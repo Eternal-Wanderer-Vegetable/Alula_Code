@@ -537,12 +537,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  /// fixture 工程的跨平台探测（演示/测试默认值）。
+  static String _defaultFolderSuggestion() {
+    final rel =
+        Directory('${Directory.current.path}/../tests/fixtures/rust-mini');
+    if (rel.existsSync()) return rel.path;
+    return Directory.current.path;
+  }
+
   Future<void> _showOpenFolderDialog() async {
     final controller = TextEditingController(
-        text: _workspaceRoot ??
-            (Directory(r'E:\Alula_Code\tests\fixtures\rust-mini').existsSync()
-                ? r'E:\Alula_Code\tests\fixtures\rust-mini'
-                : Directory.current.path));
+        text: _workspaceRoot ?? _defaultFolderSuggestion());
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -1023,9 +1028,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   child: Text(
                     _workspaceRoot == null
                         ? '资源管理器'
-                        : _workspaceRoot!
-                            .split(Platform.pathSeparator)
-                            .last,
+                        : _nameOf(_workspaceRoot!),
                     style: const TextStyle(
                         fontSize: 11, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,

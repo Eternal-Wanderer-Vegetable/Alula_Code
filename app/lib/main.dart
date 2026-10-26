@@ -8,6 +8,8 @@
 /// - title_bar / activity_bar / status_bar.dart 区域组件
 library;
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -31,11 +33,16 @@ Future<void> main(List<String> args) async {
   });
   runApp(AlulaApp(
     autoLsp: args.contains('--lsp-auto'),
-    autoFolder: args.contains('--lsp-auto')
-        ? r'E:\Alula_Code\tests\fixtures\rust-mini'
-        : null,
+    autoFolder: args.contains('--lsp-auto') ? _demoFolder() : null,
     windowControls: true,
   ));
+}
+
+/// 演示模式（--lsp-auto）自动打开的 fixture 工程（跨平台探测）。
+String? _demoFolder() {
+  final rel = Directory('${Directory.current.path}/../tests/fixtures/rust-mini');
+  if (rel.existsSync()) return rel.path;
+  return null;
 }
 
 class AlulaApp extends StatelessWidget {

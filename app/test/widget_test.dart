@@ -26,6 +26,10 @@ Future<void> pressChord(
   await tester.pump();
 }
 
+/// 仓库相对的 fixture 工程（CI 是 Linux，不能写死 Windows 绝对路径）。
+final fixtureRoot =
+    '${Directory.current.parent.path}/tests/fixtures/rust-mini';
+
 void main() {
   // 布局与会话 journal 都指向临时文件：测试不读写真实 ~/.alula/*
   late Directory tmp;
@@ -68,7 +72,7 @@ void main() {
 
   testWidgets('W2-1 标签条：拖动排序与中键关闭', (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -111,7 +115,7 @@ void main() {
 
   testWidgets('W2-2 编辑器组：拆分获焦/文档入新组/清空自动并组', (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -154,7 +158,7 @@ void main() {
 
   testWidgets('W2-3 面包屑：路径段展示 + 点击文件夹段展开文件树', (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -188,7 +192,7 @@ void main() {
 
   testWidgets('W2-4 journal：重启恢复标签与未保存内容', (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -203,7 +207,7 @@ void main() {
     // 卸载（dispose 冲写 journal）→ 「重启」
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -221,7 +225,7 @@ void main() {
   testWidgets('W3-1 命令面板：Ctrl+Shift+P 打开 → 筛选 → 回车执行拆分',
       (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -250,7 +254,7 @@ void main() {
 
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));
@@ -277,7 +281,7 @@ void main() {
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(
-      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
     ));

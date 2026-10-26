@@ -46,11 +46,15 @@ fn parse_smaps_rollup(pid: u64) -> (u64, u64, u64) {
 }
 
 fn working_set(pid: u64) -> u64 {
-    // statm 第 2 个字段 × 页大小
+    // statm 第 2 个字段 × 页大小；读不到为 0
     let Ok(statm) = std::fs::read_to_string(proc_dir().join(pid.to_string()).join("statm")) else {
         return 0;
     };
-    let rss_pages: u64 = statm.split_whitespace().nth(1)?.parse().ok()?;
+    let rss_pages: u64 = statm
+        .split_whitespace()
+        .nth(1)
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0);
     rss_pages * 4096
 }
 
