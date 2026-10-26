@@ -2,9 +2,10 @@
 //! - initialize → 返回 capabilities
 //! - textDocument/didOpen → 推送一条 publishDiagnostics
 //! - textDocument/completion → 返回固定补全项
+//!
 //! 仅用于 editor-lsp 的集成测试，覆盖客户端的帧解析与双向消息路由。
 
-use std::io::{BufRead, BufReader, Read, Write};
+use std::io::{BufRead, BufReader, Write};
 use std::process::exit;
 
 fn read_message(reader: &mut impl BufRead) -> Option<serde_json::Value> {

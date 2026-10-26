@@ -52,7 +52,9 @@ pub fn list_dir(path: &str) -> Result<Vec<DirEntry>, WorkspaceError> {
     for e in read {
         let e = e.map_err(|err| WorkspaceError::Io(err.to_string()))?;
         let name_os = e.file_name();
-        let meta = e.metadata().map_err(|err| WorkspaceError::Io(err.to_string()))?;
+        let meta = e
+            .metadata()
+            .map_err(|err| WorkspaceError::Io(err.to_string()))?;
         let Some(path_str) = entry_path(dir, &name_os) else {
             continue;
         };

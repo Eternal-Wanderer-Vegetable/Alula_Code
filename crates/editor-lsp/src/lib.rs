@@ -91,14 +91,10 @@ pub fn normalize_uri(uri: &str) -> String {
 }
 
 pub fn path_to_uri(path: &str) -> String {
+    // Windows「E:\a\b」→「file:///E:/a/b」；POSIX「/a/b」→「file:///a/b」
     let p = path.replace('\\', "/");
     let p = p.trim_start_matches('/');
-    let bytes = p.as_bytes();
-    if bytes.len() >= 2 && bytes[0].is_ascii_alphabetic() && bytes[1] == b':' {
-        format!("file:///{p}")
-    } else {
-        format!("file:///{p}")
-    }
+    format!("file:///{p}")
 }
 
 impl LspServer {
@@ -157,7 +153,13 @@ impl LspServer {
         // 等待 initialize 响应（服务器启动可能较慢）
         let deadline = Instant::now() + Duration::from_secs(30);
         loop {
-            if self.shared.server_capabilities.lock().map(|g| g.is_some()).unwrap_or(false) {
+            if self
+                .shared
+                .server_capabilities
+                .lock()
+                .map(|g| g.is_some())
+                .unwrap_or(false)
+            {
                 break;
             }
             if Instant::now() > deadline {
@@ -331,7 +333,7 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
         loop {
             let mut line = String::new();
             match reader.read_line(&mut line) {
-                Ok(0) => return,           // EOF：服务器退出
+                Ok(0) => return, // EOF：服务器退出
                 Ok(_) => {}
                 Err(_) => return,
             }
@@ -354,7 +356,10 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
         };
 
         if std::env::var("ALULA_LSP_DEBUG").is_ok() {
-            let method = msg.get("method").and_then(|m| m.as_str()).unwrap_or("<response>");
+            let method = msg
+                .get("method")
+                .and_then(|m| m.as_str())
+                .unwrap_or("<response>");
             eprintln!("[lsp-reader] 收到: {method}");
         }
 
@@ -371,69 +376,70 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
         if let Some(id) = msg.get("id").and_then(|v| v.as_i64()) {
             if msg.get("result").is_some() || msg.get("error").is_some() {
                 // initialize 响应特殊处理
-                if msg.get("result").map(|r| r.get("capabilities").is_some()).unwrap_or(false) {
+                if msg
+                    .get("result")
+                    .map(|r| r.get("capabilities").is_some())
+                    .unwrap_or(false)
+                {
                     if let Ok(mut caps) = shared.server_capabilities.lock() {
                         *caps = msg.get("result").cloned();
                     }
                 }
                 let sender = shared.pending.lock().ok().and_then(|mut g| g.remove(&id));
                 if let Some(tx) = sender {
-                    let _ = tx.send(msg.get("result").cloned().unwrap_or(serde_json::Value::Null));
+                    let _ = tx.send(
+                        msg.get("result")
+                            .cloned()
+                            .unwrap_or(serde_json::Value::Null),
+                    );
                 }
                 continue;
             }
         }
 
-        // 服务端通知
-        match msg.get("method").and_then(|v| v.as_str()) {
-            Some("textDocument/publishDiagnostics") => {
-                let params = &msg["params"];
-                let uri = params
-                    .get("uri")
-                    .and_then(|v| v.as_str())
-                    .unwrap_or("")
-                    .to_string();
-                let diags: Vec<Diagnostic> = params
-                    .get("diagnostics")
-                    .and_then(|v| v.as_array())
-                    .map(|arr| {
-                        arr.iter()
-                            .filter_map(|d| {
-                                let range = d.get("range")?["start"].clone();
-                                Some(Diagnostic {
-                                    severity: d
-                                        .get("severity")
-                                        .and_then(|v| v.as_u64())
-                                        .unwrap_or(3) as u32,
-                                    line: range.get("line").and_then(|v| v.as_u64())?,
-                                    character: range
-                                        .get("character")
-                                        .and_then(|v| v.as_u64())
-                                        .unwrap_or(0),
-                                    message: d
-                                        .get("message")
-                                        .and_then(|v| v.as_str())?
-                                        .to_string(),
-                                    source: d
-                                        .get("source")
-                                        .and_then(|v| v.as_str())
-                                        .map(|s| s.to_string()),
-                                })
+        // 服务端通知；$/progress、window/logMessage 等其余通知：忽略
+        if let Some("textDocument/publishDiagnostics") = msg.get("method").and_then(|v| v.as_str())
+        {
+            let params = &msg["params"];
+            let uri = params
+                .get("uri")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
+            let diags: Vec<Diagnostic> = params
+                .get("diagnostics")
+                .and_then(|v| v.as_array())
+                .map(|arr| {
+                    arr.iter()
+                        .filter_map(|d| {
+                            let range = d.get("range")?["start"].clone();
+                            Some(Diagnostic {
+                                severity: d.get("severity").and_then(|v| v.as_u64()).unwrap_or(3)
+                                    as u32,
+                                line: range.get("line").and_then(|v| v.as_u64())?,
+                                character: range
+                                    .get("character")
+                                    .and_then(|v| v.as_u64())
+                                    .unwrap_or(0),
+                                message: d.get("message").and_then(|v| v.as_str())?.to_string(),
+                                source: d
+                                    .get("source")
+                                    .and_then(|v| v.as_str())
+                                    .map(|s| s.to_string()),
                             })
-                            .collect()
-                    })
-                    .unwrap_or_default();
-                if std::env::var("ALULA_LSP_DEBUG").is_ok() {
-                    eprintln!(
-                        "[lsp-reader] publishDiagnostics uri={uri} 条数={}",
-                        diags.len()
-                    );
-                }
-                if let Ok(mut g) = shared.diagnostics.lock() {
-                    g.insert(normalize_uri(&uri), diags);
-                }
+                        })
+                        .collect()
+                })
+                .unwrap_or_default();
+            if std::env::var("ALULA_LSP_DEBUG").is_ok() {
+                eprintln!(
+                    "[lsp-reader] publishDiagnostics uri={uri} 条数={}",
+                    diags.len()
+                );
             }
-            _ => {} // $/progress、window/logMessage 等：忽略
+            if let Ok(mut g) = shared.diagnostics.lock() {
+                g.insert(normalize_uri(&uri), diags);
+            }
         }
     }
 }
@@ -448,15 +454,10 @@ mod tests {
             normalize_uri("file:///E:/Alula_Code/x.rs"),
             "file:///e:/Alula_Code/x.rs"
         );
-        assert_eq!(
-            normalize_uri("file:///e:/a/b.rs"),
-            "file:///e:/a/b.rs"
-        );
+        assert_eq!(normalize_uri("file:///e:/a/b.rs"), "file:///e:/a/b.rs");
         // 非 file:/// 前缀原样保留
         assert_eq!(normalize_uri("untitled:1"), "untitled:1");
     }
-
-    use super::*;
 
     #[test]
     fn path_to_uri_windows_and_unix() {

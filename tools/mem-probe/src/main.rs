@@ -78,7 +78,9 @@ fn emit_report(report: &WatchReport, out: Option<&String>, md: Option<&String>) 
     let json = serde_json::to_string_pretty(report).expect("序列化报告");
     match out {
         Some(path) => {
-            std::fs::write(path, &json).map_err(|e| format!("写出 {path} 失败: {e}")).unwrap();
+            std::fs::write(path, &json)
+                .map_err(|e| format!("写出 {path} 失败: {e}"))
+                .unwrap();
             eprintln!("JSON 报告: {path}");
         }
         None => println!("{json}"),

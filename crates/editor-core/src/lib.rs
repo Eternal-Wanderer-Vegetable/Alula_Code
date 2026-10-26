@@ -66,12 +66,7 @@ impl DocRegistry {
 
     /// 校验 base_version 后按序应用 ops，返回应用后的新版本号。
     /// 若文档挂接了 LSP，自动随发全量 didChange（docs/02 §3：MVP 用全量同步）。
-    pub fn apply(
-        &mut self,
-        id: u64,
-        base_version: u64,
-        ops: &[TextOp],
-    ) -> Result<u64, ApplyError> {
+    pub fn apply(&mut self, id: u64, base_version: u64, ops: &[TextOp]) -> Result<u64, ApplyError> {
         let buf = self.docs.get_mut(&id).ok_or(ApplyError::UnknownDoc)?;
         let current = buf.version();
         if current != base_version {
@@ -87,9 +82,7 @@ impl DocRegistry {
     }
 
     pub fn content(&self, id: u64) -> Option<(u64, String)> {
-        self.docs
-            .get(&id)
-            .map(|b| (b.version(), b.text()))
+        self.docs.get(&id).map(|b| (b.version(), b.text()))
     }
 
     pub fn text_of(&self, id: u64) -> Option<String> {
@@ -161,11 +154,8 @@ impl Default for DocRegistry {
 static SYNTAX: OnceLock<Mutex<SyntaxEngine>> = OnceLock::new();
 
 pub fn syntax_engine() -> &'static Mutex<SyntaxEngine> {
-    SYNTAX.get_or_init(|| {
-        Mutex::new(
-            SyntaxEngine::rust().expect("初始化 tree-sitter rust 引擎失败"),
-        )
-    })
+    SYNTAX
+        .get_or_init(|| Mutex::new(SyntaxEngine::rust().expect("初始化 tree-sitter rust 引擎失败")))
 }
 
 /// 解析文档当前全文，返回 (版本, tokens)。未挂语法引擎的文档也可调用。
@@ -195,10 +185,7 @@ fn workspace_servers() -> &'static Mutex<HashMap<String, Arc<LspServer>>> {
 }
 
 /// 获取（或启动）工作区对应的 LSP 服务器。同一 root 复用同一进程。
-pub fn lsp_start_for_workspace(
-    root: &str,
-    cmd: &[String],
-) -> Result<Arc<LspServer>, String> {
+pub fn lsp_start_for_workspace(root: &str, cmd: &[String]) -> Result<Arc<LspServer>, String> {
     let mut servers = workspace_servers()
         .lock()
         .map_err(|_| "workspace servers 锁中毒")?;

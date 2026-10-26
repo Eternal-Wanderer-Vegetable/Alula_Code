@@ -26,14 +26,20 @@ pub enum BufferError {
     /// offset 不是合法的 UTF-16 边界（如落在代理对中间）或越界。
     InvalidUtf16Offset { offset_utf16: usize },
     /// 删除区间越界（offset+len 超过文档末尾）。
-    DeleteOutOfBounds { offset_utf16: usize, len_utf16: usize },
+    DeleteOutOfBounds {
+        offset_utf16: usize,
+        len_utf16: usize,
+    },
 }
 
 impl std::fmt::Display for BufferError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             BufferError::InvalidUtf16Offset { offset_utf16 } => {
-                write!(f, "invalid UTF-16 offset {offset_utf16} (not a boundary or out of range)")
+                write!(
+                    f,
+                    "invalid UTF-16 offset {offset_utf16} (not a boundary or out of range)"
+                )
             }
             BufferError::DeleteOutOfBounds {
                 offset_utf16,
@@ -77,10 +83,7 @@ impl TextBuffer {
     /// 应用一个操作。成功则版本号 +1。
     pub fn apply(&mut self, op: &TextOp) -> Result<(), BufferError> {
         match op {
-            TextOp::Insert {
-                offset_utf16,
-                text,
-            } => {
+            TextOp::Insert { offset_utf16, text } => {
                 let char_idx = self.char_idx_at_utf16(*offset_utf16)?;
                 self.rope.insert(char_idx, text);
             }
@@ -89,12 +92,13 @@ impl TextBuffer {
                 len_utf16,
             } => {
                 let start = self.char_idx_at_utf16(*offset_utf16)?;
-                let end_utf16 = offset_utf16
-                    .checked_add(*len_utf16)
-                    .ok_or(BufferError::DeleteOutOfBounds {
-                        offset_utf16: *offset_utf16,
-                        len_utf16: *len_utf16,
-                    })?;
+                let end_utf16 =
+                    offset_utf16
+                        .checked_add(*len_utf16)
+                        .ok_or(BufferError::DeleteOutOfBounds {
+                            offset_utf16: *offset_utf16,
+                            len_utf16: *len_utf16,
+                        })?;
                 if end_utf16 > self.rope.len_utf16_cu() {
                     return Err(BufferError::DeleteOutOfBounds {
                         offset_utf16: *offset_utf16,

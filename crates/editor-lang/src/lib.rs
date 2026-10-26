@@ -25,9 +25,21 @@ pub struct SyntaxEngine {
 
 /// 频繁出现的捕获名白名单：过滤 query 里的非着色捕获，减少 token 量。
 const INTERESTING: &[&str] = &[
-    "keyword", "keyword.function", "keyword.conditional", "keyword.repeat",
-    "keyword.modifier", "function", "function.call", "method",
-    "string", "comment", "type", "constant", "number", "property", "variable",
+    "keyword",
+    "keyword.function",
+    "keyword.conditional",
+    "keyword.repeat",
+    "keyword.modifier",
+    "function",
+    "function.call",
+    "method",
+    "string",
+    "comment",
+    "type",
+    "constant",
+    "number",
+    "property",
+    "variable",
 ];
 
 impl SyntaxEngine {
@@ -43,7 +55,7 @@ impl SyntaxEngine {
             .map_err(|e| format!("highlights query 编译失败: {e}"))?;
         let capture_names = query
             .capture_names()
-            .into_iter()
+            .iter()
             .map(|s| s.to_string())
             .collect();
         Ok(SyntaxEngine {
@@ -84,19 +96,13 @@ impl SyntaxEngine {
         }
         spans.sort_by_key(|(s, e, _)| (*s, std::cmp::Reverse(*e)));
 
-        // 字节偏移 → UTF-16 偏移（一次线性扫描），并合并重叠区间
+        // 字节偏移 → UTF-16 偏移，并合并重叠区间
         let mut tokens = Vec::new();
-        let mut byte_to_u16 = 0usize;
-        let mut last_end_byte = 0usize;
-        let mut iter = text.char_indices().peekable();
         let mut covered_end_byte = 0usize;
-        let mut covered_end_u16 = 0usize;
-        let _ = &mut byte_to_u16;
 
         // 预计算：逐 span 转换（文本量小；增量/缓存优化留待 Phase 1）
-        let mut u16_at = |byte_off: usize, text: &str| -> usize {
-            text[..byte_off].encode_utf16().count()
-        };
+        let u16_at =
+            |byte_off: usize, text: &str| -> usize { text[..byte_off].encode_utf16().count() };
 
         for (start, end, kind) in spans {
             if start < covered_end_byte {
@@ -112,11 +118,7 @@ impl SyntaxEngine {
                 });
             }
             covered_end_byte = end;
-            covered_end_u16 = end_u16;
-            let _ = covered_end_u16;
-            last_end_byte = end;
         }
-        let _ = last_end_byte;
         Ok(tokens)
     }
 }
@@ -148,7 +150,10 @@ mod tests {
                 assert!(piece.contains("你好"), "string token 原文应含中文: {piece}");
             }
             if t.kind == "comment" {
-                assert!(piece.contains("注释"), "comment token 原文应含中文: {piece}");
+                assert!(
+                    piece.contains("注释"),
+                    "comment token 原文应含中文: {piece}"
+                );
             }
         }
     }

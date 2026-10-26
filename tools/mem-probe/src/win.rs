@@ -69,7 +69,8 @@ fn memory_of(pid: u64) -> (u64, u64, u64) {
         };
         let ok = GetProcessMemoryInfo(
             h,
-            &mut pmc as *mut PROCESS_MEMORY_COUNTERS_EX as *mut windows_sys::Win32::System::ProcessStatus::PROCESS_MEMORY_COUNTERS,
+            &mut pmc as *mut PROCESS_MEMORY_COUNTERS_EX
+                as *mut windows_sys::Win32::System::ProcessStatus::PROCESS_MEMORY_COUNTERS,
             pmc.cb,
         );
         CloseHandle(h);
@@ -78,7 +79,7 @@ fn memory_of(pid: u64) -> (u64, u64, u64) {
         }
         (
             pmc.WorkingSetSize as u64,
-            pmc.PrivateUsage.max(0) as u64,
+            pmc.PrivateUsage as u64,
             pmc.PeakPagefileUsage as u64,
         )
     }

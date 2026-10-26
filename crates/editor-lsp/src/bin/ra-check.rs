@@ -37,18 +37,31 @@ fn main() {
     );
     match &pull {
         Ok(v) => {
-            let items = v.get("items").and_then(|i| i.as_array()).map(|a| a.len()).unwrap_or(0);
-            println!("[2.5] pull diagnostics: kind={:?} items={}", v.get("kind").and_then(|k| k.as_str()), items);
+            let items = v
+                .get("items")
+                .and_then(|i| i.as_array())
+                .map(|a| a.len())
+                .unwrap_or(0);
+            println!(
+                "[2.5] pull diagnostics: kind={:?} items={}",
+                v.get("kind").and_then(|k| k.as_str()),
+                items
+            );
         }
         Err(e) => println!("[2.5] pull diagnostics 失败: {e}"),
     }
     if let Ok(v) = &pull {
-        println!("[2.6] pull 原始响应: {}", serde_json::to_string_pretty(v).unwrap_or_default().chars().take(600).collect::<String>());
+        println!(
+            "[2.6] pull 原始响应: {}",
+            serde_json::to_string_pretty(v)
+                .unwrap_or_default()
+                .chars()
+                .take(600)
+                .collect::<String>()
+        );
     }
     // didChange 触发重分析（VS Code 即时红线走的路径）
-    server
-        .did_change_full(&uri, 2, &opened)
-        .expect("didChange");
+    server.did_change_full(&uri, 2, &opened).expect("didChange");
 
     println!("[3] 轮询诊断（最长 45s）…");
     let deadline = Instant::now() + Duration::from_secs(45);
@@ -57,11 +70,17 @@ fn main() {
         let diags = server.diagnostics(&uri);
         if diags.len() as i64 != last_count {
             last_count = diags.len() as i64;
-            println!("    诊断 {} 条 @ {:.1}s", diags.len(), started.elapsed().as_secs_f64());
+            println!(
+                "    诊断 {} 条 @ {:.1}s",
+                diags.len(),
+                started.elapsed().as_secs_f64()
+            );
             for d in &diags {
                 println!(
                     "      [sev{}] L{} C{}: {}",
-                    d.severity, d.line, d.character,
+                    d.severity,
+                    d.line,
+                    d.character,
                     d.message.lines().next().unwrap_or("")
                 );
             }
@@ -87,7 +106,11 @@ fn main() {
         println!("    补全失败: {e}");
         Vec::new()
     });
-    println!("    补全 {} 项，前 8 项: {:?}", items.len(), &items[..items.len().min(8)]);
+    println!(
+        "    补全 {} 项，前 8 项: {:?}",
+        items.len(),
+        &items[..items.len().min(8)]
+    );
 
     println!("[5] shutdown");
     server.shutdown().unwrap();

@@ -40,8 +40,7 @@ pub fn snapshot() -> Result<Vec<ProcInfo>, String> {
 /// 从根进程开始的整棵进程树（含根本身）；根不存在返回 None。
 /// 父进程已退出但仍存活的进程会被并入根为 pid 的树（按当前快照的父子关系）。
 pub fn tree(all: &[ProcInfo], root_pid: u64) -> Option<Vec<ProcInfo>> {
-    let mut children: std::collections::HashMap<u64, Vec<usize>> =
-        std::collections::HashMap::new();
+    let mut children: std::collections::HashMap<u64, Vec<usize>> = std::collections::HashMap::new();
     for (i, p) in all.iter().enumerate() {
         children.entry(p.ppid).or_default().push(i);
     }
@@ -112,7 +111,7 @@ pub struct WatchReport {
 pub fn summarize(samples: &[Sample]) -> Option<Summary> {
     let last = samples.last()?;
     let peak = samples.iter().map(|s| s.total_private).max()?;
-    let tail = (samples.len() * 2 + 4) / 5; // 尾部 40%
+    let tail = (samples.len() * 2).div_ceil(5); // 尾部 40%
     let mut tail_vals: Vec<u64> = samples[samples.len() - tail.max(1)..]
         .iter()
         .map(|s| s.total_private)
@@ -136,7 +135,11 @@ pub fn report_markdown(r: &WatchReport) -> String {
         r.exe,
         r.args.join(" "),
         r.platform,
-        if r.platform == "linux" { "（含 PSS）" } else { "" }
+        if r.platform == "linux" {
+            "（含 PSS）"
+        } else {
+            ""
+        }
     ));
     s.push_str(&format!(
         "- 采样：{:.0}s，间隔 {:.1}s，共 {} 个样本\n- 采集时间：{}\n\n",
@@ -155,9 +158,11 @@ pub fn report_markdown(r: &WatchReport) -> String {
         mib(r.summary.final_private),
         mib(r.summary.final_working_set)
     ));
-    s.push_str("## 进程明细（结束时）\n\n| PID | 进程 | Private MiB | WS MiB |\n|---|---|---|---|\n");
+    s.push_str(
+        "## 进程明细（结束时）\n\n| PID | 进程 | Private MiB | WS MiB |\n|---|---|---|---|\n",
+    );
     let mut procs: Vec<&ProcInfo> = r.final_processes.iter().collect();
-    procs.sort_by(|a, b| b.private.cmp(&a.private));
+    procs.sort_by_key(|p| std::cmp::Reverse(p.private));
     for p in procs.iter().take(20) {
         s.push_str(&format!(
             "| {} | {} | {} | {} |\n",
@@ -217,8 +222,9 @@ pub fn watch(
     let launch = Instant::now();
     while launch.elapsed().as_secs_f64() < duration_s {
         let t = launch.elapsed().as_secs_f64();
-        let total = match snapshot() {
-            Ok(all) => match tree(&all, root_pid) {
+        let total = {
+            let all = snapshot()?;
+            match tree(&all, root_pid) {
                 Some(procs) => Sample {
                     t,
                     total_private: procs.iter().map(|p| p.private).sum(),
@@ -229,20 +235,20 @@ pub fn watch(
                     // 根已退出：停止采样
                     break;
                 }
-            },
-            Err(e) => return Err(e),
+            }
         };
         samples.push(total);
         let next = launch
-            + std::time::Duration::from_secs_f64(
-                ((t + interval_s) * 1000.0).ceil() / 1000.0,
-            );
+            + std::time::Duration::from_secs_f64(((t + interval_s) * 1000.0).ceil() / 1000.0);
         let wait = next.saturating_duration_since(Instant::now());
         std::thread::sleep(wait);
     }
 
     // 结束时对进程明细做一次最终快照（可能根已退出）
-    let final_processes = snapshot().ok().and_then(|all| tree(&all, root_pid)).unwrap_or_default();
+    let final_processes = snapshot()
+        .ok()
+        .and_then(|all| tree(&all, root_pid))
+        .unwrap_or_default();
 
     if kill_on_exit {
         let _ = platform::kill_tree(root_pid);
@@ -324,7 +330,14 @@ mod tests {
             total_working_set: p,
             n_processes: 1,
         };
-        let s = summarize(&[mk(0.0, 100), mk(1.0, 200), mk(2.0, 150), mk(3.0, 140), mk(4.0, 130)]).unwrap();
+        let s = summarize(&[
+            mk(0.0, 100),
+            mk(1.0, 200),
+            mk(2.0, 150),
+            mk(3.0, 140),
+            mk(4.0, 130),
+        ])
+        .unwrap();
         assert_eq!(s.peak_private, 200);
         assert!(s.final_private == 130);
     }

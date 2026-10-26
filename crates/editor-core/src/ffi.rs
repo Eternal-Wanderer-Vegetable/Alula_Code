@@ -13,13 +13,12 @@
 
 use std::ffi::{c_char, CStr, CString};
 use std::panic::{catch_unwind, AssertUnwindSafe};
-use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use editor_buffer::TextOp;
-use editor_lsp::LspServer;
 use serde_json::json;
 
-use crate::{DocRegistry, ApplyError};
+use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
 pub const ALULA_ABI_VERSION: u32 = 3;
@@ -138,9 +137,9 @@ pub unsafe extern "C" fn alula_doc_apply(
 #[no_mangle]
 pub extern "C" fn alula_doc_resync(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| match registry_lock().content(id) {
-        Some((version, content)) => to_c_ptr(
-            json!({ "ok": true, "version": version, "content": content }).to_string(),
-        ),
+        Some((version, content)) => {
+            to_c_ptr(json!({ "ok": true, "version": version, "content": content }).to_string())
+        }
         None => err_json("UnknownDoc", json!({ "id": id })),
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_resync")))
@@ -281,11 +280,7 @@ pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
 
 /// 同步补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
 #[no_mangle]
-pub extern "C" fn alula_completion(
-    id: u64,
-    offset_utf16: u64,
-    timeout_ms: u64,
-) -> *mut c_char {
+pub extern "C" fn alula_completion(id: u64, offset_utf16: u64, timeout_ms: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         let position = {
             let reg = registry_lock();
@@ -315,9 +310,9 @@ pub extern "C" fn alula_completion(
 #[no_mangle]
 pub extern "C" fn alula_syntax(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| match crate::syntax_tokens(id) {
-        Some((version, tokens)) => to_c_ptr(
-            json!({ "ok": true, "version": version, "tokens": tokens }).to_string(),
-        ),
+        Some((version, tokens)) => {
+            to_c_ptr(json!({ "ok": true, "version": version, "tokens": tokens }).to_string())
+        }
         None => err_json("UnknownDoc", json!({ "id": id })),
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_syntax")))
@@ -483,7 +478,10 @@ mod tests {
         take(unsafe { alula_doc_set_uri(id, c("file:///m.rs").as_ptr()) });
         let r = take(alula_syntax(id));
         assert_eq!(r["ok"], true);
-        assert!(r["tokens"].as_array().unwrap().len() > 0, "应提取到 token");
+        assert!(
+            !r["tokens"].as_array().unwrap().is_empty(),
+            "应提取到 token"
+        );
     }
 
     #[test]

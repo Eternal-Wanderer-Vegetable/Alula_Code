@@ -72,7 +72,7 @@ pub fn atomic_save(path: &str, content: &str) -> Result<(), SaveError> {
 mod tests {
     use super::*;
 
-    fn tmpdir(name: &str) -> tempfile::TempDir {
+    fn tmpdir(_name: &str) -> tempfile::TempDir {
         tempfile::tempdir().unwrap()
     }
 
@@ -85,7 +85,10 @@ mod tests {
         assert_eq!(std::fs::read_to_string(&target).unwrap(), "第一版");
 
         atomic_save(target.to_str().unwrap(), "第二版内容更长的内容").unwrap();
-        assert_eq!(std::fs::read_to_string(&target).unwrap(), "第二版内容更长的内容");
+        assert_eq!(
+            std::fs::read_to_string(&target).unwrap(),
+            "第二版内容更长的内容"
+        );
 
         // 目录内不应残留临时文件
         let leftovers: Vec<_> = std::fs::read_dir(td.path())
