@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第七轮收尾：W2-3/W2-4 完成 + 冒烟通过；W2 只剩交互级人工复验）
+> Last Updated：2026-10-26（第八轮收尾：W3-1 命令面板完成；CI 首跑失败已修复并复跑）
 
 ## 项目一句话
 
@@ -10,8 +10,12 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**W1 全部完成（feat-015 done）+ W2-1/2/3/4 全部完成**（58 测试绿 + init.sh 全绿；
-实机冒烟稳态 189.9 MiB，docs/baselines/2026-10-26/alula-w2-empty.md）。
+**W1 全部完成 + W2 全部完成（交互复验用户已过）+ W3-1 命令面板完成**
+（67 测试绿 + init.sh 全绿；已首次 push GitHub，CI 首跑失败→修复→复跑中）。
+- W3-1 已落能力：CommandRegistry（11 命令）/fuzzyScore/QuickInput 浮层/
+  Ctrl+Shift+P 命令面板/Ctrl+P 快速打开（有界文件索引）/Ctrl+B、Ctrl+J。
+- W3 剩余：完整 KeybindingRegistry（when 子句 + keybindings.json 覆盖）、
+  快速打开异步化（同步 FFI 遍历大仓库卡 UI）。
 - W2 已落能力：标签条交互（溢出/中键/拖动排序）、编辑器组（拆分/焦点路由/空组并组）、
   面包屑（点击展开树）、会话 journal（未保存内容崩溃恢复）+ dirtyDisk 真脏标记
   （修正了原 isDirty 永假的隐性 bug，标签脏点现在正确显示）。

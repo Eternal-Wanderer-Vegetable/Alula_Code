@@ -9,6 +9,18 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-26 第七轮续）：W3-1 命令面板 + CI 首跑修复
+
+- **git push 首次执行**（8477ecc..ca26c07），CI 首跑**失败并抓到两个真问题**：
+  ① mem-probe linux.rs 在返回 u64 的函数里用 `?`（Linux 路径首次被真实编译）；
+  ② 5 个 widget 测试依赖 Windows 绝对路径 fixture。已修复：仓库相对 fixtureRoot
+  + linux.rs and_then 归零 + 顺修侧栏标题混合分隔符切分 bug。
+- **W3-1 命令面板**：CommandRegistry（11 条命令注册）+ fuzzyScore 模糊打分
+  （子序列/连续/词首加权）+ QuickInput 浮层；Ctrl+Shift+P / Ctrl+P / Ctrl+B /
+  Ctrl+J 全局键位（autofocus Focus 保证无焦点可达）；快速打开用有界文件索引
+  （2000 上限，跳过 .git/target 等；同步 FFI 遍历大仓库会卡 UI，已知限制）。
+- CI 复跑已触发（40355417691）。
+
 ## 今日会话（2026-10-26 第六轮）：W2-3 面包屑 + W2-4 会话 journal + 冒烟
 
 - **W2-3 面包屑**：工作区相对路径段（根以下，对标 VS Code），点文件夹段唤起
