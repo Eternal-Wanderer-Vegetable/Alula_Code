@@ -829,10 +829,76 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children: [
           _buildTabStrip(g),
           const Divider(height: 1),
+          _buildBreadcrumb(g),
           Expanded(child: _buildEditor(g)),
         ],
       ),
     );
+  }
+
+  /// 面包屑（W2-3）：工作区相对路径拆段；点文件夹段在文件树中展开该目录。
+  Widget _buildBreadcrumb(EditorGroup g) {
+    final active = g.active;
+    if (active == null || active.path == null || _workspaceRoot == null) {
+      return const SizedBox.shrink();
+    }
+    final normRoot =
+        _normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '');
+    final normPath = _normPath(active.path!);
+    var rel = normPath.startsWith('$normRoot/')
+        ? normPath.substring(normRoot.length + 1)
+        : normPath;
+    final segments = rel.split('/');
+    return Container(
+      key: ValueKey('breadcrumb-${g.region}'),
+      height: 22,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < segments.length; i++) ...[
+            if (i > 0)
+              Text(' › ',
+                  style: TextStyle(
+                      color: Colors.grey.shade600, fontSize: 11)),
+            GestureDetector(
+              onTap: () => _revealInExplorer(segments, i),
+              child: Text(
+                segments[i],
+                style: const TextStyle(fontSize: 11),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _normPath(String p) => p.replaceAll('\\', '/');
+
+  /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
+  void _revealInExplorer(List<String> segments, int index) {
+    if (_workspaceRoot == null || index >= segments.length - 1) {
+      return; // 最后一段是文件名，无目录可展开
+    }
+    _layout.showRegion('sidebar');
+    final target =
+        '${_normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '')}/'
+            '${segments.take(index + 1).join('/')}';
+    void walk(List<TreeNode> nodes) {
+      for (final n in nodes) {
+        final np = _normPath(n.path);
+        if (target == np || target.startsWith('\$np/')) {
+          if (n.isDir && !n.expanded) _toggleDir(n);
+          if (n.children != null) walk(n.children!);
+        }
+      }
+    }
+
+    walk(_treeRoots);
+    setState(() {});
   }
 
   Widget _buildTabStrip(EditorGroup g) {

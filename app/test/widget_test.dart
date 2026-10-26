@@ -107,8 +107,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('main.rs'));
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('main.rs'), findsNWidgets(2),
-        reason: '树 + 新组标签各一处');
+    expect(find.text('main.rs'), findsNWidgets(3),
+        reason: '树 + 新组标签 + 面包屑各一处');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
     // 中键关闭新组唯一文档 → 组清空 → 自动摘除并组
@@ -123,6 +123,39 @@ void main() {
         reason: '空组应自动摘除');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
         reason: '回到单组且组 1 仍有 Cargo.toml');
+  });
+
+  testWidgets('W2-3 面包屑：路径段展示 + 点击文件夹段展开文件树', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 展开并打开 main.rs → 面包屑出现 src › main.rs（工作区根以下，对标 VS Code）
+    await tester.tap(find.text('src').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final bc = find.byKey(const ValueKey('breadcrumb-editor'));
+    expect(bc, findsOneWidget);
+    expect(find.descendant(of: bc, matching: find.text('src')), findsOneWidget);
+    expect(
+        find.descendant(of: bc, matching: find.text('main.rs')),
+        findsOneWidget);
+
+    // 在文件树里收起 src → main.rs 只剩面包屑一处
+    await tester.tap(find.text('src').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('main.rs'), findsNWidgets(2),
+        reason: '树已收起，剩标签 + 面包屑两处');
+
+    // 点击面包屑的 src 段 → 文件树重新展开到该目录
+    await tester.tap(find.descendant(of: bc, matching: find.text('src')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('main.rs'), findsNWidgets(3),
+        reason: '面包屑点击应展开文件树，main.rs 回到 树+标签+面包屑 三处');
   });
 
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
