@@ -97,6 +97,14 @@
       "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）"
     },
     {
+      "id": "feat-015",
+      "name": "W1 布局骨架：WorkbenchGrid + 五大区 + 标题栏 + 持久化",
+      "description": "docs/09 W1：二叉分割树布局（拖拽/最小尺寸/折叠）、活动栏/侧栏/编辑器/面板/状态栏五大区、自定义标题栏与菜单第一版、布局持久化与重启恢复",
+      "dependencies": ["feat-008"],
+      "status": "in-progress",
+      "evidence": ""
+    },
+    {
       "id": "feat-013",
       "name": "P1 工程化：CI/CD、代码图谱、harness 文档",
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",
