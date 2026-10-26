@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第四轮收尾：W1-3 补完 + 内存验收通过，feat-015 done）
+> Last Updated：2026-10-26（第五轮收尾：W2-1 标签条交互完成，下一任务 W2-2 编辑器组拆分）
 
 ## 项目一句话
 
@@ -10,10 +10,15 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**docs/09 W1 布局骨架已全部完成（feat-015 done）**：模型/网格/五大区/持久化/
-无边框窗口全落地；Release 实机复测稳态 186.6 MiB（≤200 验收线过，+4.0% 低于护栏）。
-**下一步是 W2（编辑器组：标签拖动排序/跨组拖动/编辑器拆分/面包屑）**，
-feat-010（撤销重做/查找替换）为并行线，优先级由用户定。
+**docs/09 W1 全部完成（feat-015 done，含内存验收 186.6 MiB）+ W2-1 标签条交互完成**
+（溢出滚动/中键关闭/拖动排序，44 测试绿）。
+**下轮首任务 W2-2 编辑器组拆分**（改造面大，需整轮）：
+- 布局树：WbSplit 增 insertChild/removeChild + splitLeaf(region→分裂为嵌套分割)，
+  复用 WorkbenchGrid 引擎渲染编辑器组
+- 页面：_openDocs 全局单列表 → 按 region 分组的 Map<groupRegion, GroupState>；
+  快捷键/保存/补全路由到「焦点组」
+- builders 对 region.startsWith('editor') 通配
+- 序列化天然支持（嵌套分割已在 JSON 格式内）
 
 ## 本会话完成了什么
 
@@ -56,9 +61,8 @@ feat-010（撤销重做/查找替换）为并行线，优先级由用户定。
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **进 W2 编辑器组**（docs/09 §3 W2）：标签溢出滚动/拖动排序/中键关闭、
-   编辑器组拆分（2×2，复用 WorkbenchGrid！）、面包屑（tree-sitter 符号）；
-   布局树叶子从「区域」扩展为「编辑器组」是核心改造点。
+2. **W2-2 编辑器组拆分**（见 Current Objective 的改造清单）；之后 W2-3 面包屑、
+   W2-4 会话恢复。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
 
 ## 已知坑

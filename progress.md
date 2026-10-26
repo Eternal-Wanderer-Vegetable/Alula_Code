@@ -9,6 +9,20 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-26 第四轮）：W1-3 补完 + 内存验收 + W2-1
+
+- **W1-3 无边框窗口（完成，commit 007594a）**：开发者模式开启后接入 window_manager
+  0.5.2；TitleBarStyle.hidden + DragToMoveArea + 双击最大化 + 窗口按钮；
+  windowControls 开关隔离测试与插件通道。
+- **W1 验收内存复测（通过，commit e633955）**：Release 实机 mem-probe 45s：
+  **稳态 186.6 / 峰值 197.1 MiB**（≤200 线过；较 MVP +4.0% < 5% 护栏），
+  docs/baselines/2026-10-26/alula-w1-empty.md。**feat-015 → done。**
+- **W2-1 标签条交互（commit 后续）**：溢出横向滚动、中键关闭（kMiddleMouseButton）、
+  Draggable/DragTarget 邻位拖动排序；widget 测试用鼠标指针拖 tab-3 到首位断言。
+- **下轮首任务 W2-2 编辑器组拆分**：布局树 editor 叶子可分裂为组分割（复用
+  WorkbenchGrid 引擎）；文档模型从全局 _openDocs 改为按组持有 + 焦点组路由快捷键；
+  触点面大，需整轮专注做。
+
 ## 今日会话（2026-10-26 第三轮）：W1 布局骨架落地（docs/09 开始执行）
 
 - **既有成果分 4 笔提交入库**（clippy/fmt 清理 → harness → CI → docs/09 计划）。

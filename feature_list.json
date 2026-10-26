@@ -105,6 +105,14 @@
       "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）"
     },
     {
+      "id": "feat-016",
+      "name": "W2 编辑器组：拆分/跨组拖动/面包屑/会话恢复",
+      "description": "docs/09 W2：W2-1 标签条交互已完；W2-2 编辑器组拆分（布局树 editor 叶子可分裂为组分割、文档按组持有）、W2-3 面包屑、W2-4 会话恢复",
+      "dependencies": ["feat-015"],
+      "status": "in-progress",
+      "evidence": "W2-1 提交：溢出滚动/中键关闭/拖动排序，widget 测试覆盖（拖 tab-3 到首位 + 中键关闭），44 测试全绿（2026-10-26）"
+    },
+    {
       "id": "feat-013",
       "name": "P1 工程化：CI/CD、代码图谱、harness 文档",
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",
