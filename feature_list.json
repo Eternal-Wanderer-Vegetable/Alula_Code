@@ -110,7 +110,7 @@
       "description": "docs/09 W2：W2-1 标签条交互已完；W2-2 编辑器组拆分（布局树 editor 叶子可分裂为组分割、文档按组持有）、W2-3 面包屑、W2-4 会话恢复",
       "dependencies": ["feat-015"],
       "status": "in-progress",
-      "evidence": "W2-1 提交：溢出滚动/中键关闭/拖动排序，widget 测试覆盖（拖 tab-3 到首位 + 中键关闭），44 测试全绿（2026-10-26）"
+      "evidence": "W2-1：溢出滚动/中键关闭/拖动排序（widget 测试）；W2-2：布局树分裂原语（splitLeaf/removeLeaf/自动折叠，7 模型测试）+ 编辑器组（文档按组持有/焦点组路由/拆分按钮/空组自动并组，多组全链路 widget 测试），全量 52 测试 + init.sh 全绿（2026-10-26）。注意：W2-2b 变更 GitNexus 评 Risk high，建议实机复验。剩余：W2-3 面包屑、W2-4 会话恢复"
     },
     {
       "id": "feat-013",

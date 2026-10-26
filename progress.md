@@ -9,6 +9,19 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-26 第五轮）：W2-2 编辑器组拆分
+
+- **W2-2a 布局树分裂原语（commit 7a9d33a）**：splitLeaf（叶子→嵌套分割，权重交接，
+  防重名）/removeLeaf（摘除 + 单子 split 自动折叠沿用权重；根直接子节点拒摘）+
+  控制器转发 + 7 项模型测试。
+- **W2-2b 编辑器组（commit 31b2ba6）**：EditorGroup（region+docs+activeDocId）替代
+  全局文档列表；焦点组路由（拆分后新组获焦；点标签/编辑器切焦点；保存/补全/
+  快捷键/新开文档进焦点组）；跨组跳转激活；空组自动摘除并组；「拆分编辑器」按钮。
+- ⚠️ GitNexus 对 W2-2b 评 Risk high（2 文件 11 符号）——缓解：52 测试全绿含多组
+  全链路 widget 测试；**待实机复验**。
+- 清理：共享 _editorFocus 删除（多组下不成立）。
+- DoD：init.sh 全绿（Rust 41 + Flutter 52）。
+
 ## 今日会话（2026-10-26 第四轮）：W1-3 补完 + 内存验收 + W2-1
 
 - **W1-3 无边框窗口（完成，commit 007594a）**：开发者模式开启后接入 window_manager

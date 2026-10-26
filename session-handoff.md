@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第五轮收尾：W2-1 标签条交互完成，下一任务 W2-2 编辑器组拆分）
+> Last Updated：2026-10-26（第六轮收尾：W2-2 编辑器组拆分完成，下一任务 W2-3 面包屑）
 
 ## 项目一句话
 
@@ -10,15 +10,13 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**docs/09 W1 全部完成（feat-015 done，含内存验收 186.6 MiB）+ W2-1 标签条交互完成**
-（溢出滚动/中键关闭/拖动排序，44 测试绿）。
-**下轮首任务 W2-2 编辑器组拆分**（改造面大，需整轮）：
-- 布局树：WbSplit 增 insertChild/removeChild + splitLeaf(region→分裂为嵌套分割)，
-  复用 WorkbenchGrid 引擎渲染编辑器组
-- 页面：_openDocs 全局单列表 → 按 region 分组的 Map<groupRegion, GroupState>；
-  快捷键/保存/补全路由到「焦点组」
-- builders 对 region.startsWith('editor') 通配
-- 序列化天然支持（嵌套分割已在 JSON 格式内）
+**W1 全部完成（feat-015 done）+ W2-1 标签条交互 + W2-2 编辑器组拆分完成**
+（52 测试绿；⚠️ W2-2b 被 GitNexus 评 Risk high，建议实机复验后推送）。
+编辑器组现状：splitLeaf/removeLeaf 布局原语 + EditorGroup 按组持有文档 +
+焦点组路由 + 拆分按钮 + 空组自动并组；布局序列化天然支持多组（重启恢复组结构，
+组内文档恢复属 W2-4 journal）。
+**下轮首任务 W2-3 面包屑**：编辑器区顶部路径段（workspace 相对路径拆段 + 可点击
+跳转文件树）；符号大纲需 editor-lang 扩展 symbol 查询 + FFI（Rust 侧改动，单独做）。
 
 ## 本会话完成了什么
 
@@ -61,8 +59,9 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **W2-2 编辑器组拆分**（见 Current Objective 的改造清单）；之后 W2-3 面包屑、
-   W2-4 会话恢复。
+2. **W2-3 面包屑**（路径段先行，符号大纲接 editor-lang symbol 查询需 Rust 侧配合）；
+   之后 W2-4 会话恢复（journal：未保存缓冲 + 打开标签）。
+3. **实机复验 W2-2b**（Risk high）：flutter run -d windows，拆分/拖标签/多组开关文件夹。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
 
 ## 已知坑
