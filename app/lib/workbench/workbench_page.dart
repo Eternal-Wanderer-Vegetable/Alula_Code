@@ -92,8 +92,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
-  final List<OpenDoc> _openDocs = [];
-  int? _activeDocId;
+
+  /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
+  final Map<String, EditorGroup> _groups = {};
+  String _focusedRegion = 'editor';
   int _syncCount = 0;
   int _lastLatencyUs = 0;
   int _abiVersion = 0;
@@ -114,8 +116,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late final TabController _panelTab =
       TabController(length: 3, vsync: this, initialIndex: 0);
 
-  final _editorFocus = FocusNode();
-
   @override
   void initState() {
     super.initState();
@@ -124,6 +124,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout = WorkbenchLayout(root: saved);
     }
     _layout.addListener(_scheduleLayoutSave);
+    _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
+    if (!_groups.containsKey('editor')) {
+      _groups['editor'] = EditorGroup('editor');
+    }
     _initCore();
   }
 
@@ -151,8 +155,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         controller: controller,
         savedText: welcome,
       );
-      _openDocs.add(untitled);
-      _activeDocId = _untitledId;
+      final g = _focused;
+      g.docs.add(untitled);
+      g.activeDocId = _untitledId;
       controller.addListener(() => _onDocChanged(_untitledId));
       _state = WbSyncState.idle;
       _statusDetail = '已连接 Rust 核心 v$_abiVersion';
@@ -171,18 +176,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  OpenDoc? get _active {
-    for (final d in _openDocs) {
-      if (d.id == _activeDocId) return d;
+  /// 焦点组（组被移除时回退到第一个组）。
+  EditorGroup get _focused =>
+      _groups[_focusedRegion] ?? _groups.values.first;
+
+  OpenDoc? get _active => _focused.active;
+
+  Iterable<OpenDoc> get _allDocs sync* {
+    for (final g in _groups.values) {
+      yield* g.docs;
+    }
+  }
+
+  EditorGroup? _ownerOf(int docId) {
+    for (final g in _groups.values) {
+      for (final d in g.docs) {
+        if (d.id == docId) return g;
+      }
     }
     return null;
+  }
+
+  bool _isEditorRegion(String r) => r == 'editor' || r.startsWith('editor-');
+
+  /// 布局树里的编辑器叶子 ↔ 组状态对齐（启动恢复/拆分后调用）。
+  void _ensureGroupsFromLayout() {
+    for (final l in _layout.root.leaves) {
+      if (_isEditorRegion(l.region) && !_groups.containsKey(l.region)) {
+        _groups[l.region] = EditorGroup(l.region);
+      }
+    }
   }
 
   // ---------- 编辑同步 ----------
 
   void _onDocChanged(int docId) {
-    final doc = _openDocs.where((d) => d.id == docId).firstOrNull;
+    final owner = _ownerOf(docId);
+    final doc = owner?.docs.where((d) => d.id == docId).firstOrNull;
     if (doc == null) return;
+    final isActiveOfFocused =
+        owner!.region == _focusedRegion && owner.activeDocId == docId;
     final newText = doc.controller.text;
     final ops = diffToOps(doc.savedText, newText);
     if (ops.isEmpty) return;
@@ -192,7 +225,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     try {
       final version = doc.doc.apply(ops);
       sw.stop();
-      if (docId == _activeDocId) {
+      if (isActiveOfFocused) {
         setState(() {
           _state = WbSyncState.synced;
           _syncCount++;
@@ -207,14 +240,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         selection: TextSelection.collapsed(offset: r.content.length),
       );
       doc.savedText = r.content;
-      if (docId == _activeDocId) {
+      if (isActiveOfFocused) {
         setState(() {
           _state = WbSyncState.mismatch;
           _statusDetail = '版本失配（Rust 已到 v${e.current}），已重同步至 v${r.version}';
         });
       }
     } catch (e) {
-      if (docId == _activeDocId) {
+      if (isActiveOfFocused) {
         setState(() {
           _state = WbSyncState.error;
           _statusDetail = '同步失败：$e';
@@ -312,10 +345,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openFileByPath(String path) async {
     final core = _core;
     if (core == null) return;
-    for (final d in _openDocs) {
-      if (d.path == path) {
-        setState(() => _activeDocId = d.id);
-        return;
+    // 已在任何组打开 → 跳转到所在组并激活（对标 VS Code 单实例语义）
+    for (final g in _groups.values) {
+      for (final d in g.docs) {
+        if (d.path == path) {
+          setState(() {
+            g.activeDocId = d.id;
+            _focusedRegion = g.region;
+          });
+          return;
+        }
       }
     }
     try {
@@ -334,8 +373,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         savedText: content,
       );
       setState(() {
-        _openDocs.add(open);
-        _activeDocId = id;
+        final g = _focused;
+        g.docs.add(open);
+        g.activeDocId = id;
       });
       controller.addListener(() => _onDocChanged(id));
       if (_lspReady) {
@@ -368,16 +408,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _closeDoc(int id) {
-    final doc = _openDocs.where((d) => d.id == id).firstOrNull;
+    final owner = _ownerOf(id);
+    if (owner == null) return;
+    final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
-    final wasActive = _activeDocId == id;
+    final wasActive = owner.activeDocId == id;
     doc.doc.close();
     doc.controller.dispose();
     setState(() {
-      _openDocs.remove(doc);
+      owner.docs.remove(doc);
       if (wasActive) {
-        _activeDocId = _openDocs.isEmpty ? null : _openDocs.last.id;
+        owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
       }
+      // 组空且不是唯一的组 → 摘除该组（布局树自动折叠）
+      if (owner.docs.isEmpty && _groups.length > 1) {
+        _layout.removeRegion(owner.region);
+        _groups.remove(owner.region);
+        if (_focusedRegion == owner.region) {
+          _focusedRegion = _groups.keys.first;
+        }
+      }
+    });
+  }
+
+  /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
+  void _splitFocusedGroup() {
+    final region = _focusedRegion;
+    var i = 2;
+    while (_groups.containsKey('editor-$i')) {
+      i++;
+    }
+    final fresh = 'editor-$i';
+    if (!_layout.splitRegion(region, fresh, Axis.horizontal)) {
+      setState(() => _statusDetail = '拆分失败：区域 $region 不可拆分');
+      return;
+    }
+    setState(() {
+      _ensureGroupsFromLayout();
+      _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
+      _statusDetail = '已拆分编辑器：$region → $fresh';
     });
   }
 
@@ -400,7 +469,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = 'rust-analyzer 运行中';
       });
-      for (final d in _openDocs) {
+      for (final d in _allDocs) {
         if (!d.isUntitled && !d.lspAttached) {
           try {
             core.lsp.setUri(d.id, d.uri!);
@@ -427,7 +496,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     try {
       final diags = <Map<String, Object?>>[];
       final syntax = <int, List<Map<String, Object?>>>{};
-      for (final d in _openDocs) {
+      for (final d in _allDocs) {
         if (d.isUntitled || !d.lspAttached) continue;
         try {
           diags.addAll(
@@ -562,10 +631,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pollTimer?.cancel();
     _layoutSaveTimer?.cancel();
     widget.layoutStore.save(_layout.root); // 退出前把未落盘的布局变更冲写
-    for (final d in _openDocs) {
+    for (final d in _allDocs) {
       d.controller.dispose();
     }
-    _editorFocus.dispose();
     _panelTab.dispose();
     _layout.dispose();
     super.dispose();
@@ -637,8 +705,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         onToggleSidebar: () => _layout.toggleRegion('sidebar'),
                       ),
                   'sidebar': (_) => _buildSidebar(),
-                  'editor': (_) => _buildEditorArea(),
                   'panel': (_) => _buildPanel(),
+                  // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
+                  for (final g in _groups.values)
+                    g.region: (_) => _buildEditorArea(g),
                 },
               ),
             ),
@@ -648,7 +718,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             detail: _statusDetail,
             lspStatus: _lspStatus,
             diagnosticsCount: _diagnostics.length,
-            tabCount: _openDocs.length,
+            tabCount: _allDocs.length,
             abiVersion: _abiVersion,
             syncCount: _syncCount,
             panelCollapsed: _layout.isCollapsed('panel'),
@@ -711,7 +781,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildNode(TreeNode node, int depth) {
-    final activePaths = _openDocs.map((d) => d.path).toSet();
+    final activePaths = _allDocs.map((d) => d.path).toSet();
     return Column(children: [
       InkWell(
         onTap: () {
@@ -752,20 +822,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 编辑器区：标签条 + 编辑器 ----------
 
-  Widget _buildEditorArea() {
+  Widget _buildEditorArea(EditorGroup g) {
     return Container(
       color: const Color(0xFF14161A),
       child: Column(
         children: [
-          _buildTabStrip(),
+          _buildTabStrip(g),
           const Divider(height: 1),
-          Expanded(child: _buildEditor()),
+          Expanded(child: _buildEditor(g)),
         ],
       ),
     );
   }
 
-  Widget _buildTabStrip() {
+  Widget _buildTabStrip(EditorGroup g) {
     return Container(
       height: 36,
       color: const Color(0xFF181B20),
@@ -777,12 +847,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  for (final d in _openDocs) _buildTab(d),
+                  for (final d in g.docs) _buildTab(g, d),
                 ],
               ),
             ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
+          IconButton(
+            tooltip: '拆分编辑器',
+            onPressed: _splitFocusedGroup,
+            icon: const Icon(Icons.splitscreen, size: 16),
+            visualDensity: VisualDensity.compact,
+          ),
           IconButton(
             tooltip: _lspReady
                 ? 'LSP 运行中'
@@ -811,17 +887,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
-  Widget _buildTab(OpenDoc d) {
+  Widget _buildTab(EditorGroup g, OpenDoc d) {
     final tab = InkWell(
-      onTap: () => setState(() => _activeDocId = d.id),
+      onTap: () => setState(() {
+        g.activeDocId = d.id;
+        _focusedRegion = g.region;
+      }),
       child: Container(
         key: ValueKey('tab-${d.id}'),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: d.id == _activeDocId
+          color: d.id == g.activeDocId
               ? const Color(0xFF14161A)
               : Colors.transparent,
-          border: d.id == _activeDocId
+          border: d.id == g.activeDocId
               ? const Border(
                   top: BorderSide(color: Colors.blueAccent, width: 2))
               : const Border(
@@ -843,7 +922,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     return DragTarget<int>(
       onWillAcceptWithDetails: (details) => details.data != d.id,
-      onAcceptWithDetails: (details) => _moveDoc(details.data, d.id),
+      onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
       builder: (context, _, __) => Draggable<int>(
         data: d.id,
         dragAnchorStrategy: pointerDragAnchorStrategy,
@@ -871,18 +950,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 拖动排序：把被拖标签移到目标标签的位置。
-  void _moveDoc(int draggedId, int targetId) {
-    final from = _openDocs.indexWhere((d) => d.id == draggedId);
-    final to = _openDocs.indexWhere((d) => d.id == targetId);
+  void _moveDoc(EditorGroup g, int draggedId, int targetId) {
+    final from = g.docs.indexWhere((d) => d.id == draggedId);
+    final to = g.docs.indexWhere((d) => d.id == targetId);
     if (from < 0 || to < 0 || from == to) return;
     setState(() {
-      final doc = _openDocs.removeAt(from);
-      _openDocs.insert(to, doc);
+      final doc = g.docs.removeAt(from);
+      g.docs.insert(to, doc);
     });
   }
 
-  Widget _buildEditor() {
-    final active = _active;
+  Widget _buildEditor(EditorGroup g) {
+    final active = g.active;
     if (active == null) {
       return Center(
         child: Text('打开文件夹后，从文件树选择文件',
@@ -905,18 +984,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           const SingleActivator(LogicalKeyboardKey.f3): () =>
               _panelTab.animateTo(2),
         },
-        child: Focus(
-          focusNode: _editorFocus,
-          child: TextField(
-            controller: active.controller,
-            maxLines: null,
-            expands: true,
-            style: const TextStyle(
-                fontFamily: 'monospace', fontSize: 14, height: 1.5),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.all(12),
-            ),
+        child: TextField(
+          controller: active.controller,
+          maxLines: null,
+          expands: true,
+          onTap: () {
+            // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
+            if (_focusedRegion != g.region) {
+              setState(() => _focusedRegion = g.region);
+            }
+          },
+          style: const TextStyle(
+              fontFamily: 'monospace', fontSize: 14, height: 1.5),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.all(12),
           ),
         ),
       ),
@@ -1105,6 +1187,23 @@ class OpenDoc {
 
   bool get isDirty => savedText != controller.text;
   bool get isUntitled => path == null;
+}
+
+/// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
+class EditorGroup {
+  EditorGroup(this.region);
+
+  /// 对应布局树里的叶子 region（'editor'、'editor-2'…）。
+  final String region;
+  final List<OpenDoc> docs = [];
+  int? activeDocId;
+
+  OpenDoc? get active {
+    for (final d in docs) {
+      if (d.id == activeDocId) return d;
+    }
+    return null;
+  }
 }
 
 /// 文件树节点。

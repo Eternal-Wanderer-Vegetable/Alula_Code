@@ -83,6 +83,48 @@ void main() {
     expect(find.byKey(const ValueKey('tab-3')), findsOneWidget);
   });
 
+  testWidgets('W2-2 编辑器组：拆分获焦/文档入新组/清空自动并组', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 组 1 打开 Cargo.toml
+    await tester.tap(find.text('Cargo.toml'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
+
+    // 拆分 → 新组 editor-2 获焦（空占位出现），两组各有一个拆分按钮
+    await tester.tap(find.byTooltip('拆分编辑器'));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsOneWidget,
+        reason: '新组应为空占位');
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+
+    // 文件打开进「焦点组」（新组）
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('main.rs'), findsNWidgets(2),
+        reason: '树 + 新组标签各一处');
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
+
+    // 中键关闭新组唯一文档 → 组清空 → 自动摘除并组
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('tab-3'))),
+      buttons: kMiddleMouseButton,
+    );
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('tab-3')), findsNothing);
+    expect(find.byTooltip('拆分编辑器'), findsOneWidget,
+        reason: '空组应自动摘除');
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
+        reason: '回到单组且组 1 仍有 Cargo.toml');
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(
