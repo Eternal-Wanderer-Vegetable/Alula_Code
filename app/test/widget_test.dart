@@ -6,8 +6,25 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+
+/// 带修饰键的按键（tester.sendKeyEvent 在本 SDK 版本无修饰键参数）。
+Future<void> pressChord(
+  WidgetTester tester,
+  LogicalKeyboardKey key, {
+  bool control = false,
+  bool shift = false,
+}) async {
+  if (control) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyEvent(key);
+  if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  if (control) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+}
 
 void main() {
   // 布局与会话 journal 都指向临时文件：测试不读写真实 ~/.alula/*
@@ -199,6 +216,62 @@ void main() {
     final editor = tester.widget<TextField>(find.byType(TextField));
     expect(editor.controller!.text, contains('// dirty edit'),
         reason: '未保存编辑内容应从 journal 恢复');
+  });
+
+  testWidgets('W3-1 命令面板：Ctrl+Shift+P 打开 → 筛选 → 回车执行拆分',
+      (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+      sessionStore: session,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await pressChord(tester, LogicalKeyboardKey.keyP, control: true, shift: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+
+    // 输入过滤：'拆分' 应命中「编辑器: 拆分编辑器」
+    await tester.enterText(
+        find.descendant(
+            of: find.byKey(const ValueKey('quick-input')),
+            matching: find.byType(TextField)),
+        '拆分');
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('qi-编辑器: 拆分编辑器')), findsOneWidget);
+
+    // 回车执行 → 出现两个编辑器组（两个拆分按钮）
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing,
+        reason: '执行后面板关闭');
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+  });
+
+  testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+      sessionStore: session,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await pressChord(tester, LogicalKeyboardKey.keyP, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+
+    await tester.enterText(
+        find.descendant(
+            of: find.byKey(const ValueKey('quick-input')),
+            matching: find.byType(TextField)),
+        'main');
+    await tester.pump(const Duration(milliseconds: 200));
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(find.text('main.rs'), findsNWidgets(2),
+        reason: '标签 + 面包屑 两处（快速打开不展开文件树，树里没有 main.rs）');
   });
 
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {

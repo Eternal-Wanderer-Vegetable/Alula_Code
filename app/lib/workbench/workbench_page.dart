@@ -19,9 +19,11 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import '../editor/text_diff.dart';
 import 'activity_bar.dart';
+import 'commands.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'layout_store.dart';
+import 'quick_input.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
@@ -95,6 +97,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
+  final CommandRegistry _commands = CommandRegistry();
+  List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
 
   /// journal 单文档文本上限（字符）：超出不落 journal（内容只存在于内存，
@@ -135,11 +139,100 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout = WorkbenchLayout(root: saved);
     }
     _layout.addListener(_scheduleStateSave);
+    _registerCommands();
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
       _groups['editor'] = EditorGroup('editor');
     }
     _initCore();
+  }
+
+  /// 命令注册（W3-1）：菜单/键位/命令面板统一入口。
+  void _registerCommands() {
+    void reg(String id, String category, String title,
+        Future<void> Function() run, [String? shortcut]) {
+      _commands.register(Command(
+          id: id, category: category, title: title, run: run, shortcut: shortcut));
+    }
+
+    reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
+    reg('file.save', '文件', '保存', _saveActive, 'Ctrl+S');
+    reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
+        'Ctrl+Shift+P');
+    reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
+        'Ctrl+P');
+    reg('view.toggleSidebar', '查看', '切换侧栏',
+        () async => _layout.toggleRegion('sidebar'), 'Ctrl+B');
+    reg('view.togglePanel', '查看', '切换面板',
+        () async => _layout.toggleRegion('panel'), 'Ctrl+J');
+    reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
+    reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
+        'Ctrl+Space');
+    reg('editor.verifyIntegrity', '编辑器', '校验一致性',
+        () async => _verifyIntegrity());
+    reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp);
+    reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
+  }
+
+  void _showCommandPalette() {
+    QuickInput.show(
+      context,
+      hint: '输入命令名（> 前缀可省）',
+      items: [
+        for (final c in _commands.all)
+          QuickItem(label: c.label, detail: c.shortcut, onRun: c.run),
+      ],
+    );
+  }
+
+  void _showQuickOpen() {
+    QuickInput.show(
+      context,
+      hint: '按文件名筛选（工作区内，最多索引 2000 个文件）',
+      items: [
+        for (final path in _workspaceFileIndex())
+          QuickItem(
+              label: _nameOf(path),
+              detail: path,
+              onRun: () => _openFileByPath(path)),
+      ],
+    );
+  }
+
+  /// 工作区文件索引（快速打开用）：有界递归遍历，跳过常见重目录；
+  /// 打开新文件夹时失效。同步 FFI 遍历在大仓库会卡 UI，Phase 1 后续改异步。
+  List<String> _workspaceFileIndex() {
+    final core = _core;
+    final root = _workspaceRoot;
+    if (core == null || root == null) return const [];
+    final cached = _fileIndexCache;
+    if (cached != null) return cached;
+    const skipDirs = {'.git', 'target', 'node_modules', 'build', '.dart_tool'};
+    const maxFiles = 2000;
+    final out = <String>[];
+    void walk(String dir) {
+      if (out.length >= maxFiles) return;
+      try {
+        final entries = core.workspace.listDir(dir);
+        for (final e in entries) {
+          if (out.length >= maxFiles) return;
+          final path = e['path'] as String;
+          final name = e['name'] as String;
+          if ((e['is_dir'] as bool?) ?? false) {
+            if (!skipDirs.contains(name)) walk(path);
+          } else {
+            out.add(path);
+          }
+        }
+      } on AlulaException {
+        // 不可读目录：跳过
+      }
+    }
+
+    walk(root);
+    _fileIndexCache = out;
+    return out;
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
@@ -432,6 +525,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ))
             .toList());
         _statusDetail = '工作区：$path（${entries.length} 项）';
+        _fileIndexCache = null;
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
@@ -833,7 +927,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     return Scaffold(
-      body: Column(
+      body: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.keyP, control: true,
+                  shift: true):
+              _showCommandPalette,
+          const SingleActivator(LogicalKeyboardKey.keyP, control: true):
+              _showQuickOpen,
+          const SingleActivator(LogicalKeyboardKey.keyB, control: true):
+              () => _layout.toggleRegion('sidebar'),
+          const SingleActivator(LogicalKeyboardKey.keyJ, control: true):
+              () => _layout.toggleRegion('panel'),
+        },
+        child: Focus(
+        autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
+        child: Column(
         children: [
           AlulaTitleBar(
               windowControls: widget.windowControls,
@@ -848,6 +956,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             (
               '查看',
               [
+                TitleMenuItem('命令面板    Ctrl+Shift+P', _showCommandPalette),
+                TitleMenuItem('快速打开文件…    Ctrl+P', _showQuickOpen),
                 TitleMenuItem(
                     '切换侧栏', () => _layout.toggleRegion('sidebar')),
                 TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
@@ -891,6 +1001,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             onTogglePanel: () => _layout.toggleRegion('panel'),
           ),
         ],
+        ),
+        ),
       ),
     );
   }
