@@ -36,9 +36,7 @@ fn parse_smaps_rollup(pid: u64) -> (u64, u64, u64) {
     for line in text.lines() {
         if line.starts_with("Pss:") {
             pss = read_u64_field(line).unwrap_or(0) * 1024;
-        } else if line.starts_with("Private_Clean:") {
-            private += read_u64_field(line).unwrap_or(0) * 1024;
-        } else if line.starts_with("Private_Dirty:") {
+        } else if line.starts_with("Private_Clean:") || line.starts_with("Private_Dirty:") {
             private += read_u64_field(line).unwrap_or(0) * 1024;
         }
     }
