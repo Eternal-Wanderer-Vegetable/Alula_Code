@@ -1,0 +1,402 @@
+{
+  "label": "vscode-A-extensions",
+  "exe": "C:\\Users\\Vegetable\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+  "args": [
+    "--user-data-dir=C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\vsdiag-A-ext-profile",
+    "--extensions-dir=C:\\Users\\Vegetable\\.vscode\\extensions",
+    "E:\\Alula_Code\\tests\\fixtures\\rust-mini"
+  ],
+  "duration_s": 45.0,
+  "interval_s": 1.0,
+  "root_pid": 4564,
+  "platform": "windows",
+  "captured_at": "2026-10-26 01:39:34 UTC",
+  "samples": [
+    {
+      "t": 2.3e-6,
+      "total_private": 8978432,
+      "total_working_set": 12165120,
+      "n_processes": 1
+    },
+    {
+      "t": 1.0011709,
+      "total_private": 240619520,
+      "total_working_set": 419663872,
+      "n_processes": 5
+    },
+    {
+      "t": 2.0022562,
+      "total_private": 526258176,
+      "total_working_set": 753147904,
+      "n_processes": 6
+    },
+    {
+      "t": 3.0059904,
+      "total_private": 1147174912,
+      "total_working_set": 1432924160,
+      "n_processes": 12
+    },
+    {
+      "t": 4.0060576,
+      "total_private": 1528029184,
+      "total_working_set": 1757659136,
+      "n_processes": 11
+    },
+    {
+      "t": 5.0075415,
+      "total_private": 1641574400,
+      "total_working_set": 1830760448,
+      "n_processes": 11
+    },
+    {
+      "t": 6.0081097,
+      "total_private": 1739853824,
+      "total_working_set": 1882333184,
+      "n_processes": 9
+    },
+    {
+      "t": 7.0099594,
+      "total_private": 1675132928,
+      "total_working_set": 1992654848,
+      "n_processes": 12
+    },
+    {
+      "t": 8.0105484,
+      "total_private": 2032181248,
+      "total_working_set": 2409066496,
+      "n_processes": 12
+    },
+    {
+      "t": 9.0110758,
+      "total_private": 2063044608,
+      "total_working_set": 2458247168,
+      "n_processes": 12
+    },
+    {
+      "t": 10.0120971,
+      "total_private": 2151358464,
+      "total_working_set": 2515587072,
+      "n_processes": 14
+    },
+    {
+      "t": 11.013094,
+      "total_private": 1946173440,
+      "total_working_set": 2369224704,
+      "n_processes": 12
+    },
+    {
+      "t": 12.0144864,
+      "total_private": 1957326848,
+      "total_working_set": 2375933952,
+      "n_processes": 14
+    },
+    {
+      "t": 13.0153479,
+      "total_private": 2016686080,
+      "total_working_set": 2439991296,
+      "n_processes": 17
+    },
+    {
+      "t": 14.0161745,
+      "total_private": 2058108928,
+      "total_working_set": 2500628480,
+      "n_processes": 18
+    },
+    {
+      "t": 15.0174899,
+      "total_private": 1914089472,
+      "total_working_set": 2342531072,
+      "n_processes": 14
+    },
+    {
+      "t": 16.0181274,
+      "total_private": 1902899200,
+      "total_working_set": 2249887744,
+      "n_processes": 12
+    },
+    {
+      "t": 17.0193718,
+      "total_private": 1963413504,
+      "total_working_set": 2325417984,
+      "n_processes": 12
+    },
+    {
+      "t": 18.0203796,
+      "total_private": 1908228096,
+      "total_working_set": 2279419904,
+      "n_processes": 12
+    },
+    {
+      "t": 19.0213938,
+      "total_private": 1781186560,
+      "total_working_set": 2228584448,
+      "n_processes": 12
+    },
+    {
+      "t": 20.0223189,
+      "total_private": 1808695296,
+      "total_working_set": 2267648000,
+      "n_processes": 12
+    },
+    {
+      "t": 21.0234792,
+      "total_private": 1858695168,
+      "total_working_set": 2297368576,
+      "n_processes": 14
+    },
+    {
+      "t": 22.0247159,
+      "total_private": 1768333312,
+      "total_working_set": 2260234240,
+      "n_processes": 12
+    },
+    {
+      "t": 23.0252953,
+      "total_private": 1768833024,
+      "total_working_set": 2252099584,
+      "n_processes": 12
+    },
+    {
+      "t": 24.0260783,
+      "total_private": 1768755200,
+      "total_working_set": 2252541952,
+      "n_processes": 12
+    },
+    {
+      "t": 25.0270587,
+      "total_private": 1769492480,
+      "total_working_set": 2253508608,
+      "n_processes": 12
+    },
+    {
+      "t": 26.0280822,
+      "total_private": 1770196992,
+      "total_working_set": 2253991936,
+      "n_processes": 12
+    },
+    {
+      "t": 27.0293924,
+      "total_private": 1770909696,
+      "total_working_set": 2254708736,
+      "n_processes": 12
+    },
+    {
+      "t": 28.0302615,
+      "total_private": 1770926080,
+      "total_working_set": 2254835712,
+      "n_processes": 12
+    },
+    {
+      "t": 29.0310871,
+      "total_private": 1771630592,
+      "total_working_set": 2255392768,
+      "n_processes": 12
+    },
+    {
+      "t": 30.0321012,
+      "total_private": 1772498944,
+      "total_working_set": 2256244736,
+      "n_processes": 12
+    },
+    {
+      "t": 31.0333395,
+      "total_private": 1755049984,
+      "total_working_set": 2239184896,
+      "n_processes": 12
+    },
+    {
+      "t": 32.0343053,
+      "total_private": 1611739136,
+      "total_working_set": 2097549312,
+      "n_processes": 12
+    },
+    {
+      "t": 33.0354134,
+      "total_private": 1511821312,
+      "total_working_set": 1995493376,
+      "n_processes": 12
+    },
+    {
+      "t": 34.0362263,
+      "total_private": 1377476608,
+      "total_working_set": 1838063616,
+      "n_processes": 14
+    },
+    {
+      "t": 35.0375119,
+      "total_private": 1318592512,
+      "total_working_set": 1808834560,
+      "n_processes": 12
+    },
+    {
+      "t": 36.0382337,
+      "total_private": 1317986304,
+      "total_working_set": 1810063360,
+      "n_processes": 12
+    },
+    {
+      "t": 37.0393562,
+      "total_private": 1314873344,
+      "total_working_set": 1810026496,
+      "n_processes": 12
+    },
+    {
+      "t": 38.0403366,
+      "total_private": 1282387968,
+      "total_working_set": 1784090624,
+      "n_processes": 12
+    },
+    {
+      "t": 39.0411079,
+      "total_private": 1281703936,
+      "total_working_set": 1783599104,
+      "n_processes": 12
+    },
+    {
+      "t": 40.042136,
+      "total_private": 1282965504,
+      "total_working_set": 1784946688,
+      "n_processes": 12
+    },
+    {
+      "t": 41.0432533,
+      "total_private": 1284132864,
+      "total_working_set": 1785892864,
+      "n_processes": 12
+    },
+    {
+      "t": 42.044304,
+      "total_private": 1283629056,
+      "total_working_set": 1785782272,
+      "n_processes": 12
+    },
+    {
+      "t": 43.0455069,
+      "total_private": 1282797568,
+      "total_working_set": 1784713216,
+      "n_processes": 12
+    },
+    {
+      "t": 44.0460974,
+      "total_private": 1283952640,
+      "total_working_set": 1785778176,
+      "n_processes": 12
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 4564,
+      "ppid": 15624,
+      "name": "Code.exe",
+      "working_set": 166887424,
+      "private": 112680960,
+      "peak_private": 199561216,
+      "pss": 112680960
+    },
+    {
+      "pid": 10396,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 130854912,
+      "private": 42643456,
+      "peak_private": 55140352,
+      "pss": 42643456
+    },
+    {
+      "pid": 33872,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 126251008,
+      "private": 43077632,
+      "peak_private": 53235712,
+      "pss": 43077632
+    },
+    {
+      "pid": 5436,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 139804672,
+      "private": 53698560,
+      "peak_private": 79523840,
+      "pss": 53698560
+    },
+    {
+      "pid": 33296,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 238235648,
+      "private": 190152704,
+      "peak_private": 401100800,
+      "pss": 190152704
+    },
+    {
+      "pid": 35300,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 110321664,
+      "private": 68317184,
+      "peak_private": 78901248,
+      "pss": 68317184
+    },
+    {
+      "pid": 18896,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 133595136,
+      "private": 133099520,
+      "peak_private": 340299776,
+      "pss": 133099520
+    },
+    {
+      "pid": 35580,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 189136896,
+      "private": 183554048,
+      "peak_private": 210493440,
+      "pss": 183554048
+    },
+    {
+      "pid": 31652,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 320512000,
+      "private": 251691008,
+      "peak_private": 856961024,
+      "pss": 251691008
+    },
+    {
+      "pid": 8756,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 58007552,
+      "private": 15929344,
+      "peak_private": 17764352,
+      "pss": 15929344
+    },
+    {
+      "pid": 18880,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 138113024,
+      "private": 180264960,
+      "peak_private": 267325440,
+      "pss": 180264960
+    },
+    {
+      "pid": 11508,
+      "ppid": 4564,
+      "name": "Code.exe",
+      "working_set": 35270656,
+      "private": 9658368,
+      "peak_private": 9764864,
+      "pss": 9658368
+    }
+  ],
+  "summary": {
+    "peak_private": 2151358464,
+    "stable_private": 1318592512,
+    "final_private": 1283952640,
+    "final_working_set": 1785778176
+  }
+}

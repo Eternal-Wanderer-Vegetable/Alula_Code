@@ -1,0 +1,3192 @@
+
+================================================================================
+### [user] (text)
+================================================================================
+我想要一个代码编辑器。有如下要求：
+1.兼容VScode的插件。
+2.尽可能小的占用内存。
+3.跨平台通用。
+有什么好建议吗？（让我自己动手做一个也行。）
+
+================================================================================
+### [assistant] (text)
+================================================================================
+我会重点核实哪些编辑器真正能运行 VS Code 插件，而不只是支持相同的语言服务器。然后比较它们的内存架构，并评估自己开发一个轻量编辑器的可行性。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+针对你的三个要求，我查了一下截至 2026 年 10 月的代码编辑器生态，发现一个比较有意思的现象：
+
+**轻量级编辑器已经不少，但同时具备低内存占用、跨平台、直接兼容 VS Code 插件的产品仍然很少。**
+
+问题主要不在代码编辑器本身，而在 VS Code 的插件运行机制。许多看起来很简单的插件，实际上依赖一整套 VS Code API 和 Node.js 运行环境。
+
+所以我认为可以从两个方向选择：
+
+- **直接使用：** 首先考虑 Eclipse Theia 或 VSCodium。如果愿意牺牲 VS Code 插件兼容性，则考虑 Zed。
+- **自己开发：** 用原生技术实现轻量 GUI，把 VS Code 插件宿主作为可选的独立模块。这条路线更有研究价值，但工作量不小。
+
+## 一、现有编辑器比较
+
+| 编辑器 | VS Code 插件兼容性 | 低内存潜力 | Windows / Linux / macOS |
+|---|---|---|---|
+| <Entity category="software" value="Eclipse Theia"/> | 高，大多数插件 | 一般 | 全支持 |
+| <Entity category="software" value="VSCodium"/> | 高，接近 VS Code | 一般 | 全支持 |
+| <Entity category="software" value="Zed"/> | 不直接兼容 | 较好 | 全支持 |
+| <Entity category="software" value="Lapce"/> | 不直接兼容 | 较好 | 全支持 |
+| 自研 Rust 编辑器 | 取决于实现 | 最有优化空间 | 可以支持 |
+
+这里的内存表现是架构层面的初步判断，不是同一硬件、同一工作负载下的实测排名。尤其在启用语言服务器和 AI 插件后，内存差异可能非常明显。
+
+### 1. <Entity category="software" value="Eclipse Theia"/>：最值得研究的现成架构
+
+<row align=start gap={3}>
+  <AsyncImage query="Eclipse Theia IDE desktop code editor screenshot dark theme" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">开源、模块化、VS Code 扩展兼容</text>
+    <text size="sm">Theia 并不是 VS Code 的换皮版本，而是一套独立实现的 IDE 平台。它支持通过 Open VSX 安装和运行大量 VS Code 扩展，并且能拆解和定制内部组件。</text>
+    <text size="sm"><Link url="https://theia-ide.org/" title="官方网站"/> · <Link url="https://github.com/eclipse-theia/theia" title="GitHub"/></text>
+  </box>
+</row>
+
+Theia 的插件兼容性尤其值得注意。官方文档说明，它实现了 VS Code 扩展 API，并提供兼容性报告。不过部分 API 仍可能存在行为差异或仅有占位实现，因此不能认为所有插件都能完整运行。<Cite refs={["turn452433search0","turn452433search5"]}/>
+
+**它的缺点是没有从根本上解决内存问题。** 桌面版本仍采用 Electron，后端也使用 Node.js。它的主要优势是模块化和可定制，而非天然拥有非常低的内存占用。
+
+### 2. <Entity category="software" value="VSCodium"/>：兼容性优先
+
+<row align=start gap={3}>
+  <AsyncImage query="VSCodium open source code editor desktop screenshot" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">基于 VS Code 开源代码构建</text>
+    <text size="sm">VSCodium 基本保留 VS Code 的功能和交互，去除了微软品牌与相关遥测配置，通常使用 Open VSX 作为插件来源。</text>
+    <text size="sm"><Link url="https://vscodium.com/" title="官方网站"/> · <Link url="https://github.com/VSCodium/vscodium" title="GitHub"/></text>
+  </box>
+</row>
+
+它特别适合不想重新适应编辑器、又希望尽量沿用既有 VS Code 插件的人。
+
+但它仍然是 Electron 程序，**不会仅仅因为去除了遥测，就比 VS Code 显著节省内存**。某些微软专有扩展也存在安装或授权限制。<Cite refs={["turn488045search11","turn488045search13"]}/>
+
+### 3. <Entity category="software" value="Zed"/>：最值得试用的轻量化候选
+
+<row align=start gap={3}>
+  <AsyncImage query="Zed code editor official screenshot dark theme code panels" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">Rust、原生 GPU 渲染</text>
+    <text size="sm">Zed 走的是与 VS Code 不同的技术路线。它尽量把核心功能直接集成进编辑器，以减少对插件的依赖，注重响应速度。</text>
+    <text size="sm"><Link url="https://zed.dev/" title="官方网站"/> · <Link url="https://github.com/zed-industries/zed" title="GitHub"/></text>
+  </box>
+</row>
+
+截至目前，Zed 已经正式支持 Windows、Linux、macOS，也支持 Windows 上的 WSL 开发。<Cite refs={["turn488045search2","turn488045search7"]}/>
+
+但有一个决定性的问题：Zed 官方明确指出，它使用自己的扩展系统，**不能直接运行 VS Code 扩展**。<Cite refs={["turn488045search3","turn488045search6"]}/>
+
+因此，如果插件兼容性是不能妥协的硬性要求，Zed 不适合作为最终方案；如果你主要使用 Git、LSP、终端、项目搜索和 AI Agent，它反而值得亲自测试。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 二、如果自己开发，我发现了一个值得重点研究的项目
+
+<row align=start gap={3}>
+  <AsyncImage query="Monaco editor VS Code syntax highlighting editor browser interface screenshot" aspectRatio="4:3" maxWidth="200px"/>
+  <box flex="1" gap={2}>
+    **<Link url="https://github.com/CodinGame/monaco-vscode-api" title="CodinGame/monaco-vscode-api"/>**
+
+    这个项目试图将 VS Code 的公共 API 和各种服务集成到 Monaco 编辑器中，甚至提供 VS Code 扩展加载机制。它可能是自研路线最重要的技术基础。
+  </box>
+</row>
+
+它解决了一个非常关键的问题。
+
+微软官方的 <Entity category="software" value="Monaco Editor"/> 虽然是 VS Code 使用的编辑器核心，但微软明确说明：**Monaco 本身不能直接运行 VS Code 插件。** <Cite ref="turn787841search10"/>
+
+而 `monaco-vscode-api` 的方案是把缺失的 VS Code 服务逐步补上，包括配置、命令、文件系统、扩展注册，以及基于 Web Worker 的扩展宿主。项目还提供了 VSIX 集成工具。<Cite refs={["turn874256search9","turn741138view2"]}/>
+
+这意味着，我们不一定需要从头实现完整的 VS Code。
+
+但必须注意，它不等于现成的完整 IDE，也不代表所有依赖 Node.js 的桌面插件都能直接运行。
+
+## 三、我建议的自研架构
+
+我更倾向于设计一个**按需加载插件宿主的轻量级编辑器**，而不是再制作一个完整的 VS Code 克隆。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap=1>
+    **轻量级桌面 GUI**
+
+    <text color="secondary" size="xs">Tauri 2 + Monaco Editor</text>
+    <text size="xs">编辑 · 文件树 · 搜索 · 终端 · 设置</text>
+  </box>
+  <row justify="center" align=center>
+    <icon name="arrow-down-up" color="tertiary"/>
+    <text color="secondary" size="2xs">服务接口 / IPC</text>
+  </row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap=1>
+    **Rust Core**
+
+    <text color="secondary" size="xs">文件系统 · 工作区 · Git · 进程管理 · 状态维护</text>
+  </box>
+  <row justify=center>
+    <icon name="git-fork" color="tertiary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1} height="100%">
+        <row align=center gap={1}>
+          <icon name="zap" color="success"/>
+          **轻量模式**
+        </row>
+        <text size="xs">内置功能、语法高亮、必要时启动 LSP</text>
+        <text color="secondary" size="2xs">不启动 Node 插件宿主</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1} height="100%">
+        <row align=center gap={1}>
+          <icon name="blocks" color="secondary"/>
+          **兼容模式**
+        </row>
+        <text size="xs">VS Code API 适配层 + 独立插件宿主</text>
+        <text color="secondary" size="2xs">按需启动 Node.js</text>
+      </box>
+    </grid-item>
+  </grid>
+  <box background="surface-secondary" radius="md" padding={2} align=center>
+    <text size="xs">插件来源：Open VSX / 合法取得的 VSIX</text>
+  </box>
+</box>
+
+这个设计的核心思想是：**编辑器可以不依赖插件宿主运行，但插件宿主不能绕过编辑器核心随意操作 UI。**
+
+特别是两种工作模式可以共用同一套界面、文件服务和编辑缓冲区，不必开发两个独立的编辑器。
+
+### 为什么我倾向于 Tauri + Monaco？
+
+考虑三个因素：
+
+| 维度 | 选择理由 |
+|---|---|
+| 插件兼容 | Monaco 与 VS Code 的架构更接近，可以复用 `monaco-vscode-api` |
+| 内存优化 | 可以拆除不必要的服务，将插件宿主延迟加载 |
+| 跨平台 | Tauri 已有 Windows、Linux、macOS 支持，不必自行处理所有窗口系统 |
+
+但这个组合也有一个限制：Tauri 使用系统 WebView，Windows 采用 WebView2，macOS 使用 WKWebView，Linux 使用 WebKitGTK。这意味着它的安装体积可能较小，但 UI 渲染与内存使用并非各平台完全一致。<Cite ref="turn787841search12"/>
+
+如果你追求的是绝对低内存以及严格一致的显示行为，那么可以考虑 Rust + GPUI/Floem 原生渲染。不过那会要求我们重新实现编辑器控件与大量交互，并自行将 VS Code API 映射到这些原生界面组件中，开发成本会大幅提高。
+
+### 最大的技术困难：插件运行环境
+
+VS Code 插件大致有两条主要运行路径。
+
+<box gap={2}>
+  <row align=start gap={2}>
+    <icon name="check-circle" color="success" size="lg"/>
+    <box flex="1" gap={1}>
+      **Web Extensions**
+
+      可在浏览器的 Web Worker 环境运行，适合优先通过 `monaco-vscode-api` 实现。相对容易进行隔离与按需加载。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={2}>
+    <icon name="cpu" color="secondary" size="lg"/>
+    <box flex="1" gap={1}>
+      **Node.js Extensions**
+
+      依赖 Node.js、系统文件、子进程或其他桌面能力。需要独立的 Node.js 插件宿主，以及对应的 VS Code API、生命周期管理和通信机制。
+    </box>
+  </row>
+</box>
+
+这两种运行环境是 VS Code 官方扩展体系本身的区分。<Cite refs={["turn488045search1","turn488045search14"]}/>
+
+因此，不能简单地把 `@theia/plugin-ext-vscode` 安装到 Tauri 项目中，就认为全部兼容工作已经完成。Theia 的实现还依赖其自身的后端、插件管理与 UI 服务。<Cite ref="turn452433search3"/>
+
+真正的难点不只是让插件启动，而是让插件相信它正在一个功能完整的 VS Code 工作台里运行，并正确响应相关 API。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+针对你的三个要求，我查了一下截至 2026 年 10 月的代码编辑器生态，发现一个比较有意思的现象：
+
+**轻量级编辑器已经不少，但同时具备低内存占用、跨平台、直接兼容 VS Code 插件的产品仍然很少。**
+
+问题主要不在代码编辑器本身，而在 VS Code 的插件运行机制。许多看起来很简单的插件，实际上依赖一整套 VS Code API 和 Node.js 运行环境。
+
+所以我认为可以从两个方向选择：
+
+- **直接使用：** 首先考虑 Eclipse Theia 或 VSCodium。如果愿意牺牲 VS Code 插件兼容性，则考虑 Zed。
+- **自己开发：** 用原生技术实现轻量 GUI，把 VS Code 插件宿主作为可选的独立模块。这条路线更有研究价值，但工作量不小。
+
+## 一、现有编辑器比较
+
+| 编辑器 | VS Code 插件兼容性 | 低内存潜力 | Windows / Linux / macOS |
+|---|---|---|---|
+| <Entity category="software" value="Eclipse Theia"/> | 高，大多数插件 | 一般 | 全支持 |
+| <Entity category="software" value="VSCodium"/> | 高，接近 VS Code | 一般 | 全支持 |
+| <Entity category="software" value="Zed"/> | 不直接兼容 | 较好 | 全支持 |
+| <Entity category="software" value="Lapce"/> | 不直接兼容 | 较好 | 全支持 |
+| 自研 Rust 编辑器 | 取决于实现 | 最有优化空间 | 可以支持 |
+
+这里的内存表现是架构层面的初步判断，不是同一硬件、同一工作负载下的实测排名。尤其在启用语言服务器和 AI 插件后，内存差异可能非常明显。
+
+### 1. <Entity category="software" value="Eclipse Theia"/>：最值得研究的现成架构
+
+<row align=start gap={3}>
+  <AsyncImage query="Eclipse Theia IDE desktop code editor screenshot dark theme" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">开源、模块化、VS Code 扩展兼容</text>
+    <text size="sm">Theia 并不是 VS Code 的换皮版本，而是一套独立实现的 IDE 平台。它支持通过 Open VSX 安装和运行大量 VS Code 扩展，并且能拆解和定制内部组件。</text>
+    <text size="sm"><Link url="https://theia-ide.org/" title="官方网站"/> · <Link url="https://github.com/eclipse-theia/theia" title="GitHub"/></text>
+  </box>
+</row>
+
+Theia 的插件兼容性尤其值得注意。官方文档说明，它实现了 VS Code 扩展 API，并提供兼容性报告。不过部分 API 仍可能存在行为差异或仅有占位实现，因此不能认为所有插件都能完整运行。<Cite refs={["turn452433search0","turn452433search5"]}/>
+
+**它的缺点是没有从根本上解决内存问题。** 桌面版本仍采用 Electron，后端也使用 Node.js。它的主要优势是模块化和可定制，而非天然拥有非常低的内存占用。
+
+### 2. <Entity category="software" value="VSCodium"/>：兼容性优先
+
+<row align=start gap={3}>
+  <AsyncImage query="VSCodium open source code editor desktop screenshot" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">基于 VS Code 开源代码构建</text>
+    <text size="sm">VSCodium 基本保留 VS Code 的功能和交互，去除了微软品牌与相关遥测配置，通常使用 Open VSX 作为插件来源。</text>
+    <text size="sm"><Link url="https://vscodium.com/" title="官方网站"/> · <Link url="https://github.com/VSCodium/vscodium" title="GitHub"/></text>
+  </box>
+</row>
+
+它特别适合不想重新适应编辑器、又希望尽量沿用既有 VS Code 插件的人。
+
+但它仍然是 Electron 程序，**不会仅仅因为去除了遥测，就比 VS Code 显著节省内存**。某些微软专有扩展也存在安装或授权限制。<Cite refs={["turn488045search11","turn488045search13"]}/>
+
+### 3. <Entity category="software" value="Zed"/>：最值得试用的轻量化候选
+
+<row align=start gap={3}>
+  <AsyncImage query="Zed code editor official screenshot dark theme code panels" aspectRatio="4:3" maxWidth="220px"/>
+  <box flex="1" gap={2}>
+    <text color="secondary" size="xs">Rust、原生 GPU 渲染</text>
+    <text size="sm">Zed 走的是与 VS Code 不同的技术路线。它尽量把核心功能直接集成进编辑器，以减少对插件的依赖，注重响应速度。</text>
+    <text size="sm"><Link url="https://zed.dev/" title="官方网站"/> · <Link url="https://github.com/zed-industries/zed" title="GitHub"/></text>
+  </box>
+</row>
+
+截至目前，Zed 已经正式支持 Windows、Linux、macOS，也支持 Windows 上的 WSL 开发。<Cite refs={["turn488045search2","turn488045search7"]}/>
+
+但有一个决定性的问题：Zed 官方明确指出，它使用自己的扩展系统，**不能直接运行 VS Code 扩展**。<Cite refs={["turn488045search3","turn488045search6"]}/>
+
+因此，如果插件兼容性是不能妥协的硬性要求，Zed 不适合作为最终方案；如果你主要使用 Git、LSP、终端、项目搜索和 AI Agent，它反而值得亲自测试。
+
+## 二、如果自己开发，我发现了一个值得重点研究的项目
+
+<row align=start gap={3}>
+  <AsyncImage query="Monaco editor VS Code syntax highlighting editor browser interface screenshot" aspectRatio="4:3" maxWidth="200px"/>
+  <box flex="1" gap={2}>
+    **<Link url="https://github.com/CodinGame/monaco-vscode-api" title="CodinGame/monaco-vscode-api"/>**
+
+    这个项目试图将 VS Code 的公共 API 和各种服务集成到 Monaco 编辑器中，甚至提供 VS Code 扩展加载机制。它可能是自研路线最重要的技术基础。
+  </box>
+</row>
+
+它解决了一个非常关键的问题。
+
+微软官方的 <Entity category="software" value="Monaco Editor"/> 虽然是 VS Code 使用的编辑器核心，但微软明确说明：**Monaco 本身不能直接运行 VS Code 插件。** <Cite ref="turn787841search10"/>
+
+而 `monaco-vscode-api` 的方案是把缺失的 VS Code 服务逐步补上，包括配置、命令、文件系统、扩展注册，以及基于 Web Worker 的扩展宿主。项目还提供了 VSIX 集成工具。<Cite refs={["turn874256search9","turn741138view2"]}/>
+
+这意味着，我们不一定需要从头实现完整的 VS Code。
+
+但必须注意，它不等于现成的完整 IDE，也不代表所有依赖 Node.js 的桌面插件都能直接运行。
+
+## 三、我建议的自研架构
+
+我更倾向于设计一个**按需加载插件宿主的轻量级编辑器**，而不是再制作一个完整的 VS Code 克隆。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap=1>
+    **轻量级桌面 GUI**
+
+    <text color="secondary" size="xs">Tauri 2 + Monaco Editor</text>
+    <text size="xs">编辑 · 文件树 · 搜索 · 终端 · 设置</text>
+  </box>
+  <row justify="center" align=center>
+    <icon name="arrow-down-up" color="tertiary"/>
+    <text color="secondary" size="2xs">服务接口 / IPC</text>
+  </row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap=1>
+    **Rust Core**
+
+    <text color="secondary" size="xs">文件系统 · 工作区 · Git · 进程管理 · 状态维护</text>
+  </box>
+  <row justify=center>
+    <icon name="git-fork" color="tertiary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1} height="100%">
+        <row align=center gap={1}>
+          <icon name="zap" color="success"/>
+          **轻量模式**
+        </row>
+        <text size="xs">内置功能、语法高亮、必要时启动 LSP</text>
+        <text color="secondary" size="2xs">不启动 Node 插件宿主</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1} height="100%">
+        <row align=center gap={1}>
+          <icon name="blocks" color="secondary"/>
+          **兼容模式**
+        </row>
+        <text size="xs">VS Code API 适配层 + 独立插件宿主</text>
+        <text color="secondary" size="2xs">按需启动 Node.js</text>
+      </box>
+    </grid-item>
+  </grid>
+  <box background="surface-secondary" radius="md" padding={2} align=center>
+    <text size="xs">插件来源：Open VSX / 合法取得的 VSIX</text>
+  </box>
+</box>
+
+这个设计的核心思想是：**编辑器可以不依赖插件宿主运行，但插件宿主不能绕过编辑器核心随意操作 UI。**
+
+特别是两种工作模式可以共用同一套界面、文件服务和编辑缓冲区，不必开发两个独立的编辑器。
+
+### 为什么我倾向于 Tauri + Monaco？
+
+考虑三个因素：
+
+| 维度 | 选择理由 |
+|---|---|
+| 插件兼容 | Monaco 与 VS Code 的架构更接近，可以复用 `monaco-vscode-api` |
+| 内存优化 | 可以拆除不必要的服务，将插件宿主延迟加载 |
+| 跨平台 | Tauri 已有 Windows、Linux、macOS 支持，不必自行处理所有窗口系统 |
+
+但这个组合也有一个限制：Tauri 使用系统 WebView，Windows 采用 WebView2，macOS 使用 WKWebView，Linux 使用 WebKitGTK。这意味着它的安装体积可能较小，但 UI 渲染与内存使用并非各平台完全一致。<Cite ref="turn787841search12"/>
+
+如果你追求的是绝对低内存以及严格一致的显示行为，那么可以考虑 Rust + GPUI/Floem 原生渲染。不过那会要求我们重新实现编辑器控件与大量交互，并自行将 VS Code API 映射到这些原生界面组件中，开发成本会大幅提高。
+
+### 最大的技术困难：插件运行环境
+
+VS Code 插件大致有两条主要运行路径。
+
+<box gap={2}>
+  <row align=start gap={2}>
+    <icon name="check-circle" color="success" size="lg"/>
+    <box flex="1" gap={1}>
+      **Web Extensions**
+
+      可在浏览器的 Web Worker 环境运行，适合优先通过 `monaco-vscode-api` 实现。相对容易进行隔离与按需加载。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={2}>
+    <icon name="cpu" color="secondary" size="lg"/>
+    <box flex="1" gap={1}>
+      **Node.js Extensions**
+
+      依赖 Node.js、系统文件、子进程或其他桌面能力。需要独立的 Node.js 插件宿主，以及对应的 VS Code API、生命周期管理和通信机制。
+    </box>
+  </row>
+</box>
+
+这两种运行环境是 VS Code 官方扩展体系本身的区分。<Cite refs={["turn488045search1","turn488045search14"]}/>
+
+因此，不能简单地把 `@theia/plugin-ext-vscode` 安装到 Tauri 项目中，就认为全部兼容工作已经完成。Theia 的实现还依赖其自身的后端、插件管理与 UI 服务。<Cite ref="turn452433search3"/>
+
+真正的难点不只是让插件启动，而是让插件相信它正在一个功能完整的 VS Code 工作台里运行，并正确响应相关 API。
+
+## 四、如果真要做，我建议分三个阶段
+
+| 阶段 | 交付成果 | 验证重点 |
+|---|---|---|
+| 第一阶段：轻量编辑器 | Tauri + Monaco、文件树、搜索、基本 Git、LSP | 无插件情况下的内存与响应速度 |
+| 第二阶段：插件兼容 | 接入 `monaco-vscode-api`，先支持主题、语法、Web 扩展，再实现 Node 扩展宿主 | 插件实际可用率，而不仅是安装成功率 |
+| 第三阶段：性能工程 | 延迟加载、服务休眠、插件崩溃隔离、按需启动语言服务器 | 大型仓库、长时间运行、多语言开发 |
+
+还有两个值得纳入设计的原则。
+
+**第一，不要用全局单一插件宿主状态。** 应当把编辑缓冲区、Rust 核心、语言服务器和插件宿主的生命周期分开。即使插件崩溃，编辑器也必须能够继续保存文件。
+
+**第二，不要把安装成功当作兼容成功。** 应当建立自动化测试集：安装扩展、激活扩展、调用命令、检查编辑行为、卸载扩展、释放资源，并跨三个操作系统重复验证。
+
+内存测试也必须统计整个进程树，包括 WebView、Node.js、LSP，而不是只看编辑器主进程。可以参考这个现成的 <Link url="https://github.com/levivilet/lvce-memory-benchmark" title="编辑器内存基准测试项目"/>，其测试覆盖 VS Code、Zed、Lapce、Theia 等产品，并区分多种内存指标。<Cite ref="turn452433search13"/>
+
+## 五、最后该怎么选？
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="puzzle" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果你现在就要一个可靠的编辑器：VSCodium**
+
+      在插件兼容性这项硬要求下，它是最稳妥的起点。要注意 Open VSX 与微软官方 Marketplace 的差别，部分微软专有插件不能直接使用。<Cite ref="turn787841search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="gauge" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果内存和流畅度比插件重要：Zed**
+
+      更适合愿意调整工作流的人，尤其是 Git、终端、LSP 已满足主要需求的情形。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="code-2" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果想把它变成一个长期项目：自研 Tauri + Monaco + 可选扩展宿主**
+
+      我认为这条路线最值得探索。它有机会同时改善空载资源占用和 VS Code 插件兼容性，但能否真正优于现有产品，需要原型实测。
+    </box>
+  </row>
+</box>
+
+我尤其建议先做一个技术验证原型：**同样的窗口、同样的代码文件、同样的插件，对比 VS Code、Theia 和自研编辑器的完整内存占用。** 如果自研方案没有获得明显优势，就没有必要投入大量时间重新造一个编辑器。
+
+最后，我想确认一个影响技术路线的问题：
+
+{@body const [compat,setCompat] = DIL.useState("essential")}
+<box border radius="xl" padding={3} gap={3}>
+  **你说的“兼容 VS Code 插件”，具体要求是哪一种？**
+  <radio-group direction="col" value={compat} onChange={setCompat}>
+    <radio value="all">尽可能兼容全部插件，包括复杂的 AI、调试、Remote SSH 等</radio>
+    <radio value="essential">只要主流插件可以运行，例如 Python、C/C++、Rust、Git、主题、代码补全</radio>
+    <radio value="agent">主要需要 Coding Agent / AI 插件，以及基础语言支持</radio>
+  </radio-group>
+  <button block onClick={()=>GenUI.issueNewTurn(({all:"我要求尽可能兼容全部 VS Code 插件，包括复杂 AI、调试、Remote SSH 等。请按此方向进一步制定技术方案。",essential:"我主要需要主流 VS Code 插件，包括 Python、C/C++、Rust、Git、主题、代码补全。请按此方向进一步制定技术方案。",agent:"我主要需要 Coding Agent / AI 插件，以及基础语言支持。请按此方向进一步制定技术方案。"}[compat]))}>按此方向继续研究 <icon name="arrow-right" inline/></button>
+</box>
+
+这三种目标看起来接近，实际却可能决定我们应该采用现有 IDE 平台、复用 Monaco，还是直接从 Rust 原生编辑器开始。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 四、如果真要做，我建议分三个阶段
+
+| 阶段 | 交付成果 | 验证重点 |
+|---|---|---|
+| 第一阶段：轻量编辑器 | Tauri + Monaco、文件树、搜索、基本 Git、LSP | 无插件情况下的内存与响应速度 |
+| 第二阶段：插件兼容 | 接入 `monaco-vscode-api`，先支持主题、语法、Web 扩展，再实现 Node 扩展宿主 | 插件实际可用率，而不仅是安装成功率 |
+| 第三阶段：性能工程 | 延迟加载、服务休眠、插件崩溃隔离、按需启动语言服务器 | 大型仓库、长时间运行、多语言开发 |
+
+还有两个值得纳入设计的原则。
+
+**第一，不要用全局单一插件宿主状态。** 应当把编辑缓冲区、Rust 核心、语言服务器和插件宿主的生命周期分开。即使插件崩溃，编辑器也必须能够继续保存文件。
+
+**第二，不要把安装成功当作兼容成功。** 应当建立自动化测试集：安装扩展、激活扩展、调用命令、检查编辑行为、卸载扩展、释放资源，并跨三个操作系统重复验证。
+
+内存测试也必须统计整个进程树，包括 WebView、Node.js、LSP，而不是只看编辑器主进程。可以参考这个现成的 <Link url="https://github.com/levivilet/lvce-memory-benchmark" title="编辑器内存基准测试项目"/>，其测试覆盖 VS Code、Zed、Lapce、Theia 等产品，并区分多种内存指标。<Cite ref="turn452433search13"/>
+
+## 五、最后该怎么选？
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="puzzle" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果你现在就要一个可靠的编辑器：VSCodium**
+
+      在插件兼容性这项硬要求下，它是最稳妥的起点。要注意 Open VSX 与微软官方 Marketplace 的差别，部分微软专有插件不能直接使用。<Cite ref="turn787841search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="gauge" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果内存和流畅度比插件重要：Zed**
+
+      更适合愿意调整工作流的人，尤其是 Git、终端、LSP 已满足主要需求的情形。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="code-2" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **如果想把它变成一个长期项目：自研 Tauri + Monaco + 可选扩展宿主**
+
+      我认为这条路线最值得探索。它有机会同时改善空载资源占用和 VS Code 插件兼容性，但能否真正优于现有产品，需要原型实测。
+    </box>
+  </row>
+</box>
+
+我尤其建议先做一个技术验证原型：**同样的窗口、同样的代码文件、同样的插件，对比 VS Code、Theia 和自研编辑器的完整内存占用。** 如果自研方案没有获得明显优势，就没有必要投入大量时间重新造一个编辑器。
+
+最后，我想确认一个影响技术路线的问题：
+
+{@body const [compat,setCompat] = DIL.useState("essential")}
+<box border radius="xl" padding={3} gap={3}>
+  **你说的“兼容 VS Code 插件”，具体要求是哪一种？**
+  <radio-group direction="col" value={compat} onChange={setCompat}>
+    <radio value="all">尽可能兼容全部插件，包括复杂的 AI、调试、Remote SSH 等</radio>
+    <radio value="essential">只要主流插件可以运行，例如 Python、C/C++、Rust、Git、主题、代码补全</radio>
+    <radio value="agent">主要需要 Coding Agent / AI 插件，以及基础语言支持</radio>
+  </radio-group>
+  <button block onClick={()=>GenUI.issueNewTurn(({all:"我要求尽可能兼容全部 VS Code 插件，包括复杂 AI、调试、Remote SSH 等。请按此方向进一步制定技术方案。",essential:"我主要需要主流 VS Code 插件，包括 Python、C/C++、Rust、Git、主题、代码补全。请按此方向进一步制定技术方案。",agent:"我主要需要 Coding Agent / AI 插件，以及基础语言支持。请按此方向进一步制定技术方案。"}[compat]))}>按此方向继续研究 <icon name="arrow-right" inline/></button>
+</box>
+
+这三种目标看起来接近，实际却可能决定我们应该采用现有 IDE 平台、复用 Monaco，还是直接从 Rust 原生编辑器开始。
+
+================================================================================
+### [user] (text)
+================================================================================
+我主要需要主流 VS Code 插件，包括 Python、C/C++、Rust、Git、主题、代码补全。请按此方向进一步制定技术方案。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+既然目标缩小到 Python、C/C++、Rust、Git、主题和补全，我们就不必追求完整复刻 VS Code。我会先核实这些扩展实际依赖哪些 API，再给出一个以低内存为核心、可以分阶段实现并自动测试的架构方案。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+# 轻量级、跨平台、兼容 VS Code 插件的编辑器：技术方案 V1
+
+针对你确定的使用范围，我建议采用一个更有针对性的方案：
+
+**不开发完整的 VS Code 替代品，而是开发一个以 Rust 为核心、原生支持 LSP、同时兼容主流 VS Code 扩展的轻量编辑器。**
+
+这与简单地给 Monaco 加一个插件加载器有所不同。我们的目标是让编辑器即使没有任何 VS Code 插件，也能正常完成绝大多数编程工作。
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">推荐技术栈</text>
+  <grid columns={2} gap={3}>
+    {#each [{name:"Tauri 2",sub:"跨平台桌面容器",ico:"monitor"},{name:"Rust",sub:"文件、进程、LSP、Git 核心",ico:"cpu"},{name:"Monaco",sub:"编辑器与文本呈现",ico:"code-2"},{name:"VS Code API",sub:"兼容性适配层",ico:"puzzle"}] as item}
+      <grid-item>
+        <row align=start gap={2}>
+          <icon name={item.ico} color="secondary" size="lg"/>
+          <box flex="1" gap="2px">
+            **{item.name}**
+            <text color="secondary" size="xs">{item.sub}</text>
+          </box>
+        </row>
+      </grid-item>
+    {/each}
+  </grid>
+  <divider color="subtle"/>
+  <text color="secondary" size="xs">核心原则：基础编辑不依赖 Node.js；语言服务按需启动；插件兼容层可关闭；所有资源消耗按整个进程树计算。</text>
+</box>
+
+## 一、先明确兼容性目标
+
+这里有一个重要发现：你需要的 Python、C/C++、Rust 等插件，其核心功能大多可以通过语言服务器协议（LSP）实现，没必要全部依赖 VS Code 扩展宿主。
+
+但是，**实现同等功能和运行原版 VS Code 插件是两件不同的事情。**
+
+特别是微软的扩展许可必须考虑。微软在官方 FAQ 中明确说明，其通过 Visual Studio Marketplace 发布的扩展，通常不授权在 Visual Studio 产品家族之外使用。即使部分代码开源，也不能简单认为其 Marketplace 发行包可以随意集成到自研编辑器中。<Cite ref="turn128543search1"/>
+
+因此，我们应该优先选择开放生态中的扩展，或者直接集成开放语言服务器。
+
+### 目标功能与实现方式
+
+| 功能 | 优先实现 | VS Code 插件支持 |
+|---|---|---|
+| Python | basedpyright / Pyright + Ruff | 第二阶段支持开放扩展 |
+| C/C++ | clangd | 支持 clangd 扩展 |
+| Rust | rust-analyzer | 支持 rust-analyzer 扩展 |
+| Git | 原生 Git CLI | 补充 Git 扩展能力 |
+| 主题 | VS Code JSON 主题与 TextMate 语法 | 第一阶段实现 |
+| 代码补全 | LSP Completion | 通过扩展 API 兼容其他补全提供者 |
+| 调试 | DAP（Debug Adapter Protocol） | 后续支持调试扩展 |
+
+Rust 的 `rust-analyzer` 已经在 Open VSX 发布，并具备补全、跳转、重命名、语义高亮等功能，这种开放扩展是理想的兼容目标。<Cite ref="turn258007search4"/>
+
+这份架构将采用两种兼容形式：
+
+- **功能级兼容：** 即使没有安装对应的 VS Code 插件，也能提供编辑、诊断、补全、格式化等能力。
+- **扩展级兼容：** 对选定的原版 VS Code 扩展，能够安装 VSIX、激活扩展并调用相应 API。
+
+前者是第一优先级，后者逐步扩大覆盖面。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+已经确认了两个会直接改变设计的约束：一是 Monaco 并不自动具备桌面 Node 插件运行能力；二是微软 Marketplace 的发行包存在产品使用许可限制。所以方案会把“基础语言能力”和“原版插件运行”分开实现，避免为了少量插件把整个编辑器做成另一套 VS Code。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+# 轻量级、跨平台、兼容 VS Code 插件的编辑器：技术方案 V1
+
+针对你确定的使用范围，我建议采用一个更有针对性的方案：
+
+**不开发完整的 VS Code 替代品，而是开发一个以 Rust 为核心、原生支持 LSP、同时兼容主流 VS Code 扩展的轻量编辑器。**
+
+这与简单地给 Monaco 加一个插件加载器有所不同。我们的目标是让编辑器即使没有任何 VS Code 插件，也能正常完成绝大多数编程工作。
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">推荐技术栈</text>
+  <grid columns={2} gap={3}>
+    {#each [{name:"Tauri 2",sub:"跨平台桌面容器",ico:"monitor"},{name:"Rust",sub:"文件、进程、LSP、Git 核心",ico:"cpu"},{name:"Monaco",sub:"编辑器与文本呈现",ico:"code-2"},{name:"VS Code API",sub:"兼容性适配层",ico:"puzzle"}] as item}
+      <grid-item>
+        <row align=start gap={2}>
+          <icon name={item.ico} color="secondary" size="lg"/>
+          <box flex="1" gap="2px">
+            **{item.name}**
+            <text color="secondary" size="xs">{item.sub}</text>
+          </box>
+        </row>
+      </grid-item>
+    {/each}
+  </grid>
+  <divider color="subtle"/>
+  <text color="secondary" size="xs">核心原则：基础编辑不依赖 Node.js；语言服务按需启动；插件兼容层可关闭；所有资源消耗按整个进程树计算。</text>
+</box>
+
+## 一、先明确兼容性目标
+
+这里有一个重要发现：你需要的 Python、C/C++、Rust 等插件，其核心功能大多可以通过语言服务器协议（LSP）实现，没必要全部依赖 VS Code 扩展宿主。
+
+但是，**实现同等功能和运行原版 VS Code 插件是两件不同的事情。**
+
+特别是微软的扩展许可必须考虑。微软在官方 FAQ 中明确说明，其通过 Visual Studio Marketplace 发布的扩展，通常不授权在 Visual Studio 产品家族之外使用。即使部分代码开源，也不能简单认为其 Marketplace 发行包可以随意集成到自研编辑器中。<Cite ref="turn128543search1"/>
+
+因此，我们应该优先选择开放生态中的扩展，或者直接集成开放语言服务器。
+
+### 目标功能与实现方式
+
+| 功能 | 优先实现 | VS Code 插件支持 |
+|---|---|---|
+| Python | basedpyright / Pyright + Ruff | 第二阶段支持开放扩展 |
+| C/C++ | clangd | 支持 clangd 扩展 |
+| Rust | rust-analyzer | 支持 rust-analyzer 扩展 |
+| Git | 原生 Git CLI | 补充 Git 扩展能力 |
+| 主题 | VS Code JSON 主题与 TextMate 语法 | 第一阶段实现 |
+| 代码补全 | LSP Completion | 通过扩展 API 兼容其他补全提供者 |
+| 调试 | DAP（Debug Adapter Protocol） | 后续支持调试扩展 |
+
+Rust 的 `rust-analyzer` 已经在 Open VSX 发布，并具备补全、跳转、重命名、语义高亮等功能，这种开放扩展是理想的兼容目标。<Cite ref="turn258007search4"/>
+
+这份架构将采用两种兼容形式：
+
+- **功能级兼容：** 即使没有安装对应的 VS Code 插件，也能提供编辑、诊断、补全、格式化等能力。
+- **扩展级兼容：** 对选定的原版 VS Code 扩展，能够安装 VSIX、激活扩展并调用相应 API。
+
+前者是第一优先级，后者逐步扩大覆盖面。
+
+## 二、整体软件架构
+
+我建议采用以下结构。最重要的是将 UI、编辑器核心和插件系统解耦。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" padding={3} radius="md" align=center gap="4px">
+    **Tauri 桌面应用**
+
+    <text size="xs" color="secondary">Monaco · 文件树 · 标签页 · 命令面板 · 终端 · Git UI</text>
+  </box>
+  <row justify="center" align="center" gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">Tauri IPC / 事件</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap="4px">
+      **Rust Core**
+
+      <text size="xs" color="secondary">唯一工作区协调层</text>
+    </box>
+    <grid columns={3} gap={1}>
+      {#each ["文件管理","LSP 管理","Git CLI","项目搜索","进程管理","终端 PTY"] as s}
+        <grid-item>
+          <box background="surface-secondary" radius="sm" padding={2} align=center>
+            <text textAlign="center" size="2xs" weight="medium">{s}</text>
+          </box>
+        </grid-item>
+      {/each}
+    </grid>
+  </box>
+  <row justify="center">
+    <icon name="git-fork" color="secondary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="file-code-2" color="secondary"/>
+          **语言服务**
+        </row>
+        <text size="xs" color="secondary">clangd</text>
+        <text size="xs" color="secondary">rust-analyzer</text>
+        <text size="xs" color="secondary">basedpyright / Ruff</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="puzzle" color="secondary"/>
+          **扩展运行层**
+        </row>
+        <text size="xs" color="secondary">静态 VSIX 加载</text>
+        <text size="xs" color="secondary">Web Extension Host</text>
+        <text size="xs" color="secondary">可选 Node.js Host</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+### 1. Rust Core：负责真正的工作
+
+Rust 核心不是单纯的 Tauri 后端，而应该被设计为一个可以独立测试的库。
+
+它的职责是管理工作区、缓存文件元数据、处理 Git 操作、启动和停止语言服务器，并维护所有子进程的生命周期。
+
+例如，用户打开一个 Rust 项目时，程序执行：
+
+<box border radius="lg" padding={3} gap={2}>
+  <list connector="solid" marker="number" gap={2}>
+    <list-item>读取工作区与文件信息，立即显示编辑器</list-item>
+    <list-item>识别 `Cargo.toml`，确定项目类型</list-item>
+    <list-item>检查是否已有对应的 rust-analyzer 进程</list-item>
+    <list-item>仅在需要语言功能时，启动或复用语言服务器</list-item>
+    <list-item>通过 LSP 更新补全、诊断、跳转与悬浮信息</list-item>
+  </list>
+</box>
+
+这里可以复用同一个工作区的语言服务器，而不是每打开一个文件就建立新进程。
+
+Git 则直接调用本机 `git`，初期没有必要使用 libgit2 重写所有功能。项目搜索使用 `ripgrep`，终端使用 `xterm.js` 与 Rust PTY 桥接，并在用户打开终端时才启动 Shell。
+
+### 2. Monaco：不要重复发明编辑器
+
+Monaco 已经提供成熟的文本编辑基础，包括多光标、折叠、查找替换、撤销重做、代码提示界面等。
+
+我们需要补充的主要是完整工作台相关服务，而不是从零写文本编辑控件。
+
+这里继续使用：
+
+<Link url="https://github.com/CodinGame/monaco-vscode-api" title="CodinGame/monaco-vscode-api"/>
+
+它提供了 VS Code 风格的主题、语言、配置、文本语法和扩展服务替换模块，可以按照需要引入。<Cite refs={["turn258007search1","turn258007search3"]}/>
+
+不过，我不建议一次性引入全部服务。每增加一个服务模块，都需要验证它带来的启动耗时、内存占用以及依赖体积。
+
+### 3. VS Code 插件运行层：整个项目的最高风险模块
+
+我建议将插件分为三个兼容等级：
+
+| 等级 | 插件类型 | 实现难度 |
+|---|---|---|
+| A | JSON 主题、语法、代码片段等声明式扩展 | 低 |
+| B | 具有 `browser` 入口的 Web 扩展 | 中 |
+| C | 具有 `main` 入口、依赖 Node.js 的桌面扩展 | 高 |
+
+VS Code 官方使用 `main` 和 `browser` 区分 Node.js 与 Web 扩展入口。只有声明式贡献的扩展甚至可以完全没有运行时入口。<Cite ref="turn561509search0"/>
+
+**等级 C 不应该被当成 Monaco 自带的功能。**
+
+目前 `monaco-vscode-api` 已提供 Web Worker 扩展宿主支持，但不能由此推导出完整的桌面 Node 扩展宿主已经可以直接嵌入 Tauri。我们需要另外验证 Node 宿主的运行、通信、模块解析以及扩展 API 覆盖。<Cite ref="turn128543search7"/>
+
+我建议这部分优先研究 Theia 的现有实现。Theia 已经拥有独立插件宿主和 VS Code API 适配机制，适合参考其进程模型与服务边界。<Cite ref="turn128543search6"/>
+
+最终插件宿主需要与 Rust Core 通过受控 IPC 通信。它不能持有编辑缓冲区的唯一副本，否则插件崩溃可能影响文件保存。
+
+## 三、实际支持哪些插件？
+
+下面是我建议的第一批兼容目标。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="basedpyright vscode extension icon logo" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/detachhead/basedpyright" title="BasedPyright"/> + <Link url="https://open-vsx.org/extension/charliermarsh/ruff" title="Ruff"/>**
+
+      用于 Python 的类型检查、补全、诊断、格式化、导入整理。二者都有 Open VSX 发行版本。第一阶段直接使用语言服务；第二阶段尝试运行原始扩展。<Cite refs={["turn588712search3","turn588712search8"]}/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="clangd LLVM C++ language server logo" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/llvm-vs-code-extensions/vscode-clangd" title="clangd"/>**
+
+      负责 C/C++ 补全、跳转、诊断和重构。需要注意 `compile_commands.json` 的发现与管理，CMake 项目尤其重要。<Cite ref="turn588712search7"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="rust analyzer rust programming language extension icon" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/rust-lang/rust-analyzer" title="rust-analyzer"/>**
+
+      负责 Rust 工程分析、类型提示、代码操作、补全。Cargo 项目识别和大型工作区进程管理是测试重点。
+    </box>
+  </row>
+</box>
+
+Git 不必强制安装插件就能使用基本功能。第一阶段提供提交、分支、暂存、Diff 和 Blame 即可。后续再逐步兼容 Git Graph 或其他 Git 扩展。
+
+另外，必须避免重复运行语言服务。例如，启用原版 rust-analyzer 扩展后，应允许它接管相应语言服务，停用编辑器原生启动的同类实例。否则很容易出现两个服务器同时索引一个项目，既浪费内存又造成重复诊断。
+
+这张表描述的是**计划支持的目标**，并不代表这些原始 VSIX 已经在自研编辑器中测试成功。
+
+## 四、分阶段开发路线
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="flask-conical" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 0：可行性验证**
+
+      先做最小 Tauri + Monaco 应用，再集成 `monaco-vscode-api`，依次验证主题 VSIX、简单 Web 扩展和一个真实 Node 桌面扩展的激活。
+
+      这里要设置一个明确的决策门槛：如果 Node 扩展兼容层需要大规模重建 VS Code 工作台，便转为使用 Theia 内核，而不是无限扩张自研适配层。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="file-code" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 1：能独立工作的轻量编辑器**
+
+      实现文件树、编辑保存、项目搜索、命令面板、基础 Git 和 LSP 客户端。
+
+      验收标准是：在没有 VS Code Node 插件宿主的情况下，Python、C/C++ 和 Rust 仍然可以完成补全、诊断、跳转、格式化。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="blocks" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 2：目标插件兼容**
+
+      实现 VSIX 安装、版本与依赖检查、扩展激活事件、API 适配和宿主管理。
+
+      重点完成 BasedPyright、Ruff、clangd、rust-analyzer 的真实 VSIX 行为测试，而非追求整个插件市场的兼容率。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="shield-check" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 3：生产化与自动测试**
+
+      加入崩溃恢复、工作区信任、扩展来源验证、内存监测、跨平台回归测试，以及必要的 DAP 调试支持。
+    </box>
+  </row>
+</box>
+
+### 推荐仓库目录
+
+```text
+light-editor/
+├── apps/
+│   └── desktop/
+│       ├── src/                   # Tauri 前端
+│       │   ├── editor/            # Monaco
+│       │   ├── workspace/         # 文件树、标签
+│       │   ├── extensions/        # 扩展管理 UI
+│       │   └── terminal/          # 终端界面
+│       └── src-tauri/             # Tauri 壳
+│
+├── crates/
+│   ├── editor-core/               # 工作区协调
+│   ├── editor-fs/                 # 文件系统
+│   ├── editor-lsp/                # LSP 客户端
+│   ├── editor-git/                # Git 服务
+│   └── editor-process/            # 子进程管理
+│
+├── packages/
+│   ├── vscode-bridge/             # VS Code 服务适配
+│   └── extension-runtime/         # Web 扩展宿主
+│
+├── sidecars/
+│   └── node-extension-host/       # 可选桌面宿主
+│
+└── tests/
+    ├── fixtures/                  # 测试工程
+    ├── compatibility/             # 插件测试
+    └── performance/               # 性能基准
+```
+
+Node 宿主目录先保留接口和实验代码，不应在阶段 0 验证通过前假设它已可投入使用。
+
+## 五、怎样才能真正降低内存？
+
+我认为内存优化应该优先集中在**不启动无用进程、不重复提供服务、不保留无用工作区状态**，而不是一开始就追求极端的 Rust 微优化。
+
+下面给出一组建议的工程目标。这是待验证的设计预算，不是现有原型的实测数据。
+
+| 测试状态 | 初始设计目标 |
+|---|---|
+| 空白窗口、无语言服务 | 进程树私有内存尽量低于 250 MiB |
+| 无项目冷启动 | 主界面 2 秒内可交互 |
+| 不使用插件时 | Node 扩展宿主不运行 |
+| 单一语言项目 | 不重复启动同类型语言服务器 |
+| 空闲状态 | CPU 占用接近 0 |
+| 关闭工作区 | 对应 LSP 和子进程可以退出 |
+| 插件崩溃 | 编辑、保存与现有缓冲区不受影响 |
+
+对于 Rust 大型工作区，rust-analyzer 自身的内存消耗可能远远超过编辑器本体。clangd 的索引缓存也类似。
+
+因此，测试报告必须拆分编辑器本体、WebView、语言服务器和扩展宿主，并统计整个进程树。Linux 可以采用 PSS，Windows 关注 Private Bytes，macOS 关注物理内存占用指标；不能简单相加各进程 RSS，避免重复计算共享内存。
+
+## 六、跨平台自动化测试
+
+这部分其实有成熟的工具可以复用。
+
+Tauri 最新的 WebDriver 文档推荐使用 WebdriverIO 与 `@wdio/tauri-service`。该方案能够测试 Windows、Linux、macOS 上的 Tauri 应用，并支持调用模拟、日志采集和真实应用测试。<Cite ref="turn216416search0"/>
+
+我建议为编辑器建立以下测试矩阵：
+
+| 测试类型 | 具体内容 | 通过要求 |
+|---|---|---|
+| 编辑可靠性 | 保存、撤销、恢复、编码和换行符 | 不丢失内容 |
+| 语言服务 | Python/C++/Rust 标准测试项目 | 补全、诊断、跳转正常 |
+| VSIX 兼容 | 安装、激活、实际执行功能、卸载 | 无未处理异常 |
+| 性能回归 | 冷启动、长时间运行、大型仓库 | 不超过设定性能预算 |
+| 故障注入 | 强制结束 LSP、扩展宿主 | 可以恢复，文件不丢失 |
+| 跨平台 GUI | Windows、Linux、macOS | 输入、渲染和快捷键正常 |
+
+尤其不能忽略中文输入法和跨平台字体问题。Tauri 采用的 WebView 在 Windows 上是 WebView2，macOS 是 WKWebView，Linux 则使用 WebKitGTK，三个平台需要分别验证输入法组合状态、光标定位、字体宽度和高 DPI 行为。<Cite ref="turn386893search5"/>
+
+对于你经常涉及的 Windows + WSL 工作流，我建议将 WSL 工作区支持放在独立里程碑，而不是混入第一阶段。Windows 进程与 WSL Linux 进程不能被当作同一种本地环境来管理；将来需要由 Linux 侧代理启动语言服务器，避免路径转换和工具链环境混乱。
+
+## 七、最重要的一次技术路线决策
+
+我认为我们还应该保留一个备选方案：**使用 Theia 作为兼容性核心，再逐步精简其不需要的功能。**
+
+两条路线有明显区别。
+
+| | Tauri + Monaco 自研 | 基于 Theia 精简 |
+|---|---|---|
+| 初始内存潜力 | 更高 | 一般 |
+| 插件兼容实现量 | 大 | 较小 |
+| 控制核心架构 | 完全自主 | 受 Theia 架构约束 |
+| 产品维护成本 | 较高 | 相对较低 |
+| 最适合 | 以低内存为核心的长期项目 | 快速获得成熟插件支持 |
+
+我的建议是：**先完成阶段 0，重点验证 Node 扩展宿主，而不要直接开始全面开发。**
+
+如果能够在保持 Tauri 轻量架构的同时运行目标 VSIX，那么值得继续自研。反过来，如果 Node 宿主的维护成本与完整 IDE 相当，直接复用 Theia 可能更经济。
+
+这一轮研究后，我认为最有价值的突破并不是把 VS Code 重写成 Rust，而是建立一种混合运行模式：
+
+**普通编辑使用轻量核心，复杂语言功能调用独立服务器，只有真正需要时才启用 VS Code 扩展宿主。**
+
+这样既能覆盖你的主要开发需求，也能避免为了兼容整个 VS Code 生态而承担过多资源开销。这个架构值得进入原型验证阶段。<MemoryCite />
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 二、整体软件架构
+
+我建议采用以下结构。最重要的是将 UI、编辑器核心和插件系统解耦。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" padding={3} radius="md" align=center gap="4px">
+    **Tauri 桌面应用**
+
+    <text size="xs" color="secondary">Monaco · 文件树 · 标签页 · 命令面板 · 终端 · Git UI</text>
+  </box>
+  <row justify="center" align="center" gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">Tauri IPC / 事件</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap="4px">
+      **Rust Core**
+
+      <text size="xs" color="secondary">唯一工作区协调层</text>
+    </box>
+    <grid columns={3} gap={1}>
+      {#each ["文件管理","LSP 管理","Git CLI","项目搜索","进程管理","终端 PTY"] as s}
+        <grid-item>
+          <box background="surface-secondary" radius="sm" padding={2} align=center>
+            <text textAlign="center" size="2xs" weight="medium">{s}</text>
+          </box>
+        </grid-item>
+      {/each}
+    </grid>
+  </box>
+  <row justify="center">
+    <icon name="git-fork" color="secondary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="file-code-2" color="secondary"/>
+          **语言服务**
+        </row>
+        <text size="xs" color="secondary">clangd</text>
+        <text size="xs" color="secondary">rust-analyzer</text>
+        <text size="xs" color="secondary">basedpyright / Ruff</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="puzzle" color="secondary"/>
+          **扩展运行层**
+        </row>
+        <text size="xs" color="secondary">静态 VSIX 加载</text>
+        <text size="xs" color="secondary">Web Extension Host</text>
+        <text size="xs" color="secondary">可选 Node.js Host</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+### 1. Rust Core：负责真正的工作
+
+Rust 核心不是单纯的 Tauri 后端，而应该被设计为一个可以独立测试的库。
+
+它的职责是管理工作区、缓存文件元数据、处理 Git 操作、启动和停止语言服务器，并维护所有子进程的生命周期。
+
+例如，用户打开一个 Rust 项目时，程序执行：
+
+<box border radius="lg" padding={3} gap={2}>
+  <list connector="solid" marker="number" gap={2}>
+    <list-item>读取工作区与文件信息，立即显示编辑器</list-item>
+    <list-item>识别 `Cargo.toml`，确定项目类型</list-item>
+    <list-item>检查是否已有对应的 rust-analyzer 进程</list-item>
+    <list-item>仅在需要语言功能时，启动或复用语言服务器</list-item>
+    <list-item>通过 LSP 更新补全、诊断、跳转与悬浮信息</list-item>
+  </list>
+</box>
+
+这里可以复用同一个工作区的语言服务器，而不是每打开一个文件就建立新进程。
+
+Git 则直接调用本机 `git`，初期没有必要使用 libgit2 重写所有功能。项目搜索使用 `ripgrep`，终端使用 `xterm.js` 与 Rust PTY 桥接，并在用户打开终端时才启动 Shell。
+
+### 2. Monaco：不要重复发明编辑器
+
+Monaco 已经提供成熟的文本编辑基础，包括多光标、折叠、查找替换、撤销重做、代码提示界面等。
+
+我们需要补充的主要是完整工作台相关服务，而不是从零写文本编辑控件。
+
+这里继续使用：
+
+<Link url="https://github.com/CodinGame/monaco-vscode-api" title="CodinGame/monaco-vscode-api"/>
+
+它提供了 VS Code 风格的主题、语言、配置、文本语法和扩展服务替换模块，可以按照需要引入。<Cite refs={["turn258007search1","turn258007search3"]}/>
+
+不过，我不建议一次性引入全部服务。每增加一个服务模块，都需要验证它带来的启动耗时、内存占用以及依赖体积。
+
+### 3. VS Code 插件运行层：整个项目的最高风险模块
+
+我建议将插件分为三个兼容等级：
+
+| 等级 | 插件类型 | 实现难度 |
+|---|---|---|
+| A | JSON 主题、语法、代码片段等声明式扩展 | 低 |
+| B | 具有 `browser` 入口的 Web 扩展 | 中 |
+| C | 具有 `main` 入口、依赖 Node.js 的桌面扩展 | 高 |
+
+VS Code 官方使用 `main` 和 `browser` 区分 Node.js 与 Web 扩展入口。只有声明式贡献的扩展甚至可以完全没有运行时入口。<Cite ref="turn561509search0"/>
+
+**等级 C 不应该被当成 Monaco 自带的功能。**
+
+目前 `monaco-vscode-api` 已提供 Web Worker 扩展宿主支持，但不能由此推导出完整的桌面 Node 扩展宿主已经可以直接嵌入 Tauri。我们需要另外验证 Node 宿主的运行、通信、模块解析以及扩展 API 覆盖。<Cite ref="turn128543search7"/>
+
+我建议这部分优先研究 Theia 的现有实现。Theia 已经拥有独立插件宿主和 VS Code API 适配机制，适合参考其进程模型与服务边界。<Cite ref="turn128543search6"/>
+
+最终插件宿主需要与 Rust Core 通过受控 IPC 通信。它不能持有编辑缓冲区的唯一副本，否则插件崩溃可能影响文件保存。
+
+## 三、实际支持哪些插件？
+
+下面是我建议的第一批兼容目标。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="basedpyright vscode extension icon logo" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/detachhead/basedpyright" title="BasedPyright"/> + <Link url="https://open-vsx.org/extension/charliermarsh/ruff" title="Ruff"/>**
+
+      用于 Python 的类型检查、补全、诊断、格式化、导入整理。二者都有 Open VSX 发行版本。第一阶段直接使用语言服务；第二阶段尝试运行原始扩展。<Cite refs={["turn588712search3","turn588712search8"]}/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="clangd LLVM C++ language server logo" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/llvm-vs-code-extensions/vscode-clangd" title="clangd"/>**
+
+      负责 C/C++ 补全、跳转、诊断和重构。需要注意 `compile_commands.json` 的发现与管理，CMake 项目尤其重要。<Cite ref="turn588712search7"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="rust analyzer rust programming language extension icon" aspectRatio="1:1" maxWidth="76px"/>
+    <box flex="1" gap={1}>
+      **<Link url="https://open-vsx.org/extension/rust-lang/rust-analyzer" title="rust-analyzer"/>**
+
+      负责 Rust 工程分析、类型提示、代码操作、补全。Cargo 项目识别和大型工作区进程管理是测试重点。
+    </box>
+  </row>
+</box>
+
+Git 不必强制安装插件就能使用基本功能。第一阶段提供提交、分支、暂存、Diff 和 Blame 即可。后续再逐步兼容 Git Graph 或其他 Git 扩展。
+
+另外，必须避免重复运行语言服务。例如，启用原版 rust-analyzer 扩展后，应允许它接管相应语言服务，停用编辑器原生启动的同类实例。否则很容易出现两个服务器同时索引一个项目，既浪费内存又造成重复诊断。
+
+这张表描述的是**计划支持的目标**，并不代表这些原始 VSIX 已经在自研编辑器中测试成功。
+
+## 四、分阶段开发路线
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="flask-conical" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 0：可行性验证**
+
+      先做最小 Tauri + Monaco 应用，再集成 `monaco-vscode-api`，依次验证主题 VSIX、简单 Web 扩展和一个真实 Node 桌面扩展的激活。
+
+      这里要设置一个明确的决策门槛：如果 Node 扩展兼容层需要大规模重建 VS Code 工作台，便转为使用 Theia 内核，而不是无限扩张自研适配层。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="file-code" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 1：能独立工作的轻量编辑器**
+
+      实现文件树、编辑保存、项目搜索、命令面板、基础 Git 和 LSP 客户端。
+
+      验收标准是：在没有 VS Code Node 插件宿主的情况下，Python、C/C++ 和 Rust 仍然可以完成补全、诊断、跳转、格式化。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="blocks" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 2：目标插件兼容**
+
+      实现 VSIX 安装、版本与依赖检查、扩展激活事件、API 适配和宿主管理。
+
+      重点完成 BasedPyright、Ruff、clangd、rust-analyzer 的真实 VSIX 行为测试，而非追求整个插件市场的兼容率。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="shield-check" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **阶段 3：生产化与自动测试**
+
+      加入崩溃恢复、工作区信任、扩展来源验证、内存监测、跨平台回归测试，以及必要的 DAP 调试支持。
+    </box>
+  </row>
+</box>
+
+### 推荐仓库目录
+
+```text
+light-editor/
+├── apps/
+│   └── desktop/
+│       ├── src/                   # Tauri 前端
+│       │   ├── editor/            # Monaco
+│       │   ├── workspace/         # 文件树、标签
+│       │   ├── extensions/        # 扩展管理 UI
+│       │   └── terminal/          # 终端界面
+│       └── src-tauri/             # Tauri 壳
+│
+├── crates/
+│   ├── editor-core/               # 工作区协调
+│   ├── editor-fs/                 # 文件系统
+│   ├── editor-lsp/                # LSP 客户端
+│   ├── editor-git/                # Git 服务
+│   └── editor-process/            # 子进程管理
+│
+├── packages/
+│   ├── vscode-bridge/             # VS Code 服务适配
+│   └── extension-runtime/         # Web 扩展宿主
+│
+├── sidecars/
+│   └── node-extension-host/       # 可选桌面宿主
+│
+└── tests/
+    ├── fixtures/                  # 测试工程
+    ├── compatibility/             # 插件测试
+    └── performance/               # 性能基准
+```
+
+Node 宿主目录先保留接口和实验代码，不应在阶段 0 验证通过前假设它已可投入使用。
+
+## 五、怎样才能真正降低内存？
+
+我认为内存优化应该优先集中在**不启动无用进程、不重复提供服务、不保留无用工作区状态**，而不是一开始就追求极端的 Rust 微优化。
+
+下面给出一组建议的工程目标。这是待验证的设计预算，不是现有原型的实测数据。
+
+| 测试状态 | 初始设计目标 |
+|---|---|
+| 空白窗口、无语言服务 | 进程树私有内存尽量低于 250 MiB |
+| 无项目冷启动 | 主界面 2 秒内可交互 |
+| 不使用插件时 | Node 扩展宿主不运行 |
+| 单一语言项目 | 不重复启动同类型语言服务器 |
+| 空闲状态 | CPU 占用接近 0 |
+| 关闭工作区 | 对应 LSP 和子进程可以退出 |
+| 插件崩溃 | 编辑、保存与现有缓冲区不受影响 |
+
+对于 Rust 大型工作区，rust-analyzer 自身的内存消耗可能远远超过编辑器本体。clangd 的索引缓存也类似。
+
+因此，测试报告必须拆分编辑器本体、WebView、语言服务器和扩展宿主，并统计整个进程树。Linux 可以采用 PSS，Windows 关注 Private Bytes，macOS 关注物理内存占用指标；不能简单相加各进程 RSS，避免重复计算共享内存。
+
+## 六、跨平台自动化测试
+
+这部分其实有成熟的工具可以复用。
+
+Tauri 最新的 WebDriver 文档推荐使用 WebdriverIO 与 `@wdio/tauri-service`。该方案能够测试 Windows、Linux、macOS 上的 Tauri 应用，并支持调用模拟、日志采集和真实应用测试。<Cite ref="turn216416search0"/>
+
+我建议为编辑器建立以下测试矩阵：
+
+| 测试类型 | 具体内容 | 通过要求 |
+|---|---|---|
+| 编辑可靠性 | 保存、撤销、恢复、编码和换行符 | 不丢失内容 |
+| 语言服务 | Python/C++/Rust 标准测试项目 | 补全、诊断、跳转正常 |
+| VSIX 兼容 | 安装、激活、实际执行功能、卸载 | 无未处理异常 |
+| 性能回归 | 冷启动、长时间运行、大型仓库 | 不超过设定性能预算 |
+| 故障注入 | 强制结束 LSP、扩展宿主 | 可以恢复，文件不丢失 |
+| 跨平台 GUI | Windows、Linux、macOS | 输入、渲染和快捷键正常 |
+
+尤其不能忽略中文输入法和跨平台字体问题。Tauri 采用的 WebView 在 Windows 上是 WebView2，macOS 是 WKWebView，Linux 则使用 WebKitGTK，三个平台需要分别验证输入法组合状态、光标定位、字体宽度和高 DPI 行为。<Cite ref="turn386893search5"/>
+
+对于你经常涉及的 Windows + WSL 工作流，我建议将 WSL 工作区支持放在独立里程碑，而不是混入第一阶段。Windows 进程与 WSL Linux 进程不能被当作同一种本地环境来管理；将来需要由 Linux 侧代理启动语言服务器，避免路径转换和工具链环境混乱。
+
+## 七、最重要的一次技术路线决策
+
+我认为我们还应该保留一个备选方案：**使用 Theia 作为兼容性核心，再逐步精简其不需要的功能。**
+
+两条路线有明显区别。
+
+| | Tauri + Monaco 自研 | 基于 Theia 精简 |
+|---|---|---|
+| 初始内存潜力 | 更高 | 一般 |
+| 插件兼容实现量 | 大 | 较小 |
+| 控制核心架构 | 完全自主 | 受 Theia 架构约束 |
+| 产品维护成本 | 较高 | 相对较低 |
+| 最适合 | 以低内存为核心的长期项目 | 快速获得成熟插件支持 |
+
+我的建议是：**先完成阶段 0，重点验证 Node 扩展宿主，而不要直接开始全面开发。**
+
+如果能够在保持 Tauri 轻量架构的同时运行目标 VSIX，那么值得继续自研。反过来，如果 Node 宿主的维护成本与完整 IDE 相当，直接复用 Theia 可能更经济。
+
+这一轮研究后，我认为最有价值的突破并不是把 VS Code 重写成 Rust，而是建立一种混合运行模式：
+
+**普通编辑使用轻量核心，复杂语言功能调用独立服务器，只有真正需要时才启用 VS Code 扩展宿主。**
+
+这样既能覆盖你的主要开发需求，也能避免为了兼容整个 VS Code 生态而承担过多资源开销。这个架构值得进入原型验证阶段。<MemoryCite />
+
+================================================================================
+### [user] (text)
+================================================================================
+其实我还有一个小小的想法：前端的工作台不应该再用Tauri。原因是Tauri在Liunx系统上的支持性不好，且高度依赖Webview限制了其跨平台能力。所以我想使用你上次介绍的Flutter进行前端构建。可以吗？
+
+================================================================================
+### [assistant] (text)
+================================================================================
+可以，而且 Flutter 可能更符合你现在的目标：让工作台在 Windows、Linux、macOS 上采用统一的渲染体系，不再依赖各平台的系统 WebView。我会核实一下 Flutter 桌面端、现有代码编辑组件，以及 VS Code 扩展宿主之间的兼容边界，再判断需要改动多少原方案。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+**可以，而且在你现在的设计目标下，我更支持使用 Flutter 替换 Tauri。**
+
+不过，这次调整并不只是更换前端框架。它会让整个项目的技术路线发生一个重要变化：
+
+**从「基于 Web 编辑器构建桌面应用」转向「原生渲染工作台 + Rust 编辑器核心 + 独立 VS Code 插件兼容层」。**
+
+我认为这条路线值得尝试，尤其是你已经把插件兼容目标限定在 Python、C/C++、Rust、Git、主题与代码补全上。
+
+## 一、Flutter 是否真的能解决 Tauri 的问题？
+
+你的判断有合理依据，但需要区分两个概念：跨平台的显示一致性，以及跨平台的系统兼容性。
+
+| 比较维度 | Tauri 2 | Flutter Desktop |
+|---|---|---|
+| GUI 渲染 | 系统 WebView | Flutter 自身渲染引擎 |
+| Linux 图形依赖 | WebKitGTK | GTK 窗口集成 + Flutter 引擎 |
+| 三平台视觉一致性 | 受 WebView 差异影响 | 通常更容易控制 |
+| 无浏览器内核依赖 | 否 | 是 |
+| VS Code / Monaco 复用 | 容易 | 困难 |
+| 最低内存占用 | 不确定 | 不确定 |
+| 自定义 IDE 工作台 | 灵活 | 灵活 |
+| 代码编辑控件成熟度 | Monaco 非常成熟 | 需要额外选择组件 |
+
+Flutter 官方已经支持 Windows、Linux 和 macOS 的原生桌面应用。它在 Linux 上依然需要 GTK 等系统依赖，但不用依赖 WebKitGTK 渲染整个应用界面。<Cite refs={["turn685463search0","turn949140search1","turn685463search14"]}/>
+
+此外，Flutter 3.47 已经在三大桌面平台默认启用 Impeller 渲染引擎，这也有助于统一图形渲染体系。<Cite ref="turn417437search9"/>
+
+不过，这不意味着 Flutter 完全不存在 Linux 兼容问题。例如，Linux Wayland 环境下仍有与特定 GPU 驱动、渲染器相关的内存问题报告。<Cite refs={["turn417437search8","turn417437search16"]}/>
+
+因此，我的判断是：
+
+- 对于**界面视觉一致性**，Flutter 更符合你的设计目标。
+- 对于**减少系统 WebView 依赖**，Flutter 有明确优势。
+- 对于**极低内存占用**，还不能认定 Flutter 一定胜过 Tauri，需要实际基准测试。
+- 对于**VS Code 原版插件兼容性**，Flutter 反而会提高实现难度。
+
+最后一点将是整个方案的关键。
+
+## 二、为什么不能简单把 Monaco 放进 Flutter？
+
+实际上，已经有人开发了 <Link url="https://pub.dev/packages/flutter_monaco" title="flutter_monaco"/> 这样的组件。
+
+但它在桌面系统上仍然通过 WebView 运行 Monaco，Windows 使用 WebView2，macOS 使用 WKWebView。另一些 Monaco 封装还使用 Linux WebKitGTK。<Cite refs={["turn685463search9","turn685463search13"]}/>
+
+这样虽然表面上使用 Flutter，实际上最核心的代码编辑区域仍旧依赖 WebView。
+
+**这会抵消你更换 Tauri 的一个主要目的。**
+
+所以，我建议放弃把 Monaco 作为主编辑控件的设计，改用纯 Flutter 编辑组件。
+
+这意味着我们不能再直接依赖 `monaco-vscode-api` 提供工作台兼容层，但可以换来更独立、更一致的原生编辑界面。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+**可以，而且在你现在的设计目标下，我更支持使用 Flutter 替换 Tauri。**
+
+不过，这次调整并不只是更换前端框架。它会让整个项目的技术路线发生一个重要变化：
+
+**从「基于 Web 编辑器构建桌面应用」转向「原生渲染工作台 + Rust 编辑器核心 + 独立 VS Code 插件兼容层」。**
+
+我认为这条路线值得尝试，尤其是你已经把插件兼容目标限定在 Python、C/C++、Rust、Git、主题与代码补全上。
+
+## 一、Flutter 是否真的能解决 Tauri 的问题？
+
+你的判断有合理依据，但需要区分两个概念：跨平台的显示一致性，以及跨平台的系统兼容性。
+
+| 比较维度 | Tauri 2 | Flutter Desktop |
+|---|---|---|
+| GUI 渲染 | 系统 WebView | Flutter 自身渲染引擎 |
+| Linux 图形依赖 | WebKitGTK | GTK 窗口集成 + Flutter 引擎 |
+| 三平台视觉一致性 | 受 WebView 差异影响 | 通常更容易控制 |
+| 无浏览器内核依赖 | 否 | 是 |
+| VS Code / Monaco 复用 | 容易 | 困难 |
+| 最低内存占用 | 不确定 | 不确定 |
+| 自定义 IDE 工作台 | 灵活 | 灵活 |
+| 代码编辑控件成熟度 | Monaco 非常成熟 | 需要额外选择组件 |
+
+Flutter 官方已经支持 Windows、Linux 和 macOS 的原生桌面应用。它在 Linux 上依然需要 GTK 等系统依赖，但不用依赖 WebKitGTK 渲染整个应用界面。<Cite refs={["turn685463search0","turn949140search1","turn685463search14"]}/>
+
+此外，Flutter 3.47 已经在三大桌面平台默认启用 Impeller 渲染引擎，这也有助于统一图形渲染体系。<Cite ref="turn417437search9"/>
+
+不过，这不意味着 Flutter 完全不存在 Linux 兼容问题。例如，Linux Wayland 环境下仍有与特定 GPU 驱动、渲染器相关的内存问题报告。<Cite refs={["turn417437search8","turn417437search16"]}/>
+
+因此，我的判断是：
+
+- 对于**界面视觉一致性**，Flutter 更符合你的设计目标。
+- 对于**减少系统 WebView 依赖**，Flutter 有明确优势。
+- 对于**极低内存占用**，还不能认定 Flutter 一定胜过 Tauri，需要实际基准测试。
+- 对于**VS Code 原版插件兼容性**，Flutter 反而会提高实现难度。
+
+最后一点将是整个方案的关键。
+
+## 二、为什么不能简单把 Monaco 放进 Flutter？
+
+实际上，已经有人开发了 <Link url="https://pub.dev/packages/flutter_monaco" title="flutter_monaco"/> 这样的组件。
+
+但它在桌面系统上仍然通过 WebView 运行 Monaco，Windows 使用 WebView2，macOS 使用 WKWebView。另一些 Monaco 封装还使用 Linux WebKitGTK。<Cite refs={["turn685463search9","turn685463search13"]}/>
+
+这样虽然表面上使用 Flutter，实际上最核心的代码编辑区域仍旧依赖 WebView。
+
+**这会抵消你更换 Tauri 的一个主要目的。**
+
+所以，我建议放弃把 Monaco 作为主编辑控件的设计，改用纯 Flutter 编辑组件。
+
+这意味着我们不能再直接依赖 `monaco-vscode-api` 提供工作台兼容层，但可以换来更独立、更一致的原生编辑界面。
+
+## 三、Flutter 应该选择哪个代码编辑组件？
+
+经过检索，我更倾向于从两个项目入手。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="Reqable Re Editor Flutter source code editor widget screenshot syntax highlighting" aspectRatio="4:3" maxWidth="132px"/>
+    <box flex="1" gap={1}>
+      **1. <Link url="https://github.com/reqable/re-editor" title="Re-Editor"/> — 首选原型**
+
+      Re-Editor 是专门为代码编辑设计的 Flutter 组件，不是对普通 `TextField` 的简单封装。它自行处理布局、绘制和事件，支持大文本、折叠、语法高亮、搜索替换与基础自动补全。采用 MIT 许可证。<Cite ref="turn949140search6"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Flutter code editor Akvelon flutter_code_editor screenshot syntax highlighting code" aspectRatio="4:3" maxWidth="132px"/>
+    <box flex="1" gap={1}>
+      **2. <Link url="https://pub.dev/packages/flutter_code_editor" title="flutter_code_editor"/> — 对照候选**
+
+      提供代码折叠、主题、补全和多语言语法高亮，桌面平台也在其支持范围内。适合同时进行原型测试，比较编辑延迟和大型文件性能。<Cite ref="turn692426search1"/>
+    </box>
+  </row>
+</box>
+
+不过，Re-Editor 也有一个值得注意的缺点：截至检索结果所示，其仓库中仍有多光标支持的开放功能请求。<Cite ref="turn692426search6"/>
+
+这对于 IDE 是比较明显的功能缺口。
+
+所以我不会立即把 Re-Editor 当作永久核心。更合理的做法是先验证它能否支持多光标、中文输入法、复杂撤销操作与大量文本渲染。如果表现不足，再决定是否扩展它，或独立开发编辑器控件。
+
+## 四、修改后的整体架构
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Desktop**
+
+    <text size="xs" color="secondary">原生工作台 · Re-Editor · 项目树 · Git 面板 · 终端</text>
+    <row justify="center" gap={2} wrap="wrap">
+      <badge color="secondary">Windows</badge>
+      <badge color="secondary">Linux</badge>
+      <badge color="secondary">macOS</badge>
+    </row>
+  </box>
+  <row align=center justify="center" gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">flutter_rust_bridge / FFI</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap={1}>
+      **Rust Core**
+
+      <text size="xs" color="secondary">编辑缓冲区 · 工作区 · 任务与进程生命周期</text>
+    </box>
+    <grid columns={2} gap={2}>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Tree-sitter**
+          <text size="2xs" color="secondary">增量语法分析</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **LSP Client**
+          <text size="2xs" color="secondary">诊断、跳转、补全</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Git / 文件系统**
+          <text size="2xs" color="secondary">仓库与文件管理</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Extension Bridge**
+          <text size="2xs" color="secondary">插件协议适配</text>
+        </box>
+      </grid-item>
+    </grid>
+  </box>
+  <row justify="center">
+    <icon name="git-fork" color="secondary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **语言服务进程**
+        <text size="xs" color="secondary">clangd、rust-analyzer、basedpyright、Ruff</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **可选 Node.js Host**
+        <text size="xs" color="secondary">VS Code 扩展运行环境及 API 适配</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+这套结构中，我建议特别注意三个设计。
+
+### 1. Flutter 与 Rust 通过 FFI 通信
+
+这部分可以直接利用 <Link url="https://github.com/fzyzcjy/flutter_rust_bridge" title="flutter_rust_bridge"/>，它支持三大桌面平台、异步 Rust 函数和 Rust 与 Dart 双向调用。<Cite ref="turn417437search0"/>
+
+但不应该每次输入一个字符，就把整个文件内容通过 FFI 传给 Rust。
+
+更合理的方案是：
+
+- Flutter 编辑器本地即时响应键盘输入。
+- 修改内容以增量操作和版本号同步给 Rust。
+- Rust 负责维护权威文档状态，并将语法与 LSP 更新返回 Flutter。
+- 两侧通过版本检查防止异步结果覆盖较新的编辑内容。
+
+另外，LSP 普遍涉及 UTF-16 位置编码，而 Rust 字符串使用 UTF-8。中文、Emoji、组合字符等场景必须处理好文本位置转换，否则会出现诊断波浪线和代码补全位置错乱的问题。
+
+### 2. Tree-sitter 负责基础语法能力
+
+我建议 Rust Core 使用 <Link url="https://github.com/tree-sitter/tree-sitter" title="Tree-sitter"/> 实现增量语法分析。
+
+Tree-sitter 的设计目的之一，就是能够在文件不断修改时快速更新语法树。<Cite ref="turn692426search2"/>
+
+它和 LSP 可以分工：
+
+| Tree-sitter | LSP |
+|---|---|
+| 语法高亮 | 语义补全 |
+| 代码块折叠 | 类型检查 |
+| 局部结构识别 | 定义跳转 |
+| 括号及结构分析 | 重命名与重构 |
+
+对于轻量化目标，这很有意义：打开文件不一定立即启动语言服务器，也可以先提供基本的阅读和编辑体验。
+
+### 3. VS Code 插件兼容需要重新设计
+
+这是更换 Flutter 后，最需要认真考虑的问题。
+
+VS Code 扩展宿主本来就支持独立的 Node.js 运行环境，并且可以根据激活事件延迟加载扩展。<Cite ref="turn692426search0"/>
+
+我们可以借鉴这个设计：
+
+`Flutter UI ↔ Rust Core ↔ VS Code API Bridge ↔ Node.js Host`
+
+其中，API Bridge 将常用 VS Code API 映射到 Rust 和 Flutter 提供的能力，例如：
+
+- `workspace`：读取文件、工作区配置、文件变更事件。
+- `languages`：注册诊断、补全、代码操作提供者。
+- `window`：显示信息、状态栏、输出通道。
+- `commands`：注册和执行命令。
+
+不过，**不能认为有了独立 Node.js 进程就自动兼容 VS Code 插件**。扩展还依赖大量工作台状态、编辑器对象及事件语义。
+
+对于你的首批插件，我建议先实现等价 LSP 功能，再挑选一两个具有真实 Node.js 入口的开放 VSIX，验证原版插件激活。这会让兼容工作有明确的终点。
+
+未来如果需要兼容使用 HTML 界面的 VS Code 插件，例如复杂的 Markdown 预览或 Webview 面板，可以允许这些特定区域使用可选 WebView，而不是让整个工作台依赖 WebView。VS Code 本身也将自定义编辑器的显示侧建立在 Webview 上。<Cite ref="turn949140search0"/>
+
+---
+
+## 五、现在最应该做什么？
+
+我建议重新调整第一阶段的开发目标：**先验证 Flutter 原生编辑器是否足够成熟，而不是先实现整个插件系统。**
+
+<box border radius="lg" padding={3} gap={3}>
+  <row align=center justify="between">
+    **第一阶段：原生编辑器技术验证**
+    <badge>优先</badge>
+  </row>
+  <text color="secondary" size="xs">以下是建议的验收清单，而不是已经完成的功能。</text>
+  {@body const checks=["Flutter 在 Windows 和 Linux 上正常显示工作台","Re-Editor 能流畅编辑至少 1 万行代码","中文输入法、撤销重做、光标和选择行为正确","Flutter 与 Rust 成功同步增量文本修改","接入一个 Rust LSP，完成补全和诊断","在 Release 模式测得完整内存与输入延迟"]}
+  {@body const [done,setDone] = DIL.useState([])}
+  <box gap={2}>
+    {#each checks as c,i}
+      <checkbox key={i} checked={done.includes(i)} onChange={v=>setDone(p=>v?[...p,i]:p.filter(x=>x!==i))}>{c}</checkbox>
+    {/each}
+  </box>
+  <row align=center justify="between">
+    <text color="secondary" size="xs">验证进度 {done.length}/{checks.length}</text>
+    <button size="sm" color="secondary" variant="outline" onClick={()=>GenUI.copy(checks.map((c,i)=>(done.includes(i)?"[x] ":"[ ] ")+c).join("\n"))}><icon name="copy" inline/> 复制清单</button>
+  </row>
+</box>
+
+这一步还应该对比 Flutter 和前一版 Tauri 原型的冷启动时间、空载私有内存、窗口缩放表现，以及 Linux GTK/X11/Wayland 环境中的稳定性。
+
+如果 Flutter 的编辑操作足够流畅、内存表现符合要求，就可以固定技术路线：
+
+**Flutter + Rust Core + Tree-sitter + LSP + 可选 Node.js 扩展宿主。**
+
+这会比原来更符合你的设计理念：整个编辑器可以独立于 Web 技术工作，只有确实需要的插件才额外加载相应运行环境。
+
+我认为最值得优先攻克的技术难点也因此发生了变化：**不再是如何把 VS Code 的界面搬进更轻量的桌面框架，而是如何让一个真正原生的代码编辑控件，拥有接近 VS Code 的编辑体验。**
+
+只要解决这一点，后面的 Rust Core、LSP 和 Git 都有相对成熟的技术路线可以沿用。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 三、Flutter 应该选择哪个代码编辑组件？
+
+经过检索，我更倾向于从两个项目入手。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="Reqable Re Editor Flutter source code editor widget screenshot syntax highlighting" aspectRatio="4:3" maxWidth="132px"/>
+    <box flex="1" gap={1}>
+      **1. <Link url="https://github.com/reqable/re-editor" title="Re-Editor"/> — 首选原型**
+
+      Re-Editor 是专门为代码编辑设计的 Flutter 组件，不是对普通 `TextField` 的简单封装。它自行处理布局、绘制和事件，支持大文本、折叠、语法高亮、搜索替换与基础自动补全。采用 MIT 许可证。<Cite ref="turn949140search6"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Flutter code editor Akvelon flutter_code_editor screenshot syntax highlighting code" aspectRatio="4:3" maxWidth="132px"/>
+    <box flex="1" gap={1}>
+      **2. <Link url="https://pub.dev/packages/flutter_code_editor" title="flutter_code_editor"/> — 对照候选**
+
+      提供代码折叠、主题、补全和多语言语法高亮，桌面平台也在其支持范围内。适合同时进行原型测试，比较编辑延迟和大型文件性能。<Cite ref="turn692426search1"/>
+    </box>
+  </row>
+</box>
+
+不过，Re-Editor 也有一个值得注意的缺点：截至检索结果所示，其仓库中仍有多光标支持的开放功能请求。<Cite ref="turn692426search6"/>
+
+这对于 IDE 是比较明显的功能缺口。
+
+所以我不会立即把 Re-Editor 当作永久核心。更合理的做法是先验证它能否支持多光标、中文输入法、复杂撤销操作与大量文本渲染。如果表现不足，再决定是否扩展它，或独立开发编辑器控件。
+
+## 四、修改后的整体架构
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Desktop**
+
+    <text size="xs" color="secondary">原生工作台 · Re-Editor · 项目树 · Git 面板 · 终端</text>
+    <row justify="center" gap={2} wrap="wrap">
+      <badge color="secondary">Windows</badge>
+      <badge color="secondary">Linux</badge>
+      <badge color="secondary">macOS</badge>
+    </row>
+  </box>
+  <row align=center justify="center" gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">flutter_rust_bridge / FFI</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap={1}>
+      **Rust Core**
+
+      <text size="xs" color="secondary">编辑缓冲区 · 工作区 · 任务与进程生命周期</text>
+    </box>
+    <grid columns={2} gap={2}>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Tree-sitter**
+          <text size="2xs" color="secondary">增量语法分析</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **LSP Client**
+          <text size="2xs" color="secondary">诊断、跳转、补全</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Git / 文件系统**
+          <text size="2xs" color="secondary">仓库与文件管理</text>
+        </box>
+      </grid-item>
+      <grid-item>
+        <box background="surface-secondary" radius="md" padding={2} align=center gap={1}>
+          **Extension Bridge**
+          <text size="2xs" color="secondary">插件协议适配</text>
+        </box>
+      </grid-item>
+    </grid>
+  </box>
+  <row justify="center">
+    <icon name="git-fork" color="secondary"/>
+  </row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **语言服务进程**
+        <text size="xs" color="secondary">clangd、rust-analyzer、basedpyright、Ruff</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **可选 Node.js Host**
+        <text size="xs" color="secondary">VS Code 扩展运行环境及 API 适配</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+这套结构中，我建议特别注意三个设计。
+
+### 1. Flutter 与 Rust 通过 FFI 通信
+
+这部分可以直接利用 <Link url="https://github.com/fzyzcjy/flutter_rust_bridge" title="flutter_rust_bridge"/>，它支持三大桌面平台、异步 Rust 函数和 Rust 与 Dart 双向调用。<Cite ref="turn417437search0"/>
+
+但不应该每次输入一个字符，就把整个文件内容通过 FFI 传给 Rust。
+
+更合理的方案是：
+
+- Flutter 编辑器本地即时响应键盘输入。
+- 修改内容以增量操作和版本号同步给 Rust。
+- Rust 负责维护权威文档状态，并将语法与 LSP 更新返回 Flutter。
+- 两侧通过版本检查防止异步结果覆盖较新的编辑内容。
+
+另外，LSP 普遍涉及 UTF-16 位置编码，而 Rust 字符串使用 UTF-8。中文、Emoji、组合字符等场景必须处理好文本位置转换，否则会出现诊断波浪线和代码补全位置错乱的问题。
+
+### 2. Tree-sitter 负责基础语法能力
+
+我建议 Rust Core 使用 <Link url="https://github.com/tree-sitter/tree-sitter" title="Tree-sitter"/> 实现增量语法分析。
+
+Tree-sitter 的设计目的之一，就是能够在文件不断修改时快速更新语法树。<Cite ref="turn692426search2"/>
+
+它和 LSP 可以分工：
+
+| Tree-sitter | LSP |
+|---|---|
+| 语法高亮 | 语义补全 |
+| 代码块折叠 | 类型检查 |
+| 局部结构识别 | 定义跳转 |
+| 括号及结构分析 | 重命名与重构 |
+
+对于轻量化目标，这很有意义：打开文件不一定立即启动语言服务器，也可以先提供基本的阅读和编辑体验。
+
+### 3. VS Code 插件兼容需要重新设计
+
+这是更换 Flutter 后，最需要认真考虑的问题。
+
+VS Code 扩展宿主本来就支持独立的 Node.js 运行环境，并且可以根据激活事件延迟加载扩展。<Cite ref="turn692426search0"/>
+
+我们可以借鉴这个设计：
+
+`Flutter UI ↔ Rust Core ↔ VS Code API Bridge ↔ Node.js Host`
+
+其中，API Bridge 将常用 VS Code API 映射到 Rust 和 Flutter 提供的能力，例如：
+
+- `workspace`：读取文件、工作区配置、文件变更事件。
+- `languages`：注册诊断、补全、代码操作提供者。
+- `window`：显示信息、状态栏、输出通道。
+- `commands`：注册和执行命令。
+
+不过，**不能认为有了独立 Node.js 进程就自动兼容 VS Code 插件**。扩展还依赖大量工作台状态、编辑器对象及事件语义。
+
+对于你的首批插件，我建议先实现等价 LSP 功能，再挑选一两个具有真实 Node.js 入口的开放 VSIX，验证原版插件激活。这会让兼容工作有明确的终点。
+
+未来如果需要兼容使用 HTML 界面的 VS Code 插件，例如复杂的 Markdown 预览或 Webview 面板，可以允许这些特定区域使用可选 WebView，而不是让整个工作台依赖 WebView。VS Code 本身也将自定义编辑器的显示侧建立在 Webview 上。<Cite ref="turn949140search0"/>
+
+---
+
+## 五、现在最应该做什么？
+
+我建议重新调整第一阶段的开发目标：**先验证 Flutter 原生编辑器是否足够成熟，而不是先实现整个插件系统。**
+
+<box border radius="lg" padding={3} gap={3}>
+  <row align=center justify="between">
+    **第一阶段：原生编辑器技术验证**
+    <badge>优先</badge>
+  </row>
+  <text color="secondary" size="xs">以下是建议的验收清单，而不是已经完成的功能。</text>
+  {@body const checks=["Flutter 在 Windows 和 Linux 上正常显示工作台","Re-Editor 能流畅编辑至少 1 万行代码","中文输入法、撤销重做、光标和选择行为正确","Flutter 与 Rust 成功同步增量文本修改","接入一个 Rust LSP，完成补全和诊断","在 Release 模式测得完整内存与输入延迟"]}
+  {@body const [done,setDone] = DIL.useState([])}
+  <box gap={2}>
+    {#each checks as c,i}
+      <checkbox key={i} checked={done.includes(i)} onChange={v=>setDone(p=>v?[...p,i]:p.filter(x=>x!==i))}>{c}</checkbox>
+    {/each}
+  </box>
+  <row align=center justify="between">
+    <text color="secondary" size="xs">验证进度 {done.length}/{checks.length}</text>
+    <button size="sm" color="secondary" variant="outline" onClick={()=>GenUI.copy(checks.map((c,i)=>(done.includes(i)?"[x] ":"[ ] ")+c).join("\n"))}><icon name="copy" inline/> 复制清单</button>
+  </row>
+</box>
+
+这一步还应该对比 Flutter 和前一版 Tauri 原型的冷启动时间、空载私有内存、窗口缩放表现，以及 Linux GTK/X11/Wayland 环境中的稳定性。
+
+如果 Flutter 的编辑操作足够流畅、内存表现符合要求，就可以固定技术路线：
+
+**Flutter + Rust Core + Tree-sitter + LSP + 可选 Node.js 扩展宿主。**
+
+这会比原来更符合你的设计理念：整个编辑器可以独立于 Web 技术工作，只有确实需要的插件才额外加载相应运行环境。
+
+我认为最值得优先攻克的技术难点也因此发生了变化：**不再是如何把 VS Code 的界面搬进更轻量的桌面框架，而是如何让一个真正原生的代码编辑控件，拥有接近 VS Code 的编辑体验。**
+
+只要解决这一点，后面的 Rust Core、LSP 和 Git 都有相对成熟的技术路线可以沿用。
+
+================================================================================
+### [user] (text)
+================================================================================
+我有几个想法：
+1.为了实现VScode不需要插件的那部分功能，我们是否可以参考VScode的源代码？或者直接借用其核心？（VScode是开源的）
+2.整体的内存开销应该比较的是VScode本身，而非是Tauri和Flutter来比较。只要能极大压缩内存占用均可。（现在VScode常驻内存开销在1GB左右，这实在是非常巨大，对于正在运行模型，需要极大量显存和内存的电脑是一笔巨大的负担）
+
+================================================================================
+### [assistant] (text)
+================================================================================
+这两个想法会改变技术方案的优先级。我会先确认 VS Code 哪些开源核心能真正脱离 Electron 和 Web 工作台复用，再围绕“相对 VS Code 显著降低整机内存开销”重新制定目标，而不是纠结 Flutter 和 Tauri 谁更省。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+我认为你的这两点建议都应该采纳，而且它们比前面讨论的 Flutter 与 Tauri 选型更加重要。
+
+**我们真正要做的，不应该是“用 Flutter 重写一个 VS Code”，而应该是“从 VS Code 和其他成熟编辑器中提取经过验证的设计，在更低资源开销的架构下重新组合”。**
+
+这样可以避免从零发明代码编辑器，也避免继承 VS Code 整套工作台的资源开销。
+
+我建议正式把项目目标调整为：
+
+> **在保留 VS Code 主流开发体验的前提下，尽可能降低编辑器自身的常驻内存开销，并让语言服务器、插件等额外服务按需运行。**
+
+# 一、能否直接复用 VS Code 的源代码？
+
+答案是：**可以，但要选择性复用，而不是直接搬走整个核心。**
+
+微软的开源仓库 <Link url="https://github.com/microsoft/vscode" title="microsoft/vscode"/>（Code - OSS）采用 MIT 许可证，允许在遵守许可条件的情况下修改、复用和分发源代码。
+
+但微软官方发布的 VS Code 产品还包含独立授权的品牌资源和服务，不能把两者的许可证混为一谈。<Cite refs={["turn213338search1","turn213338search2"]}/>
+
+### VS Code 实际上已经采用分层架构
+
+根据微软官方维护的源代码组织文档，VS Code 大致分为以下几层。<Cite ref="turn213338search3"/>
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **code**
+
+    <text color="secondary" size="xs">Electron 主进程 · 桌面程序入口</text>
+    <text size="xs" color="danger">不建议复用</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **workbench**
+
+    <text color="secondary" size="xs">文件树 · 面板 · 菜单 · 工作台 · 插件 UI</text>
+    <text size="xs" color="warning">参考设计，选择性移植</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box border radius="md" padding={3} align=center gap={1}>
+    **editor / Monaco Core**
+
+    <text color="secondary" size="xs">文本缓冲区 · 光标 · 选择 · 编辑操作 · 语法功能</text>
+    <text size="xs" color="success">重点参考与复用</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box border radius="md" padding={3} align=center gap={1}>
+    **platform / base**
+
+    <text color="secondary" size="xs">公共服务 · 事件 · 生命周期 · 数据结构</text>
+    <text size="xs" color="success">适合选择性复用</text>
+  </box>
+</box>
+
+不过需要注意：这些模块并不是独立的 Rust 库。VS Code 的核心主要使用 TypeScript 编写，编辑器的浏览器层也依赖 DOM。
+
+因此，“复用 VS Code 的核心”有两种完全不同的含义：
+
+- **直接复用原始代码：** 最容易保留已有功能，但需要 JavaScript 运行环境，并可能带入大量 VS Code 内部依赖。
+- **复用算法、协议与设计：** 可以用 Rust 实现独立核心，更适合 Flutter 原生界面，但需要承担移植和维护成本。
+
+在坚持 Flutter 不依赖 WebView 的前提下，我更推荐第二条路线。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 二、VS Code 哪些部分值得借用？
+
+我根据源码组织和具体实现，把值得参考的组件划分如下。
+
+| 组件 | VS Code 中的实现 | 我的建议 |
+|---|---|---|
+| 文本缓冲区 | Piece Tree | 研究算法，优先使用 Rust 实现 |
+| 撤销重做、多光标 | Editor Core | 参考行为与数据模型 |
+| 查找替换 | Editor Core | 复用算法思路 |
+| 命令与快捷键 | Platform / Workbench | 复用配置格式和行为 |
+| 工作区、文件树 | Workbench | Flutter 重新实现 UI |
+| Git | 内置 Git 扩展 | 借鉴工作流，Rust 调用 Git |
+| 语言服务 | 语言扩展 + LSP | Rust 直接实现 LSP Client |
+| 主题、语法 | VS Code 主题和 TextMate 体系 | 尽量直接兼容数据文件 |
+| 扩展宿主 | Workbench API / Extension Host | 后期选择性复用 |
+
+其中有三个特别值得研究的模块。
+
+### 1. 文本缓冲区：Piece Tree
+
+源码位置：
+
+<Link url="https://github.com/microsoft/vscode/blob/main/src/vs/editor/common/model/pieceTreeTextBuffer/pieceTreeTextBuffer.ts" title="VS Code PieceTreeTextBuffer 源码"/>
+
+这是比复制整个 Monaco 更适合研究的对象。
+
+Piece Tree 的作用是高效管理频繁插入、删除和修改的文本，避免每次编辑都重新分配整个文件。
+
+但因为现有实现是 TypeScript，如果专门为了它嵌入 JavaScript 运行时，就会违背我们的内存优化目标。
+
+更合适的方案是：参考 Piece Tree 的设计，或者直接利用成熟的 Rust 文本数据结构。
+
+我尤其推荐 <Link url="https://github.com/cessen/ropey" title="Ropey"/>。它为 Rust 文本编辑器提供 Rope 数据结构，支持 Unicode、行索引和高效的增量修改。<Cite ref="turn258932search1"/>
+
+### 2. 参考 Helix 的 Rust 编辑器核心
+
+这里我要补充一个比 VS Code 更适合作为 Rust 核心参考的项目：
+
+**<Entity category="software" value="Helix"/> — <Link url="https://github.com/helix-editor/helix" title="GitHub 源码"/>**
+
+Helix 的源码已经有清晰的模块分工：`helix-core`、`helix-lsp`、`helix-dap`、`helix-view` 等。
+
+其中 `helix-core` 使用 Ropey 管理文本，通过 Transaction 表示文本修改，同时支持多选区、撤销重做和 Tree-sitter 语法分析。<Cite ref="turn655386search2"/>
+
+这恰好覆盖我们计划在 Rust 中实现的大量基础能力。
+
+不过，我不建议直接把整个 Helix Core 视为即插即用的 GUI 编辑器内核。它与 Helix 自身的编辑模型有一定关联，而且项目采用 MPL-2.0 许可证，直接复制源码时需要遵守对应的文件级开源要求。<Cite ref="turn258932search0"/>
+
+我更倾向于让 VS Code 成为**编辑行为和用户体验参考**，让 Helix 成为**Rust 核心组织方式参考**。
+
+### 3. Git：源码可参考，运行时不必照搬
+
+VS Code 的 Git 支持其实主要通过随应用提供的内置 Git 扩展实现，并不是全部写死在编辑器主程序中。
+
+源码：<Link url="https://github.com/microsoft/vscode/tree/main/extensions/git" title="VS Code Git Extension"/>。它还向其他插件提供 `vscode.git` API。<Cite ref="turn655386search1"/>
+
+这给我们一个启发：先在 Rust Core 中实现 Git 工作区服务，再根据需求对外暴露兼容 API。
+
+这样不需要为了显示一个 Git Diff 面板而启动 Node.js。
+
+---
+
+# 三、把内存优化变成第一设计指标
+
+这是我最赞同你的第二点的地方。
+
+你提到 VS Code 目前常驻内存约 1 GB。对于还要同时运行大模型的开发环境，这当然值得优化。
+
+但首先要区分：
+
+**1 GB 是编辑器自身的内存，还是编辑器连同插件、语言服务器、终端等所有附属进程的内存？**
+
+VS Code 官方也提醒过，它采用多进程结构，扩展会在独立的 Extension Host 中运行。可以通过 `Help → Open Process Explorer` 或命令 `code --status` 查看具体进程。<Cite ref="turn175020search1"/>
+
+例如，假设某个 VS Code 工作环境的 1 GB 是以下组成：
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">假设示例：1,000 MiB 的归因分解，并非实测</text>
+  <box direction="row" height="18px" radius="sm" clip>
+    <box background="#64748b" flex={30}/>
+    <box background="#2563eb" flex={20}/>
+    <box background="#0d9488" flex={40}/>
+    <box background="#d97706" flex={10}/>
+  </box>
+  <box gap={2}>
+    {#each [{c:"#64748b",label:"工作台 / 渲染 / 基础服务",v:"300 MiB"},{c:"#2563eb",label:"扩展宿主",v:"200 MiB"},{c:"#0d9488",label:"语言服务器",v:"400 MiB"},{c:"#d97706",label:"其他工具进程",v:"100 MiB"}] as item}
+      <row align=center gap={2}>
+        <box background={item.c} size="10px" radius="sm"/>
+        <text size="xs">{item.label}</text>
+        <spacer/>
+        <text size="xs" tabularNums color="secondary">{item.v}</text>
+      </row>
+    {/each}
+  </box>
+</box>
+
+如果新的编辑器依旧要运行同一个消耗 400 MiB 的语言服务器，那么即便编辑器工作台完全不占内存，也不可能通过更换 GUI 省去这 400 MiB。
+
+这意味着我们必须设计两层指标：
+
+1. **编辑器基线内存：** Flutter、Rust Core，以及打开工作区所需的基础服务。
+2. **完整开发环境内存：** 基线加上真正启动的 LSP、插件、调试器和终端。
+
+而对于你的本地模型场景，第二项决定最终体验，第一项决定架构有没有做好。
+
+## 四、我建议设立的内存目标
+
+既然 VS Code 在你的使用环境中约为 1 GB，我们可以先把下面的目标作为设计约束。
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">第一版建议目标（非实测）</text>
+  <grid columns={2} gap={3}>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">空工作台，无语言服务器</text>
+        <title size="xl" color="default" tabularNums>≤ 200 MiB</title>
+        <caption>挑战性目标</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">普通项目，未启动 LSP</text>
+        <title size="xl" color="default" tabularNums>≤ 250 MiB</title>
+        <caption>含文件树、编辑器、基础 Git</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">Rust 或 Python 项目</text>
+        <title size="xl" tabularNums>≤ 500 MiB</title>
+        <caption>目标值，受语言服务器规模影响</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">同功能对比 VS Code</text>
+        <title size="xl" tabularNums>−50%</title>
+        <caption>主要竞争性验收目标</caption>
+      </box>
+    </grid-item>
+  </grid>
+  <divider color="subtle"/>
+  <text size="xs" color="secondary">这些数字并不保证一定可以达到。大型 Rust/C++ 项目的索引服务可能单独超过这些预算。所有比较必须在相同项目、相同语言功能、相同系统下进行。</text>
+</box>
+
+我不建议把 200 MiB 设成必须牺牲编辑稳定性才能达到的硬门槛。对于 Flutter + Rust 桌面应用，这是需要实验验证的目标，而不是天然就能达到的水平。
+
+另一方面，针对 1 GB 基线，若能在保留实际所需功能的情况下把内存控制在 300–500 MiB，即使没达到极端轻量化，也已经很有实用意义。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+我认为你的这两点建议都应该采纳，而且它们比前面讨论的 Flutter 与 Tauri 选型更加重要。
+
+**我们真正要做的，不应该是“用 Flutter 重写一个 VS Code”，而应该是“从 VS Code 和其他成熟编辑器中提取经过验证的设计，在更低资源开销的架构下重新组合”。**
+
+这样可以避免从零发明代码编辑器，也避免继承 VS Code 整套工作台的资源开销。
+
+我建议正式把项目目标调整为：
+
+> **在保留 VS Code 主流开发体验的前提下，尽可能降低编辑器自身的常驻内存开销，并让语言服务器、插件等额外服务按需运行。**
+
+# 一、能否直接复用 VS Code 的源代码？
+
+答案是：**可以，但要选择性复用，而不是直接搬走整个核心。**
+
+微软的开源仓库 <Link url="https://github.com/microsoft/vscode" title="microsoft/vscode"/>（Code - OSS）采用 MIT 许可证，允许在遵守许可条件的情况下修改、复用和分发源代码。
+
+但微软官方发布的 VS Code 产品还包含独立授权的品牌资源和服务，不能把两者的许可证混为一谈。<Cite refs={["turn213338search1","turn213338search2"]}/>
+
+### VS Code 实际上已经采用分层架构
+
+根据微软官方维护的源代码组织文档，VS Code 大致分为以下几层。<Cite ref="turn213338search3"/>
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **code**
+
+    <text color="secondary" size="xs">Electron 主进程 · 桌面程序入口</text>
+    <text size="xs" color="danger">不建议复用</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **workbench**
+
+    <text color="secondary" size="xs">文件树 · 面板 · 菜单 · 工作台 · 插件 UI</text>
+    <text size="xs" color="warning">参考设计，选择性移植</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box border radius="md" padding={3} align=center gap={1}>
+    **editor / Monaco Core**
+
+    <text color="secondary" size="xs">文本缓冲区 · 光标 · 选择 · 编辑操作 · 语法功能</text>
+    <text size="xs" color="success">重点参考与复用</text>
+  </box>
+  <row justify="center"><icon name="arrow-down" color="tertiary"/></row>
+  <box border radius="md" padding={3} align=center gap={1}>
+    **platform / base**
+
+    <text color="secondary" size="xs">公共服务 · 事件 · 生命周期 · 数据结构</text>
+    <text size="xs" color="success">适合选择性复用</text>
+  </box>
+</box>
+
+不过需要注意：这些模块并不是独立的 Rust 库。VS Code 的核心主要使用 TypeScript 编写，编辑器的浏览器层也依赖 DOM。
+
+因此，“复用 VS Code 的核心”有两种完全不同的含义：
+
+- **直接复用原始代码：** 最容易保留已有功能，但需要 JavaScript 运行环境，并可能带入大量 VS Code 内部依赖。
+- **复用算法、协议与设计：** 可以用 Rust 实现独立核心，更适合 Flutter 原生界面，但需要承担移植和维护成本。
+
+在坚持 Flutter 不依赖 WebView 的前提下，我更推荐第二条路线。
+
+## 二、VS Code 哪些部分值得借用？
+
+我根据源码组织和具体实现，把值得参考的组件划分如下。
+
+| 组件 | VS Code 中的实现 | 我的建议 |
+|---|---|---|
+| 文本缓冲区 | Piece Tree | 研究算法，优先使用 Rust 实现 |
+| 撤销重做、多光标 | Editor Core | 参考行为与数据模型 |
+| 查找替换 | Editor Core | 复用算法思路 |
+| 命令与快捷键 | Platform / Workbench | 复用配置格式和行为 |
+| 工作区、文件树 | Workbench | Flutter 重新实现 UI |
+| Git | 内置 Git 扩展 | 借鉴工作流，Rust 调用 Git |
+| 语言服务 | 语言扩展 + LSP | Rust 直接实现 LSP Client |
+| 主题、语法 | VS Code 主题和 TextMate 体系 | 尽量直接兼容数据文件 |
+| 扩展宿主 | Workbench API / Extension Host | 后期选择性复用 |
+
+其中有三个特别值得研究的模块。
+
+### 1. 文本缓冲区：Piece Tree
+
+源码位置：
+
+<Link url="https://github.com/microsoft/vscode/blob/main/src/vs/editor/common/model/pieceTreeTextBuffer/pieceTreeTextBuffer.ts" title="VS Code PieceTreeTextBuffer 源码"/>
+
+这是比复制整个 Monaco 更适合研究的对象。
+
+Piece Tree 的作用是高效管理频繁插入、删除和修改的文本，避免每次编辑都重新分配整个文件。
+
+但因为现有实现是 TypeScript，如果专门为了它嵌入 JavaScript 运行时，就会违背我们的内存优化目标。
+
+更合适的方案是：参考 Piece Tree 的设计，或者直接利用成熟的 Rust 文本数据结构。
+
+我尤其推荐 <Link url="https://github.com/cessen/ropey" title="Ropey"/>。它为 Rust 文本编辑器提供 Rope 数据结构，支持 Unicode、行索引和高效的增量修改。<Cite ref="turn258932search1"/>
+
+### 2. 参考 Helix 的 Rust 编辑器核心
+
+这里我要补充一个比 VS Code 更适合作为 Rust 核心参考的项目：
+
+**<Entity category="software" value="Helix"/> — <Link url="https://github.com/helix-editor/helix" title="GitHub 源码"/>**
+
+Helix 的源码已经有清晰的模块分工：`helix-core`、`helix-lsp`、`helix-dap`、`helix-view` 等。
+
+其中 `helix-core` 使用 Ropey 管理文本，通过 Transaction 表示文本修改，同时支持多选区、撤销重做和 Tree-sitter 语法分析。<Cite ref="turn655386search2"/>
+
+这恰好覆盖我们计划在 Rust 中实现的大量基础能力。
+
+不过，我不建议直接把整个 Helix Core 视为即插即用的 GUI 编辑器内核。它与 Helix 自身的编辑模型有一定关联，而且项目采用 MPL-2.0 许可证，直接复制源码时需要遵守对应的文件级开源要求。<Cite ref="turn258932search0"/>
+
+我更倾向于让 VS Code 成为**编辑行为和用户体验参考**，让 Helix 成为**Rust 核心组织方式参考**。
+
+### 3. Git：源码可参考，运行时不必照搬
+
+VS Code 的 Git 支持其实主要通过随应用提供的内置 Git 扩展实现，并不是全部写死在编辑器主程序中。
+
+源码：<Link url="https://github.com/microsoft/vscode/tree/main/extensions/git" title="VS Code Git Extension"/>。它还向其他插件提供 `vscode.git` API。<Cite ref="turn655386search1"/>
+
+这给我们一个启发：先在 Rust Core 中实现 Git 工作区服务，再根据需求对外暴露兼容 API。
+
+这样不需要为了显示一个 Git Diff 面板而启动 Node.js。
+
+---
+
+# 三、把内存优化变成第一设计指标
+
+这是我最赞同你的第二点的地方。
+
+你提到 VS Code 目前常驻内存约 1 GB。对于还要同时运行大模型的开发环境，这当然值得优化。
+
+但首先要区分：
+
+**1 GB 是编辑器自身的内存，还是编辑器连同插件、语言服务器、终端等所有附属进程的内存？**
+
+VS Code 官方也提醒过，它采用多进程结构，扩展会在独立的 Extension Host 中运行。可以通过 `Help → Open Process Explorer` 或命令 `code --status` 查看具体进程。<Cite ref="turn175020search1"/>
+
+例如，假设某个 VS Code 工作环境的 1 GB 是以下组成：
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">假设示例：1,000 MiB 的归因分解，并非实测</text>
+  <box direction="row" height="18px" radius="sm" clip>
+    <box background="#64748b" flex={30}/>
+    <box background="#2563eb" flex={20}/>
+    <box background="#0d9488" flex={40}/>
+    <box background="#d97706" flex={10}/>
+  </box>
+  <box gap={2}>
+    {#each [{c:"#64748b",label:"工作台 / 渲染 / 基础服务",v:"300 MiB"},{c:"#2563eb",label:"扩展宿主",v:"200 MiB"},{c:"#0d9488",label:"语言服务器",v:"400 MiB"},{c:"#d97706",label:"其他工具进程",v:"100 MiB"}] as item}
+      <row align=center gap={2}>
+        <box background={item.c} size="10px" radius="sm"/>
+        <text size="xs">{item.label}</text>
+        <spacer/>
+        <text size="xs" tabularNums color="secondary">{item.v}</text>
+      </row>
+    {/each}
+  </box>
+</box>
+
+如果新的编辑器依旧要运行同一个消耗 400 MiB 的语言服务器，那么即便编辑器工作台完全不占内存，也不可能通过更换 GUI 省去这 400 MiB。
+
+这意味着我们必须设计两层指标：
+
+1. **编辑器基线内存：** Flutter、Rust Core，以及打开工作区所需的基础服务。
+2. **完整开发环境内存：** 基线加上真正启动的 LSP、插件、调试器和终端。
+
+而对于你的本地模型场景，第二项决定最终体验，第一项决定架构有没有做好。
+
+## 四、我建议设立的内存目标
+
+既然 VS Code 在你的使用环境中约为 1 GB，我们可以先把下面的目标作为设计约束。
+
+<box border radius="xl" padding={3} gap={2}>
+  <text color="secondary" weight="medium" size="xs">第一版建议目标（非实测）</text>
+  <grid columns={2} gap={3}>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">空工作台，无语言服务器</text>
+        <title size="xl" color="default" tabularNums>≤ 200 MiB</title>
+        <caption>挑战性目标</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">普通项目，未启动 LSP</text>
+        <title size="xl" color="default" tabularNums>≤ 250 MiB</title>
+        <caption>含文件树、编辑器、基础 Git</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">Rust 或 Python 项目</text>
+        <title size="xl" tabularNums>≤ 500 MiB</title>
+        <caption>目标值，受语言服务器规模影响</caption>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box gap={1}>
+        <text color="secondary" size="xs">同功能对比 VS Code</text>
+        <title size="xl" tabularNums>−50%</title>
+        <caption>主要竞争性验收目标</caption>
+      </box>
+    </grid-item>
+  </grid>
+  <divider color="subtle"/>
+  <text size="xs" color="secondary">这些数字并不保证一定可以达到。大型 Rust/C++ 项目的索引服务可能单独超过这些预算。所有比较必须在相同项目、相同语言功能、相同系统下进行。</text>
+</box>
+
+我不建议把 200 MiB 设成必须牺牲编辑稳定性才能达到的硬门槛。对于 Flutter + Rust 桌面应用，这是需要实验验证的目标，而不是天然就能达到的水平。
+
+另一方面，针对 1 GB 基线，若能在保留实际所需功能的情况下把内存控制在 300–500 MiB，即使没达到极端轻量化，也已经很有实用意义。
+
+# 五、重新设计后的架构：Flutter 只是显示层
+
+根据你提出的两个要求，我建议采用下面这个版本。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Workbench**
+
+    <text size="xs" color="secondary">窗口 · 文件树 · 编辑视图 · 面板 · 终端 UI</text>
+    <text size="2xs" color="secondary">尽可能不承担后台索引和语言分析</text>
+  </box>
+  <row justify=center align=center gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">FFI：增量文本操作、状态事件、可视范围</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap="4px">
+      **Rust Editor Core**
+      <text color="secondary" size="xs">独立于 Flutter，适合单元测试和性能测试</text>
+    </box>
+    <grid columns={2} gap={2}>
+      {#each [{t:"Text Buffer",d:"Ropey / 编辑事务"},{t:"Language Core",d:"Tree-sitter / LSP"},{t:"Workspace",d:"文件、搜索、Git"},{t:"Editor Services",d:"撤销、多光标、命令"}] as item}
+        <grid-item>
+          <box background="surface-secondary" padding={2} radius="md" gap={1} height="100%">
+            <text weight="medium" size="xs">{item.t}</text>
+            <text color="secondary" size="2xs">{item.d}</text>
+          </box>
+        </grid-item>
+      {/each}
+    </grid>
+  </box>
+  <row justify=center><icon name="git-fork" color="secondary"/></row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="power" color="success"/>
+          **按需启动**
+        </row>
+        <text color="secondary" size="xs">LSP / 调试器 / 终端 / Git 子进程</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="plug" color="secondary"/>
+          **可选插件宿主**
+        </row>
+        <text color="secondary" size="xs">Node.js / VS Code API Bridge</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+## 六、实际优化内存的五项策略
+
+| 策略 | 具体设计 | 预期收益 |
+|---|---|---|
+| 延迟启动 | 只有项目需要时才启动语言服务器 | 避免空载 LSP 消耗 |
+| 统一文本数据 | Rust Core 管理权威缓冲区，Flutter 负责可视区域 | 减少全文件重复缓存 |
+| 虚拟化渲染 | 仅排版可见行及少量预读行 | 降低大文件显示开销 |
+| 插件宿主隔离 | Node.js 不作为基础运行依赖 | 降低无插件模式的资源占用 |
+| 进程生命周期管理 | 关闭工作区后回收无用索引进程 | 降低长期常驻内存 |
+
+其中我特别想强调**文本缓冲区的所有权**。
+
+如果使用 Re-Editor，它本身就需要维护编辑状态。Rust Core 再维护一份 Rope，就可能重复持有大量文本。
+
+因此，第一版原型可以暂时让 Flutter 维护文本、Rust 持有用于分析的同步副本；长期则应探索由 Rust 持有权威文档、Flutter 仅缓存可见文本区域及布局结果的方案。
+
+后一种设计更节省内存，但实现中文输入法、多光标、快速滚动和撤销同步的难度也更高。不要在原型尚未验证前，就把它认定为必然更优。
+
+## 七、最值得进行的一次对照实验
+
+我现在反而建议暂缓完整开发，先制作两个极简原型。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="layers" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **原型 A：精简 Code - OSS**
+
+      从现有开源仓库出发，移除不需要的内置功能，保留原生 Monaco 和扩展兼容能力。
+
+      目的：验证继承现有 VS Code 架构、减少加载内容后，能降低多少内存开销。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="cpu" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **原型 B：Flutter + Rust Core**
+
+      实现最小文件树、代码编辑、Rope 缓冲区、一个语言服务器。
+
+      目的：验证完全独立的工作台是否能够获得足够大的内存优势。
+    </box>
+  </row>
+</box>
+
+两个原型与原版 VS Code 分别在 Windows 和 Linux 上测试同一套项目。测试需要分为无插件、相同语言服务、相同功能集合三组，不能让 Flutter 版本关闭语言服务，却让 VS Code 承担完整索引工作。
+
+除了平均内存，还应记录启动峰值、10 分钟空闲后的占用、30 分钟编辑后的占用，以及关闭项目后的资源回收情况。Windows 重点比较进程树的私有内存指标；Linux 可以使用 PSS。由于共享页面会被重复计入部分内存指标，不应直接将所有进程 RSS 相加得出总占用。
+
+还有一点对你的使用环境尤其重要：**减少编辑器的 RAM 占用不一定等量增加可供模型使用的显存。** 独立显卡的专用 VRAM 与系统 RAM 是不同资源，但降低内存压力仍可能减少交换、释放可用于 CPU 推理或模型卸载的系统内存。
+
+---
+
+## 八、我的最终选择
+
+经过这次调整，我会把技术优先级定为：
+
+1. **内存开销：最高优先级。** 以真实 VS Code 开发工作流为基线，追求整体内存至少降低 50%。
+2. **基础编辑体验：必须接近 VS Code。** 文件管理、Git、补全、编辑行为不能因为节省内存而严重退化。
+3. **跨平台：Flutter + Rust。** 主界面不依赖系统 WebView。
+4. **插件兼容：有选择地支持。** Python、C/C++、Rust 先实现 LSP 等价功能，再验证原版 VSIX。
+5. **源码复用：优先复用成熟算法和开放协议。** 研究 VS Code 与 Helix，而不是从零构建每一个基础组件。
+
+不过有一个需要明确的工程取舍：**这条路线的第一版可以实现主流插件的功能等价，却不一定能直接运行所有对应的 VS Code 扩展包。** 真正的原版插件兼容仍是独立的高风险工作项。
+
+我现在更看好 **Flutter + Rust Core，以 VS Code 为用户体验参考，以 Helix 为 Rust 编辑模型参考** 的混合技术路线。
+
+它不仅有机会把编辑器变得更轻，而且能让代码编辑工作台真正独立于任何特定的前端技术。将来即使 Flutter 不能满足性能目标，Rust Core 也可以保留，替换为其他 GUI，而不必重新实现整个编辑器。
+
+**下一步最有价值的工作，就是开展 Code - OSS、Helix 和 Flutter 编辑组件的源码级可复用性审计，并建立一套能够验证“内存真的比 VS Code 少多少”的自动化基准测试。** <MemoryCite />
+
+================================================================================
+### [assistant] (text)
+================================================================================
+# 五、重新设计后的架构：Flutter 只是显示层
+
+根据你提出的两个要求，我建议采用下面这个版本。
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Workbench**
+
+    <text size="xs" color="secondary">窗口 · 文件树 · 编辑视图 · 面板 · 终端 UI</text>
+    <text size="2xs" color="secondary">尽可能不承担后台索引和语言分析</text>
+  </box>
+  <row justify=center align=center gap={2}>
+    <icon name="arrow-down-up" color="secondary"/>
+    <text size="xs" color="secondary">FFI：增量文本操作、状态事件、可视范围</text>
+  </row>
+  <box border radius="md" padding={3} gap={2}>
+    <box align=center gap="4px">
+      **Rust Editor Core**
+      <text color="secondary" size="xs">独立于 Flutter，适合单元测试和性能测试</text>
+    </box>
+    <grid columns={2} gap={2}>
+      {#each [{t:"Text Buffer",d:"Ropey / 编辑事务"},{t:"Language Core",d:"Tree-sitter / LSP"},{t:"Workspace",d:"文件、搜索、Git"},{t:"Editor Services",d:"撤销、多光标、命令"}] as item}
+        <grid-item>
+          <box background="surface-secondary" padding={2} radius="md" gap={1} height="100%">
+            <text weight="medium" size="xs">{item.t}</text>
+            <text color="secondary" size="2xs">{item.d}</text>
+          </box>
+        </grid-item>
+      {/each}
+    </grid>
+  </box>
+  <row justify=center><icon name="git-fork" color="secondary"/></row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="power" color="success"/>
+          **按需启动**
+        </row>
+        <text color="secondary" size="xs">LSP / 调试器 / 终端 / Git 子进程</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        <row align=center gap={1}>
+          <icon name="plug" color="secondary"/>
+          **可选插件宿主**
+        </row>
+        <text color="secondary" size="xs">Node.js / VS Code API Bridge</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+## 六、实际优化内存的五项策略
+
+| 策略 | 具体设计 | 预期收益 |
+|---|---|---|
+| 延迟启动 | 只有项目需要时才启动语言服务器 | 避免空载 LSP 消耗 |
+| 统一文本数据 | Rust Core 管理权威缓冲区，Flutter 负责可视区域 | 减少全文件重复缓存 |
+| 虚拟化渲染 | 仅排版可见行及少量预读行 | 降低大文件显示开销 |
+| 插件宿主隔离 | Node.js 不作为基础运行依赖 | 降低无插件模式的资源占用 |
+| 进程生命周期管理 | 关闭工作区后回收无用索引进程 | 降低长期常驻内存 |
+
+其中我特别想强调**文本缓冲区的所有权**。
+
+如果使用 Re-Editor，它本身就需要维护编辑状态。Rust Core 再维护一份 Rope，就可能重复持有大量文本。
+
+因此，第一版原型可以暂时让 Flutter 维护文本、Rust 持有用于分析的同步副本；长期则应探索由 Rust 持有权威文档、Flutter 仅缓存可见文本区域及布局结果的方案。
+
+后一种设计更节省内存，但实现中文输入法、多光标、快速滚动和撤销同步的难度也更高。不要在原型尚未验证前，就把它认定为必然更优。
+
+## 七、最值得进行的一次对照实验
+
+我现在反而建议暂缓完整开发，先制作两个极简原型。
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="layers" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **原型 A：精简 Code - OSS**
+
+      从现有开源仓库出发，移除不需要的内置功能，保留原生 Monaco 和扩展兼容能力。
+
+      目的：验证继承现有 VS Code 架构、减少加载内容后，能降低多少内存开销。
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" padding={2}>
+      <icon name="cpu" size="lg"/>
+    </box>
+    <box flex="1" gap={1}>
+      **原型 B：Flutter + Rust Core**
+
+      实现最小文件树、代码编辑、Rope 缓冲区、一个语言服务器。
+
+      目的：验证完全独立的工作台是否能够获得足够大的内存优势。
+    </box>
+  </row>
+</box>
+
+两个原型与原版 VS Code 分别在 Windows 和 Linux 上测试同一套项目。测试需要分为无插件、相同语言服务、相同功能集合三组，不能让 Flutter 版本关闭语言服务，却让 VS Code 承担完整索引工作。
+
+除了平均内存，还应记录启动峰值、10 分钟空闲后的占用、30 分钟编辑后的占用，以及关闭项目后的资源回收情况。Windows 重点比较进程树的私有内存指标；Linux 可以使用 PSS。由于共享页面会被重复计入部分内存指标，不应直接将所有进程 RSS 相加得出总占用。
+
+还有一点对你的使用环境尤其重要：**减少编辑器的 RAM 占用不一定等量增加可供模型使用的显存。** 独立显卡的专用 VRAM 与系统 RAM 是不同资源，但降低内存压力仍可能减少交换、释放可用于 CPU 推理或模型卸载的系统内存。
+
+---
+
+## 八、我的最终选择
+
+经过这次调整，我会把技术优先级定为：
+
+1. **内存开销：最高优先级。** 以真实 VS Code 开发工作流为基线，追求整体内存至少降低 50%。
+2. **基础编辑体验：必须接近 VS Code。** 文件管理、Git、补全、编辑行为不能因为节省内存而严重退化。
+3. **跨平台：Flutter + Rust。** 主界面不依赖系统 WebView。
+4. **插件兼容：有选择地支持。** Python、C/C++、Rust 先实现 LSP 等价功能，再验证原版 VSIX。
+5. **源码复用：优先复用成熟算法和开放协议。** 研究 VS Code 与 Helix，而不是从零构建每一个基础组件。
+
+不过有一个需要明确的工程取舍：**这条路线的第一版可以实现主流插件的功能等价，却不一定能直接运行所有对应的 VS Code 扩展包。** 真正的原版插件兼容仍是独立的高风险工作项。
+
+我现在更看好 **Flutter + Rust Core，以 VS Code 为用户体验参考，以 Helix 为 Rust 编辑模型参考** 的混合技术路线。
+
+它不仅有机会把编辑器变得更轻，而且能让代码编辑工作台真正独立于任何特定的前端技术。将来即使 Flutter 不能满足性能目标，Rust Core 也可以保留，替换为其他 GUI，而不必重新实现整个编辑器。
+
+**下一步最有价值的工作，就是开展 Code - OSS、Helix 和 Flutter 编辑组件的源码级可复用性审计，并建立一套能够验证“内存真的比 VS Code 少多少”的自动化基准测试。** <MemoryCite />
+
+================================================================================
+### [user] (text)
+================================================================================
+对的。最后一个问题：有没有什么项目已经尝试过这些？
+（想要制作这个项目的原因是VScode在我运行模型时打开极其容易崩溃或者导致界面卡死）
+
+================================================================================
+### [assistant] (text)
+================================================================================
+我会把现有项目分成三类来找：已经尝试做低内存 IDE 的、尝试兼容 VS Code 扩展的，以及真正采用 Flutter／Rust 原生工作台的。还会特别关注它们在内存压力下的表现，因为你遇到的崩溃和界面卡死，比单纯的空载内存数字更值得解决。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+找到了。而且有几个项目与你设想的方向相当接近，其中两个尤其值得认真研究。
+
+**一个项目已经采用了 Flutter + Rust 来构建代码编辑核心；另一个项目则尝试了 Rust 核心 + VS Code 原版插件宿主。** 这意味着你设想的两条关键技术路线，已经分别有开源实践可以参考。
+
+不过，我还没有找到一个经过充分验证、同时满足「Flutter 原生工作台、Rust 核心、VS Code 原版插件兼容、显著低内存」全部要求的成熟项目。
+
+考虑到你真正要解决的是**运行本地大模型时，VS Code 容易卡死甚至崩溃**，我会更重视这些项目的架构和稳定性，而不是单纯看谁宣称启动最快。
+
+## 一、最值得研究的项目
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="CodeForge heckmon Flutter Rust code editor widget screenshot github CodeForge" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      <row align=center wrap="wrap" gap={2}>
+        **1. <Link url="https://github.com/heckmon/code_forge" title="CodeForge"/>**
+        <badge color="success">高度相关</badge>
+      </row>
+      <text color="secondary" size="xs">Flutter + Rust · MIT</text>
+      几乎就是我们计划中「原生代码编辑组件」的现成原型。它使用 Rust Rope 文本缓冲区、Flutter 自定义渲染和内置 LSP 客户端。支持补全、诊断、悬停、重命名、多光标及语义高亮。
+
+      它不是完整 IDE，也没有宣称能直接运行 VS Code 插件。<Cite ref="turn796986search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" size="76px" align=center justify=center>
+      <icon name="blocks" size="3xl" color="secondary"/>
+    </box>
+    <box flex="1" gap={1}>
+      **2. <Link url="https://github.com/dmwarenet/dscode" title="DSCode"/>**
+
+      <text color="secondary" size="xs">Rust + Tauri + Node.js Extension Host · MIT</text>
+      直接尝试解决「减少 VS Code 内存，同时保留 VS Code 扩展」的问题。
+
+      项目声称比 VS Code 节省约 60% 内存，具有独立 Node.js 扩展宿主、LSP、DAP、终端和可拆分 Rust 模块。
+
+      不过它规模较小，**60% 是项目自己的性能声明，尚不能当成独立验证结果。** <Cite ref="turn277073search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Lapce Rust code editor screenshot IDE native GUI" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      **3. <Link url="https://github.com/lapce/lapce" title="Lapce"/>**
+
+      <text color="secondary" size="xs">Rust + Floem · Apache-2.0</text>
+      已经实现了跨平台、原生 GPU 渲染、LSP、Tree-sitter、内置终端及远程开发。它的扩展采用 WASI，而不是 VS Code 插件 API。
+
+      如果要研究如何让代码编辑器在没有浏览器内核的情况下正常运行，Lapce 是极具参考价值的现成项目。<Cite ref="turn389310search1"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Zed editor application screenshot Rust editor dark code" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      **4. <Link url="https://github.com/zed-industries/zed" title="Zed"/>**
+
+      <text color="secondary" size="xs">Rust + GPUI</text>
+      原生高性能代码编辑器的成熟参考。它选择自己的扩展系统，而非复刻 VS Code 的 Node.js 扩展运行时。
+
+      Zed 维护者曾明确表示，没有计划重新实现 VS Code Extension API。<Cite ref="turn796986search1"/>
+    </box>
+  </row>
+</box>
+
+其中我最建议先看的是 **CodeForge 与 DSCode**：前者可以减少我们重写 Flutter 编辑控件的工作，后者可以帮助研究 VS Code 插件兼容层。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+又发现了一个很适合直接借鉴的方向：LVCE 不只是做轻量编辑器，还公开了在严格内存限制下启动、编辑、保存和检测 OOM 的自动化基准测试。对你的使用场景来说，这种“内存紧张时仍能工作”的验证方法，可能比空载减少几十 MiB 更有价值。
+
+================================================================================
+### [tool] (text)
+================================================================================
+The output of this plugin was redacted.
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 二、另外两个值得参考的项目
+
+### 5. <Link url="https://github.com/lvce-editor/lvce-editor" title="LVCE Editor"/>：把后台逻辑移出 UI 线程
+
+LVCE 是一个以 VS Code 为设计参考的编辑器，主要使用 JavaScript、Electron 和 Web Worker。它不是 Flutter/Rust 项目，但尝试让大量编辑器逻辑在 Worker 中运行。<Cite ref="turn279633search1"/>
+
+这对我们有一个很实用的启发：
+
+**即使后台工作负载变得很重，也不应该让文件索引、插件执行或语言分析阻塞 GUI 的输入和绘制。**
+
+它的相关测试仓库更值得关注：
+
+<Link url="https://github.com/levivilet/lvce-memory-benchmark" title="LVCE Memory Benchmark"/>
+
+该项目已经建立了一套可复现的内存测试流程，包括：
+
+- VS Code、Lapce、Zed、Geany、Theia、LVCE 等编辑器对比。
+- 64–1024 MiB 内存限制扫描。
+- 禁用 Swap、记录 OOM、启动峰值、PSS、USS 和进程树内存。
+- 自动验证编辑与保存是否成功。
+
+它也明确说明，现有工作负载主要是单文件编辑，而非真实大型 IDE 项目。对于我们来说，可以复用测试思想，再增加实际语言服务器和模型并行运行的场景。<Cite ref="turn937320search0"/>
+
+### 6. <Link url="https://github.com/dstrml/wu" title="Wu"/>：从 Zed 派生的轻量原生编辑器
+
+Wu 是 Zed 的一个分支，使用 Rust 与原生 GPU 渲染，并增加了 Claude Code、Codex、OpenCode 等 Coding Agent 集成功能。
+
+项目宣称内存占用低于 VS Code 和 Zed，也提供三大桌面平台的安装方式。不过这一性能结论同样需要独立复测。<Cite ref="turn270595view1"/>
+
+如果只是想尽快找到一个能与 AI 工作流配合、且不必再运行完整 VS Code 的替代编辑器，Wu 也可以列入试用名单。
+
+## 三、六个项目与我们的设计目标对比
+
+| 项目 | 原生或无 WebView 工作台 | Rust 核心 | 原版 VSIX | 主要参考价值 |
+|---|---|---|---|---|
+| CodeForge | Flutter 原生组件 | 是 | 否 | 编辑器控件 |
+| DSCode | 否，Tauri | 是 | 项目宣称支持，需验证 | 插件宿主 |
+| Lapce | 是 | 是 | 否 | 完整编辑器架构 |
+| Zed | 是 | 是 | 否 | 高性能架构 |
+| LVCE | 否，Electron | 否 | 非主要兼容目标 | Worker 与内存测试 |
+| Wu | 是 | 是 | 非原版扩展体系 | 轻量化与 Agent 集成 |
+
+表中的「原版 VSIX」特指安装并实际运行 VS Code 扩展，而不是通过 LSP 实现类似功能。
+
+**这也解释了为什么目前仍值得开发这个项目：** 已经有项目很好地解决了编辑器内核、原生工作台或插件兼容中的部分问题，但这些解决方案还没有自然地组合成我们想要的产品。
+
+尤其值得注意，CodeForge 的存在意味着我们可能不再需要从零实现 Flutter 代码编辑组件。它可以成为第一版原型的直接候选，而不只是学习对象。
+
+================================================================================
+### [assistant] (text)
+================================================================================
+找到了。而且有几个项目与你设想的方向相当接近，其中两个尤其值得认真研究。
+
+**一个项目已经采用了 Flutter + Rust 来构建代码编辑核心；另一个项目则尝试了 Rust 核心 + VS Code 原版插件宿主。** 这意味着你设想的两条关键技术路线，已经分别有开源实践可以参考。
+
+不过，我还没有找到一个经过充分验证、同时满足「Flutter 原生工作台、Rust 核心、VS Code 原版插件兼容、显著低内存」全部要求的成熟项目。
+
+考虑到你真正要解决的是**运行本地大模型时，VS Code 容易卡死甚至崩溃**，我会更重视这些项目的架构和稳定性，而不是单纯看谁宣称启动最快。
+
+## 一、最值得研究的项目
+
+<box gap={3}>
+  <row align=start gap={3}>
+    <AsyncImage query="CodeForge heckmon Flutter Rust code editor widget screenshot github CodeForge" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      <row align=center wrap="wrap" gap={2}>
+        **1. <Link url="https://github.com/heckmon/code_forge" title="CodeForge"/>**
+        <badge color="success">高度相关</badge>
+      </row>
+      <text color="secondary" size="xs">Flutter + Rust · MIT</text>
+      几乎就是我们计划中「原生代码编辑组件」的现成原型。它使用 Rust Rope 文本缓冲区、Flutter 自定义渲染和内置 LSP 客户端。支持补全、诊断、悬停、重命名、多光标及语义高亮。
+
+      它不是完整 IDE，也没有宣称能直接运行 VS Code 插件。<Cite ref="turn796986search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <box background="surface-secondary" radius="lg" size="76px" align=center justify=center>
+      <icon name="blocks" size="3xl" color="secondary"/>
+    </box>
+    <box flex="1" gap={1}>
+      **2. <Link url="https://github.com/dmwarenet/dscode" title="DSCode"/>**
+
+      <text color="secondary" size="xs">Rust + Tauri + Node.js Extension Host · MIT</text>
+      直接尝试解决「减少 VS Code 内存，同时保留 VS Code 扩展」的问题。
+
+      项目声称比 VS Code 节省约 60% 内存，具有独立 Node.js 扩展宿主、LSP、DAP、终端和可拆分 Rust 模块。
+
+      不过它规模较小，**60% 是项目自己的性能声明，尚不能当成独立验证结果。** <Cite ref="turn277073search0"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Lapce Rust code editor screenshot IDE native GUI" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      **3. <Link url="https://github.com/lapce/lapce" title="Lapce"/>**
+
+      <text color="secondary" size="xs">Rust + Floem · Apache-2.0</text>
+      已经实现了跨平台、原生 GPU 渲染、LSP、Tree-sitter、内置终端及远程开发。它的扩展采用 WASI，而不是 VS Code 插件 API。
+
+      如果要研究如何让代码编辑器在没有浏览器内核的情况下正常运行，Lapce 是极具参考价值的现成项目。<Cite ref="turn389310search1"/>
+    </box>
+  </row>
+  <divider color="subtle"/>
+  <row align=start gap={3}>
+    <AsyncImage query="Zed editor application screenshot Rust editor dark code" aspectRatio="5:4" maxWidth="128px"/>
+    <box flex="1" gap={1}>
+      **4. <Link url="https://github.com/zed-industries/zed" title="Zed"/>**
+
+      <text color="secondary" size="xs">Rust + GPUI</text>
+      原生高性能代码编辑器的成熟参考。它选择自己的扩展系统，而非复刻 VS Code 的 Node.js 扩展运行时。
+
+      Zed 维护者曾明确表示，没有计划重新实现 VS Code Extension API。<Cite ref="turn796986search1"/>
+    </box>
+  </row>
+</box>
+
+其中我最建议先看的是 **CodeForge 与 DSCode**：前者可以减少我们重写 Flutter 编辑控件的工作，后者可以帮助研究 VS Code 插件兼容层。
+
+## 二、另外两个值得参考的项目
+
+### 5. <Link url="https://github.com/lvce-editor/lvce-editor" title="LVCE Editor"/>：把后台逻辑移出 UI 线程
+
+LVCE 是一个以 VS Code 为设计参考的编辑器，主要使用 JavaScript、Electron 和 Web Worker。它不是 Flutter/Rust 项目，但尝试让大量编辑器逻辑在 Worker 中运行。<Cite ref="turn279633search1"/>
+
+这对我们有一个很实用的启发：
+
+**即使后台工作负载变得很重，也不应该让文件索引、插件执行或语言分析阻塞 GUI 的输入和绘制。**
+
+它的相关测试仓库更值得关注：
+
+<Link url="https://github.com/levivilet/lvce-memory-benchmark" title="LVCE Memory Benchmark"/>
+
+该项目已经建立了一套可复现的内存测试流程，包括：
+
+- VS Code、Lapce、Zed、Geany、Theia、LVCE 等编辑器对比。
+- 64–1024 MiB 内存限制扫描。
+- 禁用 Swap、记录 OOM、启动峰值、PSS、USS 和进程树内存。
+- 自动验证编辑与保存是否成功。
+
+它也明确说明，现有工作负载主要是单文件编辑，而非真实大型 IDE 项目。对于我们来说，可以复用测试思想，再增加实际语言服务器和模型并行运行的场景。<Cite ref="turn937320search0"/>
+
+### 6. <Link url="https://github.com/dstrml/wu" title="Wu"/>：从 Zed 派生的轻量原生编辑器
+
+Wu 是 Zed 的一个分支，使用 Rust 与原生 GPU 渲染，并增加了 Claude Code、Codex、OpenCode 等 Coding Agent 集成功能。
+
+项目宣称内存占用低于 VS Code 和 Zed，也提供三大桌面平台的安装方式。不过这一性能结论同样需要独立复测。<Cite ref="turn270595view1"/>
+
+如果只是想尽快找到一个能与 AI 工作流配合、且不必再运行完整 VS Code 的替代编辑器，Wu 也可以列入试用名单。
+
+## 三、六个项目与我们的设计目标对比
+
+| 项目 | 原生或无 WebView 工作台 | Rust 核心 | 原版 VSIX | 主要参考价值 |
+|---|---|---|---|---|
+| CodeForge | Flutter 原生组件 | 是 | 否 | 编辑器控件 |
+| DSCode | 否，Tauri | 是 | 项目宣称支持，需验证 | 插件宿主 |
+| Lapce | 是 | 是 | 否 | 完整编辑器架构 |
+| Zed | 是 | 是 | 否 | 高性能架构 |
+| LVCE | 否，Electron | 否 | 非主要兼容目标 | Worker 与内存测试 |
+| Wu | 是 | 是 | 非原版扩展体系 | 轻量化与 Agent 集成 |
+
+表中的「原版 VSIX」特指安装并实际运行 VS Code 扩展，而不是通过 LSP 实现类似功能。
+
+**这也解释了为什么目前仍值得开发这个项目：** 已经有项目很好地解决了编辑器内核、原生工作台或插件兼容中的部分问题，但这些解决方案还没有自然地组合成我们想要的产品。
+
+尤其值得注意，CodeForge 的存在意味着我们可能不再需要从零实现 Flutter 代码编辑组件。它可以成为第一版原型的直接候选，而不只是学习对象。
+
+## 四、你的崩溃问题，其实应该改变项目的核心设计目标
+
+你最后补充的使用场景非常重要。
+
+**一个编辑器即使只使用 100 MiB 内存，如果系统一旦出现内存压力就无法响应键盘输入，那么它依然不是我们想要的产品。**
+
+我建议把「低内存占用」升级成「低内存占用 + 内存压力下的稳定性」。
+
+这里有三种需要区别对待的故障：
+
+| 故障来源 | 可能表现 | 编辑器应该如何处理 |
+|---|---|---|
+| 系统 RAM 紧张、频繁换页 | 整个程序卡顿，切换窗口迟缓 | 限制缓存、避免后台内存突增 |
+| GPU/驱动/图形渲染问题 | 窗口空白、界面卡死 | 保持 CPU 绘制后备路径，必要时降低渲染负担 |
+| 插件或语言服务器失控 | 内存持续增长、扩展宿主崩溃 | 子进程隔离、限额、超时和自动恢复 |
+
+这些情况不能仅凭 VS Code 总共占用了 1 GB 就区分出来。例如，VS Code 在 2026 年仍有渲染进程 V8 堆内存耗尽的相关 Issue。此类崩溃甚至可能发生在物理 RAM 尚有剩余的时候。<Cite ref="turn793701search4"/>
+
+### 对新编辑器，我会增加一个独立的「低资源模式」
+
+<box border radius="xl" padding={3} gap={2}>
+  <row align=center gap={2}>
+    <icon name="shield-check" size="lg" color="success"/>
+    **Resource-Constrained Mode**
+  </row>
+  <text color="secondary" size="sm">在资源紧张时，优先保证文本编辑、保存和界面交互，而不是坚持完整的 IDE 后台功能。</text>
+  <divider color="subtle"/>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <icon name="keyboard" color="default"/>
+        **必须保留**
+        <text size="xs">输入、滚动、撤销、文件保存、崩溃恢复</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <icon name="pause-circle" color="secondary"/>
+        **可以降级**
+        <text size="xs">后台索引、实时诊断、部分插件和非必要动画</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+这一机制应当基于真实内存压力信号和可配置的预算触发，而不是简单地在内存达到某个固定百分比时强制结束所有服务。
+
+如果 GUI 进程自己已经被操作系统阻塞甚至终止，它也不能保证恢复。因此还需要独立的文档恢复日志、定期检查点，以及文件原子保存机制。
+
+在 Linux 上，可以结合 cgroup v2 与 PSI 做压力测试；Windows 则需要使用对应的内存和进程资源监测机制。两边的实现不同，但测试目标应该一致。
+
+## 五、在真正开发之前，还可以先排查一下 VS Code
+
+鉴于你说 VS Code 在运行模型时特别容易卡死，我建议先做一次不会干扰模型计算的对照诊断。
+
+在 Windows 终端中执行：
+
+```powershell
+code --disable-extensions
+```
+
+然后在相同模型工作负载下，观察 VS Code 是否仍然出现卡死。如果问题消失，可以用 VS Code 自带的 `Help: Start Extension Bisect` 定位具体扩展；如果问题仍然存在，则应继续检查工作台进程、文件监视、内存压力与图形渲染。
+
+微软官方推荐使用 `Help → Open Process Explorer` 或 `code --status` 查看进程情况。<Cite ref="turn881481search1"/>
+
+另外，如果问题表现为窗口空白、渲染异常，也可以单独试验：
+
+```powershell
+code --disable-gpu
+```
+
+这是 VS Code 官方提供的图形问题排查方式，但它会改为软件渲染，可能增加 CPU 开销，因此不建议在未经验证时永久启用。<Cite ref="turn881481search4"/>
+
+---
+
+## 六、最终我会选择怎样的开发路线？
+
+研究过这些项目以后，我现在更倾向于采用如下组合：
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Workbench**
+
+    <text size="xs" color="secondary">工作台界面 + CodeForge 作为候选编辑组件</text>
+  </box>
+  <row justify=center><icon name="arrow-down" color="tertiary"/></row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Rust Core**
+
+    <text size="xs" color="secondary">参考 Lapce / Helix 的编辑器设计</text>
+  </box>
+  <row justify=center><icon name="git-fork" color="tertiary"/></row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **兼容与语言服务**
+        <text size="xs" color="secondary">参考 DSCode / Theia</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **性能与故障测试**
+        <text size="xs" color="secondary">参考 LVCE Benchmark</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+我还会提出一个关键的开发顺序调整：
+
+**第一版不做插件商城，先做一个能够在大模型占用大量资源时，仍然可靠编辑和保存代码的工作台。**
+
+因为 LSP 已经能满足 Python、C/C++、Rust 的绝大多数日常开发能力，而真正兼容 VS Code 插件是一个可以逐步完善的长期工程。
+
+如果第一版就能在与 VS Code 相同的项目和模型负载下，显著降低内存占用，并表现出更少的卡顿和崩溃，那么即使插件兼容程度暂时不高，它也已经解决了你最初的问题。
+
+我认为值得把 CodeForge、Lapce、DSCode 和 LVCE Benchmark 确定为这个新项目的**首批四个重点技术参考**。它们分别对应编辑控件、Rust 内核、扩展兼容和内存压力验证，能够大幅减少从零探索的工作量。
+
+---
+
+If you want, I can:
+
+- 继续介绍相关项目和案例
+- 分析内存优化策略在现有项目中的应用
+- 探讨针对模型运行时编辑器崩溃问题的解决思路
+
+================================================================================
+### [assistant] (text)
+================================================================================
+## 四、你的崩溃问题，其实应该改变项目的核心设计目标
+
+你最后补充的使用场景非常重要。
+
+**一个编辑器即使只使用 100 MiB 内存，如果系统一旦出现内存压力就无法响应键盘输入，那么它依然不是我们想要的产品。**
+
+我建议把「低内存占用」升级成「低内存占用 + 内存压力下的稳定性」。
+
+这里有三种需要区别对待的故障：
+
+| 故障来源 | 可能表现 | 编辑器应该如何处理 |
+|---|---|---|
+| 系统 RAM 紧张、频繁换页 | 整个程序卡顿，切换窗口迟缓 | 限制缓存、避免后台内存突增 |
+| GPU/驱动/图形渲染问题 | 窗口空白、界面卡死 | 保持 CPU 绘制后备路径，必要时降低渲染负担 |
+| 插件或语言服务器失控 | 内存持续增长、扩展宿主崩溃 | 子进程隔离、限额、超时和自动恢复 |
+
+这些情况不能仅凭 VS Code 总共占用了 1 GB 就区分出来。例如，VS Code 在 2026 年仍有渲染进程 V8 堆内存耗尽的相关 Issue。此类崩溃甚至可能发生在物理 RAM 尚有剩余的时候。<Cite ref="turn793701search4"/>
+
+### 对新编辑器，我会增加一个独立的「低资源模式」
+
+<box border radius="xl" padding={3} gap={2}>
+  <row align=center gap={2}>
+    <icon name="shield-check" size="lg" color="success"/>
+    **Resource-Constrained Mode**
+  </row>
+  <text color="secondary" size="sm">在资源紧张时，优先保证文本编辑、保存和界面交互，而不是坚持完整的 IDE 后台功能。</text>
+  <divider color="subtle"/>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <icon name="keyboard" color="default"/>
+        **必须保留**
+        <text size="xs">输入、滚动、撤销、文件保存、崩溃恢复</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box background="surface-secondary" radius="md" padding={3} gap={1}>
+        <icon name="pause-circle" color="secondary"/>
+        **可以降级**
+        <text size="xs">后台索引、实时诊断、部分插件和非必要动画</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+这一机制应当基于真实内存压力信号和可配置的预算触发，而不是简单地在内存达到某个固定百分比时强制结束所有服务。
+
+如果 GUI 进程自己已经被操作系统阻塞甚至终止，它也不能保证恢复。因此还需要独立的文档恢复日志、定期检查点，以及文件原子保存机制。
+
+在 Linux 上，可以结合 cgroup v2 与 PSI 做压力测试；Windows 则需要使用对应的内存和进程资源监测机制。两边的实现不同，但测试目标应该一致。
+
+## 五、在真正开发之前，还可以先排查一下 VS Code
+
+鉴于你说 VS Code 在运行模型时特别容易卡死，我建议先做一次不会干扰模型计算的对照诊断。
+
+在 Windows 终端中执行：
+
+```powershell
+code --disable-extensions
+```
+
+然后在相同模型工作负载下，观察 VS Code 是否仍然出现卡死。如果问题消失，可以用 VS Code 自带的 `Help: Start Extension Bisect` 定位具体扩展；如果问题仍然存在，则应继续检查工作台进程、文件监视、内存压力与图形渲染。
+
+微软官方推荐使用 `Help → Open Process Explorer` 或 `code --status` 查看进程情况。<Cite ref="turn881481search1"/>
+
+另外，如果问题表现为窗口空白、渲染异常，也可以单独试验：
+
+```powershell
+code --disable-gpu
+```
+
+这是 VS Code 官方提供的图形问题排查方式，但它会改为软件渲染，可能增加 CPU 开销，因此不建议在未经验证时永久启用。<Cite ref="turn881481search4"/>
+
+---
+
+## 六、最终我会选择怎样的开发路线？
+
+研究过这些项目以后，我现在更倾向于采用如下组合：
+
+<box border radius="xl" padding={3} gap={2}>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Flutter Workbench**
+
+    <text size="xs" color="secondary">工作台界面 + CodeForge 作为候选编辑组件</text>
+  </box>
+  <row justify=center><icon name="arrow-down" color="tertiary"/></row>
+  <box background="surface-secondary" radius="md" padding={3} align=center gap={1}>
+    **Rust Core**
+
+    <text size="xs" color="secondary">参考 Lapce / Helix 的编辑器设计</text>
+  </box>
+  <row justify=center><icon name="git-fork" color="tertiary"/></row>
+  <grid columns={2} gap={2}>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **兼容与语言服务**
+        <text size="xs" color="secondary">参考 DSCode / Theia</text>
+      </box>
+    </grid-item>
+    <grid-item>
+      <box border radius="md" padding={3} gap={1}>
+        **性能与故障测试**
+        <text size="xs" color="secondary">参考 LVCE Benchmark</text>
+      </box>
+    </grid-item>
+  </grid>
+</box>
+
+我还会提出一个关键的开发顺序调整：
+
+**第一版不做插件商城，先做一个能够在大模型占用大量资源时，仍然可靠编辑和保存代码的工作台。**
+
+因为 LSP 已经能满足 Python、C/C++、Rust 的绝大多数日常开发能力，而真正兼容 VS Code 插件是一个可以逐步完善的长期工程。
+
+如果第一版就能在与 VS Code 相同的项目和模型负载下，显著降低内存占用，并表现出更少的卡顿和崩溃，那么即使插件兼容程度暂时不高，它也已经解决了你最初的问题。
+
+我认为值得把 CodeForge、Lapce、DSCode 和 LVCE Benchmark 确定为这个新项目的**首批四个重点技术参考**。它们分别对应编辑控件、Rust 内核、扩展兼容和内存压力验证，能够大幅减少从零探索的工作量。

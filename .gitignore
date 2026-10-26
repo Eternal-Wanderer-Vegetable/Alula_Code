@@ -1,0 +1,39 @@
+# Rust
+/target/
+target/
+
+# 核心动态库拷贝（由 scripts/build_core 生成）
+/app/native/
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+app/windows/
+app/linux/
+app/macos/
+app/android/
+app/ios/
+app/web/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# 截图与诊断影像（本地取证用，不入库）
+docs/diagnostics/**/*.png
+docs/diagnostics/**/*.jpg
+docs/diagnostics/**/*.jpeg
+docs/diagnostics/**/*.gif
+
+# 日志与临时产物
+*.log
+app/args_debug.txt
+app/auto_debug.txt
+
+# 其他系统产物
+.DS_Store
+Thumbs.db

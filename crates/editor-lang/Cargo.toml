@@ -1,0 +1,10 @@
+[package]
+name = "editor-lang"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+tree-sitter.workspace = true
+tree-sitter-rust.workspace = true

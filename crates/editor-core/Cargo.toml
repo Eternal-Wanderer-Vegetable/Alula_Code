@@ -1,0 +1,20 @@
+[package]
+name = "editor-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+# rlib 供 workspace 内测试与将来其他 crate 复用；cdylib 供 Dart FFI 加载。
+crate-type = ["rlib", "cdylib"]
+# cdylib 产物名固定为 alula_core（alula_core.dll / libalula_core.so / libalula_core.dylib）
+name = "alula_core"
+
+[dependencies]
+editor-buffer.workspace = true
+editor-lsp.workspace = true
+editor-lang.workspace = true
+editor-workspace.workspace = true
+editor-doc.workspace = true
+serde.workspace = true
+serde_json.workspace = true

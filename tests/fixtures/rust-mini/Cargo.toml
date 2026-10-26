@@ -1,0 +1,11 @@
+[package]
+name = "rust-mini"
+version = "0.1.0"
+edition = "2021"
+
+# 独立 workspace：本 fixture 嵌在 Alula_Code 仓库（其根 Cargo.toml 也是个
+# workspace）内，不声明会被上层 workspace 吞并导致 cargo 报错。
+[workspace]
+
+
+[dependencies]

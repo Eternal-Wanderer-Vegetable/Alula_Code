@@ -1,0 +1,24 @@
+name: component_lab
+description: >-
+  Alula Code Phase 0 任务 0-2：编辑组件统一评测工程。
+  三个候选（code_forge / re_editor / flutter_code_editor）在同一工程内
+  跑相同的自动化评测项（docs/03 §1.2 评测卡中可自动化部分）。
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.13.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  code_forge: ^11.3.0
+  re_editor: ^0.10.0
+  flutter_code_editor: ^0.3.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

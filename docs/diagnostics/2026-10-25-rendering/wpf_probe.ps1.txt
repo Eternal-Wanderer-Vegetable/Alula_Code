@@ -1,0 +1,40 @@
+Add-Type -AssemblyName PresentationFramework
+Add-Type -AssemblyName System.Drawing
+
+$w = New-Object System.Windows.Window
+$w.Title = 'WPF-PROBE'
+$w.Width = 500
+$w.Height = 300
+$w.Background = New-Object System.Windows.Media.SolidColorBrush ([System.Windows.Media.Color]::FromRgb(200, 30, 30))
+$t = New-Object System.Windows.Controls.Label
+$t.Content = 'WPF RENDER OK'
+$t.FontSize = 40
+$t.Foreground = [System.Windows.Media.Brushes]::White
+$w.Content = $t
+$w.Show()
+
+# 让 WPF 完成渲染布局
+for ($i = 0; $i -lt 20; $i++) {
+    $w.Dispatcher.Invoke([Action]{}, [System.Windows.Threading.DispatcherPriority]::Background)
+    Start-Sleep -Milliseconds 200
+}
+
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public class WE {
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+  public struct RECT { public int Left, Top, Right, Bottom; }
+}
+'@
+$r = New-Object WE+RECT
+$helper = New-Object System.Windows.Interop.WindowInteropHelper $w
+[WE]::GetWindowRect($helper.Handle, [ref]$r) | Out-Null
+$bmp = New-Object System.Drawing.Bitmap(($r.Right - $r.Left), ($r.Bottom - $r.Top))
+$g = [System.Drawing.Graphics]::FromImage($bmp)
+$g.CopyFromScreen($r.Left, $r.Top, 0, 0, $bmp.Size)
+$bmp.Save('E:\Alula_Code\wpf_probe.png')
+$g.Dispose()
+$bmp.Dispose()
+$w.Close()
+Write-Host 'WPF 探针截图完成'

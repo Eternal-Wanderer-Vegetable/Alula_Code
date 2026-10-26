@@ -1,0 +1,28 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/editor-buffer",
+    "crates/editor-core",
+    "crates/editor-lsp",
+    "crates/editor-lang",
+    "crates/editor-workspace",
+    "crates/editor-doc",
+    "tools/mem-probe",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+ropey = "1.6"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+editor-buffer = { path = "crates/editor-buffer" }
+editor-lsp = { path = "crates/editor-lsp" }
+editor-lang = { path = "crates/editor-lang" }
+editor-workspace = { path = "crates/editor-workspace" }
+editor-doc = { path = "crates/editor-doc" }
+tree-sitter = "0.25"
+tree-sitter-rust = "0.23"

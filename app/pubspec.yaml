@@ -1,0 +1,23 @@
+name: alula_app
+description: >-
+  Alula Code — MVP 原型 B：Flutter 工作台 + Rust 核心（editor-core），
+  验证「编辑 → 增量同步 → Rust 应用 → 版本回执」闭环（docs/03 Phase 0 任务 0-1）。
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
+  ffi: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

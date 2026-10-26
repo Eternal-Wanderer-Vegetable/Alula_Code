@@ -1,0 +1,302 @@
+{
+  "label": "prototypeA-fullext",
+  "exe": "E:\\vscode-oss\\.build\\electron\\Code - OSS.exe",
+  "args": [
+    "--user-data-dir=E:\\vscode-oss\\.build\\vsdiag-profile",
+    "E:\\Alula_Code\\tests\\fixtures\\rust-mini"
+  ],
+  "duration_s": 45.0,
+  "interval_s": 1.0,
+  "root_pid": 26968,
+  "platform": "windows",
+  "captured_at": "2026-10-26 07:17:24 UTC",
+  "samples": [
+    {
+      "t": 1.2e-6,
+      "total_private": 9613312,
+      "total_working_set": 16314368,
+      "n_processes": 1
+    },
+    {
+      "t": 1.0014725,
+      "total_private": 25513984,
+      "total_working_set": 57450496,
+      "n_processes": 1
+    },
+    {
+      "t": 2.0020616,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 3.0031463,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 4.0043418,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 5.0051677,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 6.0061414,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 7.0072689,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 8.0080744,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 9.0093915,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 10.0102726,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 11.0113268,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 12.0122868,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 13.0133275,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 14.0142496,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 15.015101,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 16.0163292,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 17.0174923,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 18.018093,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 19.0192312,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 20.0202069,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 21.0214711,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 22.0223115,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 23.0233828,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 24.0242848,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 25.0255025,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 26.0263522,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 27.0274538,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 28.0282387,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 29.0293221,
+      "total_private": 25526272,
+      "total_working_set": 57479168,
+      "n_processes": 1
+    },
+    {
+      "t": 30.0301656,
+      "total_private": 25456640,
+      "total_working_set": 57442304,
+      "n_processes": 1
+    },
+    {
+      "t": 31.0310538,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 32.032451,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 33.0332085,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 34.0340706,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 35.0352665,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 36.0365099,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 37.0374276,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 38.0384006,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 39.0394364,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 40.0400819,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 41.0414627,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 42.042153,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 43.0438814,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    },
+    {
+      "t": 44.0441069,
+      "total_private": 25456640,
+      "total_working_set": 57446400,
+      "n_processes": 1
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 26968,
+      "ppid": 19452,
+      "name": "Code - OSS.exe",
+      "working_set": 57446400,
+      "private": 25456640,
+      "peak_private": 25530368,
+      "pss": 25456640
+    }
+  ],
+  "summary": {
+    "peak_private": 25526272,
+    "stable_private": 25456640,
+    "final_private": 25456640,
+    "final_working_set": 57446400
+  }
+}
