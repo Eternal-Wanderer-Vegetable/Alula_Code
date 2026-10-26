@@ -9,6 +9,19 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-26 第六轮）：W2-3 面包屑 + W2-4 会话 journal + 冒烟
+
+- **W2-3 面包屑**：工作区相对路径段（根以下，对标 VS Code），点文件夹段唤起
+  侧栏并沿祖先链展开文件树；多组各自有面包屑。
+- **W2-4 会话 journal**：SessionStore（session.json 原子写盘，损坏回退）；启动恢复
+  组/标签/焦点/文件树/未保存文本（journal 文本优先于磁盘；脏标记不跨重启保留，
+  内容优先）；单文档文本上限 2M 字符。**顺手修正隐性 bug**：原 isDirty 是同步
+  基线差值（每次 apply 后基线前移 → 脏点永不显示），新增 dirtyDisk 真磁盘脏标记。
+- **实机冒烟**：W2 Release 稳态 189.9 MiB（+1.8% < 5% 护栏，≤200 线内），
+  docs/baselines/2026-10-26/alula-w2-empty.md；启动级验证了两笔 Risk high 提交。
+- ⚠️ 仍需人工交互复验：拆分/拖标签/强杀后 journal 恢复（真窗口操作）。
+- DoD：init.sh 全绿（Rust 41 + Flutter 58）。
+
 ## 今日会话（2026-10-26 第五轮）：W2-2 编辑器组拆分
 
 - **W2-2a 布局树分裂原语（commit 7a9d33a）**：splitLeaf（叶子→嵌套分割，权重交接，

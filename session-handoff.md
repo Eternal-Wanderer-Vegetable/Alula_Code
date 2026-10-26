@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第六轮收尾：W2-2 编辑器组拆分完成，下一任务 W2-3 面包屑）
+> Last Updated：2026-10-26（第七轮收尾：W2-3/W2-4 完成 + 冒烟通过；W2 只剩交互级人工复验）
 
 ## 项目一句话
 
@@ -10,13 +10,15 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**W1 全部完成（feat-015 done）+ W2-1 标签条交互 + W2-2 编辑器组拆分完成**
-（52 测试绿；⚠️ W2-2b 被 GitNexus 评 Risk high，建议实机复验后推送）。
-编辑器组现状：splitLeaf/removeLeaf 布局原语 + EditorGroup 按组持有文档 +
-焦点组路由 + 拆分按钮 + 空组自动并组；布局序列化天然支持多组（重启恢复组结构，
-组内文档恢复属 W2-4 journal）。
-**下轮首任务 W2-3 面包屑**：编辑器区顶部路径段（workspace 相对路径拆段 + 可点击
-跳转文件树）；符号大纲需 editor-lang 扩展 symbol 查询 + FFI（Rust 侧改动，单独做）。
+**W1 全部完成（feat-015 done）+ W2-1/2/3/4 全部完成**（58 测试绿 + init.sh 全绿；
+实机冒烟稳态 189.9 MiB，docs/baselines/2026-10-26/alula-w2-empty.md）。
+- W2 已落能力：标签条交互（溢出/中键/拖动排序）、编辑器组（拆分/焦点路由/空组并组）、
+  面包屑（点击展开树）、会话 journal（未保存内容崩溃恢复）+ dirtyDisk 真脏标记
+  （修正了原 isDirty 永假的隐性 bug，标签脏点现在正确显示）。
+- ⚠️ 交互级人工复验未做（agent 无法操作真窗口）：拆分按钮/拖标签/强杀进程后
+  重启恢复未保存内容。复验通过即可 push。
+- 下轮候选：W2-5 符号大纲面包屑（需 editor-lang symbol 查询 + FFI，Rust 侧）、
+  W3 命令面板（CommandRegistry/QuickInput，docs/09）、feat-010 撤销重做/查找替换。
 
 ## 本会话完成了什么
 
@@ -43,6 +45,8 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Blockers（阻塞项）
 
+- **W2 交互级人工复验**（agent 无法操作真窗口）：拆分/拖标签/强杀恢复，
+  清单见 Next Session 第 2 条。
 - CI/CD 工作流未在 GitHub Actions 实机跑过（remote 已配置：
   github.com/Eternal-Wanderer-Vegetable/Alula_Code，需用户推送）。
 - feat-002 编辑器组件人工复核需真机 + 微软拼音（人工环节，agent 无法替代）。
@@ -59,9 +63,10 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **W2-3 面包屑**（路径段先行，符号大纲接 editor-lang symbol 查询需 Rust 侧配合）；
-   之后 W2-4 会话恢复（journal：未保存缓冲 + 打开标签）。
-3. **实机复验 W2-2b**（Risk high）：flutter run -d windows，拆分/拖标签/多组开关文件夹。
+2. **人工交互复验（需真窗口，见 Blockers）**：`flutter run -d windows` →
+   ① 拆分按钮出双组、拖标签跨组；② 编辑不保存 → 任务管理器强杀 → 重启 →
+   未保存内容从 journal 恢复；③ 标签脏点（•）随编辑出现、Ctrl+S 消失。
+3. 复验通过后 `git push`（CI 首跑 + Linux PSS 首验）。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
 
 ## 已知坑
