@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
   ffi: ^2.1.0
+  window_manager: ^0.5.2
 
 dev_dependencies:
   flutter_test:

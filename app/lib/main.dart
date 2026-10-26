@@ -9,16 +9,31 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'workbench/layout_store.dart';
 import 'workbench/workbench_page.dart';
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // 无边框窗口（W1-3）：原生标题栏隐藏，自绘标题栏接管拖拽与窗口控制。
+  // 仅真实入口执行；widget 测试直接 pump AlulaApp，不触碰插件。
+  await windowManager.ensureInitialized();
+  const options = WindowOptions(
+    title: 'Alula Code',
+    minimumSize: Size(640, 400),
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  await windowManager.waitUntilReadyToShow(options, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
   runApp(AlulaApp(
     autoLsp: args.contains('--lsp-auto'),
     autoFolder: args.contains('--lsp-auto')
         ? r'E:\Alula_Code\tests\fixtures\rust-mini'
         : null,
+    windowControls: true,
   ));
 }
 
@@ -28,6 +43,7 @@ class AlulaApp extends StatelessWidget {
     this.autoLsp = false,
     this.autoFolder,
     this.layoutStore,
+    this.windowControls = false,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -38,6 +54,11 @@ class AlulaApp extends StatelessWidget {
 
   /// 布局持久化注入点（测试用临时路径；默认真实用户目录）。
   final LayoutStore? layoutStore;
+
+  /// 自绘窗口控制按钮（- □ ×）与拖拽移动区。
+  /// 默认关闭：widget 测试环境没有 window_manager 插件通道；
+  /// 真实入口 main() 显式开启。
+  final bool windowControls;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +73,7 @@ class AlulaApp extends StatelessWidget {
         autoLsp: autoLsp,
         autoFolder: autoFolder,
         layoutStore: layoutStore,
+        windowControls: windowControls,
       ),
     );
   }

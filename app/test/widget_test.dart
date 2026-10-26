@@ -31,6 +31,15 @@ void main() {
         reason: '活动栏应有资源管理器');
   });
 
+  testWidgets('窗口控制按钮：windowControls 开启时渲染（W1-3）', (tester) async {
+    await tester.pumpWidget(AlulaApp(layoutStore: store, windowControls: true));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byTooltip('最小化'), findsOneWidget);
+    expect(find.byTooltip('最大化'), findsOneWidget);
+    expect(find.byTooltip('关闭'), findsOneWidget);
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(

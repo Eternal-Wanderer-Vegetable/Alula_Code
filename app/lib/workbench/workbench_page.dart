@@ -56,6 +56,7 @@ class WorkbenchPage extends StatefulWidget {
     this.autoLsp = false,
     this.autoFolder,
     LayoutStore? layoutStore,
+    this.windowControls = false,
   }) : layoutStore = layoutStore ?? _defaultStore;
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -66,6 +67,9 @@ class WorkbenchPage extends StatefulWidget {
 
   /// 布局持久化（测试注入临时路径，避免读写真实 ~/.alula/layout.json）。
   final LayoutStore layoutStore;
+
+  /// 自绘窗口控制按钮（真实窗口开启；测试关闭，避免触碰插件通道）。
+  final bool windowControls;
 
   static final LayoutStore _defaultStore = LayoutStore();
 
@@ -596,7 +600,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: Column(
         children: [
-          AlulaTitleBar(menus: [
+          AlulaTitleBar(
+              windowControls: widget.windowControls,
+              menus: [
             (
               '文件',
               [
