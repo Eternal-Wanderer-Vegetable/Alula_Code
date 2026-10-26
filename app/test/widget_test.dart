@@ -4,17 +4,21 @@ import 'dart:io';
 
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // 布局持久化指向临时文件：测试不读写真实 ~/.alula/layout.json
+  // 布局与会话 journal 都指向临时文件：测试不读写真实 ~/.alula/*
   late Directory tmp;
   late LayoutStore store;
+  late SessionStore session;
   setUp(() async {
     tmp = await Directory.systemTemp.createTemp('alula_widget_test');
-    store = LayoutStore(path: '${tmp.path.replaceAll(r'\', '/')}/layout.json');
+    final base = tmp.path.replaceAll(r'\', '/');
+    store = LayoutStore(path: '$base/layout.json');
+    session = SessionStore(path: '$base/session.json');
   });
   tearDown(() async {
     if (tmp.existsSync()) await tmp.delete(recursive: true);
@@ -33,7 +37,11 @@ void main() {
   });
 
   testWidgets('窗口控制按钮：windowControls 开启时渲染（W1-3）', (tester) async {
-    await tester.pumpWidget(AlulaApp(layoutStore: store, windowControls: true));
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: store,
+      sessionStore: session,
+      windowControls: true,
+    ));
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.byTooltip('最小化'), findsOneWidget);
@@ -45,6 +53,7 @@ void main() {
     await tester.pumpWidget(AlulaApp(
       autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
       layoutStore: store,
+      sessionStore: session,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -87,6 +96,7 @@ void main() {
     await tester.pumpWidget(AlulaApp(
       autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
       layoutStore: store,
+      sessionStore: session,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -129,6 +139,7 @@ void main() {
     await tester.pumpWidget(AlulaApp(
       autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
       layoutStore: store,
+      sessionStore: session,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -158,11 +169,44 @@ void main() {
         reason: '面包屑点击应展开文件树，main.rs 回到 树+标签+面包屑 三处');
   });
 
+  testWidgets('W2-4 journal：重启恢复标签与未保存内容', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+      sessionStore: session,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 打开 Cargo.toml 并做未保存编辑
+    await tester.tap(find.text('Cargo.toml'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.enterText(find.byType(TextField), '// dirty edit\n');
+    await tester.pump(const Duration(milliseconds: 700)); // 越过 500ms 防抖
+
+    // 卸载（dispose 冲写 journal）→ 「重启」
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+      sessionStore: session,
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    // 标签恢复：树 + 标签 + 面包屑 三处
+    expect(find.text('Cargo.toml'), findsNWidgets(3),
+        reason: '重启后 Cargo.toml 应自动恢复打开');
+    // 未保存内容恢复（脏标记不跨重启保留，内容优先）
+    final editor = tester.widget<TextField>(find.byType(TextField));
+    expect(editor.controller!.text, contains('// dirty edit'),
+        reason: '未保存编辑内容应从 journal 恢复');
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(
       autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
       layoutStore: store,
+      sessionStore: session,
     ));
     // 越过 100ms 延迟触发 + listDir FFI + setState
     await tester.pump(const Duration(milliseconds: 500));

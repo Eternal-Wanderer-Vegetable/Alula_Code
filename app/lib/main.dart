@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'workbench/layout_store.dart';
+import 'workbench/session_store.dart';
 import 'workbench/workbench_page.dart';
 
 Future<void> main(List<String> args) async {
@@ -43,6 +44,7 @@ class AlulaApp extends StatelessWidget {
     this.autoLsp = false,
     this.autoFolder,
     this.layoutStore,
+    this.sessionStore,
     this.windowControls = false,
   });
 
@@ -54,6 +56,9 @@ class AlulaApp extends StatelessWidget {
 
   /// 布局持久化注入点（测试用临时路径；默认真实用户目录）。
   final LayoutStore? layoutStore;
+
+  /// 会话 journal 注入点（测试用临时路径；默认真实用户目录）。
+  final SessionStore? sessionStore;
 
   /// 自绘窗口控制按钮（- □ ×）与拖拽移动区。
   /// 默认关闭：widget 测试环境没有 window_manager 插件通道；
@@ -73,6 +78,7 @@ class AlulaApp extends StatelessWidget {
         autoLsp: autoLsp,
         autoFolder: autoFolder,
         layoutStore: layoutStore,
+        sessionStore: sessionStore,
         windowControls: windowControls,
       ),
     );

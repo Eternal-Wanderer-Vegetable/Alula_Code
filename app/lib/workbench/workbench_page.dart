@@ -22,6 +22,7 @@ import 'activity_bar.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'layout_store.dart';
+import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
 
@@ -57,8 +58,10 @@ class WorkbenchPage extends StatefulWidget {
     this.autoLsp = false,
     this.autoFolder,
     LayoutStore? layoutStore,
+    SessionStore? sessionStore,
     this.windowControls = false,
-  }) : layoutStore = layoutStore ?? _defaultStore;
+  })  : layoutStore = layoutStore ?? _defaultStore,
+        sessionStore = sessionStore ?? _defaultSessionStore;
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
   final bool autoLsp;
@@ -69,10 +72,14 @@ class WorkbenchPage extends StatefulWidget {
   /// 布局持久化（测试注入临时路径，避免读写真实 ~/.alula/layout.json）。
   final LayoutStore layoutStore;
 
+  /// 会话 journal（测试注入临时路径）。
+  final SessionStore sessionStore;
+
   /// 自绘窗口控制按钮（真实窗口开启；测试关闭，避免触碰插件通道）。
   final bool windowControls;
 
   static final LayoutStore _defaultStore = LayoutStore();
+  static final SessionStore _defaultSessionStore = SessionStore();
 
   @override
   State<WorkbenchPage> createState() => _WorkbenchPageState();
@@ -88,7 +95,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
-  Timer? _layoutSaveTimer;
+  Timer? _stateSaveTimer;
+
+  /// journal 单文档文本上限（字符）：超出不落 journal（内容只存在于内存，
+  /// 崩溃后该文档回退为磁盘内容）。低内存纪律：journal 不做无界缓冲。
+  static const _kMaxJournalTextChars = 2000000;
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
@@ -123,7 +134,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
     }
-    _layout.addListener(_scheduleLayoutSave);
+    _layout.addListener(_scheduleStateSave);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
       _groups['editor'] = EditorGroup('editor');
@@ -131,48 +142,193 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _initCore();
   }
 
-  /// 布局变更防抖落盘（拖拽过程每帧都通知，不能每帧写盘）。
-  void _scheduleLayoutSave() {
-    _layoutSaveTimer?.cancel();
-    _layoutSaveTimer = Timer(const Duration(milliseconds: 500), () {
+  /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
+  void _scheduleStateSave() {
+    _stateSaveTimer?.cancel();
+    _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
       widget.layoutStore.save(_layout.root);
+      widget.sessionStore.save(_encodeSession());
     });
   }
+
+  /// 会话 journal 序列化：文档文本只在 untitled 或已脏时落盘；
+  /// 干净文件恢复时从磁盘重读（journal 保持小）。
+  Map<String, Object?> _encodeSession() => {
+        'v': 1,
+        'focused': _focusedRegion,
+        if (_workspaceRoot != null) 'workspace': _workspaceRoot,
+        'groups': [
+          for (final g in _groups.values)
+            {
+              'region': g.region,
+              'active': g.activeDocId,
+              'docs': [
+                for (final d in g.docs)
+                  {
+                    'id': d.id,
+                    if (d.path != null) 'path': d.path,
+                    if ((d.isUntitled || d.isDirty) &&
+                        d.controller.text.length <= _kMaxJournalTextChars)
+                      'text': d.controller.text,
+                  }
+              ],
+            }
+        ],
+      };
 
   void _initCore() {
     try {
       final core = AlulaCore.load();
       _core = core;
       _abiVersion = core.abiVersion;
-      const welcome =
-          '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
-      final doc = core.openDoc(_untitledId, welcome);
-      final controller = TextEditingController(text: welcome);
-      final untitled = OpenDoc(
-        id: _untitledId,
-        name: '未命名',
-        doc: doc,
-        controller: controller,
-        savedText: welcome,
-      );
+      _restoreSession(core);
+      // journal 没有未命名文档时才建欢迎页（避免恢复后出现重复未命名）
       final g = _focused;
-      g.docs.add(untitled);
-      g.activeDocId = _untitledId;
-      controller.addListener(() => _onDocChanged(_untitledId));
+      if (!g.docs.any((d) => d.isUntitled)) {
+        const welcome =
+            '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
+        final doc = core.openDoc(_untitledId, welcome);
+        final controller = TextEditingController(text: welcome);
+        final untitled = OpenDoc(
+          id: _untitledId,
+          name: '未命名',
+          doc: doc,
+          controller: controller,
+          savedText: welcome,
+        );
+        g.docs.add(untitled);
+        controller.addListener(() => _onDocChanged(_untitledId));
+        _scheduleStateSave();
+      }
+      if (g.activeDocId == null && g.docs.isNotEmpty) {
+        g.activeDocId = g.docs.last.id;
+      }
       _state = WbSyncState.idle;
       _statusDetail = '已连接 Rust 核心 v$_abiVersion';
-      if (widget.autoFolder != null &&
+      var openedFolder = false;
+      if (_workspaceRoot == null &&
+          widget.autoFolder != null &&
           Directory(widget.autoFolder!).existsSync()) {
         _openFolder(widget.autoFolder!);
-        if (widget.autoLsp) {
-          Future<void>.delayed(
-              const Duration(milliseconds: 50), _startLsp);
-        }
+        openedFolder = true;
+      } else if (_workspaceRoot != null) {
+        _reloadTreeRoots();
+      }
+      if (openedFolder && widget.autoLsp) {
+        Future<void>.delayed(
+            const Duration(milliseconds: 50), _startLsp);
       }
     } catch (e) {
       _loadError = e.toString();
       _state = WbSyncState.error;
       _statusDetail = '核心加载失败';
+    }
+  }
+
+  /// 恢复上次会话（W2-4）：组/标签/焦点/工作区 + 未保存文本。
+  /// 脏文件的脏标记不跨重启保留（内容优先）：恢复后 savedText = 恢复文本，
+  /// 首次编辑从恢复文本继续增量同步。journal 损坏一律按全新会话启动。
+  void _restoreSession(AlulaCore core) {
+    final data = widget.sessionStore.tryLoad();
+    if (data == null) return;
+    try {
+      final groupsRaw = data['groups'];
+      if (groupsRaw is! List) return;
+      var maxId = 1;
+      for (final gr in groupsRaw) {
+        if (gr is! Map) continue;
+        final region = gr['region'];
+        if (region is! String || !_isEditorRegion(region)) continue;
+        final target = _groups[region];
+        if (target == null) continue; // 布局里已无此组：跳过
+        final docsRaw = gr['docs'];
+        if (docsRaw is! List) continue;
+        for (final dr in docsRaw) {
+          if (dr is! Map) continue;
+          final id = (dr['id'] as num?)?.toInt();
+          if (id == null) continue;
+          final path = dr['path'] as String?;
+          final text = dr['text'] as String?;
+          String? content;
+          String savedText;
+          // 优先级：journal 文本（未保存内容）> 磁盘内容；脏标记不跨重启保留
+          if (path != null) {
+            String? disk;
+            try {
+              disk = core.workspace.readFile(path);
+            } on AlulaException {
+              disk = null; // 磁盘文件没了：只能靠 journal
+            }
+            if (text != null) {
+              content = text;
+            } else if (disk != null) {
+              content = disk;
+            } else {
+              continue;
+            }
+          } else {
+            if (text == null) continue; // untitled 缺 journal 文本：跳过
+            content = text;
+          }
+          savedText = content;
+          final doc = core.openDoc(id, content);
+          final name =
+              path != null ? _nameOf(path) : '未命名';
+          final controller = TextEditingController(text: content);
+          final open = OpenDoc(
+            id: id,
+            path: path,
+            uri: path != null ? _pathToUri(path) : null,
+            name: name,
+            doc: doc,
+            controller: controller,
+            savedText: savedText,
+          );
+          target.docs.add(open);
+          controller.addListener(() => _onDocChanged(id));
+          if (id > maxId) maxId = id;
+        }
+        final active = (gr['active'] as num?)?.toInt();
+        if (target.docs.isNotEmpty) {
+          target.activeDocId =
+              target.docs.any((d) => d.id == active) ? active : target.docs.last.id;
+        }
+      }
+      final focused = data['focused'];
+      if (focused is String && _groups.containsKey(focused)) {
+        _focusedRegion = focused;
+      }
+      final workspace = data['workspace'];
+      if (workspace is String && Directory(workspace).existsSync()) {
+        _workspaceRoot = workspace;
+      }
+      _nextDocId = maxId + 1;
+    } catch (_) {
+      // journal 损坏：忽略（组状态保持空，按全新会话继续）
+    }
+  }
+
+  String _nameOf(String path) =>
+      path.replaceAll('\\', '/').split('/').last;
+
+  /// 重载文件树根（journal 恢复工作区后）。
+  void _reloadTreeRoots() {
+    final core = _core;
+    final root = _workspaceRoot;
+    if (core == null || root == null) return;
+    try {
+      final entries = core.workspace.listDir(root);
+      _treeRoots
+        ..clear()
+        ..addAll(entries
+            .map((e) => TreeNode(
+                  name: e['name'] as String,
+                  path: e['path'] as String,
+                  isDir: (e['is_dir'] as bool?) ?? false,
+                ))
+            .toList());
+    } on AlulaException catch (_) {
+      // 工作区目录不可读：树保持空，用户可重新打开文件夹
     }
   }
 
@@ -221,6 +377,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (ops.isEmpty) return;
     doc.savedText = newText; // 同步基准前移（失败时由失配分支恢复）
 
+    doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
+    _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
     final sw = Stopwatch()..start();
     try {
       final version = doc.doc.apply(ops);
@@ -275,6 +433,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toList());
         _statusDetail = '工作区：$path（${entries.length} 项）';
         _layout.showRegion('sidebar');
+        _scheduleStateSave();
       });
     } on AlulaException catch (e) {
       setState(() {
@@ -377,6 +536,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         g.docs.add(open);
         g.activeDocId = id;
       });
+      _scheduleStateSave();
       controller.addListener(() => _onDocChanged(id));
       if (_lspReady) {
         try {
@@ -428,6 +588,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _focusedRegion = _groups.keys.first;
         }
       }
+      _scheduleStateSave();
     });
   }
 
@@ -447,6 +608,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _ensureGroupsFromLayout();
       _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
       _statusDetail = '已拆分编辑器：$region → $fresh';
+      _scheduleStateSave();
     });
   }
 
@@ -578,9 +740,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     try {
       active.doc.saveFile(active.path!);
       active.savedText = active.controller.text;
+      active.dirtyDisk = false;
       setState(() {
         _statusDetail = '已原子保存 ${active.name}（v${active.doc.version}）';
       });
+      _scheduleStateSave(); // 保存后 journal 里的 text 分支消失（转干净）
       if (active.lspAttached && _lspReady) {
         try {
           active.doc.core.lsp.didSave(active.id);
@@ -629,8 +793,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _pollTimer?.cancel();
-    _layoutSaveTimer?.cancel();
-    widget.layoutStore.save(_layout.root); // 退出前把未落盘的布局变更冲写
+    _stateSaveTimer?.cancel();
+    // 退出前把未落盘的布局与会话冲写
+    widget.layoutStore.save(_layout.root);
+    widget.sessionStore.save(_encodeSession());
     for (final d in _allDocs) {
       d.controller.dispose();
     }
@@ -1024,6 +1190,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final doc = g.docs.removeAt(from);
       g.docs.insert(to, doc);
     });
+    _scheduleStateSave();
   }
 
   Widget _buildEditor(EditorGroup g) {
@@ -1247,11 +1414,15 @@ class OpenDoc {
   final AlulaDoc doc;
   final TextEditingController controller;
 
-  /// 上次保存时的全文（脏标记基准）。
+  /// 上次保存时的全文（FFI 增量同步基准；每次成功 apply 都会前移，
+  /// 因此不能当「与磁盘不一致」的脏标记用）。
   String savedText;
   bool lspAttached = false;
 
-  bool get isDirty => savedText != controller.text;
+  /// 与磁盘不一致（有未保存的用户编辑）：编辑置位、saveFile 复位。
+  bool dirtyDisk = false;
+
+  bool get isDirty => dirtyDisk;
   bool get isUntitled => path == null;
 }
 
