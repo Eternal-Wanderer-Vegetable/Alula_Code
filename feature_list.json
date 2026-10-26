@@ -99,10 +99,10 @@
     {
       "id": "feat-015",
       "name": "W1 布局骨架：WorkbenchGrid + 五大区 + 标题栏 + 持久化",
-      "description": "docs/09 W1：二叉分割树布局（拖拽/最小尺寸/折叠）、活动栏/侧栏/编辑器/面板/状态栏五大区、标题栏菜单第一版、布局持久化与重启恢复。剩余：无边框窗口（window_manager，被 Windows 开发者模式阻塞）、实机内存复测",
+      "description": "docs/09 W1 全项：二叉分割树布局（拖拽/最小尺寸/折叠）、五大区、标题栏菜单 + 无边框窗口（window_manager：拖拽移动/双击最大化/窗口按钮）、布局持久化与恢复",
       "dependencies": ["feat-008"],
-      "status": "in-progress",
-      "evidence": "init.sh 全绿（2026-10-26）；flutter 42 测试（模型 18 + 网格交互 5 + 存储 4 + FFI/widget 15）；布局持久化原子写盘单测覆盖"
+      "status": "done",
+      "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）"
     },
     {
       "id": "feat-013",

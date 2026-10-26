@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第三轮会话收尾：W1 布局骨架落地）
+> Last Updated：2026-10-26（第四轮收尾：W1-3 补完 + 内存验收通过，feat-015 done）
 
 ## 项目一句话
 
@@ -10,10 +10,10 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**docs/09 W1 布局骨架已基本落地**（模型/网格/五大区/持久化，4 笔提交）。
-剩余收口：① W1-3 无边框窗口（阻塞：Windows 开发者模式未开）；② 实机内存复测
-（mem-probe 对比 docs/baselines/，需跑 Release）。之后进 W2（编辑器组：多标签拆分/面包屑）
-或 feat-010（撤销重做/查找替换），由用户定优先级。
+**docs/09 W1 布局骨架已全部完成（feat-015 done）**：模型/网格/五大区/持久化/
+无边框窗口全落地；Release 实机复测稳态 186.6 MiB（≤200 验收线过，+4.0% 低于护栏）。
+**下一步是 W2（编辑器组：标签拖动排序/跨组拖动/编辑器拆分/面包屑）**，
+feat-010（撤销重做/查找替换）为并行线，优先级由用户定。
 
 ## 本会话完成了什么
 
@@ -40,9 +40,6 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Blockers（阻塞项）
 
-- **W1-3 无边框标题栏**：`flutter pub add window_manager` 需要 Windows
-  **开发者模式**（pub 插件符号链接要求）。开启方式：`start ms-settings:developers`。
-  开启后装依赖 + 在 title_bar.dart 的 trailing 挂点接窗口按钮与 DragToMoveArea。
 - CI/CD 工作流未在 GitHub Actions 实机跑过（remote 已配置：
   github.com/Eternal-Wanderer-Vegetable/Alula_Code，需用户推送）。
 - feat-002 编辑器组件人工复核需真机 + 微软拼音（人工环节，agent 无法替代）。
@@ -59,11 +56,9 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **W1 收口二选一**（按用户优先级）：
-   - 用户已开开发者模式 → 补 W1-3：`flutter pub add window_manager`，main() 初始化
-     TitleBarStyle.hidden，title_bar.dart 接 DragToMoveArea + 窗口按钮；然后实机跑
-     `tools/mem-probe` 复测空载内存（W1 验收）。
-   - 直接进 W2（编辑器组：标签拖动/拆分/面包屑，docs/09 §3 W2）。
+2. **进 W2 编辑器组**（docs/09 §3 W2）：标签溢出滚动/拖动排序/中键关闭、
+   编辑器组拆分（2×2，复用 WorkbenchGrid！）、面包屑（tree-sitter 符号）；
+   布局树叶子从「区域」扩展为「编辑器组」是核心改造点。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
 
 ## 已知坑

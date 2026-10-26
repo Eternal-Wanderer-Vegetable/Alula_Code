@@ -21,12 +21,16 @@
   main.dart 瘦身。38 测试。commit `W1-2`。
 - **W1-4 布局持久化**：LayoutStore（原子写盘 + 损坏回退）、启动恢复、500ms 防抖落盘、
   dispose 冲写；layoutStore 注入点隔离测试与真实用户目录。42 测试。commit `W1-4`。
-- **W1-3 无边框标题栏（延期）**：菜单栏已随 W1-2 完成；window_manager 因
-  Windows 未开开发者模式无法安装（pub 插件符号链接要求）——开启后
-  `flutter pub add window_manager` 并接 title_bar.dart 的 trailing 挂点即可。
+- **W1-3 无边框标题栏（已完成）**：用户开启开发者模式后接入 window_manager 0.5.2：
+  TitleBarStyle.hidden + DragToMoveArea 拖拽移动 + 双击切换最大化 + -/□/× 窗口按钮
+  （WindowListener 跟踪最大化态）；windowControls 显式开关隔离测试与插件通道。
+- **W1 验收内存复测（已过）**：Release 实机 mem-probe 45s 采样，
+  **稳态 186.6 MiB / 峰值 197.1 MiB**（≤200 验收线），较 MVP 基线 179.2 **+4.0%**
+  （低于 5% 护栏，归属 = 工作台外壳），报告 docs/baselines/2026-10-26/alula-w1-empty.md。
+- **feat-015 关闭（done）**：W1 全项完成。
 - **决策微调**：Riverpod 推迟到 W3（命令/键位系统）引入；W1 用 ChangeNotifier +
   ListenableBuilder 已满足细粒度重建，少一个依赖。
-- DoD：init.sh 全绿（Rust 41 + Flutter 42）。
+- DoD：init.sh 全绿（Rust 41 + Flutter 43）。
 
 ## 上一会话（2026-10-26 第二轮）：工程化建设
 
