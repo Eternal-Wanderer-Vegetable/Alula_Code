@@ -10,6 +10,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'workbench/layout_store.dart';
 import 'workbench/workbench_page.dart';
 
 void main(List<String> args) {
@@ -22,13 +23,21 @@ void main(List<String> args) {
 }
 
 class AlulaApp extends StatelessWidget {
-  const AlulaApp({super.key, this.autoLsp = false, this.autoFolder});
+  const AlulaApp({
+    super.key,
+    this.autoLsp = false,
+    this.autoFolder,
+    this.layoutStore,
+  });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
   final bool autoLsp;
 
   /// 随 autoLsp 一起自动打开的文件夹。
   final String? autoFolder;
+
+  /// 布局持久化注入点（测试用临时路径；默认真实用户目录）。
+  final LayoutStore? layoutStore;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +48,11 @@ class AlulaApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFF14161A),
       ),
-      home: WorkbenchPage(autoLsp: autoLsp, autoFolder: autoFolder),
+      home: WorkbenchPage(
+        autoLsp: autoLsp,
+        autoFolder: autoFolder,
+        layoutStore: layoutStore,
+      ),
     );
   }
 }

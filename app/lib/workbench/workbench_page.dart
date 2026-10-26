@@ -20,6 +20,7 @@ import '../editor/text_diff.dart';
 import 'activity_bar.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
+import 'layout_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
 
@@ -50,13 +51,23 @@ Color _tokenColor(String kind) {
 }
 
 class WorkbenchPage extends StatefulWidget {
-  const WorkbenchPage({super.key, this.autoLsp = false, this.autoFolder});
+  WorkbenchPage({
+    super.key,
+    this.autoLsp = false,
+    this.autoFolder,
+    LayoutStore? layoutStore,
+  }) : layoutStore = layoutStore ?? _defaultStore;
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
   final bool autoLsp;
 
   /// 随 autoLsp 一起自动打开的文件夹。
   final String? autoFolder;
+
+  /// 布局持久化（测试注入临时路径，避免读写真实 ~/.alula/layout.json）。
+  final LayoutStore layoutStore;
+
+  static final LayoutStore _defaultStore = LayoutStore();
 
   @override
   State<WorkbenchPage> createState() => _WorkbenchPageState();
@@ -70,8 +81,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _loadError = '';
   int _nextDocId = 2;
 
-  /// 工作台布局（分割树；W1-4 接持久化）。
-  late final WorkbenchLayout _layout = WorkbenchLayout();
+  /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
+  WorkbenchLayout _layout = WorkbenchLayout();
+  Timer? _layoutSaveTimer;
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
@@ -102,7 +114,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void initState() {
     super.initState();
+    final saved = widget.layoutStore.tryLoad();
+    if (saved != null) {
+      _layout = WorkbenchLayout(root: saved);
+    }
+    _layout.addListener(_scheduleLayoutSave);
     _initCore();
+  }
+
+  /// 布局变更防抖落盘（拖拽过程每帧都通知，不能每帧写盘）。
+  void _scheduleLayoutSave() {
+    _layoutSaveTimer?.cancel();
+    _layoutSaveTimer = Timer(const Duration(milliseconds: 500), () {
+      widget.layoutStore.save(_layout.root);
+    });
   }
 
   void _initCore() {
@@ -530,6 +555,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _layoutSaveTimer?.cancel();
+    widget.layoutStore.save(_layout.root); // 退出前把未落盘的布局变更冲写
     for (final d in _openDocs) {
       d.controller.dispose();
     }
