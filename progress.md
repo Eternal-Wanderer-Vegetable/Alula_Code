@@ -9,7 +9,26 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
-## 今日会话（2026-10-26 第二轮）：工程化建设
+## 今日会话（2026-10-26 第三轮）：W1 布局骨架落地（docs/09 开始执行）
+
+- **既有成果分 4 笔提交入库**（clippy/fmt 清理 → harness → CI → docs/09 计划）。
+- **W1-1 布局树模型**：WbNode/WbSplit/WbLeaf 分割树（固定/弹性/折叠三形态）、
+  moveDivider 拖拽数学（min 钳制 + 退化区间保护）、像素⇄权重双向换算无漂移、
+  JSON 序列化 + defaultLayout。18 单测。commit `W1-1`。
+- **W1-2 网格渲染 + 五大区**：WorkbenchGrid（分割条只在相邻弹性节点间、内置监听）、
+  WorkbenchLayout 控制器（折叠记忆/唤起）；原 EditorPage 全逻辑迁 workbench_page.dart，
+  旧工具栏动作拆入标题栏菜单/侧栏头部/编辑器动作区；诊断/补全/语法移入底部面板；
+  main.dart 瘦身。38 测试。commit `W1-2`。
+- **W1-4 布局持久化**：LayoutStore（原子写盘 + 损坏回退）、启动恢复、500ms 防抖落盘、
+  dispose 冲写；layoutStore 注入点隔离测试与真实用户目录。42 测试。commit `W1-4`。
+- **W1-3 无边框标题栏（延期）**：菜单栏已随 W1-2 完成；window_manager 因
+  Windows 未开开发者模式无法安装（pub 插件符号链接要求）——开启后
+  `flutter pub add window_manager` 并接 title_bar.dart 的 trailing 挂点即可。
+- **决策微调**：Riverpod 推迟到 W3（命令/键位系统）引入；W1 用 ChangeNotifier +
+  ListenableBuilder 已满足细粒度重建，少一个依赖。
+- DoD：init.sh 全绿（Rust 41 + Flutter 42）。
+
+## 上一会话（2026-10-26 第二轮）：工程化建设
 
 | 项 | 结果 | 证据 |
 |---|---|---|

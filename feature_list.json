@@ -99,10 +99,10 @@
     {
       "id": "feat-015",
       "name": "W1 布局骨架：WorkbenchGrid + 五大区 + 标题栏 + 持久化",
-      "description": "docs/09 W1：二叉分割树布局（拖拽/最小尺寸/折叠）、活动栏/侧栏/编辑器/面板/状态栏五大区、自定义标题栏与菜单第一版、布局持久化与重启恢复",
+      "description": "docs/09 W1：二叉分割树布局（拖拽/最小尺寸/折叠）、活动栏/侧栏/编辑器/面板/状态栏五大区、标题栏菜单第一版、布局持久化与重启恢复。剩余：无边框窗口（window_manager，被 Windows 开发者模式阻塞）、实机内存复测",
       "dependencies": ["feat-008"],
       "status": "in-progress",
-      "evidence": ""
+      "evidence": "init.sh 全绿（2026-10-26）；flutter 42 测试（模型 18 + 网格交互 5 + 存储 4 + FFI/widget 15）；布局持久化原子写盘单测覆盖"
     },
     {
       "id": "feat-013",
