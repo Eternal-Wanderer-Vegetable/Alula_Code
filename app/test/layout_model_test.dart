@@ -16,9 +16,12 @@ void main() {
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);
       final sidebar = inner.leafOf('sidebar')!;
-      expect(sidebar.collapsed, isTrue);
-      expect(sidebar.lastWeight, closeTo(0.24, 1e-9));
+      expect(sidebar.collapsed, isFalse, reason: '侧栏默认展开');
+      expect(sidebar.weight, closeTo(0.24, 1e-9));
       expect(sidebar.minExtent, 170);
+      final panel = restored.leafOf('panel')!;
+      expect(panel.collapsed, isTrue, reason: '面板默认收起');
+      expect(panel.lastWeight, closeTo(0.3, 1e-9));
       expect(inner.leafOf('activity')!.fixedExtent, 44);
     });
 
@@ -117,9 +120,9 @@ void main() {
     });
   });
 
-  group('权重 ⇄ 像素换算', () {
-    test('weightsToExtents：固定/折叠/弹性', () {
-      final leaves = [
+  group('权重 ⇄ 像素换算（WbSplitLayout）', () {
+    test('extentsFor：固定/折叠/弹性', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
         WbLeaf(region: 'activity', fixedExtent: 44),
         WbLeaf(
             region: 'sidebar',
@@ -127,46 +130,91 @@ void main() {
             collapsed: true,
             lastWeight: 0.25),
         WbLeaf(region: 'editor', weight: 0.75),
-      ];
-      final px = weightsToExtents(leaves, 1000);
+      ]);
+      final px = split.extentsFor(1000);
       expect(px[0], 44); // 固定
       expect(px[1], 0); // 折叠
       expect(px[2], 956); // 1000-44 全给弹性
     });
 
-    test('extentsToWeights 归一化且固定为 0，回到 weightsToExtents 尺寸稳定', () {
-      final leaves = [
-        WbLeaf(region: 'activity', fixedExtent: 44),
-        WbLeaf(region: 'sidebar', weight: 0.5, minExtent: 170),
-        WbLeaf(region: 'editor', weight: 0.5),
-      ];
-      const total = 800.0;
-      final px1 = weightsToExtents(leaves, total);
-      final w = extentsToWeights(px1, [true, false, false]);
-      expect(w[0], 0);
-      expect(w[1] + w[2], closeTo(1, 1e-9));
-      // 写回后再分配，像素应与 px1 一致（无漂移）
-      leaves[1].weight = w[1];
-      leaves[2].weight = w[2];
-      final px2 = weightsToExtents(leaves, total);
-      expect(px2[1], closeTo(px1[1], 1e-6));
-      expect(px2[2], closeTo(px1[2], 1e-6));
+    test('extentsFor：嵌套 split 作为弹性子节点参与分配', () {
+      final root = WbSplit(axis: Axis.vertical, children: [
+        WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
+          WbLeaf(region: 'a'),
+          WbLeaf(region: 'b'),
+        ]),
+        WbLeaf(region: 'panel', weight: 0.3),
+      ]);
+      final px = root.extentsFor(1000);
+      expect(px[0], closeTo(700, 1e-9));
+      expect(px[1], closeTo(300, 1e-9));
     });
 
-    test('拖拽数学接入换算：其余格子像素严格不动（docs/09 验收点）', () {
-      final leaves = [
+    test('minsFor：嵌套 split 取子节点最小值之和', () {
+      final root = WbSplit(axis: Axis.vertical, children: [
+        WbSplit(axis: Axis.horizontal, children: [
+          WbLeaf(region: 'a', minExtent: 100),
+          WbLeaf(region: 'b', minExtent: 50),
+        ]),
+        WbLeaf(region: 'panel', minExtent: 120),
+      ]);
+      expect(root.minsFor(), [150, 120]);
+    });
+
+    test('applyDrag：其余兄弟像素严格不动（docs/09 验收点）', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
         WbLeaf(region: 'sidebar', weight: 0.3, minExtent: 170),
         WbLeaf(region: 'editor', weight: 0.7),
-      ];
+      ]);
       const total = 1000.0;
-      var px = weightsToExtents(leaves, total);
-      px = moveDivider(extents: px, minExtents: [170, 320], index: 0, deltaPx: 100);
-      final w = extentsToWeights(px, [false, false]);
-      leaves[0].weight = w[0];
-      leaves[1].weight = w[1];
-      final px2 = weightsToExtents(leaves, total);
-      expect(px2[0], closeTo(px[0], 1e-6));
-      expect(px2[1], closeTo(px[1], 1e-6));
+      final before = split.extentsFor(total);
+      split.applyDrag(0, 100, total);
+      final after = split.extentsFor(total);
+      expect(after[0], closeTo(before[0] + 100, 1e-6));
+      expect(after[1], closeTo(before[1] - 100, 1e-6));
+    });
+
+    test('applyDrag：min 钳制生效', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'sidebar', weight: 0.3, minExtent: 170),
+        WbLeaf(region: 'editor', weight: 0.7),
+      ]);
+      split.applyDrag(0, -1000, 1000);
+      final px = split.extentsFor(1000);
+      expect(px[0], 170);
+      expect(px[1], 830);
+    });
+
+    test('applyDrag：拖嵌套 split 与叶子的分界 → 只改两者权重', () {
+      final inner =
+          WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
+        WbLeaf(region: 'a'),
+        WbLeaf(region: 'b'),
+      ]);
+      final panel = WbLeaf(region: 'panel', weight: 0.3);
+      final root = WbSplit(axis: Axis.vertical, children: [inner, panel]);
+      root.applyDrag(0, 100, 1000);
+      final px = root.extentsFor(1000);
+      expect(px[0], closeTo(800, 1e-6));
+      expect(px[1], closeTo(200, 1e-6));
+      // inner 内部两个叶子等分，不受父级拖拽影响
+      final innerPx = inner.extentsFor(px[0]);
+      expect(innerPx[0], closeTo(innerPx[1], 1e-6));
+    });
+
+    test('权重往返无漂移：extentsFor → applyDrag(0) → extentsFor 恒等', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'activity', fixedExtent: 44),
+        WbLeaf(region: 'sidebar', weight: 0.4, minExtent: 170),
+        WbLeaf(region: 'editor', weight: 0.6),
+      ]);
+      const total = 800.0;
+      final before = split.extentsFor(total);
+      split.applyDrag(1, 0, total); // delta 0：写回权重后应无漂移
+      final after = split.extentsFor(total);
+      expect(after[0], closeTo(before[0], 1e-6));
+      expect(after[1], closeTo(before[1], 1e-6));
+      expect(after[2], closeTo(before[2], 1e-6));
     });
   });
 
@@ -180,17 +228,17 @@ void main() {
     test('折叠恢复还原折叠前权重（折叠记忆）', () {
       final root = defaultLayout();
       final sidebar = root.leafOf('sidebar')!;
-      expect(sidebar.collapsed, isTrue);
+      expect(sidebar.collapsed, isFalse, reason: '侧栏默认展开');
+      // 折叠：记住当前权重
+      sidebar.lastWeight = sidebar.weight;
+      sidebar.collapsed = true;
+      expect(sidebar.lastWeight, closeTo(0.24, 1e-9));
       // 恢复：还原 lastWeight，清空记忆
       sidebar.weight = sidebar.lastWeight!;
       sidebar.lastWeight = null;
       sidebar.collapsed = false;
       expect(sidebar.weight, closeTo(0.24, 1e-9));
       expect(sidebar.collapsed, isFalse);
-      // 再折叠：把当前权重存进 lastWeight
-      sidebar.lastWeight = sidebar.weight;
-      sidebar.collapsed = true;
-      expect(sidebar.lastWeight, closeTo(0.24, 1e-9));
     });
   });
 }

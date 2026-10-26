@@ -18,6 +18,10 @@ sealed class WbNode {
 
   Map<String, Object?> toJson();
 
+  /// 弹性权重（同轴弹性兄弟间瓜分剩余空间的比例份额）。
+  /// 叶子与嵌套 split 都有：split 作为弹性子节点参与父级分配。
+  abstract double weight;
+
   static WbNode fromJson(Map<String, Object?> json) {
     switch (json['t']) {
       case 'split':
@@ -52,17 +56,29 @@ sealed class WbNode {
 
 /// 分支节点：沿 [axis] 排布的若干子节点。
 class WbSplit extends WbNode {
-  WbSplit({required this.axis, required List<WbNode> children})
-      : assert(children.length >= 2, 'split 至少两个子节点'),
+  WbSplit({
+    required this.axis,
+    required List<WbNode> children,
+    this.weight = 1,
+    this.name,
+  })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children);
 
   final Axis axis;
   final List<WbNode> children;
 
+  /// 稳定标识（可选）：调试与测试定位用（分割条 key = wb-div-<左>-<右>）。
+  final String? name;
+
+  @override
+  double weight;
+
   @override
   Map<String, Object?> toJson() => {
         't': 'split',
         'axis': axis == Axis.horizontal ? 'h' : 'v',
+        if (weight != 1) 'weight': weight,
+        if (name != null) 'name': name,
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -74,6 +90,8 @@ class WbSplit extends WbNode {
     }
     return WbSplit(
       axis: axis,
+      weight: json['weight'] is num ? (json['weight'] as num).toDouble() : 1,
+      name: json['name'] is String ? json['name'] as String : null,
       children: raw
           .map((e) =>
               WbNode.fromJson((e as Map).cast<String, Object?>()))
@@ -103,6 +121,7 @@ class WbLeaf extends WbNode {
   final double? fixedExtent;
 
   /// 弹性权重（同轴兄弟间瓜分剩余空间的比例份额）。
+  @override
   double weight;
 
   /// 主轴最小像素尺寸（拖拽钳制下限）。
@@ -159,15 +178,11 @@ WbSplit defaultLayout() => WbSplit(
       children: [
         WbSplit(
           axis: Axis.horizontal,
+          weight: 0.7,
+          name: 'main-row',
           children: [
             WbLeaf(region: 'activity', fixedExtent: 44),
-            WbLeaf(
-              region: 'sidebar',
-              weight: 0.24,
-              minExtent: 170,
-              collapsed: true,
-              lastWeight: 0.24,
-            ),
+            WbLeaf(region: 'sidebar', weight: 0.24, minExtent: 170),
             WbLeaf(region: 'editor', weight: 0.76, minExtent: 320),
           ],
         ),
@@ -224,25 +239,75 @@ List<double> extentsToWeights(List<double> extents, List<bool> fixed) {
   });
 }
 
-/// 按权重把 [totalExtent] 像素分配给各子节点（固定叶子取 fixedExtent，
-/// 折叠叶子取 0）。要求 [leaves] 与返回一一对应。
-List<double> weightsToExtents(List<WbLeaf> leaves, double totalExtent) {
-  var flexWeight = 0.0;
-  var fixedUsed = 0.0;
-  for (final l in leaves) {
-    if (l.collapsed) continue;
-    if (l.isFixed) {
-      fixedUsed += l.fixedExtent!;
-    } else {
-      flexWeight += l.weight;
+/// 节点在主轴上是否为弹性（参与权重分配）：
+/// 固定/折叠叶子否；嵌套 split 总是弹性（W1 无折叠分支）。
+bool isFlexibleNode(WbNode node) {
+  final self = node;
+  if (self is WbLeaf) return !self.isFixed && !self.collapsed;
+  return true;
+}
+
+/// 节点主轴最小像素：叶子取 minExtent（折叠为 0，固定取固定值）；
+/// split 取各子节点最小值之和。
+double nodeMinExtent(WbNode node) {
+  final self = node;
+  if (self is WbLeaf) {
+    if (self.isFixed) return self.fixedExtent!;
+    return self.collapsed ? 0 : self.minExtent;
+  }
+  final split = self as WbSplit; // sealed 层级：非叶必为 split
+  var sum = 0.0;
+  for (final c in split.children) {
+    sum += nodeMinExtent(c);
+  }
+  return sum;
+}
+
+extension WbSplitLayout on WbSplit {
+  /// 按当前模型把 [totalExtent] 主轴像素分配给各子节点。
+  /// 固定叶子取 fixedExtent，折叠叶子取 0，弹性节点按权重瓜分剩余。
+  List<double> extentsFor(double totalExtent) {
+    var flexWeight = 0.0;
+    var fixedUsed = 0.0;
+    for (final c in children) {
+      final leaf = c;
+      if (leaf is WbLeaf && leaf.collapsed) continue;
+      if (leaf is WbLeaf && leaf.isFixed) {
+        fixedUsed += leaf.fixedExtent!;
+      } else {
+        flexWeight += leaf.weight;
+      }
+    }
+    final flexPx = (totalExtent - fixedUsed).clamp(0.0, totalExtent);
+    final unit = flexWeight > 0 && flexPx > 0 ? flexPx / flexWeight : 0.0;
+    return children.map((c) {
+      final leaf = c;
+      if (leaf is WbLeaf && leaf.collapsed) return 0.0;
+      if (leaf is WbLeaf && leaf.isFixed) return leaf.fixedExtent!;
+      return leaf.weight * unit;
+    }).toList();
+  }
+
+  /// 该 split 的各子节点最小主轴像素。
+  List<double> minsFor() =>
+      children.map(nodeMinExtent).toList(growable: false);
+
+  /// 拖拽第 [index] 个分割条移动 [deltaPx] 像素（该 split 主轴总长 [totalExtent]）。
+  /// 就地更新弹性子节点的权重，其余兄弟像素保持不变。
+  void applyDrag(int index, double deltaPx, double totalExtent) {
+    if (totalExtent <= 0) return;
+    final extents = extentsFor(totalExtent);
+    final moved =
+        moveDivider(extents: extents, minExtents: minsFor(), index: index, deltaPx: deltaPx);
+    if (identical(moved, extents)) return;
+    final flexTotal =
+        moved.fold(0.0, (s, e) => s + e); // 含固定像素；固定叶子不写回权重
+    if (flexTotal <= 0) return;
+    for (var i = 0; i < children.length; i++) {
+      final c = children[i];
+      final leaf = c;
+      if (leaf is WbLeaf && (leaf.isFixed || leaf.collapsed)) continue;
+      c.weight = moved[i] / flexTotal;
     }
   }
-  final flexPx = (totalExtent - fixedUsed).clamp(0.0, totalExtent);
-  double? unit;
-  if (flexWeight > 0 && flexPx > 0) unit = flexPx / flexWeight;
-  return leaves.map((l) {
-    if (l.collapsed) return 0.0;
-    if (l.isFixed) return l.fixedExtent!;
-    return (l.weight * (unit ?? 0));
-  }).toList();
 }
