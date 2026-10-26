@@ -311,3 +311,96 @@ extension WbSplitLayout on WbSplit {
     }
   }
 }
+
+/// 树结构变更原语（W2-2 编辑器组拆分）：叶子分裂与摘除。
+extension WbSplitTreeOps on WbSplit {
+  /// 定位 region 叶子的直接父 split（含 this 自身）。
+  WbSplit? parentSplitOf(String region) {
+    WbSplit? walk(WbSplit node) {
+      for (final c in node.children) {
+        final leaf = c;
+        if (leaf is WbLeaf && leaf.region == region) return node;
+        final split = c;
+        if (split is WbSplit) {
+          final found = walk(split);
+          if (found != null) return found;
+        }
+      }
+      return null;
+    }
+
+    return walk(this);
+  }
+
+  /// 把 [region] 叶子替换为 [axis] 方向的嵌套分割：原叶子 + 新叶子（权重
+  /// [newWeight]）。返回新叶子；region 不存在 / newRegion 已占用时返回 null。
+  WbLeaf? splitLeaf(
+    String region,
+    String newRegion,
+    Axis axis, {
+    double newWeight = 0.5,
+    String? splitName,
+  }) {
+    if (region == newRegion) return null;
+    if (leafOf(newRegion) != null || leafOf(region) == null) return null;
+    final parent = parentSplitOf(region);
+    if (parent == null) return null;
+    final index =
+        parent.children.indexWhere((c) => c is WbLeaf && c.region == region);
+    if (index < 0) return null;
+    final original = parent.children[index] as WbLeaf;
+    final outerWeight = original.weight;
+    final fresh = WbLeaf(
+      region: newRegion,
+      weight: newWeight,
+      minExtent: original.minExtent,
+    );
+    original.weight = 1 - newWeight;
+    parent.children[index] = WbSplit(
+      axis: axis,
+      weight: outerWeight,
+      name: splitName,
+      children: [original, fresh],
+    );
+    return fresh;
+  }
+
+  /// 摘除 [region] 叶子；若父 split 因此只剩一个子节点，则用该子节点把父
+  /// split 从树中折叠掉（权重沿用父 split 的）。
+  /// 根的直接子节点不在可摘除范围（摘除会使根失效），返回 false。
+  bool removeLeaf(String region) {
+    if (children.any((c) => c is WbLeaf && c.region == region)) {
+      return false; // 根的直接子节点不可摘除
+    }
+    return _removeLeaf(this, region);
+  }
+
+  bool _removeLeaf(WbSplit node, String region) {
+    for (var i = 0; i < node.children.length; i++) {
+      final c = node.children[i];
+      final split = c;
+      if (split is! WbSplit) continue;
+      final idx =
+          split.children.indexWhere((ch) => ch is WbLeaf && ch.region == region);
+      if (idx >= 0) {
+        split.children.removeAt(idx);
+        _collapseIfSingleton(node, i, split);
+        return true;
+      }
+      if (_removeLeaf(split, region)) {
+        _collapseIfSingleton(node, i, split);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// split 只剩一个子节点时折叠：唯一子顶替其位置并沿用其权重。
+  void _collapseIfSingleton(WbSplit node, int i, WbSplit split) {
+    if (split.children.length == 1) {
+      final remaining = split.children[0];
+      remaining.weight = split.weight;
+      node.children[i] = remaining;
+    }
+  }
+}

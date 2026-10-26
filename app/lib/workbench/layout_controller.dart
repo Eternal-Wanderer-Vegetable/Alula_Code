@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart' show Axis;
 
 import 'layout_model.dart';
 
@@ -45,5 +46,22 @@ class WorkbenchLayout extends ChangeNotifier {
       WbSplit split, int index, double deltaPx, double totalExtent) {
     split.applyDrag(index, deltaPx, totalExtent);
     notifyListeners();
+  }
+
+  /// 把 [region] 叶子沿 [axis] 分裂出 [newRegion]（W2-2 编辑器组）。
+  bool splitRegion(String region, String newRegion, Axis axis,
+      {String? splitName}) {
+    final fresh = root.splitLeaf(region, newRegion, axis, splitName: splitName);
+    if (fresh != null) notifyListeners();
+    return fresh != null;
+  }
+
+  /// 摘除 [region] 叶子（树会自动折叠单子节点 split）。
+  bool removeRegion(String region) {
+    if (root.removeLeaf(region)) {
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 }
