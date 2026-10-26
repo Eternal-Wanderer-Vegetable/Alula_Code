@@ -1,0 +1,116 @@
+{
+  "features": [
+    {
+      "id": "feat-001",
+      "name": "0-1 原型 B 骨架：Flutter + FFI + Ropey 闭环",
+      "description": "「编辑→增量同步→Rust 应用→版本回执」最小闭环（docs/03 Phase 0 任务 0-1）",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "app/lib/bridge + app/test/core_sync_test.dart 走真实 FFI；cargo test --workspace 全绿（2026-10-26）"
+    },
+    {
+      "id": "feat-002",
+      "name": "0-2 编辑组件评测：CodeForge / Re-Editor / flutter_code_editor",
+      "description": "统一评测卡 16 分制打分与选型（docs/06）。遗留：真机 IME 与万行文件流畅度人工复核（报告 §五清单）",
+      "dependencies": [],
+      "status": "in-progress",
+      "evidence": "自动化部分完成：code_forge 13 分首选 / re_editor 10 分备选 / flutter_code_editor 5 分否决（docs/06-评测-编辑组件选型.md，2026-10-26）"
+    },
+    {
+      "id": "feat-003",
+      "name": "0-3 Tree-sitter + LSP 接入（rust-analyzer）",
+      "description": "editor-lsp（stdio JSON-RPC）+ editor-lang（tree-sitter-rust）+ FFI ABI v2 + 三面板 UI；对真实 rust-analyzer 全链路实测。遗留到 Phase 1：增量解析、诊断/补全异步化",
+      "dependencies": ["feat-001"],
+      "status": "done",
+      "evidence": "诊断 7 条实时推送、补全 62 项、语法 40 token；截图 docs/diagnostics/2026-10-26-lsp-demo/"
+    },
+    {
+      "id": "feat-004",
+      "name": "0-4 原型 A：精简 Code-OSS 对照",
+      "description": "验证「继承架构做减法」路线。结论：移除 86 个内置扩展仅省 ≈20 MiB（−1.5%），G1 判定原型 A 路线否决，固定原型 B 自研路线",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "docs/08-原型A-精简Code-OSS.md（1310→1290 MiB，2026-10-26）"
+    },
+    {
+      "id": "feat-005",
+      "name": "0-5 基准框架：tools/mem-probe + tools/bench",
+      "description": "三平台进程树内存采集 + 报告模板 + VS Code 基线。遗留：Linux PSS 待 CI 验证、macOS 待实现",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "mem-probe 5 测试全绿；首批基线 alula 179.2 vs VS Code 959.5 MiB（−81.3%），docs/baselines/2026-10-26/"
+    },
+    {
+      "id": "feat-006",
+      "name": "0-6 对照实验：VS Code vs 原型 A vs 原型 B",
+      "description": "三组场景（无插件/同语言服务/同功能集）× Windows+Linux。无插件组数据齐备；同语言服务组待 Phase 1 LSP 稳定后补测",
+      "dependencies": ["feat-004", "feat-005"],
+      "status": "in-progress",
+      "evidence": "无插件组：alula 179.2 / VS Code 干净 989.9 / 原型 A 1310 / 原型 A 精简 1290 MiB（docs/baselines/2026-10-26/ + docs/08）"
+    },
+    {
+      "id": "feat-007",
+      "name": "0-7 现有 VS Code 卡死归因诊断",
+      "description": "定位用户环境 VS Code 卡死根因，反哺架构设计",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "根因：系统提交内存耗尽（python.exe 提交 86–93 GB 击穿 107 GB 上限）；docs/07-诊断-VSCode卡死归因.md"
+    },
+    {
+      "id": "feat-008",
+      "name": "P1 编辑基础：打开/保存/多标签（增量 1）",
+      "description": "多文件工作台闭环：打开文件夹→文件树（懒加载）→多标签→编辑→Ctrl+S 原子保存（editor-doc）。剩余：编码/换行符处理、查找替换、撤销重做 UI 化",
+      "dependencies": ["feat-003"],
+      "status": "in-progress",
+      "evidence": "实机截图 docs/diagnostics/2026-10-26-phase1/；commit 8477ecc"
+    },
+    {
+      "id": "feat-009",
+      "name": "P1 LSP：rust-analyzer 按工作区共享进程 + 诊断/补全",
+      "description": "多文件接入 rust-analyzer（按工作区共享）。剩余：basedpyright/Ruff、clangd、跳转定义/悬浮/格式化、诊断/补全异步化、增量解析",
+      "dependencies": ["feat-003", "feat-008"],
+      "status": "in-progress",
+      "evidence": "docs/03 §2.1 增量 1 记录（2026-10-26）"
+    },
+    {
+      "id": "feat-010",
+      "name": "P1 下一增量：撤销/重做 UI、查找替换、Git 面板、文件监视",
+      "description": "docs/03 §2.1 明确的下一增量；编辑器组件切换（code_forge）待 feat-002 人工复核后执行",
+      "dependencies": ["feat-008"],
+      "status": "not-started",
+      "evidence": ""
+    },
+    {
+      "id": "feat-011",
+      "name": "P1 稳定性：进程监督树、低资源模式、崩溃恢复 journal",
+      "description": "强杀 LSP 不崩、关闭工作区进程树清空、内存限额下可用、断电恢复（Phase 1 DoD 稳定性条目）",
+      "dependencies": ["feat-009"],
+      "status": "not-started",
+      "evidence": ""
+    },
+    {
+      "id": "feat-012",
+      "name": "P1 性能验收：内存预算与冷启动达标",
+      "description": "空工作台 ≤200 MiB、普通项目 ≤250 MiB、Rust+RA ≤500 MiB、冷启动 ≤2s、对 VS Code −50%（docs/03 §2.2）",
+      "dependencies": ["feat-010", "feat-011"],
+      "status": "not-started",
+      "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）"
+    },
+    {
+      "id": "feat-013",
+      "name": "P1 工程化：CI/CD、代码图谱、harness 文档",
+      "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "GitNexus 索引（796 符号/1681 关系）；harness validator 100/100；init.sh 端到端全绿（2026-10-26）；.github/workflows/ci.yml + release.yml 语法校验通过，待推送后看 Actions 首跑"
+    },
+    {
+      "id": "feat-014",
+      "name": "P1 打包：三平台 Release 构建与安装包",
+      "description": "Windows 安装包已完成；Linux（AppImage/deb）、macOS（dmg）待做，接入 CI 矩阵",
+      "dependencies": ["feat-013"],
+      "status": "in-progress",
+      "evidence": "Windows 构建 ✅（docs/03 §2.1）"
+    }
+  ]
+}

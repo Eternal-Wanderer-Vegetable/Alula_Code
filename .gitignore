@@ -37,3 +37,10 @@ app/auto_debug.txt
 # 其他系统产物
 .DS_Store
 Thumbs.db
+
+# GitNexus 本地索引（运行 npx gitnexus analyze 重建）
+.gitnexus/
+
+# skills CLI 的 npm 缓存（npx skills add 产生）
+npm-cache/
+
