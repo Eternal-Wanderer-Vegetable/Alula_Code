@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,6 +39,48 @@ void main() {
     expect(find.byTooltip('最小化'), findsOneWidget);
     expect(find.byTooltip('最大化'), findsOneWidget);
     expect(find.byTooltip('关闭'), findsOneWidget);
+  });
+
+  testWidgets('W2-1 标签条：拖动排序与中键关闭', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: r'E:\Alula_Code\tests\fixtures\rust-mini',
+      layoutStore: store,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 打开两个文件（+ 未命名）→ 3 个标签；docId：未命名=1、Cargo.toml=2、main.rs=3
+    await tester.tap(find.text('Cargo.toml'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('src'));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('main.rs'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    double leftOf(String key) =>
+        tester.getTopLeft(find.byKey(ValueKey(key))).dx;
+    expect(leftOf('tab-1'), lessThan(leftOf('tab-2')),
+        reason: '初始顺序：未命名 在 Cargo.toml 前');
+
+    // 鼠标拖 tab-3（main.rs）到 tab-1（未命名）上 → 变为第一个
+    await tester.drag(find.byKey(const ValueKey('tab-3')), const Offset(-260, 0),
+        kind: PointerDeviceKind.mouse);
+    await tester.pump();
+    expect(leftOf('tab-3'), lessThan(leftOf('tab-1')),
+        reason: '拖动排序后 main.rs 应在 未命名 前');
+    expect(leftOf('tab-2'), greaterThan(leftOf('tab-1')),
+        reason: 'Cargo.toml 排在 未命名 后（相对顺序保持）');
+
+    // 中键关闭 tab-1（未命名）
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.byKey(const ValueKey('tab-1'))),
+      buttons: kMiddleMouseButton,
+    );
+    await gesture.up();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('tab-1')), findsNothing,
+        reason: '中键应关闭标签');
+    expect(find.byKey(const ValueKey('tab-2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('tab-3')), findsOneWidget);
   });
 
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {

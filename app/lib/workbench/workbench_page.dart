@@ -12,6 +12,7 @@ library;
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart' show kMiddleMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -771,41 +772,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       child: Row(
         children: [
           Expanded(
-            child: Row(
-              children: [
-                for (final d in _openDocs)
-                  InkWell(
-                    onTap: () => setState(() => _activeDocId = d.id),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: d.id == _activeDocId
-                            ? const Color(0xFF14161A)
-                            : Colors.transparent,
-                        border: d.id == _activeDocId
-                            ? const Border(
-                                top: BorderSide(
-                                    color: Colors.blueAccent, width: 2))
-                            : const Border(
-                                top: BorderSide(
-                                    color: Colors.transparent, width: 2)),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                              '${d.name}${d.isDirty ? " •" : ""}',
-                              style: const TextStyle(fontSize: 12)),
-                          const SizedBox(width: 6),
-                          InkWell(
-                            onTap: () => _closeDoc(d.id),
-                            child: Icon(Icons.close,
-                                size: 12, color: Colors.grey.shade500),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
+            // W2-1：标签溢出横向滚动（对标 VS Code 滚动标签条）
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final d in _openDocs) _buildTab(d),
+                ],
+              ),
             ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
@@ -834,6 +808,77 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
       ),
     );
+  }
+
+  /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
+  Widget _buildTab(OpenDoc d) {
+    final tab = InkWell(
+      onTap: () => setState(() => _activeDocId = d.id),
+      child: Container(
+        key: ValueKey('tab-${d.id}'),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: d.id == _activeDocId
+              ? const Color(0xFF14161A)
+              : Colors.transparent,
+          border: d.id == _activeDocId
+              ? const Border(
+                  top: BorderSide(color: Colors.blueAccent, width: 2))
+              : const Border(
+                  top: BorderSide(color: Colors.transparent, width: 2)),
+        ),
+        child: Row(
+          children: [
+            Text('${d.name}${d.isDirty ? " •" : ""}',
+                style: const TextStyle(fontSize: 12)),
+            const SizedBox(width: 6),
+            InkWell(
+              onTap: () => _closeDoc(d.id),
+              child: Icon(Icons.close,
+                  size: 12, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
+      ),
+    );
+    return DragTarget<int>(
+      onWillAcceptWithDetails: (details) => details.data != d.id,
+      onAcceptWithDetails: (details) => _moveDoc(details.data, d.id),
+      builder: (context, _, __) => Draggable<int>(
+        data: d.id,
+        dragAnchorStrategy: pointerDragAnchorStrategy,
+        feedback: Material(
+          type: MaterialType.transparency,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF252932),
+              borderRadius: BorderRadius.circular(3),
+            ),
+            child: Text(d.name, style: const TextStyle(fontSize: 12)),
+          ),
+        ),
+        childWhenDragging: Opacity(opacity: 0.4, child: tab),
+        child: Listener(
+          // 中键关闭（kMiddleMouseButton），不影响左键激活
+          onPointerDown: (e) {
+            if (e.buttons == kMiddleMouseButton) _closeDoc(d.id);
+          },
+          child: tab,
+        ),
+      ),
+    );
+  }
+
+  /// 拖动排序：把被拖标签移到目标标签的位置。
+  void _moveDoc(int draggedId, int targetId) {
+    final from = _openDocs.indexWhere((d) => d.id == draggedId);
+    final to = _openDocs.indexWhere((d) => d.id == targetId);
+    if (from < 0 || to < 0 || from == to) return;
+    setState(() {
+      final doc = _openDocs.removeAt(from);
+      _openDocs.insert(to, doc);
+    });
   }
 
   Widget _buildEditor() {
