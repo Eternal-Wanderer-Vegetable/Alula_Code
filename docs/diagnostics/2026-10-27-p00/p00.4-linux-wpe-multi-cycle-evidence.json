@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-28",
+  "experiment": "ten sequential WebView create/destroy cycles in one uninstrumented WPE Flutter Release probe process",
+  "probe": {
+    "runtime": "Flutter Linux Release web_engine_probe",
+    "webkit": "WPE WebKit 2.52.6 source build",
+    "mode": "P00_4_WEB_AUTO=1 P00_4_WEB_NO_CAPTURE=1",
+    "sequence": "The probe ran one automatic create/destroy cycle, then xdotool F5 triggered nine more cycles in the same app process. Each destroy was followed by a 30-second wait before sampling.",
+    "capture_omissions": ["screenshot", "MHTML", "Inspector command"]
+  },
+  "environment": {
+    "os": "Debian GNU/Linux 12 (Bookworm), Docker container",
+    "uid_gid": "1000:1000 (probe)",
+    "display": "Xvfb :131, 1280x720x24",
+    "renderer": "Mesa software GL",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1",
+    "scope_limit": "Single diagnostic probe process; software rendering with WebKit sandbox and GBM disabled; not product integration, hardware GBM, a leak proof, or docs/04 acceptance."
+  },
+  "measurement": {
+    "source": "/proc/<pid>/smaps_rollup",
+    "private_mib_definition": "sum of Private_Clean and Private_Dirty across web_engine_probe and its direct WPE children",
+    "baseline": {
+      "process_count": 2,
+      "private_mib": 177.57,
+      "pss_mib": 231.80,
+      "processes": ["web_engine_probe", "WPENetworkProcess"]
+    },
+    "destroyed_30s_by_cycle": [
+      {"cycle": 1, "private_mib": 230.07, "pss_mib": 286.68, "delta_private_mib": 52.50, "delta_pss_mib": 54.88},
+      {"cycle": 2, "private_mib": 229.39, "pss_mib": 286.00, "delta_private_mib": 51.83, "delta_pss_mib": 54.19},
+      {"cycle": 3, "private_mib": 235.82, "pss_mib": 292.43, "delta_private_mib": 58.25, "delta_pss_mib": 60.63},
+      {"cycle": 4, "private_mib": 238.45, "pss_mib": 295.06, "delta_private_mib": 60.89, "delta_pss_mib": 63.25},
+      {"cycle": 5, "private_mib": 241.41, "pss_mib": 298.02, "delta_private_mib": 63.84, "delta_pss_mib": 66.21},
+      {"cycle": 6, "private_mib": 254.56, "pss_mib": 311.16, "delta_private_mib": 77.00, "delta_pss_mib": 79.36},
+      {"cycle": 7, "private_mib": 250.52, "pss_mib": 307.19, "delta_private_mib": 72.96, "delta_pss_mib": 75.38},
+      {"cycle": 8, "private_mib": 253.30, "pss_mib": 309.97, "delta_private_mib": 75.73, "delta_pss_mib": 78.17},
+      {"cycle": 9, "private_mib": 256.18, "pss_mib": 312.86, "delta_private_mib": 78.62, "delta_pss_mib": 81.05},
+      {"cycle": 10, "private_mib": 258.77, "pss_mib": 315.43, "delta_private_mib": 81.20, "delta_pss_mib": 83.63}
+    ],
+    "lifecycle": {
+      "each_recorded_open_sample_process_count": 3,
+      "each_destroyed_30s_sample_process_count": 2,
+      "destroyed_30s_processes": ["web_engine_probe", "WPENetworkProcess"],
+      "WPEWebProcess": "present at each open sample; absent at each destroy+30s sample",
+      "WPENetworkProcess": "remained through all samples; its PSS stayed about 30.1-30.3 MiB"
+    }
+  },
+  "parent_process_delta_cycle10_minus_baseline_mib": {
+    "private": 82.20,
+    "pss": 83.42,
+    "pss_anon": 67.82,
+    "pss_file": 15.60
+  },
+  "network_process_delta_cycle10_minus_baseline_mib": {
+    "private": -1.01,
+    "pss": 0.22
+  },
+  "parent_mapping_group_delta_cycle10_minus_baseline_mib": {
+    "[heap]": {"pss": 35.17, "private_dirty": 35.17},
+    "[anonymous] (aggregate of unnamed mappings)": {"pss": 32.48, "private_dirty": 32.48},
+    "/work/install/lib/libWPEWebKit-2.0.so.1.9.10": {"pss": 14.65, "private_clean": 13.50}
+  },
+  "interpretation": [
+    "Destroy+30s private/PSS did not return to the initial baseline over ten cycles; cycle-to-cycle values fluctuated, while the final cycle remained 81.20/83.63 MiB above baseline.",
+    "The WebKit file mapping increased mainly after the first cycle and then remained stable; anonymous mappings and the process heap accounted for most later increases.",
+    "smaps identifies page residency and mapping categories, not whether allocations are live objects, allocator-retained pages, caches, or a specific library's resources; this does not prove a leak or identify its owner."
+  ],
+  "artifacts": {
+    "run_directory": "p00.4-linux-wpe-multi-cycle-run1/",
+    "capture_script": "p00.4-linux-wpe-multi-cycle-run1/capture.sh",
+    "raw_maps_and_smaps": "compressed per-process snapshots; smaps_rollup remains uncompressed"
+  }
+}

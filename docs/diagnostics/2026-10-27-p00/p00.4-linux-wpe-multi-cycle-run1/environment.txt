@@ -1,0 +1,15 @@
+Date: 2026-10-28
+Container: Debian GNU/Linux 12 (Bookworm), original WPE 2.52.6 source-build container
+UID/GID: 1000(probe):1000(probe)
+Display: Xvfb :131, 1280x720x24
+Renderer: Mesa software GL
+Probe: Flutter Linux Release web_engine_probe
+LD_LIBRARY_PATH=/repo/tools/web-engine-probe/build/linux/x64/release/bundle/lib:/work/install/lib
+TMPDIR=/tmp/p00.4-linux-wpe-multi-cycle-run4/tmp
+WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1
+P00_4_WEB_AUTO=1
+P00_4_WEB_NO_CAPTURE=1
+Actions: one automatic create/destroy cycle followed by nine F5-driven create/destroy cycles in the same Flutter process; every destroy was followed by a 30-second wait. No screenshot, MHTML, or Inspector command.
+Measurement: /proc/<pid>/smaps_rollup for probe and direct WPE children; private = Private_Clean + Private_Dirty.
+Limit: single Xvfb/software-GL probe process with sandbox and GBM disabled; not a product integration, hardware result, leak proof, or docs/04 acceptance.

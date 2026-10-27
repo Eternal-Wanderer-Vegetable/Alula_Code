@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十三轮：WPE 父进程 smaps 映射 follow-up）
+> Last Updated：2026-10-28（第三十四轮：WPE 同进程十轮内存采样）
 
 ## 项目一句话
 
@@ -8,7 +8,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-WPE 2.52.6 source-built Flutter探针新增一轮 UID 1000 未插桩 smaps 生命周期采样：destroy+30s进程树比基线高40.90 MiB private/43.23 MiB PSS；父进程 `[heap]` 增21.11 MiB PSS，WPE WebKit文件映射增14.62 MiB PSS（主要 private-clean），匿名映射aggregate增7.30 MiB PSS。smaps只定位映射类别，不能判定live object、malloc保留页或具体owner，也不能证明leak。见 p00.4-linux-wpe-parent-smaps-evidence.json。Heaptrack插桩仍单独显示51.25 MiB软件rasterizer峰值栈与93.52 MiB未解析峰值；插桩峰值不可与原始样本比较，见 p00.4-linux-wpe-parent-heaptrack-evidence.json。
+WPE 2.52.6 source-built Flutter探针以 UID 1000 未插桩方式完成同进程十轮无截图创建/销毁，每轮销毁后等待30秒；第十轮进程树较初始高81.20 MiB private/83.63 MiB PSS。父进程 `[heap]`、匿名映射和 WPE WebKit 文件页均增加，期间有回落；映射不能判定 live object、malloc保留页或具体 owner，也不能证明 leak。见 p00.4-linux-wpe-multi-cycle-evidence.json。单轮 parent smaps 和 Heaptrack 证据见 p00.4-linux-wpe-parent-smaps-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-evidence.json。
 Windows Git Bash 的完整门禁刚复跑通过：cargo fmt --check、bash init.sh（Rust tests/Clippy/build_core/Flutter 122 项）及单独 app flutter analyze 均 exit 0。WSL init.sh --fast 因缺 cargo 与 Flutter 脚本 CRLF 失败；不是产品错误。输出见 p00-full-validation-windows-gitbash-2026-10-28.log。
 2026-10-28 按用户选择使用 Windows Git Bash 重跑 P00.3 四项夹具，全部通过；2,000,001 UTF-16 恢复 fixture 耗时约 2:10。P00.4 Linux/WPE 三轮自动生命周期样本与一轮无截图手动 F5 样本已记录：销毁+30s仍有 41.9–72.2 MiB Private Bytes 增量，NetworkProcess 留存，父进程残留尚未归因。
 macOS dispatch 仍因默认分支没有 workflow/current branch 未推送而不可运行；没有推送或 macOS runner 证据。需用户明确授权后才能推送当前分支以运行该 workflow。
@@ -18,6 +18,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 
 ## What Changed
 
+- 第三十四轮：Windows Git Bash 从 WSL 调用 `bash init.sh --fast` EXIT=0（Rust tests、build_core、Flutter 122 项）；同一 WPE probe 连做十轮 no-capture F5 生命周期，第十轮 destroy+30s 比基线多81.20/83.63 MiB private/PSS，父进程映射类别持续增长但不能证明泄漏。证据见 `p00.4-linux-wpe-multi-cycle-evidence.json`。
 - 第三十三轮：UID 1000 未插桩 WPE smaps 生命周期采样在 destroy+30s 观察到 +40.90 MiB private/+43.23 MiB PSS；父进程 heap、WPE 文件页和匿名映射均有驻留增量，但无法判断 live allocation 或具体分配 owner。sandbox/GBM 关闭，单轮诊断不满足 docs/04；原始快照与限制见 `p00.4-linux-wpe-parent-smaps-evidence.json`。
 - 第三十二轮：为独立WPE探针增加无截图自动生命周期模式并通过离线 analyze/test 与 Linux Release build。Heaptrack 1.4.0 的单轮插桩样本在销毁+30s时父进程比该轮基线高98.2/101.7 MiB private/PSS；一个51.25 MiB峰值栈走过插件初始化与 software `swrast_dri.so`，另一93.52 MiB峰值调用点未解析。插桩开销与peak/leak统计限制见 evidence JSON；仍不足以归因未插桩约40 MiB残留，P00.4 blocked。
 
@@ -111,6 +112,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
 - tools/web-engine-probe/lib/main.dart、tools/web-engine-probe/README.md、docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-run3/：WPE 无截图自动生命周期模式、Heaptrack 原始 trace 与单轮父进程峰值分配路径探查。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-smaps-evidence.json 与 p00.4-linux-wpe-parent-smaps-run1/：UID 1000 未插桩生命周期的父进程 `/proc/smaps` 映射快照和分类汇总。
+- docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-multi-cycle-evidence.json 与 p00.4-linux-wpe-multi-cycle-run1/：单个 probe 进程十次 WPE WebView 创建/销毁后的 maps/smaps 生命周期采样。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-build.log 与 p00.4-linux-wpe-trixie-compat.log：当前 beta Windows 兼容性复跑及两种 Linux WPE API 组合的构建阻塞证据。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/、三个 p00.4-linux-wpe-2.52.6-frame-poll-run*/ 与 p00.4-linux-wpe-2.52.6-inspector-http-run/：WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、首帧有界轮询、Remote Inspector HTTP target discovery、MHTML/PNG、sandbox 进程及单轮内存证据；明确记录临时 sandbox/GBM overrides。
 - .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；本地构建未通过，CI workflow 未运行。
@@ -124,7 +126,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 
 ## Next Session
 
-1. 按 AGENTS 启动流程重读 Current State、检查 GitNexus fresh，并使用 Windows Git Bash 跑 bash init.sh --fast；当前 WSL shell 没 Cargo 且无法运行 Windows Flutter SDK。
+1. 按 AGENTS 启动流程重读 Current State、检查 GitNexus fresh，并运行 `"/mnt/c/Program Files/Git/bin/bash.exe" -lc 'cd /e/alula_code && bash init.sh --fast'`；本机已验证该方式 EXIT=0，WSL shell 本身仍缺 Cargo。
 2. 继续处理 P00.4：取得可用的 macOS runner/服务身份与许可证据；在有真实 DRM 驱动的 Linux runner 验证 WPE GBM/DMABUF；补齐 docs/04 长时、多场景三轮预算采样。当前本地 WPE 内存证据不满足验收。
 3. P00 完成前不要启动依赖它的 P01。当前分支 codex/vscode-parity-p00 尚未推送；此前仅推送并运行 macOS workflow 的授权请求仍待用户答复，未授权前不得推送。Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 阶段提交只暂存本轮 P00.4 诊断证据与状态文档；保留用户既有 app/、harness 等未提交变更。
