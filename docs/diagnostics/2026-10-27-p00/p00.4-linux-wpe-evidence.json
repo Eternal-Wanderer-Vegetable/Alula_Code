@@ -1,8 +1,8 @@
 {
   "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
   "recordedAt": "2026-10-28",
-  "status": "runner-prepared-not-run",
-  "scope": "Static plugin contract and replay infrastructure only; no Linux runtime evidence",
+  "status": "build-blocked",
+  "scope": "Local Flutter Linux/WPE probe analyzed and tested; Release build blocked before application runtime; Xvfb replay not run",
   "probe": {
     "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
     "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
@@ -32,22 +32,67 @@
   "runner": {
     "workflow": ".github/workflows/p00-web-engine-linux.yml",
     "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
-    "host": "GitHub Actions ubuntu-24.04 with debian:sid container",
+    "host": "Local temporary Docker container with sid packages; GitHub Actions workflow remains unrun",
     "wpeDevelopmentPackage": "libwpewebkit-2.0-dev",
-    "wpePackageVersion": "not observed; workflow records it during execution",
+    "wpePackageVersion": "libwpewebkit-2.0-dev=2.54.2-1; libwpe-1.0-1=1.16.3-2",
     "runtimeExecuted": false,
-    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-run"
+    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-run",
+    "libsecretDevelopmentPackage": "libsecret-1-dev=0.21.8.2-2"
   },
   "limitations": [
-    "No Flutter Linux build or application run has occurred",
-    "No MHTML save/reload result, screenshot, or memory sample exists",
-    "No Web Inspector attachment test has occurred",
+    "The Linux WPE application did not build, so no MHTML save/reload, screenshot, or process-memory samples were produced",
+    "The pinned Linux plugin source references WPE_SETTING_DISABLE_ANIMATIONS, which is absent from the installed WPE 2.54.2 settings header; the build log records the compiler diagnostic",
+    "No compatibility macro or plugin source patch was used in the default build attempt",
     "CDP is declared unsupported by the pinned plugin contract; this is not a runtime failure trace",
-    "Debian sid package versions are rolling and must be recorded from the actual run"
+    "The plugin support table does not list Linux for Web Inspector; Inspector attachment was not tested",
+    "macOS WKWebView and Safari Web Inspector remain unverified",
+    "The local container used sid packages over a Bookworm-derived image and is not a clean reproduction of the Debian sid GitHub Actions container"
   ],
   "sources": [
     "https://github.com/pichillilorenzo/flutter_inappwebview/blob/master/flutter_inappwebview_linux/WPE_BACKEND.md",
     "https://packages.debian.org/sid/amd64/libwpewebkit-2.0-dev/filelist",
     "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev"
-  ]
+  ],
+  "environment": {
+    "runner": "Temporary local Docker container; not a GitHub Actions run",
+    "reportedOs": "Debian GNU/Linux forky/sid",
+    "imageNote": "Started from a locally cached Bookworm-derived Python image with Debian sid packages installed; not equivalent to a clean debian:sid workflow image",
+    "flutter": "3.47.8, framework 737ba8f885, Dart 3.13.7",
+    "rust": "rustc 1.97.1, cargo 1.97.1",
+    "wpeWebKit": "2.54.2",
+    "libwpe": "1.16.3-2",
+    "libsecretDev": "0.21.8.2-2",
+    "rendering": "Xvfb and software GL; runtime replay not reached"
+  },
+  "commands": [
+    {
+      "command": "flutter analyze",
+      "exitCode": 0,
+      "result": "No issues found"
+    },
+    {
+      "command": "flutter test",
+      "exitCode": 0,
+      "result": "All tests passed (1 test)"
+    },
+    {
+      "command": "flutter build linux --release",
+      "exitCode": 1,
+      "result": "Compile failed in flutter_inappwebview_linux"
+    }
+  ],
+  "buildFailure": {
+    "file": "linux/flutter/ephemeral/.plugin_symlinks/flutter_inappwebview_linux/linux/in_app_webview/in_app_webview_settings.cc",
+    "line": 405,
+    "diagnostic": "use of undeclared identifier 'WPE_SETTING_DISABLE_ANIMATIONS'",
+    "availableRelatedSetting": "WPE_SETTING_REDUCED_MOTION",
+    "header": "/usr/include/wpe-webkit-2.0/wpe-platform/wpe/WPESettings.h",
+    "packages": {
+      "flutter_inappwebview": "6.2.0-beta.3",
+      "flutter_inappwebview_linux": "0.1.0-beta.1",
+      "libwpewebkit-2.0-dev": "2.54.2-1"
+    },
+    "note": "The default plugin source was built without a source patch or compatibility define. Application runtime was not reached."
+  },
+  "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-build.log"
 }

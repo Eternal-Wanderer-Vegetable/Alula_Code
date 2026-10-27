@@ -98,7 +98,8 @@ dependencies, then run:
 
 ```bash
 sudo apt-get install build-essential clang cmake libepoxy-dev libgtk-3-dev \
-  libwpe-1.0-dev libwpewebkit-2.0-dev ninja-build pkg-config x11-utils xauth xvfb
+  libsecret-1-dev libwpe-1.0-dev libwpewebkit-2.0-dev ninja-build pkg-config \
+  x11-utils xauth xvfb
 flutter config --enable-linux-desktop
 cd tools/web-engine-probe
 flutter pub get
@@ -115,8 +116,14 @@ MHTML bytes, and `mem-probe` process-tree samples before and after the WebView
 lifecycle. It uses Xvfb with software GL, so these memory values are exploratory
 and should not be compared with interactive desktop baselines. The
 `P00.4 Linux WPE Web Engine Probe` workflow uses a Debian sid container to
-produce the same artifacts. It has not run yet; its script and workflow are
-infrastructure, not Linux runtime evidence.
+produce the same artifacts. A local attempt on 2026-10-28 passed `flutter
+analyze` and `flutter test`, then stopped during the Release build because
+`flutter_inappwebview_linux 0.1.0-beta.1` references the missing
+`WPE_SETTING_DISABLE_ANIMATIONS` macro with Debian sid WPE 2.54.2. The workflow
+and this guide now include the separately required `libsecret-1-dev` package.
+No Flutter/WPE runtime replay has passed; see
+`docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-evidence.json` and
+`p00.4-linux-wpe-build.log` for the captured attempt.
 
 ## Linux WebKitGTK engine-only check
 
