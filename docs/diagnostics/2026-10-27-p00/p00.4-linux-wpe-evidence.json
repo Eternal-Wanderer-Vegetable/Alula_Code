@@ -1,0 +1,53 @@
+{
+  "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
+  "recordedAt": "2026-10-28",
+  "status": "runner-prepared-not-run",
+  "scope": "Static plugin contract and replay infrastructure only; no Linux runtime evidence",
+  "probe": {
+    "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
+    "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
+    "linuxPackage": "flutter_inappwebview_linux 0.1.0-beta.1",
+    "linuxPackageSha256": "2e1a3b09bb911fb5a8bb155cb7f1eb1428a19b6e20363b9db48beef428b8cef5",
+    "engine": "WPE WebKit",
+    "archiveApi": "saveWebArchive with WEBKIT_SAVE_MODE_MHTML",
+    "archiveSuffix": ".mht",
+    "screenshotApi": "takeScreenshot (PNG)"
+  },
+  "sourceContract": {
+    "callDevToolsProtocolMethodSupported": false,
+    "callDevToolsProtocolMethodSupportedPlatforms": [
+      "Windows WebView2"
+    ],
+    "isInspectableSupported": false,
+    "isInspectableSupportedPlatforms": [
+      "iOS WKWebView 16.4+",
+      "macOS WKWebView 13.3+",
+      "Windows WebView2"
+    ],
+    "evidence": [
+      "Pinned flutter_inappwebview_platform_interface annotations",
+      "Pinned Linux package webview_channel_delegate.cc has takeScreenshot and saveWebArchive handlers but no callDevToolsProtocolMethod handler"
+    ]
+  },
+  "runner": {
+    "workflow": ".github/workflows/p00-web-engine-linux.yml",
+    "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
+    "host": "GitHub Actions ubuntu-24.04 with debian:sid container",
+    "wpeDevelopmentPackage": "libwpewebkit-2.0-dev",
+    "wpePackageVersion": "not observed; workflow records it during execution",
+    "runtimeExecuted": false,
+    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-run"
+  },
+  "limitations": [
+    "No Flutter Linux build or application run has occurred",
+    "No MHTML save/reload result, screenshot, or memory sample exists",
+    "No Web Inspector attachment test has occurred",
+    "CDP is declared unsupported by the pinned plugin contract; this is not a runtime failure trace",
+    "Debian sid package versions are rolling and must be recorded from the actual run"
+  ],
+  "sources": [
+    "https://github.com/pichillilorenzo/flutter_inappwebview/blob/master/flutter_inappwebview_linux/WPE_BACKEND.md",
+    "https://packages.debian.org/sid/amd64/libwpewebkit-2.0-dev/filelist",
+    "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev"
+  ]
+}

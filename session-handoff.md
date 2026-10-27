@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第十七轮：补齐 macOS Web Archive 回放 runner；Mac 实测与 P00.4 阻塞仍未解除）
+> Last Updated：2026-10-28（第十八轮：补齐 Linux WPE runner；Windows beta 探针复跑通过；Linux/Mac 实测与 P00.4 阻塞仍未解除）
 
 ## 项目一句话
 
@@ -9,7 +9,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Current Objective
 
-P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证据。Web 实验包括 Windows Flutter/WebView2 与 Linux WebKitGTK 原生引擎层结果；本轮为 macOS WKWebView 新增了 Web Archive 回放 runner，但尚无 Mac 构建/运行结果。Linux Flutter/WPE/CDP、macOS 实测及 Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证据。Web 实验包括 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）及 Linux WebKitGTK 原生引擎层结果。Linux Flutter/WPE runner 已准备但未执行；所选插件声明不支持 Linux CDP 与 Inspector。macOS runner 也尚未执行，Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
@@ -21,7 +21,10 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - 第十五轮复核：固定 SHA 与 1.145.0 官方 Insiders URL 仍 404，latest 返回 1.144.0 不同 revision；Marketplace fork 禁止与 Sync 无自定义后端政策保持。Linux 插件路线为 v6.2 beta + 独立 WPE 包；当前 Ubuntu WSL 无 Linux Flutter/Dart 与 WPE dev SDK。证据补充在 reference-acquisition.md、p00.4-web-adr.md、p00.4-services-adr.md。
 - 第十七轮：重验 pinned commit 下载 URL 与官方 CLI 的 1.145.0 版本解析 GET 均为 404；微软维护的 `vscode-test` helper 与 VS Code CLI 更新实现使用同一 commit URL，公开官方路径没有发现可替代的固定版本端点。该结果不覆盖所有内部/企业发行渠道，记录在 `reference-acquisition.md`。
 - 第十七轮：新增隔离 macOS Flutter 工程、WKWebView Web Archive 保存/同 view 重载验证、页面标记输出、`footprint -targetChildren` 采样脚本及 macOS 15 GitHub Actions runner。它们尚未在 Mac 执行，不是平台通过证据；Safari Web Inspector 附着仍是独立手动步骤。细节见 `p00.4-web-adr.md`、`tools/web-engine-probe/README.md` 与 `.github/workflows/p00-web-engine-macos.yml`。
-- GitNexus staged `detect-changes` 为 risk=medium（37 files/20 symbols/5 flows），五条受影响流程均在隔离 Web Probe 的 build、导出、重载、销毁与自动回放；all scope 还包含工作区用户既存改动。`_toggleWebView` impact 为 HIGH，该方法的状态文案改动已撤回；`State.build` impact 为 UNKNOWN，确认是 Flutter 覆写后按动态回调路径人工审阅。其余探针回放方法 impact 为 LOW。分析器报告的 process graph truncation 仍存在。
+- 第十八轮：新增 Flutter Linux runner、Debian sid WPE 构建 workflow、Xvfb replay 与 `mem-probe` 采样；锁定插件 beta 6.2.0。Windows Git Bash analyze/test/Release build 与 WebView2 CDP/MHTML 自动回放通过；新增 1,438-byte MHTML、截图与五阶段内存 JSON。Linux workflow 尚未运行，静态契约显示其 WPE 插件没有 CDP handler，Inspector 标志不支持 Linux。详见 `p00.4-linux-wpe-evidence.json`、`p00.4-web-beta-evidence.json` 与 `p00.4-web-adr.md`。
+- 第十八轮收尾：Windows Git Bash `bash init.sh` EXIT=0，Rust workspace tests、clippy、build_core 与 Flutter 122 项测试通过；恢复夹具的 2,000,001 UTF-16 输入在约 2 分钟后完成，输出仍为预期的磁盘 5 单元恢复结果。Git Bash 启动时 `.bashrc` 编码告警但不影响命令成功。
+- 第十八轮 GitNexus `detect-changes --scope all` 为 risk=low（61 files/58 symbols/0 flows），staged scope 为 risk=low（32 files/42 symbols/0 flows）；all 包含用户原有工作区改动。两个结果均未报告 partial/truncated，但索引过程图本身有截断：186 flows、208 个入口候选未纳入、98 个 callee 被跳过、2 次 walk 达预算；缺失流程不视为无影响。
+第十七轮 GitNexus staged `detect-changes` 为 risk=medium（37 files/20 symbols/5 flows），五条受影响流程均在隔离 Web Probe 的 build、导出、重载、销毁与自动回放；all scope 还包含工作区用户既存改动。`_toggleWebView` impact 为 HIGH，该方法的状态文案改动已撤回；`State.build` impact 为 UNKNOWN，确认是 Flutter 覆写后按动态回调路径人工审阅。其余探针回放方法 impact 为 LOW。分析器报告的 process graph truncation 仍存在。
 - 第十六轮完成 Windows Git Bash `cargo fmt --check && bash init.sh`，退出码 0；单独 Flutter `analyze` 也为 0（No issues found）。完整门禁覆盖 Rust workspace tests、core 构建、clippy 零警告和 Flutter 122 项测试；RECOVERY-01 接受 2,000,001 UTF-16 单元后仍只从磁盘恢复 5 单元，现状故障夹具保持预期。
 - 第十六轮仅更新进度/交接文档，没有修改 `app/`、`crates/` 或产品依赖。用户工作区中原有的未提交修改继续保持未暂存、未纳入提交。
 - 本轮 GitNexus `detect_changes` all/staged 均 risk=low；staged 为 5 个文档文件、0 条受影响流程。结果对象无 `partial`/`truncated` 字段；索引流程图本身仍截断（187 flows，406 个入口候选丢弃 206 个、98 个 callee 跳过、2 次 walk 达预算）。
@@ -60,7 +63,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
 - P00 需固定参考的 Microsoft 同 SHA 发行物尚不可得；Code-OSS 与微软发行配置差异不能抹平。
 - P00.4 实验1只在 Windows 验证；macOS/Linux IME、Rust 往返/背压、Release 内存、完整 Unicode/EOL 与无障碍仍未验证。
-- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE 集成（上游当前需 v6.2 beta + WPE 2.0）、Chrome CDP 互操作、硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
+- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE runner 尚未在 Debian sid 执行；所选 beta 插件静态声明 CDP 与 Inspector 不支持 Linux。硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
 - P00.4 实验3：官方 FAQ 明确 Marketplace 不允许 Code-OSS fork 访问，Microsoft 扩展许可限定 VS family；Settings Sync 不支持自定义后端。本地正式版 1.142.0 产品身份字段不属于固定 1.145.0 Code-OSS 参考。需解决许可/产品身份边界才可声称官方服务 1:1。
 - 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
   使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
@@ -76,6 +79,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
+- docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/ 与 p00.4-linux-wpe-evidence.json：当前 beta Windows 兼容性复跑及 Linux WPE 静态契约/runner 状态。
+- .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；目前尚未运行。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
@@ -86,7 +91,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。先在 Mac runner 上执行 `.github/workflows/p00-web-engine-macos.yml` 并检查 artifact；需手动确认 Safari Web Inspector attach。Linux Flutter/WPE/CDP 仍需单独 runner。
+2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Mac 与 Linux workflow 仍需在 GitHub Actions 上运行并检查 artifact；Mac 还需手动确认 Safari Web Inspector attach。Linux CDP/Inspector 在当前插件支持表中不支持，需记录为架构决策而非当作兼容。
 3. Microsoft 官方身份/许可路径仍没有授权结论。用户尚未回复“保持严格 1:1 / 批准不等价替代 / 提供授权或 runner 访问信息”的问题；按严格标准保留阻塞，直到明确决策。
 4. 工作流必须推到 GitHub PR/分支后才会获得 Mac 运行结果；当前本地提交分支尚未推送。不要将未运行的 workflow 写成 Mac 证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
 4. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。

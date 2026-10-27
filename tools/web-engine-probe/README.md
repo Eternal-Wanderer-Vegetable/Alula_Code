@@ -1,11 +1,11 @@
 # P00.4 Web Engine Probe
 
-Standalone Windows Flutter app for the second P00.4 risk experiment. It pins
-flutter_inappwebview 6.1.5 and uses the machine's Evergreen WebView2 runtime.
-It does not add a dependency to the Alula workbench. The tested release build
-used Visual Studio 2026 and required NuGet CLI plus the WebView2 NuGet package;
-the current plugin also needs `_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS`
-with this MSVC version.
+Standalone Flutter app for the second P00.4 risk experiment. It pins
+flutter_inappwebview 6.2.0-beta.3 so the same probe can exercise WebView2,
+WKWebView, and the Linux WPE implementation. It does not add a dependency to
+the Alula workbench. The recorded Windows release build used the previous
+6.1.5 plugin and Visual Studio 2026; rerun the Windows release build before
+using that capture as evidence for the current probe revision.
 
 From Windows Git Bash:
 
@@ -21,16 +21,21 @@ PATH=/e/alula_code/tools/web-engine-probe:$PATH \
 /e/_alula_tools/flutter-win-wrapper.sh run -d windows --release
 ```
 
-The probe starts with no WebView. F5 creates or destroys WebView2 and loads an
+The Windows build needs NuGet CLI at `tools/web-engine-probe/nuget.exe`. If it
+is missing, download the [official NuGet CLI](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe)
+to that ignored path before building.
+
+The probe starts with no WebView. F5 creates or destroys the native WebView and loads an
 offline page with an embedded data URI resource. F6 calls
 Page.captureSnapshot(format=mhtml), writes the returned archive to the system
 temporary directory, and reports whether the MIME header and page marker are
-present. F7 navigates the same WebView to the saved archive. The buttons do the
-same actions. `P00_4_WEB_AUTO=1` runs that sequence automatically for the
-smoke script; it is off in a normal launch. The probe uses `Page.captureScreenshot`
-to save the initial page and MHTML reload directly from WebView2. The smoke
-waits for those page lifecycle markers before copying screenshots and sampling
-the process tree.
+present. Linux calls WPE WebKit's `saveWebArchive` API; macOS saves a WKWebView
+Web Archive. F7 navigates the same WebView to the saved archive. The buttons do
+the same actions. `P00_4_WEB_AUTO=1` runs that sequence automatically for the
+platform smoke script; it is off in a normal launch. Windows uses CDP
+screenshots, Linux uses the plugin's PNG screenshot API, and macOS records page
+verification JSON. The smoke scripts wait for page lifecycle markers before
+copying artifacts and sampling the process tree.
 
 For Windows process-tree Private Bytes, get the probe PID from Task Manager or
 PowerShell, then run the repository mem-probe in a second Windows Git Bash:
@@ -46,13 +51,12 @@ captures WebView page screenshots and process-tree snapshots, waits 30 seconds
 after destroy, then closes the probe.
 
 The recorded Windows replay and its limits are in
-`docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md`. macOS and Flutter Linux need
-their own native builds. Do not infer cross-platform CDP, MHTML, or memory
-behavior from the Windows result.
+`docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md`. Do not infer cross-platform
+CDP, MHTML, Inspector, or memory behavior from the Windows result.
 
 ## macOS WKWebView check
 
-The macOS target uses the stable plugin's native `WKWebView.createWebArchiveData`
+The macOS target uses the plugin's native `WKWebView.createWebArchiveData`
 API and saves a `.webarchive` file before opening it in the same WebView. It
 checks the original page and the reloaded archive with JavaScript, because the
 macOS WebKit view does not implement the Windows CDP screenshot path. This
@@ -78,6 +82,41 @@ remains a separate manual check. The same replay is available as the
 `P00.4 macOS Web Engine Probe` GitHub Actions workflow. Neither the new target
 nor the workflow has run on macOS yet, so they are test infrastructure rather
 than Mac evidence.
+
+## Linux Flutter/WPE check
+
+The Linux Flutter plugin uses WPE WebKit. The probe exercises PNG screenshots
+and MHTML archive save/reload. Its published method support table marks
+`callDevToolsProtocolMethod` as Windows only, and the Linux implementation has
+no native CDP method handler. The generated page JSON records that support flag
+as `false`; it does not claim CDP compatibility. The same support table limits
+`isInspectable` to iOS, macOS, and Windows, so Inspector attachment remains
+unverified on Linux.
+
+On Debian sid with Flutter 3.47.8, install the desktop and WPE build
+dependencies, then run:
+
+```bash
+sudo apt-get install build-essential clang cmake libepoxy-dev libgtk-3-dev \
+  libwpe-1.0-dev libwpewebkit-2.0-dev ninja-build pkg-config x11-utils xauth xvfb
+flutter config --enable-linux-desktop
+cd tools/web-engine-probe
+flutter pub get
+flutter analyze
+flutter test
+flutter build linux --release
+scripts/run-web-smoke-linux.sh \
+  build/linux/x64/release/bundle/web_engine_probe \
+  ../../docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-run
+```
+
+The runner records WPE package versions, page verification JSON and PNGs,
+MHTML bytes, and `mem-probe` process-tree samples before and after the WebView
+lifecycle. It uses Xvfb with software GL, so these memory values are exploratory
+and should not be compared with interactive desktop baselines. The
+`P00.4 Linux WPE Web Engine Probe` workflow uses a Debian sid container to
+produce the same artifacts. It has not run yet; its script and workflow are
+infrastructure, not Linux runtime evidence.
 
 ## Linux WebKitGTK engine-only check
 

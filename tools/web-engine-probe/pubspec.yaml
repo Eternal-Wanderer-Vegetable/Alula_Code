@@ -1,5 +1,5 @@
 name: web_engine_probe
-description: "Standalone P00.4 Windows WebView2, CDP and MHTML risk probe."
+description: "Standalone P00.4 WebView2, WKWebView and WPE risk probe."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,7 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_inappwebview: 6.1.5
+  flutter_inappwebview: 6.2.0-beta.3
 
 dev_dependencies:
   flutter_test:

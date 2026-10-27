@@ -1,0 +1,78 @@
+name: P00.4 Linux WPE Web Engine Probe
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p00-web-engine-linux.yml'
+      - 'tools/web-engine-probe/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-engine-linux:
+    name: WPE WebKit MHTML replay
+    runs-on: ubuntu-24.04
+    container:
+      image: debian:sid
+    timeout-minutes: 35
+    steps:
+      - name: Install build and WPE dependencies
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential ca-certificates clang cmake curl dbus-x11 fonts-dejavu-core \
+            git libepoxy-dev libgl1-mesa-dri libgtk-3-dev liblzma-dev libwpe-1.0-dev \
+            libwpewebkit-2.0-dev ninja-build pkg-config unzip x11-utils xauth xvfb \
+            xz-utils zip
+
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Verify WPE development packages
+        run: |
+          pkg-config --modversion wpe-webkit-2.0
+          pkg-config --modversion wpe-platform-2.0
+          pkg-config --modversion wpe-platform-headless-2.0
+
+      - name: Resolve probe dependencies
+        run: |
+          flutter config --enable-linux-desktop
+          flutter pub get
+        working-directory: tools/web-engine-probe
+
+      - name: Analyze and test probe
+        run: |
+          flutter analyze
+          flutter test
+        working-directory: tools/web-engine-probe
+
+      - name: Build Linux probe
+        run: flutter build linux --release
+        working-directory: tools/web-engine-probe
+
+      - name: Build memory sampler
+        run: cargo build --release -p mem-probe
+
+      - name: Run WPE MHTML replay
+        run: |
+          tools/web-engine-probe/scripts/run-web-smoke-linux.sh \
+            tools/web-engine-probe/build/linux/x64/release/bundle/web_engine_probe \
+            "$RUNNER_TEMP/p00.4-web-linux"
+
+      - name: Upload Linux probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p00.4-web-linux-${{ github.run_id }}
+          path: ${{ runner.temp }}/p00.4-web-linux
+          if-no-files-found: warn
+          retention-days: 14

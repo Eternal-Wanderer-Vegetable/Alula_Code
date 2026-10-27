@@ -1,0 +1,38 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: about:blank
+Subject: Alula Web Probe
+Date: Tue, 27 Oct 2026 17:07:21 GMT
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--kKF9i3CV5wc42LRrNWNMB5tsk8RpbqeIHzHgDHPrSE----"
+
+
+------MultipartBoundary--kKF9i3CV5wc42LRrNWNMB5tsk8RpbqeIHzHgDHPrSE----
+Content-Type: text/html
+Content-ID: <frame-EAB4DBF761324F75F9EB9B5BA6848C10@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html><html><head><meta http-equiv=3D"Content-Type" content=3D"tex=
+t/html; charset=3DUTF-8"><link rel=3D"stylesheet" type=3D"text/css" href=3D=
+"cid:css-d6abd416-4184-4eca-84e5-fd7f63252c07@mhtml.blink" /><title>Alula W=
+eb Probe</title>
+
+</head><body data-ready=3D"true"><h1>WEB_ENGINE_PROBE_OK</h1>
+<p id=3D"resource">Offline data URI resource:</p>
+<img alt=3D"probe" width=3D"16" height=3D"16" src=3D"data:image/gif;base64,=
+R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=3D">
+
+</body></html>
+------MultipartBoundary--kKF9i3CV5wc42LRrNWNMB5tsk8RpbqeIHzHgDHPrSE----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-d6abd416-4184-4eca-84e5-fd7f63252c07@mhtml.blink
+
+@charset "utf-8";
+
+body { font: 20px sans-serif; background: rgb(244, 247, 255); padding: 32px=
+; }
+
+h1 { color: rgb(25, 79, 168); }
+------MultipartBoundary--kKF9i3CV5wc42LRrNWNMB5tsk8RpbqeIHzHgDHPrSE------

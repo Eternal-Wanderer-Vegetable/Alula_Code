@@ -59,7 +59,13 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
 
   bool get _usesWebArchive => Platform.isMacOS;
 
-  String get _archiveExtension => _usesWebArchive ? 'webarchive' : 'mhtml';
+  bool get _usesLinuxMhtml => Platform.isLinux;
+
+  String get _archiveExtension => _usesWebArchive
+      ? 'webarchive'
+      : _usesLinuxMhtml
+      ? 'mht'
+      : 'mhtml';
 
   String get _archiveReloadedPhase =>
       _usesWebArchive ? 'webarchive-loaded' : 'mhtml-loaded';
@@ -101,7 +107,7 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     InAppWebViewController controller,
     String phase,
   ) async {
-    if (_usesWebArchive) {
+    if (_usesWebArchive || _usesLinuxMhtml) {
       final title = await controller.evaluateJavascript(
         source: 'document.title',
       );
@@ -109,7 +115,7 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
         source: "document.body.innerText.includes('WEB_ENGINE_PROBE_OK')",
       );
       if (hasProbeMarker != true) {
-        throw StateError('WKWebView page marker is missing after $phase');
+        throw StateError('WebView page marker is missing after $phase');
       }
       final file = File(
         '${Directory.systemTemp.path}${Platform.pathSeparator}'
@@ -121,9 +127,31 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
           'title': title,
           'hasProbeMarker': hasProbeMarker,
           'url': (await controller.getUrl())?.toString(),
+          if (_usesLinuxMhtml)
+            'cdpMethodSupported': InAppWebViewController.isMethodSupported(
+              PlatformInAppWebViewControllerMethod.callDevToolsProtocolMethod,
+              platform: TargetPlatform.linux,
+            ),
+          if (_usesLinuxMhtml)
+            'inspectableSettingSupported':
+                InAppWebViewSettings.isPropertySupported(
+                  InAppWebViewSettingsProperty.isInspectable,
+                  platform: TargetPlatform.linux,
+                ),
         }),
         flush: true,
       );
+      if (_usesLinuxMhtml) {
+        final screenshot = await controller.takeScreenshot();
+        if (screenshot == null || screenshot.isEmpty) {
+          throw StateError('WPE WebKit returned no screenshot after $phase');
+        }
+        final imageFile = File(
+          '${Directory.systemTemp.path}${Platform.pathSeparator}'
+          'p00.4-web-$phase-render.png',
+        );
+        await imageFile.writeAsBytes(screenshot, flush: true);
+      }
       return;
     }
 
@@ -165,6 +193,8 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     setState(
       () => _status = _usesWebArchive
           ? 'Creating WKWebView Web Archive…'
+          : _usesLinuxMhtml
+          ? 'Saving WPE WebKit MHTML…'
           : 'Calling Page.captureSnapshot(format=mhtml)…',
     );
     try {
@@ -185,6 +215,39 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
           _archivePath = file.path;
           _archiveBytes = archiveBytes;
           _status = 'WKWebView Web Archive saved; page marker=$hasProbePage';
+        });
+        return;
+      }
+
+      if (_usesLinuxMhtml) {
+        final file = File(
+          '${Directory.systemTemp.path}${Platform.pathSeparator}'
+          '$_archiveFileName',
+        );
+        final savedPath = await controller.saveWebArchive(
+          filePath: file.path,
+          autoname: false,
+        );
+        if (savedPath == null || savedPath.isEmpty) {
+          throw StateError('WPE WebKit returned no MHTML archive path');
+        }
+
+        final archiveFile = File(savedPath);
+        final data = await archiveFile.readAsBytes();
+        if (data.isEmpty) {
+          throw StateError('WPE WebKit returned an empty MHTML archive');
+        }
+        final archiveText = String.fromCharCodes(data);
+        final hasMimeHeader = archiveText.toLowerCase().contains(
+          'mime-version:',
+        );
+        final hasProbePage = archiveText.contains('WEB_ENGINE_PROBE_OK');
+        final archiveBytes = await archiveFile.length();
+        setState(() {
+          _archivePath = archiveFile.path;
+          _archiveBytes = archiveBytes;
+          _status =
+              'WPE WebKit MHTML saved; MIME header=$hasMimeHeader, page marker=$hasProbePage';
         });
         return;
       }
@@ -216,6 +279,8 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
       setState(
         () => _status = _usesWebArchive
             ? 'WKWebView Web Archive failed: $error'
+            : _usesLinuxMhtml
+            ? 'WPE WebKit MHTML failed: $error'
             : 'CDP/MHTML failed: $error',
       );
     }
@@ -272,6 +337,8 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
                     child: Text(
                       _usesWebArchive
                           ? 'Save WKWebView Web Archive'
+                          : _usesLinuxMhtml
+                          ? 'Save WPE MHTML'
                           : 'Capture CDP MHTML',
                     ),
                   ),
