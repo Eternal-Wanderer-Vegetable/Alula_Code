@@ -59,7 +59,7 @@
   "parent_mapping_group_delta_cycle10_minus_baseline_mib": {
     "[heap]": {"pss": 35.17, "private_dirty": 35.17},
     "[anonymous] (aggregate of unnamed mappings)": {"pss": 32.48, "private_dirty": 32.48},
-    "/work/install/lib/libWPEWebKit-2.0.so.1.9.10": {"pss": 14.65, "private_clean": 13.50}
+    "/work/install/lib/libWPEWebKit-2.0.so.1.9.10": {"pss": 14.66, "pss_delta_kib": 15008, "private_clean": 13.50}
   },
   "interpretation": [
     "Destroy+30s private/PSS did not return to the initial baseline over ten cycles; cycle-to-cycle values fluctuated, while the final cycle remained 81.20/83.63 MiB above baseline.",

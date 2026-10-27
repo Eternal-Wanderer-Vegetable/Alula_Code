@@ -20,7 +20,7 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 - 通过 `/mnt/c/Program Files/Git/bin/bash.exe` 从 WSL 调用 Windows Git Bash 执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core` 与 Flutter 122 项测试通过；用户 Git Bash `.bashrc` 有 BOM 告警，不影响命令。当前 WSL 直接调用仍因缺 Cargo/Windows Flutter CRLF 失败。
 - 在 UID 1000、WPE 2.52.6、Xvfb/software GL、sandbox/GBM disabled 的独立 Release 探针进程里，无截图/MHTML/Inspector 连续创建/销毁 10 次，每次销毁+30s采样。进程树基线 177.57/231.80 MiB private/PSS，第十轮 258.77/315.43 MiB（+81.20/+83.63）；增量在父进程，NetworkProcess PSS 基本稳定，WPEWebProcess 销毁后退出。
-- 父进程 `[heap]`、匿名映射、WPE WebKit 文件映射 PSS 分别比基线高 35.17/32.48/14.65 MiB。周期内有回落，不能由映射数据证明 live leak 或具体 owner；单轮软件渲染探针不满足 docs/04。原始证据和限制见 `p00.4-linux-wpe-multi-cycle-evidence.json` 与 `p00.4-linux-wpe-multi-cycle-run1/`。P00.4 继续 blocked。
+- 父进程 `[heap]`、匿名映射、WPE WebKit 文件映射 PSS 分别比基线高 35.17/32.48/14.66 MiB（文件页增量为 15,008 KiB）。周期内有回落，不能由映射数据证明 live leak 或具体 owner；单轮软件渲染探针不满足 docs/04。原始证据和限制见 `p00.4-linux-wpe-multi-cycle-evidence.json` 与 `p00.4-linux-wpe-multi-cycle-run1/`。P00.4 继续 blocked。
 
 ## 今日会话（2026-10-28 第三十三轮）：WPE 父进程 smaps 映射 follow-up
 
