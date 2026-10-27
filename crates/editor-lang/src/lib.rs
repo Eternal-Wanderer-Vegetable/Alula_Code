@@ -17,6 +17,19 @@ pub struct Token {
     pub kind: String,
 }
 
+/// 一个符号定义（大纲用）：tree-sitter 定义节点提取。
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct Symbol {
+    /// 类别标签：function/struct/enum/trait/impl/mod/const/static/type/macro
+    pub kind: String,
+    /// 符号名（impl 为被实现类型，如 "Foo"；trait impl 为 "Trait for Foo"）。
+    pub name: String,
+    /// UTF-16 code unit 起始偏移（与 Dart/LSP 口径一致）。
+    pub start_utf16: usize,
+    /// 1-based 起始行。
+    pub line: usize,
+}
+
 pub struct SyntaxEngine {
     parser: Parser,
     query: Query,
@@ -121,6 +134,90 @@ impl SyntaxEngine {
         }
         Ok(tokens)
     }
+
+    /// 提取符号定义（大纲视图用）：遍历语法树收集定义类节点。
+    /// 含嵌套（impl 里的方法、mod 里的项），按文档顺序输出。
+    pub fn symbols(&mut self, text: &str) -> Result<Vec<Symbol>, String> {
+        let tree = self
+            .parser
+            .parse(text, None)
+            .ok_or("tree-sitter 解析返回 None")?;
+
+        // 字节偏移 → UTF-16（与 parse 相同口径）
+        let u16_at =
+            |byte_off: usize, text: &str| -> usize { text[..byte_off].encode_utf16().count() };
+
+        let mut out: Vec<Symbol> = Vec::new();
+
+        // 定义类节点：kind → 类别标签
+        const DEF_KINDS: &[(&str, &str)] = &[
+            ("function_item", "function"),
+            ("struct_item", "struct"),
+            ("enum_item", "enum"),
+            ("trait_item", "trait"),
+            ("impl_item", "impl"),
+            ("mod_item", "mod"),
+            ("const_item", "const"),
+            ("static_item", "static"),
+            ("type_item", "type"),
+            ("macro_definition", "macro"),
+        ];
+
+        fn walk(
+            node: tree_sitter::Node,
+            text: &str,
+            u16_at: &dyn Fn(usize, &str) -> usize,
+            defs: &[(&str, &str)],
+            out: &mut Vec<Symbol>,
+            depth: usize,
+        ) {
+            if depth > 12 {
+                return; // 深度保险
+            }
+            let kind = node.kind();
+            if let Some((_, label)) = defs.iter().find(|(k, _)| *k == kind) {
+                let name_node = if kind == "impl_item" {
+                    // impl 没有 name 字段：取被实现类型（含 trait 前缀）
+                    node.child_by_field_name("trait")
+                        .map(|t| {
+                            let ty = node
+                                .child_by_field_name("type")
+                                .map(|n| n.utf8_text(text.as_bytes()).unwrap_or("?"))
+                                .unwrap_or("?");
+                            format!("{} for {}", t.utf8_text(text.as_bytes()).unwrap_or("?"), ty)
+                        })
+                        .unwrap_or_else(|| {
+                            node.child_by_field_name("type")
+                                .map(|n| {
+                                    n.utf8_text(text.as_bytes()).unwrap_or("?").to_string()
+                                })
+                                .unwrap_or_default()
+                        })
+                } else {
+                    node.child_by_field_name("name")
+                        .map(|n| n.utf8_text(text.as_bytes()).unwrap_or("?").to_string())
+                        .unwrap_or_default()
+                };
+                if !name_node.is_empty() {
+                    out.push(Symbol {
+                        kind: (*label).to_string(),
+                        name: name_node,
+                        start_utf16: u16_at(node.start_byte(), text),
+                        line: node.start_position().row + 1,
+                    });
+                }
+            }
+            let mut cursor = node.walk();
+            for child in node.children(&mut cursor) {
+                walk(child, text, u16_at, defs, out, depth + 1);
+            }
+        }
+
+        let root = tree.root_node();
+        walk(root, text, &u16_at, DEF_KINDS, &mut out, 0);
+        out.sort_by_key(|sym| sym.start_utf16);
+        Ok(out)
+    }
 }
 
 #[cfg(test)]
@@ -156,6 +253,60 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn symbols_extracted_with_kinds_lines_utf16() {
+        let mut engine = SyntaxEngine::rust().unwrap();
+        let code = "// 中文注释
+fn main() {
+    inner_fn();
+}
+            struct Point { x: i32 }
+enum Color { Red }
+trait Shape {
+    fn area(&self) -> f64;
+}
+            impl Shape for Point {
+    fn area(&self) -> f64 { 0.0 }
+}
+            mod inner {
+    pub fn helper() {}
+}
+const MAX: i32 = 10;
+";
+        let symbols = engine.symbols(code).unwrap();
+
+        let kinds: Vec<&str> = symbols.iter().map(|s| s.kind.as_str()).collect();
+        assert!(kinds.contains(&"function"), "应含 function（main/area/helper）");
+        assert!(kinds.contains(&"struct"));
+        assert!(kinds.contains(&"enum"));
+        assert!(kinds.contains(&"trait"));
+        assert!(kinds.contains(&"impl"));
+        assert!(kinds.contains(&"mod"));
+        assert!(kinds.contains(&"const"));
+
+        // impl 的名字 = "Trait for Type"
+        let imp = symbols.iter().find(|s| s.kind == "impl").unwrap();
+        assert_eq!(imp.name, "Shape for Point");
+
+        // main 在第 2 行（中文注释占第 1 行）
+        let main = symbols.iter().find(|s| s.name == "main").unwrap();
+        assert_eq!(main.line, 2);
+        // UTF-16 偏移切片回验：偏移处应是 "fn"
+        let u16s: Vec<u16> = code.encode_utf16().collect();
+        let piece: String =
+            String::from_utf16_lossy(&u16s[main.start_utf16..main.start_utf16 + 2]);
+        assert_eq!(piece, "fn");
+
+        // 按文档顺序
+        let starts: Vec<usize> = symbols.iter().map(|s| s.start_utf16).collect();
+        let mut sorted = starts.clone();
+        sorted.sort_unstable();
+        assert_eq!(starts, sorted, "应按文档顺序输出");
+
+        // helper（mod 内嵌套函数）也被收集
+        assert!(symbols.iter().any(|s| s.name == "helper"));
     }
 
     #[test]

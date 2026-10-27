@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 3;
+const int expectedAbiVersion = 4;
 
 enum OpType { insert, delete }
 
@@ -104,6 +104,16 @@ class AlulaLsp {
         as Map<String, Object?>;
     if (r['ok'] != true) return const [];
     return (r['items'] as List).cast<String>();
+  }
+
+  /// 文档符号定义（大纲）：[{kind, name, start_utf16, line}]。
+  ({int version, List<Map<String, Object?>> symbols})? symbols(int id) {
+    final r = jsonDecode(_core._ffi.symbolsJson(id)) as Map<String, Object?>;
+    if (r['ok'] != true) return null;
+    return (
+      version: r['version'] as int,
+      symbols: (r['symbols'] as List).cast<Map<String, Object?>>(),
+    );
   }
 
   /// Tree-sitter 语法 token：[{start_utf16, end_utf16, kind}]。

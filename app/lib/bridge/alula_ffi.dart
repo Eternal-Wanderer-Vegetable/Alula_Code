@@ -110,6 +110,11 @@ class AlulaFfi {
         'alula_syntax',
       );
 
+  late final Pointer<Utf8> Function(int) _symbols = lib
+      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+        'alula_symbols',
+      );
+
   late final Pointer<Utf8> Function(Pointer<Utf8>) _wsListDir = lib
       .lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>('alula_ws_list_dir');
@@ -201,6 +206,8 @@ class AlulaFfi {
       _takeJson(_completion(id, offsetUtf16, timeoutMs));
 
   String syntaxJson(int id) => _takeJson(_syntax(id));
+
+  String symbolsJson(int id) => _takeJson(_symbols(id));
 
   String wsListDirJson(String path) {
     final p = path.toNativeUtf8();

@@ -136,6 +136,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   SearchService? _searchService;
   WorkspaceWatcher? _watcher;
 
+  // ---------- 大纲视图（feat-outline） ----------
+  final List<({String kind, String name, int startUtf16, int line})>
+      _outlineSymbols = [];
+  String _outlineDocKey = '';
+  Timer? _outlineTimer;
+
   // ---------- Git 面板（feat-git，CLI 封装） ----------
   String _sidebarView = 'explorer';
   GitCli? _git;
@@ -226,6 +232,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'Ctrl+Space');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity());
+    reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
@@ -566,6 +573,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
     _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
+    _scheduleOutlineRefresh();
     final sw = Stopwatch()..start();
     try {
       final version = doc.doc.apply(ops);
@@ -1170,6 +1178,55 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  // ---------- 大纲视图 ----------
+
+  /// 刷新当前焦点文档的符号大纲（FFI；按版本去重）。
+  void _refreshOutline() {
+    final active = _active;
+    if (active == null) {
+      _outlineSymbols.clear();
+      _outlineDocKey = '';
+      return;
+    }
+    final r = active.doc.core.lsp.symbols(active.id);
+    if (r == null) return;
+    final key = '${active.name}#${r.version}';
+    if (key == _outlineDocKey) return;
+    _outlineDocKey = key;
+    _outlineSymbols
+      ..clear()
+      ..addAll([
+        for (final s in r.symbols)
+          (
+            kind: s['kind'] as String? ?? '',
+            name: s['name'] as String? ?? '',
+            startUtf16: (s['start_utf16'] as num?)?.toInt() ?? 0,
+            line: (s['line'] as num?)?.toInt() ?? 0,
+          )
+      ]);
+  }
+
+  /// 编辑后防抖刷新大纲。
+  void _scheduleOutlineRefresh() {
+    _outlineTimer?.cancel();
+    _outlineTimer = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      setState(_refreshOutline);
+    });
+  }
+
+  void _jumpToSymbol(int startUtf16) {
+    final active = _active;
+    if (active == null) return;
+    final t = active.controller.text;
+    final offset = startUtf16.clamp(0, t.length);
+    active.controller.value = TextEditingValue(
+      text: t,
+      selection: TextSelection.collapsed(offset: offset),
+    );
+    setState(() {});
+  }
+
   // ---------- 搜索视图 ----------
 
   Future<void> _runSearch() async {
@@ -1253,15 +1310,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await _checkExternalChanges();
   }
 
-  /// 重载文件树：根 + 已展开目录（保留展开状态）。
+  /// 重载文件树：全量重建但**保留展开状态**（外部刷新不能抹掉用户的
+  /// 展开层级——否则每次 git status 写 .git 都会把树折回去）。
   void _refreshTree() {
     final core = _core;
     if (core == null || _workspaceRoot == null) return;
+
+    // 快照展开目录路径
+    final expandedPaths = <String>{};
+    void snapshot(List<TreeNode> nodes) {
+      for (final n in nodes) {
+        if (n.isDir && n.expanded) expandedPaths.add(n.path);
+        if (n.children != null) snapshot(n.children!);
+      }
+    }
+
+    snapshot(_treeRoots);
     _reloadTreeRoots();
 
-    void walk(List<TreeNode> nodes) {
+    // 恢复展开态并重载对应子节点
+    void restore(List<TreeNode> nodes) {
       for (final n in nodes) {
-        if (!n.isDir || !n.expanded || n.children == null) continue;
+        if (!n.isDir || !expandedPaths.contains(n.path)) continue;
+        n.expanded = true;
         try {
           final entries = core.workspace.listDir(n.path);
           n.children = entries
@@ -1271,14 +1342,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     isDir: (e['is_dir'] as bool?) ?? false,
                   ))
               .toList();
-          walk(n.children!);
+          restore(n.children!);
         } on AlulaException {
-          // 目录被外部删除等：保留旧子节点，不中断
+          // 目录被外部删除：跳过该分支
         }
       }
     }
 
-    walk(_treeRoots);
+    restore(_treeRoots);
     if (mounted) setState(() {});
   }
 
@@ -1404,11 +1475,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
   void _selectSidebarView(String view) {
+    if (view == 'outline') _refreshOutline();
     if (_sidebarView == view && !_layout.isCollapsed('sidebar')) {
       _layout.toggleRegion('sidebar');
       return;
     }
-    setState(() => _sidebarView = view);
+    setState(() {
+      _sidebarView = view;
+      if (view == 'outline') _refreshOutline();
+    });
     _layout.showRegion('sidebar');
   }
 
@@ -1446,6 +1521,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _searchSub?.cancel();
     _searchQuery.dispose();
+    _outlineTimer?.cancel();
     _watcher?.stop();
     _panelTab.dispose();
     _commitMessage.dispose();
@@ -1519,6 +1595,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 TitleMenuItem('搜索…${_sc('view.search')}', () {
                   _selectSidebarView('search');
                 }),
+                TitleMenuItem('大纲', () => _selectSidebarView('outline')),
                 TitleMenuItem(
                     '切换侧栏', () => _layout.toggleRegion('sidebar')),
                 TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
@@ -1545,6 +1622,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   'sidebar': (_) => switch (_sidebarView) {
                         'git' => _buildGitPanel(),
                         'search' => _buildSearchPanel(),
+                        'outline' => _buildOutlinePanel(),
                         _ => _buildSidebar(),
                       },
                   'panel': (_) => _buildPanel(),
@@ -1572,6 +1650,95 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
   }
+
+  // ---------- 侧栏：大纲 ----------
+
+  Widget _buildOutlinePanel() {
+    final active = _active;
+    return Container(
+      color: const Color(0xFF181B20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+            child: Text(
+              active == null ? '大纲' : '大纲 · ${active.name}',
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: active == null || _outlineSymbols.isEmpty
+                ? Center(
+                    child: Text(
+                      active == null
+                          ? '无打开文档'
+                          : (_outlineSymbols.isEmpty
+                              ? '未发现符号（仅支持 Rust）'
+                              : ''),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.grey.shade500, fontSize: 12),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _outlineSymbols.length,
+                    itemBuilder: (context, i) {
+                      final sym = _outlineSymbols[i];
+                      return Material(
+                        type: MaterialType.transparency,
+                        child: ListTile(
+                          key: ValueKey('outline-$i'),
+                          dense: true,
+                          leading: Container(
+                            width: 30,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2F3542),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              _outlineKindBadge(sym.kind),
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Colors.lightBlueAccent
+                                    .withValues(alpha: 0.9),
+                              ),
+                            ),
+                          ),
+                          title: Text(sym.name,
+                              style: const TextStyle(fontSize: 12),
+                              overflow: TextOverflow.ellipsis),
+                          subtitle: Text('行 ${sym.line}',
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade500)),
+                          onTap: () => _jumpToSymbol(sym.startUtf16),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _outlineKindBadge(String kind) => switch (kind) {
+        'function' => 'fn',
+        'struct' => 'st',
+        'enum' => 'en',
+        'trait' => 'tr',
+        'impl' => 'im',
+        'mod' => 'mo',
+        'const' => 'co',
+        'static' => 'st',
+        'type' => 'ty',
+        'macro' => 'ma',
+        _ => kind.isEmpty ? '?' : kind.substring(0, 2),
+      };
 
   // ---------- 侧栏：搜索 ----------
 

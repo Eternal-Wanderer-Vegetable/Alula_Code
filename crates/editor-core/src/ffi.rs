@@ -21,7 +21,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 3;
+pub const ALULA_ABI_VERSION: u32 = 4;
 
 static REGISTRY: OnceLock<Mutex<DocRegistry>> = OnceLock::new();
 
@@ -307,6 +307,17 @@ pub extern "C" fn alula_completion(id: u64, offset_utf16: u64, timeout_ms: u64) 
 // ---------- 导出函数：Tree-sitter 语法 ----------
 
 /// 当前文档的语法高亮 token（UTF-16 区间 + 捕获类别）。
+#[no_mangle]
+pub extern "C" fn alula_symbols(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| match crate::doc_symbols(id) {
+        Some((version, symbols)) => {
+            to_c_ptr(json!({ "ok": true, "version": version, "symbols": symbols }).to_string())
+        }
+        None => err_json("UnknownDoc", json!({ "id": id })),
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_symbols")))
+}
+
 #[no_mangle]
 pub extern "C" fn alula_syntax(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| match crate::syntax_tokens(id) {

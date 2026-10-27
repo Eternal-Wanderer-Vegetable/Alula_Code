@@ -171,6 +171,19 @@ pub fn syntax_tokens(id: u64) -> Option<(u64, Vec<editor_lang::Token>)> {
     Some((version, tokens))
 }
 
+/// 提取文档符号定义（大纲视图）。未挂语法引擎的文档也可调用。
+pub fn doc_symbols(id: u64) -> Option<(u64, Vec<editor_lang::Symbol>)> {
+    let text = {
+        let reg = registry_shared().lock().ok()?;
+        reg.text_of(id)?
+    };
+    let mut engine = syntax_engine().lock().ok()?;
+    let symbols = engine.symbols(&text).ok()?;
+    drop(engine);
+    let version = registry_shared().lock().ok()?.version_of(id)?;
+    Some((version, symbols))
+}
+
 // FFI 层与语法层共享同一个注册表实例。
 pub(crate) fn registry_shared() -> &'static Mutex<DocRegistry> {
     ffi::registry()

@@ -550,6 +550,64 @@ void main() {
     });
   });
 
+  testWidgets('feat-outline 大纲：符号列表与点击跳转', (tester) async {
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+          prefix: 'alula_outline_widget',
+          extraFiles: {
+            'src/lib.rs': 'pub struct Point {$kNL'
+                '    x: i32,$kNL'
+                '}$kNL$kNL'
+                'pub fn make_point() -> Point {$kNL'
+                '    Point { x: 1 }$kNL'
+                '}$kNL'
+          });
+      addTearDown(() async {
+        if (repo.existsSync()) await repo.delete(recursive: true);
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+      // 等文件监视器的「建仓事件余波」防抖完成（会触发一次树重建）
+      await Future<void>.delayed(const Duration(milliseconds: 1200));
+      await tester.pump();
+
+      // 打开 src/lib.rs
+      await tester.tap(find.text('src'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pump();
+
+      await tester.tap(find.text('lib.rs'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pump();
+
+      // 切到大纲视图
+      await tester.tap(find.byTooltip('大纲'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pump();
+
+      expect(find.text('make_point'), findsOneWidget,
+          reason: '大纲应列出函数符号');
+      expect(find.text('Point'), findsOneWidget, reason: '大纲应列出结构体符号');
+
+      // 点击 make_point → 编辑器光标跳到该符号起始处
+      await tester.tap(find.text('make_point'));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      await tester.pump();
+
+      final editor = tester.widget<TextField>(find.byType(TextField).last);
+      final expected =
+          editor.controller!.text.indexOf('pub fn make_point');
+      expect(editor.controller!.selection.baseOffset, expected,
+          reason: '点击大纲符号应把光标跳到定义起始');
+    });
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(
