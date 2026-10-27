@@ -76,9 +76,15 @@ void main() {
     });
 
     test('rg 后端（若本机可用）：结果与 git grep 一致', () async {
-      // CI 可能没有 rg：单独探测可用性，不可用就跳过
-      final probe = await Process.run('rg', ['--version']);
-      if (probe.exitCode != 0) return;
+      // CI 可能没有 rg（可执行文件不存在会抛异常，不只是非零退出码）
+      var rgAvailable = false;
+      try {
+        final probe = await Process.run('rg', ['--version']);
+        rgAvailable = probe.exitCode == 0;
+      } on ProcessException {
+        rgAvailable = false;
+      }
+      if (!rgAvailable) return;
       final svc = SearchService(
           root: repo.path,
           defaultBackend: SearchBackend.ripgrep,
