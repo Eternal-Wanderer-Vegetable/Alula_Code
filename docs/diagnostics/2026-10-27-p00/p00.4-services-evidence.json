@@ -1,0 +1,69 @@
+{
+  "experiment": "P00.4-official-services-endpoints-client-registration",
+  "capturedAt": "2026-10-27T15:34:29Z",
+  "referenceSource": {
+    "repository": "microsoft/vscode",
+    "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "version": "1.145.0 development",
+    "productJsonSha256": "104a252a18d584b91176d24d20a12b7e08ce9225cf0cb176906928c068c1a945",
+    "productFieldsAbsent": [
+      "auth",
+      "configurationSync.store",
+      "extensionsGallery",
+      "tunnelApplicationConfig"
+    ],
+    "runtimeIdentity": "Code - OSS Dev (see runtime-evidence.json)"
+  },
+  "installedMicrosoftReference": {
+    "version": "1.142.0",
+    "quality": "stable",
+    "productJsonSha256": "bb590c029d69e5caa7fb5ee69a530931720964a24052631eb71da7b60050df8a",
+    "isSameVersionAsPinnedSource": false,
+    "sensitiveValuesCopied": false,
+    "configuredSections": [
+      "auth",
+      "configurationSync.store",
+      "editSessions.store",
+      "extensionsGallery",
+      "tunnelApplicationConfig"
+    ]
+  },
+  "officialEndpoints": {
+    "authentication": [
+      "https://login.microsoftonline.com/common/oauth2/authorize",
+      "https://login.microsoftonline.com/common/oauth2/token",
+      "https://vscode-redirect.azurewebsites.net/",
+      "https://github.com/login/oauth/authorize"
+    ],
+    "settingsSync": [
+      "https://vscode-sync.trafficmanager.net/",
+      "https://vscode-sync-insiders.trafficmanager.net/"
+    ],
+    "marketplace": [
+      "https://marketplace.visualstudio.com/_apis/public/gallery",
+      "https://marketplace.visualstudio.com/items",
+      "https://main.vscode-cdn.net/extensions/marketplace.json"
+    ],
+    "tunnels": [
+      "https://global.rel.tunnels.api.visualstudio.com",
+      "https://vscode.dev"
+    ]
+  },
+  "networkProbe": {
+    "method": "HEAD",
+    "url": "https://vscode-sync.trafficmanager.net/",
+    "tlsVerifyResult": 0,
+    "httpStatus": 404,
+    "resolvedRemoteIp": "198.18.0.52",
+    "interpretation": "Execution-environment network path only; not evidence of a Sync API response or authorization"
+  },
+  "notPerformed": [
+    "No Microsoft or GitHub sign-in",
+    "No OAuth client registration or secret creation",
+    "No Marketplace API request because official policy excludes Code-OSS forks",
+    "No tunnel creation or other write request",
+    "No authenticated Settings Sync request"
+  ],
+  "decision": "Official Microsoft distribution configuration is separate from the pinned Code-OSS product. Marketplace access for Code-OSS forks is explicitly prohibited by the VS Code FAQ. Keep P00 in progress and P00.4 blocked until scope/permission and cross-platform Web experiment constraints are resolved; a custom gallery or backend is not official 1:1.",
+  "adr": "p00.4-services-adr.md"
+}

@@ -1,0 +1,75 @@
+{
+  "experiment": "P00.4-editor-ime-incremental-multicursor-viewport",
+  "status": "complete",
+  "decision": "Keep CodeForge 11.3.0 as a P03 candidate for further validation; do not integrate it into the Alula workbench or treat it as the final architecture.",
+  "scope": "Standalone Flutter Windows probe only; no product workbench or Rust DocumentModel changes.",
+  "environment": {
+    "os": "Windows 11 build 26200 x64",
+    "flutter": "3.47.8",
+    "dart": "3.13.7",
+    "package": "code_forge 11.3.0",
+    "ime": "Microsoft Pinyin, zh-Hans-CN, TIP 0804:{81D4E9C9-1D3B-41BC-9E6C-4B40BF79E35E}{FA550B04-5AD7-411F-A5AC-CA038EC515D7}",
+    "window": "1280x720"
+  },
+  "replay": {
+    "directory": "tools/editor-ime-probe",
+    "commands": [
+      {
+        "command": "/e/_alula_tools/flutter-win-wrapper.sh analyze",
+        "exit_code": 0,
+        "result": "No issues found."
+      },
+      {
+        "command": "/e/_alula_tools/flutter-win-wrapper.sh test",
+        "exit_code": 0,
+        "result": "4 widget tests passed."
+      }
+    ]
+  },
+  "automated_observations": {
+    "ime_composition": {
+      "during_composition": "display=ni; committed text remains seed",
+      "after_commit": "text=seed你好; one undo restores seed"
+    },
+    "delta_multicursor": {
+      "input": "a|b|c|d",
+      "delta": "insert X",
+      "result": "aX|bX|cX|dX",
+      "undo": "single undo restores original text"
+    },
+    "viewport": {
+      "line_count": 10000,
+      "dart_utf16_code_units": 258889,
+      "secondary_cursors": 3,
+      "scroll_px": 83700.0,
+      "max_scroll_px": 167400.0
+    }
+  },
+  "manual_windows_ime": {
+    "composition": "Microsoft Pinyin displayed active nihao composition and candidate list before commit.",
+    "commit": "Space selected first candidate 你好.",
+    "cancel": "Escape canceled zhongguo composition without adding document text.",
+    "latin_input": "xyz appeared incrementally in the 10k-line document.",
+    "screenshots": [
+      "p00.4-ime-composition.png",
+      "p00.4-ime-committed.png",
+      "p00.4-ime-cancel-before.png",
+      "p00.4-ime-cancelled.png",
+      "p00.4-latin-incremental.png"
+    ]
+  },
+  "exploratory_debug_metrics": {
+    "max_frame_total_span_ms": 52.0,
+    "frames_over_16ms": 2,
+    "frames_observed": 4681,
+    "max_keydown_to_controller_notification_ms": 428.8,
+    "caveat": "Cumulative mixed-input Debug-run observations only; not an isolated latency benchmark, Release performance result, or acceptance gate."
+  },
+  "not_verified": [
+    "macOS and Linux IME behavior",
+    "real native GUI multi-cursor interaction",
+    "Rust DocumentModel round-trip, bounded adapter, and synchronization backpressure",
+    "Release latency and process-tree memory",
+    "Emoji, ZWJ, combining characters, CRLF, BOM, column selection, long-line behavior, accessibility, and multiple views"
+  ]
+}
