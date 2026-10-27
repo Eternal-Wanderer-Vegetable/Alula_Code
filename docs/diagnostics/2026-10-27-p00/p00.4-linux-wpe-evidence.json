@@ -1,8 +1,8 @@
 {
   "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
   "recordedAt": "2026-10-28",
-  "status": "runtime-replay-passed-with-isolated-container-overrides",
-  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed with WebKit sandbox disabled and GBM disabled; no production, CDP, Inspector, or macOS acceptance.",
+  "status": "runtime-replay-and-default-sandbox-passed-with-cpu-rendering-limitations",
+  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A follow-up left the WebKit sandbox-disable variable unset and observed bwrap children in a container with SYS_ADMIN plus seccomp unconfined; GBM remained disabled. The first-page screenshot was background-only despite a passing DOM marker. No production, CDP, Inspector, hardware-rendering, or macOS acceptance.",
   "probe": {
     "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
     "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
@@ -32,7 +32,7 @@
   "runner": {
     "workflow": ".github/workflows/p00-web-engine-linux.yml",
     "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
-    "host": "Local temporary Docker container, Debian GNU/Linux 12 Bookworm; GitHub Actions workflow remains unrun",
+    "host": "Local Debian GNU/Linux 12 Bookworm Docker containers; baseline replay used the default container seccomp profile, and follow-up sandbox replay used --cap-add SYS_ADMIN --security-opt seccomp=unconfined as UID 1000. GitHub Actions workflow remains unrun",
     "wpeDevelopmentPackage": "Official WPE WebKit 2.52.6 source build installed at /work/install; not a dpkg package",
     "wpePackageVersion": "wpe-webkit-2.0=2.52.6; wpe-platform-2.0=2.52.6; wpe-platform-headless-2.0=2.52.6",
     "runtimeExecuted": true,
@@ -40,7 +40,8 @@
     "libsecretDevelopmentPackage": "libsecret-1-dev=0.20.5-3"
   },
   "limitations": [
-    "WPE 2.52.6 source build and Flutter/WPE replay passed only in an isolated container with WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 and WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1; default sandbox and hardware rendering are unverified",
+    "The default WebKit sandbox passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; this is not a normal runner/production security result. Both replay paths disabled GBM, so hardware rendering remains unverified",
+    "The default-sandbox replay initial-page DOM marker passed but its first PNG was background-only; the MHTML reload PNG rendered correctly. First-frame screenshot behavior remains unresolved",
     "Debian sid WPE 2.54.2 build still fails because the plugin references WPE_SETTING_DISABLE_ANIMATIONS, absent from its headers; see the 2.54 build evidence",
     "Debian Trixie WPE 2.48.3 legacy FDO fallback still fails because webkit_web_view_get_theme_color is undeclared; see the Trixie compatibility evidence",
     "No compatibility macro or plugin source patch was used",
@@ -60,7 +61,7 @@
     "https://wpewebkit.org/about/get-wpe.html"
   ],
   "environment": {
-    "runner": "Temporary local Docker container; not a GitHub Actions run",
+    "runner": "Local Debian Bookworm Docker containers; baseline and follow-up sandbox runs; not a GitHub Actions run",
     "reportedOs": "Debian GNU/Linux 12 (bookworm)",
     "imageNote": "Locally cached python:3.12.14-slim-bookworm base; WPE 2.52.6 built from official release source and installed under /work/install; not a Debian WPE package or clean debian:sid CI image",
     "flutter": "3.47.8, framework 737ba8f885, Dart 3.13.7",
@@ -68,7 +69,7 @@
     "wpeWebKit": "2.52.6 source build; WPEPlatform and headless pkg-config modules 2.52.6",
     "libwpe": "1.14.0-1",
     "libsecretDev": "0.20.5-3",
-    "rendering": "Xvfb and software GL; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1; WebKit sandbox disabled only because container lacks unprivileged user namespaces",
+    "rendering": "Xvfb/software GL; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1 in both runs. Baseline set WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1; follow-up left it unset and used Docker --cap-add SYS_ADMIN --security-opt seccomp=unconfined. Hardware GBM rendering not tested",
     "buildTools": "GCC 12.2.0 for WPE; Clang 14.0.6 for Flutter Linux plugin; CMake 3.25.1; Ninja 1.11.1"
   },
   "commands": [
@@ -245,5 +246,86 @@
     "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/"
   },
   "sourceBuildEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md",
-  "runtimeEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/"
+  "runtimeEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/",
+  "sandboxReplay": {
+    "successful": true,
+    "runner": "Temporary Debian 12 container with --cap-add SYS_ADMIN --security-opt seccomp=unconfined; probe user UID/GID 1000; not GitHub Actions",
+    "userNamespaceProbe": {
+      "command": "unshare --user --map-root-user true",
+      "exitCode": 0,
+      "bubblewrapMode": "0755"
+    },
+    "overrides": {
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1"
+    },
+    "observedChildProcessesWhileOpen": [
+      "bwrap",
+      "bwrap",
+      "WPEWebProcess",
+      "WPENetworkProcess"
+    ],
+    "replay": {
+      "exitCode": 0,
+      "phases": [
+        "initial-loaded",
+        "mhtml-loaded",
+        "webview-destroyed"
+      ],
+      "destroySampleSeconds": 30
+    },
+    "initialPage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-initial-render.png",
+      "screenshotObservation": "Background-only image despite DOM marker"
+    },
+    "mhtmlReload": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-mhtml-render.png",
+      "screenshotObservation": "Rendered title and body visible",
+      "mhtmlBytes": 2587,
+      "sha256": "c76e7258be9df4075a76d8d7d1bccfdd8f8d42c35d339aaa6505df1e38c3048e",
+      "mimeVersion": "1.0"
+    },
+    "memorySamples": [
+      {
+        "phase": "before-webview",
+        "processes": 2,
+        "privateMiB": 227.0,
+        "workingSetMiB": 341.9,
+        "pssMiB": 281.5
+      },
+      {
+        "phase": "webview-open",
+        "processes": 5,
+        "privateMiB": 314.9,
+        "workingSetMiB": 600.7,
+        "pssMiB": 422.8
+      },
+      {
+        "phase": "mhtml-reloaded",
+        "processes": 5,
+        "privateMiB": 332.8,
+        "workingSetMiB": 622.2,
+        "pssMiB": 441.4
+      },
+      {
+        "phase": "webview-destroyed",
+        "processes": 2,
+        "privateMiB": 255.3,
+        "workingSetMiB": 382.5,
+        "pssMiB": 315.5
+      },
+      {
+        "phase": "destroyed-30s",
+        "processes": 2,
+        "privateMiB": 258.5,
+        "workingSetMiB": 382.1,
+        "pssMiB": 317.3
+      }
+    ],
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-default-sandbox-run/"
+  }
 }

@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十一轮：WPE 2.52.6 源码构建与受限容器回放通过）
+> Last Updated：2026-10-28（第二十二轮：WPE 默认 sandbox 受限容器复核）
 
 ## 项目一句话
 
@@ -8,12 +8,13 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-
-P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验仍有阻塞。Web 实验包括 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生引擎层，以及官方 WPE 2.52.6 源码构建后的 Flutter Linux Release/Xvfb MHTML 回放。该回放依赖隔离容器关闭 WebKit sandbox、禁用 GBM的软件渲染路径，不证明默认安全配置或硬件渲染。Debian sid WPE 2.54.2 设置 API 改名与 Trixie 2.48.3 FDO `webkit_web_view_get_theme_color` 仍有构建阻塞；Linux CDP/Inspector 不支持。macOS runner 未执行，Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。基线 Docker seccomp 阻止 bwrap user namespace；后续用 `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 运行，WebKit sandbox-disable 环境变量 unset，内存样本含 bwrap/WPEWebProcess，MHTML 重载截图通过；首帧 PNG 仍只有背景色，GBM 继续关闭。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP/Inspector 不支持，macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
+
+- 第二十二轮：以 `--cap-add SYS_ADMIN --security-opt seccomp=unconfined` 本地容器复测默认 WebKit sandbox；探针用户 UID 1000、sandbox-disable 环境变量 unset、GBM disabled。`unshare` 成功，bwrap/WebProcess 进程可见，MHTML 重载截图通过；初始 DOM marker 虽通过，首帧 PNG 背景空白。延迟 500ms/2s 未修复，探针源码保持原状。证据见 `p00.4-linux-wpe-2.52.6-default-sandbox-run/`。
 
 - P00.4 实验1：独立 Flutter Windows CodeForge 11.3.0 探针通过真实 Microsoft Pinyin composition/commit/cancel/Latin 输入；4 个 widget tests 覆盖 composition undo、Delta 多光标插入/撤销与 10k 行视口。见 p00.4-editor-adr.md 与 p00.4-editor-evidence.json。CodeForge 仅保留为 P03 候选。
 - P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；另在 WSLg 上以 GTK 原生探针验证 WebKitGTK 页面快照、MHTML 保存/重载、Web Inspector 和短时进程生命周期。Linux 结果不代表 Flutter/WPE 集成或 Chrome CDP；macOS 未验证。证据见 p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
@@ -72,7 +73,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验仍有阻塞。W
 - P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
 - P00 需固定参考的 Microsoft 同 SHA 发行物尚不可得；Code-OSS 与微软发行配置差异不能抹平。
 - P00.4 实验1只在 Windows 验证；macOS/Linux IME、Rust 往返/背压、Release 内存、完整 Unicode/EOL 与无障碍仍未验证。
-- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；WPE 2.52.6 source build 和 Xvfb MHTML/PNG/销毁回放通过，但关闭了隔离容器 WebKit sandbox 与 GBM，硬件加速/default sandbox 未验证。WPE 2.54.2 Release 与 Trixie 2.48.3 FDO 构建仍失败；所选 beta 插件静态声明 CDP 与 Inspector 不支持 Linux。docs/04 长时多轮内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
+- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；WPE 2.52.6 source build/Xvfb MHTML replay 通过。默认 sandbox 后续在 Docker `SYS_ADMIN` + `seccomp=unconfined` 配置、UID 1000 下运行，sandbox-disable 变量 unset，进程树观察到 bwrap/WPEWebProcess；首帧 PNG 背景空白，MHTML 重载截图通过。GBM 硬件仍关闭；WPE 2.54.2 Release 与 Trixie 2.48.3 FDO 构建仍失败；所选 beta 插件静态声明 CDP 与 Inspector 不支持 Linux。docs/04 长时多轮内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
 - P00.4 实验3：官方 FAQ 明确 Marketplace 不允许 Code-OSS fork 访问，Microsoft 扩展许可限定 VS family；Settings Sync 不支持自定义后端。本地正式版 1.142.0 产品身份字段不属于固定 1.145.0 Code-OSS 参考。需解决许可/产品身份边界才可声称官方服务 1:1。
 - 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
   使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
@@ -101,7 +102,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验仍有阻塞。W
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. Linux 的 source-built WPE 2.52.6 只在关闭 sandbox 与 GBM 的临时容器配置下通过；不要据此签收 Linux 默认安全/硬件渲染，也不要开 P01。下一步处理 Mac 真机 WKWebView/Web Archive/Safari Inspector 证据，并继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（workflow 固定 Debian sid WPE 2.54.2），只有用户推送/触发后才有该 CI 结果。
+2. WPE 2.52.6 已在 sandbox-disable baseline 和 `SYS_ADMIN` + `seccomp=unconfined` follow-up 中运行；后者 sandbox-disable 变量 unset 且观测到 bwrap 子进程，但首帧 PNG 背景空白、GBM 硬件未测。P00/P00.4 仍 blocked，不要开 P01。下一步在授权可用的 Mac runner 上验证 WKWebView/Web Archive/Safari Inspector，继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（固定 Debian sid WPE 2.54.2），不要从本地结果推断该 CI 通过。
 3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP/Inspector 在当前插件支持表中不支持，需记录为架构决策而非当作兼容。
 4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。工作流推到 GitHub PR/分支后才能取得 Mac 运行结果，当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
 5. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。

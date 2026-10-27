@@ -9,7 +9,17 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；后者依赖隔离容器关闭 WebKit sandbox 与 GBM 的软件路径。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，MHTML 页面截图可见，但首帧 PNG 只有背景色，GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+
+## 今日会话（2026-10-28 第二十二轮）：WPE 默认 sandbox 受限容器复核
+
+- 按启动流程用 Windows Git Bash 重跑 `bash init.sh --fast`，退出码 0；Rust workspace 测试、核心库构建与 Flutter 122 项测试通过。GitNexus 在本次提交前状态 fresh。
+- 标准临时容器的 seccomp profile 阻止 bwrap 创建 user namespace。为判断是否是 WPE 本身不支持 sandbox，使用本地一次性镜像启动验证容器，运行参数为 `--cap-add SYS_ADMIN --security-opt seccomp=unconfined`，探针进程仍为 UID/GID 1000；`unshare --user --map-root-user true` 退出 0。
+- 在该容器中保持 `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS` unset、设置 `WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1` 后，探针完整经过 initial-loaded、mhtml-loaded、webview-destroyed 与销毁后 30 秒采样，退出码 0。WebView 打开时进程树含两个 `bwrap`、`WPEWebProcess` 和 `WPENetworkProcess`；销毁后 WPEWebProcess 退出，NetworkProcess 留存。
+- 首次页面 JSON marker 为 true，但 PNG 只有背景色；MHTML 重载页面的 JSON marker 与截图正常。500ms、2 秒等待都没能修好干净配置的首帧截图，因此撤回了探针中的临时延迟变更，产品/探针源码最终无改动。GBM 硬件渲染仍未验证。
+- 默认 sandbox 运行证据在 `p00.4-linux-wpe-2.52.6-default-sandbox-run/`；单轮 Private/Working Set/PSS MiB：基线 227.0/341.9/281.5，view open 314.9/600.7/422.8，MHTML 332.8/622.2/441.4，destroy 255.3/382.5/315.5，destroy+30s 258.5/382.1/317.3。该轮不是 docs/04 三轮与长时产品验收。
+- WPE 默认 sandbox launcher 已在具备额外 namespace 能力的隔离 Docker 环境运行；这不证明常规 Docker/GitHub runner/生产主机可用。首帧截图、GBM 硬件、macOS 与官方服务仍是 P00.4 阻塞；feat-022/P00 继续 in-progress，P01 继续 not-started。
+- 本轮没有保留探针源代码改动；只更新 P00.4 ADR/证据、README、状态索引与会话交接。提交前需重新 analyze GitNexus、对暂存集跑 detect-changes，并验证 MHTML hash 与 JSON。
 
 ## 今日会话（2026-10-28 第二十一轮）：WPE 2.52.6 源码构建与回放
 
