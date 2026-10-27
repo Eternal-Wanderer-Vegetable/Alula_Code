@@ -121,9 +121,10 @@ analyze` and `flutter test`, then stopped during the Release build because
 `flutter_inappwebview_linux 0.1.0-beta.1` references the missing
 `WPE_SETTING_DISABLE_ANIMATIONS` macro with Debian sid WPE 2.54.2. The workflow
 and this guide now include the separately required `libsecret-1-dev` package.
-No Flutter/WPE runtime replay has passed; see
-`docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-evidence.json` and
-`p00.4-linux-wpe-build.log` for the captured attempt.
+No Flutter/WPE runtime replay has passed. The Debian Trixie 2.48.3 legacy FDO
+fallback also failed to build this plugin at `webkit_web_view_get_theme_color`;
+see `docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-evidence.json`,
+`p00.4-linux-wpe-build.log`, and `p00.4-linux-wpe-trixie-compat.log` for both attempts.
 
 ## Linux WebKitGTK engine-only check
 

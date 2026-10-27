@@ -51,7 +51,11 @@
   "sources": [
     "https://github.com/pichillilorenzo/flutter_inappwebview/blob/master/flutter_inappwebview_linux/WPE_BACKEND.md",
     "https://packages.debian.org/sid/amd64/libwpewebkit-2.0-dev/filelist",
-    "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev"
+    "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev",
+    "https://wpewebkit.org/blog/2026-09-16-wpewebkit-2.54.html",
+    "https://packages.debian.org/en/trixie/libwpewebkit-2.0-dev",
+    "https://pub.dev/packages/flutter_inappwebview_linux/versions",
+    "https://wpewebkit.org/about/get-wpe.html"
   ],
   "environment": {
     "runner": "Temporary local Docker container; not a GitHub Actions run",
@@ -94,5 +98,18 @@
     },
     "note": "The default plugin source was built without a source patch or compatibility define. Application runtime was not reached."
   },
-  "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-build.log"
+  "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-build.log",
+  "followUpCompatibility": {
+    "recordedAt": "2026-10-28",
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-trixie-compat.log",
+    "upstreamApiChange": "WPE 2.54 replaced WPE_SETTING_DISABLE_ANIMATIONS with WPE_SETTING_REDUCED_MOTION; flutter_inappwebview_linux 0.1.0-beta.1 still references the old setting",
+    "debianStableFallback": {
+      "wpeWebKit": "2.48.3-1 from Debian Trixie",
+      "backend": "WPEBackend-FDO 1.16.1-1+b1",
+      "buildExitCode": 1,
+      "diagnostic": "undeclared identifier webkit_web_view_get_theme_color",
+      "runtimeExecuted": false,
+      "environmentNote": "Tested in a Bookworm-derived mixed Debian container, not a clean Trixie image; the advertised include directory had to be created temporarily to evaluate the legacy FDO compile path"
+    }
+  }
 }

@@ -9,7 +9,15 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）和 Linux WebKitGTK 原生 GTK 引擎层结果；Flutter Linux/WPE probe 本地 analyze/test 已通过，但 Release 构建在 WPE 2.54.2 处被 beta 插件未定义 WPE_SETTING_DISABLE_ANIMATIONS 阻断；无 WPE runtime 证据，CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十六轮 Windows 完整 DoD 和单独 Flutter analyze 均通过；第十七轮新增 macOS runner；第十八轮 Windows beta 探针复跑通过并新增 Linux WPE runner；P01 仍受 P00 依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）和 Linux WebKitGTK 原生 GTK 引擎层结果；Flutter Linux/WPE probe 本地 analyze/test 已通过，但 Release 构建因 WPE 2.54.2 移除 beta 插件所用旧设置 API 而失败；Trixie 2.48.3 的 legacy FDO 回退也因缺少 WebKit API 失败；无 WPE runtime 证据，CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。Linux WPE 在 sid 2.54 与 Trixie 2.48.3 两条本地构建路径均未通过；第十九轮 Windows 完整 DoD 和单独 Flutter analyze 均通过；第十七轮新增 macOS runner；第十八轮 Windows beta 探针复跑通过并新增 Linux WPE runner；P01 仍受 P00 依赖约束。
+
+## 今日会话（2026-10-28 第二十轮）：WPE API 兼容边界复核
+
+- 官方 WPE 2.54 迁移说明确认 `WPE_SETTING_DISABLE_ANIMATIONS` 已替换为 `WPE_SETTING_REDUCED_MOTION`；pub.dev 当前只有 `flutter_inappwebview_linux 0.1.0-beta.1`，仍引用旧名。
+- 测试 Debian Trixie `libwpewebkit-2.0-dev=2.48.3-1` 与插件声明的 WPEBackend-FDO legacy fallback。该包没有 WPEPlatform pkg-config/header；为继续检查 FDO 分支，在临时容器补空 include 目录后，干净 `flutter clean` + Release build 仍因 `webkit_web_view_get_theme_color` 未声明失败。容器为 Bookworm 衍生/混合 Debian，不是干净 Trixie；无 WPE runtime 证据。细节见 `p00.4-linux-wpe-trixie-compat.log`。
+- 未加编译宏、未改插件源码、未把临时目录 workaround 写入仓库。WPE 2.53.92 是官方开发版，需单独评估是否值得从源码构建；P00.4 仍 blocked，P01 仍 not-started。
+- GitNexus 在提交 `5d8b795` 后重建索引：201 flows；188 个入口候选未进入排名、123 个 callee 因分支预算跳过、2 次 walk 达预算；缺失 flow 不能视为无影响。
+- 提交前 GitNexus `detect-changes --scope all` risk=low（37 files/33 symbols/0 processes），staged risk=low（8 files/17 symbols/0 processes）。
 
 ## 今日会话（2026-10-28 第十九轮）：Flutter Linux/WPE 构建尝试与阻塞
 
