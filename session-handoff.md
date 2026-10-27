@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十五轮：WSLg D3D12 EGL / GBM capability check）
+> Last Updated：2026-10-28（第二十六轮：WSLg Wayland EGL follow-up）
 
 ## 项目一句话
 
@@ -8,12 +8,13 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，但未验证 Inspector 命令会话。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash、X11 EGL_NOT_INITIALIZED，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，但未验证 Inspector 命令会话。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash；X11/Wayland EGL 均为 EGL_NOT_INITIALIZED，Wayland socket 可连但没有 GLES2 config；直接 WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
 
+- 第二十六轮：按启动流程检查 GitNexus fresh；当前 WSL `bash init.sh --fast` 因 Cargo 缺失与挂载 Flutter shell CRLF 失败，Windows Git Bash 完整门禁已有通过记录。WPE Debian 12 容器映射 `/dev/dxg`、render node、render GID 992 与 WSLg Wayland socket 后能连接 socket，但 EGL 返回 `EGL_NOT_INITIALIZED`、无 GLES2 config；直接 GBM API 打开 render node 后 `gbm_create_device` 返回 null、没有 buffer；没有运行 WebView。原 WPE 容器未改，临时快照镜像已清理，日志见 `p00.4-linux-wpe-wslg-d3d12-run/wayland-egl.log`。P00.4 仍 blocked。
 - 第二十五轮：WSLg EGL surfaceless probe 在 `GALLIUM_DRIVER=d3d12` 下成功创建 GLES context，renderer 为 `D3D12 (AMD Radeon(TM) Graphics)`。WPE 2.52.6 快照容器映射 `/dev/dxg` 与 DRM devices、GBM enabled、software GL unset 时，Flutter EGL context 未创建，WPEWebProcess crash，90 秒内未到 initial-loaded；容器 X11 `:0` 可连接但 EGL_NOT_INITIALIZED。未获得 WPE GBM/DMABUF 证据，属于当前 Debian Mesa/WSLg integration failure，不是 WPE 支持结论。临时 GBM probe 也因缺 Mesa DRI drivers 而不确定。WSL shell 无 `cmd.exe`；P00.3 四个 fixture 与 Windows Git Bash 门禁已有第二十三轮通过记录，本轮没有冒称重跑。未改产品或原 WPE 容器，临时镜像已删除。证据：`docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-wslg-d3d12-run/`、`p00.4-wslg-egl-evidence.json`。
 - 第二十四轮：在 WPE 2.52.6 source build 的 Flutter Linux/WPE 探针上配置 loopback `WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9231`；target list 列出 `Alula Web Probe`，`Main.html` HTTP 200、2,680 bytes。页面/MHTML/销毁回放退出码 0。运行显式禁用 sandbox 与 GBM；只证明 Remote Inspector HTTP target discovery/frontend bootstrap 可用，未证明 Inspector command session，也不支持 CDP。更正“Linux Inspector 不支持”为“WPE native endpoint 可用、插件静态 capability=false、命令交互未验证”。P00.4 仍 blocked，P01 未启动。证据见 `p00.4-linux-wpe-inspector-evidence.json` 与 `p00.4-linux-wpe-2.52.6-inspector-http-run/`。
 - 本轮 Windows Git Bash `bash init.sh --fast` EXIT=0，Flutter 122 项测试通过。
@@ -109,9 +110,9 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 b
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. WPE 2.52.6 在 `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下 sandbox-disable 变量 unset 的三次新回放均生成首屏/MHTML截图；最终探针一次重试后捕获标题蓝色像素。该探针轮询只解决诊断截图时序，不是产品帧同步保证；WSLg D3D12 EGL/GLES 可用，但 WPE GBM/DMABUF 未验证（最小 Debian GBM probe 不确定）。P00/P00.4 仍 blocked，不要开 P01。下一步在授权可用的 Mac runner 上验证 WKWebView/Web Archive/Safari Inspector，继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（固定 Debian sid WPE 2.54.2），不要从本地结果推断该 CI 通过。
+2. WPE 2.52.6 在 `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下 sandbox-disable 变量 unset 的三次新回放均生成首屏/MHTML截图；最终探针一次重试后捕获标题蓝色像素。该探针轮询只解决诊断截图时序，不是产品帧同步保证；WSLg 宿主 D3D12 EGL/GLES 可用；pinned Debian 12 WPE 容器的 X11/Wayland EGL 初始化均失败，Wayland socket 可连但无 GLES2 config；WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，WPE GBM/DMABUF 仍未验证。P00/P00.4 仍 blocked，不要开 P01。下一步在授权可用的 Mac runner 上验证 WKWebView/Web Archive/Safari Inspector，继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（固定 Debian sid WPE 2.54.2），不要从本地结果推断该 CI 通过。
 3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP 仍不支持；WPE Remote Inspector HTTP target discovery/frontend bootstrap 已验证，但未验证命令会话，不能当作 CDP 等价。
-4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。工作流推到 GitHub PR/分支后才能取得 Mac 运行结果，当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
+4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。Mac workflow 需要先推送 `codex/vscode-parity-p00`；用户对“仅推送并运行、不创建 PR”的授权请求尚未得到回答，未授权前不要推送。当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
 5. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 
 ## 已知风险（尚未因本轮计划而修复）

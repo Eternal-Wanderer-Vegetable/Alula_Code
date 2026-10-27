@@ -1,6 +1,6 @@
 {
   "hostEglProbeCapturedAtUtc": "2026-10-27T21:15:32Z",
-  "recordedAtUtc": "2026-10-27T21:24:21Z",
+  "recordedAtUtc": "2026-10-27T21:33:19Z",
   "scope": "WSLg EGL and WPE-container hardware-renderer probe; not a product acceptance run",
   "host": {
     "environment": "WSL2 with WSLg",
@@ -53,6 +53,28 @@
       "eglInitialize": "failed with EGL_NOT_INITIALIZED (0x3001)",
       "wpeApplicationRun": false
     },
+    "containerWaylandProbe": {
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "supplementaryRenderGroup": 992,
+      "wslgWaylandSocket": "connected",
+      "hostWslD3d12LibrariesMounted": true,
+      "eglInitialize": "failed with EGL_NOT_INITIALIZED (0x3001)",
+      "gles2Config": "unavailable",
+      "wpeApplicationRun": false
+    },
+    "directGbmProbe": {
+      "runtime": "Temporary snapshot of the WPE 2.52.6 Debian Bookworm container",
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "supplementaryRenderGroup": 992,
+      "renderNodeOpen": true,
+      "gbmCreateDevice": "null",
+      "gbmBufferAllocated": false,
+      "mesaDiagnostics": [
+        "Failed to retrieve DRM device information.",
+        "Mesa attempted vgem_dri.so, which was absent, and failed to load that driver."
+      ],
+      "result": "The current WSLg DRM node did not initialize GBM in the WPE container; this does not establish WPE GBM behavior on a supported Linux GPU."
+    },
     "result": "The pinned Debian 12 Mesa/WPE container did not create a hardware EGL context with WSLg devices; WPE GBM/DMABUF support remains unverified"
   },
   "limitations": [
@@ -60,5 +82,5 @@
     "No GBM buffer allocation/import or WPE frame presentation was verified.",
     "The host D3D12 EGL result is WSLg hardware-renderer evidence, not evidence that the pinned Debian container can use it."
   ],
-  "disposition": "Keep P00.4 blocked; the current WPE container's WSLg EGL integration failed and WPE GBM remains unverified."
+  "disposition": "Keep P00.4 blocked; the current WSLg DRM node cannot initialize GBM in the WPE container, and WPE GBM on a supported Linux GPU remains unverified."
 }
