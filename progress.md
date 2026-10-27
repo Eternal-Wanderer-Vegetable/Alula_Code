@@ -9,6 +9,20 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27 第二轮）：feat-010a 撤销/重做 + 查找替换
+
+- **决策**：Flutter 内建 UndoHistory 探测死锁（测试环境）且绑死 TextField
+  （组件选型会失效）→ **自研 UndoStack**（文本快照制：400ms 打字合并、
+  100 帧/200 万字符双上限淘汰、新变更作废 redo）。撤销 = 快照写回 controller
+  经 diff→FFI 同步，一致性天然成立。
+- **关键机制**（两条都踩过）：① 每文档 FocusNode onKeyEvent 在事件分发第一站
+  拦截 Ctrl+Z/Shift+Z/Y/F/H——原生 UndoHistory 在焦点链更下方注册同键；
+  ② 撤销快照基线必须在 savedText 前移之前捕获（先写反过一次，端到端测试抓住）。
+- **查找替换**：find_replace.dart 纯逻辑（非重叠匹配/大小写切换/从后向前
+  全部替换，UTF-16+Emoji 用例）+ 编辑器右上角浮层（计数 x/y、上下导航、
+  替换/全部替换）；标题栏新增「编辑」菜单。
+- 测试：16 纯逻辑 + 1 端到端；全量 93 绿 + init.sh + CI 全绿。
+
 ## 今日会话（2026-10-27）：W3-2 键位注册表
 
 - **KeybindingSet**：默认表 10 键位（逗号分隔多键位）、parseChord 解析、

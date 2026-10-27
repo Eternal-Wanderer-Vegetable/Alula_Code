@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-27（收尾：W3-1/W3-2 完成，CI 全绿；下一任务 feat-010 撤销重做/查找替换）
+> Last Updated：2026-10-27（第二轮收尾：feat-010a 撤销/重做 + 查找替换完成；剩余 Git 面板/文件监视）
 
 ## 项目一句话
 
@@ -10,7 +10,11 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**W1/W2 全部完成 + W3-1/W3-2 完成**（76 测试绿 + init.sh 全绿 + CI 全绿）。
+**W1/W2/W3-1/W3-2/feat-010a 全部完成**（93 测试绿 + init.sh 全绿 + CI 全绿）。
+- feat-010a：自研 UndoStack + 查找替换栏 + 编辑菜单；撤销键位经 FocusNode
+  第一站拦截（详见 progress.md 两条关键机制）。
+- feat-010 剩余：Git 面板（status/stage/commit，CLI 封装）、文件监视
+  （crates/editor-workspace）、编辑器组件切换（待 feat-002 人工复核）。
 - W3 已落能力：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（默认表 +
   keybindings.json 重绑定与移除）/菜单键位提示动态化/F1-F3 命令化。
 - W3 剩余小项：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）。
@@ -67,9 +71,8 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **下轮开发任务**：feat-010 撤销/重做（先验证 Flutter TextField 内建 undo
-   与 FFI 同步是否已兼容，再决定 Rust 侧 undo stack）与查找替换（crate 内实现
-   + FFI）；之后 W3-2c 快速打开异步化、W4 侧边栏视图（搜索/Git）。
+2. **下轮开发任务**：Git 面板（docs/03 Git 行：status/stage/commit/diff，
+   CLI 封装）或 W4 搜索视图（ripgrep 流式）或 W3-2c 快速打开异步化。
 3. 桌面 exe（双击入口）为 W3-1 版本；要体验 W3-2 键位覆盖需重建
    （flutter build windows --release，开发者模式需保持开启）。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。

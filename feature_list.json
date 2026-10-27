@@ -75,10 +75,11 @@
     {
       "id": "feat-010",
       "name": "P1 下一增量：撤销/重做 UI、查找替换、Git 面板、文件监视",
-      "description": "docs/03 §2.1 明确的下一增量；编辑器组件切换（code_forge）待 feat-002 人工复核后执行",
+      "description": "撤销/重做与查找替换已完成（feat-010a）；Git 面板、文件监视、编辑器组件切换（code_forge）待做",
       "dependencies": ["feat-008"],
-      "status": "not-started",
-      "evidence": ""
+      "status": "in-progress",
+      "evidence": "feat-010a（2026-10-27）：自研 UndoStack（快照制/打字合并/双上限淘汰）+ 查找替换栏（UTF-16 口径，大小写切换）+ 编辑菜单；16 纯逻辑测试 + 1 端到端（撤销→重做→查找→全部替换→撤销恢复，覆盖 FFI 反向同步）；93 测试全绿 + init.sh 全绿 + CI 全绿。决策：不依赖 TextField 内建 UndoHistory（死锁 + 锁死组件选型）"'
+
     },
     {
       "id": "feat-011",
