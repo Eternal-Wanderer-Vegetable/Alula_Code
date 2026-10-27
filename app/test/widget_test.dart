@@ -534,7 +534,7 @@ void main() {
           'v1$kNL');
 
       // 外部修改磁盘文件
-      File(repo.path + Platform.pathSeparator + 'watch.txt')
+      File('${repo.path}/watch.txt')
           .writeAsStringSync('v2 external$kNL');
       // 防抖 600ms + 事件延迟 + 重载
       await Future<void>.delayed(const Duration(milliseconds: 1800));
