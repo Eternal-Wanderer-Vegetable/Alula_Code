@@ -509,7 +509,7 @@ void main() {
     await tester.runAsync(() async {
       final repo = await createTempRepo(
           prefix: 'alula_fw_widget',
-          extraFiles: {'watch.txt': 'v1' + kNL});
+          extraFiles: {'watch.txt': 'v1$kNL'});
       addTearDown(() async {
         if (repo.existsSync()) await repo.delete(recursive: true);
       });
@@ -531,11 +531,11 @@ void main() {
               .widget<TextField>(find.byType(TextField).last)
               .controller!
               .text,
-          'v1' + kNL);
+          'v1$kNL');
 
       // 外部修改磁盘文件
       File(repo.path + Platform.pathSeparator + 'watch.txt')
-          .writeAsStringSync('v2 external' + kNL);
+          .writeAsStringSync('v2 external$kNL');
       // 防抖 600ms + 事件延迟 + 重载
       await Future<void>.delayed(const Duration(milliseconds: 1800));
       await tester.pump();
@@ -545,7 +545,7 @@ void main() {
               .widget<TextField>(find.byType(TextField).last)
               .controller!
               .text,
-          'v2 external' + kNL,
+          'v2 external$kNL',
           reason: '干净文档应在磁盘外部修改后自动重载');
     });
   });
