@@ -9,7 +9,16 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）和 Linux WebKitGTK 原生 GTK 引擎层结果；Flutter Linux/WPE probe 本地 analyze/test 已通过，但 Release 构建因 WPE 2.54.2 移除 beta 插件所用旧设置 API 而失败；Trixie 2.48.3 的 legacy FDO 回退也因缺少 WebKit API 失败；无 WPE runtime 证据，CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。Linux WPE 在 sid 2.54 与 Trixie 2.48.3 两条本地构建路径均未通过；第十九轮 Windows 完整 DoD 和单独 Flutter analyze 均通过；第十七轮新增 macOS runner；第十八轮 Windows beta 探针复跑通过并新增 Linux WPE runner；P01 仍受 P00 依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；后者依赖隔离容器关闭 WebKit sandbox 与 GBM 的软件路径。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+
+## 今日会话（2026-10-28 第二十一轮）：WPE 2.52.6 源码构建与回放
+
+- 使用官方 WPE WebKit 2.52.6 release archive（SHA-256 `b2bafef2751625b7fdf530f230ff0f542ff0eeba3590c3a989d931b2a55c858e`）在临时 Debian Bookworm Docker 容器源码构建；WPEPlatform、Headless、MHTML 均开启，9,421 个 Ninja 步骤与 install 均成功。编译有 15 条 `-Wrestrict`、7 条 `-Wuse-after-free` 警告。构建参数、日志和源码限制见 `p00.4-linux-wpe-2.52.6-build.md`。
+- Flutter 3.47.8 / Dart 3.13.7 的 probe `pub get`、`analyze`、1 项 test、Linux Release build 均通过；Rust 1.90.0 下 mem-probe release build 通过。Clang14 的 CMake 探测需设置自定义 WPE `LDFLAGS`；插件的 `-Wno-deprecated-literal-operator` 在本机 Clang14 未知，临时 `CXXFLAGS` 只屏蔽该选项诊断，没有改插件/产品源。
+- 默认 WebKit sandbox 因容器禁止非特权 user namespace 无法启动；禁用 sandbox 后，GBM/DMA-BUF 路径不产出 CPU screenshot；设置 `WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1` 后，初始页面、MHTML 重载、PNG、销毁和 30 秒内存采样全部通过。最终回放同时设 `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1`，只作为隔离软件渲染实验，不证明默认安全或硬件渲染。
+- 单轮 Private/Working Set/PSS MiB：空 WebView 176.9/290.7/230.9；WebView open 282.5/553.9/384.8；MHTML reload 289.5/564.4/392.5；destroy 219.8/342.3/278.2；destroy+30s 219.3/341.8/277.7。WPEWebProcess 已退出但 NetworkProcess 留存；不满足 docs/04 多轮与长时协议。页面 JSON 仍记录 Linux CDP/Inspector 不支持。
+- 更新 smoke runner，使 source-built WPE 不在 dpkg 中时仍可记录 pkg-config 版本，并将 WebKit 安全/GBM overrides 写入 environment.txt。GitNexus 对脚本文件的 impact 为 UNKNOWN；文本检索确认仅 README、Linux Actions workflow 和证据 JSON 引用该脚本。P00.4/feat-022 保持 blocked/in-progress，P01 仍 not-started。未修改 `app/`、`crates/` 或产品依赖。
+- 本轮启动时 Windows Git Bash `bash init.sh --fast` 完整退出码 0；Rust/Dart 全门禁与 122 项 Flutter 测试通过。新增变更只涉及探针脚本和文档/实验数据；提交前仍需跑 Bash 语法、JSON/证据校验和 GitNexus graph change analysis。
 
 ## 今日会话（2026-10-28 第二十轮）：WPE API 兼容边界复核
 

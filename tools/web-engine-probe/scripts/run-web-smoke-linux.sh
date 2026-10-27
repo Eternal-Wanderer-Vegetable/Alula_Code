@@ -69,8 +69,12 @@ fi
   pkg-config --modversion wpe-platform-2.0
   printf 'wpe-platform-headless-2.0='
   pkg-config --modversion wpe-platform-headless-2.0
-  dpkg-query -W -f='${Package}=${Version}\n' \
-    libwpewebkit-2.0-dev libwpe-1.0-dev libgtk-3-dev libepoxy-dev
+  printf 'WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=%s\n' "${WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS:-unset}"
+  printf 'WEBKIT_DMABUF_RENDERER_DISABLE_GBM=%s\n' "${WEBKIT_DMABUF_RENDERER_DISABLE_GBM:-unset}"
+  if ! dpkg-query -W -f='${Package}=${Version}\n' \
+    libwpewebkit-2.0-dev libwpe-1.0-dev libgtk-3-dev libepoxy-dev; then
+    printf 'Some WPE development files may be source-installed; pkg-config versions above are authoritative.\n'
+  fi
 } > "$output_directory/environment.txt"
 
 P00_4_WEB_AUTO=1 "$probe_executable" \

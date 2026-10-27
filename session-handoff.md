@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十轮：核实 WPE 2.54 API 改名与 Debian Trixie 2.48.3 FDO 回退仍不兼容）
+> Last Updated：2026-10-28（第二十一轮：WPE 2.52.6 源码构建与受限容器回放通过）
 
 ## 项目一句话
 
@@ -9,7 +9,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Current Objective
 
-P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证据。Web 实验包括 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）及 Linux WebKitGTK 原生引擎层结果。Flutter Linux/WPE 的 analyze/test 已通过，但 Debian sid WPE 2.54.2 的设置 API 改名阻断 Release 构建；Trixie 2.48.3 的 FDO 回退又因缺少 `webkit_web_view_get_theme_color` 失败，尚无 WPE runtime 证据；所选插件声明不支持 Linux CDP 与 Inspector。macOS runner 也尚未执行，Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验仍有阻塞。Web 实验包括 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生引擎层，以及官方 WPE 2.52.6 源码构建后的 Flutter Linux Release/Xvfb MHTML 回放。该回放依赖隔离容器关闭 WebKit sandbox、禁用 GBM的软件渲染路径，不证明默认安全配置或硬件渲染。Debian sid WPE 2.54.2 设置 API 改名与 Trixie 2.48.3 FDO `webkit_web_view_get_theme_color` 仍有构建阻塞；Linux CDP/Inspector 不支持。macOS runner 未执行，Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
@@ -26,6 +26,9 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - 第十八轮 GitNexus `detect-changes --scope all` 为 risk=low（61 files/58 symbols/0 flows），staged scope 为 risk=low（32 files/42 symbols/0 flows）；all 包含用户原有工作区改动。两个结果均未报告 partial/truncated，但索引过程图本身有截断：186 flows、208 个入口候选未纳入、98 个 callee 被跳过、2 次 walk 达预算；缺失流程不视为无影响。
 - 第十九轮：在本地临时 sid 包环境跑 Flutter 3.47.8 / Dart 3.13.7 的 `flutter analyze` 与 `flutter test`，均通过。Release 构建在 `flutter_inappwebview_linux 0.1.0-beta.1` 的 `WPE_SETTING_DISABLE_ANIMATIONS` 未定义错误处失败；WPE 2.54.2 头文件提供 `WPE_SETTING_REDUCED_MOTION`。未修改插件源码或增加编译兼容宏，无 Xvfb runtime replay。证据见 `p00.4-linux-wpe-build.log` 与 `p00.4-linux-wpe-evidence.json`。
 - 第二十轮：WPE 官方 2.54 migration notes 确认旧动画 setting 已替换；pub.dev 当前只发布 Linux beta.1。Debian Trixie 2.48.3 的 FDO fallback 在混合容器中仍因 `webkit_web_view_get_theme_color` 未声明而构建失败。没有宏或插件源码补丁，无 runtime；证据见 `p00.4-linux-wpe-trixie-compat.log` 与更新后的 Web ADR。
+- 第二十一轮：官方 WPE 2.52.6 release 源码在 Bookworm 临时容器以 WPEPlatform/Headless/MHTML 配置构建成功，Flutter probe Release build 与 Xvfb MHTML/PNG/destroy replay 通过。容器不允许 bwrap namespace，因此关闭 sandbox；GBM/DMA-BUF 路径不提供截图像素，设置 `WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1` 后软件缓冲回放通过。完整构建参数、警告、内存数据和边界见 `p00.4-linux-wpe-2.52.6-build.md` 与 `p00.4-linux-wpe-2.52.6-run/`。
+- 本轮 `mem-probe` Linux Release build 成功；探针 `flutter pub get/analyze/test/build linux --release` 均退出码 0。脚本现在兼容 source-installed WPE pkg-config 记录，并把 sandbox/GBM overrides 写入环境证据。
+- P00.4 仍 blocked：macOS、官方服务身份/许可、Linux 默认 sandbox/硬件渲染/CDP/Inspector 未解决；P01 仍 not-started。无 `app/`、`crates/` 或产品依赖改动。
 - 本轮 GitNexus reindex：201 flows；188 个入口候选未进入排名、123 个 callee 因分支预算跳过、2 次 walk 达预算；缺失 flow 不视为无影响。提交前 detect-changes all risk=low（37 files/33 symbols/0 processes），staged risk=low（8 files/17 symbols/0 processes）。
 - 首次 Linux CMake 配置还发现缺少 `libsecret-1-dev`，已加入 Linux workflow 和 README 依赖清单。临时容器以 Bookworm 衍生镜像为基础安装 sid 包，OS 文件报告 `forky/sid`，不等同于干净的 `debian:sid`。
 - GitNexus 在 Flutter 生成文件出现后重建为 up-to-date。`WebEngineProbePage` impact 为 LOW（1 个直接调用、0 流程）；CMake 文件目标为 UNKNOWN，文本确认本轮只补构建依赖。提交前 `detect-changes --scope all` risk=low（38 files/34 symbols/0 processes），staged risk=low（9 files/18 symbols/0 processes）。索引仍有流程截断：186 flows、208 个入口候选未纳入、98 个 callee 被跳过、2 次 walk 达预算，缺失 flow 不视为无影响。
@@ -69,7 +72,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
 - P00 需固定参考的 Microsoft 同 SHA 发行物尚不可得；Code-OSS 与微软发行配置差异不能抹平。
 - P00.4 实验1只在 Windows 验证；macOS/Linux IME、Rust 往返/背压、Release 内存、完整 Unicode/EOL 与无障碍仍未验证。
-- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE analyze/test 通过，但在本地 Debian sid WPE 2.54.2 环境下 Release 构建因插件引用缺失宏失败，尚无 WPE runtime 证据；所选 beta 插件静态声明 CDP 与 Inspector 不支持 Linux。硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
+- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；WPE 2.52.6 source build 和 Xvfb MHTML/PNG/销毁回放通过，但关闭了隔离容器 WebKit sandbox 与 GBM，硬件加速/default sandbox 未验证。WPE 2.54.2 Release 与 Trixie 2.48.3 FDO 构建仍失败；所选 beta 插件静态声明 CDP 与 Inspector 不支持 Linux。docs/04 长时多轮内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
 - P00.4 实验3：官方 FAQ 明确 Marketplace 不允许 Code-OSS fork 访问，Microsoft 扩展许可限定 VS family；Settings Sync 不支持自定义后端。本地正式版 1.142.0 产品身份字段不属于固定 1.145.0 Code-OSS 参考。需解决许可/产品身份边界才可声称官方服务 1:1。
 - 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
   使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
@@ -86,6 +89,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-build.log 与 p00.4-linux-wpe-trixie-compat.log：当前 beta Windows 兼容性复跑及两种 Linux WPE API 组合的构建阻塞证据。
+- docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md 与 p00.4-linux-wpe-2.52.6-run/：官方 WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、MHTML/PNG 与单轮进程内存证据；明确记录了临时 sandbox/GBM overrides。
 - .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；本地构建未通过，CI workflow 未运行。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
@@ -97,7 +101,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均有部分证�
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. WPE 2.54 已移除 beta 插件引用的旧 setting；Trixie 2.48.3 legacy FDO 又缺少插件调用的 WebKit API。评估是否值得从源码构建 WPE 2.53.92 开发版作为实验组合；未构建和运行前继续保留 blocked，不加宏或未经验证的源码补丁。Mac 与 Linux workflow 仍需在 GitHub Actions 上运行并检查 artifact；Mac 还需手动确认 Safari Web Inspector attach。
+2. Linux 的 source-built WPE 2.52.6 只在关闭 sandbox 与 GBM 的临时容器配置下通过；不要据此签收 Linux 默认安全/硬件渲染，也不要开 P01。下一步处理 Mac 真机 WKWebView/Web Archive/Safari Inspector 证据，并继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（workflow 固定 Debian sid WPE 2.54.2），只有用户推送/触发后才有该 CI 结果。
 3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP/Inspector 在当前插件支持表中不支持，需记录为架构决策而非当作兼容。
 4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。工作流推到 GitHub PR/分支后才能取得 Mac 运行结果，当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
 5. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。

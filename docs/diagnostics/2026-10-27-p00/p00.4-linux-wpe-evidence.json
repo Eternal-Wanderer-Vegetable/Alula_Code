@@ -1,8 +1,8 @@
 {
   "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
   "recordedAt": "2026-10-28",
-  "status": "build-blocked",
-  "scope": "Local Flutter Linux/WPE probe analyzed and tested; Release build blocked before application runtime; Xvfb replay not run",
+  "status": "runtime-replay-passed-with-isolated-container-overrides",
+  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed with WebKit sandbox disabled and GBM disabled; no production, CDP, Inspector, or macOS acceptance.",
   "probe": {
     "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
     "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
@@ -32,23 +32,25 @@
   "runner": {
     "workflow": ".github/workflows/p00-web-engine-linux.yml",
     "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
-    "host": "Local temporary Docker container with sid packages; GitHub Actions workflow remains unrun",
-    "wpeDevelopmentPackage": "libwpewebkit-2.0-dev",
-    "wpePackageVersion": "libwpewebkit-2.0-dev=2.54.2-1; libwpe-1.0-1=1.16.3-2",
-    "runtimeExecuted": false,
-    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-run",
-    "libsecretDevelopmentPackage": "libsecret-1-dev=0.21.8.2-2"
+    "host": "Local temporary Docker container, Debian GNU/Linux 12 Bookworm; GitHub Actions workflow remains unrun",
+    "wpeDevelopmentPackage": "Official WPE WebKit 2.52.6 source build installed at /work/install; not a dpkg package",
+    "wpePackageVersion": "wpe-webkit-2.0=2.52.6; wpe-platform-2.0=2.52.6; wpe-platform-headless-2.0=2.52.6",
+    "runtimeExecuted": true,
+    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run",
+    "libsecretDevelopmentPackage": "libsecret-1-dev=0.20.5-3"
   },
   "limitations": [
-    "The Linux WPE application did not build, so no MHTML save/reload, screenshot, or process-memory samples were produced",
-    "The pinned Linux plugin source references WPE_SETTING_DISABLE_ANIMATIONS, which is absent from the installed WPE 2.54.2 settings header; the build log records the compiler diagnostic",
-    "No compatibility macro or plugin source patch was used in the default build attempt",
-    "CDP is declared unsupported by the pinned plugin contract; this is not a runtime failure trace",
+    "WPE 2.52.6 source build and Flutter/WPE replay passed only in an isolated container with WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 and WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1; default sandbox and hardware rendering are unverified",
+    "Debian sid WPE 2.54.2 build still fails because the plugin references WPE_SETTING_DISABLE_ANIMATIONS, absent from its headers; see the 2.54 build evidence",
+    "Debian Trixie WPE 2.48.3 legacy FDO fallback still fails because webkit_web_view_get_theme_color is undeclared; see the Trixie compatibility evidence",
+    "No compatibility macro or plugin source patch was used",
+    "CDP is declared unsupported by the pinned Linux plugin contract; the runtime JSON records false",
     "The plugin support table does not list Linux for Web Inspector; Inspector attachment was not tested",
     "macOS WKWebView and Safari Web Inspector remain unverified",
-    "The local container used sid packages over a Bookworm-derived image and is not a clean reproduction of the Debian sid GitHub Actions container"
+    "The local run uses Xvfb/software GL, a source-built WPE prefix and one short memory round; it is not the Debian sid GitHub workflow or docs/04 product acceptance"
   ],
   "sources": [
+    "https://wpewebkit.org/release/wpewebkit-2.52.6.html",
     "https://github.com/pichillilorenzo/flutter_inappwebview/blob/master/flutter_inappwebview_linux/WPE_BACKEND.md",
     "https://packages.debian.org/sid/amd64/libwpewebkit-2.0-dev/filelist",
     "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev",
@@ -59,16 +61,22 @@
   ],
   "environment": {
     "runner": "Temporary local Docker container; not a GitHub Actions run",
-    "reportedOs": "Debian GNU/Linux forky/sid",
-    "imageNote": "Started from a locally cached Bookworm-derived Python image with Debian sid packages installed; not equivalent to a clean debian:sid workflow image",
+    "reportedOs": "Debian GNU/Linux 12 (bookworm)",
+    "imageNote": "Locally cached python:3.12.14-slim-bookworm base; WPE 2.52.6 built from official release source and installed under /work/install; not a Debian WPE package or clean debian:sid CI image",
     "flutter": "3.47.8, framework 737ba8f885, Dart 3.13.7",
-    "rust": "rustc 1.97.1, cargo 1.97.1",
-    "wpeWebKit": "2.54.2",
-    "libwpe": "1.16.3-2",
-    "libsecretDev": "0.21.8.2-2",
-    "rendering": "Xvfb and software GL; runtime replay not reached"
+    "rust": "rustc 1.90.0, cargo 1.90.0 (mem-probe build only)",
+    "wpeWebKit": "2.52.6 source build; WPEPlatform and headless pkg-config modules 2.52.6",
+    "libwpe": "1.14.0-1",
+    "libsecretDev": "0.20.5-3",
+    "rendering": "Xvfb and software GL; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1; WebKit sandbox disabled only because container lacks unprivileged user namespaces",
+    "buildTools": "GCC 12.2.0 for WPE; Clang 14.0.6 for Flutter Linux plugin; CMake 3.25.1; Ninja 1.11.1"
   },
   "commands": [
+    {
+      "command": "flutter pub get",
+      "exitCode": 0,
+      "result": "Probe dependencies resolved through the configured Flutter pub mirror"
+    },
     {
       "command": "flutter analyze",
       "exitCode": 0,
@@ -80,9 +88,19 @@
       "result": "All tests passed (1 test)"
     },
     {
-      "command": "flutter build linux --release",
-      "exitCode": 1,
-      "result": "Compile failed in flutter_inappwebview_linux"
+      "command": "flutter build linux --release (PKG_CONFIG_PATH=/work/install/lib/pkgconfig; LD_LIBRARY_PATH=/work/install/lib:/work/install/lib/x86_64-linux-gnu; LDFLAGS=-L/work/install/lib; CXXFLAGS=-Wno-unknown-warning-option)",
+      "exitCode": 0,
+      "result": "Built build/linux/x64/release/bundle/web_engine_probe against WPE 2.52.6"
+    },
+    {
+      "command": "cargo +1.90.0 build --locked --release -p mem-probe",
+      "exitCode": 0,
+      "result": "Built Linux mem-probe"
+    },
+    {
+      "command": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh <web_engine_probe> docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run (WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1)",
+      "exitCode": 0,
+      "result": "initial-loaded, mhtml-loaded and webview-destroyed phases passed; 30-second sample saved"
     }
   ],
   "buildFailure": {
@@ -110,6 +128,122 @@
       "diagnostic": "undeclared identifier webkit_web_view_get_theme_color",
       "runtimeExecuted": false,
       "environmentNote": "Tested in a Bookworm-derived mixed Debian container, not a clean Trixie image; the advertised include directory had to be created temporarily to evaluate the legacy FDO compile path"
+    },
+    "wpe2526SourceBuildReplay": {
+      "recordedAt": "2026-10-28",
+      "wpeWebKit": "2.52.6 from official source archive",
+      "buildExitCode": 0,
+      "runtimeExecuted": true,
+      "runtimeExitCode": 0,
+      "requiredContainerOverrides": [
+        "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1",
+        "WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1"
+      ],
+      "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md and p00.4-linux-wpe-2.52.6-run/",
+      "environmentNote": "Temporary Debian Bookworm Docker container; no hardware rendering; not a Debian package or GitHub Actions run"
     }
-  }
+  },
+  "sourceBuild": {
+    "officialRelease": "WPE WebKit 2.52.6",
+    "archive": "wpewebkit-2.52.6.tar.xz",
+    "sha256": "b2bafef2751625b7fdf530f230ff0f542ff0eeba3590c3a989d931b2a55c858e",
+    "installPrefix": "/work/install (temporary container)",
+    "cmakeOptions": {
+      "ENABLE_MHTML": true,
+      "ENABLE_WPE_PLATFORM": true,
+      "ENABLE_WPE_PLATFORM_HEADLESS": true,
+      "ENABLE_WPE_LEGACY_API": false,
+      "ENABLE_DOCUMENTATION": false,
+      "ENABLE_MINIBROWSER": false,
+      "USE_LIBBACKTRACE": false
+    },
+    "ninjaBuildExitCode": 0,
+    "ninjaInstallExitCode": 0,
+    "buildSteps": 9421,
+    "warningCount": 22,
+    "warningsByClass": {
+      "-Wrestrict": 15,
+      "-Wuse-after-free": 7
+    },
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md",
+    "runLogs": [
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-cmake-configure.log.xz",
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-build-release.log.xz",
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-install.log.xz"
+    ]
+  },
+  "runtimeReplay": {
+    "successful": true,
+    "overrides": {
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1"
+    },
+    "failedDefaultSandboxAttempt": "bwrap could not create a user namespace in this container",
+    "failedSoftwareScreenshotAttempt": "DOM marker loaded but WPE screenshot returned no CPU pixel buffer while GBM path was enabled",
+    "initialPage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-initial-render.png",
+      "dimensions": "1280x572",
+      "cdpSupported": false,
+      "inspectableSupported": false
+    },
+    "mhtmlReload": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-mhtml-render.png",
+      "dimensions": "1280x532",
+      "mhtmlBytes": 2587,
+      "sha256": "346ef1f3ca7e484c9f443d81ffc69bbcc8c2ccda4e777540257e906b02b31ac0",
+      "mimeVersion": "1.0"
+    },
+    "memorySamples": [
+      {
+        "phase": "before-webview",
+        "processes": 2,
+        "privateMiB": 176.9,
+        "workingSetMiB": 290.7,
+        "pssMiB": 230.9,
+        "file": "before-webview-memory.json"
+      },
+      {
+        "phase": "webview-open",
+        "processes": 3,
+        "privateMiB": 282.5,
+        "workingSetMiB": 553.9,
+        "pssMiB": 384.8,
+        "file": "webview-open-memory.json"
+      },
+      {
+        "phase": "mhtml-reloaded",
+        "processes": 3,
+        "privateMiB": 289.5,
+        "workingSetMiB": 564.4,
+        "pssMiB": 392.5,
+        "file": "mhtml-reloaded-memory.json"
+      },
+      {
+        "phase": "webview-destroyed",
+        "processes": 2,
+        "privateMiB": 219.8,
+        "workingSetMiB": 342.3,
+        "pssMiB": 278.2,
+        "file": "webview-destroyed-memory.json"
+      },
+      {
+        "phase": "webview-destroyed-30s",
+        "processes": 2,
+        "privateMiB": 219.3,
+        "workingSetMiB": 341.8,
+        "pssMiB": 277.7,
+        "file": "webview-destroyed-30s-memory.json"
+      }
+    ],
+    "webProcessExitedAfterDestroy": true,
+    "networkProcessRemainedAfterDestroy": true,
+    "memoryRounds": 1,
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/"
+  },
+  "sourceBuildEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md",
+  "runtimeEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/"
 }
