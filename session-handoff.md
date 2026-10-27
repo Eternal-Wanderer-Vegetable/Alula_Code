@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十三轮：P00.3 夹具复放与 WPE 首帧轮询）
+> Last Updated：2026-10-28（第二十四轮：WPE Remote Inspector HTTP target replay）
 
 ## 项目一句话
 
@@ -8,12 +8,14 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP/Inspector 不支持，macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，但未验证 Inspector 命令会话。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
 
+- 第二十四轮：在 WPE 2.52.6 source build 的 Flutter Linux/WPE 探针上配置 loopback `WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9231`；target list 列出 `Alula Web Probe`，`Main.html` HTTP 200、2,680 bytes。页面/MHTML/销毁回放退出码 0。运行显式禁用 sandbox 与 GBM；只证明 Remote Inspector HTTP target discovery/frontend bootstrap 可用，未证明 Inspector command session，也不支持 CDP。更正“Linux Inspector 不支持”为“WPE native endpoint 可用、插件静态 capability=false、命令交互未验证”。P00.4 仍 blocked，P01 未启动。证据见 `p00.4-linux-wpe-inspector-evidence.json` 与 `p00.4-linux-wpe-2.52.6-inspector-http-run/`。
+- 本轮 Windows Git Bash `bash init.sh --fast` EXIT=0，Flutter 122 项测试通过。
 - 第二十三轮：按用户选择的 Windows Git Bash 重跑 P00.3 `build_core`、Flutter fixture 与两个 Rust fixture 命令；四项夹具全部通过，输出与既有记录一致，超大文档用例约 2 分 03 秒。WPE 旧首屏的 732,160 个 RGBA 像素均透明；插件只复制当前缓冲。独立探针改为 DOM 查询前检查标题蓝色像素并有界重试。analyze/test/Linux Release build 通过，三次新的默认 sandbox 冷启动均取得 initial/MHTML 截图，最终版本的一次回放第 2 次截图才得到目标帧。P00.4 仍 blocked，未动产品代码。证据见 `p00.4-linux-wpe-evidence.json` 与三个 `p00.4-linux-wpe-2.52.6-frame-poll-run*/`。
   提交前 Windows Git Bash `cargo fmt --check`、完整 `bash init.sh`、单独 `app/ flutter analyze` 均 EXIT=0；完整脚本覆盖 Rust workspace tests、Clippy、build_core 和 Flutter 122 项测试。
   GitNexus `detect-changes` all risk=medium（91 files/14 symbols/1 flow，含既有 workbench 变更），staged risk=medium（62 files/4 symbols/1 flow，Build→`_hasProbeHeadingPixel`）；无 HIGH/CRITICAL。流程图截断提示 190 个入口候选未入选、123 个 callee 因预算跳过、2 次 walk 达预算，不能把缺失 flow 作为无影响证据。
@@ -93,8 +95,9 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 b
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-build.log 与 p00.4-linux-wpe-trixie-compat.log：当前 beta Windows 兼容性复跑及两种 Linux WPE API 组合的构建阻塞证据。
-- docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/ 与三个 p00.4-linux-wpe-2.52.6-frame-poll-run*/：WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、首帧有界轮询、MHTML/PNG、sandbox 进程及单轮内存证据；明确记录临时 sandbox/GBM overrides。
+- docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/、三个 p00.4-linux-wpe-2.52.6-frame-poll-run*/ 与 p00.4-linux-wpe-2.52.6-inspector-http-run/：WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、首帧有界轮询、Remote Inspector HTTP target discovery、MHTML/PNG、sandbox 进程及单轮内存证据；明确记录临时 sandbox/GBM overrides。
 - .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；本地构建未通过，CI workflow 未运行。
+- docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-inspector-evidence.json：WPE Remote Inspector HTTP target/frontend endpoint 回放与限制。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
@@ -106,7 +109,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 b
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
 2. WPE 2.52.6 在 `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下 sandbox-disable 变量 unset 的三次新回放均生成首屏/MHTML截图；最终探针一次重试后捕获标题蓝色像素。该探针轮询只解决诊断截图时序，不是产品帧同步保证；GBM 硬件未测。P00/P00.4 仍 blocked，不要开 P01。下一步在授权可用的 Mac runner 上验证 WKWebView/Web Archive/Safari Inspector，继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（固定 Debian sid WPE 2.54.2），不要从本地结果推断该 CI 通过。
-3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP/Inspector 在当前插件支持表中不支持，需记录为架构决策而非当作兼容。
+3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP 仍不支持；WPE Remote Inspector HTTP target discovery/frontend bootstrap 已验证，但未验证命令会话，不能当作 CDP 等价。
 4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。工作流推到 GitHub PR/分支后才能取得 Mac 运行结果，当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
 5. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 

@@ -9,7 +9,14 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP/Inspector 静态不支持；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，Inspector 命令会话未验证；macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+
+## 今日会话（2026-10-28 第二十四轮）：验证 WPE Remote Inspector HTTP endpoint
+
+- WPE 2.52.6 source build 的 Flutter Linux/WPE Release 探针配置 loopback `WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9231`；服务 target list 列出 `Alula Web Probe` 和 `/socket/1/1/WebPage`，`/Main.html` HTTP 200、2,680 bytes。同一回放 initial/MHTML 页面 marker、截图、销毁与 30 秒回收采样通过，退出码 0。
+- 确认 pinned Linux 插件 capability JSON 仍报 `callDevToolsProtocolMethod=false`、`isInspectable=false`；但 Linux 原生插件源码默认 `enableDeveloperExtras=true` 并调用 WPE setting setter。因此把“Inspector 不支持”改为“WPE Remote Inspector endpoint/target/frontend bootstrap 已验证，命令会话未验证”；CDP 仍不支持。
+- 此次 Inspector 回放显式禁用 WebKit sandbox 与 GBM，仍为 Xvfb/source-built WPE 诊断结果；没有 Inspector UI attach 或 protocol command response，不能推断安全发布或 CDP 等价。证据见 `p00.4-linux-wpe-inspector-evidence.json`、`p00.4-linux-wpe-2.52.6-inspector-http-run/` 和 ADR。
+- 启动门禁 Windows Git Bash `bash init.sh --fast` EXIT=0；Flutter 122 项测试通过。未改产品 `app/` 或 `crates/`，P00.4 仍 blocked，feat-022 in-progress，P01 not-started。
 
 ## 今日会话（2026-10-28 第二十三轮）：重放 P00.3 并处理 WPE 首帧截图时序
 
