@@ -1,0 +1,288 @@
+{
+  "date": "2026-10-28",
+  "experiment": "P00.4 exploratory repeated Linux WPE lifecycle memory samples",
+  "environment": {
+    "os": "Debian GNU/Linux 12 (Bookworm), Docker container",
+    "webkit": "WPE WebKit 2.52.6 source build",
+    "probe": "Flutter Linux Release standalone web_engine_probe",
+    "uid": 1000,
+    "display": "Xvfb, X11",
+    "renderer": "software GL",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1",
+    "scope_limit": "Diagnostic probe only; no Alula product integration, hardware rendering, production sandbox, or docs/04 acceptance."
+  },
+  "automated_runs_with_screenshot_and_mhtml_capture": {
+    "run1": {
+      "before-webview": {
+        "process_count": 2,
+        "private_mib": 177.2,
+        "pss_mib": 231.5,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-open": {
+        "process_count": 3,
+        "private_mib": 310.5,
+        "pss_mib": 414.8,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "mhtml-reloaded": {
+        "process_count": 3,
+        "private_mib": 312.4,
+        "pss_mib": 417.4,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed": {
+        "process_count": 2,
+        "private_mib": 245.4,
+        "pss_mib": 304.3,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed-30s": {
+        "process_count": 2,
+        "private_mib": 245.3,
+        "pss_mib": 304.1,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      }
+    },
+    "run2": {
+      "before-webview": {
+        "process_count": 2,
+        "private_mib": 177.5,
+        "pss_mib": 231.7,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-open": {
+        "process_count": 3,
+        "private_mib": 301.4,
+        "pss_mib": 405.5,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "mhtml-reloaded": {
+        "process_count": 3,
+        "private_mib": 317.3,
+        "pss_mib": 422.1,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed": {
+        "process_count": 2,
+        "private_mib": 249.9,
+        "pss_mib": 308.6,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed-30s": {
+        "process_count": 2,
+        "private_mib": 249.7,
+        "pss_mib": 308.4,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      }
+    },
+    "run3": {
+      "before-webview": {
+        "process_count": 2,
+        "private_mib": 178.0,
+        "pss_mib": 231.9,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-open": {
+        "process_count": 3,
+        "private_mib": 312.3,
+        "pss_mib": 416.4,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "mhtml-reloaded": {
+        "process_count": 3,
+        "private_mib": 320.2,
+        "pss_mib": 425.1,
+        "processes": [
+          "web_engine_prob",
+          "WPEWebProcess",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed": {
+        "process_count": 2,
+        "private_mib": 244.7,
+        "pss_mib": 303.2,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      },
+      "webview-destroyed-30s": {
+        "process_count": 2,
+        "private_mib": 253.5,
+        "pss_mib": 312.0,
+        "processes": [
+          "web_engine_prob",
+          "WPENetworkProce"
+        ]
+      }
+    }
+  },
+  "automated_medians": {
+    "before-webview": {
+      "process_count": 2,
+      "private_mib": 177.5,
+      "pss_mib": 231.7
+    },
+    "webview-open": {
+      "process_count": 3,
+      "private_mib": 310.5,
+      "pss_mib": 414.8
+    },
+    "mhtml-reloaded": {
+      "process_count": 3,
+      "private_mib": 317.3,
+      "pss_mib": 422.1
+    },
+    "webview-destroyed": {
+      "process_count": 2,
+      "private_mib": 245.4,
+      "pss_mib": 304.3
+    },
+    "webview-destroyed-30s": {
+      "process_count": 2,
+      "private_mib": 249.7,
+      "pss_mib": 308.4
+    },
+    "destroyed_30s_minus_before": {
+      "private_mib": 72.2,
+      "pss_mib": 76.7
+    }
+  },
+  "manual_f5_no_screenshot_run": {
+    "path": "p00.4-linux-wpe-manual-f5-no-screenshot-run/",
+    "method": "Manual F5 create/destroy; no screenshot or MHTML action; separate TMPDIR remained empty.",
+    "stages": {
+      "before-webview": {
+        "process_count": 2,
+        "private_mib": 176.8,
+        "pss_mib": 231.3,
+        "processes": [
+          {
+            "name": "web_engine_prob",
+            "private_mib": 163.0,
+            "pss_mib": 201.1
+          },
+          {
+            "name": "WPENetworkProce",
+            "private_mib": 13.8,
+            "pss_mib": 30.2
+          }
+        ]
+      },
+      "webview-open": {
+        "process_count": 3,
+        "private_mib": 281.0,
+        "pss_mib": 383.5,
+        "processes": [
+          {
+            "name": "web_engine_prob",
+            "private_mib": 169.7,
+            "pss_mib": 215.9
+          },
+          {
+            "name": "WPEWebProcess",
+            "private_mib": 99.5,
+            "pss_mib": 143.4
+          },
+          {
+            "name": "WPENetworkProce",
+            "private_mib": 11.7,
+            "pss_mib": 24.3
+          }
+        ]
+      },
+      "webview-destroyed": {
+        "process_count": 2,
+        "private_mib": 218.7,
+        "pss_mib": 275.5,
+        "processes": [
+          {
+            "name": "web_engine_prob",
+            "private_mib": 205.8,
+            "pss_mib": 245.1
+          },
+          {
+            "name": "WPENetworkProce",
+            "private_mib": 12.8,
+            "pss_mib": 30.4
+          }
+        ]
+      },
+      "webview-destroyed-30s": {
+        "process_count": 2,
+        "private_mib": 218.7,
+        "pss_mib": 275.5,
+        "processes": [
+          {
+            "name": "web_engine_prob",
+            "private_mib": 205.8,
+            "pss_mib": 245.1
+          },
+          {
+            "name": "WPENetworkProce",
+            "private_mib": 12.8,
+            "pss_mib": 30.4
+          }
+        ]
+      }
+    },
+    "destroyed_30s_minus_before": {
+      "private_mib": 41.9,
+      "pss_mib": 44.2
+    },
+    "observed_process_lifecycle": "WPEWebProcess absent after destroy; WPENetworkProcess remained through destroy+30s.",
+    "parent_private_after_destroy_mib": 205.8,
+    "parent_private_before_webview_mib": 163.0,
+    "interpretation": "The approximately 42 MiB private-byte residual after destroy is in the Flutter probe parent; the surviving network process stays near its baseline. This separates the residual from screenshot buffers but does not attribute it specifically to Flutter, Dart, or plugin allocations."
+  },
+  "limitations": [
+    "Three runs used the scripted screenshot/MHTML path; the no-screenshot path was a single manual run.",
+    "These short Xvfb samples do not include the docs/04 three-run startup/1-minute/10-minute/30-minute/edit/close protocol.",
+    "No product memory budget conclusion is supported.",
+    "Container process listings include prior orphaned zombie entries; stage counts and memory values use mem-probe process-tree JSON rooted at this probe PID."
+  ]
+}

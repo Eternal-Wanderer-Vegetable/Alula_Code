@@ -1,0 +1,90 @@
+From: <Saved by WebKit>
+Subject: Alula Web Probe
+Date: Wed, 27 Oct 2026 21:49:58 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_6F7B_5EF0759E.E24F0BCF"
+
+------=_NextPart_000_6F7B_5EF0759E.E24F0BCF
+Content-Type: text/html
+Content-Transfer-Encoding: quoted-printable
+Content-Location: wyciwyg://frame/0
+
+<html><head><meta charset=3D"UTF-8"><title>Alula Web Probe</title>
+<style>body{font:20px sans-serif;background:#f4f7ff;padding:32px}h1{color:#=
+194fa8}</style>
+<style>input[type=3D"color"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 44px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid #767676;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: transparent;
+}
+input[type=3D"color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type=3D"color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+input[type=3D"color"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+input[type=3D"color"]:focus {
+  outline: 2px solid #4A90D9;
+  outline-offset: 1px;
+}</style><style>input[type=3D"date"]::-webkit-calendar-picker-indicator,
+input[type=3D"datetime-local"]::-webkit-calendar-picker-indicator,
+input[type=3D"time"]::-webkit-calendar-picker-indicator,
+input[type=3D"month"]::-webkit-calendar-picker-indicator,
+input[type=3D"week"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  position: relative;
+}
+._flutter_date_picker_icon {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+  pointer-events: auto;
+  z-index: 1;
+  padding: 2px 4px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+._flutter_date_picker_icon:hover {
+  opacity: 1;
+}
+._flutter_date_input_wrapper {
+  position: relative;
+  display: inline-block;
+}
+._flutter_date_input_wrapped {
+  padding-right: 28px !important;
+}</style></head><body data-ready=3D"true"><h1>WEB_ENGINE_PROBE_OK</h1>
+<p id=3D"resource">Offline data URI resource:</p>
+<img alt=3D"probe" width=3D"16" height=3D"16" src=3D"data:image/gif;base64,=
+R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=3D">
+
+</body></html>
+------=_NextPart_000_6F7B_5EF0759E.E24F0BCF
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=
+
+R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=
+------=_NextPart_000_6F7B_5EF0759E.E24F0BCF--

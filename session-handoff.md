@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十八轮：WPE Inspector protocol command session）
+> Last Updated：2026-10-28（第二十九轮：P00.3 fixture 复跑与 WPE 内存 follow-up）
 
 ## 项目一句话
 
@@ -8,13 +8,15 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-2026-10-28 macOS dispatch 预检确认本地 workflow 在 GitHub 默认分支返回 404、当前工作分支未发布；没有推送，也没有 macOS runner 证据。预检记录在 docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。推送授权请求仍待用户答复。
-P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash；X11/Wayland EGL 均为 EGL_NOT_INITIALIZED，Wayland socket 可连但没有 GLES2 config；直接 WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
+2026-10-28 按用户选择使用 Windows Git Bash 重跑 P00.3 四项夹具，全部通过；2,000,001 UTF-16 恢复 fixture 耗时约 2:10。P00.4 Linux/WPE 三轮自动生命周期样本与一轮无截图手动 F5 样本已记录：销毁+30s仍有 41.9–72.2 MiB Private Bytes 增量，NetworkProcess 留存，父进程残留尚未归因。
+macOS dispatch 仍因默认分支没有 workflow/current branch 未推送而不可运行；没有推送或 macOS runner 证据。需用户明确授权后才能推送当前分支以运行该 workflow。
+P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector command session 已通过，但它不是 CDP；WPE GBM、macOS、Microsoft 服务身份/许可、docs/04 长时多场景内存验收仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
 
+- 第二十九轮：Windows Git Bash 重跑 P00.3 build_core、Flutter 两项 risk fixtures 和两个 Rust integration tests，四项全通过，恢复 fixture 2:10；输出 p00.3-windows-gitbash-rerun-2026-10-28.log。同一 WPE 2.52.6 source-built probe 连续三轮自动采样，并补一轮不触发截图/MHTML 的手动 F5 创建/销毁；无截图 TMPDIR 为空，WebProcess 销毁后退出、NetworkProcess 保留，父进程仍有约 42 MiB Private Bytes 增量。P00.4 继续 blocked，汇总为 p00.4-linux-wpe-memory-repeat-evidence.json。
 - 第二十八轮：WPE 2.52.6 Remote Inspector target multiplexing session 成功调用 Runtime.enable/Runtime.evaluate，返回 title 与 marker；CDP 仍不支持。Xvfb 诊断禁用 sandbox/GBM；记录见 p00.4-linux-wpe-inspector-protocol-evidence.json 与 p00.4-linux-wpe-2.52.6-inspector-protocol-run/。
 - 第二十七轮：复核当前分支在 origin 无对应引用；GitHub 当前只列出 CI、Release，查询 macOS workflow 返回默认分支 404。没有推送或 dispatch；macOS runner 未运行。证据：docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。
 
@@ -113,11 +115,10 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 b
 
 ## Next Session
 
-1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. WPE 2.52.6 在 `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下 sandbox-disable 变量 unset 的三次新回放均生成首屏/MHTML截图；最终探针一次重试后捕获标题蓝色像素。该探针轮询只解决诊断截图时序，不是产品帧同步保证；WSLg 宿主 D3D12 EGL/GLES 可用；pinned Debian 12 WPE 容器的 X11/Wayland EGL 初始化均失败，Wayland socket 可连但无 GLES2 config；WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，WPE GBM/DMABUF 仍未验证。P00/P00.4 仍 blocked，不要开 P01。下一步在授权可用的 Mac runner 上验证 WKWebView/Web Archive/Safari Inspector，继续厘清 Microsoft 官方服务身份/许可边界；Linux GitHub workflow 仍未运行（固定 Debian sid WPE 2.54.2），不要从本地结果推断该 CI 通过。
-3. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。Linux CDP 仍不支持；WPE Remote Inspector HTTP target discovery/frontend bootstrap 已验证，但未验证命令会话，不能当作 CDP 等价。
-4. Microsoft 官方身份/许可路径仍没有授权结论；按严格标准保留阻塞。Mac workflow 需要先推送 `codex/vscode-parity-p00`；用户对“仅推送并运行、不创建 PR”的授权请求尚未得到回答，未授权前不要推送。当前不要把未运行 workflow 写成平台证据，也不要用 Linux GTK 结果代替 Flutter/WPE。
-5. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
+1. 按 AGENTS 启动流程重读 Current State、检查 GitNexus fresh，并使用 Windows Git Bash 跑 bash init.sh --fast；当前 WSL shell 没 Cargo 且无法运行 Windows Flutter SDK。
+2. 继续处理 P00.4：取得可用的 macOS runner/服务身份与许可证据；在有真实 DRM 驱动的 Linux runner 验证 WPE GBM/DMABUF；补齐 docs/04 长时、多场景三轮预算采样。当前本地 WPE 内存证据不满足验收。
+3. P00 完成前不要启动依赖它的 P01。当前分支 codex/vscode-parity-p00 尚未推送；此前仅推送并运行 macOS workflow 的授权请求仍待用户答复，未授权前不得推送。Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
+4. 阶段提交前仅暂存本轮 P00 文档/诊断文件；保留用户既有 app/、harness 等未提交变更。
 
 ## 已知风险（尚未因本轮计划而修复）
 
