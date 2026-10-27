@@ -138,6 +138,14 @@
       "evidence": "3 项 watcher 单测（防抖收敛/stop/递归）+ 1 项端到端 widget 测试（外部写盘→干净文档自动重载）；119 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
     },
     {
+      "id": "feat-020",
+      "name": "大纲视图：tree-sitter 符号提取全栈（Rust→FFI→UI）",
+      "description": "editor-lang.symbols()（10 类定义节点，含嵌套与 impl Trait for Type 命名）+ FFI alula_symbols（ABI v4 双侧握手）+ 大纲侧栏视图（类别徽章/行号/点击跳定义）+ 编辑后 500ms 防抖刷新",
+      "dependencies": ["feat-015"],
+      "status": "done",
+      "evidence": "3 项 Rust 单测（中注释行号/UTF-16 偏移回验/文档序）+ 1 项端到端 widget 测试（符号列表→点击跳定义起始）；顺修外部刷新丢展开态的真实 UX bug（_refreshTree 快照恢复展开）；120 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
+    },
+    {
       "id": "feat-013",
       "name": "P1 工程化：CI/CD、代码图谱、harness 文档",
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",

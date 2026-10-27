@@ -9,6 +9,17 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27 第六轮）：feat-outline 大纲视图（首个 Rust 侧功能）
+
+- **全栈贯通**：editor-lang.symbols()（tree-sitter 遍历 10 类定义节点，impl 取
+  「Trait for Type」，UTF-16 偏移/行号，嵌套+深度保险）→ editor-core.doc_symbols
+  → FFI alula_symbols（**ABI 3→4** 双侧握手）→ Dart core.lsp.symbols →
+  大纲侧栏视图（类别徽章/行号/点击跳定义）+ 编辑后防抖刷新（版本去重）。
+- **顺修真实 UX bug**：外部刷新重建文件树丢展开状态（git status 写 .git 即
+  触发监视刷新，用户展开被抹掉）→ _refreshTree 快照并恢复展开态。
+- CI Format 门抓了新代码格式（cargo fmt 补齐）。
+- 测试：3 Rust 单测 + 1 端到端 widget；全量 120 绿 + CI 全绿。
+
 ## 今日会话（2026-10-27 第五轮）：feat-filewatch 文件监视
 
 - WorkspaceWatcher：Directory.watch(recursive)（Windows/Linux 原生递归，零新

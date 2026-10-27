@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-27（第五轮收尾：文件监视完成；W4 主体全部落地）
+> Last Updated：2026-10-27（第六轮收尾：大纲视图完成——首个 Rust 侧功能全栈贯通；ABI v4）
 
 ## 项目一句话
 
@@ -71,8 +71,9 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **下轮开发任务候选**：搜索结果按文件分组/正则开关、W3-2c 快速打开异步化、
-   大纲视图（需 editor-lang symbol 查询 + FFI）、命令面板补 Git 命令。
+2. **下轮开发任务候选**：跳转定义（复用 symbols 通路做 go-to-definition）、
+   搜索按文件分组/正则、W3-2c 快速打开异步化、命令面板补 Git 命令、
+   W5 终端面板（PTY）。
 3. 桌面 exe（双击入口）为 W3-1 版本；要体验 W3-2 键位覆盖需重建
    （flutter build windows --release，开发者模式需保持开启）。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
