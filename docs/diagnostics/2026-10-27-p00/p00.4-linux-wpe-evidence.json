@@ -1,8 +1,8 @@
 {
   "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
   "recordedAt": "2026-10-28",
-  "status": "runtime-replay-and-default-sandbox-passed-with-cpu-rendering-limitations",
-  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A follow-up left the WebKit sandbox-disable variable unset and observed bwrap children in a container with SYS_ADMIN plus seccomp unconfined; GBM remained disabled. The first-page screenshot was background-only despite a passing DOM marker. No production, CDP, Inspector, hardware-rendering, or macOS acceptance.",
+  "status": "default-sandbox-and-bounded-frame-poll-passed-with-cpu-rendering-limitations",
+  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A follow-up left the WebKit sandbox-disable variable unset and observed bwrap children in a container with SYS_ADMIN plus seccomp unconfined; GBM remained disabled. An original unpolled initial-page screenshot was fully transparent despite a passing DOM marker. Source inspection found that the pinned plugin reads the current pixel buffer without waiting for a WPE frame callback. The isolated probe now polls for the page heading pixel, and three follow-up replays rendered both the initial page and MHTML reload; the final version exercised one retry. No production, CDP, Inspector, hardware-rendering, or macOS acceptance.",
   "probe": {
     "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
     "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
@@ -11,7 +11,7 @@
     "engine": "WPE WebKit",
     "archiveApi": "saveWebArchive with WEBKIT_SAVE_MODE_MHTML",
     "archiveSuffix": ".mht",
-    "screenshotApi": "takeScreenshot (PNG)"
+    "screenshotApi": "takeScreenshot (PNG; copies current pixel buffer without waiting for a WPE frame callback)"
   },
   "sourceContract": {
     "callDevToolsProtocolMethodSupported": false,
@@ -40,8 +40,8 @@
     "libsecretDevelopmentPackage": "libsecret-1-dev=0.20.5-3"
   },
   "limitations": [
-    "The default WebKit sandbox passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; this is not a normal runner/production security result. Both replay paths disabled GBM, so hardware rendering remains unverified",
-    "The default-sandbox replay initial-page DOM marker passed but its first PNG was background-only; the MHTML reload PNG rendered correctly. First-frame screenshot behavior remains unresolved",
+    "The default WebKit sandbox passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; this is not a normal runner/production security result. All replay paths disabled GBM, so hardware rendering remains unverified",
+    "An unpolled default-sandbox capture had the DOM marker but produced a fully transparent PNG (1280x572 RGBA). The pinned plugin snapshots its current buffer without waiting for a frame callback. The isolated probe now captures before DOM queries and polls up to 30 times for a blue heading pixel; three follow-up replays rendered the page, and the final heading-check version succeeded on attempt 2. This mitigates the probe capture race only and does not guarantee product-level frame synchronization or behavior on other hosts",
     "Debian sid WPE 2.54.2 build still fails because the plugin references WPE_SETTING_DISABLE_ANIMATIONS, absent from its headers; see the 2.54 build evidence",
     "Debian Trixie WPE 2.48.3 legacy FDO fallback still fails because webkit_web_view_get_theme_color is undeclared; see the Trixie compatibility evidence",
     "No compatibility macro or plugin source patch was used",
@@ -278,7 +278,7 @@
       "title": "Alula Web Probe",
       "marker": true,
       "screenshot": "p00.4-web-initial-render.png",
-      "screenshotObservation": "Background-only image despite DOM marker"
+      "screenshotObservation": "The original unpolled PNG was fully transparent RGBA despite the DOM marker; bounded frame-poll results are recorded in framePollingFollowUp."
     },
     "mhtmlReload": {
       "title": "Alula Web Probe",
@@ -327,5 +327,238 @@
       }
     ],
     "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-default-sandbox-run/"
+  },
+  "framePollingFollowUp": {
+    "recordedAt": "2026-10-28",
+    "pluginBehavior": "Pinned Linux takeScreenshot handler copies the current pixel buffer; it does not wait for a WPE frame callback.",
+    "originalUnpolledCapture": {
+      "file": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-default-sandbox-run/p00.4-web-initial-render.png",
+      "format": "RGBA 8-bit",
+      "width": 1280,
+      "height": 572,
+      "uniqueColors": 1,
+      "rgba": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pixelCount": 732160,
+      "domMarker": true
+    },
+    "probeChange": "Capture the Linux page screenshot before DOM JavaScript queries; retry up to 30 times with 100 ms spacing until a nontransparent pixel in the page heading blue range is found.",
+    "validation": {
+      "flutterAnalyzeExitCode": 0,
+      "flutterTestExitCode": 0,
+      "flutterLinuxReleaseBuildExitCode": 0,
+      "freshDefaultSandboxRuns": 3,
+      "runs": [
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run/",
+          "probeRevision": "alpha-poll; screenshot after DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 1,
+            "elapsedMs": 94
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 31
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "d09cfe246556e08b4767a4c5ab9e34de9fd025d3f44bbec679fa00a05ff9b66f",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        },
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run2/",
+          "probeRevision": "alpha-poll; screenshot after DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 1,
+            "elapsedMs": 97
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 22
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "50a51dacf21e5f5587f88f3669f0a3a6375041e3637499b21b1fbdbe7c1d9ff6",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        },
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run3/",
+          "probeRevision": "heading-pixel poll; screenshot before DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 2,
+            "elapsedMs": 199
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 51
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "ee2b5842e974fa0bee4aa28304eebc7265b1c7e579541ba75332a2dd485a82f0",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        }
+      ]
+    },
+    "interpretation": "The previous transparent image came from reading the current buffer before a painted page frame was available. The bounded wait made the probe capture robust across these local runs, including one actual retry. This is probe-only handling and does not establish a product or cross-host frame synchronization guarantee."
   }
 }

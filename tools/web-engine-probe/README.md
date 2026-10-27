@@ -116,28 +116,36 @@ MHTML bytes, and `mem-probe` process-tree samples before and after the WebView
 lifecycle. It uses Xvfb with software GL, so these memory values are exploratory
 and should not be compared with interactive desktop baselines. The
 `P00.4 Linux WPE Web Engine Probe` workflow uses a Debian sid container to
-produce the same artifacts. A local attempt on 2026-10-28 passed `flutter
-analyze` and `flutter test`, then stopped during the Release build because
-`flutter_inappwebview_linux 0.1.0-beta.1` references the missing
-`WPE_SETTING_DISABLE_ANIMATIONS` macro with Debian sid WPE 2.54.2. The workflow
-and this guide now include the separately required `libsecret-1-dev` package.
-An official WPE 2.52.6 source build compiled the plugin and passed Xvfb MHTML
-save/reload with GBM disabled. The first replay disabled WebKit sandbox because
-the default Docker seccomp profile blocked user namespaces. A follow-up ran the
-probe as UID 1000 with `SYS_ADMIN` and seccomp unconfined, left
+produce the same artifacts. A local Debian sid attempt on 2026-10-28 passed
+`flutter analyze` and `flutter test`, then stopped during the Release build
+because `flutter_inappwebview_linux 0.1.0-beta.1` references the missing
+`WPE_SETTING_DISABLE_ANIMATIONS` macro with WPE 2.54.2. The workflow and this
+guide include the separately required `libsecret-1-dev` package.
+
+An official WPE 2.52.6 source build compiled the plugin and passed Xvfb
+MHTML save/reload with GBM disabled. The first default-sandbox replay ran as
+UID 1000 with `SYS_ADMIN` and seccomp unconfined, left
 `WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS` unset, and observed the `bwrap`
-sandbox children. That run passed the DOM and MHTML reload checks, but the
-initial-page PNG contained only the background while the MHTML PNG rendered
-correctly. Hardware GBM, normal production/CI sandbox settings, CDP, Inspector,
-macOS and production compatibility remain unverified. The Debian Trixie 2.48.3
-legacy FDO fallback also failed to build this plugin at
+sandbox children. Its DOM marker passed, but the initial PNG was fully
+transparent. Source inspection showed that the pinned Linux plugin's
+`takeScreenshot()` copies its current pixel buffer without waiting for a WPE
+frame callback. The isolated probe now checks for the page heading's blue pixel
+before its DOM queries and retries up to 30 times at 100 ms intervals. Two
+preliminary alpha-check runs rendered on the first attempt; the final version
+rendered on its second attempt. All three fresh default-sandbox runs rendered
+the initial page and MHTML reload. This stabilizes probe screenshots, but does
+not prove a product-level frame guarantee or another host's behavior.
+Hardware GBM, normal production/CI sandbox settings, CDP, Inspector, macOS and
+production compatibility remain unverified. The Debian Trixie 2.48.3 legacy
+FDO fallback also failed to build this plugin at
 `webkit_web_view_get_theme_color`. Build flags, warnings, memory snapshots, and
-the limits of the local replays are in
+local replay limits are in
 `docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md`,
 `p00.4-linux-wpe-2.52.6-run/`, and
-`p00.4-linux-wpe-2.52.6-default-sandbox-run/`; the 2.54.2 and 2.48.3 failures
-remain in `p00.4-linux-wpe-evidence.json`, `p00.4-linux-wpe-build.log`, and
-`p00.4-linux-wpe-trixie-compat.log`.
+`p00.4-linux-wpe-2.52.6-default-sandbox-run/` plus the three
+`p00.4-linux-wpe-2.52.6-frame-poll-run*` directories; the 2.54.2 and 2.48.3
+failures remain in `p00.4-linux-wpe-evidence.json`,
+`p00.4-linux-wpe-build.log`, and `p00.4-linux-wpe-trixie-compat.log`.
 
 ## Linux WebKitGTK engine-only check
 

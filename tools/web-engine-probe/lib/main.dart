@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -108,6 +109,9 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     String phase,
   ) async {
     if (_usesWebArchive || _usesLinuxMhtml) {
+      final capture = _usesLinuxMhtml
+          ? await _captureLinuxFrame(controller, phase)
+          : null;
       final title = await controller.evaluateJavascript(
         source: 'document.title',
       );
@@ -141,16 +145,16 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
         }),
         flush: true,
       );
-      if (_usesLinuxMhtml) {
-        final screenshot = await controller.takeScreenshot();
-        if (screenshot == null || screenshot.isEmpty) {
-          throw StateError('WPE WebKit returned no screenshot after $phase');
-        }
+      if (capture != null) {
         final imageFile = File(
           '${Directory.systemTemp.path}${Platform.pathSeparator}'
           'p00.4-web-$phase-render.png',
         );
-        await imageFile.writeAsBytes(screenshot, flush: true);
+        await imageFile.writeAsBytes(capture.png, flush: true);
+        debugPrint(
+          'P00.4_WPE_FRAME_CAPTURE phase=$phase '
+          'attempts=${capture.attempts} elapsedMs=${capture.elapsedMs}',
+        );
       }
       return;
     }
@@ -167,6 +171,61 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
       '${Directory.systemTemp.path}${Platform.pathSeparator}p00.4-web-$phase-render.png',
     );
     await file.writeAsBytes(base64Decode(data), flush: true);
+  }
+
+  Future<({Uint8List png, int attempts, int elapsedMs})> _captureLinuxFrame(
+    InAppWebViewController controller,
+    String phase,
+  ) async {
+    final stopwatch = Stopwatch()..start();
+    for (var attempt = 1; attempt <= 30; attempt++) {
+      final png = await controller.takeScreenshot();
+      if (png != null && png.isNotEmpty && await _hasProbeHeadingPixel(png)) {
+        stopwatch.stop();
+        return (
+          png: png,
+          attempts: attempt,
+          elapsedMs: stopwatch.elapsedMilliseconds,
+        );
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    stopwatch.stop();
+    throw StateError(
+      'WPE WebKit returned no page-heading frame after $phase '
+      '(${stopwatch.elapsedMilliseconds} ms)',
+    );
+  }
+
+  Future<bool> _hasProbeHeadingPixel(Uint8List png) async {
+    final codec = await ui.instantiateImageCodec(png);
+    try {
+      final frame = await codec.getNextFrame();
+      try {
+        final pixels = await frame.image.toByteData(
+          format: ui.ImageByteFormat.rawRgba,
+        );
+        if (pixels == null) return false;
+        for (var offset = 0; offset < pixels.lengthInBytes; offset += 4) {
+          final red = pixels.getUint8(offset);
+          final green = pixels.getUint8(offset + 1);
+          final blue = pixels.getUint8(offset + 2);
+          final alpha = pixels.getUint8(offset + 3);
+          if (alpha > 0 &&
+              red < 60 &&
+              green > 40 &&
+              green < 120 &&
+              blue > 120) {
+            return true;
+          }
+        }
+        return false;
+      } finally {
+        frame.image.dispose();
+      }
+    } finally {
+      codec.dispose();
+    }
   }
 
   KeyEventResult _handleShortcut(FocusNode node, KeyEvent event) {

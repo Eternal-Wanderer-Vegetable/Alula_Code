@@ -1,0 +1,10 @@
+
+(com.example.web_engine_probe:58): dbind-WARNING **: 20:39:09.280: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(com.example.web_engine_probe:58): Atk-CRITICAL **: 20:39:09.310: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+** Message: 20:39:13.464: InAppWebView: loadData() called while loading, stopping current load first
+
+** (WPEWebProcess:2): WARNING **: 20:39:13.607: Can't connect to a11y bus: Could not connect: No such file or directory
+P00.4_WPE_FRAME_CAPTURE phase=initial attempts=1 elapsedMs=94
+P00.4_WPE_FRAME_CAPTURE phase=mhtml attempts=1 elapsedMs=31
