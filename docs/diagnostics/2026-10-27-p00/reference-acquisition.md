@@ -51,6 +51,18 @@ VS Code 官方 FAQ 描述的下载 URL 以版本占位符和平台/渠道组成�
 - 本次实际启动使用 `--disable-extensions`，没有安装或启用 marketplace 扩展；独立用户数据目录避免污染用户 VS Code。`runtime-evidence.json` 同时导出 pinned `product.json` 声明的三项默认内置扩展及版本、SHA-256：`ms-vscode.js-debug-companion@1.1.3`、`ms-vscode.js-debug@1.140.0`、`ms-vscode.vscode-js-profile-table@1.0.11`。这些是产品清单声明，不代表它们已下载或出现在此次 Code-OSS 进程中。
 - 本阶段提交门运行 Windows Git Bash `bash init.sh` 成功（Rust test、clippy、build_core、Flutter 120 tests）；独立 `cargo fmt --check` 与 `E:\flutter\bin\flutter.bat analyze` 均通过。Git Bash 启动读取 UTF-16 BOM `.bashrc` 有 shell 提示，但 `init.sh` 正常完成并退出 0。
 
+## 2026-10-28 官方发行 URL 复核
+
+本地时间 2026-10-28 00:22（Asia/Shanghai）从 Windows Git Bash 用 `curl -sSIL` 重查官方分发地址：
+
+| 请求 | 最终状态 | 最终地址/结果 |
+|---|---:|---|
+| `https://update.code.visualstudio.com/latest/win32-x64-archive/insider` | 200 | `VSCode-win32-x64-1.144.0-insider.zip`；发行路径 revision token `abc2b20cb3e724689f78f5d2a3c231589b25483c` |
+| `https://update.code.visualstudio.com/commit:4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/win32-x64-archive/insider` | 404 | 固定 SHA 地址无此发行物 |
+| `https://update.code.visualstudio.com/1.145.0/win32-x64-archive/insider` | 404 | 固定源码版本号地址无此发行物 |
+
+该次复核与前面的探测一致：当前 `latest/insider` 仍是不同版本/提交，不能替代 pinned Code-OSS 1.145.0；只证明这些官方 URL 当前不可用，不推断其它发行渠道不存在。Code-OSS 固定 SHA 构建仍是可重放桌面对照；微软同 SHA 二进制保持 unavailable/blocker。
+
 ## 验收边界与下一步
 
 P00.1 已按 Code-OSS 固定 SHA 源码路径完成验收：上游身份/签名和版本元数据可核验、微软精确发行物探测结果已登记、桌面 client 可构建与启动，环境及产品声明的默认扩展包清单已有可复核文件。限制是这不是微软签名发行包；未下载 marketplace 扩展，未构建 Copilot / remote lane，也未覆盖登录、同步、市场、Web 与官方服务。P00.2 原子注册项导出器现在具备 pinned 源码与运行时参考，仍需按 `docs/03` 顺序单独开工。

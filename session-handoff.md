@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第十四轮：补充 Linux WebKitGTK 原生引擎证据；Flutter/Linux 集成、macOS 与官方服务阻塞未解除）
+> Last Updated：2026-10-28（第十五轮：重验固定 SHA 官方发行物、服务政策与 Linux WPE runner 前提；P00.4 阻塞未解除）
 
 ## 项目一句话
 
@@ -18,6 +18,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 - P00.4 实验1：独立 Flutter Windows CodeForge 11.3.0 探针通过真实 Microsoft Pinyin composition/commit/cancel/Latin 输入；4 个 widget tests 覆盖 composition undo、Delta 多光标插入/撤销与 10k 行视口。见 p00.4-editor-adr.md 与 p00.4-editor-evidence.json。CodeForge 仅保留为 P03 候选。
 - P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；另在 WSLg 上以 GTK 原生探针验证 WebKitGTK 页面快照、MHTML 保存/重载、Web Inspector 和短时进程生命周期。Linux 结果不代表 Flutter/WPE 集成或 Chrome CDP；macOS 未验证。证据见 p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
 - P00.4 实验3：固定 Code-OSS 产品配置与本机 Microsoft VS Code 1.142.0 Stable 产品配置对照；官方文档确认 Settings Sync 不支持自定义后端，Marketplace 不允许 Code-OSS fork。未登录、未注册 OAuth 应用、未调用 Marketplace API、未创建隧道。见 p00.4-services-adr.md、p00.4-services-evidence.json。
+- 第十五轮复核：固定 SHA 与 1.145.0 官方 Insiders URL 仍 404，latest 返回 1.144.0 不同 revision；Marketplace fork 禁止与 Sync 无自定义后端政策保持。Linux 插件路线为 v6.2 beta + 独立 WPE 包；当前 Ubuntu WSL 无 Linux Flutter/Dart 与 WPE dev SDK。证据补充在 reference-acquisition.md、p00.4-web-adr.md、p00.4-services-adr.md。
+- 本轮 GitNexus `detect_changes` all/staged 均 risk=low；staged 为 5 个文档文件、0 条受影响流程。结果对象无 `partial`/`truncated` 字段；索引流程图本身仍截断（187 flows，406 个入口候选丢弃 206 个、98 个 callee 跳过、2 次 walk 达预算）。
 - P00.4 标记 blocked；feat-022/P00 保持 in-progress。没有改动 app/ 或 crates/ 产品代码。
 
 - 固定vscode SHA 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e（1.145.0开发版，非Stable）；
@@ -47,11 +49,11 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 
 ## Blockers / 待核实前提
 
-- P00.1：官方 `latest/insider` 当前指向 1.144.0 的其他 commit，固定 SHA 与 1.145.0 下载路径返回 404；Code-OSS client-only build/start 已完成。remote 子树依赖未安装，Copilot/remote lane 未构建；不能把此源码构建称作微软发行物。
+- P00.1：2026-10-28 重验官方 `latest/insider` 指向 1.144.0 的其他 revision token `abc2b20cb3e724689f78f5d2a3c231589b25483c`；固定 SHA 与 1.145.0 下载路径仍 404。Code-OSS client-only build/start 已完成；remote 子树依赖未安装，Copilot/remote lane 未构建；不能把此源码构建称作微软发行物。
 - P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
 - P00 需固定参考的 Microsoft 同 SHA 发行物尚不可得；Code-OSS 与微软发行配置差异不能抹平。
 - P00.4 实验1只在 Windows 验证；macOS/Linux IME、Rust 往返/背压、Release 内存、完整 Unicode/EOL 与无障碍仍未验证。
-- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE 集成、Chrome CDP 互操作、硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
+- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE 集成（上游当前需 v6.2 beta + WPE 2.0）、Chrome CDP 互操作、硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
 - P00.4 实验3：官方 FAQ 明确 Marketplace 不允许 Code-OSS fork 访问，Microsoft 扩展许可限定 VS family；Settings Sync 不支持自定义后端。本地正式版 1.142.0 产品身份字段不属于固定 1.145.0 Code-OSS 参考。需解决许可/产品身份边界才可声称官方服务 1:1。
 - 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
   使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
@@ -77,8 +79,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。下一步解决产品身份/官方服务许可条件，并取得 Flutter Linux/WPE/CDP 与 macOS 真机证据或按用户批准修订等价范围；保留当前各平台差异记录。
-3. 本轮 `bash init.sh --fast` 通过；Linux 原生 GTK 探针有可重放证据。本阶段应在完成状态/证据同步、GitNexus 变更分析后做 scoped commit；不要把工作区里其它用户既存改动纳入提交。
+2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。下一步需要 Flutter Linux/WPE 与 macOS 真机证据，并明确微软产品身份/服务许可路径或由用户批准记录不等价替代；当前 Windows Git Bash 与 WSL 状态、复核来源见本文件。
+3. 第十五轮 `bash init.sh --fast` 通过。P00.1/P00.4 在线复核已记入 ADR；本轮需以专用 staged scope 分析和提交文档更新，保护其它用户改动。
 4. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 
 ## 已知风险（尚未因本轮计划而修复）
