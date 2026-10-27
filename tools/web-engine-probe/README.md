@@ -90,8 +90,7 @@ and MHTML archive save/reload. Its published method support table marks
 `callDevToolsProtocolMethod` as Windows only, and the Linux implementation has
 no native CDP method handler. The generated page JSON records that support flag
 as `false`; it does not claim CDP compatibility. The same support table limits
-`isInspectable` to iOS, macOS, and Windows, so Inspector attachment remains
-unverified on Linux.
+`isInspectable` to iOS, macOS, and Windows; the WPE 2.52.6 Web Inspector Protocol command path was later verified through the multiplexing target, while UI attachment remains unverified on Linux. This does not establish CDP support; see docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-inspector-protocol-evidence.json.
 
 On Debian sid with Flutter 3.47.8, install the desktop and WPE build
 dependencies, then run:

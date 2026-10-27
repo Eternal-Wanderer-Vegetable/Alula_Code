@@ -1,0 +1,75 @@
+{
+  "status": "command-succeeded",
+  "target_list_http_status": 200,
+  "websocket_path": "/socket/1/1/WebPage",
+  "websocket_handshake": "101 Switching Protocols",
+  "multiplexing_page_target_id": "page-7",
+  "commands": [
+    {
+      "method": "Runtime.enable",
+      "response": {
+        "result": {},
+        "id": 41
+      }
+    },
+    {
+      "method": "Runtime.evaluate",
+      "params": {
+        "expression": "JSON.stringify({title:document.title,marker:document.body.innerText.includes('WEB_ENGINE_PROBE_OK')})",
+        "returnByValue": true
+      },
+      "response": {
+        "result": {
+          "result": {
+            "type": "string",
+            "value": "{\"title\":\"Alula Web Probe\",\"marker\":true}"
+          },
+          "wasThrown": false
+        },
+        "id": 42
+      }
+    }
+  ],
+  "outer_messages": [
+    {
+      "method": "Target.targetCreated",
+      "params": {
+        "targetInfo": {
+          "targetId": "page-7",
+          "type": "page"
+        }
+      }
+    },
+    {
+      "method": "Target.targetCreated",
+      "params": {
+        "targetInfo": {
+          "targetId": "frame-8589934593",
+          "type": "frame"
+        }
+      }
+    },
+    {
+      "result": {},
+      "id": 1
+    },
+    {
+      "method": "Target.dispatchMessageFromTarget",
+      "params": {
+        "targetId": "page-7",
+        "message": "{\"result\":{},\"id\":41}"
+      }
+    },
+    {
+      "result": {},
+      "id": 2
+    },
+    {
+      "method": "Target.dispatchMessageFromTarget",
+      "params": {
+        "targetId": "page-7",
+        "message": "{\"result\":{\"result\":{\"type\":\"string\",\"value\":\"{\\\"title\\\":\\\"Alula Web Probe\\\",\\\"marker\\\":true}\"},\"wasThrown\":false},\"id\":42}"
+      }
+    }
+  ]
+}

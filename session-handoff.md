@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十七轮：macOS workflow dispatch preflight）
+> Last Updated：2026-10-28（第二十八轮：WPE Inspector protocol command session）
 
 ## 项目一句话
 
@@ -9,12 +9,13 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Current Objective
 2026-10-28 macOS dispatch 预检确认本地 workflow 在 GitHub 默认分支返回 404、当前工作分支未发布；没有推送，也没有 macOS runner 证据。预检记录在 docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。推送授权请求仍待用户答复。
-P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，但未验证 Inspector 命令会话。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash；X11/Wayland EGL 均为 EGL_NOT_INITIALIZED，Wayland socket 可连但没有 GLES2 config；直接 WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash；X11/Wayland EGL 均为 EGL_NOT_INITIALIZED，Wayland socket 可连但没有 GLES2 config；直接 WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
 
+- 第二十八轮：WPE 2.52.6 Remote Inspector target multiplexing session 成功调用 Runtime.enable/Runtime.evaluate，返回 title 与 marker；CDP 仍不支持。Xvfb 诊断禁用 sandbox/GBM；记录见 p00.4-linux-wpe-inspector-protocol-evidence.json 与 p00.4-linux-wpe-2.52.6-inspector-protocol-run/。
 - 第二十七轮：复核当前分支在 origin 无对应引用；GitHub 当前只列出 CI、Release，查询 macOS workflow 返回默认分支 404。没有推送或 dispatch；macOS runner 未运行。证据：docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。
 
 - 第二十六轮：按启动流程检查 GitNexus fresh；当前 WSL `bash init.sh --fast` 因 Cargo 缺失与挂载 Flutter shell CRLF 失败，Windows Git Bash 完整门禁已有通过记录。WPE Debian 12 容器映射 `/dev/dxg`、render node、render GID 992 与 WSLg Wayland socket 后能连接 socket，但 EGL 返回 `EGL_NOT_INITIALIZED`、无 GLES2 config；直接 GBM API 打开 render node 后 `gbm_create_device` 返回 null、没有 buffer；没有运行 WebView。原 WPE 容器未改，临时快照镜像已清理，日志见 `p00.4-linux-wpe-wslg-d3d12-run/wayland-egl.log`。P00.4 仍 blocked。
