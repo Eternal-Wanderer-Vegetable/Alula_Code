@@ -1,0 +1,33 @@
+{
+  "capturedAtUtc": "2026-10-27T21:15:32Z",
+  "scope": "WSLg EGL capability probe only; not an Alula/WPE product run",
+  "host": {
+    "environment": "WSL2 with WSLg",
+    "deviceNodes": ["/dev/dxg", "/dev/dri/card0", "/dev/dri/renderD128"],
+    "drmCardDriver": "faux_driver",
+    "wslD3d12LibraryPresent": true
+  },
+  "eglProbe": {
+    "command": "GALLIUM_DRIVER=d3d12 MESA_DEBUG=1 python3 - (ctypes EGL surfaceless GLES2 pbuffer probe)",
+    "eglVersion": "1.5",
+    "glRenderer": "D3D12 (AMD Radeon(TM) Graphics)",
+    "glVersion": "OpenGL ES 3.1 Mesa 25.2.8-0ubuntu0.24.04.4",
+    "result": "WSLg D3D12-backed EGL context creation succeeded"
+  },
+  "gbmProbe": {
+    "environment": "Disposable Debian Bookworm container with libgbm1 and /dev/dri/renderD128 passed through; no WPE/WebKit runtime",
+    "renderNodeOpen": true,
+    "gbmCreateDevice": "null",
+    "diagnostics": [
+      "Mesa could not load vgem, zink, kms_swrast, or swrast DRI drivers in the minimal container.",
+      "This does not establish whether the WPE container's DRI drivers can initialize GBM."
+    ],
+    "result": "Inconclusive for WPE GBM/DMABUF"
+  },
+  "limitations": [
+    "No Flutter, WebKit, or WPE application was run with this EGL context.",
+    "No GBM buffer allocation/import or WPE frame presentation was verified.",
+    "The D3D12 EGL result is hardware-renderer evidence for WSLg, not product-path acceptance evidence."
+  ],
+  "disposition": "Keep P00.4 blocked; record WSLg D3D12 availability while WPE GBM remains unverified."
+}
