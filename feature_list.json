@@ -118,7 +118,7 @@
       "description": "docs/09 W3-1：CommandRegistry（菜单/键位/面板统一引用命令 id）+ fuzzyScore 模糊打分 + QuickInput 浮层（Ctrl+Shift+P 命令面板 / Ctrl+P 快速打开）+ 全局键位（Ctrl+B/Ctrl+J）。剩余：完整 KeybindingRegistry（when 子句、keybindings.json 覆盖）",
       "dependencies": ["feat-015"],
       "status": "in-progress",
-      "evidence": "7 项注册表/模糊搜索单测 + 2 项 widget 测试（面板打开筛选执行 / 快速打开），67 测试全绿（2026-10-26）"
+      "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）"
     },
     {
       "id": "feat-013",

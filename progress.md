@@ -9,6 +9,18 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27）：W3-2 键位注册表
+
+- **KeybindingSet**：默认表 10 键位（逗号分隔多键位）、parseChord 解析、
+  用户 keybindings.json 覆盖（追加 = 同命令重绑定、'-command' 移除、损坏逐条忽略）、
+  KeybindingsStore 可注入。
+- **页面接入**：全局 CallbackShortcuts 由注册表生成；编辑器级快捷键全部并入；
+  F1-F3 命令化；菜单键位提示动态化（用户重绑定后菜单自动跟随）。
+- **踩坑记录**：SingleActivator 没有重写 ==/hashCode（Shortcuts 走 accepts()
+  分发），不能当查询键——值查询用 KeyChord。
+- 用户交互复验通过（W2）；CI 两轮推送全绿。
+- DoD：init.sh 全绿（Rust 41 + Flutter 76）。
+
 ## 今日会话（2026-10-26 第七轮续）：W3-1 命令面板 + CI 首跑修复
 
 - **git push 首次执行**（8477ecc..ca26c07），CI 首跑**失败并抓到两个真问题**：

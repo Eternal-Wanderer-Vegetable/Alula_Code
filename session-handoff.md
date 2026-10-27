@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-26（第八轮收尾：W3-1 命令面板完成；CI 首跑失败已修复并复跑）
+> Last Updated：2026-10-27（收尾：W3-1/W3-2 完成，CI 全绿；下一任务 feat-010 撤销重做/查找替换）
 
 ## 项目一句话
 
@@ -10,12 +10,12 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 
 ## Current Objective
 
-**W1 全部完成 + W2 全部完成（交互复验用户已过）+ W3-1 命令面板完成**
-（67 测试绿 + init.sh 全绿；已首次 push GitHub，CI 首跑失败→修复→复跑中）。
-- W3-1 已落能力：CommandRegistry（11 命令）/fuzzyScore/QuickInput 浮层/
-  Ctrl+Shift+P 命令面板/Ctrl+P 快速打开（有界文件索引）/Ctrl+B、Ctrl+J。
-- W3 剩余：完整 KeybindingRegistry（when 子句 + keybindings.json 覆盖）、
-  快速打开异步化（同步 FFI 遍历大仓库卡 UI）。
+**W1/W2 全部完成 + W3-1/W3-2 完成**（76 测试绿 + init.sh 全绿 + CI 全绿）。
+- W3 已落能力：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（默认表 +
+  keybindings.json 重绑定与移除）/菜单键位提示动态化/F1-F3 命令化。
+- W3 剩余小项：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）。
+- 细节债（用户说过最后统一改）：快速打开索引 2000 上限提示、Ctrl+B/J 菜单
+  提示已随 W3-2 动态化（已还清）。
 - W2 已落能力：标签条交互（溢出/中键/拖动排序）、编辑器组（拆分/焦点路由/空组并组）、
   面包屑（点击展开树）、会话 journal（未保存内容崩溃恢复）+ dirtyDisk 真脏标记
   （修正了原 isDirty 永假的隐性 bug，标签脏点现在正确显示）。
@@ -67,10 +67,11 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **人工交互复验（需真窗口，见 Blockers）**：`flutter run -d windows` →
-   ① 拆分按钮出双组、拖标签跨组；② 编辑不保存 → 任务管理器强杀 → 重启 →
-   未保存内容从 journal 恢复；③ 标签脏点（•）随编辑出现、Ctrl+S 消失。
-3. 复验通过后 `git push`（CI 首跑 + Linux PSS 首验）。
+2. **下轮开发任务**：feat-010 撤销/重做（先验证 Flutter TextField 内建 undo
+   与 FFI 同步是否已兼容，再决定 Rust 侧 undo stack）与查找替换（crate 内实现
+   + FFI）；之后 W3-2c 快速打开异步化、W4 侧边栏视图（搜索/Git）。
+3. 桌面 exe（双击入口）为 W3-1 版本；要体验 W3-2 键位覆盖需重建
+   （flutter build windows --release，开发者模式需保持开启）。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
 
 ## 已知坑
