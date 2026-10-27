@@ -3,11 +3,63 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-10-26）
+## Current State（当前状态，2026-10-27 P00 执行）
 
-**Phase 0 技术验证已关闭（决策门 G1 已过）：固定原型 B 自研路线**
-（Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
-**Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
+用户目标变更为：按现有 **Flutter + Rust** 栈，对固定版本VSCode默认无需用户安装扩展的
+全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
+当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
+旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器已完成；当前执行 P00.3 Golden 基线与现状故障夹具，P00.4 未启动。
+
+## 今日会话（2026-10-27 第十轮）：P00.2 原子贡献与运行时登记导出
+
+- 固定源码 AST、95 个扩展 manifest、`product.json` 和隔离运行时 registry 导出为 12,958 条唯一登记记录；导出器验证 pinned commit/tree，保留运行时独有 ID、无稳定 ID、无目录路由和无 feature 路由等未决项。
+- 运行时快照：2,684 条命令、5 种语言、1,289 个配置键；client-only 宿主未加载随附扩展 payload，静态 95 个 manifest 与运行时 0 个产品扩展的差异单独记录。运行时配置候选 1,289/1,289 可查。
+- 检查发现并修正对账逻辑，防止把运行时独有项误计为源码项；注册记录 ID 现在唯一。当前尚有 6,828 条未决注册/路由，不计作覆盖率，留待后续逐项复核。
+- 证据：`docs/diagnostics/2026-10-27-p00/atomic-contributions.md` 与 JSON ledger；可用 `node tools/vscode-parity/export-atomic-contributions.mjs --source=<pinned-checkout>` 重放。
+- P00.2 导出器子项完成，P00 总包继续 in-progress；下一项为 P00.3 黄金基线/故障夹具。`bash init.sh`、`cargo fmt --check`、`flutter analyze` 均 EXIT=0，详见 `docs/diagnostics/2026-10-27-p00/p00.2-validation.log`。
+- GitNexus `detect-changes --scope all` 报告 risk=critical（48 files/264 symbols/20 flows），包含此前已有的 README 和 app 修改；staged scope 为 19 files/248 symbols/17 flows，命中本阶段新导出器流程与文档，无 Alula 产品源码。记录于 `docs/diagnostics/2026-10-27-p00/atomic-contributions.md`。
+
+## 今日会话（2026-10-27 第九轮）：P00.1 固定参考构建与启动
+
+- 固定 SHA `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` Code-OSS client-only build 成功；Electron `43.8.3` 生成并成功启动 Workbench。构建输出 `client=full, extensions=skip, copilot=skip`，未编译外接 AI lane。
+- 使用独立 user-data/extensions 目录启动，无账号登录；CDP 导出 viewport/DPI/locale/主题和 `product.json` 内置扩展清单，并保存 Workbench 欢迎页截图。
+- 官方微软精确 SHA 发行物仍未找到；只把 Code-OSS 源码作为参考构建。remote 子树 postinstall 为非桌面 client 依赖，构建取证后停止；不将 remote 依赖视为已安装。
+- 仓库 DoD：`bash init.sh` EXIT=0（Rust test、clippy、build_core、Flutter 120 tests）；另跑 `cargo fmt --check`、`flutter analyze` 均通过。Git Bash 启动有 `.bashrc` UTF-16 BOM 提示，但命令继续并全绿。
+- 证据：`docs/diagnostics/2026-10-27-p00/reference-acquisition.md`、`capture-reference.mjs`、`runtime-evidence.json`、`reference-workbench.png`。P00.1 已验收，P00 总包仍 in-progress。
+
+## 今日会话（2026-10-27 第八轮）：P00.1 固定参考获取（历史进度）
+
+- 切到 `codex/vscode-parity-p00` 分支，保留工作区既存改动；没有整仓暂存或提交。
+- GitHub 官方 commit API 核实 pinned SHA、tree、parent 与签名；`package.json` 为 1.145.0，`product.json` blob 已核验。
+- 官方 Insider 最新归档落在 1.144.0 / 不同 commit；精确 SHA 与 1.145.0 的测试下载 URL 返回 404。本地 `code` 为 1.142.0，不能代替固定参考。
+- Git smart-protocol 在 WSL 与 Windows Git Bash 均挂起；固定源码后续改用限制目标的 Git 协议 v2 relay 获取，commit/tree 已核验。该轮结束时构建和启动尚未完成。
+- 基线：WSL `init.sh --fast` 因无 cargo 及 Flutter shell CRLF 失败；Windows Git Bash 的同命令退出 0，Rust 测试/build_core 与 Flutter 120 项通过。Node 24.22.1、npm 12.0.2、cargo 1.97.1；npm registry ping 17.7 秒成功。
+- 证据：`docs/diagnostics/2026-10-27-p00/reference-acquisition.md`。本轮没有产品实现变更，不做内存或 UI 等价结论。
+
+## 今日会话（2026-10-27 第七轮）：完整复刻计划
+
+- 固定上游：vscode `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`（1.145.0开发快照）；
+  docs `da213552439825628e0ab958dbde1e413dbc36bf`。通过官方GitHub connector实查目录、
+  90个非AI产品manifest/74个language ID/89个grammar贡献及3个下载式预置调试扩展。
+- 总计划16实施包P00–P15，含架构/依赖/风险/资源/跨平台界面及行为验收；矩阵342条功能族
+  与14项边界决策。功能族仍须P00展开为原子注册项，不声称已完成100%语义覆盖。
+- 范围包括内置扩展、终端、默认JS调试、Notebook宿主/输出、Markdown rich/math/Mermaid、
+  集成浏览器、Profiles/Sync、Cloud Changes、公网Ports等非AI外部服务。外部服务互通前提单列，
+  不能因联网删需求，也不冒称额外Python/Jupyter/Remote等provider已默认提供。
+- 修正旧计划只要求结构等价、历史状态过期、空窗内存被当同功能−50%已通过的问题。
+  现有全局UndoStack/大文档备份/同步FFI/800ms轮询/LSP回收等静态风险列入P00/P01/P02。
+- 按Startup规则复验发现当前工作树Flutter编译失败：`_findRenderEditableOf`递归误调用
+  接收BuildContext的方法；GitNexus impact LOW（2个上游方法、Ctrl+点击流程），仅一行改为
+  正确RenderObject递归辅助方法。保留其余用户既存代码/skill改动。
+- 验证：Windows Git Bash执行cargo fmt --check + bash init.sh + flutter analyze，EXIT=0；
+  Rust workspace测试全绿、Flutter120测试通过，clippy零警告/analyze零问题。
+  证据：docs/diagnostics/2026-10-27-parity-plan/full-validation.log；前后fast日志同目录。
+- 当前WSL无cargo且Windows Flutter shell为CRLF，不能直接据WSL失败判业务错误；使用现有
+  Windows工具链复验。原Windows GitNexus元数据在WSL无效，隔离索引在
+  `/tmp/alula-plan-gitnexus`，不改原`.gitnexus`缓存；过程发现截断不可推断缺失调用不存在。
+- 计划结构/链接/依赖自检通过，harness100/100；全工作树graph change analysis记录于同目录。
+  最终证据见verification.md。feat-021计划完成；P00–P15未开始，未提交、未推送。
 
 ## 今日会话（2026-10-27 第六轮）：feat-outline 大纲视图（首个 Rust 侧功能）
 

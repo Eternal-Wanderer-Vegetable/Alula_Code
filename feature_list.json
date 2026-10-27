@@ -6,23 +6,35 @@
       "description": "「编辑→增量同步→Rust 应用→版本回执」最小闭环（docs/03 Phase 0 任务 0-1）",
       "dependencies": [],
       "status": "done",
-      "evidence": "app/lib/bridge + app/test/core_sync_test.dart 走真实 FFI；cargo test --workspace 全绿（2026-10-26）"
+      "evidence": "app/lib/bridge + app/test/core_sync_test.dart 走真实 FFI；cargo test --workspace 全绿（2026-10-26）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-002",
       "name": "0-2 编辑组件评测：CodeForge / Re-Editor / flutter_code_editor",
       "description": "统一评测卡 16 分制打分与选型（docs/06）。遗留：真机 IME 与万行文件流畅度人工复核（报告 §五清单）",
       "dependencies": [],
-      "status": "in-progress",
-      "evidence": "自动化部分完成：code_forge 13 分首选 / re_editor 10 分备选 / flutter_code_editor 5 分否决（docs/06-评测-编辑组件选型.md，2026-10-26）"
+      "status": "not-started",
+      "evidence": "自动化部分完成：code_forge 13 分首选 / re_editor 10 分备选 / flutter_code_editor 5 分否决（docs/06-评测-编辑组件选型.md，2026-10-26）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P03"
+      ]
     },
     {
       "id": "feat-003",
       "name": "0-3 Tree-sitter + LSP 接入（rust-analyzer）",
       "description": "editor-lsp（stdio JSON-RPC）+ editor-lang（tree-sitter-rust）+ FFI ABI v2 + 三面板 UI；对真实 rust-analyzer 全链路实测。遗留到 Phase 1：增量解析、诊断/补全异步化",
-      "dependencies": ["feat-001"],
+      "dependencies": [
+        "feat-001"
+      ],
       "status": "done",
-      "evidence": "诊断 7 条实时推送、补全 62 项、语法 40 token；截图 docs/diagnostics/2026-10-26-lsp-demo/"
+      "evidence": "诊断 7 条实时推送、补全 62 项、语法 40 token；截图 docs/diagnostics/2026-10-26-lsp-demo/",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-004",
@@ -30,7 +42,9 @@
       "description": "验证「继承架构做减法」路线。结论：移除 86 个内置扩展仅省 ≈20 MiB（−1.5%），G1 判定原型 A 路线否决，固定原型 B 自研路线",
       "dependencies": [],
       "status": "done",
-      "evidence": "docs/08-原型A-精简Code-OSS.md（1310→1290 MiB，2026-10-26）"
+      "evidence": "docs/08-原型A-精简Code-OSS.md（1310→1290 MiB，2026-10-26）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-005",
@@ -38,15 +52,27 @@
       "description": "三平台进程树内存采集 + 报告模板 + VS Code 基线。遗留：Linux PSS 待 CI 验证、macOS 待实现",
       "dependencies": [],
       "status": "done",
-      "evidence": "mem-probe 5 测试全绿；首批基线 alula 179.2 vs VS Code 959.5 MiB（−81.3%），docs/baselines/2026-10-26/"
+      "evidence": "mem-probe 5 测试全绿；首批基线 alula 179.2 vs VS Code 959.5 MiB（−81.3%），docs/baselines/2026-10-26/",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-006",
       "name": "0-6 对照实验：VS Code vs 原型 A vs 原型 B",
       "description": "三组场景（无插件/同语言服务/同功能集）× Windows+Linux。无插件组数据齐备；同语言服务组待 Phase 1 LSP 稳定后补测",
-      "dependencies": ["feat-004", "feat-005"],
-      "status": "in-progress",
-      "evidence": "无插件组：alula 179.2 / VS Code 干净 989.9 / 原型 A 1310 / 原型 A 精简 1290 MiB（docs/baselines/2026-10-26/ + docs/08）"
+      "dependencies": [
+        "feat-004",
+        "feat-005"
+      ],
+      "status": "not-started",
+      "evidence": "无插件组：alula 179.2 / VS Code 干净 989.9 / 原型 A 1310 / 原型 A 精简 1290 MiB（docs/baselines/2026-10-26/ + docs/08）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
     },
     {
       "id": "feat-007",
@@ -54,96 +80,183 @@
       "description": "定位用户环境 VS Code 卡死根因，反哺架构设计",
       "dependencies": [],
       "status": "done",
-      "evidence": "根因：系统提交内存耗尽（python.exe 提交 86–93 GB 击穿 107 GB 上限）；docs/07-诊断-VSCode卡死归因.md"
+      "evidence": "根因：系统提交内存耗尽（python.exe 提交 86–93 GB 击穿 107 GB 上限）；docs/07-诊断-VSCode卡死归因.md",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-008",
       "name": "P1 编辑基础：打开/保存/多标签（增量 1）",
       "description": "多文件工作台闭环：打开文件夹→文件树（懒加载）→多标签→编辑→Ctrl+S 原子保存（editor-doc）。剩余：编码/换行符处理、查找替换、撤销重做 UI 化",
-      "dependencies": ["feat-003"],
-      "status": "in-progress",
-      "evidence": "实机截图 docs/diagnostics/2026-10-26-phase1/；commit 8477ecc"
+      "dependencies": [
+        "feat-003"
+      ],
+      "status": "not-started",
+      "evidence": "实机截图 docs/diagnostics/2026-10-26-phase1/；commit 8477ecc",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P02",
+        "P04",
+        "P05",
+        "P06",
+        "P07"
+      ]
     },
     {
       "id": "feat-009",
       "name": "P1 LSP：rust-analyzer 按工作区共享进程 + 诊断/补全",
       "description": "多文件接入 rust-analyzer（按工作区共享）。剩余：basedpyright/Ruff、clangd、跳转定义/悬浮/格式化、诊断/补全异步化、增量解析",
-      "dependencies": ["feat-003", "feat-008"],
-      "status": "in-progress",
-      "evidence": "docs/03 §2.1 增量 1 记录（2026-10-26）"
+      "dependencies": [
+        "feat-003",
+        "feat-008"
+      ],
+      "status": "not-started",
+      "evidence": "docs/03 §2.1 增量 1 记录（2026-10-26）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P08"
+      ]
     },
     {
       "id": "feat-010",
       "name": "P1 下一增量：撤销/重做 UI、查找替换、Git 面板、文件监视",
       "description": "撤销/重做与查找替换已完成（feat-010a）；Git 面板、文件监视、编辑器组件切换（code_forge）待做",
-      "dependencies": ["feat-008"],
-      "status": "in-progress",
-      "evidence": "feat-010a 撤销/重做/查找替换（2026-10-27）+ feat-git Git 面板（同日）：GitCli CLI 封装（porcelain -z/UTF-8 解码/可注入 runner，6 单测 + 4 真 git 集成测试）+ 侧栏双视图切换 + 面板（分支/分组/暂存/提交）+ 底部 Git Diff 标签 + 端到端 widget 测试；全量 104 测试绿 + init.sh 全绿 + CI 全绿"
-
+      "dependencies": [
+        "feat-008"
+      ],
+      "status": "not-started",
+      "evidence": "feat-010a 撤销/重做/查找替换（2026-10-27）+ feat-git Git 面板（同日）：GitCli CLI 封装（porcelain -z/UTF-8 解码/可注入 runner，6 单测 + 4 真 git 集成测试）+ 侧栏双视图切换 + 面板（分支/分组/暂存/提交）+ 底部 Git Diff 标签 + 端到端 widget 测试；全量 104 测试绿 + init.sh 全绿 + CI 全绿",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P02",
+        "P04",
+        "P06",
+        "P09"
+      ]
     },
     {
       "id": "feat-011",
       "name": "P1 稳定性：进程监督树、低资源模式、崩溃恢复 journal",
       "description": "强杀 LSP 不崩、关闭工作区进程树清空、内存限额下可用、断电恢复（Phase 1 DoD 稳定性条目）",
-      "dependencies": ["feat-009"],
+      "dependencies": [
+        "feat-009"
+      ],
       "status": "not-started",
-      "evidence": ""
+      "evidence": "",
+      "track": "legacy-prototype",
+      "superseded_by_packages": [
+        "P01",
+        "P02",
+        "P14"
+      ]
     },
     {
       "id": "feat-012",
       "name": "P1 性能验收：内存预算与冷启动达标",
       "description": "空工作台 ≤200 MiB、普通项目 ≤250 MiB、Rust+RA ≤500 MiB、冷启动 ≤2s、对 VS Code −50%（docs/03 §2.2）",
-      "dependencies": ["feat-010", "feat-011"],
+      "dependencies": [
+        "feat-010",
+        "feat-011"
+      ],
       "status": "not-started",
-      "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）"
+      "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
     },
     {
       "id": "feat-015",
       "name": "W1 布局骨架：WorkbenchGrid + 五大区 + 标题栏 + 持久化",
       "description": "docs/09 W1 全项：二叉分割树布局（拖拽/最小尺寸/折叠）、五大区、标题栏菜单 + 无边框窗口（window_manager：拖拽移动/双击最大化/窗口按钮）、布局持久化与恢复",
-      "dependencies": ["feat-008"],
+      "dependencies": [
+        "feat-008"
+      ],
       "status": "done",
-      "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）"
+      "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-016",
       "name": "W2 编辑器组：拆分/跨组拖动/面包屑/会话恢复",
       "description": "docs/09 W2：W2-1 标签条交互已完；W2-2 编辑器组拆分（布局树 editor 叶子可分裂为组分割、文档按组持有）、W2-3 面包屑、W2-4 会话恢复",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "W2-1 标签条交互 + W2-2 编辑器组（分裂原语 7 测试 + 多组全链路）+ W2-3 面包屑（路径段/点击展开树）+ W2-4 会话 journal（端到端恢复测试），全量 58 测试 + init.sh 全绿；实机冒烟：W2 Release 稳态 189.9 MiB（+1.8% < 5% 护栏，2026-10-26）。启动级已实机验证；交互级复验（拆分/拖标签/强杀恢复）待人工。剩余：W2-4 的脏标记跨重启保留（可选）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "W2-1 标签条交互 + W2-2 编辑器组（分裂原语 7 测试 + 多组全链路）+ W2-3 面包屑（路径段/点击展开树）+ W2-4 会话 journal（端到端恢复测试），全量 58 测试 + init.sh 全绿；实机冒烟：W2 Release 稳态 189.9 MiB（+1.8% < 5% 护栏，2026-10-26）。启动级已实机验证；交互级复验（拆分/拖标签/强杀恢复）待人工。剩余：W2-4 的脏标记跨重启保留（可选）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P05"
+      ]
     },
     {
       "id": "feat-017",
       "name": "W3 命令面板与键位：CommandRegistry/QuickInput/全局键位",
       "description": "docs/09 W3-1：CommandRegistry（菜单/键位/面板统一引用命令 id）+ fuzzyScore 模糊打分 + QuickInput 浮层（Ctrl+Shift+P 命令面板 / Ctrl+P 快速打开）+ 全局键位（Ctrl+B/Ctrl+J）。剩余：完整 KeybindingRegistry（when 子句、keybindings.json 覆盖）",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P01",
+        "P05",
+        "P07"
+      ]
     },
     {
       "id": "feat-018",
       "name": "W4 搜索视图：ripgrep 优先 + git grep 回退，流式结果",
       "description": "活动栏搜索视图（Ctrl+Shift+F）：后端探测 rg→git grep→不可用提示；流式命中（可取消终止子进程）；命中上限 500；点击命中打开文件并跳转行。剩余：按文件分组展示、正则支持",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "10 项服务测试（解析/临时仓集成/上限/取消）+ 1 项端到端 widget 测试（Ctrl+Shift+F→搜索→点击跳行）；115 测试全绿 + CI 全绿（2026-10-27）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "10 项服务测试（解析/临时仓集成/上限/取消）+ 1 项端到端 widget 测试（Ctrl+Shift+F→搜索→点击跳行）；115 测试全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P06"
+      ]
     },
     {
       "id": "feat-019",
       "name": "文件监视：工作区外部变更自动刷新与重载",
       "description": "dart:io Directory.watch(recursive) 递归监视（零新依赖）+ 600ms 防抖；外部变更后刷新文件树（保留展开状态）/Git 状态；打开文档外部修改：干净文档自动重载、脏文档仅提示。剩余：外部删除文件的缓冲区处理",
-      "dependencies": ["feat-015"],
+      "dependencies": [
+        "feat-015"
+      ],
       "status": "done",
-      "evidence": "3 项 watcher 单测（防抖收敛/stop/递归）+ 1 项端到端 widget 测试（外部写盘→干净文档自动重载）；119 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
+      "evidence": "3 项 watcher 单测（防抖收敛/stop/递归）+ 1 项端到端 widget 测试（外部写盘→干净文档自动重载）；119 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-020",
       "name": "大纲视图：tree-sitter 符号提取全栈（Rust→FFI→UI）",
       "description": "editor-lang.symbols()（10 类定义节点，含嵌套与 impl Trait for Type 命名）+ FFI alula_symbols（ABI v4 双侧握手）+ 大纲侧栏视图（类别徽章/行号/点击跳定义）+ 编辑后 500ms 防抖刷新",
-      "dependencies": ["feat-015"],
+      "dependencies": [
+        "feat-015"
+      ],
       "status": "done",
-      "evidence": "3 项 Rust 单测（中注释行号/UTF-16 偏移回验/文档序）+ 1 项端到端 widget 测试（符号列表→点击跳定义起始）；顺修外部刷新丢展开态的真实 UX bug（_refreshTree 快照恢复展开）；120 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
+      "evidence": "3 项 Rust 单测（中注释行号/UTF-16 偏移回验/文档序）+ 1 项端到端 widget 测试（符号列表→点击跳定义起始）；顺修外部刷新丢展开态的真实 UX bug（_refreshTree 快照恢复展开）；120 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-013",
@@ -151,15 +264,254 @@
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",
       "dependencies": [],
       "status": "done",
-      "evidence": "GitNexus 索引（796 符号/1681 关系）；harness validator 100/100；init.sh 端到端全绿（2026-10-26）；.github/workflows/ci.yml + release.yml 语法校验通过，待推送后看 Actions 首跑"
+      "evidence": "GitNexus 索引（796 符号/1681 关系）；harness validator 100/100；init.sh 端到端全绿（2026-10-26）；.github/workflows/ci.yml + release.yml 语法校验通过，待推送后看 Actions 首跑",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-014",
       "name": "P1 打包：三平台 Release 构建与安装包",
       "description": "Windows 安装包已完成；Linux（AppImage/deb）、macOS（dmg）待做，接入 CI 矩阵",
-      "dependencies": ["feat-013"],
+      "dependencies": [
+        "feat-013"
+      ],
+      "status": "not-started",
+      "evidence": "Windows 构建 ✅（docs/03 §2.1）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
+    },
+    {
+      "id": "feat-021",
+      "name": "VS Code无插件非AI全功能1:1复刻总计划",
+      "description": "docs/03当前主线：固定上游、范围/审计/架构/16实施包/逐项验收/证据/交接；仅计划，不登记产品实现完成。",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "docs/10总计划；docs/11及plans/vscode-parity-matrix.json：342条/22组/14边界/16实施包；上游90个manifest/462个发现项路由；docs/diagnostics/2026-10-27-parity-plan/verification.md：fmt/init/analyze通过、Flutter120、harness100、计划结构与graph分析。仅计划完成，P00–P15未实施。",
+      "track": "vscode-builtin-parity",
+      "phase": "planning"
+    },
+    {
+      "id": "feat-022",
+      "name": "P00 对照版本与贡献项原子清单",
+      "description": "固定SHA参考构建/发行服务参考可重复；贡献项交叉导出；golden/风险fixture；编辑器/Web引擎/官方服务三项限时实验与ADR齐备；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-021"
+      ],
       "status": "in-progress",
-      "evidence": "Windows 构建 ✅（docs/03 §2.1）"
+      "evidence": "P00.1 done：固定SHA与签名/版本元数据已核验；Windows Code-OSS client-only build、Electron 43.8.3启动、runtime环境与product.json内置扩展包清单已登记；微软精确发行物未找到，差异与未构建lane见docs/diagnostics/2026-10-27-p00/reference-acquisition.md、runtime-evidence.json、reference-workbench.png。P00.2 done：固定源码 AST、95个扩展manifest、product.json与运行时registry交叉导出12,958条；未知路由保留，具体数量/差异见docs/diagnostics/2026-10-27-p00/atomic-contributions.md。P00.3/P00.4未开始。",
+      "track": "vscode-builtin-parity",
+      "phase": "P00"
+    },
+    {
+      "id": "feat-023",
+      "name": "P01 异步服务/上下文/进程监督",
+      "description": "request/version/cancel/背压/ABI对拍；慢/失序服务不阻塞；关工作区清空任务/进程；无全量定时轮询；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-022"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P01"
+    },
+    {
+      "id": "feat-024",
+      "name": "P02 文档事务/保存/恢复",
+      "description": "每文档撤销与跨文档事务、编码/EOL/savepoint对照；外部冲突/掉电/坏盘/超大未保存文本无静默丢失；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P02"
+    },
+    {
+      "id": "feat-025",
+      "name": "P03 编辑器输入与绘制",
+      "description": "ADR选定真实控件/文本归属；三平台IME/多光标/列选/万行长行/多视图/无障碍/内存硬门通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-024"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P03"
+    },
+    {
+      "id": "feat-026",
+      "name": "P04 编辑命令/查找/片段/diff/merge",
+      "description": "EDT全部注册子项对拍，含selection/undo/dirty/多文档预览应用回滚；不是只有可见按钮；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-025"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
+    },
+    {
+      "id": "feat-027",
+      "name": "P05 工作台界面1:1",
+      "description": "LAY/CMD页面全状态golden与键鼠焦点/拖放对照，含双侧栏/浮窗/modal/locked scrolling；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-025"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-028",
+      "name": "P06 Explorer/多根/搜索/Timeline",
+      "description": "FS/SRC全部流程；.code-workspace/ignore/dirty搜索/全局替换/watch overflow/全量可达通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-024",
+        "feat-027"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P06"
+    },
+    {
+      "id": "feat-029",
+      "name": "P07 配置/键位/主题/Profiles",
+      "description": "默认配置与优先级、when/chord/平台键位、所有随附主题图标/片段、Profiles隔离迁移一致；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-027"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P07"
+    },
+    {
+      "id": "feat-030",
+      "name": "P08 全部默认语言服务",
+      "description": "随附语言/grammar逐项fixture、JS/TS/HTML/CSS/JSON/Markdown/PHP/Emmet真实provider、Problems与完整编辑返回通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-028",
+        "feat-029"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P08"
+    },
+    {
+      "id": "feat-031",
+      "name": "P09 Git/SCM",
+      "description": "GIT全部项，含块暂存/分支远程/stash/worktree/graph/blame/conflicts；Git故障和Unicode路径对拍；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-028"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P09"
+    },
+    {
+      "id": "feat-032",
+      "name": "P10 PTY终端/shell integration",
+      "description": "TER全部项，ConPTY/Unix VT/输入/split/持久化/suggest/流控/进程回收及资源预算通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-027",
+        "feat-029"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P10"
+    },
+    {
+      "id": "feat-033",
+      "name": "P11 Tasks/默认JS调试/Testing-Comments容器",
+      "description": "TSK/DBG全项，真实js-debug与companion/profile、外部Chrome-Edge、任务matcher；集成浏览器联调交P12，无provider不伪造默认测试能力；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-030",
+        "feat-032"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P11"
+    },
+    {
+      "id": "feat-034",
+      "name": "P12 Markdown/Notebook/media/browser",
+      "description": "NBK/MDK/WEB全项，rich/公式/Mermaid/renderer/DevTools/CDP及P11浏览器联调真实可用；安全隔离与按需内存通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-027",
+        "feat-029",
+        "feat-030",
+        "feat-033"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P12"
+    },
+    {
+      "id": "feat-035",
+      "name": "P13 账户/同步/Cloud Changes/Ports/管理",
+      "description": "NET全项，非AI联网能力真实试跑；官方互通/注册/分发条件有证据，自建替代不能冒称官方1:1；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-028",
+        "feat-029",
+        "feat-032"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P13"
+    },
+    {
+      "id": "feat-036",
+      "name": "P14 系统/无障碍/安全/质量整合",
+      "description": "ACC全项；三平台CLI/权限/信任/可访问性/资源观测；全功能故障与性能报告通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-030",
+        "feat-031",
+        "feat-032",
+        "feat-033",
+        "feat-034",
+        "feat-035"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P14"
+    },
+    {
+      "id": "feat-037",
+      "name": "P15 全量对照与发布",
+      "description": "REL全项；原子项未映射/未验收为0，所有硬门绿；安装更新回退/资源回收/差异账本签收；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-036"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P15"
     }
-  ]
+  ],
+  "active_track": "vscode-builtin-parity",
+  "state_authority": "docs/03-里程碑计划与验收标准.md#当前主线：VS-Code-无插件全功能-1:1",
+  "reference": {
+    "vscode": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "vscode_docs": "da213552439825628e0ab958dbde1e413dbc36bf"
+  }
 }

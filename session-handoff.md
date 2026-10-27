@@ -1,86 +1,74 @@
 # session-handoff.md — 会话交接
 
-> 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-27（第六轮收尾：大纲视图完成——首个 Rust 侧功能全栈贯通；ABI v4）
+> Last Updated：2026-10-27（第十轮：P00.2 原子贡献/运行时登记导出完成）
 
 ## 项目一句话
 
-低内存代码编辑器（对标 VS Code 但内存 −50%）：Flutter 桌面工作台 + Rust 编辑核心。
-Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 1（V1 轻量编辑器）**。
+Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编辑/保存优先。
+用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
 
-**W1/W2/W3-1/W3-2/feat-010a 全部完成**（93 测试绿 + init.sh 全绿 + CI 全绿）。
-- feat-010a：自研 UndoStack + 查找替换栏 + 编辑菜单；撤销键位经 FocusNode
-  第一站拦截（详见 progress.md 两条关键机制）。
-- feat-010 剩余：Git 面板（status/stage/commit，CLI 封装）、文件监视
-  （crates/editor-workspace）、编辑器组件切换（待 feat-002 人工复核）。
-- W3 已落能力：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（默认表 +
-  keybindings.json 重绑定与移除）/菜单键位提示动态化/F1-F3 命令化。
-- W3 剩余小项：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）。
-- 细节债（用户说过最后统一改）：快速打开索引 2000 上限提示、Ctrl+B/J 菜单
-  提示已随 W3-2 动态化（已还清）。
-- W2 已落能力：标签条交互（溢出/中键/拖动排序）、编辑器组（拆分/焦点路由/空组并组）、
-  面包屑（点击展开树）、会话 journal（未保存内容崩溃恢复）+ dirtyDisk 真脏标记
-  （修正了原 isDirty 永假的隐性 bug，标签脏点现在正确显示）。
-- ⚠️ 交互级人工复验未做（agent 无法操作真窗口）：拆分按钮/拖标签/强杀进程后
-  重启恢复未保存内容。复验通过即可 push。
-- 下轮候选：W2-5 符号大纲面包屑（需 editor-lang symbol 查询 + FFI，Rust 侧）、
-  W3 命令面板（CommandRegistry/QuickInput，docs/09）、feat-010 撤销重做/查找替换。
+当前仅推进docs/03的P00.3：Golden 基线与现状故障夹具。P00.1 已通过固定 SHA 的 Code-OSS client-only build 与 Workbench 启动完成验收；P00.2 已完成源码/manifest/product/runtime 交叉导出，保留所有未决路由。
+当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
+旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.3进行中；P00.4及P01–P15尚未开始。
 
-## 本会话完成了什么
+## What Changed
 
-1. **GitNexus 代码图谱**：`npx gitnexus analyze` 建立索引（796 符号/1681 关系/66 执行流）。
-   `.gitnexus/` 已入 gitignore（本地缓存，新 clone 后重跑即可）。CLAUDE.md/AGENTS.md
-   里 `<!-- gitnexus:start -->` 块之间是自动生成区，项目守则写在其上方，勿删块标记。
-2. **harness 文档五件套**：AGENTS.md/CLAUDE.md（守则+不变量+DoD）、feature_list.json、
-   progress.md、init.sh、本文件。skill 装在 `.agents/skills/harness-creator/`，
-   用 `node .agents/skills/harness-creator/scripts/validate-harness.mjs --target .` 可复查。
-3. **CI/CD**：`.github/workflows/ci.yml`（Rust fmt+clippy+test 双系统矩阵 / Flutter
-   analyze+test 走真实 FFI / harness 结构校验）+ `release.yml`（tag 触发 Windows/Linux
-   打包并发布 Release）。附带把全仓 clippy 警告清零、cargo fmt 统一、
-   build_core.sh 补 Windows dll —— 这些是让 CI 门能过的前置修复。
-4. **VSCode 工作台复刻计划**：`docs/09-VSCode工作台Flutter复刻计划.md`
-   （W1–W6 里程碑 + 内存护栏 + 风险表；仅计划，未实施）。
+- 固定vscode SHA 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e（1.145.0开发版，非Stable）；
+  vscode-docs SHA da213552439825628e0ab958dbde1e413dbc36bf。
+- 总计划16实施包，342条功能族验收/14边界决策；另有源目录/全部90个非AI产品manifest及下载预置调试器清单。
+- P00.2 exporter从固定 SHA 的 14,811 个 tracked TS/JS 文件中解析 1,490 个候选源文件，导出 AST、95 个扩展 manifest、`product.json` 和隔离运行时 registry，共 12,958 条唯一记录；2,140 条为运行时独有登记。
+- 当前保留 6,828 条未决登记/路由，不能计作覆盖率。运行时探针观测 2,684 个命令、1,289 个配置键、5 种语言；client-only lane 未加载默认扩展 payload，运行时产品扩展数为 0。
+- 默认随附扩展全部纳入；终端/JS调试/Markdown rich-Mermaid/Notebook宿主/集成浏览器/Sync/Cloud Changes/Ports不漏。
+  外接AI排除；需用户另装的Python/Jupyter/Remote等业务provider不冒充默认能力。
+- 官方服务互通是条件验收，不能因联网删需求；自建替代不等于官方1:1完成。
+- 旧未完成feature保留evidence并退回not-started/legacy；新执行轨为vscode-builtin-parity，单feature推进。
+- Startup发现原工作树Flutter编译错误，按规则仅一行修复_findRenderEditableOf递归误调；impact LOW。
 
-## 验证状态
+## Verification Evidence
 
-- `bash init.sh` 一键全绿（EXIT=0，2026-10-26）：cargo fmt --check / cargo test（41）/
-  clippy -D warnings（0 警告）/ build_core / flutter analyze / flutter test（15）
-- Flutter SDK 在 `E:\flutter`，Git Bash 不在 PATH：init.sh 会自动探测，
-  手动调用用 `/e/flutter/bin/flutter`
-- CI 工作流 YAML 语法已校验；**Actions 真机首跑待推送后确认**
+- cargo fmt --check、bash init.sh（Rust test/clippy/build_core/Flutter120测试）、flutter analyze：EXIT=0。
+- 本轮 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 均 EXIT=0；日志：`docs/diagnostics/2026-10-27-p00/p00.2-validation.log`。P00.2 导出器 `node --check` 与结构核验通过；12,958 条均具来源路径/可达状态，注册记录 ID 全唯一，四类静态/运行时对账计数自洽。
+- GitNexus `detect-changes --scope all` risk=critical（48 files/264 symbols/20 flows），包含工作树中既有 README/app 修改；staged scope risk=critical（19 files/248 symbols/17 flows），命中本阶段导出器流程与文档，本阶段未暂存产品源码。详情见 `atomic-contributions.md`。
+- 本轮阶段门复核：Windows Git Bash `bash init.sh` 全绿、`cargo fmt --check` 通过、`E:\flutter\bin\flutter.bat analyze` 无问题；Git Bash 打印 `.bashrc` UTF-16 BOM 提示但未影响退出状态。
+- 实际命令/日志与文档结构/graph/harness结果：docs/diagnostics/2026-10-27-parity-plan/verification.md。
+- 当前工具链是Windows：从WSL调用Git Bash执行；WSL本身无cargo，Windows Flutter shell有CRLF，勿把环境报错当业务回归。
+- 本轮未做新UI/内存基准；只有一行类型修复，没有新增常驻结构。完整1:1/IME/性能均未声称通过。
+- 未commit、未push；工作树有大量用户既存skill/app/pubspec改动，勿覆盖、归属本轮或整仓打包提交。
 
-## Blockers（阻塞项）
+## Blockers / 待核实前提
 
-- **W2 交互级人工复验**（agent 无法操作真窗口）：拆分/拖标签/强杀恢复，
-  清单见 Next Session 第 2 条。
-- CI/CD 工作流未在 GitHub Actions 实机跑过（remote 已配置：
-  github.com/Eternal-Wanderer-Vegetable/Alula_Code，需用户推送）。
-- feat-002 编辑器组件人工复核需真机 + 微软拼音（人工环节，agent 无法替代）。
+- P00.1：官方 `latest/insider` 当前指向 1.144.0 的其他 commit，固定 SHA 与 1.145.0 下载路径返回 404；Code-OSS client-only build/start 已完成。remote 子树依赖未安装，Copilot/remote lane 未构建；不能把此源码构建称作微软发行物。
+- P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
+- P00需构建固定参考，若无相同SHA官方发行物，官方服务参考项标reference unavailable并建立明确差异。
+- 真机IME/万行/多DPI/辅助技术未有完整证据；旧G1路线选择不等于这些硬门已通过。
+- 官方OAuth/Sync/隧道/市场的注册与分发条件，Web引擎跨平台CDP/MHTML/DevTools与内存，在P00顺序做限时实验。
+- 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
+  使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
+  代码图谱process发现可能截断，缺失flow不等于无调用；UNKNOWN先做文本确认。
 
-## Files（第三轮新增/改动）
+## Files
 
-- `app/lib/workbench/`：layout_model.dart（分割树模型）、layout_controller.dart、
-  layout_grid.dart（渲染+分割条）、layout_store.dart（持久化）、workbench_page.dart
-  （原 main.dart 全逻辑迁移）、title_bar/activity_bar/status_bar.dart
-- `app/lib/main.dart`：瘦身为入口；`app/test/`：layout_model/grid/store/widget 测试
-- 本轮提交：`443e3e5`→`W1-4`（chore 清理、harness、ci、docs09、W1-1/2/4 共 7 笔）
-- `feature_list.json`（feat-015 登记）、`progress.md`、`session-handoff.md`（本文件）
+- docs/10-VSCode无插件全功能复刻总计划.md、docs/11-VSCode功能对照矩阵.md、docs/plans/：新计划及官方源证据。
+- docs/diagnostics/2026-10-27-p00/reference-acquisition.md：P00.1固定参考获取与下载探测记录。
+- docs/diagnostics/2026-10-27-p00/atomic-contributions.md：P00.2统计、运行时差异和未决项；`atomic-contributions.json` 是逐项 ledger。
+- tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
+- docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
+- feature_list.json、progress.md、本文件：可续作状态。
+- app/lib/workbench/workbench_page.dart：本轮仅_findRenderEditableOf中递归调用一行；其余既存修改归用户。
+- docs/diagnostics/2026-10-27-parity-plan/：验证日志。
 
-## Next Session（推荐首步）
+## Next Session
 
-1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **下轮开发任务候选**：跳转定义（复用 symbols 通路做 go-to-definition）、
-   搜索按文件分组/正则、W3-2c 快速打开异步化、命令面板补 Git 命令、
-   W5 终端面板（PTY）。
-3. 桌面 exe（双击入口）为 W3-1 版本；要体验 W3-2 键位覆盖需重建
-   （flutter build windows --release，开发者模式需保持开启）。
-3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。
+1. 按AGENTS启动流程读本文件/progress Current State、检查图谱、跑init --fast（Windows工具链）。
+2. P00.3 先固定同环境 Workbench 页面/行为 golden，再准备双文件交替撤销、超大未保存文件、关闭工作区进程、长延迟补全四个可重放夹具。
+3. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据；当前 Alula 工作树有大量既存用户改动。
+4. 阶段验收与 GitNexus detect_changes 完成后，只提交本阶段明确归属的文件；不要整仓打包用户既存改动。
+5. 任何业务代码变更前impact；提交前完整detect_changes；状态只以docs/03为准并同步执行镜像/evidence。
 
-## 已知坑
+## 已知风险（尚未因本轮计划而修复）
 
-- FFI 偏移一律 UTF-16 code unit，动协议前读 AGENTS.md 不变量 1–3。
-- `app/windows/`、`app/native/`、`.gitnexus/` 都在 gitignore，clone 后需
-  `flutter create` + `build_core` 重建。
-- docs/03 任务表是状态权威源；改状态时同步 feature_list.json + progress.md。
+全局UndoStack跨文档风险；>2M字符未保存内容不入journal；同步FFI与800ms全量轮询；
+Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读；快速打开/搜索硬上限。
+详见docs/10 §2，不把静态风险冒充已运行复现。

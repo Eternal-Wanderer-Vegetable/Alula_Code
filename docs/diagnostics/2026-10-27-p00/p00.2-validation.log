@@ -1,0 +1,215 @@
+bash.exe : /c/Users/Vegetable/.bashrc: line 1: $'\377\376export': command not found
+所在位置 行:1 字符: 78
++ ... ation.log"; & "C:\Program Files\Git\bin\bash.exe" -lc "cd /e/Alula_Co ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (/c/Users/Vegeta...mmand not found:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+== 1/4 Rust: cargo test --workspace ==
+
+running 10 tests
+..........
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 12 tests
+............
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.54s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[PASS] cargo test
+
+== 2/4 Rust: cargo clippy -D warnings ==
+[PASS] clippy
+
+== 3/4 鏋勫缓鏍稿績鍔ㄦ€佸簱 鈫?app/native/ ==
+    Finished `release` profile [optimized] target(s) in 0.13s
+OK: app/native/ 宸插氨缁?[PASS] build_core
+
+== 4/4 Flutter: flutter test (app/) ==
+00:00 +0: loading E:/Alula_Code/app/test/commands_test.dart
+00:00 +0: E:/Alula_Code/app/test/commands_test.dart: 娉ㄥ唽琛?娉ㄥ唽 / 鏌ユ壘 / 鍚?id 瑕嗙洊 / 娉ㄩ攢
+00:00 +1: E:/Alula_Code/app/test/commands_test.dart: 娉ㄥ唽琛?label 涓恒€屽垎绫? 鍚嶇О銆?00:00 +2: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 瀛愬簭鍒楀懡涓繑鍥炲垎鏁帮紝涓嶅懡涓繑鍥?null
+00:00 +3: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 鍓嶇紑/璇嶉鍛戒腑姣斾腑娈靛懡涓垎楂?00:00 +4: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 杩炵画鍛戒腑姣旂鏁ｅ懡涓垎楂?00:00 +5: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 澶у皬鍐欎笉鏁忔劅
+00:00 +6: E:/Alula_Code/app/test/commands_test.dart: search 鎺掑簭 鎸夊垎鏁伴檷搴忥紝鍚屽垎鎸?label 瀛楀吀搴?00:00 +7: E:/Alula_Code/app/test/core_sync_test.dart: ABI 鐗堟湰鍖归厤
+00:00 +8: E:/Alula_Code/app/test/core_sync_test.dart: 鎵撳紑鈫掓彃鍏モ啋鐗堟湰鍥炴墽鈫抮esync 鍏ㄦ枃涓€鑷?00:00 +9: E:/Alula_Code/app/test/core_sync_test.dart: 杩囨湡鐗堟湰琚嫆缁濆苟缁欏嚭 Rust 褰撳墠鐗堟湰
+00:00 +10: E:/Alula_Code/app/test/core_sync_test.dart: 涓枃涓?emoji 娣锋帓澧為噺鍦?FFI 杈圭晫姝ｇ‘
+00:00 +11: E:/Alula_Code/app/test/core_sync_test.dart: 鍏堝垹鍚庢彃鐨?op 搴忓垪鍦?Rust 渚ф寜搴忕敓鏁?00:00 +12: E:/Alula_Code/app/test/core_sync_test.dart: 闈炴硶 UTF-16 杈圭晫锛堜唬鐞嗗涓棿锛夎 Rust 鎷掔粷
+00:00 +13: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 鍩烘湰鍛戒腑涓庨潪閲嶅彔璁℃暟
+00:00 +14: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 澶у皬鍐欎笉鏁忔劅
+00:00 +15: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 绌烘煡璇笌鏃犲懡涓?00:00 +16: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches UTF-16 鍙ｅ緞锛欵moji锛堜唬鐞嗗锛夊崰 2 涓?code unit锛屽亸绉讳笉钀戒唬鐞嗗涓棿
+00:00 +17: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches CRLF 涓庢崲琛岀幆澧冨懡涓?00:00 +18: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 鍏ㄩ儴鏇挎崲涓庤鏁?00:00 +19: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 澶у皬鍐欎笉鏁忔劅鏇挎崲
+00:00 +20: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 鏇挎崲涓插寘鍚煡璇覆涓嶉€犳垚閲嶅彔璇浛鎹?00:00 +21: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches UTF-16锛氭浛鎹㈡枃鏈惈 Emoji
+00:00 +22: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 绌烘煡璇㈠師鏍疯繑鍥?00:00 +23: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack push/undo/redo 寰€杩?00:00 +24: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack coalesce 鍚堝苟涓嶅帇鏂板抚锛氫竴娆℃挙閿€鍥為€€鏁存杈撳叆
+00:00 +25: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 鏂板彉鏇翠綔搴?redo 鏍?00:00 +26: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 鏉℃暟涓婇檺娣樻卑鏈€鏃?00:00 +27: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 鎬诲瓧绗︿笂闄愭窐姹版渶鏃э紙浣庡唴瀛樼邯寰嬶級
+00:00 +28: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack clear 娓呯┖鍙屾爤
+00:00 +29: E:/Alula_Code/app/test/git_cli_test.dart: porcelain -z 瑙ｆ瀽锛氫慨鏀?鏈窡韪?閲嶅懡鍚?涓枃璺緞
+00:00 +30: E:/Alula_Code/app/test/git_cli_test.dart: status 鍛戒护鍙傛暟锛?-porcelain -z
+00:00 +31: E:/Alula_Code/app/test/git_cli_test.dart: stage/unstage/commit 鐨勫弬鏁版瀯閫?00:00 +32: E:/Alula_Code/app/test/git_cli_test.dart: commit 绌轰俊鎭笌 git 澶辫触锛氭姏 GitError
+00:00 +33: E:/Alula_Code/app/test/git_cli_test.dart: isRepo锛歵rue / false锛坮ev-parse 澶辫触锛?00:00 +34: E:/Alula_Code/app/test/git_cli_test.dart: diff/log 杞彂
+00:00 +35: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +36: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +37: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +38: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +39: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +40: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +41: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +42: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +43: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +44: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +45: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +46: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +47: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +48: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +49: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +50: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +51: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +52: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +53: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +54: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +55: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +56: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +57: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +58: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +59: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +60: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +61: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +62: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +63: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +64: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +65: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +66: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +67: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +68: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +69: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +70: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +71: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:00 +72: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +73: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +74: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +75: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +76: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +77: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +78: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +79: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +80: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +81: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +82: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +83: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +84: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +85: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +86: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +87: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +88: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +89: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +90: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +91: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +92: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +93: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +94: E:/Alula_Code/app/test/git_integration_test.dart: 鍏ㄦ祦绋嬶細status 鈫?stage 鈫?diff 鈫?commit 鈫?log 鈫?骞插噣
+00:01 +95: E:/Alula_Code/app/test/search_service_test.dart: 闆嗘垚锛堢湡瀹炲瓙杩涚▼锛屼复鏃朵粨搴擄級 git grep 鍚庣锛氬叏閲忔敹闆?+ 琛屽彿姝ｇ‘
+00:01 +96: E:/Alula_Code/app/test/widget_test.dart: 搴旂敤鏋勫缓骞舵樉绀哄伐浣滃彴锛圵1 甯冨眬楠ㄦ灦锛?00:01 +97: E:/Alula_Code/app/test/widget_test.dart: 搴旂敤鏋勫缓骞舵樉绀哄伐浣滃彴锛圵1 甯冨眬楠ㄦ灦锛?00:02 +98: E:/Alula_Code/app/test/widget_test.dart: 搴旂敤鏋勫缓骞舵樉绀哄伐浣滃彴锛圵1 甯冨眬楠ㄦ灦锛?00:02 +99: E:/Alula_Code/app/test/widget_test.dart: 搴旂敤鏋勫缓骞舵樉绀哄伐浣滃彴锛圵1 甯冨眬楠ㄦ灦锛?00:02 +100: E:/Alula_Code/app/test/widget_test.dart: 搴旂敤鏋勫缓骞舵樉绀哄伐浣滃彴锛圵1 甯冨眬楠ㄦ灦锛?00:02 +101: E:/Alula_Code/app/test/workspace_watcher_test.dart: stop 鍚庡閮ㄥ彉鏇翠笉鍐嶈Е鍙?00:02 +102: E:/Alula_Code/app/test/git_integration_test.dart: 淇敼宸茶窡韪枃浠讹細unstaged diff
+00:02 +103: E:/Alula_Code/app/test/git_integration_test.dart: 淇敼宸茶窡韪枃浠讹細unstaged diff
+00:02 +104: E:/Alula_Code/app/test/search_service_test.dart: 闆嗘垚锛堢湡瀹炲瓙杩涚▼锛屼复鏃朵粨搴擄級 鍛戒腑涓婇檺锛氳揪鍒?maxHits 鍚庢彁鍓嶇粓姝?00:02 +105: E:/Alula_Code/app/test/workspace_watcher_test.dart: 瀛愮洰褰曚簨浠朵篃瑙﹀彂锛堥€掑綊锛?00:02 +106: E:/Alula_Code/app/test/workspace_watcher_test.dart: 瀛愮洰褰曚簨浠朵篃瑙﹀彂锛堥€掑綊锛?00:03 +107: E:/Alula_Code/app/test/widget_test.dart: W2-1 鏍囩鏉★細鎷栧姩鎺掑簭涓庝腑閿叧闂?00:03 +108: E:/Alula_Code/app/test/widget_test.dart: W2-2 缂栬緫鍣ㄧ粍锛氭媶鍒嗚幏鐒?鏂囨。鍏ユ柊缁?娓呯┖鑷姩骞剁粍
+00:03 +109: E:/Alula_Code/app/test/widget_test.dart: W2-3 闈㈠寘灞戯細璺緞娈靛睍绀?+ 鐐瑰嚮鏂囦欢澶规灞曞紑鏂囦欢鏍?00:03 +110: E:/Alula_Code/app/test/widget_test.dart: W2-4 journal锛氶噸鍚仮澶嶆爣绛句笌鏈繚瀛樺唴瀹?00:03 +111: E:/Alula_Code/app/test/widget_test.dart: W3-1 鍛戒护闈㈡澘锛欳trl+Shift+P 鎵撳紑 鈫?绛涢€?鈫?鍥炶溅鎵ц鎷嗗垎
+00:04 +112: E:/Alula_Code/app/test/widget_test.dart: W3-1 蹇€熸墦寮€锛欳trl+P 鈫?绛涢€夋枃浠?鈫?鍥炶溅鎵撳紑
+00:04 +113: E:/Alula_Code/app/test/widget_test.dart: W3-2 keybindings.json锛氶噸缁戝畾涓庣Щ闄?00:04 +114: E:/Alula_Code/app/test/widget_test.dart: feat-010 鎾ら攢/閲嶅仛/鏌ユ壘鏇挎崲绔埌绔紙鍚?FFI 涓€鑷存€э級
+00:05 +115: E:/Alula_Code/app/test/widget_test.dart: feat-git 闈㈡澘锛氳鍥惧垏鎹?鐘舵€?鏆傚瓨/鎻愪氦
+00:07 +116: E:/Alula_Code/app/test/widget_test.dart: feat-search 鎼滅储瑙嗗浘锛欳trl+Shift+F/娴佸紡缁撴灉/鐐瑰嚮璺宠
+00:10 +117: E:/Alula_Code/app/test/widget_test.dart: feat-filewatch 澶栭儴淇敼锛氬共鍑€鏂囨。鑷姩閲嶈浇
+00:13 +118: E:/Alula_Code/app/test/widget_test.dart: feat-outline 澶х翰锛氱鍙峰垪琛ㄤ笌鐐瑰嚮璺宠浆
+00:16 +119: E:/Alula_Code/app/test/widget_test.dart: autoFolder锛氭枃浠舵爲鑷姩瑁呰浇 fixture 宸ョ▼鏍圭洰褰?00:16 +120: All tests passed!
+[PASS] flutter test
+
+鍏ㄩ儴閫氳繃 鈥?婊¤冻鎻愪氦鍓?DoD銆?[0m
+bash init.sh EXIT=0
+/c/Users/Vegetable/.bashrc: line 1: $'\377\376export': command not found
+cargo fmt --check EXIT=0
+Analyzing app...
+No issues found! (ran in 2.4s)
+flutter analyze EXIT=0

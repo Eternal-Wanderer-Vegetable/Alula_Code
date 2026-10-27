@@ -1,0 +1,2629 @@
+{
+  "version": 1,
+  "reference": {
+    "vscode": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "vscode_docs": "da213552439825628e0ab958dbde1e413dbc36bf"
+  },
+  "task_status_authority": "docs/03-里程碑计划与验收标准.md",
+  "note": "Requirement-family plan, not an atomic registry export or completion ledger. P00 expands every upstream contribution ID into cases. current_basis never means parity passed.",
+  "groups": [
+    {
+      "prefix": "REF",
+      "title": "参考版本与可验收资产",
+      "phase": "P00",
+      "scope": "A",
+      "current_basis": "未建立完整对照",
+      "source_paths": [
+        "product.json",
+        "src/vs/workbench/contrib",
+        "extensions"
+      ],
+      "doc_path": "docs/toc.json",
+      "rows": [
+        {
+          "id": "REF-01",
+          "name": "固定构建与配置",
+          "acceptance": "构建固定SHA，保存版本/产品配置/OS/默认flags；重复构建产物来源可追踪",
+          "case_id": "parity-ref-01"
+        },
+        {
+          "id": "REF-02",
+          "name": "默认贡献清单",
+          "acceptance": "核心运行时注册、AST和全部随附manifest交叉核对；命令/菜单/键位/设置均有原子ID",
+          "case_id": "parity-ref-02"
+        },
+        {
+          "id": "REF-03",
+          "name": "下载式预置物",
+          "acceptance": "js-debug/companion/profile-table锁版本与hash并验证真实可运行，不漏仓库外预置扩展",
+          "case_id": "parity-ref-03"
+        },
+        {
+          "id": "REF-04",
+          "name": "范围与排除账本",
+          "acceptance": "每项分类A–G并附理由；默认关闭实验功能独立标记，未知项不能计完成",
+          "case_id": "parity-ref-04"
+        },
+        {
+          "id": "REF-05",
+          "name": "视觉参考资产",
+          "acceptance": "固定主题/字体/DPI/尺寸，保存核心页面及交互状态golden，不混用旧版截图",
+          "case_id": "parity-ref-05"
+        },
+        {
+          "id": "REF-06",
+          "name": "行为对拍资产",
+          "acceptance": "相同fixture和操作序列比较文本/选区/dirty/磁盘/焦点/进程",
+          "case_id": "parity-ref-06"
+        },
+        {
+          "id": "REF-07",
+          "name": "现存风险复现",
+          "acceptance": "双文件撤销、超2M字符恢复、关闭工作区进程、慢补全各有可重复用例",
+          "case_id": "parity-ref-07"
+        },
+        {
+          "id": "REF-08",
+          "name": "版本升级差异",
+          "acceptance": "升级参考版本时列新增/删改注册项与回归，未经登记不能滚动跟随main",
+          "case_id": "parity-ref-08"
+        },
+        {
+          "id": "REF-09",
+          "name": "P00早期技术风险实验",
+          "acceptance": "依次限时验证编辑器IME+delta/多光标、三平台web引擎DevTools-CDP-MHTML、官方服务参考/客户端注册可行性；各有ADR与证据，不等到P12/P13才发现阻塞",
+          "case_id": "parity-ref-09"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/product.json",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/toc.json"
+    },
+    {
+      "prefix": "SRV",
+      "title": "服务基础与生命周期",
+      "phase": "P01",
+      "scope": "A",
+      "current_basis": "同步FFI与原型命令可复用",
+      "source_paths": [
+        "src/vs/workbench/services",
+        "src/vs/workbench/contrib/commands"
+      ],
+      "doc_path": "docs/editing/workspaces/workspaces.md",
+      "rows": [
+        {
+          "id": "SRV-01",
+          "name": "文档和视图身份",
+          "acceptance": "同一workbench的组和辅助浮窗共享文档；独立顶层窗口按session+URI隔离dirty buffer，以外改/保存冲突协调",
+          "case_id": "parity-srv-01"
+        },
+        {
+          "id": "SRV-02",
+          "name": "异步请求事件合同",
+          "acceptance": "request/document/workspace/version标识齐全，慢请求不阻塞UI",
+          "case_id": "parity-srv-02"
+        },
+        {
+          "id": "SRV-03",
+          "name": "取消超时与背压",
+          "acceptance": "关视图/工作区取消任务，超时返回明确状态，事件队列/并发有界",
+          "case_id": "parity-srv-03"
+        },
+        {
+          "id": "SRV-04",
+          "name": "过期和失序回包",
+          "acceptance": "旧版本补全/诊断/搜索结果不覆盖新文档和新工作区",
+          "case_id": "parity-srv-04"
+        },
+        {
+          "id": "SRV-05",
+          "name": "FFI版本与资源",
+          "acceptance": "双侧ABI握手、错误/内存释放合同及真实UTF-16对拍全绿",
+          "case_id": "parity-srv-05"
+        },
+        {
+          "id": "SRV-06",
+          "name": "命令与上下文引擎",
+          "acceptance": "命令ID/参数/条件/启用状态由菜单/面板/键位共用，条件变化立即生效",
+          "case_id": "parity-srv-06"
+        },
+        {
+          "id": "SRV-07",
+          "name": "进程监督树",
+          "acceptance": "Git/rg/LSP/DAP/PTY/Node/web子树可归属、限额、取消、重启和回收",
+          "case_id": "parity-srv-07"
+        },
+        {
+          "id": "SRV-08",
+          "name": "资源压力与预算",
+          "acceptance": "Warn/Critical可见，优先保留编辑保存；缓存与后台任务可回收",
+          "case_id": "parity-srv-08"
+        },
+        {
+          "id": "SRV-09",
+          "name": "事件驱动更新",
+          "acceptance": "空闲无周期性全文件解析；修改只触发必要文档和范围更新",
+          "case_id": "parity-srv-09"
+        },
+        {
+          "id": "SRV-10",
+          "name": "多工作区生命周期",
+          "acceptance": "打开/切换/关闭根目录释放其订阅和服务，后台失败不破坏文本",
+          "case_id": "parity-srv-10"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/commands"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/workspaces/workspaces.md"
+    },
+    {
+      "prefix": "DOC",
+      "title": "文档、保存与恢复",
+      "phase": "P02",
+      "scope": "A",
+      "current_basis": "Rope/原子保存/journal原型；等价未验证",
+      "source_paths": [
+        "src/vs/workbench/services/textfile",
+        "src/vs/workbench/services/workingCopy",
+        "src/vs/workbench/contrib/localHistory"
+      ],
+      "doc_path": "docs/editing/codebasics.md",
+      "rows": [
+        {
+          "id": "DOC-01",
+          "name": "打开与未命名文档",
+          "acceptance": "文件/URI/untitled/语言选择/打开失败状态与参考一致",
+          "case_id": "parity-doc-01"
+        },
+        {
+          "id": "DOC-02",
+          "name": "保存另存为全部保存",
+          "acceptance": "保存点、路径变更、编码、脏标记与窗口标题同步",
+          "case_id": "parity-doc-02"
+        },
+        {
+          "id": "DOC-03",
+          "name": "自动保存",
+          "acceptance": "延时/失焦/窗口切换及例外设置遵循同一状态机",
+          "case_id": "parity-doc-03"
+        },
+        {
+          "id": "DOC-04",
+          "name": "撤销重做与保存点",
+          "acceptance": "每文档事务历史独立，IME合并/undo stop/redo分支正确",
+          "case_id": "parity-doc-04"
+        },
+        {
+          "id": "DOC-05",
+          "name": "跨文档编辑事务",
+          "acceptance": "WorkspaceEdit范围/版本校验，部分失败可回滚，undo归属明确",
+          "case_id": "parity-doc-05"
+        },
+        {
+          "id": "DOC-06",
+          "name": "编码探测和重开",
+          "acceptance": "UTF-8/UTF-8 BOM/UTF-16/GBK等固定支持清单逐项roundtrip",
+          "case_id": "parity-doc-06"
+        },
+        {
+          "id": "DOC-07",
+          "name": "按编码保存",
+          "acceptance": "不可表示字符/转换失败有明确反馈，不静默损坏内容",
+          "case_id": "parity-doc-07"
+        },
+        {
+          "id": "DOC-08",
+          "name": "换行符处理",
+          "acceptance": "LF/CRLF/BOM/无末尾换行保持，转换后的dirty与undo正确",
+          "case_id": "parity-doc-08"
+        },
+        {
+          "id": "DOC-09",
+          "name": "外部变更重载",
+          "acceptance": "干净文档自动重载且保留视图；脏文档提示冲突",
+          "case_id": "parity-doc-09"
+        },
+        {
+          "id": "DOC-10",
+          "name": "保存冲突比较",
+          "acceptance": "比较/覆盖/重试/取消保留双方文本，不先覆盖磁盘",
+          "case_id": "parity-doc-10"
+        },
+        {
+          "id": "DOC-11",
+          "name": "删除重命名孤儿文档",
+          "acceptance": "外部删改后缓冲仍可编辑/另存，路径和标签状态一致",
+          "case_id": "parity-doc-11"
+        },
+        {
+          "id": "DOC-12",
+          "name": "只读权限和二进制",
+          "acceptance": "识别只读/权限/二进制，拒绝或确认动作清晰",
+          "case_id": "parity-doc-12"
+        },
+        {
+          "id": "DOC-13",
+          "name": "可靠原子写入",
+          "acceptance": "磁盘满/权限/锁文件/中断下磁盘无半写且原内容可恢复",
+          "case_id": "parity-doc-13"
+        },
+        {
+          "id": "DOC-14",
+          "name": "Hot Exit与退出确认",
+          "acceptance": "各OS退出/关末窗/重载策略和未保存确认一致",
+          "case_id": "parity-doc-14"
+        },
+        {
+          "id": "DOC-15",
+          "name": "已接受编辑文档的可靠恢复",
+          "acceptance": "所有已接受编辑文档含>2M字符均可靠备份，dirty正确；超支持容量须编辑前明确拒绝或采用可验证流式策略",
+          "case_id": "parity-doc-15"
+        },
+        {
+          "id": "DOC-16",
+          "name": "journal损坏与掉电",
+          "acceptance": "校验/版本/备份/原子替换、保存中强杀均有恢复证据",
+          "case_id": "parity-doc-16"
+        },
+        {
+          "id": "DOC-17",
+          "name": "Local History",
+          "acceptance": "条目合并/上限/exclude/create/rename/delete/compare/restore及删除文件恢复",
+          "case_id": "parity-doc-17"
+        },
+        {
+          "id": "DOC-18",
+          "name": "会话隔离与视图恢复",
+          "acceptance": "布局/组/标签/选择/滚动/折叠/MRU按窗口和工作区恢复",
+          "case_id": "parity-doc-18"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/textfile",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/workingCopy",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/localHistory"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/codebasics.md"
+    },
+    {
+      "prefix": "REN",
+      "title": "编辑器绘制与输入",
+      "phase": "P03",
+      "scope": "A",
+      "current_basis": "仍为TextField；需组件硬门",
+      "source_paths": [
+        "src/vs/editor/contrib",
+        "src/vs/workbench/contrib/codeEditor"
+      ],
+      "doc_path": "docs/editing/codebasics.md",
+      "rows": [
+        {
+          "id": "REN-01",
+          "name": "虚拟化与大文件",
+          "acceptance": "万行/五万行/超长行编辑滚动达预算，显式降级不截断文本",
+          "case_id": "parity-ren-01"
+        },
+        {
+          "id": "REN-02",
+          "name": "字体与文本布局",
+          "acceptance": "字号/字重/行高/字距/连字/CJK/emoji/组合字符宽度和命中一致",
+          "case_id": "parity-ren-02"
+        },
+        {
+          "id": "REN-03",
+          "name": "IME与复杂输入",
+          "acceptance": "微软拼音/fcitx5/ibus/macOS组合、撤销、移动与候选窗位置正确",
+          "case_id": "parity-ren-03"
+        },
+        {
+          "id": "REN-04",
+          "name": "RTL与双向文本",
+          "acceptance": "混排光标、选择、显示和控制字符提示对照通过",
+          "case_id": "parity-ren-04"
+        },
+        {
+          "id": "REN-05",
+          "name": "行号和gutter",
+          "acceptance": "绝对/相对/间隔/关闭，断点/折叠/装饰命中正确",
+          "case_id": "parity-ren-05"
+        },
+        {
+          "id": "REN-06",
+          "name": "光标与选区",
+          "acceptance": "样式/闪烁/动画/多光标/不活动选区及选区方向一致",
+          "case_id": "parity-ren-06"
+        },
+        {
+          "id": "REN-07",
+          "name": "缩进与括号引导",
+          "acceptance": "indent/bracket guides、括号对颜色、匹配与错误装饰正确",
+          "case_id": "parity-ren-07"
+        },
+        {
+          "id": "REN-08",
+          "name": "空白控制字符和rulers",
+          "acceptance": "显示模式、制表宽度、不可见/Unicode疑似字符和标尺正确",
+          "case_id": "parity-ren-08"
+        },
+        {
+          "id": "REN-09",
+          "name": "换行与水平滚动",
+          "acceptance": "wordWrap/缩进/长行/scrollBeyondLastLine等选项影响与参考一致",
+          "case_id": "parity-ren-09"
+        },
+        {
+          "id": "REN-10",
+          "name": "Minimap与概览标尺",
+          "acceptance": "缩放/位置/高亮/section header/拖动跳转与可见区同步",
+          "case_id": "parity-ren-10"
+        },
+        {
+          "id": "REN-11",
+          "name": "Sticky Scroll",
+          "acceptance": "嵌套层级/点击/折叠/滚动与语言结构一致",
+          "case_id": "parity-ren-11"
+        },
+        {
+          "id": "REN-12",
+          "name": "折叠视图",
+          "acceptance": "手动/缩进/语义折叠状态与hidden range、选择移动兼容",
+          "case_id": "parity-ren-12"
+        },
+        {
+          "id": "REN-13",
+          "name": "装饰层和inline内容",
+          "acceptance": "诊断波浪线/hover/CodeLens/inlay/inline hints/字形与布局不漂移",
+          "case_id": "parity-ren-13"
+        },
+        {
+          "id": "REN-14",
+          "name": "滚动输入",
+          "acceptance": "平滑/鼠标中键/触控板/自动滚动/字体缩放及跨DPI对齐",
+          "case_id": "parity-ren-14"
+        },
+        {
+          "id": "REN-15",
+          "name": "编辑器可访问语义",
+          "acceptance": "screen reader读行/选区/诊断与Tab焦点模式；不能只绘制canvas无语义",
+          "case_id": "parity-ren-15"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/codeEditor"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/codebasics.md"
+    },
+    {
+      "prefix": "EDT",
+      "title": "编辑命令与比较",
+      "phase": "P04",
+      "scope": "A",
+      "current_basis": "基础查找/快照撤销原型；需完整重验",
+      "source_paths": [
+        "src/vs/editor/contrib",
+        "src/vs/workbench/contrib/mergeEditor",
+        "src/vs/workbench/contrib/multiDiffEditor"
+      ],
+      "doc_path": "docs/editing/codebasics.md",
+      "rows": [
+        {
+          "id": "EDT-01",
+          "name": "移动与选择命令",
+          "acceptance": "字符/word/subword/行/页/文件首尾与选择变体、smart Home逐项对照",
+          "case_id": "parity-edt-01"
+        },
+        {
+          "id": "EDT-02",
+          "name": "鼠标选择与锚点",
+          "acceptance": "单双三击/拖选/anchor/自动滚动/方向保持正确",
+          "case_id": "parity-edt-02"
+        },
+        {
+          "id": "EDT-03",
+          "name": "多光标与列选",
+          "acceptance": "增加上下光标/各次出现/跳过匹配/合并重叠/box选择一致",
+          "case_id": "parity-edt-03"
+        },
+        {
+          "id": "EDT-04",
+          "name": "光标撤销重做",
+          "acceptance": "cursor undo/redo与文本undo分别工作，不串文档",
+          "case_id": "parity-edt-04"
+        },
+        {
+          "id": "EDT-05",
+          "name": "插入覆写和删除",
+          "acceptance": "insert/OVR/词删除/行边界删除/粘贴覆写及状态栏正确",
+          "case_id": "parity-edt-05"
+        },
+        {
+          "id": "EDT-06",
+          "name": "缩进与自动闭合",
+          "acceptance": "Tab/反缩进/自动缩进/括号引号surround/跳过/删除/智能回车一致",
+          "case_id": "parity-edt-06"
+        },
+        {
+          "id": "EDT-07",
+          "name": "行操作",
+          "acceptance": "移动/复制/删除/插入上下行/合并/排序/去重等实际注册项全部有case",
+          "case_id": "parity-edt-07"
+        },
+        {
+          "id": "EDT-08",
+          "name": "大小写与文本转换",
+          "acceptance": "大小写/title/camel/snake等固定注册项、transpose、数值替换正确",
+          "case_id": "parity-edt-08"
+        },
+        {
+          "id": "EDT-09",
+          "name": "注释和格式清理",
+          "acceptance": "行块注释、尾空白/末换行/缩进转换与语言配置一致",
+          "case_id": "parity-edt-09"
+        },
+        {
+          "id": "EDT-10",
+          "name": "剪贴板与多选粘贴",
+          "acceptance": "空选区整行copy/cut、多光标分发、CRLF、缩进、富文本copy正确",
+          "case_id": "parity-edt-10"
+        },
+        {
+          "id": "EDT-11",
+          "name": "文本拖放和Paste As",
+          "acceptance": "同/跨编辑器move/copy，纯文本/链接/图片paste-drop provider及撤销正确",
+          "case_id": "parity-edt-11"
+        },
+        {
+          "id": "EDT-12",
+          "name": "片段会话",
+          "acceptance": "placeholder/Tabstop/choice/变量/转换/嵌套/多光标/取消与用户片段正确",
+          "case_id": "parity-edt-12"
+        },
+        {
+          "id": "EDT-13",
+          "name": "查找基础",
+          "acceptance": "case/whole word/regex/selection scope/多行、上下循环/计数/高亮/历史正确",
+          "case_id": "parity-edt-13"
+        },
+        {
+          "id": "EDT-14",
+          "name": "替换语义",
+          "acceptance": "capture/preserve case/转义/大小写变换/零宽匹配/当前与全部替换可撤销",
+          "case_id": "parity-edt-14"
+        },
+        {
+          "id": "EDT-15",
+          "name": "查找交互和异常",
+          "acceptance": "Esc/Enter/Alt+Enter/焦点/调整大小/非法regex/巨大结果反馈一致",
+          "case_id": "parity-edt-15"
+        },
+        {
+          "id": "EDT-16",
+          "name": "导航历史",
+          "acceptance": "back/forward/last edit与跨文档/组选择位置、最近文件正确",
+          "case_id": "parity-edt-16"
+        },
+        {
+          "id": "EDT-17",
+          "name": "文本差异编辑器",
+          "acceptance": "inline/side-by-side/word diff/moved blocks/忽略空白/折叠未变区/下一差异正确",
+          "case_id": "parity-edt-17"
+        },
+        {
+          "id": "EDT-18",
+          "name": "差异操作",
+          "acceptance": "选中文件比较/与剪贴板/已保存版本、可编辑右侧、apply/revert块对照",
+          "case_id": "parity-edt-18"
+        },
+        {
+          "id": "EDT-19",
+          "name": "三方合并",
+          "acceptance": "base/input1/input2/result、accept/combine/conflict导航、保存与未解状态正确",
+          "case_id": "parity-edt-19"
+        },
+        {
+          "id": "EDT-20",
+          "name": "批量编辑预览与Multi Diff",
+          "acceptance": "按文件/块选择、预览、应用失败/回滚、dirty/undo与多资源差异一致",
+          "case_id": "parity-edt-20"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/mergeEditor",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/multiDiffEditor"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/codebasics.md"
+    },
+    {
+      "prefix": "LAY",
+      "title": "工作台界面与通用控件",
+      "phase": "P05",
+      "scope": "A",
+      "current_basis": "分割树/五区/标签原型可复用",
+      "source_paths": [
+        "src/vs/workbench/browser/parts",
+        "src/vs/workbench/services/layout",
+        "src/vs/workbench/services/views"
+      ],
+      "doc_path": "docs/configure/custom-layout.md",
+      "rows": [
+        {
+          "id": "LAY-01",
+          "name": "标题栏与菜单",
+          "acceptance": "native/custom、拖动/双击/窗口按钮、菜单层级/mnemonic/macOS菜单一致",
+          "case_id": "parity-lay-01"
+        },
+        {
+          "id": "LAY-02",
+          "name": "Command Center和布局控制",
+          "acceptance": "标题模板/dirty/profile/workspace、命令中心/布局按钮状态和键盘路径一致",
+          "case_id": "parity-lay-02"
+        },
+        {
+          "id": "LAY-03",
+          "name": "Activity Bar",
+          "acceptance": "位置/大小/隐藏、顺序/切换/徽章/Accounts/Manage与右键一致",
+          "case_id": "parity-lay-03"
+        },
+        {
+          "id": "LAY-04",
+          "name": "主次侧栏",
+          "acceptance": "左右/显示/默认策略、视图移动/拆分/折叠、空态与持久化一致",
+          "case_id": "parity-lay-04"
+        },
+        {
+          "id": "LAY-05",
+          "name": "Panel位置与alignment",
+          "acceptance": "固定注册位置/对齐/最大化/还原/拖放、最小尺寸正确",
+          "case_id": "parity-lay-05"
+        },
+        {
+          "id": "LAY-06",
+          "name": "sash与布局恢复",
+          "acceptance": "拖动/双击重置/折叠记忆/reset view locations跨缩放不漂移",
+          "case_id": "parity-lay-06"
+        },
+        {
+          "id": "LAY-07",
+          "name": "编辑器组布局",
+          "acceptance": "任意水平垂直分割、同组split、移动复制/顺序/均分/最大化/锁组正确",
+          "case_id": "parity-lay-07"
+        },
+        {
+          "id": "LAY-08",
+          "name": "标签模式",
+          "acceptance": "multiple/single/none、wrap/multirow、大小/关闭按钮/图标/路径消歧正确",
+          "case_id": "parity-lay-08"
+        },
+        {
+          "id": "LAY-09",
+          "name": "preview/pinned/sticky标签",
+          "acceptance": "预览被替换/首次编辑转永久、sticky单行/关闭规则正确",
+          "case_id": "parity-lay-09"
+        },
+        {
+          "id": "LAY-10",
+          "name": "标签交互与关闭菜单",
+          "acceptance": "拖放/跨组/复制/中键/overflow/MRU、关闭左右其他已保存及脏确认正确",
+          "case_id": "parity-lay-10"
+        },
+        {
+          "id": "LAY-11",
+          "name": "Open Editors与面包屑",
+          "acceptance": "各组树、路径/符号picker、排序/键盘/复制/随光标定位一致",
+          "case_id": "parity-lay-11"
+        },
+        {
+          "id": "LAY-12",
+          "name": "浮动辅助窗口",
+          "acceptance": "拖标签新窗、组/焦点同步、compact/pin-top/移回/关闭恢复一致",
+          "case_id": "parity-lay-12"
+        },
+        {
+          "id": "LAY-13",
+          "name": "Modal Editor",
+          "acceptance": "workbench.editor.useModal=off/some/all；Settings/Keys/Profiles/Trust/Extensions、Esc/外点/最大化/移回tab/focus trap逐项对照",
+          "case_id": "parity-lay-13"
+        },
+        {
+          "id": "LAY-14",
+          "name": "Zen全屏居中和密度",
+          "acceptance": "进入退出/Esc/toolbar/window zoom/palette位置/compact状态可恢复",
+          "case_id": "parity-lay-14"
+        },
+        {
+          "id": "LAY-15",
+          "name": "跨编辑器锁定滚动",
+          "acceptance": "Toggle/Hold locked scrolling及状态栏、不同文档长度/组/窗口正确",
+          "case_id": "parity-lay-15"
+        },
+        {
+          "id": "LAY-16",
+          "name": "列表树表格控件",
+          "acceptance": "多选/range/键盘/type navigation/filter/列resize/右键/hover状态一致",
+          "case_id": "parity-lay-16"
+        },
+        {
+          "id": "LAY-17",
+          "name": "QuickInput和多步picker",
+          "acceptance": "分组/多选/描述/detail/buttons/back/校验/历史/取消及焦点恢复一致",
+          "case_id": "parity-lay-17"
+        },
+        {
+          "id": "LAY-18",
+          "name": "通知与进度",
+          "acceptance": "toast/center/banner/DND/来源过滤/actions/取消/loading/error/可访问提示一致",
+          "case_id": "parity-lay-18"
+        },
+        {
+          "id": "LAY-19",
+          "name": "欢迎与引导",
+          "acceptance": "Welcome/Walkthrough/空组watermark/最近项目/帮助路径及持久化一致",
+          "case_id": "parity-lay-19"
+        },
+        {
+          "id": "LAY-20",
+          "name": "焦点和拖放全链路",
+          "acceptance": "菜单/树/编辑器/面板/浮窗切换焦点、跨应用DnD、drop overlay与快捷键路由一致",
+          "case_id": "parity-lay-20"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/browser/parts",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/layout",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/views"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/configure/custom-layout.md"
+    },
+    {
+      "prefix": "CMD",
+      "title": "快速访问与结构导航",
+      "phase": "P05",
+      "scope": "A",
+      "current_basis": "CommandRegistry/QuickInput/大纲原型",
+      "source_paths": [
+        "src/vs/workbench/contrib/quickaccess",
+        "src/vs/workbench/contrib/outline",
+        "src/vs/editor/contrib/peekView"
+      ],
+      "doc_path": "docs/editing/editingevolved.md",
+      "rows": [
+        {
+          "id": "CMD-01",
+          "name": "命令面板",
+          "acceptance": "类别/模糊匹配/MRU/参数/禁用条件/键位提示与默认命令全集正确",
+          "case_id": "parity-cmd-01"
+        },
+        {
+          "id": "CMD-02",
+          "name": "快速打开",
+          "acceptance": "路径/文件名/多根/fuzzy/MRU/绝对路径/:line:column，全部文件可达",
+          "case_id": "parity-cmd-02"
+        },
+        {
+          "id": "CMD-03",
+          "name": "Go to Line与位置",
+          "acceptance": "行列输入/比例等实际注册格式及UTF-16定位正确",
+          "case_id": "parity-cmd-03"
+        },
+        {
+          "id": "CMD-04",
+          "name": "文档符号picker",
+          "acceptance": "层级/类别/过滤/预览/侧开/取消恢复位置一致",
+          "case_id": "parity-cmd-04"
+        },
+        {
+          "id": "CMD-05",
+          "name": "工作区符号",
+          "acceptance": "provider/多根/取消/排序/无结果/侧开定位正确",
+          "case_id": "parity-cmd-05"
+        },
+        {
+          "id": "CMD-06",
+          "name": "Breadcrumbs符号路径",
+          "acceptance": "显示开关/顺序/下拉/键盘/鼠标切组路径正确",
+          "case_id": "parity-cmd-06"
+        },
+        {
+          "id": "CMD-07",
+          "name": "Outline视图",
+          "acceptance": "层级/过滤/排序/follow cursor/折叠/定位与最新版本一致",
+          "case_id": "parity-cmd-07"
+        },
+        {
+          "id": "CMD-08",
+          "name": "Peek与References",
+          "acceptance": "可调整/固定/树与编辑器切换/下一项/打开关闭焦点正确",
+          "case_id": "parity-cmd-08"
+        },
+        {
+          "id": "CMD-09",
+          "name": "定义声明实现类型导航",
+          "acceptance": "支持Location/LocationLink/多结果/跨文件，不以同名匹配替代",
+          "case_id": "parity-cmd-09"
+        },
+        {
+          "id": "CMD-10",
+          "name": "调用与类型层级",
+          "acceptance": "上游provider可用时方向/分页/导航、无provider为空态",
+          "case_id": "parity-cmd-10"
+        },
+        {
+          "id": "CMD-11",
+          "name": "Problems导航",
+          "acceptance": "F8/Shift+F8/筛选/跨文件/内联错误与位置范围正确",
+          "case_id": "parity-cmd-11"
+        },
+        {
+          "id": "CMD-12",
+          "name": "链接打开与可信域",
+          "acceptance": "路径/URL识别、修饰键/hover/open-to-side、确认和允许域持久化正确",
+          "case_id": "parity-cmd-12"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/quickaccess",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/outline",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib/peekView"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/editingevolved.md"
+    },
+    {
+      "prefix": "FS",
+      "title": "资源管理器与工作区",
+      "phase": "P06",
+      "scope": "A",
+      "current_basis": "懒树/Dart watcher/单根原型",
+      "source_paths": [
+        "src/vs/workbench/contrib/files",
+        "src/vs/workbench/contrib/workspaces",
+        "src/vs/workbench/contrib/timeline"
+      ],
+      "doc_path": "docs/editing/workspaces/multi-root-workspaces.md",
+      "rows": [
+        {
+          "id": "FS-01",
+          "name": "Explorer创建与重命名",
+          "acceptance": "文件/文件夹/嵌套路径/大小写rename/重复名/非法路径正确",
+          "case_id": "parity-fs-01"
+        },
+        {
+          "id": "FS-02",
+          "name": "删除与回收站",
+          "acceptance": "trash/permanent/确认/失败/撤销可用性按平台对照",
+          "case_id": "parity-fs-02"
+        },
+        {
+          "id": "FS-03",
+          "name": "复制剪切粘贴和duplicate",
+          "acceptance": "文件夹递归/名称冲突/权限/脏文档身份和状态一致",
+          "case_id": "parity-fs-03"
+        },
+        {
+          "id": "FS-04",
+          "name": "文件拖放与导入",
+          "acceptance": "移动复制/跨根/跨窗/系统导入/覆盖确认/取消不丢文件",
+          "case_id": "parity-fs-04"
+        },
+        {
+          "id": "FS-05",
+          "name": "多选和树导航",
+          "acceptance": "range/键盘/type navigation/展开折叠/刷新保持选择与展开态",
+          "case_id": "parity-fs-05"
+        },
+        {
+          "id": "FS-06",
+          "name": "compact与file nesting",
+          "acceptance": "压缩路径/嵌套规则/排序/exclude/gitignore/autoreveal一致",
+          "case_id": "parity-fs-06"
+        },
+        {
+          "id": "FS-07",
+          "name": "文件装饰与Open With",
+          "acceptance": "dirty/SCM/只读/符号链接、默认编辑器/侧开/重新打开正确",
+          "case_id": "parity-fs-07"
+        },
+        {
+          "id": "FS-08",
+          "name": "路径动作",
+          "acceptance": "copy absolute/relative path、reveal OS/terminal、比较选定文件正确",
+          "case_id": "parity-fs-08"
+        },
+        {
+          "id": "FS-09",
+          "name": "空窗单文件与文件夹",
+          "acceptance": "打开/复用新窗策略与最近列表符合平台设置",
+          "case_id": "parity-fs-09"
+        },
+        {
+          "id": "FS-10",
+          "name": "多根工作区",
+          "acceptance": "add/remove/reorder/name、重复basename、嵌套根和多根disambiguation一致",
+          "case_id": "parity-fs-10"
+        },
+        {
+          "id": "FS-11",
+          "name": ".code-workspace",
+          "acceptance": "相对绝对路径、JSONC schema/settings/tasks/launch、Save Workspace As roundtrip",
+          "case_id": "parity-fs-11"
+        },
+        {
+          "id": "FS-12",
+          "name": "根目录失效和切换",
+          "acceptance": "目录被删/重命名/离线、关闭根脏确认及进程回收正确",
+          "case_id": "parity-fs-12"
+        },
+        {
+          "id": "FS-13",
+          "name": "URI和平台路径",
+          "acceptance": "Windows drive/UNC/case、Unix权限/symlink、路径编码与URI往返正确",
+          "case_id": "parity-fs-13"
+        },
+        {
+          "id": "FS-14",
+          "name": "文件系统provider合同",
+          "acceptance": "stat/read/write/watch/atomic/readonly/error语义，默认本地provider真实可用",
+          "case_id": "parity-fs-14"
+        },
+        {
+          "id": "FS-15",
+          "name": "递归watcher与事件合并",
+          "acceptance": "创建/修改/移动/删除按path刷新，风暴不重读全部文档",
+          "case_id": "parity-fs-15"
+        },
+        {
+          "id": "FS-16",
+          "name": "watcher失效恢复",
+          "acceptance": "overflow/权限/平台递归限制有观测、重扫与错误状态",
+          "case_id": "parity-fs-16"
+        },
+        {
+          "id": "FS-17",
+          "name": "Timeline视图",
+          "acceptance": "筛选provider/refresh/paging/排序，与Git和Local History关联",
+          "case_id": "parity-fs-17"
+        },
+        {
+          "id": "FS-18",
+          "name": "本地历史恢复入口",
+          "acceptance": "从Explorer/Timeline查找已删文件、比较和恢复与文档模型同步",
+          "case_id": "parity-fs-18"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/files",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/workspaces",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/timeline"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/workspaces/multi-root-workspaces.md"
+    },
+    {
+      "prefix": "SRC",
+      "title": "全局搜索与Search Editor",
+      "phase": "P06",
+      "scope": "A",
+      "current_basis": "rg/git grep流式原型；硬上限需替代",
+      "source_paths": [
+        "src/vs/workbench/contrib/search",
+        "src/vs/workbench/contrib/searchEditor",
+        "extensions/search-result"
+      ],
+      "doc_path": "docs/editing/codebasics.md",
+      "rows": [
+        {
+          "id": "SRC-01",
+          "name": "搜索选项",
+          "acceptance": "case/whole word/regex/multiline/上下文行与参考命中一致",
+          "case_id": "parity-src-01"
+        },
+        {
+          "id": "SRC-02",
+          "name": "include exclude与ignore",
+          "acceptance": "glob/多根path/.ignore/.gitignore/files.exclude/search.exclude和开关正确",
+          "case_id": "parity-src-02"
+        },
+        {
+          "id": "SRC-03",
+          "name": "隐藏符号链接和编码",
+          "acceptance": "按配置搜索含非UTF8/hidden/symlink/binary策略，不无界递归",
+          "case_id": "parity-src-03"
+        },
+        {
+          "id": "SRC-04",
+          "name": "未保存内存文本",
+          "acceptance": "搜索/替换包含dirty缓冲区且与磁盘结果去重",
+          "case_id": "parity-src-04"
+        },
+        {
+          "id": "SRC-05",
+          "name": "增量结果与取消",
+          "acceptance": "流式结果/进度/取消/新查询替换旧查询不泄漏子进程",
+          "case_id": "parity-src-05"
+        },
+        {
+          "id": "SRC-06",
+          "name": "结果树与统计",
+          "acceptance": "按文件分组/list/sort/collapse/remove、计数/截断/错误状态一致",
+          "case_id": "parity-src-06"
+        },
+        {
+          "id": "SRC-07",
+          "name": "结果定位与复制",
+          "acceptance": "点击/键盘next-prev/侧开/复制结果路径命中、中文UTF-16行列正确",
+          "case_id": "parity-src-07"
+        },
+        {
+          "id": "SRC-08",
+          "name": "范围与变更文件搜索",
+          "acceptance": "多根/选中文件夹/changed-files-only按固定设置与菜单支持",
+          "case_id": "parity-src-08"
+        },
+        {
+          "id": "SRC-09",
+          "name": "替换预览",
+          "acceptance": "单条/文件/全局预览和确认，regex/capture/preserve case正确",
+          "case_id": "parity-src-09"
+        },
+        {
+          "id": "SRC-10",
+          "name": "全局替换事务",
+          "acceptance": "dirty/readonly/外部修改冲突、部分失败/撤销不丢内容",
+          "case_id": "parity-src-10"
+        },
+        {
+          "id": "SRC-11",
+          "name": "Quick Text Search",
+          "acceptance": "快速面板搜索/预览/转完整视图/键盘操作与取消正确",
+          "case_id": "parity-src-11"
+        },
+        {
+          "id": "SRC-12",
+          "name": "Search Editor创建与保存",
+          "acceptance": "结果文档可保存重开，位置链接/上下文/参数正确",
+          "case_id": "parity-src-12"
+        },
+        {
+          "id": "SRC-13",
+          "name": "Search Editor重搜和编辑",
+          "acceptance": "rerun/query focus/reuse配置/open-to-side与可编辑结果一致",
+          "case_id": "parity-src-13"
+        },
+        {
+          "id": "SRC-14",
+          "name": "有界但全量可达",
+          "acceptance": "maxResults明确提示并可继续/分页/重查，不能静默限制500条或2000文件",
+          "case_id": "parity-src-14"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/search",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/searchEditor",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/search-result"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/editing/codebasics.md"
+    },
+    {
+      "prefix": "CFG",
+      "title": "设置、键位、Profiles",
+      "phase": "P07",
+      "scope": "A",
+      "current_basis": "少量keybindings.json覆盖原型",
+      "source_paths": [
+        "src/vs/workbench/contrib/preferences",
+        "src/vs/workbench/contrib/keybindings",
+        "src/vs/workbench/contrib/userDataProfile"
+      ],
+      "doc_path": "docs/configure/settings.md",
+      "rows": [
+        {
+          "id": "CFG-01",
+          "name": "设置注册表和默认值",
+          "acceptance": "全部范围内key/type/default/scope/tags/deprecation/限制可追踪",
+          "case_id": "parity-cfg-01"
+        },
+        {
+          "id": "CFG-02",
+          "name": "Settings GUI",
+          "acceptance": "category/search/类型控件/reset/copy key-JSON/有效值/错误与默认体验一致",
+          "case_id": "parity-cfg-02"
+        },
+        {
+          "id": "CFG-03",
+          "name": "设置搜索筛选",
+          "acceptance": "modified/language/id/tag/feature等注册过滤及普通文本搜索；AI搜索另排除",
+          "case_id": "parity-cfg-03"
+        },
+        {
+          "id": "CFG-04",
+          "name": "Settings JSONC",
+          "acceptance": "注释/trailing comma/schema/补全/默认设置/用户-工作区-根目录入口一致",
+          "case_id": "parity-cfg-04"
+        },
+        {
+          "id": "CFG-05",
+          "name": "优先级和合并",
+          "acceptance": "default/user/workspace/folder/language/policy按固定规则，object合并/array替换正确",
+          "case_id": "parity-cfg-05"
+        },
+        {
+          "id": "CFG-06",
+          "name": "语言覆盖和资源scope",
+          "acceptance": "单/多language override、不同根/URI有效值隔离",
+          "case_id": "parity-cfg-06"
+        },
+        {
+          "id": "CFG-07",
+          "name": "设置热更新与失败",
+          "acceptance": "重载/需重启/无效值/写失败/外部修改保留文本并说明",
+          "case_id": "parity-cfg-07"
+        },
+        {
+          "id": "CFG-08",
+          "name": "键位平台默认表",
+          "acceptance": "Ctrl/Cmd/Alt/Meta/scancode/keyboard layout/AltGr/dead key一致",
+          "case_id": "parity-cfg-08"
+        },
+        {
+          "id": "CFG-09",
+          "name": "chord与when",
+          "acceptance": "多段chord/超时/条件表达式/优先级/焦点上下文及冲突判定正确",
+          "case_id": "parity-cfg-09"
+        },
+        {
+          "id": "CFG-10",
+          "name": "用户键位语义",
+          "acceptance": "移除规则/空命令/args/runCommands/JSONC reload及默认回退正确",
+          "case_id": "parity-cfg-10"
+        },
+        {
+          "id": "CFG-11",
+          "name": "键位编辑器",
+          "acceptance": "搜索/录制/增改删/reset/冲突/同键/来源/布局选择正确",
+          "case_id": "parity-cfg-11"
+        },
+        {
+          "id": "CFG-12",
+          "name": "键位诊断与systemWide",
+          "acceptance": "系统级仅桌面/用户定义/单组合键，忽略when/不支持chord，后台触发；OS冲突通知，前台由命令决定；另验troubleshooting",
+          "case_id": "parity-cfg-12"
+        },
+        {
+          "id": "CFG-13",
+          "name": "用户snippets与tasks",
+          "acceptance": "语言/global/project片段、用户tasks与Profiles隔离正确",
+          "case_id": "parity-cfg-13"
+        },
+        {
+          "id": "CFG-14",
+          "name": "Profiles创建和切换",
+          "acceptance": "default/named/copy/empty/temporary、名称图标/新窗/删除和关联正确",
+          "case_id": "parity-cfg-14"
+        },
+        {
+          "id": "CFG-15",
+          "name": "Profiles内容与共享",
+          "acceptance": "settings/keys/snippets/tasks/UI/extensions按选项隔离或all profiles共享",
+          "case_id": "parity-cfg-15"
+        },
+        {
+          "id": "CFG-16",
+          "name": "Profiles导入导出",
+          "acceptance": ".code-profile本地/URL/Gist预览/选择部分/损坏失败与回滚",
+          "case_id": "parity-cfg-16"
+        },
+        {
+          "id": "CFG-17",
+          "name": "工作区信任设置合同",
+          "acceptance": "受限配置/父目录继承/可信目录管理/外部文件限制，不能被工作区JSON绕过",
+          "case_id": "parity-cfg-17"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/preferences",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/keybindings",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/userDataProfile"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/configure/settings.md"
+    },
+    {
+      "prefix": "THM",
+      "title": "颜色、图标与主题",
+      "phase": "P07",
+      "scope": "B",
+      "current_basis": "未实现VSCode主题等价",
+      "source_paths": [
+        "src/vs/workbench/contrib/themes",
+        "src/vs/workbench/services/themes",
+        "extensions/theme-defaults",
+        "extensions/theme-seti"
+      ],
+      "doc_path": "docs/configure/themes.md",
+      "rows": [
+        {
+          "id": "THM-01",
+          "name": "所有随附颜色主题",
+          "acceptance": "Dark/Light Modern、Dark+/Light+、高对比及其他内置主题数据全部覆盖",
+          "case_id": "parity-thm-01"
+        },
+        {
+          "id": "THM-02",
+          "name": "主题picker预览",
+          "acceptance": "即时预览/取消回滚/保存选择/工作区偏好和键盘操作正确",
+          "case_id": "parity-thm-02"
+        },
+        {
+          "id": "THM-03",
+          "name": "系统外观联动",
+          "acceptance": "OS light/dark/high-contrast检测与preferred theme实时切换",
+          "case_id": "parity-thm-03"
+        },
+        {
+          "id": "THM-04",
+          "name": "workbench颜色定制",
+          "acceptance": "theme通配覆盖/自定义token/透明度/缺省回退一致",
+          "case_id": "parity-thm-04"
+        },
+        {
+          "id": "THM-05",
+          "name": "TextMate token主题",
+          "acceptance": "scope匹配/嵌套/优先级与实际grammar scopes对拍",
+          "case_id": "parity-thm-05"
+        },
+        {
+          "id": "THM-06",
+          "name": "语义token定制",
+          "acceptance": "legend/modifier/主题规则与TextMate回退、禁用设置正确",
+          "case_id": "parity-thm-06"
+        },
+        {
+          "id": "THM-07",
+          "name": "文件图标主题",
+          "acceptance": "Seti/Modern或当前实际内置清单、Minimal/None、文件夹/扩展名/语言优先级",
+          "case_id": "parity-thm-07"
+        },
+        {
+          "id": "THM-08",
+          "name": "产品图标主题",
+          "acceptance": "默认codicon/product icon映射、字体加载与图标定制正确",
+          "case_id": "parity-thm-08"
+        },
+        {
+          "id": "THM-09",
+          "name": "主题开发工具",
+          "acceptance": "token-scope inspector/生成当前主题、设置JSON入口与诊断正确",
+          "case_id": "parity-thm-09"
+        },
+        {
+          "id": "THM-10",
+          "name": "资产离线加载",
+          "acceptance": "全部默认主题/语法/图标可离线使用，导入包来源与notice可追踪",
+          "case_id": "parity-thm-10"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/themes",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/themes",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/theme-defaults",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/theme-seti"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/configure/themes.md"
+    },
+    {
+      "prefix": "LNG",
+      "title": "默认语言能力与Problems",
+      "phase": "P08",
+      "scope": "B",
+      "current_basis": "Rust-only tree-sitter/RA原型可保留",
+      "source_paths": [
+        "extensions",
+        "src/vs/workbench/contrib/markers",
+        "src/vs/workbench/contrib/languageDetection",
+        "src/vs/editor/contrib/suggest"
+      ],
+      "doc_path": "docs/languages/overview.md",
+      "rows": [
+        {
+          "id": "LNG-01",
+          "name": "全部随附语言配置",
+          "acceptance": "90个源manifest中的74个language ID逐一映射；别名/扩展名/filename/firstLine正确",
+          "case_id": "parity-lng-01"
+        },
+        {
+          "id": "LNG-02",
+          "name": "TextMate语法与嵌入注入",
+          "acceptance": "89个grammar条目全部有colorize fixture，HTML内JS/CSS/Markdown fence等不漏",
+          "case_id": "parity-lng-02"
+        },
+        {
+          "id": "LNG-03",
+          "name": "语言配置与基础高亮",
+          "acceptance": "注释/括号/wordPattern/indent/fold/snippets及语言切换/文件关联正确",
+          "case_id": "parity-lng-03"
+        },
+        {
+          "id": "LNG-04",
+          "name": "自动语言检测和状态",
+          "acceptance": "本地识别/状态项/相关命令、错误与禁用设置，普通能力不按AI误排",
+          "case_id": "parity-lng-04"
+        },
+        {
+          "id": "LNG-05",
+          "name": "provider注册与能力协商",
+          "acceptance": "按资源/语言/trust按需启动，位置编码/取消/版本/失序完整",
+          "case_id": "parity-lng-05"
+        },
+        {
+          "id": "LNG-06",
+          "name": "Suggest和传统补全",
+          "acceptance": "排序/过滤/触发/commit chars/snippets/textEdit/additionalEdit/resolve和文档正确",
+          "case_id": "parity-lng-06"
+        },
+        {
+          "id": "LNG-07",
+          "name": "Hover与签名",
+          "acceptance": "Markdown/代码块/链接/重载/参数高亮/延时取消及定位正确",
+          "case_id": "parity-lng-07"
+        },
+        {
+          "id": "LNG-08",
+          "name": "语义导航与重构",
+          "acceptance": "definition/declaration/implementation/type/references/rename/code action/WorkspaceEdit完整",
+          "case_id": "parity-lng-08"
+        },
+        {
+          "id": "LNG-09",
+          "name": "格式化与语义装饰",
+          "acceptance": "format document-range-onType-onSave/CodeLens/inlay/semantic token/color picker按provider能力",
+          "case_id": "parity-lng-09"
+        },
+        {
+          "id": "LNG-10",
+          "name": "JS-TS项目与诊断",
+          "acceptance": "tsserver工程/ts-jsconfig/推断工程/版本切换/诊断/自动类型获取按默认设置工作",
+          "case_id": "parity-lng-10"
+        },
+        {
+          "id": "LNG-11",
+          "name": "JS-TS导航补全重构",
+          "acceptance": "auto import/organize imports/rename file/import paths/refactors/quick fixes/JSX-TSX/JSDoc完整",
+          "case_id": "parity-lng-11"
+        },
+        {
+          "id": "LNG-12",
+          "name": "HTML语言服务",
+          "acceptance": "标签属性/链接/颜色/格式/linked editing/validation/embedded support一致",
+          "case_id": "parity-lng-12"
+        },
+        {
+          "id": "LNG-13",
+          "name": "CSS-SCSS-LESS语言服务",
+          "acceptance": "补全/诊断/导航/rename/颜色/格式/数据配置与Emmet联动一致",
+          "case_id": "parity-lng-13"
+        },
+        {
+          "id": "LNG-14",
+          "name": "JSON-JSONC与配置编辑",
+          "acceptance": "schema本地远程/关联/缓存/补全/验证/格式、settings/tasks/launch/package配置支持",
+          "case_id": "parity-lng-14"
+        },
+        {
+          "id": "LNG-15",
+          "name": "Markdown语言服务",
+          "acceptance": "符号/链接路径/补全/验证/rename/update links/file references与配置一致",
+          "case_id": "parity-lng-15"
+        },
+        {
+          "id": "LNG-16",
+          "name": "PHP默认有限能力",
+          "acceptance": "按上游注册补全/hover/signature及php lint；不冒称完整PHP LSP/调试",
+          "case_id": "parity-lng-16"
+        },
+        {
+          "id": "LNG-17",
+          "name": "Emmet完整非AI能力",
+          "acceptance": "缩写/展开/包裹/平衡/拆合标签/编辑点/计算等命令和配置逐项对拍",
+          "case_id": "parity-lng-17"
+        },
+        {
+          "id": "LNG-18",
+          "name": "Problems面板",
+          "acceptance": "文件分组/筛选/严重性/source/code/相关信息/复制/定位/状态栏与内联显示一致",
+          "case_id": "parity-lng-18"
+        },
+        {
+          "id": "LNG-19",
+          "name": "References和层级视图",
+          "acceptance": "默认references-view、调用/类型层级有provider时真实可用，无provider正确空态",
+          "case_id": "parity-lng-19"
+        },
+        {
+          "id": "LNG-20",
+          "name": "其他内置开发辅助",
+          "acceptance": "npm/extension-editing/configuration-editing/reference/search-result包非AI命令全部映射",
+          "case_id": "parity-lng-20"
+        },
+        {
+          "id": "LNG-21",
+          "name": "非AI Inline Suggestions通用宿主",
+          "acceptance": "ghost text/多行/逐词逐行接受/下一建议/取消/快捷键/无provider空态用协议fixture验证；不虚构默认内联provider",
+          "case_id": "parity-lng-21"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/markers",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/languageDetection",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib/suggest"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/languages/overview.md"
+    },
+    {
+      "prefix": "GIT",
+      "title": "Git与源代码管理",
+      "phase": "P09",
+      "scope": "B/C",
+      "current_basis": "status/stage/commit/text diff原型",
+      "source_paths": [
+        "extensions/git",
+        "extensions/git-base",
+        "extensions/github",
+        "src/vs/workbench/contrib/scm"
+      ],
+      "doc_path": "docs/sourcecontrol/overview.md",
+      "rows": [
+        {
+          "id": "GIT-01",
+          "name": "工具探测与仓库发现",
+          "acceptance": "Git缺失/版本/多仓/子模块/嵌套/多根识别、选择与刷新正确",
+          "case_id": "parity-git-01"
+        },
+        {
+          "id": "GIT-02",
+          "name": "SCM视图与装饰",
+          "acceptance": "工作区/暂存/未跟踪/冲突分组、徽章/树列表/排序/空态一致",
+          "case_id": "parity-git-02"
+        },
+        {
+          "id": "GIT-03",
+          "name": "文件和块暂存",
+          "acceptance": "stage/unstage文件、选区/hunk/行、rename/二进制及恢复状态正确",
+          "case_id": "parity-git-03"
+        },
+        {
+          "id": "GIT-04",
+          "name": "丢弃和撤销",
+          "acceptance": "discard/clean/undo last commit/amend确认及失败不丢数据",
+          "case_id": "parity-git-04"
+        },
+        {
+          "id": "GIT-05",
+          "name": "提交编辑器",
+          "acceptance": "message/验证/template/signoff/amend/签名/空提交/输入历史及SCM输入编辑器正确",
+          "case_id": "parity-git-05"
+        },
+        {
+          "id": "GIT-06",
+          "name": "diff与Quick Diff",
+          "acceptance": "index/worktree/HEAD比较、gutter块/下一修改/revert/stage，dirty同步",
+          "case_id": "parity-git-06"
+        },
+        {
+          "id": "GIT-07",
+          "name": "提交历史图",
+          "acceptance": "SCM Graph/分支标签/过滤/分页/点击commit/Multi Diff按固定默认功能对照",
+          "case_id": "parity-git-07"
+        },
+        {
+          "id": "GIT-08",
+          "name": "Blame与Timeline",
+          "acceptance": "行/编辑器/状态hover、commit细节/复制/历史版本/Timeline正确",
+          "case_id": "parity-git-08"
+        },
+        {
+          "id": "GIT-09",
+          "name": "分支和tag",
+          "acceptance": "create/checkout/rename/delete/publish/tag、脏工作树切换与错误反馈",
+          "case_id": "parity-git-09"
+        },
+        {
+          "id": "GIT-10",
+          "name": "merge与rebase",
+          "acceptance": "固定注册和默认可达的merge/rebase/cherry-pick/continue/abort等动作及冲突状态正确，不扩成全部Git CLI",
+          "case_id": "parity-git-10"
+        },
+        {
+          "id": "GIT-11",
+          "name": "stash",
+          "acceptance": "save/apply/pop/drop/查看与未跟踪处理、失败保留状态",
+          "case_id": "parity-git-11"
+        },
+        {
+          "id": "GIT-12",
+          "name": "worktrees",
+          "acceptance": "create/open/remove/迁移与分支关联、窗口/工作区关系正确",
+          "case_id": "parity-git-12"
+        },
+        {
+          "id": "GIT-13",
+          "name": "remotes和同步",
+          "acceptance": "按实际默认动作验add/remove remote、fetch/pull/push/sync/rebase/autofetch；不凭底层API假定rename菜单",
+          "case_id": "parity-git-13"
+        },
+        {
+          "id": "GIT-14",
+          "name": "认证与credential交互",
+          "acceptance": "终端/askpass/SSH/HTTPS/凭据失败不阻塞UI，secrets不写日志",
+          "case_id": "parity-git-14"
+        },
+        {
+          "id": "GIT-15",
+          "name": "冲突编辑器",
+          "acceptance": "文本冲突标记/accept current-incoming-both/比较/三方merge/完成状态一致",
+          "case_id": "parity-git-15"
+        },
+        {
+          "id": "GIT-16",
+          "name": "clone与init",
+          "acceptance": "本地/URL clone、进度/取消、打开新窗/添加工作区/错误正确",
+          "case_id": "parity-git-16"
+        },
+        {
+          "id": "GIT-17",
+          "name": "ignore与文件操作联动",
+          "acceptance": "gitignore编辑、rename/move/delete对index和dirty一致",
+          "case_id": "parity-git-17"
+        },
+        {
+          "id": "GIT-18",
+          "name": "子模块与大量更改",
+          "acceptance": "子模块打开/更新/差异、大仓阈值提示与继续可达",
+          "case_id": "parity-git-18"
+        },
+        {
+          "id": "GIT-19",
+          "name": "GitHub内置基础集成",
+          "acceptance": "clone选择/远程链接/发布仓库/认证纳入条件验收，PR业务另排",
+          "case_id": "parity-git-19"
+        },
+        {
+          "id": "GIT-20",
+          "name": "故障与取消",
+          "acceptance": "锁文件/冲突/超时/网络断线/子进程强杀可恢复，危险动作有相同确认",
+          "case_id": "parity-git-20"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/git",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/git-base",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/github",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/scm"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/sourcecontrol/overview.md"
+    },
+    {
+      "prefix": "TER",
+      "title": "集成终端",
+      "phase": "P10",
+      "scope": "A/B/C",
+      "current_basis": "未有完整PTY终端",
+      "source_paths": [
+        "src/vs/workbench/contrib/terminal",
+        "src/vs/workbench/contrib/terminalContrib",
+        "extensions/terminal-suggest"
+      ],
+      "doc_path": "docs/terminal/basics.md",
+      "rows": [
+        {
+          "id": "TER-01",
+          "name": "跨平台PTY",
+          "acceptance": "Windows ConPTY/Unix PTY，窗口resize/编码/退出码和信号正确",
+          "case_id": "parity-ter-01"
+        },
+        {
+          "id": "TER-02",
+          "name": "VT终端状态",
+          "acceptance": "ANSI/CSI/OSC/SGR/alternate screen/光标/真彩/应用键盘常用套件对拍",
+          "case_id": "parity-ter-02"
+        },
+        {
+          "id": "TER-03",
+          "name": "Unicode和输入法",
+          "acceptance": "CJK/Emoji/组合字符/宽度/IME/AltGr/粘贴/死键无乱码",
+          "case_id": "parity-ter-03"
+        },
+        {
+          "id": "TER-04",
+          "name": "终端创建关闭",
+          "acceptance": "new/kill/relaunch/rename/icon/color/active状态与确认一致",
+          "case_id": "parity-ter-04"
+        },
+        {
+          "id": "TER-05",
+          "name": "tabs与split组",
+          "acceptance": "拖放/排序/多选/均分/切组/焦点/关闭组正确",
+          "case_id": "parity-ter-05"
+        },
+        {
+          "id": "TER-06",
+          "name": "终端作为编辑器",
+          "acceptance": "面板-编辑器移动/side group/浮窗/restore与布局一致",
+          "case_id": "parity-ter-06"
+        },
+        {
+          "id": "TER-07",
+          "name": "profiles和默认shell",
+          "acceptance": "检测/指定shell/args/env/cwd/icon/color/OS override正确",
+          "case_id": "parity-ter-07"
+        },
+        {
+          "id": "TER-08",
+          "name": "环境变量与工作区",
+          "acceptance": "env inheritance/变量解析/多根cwd/信任/relaunch提示正确",
+          "case_id": "parity-ter-08"
+        },
+        {
+          "id": "TER-09",
+          "name": "渲染与外观",
+          "acceptance": "字体/连字/行高/contrast/cursor/GPU选项对应等价可用行为",
+          "case_id": "parity-ter-09"
+        },
+        {
+          "id": "TER-10",
+          "name": "scrollback和查找",
+          "acceptance": "有界滚动历史/clear/find regex-case-word/highlight/navigation正确",
+          "case_id": "parity-ter-10"
+        },
+        {
+          "id": "TER-11",
+          "name": "选择复制粘贴",
+          "acceptance": "word/line/column/多行安全粘贴提示/右键/复制选择与OS映射正确",
+          "case_id": "parity-ter-11"
+        },
+        {
+          "id": "TER-12",
+          "name": "快捷键路由",
+          "acceptance": "commandsToSkipShell/send key/chord/alt-click/tab focus与编辑器隔离",
+          "case_id": "parity-ter-12"
+        },
+        {
+          "id": "TER-13",
+          "name": "链接检测与打开",
+          "acceptance": "文件行列/URL/port、hover/确认/选择provider和搜索回退正确",
+          "case_id": "parity-ter-13"
+        },
+        {
+          "id": "TER-14",
+          "name": "shell integration探测",
+          "acceptance": "bash/zsh/fish/PowerShell启动脚本、状态/不支持回退正确",
+          "case_id": "parity-ter-14"
+        },
+        {
+          "id": "TER-15",
+          "name": "命令导航与装饰",
+          "acceptance": "检测cwd/命令/完成退出码、mark/跳转/selection/hover与退出状态",
+          "case_id": "parity-ter-15"
+        },
+        {
+          "id": "TER-16",
+          "name": "最近命令目录和Sticky Scroll",
+          "acceptance": "历史picker/运行复制/当前命令区域/工作区scope正确",
+          "case_id": "parity-ter-16"
+        },
+        {
+          "id": "TER-17",
+          "name": "终端建议",
+          "acceptance": "内置terminal-suggest命令/参数/路径/补全键位与非AI筛选正确",
+          "case_id": "parity-ter-17"
+        },
+        {
+          "id": "TER-18",
+          "name": "持久化和恢复",
+          "acceptance": "reload/reconnect/重启revive、输出恢复与不可能恢复的进程区别可见",
+          "case_id": "parity-ter-18"
+        },
+        {
+          "id": "TER-19",
+          "name": "任务调试终端",
+          "acceptance": "复用/专用/共享终端、任务状态/输入/隐藏/结束一致",
+          "case_id": "parity-ter-19"
+        },
+        {
+          "id": "TER-20",
+          "name": "音频与无障碍",
+          "acceptance": "bell/signals/accessible buffer/读命令/选择与链接正确",
+          "case_id": "parity-ter-20"
+        },
+        {
+          "id": "TER-21",
+          "name": "流控与子进程树",
+          "acceptance": "大量输出背压/限额/取消/孤儿回收，关闭工作区无遗留",
+          "case_id": "parity-ter-21"
+        },
+        {
+          "id": "TER-22",
+          "name": "外部终端入口",
+          "acceptance": "open external terminal与平台设置、路径/环境正确",
+          "case_id": "parity-ter-22"
+        },
+        {
+          "id": "TER-23",
+          "name": "传统Terminal Quick Fix",
+          "acceptance": "端口占用kill-rerun/Git上游与拼写/链接/PowerShell反馈等实际非AI修复菜单和执行结果正确",
+          "case_id": "parity-ter-23"
+        },
+        {
+          "id": "TER-24",
+          "name": "终端图像协议",
+          "acceptance": "enableImages默认off；开启时Sixel/iTerm图像按平台能力对拍；明确上游不恢复图像历史、不支持动画GIF的边界",
+          "case_id": "parity-ter-24"
+        },
+        {
+          "id": "TER-25",
+          "name": "发送控制与自动回复",
+          "acceptance": "sendSequence/sendSignal、restricted autoReplies默认空且节流、命令guide等实际设置动作正确，信任限制不被绕过",
+          "case_id": "parity-ter-25"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/terminal",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/terminalContrib",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/terminal-suggest"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/terminal/basics.md"
+    },
+    {
+      "prefix": "TSK",
+      "title": "任务系统",
+      "phase": "P11",
+      "scope": "A/B/C",
+      "current_basis": "未实现",
+      "source_paths": [
+        "src/vs/workbench/contrib/tasks",
+        "extensions/npm",
+        "extensions/gulp",
+        "extensions/grunt",
+        "extensions/jake"
+      ],
+      "doc_path": "docs/debugtest/tasks.md",
+      "rows": [
+        {
+          "id": "TSK-01",
+          "name": "tasks.json配置",
+          "acceptance": "schema/JSONC/版本/type/shell-process/OS覆盖与错误定位正确",
+          "case_id": "parity-tsk-01"
+        },
+        {
+          "id": "TSK-02",
+          "name": "任务发现与picker",
+          "acceptance": "workspace/user/multi-root任务、自动检测/分组/最近/默认构建测试任务正确",
+          "case_id": "parity-tsk-02"
+        },
+        {
+          "id": "TSK-03",
+          "name": "内置工具任务",
+          "acceptance": "npm/Gulp/Grunt/Jake及tsconfig build-watch发现运行；$tsc/$tsc-watch/$tsgo-watch等实际matchers，缺工具反馈一致",
+          "case_id": "parity-tsk-03"
+        },
+        {
+          "id": "TSK-04",
+          "name": "变量解析",
+          "acceptance": "workspace/file/env/config/input/command及递归/失败/多根消歧正确",
+          "case_id": "parity-tsk-04"
+        },
+        {
+          "id": "TSK-05",
+          "name": "输入和依赖图",
+          "acceptance": "promptString/pickString/command、dependsOn/顺序并行/循环错误正确",
+          "case_id": "parity-tsk-05"
+        },
+        {
+          "id": "TSK-06",
+          "name": "运行配置",
+          "acceptance": "cwd/env/quoting/shell executable/args/Windows转义正确",
+          "case_id": "parity-tsk-06"
+        },
+        {
+          "id": "TSK-07",
+          "name": "presentation和terminal复用",
+          "acceptance": "reveal/focus/echo/panel/group/clear/close等配置正确",
+          "case_id": "parity-tsk-07"
+        },
+        {
+          "id": "TSK-08",
+          "name": "problem matchers",
+          "acceptance": "单多行/background/begin-end/文件解析/owner/severity与Problems一致",
+          "case_id": "parity-tsk-08"
+        },
+        {
+          "id": "TSK-09",
+          "name": "后台和自动任务",
+          "acceptance": "watch task/readiness/runOn folderOpen/信任确认与取消正确",
+          "case_id": "parity-tsk-09"
+        },
+        {
+          "id": "TSK-10",
+          "name": "任务生命周期",
+          "acceptance": "运行中列表/restart/rerun/terminate/退出码/部分失败和进程树清理",
+          "case_id": "parity-tsk-10"
+        },
+        {
+          "id": "TSK-11",
+          "name": "任务与调试联动",
+          "acceptance": "preLaunch/postDebug/失败继续确认及依赖等待无死锁",
+          "case_id": "parity-tsk-11"
+        },
+        {
+          "id": "TSK-12",
+          "name": "任务配置编辑体验",
+          "acceptance": "自动生成/定制/default task/最近命令及无任务空态正确",
+          "case_id": "parity-tsk-12"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/tasks",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/npm",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/gulp",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/grunt",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/jake"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/debugtest/tasks.md"
+    },
+    {
+      "prefix": "DBG",
+      "title": "默认调试与Testing容器",
+      "phase": "P11",
+      "scope": "A/B/C",
+      "current_basis": "未实现",
+      "source_paths": [
+        "src/vs/workbench/contrib/debug",
+        "src/vs/workbench/contrib/testing",
+        "extensions/debug-auto-launch",
+        "extensions/debug-server-ready",
+        "product.json"
+      ],
+      "doc_path": "docs/debugtest/debugging.md",
+      "rows": [
+        {
+          "id": "DBG-01",
+          "name": "launch.json与调试配置",
+          "acceptance": "schema/变量/OS覆盖/compound/多根/动态配置与无配置入口正确",
+          "case_id": "parity-dbg-01"
+        },
+        {
+          "id": "DBG-02",
+          "name": "DAP协议生命周期",
+          "acceptance": "initialize/launch-attach/configurationDone/断连/取消/失序/adapter崩溃正确",
+          "case_id": "parity-dbg-02"
+        },
+        {
+          "id": "DBG-03",
+          "name": "断点",
+          "acceptance": "源码/inline column/条件/hit count/logpoint/triggered/function/data/exception按adapter能力，启停和验证态正确",
+          "case_id": "parity-dbg-03"
+        },
+        {
+          "id": "DBG-04",
+          "name": "执行控制",
+          "acceptance": "continue/pause/step in-over-out/restart/stop/run-to-cursor/set-next按能力工作",
+          "case_id": "parity-dbg-04"
+        },
+        {
+          "id": "DBG-05",
+          "name": "调用栈与线程",
+          "acceptance": "多线程/异步栈/加载源/模块/选择frame、未知源按需加载正确",
+          "case_id": "parity-dbg-05"
+        },
+        {
+          "id": "DBG-06",
+          "name": "变量与Watch",
+          "acceptance": "懒展开/分页/set value/evaluate/作用域/内存对象、错误与过期状态正确",
+          "case_id": "parity-dbg-06"
+        },
+        {
+          "id": "DBG-07",
+          "name": "Debug Console",
+          "acceptance": "REPL/补全/历史/过滤/复制/多session、对象树和输出链路正确",
+          "case_id": "parity-dbg-07"
+        },
+        {
+          "id": "DBG-08",
+          "name": "调试UI",
+          "acceptance": "toolbar位置、gutter/current line/hover/status/选择session、键位焦点正确",
+          "case_id": "parity-dbg-08"
+        },
+        {
+          "id": "DBG-09",
+          "name": "多会话和复合调试",
+          "acceptance": "父子/多根/compound stopAll、console切换和终端回收正确",
+          "case_id": "parity-dbg-09"
+        },
+        {
+          "id": "DBG-10",
+          "name": "源码映射与定位",
+          "acceptance": "source maps/loaded scripts/skip files/blackbox/远程路径等默认JS能力",
+          "case_id": "parity-dbg-10"
+        },
+        {
+          "id": "DBG-11",
+          "name": "Node默认调试",
+          "acceptance": "launch/attach/process picker/auto attach/JavaScript Debug Terminal实际可用",
+          "case_id": "parity-dbg-11"
+        },
+        {
+          "id": "DBG-12",
+          "name": "浏览器默认调试",
+          "acceptance": "P11验外部Chrome/Edge launch-attach/CDP及真实断点；集成浏览器联调在P12验收，按交叉case登记",
+          "case_id": "parity-dbg-12"
+        },
+        {
+          "id": "DBG-13",
+          "name": "serverReady与自动启动",
+          "acceptance": "输出匹配后openExternally/debugWithChrome等固定action与任务联动",
+          "case_id": "parity-dbg-13"
+        },
+        {
+          "id": "DBG-14",
+          "name": "性能分析与可视化",
+          "acceptance": "JS profiling与预置profile-table/companion动作有真实数据和查看器",
+          "case_id": "parity-dbg-14"
+        },
+        {
+          "id": "DBG-15",
+          "name": "能力可用性边界",
+          "acceptance": "不支持memory/disassembly等显示正确条件/空态，支持时按DAP能力验收",
+          "case_id": "parity-dbg-15"
+        },
+        {
+          "id": "DBG-16",
+          "name": "Testing通用容器",
+          "acceptance": "view/filter/group/tag/profiles/run-debug/结果历史/peek/output无provider正确空态",
+          "case_id": "parity-dbg-16"
+        },
+        {
+          "id": "DBG-17",
+          "name": "Testing覆盖率与持续运行",
+          "acceptance": "内部协议fixture验证UI/行分支装饰/取消，不冒称默认pytest-Jest可用",
+          "case_id": "parity-dbg-17"
+        },
+        {
+          "id": "DBG-18",
+          "name": "调试与测试故障",
+          "acceptance": "adapter/程序退出/端口占用/权限/超时保持编辑可用并回收资源",
+          "case_id": "parity-dbg-18"
+        },
+        {
+          "id": "DBG-19",
+          "name": "Comments通用宿主",
+          "acceptance": "thread/range/reply/collapse/resolve/权限和焦点用内部provider fixture验UI合同；默认无provider保持真实空态",
+          "case_id": "parity-dbg-19"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/debug",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/testing",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/debug-auto-launch",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/debug-server-ready",
+        "https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/product.json"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/debugtest/debugging.md"
+    },
+    {
+      "prefix": "NBK",
+      "title": "Notebook与随附输出渲染",
+      "phase": "P12",
+      "scope": "A/B",
+      "current_basis": "未实现；不含Jupyter业务扩展",
+      "source_paths": [
+        "src/vs/workbench/contrib/notebook",
+        "extensions/ipynb",
+        "extensions/notebook-renderers"
+      ],
+      "doc_path": "docs/datascience/jupyter-notebooks.md",
+      "rows": [
+        {
+          "id": "NBK-01",
+          "name": "ipynb解析与序列化",
+          "acceptance": "未知metadata/attachments/output/indent/cell id roundtrip不丢失",
+          "case_id": "parity-nbk-01"
+        },
+        {
+          "id": "NBK-02",
+          "name": "Notebook虚拟化",
+          "acceptance": "大单元/多单元/大输出按需渲染，内容与选区不被缓存淘汰丢失",
+          "case_id": "parity-nbk-02"
+        },
+        {
+          "id": "NBK-03",
+          "name": "cell编辑和命令模式",
+          "acceptance": "code/markdown切换、键位/焦点/multi-select/折叠正确",
+          "case_id": "parity-nbk-03"
+        },
+        {
+          "id": "NBK-04",
+          "name": "cell操作",
+          "acceptance": "insert/delete/move/copy/cut/paste/split/join/undo跨cell事务正确",
+          "case_id": "parity-nbk-04"
+        },
+        {
+          "id": "NBK-05",
+          "name": "cell语言与代码能力",
+          "acceptance": "cell URI/版本/补全/诊断/折叠与实际默认provider能力一致",
+          "case_id": "parity-nbk-05"
+        },
+        {
+          "id": "NBK-06",
+          "name": "Markdown cell",
+          "acceptance": "预览/编辑/数学/Mermaid/附件链接、安全与键盘路径正确",
+          "case_id": "parity-nbk-06"
+        },
+        {
+          "id": "NBK-07",
+          "name": "Notebook导航",
+          "acceptance": "Outline/sticky scroll/行号/标题折叠/定位/选择与滚动正确",
+          "case_id": "parity-nbk-07"
+        },
+        {
+          "id": "NBK-08",
+          "name": "Notebook查找",
+          "acceptance": "input/rendered/output过滤、多行/regex/替换与cell位置正确",
+          "case_id": "parity-nbk-08"
+        },
+        {
+          "id": "NBK-09",
+          "name": "Notebook差异",
+          "acceptance": "cell增删改移动/output/metadata差异显示及导航正确",
+          "case_id": "parity-nbk-09"
+        },
+        {
+          "id": "NBK-10",
+          "name": "kernel选择空态",
+          "acceptance": "无provider清晰提示，不伪造执行；安装外部Jupyter执行不计默认能力",
+          "case_id": "parity-nbk-10"
+        },
+        {
+          "id": "NBK-11",
+          "name": "renderer MIME集合",
+          "acceptance": "内置text/stream/error/json/HTML/JS/image/SVG/Markdown/math逐项对拍",
+          "case_id": "parity-nbk-11"
+        },
+        {
+          "id": "NBK-12",
+          "name": "输出交互",
+          "acceptance": "collapse/scroll/copy/save/clear/open、错误/截断/延迟加载可达",
+          "case_id": "parity-nbk-12"
+        },
+        {
+          "id": "NBK-13",
+          "name": "输出安全隔离",
+          "acceptance": "HTML/JS/CSP/信任/资源根限制，不能访问任意本地文件与宿主",
+          "case_id": "parity-nbk-13"
+        },
+        {
+          "id": "NBK-14",
+          "name": "保存与崩溃恢复",
+          "acceptance": "cell编辑/附件/metadata/输出dirty及journal恢复一致",
+          "case_id": "parity-nbk-14"
+        },
+        {
+          "id": "NBK-15",
+          "name": "Interactive与REPL Notebook宿主",
+          "acceptance": "通用输入/输出/历史/执行状态在默认provider存在时验真实能力，无provider空态；不额外捆绑Jupyter扩展",
+          "case_id": "parity-nbk-15"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/notebook",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/ipynb",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/notebook-renderers"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/datascience/jupyter-notebooks.md"
+    },
+    {
+      "prefix": "MDK",
+      "title": "Markdown与媒体编辑器",
+      "phase": "P12",
+      "scope": "B",
+      "current_basis": "未实现",
+      "source_paths": [
+        "extensions/markdown-language-features",
+        "extensions/markdown-math",
+        "extensions/mermaid-markdown-features",
+        "src/vs/workbench/contrib/mediaPreview"
+      ],
+      "doc_path": "docs/languages/markdown.md",
+      "rows": [
+        {
+          "id": "MDK-01",
+          "name": "Markdown源与预览",
+          "acceptance": "CommonMark/GFM实际配置、标题/Outline导航、表格/代码fence/图片链接显示一致，不假定额外TOC生成器",
+          "case_id": "parity-mdk-01"
+        },
+        {
+          "id": "MDK-02",
+          "name": "预览同步",
+          "acceptance": "side-by-side/locked preview/source scroll与选区同步、点击回源正确",
+          "case_id": "parity-mdk-02"
+        },
+        {
+          "id": "MDK-03",
+          "name": "预览配置和安全",
+          "acceptance": "styles/font/换行/link/trust/CSP/本地资源与远程限制一致",
+          "case_id": "parity-mdk-03"
+        },
+        {
+          "id": "MDK-04",
+          "name": "数学与Mermaid",
+          "acceptance": "KaTeX行内块、Mermaid图pan/zoom/resize/reset/open source/copy source等实际命令正确；不臆造导出",
+          "case_id": "parity-mdk-04"
+        },
+        {
+          "id": "MDK-05",
+          "name": "Markdown富文本编辑",
+          "acceptance": "实验标识/开启条件保留，source-rich切换/选区/内容roundtrip与undo无损",
+          "case_id": "parity-mdk-05"
+        },
+        {
+          "id": "MDK-06",
+          "name": "Markdown差异预览",
+          "acceptance": "source/rendered diff与自定义editor、链接/布局/保存行为正确",
+          "case_id": "parity-mdk-06"
+        },
+        {
+          "id": "MDK-07",
+          "name": "链接更新与拖贴",
+          "acceptance": "rename时update links、paste-drop图片/URL/文件、路径选择可撤销",
+          "case_id": "parity-mdk-07"
+        },
+        {
+          "id": "MDK-08",
+          "name": "Markdown任务列表与大文件",
+          "acceptance": "列表编辑/粘贴/格式/预览限额、长文导航与后台取消",
+          "case_id": "parity-mdk-08"
+        },
+        {
+          "id": "MDK-09",
+          "name": "图片与SVG预览",
+          "acceptance": "缩放/适配/尺寸/背景/复制/选择/源-预览切换与失败状态正确",
+          "case_id": "parity-mdk-09"
+        },
+        {
+          "id": "MDK-10",
+          "name": "音频视频预览",
+          "acceptance": "支持格式播放/暂停/seek/音量/错误/平台codec差异登记",
+          "case_id": "parity-mdk-10"
+        },
+        {
+          "id": "MDK-11",
+          "name": "二进制和自定义编辑器",
+          "acceptance": "默认打开策略/重开为文本/readonly/保存合同，普通宿主可用",
+          "case_id": "parity-mdk-11"
+        },
+        {
+          "id": "MDK-12",
+          "name": "预览生命周期",
+          "acceptance": "关闭释放renderer；隐藏按retain-context设置/预算回收并恢复交互状态，未打开时无web常驻",
+          "case_id": "parity-mdk-12"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/markdown-language-features",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/markdown-math",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/mermaid-markdown-features",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/mediaPreview"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/languages/markdown.md"
+    },
+    {
+      "prefix": "WEB",
+      "title": "Simple Browser与集成浏览器",
+      "phase": "P12",
+      "scope": "A/B/C",
+      "current_basis": "未实现；需跨平台引擎实验",
+      "source_paths": [
+        "extensions/simple-browser",
+        "src/vs/workbench/contrib/browserView"
+      ],
+      "doc_path": "docs/debugtest/integrated-browser.md",
+      "rows": [
+        {
+          "id": "WEB-01",
+          "name": "Simple Browser",
+          "acceptance": "URL/前后/刷新/外部打开/focus lock提示/iframe限制与参考一致",
+          "case_id": "parity-web-01"
+        },
+        {
+          "id": "WEB-02",
+          "name": "集成浏览器导航",
+          "acceptance": "地址输入/建议/搜索/前后/刷新/停止/协议错误状态正确",
+          "case_id": "parity-web-02"
+        },
+        {
+          "id": "WEB-03",
+          "name": "本地HTML和MHTML",
+          "acceptance": "file/HTML-HTM/MHT-MHTML打开、资源根/权限与保存来源正确",
+          "case_id": "parity-web-03"
+        },
+        {
+          "id": "WEB-04",
+          "name": "browser tabs和独立窗",
+          "acceptance": "tab管理/编辑器组/新窗/浮窗/关闭重开与键盘路径一致",
+          "case_id": "parity-web-04"
+        },
+        {
+          "id": "WEB-05",
+          "name": "历史收藏最近项",
+          "acceptance": "默认容量/可配置历史/搜索/收藏/删除/清空及隐私scope正确",
+          "case_id": "parity-web-05"
+        },
+        {
+          "id": "WEB-06",
+          "name": "页面查找缩放",
+          "acceptance": "find/next-prev/page zoom/重置/设置、快捷键focus路由正确",
+          "case_id": "parity-web-06"
+        },
+        {
+          "id": "WEB-07",
+          "name": "DevTools与调试",
+          "acceptance": "真实DevTools/CDP与editor-browser DAP桥接，不能用静态面板替代",
+          "case_id": "parity-web-07"
+        },
+        {
+          "id": "WEB-08",
+          "name": "网站权限",
+          "acceptance": "camera/mic/clipboard/location等实际权限提示/记忆/撤销与系统权限协调",
+          "case_id": "parity-web-08"
+        },
+        {
+          "id": "WEB-09",
+          "name": "会话和存储",
+          "acceptance": "global/workspace/ephemeral cookies-cache-history隔离，clear storage正确",
+          "case_id": "parity-web-09"
+        },
+        {
+          "id": "WEB-10",
+          "name": "拼写和页面输入",
+          "acceptance": "字典/输入法/表单/选择复制/页面快捷键与浏览器焦点正确",
+          "case_id": "parity-web-10"
+        },
+        {
+          "id": "WEB-11",
+          "name": "localhost链接接管",
+          "acceptance": "终端/任务serverReady/浏览器打开策略、选择和外部打开正确",
+          "case_id": "parity-web-11"
+        },
+        {
+          "id": "WEB-12",
+          "name": "下载与外链策略",
+          "acceptance": "参考支持的下载/新窗/外部URI及失败/确认逐项验收",
+          "case_id": "parity-web-12"
+        },
+        {
+          "id": "WEB-13",
+          "name": "网络代理与证书",
+          "acceptance": "代理/localhost/HTTPS错误、远程代理仅连接provider存在时正确",
+          "case_id": "parity-web-13"
+        },
+        {
+          "id": "WEB-14",
+          "name": "浏览器资源与安全",
+          "acceptance": "多页CPU/内存/GPU/关闭回收、页面与工作区/宿主权限隔离",
+          "case_id": "parity-web-14"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/simple-browser",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/browserView"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/debugtest/integrated-browser.md"
+    },
+    {
+      "prefix": "NET",
+      "title": "账户、同步与非AI服务",
+      "phase": "P13",
+      "scope": "D",
+      "current_basis": "未实现；官方互通有外部前提",
+      "source_paths": [
+        "src/vs/workbench/contrib/authentication",
+        "src/vs/workbench/contrib/userDataSync",
+        "src/vs/workbench/contrib/editSessions",
+        "extensions/github-authentication",
+        "extensions/microsoft-authentication",
+        "extensions/tunnel-forwarding"
+      ],
+      "doc_path": "docs/configure/settings-sync.md",
+      "rows": [
+        {
+          "id": "NET-01",
+          "name": "账户和认证会话",
+          "acceptance": "GitHub/Microsoft登录登出/授权scope/多账户/取消/过期/权限面板完整",
+          "case_id": "parity-net-01"
+        },
+        {
+          "id": "NET-02",
+          "name": "secrets与加密存储",
+          "acceptance": "OS credential store/密钥轮换/加密失败，token不入设置或日志",
+          "case_id": "parity-net-02"
+        },
+        {
+          "id": "NET-03",
+          "name": "Settings Sync选择",
+          "acceptance": "settings/keys/snippets/tasks/UI/profiles与Extensions IDs/启用状态按开关同步，ignoredSettings/ignoredExtensions正确",
+          "case_id": "parity-net-03"
+        },
+        {
+          "id": "NET-04",
+          "name": "同步冲突和恢复",
+          "acceptance": "merge/接受local-remote/历史备份/机器列表/关闭删除/故障日志正确",
+          "case_id": "parity-net-04"
+        },
+        {
+          "id": "NET-05",
+          "name": "跨平台同步",
+          "acceptance": "平台差异与machine-scoped项处理正确，离线编辑重连不丢配置",
+          "case_id": "parity-net-05"
+        },
+        {
+          "id": "NET-06",
+          "name": "Cloud Changes",
+          "acceptance": "Store/Show/Resume Working Changes/Show Log/Serialized Data/Continue Working On和Existing Local Folder、身份/冲突/取消真实可用",
+          "case_id": "parity-net-06"
+        },
+        {
+          "id": "NET-07",
+          "name": "GitHub基础服务",
+          "acceptance": "clone仓库选择/发布/远程链接/权限/失败回滚；PR-Issues业务不冒称内置",
+          "case_id": "parity-net-07"
+        },
+        {
+          "id": "NET-08",
+          "name": "Ports视图",
+          "acceptance": "add/remove/name/local-forwarded地址/open/copy/status/进程检测等实际支持项正确",
+          "case_id": "parity-net-08"
+        },
+        {
+          "id": "NET-09",
+          "name": "公网隧道",
+          "acceptance": "public/private/GitHub认证/复用/停止/网络失败/端口冲突与服务生命周期正确",
+          "case_id": "parity-net-09"
+        },
+        {
+          "id": "NET-10",
+          "name": "Remote Tunnel内置入口",
+          "acceptance": "固定发行构建具备的serve/connect/share入口、状态/凭据/退出有证据",
+          "case_id": "parity-net-10"
+        },
+        {
+          "id": "NET-11",
+          "name": "扩展管理界面",
+          "acceptance": "内置/installed/recommended/search/详情/enable-disable/profile作用域与错误状态完整",
+          "case_id": "parity-net-11"
+        },
+        {
+          "id": "NET-12",
+          "name": "扩展包生命周期",
+          "acceptance": "来源/下载校验/依赖/安装更新卸载/回滚管理可用；第三方激活不假成功",
+          "case_id": "parity-net-12"
+        },
+        {
+          "id": "NET-13",
+          "name": "联网与证书代理",
+          "acceptance": "HTTP proxy/系统证书/离线/计量连接/重试/取消与设置正确",
+          "case_id": "parity-net-13"
+        },
+        {
+          "id": "NET-14",
+          "name": "后端互通与替代账本",
+          "acceptance": "官方端点/client注册/预置包可用性实测；自建兼容不冒称官方1:1",
+          "case_id": "parity-net-14"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/authentication",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/userDataSync",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/editSessions",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/github-authentication",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/microsoft-authentication",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/extensions/tunnel-forwarding"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/configure/settings-sync.md"
+    },
+    {
+      "prefix": "ACC",
+      "title": "可访问性、系统与可观测性",
+      "phase": "P14",
+      "scope": "A",
+      "current_basis": "部分平台框架与mem-probe可复用",
+      "source_paths": [
+        "src/vs/workbench/contrib/accessibility",
+        "src/vs/workbench/contrib/accessibilitySignals",
+        "src/vs/workbench/contrib/processExplorer",
+        "src/vs/workbench/contrib/logs"
+      ],
+      "doc_path": "docs/configure/accessibility/accessibility.md",
+      "rows": [
+        {
+          "id": "ACC-01",
+          "name": "Screen Reader全流程",
+          "acceptance": "编辑/树/菜单/quick input/终端/Notebook/browser/设置以semantics tree+NVDA/VoiceOver/Orca实机验证焦点读出",
+          "case_id": "parity-acc-01"
+        },
+        {
+          "id": "ACC-02",
+          "name": "Accessible View和Help",
+          "acceptance": "hover/通知/输出/终端等可访问视图、导航/帮助和返回焦点正确",
+          "case_id": "parity-acc-02"
+        },
+        {
+          "id": "ACC-03",
+          "name": "键盘全可达",
+          "acceptance": "Tab focus mode/菜单/状态栏/面板/浮窗/对话框focus trap无死角",
+          "case_id": "parity-acc-03"
+        },
+        {
+          "id": "ACC-04",
+          "name": "高对比减少动画和信号",
+          "acceptance": "contrast/zoom/reduced motion/audio cues/announcement设置与OS联动",
+          "case_id": "parity-acc-04"
+        },
+        {
+          "id": "ACC-05",
+          "name": "系统窗口与多显示器",
+          "acceptance": "DPI跨屏/最小最大/全屏/恢复尺寸/原生菜单按三平台正确",
+          "case_id": "parity-acc-05"
+        },
+        {
+          "id": "ACC-06",
+          "name": "CLI和文件关联",
+          "acceptance": "open/add/goto/diff/merge/wait/reuse-new-window/profile/user-data等固定非AI选项映射",
+          "case_id": "parity-acc-06"
+        },
+        {
+          "id": "ACC-07",
+          "name": "外部URI与系统集成",
+          "acceptance": "协议注册/open path-URL/剪贴板/OS reveal/系统对话框路径正确",
+          "case_id": "parity-acc-07"
+        },
+        {
+          "id": "ACC-08",
+          "name": "信任和安全全链路",
+          "acceptance": "restricted mode/可信域/任务执行/预览/secret/网络边界一致",
+          "case_id": "parity-acc-08"
+        },
+        {
+          "id": "ACC-09",
+          "name": "Output与日志",
+          "acceptance": "channel选择/levels/filter/clear/save/scroll lock/限额及服务关联正确",
+          "case_id": "parity-acc-09"
+        },
+        {
+          "id": "ACC-10",
+          "name": "进程资源与性能工具",
+          "acceptance": "进程树CPU/内存、日志/启动诊断/性能视图有真实数据与可停订阅",
+          "case_id": "parity-acc-10"
+        },
+        {
+          "id": "ACC-11",
+          "name": "Help和Issue Reporter",
+          "acceptance": "版本/许可/快捷键参考/问题报告/诊断包，敏感数据处理和取消正确",
+          "case_id": "parity-acc-11"
+        },
+        {
+          "id": "ACC-12",
+          "name": "语言和策略",
+          "acceptance": "默认English/locale切换与外部language pack边界、policy导出/受管状态正确",
+          "case_id": "parity-acc-12"
+        },
+        {
+          "id": "ACC-13",
+          "name": "开发者检查与故障诊断命令",
+          "acceptance": "Screencast/Inspect Context Keys/键位排查/日志/运行内置能力与禁用-bisect等默认可达命令逐项映射，不依赖第三方业务扩展",
+          "case_id": "parity-acc-13"
+        },
+        {
+          "id": "ACC-14",
+          "name": "遥测反馈与实验控制",
+          "acceptance": "telemetry等级/退出/crash配置/调查反馈/非AI公告及受管策略遵循设置；数据发送内容和端点单独登记",
+          "case_id": "parity-acc-14"
+        },
+        {
+          "id": "ACC-15",
+          "name": "辅助语音provider边界",
+          "acceptance": "普通辅助朗读/声音信号保留；依赖额外Speech扩展或仅Agent的语音单列E/F，无provider不假称默认语音服务",
+          "case_id": "parity-acc-15"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/accessibility",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/accessibilitySignals",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/processExplorer",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/logs"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/configure/accessibility/accessibility.md"
+    },
+    {
+      "prefix": "REL",
+      "title": "资源压力、分发与总验收",
+      "phase": "P15",
+      "scope": "A",
+      "current_basis": "已有CI/Windows打包；完整证据未达",
+      "source_paths": [
+        "src/vs/workbench/contrib/update",
+        "src/vs/workbench/contrib/performance",
+        "src/vs/workbench/services/lifecycle"
+      ],
+      "doc_path": "docs/setup/windows.md",
+      "rows": [
+        {
+          "id": "REL-01",
+          "name": "三平台安装包",
+          "acceptance": "Windows安装便携/Linux/macOS包可启动、包含默认离线资产并有完整notice",
+          "case_id": "parity-rel-01"
+        },
+        {
+          "id": "REL-02",
+          "name": "更新回滚与卸载",
+          "acceptance": "检查/下载/安装/重启/失败回滚/卸载保留用户数据行为明确可测",
+          "case_id": "parity-rel-02"
+        },
+        {
+          "id": "REL-03",
+          "name": "完整性注册项核对",
+          "acceptance": "范围内原子贡献每项映射case/evidence；未映射/未消化不为零不能宣告完成",
+          "case_id": "parity-rel-03"
+        },
+        {
+          "id": "REL-04",
+          "name": "全视觉回归",
+          "acceptance": "所有核心页/状态/主题/缩放/平台保存golden与diff，掩膜逐项有依据",
+          "case_id": "parity-rel-04"
+        },
+        {
+          "id": "REL-05",
+          "name": "行为结果对拍",
+          "acceptance": "正常/边界/失败序列的文本/选区/磁盘/配置/焦点/进程状态一致",
+          "case_id": "parity-rel-05"
+        },
+        {
+          "id": "REL-06",
+          "name": "相同功能内存对照",
+          "acceptance": "包含所有实际子进程，同项目同服务至少3次，不拿空UI比带语言VSCode",
+          "case_id": "parity-rel-06"
+        },
+        {
+          "id": "REL-07",
+          "name": "空闲与30min稳定性",
+          "acceptance": "无轮询空转、内存持续增长；长时间编辑/切根/关闭回收有曲线",
+          "case_id": "parity-rel-07"
+        },
+        {
+          "id": "REL-08",
+          "name": "限额与系统提交压力",
+          "acceptance": "Warn/Critical输入保存可用、可重建缓存降级、最低可工作档位报告",
+          "case_id": "parity-rel-08"
+        },
+        {
+          "id": "REL-09",
+          "name": "保存恢复故障注入",
+          "acceptance": "磁盘满/权限/强杀/坏journal/超大未保存文本无静默丢失",
+          "case_id": "parity-rel-09"
+        },
+        {
+          "id": "REL-10",
+          "name": "服务与网络故障",
+          "acceptance": "强杀LSP/DAP/PTY/web/隧道、慢请求/断线/认证失效编辑仍可用",
+          "case_id": "parity-rel-10"
+        },
+        {
+          "id": "REL-11",
+          "name": "预算与容量可见",
+          "acceptance": "undo/token/index/search/history/scrollback/output/web缓存有owner/上限/回收证据",
+          "case_id": "parity-rel-11"
+        },
+        {
+          "id": "REL-12",
+          "name": "发布差异清单",
+          "acceptance": "未解决功能/外部服务/实验和平台差异逐项公开，硬门未过保持未完成",
+          "case_id": "parity-rel-12"
+        }
+      ],
+      "upstream_sources": [
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/update",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/performance",
+        "https://github.com/microsoft/vscode/tree/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/services/lifecycle"
+      ],
+      "documentation": "https://github.com/microsoft/vscode-docs/blob/da213552439825628e0ab958dbde1e413dbc36bf/docs/setup/windows.md"
+    }
+  ],
+  "boundary_decisions": [
+    {
+      "id": "EX-01",
+      "title": "外接AI",
+      "scope": "F",
+      "decision": "Chat/Inline Chat/Copilot/Agents/AI completions/AI search/MCP代理等按依赖逐项排除；普通编辑共享组件保留"
+    },
+    {
+      "id": "EX-02",
+      "title": "Canvas与Agent专用界面",
+      "scope": "F",
+      "decision": "当前Canvas菜单受ChatContextKeys.enabled控制；不当作普通非AI画布；将来若独立默认能力需重审"
+    },
+    {
+      "id": "EX-03",
+      "title": "Python/C++/Rust等完整业务provider",
+      "scope": "E",
+      "decision": "默认语法/snippets纳入LNG；需用户安装的LSP/调试/测试能力不归入默认复刻，现有RA另记附加能力"
+    },
+    {
+      "id": "EX-04",
+      "title": "Jupyter执行与kernel",
+      "scope": "E",
+      "decision": "保留NBK宿主/ipynb/renderer；额外Jupyter/Python provider的执行/变量浏览不冒称默认可用"
+    },
+    {
+      "id": "EX-05",
+      "title": "测试框架provider",
+      "scope": "E",
+      "decision": "pytest/JUnit/Jest等需要用户扩展；保留Testing UI与协议空态，测试fixture仅用于验证宿主"
+    },
+    {
+      "id": "EX-06",
+      "title": "Remote SSH/WSL/Containers/Codespaces业务扩展",
+      "scope": "E",
+      "decision": "默认未随附的连接provider排除；内置远程指示/Ports/Tunnel实际能力仍在NET"
+    },
+    {
+      "id": "EX-07",
+      "title": "GitHub PR-Issues与Remote Repositories业务",
+      "scope": "E",
+      "decision": "GitHub基础认证/clone/publish纳入；用户扩展PR/Issues/remotehub能力不自动纳入"
+    },
+    {
+      "id": "EX-08",
+      "title": "任意第三方vscode API兼容",
+      "scope": "E",
+      "decision": "通用扩展运行时不是本次产品目标；扩展管理自身功能纳入NET，受支持状态必须诚实"
+    },
+    {
+      "id": "EX-09",
+      "title": "额外主题语法语言包",
+      "scope": "E",
+      "decision": "默认包全部纳入；用户导入数据格式兼容按THM/LNG测试，不要求所有外部包业务可用"
+    },
+    {
+      "id": "EX-10",
+      "title": "源码测试与构建辅助",
+      "scope": "G",
+      "decision": "vscode-api-tests/colorize-tests/test-resolver/types等不是默认用户功能；可复用测试数据不算产品需求"
+    },
+    {
+      "id": "EX-11",
+      "title": "实验和默认关闭功能",
+      "scope": "G",
+      "decision": "先登记flag/平台/可达性，不直接删除；范围内有设置入口的非AI能力仍需条件case"
+    },
+    {
+      "id": "EX-12",
+      "title": "官方服务和预置包不可用",
+      "scope": "D",
+      "decision": "不属于排除：保持NET/P00阻塞项，替代实现与官方互通分别签收"
+    },
+    {
+      "id": "EX-13",
+      "title": "系统依赖缺失",
+      "scope": "C",
+      "decision": "不属于排除：Git/运行时/shell缺失要有相同前提检测，具备条件时验收真实能力"
+    },
+    {
+      "id": "EX-14",
+      "title": "品牌名称和标识",
+      "scope": "G",
+      "decision": "Alula自有名称与图标单列可见差异；不据此削减功能/布局/交互验收"
+    }
+  ]
+}
