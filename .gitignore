@@ -44,3 +44,4 @@ Thumbs.db
 # skills CLI 的 npm 缓存（npx skills add 产生）
 npm-cache/
 
+_migrate_*.py
