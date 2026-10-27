@@ -50,6 +50,35 @@ The recorded Windows replay and its limits are in
 their own native builds. Do not infer cross-platform CDP, MHTML, or memory
 behavior from the Windows result.
 
+## macOS WKWebView check
+
+The macOS target uses the stable plugin's native `WKWebView.createWebArchiveData`
+API and saves a `.webarchive` file before opening it in the same WebView. It
+checks the original page and the reloaded archive with JavaScript, because the
+macOS WebKit view does not implement the Windows CDP screenshot path. This
+Web Archive is not MHTML and does not establish CDP compatibility.
+
+On a Mac with Flutter 3.47.8 and Xcode installed:
+
+```bash
+cd tools/web-engine-probe
+flutter pub get
+flutter analyze
+flutter test
+flutter build macos --release
+scripts/run-web-smoke-macos.sh \
+  build/macos/Build/Products/Release/web_engine_probe.app \
+  ../../docs/diagnostics/2026-10-27-p00/p00.4-web-macos-run
+```
+
+The runner records `footprint -targetChildren` snapshots before/after the
+WebView lifecycle, page verification JSON, the Web Archive bytes, and best-effort
+desktop screenshots. It does not automate attaching Safari Web Inspector; that
+remains a separate manual check. The same replay is available as the
+`P00.4 macOS Web Engine Probe` GitHub Actions workflow. Neither the new target
+nor the workflow has run on macOS yet, so they are test infrastructure rather
+than Mac evidence.
+
 ## Linux WebKitGTK engine-only check
 
 `linux/webkitgtk_probe.py` is a separate GTK probe. It checks the host's native

@@ -63,6 +63,18 @@ VS Code 官方 FAQ 描述的下载 URL 以版本占位符和平台/渠道组成�
 
 该次复核与前面的探测一致：当前 `latest/insider` 仍是不同版本/提交，不能替代 pinned Code-OSS 1.145.0；只证明这些官方 URL 当前不可用，不推断其它发行渠道不存在。Code-OSS 固定 SHA 构建仍是可重放桌面对照；微软同 SHA 二进制保持 unavailable/blocker。
 
+### 官方客户端实现路径交叉核对
+
+微软维护的 [`vscode-test` 下载 helper](https://github.com/microsoft/vscode-test/blob/main/lib/util.ts)
+将指定 Insiders commit 映射到
+`https://update.code.visualstudio.com/commit:<commit>/<platform>/insider`；VS Code CLI 的
+[官方更新服务实现](https://github.com/microsoft/vscode/blob/main/cli/src/update_service.rs)
+同样使用该 commit 下载 URL。再次用 Windows Git Bash 对 pinned SHA 端点发起 HEAD，仍为
+404。另对官方 CLI 源码支持的语义版本解析端点
+`/api/versions/1.145.0/win32-x64-archive/insider` 发起 GET，正文为 `Not Found`、HTTP
+404。可见的官方客户端路径没有提供另一个可解析该 SHA/版本的地址；这仍不证明微软所有
+内部、企业或未公开分发渠道均不存在该构建。
+
 ## 验收边界与下一步
 
 P00.1 已按 Code-OSS 固定 SHA 源码路径完成验收：上游身份/签名和版本元数据可核验、微软精确发行物探测结果已登记、桌面 client 可构建与启动，环境及产品声明的默认扩展包清单已有可复核文件。限制是这不是微软签名发行包；未下载 marketplace 扩展，未构建 Copilot / remote lane，也未覆盖登录、同步、市场、Web 与官方服务。P00.2 原子注册项导出器现在具备 pinned 源码与运行时参考，仍需按 `docs/03` 顺序单独开工。

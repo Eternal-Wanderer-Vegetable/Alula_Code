@@ -57,6 +57,15 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
   String? _archivePath;
   int? _archiveBytes;
 
+  bool get _usesWebArchive => Platform.isMacOS;
+
+  String get _archiveExtension => _usesWebArchive ? 'webarchive' : 'mhtml';
+
+  String get _archiveReloadedPhase =>
+      _usesWebArchive ? 'webarchive-loaded' : 'mhtml-loaded';
+
+  String get _archiveFileName => 'p00.4-web-probe.$_archiveExtension';
+
   @override
   void initState() {
     super.initState();
@@ -92,6 +101,32 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     InAppWebViewController controller,
     String phase,
   ) async {
+    if (_usesWebArchive) {
+      final title = await controller.evaluateJavascript(
+        source: 'document.title',
+      );
+      final hasProbeMarker = await controller.evaluateJavascript(
+        source: "document.body.innerText.includes('WEB_ENGINE_PROBE_OK')",
+      );
+      if (hasProbeMarker != true) {
+        throw StateError('WKWebView page marker is missing after $phase');
+      }
+      final file = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}'
+        'p00.4-web-$phase-page.json',
+      );
+      await file.writeAsString(
+        jsonEncode({
+          'phase': phase,
+          'title': title,
+          'hasProbeMarker': hasProbeMarker,
+          'url': (await controller.getUrl())?.toString(),
+        }),
+        flush: true,
+      );
+      return;
+    }
+
     final result = await controller.callDevToolsProtocolMethod(
       methodName: 'Page.captureScreenshot',
       parameters: const {'format': 'png', 'fromSurface': true},
@@ -127,8 +162,33 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     final controller = _controller;
     if (controller == null) return;
 
-    setState(() => _status = 'Calling Page.captureSnapshot(format=mhtml)…');
+    setState(
+      () => _status = _usesWebArchive
+          ? 'Creating WKWebView Web Archive…'
+          : 'Calling Page.captureSnapshot(format=mhtml)…',
+    );
     try {
+      if (_usesWebArchive) {
+        final data = await controller.createWebArchiveData();
+        if (data == null || data.isEmpty) {
+          throw StateError('WKWebView returned no Web Archive data');
+        }
+        final file = File(
+          '${Directory.systemTemp.path}${Platform.pathSeparator}'
+          '$_archiveFileName',
+        );
+        await file.writeAsBytes(data, flush: true);
+        final hasProbePage = String.fromCharCodes(data)
+            .contains('WEB_ENGINE_PROBE_OK');
+        final archiveBytes = await file.length();
+        setState(() {
+          _archivePath = file.path;
+          _archiveBytes = archiveBytes;
+          _status = 'WKWebView Web Archive saved; page marker=$hasProbePage';
+        });
+        return;
+      }
+
       final result = await controller.callDevToolsProtocolMethod(
         methodName: 'Page.captureSnapshot',
         parameters: const {'format': 'mhtml'},
@@ -139,7 +199,8 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
       }
 
       final file = File(
-        '${Directory.systemTemp.path}${Platform.pathSeparator}p00.4-web-probe.mhtml',
+        '${Directory.systemTemp.path}${Platform.pathSeparator}'
+        '$_archiveFileName',
       );
       await file.writeAsString(data, flush: true);
       final hasMimeHeader = data.toLowerCase().contains('mime-version:');
@@ -152,7 +213,11 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
             'CDP snapshot saved; MIME header=$hasMimeHeader, page marker=$hasProbePage';
       });
     } catch (error) {
-      setState(() => _status = 'CDP/MHTML failed: $error');
+      setState(
+        () => _status = _usesWebArchive
+            ? 'WKWebView Web Archive failed: $error'
+            : 'CDP/MHTML failed: $error',
+      );
     }
   }
 
@@ -165,9 +230,17 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
       await controller.loadUrl(
         urlRequest: URLRequest(url: WebUri(File(path).uri.toString())),
       );
-      setState(() => _status = 'Navigated to saved MHTML file');
+      setState(
+        () => _status = _usesWebArchive
+            ? 'Navigated to saved Web Archive'
+            : 'Navigated to saved MHTML file',
+      );
     } catch (error) {
-      setState(() => _status = 'Opening saved MHTML failed: $error');
+      setState(
+        () => _status = _usesWebArchive
+            ? 'Opening saved Web Archive failed: $error'
+            : 'Opening saved MHTML failed: $error',
+      );
     }
   }
 
@@ -196,13 +269,21 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
                   ),
                   OutlinedButton(
                     onPressed: controller == null ? null : _captureMhtml,
-                    child: const Text('Capture CDP MHTML'),
+                    child: Text(
+                      _usesWebArchive
+                          ? 'Save WKWebView Web Archive'
+                          : 'Capture CDP MHTML',
+                    ),
                   ),
                   OutlinedButton(
                     onPressed: controller == null || _archivePath == null
                         ? null
                         : _openMhtml,
-                    child: const Text('Open saved MHTML'),
+                    child: Text(
+                      _usesWebArchive
+                          ? 'Open saved Web Archive'
+                          : 'Open saved MHTML',
+                    ),
                   ),
                 ],
               ),
@@ -240,14 +321,18 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
                         if (!mounted) return;
                         setState(() => _status = 'Loaded $url; title=$title');
                         _shortcutFocusNode.requestFocus();
-                        final openedArchive = url.toString().contains(
-                          'p00.4-web-probe.mhtml',
+                        final openedArchive = url.toString().endsWith(
+                          _archiveFileName,
                         );
                         if (widget.autoProbe) {
-                          final phase = openedArchive ? 'mhtml' : 'initial';
+                          final phase = openedArchive
+                              ? (_usesWebArchive ? 'webarchive' : 'mhtml')
+                              : 'initial';
                           await _captureRenderedPage(value, phase);
                           await _writeAutoPhase(
-                            openedArchive ? 'mhtml-loaded' : 'initial-loaded',
+                            openedArchive
+                                ? _archiveReloadedPhase
+                                : 'initial-loaded',
                           );
                         }
                         if (widget.autoProbe &&
