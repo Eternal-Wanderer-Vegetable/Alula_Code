@@ -9,6 +9,16 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27 第五轮）：feat-filewatch 文件监视
+
+- WorkspaceWatcher：Directory.watch(recursive)（Windows/Linux 原生递归，零新
+  依赖），600ms 防抖收敛，错误静默降级；先探测本平台递归可用性再动工。
+- 外部变更后：文件树刷新（根+已展开目录保留展开态）、Git 状态刷新、
+  打开文档检测——干净文档自动重载、脏文档仅提示（不覆盖本地编辑）。
+- analyzer info 清零（5 项字符串插值 lint）——init.sh 不含 analyze 的盲区
+  被 CI 抓到一次，注意提交前跑 analyze。
+- 测试：3 watcher 单测 + 1 端到端（外部写盘→自动重载）；全量 119 绿 + CI 全绿。
+
 ## 今日会话（2026-10-27 第四轮）：feat-search 搜索视图
 
 - **SearchService**：后端探测 rg --json → git grep --untracked → 不可用提示；
