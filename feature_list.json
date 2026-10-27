@@ -122,6 +122,14 @@
       "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）"
     },
     {
+      "id": "feat-018",
+      "name": "W4 搜索视图：ripgrep 优先 + git grep 回退，流式结果",
+      "description": "活动栏搜索视图（Ctrl+Shift+F）：后端探测 rg→git grep→不可用提示；流式命中（可取消终止子进程）；命中上限 500；点击命中打开文件并跳转行。剩余：按文件分组展示、正则支持",
+      "dependencies": ["feat-015"],
+      "status": "in-progress",
+      "evidence": "10 项服务测试（解析/临时仓集成/上限/取消）+ 1 项端到端 widget 测试（Ctrl+Shift+F→搜索→点击跳行）；115 测试全绿 + CI 全绿（2026-10-27）"
+    },
+    {
       "id": "feat-013",
       "name": "P1 工程化：CI/CD、代码图谱、harness 文档",
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",

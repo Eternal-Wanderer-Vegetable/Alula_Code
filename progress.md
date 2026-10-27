@@ -9,6 +9,18 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27 第四轮）：feat-search 搜索视图
+
+- **SearchService**：后端探测 rg --json → git grep --untracked → 不可用提示；
+  流式命中（StreamController + 取消订阅终止子进程）；上限 500。
+- **三个实战坑**：① rg 在 stdout 管道化且无显式路径时等待 stdin（补 '.'）；
+  ② git grep 默认不搜未跟踪文件（补 --untracked）；③ pattern 必须在
+  '--' pathspec 之前。CI 又抓到一个：rg 探测要捕 ProcessException（可执行
+  文件不存在直接抛异常，不只是非零退出码）。
+- **UI**：活动栏搜索图标激活（侧栏第三视图）+ Ctrl+Shift+F 命令/键位 +
+  搜索框（Enter/大小写切换）+ 命中列表；点击命中打开文件并跳转到对应行。
+- 测试：10 服务测试 + 1 端到端 widget（runAsync）；全量 115 绿 + CI 全绿。
+
 ## 今日会话（2026-10-27 第三轮）：feat-git Git 面板
 
 - **GitCli**（Dart CLI 封装）：status --porcelain -z 解析（rename/中文路径/
