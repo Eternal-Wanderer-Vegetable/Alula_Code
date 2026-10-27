@@ -1,0 +1,1 @@
+Probe exited after destroy+30s; F5 only; no screenshot or MHTML command was issued.

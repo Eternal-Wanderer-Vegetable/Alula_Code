@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十轮：Windows Git Bash 完整门禁复验）
+> Last Updated：2026-10-28（第三十一轮：WPE 无截图生命周期三轮复验）
 
 ## 项目一句话
 
@@ -8,6 +8,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
+WPE 2.52.6 source-built Flutter探针又完成三轮无截图手动F5周期；销毁+30s中位残留40.2 MiB Private Bytes / 42.5 MiB PSS，NetworkProcess留存、父进程残留未归因。数据在 p00.4-linux-wpe-memory-repeat-evidence.json。
 Windows Git Bash 的完整门禁刚复跑通过：cargo fmt --check、bash init.sh（Rust tests/Clippy/build_core/Flutter 122 项）及单独 app flutter analyze 均 exit 0。WSL init.sh --fast 因缺 cargo 与 Flutter 脚本 CRLF 失败；不是产品错误。输出见 p00-full-validation-windows-gitbash-2026-10-28.log。
 2026-10-28 按用户选择使用 Windows Git Bash 重跑 P00.3 四项夹具，全部通过；2,000,001 UTF-16 恢复 fixture 耗时约 2:10。P00.4 Linux/WPE 三轮自动生命周期样本与一轮无截图手动 F5 样本已记录：销毁+30s仍有 41.9–72.2 MiB Private Bytes 增量，NetworkProcess 留存，父进程残留尚未归因。
 macOS dispatch 仍因默认分支没有 workflow/current branch 未推送而不可运行；没有推送或 macOS runner 证据。需用户明确授权后才能推送当前分支以运行该 workflow。
@@ -17,6 +18,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 
 ## What Changed
 
+- 第三十一轮：三轮无截图/MHTML F5 创建销毁复验，destroy+30s Private Bytes/PSS中位数比空载高40.2/42.5 MiB；WebProcess退出、NetworkProcess留存，父进程残留未归因。仅探针级，P00.4仍blocked，见 p00.4-linux-wpe-manual-f5-repeat-run1/至run3/。
 - 第三十轮：Windows Git Bash 完整门禁通过；Flutter 122 项、Rust tests、Clippy、build_core、cargo fmt --check 与 flutter analyze 全绿。2,000,001 UTF-16 fixture 2:11。WSL fast 门禁失败为 runner/挂载问题，见 docs/diagnostics/2026-10-27-p00/p00-full-validation-windows-gitbash-2026-10-28.log。
 - 第二十九轮：Windows Git Bash 重跑 P00.3 build_core、Flutter 两项 risk fixtures 和两个 Rust integration tests，四项全通过，恢复 fixture 2:10；输出 p00.3-windows-gitbash-rerun-2026-10-28.log。同一 WPE 2.52.6 source-built probe 连续三轮自动采样，并补一轮不触发截图/MHTML 的手动 F5 创建/销毁；无截图 TMPDIR 为空，WebProcess 销毁后退出、NetworkProcess 保留，父进程仍有约 42 MiB Private Bytes 增量。P00.4 继续 blocked，汇总为 p00.4-linux-wpe-memory-repeat-evidence.json。
 - 第二十八轮：WPE 2.52.6 Remote Inspector target multiplexing session 成功调用 Runtime.enable/Runtime.evaluate，返回 title 与 marker；CDP 仍不支持。Xvfb 诊断禁用 sandbox/GBM；记录见 p00.4-linux-wpe-inspector-protocol-evidence.json 与 p00.4-linux-wpe-2.52.6-inspector-protocol-run/。
