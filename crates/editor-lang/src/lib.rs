@@ -188,9 +188,7 @@ impl SyntaxEngine {
                         })
                         .unwrap_or_else(|| {
                             node.child_by_field_name("type")
-                                .map(|n| {
-                                    n.utf8_text(text.as_bytes()).unwrap_or("?").to_string()
-                                })
+                                .map(|n| n.utf8_text(text.as_bytes()).unwrap_or("?").to_string())
                                 .unwrap_or_default()
                         })
                 } else {
@@ -278,7 +276,10 @@ const MAX: i32 = 10;
         let symbols = engine.symbols(code).unwrap();
 
         let kinds: Vec<&str> = symbols.iter().map(|s| s.kind.as_str()).collect();
-        assert!(kinds.contains(&"function"), "应含 function（main/area/helper）");
+        assert!(
+            kinds.contains(&"function"),
+            "应含 function（main/area/helper）"
+        );
         assert!(kinds.contains(&"struct"));
         assert!(kinds.contains(&"enum"));
         assert!(kinds.contains(&"trait"));
@@ -295,8 +296,7 @@ const MAX: i32 = 10;
         assert_eq!(main.line, 2);
         // UTF-16 偏移切片回验：偏移处应是 "fn"
         let u16s: Vec<u16> = code.encode_utf16().collect();
-        let piece: String =
-            String::from_utf16_lossy(&u16s[main.start_utf16..main.start_utf16 + 2]);
+        let piece: String = String::from_utf16_lossy(&u16s[main.start_utf16..main.start_utf16 + 2]);
         assert_eq!(piece, "fn");
 
         // 按文档顺序
