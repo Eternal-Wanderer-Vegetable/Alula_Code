@@ -108,6 +108,8 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     InAppWebViewController controller,
     String phase,
   ) async {
+    if (Platform.environment['P00_4_WEB_NO_CAPTURE'] == '1') return;
+
     if (_usesWebArchive || _usesLinuxMhtml) {
       final capture = _usesLinuxMhtml
           ? await _captureLinuxFrame(controller, phase)
@@ -487,6 +489,12 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
   }
 
   Future<void> _runAutomaticReplay() async {
+    if (Platform.environment['P00_4_WEB_NO_CAPTURE'] == '1') {
+      await Future<void>.delayed(const Duration(seconds: 8));
+      if (mounted) _toggleWebView();
+      return;
+    }
+
     await Future<void>.delayed(const Duration(seconds: 5));
     await _captureMhtml();
     await Future<void>.delayed(const Duration(seconds: 2));

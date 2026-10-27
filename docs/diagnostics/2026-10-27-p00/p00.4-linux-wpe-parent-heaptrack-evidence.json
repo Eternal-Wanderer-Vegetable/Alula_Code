@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-28",
+  "experiment": "one heaptrack-instrumented Linux WPE no-capture create/destroy cycle",
+  "probe": {
+    "runtime": "Flutter Linux Release web_engine_probe",
+    "webkit": "WPE WebKit 2.52.6 source build",
+    "mode": "P00_4_WEB_AUTO=1 P00_4_WEB_NO_CAPTURE=1",
+    "actions": "Create one WebView, wait for initial load, destroy it, then sample for 30 seconds; no screenshot, MHTML, or Inspector command."
+  },
+  "environment": {
+    "os": "Debian GNU/Linux 12 (Bookworm), Docker container",
+    "uid": 1000,
+    "display": "Xvfb X11",
+    "renderer": "software GL",
+    "heaptrack": "1.4.0-2",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1",
+    "scope_limit": "Instrumented diagnostic probe only; not an uninstrumented baseline, product integration, hardware rendering, production sandbox, or docs/04 acceptance."
+  },
+  "process_tree_samples": {
+    "before_webview": {
+      "process_count": 2,
+      "private_mib": 162.0,
+      "pss_mib": 213.5,
+      "parent_private_bytes": 155459584,
+      "parent_pss_bytes": 192566272
+    },
+    "webview_open": {
+      "process_count": 3,
+      "private_mib": 329.6,
+      "pss_mib": 432.8,
+      "processes": ["web_engine_probe", "WPEWebProcess", "WPENetworkProcess"]
+    },
+    "webview_destroyed": {
+      "process_count": 2,
+      "private_mib": 259.6,
+      "pss_mib": 317.2,
+      "processes": ["web_engine_probe", "WPENetworkProcess"]
+    },
+    "webview_destroyed_30s": {
+      "process_count": 2,
+      "private_mib": 259.2,
+      "pss_mib": 315.4,
+      "parent_private_bytes": 258392064,
+      "parent_pss_bytes": 299171840,
+      "processes": ["web_engine_probe", "WPENetworkProcess"]
+    },
+    "parent_delta_destroyed_30s_minus_before": {
+      "private_mib": 98.2,
+      "pss_mib": 101.7
+    }
+  },
+  "heaptrack_summary": {
+    "runtime_seconds": 42.189,
+    "allocation_calls": 960896,
+    "peak_heap_mib": 167.06,
+    "peak_rss_including_heaptrack_overhead_mib": 351.08,
+    "reported_outstanding_allocations_mib": 154.50,
+    "reported_outstanding_allocations_note": "The probe was ended with SIGTERM after the final sample. Heaptrack's reported outstanding allocations include process-lifetime allocations at termination and are not evidence of a leak."
+  },
+  "peak_allocation_sites": [
+    {
+      "peak_mib": 51.25,
+      "stack": "swrast_dri.so -> libEGL_mesa.so -> wpe_display_get_egl_display -> flutter_inappwebview_plugin::InAppWebView::InitWpeBackend -> CreateInAppWebView",
+      "interpretation": "A peak allocation path through the software rasterizer and WPE plugin initialization; this peak is not a measurement of bytes retained after WebView destruction."
+    },
+    {
+      "peak_mib": 93.52,
+      "leaf_address": "0x7d29d98a4fef",
+      "symbol": "unresolved",
+      "interpretation": "Heaptrack did not resolve the callsite to a module or symbol; this allocation peak cannot be attributed."
+    }
+  ],
+  "limitations": [
+    "Heaptrack instrumentation changes allocation timing and memory use; its absolute values cannot be compared with the earlier uninstrumented approximately 41 MiB parent residual.",
+    "The peak allocation sites summarize maxima during the whole run and do not prove which allocations remained at destroy+30 seconds.",
+    "The single Xvfb/software-GL sample does not cover hardware GBM, a production sandbox, the full Alula workbench, or the docs/04 three-run startup/idle/edit/close protocol.",
+    "WPEWebProcess exited after widget disposal while WPENetworkProcess remained; the roughly 40 MiB uninstrumented parent residual remains unexplained."
+  ],
+  "artifacts": {
+    "run_directory": "p00.4-linux-wpe-parent-heaptrack-run3/",
+    "heaptrack_trace": "p00.4-linux-wpe-parent-heaptrack-run3/heaptrack.gz",
+    "stage_samples": "p00.4-linux-wpe-parent-heaptrack-run3/*-memory.json",
+    "process_lists": "p00.4-linux-wpe-parent-heaptrack-run3/*-processes.txt"
+  }
+}

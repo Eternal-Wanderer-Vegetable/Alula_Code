@@ -121,6 +121,15 @@ because `flutter_inappwebview_linux 0.1.0-beta.1` references the missing
 `WPE_SETTING_DISABLE_ANIMATIONS` macro with WPE 2.54.2. The workflow and this
 guide include the separately required `libsecret-1-dev` package.
 
+For a lifecycle sample that skips screenshots and archive operations, launch
+the Release executable with `P00_4_WEB_AUTO=1` and
+`P00_4_WEB_NO_CAPTURE=1`. The probe creates the WebView after startup, waits
+until the page is loaded, destroys it, and writes phase markers under
+`$TMPDIR/p00.4-web-probe-phase.txt`. This mode reuses the normal WebView
+creation/disposal path while avoiding screenshot and MHTML allocations. The
+Heaptrack-instrumented exploratory sample and its limits are recorded in
+`docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-evidence.json`.
+
 An official WPE 2.52.6 source build compiled the plugin and passed Xvfb
 MHTML save/reload with GBM disabled. The first default-sandbox replay ran as
 UID 1000 with `SYS_ADMIN` and seccomp unconfined, left

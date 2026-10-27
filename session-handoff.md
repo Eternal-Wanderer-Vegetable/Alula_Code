@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十一轮：WPE 无截图生命周期三轮复验）
+> Last Updated：2026-10-28（第三十二轮：WPE 父进程 heaptrack 探查）
 
 ## 项目一句话
 
@@ -8,7 +8,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
-WPE 2.52.6 source-built Flutter探针又完成三轮无截图手动F5周期；销毁+30s中位残留40.2 MiB Private Bytes / 42.5 MiB PSS，NetworkProcess留存、父进程残留未归因。数据在 p00.4-linux-wpe-memory-repeat-evidence.json。
+WPE 2.52.6 source-built Flutter探针又完成三轮无截图手动F5周期；销毁+30s中位残留40.2 MiB Private Bytes / 42.5 MiB PSS，NetworkProcess留存、父进程残留未归因。Heaptrack插桩的无截图自动周期发现51.25 MiB软件rasterizer峰值栈经WPE插件初始化，另有93.52 MiB峰值调用点未解析；插桩数值不可与原始样本比较，仍未解释约40 MiB残留。见 p00.4-linux-wpe-parent-heaptrack-evidence.json。
 Windows Git Bash 的完整门禁刚复跑通过：cargo fmt --check、bash init.sh（Rust tests/Clippy/build_core/Flutter 122 项）及单独 app flutter analyze 均 exit 0。WSL init.sh --fast 因缺 cargo 与 Flutter 脚本 CRLF 失败；不是产品错误。输出见 p00-full-validation-windows-gitbash-2026-10-28.log。
 2026-10-28 按用户选择使用 Windows Git Bash 重跑 P00.3 四项夹具，全部通过；2,000,001 UTF-16 恢复 fixture 耗时约 2:10。P00.4 Linux/WPE 三轮自动生命周期样本与一轮无截图手动 F5 样本已记录：销毁+30s仍有 41.9–72.2 MiB Private Bytes 增量，NetworkProcess 留存，父进程残留尚未归因。
 macOS dispatch 仍因默认分支没有 workflow/current branch 未推送而不可运行；没有推送或 macOS runner 证据。需用户明确授权后才能推送当前分支以运行该 workflow。
@@ -17,6 +17,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
+
+- 第三十二轮：为独立WPE探针增加无截图自动生命周期模式并通过离线 analyze/test 与 Linux Release build。Heaptrack 1.4.0 的单轮插桩样本在销毁+30s时父进程比该轮基线高98.2/101.7 MiB private/PSS；一个51.25 MiB峰值栈走过插件初始化与 software `swrast_dri.so`，另一93.52 MiB峰值调用点未解析。插桩开销与peak/leak统计限制见 evidence JSON；仍不足以归因未插桩约40 MiB残留，P00.4 blocked。
 
 - 第三十一轮：三轮无截图/MHTML F5 创建销毁复验，destroy+30s Private Bytes/PSS中位数比空载高40.2/42.5 MiB；WebProcess退出、NetworkProcess留存，父进程残留未归因。仅探针级，P00.4仍blocked，见 p00.4-linux-wpe-manual-f5-repeat-run1/至run3/。
 - 第三十轮：Windows Git Bash 完整门禁通过；Flutter 122 项、Rust tests、Clippy、build_core、cargo fmt --check 与 flutter analyze 全绿。2,000,001 UTF-16 fixture 2:11。WSL fast 门禁失败为 runner/挂载问题，见 docs/diagnostics/2026-10-27-p00/p00-full-validation-windows-gitbash-2026-10-28.log。
@@ -106,6 +108,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
+- tools/web-engine-probe/lib/main.dart、tools/web-engine-probe/README.md、docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-run3/：WPE 无截图自动生命周期模式、Heaptrack 原始 trace 与单轮父进程峰值分配路径探查。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-build.log 与 p00.4-linux-wpe-trixie-compat.log：当前 beta Windows 兼容性复跑及两种 Linux WPE API 组合的构建阻塞证据。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/、三个 p00.4-linux-wpe-2.52.6-frame-poll-run*/ 与 p00.4-linux-wpe-2.52.6-inspector-http-run/：WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、首帧有界轮询、Remote Inspector HTTP target discovery、MHTML/PNG、sandbox 进程及单轮内存证据；明确记录临时 sandbox/GBM overrides。
 - .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；本地构建未通过，CI workflow 未运行。
@@ -122,7 +125,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 1. 按 AGENTS 启动流程重读 Current State、检查 GitNexus fresh，并使用 Windows Git Bash 跑 bash init.sh --fast；当前 WSL shell 没 Cargo 且无法运行 Windows Flutter SDK。
 2. 继续处理 P00.4：取得可用的 macOS runner/服务身份与许可证据；在有真实 DRM 驱动的 Linux runner 验证 WPE GBM/DMABUF；补齐 docs/04 长时、多场景三轮预算采样。当前本地 WPE 内存证据不满足验收。
 3. P00 完成前不要启动依赖它的 P01。当前分支 codex/vscode-parity-p00 尚未推送；此前仅推送并运行 macOS workflow 的授权请求仍待用户答复，未授权前不得推送。Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
-4. 阶段提交前仅暂存本轮 P00 文档/诊断文件；保留用户既有 app/、harness 等未提交变更。
+4. 阶段提交只暂存本轮 P00.4 探针代码、README、状态文档与 heaptrack 证据；保留用户既有 app/、harness 等未提交变更。
 
 ## 已知风险（尚未因本轮计划而修复）
 

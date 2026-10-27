@@ -1,0 +1,1 @@
+Heaptrack-wrapped app exited after destroy+30s sample.

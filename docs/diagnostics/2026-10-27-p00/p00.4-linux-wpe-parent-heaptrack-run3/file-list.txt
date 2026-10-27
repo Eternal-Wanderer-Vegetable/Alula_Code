@@ -1,0 +1,15 @@
+total 3.2M
+-rwxrwxrwx 1 probe probe  398 Oct 27 22:19 before-webview-memory.json
+-rwxrwxrwx 1 probe probe  818 Oct 27 22:19 environment.txt
+-rwxrwxrwx 1 probe probe    0 Oct 27  2026 file-list.txt
+-rwxrwxrwx 1 probe probe 1.1K Oct 27  2026 heaptrack-launch.log
+-rwxrwxrwx 1 probe probe 3.2M Oct 27  2026 heaptrack.gz
+-rwxrwxrwx 1 probe probe   34 Oct 27 22:19 pids.txt
+-rwxrwxrwx 1 probe probe   55 Oct 27  2026 probe-exit.txt
+drwxrwxrwx 1 probe probe 4.0K Oct 27 22:19 tmp
+-rwxrwxrwx 1 probe probe  398 Oct 27  2026 webview-destroyed-30s-memory.json
+-rwxrwxrwx 1 probe probe  398 Oct 27  2026 webview-destroyed-memory.json
+-rwxrwxrwx 1 probe probe  529 Oct 27  2026 webview-destroyed-processes.txt
+-rwxrwxrwx 1 probe probe  525 Oct 27 22:19 webview-open-memory.json
+-rwxrwxrwx 1 probe probe  628 Oct 27 22:19 webview-open-processes.txt
+-rwxrwxrwx 1 probe probe   64 Oct 27 22:19 xvfb.log
