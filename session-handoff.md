@@ -1,7 +1,7 @@
 # session-handoff.md — 会话交接
 
 > 收尾时更新本文件，让下一个会话无需考古即可续作。
-> Last Updated：2026-10-27（第二轮收尾：feat-010a 撤销/重做 + 查找替换完成；剩余 Git 面板/文件监视）
+> Last Updated：2026-10-27（第三轮收尾：Git 面板完成；feat-010 仅剩文件监视/组件切换）
 
 ## 项目一句话
 
@@ -71,8 +71,9 @@ Phase 0 已关闭（G1 决策：原型 B 自研路线），当前处于 **Phase 
 ## Next Session（推荐首步）
 
 1. **推送 GitHub 看 CI 首跑**（用户操作）：`git push`。
-2. **下轮开发任务**：Git 面板（docs/03 Git 行：status/stage/commit/diff，
-   CLI 封装）或 W4 搜索视图（ripgrep 流式）或 W3-2c 快速打开异步化。
+2. **下轮开发任务**：W4 搜索视图（ripgrep 流式结果）或文件监视
+   （editor-workspace），或 W3-2c 快速打开异步化；命令面板里补 Git 命令
+   （暂存全部/提交等）。
 3. 桌面 exe（双击入口）为 W3-1 版本；要体验 W3-2 键位覆盖需重建
    （flutter build windows --release，开发者模式需保持开启）。
 3. feat-010（撤销/重做/查找替换）与 W2 并行线，先做谁由用户定。

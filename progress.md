@@ -9,6 +9,19 @@
 （Flutter 工作台 + Rust 核心 + Tree-sitter + LSP + 可选 Node 宿主）。
 **Phase 1 增量 1 完成**：多文件工作台闭环 + rust-analyzer 按工作区共享接入。
 
+## 今日会话（2026-10-27 第三轮）：feat-git Git 面板
+
+- **GitCli**（Dart CLI 封装）：status --porcelain -z 解析（rename/中文路径/
+  未跟踪目录归一化）、add/reset/commit/diff/log；默认 runner 显式 UTF-8
+  （Windows 码表乱码坑）；runner 可注入。6 假 runner 单测 + 4 真 git 集成测试
+  （临时仓库全流程，局部 user 配置）。
+- **UI**：活动栏双视图切换（资源管理器/源代码管理，重复点折叠）；Git 面板
+  （分支/暂存区与工作区分组/单文件暂存取消/提交框/错误展示）；点击更改文件
+  → 底部面板「Git Diff」标签看差异。
+- **踩坑**：widget 测试假 async zone 里真实 git 子进程永不完成 → tester.runAsync
+  包裹；ListTile 在彩色容器内触发框架断言 → 透明 Material 包裹。
+- 测试：104 全绿 + init.sh + CI 全绿。
+
 ## 今日会话（2026-10-27 第二轮）：feat-010a 撤销/重做 + 查找替换
 
 - **决策**：Flutter 内建 UndoHistory 探测死锁（测试环境）且绑死 TextField
