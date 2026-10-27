@@ -22,6 +22,7 @@ import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
 import '../git/git_cli.dart';
 import '../search/search_service.dart';
+import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
 import 'commands.dart';
 import 'layout_controller.dart';
@@ -133,6 +134,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   StreamSubscription<SearchHit>? _searchSub;
   int _searchGen = 0;
   SearchService? _searchService;
+  WorkspaceWatcher? _watcher;
 
   // ---------- Git 面板（feat-git，CLI 封装） ----------
   String _sidebarView = 'explorer';
@@ -476,6 +478,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _workspaceRoot = workspace;
         _git = GitCli(root: workspace);
         _searchService = SearchService(root: workspace);
+        _attachWorkspaceWatcher();
       }
       _nextDocId = maxId + 1;
     } catch (_) {
@@ -620,6 +623,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _git = GitCli(root: path);
         _refreshGit();
         _searchService = SearchService(root: path);
+        _attachWorkspaceWatcher();
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
@@ -1230,6 +1234,91 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  // ---------- 工作区文件监视（feat-filewatch） ----------
+
+  void _attachWorkspaceWatcher() {
+    final root = _workspaceRoot;
+    if (root == null) return;
+    _watcher?.stop();
+    _watcher = WorkspaceWatcher(root: root, onChanged: _onWorkspaceChanged)
+      ..start();
+  }
+
+  /// 外部变更（防抖后）：刷新文件树 + Git 状态；打开文档若在磁盘上被外部
+  /// 修改，干净文档自动重载、脏文档仅提示（不覆盖本地编辑）。
+  Future<void> _onWorkspaceChanged() async {
+    if (!mounted) return;
+    _refreshTree();
+    _refreshGit();
+    await _checkExternalChanges();
+  }
+
+  /// 重载文件树：根 + 已展开目录（保留展开状态）。
+  void _refreshTree() {
+    final core = _core;
+    if (core == null || _workspaceRoot == null) return;
+    _reloadTreeRoots();
+
+    void walk(List<TreeNode> nodes) {
+      for (final n in nodes) {
+        if (!n.isDir || !n.expanded || n.children == null) continue;
+        try {
+          final entries = core.workspace.listDir(n.path);
+          n.children = entries
+              .map((e) => TreeNode(
+                    name: e['name'] as String,
+                    path: e['path'] as String,
+                    isDir: (e['is_dir'] as bool?) ?? false,
+                  ))
+              .toList();
+          walk(n.children!);
+        } on AlulaException {
+          // 目录被外部删除等：保留旧子节点，不中断
+        }
+      }
+    }
+
+    walk(_treeRoots);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _checkExternalChanges() async {
+    final core = _core;
+    if (core == null) return;
+    for (final g in _groups.values) {
+      for (final d in g.docs.where((d) => d.path != null)) {
+        String? disk;
+        try {
+          disk = core.workspace.readFile(d.path!);
+        } on AlulaException {
+          continue; // 文件被外部删除：V1 不处理（保留内存缓冲）
+        }
+        if (d.dirtyDisk) {
+          if (disk != d.savedText) {
+            if (mounted) {
+              setState(() =>
+                  _statusDetail = '注意：${d.name} 在磁盘上被外部修改（本地有未保存编辑）');
+            }
+          }
+        } else if (disk != d.controller.text) {
+          // 干净文档自动重载（_undoRedoBusy 复用为「程序化更新」闸门）
+          _undoRedoBusy = true;
+          d.controller.value = TextEditingValue(
+            text: disk,
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+          d.savedText = disk;
+          d.dirtyDisk = false;
+          _undoRedoBusy = false;
+          if (mounted) {
+            setState(() => _statusDetail = '已自动重载外部修改的 ${d.name}');
+          }
+        }
+      }
+    }
+    _scheduleStateSave();
+  }
+
   // ---------- Git 面板 ----------
 
   Future<void> _refreshGit() async {
@@ -1357,6 +1446,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _searchSub?.cancel();
     _searchQuery.dispose();
+    _watcher?.stop();
     _panelTab.dispose();
     _commitMessage.dispose();
     _layout.dispose();

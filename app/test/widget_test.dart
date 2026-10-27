@@ -29,6 +29,9 @@ Future<void> pressChord(
 }
 
 /// 仓库相对的 fixture 工程（CI 是 Linux，不能写死 Windows 绝对路径）。
+// 换行符（字符串拼接用，避免脚本转义问题）
+const String kNL = '\n';
+
 final fixtureRoot =
     '${Directory.current.parent.path}/tests/fixtures/rust-mini';
 
@@ -499,6 +502,51 @@ void main() {
           reason: '命中文件应在编辑器打开（.last 排除侧栏搜索框）');
       expect(editor.controller!.selection.baseOffset, 0,
           reason: '命中在第 1 行，光标应跳到行首');
+    });
+  });
+
+  testWidgets('feat-filewatch 外部修改：干净文档自动重载', (tester) async {
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+          prefix: 'alula_fw_widget',
+          extraFiles: {'watch.txt': 'v1' + kNL});
+      addTearDown(() async {
+        if (repo.existsSync()) await repo.delete(recursive: true);
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+
+      // 打开 watch.txt
+      await tester.tap(find.text('watch.txt'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pump();
+      expect(
+          tester
+              .widget<TextField>(find.byType(TextField).last)
+              .controller!
+              .text,
+          'v1' + kNL);
+
+      // 外部修改磁盘文件
+      File(repo.path + Platform.pathSeparator + 'watch.txt')
+          .writeAsStringSync('v2 external' + kNL);
+      // 防抖 600ms + 事件延迟 + 重载
+      await Future<void>.delayed(const Duration(milliseconds: 1800));
+      await tester.pump();
+
+      expect(
+          tester
+              .widget<TextField>(find.byType(TextField).last)
+              .controller!
+              .text,
+          'v2 external' + kNL,
+          reason: '干净文档应在磁盘外部修改后自动重载');
     });
   });
 
