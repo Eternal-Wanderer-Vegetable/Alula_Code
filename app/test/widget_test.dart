@@ -452,6 +452,56 @@ void main() {
     });
   });
 
+  testWidgets('feat-search 搜索视图：Ctrl+Shift+F/流式结果/点击跳行', (tester) async {
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+          prefix: 'alula_search_widget',
+          extraFiles: {'src/needle.py': 'find the needle here\n'});
+      addTearDown(() async {
+        if (repo.existsSync()) await repo.delete(recursive: true);
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+
+      // 键位 Ctrl+Shift+F 切到搜索视图
+      await pressChord(tester, LogicalKeyboardKey.keyF, control: true, shift: true);
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('search-input')), findsOneWidget);
+
+      // 输入并提交（onSubmitted）
+      await tester.enterText(
+          find.byKey(const ValueKey('search-input')), 'needle');
+      await tester.pump();
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+
+      expect(find.textContaining('find the needle here'), findsOneWidget,
+          reason: '命中行文本应出现在结果列表');
+      expect(find.textContaining('needle.py'), findsOneWidget,
+          reason: '文件名展示');
+
+      // 点击命中 → 打开文件
+      await tester.tap(find.byKey(const ValueKey('search-hit-0')));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await tester.pump();
+
+      final editor =
+          tester.widget<TextField>(find.byType(TextField).last);
+      expect(editor.controller!.text, contains('find the needle here'),
+          reason: '命中文件应在编辑器打开（.last 排除侧栏搜索框）');
+      expect(editor.controller!.selection.baseOffset, 0,
+          reason: '命中在第 1 行，光标应跳到行首');
+    });
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(

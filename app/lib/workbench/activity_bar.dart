@@ -34,8 +34,12 @@ class ActivityBar extends StatelessWidget {
             active: !sidebarCollapsed && activeView == 'explorer',
             onTap: () => onSelectView('explorer'),
           ),
-          const _Item(
-              icon: Icons.search, tooltip: '搜索（W4）', active: false),
+          _Item(
+            icon: Icons.search,
+            tooltip: '搜索',
+            active: !sidebarCollapsed && activeView == 'search',
+            onTap: () => onSelectView('search'),
+          ),
           _Item(
             icon: Icons.account_tree_outlined,
             tooltip: '源代码管理',

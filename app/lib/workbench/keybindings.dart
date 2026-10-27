@@ -146,6 +146,7 @@ class KeybindingSet {
   static const Map<String, String> defaults = {
     'view.commandPalette': 'ctrl+shift+p',
     'view.quickOpen': 'ctrl+p',
+    'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
     'view.togglePanel': 'ctrl+j',
     'file.save': 'ctrl+s',

@@ -21,6 +21,7 @@ import '../editor/find_replace.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
 import '../git/git_cli.dart';
+import '../search/search_service.dart';
 import 'activity_bar.dart';
 import 'commands.dart';
 import 'layout_controller.dart';
@@ -123,6 +124,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _findVisible = false;
   bool _replaceVisible = false;
 
+  // ---------- 搜索视图（feat-search） ----------
+  final _searchQuery = TextEditingController();
+  List<SearchHit> _searchHits = [];
+  bool _searching = false;
+  String? _searchBackendLabel;
+  bool _searchCaseSensitive = false;
+  StreamSubscription<SearchHit>? _searchSub;
+  int _searchGen = 0;
+  SearchService? _searchService;
+
   // ---------- Git 面板（feat-git，CLI 封装） ----------
   String _sidebarView = 'explorer';
   GitCli? _git;
@@ -202,6 +213,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         'Ctrl+P');
+    reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'), 'Ctrl+B');
     reg('view.togglePanel', '查看', '切换面板',
@@ -463,6 +475,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (workspace is String && Directory(workspace).existsSync()) {
         _workspaceRoot = workspace;
         _git = GitCli(root: workspace);
+        _searchService = SearchService(root: workspace);
       }
       _nextDocId = maxId + 1;
     } catch (_) {
@@ -606,6 +619,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _fileIndexCache = null;
         _git = GitCli(root: path);
         _refreshGit();
+        _searchService = SearchService(root: path);
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
@@ -1152,6 +1166,70 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  // ---------- 搜索视图 ----------
+
+  Future<void> _runSearch() async {
+    final svc = _searchService;
+    final gen = ++_searchGen;
+    await _searchSub?.cancel();
+    final q = _searchQuery.text;
+    if (!mounted) return;
+    setState(() {
+      _searching = true;
+      _searchHits = [];
+    });
+    if (q.trim().isEmpty || svc == null) {
+      if (mounted) setState(() => _searching = false);
+      return;
+    }
+    final backend = await svc.detectBackend();
+    if (!mounted || gen != _searchGen) return;
+    setState(() {
+      _searchBackendLabel = switch (backend) {
+        SearchBackend.ripgrep => 'ripgrep',
+        SearchBackend.gitGrep => 'git grep',
+        null => '不可用（需 ripgrep 或 git 仓库）',
+      };
+      _searching = backend == null;
+    });
+    if (backend == null) return;
+    final caseSensitive = _searchCaseSensitive;
+    _searchSub = svc
+        .search(q, caseSensitive: caseSensitive, backend: backend)
+        .listen((hit) {
+      if (!mounted || gen != _searchGen) return;
+      setState(() => _searchHits = [..._searchHits, hit]);
+    }, onDone: () {
+      if (mounted && gen == _searchGen) setState(() => _searching = false);
+    }, onError: (Object e) {
+      if (mounted && gen == _searchGen) {
+        setState(() {
+          _searching = false;
+          _statusDetail = '搜索失败：$e';
+        });
+      }
+    });
+  }
+
+  /// 打开命中的文件并跳转到对应行。
+  Future<void> _openSearchHit(SearchHit hit) async {
+    final root = _workspaceRoot;
+    if (root == null) return;
+    final sep = root.endsWith('/') || root.endsWith('\\') ? '' : '/';
+    await _openFileByPath('$root$sep${hit.path}');
+    final active = _active;
+    if (active == null) return;
+    final lines = active.controller.text.split('\n');
+    var offset = 0;
+    for (var i = 0; i < hit.line - 1 && i < lines.length; i++) {
+      offset += lines[i].length + 1;
+    }
+    active.controller.value = TextEditingValue(
+      text: active.controller.text,
+      selection: TextSelection.collapsed(offset: offset),
+    );
+  }
+
   // ---------- Git 面板 ----------
 
   Future<void> _refreshGit() async {
@@ -1277,6 +1355,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final n in _editorFocusNodes.values) {
       n.dispose();
     }
+    _searchSub?.cancel();
+    _searchQuery.dispose();
     _panelTab.dispose();
     _commitMessage.dispose();
     _layout.dispose();
@@ -1346,6 +1426,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     '命令面板${_sc('view.commandPalette')}', _showCommandPalette),
                 TitleMenuItem(
                     '快速打开文件…${_sc('view.quickOpen')}', _showQuickOpen),
+                TitleMenuItem('搜索…${_sc('view.search')}', () {
+                  _selectSidebarView('search');
+                }),
                 TitleMenuItem(
                     '切换侧栏', () => _layout.toggleRegion('sidebar')),
                 TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
@@ -1369,9 +1452,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         sidebarCollapsed: _layout.isCollapsed('sidebar'),
                         onSelectView: _selectSidebarView,
                       ),
-                  'sidebar': (_) => _sidebarView == 'git'
-                      ? _buildGitPanel()
-                      : _buildSidebar(),
+                  'sidebar': (_) => switch (_sidebarView) {
+                        'git' => _buildGitPanel(),
+                        'search' => _buildSearchPanel(),
+                        _ => _buildSidebar(),
+                      },
                   'panel': (_) => _buildPanel(),
                   // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                   for (final g in _groups.values)
@@ -1394,6 +1479,105 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
         ),
         ),
+      ),
+    );
+  }
+
+  // ---------- 侧栏：搜索 ----------
+
+  Widget _buildSearchPanel() {
+    return Container(
+      color: const Color(0xFF181B20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('search-input'),
+                    controller: _searchQuery,
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: const InputDecoration(
+                      hintText: '搜索（Enter 执行）',
+                      isDense: true,
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    ),
+                    onSubmitted: (_) => _runSearch(),
+                  ),
+                ),
+                IconButton(
+                  tooltip: '区分大小写',
+                  onPressed: () {
+                    setState(() => _searchCaseSensitive = !_searchCaseSensitive);
+                  },
+                  icon: Text('Aa',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: _searchCaseSensitive
+                              ? Colors.lightBlueAccent
+                              : Colors.grey.shade400)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  tooltip: '搜索',
+                  onPressed: _runSearch,
+                  icon: const Icon(Icons.search, size: 16),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 4, 10, 4),
+            child: Text(
+              _searching
+                  ? '搜索中…'
+                  : '${_searchBackendLabel == null ? '' : '$_searchBackendLabel · '}${_searchHits.length} 个匹配（上限 500）',
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: _searchHits.isEmpty
+                ? Center(
+                    child: Text(
+                      _searching ? '' : '输入关键词后回车搜索',
+                      style: TextStyle(
+                          color: Colors.grey.shade500, fontSize: 12),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _searchHits.length,
+                    itemBuilder: (context, i) {
+                      final hit = _searchHits[i];
+                      return Material(
+                        type: MaterialType.transparency,
+                        child: ListTile(
+                        key: ValueKey('search-hit-$i'),
+                        dense: true,
+                        title: Text(hit.lineText,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12)),
+                        subtitle: Text(
+                            '${_nameOf(hit.path)} · 行 ${hit.line}',
+                            style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey.shade500),
+                            overflow: TextOverflow.ellipsis),
+                        onTap: () => _openSearchHit(hit),
+                      ),
+                      );
+                    },
+                  ),
+          ),
+        ],
       ),
     );
   }
