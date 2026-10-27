@@ -9,7 +9,14 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成；2026-10-28 Windows Git Bash 复跑的四项 P00.3 命令与完整门禁全部通过。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持；WSLg 宿主在 `GALLIUM_DRIVER=d3d12` 下成功创建 D3D12 EGL/GLES context；临时 Debian GBM probe 因缺 DRI driver 返回 null，不能推断 WPE GBM。随后 WPE 2.52.6 快照容器映射 WSLg 设备、GBM enabled 且 software GL unset 时，Flutter EGL context 失败、WPEWebProcess crash、90 秒内未到 initial-loaded；WSLg X11 :0 与 Wayland socket 的容器 EGL 检查都返回 EGL_NOT_INITIALIZED；Wayland socket 可连接但无 GLES2 config；直接 WPE 镜像 GBM probe 打开 render node 后 `gbm_create_device` 返回 null。记录在 `p00.4-linux-wpe-wslg-d3d12-run/` 与 `p00.4-wslg-egl-evidence.json`；这属于当前环境集成失败，WPE GBM 仍未验证。macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。2026-10-28 三轮 WPE 自动生命周期采样与三轮无截图 F5 复跑显示销毁+30s仍有残留，中位数见第三十一轮；这些探针样本不满足 docs/04 DoD。Heaptrack 单轮插桩峰值路径见第三十二轮，仍未解释原始父进程残留。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成；2026-10-28 Windows Git Bash 复跑的四项 P00.3 命令与完整门禁全部通过。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持；WSLg 宿主在 `GALLIUM_DRIVER=d3d12` 下成功创建 D3D12 EGL/GLES context；临时 Debian GBM probe 因缺 DRI driver 返回 null，不能推断 WPE GBM。随后 WPE 2.52.6 快照容器映射 WSLg 设备、GBM enabled 且 software GL unset 时，Flutter EGL context 失败、WPEWebProcess crash、90 秒内未到 initial-loaded；WSLg X11 :0 与 Wayland socket 的容器 EGL 检查都返回 EGL_NOT_INITIALIZED；Wayland socket 可连接但无 GLES2 config；直接 WPE 镜像 GBM probe 打开 render node 后 `gbm_create_device` 返回 null。记录在 `p00.4-linux-wpe-wslg-d3d12-run/` 与 `p00.4-wslg-egl-evidence.json`；这属于当前环境集成失败，WPE GBM 仍未验证。macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。2026-10-28 三轮 WPE 自动生命周期采样与三轮无截图 F5 复跑显示销毁+30s仍有残留，中位数见第三十一轮；这些探针样本不满足 docs/04 DoD。Heaptrack 单轮插桩峰值路径见第三十二轮。第三十三轮以 UID 1000 未插桩 smaps 复测得到 +40.9 MiB private/+43.2 MiB PSS；父进程 `[heap]`、WPE WebKit 文件映射与匿名映射驻留增加，但仍无法判断 live object、分配器保留或具体 owner，不能据此判定泄漏。P00.4 继续 blocked；第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
+
+## 今日会话（2026-10-28 第三十三轮）：WPE 父进程 smaps 映射 follow-up
+
+- 在 UID 1000 的 Debian 12/WPE 2.52.6/Xvfb 软件 GL 容器中，以无截图自动模式复跑一轮并保存 baseline、WebView open、destroy、destroy+30s 的进程 `smaps`/maps/status；无 MHTML、截图或 Inspector 操作。
+- 本轮进程树 private/PSS 从 WebView 前 177.46/231.68 MiB 到销毁+30s 218.36/274.91 MiB，增量 40.90/43.23 MiB；WPEWebProcess 退出，WPENetworkProcess 留存。
+- 父进程最大映射组增量为 `[heap]` +21.11 MiB PSS、WPE WebKit 文件映射 +14.62 MiB PSS（主要 private-clean）、匿名映射合计 +7.30 MiB PSS。映射数据不能区分 live object、malloc 保留页或具体库/图形 owner，不构成 leak 证明；sandbox 与 GBM 关闭，单轮探针，不满足 docs/04。
+- 原始压缩快照、采集脚本和汇总见 `p00.4-linux-wpe-parent-smaps-run1/`、`p00.4-linux-wpe-parent-smaps-evidence.json` 与更新后的 `p00.4-web-adr.md`。P00.4 继续 blocked，P01 不启动。
 
 ## 今日会话（2026-10-28 第三十二轮）：WPE 父进程 heaptrack 探查
 
@@ -414,9 +421,8 @@ cargo test --workspace   → 10+12+3+2+3+1+3+4 全部 ok（41 passed, 0 failed�
 flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 FFI 闭环）
 ```
 
-## Next（下一步，按优先级）
+## Next（下一步，按 docs/03）
 
-1. **feat-010 下一增量**：撤销/重做 UI 化、查找替换、Git 面板（status/stage/commit）、文件监视。
-2. **feat-002 人工复核**：code_forge 真机 IME + 万行文件流畅度 → 通过后执行编辑器组件切换。
-3. **feat-013 收尾**：推送 GitHub 后验证 CI 全绿；GitNexus 在 commit 后按 hook 提示重建索引。
-4. 诊断/补全异步化（替换现轮询+阻塞 FFI）——为跳转定义/悬浮做准备。
+1. 继续关闭 P00.4 风险门：获取可用 macOS runner、处理服务身份/许可边界、在真实 DRM 主机验证 WPE GBM/DMABUF，并完成 docs/04 三轮长时多场景采样。
+2. 等待用户对推送当前分支以运行 macOS workflow 的明确授权；未授权前保持分支本地，不触发 workflow。
+3. P00/feat-022 完成前不启动依赖它的 P01；当前尚有跨平台、官方服务和内存验收项阻塞。

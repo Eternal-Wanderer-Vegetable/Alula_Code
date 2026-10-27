@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-28",
+  "experiment": "one uninstrumented Linux WPE no-capture create/destroy cycle with /proc smaps snapshots",
+  "probe": {
+    "runtime": "Flutter Linux Release web_engine_probe",
+    "webkit": "WPE WebKit 2.52.6 source build",
+    "mode": "P00_4_WEB_AUTO=1 P00_4_WEB_NO_CAPTURE=1",
+    "actions": "Sample before WebView creation, after initial page load, immediately after widget removal, and 30 seconds later; no screenshot, MHTML, or Inspector command."
+  },
+  "environment": {
+    "os": "Debian GNU/Linux 12 (Bookworm), Docker container",
+    "uid_gid": "1000:1000 (probe)",
+    "display": "Xvfb :127, 1280x720x24",
+    "renderer": "Mesa software GL",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1",
+    "scope_limit": "One diagnostic probe cycle only; software rendering with WebKit sandbox and GBM disabled; not product integration, hardware GBM, a leak proof, or docs/04 acceptance."
+  },
+  "measurement": {
+    "source": "/proc/<pid>/smaps_rollup",
+    "private_mib_definition": "sum of Private_Clean and Private_Dirty across the probe and direct WPE child processes",
+    "stages": {
+      "before_webview": {
+        "process_count": 2,
+        "private_mib": 177.46,
+        "pss_mib": 231.68,
+        "processes": ["web_engine_probe", "WPENetworkProcess"]
+      },
+      "webview_open": {
+        "process_count": 3,
+        "private_mib": 286.07,
+        "pss_mib": 388.36,
+        "processes": ["web_engine_probe", "WPEWebProcess", "WPENetworkProcess"]
+      },
+      "webview_destroyed_30s": {
+        "process_count": 2,
+        "private_mib": 218.36,
+        "pss_mib": 274.91,
+        "processes": ["web_engine_probe", "WPENetworkProcess"]
+      },
+      "delta_destroyed_30s_minus_before": {
+        "private_mib": 40.90,
+        "pss_mib": 43.23
+      }
+    }
+  },
+  "parent_mapping_group_delta_mib_destroyed_30s_minus_before": {
+    "[heap]": {
+      "rss_mib": 21.11,
+      "pss_mib": 21.11,
+      "private_dirty_mib": 21.11
+    },
+    "/work/install/lib/libWPEWebKit-2.0.so.1.9.10": {
+      "rss_mib": 15.75,
+      "pss_mib": 14.62,
+      "private_clean_mib": 13.50
+    },
+    "[anonymous] (aggregate of unnamed mappings)": {
+      "rss_mib": 7.30,
+      "pss_mib": 7.30,
+      "private_dirty_mib": 7.30
+    },
+    "[anon:dart-heap]": {
+      "rss_mib": -0.98,
+      "pss_mib": -0.98,
+      "private_dirty_mib": -0.98
+    }
+  },
+  "interpretation": [
+    "The process-tree residual reproduces the earlier roughly 40-43 MiB uninstrumented increase.",
+    "The largest positive resident mapping-group changes are the process brk heap, a WPE WebKit file mapping, and unnamed anonymous mappings.",
+    "smaps identifies mapping categories and residency, not whether the heap pages contain live objects, allocator-retained pages, graphics/JIT cache, or another owner's allocations; no leak or subsystem attribution is established."
+  ],
+  "artifacts": {
+    "run_directory": "p00.4-linux-wpe-parent-smaps-run1/",
+    "raw_maps_and_smaps": "compressed per-process snapshots in the run directory",
+    "capture_script": "p00.4-linux-wpe-parent-smaps-run1/capture.sh"
+  }
+}
