@@ -9,12 +9,17 @@ import 'package:flutter/material.dart';
 class ActivityBar extends StatelessWidget {
   const ActivityBar({
     super.key,
+    required this.activeView,
     required this.sidebarCollapsed,
-    required this.onToggleSidebar,
+    required this.onSelectView,
   });
 
+  /// 当前侧栏视图（'explorer' / 'git'）；侧栏折叠时仍保留上次视图。
+  final String activeView;
   final bool sidebarCollapsed;
-  final VoidCallback onToggleSidebar;
+
+  /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
+  final ValueChanged<String> onSelectView;
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +31,17 @@ class ActivityBar extends StatelessWidget {
           _Item(
             icon: Icons.explore_outlined,
             tooltip: '资源管理器',
-            active: !sidebarCollapsed,
-            onTap: onToggleSidebar,
+            active: !sidebarCollapsed && activeView == 'explorer',
+            onTap: () => onSelectView('explorer'),
           ),
           const _Item(
               icon: Icons.search, tooltip: '搜索（W4）', active: false),
-          const _Item(
-              icon: Icons.account_tree_outlined,
-              tooltip: '源代码管理（W4）',
-              active: false),
+          _Item(
+            icon: Icons.account_tree_outlined,
+            tooltip: '源代码管理',
+            active: !sidebarCollapsed && activeView == 'git',
+            onTap: () => onSelectView('git'),
+          ),
           const Spacer(),
           const _Item(icon: Icons.settings_outlined, tooltip: '管理（W6）', active: false),
         ],

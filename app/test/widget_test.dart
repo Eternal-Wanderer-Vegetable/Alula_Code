@@ -6,6 +6,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -396,6 +397,59 @@ void main() {
             .text,
         '${before}XX',
         reason: '撤销应恢复替换前文本（Rust 侧经 diff 反向同步）');
+  });
+
+  testWidgets('feat-git 面板：视图切换/状态/暂存/提交', (tester) async {
+    // 真实 git 子进程需要 runAsync（widget 测试默认假 async zone）
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+          prefix: 'alula_git_widget', extraFiles: {'hello.py': 'print(1)\n'});
+      addTearDown(() async {
+        if (repo.existsSync()) await repo.delete(recursive: true);
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+
+      // 活动栏切到源代码管理
+      await tester.tap(find.byTooltip('源代码管理'));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await tester.pump();
+
+      expect(find.text('源代码管理'), findsWidgets);
+      expect(find.text('main'), findsOneWidget, reason: '分支名展示');
+      expect(find.text('hello.py'), findsOneWidget, reason: '未跟踪文件列出');
+      expect(find.text('更改（1）'), findsOneWidget);
+
+      // 暂存 hello.py
+      await tester.tap(find.byTooltip('暂存'));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await tester.pump();
+      expect(find.text('暂存的更改（1）'), findsOneWidget);
+
+      // 提交
+      await tester.enterText(
+          find.byKey(const ValueKey('commit-input')), 'test: widget 提交');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('commit-button')));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      await tester.pump();
+      expect(find.text('工作区干净'), findsOneWidget, reason: '提交后无更改');
+
+      // 真 git 验证：仓库应有两个提交
+      final log = await Process.run('git', ['log', '--oneline'],
+          workingDirectory: repo.path);
+      final lines = (log.stdout as String)
+          .split('\n')
+          .where((l) => l.isNotEmpty)
+          .length;
+      expect(lines, 2);
+    });
   });
 
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {

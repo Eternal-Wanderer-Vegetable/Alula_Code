@@ -20,6 +20,7 @@ import '../bridge/alula_core.dart';
 import '../editor/find_replace.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
+import '../git/git_cli.dart';
 import 'activity_bar.dart';
 import 'commands.dart';
 import 'layout_controller.dart';
@@ -121,6 +122,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
   bool _replaceVisible = false;
+
+  // ---------- Git 面板（feat-git，CLI 封装） ----------
+  String _sidebarView = 'explorer';
+  GitCli? _git;
+  bool _gitReady = false;
+  String _gitBranch = '';
+  List<GitStatusEntry> _gitEntries = [];
+  String? _gitError;
+  final _commitMessage = TextEditingController();
+  String _gitDiff = '';
+  String _gitDiffPath = '';
+  bool _gitDiffStaged = false;
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -155,7 +168,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   List<String> _completionItems = const [];
 
   late final TabController _panelTab =
-      TabController(length: 3, vsync: this, initialIndex: 0);
+      TabController(length: 4, vsync: this, initialIndex: 0);
 
   @override
   void initState() {
@@ -449,6 +462,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final workspace = data['workspace'];
       if (workspace is String && Directory(workspace).existsSync()) {
         _workspaceRoot = workspace;
+        _git = GitCli(root: workspace);
       }
       _nextDocId = maxId + 1;
     } catch (_) {
@@ -590,6 +604,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toList());
         _statusDetail = '工作区：$path（${entries.length} 项）';
         _fileIndexCache = null;
+        _git = GitCli(root: path);
+        _refreshGit();
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
@@ -1136,6 +1152,99 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  // ---------- Git 面板 ----------
+
+  Future<void> _refreshGit() async {
+    final git = _git;
+    if (git == null) return;
+    try {
+      if (!await git.isRepo()) {
+        if (!mounted) return;
+        setState(() {
+          _gitReady = false;
+          _gitError = null;
+          _gitEntries = [];
+        });
+        return;
+      }
+      final branch = await git.currentBranch();
+      final entries = await git.status();
+      if (!mounted) return;
+      setState(() {
+        _gitReady = true;
+        _gitBranch = branch;
+        _gitEntries = entries;
+        _gitError = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _gitReady = false;
+        _gitError = '$e';
+      });
+    }
+  }
+
+  Future<void> _gitStage(String path) async {
+    try {
+      await _git?.stage([path]);
+      await _refreshGit();
+    } catch (e) {
+      if (mounted) setState(() => _gitError = '$e');
+    }
+  }
+
+  Future<void> _gitUnstage(String path) async {
+    try {
+      await _git?.unstage([path]);
+      await _refreshGit();
+    } catch (e) {
+      if (mounted) setState(() => _gitError = '$e');
+    }
+  }
+
+  Future<void> _gitCommit() async {
+    final msg = _commitMessage.text;
+    if (msg.trim().isEmpty) {
+      setState(() => _gitError = '提交信息不能为空');
+      return;
+    }
+    try {
+      final summary = await _git!.commit(msg);
+      _commitMessage.clear();
+      await _refreshGit();
+      if (mounted) setState(() => _statusDetail = summary);
+    } catch (e) {
+      if (mounted) setState(() => _gitError = '$e');
+    }
+  }
+
+  Future<void> _showGitDiff(GitStatusEntry e) async {
+    final staged = !e.hasUnstagedChanges; // 纯暂存变更看 cached，否则看工作区
+    try {
+      final d = await _git?.diff(path: e.path, staged: staged) ?? '';
+      if (!mounted) return;
+      setState(() {
+        _gitDiff = d.isEmpty ? '（无文本差异：可能是二进制文件或全新文件）' : d;
+        _gitDiffPath = e.origPath == null ? e.path : '${e.origPath} → ${e.path}';
+        _gitDiffStaged = staged;
+      });
+      _panelTab.animateTo(3);
+    } catch (err) {
+      if (mounted) setState(() => _gitError = '$err');
+    }
+  }
+
+  /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
+  void _selectSidebarView(String view) {
+    if (_sidebarView == view && !_layout.isCollapsed('sidebar')) {
+      _layout.toggleRegion('sidebar');
+      return;
+    }
+    setState(() => _sidebarView = view);
+    _layout.showRegion('sidebar');
+  }
+
   void _showAbout() {
     showDialog<void>(
       context: context,
@@ -1169,6 +1278,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       n.dispose();
     }
     _panelTab.dispose();
+    _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
   }
@@ -1255,10 +1365,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 layout: _layout,
                 builders: {
                   'activity': (_) => ActivityBar(
+                        activeView: _sidebarView,
                         sidebarCollapsed: _layout.isCollapsed('sidebar'),
-                        onToggleSidebar: () => _layout.toggleRegion('sidebar'),
+                        onSelectView: _selectSidebarView,
                       ),
-                  'sidebar': (_) => _buildSidebar(),
+                  'sidebar': (_) => _sidebarView == 'git'
+                      ? _buildGitPanel()
+                      : _buildSidebar(),
                   'panel': (_) => _buildPanel(),
                   // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                   for (final g in _groups.values)
@@ -1281,6 +1394,171 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
         ),
         ),
+      ),
+    );
+  }
+
+  // ---------- 侧栏：源代码管理（Git） ----------
+
+  Widget _buildGitPanel() {
+    if (!_gitReady) {
+      return Container(
+        color: const Color(0xFF181B20),
+        padding: const EdgeInsets.all(12),
+        alignment: Alignment.topLeft,
+        child: Text(
+          _gitError ?? '当前文件夹不是 Git 仓库',
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+        ),
+      );
+    }
+    final staged =
+        _gitEntries.where((e) => e.hasStagedChanges).toList();
+    final changes =
+        _gitEntries.where((e) => !e.hasStagedChanges).toList();
+    return Container(
+      color: const Color(0xFF181B20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+            child: Row(
+              children: [
+                const Text('源代码管理',
+                    style:
+                        TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Icon(Icons.call_split, size: 13, color: Colors.grey.shade500),
+                const SizedBox(width: 4),
+                Text(_gitBranch,
+                    style: TextStyle(
+                        color: Colors.grey.shade400, fontSize: 11)),
+                IconButton(
+                  tooltip: '刷新',
+                  onPressed: _refreshGit,
+                  icon: const Icon(Icons.refresh, size: 15),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+            child: Column(
+              children: [
+                TextField(
+                  key: const ValueKey('commit-input'),
+                  controller: _commitMessage,
+                  minLines: 2,
+                  maxLines: 4,
+                  style: const TextStyle(fontSize: 12),
+                  decoration: const InputDecoration(
+                    hintText: '提交信息（暂存的更改）',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(8),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    key: const ValueKey('commit-button'),
+                    onPressed: staged.isEmpty ? null : _gitCommit,
+                    icon: const Icon(Icons.check, size: 14),
+                    label: Text(staged.isEmpty
+                        ? '没有暂存的更改'
+                        : '提交（${staged.length}）'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      textStyle: const TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ),
+                if (_gitError != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      _gitError!,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: Colors.redAccent, fontSize: 11),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: _gitEntries.isEmpty
+                ? Center(
+                    child: Text('工作区干净',
+                        style: TextStyle(
+                            color: Colors.grey.shade500, fontSize: 12)))
+                : ListView(
+                    children: [
+                      if (staged.isNotEmpty) ...[
+                        _gitSectionHeader('暂存的更改（${staged.length}）'),
+                        for (final e in staged)
+                          _gitTile(e, stagedEntry: true),
+                      ],
+                      if (changes.isNotEmpty) ...[
+                        _gitSectionHeader('更改（${changes.length}）'),
+                        for (final e in changes)
+                          _gitTile(e, stagedEntry: false),
+                      ],
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _gitSectionHeader(String text) => Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
+        child: Text(text,
+            style: TextStyle(
+                color: Colors.grey.shade400,
+                fontSize: 11,
+                fontWeight: FontWeight.bold)),
+      );
+
+  Widget _gitTile(GitStatusEntry e, {required bool stagedEntry}) {
+    final name = _nameOf(e.path);
+    // 面板容器有背景色，ListTile 需自备 Material 才能正常绘制 ink
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
+      key: ValueKey('git-${stagedEntry ? 's' : 'w'}-${e.path}'),
+      dense: true,
+      leading: Text(e.code,
+          style: TextStyle(
+              fontSize: 11,
+              color: e.isUntracked
+                  ? Colors.greenAccent
+                  : (stagedEntry ? Colors.lightGreenAccent : Colors.orangeAccent))),
+      title: Text(name,
+          style: const TextStyle(fontSize: 12),
+          overflow: TextOverflow.ellipsis),
+      subtitle: e.origPath != null
+          ? Text('${_nameOf(e.origPath!)} → $name',
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+              overflow: TextOverflow.ellipsis)
+          : null,
+      onTap: () => _showGitDiff(e),
+      trailing: IconButton(
+        tooltip: stagedEntry ? '取消暂存' : '暂存',
+        onPressed: () =>
+            stagedEntry ? _gitUnstage(e.path) : _gitStage(e.path),
+        icon: Icon(
+          stagedEntry ? Icons.remove : Icons.add,
+          size: 15,
+          color: Colors.grey.shade400,
+        ),
+      ),
       ),
     );
   }
@@ -1444,7 +1722,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     void walk(List<TreeNode> nodes) {
       for (final n in nodes) {
         final np = _normPath(n.path);
-        if (target == np || target.startsWith('\$np/')) {
+        if (target == np || target.startsWith('$np/')) {
           if (n.isDir && !n.expanded) _toggleDir(n);
           if (n.children != null) walk(n.children!);
         }
@@ -1741,6 +2019,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Tab(text: '诊断'),
               Tab(text: '补全'),
               Tab(text: '语法 (Tree-sitter)'),
+              Tab(text: 'Git Diff'),
             ],
           ),
           Expanded(
@@ -1750,11 +2029,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _buildDiagnosticsPanel(),
                 _buildCompletionPanel(),
                 _buildSyntaxPanel(),
+                _buildGitDiffPanel(),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGitDiffPanel() {
+    if (_gitDiff.isEmpty) {
+      return Center(
+        child: Text('在源代码管理中点击更改文件查看差异',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '$_gitDiffPath（${_gitDiffStaged ? '暂存区' : '工作区'}）',
+                  style: const TextStyle(fontSize: 11),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              IconButton(
+                tooltip: '清除',
+                onPressed: () => setState(() => _gitDiff = ''),
+                icon: const Icon(Icons.close, size: 14),
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            child: SelectableText(
+              _gitDiff,
+              style: const TextStyle(
+                  fontFamily: 'monospace', fontSize: 11, height: 1.4),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
