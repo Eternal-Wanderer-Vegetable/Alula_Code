@@ -9,7 +9,14 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2 与 Linux WebKitGTK 原生 GTK 引擎层结果，Linux Flutter/WPE/CDP 与 macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2 与 Linux WebKitGTK 原生 GTK 引擎层结果，Linux Flutter/WPE/CDP 与 macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十六轮 Windows 完整 DoD 和单独 Flutter analyze 均通过；P01 仍受 P00 依赖约束。
+
+## 今日会话（2026-10-28 第十六轮）：P00 完整门禁复验
+
+- Windows Git Bash 执行 `cargo fmt --check && bash init.sh` EXIT=0；Rust workspace tests、core 构建、clippy 零警告、Flutter 122 项测试全绿。RECOVERY-01 实际接受 2,000,001 个 UTF-16 单元，重启恢复内容仍只有磁盘上的 5 个单元，夹具符合预期。
+- 单独执行 Flutter `analyze` EXIT=0，`No issues found!`。本轮没有改动 `app/`、`crates/` 或产品依赖。
+- GitNexus 状态在提交 `7a67d8f` 时 up-to-date；本次仅更新状态/交接文档。只提交本轮文档，不包含工作区已有的其它用户改动。
+- P00.4 的 macOS、Linux Flutter/WPE/CDP 与 Microsoft 官方服务身份/许可阻塞仍未解除；feat-022/P00 保持 in-progress，P01 未开始。
 
 ## 今日会话（2026-10-28 第十五轮）：复核官方发行物与 Linux WPE runner 前提
 

@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第十五轮：重验固定 SHA 官方发行物、服务政策与 Linux WPE runner 前提；P00.4 阻塞未解除）
+> Last Updated：2026-10-28（第十六轮：复验完整 Windows Git Bash DoD；P00.4 阻塞未解除）
 
 ## 项目一句话
 
@@ -19,6 +19,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 - P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；另在 WSLg 上以 GTK 原生探针验证 WebKitGTK 页面快照、MHTML 保存/重载、Web Inspector 和短时进程生命周期。Linux 结果不代表 Flutter/WPE 集成或 Chrome CDP；macOS 未验证。证据见 p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
 - P00.4 实验3：固定 Code-OSS 产品配置与本机 Microsoft VS Code 1.142.0 Stable 产品配置对照；官方文档确认 Settings Sync 不支持自定义后端，Marketplace 不允许 Code-OSS fork。未登录、未注册 OAuth 应用、未调用 Marketplace API、未创建隧道。见 p00.4-services-adr.md、p00.4-services-evidence.json。
 - 第十五轮复核：固定 SHA 与 1.145.0 官方 Insiders URL 仍 404，latest 返回 1.144.0 不同 revision；Marketplace fork 禁止与 Sync 无自定义后端政策保持。Linux 插件路线为 v6.2 beta + 独立 WPE 包；当前 Ubuntu WSL 无 Linux Flutter/Dart 与 WPE dev SDK。证据补充在 reference-acquisition.md、p00.4-web-adr.md、p00.4-services-adr.md。
+- 第十六轮完成 Windows Git Bash `cargo fmt --check && bash init.sh`，退出码 0；单独 Flutter `analyze` 也为 0（No issues found）。完整门禁覆盖 Rust workspace tests、core 构建、clippy 零警告和 Flutter 122 项测试；RECOVERY-01 接受 2,000,001 UTF-16 单元后仍只从磁盘恢复 5 单元，现状故障夹具保持预期。
+- 第十六轮仅更新进度/交接文档，没有修改 `app/`、`crates/` 或产品依赖。用户工作区中原有的未提交修改继续保持未暂存、未纳入提交。
 - 本轮 GitNexus `detect_changes` all/staged 均 risk=low；staged 为 5 个文档文件、0 条受影响流程。结果对象无 `partial`/`truncated` 字段；索引流程图本身仍截断（187 flows，406 个入口候选丢弃 206 个、98 个 callee 跳过、2 次 walk 达预算）。
 - P00.4 标记 blocked；feat-022/P00 保持 in-progress。没有改动 app/ 或 crates/ 产品代码。
 
@@ -44,6 +46,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 - P00.4 探针：Windows Git Bash `flutter analyze` EXIT=0、`flutter test` EXIT=0（1 项）、Windows Release build EXIT=0；详见 web evidence。根目录 `cargo fmt --check`、`bash init.sh`、单独的 `flutter analyze` 均 EXIT=0，完整 Flutter 测试通过（122 项）。
 - GitNexus 索引更新后执行完整 `detect-changes --scope all`，结构化结果无 `partial`/`truncated`：107 files / 271 symbols / 17 flows，risk=critical；staged scope 为 78 files / 255 symbols / 17 flows，risk=critical。staged 受影响流程都落在独立探针的 Flutter Win32Window 生命周期模板或 Web 自动回放，没有 app/ 或 crates/ 产品代码；全量 scope 还包含用户既存工作区改动，未纳入阶段提交。Analyzer 的 process graph 仍有截断（187 flows；393 个候选入口中 193 个未入选、98 个 callee 被跳过、2 次 walk 达到预算）；缺失 flow 不视作无影响。
 - 本轮 `bash init.sh --fast` EXIT=0；新增 GTK runner `bash -n`、Python `py_compile` 和完整相对路径重放均 EXIT=0，九阶段证据齐全。MHTML 每次生成边界不同，页面截图字节一致，MHTML MIME 头与页面标记重放一致。
+- 第十六轮 `cargo fmt --check && bash init.sh` EXIT=0，单独 Flutter `analyze` EXIT=0；完整门禁包含 Rust 测试、clippy、core 构建与 Flutter 122 项测试。
 - 本轮 GitNexus `detect_changes` 的 all 与 staged scope 均为 risk=high；staged scope 覆盖 22 个文件与 8 条受影响流程，八条均为 GTK 探针生命周期/采样路径。结果对象没有 `partial`/`truncated` 字段；索引构建日志报告 process graph 被截断：187 flows，406 个入口候选丢弃 206 个，98 个 callee 跳过，2 次 walk 达预算。all scope 同时涵盖未暂存用户改动。
 - 本轮没有 app/ 或 crates/ 产品实现变更；Linux WebKitGTK 证据作为 P00.4 scoped follow-up 提交，不把 GTK/WebView 证明写成产品能力；其它既存工作区改动不纳入提交。
 
@@ -80,7 +83,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据�
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
 2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。下一步需要 Flutter Linux/WPE 与 macOS 真机证据，并明确微软产品身份/服务许可路径或由用户批准记录不等价替代；当前 Windows Git Bash 与 WSL 状态、复核来源见本文件。
-3. 第十五轮 `bash init.sh --fast` 通过。P00.1/P00.4 在线复核已记入 ADR；本轮需以专用 staged scope 分析和提交文档更新，保护其它用户改动。
+3. 第十六轮完整 DoD 已通过并记录；P00.4 仍 blocked。继续前先取得对 Microsoft 官方身份/许可路径或记录不等价替代的明确决策，并安排可提供 macOS 与 Linux Flutter/WPE/CDP 证据的 runner；未满足 docs/03 的 P00 验收前不启动 P01。
 4. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 
 ## 已知风险（尚未因本轮计划而修复）
