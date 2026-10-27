@@ -64,6 +64,19 @@
     "No tunnel creation or other write request",
     "No authenticated Settings Sync request"
   ],
+  "currentPolicyCheck": {
+    "checkedAt": "2026-10-28",
+    "sources": [
+      {
+        "url": "https://code.visualstudio.com/docs/supporting/faq",
+        "finding": "The Visual Studio Marketplace is limited to the Visual Studio product family; alternative products built on Code-OSS forks are not permitted to access it."
+      },
+      {
+        "url": "https://code.visualstudio.com/docs/configure/settings-sync",
+        "finding": "Built-in Settings Sync uses a dedicated service and custom backends are not supported."
+      }
+    ]
+  },
   "decision": "Official Microsoft distribution configuration is separate from the pinned Code-OSS product. Marketplace access for Code-OSS forks is explicitly prohibited by the VS Code FAQ. Keep P00 in progress and P00.4 blocked until scope/permission and cross-platform Web experiment constraints are resolved; a custom gallery or backend is not official 1:1.",
   "adr": "p00.4-services-adr.md"
 }

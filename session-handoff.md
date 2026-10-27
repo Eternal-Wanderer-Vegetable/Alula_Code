@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十四轮：WPE 同进程十轮内存采样）
+> Last Updated：2026-10-28（第三十五轮：复核官方服务策略）
 
 ## 项目一句话
 
@@ -18,6 +18,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 
 ## What Changed
 
+- 第三十五轮：重新核对当前 Microsoft VS Code FAQ 与 Settings Sync 官方文档，确认 Marketplace fork 限制和 Sync 专用服务/不支持自定义后端；更新 `p00.4-services-evidence.json` 与 ADR。没有登录或服务写操作。P00.4 外部阻塞未解除；macOS 分支推送授权仍待用户答复。
 - 第三十四轮：Windows Git Bash 从 WSL 调用 `bash init.sh --fast` EXIT=0（Rust tests、build_core、Flutter 122 项）；同一 WPE probe 连做十轮 no-capture F5 生命周期，第十轮 destroy+30s 比基线多81.20/83.63 MiB private/PSS，父进程映射类别持续增长但不能证明泄漏。证据见 `p00.4-linux-wpe-multi-cycle-evidence.json`。
 - 第三十三轮：UID 1000 未插桩 WPE smaps 生命周期采样在 destroy+30s 观察到 +40.90 MiB private/+43.23 MiB PSS；父进程 heap、WPE 文件页和匿名映射均有驻留增量，但无法判断 live allocation 或具体分配 owner。sandbox/GBM 关闭，单轮诊断不满足 docs/04；原始快照与限制见 `p00.4-linux-wpe-parent-smaps-evidence.json`。
 - 第三十二轮：为独立WPE探针增加无截图自动生命周期模式并通过离线 analyze/test 与 Linux Release build。Heaptrack 1.4.0 的单轮插桩样本在销毁+30s时父进程比该轮基线高98.2/101.7 MiB private/PSS；一个51.25 MiB峰值栈走过插件初始化与 software `swrast_dri.so`，另一93.52 MiB峰值调用点未解析。插桩开销与peak/leak统计限制见 evidence JSON；仍不足以归因未插桩约40 MiB残留，P00.4 blocked。
