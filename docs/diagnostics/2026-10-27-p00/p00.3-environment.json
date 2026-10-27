@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-27T13:39:25Z",
+  "reference": {
+    "sourceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "version": "1.145.0",
+    "runtimeEvidence": "runtime-evidence.json",
+    "pageImage": {
+      "path": "reference-workbench.png",
+      "pixelWidth": 1505,
+      "pixelHeight": 1005,
+      "viewportCssPixels": [
+        1204,
+        804
+      ],
+      "devicePixelRatio": 1.25,
+      "locale": "en-US",
+      "timeZone": "Asia/Shanghai",
+      "theme": "dark"
+    }
+  },
+  "alulaRunner": {
+    "repositoryHead": "04b1565",
+    "branch": "codex/vscode-parity-p00",
+    "worktreeWasDirty": true,
+    "host": "Windows 11 10.0.26200 (commands launched through Windows Git Bash from WSL2)",
+    "captureScreenPixels": [
+      2048,
+      1152
+    ],
+    "node": "v24.22.1",
+    "rustToolchain": "cargo 1.97.1; rustc 1.97.1; rustfmt 1.9.0-stable",
+    "flutterToolchain": "Flutter 3.47.8 stable; Dart 3.13.7; DevTools 2.60.0",
+    "flutterInvocation": "Windows Git Bash; FLUTTER_BIN=/e/_alula_tools/flutter-win-wrapper.sh invokes E:\\flutter\\bin\\flutter.bat.",
+    "testStatus": "pass",
+    "initFastExitCode": 0,
+    "initFullExitCode": 0,
+    "reason": "The WSL shell itself has no Cargo and direct invocation of the mounted Windows Flutter script fails on CRLF. The Windows Git Bash runner with the Flutter wrapper completed startup, full DoD, and analysis gates."
+  },
+  "worktreeSourceHashes": {
+    "app/lib/workbench/workbench_page.dart": "71c8a1e033f3a6126e9eb057f61883ec639c78e53fc47952c2eb38717eebfeda",
+    "app/lib/workbench/session_store.dart": "5b6cb61f1cf63f59bea18173e95c4e019c8148a1c7d44bb71f36d0ae2879bc6f",
+    "crates/editor-core/src/ffi.rs": "945f5ebc93c1545f4b393f972653a7f9305257a79b46bcf7f1c1b61e6c859cf2",
+    "crates/editor-core/src/lib.rs": "86b0635b0ff2aae5075b8d6cbf9214c53ae0223717c00c3282256a2169095623",
+    "crates/editor-lsp/src/lib.rs": "6fc959feb10c8beaa5bb87445cb7bacb075be0f067bd4f9dddf9d17594eedbef"
+  },
+  "gateResults": {
+    "bashInitFast": 0,
+    "bashInitFull": 0,
+    "cargoFmtCheck": 0,
+    "cargoTestWorkspace": 0,
+    "cargoClippyDWarnings": 0,
+    "buildCore": 0,
+    "flutterAnalyze": 0,
+    "flutterTest": 0,
+    "flutterTestCount": 122
+  },
+  "alulaPageCapture": {
+    "path": "alula-welcome.png",
+    "capturedAt": "2026-10-27T13:39:25Z",
+    "processId": 43200,
+    "clientPixels": [
+      1505,
+      1005
+    ],
+    "dpi": 120,
+    "theme": "dark",
+    "locale": "zh-CN",
+    "workspaceState": "isolated HOME; empty workspace with untitled editor"
+  },
+  "referenceBehaviorReplay": {
+    "fixture": "parity-ref-07-undo-01",
+    "reference": "Code-OSS 1.145.0 / Electron 43.8.3 / pinned commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "userData": "isolated",
+    "extensions": "disabled",
+    "result": "Both Cargo.toml and src/main.rs edits were saved; one undo in each document restored that document’s own original text."
+  }
+}

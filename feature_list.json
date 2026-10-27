@@ -303,7 +303,7 @@
         "feat-021"
       ],
       "status": "in-progress",
-      "evidence": "P00.1 done：固定SHA与签名/版本元数据已核验；Windows Code-OSS client-only build、Electron 43.8.3启动、runtime环境与product.json内置扩展包清单已登记；微软精确发行物未找到，差异与未构建lane见docs/diagnostics/2026-10-27-p00/reference-acquisition.md、runtime-evidence.json、reference-workbench.png。P00.2 done：固定源码 AST、95个扩展manifest、product.json与运行时registry交叉导出12,958条；未知路由保留，具体数量/差异见docs/diagnostics/2026-10-27-p00/atomic-contributions.md。P00.3/P00.4未开始。",
+      "evidence": "P00.1 done：固定SHA与签名/版本元数据已核验；Windows Code-OSS client-only build、Electron 43.8.3启动、runtime环境与product.json内置扩展包清单已登记；微软精确发行物未找到，差异与未构建lane见docs/diagnostics/2026-10-27-p00/reference-acquisition.md、runtime-evidence.json、reference-workbench.png。P00.2 done：固定源码 AST、95个扩展manifest、product.json与运行时registry交叉导出12,958条；未知路由保留，具体数量/差异见docs/diagnostics/2026-10-27-p00/atomic-contributions.md。P00.3 done：Windows Git Bash 四个风险夹具运行通过，固定参考与 Alula 页面图、环境及门禁结果登记；Code-OSS 双文件撤销对照也已运行。Alula 语言为 zh-CN、参考为 en-US；其余三项固定参考配对作为后续对照。证据：docs/diagnostics/2026-10-27-p00/p00.3-replay.md、p00.3-current-state.json、p00.3-environment.json、alula-welcome.png。P00.4 未开始。",
       "track": "vscode-builtin-parity",
       "phase": "P00"
     },

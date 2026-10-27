@@ -9,7 +9,15 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器已完成；当前执行 P00.3 Golden 基线与现状故障夹具，P00.4 未启动。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成；当前下一项为 P00.4 三项限时风险实验，尚未启动。
+
+## 今日会话（2026-10-27 第十一轮）：P00.3 现状风险夹具验收
+
+- 新增 Flutter 双文件交替撤销、超 2M UTF-16 单元未保存恢复测试；新增 Rust 关闭工作区进程、1.2s 延迟补全测试及专用 fake LSP。
+- Windows 11 Git Bash 运行四个现状夹具：撤销跨文件串写；超 2,000,000 UTF-16 单元正文未写入 journal，重启后读回磁盘 `seed\n`；关闭全部文档后 LSP 子进程仍存活；1.2s provider 令调用方等待 1.2s。固定 Code-OSS 1.145.0 的隔离运行再验证双文件分别撤销各自内容。
+- 采集真实 Alula 空工作区页面图 `docs/diagnostics/2026-10-27-p00/alula-welcome.png`。与固定参考同为 1505×1005、1204×804 逻辑视口、DPI/DPR 1.25、深色主题；Alula 为 zh-CN、参考为 en-US，文字视觉配对留到 P05。
+- DoD 全绿：`bash init.sh --fast`、`bash init.sh`、`cargo fmt --check`、`flutter analyze` 均 exit 0；Rust workspace tests/clippy/build_core 通过；Flutter 122 项通过。Windows 工具链/fixture 输出见 `p00.3-environment.json` 与 `p00.3-current-state.json`。
+- `docs/03` 将 P00.3 标为 done，P00.4 仍 not-started。三项限时实验尚未开始；P00 整体仍 in-progress。
 
 ## 今日会话（2026-10-27 第十轮）：P00.2 原子贡献与运行时登记导出
 

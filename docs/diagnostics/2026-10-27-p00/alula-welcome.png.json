@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-10-27T13:39:25.2574809Z",
+  "processId": 43200,
+  "title": "Alula Code",
+  "dpi": 120,
+  "clientPixels": [
+    1505,
+    1005
+  ],
+  "screenPixels": [
+    2048,
+    1152
+  ],
+  "captureMethod": "PrintWindow client-only",
+  "outputPath": "E:\\\\alula_code\\\\docs\\\\diagnostics\\\\2026-10-27-p00\\\\alula-welcome.png"
+}

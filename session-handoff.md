@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-27（第十轮：P00.2 原子贡献/运行时登记导出完成）
+> Last Updated：2026-10-27（第十一轮：P00.3 基线与风险夹具已验收）
 
 ## 项目一句话
 
@@ -9,9 +9,9 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Current Objective
 
-当前仅推进docs/03的P00.3：Golden 基线与现状故障夹具。P00.1 已通过固定 SHA 的 Code-OSS client-only build 与 Workbench 启动完成验收；P00.2 已完成源码/manifest/product/runtime 交叉导出，保留所有未决路由。
+P00.1、P00.2、P00.3 已完成；当前下一项是 docs/03 的 P00.4 三项限时风险实验，P00 总包仍 in-progress。P00.3 的环境、页面/行为基线与四个夹具均已运行并登记。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
-旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.3进行中；P00.4及P01–P15尚未开始。
+旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4及P01–P15尚未开始。
 
 ## What Changed
 
@@ -28,14 +28,13 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Verification Evidence
 
-- cargo fmt --check、bash init.sh（Rust test/clippy/build_core/Flutter120测试）、flutter analyze：EXIT=0。
-- 本轮 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 均 EXIT=0；日志：`docs/diagnostics/2026-10-27-p00/p00.2-validation.log`。P00.2 导出器 `node --check` 与结构核验通过；12,958 条均具来源路径/可达状态，注册记录 ID 全唯一，四类静态/运行时对账计数自洽。
-- GitNexus `detect-changes --scope all` risk=critical（48 files/264 symbols/20 flows），包含工作树中既有 README/app 修改；staged scope risk=critical（19 files/248 symbols/17 flows），命中本阶段导出器流程与文档，本阶段未暂存产品源码。详情见 `atomic-contributions.md`。
-- 本轮阶段门复核：Windows Git Bash `bash init.sh` 全绿、`cargo fmt --check` 通过、`E:\flutter\bin\flutter.bat analyze` 无问题；Git Bash 打印 `.bashrc` UTF-16 BOM 提示但未影响退出状态。
-- 实际命令/日志与文档结构/graph/harness结果：docs/diagnostics/2026-10-27-parity-plan/verification.md。
-- 当前工具链是Windows：从WSL调用Git Bash执行；WSL本身无cargo，Windows Flutter shell有CRLF，勿把环境报错当业务回归。
-- 本轮未做新UI/内存基准；只有一行类型修复，没有新增常驻结构。完整1:1/IME/性能均未声称通过。
-- 未commit、未push；工作树有大量用户既存skill/app/pubspec改动，勿覆盖、归属本轮或整仓打包提交。
+- P00.3：Windows Git Bash `bash init.sh --fast` EXIT=0、`bash init.sh` EXIT=0、`cargo fmt --check` EXIT=0、`flutter analyze` EXIT=0。完整门禁包含 Rust workspace tests、clippy 零警告、build_core 与 Flutter 122 项测试全绿。
+- 四个夹具均实际运行：UNDO-01 两份 Alula 文档各自撤销时互相串写；RECOVERY-01 接受 2,000,001 UTF-16 单元但恢复为磁盘 5 单元；CLOSE-01 文档关闭后 workspace LSP 仍活着；SLOW-01 provider 延迟与调用方等待均为 1,200ms。
+- 固定 Code-OSS 1.145.0 / Electron 43.8.3 的隔离实例验证双文件 undo 每个文档恢复自己的原始文本。参考行为输出与 Alula 观测见 `p00.3-current-state.json`。
+- 页面证据：`reference-workbench.png` 与真实 Alula `alula-welcome.png`。窗口均 1505×1005、DPR 1.25、深色；Alula 画面为中文，固定参考为英文，未声称文字级视觉一致。
+- GitNexus `detect-changes --scope all`：43 files/40 symbols/3 flows，risk=medium，来自其它既存工作区改动；staged scope：14 files/24 symbols/0 flows，risk=low，仅有 characterization fixtures、fake LSP、证据与状态文档。隔离索引报告 process graph 截断，缺失 flow 不作无影响证明；详见 `p00.3-replay.md`。
+- 更早的 WSL 直接运行失败是 runner 不兼容，不是产品测试失败；最终 Windows Git Bash 的全量 DoD 已通过。早期输出保留在 `p00.3-validation.log`（ignored，本轮退出码以以上可重放命令为准）。
+- 本轮没有产品实现变更，不新增常驻结构；P00.3 只固定问题现状，不把它们误写成已修复。
 
 ## Blockers / 待核实前提
 
@@ -53,6 +52,8 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 - docs/10-VSCode无插件全功能复刻总计划.md、docs/11-VSCode功能对照矩阵.md、docs/plans/：新计划及官方源证据。
 - docs/diagnostics/2026-10-27-p00/reference-acquisition.md：P00.1固定参考获取与下载探测记录。
 - docs/diagnostics/2026-10-27-p00/atomic-contributions.md：P00.2统计、运行时差异和未决项；`atomic-contributions.json` 是逐项 ledger。
+- docs/diagnostics/2026-10-27-p00/p00.3-replay.md、`p00.3-environment.json`、`p00.3-current-state.json`、`alula-welcome.png`：P00.3门禁、环境、现状夹具输出与页面基线。
+- app/test/p00_risk_fixtures_test.dart、crates/editor-core/tests/p00_workspace_close.rs、crates/editor-lsp/tests/p00_slow_completion.rs：四个现状风险复放测试及专用 fake LSP。
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
 - feature_list.json、progress.md、本文件：可续作状态。
@@ -61,11 +62,10 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Next Session
 
-1. 按AGENTS启动流程读本文件/progress Current State、检查图谱、跑init --fast（Windows工具链）。
-2. P00.3 先固定同环境 Workbench 页面/行为 golden，再准备双文件交替撤销、超大未保存文件、关闭工作区进程、长延迟补全四个可重放夹具。
-3. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据；当前 Alula 工作树有大量既存用户改动。
-4. 阶段验收与 GitNexus detect_changes 完成后，只提交本阶段明确归属的文件；不要整仓打包用户既存改动。
-5. 任何业务代码变更前impact；提交前完整detect_changes；状态只以docs/03为准并同步执行镜像/evidence。
+1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
+2. P00.3 已完成并按阶段提交；下一项只推进 P00.4：顺序完成编辑器 IME/增量输入/多光标视口、三平台 Web/CDP/MHTML/内存、官方服务/注册前提三个限时实验并记录 ADR；每次只推进一个实验。
+3. P00.4 每项开工前做 GitNexus impact；阶段提交前完整 `detect-changes`，只提交本阶段明确归属文件，不打包用户既存改动。
+4. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 
 ## 已知风险（尚未因本轮计划而修复）
 
