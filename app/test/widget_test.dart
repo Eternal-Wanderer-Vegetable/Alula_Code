@@ -314,6 +314,90 @@ void main() {
         reason: '重绑定后的 Ctrl+I 应生效');
   });
 
+  testWidgets('feat-010 撤销/重做/查找替换端到端（含 FFI 一致性）', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 打开 Cargo.toml 并编辑
+    await tester.tap(find.text('Cargo.toml'));
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = tester.widget<TextField>(find.byType(TextField));
+    final before = editor.controller!.text;
+    await tester.enterText(find.byType(TextField), '${before}XX');
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // 撤销：回退到编辑前
+    await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+        tester
+            .widget<TextField>(find.byType(TextField).first)
+            .controller!
+            .text,
+        before,
+        reason: 'Ctrl+Z 应回退到编辑前');
+
+    // 重做：恢复编辑（Ctrl+Shift+Z）
+    await pressChord(tester, LogicalKeyboardKey.keyZ,
+        control: true, shift: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+        tester
+            .widget<TextField>(find.byType(TextField).first)
+            .controller!
+            .text,
+        '${before}XX',
+        reason: 'Ctrl+Shift+Z 应恢复编辑');
+
+    // 查找替换：Ctrl+H 打开（含替换字段）→ 全部替换 workspace → WORKSPACE
+    await pressChord(tester, LogicalKeyboardKey.keyH, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('find-bar')), findsOneWidget);
+
+    final bar = find.byKey(const ValueKey('find-bar'));
+    await tester.enterText(
+        find.descendant(of: bar, matching: find.byType(TextField)).first,
+        'workspace');
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.descendant(of: bar, matching: find.textContaining('/')),
+        findsOneWidget,
+        reason: '应有匹配计数（x/y）');
+
+    await tester.enterText(
+        find.descendant(of: bar, matching: find.byType(TextField)).at(1),
+        'WORKSPACE');
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.byTooltip('全部替换'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    final after = tester
+        .widget<TextField>(find.byType(TextField).first)
+        .controller!
+        .text;
+    expect(after, contains('WORKSPACE'));
+    expect(after.contains('workspace'), isFalse,
+        reason: '区分大小写模式下 workspace 应全部被替换');
+
+    // FFI 一致性：撤销全部替换 → 文本恢复（经 diff→FFI 反向同步）。
+    // 先把焦点点回编辑器（替换输入框的原生 undo 只管自己的文本）。
+    await tester.tap(find.byType(TextField).first);
+    await tester.pump(const Duration(milliseconds: 100));
+    await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+        tester
+            .widget<TextField>(find.byType(TextField).first)
+            .controller!
+            .text,
+        '${before}XX',
+        reason: '撤销应恢复替换前文本（Rust 侧经 diff 反向同步）');
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(

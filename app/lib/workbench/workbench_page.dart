@@ -14,9 +14,12 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart' show kMiddleMouseButton;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import '../editor/find_replace.dart';
 import '../editor/text_diff.dart';
+import '../editor/undo_stack.dart';
 import 'activity_bar.dart';
 import 'commands.dart';
 import 'layout_controller.dart';
@@ -110,6 +113,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
 
+  // ---------- 撤销/重做（feat-010，自研栈：不依赖 TextField 内建 UndoHistory） ----------
+  final UndoStack _undoStack = UndoStack();
+  DateTime? _lastEditAt;
+  bool _undoRedoBusy = false; // 撤销/重做程序化写回时不入栈
+
+  // ---------- 查找/替换 ----------
+  bool _findVisible = false;
+  bool _replaceVisible = false;
+  final _findQuery = TextEditingController();
+  final _replaceInput = TextEditingController();
+  List<TextMatch> _matches = const [];
+  int _matchIndex = -1;
+  bool _caseSensitive = false;
+
   /// journal 单文档文本上限（字符）：超出不落 journal（内容只存在于内存，
   /// 崩溃后该文档回退为磁盘内容）。低内存纪律：journal 不做无界缓冲。
   static const _kMaxJournalTextChars = 2000000;
@@ -188,6 +205,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _panelTab.animateTo(1));
     reg('view.panelSyntax', '查看', '语法面板',
         () async => _panelTab.animateTo(2));
+    reg('editor.undo', '编辑器', '撤销', () async => _undo());
+    reg('editor.redo', '编辑器', '重做', () async => _redo());
+    reg('editor.find', '编辑器', '查找…', () async => _toggleFind());
+    reg('editor.replace', '编辑器', '替换…', () async => _openReplace());
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp);
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
   }
@@ -500,10 +521,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final isActiveOfFocused =
         owner!.region == _focusedRegion && owner.activeDocId == docId;
     final newText = doc.controller.text;
-    final ops = diffToOps(doc.savedText, newText);
+    final beforeText = doc.savedText; // 撤销快照基线（必须在基准前移前捕获）
+    final ops = diffToOps(beforeText, newText);
     if (ops.isEmpty) return;
     doc.savedText = newText; // 同步基准前移（失败时由失配分支恢复）
 
+    // 撤销栈入帧
+    if (!_undoRedoBusy) {
+      final now = DateTime.now();
+      final coalesce =
+          _lastEditAt != null && now.difference(_lastEditAt!) < const Duration(milliseconds: 400);
+      _undoStack.push(before: beforeText, caret: newText.length, coalesce: coalesce);
+      _lastEditAt = now;
+    }
     doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
     _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
     final sw = Stopwatch()..start();
@@ -708,6 +738,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final wasActive = owner.activeDocId == id;
     doc.doc.close();
     doc.controller.dispose();
+    _editorFocusNodes.remove(id)?.dispose();
     setState(() {
       owner.docs.remove(doc);
       if (wasActive) {
@@ -904,6 +935,207 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  /// 每文档一个带 onKeyEvent 的 FocusNode：在事件分发第一站拦截
+  /// 撤销/重做/查找键位。必须在这里抢——TextField 内建 UndoHistory 在
+  /// 焦点链更下方注册了 Ctrl+Z/Y，晚于焦点节点处理器，且会双栈打架
+  /// （测试环境还会死锁）。
+  final Map<int, FocusNode> _editorFocusNodes = {};
+
+  FocusNode _focusNodeFor(EditorGroup g, OpenDoc doc) {
+    return _editorFocusNodes.putIfAbsent(doc.id, () {
+      return FocusNode(onKeyEvent: (node, event) {
+        if (event is! KeyDownEvent) return KeyEventResult.ignored;
+        final ctrl = HardwareKeyboard.instance.isControlPressed;
+        final shift = HardwareKeyboard.instance.isShiftPressed;
+        if (!ctrl) return KeyEventResult.ignored;
+        if (event.logicalKey == LogicalKeyboardKey.keyZ) {
+          shift ? _redo() : _undo();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.keyY) {
+          _redo();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.keyF && !shift) {
+          _toggleFind();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.keyH && !shift) {
+          _openReplace();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      });
+    });
+  }
+
+  /// 撤销：把快照写回 controller，经「diff → FFI」通路同步 Rust。
+  void _undo() {
+    final active = _active;
+    if (active == null) {
+      setState(() => _statusDetail = '撤销需要打开的文档');
+      return;
+    }
+    final sel = active.controller.selection;
+    final entry = _undoStack.undo(
+        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+    if (entry == null) {
+      setState(() => _statusDetail = '无可撤销');
+      return;
+    }
+    _undoRedoBusy = true;
+    final caret = entry.caret.clamp(0, entry.text.length);
+    active.controller.value = TextEditingValue(
+      text: entry.text,
+      selection: TextSelection.collapsed(offset: caret),
+    );
+    _undoRedoBusy = false;
+    _lastEditAt = null; // 撤销后不再与后续打字合并
+    _onFindTextChanged();
+    setState(() => _statusDetail = '已撤销');
+    _scheduleStateSave();
+  }
+
+  void _redo() {
+    final active = _active;
+    if (active == null) {
+      setState(() => _statusDetail = '重做需要打开的文档');
+      return;
+    }
+    final sel = active.controller.selection;
+    final entry = _undoStack.redo(
+        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+    if (entry == null) {
+      setState(() => _statusDetail = '无可重做');
+      return;
+    }
+    _undoRedoBusy = true;
+    final caret = entry.caret.clamp(0, entry.text.length);
+    active.controller.value = TextEditingValue(
+      text: entry.text,
+      selection: TextSelection.collapsed(offset: caret),
+    );
+    _undoRedoBusy = false;
+    _lastEditAt = null;
+    _onFindTextChanged();
+    setState(() => _statusDetail = '已重做');
+    _scheduleStateSave();
+  }
+
+  // ---------- 查找/替换 ----------
+
+  void _toggleFind() {
+    setState(() {
+      _findVisible = !_findVisible;
+      if (_findVisible) {
+        _replaceVisible = false;
+        _refreshMatches();
+      } else {
+        _matches = const [];
+        _matchIndex = -1;
+      }
+    });
+  }
+
+  void _openReplace() {
+    setState(() {
+      _findVisible = true;
+      _replaceVisible = true;
+      _refreshMatches();
+    });
+  }
+
+  void _onFindTextChanged() {
+    if (!_findVisible) return;
+    _refreshMatches();
+    setState(() {});
+  }
+
+  void _refreshMatches() {
+    final active = _active;
+    final text = active?.controller.text ?? '';
+    _matches = _findVisible
+        ? findMatches(text, _findQuery.text, caseSensitive: _caseSensitive)
+        : const [];
+    if (_matchIndex >= _matches.length) {
+      _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
+    }
+    if (_matches.isEmpty) _matchIndex = -1;
+  }
+
+  void _gotoMatch(int direction) {
+    final active = _active;
+    if (active == null) return;
+    _refreshMatches();
+    if (_matches.isEmpty) {
+      setState(() => _matchIndex = -1);
+      return;
+    }
+    final sel = active.controller.selection;
+    final from = sel.baseOffset >= 0 ? sel.baseOffset : 0;
+    final m = direction > 0
+        ? findNext(_matches, from)
+        : findPrevious(_matches, from);
+    _matchIndex = _matches.indexOf(m!);
+    active.controller.value = TextEditingValue(
+      text: active.controller.text,
+      selection: TextSelection(baseOffset: m.start, extentOffset: m.end),
+    );
+    setState(() {});
+  }
+
+  void _replaceCurrent() {
+    final active = _active;
+    if (active == null) return;
+    _refreshMatches();
+    if (_matches.isEmpty) {
+      setState(() => _statusDetail = '无匹配');
+      return;
+    }
+    final sel = active.controller.selection;
+    final from = sel.baseOffset >= 0 ? sel.baseOffset : 0;
+    var m = findNext(_matches, from)!;
+    var isOnMatch = sel.baseOffset == m.start && sel.extentOffset == m.end;
+    if (!isOnMatch) {
+      // 先跳转到该匹配，再按一次才替换（与 VS Code 语义一致）
+      _matchIndex = _matches.indexOf(m);
+      active.controller.value = TextEditingValue(
+        text: active.controller.text,
+        selection: TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      setState(() {});
+      return;
+    }
+    final t = active.controller.text;
+    active.controller.value = TextEditingValue(
+      text: t.replaceRange(m.start, m.end, _replaceInput.text),
+      selection:
+          TextSelection.collapsed(offset: m.start + _replaceInput.text.length),
+    );
+    _refreshMatches();
+    setState(() => _statusDetail =
+        '已替换 1 处（剩余 ${_matches.length} 处）');
+  }
+
+  void _replaceAll() {
+    final active = _active;
+    if (active == null) return;
+    final r = replaceAllMatches(active.controller.text, _findQuery.text,
+        _replaceInput.text,
+        caseSensitive: _caseSensitive);
+    if (r.count == 0) {
+      setState(() => _statusDetail = '无匹配');
+      return;
+    }
+    active.controller.value = TextEditingValue(
+      text: r.newText,
+      selection: TextSelection.collapsed(offset: r.newText.length),
+    );
+    _refreshMatches();
+    setState(() => _statusDetail = '已替换 ${r.count} 处');
+    _scheduleStateSave();
+  }
+
   void _showAbout() {
     showDialog<void>(
       context: context,
@@ -932,6 +1164,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     widget.sessionStore.save(_encodeSession());
     for (final d in _allDocs) {
       d.controller.dispose();
+    }
+    for (final n in _editorFocusNodes.values) {
+      n.dispose();
     }
     _panelTab.dispose();
     _layout.dispose();
@@ -983,6 +1218,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               [
                 TitleMenuItem('打开文件夹', _showOpenFolderDialog),
                 TitleMenuItem('保存${_sc('file.save')}', _saveActive),
+              ],
+            ),
+            (
+              '编辑',
+              [
+                TitleMenuItem('撤销${_sc('editor.undo')}', _undo),
+                TitleMenuItem('重做${_sc('editor.redo')}', _redo),
+                TitleMenuItem('查找…${_sc('editor.find')}', _toggleFind),
+                TitleMenuItem('替换…${_sc('editor.replace')}', _openReplace),
               ],
             ),
             (
@@ -1347,21 +1591,136 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: TextField(
-          controller: active.controller,
-          maxLines: null,
-          expands: true,
-          onTap: () {
-            // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
-            if (_focusedRegion != g.region) {
-              setState(() => _focusedRegion = g.region);
-            }
-          },
-          style: const TextStyle(
-              fontFamily: 'monospace', fontSize: 14, height: 1.5),
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.all(12),
+      child: Stack(
+        children: [
+          TextField(
+            focusNode: _focusNodeFor(g, active),
+            controller: active.controller,
+            maxLines: null,
+            expands: true,
+            onTap: () {
+              // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
+              if (_focusedRegion != g.region) {
+                setState(() => _focusedRegion = g.region);
+              }
+            },
+            style: const TextStyle(
+                fontFamily: 'monospace', fontSize: 14, height: 1.5),
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.all(12),
+            ),
+          ),
+          if (_findVisible)
+            Positioned(top: 0, right: 12, child: _buildFindBar()),
+        ],
+      ),
+    );
+  }
+
+  /// 查找/替换栏（feat-010，对标 VS Code 编辑器右上角浮层）。
+  Widget _buildFindBar() {
+    final count = _matches.isEmpty
+        ? (_findQuery.text.isEmpty ? '' : '无匹配')
+        : '${_matchIndex < 0 ? '-' : _matchIndex + 1}/${_matches.length}';
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.escape): _toggleFind,
+      },
+      child: Container(
+        key: const ValueKey('find-bar'),
+        width: 470,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF252932),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(blurRadius: 12, color: Colors.black45)
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _findQuery,
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 12),
+                    decoration: const InputDecoration(
+                        hintText: '查找', isDense: true, border: InputBorder.none),
+                    onChanged: (_) => _onFindTextChanged(),
+                    onSubmitted: (_) => _gotoMatch(1),
+                  ),
+                ),
+                Text(count,
+                    style: TextStyle(
+                        color: Colors.grey.shade500, fontSize: 11)),
+                IconButton(
+                  tooltip: '区分大小写',
+                  onPressed: () {
+                    setState(() {
+                      _caseSensitive = !_caseSensitive;
+                      _refreshMatches();
+                    });
+                  },
+                  icon: Text('Aa',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: _caseSensitive
+                              ? Colors.lightBlueAccent
+                              : Colors.grey.shade400)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  tooltip: '上一个匹配',
+                  onPressed: () => _gotoMatch(-1),
+                  icon: const Icon(Icons.keyboard_arrow_up, size: 16),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  tooltip: '下一个匹配',
+                  onPressed: () => _gotoMatch(1),
+                  icon: const Icon(Icons.keyboard_arrow_down, size: 16),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  tooltip: '关闭',
+                  onPressed: _toggleFind,
+                  icon: const Icon(Icons.close, size: 14),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            if (_replaceVisible)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _replaceInput,
+                      style: const TextStyle(fontSize: 12),
+                      decoration: const InputDecoration(
+                          hintText: '替换为',
+                          isDense: true,
+                          border: InputBorder.none),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: '替换',
+                    onPressed: _replaceCurrent,
+                    icon: const Icon(Icons.find_replace, size: 15),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  IconButton(
+                    tooltip: '全部替换',
+                    onPressed: _replaceAll,
+                    icon: const Icon(Icons.done_all, size: 15),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
+              ),
+          ],
         ),
       ),
     );

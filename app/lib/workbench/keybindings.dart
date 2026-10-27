@@ -150,6 +150,12 @@ class KeybindingSet {
     'view.togglePanel': 'ctrl+j',
     'file.save': 'ctrl+s',
     'editor.completion': 'ctrl+space,f8',
+    // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
+    // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
+    'editor.undo': 'ctrl+z',
+    'editor.redo': 'ctrl+shift+z,ctrl+y',
+    'editor.find': 'ctrl+f',
+    'editor.replace': 'ctrl+h',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
