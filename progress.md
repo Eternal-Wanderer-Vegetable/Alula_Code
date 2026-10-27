@@ -11,6 +11,12 @@
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
 P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；GBM 仍关闭。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，Inspector 命令会话未验证；WSLg 宿主在 `GALLIUM_DRIVER=d3d12` 下成功创建 D3D12 EGL/GLES context；临时 Debian GBM probe 因缺 DRI driver 返回 null，不能推断 WPE GBM。随后 WPE 2.52.6 快照容器映射 WSLg 设备、GBM enabled 且 software GL unset 时，Flutter EGL context 失败、WPEWebProcess crash、90 秒内未到 initial-loaded；WSLg X11 :0 与 Wayland socket 的容器 EGL 检查都返回 EGL_NOT_INITIALIZED；Wayland socket 可连接但无 GLES2 config；直接 WPE 镜像 GBM probe 打开 render node 后 `gbm_create_device` 返回 null。记录在 `p00.4-linux-wpe-wslg-d3d12-run/` 与 `p00.4-wslg-egl-evidence.json`；这属于当前环境集成失败，WPE GBM 仍未验证。macOS 仍未验证；官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。第十九轮 Windows 完整 DoD和单独 Flutter analyze通过；P01仍受P00依赖约束。
 
+## 今日会话（2026-10-28 第二十七轮）：macOS workflow dispatch 预检
+
+- 复核当前分支 codex/vscode-parity-p00（HEAD 3b3c7f0）在 origin 上没有对应 branch ref；GitHub workflow 列表仅返回 CI 与 Release；查询 p00-web-engine-macos.yml 明确返回默认分支 404。
+- 没有推送，也没有尝试 dispatch；因此没有 macOS runner 或平台通过证据。待用户授权后才可发布当前分支以运行已准备的 macOS workflow。记录在 docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。
+- P00.4 继续 blocked，feat-022/P00 in-progress，P01 not-started；未改产品代码。
+
 ## 今日会话（2026-10-28 第二十六轮）：WSLg Wayland EGL follow-up
 
 - 按启动门禁复核，`bash init.sh --fast` 在当前 WSL shell 因 Cargo 不存在、Windows Flutter 脚本 CRLF 而失败；不代表产品门禁结果。Windows Git Bash 的完整 DoD 与 P00.3 fixture 通过记录保持有效。

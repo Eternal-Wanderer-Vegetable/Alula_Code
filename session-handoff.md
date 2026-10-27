@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第二十六轮：WSLg Wayland EGL follow-up）
+> Last Updated：2026-10-28（第二十七轮：macOS workflow dispatch preflight）
 
 ## 项目一句话
 
@@ -8,11 +8,14 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
 
 ## Current Objective
+2026-10-28 macOS dispatch 预检确认本地 workflow 在 GitHub 默认分支返回 404、当前工作分支未发布；没有推送，也没有 macOS runner 证据。预检记录在 docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。推送授权请求仍待用户答复。
 P00.1、P00.2、P00.3 已完成；P00.4 三项实验的 ADR/证据齐备但仍 blocked。Web 实验含 Windows Flutter/WebView2、Linux WebKitGTK，以及 WPE 2.52.6 源码构建。无等待旧首帧 PNG 是全透明缓冲；检查确认 pinned Linux 插件只复制当前像素缓冲、不等待 WPE 帧回调。独立探针已在 DOM 查询前轮询页面标题蓝色像素；三次默认 sandbox 冷启动均取得初始/MHTML 页面截图，最终版本一次重试后成功。GBM 继续关闭，探针结果不证明产品帧同步。WPE 2.54.2/2.48.3 发行包构建失败，Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery 与 Main.html (HTTP 200) 已实测，但未验证 Inspector 命令会话。WSLg 宿主 D3D12 EGL/GLES context 已验证；WPE 2.52.6 容器映射设备并启用 GBM 的尝试在 Flutter EGL 初始化阶段失败，WebProcess crash；X11/Wayland EGL 均为 EGL_NOT_INITIALIZED，Wayland socket 可连但没有 GLES2 config；直接 WPE 镜像 `gbm_create_device` 返回 null、未分配 buffer，仍没有 WPE GBM/DMABUF 结论。临时 Debian GBM probe 也因缺少 DRI driver 而不确定。macOS 与 Microsoft 官方服务身份/许可仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
+
+- 第二十七轮：复核当前分支在 origin 无对应引用；GitHub 当前只列出 CI、Release，查询 macOS workflow 返回默认分支 404。没有推送或 dispatch；macOS runner 未运行。证据：docs/diagnostics/2026-10-27-p00/p00.4-macos-dispatch-preflight.json。
 
 - 第二十六轮：按启动流程检查 GitNexus fresh；当前 WSL `bash init.sh --fast` 因 Cargo 缺失与挂载 Flutter shell CRLF 失败，Windows Git Bash 完整门禁已有通过记录。WPE Debian 12 容器映射 `/dev/dxg`、render node、render GID 992 与 WSLg Wayland socket 后能连接 socket，但 EGL 返回 `EGL_NOT_INITIALIZED`、无 GLES2 config；直接 GBM API 打开 render node 后 `gbm_create_device` 返回 null、没有 buffer；没有运行 WebView。原 WPE 容器未改，临时快照镜像已清理，日志见 `p00.4-linux-wpe-wslg-d3d12-run/wayland-egl.log`。P00.4 仍 blocked。
 - 第二十五轮：WSLg EGL surfaceless probe 在 `GALLIUM_DRIVER=d3d12` 下成功创建 GLES context，renderer 为 `D3D12 (AMD Radeon(TM) Graphics)`。WPE 2.52.6 快照容器映射 `/dev/dxg` 与 DRM devices、GBM enabled、software GL unset 时，Flutter EGL context 未创建，WPEWebProcess crash，90 秒内未到 initial-loaded；容器 X11 `:0` 可连接但 EGL_NOT_INITIALIZED。未获得 WPE GBM/DMABUF 证据，属于当前 Debian Mesa/WSLg integration failure，不是 WPE 支持结论。临时 GBM probe 也因缺 Mesa DRI drivers 而不确定。WSL shell 无 `cmd.exe`；P00.3 四个 fixture 与 Windows Git Bash 门禁已有第二十三轮通过记录，本轮没有冒称重跑。未改产品或原 WPE 容器，临时镜像已删除。证据：`docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-wslg-d3d12-run/`、`p00.4-wslg-egl-evidence.json`。
