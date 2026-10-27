@@ -1,6 +1,7 @@
 {
-  "capturedAtUtc": "2026-10-27T21:15:32Z",
-  "scope": "WSLg EGL capability probe only; not an Alula/WPE product run",
+  "hostEglProbeCapturedAtUtc": "2026-10-27T21:15:32Z",
+  "recordedAtUtc": "2026-10-27T21:24:21Z",
+  "scope": "WSLg EGL and WPE-container hardware-renderer probe; not a product acceptance run",
   "host": {
     "environment": "WSL2 with WSLg",
     "deviceNodes": ["/dev/dxg", "/dev/dri/card0", "/dev/dri/renderD128"],
@@ -24,10 +25,40 @@
     ],
     "result": "Inconclusive for WPE GBM/DMABUF"
   },
+  "wpeContainerAttempt": {
+    "runtime": "Temporary snapshot of the existing Debian Bookworm WPE 2.52.6 source-build container; the original container was left unchanged",
+    "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/card0", "/dev/dri/renderD128"],
+    "containerMesaVersion": "22.3.6-1+deb12u2",
+    "rendererEnvironment": {
+      "GALLIUM_DRIVER": "d3d12",
+      "LIBGL_ALWAYS_SOFTWARE": "unset",
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "unset"
+    },
+    "sandboxContainerFlags": ["SYS_ADMIN", "seccomp=unconfined"],
+    "xvfbRun": {
+      "display": ":99",
+      "result": "Flutter could not create an EGL context; WPEWebProcess crashed before initial-loaded; runner exited 1 after the 90-second phase deadline",
+      "diagnostics": [
+        "libEGL: failed to create dri2 screen",
+        "Failed to create OpenGL context: No GL implementation is available",
+        "WPE WebProcess terminated with reason=CRASHED"
+      ]
+    },
+    "containerX11Probe": {
+      "display": ":0",
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "hostWslD3d12LibrariesMounted": true,
+      "x11Connection": "connected",
+      "eglInitialize": "failed with EGL_NOT_INITIALIZED (0x3001)",
+      "wpeApplicationRun": false
+    },
+    "result": "The pinned Debian 12 Mesa/WPE container did not create a hardware EGL context with WSLg devices; WPE GBM/DMABUF support remains unverified"
+  },
   "limitations": [
-    "No Flutter, WebKit, or WPE application was run with this EGL context.",
+    "The Flutter/WPE application was launched for a hardware-path attempt but failed before page initialization.",
     "No GBM buffer allocation/import or WPE frame presentation was verified.",
-    "The D3D12 EGL result is hardware-renderer evidence for WSLg, not product-path acceptance evidence."
+    "The host D3D12 EGL result is WSLg hardware-renderer evidence, not evidence that the pinned Debian container can use it."
   ],
-  "disposition": "Keep P00.4 blocked; record WSLg D3D12 availability while WPE GBM remains unverified."
+  "disposition": "Keep P00.4 blocked; the current WPE container's WSLg EGL integration failed and WPE GBM remains unverified."
 }
