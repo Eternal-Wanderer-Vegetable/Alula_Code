@@ -1,0 +1,122 @@
+{
+  "experiment": "P00.4 Linux WebKitGTK native engine supplement",
+  "recordedAt": "2026-10-27T16:01:40Z",
+  "environment": {
+    "os": "Ubuntu 24.04.5 LTS on WSL2 / WSLg",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2 x86_64",
+    "display": "X11 through WSLg; GDK_BACKEND=x11",
+    "gtk": "3.24.41",
+    "webkitgtk": "2.52.6",
+    "python": "3.12 system Python with PyGObject and Cairo bridge",
+    "graphicsWarning": "libEGL reported DRI3 unavailable; hardware-accelerated rendering was not established"
+  },
+  "capabilities": {
+    "renderedOfflineHtml": true,
+    "pageSnapshotApi": "WebKitWebView.get_snapshot",
+    "mhtmlExportApi": "WebKitWebView.save_to_file(WebKitSaveMode.MHTML)",
+    "mhtmlReloadedInSameView": true,
+    "webInspector": "WebKitWebInspector.show; attached=true; canAttach=false; screen captured from main GTK window",
+    "chromeDevToolsProtocol": "not tested or claimed",
+    "flutterLinuxEmbedding": "not tested"
+  },
+  "mhtml": {
+    "path": "p00.4-linux-webkitgtk-run/p00.4-linux-webkitgtk.mhtml",
+    "bytes": 1176,
+    "sha256": "9619ad97b11f0ddbdce69cc6c2774f39004d43d8967723cf230adfa0031ee20a",
+    "mimeHeader": true,
+    "pageMarkerPresent": true,
+    "reloadUri": "file:///mnt/e/alula_code/docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-run/p00.4-linux-webkitgtk.mhtml"
+  },
+  "processTreePrivateBytes": {
+    "metric": "sum of Private_Clean + Private_Dirty from each descendant /proc/<pid>/smaps_rollup",
+    "samples": [
+      {
+        "phase": "before-webview",
+        "processes": 1,
+        "privateMiB": 22.7,
+        "rssMiB": 62.4,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/before-webview.json"
+      },
+      {
+        "phase": "webview-created",
+        "processes": 2,
+        "privateMiB": 67.3,
+        "rssMiB": 175.8,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/webview-created.json"
+      },
+      {
+        "phase": "web-open",
+        "processes": 3,
+        "privateMiB": 170.0,
+        "rssMiB": 422.9,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/web-open.json"
+      },
+      {
+        "phase": "mhtml-exported",
+        "processes": 3,
+        "privateMiB": 196.8,
+        "rssMiB": 450.4,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/mhtml-exported.json"
+      },
+      {
+        "phase": "mhtml-open",
+        "processes": 3,
+        "privateMiB": 199.2,
+        "rssMiB": 464.0,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/mhtml-open.json"
+      },
+      {
+        "phase": "inspector-open",
+        "processes": 4,
+        "privateMiB": 201.9,
+        "rssMiB": 474.0,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/inspector-open.json"
+      },
+      {
+        "phase": "inspector-open-completed",
+        "processes": 5,
+        "privateMiB": 449.8,
+        "rssMiB": 964.2,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/inspector-open-completed.json"
+      },
+      {
+        "phase": "destroyed",
+        "processes": 5,
+        "privateMiB": 456.6,
+        "rssMiB": 964.2,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/destroyed.json"
+      },
+      {
+        "phase": "destroyed-30s",
+        "processes": 2,
+        "privateMiB": 69.6,
+        "rssMiB": 223.0,
+        "rawEvidence": "p00.4-linux-webkitgtk-run/destroyed-30s.json"
+      }
+    ]
+  },
+  "screenshots": {
+    "p00.4-linux-webkitgtk-inspector.png": {
+      "bytes": 78655,
+      "sha256": "a3c71ba2096c9e97464cf0526a37680d3c0c9f88391c8a22473381072a99c3f7"
+    },
+    "p00.4-linux-webkitgtk-mhtml-opened.png": {
+      "bytes": 20479,
+      "sha256": "7834eee4f936aec79d7f28fe230f32709a55591d4353da4c883c2bb2eaafc9fe"
+    },
+    "p00.4-linux-webkitgtk-open.png": {
+      "bytes": 20479,
+      "sha256": "f279d572efc42af333d53f33474c55306e42412f6c260272513acc633572ae29"
+    }
+  },
+  "replay": "tools/web-engine-probe/linux/run-webkitgtk-probe.sh",
+  "decision": "Linux WebKitGTK engine-level rendering, MHTML save/reload, page snapshots, and Web Inspector are demonstrated. This does not validate a Flutter Linux plugin or Chrome CDP. P00.4 remains blocked by untested macOS and unresolved official-service conditions.",
+  "limitations": [
+    "One WSLg software-rendering lifecycle sample, not the docs/04 three-run and 1/10/30 minute product memory protocol",
+    "GTK-native probe only; no Flutter Linux embedding, editor focus/input integration, or WPE plugin test",
+    "No Chrome CDP compatibility demonstrated for WebKitGTK",
+    "No macOS WKWebView, Web Archive, Safari Web Inspector, or macOS memory run",
+    "Small offline HTML with a data URI only; no authentication, media, hostile content, downloads, or multi-view workload",
+    "The WebKitNetworkProcess remained after 30 seconds and the probe process retained more private memory than the GTK-shell baseline"
+  ]
+}

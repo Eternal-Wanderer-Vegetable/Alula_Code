@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-27（第十三轮：P00.4 三项风险实验有证据，跨平台/官方服务阻塞未解除）
+> Last Updated：2026-10-28（第十四轮：补充 Linux WebKitGTK 原生引擎证据；Flutter/Linux 集成、macOS 与官方服务阻塞未解除）
 
 ## 项目一句话
 
@@ -9,14 +9,14 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 
 ## Current Objective
 
-P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已完成可行性取证，但 macOS/Linux Web 试验与 Microsoft 官方服务互通有外部阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
+P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已有证据。Web 实验包括 Windows Flutter/WebView2 与 Linux WebKitGTK 原生引擎层结果，但 Linux Flutter/WPE/CDP、macOS Web 试验及 Microsoft 官方服务互通仍有阻塞。P00.4=blocked，feat-022/P00=in-progress；P01–P15 尚未开始。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
 旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
 
 ## What Changed
 
 - P00.4 实验1：独立 Flutter Windows CodeForge 11.3.0 探针通过真实 Microsoft Pinyin composition/commit/cancel/Latin 输入；4 个 widget tests 覆盖 composition undo、Delta 多光标插入/撤销与 10k 行视口。见 p00.4-editor-adr.md 与 p00.4-editor-evidence.json。CodeForge 仅保留为 P03 候选。
-- P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；CDP 页面截图和阶段标记驱动的 Private Bytes 证据见 p00.4-web-adr.md、p00.4-web-evidence.json。仅 Windows 完成，macOS/Linux 未验证。
+- P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；另在 WSLg 上以 GTK 原生探针验证 WebKitGTK 页面快照、MHTML 保存/重载、Web Inspector 和短时进程生命周期。Linux 结果不代表 Flutter/WPE 集成或 Chrome CDP；macOS 未验证。证据见 p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
 - P00.4 实验3：固定 Code-OSS 产品配置与本机 Microsoft VS Code 1.142.0 Stable 产品配置对照；官方文档确认 Settings Sync 不支持自定义后端，Marketplace 不允许 Code-OSS fork。未登录、未注册 OAuth 应用、未调用 Marketplace API、未创建隧道。见 p00.4-services-adr.md、p00.4-services-evidence.json。
 - P00.4 标记 blocked；feat-022/P00 保持 in-progress。没有改动 app/ 或 crates/ 产品代码。
 
@@ -41,7 +41,9 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已完成可�
 - 更早的 WSL 直接运行失败是 runner 不兼容，不是产品测试失败；最终 Windows Git Bash 的全量 DoD 已通过。早期输出保留在 `p00.3-validation.log`（ignored，本轮退出码以以上可重放命令为准）。
 - P00.4 探针：Windows Git Bash `flutter analyze` EXIT=0、`flutter test` EXIT=0（1 项）、Windows Release build EXIT=0；详见 web evidence。根目录 `cargo fmt --check`、`bash init.sh`、单独的 `flutter analyze` 均 EXIT=0，完整 Flutter 测试通过（122 项）。
 - GitNexus 索引更新后执行完整 `detect-changes --scope all`，结构化结果无 `partial`/`truncated`：107 files / 271 symbols / 17 flows，risk=critical；staged scope 为 78 files / 255 symbols / 17 flows，risk=critical。staged 受影响流程都落在独立探针的 Flutter Win32Window 生命周期模板或 Web 自动回放，没有 app/ 或 crates/ 产品代码；全量 scope 还包含用户既存工作区改动，未纳入阶段提交。Analyzer 的 process graph 仍有截断（187 flows；393 个候选入口中 193 个未入选、98 个 callee 被跳过、2 次 walk 达到预算）；缺失 flow 不视作无影响。
-- 本轮没有 app/ 或 crates/ 产品实现变更；P00.4 只完成独立风险取证，不把 WebView 证明写成产品能力。
+- 本轮 `bash init.sh --fast` EXIT=0；新增 GTK runner `bash -n`、Python `py_compile` 和完整相对路径重放均 EXIT=0，九阶段证据齐全。MHTML 每次生成边界不同，页面截图字节一致，MHTML MIME 头与页面标记重放一致。
+- 本轮 GitNexus `detect_changes` 的 all 与 staged scope 均为 risk=high；staged scope 覆盖 22 个文件与 8 条受影响流程，八条均为 GTK 探针生命周期/采样路径。结果对象没有 `partial`/`truncated` 字段；索引构建日志报告 process graph 被截断：187 flows，406 个入口候选丢弃 206 个，98 个 callee 跳过，2 次 walk 达预算。all scope 同时涵盖未暂存用户改动。
+- 本轮没有 app/ 或 crates/ 产品实现变更；Linux WebKitGTK 证据作为 P00.4 scoped follow-up 提交，不把 GTK/WebView 证明写成产品能力；其它既存工作区改动不纳入提交。
 
 ## Blockers / 待核实前提
 
@@ -49,7 +51,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已完成可�
 - P00.2：client-only 运行时没有加载随附扩展 payload；静态 95 个 manifest 与运行时 0 个产品扩展的差异保留。6,828 条未决记录和候选映射必须在后续逐项复核，不计为已覆盖。
 - P00 需固定参考的 Microsoft 同 SHA 发行物尚不可得；Code-OSS 与微软发行配置差异不能抹平。
 - P00.4 实验1只在 Windows 验证；macOS/Linux IME、Rust 往返/背压、Release 内存、完整 Unicode/EOL 与无障碍仍未验证。
-- P00.4 实验2只在 Windows WebView2 通过；macOS WKWebView/Web Archive 与 Linux WPE/Web Inspector/CDP/MHTML/内存未实测，没有对应设备/GUI runner。
+- P00.4 实验2：Linux 原生 WebKitGTK 的 MHTML/快照/Inspector/单轮内存已有 WSLg 证据；Flutter Linux/WPE 集成、Chrome CDP 互操作、硬件加速及 docs/04 长时多轮产品内存协议仍未实测；macOS WKWebView/Web Archive/Safari Inspector 和内存仍未实测。
 - P00.4 实验3：官方 FAQ 明确 Marketplace 不允许 Code-OSS fork 访问，Microsoft 扩展许可限定 VS family；Settings Sync 不支持自定义后端。本地正式版 1.142.0 产品身份字段不属于固定 1.145.0 Code-OSS 参考。需解决许可/产品身份边界才可声称官方服务 1:1。
 - 原Windows .gitnexus元数据在WSL路径无效。本轮隔离索引位于/tmp/alula-plan-gitnexus，不修改原缓存；
   使用 GITNEXUS_STORAGE_ROOT=/tmp/alula-plan-gitnexus node .gitnexus/run.cjs ... 。缓存临时丢失可重建。
@@ -65,6 +67,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已完成可�
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
+- docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
 - feature_list.json、progress.md、本文件：可续作状态。
@@ -74,8 +77,8 @@ P00.1、P00.2、P00.3 已完成；P00.4 三项限时风险实验均已完成可�
 ## Next Session
 
 1. 按 AGENTS 启动流程读取本文件/progress Current State，检查 GitNexus 状态并使用 Windows Git Bash 跑 `bash init.sh --fast`。
-2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。若有 macOS/Linux runner，补做 Web/IME 子实验；官方 Marketplace 明确禁止 fork，需用户确认是否取得 Microsoft 许可/产品身份，或修订目标接受非官方 gallery/sync 替代并保留不等价状态。
-3. 本轮已完成根目录 full DoD、GitNexus 全量与 staged scope 变更分析，并按 P00.4 阶段提交；工作区里其它用户既存改动仍保持未暂存。
+2. P00.4 当前 blocked；不要开 P01（docs/03 依赖 P00）。下一步解决产品身份/官方服务许可条件，并取得 Flutter Linux/WPE/CDP 与 macOS 真机证据或按用户批准修订等价范围；保留当前各平台差异记录。
+3. 本轮 `bash init.sh --fast` 通过；Linux 原生 GTK 探针有可重放证据。本阶段应在完成状态/证据同步、GitNexus 变更分析后做 scoped commit；不要把工作区里其它用户既存改动纳入提交。
 4. 复用固定 SHA 工作树 `E:\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 P00.1/P00.2 证据。
 
 ## 已知风险（尚未因本轮计划而修复）

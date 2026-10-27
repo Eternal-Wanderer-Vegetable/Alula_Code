@@ -46,6 +46,28 @@ captures WebView page screenshots and process-tree snapshots, waits 30 seconds
 after destroy, then closes the probe.
 
 The recorded Windows replay and its limits are in
-`docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md`. macOS and Linux need their
-own native builds. Do not infer cross-platform CDP, MHTML, or memory behavior
-from the Windows result.
+`docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md`. macOS and Flutter Linux need
+their own native builds. Do not infer cross-platform CDP, MHTML, or memory
+behavior from the Windows result.
+
+## Linux WebKitGTK engine-only check
+
+`linux/webkitgtk_probe.py` is a separate GTK probe. It checks the host's native
+WebKitGTK engine for page rendering, MHTML save/reload, page snapshots, Web
+Inspector, and process lifetime. It does not run inside Flutter and it does not
+implement or demonstrate Chrome DevTools Protocol (CDP).
+
+On Ubuntu/Debian x86_64 with WSLg or an X11 display, install the host runtime
+once if needed, then run the probe:
+
+```bash
+sudo apt-get install python3-gi python3-cairo gir1.2-gtk-3.0 libwebkit2gtk-4.1-0
+tools/web-engine-probe/linux/run-webkitgtk-probe.sh \
+  docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-run
+```
+
+The runner downloads and extracts the WebKitGTK/JSC/Soup GObject typelibs and
+Cairo bridge into a temporary directory without installing those packages.
+The output directory receives a JSON process-tree sample for each phase, PNG
+screenshots, and the MHTML archive. WebKitGTK is the engine tested here; this
+does not validate the separate WPE-based Linux Flutter plugin.

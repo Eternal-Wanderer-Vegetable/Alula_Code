@@ -1,0 +1,15 @@
+{
+  "phase": "before-webview",
+  "capturedAtMonotonicSeconds": 0.026,
+  "rootPid": 107919,
+  "webkitgtkVersion": "2.52.6",
+  "processes": [
+    {
+      "pid": 107919,
+      "ppid": 107881,
+      "comm": "python3",
+      "rss_kib": 63848,
+      "private_kib": 23248
+    }
+  ]
+}
