@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'workbench/layout_store.dart';
+import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
 import 'workbench/workbench_page.dart';
 
@@ -52,6 +53,7 @@ class AlulaApp extends StatelessWidget {
     this.autoFolder,
     this.layoutStore,
     this.sessionStore,
+    this.keybindingsStore,
     this.windowControls = false,
   });
 
@@ -66,6 +68,9 @@ class AlulaApp extends StatelessWidget {
 
   /// 会话 journal 注入点（测试用临时路径；默认真实用户目录）。
   final SessionStore? sessionStore;
+
+  /// 键位覆盖文件注入点（测试用临时路径；默认真实用户目录）。
+  final KeybindingsStore? keybindingsStore;
 
   /// 自绘窗口控制按钮（- □ ×）与拖拽移动区。
   /// 默认关闭：widget 测试环境没有 window_manager 插件通道；
@@ -86,6 +91,7 @@ class AlulaApp extends StatelessWidget {
         autoFolder: autoFolder,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
+        keybindingsStore: keybindingsStore,
         windowControls: windowControls,
       ),
     );

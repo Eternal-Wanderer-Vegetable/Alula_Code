@@ -14,6 +14,7 @@
 library;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show SingleActivator;
@@ -141,15 +142,14 @@ KeyChord? parseChord(String spec) {
 class KeybindingSet {
   KeybindingSet._(this._chordToCommand);
 
-  /// 默认键位表（命令 id → 键位串）。
+  /// 默认键位表（命令 id → 键位串，逗号分隔可给一条命令多个键位）。
   static const Map<String, String> defaults = {
     'view.commandPalette': 'ctrl+shift+p',
     'view.quickOpen': 'ctrl+p',
     'view.toggleSidebar': 'ctrl+b',
     'view.togglePanel': 'ctrl+j',
     'file.save': 'ctrl+s',
-    'editor.completion': 'ctrl+space',
-    'editor.completionF8': 'f8',
+    'editor.completion': 'ctrl+space,f8',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
@@ -158,10 +158,13 @@ class KeybindingSet {
   /// 从默认表出发应用用户覆盖（`-command` 移除；同键位串后写者胜）。
   /// [userJson] 为 keybindings.json 的原始文本；损坏或非法条目逐条忽略。
   factory KeybindingSet.load({String? userJson}) {
-    final map = <KeyChord, String>{
-      for (final e in defaults.entries)
-        if (parseChord(e.value) != null) parseChord(e.value)!: e.key,
-    };
+    final map = <KeyChord, String>{};
+    for (final e in defaults.entries) {
+      for (final spec in e.value.split(',')) {
+        final chord = parseChord(spec.trim());
+        if (chord != null) map[chord] = e.key;
+      }
+    }
     _applyUserJson(map, userJson);
     return KeybindingSet._(map);
   }
@@ -188,6 +191,8 @@ class KeybindingSet {
           map.remove(chord);
         }
       } else {
+        // 重绑定语义：同命令旧键位全部让位（含默认），用户键位成为唯一展示
+        map.removeWhere((_, v) => v == command);
         map[chord] = command;
       }
     }
@@ -205,12 +210,38 @@ class KeybindingSet {
   String? commandForChord(KeyChord chord) => _chordToCommand[chord];
 
   /// 命令 id → 展示键位串（菜单提示用，如 'Ctrl+Shift+P'）。
-  /// 同命令多条键位时取最后写入的一条（用户覆盖优先展示）。
+  /// 重绑定语义下同命令只剩用户键位，首匹配即正确展示。
   String? shortcutFor(String commandId) {
-    String? result;
     for (final e in _chordToCommand.entries) {
-      if (e.value == commandId) result = e.key.display;
+      if (e.value == commandId) return e.key.display;
     }
-    return result;
+    return null;
+  }
+}
+
+
+/// keybindings.json 存取（原始文本；注入路径供测试隔离）。
+/// V1 只读：键位编辑直接改文件，UI 不提供编辑器。
+class KeybindingsStore {
+  KeybindingsStore({String? path}) : _overridePath = path;
+
+  final String? _overridePath;
+
+  String resolvePath() {
+    if (_overridePath != null) return _overridePath;
+    final home = Platform.environment['HOME'] ??
+        Platform.environment['USERPROFILE'] ??
+        Directory.current.path;
+    return '$home/.alula/keybindings.json';
+  }
+
+  String? tryLoadText() {
+    try {
+      final file = File(resolvePath());
+      if (!file.existsSync()) return null;
+      return file.readAsStringSync();
+    } catch (_) {
+      return null;
+    }
   }
 }

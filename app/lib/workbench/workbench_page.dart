@@ -14,7 +14,6 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart' show kMiddleMouseButton;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/text_diff.dart';
@@ -22,6 +21,7 @@ import 'activity_bar.dart';
 import 'commands.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
+import 'keybindings.dart';
 import 'layout_store.dart';
 import 'quick_input.dart';
 import 'session_store.dart';
@@ -61,9 +61,11 @@ class WorkbenchPage extends StatefulWidget {
     this.autoFolder,
     LayoutStore? layoutStore,
     SessionStore? sessionStore,
+    KeybindingsStore? keybindingsStore,
     this.windowControls = false,
   })  : layoutStore = layoutStore ?? _defaultStore,
-        sessionStore = sessionStore ?? _defaultSessionStore;
+        sessionStore = sessionStore ?? _defaultSessionStore,
+        keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
   final bool autoLsp;
@@ -77,11 +79,15 @@ class WorkbenchPage extends StatefulWidget {
   /// 会话 journal（测试注入临时路径）。
   final SessionStore sessionStore;
 
+  /// 键位覆盖文件（测试注入临时路径）。
+  final KeybindingsStore keybindingsStore;
+
   /// 自绘窗口控制按钮（真实窗口开启；测试关闭，避免触碰插件通道）。
   final bool windowControls;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
+  static final KeybindingsStore _defaultKeybindingsStore = KeybindingsStore();
 
   @override
   State<WorkbenchPage> createState() => _WorkbenchPageState();
@@ -98,6 +104,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   final CommandRegistry _commands = CommandRegistry();
+
+  /// 键位集合（默认表 + 用户 keybindings.json 覆盖，docs/09 W3-2）。
+  late final KeybindingSet _keybindings;
   List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
 
@@ -139,6 +148,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout = WorkbenchLayout(root: saved);
     }
     _layout.addListener(_scheduleStateSave);
+    _keybindings = KeybindingSet.load(
+        userJson: widget.keybindingsStore.tryLoadText());
     _registerCommands();
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
@@ -171,8 +182,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'Ctrl+Space');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity());
+    reg('view.panelDiagnostics', '查看', '诊断面板',
+        () async => _panelTab.animateTo(0));
+    reg('view.panelCompletions', '查看', '补全面板',
+        () async => _panelTab.animateTo(1));
+    reg('view.panelSyntax', '查看', '语法面板',
+        () async => _panelTab.animateTo(2));
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp);
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
+  }
+
+  /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
+  String _sc(String commandId) {
+    final sc = _keybindings.shortcutFor(commandId);
+    return sc == null ? '' : '    $sc';
+  }
+
+  /// 执行命令（键位/菜单/面板统一出口）；未知 id（用户键位指向不存在的命令）
+  /// 给状态栏提示而不是静默吞掉。
+  void _runCommand(String id) {
+    final c = _commands.byId(id);
+    if (c == null) {
+      setState(() => _statusDetail = '命令不存在：$id（检查 keybindings.json）');
+      return;
+    }
+    c.run();
   }
 
   void _showCommandPalette() {
@@ -934,15 +968,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
-          const SingleActivator(LogicalKeyboardKey.keyP, control: true,
-                  shift: true):
-              _showCommandPalette,
-          const SingleActivator(LogicalKeyboardKey.keyP, control: true):
-              _showQuickOpen,
-          const SingleActivator(LogicalKeyboardKey.keyB, control: true):
-              () => _layout.toggleRegion('sidebar'),
-          const SingleActivator(LogicalKeyboardKey.keyJ, control: true):
-              () => _layout.toggleRegion('panel'),
+          for (final e in _keybindings.resolve().entries)
+            e.key: () => _runCommand(e.value),
         },
         child: Focus(
         autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
@@ -955,14 +982,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               '文件',
               [
                 TitleMenuItem('打开文件夹', _showOpenFolderDialog),
-                TitleMenuItem('保存    Ctrl+S', _saveActive),
+                TitleMenuItem('保存${_sc('file.save')}', _saveActive),
               ],
             ),
             (
               '查看',
               [
-                TitleMenuItem('命令面板    Ctrl+Shift+P', _showCommandPalette),
-                TitleMenuItem('快速打开文件…    Ctrl+P', _showQuickOpen),
+                TitleMenuItem(
+                    '命令面板${_sc('view.commandPalette')}', _showCommandPalette),
+                TitleMenuItem(
+                    '快速打开文件…${_sc('view.quickOpen')}', _showQuickOpen),
                 TitleMenuItem(
                     '切换侧栏', () => _layout.toggleRegion('sidebar')),
                 TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
@@ -1318,21 +1347,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: CallbackShortcuts(
-        bindings: {
-          const SingleActivator(LogicalKeyboardKey.keyS, control: true):
-              _saveActive,
-          const SingleActivator(LogicalKeyboardKey.space, control: true):
-              _requestCompletion,
-          const SingleActivator(LogicalKeyboardKey.f8): _requestCompletion,
-          const SingleActivator(LogicalKeyboardKey.f1): () =>
-              _panelTab.animateTo(0),
-          const SingleActivator(LogicalKeyboardKey.f2): () =>
-              _panelTab.animateTo(1),
-          const SingleActivator(LogicalKeyboardKey.f3): () =>
-              _panelTab.animateTo(2),
-        },
-        child: TextField(
+      child: TextField(
           controller: active.controller,
           maxLines: null,
           expands: true,
@@ -1344,10 +1359,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           },
           style: const TextStyle(
               fontFamily: 'monospace', fontSize: 14, height: 1.5),
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            contentPadding: EdgeInsets.all(12),
-          ),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.all(12),
         ),
       ),
     );

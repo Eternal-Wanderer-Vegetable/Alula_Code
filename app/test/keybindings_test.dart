@@ -29,7 +29,10 @@ void main() {
     test('默认表可解析且包含核心键位', () {
       final ks = KeybindingSet.load();
       final resolved = ks.resolve();
-      expect(resolved.keys.length, KeybindingSet.defaults.length);
+      final expectedChords = KeybindingSet.defaults.values
+          .fold<int>(0, (n, v) => n + v.split(',').length);
+      expect(resolved.keys.length, expectedChords,
+          reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
@@ -39,9 +42,11 @@ void main() {
       final ks = KeybindingSet.load(userJson:
           '[{"key": "ctrl+alt+f", "command": "view.quickOpen"}]');
       expect(ks.commandForChord(parseChord('ctrl+alt+f')!), 'view.quickOpen',
-          reason: '追加的新键位生效');
+          reason: '新键位生效');
+      expect(ks.commandForChord(parseChord('ctrl+p')!), isNull,
+          reason: '重绑定语义：同命令旧默认键位让位');
       expect(ks.shortcutFor('view.quickOpen'), 'Ctrl+Alt+F',
-          reason: '后写者胜：追加覆盖展示');
+          reason: '展示跟随用户重绑定');
     });
 
     test('用户移除：-command 删掉匹配的默认键位', () {
@@ -61,9 +66,11 @@ void main() {
 
     test('损坏 JSON：只用默认键位', () {
       final ks = KeybindingSet.load(userJson: '[{"key": broken');
-      expect(ks.resolve().length, KeybindingSet.defaults.length);
+      final expectedChords = KeybindingSet.defaults.values
+          .fold<int>(0, (n, v) => n + v.split(',').length);
+      expect(ks.resolve().length, expectedChords);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
-      expect(ks2.resolve().length, KeybindingSet.defaults.length);
+      expect(ks2.resolve().length, expectedChords);
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {

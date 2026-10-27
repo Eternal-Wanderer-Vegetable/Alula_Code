@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/gestures.dart';
@@ -35,11 +36,13 @@ void main() {
   late Directory tmp;
   late LayoutStore store;
   late SessionStore session;
+  late KeybindingsStore keybindings;
   setUp(() async {
     tmp = await Directory.systemTemp.createTemp('alula_widget_test');
     final base = tmp.path.replaceAll(r'\', '/');
     store = LayoutStore(path: '$base/layout.json');
     session = SessionStore(path: '$base/session.json');
+    keybindings = KeybindingsStore(path: '$base/keybindings.json');
   });
   tearDown(() async {
     if (tmp.existsSync()) await tmp.delete(recursive: true);
@@ -61,6 +64,7 @@ void main() {
     await tester.pumpWidget(AlulaApp(
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
       windowControls: true,
     ));
     await tester.pump(const Duration(milliseconds: 300));
@@ -75,6 +79,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -118,6 +123,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -161,6 +167,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -195,6 +202,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -210,6 +218,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 600));
 
@@ -228,6 +237,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -257,6 +267,7 @@ void main() {
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -278,12 +289,38 @@ void main() {
         reason: '标签 + 面包屑 两处（快速打开不展开文件树，树里没有 main.rs）');
   });
 
+  testWidgets('W3-2 keybindings.json：重绑定与移除', (tester) async {
+    File(keybindings.resolvePath()).writeAsStringSync(
+        '[{"key":"ctrl+i","command":"view.quickOpen"},'
+        '{"key":"ctrl+p","command":"-view.quickOpen"}]');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 旧键位 Ctrl+P 已被移除：不再打开面板
+    await pressChord(tester, LogicalKeyboardKey.keyP, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing,
+        reason: '-command 移除后 Ctrl+P 不应触发');
+
+    // 新键位 Ctrl+I 打开快速打开
+    await pressChord(tester, LogicalKeyboardKey.keyI, control: true);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget,
+        reason: '重绑定后的 Ctrl+I 应生效');
+  });
+
   testWidgets('autoFolder：文件树自动装载 fixture 工程根目录', (tester) async {
     // 依赖 app/native 的核心动态库与 fixture 目录存在（仓库内默认满足）
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
       sessionStore: session,
+      keybindingsStore: keybindings,
     ));
     // 越过 100ms 延迟触发 + listDir FFI + setState
     await tester.pump(const Duration(milliseconds: 500));
