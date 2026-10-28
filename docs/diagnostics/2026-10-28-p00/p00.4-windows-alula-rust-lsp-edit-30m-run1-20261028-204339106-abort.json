@@ -1,0 +1,734 @@
+{
+    "label":  "alula-rust-lsp-edit-30m-run1-20261028-204339106",
+    "run_index":  1,
+    "preflight":  false,
+    "status":  "aborted",
+    "abort_reason":  "Foreground changed (expected 56954624, found 12781196); stopped before sending more input.",
+    "aborted_at_utc":  "2026-10-28T12:56:00.6776589Z",
+    "test_started_at_utc":  "2026-10-28T12:43:39.2324684Z",
+    "edit_started_at_utc":  "2026-10-28T12:43:48.3477214Z",
+    "edit_elapsed_s":  732.329,
+    "expected_foreground_hwnd":  56954624,
+    "foreground_hwnd_at_abort":  12781196,
+    "root_pid":  36000,
+    "process_tree_pids_observed":  [
+                                       {
+                                           "pid":  1432,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  1716,
+                                           "ppid":  32092,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\cargo.exe"
+                                       },
+                                       {
+                                           "pid":  5148,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\cargo.exe"
+                                       },
+                                       {
+                                           "pid":  13416,
+                                           "ppid":  18320,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  13540,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  16976,
+                                           "ppid":  36000,
+                                           "name":  "rust-analyzer.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe"
+                                       },
+                                       {
+                                           "pid":  18320,
+                                           "ppid":  33924,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  22300,
+                                           "ppid":  1716,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  29012,
+                                           "ppid":  31860,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  31860,
+                                           "ppid":  39372,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  32092,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\cargo.exe"
+                                       },
+                                       {
+                                           "pid":  33924,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  34716,
+                                           "ppid":  16976,
+                                           "name":  "rust-analyzer.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe"
+                                       },
+                                       {
+                                           "pid":  36000,
+                                           "ppid":  42232,
+                                           "name":  "alula_app.exe",
+                                           "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe"
+                                       },
+                                       {
+                                           "pid":  36132,
+                                           "ppid":  46488,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  37160,
+                                           "ppid":  56188,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\cargo.exe"
+                                       },
+                                       {
+                                           "pid":  39208,
+                                           "ppid":  34716,
+                                           "name":  "rust-analyzer-proc-macro-srv.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe"
+                                       },
+                                       {
+                                           "pid":  39372,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  43672,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  46488,
+                                           "ppid":  13540,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  46496,
+                                           "ppid":  31860,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  47960,
+                                           "ppid":  43672,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  49600,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\cargo.exe"
+                                       },
+                                       {
+                                           "pid":  51824,
+                                           "ppid":  46488,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  54028,
+                                           "ppid":  1716,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  55396,
+                                           "ppid":  18320,
+                                           "name":  "rustc.exe",
+                                           "executable_path":  ""
+                                       },
+                                       {
+                                           "pid":  56188,
+                                           "ppid":  34716,
+                                           "name":  "cargo.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\cargo.exe"
+                                       }
+                                   ],
+    "saved_edit_count":  61,
+    "saved_edits":  [
+                        {
+                            "cycle":  1,
+                            "elapsed_s":  2.518,
+                            "captured_at_utc":  "2026-10-28T12:43:50.8663775Z",
+                            "marker":  "P00_4_EDIT_1_001",
+                            "saved":  true,
+                            "bytes":  607,
+                            "sha256":  "2BAAEEC36F4484913ADFB64AE80C14A2D529610BAC8A36BD15537ED2752D5CCC"
+                        },
+                        {
+                            "cycle":  2,
+                            "elapsed_s":  14.488,
+                            "captured_at_utc":  "2026-10-28T12:44:02.8361266Z",
+                            "marker":  "P00_4_EDIT_1_002",
+                            "saved":  true,
+                            "bytes":  627,
+                            "sha256":  "5466E208C69150E88B10E16DB0A02E191BE0FB36E47CB4E5DAD86BD2730406CE"
+                        },
+                        {
+                            "cycle":  3,
+                            "elapsed_s":  26.54,
+                            "captured_at_utc":  "2026-10-28T12:44:14.8885735Z",
+                            "marker":  "P00_4_EDIT_1_003",
+                            "saved":  true,
+                            "bytes":  647,
+                            "sha256":  "D8D09526FC651DC45FFC80EB0159B5C377C531BDED905871A11BF6F2B3828996"
+                        },
+                        {
+                            "cycle":  4,
+                            "elapsed_s":  38.492,
+                            "captured_at_utc":  "2026-10-28T12:44:26.8404426Z",
+                            "marker":  "P00_4_EDIT_1_004",
+                            "saved":  true,
+                            "bytes":  667,
+                            "sha256":  "06D0BD409F4CEF617E6FFA462CD9E31D65F06A3C41626D8F3440D01DCFC02B39"
+                        },
+                        {
+                            "cycle":  5,
+                            "elapsed_s":  50.504,
+                            "captured_at_utc":  "2026-10-28T12:44:38.8516874Z",
+                            "marker":  "P00_4_EDIT_1_005",
+                            "saved":  true,
+                            "bytes":  687,
+                            "sha256":  "9DEFD89D37B0FADD1F79A308ECF9A1350A3AF0A331EEB370DB199E6B8D6FF360"
+                        },
+                        {
+                            "cycle":  6,
+                            "elapsed_s":  62.503,
+                            "captured_at_utc":  "2026-10-28T12:44:50.8516985Z",
+                            "marker":  "P00_4_EDIT_1_006",
+                            "saved":  true,
+                            "bytes":  707,
+                            "sha256":  "E89501B1EF212D8D336DDB61F1054B2E0F35F0B19C42E5AFF5B4A8D5C648E673"
+                        },
+                        {
+                            "cycle":  7,
+                            "elapsed_s":  74.502,
+                            "captured_at_utc":  "2026-10-28T12:45:02.8509252Z",
+                            "marker":  "P00_4_EDIT_1_007",
+                            "saved":  true,
+                            "bytes":  727,
+                            "sha256":  "EB98DE714E9016D562C35DA3F1397790900215FBE583DD285E691B76E7FBCAE8"
+                        },
+                        {
+                            "cycle":  8,
+                            "elapsed_s":  86.5,
+                            "captured_at_utc":  "2026-10-28T12:45:14.8474845Z",
+                            "marker":  "P00_4_EDIT_1_008",
+                            "saved":  true,
+                            "bytes":  747,
+                            "sha256":  "E659FC238023C45830F2CFFACAADD745FF1DBB701482E0A0219D72564B6CE09D"
+                        },
+                        {
+                            "cycle":  9,
+                            "elapsed_s":  98.505,
+                            "captured_at_utc":  "2026-10-28T12:45:26.8528787Z",
+                            "marker":  "P00_4_EDIT_1_009",
+                            "saved":  true,
+                            "bytes":  767,
+                            "sha256":  "C85FEB5B810177F6DDFBDC143D70F5BE0FCFD3F8FAE2E1F02E03324556EFA679"
+                        },
+                        {
+                            "cycle":  10,
+                            "elapsed_s":  110.52,
+                            "captured_at_utc":  "2026-10-28T12:45:38.8682290Z",
+                            "marker":  "P00_4_EDIT_1_010",
+                            "saved":  true,
+                            "bytes":  787,
+                            "sha256":  "A3D585427A00C4800C752F4D989C177C1659BE18BE509554A1E7755F26D53773"
+                        },
+                        {
+                            "cycle":  11,
+                            "elapsed_s":  122.534,
+                            "captured_at_utc":  "2026-10-28T12:45:50.8823327Z",
+                            "marker":  "P00_4_EDIT_1_011",
+                            "saved":  true,
+                            "bytes":  807,
+                            "sha256":  "3438A9403846029F0648506225618188F5A9412AD611E3E787E88A6E7A8F5CEE"
+                        },
+                        {
+                            "cycle":  12,
+                            "elapsed_s":  134.496,
+                            "captured_at_utc":  "2026-10-28T12:46:02.8441509Z",
+                            "marker":  "P00_4_EDIT_1_012",
+                            "saved":  true,
+                            "bytes":  827,
+                            "sha256":  "2469718324FA4D254110C3AB788D0B52C02AA9FC5A34E6691AAC5FDE6DC5838D"
+                        },
+                        {
+                            "cycle":  13,
+                            "elapsed_s":  146.511,
+                            "captured_at_utc":  "2026-10-28T12:46:14.8594356Z",
+                            "marker":  "P00_4_EDIT_1_013",
+                            "saved":  true,
+                            "bytes":  847,
+                            "sha256":  "92EDD9A4C7EC46E738A84B02C04F32BD5064A66C0B6A1AFAD30FFDEE8408AFB5"
+                        },
+                        {
+                            "cycle":  14,
+                            "elapsed_s":  158.519,
+                            "captured_at_utc":  "2026-10-28T12:46:26.8670586Z",
+                            "marker":  "P00_4_EDIT_1_014",
+                            "saved":  true,
+                            "bytes":  867,
+                            "sha256":  "E921BDC1AD3F8C6DF74EDE795B00C474E8783B800132192DE8EC0D6604FC5879"
+                        },
+                        {
+                            "cycle":  15,
+                            "elapsed_s":  170.481,
+                            "captured_at_utc":  "2026-10-28T12:46:38.8300682Z",
+                            "marker":  "P00_4_EDIT_1_015",
+                            "saved":  true,
+                            "bytes":  887,
+                            "sha256":  "B8C8686ED2D9873A9311B9AFA54526AC927B8AE325090A9F6640F32B458C59F3"
+                        },
+                        {
+                            "cycle":  16,
+                            "elapsed_s":  182.536,
+                            "captured_at_utc":  "2026-10-28T12:46:50.8846595Z",
+                            "marker":  "P00_4_EDIT_1_016",
+                            "saved":  true,
+                            "bytes":  907,
+                            "sha256":  "3DD6E1AD30F7896503EE3922C909BF3E69451E0901D5E2BE8B148FE6CE506309"
+                        },
+                        {
+                            "cycle":  17,
+                            "elapsed_s":  194.497,
+                            "captured_at_utc":  "2026-10-28T12:47:02.8450429Z",
+                            "marker":  "P00_4_EDIT_1_017",
+                            "saved":  true,
+                            "bytes":  927,
+                            "sha256":  "F90B41D99C062786BED63F7A6089CB0C5E9D4B9B7D8292B78C3F269D2F078434"
+                        },
+                        {
+                            "cycle":  18,
+                            "elapsed_s":  206.505,
+                            "captured_at_utc":  "2026-10-28T12:47:14.8535369Z",
+                            "marker":  "P00_4_EDIT_1_018",
+                            "saved":  true,
+                            "bytes":  947,
+                            "sha256":  "F1F83C78B29266DA79290AE17E2C3100973C58A1D015E7BE3B9909EE7A3BA112"
+                        },
+                        {
+                            "cycle":  19,
+                            "elapsed_s":  218.487,
+                            "captured_at_utc":  "2026-10-28T12:47:26.8357364Z",
+                            "marker":  "P00_4_EDIT_1_019",
+                            "saved":  true,
+                            "bytes":  967,
+                            "sha256":  "AC3B459F043C4A153BB0BC46C1B67B69540ABD1D1181B461A92610C7C4699E0A"
+                        },
+                        {
+                            "cycle":  20,
+                            "elapsed_s":  230.501,
+                            "captured_at_utc":  "2026-10-28T12:47:38.8490653Z",
+                            "marker":  "P00_4_EDIT_1_020",
+                            "saved":  true,
+                            "bytes":  987,
+                            "sha256":  "0B3F9ADC7F96435866B9D15A63F025B01504EBEA527897F7F82221617D9A83BE"
+                        },
+                        {
+                            "cycle":  21,
+                            "elapsed_s":  242.525,
+                            "captured_at_utc":  "2026-10-28T12:47:50.8730635Z",
+                            "marker":  "P00_4_EDIT_1_021",
+                            "saved":  true,
+                            "bytes":  1007,
+                            "sha256":  "B4F1F25D8C5B33030275D7411DF5936A39241778698FF730463A112CB27877B1"
+                        },
+                        {
+                            "cycle":  22,
+                            "elapsed_s":  254.533,
+                            "captured_at_utc":  "2026-10-28T12:48:02.8811834Z",
+                            "marker":  "P00_4_EDIT_1_022",
+                            "saved":  true,
+                            "bytes":  1027,
+                            "sha256":  "806998400AB141C12F137FE7ED702E992C177B9EFDFA0C0ABF2231987A06BE99"
+                        },
+                        {
+                            "cycle":  23,
+                            "elapsed_s":  266.499,
+                            "captured_at_utc":  "2026-10-28T12:48:14.8471066Z",
+                            "marker":  "P00_4_EDIT_1_023",
+                            "saved":  true,
+                            "bytes":  1047,
+                            "sha256":  "728D3145256DFF4CFCC2A5FB4917CE6C98954D9DBF02A3E61AD64A3AA3E0E168"
+                        },
+                        {
+                            "cycle":  24,
+                            "elapsed_s":  278.488,
+                            "captured_at_utc":  "2026-10-28T12:48:26.8363143Z",
+                            "marker":  "P00_4_EDIT_1_024",
+                            "saved":  true,
+                            "bytes":  1067,
+                            "sha256":  "67E817DDEA8C1E10320E0482D5F97A0A1FCB59EB6E23535FAFBBF5D7E60D35B2"
+                        },
+                        {
+                            "cycle":  25,
+                            "elapsed_s":  290.513,
+                            "captured_at_utc":  "2026-10-28T12:48:38.8607760Z",
+                            "marker":  "P00_4_EDIT_1_025",
+                            "saved":  true,
+                            "bytes":  1087,
+                            "sha256":  "FD054412673E49247FF5F75088F719B0A3183226134A43BEA52FEE24C2555B59"
+                        },
+                        {
+                            "cycle":  26,
+                            "elapsed_s":  302.511,
+                            "captured_at_utc":  "2026-10-28T12:48:50.8592474Z",
+                            "marker":  "P00_4_EDIT_1_026",
+                            "saved":  true,
+                            "bytes":  1107,
+                            "sha256":  "565C52C11657AE363E401AF678AC1AABD241EDB37FF677ABFD190823D35CF6F4"
+                        },
+                        {
+                            "cycle":  27,
+                            "elapsed_s":  314.518,
+                            "captured_at_utc":  "2026-10-28T12:49:02.8659681Z",
+                            "marker":  "P00_4_EDIT_1_027",
+                            "saved":  true,
+                            "bytes":  1127,
+                            "sha256":  "4E0077027D82E73A8AA951BB8C6F26EE62FF878D635C09759F0E4410691B475C"
+                        },
+                        {
+                            "cycle":  28,
+                            "elapsed_s":  326.522,
+                            "captured_at_utc":  "2026-10-28T12:49:14.8700370Z",
+                            "marker":  "P00_4_EDIT_1_028",
+                            "saved":  true,
+                            "bytes":  1147,
+                            "sha256":  "78304761C160B3144A38D821FE432319F845CF5797290CE2B19728F6B328104A"
+                        },
+                        {
+                            "cycle":  29,
+                            "elapsed_s":  338.519,
+                            "captured_at_utc":  "2026-10-28T12:49:26.8671622Z",
+                            "marker":  "P00_4_EDIT_1_029",
+                            "saved":  true,
+                            "bytes":  1167,
+                            "sha256":  "7A7DE2F8819C4C63AF613A58B111EC4346D6B75A889025099E7F4F037994E154"
+                        },
+                        {
+                            "cycle":  30,
+                            "elapsed_s":  350.517,
+                            "captured_at_utc":  "2026-10-28T12:49:38.8652199Z",
+                            "marker":  "P00_4_EDIT_1_030",
+                            "saved":  true,
+                            "bytes":  1187,
+                            "sha256":  "CDF3AB8B650985C8DB199CFA64428CA29A27398EE44E60BC38F2DBE9291D7B6F"
+                        },
+                        {
+                            "cycle":  31,
+                            "elapsed_s":  362.511,
+                            "captured_at_utc":  "2026-10-28T12:49:50.8599340Z",
+                            "marker":  "P00_4_EDIT_1_031",
+                            "saved":  true,
+                            "bytes":  1207,
+                            "sha256":  "13A959AD1A85B23C7F65EE568789A6A1308B0950073D1BD748CCB4D9EA99194D"
+                        },
+                        {
+                            "cycle":  32,
+                            "elapsed_s":  374.505,
+                            "captured_at_utc":  "2026-10-28T12:50:02.8537447Z",
+                            "marker":  "P00_4_EDIT_1_032",
+                            "saved":  true,
+                            "bytes":  1227,
+                            "sha256":  "101464556756AFD9839409EF1CBCE46B6D65CD10F11BA9D2721B4A1B9B887656"
+                        },
+                        {
+                            "cycle":  33,
+                            "elapsed_s":  386.482,
+                            "captured_at_utc":  "2026-10-28T12:50:14.8308418Z",
+                            "marker":  "P00_4_EDIT_1_033",
+                            "saved":  true,
+                            "bytes":  1247,
+                            "sha256":  "9F6AE8480247F86DC1E29306C8D65F69396B6C1C895E82AB39E2D176D8332E7D"
+                        },
+                        {
+                            "cycle":  34,
+                            "elapsed_s":  398.528,
+                            "captured_at_utc":  "2026-10-28T12:50:26.8755253Z",
+                            "marker":  "P00_4_EDIT_1_034",
+                            "saved":  true,
+                            "bytes":  1267,
+                            "sha256":  "032F7BA1D414F7032E0EB215BF4D17D2436BAB070204C0424562DE85B5AD2036"
+                        },
+                        {
+                            "cycle":  35,
+                            "elapsed_s":  410.522,
+                            "captured_at_utc":  "2026-10-28T12:50:38.8699465Z",
+                            "marker":  "P00_4_EDIT_1_035",
+                            "saved":  true,
+                            "bytes":  1287,
+                            "sha256":  "29046765F9B4591E70AB348F254E2F3455C1FAFC8DFF8CD047DCAEFED1981CE6"
+                        },
+                        {
+                            "cycle":  36,
+                            "elapsed_s":  422.499,
+                            "captured_at_utc":  "2026-10-28T12:50:50.8472891Z",
+                            "marker":  "P00_4_EDIT_1_036",
+                            "saved":  true,
+                            "bytes":  1307,
+                            "sha256":  "AF17626E4CA5DA71ED5F0C49401641200FC4428FDEB34004BCB9F3A00B346832"
+                        },
+                        {
+                            "cycle":  37,
+                            "elapsed_s":  434.515,
+                            "captured_at_utc":  "2026-10-28T12:51:02.8640787Z",
+                            "marker":  "P00_4_EDIT_1_037",
+                            "saved":  true,
+                            "bytes":  1327,
+                            "sha256":  "5C2F5F9369C73F73830E36E6F62520AD40C11AB67E937F2B32DBB4460DC7833F"
+                        },
+                        {
+                            "cycle":  38,
+                            "elapsed_s":  446.508,
+                            "captured_at_utc":  "2026-10-28T12:51:14.8561848Z",
+                            "marker":  "P00_4_EDIT_1_038",
+                            "saved":  true,
+                            "bytes":  1347,
+                            "sha256":  "448D61269CF361339D4037B02F2D1D5BF30FCD433924416D6F9973B0A44E57E7"
+                        },
+                        {
+                            "cycle":  39,
+                            "elapsed_s":  458.512,
+                            "captured_at_utc":  "2026-10-28T12:51:26.8600574Z",
+                            "marker":  "P00_4_EDIT_1_039",
+                            "saved":  true,
+                            "bytes":  1367,
+                            "sha256":  "361355CDC5C36F863BCD02B29641A3483AB945510BBA2527F148E06A0DFD0112"
+                        },
+                        {
+                            "cycle":  40,
+                            "elapsed_s":  470.467,
+                            "captured_at_utc":  "2026-10-28T12:51:38.8144386Z",
+                            "marker":  "P00_4_EDIT_1_040",
+                            "saved":  true,
+                            "bytes":  1387,
+                            "sha256":  "4672F77100A778232BA0D90C4796164FB7BB4D49AF064FD8E12C20DA570FC826"
+                        },
+                        {
+                            "cycle":  41,
+                            "elapsed_s":  482.54,
+                            "captured_at_utc":  "2026-10-28T12:51:50.8877065Z",
+                            "marker":  "P00_4_EDIT_1_041",
+                            "saved":  true,
+                            "bytes":  1407,
+                            "sha256":  "E0785D9D21639FF33801761757A73244D53C32A2E908651656F7B22FCF1A7819"
+                        },
+                        {
+                            "cycle":  42,
+                            "elapsed_s":  494.537,
+                            "captured_at_utc":  "2026-10-28T12:52:02.8854145Z",
+                            "marker":  "P00_4_EDIT_1_042",
+                            "saved":  true,
+                            "bytes":  1427,
+                            "sha256":  "E7428197554261FF242D46C6A218D9DEDCA69FCA8EE399C5EC371C07A4F860DA"
+                        },
+                        {
+                            "cycle":  43,
+                            "elapsed_s":  506.522,
+                            "captured_at_utc":  "2026-10-28T12:52:14.8697128Z",
+                            "marker":  "P00_4_EDIT_1_043",
+                            "saved":  true,
+                            "bytes":  1447,
+                            "sha256":  "7EFE1B6E1F36A217348AC3F2CF45657B66E433AF97D2D9157FC74E145FB9A46B"
+                        },
+                        {
+                            "cycle":  44,
+                            "elapsed_s":  518.513,
+                            "captured_at_utc":  "2026-10-28T12:52:26.8618829Z",
+                            "marker":  "P00_4_EDIT_1_044",
+                            "saved":  true,
+                            "bytes":  1467,
+                            "sha256":  "72A65CB9114511F5FBAB8E4C111B23F3D387A27EA2554E4B738368548E7C6413"
+                        },
+                        {
+                            "cycle":  45,
+                            "elapsed_s":  530.51,
+                            "captured_at_utc":  "2026-10-28T12:52:38.8575720Z",
+                            "marker":  "P00_4_EDIT_1_045",
+                            "saved":  true,
+                            "bytes":  1487,
+                            "sha256":  "B7C4B5C446D1068ECA7662366219259ABEB8FB6CED249E2390414D6120F9F8DD"
+                        },
+                        {
+                            "cycle":  46,
+                            "elapsed_s":  542.526,
+                            "captured_at_utc":  "2026-10-28T12:52:50.8746424Z",
+                            "marker":  "P00_4_EDIT_1_046",
+                            "saved":  true,
+                            "bytes":  1507,
+                            "sha256":  "EEBFDCF4B2D1805D7929166BC13E34A15B247D7A681C0D49D839F778B79534A7"
+                        },
+                        {
+                            "cycle":  47,
+                            "elapsed_s":  554.531,
+                            "captured_at_utc":  "2026-10-28T12:53:02.8784404Z",
+                            "marker":  "P00_4_EDIT_1_047",
+                            "saved":  true,
+                            "bytes":  1527,
+                            "sha256":  "6F194B0FBBB21E7CF70A70A50D6B66A02D4A6EAEE15576F842FCA4F1AA203987"
+                        },
+                        {
+                            "cycle":  48,
+                            "elapsed_s":  566.518,
+                            "captured_at_utc":  "2026-10-28T12:53:14.8666832Z",
+                            "marker":  "P00_4_EDIT_1_048",
+                            "saved":  true,
+                            "bytes":  1547,
+                            "sha256":  "2E675F5B8A4CA6955CBBD0A272772778D7E39D4C22AD0E18F511B348236980A7"
+                        },
+                        {
+                            "cycle":  49,
+                            "elapsed_s":  578.482,
+                            "captured_at_utc":  "2026-10-28T12:53:26.8308020Z",
+                            "marker":  "P00_4_EDIT_1_049",
+                            "saved":  true,
+                            "bytes":  1567,
+                            "sha256":  "969F22A3919F53316D76613A77A81511C3508227D566C30E008FBFE9E7562A96"
+                        },
+                        {
+                            "cycle":  50,
+                            "elapsed_s":  590.503,
+                            "captured_at_utc":  "2026-10-28T12:53:38.8513954Z",
+                            "marker":  "P00_4_EDIT_1_050",
+                            "saved":  true,
+                            "bytes":  1587,
+                            "sha256":  "D73008F94E3FFF4A5E248747B8A671006DE3DA4F35262418103FC9965316D5CA"
+                        },
+                        {
+                            "cycle":  51,
+                            "elapsed_s":  602.536,
+                            "captured_at_utc":  "2026-10-28T12:53:50.8843456Z",
+                            "marker":  "P00_4_EDIT_1_051",
+                            "saved":  true,
+                            "bytes":  1607,
+                            "sha256":  "5548B03098A7237C7107AF449A39CF4D0BCFCCE3A2F1A58691014A799D350BAB"
+                        },
+                        {
+                            "cycle":  52,
+                            "elapsed_s":  614.481,
+                            "captured_at_utc":  "2026-10-28T12:54:02.8289234Z",
+                            "marker":  "P00_4_EDIT_1_052",
+                            "saved":  true,
+                            "bytes":  1627,
+                            "sha256":  "F16A9344255CF1A236A69522DE277B4A11912098273F2169B5592E23F1855FBD"
+                        },
+                        {
+                            "cycle":  53,
+                            "elapsed_s":  626.57,
+                            "captured_at_utc":  "2026-10-28T12:54:14.9180529Z",
+                            "marker":  "P00_4_EDIT_1_053",
+                            "saved":  true,
+                            "bytes":  1647,
+                            "sha256":  "F4E22B0415FB1FE0C8A8880A1958992B8E1CB5F74E0DAF3337D3CF1BA47E394C"
+                        },
+                        {
+                            "cycle":  54,
+                            "elapsed_s":  638.509,
+                            "captured_at_utc":  "2026-10-28T12:54:26.8570284Z",
+                            "marker":  "P00_4_EDIT_1_054",
+                            "saved":  true,
+                            "bytes":  1667,
+                            "sha256":  "AD11D41D5C529A6396FEC574AF42A53FE51507F2D82841438B3BE565205AFF7C"
+                        },
+                        {
+                            "cycle":  55,
+                            "elapsed_s":  650.493,
+                            "captured_at_utc":  "2026-10-28T12:54:38.8414085Z",
+                            "marker":  "P00_4_EDIT_1_055",
+                            "saved":  true,
+                            "bytes":  1687,
+                            "sha256":  "8D8495A0521DA41311975CBB42969B6E0986BC41ED503D09A2F04E505304E39C"
+                        },
+                        {
+                            "cycle":  56,
+                            "elapsed_s":  662.488,
+                            "captured_at_utc":  "2026-10-28T12:54:50.8359875Z",
+                            "marker":  "P00_4_EDIT_1_056",
+                            "saved":  true,
+                            "bytes":  1707,
+                            "sha256":  "24C6153719D5F5B4E18F3223B1A8C03960783C3BF320BE595362D9491E596D2C"
+                        },
+                        {
+                            "cycle":  57,
+                            "elapsed_s":  674.493,
+                            "captured_at_utc":  "2026-10-28T12:55:02.8414856Z",
+                            "marker":  "P00_4_EDIT_1_057",
+                            "saved":  true,
+                            "bytes":  1727,
+                            "sha256":  "EBE21EC380BAAEB90E2B3E9A4316DA01879C51D97649140C2EE9BDC1A9B7B14F"
+                        },
+                        {
+                            "cycle":  58,
+                            "elapsed_s":  686.54,
+                            "captured_at_utc":  "2026-10-28T12:55:14.8881185Z",
+                            "marker":  "P00_4_EDIT_1_058",
+                            "saved":  true,
+                            "bytes":  1747,
+                            "sha256":  "9B8418B44805E2A5A9D261766C5FCC7B8E422C9FAF1896389552DAE9481E6565"
+                        },
+                        {
+                            "cycle":  59,
+                            "elapsed_s":  698.5,
+                            "captured_at_utc":  "2026-10-28T12:55:26.8477786Z",
+                            "marker":  "P00_4_EDIT_1_059",
+                            "saved":  true,
+                            "bytes":  1767,
+                            "sha256":  "DD905D0CBF530EC4CABFD5818D8A5FDB1F77E6560D0B860340B4944FFBD5606B"
+                        },
+                        {
+                            "cycle":  60,
+                            "elapsed_s":  710.505,
+                            "captured_at_utc":  "2026-10-28T12:55:38.8530502Z",
+                            "marker":  "P00_4_EDIT_1_060",
+                            "saved":  true,
+                            "bytes":  1787,
+                            "sha256":  "12475A9B0FB11C6B974AFA7ED4628DF7061EA4E4CEA64288BFA226DEE629A591"
+                        },
+                        {
+                            "cycle":  61,
+                            "elapsed_s":  722.531,
+                            "captured_at_utc":  "2026-10-28T12:55:50.8792242Z",
+                            "marker":  "P00_4_EDIT_1_061",
+                            "saved":  true,
+                            "bytes":  1807,
+                            "sha256":  "5B601A01C1CB59DB7651FDCFA9BA8E944809C7E39B9BB57C1AC24C2B1E92A3C2"
+                        }
+                    ],
+    "memory_report_path":  "p00.4-windows-alula-rust-lsp-edit-30m-run1-20261028-204339106.json",
+    "memory_report_present":  false,
+    "memory_report_valid_for_acceptance":  false,
+    "note":  "An aborted attempt is not a completed duration sample. Any partial memory output is diagnostic only and must not be counted toward acceptance."
+}

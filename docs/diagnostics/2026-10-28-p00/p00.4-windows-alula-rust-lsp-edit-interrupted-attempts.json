@@ -49,12 +49,32 @@
       "complete_memory_report_retained": false,
       "counts_toward_acceptance": false,
       "observed_alula_and_rust_analyzer_processes_cleaned_up": true
+    },
+    {
+      "run_index": 1,
+      "attempt": 3,
+      "status": "aborted_foreground_changed",
+      "elapsed_seconds": 732.329,
+      "saved_edits": 61,
+      "alula_pid": 36000,
+      "expected_window_handle": 56954624,
+      "observed_foreground_window_handle": 12781196,
+      "observed_foreground_process_id": 46760,
+      "observed_foreground_process": "WindowsSandboxRemoteSession.exe",
+      "observed_foreground_window_title": "Windows Sandbox",
+      "aborted_at_utc": "2026-10-28T12:56:00.6776589Z",
+      "temporary_root": "unique app/build/p00.4-edit-run1-20261028-204339106-* directory; removed by finally cleanup",
+      "abort_report": "p00.4-windows-alula-rust-lsp-edit-30m-run1-20261028-204339106-abort.json",
+      "probe_stderr": "p00.4-windows-alula-rust-lsp-edit-30m-run1-20261028-204339106-probe.stderr.log",
+      "complete_memory_report_retained": false,
+      "observed_alula_and_rust_analyzer_processes_cleaned_up": true,
+      "counts_toward_acceptance": false
     }
   ],
   "limitations": [
-    "Formal attempt durations and edit counts are approximate session observations; neither attempt retained a complete mem-probe report.",
+    "The first two formal attempt durations and edit counts are approximate session observations; the third has a structured abort report with elapsed time and saved edit records.",
     "The foreground guard stopped sending input as soon as the active window no longer matched Alula.",
-    "The Windows desktop could not remain on Alula for the required 30-minute interval during either attempt.",
+    "The Windows desktop did not remain on Alula for the required 30-minute interval in any attempt.",
     "These interruptions are not evidence of a product crash, memory result, or failed save; they are invalid/incomplete acceptance runs."
   ]
 }
