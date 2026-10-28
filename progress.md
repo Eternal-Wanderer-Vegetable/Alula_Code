@@ -18,6 +18,8 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - 用户报告前台进程误关闭后，已重新完整执行 Windows 隔离 HOME/`rust-mini`/Release Rust+RA 编辑流程：1800.011 秒、150/150 次保存、1817 个一秒样本；Private Bytes 峰值/稳定/最终值 846.68/661.44/233.00 MiB。稳定值仍高于 500 MiB 目标 161.44 MiB；4 个观察 PID 关闭+30 秒后均退出，临时数据清除、原前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-043806492.{json,md}`、`-activity.json`、`-probe.stderr.log`。
 - 从 WSL 中断点恢复，`bash init.sh --fast` 退出 0（Rust tests、core build、Flutter 122 项）。安装 Xvfb/xdotool/netpbm 并在隔离 fixture 下完成 Linux 主应用 cgroup 交互探索：512 MiB 无 LSP 单轮保存通过；512 MiB 含真实 Rust Analyzer 被 OOM killer 终止；1 GiB 含 Rust Analyzer 单轮保存通过，采样峰值 903,749,632 bytes，OOM=0。
 - 1 GiB 与 512 MiB 无 LSP 成功关闭返回 0，但仍有 Flutter `FlutterEngineRemoveView returned kInvalidArguments` warning。各场景仅单轮，不满足 docs/04 的完整多档重复及长时进程树矩阵；真实 DRM/WPE GBM 与官方服务授权仍阻塞。P00.4 保持 blocked，P01 不启动。完整限制与原始证据见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。
+- 提交 `e0256b2` 已按既有授权推送，GitHub CI run `40772304233` 全绿：Harness、Ubuntu/Windows Rust fmt/Clippy/tests，Flutter analyze 与 122 项测试通过。
+- 按会话收尾要求再次运行本机完整 `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh`，退出 0：workspace tests、Clippy、build_core 和 Flutter 122 项通过；超大 recovery fixture 2:36。
 
 ## 今日会话（2026-10-29 第六十二轮）：Windows 前台 Rust+RA 编辑验收复跑
 
