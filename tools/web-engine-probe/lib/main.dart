@@ -364,8 +364,10 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     if (controller == null || path == null) return;
 
     try {
+      final archiveUri = WebUri(File(path).uri.toString());
       await controller.loadUrl(
-        urlRequest: URLRequest(url: WebUri(File(path).uri.toString())),
+        urlRequest: URLRequest(url: archiveUri),
+        allowingReadAccessTo: archiveUri,
       );
       setState(
         () => _status = _usesWebArchive
