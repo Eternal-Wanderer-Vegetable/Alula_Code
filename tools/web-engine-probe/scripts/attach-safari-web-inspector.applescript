@@ -80,8 +80,8 @@ on attachInspectableTarget()
 				key code 53
 				delay 0.25
 			end repeat
-			if attachResult is "" then error "Alula Web Probe did not appear in Safari Develop menu"
-			delay 1
+			if attachResult is "" then error "Web Archive page did not appear in Safari Develop menu"
+			delay 2
 			return "attach=ok target=" & attachResult & " windows=" & (name of every window as text)
 		end tell
 	end tell
@@ -96,7 +96,7 @@ on findInspectableTarget(menuReference)
 					set itemTitle to name of menuItemReference as text
 				end try
 				log "Safari Develop item: " & itemTitle
-				if itemTitle contains "Alula Web Probe" or itemTitle contains "web_engine_probe" then
+				if itemTitle contains "p00.4-web-probe.webarchive" then
 					click menuItemReference
 					return itemTitle
 				end if
