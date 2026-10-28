@@ -373,7 +373,7 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     if (controller == null || path == null) return;
 
     try {
-      final archiveUri = WebUri(File(path).uri.toString());
+      final fileUri = WebUri(File(path).uri.toString());
       if (_usesWebArchive) {
         final canLoadSimulatedRequest =
             InAppWebViewController.isMethodSupported(
@@ -390,9 +390,12 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
         if (archiveData.isEmpty) {
           throw StateError('Saved WKWebView Web Archive is empty');
         }
+        final archiveUri = WebUri(
+          'https://webarchive.invalid/$_archiveFileName',
+        );
         stdout.writeln(
-          'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri bytes=${archiveData.length} '
-          'mimeType=application/x-webarchive',
+          'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri source=$fileUri '
+          'bytes=${archiveData.length} mimeType=application/x-webarchive',
         );
         await controller.loadSimulatedRequest(
           urlRequest: URLRequest(url: archiveUri),
@@ -400,14 +403,14 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
           urlResponse: URLResponse(
             expectedContentLength: archiveData.length,
             mimeType: 'application/x-webarchive',
-            textEncodingName: 'utf-8',
+            statusCode: 200,
             url: archiveUri,
           ),
         );
       } else {
         await controller.loadUrl(
-          urlRequest: URLRequest(url: archiveUri),
-          allowingReadAccessTo: archiveUri,
+          urlRequest: URLRequest(url: fileUri),
+          allowingReadAccessTo: fileUri,
         );
       }
       stdout.writeln('P00_4_ARCHIVE_LOAD_REQUEST_RETURNED');
