@@ -374,13 +374,42 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
 
     try {
       final archiveUri = WebUri(File(path).uri.toString());
-      stdout.writeln(
-        'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri readAccess=$archiveUri',
-      );
-      await controller.loadUrl(
-        urlRequest: URLRequest(url: archiveUri),
-        allowingReadAccessTo: archiveUri,
-      );
+      if (_usesWebArchive) {
+        final canLoadSimulatedRequest =
+            InAppWebViewController.isMethodSupported(
+              PlatformInAppWebViewControllerMethod.loadSimulatedRequest,
+              platform: TargetPlatform.macOS,
+            );
+        if (!canLoadSimulatedRequest) {
+          throw UnsupportedError(
+            'WKWebView loadSimulatedRequest requires macOS 12 or newer',
+          );
+        }
+
+        final archiveData = await File(path).readAsBytes();
+        if (archiveData.isEmpty) {
+          throw StateError('Saved WKWebView Web Archive is empty');
+        }
+        stdout.writeln(
+          'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri bytes=${archiveData.length} '
+          'mimeType=application/x-webarchive',
+        );
+        await controller.loadSimulatedRequest(
+          urlRequest: URLRequest(url: archiveUri),
+          data: archiveData,
+          urlResponse: URLResponse(
+            expectedContentLength: archiveData.length,
+            mimeType: 'application/x-webarchive',
+            textEncodingName: 'utf-8',
+            url: archiveUri,
+          ),
+        );
+      } else {
+        await controller.loadUrl(
+          urlRequest: URLRequest(url: archiveUri),
+          allowingReadAccessTo: archiveUri,
+        );
+      }
       stdout.writeln('P00_4_ARCHIVE_LOAD_REQUEST_RETURNED');
       setState(
         () => _status = _usesWebArchive
