@@ -17,7 +17,7 @@ jobs:
     container:
       image: debian:sid
       # bubblewrap needs these privileges for WebKit's default sandbox.
-      options: --cap-add=SYS_ADMIN --security-opt=seccomp=unconfined
+      options: --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --security-opt=seccomp=unconfined
     timeout-minutes: 35
     steps:
       - name: Install build and WPE dependencies
