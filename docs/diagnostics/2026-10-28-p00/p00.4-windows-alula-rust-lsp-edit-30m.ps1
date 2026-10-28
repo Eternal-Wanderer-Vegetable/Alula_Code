@@ -231,6 +231,28 @@ function Add-ObservedPids([int]$RootPid) {
   }
 }
 
+function Add-ProcessMemorySnapshot([int]$RootPid, [double]$ElapsedSeconds) {
+  $capturedAt = [DateTime]::UtcNow.ToString('o')
+  foreach ($node in @(Get-TreeNodes $RootPid)) {
+    try {
+      $process = Get-Process -Id ([int]$node.ProcessId) -ErrorAction Stop
+      $process.Refresh()
+      [void]$processMemorySamples.Add([pscustomobject]@{
+        elapsed_s = [Math]::Round($ElapsedSeconds, 3)
+        captured_at_utc = $capturedAt
+        pid = [int]$node.ProcessId
+        ppid = [int]$node.ParentProcessId
+        name = [string]$node.Name
+        executable_path = [string]$node.ExecutablePath
+        private_bytes = [long]$process.PrivateMemorySize64
+        working_set_bytes = [long]$process.WorkingSet64
+      })
+    } catch {
+      # A short-lived child may exit between the process-tree and memory queries.
+    }
+  }
+}
+
 function Stop-AppTree([int]$RootPid) {
   if ($RootPid -le 0) { return }
   $nodes = @(Get-TreeNodes $RootPid)
@@ -279,6 +301,7 @@ $targetWindow = [IntPtr]::Zero
 $rootPid = 0
 $probeProcess = $null
 $observedPids = @{}
+$processMemorySamples = New-Object System.Collections.ArrayList
 $edits = New-Object System.Collections.ArrayList
 $testStartedUtc = [DateTime]::UtcNow.ToString('o')
 $editStartedUtc = $null
@@ -412,6 +435,7 @@ try {
   Add-ObservedPids $rootPid
   $editStartedUtc = [DateTime]::UtcNow.ToString('o')
   $editTimer = [System.Diagnostics.Stopwatch]::StartNew()
+  Add-ProcessMemorySnapshot $rootPid $editTimer.Elapsed.TotalSeconds
   $cycle = 0
   while ($editTimer.Elapsed.TotalSeconds -lt $editDuration) {
     Assert-TargetForeground
@@ -436,6 +460,7 @@ try {
     })
     if (($cycle % 5) -eq 0) {
       Add-ObservedPids $rootPid
+      Add-ProcessMemorySnapshot $rootPid $editTimer.Elapsed.TotalSeconds
       Write-Output "edit_run=$suffix cycle=$cycle elapsed_s=$([Math]::Round($editTimer.Elapsed.TotalSeconds)) saved_hash=$($hash.Substring(0, 12))"
     }
     $nextDeadline = $cycle * $editInterval
@@ -449,6 +474,7 @@ try {
   if ($editTimer.Elapsed.TotalSeconds -lt $editDuration) { throw 'Edit interval ended before its required duration.' }
   $editEndedUtc = [DateTime]::UtcNow.ToString('o')
   $editTimer.Stop()
+  Add-ProcessMemorySnapshot $rootPid $editTimer.Elapsed.TotalSeconds
   $finalText = [System.IO.File]::ReadAllText($editedFile)
   $lastMarker = [string]$edits[$edits.Count - 1].marker
   if (!$finalText.Contains($lastMarker)) { throw "Final disk content is missing last marker $lastMarker" }
@@ -520,6 +546,8 @@ try {
     memory_report = [IO.Path]::GetFileName($memoryJson)
     memory_summary = $probeReport.summary
     memory_samples = $probeReport.samples.Count
+    process_memory_sample_interval_edits = 5
+    process_memory_samples = @($processMemorySamples.ToArray())
     edits = @($edits.ToArray())
   }
   if ($foregroundBefore -ne [IntPtr]::Zero -and [P004EditInput]::IsWindow($foregroundBefore)) {
@@ -538,6 +566,7 @@ try {
     "- Process tree: $($recorded.Count) distinct PIDs observed; all exited after the close check = $($closeCheck.all_recorded_processes_exited).",
     "- Private Bytes: peak $([Math]::Round($summary.peak_private / $miB, 2)) MiB; stable $([Math]::Round($summary.stable_private / $miB, 2)) MiB; final $([Math]::Round($summary.final_private / $miB, 2)) MiB.",
     "- Samples: $($probeReport.samples.Count); mem-probe duration target $probeDuration s; one-second interval.",
+    "- Process detail: $($processMemorySamples.Count) per-PID Private Bytes/Working Set observations at start, every fifth saved edit, and the end of editing.",
     "- Isolated fixture and HOME: removed after evidence capture; app foreground restored = $($report.foreground_restored).",
     '',
     'This is a single Windows product scenario repetition. It does not include a VS Code comparison, other platforms, DRM WPE GBM, or Microsoft account/service validation.'
@@ -585,6 +614,8 @@ try {
     foreground_hwnd_at_abort = if ($foregroundAtAbort -ne [IntPtr]::Zero) { $foregroundAtAbort.ToInt64() } else { $null }
     root_pid = $rootPid
     process_tree_pids_observed = $recordedAtAbort
+    process_memory_sample_interval_edits = 5
+    process_memory_samples = @($processMemorySamples.ToArray())
     saved_edit_count = $edits.Count
     saved_edits = @($edits.ToArray())
     memory_report_path = [IO.Path]::GetFileName($memoryJson)

@@ -1,0 +1,26 @@
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+2026-10-29T00:26:43.3278117+08:00  WARN notify error: Input watch path is neither a file nor a directory.
+2026-10-29T00:26:43.5187209+08:00  WARN notify error: Input watch path is neither a file nor a directory.
+Error: client exited without proper shutdown sequence
+
+Stack backtrace:
+   0: std::backtrace_rs::backtrace::win64::trace
+             at /rustc/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library\std\src\..\..\backtrace\src\backtrace\win64.rs:85
+   1: std::backtrace_rs::backtrace::trace_unsynchronized
+             at /rustc/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library\std\src\..\..\backtrace\src\backtrace\mod.rs:66
+   2: std::backtrace::Backtrace::create
+             at /rustc/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library\std\src\backtrace.rs:331
+   3: std::backtrace::Backtrace::capture
+             at /rustc/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library\std\src\backtrace.rs:296
+   4: <unknown>
+   5: <unknown>
+   6: <unknown>
+   7: <unknown>
+   8: <unknown>
+   9: std::sys::thread::windows::impl$0::new::thread_start
+             at /rustc/8bab26f4f68e0e26f0bb7960be334d5b520ea452/library\std\src\sys\thread\windows.rs:58
+  10: BaseThreadInitThunk
+  11: RtlUserThreadStart
+JSON 鎶ュ憡: E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-alula-rust-lsp-edit-30m-run1-20261029-002641395.json
+Markdown 鎶ュ憡: E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-alula-rust-lsp-edit-30m-run1-20261029-002641395.md
+鎽樿 [alula-rust-lsp-edit-30m-run1-20261029-002641395]: 宄板€?679.9 MiB / 绋虫€?657.5 MiB / 缁撴潫 661.5 MiB锛? 杩涚▼锛?

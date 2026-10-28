@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第五十四轮：Windows Rust+RA 三轮30分钟编辑采样）
+> Last Updated：2026-10-29（第五十六轮：重跑 Rust+RA 编辑态完整验收）
 
 ## 项目一句话
 
@@ -19,6 +19,10 @@ Windows Release `--lsp-auto` 首轮 45 秒采样只有主进程；原因是默�
 Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.10/588.58 MiB；三轮 600 秒 idle 样本尾部稳定态 589.09/589.27/589.09 MiB，中位数 589.09 MiB，结束值 588.11/590.77/591.70 MiB，均仍比 500 MiB 目标高约 89 MiB。三轮结束+30秒后各四个 PID 均退出。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。VS Code 1.142.0 + 隔离扩展副本经 PowerShell 最小化和 WSH `SW_SHOWMINNOACTIVE` 两种方式启动都切换前台；安全守卫每次均恢复前台并停止实例，未采集对照数据；临时数据已清理，后续前台对照尚待许可。树含 Alula、两个 `rust-analyzer.exe` 与 proc-macro server；每次启动有两条 watcher path 告警。汇总与原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。已有三轮30分钟脚本编辑数据：稳定 Private Bytes 676.20/672.36/660.81 MiB，中位数672.36 MiB，超500 MiB目标172.36 MiB；每轮150次保存、1,808个样本，关闭+30秒后进程全退。尚无 VS Code 对照及完整产品服务门证据。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
+
+- 第五十六轮：按用户要求从启动、1800 秒编辑、关闭到清理完整重跑 Windows Rust+RA 隔离验收。150/150 次保存、1808 个内存样本，稳定 Private Bytes 657.55 MiB（高于 500 MiB 目标 157.55 MiB）。32 个快照中的末 40% 逐进程中位数为主 rust-analyzer 427.02 MiB、Alula 223.49 MiB、launcher 3.05 MiB、proc-macro 2.86 MiB。最终 SHA/marker 校验通过，4 个观察 PID 关闭+30 秒退出，临时目录清除、前台恢复。watcher-path 与非优雅 LSP shutdown 警告仍在。PowerShell parse、`cargo fmt --check`、完整 `bash init.sh`（Rust tests、Clippy、core build、Flutter 122 tests）和 `flutter analyze` 全部通过；没有改 app/ 或 crates/ 产品代码。P00.4 继续 blocked，P01 不启动。详细数据见 docs/03 与 Rust+RA summary。
+
+- 第五十五轮：在此前三轮之外另完成一次 30 分钟隔离编辑，150 次保存、1809 个一秒 mem-probe 样本。全树稳定 Private Bytes 660.29 MiB，仍超过 500 MiB 160.29 MiB。32 个 PID 级快照显示尾部主 rust-analyzer 428.68 MiB、Alula 227.75 MiB，RA launcher 3.14 MiB，proc-macro server 2.88 MiB。关闭+30 秒所有观察 PID 退出；LSP graceful shutdown 仍未证实。PowerShell 解析及脚本运行通过；完整原始路径列于 progress.md 与 docs/03。P00.4 继续 blocked，P01 不启动。
 
 - 第五十四轮：Windows Rust+RA 三轮30分钟编辑在同一Release/fixture/`--lsp-auto` 配置下完成，150次保存/轮，稳定 Private Bytes 中位数672.36 MiB（目标500 MiB）；关闭+30秒观察到所有 PID 退出，但 RA stderr 有非优雅关闭警告。两次失败重试不计入样本，最终 run3 改用 Ctrl+S 并通过。WSL原生 `bash init.sh --fast` 与完整 `bash init.sh` 均退出0。GitNexus 在最终状态更新后重建索引；detect-changes all/staged 均为 risk=low（0 条受影响流程）；all 范围也包含工作区未暂存的 app/、README 等修改。阶段提交只含 P00.4 文档、诊断和测试脚本。process graph 仍截断，缺失流程不能视为无影响证明。详见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与 `p00.4-windows-alula-rust-lsp-edit-interrupted-attempts.md`。
 
@@ -171,5 +175,6 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 
 ## Next Session 首步
 
-1. 读取三轮30分钟报告：稳定 Private Bytes 中位数672.36 MiB，仍超500 MiB预算；评估是否先做内存优化或继续诊断 RA watcher/shutdown 行为。不要把失败重试当样本。
-2. 如继续同服务 VS Code 前台对照，先取得独立授权；Alula 前台编辑测试授权不覆盖 VS Code。真实 DRM WPE GBM/DMABUF 与官方服务身份/许可仍待外部条件。完整产品预算未验收，不启动 P01。
+1. 检查用户对隔离 VS Code 10 分钟前台对照的授权回复；获准后运行现有脚本并保留其版本不匹配限制，未获准则保持无对照结论。
+2. 用新逐进程证据评估 Rust+RA 500 MiB 预算差距；不通过静默禁用默认语言能力来凑预算，也不把单轮归因当作优化验证。
+3. 真实 DRM WPE GBM/DMABUF 与 Microsoft 官方身份/许可目前没有外部接入；完整产品内存门仍未完成，P00 未签收前不启动 P01。
