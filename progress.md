@@ -13,6 +13,14 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-29 第五十七轮）：前台意外关闭后的完整重跑
+
+- 按用户要求从隔离 HOME/fixture 启动到关闭清理，再完整重跑 Windows Release Rust+RA 编辑态流程；编辑 1800.015 秒，150/150 次保存成功，mem-probe 记录 1808 个一秒样本。Private Bytes 峰值/稳定/最终值为 683.19/661.77/665.47 MiB，稳定值仍超 500 MiB 目标 161.77 MiB。
+- 32 个进程树快照、128 条 PID 记录；最后 40% 的主 rust-analyzer、Alula、launcher、proc-macro server Private Bytes 中位数为 429.00/226.94/3.05/2.88 MiB。marker 与 SHA-256 校验通过；关闭+30 秒 4 个观察 PID 均退出，临时 HOME/fixture 已清理，前台已恢复。两条 watcher-path 告警与非优雅 LSP shutdown 警告仍存在。
+- 前一轮 VS Code 版本预检中，`Code.exe --version` 意外启动默认 profile 并初始化应用共享存储；已停止观察到的进程树，没有采样，也未检查或回滚共享存储。后续对照仍需独立前台授权，隔离启动参数正在加强。
+- P00.4 仍 blocked；同服务 VS Code 对照、真实 DRM/WPE GBM、Microsoft 官方身份/许可和完整产品跨平台内存门未完成；P01 不启动。无 app/ 或 crates/ 产品代码改动。
+- 证据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.json`、`-activity.json`、`.md`、`-probe.stderr.log`、`p00.4-windows-alula-rust-lsp-summary.md`。
+
 ## 今日会话（2026-10-29 第五十六轮）：重跑 Rust+RA 编辑态完整验收
 
 - 按用户要求从隔离 HOME/fixture 启动到关闭清理完整重跑 Windows Release Rust+RA 编辑态流程；1800.011 秒内 150/150 次保存，mem-probe 记录 1808 个一秒样本。Private Bytes 峰值/稳定/最终值 679.95/657.55/661.45 MiB，稳定值仍超 500 MiB 目标 157.55 MiB。

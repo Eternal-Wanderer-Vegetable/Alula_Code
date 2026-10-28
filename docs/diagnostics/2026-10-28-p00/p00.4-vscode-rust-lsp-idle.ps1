@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $root = 'E:\alula_code'
 $profile = Join-Path $root 'app\build\p00.4-vscode-rust-idle-profile'
 $extensions = Join-Path $root 'app\build\p00.4-vscode-rust-idle-extensions'
+$sharedData = Join-Path $root 'app\build\p00.4-vscode-rust-idle-shared'
 $fixture = Join-Path $root 'tests\fixtures\rust-mini'
 $code = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
 $outJson = Join-Path $root 'docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle.json'
@@ -13,6 +14,7 @@ $intervalMilliseconds = 1000
 if (!(Test-Path $code)) { throw "VS Code executable not found: $code" }
 if (!(Test-Path $profile)) { throw "Isolated user-data directory not found: $profile" }
 if (!(Test-Path $extensions)) { throw "Isolated extension directory not found: $extensions" }
+if (!(Test-Path $sharedData)) { throw "Isolated shared-data directory not found: $sharedData" }
 if (!(Test-Path $fixture)) { throw "Rust fixture not found: $fixture" }
 if ((Test-Path $outJson) -or (Test-Path $outMarkdown)) { throw 'Refusing to overwrite an existing report' }
 
@@ -65,7 +67,7 @@ function Stop-Tree([int] $RootPid) {
 
 $foregroundBefore = [P00Window]::GetForegroundWindow()
 $startedAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')
-$arguments = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", '--disable-workspace-trust', $fixture)
+$arguments = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", "--shared-data-dir=$sharedData", '--disable-telemetry', '--disable-workspace-trust', $fixture)
 $quotedArguments = @($arguments | ForEach-Object { '"' + $_.Replace('"', '\"') + '"' })
 $commandLine = '"' + $code + '" ' + ($quotedArguments -join ' ')
 $shell = New-Object -ComObject WScript.Shell
@@ -148,7 +150,7 @@ $report = [ordered]@{
   label = 'vscode-rust-lsp-idle-10min'
   product = 'Microsoft VS Code 1.142.0 Stable'
   exe = $code
-  args = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", '--disable-workspace-trust', $fixture)
+  args = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", "--shared-data-dir=$sharedData", '--disable-telemetry', '--disable-workspace-trust', $fixture)
   extension = 'rust-lang.rust-analyzer 0.3.3089'
   rust_analyzer_server = 'C:\Users\Vegetable\.cargo\bin\rust-analyzer.exe (rust-analyzer 1.97.1)'
   rust_analyzer_observed = $rustAnalyzerObserved
@@ -156,6 +158,9 @@ $report = [ordered]@{
   fixture = $fixture
   isolated_profile = $profile
   isolated_extensions = $extensions
+  isolated_shared_data = $sharedData
+  telemetry_disabled = $true
+  automatic_updates_disabled_by_profile_setting = $true
   duration_s = [double]$durationSeconds
   interval_s = 1.0
   root_pid = $rootPid
@@ -178,7 +183,7 @@ $lines = @(
   '# Memory sample: vscode-rust-lsp-idle-10min',
   '',
   '- Product: Microsoft VS Code 1.142.0 Stable; comparison only, not the pinned Code-OSS 1.145.0 reference.',
-  '- Runtime: Windows process-tree Private Bytes; minimized window; isolated user-data and extension directories; no account sign-in or sync.',
+  '- Runtime: Windows process-tree Private Bytes; minimized window; isolated user-data, extension, and shared-data directories; telemetry and automatic updates disabled; no account sign-in or sync.',
   "- Language service: $($report.extension), configured to use the same rust-analyzer 1.97.1 executable as Alula.",
   "- Rust Analyzer observed in the process tree: $rustAnalyzerObserved; executable paths: $($rustAnalyzerPaths -join ', ').",
   "- Sampling: $durationSeconds seconds, 1-second interval, $($samples.Count) samples.",
