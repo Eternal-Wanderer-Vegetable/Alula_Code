@@ -1,7 +1,11 @@
 //! P00.3 process-lifecycle fixture used by the editor-core integration test.
 
 use serde_json::{json, Value};
-use std::io::{BufRead, BufReader, Write};
+use std::{
+    fs::OpenOptions,
+    io::{BufRead, BufReader, Write},
+    path::PathBuf,
+};
 
 fn read_message(reader: &mut impl BufRead) -> Option<Value> {
     let mut content_length = None;
@@ -32,22 +36,43 @@ fn send(value: &Value) {
     lock.flush().unwrap();
 }
 
+fn trace(path: &PathBuf, method: &str) {
+    let mut file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+        .expect("open trace file");
+    writeln!(file, "{method}").expect("write trace file");
+    file.flush().expect("flush trace file");
+}
+
 fn main() {
+    let trace_path = std::env::args_os()
+        .nth(1)
+        .map(PathBuf::from)
+        .expect("trace path argument");
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
     while let Some(message) = read_message(&mut reader) {
-        match message.get("method").and_then(Value::as_str).unwrap_or("") {
+        let method = message.get("method").and_then(Value::as_str).unwrap_or("");
+        match method {
             "initialize" => send(&json!({
                 "jsonrpc": "2.0",
                 "id": message["id"],
                 "result": {"capabilities": {"textDocumentSync": 1}},
             })),
-            "shutdown" => send(&json!({
-                "jsonrpc": "2.0",
-                "id": message["id"],
-                "result": null,
-            })),
-            "exit" => break,
+            "textDocument/didOpen" | "textDocument/didClose" | "shutdown" | "exit" => {
+                trace(&trace_path, method);
+                if method == "shutdown" {
+                    send(&json!({
+                        "jsonrpc": "2.0",
+                        "id": message["id"],
+                        "result": null,
+                    }));
+                } else if method == "exit" {
+                    break;
+                }
+            }
             _ => {}
         }
     }

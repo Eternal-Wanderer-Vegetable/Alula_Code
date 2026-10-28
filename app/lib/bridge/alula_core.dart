@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 4;
+const int expectedAbiVersion = 5;
 
 enum OpType { insert, delete }
 
@@ -79,6 +79,11 @@ class AlulaLsp {
   /// 启动语言服务器并挂接到文档。
   void start(int id, String workspaceRoot, List<String> cmd) {
     _check(_core._ffi.lspStartJson(id, workspaceRoot, jsonEncode(cmd)));
+  }
+
+  /// 关闭工作区服务及其所有关联文档。
+  void shutdownWorkspace(String workspaceRoot) {
+    _check(_core._ffi.lspShutdownWorkspaceJson(workspaceRoot));
   }
 
   /// 声明文档 URI（file:/// 形式）。

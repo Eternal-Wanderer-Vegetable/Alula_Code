@@ -21,7 +21,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 4;
+pub const ALULA_ABI_VERSION: u32 = 5;
 
 static REGISTRY: OnceLock<Mutex<DocRegistry>> = OnceLock::new();
 
@@ -149,8 +149,15 @@ pub extern "C" fn alula_doc_resync(id: u64) -> *mut c_char {
 #[no_mangle]
 pub extern "C" fn alula_doc_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
-        // 关闭文档前先断开 LSP（不做 shutdown 握手——文档级断接即可）
-        registry_lock().detach_lsp(id);
+        let (server, uri) = {
+            let reg = registry_lock();
+            (reg.lsp_of(id), reg.uri_of(id))
+        };
+        if let (Some(server), Some(uri)) = (server, uri) {
+            // A tab can close while its workspace server remains shared by
+            // other documents, so notify the server before dropping the URI.
+            let _ = server.did_close(&uri);
+        }
         let removed = registry_lock().close(id);
         to_c_ptr(json!({ "ok": true, "removed": removed }).to_string())
     }))
@@ -222,6 +229,27 @@ pub extern "C" fn alula_lsp_stop(id: u64) -> *mut c_char {
         to_c_ptr(json!({ "ok": true, "detached": server }).to_string())
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_lsp_stop")))
+}
+
+/// 完成指定工作区的 LSP shutdown/exit 握手并回收服务进程。
+///
+/// # Safety
+/// `workspace_root` 必须是合法的 NUL 结尾 UTF-8。
+#[no_mangle]
+pub unsafe extern "C" fn alula_lsp_shutdown_workspace(
+    workspace_root: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let root = match read_c_str(workspace_root) {
+            Ok(s) => s.to_string(),
+            Err(e) => return e,
+        };
+        match crate::lsp_shutdown_for_workspace(&root) {
+            Ok(stopped) => to_c_ptr(json!({ "ok": true, "stopped": stopped }).to_string()),
+            Err(e) => err_json("ShutdownFailed", json!(e)),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_lsp_shutdown_workspace")))
 }
 
 /// 以文档当前全文发送 didOpen（需已 set_uri）。版本取当前版本。

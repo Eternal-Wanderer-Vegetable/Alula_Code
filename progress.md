@@ -13,6 +13,15 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-29 第五十八轮）：LSP 工作区优雅关闭与门禁复验
+
+- 新增 ABI v5 工作区 LSP shutdown FFI/Dart 包装；tab close 发 didClose 但保留共享服务，workbench dispose 通知全部附着文档、等待 shutdown response 后发送 exit 并有界回收进程。Fake LSP trace 验证完整消息顺序与进程退出。
+- `cargo fmt --check`、`cargo test --workspace`、Clippy、`build_core`、`flutter analyze --no-pub` 与完整 `bash init.sh` 全通过；Flutter 122 项全绿。
+- 跟进发现工作区原有未提交 Ctrl+Click 监听会在 pointer-down 时同步 rebuild 并夺走 P00.3 Undo fixture 焦点；验证时改为帧后处理后 fixture 与完整门禁复绿。该 workbench hunk 与用户的其他既存修改保持未暂存，不纳入本次提交。
+- 当前 fake-server 通过尚不等于真实 Windows rust-analyzer 复验；既有 Rust+RA 稳态内存 661.77 MiB，仍高于 500 MiB。真实 DRM WPE GBM、官方服务身份/许可、同服务 VS Code 与完整产品跨平台门仍阻塞，P00.4 继续 blocked、P01 不启动。
+- GitNexus staged detect-changes 为 HIGH、9 条受影响流程；fresh graph 仍有 201/401 entry candidates 未排名、123 个 callees 跳过、2 次 walk 到预算。已在证据文件列出具体 flow 与文本搜索补核，不能把图谱当作完整影响证明。
+- 详细记录：`docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md`。
+
 ## 今日会话（2026-10-29 第五十七轮）：前台意外关闭后的完整重跑
 
 - 按用户要求从隔离 HOME/fixture 启动到关闭清理，再完整重跑 Windows Release Rust+RA 编辑态流程；编辑 1800.015 秒，150/150 次保存成功，mem-probe 记录 1808 个一秒样本。Private Bytes 峰值/稳定/最终值为 683.19/661.77/665.47 MiB，稳定值仍超 500 MiB 目标 161.77 MiB。

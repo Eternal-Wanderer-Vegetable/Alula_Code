@@ -1510,10 +1510,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _pollTimer?.cancel();
     _stateSaveTimer?.cancel();
+    final core = _core;
+    final root = _workspaceRoot;
+    if (_lspReady && core != null && root != null) {
+      try {
+        core.lsp.shutdownWorkspace(root);
+      } catch (e) {
+        debugPrint('关闭工作区语言服务器失败：$e');
+      }
+    }
     // 退出前把未落盘的布局与会话冲写
     widget.layoutStore.save(_layout.root);
     widget.sessionStore.save(_encodeSession());
     for (final d in _allDocs) {
+      d.doc.close();
       d.controller.dispose();
     }
     for (final n in _editorFocusNodes.values) {

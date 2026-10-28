@@ -128,6 +128,22 @@ impl DocRegistry {
         self.lsp.get(&id).cloned()
     }
 
+    /// Detach every document using this workspace server and return their URIs
+    /// so the caller can send didClose before the server shutdown handshake.
+    pub fn detach_lsp_server(&mut self, server: &Arc<LspServer>) -> Vec<String> {
+        let ids: Vec<u64> = self
+            .lsp
+            .iter()
+            .filter_map(|(id, attached)| Arc::ptr_eq(attached, server).then_some(*id))
+            .collect();
+        for id in &ids {
+            self.lsp.remove(id);
+        }
+        ids.into_iter()
+            .filter_map(|id| self.uris.get(&id).cloned())
+            .collect()
+    }
+
     pub fn close(&mut self, id: u64) -> bool {
         self.uris.remove(&id);
         self.lsp.remove(&id);
@@ -212,6 +228,33 @@ pub fn lsp_start_for_workspace(root: &str, cmd: &[String]) -> Result<Arc<LspServ
     let server = Arc::new(LspServer::spawn(root, cmd)?);
     servers.insert(root.to_string(), Arc::clone(&server));
     Ok(server)
+}
+
+/// Close all documents attached to a workspace server, perform the LSP
+/// shutdown/exit handshake, and reap its process.
+pub fn lsp_shutdown_for_workspace(root: &str) -> Result<bool, String> {
+    let mut servers = workspace_servers()
+        .lock()
+        .map_err(|_| "workspace servers 锁中毒")?;
+    let Some(server) = servers.get(root).cloned() else {
+        return Ok(false);
+    };
+
+    let uris = registry_shared()
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+        .detach_lsp_server(&server);
+    for uri in uris {
+        // Closing the workspace must still reap its server if a best-effort
+        // didClose notification fails; the shutdown handshake reports its own
+        // result below.
+        let _ = server.did_close(&uri);
+    }
+
+    let result = server.shutdown();
+    servers.remove(root);
+    result?;
+    Ok(true)
 }
 
 #[cfg(test)]
