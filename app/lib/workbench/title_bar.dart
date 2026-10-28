@@ -5,6 +5,8 @@
 /// widget 测试默认 windowControls=false，不触碰 window_manager 插件通道。
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -21,6 +23,7 @@ class AlulaTitleBar extends StatefulWidget {
     super.key,
     required this.menus,
     this.windowControls = false,
+    this.onCloseRequested,
   });
 
   /// 菜单组（标题 → 菜单项列表）。
@@ -28,6 +31,9 @@ class AlulaTitleBar extends StatefulWidget {
 
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
   final bool windowControls;
+
+  /// 处理系统关闭事件；回调完成后由标题栏销毁窗口。
+  final VoidCallback? onCloseRequested;
 
   @override
   State<AlulaTitleBar> createState() => _AlulaTitleBarState();
@@ -62,6 +68,15 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   @override
   void onWindowUnmaximize() {
     if (mounted) setState(() => _maximized = false);
+  }
+
+  @override
+  void onWindowClose() {
+    try {
+      widget.onCloseRequested?.call();
+    } finally {
+      unawaited(windowManager.destroy());
+    }
   }
 
   @override

@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第五十八轮：LSP 工作区优雅关闭与门禁复验）
+> Last Updated：2026-10-29（第五十九轮：Windows 原生关闭与真实 LSP 完整复验）
 
 ## 项目一句话
 
@@ -10,7 +10,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 ## Current Objective
 macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、Release build、693-byte Web Archive 同 WKWebView 重载及 Safari Web Inspector 页面级附着；附着截图显示目标页 DOM，原始证据在 `docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`。Linux Debian sid/WPE run 40616364735 在 HEAD `51fe0cd` 通过 MHTML 回放；sandbox-disable 与 GBM-disable 变量 unset 时观察到 bwrap，但 CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。旧证据目录：`p00.4-web-linux-run-40616364735/`。
 
-剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；Rust+RA 稳定内存高于500 MiB目标；fake LSP 已验证优雅 shutdown，真实 Windows rust-analyzer 尚未在修复后复测，旧 warning 的状态仍待确认；同服务 VS Code 对照尚无前台测试授权；完整产品其他服务与跨平台 docs/04 场景未完成。Windows Rust+RA 的启动、1分钟、10分钟 idle 与30分钟编辑现均有三轮数据，但这不足以关闭完整产品门。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
+剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；Rust+RA 稳定内存高于500 MiB目标（修复后完整 run 为657.82 MiB）；同服务 VS Code 对照尚无前台测试授权；完整产品其他服务与跨平台 docs/04 场景未完成。Windows `rust-mini` 上的真实 rust-analyzer shutdown 已由 30 秒冒烟和 30 分钟完整运行复验通过，stderr 不再含 `client exited without proper shutdown sequence`，两条 watcher-path 警告仍在。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
 按用户最新要求在前台进程关闭后完整重跑 Windows Rust+RA 编辑验收：1800.015 秒、150/150 次保存、1808 个样本，Private Bytes 峰值/稳定/最终值 683.19/661.77/665.47 MiB；稳定值超 500 MiB 目标 161.77 MiB。关闭+30 秒四个观察 PID 均退出，临时 HOME/fixture 清除且前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.*`。此前 `Code.exe --version` 版本预检意外启动默认 VS Code profile 并初始化应用共享存储；观察到的进程树已停止，但共享存储未检查或回滚，也没有取得对照样本。单独 VS Code 前台测试仍待用户授权。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
 WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。跨 OS package-config 恢复后的 `bash init.sh --fast` 日志：`docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log`。
@@ -21,10 +21,13 @@ Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.1
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
-本轮新增 ABI v5 workspace LSP shutdown FFI：tab close 发 didClose 并保留共享服务；workbench dispose 会对剩余文档执行 didClose、shutdown-response、exit 与有界进程回收。Fake LSP trace 顺序验证通过。`cargo fmt --check`、workspace tests、Clippy、build_core、`flutter analyze --no-pub` 与完整 `bash init.sh` 全通过（Flutter 122 项）。完整测试使用的 workbench 仍含用户的未提交变更；其中 Ctrl+Click 监听需帧后处理以维持 P00.3 测试焦点，该 hunk 与其他 workbench 改动均保留在未暂存区。真实 Windows rust-analyzer post-fix 复验尚未完成，既有稳定 Private Bytes 661.77 MiB 仍超过500 MiB。GitNexus staged detect-changes 为 HIGH、9 条流程；图谱 201/401 entry candidates 未排名、123 callees 跳过、2 walks 达到预算。完整证据与受影响调用路径：`docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md`。
+本轮新增 ABI v5 workspace LSP shutdown FFI：tab close 发 didClose 并保留共享服务；workbench 关闭时对剩余文档执行 didClose、shutdown-response、exit 与有界进程回收。Windows Release 真实 rust-analyzer 已在第五十九轮通过关闭复验；`window_manager` 0.5.2 的 `WM_CLOSE` 需先 `setPreventClose(true)` 并由 `onWindowClose` 发起 shutdown，单靠 widget `dispose()` 不可靠。Flutter analyze、122 项测试与 Release build 全通过。当前稳定 Private Bytes 657.82 MiB，仍高于500 MiB；两条 watcher-path 告警仍在。完整测试使用的 workbench 仍含用户的未提交变更；其中 Ctrl+Click/Git 功能 hunks 保持未暂存。GitNexus `WorkbenchPage`/`AlulaTitleBar` impact 为 LOW，dispose 为 UNKNOWN（5 个接收者调用未解析），并已用文本确认回调路径。详细证据：`docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md`。
 
 
-- 第五十七轮：响应用户要求完整重跑此前前台进程意外关闭的 Windows Rust+RA 流程。1800.015 秒内 150/150 次编辑保存、1808 个一秒样本；Private Bytes 峰值/稳定/最终值 683.19/661.77/665.47 MiB。32 个快照中尾部逐进程中位数为主 rust-analyzer 429.00 MiB、Alula 226.94 MiB、launcher 3.05 MiB、proc-macro 2.88 MiB。最终 SHA/marker 校验通过，四个观察 PID 关闭+30 秒退出，fixture/HOME 已清理，前台已恢复。watcher-path 与非优雅 LSP shutdown 警告仍在；无产品源代码修改，P00.4 继续 blocked。证据已登记到 docs/03、progress.md 和 Rust+RA summary。
+- 第五十九轮：用户误关前台窗口后完整重跑。先记录一轮 1800 秒有效编辑样本但发现 shutdown 错误，追踪到 Windows `WM_CLOSE` 默认绕开 Flutter disposal；加入 `setPreventClose(true)` 与 `onWindowClose` 处理。Windows analyze/test 122项/Release build 全通过，30秒真实 LSP 冒烟和新 1800.011 秒运行均不再出现非优雅 shutdown 错误。最终 150/150 次保存，1815 个样本，峰值/稳定/最终 Private Bytes 798.17/657.82/232.52 MiB；6 个 PID 关闭+30秒全退，HOME/fixture 清理、marker/hash 和前台恢复通过。两条 watcher-path 警告仍在，稳定内存超标 157.82 MiB，P00.4 继续 blocked。证据已登记到 docs/03、progress.md 与 `docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md`。
+- WSL package config 用 `/tmp/alula-pub-cache` 离线恢复；Rust workspace tests 与 core build 通过。并行 `init.sh --fast` 的 Flutter suite 曾有一次 `REF-07-UNDO-01` 文件内容错配；单项重跑和完整 `flutter test --concurrency=1`（122项）通过，根因未定位。Windows 默认并行 122 项亦通过。
+
+- 第五十七轮：响应用户要求完整重跑此前前台进程意外关闭的 Windows Rust+RA 流程。1800.015 秒内 150/150 次编辑保存、1808 个一秒样本；Private Bytes 峰值/稳定/最终值 683.19/661.77/665.45 MiB。32 个快照中尾部逐进程中位数为主 rust-analyzer 429.00 MiB、Alula 226.94 MiB、launcher 3.05 MiB、proc-macro 2.88 MiB。最终 SHA/marker 校验通过，四个观察 PID 关闭+30 秒退出，fixture/HOME 已清理，前台已恢复。watcher-path 与非优雅 LSP shutdown 警告仍在；无产品源代码修改，P00.4 继续 blocked。证据已登记到 docs/03、progress.md 和 Rust+RA summary。
 
 - 第五十六轮：按用户要求从启动、1800 秒编辑、关闭到清理完整重跑 Windows Rust+RA 隔离验收。150/150 次保存、1808 个内存样本，稳定 Private Bytes 657.55 MiB（高于 500 MiB 目标 157.55 MiB）。32 个快照中的末 40% 逐进程中位数为主 rust-analyzer 427.02 MiB、Alula 223.49 MiB、launcher 3.05 MiB、proc-macro 2.86 MiB。最终 SHA/marker 校验通过，4 个观察 PID 关闭+30 秒退出，临时目录清除、前台恢复。watcher-path 与非优雅 LSP shutdown 警告仍在。PowerShell parse、`cargo fmt --check`、完整 `bash init.sh`（Rust tests、Clippy、core build、Flutter 122 tests）和 `flutter analyze` 全部通过；没有改 app/ 或 crates/ 产品代码。P00.4 继续 blocked，P01 不启动。详细数据见 docs/03 与 Rust+RA summary。
 
