@@ -9,8 +9,20 @@
   "profile_and_extensions": "isolated under app/build; extension copied into a temporary extensions directory; no account sign-in or sync",
   "requested_window_style": "minimized",
   "foreground_changed_within_start_guard": true,
-  "action": "restored prior foreground window, terminated the isolated launch, verified no matching isolated VS Code process remained, and removed the temporary profile and extension copy",
+  "action": "Both noninteractive launch attempts changed the foreground. Each guard restored the previous foreground and terminated its isolated VS Code tree. A follow-up process check found no matching isolated processes, and the temporary profile and extension copy were deleted.",
   "sample_started": false,
   "planned_duration_s": 600,
-  "scope_limit": "No memory comparison data was produced. The installed VS Code version differs from pinned Code-OSS 1.145.0-dev. Any follow-up requiring a foreground window needs explicit user approval."
+  "scope_limit": "No memory comparison data was produced. The installed VS Code version differs from pinned Code-OSS 1.145.0-dev. Any follow-up requiring a foreground window needs explicit user approval.",
+  "attempts": [
+    {
+      "method": "PowerShell Start-Process -WindowStyle Minimized",
+      "foreground_changed_within_start_guard": true,
+      "action": "restored prior foreground and stopped the isolated tree"
+    },
+    {
+      "method": "WScript.Shell.Run show state 7 (SW_SHOWMINNOACTIVE)",
+      "foreground_changed_within_start_guard": true,
+      "action": "restored prior foreground and stopped the isolated tree"
+    }
+  ]
 }

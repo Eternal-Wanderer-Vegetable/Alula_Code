@@ -65,8 +65,17 @@ function Stop-Tree([int] $RootPid) {
 
 $foregroundBefore = [P00Window]::GetForegroundWindow()
 $startedAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')
-$process = Start-Process -FilePath $code -ArgumentList @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", '--disable-workspace-trust', $fixture) -WindowStyle Minimized -PassThru
-$rootPid = [int]$process.Id
+$arguments = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", '--disable-workspace-trust', $fixture)
+$quotedArguments = @($arguments | ForEach-Object { '"' + $_.Replace('"', '\"') + '"' })
+$commandLine = '"' + $code + '" ' + ($quotedArguments -join ' ')
+$shell = New-Object -ComObject WScript.Shell
+[void]$shell.Run($commandLine, 7, $false) # SW_SHOWMINNOACTIVE: minimized without activation.
+Start-Sleep -Milliseconds 500
+$rootNodes = @(Get-CimInstance -ClassName Win32_Process | Where-Object {
+  $_.Name -eq 'Code.exe' -and $_.CommandLine -like "*--new-window*" -and $_.CommandLine -like "*--user-data-dir=$profile*"
+})
+if ($rootNodes.Count -eq 0) { throw 'Could not locate the isolated VS Code root process.' }
+$rootPid = [int]$rootNodes[0].ProcessId
 $focusStayedStable = $true
 for ($i = 0; $i -lt 50; $i++) {
   Start-Sleep -Milliseconds 100
