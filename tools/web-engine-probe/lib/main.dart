@@ -271,10 +271,12 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     );
     try {
       if (_usesWebArchive) {
+        stdout.writeln('P00_4_ARCHIVE_CAPTURE_BEGIN');
         final data = await controller.createWebArchiveData();
         if (data == null || data.isEmpty) {
           throw StateError('WKWebView returned no Web Archive data');
         }
+        stdout.writeln('P00_4_ARCHIVE_CAPTURE_DATA bytes=${data.length}');
         final file = File(
           '${Directory.systemTemp.path}${Platform.pathSeparator}'
           '$_archiveFileName',
@@ -288,6 +290,10 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
           _archiveBytes = archiveBytes;
           _status = 'WKWebView Web Archive saved; page marker=$hasProbePage';
         });
+        stdout.writeln(
+          'P00_4_ARCHIVE_SAVED path=${file.path} bytes=$archiveBytes '
+          'pageMarker=$hasProbePage',
+        );
         return;
       }
 
@@ -348,6 +354,9 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
             'CDP snapshot saved; MIME header=$hasMimeHeader, page marker=$hasProbePage';
       });
     } catch (error) {
+      if (_usesWebArchive) {
+        stdout.writeln('P00_4_ARCHIVE_CAPTURE_ERROR error=$error');
+      }
       setState(
         () => _status = _usesWebArchive
             ? 'WKWebView Web Archive failed: $error'
@@ -365,16 +374,23 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
 
     try {
       final archiveUri = WebUri(File(path).uri.toString());
+      stdout.writeln(
+        'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri readAccess=$archiveUri',
+      );
       await controller.loadUrl(
         urlRequest: URLRequest(url: archiveUri),
         allowingReadAccessTo: archiveUri,
       );
+      stdout.writeln('P00_4_ARCHIVE_LOAD_REQUEST_RETURNED');
       setState(
         () => _status = _usesWebArchive
             ? 'Navigated to saved Web Archive'
             : 'Navigated to saved MHTML file',
       );
     } catch (error) {
+      if (_usesWebArchive) {
+        stdout.writeln('P00_4_ARCHIVE_LOAD_REQUEST_ERROR error=$error');
+      }
       setState(
         () => _status = _usesWebArchive
             ? 'Opening saved Web Archive failed: $error'

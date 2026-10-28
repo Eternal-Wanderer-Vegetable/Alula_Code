@@ -1,0 +1,53 @@
+======================================================================
+web_engine_probe [18091]: 64-bit    Footprint: 44 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+9648 KB        0 B       128 KB         24    IOAccelerator (graphics)
+6288 KB        0 B          0 B         73    untagged (VM_ALLOCATE)
+5664 KB        0 B       304 KB         13    IOSurface
+3424 KB        0 B          0 B          4    MALLOC_SMALL
+3119 KB        0 B          0 B        954    __AUTH_CONST
+2992 KB        0 B       880 KB          1    MALLOC_NANO
+2505 KB        0 B          0 B        938    __DATA
+1536 KB        0 B      4928 KB          3    MALLOC_MEDIUM
+1428 KB        0 B          0 B       2055    unused dyld shared cache area
+1424 KB        0 B          0 B          9    MALLOC_TINY
+ 960 KB        0 B       496 KB          9    WebKit malloc
+ 857 KB        0 B          0 B        341    __DATA_DIRTY
+ 697 KB        0 B          0 B        706    __AUTH
+ 691 KB        0 B          0 B          1    page table
+ 688 KB        0 B       208 KB         40    stack
+ 688 KB        0 B          0 B         33    ColorSync
+ 464 KB        0 B          0 B         29    CoreAnimation
+ 450 KB      48 KB          0 B        966    __DATA_CONST
+ 432 KB      15 MB          0 B         48    mapped file
+ 320 KB        0 B          0 B          5    CoreUI image data
+ 320 KB        0 B          0 B         38    MALLOC metadata
+ 128 KB        0 B          0 B          3    IOAccelerator
+ 128 KB        0 B          0 B          1    Accelerate image backing stores
+ 128 KB        0 B          0 B          5    IOKit
+  64 KB        0 B          0 B          2    __TPRO_CONST
+  48 KB        0 B          0 B          2    CG image
+  48 KB        0 B          0 B          3    CoreGraphics
+  32 KB        0 B          0 B          1    Activity Tracing
+  32 KB        0 B          0 B          1    Owned physical footprint (unmapped)
+  16 KB        0 B          0 B          1    MALLOC_LARGE
+  16 KB        0 B          0 B          1    CoreImage
+  16 KB        0 B          0 B          1    os_alloc_once
+  16 KB        0 B          0 B          1    Foundation
+    0 B        0 B        16 MB          1    MALLOC_LARGE_REUSABLE
+    0 B      13 MB          0 B        990    __TEXT
+    0 B     160 KB          0 B          7    __LINKEDIT
+    0 B        0 B          0 B          1    __GLSLBUILTINS
+    0 B        0 B          0 B          1    __FONT_DATA
+    0 B        0 B          0 B          1    __INFO_FILTER
+    0 B        0 B          0 B          1    __CTF
+    ---        ---          ---        ---    ---
+  44 MB      28 MB        23 MB       7316    TOTAL
+
+Auxiliary data:
+    phys_footprint: 48 MB
+    phys_footprint_peak: 50 MB
+

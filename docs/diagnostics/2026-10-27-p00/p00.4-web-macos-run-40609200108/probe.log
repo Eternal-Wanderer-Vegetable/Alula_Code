@@ -1,0 +1,10 @@
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_metal_impeller.mm(53)] Using the Impeller rendering backend (MetalSDF).
+P00_4_PROBE_MAIN autoProbe=true systemTemp=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp TMPDIR=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/
+P00_4_PROBE_INIT autoProbe=true systemTemp=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp TMPDIR=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/
+P00_4_AUTO_TOGGLE mounted=true
+P00_4_WEBVIEW_CREATED
+P00_4_LOAD_START url=about:blank
+P00_4_LOAD_STOP_BEGIN url=about:blank
+P00_4_LOAD_STOP_READY url=about:blank title=Alula Web Probe
+P00_4_PHASE phase=initial-loaded path=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/p00.4-web-probe-phase.txt
+P00_4_PHASE phase=webview-destroyed path=/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/p00.4-web-probe-phase.txt

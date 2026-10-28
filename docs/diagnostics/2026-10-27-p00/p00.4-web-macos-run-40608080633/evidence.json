@@ -1,0 +1,37 @@
+{
+  "run_id": 40608080633,
+  "run_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40608080633",
+  "commit": "9d8ab90346757b6fcdb072fed550899453bcc03b",
+  "runner": "GitHub Actions macos-15",
+  "os": "macOS 15.7.9",
+  "flutter": "3.47.8 stable",
+  "steps": {
+    "dependency_resolution": "passed",
+    "analyze_and_test": "passed",
+    "release_build": "passed",
+    "wkwebview_archive_replay": "failed"
+  },
+  "observed_phases": [
+    "webview-created",
+    "initial-loaded"
+  ],
+  "failure": {
+    "expected_phase": "webarchive-loaded",
+    "error": "NSURLErrorDomain error -999 for the local .webarchive file URL",
+    "interpretation": "The WebArchive reload did not reach its load-stop callback; this run does not establish successful archive replay."
+  },
+  "app_sandbox_tmpdir": "/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/",
+  "follow_up": {
+    "commit": "03fdc8ed3eb58f06545d97960f3f0b0ffecdb01f",
+    "change": "Pass the same archive file URI as allowingReadAccessTo when reloading the local archive.",
+    "rerun_id": 40609200108,
+    "rerun_status": "failed",
+    "rerun_result": "Analyze, test, and Release build passed, but the replay again timed out waiting for webarchive-loaded. No load-start, load-stop, or load-error callback for the archive URL was logged.",
+    "rerun_evidence": "../p00.4-web-macos-run-40609200108/"
+  },
+  "limitations": [
+    "No WebArchive reload or post-reload screenshot was captured.",
+    "Safari Web Inspector attachment was not automated or verified.",
+    "This is a standalone probe runner, not product-level macOS evidence."
+  ]
+}
