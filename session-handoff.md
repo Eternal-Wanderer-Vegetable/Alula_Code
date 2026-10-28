@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第六十轮：WSL 门禁与跨平台 CI 复验）
+> Last Updated：2026-10-29（第六十一轮：WSL 主应用 Linux runner）
 
 ## 项目一句话
 
@@ -14,11 +14,17 @@ macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、
 按用户最新要求在前台进程关闭后完整重跑 Windows Rust+RA 编辑验收：1800.015 秒、150/150 次保存、1808 个样本，Private Bytes 峰值/稳定/最终值 683.19/661.77/665.47 MiB；稳定值超 500 MiB 目标 161.77 MiB。关闭+30 秒四个观察 PID 均退出，临时 HOME/fixture 清除且前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.*`。此前 `Code.exe --version` 版本预检意外启动默认 VS Code profile 并初始化应用共享存储；观察到的进程树已停止，但共享存储未检查或回滚，也没有取得对照样本。单独 VS Code 前台测试仍待用户授权。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
 WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。跨 OS package-config 恢复后的 `bash init.sh --fast` 日志：`docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log`。
+第六十一轮 follow-up 已补齐并追踪 `app/linux`：Release bundle 含 Rust `.so`，6 项 Linux FFI 对拍通过。该 WSLg build 不等于真实 DRM/WPE GBM；cgroup 限额交互和 docs/04 产品长时内存矩阵仍未完成，详见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-main-runner.md`。
 Windows Git Bash 侧 `build_core.sh`、`flutter pub get --enforce-lockfile` 与 `flutter build windows --release --no-pub` 均通过，Release artifact 为 `app/build/windows/x64/runner/Release/alula_app.exe`。锁文件相对 HEAD 只有已有行尾差异，无语义变化。诊断记录已同时列出 Linux 主应用目标缺失。
+host triple 选择现已在 WSL 与 Windows Git Bash 两端验证，复制各自 DLL/SO 且不覆盖另一平台库。
 Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 45 秒空窗口采样，稳态 Private Bytes 中位数 187.46 MiB；最后一轮关闭+30s 后进程数为 0。记录 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-current-empty-summary.md`。不等于 docs/04 的完整产品内存验收。
 Windows Release `--lsp-auto` 首轮 45 秒采样只有主进程；原因是默认 session 恢复了有效 workspace，使 demo autoFolder 分支跳过。隔离 HOME 后进行了三轮 Rust+RA 样本。数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.json`。
 Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.10/588.58 MiB；三轮 600 秒 idle 样本尾部稳定态 589.09/589.27/589.09 MiB，中位数 589.09 MiB，结束值 588.11/590.77/591.70 MiB，均仍比 500 MiB 目标高约 89 MiB。三轮结束+30秒后各四个 PID 均退出。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。VS Code 1.142.0 + 隔离扩展副本经 PowerShell 最小化和 WSH `SW_SHOWMINNOACTIVE` 两种方式启动都切换前台；安全守卫每次均恢复前台并停止实例，未采集对照数据；临时数据已清理，后续前台对照尚待许可。树含 Alula、两个 `rust-analyzer.exe` 与 proc-macro server；每次启动有两条 watcher path 告警。汇总与原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。已有三轮30分钟脚本编辑数据：稳定 Private Bytes 676.20/672.36/660.81 MiB，中位数672.36 MiB，超500 MiB目标172.36 MiB；每轮150次保存、1,808个样本，关闭+30秒后进程全退。尚无 VS Code 对照及完整产品服务门证据。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
+## Verification Update（第六十一轮）
+
+主应用 Linux runner 已新增并纳入源码控制；`flutter build linux --release --no-pub` 成功，bundle 含 `libalula_core.so`。WSL 与 Windows Git Bash 的 `build_core.sh` host 选择均通过；Linux FFI 对拍 6 项通过，`cargo fmt --check`、workspace Clippy、`flutter analyze --no-pub` 和修正后的 `bash init.sh --fast` 均通过（Flutter 122 项）。目前只证明 WSL Linux build/FFI；隔离窗口 UI smoke 与 cgroup 限额交互尚未完成，WSLg 软件渲染不代表 DRM GBM。P00.4 仍 blocked，P01 不启动。证据：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-main-runner.md`。
+
 ## Verification Update（第六十轮）
 
 At `5e6e0ce`, WSL `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh --fast` passed Rust workspace tests, `build_core`, and all 122 Flutter tests under default parallel execution. One earlier parallel `REF-07-UNDO-01` failure remains unreproduced; isolated and serial runs plus this parallel rerun passed, with root cause unknown.
@@ -178,7 +184,7 @@ The authorized branch push completed. GitHub CI run 40758401730 passed (Rust Ubu
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 与 Flutter 工具链、Windows Flutter Windows Release 构建均有本地验证；完整 `bash init.sh`、独立 Flutter analyze 和串行 test 已全绿，可避免重复全量 recovery fixture，除非代码变化要求复验。
 2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可、同服务 VS Code 前台对照，以及完整产品多服务/跨平台预算。Windows Rust+RA 已有三轮1分钟、10分钟 idle、30分钟编辑数据；30分钟编辑稳定中位数672.36 MiB，超过500 MiB预算172.36 MiB。若需要 VS Code 对照，先取得单独前台测试授权；当前只获准 Alula 编辑测试。
-3. 主应用 `app/` 的 Linux desktop runner 未配置；`flutter build linux --release --no-pub` 在编译前失败。将 scaffold 排在 docs/03 跨平台阶段，P00 完成前不启动 P01。独立 WPE probe 有 Linux runner 与 CI evidence。分支 `codex/vscode-parity-p00` 的推送授权已执行；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
+3. 主应用 `app/linux` runner 已建立；WSL Release build 与 FFI 对拍通过，但隔离窗口 smoke、cgroup 限额交互、真实 DRM/WPE GBM 仍未验。P00.4 未满足全部跨平台与内存门，完成 P00 前不启动 P01。Linux CDP 仍不支持，WPE Inspector Protocol 不等于 CDP。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 
 ## 已知风险（尚未因本轮计划而修复）
@@ -191,5 +197,5 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 ## Next Session 首步
 
 1. 检查用户对隔离 VS Code 10 分钟前台对照的授权回复；获准后运行现有脚本并保留其版本不匹配限制，未获准则保持无对照结论。
-2. 用新逐进程证据评估 Rust+RA 500 MiB 预算差距；不通过静默禁用默认语言能力来凑预算，也不把单轮归因当作优化验证。
+2. 现有 Linux runner 下完成隔离窗口 smoke 与 cgroup 限额交互；继续追踪 Rust+RA 500 MiB 预算差距，不静默禁用默认语言能力凑预算。
 3. 真实 DRM WPE GBM/DMABUF 与 Microsoft 官方身份/许可目前没有外部接入；完整产品内存门仍未完成，P00 未签收前不启动 P01。

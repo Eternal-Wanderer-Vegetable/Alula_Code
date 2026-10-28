@@ -13,6 +13,12 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-29 第六十一轮）：WSL 主应用 Linux runner
+
+- 为 P00.4 主应用验证新增并纳入源码控制 `app/linux/` Flutter runner；Linux release bundle 将 `libalula_core.so` 放到可执行文件旁。修正 `build_core.sh` 根据 Rust host triple 选择库，避免共享 WSL/Windows 工作树时把旧 DLL 复制给 Linux；WSL 与 Windows Git Bash 两端复制验证通过。
+- `flutter pub get --offline --enforce-lockfile`、`flutter build linux --release --no-pub` 成功；bundle 含正确 ELF Rust 核心。`flutter test --no-pub test/core_sync_test.dart` 的 6 项真实 FFI 测试通过。`cargo fmt --check`、workspace Clippy、`flutter analyze --no-pub` 与修正后的 `bash init.sh --fast` 均通过，Flutter 122 项全绿。
+- 主应用 Linux 目前只验证了 Release build 与 FFI；隔离桌面 UI smoke、docs/04 产品内存矩阵/cgroup 限额交互尚未通过。WSLg 软件渲染不能替代 DRM/WPE GBM/DMABUF。P00.4 保持 blocked，P01 不启动。证据：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-main-runner.md`。
+
 ## 今日会话（2026-10-29 第六十轮）：WSL 快速门禁与跨平台 CI 复验
 
 - 当前分支 `5e6e0ce` 已按既有授权推送。远端 CI run `40758401730` 全绿：Windows/Ubuntu Rust fmt、Clippy、workspace tests，Flutter analyze/122 项 tests 与 harness 校验通过；Flutter job 用时 6m12s。macOS Web Engine Probe `40758401692` 与 Linux WPE Web Engine Probe `40758401773` 的 analyze/test/build/replay jobs 也全绿。
