@@ -74,6 +74,9 @@ fi
   done
   printf 'WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=%s\n' "${WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS:-unset}"
   printf 'WEBKIT_DMABUF_RENDERER_DISABLE_GBM=%s\n' "${WEBKIT_DMABUF_RENDERER_DISABLE_GBM:-unset}"
+  printf 'security-label='
+  cat /proc/self/attr/current 2>/dev/null || printf 'unavailable\n'
+  grep -E '^Cap(Eff|Bnd|Prm):' /proc/self/status || true
   if ! dpkg-query -W -f='${Package}=${Version}\n' \
     libwpewebkit-2.0-dev libwpe-1.0-dev libwpebackend-fdo-1.0-dev \
     libgtk-3-dev libepoxy-dev; then

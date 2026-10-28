@@ -13,11 +13,12 @@ permissions:
 jobs:
   web-engine-linux:
     name: WPE WebKit MHTML replay
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
     container:
       image: debian:sid
-      # bubblewrap needs these privileges for WebKit's default sandbox.
-      options: --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --security-opt=seccomp=unconfined
+      # bubblewrap needs namespace, loopback, and mount-propagation permissions.
+      options: --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --security-opt=seccomp=unconfined --security-opt=apparmor=unconfined
     timeout-minutes: 35
     steps:
       - name: Install build and WPE dependencies
