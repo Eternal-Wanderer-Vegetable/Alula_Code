@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第四十一轮：WSL 原生 Flutter 与全门禁复验）
+> Last Updated：2026-10-28（第四十二轮：WSL Linux 桌面目标构建检查）
 
 ## 项目一句话
 
@@ -12,9 +12,11 @@ macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、
 
 剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 对完整产品执行三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
+WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
+- 第四十二轮：在 WSL 完成 core build；主应用 Linux Release 构建检查发现没有 Linux desktop project 配置，因此将 Linux runner scaffold 留作后续跨平台阶段。独立 WPE probe 有 Linux runner。没有修改产品代码。
 - 第四十一轮：WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7 和 Linux desktop 开发依赖；`flutter doctor -v` 的 Linux toolchain 检查通过。Rust 格式、workspace tests、Clippy、build_core、Flutter analyze 与 122 项 test 全通过。P00.3 大文本恢复夹具的 2,000,001 UTF-16 单元观测符合既有 current-state fixture；没有改产品代码或测试。P00.4 仍 blocked，P01 不启动。详见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 - 第四十轮：macOS run 40647161201 在 HEAD `5da053b` 通过 Safari Web Inspector 页面级附着，窗口标题匹配归档页，截图显示目标 DOM；probe analyze/test、Release build、Web Archive replay 全通过。证据已保存于 `docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`。Safari Inspector 子项通过，但完整产品内存、真实 WPE GBM 与官方服务身份/许可仍阻塞 P00.4。
 - 第三十九轮：WSL 安装 GBM development header 并补足本地账号 `video`/`render` 设备组；uid 1000 `card0` GBM buffer/dma-buf 导出成功，render node buffer ioctl 失败；GBM EGL 只有 llvmpipe surfaceless GLES、无 pbuffer GLES2 config。未运行 WPE，真实硬件 DRM 主机门槛仍开放。WSL Rust fmt/tests/clippy/editor-core release build 全部通过；1.58 GB Linux Flutter SDK 未下载完成。
@@ -135,8 +137,8 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stabl
 ## Next Session
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 与 Flutter 工具链均可原生工作；完整 `bash init.sh`、独立 Flutter analyze 和串行 test 已全绿，可避免重复全量 recovery fixture，除非代码变化要求复验。
-2. Safari Web Inspector 页面级附着已由 run 40647161201 验证；下一步取得真实 DRM 主机 WPE GBM/DMABUF 证据、处理官方服务身份/许可，并按 docs/04 对产品做多场景三轮预算采样。CI 单轮探针 footprint 不足以验收。
-3. P00 完成前不要启动依赖它的 P01。分支 `codex/vscode-parity-p00` 已获授权推送；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
+2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及 docs/04 完整产品的三轮长时多场景预算采样；CI 单轮探针 footprint 不足以验收。
+3. 主应用 `app/` 的 Linux desktop runner 未配置；`flutter build linux --release --no-pub` 在编译前失败。将 scaffold 排在 docs/03 跨平台阶段，P00 完成前不启动 P01。独立 WPE probe 有 Linux runner 与 CI evidence。分支 `codex/vscode-parity-p00` 的推送授权已执行；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 
 ## 已知风险（尚未因本轮计划而修复）

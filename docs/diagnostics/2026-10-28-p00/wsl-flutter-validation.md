@@ -17,6 +17,8 @@ The WSL Linux desktop toolchain dependencies are now installed: clang 18.1.3, CM
 | `flutter analyze --no-pub` in `app/` | Exit 0; no issues found |
 | `flutter test --no-pub --concurrency=1` in `app/` | Exit 0; 122 tests passed |
 | `bash init.sh` with the WSL Cargo/Flutter paths and offline Pub cache | Exit 0; Rust workspace tests, Clippy, `build_core`, and all 122 Flutter tests passed |
+| `bash scripts/build_core.sh` | Exit 0; `app/native/` ready |
+| `flutter build linux --release --no-pub` in `app/` | Exit 1 before compilation: “No Linux desktop project configured.” The main `app/` has no Linux runner scaffold. |
 
 The `P00.3 REF-07-RECOVERY-01` fixture accepted 2,000,001 UTF-16 units; the session journal omitted the oversized text and restart recovered the 5-unit on-disk `seed\n` content, matching the recorded current-state behavior. The UTF-16 diff random replay also passed.
 
@@ -24,4 +26,6 @@ One earlier parallel `flutter test --no-pub` run exited 1 on `P00.3 REF-07-UNDO-
 
 ## Scope and remaining gates
 
-This only establishes that the current Flutter/Rust workspace gates can run natively in WSL. It does not establish WPE hardware GBM/DMABUF, Microsoft official-service identity/licensing, or the docs/04 full-product memory acceptance. P00.4 remains blocked and P01 remains unstarted. The WSLg renderer evidence remains software `llvmpipe`; it is not real DRM hardware evidence.
+Flutter Doctor's Linux toolchain check establishes host dependency readiness, not that the main `app/` has a Linux desktop target. The independent `tools/web-engine-probe/` does have its own Linux runner and prior WPE CI evidence. No main-app Linux scaffold was added in this P00 work.
+
+These checks establish that the current Flutter/Rust workspace gates can run natively in WSL. They do not establish WPE hardware GBM/DMABUF, Microsoft official-service identity/licensing, or the docs/04 full-product memory acceptance. P00.4 remains blocked and P01 remains unstarted. The WSLg renderer evidence remains software `llvmpipe`; it is not real DRM hardware evidence.

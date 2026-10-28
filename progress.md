@@ -18,7 +18,13 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - 在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，并复用现有 pub mirror 缓存离线按锁文件解析依赖；未修改 pubspec 或 lockfile 内容。安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret 与 GBM 桌面开发依赖；`flutter doctor -v` 的 Linux desktop toolchain 检查通过，Flutter bin 已加入 `.profile` 和 `.bashrc` PATH。
 - `cargo fmt --check`、`cargo clippy --workspace --all-targets -- -D warnings`、app `flutter analyze --no-pub`、`flutter test --no-pub --concurrency=1` 与完整 `bash init.sh` 全部 EXIT=0；Rust tests、Clippy、build_core、Flutter 122 项和静态分析全绿。2,000,001 UTF-16 单元恢复夹具按预期记录旧行为。
 - 初始并行 Flutter 单次出现 P00.3 Undo fixture 失败；该测试单独、完整串行和随后完整默认并行 `init.sh` 复跑均通过，根因未确认，未改产品代码或测试。验收记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
-- P00.4 仍 blocked/in-progress，真实 DRM WPE GBM、官方服务身份/许可和 docs/04 完整产品内存门未解决；P01 不启动。WSL Linux 桌面开发依赖已从临时 Ubuntu Aliyun apt 源安装；该临时源配置与索引缓存已清理。
+- P00.4 仍 blocked/in-progress，真实 DRM WPE GBM、官方服务身份/许可和 docs/04 完整产品内存门未解决；P01 不启动。WSL Linux 桌面开发依赖已从临时 Ubuntu Aliyun apt 源安装；临时 apt 源配置文件已移除。
+
+## 今日会话（2026-10-28 第四十二轮）：WSL Linux 桌面目标构建检查
+
+- 在登录 shell 中运行 `bash scripts/build_core.sh` 成功；随后主应用 `app/` 的 `flutter build linux --release --no-pub` 在编译前返回 `No Linux desktop project configured`。Flutter host toolchain 已就绪，但主应用没有 Linux runner scaffold。
+- `tools/web-engine-probe/` 自带 Linux runner，P00.4 WPE CI 已有独立 Linux 构建与回放证据；不把该探针证据当作主应用 Linux 构建通过。本轮不新增 `app/linux` 文件。
+- 将主应用 Linux runner 缺失登记为后续跨平台阶段事项；P00.4 的真实 DRM WPE GBM、官方服务身份/许可、docs/04 产品内存门仍阻塞，P01 不启动。诊断见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
 ## 今日会话（2026-10-28 第四十轮）：Safari Web Inspector 页面附着验证
 
@@ -477,6 +483,6 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 继续关闭 P00.4 风险门：获取可用 macOS runner、处理服务身份/许可边界、在真实 DRM 主机验证 WPE GBM/DMABUF，并完成 docs/04 三轮长时多场景采样。
-2. 等待用户对推送当前分支以运行 macOS workflow 的明确授权；未授权前保持分支本地，不触发 workflow。
-3. P00/feat-022 完成前不启动依赖它的 P01；当前尚有跨平台、官方服务和内存验收项阻塞。
+1. 继续关闭 P00.4 风险门：在真实 DRM 主机验证 WPE GBM/DMABUF，处理服务身份/许可边界，并完成 docs/04 三轮长时多场景采样。
+2. 主产品 `app/` 缺 Linux desktop runner；Flutter host toolchain 已就绪，`flutter build linux` 仍因项目未配置而无法开始。将 scaffold 工作按 docs/03 依赖排到后续跨平台阶段；独立 WPE probe 已有 Linux runner。
+3. P00/feat-022 完成前不启动依赖它的 P01；当前仍有 WPE 硬件、官方服务和产品内存验收阻塞。
