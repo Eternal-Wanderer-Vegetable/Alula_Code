@@ -38,7 +38,7 @@ jobs:
         run: flutter build macos --release
         working-directory: tools/web-engine-probe
 
-      - name: Run WKWebView archive replay
+      - name: Run WKWebView archive replay and Safari Inspector attach
         run: |
           bash tools/web-engine-probe/scripts/run-web-smoke-macos.sh \
             tools/web-engine-probe/build/macos/Build/Products/Release/web_engine_probe.app \

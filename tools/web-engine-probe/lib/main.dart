@@ -410,10 +410,7 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
         );
         final loaded = await _macOSWebArchiveChannel.invokeMethod<bool>(
           'loadWebArchive',
-          {
-            'data': archiveData,
-            'baseURL': archiveUri.toString(),
-          },
+          {'data': archiveData, 'baseURL': archiveUri.toString()},
         );
         if (loaded != true) {
           throw StateError('Native WKWebView Web Archive load was not started');
@@ -583,7 +580,25 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     await _captureMhtml();
     await Future<void>.delayed(const Duration(seconds: 2));
     await _openMhtml();
-    await Future<void>.delayed(const Duration(seconds: 8));
+    if (Platform.isMacOS &&
+        Platform.environment['P00_4_WEB_INSPECTOR_HOLD'] == '1') {
+      final releaseFile = File(
+        '${Directory.systemTemp.path}${Platform.pathSeparator}'
+        'p00.4-web-inspector-release.txt',
+      );
+      final stopwatch = Stopwatch()..start();
+      while (mounted &&
+          !await releaseFile.exists() &&
+          stopwatch.elapsed < const Duration(seconds: 90)) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      final release = await releaseFile.exists()
+          ? await releaseFile.readAsString()
+          : 'timeout';
+      stdout.writeln('P00_4_INSPECTOR_HOLD release=$release');
+    } else {
+      await Future<void>.delayed(const Duration(seconds: 8));
+    }
     if (mounted) _toggleWebView();
   }
 

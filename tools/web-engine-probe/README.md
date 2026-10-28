@@ -81,13 +81,19 @@ scripts/run-web-smoke-macos.sh \
 
 The runner records `footprint -targetChildren` snapshots before/after the
 WebView lifecycle, page verification JSON, the Web Archive bytes, and best-effort
-desktop screenshots. GitHub Actions run 40613565941 passed analyze, tests,
+desktop screenshots. The macOS smoke also enables Safari's Develop menu,
+opens Inspect Apps and Devices, and attempts to select the `Alula Web Probe`
+target while the same WKWebView is held open. On successful attachment it
+captures the desktop. Its attach log
+and screenshot are uploaded with the other evidence; a missing target makes the
+smoke fail after preserving the archive and lifecycle artifacts. GitHub Actions
+run 40613565941 passed analyze, tests,
 Release build, and replay on `macos-15`; its 693-byte archive restored the title
 and marker, and `archiveParsed` was true. See
 `docs/diagnostics/2026-10-27-p00/p00.4-web-macos-run-40613565941/`. The screenshot
 and page assertion verify the probe replay only; they do not satisfy docs/04
-product memory acceptance. The workflow does not automate attaching Safari Web
-Inspector, which remains a separate manual check.
+product memory acceptance. Safari attachment evidence is pending a macOS Actions
+run; until that run's artifact is inspected, the Inspector gate remains open.
 
 ## Linux Flutter/WPE check
 

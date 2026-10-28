@@ -22,12 +22,30 @@ mkdir -p "$sandbox_tmp_directory"
 export TMPDIR="$sandbox_tmp_directory/"
 
 phase_file="$TMPDIR/p00.4-web-probe-phase.txt"
-rm -f "$phase_file"
+inspector_release_file="$TMPDIR/p00.4-web-inspector-release.txt"
+inspector_script="$(dirname "$0")/attach-safari-web-inspector.applescript"
+rm -f "$phase_file" "$inspector_release_file"
 
 sw_vers > "$output_directory/environment.txt"
 flutter --version >> "$output_directory/environment.txt"
 
-P00_4_WEB_AUTO=1 "$app_executable" > "$output_directory/probe.log" 2>&1 &
+inspector_attach_verified=0
+if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true \
+  > "$output_directory/safari-develop-menu.log" 2>&1; then
+  echo "could not enable Safari Develop menu" \
+    >> "$output_directory/safari-develop-menu.log"
+fi
+if ! open -a Safari >> "$output_directory/safari-develop-menu.log" 2>&1; then
+  echo "could not open Safari" >> "$output_directory/safari-develop-menu.log"
+fi
+if ! osascript "$inspector_script" prepare \
+  > "$output_directory/safari-inspector-prepare.log" 2>&1; then
+  echo "Safari Inspector window preparation failed" \
+    >> "$output_directory/safari-inspector-prepare.log"
+fi
+
+P00_4_WEB_AUTO=1 P00_4_WEB_INSPECTOR_HOLD=1 \
+  "$app_executable" > "$output_directory/probe.log" 2>&1 &
 probe_pid=$!
 trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
 
@@ -105,6 +123,17 @@ wait_for_phase webarchive-loaded
 save_screenshot webarchive-reloaded
 save_footprint webarchive-reloaded
 
+if osascript "$inspector_script" attach \
+  > "$output_directory/safari-inspector-attach.log" 2>&1; then
+  inspector_attach_verified=1
+  save_screenshot safari-web-inspector-attached
+  printf 'attached\n' > "$inspector_release_file"
+else
+  printf 'attach-failed\n' > "$inspector_release_file"
+  echo "Safari Web Inspector attach failed; see safari-inspector-attach.log" \
+    >> "$output_directory/warnings.txt"
+fi
+
 wait_for_phase webview-destroyed
 save_footprint webview-destroyed
 sleep 30
@@ -130,3 +159,7 @@ wait "$probe_pid" 2>/dev/null || true
 trap - EXIT
 
 echo "macOS Web Archive replay evidence saved to $output_directory"
+if (( inspector_attach_verified != 1 )); then
+  echo "Safari Web Inspector attachment was not verified" >&2
+  exit 1
+fi
