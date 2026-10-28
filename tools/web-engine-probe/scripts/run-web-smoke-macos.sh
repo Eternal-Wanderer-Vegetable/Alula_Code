@@ -128,9 +128,6 @@ wait_for_log() {
   exit 1
 }
 
-sleep 1
-save_footprint before-webview
-
 if ! open -n \
   --env P00_4_WEB_AUTO=1 \
   --env P00_4_WEB_INSPECTOR_HOLD=1 \
@@ -156,6 +153,7 @@ if [[ -z "$probe_pid" ]]; then
 fi
 trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
 
+save_footprint before-webview
 wait_for_log P00_4_PROBE_MAIN
 wait_for_log P00_4_WEBVIEW_CREATED
 save_footprint webview-created
