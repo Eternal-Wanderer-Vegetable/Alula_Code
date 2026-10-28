@@ -63,12 +63,14 @@ fi
   uname -a
   cat /etc/os-release
   flutter --version
-  printf 'wpe-webkit-2.0='
-  pkg-config --modversion wpe-webkit-2.0
-  printf 'wpe-platform-2.0='
-  pkg-config --modversion wpe-platform-2.0
-  printf 'wpe-platform-headless-2.0='
-  pkg-config --modversion wpe-platform-headless-2.0
+  for module in \
+    wpe-webkit-2.0 \
+    wpe-web-process-extension-2.0 \
+    wpe-platform-2.0 \
+    wpe-platform-headless-2.0; do
+    version="$(pkg-config --modversion "$module" 2>/dev/null || true)"
+    printf '%s=%s\n' "$module" "${version:-not-installed}"
+  done
   printf 'WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=%s\n' "${WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS:-unset}"
   printf 'WEBKIT_DMABUF_RENDERER_DISABLE_GBM=%s\n' "${WEBKIT_DMABUF_RENDERER_DISABLE_GBM:-unset}"
   if ! dpkg-query -W -f='${Package}=${Version}\n' \

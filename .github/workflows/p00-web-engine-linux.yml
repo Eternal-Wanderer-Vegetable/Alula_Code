@@ -46,9 +46,9 @@ jobs:
       - name: Verify WPE development packages
         run: |
           pkg-config --modversion wpe-webkit-2.0
-          pkg-config --modversion wpe-platform-2.0
-          pkg-config --modversion wpe-platform-headless-2.0
+          pkg-config --modversion wpe-web-process-extension-2.0
           test "$(pkg-config --modversion wpe-webkit-2.0)" = 2.52.6
+          test "$(pkg-config --modversion wpe-web-process-extension-2.0)" = 2.52.6
 
       - name: Resolve probe dependencies
         run: |
