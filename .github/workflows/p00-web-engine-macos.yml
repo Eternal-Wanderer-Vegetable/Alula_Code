@@ -40,7 +40,7 @@ jobs:
 
       - name: Run WKWebView archive replay
         run: |
-          tools/web-engine-probe/scripts/run-web-smoke-macos.sh \
+          bash tools/web-engine-probe/scripts/run-web-smoke-macos.sh \
             tools/web-engine-probe/build/macos/Build/Products/Release/web_engine_probe.app \
             "$RUNNER_TEMP/p00.4-web-macos"
 

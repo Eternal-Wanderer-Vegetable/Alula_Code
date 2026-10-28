@@ -64,7 +64,7 @@ jobs:
 
       - name: Run WPE MHTML replay
         run: |
-          tools/web-engine-probe/scripts/run-web-smoke-linux.sh \
+          bash tools/web-engine-probe/scripts/run-web-smoke-linux.sh \
             tools/web-engine-probe/build/linux/x64/release/bundle/web_engine_probe \
             "$RUNNER_TEMP/p00.4-web-linux"
 
