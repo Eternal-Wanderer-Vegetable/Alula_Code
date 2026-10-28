@@ -42,6 +42,10 @@ class WebEngineProbePage extends StatefulWidget {
 }
 
 class _WebEngineProbePageState extends State<WebEngineProbePage> {
+  static const _macOSWebArchiveChannel = MethodChannel(
+    'alula.p00_4/webarchive',
+  );
+
   static const _pageHtml = '''
 <!doctype html>
 <html><head><meta charset="utf-8"><title>Alula Web Probe</title>
@@ -134,6 +138,19 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
       if (hasProbeMarker != true) {
         throw StateError('WebView page marker is missing after $phase');
       }
+      final hasRawWebArchiveHeader = _usesWebArchive
+          ? await controller.evaluateJavascript(
+              source: "document.body.innerText.includes('bplist00')",
+            )
+          : null;
+      final archiveParsed =
+          !_usesWebArchive ||
+          (title == 'Alula Web Probe' && hasRawWebArchiveHeader == false);
+      if (!archiveParsed) {
+        throw StateError(
+          'WKWebView displayed the Web Archive payload instead of parsing it',
+        );
+      }
       final file = File(
         '${Directory.systemTemp.path}${Platform.pathSeparator}'
         'p00.4-web-$phase-page.json',
@@ -143,6 +160,10 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
           'phase': phase,
           'title': title,
           'hasProbeMarker': hasProbeMarker,
+          if (_usesWebArchive) ...{
+            'hasRawWebArchiveHeader': hasRawWebArchiveHeader,
+            'archiveParsed': archiveParsed,
+          },
           'url': (await controller.getUrl())?.toString(),
           if (_usesLinuxMhtml)
             'cdpMethodSupported': InAppWebViewController.isMethodSupported(
@@ -375,17 +396,6 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     try {
       final fileUri = WebUri(File(path).uri.toString());
       if (_usesWebArchive) {
-        final canLoadSimulatedRequest =
-            InAppWebViewController.isMethodSupported(
-              PlatformInAppWebViewControllerMethod.loadSimulatedRequest,
-              platform: TargetPlatform.macOS,
-            );
-        if (!canLoadSimulatedRequest) {
-          throw UnsupportedError(
-            'WKWebView loadSimulatedRequest requires macOS 12 or newer',
-          );
-        }
-
         final archiveData = await File(path).readAsBytes();
         if (archiveData.isEmpty) {
           throw StateError('Saved WKWebView Web Archive is empty');
@@ -395,18 +405,19 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
         );
         stdout.writeln(
           'P00_4_ARCHIVE_LOAD_BEGIN url=$archiveUri source=$fileUri '
-          'bytes=${archiveData.length} mimeType=application/x-webarchive',
+          'bytes=${archiveData.length} mimeType=application/x-webarchive '
+          'api=WKWebView.load(data:)',
         );
-        await controller.loadSimulatedRequest(
-          urlRequest: URLRequest(url: archiveUri),
-          data: archiveData,
-          urlResponse: URLResponse(
-            expectedContentLength: archiveData.length,
-            mimeType: 'application/x-webarchive',
-            statusCode: 200,
-            url: archiveUri,
-          ),
+        final loaded = await _macOSWebArchiveChannel.invokeMethod<bool>(
+          'loadWebArchive',
+          {
+            'data': archiveData,
+            'baseURL': archiveUri.toString(),
+          },
         );
+        if (loaded != true) {
+          throw StateError('Native WKWebView Web Archive load was not started');
+        }
       } else {
         await controller.loadUrl(
           urlRequest: URLRequest(url: fileUri),
