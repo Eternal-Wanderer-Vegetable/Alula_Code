@@ -35,6 +35,24 @@ if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true \
   echo "could not enable Safari Develop menu" \
     >> "$output_directory/safari-develop-menu.log"
 fi
+if ! defaults write com.apple.Safari.SandboxBroker ShowDevelopMenu -bool true \
+  >> "$output_directory/safari-develop-menu.log" 2>&1; then
+  echo "could not enable Safari Develop menu in SandboxBroker preferences" \
+    >> "$output_directory/safari-develop-menu.log"
+fi
+defaults read com.apple.Safari IncludeDevelopMenu \
+  >> "$output_directory/safari-develop-menu.log" 2>&1 || true
+defaults read com.apple.Safari.SandboxBroker ShowDevelopMenu \
+  >> "$output_directory/safari-develop-menu.log" 2>&1 || true
+osascript -e 'tell application "Safari" to quit' \
+  >> "$output_directory/safari-develop-menu.log" 2>&1 || true
+for _ in $(seq 1 20); do
+  if ! pgrep -x Safari >/dev/null 2>&1; then break; fi
+  sleep 0.25
+done
+if pgrep -x Safari >/dev/null 2>&1; then
+  killall Safari >> "$output_directory/safari-develop-menu.log" 2>&1 || true
+fi
 if ! open -a Safari >> "$output_directory/safari-develop-menu.log" 2>&1; then
   echo "could not open Safari" >> "$output_directory/safari-develop-menu.log"
 fi
@@ -43,11 +61,6 @@ if ! osascript "$inspector_script" prepare \
   echo "Safari Inspector window preparation failed" \
     >> "$output_directory/safari-inspector-prepare.log"
 fi
-
-P00_4_WEB_AUTO=1 P00_4_WEB_INSPECTOR_HOLD=1 \
-  "$app_executable" > "$output_directory/probe.log" 2>&1 &
-probe_pid=$!
-trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
 
 save_footprint() {
   local name="$1"
@@ -72,6 +85,7 @@ wait_for_phase() {
     if ! kill -0 "$probe_pid" 2>/dev/null; then
       echo "probe exited before phase '$expected'" >&2
       cat "$output_directory/probe.log" >&2 || true
+      cat "$output_directory/probe-stderr.log" >&2 || true
       exit 1
     fi
     if [[ -f "$phase_file" ]] && [[ "$(<"$phase_file")" == "$expected" ]]; then
@@ -83,6 +97,7 @@ wait_for_phase() {
 
   echo "timed out waiting for phase '$expected'" >&2
   cat "$output_directory/probe.log" >&2 || true
+  cat "$output_directory/probe-stderr.log" >&2 || true
   exit 1
 }
 
@@ -95,9 +110,12 @@ wait_for_log() {
     if ! kill -0 "$probe_pid" 2>/dev/null; then
       echo "probe exited before log marker '$marker'" >&2
       cat "$output_directory/probe.log" >&2 || true
+      cat "$output_directory/probe-stderr.log" >&2 || true
       exit 1
     fi
-    if grep -Fq "$marker" "$output_directory/probe.log"; then
+    if grep -Fq "$marker" \
+      "$output_directory/probe.log" \
+      "$output_directory/probe-stderr.log"; then
       echo "log_marker=$marker"
       return 0
     fi
@@ -106,12 +124,39 @@ wait_for_log() {
 
   echo "timed out waiting for log marker '$marker'" >&2
   cat "$output_directory/probe.log" >&2 || true
+  cat "$output_directory/probe-stderr.log" >&2 || true
   exit 1
 }
 
 sleep 1
 save_footprint before-webview
 
+if ! open -n \
+  --env P00_4_WEB_AUTO=1 \
+  --env P00_4_WEB_INSPECTOR_HOLD=1 \
+  --stdout "$output_directory/probe.log" \
+  --stderr "$output_directory/probe-stderr.log" \
+  "$app_bundle" > "$output_directory/probe-launch.log" 2>&1; then
+  echo "could not launch probe app bundle" >&2
+  cat "$output_directory/probe-launch.log" >&2 || true
+  exit 1
+fi
+
+probe_pid=""
+for _ in $(seq 1 40); do
+  probe_pid="$(ps -axo pid=,command= | awk -v executable="$app_executable" \
+    'index($0, executable) > 0 { print $1 }' | tail -n 1)"
+  if [[ -n "$probe_pid" ]]; then break; fi
+  sleep 0.25
+done
+if [[ -z "$probe_pid" ]]; then
+  echo "probe process was not found after Launch Services startup" >&2
+  cat "$output_directory/probe-launch.log" >&2 || true
+  exit 1
+fi
+trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
+
+wait_for_log P00_4_PROBE_MAIN
 wait_for_log P00_4_WEBVIEW_CREATED
 save_footprint webview-created
 

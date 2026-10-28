@@ -12,8 +12,13 @@ on prepareInspectorWindow()
 	tell application "System Events"
 		tell process "Safari"
 			set frontmost to true
+			repeat with attemptNumber from 1 to 30
+				if exists menu bar item "Develop" of menu bar 1 then exit repeat
+				delay 1
+			end repeat
 			if not (exists menu bar item "Develop" of menu bar 1) then
-				error "Safari Develop menu is unavailable"
+				set visibleMenuItems to name of menu bar items of menu bar 1
+				error "Safari Develop menu is unavailable; visible menu items: " & (visibleMenuItems as text)
 			end if
 			click menu bar item "Develop" of menu bar 1
 			delay 0.2
