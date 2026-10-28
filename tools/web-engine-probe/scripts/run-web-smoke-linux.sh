@@ -67,14 +67,16 @@ fi
     wpe-webkit-2.0 \
     wpe-web-process-extension-2.0 \
     wpe-platform-2.0 \
-    wpe-platform-headless-2.0; do
+    wpe-platform-headless-2.0 \
+    wpebackend-fdo-1.0; do
     version="$(pkg-config --modversion "$module" 2>/dev/null || true)"
     printf '%s=%s\n' "$module" "${version:-not-installed}"
   done
   printf 'WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=%s\n' "${WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS:-unset}"
   printf 'WEBKIT_DMABUF_RENDERER_DISABLE_GBM=%s\n' "${WEBKIT_DMABUF_RENDERER_DISABLE_GBM:-unset}"
   if ! dpkg-query -W -f='${Package}=${Version}\n' \
-    libwpewebkit-2.0-dev libwpe-1.0-dev libgtk-3-dev libepoxy-dev; then
+    libwpewebkit-2.0-dev libwpe-1.0-dev libwpebackend-fdo-1.0-dev \
+    libgtk-3-dev libepoxy-dev; then
     printf 'Some WPE development files may be source-installed; pkg-config versions above are authoritative.\n'
   fi
 } > "$output_directory/environment.txt"

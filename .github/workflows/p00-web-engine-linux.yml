@@ -29,7 +29,8 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             build-essential ca-certificates clang cmake curl dbus-x11 fonts-dejavu-core \
             git jq libepoxy-dev libgl1-mesa-dri libgtk-3-dev liblzma-dev libwpe-1.0-dev \
-            libsecret-1-dev libwpewebkit-2.0-1=2.52.6-1 \
+            libsecret-1-dev libwpebackend-fdo-1.0-dev \
+            libwpewebkit-2.0-1=2.52.6-1 \
             libwpewebkit-2.0-dev=2.52.6-1 ninja-build pkg-config unzip x11-utils \
             xauth xvfb xz-utils zip
 
@@ -49,6 +50,7 @@ jobs:
           pkg-config --modversion wpe-web-process-extension-2.0
           test "$(pkg-config --modversion wpe-webkit-2.0)" = 2.52.6
           test "$(pkg-config --modversion wpe-web-process-extension-2.0)" = 2.52.6
+          pkg-config --modversion wpebackend-fdo-1.0
 
       - name: Resolve probe dependencies
         run: |
