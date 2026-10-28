@@ -26,6 +26,12 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - `tools/web-engine-probe/` 自带 Linux runner，P00.4 WPE CI 已有独立 Linux 构建与回放证据；不把该探针证据当作主应用 Linux 构建通过。本轮不新增 `app/linux` 文件。
 - 将主应用 Linux runner 缺失登记为后续跨平台阶段事项；P00.4 的真实 DRM WPE GBM、官方服务身份/许可、docs/04 产品内存门仍阻塞，P01 不启动。诊断见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-28 第四十三轮）：Windows 主应用 Release 构建验证
+
+- Windows Git Bash 下 `bash scripts/build_core.sh` 成功；首次 `flutter build windows --release --no-pub` 因生成插件链接目录缺失而未生成 CMake 项目。
+- 在 `app/` 执行 `flutter pub get --enforce-lockfile` 后，Windows Release build 通过，产物为 `app/build/windows/x64/runner/Release/alula_app.exe`。lockfile 相对 HEAD 仅有行尾差异、无语义内容变化。
+- P00.4 的真实 DRM WPE GBM、官方服务身份/许可和 docs/04 完整产品内存门仍未解决；主应用 Linux runner 亦未配置，记录为后续跨平台阶段事项。没有修改产品源文件。
+
 ## 今日会话（2026-10-28 第四十轮）：Safari Web Inspector 页面附着验证
 
 - macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过 probe analyze/test、Release build、Web Archive 保存/重载和 Safari Web Inspector 页面级附着。日志显示 Web Inspector 窗口标题匹配 `webarchive.invalid — p00.4-web-probe.webarchive`；附着截图可见 `html > body data-ready="true"`。
