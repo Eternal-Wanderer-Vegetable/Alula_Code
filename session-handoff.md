@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第五十轮：VS Code 同服务对照前台安全预检）
+> Last Updated：2026-10-28（第五十一轮：WSL依赖复验与 Rust LSP watcher 告警归因）
 
 ## 项目一句话
 
@@ -19,6 +19,8 @@ Windows Release `--lsp-auto` 首轮 45 秒采样只有主进程；原因是默�
 Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.10/588.58 MiB；三轮 600 秒 idle 样本尾部稳定态 589.09/589.27/589.09 MiB，中位数 589.09 MiB，结束值 588.11/590.77/591.70 MiB，均仍比 500 MiB 目标高约 89 MiB。三轮结束+30秒后各四个 PID 均退出。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。VS Code 1.142.0 + 隔离扩展副本经 PowerShell 最小化和 WSH `SW_SHOWMINNOACTIVE` 两种方式启动都切换前台；安全守卫每次均恢复前台并停止实例，未采集对照数据；临时数据已清理，后续前台对照尚待许可。树含 Alula、两个 `rust-analyzer.exe` 与 proc-macro server；每次启动有两条 watcher path 告警。汇总与原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。没有 30 分钟脚本编辑、VS Code 对照及完整产品服务门证据。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
+
+- 第五十一轮：WSL `bash init.sh --fast` 通过 Rust workspace tests、`build_core` 和 Flutter 122 项测试。独立 rust-analyzer 1.97.1 LSP 初始化复现 watcher path 告警，定位为 rust-analyzer stderr；notify-rs 错误条件提示失败 watch path 缺失或非文件/目录，但路径未确认。WSL Windows-interop `RA_LOG=trace` 尝试未完成握手；已停止隔离进程。没有改产品代码。证据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-ra-notify-warning.md`。
 
 - 第五十轮：VS Code 同服务对照安全预检发现 PowerShell 最小化和 WSH `SW_SHOWMINNOACTIVE` 启动都会切换前台；前台守卫两次均恢复原窗口，隔离实例已退出，临时 profile/扩展副本已删除，未进行 10 分钟采样。VS Code 1.142.0 与锁定的 Code-OSS 1.145.0-dev 有版本差异。30 分钟 Alula 编辑实测的前台测试请求待用户回复；VS Code 对照也需要另行取得前台测试许可。证据：`docs/diagnostics/2026-10-28-p00/p00.4-vscode-rust-lsp-preflight.json`。
 
@@ -166,5 +168,5 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 
 ## Next Session 首步
 
-1. 阅读 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 和 10 分钟 raw report；设计隔离 fixture 的脚本化 30 分钟编辑采样，并补 VS Code 同场景对照，避免修改用户 profile/workspace。
+1. 阅读 `docs/diagnostics/2026-10-28-p00/p00.4-windows-ra-notify-warning.md` 与 `p00.4-windows-alula-rust-lsp-summary.md`；若继续调查告警，用 Windows-native rust-analyzer log-file 采集补足失败 watch path。30 分钟编辑和 VS Code 前台采样须等待对应用户许可。
 2. P00.4 其余真实 DRM WPE GBM/DMABUF、官方服务身份/许可门保持待解；docs/04 完整产品预算仍未验收，不启动 P01。

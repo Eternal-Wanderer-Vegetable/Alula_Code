@@ -13,6 +13,12 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-28 第五十一轮）：WSL依赖复验与 Rust LSP watcher 告警归因
+
+- 在 WSL 复跑 `bash init.sh --fast`，Rust workspace tests、`build_core` 与 Flutter 122 项测试通过。完整门禁证据仍见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
+- 独立 rust-analyzer 1.97.1 LSP 初始化复现两条 watcher path 告警；确认它们来自 rust-analyzer stderr。上游 notify-rs 错误条件指向缺失或非文件/目录的请求路径，但具体失败路径未知；经 WSL Windows-interop pipe 的 `RA_LOG=trace` 补充尝试未完成握手，已停止本次隔离进程。没有改产品代码。
+- 详细记录：`docs/diagnostics/2026-10-28-p00/p00.4-windows-ra-notify-warning.md`。P00.4 仍 blocked/in-progress；真实 DRM WPE GBM、官方服务身份/许可、完整产品内存门和获批的前台编辑对照仍未解决，不启动 P01。
+
 ## 今日会话（2026-10-28 第四十一轮）：WSL 原生 Flutter 与全门禁复验
 
 - 在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，并复用现有 pub mirror 缓存离线按锁文件解析依赖；未修改 pubspec 或 lockfile 内容。安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret 与 GBM 桌面开发依赖；`flutter doctor -v` 的 Linux desktop toolchain 检查通过，Flutter bin 已加入 `.profile` 和 `.bashrc` PATH。
