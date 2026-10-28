@@ -1,0 +1,5211 @@
+{
+  "date": "2026-10-29",
+  "platform": "WSLg with Xvfb/software GL",
+  "runner": "Flutter Linux Release main app",
+  "swap": "0",
+  "limit_mib": [
+    64,
+    128,
+    256,
+    512,
+    1024
+  ],
+  "repeats_per_mode_tier": 3,
+  "modes": {
+    "no_ra": "--lsp-auto workspace; PATH excludes cargo so no rust-analyzer process can launch (start attempt may report unavailable)",
+    "ra": "--lsp-auto workspace with installed rust-analyzer stable toolchain"
+  },
+  "scope": "systemd-run cgroup v2 wraps xvfb-run, Xvfb, app and child services",
+  "runs": [
+    {
+      "label": "p00.4-linux-cgroup-no_ra-64-r1",
+      "mode": "no_ra",
+      "limit_mib": 64,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:52:58.990483+00:00",
+      "finished_utc": "2026-10-28T21:52:59.502474+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 67108864,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-64-1-582264.scope; invocation ID: 479f30c1f9b94b30a1e28bb1b7e0b7fb\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-64-r2",
+      "mode": "no_ra",
+      "limit_mib": 64,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:52:59.541086+00:00",
+      "finished_utc": "2026-10-28T21:52:26.160382+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 67108864,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-64-2-582264.scope; invocation ID: bba094a773a3467c82812091ad37ef82\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-64-r3",
+      "mode": "no_ra",
+      "limit_mib": 64,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:52:26.199668+00:00",
+      "finished_utc": "2026-10-28T21:52:26.711141+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-64-3-582264.scope; invocation ID: 23776538c89f4f97a4bc58cb7e00d161\n/tmp/alula-p00-linux-cgroup-matrix-inner.sh: line 1: 582466 Killed                  ( cd \"$ROOT/app\"; exec \"${APP_ENV[@]}\" \"$APP_BIN\" --lsp-auto ) > \"$ROOT/app.log\" 2>&1\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-128-r1",
+      "mode": "no_ra",
+      "limit_mib": 128,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:52:26.749781+00:00",
+      "finished_utc": "2026-10-28T21:52:27.261354+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-128-1-582264.scope; invocation ID: 4d16adbf194149e2b596cb774442b522\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-128-r2",
+      "mode": "no_ra",
+      "limit_mib": 128,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:52:27.302144+00:00",
+      "finished_utc": "2026-10-28T21:52:27.813250+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-128-2-582264.scope; invocation ID: 294fa3f8736f4fad8d0d28ba99072f54\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-128-r3",
+      "mode": "no_ra",
+      "limit_mib": 128,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:52:27.854252+00:00",
+      "finished_utc": "2026-10-28T21:52:28.366085+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-no_ra-128-3-582264.scope; invocation ID: 9a26b3b210d1410c8f97b0be85443f0c\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-256-r1",
+      "mode": "no_ra",
+      "limit_mib": 256,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:52:28.406479+00:00",
+      "finished_utc": "2026-10-28T21:52:32.506406+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-256-1-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_256_R1",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "cb9cf7abcca3f9b3e97a614f06f8b47fb75ddea01bee3ede34d9a191f51fd349",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 268263424,
+      "peak_pss_tree_bytes": 316773376,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 177426432,
+          "pss_tree_bytes": 217691136,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 255746048,
+          "pss_tree_bytes": 303931392,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 264441856,
+          "pss_tree_bytes": 313838592,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 264957952,
+          "pss_tree_bytes": 316773376,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 263700480,
+          "pss_tree_bytes": 313094144,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 264953856,
+          "pss_tree_bytes": 314712064,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 268263424,
+          "pss_tree_bytes": 316438528,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-256-1-582264.scope; invocation ID: c5e8fba831aa48c3925ee547b7a1c3b3\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_256_R1\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=cb9cf7abcca3f9b3e97a614f06f8b47fb75ddea01bee3ede34d9a191f51fd349\nmemory.current.final_before_close=264589312\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 110\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-256-r2",
+      "mode": "no_ra",
+      "limit_mib": 256,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:52:32.561586+00:00",
+      "finished_utc": "2026-10-28T21:52:36.683170+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-256-2-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 11,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "failed",
+      "marker": "P00CG_no_ra_256_R2",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "e7613dab2aea278346bc998491b69f1ef86d845a5bcdaf18953534e5f47d7df0",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 264740864,
+      "peak_pss_tree_bytes": 315508736,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179089408,
+          "pss_tree_bytes": 219973632,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256401408,
+          "pss_tree_bytes": 303974400,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 264712192,
+          "pss_tree_bytes": 313953280,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 264716288,
+          "pss_tree_bytes": 315431936,
+          "pss_processes": 4,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 259907584,
+          "pss_tree_bytes": 307959808,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 264638464,
+          "pss_tree_bytes": 313608192,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.58,
+          "memory_current_bytes": 264740864,
+          "pss_tree_bytes": 315508736,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-256-2-582264.scope; invocation ID: 8dd74f4bff0c4a3d97ebb8f9641abad4\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=failed\nmarker=P00CG_no_ra_256_R2\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=e7613dab2aea278346bc998491b69f1ef86d845a5bcdaf18953534e5f47d7df0\nmemory.current.final_before_close=265240576\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 167\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-256-r3",
+      "mode": "no_ra",
+      "limit_mib": 256,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:52:36.726811+00:00",
+      "finished_utc": "2026-10-28T21:53:14.677284+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-256-3-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_256_R3",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "1cdb3d1b991d0c8df36fa5a886692b1858e341a17b672451ada8e45cd9e209d5",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 264290304,
+      "peak_pss_tree_bytes": 313885696,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179904512,
+          "pss_tree_bytes": 219829248,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 257081344,
+          "pss_tree_bytes": 303714304,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 253661184,
+          "pss_tree_bytes": 302597120,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 264208384,
+          "pss_tree_bytes": 312281088,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.57,
+          "memory_current_bytes": 261857280,
+          "pss_tree_bytes": 310879232,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.08,
+          "memory_current_bytes": 264290304,
+          "pss_tree_bytes": 313885696,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 264155136,
+          "pss_tree_bytes": 313404416,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-256-3-582264.scope; invocation ID: eae54ca43c5c48fbb6ed91ec78f2a202\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_256_R3\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=1cdb3d1b991d0c8df36fa5a886692b1858e341a17b672451ada8e45cd9e209d5\nmemory.current.final_before_close=265773056\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 85\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-512-r1",
+      "mode": "no_ra",
+      "limit_mib": 512,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:52:40.874783+00:00",
+      "finished_utc": "2026-10-28T21:53:18.826407+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-512-1-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_512_R1",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "5b0ace1eb920bcba1e46caddf08eb127e348bd0c632fe71b9fb42c832fafbddf",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 285188096,
+      "peak_pss_tree_bytes": 332981248,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 175579136,
+          "pss_tree_bytes": 215334912,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 249667584,
+          "pss_tree_bytes": 297364480,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 271564800,
+          "pss_tree_bytes": 319120384,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 273342464,
+          "pss_tree_bytes": 321037312,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.57,
+          "memory_current_bytes": 274153472,
+          "pss_tree_bytes": 321371136,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.08,
+          "memory_current_bytes": 277536768,
+          "pss_tree_bytes": 324660224,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.6,
+          "memory_current_bytes": 285188096,
+          "pss_tree_bytes": 332981248,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-512-1-582264.scope; invocation ID: 51ae2d2934a84705ab624b2c33f43991\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_512_R1\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=5b0ace1eb920bcba1e46caddf08eb127e348bd0c632fe71b9fb42c832fafbddf\nmemory.current.final_before_close=280903680\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-512-r2",
+      "mode": "no_ra",
+      "limit_mib": 512,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:53:18.868006+00:00",
+      "finished_utc": "2026-10-28T21:52:49.096987+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-512-2-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_512_R2",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "8a3390f49fc206fd7ba5dc94645b4cc00ece44719dc153a35f3f696c60e38bb7",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 282136576,
+      "peak_pss_tree_bytes": 332279808,
+      "series": [
+        {
+          "t_s": 0.51,
+          "memory_current_bytes": 180715520,
+          "pss_tree_bytes": 221046784,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256655360,
+          "pss_tree_bytes": 303611904,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 274042880,
+          "pss_tree_bytes": 324197376,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 275267584,
+          "pss_tree_bytes": 322335744,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 275632128,
+          "pss_tree_bytes": 323083264,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 278753280,
+          "pss_tree_bytes": 326069248,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 282136576,
+          "pss_tree_bytes": 332279808,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-512-2-582264.scope; invocation ID: a56a1e7ff4fc44dbafdbc60bf6e86208\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_512_R2\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=8a3390f49fc206fd7ba5dc94645b4cc00ece44719dc153a35f3f696c60e38bb7\nmemory.current.final_before_close=279719936\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-512-r3",
+      "mode": "no_ra",
+      "limit_mib": 512,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:52:49.140619+00:00",
+      "finished_utc": "2026-10-28T21:52:53.202813+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-512-3-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_512_R3",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "6f9f46c7bbad2dc6db7686b04ef9f16497a102e2a7c93b2fbae60e8e2e57dfdb",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 284745728,
+      "peak_pss_tree_bytes": 335336448,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 181239808,
+          "pss_tree_bytes": 220988416,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256077824,
+          "pss_tree_bytes": 303315968,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 273027072,
+          "pss_tree_bytes": 319976448,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 275542016,
+          "pss_tree_bytes": 325428224,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 275070976,
+          "pss_tree_bytes": 322363392,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 278687744,
+          "pss_tree_bytes": 325877760,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 284745728,
+          "pss_tree_bytes": 335336448,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-512-3-582264.scope; invocation ID: c858b1f68c1c4a0ab1705bb72540e111\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_512_R3\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=6f9f46c7bbad2dc6db7686b04ef9f16497a102e2a7c93b2fbae60e8e2e57dfdb\nmemory.current.final_before_close=283222016\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-1024-r1",
+      "mode": "no_ra",
+      "limit_mib": 1024,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:52:53.247547+00:00",
+      "finished_utc": "2026-10-28T21:52:57.341115+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-1024-1-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_1024_R1",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "46830c3d99f7df3db9981c3c60a7e8e0e95155564b56ba82b2bcedf48dfe68c7",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 285401088,
+      "peak_pss_tree_bytes": 332072960,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 180502528,
+          "pss_tree_bytes": 221031424,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 255602688,
+          "pss_tree_bytes": 303361024,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 269422592,
+          "pss_tree_bytes": 316602368,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 271679488,
+          "pss_tree_bytes": 318508032,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.57,
+          "memory_current_bytes": 280518656,
+          "pss_tree_bytes": 327673856,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.08,
+          "memory_current_bytes": 283492352,
+          "pss_tree_bytes": 330962944,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 285401088,
+          "pss_tree_bytes": 332072960,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-1024-1-582264.scope; invocation ID: eab176a79b2e41f4879a961131842dc2\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_1024_R1\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=46830c3d99f7df3db9981c3c60a7e8e0e95155564b56ba82b2bcedf48dfe68c7\nmemory.current.final_before_close=284979200\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-1024-r2",
+      "mode": "no_ra",
+      "limit_mib": 1024,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:52:57.385112+00:00",
+      "finished_utc": "2026-10-28T21:53:01.479485+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-1024-2-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_1024_R2",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "435896d9cabd0da19f4be9969ec5e3f4b57e2f1cf4696d6b4fb6ee323d862be0",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 292843520,
+      "peak_pss_tree_bytes": 338745344,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179904512,
+          "pss_tree_bytes": 220744704,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256266240,
+          "pss_tree_bytes": 303013888,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 278364160,
+          "pss_tree_bytes": 324895744,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 278503424,
+          "pss_tree_bytes": 329162752,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.57,
+          "memory_current_bytes": 284532736,
+          "pss_tree_bytes": 332142592,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.08,
+          "memory_current_bytes": 287895552,
+          "pss_tree_bytes": 335398912,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 292843520,
+          "pss_tree_bytes": 338745344,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-1024-2-582264.scope; invocation ID: b5fd350493e04f6e84ded1c9a8cda8a4\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_1024_R2\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=435896d9cabd0da19f4be9969ec5e3f4b57e2f1cf4696d6b4fb6ee323d862be0\nmemory.current.final_before_close=288776192\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-1024-r3",
+      "mode": "no_ra",
+      "limit_mib": 1024,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:53:01.523093+00:00",
+      "finished_utc": "2026-10-28T21:53:39.514006+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-1024-3-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_1024_R3",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "9773fbee7327d0cc13131f81aa3c29a93dd5438ba4c9d6473aa5941ed0bf9af4",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 285794304,
+      "peak_pss_tree_bytes": 332643328,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179781632,
+          "pss_tree_bytes": 219836416,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256999424,
+          "pss_tree_bytes": 303749120,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 273092608,
+          "pss_tree_bytes": 320387072,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 275574784,
+          "pss_tree_bytes": 322067456,
+          "pss_processes": 4,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 277630976,
+          "pss_tree_bytes": 324289536,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 280891392,
+          "pss_tree_bytes": 327828480,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.59,
+          "memory_current_bytes": 285794304,
+          "pss_tree_bytes": 332643328,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-1024-3-582264.scope; invocation ID: 9fd02cb53cf64c49aa037c74f277c6fa\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_1024_R3\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=9773fbee7327d0cc13131f81aa3c29a93dd5438ba4c9d6473aa5941ed0bf9af4\nmemory.current.final_before_close=282038272\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-64-r1",
+      "mode": "ra",
+      "limit_mib": 64,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:53:39.559317+00:00",
+      "finished_utc": "2026-10-28T21:53:06.182420+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 67108864,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-64-1-582264.scope; invocation ID: e7145cc059a34c06a37d2dd331b4bc73\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-64-r2",
+      "mode": "ra",
+      "limit_mib": 64,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:53:06.224528+00:00",
+      "finished_utc": "2026-10-28T21:53:06.736328+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 67108864,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-64-2-582264.scope; invocation ID: e8ddf09d73234e8ca253a601a22e3424\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-64-r3",
+      "mode": "ra",
+      "limit_mib": 64,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:53:06.778180+00:00",
+      "finished_utc": "2026-10-28T21:53:07.289417+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-64-3-582264.scope; invocation ID: 20bf9f8647e64343adfde727b12c6c22\n/tmp/alula-p00-linux-cgroup-matrix-inner.sh: line 1: 584745 Killed                  ( cd \"$ROOT/app\"; exec \"${APP_ENV[@]}\" \"$APP_BIN\" --lsp-auto ) > \"$ROOT/app.log\" 2>&1\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-128-r1",
+      "mode": "ra",
+      "limit_mib": 128,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:53:07.330055+00:00",
+      "finished_utc": "2026-10-28T21:53:07.842218+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-128-1-582264.scope; invocation ID: eb5f9180469845d19a4fe29b45d2fc38\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-128-r2",
+      "mode": "ra",
+      "limit_mib": 128,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:53:07.883746+00:00",
+      "finished_utc": "2026-10-28T21:53:08.394883+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-128-2-582264.scope; invocation ID: c91a7dd044dc48b39f0f435d6868546e\n/tmp/alula-p00-linux-cgroup-matrix-inner.sh: line 1: 584944 Killed                  ( cd \"$ROOT/app\"; exec \"${APP_ENV[@]}\" \"$APP_BIN\" --lsp-auto ) > \"$ROOT/app.log\" 2>&1\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-128-r3",
+      "mode": "ra",
+      "limit_mib": 128,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:53:08.436902+00:00",
+      "finished_utc": "2026-10-28T21:53:08.948450+00:00",
+      "scope": null,
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 134217728,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": false,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": null,
+      "peak_pss_tree_bytes": null,
+      "series": [],
+      "output_tail": "Running as unit: alula-p00-ra-128-3-582264.scope; invocation ID: 8aebdad554b045dfbbebcf7e8c324fe4\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-256-r1",
+      "mode": "ra",
+      "limit_mib": 256,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:53:08.989994+00:00",
+      "finished_utc": "2026-10-28T21:53:43.899349+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-256-1-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 177102848,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 177102848,
+      "peak_pss_tree_bytes": 216798208,
+      "series": [
+        {
+          "t_s": 0.51,
+          "memory_current_bytes": 177102848,
+          "pss_tree_bytes": 216798208,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-256-1-582264.scope; invocation ID: 3a3f481b12a74314b88d3da32dec4449\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nTerminated\nTerminated\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-256-r2",
+      "mode": "ra",
+      "limit_mib": 256,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:53:43.942307+00:00",
+      "finished_utc": "2026-10-28T21:53:11.063619+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-256-2-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 177958912,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 178208768,
+      "peak_pss_tree_bytes": 218540032,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 178208768,
+          "pss_tree_bytes": 218540032,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-256-2-582264.scope; invocation ID: 8aa6e973858c4b2bb81709d02618e5dd\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nTerminated\nTerminated\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-256-r3",
+      "mode": "ra",
+      "limit_mib": 256,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:53:11.108201+00:00",
+      "finished_utc": "2026-10-28T21:53:12.128751+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-256-3-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 176988160,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 176988160,
+      "peak_pss_tree_bytes": 216264704,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 176988160,
+          "pss_tree_bytes": 216264704,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-256-3-582264.scope; invocation ID: bfb1815ada584be1b274c74986399147\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nTerminated\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-512-r1",
+      "mode": "ra",
+      "limit_mib": 512,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:53:12.171306+00:00",
+      "finished_utc": "2026-10-28T21:53:14.220374+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-512-1-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 536870912,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 520298496,
+      "peak_pss_tree_bytes": 608820224,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179499008,
+          "pss_tree_bytes": 219840512,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 403124224,
+          "pss_tree_bytes": 485268480,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 520298496,
+          "pss_tree_bytes": 608820224,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-512-1-582264.scope; invocation ID: c291738f7e8140c685ac019c60326494\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-512-r2",
+      "mode": "ra",
+      "limit_mib": 512,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:53:14.271117+00:00",
+      "finished_utc": "2026-10-28T21:53:16.321350+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-512-2-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 513961984,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 514224128,
+      "peak_pss_tree_bytes": 603907072,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 180412416,
+          "pss_tree_bytes": 220179456,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 402624512,
+          "pss_tree_bytes": 485127168,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 514224128,
+          "pss_tree_bytes": 603907072,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-512-2-582264.scope; invocation ID: 12b225d53043464985f8c451e6e80f71\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\nTerminated\nTerminated\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-512-r3",
+      "mode": "ra",
+      "limit_mib": 512,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:53:16.366533+00:00",
+      "finished_utc": "2026-10-28T21:53:18.417110+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-512-3-582264.scope",
+      "systemd_result": "oom-kill",
+      "systemd_memory_peak_bytes": 510881792,
+      "exit_code": -15,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": null,
+      "marker": null,
+      "baseline_sha256": null,
+      "final_sha256": null,
+      "close_result": null,
+      "app_exit_code": null,
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 511143936,
+      "peak_pss_tree_bytes": 599968768,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 180514816,
+          "pss_tree_bytes": 220867584,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 398782464,
+          "pss_tree_bytes": 480230400,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.55,
+          "memory_current_bytes": 511143936,
+          "pss_tree_bytes": 599968768,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-512-3-582264.scope; invocation ID: aa83dee94b684769a5332b2ea076ba15\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=536870912\nmemory.swap.max=0\nTerminated\nTerminated\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-1024-r1",
+      "mode": "ra",
+      "limit_mib": 1024,
+      "repeat": 1,
+      "started_utc": "2026-10-28T21:53:18.460520+00:00",
+      "finished_utc": "2026-10-28T21:54:27.925940+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-1024-1-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_ra_1024_R1",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "77b6cb2874bcfb573ce813dd7ceda733cb07fc81a4060440a9cddf2242609735",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 849522688,
+      "peak_pss_tree_bytes": 935542784,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179437568,
+          "pss_tree_bytes": 219566080,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 401604608,
+          "pss_tree_bytes": 483270656,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 512233472,
+          "pss_tree_bytes": 602042368,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 658247680,
+          "pss_tree_bytes": 746394624,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.58,
+          "memory_current_bytes": 849522688,
+          "pss_tree_bytes": 925156352,
+          "pss_processes": 8,
+          "pids": 9,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.1,
+          "memory_current_bytes": 836104192,
+          "pss_tree_bytes": 925227008,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.62,
+          "memory_current_bytes": 837308416,
+          "pss_tree_bytes": 926492672,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.14,
+          "memory_current_bytes": 838582272,
+          "pss_tree_bytes": 927746048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.65,
+          "memory_current_bytes": 832598016,
+          "pss_tree_bytes": 921597952,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.17,
+          "memory_current_bytes": 833626112,
+          "pss_tree_bytes": 922867712,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.69,
+          "memory_current_bytes": 833626112,
+          "pss_tree_bytes": 922867712,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.21,
+          "memory_current_bytes": 836853760,
+          "pss_tree_bytes": 926718976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.73,
+          "memory_current_bytes": 838848512,
+          "pss_tree_bytes": 928697344,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.25,
+          "memory_current_bytes": 837652480,
+          "pss_tree_bytes": 926830592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.76,
+          "memory_current_bytes": 833216512,
+          "pss_tree_bytes": 923587584,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.28,
+          "memory_current_bytes": 841822208,
+          "pss_tree_bytes": 931976192,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.8,
+          "memory_current_bytes": 842375168,
+          "pss_tree_bytes": 932036608,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.32,
+          "memory_current_bytes": 843554816,
+          "pss_tree_bytes": 933466112,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.84,
+          "memory_current_bytes": 844824576,
+          "pss_tree_bytes": 934887424,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.36,
+          "memory_current_bytes": 844832768,
+          "pss_tree_bytes": 934924288,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.88,
+          "memory_current_bytes": 839630848,
+          "pss_tree_bytes": 929153024,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.4,
+          "memory_current_bytes": 840671232,
+          "pss_tree_bytes": 930611200,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.92,
+          "memory_current_bytes": 840466432,
+          "pss_tree_bytes": 930635776,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.43,
+          "memory_current_bytes": 845340672,
+          "pss_tree_bytes": 935542784,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.95,
+          "memory_current_bytes": 836390912,
+          "pss_tree_bytes": 926257152,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.47,
+          "memory_current_bytes": 840339456,
+          "pss_tree_bytes": 929845248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.99,
+          "memory_current_bytes": 844845056,
+          "pss_tree_bytes": 934965248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 14.51,
+          "memory_current_bytes": 844730368,
+          "pss_tree_bytes": 935003136,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.02,
+          "memory_current_bytes": 838778880,
+          "pss_tree_bytes": 929182720,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.55,
+          "memory_current_bytes": 840294400,
+          "pss_tree_bytes": 930624512,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.06,
+          "memory_current_bytes": 840482816,
+          "pss_tree_bytes": 930657280,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.58,
+          "memory_current_bytes": 842461184,
+          "pss_tree_bytes": 932064256,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.1,
+          "memory_current_bytes": 843653120,
+          "pss_tree_bytes": 933497856,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.62,
+          "memory_current_bytes": 843341824,
+          "pss_tree_bytes": 933543936,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.14,
+          "memory_current_bytes": 844947456,
+          "pss_tree_bytes": 934965248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.65,
+          "memory_current_bytes": 839462912,
+          "pss_tree_bytes": 929152000,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.17,
+          "memory_current_bytes": 839446528,
+          "pss_tree_bytes": 929184768,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.69,
+          "memory_current_bytes": 840617984,
+          "pss_tree_bytes": 930611200,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.21,
+          "memory_current_bytes": 842338304,
+          "pss_tree_bytes": 932040704,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.73,
+          "memory_current_bytes": 842240000,
+          "pss_tree_bytes": 932075520,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.25,
+          "memory_current_bytes": 843608064,
+          "pss_tree_bytes": 933496832,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.76,
+          "memory_current_bytes": 845103104,
+          "pss_tree_bytes": 934939648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.28,
+          "memory_current_bytes": 844931072,
+          "pss_tree_bytes": 934972416,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.8,
+          "memory_current_bytes": 839258112,
+          "pss_tree_bytes": 929153024,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.32,
+          "memory_current_bytes": 840601600,
+          "pss_tree_bytes": 933935104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.84,
+          "memory_current_bytes": 840994816,
+          "pss_tree_bytes": 930613248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.36,
+          "memory_current_bytes": 842604544,
+          "pss_tree_bytes": 932034560,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.88,
+          "memory_current_bytes": 842547200,
+          "pss_tree_bytes": 932073472,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.4,
+          "memory_current_bytes": 844087296,
+          "pss_tree_bytes": 933543936,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.91,
+          "memory_current_bytes": 846172160,
+          "pss_tree_bytes": 934948864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.43,
+          "memory_current_bytes": 846155776,
+          "pss_tree_bytes": 934985728,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.95,
+          "memory_current_bytes": 839954432,
+          "pss_tree_bytes": 929175552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.47,
+          "memory_current_bytes": 841089024,
+          "pss_tree_bytes": 930596864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.99,
+          "memory_current_bytes": 841310208,
+          "pss_tree_bytes": 930628608,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 28.51,
+          "memory_current_bytes": 842469376,
+          "pss_tree_bytes": 931113984,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.03,
+          "memory_current_bytes": 843964416,
+          "pss_tree_bytes": 933507072,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.54,
+          "memory_current_bytes": 844206080,
+          "pss_tree_bytes": 933527552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.06,
+          "memory_current_bytes": 845144064,
+          "pss_tree_bytes": 934961152,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.58,
+          "memory_current_bytes": 839913472,
+          "pss_tree_bytes": 929152000,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.1,
+          "memory_current_bytes": 839892992,
+          "pss_tree_bytes": 929188864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.62,
+          "memory_current_bytes": 841072640,
+          "pss_tree_bytes": 930622464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.13,
+          "memory_current_bytes": 842584064,
+          "pss_tree_bytes": 932043776,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.65,
+          "memory_current_bytes": 842584064,
+          "pss_tree_bytes": 932081664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.17,
+          "memory_current_bytes": 843780096,
+          "pss_tree_bytes": 933515264,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.69,
+          "memory_current_bytes": 843890688,
+          "pss_tree_bytes": 933535744,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.21,
+          "memory_current_bytes": 845164544,
+          "pss_tree_bytes": 934957056,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.73,
+          "memory_current_bytes": 839041024,
+          "pss_tree_bytes": 929165312,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.24,
+          "memory_current_bytes": 839225344,
+          "pss_tree_bytes": 929202176,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.76,
+          "memory_current_bytes": 840646656,
+          "pss_tree_bytes": 930615296,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.28,
+          "memory_current_bytes": 842502144,
+          "pss_tree_bytes": 932044800,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.8,
+          "memory_current_bytes": 841760768,
+          "pss_tree_bytes": 932082688,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.32,
+          "memory_current_bytes": 843177984,
+          "pss_tree_bytes": 933504000,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.84,
+          "memory_current_bytes": 844853248,
+          "pss_tree_bytes": 934940672,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.35,
+          "memory_current_bytes": 844652544,
+          "pss_tree_bytes": 934973440,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.87,
+          "memory_current_bytes": 838926336,
+          "pss_tree_bytes": 929134592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.39,
+          "memory_current_bytes": 840024064,
+          "pss_tree_bytes": 930592768,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.91,
+          "memory_current_bytes": 840208384,
+          "pss_tree_bytes": 930637824,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.43,
+          "memory_current_bytes": 841416704,
+          "pss_tree_bytes": 932059136,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.95,
+          "memory_current_bytes": 843476992,
+          "pss_tree_bytes": 933507072,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 41.47,
+          "memory_current_bytes": 843358208,
+          "pss_tree_bytes": 933539840,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 41.98,
+          "memory_current_bytes": 845070336,
+          "pss_tree_bytes": 934952960,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 42.5,
+          "memory_current_bytes": 845053952,
+          "pss_tree_bytes": 934989824,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.02,
+          "memory_current_bytes": 838656000,
+          "pss_tree_bytes": 929185792,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.54,
+          "memory_current_bytes": 840065024,
+          "pss_tree_bytes": 930607104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.06,
+          "memory_current_bytes": 840683520,
+          "pss_tree_bytes": 930634752,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.58,
+          "memory_current_bytes": 842530816,
+          "pss_tree_bytes": 932089856,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.1,
+          "memory_current_bytes": 843374592,
+          "pss_tree_bytes": 933511168,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.62,
+          "memory_current_bytes": 843317248,
+          "pss_tree_bytes": 933540864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.13,
+          "memory_current_bytes": 845033472,
+          "pss_tree_bytes": 934974464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.65,
+          "memory_current_bytes": 838926336,
+          "pss_tree_bytes": 929157120,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.17,
+          "memory_current_bytes": 838901760,
+          "pss_tree_bytes": 929193984,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.69,
+          "memory_current_bytes": 840024064,
+          "pss_tree_bytes": 930607104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.21,
+          "memory_current_bytes": 841560064,
+          "pss_tree_bytes": 932028416,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.73,
+          "memory_current_bytes": 842014720,
+          "pss_tree_bytes": 932081664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.25,
+          "memory_current_bytes": 843251712,
+          "pss_tree_bytes": 933515264,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.77,
+          "memory_current_bytes": 844476416,
+          "pss_tree_bytes": 934910976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.29,
+          "memory_current_bytes": 844455936,
+          "pss_tree_bytes": 934943744,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.81,
+          "memory_current_bytes": 839094272,
+          "pss_tree_bytes": 929159168,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.32,
+          "memory_current_bytes": 840114176,
+          "pss_tree_bytes": 930576384,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.84,
+          "memory_current_bytes": 840048640,
+          "pss_tree_bytes": 930601984,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.36,
+          "memory_current_bytes": 841789440,
+          "pss_tree_bytes": 932031488,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.88,
+          "memory_current_bytes": 841936896,
+          "pss_tree_bytes": 932071424,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.4,
+          "memory_current_bytes": 843468800,
+          "pss_tree_bytes": 933525504,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.92,
+          "memory_current_bytes": 844890112,
+          "pss_tree_bytes": 934951936,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.44,
+          "memory_current_bytes": 844865536,
+          "pss_tree_bytes": 934988800,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.95,
+          "memory_current_bytes": 838819840,
+          "pss_tree_bytes": 929189888,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.47,
+          "memory_current_bytes": 840622080,
+          "pss_tree_bytes": 930623488,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.99,
+          "memory_current_bytes": 840589312,
+          "pss_tree_bytes": 930656256,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 56.51,
+          "memory_current_bytes": 842031104,
+          "pss_tree_bytes": 932077568,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.03,
+          "memory_current_bytes": 843210752,
+          "pss_tree_bytes": 933510144,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.54,
+          "memory_current_bytes": 843259904,
+          "pss_tree_bytes": 933542912,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.06,
+          "memory_current_bytes": 844869632,
+          "pss_tree_bytes": 934943744,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.58,
+          "memory_current_bytes": 839118848,
+          "pss_tree_bytes": 929143808,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.1,
+          "memory_current_bytes": 839573504,
+          "pss_tree_bytes": 929179648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.62,
+          "memory_current_bytes": 840769536,
+          "pss_tree_bytes": 930600960,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.13,
+          "memory_current_bytes": 842174464,
+          "pss_tree_bytes": 932045824,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.65,
+          "memory_current_bytes": 842203136,
+          "pss_tree_bytes": 932081664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.17,
+          "memory_current_bytes": 843444224,
+          "pss_tree_bytes": 933502976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.69,
+          "memory_current_bytes": 843534336,
+          "pss_tree_bytes": 933517312,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.21,
+          "memory_current_bytes": 845070336,
+          "pss_tree_bytes": 934950912,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.73,
+          "memory_current_bytes": 839151616,
+          "pss_tree_bytes": 929140736,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.24,
+          "memory_current_bytes": 839266304,
+          "pss_tree_bytes": 929177600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.76,
+          "memory_current_bytes": 840830976,
+          "pss_tree_bytes": 930615296,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.28,
+          "memory_current_bytes": 842256384,
+          "pss_tree_bytes": 932036608,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.8,
+          "memory_current_bytes": 842457088,
+          "pss_tree_bytes": 932059136,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.32,
+          "memory_current_bytes": 843735040,
+          "pss_tree_bytes": 933492736,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.84,
+          "memory_current_bytes": 844660736,
+          "pss_tree_bytes": 934914048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.35,
+          "memory_current_bytes": 844836864,
+          "pss_tree_bytes": 934946816,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.87,
+          "memory_current_bytes": 839561216,
+          "pss_tree_bytes": 929145856,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.39,
+          "memory_current_bytes": 841003008,
+          "pss_tree_bytes": 930563072,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.91,
+          "memory_current_bytes": 841347072,
+          "pss_tree_bytes": 930648064,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.43,
+          "memory_current_bytes": 842489856,
+          "pss_tree_bytes": 932081664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.95,
+          "memory_current_bytes": 844230656,
+          "pss_tree_bytes": 934615040,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-1024-1-582264.scope; invocation ID: f36d7bf2c2094f6eb6dfeec6697c17ea\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=1\nsave_result=passed\nmarker=P00CG_ra_1024_R1\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=77b6cb2874bcfb573ce813dd7ceda733cb07fc81a4060440a9cddf2242609735\nmemory.current.final_before_close=842629120\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\n2026-10-29T05:53:19.334310238+08:00  WARN notify error: No path was found.\n2026-10-29T05:53:19.393877143+08:00  WARN notify error: No path was found.\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-1024-r2",
+      "mode": "ra",
+      "limit_mib": 1024,
+      "repeat": 2,
+      "started_utc": "2026-10-28T21:54:27.973954+00:00",
+      "finished_utc": "2026-10-28T21:55:37.443719+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-1024-2-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_ra_1024_R2",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "6e3052cfaf838d961ce2a39ed00108992756767f3b6f13f849e6ac67b773addf",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 851234816,
+      "peak_pss_tree_bytes": 938176512,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 179765248,
+          "pss_tree_bytes": 219274240,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 402866176,
+          "pss_tree_bytes": 484635648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 514125824,
+          "pss_tree_bytes": 603288576,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 654835712,
+          "pss_tree_bytes": 742441984,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.58,
+          "memory_current_bytes": 833916928,
+          "pss_tree_bytes": 922930176,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.1,
+          "memory_current_bytes": 833581056,
+          "pss_tree_bytes": 922954752,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.61,
+          "memory_current_bytes": 834760704,
+          "pss_tree_bytes": 924220416,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.13,
+          "memory_current_bytes": 839725056,
+          "pss_tree_bytes": 929168384,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.65,
+          "memory_current_bytes": 833740800,
+          "pss_tree_bytes": 923024384,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.17,
+          "memory_current_bytes": 834842624,
+          "pss_tree_bytes": 924294144,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.68,
+          "memory_current_bytes": 834842624,
+          "pss_tree_bytes": 924294144,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.2,
+          "memory_current_bytes": 842526720,
+          "pss_tree_bytes": 931858432,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.73,
+          "memory_current_bytes": 842326016,
+          "pss_tree_bytes": 934898688,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.25,
+          "memory_current_bytes": 842743808,
+          "pss_tree_bytes": 931781632,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.77,
+          "memory_current_bytes": 835166208,
+          "pss_tree_bytes": 924941312,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.29,
+          "memory_current_bytes": 839581696,
+          "pss_tree_bytes": 929704960,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.81,
+          "memory_current_bytes": 839675904,
+          "pss_tree_bytes": 929737728,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.32,
+          "memory_current_bytes": 844886016,
+          "pss_tree_bytes": 934853632,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.84,
+          "memory_current_bytes": 846274560,
+          "pss_tree_bytes": 936276992,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.36,
+          "memory_current_bytes": 846516224,
+          "pss_tree_bytes": 936313856,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.88,
+          "memory_current_bytes": 840503296,
+          "pss_tree_bytes": 930562048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.4,
+          "memory_current_bytes": 842305536,
+          "pss_tree_bytes": 935958528,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.92,
+          "memory_current_bytes": 841641984,
+          "pss_tree_bytes": 932039680,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.43,
+          "memory_current_bytes": 843210752,
+          "pss_tree_bytes": 933258240,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.95,
+          "memory_current_bytes": 844906496,
+          "pss_tree_bytes": 934910976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.47,
+          "memory_current_bytes": 844869632,
+          "pss_tree_bytes": 934931456,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.99,
+          "memory_current_bytes": 846082048,
+          "pss_tree_bytes": 936365056,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 14.51,
+          "memory_current_bytes": 846532608,
+          "pss_tree_bytes": 937253888,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.03,
+          "memory_current_bytes": 840650752,
+          "pss_tree_bytes": 930589696,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.55,
+          "memory_current_bytes": 842358784,
+          "pss_tree_bytes": 932015104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.07,
+          "memory_current_bytes": 842268672,
+          "pss_tree_bytes": 932051968,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.59,
+          "memory_current_bytes": 843776000,
+          "pss_tree_bytes": 933485568,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.1,
+          "memory_current_bytes": 845312000,
+          "pss_tree_bytes": 934919168,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.62,
+          "memory_current_bytes": 845635584,
+          "pss_tree_bytes": 934966272,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.14,
+          "memory_current_bytes": 846528512,
+          "pss_tree_bytes": 936383488,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.66,
+          "memory_current_bytes": 841080832,
+          "pss_tree_bytes": 930552832,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.18,
+          "memory_current_bytes": 841064448,
+          "pss_tree_bytes": 930585600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.7,
+          "memory_current_bytes": 842600448,
+          "pss_tree_bytes": 932006912,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.21,
+          "memory_current_bytes": 843726848,
+          "pss_tree_bytes": 933436416,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.73,
+          "memory_current_bytes": 843300864,
+          "pss_tree_bytes": 933489664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.25,
+          "memory_current_bytes": 844480512,
+          "pss_tree_bytes": 934910976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.77,
+          "memory_current_bytes": 846168064,
+          "pss_tree_bytes": 936336384,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.29,
+          "memory_current_bytes": 846086144,
+          "pss_tree_bytes": 936369152,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.81,
+          "memory_current_bytes": 840298496,
+          "pss_tree_bytes": 930540544,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.32,
+          "memory_current_bytes": 841461760,
+          "pss_tree_bytes": 931974144,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.84,
+          "memory_current_bytes": 842039296,
+          "pss_tree_bytes": 932011008,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.36,
+          "memory_current_bytes": 843468800,
+          "pss_tree_bytes": 933432320,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.88,
+          "memory_current_bytes": 843685888,
+          "pss_tree_bytes": 933465088,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.4,
+          "memory_current_bytes": 848805888,
+          "pss_tree_bytes": 937149440,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.92,
+          "memory_current_bytes": 846315520,
+          "pss_tree_bytes": 936356864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.44,
+          "memory_current_bytes": 846557184,
+          "pss_tree_bytes": 936393728,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.95,
+          "memory_current_bytes": 841035776,
+          "pss_tree_bytes": 930592768,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.47,
+          "memory_current_bytes": 842559488,
+          "pss_tree_bytes": 932014080,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.99,
+          "memory_current_bytes": 842424320,
+          "pss_tree_bytes": 932043776,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 28.51,
+          "memory_current_bytes": 844316672,
+          "pss_tree_bytes": 933477376,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.03,
+          "memory_current_bytes": 845606912,
+          "pss_tree_bytes": 934898688,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.54,
+          "memory_current_bytes": 845828096,
+          "pss_tree_bytes": 934935552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.06,
+          "memory_current_bytes": 847388672,
+          "pss_tree_bytes": 936369152,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.58,
+          "memory_current_bytes": 841277440,
+          "pss_tree_bytes": 930549760,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.1,
+          "memory_current_bytes": 841035776,
+          "pss_tree_bytes": 930586624,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.62,
+          "memory_current_bytes": 842833920,
+          "pss_tree_bytes": 932017152,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.13,
+          "memory_current_bytes": 843804672,
+          "pss_tree_bytes": 933438464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.65,
+          "memory_current_bytes": 843706368,
+          "pss_tree_bytes": 933470208,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.17,
+          "memory_current_bytes": 844816384,
+          "pss_tree_bytes": 934903808,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.69,
+          "memory_current_bytes": 844759040,
+          "pss_tree_bytes": 934943744,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.21,
+          "memory_current_bytes": 845975552,
+          "pss_tree_bytes": 936365056,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.73,
+          "memory_current_bytes": 840941568,
+          "pss_tree_bytes": 930565120,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.25,
+          "memory_current_bytes": 840925184,
+          "pss_tree_bytes": 930601984,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.77,
+          "memory_current_bytes": 842039296,
+          "pss_tree_bytes": 932030464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.29,
+          "memory_current_bytes": 843579392,
+          "pss_tree_bytes": 933459968,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.81,
+          "memory_current_bytes": 844034048,
+          "pss_tree_bytes": 933489664,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.33,
+          "memory_current_bytes": 845615104,
+          "pss_tree_bytes": 934910976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.85,
+          "memory_current_bytes": 846778368,
+          "pss_tree_bytes": 936340480,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.37,
+          "memory_current_bytes": 846700544,
+          "pss_tree_bytes": 936373248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.89,
+          "memory_current_bytes": 840462336,
+          "pss_tree_bytes": 930578432,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.41,
+          "memory_current_bytes": 841867264,
+          "pss_tree_bytes": 932012032,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.93,
+          "memory_current_bytes": 841900032,
+          "pss_tree_bytes": 932043776,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.44,
+          "memory_current_bytes": 843440128,
+          "pss_tree_bytes": 933465088,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.96,
+          "memory_current_bytes": 844668928,
+          "pss_tree_bytes": 934906880,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 41.48,
+          "memory_current_bytes": 844914688,
+          "pss_tree_bytes": 934939648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 42.0,
+          "memory_current_bytes": 846311424,
+          "pss_tree_bytes": 936372224,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 42.52,
+          "memory_current_bytes": 851234816,
+          "pss_tree_bytes": 938176512,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.04,
+          "memory_current_bytes": 840327168,
+          "pss_tree_bytes": 930597888,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.56,
+          "memory_current_bytes": 841867264,
+          "pss_tree_bytes": 931804160,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.07,
+          "memory_current_bytes": 841842688,
+          "pss_tree_bytes": 932046848,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.59,
+          "memory_current_bytes": 843517952,
+          "pss_tree_bytes": 933480448,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.11,
+          "memory_current_bytes": 845025280,
+          "pss_tree_bytes": 934901760,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.63,
+          "memory_current_bytes": 844890112,
+          "pss_tree_bytes": 934933504,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.15,
+          "memory_current_bytes": 846327808,
+          "pss_tree_bytes": 936367104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.67,
+          "memory_current_bytes": 840966144,
+          "pss_tree_bytes": 930542592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.18,
+          "memory_current_bytes": 841093120,
+          "pss_tree_bytes": 930579456,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.7,
+          "memory_current_bytes": 842489856,
+          "pss_tree_bytes": 932015104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.22,
+          "memory_current_bytes": 843685888,
+          "pss_tree_bytes": 933436416,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.74,
+          "memory_current_bytes": 843444224,
+          "pss_tree_bytes": 933496832,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.26,
+          "memory_current_bytes": 844910592,
+          "pss_tree_bytes": 934930432,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.77,
+          "memory_current_bytes": 846286848,
+          "pss_tree_bytes": 936343552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.29,
+          "memory_current_bytes": 846270464,
+          "pss_tree_bytes": 936376320,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.81,
+          "memory_current_bytes": 840503296,
+          "pss_tree_bytes": 930554880,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.33,
+          "memory_current_bytes": 841998336,
+          "pss_tree_bytes": 931972096,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.85,
+          "memory_current_bytes": 841752576,
+          "pss_tree_bytes": 932016128,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.37,
+          "memory_current_bytes": 843292672,
+          "pss_tree_bytes": 933445632,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.88,
+          "memory_current_bytes": 843718656,
+          "pss_tree_bytes": 933493760,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.4,
+          "memory_current_bytes": 844943360,
+          "pss_tree_bytes": 934947840,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.92,
+          "memory_current_bytes": 846929920,
+          "pss_tree_bytes": 936365056,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.44,
+          "memory_current_bytes": 846811136,
+          "pss_tree_bytes": 936401920,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.96,
+          "memory_current_bytes": 840810496,
+          "pss_tree_bytes": 930580480,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.48,
+          "memory_current_bytes": 841900032,
+          "pss_tree_bytes": 932014080,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.99,
+          "memory_current_bytes": 842039296,
+          "pss_tree_bytes": 932067328,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 56.51,
+          "memory_current_bytes": 843317248,
+          "pss_tree_bytes": 933488640,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.03,
+          "memory_current_bytes": 844857344,
+          "pss_tree_bytes": 934903808,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.55,
+          "memory_current_bytes": 844771328,
+          "pss_tree_bytes": 934936576,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.07,
+          "memory_current_bytes": 846290944,
+          "pss_tree_bytes": 936372224,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.59,
+          "memory_current_bytes": 840417280,
+          "pss_tree_bytes": 930572288,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.1,
+          "memory_current_bytes": 840757248,
+          "pss_tree_bytes": 930589696,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.62,
+          "memory_current_bytes": 842407936,
+          "pss_tree_bytes": 931795968,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.14,
+          "memory_current_bytes": 843649024,
+          "pss_tree_bytes": 933444608,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.66,
+          "memory_current_bytes": 844386304,
+          "pss_tree_bytes": 933473280,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.18,
+          "memory_current_bytes": 844922880,
+          "pss_tree_bytes": 934894592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.69,
+          "memory_current_bytes": 845103104,
+          "pss_tree_bytes": 934939648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.21,
+          "memory_current_bytes": 846127104,
+          "pss_tree_bytes": 936373248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.73,
+          "memory_current_bytes": 839954432,
+          "pss_tree_bytes": 930553856,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.25,
+          "memory_current_bytes": 840196096,
+          "pss_tree_bytes": 930586624,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.77,
+          "memory_current_bytes": 841637888,
+          "pss_tree_bytes": 932013056,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.28,
+          "memory_current_bytes": 843165696,
+          "pss_tree_bytes": 933434368,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.8,
+          "memory_current_bytes": 843501568,
+          "pss_tree_bytes": 933469184,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.32,
+          "memory_current_bytes": 845041664,
+          "pss_tree_bytes": 934902784,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.84,
+          "memory_current_bytes": 846516224,
+          "pss_tree_bytes": 936340480,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.36,
+          "memory_current_bytes": 846450688,
+          "pss_tree_bytes": 936373248,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.88,
+          "memory_current_bytes": 841093120,
+          "pss_tree_bytes": 930583552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.4,
+          "memory_current_bytes": 843251712,
+          "pss_tree_bytes": 935836672,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.92,
+          "memory_current_bytes": 842100736,
+          "pss_tree_bytes": 932048896,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.44,
+          "memory_current_bytes": 843464704,
+          "pss_tree_bytes": 933482496,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.95,
+          "memory_current_bytes": 846004224,
+          "pss_tree_bytes": 936028160,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-1024-2-582264.scope; invocation ID: ae772ccadacf41ea9b9f052e677f905e\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=1\nsave_result=passed\nmarker=P00CG_ra_1024_R2\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=6e3052cfaf838d961ce2a39ed00108992756767f3b6f13f849e6ac67b773addf\nmemory.current.final_before_close=844275712\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\n2026-10-29T05:54:28.845592817+08:00  WARN notify error: No path was found.\n2026-10-29T05:54:28.902630241+08:00  WARN notify error: No path was found.\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-ra-1024-r3",
+      "mode": "ra",
+      "limit_mib": 1024,
+      "repeat": 3,
+      "started_utc": "2026-10-28T21:55:37.489604+00:00",
+      "finished_utc": "2026-10-28T21:56:46.913732+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-1024-3-582264.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_ra_1024_R3",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "cdbfcde69e92759bdb1e621217906fe55b9cdae267ebd752480de73109aec206",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 849588224,
+      "peak_pss_tree_bytes": 938500096,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 181121024,
+          "pss_tree_bytes": 221345792,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 402563072,
+          "pss_tree_bytes": 484928512,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 517165056,
+          "pss_tree_bytes": 606792704,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.06,
+          "memory_current_bytes": 659267584,
+          "pss_tree_bytes": 747461632,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.58,
+          "memory_current_bytes": 837926912,
+          "pss_tree_bytes": 927219712,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.1,
+          "memory_current_bytes": 837754880,
+          "pss_tree_bytes": 927244288,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.62,
+          "memory_current_bytes": 839028736,
+          "pss_tree_bytes": 928509952,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.13,
+          "memory_current_bytes": 840204288,
+          "pss_tree_bytes": 929767424,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.65,
+          "memory_current_bytes": 834117632,
+          "pss_tree_bytes": 923570176,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.17,
+          "memory_current_bytes": 835411968,
+          "pss_tree_bytes": 924839936,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.69,
+          "memory_current_bytes": 835411968,
+          "pss_tree_bytes": 924839936,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.21,
+          "memory_current_bytes": 839114752,
+          "pss_tree_bytes": 928712704,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 6.73,
+          "memory_current_bytes": 837173248,
+          "pss_tree_bytes": 926986240,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.24,
+          "memory_current_bytes": 839081984,
+          "pss_tree_bytes": 928825344,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 7.76,
+          "memory_current_bytes": 840699904,
+          "pss_tree_bytes": 930720768,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.28,
+          "memory_current_bytes": 842661888,
+          "pss_tree_bytes": 932699136,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 8.8,
+          "memory_current_bytes": 842334208,
+          "pss_tree_bytes": 932761600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.32,
+          "memory_current_bytes": 843890688,
+          "pss_tree_bytes": 934146048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 9.84,
+          "memory_current_bytes": 845365248,
+          "pss_tree_bytes": 935554048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.36,
+          "memory_current_bytes": 845348864,
+          "pss_tree_bytes": 935590912,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 10.88,
+          "memory_current_bytes": 846950400,
+          "pss_tree_bytes": 937004032,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.39,
+          "memory_current_bytes": 840896512,
+          "pss_tree_bytes": 931273728,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 11.91,
+          "memory_current_bytes": 841072640,
+          "pss_tree_bytes": 934555648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.43,
+          "memory_current_bytes": 845508608,
+          "pss_tree_bytes": 936246272,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 12.95,
+          "memory_current_bytes": 836591616,
+          "pss_tree_bytes": 926953472,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.47,
+          "memory_current_bytes": 840159232,
+          "pss_tree_bytes": 930529280,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 13.99,
+          "memory_current_bytes": 845021184,
+          "pss_tree_bytes": 935636992,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 14.51,
+          "memory_current_bytes": 845127680,
+          "pss_tree_bytes": 935895040,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.03,
+          "memory_current_bytes": 846344192,
+          "pss_tree_bytes": 937111552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 15.55,
+          "memory_current_bytes": 841068544,
+          "pss_tree_bytes": 931301376,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.06,
+          "memory_current_bytes": 841052160,
+          "pss_tree_bytes": 931338240,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 16.58,
+          "memory_current_bytes": 842817536,
+          "pss_tree_bytes": 932762624,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.1,
+          "memory_current_bytes": 844058624,
+          "pss_tree_bytes": 934151168,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 17.62,
+          "memory_current_bytes": 843636736,
+          "pss_tree_bytes": 934210560,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.14,
+          "memory_current_bytes": 845029376,
+          "pss_tree_bytes": 935644160,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 18.66,
+          "memory_current_bytes": 846188544,
+          "pss_tree_bytes": 937070592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.17,
+          "memory_current_bytes": 846434304,
+          "pss_tree_bytes": 937103360,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 19.69,
+          "memory_current_bytes": 840835072,
+          "pss_tree_bytes": 931340288,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.21,
+          "memory_current_bytes": 842342400,
+          "pss_tree_bytes": 932761600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 20.73,
+          "memory_current_bytes": 842543104,
+          "pss_tree_bytes": 932794368,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.25,
+          "memory_current_bytes": 843976704,
+          "pss_tree_bytes": 934191104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 21.77,
+          "memory_current_bytes": 845303808,
+          "pss_tree_bytes": 935577600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.28,
+          "memory_current_bytes": 845549568,
+          "pss_tree_bytes": 935614464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 22.8,
+          "memory_current_bytes": 847605760,
+          "pss_tree_bytes": 937082880,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.32,
+          "memory_current_bytes": 848814080,
+          "pss_tree_bytes": 938500096,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 23.84,
+          "memory_current_bytes": 841379840,
+          "pss_tree_bytes": 931320832,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.36,
+          "memory_current_bytes": 842768384,
+          "pss_tree_bytes": 932754432,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 24.88,
+          "memory_current_bytes": 843055104,
+          "pss_tree_bytes": 932798464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.39,
+          "memory_current_bytes": 844447744,
+          "pss_tree_bytes": 934187008,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 25.92,
+          "memory_current_bytes": 849588224,
+          "pss_tree_bytes": 937867264,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.43,
+          "memory_current_bytes": 846163968,
+          "pss_tree_bytes": 935690240,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 26.95,
+          "memory_current_bytes": 847192064,
+          "pss_tree_bytes": 937071616,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.47,
+          "memory_current_bytes": 841625600,
+          "pss_tree_bytes": 931304448,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 27.99,
+          "memory_current_bytes": 840982528,
+          "pss_tree_bytes": 931337216,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 28.51,
+          "memory_current_bytes": 842780672,
+          "pss_tree_bytes": 932791296,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.03,
+          "memory_current_bytes": 844013568,
+          "pss_tree_bytes": 934192128,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 29.55,
+          "memory_current_bytes": 844267520,
+          "pss_tree_bytes": 934200320,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.06,
+          "memory_current_bytes": 845271040,
+          "pss_tree_bytes": 935621632,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 30.58,
+          "memory_current_bytes": 847065088,
+          "pss_tree_bytes": 937048064,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.1,
+          "memory_current_bytes": 846995456,
+          "pss_tree_bytes": 937080832,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 31.62,
+          "memory_current_bytes": 841125888,
+          "pss_tree_bytes": 931332096,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.14,
+          "memory_current_bytes": 842383360,
+          "pss_tree_bytes": 932765696,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 32.66,
+          "memory_current_bytes": 842428416,
+          "pss_tree_bytes": 932794368,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.17,
+          "memory_current_bytes": 843644928,
+          "pss_tree_bytes": 934182912,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 33.69,
+          "memory_current_bytes": 843878400,
+          "pss_tree_bytes": 934184960,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.21,
+          "memory_current_bytes": 845320192,
+          "pss_tree_bytes": 935618560,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 34.73,
+          "memory_current_bytes": 846929920,
+          "pss_tree_bytes": 937071616,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.25,
+          "memory_current_bytes": 847175680,
+          "pss_tree_bytes": 937104384,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 35.77,
+          "memory_current_bytes": 841293824,
+          "pss_tree_bytes": 931305472,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.28,
+          "memory_current_bytes": 842764288,
+          "pss_tree_bytes": 932726784,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 36.8,
+          "memory_current_bytes": 842559488,
+          "pss_tree_bytes": 932756480,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.32,
+          "memory_current_bytes": 843796480,
+          "pss_tree_bytes": 934153216,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 37.84,
+          "memory_current_bytes": 845688832,
+          "pss_tree_bytes": 935576576,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.36,
+          "memory_current_bytes": 845484032,
+          "pss_tree_bytes": 935613440,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 38.88,
+          "memory_current_bytes": 846655488,
+          "pss_tree_bytes": 937070592,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.4,
+          "memory_current_bytes": 841396224,
+          "pss_tree_bytes": 931287040,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 39.92,
+          "memory_current_bytes": 844476416,
+          "pss_tree_bytes": 933548032,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.43,
+          "memory_current_bytes": 842702848,
+          "pss_tree_bytes": 932798464,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 40.95,
+          "memory_current_bytes": 843886592,
+          "pss_tree_bytes": 934172672,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 41.47,
+          "memory_current_bytes": 843866112,
+          "pss_tree_bytes": 934205440,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 41.99,
+          "memory_current_bytes": 845373440,
+          "pss_tree_bytes": 935653376,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 42.51,
+          "memory_current_bytes": 845275136,
+          "pss_tree_bytes": 936423424,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.03,
+          "memory_current_bytes": 846577664,
+          "pss_tree_bytes": 937072640,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 43.55,
+          "memory_current_bytes": 841043968,
+          "pss_tree_bytes": 931305472,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.06,
+          "memory_current_bytes": 840749056,
+          "pss_tree_bytes": 931341312,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 44.59,
+          "memory_current_bytes": 843026432,
+          "pss_tree_bytes": 932121600,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.11,
+          "memory_current_bytes": 843657216,
+          "pss_tree_bytes": 933522432,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 45.62,
+          "memory_current_bytes": 843866112,
+          "pss_tree_bytes": 933537792,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.14,
+          "memory_current_bytes": 845058048,
+          "pss_tree_bytes": 935617536,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 46.66,
+          "memory_current_bytes": 846835712,
+          "pss_tree_bytes": 937051136,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.18,
+          "memory_current_bytes": 847003648,
+          "pss_tree_bytes": 937083904,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 47.7,
+          "memory_current_bytes": 841601024,
+          "pss_tree_bytes": 931312640,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.21,
+          "memory_current_bytes": 843055104,
+          "pss_tree_bytes": 932746240,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 48.73,
+          "memory_current_bytes": 843137024,
+          "pss_tree_bytes": 932770816,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.25,
+          "memory_current_bytes": 844431360,
+          "pss_tree_bytes": 934159360,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 49.77,
+          "memory_current_bytes": 846065664,
+          "pss_tree_bytes": 935588864,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.29,
+          "memory_current_bytes": 846045184,
+          "pss_tree_bytes": 935621632,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 50.81,
+          "memory_current_bytes": 847613952,
+          "pss_tree_bytes": 937062400,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.32,
+          "memory_current_bytes": 849154048,
+          "pss_tree_bytes": 938496000,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 51.84,
+          "memory_current_bytes": 841826304,
+          "pss_tree_bytes": 931317760,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.36,
+          "memory_current_bytes": 842633216,
+          "pss_tree_bytes": 932734976,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 52.88,
+          "memory_current_bytes": 842375168,
+          "pss_tree_bytes": 932766720,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.4,
+          "memory_current_bytes": 843608064,
+          "pss_tree_bytes": 934167552,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 53.92,
+          "memory_current_bytes": 845025280,
+          "pss_tree_bytes": 935617536,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.44,
+          "memory_current_bytes": 845008896,
+          "pss_tree_bytes": 935654400,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 54.96,
+          "memory_current_bytes": 845905920,
+          "pss_tree_bytes": 937115648,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.47,
+          "memory_current_bytes": 840187904,
+          "pss_tree_bytes": 931332096,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 55.99,
+          "memory_current_bytes": 840560640,
+          "pss_tree_bytes": 931333120,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 56.51,
+          "memory_current_bytes": 842031104,
+          "pss_tree_bytes": 932762624,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.03,
+          "memory_current_bytes": 844242944,
+          "pss_tree_bytes": 934152192,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 57.55,
+          "memory_current_bytes": 843927552,
+          "pss_tree_bytes": 934184960,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.07,
+          "memory_current_bytes": 845664256,
+          "pss_tree_bytes": 935618560,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 58.58,
+          "memory_current_bytes": 847216640,
+          "pss_tree_bytes": 937039872,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.1,
+          "memory_current_bytes": 847155200,
+          "pss_tree_bytes": 937103360,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 59.62,
+          "memory_current_bytes": 841416704,
+          "pss_tree_bytes": 931107840,
+          "pss_processes": 7,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.14,
+          "memory_current_bytes": 842702848,
+          "pss_tree_bytes": 932733952,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 60.66,
+          "memory_current_bytes": 842645504,
+          "pss_tree_bytes": 932787200,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.18,
+          "memory_current_bytes": 843939840,
+          "pss_tree_bytes": 934188032,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 61.69,
+          "memory_current_bytes": 844423168,
+          "pss_tree_bytes": 934223872,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.21,
+          "memory_current_bytes": 846143488,
+          "pss_tree_bytes": 935645184,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 62.73,
+          "memory_current_bytes": 847093760,
+          "pss_tree_bytes": 937068544,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.25,
+          "memory_current_bytes": 846950400,
+          "pss_tree_bytes": 937101312,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 63.77,
+          "memory_current_bytes": 840523776,
+          "pss_tree_bytes": 931304448,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.28,
+          "memory_current_bytes": 842326016,
+          "pss_tree_bytes": 932738048,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 64.8,
+          "memory_current_bytes": 842670080,
+          "pss_tree_bytes": 932780032,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.32,
+          "memory_current_bytes": 843763712,
+          "pss_tree_bytes": 934168576,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 65.84,
+          "memory_current_bytes": 844906496,
+          "pss_tree_bytes": 935620608,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.36,
+          "memory_current_bytes": 844771328,
+          "pss_tree_bytes": 935653376,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 66.88,
+          "memory_current_bytes": 846807040,
+          "pss_tree_bytes": 937049088,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.39,
+          "memory_current_bytes": 840863744,
+          "pss_tree_bytes": 931281920,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 67.92,
+          "memory_current_bytes": 844910592,
+          "pss_tree_bytes": 933579776,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.43,
+          "memory_current_bytes": 842493952,
+          "pss_tree_bytes": 932783104,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 68.95,
+          "memory_current_bytes": 845455360,
+          "pss_tree_bytes": 935326720,
+          "pss_processes": 8,
+          "pids": 8,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-ra-1024-3-582264.scope; invocation ID: 44d65bb07afc4ef88cb295545c17a8a6\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=1073741824\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=1\nsave_result=passed\nmarker=P00CG_ra_1024_R3\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=cdbfcde69e92759bdb1e621217906fe55b9cdae267ebd752480de73109aec206\nmemory.current.final_before_close=843042816\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\n2026-10-29T05:55:38.352591163+08:00  WARN notify error: No path was found.\n2026-10-29T05:55:38.407837891+08:00  WARN notify error: No path was found.\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    },
+    {
+      "label": "p00.4-linux-cgroup-no_ra-256-r4",
+      "mode": "no_ra",
+      "limit_mib": 256,
+      "repeat": 4,
+      "started_utc": "2026-10-28T21:57:02.703192+00:00",
+      "finished_utc": "2026-10-28T21:57:08.805324+00:00",
+      "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-no_ra-256-4-590755.scope",
+      "systemd_result": "success",
+      "systemd_memory_peak_bytes": null,
+      "exit_code": 0,
+      "timed_out": false,
+      "window_found": true,
+      "save_result": "passed",
+      "marker": "P00CG_no_ra_256_R4",
+      "baseline_sha256": "6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684",
+      "final_sha256": "b191d39721412f6c8f58f02d865dcabcf34d995a97c65956d6696dde7a01a24a",
+      "close_result": "exited",
+      "app_exit_code": "0",
+      "oom_kill_count": 0,
+      "oom_count": 0,
+      "peak_memory_current_bytes": 265666560,
+      "peak_pss_tree_bytes": 313676800,
+      "series": [
+        {
+          "t_s": 0.52,
+          "memory_current_bytes": 180080640,
+          "pss_tree_bytes": 220641280,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.03,
+          "memory_current_bytes": 256466944,
+          "pss_tree_bytes": 303484928,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 1.54,
+          "memory_current_bytes": 261865472,
+          "pss_tree_bytes": 311081984,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.05,
+          "memory_current_bytes": 261718016,
+          "pss_tree_bytes": 311081984,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 2.56,
+          "memory_current_bytes": 261611520,
+          "pss_tree_bytes": 310688768,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.07,
+          "memory_current_bytes": 265666560,
+          "pss_tree_bytes": 312612864,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 3.58,
+          "memory_current_bytes": 264585216,
+          "pss_tree_bytes": 313676800,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.1,
+          "memory_current_bytes": 264765440,
+          "pss_tree_bytes": 311755776,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 4.61,
+          "memory_current_bytes": 258191360,
+          "pss_tree_bytes": 306764800,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.12,
+          "memory_current_bytes": 262352896,
+          "pss_tree_bytes": 310909952,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        },
+        {
+          "t_s": 5.63,
+          "memory_current_bytes": 264564736,
+          "pss_tree_bytes": 313027584,
+          "pss_processes": 5,
+          "pids": 5,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      ],
+      "output_tail": "Running as unit: alula-p00-no_ra-256-4-590755.scope; invocation ID: a5594f8528e247fb981e26fa0f2716ca\nwindow_found=yes\nwindow_size=1280x720\nmemory.max=268435456\nmemory.swap.max=0\nrust_analyzer_processes_before_edit=0\nsave_result=passed\nmarker=P00CG_no_ra_256_R4\nbaseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684\nfinal_sha256=b191d39721412f6c8f58f02d865dcabcf34d995a97c65956d6696dde7a01a24a\nmemory.current.final_before_close=263708672\nmemory.events.before_close:\nlow 0\nhigh 0\nmax 118\noom 0\noom_kill 0\noom_group_kill 0\nclose_result=exited\napp_exit_code=0\napp_log_tail:\nlibEGL warning: DRI3 error: Could not get DRI3 device\nlibEGL warning: Ensure your X server supports DRI3 to get accelerated rendering\n[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).\nembedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.\n"
+    }
+  ]
+}
