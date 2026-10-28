@@ -9,7 +9,7 @@
 全部非外接AI功能与界面做1:1复刻。计划已完成，P00.1已完成，P00总包继续执行，**产品完整复刻未实施**。
 当前唯一状态/DoD见docs/03新主线；计划在docs/10、逐项功能族在docs/11。
 旧原型可复用，但done不继承为新等价验收；未完成旧项保留证据并退回not-started/legacy。
-P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成；2026-10-28 Windows Git Bash 复跑的四项 P00.3 命令与完整门禁全部通过。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；本地回放关闭 GBM，后续 CI 虽将 GBM-disable 变量 unset 但使用 Xvfb/software GL，硬件 GBM 仍未验证。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持；WSLg 宿主在 `GALLIUM_DRIVER=d3d12` 下成功创建 D3D12 EGL/GLES context；临时 Debian GBM probe 因缺 DRI driver 返回 null，不能推断 WPE GBM。随后 WPE 2.52.6 快照容器映射 WSLg 设备、GBM enabled 且 software GL unset 时，Flutter EGL context 失败、WPEWebProcess crash、90 秒内未到 initial-loaded；WSLg X11 :0 与 Wayland socket 的容器 EGL 检查都返回 EGL_NOT_INITIALIZED；Wayland socket 可连接但无 GLES2 config；直接 WPE 镜像 GBM probe 打开 render node 后 `gbm_create_device` 返回 null。记录在 `p00.4-linux-wpe-wslg-d3d12-run/` 与 `p00.4-wslg-egl-evidence.json`；这属于当前环境集成失败，WPE GBM 仍未验证。macOS WKWebView Web Archive 已由 macOS 15 runner 验证保存与同一视图重载（693 bytes，title/marker 正确，archiveParsed=true）；run 40647161201 又通过 Safari Web Inspector 页面级附着，截图可见目标 DOM。docs/04 产品内存仍未验收。官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。2026-10-28 三轮 WPE 自动生命周期采样与三轮无截图 F5 复跑显示销毁+30s仍有残留，中位数见第三十一轮；这些探针样本不满足 docs/04 DoD。Heaptrack 单轮插桩峰值路径见第三十二轮。第三十三轮以 UID 1000 未插桩 smaps 复测得到 +40.9 MiB private/+43.2 MiB PSS；父进程 `[heap]`、WPE WebKit 文件映射与匿名映射驻留增加，但仍无法判断 live object、分配器保留或具体 owner，不能据此判定泄漏。P00.4 继续 blocked；同一 WPE 探针10轮创建/销毁后，第10轮 destroy+30s 比初始高81.2 MiB private/83.6 MiB PSS，匿名映射持续增加且有回落，不能证明泄漏或 owner；P01仍受P00依赖约束。
+P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时注册项导出器、P00.3 Golden 基线与现状故障夹具均已完成；2026-10-28 Windows Git Bash 复跑的四项 P00.3 命令与完整门禁全部通过。P00.4 三项实验均有 ADR 与证据：编辑器 Windows 探针完成；Web 有 Windows Flutter/WebView2（stable 6.1.5 原始结果与 beta 6.2.0 兼容性复跑）、Linux WebKitGTK 原生 GTK，以及 Flutter/WPE 2.52.6 源码构建后的 Xvfb MHTML/截图/销毁回放；基线回放依赖隔离容器关闭 WebKit sandbox 与 GBM；后续在 Docker `SYS_ADMIN` + `seccomp=unconfined`、UID 1000 下运行，sandbox-disable 变量保持 unset，采样含 bwrap/WPEWebProcess，原始无等待首帧 PNG 为全透明缓冲；插件截图 API 只复制当前像素缓冲、不等 WPE 帧回调。隔离探针现于 DOM 查询前轮询页面标题蓝色像素，三次默认 sandbox 冷启动均取得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级时序处理，不提供产品层帧同步保证；本地回放关闭 GBM，后续 CI 虽将 GBM-disable 变量 unset 但使用 Xvfb/software GL，硬件 GBM 仍未验证。Debian sid WPE 2.54.2 设置 API 不兼容和 Trixie 2.48.3 FDO WebKit API 缺失仍是发行包阻塞；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target discovery/Main.html (HTTP 200) 与 WPE Inspector protocol command session 已验证；经 Target.sendMessageToTarget 调用 Runtime.enable/Runtime.evaluate 并返回页面 title/marker，Linux CDP 仍不支持；WSLg 宿主在 `GALLIUM_DRIVER=d3d12` 下成功创建 D3D12 EGL/GLES context；临时 Debian GBM probe 因缺 DRI driver 返回 null，不能推断 WPE GBM。随后 WPE 2.52.6 快照容器映射 WSLg 设备、GBM enabled 且 software GL unset 时，Flutter EGL context 失败、WPEWebProcess crash、90 秒内未到 initial-loaded；WSLg X11 :0 与 Wayland socket 的容器 EGL 检查都返回 EGL_NOT_INITIALIZED；Wayland socket 可连接但无 GLES2 config；直接 WPE 镜像 GBM probe 打开 render node 后 `gbm_create_device` 返回 null。记录在 `p00.4-linux-wpe-wslg-d3d12-run/` 与 `p00.4-wslg-egl-evidence.json`；这属于当前环境集成失败，WPE GBM 仍未验证。macOS WKWebView Web Archive 已由 macOS 15 runner 验证保存与同一视图重载（693 bytes，title/marker 正确，archiveParsed=true）；run 40647161201 又通过 Safari Web Inspector 页面级附着，截图可见目标 DOM。docs/04 产品内存仍未验收。官方服务实验发现 Marketplace 与 Code-OSS fork 的明确政策阻塞。P00.4 标记 blocked；feat-022/P00 仍 in-progress。2026-10-28 三轮 WPE 自动生命周期采样与三轮无截图 F5 复跑显示销毁+30s仍有残留，中位数见第三十一轮；这些探针样本不满足 docs/04 DoD。Heaptrack 单轮插桩峰值路径见第三十二轮。第三十三轮以 UID 1000 未插桩 smaps 复测得到 +40.9 MiB private/+43.2 MiB PSS；父进程 `[heap]`、WPE WebKit 文件映射与匿名映射驻留增加，但仍无法判断 live object、分配器保留或具体 owner，不能据此判定泄漏。P00.4 继续 blocked；同一 WPE 探针10轮创建/销毁后，第10轮 destroy+30s 比初始高81.2 MiB private/83.6 MiB PSS，匿名映射持续增加且有回落，不能证明泄漏或 owner；P01仍受P00依赖约束。Windows Rust+RA 三轮 10 分钟 idle 尾部稳定态为 589.09/589.27/589.09 MiB，中位数 589.09 MiB，较 500 MiB 目标高 89.09 MiB；未观察到 idle 增长或预算恢复。三轮关闭+30秒均未见残留 PID。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份；30 分钟编辑和同服务 VS Code 对照尚缺，P00.4 仍 blocked。VS Code 1.142.0 的隔离 profile/扩展副本启动前台保护被触发：最小化启动仍切换前台，脚本恢复原窗口并终止隔离实例，未采集内存数据；临时数据已清除。
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
@@ -31,6 +31,43 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - Windows Git Bash 下 `bash scripts/build_core.sh` 成功；首次 `flutter build windows --release --no-pub` 因生成插件链接目录缺失而未生成 CMake 项目。
 - 在 `app/` 执行 `flutter pub get --enforce-lockfile` 后，Windows Release build 通过，产物为 `app/build/windows/x64/runner/Release/alula_app.exe`。lockfile 相对 HEAD 仅有行尾差异、无语义内容变化。
 - P00.4 的真实 DRM WPE GBM、官方服务身份/许可和 docs/04 完整产品内存门仍未解决；主应用 Linux runner 亦未配置，记录为后续跨平台阶段事项。没有修改产品源文件。
+
+## 今日会话（2026-10-28 第五十轮）：VS Code 同服务对照前台安全预检
+
+- 本机安装 VS Code 1.142.0 Stable，rust-analyzer 扩展 0.3.3089；隔离 profile 与扩展副本配置为使用和 Alula 相同的 rust-analyzer 1.97.1 二进制。PowerShell 采样脚本通过解析检查。
+- 以最小化窗口启动时，前台守卫检测到当前窗口被切换，立即恢复之前的前台并终止隔离实例。进程查询确认没有使用临时 profile 的进程；临时 profile 和扩展副本已删除。没有开始内存采样，也没有访问登录、Sync 或 Marketplace 服务。该 VS Code 版本不是锁定的 Code-OSS 1.145.0-dev。
+- 预检证据和脚本见 `docs/diagnostics/2026-10-28-p00/p00.4-vscode-rust-lsp-preflight.json`、`p00.4-vscode-rust-lsp-idle.ps1`。同服务 VS Code 采样与 30 分钟编辑仍需前台窗口；Alula 测试的用户授权请求尚待回复，VS Code 对照另需用户许可。P00.4 保持 blocked/in-progress。
+
+## 今日会话（2026-10-28 第四十九轮）：Windows Rust + rust-analyzer 第三轮 10 分钟 idle 采样
+
+- Windows Release/`rust-mini` fixture 与全新隔离 HOME 采样 600 秒，共 600 个一秒样本：Private Bytes 峰值/尾部稳定态/结束值为 608.72/589.09/591.70 MiB。三轮 idle 稳态中位数 589.09 MiB，仍比 500 MiB 目标高 89.09 MiB；未观察到显著 idle 增长或预算恢复。
+- 启动重现两条 watcher path 告警。关闭+30秒后 Alula、两个 rust-analyzer 和 proc-macro server 四个 PID 均退出，隔离 HOME 已删除。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份；30 分钟编辑、同服务 VS Code 对照和完整产品服务场景仍未完成。
+- 原始证据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run3.json`、`.md` 与 `p00.4-windows-alula-rust-lsp-summary.md`。P00.4 保持 blocked/in-progress，P01 不启动。
+
+## 今日会话（2026-10-28 第四十八轮）：Windows Rust + rust-analyzer 第二轮 10 分钟 idle 采样
+
+- Windows Release/`rust-mini` fixture 与全新隔离 HOME 采样 600 秒，共 600 个一秒样本：Private Bytes 峰值/尾部稳定态/结束值 603.16/589.27/590.77 MiB。稳定态比首轮 idle 高 0.18 MiB，仍超 500 MiB 目标 89.27 MiB；未观察到显著 idle 增长。启动仍有两条 watcher path 告警。
+- 关闭+30秒后 Alula、两个 rust-analyzer 和 proc-macro server 的四个 PID 均退出，隔离 HOME 已删除。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份；此两项仍阻塞 P00.4。第三轮 idle 样本正在进行，30 分钟编辑和同服务 VS Code 对照未完成。
+- 原始数据和范围限制见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run2.json`、`.md` 与 `p00.4-windows-alula-rust-lsp-summary.md`。P00.4 保持 blocked/in-progress，P01 不启动。
+
+## 今日会话（2026-10-28 第四十七轮）：Windows Rust + rust-analyzer 10 分钟 idle 采样
+
+- 同一 Windows Release/`rust-mini` fixture 使用隔离 HOME 做一轮 600 秒/1 秒间隔 idle 采样，共 600 个样本；Private Bytes 峰值 600.08 MiB、尾部 40% 中位数 589.09 MiB、结束 588.11 MiB。相较此前三轮 1 分钟样本稳定值中位数低 0.75 MiB，但仍比 500 MiB 预算高 89.09 MiB；未见明显空闲增长。
+- 启动时重现两条 `notify error: Input watch path is neither a file nor a directory.` 告警。结束+30 秒后本轮四个记录 PID 均不存在，临时 HOME 已删除。无脚本化编辑；这是单轮 idle 子场景，不关闭 docs/04 完整内存门。
+- 数据与限制见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-10min.json`、同名 Markdown 和 `p00.4-windows-alula-rust-lsp-summary.md`。P00.4 仍 blocked/in-progress；真实 DRM WPE GBM、官方服务身份/许可、30 分钟编辑与完整对照仍未完成。
+
+## 今日会话（2026-10-28 第四十六轮）：Windows Rust + rust-analyzer 内存三轮采样
+
+- GitNexus CLI status 发现 analyzer runtime fingerprint 变化后，使用缓存 CLI 执行 `analyze --index-only`，索引刷新到当前 `c5f89a5`。过程图提取仍有候选入口与调用裁剪；本次用 `context` 和源码确认了 session restore 早于 autoFolder 的启动顺序。
+- 前一轮 `--lsp-auto` 只有主进程的原因已确认：Windows profile session 有 workspace 字段且目录存在，恢复逻辑使自动 fixture 打开分支跳过。未输出原路径或文档内容；profile session LastWrite 早于探针。以隔离临时 HOME 重跑，rust-analyzer 和 proc-macro server 均稳定出现。
+- 三轮 Windows Release 1 分钟采样的稳定 Private Bytes 为 589.84/593.10/588.58 MiB，中位数 589.84 MiB；峰值中位数 598.40 MiB。稳定态超过 docs/03 的 500 MiB Rust+RA 目标约 89.84 MiB。每轮有两条 watcher path 告警；末轮关闭+30 秒后 Alula/RA/proc-macro 进程均为 0。汇总及 raw reports：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。
+- WSL 跨 OS `.dart_tool` 修复后 `bash init.sh --fast` 通过 Rust tests、build_core、Flutter 122 项测试（跳过 Clippy），日志见 `p00.4-wsl-init-fast-recovery-2026-10-28.log`。P00.4 仍缺长时编辑/idle/对照、真实 DRM 和服务身份/许可证据；feat-022 仍 in-progress，P01 不启动。
+
+## 今日会话（2026-10-28 第四十五轮）：WSL 门禁复跑与 Windows LSP 自动启动采样
+
+- Windows `pub get` 曾将共享忽略文件 `app/.dart_tool/package_config.json` 写成 Windows Pub Cache URI，WSL 因此无法解析 `package:ffi`。用现有 WSL 离线缓存重建生成文件后，`bash init.sh --fast` 通过 Rust workspace tests、`build_core` 与 Flutter 122 项测试；该快速门跳过 Clippy，完整 Clippy/格式/analyze 证据仍见 `wsl-flutter-validation.md`；本次完整复跑输出保存于 `docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log`。
+- Windows Release app 从 `app/` 工作目录以 `--lsp-auto` 启动并采样 45 秒。45/45 个进程树读数只有 `alula_app.exe`，未观察到 rust-analyzer 子进程；峰值/稳定态 Private Bytes 为 202.3/190.3 MiB。此为启动尝试，不是 Rust+LSP 样本，原因未确认。原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.json` 及同名 Markdown。
+- P00.4 仍缺真实 DRM WPE GBM/DMABUF 主机证据、官方服务身份/许可和完整产品 1/10/30 分钟内存验收；feat-022 保持 in-progress，P01 不启动。
 
 ## 今日会话（2026-10-28 第四十四轮）：Windows 空工作台三轮内存样本
 

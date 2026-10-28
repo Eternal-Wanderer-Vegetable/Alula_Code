@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第四十四轮：Windows 空工作台三轮内存样本）
+> Last Updated：2026-10-28（第五十轮：VS Code 同服务对照前台安全预检）
 
 ## 项目一句话
 
@@ -12,11 +12,23 @@ macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、
 
 剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 对完整产品执行三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
-WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。
+WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。跨 OS package-config 恢复后的 `bash init.sh --fast` 日志：`docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log`。
 Windows Git Bash 侧 `build_core.sh`、`flutter pub get --enforce-lockfile` 与 `flutter build windows --release --no-pub` 均通过，Release artifact 为 `app/build/windows/x64/runner/Release/alula_app.exe`。锁文件相对 HEAD 只有已有行尾差异，无语义变化。诊断记录已同时列出 Linux 主应用目标缺失。
 Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 45 秒空窗口采样，稳态 Private Bytes 中位数 187.46 MiB；最后一轮关闭+30s 后进程数为 0。记录 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-current-empty-summary.md`。不等于 docs/04 的完整产品内存验收。
+Windows Release `--lsp-auto` 首轮 45 秒采样只有主进程；原因是默认 session 恢复了有效 workspace，使 demo autoFolder 分支跳过。隔离 HOME 后进行了三轮 Rust+RA 样本。数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.json`。
+Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.10/588.58 MiB；三轮 600 秒 idle 样本尾部稳定态 589.09/589.27/589.09 MiB，中位数 589.09 MiB，结束值 588.11/590.77/591.70 MiB，均仍比 500 MiB 目标高约 89 MiB。三轮结束+30秒后各四个 PID 均退出。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。VS Code 1.142.0 + 隔离扩展副本的最小化启动仍切换前台，安全守卫已恢复前台并停止实例，未采集对照数据；临时数据已清理，后续前台对照尚待许可。树含 Alula、两个 `rust-analyzer.exe` 与 proc-macro server；每次启动有两条 watcher path 告警。汇总与原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。没有 30 分钟脚本编辑、VS Code 对照及完整产品服务门证据。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
+
+- 第五十轮：VS Code 同服务对照安全预检发现最小化启动仍切换前台；前台守卫恢复原窗口，隔离实例已退出，临时 profile/扩展副本已删除，未进行 10 分钟采样。VS Code 1.142.0 与锁定的 Code-OSS 1.145.0-dev 有版本差异。30 分钟 Alula 编辑实测的前台测试请求待用户回复；VS Code 对照也需要另行取得前台测试许可。证据：`docs/diagnostics/2026-10-28-p00/p00.4-vscode-rust-lsp-preflight.json`。
+
+- 第四十九轮：Windows Rust+RA 第三轮 10 分钟 idle 采样完成，峰值/尾部稳定态/结束 Private Bytes 为 608.72/589.09/591.70 MiB。三轮 idle 稳态中位数 589.09 MiB，仍超 500 MiB 目标 89.09 MiB；没有观察到 idle 增长。关闭+30秒复查本轮四个 PID 均已退出，隔离 HOME 已清理。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。30 分钟编辑与同服务 VS Code 对照仍未完成。原始数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run3.json`、`.md`。
+
+- 第四十八轮：Windows Rust+RA 第二轮 10 分钟 idle 采样完成，600 个一秒样本的尾部稳定态为 589.27 MiB、结束值 590.77 MiB，较首轮 idle 稳态只高 0.18 MiB，仍超过 500 MiB 目标 89.27 MiB。关闭+30秒复查四个 PID 均已退出，隔离 HOME 已清理。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份；第三轮 idle 采样进行中。原始数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run2.json`、`.md`。
+
+- 第四十六轮：刷新 GitNexus 索引后确认默认 Windows profile session 会跳过 `--lsp-auto` fixture；隔离 HOME 让 Rust+RA 真正启动。三轮 60 秒 Release 进程树稳定态 Private Bytes 中位数 589.84 MiB，高于 500 MiB 目标；重复出现 watcher path 告警。末轮关闭+30 秒后 Alula/RA/proc-macro 均退出。完整范围限制见 Rust+RA summary；长时编辑/idle、VS Code 对照、DRM 与官方服务门仍未完成。
+
+- 第四十五轮：修复 WSL 共享生成态 `.dart_tool/package_config.json` 的跨 OS Pub Cache URI 后，`bash init.sh --fast` 通过 Rust tests、build_core、Flutter 122 项 tests（跳过 Clippy）。Windows Release `--lsp-auto` 45 秒进程树采样只有 `alula_app.exe`，未观察到 rust-analyzer 子进程；不算 Rust+LSP 内存证据，根因未确认。详见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.md`。P00.4 其余外部/完整内存门仍未通过。
 
 - 第四十四轮：Windows 当前工作树主应用 Release 做三轮空窗口 45 秒进程树采样；稳态 Private Bytes 中位数 187.46 MiB，末轮关闭+30s 后未见残留进程。此样本不覆盖完整功能/长时编辑，不关闭 P00.4 内存门。
 - 第四十三轮：Windows Git Bash 下主应用 Release build 成功。首次构建因生成的 Windows plugin links 缺失而失败；随后锁文件强制模式的 `flutter pub get` 成功并生成链接，重跑 Release build 通过。没有改产品源文件。
@@ -141,7 +153,7 @@ Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 
 ## Next Session
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 与 Flutter 工具链、Windows Flutter Windows Release 构建均有本地验证；完整 `bash init.sh`、独立 Flutter analyze 和串行 test 已全绿，可避免重复全量 recovery fixture，除非代码变化要求复验。
-2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及 docs/04 完整产品的 1/10/30 分钟多场景三轮预算采样；当前三轮 Windows 45 秒空窗口仅为工作树基线，CI 单轮 probe footprint 也不足以验收。
+2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及 docs/04 完整产品的三轮 1/10/30 分钟多场景预算采样和 VS Code 对照。Windows Rust+RA 已有三轮 1 分钟与单轮 10 分钟 idle exploratory evidence；10 分钟稳态仍约 589 MiB，且没有 30 分钟编辑。
 3. 主应用 `app/` 的 Linux desktop runner 未配置；`flutter build linux --release --no-pub` 在编译前失败。将 scaffold 排在 docs/03 跨平台阶段，P00 完成前不启动 P01。独立 WPE probe 有 Linux runner 与 CI evidence。分支 `codex/vscode-parity-p00` 的推送授权已执行；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 
@@ -150,3 +162,9 @@ Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 
 全局UndoStack跨文档风险；>2M字符未保存内容不入journal；同步FFI与800ms全量轮询；
 Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读；快速打开/搜索硬上限。
 详见docs/10 §2，不把静态风险冒充已运行复现。
+
+
+## Next Session 首步
+
+1. 阅读 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 和 10 分钟 raw report；设计隔离 fixture 的脚本化 30 分钟编辑采样，并补 VS Code 同场景对照，避免修改用户 profile/workspace。
+2. P00.4 其余真实 DRM WPE GBM/DMABUF、官方服务身份/许可门保持待解；docs/04 完整产品预算仍未验收，不启动 P01。
