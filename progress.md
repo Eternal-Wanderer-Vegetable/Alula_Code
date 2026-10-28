@@ -13,6 +13,19 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-29 第六十三轮）：恢复前台验收并完成 WSL cgroup 探索
+
+- 用户报告前台进程误关闭后，已重新完整执行 Windows 隔离 HOME/`rust-mini`/Release Rust+RA 编辑流程：1800.011 秒、150/150 次保存、1817 个一秒样本；Private Bytes 峰值/稳定/最终值 846.68/661.44/233.00 MiB。稳定值仍高于 500 MiB 目标 161.44 MiB；4 个观察 PID 关闭+30 秒后均退出，临时数据清除、原前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-043806492.{json,md}`、`-activity.json`、`-probe.stderr.log`。
+- 从 WSL 中断点恢复，`bash init.sh --fast` 退出 0（Rust tests、core build、Flutter 122 项）。安装 Xvfb/xdotool/netpbm 并在隔离 fixture 下完成 Linux 主应用 cgroup 交互探索：512 MiB 无 LSP 单轮保存通过；512 MiB 含真实 Rust Analyzer 被 OOM killer 终止；1 GiB 含 Rust Analyzer 单轮保存通过，采样峰值 903,749,632 bytes，OOM=0。
+- 1 GiB 与 512 MiB 无 LSP 成功关闭返回 0，但仍有 Flutter `FlutterEngineRemoveView returned kInvalidArguments` warning。各场景仅单轮，不满足 docs/04 的完整多档重复及长时进程树矩阵；真实 DRM/WPE GBM 与官方服务授权仍阻塞。P00.4 保持 blocked，P01 不启动。完整限制与原始证据见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。
+
+## 今日会话（2026-10-29 第六十二轮）：Windows 前台 Rust+RA 编辑验收复跑
+
+- WSL `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh --fast` 从中断点恢复并退出 0：Rust workspace tests、`build_core` 与 Flutter 122 项测试均通过。
+- 按用户要求从隔离 HOME/`rust-mini` fixture 到退出清理重跑 Windows Release 前台编辑流程。1800.011 秒、150/150 次保存、1817 个一秒 mem-probe 样本；Private Bytes 峰值/稳定/最终值 846.68/661.44/233.00 MiB。稳定值比 500 MiB 目标高 161.44 MiB，不能据此关闭内存门。
+- Marker/hash 校验通过；关闭+30 秒后 4 个观察 PID 均退出，临时 HOME/fixture 删除且原前台恢复。stderr 有两条 watcher-path 告警，没有 `client exited without proper shutdown sequence`。这是额外 follow-up，不并入原三轮中位数。
+- P00.4 仍 blocked，P01 不启动；主应用 UI/cgroup 限额交互、完整 docs/04 矩阵、真实 DRM/WPE GBM、官方服务身份/许可和 VS Code 对照仍缺证据。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-043806492.{json,md}`、`-activity.json`、`-probe.stderr.log`。
+
 ## 今日会话（2026-10-29 第六十一轮）：WSL 主应用 Linux runner
 
 - 为 P00.4 主应用验证新增并纳入源码控制 `app/linux/` Flutter runner；Linux release bundle 将 `libalula_core.so` 放到可执行文件旁。修正 `build_core.sh` 根据 Rust host triple 选择库，避免共享 WSL/Windows 工作树时把旧 DLL 复制给 Linux；WSL 与 Windows Git Bash 两端复制验证通过。

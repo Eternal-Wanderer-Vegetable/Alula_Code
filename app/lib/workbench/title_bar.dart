@@ -41,6 +41,7 @@ class AlulaTitleBar extends StatefulWidget {
 
 class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   bool _maximized = false;
+  bool _closeInProgress = false;
 
   @override
   void initState() {
@@ -72,10 +73,15 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
 
   @override
   void onWindowClose() {
+    if (_closeInProgress) return;
+    _closeInProgress = true;
     try {
       widget.onCloseRequested?.call();
     } finally {
-      unawaited(windowManager.destroy());
+      unawaited(windowManager.destroy().catchError((Object error) {
+        _closeInProgress = false;
+        debugPrint('销毁窗口失败：$error');
+      }));
     }
   }
 

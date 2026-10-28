@@ -1,0 +1,19 @@
+Running as unit: alula-p00-linux-lsp512-run2-563990.scope; invocation ID: 53c1b8eaa85a46e489cf2588ff41b173
+label=p00.4-wsl-linux-rust-lsp-cgroup512-20261029
+app_pid=564005
+window=2097155 title=Alula Code size=1280x720
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-linux-lsp512-run2-563990.scope
+memory.max=536870912
+memory.swap.max=0
+memory.current.initial=243728384
+rust_analyzer_processes_before_edit:
+ 564102  564005 Sl   /home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer
+Terminated
+Terminated
+
+systemd_final_status=failed
+systemd_result=oom-kill
+systemd_duration=45.670s
+systemd_observation=The scope was killed by the OOM killer.
+memory.max=536870912
+memory.swap.max=0
