@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十八轮：WSL Rust 工具链与跨 runner 门禁复验）
+> Last Updated：2026-10-28（第三十九轮：WSLg GBM/EGL 依赖与能力复测）
 
 ## 项目一句话
 
@@ -14,6 +14,8 @@ macOS 15 Actions run 40616364760 与 Linux Debian sid/WPE run 40616364735 均已
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fmt --check && bash init.sh` 与 `flutter analyze` 均 exit 0。WSL stable Rust 1.99.1 已安装，格式、workspace tests、clippy 与 Linux `editor-core` release build 均通过。WSL 的 `/mnt/e/flutter` 是 Windows SDK，shell wrapper 有 CRLF；Flutter gate继续使用 Windows Git Bash 中的 Flutter 3.47.8。验证记录：`docs/diagnostics/2026-10-28-p00/wsl-rust-validation.md`。root GitHub CI run 40616364863 全绿。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
+
+- 第三十九轮：WSL 安装 GBM development header 并补足本地账号 `video`/`render` 设备组；uid 1000 `card0` GBM buffer/dma-buf 导出成功，render node buffer ioctl 失败；GBM EGL 只有 llvmpipe surfaceless GLES、无 pbuffer GLES2 config。未运行 WPE，真实硬件 DRM 主机门槛仍开放。WSL Rust fmt/tests/clippy/editor-core release build 全部通过；1.58 GB Linux Flutter SDK 未下载完成。
 
 - 第三十七轮：Linux run 40616364735 和 macOS run 40616364760 在 HEAD `51fe0cd` 均通过 probe analyze/test、Release build 与 WebArchive/MHTML 回放；Linux WPE 默认 sandbox 环境变量未关闭，观察到 bwrap，但容器 security label=unconfined、capabilities 增强。Linux 单轮 destroy+30s 为 406.8 MiB private（较 WebView 前+117.4 MiB），不满足 docs/04；root CI 40616364863 全绿。原始 artifacts 已归档，P00.4 仍 blocked。
 - 第三十六轮：修复 Linux WPE CI 缺少插件要求的 legacy FDO development package，加入 `libwpebackend-fdo-1.0-dev` 并记录实际 pkg-config 后端；`bash -n`、`git diff --check` 通过，提交并推送 `e853999`。macOS 15 Actions run 40614141265 的 Web Archive replay 通过，title/marker 正确，`archiveParsed=true`；证据在 `p00.4-web-macos-run-40614141265/`。Linux run 40614659876 仍在执行，P00.4 保持 blocked。
@@ -121,6 +123,7 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fm
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
 - docs/diagnostics/2026-10-28-p00/wsl-rust-validation.md：WSL stable Rust 安装校验、Linux Rust 检查及 Windows Git Bash 完整门禁复验。
+- docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json：WSLg faux DRM GBM buffer/dma-buf 与 llvmpipe EGL/GLES 能力复测；不作为硬件 WPE/GBM 验收。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
 - feature_list.json、progress.md、本文件：可续作状态。
 - app/lib/workbench/workbench_page.dart：本轮仅_findRenderEditableOf中递归调用一行；其余既存修改归用户。

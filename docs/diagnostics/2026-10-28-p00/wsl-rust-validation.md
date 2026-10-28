@@ -36,3 +36,10 @@ cargo fmt --check && bash init.sh
 ## Scope and remaining gate
 
 No application code or `feature_list.json` status changed. `feat-022` / P00 remains `in-progress`, with P00.4 blocked by the existing external/product gates: Safari Web Inspector manual attach, WPE GBM/DMABUF on a real DRM host, Microsoft service identity/licensing, and the full docs/04 multi-run product memory protocol. WSL Rust installation removes the missing-Cargo environment blocker but does not satisfy those gates.
+
+## 2026-10-28 WSLg GBM/EGL follow-up
+
+- Installed the narrow WSL GBM development dependency `libgbm-dev=25.2.8-0ubuntu0.24.04.4`. The broader EGL/GTK/Clang package set was not installed: Ubuntu mirror transfers stalled on X11 headers; the pinned 1.58 GB Flutter Linux archive also transferred too slowly to complete. The partial Flutter archive was removed. Flutter validation remains on the already-green Windows Git Bash runner.
+- Added the WSL account to `video` and `render`, then verified the device probe in a fresh UID 1000 process with those supplementary groups. A compiled C GBM probe can allocate an XRGB8888 GBM buffer and export dma-buf from `/dev/dri/card0`; `/dev/dri/renderD128` creates a GBM device but fails buffer allocation with `DRM_IOCTL_MODE_CREATE_DUMB failed: Permission denied`.
+- A GBM EGL display on `card0` initializes as EGL 1.5 but returns zero pbuffer/OpenGL ES 2 configs. A no-config surfaceless GLES context becomes current and reports `llvmpipe (LLVM 20.1.2, 256 bits)`, which is software rendering. The sysfs driver is WSLg `faux_driver`; this does not prove WPE hardware rendering or WPE GBM support. Structured output: `wslg-gbm-egl-evidence.json`.
+- Re-ran WSL `cargo fmt --check`, `cargo test --workspace --locked`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, and `cargo build -p editor-core --release --locked`; all completed successfully.
