@@ -30,6 +30,7 @@ sw_vers > "$output_directory/environment.txt"
 flutter --version >> "$output_directory/environment.txt"
 
 inspector_attach_verified=0
+footprint_capture_failed=0
 if ! defaults write com.apple.Safari IncludeDevelopMenu -bool true \
   > "$output_directory/safari-develop-menu.log" 2>&1; then
   echo "could not enable Safari Develop menu" \
@@ -67,12 +68,20 @@ save_footprint() {
   local footprint_file="$output_directory/$name-footprint.txt"
   if ! footprint -pid "$probe_pid" -targetChildren \
     > "$footprint_file" 2>&1; then
+    local privileged_output="$footprint_file.sudo"
     if ! sudo -n footprint -pid "$probe_pid" -targetChildren \
-      > "$footprint_file" 2>&1; then
+      > "$privileged_output" 2>&1; then
+      echo "privileged footprint retry failed" \
+        >> "$footprint_file"
+      cat "$privileged_output" >> "$footprint_file"
       cat "$footprint_file" >&2
-      return 1
+      footprint_capture_failed=1
+      rm -f "$privileged_output"
+      return 0
     fi
+    cat "$privileged_output" > "$footprint_file"
     echo "capture=privileged-fallback" >> "$footprint_file"
+    rm -f "$privileged_output"
   fi
 }
 
@@ -159,12 +168,14 @@ if [[ -z "$probe_pid" ]]; then
   cat "$output_directory/probe-launch.log" >&2 || true
   exit 1
 fi
-ps -p "$probe_pid" -o pid=,ppid=,user=,command= \
+printf 'probe_pid=%s\n' "$probe_pid" \
   > "$output_directory/probe-process.txt"
+ps -p "$probe_pid" -o pid=,ppid=,user=,comm= \
+  >> "$output_directory/probe-process.txt" 2>&1 || true
 trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
 
-save_footprint before-webview
 wait_for_log P00_4_PROBE_MAIN
+save_footprint before-webview
 wait_for_log P00_4_WEBVIEW_CREATED
 save_footprint webview-created
 
@@ -214,5 +225,9 @@ trap - EXIT
 echo "macOS Web Archive replay evidence saved to $output_directory"
 if (( inspector_attach_verified != 1 )); then
   echo "Safari Web Inspector attachment was not verified" >&2
+  exit 1
+fi
+if (( footprint_capture_failed != 0 )); then
+  echo "one or more macOS process footprint samples could not be captured" >&2
   exit 1
 fi
