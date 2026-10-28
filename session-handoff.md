@@ -1,23 +1,22 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十五轮：复核官方服务策略）
+> Last Updated：2026-10-28（第三十七轮：macOS/Linux WPE GitHub Actions 回放完成）
 
 ## 项目一句话
 
 Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编辑/保存优先。
-用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2 已完成，P00 总包仍进行中。
+用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2、P00.3 已完成，P00.4继续进行。
 
 ## Current Objective
-WPE 2.52.6 source-built Flutter探针以 UID 1000 未插桩方式完成同进程十轮无截图创建/销毁，每轮销毁后等待30秒；第十轮进程树较初始高81.20 MiB private/83.63 MiB PSS。父进程 `[heap]`、匿名映射和 WPE WebKit 文件页均增加，期间有回落；映射不能判定 live object、malloc保留页或具体 owner，也不能证明 leak。见 p00.4-linux-wpe-multi-cycle-evidence.json。单轮 parent smaps 和 Heaptrack 证据见 p00.4-linux-wpe-parent-smaps-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-evidence.json。
-Windows Git Bash 的完整门禁刚复跑通过：cargo fmt --check、bash init.sh（Rust tests/Clippy/build_core/Flutter 122 项）及单独 app flutter analyze 均 exit 0。WSL init.sh --fast 因缺 cargo 与 Flutter 脚本 CRLF 失败；不是产品错误。输出见 p00-full-validation-windows-gitbash-2026-10-28.log。
-2026-10-28 按用户选择使用 Windows Git Bash 重跑 P00.3 四项夹具，全部通过；2,000,001 UTF-16 恢复 fixture 耗时约 2:10。P00.4 Linux/WPE 三轮自动生命周期样本与一轮无截图手动 F5 样本已记录：销毁+30s仍有 41.9–72.2 MiB Private Bytes 增量，NetworkProcess 留存，父进程残留尚未归因。
-macOS dispatch 仍因默认分支没有 workflow/current branch 未推送而不可运行；没有推送或 macOS runner 证据。需用户明确授权后才能推送当前分支以运行该 workflow。
-P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector command session 已通过，但它不是 CDP；WPE GBM、macOS、Microsoft 服务身份/许可、docs/04 长时多场景内存验收仍未解决。feat-022/P00=in-progress，P01–P15 未开始。
-当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。
-旧Phase/W里程碑只作历史；原型done不继承为1:1完成。P00.4不能签收done。
+macOS 15 Actions run 40616364760 与 Linux Debian sid/WPE run 40616364735 均已在 HEAD `51fe0cd` 成功：macOS 同一 WKWebView 重载 693-byte Web Archive，title/marker 正确、`archiveParsed=true`；Linux WPE 2.52.6/FDO 1.16.1 在 sandbox-disable 与 GBM-disable 变量 unset 的情况下观察到 bwrap，并完成 MHTML 回放。Linux CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。证据目录：`p00.4-web-macos-run-40616364760/`、`p00.4-web-linux-run-40616364735/`。
 
+优先阻塞：Safari Web Inspector 手动附着；真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 完整产品的三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
+Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；本次 WSL 直接 `bash init.sh --fast` 因缺 Cargo 和 Flutter shell CRLF 失败，这是 runner 环境限制。root GitHub CI run 40616364863 全绿。
+当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
+- 第三十七轮：Linux run 40616364735 和 macOS run 40616364760 在 HEAD `51fe0cd` 均通过 probe analyze/test、Release build 与 WebArchive/MHTML 回放；Linux WPE 默认 sandbox 环境变量未关闭，观察到 bwrap，但容器 security label=unconfined、capabilities 增强。Linux 单轮 destroy+30s 为 406.8 MiB private（较 WebView 前+117.4 MiB），不满足 docs/04；root CI 40616364863 全绿。原始 artifacts 已归档，P00.4 仍 blocked。
+- 第三十六轮：修复 Linux WPE CI 缺少插件要求的 legacy FDO development package，加入 `libwpebackend-fdo-1.0-dev` 并记录实际 pkg-config 后端；`bash -n`、`git diff --check` 通过，提交并推送 `e853999`。macOS 15 Actions run 40614141265 的 Web Archive replay 通过，title/marker 正确，`archiveParsed=true`；证据在 `p00.4-web-macos-run-40614141265/`。Linux run 40614659876 仍在执行，P00.4 保持 blocked。
 - 第三十五轮：重新核对当前 Microsoft VS Code FAQ 与 Settings Sync 官方文档，确认 Marketplace fork 限制和 Sync 专用服务/不支持自定义后端；更新 `p00.4-services-evidence.json` 与 ADR。没有登录或服务写操作。P00.4 外部阻塞未解除；macOS 分支推送授权仍待用户答复。
 - 第三十四轮：Windows Git Bash 从 WSL 调用 `bash init.sh --fast` EXIT=0（Rust tests、build_core、Flutter 122 项）；同一 WPE probe 连做十轮 no-capture F5 生命周期，第十轮 destroy+30s 比基线多81.20/83.63 MiB private/PSS，父进程映射类别持续增长但不能证明泄漏。证据见 `p00.4-linux-wpe-multi-cycle-evidence.json`。
 - 第三十三轮：UID 1000 未插桩 WPE smaps 生命周期采样在 destroy+30s 观察到 +40.90 MiB private/+43.23 MiB PSS；父进程 heap、WPE 文件页和匿名映射均有驻留增量，但无法判断 live allocation 或具体分配 owner。sandbox/GBM 关闭，单轮诊断不满足 docs/04；原始快照与限制见 `p00.4-linux-wpe-parent-smaps-evidence.json`。
@@ -39,7 +38,7 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 - 第二十二轮：以 `--cap-add SYS_ADMIN --security-opt seccomp=unconfined` 本地容器复测默认 WebKit sandbox；探针用户 UID 1000、sandbox-disable 环境变量 unset、GBM disabled。`unshare` 成功，bwrap/WebProcess 进程可见，MHTML 重载截图通过；初始 DOM marker 虽通过，首帧 PNG 背景空白。延迟 500ms/2s 未修复，探针源码保持原状。证据见 `p00.4-linux-wpe-2.52.6-default-sandbox-run/`。
 
 - P00.4 实验1：独立 Flutter Windows CodeForge 11.3.0 探针通过真实 Microsoft Pinyin composition/commit/cancel/Latin 输入；4 个 widget tests 覆盖 composition undo、Delta 多光标插入/撤销与 10k 行视口。见 p00.4-editor-adr.md 与 p00.4-editor-evidence.json。CodeForge 仅保留为 P03 候选。
-- P00.4 实验2：独立 Flutter Windows WebView2 探针以 `flutter_inappwebview 6.1.5` 验证按需创建/销毁、CDP MHTML 导出与同一 WebView 重载；另在 WSLg 上以 GTK 原生探针验证 WebKitGTK 页面快照、MHTML 保存/重载、Web Inspector 和短时进程生命周期。Linux 结果不代表 Flutter/WPE 集成或 Chrome CDP；macOS 未验证。证据见 p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
+- P00.4 实验2：Windows Flutter/WebView2、Linux WebKitGTK 原生 GTK 与 WPE、macOS WKWebView Web Archive probe 均有运行证据；各 API 的边界不等于跨平台 CDP/MHTML。macOS runner 40616364760 与 Linux WPE runner 40616364735 均已通过；Safari Web Inspector 附着仍需单独实测。证据见 p00.4-web-adr.md、p00.4-web-macos-run-40614141265/、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json 及 p00.4-linux-webkitgtk-run/。
 - P00.4 实验3：固定 Code-OSS 产品配置与本机 Microsoft VS Code 1.142.0 Stable 产品配置对照；官方文档确认 Settings Sync 不支持自定义后端，Marketplace 不允许 Code-OSS fork。未登录、未注册 OAuth 应用、未调用 Marketplace API、未创建隧道。见 p00.4-services-adr.md、p00.4-services-evidence.json。
 - 第十五轮复核：固定 SHA 与 1.145.0 官方 Insiders URL 仍 404，latest 返回 1.144.0 不同 revision；Marketplace fork 禁止与 Sync 无自定义后端政策保持。Linux 插件路线为 v6.2 beta + 独立 WPE 包；当前 Ubuntu WSL 无 Linux Flutter/Dart 与 WPE dev SDK。证据补充在 reference-acquisition.md、p00.4-web-adr.md、p00.4-services-adr.md。
 - 第十七轮：重验 pinned commit 下载 URL 与官方 CLI 的 1.145.0 版本解析 GET 均为 404；微软维护的 `vscode-test` helper 与 VS Code CLI 更新实现使用同一 commit URL，公开官方路径没有发现可替代的固定版本端点。该结果不覆盖所有内部/企业发行渠道，记录在 `reference-acquisition.md`。
@@ -110,13 +109,14 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 - app/test/p00_risk_fixtures_test.dart、crates/editor-core/tests/p00_workspace_close.rs、crates/editor-lsp/tests/p00_slow_completion.rs：四个现状风险复放测试及专用 fake LSP。
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
-- docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2 Windows 子实验。
+- docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2及 Windows 子实验。
+- docs/diagnostics/2026-10-27-p00/p00.4-web-linux-run-40616364735/ 与 p00.4-web-macos-run-40616364760/：通过的 Linux WPE/MHTML 与 macOS WKWebView/Web Archive workflow 原始输出和结构化证据。
 - tools/web-engine-probe/lib/main.dart、tools/web-engine-probe/README.md、docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-run3/：WPE 无截图自动生命周期模式、Heaptrack 原始 trace 与单轮父进程峰值分配路径探查。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-smaps-evidence.json 与 p00.4-linux-wpe-parent-smaps-run1/：UID 1000 未插桩生命周期的父进程 `/proc/smaps` 映射快照和分类汇总。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-multi-cycle-evidence.json 与 p00.4-linux-wpe-multi-cycle-run1/：单个 probe 进程十次 WPE WebView 创建/销毁后的 maps/smaps 生命周期采样。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-beta-evidence.json、p00.4-web-beta-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-build.log 与 p00.4-linux-wpe-trixie-compat.log：当前 beta Windows 兼容性复跑及两种 Linux WPE API 组合的构建阻塞证据。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/、三个 p00.4-linux-wpe-2.52.6-frame-poll-run*/ 与 p00.4-linux-wpe-2.52.6-inspector-http-run/：WPE 2.52.6 源码构建、Flutter Release/Xvfb replay、首帧有界轮询、Remote Inspector HTTP target discovery、MHTML/PNG、sandbox 进程及单轮内存证据；明确记录临时 sandbox/GBM overrides。
-- .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE 构建和可重放 Xvfb 生命周期采样；本地构建未通过，CI workflow 未运行。
+- .github/workflows/p00-web-engine-linux.yml、tools/web-engine-probe/linux/ 与 scripts/run-web-smoke-linux.sh：Linux WPE Debian sid CI workflow 40616364735 已通过 Xvfb MHTML 回放；本地 source-build 及历史失败/修复 run 证据保留。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-inspector-evidence.json：WPE Remote Inspector HTTP target/frontend endpoint 回放与限制。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
@@ -127,10 +127,10 @@ P00.1、P00.2、P00.3 已完成；P00.4 保持 blocked。WPE Remote Inspector co
 
 ## Next Session
 
-1. 按 AGENTS 启动流程重读 Current State、检查 GitNexus fresh，并运行 `"/mnt/c/Program Files/Git/bin/bash.exe" -lc 'cd /e/alula_code && bash init.sh --fast'`；本机已验证该方式 EXIT=0，WSL shell 本身仍缺 Cargo。
-2. 继续处理 P00.4：取得可用的 macOS runner/服务身份与许可证据；在有真实 DRM 驱动的 Linux runner 验证 WPE GBM/DMABUF；补齐 docs/04 长时、多场景三轮预算采样。当前本地 WPE 内存证据不满足验收。
-3. P00 完成前不要启动依赖它的 P01。当前分支 codex/vscode-parity-p00 尚未推送；此前仅推送并运行 macOS workflow 的授权请求仍待用户答复，未授权前不得推送。Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
-4. 阶段提交只暂存本轮 P00.4 诊断证据与状态文档；保留用户既有 app/、harness 等未提交变更。
+1. 按 AGENTS 启动流程重读状态，先跑 GitNexus status 与 Windows Git Bash 完整门禁；WSL `bash init.sh --fast` 已实测受缺 Cargo 与 Flutter shell CRLF 阻塞。
+2. 不重跑已通过的 Linux run 40616364735/macOS run 40616364760；下一步处理 Safari Web Inspector 手动附着、真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，并按 docs/04 做产品级多场景三轮预算采样。CI 的单轮探针内存样本不足以验收。
+3. P00 完成前不要启动依赖它的 P01。分支 `codex/vscode-parity-p00` 已获授权推送；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
+4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 
 ## 已知风险（尚未因本轮计划而修复）
 

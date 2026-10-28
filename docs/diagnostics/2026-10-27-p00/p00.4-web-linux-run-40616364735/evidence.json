@@ -1,0 +1,90 @@
+{
+  "runId": 40616364735,
+  "runUrl": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40616364735",
+  "headSha": "51fe0cdc971e829270682b9b454aaafb4b78958a",
+  "runner": "ubuntu-24.04 host with Debian sid container",
+  "status": "completed",
+  "conclusion": "success",
+  "steps": {
+    "Set up job": "success",
+    "Initialize containers": "success",
+    "Install build and WPE dependencies": "success",
+    "Run actions/checkout@v4": "success",
+    "Run subosito/flutter-action@v2": "success",
+    "Run dtolnay/rust-toolchain@stable": "success",
+    "Verify WPE development packages": "success",
+    "Resolve probe dependencies": "success",
+    "Analyze and test probe": "success",
+    "Build Linux probe": "success",
+    "Build memory sampler": "success",
+    "Run WPE MHTML replay": "success",
+    "Upload Linux probe evidence": "success",
+    "Post Run subosito/flutter-action@v2": "success",
+    "Post Run actions/checkout@v4": "success",
+    "Stop containers": "success",
+    "Complete job": "success"
+  },
+  "packages": {
+    "wpe-webkit-2.0": "2.52.6",
+    "wpe-web-process-extension-2.0": "2.52.6",
+    "wpebackend-fdo-1.0": "1.16.1"
+  },
+  "sandbox": {
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "unset",
+    "securityLabel": "unconfined",
+    "capabilitiesRecorded": true,
+    "bwrapObserved": true
+  },
+  "replay": {
+    "initialPage": {
+      "phase": "initial",
+      "title": "Alula Web Probe",
+      "hasProbeMarker": true,
+      "url": "about:blank",
+      "cdpMethodSupported": false,
+      "inspectableSettingSupported": false
+    },
+    "initialFrameCaptureAttempts": 4,
+    "initialFrameCaptureElapsedMs": 465,
+    "mhtmlPage": {
+      "phase": "mhtml",
+      "title": "Alula Web Probe",
+      "hasProbeMarker": true,
+      "url": "file:///__w/_temp/p00.4-web-linux/tmp/p00.4-web-probe.mht",
+      "cdpMethodSupported": false,
+      "inspectableSettingSupported": false
+    },
+    "mhtmlFrameCaptureAttempts": 1,
+    "mhtmlFrameCaptureElapsedMs": 50,
+    "archivePath": "p00.4-web-probe.mht",
+    "archiveBytes": 2587,
+    "archiveSha256": "65539bc4456eb93924f1b8f7f2bcfb56676eea655c47cba259930ce74260dd5d",
+    "screenshotFiles": [
+      "p00.4-web-initial-render.png",
+      "p00.4-web-mhtml-render.png"
+    ]
+  },
+  "memoryMiB": {
+    "beforeWebView": 289.4,
+    "webViewOpen": 510.5,
+    "mhtmlReloaded": 552.3,
+    "destroyPlus30s": 406.8,
+    "destroyPlus30sDeltaFromBefore": 117.4,
+    "pss": {
+      "beforeWebView": 349.3,
+      "webViewOpen": 650.6,
+      "mhtmlReloaded": 693.9,
+      "destroyPlus30s": 473.3
+    }
+  },
+  "destroyPlus30sProcesses": [
+    "web_engine_prob",
+    "WPENetworkProce"
+  ],
+  "limitations": [
+    "Single probe-only Xvfb/software-GL sample; not docs/04 three-run and long-duration product memory acceptance.",
+    "GBM hardware rendering was not enabled.",
+    "Linux plugin reports CDP method and inspectable setting unsupported; WPE Inspector Protocol is not CDP."
+  ]
+}

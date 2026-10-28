@@ -2,7 +2,7 @@
   "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
   "recordedAt": "2026-10-28",
   "status": "default-sandbox-and-bounded-frame-poll-passed-with-cpu-rendering-limitations",
-  "scope": "Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A follow-up left the WebKit sandbox-disable variable unset and observed bwrap children in a container with SYS_ADMIN plus seccomp unconfined; GBM remained disabled. An original unpolled initial-page screenshot was fully transparent despite a passing DOM marker. Source inspection found that the pinned plugin reads the current pixel buffer without waiting for a WPE frame callback. The isolated probe now polls for the page heading pixel, and three follow-up replays rendered both the initial page and MHTML reload; the final version exercised one retry. No production integration, CDP, Inspector command-session, hardware-rendering, or macOS acceptance; the separate Remote Inspector HTTP endpoint evidence is recorded in p00.4-linux-wpe-inspector-evidence.json.",
+  "scope": "Local Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A later Debian sid GitHub Actions run 40616364735 passed dependency verification, analyze/test, Release build, memory sampler build and MHTML replay using packaged WPE WebKit 2.52.6 and WPEBackend-FDO 1.16.1. It left WebKit sandbox-disable and GBM-disable variables unset and observed bwrap, but ran inside an unconfined container with elevated capabilities. The local probe-only evidence and CI evidence do not establish production integration, CDP, Linux Inspector UI, hardware GBM or docs/04 product memory acceptance. A separate macOS 15 run 40616364760 passed the WKWebView Web Archive probe; Safari Inspector and product memory remain open.",
   "probe": {
     "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
     "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
@@ -32,7 +32,7 @@
   "runner": {
     "workflow": ".github/workflows/p00-web-engine-linux.yml",
     "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
-    "host": "Local Debian GNU/Linux 12 Bookworm Docker containers; baseline replay used the default container seccomp profile, and follow-up sandbox replay used --cap-add SYS_ADMIN --security-opt seccomp=unconfined as UID 1000. GitHub Actions workflow remains unrun",
+    "host": "Original local Debian GNU/Linux 12 Bookworm Docker containers; see followUpGithubActions for the later Debian sid GitHub Actions replay",
     "wpeDevelopmentPackage": "Official WPE WebKit 2.52.6 source build installed at /work/install; not a dpkg package",
     "wpePackageVersion": "wpe-webkit-2.0=2.52.6; wpe-platform-2.0=2.52.6; wpe-platform-headless-2.0=2.52.6",
     "runtimeExecuted": true,
@@ -40,15 +40,15 @@
     "libsecretDevelopmentPackage": "libsecret-1-dev=0.20.5-3"
   },
   "limitations": [
-    "The default WebKit sandbox passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; this is not a normal runner/production security result. All replay paths disabled GBM, so hardware rendering remains unverified",
+    "Local default-WebKit-sandbox replay passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; it is not a normal runner/production security result. Local replay paths disabled GBM, so hardware rendering remains unverified",
     "An unpolled default-sandbox capture had the DOM marker but produced a fully transparent PNG (1280x572 RGBA). The pinned plugin snapshots its current buffer without waiting for a frame callback. The isolated probe now captures before DOM queries and polls up to 30 times for a blue heading pixel; three follow-up replays rendered the page, and the final heading-check version succeeded on attempt 2. This mitigates the probe capture race only and does not guarantee product-level frame synchronization or behavior on other hosts",
     "Debian sid WPE 2.54.2 build still fails because the plugin references WPE_SETTING_DISABLE_ANIMATIONS, absent from its headers; see the 2.54 build evidence",
     "Debian Trixie WPE 2.48.3 legacy FDO fallback still fails because webkit_web_view_get_theme_color is undeclared; see the Trixie compatibility evidence",
     "No compatibility macro or plugin source patch was used",
     "CDP is declared unsupported by the pinned Linux plugin contract; the runtime JSON records false",
-    "The runtime support table reports isInspectable=false, but a separate WPE 2.52.6 follow-up verified the Remote Inspector HTTP target list and frontend resource; no Inspector command session was verified (see p00.4-linux-wpe-inspector-evidence.json).",
-    "macOS WKWebView and Safari Web Inspector remain unverified",
-    "The local run uses Xvfb/software GL, a source-built WPE prefix and one short memory round; it is not the Debian sid GitHub workflow or docs/04 product acceptance"
+    "The local run uses Xvfb/software GL, a source-built WPE prefix and a short memory round; it is not the Debian sid GitHub workflow or docs/04 product acceptance",
+    "Follow-up GitHub Actions run 40616364735 passed packaged WPE 2.52.6/FDO 1.16.1 analyze, test, Release build, sampler build and MHTML replay. Sandbox-disable and GBM-disable variables were unset and bwrap was observed, but the container security label was unconfined with elevated capabilities. Its one destroy+30s probe sample was 406.8 MiB private (+117.4 MiB from pre-WebView) and retained WPENetworkProcess; this neither proves a leak nor meets docs/04 repeated long-duration product gates.",
+    "Separate macOS 15 run 40616364760 passed a 693-byte Web Archive save/reload probe. Safari Web Inspector attachment and docs/04 product memory acceptance remain unverified."
   ],
   "sources": [
     "https://wpewebkit.org/release/wpewebkit-2.52.6.html",
@@ -560,5 +560,53 @@
       ]
     },
     "interpretation": "The previous transparent image came from reading the current buffer before a painted page frame was available. The bounded wait made the probe capture robust across these local runs, including one actual retry. This is probe-only handling and does not establish a product or cross-host frame synchronization guarantee."
+  },
+  "followUpGithubActions": {
+    "headSha": "51fe0cdc971e829270682b9b454aaafb4b78958a",
+    "linuxRun": {
+      "id": 40616364735,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40616364735",
+      "evidenceDirectory": "p00.4-web-linux-run-40616364735/",
+      "conclusion": "success",
+      "wpeWebKit": "2.52.6",
+      "wpeBackendFdo": "1.16.1",
+      "webkitSandboxDisable": "unset",
+      "gbmDisable": "unset",
+      "bwrapObserved": true,
+      "containerSecurityLabel": "unconfined",
+      "initialPageCaptureAttempts": 4,
+      "initialPageCaptureElapsedMs": 465,
+      "mhtmlCaptureAttempts": 1,
+      "mhtmlCaptureElapsedMs": 50,
+      "mhtmlBytes": 2587,
+      "mhtmlSha256": "65539bc4456eb93924f1b8f7f2bcfb56676eea655c47cba259930ce74260dd5d",
+      "destroyPlus30sPrivateMiB": 406.8,
+      "destroyPlus30sPrivateDeltaFromBeforeWebViewMiB": 117.4,
+      "destroyPlus30sProcesses": [
+        "web_engine_prob",
+        "WPENetworkProce"
+      ],
+      "limitations": [
+        "single probe-only Xvfb/software-GL sample",
+        "no hardware GBM",
+        "not docs/04 product memory acceptance"
+      ]
+    },
+    "macosRun": {
+      "id": 40616364760,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40616364760",
+      "evidenceDirectory": "p00.4-web-macos-run-40616364760/",
+      "conclusion": "success",
+      "archiveBytes": 693,
+      "archiveSha256": "f99cd79f8edec867378f55eeceb2182627ca14904e60099119feaf094afc9a0d",
+      "title": "Alula Web Probe",
+      "hasProbeMarker": true,
+      "archiveParsed": true,
+      "limitations": [
+        "Web Archive probe only; not MHTML/CDP equivalence",
+        "Safari Web Inspector attachment unverified",
+        "not docs/04 product memory acceptance"
+      ]
+    }
   }
 }

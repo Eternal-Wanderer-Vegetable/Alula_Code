@@ -1,0 +1,36 @@
+{
+  "runId": 40614141322,
+  "runUrl": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40614141322",
+  "headSha": "d47543d585850acfd7a0367dc396711711adcf79",
+  "runner": "ubuntu-24.04 with debian:sid container",
+  "status": "completed",
+  "conclusion": "failure",
+  "steps": {
+    "Set up job": "success",
+    "Initialize containers": "success",
+    "Install build and WPE dependencies": "success",
+    "Run actions/checkout@v4": "success",
+    "Run subosito/flutter-action@v2": "success",
+    "Run dtolnay/rust-toolchain@stable": "success",
+    "Verify WPE development packages": "success",
+    "Resolve probe dependencies": "success",
+    "Analyze and test probe": "success",
+    "Build Linux probe": "failure",
+    "Build memory sampler": "skipped",
+    "Run WPE MHTML replay": "skipped",
+    "Upload Linux probe evidence": "success",
+    "Post Run subosito/flutter-action@v2": "success",
+    "Post Run actions/checkout@v4": "success",
+    "Stop containers": "success",
+    "Complete job": "success"
+  },
+  "verified": {
+    "wpe-webkit-2.0": "2.52.6",
+    "wpe-web-process-extension-2.0": "2.52.6"
+  },
+  "failure": "Linux Release CMake configure found neither wpe-platform-2.0 nor wpebackend-fdo-1.0; the plugin requires one backend development package.",
+  "buildAttempted": true,
+  "mhtmlReplayAttempted": false,
+  "log": "workflow-build-failure.log",
+  "resolution": "Install libwpebackend-fdo-1.0-dev and assert the pkg-config backend in commit e853999; retry run 40614659876."
+}

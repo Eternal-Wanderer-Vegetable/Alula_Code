@@ -1,0 +1,51 @@
+{
+  "runId": 40615761042,
+  "runUrl": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40615761042",
+  "headSha": "bfab92b705469e802f6ce4ceed0f7ae29367c1de",
+  "runner": "ubuntu-24.04 with debian:sid container",
+  "status": "completed",
+  "conclusion": "failure",
+  "steps": {
+    "Set up job": "success",
+    "Initialize containers": "success",
+    "Install build and WPE dependencies": "success",
+    "Run actions/checkout@v4": "success",
+    "Run subosito/flutter-action@v2": "success",
+    "Run dtolnay/rust-toolchain@stable": "success",
+    "Verify WPE development packages": "success",
+    "Resolve probe dependencies": "success",
+    "Analyze and test probe": "success",
+    "Build Linux probe": "success",
+    "Build memory sampler": "success",
+    "Run WPE MHTML replay": "failure",
+    "Upload Linux probe evidence": "success",
+    "Post Run subosito/flutter-action@v2": "success",
+    "Post Run actions/checkout@v4": "success",
+    "Stop containers": "success",
+    "Complete job": "success"
+  },
+  "packages": {
+    "wpe-webkit-2.0": "2.52.6",
+    "wpe-web-process-extension-2.0": "2.52.6",
+    "wpebackend-fdo-1.0": "1.16.1"
+  },
+  "build": "Flutter Linux Release build and memory sampler build passed.",
+  "sandboxConfiguration": {
+    "SYS_ADMIN": "granted",
+    "NET_ADMIN": "granted",
+    "seccomp": "unconfined",
+    "apparmor": "default",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset"
+  },
+  "replayFailure": "Bubblewrap reached mount setup but failed making the root mount slave: Permission denied; app aborted before initial-loaded.",
+  "mhtmlReplayAttempted": true,
+  "pageArtifactsProduced": false,
+  "files": [
+    "environment.txt",
+    "before-webview-memory.json",
+    "probe.log",
+    "xvfb.log",
+    "workflow-replay-failure.log"
+  ],
+  "resolution": "Disable AppArmor confinement for this isolated container as well, record the active label/capabilities, and limit the job to same-repository PRs and manual dispatch. Retry run generated from commit 51fe0cd."
+}

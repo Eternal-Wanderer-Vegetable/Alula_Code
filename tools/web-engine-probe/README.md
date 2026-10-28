@@ -57,10 +57,14 @@ CDP, MHTML, Inspector, or memory behavior from the Windows result.
 ## macOS WKWebView check
 
 The macOS target uses the plugin's native `WKWebView.createWebArchiveData`
-API and saves a `.webarchive` file before opening it in the same WebView. It
-checks the original page and the reloaded archive with JavaScript, because the
-macOS WebKit view does not implement the Windows CDP screenshot path. This
-Web Archive is not MHTML and does not establish CDP compatibility.
+API and saves a `.webarchive` file before reopening it in the same WebView. The
+plugin's simulated-response API displayed binary WebArchive bytes as page text,
+so the probe Runner provides a small method-channel bridge to call the native
+`WKWebView.load(data:mimeType:characterEncodingName:baseURL:)` API. That bridge
+locates the probe's single WKWebView in Flutter's native view tree; it is test
+infrastructure rather than a product API. The replay asserts the archived title
+and marker and fails if `bplist00` is rendered as page text. This Web Archive is
+not MHTML and does not establish CDP compatibility.
 
 On a Mac with Flutter 3.47.8 and Xcode installed:
 
@@ -77,11 +81,13 @@ scripts/run-web-smoke-macos.sh \
 
 The runner records `footprint -targetChildren` snapshots before/after the
 WebView lifecycle, page verification JSON, the Web Archive bytes, and best-effort
-desktop screenshots. It does not automate attaching Safari Web Inspector; that
-remains a separate manual check. The same replay is available as the
-`P00.4 macOS Web Engine Probe` GitHub Actions workflow. Neither the new target
-nor the workflow has run on macOS yet, so they are test infrastructure rather
-than Mac evidence.
+desktop screenshots. GitHub Actions run 40613565941 passed analyze, tests,
+Release build, and replay on `macos-15`; its 693-byte archive restored the title
+and marker, and `archiveParsed` was true. See
+`docs/diagnostics/2026-10-27-p00/p00.4-web-macos-run-40613565941/`. The screenshot
+and page assertion verify the probe replay only; they do not satisfy docs/04
+product memory acceptance. The workflow does not automate attaching Safari Web
+Inspector, which remains a separate manual check.
 
 ## Linux Flutter/WPE check
 
@@ -97,7 +103,8 @@ dependencies, then run:
 
 ```bash
 sudo apt-get install build-essential clang cmake libepoxy-dev libgtk-3-dev \
-  libsecret-1-dev libwpe-1.0-dev libwpewebkit-2.0-dev ninja-build pkg-config \
+  libsecret-1-dev libwpe-1.0-dev libwpebackend-fdo-1.0-dev \
+  libwpewebkit-2.0-dev ninja-build pkg-config \
   x11-utils xauth xvfb
 flutter config --enable-linux-desktop
 cd tools/web-engine-probe
@@ -120,6 +127,23 @@ produce the same artifacts. A local Debian sid attempt on 2026-10-28 passed
 because `flutter_inappwebview_linux 0.1.0-beta.1` references the missing
 `WPE_SETTING_DISABLE_ANIMATIONS` macro with WPE 2.54.2. The workflow and this
 guide include the separately required `libsecret-1-dev` package.
+The workflow pins WPE WebKit 2.52.6 from the Debian snapshot and installs the
+plugin's supported WPEBackend-FDO development fallback. Run 40614141322 passed
+the version checks but stopped at CMake because neither WPEPlatform nor FDO
+development files were present; commit `e853999` adds that fallback and records
+its pkg-config version. The later run 40616364735 passed package verification,
+analyze/test, Release build, memory sampler build, and default WebKit sandbox
+MHTML replay. The runner reported WPE WebKit 2.52.6 and WPEBackend-FDO 1.16.1;
+the sandbox-disable and GBM-disable variables were unset and `bwrap` was
+observed. The container's security label was `unconfined` with elevated
+capabilities, so this does not establish the production container security
+profile. The initial page frame took four captures (465 ms); the MHTML reload
+took one (50 ms). Its 2,587-byte archive SHA-256 and raw artifacts are recorded
+in `docs/diagnostics/2026-10-27-p00/p00.4-web-linux-run-40616364735/`.
+The single Xvfb/software-GL sample measured 406.8 MiB private at destroy+30s,
+117.4 MiB above the pre-WebView process tree, with `WPENetworkProcess` still
+present. This is an exploratory probe measurement, not a leak finding or the
+multi-run product acceptance in docs/04.
 
 For a lifecycle sample that skips screenshots and archive operations, launch
 the Release executable with `P00_4_WEB_AUTO=1` and
@@ -143,8 +167,14 @@ preliminary alpha-check runs rendered on the first attempt; the final version
 rendered on its second attempt. All three fresh default-sandbox runs rendered
 the initial page and MHTML reload. This stabilizes probe screenshots, but does
 not prove a product-level frame guarantee or another host's behavior.
-Hardware GBM, normal production/CI sandbox settings, CDP, Inspector, macOS and
-production compatibility remain unverified. The Debian Trixie 2.48.3 legacy
+Hardware GBM, the production security profile, CDP, Linux Inspector UI
+attachment, and production compatibility remain unverified. The Linux workflow
+has a passing default-WebKit-sandbox replay, but its CI container uses an
+unconfined security label and elevated capabilities. macOS 15 run 40616364760
+also passed the probe analyze/test, Release build and same-WKWebView Web Archive
+replay (693 bytes; title and marker restored; `archiveParsed=true`); it does not
+verify MHTML/CDP equivalence or Safari Web Inspector attachment. The Debian
+Trixie 2.48.3 legacy
 FDO fallback also failed to build this plugin at
 `webkit_web_view_get_theme_color`. Build flags, warnings, memory snapshots, and
 local replay limits are in
