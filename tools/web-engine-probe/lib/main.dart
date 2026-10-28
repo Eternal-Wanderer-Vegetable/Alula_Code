@@ -8,9 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 void main() {
-  runApp(
-    WebEngineProbeApp(autoProbe: Platform.environment['P00_4_WEB_AUTO'] == '1'),
+  final autoProbe = Platform.environment['P00_4_WEB_AUTO'] == '1';
+  stdout.writeln(
+    'P00_4_PROBE_MAIN autoProbe=$autoProbe '
+    'systemTemp=${Directory.systemTemp.path} '
+    'TMPDIR=${Platform.environment['TMPDIR'] ?? '(unset)'}',
   );
+  runApp(WebEngineProbeApp(autoProbe: autoProbe));
 }
 
 class WebEngineProbeApp extends StatelessWidget {
@@ -76,8 +80,14 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
   @override
   void initState() {
     super.initState();
+    stdout.writeln(
+      'P00_4_PROBE_INIT autoProbe=${widget.autoProbe} '
+      'systemTemp=${Directory.systemTemp.path} '
+      'TMPDIR=${Platform.environment['TMPDIR'] ?? '(unset)'}',
+    );
     if (widget.autoProbe) {
       Future<void>.delayed(const Duration(seconds: 4), () {
+        stdout.writeln('P00_4_AUTO_TOGGLE mounted=$mounted');
         if (mounted) _toggleWebView();
       });
     }
@@ -101,6 +111,7 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
     final file = File(
       '${Directory.systemTemp.path}${Platform.pathSeparator}p00.4-web-probe-phase.txt',
     );
+    stdout.writeln('P00_4_PHASE phase=$phase path=${file.path}');
     await file.writeAsString(phase, flush: true);
   }
 
@@ -436,17 +447,25 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
                         isInspectable: true,
                       ),
                       onWebViewCreated: (value) {
+                        stdout.writeln('P00_4_WEBVIEW_CREATED');
                         setState(() {
                           _controller = value;
                           _status = 'WebView created';
                         });
                         _shortcutFocusNode.requestFocus();
                       },
+                      onLoadStart: (value, url) {
+                        stdout.writeln('P00_4_LOAD_START url=$url');
+                      },
                       onLoadStop: (value, url) async {
+                        stdout.writeln('P00_4_LOAD_STOP_BEGIN url=$url');
                         final title = await value.evaluateJavascript(
                           source: 'document.title',
                         );
                         if (!mounted) return;
+                        stdout.writeln(
+                          'P00_4_LOAD_STOP_READY url=$url title=$title',
+                        );
                         setState(() => _status = 'Loaded $url; title=$title');
                         _shortcutFocusNode.requestFocus();
                         final openedArchive = url.toString().endsWith(
@@ -471,6 +490,10 @@ class _WebEngineProbePageState extends State<WebEngineProbePage> {
                         }
                       },
                       onReceivedError: (value, request, error) {
+                        stdout.writeln(
+                          'P00_4_LOAD_ERROR url=${request.url} '
+                          'description=${error.description}',
+                        );
                         setState(
                           () => _status = 'Load error: ${error.description}',
                         );
