@@ -168,5 +168,5 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 
 ## Next Session 首步
 
-1. 阅读 `docs/diagnostics/2026-10-28-p00/p00.4-windows-ra-notify-warning.md` 与 `p00.4-windows-alula-rust-lsp-summary.md`；若继续调查告警，用 Windows-native rust-analyzer log-file 采集补足失败 watch path。30 分钟编辑和 VS Code 前台采样须等待对应用户许可。
-2. P00.4 其余真实 DRM WPE GBM/DMABUF、官方服务身份/许可门保持待解；docs/04 完整产品预算仍未验收，不启动 P01。
+1. 重跑 `p00.4-windows-alula-rust-lsp-edit-30m.ps1 -RunIndex 1` 前，安排一个 Alula 能持续保持前台的完整 30 分钟窗口；用户已授权 Alula 前台测试。30 秒预检成功，但两次正式尝试约 291 秒/171 秒后切至 Explorer 并中止，均无完整采样。不要把这两轮计为验收。若继续归因 watcher 告警，可用 Windows-native rust-analyzer log-file 采集补足失败 watch path。
+2. 同服务 VS Code 前台采样仍需另行授权；真实 DRM WPE GBM/DMABUF、官方服务身份/许可门保持待解。docs/04 完整产品预算仍未验收，不启动 P01。
