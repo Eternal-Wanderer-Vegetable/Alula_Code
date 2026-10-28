@@ -189,18 +189,19 @@ function Send-EditorComment([string]$marker) {
   [P004EditInput]::SendUnicode("// $marker")
   Assert-TargetForeground
   if ($Preflight -and $edits.Count -eq 0) { Save-TargetScreenshot $uiCapturePaths[3] }
-  [void][P004EditInput]::SetCursorPos($window.Left + 130, $window.Top + 26)
-  Start-Sleep -Milliseconds 200
-  [P004EditInput]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
-  [P004EditInput]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
-  Start-Sleep -Milliseconds 400
-  Assert-TargetForeground
-  if ($Preflight -and $edits.Count -eq 0) { Save-TargetScreenshot $uiCapturePaths[4] }
-  [void][P004EditInput]::SetCursorPos($window.Left + 185, $window.Top + 110)
-  Start-Sleep -Milliseconds 200
-  [P004EditInput]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
-  Start-Sleep -Milliseconds 80
-  [P004EditInput]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+  if ($Preflight -and $edits.Count -eq 0) {
+    [void][P004EditInput]::SetCursorPos($window.Left + 130, $window.Top + 26)
+    Start-Sleep -Milliseconds 200
+    [P004EditInput]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+    [P004EditInput]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+    Start-Sleep -Milliseconds 400
+    Assert-TargetForeground
+    Save-TargetScreenshot $uiCapturePaths[4]
+    [P004EditInput]::Tap(0x1B) # Close the menu; save through the documented shortcut below.
+    Start-Sleep -Milliseconds 100
+    Assert-TargetForeground
+  }
+  Send-ControlKey 0x53 # Ctrl+S; avoid coordinate-sensitive menu selection.
   Start-Sleep -Milliseconds 600
   Assert-TargetForeground
   if ($Preflight -and $edits.Count -eq 0) { Save-TargetScreenshot $uiCapturePaths[5] }
@@ -243,6 +244,7 @@ function Stop-AppTree([int]$RootPid) {
 function Wait-ForSavedMarker([string]$Marker) {
   $deadline = [DateTime]::UtcNow.AddSeconds(8)
   while ([DateTime]::UtcNow -lt $deadline) {
+    Assert-TargetForeground
     if (Test-Path -LiteralPath $editedFile) {
       $text = [System.IO.File]::ReadAllText($editedFile)
       if ($text.Contains($Marker)) { return $text }

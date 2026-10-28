@@ -1,0 +1,227 @@
+{
+    "label":  "alula-rust-lsp-edit-30m-run3-20261028-224002562",
+    "run_index":  3,
+    "preflight":  false,
+    "status":  "aborted",
+    "abort_reason":  "Save verification failed for marker P00_4_EDIT_3_021",
+    "aborted_at_utc":  "2026-10-28T14:44:23.5036280Z",
+    "test_started_at_utc":  "2026-10-28T14:40:02.6905130Z",
+    "edit_started_at_utc":  "2026-10-28T14:40:12.6584908Z",
+    "edit_elapsed_s":  250.845,
+    "expected_foreground_hwnd":  35852682,
+    "foreground_hwnd_at_abort":  267254,
+    "root_pid":  33860,
+    "process_tree_pids_observed":  [
+                                       {
+                                           "pid":  3268,
+                                           "ppid":  34604,
+                                           "name":  "rust-analyzer-proc-macro-srv.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe"
+                                       },
+                                       {
+                                           "pid":  33860,
+                                           "ppid":  55864,
+                                           "name":  "alula_app.exe",
+                                           "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe"
+                                       },
+                                       {
+                                           "pid":  34604,
+                                           "ppid":  55788,
+                                           "name":  "rust-analyzer.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe"
+                                       },
+                                       {
+                                           "pid":  55788,
+                                           "ppid":  33860,
+                                           "name":  "rust-analyzer.exe",
+                                           "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe"
+                                       }
+                                   ],
+    "saved_edit_count":  20,
+    "saved_edits":  [
+                        {
+                            "cycle":  1,
+                            "elapsed_s":  2.508,
+                            "captured_at_utc":  "2026-10-28T14:40:15.1678577Z",
+                            "marker":  "P00_4_EDIT_3_001",
+                            "saved":  true,
+                            "bytes":  607,
+                            "sha256":  "127F1309D5C4983AD924D8DA6C261400E57C8E34BAACDA4B940ECFEBCD6EEA86"
+                        },
+                        {
+                            "cycle":  2,
+                            "elapsed_s":  14.546,
+                            "captured_at_utc":  "2026-10-28T14:40:27.2049955Z",
+                            "marker":  "P00_4_EDIT_3_002",
+                            "saved":  true,
+                            "bytes":  627,
+                            "sha256":  "E4297BDDB98EE618BFD6F05B014D9CCC95DBE4BFBE40DAA2D3FE451A79FEA320"
+                        },
+                        {
+                            "cycle":  3,
+                            "elapsed_s":  26.52,
+                            "captured_at_utc":  "2026-10-28T14:40:39.1795365Z",
+                            "marker":  "P00_4_EDIT_3_003",
+                            "saved":  true,
+                            "bytes":  647,
+                            "sha256":  "844BDCB3B2543A875462D40D48F69A3EECD90160D46169FE4E807E82A0338346"
+                        },
+                        {
+                            "cycle":  4,
+                            "elapsed_s":  38.555,
+                            "captured_at_utc":  "2026-10-28T14:40:51.2140421Z",
+                            "marker":  "P00_4_EDIT_3_004",
+                            "saved":  true,
+                            "bytes":  667,
+                            "sha256":  "994AB0313744381135DE32763C21E6E3AFB8F8283A4424992E523332664DDEE3"
+                        },
+                        {
+                            "cycle":  5,
+                            "elapsed_s":  50.499,
+                            "captured_at_utc":  "2026-10-28T14:41:03.1582526Z",
+                            "marker":  "P00_4_EDIT_3_005",
+                            "saved":  true,
+                            "bytes":  687,
+                            "sha256":  "04D48CF59EB2E866B20EDD64CE0326DC5CBC4E91C3518A8C1596BA0C5EC46EF0"
+                        },
+                        {
+                            "cycle":  6,
+                            "elapsed_s":  62.52,
+                            "captured_at_utc":  "2026-10-28T14:41:15.1795059Z",
+                            "marker":  "P00_4_EDIT_3_006",
+                            "saved":  true,
+                            "bytes":  707,
+                            "sha256":  "BBF05E83C5277D9AAEBD0C134CC4FF6A5CA74ADFD44AD4FB9E1234B17F274F6F"
+                        },
+                        {
+                            "cycle":  7,
+                            "elapsed_s":  74.503,
+                            "captured_at_utc":  "2026-10-28T14:41:27.1616096Z",
+                            "marker":  "P00_4_EDIT_3_007",
+                            "saved":  true,
+                            "bytes":  727,
+                            "sha256":  "74AAA3CDBB39D9705DEC46CF2D065C8A2C0D0EA99FAC509CE6F4C9B7AAEE167A"
+                        },
+                        {
+                            "cycle":  8,
+                            "elapsed_s":  86.529,
+                            "captured_at_utc":  "2026-10-28T14:41:39.1877021Z",
+                            "marker":  "P00_4_EDIT_3_008",
+                            "saved":  true,
+                            "bytes":  747,
+                            "sha256":  "514936E9D6078D7C62649CA59A9B209FD6BB8A6858455D2845FB94B66691511A"
+                        },
+                        {
+                            "cycle":  9,
+                            "elapsed_s":  98.51,
+                            "captured_at_utc":  "2026-10-28T14:41:51.1690968Z",
+                            "marker":  "P00_4_EDIT_3_009",
+                            "saved":  true,
+                            "bytes":  767,
+                            "sha256":  "162A0F81DFDBB29B4129F16330457380E3198DB430620FA85AF5F2BD3A0EAEFE"
+                        },
+                        {
+                            "cycle":  10,
+                            "elapsed_s":  110.517,
+                            "captured_at_utc":  "2026-10-28T14:42:03.1758159Z",
+                            "marker":  "P00_4_EDIT_3_010",
+                            "saved":  true,
+                            "bytes":  787,
+                            "sha256":  "EE2AE2EAF4F389410F07A9071C96F3BB068FC965E75945C3AD7750E419A818C7"
+                        },
+                        {
+                            "cycle":  11,
+                            "elapsed_s":  122.513,
+                            "captured_at_utc":  "2026-10-28T14:42:15.1721095Z",
+                            "marker":  "P00_4_EDIT_3_011",
+                            "saved":  true,
+                            "bytes":  807,
+                            "sha256":  "034691EB91658BE31D6F27816E9C91A5BFE361B69AAA01AC9280AE3C1E0A41EB"
+                        },
+                        {
+                            "cycle":  12,
+                            "elapsed_s":  134.521,
+                            "captured_at_utc":  "2026-10-28T14:42:27.1795422Z",
+                            "marker":  "P00_4_EDIT_3_012",
+                            "saved":  true,
+                            "bytes":  827,
+                            "sha256":  "DC68300AEAEE16698258F29E1FA29D4359F3FB7A11B105B5FE6708B5D97BA945"
+                        },
+                        {
+                            "cycle":  13,
+                            "elapsed_s":  146.488,
+                            "captured_at_utc":  "2026-10-28T14:42:39.1460852Z",
+                            "marker":  "P00_4_EDIT_3_013",
+                            "saved":  true,
+                            "bytes":  847,
+                            "sha256":  "3C04E2F14EB779FF28C3FB539180168B4F98B6E997A7861F1577AE5B8380C030"
+                        },
+                        {
+                            "cycle":  14,
+                            "elapsed_s":  158.512,
+                            "captured_at_utc":  "2026-10-28T14:42:51.1712915Z",
+                            "marker":  "P00_4_EDIT_3_014",
+                            "saved":  true,
+                            "bytes":  867,
+                            "sha256":  "55D838F6995E619C3A3C0807A96F20A8A73C56A194437EAF627D3DA1F53188DE"
+                        },
+                        {
+                            "cycle":  15,
+                            "elapsed_s":  170.512,
+                            "captured_at_utc":  "2026-10-28T14:43:03.1703566Z",
+                            "marker":  "P00_4_EDIT_3_015",
+                            "saved":  true,
+                            "bytes":  887,
+                            "sha256":  "57F44548C3865CCEC4E258D0F50C0FC14F9A5A4658E07EA620D2776A6810A3E5"
+                        },
+                        {
+                            "cycle":  16,
+                            "elapsed_s":  182.519,
+                            "captured_at_utc":  "2026-10-28T14:43:15.1775175Z",
+                            "marker":  "P00_4_EDIT_3_016",
+                            "saved":  true,
+                            "bytes":  907,
+                            "sha256":  "C04BA1E32DD533C8A6F199E23847DFD0C182C2F80C64572AF1F67B268CA63B36"
+                        },
+                        {
+                            "cycle":  17,
+                            "elapsed_s":  194.519,
+                            "captured_at_utc":  "2026-10-28T14:43:27.1779212Z",
+                            "marker":  "P00_4_EDIT_3_017",
+                            "saved":  true,
+                            "bytes":  927,
+                            "sha256":  "23ED7AE9C6DF7AE6BF14BCA9E429910DD8FE159BA6186E5425ACE10794FD8E6E"
+                        },
+                        {
+                            "cycle":  18,
+                            "elapsed_s":  206.513,
+                            "captured_at_utc":  "2026-10-28T14:43:39.1718033Z",
+                            "marker":  "P00_4_EDIT_3_018",
+                            "saved":  true,
+                            "bytes":  947,
+                            "sha256":  "04F419FBF2031F0946D7F7B382817C0CA33FD92B5691CE5BFDBBFB59F6778C57"
+                        },
+                        {
+                            "cycle":  19,
+                            "elapsed_s":  218.529,
+                            "captured_at_utc":  "2026-10-28T14:43:51.1887503Z",
+                            "marker":  "P00_4_EDIT_3_019",
+                            "saved":  true,
+                            "bytes":  967,
+                            "sha256":  "CA36D44885E39BA55DE0846B1E24340F2862151E809BE1C217E7A2C59BFE229D"
+                        },
+                        {
+                            "cycle":  20,
+                            "elapsed_s":  230.521,
+                            "captured_at_utc":  "2026-10-28T14:44:03.1801233Z",
+                            "marker":  "P00_4_EDIT_3_020",
+                            "saved":  true,
+                            "bytes":  987,
+                            "sha256":  "8CB74EC83C877ACBF13C84B6C9C1D36A648F5E286D4684BF38FC63332BA912D2"
+                        }
+                    ],
+    "memory_report_path":  "p00.4-windows-alula-rust-lsp-edit-30m-run3-20261028-224002562.json",
+    "memory_report_present":  false,
+    "memory_report_valid_for_acceptance":  false,
+    "note":  "An aborted attempt is not a completed duration sample. Any partial memory output is diagnostic only and must not be counted toward acceptance."
+}
