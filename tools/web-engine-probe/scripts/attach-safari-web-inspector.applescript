@@ -1,10 +1,35 @@
 on run argv
-	if (count of argv) is not 1 then error "usage: attach-safari-web-inspector.applescript prepare|attach"
+	if (count of argv) < 1 or (count of argv) > 2 then
+		error "usage: attach-safari-web-inspector.applescript prepare|attach|activate-probe [pid]"
+	end if
 	set actionName to item 1 of argv as text
+	if actionName is "activate-probe" then
+		if (count of argv) is not 2 then error "activate-probe requires a pid"
+		return my activateProbeProcess(item 2 of argv)
+	end if
+	if (count of argv) is not 1 then error actionName & " does not accept extra arguments"
 	if actionName is "prepare" then return my prepareInspectorWindow()
 	if actionName is "attach" then return my attachInspectableTarget()
 	error "unknown action: " & actionName
 end run
+
+on activateProbeProcess(pidArgument)
+	set targetPID to pidArgument as integer
+	tell application "System Events"
+		repeat with attemptNumber from 1 to 20
+			repeat with processReference in application processes
+				try
+					if (unix id of processReference) is targetPID then
+						set frontmost of processReference to true
+						return "activate=ok pid=" & targetPID & " process=" & (name of processReference as text)
+					end if
+				end try
+			end repeat
+			delay 0.25
+		end repeat
+	end tell
+	error "probe process was not frontmost after System Events activation; pid=" & targetPID
+end activateProbeProcess
 
 on prepareInspectorWindow()
 	tell application "Safari" to activate
