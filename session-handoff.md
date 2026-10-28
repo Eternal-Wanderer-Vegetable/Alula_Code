@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十九轮：WSLg GBM/EGL 依赖与能力复测）
+> Last Updated：2026-10-28（第四十轮：Safari Web Inspector 页面附着验证）
 
 ## 项目一句话
 
@@ -8,13 +8,14 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2、P00.3 已完成，P00.4继续进行。
 
 ## Current Objective
-macOS 15 Actions run 40616364760 与 Linux Debian sid/WPE run 40616364735 均已在 HEAD `51fe0cd` 成功：macOS 同一 WKWebView 重载 693-byte Web Archive，title/marker 正确、`archiveParsed=true`；Linux WPE 2.52.6/FDO 1.16.1 在 sandbox-disable 与 GBM-disable 变量 unset 的情况下观察到 bwrap，并完成 MHTML 回放。Linux CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。证据目录：`p00.4-web-macos-run-40616364760/`、`p00.4-web-linux-run-40616364735/`。
+macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、Release build、693-byte Web Archive 同 WKWebView 重载及 Safari Web Inspector 页面级附着；附着截图显示目标页 DOM，原始证据在 `docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`。Linux Debian sid/WPE run 40616364735 在 HEAD `51fe0cd` 通过 MHTML 回放；sandbox-disable 与 GBM-disable 变量 unset 时观察到 bwrap，但 CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。旧证据目录：`p00.4-web-linux-run-40616364735/`。
 
-优先阻塞：Safari Web Inspector 手动附着；真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 完整产品的三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
+剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 对完整产品执行三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fmt --check && bash init.sh` 与 `flutter analyze` 均 exit 0。WSL stable Rust 1.99.1 已安装，格式、workspace tests、clippy 与 Linux `editor-core` release build 均通过。WSL 的 `/mnt/e/flutter` 是 Windows SDK，shell wrapper 有 CRLF；Flutter gate继续使用 Windows Git Bash 中的 Flutter 3.47.8。验证记录：`docs/diagnostics/2026-10-28-p00/wsl-rust-validation.md`。root GitHub CI run 40616364863 全绿。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
+- 第四十轮：macOS run 40647161201 在 HEAD `5da053b` 通过 Safari Web Inspector 页面级附着，窗口标题匹配归档页，截图显示目标 DOM；probe analyze/test、Release build、Web Archive replay 全通过。证据已保存于 `docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`。Safari Inspector 子项通过，但完整产品内存、真实 WPE GBM 与官方服务身份/许可仍阻塞 P00.4。
 - 第三十九轮：WSL 安装 GBM development header 并补足本地账号 `video`/`render` 设备组；uid 1000 `card0` GBM buffer/dma-buf 导出成功，render node buffer ioctl 失败；GBM EGL 只有 llvmpipe surfaceless GLES、无 pbuffer GLES2 config。未运行 WPE，真实硬件 DRM 主机门槛仍开放。WSL Rust fmt/tests/clippy/editor-core release build 全部通过；1.58 GB Linux Flutter SDK 未下载完成。
 
 - 第三十七轮：Linux run 40616364735 和 macOS run 40616364760 在 HEAD `51fe0cd` 均通过 probe analyze/test、Release build 与 WebArchive/MHTML 回放；Linux WPE 默认 sandbox 环境变量未关闭，观察到 bwrap，但容器 security label=unconfined、capabilities 增强。Linux 单轮 destroy+30s 为 406.8 MiB private（较 WebView 前+117.4 MiB），不满足 docs/04；root CI 40616364863 全绿。原始 artifacts 已归档，P00.4 仍 blocked。
@@ -112,7 +113,7 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fm
 - tools/vscode-parity/export-atomic-contributions.mjs、runtime-probe/：P00.2可重放导出器和临时探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-editor-adr.md、p00.4-editor-evidence.json 与 tools/editor-ime-probe/：P00.4实验1决策、数据、重放探针及真机截图。
 - docs/diagnostics/2026-10-27-p00/p00.4-web-adr.md、p00.4-web-evidence.json、MHTML/PNG/进程树采样与 tools/web-engine-probe/：P00.4实验2及 Windows 子实验。
-- docs/diagnostics/2026-10-27-p00/p00.4-web-linux-run-40616364735/ 与 p00.4-web-macos-run-40616364760/：通过的 Linux WPE/MHTML 与 macOS WKWebView/Web Archive workflow 原始输出和结构化证据。
+- docs/diagnostics/2026-10-27-p00/p00.4-web-linux-run-40616364735/ 与 docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/：通过的 Linux WPE/MHTML 与 macOS WKWebView/Web Archive/Safari Inspector workflow 原始输出和结构化证据。
 - tools/web-engine-probe/lib/main.dart、tools/web-engine-probe/README.md、docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-evidence.json 与 p00.4-linux-wpe-parent-heaptrack-run3/：WPE 无截图自动生命周期模式、Heaptrack 原始 trace 与单轮父进程峰值分配路径探查。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-smaps-evidence.json 与 p00.4-linux-wpe-parent-smaps-run1/：UID 1000 未插桩生命周期的父进程 `/proc/smaps` 映射快照和分类汇总。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-multi-cycle-evidence.json 与 p00.4-linux-wpe-multi-cycle-run1/：单个 probe 进程十次 WPE WebView 创建/销毁后的 maps/smaps 生命周期采样。
@@ -132,7 +133,7 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fm
 ## Next Session
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 工具链及 Linux Rust checks 已通过；Windows Git Bash full DoD 与 Flutter analyze 已通过，无需重复全量 recovery fixture。
-2. 不重跑已通过的 Linux run 40616364735/macOS run 40616364760；下一步处理 Safari Web Inspector 手动附着、真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，并按 docs/04 做产品级多场景三轮预算采样。CI 的单轮探针内存样本不足以验收。
+2. Safari Web Inspector 页面级附着已由 run 40647161201 验证；下一步取得真实 DRM 主机 WPE GBM/DMABUF 证据、处理官方服务身份/许可，并按 docs/04 对产品做多场景三轮预算采样。CI 单轮探针 footprint 不足以验收。
 3. P00 完成前不要启动依赖它的 P01。分支 `codex/vscode-parity-p00` 已获授权推送；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 

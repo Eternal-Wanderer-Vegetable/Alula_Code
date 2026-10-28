@@ -81,19 +81,18 @@ scripts/run-web-smoke-macos.sh \
 
 The runner records `footprint -targetChildren` snapshots before/after the
 WebView lifecycle, page verification JSON, the Web Archive bytes, and best-effort
-desktop screenshots. The macOS smoke also enables Safari's Develop menu,
-opens Inspect Apps and Devices, and attempts to select the `Alula Web Probe`
-target while the same WKWebView is held open. On successful attachment it
-captures the desktop. Its attach log
-and screenshot are uploaded with the other evidence; a missing target makes the
-smoke fail after preserving the archive and lifecycle artifacts. GitHub Actions
-run 40613565941 passed analyze, tests,
-Release build, and replay on `macos-15`; its 693-byte archive restored the title
-and marker, and `archiveParsed` was true. See
-`docs/diagnostics/2026-10-27-p00/p00.4-web-macos-run-40613565941/`. The screenshot
-and page assertion verify the probe replay only; they do not satisfy docs/04
-product memory acceptance. Safari attachment evidence is pending a macOS Actions
-run; until that run's artifact is inspected, the Inspector gate remains open.
+desktop screenshots. The macOS smoke enables Safari's Develop menu, opens Inspect
+Apps and Devices, and selects the Web Archive page target while the same WKWebView
+is held open. It waits for a Web Inspector window whose title includes the target
+page, then captures the desktop. A missing target/window makes the smoke fail
+after preserving the archive and lifecycle artifacts. GitHub Actions run
+40647161201 passed analyze, tests, Release build, Web Archive replay, and
+page-level Inspector attachment on `macos-15`. The attach log identifies
+`webarchive.invalid — p00.4-web-probe.webarchive`; the screenshot shows the DOM
+tree `html > body data-ready="true"`. See
+`docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`. This verifies
+the probe's Safari Inspector attachment only. It does not satisfy docs/04 product
+memory acceptance or establish CDP/MHTML compatibility.
 
 ## Linux Flutter/WPE check
 
@@ -178,8 +177,10 @@ attachment, and production compatibility remain unverified. The Linux workflow
 has a passing default-WebKit-sandbox replay, but its CI container uses an
 unconfined security label and elevated capabilities. macOS 15 run 40616364760
 also passed the probe analyze/test, Release build and same-WKWebView Web Archive
-replay (693 bytes; title and marker restored; `archiveParsed=true`); it does not
-verify MHTML/CDP equivalence or Safari Web Inspector attachment. The Debian
+replay (693 bytes; title and marker restored; `archiveParsed=true`); that run
+did not verify MHTML/CDP equivalence or Safari Web Inspector attachment. The
+later run 40647161201 attached Safari Web Inspector to the archive page target
+and captured its DOM; this still does not establish CDP/MHTML equivalence. The Debian
 Trixie 2.48.3 legacy
 FDO fallback also failed to build this plugin at
 `webkit_web_view_get_theme_color`. Build flags, warnings, memory snapshots, and

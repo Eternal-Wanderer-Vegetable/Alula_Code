@@ -1,0 +1,86 @@
+{
+  "experiment": "P00.4 macOS WKWebView and Safari Web Inspector",
+  "capturedAt": "2026-10-28",
+  "run": {
+    "id": 40647161201,
+    "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40647161201",
+    "head": "5da053b",
+    "conclusion": "success",
+    "runner": "macos-15"
+  },
+  "environment": {
+    "os": "macOS 15.7.9 (24G830)",
+    "flutter": "3.47.8 stable",
+    "safari": "26.6.1"
+  },
+  "checks": {
+    "flutterAnalyze": "passed",
+    "flutterTest": "passed",
+    "macOSReleaseBuild": "passed",
+    "webArchiveReplay": "passed",
+    "archiveBytes": 693,
+    "archiveSha256": "f99cd79f8edec867378f55eeceb2182627ca14904e60099119feaf094afc9a0d",
+    "initialPage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "url": "about:blank"
+    },
+    "webArchivePage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "archiveParsed": true,
+      "rawBplistDisplayed": false,
+      "url": "https://webarchive.invalid/p00.4-web-probe.webarchive"
+    },
+    "safariWebInspector": {
+      "attachment": "passed",
+      "target": "webarchive.invalid — p00.4-web-probe.webarchive",
+      "windowTitle": "Web Inspector — web_engine_probe — webarchive.invalid — p00.4-web-probe.webarchive",
+      "domVisibleInScreenshot": "html > body data-ready=\"true\"",
+      "screenshot": "safari-web-inspector-attached.png"
+    },
+    "lifecycle": [
+      "webview-created",
+      "initial-loaded",
+      "webarchive-loaded",
+      "webview-destroyed",
+      "webview-destroyed+30s"
+    ]
+  },
+  "footprintMiB": {
+    "beforeWebView": 42,
+    "webViewCreated": 44,
+    "initialLoaded": 45,
+    "webArchiveReloaded": 43,
+    "destroyed": 41,
+    "destroyedPlus30s": 42
+  },
+  "limitations": [
+    "One hosted-runner probe lifecycle only; footprint output is not the complete Alula process-tree memory measurement.",
+    "Does not satisfy docs/04 multi-run 1/10/30-minute, edit-load, workspace-close, and full-process-tree product acceptance.",
+    "WKWebView Web Archive and Safari Web Inspector do not establish CDP or MHTML compatibility.",
+    "Does not validate Linux WPE hardware GBM/DMABUF or Microsoft service identity/licensing."
+  ],
+  "rawEvidence": [
+    "environment.txt",
+    "probe.log",
+    "probe-process.txt",
+    "probe-activate.log",
+    "safari-develop-menu.log",
+    "safari-inspector-prepare.log",
+    "safari-inspector-attach.log",
+    "p00.4-web-initial-page.json",
+    "p00.4-web-webarchive-page.json",
+    "p00.4-web-probe.webarchive",
+    "webarchive.sha256",
+    "before-webview-footprint.txt",
+    "webview-created-footprint.txt",
+    "webview-open-footprint.txt",
+    "webarchive-reloaded-footprint.txt",
+    "webview-destroyed-footprint.txt",
+    "webview-destroyed-30s-footprint.txt",
+    "webview-open.png",
+    "webarchive-reloaded.png",
+    "safari-web-inspector-attached.png"
+  ]
+}
