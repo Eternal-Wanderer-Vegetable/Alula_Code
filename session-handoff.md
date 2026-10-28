@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第四十三轮：Windows 主应用 Release 构建验证）
+> Last Updated：2026-10-28（第四十四轮：Windows 空工作台三轮内存样本）
 
 ## 项目一句话
 
@@ -14,9 +14,11 @@ macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
 WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。
 Windows Git Bash 侧 `build_core.sh`、`flutter pub get --enforce-lockfile` 与 `flutter build windows --release --no-pub` 均通过，Release artifact 为 `app/build/windows/x64/runner/Release/alula_app.exe`。锁文件相对 HEAD 只有已有行尾差异，无语义变化。诊断记录已同时列出 Linux 主应用目标缺失。
+Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 45 秒空窗口采样，稳态 Private Bytes 中位数 187.46 MiB；最后一轮关闭+30s 后进程数为 0。记录 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-current-empty-summary.md`。不等于 docs/04 的完整产品内存验收。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
+- 第四十四轮：Windows 当前工作树主应用 Release 做三轮空窗口 45 秒进程树采样；稳态 Private Bytes 中位数 187.46 MiB，末轮关闭+30s 后未见残留进程。此样本不覆盖完整功能/长时编辑，不关闭 P00.4 内存门。
 - 第四十三轮：Windows Git Bash 下主应用 Release build 成功。首次构建因生成的 Windows plugin links 缺失而失败；随后锁文件强制模式的 `flutter pub get` 成功并生成链接，重跑 Release build 通过。没有改产品源文件。
 - 第四十二轮：在 WSL 完成 core build；主应用 Linux Release 构建检查发现没有 Linux desktop project 配置，因此将 Linux runner scaffold 留作后续跨平台阶段。独立 WPE probe 有 Linux runner。没有修改产品代码。
 - 第四十一轮：WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7 和 Linux desktop 开发依赖；`flutter doctor -v` 的 Linux toolchain 检查通过。Rust 格式、workspace tests、Clippy、build_core、Flutter analyze 与 122 项 test 全通过。P00.3 大文本恢复夹具的 2,000,001 UTF-16 单元观测符合既有 current-state fixture；没有改产品代码或测试。P00.4 仍 blocked，P01 不启动。详见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
@@ -139,7 +141,7 @@ Windows Git Bash 侧 `build_core.sh`、`flutter pub get --enforce-lockfile` 与 
 ## Next Session
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 与 Flutter 工具链、Windows Flutter Windows Release 构建均有本地验证；完整 `bash init.sh`、独立 Flutter analyze 和串行 test 已全绿，可避免重复全量 recovery fixture，除非代码变化要求复验。
-2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及 docs/04 完整产品的三轮长时多场景预算采样；CI 单轮探针 footprint 不足以验收。
+2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及 docs/04 完整产品的 1/10/30 分钟多场景三轮预算采样；当前三轮 Windows 45 秒空窗口仅为工作树基线，CI 单轮 probe footprint 也不足以验收。
 3. 主应用 `app/` 的 Linux desktop runner 未配置；`flutter build linux --release --no-pub` 在编译前失败。将 scaffold 排在 docs/03 跨平台阶段，P00 完成前不启动 P01。独立 WPE probe 有 Linux runner 与 CI evidence。分支 `codex/vscode-parity-p00` 的推送授权已执行；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 

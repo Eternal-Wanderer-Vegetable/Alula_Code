@@ -32,6 +32,12 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - 在 `app/` 执行 `flutter pub get --enforce-lockfile` 后，Windows Release build 通过，产物为 `app/build/windows/x64/runner/Release/alula_app.exe`。lockfile 相对 HEAD 仅有行尾差异、无语义内容变化。
 - P00.4 的真实 DRM WPE GBM、官方服务身份/许可和 docs/04 完整产品内存门仍未解决；主应用 Linux runner 亦未配置，记录为后续跨平台阶段事项。没有修改产品源文件。
 
+## 今日会话（2026-10-28 第四十四轮）：Windows 空工作台三轮内存样本
+
+- Windows Release app（HEAD `2235402` 加预先存在的 unstaged app 修改）用 Windows `mem-probe` 连续冷启动采样三次，每次 45 秒、间隔 1 秒，每份报告 45 个样本，进程树只有 `alula_app.exe`。
+- Peak Private Bytes：202.60/201.72/200.63 MiB；稳态/结束 Private Bytes：188.38/187.46/186.38 MiB；中位数分别为 201.72/187.46 MiB。第三轮结束后等待 30 秒，`Get-Process alula_app` 返回 0。与旧空窗口样本相近，不作版本回归结论。
+- 该采样没有 workspace、LSP、terminal、WebView 或编辑负载，不覆盖 docs/04 的长时多场景完整产品门。原始报告和限制见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-current-empty-summary.md`。P00.4 仍 blocked/in-progress，P01 不启动。
+
 ## 今日会话（2026-10-28 第四十轮）：Safari Web Inspector 页面附着验证
 
 - macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过 probe analyze/test、Release build、Web Archive 保存/重载和 Safari Web Inspector 页面级附着。日志显示 Web Inspector 窗口标题匹配 `webarchive.invalid — p00.4-web-probe.webarchive`；附着截图可见 `html > body data-ready="true"`。
