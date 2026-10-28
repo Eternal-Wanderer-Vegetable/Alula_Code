@@ -159,7 +159,7 @@ wait_for_log P00_4_PROBE_MAIN
 save_footprint before-webview
 if osascript "$inspector_script" activate-probe "$probe_pid" \
   > "$output_directory/probe-activate.log" 2>&1; then
-  save_screenshot probe-launched
+  :
 else
   echo "probe foreground activation failed; see probe-activate.log" \
     >> "$output_directory/warnings.txt"

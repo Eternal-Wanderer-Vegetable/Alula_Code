@@ -81,8 +81,23 @@ on attachInspectableTarget()
 				delay 0.25
 			end repeat
 			if attachResult is "" then error "Web Archive page did not appear in Safari Develop menu"
-			delay 2
-			return "attach=ok target=" & attachResult & " windows=" & (name of every window as text)
+			set inspectorWindowTitle to ""
+			repeat with inspectAttemptNumber from 1 to 40
+				repeat with candidateWindow in windows
+					try
+						set candidateWindowName to name of candidateWindow as text
+						if candidateWindowName contains "Web Inspector" and candidateWindowName contains "p00.4-web-probe.webarchive" then
+							set inspectorWindowTitle to candidateWindowName
+							exit repeat
+						end if
+					end try
+				end repeat
+				if inspectorWindowTitle is not "" then exit repeat
+				delay 0.25
+			end repeat
+			if inspectorWindowTitle is "" then error "Safari did not open Web Inspector for the Web Archive page"
+			delay 3
+			return "attach=ok target=" & attachResult & " inspectorWindow=" & inspectorWindowTitle & " windows=" & (name of every window as text)
 		end tell
 	end tell
 end attachInspectableTarget
