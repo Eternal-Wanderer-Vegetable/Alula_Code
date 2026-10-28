@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-28（第三十七轮：macOS/Linux WPE GitHub Actions 回放完成）
+> Last Updated：2026-10-28（第三十八轮：WSL Rust 工具链与跨 runner 门禁复验）
 
 ## 项目一句话
 
@@ -11,7 +11,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 macOS 15 Actions run 40616364760 与 Linux Debian sid/WPE run 40616364735 均已在 HEAD `51fe0cd` 成功：macOS 同一 WKWebView 重载 693-byte Web Archive，title/marker 正确、`archiveParsed=true`；Linux WPE 2.52.6/FDO 1.16.1 在 sandbox-disable 与 GBM-disable 变量 unset 的情况下观察到 bwrap，并完成 MHTML 回放。Linux CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。证据目录：`p00.4-web-macos-run-40616364760/`、`p00.4-web-linux-run-40616364735/`。
 
 优先阻塞：Safari Web Inspector 手动附着；真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；按 docs/04 完整产品的三轮 1/10/30 分钟及关闭+30s 进程树预算验收。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。
-Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；本次 WSL 直接 `bash init.sh --fast` 因缺 Cargo 和 Flutter shell CRLF 失败，这是 runner 环境限制。root GitHub CI run 40616364863 全绿。
+Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；`cargo fmt --check && bash init.sh` 与 `flutter analyze` 均 exit 0。WSL stable Rust 1.99.1 已安装，格式、workspace tests、clippy 与 Linux `editor-core` release build 均通过。WSL 的 `/mnt/e/flutter` 是 Windows SDK，shell wrapper 有 CRLF；Flutter gate继续使用 Windows Git Bash 中的 Flutter 3.47.8。验证记录：`docs/diagnostics/2026-10-28-p00/wsl-rust-validation.md`。root GitHub CI run 40616364863 全绿。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
 ## What Changed
 
@@ -120,6 +120,7 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；本次 WS
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-inspector-evidence.json：WPE Remote Inspector HTTP target/frontend endpoint 回放与限制。
 - docs/diagnostics/2026-10-27-p00/p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/ 与 tools/web-engine-probe/linux/：P00.4 Linux WebKitGTK 原生引擎补充及可重放 GTK 探针。
 - docs/diagnostics/2026-10-27-p00/p00.4-services-adr.md、p00.4-services-evidence.json：P00.4实验3端点、正式版配置差异、Marketplace/Sync 阻塞。
+- docs/diagnostics/2026-10-28-p00/wsl-rust-validation.md：WSL stable Rust 安装校验、Linux Rust 检查及 Windows Git Bash 完整门禁复验。
 - docs/03：新P00–P15状态/依赖/DoD；docs/09与README标历史范围与新入口。
 - feature_list.json、progress.md、本文件：可续作状态。
 - app/lib/workbench/workbench_page.dart：本轮仅_findRenderEditableOf中递归调用一行；其余既存修改归用户。
@@ -127,7 +128,7 @@ Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过；本次 WS
 
 ## Next Session
 
-1. 按 AGENTS 启动流程重读状态，先跑 GitNexus status 与 Windows Git Bash 完整门禁；WSL `bash init.sh --fast` 已实测受缺 Cargo 与 Flutter shell CRLF 阻塞。
+1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 工具链及 Linux Rust checks 已通过；Windows Git Bash full DoD 与 Flutter analyze 已通过，无需重复全量 recovery fixture。
 2. 不重跑已通过的 Linux run 40616364735/macOS run 40616364760；下一步处理 Safari Web Inspector 手动附着、真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，并按 docs/04 做产品级多场景三轮预算采样。CI 的单轮探针内存样本不足以验收。
 3. P00 完成前不要启动依赖它的 P01。分支 `codex/vscode-parity-p00` 已获授权推送；Linux CDP 不支持，WPE Inspector Protocol 不能作为 CDP 等价。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
