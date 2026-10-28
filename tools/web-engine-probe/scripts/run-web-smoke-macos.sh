@@ -64,8 +64,16 @@ fi
 
 save_footprint() {
   local name="$1"
-  footprint -pid "$probe_pid" -targetChildren \
-    > "$output_directory/$name-footprint.txt" 2>&1
+  local footprint_file="$output_directory/$name-footprint.txt"
+  if ! footprint -pid "$probe_pid" -targetChildren \
+    > "$footprint_file" 2>&1; then
+    if ! sudo -n footprint -pid "$probe_pid" -targetChildren \
+      > "$footprint_file" 2>&1; then
+      cat "$footprint_file" >&2
+      return 1
+    fi
+    echo "capture=privileged-fallback" >> "$footprint_file"
+  fi
 }
 
 save_screenshot() {
@@ -151,6 +159,8 @@ if [[ -z "$probe_pid" ]]; then
   cat "$output_directory/probe-launch.log" >&2 || true
   exit 1
 fi
+ps -p "$probe_pid" -o pid=,ppid=,user=,command= \
+  > "$output_directory/probe-process.txt"
 trap 'kill "$probe_pid" 2>/dev/null || true; wait "$probe_pid" 2>/dev/null || true' EXIT
 
 save_footprint before-webview
