@@ -15,9 +15,11 @@ if [[ ! -x "$app_executable" ]]; then
   exit 1
 fi
 
-mkdir -p "$output_directory/tmp"
+mkdir -p "$output_directory"
 output_directory="$(cd "$output_directory" && pwd)"
-export TMPDIR="$output_directory/tmp/"
+sandbox_tmp_directory="$HOME/Library/Containers/dev.alula.webEngineProbe/Data/tmp"
+mkdir -p "$sandbox_tmp_directory"
+export TMPDIR="$sandbox_tmp_directory/"
 
 phase_file="$TMPDIR/p00.4-web-probe-phase.txt"
 rm -f "$phase_file"
@@ -66,8 +68,34 @@ wait_for_phase() {
   exit 1
 }
 
+wait_for_log() {
+  local marker="$1"
+  local timeout_seconds="${2:-90}"
+  local deadline=$((SECONDS + timeout_seconds))
+
+  while (( SECONDS < deadline )); do
+    if ! kill -0 "$probe_pid" 2>/dev/null; then
+      echo "probe exited before log marker '$marker'" >&2
+      cat "$output_directory/probe.log" >&2 || true
+      exit 1
+    fi
+    if grep -Fq "$marker" "$output_directory/probe.log"; then
+      echo "log_marker=$marker"
+      return 0
+    fi
+    sleep 0.25
+  done
+
+  echo "timed out waiting for log marker '$marker'" >&2
+  cat "$output_directory/probe.log" >&2 || true
+  exit 1
+}
+
 sleep 1
 save_footprint before-webview
+
+wait_for_log P00_4_WEBVIEW_CREATED
+save_footprint webview-created
 
 wait_for_phase initial-loaded
 save_screenshot webview-open
