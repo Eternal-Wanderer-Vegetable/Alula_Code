@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第五十九轮：Windows 原生关闭与真实 LSP 完整复验）
+> Last Updated：2026-10-29（第六十轮：WSL 门禁与跨平台 CI 复验）
 
 ## 项目一句话
 
@@ -19,6 +19,12 @@ Windows `mem-probe` 对当前带既存 app 修改的工作树 Release 做三轮 
 Windows Release `--lsp-auto` 首轮 45 秒采样只有主进程；原因是默认 session 恢复了有效 workspace，使 demo autoFolder 分支跳过。隔离 HOME 后进行了三轮 Rust+RA 样本。数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.json`。
 Windows Rust+RA Release 三轮各 60 秒稳定态 Private Bytes 为 589.84/593.10/588.58 MiB；三轮 600 秒 idle 样本尾部稳定态 589.09/589.27/589.09 MiB，中位数 589.09 MiB，结束值 588.11/590.77/591.70 MiB，均仍比 500 MiB 目标高约 89 MiB。三轮结束+30秒后各四个 PID 均退出。用户确认暂无真实 DRM Linux 主机或获授权的 Microsoft 官方客户端身份。VS Code 1.142.0 + 隔离扩展副本经 PowerShell 最小化和 WSH `SW_SHOWMINNOACTIVE` 两种方式启动都切换前台；安全守卫每次均恢复前台并停止实例，未采集对照数据；临时数据已清理，后续前台对照尚待许可。树含 Alula、两个 `rust-analyzer.exe` 与 proc-macro server；每次启动有两条 watcher path 告警。汇总与原始报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md` 与同目录 JSON/Markdown。已有三轮30分钟脚本编辑数据：稳定 Private Bytes 676.20/672.36/660.81 MiB，中位数672.36 MiB，超500 MiB目标172.36 MiB；每轮150次保存、1,808个样本，关闭+30秒后进程全退。尚无 VS Code 对照及完整产品服务门证据。
 当前任务与DoD唯一权威：docs/03当前主线；docs/10为范围/架构/方法，docs/11为需求矩阵。旧Phase/W里程碑只作历史；原型done不继承为1:1完成。
+## Verification Update（第六十轮）
+
+At `5e6e0ce`, WSL `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh --fast` passed Rust workspace tests, `build_core`, and all 122 Flutter tests under default parallel execution. One earlier parallel `REF-07-UNDO-01` failure remains unreproduced; isolated and serial runs plus this parallel rerun passed, with root cause unknown.
+
+The authorized branch push completed. GitHub CI run 40758401730 passed (Rust Ubuntu/Windows, Flutter analyze/test, harness); macOS Web Engine Probe run 40758401692 and Linux WPE Web Engine Probe run 40758401773 also passed. The latter two are probe evidence only; Linux used CI Xvfb/software GL and does not prove real DRM GBM/DMABUF. P00.4 remains blocked; a separate isolated VS Code idle-comparator foreground-permission question is pending, and P01 remains not started. Evidence: `docs/diagnostics/2026-10-29-p00/p00.4-cross-platform-validation-followup-20261029.md`.
+
 ## What Changed
 
 本轮新增 ABI v5 workspace LSP shutdown FFI：tab close 发 didClose 并保留共享服务；workbench 关闭时对剩余文档执行 didClose、shutdown-response、exit 与有界进程回收。Windows Release 真实 rust-analyzer 已在第五十九轮通过关闭复验；`window_manager` 0.5.2 的 `WM_CLOSE` 需先 `setPreventClose(true)` 并由 `onWindowClose` 发起 shutdown，单靠 widget `dispose()` 不可靠。Flutter analyze、122 项测试与 Release build 全通过。当前稳定 Private Bytes 657.82 MiB，仍高于500 MiB；两条 watcher-path 告警仍在。完整测试使用的 workbench 仍含用户的未提交变更；其中 Ctrl+Click/Git 功能 hunks 保持未暂存。GitNexus `WorkbenchPage`/`AlulaTitleBar` impact 为 LOW，dispose 为 UNKNOWN（5 个接收者调用未解析），并已用文本确认回调路径。详细证据：`docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md`。

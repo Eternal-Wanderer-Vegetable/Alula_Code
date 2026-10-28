@@ -13,6 +13,12 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 
 2026-10-28 WSLg GBM follow-up：`libgbm-dev` 已安装，普通 uid 1000 可在 WSLg faux DRM 的 `card0` 分配/导出 GBM dma-buf；GBM EGL 无 GLES2 pbuffer config，surfaceless context 使用 llvmpipe 软件渲染。未运行 WPE，不满足硬件 GBM 验收；完整数据在 `docs/diagnostics/2026-10-28-p00/wslg-gbm-egl-evidence.json`。WSL Rust fmt/tests/clippy/release build 复验全通过；现已在 WSL ext4 安装 Flutter stable 3.47.8/Dart 3.13.7，离线 pub 依赖解析成功，WSL 的 cargo fmt、完整 bash init.sh、flutter analyze 与 flutter test 均通过。另已安装 clang、CMake、Ninja、pkg-config、GTK、libstdc++-12-dev、Epoxy、libsecret、GBM 开发依赖，`flutter doctor -v` 确认 Linux desktop toolchain 可用；Flutter bin 已加入 Bash PATH。原生 runner 证据见 `docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。
 
+## 今日会话（2026-10-29 第六十轮）：WSL 快速门禁与跨平台 CI 复验
+
+- 当前分支 `5e6e0ce` 已按既有授权推送。远端 CI run `40758401730` 全绿：Windows/Ubuntu Rust fmt、Clippy、workspace tests，Flutter analyze/122 项 tests 与 harness 校验通过；Flutter job 用时 6m12s。macOS Web Engine Probe `40758401692` 与 Linux WPE Web Engine Probe `40758401773` 的 analyze/test/build/replay jobs 也全绿。
+- WSL 重跑 `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh --fast` 退出 0，包含 Rust workspace tests、build_core 与 Flutter 122 项默认并行测试。此前并行 Undo fixture 单次失败后，本次并行全套、隔离 fixture 与此前串行全套均通过；根因未定位。fixture 输出仍刻画预期的当前 Undo/recovery 行为，不代表这些已知产品缺口已修复。
+- CI 只验证本次已提交的关闭路径代码与独立 Web Engine probes。macOS/Linux probe 不是主应用跨平台 build；Linux runner 使用 Xvfb/software GL，不验证真实 DRM GBM/DMABUF。P00.4 的内存、服务身份/许可与对照门未解除，P01 不启动。证据：`docs/diagnostics/2026-10-29-p00/p00.4-cross-platform-validation-followup-20261029.md`。
+
 ## 今日会话（2026-10-29 第五十九轮）：Windows 原生关闭路径与真实 LSP 重跑
 
 - 前一轮 post-fix 30 秒/30 分钟 Rust+RA 运行仍有 `client exited without proper shutdown sequence`。源码追踪确认 `window_manager` 0.5.2 的 Windows `WM_CLOSE` 在默认 `preventClose=false` 时不会等待 Flutter `dispose()`；fake-server 测试没有覆盖原生窗口关闭边界。
