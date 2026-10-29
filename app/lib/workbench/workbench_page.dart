@@ -409,6 +409,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     'id': d.id,
                     if (d.path != null) 'path': d.path,
                     'fileOptions': d.fileOptions.toJson(),
+                    'savedFileOptions': d.savedFileOptions.toJson(),
                     if ((d.isUntitled || d.isDirty) &&
                         d.controller.text.length <= _kMaxJournalTextChars)
                       'text': d.controller.text,
@@ -499,23 +500,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           String savedText;
           var fileOptions = TextFileOptions.defaults;
           var savedFileOptions = TextFileOptions.defaults;
+          var diskState = DiskDocumentState.current;
+          var conflictBaselineKnown = true;
           DecodedTextFile? diskFile;
-          // 优先级：journal 文本（未保存内容）> 磁盘内容；脏标记不跨重启保留
+          Map<String, Object?>? journalOptions;
+          Map<String, Object?>? journalSavedOptions;
+          // journal 文本保留本地编辑；磁盘文本作为当前可验证的 savepoint。
           if (path != null) {
+            final optionsRaw = dr['fileOptions'];
+            journalOptions = optionsRaw is Map
+                ? Map<String, Object?>.from(optionsRaw)
+                : null;
+            final savedOptionsRaw = dr['savedFileOptions'];
+            journalSavedOptions = savedOptionsRaw is Map
+                ? Map<String, Object?>.from(savedOptionsRaw)
+                : null;
             try {
-              final optionsRaw = dr['fileOptions'];
-              final journalOptions = optionsRaw is Map
-                  ? TextFileOptions.fromJson(
-                      Map<String, Object?>.from(optionsRaw),
-                    )
-                  : null;
+              final options = journalOptions == null
+                  ? null
+                  : TextFileOptions.fromJson(journalOptions);
               diskFile = _readDiskDocument(
                 core,
                 path,
-                preferredEncoding: journalOptions?.encoding,
+                preferredEncoding: options?.encoding,
               );
-            } on AlulaException {
-              diskFile = null; // 磁盘文件没了：只能靠 journal
+            } on AlulaException catch (error) {
+              diskFile = null;
+              diskState = error.code == 'NotFound'
+                  ? DiskDocumentState.missing
+                  : DiskDocumentState.unavailable;
             }
             if (text != null) {
               content = text;
@@ -524,13 +537,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             } else {
               continue;
             }
-            savedFileOptions = diskFile?.options ?? TextFileOptions.defaults;
-            final optionsRaw = dr['fileOptions'];
-            fileOptions = optionsRaw is Map
-                ? TextFileOptions.fromJson(
-                    Map<String, Object?>.from(optionsRaw),
-                  )
-                : savedFileOptions;
+            final priorSavedFileOptions = journalSavedOptions == null
+                ? diskFile?.options ?? TextFileOptions.defaults
+                : TextFileOptions.fromJson(journalSavedOptions);
+            savedFileOptions = diskFile?.options ?? priorSavedFileOptions;
+            fileOptions = text != null && journalOptions != null
+                ? TextFileOptions.fromJson(journalOptions)
+                : diskFile?.options ?? savedFileOptions;
+            final optionsDifferFromDisk = fileOptions != diskFile?.options;
+            final savedOptionsDifferFromDisk = journalSavedOptions == null ||
+                priorSavedFileOptions != diskFile?.options;
+            if (diskFile != null &&
+                (content != diskFile.content ||
+                    optionsDifferFromDisk && savedOptionsDifferFromDisk)) {
+              diskState = DiskDocumentState.conflict;
+              conflictBaselineKnown = false;
+            }
           } else {
             if (text == null) continue; // untitled 缺 journal 文本：跳过
             content = text;
@@ -542,7 +564,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             }
             savedFileOptions = fileOptions;
           }
-          savedText = content;
+          savedText = diskFile?.content ?? content;
           final doc = core.openDoc(id, content);
           final name = path != null ? _nameOf(path) : '未命名';
           final controller = TextEditingController(text: content);
@@ -556,7 +578,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             savedText: savedText,
             fileOptions: fileOptions,
             savedFileOptions: savedFileOptions,
-            dirtyDisk: fileOptions != savedFileOptions,
+            dirtyDisk: path == null
+                ? false
+                : diskFile == null ||
+                    content != diskFile.content ||
+                    fileOptions != diskFile.options,
+            diskState: diskState,
+            conflictBaselineKnown: conflictBaselineKnown,
             undoBudget: _undoHistoryBudget,
           );
           target.docs.add(open);
@@ -565,8 +593,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         final active = (gr['active'] as num?)?.toInt();
         if (target.docs.isNotEmpty) {
-          target.activeDocId =
-              target.docs.any((d) => d.id == active) ? active : target.docs.last.id;
+          target.activeDocId = target.docs.any((d) => d.id == active)
+              ? active
+              : target.docs.last.id;
         }
       }
       final focused = data['focused'];
@@ -1009,6 +1038,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.doc.close();
     doc.undoStack.dispose();
     doc.controller.dispose();
+    doc.editorScrollController.dispose();
     _editorFocusNodes.remove(id)?.dispose();
     setState(() {
       _syntaxByDoc = nextSyntax;
@@ -1229,9 +1259,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _saveAsActive() async {
     final active = _active;
     if (active == null) return;
-    final path = await _showSaveAsDialog(active);
+    await _saveAsDoc(active);
+  }
+
+  Future<void> _saveAsDoc(OpenDoc doc) async {
+    final path = await _showSaveAsDialog(doc);
     if (path == null) return;
-    await _saveDocToPath(active, path);
+    await _saveDocToPath(doc, path);
   }
 
   Future<void> _saveDocToPath(
@@ -1244,6 +1278,53 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final oldPath = doc.path;
     final pathChanged = oldPath == null ||
         _canonicalPath(oldPath) != _canonicalPath(targetPath);
+
+    if (!pathChanged && doc.diskState == DiskDocumentState.missing) {
+      setState(() => _statusDetail = '${doc.name} 已不在原路径；缓冲区仍保留，请使用“另存为”保存');
+      return;
+    }
+    if (!pathChanged && doc.diskState == DiskDocumentState.unavailable) {
+      setState(() => _statusDetail = '无法核对 ${doc.name} 的磁盘版本；请重试读取或使用“另存为”');
+      return;
+    }
+    if (!pathChanged && doc.diskState == DiskDocumentState.conflict) {
+      final action = await showDialog<_ConflictSaveAction>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          key: const ValueKey('external-conflict-dialog'),
+          title: const Text('磁盘版本已变化'),
+          content: Text(
+            '“${doc.name}”在磁盘上的内容与本地缓冲区不同。选择覆盖磁盘、另存本地内容，或返回继续编辑。',
+          ),
+          actions: [
+            TextButton(
+              key: const ValueKey('external-conflict-cancel'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.cancel),
+              child: const Text('继续编辑'),
+            ),
+            TextButton(
+              key: const ValueKey('external-conflict-save-as'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.saveAs),
+              child: const Text('另存为…'),
+            ),
+            FilledButton(
+              key: const ValueKey('external-conflict-confirm-overwrite'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.overwrite),
+              child: const Text('覆盖磁盘文件'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (action == _ConflictSaveAction.saveAs) {
+        await _saveAsDoc(doc);
+        return;
+      }
+      if (action != _ConflictSaveAction.overwrite) return;
+    }
 
     if (pathChanged &&
         _allDocs.any((other) =>
@@ -1278,7 +1359,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     try {
-      doc.doc.saveFile(targetPath);
+      doc.doc.saveFile(targetPath, options: targetOptions);
       var lspWarning = false;
       if (pathChanged) {
         if (doc.lspAttached && _lspReady) {
@@ -1307,6 +1388,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       doc.fileOptions = targetOptions;
       doc.savedFileOptions = targetOptions;
       doc.savedText = doc.controller.text;
+      doc.diskState = DiskDocumentState.current;
+      doc.conflictBaselineKnown = true;
       _updateDirty(doc);
       _syncCommandContext();
       setState(() {
@@ -1324,6 +1407,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         _state = WbSyncState.error;
         _statusDetail = '保存失败：${e.code} ${e.detail}';
+        if (e.code == 'ReadOnlyFile') {
+          doc.diskState = DiskDocumentState.readOnly;
+        }
       });
     }
   }
@@ -1375,6 +1461,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       doc.syncText = diskText;
       doc.fileOptions = diskFile.options;
       doc.savedFileOptions = diskFile.options;
+      doc.diskState = DiskDocumentState.current;
+      doc.conflictBaselineKnown = true;
       doc.undoRedoBusy = true;
       try {
         doc.controller.value = TextEditingValue(
@@ -1396,6 +1484,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         _state = WbSyncState.error;
         _statusDetail = '还原失败：${e.code} ${e.detail}';
+        if (e.code == 'NotFound') {
+          doc.diskState = DiskDocumentState.missing;
+        }
       });
     }
   }
@@ -1628,6 +1719,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.syncText = disk.content;
     doc.fileOptions = disk.options;
     doc.savedFileOptions = disk.options;
+    doc.diskState = DiskDocumentState.current;
+    doc.conflictBaselineKnown = true;
     _updateDirty(doc);
     doc.undoStack.clear();
     doc.lastEditAt = null;
@@ -2120,26 +2213,73 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             d.path!,
             preferredEncoding: d.savedFileOptions.encoding,
           );
-        } on AlulaException {
-          continue; // 文件被外部删除：V1 不处理（保留内存缓冲）
-        }
-        if (d.dirtyDisk) {
-          if (disk.content != d.savedText ||
-              disk.options != d.savedFileOptions) {
-            if (mounted) {
-              setState(
-                  () => _statusDetail = '注意：${d.name} 在磁盘上被外部修改（本地有未保存编辑）');
+        } on AlulaException catch (error) {
+          final nextState = error.code == 'NotFound'
+              ? DiskDocumentState.missing
+              : DiskDocumentState.unavailable;
+          if (d.diskState != nextState) {
+            d.diskState = nextState;
+            if (error.code == 'NotFound') {
+              _statusDetail = '${d.name} 已从磁盘删除或移动；本地缓冲区仍可编辑';
+            } else {
+              _statusDetail = '读取 ${d.name} 的磁盘版本失败：${error.code}';
             }
           }
+          continue;
+        }
+        final diskMatchesBuffer =
+            disk.content == d.controller.text && disk.options == d.fileOptions;
+        if (diskMatchesBuffer) {
+          d.savedText = disk.content;
+          d.savedFileOptions = disk.options;
+          d.dirtyDisk = false;
+          if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
+            d.conflictBaselineKnown = true;
+          }
+          continue;
+        }
+        if (d.dirtyDisk) {
+          final diskMatchesSavepoint =
+              disk.content == d.savedText && disk.options == d.savedFileOptions;
+          if (d.diskState == DiskDocumentState.conflict &&
+              !d.conflictBaselineKnown) {
+            // 旧 session journal 没有原文快照；直到两侧收敛或用户显式处理，
+            // 保持冲突状态，不能因为重新读取同一磁盘版本而解除提示。
+            continue;
+          }
+          if (!diskMatchesSavepoint) {
+            d.diskState = DiskDocumentState.conflict;
+            d.conflictBaselineKnown = true;
+            _statusDetail = '注意：${d.name} 在磁盘上被外部修改；本地编辑已保留';
+          } else if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
+            d.conflictBaselineKnown = true;
+          }
+        } else if (d.diskState == DiskDocumentState.conflict) {
+          // 即使本地通过 undo 回到旧 savepoint，已发现的外部冲突也要显式处理；
+          // watcher 的后续事件不能把任一侧静默替换掉。
+          continue;
         } else if (disk.content != d.controller.text ||
             disk.options != d.fileOptions) {
-          // 干净文档自动重载时不产生撤销历史。
+          // 干净文档自动重载时保留光标、选区与每文档滚动位置，不产生撤销历史。
+          final oldSelection = d.controller.selection;
+          int clampOffset(int offset) => offset.clamp(0, disk.content.length);
+          final selection = TextSelection(
+            baseOffset: clampOffset(oldSelection.baseOffset),
+            extentOffset: clampOffset(oldSelection.extentOffset),
+            affinity: oldSelection.affinity,
+            isDirectional: oldSelection.isDirectional,
+          );
+          final oldScrollOffset = d.editorScrollController.hasClients
+              ? d.editorScrollController.offset
+              : null;
           d.undoRedoBusy = true;
           try {
             if (disk.content != d.controller.text) {
               d.controller.value = TextEditingValue(
                 text: disk.content,
-                selection: const TextSelection.collapsed(offset: 0),
+                selection: selection,
               );
             }
             d.savedText = disk.content;
@@ -2151,12 +2291,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           } finally {
             d.undoRedoBusy = false;
           }
-          if (mounted) {
-            setState(() => _statusDetail = '已自动重载外部修改的 ${d.name}');
+          if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
           }
+          d.conflictBaselineKnown = true;
+          _statusDetail = '已自动重载外部修改的 ${d.name}';
+          if (oldScrollOffset != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted || !d.editorScrollController.hasClients) return;
+              final position = d.editorScrollController.position;
+              d.editorScrollController.jumpTo(
+                oldScrollOffset
+                    .clamp(position.minScrollExtent, position.maxScrollExtent)
+                    .toDouble(),
+              );
+            });
+          }
+        } else if (d.diskState == DiskDocumentState.missing ||
+            d.diskState == DiskDocumentState.unavailable) {
+          d.diskState = DiskDocumentState.current;
+          d.conflictBaselineKnown = true;
         }
       }
     }
+    if (mounted) setState(() {});
     _syncCommandContext();
     _scheduleStateSave();
   }
@@ -2290,6 +2448,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       d.doc.close();
       d.undoStack.dispose();
       d.controller.dispose();
+      d.editorScrollController.dispose();
     }
     for (final n in _editorFocusNodes.values) {
       n.dispose();
@@ -3069,8 +3228,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final tab = InkWell(
       onTap: () {
         setState(() {
-        g.activeDocId = d.id;
-        _focusedRegion = g.region;
+          g.activeDocId = d.id;
+          _focusedRegion = g.region;
         });
         _syncCommandContext();
       },
@@ -3091,11 +3250,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           children: [
             Text('${d.name}${d.isDirty ? " •" : ""}',
                 style: const TextStyle(fontSize: 12)),
+            if (d.diskState != DiskDocumentState.current) ...[
+              const SizedBox(width: 4),
+              Icon(
+                switch (d.diskState) {
+                  DiskDocumentState.current => Icons.check,
+                  DiskDocumentState.conflict => Icons.sync_problem_outlined,
+                  DiskDocumentState.missing => Icons.file_present_outlined,
+                  DiskDocumentState.readOnly => Icons.lock_outline,
+                  DiskDocumentState.unavailable => Icons.warning_amber_outlined,
+                },
+                key: ValueKey('tab-disk-state-${d.id}'),
+                size: 13,
+                color: d.diskState == DiskDocumentState.conflict
+                    ? Colors.orangeAccent
+                    : Colors.blueGrey.shade300,
+              ),
+            ],
             const SizedBox(width: 6),
             InkWell(
               onTap: () => _closeDoc(d.id),
-              child: Icon(Icons.close,
-                  size: 12, color: Colors.grey.shade500),
+              child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -3142,6 +3317,114 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  Widget _buildDiskStateBanner(OpenDoc doc) {
+    final (icon, message, color) = switch (doc.diskState) {
+      DiskDocumentState.current => (
+          Icons.check_circle_outline,
+          '',
+          Colors.transparent
+        ),
+      DiskDocumentState.conflict => (
+          Icons.sync_problem_outlined,
+          '磁盘上的 ${doc.name} 已变化，本地缓冲区仍保留。',
+          Colors.orange.shade900
+        ),
+      DiskDocumentState.missing => (
+          Icons.file_present_outlined,
+          '${doc.name} 已从磁盘删除或移动；缓冲区仍可编辑。',
+          Colors.blueGrey.shade800
+        ),
+      DiskDocumentState.readOnly => (
+          Icons.lock_outline,
+          '${doc.name} 是只读文件，原文件未被覆盖。',
+          Colors.blueGrey.shade800
+        ),
+      DiskDocumentState.unavailable => (
+          Icons.warning_amber_outlined,
+          '无法读取 ${doc.name} 的当前磁盘版本；本地缓冲区已保留。',
+          Colors.red.shade900
+        ),
+    };
+    final actions = switch (doc.diskState) {
+      DiskDocumentState.current => const <Widget>[],
+      DiskDocumentState.conflict => <Widget>[
+          TextButton(
+            key: const ValueKey('external-reload'),
+            onPressed: _revertActive,
+            child: const Text('从磁盘重载'),
+          ),
+          TextButton(
+            key: const ValueKey('external-overwrite'),
+            onPressed: () => _saveDocToPath(doc, doc.path!),
+            child: const Text('覆盖磁盘…'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.missing => <Widget>[
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.readOnly => <Widget>[
+          TextButton(
+            key: const ValueKey('external-retry-save'),
+            onPressed: () => _saveDocToPath(doc, doc.path!),
+            child: const Text('重试保存'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.unavailable => <Widget>[
+          TextButton(
+            key: const ValueKey('external-retry-read'),
+            onPressed: _checkExternalChanges,
+            child: const Text('重试读取'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+    };
+    return Container(
+      key: ValueKey('disk-state-${doc.id}'),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.32),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: Colors.white70),
+              const SizedBox(width: 6),
+              Expanded(
+                child:
+                    Text(message, maxLines: 2, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          ),
+          if (actions.isNotEmpty)
+            Wrap(spacing: 4, runSpacing: 0, children: actions),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEditor(EditorGroup g) {
     final active = g.active;
     if (active == null) {
@@ -3152,29 +3435,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Stack(
+      child: Column(
         children: [
-          TextField(
-            focusNode: _focusNodeFor(g, active),
-            controller: active.controller,
-            maxLines: null,
-            expands: true,
-            onTap: () {
-              // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
-              if (_focusedRegion != g.region) {
-                setState(() => _focusedRegion = g.region);
-                  _syncCommandContext();
-              }
-            },
-            style: const TextStyle(
-                fontFamily: 'monospace', fontSize: 14, height: 1.5),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.all(12),
+          if (active.diskState != DiskDocumentState.current)
+            _buildDiskStateBanner(active),
+          Expanded(
+            child: Stack(
+              children: [
+                TextField(
+                  focusNode: _focusNodeFor(g, active),
+                  controller: active.controller,
+                  scrollController: active.editorScrollController,
+                  maxLines: null,
+                  expands: true,
+                  onTap: () {
+                    // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
+                    if (_focusedRegion != g.region) {
+                      setState(() => _focusedRegion = g.region);
+                      _syncCommandContext();
+                    }
+                  },
+                  style: const TextStyle(
+                      fontFamily: 'monospace', fontSize: 14, height: 1.5),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                ),
+                if (_findVisible)
+                  Positioned(top: 0, right: 12, child: _buildFindBar()),
+              ],
             ),
           ),
-          if (_findVisible)
-            Positioned(top: 0, right: 12, child: _buildFindBar()),
         ],
       ),
     );
@@ -3514,8 +3806,11 @@ class OpenDoc {
     this.fileOptions = TextFileOptions.defaults,
     this.savedFileOptions = TextFileOptions.defaults,
     this.dirtyDisk = false,
+    this.diskState = DiskDocumentState.current,
+    this.conflictBaselineKnown = true,
     required UndoHistoryBudget undoBudget,
-  })  : lspAttached = false,
+  })  : editorScrollController = ScrollController(),
+        lspAttached = false,
         undoStack = UndoStack(budget: undoBudget),
         syncText = savedText;
 
@@ -3525,6 +3820,7 @@ class OpenDoc {
   String name;
   final AlulaDoc doc;
   final TextEditingController controller;
+  final ScrollController editorScrollController;
   final UndoStack undoStack;
   DateTime? lastEditAt;
   bool undoRedoBusy = false;
@@ -3545,9 +3841,19 @@ class OpenDoc {
   /// 当前文本与磁盘 savepoint 不一致；undo 回到 savepoint 时会清除。
   bool dirtyDisk = false;
 
+  /// 当前路径相对文档 savepoint 的外部状态。
+  DiskDocumentState diskState;
+
+  /// 恢复旧 journal 时缺少原磁盘文本基线；冲突在两侧收敛或显式处理前保持。
+  bool conflictBaselineKnown;
+
   bool get isDirty => dirtyDisk;
   bool get isUntitled => path == null;
 }
+
+enum DiskDocumentState { current, conflict, missing, readOnly, unavailable }
+
+enum _ConflictSaveAction { cancel, saveAs, overwrite }
 
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {

@@ -28,6 +28,41 @@ Future<void> pressChord(
   await tester.pump();
 }
 
+Future<void> setFileReadOnlyForTest(File file, bool value) async {
+  final result = Platform.isWindows
+      ? await Process.run('attrib', [value ? '+R' : '-R', file.path])
+      : await Process.run('chmod', [value ? 'a-w' : 'u+w', file.path]);
+  if (result.exitCode != 0) {
+    throw StateError('设置只读属性失败：${result.stderr}');
+  }
+}
+
+Directory createP025Workspace(Directory temp, {String content = 'seed\n'}) {
+  final workspace = Directory('${temp.path}/p02.5-workspace')..createSync();
+  File('${workspace.path}/note.txt').writeAsStringSync(content);
+  return workspace;
+}
+
+Future<void> openP025Note(
+  WidgetTester tester,
+  Directory workspace,
+  LayoutStore layout,
+  SessionStore session,
+  KeybindingsStore keybindings,
+) async {
+  await tester.pumpWidget(AlulaApp(
+    autoFolder: workspace.path,
+    layoutStore: layout,
+    sessionStore: session,
+    keybindingsStore: keybindings,
+  ));
+  await Future<void>.delayed(const Duration(milliseconds: 700));
+  await tester.pump();
+  await tester.tap(find.text('note.txt').first);
+  await Future<void>.delayed(const Duration(milliseconds: 300));
+  await tester.pump();
+}
+
 /// 仓库相对的 fixture 工程（CI 是 Linux，不能写死 Windows 绝对路径）。
 // 换行符（字符串拼接用，避免脚本转义问题）
 const String kNL = '\n';
@@ -226,10 +261,12 @@ void main() {
     ));
     await tester.pump(const Duration(milliseconds: 600));
 
-    // 标签恢复：树 + 标签 + 面包屑 三处
-    expect(find.text('Cargo.toml'), findsNWidgets(3),
-        reason: '重启后 Cargo.toml 应自动恢复打开');
-    // 未保存内容恢复（脏标记不跨重启保留，内容优先）
+    // 标签恢复：树与面包屑使用原文件名，未保存标签带 dirty 标记。
+    expect(find.text('Cargo.toml'), findsNWidgets(2),
+        reason: '重启后 Cargo.toml 应恢复在文件树和面包屑中');
+    expect(find.text('Cargo.toml •'), findsOneWidget,
+        reason: 'journal 恢复的本地编辑继续标记为未保存');
+    // 未保存编辑内容恢复，并与磁盘版本保持可区分。
     final editor = tester.widget<TextField>(find.byType(TextField));
     expect(editor.controller!.text, contains('// dirty edit'),
         reason: '未保存编辑内容应从 journal 恢复');
@@ -547,6 +584,206 @@ void main() {
               .text,
           'v2 external$kNL',
           reason: '干净文档应在磁盘外部修改后自动重载');
+    });
+  });
+
+  testWidgets('P02.5 干净文档外部重载保留光标、选区和滚动位置', (tester) async {
+    final workspace = createP025Workspace(
+      tmp,
+      content: List.generate(120, (i) => 'line $i seed').join('\n'),
+    );
+    final file = File('${workspace.path}/note.txt');
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      final editor = find.byType(TextField).first;
+      final field = tester.widget<TextField>(editor);
+      final controller = field.controller!;
+      final scroll = field.scrollController!;
+      controller.selection =
+          const TextSelection(baseOffset: 12, extentOffset: 20);
+      await tester.pump();
+      scroll.jumpTo(scroll.position.maxScrollExtent);
+      await tester.pump();
+      final priorScroll = scroll.offset;
+      expect(priorScroll, greaterThan(0));
+
+      final replacement =
+          List.generate(120, (i) => 'external $i changed').join('\n');
+      file.writeAsStringSync(replacement);
+      await Future<void>.delayed(const Duration(milliseconds: 1900));
+      await tester.pump();
+
+      expect(controller.text, replacement);
+      expect(controller.selection.baseOffset, 12);
+      expect(controller.selection.extentOffset, 20);
+      expect(scroll.offset, closeTo(priorScroll, 1));
+      expect(find.byKey(const ValueKey('disk-state-2')), findsNothing);
+    });
+  });
+
+  testWidgets('P02.5 脏文档外部冲突先保留两侧，确认后才覆盖磁盘', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    final file = File('${workspace.path}/note.txt');
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      final editor = find.byType(TextField).first;
+      const localText = 'local unsaved version\n';
+      const externalText = 'external disk version\n';
+      await tester.enterText(editor, localText);
+      await tester.pump(const Duration(milliseconds: 100));
+      file.writeAsStringSync(externalText);
+      await Future<void>.delayed(const Duration(milliseconds: 1900));
+      await tester.pump();
+
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+      expect(file.readAsStringSync(), externalText);
+      expect(find.byKey(const ValueKey('disk-state-2')), findsOneWidget);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      expect(find.byKey(const ValueKey('external-conflict-dialog')),
+          findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('external-conflict-cancel')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+      expect(file.readAsStringSync(), externalText, reason: '取消冲突处理不改写任一侧');
+
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.tap(
+          find.byKey(const ValueKey('external-conflict-confirm-overwrite')));
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(file.readAsStringSync(), localText);
+      expect(find.byKey(const ValueKey('disk-state-2')), findsNothing);
+    });
+  });
+
+  testWidgets('P02.5 恢复的未保存文本与当前磁盘不同时要求显式处理', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    final file = File('${workspace.path}/note.txt');
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      const localText = 'recovered local version\n';
+      const externalText = 'changed while the editor was closed\n';
+      await tester.enterText(find.byType(TextField).first, localText);
+      await Future<void>.delayed(const Duration(milliseconds: 650));
+      await tester.pump();
+      file.writeAsStringSync(externalText);
+      await Future<void>.delayed(const Duration(milliseconds: 1900));
+      await tester.pump();
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      await tester.pump();
+
+      final editor = find.byType(TextField).first;
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+      expect(file.readAsStringSync(), externalText);
+      expect(find.byKey(const ValueKey('disk-state-2')), findsOneWidget);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      expect(find.byKey(const ValueKey('external-conflict-dialog')),
+          findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('external-conflict-cancel')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+      expect(file.readAsStringSync(), externalText);
+    });
+  });
+
+  testWidgets('P02.5 外部删除后继续编辑并可另存为', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    final file = File('${workspace.path}/note.txt');
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      file.deleteSync();
+      await Future<void>.delayed(const Duration(milliseconds: 1900));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('disk-state-2')), findsOneWidget);
+
+      final editor = find.byType(TextField).first;
+      const localText = 'orphan buffer remains editable\n';
+      await tester.enterText(editor, localText);
+      await tester.pump(const Duration(milliseconds: 150));
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump();
+      expect(file.existsSync(), isFalse, reason: '普通保存不会静默重建已删除的路径');
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+
+      await tester.tap(find.byKey(const ValueKey('external-save-as')));
+      await tester.pump(const Duration(milliseconds: 100));
+      final target = File('${workspace.path}/recovered.txt');
+      await tester.enterText(
+          find.byKey(const ValueKey('save-as-path')), target.path);
+      await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(target.readAsStringSync(), localText);
+      expect(file.existsSync(), isFalse);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('tab-2')),
+          matching: find.text('recovered.txt'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('disk-state-2')), findsNothing);
+    });
+  });
+
+  testWidgets('P02.5 外部重命名后旧标签保留缓冲区', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    final file = File('${workspace.path}/note.txt');
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      final moved = File('${workspace.path}/moved.txt');
+      file.renameSync(moved.path);
+      await Future<void>.delayed(const Duration(milliseconds: 1900));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('disk-state-2')), findsOneWidget);
+      expect(
+          tester
+              .widget<TextField>(find.byType(TextField).first)
+              .controller!
+              .text,
+          'seed\n');
+      expect(file.existsSync(), isFalse);
+      expect(moved.readAsStringSync(), 'seed\n');
+    });
+  });
+
+  testWidgets('P02.5 只读保存失败保留磁盘字节并提供另存', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    final file = File('${workspace.path}/note.txt');
+    addTearDown(() async {
+      if (file.existsSync()) await setFileReadOnlyForTest(file, false);
+    });
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await setFileReadOnlyForTest(file, true);
+      final editor = find.byType(TextField).first;
+      const localText = 'edited in memory\n';
+      await tester.enterText(editor, localText);
+      await tester.pump(const Duration(milliseconds: 100));
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 250));
+
+      expect(file.readAsStringSync(), 'seed\n');
+      expect(tester.widget<TextField>(editor).controller!.text, localText);
+      expect(find.byKey(const ValueKey('disk-state-2')), findsOneWidget);
+      expect(find.textContaining('只读文件'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('external-save-as')));
+      await tester.pump(const Duration(milliseconds: 100));
+      final target = File('${workspace.path}/writable-copy.txt');
+      await tester.enterText(
+          find.byKey(const ValueKey('save-as-path')), target.path);
+      await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(target.readAsStringSync(), localText);
+      expect(file.readAsStringSync(), 'seed\n');
     });
   });
 

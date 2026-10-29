@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P02.5 外部变更/冲突/只读/孤儿文档）
+
+- P02.5 已完成：ABI v10 显式返回只读目标错误；干净外部重载保留光标、选区与滚动位置；本地脏内容与磁盘更新、journal 恢复内容与当前磁盘均保留两侧并要求用户显式处理。删除/重命名后的旧文档保持可编辑，普通保存不会静默重建原路径，另存为可恢复内容。
+- 六个 Flutter 行为用例覆盖视图保留、磁盘冲突取消/覆盖、journal 恢复冲突、删除后继续编辑/另存、重命名孤儿状态和只读保存原字节保护；Rust 测试覆盖只读目标在原子替换前拒绝。
+- 验证：`cargo fmt --check`、`cargo test --workspace`、`cargo clippy --workspace --all-targets -- -D warnings`、`bash scripts/build_core.sh`、`flutter analyze` 与 `bash init.sh` 全部通过；完整 Flutter suite 为 147 项。完整行为、图谱影响与限制见 `docs/diagnostics/2026-10-30-p02/p02.5-external-changes-conflicts.md`。
+- P02 / feat-024 继续 in-progress；下一唯一活动切片 P02.6 崩溃 journal 与大文本恢复。500 MiB 性能优化目标继续留到 P14。
+
 ### 最新进展（2026-10-30，P02.4 编码/BOM/EOL）
 
 - P02.4 已完成并通过完整门禁：Rust/Dart FFI ABI 升至 v9，支持 UTF-8、UTF-16LE/BE、GBK 与 LF/CRLF；保存/重开保留编码、BOM、EOL，编辑缓冲区统一 LF；GBK 不可表示字符会在原子替换前报错。无 BOM UTF-16 可手动选择编码打开，并能在会话恢复、Revert、外部检查中继续按 UTF-16 解码。

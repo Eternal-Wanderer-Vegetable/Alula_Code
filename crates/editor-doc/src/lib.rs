@@ -265,6 +265,7 @@ pub fn encode_file(text: &str, options: TextFileOptions) -> Result<Vec<u8>, Enco
 #[derive(Debug)]
 pub enum SaveError {
     NoParentDir(String),
+    ReadOnlyTarget(String),
     CreateTempFailed(String, std::io::Error),
     WriteFailed(String, std::io::Error),
     SyncFailed(String, std::io::Error),
@@ -277,6 +278,7 @@ impl std::fmt::Display for SaveError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             SaveError::NoParentDir(p) => write!(f, "目标没有父目录: {p}"),
+            SaveError::ReadOnlyTarget(p) => write!(f, "目标文件是只读文件: {p}"),
             SaveError::CreateTempFailed(p, e) => write!(f, "创建临时文件失败 ({p}): {e}"),
             SaveError::WriteFailed(p, e) => write!(f, "写入失败 ({p}): {e}"),
             SaveError::SyncFailed(p, e) => write!(f, "fsync 失败 ({p}): {e}"),
@@ -324,6 +326,12 @@ pub fn atomic_save_with_options(
 
 fn atomic_save_bytes(path: &str, bytes: &[u8]) -> Result<(), SaveError> {
     let target = Path::new(path);
+    if target
+        .metadata()
+        .is_ok_and(|metadata| metadata.permissions().readonly())
+    {
+        return Err(SaveError::ReadOnlyTarget(path.to_string()));
+    }
     let parent = match target.parent().filter(|p| !p.as_os_str().is_empty()) {
         Some(p) => p.to_path_buf(),
         None => return Err(SaveError::NoParentDir(path.to_string())),
@@ -497,5 +505,46 @@ mod tests {
             atomic_save("just-a-name.txt", "x"),
             Err(SaveError::NoParentDir(_))
         ));
+    }
+
+    #[test]
+    fn read_only_target_is_rejected_before_replacement() {
+        let td = tmpdir("doc-readonly");
+        let target = td.path().join("readonly.txt");
+        std::fs::write(&target, b"disk version").unwrap();
+
+        #[cfg(unix)]
+        let original_mode = {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::metadata(&target).unwrap().permissions().mode()
+        };
+        let mut permissions = std::fs::metadata(&target).unwrap().permissions();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            permissions.set_mode(original_mode & !0o222);
+        }
+        #[cfg(windows)]
+        permissions.set_readonly(true);
+        std::fs::set_permissions(&target, permissions).unwrap();
+
+        assert!(matches!(
+            atomic_save(target.to_str().unwrap(), "replacement"),
+            Err(SaveError::ReadOnlyTarget(_))
+        ));
+        assert_eq!(std::fs::read(&target).unwrap(), b"disk version");
+
+        #[cfg(unix)]
+        let permissions = {
+            use std::os::unix::fs::PermissionsExt;
+            let mut permissions = std::fs::metadata(&target).unwrap().permissions();
+            permissions.set_mode(original_mode);
+            permissions
+        };
+        #[cfg(windows)]
+        let mut permissions = std::fs::metadata(&target).unwrap().permissions();
+        #[cfg(windows)]
+        permissions.set_readonly(false);
+        std::fs::set_permissions(&target, permissions).unwrap();
     }
 }

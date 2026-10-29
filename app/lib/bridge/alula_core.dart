@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 9;
+const int expectedAbiVersion = 10;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 

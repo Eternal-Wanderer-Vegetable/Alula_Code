@@ -28,7 +28,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 9;
+pub const ALULA_ABI_VERSION: u32 = 10;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -837,6 +837,9 @@ pub unsafe extern "C" fn alula_doc_save_file(
         }
         match editor_doc::atomic_save(&path, &text) {
             Ok(()) => to_c_ptr(json!({ "ok": true, "version": version, "path": path }).to_string()),
+            Err(editor_doc::SaveError::ReadOnlyTarget(path)) => {
+                err_json("ReadOnlyFile", json!({ "path": path }))
+            }
             Err(e) => err_json("SaveFailed", json!(e.to_string())),
         }
     }))
@@ -897,6 +900,9 @@ pub unsafe extern "C" fn alula_doc_save_file_with_options(
             Ok(()) => to_c_ptr(json!({ "ok": true, "version": version, "path": path }).to_string()),
             Err(editor_doc::SaveError::UnrepresentableCharacters(encoding)) => {
                 err_json("UnrepresentableCharacter", json!({ "encoding": encoding }))
+            }
+            Err(editor_doc::SaveError::ReadOnlyTarget(path)) => {
+                err_json("ReadOnlyFile", json!({ "path": path }))
             }
             Err(e) => err_json("SaveFailed", json!(e.to_string())),
         }
