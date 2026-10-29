@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第七十四轮：LRU 容量长测无稳定收益）
+> Last Updated：2026-10-29（第七十五轮：固定版 Code-OSS idle 启动未进入 Workbench）
 
 指标口径修正（2026-10-29）：同服务 VS Code idle 稳定值依 `tools/mem-probe::summarize` 取时间顺序最后 240 个样本，再取上中位数。四轮稳定值为 1267.18、1324.33、1298.38、1351.11 MiB，中位数 1311.36 MiB；新增第四轮尾段起始 t=436.187 s。原始采样均保留。
 
@@ -10,7 +10,7 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2、P00.3 已完成，P00.4继续进行。
 
 ## Current Objective
-最近的 LRU 容量筛选已结束：capacity 16 的短测显示较低稳定值，但 30 分钟/150 次保存长测为 659.96 MiB，比既有默认配置 run3 的 657.93 MiB 略高。没有修改产品默认设置；证据见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-lru-capacity-screen-20261029.md`。继续处理 P00.4 可在当前环境完成的证据项；外部 DRM 主机与 Microsoft 服务身份仍缺失，P01 不能启动。
+最近的 LRU 容量筛选已结束：capacity 16 的短测显示较低稳定值，但 30 分钟/150 次保存长测为 659.96 MiB，比既有默认配置 run3 的 657.93 MiB 略高。没有修改产品默认设置；证据见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-lru-capacity-screen-20261029.md`。随后尝试固定 Code-OSS 1.145.0-dev + 同版 rust-analyzer idle 对照，但启动未到 Workbench renderer，没有有效内存样本；失败过程和 fail-fast runner 见 `p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}` 与 `p00.4-code-oss-rust-lsp-idle-10min.ps1`。继续处理 P00.4 可在当前环境完成的证据项；外部 DRM 主机与 Microsoft 服务身份仍缺失，P01 不能启动。
 
 WSL 已恢复：`ip route show` 与 Windows PowerShell interop 均可运行。GitNexus 已重建并显示 up-to-date；索引仍报告 entry-point/callee/walk budget 截断。启动 `bash init.sh --fast` 通过 Rust workspace tests、`build_core` 与 Flutter 122 项测试。
 
@@ -236,7 +236,7 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 - P00.4 诊断提交 `07515f3` 已推送到 `codex/vscode-parity-p00`。GitHub CI run `40806485257`、Linux WPE Web Engine Probe `40806485215`、macOS Web Engine Probe `40806485341` 均成功。CI 不代表原生 DRM/WPE GBM 或完整产品内存门通过。
 - P00.4/feat-022 继续 blocked/in-progress；工作区保留既有 app/harness 修改，未混入 `07515f3`。
 
-## Verification Update（第七十轮：固定版 Code-OSS 同服务 idle 启动诊断）
+## Verification Update（第七十五轮：固定版 Code-OSS 同服务 idle 启动诊断）
 
 - 按用户授权尝试 pinned Code-OSS 1.145.0-dev + rust-analyzer 1.97.1 的隔离 idle 对照。五次启动尝试均未形成有效样本；最后两次经上游 `scripts/code.bat` 启动，进程树没有 Workbench renderer，故没有开始600点内存采样。焦点守卫在运行期间保留，失败 runner 清理了隔离进程/profile/extensions/shared-data/fixture。未走 Marketplace 或账户登录路径。
 - 记录：`docs/diagnostics/2026-10-28-p00/p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}`；可重放 fast-fail runner：`p00.4-code-oss-rust-lsp-idle-10min.ps1`。已完成的 Microsoft VS Code 1.142.0 同服务 idle 样本仍有效但版本不匹配；Alula 30分钟编辑重跑有效且稳定内存高于预算。当前无产品代码改动。

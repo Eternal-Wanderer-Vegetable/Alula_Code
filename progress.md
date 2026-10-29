@@ -679,7 +679,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 这三次 WSLg 观察的 scope PSS 峰值中位数 889.30 MiB，高于 500 MiB Rust+RA 目标；它们不覆盖真实 DRM/WPE GBM/DMABUF、完整 docs/04 多场景压力矩阵或同版本编辑负载。P00.4/feat-022 仍 blocked/in-progress，P01 不启动。本轮未改产品源代码。
 - 阶段提交 `07515f3` 已推送至 `codex/vscode-parity-p00`；GitHub CI `40806485257`、Linux WPE `40806485215`、macOS Web Engine `40806485341` 均成功。它们不替代原生 DRM/GBM 与完整 docs/04 产品矩阵。
 
-## 今日会话（2026-10-29 第七十轮）：固定版 Code-OSS 同服务 idle 启动诊断
+## 今日会话（2026-10-29 第七十五轮）：固定版 Code-OSS 同服务 idle 启动诊断
 
 - 用户授权的版本匹配对照尝试未进入 Workbench：固定 Code-OSS 1.145.0-dev / Electron 43.8.3，配置同一 rust-analyzer 1.97.1 与隔离 profile、扩展、shared-data、fixture；脚本先前的直接启动和随后上游 `scripts/code.bat` 启动均未观察到 renderer/RA，没有产生有效内存样本。最后一轮在30秒 renderer 快速门失败并清理；确认没有隔离进程或临时目录遗留，也没有 Marketplace/账户登录。
 - 前面一次直接启动在4个 Code-OSS 进程下记录至240/600点后中止，另一次正确批处理入口等待180秒未见 RA；这些均无效，不与 Alula 内存比较。完整尝试、限制和日志索引见 `docs/diagnostics/2026-10-28-p00/p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}`，可重放的 fail-fast runner 为同目录 `p00.4-code-oss-rust-lsp-idle-10min.ps1`。
