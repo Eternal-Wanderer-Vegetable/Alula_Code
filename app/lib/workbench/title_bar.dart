@@ -10,24 +10,30 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'commands.dart';
+
 /// 标题栏菜单项。
 class TitleMenuItem {
-  const TitleMenuItem(this.label, this.onSelected);
+  const TitleMenuItem(this.label, {required this.commandId, this.arguments});
 
   final String label;
-  final VoidCallback onSelected;
+  final String commandId;
+  final Object? arguments;
 }
 
 class AlulaTitleBar extends StatefulWidget {
   const AlulaTitleBar({
     super.key,
     required this.menus,
+    required this.commands,
     this.windowControls = false,
     this.onCloseRequested,
   });
 
   /// 菜单组（标题 → 菜单项列表）。
   final List<(String, List<TitleMenuItem>)> menus;
+
+  final CommandService commands;
 
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
   final bool windowControls;
@@ -95,7 +101,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         const SizedBox(width: 10),
         // 菜单按钮要在拖拽区之上，点击不被拖拽手势吃掉
         for (final (title, items) in widget.menus)
-          _MenuButton(title: title, items: items),
+          _MenuButton(title: title, items: items, commands: widget.commands),
         const Spacer(),
         if (widget.windowControls) ..._buildWindowButtons(),
       ],
@@ -133,9 +139,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         onPressed: windowManager.minimize,
       ),
       _WindowButton(
-        icon: _maximized
-            ? Icons.filter_none
-            : Icons.crop_square_outlined,
+        icon: _maximized ? Icons.filter_none : Icons.crop_square_outlined,
         tooltip: _maximized ? '向下还原' : '最大化',
         onPressed: () => windowManager.isMaximized().then((v) {
           v ? windowManager.unmaximize() : windowManager.maximize();
@@ -183,33 +187,43 @@ class _WindowButton extends StatelessWidget {
 }
 
 class _MenuButton extends StatelessWidget {
-  const _MenuButton({required this.title, required this.items});
+  const _MenuButton({
+    required this.title,
+    required this.items,
+    required this.commands,
+  });
 
   final String title;
   final List<TitleMenuItem> items;
+  final CommandService commands;
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      tooltip: title,
-      position: PopupMenuPosition.under,
-      color: const Color(0xFF252932),
-      onSelected: (label) {
-        for (final item in items) {
-          if (item.label == label) item.onSelected();
-        }
-      },
-      itemBuilder: (context) => [
-        for (final item in items)
-          PopupMenuItem<String>(
-            value: item.label,
-            height: 34,
-            child: Text(item.label, style: const TextStyle(fontSize: 12)),
-          ),
-      ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Text(title, style: const TextStyle(fontSize: 12)),
+    return ListenableBuilder(
+      listenable: commands,
+      builder: (context, _) => PopupMenuButton<String>(
+        tooltip: title,
+        position: PopupMenuPosition.under,
+        color: const Color(0xFF252932),
+        onSelected: (commandId) {
+          final item =
+              items.firstWhere((entry) => entry.commandId == commandId);
+          unawaited(commands.execute(commandId, arguments: item.arguments));
+        },
+        itemBuilder: (context) => [
+          for (final item
+              in items.where((entry) => commands.isVisible(entry.commandId)))
+            PopupMenuItem<String>(
+              value: item.commandId,
+              enabled: commands.isEnabled(item.commandId),
+              height: 34,
+              child: Text(item.label, style: const TextStyle(fontSize: 12)),
+            ),
+        ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Text(title, style: const TextStyle(fontSize: 12)),
+        ),
       ),
     );
   }

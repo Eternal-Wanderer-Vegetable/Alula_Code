@@ -109,7 +109,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
-  final CommandRegistry _commands = CommandRegistry();
+  final CommandService _commands = CommandService();
 
   /// 键位集合（默认表 + 用户 keybindings.json 覆盖，docs/09 W3-2）。
   late final KeybindingSet _keybindings;
@@ -205,45 +205,67 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _groups['editor'] = EditorGroup('editor');
     }
     _initCore();
+    _syncCommandContext();
+    _commands.addListener(_onCommandServiceChanged);
   }
 
   /// 命令注册（W3-1）：菜单/键位/命令面板统一入口。
   void _registerCommands() {
-    void reg(String id, String category, String title,
-        Future<void> Function() run, [String? shortcut]) {
+    void reg(
+        String id, String category, String title, Future<void> Function() run,
+        {String? shortcut,
+        String? when,
+        String? enablement,
+        Future<void> Function(Object? arguments)? runWithArguments}) {
       _commands.register(Command(
-          id: id, category: category, title: title, run: run, shortcut: shortcut));
+        id: id,
+        category: category,
+        title: title,
+        run: run,
+        shortcut: shortcut,
+        when: when,
+        enablement: enablement,
+        runWithArguments: runWithArguments,
+      ));
     }
 
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
-    reg('file.save', '文件', '保存', _saveActive, 'Ctrl+S');
+    reg('file.save', '文件', '保存', _saveActive,
+        shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
-        'Ctrl+Shift+P');
+        shortcut: 'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
-        'Ctrl+P');
+        shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
     reg('view.toggleSidebar', '查看', '切换侧栏',
-        () async => _layout.toggleRegion('sidebar'), 'Ctrl+B');
+        () async => _layout.toggleRegion('sidebar'),
+        shortcut: 'Ctrl+B');
     reg('view.togglePanel', '查看', '切换面板',
-        () async => _layout.toggleRegion('panel'), 'Ctrl+J');
+        () async => _layout.toggleRegion('panel'),
+        shortcut: 'Ctrl+J');
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
     reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
-        'Ctrl+Space');
+        shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
-        () async => _verifyIntegrity());
+        () async => _verifyIntegrity(),
+        enablement: 'editorActive');
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
         () async => _panelTab.animateTo(1));
-    reg('view.panelSyntax', '查看', '语法面板',
-        () async => _panelTab.animateTo(2));
-    reg('editor.undo', '编辑器', '撤销', () async => _undo());
-    reg('editor.redo', '编辑器', '重做', () async => _redo());
-    reg('editor.find', '编辑器', '查找…', () async => _toggleFind());
-    reg('editor.replace', '编辑器', '替换…', () async => _openReplace());
-    reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp);
+    reg('view.panelSyntax', '查看', '语法面板', () async => _panelTab.animateTo(2));
+    reg('editor.undo', '编辑器', '撤销', () async => _undo(),
+        enablement: 'editorActive && editorCanUndo');
+    reg('editor.redo', '编辑器', '重做', () async => _redo(),
+        enablement: 'editorActive && editorCanRedo');
+    reg('editor.find', '编辑器', '查找…', () async => _toggleFind(),
+        enablement: 'editorActive');
+    reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
+        enablement: 'editorActive');
+    reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
+        enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
   }
 
@@ -255,13 +277,36 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 执行命令（键位/菜单/面板统一出口）；未知 id（用户键位指向不存在的命令）
   /// 给状态栏提示而不是静默吞掉。
-  void _runCommand(String id) {
-    final c = _commands.byId(id);
-    if (c == null) {
+  void _runCommand(String id, {Object? arguments}) {
+    unawaited(_commands.execute(id, arguments: arguments).then((status) {
+      if (!mounted) return;
+      if (status == CommandExecutionStatus.unknown) {
       setState(() => _statusDetail = '命令不存在：$id（检查 keybindings.json）');
-      return;
+      } else if (status == CommandExecutionStatus.disabled ||
+          status == CommandExecutionStatus.hidden) {
+        setState(() => _statusDetail = '命令当前不可用：$id');
+      } else if (status == CommandExecutionStatus.unsupportedArguments) {
+        setState(() => _statusDetail = '命令不接受参数：$id');
     }
-    c.run();
+    }));
+  }
+
+  void _syncCommandContext() {
+    final active = _active;
+    _commands.context.setValues({
+      'editorActive': active != null,
+      'editorDirty': active?.isDirty ?? false,
+      'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
+      'editorCanUndo': _undoStack.canUndo,
+      'editorCanRedo': _undoStack.canRedo,
+      'workspaceOpen': _workspaceRoot != null,
+      'lspStarting': _lspStarting,
+      'lspReady': _lspReady,
+    });
+  }
+
+  void _onCommandServiceChanged() {
+    if (mounted) setState(() {});
   }
 
   void _showCommandPalette() {
@@ -270,8 +315,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '输入命令名（> 前缀可省）',
       items: [
         for (final c in _commands.all)
-          QuickItem(label: c.label, detail: c.shortcut, onRun: c.run),
+          QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
       ],
+      commands: _commands,
     );
   }
 
@@ -572,6 +618,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _lastEditAt = now;
     }
     doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
+    if (isActiveOfFocused) _syncCommandContext();
     _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
     _scheduleOutlineRefresh();
     final sw = Stopwatch()..start();
@@ -635,6 +682,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _syncCommandContext();
     } on AlulaException catch (e) {
       setState(() {
         _statusDetail = '打开文件夹失败：${e.code}';
@@ -717,6 +765,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             g.activeDocId = d.id;
             _focusedRegion = g.region;
           });
+          _syncCommandContext();
           return;
         }
       }
@@ -741,6 +790,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         g.docs.add(open);
         g.activeDocId = id;
       });
+      _syncCommandContext();
       _scheduleStateSave();
       controller.addListener(() => _onDocChanged(id));
       if (_lspReady) {
@@ -796,6 +846,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       _scheduleStateSave();
     });
+    _syncCommandContext();
   }
 
   /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
@@ -816,6 +867,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
     });
+    _syncCommandContext();
   }
 
   // ---------- LSP ----------
@@ -828,6 +880,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _lspStarting = true;
       _lspStatus = '正在启动 rust-analyzer…';
     });
+    _syncCommandContext();
     await Future<void>.delayed(const Duration(milliseconds: 50));
     try {
       // Rust 侧按工作区复用服务器进程；挂接用任一已打开文档 id 均可
@@ -837,6 +890,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = 'rust-analyzer 运行中';
       });
+      _syncCommandContext();
       for (final d in _allDocs) {
         if (!d.isUntitled && !d.lspAttached) {
           try {
@@ -854,6 +908,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = '启动失败：$e';
       });
+      _syncCommandContext();
     }
   }
 
@@ -957,6 +1012,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       active.doc.saveFile(active.path!);
       active.savedText = active.controller.text;
       active.dirtyDisk = false;
+      _syncCommandContext();
       setState(() {
         _statusDetail = '已原子保存 ${active.name}（v${active.doc.version}）';
       });
@@ -1001,19 +1057,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final shift = HardwareKeyboard.instance.isShiftPressed;
         if (!ctrl) return KeyEventResult.ignored;
         if (event.logicalKey == LogicalKeyboardKey.keyZ) {
-          shift ? _redo() : _undo();
+          _runCommand(shift ? 'editor.redo' : 'editor.undo');
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.keyY) {
-          _redo();
+          _runCommand('editor.redo');
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.keyF && !shift) {
-          _toggleFind();
+          _runCommand('editor.find');
           return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.keyH && !shift) {
-          _openReplace();
+          _runCommand('editor.replace');
           return KeyEventResult.handled;
         }
         return KeyEventResult.ignored;
@@ -1397,6 +1453,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
     }
+    _syncCommandContext();
     _scheduleStateSave();
   }
 
@@ -1532,6 +1589,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       n.dispose();
     }
     _searchSub?.cancel();
+    _commands
+      ..removeListener(_onCommandServiceChanged)
+      ..dispose();
     _searchQuery.dispose();
     _outlineTimer?.cancel();
     _watcher?.stop();
@@ -1583,53 +1643,65 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
-          for (final e in _keybindings.resolve().entries)
-            e.key: () => _runCommand(e.value),
+          for (final e in _keybindings
+              .resolveBindings(matchesWhen: _commands.context.matches)
+              .entries
+              .where((entry) => _commands.isEnabled(entry.value.commandId)))
+            e.key: () =>
+                _runCommand(e.value.commandId, arguments: e.value.arguments),
         },
         child: Focus(
         autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
         child: Column(
         children: [
           AlulaTitleBar(
+                  commands: _commands,
               windowControls: widget.windowControls,
               onCloseRequested: _shutdownLspWorkspace,
               menus: [
             (
               '文件',
               [
-                TitleMenuItem('打开文件夹', _showOpenFolderDialog),
-                TitleMenuItem('保存${_sc('file.save')}', _saveActive),
+                        const TitleMenuItem('打开文件夹',
+                            commandId: 'file.openFolder'),
+                        TitleMenuItem('保存${_sc('file.save')}',
+                            commandId: 'file.save'),
               ],
             ),
             (
               '编辑',
               [
-                TitleMenuItem('撤销${_sc('editor.undo')}', _undo),
-                TitleMenuItem('重做${_sc('editor.redo')}', _redo),
-                TitleMenuItem('查找…${_sc('editor.find')}', _toggleFind),
-                TitleMenuItem('替换…${_sc('editor.replace')}', _openReplace),
+                        TitleMenuItem('撤销${_sc('editor.undo')}',
+                            commandId: 'editor.undo'),
+                        TitleMenuItem('重做${_sc('editor.redo')}',
+                            commandId: 'editor.redo'),
+                        TitleMenuItem('查找…${_sc('editor.find')}',
+                            commandId: 'editor.find'),
+                        TitleMenuItem('替换…${_sc('editor.replace')}',
+                            commandId: 'editor.replace'),
               ],
             ),
             (
               '查看',
               [
-                TitleMenuItem(
-                    '命令面板${_sc('view.commandPalette')}', _showCommandPalette),
-                TitleMenuItem(
-                    '快速打开文件…${_sc('view.quickOpen')}', _showQuickOpen),
-                TitleMenuItem('搜索…${_sc('view.search')}', () {
-                  _selectSidebarView('search');
-                }),
-                TitleMenuItem('大纲', () => _selectSidebarView('outline')),
-                TitleMenuItem(
-                    '切换侧栏', () => _layout.toggleRegion('sidebar')),
-                TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
+                        TitleMenuItem('命令面板${_sc('view.commandPalette')}',
+                            commandId: 'view.commandPalette'),
+                        TitleMenuItem('快速打开文件…${_sc('view.quickOpen')}',
+                            commandId: 'view.quickOpen'),
+                        TitleMenuItem('搜索…${_sc('view.search')}',
+                            commandId: 'view.search'),
+                        const TitleMenuItem('大纲', commandId: 'view.outline'),
+                        const TitleMenuItem('切换侧栏',
+                            commandId: 'view.toggleSidebar'),
+                        const TitleMenuItem('切换面板',
+                            commandId: 'view.togglePanel'),
               ],
             ),
             (
               '帮助',
               [
-                TitleMenuItem('关于 Alula Code', _showAbout),
+                        const TitleMenuItem('关于 Alula Code',
+                            commandId: 'help.about'),
               ],
             ),
           ]),
@@ -2053,7 +2125,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ),
                 IconButton(
                   tooltip: '打开文件夹',
-                  onPressed: _showOpenFolderDialog,
+                  onPressed: () => _runCommand('file.openFolder'),
                   icon: const Icon(Icons.folder_open, size: 15),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -2219,7 +2291,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
           IconButton(
             tooltip: '拆分编辑器',
-            onPressed: _splitFocusedGroup,
+            onPressed: () => _runCommand('editor.split'),
             icon: const Icon(Icons.splitscreen, size: 16),
             visualDensity: VisualDensity.compact,
           ),
@@ -2227,20 +2299,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             tooltip: _lspReady
                 ? 'LSP 运行中'
                 : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP'),
-            onPressed: (_lspReady || _workspaceRoot == null) ? null : _startLsp,
+            onPressed: _commands.isEnabled('lsp.start')
+                ? () => _runCommand('lsp.start')
+                : null,
             icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow,
                 size: 16),
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
             tooltip: '补全    Ctrl+Space',
-            onPressed: _requestCompletion,
+            onPressed: _commands.isEnabled('editor.completion')
+                ? () => _runCommand('editor.completion')
+                : null,
             icon: const Icon(Icons.autorenew, size: 16),
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
             tooltip: '校验一致性',
-            onPressed: _verifyIntegrity,
+            onPressed: _commands.isEnabled('editor.verifyIntegrity')
+                ? () => _runCommand('editor.verifyIntegrity')
+                : null,
             icon: const Icon(Icons.fact_check_outlined, size: 16),
             visualDensity: VisualDensity.compact,
           ),
@@ -2253,10 +2331,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(EditorGroup g, OpenDoc d) {
     final tab = InkWell(
-      onTap: () => setState(() {
+      onTap: () {
+        setState(() {
         g.activeDocId = d.id;
         _focusedRegion = g.region;
-      }),
+        });
+        _syncCommandContext();
+      },
       child: Container(
         key: ValueKey('tab-${d.id}'),
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -2346,6 +2427,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
               if (_focusedRegion != g.region) {
                 setState(() => _focusedRegion = g.region);
+                  _syncCommandContext();
               }
             },
             style: const TextStyle(
@@ -2431,7 +2513,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ),
                 IconButton(
                   tooltip: '关闭',
-                  onPressed: _toggleFind,
+                  onPressed: () => _runCommand('editor.find'),
                   icon: const Icon(Icons.close, size: 14),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -2479,6 +2561,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children: [
           TabBar(
             controller: _panelTab,
+            onTap: (index) {
+              const commandIds = [
+                'view.panelDiagnostics',
+                'view.panelCompletions',
+                'view.panelSyntax',
+              ];
+              if (index < commandIds.length) _runCommand(commandIds[index]);
+            },
             isScrollable: true,
             tabAlignment: TabAlignment.start,
             tabs: const [

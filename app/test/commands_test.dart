@@ -1,5 +1,6 @@
 // CommandRegistry 与模糊搜索单测（docs/09 W3-1）。
 import 'package:alula_app/workbench/commands.dart';
+import 'package:alula_app/workbench/context_keys.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Command _cmd(String id, String category, String title) => Command(
@@ -75,6 +76,57 @@ void main() {
       // 同分按 label 字典序：切换侧栏 < 切换面板
       final qie = r.search('切换');
       expect(qie.map((c) => c.title).toList(), ['切换侧栏', '切换面板']);
+    });
+  });
+
+  group('命令上下文与统一分发', () {
+    test('表达式支持布尔组合、相等比较、分组并对非法表达式关闭', () {
+      final context = ContextKeyService()
+        ..setValues(
+            {'editorActive': true, 'language': 'rust', 'readOnly': false});
+
+      expect(context.matches('editorActive && language == "rust"'), isTrue);
+      expect(context.matches('editorActive && (!readOnly || false)'), isTrue);
+      expect(
+          context.matches('(editorActive && language == "python") || readOnly'),
+          isFalse);
+      expect(context.matches('editorActive && )'), isFalse);
+      context.dispose();
+    });
+
+    test('context 变化即时更新可见和启用状态，分发接收 id 与参数', () async {
+      final commands = CommandService();
+      Object? received;
+      commands.register(Command(
+        id: 'editor.openAt',
+        title: '打开位置',
+        category: '编辑器',
+        run: () async {},
+        when: 'editorActive',
+        enablement: 'workspaceOpen',
+        runWithArguments: (arguments) async => received = arguments,
+      ));
+
+      expect(commands.isVisible('editor.openAt'), isFalse);
+      expect(commands.isEnabled('editor.openAt'), isFalse);
+      commands.context
+          .setValues({'editorActive': true, 'workspaceOpen': false});
+      expect(commands.isVisible('editor.openAt'), isTrue);
+      expect(commands.isEnabled('editor.openAt'), isFalse);
+      expect(await commands.execute('editor.openAt', arguments: 12),
+          CommandExecutionStatus.disabled);
+      commands.context.setValue('workspaceOpen', true);
+      expect(commands.isEnabled('editor.openAt'), isTrue);
+      expect(await commands.execute('editor.openAt', arguments: 12),
+          CommandExecutionStatus.executed);
+      expect(received, 12);
+      expect(await commands.execute('missing'), CommandExecutionStatus.unknown);
+
+      commands.context.setValue('editorActive', false);
+      expect(commands.isVisible('editor.openAt'), isFalse);
+      expect(await commands.execute('editor.openAt'),
+          CommandExecutionStatus.hidden);
+      commands.dispose();
     });
   });
 }

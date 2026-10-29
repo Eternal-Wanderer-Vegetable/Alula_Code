@@ -31,16 +31,15 @@ void main() {
       final resolved = ks.resolve();
       final expectedChords = KeybindingSet.defaults.values
           .fold<int>(0, (n, v) => n + v.split(',').length);
-      expect(resolved.keys.length, expectedChords,
-          reason: '逗号分隔的多键位各占一条');
+      expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
     });
 
     test('用户追加：新键位生效', () {
-      final ks = KeybindingSet.load(userJson:
-          '[{"key": "ctrl+alt+f", "command": "view.quickOpen"}]');
+      final ks = KeybindingSet.load(
+          userJson: '[{"key": "ctrl+alt+f", "command": "view.quickOpen"}]');
       expect(ks.commandForChord(parseChord('ctrl+alt+f')!), 'view.quickOpen',
           reason: '新键位生效');
       expect(ks.commandForChord(parseChord('ctrl+p')!), isNull,
@@ -49,17 +48,43 @@ void main() {
           reason: '展示跟随用户重绑定');
     });
 
+    test('键位携带参数和 when 条件并参与上下文过滤', () {
+      final ks = KeybindingSet.load(
+          userJson: '[{"key":"ctrl+alt+f","command":"view.quickOpen",'
+              '"args":{"path":"src/main.rs"},"when":"editorTextFocus"}]');
+      final chord = parseChord('ctrl+alt+f')!;
+      final binding = ks.bindingForChord(chord)!;
+      expect(binding.commandId, 'view.quickOpen');
+      expect(binding.arguments, {'path': 'src/main.rs'});
+      expect(binding.when, 'editorTextFocus');
+      expect(
+        ks
+            .resolveBindings(matchesWhen: (condition) => condition == null)
+            .values
+            .where((binding) => binding.commandId == 'view.quickOpen'),
+        isEmpty,
+      );
+      expect(
+        ks
+            .resolveBindings(
+                matchesWhen: (condition) => condition == 'editorTextFocus')
+            .values
+            .where((binding) => binding.commandId == 'view.quickOpen'),
+        hasLength(1),
+      );
+    });
+
     test('用户移除：-command 删掉匹配的默认键位', () {
-      final ks = KeybindingSet.load(userJson:
-          '[{"key": "ctrl+p", "command": "-view.quickOpen"}]');
+      final ks = KeybindingSet.load(
+          userJson: '[{"key": "ctrl+p", "command": "-view.quickOpen"}]');
       expect(ks.commandForChord(parseChord('ctrl+p')!), isNull,
           reason: '默认 Ctrl+P 已被移除');
       expect(ks.shortcutFor('view.quickOpen'), isNull);
     });
 
     test('移除不匹配的键位串：无操作', () {
-      final ks = KeybindingSet.load(userJson:
-          '[{"key": "ctrl+q", "command": "-view.quickOpen"}]');
+      final ks = KeybindingSet.load(
+          userJson: '[{"key": "ctrl+q", "command": "-view.quickOpen"}]');
       expect(ks.commandForChord(parseChord('ctrl+p')!), 'view.quickOpen',
           reason: '键位不匹配不移除');
     });
@@ -74,9 +99,9 @@ void main() {
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {
-      final ks = KeybindingSet.load(userJson:
-          '[{"nope": 1}, {"key": "meta+x", "command": "file.save"}, '
-          '{"key": "ctrl+y", "command": "view.togglePanel"}]');
+      final ks = KeybindingSet.load(
+          userJson: '[{"nope": 1}, {"key": "meta+x", "command": "file.save"}, '
+              '{"key": "ctrl+y", "command": "view.togglePanel"}]');
       expect(ks.commandForChord(parseChord('ctrl+y')!), 'view.togglePanel',
           reason: '合法条目生效');
       expect(ks.commandForChord(parseChord('ctrl+x')!), isNull,

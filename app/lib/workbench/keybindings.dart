@@ -7,6 +7,7 @@
 ///   {"key": "ctrl+p", "command": "-view.quickOpen"}
 /// ]
 /// ```
+/// Entries may also provide `args` and a context-expression `when` condition.
 /// - `command` 以 `-` 开头表示移除该命令的这条默认键位；
 /// - 其余为追加；同一键位串后写者胜。
 ///
@@ -57,6 +58,19 @@ class KeyChord {
 
   @override
   int get hashCode => Object.hash(key, control, shift, alt);
+}
+
+/// A keybinding target with optional command arguments and a context condition.
+class KeybindingBinding {
+  const KeybindingBinding({
+    required this.commandId,
+    this.arguments,
+    this.when,
+  });
+
+  final String commandId;
+  final Object? arguments;
+  final String? when;
 }
 
 String _displayKey(LogicalKeyboardKey key) {
@@ -165,18 +179,21 @@ class KeybindingSet {
   /// 从默认表出发应用用户覆盖（`-command` 移除；同键位串后写者胜）。
   /// [userJson] 为 keybindings.json 的原始文本；损坏或非法条目逐条忽略。
   factory KeybindingSet.load({String? userJson}) {
-    final map = <KeyChord, String>{};
+    final map = <KeyChord, KeybindingBinding>{};
     for (final e in defaults.entries) {
       for (final spec in e.value.split(',')) {
         final chord = parseChord(spec.trim());
-        if (chord != null) map[chord] = e.key;
+        if (chord != null) {
+          map[chord] = KeybindingBinding(commandId: e.key);
+        }
       }
     }
     _applyUserJson(map, userJson);
     return KeybindingSet._(map);
   }
 
-  static void _applyUserJson(Map<KeyChord, String> map, String? userJson) {
+  static void _applyUserJson(
+      Map<KeyChord, KeybindingBinding> map, String? userJson) {
     if (userJson == null) return;
     Object? decoded;
     try {
@@ -194,33 +211,51 @@ class KeybindingSet {
       if (chord == null) continue;
       if (command.startsWith('-')) {
         // 移除：键位与命令都匹配才算
-        if (map[chord] == command.substring(1)) {
+        if (map[chord]?.commandId == command.substring(1)) {
           map.remove(chord);
         }
       } else {
         // 重绑定语义：同命令旧键位全部让位（含默认），用户键位成为唯一展示
-        map.removeWhere((_, v) => v == command);
-        map[chord] = command;
+        map.removeWhere((_, binding) => binding.commandId == command);
+        final condition = entry['when'];
+        map[chord] = KeybindingBinding(
+          commandId: command,
+          arguments: entry['args'],
+          when: condition is String ? condition : null,
+        );
       }
     }
   }
 
-  final Map<KeyChord, String> _chordToCommand;
+  final Map<KeyChord, KeybindingBinding> _chordToCommand;
 
   /// 键位 → 命令 id（供 CallbackShortcuts 合成）。
   Map<SingleActivator, String> resolve() => {
-        for (final e in _chordToCommand.entries) e.key.toActivator(): e.value,
+        for (final e in _chordToCommand.entries)
+          e.key.toActivator(): e.value.commandId,
+      };
+
+  /// Full keybinding records for context-aware dispatch.
+  Map<SingleActivator, KeybindingBinding> resolveBindings({
+    bool Function(String? condition)? matchesWhen,
+  }) =>
+      {
+        for (final e in _chordToCommand.entries)
+          if (matchesWhen == null || matchesWhen(e.value.when))
+            e.key.toActivator(): e.value,
       };
 
   /// 键位 → 命令 id（值查询用 KeyChord：它有正确的相等性；
   /// SingleActivator 没有重写 ==，不能当查询键用）。
-  String? commandForChord(KeyChord chord) => _chordToCommand[chord];
+  String? commandForChord(KeyChord chord) => _chordToCommand[chord]?.commandId;
+
+  KeybindingBinding? bindingForChord(KeyChord chord) => _chordToCommand[chord];
 
   /// 命令 id → 展示键位串（菜单提示用，如 'Ctrl+Shift+P'）。
   /// 重绑定语义下同命令只剩用户键位，首匹配即正确展示。
   String? shortcutFor(String commandId) {
     for (final e in _chordToCommand.entries) {
-      if (e.value == commandId) return e.key.display;
+      if (e.value.commandId == commandId) return e.key.display;
     }
     return null;
   }

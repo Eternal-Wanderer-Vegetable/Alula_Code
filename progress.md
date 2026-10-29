@@ -5,11 +5,17 @@
 
 ## Current State（当前状态，2026-10-29 优先级调整）
 
+### 最新进展（2026-10-29，P01.2 命令与上下文引擎）
+
+- SRV-06 已完成：`CommandService` 统一命令 ID/参数/条件/启用状态/执行结果；菜单、命令面板、键位、编辑器工具栏、面板标签与编辑器焦点链共用分发。Context expression 更新会立刻刷新 UI；`keybindings.json` 支持 `args` / `when`。
+- `flutter analyze --no-pub` 零问题；全量 Flutter 测试串行 125/125 通过，widget 用例 15/15 通过。`cargo fmt --all -- --check` 与 `FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh` 均退出 0，后者完成 Rust tests、Clippy、build_core、Flutter 125/125。一次默认并行全量运行在既有 P00 双文档撤销 fixture 的断言失败，单项与串行复跑通过；详情见 `docs/diagnostics/2026-10-29-p01/p01.2-command-context-engine.md`。
+- P01.2 已阶段完成，当前唯一活动切片转为 P01.3 进程监督与资源状态；500 MiB 数值验收继续暂停，架构阶段仍要求资源有界、关闭清理、压力下可编辑/保存。
+
 ### 最新进展（2026-10-29，用户调整复刻/优化顺序）
 
 - 调度顺序改为先完成 P00–P13 的 VS Code 整体架构与默认功能复刻，再在 P14 做全功能性能/内存优化，P15 完成最终对照。Rust + rust-analyzer ≤500 MiB 暂停作为验收门；已有占用数据保留作基线，后续重新定标。
 - P00 / feat-022 按阶段交付物签收：参考来源/构建差异、贡献项导出、golden/风险夹具和三项风险实验 ADR/证据已登记。真实 DRM/WPE GBM、Microsoft 官方服务身份/许可是 P12/P13/P14 后续风险，不再阻塞 P01。
-- P01 / feat-023 继续进行：P01.1 异步请求/取消/版本契约已完成，当前唯一活动切片为 P01.2 命令与上下文引擎。架构阶段仍要求资源有界、服务按需启停、关闭后回收，并保证压力下可编辑/保存及无数据丢失；不提前做以数值占用达标为目的的优化。
+- P01 / feat-023 继续进行：P01.1 异步请求/取消/版本契约与 P01.2 命令/上下文引擎已完成，当前唯一活动切片为 P01.3 进程监督与资源状态。架构阶段仍要求资源有界、服务按需启停、关闭后回收，并保证压力下可编辑/保存及无数据丢失；不提前做以数值占用达标为目的的优化。
 - 启动基线首跑中，P00.3 `REF-07-UNDO-01` 曾因打开第二文件时的编辑时间戳落入 400ms undo coalescing 窗口而失败。测试在第二文件打开后增加 450ms 实时等待以隔离两次编辑；复跑 `bash init.sh --fast` 全通过（Rust workspace tests、build_core、Flutter 122/122），观测仍为双文档撤销串写这一既有夹具结果。
 - 提交前 GitNexus `detect-changes --scope all` 覆盖工作树 38 个文件/11 个 symbols，报告 0 个受影响流程、low risk；staged 检查覆盖本次 7 个文件/1 个 AGENTS 文档 symbol、0 个受影响流程、low risk。索引报告既有流程图截断（417 个候选入口中 217 个未排名、130 个 callee 跳过、2 次 walk 达预算），因此 0 流程仅用于本次文档变更风险评估，不代表代码图完整。
 - 本次变更文件：`AGENTS.md`、docs/03、docs/04、docs/10、`feature_list.json`、本文件与 `session-handoff.md`。
