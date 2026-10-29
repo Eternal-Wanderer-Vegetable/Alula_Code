@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 12;
+const int expectedAbiVersion = 13;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
@@ -222,6 +222,23 @@ class TextRangeRead {
     required this.startLine,
     required this.startCharacter,
     required this.text,
+  });
+}
+
+/// UTF-16 absolute start for a zero-based Rust document line.
+class DocumentLineOffset {
+  final int version;
+  final int totalUtf16Length;
+  final int lineCount;
+  final int line;
+  final int offsetUtf16;
+
+  const DocumentLineOffset({
+    required this.version,
+    required this.totalUtf16Length,
+    required this.lineCount,
+    required this.line,
+    required this.offsetUtf16,
   });
 }
 
@@ -496,6 +513,29 @@ class AlulaDoc {
   int version;
 
   AlulaDoc._(this.core, this.id, this.version);
+
+  /// Resolve a zero-based line from Rust without scanning the document in Dart.
+  DocumentLineOffset lineOffset(int line) {
+    if (line < 0) throw RangeError.value(line, 'line', 'must be non-negative');
+    final json = core._ffi.docLineOffsetJson(id, line);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final offset = DocumentLineOffset(
+      version: r['version'] as int,
+      totalUtf16Length: r['totalUtf16Length'] as int,
+      lineCount: r['lineCount'] as int,
+      line: r['line'] as int,
+      offsetUtf16: r['offsetUtf16'] as int,
+    );
+    version = offset.version;
+    return offset;
+  }
 
   /// Read at most [maxLenUtf16] UTF-16 units without transferring the full file.
   /// The returned end is adjusted to a Unicode scalar boundary.

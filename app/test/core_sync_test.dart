@@ -118,6 +118,31 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('Rust 按行 UTF-16 起点定位支持 BOM、emoji、CRLF 和末尾空行', () {
+    final doc = _bootstrap.core!.openDoc(9032, '\u{FEFF}a🦊\r\nb\n');
+    final first = doc.lineOffset(0);
+    final second = doc.lineOffset(1);
+    final finalEmpty = doc.lineOffset(2);
+
+    expect(first.offsetUtf16, 0);
+    expect(second.offsetUtf16, 6);
+    expect(finalEmpty.offsetUtf16, 8);
+    expect(finalEmpty.totalUtf16Length, 8);
+    expect(finalEmpty.lineCount, 3);
+    expect(finalEmpty.version, 1);
+    expect(
+      doc.readRange(second.offsetUtf16, maxLenUtf16: 2).text,
+      'b\n',
+    );
+    expect(
+      () => doc.lineOffset(3),
+      throwsA(
+          isA<AlulaException>().having((e) => e.code, 'code', 'InvalidLine')),
+    );
+    expect(() => doc.lineOffset(-1), throwsRangeError);
+    doc.close();
+  }, skip: skip);
+
   test('过期版本被拒绝并给出 Rust 当前版本', () {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(

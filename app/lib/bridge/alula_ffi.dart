@@ -77,6 +77,10 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
           Pointer<Utf8> Function(int, int, int)>('alula_doc_read_range');
 
+  late final Pointer<Utf8> Function(int, int) _docLineOffset =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_doc_line_offset');
+
   late final Pointer<Utf8> Function(int) _docClose = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_doc_close',
@@ -252,6 +256,9 @@ class AlulaFfi {
 
   String docReadRangeJson(int id, int startUtf16, int maxLenUtf16) =>
       _takeJson(_docReadRange(id, startUtf16, maxLenUtf16));
+
+  String docLineOffsetJson(int id, int line) =>
+      _takeJson(_docLineOffset(id, line));
 
   String docCloseJson(int id) => _takeJson(_docClose(id));
 

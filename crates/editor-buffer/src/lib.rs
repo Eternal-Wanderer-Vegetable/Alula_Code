@@ -23,6 +23,16 @@ pub struct TextRangeRead {
     pub text: String,
 }
 
+/// Absolute UTF-16 start offset for one zero-based document line.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineOffset {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub line: usize,
+    pub offset_utf16: usize,
+}
+
 /// 单个增量编辑操作。offset/len 均为 UTF-16 code unit 口径。
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -48,6 +58,8 @@ pub enum BufferError {
     },
     /// A bounded read requested more than the API's per-call limit.
     ReadRangeTooLarge { requested: usize, max: usize },
+    /// A requested zero-based line is outside the document.
+    InvalidLine { line: usize, line_count: usize },
 }
 
 impl std::fmt::Display for BufferError {
@@ -67,6 +79,9 @@ impl std::fmt::Display for BufferError {
             }
             BufferError::ReadRangeTooLarge { requested, max } => {
                 write!(f, "read range length {requested} exceeds maximum {max}")
+            }
+            BufferError::InvalidLine { line, line_count } => {
+                write!(f, "line {line} is outside document line count {line_count}")
             }
         }
     }
@@ -100,6 +115,23 @@ impl TextBuffer {
 
     pub fn len_utf16(&self) -> usize {
         self.rope.len_utf16_cu()
+    }
+
+    /// Resolve a zero-based line to its absolute UTF-16 start without reading
+    /// or materialising document text.
+    pub fn line_offset_utf16(&self, line: usize) -> Result<TextLineOffset, BufferError> {
+        let line_count = self.rope.len_lines();
+        if line >= line_count {
+            return Err(BufferError::InvalidLine { line, line_count });
+        }
+        let char_index = self.rope.line_to_char(line);
+        Ok(TextLineOffset {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            line,
+            offset_utf16: self.rope.char_to_utf16_cu(char_index),
+        })
     }
 
     /// Read a bounded UTF-16 range without materialising the whole document.
@@ -397,6 +429,30 @@ mod tests {
         assert_eq!(page.total_utf16_length, 100_000);
         assert_eq!(page.line_count, 1);
         assert_eq!(page.end_utf16, 53_096);
+    }
+
+    #[test]
+    fn line_offsets_are_utf16_absolute_across_bom_emoji_and_crlf() {
+        let buf = TextBuffer::open("\u{FEFF}a🦊\r\nb\n");
+        assert_eq!(buf.line_offset_utf16(0).unwrap().offset_utf16, 0);
+        assert_eq!(buf.line_offset_utf16(1).unwrap().offset_utf16, 6);
+        assert_eq!(buf.line_offset_utf16(2).unwrap().offset_utf16, 8);
+        assert_eq!(buf.line_offset_utf16(2).unwrap().line_count, 3);
+        assert_eq!(
+            buf.line_offset_utf16(3),
+            Err(BufferError::InvalidLine {
+                line: 3,
+                line_count: 3,
+            })
+        );
+    }
+
+    #[test]
+    fn final_empty_line_has_document_end_offset() {
+        let buf = TextBuffer::open("last\n");
+        let last = buf.line_offset_utf16(1).unwrap();
+        assert_eq!(last.offset_utf16, 5);
+        assert_eq!(last.total_utf16_length, 5);
     }
 
     #[test]

@@ -29,7 +29,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 12;
+pub const ALULA_ABI_VERSION: u32 = 13;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -472,6 +472,36 @@ pub extern "C" fn alula_doc_read_range(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_read_range")))
+}
+
+/// Resolve a zero-based line to its absolute UTF-16 start offset.
+#[no_mangle]
+pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(line) = usize::try_from(line) else {
+            return err_json("InvalidArgument", json!("line index is not representable"));
+        };
+        match registry_lock().line_offset_utf16(id, line) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(offset)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": offset.version,
+                    "totalUtf16Length": offset.total_utf16_length,
+                    "lineCount": offset.line_count,
+                    "line": offset.line,
+                    "offsetUtf16": offset.offset_utf16,
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidLine { line, line_count })) => err_json(
+                "InvalidLine",
+                json!({ "line": line, "lineCount": line_count }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
 }
 
 /// 关闭文档并释放其缓冲区。
@@ -1145,6 +1175,30 @@ mod tests {
         let oversized = take(alula_doc_read_range(id, 0, 65_537));
         assert_eq!(oversized["ok"], false);
         assert_eq!(oversized["error"]["code"], "ReadRangeTooLarge");
+
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn line_offset_over_ffi_uses_utf16_and_reports_invalid_line() {
+        let id = 92_812;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}a🦊\r\nb\n").as_ptr()) });
+
+        let first = take(alula_doc_line_offset(id, 0));
+        assert_eq!(first["offsetUtf16"], 0);
+        assert_eq!(first["totalUtf16Length"], 8);
+        assert_eq!(first["lineCount"], 3);
+
+        let second = take(alula_doc_line_offset(id, 1));
+        assert_eq!(second["offsetUtf16"], 6);
+        assert_eq!(second["version"], 1);
+
+        let third = take(alula_doc_line_offset(id, 2));
+        assert_eq!(third["offsetUtf16"], 8);
+
+        let invalid = take(alula_doc_line_offset(id, 3));
+        assert_eq!(invalid["ok"], false);
+        assert_eq!(invalid["error"]["code"], "InvalidLine");
 
         take(alula_doc_close(id));
     }

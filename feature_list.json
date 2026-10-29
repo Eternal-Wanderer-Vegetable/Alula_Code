@@ -339,7 +339,7 @@
         "feat-024"
       ],
       "status": "in-progress",
-      "evidence": "P03.1 Rust 权威文档有界 UTF-16 范围读取与 ABI v12 完成：真实 Dart↔Rust 动态库对拍覆盖 BOM、CRLF、emoji 代理对、无效边界、64 Ki 单次上限与 100k 单行分页；cargo fmt、workspace tests/Clippy、build_core、Flutter analyze 与 `bash init.sh`（165 项）全绿。报告 docs/diagnostics/2026-10-30-p03/p03.1-bounded-rust-range-read.md。当前下一片 P03.2 控件/文本所有权 ADR 与可视区原型；全文 TextField 尚未移除，P03 平台 IME/无障碍门未完成。",
+      "evidence": "P03.1 Rust 权威文档有界 UTF-16 范围读取与 ABI v12 完成：真实 Dart↔Rust 动态库对拍覆盖 BOM、CRLF、emoji 代理对、无效边界、64 Ki 单次上限与 100k 单行分页；报告 docs/diagnostics/2026-10-30-p03/p03.1-bounded-rust-range-read.md。P03.2 ABI v13 Rust Rope 按行 UTF-16 地址查询完成：不扫描全文，BOM/emoji/CRLF/末尾空行/越界由 Rust 与 Dart↔Rust 对拍，`bash init.sh`（166 项）、fmt、Clippy、build_core、Flutter analyze 全绿；报告 docs/diagnostics/2026-10-30-p03/p03.2-rust-line-offset-api.md。当前下一片 P03.3 控件/文本所有权 ADR 与有界可视区原型；全文 TextField 尚未移除，P03 平台 IME/无障碍门未完成。",
       "track": "vscode-builtin-parity",
       "phase": "P03"
     },

@@ -8,7 +8,7 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
-use editor_buffer::{BufferError, TextBuffer, TextOp, TextRangeRead};
+use editor_buffer::{BufferError, TextBuffer, TextLineOffset, TextOp, TextRangeRead};
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
 
@@ -184,6 +184,17 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.read_range_utf16(start_utf16, max_len_utf16))
+    }
+
+    /// Resolve a zero-based line to its UTF-16 offset in a registered document.
+    pub fn line_offset_utf16(
+        &self,
+        id: u64,
+        line: usize,
+    ) -> Option<Result<TextLineOffset, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.line_offset_utf16(line))
     }
 
     pub fn version_of(&self, id: u64) -> Option<u64> {

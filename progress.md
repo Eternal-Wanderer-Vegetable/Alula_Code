@@ -826,3 +826,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 变更前 GitNexus 影响：TextBuffer CRITICAL（11 符号/8 流程）、DocRegistry CRITICAL（19/13）、AlulaFfi CRITICAL（44/18）。风险未按共享轴豁免；本片仅新增读 API，并由 FFI 对拍和完整门禁回归。
 - 定向 Rust（buffer 13/core 19）与 Linux FFI 对拍（Flutter 13）通过；`cargo fmt --all -- --check`、workspace Clippy、build_core、flutter analyze 及 `bash init.sh` EXIT=0，完整 Flutter 165 项通过。详细边界见 `docs/diagnostics/2026-10-30-p03/p03.1-bounded-rust-range-read.md`。
 - 工作树里的 workbench、harness、app 配置和其他文档改动未纳入 P03.1。下一切片 P03.2：控件/文本所有权 ADR 与 Rust 分页可视区原型；500 MiB 数值优化继续留 P14。
+
+## 今日会话（2026-10-30）：P03.2 Rust 按行 UTF-16 地址
+
+- 完成 ABI v13 `alula_doc_line_offset` / `AlulaDoc.lineOffset`；Rust Rope 直接将 0-based 行映射为绝对 UTF-16 起点，返回版本/全文长度/行数，Dart 无需扫描全文。BOM、emoji、CRLF、末尾空行和非法行均由 Rust 与 Linux Dart↔Rust 动态库对拍。
+- 变更前 GitNexus：TextBuffer CRITICAL（14 符号/10 流程）、DocRegistry CRITICAL（19/13）、AlulaFfi CRITICAL（45/16）；AlulaDoc MEDIUM lower-bound（14 符号，callable value 检查 unavailable）。源码搜索未发现将 AlulaDoc 句柄保存为函数值；风险没有以 shared-axis 结果降低。
+- Rust 定向 15 buffer/20 core tests 与 Flutter 14 项 FFI 测试通过；fmt、Clippy、build_core、Flutter analyze 与完整 `bash init.sh`（166 项）全绿。2,000,001 UTF-16 恢复 fixture 约运行 5 分 22 秒后通过。报告 `docs/diagnostics/2026-10-30-p03/p03.2-rust-line-offset-api.md`。
+- 下一切片 P03.3：使用 Rust 行地址 + 有界范围读取做编辑控件/文本所有权 ADR 与可视区原型；工作台全文 TextField 仍在，三平台 IME、无障碍和多视图还未通过。P14 才重新制定和开展整机内存数值优化。
