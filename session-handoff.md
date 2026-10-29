@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第七十三轮：WSL 恢复，VS Code idle 对照复跑完成）
+> Last Updated：2026-10-29（第七十四轮：LRU 容量长测无稳定收益）
 
 指标口径修正（2026-10-29）：同服务 VS Code idle 稳定值依 `tools/mem-probe::summarize` 取时间顺序最后 240 个样本，再取上中位数。四轮稳定值为 1267.18、1324.33、1298.38、1351.11 MiB，中位数 1311.36 MiB；新增第四轮尾段起始 t=436.187 s。原始采样均保留。
 
@@ -10,6 +10,8 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 用户最新要求：执行docs/10中的全功能复刻计划并分阶段提交；P00.1、P00.2、P00.3 已完成，P00.4继续进行。
 
 ## Current Objective
+最近的 LRU 容量筛选已结束：capacity 16 的短测显示较低稳定值，但 30 分钟/150 次保存长测为 659.96 MiB，比既有默认配置 run3 的 657.93 MiB 略高。没有修改产品默认设置；证据见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-lru-capacity-screen-20261029.md`。继续处理 P00.4 可在当前环境完成的证据项；外部 DRM 主机与 Microsoft 服务身份仍缺失，P01 不能启动。
+
 WSL 已恢复：`ip route show` 与 Windows PowerShell interop 均可运行。GitNexus 已重建并显示 up-to-date；索引仍报告 entry-point/callee/walk budget 截断。启动 `bash init.sh --fast` 通过 Rust workspace tests、`build_core` 与 Flutter 122 项测试。
 
 按用户授权完成同服务 Windows VS Code idle 隔离复跑：Microsoft VS Code 1.142.0 Stable + rust-analyzer 0.3.3089/server 1.97.1，600 点/729.671 秒。Private Bytes 峰值/时间尾段稳定/末值为 1630.83/1351.11/1343.63 MiB；启动期间一次焦点恢复成功，13 个采样 PID 关闭+30秒全退，profile/扩展/shared-data 已清理。四轮同服务 idle 稳定值中位数为 1311.36 MiB。它不是固定 Code-OSS 1.145.0-dev 的版本匹配样本，也没有编辑负载。
