@@ -620,10 +620,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final isActiveOfFocused =
         owner!.region == _focusedRegion && owner.activeDocId == docId;
     final newText = doc.controller.text;
-    final beforeText = doc.savedText; // 撤销快照基线（必须在基准前移前捕获）
+    final beforeText = doc.syncText; // Rust 同步基线（必须在基准前移前捕获）
     final ops = diffToOps(beforeText, newText);
     if (ops.isEmpty) return;
-    doc.savedText = newText; // 同步基准前移（失败时由失配分支恢复）
+    doc.syncText = newText; // 同步基准前移（失败时由失配分支恢复）
 
     // 撤销栈入帧
     if (!doc.undoRedoBusy) {
@@ -634,7 +634,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           before: beforeText, caret: newText.length, coalesce: coalesce);
       doc.lastEditAt = now;
     }
-    doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
+    doc.dirtyDisk = newText != doc.savedText;
     if (isActiveOfFocused) _syncCommandContext();
     _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
     _scheduleOutlineRefresh();
@@ -652,11 +652,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     } on SyncMismatchException catch (e) {
       final r = doc.doc.resync();
-      doc.controller.value = TextEditingValue(
-        text: r.content,
-        selection: TextSelection.collapsed(offset: r.content.length),
-      );
-      doc.savedText = r.content;
+      doc.syncText = r.content;
+      doc.undoRedoBusy = true;
+      try {
+        doc.controller.value = TextEditingValue(
+          text: r.content,
+          selection: TextSelection.collapsed(offset: r.content.length),
+        );
+      } finally {
+        doc.undoRedoBusy = false;
+      }
+      doc.dirtyDisk = r.content != doc.savedText;
       if (isActiveOfFocused) {
         setState(() {
           _state = WbSyncState.mismatch;
@@ -2965,7 +2971,8 @@ class OpenDoc {
     required this.savedText,
     required UndoHistoryBudget undoBudget,
   })  : lspAttached = false,
-        undoStack = UndoStack(budget: undoBudget);
+        undoStack = UndoStack(budget: undoBudget),
+        syncText = savedText;
 
   final int id;
   final String? path;
@@ -2977,12 +2984,14 @@ class OpenDoc {
   DateTime? lastEditAt;
   bool undoRedoBusy = false;
 
-  /// 上次保存时的全文（FFI 增量同步基准；每次成功 apply 都会前移，
-  /// 因此不能当「与磁盘不一致」的脏标记用）。
+  /// 上次保存成功时的全文（磁盘 savepoint；只在保存或外部重载时前移）。
   String savedText;
+
+  /// 最近一次与 Rust 缓冲区一致的全文，用作下一次 FFI 增量 diff 基线。
+  String syncText;
   bool lspAttached = false;
 
-  /// 与磁盘不一致（有未保存的用户编辑）：编辑置位、saveFile 复位。
+  /// 当前文本与磁盘 savepoint 不一致；undo 回到 savepoint 时会清除。
   bool dirtyDisk = false;
 
   bool get isDirty => dirtyDisk;
