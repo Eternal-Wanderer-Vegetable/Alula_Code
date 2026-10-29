@@ -1,0 +1,15 @@
+started_at=2026-10-29 08:06:33 UTC
+startup_s=1 processes=4 renderer_processes=1 rust_analyzer=0
+samples=60/600 elapsed_s=92.9 private_bytes=1807650816 processes=15 foreground_recoveries=0
+samples=120/600 elapsed_s=183.7 private_bytes=1807282176 processes=15 foreground_recoveries=0
+samples=180/600 elapsed_s=273.2 private_bytes=1796440064 processes=15 foreground_recoveries=0
+samples=240/600 elapsed_s=362 private_bytes=1790033920 processes=15 foreground_recoveries=0
+samples=300/600 elapsed_s=452.1 private_bytes=1790451712 processes=15 foreground_recoveries=0
+samples=360/600 elapsed_s=541.5 private_bytes=1777573888 processes=15 foreground_recoveries=0
+samples=420/600 elapsed_s=628.7 private_bytes=1790730240 processes=15 foreground_recoveries=0
+samples=480/600 elapsed_s=715.9 private_bytes=1782697984 processes=15 foreground_recoveries=0
+samples=540/600 elapsed_s=802.5 private_bytes=1780711424 processes=15 foreground_recoveries=0
+samples=600/600 elapsed_s=888.1 private_bytes=1788338176 processes=15 foreground_recoveries=0
+complete samples=600 peak_mib=2346.9 stable_mib=1702.7 final_mib=1705.5 foreground_unchanged=True foreground_recoveries=0 close_exited=True isolated_data_cleaned=True
+json=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.json
+markdown=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.md

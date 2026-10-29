@@ -5,6 +5,15 @@
 
 ## Current State（当前状态，2026-10-29 P00 执行）
 
+### 最新进展（2026-10-29，第七十六轮，固定版 Code-OSS Rust+RA idle 对照完成）
+
+- 复现并定位 Code-OSS 无 renderer 的根因：旧生成的 NLS-indexed `out/mainImpl.js` 与开发启动器 `VSCODE_DEV=1` 不兼容，主进程抛出 `NLS MISSING: 140`。Windows Node 24.22.1 重跑标准 dev transpile 后，30 秒隔离 smoke 在 6 秒内看到 renderer。
+- 用户授权的固定 Code-OSS 1.145.0-dev / Electron 43.8.3 + rust-analyzer extension 0.3.3089 / server 1.97.1 idle 对照完成：600 个样本，实际跨度 888.565 秒（中位间隔 1.472 秒）；Private Bytes 峰值/尾段稳定/末值 2346.86/1702.66/1705.49 MiB，末 Working Set 1899.62 MiB。RA 在进程树中，焦点未变，关闭+30秒 PID 全退，隔离目录已清理。
+- 报告和原始数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.{json,md,log}`；旧失败诊断已补根因和修复记录。
+- 此为 idle 参考，不能替代 Alula 的 30 分钟编辑或 docs/04 完整矩阵。Alula run3 稳态仍超 500 MiB；真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可未解决，故 P00.4/feat-022 保持 blocked/in-progress，P01 不启动。
+- 提交前验证：`bash init.sh` 通过 Rust workspace tests、Clippy、`build_core` 和 Flutter 122 项测试；`cargo fmt --check` 与 `flutter analyze` 也通过（No issues found）。
+
+
 ### 最新进展（2026-10-29，第七十四轮，Windows LRU 内存筛选）
 
 - 为评估 RA 缓存上限，完成 capacity 128/32/16 的三个 120 秒隔离筛选，并对 capacity 16 完成 1800 秒、150/150 次保存长测。配置均被 RA 读取且无校验错误；四轮采样关闭+30秒进程全退，长测前台恢复成功。
