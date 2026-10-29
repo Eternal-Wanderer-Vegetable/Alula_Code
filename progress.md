@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
-### 最新进展（2026-10-30，P02.5 外部变更/冲突/只读/孤儿文档）
+### 最新进展（2026-10-30，P02.6 崩溃 journal 与大文本恢复）
+
+- P02.6 已完成：journal 使用版本、generation 与 checksum；流式写入同目录临时文件，保留有效备份，启动时可从已 flush 临时代或备份恢复。兼容 legacy journal；坏数据、未知版本和写入失败均有明确状态/提示。
+- 移除了旧 2,000,000 UTF-16 单元 journal 阈值。端到端夹具接受 2,000,001 单元脏文本，journal 持久化后重启全文一致恢复，原磁盘文件保持不变。独立子进程在临时 journal flush 后被强杀，重启从该临时代恢复。
+- 验证：journal 单测 12/12、journal 错误提示 widget 定向测试通过、大文本端到端 fixture 通过；`bash init.sh` 完整门禁退出 0，Flutter 156 项全通过。日志 `/tmp/alula-p02.6-init-20261030.log`，详见 `docs/diagnostics/2026-10-30-p02/p02.6-crash-journal-large-text.md`。
+- GitNexus 暂存范围变更分析：11 files、59 symbols、4 affected flows、MEDIUM；全工作树：41 files、77 symbols、4 affected flows、MEDIUM（包含已有 README、keybindings 等变更）。无 HIGH/CRITICAL。下一唯一活动切片 P02.7 跨文档编辑事务。Rust + rust-analyzer 500 MiB 数值优化继续安排在 P14。
+
+### 历史进展（2026-10-30，P02.5 外部变更/冲突/只读/孤儿文档）
 
 - P02.5 已完成：ABI v10 显式返回只读目标错误；干净外部重载保留光标、选区与滚动位置；本地脏内容与磁盘更新、journal 恢复内容与当前磁盘均保留两侧并要求用户显式处理。删除/重命名后的旧文档保持可编辑，普通保存不会静默重建原路径，另存为可恢复内容。
 - 六个 Flutter 行为用例覆盖视图保留、磁盘冲突取消/覆盖、journal 恢复冲突、删除后继续编辑/另存、重命名孤儿状态和只读保存原字节保护；Rust 测试覆盖只读目标在原子替换前拒绝。

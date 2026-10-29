@@ -862,4 +862,28 @@ void main() {
         reason: '树根应列出 Cargo.toml');
     expect(find.text('src'), findsOneWidget, reason: '树根应列出 src 目录');
   });
+
+
+  testWidgets('P02.6 损坏的会话 journal 显示恢复失败提示', (tester) async {
+    File(session.resolvePath()).writeAsStringSync('{broken journal');
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(
+        find.byKey(const ValueKey('journal-recovery-banner')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('journal-recovery-banner')),
+        matching: find.textContaining('journal 和备份均无法校验'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('关闭提示'));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('journal-recovery-banner')), findsNothing);
+  });
 }

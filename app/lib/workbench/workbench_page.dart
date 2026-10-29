@@ -161,10 +161,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _matchIndex = -1;
   bool _caseSensitive = false;
 
-  /// journal 单文档文本上限（字符）：超出不落 journal（内容只存在于内存，
-  /// 崩溃后该文档回退为磁盘内容）。低内存纪律：journal 不做无界缓冲。
-  static const _kMaxJournalTextChars = 2000000;
-
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
 
@@ -177,6 +173,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   WbSyncState _state = WbSyncState.idle;
   String _statusDetail = '初始化…';
+  String? _journalRecoveryNotice;
+  String? _journalSaveError;
 
   // LSP / 语法
   bool _lspStarting = false;
@@ -388,7 +386,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
       widget.layoutStore.save(_layout.root);
-      widget.sessionStore.save(_encodeSession());
+      final saved = widget.sessionStore.save(_encodeSession());
+      if (!mounted) return;
+      if (!saved) {
+        setState(() {
+          _journalSaveError = '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。'
+              '${widget.sessionStore.lastSaveError ?? ''}';
+        });
+      } else if (_journalSaveError != null) {
+        setState(() => _journalSaveError = null);
+      }
     });
   }
 
@@ -410,9 +417,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     if (d.path != null) 'path': d.path,
                     'fileOptions': d.fileOptions.toJson(),
                     'savedFileOptions': d.savedFileOptions.toJson(),
-                    if ((d.isUntitled || d.isDirty) &&
-                        d.controller.text.length <= _kMaxJournalTextChars)
-                      'text': d.controller.text,
+                    if (d.isUntitled || d.isDirty) 'text': d.controller.text,
                   }
               ],
             }
@@ -448,7 +453,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         g.activeDocId = g.docs.last.id;
       }
       _state = WbSyncState.idle;
-      _statusDetail = '已连接 Rust 核心 v$_abiVersion';
+      _statusDetail = _journalRecoveryNotice ?? '已连接 Rust 核心 v$_abiVersion';
       var openedFolder = false;
       if (_workspaceRoot == null &&
           widget.autoFolder != null &&
@@ -477,6 +482,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 首次编辑从恢复文本继续增量同步。journal 损坏一律按全新会话启动。
   void _restoreSession(AlulaCore core) {
     final data = widget.sessionStore.tryLoad();
+    _journalRecoveryNotice = switch (widget.sessionStore.lastLoadStatus) {
+      SessionLoadStatus.recoveredFromBackup =>
+        '会话 journal 主文件不可用，已从上一个有效备份恢复；最近一次会话状态可能不完整。',
+      SessionLoadStatus.recoveredFromTemporary =>
+        '检测到上次保存被中断，已从校验通过的临时 journal 恢复。',
+      SessionLoadStatus.invalid =>
+        '会话 journal 和备份均无法校验；未保存文本可能无法恢复，现有文件已从磁盘打开。',
+      SessionLoadStatus.unsupportedVersion => '会话 journal 版本不受支持，未载入其中的未保存文本。',
+      SessionLoadStatus.notFound ||
+      SessionLoadStatus.loaded ||
+      SessionLoadStatus.legacy =>
+        null,
+    };
     if (data == null) return;
     try {
       final groupsRaw = data['groups'];
@@ -3425,6 +3443,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Widget _buildJournalNoticeBanner({
+    required String key,
+    required String message,
+    required VoidCallback onDismiss,
+  }) {
+    return Container(
+      key: ValueKey(key),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 6),
+      child: MaterialBanner(
+        content: Text(message),
+        actions: [
+          TextButton(onPressed: onDismiss, child: const Text('关闭提示')),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEditor(EditorGroup g) {
     final active = g.active;
     if (active == null) {
@@ -3437,6 +3473,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
+          if (_journalRecoveryNotice != null)
+            _buildJournalNoticeBanner(
+              key: 'journal-recovery-banner',
+              message: _journalRecoveryNotice!,
+              onDismiss: () => setState(() => _journalRecoveryNotice = null),
+            ),
+          if (_journalSaveError != null)
+            _buildJournalNoticeBanner(
+              key: 'journal-save-error-banner',
+              message: _journalSaveError!,
+              onDismiss: () => setState(() => _journalSaveError = null),
+            ),
           if (active.diskState != DiskDocumentState.current)
             _buildDiskStateBanner(active),
           Expanded(

@@ -167,12 +167,12 @@ void main() {
       'journalTextPresent': journalTextPresent,
       'diskUtf16Units': diskFile.readAsStringSync().length,
       'recoveredUtf16Units': recoveredText.length,
-      'recoveredFromDisk': recoveredText == diskFile.readAsStringSync(),
+      'recoveredFromJournal': recoveredText == acceptedText,
     };
-    // Current baseline: the journal omits the accepted edit and reloads disk text.
+    // The journal now preserves accepted edits above the former 2M threshold.
     expect(acceptedText.length, greaterThan(2000000));
-    expect(journalTextPresent, isFalse);
-    expect(recoveredText, diskFile.readAsStringSync());
+    expect(journalTextPresent, isTrue);
+    expect(recoveredText, acceptedText);
     // ignore: avoid_print
     print('P00.3_FIXTURE=${jsonEncode(observed)}');
   });
