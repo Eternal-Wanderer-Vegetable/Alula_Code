@@ -97,6 +97,9 @@ void main() {
     await tester.tap(find.text('main.rs').first);
     await tester.pump(const Duration(milliseconds: 200));
     final bBefore = editorText(tester);
+    // File activation may update the shared edit timestamp. Let its coalescing
+    // window expire so this fixture records two independent document edits.
+    await waitWallClock(tester, const Duration(milliseconds: 450));
     await tester.enterText(find.byType(TextField).first, '$bBefore\n// B-edit');
     await tester.pump(const Duration(milliseconds: 500));
 

@@ -3,7 +3,16 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-10-29 P00 执行）
+## Current State（当前状态，2026-10-29 优先级调整）
+
+### 最新进展（2026-10-29，用户调整复刻/优化顺序）
+
+- 调度顺序改为先完成 P00–P13 的 VS Code 整体架构与默认功能复刻，再在 P14 做全功能性能/内存优化，P15 完成最终对照。Rust + rust-analyzer ≤500 MiB 暂停作为验收门；已有占用数据保留作基线，后续重新定标。
+- P00 / feat-022 按阶段交付物签收：参考来源/构建差异、贡献项导出、golden/风险夹具和三项风险实验 ADR/证据已登记。真实 DRM/WPE GBM、Microsoft 官方服务身份/许可是 P12/P13/P14 后续风险，不再阻塞 P01。
+- 当前唯一进行项转为 P01 / feat-023。架构阶段仍要求资源有界、服务按需启停、关闭后回收，并保证压力下可编辑/保存及无数据丢失；不提前做以数值占用达标为目的的优化。
+- 启动基线首跑中，P00.3 `REF-07-UNDO-01` 曾因打开第二文件时的编辑时间戳落入 400ms undo coalescing 窗口而失败。测试在第二文件打开后增加 450ms 实时等待以隔离两次编辑；复跑 `bash init.sh --fast` 全通过（Rust workspace tests、build_core、Flutter 122/122），观测仍为双文档撤销串写这一既有夹具结果。
+- 提交前 GitNexus `detect-changes --scope all` 覆盖工作树 38 个文件/11 个 symbols，报告 0 个受影响流程、low risk；staged 检查覆盖本次 7 个文件/1 个 AGENTS 文档 symbol、0 个受影响流程、low risk。索引报告既有流程图截断（417 个候选入口中 217 个未排名、130 个 callee 跳过、2 次 walk 达预算），因此 0 流程仅用于本次文档变更风险评估，不代表代码图完整。
+- 本次变更文件：`AGENTS.md`、docs/03、docs/04、docs/10、`feature_list.json`、本文件与 `session-handoff.md`。
 
 ### 最新进展（2026-10-29，第七十八轮，固定版 Code-OSS 30 分钟脚本编辑对照）
 
@@ -51,6 +60,23 @@ P00.1 固定 SHA 源码/发行物与构建路径、P00.2 原子贡献/运行时�
 - 完成用户授权的隔离 Windows VS Code 同服务 idle 复跑：Microsoft VS Code 1.142.0 Stable + rust-analyzer extension 0.3.3089/server 1.97.1；独立 user-data、扩展和 shared-data，telemetry/自动更新关闭、未登录或 Sync。600 点覆盖 729.671 秒；Private Bytes 峰值/尾段稳定/末值 1630.83/1351.11/1343.63 MiB，末 Working Set 1556.62 MiB。RA 在树中；一次启动焦点恢复成功；13 个记录 PID 在关闭+30 秒全部退出，隔离目录已清理。
 - 四轮 VS Code idle 稳定值为 1267.18/1324.33/1298.38/1351.11 MiB，中位数 1311.36 MiB。VS Code 版本不匹配固定 Code-OSS 1.145.0-dev，本轮也不是编辑场景。Windows Alula Rust+RA 30 分钟稳定态仍高于 500 MiB；真实 DRM/WPE GBM、Microsoft 官方服务身份/许可与完整 docs/04 产品/平台矩阵仍未完成。P00.4 继续 blocked、feat-022 保持 in-progress，P01 不启动。
 - 报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle-repeat2-20261029-024524.{json,md}`；运行日志：`p00.4-windows-vscode-rust-lsp-idle-20261029-134127345.log`；复跑脚本：`p00.4-vscode-rust-lsp-idle-repeat2-20261029-024524.ps1`。
+
+### 最新进展（2026-10-29，第七十二轮，恢复后第二次复核）
+
+- 再次确认 WSL interop 未恢复，旧 GitNexus 与 route-netlink D 状态进程仍在；直接启动 `cmd.exe /c echo WSL_TO_WINDOWS_OK` 仍返回 `UtilAcceptVsock:281: accept4 failed 110`。不启动新的 VS Code 或 GitNexus 进程。
+- 已复核隔离脚本、`Code.exe`、user-data、扩展副本与 shared-data 目录均还在，无本轮采样输出；WSL 重启后可直接续跑。记录追加在 `docs/diagnostics/2026-10-29-p00/p00.4-windows-vscode-rust-lsp-idle-rerun-blocked-20261029.md`。P00.4 仍 blocked/in-progress，未提交。
+
+### 最新进展（2026-10-29，第七十一轮，恢复后复核）
+
+- 当前 goal 恢复后重新核对，WSL 未重启：interop/distro 环境变量仍为空；之前 GitNexus 和 route-netlink 进程保持 D 状态。一次安全的 `ip route show` 重试仍挂起，随后只终止 timeout 包装进程，D 状态的内核等待进程仍在。
+- 从独立 Node REPL 尝试启动 Windows PowerShell，也返回 `UtilAcceptVsock:281: accept4 failed 110`。没有 Code.exe、焦点变化或内存样本；不继续制造 route-netlink/GitNexus 等待进程。证据补入 `docs/diagnostics/2026-10-29-p00/p00.4-windows-vscode-rust-lsp-idle-rerun-blocked-20261029.md`。
+- 需要先在 Windows 宿主终止并重启当前 WSL 发行版；恢复后检查 route/GitNexus，继续已授权的隔离采样。P00.4 保持 blocked，feat-022 in-progress，P01 不启动；不提交，因为 GitNexus pre-commit 检查仍不可用。
+
+### 最新进展（2026-10-29，第七十轮）
+
+- 用户授权重跑隔离 VS Code + 相同 rust-analyzer 1.97.1 的 10 分钟 idle 对照。执行前确认 Linux 基线：`init.sh --fast` 中 Rust workspace tests、`build_core` 与 Flutter 122 项全部通过。
+- Windows PowerShell 从 WSL 启动失败：`UtilAcceptVsock:281: accept4 failed 110`；显式设置两个现有 WSL interop socket 也失败。本轮没有启动 Code.exe、没有窗口焦点变化、没有内存样本。隔离 profile/扩展/shared-data 和 timestamped runner 已准备，详见 `docs/diagnostics/2026-10-29-p00/p00.4-windows-vscode-rust-lsp-idle-rerun-blocked-20261029.md`。
+- WSL `ip route show` 与 GitNexus `status/analyze` 均进入内核 D 状态（route-netlink dump），无法由信号结束。`dmesg` 显示 `kworker/0:1` 在 `hv_pri_chan vmbus_add_channel_work` 阻塞超 483 秒，多个请求等待其 mutex；需宿主侧终止/重启当前 WSL 发行版。GitNexus 新鲜度无法确认，本轮不提交。恢复 WSL 后先检查 `ip route show` 和 GitNexus，再运行隔离 runner。P00/feat-022 继续 in-progress，P00.4 blocked，P01 不开始。
 
 ### 最新进展（2026-10-29，第六十八轮）
 
