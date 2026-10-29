@@ -5,6 +5,15 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.4.1 有界输入会话合同）
+
+- 新增 `RustTextInputWindow`：Rust 读取最多 64 Ki UTF-16 输入窗，Flutter 仅在窗口内计算 delta，并把局部 TextOp 偏移平移到文档绝对坐标；窗口总大小硬限，超限不写 Rust。
+- IME composition 作为 Flutter 临时 overlay，不提前修改 Rust authoritative text；平台提交后一次性回写 TextOps，取消返回已提交值；composition selection/range 保持窗口坐标并携带对应 Rust 替换范围，已提交 selection 才映射到文档绝对 UTF-16。超限输入被拒绝，版本失配保留 pending 值。
+- 待写回使用单槽最新快照，100 次输入事件仅写入最后的 TextOp；失败时 pending 不丢。合同可在保存或焦点转移前明确提交/取消组合态。
+- 定向 Dart↔Rust FFI 测试 7/7、`flutter analyze --no-pub` 零问题、`cargo fmt --all -- --check` 通过；`bash init.sh` EXIT=0：Rust workspace、Clippy、native core 构建与 Flutter 全量 175 项通过；超大恢复夹具已运行完成。无 Rust/ABI 修改。
+- GitNexus 刷新后暂存变更检测为 7 files / 12 symbols / 87 affected processes、CRITICAL；全工作树 39 files / 87 flows、CRITICAL，含既有用户改动。新类精确 upstream impact 为 LOW（仅测试 importer、0 流程）；图谱报告 379 个候选入口与 186 个 callee 截断，已如实登记，不以低风险结论覆盖全局 CRITICAL。
+- 报告：`docs/diagnostics/2026-10-30-p03/p03.4.1-input-window-contract.md`。输入合同未接入工作台控件，也没有原生候选窗或 Windows/macOS/Linux 产品 IME 证据；P03.4.2 将继续完成控件接线与平台验收。旧 CodeForge Windows 探针不替代产品门。
+
 ### 最新进展（2026-10-30，P03.3 Rust 唯一文本所有权与有界视口原型）
 
 - P03.3 已完成并通过完整门禁。ABI v14 `readLines` 一次最多 256 行且总响应最多 64 Ki UTF-16；视口原型按 32 行/页、2,048 UTF-16 单元/行、每视图最多缓存 3 页读取 Rust 文档。10k 行末页、50k 行真实 FFI 双视图滚动/选区/独立状态与 100k 单行从第 90k 列续读均有 fixture。
