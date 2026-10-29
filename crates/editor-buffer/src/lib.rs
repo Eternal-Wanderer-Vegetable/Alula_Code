@@ -9,6 +9,8 @@ use serde::{Deserialize, Serialize};
 
 /// Maximum UTF-16 units requested by one bounded document read.
 pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
+/// Maximum number of line windows returned by one editor viewport request.
+pub const MAX_READ_LINES: usize = 256;
 
 /// A bounded read from the Rust-authoritative document.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -31,6 +33,25 @@ pub struct TextLineOffset {
     pub line_count: usize,
     pub line: usize,
     pub offset_utf16: usize,
+}
+
+/// One bounded UTF-16 window from a document line.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineRead {
+    pub line: usize,
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub text: String,
+}
+
+/// A bounded set of line windows from one immutable buffer snapshot.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLinesRead {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub first_line: usize,
+    pub lines: Vec<TextLineRead>,
 }
 
 /// 单个增量编辑操作。offset/len 均为 UTF-16 code unit 口径。
@@ -60,6 +81,15 @@ pub enum BufferError {
     ReadRangeTooLarge { requested: usize, max: usize },
     /// A requested zero-based line is outside the document.
     InvalidLine { line: usize, line_count: usize },
+    /// A viewport line request has invalid bounds or a budget smaller than its
+    /// per-line worst case.
+    InvalidLineWindow {
+        max_lines: usize,
+        max_line_utf16: usize,
+        max_total_utf16: usize,
+    },
+    /// A viewport request contains too many line windows.
+    ReadLineCountTooLarge { requested: usize, max: usize },
 }
 
 impl std::fmt::Display for BufferError {
@@ -82,6 +112,17 @@ impl std::fmt::Display for BufferError {
             }
             BufferError::InvalidLine { line, line_count } => {
                 write!(f, "line {line} is outside document line count {line_count}")
+            }
+            BufferError::InvalidLineWindow {
+                max_lines,
+                max_line_utf16,
+                max_total_utf16,
+            } => write!(
+                f,
+                "invalid line window ({max_lines} lines × {max_line_utf16} UTF-16 units; total budget {max_total_utf16})"
+            ),
+            BufferError::ReadLineCountTooLarge { requested, max } => {
+                write!(f, "line window count {requested} exceeds maximum {max}")
             }
         }
     }
@@ -188,6 +229,104 @@ impl TextBuffer {
             start_line,
             start_character,
             text: self.rope.slice(start_char..end_char).to_string(),
+        })
+    }
+
+    /// Read a bounded page of per-line horizontal windows from one Rust
+    /// snapshot. Line separators are excluded from each returned window.
+    ///
+    /// `max_line_utf16 * max_lines` must fit within `max_total_utf16`, making
+    /// the response size predictable even when every requested line is long.
+    /// Horizontal positions are UTF-16 columns; a position inside a surrogate
+    /// pair is moved back to the scalar start.
+    pub fn read_lines_utf16(
+        &self,
+        first_line: usize,
+        max_lines: usize,
+        horizontal_start_utf16: usize,
+        max_line_utf16: usize,
+        max_total_utf16: usize,
+    ) -> Result<TextLinesRead, BufferError> {
+        let line_count = self.rope.len_lines();
+        if first_line >= line_count {
+            return Err(BufferError::InvalidLine {
+                line: first_line,
+                line_count,
+            });
+        }
+        if max_lines > MAX_READ_LINES {
+            return Err(BufferError::ReadLineCountTooLarge {
+                requested: max_lines,
+                max: MAX_READ_LINES,
+            });
+        }
+        if max_lines == 0
+            || max_line_utf16 < 2
+            || max_total_utf16 == 0
+            || max_line_utf16 > MAX_READ_RANGE_UTF16
+            || max_total_utf16 > MAX_READ_RANGE_UTF16
+            || max_line_utf16.saturating_mul(max_lines) > max_total_utf16
+        {
+            return Err(BufferError::InvalidLineWindow {
+                max_lines,
+                max_line_utf16,
+                max_total_utf16,
+            });
+        }
+
+        let returned_line_count = max_lines.min(line_count - first_line);
+        let mut lines = Vec::with_capacity(returned_line_count);
+        for line_index in first_line..first_line + returned_line_count {
+            let line_slice = self.rope.line(line_index);
+            let mut content_chars = line_slice.len_chars();
+            if content_chars > 0 && line_slice.char(content_chars - 1) == '\n' {
+                content_chars -= 1;
+                if content_chars > 0 && line_slice.char(content_chars - 1) == '\r' {
+                    content_chars -= 1;
+                }
+            }
+
+            let content_start_char = self.rope.line_to_char(line_index);
+            let content_end_char = content_start_char + content_chars;
+            let content_start_utf16 = self.rope.char_to_utf16_cu(content_start_char);
+            let content_end_utf16 = self.rope.char_to_utf16_cu(content_end_char);
+            let content_length = content_end_utf16 - content_start_utf16;
+            let requested_column = horizontal_start_utf16.min(content_length);
+            let requested_start = content_start_utf16 + requested_column;
+            let start_char = match self.char_idx_at_utf16(requested_start) {
+                Ok(char_index) => char_index,
+                Err(BufferError::InvalidUtf16Offset { .. }) if requested_start > 0 => {
+                    self.char_idx_at_utf16(requested_start - 1)?
+                }
+                Err(error) => return Err(error),
+            };
+            let start_utf16 = self.rope.char_to_utf16_cu(start_char);
+            let requested_end = start_utf16
+                .saturating_add(max_line_utf16)
+                .min(content_end_utf16);
+            let end_char = match self.char_idx_at_utf16(requested_end) {
+                Ok(char_index) => char_index,
+                Err(BufferError::InvalidUtf16Offset { .. }) if requested_end > start_utf16 => {
+                    self.char_idx_at_utf16(requested_end - 1)?
+                }
+                Err(error) => return Err(error),
+            };
+            let end_utf16 = self.rope.char_to_utf16_cu(end_char);
+
+            lines.push(TextLineRead {
+                line: line_index,
+                start_utf16,
+                end_utf16,
+                text: self.rope.slice(start_char..end_char).to_string(),
+            });
+        }
+
+        Ok(TextLinesRead {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            first_line,
+            lines,
         })
     }
 
@@ -453,6 +592,87 @@ mod tests {
         let last = buf.line_offset_utf16(1).unwrap();
         assert_eq!(last.offset_utf16, 5);
         assert_eq!(last.total_utf16_length, 5);
+    }
+
+    #[test]
+    fn bounded_line_windows_trim_bom_crlf_and_keep_utf16_offsets() {
+        let buf = TextBuffer::open("\u{FEFF}a🦊\r\nsecond\n");
+        let page = buf.read_lines_utf16(0, 3, 0, 8, 24).unwrap();
+        assert_eq!(page.version, 1);
+        assert_eq!(page.total_utf16_length, 13);
+        assert_eq!(page.line_count, 3);
+        assert_eq!(page.first_line, 0);
+        assert_eq!(page.lines.len(), 3);
+        assert_eq!(page.lines[0].text, "\u{FEFF}a🦊");
+        assert_eq!((page.lines[0].start_utf16, page.lines[0].end_utf16), (0, 4));
+        assert_eq!(page.lines[1].text, "second");
+        assert_eq!(
+            (page.lines[1].start_utf16, page.lines[1].end_utf16),
+            (6, 12)
+        );
+        assert_eq!(page.lines[2].text, "");
+        assert_eq!(
+            (page.lines[2].start_utf16, page.lines[2].end_utf16),
+            (13, 13)
+        );
+    }
+
+    #[test]
+    fn line_window_horizontal_offset_moves_back_from_surrogate_middle() {
+        let buf = TextBuffer::open("a🦊z\r\nnext");
+        let page = buf.read_lines_utf16(0, 2, 2, 8, 16).unwrap();
+        assert_eq!(page.lines[0].text, "🦊z");
+        assert_eq!((page.lines[0].start_utf16, page.lines[0].end_utf16), (1, 4));
+        assert_eq!(page.lines[1].text, "xt");
+        assert_eq!(
+            (page.lines[1].start_utf16, page.lines[1].end_utf16),
+            (8, 10)
+        );
+    }
+
+    #[test]
+    fn long_line_windows_are_bounded_and_can_jump_horizontally() {
+        let buf = TextBuffer::open(&"x".repeat(100_000));
+        let page = buf.read_lines_utf16(0, 1, 90_000, 2_048, 2_048).unwrap();
+        assert_eq!(page.line_count, 1);
+        assert_eq!(page.lines[0].start_utf16, 90_000);
+        assert_eq!(page.lines[0].end_utf16, 92_048);
+        assert_eq!(page.lines[0].text, "x".repeat(2_048));
+    }
+
+    #[test]
+    fn bounded_line_windows_address_the_end_of_a_10k_line_document() {
+        let text = (0..10_000)
+            .map(|line| format!("line-{line}"))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let buf = TextBuffer::open(&text);
+        let page = buf.read_lines_utf16(9_984, 16, 0, 32, 512).unwrap();
+        assert_eq!(page.line_count, 10_000);
+        assert_eq!(page.first_line, 9_984);
+        assert_eq!(page.lines.len(), 16);
+        assert_eq!(page.lines.last().unwrap().line, 9_999);
+        assert_eq!(page.lines.last().unwrap().text, "line-9999");
+    }
+
+    #[test]
+    fn line_window_rejects_unbounded_or_inconsistent_limits() {
+        let buf = TextBuffer::open("a\nb");
+        assert_eq!(
+            buf.read_lines_utf16(0, 257, 0, 2, 514),
+            Err(BufferError::ReadLineCountTooLarge {
+                requested: 257,
+                max: 256,
+            })
+        );
+        assert_eq!(
+            buf.read_lines_utf16(0, 2, 0, 4, 7),
+            Err(BufferError::InvalidLineWindow {
+                max_lines: 2,
+                max_line_utf16: 4,
+                max_total_utf16: 7,
+            })
+        );
     }
 
     #[test]

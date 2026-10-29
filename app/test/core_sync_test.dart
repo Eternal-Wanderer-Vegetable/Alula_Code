@@ -143,6 +143,50 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('Rust 可视区批量按行读取保留 UTF-16 边界并支持长行窗口', () {
+    final doc = _bootstrap.core!.openDoc(9033, '\u{FEFF}a🦊\r\nsecond\n');
+    final page = doc.readLines(
+      firstLine: 0,
+      maxLines: 2,
+      horizontalStartUtf16: 0,
+      maxLineUtf16: 8,
+      maxTotalUtf16: 16,
+    );
+    expect(page.version, 1);
+    expect(page.totalUtf16Length, 13);
+    expect(page.lineCount, 3);
+    expect(page.lines.map((line) => line.text), ['\u{FEFF}a🦊', 'second']);
+    expect(
+      page.lines.map((line) => (line.startUtf16, line.endUtf16)),
+      [(0, 4), (6, 12)],
+    );
+
+    final horizontal = doc.readLines(
+      firstLine: 0,
+      maxLines: 2,
+      horizontalStartUtf16: 3,
+      maxLineUtf16: 8,
+      maxTotalUtf16: 16,
+    );
+    expect(horizontal.lines[0].text, '🦊');
+    expect(horizontal.lines[0].startUtf16, 2);
+    expect(horizontal.lines[1].text, 'ond');
+
+    final longLine = _bootstrap.core!.openDoc(9034, '${'x' * 90000}🦊tail');
+    final tail = longLine.readLines(
+      firstLine: 0,
+      maxLines: 1,
+      horizontalStartUtf16: 90000,
+      maxLineUtf16: 2048,
+      maxTotalUtf16: 2048,
+    );
+    expect(tail.lines.single.text, '🦊tail');
+    expect(tail.lines.single.startUtf16, 90000);
+    expect(tail.lines.single.endUtf16, 90006);
+    doc.close();
+    longLine.close();
+  }, skip: skip);
+
   test('过期版本被拒绝并给出 Rust 当前版本', () {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(

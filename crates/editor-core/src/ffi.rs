@@ -29,7 +29,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 13;
+pub const ALULA_ABI_VERSION: u32 = 14;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -502,6 +502,88 @@ pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
+}
+
+/// Read a bounded batch of UTF-16 line windows from one Rust document snapshot.
+#[no_mangle]
+pub extern "C" fn alula_doc_read_lines(
+    id: u64,
+    first_line: u64,
+    max_lines: u64,
+    horizontal_start_utf16: u64,
+    max_line_utf16: u64,
+    max_total_utf16: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(first_line) = usize::try_from(first_line) else {
+            return err_json("InvalidArgument", json!("first line is not representable"));
+        };
+        let Ok(max_lines) = usize::try_from(max_lines) else {
+            return err_json("InvalidArgument", json!("line count is not representable"));
+        };
+        let Ok(horizontal_start_utf16) = usize::try_from(horizontal_start_utf16) else {
+            return err_json(
+                "InvalidArgument",
+                json!("horizontal offset is not representable"),
+            );
+        };
+        let Ok(max_line_utf16) = usize::try_from(max_line_utf16) else {
+            return err_json(
+                "InvalidArgument",
+                json!("per-line read length is not representable"),
+            );
+        };
+        let Ok(max_total_utf16) = usize::try_from(max_total_utf16) else {
+            return err_json(
+                "InvalidArgument",
+                json!("total read length is not representable"),
+            );
+        };
+
+        match registry_lock().read_lines(
+            id,
+            first_line,
+            max_lines,
+            horizontal_start_utf16,
+            max_line_utf16,
+            max_total_utf16,
+        ) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(page)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": page.version,
+                    "totalUtf16Length": page.total_utf16_length,
+                    "lineCount": page.line_count,
+                    "firstLine": page.first_line,
+                    "lines": page.lines.into_iter().map(|line| json!({
+                        "line": line.line,
+                        "startUtf16": line.start_utf16,
+                        "endUtf16": line.end_utf16,
+                        "text": line.text,
+                    })).collect::<Vec<_>>(),
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidLine { line, line_count })) => err_json(
+                "InvalidLine",
+                json!({ "line": line, "lineCount": line_count }),
+            ),
+            Some(Err(BufferError::ReadRangeTooLarge { requested, max })) => err_json(
+                "ReadRangeTooLarge",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::ReadLineCountTooLarge { requested, max })) => err_json(
+                "ReadLineCountTooLarge",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::InvalidLineWindow { .. })) => {
+                err_json("InvalidLineWindow", json!("invalid line window limits"))
+            }
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_read_lines")))
 }
 
 /// 关闭文档并释放其缓冲区。
@@ -1201,6 +1283,54 @@ mod tests {
         assert_eq!(invalid["error"]["code"], "InvalidLine");
 
         take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn bounded_line_windows_over_ffi_share_a_rust_snapshot() {
+        let id = 92_813;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}a🦊\r\nsecond\n").as_ptr()) });
+
+        let page = take(alula_doc_read_lines(id, 0, 3, 0, 8, 24));
+        assert_eq!(page["ok"], true);
+        assert_eq!(page["version"], 1);
+        assert_eq!(page["totalUtf16Length"], 13);
+        assert_eq!(page["lineCount"], 3);
+        assert_eq!(page["firstLine"], 0);
+        assert_eq!(page["lines"][0]["text"], "\u{FEFF}a🦊");
+        assert_eq!(page["lines"][0]["startUtf16"], 0);
+        assert_eq!(page["lines"][0]["endUtf16"], 4);
+        assert_eq!(page["lines"][1]["text"], "second");
+        assert_eq!(page["lines"][1]["startUtf16"], 6);
+        assert_eq!(page["lines"][1]["endUtf16"], 12);
+        assert_eq!(page["lines"][2]["text"], "");
+
+        let long_line_id = id + 1;
+        take(unsafe {
+            alula_doc_open(
+                long_line_id,
+                c(&format!("{}🦊tail", "x".repeat(90_000))).as_ptr(),
+            )
+        });
+        let horizontal = take(alula_doc_read_lines(
+            long_line_id,
+            0,
+            1,
+            90_000,
+            2_048,
+            2_048,
+        ));
+        assert_eq!(horizontal["lines"][0]["text"], "🦊tail");
+        assert_eq!(horizontal["lines"][0]["startUtf16"], 90_000);
+
+        let invalid_window = take(alula_doc_read_lines(id, 0, 2, 0, 8, 15));
+        assert_eq!(invalid_window["ok"], false);
+        assert_eq!(invalid_window["error"]["code"], "InvalidLineWindow");
+        let invalid_count = take(alula_doc_read_lines(id, 0, 257, 0, 2, 514));
+        assert_eq!(invalid_count["ok"], false);
+        assert_eq!(invalid_count["error"]["code"], "ReadLineCountTooLarge");
+
+        take(alula_doc_close(id));
+        take(alula_doc_close(long_line_id));
     }
 
     #[test]

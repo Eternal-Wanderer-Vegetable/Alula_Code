@@ -12,8 +12,9 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 13;
+const int expectedAbiVersion = 14;
 const int maxDocReadRangeUtf16 = 64 * 1024;
+const int maxDocReadLines = 256;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -239,6 +240,38 @@ class DocumentLineOffset {
     required this.lineCount,
     required this.line,
     required this.offsetUtf16,
+  });
+}
+
+/// One horizontal UTF-16 window from a line in the Rust document.
+class DocumentLineWindow {
+  final int line;
+  final int startUtf16;
+  final int endUtf16;
+  final String text;
+
+  const DocumentLineWindow({
+    required this.line,
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.text,
+  });
+}
+
+/// Bounded line windows and metadata from one Rust document snapshot.
+class DocumentLinesRead {
+  final int version;
+  final int totalUtf16Length;
+  final int lineCount;
+  final int firstLine;
+  final List<DocumentLineWindow> lines;
+
+  const DocumentLinesRead({
+    required this.version,
+    required this.totalUtf16Length,
+    required this.lineCount,
+    required this.firstLine,
+    required this.lines,
   });
 }
 
@@ -535,6 +568,88 @@ class AlulaDoc {
     );
     version = offset.version;
     return offset;
+  }
+
+  /// Read a bounded batch of line windows without mirroring the document.
+  /// The requested worst case must fit within the total UTF-16 response cap.
+  DocumentLinesRead readLines({
+    required int firstLine,
+    required int maxLines,
+    int horizontalStartUtf16 = 0,
+    int maxLineUtf16 = 2048,
+    int maxTotalUtf16 = maxDocReadRangeUtf16,
+  }) {
+    if (firstLine < 0) {
+      throw RangeError.value(firstLine, 'firstLine', 'must be non-negative');
+    }
+    if (horizontalStartUtf16 < 0) {
+      throw RangeError.value(
+        horizontalStartUtf16,
+        'horizontalStartUtf16',
+        'must be non-negative',
+      );
+    }
+    if (maxLines < 1 || maxLines > maxDocReadLines) {
+      throw RangeError.range(maxLines, 1, maxDocReadLines, 'maxLines');
+    }
+    if (maxLineUtf16 < 2 || maxLineUtf16 > maxDocReadRangeUtf16) {
+      throw RangeError.range(
+        maxLineUtf16,
+        2,
+        maxDocReadRangeUtf16,
+        'maxLineUtf16',
+      );
+    }
+    if (maxTotalUtf16 < 1 || maxTotalUtf16 > maxDocReadRangeUtf16) {
+      throw RangeError.range(
+        maxTotalUtf16,
+        1,
+        maxDocReadRangeUtf16,
+        'maxTotalUtf16',
+      );
+    }
+    if (maxLineUtf16 * maxLines > maxTotalUtf16) {
+      throw RangeError.value(
+        maxTotalUtf16,
+        'maxTotalUtf16',
+        'must cover maxLineUtf16 × maxLines',
+      );
+    }
+
+    final json = core._ffi.docReadLinesJson(
+      id,
+      firstLine,
+      maxLines,
+      horizontalStartUtf16,
+      maxLineUtf16,
+      maxTotalUtf16,
+    );
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final lines = (r['lines'] as List<dynamic>).map((item) {
+      final line = item as Map<String, Object?>;
+      return DocumentLineWindow(
+        line: line['line'] as int,
+        startUtf16: line['startUtf16'] as int,
+        endUtf16: line['endUtf16'] as int,
+        text: line['text'] as String,
+      );
+    }).toList(growable: false);
+    final page = DocumentLinesRead(
+      version: r['version'] as int,
+      totalUtf16Length: r['totalUtf16Length'] as int,
+      lineCount: r['lineCount'] as int,
+      firstLine: r['firstLine'] as int,
+      lines: lines,
+    );
+    version = page.version;
+    return page;
   }
 
   /// Read at most [maxLenUtf16] UTF-16 units without transferring the full file.

@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.3 Rust 唯一文本所有权与有界视口原型）
+
+- P03.3 已完成并通过完整门禁。ABI v14 `readLines` 一次最多 256 行且总响应最多 64 Ki UTF-16；视口原型按 32 行/页、2,048 UTF-16 单元/行、每视图最多缓存 3 页读取 Rust 文档。10k 行末页、50k 行真实 FFI 双视图滚动/选区/独立状态与 100k 单行从第 90k 列续读均有 fixture。
+- ADR 选择 Rust 唯一完整文本 + Flutter 有界分页绘制/选择，CodeForge 完整 Rope 与当前 TextField 全文控制器不作为最终大文档文本所有者。该原型只读且未替换工作台控件；输入/IME、多光标、跨页选择、无障碍、三平台与帧时延留在 P03.4–P03.7。
+- 验证：`cargo fmt --all -- --check`、`bash init.sh` EXIT=0（workspace tests、Clippy、build_core、Flutter 168 项）、`flutter analyze --no-pub` 零问题；真实 FFI 控件测试通过。报告：`docs/diagnostics/2026-10-30-p03/p03.3-bounded-viewport-adr.md`。
+- 预编辑 GitNexus 将 `TextBuffer` 与 `DocRegistry` 标为 CRITICAL；提交前 staged/all 结果见 P03.3 诊断报告。P03.4 是下一唯一活动切片。500 MiB 数值目标仍留在 P14，本片不做内存调优或整机测量。
+
 ### 最新进展（2026-10-30，P02.6 崩溃 journal 与大文本恢复）
 
 - P02.6 已完成：journal 使用版本、generation 与 checksum；流式写入同目录临时文件，保留有效备份，启动时可从已 flush 临时代或备份恢复。兼容 legacy journal；坏数据、未知版本和写入失败均有明确状态/提示。

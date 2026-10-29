@@ -8,7 +8,9 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
-use editor_buffer::{BufferError, TextBuffer, TextLineOffset, TextOp, TextRangeRead};
+use editor_buffer::{
+    BufferError, TextBuffer, TextLineOffset, TextLinesRead, TextOp, TextRangeRead,
+};
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
 
@@ -195,6 +197,27 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_offset_utf16(line))
+    }
+
+    /// Read a bounded page of line windows from a registered Rust document.
+    pub fn read_lines(
+        &self,
+        id: u64,
+        first_line: usize,
+        max_lines: usize,
+        horizontal_start_utf16: usize,
+        max_line_utf16: usize,
+        max_total_utf16: usize,
+    ) -> Option<Result<TextLinesRead, BufferError>> {
+        self.docs.get(&id).map(|buffer| {
+            buffer.read_lines_utf16(
+                first_line,
+                max_lines,
+                horizontal_start_utf16,
+                max_line_utf16,
+                max_total_utf16,
+            )
+        })
     }
 
     pub fn version_of(&self, id: u64) -> Option<u64> {
