@@ -314,8 +314,8 @@
       "dependencies": [
         "feat-022"
       ],
-      "status": "in-progress",
-      "evidence": "P01/feat-023 总体仍 in-progress。P01.1 异步请求/取消/版本契约已完成，证据见 docs/diagnostics/2026-10-29-p01/p01.1-async-completion-contract.md。P01.2 命令/context 引擎已完成：共享 CommandService、参数分发、ContextKeyService 条件表达式、动态 enabled 状态、keybindings args/when，菜单/面板/命令面板/键位走统一 ID 入口；测试证据见 docs/diagnostics/2026-10-29-p01/p01.2-command-context-engine.md。当前唯一活动切片转为 P01.3 进程监督与资源状态，权威状态见 docs/03 N.1。500 MiB 目标暂停，架构阶段仍保留生命周期与稳定性要求。 P01.3 done: editor-process 统一监督 Rust LSP 与 Dart Git/rg 子进程，提供按需进程树/资源压力 API、ABI v7、工作区 30 秒状态显示和 Critical 补全/搜索回收；不回收 Git mutation。进程树与仅 Search 回收测试、ABI 往返和全套 gates 通过；详情 docs/diagnostics/2026-10-30-p01/p01.3-process-resource-supervision.md。当前唯一活动切片转为 P01.4。",
+      "status": "done",
+      "evidence": "P01/feat-023 总体仍 in-progress。P01.1 异步请求/取消/版本契约已完成，证据见 docs/diagnostics/2026-10-29-p01/p01.1-async-completion-contract.md。P01.2 命令/context 引擎已完成：共享 CommandService、参数分发、ContextKeyService 条件表达式、动态 enabled 状态、keybindings args/when，菜单/面板/命令面板/键位走统一 ID 入口；测试证据见 docs/diagnostics/2026-10-29-p01/p01.2-command-context-engine.md。当前唯一活动切片转为 P01.3 进程监督与资源状态，权威状态见 docs/03 N.1。500 MiB 目标暂停，架构阶段仍保留生命周期与稳定性要求。 P01.3 done: editor-process 统一监督 Rust LSP 与 Dart Git/rg 子进程，提供按需进程树/资源压力 API、ABI v7、工作区 30 秒状态显示和 Critical 补全/搜索回收；不回收 Git mutation。进程树与仅 Search 回收测试、ABI 往返和全套 gates 通过；详情 docs/diagnostics/2026-10-30-p01/p01.3-process-resource-supervision.md。当前唯一活动切片转为 P01.4。 P01.4 done: generation-guarded serialized workspace watcher lifecycle; cancellation of pending debounce and per-document syntax refresh on open/edit/attach; 800ms diagnostics snapshot polling only while an LSP document is attached. Evidence and limits: docs/diagnostics/2026-10-30-p01/p01.4-event-driven-workspace-lifecycle.md. P01.1–P01.4 complete; next P02/feat-024.",
       "track": "vscode-builtin-parity",
       "phase": "P01"
     },

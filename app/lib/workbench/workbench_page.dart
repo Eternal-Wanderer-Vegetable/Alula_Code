@@ -137,6 +137,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _searchGen = 0;
   SearchService? _searchService;
   WorkspaceWatcher? _watcher;
+  int _watcherGeneration = 0;
+  Future<void> _watcherTransition = Future<void>.value();
 
   // ---------- 大纲视图（feat-outline） ----------
   final List<({String kind, String name, int startUtf16, int line})>
@@ -184,6 +186,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
+  final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
   bool _polling = false;
   List<String> _completionItems = const [];
@@ -667,6 +670,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         });
       }
     }
+    if (doc.lspAttached) _scheduleSyntaxRefresh(docId);
   }
 
   // ---------- 文件夹 / 文件树 ----------
@@ -686,6 +690,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStatus = 'LSP 未启动';
         _diagnostics.clear();
         _syntaxByDoc.clear();
+        for (final timer in _syntaxRefreshTimers.values) {
+          timer.cancel();
+        }
+        _syntaxRefreshTimers.clear();
         _pollTimer?.cancel();
         _pollTimer = null;
         for (final doc in _allDocs) {
@@ -715,10 +723,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           registerProcess: core.runtime.registerProcess,
           unregisterProcess: core.runtime.unregisterProcess,
         );
-        _attachWorkspaceWatcher();
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _attachWorkspaceWatcher();
+      _updateLanguageServicePolling();
       _startResourceMonitoring();
       _syncCommandContext();
     } on AlulaException catch (e) {
@@ -864,8 +873,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           core.lsp.setUri(id, open.uri!);
           core.lsp.didOpen(id, languageId: _languageIdOf(path));
           open.lspAttached = true;
+          _scheduleSyntaxRefresh(id);
         } catch (_) {}
       }
+      _updateLanguageServicePolling();
     } on AlulaException catch (e) {
       setState(() {
         _statusDetail =
@@ -894,10 +905,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
     final wasActive = owner.activeDocId == id;
+    _syntaxRefreshTimers.remove(id)?.cancel();
+    final nextSyntax = Map<int, List<Map<String, Object?>>>.of(_syntaxByDoc)
+      ..remove(id);
     doc.doc.close();
     doc.controller.dispose();
     _editorFocusNodes.remove(id)?.dispose();
     setState(() {
+      _syntaxByDoc = nextSyntax;
       owner.docs.remove(doc);
       if (wasActive) {
         owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
@@ -912,6 +927,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       _scheduleStateSave();
     });
+    _updateLanguageServicePolling();
     _syncCommandContext();
   }
 
@@ -963,12 +979,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             core.lsp.setUri(d.id, d.uri!);
             core.lsp.didOpen(d.id, languageId: _languageIdOf(d.path!));
             d.lspAttached = true;
+            _scheduleSyntaxRefresh(d.id);
           } catch (_) {}
         }
       }
-      _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
-        _pollLanguageServices();
-      });
+      _updateLanguageServicePolling();
     } catch (e) {
       setState(() {
         _lspStarting = false;
@@ -981,30 +996,65 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _pollLanguageServices() {
     final core = _core;
     if (core == null || _polling || !_lspReady) return;
+    if (!_allDocs.any((doc) => doc.lspAttached && !doc.isUntitled)) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+      return;
+    }
     _polling = true;
     try {
       final diags = <Map<String, Object?>>[];
-      final syntax = <int, List<Map<String, Object?>>>{};
       for (final d in _allDocs) {
         if (d.isUntitled || !d.lspAttached) continue;
         try {
           diags.addAll(
               core.lsp.diagnostics(d.id).map((m) => {...m, 'file': d.name}));
         } catch (_) {}
-        final s = core.lsp.syntax(d.id);
-        if (s != null) syntax[d.id] = s.tokens;
       }
       if (!mounted) return;
       setState(() {
         _diagnostics
           ..clear()
           ..addAll(diags);
-        _syntaxByDoc = syntax;
       });
     } catch (_) {
     } finally {
       _polling = false;
     }
+  }
+
+  void _updateLanguageServicePolling() {
+    final shouldPoll =
+        _lspReady && _allDocs.any((doc) => doc.lspAttached && !doc.isUntitled);
+    if (!shouldPoll) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+      return;
+    }
+    _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
+      _pollLanguageServices();
+    });
+  }
+
+  void _scheduleSyntaxRefresh(int docId) {
+    final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
+    if (doc == null || !doc.lspAttached) return;
+    _syntaxRefreshTimers.remove(docId)?.cancel();
+    _syntaxRefreshTimers[docId] = Timer(const Duration(milliseconds: 80), () {
+      _syntaxRefreshTimers.remove(docId);
+      if (!mounted) return;
+      final current = _allDocs.where((item) => item.id == docId).firstOrNull;
+      if (current == null || !current.lspAttached) return;
+      try {
+        final syntax = _core?.lsp.syntax(docId);
+        if (syntax == null || !mounted) return;
+        setState(() {
+          _syntaxByDoc = {..._syntaxByDoc, docId: syntax.tokens};
+        });
+      } catch (error) {
+        debugPrint('语法状态刷新失败（doc=$docId）：$error');
+      }
+    });
   }
 
   // ---------- 补全 / 保存 ----------
@@ -1427,16 +1477,64 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _attachWorkspaceWatcher() {
     final root = _workspaceRoot;
-    if (root == null) return;
-    _watcher?.stop();
-    _watcher = WorkspaceWatcher(root: root, onChanged: _onWorkspaceChanged)
-      ..start();
+    final current = _watcher;
+    if (root == null) {
+      _stopWorkspaceWatcher();
+      return;
+    }
+    if (current != null && current.root == root && current.isWatching) return;
+
+    final generation = ++_watcherGeneration;
+    _watcher = null;
+    _watcherTransition =
+        _watcherTransition.catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 上次切换失败：$error');
+    }).then((_) async {
+      await current?.stop();
+      if (!mounted ||
+          generation != _watcherGeneration ||
+          _workspaceRoot != root) {
+        return;
+      }
+      final watcher = WorkspaceWatcher(
+        root: root,
+        onChanged: () {
+          if (mounted &&
+              generation == _watcherGeneration &&
+              _workspaceRoot == root) {
+            unawaited(_onWorkspaceChanged(root));
+          }
+        },
+      );
+      _watcher = watcher;
+      await watcher.start();
+      if (generation != _watcherGeneration && identical(_watcher, watcher)) {
+        _watcher = null;
+        await watcher.stop();
+      }
+    }).catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 切换失败：$error');
+    });
+  }
+
+  void _stopWorkspaceWatcher() {
+    ++_watcherGeneration;
+    final watcher = _watcher;
+    _watcher = null;
+    _watcherTransition =
+        _watcherTransition.catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 切换失败：$error');
+    }).then((_) async {
+      await watcher?.stop();
+    }).catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 停止失败：$error');
+    });
   }
 
   /// 外部变更（防抖后）：刷新文件树 + Git 状态；打开文档若在磁盘上被外部
   /// 修改，干净文档自动重载、脏文档仅提示（不覆盖本地编辑）。
-  Future<void> _onWorkspaceChanged() async {
-    if (!mounted) return;
+  Future<void> _onWorkspaceChanged(String root) async {
+    if (!mounted || _workspaceRoot != root) return;
     _refreshTree();
     _refreshGit();
     await _checkExternalChanges();
@@ -1661,7 +1759,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..dispose();
     _searchQuery.dispose();
     _outlineTimer?.cancel();
-    _watcher?.stop();
+    _stopWorkspaceWatcher();
+    for (final timer in _syntaxRefreshTimers.values) {
+      timer.cancel();
+    }
+    _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _commitMessage.dispose();
     _layout.dispose();

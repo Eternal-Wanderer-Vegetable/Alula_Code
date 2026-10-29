@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P01.4 事件驱动工作区生命周期）
+
+- P01.4 已完成：workspace watcher 增加 generation 防止旧根回调，attach/detach 串行切换并取消 pending debounce；语法只对打开/编辑/attach 的单文档防抖刷新，不再每 800ms 遍历所有 LSP 文档计算语法；关闭文档、工作区切换和退出时清理对应 timer/语法状态。
+- 诊断快照保留轻量 800ms 轮询，但只在至少一个已 attach 的非 untitled LSP 文档时运行；没有此类文档就停止。该轮询只取诊断快照，不解析文档文本。
+- `FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh` 最终退出 0：Rust workspace tests、Clippy、build_core、Flutter 130/130；`flutter analyze --no-pub`、`cargo fmt --check`、watcher/widget 聚焦测试也通过。首次完整运行中的 P00.3 双文档撤销夹具出现一次文档激活时序失败；夹具单项及第二轮完整串行门禁通过。
+- GitNexus 与变更范围、未解析跨语言边、测试限制详见 `docs/diagnostics/2026-10-30-p01/p01.4-event-driven-workspace-lifecycle.md`。P01.1–P01.4 全部交付并阶段提交；下一项 P02 / feat-024。
+
 ### 最新进展（2026-10-30，P01.3 进程监督与资源状态）
 
 - P01.3 已完成：新增 `editor-process` 统一监督 Rust LSP 与 Dart Git/搜索子进程，提供按需进程树快照、资源压力状态与临界态搜索回收；ABI 两侧同步到 v7，工作台只在工作区打开时每 30 秒采样并显示压力状态。
