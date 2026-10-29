@@ -3750,7 +3750,11 @@
                         ],
     "summary":  {
                     "peak_private":  1731457024,
-                    "stable_private":  1402892288,
+                    "stable_private":  1388662784,
+                    "stable_method":  "upper-middle of Private Bytes values from chronological last ceil(2*n/5) samples, matching tools/mem-probe::summarize",
+                    "stable_tail_sample_count":  240,
+                    "stable_tail_start_sample_index":  360,
+                    "stable_tail_start_t_s":  466.223,
                     "final_private":  1386254336,
                     "final_working_set":  1614548992
                 },

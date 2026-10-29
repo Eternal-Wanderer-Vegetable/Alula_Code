@@ -198,14 +198,14 @@ $medianSampleInterval = if (($sortedSampleIntervals.Count % 2) -eq 0) {
 $actualSamplingSpan = [double]$samples[-1].t - [double]$samples[0].t
 $actualSamplingElapsed = [double]$timer.Elapsed.TotalSeconds
 $finalItems = @(Get-TreeMemory $rootPid)
-$privateValues = @($samples | ForEach-Object { [double]$_.total_private })
-$sorted = @($privateValues | Sort-Object)
-$tailStart = [int][Math]::Floor($sorted.Count * 0.6)
-$tail = @($sorted[$tailStart..($sorted.Count - 1)])
-$stable = ($tail | Measure-Object -Average).Average
-# Median of the sorted tail, matching mem-probe's tail-stable definition.
-$middle = [int][Math]::Floor($tail.Count / 2)
-if (($tail.Count % 2) -eq 0) { $stable = ($tail[$middle - 1] + $tail[$middle]) / 2.0 } else { $stable = $tail[$middle] }
+$tailCount = [int][Math]::Ceiling($samples.Count * 2.0 / 5.0)
+$tailStart = $samples.Count - $tailCount
+$tailStartTime = [double]$samples[$tailStart].t
+$tailPrivateValues = @($samples[$tailStart..($samples.Count - 1)] | ForEach-Object { [long]$_.total_private })
+$sortedTailPrivateValues = @($tailPrivateValues | Sort-Object)
+# Match mem-probe::summarize: chronological last ceil(2*n/5), then upper-middle.
+$middle = [int][Math]::Floor($sortedTailPrivateValues.Count / 2)
+$stable = [long]$sortedTailPrivateValues[$middle]
 $closePids = @($observedPids + @($finalItems | ForEach-Object { [int]$_.pid }) | Sort-Object -Unique)
 $finalPrivate = [long]$samples[-1].total_private
 $finalWorkingSet = [long]$samples[-1].total_working_set
@@ -252,7 +252,11 @@ $report = [ordered]@{
   final_processes = $finalItems
   summary = [ordered]@{
     peak_private = $peakPrivate
-    stable_private = [long][Math]::Round($stable)
+    stable_private = $stable
+    stable_method = 'upper-middle of Private Bytes values from chronological last ceil(2*n/5) samples, matching tools/mem-probe::summarize'
+    stable_tail_sample_count = $tailCount
+    stable_tail_start_sample_index = $tailStart
+    stable_tail_start_t_s = $tailStartTime
     final_private = $finalPrivate
     final_working_set = $finalWorkingSet
   }
@@ -269,13 +273,14 @@ $lines = @(
   "- Language service: $($report.extension), configured to use the same rust-analyzer 1.97.1 executable as Alula.",
   "- Rust Analyzer observed in the process tree: $rustAnalyzerObserved; executable paths: $($rustAnalyzerPaths -join ', ').",
   "- Sampling: target $durationSeconds one-second samples; collected $($samples.Count) over $([Math]::Round($actualSamplingElapsed, 1)) seconds; sample span $([Math]::Round($actualSamplingSpan, 1)) seconds and median interval $([Math]::Round($medianSampleInterval, 3)) seconds.",
+  "- Stable method: sort Private Bytes only within the chronological last $tailCount samples (beginning at t=$([Math]::Round($tailStartTime, 3)) s) and select the upper-middle value, matching tools/mem-probe::summarize.",
   "- Foreground window stayed unchanged: $focusStayedStable; isolated-window foreground recoveries: $($focusRecoveryEvents.Count).",
   '- If isolated VS Code briefly became foreground, the runner restored the prior foreground, minimized the isolated window without activation, and continued only after confirming focus had moved away.',
   '',
   '| Metric | Private (MiB) | Working Set (MiB) |',
   '|---|---:|---:|',
   "| Peak | $([Math]::Round($peakPrivate / $miB, 2)) | - |",
-  "| Stable (tail 40% median) | $([Math]::Round($stable / $miB, 2)) | - |",
+  "| Stable (chronological tail upper-middle) | $([Math]::Round($stable / $miB, 2)) | - |",
   "| Final | $([Math]::Round($finalPrivate / $miB, 2)) | $([Math]::Round($finalWorkingSet / $miB, 2)) |",
   '',
   "Close check after 30 seconds: all recorded PIDs exited = $($closeCheck.all_recorded_pids_exited).",
