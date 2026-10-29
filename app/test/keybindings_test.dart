@@ -34,6 +34,7 @@ void main() {
       expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
+      expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
     });
 

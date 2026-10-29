@@ -783,3 +783,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 完成 P02.2：拆分磁盘 savepoint savedText 与 Rust diff 基线 syncText；undo/redo 跨已保存文本时 dirty 正确清除/恢复，Rust resync 不覆盖磁盘 savepoint。Widget fixture 覆盖 Ctrl+S、undo、redo、标签 dirty 点及磁盘内容。
 - 完整门禁 FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh 通过：Rust workspace tests、Clippy、build_core、Flutter 133/133；另有 cargo fmt --all -- --check、Flutter analyze（0 issues）、定向 19 项测试通过。细节和风险边界：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md。
 - Rust + rust-analyzer ≤500 MiB 目标已按用户调整暂时移出当前目标，历史测量仅作基线，P14 重新定标；下一项 P02.3 Save As/Revert。现有工作树包含无关用户改动，阶段提交会按文件及内容精确选择。
+
+## 今日会话（2026-10-30）：P02.3 Save As/Revert
+
+- 完成 P02.3：新增 file.saveAs/file.revert、Save As 快捷键及 File 菜单；路径迁移更新 URI/名称/savepoint/journal，并检查重复打开路径和覆盖确认；Revert 读取当前路径磁盘内容、同步 Rust/controller、确认丢弃脏文本并清空撤销历史。
+- 增加保留 Rust 缓冲区的 didClose FFI，Dart/Rust ABI v8 双侧握手；fake-LSP 集成测试覆盖旧 URI didClose、新 URI didOpen 与关闭次序。平台原生文件选择器未纳入本切片，使用路径输入对话框。
+- 最终门禁：cargo fmt、Flutter analyze 0 issues、FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh EXIT=0；Rust workspace、Clippy、build_core、Flutter 135/135 全绿。详见 docs/diagnostics/2026-10-30-p02/p02.3-save-as-revert.md。
+- 500 MiB 数值优化继续放在 P14；下一切片 P02.4 编码/BOM/EOL。工作树仍有其它用户未提交改动，按 staged snapshot 精确提交。

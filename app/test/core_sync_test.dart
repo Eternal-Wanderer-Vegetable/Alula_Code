@@ -29,6 +29,15 @@ void main() {
     expect(_bootstrap.core!.abiVersion, expectedAbiVersion);
   }, skip: skip);
 
+  test('didClose 只关闭语言文档，不释放 Rust 文本缓冲区', () {
+    final core = _bootstrap.core!;
+    final doc = core.openDoc(9006, 'kept after didClose');
+    core.lsp.setUri(doc.id, 'file:///kept-after-did-close.txt');
+    core.lsp.didClose(doc.id);
+    expect(doc.resync().content, 'kept after didClose');
+    doc.close();
+  }, skip: skip);
+
   test('资源状态与进程登记桥接可往返', () {
     final core = _bootstrap.core!;
     final status = core.runtime.sampleResourceStatus();

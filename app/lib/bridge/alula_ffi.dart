@@ -122,6 +122,10 @@ class AlulaFfi {
         Pointer<Utf8> Function(int, Pointer<Utf8>)
       >('alula_lsp_did_open');
 
+  late final Pointer<Utf8> Function(int) _lspDidClose = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64),
+      Pointer<Utf8> Function(int)>('alula_lsp_did_close');
+
   late final Pointer<Utf8> Function(int) _diagnostics = lib
       .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
         'alula_diagnostics',
@@ -277,6 +281,8 @@ class AlulaFfi {
       malloc.free(p);
     }
   }
+
+  String lspDidCloseJson(int id) => _takeJson(_lspDidClose(id));
 
   String diagnosticsJson(int id) => _takeJson(_diagnostics(id));
 

@@ -27,7 +27,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 7;
+pub const ALULA_ABI_VERSION: u32 = 8;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -491,6 +491,29 @@ pub unsafe extern "C" fn alula_lsp_did_open(id: u64, language_id: *const c_char)
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_lsp_did_open")))
 }
 
+/// 发送文档 didClose，但保留 Rust 文档缓冲区，供 URI 迁移后重新 didOpen。
+#[no_mangle]
+pub extern "C" fn alula_lsp_did_close(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let reg = registry_lock();
+        if reg.version_of(id).is_none() {
+            return err_json("UnknownDoc", json!({ "id": id }));
+        }
+        let Some(uri) = reg.uri_of(id) else {
+            return to_c_ptr(json!({ "ok": true, "closed": false }).to_string());
+        };
+        let Some(server) = reg.lsp_of(id) else {
+            return to_c_ptr(json!({ "ok": true, "closed": false }).to_string());
+        };
+        drop(reg);
+        match server.did_close(&uri) {
+            Ok(()) => to_c_ptr(json!({ "ok": true, "closed": true }).to_string()),
+            Err(e) => err_json("SendFailed", json!(e)),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_lsp_did_close")))
+}
+
 /// 该文档 URI 的最新诊断快照（轮询式；RA 在后台推送，这里只读缓存）。
 #[no_mangle]
 pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
@@ -824,6 +847,18 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
+    }
+
+    #[test]
+    fn lsp_did_close_without_server_keeps_document_open() {
+        let id = 209;
+        take(unsafe { alula_doc_open(id, c("still open").as_ptr()) });
+        take(unsafe { alula_doc_set_uri(id, c("file:///still-open.txt").as_ptr()) });
+
+        let closed = take(alula_lsp_did_close(id));
+        assert_eq!(closed["ok"], true);
+        assert_eq!(closed["closed"], false);
+        assert_eq!(take(alula_doc_resync(id))["content"], "still open");
     }
 
     #[test]

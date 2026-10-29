@@ -235,6 +235,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
+    reg('file.saveAs', '文件', '另存为…', _saveAsActive,
+        shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+    reg('file.revert', '文件', '从磁盘还原', _revertActive,
+        enablement: 'editorActive');
     reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
         shortcut: 'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
@@ -1130,21 +1134,97 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final active = _active;
     if (active == null) return;
     if (active.isUntitled) {
-      setState(() => _statusDetail = '未命名文档不支持保存（请从文件树打开文件）');
+      await _saveAsActive();
       return;
     }
+    await _saveDocToPath(active, active.path!);
+  }
+
+  Future<void> _saveAsActive() async {
+    final active = _active;
+    if (active == null) return;
+    final path = await _showSaveAsDialog(active);
+    if (path == null) return;
+    await _saveDocToPath(active, path);
+  }
+
+  Future<void> _saveDocToPath(OpenDoc doc, String requestedPath) async {
+    final targetPath = File(requestedPath).absolute.path;
+    final oldPath = doc.path;
+    final pathChanged = oldPath == null ||
+        _canonicalPath(oldPath) != _canonicalPath(targetPath);
+
+    if (pathChanged &&
+        _allDocs.any((other) =>
+            !identical(other, doc) &&
+            other.path != null &&
+            _canonicalPath(other.path!) == _canonicalPath(targetPath))) {
+      setState(() => _statusDetail = '该路径已在其他标签中打开');
+      return;
+    }
+
+    if (pathChanged && File(targetPath).existsSync()) {
+      final overwrite = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('覆盖文件？'),
+          content: Text('目标文件已存在：\n$targetPath'),
+          actions: [
+            TextButton(
+              key: const ValueKey('save-as-overwrite-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('save-as-overwrite-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('覆盖'),
+            ),
+          ],
+        ),
+      );
+      if (overwrite != true) return;
+    }
+
     try {
-      active.doc.saveFile(active.path!);
-      active.savedText = active.controller.text;
-      active.dirtyDisk = false;
+      doc.doc.saveFile(targetPath);
+      var lspWarning = false;
+      if (pathChanged) {
+        if (doc.lspAttached && _lspReady) {
+          try {
+            doc.doc.core.lsp.didClose(doc.id);
+          } catch (_) {}
+        }
+        doc.path = targetPath;
+        doc.uri = _pathToUri(targetPath);
+        doc.name = _nameOf(targetPath);
+        if (_lspReady) {
+          try {
+            doc.doc.core.lsp.setUri(doc.id, doc.uri!);
+            doc.doc.core.lsp.didOpen(
+              doc.id,
+              languageId: _languageIdOf(targetPath),
+            );
+            doc.lspAttached = true;
+          } catch (_) {
+            doc.lspAttached = false;
+            lspWarning = true;
+          }
+        }
+        if (_workspaceRoot != null) _refreshTree();
+      }
+      doc.savedText = doc.controller.text;
+      doc.dirtyDisk = false;
       _syncCommandContext();
       setState(() {
-        _statusDetail = '已原子保存 ${active.name}（v${active.doc.version}）';
+        _statusDetail = lspWarning
+            ? '已保存 ${doc.name}，语言服务未能重新打开文档'
+            : '已原子保存 ${doc.name}（v${doc.doc.version}）';
       });
       _scheduleStateSave(); // 保存后 journal 里的 text 分支消失（转干净）
-      if (active.lspAttached && _lspReady) {
+      if (doc.lspAttached && _lspReady) {
         try {
-          active.doc.core.lsp.didSave(active.id);
+          doc.doc.core.lsp.didSave(doc.id);
         } catch (_) {}
       }
     } on AlulaException catch (e) {
@@ -1153,6 +1233,104 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _statusDetail = '保存失败：${e.code} ${e.detail}';
       });
     }
+  }
+
+  Future<void> _revertActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.isUntitled) {
+      setState(() => _statusDetail = '未命名文档没有磁盘版本可还原');
+      return;
+    }
+    if (doc.dirtyDisk) {
+      final discard = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('放弃未保存的修改？'),
+          content: Text('将从磁盘重新载入“${doc.name}”，未保存内容会丢失。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('revert-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('revert-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('还原'),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) return;
+    }
+
+    try {
+      final diskText = doc.doc.core.workspace.readFile(doc.path!);
+      final currentText = doc.doc.resync().content;
+      final ops = diffToOps(currentText, diskText);
+      if (ops.isNotEmpty) doc.doc.apply(ops);
+
+      final caret =
+          doc.controller.selection.extentOffset.clamp(0, diskText.length);
+      doc.savedText = diskText;
+      doc.syncText = diskText;
+      doc.dirtyDisk = false;
+      doc.undoRedoBusy = true;
+      try {
+        doc.controller.value = TextEditingValue(
+          text: diskText,
+          selection: TextSelection.collapsed(offset: caret),
+        );
+      } finally {
+        doc.undoRedoBusy = false;
+      }
+      doc.undoStack.clear();
+      doc.lastEditAt = null;
+      if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      _scheduleOutlineRefresh();
+      _scheduleStateSave();
+      _syncCommandContext();
+      setState(() => _statusDetail = '已从磁盘还原 ${doc.name}');
+    } on AlulaException catch (e) {
+      setState(() {
+        _state = WbSyncState.error;
+        _statusDetail = '还原失败：${e.code} ${e.detail}';
+      });
+    }
+  }
+
+  Future<String?> _showSaveAsDialog(OpenDoc doc) async {
+    final root = _workspaceRoot ?? Directory.current.path;
+    final defaultPath = doc.path ??
+        '$root${Platform.pathSeparator}${doc.isUntitled ? 'untitled.txt' : doc.name}';
+    var selectedPath = defaultPath;
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('另存为'),
+        content: TextFormField(
+          key: const ValueKey('save-as-path'),
+          initialValue: defaultPath,
+          onChanged: (value) => selectedPath = value,
+          decoration: const InputDecoration(labelText: '文件路径'),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('save-as-confirm'),
+            onPressed: () => Navigator.pop(dialogContext, selectedPath),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+    final trimmed = result?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
   }
 
   void _verifyIntegrity() {
@@ -1856,6 +2034,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             commandId: 'file.openFolder'),
                         TitleMenuItem('保存${_sc('file.save')}',
                             commandId: 'file.save'),
+                        TitleMenuItem('另存为…${_sc('file.saveAs')}',
+                            commandId: 'file.saveAs'),
+                        const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
               ],
             ),
             (
@@ -2442,6 +2623,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String _normPath(String p) => p.replaceAll('\\', '/');
 
+  String _canonicalPath(String path) {
+    final absolute = _normPath(File(path).absolute.path);
+    return Platform.isWindows ? absolute.toLowerCase() : absolute;
+  }
+
   /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
   void _revealInExplorer(List<String> segments, int index) {
     if (_workspaceRoot == null || index >= segments.length - 1) {
@@ -2975,9 +3161,9 @@ class OpenDoc {
         syncText = savedText;
 
   final int id;
-  final String? path;
-  final String? uri;
-  final String name;
+  String? path;
+  String? uri;
+  String name;
   final AlulaDoc doc;
   final TextEditingController controller;
   final UndoStack undoStack;
