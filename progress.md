@@ -695,3 +695,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 前面一次直接启动在4个 Code-OSS 进程下记录至240/600点后中止，另一次正确批处理入口等待180秒未见 RA；这些均无效，不与 Alula 内存比较。完整尝试、限制和日志索引见 `docs/diagnostics/2026-10-28-p00/p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}`，可重放的 fail-fast runner 为同目录 `p00.4-code-oss-rust-lsp-idle-10min.ps1`。
 - 有效的 Microsoft VS Code 1.142.0 同服务 idle 对照仍是单独补充证据，版本与固定 Code-OSS 不匹配且不含编辑负载；Windows Alula 30分钟/150次保存编辑重跑已在既有进度中记录，稳定 Private Bytes 657.93 MiB，超过500 MiB目标。P00.4/feat-022 继续 blocked/in-progress，P01 不启动；没有产品代码改动。
 - 提交前完整 `bash init.sh` EXIT=0：Rust workspace tests、Clippy、`build_core` 与 Flutter 122 项测试通过；PowerShell runner AST parse 和 evidence JSON 校验也通过。
+
+
+## 本轮（2026-10-29）：固定版 rust-analyzer 配置审计
+
+- 检查本机 0.3.3089/server commit `5ec20d044d`：扩展 schema 暴露 per-query LRU 设置，但固定源码中的应用函数为 Salsa 迁移留空；不运行该无效实验，也不削减语言能力。报告：`docs/diagnostics/2026-10-29-p00/p00.4-rust-analyzer-query-lru-config-audit.md`。
+- P00.4/feat-022 保持 in-progress/blocked；P01 不启动。

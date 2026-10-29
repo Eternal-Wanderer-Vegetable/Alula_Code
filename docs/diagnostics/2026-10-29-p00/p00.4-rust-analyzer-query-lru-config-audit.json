@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-29",
+  "extension": {
+    "id": "rust-lang.rust-analyzer",
+    "version": "0.3.3089",
+    "releaseTag": "2026-10-19"
+  },
+  "server": {
+    "versionOutput": "rust-analyzer 0.3.3089-standalone (5ec20d044d 2026-10-18)",
+    "revision": "5ec20d044d",
+    "binarySha256": "6f76533ca854bc2708bfa1caab68240ed5b89e530eafc1ac9865f5a569f5ec1d"
+  },
+  "configuration": "rust-analyzer.lru.query.capacities",
+  "schemaAdvertisesSetting": true,
+  "implementationAppliesSetting": false,
+  "source": "https://github.com/rust-lang/rust-analyzer/blob/5ec20d044d/crates/ide-db/src/lib.rs#L231-L255",
+  "sourceFinding": "update_lru_capacities has an unused map parameter; per-query setters are commented out with a Salsa transition FIXME.",
+  "experimentRun": false,
+  "reasonNotRun": "The pinned binary ignores this setting, so a memory experiment would be a no-op.",
+  "productConfigChanged": false,
+  "capabilitiesDisabled": false,
+  "status": "P00.4 remains blocked; this audit does not satisfy the 500 MiB target or docs/04 product matrix."
+}
