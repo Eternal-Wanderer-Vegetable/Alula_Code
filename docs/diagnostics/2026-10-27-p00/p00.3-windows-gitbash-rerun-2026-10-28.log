@@ -1,0 +1,37 @@
+2026-10-28T05:54:20+08:00
+
+=== build_core ===
+    Finished `release` profile [optimized] target(s) in 0.06s
+OK: app/native/ 已就绪
+
+=== Flutter P00.3 fixtures ===
+00:00 +0: loading E:/Alula_Code/app/test/p00_risk_fixtures_test.dart
+00:00 +0: P00.3 REF-07-UNDO-01 alternating edits in two files
+P00.3_FIXTURE={"fixture":"parity-ref-07-undo-01","aBeforeLength":201,"bBeforeLength":435,"aUndoRestoredOwnText":false,"aUndoAppliedOtherFileSnapshot":true,"bUndoRestoredOwnText":false,"bUndoAppliedOtherFileSnapshot":true}
+00:01 +1: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+P00.3_FIXTURE={"fixture":"parity-ref-07-recovery-01","acceptedUtf16Units":2000001,"journalTextPresent":false,"diskUtf16Units":5,"recoveredUtf16Units":5,"recoveredFromDisk":true}
+02:10 +2: All tests passed!
+
+=== Rust workspace close fixture ===
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running tests\p00_workspace_close.rs (target\debug\deps\p00_workspace_close-8c8e9dd98ae4c371.exe)
+
+running 1 test
+P00.3_FIXTURE={"fixture":"parity-ref-07-close-process-01","allDocumentsClosed":true,"workspaceProcessAlive":true}
+test closing_all_workspace_documents_leaves_server_process_alive ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s
+
+
+=== Rust slow completion fixture ===
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running tests\p00_slow_completion.rs (target\debug\deps\p00_slow_completion-2118f448160f7cf4.exe)
+
+running 1 test
+P00.3_FIXTURE={"fixture":"parity-ref-07-slow-completion-01","configuredDelayMs":1200,"callerWaitMs":1201,"items":["delayed_completion"]}
+test delayed_completion_blocks_until_response ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.53s
+
+
+=== RESULT: all four P00.3 fixture commands passed ===

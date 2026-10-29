@@ -1,0 +1,45 @@
+{
+  "runId": 40614141265,
+  "runUrl": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40614141265",
+  "headSha": "d47543d585850acfd7a0367dc396711711adcf79",
+  "runner": "macos-15",
+  "status": "completed",
+  "conclusion": "success",
+  "steps": {
+    "WKWebView Web Archive replay": {
+      "Set up job": "success",
+      "Run actions/checkout@v4": "success",
+      "Run subosito/flutter-action@v2": "success",
+      "Resolve probe dependencies": "success",
+      "Analyze and test probe": "success",
+      "Build macOS probe": "success",
+      "Run WKWebView archive replay": "success",
+      "Upload macOS probe evidence": "success",
+      "Post Run subosito/flutter-action@v2": "success",
+      "Post Run actions/checkout@v4": "success",
+      "Complete job": "success"
+    }
+  },
+  "archive": {
+    "path": "p00.4-web-probe.webarchive",
+    "bytes": 693,
+    "sha256": "9facfd78e54aca7f90b3d8d5deeeff2a0d9ce9212d38d0e2bc91778cc4997dbb"
+  },
+  "page": {
+    "phase": "webarchive",
+    "title": "Alula Web Probe",
+    "hasProbeMarker": true,
+    "hasRawWebArchiveHeader": false,
+    "archiveParsed": true,
+    "url": "https://webarchive.invalid/p00.4-web-probe.webarchive"
+  },
+  "screenshots": [
+    "webview-open.png",
+    "webarchive-reloaded.png"
+  ],
+  "limits": [
+    "Probe-only Web Archive replay; not MHTML or CDP evidence.",
+    "Safari Web Inspector attachment remains unverified.",
+    "Does not satisfy docs/04 product memory acceptance."
+  ]
+}

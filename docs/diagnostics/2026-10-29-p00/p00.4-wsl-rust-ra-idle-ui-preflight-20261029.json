@@ -1,0 +1,1315 @@
+{
+  "schema": "alula-p00.4-wsl-rust-ra-idle-repeat-v1",
+  "run_id": "ui-check-verify-file-20261029",
+  "date": "2026-10-29",
+  "platform": "WSLg + Xvfb software GL; not a native DRM/X11/Wayland host",
+  "runner": "Flutter Linux Release main app + WSL stable rust-analyzer",
+  "runner_executable": "/mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app",
+  "fixture": "isolated copy of tests/fixtures/rust-mini",
+  "language_server": "rust-analyzer 1.99.1 (58cf8f9 2026-10-13)",
+  "limit_mib": 1024,
+  "memory_max_bytes": 1073741824,
+  "swap_max_bytes": 0,
+  "scope": "/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-ra-idle-ui-check-verify-file-202-61159.scope",
+  "scope_unit": "alula-p00-ra-idle-ui-check-verify-file-202-61159.scope",
+  "scope_result": 5,
+  "process_exit_code": -15,
+  "inner": {
+    "app_ready": {
+      "monotonic_s": 9890.742864382,
+      "wall_time": "2026-10-29T10:23:17+0800",
+      "app_pid": 61175,
+      "window_id": "2097155",
+      "rust_analyzer_seen": true
+    },
+    "main_rs_open_attempted": {
+      "monotonic_s": 9894.182457862,
+      "wall_time": "2026-10-29T10:23:21+0800",
+      "path": "src/main.rs",
+      "window_id": "2097155",
+      "quick_open_key_returncode": 0,
+      "quick_open_type_returncode": 0,
+      "quick_open_enter_returncode": 0
+    },
+    "idle_start": {
+      "monotonic_s": 9895.28332511,
+      "wall_time": "2026-10-29T10:23:22+0800",
+      "rust_analyzer_processes": [
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583863296,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    "idle_end": {
+      "monotonic_s": 9915.387298387,
+      "wall_time": "2026-10-29T10:23:42+0800",
+      "rust_analyzer_processes": [
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583864320,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    "close_click_sent": {
+      "monotonic_s": 9916.603836,
+      "wall_time": "2026-10-29T10:24:18+0800",
+      "window_geometry": "WINDOW=2097155\nX=0\nY=0\nWIDTH=1280\nHEIGHT=720\nSCREEN=0",
+      "move_returncode": 0,
+      "move_stderr": "",
+      "click_returncode": 0,
+      "click_stderr": "",
+      "mouse_location": "X=1260\nY=18\nSCREEN=0\nWINDOW=0"
+    },
+    "app_closed": {
+      "monotonic_s": 9936.666343784,
+      "wall_time": "2026-10-29T10:24:38+0800",
+      "close_method": "forced-terminate",
+      "app_exit_code": -15
+    },
+    "close_plus_30s": {
+      "monotonic_s": 9966.761108767,
+      "wall_time": "2026-10-29T10:25:08+0800",
+      "rust_services_left": []
+    }
+  },
+  "sampling_interval_s": 1,
+  "breakdown_interval_s": 10,
+  "sample_count": 78,
+  "duration_s": 77.029,
+  "peak_memory_current_bytes": 865878016,
+  "peak_scope_pss_bytes": 939658240,
+  "idle_start_sample": {
+    "t_s": 5.029,
+    "memory_current_bytes": 864047104,
+    "pss_tree_bytes": 934415360,
+    "pss_processes": 7,
+    "pids": 7,
+    "cpu_usage_usec": 6918996,
+    "oom": 0,
+    "oom_kill": 0
+  },
+  "idle_end_sample": {
+    "t_s": 26.029,
+    "memory_current_bytes": 858865664,
+    "pss_tree_bytes": 932936704,
+    "pss_processes": 7,
+    "pids": 7,
+    "cpu_usage_usec": 9552637,
+    "oom": 0,
+    "oom_kill": 0
+  },
+  "idle_duration_s": 20.104,
+  "idle_cpu_usage_delta_usec": 2633641,
+  "idle_cpu_percent_of_one_core": 13.1001,
+  "idle_process_cpu_deltas": [
+    {
+      "pid": 61160,
+      "comm": "xvfb-run",
+      "cpu_seconds": 0.0,
+      "pss_start_bytes": 216064,
+      "pss_end_bytes": 277504
+    }
+  ],
+  "first_idle_minute_process_pss_median_bytes": {
+    "xvfb-run": 277504,
+    "Xvfb": 35437568,
+    "python3": 10779648,
+    "alula_app": 281231360,
+    "rust-analyzer": 583864320,
+    "rust-analyzer-p": 12012544
+  },
+  "last_idle_minute_process_pss_median_bytes": {
+    "xvfb-run": 277504,
+    "mktemp": 169984,
+    "Xvfb": 35437568,
+    "python3": 10755072,
+    "alula_app": 281212928,
+    "rust-analyzer": 583864320,
+    "rust-analyzer-p": 12012544
+  },
+  "oom_events_final": {
+    "oom": 0,
+    "oom_kill": 0,
+    "source": "last in-scope cgroup sample"
+  },
+  "series": [
+    {
+      "t_s": 0.029,
+      "memory_current_bytes": 1507328,
+      "pss_tree_bytes": 386048,
+      "pss_processes": 2,
+      "pids": 2,
+      "cpu_usage_usec": 5675,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 1.029,
+      "memory_current_bytes": 397889536,
+      "pss_tree_bytes": 455265280,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 1627313,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 2.031,
+      "memory_current_bytes": 622727168,
+      "pss_tree_bytes": 691636224,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 4093548,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 3.029,
+      "memory_current_bytes": 858263552,
+      "pss_tree_bytes": 928787456,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 6496324,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 4.029,
+      "memory_current_bytes": 861323264,
+      "pss_tree_bytes": 931752960,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 6792297,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 5.029,
+      "memory_current_bytes": 864047104,
+      "pss_tree_bytes": 934415360,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 6918996,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 6.029,
+      "memory_current_bytes": 858808320,
+      "pss_tree_bytes": 929410048,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7083015,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 7.029,
+      "memory_current_bytes": 860000256,
+      "pss_tree_bytes": 930749440,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7143702,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 8.029,
+      "memory_current_bytes": 861224960,
+      "pss_tree_bytes": 932076544,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7206231,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 9.029,
+      "memory_current_bytes": 864210944,
+      "pss_tree_bytes": 934747136,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7332316,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 10.029,
+      "memory_current_bytes": 858521600,
+      "pss_tree_bytes": 932903936,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7399418,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 11.029,
+      "memory_current_bytes": 859807744,
+      "pss_tree_bytes": 934196224,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7461012,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 12.029,
+      "memory_current_bytes": 861454336,
+      "pss_tree_bytes": 935574528,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7541247,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 13.029,
+      "memory_current_bytes": 864305152,
+      "pss_tree_bytes": 938241024,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7668362,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 14.029,
+      "memory_current_bytes": 858841088,
+      "pss_tree_bytes": 932895744,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7734454,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 15.029,
+      "memory_current_bytes": 860114944,
+      "pss_tree_bytes": 934235136,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7801012,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 16.029,
+      "memory_current_bytes": 861409280,
+      "pss_tree_bytes": 935566336,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7865542,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 17.029,
+      "memory_current_bytes": 863997952,
+      "pss_tree_bytes": 938236928,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 7997085,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 18.029,
+      "memory_current_bytes": 858767360,
+      "pss_tree_bytes": 932903936,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8066930,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 19.029,
+      "memory_current_bytes": 860319744,
+      "pss_tree_bytes": 934231040,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8131361,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 20.029,
+      "memory_current_bytes": 861614080,
+      "pss_tree_bytes": 935570432,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8197107,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 21.029,
+      "memory_current_bytes": 863985664,
+      "pss_tree_bytes": 938241024,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8322874,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 22.029,
+      "memory_current_bytes": 858767360,
+      "pss_tree_bytes": 932895744,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8387843,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 23.029,
+      "memory_current_bytes": 860319744,
+      "pss_tree_bytes": 934235136,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8452922,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 24.029,
+      "memory_current_bytes": 861609984,
+      "pss_tree_bytes": 935561216,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8518573,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 25.029,
+      "memory_current_bytes": 864079872,
+      "pss_tree_bytes": 938236928,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 8648341,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 26.029,
+      "memory_current_bytes": 858865664,
+      "pss_tree_bytes": 932936704,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 9552637,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 27.029,
+      "memory_current_bytes": 861626368,
+      "pss_tree_bytes": 935435264,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 10669869,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 28.029,
+      "memory_current_bytes": 863055872,
+      "pss_tree_bytes": 936778752,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 10733787,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 29.029,
+      "memory_current_bytes": 865644544,
+      "pss_tree_bytes": 939445248,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 10861252,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 30.029,
+      "memory_current_bytes": 860590080,
+      "pss_tree_bytes": 934280192,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 10928029,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 31.029,
+      "memory_current_bytes": 861884416,
+      "pss_tree_bytes": 935619584,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 10992578,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 32.029,
+      "memory_current_bytes": 863178752,
+      "pss_tree_bytes": 936946688,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11060729,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 33.029,
+      "memory_current_bytes": 865763328,
+      "pss_tree_bytes": 939613184,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11193465,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 34.029,
+      "memory_current_bytes": 860274688,
+      "pss_tree_bytes": 934284288,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11260672,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 35.029,
+      "memory_current_bytes": 861585408,
+      "pss_tree_bytes": 935611392,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11326241,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 36.029,
+      "memory_current_bytes": 862859264,
+      "pss_tree_bytes": 936950784,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11391079,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 37.029,
+      "memory_current_bytes": 865878016,
+      "pss_tree_bytes": 939658240,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11528492,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 38.029,
+      "memory_current_bytes": 860332032,
+      "pss_tree_bytes": 934280192,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11597168,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 39.029,
+      "memory_current_bytes": 861589504,
+      "pss_tree_bytes": 935619584,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11661284,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 40.029,
+      "memory_current_bytes": 862633984,
+      "pss_tree_bytes": 936946688,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11723631,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 41.029,
+      "memory_current_bytes": 865480704,
+      "pss_tree_bytes": 939613184,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11852781,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 42.029,
+      "memory_current_bytes": 860336128,
+      "pss_tree_bytes": 934284288,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11921898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 43.029,
+      "memory_current_bytes": 861892608,
+      "pss_tree_bytes": 935611392,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 11987130,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 44.029,
+      "memory_current_bytes": 862846976,
+      "pss_tree_bytes": 936950784,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 12055360,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 45.029,
+      "memory_current_bytes": 865693696,
+      "pss_tree_bytes": 939617280,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 12188094,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 46.029,
+      "memory_current_bytes": 860217344,
+      "pss_tree_bytes": 934280192,
+      "pss_processes": 7,
+      "pids": 7,
+      "cpu_usage_usec": 12253269,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 47.029,
+      "memory_current_bytes": 39800832,
+      "pss_tree_bytes": 46130176,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 48.029,
+      "memory_current_bytes": 39653376,
+      "pss_tree_bytes": 46130176,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 49.029,
+      "memory_current_bytes": 39653376,
+      "pss_tree_bytes": 46130176,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 50.029,
+      "memory_current_bytes": 39653376,
+      "pss_tree_bytes": 46130176,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 51.029,
+      "memory_current_bytes": 39403520,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 52.029,
+      "memory_current_bytes": 39211008,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 53.029,
+      "memory_current_bytes": 39186432,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 54.029,
+      "memory_current_bytes": 39186432,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 55.029,
+      "memory_current_bytes": 39186432,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 56.029,
+      "memory_current_bytes": 39170048,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 57.029,
+      "memory_current_bytes": 39170048,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 58.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46120960,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 59.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 60.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 61.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 62.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 63.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 64.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 65.029,
+      "memory_current_bytes": 39120896,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 66.029,
+      "memory_current_bytes": 38989824,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 67.029,
+      "memory_current_bytes": 38989824,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 68.029,
+      "memory_current_bytes": 38961152,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 69.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 70.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 71.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 72.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 73.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 74.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 75.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 76.029,
+      "memory_current_bytes": 38789120,
+      "pss_tree_bytes": 46132224,
+      "pss_processes": 3,
+      "pids": 3,
+      "cpu_usage_usec": 12527898,
+      "oom": 0,
+      "oom_kill": 0
+    },
+    {
+      "t_s": 77.029,
+      "memory_current_bytes": null,
+      "pss_tree_bytes": 0,
+      "pss_processes": 0,
+      "pids": 0,
+      "cpu_usage_usec": null,
+      "oom": 0,
+      "oom_kill": 0
+    }
+  ],
+  "process_breakdown_samples": [
+    {
+      "t_s": 0.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 216064,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61167,
+          "ppid": 61160,
+          "comm": "mktemp",
+          "cmdline": "mktemp -d -t xvfb-run.XXXXXX",
+          "pss_bytes": 169984,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    {
+      "t_s": 10.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 277504,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35437568,
+          "cpu_ticks": 13
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10755072,
+          "cpu_ticks": 35
+        },
+        {
+          "pid": 61175,
+          "ppid": 61174,
+          "comm": "alula_app",
+          "cmdline": "/mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app --lsp-auto",
+          "pss_bytes": 278544384,
+          "cpu_ticks": 386
+        },
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583864320,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    {
+      "t_s": 21.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 277504,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35437568,
+          "cpu_ticks": 18
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10755072,
+          "cpu_ticks": 35
+        },
+        {
+          "pid": 61175,
+          "ppid": 61174,
+          "comm": "alula_app",
+          "cmdline": "/mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app --lsp-auto",
+          "pss_bytes": 283881472,
+          "cpu_ticks": 473
+        },
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583864320,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    {
+      "t_s": 32.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 277504,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35437568,
+          "cpu_ticks": 32
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10779648,
+          "cpu_ticks": 45
+        },
+        {
+          "pid": 61175,
+          "ppid": 61174,
+          "comm": "alula_app",
+          "cmdline": "/mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app --lsp-auto",
+          "pss_bytes": 282562560,
+          "cpu_ticks": 721
+        },
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583864320,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    {
+      "t_s": 42.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 277504,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35437568,
+          "cpu_ticks": 36
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10779648,
+          "cpu_ticks": 47
+        },
+        {
+          "pid": 61175,
+          "ppid": 61174,
+          "comm": "alula_app",
+          "cmdline": "/mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app --lsp-auto",
+          "pss_bytes": 279900160,
+          "cpu_ticks": 801
+        },
+        {
+          "pid": 61261,
+          "ppid": 61175,
+          "comm": "rust-analyzer",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer",
+          "pss_bytes": 583864320,
+          "cpu_ticks": 245
+        },
+        {
+          "pid": 61439,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 11998208,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61440,
+          "ppid": 61261,
+          "comm": "rust-analyzer-p",
+          "cmdline": "/home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/libexec/rust-analyzer-proc-macro-srv",
+          "pss_bytes": 12026880,
+          "cpu_ticks": 0
+        }
+      ]
+    },
+    {
+      "t_s": 53.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 278528,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35068928,
+          "cpu_ticks": 38
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10784768,
+          "cpu_ticks": 47
+        }
+      ]
+    },
+    {
+      "t_s": 63.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 278528,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35068928,
+          "cpu_ticks": 38
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10784768,
+          "cpu_ticks": 47
+        }
+      ]
+    },
+    {
+      "t_s": 74.029,
+      "processes": [
+        {
+          "pid": 61160,
+          "ppid": 61159,
+          "comm": "xvfb-run",
+          "cmdline": "/bin/sh /usr/bin/xvfb-run -a -s -screen 0 1280x800x24 /usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 278528,
+          "cpu_ticks": 0
+        },
+        {
+          "pid": 61171,
+          "ppid": 61160,
+          "comm": "Xvfb",
+          "cmdline": "Xvfb :100 -screen 0 1280x800x24 -nolisten tcp -auth /tmp/xvfb-run.ZZ3q2V/Xauthority",
+          "pss_bytes": 35068928,
+          "cpu_ticks": 38
+        },
+        {
+          "pid": 61174,
+          "ppid": 61160,
+          "comm": "python3",
+          "cmdline": "/usr/bin/python3 /mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py --inner /tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug /mnt/e/alula_code/app/build/linux/x64/release/bundle/alula_app 20 1",
+          "pss_bytes": 10784768,
+          "cpu_ticks": 47
+        }
+      ]
+    }
+  ],
+  "output_tail": "Running as unit: alula-p00-ra-idle-ui-check-verify-file-202-61159.scope; invocation ID: 30069a4736294c55ace86f2fd964922b\n{\"app_exit_code\": -15, \"close_method\": \"forced-terminate\", \"rust_left\": 0}\n",
+  "temporary_root": "/tmp/alula-p00-wsl-ra-idle-ui-check-verify-file-20261029-mu5kygug",
+  "temporary_data_removed": true
+}

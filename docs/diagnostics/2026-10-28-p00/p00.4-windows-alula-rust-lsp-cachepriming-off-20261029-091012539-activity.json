@@ -1,0 +1,328 @@
+{
+    "label":  "alula-rust-lsp-cachepriming-off-20261029-091012539",
+    "run_index":  1,
+    "preflight":  false,
+    "platform":  "Windows",
+    "app_exe":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+    "mem_probe_exe":  "E:\\alula_code\\target\\release\\mem-probe.exe",
+    "args":  [
+                 "--lsp-auto"
+             ],
+    "fixture_source":  "E:\\alula_code\\tests\\fixtures\\rust-mini",
+    "isolated_fixture":  "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini",
+    "isolated_home":  "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\home",
+    "edited_file":  "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini\\src\\main.rs",
+    "rust_analyzer_config_file":  "rust-analyzer.toml in isolated project root",
+    "rust_analyzer_config_text":  "[cachePriming]\nenable = false\n",
+    "rust_analyzer_config_sha256":  "D025BAE628327F9CD8639C3EEF40A6151DBB2C15B2906D2A1C6A567019D33AE6",
+    "cache_priming_enabled":  false,
+    "baseline_sha256":  "6689B6C06534079C1A006631F54D180F642D169F7A15455C50A2A7EEB2B02684",
+    "final_sha256":  "A3D585427A00C4800C752F4D989C177C1659BE18BE509554A1E7755F26D53773",
+    "final_byte_count":  787,
+    "last_saved_marker":  "P00_4_EDIT_1_010",
+    "edit_duration_s":  120.0075504,
+    "edit_interval_s":  12,
+    "edit_count":  10,
+    "test_started_at_utc":  "2026-10-29T01:10:12.7617857Z",
+    "edit_started_at_utc":  "2026-10-29T01:10:22.3280385Z",
+    "edit_ended_at_utc":  "2026-10-29T01:12:22.3353465Z",
+    "root_pid":  30092,
+    "process_tree_pids":  [
+                              {
+                                  "pid":  14188,
+                                  "ppid":  42928,
+                                  "name":  "rust-analyzer-proc-macro-srv.exe",
+                                  "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe"
+                              },
+                              {
+                                  "pid":  30092,
+                                  "ppid":  3860,
+                                  "name":  "alula_app.exe",
+                                  "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe"
+                              },
+                              {
+                                  "pid":  42928,
+                                  "ppid":  50268,
+                                  "name":  "rust-analyzer.exe",
+                                  "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe"
+                              },
+                              {
+                                  "pid":  50268,
+                                  "ppid":  30092,
+                                  "name":  "rust-analyzer.exe",
+                                  "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe"
+                              }
+                          ],
+    "foreground_restored":  true,
+    "close_check":  {
+                        "wait_seconds":  30,
+                        "checked_at_utc":  "2026-10-29T01:13:00.5388032Z",
+                        "all_recorded_processes_exited":  true,
+                        "still_alive_pids":  [
+
+                                             ]
+                    },
+    "memory_report":  "p00.4-windows-alula-rust-lsp-cachepriming-off-20261029-091012539.json",
+    "memory_summary":  {
+                           "peak_private":  783462400,
+                           "stable_private":  666398720,
+                           "final_private":  223961088,
+                           "final_working_set":  285458432
+                       },
+    "memory_samples":  137,
+    "process_memory_sample_interval_edits":  5,
+    "process_memory_samples":  [
+                                   {
+                                       "elapsed_s":  0.001,
+                                       "captured_at_utc":  "2026-10-29T01:10:22.3351587Z",
+                                       "pid":  30092,
+                                       "ppid":  3860,
+                                       "name":  "alula_app.exe",
+                                       "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+                                       "private_bytes":  210616320,
+                                       "working_set_bytes":  128782336
+                                   },
+                                   {
+                                       "elapsed_s":  0.001,
+                                       "captured_at_utc":  "2026-10-29T01:10:22.3351587Z",
+                                       "pid":  50268,
+                                       "ppid":  30092,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  3407872,
+                                       "working_set_bytes":  11702272
+                                   },
+                                   {
+                                       "elapsed_s":  0.001,
+                                       "captured_at_utc":  "2026-10-29T01:10:22.3351587Z",
+                                       "pid":  42928,
+                                       "ppid":  50268,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  407216128,
+                                       "working_set_bytes":  410877952
+                                   },
+                                   {
+                                       "elapsed_s":  0.001,
+                                       "captured_at_utc":  "2026-10-29T01:10:22.3351587Z",
+                                       "pid":  14188,
+                                       "ppid":  42928,
+                                       "name":  "rust-analyzer-proc-macro-srv.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+                                       "private_bytes":  3088384,
+                                       "working_set_bytes":  14659584
+                                   },
+                                   {
+                                       "elapsed_s":  49.922,
+                                       "captured_at_utc":  "2026-10-29T01:11:12.2513841Z",
+                                       "pid":  30092,
+                                       "ppid":  3860,
+                                       "name":  "alula_app.exe",
+                                       "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+                                       "private_bytes":  214970368,
+                                       "working_set_bytes":  135499776
+                                   },
+                                   {
+                                       "elapsed_s":  49.922,
+                                       "captured_at_utc":  "2026-10-29T01:11:12.2513841Z",
+                                       "pid":  50268,
+                                       "ppid":  30092,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  3309568,
+                                       "working_set_bytes":  11653120
+                                   },
+                                   {
+                                       "elapsed_s":  49.922,
+                                       "captured_at_utc":  "2026-10-29T01:11:12.2513841Z",
+                                       "pid":  42928,
+                                       "ppid":  50268,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  450244608,
+                                       "working_set_bytes":  449249280
+                                   },
+                                   {
+                                       "elapsed_s":  49.922,
+                                       "captured_at_utc":  "2026-10-29T01:11:12.2513841Z",
+                                       "pid":  14188,
+                                       "ppid":  42928,
+                                       "name":  "rust-analyzer-proc-macro-srv.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+                                       "private_bytes":  2998272,
+                                       "working_set_bytes":  14610432
+                                   },
+                                   {
+                                       "elapsed_s":  109.957,
+                                       "captured_at_utc":  "2026-10-29T01:12:12.2855938Z",
+                                       "pid":  30092,
+                                       "ppid":  3860,
+                                       "name":  "alula_app.exe",
+                                       "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+                                       "private_bytes":  220090368,
+                                       "working_set_bytes":  140787712
+                                   },
+                                   {
+                                       "elapsed_s":  109.957,
+                                       "captured_at_utc":  "2026-10-29T01:12:12.2855938Z",
+                                       "pid":  50268,
+                                       "ppid":  30092,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  3309568,
+                                       "working_set_bytes":  11653120
+                                   },
+                                   {
+                                       "elapsed_s":  109.957,
+                                       "captured_at_utc":  "2026-10-29T01:12:12.2855938Z",
+                                       "pid":  42928,
+                                       "ppid":  50268,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  446832640,
+                                       "working_set_bytes":  446472192
+                                   },
+                                   {
+                                       "elapsed_s":  109.957,
+                                       "captured_at_utc":  "2026-10-29T01:12:12.2855938Z",
+                                       "pid":  14188,
+                                       "ppid":  42928,
+                                       "name":  "rust-analyzer-proc-macro-srv.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+                                       "private_bytes":  2998272,
+                                       "working_set_bytes":  14610432
+                                   },
+                                   {
+                                       "elapsed_s":  120.008,
+                                       "captured_at_utc":  "2026-10-29T01:12:22.3363490Z",
+                                       "pid":  30092,
+                                       "ppid":  3860,
+                                       "name":  "alula_app.exe",
+                                       "executable_path":  "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+                                       "private_bytes":  218382336,
+                                       "working_set_bytes":  139075584
+                                   },
+                                   {
+                                       "elapsed_s":  120.008,
+                                       "captured_at_utc":  "2026-10-29T01:12:22.3363490Z",
+                                       "pid":  50268,
+                                       "ppid":  30092,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  3309568,
+                                       "working_set_bytes":  11653120
+                                   },
+                                   {
+                                       "elapsed_s":  120.008,
+                                       "captured_at_utc":  "2026-10-29T01:12:22.3363490Z",
+                                       "pid":  42928,
+                                       "ppid":  50268,
+                                       "name":  "rust-analyzer.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+                                       "private_bytes":  445153280,
+                                       "working_set_bytes":  445710336
+                                   },
+                                   {
+                                       "elapsed_s":  120.008,
+                                       "captured_at_utc":  "2026-10-29T01:12:22.3363490Z",
+                                       "pid":  14188,
+                                       "ppid":  42928,
+                                       "name":  "rust-analyzer-proc-macro-srv.exe",
+                                       "executable_path":  "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+                                       "private_bytes":  2998272,
+                                       "working_set_bytes":  14610432
+                                   }
+                               ],
+    "edits":  [
+                  {
+                      "cycle":  1,
+                      "elapsed_s":  1.989,
+                      "captured_at_utc":  "2026-10-29T01:10:24.3185710Z",
+                      "marker":  "P00_4_EDIT_1_001",
+                      "saved":  true,
+                      "bytes":  607,
+                      "sha256":  "2BAAEEC36F4484913ADFB64AE80C14A2D529610BAC8A36BD15537ED2752D5CCC"
+                  },
+                  {
+                      "cycle":  2,
+                      "elapsed_s":  13.77,
+                      "captured_at_utc":  "2026-10-29T01:10:36.0998549Z",
+                      "marker":  "P00_4_EDIT_1_002",
+                      "saved":  true,
+                      "bytes":  627,
+                      "sha256":  "5466E208C69150E88B10E16DB0A02E191BE0FB36E47CB4E5DAD86BD2730406CE"
+                  },
+                  {
+                      "cycle":  3,
+                      "elapsed_s":  25.818,
+                      "captured_at_utc":  "2026-10-29T01:10:48.1470770Z",
+                      "marker":  "P00_4_EDIT_1_003",
+                      "saved":  true,
+                      "bytes":  647,
+                      "sha256":  "D8D09526FC651DC45FFC80EB0159B5C377C531BDED905871A11BF6F2B3828996"
+                  },
+                  {
+                      "cycle":  4,
+                      "elapsed_s":  37.765,
+                      "captured_at_utc":  "2026-10-29T01:11:00.0935145Z",
+                      "marker":  "P00_4_EDIT_1_004",
+                      "saved":  true,
+                      "bytes":  667,
+                      "sha256":  "06D0BD409F4CEF617E6FFA462CD9E31D65F06A3C41626D8F3440D01DCFC02B39"
+                  },
+                  {
+                      "cycle":  5,
+                      "elapsed_s":  49.768,
+                      "captured_at_utc":  "2026-10-29T01:11:12.0968081Z",
+                      "marker":  "P00_4_EDIT_1_005",
+                      "saved":  true,
+                      "bytes":  687,
+                      "sha256":  "9DEFD89D37B0FADD1F79A308ECF9A1350A3AF0A331EEB370DB199E6B8D6FF360"
+                  },
+                  {
+                      "cycle":  6,
+                      "elapsed_s":  61.782,
+                      "captured_at_utc":  "2026-10-29T01:11:24.1110786Z",
+                      "marker":  "P00_4_EDIT_1_006",
+                      "saved":  true,
+                      "bytes":  707,
+                      "sha256":  "E89501B1EF212D8D336DDB61F1054B2E0F35F0B19C42E5AFF5B4A8D5C648E673"
+                  },
+                  {
+                      "cycle":  7,
+                      "elapsed_s":  73.794,
+                      "captured_at_utc":  "2026-10-29T01:11:36.1223097Z",
+                      "marker":  "P00_4_EDIT_1_007",
+                      "saved":  true,
+                      "bytes":  727,
+                      "sha256":  "EB98DE714E9016D562C35DA3F1397790900215FBE583DD285E691B76E7FBCAE8"
+                  },
+                  {
+                      "cycle":  8,
+                      "elapsed_s":  85.791,
+                      "captured_at_utc":  "2026-10-29T01:11:48.1200575Z",
+                      "marker":  "P00_4_EDIT_1_008",
+                      "saved":  true,
+                      "bytes":  747,
+                      "sha256":  "E659FC238023C45830F2CFFACAADD745FF1DBB701482E0A0219D72564B6CE09D"
+                  },
+                  {
+                      "cycle":  9,
+                      "elapsed_s":  97.764,
+                      "captured_at_utc":  "2026-10-29T01:12:00.0925890Z",
+                      "marker":  "P00_4_EDIT_1_009",
+                      "saved":  true,
+                      "bytes":  767,
+                      "sha256":  "C85FEB5B810177F6DDFBDC143D70F5BE0FCFD3F8FAE2E1F02E03324556EFA679"
+                  },
+                  {
+                      "cycle":  10,
+                      "elapsed_s":  109.751,
+                      "captured_at_utc":  "2026-10-29T01:12:12.0804479Z",
+                      "marker":  "P00_4_EDIT_1_010",
+                      "saved":  true,
+                      "bytes":  787,
+                      "sha256":  "A3D585427A00C4800C752F4D989C177C1659BE18BE509554A1E7755F26D53773"
+                  }
+              ]
+}

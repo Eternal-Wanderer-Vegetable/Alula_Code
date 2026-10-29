@@ -1,0 +1,79 @@
+{
+  "experiment": "P00.4 Linux WPE Remote Web Inspector protocol session",
+  "recordedAt": "2026-10-28",
+  "status": "web-inspector-protocol-command-session-verified; cdp-unverified",
+  "scope": "A standalone Flutter Linux/WPE Release probe used the WPE Remote Inspector HTTP endpoint and its multiplexed WebSocket target. This verifies a WPE Web Inspector Protocol command response, not Chrome DevTools Protocol or product integration.",
+  "runtime": {
+    "host": "WSL2; Debian GNU/Linux 12 Bookworm container",
+    "flutter": "3.47.8 stable",
+    "dart": "3.13.7",
+    "webviewPlugin": "flutter_inappwebview 6.2.0-beta.3",
+    "linuxPlugin": "flutter_inappwebview_linux 0.1.0-beta.1",
+    "wpeWebKit": "2.52.6 source build",
+    "probeUser": "UID 1000",
+    "display": "Xvfb :103, 1440x900x24",
+    "webKitInspectorHttpServer": "127.0.0.1:9231",
+    "webKitSandboxDisabled": true,
+    "gbmDisabled": true
+  },
+  "results": {
+    "probeLifecycle": [
+      "initial-loaded",
+      "mhtml-loaded",
+      "webview-destroyed"
+    ],
+    "targetListHttpStatus": 200,
+    "webSocketHandshakeStatus": 101,
+    "webSocketPath": "/socket/1/1/WebPage",
+    "multiplexingPageTargetId": "page-7",
+    "multiplexedCommand": "Target.sendMessageToTarget",
+    "commands": [
+      {
+        "method": "Runtime.enable",
+        "response": {
+          "result": {},
+          "id": 41
+        }
+      },
+      {
+        "method": "Runtime.evaluate",
+        "expression": "JSON.stringify({title:document.title,marker:document.body.innerText.includes('WEB_ENGINE_PROBE_OK')})",
+        "response": {
+          "result": {
+            "result": {
+              "type": "string",
+              "value": "{\"title\":\"Alula Web Probe\",\"marker\":true}"
+            },
+            "wasThrown": false
+          },
+          "id": 42
+        }
+      }
+    ],
+    "returnedPageValue": {
+      "title": "Alula Web Probe",
+      "marker": true
+    },
+    "pluginCapabilityMetadata": {
+      "callDevToolsProtocolMethodSupported": false,
+      "isInspectableSettingSupported": false
+    }
+  },
+  "protocolNote": "The endpoint is a multiplexing target. Commands for a child page target must be nested in Target.sendMessageToTarget using the target ID announced by Target.targetCreated. Sending Runtime or Page commands directly to the outer endpoint returns a domain-not-found error.",
+  "limitations": [
+    "This is Web Inspector Protocol, not Chrome DevTools Protocol; Linux CDP remains unsupported by the pinned Flutter plugin.",
+    "The Inspector frontend UI was not attached; only a protocol command session was exercised.",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 and WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1 were set for this Xvfb diagnostic run.",
+    "No WPE hardware GBM/DMABUF, production security configuration, Alula product integration, or docs/04 multi-round memory acceptance was demonstrated.",
+    "One standalone replay was performed; this does not establish cross-version or cross-host behavior."
+  ],
+  "artifacts": {
+    "protocol-session.json": "eed99b8ea357ab621b207a9340d9904423e0a554426beb3d91adda1a1c3f4e30",
+    "inspector-protocol-client.py": "d40c4b2e83b8fb16f533531a73d4a78a229026347de4781e30cc73ac38305d16",
+    "app.log": "1ab3e3c08c8d88ee0a662518b2a33776de811b19f05e6604e40e99caa20837b7",
+    "final-phase.txt": "71bfd29c44abcb904d2a18c87b816f1bdd7a0dfbe6fccf2603ced21b68d50610",
+    "environment.txt": "dfc4a409d81c777c3e4732de298d6fdbe40d8c9ce8d85bdf3a9195509c65eb8c",
+    "README.md": "9075047218b6bbc616c4b5d2b17d7c51df8eabc0117a213b5feab1594232e2b0"
+  },
+  "artifactDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-inspector-protocol-run/"
+}

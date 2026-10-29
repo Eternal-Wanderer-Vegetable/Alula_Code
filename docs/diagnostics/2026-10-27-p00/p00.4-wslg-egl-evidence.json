@@ -1,0 +1,86 @@
+{
+  "hostEglProbeCapturedAtUtc": "2026-10-27T21:15:32Z",
+  "recordedAtUtc": "2026-10-27T21:33:19Z",
+  "scope": "WSLg EGL and WPE-container hardware-renderer probe; not a product acceptance run",
+  "host": {
+    "environment": "WSL2 with WSLg",
+    "deviceNodes": ["/dev/dxg", "/dev/dri/card0", "/dev/dri/renderD128"],
+    "drmCardDriver": "faux_driver",
+    "wslD3d12LibraryPresent": true
+  },
+  "eglProbe": {
+    "command": "GALLIUM_DRIVER=d3d12 MESA_DEBUG=1 python3 - (ctypes EGL surfaceless GLES2 pbuffer probe)",
+    "eglVersion": "1.5",
+    "glRenderer": "D3D12 (AMD Radeon(TM) Graphics)",
+    "glVersion": "OpenGL ES 3.1 Mesa 25.2.8-0ubuntu0.24.04.4",
+    "result": "WSLg D3D12-backed EGL context creation succeeded"
+  },
+  "gbmProbe": {
+    "environment": "Disposable Debian Bookworm container with libgbm1 and /dev/dri/renderD128 passed through; no WPE/WebKit runtime",
+    "renderNodeOpen": true,
+    "gbmCreateDevice": "null",
+    "diagnostics": [
+      "Mesa could not load vgem, zink, kms_swrast, or swrast DRI drivers in the minimal container.",
+      "This does not establish whether the WPE container's DRI drivers can initialize GBM."
+    ],
+    "result": "Inconclusive for WPE GBM/DMABUF"
+  },
+  "wpeContainerAttempt": {
+    "runtime": "Temporary snapshot of the existing Debian Bookworm WPE 2.52.6 source-build container; the original container was left unchanged",
+    "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/card0", "/dev/dri/renderD128"],
+    "containerMesaVersion": "22.3.6-1+deb12u2",
+    "rendererEnvironment": {
+      "GALLIUM_DRIVER": "d3d12",
+      "LIBGL_ALWAYS_SOFTWARE": "unset",
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "unset"
+    },
+    "sandboxContainerFlags": ["SYS_ADMIN", "seccomp=unconfined"],
+    "xvfbRun": {
+      "display": ":99",
+      "result": "Flutter could not create an EGL context; WPEWebProcess crashed before initial-loaded; runner exited 1 after the 90-second phase deadline",
+      "diagnostics": [
+        "libEGL: failed to create dri2 screen",
+        "Failed to create OpenGL context: No GL implementation is available",
+        "WPE WebProcess terminated with reason=CRASHED"
+      ]
+    },
+    "containerX11Probe": {
+      "display": ":0",
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "hostWslD3d12LibrariesMounted": true,
+      "x11Connection": "connected",
+      "eglInitialize": "failed with EGL_NOT_INITIALIZED (0x3001)",
+      "wpeApplicationRun": false
+    },
+    "containerWaylandProbe": {
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "supplementaryRenderGroup": 992,
+      "wslgWaylandSocket": "connected",
+      "hostWslD3d12LibrariesMounted": true,
+      "eglInitialize": "failed with EGL_NOT_INITIALIZED (0x3001)",
+      "gles2Config": "unavailable",
+      "wpeApplicationRun": false
+    },
+    "directGbmProbe": {
+      "runtime": "Temporary snapshot of the WPE 2.52.6 Debian Bookworm container",
+      "deviceNodesPassedThrough": ["/dev/dxg", "/dev/dri/renderD128"],
+      "supplementaryRenderGroup": 992,
+      "renderNodeOpen": true,
+      "gbmCreateDevice": "null",
+      "gbmBufferAllocated": false,
+      "mesaDiagnostics": [
+        "Failed to retrieve DRM device information.",
+        "Mesa attempted vgem_dri.so, which was absent, and failed to load that driver."
+      ],
+      "result": "The current WSLg DRM node did not initialize GBM in the WPE container; this does not establish WPE GBM behavior on a supported Linux GPU."
+    },
+    "result": "The pinned Debian 12 Mesa/WPE container did not create a hardware EGL context with WSLg devices; WPE GBM/DMABUF support remains unverified"
+  },
+  "limitations": [
+    "The Flutter/WPE application was launched for a hardware-path attempt but failed before page initialization.",
+    "No GBM buffer allocation/import or WPE frame presentation was verified.",
+    "The host D3D12 EGL result is WSLg hardware-renderer evidence, not evidence that the pinned Debian container can use it."
+  ],
+  "disposition": "Keep P00.4 blocked; the current WSLg DRM node cannot initialize GBM in the WPE container, and WPE GBM on a supported Linux GPU remains unverified."
+}

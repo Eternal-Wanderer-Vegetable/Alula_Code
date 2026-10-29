@@ -228,6 +228,16 @@ impl LspServer {
         }))
     }
 
+    /// 文档关闭通知。
+    pub fn did_close(&self, uri: &str) -> Result<(), String> {
+        let uri = &normalize_uri(uri);
+        self.send_message(&serde_json::json!({
+            "jsonrpc": "2.0",
+            "method": "textDocument/didClose",
+            "params": {"textDocument": {"uri": uri}},
+        }))
+    }
+
     /// 通用同步请求（pull diagnostics 等使用）。
     pub fn request(
         &self,
@@ -249,8 +259,15 @@ impl LspServer {
             self.shared.pending.lock().ok().map(|mut g| g.remove(&id));
             return Err(e);
         }
-        rx.recv_timeout(Duration::from_millis(timeout_ms))
-            .map_err(|_| format!("请求 {method} 响应超时（{timeout_ms}ms）"))
+        match rx.recv_timeout(Duration::from_millis(timeout_ms)) {
+            Ok(response) => Ok(response),
+            Err(_) => {
+                if let Ok(mut pending) = self.shared.pending.lock() {
+                    pending.remove(&id);
+                }
+                Err(format!("请求 {method} 响应超时（{timeout_ms}ms）"))
+            }
+        }
     }
 
     /// 同步补全请求（带超时）。返回每项的插入文本（insertText/textEdit.newText/label）。
@@ -282,19 +299,38 @@ impl LspServer {
 
     /// shutdown + exit 握手并回收进程。
     pub fn shutdown(&self) -> Result<(), String> {
-        let id = self.next_id.fetch_add(1, Ordering::SeqCst);
-        let _ = self.send_message(&serde_json::json!({
-            "jsonrpc": "2.0", "id": id, "method": "shutdown", "params": null,
-        }));
-        std::thread::sleep(Duration::from_millis(150));
-        let _ = self.send_message(&serde_json::json!({
+        if !self.is_alive() {
+            return Ok(());
+        }
+
+        let shutdown = self.request("shutdown", serde_json::Value::Null, 1_000);
+        let exit = self.send_message(&serde_json::json!({
             "jsonrpc": "2.0", "method": "exit", "params": null,
         }));
-        std::thread::sleep(Duration::from_millis(150));
-        if let Ok(mut child) = self.child.lock() {
-            let _ = child.kill();
-            let _ = child.wait();
+
+        let deadline = Instant::now() + Duration::from_secs(1);
+        loop {
+            let status = self
+                .child
+                .lock()
+                .map_err(|_| "LSP child 锁中毒")?
+                .try_wait()
+                .map_err(|e| format!("等待 LSP 退出失败: {e}"))?;
+            if status.is_some() {
+                break;
+            }
+            if Instant::now() >= deadline {
+                if let Ok(mut child) = self.child.lock() {
+                    let _ = child.kill();
+                    let _ = child.wait();
+                }
+                return Err("LSP 未在 exit 通知后 1 秒内退出，已强制终止".into());
+            }
+            std::thread::sleep(Duration::from_millis(25));
         }
+
+        shutdown?;
+        exit?;
         Ok(())
     }
 }

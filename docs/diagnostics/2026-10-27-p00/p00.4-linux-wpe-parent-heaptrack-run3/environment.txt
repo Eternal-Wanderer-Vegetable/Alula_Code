@@ -1,0 +1,18 @@
+Linux 5b973c9ae68e 6.18.54.1-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026 x86_64 GNU/Linux
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+VERSION_CODENAME=bookworm
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+heaptrack 1.4.0
+heaptrack	1.4.0-2
+probe=/repo/tools/web-engine-probe/build/linux/x64/release/bundle/web_engine_probe
+LD_LIBRARY_PATH=/repo/tools/web-engine-probe/build/linux/x64/release/bundle/lib:/work/install/lib
+DISPLAY=:125
+WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1
+mode=P00_4_WEB_AUTO=1 and P00_4_WEB_NO_CAPTURE=1; one create/destroy cycle; no screenshots, archive, or inspector command

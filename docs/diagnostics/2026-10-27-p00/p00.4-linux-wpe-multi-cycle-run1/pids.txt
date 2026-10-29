@@ -1,0 +1,2 @@
+app_pid=67718
+xvfb_pid=67714

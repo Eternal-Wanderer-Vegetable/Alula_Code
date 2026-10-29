@@ -1,0 +1,843 @@
+{
+  "label": "alula-rust-lsp-cachepriming-off-20261029-091012539",
+  "exe": "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+  "args": [
+    "--lsp-auto"
+  ],
+  "duration_s": 240.0,
+  "interval_s": 1.0,
+  "root_pid": 30092,
+  "platform": "windows",
+  "captured_at": "2026-10-29 01:12:30 UTC",
+  "samples": [
+    {
+      "t": 4.1e-6,
+      "total_private": 385024,
+      "total_working_set": 2191360,
+      "n_processes": 1
+    },
+    {
+      "t": 1.0013155,
+      "total_private": 107278336,
+      "total_working_set": 77799424,
+      "n_processes": 1
+    },
+    {
+      "t": 2.0021533,
+      "total_private": 247017472,
+      "total_working_set": 213549056,
+      "n_processes": 7
+    },
+    {
+      "t": 3.0033404,
+      "total_private": 337518592,
+      "total_working_set": 281669632,
+      "n_processes": 5
+    },
+    {
+      "t": 4.0042009,
+      "total_private": 554467328,
+      "total_working_set": 489488384,
+      "n_processes": 4
+    },
+    {
+      "t": 5.0051159,
+      "total_private": 625209344,
+      "total_working_set": 562741248,
+      "n_processes": 4
+    },
+    {
+      "t": 6.0064561,
+      "total_private": 624349184,
+      "total_working_set": 563920896,
+      "n_processes": 4
+    },
+    {
+      "t": 7.0072033,
+      "total_private": 625926144,
+      "total_working_set": 565231616,
+      "n_processes": 4
+    },
+    {
+      "t": 8.0082159,
+      "total_private": 626528256,
+      "total_working_set": 567873536,
+      "n_processes": 4
+    },
+    {
+      "t": 9.0090416,
+      "total_private": 623276032,
+      "total_working_set": 565104640,
+      "n_processes": 4
+    },
+    {
+      "t": 10.0103513,
+      "total_private": 625901568,
+      "total_working_set": 567529472,
+      "n_processes": 4
+    },
+    {
+      "t": 11.0113507,
+      "total_private": 630837248,
+      "total_working_set": 593399808,
+      "n_processes": 7
+    },
+    {
+      "t": 12.0123817,
+      "total_private": 667516928,
+      "total_working_set": 617250816,
+      "n_processes": 6
+    },
+    {
+      "t": 13.013311,
+      "total_private": 661663744,
+      "total_working_set": 600133632,
+      "n_processes": 4
+    },
+    {
+      "t": 14.0140584,
+      "total_private": 662650880,
+      "total_working_set": 601608192,
+      "n_processes": 4
+    },
+    {
+      "t": 15.0153295,
+      "total_private": 662355968,
+      "total_working_set": 601247744,
+      "n_processes": 4
+    },
+    {
+      "t": 16.0162669,
+      "total_private": 659202048,
+      "total_working_set": 598102016,
+      "n_processes": 4
+    },
+    {
+      "t": 17.0174938,
+      "total_private": 660779008,
+      "total_working_set": 599609344,
+      "n_processes": 4
+    },
+    {
+      "t": 18.0180616,
+      "total_private": 662351872,
+      "total_working_set": 601116672,
+      "n_processes": 4
+    },
+    {
+      "t": 19.019127,
+      "total_private": 656584704,
+      "total_working_set": 595218432,
+      "n_processes": 4
+    },
+    {
+      "t": 20.0204227,
+      "total_private": 659210240,
+      "total_working_set": 598167552,
+      "n_processes": 4
+    },
+    {
+      "t": 21.0211566,
+      "total_private": 660787200,
+      "total_working_set": 599674880,
+      "n_processes": 4
+    },
+    {
+      "t": 22.0222345,
+      "total_private": 662884352,
+      "total_working_set": 601640960,
+      "n_processes": 4
+    },
+    {
+      "t": 23.0233853,
+      "total_private": 660684800,
+      "total_working_set": 602890240,
+      "n_processes": 5
+    },
+    {
+      "t": 24.0243128,
+      "total_private": 617639936,
+      "total_working_set": 580276224,
+      "n_processes": 7
+    },
+    {
+      "t": 25.0250844,
+      "total_private": 610181120,
+      "total_working_set": 558170112,
+      "n_processes": 4
+    },
+    {
+      "t": 26.0262342,
+      "total_private": 611753984,
+      "total_working_set": 559677440,
+      "n_processes": 4
+    },
+    {
+      "t": 27.0271156,
+      "total_private": 613330944,
+      "total_working_set": 561147904,
+      "n_processes": 4
+    },
+    {
+      "t": 28.0284515,
+      "total_private": 615956480,
+      "total_working_set": 564133888,
+      "n_processes": 4
+    },
+    {
+      "t": 29.0294889,
+      "total_private": 610189312,
+      "total_working_set": 558170112,
+      "n_processes": 4
+    },
+    {
+      "t": 30.0302287,
+      "total_private": 611762176,
+      "total_working_set": 559652864,
+      "n_processes": 4
+    },
+    {
+      "t": 31.0314143,
+      "total_private": 613298176,
+      "total_working_set": 561102848,
+      "n_processes": 4
+    },
+    {
+      "t": 32.0321288,
+      "total_private": 615669760,
+      "total_working_set": 563900416,
+      "n_processes": 4
+    },
+    {
+      "t": 33.0331503,
+      "total_private": 609890304,
+      "total_working_set": 558002176,
+      "n_processes": 4
+    },
+    {
+      "t": 34.0344458,
+      "total_private": 611463168,
+      "total_working_set": 559575040,
+      "n_processes": 4
+    },
+    {
+      "t": 35.0353976,
+      "total_private": 614342656,
+      "total_working_set": 565923840,
+      "n_processes": 5
+    },
+    {
+      "t": 36.0362415,
+      "total_private": 613027840,
+      "total_working_set": 561704960,
+      "n_processes": 4
+    },
+    {
+      "t": 37.0375134,
+      "total_private": 614604800,
+      "total_working_set": 563212288,
+      "n_processes": 4
+    },
+    {
+      "t": 38.0381976,
+      "total_private": 616177664,
+      "total_working_set": 564719616,
+      "n_processes": 4
+    },
+    {
+      "t": 39.0391909,
+      "total_private": 610406400,
+      "total_working_set": 558755840,
+      "n_processes": 4
+    },
+    {
+      "t": 40.0404033,
+      "total_private": 613031936,
+      "total_working_set": 561704960,
+      "n_processes": 4
+    },
+    {
+      "t": 41.0412319,
+      "total_private": 614608896,
+      "total_working_set": 563212288,
+      "n_processes": 4
+    },
+    {
+      "t": 42.0420838,
+      "total_private": 616181760,
+      "total_working_set": 564723712,
+      "n_processes": 4
+    },
+    {
+      "t": 43.0433605,
+      "total_private": 610402304,
+      "total_working_set": 558759936,
+      "n_processes": 4
+    },
+    {
+      "t": 44.0443321,
+      "total_private": 613027840,
+      "total_working_set": 561709056,
+      "n_processes": 4
+    },
+    {
+      "t": 45.0452624,
+      "total_private": 614604800,
+      "total_working_set": 563216384,
+      "n_processes": 4
+    },
+    {
+      "t": 46.0462423,
+      "total_private": 611975168,
+      "total_working_set": 560406528,
+      "n_processes": 4
+    },
+    {
+      "t": 47.047225,
+      "total_private": 648900608,
+      "total_working_set": 595226624,
+      "n_processes": 5
+    },
+    {
+      "t": 48.0483214,
+      "total_private": 614363136,
+      "total_working_set": 563019776,
+      "n_processes": 4
+    },
+    {
+      "t": 49.0491125,
+      "total_private": 615940096,
+      "total_working_set": 564527104,
+      "n_processes": 4
+    },
+    {
+      "t": 50.0503703,
+      "total_private": 617512960,
+      "total_working_set": 566034432,
+      "n_processes": 4
+    },
+    {
+      "t": 51.0512598,
+      "total_private": 611741696,
+      "total_working_set": 560136192,
+      "n_processes": 4
+    },
+    {
+      "t": 52.0524991,
+      "total_private": 614367232,
+      "total_working_set": 563019776,
+      "n_processes": 4
+    },
+    {
+      "t": 53.0532558,
+      "total_private": 615944192,
+      "total_working_set": 564527104,
+      "n_processes": 4
+    },
+    {
+      "t": 54.0543645,
+      "total_private": 617517056,
+      "total_working_set": 566034432,
+      "n_processes": 4
+    },
+    {
+      "t": 55.0551416,
+      "total_private": 611737600,
+      "total_working_set": 560136192,
+      "n_processes": 4
+    },
+    {
+      "t": 56.0563868,
+      "total_private": 614363136,
+      "total_working_set": 563019776,
+      "n_processes": 4
+    },
+    {
+      "t": 57.0574563,
+      "total_private": 615940096,
+      "total_working_set": 564527104,
+      "n_processes": 4
+    },
+    {
+      "t": 58.0580854,
+      "total_private": 613310464,
+      "total_working_set": 561799168,
+      "n_processes": 4
+    },
+    {
+      "t": 59.0592262,
+      "total_private": 667361280,
+      "total_working_set": 625770496,
+      "n_processes": 6
+    },
+    {
+      "t": 60.0603282,
+      "total_private": 661921792,
+      "total_working_set": 603017216,
+      "n_processes": 4
+    },
+    {
+      "t": 61.0615003,
+      "total_private": 663498752,
+      "total_working_set": 604524544,
+      "n_processes": 4
+    },
+    {
+      "t": 62.0621687,
+      "total_private": 665034752,
+      "total_working_set": 606007296,
+      "n_processes": 4
+    },
+    {
+      "t": 63.0633048,
+      "total_private": 659263488,
+      "total_working_set": 600109056,
+      "n_processes": 4
+    },
+    {
+      "t": 64.0643409,
+      "total_private": 661889024,
+      "total_working_set": 602992640,
+      "n_processes": 4
+    },
+    {
+      "t": 65.0651884,
+      "total_private": 663465984,
+      "total_working_set": 604499968,
+      "n_processes": 4
+    },
+    {
+      "t": 66.0663977,
+      "total_private": 663744512,
+      "total_working_set": 604712960,
+      "n_processes": 4
+    },
+    {
+      "t": 67.0675796,
+      "total_private": 657965056,
+      "total_working_set": 598749184,
+      "n_processes": 4
+    },
+    {
+      "t": 68.0682522,
+      "total_private": 660590592,
+      "total_working_set": 601698304,
+      "n_processes": 4
+    },
+    {
+      "t": 69.0695692,
+      "total_private": 662167552,
+      "total_working_set": 603205632,
+      "n_processes": 4
+    },
+    {
+      "t": 70.0708513,
+      "total_private": 659537920,
+      "total_working_set": 600522752,
+      "n_processes": 4
+    },
+    {
+      "t": 71.0713681,
+      "total_private": 667394048,
+      "total_working_set": 618852352,
+      "n_processes": 6
+    },
+    {
+      "t": 72.0811176,
+      "total_private": 666243072,
+      "total_working_set": 612331520,
+      "n_processes": 5
+    },
+    {
+      "t": 73.0864778,
+      "total_private": 660615168,
+      "total_working_set": 601755648,
+      "n_processes": 4
+    },
+    {
+      "t": 74.0872072,
+      "total_private": 662188032,
+      "total_working_set": 603197440,
+      "n_processes": 4
+    },
+    {
+      "t": 75.0880405,
+      "total_private": 663764992,
+      "total_working_set": 604643328,
+      "n_processes": 4
+    },
+    {
+      "t": 76.0894389,
+      "total_private": 666390528,
+      "total_working_set": 607592448,
+      "n_processes": 4
+    },
+    {
+      "t": 77.0900703,
+      "total_private": 660619264,
+      "total_working_set": 601759744,
+      "n_processes": 4
+    },
+    {
+      "t": 78.0911972,
+      "total_private": 662192128,
+      "total_working_set": 603201536,
+      "n_processes": 4
+    },
+    {
+      "t": 79.0925527,
+      "total_private": 663244800,
+      "total_working_set": 604643328,
+      "n_processes": 4
+    },
+    {
+      "t": 80.0935171,
+      "total_private": 666394624,
+      "total_working_set": 607592448,
+      "n_processes": 4
+    },
+    {
+      "t": 81.0942358,
+      "total_private": 660615168,
+      "total_working_set": 601759744,
+      "n_processes": 4
+    },
+    {
+      "t": 82.0952934,
+      "total_private": 666509312,
+      "total_working_set": 607715328,
+      "n_processes": 4
+    },
+    {
+      "t": 83.0963773,
+      "total_private": 672825344,
+      "total_working_set": 614993920,
+      "n_processes": 5
+    },
+    {
+      "t": 84.0971651,
+      "total_private": 669548544,
+      "total_working_set": 609304576,
+      "n_processes": 4
+    },
+    {
+      "t": 85.0981821,
+      "total_private": 664825856,
+      "total_working_set": 604454912,
+      "n_processes": 4
+    },
+    {
+      "t": 86.0992505,
+      "total_private": 666398720,
+      "total_working_set": 605896704,
+      "n_processes": 4
+    },
+    {
+      "t": 87.10011,
+      "total_private": 667975680,
+      "total_working_set": 607367168,
+      "n_processes": 4
+    },
+    {
+      "t": 88.1013417,
+      "total_private": 668246016,
+      "total_working_set": 609050624,
+      "n_processes": 4
+    },
+    {
+      "t": 89.1023395,
+      "total_private": 662470656,
+      "total_working_set": 603152384,
+      "n_processes": 4
+    },
+    {
+      "t": 90.1032865,
+      "total_private": 664043520,
+      "total_working_set": 604594176,
+      "n_processes": 4
+    },
+    {
+      "t": 91.1040379,
+      "total_private": 665620480,
+      "total_working_set": 606064640,
+      "n_processes": 4
+    },
+    {
+      "t": 92.1054635,
+      "total_private": 668246016,
+      "total_working_set": 609054720,
+      "n_processes": 4
+    },
+    {
+      "t": 93.1063719,
+      "total_private": 662470656,
+      "total_working_set": 603156480,
+      "n_processes": 4
+    },
+    {
+      "t": 94.1074829,
+      "total_private": 667721728,
+      "total_working_set": 608145408,
+      "n_processes": 4
+    },
+    {
+      "t": 95.1082985,
+      "total_private": 679755776,
+      "total_working_set": 635936768,
+      "n_processes": 6
+    },
+    {
+      "t": 96.1093083,
+      "total_private": 623337472,
+      "total_working_set": 571719680,
+      "n_processes": 4
+    },
+    {
+      "t": 97.1104753,
+      "total_private": 618614784,
+      "total_working_set": 566886400,
+      "n_processes": 4
+    },
+    {
+      "t": 98.111223,
+      "total_private": 620187648,
+      "total_working_set": 568328192,
+      "n_processes": 4
+    },
+    {
+      "t": 99.112311,
+      "total_private": 621764608,
+      "total_working_set": 569774080,
+      "n_processes": 4
+    },
+    {
+      "t": 100.1132866,
+      "total_private": 624390144,
+      "total_working_set": 572719104,
+      "n_processes": 4
+    },
+    {
+      "t": 101.1141904,
+      "total_private": 618614784,
+      "total_working_set": 566890496,
+      "n_processes": 4
+    },
+    {
+      "t": 102.1150316,
+      "total_private": 620187648,
+      "total_working_set": 568332288,
+      "n_processes": 4
+    },
+    {
+      "t": 103.116519,
+      "total_private": 621764608,
+      "total_working_set": 569798656,
+      "n_processes": 4
+    },
+    {
+      "t": 104.1174143,
+      "total_private": 624390144,
+      "total_working_set": 572788736,
+      "n_processes": 4
+    },
+    {
+      "t": 105.1183506,
+      "total_private": 618614784,
+      "total_working_set": 566890496,
+      "n_processes": 4
+    },
+    {
+      "t": 106.1194481,
+      "total_private": 623865856,
+      "total_working_set": 572174336,
+      "n_processes": 4
+    },
+    {
+      "t": 107.1204469,
+      "total_private": 693841920,
+      "total_working_set": 685400064,
+      "n_processes": 8
+    },
+    {
+      "t": 108.1211538,
+      "total_private": 669626368,
+      "total_working_set": 610340864,
+      "n_processes": 4
+    },
+    {
+      "t": 109.1223324,
+      "total_private": 664903680,
+      "total_working_set": 605425664,
+      "n_processes": 4
+    },
+    {
+      "t": 110.1231054,
+      "total_private": 666476544,
+      "total_working_set": 606867456,
+      "n_processes": 4
+    },
+    {
+      "t": 111.1241685,
+      "total_private": 668053504,
+      "total_working_set": 608337920,
+      "n_processes": 4
+    },
+    {
+      "t": 112.1253751,
+      "total_private": 670679040,
+      "total_working_set": 611323904,
+      "n_processes": 4
+    },
+    {
+      "t": 113.126157,
+      "total_private": 664903680,
+      "total_working_set": 605491200,
+      "n_processes": 4
+    },
+    {
+      "t": 114.1273542,
+      "total_private": 666476544,
+      "total_working_set": 606932992,
+      "n_processes": 4
+    },
+    {
+      "t": 115.128429,
+      "total_private": 668053504,
+      "total_working_set": 608403456,
+      "n_processes": 4
+    },
+    {
+      "t": 116.1293311,
+      "total_private": 670679040,
+      "total_working_set": 611389440,
+      "n_processes": 4
+    },
+    {
+      "t": 117.1303476,
+      "total_private": 664903680,
+      "total_working_set": 605491200,
+      "n_processes": 4
+    },
+    {
+      "t": 118.1310541,
+      "total_private": 670154752,
+      "total_working_set": 610803712,
+      "n_processes": 4
+    },
+    {
+      "t": 119.1321416,
+      "total_private": 783462400,
+      "total_working_set": 680292352,
+      "n_processes": 8
+    },
+    {
+      "t": 120.1332298,
+      "total_private": 669585408,
+      "total_working_set": 610844672,
+      "n_processes": 4
+    },
+    {
+      "t": 121.1344224,
+      "total_private": 671162368,
+      "total_working_set": 612352000,
+      "n_processes": 4
+    },
+    {
+      "t": 122.1350517,
+      "total_private": 672735232,
+      "total_working_set": 613859328,
+      "n_processes": 4
+    },
+    {
+      "t": 123.1363267,
+      "total_private": 666963968,
+      "total_working_set": 607895552,
+      "n_processes": 4
+    },
+    {
+      "t": 124.1374225,
+      "total_private": 669560832,
+      "total_working_set": 610836480,
+      "n_processes": 4
+    },
+    {
+      "t": 125.1384143,
+      "total_private": 669843456,
+      "total_working_set": 611049472,
+      "n_processes": 4
+    },
+    {
+      "t": 126.1393918,
+      "total_private": 671416320,
+      "total_working_set": 612556800,
+      "n_processes": 4
+    },
+    {
+      "t": 127.1402053,
+      "total_private": 665640960,
+      "total_working_set": 606593024,
+      "n_processes": 4
+    },
+    {
+      "t": 128.1413465,
+      "total_private": 668266496,
+      "total_working_set": 609542144,
+      "n_processes": 4
+    },
+    {
+      "t": 129.1422511,
+      "total_private": 669843456,
+      "total_working_set": 611049472,
+      "n_processes": 4
+    },
+    {
+      "t": 130.1434703,
+      "total_private": 222007296,
+      "total_working_set": 152498176,
+      "n_processes": 3
+    },
+    {
+      "t": 131.1443715,
+      "total_private": 224436224,
+      "total_working_set": 282685440,
+      "n_processes": 3
+    },
+    {
+      "t": 132.1451076,
+      "total_private": 224436224,
+      "total_working_set": 282685440,
+      "n_processes": 3
+    },
+    {
+      "t": 133.1461123,
+      "total_private": 224911360,
+      "total_working_set": 283922432,
+      "n_processes": 3
+    },
+    {
+      "t": 134.1473587,
+      "total_private": 222224384,
+      "total_working_set": 278093824,
+      "n_processes": 3
+    },
+    {
+      "t": 135.1484674,
+      "total_private": 223465472,
+      "total_working_set": 284221440,
+      "n_processes": 3
+    },
+    {
+      "t": 136.149057,
+      "total_private": 223961088,
+      "total_working_set": 285458432,
+      "n_processes": 3
+    }
+  ],
+  "final_processes": [],
+  "summary": {
+    "peak_private": 783462400,
+    "stable_private": 666398720,
+    "final_private": 223961088,
+    "final_working_set": 285458432
+  }
+}

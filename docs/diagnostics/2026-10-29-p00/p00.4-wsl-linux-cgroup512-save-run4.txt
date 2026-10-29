@@ -1,0 +1,34 @@
+Running as unit: alula-p00-linux-cgroup512-run4-562938.scope; invocation ID: 81184b1678cd4bcd82d15f910e3a7932
+xwdtopnm: writing PPM file
+label=p00.4-wsl-linux-cgroup512-20261029
+window=2097155 title=Alula Code size=1280x720
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-linux-cgroup512-run4-562938.scope
+memory.max=536870912
+memory.swap.max=0
+memory.current.after_edit=293056512
+save_result=passed
+marker=ALULACGROUP512RUN4
+baseline_sha256=6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684
+final_sha256=55329b95431bca7c09483086e76dc696c6210d9da65bd869be42911ffdcc3789
+screenshot=/mnt/e/alula_code/docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup512-save-run4.png
+memory.events.after_edit:
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+close_result=exited
+app_exit_code=0
+memory.events.final:
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+app_log_tail:
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+embedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.

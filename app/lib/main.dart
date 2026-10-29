@@ -23,6 +23,8 @@ Future<void> main(List<String> args) async {
   // 无边框窗口（W1-3）：原生标题栏隐藏，自绘标题栏接管拖拽与窗口控制。
   // 仅真实入口执行；widget 测试直接 pump AlulaApp，不触碰插件。
   await windowManager.ensureInitialized();
+  // 拦截系统关闭请求，让工作台先完成 LSP shutdown/exit，再销毁窗口。
+  await windowManager.setPreventClose(true);
   const options = WindowOptions(
     title: 'Alula Code',
     minimumSize: Size(640, 400),

@@ -1,0 +1,55 @@
+{
+  "phase": "inspector-open-completed",
+  "capturedAtMonotonicSeconds": 8.74,
+  "rootPid": 107919,
+  "webkitgtkVersion": "2.52.6",
+  "processes": [
+    {
+      "pid": 107919,
+      "ppid": 107881,
+      "comm": "python3",
+      "rss_kib": 179868,
+      "private_kib": 54028
+    },
+    {
+      "pid": 107997,
+      "ppid": 107919,
+      "comm": "WebKitNetworkPr",
+      "rss_kib": 52324,
+      "private_kib": 7836
+    },
+    {
+      "pid": 108001,
+      "ppid": 107919,
+      "comm": "WebKitWebProces",
+      "rss_kib": 251716,
+      "private_kib": 97932
+    },
+    {
+      "pid": 108069,
+      "ppid": 107919,
+      "comm": "WebKitWebProces",
+      "rss_kib": 451724,
+      "private_kib": 292524
+    },
+    {
+      "pid": 108071,
+      "ppid": 107919,
+      "comm": "WebKitNetworkPr",
+      "rss_kib": 51688,
+      "private_kib": 8320
+    }
+  ],
+  "inspectedUri": "p00.4-linux-webkitgtk.mhtml",
+  "attached": true,
+  "canAttach": false,
+  "windows": [
+    {
+      "ok": true,
+      "title": "P00.4 Linux WebKitGTK Probe",
+      "path": "p00.4-linux-webkitgtk-inspector.png",
+      "width": 960,
+      "height": 640
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+Probe exited after the 30-second destroy sample.

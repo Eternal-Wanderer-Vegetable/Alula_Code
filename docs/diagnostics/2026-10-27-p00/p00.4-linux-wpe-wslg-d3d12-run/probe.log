@@ -1,0 +1,21 @@
+
+(com.example.web_engine_probe:56): dbind-WARNING **: 21:20:31.557: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+libEGL warning: egl: failed to create dri2 screen
+
+** (com.example.web_engine_probe:56): WARNING **: 21:20:31.597: Failed to create EGL context for rendering
+
+** (com.example.web_engine_probe:56): WARNING **: 21:20:31.597: Failed to create EGL context for resource sharing
+
+** (com.example.web_engine_probe:56): WARNING **: 21:20:31.597: Failed to create EGL context for platform thread
+
+(com.example.web_engine_probe:56): Atk-CRITICAL **: 21:20:31.598: atk_socket_embed: assertion 'plug_id != NULL' failed
+
+** (com.example.web_engine_probe:56): WARNING **: 21:20:31.599: Failed to create OpenGL context: No GL implementation is available
+[ERROR:flutter/impeller/renderer/backend/gles/description_gles.cc(92)] Impeller validation: Could not determine GL version.
+[ERROR:flutter/shell/common/platform_view.cc(81)] Failed to create platform view rendering surface
+libEGL warning: egl: failed to create dri2 screen
+** Message: 21:21:06.527: InAppWebView: loadData() called while loading, stopping current load first
+libEGL warning: egl: failed to create dri2 screen
+Could not create surfaceless EGL display: EGL_NOT_INITIALIZED. Aborting...
+
+** (com.example.web_engine_probe:56): WARNING **: 21:20:38.810: InAppWebView[0]: WebProcess terminated (reason=CRASHED, didCrash=true)

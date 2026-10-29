@@ -1,0 +1,31 @@
+{
+  "run_id": 40609200108,
+  "run_url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40609200108",
+  "commit": "03fdc8ed3eb58f06545d97960f3f0b0ffecdb01f",
+  "runner": "GitHub Actions macos-15",
+  "os": "macOS 15.7.9",
+  "flutter": "3.47.8 stable",
+  "steps": {
+    "dependency_resolution": "passed",
+    "analyze_and_test": "passed",
+    "release_build": "passed",
+    "wkwebview_archive_replay": "failed"
+  },
+  "observed_phases": [
+    "webview-created",
+    "initial-loaded",
+    "webview-destroyed"
+  ],
+  "failure": {
+    "expected_phase": "webarchive-loaded",
+    "details": "The 90-second replay wait expired. The probe log showed no archive URL load-start, load-stop, or load-error callback after adding allowingReadAccessTo. The initial page remained valid and its screenshot was captured.",
+    "interpretation": "The file-read authorization change alone did not prove successful WebArchive replay. Capture creation and archive navigation need separate phase diagnostics."
+  },
+  "app_sandbox_tmpdir": "/Users/runner/Library/Containers/dev.alula.webEngineProbe/Data/tmp/",
+  "limitations": [
+    "No WebArchive reload or post-reload screenshot was captured.",
+    "Safari Web Inspector attachment was not automated or verified.",
+    "This is a standalone probe runner, not product-level macOS evidence."
+  ],
+  "next_step": "Add archive capture/load markers, then rerun macOS CI to identify which operation stalls."
+}

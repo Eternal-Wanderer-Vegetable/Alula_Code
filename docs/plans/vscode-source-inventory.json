@@ -1,0 +1,2343 @@
+{
+  "created_at": "2026-10-27",
+  "kind": "directory-discovery-snapshot",
+  "repositories": {
+    "vscode": {
+      "url": "https://github.com/microsoft/vscode",
+      "ref": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+      "version": "1.145.0 (development main; not stable)"
+    },
+    "vscode_docs": {
+      "url": "https://github.com/microsoft/vscode-docs",
+      "ref": "da213552439825628e0ab958dbde1e413dbc36bf"
+    }
+  },
+  "notes": [
+    "Directory discovery is verified via GitHub connector. It is not a claim that every source registration was extracted or every file was read.",
+    "P00 must extract runtime/static contribution registrations and attach atomic parity cases before implementation is accepted.",
+    "Task status and Definition of Done are authoritative in docs/03; this file is immutable reference evidence."
+  ],
+  "directories": [
+    {
+      "key": "vscode_contrib",
+      "entries": [
+        {
+          "path": "src/vs/workbench/contrib/accessibility",
+          "type": "dir",
+          "sha": "f8b7031e5875a38984051f2266ecd78de2aa6a5b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/accessibilitySignals",
+          "type": "dir",
+          "sha": "f8dccbf9a37083a1b4a3066849c3ff82f9b7312d"
+        },
+        {
+          "path": "src/vs/workbench/contrib/agentsVoice",
+          "type": "dir",
+          "sha": "dbc666d88295bb23a888f924358700a1e4e22b8c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/authentication",
+          "type": "dir",
+          "sha": "6c6342027c7d3f100dd19402a0463182edf865e7"
+        },
+        {
+          "path": "src/vs/workbench/contrib/bracketPairColorizer2Telemetry",
+          "type": "dir",
+          "sha": "5a1eb22cc6f819d36cae72cbbee85b7151393f7b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/browserView",
+          "type": "dir",
+          "sha": "e06343f690e49575d4e62c7c28cad815eca394dc"
+        },
+        {
+          "path": "src/vs/workbench/contrib/bulkEdit",
+          "type": "dir",
+          "sha": "07712e225e9a56f36a746cd9360972ced261771f"
+        },
+        {
+          "path": "src/vs/workbench/contrib/callHierarchy",
+          "type": "dir",
+          "sha": "67a51b5509d074e5693a1fd131067aad47bdc161"
+        },
+        {
+          "path": "src/vs/workbench/contrib/canvases",
+          "type": "dir",
+          "sha": "c58155e8d5008635ae60b346fc38261283ef613c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/chat",
+          "type": "dir",
+          "sha": "780657e9213f97a994ffda7b213ff87021f21495"
+        },
+        {
+          "path": "src/vs/workbench/contrib/codeActions",
+          "type": "dir",
+          "sha": "b4c83088c2054b9661da1a053b26cda9e185400a"
+        },
+        {
+          "path": "src/vs/workbench/contrib/codeEditor",
+          "type": "dir",
+          "sha": "a7fd63a4e1d7bcc650b0b73945c81f6e452d0c14"
+        },
+        {
+          "path": "src/vs/workbench/contrib/commands",
+          "type": "dir",
+          "sha": "70b7bb53d64f608fb3fd0991156eb41e491cb8ab"
+        },
+        {
+          "path": "src/vs/workbench/contrib/comments",
+          "type": "dir",
+          "sha": "59367f1ffad0da397f87912d18d6de183df89399"
+        },
+        {
+          "path": "src/vs/workbench/contrib/customEditor",
+          "type": "dir",
+          "sha": "f8ff9e77de904806801e77be3c9014d57aafe081"
+        },
+        {
+          "path": "src/vs/workbench/contrib/debug",
+          "type": "dir",
+          "sha": "4527cc6dd58ca51e700e0087d4e4f17f8e1bf2f3"
+        },
+        {
+          "path": "src/vs/workbench/contrib/dropOrPasteInto",
+          "type": "dir",
+          "sha": "fa87d5d127a0aa6fe4c8f0bf89537a9aa13d1bb5"
+        },
+        {
+          "path": "src/vs/workbench/contrib/editSessions",
+          "type": "dir",
+          "sha": "8a1a7ed6efb04d0d75557f2bc16c921f8371f87b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/editTelemetry",
+          "type": "dir",
+          "sha": "c794b0a0140933caea160b09651f12f444525b2b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/emergencyAlert",
+          "type": "dir",
+          "sha": "9b06dbe81d42983fe2ff10b6ecaa7c2cf2f1e9af"
+        },
+        {
+          "path": "src/vs/workbench/contrib/emmet",
+          "type": "dir",
+          "sha": "f97581983cc04e912ea1a487ff6940f4ff8d42ad"
+        },
+        {
+          "path": "src/vs/workbench/contrib/encryption",
+          "type": "dir",
+          "sha": "1ecbb7315309aad573a67d6e276a823588cc0835"
+        },
+        {
+          "path": "src/vs/workbench/contrib/extensions",
+          "type": "dir",
+          "sha": "4c03c5cf02cd8586bcc4f1fdcac2f8a92d76d8e6"
+        },
+        {
+          "path": "src/vs/workbench/contrib/externalTerminal",
+          "type": "dir",
+          "sha": "3bbb45267bd010ed6c00d4a284b454ed49d86d1a"
+        },
+        {
+          "path": "src/vs/workbench/contrib/externalUriOpener",
+          "type": "dir",
+          "sha": "7997ea361091524d604a1b6066ecd19cdea4e2b0"
+        },
+        {
+          "path": "src/vs/workbench/contrib/files",
+          "type": "dir",
+          "sha": "2ed2a84387f3fef6150112a60b52931ceb8b015d"
+        },
+        {
+          "path": "src/vs/workbench/contrib/folding",
+          "type": "dir",
+          "sha": "af7526d53e0f51584be8b6bb4f2bdeef8e1ebb0b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/format",
+          "type": "dir",
+          "sha": "6ace57ccf154625d4b9ecff5a267ee7b3651c0d8"
+        },
+        {
+          "path": "src/vs/workbench/contrib/git",
+          "type": "dir",
+          "sha": "e67e747157f39ebc01e60f96039bdbc5974bae55"
+        },
+        {
+          "path": "src/vs/workbench/contrib/github",
+          "type": "dir",
+          "sha": "b9833e80d1a0fc291028c524a863efaffe1e4055"
+        },
+        {
+          "path": "src/vs/workbench/contrib/imageCarousel",
+          "type": "dir",
+          "sha": "2c2ce2e59353521801d486570aa30f9f7c306796"
+        },
+        {
+          "path": "src/vs/workbench/contrib/inlayHints",
+          "type": "dir",
+          "sha": "b0a5dfc1f01faab644b45dfef1351a8034bf7201"
+        },
+        {
+          "path": "src/vs/workbench/contrib/inlineChat",
+          "type": "dir",
+          "sha": "8a0f0d4d3e8d8271946357738672148b8aca3e88"
+        },
+        {
+          "path": "src/vs/workbench/contrib/inlineCompletions",
+          "type": "dir",
+          "sha": "04c11ece11e8cebf8f1211483b95bf6b67b82fca"
+        },
+        {
+          "path": "src/vs/workbench/contrib/interactive",
+          "type": "dir",
+          "sha": "0a0d3145eaac01b32ee572d20ed619c0fa8d913c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/issue",
+          "type": "dir",
+          "sha": "a6244ebc6a4e285948feae983db6213d85aeceae"
+        },
+        {
+          "path": "src/vs/workbench/contrib/keybindings",
+          "type": "dir",
+          "sha": "1a8e81f49b283024fe375bcb9aa87b270e54451c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/keybindingsExport",
+          "type": "dir",
+          "sha": "e8fd37e4ea83842ec98267ea2cbb3f081ef52350"
+        },
+        {
+          "path": "src/vs/workbench/contrib/languageDetection",
+          "type": "dir",
+          "sha": "dde665da150125bd76344d548c6df378b8ca383c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/languageStatus",
+          "type": "dir",
+          "sha": "0c561159ffdb4fd702e3f38b54965dedfbe61b55"
+        },
+        {
+          "path": "src/vs/workbench/contrib/limitIndicator",
+          "type": "dir",
+          "sha": "f631d6a975ca21fe31f8848536982a641898d2db"
+        },
+        {
+          "path": "src/vs/workbench/contrib/list",
+          "type": "dir",
+          "sha": "44a510931f4e356b0b73dbfa0206f04006840c03"
+        },
+        {
+          "path": "src/vs/workbench/contrib/localHistory",
+          "type": "dir",
+          "sha": "b6d2d40425d7c17cc96fdc495a78f794b3a9eea2"
+        },
+        {
+          "path": "src/vs/workbench/contrib/localization",
+          "type": "dir",
+          "sha": "366fb1bdad81f7a7f852a4c1d7fea939c6627406"
+        },
+        {
+          "path": "src/vs/workbench/contrib/logs",
+          "type": "dir",
+          "sha": "d83a76aed6d24160812c53c098b9dcc566c4a684"
+        },
+        {
+          "path": "src/vs/workbench/contrib/markdown",
+          "type": "dir",
+          "sha": "3294895ef428cd250dbaa6d783eeaab7767ccaca"
+        },
+        {
+          "path": "src/vs/workbench/contrib/markers",
+          "type": "dir",
+          "sha": "9d8fb4ea5dbdad12601b8060f2e2d68b64e64602"
+        },
+        {
+          "path": "src/vs/workbench/contrib/mcp",
+          "type": "dir",
+          "sha": "d58e9042ac56db02d3f5eb9cc7293abe64797a7b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/mediaPreview",
+          "type": "dir",
+          "sha": "ff5661dc2b99edd3f94523e95638b3838f994a6a"
+        },
+        {
+          "path": "src/vs/workbench/contrib/mergeEditor",
+          "type": "dir",
+          "sha": "ec4daf256364cadadaf25cb3bc3cd8a64db45463"
+        },
+        {
+          "path": "src/vs/workbench/contrib/meteredConnection",
+          "type": "dir",
+          "sha": "a27866b3d5e84f4577881964de5915695e257211"
+        },
+        {
+          "path": "src/vs/workbench/contrib/modernUI",
+          "type": "dir",
+          "sha": "00419b6d5b21cf06dc3ae2c80a0ba50015784595"
+        },
+        {
+          "path": "src/vs/workbench/contrib/multiDiffEditor",
+          "type": "dir",
+          "sha": "2e15e1b5b577114f4e0e4365a110833a67efe936"
+        },
+        {
+          "path": "src/vs/workbench/contrib/notebook",
+          "type": "dir",
+          "sha": "08fc8809e9926a6023e4cb55c31e9693b9993cc3"
+        },
+        {
+          "path": "src/vs/workbench/contrib/onboarding",
+          "type": "dir",
+          "sha": "a3750e6e890b3517d85ec99d3273ec9770a89b73"
+        },
+        {
+          "path": "src/vs/workbench/contrib/opener",
+          "type": "dir",
+          "sha": "ee8d816908360a5dbe10d77e35b981b7e098e567"
+        },
+        {
+          "path": "src/vs/workbench/contrib/outline",
+          "type": "dir",
+          "sha": "7e6dcf5cd9ed6d3acc1febd7b329e2254fa526a5"
+        },
+        {
+          "path": "src/vs/workbench/contrib/output",
+          "type": "dir",
+          "sha": "ad50d6becd206e6882551f4cf6c519a5e2b385ce"
+        },
+        {
+          "path": "src/vs/workbench/contrib/performance",
+          "type": "dir",
+          "sha": "aac366c2381625bc416c921741c063759b419d9f"
+        },
+        {
+          "path": "src/vs/workbench/contrib/policyExport",
+          "type": "dir",
+          "sha": "292e0caffccedaf098b4c8156afca14496b645fb"
+        },
+        {
+          "path": "src/vs/workbench/contrib/preferences",
+          "type": "dir",
+          "sha": "0e0ee884d2cdc39e645f106fc6838d363664411b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/processExplorer",
+          "type": "dir",
+          "sha": "2aa679eb6b5649d42e9a254de7db3b4018927488"
+        },
+        {
+          "path": "src/vs/workbench/contrib/quickaccess",
+          "type": "dir",
+          "sha": "0908c43d81f066e29952dc53ee1c6e3ee62d38ce"
+        },
+        {
+          "path": "src/vs/workbench/contrib/relauncher",
+          "type": "dir",
+          "sha": "cef6fafe8b3d44f4e20d1d71ef0d61b2bb7164c1"
+        },
+        {
+          "path": "src/vs/workbench/contrib/remote",
+          "type": "dir",
+          "sha": "a7b3445603fe8c648e6f9b04436cdea84ae568d2"
+        },
+        {
+          "path": "src/vs/workbench/contrib/remoteCodingAgents",
+          "type": "dir",
+          "sha": "456ca80e1e8ac8d74b835a6c3980076390d303ba"
+        },
+        {
+          "path": "src/vs/workbench/contrib/remoteTunnel",
+          "type": "dir",
+          "sha": "57975143049343f17594de3ae386cc27043b768e"
+        },
+        {
+          "path": "src/vs/workbench/contrib/replNotebook",
+          "type": "dir",
+          "sha": "e9f0cf9c47c9993f349ef9141db42ef6e725cd5e"
+        },
+        {
+          "path": "src/vs/workbench/contrib/sash",
+          "type": "dir",
+          "sha": "08baefa449ce0e438d7b4a11f9b653aec5660ccf"
+        },
+        {
+          "path": "src/vs/workbench/contrib/scm",
+          "type": "dir",
+          "sha": "dab85eaba93ae1f669d86768e34c7e569f507b66"
+        },
+        {
+          "path": "src/vs/workbench/contrib/scrollLocking",
+          "type": "dir",
+          "sha": "c046c7678b9a8d249fa168a5eda6ebea6de41663"
+        },
+        {
+          "path": "src/vs/workbench/contrib/search",
+          "type": "dir",
+          "sha": "25b1cd8e0202c5b851d904bb1c26e738752d0d1b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/searchEditor",
+          "type": "dir",
+          "sha": "33ff2a628e8af195436f07bd3e4834053c3e4185"
+        },
+        {
+          "path": "src/vs/workbench/contrib/share",
+          "type": "dir",
+          "sha": "69ab876843951c1508d5e7efc56c1a988c9bb90c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/snippets",
+          "type": "dir",
+          "sha": "fb3b3a5d81934f42689e7660990ee068885051ec"
+        },
+        {
+          "path": "src/vs/workbench/contrib/speech",
+          "type": "dir",
+          "sha": "41645018744d9b156a1b163e2c209fa944a2ecf7"
+        },
+        {
+          "path": "src/vs/workbench/contrib/splash",
+          "type": "dir",
+          "sha": "ba749341c6f5715697d4fa1e08434ceffa73c119"
+        },
+        {
+          "path": "src/vs/workbench/contrib/surveys",
+          "type": "dir",
+          "sha": "adc9828243bcd69180d4062a0796564ce1a7a2a3"
+        },
+        {
+          "path": "src/vs/workbench/contrib/tags",
+          "type": "dir",
+          "sha": "a8fe565db02bedce8d07e2b662790cc8cff908e9"
+        },
+        {
+          "path": "src/vs/workbench/contrib/tasks",
+          "type": "dir",
+          "sha": "ebb6318c2f40ff57624e04fb59dd523fc1d81389"
+        },
+        {
+          "path": "src/vs/workbench/contrib/telemetry",
+          "type": "dir",
+          "sha": "a2b7835e2f81ca7565a348d39712ffee408c3c11"
+        },
+        {
+          "path": "src/vs/workbench/contrib/terminal",
+          "type": "dir",
+          "sha": "4b64ec6dc6826ca95cf6969ae6f3cd6763070fe9"
+        },
+        {
+          "path": "src/vs/workbench/contrib/terminalContrib",
+          "type": "dir",
+          "sha": "fe3ceb6e553d5fa56f401a8e9f23878fe514224b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/testing",
+          "type": "dir",
+          "sha": "7e66ffe66b680682abf8ea9cd87a038c76ff5ca6"
+        },
+        {
+          "path": "src/vs/workbench/contrib/themes",
+          "type": "dir",
+          "sha": "ec133a0ee6ce687dce5b463a320220f7d46ca09b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/timeline",
+          "type": "dir",
+          "sha": "09e9c0fba05d6f7d50e02d3f21e6ed9b05a2fc86"
+        },
+        {
+          "path": "src/vs/workbench/contrib/typeHierarchy",
+          "type": "dir",
+          "sha": "e6c083c78b1dfe1e6338677031c13751a609c59a"
+        },
+        {
+          "path": "src/vs/workbench/contrib/update",
+          "type": "dir",
+          "sha": "3dcd73ec73d85dd5987277a3d2506c592bab5e2d"
+        },
+        {
+          "path": "src/vs/workbench/contrib/url",
+          "type": "dir",
+          "sha": "e8822ea918cc13b5991707125a742d8925a02a0a"
+        },
+        {
+          "path": "src/vs/workbench/contrib/userDataProfile",
+          "type": "dir",
+          "sha": "9973dabd7aae715c66163993d68839c1071bc251"
+        },
+        {
+          "path": "src/vs/workbench/contrib/userDataSync",
+          "type": "dir",
+          "sha": "94bfabdcff6d21c81dc12d5f7a0ed1db6d1de614"
+        },
+        {
+          "path": "src/vs/workbench/contrib/webview",
+          "type": "dir",
+          "sha": "ecaba49e38f71cb88448088ef847a68da2416fbf"
+        },
+        {
+          "path": "src/vs/workbench/contrib/webviewPanel",
+          "type": "dir",
+          "sha": "bc5155d9d407e920c1f89af9c45e1d4d21a1565b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/webviewView",
+          "type": "dir",
+          "sha": "4eeefd02d02a16b221df29a0f4a0ae4bba0ab6ac"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeAgentSessions",
+          "type": "dir",
+          "sha": "62a44da7323ce9ed5b0f255a6b702fe6f198469c"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeBanner",
+          "type": "dir",
+          "sha": "d4d6019e1c8ddc1009bf928b06b70b425f9a674b"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeGettingStarted",
+          "type": "dir",
+          "sha": "1500e49828fcdd54c4de831edd4d4a2abbe92cf9"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeOnboarding",
+          "type": "dir",
+          "sha": "c6eac6fe63a0bdd3fc424e5a191c9c1519a5d794"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeViews",
+          "type": "dir",
+          "sha": "84155d35711f1403a7d27d17f813c0a2c06068f0"
+        },
+        {
+          "path": "src/vs/workbench/contrib/welcomeWalkthrough",
+          "type": "dir",
+          "sha": "f1367473381f65c14d9f458ab479d3325dc70e49"
+        },
+        {
+          "path": "src/vs/workbench/contrib/workspace",
+          "type": "dir",
+          "sha": "f25a36831c0d362df7d9a12e02bb19a54280d196"
+        },
+        {
+          "path": "src/vs/workbench/contrib/workspaces",
+          "type": "dir",
+          "sha": "8f01625ce92760c7ec32bca32b4c1bdaf4e6a1d6"
+        }
+      ]
+    },
+    {
+      "key": "editor_contrib",
+      "entries": [
+        {
+          "path": "src/vs/editor/contrib/anchorSelect",
+          "type": "dir",
+          "sha": "b7506cf6378f0b2830dc25bf4b7f3ad82e6d76e9"
+        },
+        {
+          "path": "src/vs/editor/contrib/bracketMatching",
+          "type": "dir",
+          "sha": "e7d0ebdbd49fda5e4cdd30c6a453fe7dffcbe99f"
+        },
+        {
+          "path": "src/vs/editor/contrib/caretOperations",
+          "type": "dir",
+          "sha": "c89faf22ead61abe87f7501a7340deab34433989"
+        },
+        {
+          "path": "src/vs/editor/contrib/clipboard",
+          "type": "dir",
+          "sha": "2e77fc7baae11438a7ec84e43e8fe8bf0ec94d35"
+        },
+        {
+          "path": "src/vs/editor/contrib/codeAction",
+          "type": "dir",
+          "sha": "cc6e590b6b0365c4c138053118748c1effd01125"
+        },
+        {
+          "path": "src/vs/editor/contrib/codelens",
+          "type": "dir",
+          "sha": "02668c6125affbcb75b80adb5d7d4e1a9ef44e01"
+        },
+        {
+          "path": "src/vs/editor/contrib/colorPicker",
+          "type": "dir",
+          "sha": "43b4db96d3632a95e874f047605d884afd12dd2e"
+        },
+        {
+          "path": "src/vs/editor/contrib/comment",
+          "type": "dir",
+          "sha": "85120dda9ec7d5a7e4ac9799c8142bffa9fb29a0"
+        },
+        {
+          "path": "src/vs/editor/contrib/contextmenu",
+          "type": "dir",
+          "sha": "bf503279f4983e7e52ee938981f0c4ffcc403ccf"
+        },
+        {
+          "path": "src/vs/editor/contrib/cursorUndo",
+          "type": "dir",
+          "sha": "f152eacf3237d645e2fbd99b1845849b5435d13c"
+        },
+        {
+          "path": "src/vs/editor/contrib/diffEditorBreadcrumbs",
+          "type": "dir",
+          "sha": "28024c853e3f26ca2cee0dce396ab41fb09c4519"
+        },
+        {
+          "path": "src/vs/editor/contrib/dnd",
+          "type": "dir",
+          "sha": "309246ccf6826f47acdae8804babe2a291f86152"
+        },
+        {
+          "path": "src/vs/editor/contrib/documentSymbols",
+          "type": "dir",
+          "sha": "439418c752cf6165f5b9d167fdf46ba1a9ee8240"
+        },
+        {
+          "path": "src/vs/editor/contrib/dropOrPasteInto",
+          "type": "dir",
+          "sha": "e9814e6e09ed16a66f0e7677df4bf0c15f68bbf8"
+        },
+        {
+          "path": "src/vs/editor/contrib/editorState",
+          "type": "dir",
+          "sha": "f622b645e7ccf1ba287a018acfeb1cdb2980411c"
+        },
+        {
+          "path": "src/vs/editor/contrib/find",
+          "type": "dir",
+          "sha": "404ff635fc41ccb0712da6b05b1d5e4c91d76f42"
+        },
+        {
+          "path": "src/vs/editor/contrib/floatingMenu",
+          "type": "dir",
+          "sha": "735d039147bedae5f1318f2f554e61727754649d"
+        },
+        {
+          "path": "src/vs/editor/contrib/folding",
+          "type": "dir",
+          "sha": "9152b85bcbe429ef67dd850e7698dc9494970cf1"
+        },
+        {
+          "path": "src/vs/editor/contrib/fontZoom",
+          "type": "dir",
+          "sha": "74c022cb4cb1f68c0ca08055ee27fa86944cdec0"
+        },
+        {
+          "path": "src/vs/editor/contrib/format",
+          "type": "dir",
+          "sha": "1bfc5e66cfd47ae7e30bcfc9c31485fabfa86de3"
+        },
+        {
+          "path": "src/vs/editor/contrib/gotoError",
+          "type": "dir",
+          "sha": "90444a80f923b4a42907da03183c1705d39cb2fc"
+        },
+        {
+          "path": "src/vs/editor/contrib/gotoSymbol",
+          "type": "dir",
+          "sha": "83b65053da3efd9336e5121b389e925425ca98f7"
+        },
+        {
+          "path": "src/vs/editor/contrib/gpu",
+          "type": "dir",
+          "sha": "af3fa18f9aa286ee1319a79472ceb9fabe0fc45a"
+        },
+        {
+          "path": "src/vs/editor/contrib/hover",
+          "type": "dir",
+          "sha": "5306ee61b84cba319ac8b09ad9cd620df795d383"
+        },
+        {
+          "path": "src/vs/editor/contrib/inPlaceReplace",
+          "type": "dir",
+          "sha": "1ce2017ce930895c4fd7c4a5729e7ca926b798b0"
+        },
+        {
+          "path": "src/vs/editor/contrib/indentation",
+          "type": "dir",
+          "sha": "d549b94ba036840b003561ab32d7ddd120a24c9d"
+        },
+        {
+          "path": "src/vs/editor/contrib/inlayHints",
+          "type": "dir",
+          "sha": "dbecdc4748c4ef0b70196bd21740749763832151"
+        },
+        {
+          "path": "src/vs/editor/contrib/inlineCompletions",
+          "type": "dir",
+          "sha": "5867af9cdc152b448155b17f5f67dbc6e39a214e"
+        },
+        {
+          "path": "src/vs/editor/contrib/inlineProgress",
+          "type": "dir",
+          "sha": "fff42a78ae3c87afb90e414f59b3917bea9a68db"
+        },
+        {
+          "path": "src/vs/editor/contrib/insertFinalNewLine",
+          "type": "dir",
+          "sha": "b28ceccb3ca5a3b0acd39ee232142b9516fe3f73"
+        },
+        {
+          "path": "src/vs/editor/contrib/lineSelection",
+          "type": "dir",
+          "sha": "6188d388c107c129fdb1f47ab862a322cff8047f"
+        },
+        {
+          "path": "src/vs/editor/contrib/linesOperations",
+          "type": "dir",
+          "sha": "a58c89cb70571b8bc21726180d9229bb9b0ae603"
+        },
+        {
+          "path": "src/vs/editor/contrib/linkedEditing",
+          "type": "dir",
+          "sha": "77cb21509147ca1f96bcb06feb1b0141755e730d"
+        },
+        {
+          "path": "src/vs/editor/contrib/links",
+          "type": "dir",
+          "sha": "ba7bd49c9c827017bd8b23006a6a651e78097089"
+        },
+        {
+          "path": "src/vs/editor/contrib/longLinesHelper",
+          "type": "dir",
+          "sha": "6aa3d346182a9c8b85c71ac99770bfb387504be3"
+        },
+        {
+          "path": "src/vs/editor/contrib/message",
+          "type": "dir",
+          "sha": "cb30224484f51702febbfdd8ee265b652225aabd"
+        },
+        {
+          "path": "src/vs/editor/contrib/middleScroll",
+          "type": "dir",
+          "sha": "470e39978bb50d30058e27bb34aef4916b9a6128"
+        },
+        {
+          "path": "src/vs/editor/contrib/multicursor",
+          "type": "dir",
+          "sha": "fd63cd2a0b0e1e7c30e0dd6bd5e480ce9e8f9124"
+        },
+        {
+          "path": "src/vs/editor/contrib/parameterHints",
+          "type": "dir",
+          "sha": "7b40fb5bb31eaac144d91966f2e34b2eede78cc4"
+        },
+        {
+          "path": "src/vs/editor/contrib/peekView",
+          "type": "dir",
+          "sha": "69e4290c26a106c5114546928856754cb69acd3d"
+        },
+        {
+          "path": "src/vs/editor/contrib/placeholderText",
+          "type": "dir",
+          "sha": "1ccc7b84b8c52dad274d49f782955f830e0ea479"
+        },
+        {
+          "path": "src/vs/editor/contrib/quickAccess",
+          "type": "dir",
+          "sha": "0a8f947d46b7fdd232543ddd076c0fa75742aae6"
+        },
+        {
+          "path": "src/vs/editor/contrib/readOnlyMessage",
+          "type": "dir",
+          "sha": "9f5a0326ee5ac17144c3904240c03bbc5115da15"
+        },
+        {
+          "path": "src/vs/editor/contrib/rename",
+          "type": "dir",
+          "sha": "fd3350eae5e854ef842fea0b5ffcf8ce2b0b8735"
+        },
+        {
+          "path": "src/vs/editor/contrib/sectionHeaders",
+          "type": "dir",
+          "sha": "9cacc57814e7d517092bef749097b208f11a116a"
+        },
+        {
+          "path": "src/vs/editor/contrib/semanticTokens",
+          "type": "dir",
+          "sha": "21fa061d2f4a2f3f97f58a7a1b7da1b13c5c9507"
+        },
+        {
+          "path": "src/vs/editor/contrib/smartSelect",
+          "type": "dir",
+          "sha": "4d21dbd5d4a21b1c09dc6b9076ca5a8bc3d8143b"
+        },
+        {
+          "path": "src/vs/editor/contrib/snippet",
+          "type": "dir",
+          "sha": "c081eea2e6ef9203ef4b63ddc1dfdf9422126c0d"
+        },
+        {
+          "path": "src/vs/editor/contrib/stickyScroll",
+          "type": "dir",
+          "sha": "221ea916f5f55a591079be82dd055d4bf5c00817"
+        },
+        {
+          "path": "src/vs/editor/contrib/suggest",
+          "type": "dir",
+          "sha": "9110f2af9daeb9a5491cebca058b572e93e6bcfe"
+        },
+        {
+          "path": "src/vs/editor/contrib/symbolIcons",
+          "type": "dir",
+          "sha": "39c3b79db87fd798bfdf18254297c631265ad7ca"
+        },
+        {
+          "path": "src/vs/editor/contrib/toggleTabFocusMode",
+          "type": "dir",
+          "sha": "3ffabadc3079fb6e196fcabd53e6422349e0c916"
+        },
+        {
+          "path": "src/vs/editor/contrib/tokenization",
+          "type": "dir",
+          "sha": "7b8efa8dbf3d87aa19a00b57bb813e45355d99a8"
+        },
+        {
+          "path": "src/vs/editor/contrib/unicodeHighlighter",
+          "type": "dir",
+          "sha": "fbdcacecfae2f73b4a82a03fc72a98470a5d8be9"
+        },
+        {
+          "path": "src/vs/editor/contrib/unusualLineTerminators",
+          "type": "dir",
+          "sha": "5a239f06614cdff329a90aa8bf473fe930e8b55e"
+        },
+        {
+          "path": "src/vs/editor/contrib/wordHighlighter",
+          "type": "dir",
+          "sha": "5bde548b7677a20a3800eba15124cf7a2f4167a5"
+        },
+        {
+          "path": "src/vs/editor/contrib/wordOperations",
+          "type": "dir",
+          "sha": "f648b2091b58407f062bb7764f9a53e9d8f1f10a"
+        },
+        {
+          "path": "src/vs/editor/contrib/wordPartOperations",
+          "type": "dir",
+          "sha": "f9e1e7417c0282f1f9ac324bc3f112adc208204f"
+        },
+        {
+          "path": "src/vs/editor/contrib/zoneWidget",
+          "type": "dir",
+          "sha": "72f9070de34dffae0dfb657b3bd23decf4a0f7eb"
+        }
+      ]
+    },
+    {
+      "key": "workbench_services",
+      "entries": [
+        {
+          "path": "src/vs/workbench/services/accessibility",
+          "type": "dir",
+          "sha": "dc14fe0d94cc84498649632017cb5ba8d1b0c610"
+        },
+        {
+          "path": "src/vs/workbench/services/accounts",
+          "type": "dir",
+          "sha": "10a63a94c82a1820377e6be12b02d902753a6da3"
+        },
+        {
+          "path": "src/vs/workbench/services/actions",
+          "type": "dir",
+          "sha": "6722dc8170a0f408c3f0922b3ccffcf3d940dfb7"
+        },
+        {
+          "path": "src/vs/workbench/services/activity",
+          "type": "dir",
+          "sha": "276756857d67799c6e28e0974213cd8cad28cf1a"
+        },
+        {
+          "path": "src/vs/workbench/services/agentEditorComments",
+          "type": "dir",
+          "sha": "8b7425044e3a1eaa94eca226cd9e06b529bd12be"
+        },
+        {
+          "path": "src/vs/workbench/services/agentHost",
+          "type": "dir",
+          "sha": "211db7062b5bd4ede8d4059a29353d6050028fbf"
+        },
+        {
+          "path": "src/vs/workbench/services/aiEmbeddingVector",
+          "type": "dir",
+          "sha": "22c27d270cbb6033e472cf044c9b313172a9c505"
+        },
+        {
+          "path": "src/vs/workbench/services/aiRelatedInformation",
+          "type": "dir",
+          "sha": "0a9c75373be1a586dd095c148862f161bb8e572b"
+        },
+        {
+          "path": "src/vs/workbench/services/aiSettingsSearch",
+          "type": "dir",
+          "sha": "fb715b094949504516e5ec2bef24e5ae0bdca259"
+        },
+        {
+          "path": "src/vs/workbench/services/assignment",
+          "type": "dir",
+          "sha": "f350a0dc66bfe62a7a2fa188fcb5c0307cb85cb6"
+        },
+        {
+          "path": "src/vs/workbench/services/authentication",
+          "type": "dir",
+          "sha": "6597bcb955dd6b819e359f621de09318f014798c"
+        },
+        {
+          "path": "src/vs/workbench/services/auxiliaryWindow",
+          "type": "dir",
+          "sha": "9fc29d94c7f8c802a96ea83ba520c7d20aac0805"
+        },
+        {
+          "path": "src/vs/workbench/services/banner",
+          "type": "dir",
+          "sha": "7f8f0bc4ac9252fd122eee73d51802e679e94f40"
+        },
+        {
+          "path": "src/vs/workbench/services/browserView",
+          "type": "dir",
+          "sha": "77739585dec37af8744091cbd899895538e01e32"
+        },
+        {
+          "path": "src/vs/workbench/services/chat",
+          "type": "dir",
+          "sha": "5c6d5ca695d650a09d47ab952096c36e3094c565"
+        },
+        {
+          "path": "src/vs/workbench/services/checksum",
+          "type": "dir",
+          "sha": "c21873f34c9390857f21260b0260075406c1b758"
+        },
+        {
+          "path": "src/vs/workbench/services/clipboard",
+          "type": "dir",
+          "sha": "65d67f5d76e1cba6754b82c3870fb6788dbdeddf"
+        },
+        {
+          "path": "src/vs/workbench/services/commands",
+          "type": "dir",
+          "sha": "e155b8b23d16580de3b7a5b2b1fd9643aaf1dee5"
+        },
+        {
+          "path": "src/vs/workbench/services/configuration",
+          "type": "dir",
+          "sha": "2471f4cdae993bdc32c7543580fb891b8ca2c3a5"
+        },
+        {
+          "path": "src/vs/workbench/services/configurationResolver",
+          "type": "dir",
+          "sha": "96b3ea1f328bd46c0cb6731d779b9832b1359ce5"
+        },
+        {
+          "path": "src/vs/workbench/services/contextmenu",
+          "type": "dir",
+          "sha": "2259f270ab1e6efd045a0b390401f5ad67c1c59f"
+        },
+        {
+          "path": "src/vs/workbench/services/dataChannel",
+          "type": "dir",
+          "sha": "3474d00bfd87aae8e2cd21bb414cb01ce51aa4d7"
+        },
+        {
+          "path": "src/vs/workbench/services/decorations",
+          "type": "dir",
+          "sha": "f61cfe9f18ee0b63dbbd8021a2ca730bce2d6f45"
+        },
+        {
+          "path": "src/vs/workbench/services/dialogs",
+          "type": "dir",
+          "sha": "0fd7f49687eefe3fdc7f64ce91b85d8936097a02"
+        },
+        {
+          "path": "src/vs/workbench/services/driver",
+          "type": "dir",
+          "sha": "a217d225ae2223d85c913542b511b27bbdc48f65"
+        },
+        {
+          "path": "src/vs/workbench/services/editor",
+          "type": "dir",
+          "sha": "1e6912b7893c1c1dacb9b2ea348671a490530041"
+        },
+        {
+          "path": "src/vs/workbench/services/encryption",
+          "type": "dir",
+          "sha": "3e358cbf7b01713369d5129e70f5beafabd105d5"
+        },
+        {
+          "path": "src/vs/workbench/services/environment",
+          "type": "dir",
+          "sha": "850c719c555c36a4ffbec473ef0cbec32ee72812"
+        },
+        {
+          "path": "src/vs/workbench/services/extensionManagement",
+          "type": "dir",
+          "sha": "469662debb44e0a9b29c6aaf79d93e9126de558c"
+        },
+        {
+          "path": "src/vs/workbench/services/extensionRecommendations",
+          "type": "dir",
+          "sha": "cff2edd629038d7671eaed315a391870bb724ea1"
+        },
+        {
+          "path": "src/vs/workbench/services/extensions",
+          "type": "dir",
+          "sha": "d117a80196f27d1c302162e469aba98d0d8d2be2"
+        },
+        {
+          "path": "src/vs/workbench/services/files",
+          "type": "dir",
+          "sha": "8e005ad0150ea40106adb6fa5454e0f8226b16f9"
+        },
+        {
+          "path": "src/vs/workbench/services/filesConfiguration",
+          "type": "dir",
+          "sha": "3ce6a616025cde07d018b3e0a9c376bc9e662390"
+        },
+        {
+          "path": "src/vs/workbench/services/github",
+          "type": "dir",
+          "sha": "cbc3c3caca0a00c50370b082bd783ccafa9d3ed4"
+        },
+        {
+          "path": "src/vs/workbench/services/history",
+          "type": "dir",
+          "sha": "f993c766daf997d49637dac92b3fd17d182f7ed3"
+        },
+        {
+          "path": "src/vs/workbench/services/host",
+          "type": "dir",
+          "sha": "e32e409af6e8a6cf70610a1afb0c28222c843848"
+        },
+        {
+          "path": "src/vs/workbench/services/imageResize",
+          "type": "dir",
+          "sha": "806dc2ff12642fe8e4d3e630dcc398ba3a0a8109"
+        },
+        {
+          "path": "src/vs/workbench/services/inlineCompletions",
+          "type": "dir",
+          "sha": "4cb6f8ac763ca16f0a357b6270fb91fb6f20f3dd"
+        },
+        {
+          "path": "src/vs/workbench/services/integrity",
+          "type": "dir",
+          "sha": "107c645268439cf80ef30fe8901ca09564829de9"
+        },
+        {
+          "path": "src/vs/workbench/services/keybinding",
+          "type": "dir",
+          "sha": "c1afd7bc2cc1609803b94c1be63d68d2eb8c7f29"
+        },
+        {
+          "path": "src/vs/workbench/services/label",
+          "type": "dir",
+          "sha": "2bcec9310f00a9fca300d8da18e68b42d2943675"
+        },
+        {
+          "path": "src/vs/workbench/services/language",
+          "type": "dir",
+          "sha": "677c10ee1520dbbc4a03c1dc2aa9dfdbfe494ab0"
+        },
+        {
+          "path": "src/vs/workbench/services/languageDetection",
+          "type": "dir",
+          "sha": "d275d6f10693f2c9719827aa85964a5986687aff"
+        },
+        {
+          "path": "src/vs/workbench/services/languageStatus",
+          "type": "dir",
+          "sha": "a90c87a00cd7b1a1539c45f74005eb2f60c698b2"
+        },
+        {
+          "path": "src/vs/workbench/services/layout",
+          "type": "dir",
+          "sha": "ea476366f4e3935e6f68f686c84d61b1bd6d6fea"
+        },
+        {
+          "path": "src/vs/workbench/services/lifecycle",
+          "type": "dir",
+          "sha": "6af2bccad085d8a5760adab99d07f3deed6e4a8d"
+        },
+        {
+          "path": "src/vs/workbench/services/localTranscription",
+          "type": "dir",
+          "sha": "aea3ed0284fa8e9907ea2276a9106d564de870e0"
+        },
+        {
+          "path": "src/vs/workbench/services/localization",
+          "type": "dir",
+          "sha": "b9d056df1272777b84e8642b4eebe840762cf98b"
+        },
+        {
+          "path": "src/vs/workbench/services/log",
+          "type": "dir",
+          "sha": "a8a35a1c922ac75a1a4467c2fb018dac8d9a781a"
+        },
+        {
+          "path": "src/vs/workbench/services/mcp",
+          "type": "dir",
+          "sha": "dce29824341a90b906706926d83cfc76c1ff4420"
+        },
+        {
+          "path": "src/vs/workbench/services/menubar",
+          "type": "dir",
+          "sha": "45ff64581a6fcb17cf1f5dddd88e82b73763e515"
+        },
+        {
+          "path": "src/vs/workbench/services/model",
+          "type": "dir",
+          "sha": "10a10be781550dd8b0a89892ae60b4d334dcc474"
+        },
+        {
+          "path": "src/vs/workbench/services/notebook",
+          "type": "dir",
+          "sha": "ddf71568f1b62496437db81db9ab8bd8f3a82de1"
+        },
+        {
+          "path": "src/vs/workbench/services/notification",
+          "type": "dir",
+          "sha": "368f397733430d09322fc82821ae873e9499ef2a"
+        },
+        {
+          "path": "src/vs/workbench/services/outline",
+          "type": "dir",
+          "sha": "5f0c693027ec887827a6244f20affb40e3b622cd"
+        },
+        {
+          "path": "src/vs/workbench/services/output",
+          "type": "dir",
+          "sha": "670d95287cd0323b4708c31d3885c4b8253ec693"
+        },
+        {
+          "path": "src/vs/workbench/services/panecomposite",
+          "type": "dir",
+          "sha": "daed0af9d0f448e8cbabbb97e0754ef8f3df2840"
+        },
+        {
+          "path": "src/vs/workbench/services/path",
+          "type": "dir",
+          "sha": "3e3e6da2173f3fb4b597dbafb307ddfed784cfc9"
+        },
+        {
+          "path": "src/vs/workbench/services/policies",
+          "type": "dir",
+          "sha": "ce5decd4221db534fbd6afab114ae0d832a68db6"
+        },
+        {
+          "path": "src/vs/workbench/services/power",
+          "type": "dir",
+          "sha": "61196308627aa6d94a8a494c1e679a72ccf39dfd"
+        },
+        {
+          "path": "src/vs/workbench/services/preferences",
+          "type": "dir",
+          "sha": "4c78ff7f2d425c827f3f02a91dbe8a729a6d3458"
+        },
+        {
+          "path": "src/vs/workbench/services/process",
+          "type": "dir",
+          "sha": "65800e12242c5452847338ae776eb76ca9ef9067"
+        },
+        {
+          "path": "src/vs/workbench/services/progress",
+          "type": "dir",
+          "sha": "30e1a326390ae505d09f0923e35bae232ad29ecc"
+        },
+        {
+          "path": "src/vs/workbench/services/quickinput",
+          "type": "dir",
+          "sha": "6d3acffacc603724169389759f7083df05b4f41e"
+        },
+        {
+          "path": "src/vs/workbench/services/remote",
+          "type": "dir",
+          "sha": "d2d078f397d6c55decf1c292bfd31f551e8e84b8"
+        },
+        {
+          "path": "src/vs/workbench/services/request",
+          "type": "dir",
+          "sha": "7ba222610cb50d715c15f4025be750cb2b0742b0"
+        },
+        {
+          "path": "src/vs/workbench/services/search",
+          "type": "dir",
+          "sha": "b9a14f8074262cf0d091f13211aafd2ec65c3628"
+        },
+        {
+          "path": "src/vs/workbench/services/secrets",
+          "type": "dir",
+          "sha": "de8055c7ce584d049c7ca1c41f6ab9c5762eae14"
+        },
+        {
+          "path": "src/vs/workbench/services/sharedProcess",
+          "type": "dir",
+          "sha": "ee102cb45caaf69e35f7b0073575f58f258be6d2"
+        },
+        {
+          "path": "src/vs/workbench/services/statusbar",
+          "type": "dir",
+          "sha": "5d16ba738e0694c26cd61b616ff1b72a82ec4c1b"
+        },
+        {
+          "path": "src/vs/workbench/services/storage",
+          "type": "dir",
+          "sha": "01ec5305609d15dc2b338115df73641d79ce15e7"
+        },
+        {
+          "path": "src/vs/workbench/services/suggest",
+          "type": "dir",
+          "sha": "5c56fb2362ecbe51bee1966a1a8a398725572c3a"
+        },
+        {
+          "path": "src/vs/workbench/services/telemetry",
+          "type": "dir",
+          "sha": "387ef1404b47da748c5cade0ac82d9bf9d526b1d"
+        },
+        {
+          "path": "src/vs/workbench/services/terminal",
+          "type": "dir",
+          "sha": "6d8e506ef567766c676067f6972389ab21888b6b"
+        },
+        {
+          "path": "src/vs/workbench/services/textMate",
+          "type": "dir",
+          "sha": "ec0252579393fbe738fbf5e47d8486eb29552053"
+        },
+        {
+          "path": "src/vs/workbench/services/textfile",
+          "type": "dir",
+          "sha": "70bff6374e04561f8f7272cbb3f670f3d4644418"
+        },
+        {
+          "path": "src/vs/workbench/services/textmodelResolver",
+          "type": "dir",
+          "sha": "93930c28372e0497d40e6f02594a5453d8b45c06"
+        },
+        {
+          "path": "src/vs/workbench/services/textresourceProperties",
+          "type": "dir",
+          "sha": "b2966979e1479991867148bc2498adf063025888"
+        },
+        {
+          "path": "src/vs/workbench/services/themes",
+          "type": "dir",
+          "sha": "6c0934eeeccd3aa7167f3035984474c7c4758079"
+        },
+        {
+          "path": "src/vs/workbench/services/timer",
+          "type": "dir",
+          "sha": "27068d51231d8bdf772c0d525ee810cd4f5ce86d"
+        },
+        {
+          "path": "src/vs/workbench/services/title",
+          "type": "dir",
+          "sha": "77ca340af7882896f2679d7c89b18fcb804f4c29"
+        },
+        {
+          "path": "src/vs/workbench/services/treeSitter",
+          "type": "dir",
+          "sha": "20e4b18f70bda05bbb036736518d6206647c377a"
+        },
+        {
+          "path": "src/vs/workbench/services/tunnel",
+          "type": "dir",
+          "sha": "088a69e1157b58ebaa32821333d91caf1cb1da96"
+        },
+        {
+          "path": "src/vs/workbench/services/untitled",
+          "type": "dir",
+          "sha": "2cc01b7511e8844be8752eb1f60fe3372a06eb2e"
+        },
+        {
+          "path": "src/vs/workbench/services/update",
+          "type": "dir",
+          "sha": "e8740b8dc6991d40f9c480b650a3dc3348f6c8f1"
+        },
+        {
+          "path": "src/vs/workbench/services/url",
+          "type": "dir",
+          "sha": "08afc5b446082ae5f521e4eb6e82d657bed24e1c"
+        },
+        {
+          "path": "src/vs/workbench/services/userActivity",
+          "type": "dir",
+          "sha": "df514549cf8e1376dffe40da2202d2cbff050d29"
+        },
+        {
+          "path": "src/vs/workbench/services/userAttention",
+          "type": "dir",
+          "sha": "c170e445bc148a2bcf740566056c5db1b4345f30"
+        },
+        {
+          "path": "src/vs/workbench/services/userData",
+          "type": "dir",
+          "sha": "7962bbba967f6a3ab6a2a24a0528843c097f8ae4"
+        },
+        {
+          "path": "src/vs/workbench/services/userDataProfile",
+          "type": "dir",
+          "sha": "623e0068642a66a681f143abcd9716cc1aac2471"
+        },
+        {
+          "path": "src/vs/workbench/services/userDataSync",
+          "type": "dir",
+          "sha": "48ea5d8030290de09a3eb62043382b6eef2c237e"
+        },
+        {
+          "path": "src/vs/workbench/services/utilityProcess",
+          "type": "dir",
+          "sha": "c1ac38e2936aaf06825d7a75cffbff2687d20ac0"
+        },
+        {
+          "path": "src/vs/workbench/services/views",
+          "type": "dir",
+          "sha": "32a3513d6b67cbb30e9c221e7f366d0d6b0249ef"
+        },
+        {
+          "path": "src/vs/workbench/services/workingCopy",
+          "type": "dir",
+          "sha": "a000776a70dbc8cda58e15bf3e3a7e7bc7e43181"
+        },
+        {
+          "path": "src/vs/workbench/services/workspaces",
+          "type": "dir",
+          "sha": "9259fd4253995cb883992909a4453ee1a1707959"
+        }
+      ]
+    },
+    {
+      "key": "workbench_parts",
+      "entries": [
+        {
+          "path": "src/vs/workbench/browser/parts/activitybar",
+          "type": "dir",
+          "sha": "d880f5c383ac26a3c8f3de860008b80b920b2d65"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/auxiliarybar",
+          "type": "dir",
+          "sha": "fd608a97fc7004e3e1a96d7b8eb7ab84846c4cfb"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/banner",
+          "type": "dir",
+          "sha": "2d98b62ff5336b67121e27e082f154500c6215da"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/compositeBar.ts",
+          "type": "file",
+          "sha": "8d1020b662172ea305e9ab644347ad70b0234e09"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/compositeBarActions.ts",
+          "type": "file",
+          "sha": "fe7bce2f083deba50ac282df9514e29f5198c91c"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/compositePart.ts",
+          "type": "file",
+          "sha": "2a3814c72c2d715d4d47b5bc8b9b897154519e9f"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/dialogs",
+          "type": "dir",
+          "sha": "bbc4377fd9df59b7122ef92a1602e509a1081683"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/editor",
+          "type": "dir",
+          "sha": "e03f0eb77a76cbe560a5781627fc6a71ba229fb0"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/globalCompositeBar.ts",
+          "type": "file",
+          "sha": "d0f5bd1bd21c7d1536d00c5979e4d2c0658d8af7"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/media",
+          "type": "dir",
+          "sha": "a16d326c10d7d3d150391077011136eea88ce3fd"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/notifications",
+          "type": "dir",
+          "sha": "143e318403b9823ab88925ff86223fb55de69002"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/paneCompositeBar.ts",
+          "type": "file",
+          "sha": "ee76b0ef3b4f24cf61f30c948d6614d287019a27"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/paneCompositePart.ts",
+          "type": "file",
+          "sha": "7626411fdee04db8044b47b8efb8b75eab589e12"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/paneCompositePartService.ts",
+          "type": "file",
+          "sha": "e10cad54ce5bef9b3bd0bb173ae3a8cc554f7c1a"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/panel",
+          "type": "dir",
+          "sha": "0d032b469c38d2025c9c8d78516cdd5105506a40"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/sidebar",
+          "type": "dir",
+          "sha": "0c7397afcd024eb63c0300620ae8143d0d100557"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/statusbar",
+          "type": "dir",
+          "sha": "fa715c087aa69a5f89ad3e2d31bb4745a28c0d61"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/titlebar",
+          "type": "dir",
+          "sha": "65b6fa6adffce7e7c1b6eb5520930df3ffb4abdb"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/views",
+          "type": "dir",
+          "sha": "b82ade162f1d77bde501fe1431c59e0365347b82"
+        },
+        {
+          "path": "src/vs/workbench/browser/parts/visibleViewContainersTracker.ts",
+          "type": "file",
+          "sha": "cab9b8f854248955b669b65444b3c6ab6d8d3bc1"
+        }
+      ]
+    },
+    {
+      "key": "extensions",
+      "entries": [
+        {
+          "path": "extensions/.npmrc",
+          "type": "file",
+          "sha": "a9c57709666b27ed6df6df5494b45558582bd723"
+        },
+        {
+          "path": "extensions/CONTRIBUTING.md",
+          "type": "file",
+          "sha": "cfaf6b0ca8dc1e901fa327a719d301df93576d00"
+        },
+        {
+          "path": "extensions/bat",
+          "type": "dir",
+          "sha": "ca7928cf8b10f918b14f4ab382904ca352285a0e"
+        },
+        {
+          "path": "extensions/cgmanifest.json",
+          "type": "file",
+          "sha": "03cf0cef986b17348439d24ab00eff096eb13828"
+        },
+        {
+          "path": "extensions/clojure",
+          "type": "dir",
+          "sha": "40b2f37f7cfa1ac93c253d6ad72eeea18b5b8d26"
+        },
+        {
+          "path": "extensions/coffeescript",
+          "type": "dir",
+          "sha": "8502493db55271e0b614adf59d9535c5d4329ecb"
+        },
+        {
+          "path": "extensions/configuration-editing",
+          "type": "dir",
+          "sha": "f0c2aa7d40588556f243ef3d7aed63aa79da7953"
+        },
+        {
+          "path": "extensions/copilot",
+          "type": "dir",
+          "sha": "0c0f2b54dbf43f4d44065a4c3516a1abf03b9056"
+        },
+        {
+          "path": "extensions/cpp",
+          "type": "dir",
+          "sha": "1a7af6ef9bc5f61a222d03fa7d39bb2df0941b81"
+        },
+        {
+          "path": "extensions/csharp",
+          "type": "dir",
+          "sha": "e349ffbb13360cc625427aeb5f0be7272b1ebb37"
+        },
+        {
+          "path": "extensions/css-language-features",
+          "type": "dir",
+          "sha": "69f46ac03aed65224e52744dc36b9cb16b566934"
+        },
+        {
+          "path": "extensions/css",
+          "type": "dir",
+          "sha": "923d7dce75a675b34d666589d08a0cfc6c4ef15c"
+        },
+        {
+          "path": "extensions/dart",
+          "type": "dir",
+          "sha": "e746160513900f676e781b22541306e34f751db9"
+        },
+        {
+          "path": "extensions/debug-auto-launch",
+          "type": "dir",
+          "sha": "38473c36cc7dad53e38705b48d5b3ee0cd236ca7"
+        },
+        {
+          "path": "extensions/debug-server-ready",
+          "type": "dir",
+          "sha": "7fff2da73ff9405216d1e3d47231809679810372"
+        },
+        {
+          "path": "extensions/diff",
+          "type": "dir",
+          "sha": "4f2200f22c8225ec3132005a9e0cee209d669a64"
+        },
+        {
+          "path": "extensions/docker",
+          "type": "dir",
+          "sha": "e86204fbb2e80232ab0c65fe5e4f2d3c8a72c13f"
+        },
+        {
+          "path": "extensions/dotenv",
+          "type": "dir",
+          "sha": "ee6d2445e14285f175794a20e4b31a53d0f1e39c"
+        },
+        {
+          "path": "extensions/emmet",
+          "type": "dir",
+          "sha": "9f194c340958bbecd369f6bda7e2b623e43d1295"
+        },
+        {
+          "path": "extensions/esbuild-common.mts",
+          "type": "file",
+          "sha": "ba783faf48a0ace670550dd42c1a16cc9b87c7bf"
+        },
+        {
+          "path": "extensions/esbuild-common.test.mts",
+          "type": "file",
+          "sha": "5927ace9148d6addbb4181f5bfa2546044623aeb"
+        },
+        {
+          "path": "extensions/esbuild-extension-common.mts",
+          "type": "file",
+          "sha": "5b967a9140e7472368bdaeded715dd04044d7488"
+        },
+        {
+          "path": "extensions/esbuild-webview-common.mts",
+          "type": "file",
+          "sha": "f54039744cb4154cacb7a1307af5737b50eee1f4"
+        },
+        {
+          "path": "extensions/extension-editing",
+          "type": "dir",
+          "sha": "b66024ba2b6cbf4d89533895d898ccfc7a06f771"
+        },
+        {
+          "path": "extensions/fsharp",
+          "type": "dir",
+          "sha": "a9e8a099dfbee714e18ef04138e2d2b084f399d3"
+        },
+        {
+          "path": "extensions/git-base",
+          "type": "dir",
+          "sha": "4a9950be040a2dc6bb3235de861d69ed33648ca6"
+        },
+        {
+          "path": "extensions/git",
+          "type": "dir",
+          "sha": "a5a841a856efaba1b1b3bfa09c650659ea4fe861"
+        },
+        {
+          "path": "extensions/github-authentication",
+          "type": "dir",
+          "sha": "7482c5702508a0a80389c233e0f4cffa46f636c1"
+        },
+        {
+          "path": "extensions/github",
+          "type": "dir",
+          "sha": "0d304bffac561d3b41e35ec89073d9e0557a2984"
+        },
+        {
+          "path": "extensions/go",
+          "type": "dir",
+          "sha": "3cd2a3abec167e335c587b390c21b828201d6f91"
+        },
+        {
+          "path": "extensions/groovy",
+          "type": "dir",
+          "sha": "782eb5f006e6144a637c4e06420cf3bcbf5858cb"
+        },
+        {
+          "path": "extensions/grunt",
+          "type": "dir",
+          "sha": "34f9ad7239c66d3277af8412c54a413958774e19"
+        },
+        {
+          "path": "extensions/gulp",
+          "type": "dir",
+          "sha": "7e8af8bebe3cd65039f06276ec609256a0d40fd1"
+        },
+        {
+          "path": "extensions/handlebars",
+          "type": "dir",
+          "sha": "aefc5d8c64f72c4546baa674ad22c3bdf0bc3ae3"
+        },
+        {
+          "path": "extensions/hlsl",
+          "type": "dir",
+          "sha": "4a05e2354c8797966898be70d8fdaaaad9fac3b7"
+        },
+        {
+          "path": "extensions/html-language-features",
+          "type": "dir",
+          "sha": "d389a382e847368d3701df588940c2270d55aa2c"
+        },
+        {
+          "path": "extensions/html",
+          "type": "dir",
+          "sha": "1072076d342e8e04fa0f53e283fead4f076e323f"
+        },
+        {
+          "path": "extensions/ini",
+          "type": "dir",
+          "sha": "e2b5c6069bc983382a918d780400e2bce6e458b1"
+        },
+        {
+          "path": "extensions/ipynb",
+          "type": "dir",
+          "sha": "bd8fc16ae0c51ee9f158193ce900ba48b5ed0bd7"
+        },
+        {
+          "path": "extensions/jake",
+          "type": "dir",
+          "sha": "5c8a0a7dc727b691cc3eb651374598597e698d9d"
+        },
+        {
+          "path": "extensions/java",
+          "type": "dir",
+          "sha": "a9c454b2c8a768ca870e127f152aecb3336ae3e8"
+        },
+        {
+          "path": "extensions/javascript",
+          "type": "dir",
+          "sha": "504ca718cdb692df1f0cf602fca1bc2cb3e502c4"
+        },
+        {
+          "path": "extensions/json-language-features",
+          "type": "dir",
+          "sha": "2968fde8f3594766b2cbbbe81049217d26a9a82c"
+        },
+        {
+          "path": "extensions/json",
+          "type": "dir",
+          "sha": "71949cd1b28da9b49b87a54f1eb28f848144d675"
+        },
+        {
+          "path": "extensions/julia",
+          "type": "dir",
+          "sha": "3ac23155a6b6bf7f09ee97190368c54d9efc5ca3"
+        },
+        {
+          "path": "extensions/latex",
+          "type": "dir",
+          "sha": "aa21f5084eb41beeedc0031a45e248fab717aabc"
+        },
+        {
+          "path": "extensions/less",
+          "type": "dir",
+          "sha": "cd2acc82c37c0fb1f947b726fa1866fb00c43b5a"
+        },
+        {
+          "path": "extensions/log",
+          "type": "dir",
+          "sha": "6335f51a09b1d50dd9fdf355cc785c82d3277010"
+        },
+        {
+          "path": "extensions/lua",
+          "type": "dir",
+          "sha": "a1d87b31ee7ff2e6ea1a681f09eeb0e9dafbf21d"
+        },
+        {
+          "path": "extensions/make",
+          "type": "dir",
+          "sha": "805e0c8d9a20438af41a314fb8dc346d82ce99c7"
+        },
+        {
+          "path": "extensions/markdown-basics",
+          "type": "dir",
+          "sha": "dc38ec0babc99ea05b336d2827ca60a405b7fba7"
+        },
+        {
+          "path": "extensions/markdown-language-features",
+          "type": "dir",
+          "sha": "890d896941556581d1255583ab7214c67aed8ffc"
+        },
+        {
+          "path": "extensions/markdown-math",
+          "type": "dir",
+          "sha": "18737d8c5e29a7b123d7c18f891f7cc301cf5fb4"
+        },
+        {
+          "path": "extensions/merge-conflict",
+          "type": "dir",
+          "sha": "15e9d5d86a2d5f3c1065bfb5bbf98f52189724ad"
+        },
+        {
+          "path": "extensions/mermaid-markdown-features",
+          "type": "dir",
+          "sha": "af0bf43a27e3e0fc388553d2c8f06d819de0edbd"
+        },
+        {
+          "path": "extensions/microsoft-authentication",
+          "type": "dir",
+          "sha": "f625d8a14647d3b17ae36977d70e1056a3665809"
+        },
+        {
+          "path": "extensions/notebook-renderers",
+          "type": "dir",
+          "sha": "35d9edd1fe0c0ab5a3a9160d7aae9dcdfcdc0ca0"
+        },
+        {
+          "path": "extensions/npm",
+          "type": "dir",
+          "sha": "d4ced3c4b7670bd4df6b57e0260d9e604ccabfcc"
+        },
+        {
+          "path": "extensions/objective-c",
+          "type": "dir",
+          "sha": "5cff3d011af10c90750e328fa67294f3f181ed19"
+        },
+        {
+          "path": "extensions/package-lock.json",
+          "type": "file",
+          "sha": "a55af3c1109c307bc7a2e75c4a162fb9d32db4ed"
+        },
+        {
+          "path": "extensions/package.json",
+          "type": "file",
+          "sha": "60185fa80859d7a0e38aa8bae5bf836e0697a2da"
+        },
+        {
+          "path": "extensions/perl",
+          "type": "dir",
+          "sha": "0960a9596599477e0bc1b2782f4a1f6dc8c73a1b"
+        },
+        {
+          "path": "extensions/php-language-features",
+          "type": "dir",
+          "sha": "3953504edec9a3aa3a295fcb726783e5a682ba4a"
+        },
+        {
+          "path": "extensions/php",
+          "type": "dir",
+          "sha": "eb2569ab7fca37cf1b24c018974dafa20ea446d9"
+        },
+        {
+          "path": "extensions/postinstall.mjs",
+          "type": "file",
+          "sha": "eb8af1bbea91ce9666fbc3a65139195e2537204b"
+        },
+        {
+          "path": "extensions/powershell",
+          "type": "dir",
+          "sha": "f9e131f823ac658d5bb8ee5c8e298324ccbde920"
+        },
+        {
+          "path": "extensions/prompt-basics",
+          "type": "dir",
+          "sha": "8f4029e4cf62f1240016e25812ef691a54300ee4"
+        },
+        {
+          "path": "extensions/pug",
+          "type": "dir",
+          "sha": "a1396a047f1d3a4a0108d1fd8c9d75ea8320ff86"
+        },
+        {
+          "path": "extensions/python",
+          "type": "dir",
+          "sha": "062ca239b3125cac805e668f45bc720cd612ee16"
+        },
+        {
+          "path": "extensions/r",
+          "type": "dir",
+          "sha": "9ff76c3e0894ab3b69a8b77d84ba370178a36c8c"
+        },
+        {
+          "path": "extensions/razor",
+          "type": "dir",
+          "sha": "d30edb3259dc6fd3514c2a637c63eaac5e77bf3b"
+        },
+        {
+          "path": "extensions/references-view",
+          "type": "dir",
+          "sha": "a825b6166fcd5557dfd284c97f6a589e57b64dce"
+        },
+        {
+          "path": "extensions/restructuredtext",
+          "type": "dir",
+          "sha": "12dccc529ec6fb7e411a19aea3b2cf18b0bb79ee"
+        },
+        {
+          "path": "extensions/ruby",
+          "type": "dir",
+          "sha": "5d5e03bc76820f637f6bcb1c1f14bf748807164e"
+        },
+        {
+          "path": "extensions/rust",
+          "type": "dir",
+          "sha": "3b82d090557b872d0e26a977bad3196431a46d04"
+        },
+        {
+          "path": "extensions/scss",
+          "type": "dir",
+          "sha": "021e3b27da00c58ac60231c1f04db162e1e10ac0"
+        },
+        {
+          "path": "extensions/search-result",
+          "type": "dir",
+          "sha": "197190bc67518cc2e6b47ead7ed5e593174dc2b3"
+        },
+        {
+          "path": "extensions/shaderlab",
+          "type": "dir",
+          "sha": "2fabf982122ad105a6a5d7e8e7e8f06ce5b211c6"
+        },
+        {
+          "path": "extensions/shellscript",
+          "type": "dir",
+          "sha": "077b09cc18e7425f5e4922aa443956f4945b4b53"
+        },
+        {
+          "path": "extensions/simple-browser",
+          "type": "dir",
+          "sha": "6617ab146f0a414c3f86f540765d443c3251e8d3"
+        },
+        {
+          "path": "extensions/sql",
+          "type": "dir",
+          "sha": "ddee21ea0af4d1fd5fbdcf5bfebffff6678710aa"
+        },
+        {
+          "path": "extensions/swift",
+          "type": "dir",
+          "sha": "3f5a29b6c7e75e922e80f0a140cb9b026fe93c2b"
+        },
+        {
+          "path": "extensions/terminal-suggest",
+          "type": "dir",
+          "sha": "75a186fb52ad98fcfa877df6ad32f8ee09874ce7"
+        },
+        {
+          "path": "extensions/theme-abyss",
+          "type": "dir",
+          "sha": "9d55a4c32273b0b54b8d959df6befe2c50f14a6c"
+        },
+        {
+          "path": "extensions/theme-defaults",
+          "type": "dir",
+          "sha": "440c9c6b4783d0cd005279cfe78aec452cca6c11"
+        },
+        {
+          "path": "extensions/theme-kimbie-dark",
+          "type": "dir",
+          "sha": "7bc9683e2834b1168dec0d7121c7fa1dc88fa844"
+        },
+        {
+          "path": "extensions/theme-modern-icons",
+          "type": "dir",
+          "sha": "d23bd5df0d4e09f9b0f124eca22f459875e7fca5"
+        },
+        {
+          "path": "extensions/theme-monokai-dimmed",
+          "type": "dir",
+          "sha": "94830c8981034b7735a8c43fe5266ca825baf091"
+        },
+        {
+          "path": "extensions/theme-monokai",
+          "type": "dir",
+          "sha": "f00ca7144da16e4fcaa125733202d2eec5a49237"
+        },
+        {
+          "path": "extensions/theme-quietlight",
+          "type": "dir",
+          "sha": "847718b7c1826dce86293437e0f9853544a35180"
+        },
+        {
+          "path": "extensions/theme-red",
+          "type": "dir",
+          "sha": "0b5668f4ed52b11a465f7d2c776ca37b1b77d8b8"
+        },
+        {
+          "path": "extensions/theme-seti",
+          "type": "dir",
+          "sha": "e0f28dc71a6bdf625e61e6bd6ce02833e18f21a8"
+        },
+        {
+          "path": "extensions/theme-solarized-dark",
+          "type": "dir",
+          "sha": "f05f957f200d78a13b94c3e13047705b11987782"
+        },
+        {
+          "path": "extensions/theme-solarized-light",
+          "type": "dir",
+          "sha": "d896e93f7ba6a8447ea705c2c5956eb32ba0a378"
+        },
+        {
+          "path": "extensions/theme-tomorrow-night-blue",
+          "type": "dir",
+          "sha": "0874ba8a0c032e31d608e078cda8aa74c0ae5cbc"
+        },
+        {
+          "path": "extensions/tsconfig.base.json",
+          "type": "file",
+          "sha": "db32799b3ba2551efa1d759bf95766f7a2f12335"
+        },
+        {
+          "path": "extensions/tunnel-forwarding",
+          "type": "dir",
+          "sha": "18564905c3fbdc96365b1997290f95f32bb5898e"
+        },
+        {
+          "path": "extensions/types",
+          "type": "dir",
+          "sha": "26598c411d7cd2b4eb31fa6c78f00644571b6435"
+        },
+        {
+          "path": "extensions/typescript-basics",
+          "type": "dir",
+          "sha": "96b53d74d9d47d13107891703afc1b7fab6426c4"
+        },
+        {
+          "path": "extensions/typescript-language-features",
+          "type": "dir",
+          "sha": "2cf0d2b1d3a7141d7228da33d1cd662884365e2e"
+        },
+        {
+          "path": "extensions/vb",
+          "type": "dir",
+          "sha": "09b943811942409552431d1855d65d54b47532cf"
+        },
+        {
+          "path": "extensions/vscode-api-tests",
+          "type": "dir",
+          "sha": "6c1a134ab19590f012fcb136c46ecb9a6afeb6bc"
+        },
+        {
+          "path": "extensions/vscode-colorize-perf-tests",
+          "type": "dir",
+          "sha": "08381a12fdd64161e1c2a24edc311382b5438630"
+        },
+        {
+          "path": "extensions/vscode-colorize-tests",
+          "type": "dir",
+          "sha": "99d2cefa348028fb26080a0cdf10d77b93b69026"
+        },
+        {
+          "path": "extensions/vscode-test-resolver",
+          "type": "dir",
+          "sha": "9a011dd53d069e2a23e03bc35cda72001d080591"
+        },
+        {
+          "path": "extensions/xml",
+          "type": "dir",
+          "sha": "ea9fc8520ee4315855424821cbbe9013569c3736"
+        },
+        {
+          "path": "extensions/yaml",
+          "type": "dir",
+          "sha": "268eb3f74e3e38c27fc0f18cf8b942e08ea9d037"
+        }
+      ]
+    },
+    {
+      "key": "docs_root",
+      "entries": [
+        {
+          "path": "docs/agent-customization",
+          "type": "dir",
+          "sha": "0a16f059d6f728e2a246a38f224a211b2e7939b5"
+        },
+        {
+          "path": "docs/agents",
+          "type": "dir",
+          "sha": "ac214ee1c5511e61b03cca631ff59c7c3aaa04d4"
+        },
+        {
+          "path": "docs/azure",
+          "type": "dir",
+          "sha": "40946f869474906fb93110726dcf7bb574c2d45e"
+        },
+        {
+          "path": "docs/chat",
+          "type": "dir",
+          "sha": "41ac28dd250aff162d19034170bdd3b1558e58b0"
+        },
+        {
+          "path": "docs/configure",
+          "type": "dir",
+          "sha": "32a4f3e28e77657a42ad6f247a9ee589b8562074"
+        },
+        {
+          "path": "docs/containers",
+          "type": "dir",
+          "sha": "1433fbf1b617409729a426ea84e02b59eefcae33"
+        },
+        {
+          "path": "docs/cpp",
+          "type": "dir",
+          "sha": "4d9d586365a0f5238eba8b269a2deca3cf1d450b"
+        },
+        {
+          "path": "docs/csharp",
+          "type": "dir",
+          "sha": "147ae3c116b799f21f732fdfa29887de56dc4ce0"
+        },
+        {
+          "path": "docs/customization",
+          "type": "dir",
+          "sha": "f12bc4e060e66e009abf44034bca64b836294c85"
+        },
+        {
+          "path": "docs/datascience",
+          "type": "dir",
+          "sha": "dc89473859235008a1d3c93585f665ca0853610c"
+        },
+        {
+          "path": "docs/debugtest",
+          "type": "dir",
+          "sha": "ecb70232503aa57959d8ec83665bdba9138324fd"
+        },
+        {
+          "path": "docs/devcontainers",
+          "type": "dir",
+          "sha": "3cb2664cbde31c5ec3506a378a46669a40029527"
+        },
+        {
+          "path": "docs/editing",
+          "type": "dir",
+          "sha": "084c52d3976acec56c1598f1850bb385a79bf464"
+        },
+        {
+          "path": "docs/editor",
+          "type": "dir",
+          "sha": "644d32efafdb7424678f10bde60537ed271b606c"
+        },
+        {
+          "path": "docs/enterprise",
+          "type": "dir",
+          "sha": "2e7dbba904f84f4c10fdbc57bcdcf17ae97d6b2c"
+        },
+        {
+          "path": "docs/extension-docs",
+          "type": "dir",
+          "sha": "42bae66a1162a4c5899afc501e1a2ebc1e3b00ea"
+        },
+        {
+          "path": "docs/getstarted",
+          "type": "dir",
+          "sha": "b021196dff21d9449dc9ca37c09b140d954e24a6"
+        },
+        {
+          "path": "docs/intelligentapps",
+          "type": "dir",
+          "sha": "3d9c702202fb20df524962f18276b08e2de5d413"
+        },
+        {
+          "path": "docs/introvideos",
+          "type": "dir",
+          "sha": "53e0709cea552b4716443adfab1297d43dd94723"
+        },
+        {
+          "path": "docs/java",
+          "type": "dir",
+          "sha": "fc30257ccd0032d0a2041233d2f09a7d8557d865"
+        },
+        {
+          "path": "docs/languages",
+          "type": "dir",
+          "sha": "6f58507627cfd21c9938bbf3d488ac6463ff8105"
+        },
+        {
+          "path": "docs/metadata.json",
+          "type": "file",
+          "sha": "9ce490eb00f5a9c8d06c811c4fc97e6d516c2000"
+        },
+        {
+          "path": "docs/nodejs",
+          "type": "dir",
+          "sha": "6a93e9ce8b8ac49af2028c67ce492c142243a4d4"
+        },
+        {
+          "path": "docs/other",
+          "type": "dir",
+          "sha": "2101680418c90a85be46fc1d958d6f5ddc5daedb"
+        },
+        {
+          "path": "docs/python",
+          "type": "dir",
+          "sha": "6242c8a3616433915fb3327ff82f838158dd5e65"
+        },
+        {
+          "path": "docs/redirection.json",
+          "type": "file",
+          "sha": "b1b2c06b4939dfac06e19c666868fc12e5338e0d"
+        },
+        {
+          "path": "docs/reference",
+          "type": "dir",
+          "sha": "4338903ff7dbe8a2507bd5ba0a7d78856840f65f"
+        },
+        {
+          "path": "docs/remote",
+          "type": "dir",
+          "sha": "0ef0d5e34210a5e9536cba5b0fbfd232068ef264"
+        },
+        {
+          "path": "docs/setup",
+          "type": "dir",
+          "sha": "6bdde97998f7d010334299205dc6e347b86b3418"
+        },
+        {
+          "path": "docs/sourcecontrol",
+          "type": "dir",
+          "sha": "eff9502da7ffaad713d47f7a85875e9852d2e394"
+        },
+        {
+          "path": "docs/supporting",
+          "type": "dir",
+          "sha": "8f889c1f224256b4fd8c9bb2a47cf5eee75b9871"
+        },
+        {
+          "path": "docs/terminal",
+          "type": "dir",
+          "sha": "cafb24cc2469a8eb2247fa114148ef154b067ab7"
+        },
+        {
+          "path": "docs/toc.json",
+          "type": "file",
+          "sha": "5433da361f42d46f0b04f16aaa4103864f698c42"
+        },
+        {
+          "path": "docs/typescript",
+          "type": "dir",
+          "sha": "0fad25cee5e59388479ca2e73a0e54165f5265d9"
+        }
+      ]
+    }
+  ],
+  "documentation_discovery": [
+    {
+      "key": "docs_editing_tree",
+      "truncated": false,
+      "markdown": [
+        {
+          "path": "ai-powered-suggestions.md",
+          "sha": "7f7188c409a929f8edbe562b07cab1df9069d5a8"
+        },
+        {
+          "path": "codebasics.md",
+          "sha": "085b172973b73815f12c7d98ea8def5e72a7afc4"
+        },
+        {
+          "path": "copilot-smart-actions.md",
+          "sha": "b9e1fa41db7684d6df031380aaa21e8d0ca735f4"
+        },
+        {
+          "path": "editingevolved.md",
+          "sha": "ecf2c9c2dac7bfc9139adec4fd5069ea4671987b"
+        },
+        {
+          "path": "getting-started/action-card-samples.md",
+          "sha": "e43017ec530221ef8ff58f0eb4ecb27bb02ed33f"
+        },
+        {
+          "path": "getting-started/editor-tutorial.md",
+          "sha": "d159389773b7e2f0e191c936d4ce96bb58b6e75d"
+        },
+        {
+          "path": "getting-started/overview.md",
+          "sha": "34a48474a7b2654627247630b5f173ef5d83be28"
+        },
+        {
+          "path": "getting-started/tips-and-tricks.md",
+          "sha": "af36bea9de3d8f6bf8ef6a4bcc68bd166c534ccd"
+        },
+        {
+          "path": "getting-started/userinterface.md",
+          "sha": "729f8c6d178b590402c9218eb395a07c723eca62"
+        },
+        {
+          "path": "intellisense.md",
+          "sha": "99ba61042a381255d47f4ebf78f1b434f8a839ae"
+        },
+        {
+          "path": "refactoring.md",
+          "sha": "0b696624c3183bd2b1d2d7f4fb41095054efbd04"
+        },
+        {
+          "path": "userdefinedsnippets.md",
+          "sha": "289aabcaf01b0f98715b681c069174c078965ca5"
+        },
+        {
+          "path": "workspaces/multi-root-workspaces.md",
+          "sha": "8b972357d021d3e8c5bf0858288f98b7fabe68c8"
+        },
+        {
+          "path": "workspaces/workspace-trust.md",
+          "sha": "27126703cb0f8c83a6d56750c65880134493e9f8"
+        },
+        {
+          "path": "workspaces/workspaces.md",
+          "sha": "7749ccb2591d474ac97beb1fa98e65fc48666de6"
+        }
+      ]
+    },
+    {
+      "key": "docs_configure_tree",
+      "truncated": false,
+      "markdown": [
+        {
+          "path": "accessibility/accessibility.md",
+          "sha": "5a9cb3e83bc2f2150fb5c6efa663bc0b202c3d25"
+        },
+        {
+          "path": "accessibility/voice.md",
+          "sha": "1c505f357c463efa5d3961c50b3f682457bef17f"
+        },
+        {
+          "path": "command-line.md",
+          "sha": "859edb3e98d44b6bf8c91e519a5781088f59c37b"
+        },
+        {
+          "path": "custom-layout.md",
+          "sha": "9ffcbad4469dc83f78149f53f20b850bf9106ae1"
+        },
+        {
+          "path": "extensions/extension-marketplace.md",
+          "sha": "aa2dfbd211cf1b20a29b0ae231ce9f33653016a8"
+        },
+        {
+          "path": "extensions/extension-runtime-security.md",
+          "sha": "d7d6a726e1dd79b4115be662dff6edeabdb9879c"
+        },
+        {
+          "path": "extensions/extensions.md",
+          "sha": "da9070a5c3666bbca0594cdcf8ab12671fe95ce4"
+        },
+        {
+          "path": "keybindings.md",
+          "sha": "8dbcacab5271268a31be3853a8ccbbb21935e339"
+        },
+        {
+          "path": "locales.md",
+          "sha": "0a303ac1e995a9caeae60533a70e18933d9f7d62"
+        },
+        {
+          "path": "profiles.md",
+          "sha": "82e949ca179a624fe2aec1246c72fe111c36a5d6"
+        },
+        {
+          "path": "settings-sync.md",
+          "sha": "554b5c915cbc69a7f0f341a966a4fe0064c0b83c"
+        },
+        {
+          "path": "settings.md",
+          "sha": "fe3ca54732444c5c6f365f542a20dc2d3ce5ddb6"
+        },
+        {
+          "path": "telemetry.md",
+          "sha": "2fb4239e5e74d719d4e9a6cdba3ed2308cebdd4d"
+        },
+        {
+          "path": "themes.md",
+          "sha": "4f876f04f4474cd455e5fba4532ce6926b6947e7"
+        }
+      ]
+    },
+    {
+      "key": "docs_debugtest_tree",
+      "truncated": false,
+      "markdown": [
+        {
+          "path": "debugging-configuration.md",
+          "sha": "f9f738fff7b04019516692a57678a0d072845db4"
+        },
+        {
+          "path": "debugging.md",
+          "sha": "5e4d9ffd277498aaef0adf2aaea6e746313fe23e"
+        },
+        {
+          "path": "integrated-browser.md",
+          "sha": "2b6f344e78bf44eaf52b61369eea8077a0a5059a"
+        },
+        {
+          "path": "port-forwarding.md",
+          "sha": "227b1ffdaa2e7cafbea5b2d84648e2bbde919f26"
+        },
+        {
+          "path": "tasks.md",
+          "sha": "de7308138c12556797e26bd50cc64e6071e89d69"
+        },
+        {
+          "path": "testing.md",
+          "sha": "2fc9ff24ce970f97e9c7c0f0735636b1dabd3361"
+        }
+      ]
+    },
+    {
+      "key": "docs_sourcecontrol_tree",
+      "truncated": false,
+      "markdown": [
+        {
+          "path": "branches-worktrees.md",
+          "sha": "5e2dfa1c0cf0cec46103764e6b637af28b616ee7"
+        },
+        {
+          "path": "faq.md",
+          "sha": "563bb4a944816778b2b2f178ada146850507c764"
+        },
+        {
+          "path": "github.md",
+          "sha": "4db47f3ec4b8bc537d89ae401b9c815ef4237b82"
+        },
+        {
+          "path": "history.md",
+          "sha": "8c0362a9416f0d4b96561e16b966c3fb8bb870b1"
+        },
+        {
+          "path": "merge-conflicts.md",
+          "sha": "0ad161887f254da5e4d2aae2046522fd5e139b73"
+        },
+        {
+          "path": "overview.md",
+          "sha": "c147016bbd0566761d1e49f300e3b7c3fd4e7c34"
+        },
+        {
+          "path": "quickstart.md",
+          "sha": "32879c9adb4cad717dc38f736f943c40c1f51347"
+        },
+        {
+          "path": "repos-remotes.md",
+          "sha": "2f73a2d5e7dae4b2a91f97cd6266e79ca28872bd"
+        },
+        {
+          "path": "staging-commits.md",
+          "sha": "81cd013c8233027eb489a818f76b78fec1bc90a2"
+        },
+        {
+          "path": "troubleshooting.md",
+          "sha": "c3610780482a8da35028c5acd557325d4a1b0322"
+        }
+      ]
+    }
+  ]
+}

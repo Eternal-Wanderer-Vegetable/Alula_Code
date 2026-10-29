@@ -88,6 +88,12 @@ class AlulaFfi {
         Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>)
       >('alula_lsp_start');
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _lspShutdownWorkspace = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Pointer<Utf8>),
+        Pointer<Utf8> Function(Pointer<Utf8>)
+      >('alula_lsp_shutdown_workspace');
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>) _lspDidOpen = lib
       .lookupFunction<
         Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -188,6 +194,15 @@ class AlulaFfi {
     } finally {
       malloc.free(r);
       malloc.free(c);
+    }
+  }
+
+  String lspShutdownWorkspaceJson(String workspaceRoot) {
+    final root = workspaceRoot.toNativeUtf8();
+    try {
+      return _takeJson(_lspShutdownWorkspace(root));
+    } finally {
+      malloc.free(root);
     }
   }
 

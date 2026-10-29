@@ -1,0 +1,128 @@
+on run argv
+	if (count of argv) < 1 or (count of argv) > 2 then
+		error "usage: attach-safari-web-inspector.applescript prepare|attach|activate-probe [pid]"
+	end if
+	set actionName to item 1 of argv as text
+	if actionName is "activate-probe" then
+		if (count of argv) is not 2 then error "activate-probe requires a pid"
+		return my activateProbeProcess(item 2 of argv)
+	end if
+	if (count of argv) is not 1 then error actionName & " does not accept extra arguments"
+	if actionName is "prepare" then return my prepareInspectorWindow()
+	if actionName is "attach" then return my attachInspectableTarget()
+	error "unknown action: " & actionName
+end run
+
+on activateProbeProcess(pidArgument)
+	set targetPID to pidArgument as integer
+	tell application "System Events"
+		repeat with attemptNumber from 1 to 20
+			repeat with processReference in application processes
+				try
+					if (unix id of processReference) is targetPID then
+						set frontmost of processReference to true
+						return "activate=ok pid=" & targetPID & " process=" & (name of processReference as text)
+					end if
+				end try
+			end repeat
+			delay 0.25
+		end repeat
+	end tell
+	error "probe process was not frontmost after System Events activation; pid=" & targetPID
+end activateProbeProcess
+
+on prepareInspectorWindow()
+	tell application "Safari" to activate
+	delay 1
+	tell application "System Events"
+		tell process "Safari"
+			set frontmost to true
+			repeat with attemptNumber from 1 to 30
+				if exists menu bar item "Develop" of menu bar 1 then exit repeat
+				delay 1
+			end repeat
+			if not (exists menu bar item "Develop" of menu bar 1) then
+				set visibleMenuItems to name of menu bar items of menu bar 1
+				error "Safari Develop menu is unavailable; visible menu items: " & (visibleMenuItems as text)
+			end if
+			click menu bar item "Develop" of menu bar 1
+			delay 0.2
+			set developMenu to menu 1 of menu bar item "Develop" of menu bar 1
+			set inspectItem to missing value
+			repeat with candidate in menu items of developMenu
+				set candidateName to name of candidate as text
+				if candidateName contains "Inspect Apps and Devices" then
+					set inspectItem to candidate
+				end if
+			end repeat
+			if inspectItem is missing value then
+				error "Safari Inspect Apps and Devices menu item is unavailable"
+			end if
+			click inspectItem
+			delay 1
+			return "prepare=ok windows=" & (name of every window as text)
+		end tell
+	end tell
+end prepareInspectorWindow
+
+on attachInspectableTarget()
+	tell application "Safari" to activate
+	tell application "System Events"
+		tell process "Safari"
+			set frontmost to true
+			set attachResult to ""
+			repeat with attemptNumber from 1 to 40
+				click menu bar item "Develop" of menu bar 1
+				delay 0.15
+				set developMenu to menu 1 of menu bar item "Develop" of menu bar 1
+				set attachResult to my findInspectableTarget(developMenu)
+				if attachResult is not "" then exit repeat
+				key code 53
+				delay 0.25
+			end repeat
+			if attachResult is "" then error "Web Archive page did not appear in Safari Develop menu"
+			set inspectorWindowTitle to ""
+			repeat with inspectAttemptNumber from 1 to 40
+				repeat with candidateWindow in windows
+					try
+						set candidateWindowName to name of candidateWindow as text
+						if candidateWindowName contains "Web Inspector" and candidateWindowName contains "p00.4-web-probe.webarchive" then
+							set inspectorWindowTitle to candidateWindowName
+							exit repeat
+						end if
+					end try
+				end repeat
+				if inspectorWindowTitle is not "" then exit repeat
+				delay 0.25
+			end repeat
+			if inspectorWindowTitle is "" then error "Safari did not open Web Inspector for the Web Archive page"
+			delay 3
+			return "attach=ok target=" & attachResult & " inspectorWindow=" & inspectorWindowTitle & " windows=" & (name of every window as text)
+		end tell
+	end tell
+end attachInspectableTarget
+
+on findInspectableTarget(menuReference)
+	tell application "System Events"
+		tell process "Safari"
+			repeat with menuItemReference in menu items of menuReference
+				set itemTitle to ""
+				try
+					set itemTitle to name of menuItemReference as text
+				end try
+				log "Safari Develop item: " & itemTitle
+				if itemTitle contains "p00.4-web-probe.webarchive" then
+					click menuItemReference
+					return itemTitle
+				end if
+				try
+					if exists menu 1 of menuItemReference then
+						set nestedResult to my findInspectableTarget(menu 1 of menuItemReference)
+						if nestedResult is not "" then return nestedResult
+					end if
+				end try
+			end repeat
+		end tell
+	end tell
+	return ""
+end findInspectableTarget

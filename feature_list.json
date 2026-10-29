@@ -6,23 +6,35 @@
       "description": "「编辑→增量同步→Rust 应用→版本回执」最小闭环（docs/03 Phase 0 任务 0-1）",
       "dependencies": [],
       "status": "done",
-      "evidence": "app/lib/bridge + app/test/core_sync_test.dart 走真实 FFI；cargo test --workspace 全绿（2026-10-26）"
+      "evidence": "app/lib/bridge + app/test/core_sync_test.dart 走真实 FFI；cargo test --workspace 全绿（2026-10-26）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-002",
       "name": "0-2 编辑组件评测：CodeForge / Re-Editor / flutter_code_editor",
       "description": "统一评测卡 16 分制打分与选型（docs/06）。遗留：真机 IME 与万行文件流畅度人工复核（报告 §五清单）",
       "dependencies": [],
-      "status": "in-progress",
-      "evidence": "自动化部分完成：code_forge 13 分首选 / re_editor 10 分备选 / flutter_code_editor 5 分否决（docs/06-评测-编辑组件选型.md，2026-10-26）"
+      "status": "not-started",
+      "evidence": "自动化部分完成：code_forge 13 分首选 / re_editor 10 分备选 / flutter_code_editor 5 分否决（docs/06-评测-编辑组件选型.md，2026-10-26）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P03"
+      ]
     },
     {
       "id": "feat-003",
       "name": "0-3 Tree-sitter + LSP 接入（rust-analyzer）",
       "description": "editor-lsp（stdio JSON-RPC）+ editor-lang（tree-sitter-rust）+ FFI ABI v2 + 三面板 UI；对真实 rust-analyzer 全链路实测。遗留到 Phase 1：增量解析、诊断/补全异步化",
-      "dependencies": ["feat-001"],
+      "dependencies": [
+        "feat-001"
+      ],
       "status": "done",
-      "evidence": "诊断 7 条实时推送、补全 62 项、语法 40 token；截图 docs/diagnostics/2026-10-26-lsp-demo/"
+      "evidence": "诊断 7 条实时推送、补全 62 项、语法 40 token；截图 docs/diagnostics/2026-10-26-lsp-demo/",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-004",
@@ -30,7 +42,9 @@
       "description": "验证「继承架构做减法」路线。结论：移除 86 个内置扩展仅省 ≈20 MiB（−1.5%），G1 判定原型 A 路线否决，固定原型 B 自研路线",
       "dependencies": [],
       "status": "done",
-      "evidence": "docs/08-原型A-精简Code-OSS.md（1310→1290 MiB，2026-10-26）"
+      "evidence": "docs/08-原型A-精简Code-OSS.md（1310→1290 MiB，2026-10-26）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-005",
@@ -38,15 +52,27 @@
       "description": "三平台进程树内存采集 + 报告模板 + VS Code 基线。遗留：Linux PSS 待 CI 验证、macOS 待实现",
       "dependencies": [],
       "status": "done",
-      "evidence": "mem-probe 5 测试全绿；首批基线 alula 179.2 vs VS Code 959.5 MiB（−81.3%），docs/baselines/2026-10-26/"
+      "evidence": "mem-probe 5 测试全绿；首批基线 alula 179.2 vs VS Code 959.5 MiB（−81.3%），docs/baselines/2026-10-26/",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-006",
       "name": "0-6 对照实验：VS Code vs 原型 A vs 原型 B",
       "description": "三组场景（无插件/同语言服务/同功能集）× Windows+Linux。无插件组数据齐备；同语言服务组待 Phase 1 LSP 稳定后补测",
-      "dependencies": ["feat-004", "feat-005"],
-      "status": "in-progress",
-      "evidence": "无插件组：alula 179.2 / VS Code 干净 989.9 / 原型 A 1310 / 原型 A 精简 1290 MiB（docs/baselines/2026-10-26/ + docs/08）"
+      "dependencies": [
+        "feat-004",
+        "feat-005"
+      ],
+      "status": "not-started",
+      "evidence": "无插件组：alula 179.2 / VS Code 干净 989.9 / 原型 A 1310 / 原型 A 精简 1290 MiB（docs/baselines/2026-10-26/ + docs/08）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
     },
     {
       "id": "feat-007",
@@ -54,96 +80,183 @@
       "description": "定位用户环境 VS Code 卡死根因，反哺架构设计",
       "dependencies": [],
       "status": "done",
-      "evidence": "根因：系统提交内存耗尽（python.exe 提交 86–93 GB 击穿 107 GB 上限）；docs/07-诊断-VSCode卡死归因.md"
+      "evidence": "根因：系统提交内存耗尽（python.exe 提交 86–93 GB 击穿 107 GB 上限）；docs/07-诊断-VSCode卡死归因.md",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-008",
       "name": "P1 编辑基础：打开/保存/多标签（增量 1）",
       "description": "多文件工作台闭环：打开文件夹→文件树（懒加载）→多标签→编辑→Ctrl+S 原子保存（editor-doc）。剩余：编码/换行符处理、查找替换、撤销重做 UI 化",
-      "dependencies": ["feat-003"],
-      "status": "in-progress",
-      "evidence": "实机截图 docs/diagnostics/2026-10-26-phase1/；commit 8477ecc"
+      "dependencies": [
+        "feat-003"
+      ],
+      "status": "not-started",
+      "evidence": "实机截图 docs/diagnostics/2026-10-26-phase1/；commit 8477ecc",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P02",
+        "P04",
+        "P05",
+        "P06",
+        "P07"
+      ]
     },
     {
       "id": "feat-009",
       "name": "P1 LSP：rust-analyzer 按工作区共享进程 + 诊断/补全",
       "description": "多文件接入 rust-analyzer（按工作区共享）。剩余：basedpyright/Ruff、clangd、跳转定义/悬浮/格式化、诊断/补全异步化、增量解析",
-      "dependencies": ["feat-003", "feat-008"],
-      "status": "in-progress",
-      "evidence": "docs/03 §2.1 增量 1 记录（2026-10-26）"
+      "dependencies": [
+        "feat-003",
+        "feat-008"
+      ],
+      "status": "not-started",
+      "evidence": "docs/03 §2.1 增量 1 记录（2026-10-26）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P08"
+      ]
     },
     {
       "id": "feat-010",
       "name": "P1 下一增量：撤销/重做 UI、查找替换、Git 面板、文件监视",
       "description": "撤销/重做与查找替换已完成（feat-010a）；Git 面板、文件监视、编辑器组件切换（code_forge）待做",
-      "dependencies": ["feat-008"],
-      "status": "in-progress",
-      "evidence": "feat-010a 撤销/重做/查找替换（2026-10-27）+ feat-git Git 面板（同日）：GitCli CLI 封装（porcelain -z/UTF-8 解码/可注入 runner，6 单测 + 4 真 git 集成测试）+ 侧栏双视图切换 + 面板（分支/分组/暂存/提交）+ 底部 Git Diff 标签 + 端到端 widget 测试；全量 104 测试绿 + init.sh 全绿 + CI 全绿"
-
+      "dependencies": [
+        "feat-008"
+      ],
+      "status": "not-started",
+      "evidence": "feat-010a 撤销/重做/查找替换（2026-10-27）+ feat-git Git 面板（同日）：GitCli CLI 封装（porcelain -z/UTF-8 解码/可注入 runner，6 单测 + 4 真 git 集成测试）+ 侧栏双视图切换 + 面板（分支/分组/暂存/提交）+ 底部 Git Diff 标签 + 端到端 widget 测试；全量 104 测试绿 + init.sh 全绿 + CI 全绿",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P02",
+        "P04",
+        "P06",
+        "P09"
+      ]
     },
     {
       "id": "feat-011",
       "name": "P1 稳定性：进程监督树、低资源模式、崩溃恢复 journal",
       "description": "强杀 LSP 不崩、关闭工作区进程树清空、内存限额下可用、断电恢复（Phase 1 DoD 稳定性条目）",
-      "dependencies": ["feat-009"],
+      "dependencies": [
+        "feat-009"
+      ],
       "status": "not-started",
-      "evidence": ""
+      "evidence": "",
+      "track": "legacy-prototype",
+      "superseded_by_packages": [
+        "P01",
+        "P02",
+        "P14"
+      ]
     },
     {
       "id": "feat-012",
       "name": "P1 性能验收：内存预算与冷启动达标",
       "description": "空工作台 ≤200 MiB、普通项目 ≤250 MiB、Rust+RA ≤500 MiB、冷启动 ≤2s、对 VS Code −50%（docs/03 §2.2）",
-      "dependencies": ["feat-010", "feat-011"],
+      "dependencies": [
+        "feat-010",
+        "feat-011"
+      ],
       "status": "not-started",
-      "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）"
+      "evidence": "当前无插件基线 179.2 MiB 已优于空工作台目标（docs/baselines/2026-10-26/）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
     },
     {
       "id": "feat-015",
       "name": "W1 布局骨架：WorkbenchGrid + 五大区 + 标题栏 + 持久化",
       "description": "docs/09 W1 全项：二叉分割树布局（拖拽/最小尺寸/折叠）、五大区、标题栏菜单 + 无边框窗口（window_manager：拖拽移动/双击最大化/窗口按钮）、布局持久化与恢复",
-      "dependencies": ["feat-008"],
+      "dependencies": [
+        "feat-008"
+      ],
       "status": "done",
-      "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）"
+      "evidence": "Release 实机复测稳态 186.6 MiB（≤200 验收线，较 MVP +4.0% 低于 5% 护栏），docs/baselines/2026-10-26/alula-w1-empty.md；init.sh 全绿；flutter 43 测试（模型 18 + 网格 5 + 存储 4 + FFI/text_diff/widget 16）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-016",
       "name": "W2 编辑器组：拆分/跨组拖动/面包屑/会话恢复",
       "description": "docs/09 W2：W2-1 标签条交互已完；W2-2 编辑器组拆分（布局树 editor 叶子可分裂为组分割、文档按组持有）、W2-3 面包屑、W2-4 会话恢复",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "W2-1 标签条交互 + W2-2 编辑器组（分裂原语 7 测试 + 多组全链路）+ W2-3 面包屑（路径段/点击展开树）+ W2-4 会话 journal（端到端恢复测试），全量 58 测试 + init.sh 全绿；实机冒烟：W2 Release 稳态 189.9 MiB（+1.8% < 5% 护栏，2026-10-26）。启动级已实机验证；交互级复验（拆分/拖标签/强杀恢复）待人工。剩余：W2-4 的脏标记跨重启保留（可选）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "W2-1 标签条交互 + W2-2 编辑器组（分裂原语 7 测试 + 多组全链路）+ W2-3 面包屑（路径段/点击展开树）+ W2-4 会话 journal（端到端恢复测试），全量 58 测试 + init.sh 全绿；实机冒烟：W2 Release 稳态 189.9 MiB（+1.8% < 5% 护栏，2026-10-26）。启动级已实机验证；交互级复验（拆分/拖标签/强杀恢复）待人工。剩余：W2-4 的脏标记跨重启保留（可选）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P05"
+      ]
     },
     {
       "id": "feat-017",
       "name": "W3 命令面板与键位：CommandRegistry/QuickInput/全局键位",
       "description": "docs/09 W3-1：CommandRegistry（菜单/键位/面板统一引用命令 id）+ fuzzyScore 模糊打分 + QuickInput 浮层（Ctrl+Shift+P 命令面板 / Ctrl+P 快速打开）+ 全局键位（Ctrl+B/Ctrl+J）。剩余：完整 KeybindingRegistry（when 子句、keybindings.json 覆盖）",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "W3-1 + W3-2 完成：CommandRegistry/fuzzyScore/QuickInput/KeybindingSet（重绑定语义 + keybindings.json 覆盖 + 菜单键位提示动态化 + F1-F3 命令化），8+2+1 项测试，全量 76 测试全绿，CI 全绿（2026-10-27）。剩余：快速打开异步化（同步 FFI 遍历大仓库卡 UI 的已知限制）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P01",
+        "P05",
+        "P07"
+      ]
     },
     {
       "id": "feat-018",
       "name": "W4 搜索视图：ripgrep 优先 + git grep 回退，流式结果",
       "description": "活动栏搜索视图（Ctrl+Shift+F）：后端探测 rg→git grep→不可用提示；流式命中（可取消终止子进程）；命中上限 500；点击命中打开文件并跳转行。剩余：按文件分组展示、正则支持",
-      "dependencies": ["feat-015"],
-      "status": "in-progress",
-      "evidence": "10 项服务测试（解析/临时仓集成/上限/取消）+ 1 项端到端 widget 测试（Ctrl+Shift+F→搜索→点击跳行）；115 测试全绿 + CI 全绿（2026-10-27）"
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "not-started",
+      "evidence": "10 项服务测试（解析/临时仓集成/上限/取消）+ 1 项端到端 widget 测试（Ctrl+Shift+F→搜索→点击跳行）；115 测试全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P06"
+      ]
     },
     {
       "id": "feat-019",
       "name": "文件监视：工作区外部变更自动刷新与重载",
       "description": "dart:io Directory.watch(recursive) 递归监视（零新依赖）+ 600ms 防抖；外部变更后刷新文件树（保留展开状态）/Git 状态；打开文档外部修改：干净文档自动重载、脏文档仅提示。剩余：外部删除文件的缓冲区处理",
-      "dependencies": ["feat-015"],
+      "dependencies": [
+        "feat-015"
+      ],
       "status": "done",
-      "evidence": "3 项 watcher 单测（防抖收敛/stop/递归）+ 1 项端到端 widget 测试（外部写盘→干净文档自动重载）；119 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
+      "evidence": "3 项 watcher 单测（防抖收敛/stop/递归）+ 1 项端到端 widget 测试（外部写盘→干净文档自动重载）；119 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-020",
       "name": "大纲视图：tree-sitter 符号提取全栈（Rust→FFI→UI）",
       "description": "editor-lang.symbols()（10 类定义节点，含嵌套与 impl Trait for Type 命名）+ FFI alula_symbols（ABI v4 双侧握手）+ 大纲侧栏视图（类别徽章/行号/点击跳定义）+ 编辑后 500ms 防抖刷新",
-      "dependencies": ["feat-015"],
+      "dependencies": [
+        "feat-015"
+      ],
       "status": "done",
-      "evidence": "3 项 Rust 单测（中注释行号/UTF-16 偏移回验/文档序）+ 1 项端到端 widget 测试（符号列表→点击跳定义起始）；顺修外部刷新丢展开态的真实 UX bug（_refreshTree 快照恢复展开）；120 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）"
+      "evidence": "3 项 Rust 单测（中注释行号/UTF-16 偏移回验/文档序）+ 1 项端到端 widget 测试（符号列表→点击跳定义起始）；顺修外部刷新丢展开态的真实 UX bug（_refreshTree 快照恢复展开）；120 测试全绿 + init.sh 全绿 + CI 全绿（2026-10-27）",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-013",
@@ -151,15 +264,254 @@
       "description": "GitHub Actions（Rust+Flutter 双矩阵）、GitNexus 图谱、AGENTS.md/feature_list/progress/init.sh harness",
       "dependencies": [],
       "status": "done",
-      "evidence": "GitNexus 索引（796 符号/1681 关系）；harness validator 100/100；init.sh 端到端全绿（2026-10-26）；.github/workflows/ci.yml + release.yml 语法校验通过，待推送后看 Actions 首跑"
+      "evidence": "GitNexus 索引（796 符号/1681 关系）；harness validator 100/100；init.sh 端到端全绿（2026-10-26）；.github/workflows/ci.yml + release.yml 语法校验通过，待推送后看 Actions 首跑",
+      "track": "legacy-prototype",
+      "superseded_by_packages": []
     },
     {
       "id": "feat-014",
       "name": "P1 打包：三平台 Release 构建与安装包",
       "description": "Windows 安装包已完成；Linux（AppImage/deb）、macOS（dmg）待做，接入 CI 矩阵",
-      "dependencies": ["feat-013"],
+      "dependencies": [
+        "feat-013"
+      ],
+      "status": "not-started",
+      "evidence": "Windows 构建 ✅（docs/03 §2.1）",
+      "track": "legacy-prototype",
+      "legacy_status_before_replan": "in-progress",
+      "replan_note": "2026-10-27完整复刻重规划：保留部分实现与原evidence，停止旧项独立调度；not-started表示未按新合同验收，不表示代码不存在。",
+      "superseded_by_packages": [
+        "P14",
+        "P15"
+      ]
+    },
+    {
+      "id": "feat-021",
+      "name": "VS Code无插件非AI全功能1:1复刻总计划",
+      "description": "docs/03当前主线：固定上游、范围/审计/架构/16实施包/逐项验收/证据/交接；仅计划，不登记产品实现完成。",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "docs/10总计划；docs/11及plans/vscode-parity-matrix.json：342条/22组/14边界/16实施包；上游90个manifest/462个发现项路由；docs/diagnostics/2026-10-27-parity-plan/verification.md：fmt/init/analyze通过、Flutter120、harness100、计划结构与graph分析。仅计划完成，P00–P15未实施。",
+      "track": "vscode-builtin-parity",
+      "phase": "planning"
+    },
+    {
+      "id": "feat-022",
+      "name": "P00 对照版本与贡献项原子清单",
+      "description": "固定SHA参考构建/发行服务参考可重复；贡献项交叉导出；golden/风险fixture；编辑器/Web引擎/官方服务三项限时实验与ADR齐备；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-021"
+      ],
       "status": "in-progress",
-      "evidence": "Windows 构建 ✅（docs/03 §2.1）"
+      "evidence": "P00.1 done：固定SHA与签名/版本元数据已核验；Windows Code-OSS client-only build、Electron 43.8.3启动、runtime环境与product.json内置扩展包清单已登记；微软精确发行物未找到，差异与未构建lane见docs/diagnostics/2026-10-27-p00/reference-acquisition.md、runtime-evidence.json、reference-workbench.png。P00.2 done：固定源码 AST、95个扩展manifest、product.json与运行时registry交叉导出12,958条；未知路由保留，具体数量/差异见docs/diagnostics/2026-10-27-p00/atomic-contributions.md。P00.3 done：Windows Git Bash 四个风险夹具运行通过，固定参考与 Alula 页面图、环境及门禁结果登记；Code-OSS 双文件撤销对照也已运行。Alula 语言为 zh-CN、参考为 en-US；其余三项固定参考配对作为后续对照。证据：docs/diagnostics/2026-10-27-p00/p00.3-replay.md、p00.3-current-state.json、p00.3-environment.json、alula-welcome.png。P00.4 blocked：实验1 Windows CodeForge 探针完成，见 p00.4-editor-adr.md 与 p00.4-editor-evidence.json；实验2 Windows Flutter/WebView2/CDP/MHTML 与 Linux WebKitGTK 原生 GTK 引擎（页面快照、MHTML保存/重载、Web Inspector、进程私有内存）有证据；Linux Flutter/WPE probe 的 analyze/test/Release build 及 WPE 2.52.6 官方源码构建后的 Xvfb MHTML/截图/销毁回放通过，基线回放禁用了 WebKit sandbox 并关闭 GBM 软件渲染路径；后续在 Docker SYS_ADMIN + seccomp unconfined、UID 1000 下将 sandbox-disable 环境变量保持 unset，观察到 bwrap 子进程且 MHTML 重载通过；旧无等待抓图首帧为全透明缓冲。插件 takeScreenshot 只复制当前像素缓冲、不等待 WPE 帧回调；独立探针现于 DOM 查询前等待标题蓝色像素，三次冷启动均获得初始页与 MHTML 截图，最终版本一次重试后通过。此为探针级处理，不证明产品或跨主机帧同步。本地回放关闭 GBM；后续 CI 的 GBM-disable 变量 unset 但使用 Xvfb/software GL，硬件 GBM 仍未验证；Debian sid WPE 2.54.2 因旧设置 API、Trixie WPE 2.48.3 legacy FDO 因缺少 webkit_web_view_get_theme_color 仍构建失败；Linux CDP 不支持；WPE 2.52.6 Remote Web Inspector HTTP target list/Main.html (HTTP 200) 与 WPE Inspector protocol session 已验证：经 Target.sendMessageToTarget multiplexing 调用 Runtime.enable/Runtime.evaluate，返回 Alula Web Probe 与 marker=true；Linux CDP 仍不支持，见 p00.4-linux-wpe-inspector-protocol-evidence.json 与 p00.4-linux-wpe-2.52.6-inspector-protocol-run/。WSLg 宿主 D3D12 EGL/GLES 成功；WPE 2.52.6 容器快照映射 WSLg 设备且 GBM enabled 时，Flutter EGL context failure、WPEWebProcess crash、initial-loaded 未到达；容器 X11/Wayland EGL 都为 EGL_NOT_INITIALIZED；Wayland socket 可连但无 GLES2 config；WPE 镜像内 `gbm_create_device` 也返回 null、未分配 buffer。这是当前 Debian Mesa/WSLg 集成失败，不是 WPE 不支持的结论。最小 Debian GBM probe 因缺少 DRI driver 也 inconclusive。Safari Inspector 已由 macOS run 40647161201 验证页面级附着；WPE GBM、完整产品内存验收与官方服务仍未解决，见 p00.4-linux-wpe-wslg-d3d12-run/、p00.4-wslg-egl-evidence.json、p00.4-web-adr.md、p00.4-web-evidence.json、p00.4-linux-webkitgtk-evidence.json、p00.4-linux-webkitgtk-run/、p00.4-linux-wpe-evidence.json、p00.4-linux-wpe-2.52.6-build.md、p00.4-linux-wpe-2.52.6-run/、p00.4-linux-wpe-2.52.6-default-sandbox-run/、p00.4-linux-wpe-2.52.6-frame-poll-run*/、p00.4-linux-wpe-build.log、p00.4-linux-wpe-trixie-compat.log、tools/web-engine-probe/linux/；实验3核对固定 Code-OSS 与本机正式版产品配置并查阅官方政策，Marketplace 不允许 Code-OSS fork、正式产品 client 身份/Sync 权限未提供，见 p00.4-services-adr.md 与 p00.4-services-evidence.json。三项 ADR/证据齐备但阻塞未消除；macOS workflow 初次预检的默认分支 404 与未推送状态是历史检查点，用户随后授权推送；之后的 macOS runner 证据见 40614141265 与更新的 40616364760。详见 p00.4-macos-dispatch-preflight.json 与对应 run 目录。P00/feat-022 仍 in-progress，不能签收。 P00.4 Windows Rust+RA 完整重跑 2（2026-10-29）：1800.015秒、150/150次保存、1808个样本，Private Bytes 683.19/661.77/665.47 MiB；关闭+30秒4个观察PID退出，隔离HOME/fixture清理且前台恢复。稳定值仍高于500 MiB目标161.77 MiB；P00.4继续blocked。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.{json,md,activity.json,probe.stderr.log}。 P00.3 2026-10-28 Windows Git Bash复跑：build_core、Flutter两项风险fixture、editor-core workspace-close、editor-lsp slow-completion四项全通过，输出见docs/diagnostics/2026-10-27-p00/p00.3-windows-gitbash-rerun-2026-10-28.log。P00.4 Linux/WPE三轮自动内存采样与单轮无截图F5周期显示销毁+30s仍有未归因的父进程/NetworkProcess残留；不满足docs/04验收且维持blocked，证据见docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-memory-repeat-evidence.json与对应run目录。 2026-10-28 Windows Git Bash完整门禁复跑：cargo fmt --check、bash init.sh（Rust tests、Clippy、build_core、Flutter 122项）及单独app flutter analyze全部退出0；Flutter超大恢复fixture 2:11。完整输出见docs/diagnostics/2026-10-27-p00/p00-full-validation-windows-gitbash-2026-10-28.log。 P00.4 Linux/WPE补充：3轮不截图/MHTML的手动F5创建/销毁重复验证显示销毁+30s private/PSS中位残留40.2/42.5 MiB，NetworkProcess留存、Flutter父进程增加约41.2/42.3 MiB；仍为探针级、未归因，不满足docs/04，P00.4维持blocked。见p00.4-linux-wpe-memory-repeat-evidence.json及p00.4-linux-wpe-manual-f5-repeat-run1/至run3/。新增一次Heaptrack插桩的无截图自动生命周期：销毁+30s父进程比同轮基线高98.2/101.7 MiB private/PSS；profile峰值栈有51.25 MiB经插件WPE初始化进入swrast，93.52 MiB调用点未解析。插桩改变内存行为、峰值不等于留存、强制退出的leak数字不作结论；仍未解释原始约40 MiB残留。见p00.4-linux-wpe-parent-heaptrack-evidence.json与p00.4-linux-wpe-parent-heaptrack-run3/。 P00.4 Linux/WPE parent smaps follow-up: one UID 1000 no-capture cycle showed +40.90 MiB private/+43.23 MiB PSS at destroy+30s; parent [heap]/WPE file/anonymous mapping groups grew but no live-allocation owner or leak was established. See docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-smaps-evidence.json and p00.4-linux-wpe-parent-smaps-run1/; P00.4 remains blocked. P00.4 Linux/WPE同进程10轮无截图创建/销毁 follow-up：第10轮 destroy+30s仍比基线高81.20 MiB private/83.63 MiB PSS，父进程 heap/匿名映射/WPE文件页均增加；周期有回落，不能据此证明leak或owner。见docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-multi-cycle-evidence.json及p00.4-linux-wpe-multi-cycle-run1/；P00.4继续blocked。 P00.4 macOS 15 runner run 40616364760：probe analyze/test、Release build 与 WKWebView Web Archive replay 全通过；693-byte archive 在同一视图重载后 title/marker 正确、archiveParsed=true，证据 docs/diagnostics/2026-10-27-p00/p00.4-web-macos-run-40616364760/。Safari Web Inspector 手动附着与 docs/04 产品内存仍 open。Linux Debian sid WPE run 40616364735：probe analyze/test、Release build、memory sampler build 与默认 WebKit sandbox 下 MHTML replay 全通过；WPE WebKit 2.52.6、FDO 1.16.1，sandbox/GBM-disable variables unset、bwrap observed；容器 security label 为 unconfined 且带增强 capabilities。初始帧4次/465ms、MHTML帧1次/50ms；2,587-byte archive SHA-256 记录于 p00.4-web-linux-run-40616364735/evidence.json。destroy+30s private 406.8 MiB（相对创建前+117.4 MiB），NetworkProcess 留存；单轮探针不证明 leak、不满足 docs/04 多轮长时产品验收，GBM 未验证。此前Linux失败 run 40614141322、40614659876、40615270834、40615761042均保留为修复过程证据；最终成功 run 已关闭构建与 sandbox-child 启动缺口，但生产安全 profile 与硬件 GBM仍未验收。CI root run 40616364863通过。P00.4 保持 blocked。 WSL 2026-10-28：Flutter 3.47.8/Dart 3.13.7 原生 WSL runner 的 cargo fmt、完整 bash init.sh、flutter analyze 与 serial flutter test 122 项全通过；见 docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md。P00.4 阻塞项未解除，状态保持 in-progress。 WSL follow-up 2026-10-28：原生 Flutter 3.47.8/Dart 3.13.7 与 Linux desktop toolchain 依赖已安装，flutter doctor Linux toolchain 检查通过；完整 bash init.sh、analyze、122 项 Flutter tests、Rust fmt/clippy 全通过。记录：docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md。 WSL Linux desktop target check 2026-10-28：`bash scripts/build_core.sh` 通过；主产品 `app/` 的 `flutter build linux --release --no-pub` 在编译前因没有 Linux desktop project 配置退出。主产品 Linux runner 留作后续跨平台阶段；独立 WPE probe 有 Linux runner 与 CI 证据，详见 docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md。 Windows Release follow-up 2026-10-28：Windows Git Bash 下 build_core、pub get --enforce-lockfile、flutter build windows --release --no-pub 全通过；主应用 Linux release 因缺少 Linux desktop project 配置未开始编译。见 docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md。 Windows empty-worktree follow-up 2026-10-28：当前 Windows Release 工作树三次 45s 空窗口进程树采样，稳态 Private Bytes 中位数 187.46 MiB；末轮关闭+30s 后进程数 0。仅探索基线，不满足 docs/04 完整产品门。详见 docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-current-empty-summary.md。 P00.4 Windows LSP auto-start exploratory sample 2026-10-28: 45 one-second samples observed only alula_app.exe; no rust-analyzer child. It is not a Rust+LSP memory result. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-lsp-autostart-attempt.json and .md. P00.4 WSL cross-OS package-config recovery 2026-10-28: after rebuilding ignored .dart_tool package config from the WSL offline cache, bash init.sh --fast passed cargo tests, build_core, and 122 Flutter tests (Clippy skipped). Log: docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log. P00.4 Windows Rust+RA exploratory memory 2026-10-28: three cold 60-second Windows Release samples with isolated HOME; stable Private Bytes 589.84/593.10/588.58 MiB (median 589.84), exceeding the 500 MiB target. All three final trees contained Alula, two rust-analyzer.exe processes, and rust-analyzer-proc-macro-srv.exe; all were gone 30 seconds after the last run. Not the complete docs/04 gate. Summary: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md; raw run JSON/Markdown in the same directory. P00.4 Windows Rust+RA 10-minute idle follow-up: one 600-second isolated-HOME sample, 600 one-second samples; peak/stable/final Private Bytes 600.08/589.09/588.11 MiB, still 89.09 MiB over target and near the prior 1-minute stable median. Two watcher-path warnings recurred at startup; all four sampled PIDs were gone 30 seconds after close. This is one idle sub-scenario only, not docs/04 completion. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-10min.json, .md, and p00.4-windows-alula-rust-lsp-summary.md. P00.4 Windows Rust+RA idle run 2: 600-second isolated-HOME sample, 600 one-second samples; peak/stable/final Private Bytes 603.16/589.27/590.77 MiB, 89.27 MiB over target and within 0.18 MiB of idle run 1 stable memory. The two watcher-path warnings recurred; all four PIDs exited by the 30-second post-close check. User reports no available real DRM host or authorized Microsoft client identity. Idle repetition is incomplete (run 3 active), and 30-minute editing, same-service VS Code comparison, and full-product memory gates remain open. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run2.json/.md and p00.4-windows-alula-rust-lsp-summary.md. P00.4 Windows Rust+RA idle run 3: 600-second isolated-HOME sample, 600 one-second samples; peak/stable/final Private Bytes 608.72/589.09/591.70 MiB, 89.09 MiB over target. Across three idle runs stable median is 589.09 MiB; no idle growth or budget recovery observed. Two watcher-path warnings recurred; all four PIDs exited by the 30-second post-close check. The 10-minute idle repetition is complete, but 30-minute editing, same-service VS Code comparison, and full-product/platform memory gates remain open. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-idle-run3.json/.md and p00.4-windows-alula-rust-lsp-summary.md. Same-service VS Code comparator preflight used an isolated profile and extension copy. Both PowerShell WindowStyle Minimized and WSH SW_SHOWMINNOACTIVE launches changed foreground; each guard restored the prior window and terminated the isolated process, with no sample collected. No user-profile data changed and temporary copies were removed. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-vscode-rust-lsp-preflight.json and p00.4-vscode-rust-lsp-idle.ps1. A foreground comparator requires user approval and is not version-matched to pinned Code-OSS 1.145.0-dev. P00.4 Windows Rust+RA scripted editing: following the 30-second preflight, three full 30-minute runs each saved 150/150 edits over 1,800 seconds and recorded 1,808 one-second mem-probe samples. Stable Private Bytes were 676.20/672.36/660.81 MiB (median 672.36 MiB, 172.36 MiB over the 500 MiB budget); peak/final medians were 858.16/674.20 MiB. Every recorded PID exited at the close+30-second check, but all three full-run stderr logs retained two watcher-path warnings and rust-analyzer \"client exited without proper shutdown sequence\", so graceful LSP shutdown is unproven. Two additional run-3 retries failed save verification after foreground returned to HWND 267254 and are invalid samples; the final completed run used Ctrl+S and continuous foreground checks. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-summary.md, p00.4-windows-alula-rust-lsp-edit-interrupted-attempts.md, and the three run1/run2/run3 JSON, activity, Markdown, and stderr reports. P00.4 remains in-progress/blocked; P01 must not start. P00.4 Windows Rust+RA process-attribution follow-up: one further 1800-second edit run saved 150/150 edits and captured 1809 one-second total-tree samples plus 32 per-process snapshots/128 rows. Stable total Private Bytes was 660.29 MiB (160.29 MiB above target); tail-window process medians were main rust-analyzer 428.68 MiB, Alula 227.75 MiB, launcher 3.14 MiB, and proc-macro server 2.88 MiB. All observed PIDs exited after 30 seconds; graceful LSP shutdown remains unproven. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run1-20261028-235126746.md, .json, -activity.json. P00.4 remains blocked; P01 not started. P00.4 Windows Rust+RA full edit rerun 2026-10-29: isolated 1800-second foreground workflow saved 150/150 edits, captured 1808 one-second memory samples and 32 per-process snapshots/128 rows. Peak/stable/final Private Bytes 679.95/657.55/661.45 MiB; stable remains 157.55 MiB over target. Final marker/hash verified, all 4 observed PIDs exited after 30 seconds, and temporary HOME/fixture were removed. Tail-window medians: main rust-analyzer 427.02 MiB, Alula 223.49 MiB, launcher 3.05 MiB, proc-macro 2.86 MiB. Watcher-path and non-graceful shutdown warnings remain. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run1-20261029-002641395.md/.json/-activity.json and summary. P00.4 remains blocked; P01 not started. Full WSL gates for this rerun also passed: cargo fmt --check, bash init.sh (workspace tests, Clippy, build_core, Flutter 122 tests), and flutter analyze. P00.4 LSP graceful-shutdown follow-up (2026-10-29): ABI v5 workspace shutdown FFI, didClose/shutdown-response/exit/reap lifecycle and Dart disposal wired; fake-LSP integration asserts ordered notifications and shared-server tab-close behavior. cargo fmt, workspace tests, Clippy, build_core, flutter analyze, and bash init.sh (122 Flutter tests) pass. The existing uncommitted Ctrl+Click listener was deferred until after pointer/focus dispatch for test validation; that workbench hunk remains unstaged. Real Windows rust-analyzer shutdown has not been rerun after the change; see docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md. GitNexus staged detect-changes reports HIGH across 9 flows; the fresh index truncates 201/401 candidate entry points, 123 callees, and 2 walks, so this is not a complete graph proof. P00.4 remains blocked; P01 not started. P00.4 post-fix Windows real LSP close verification: window_manager 0.5.2 now intercepts WM_CLOSE and runs workspace shutdown before destroy; 30-second smoke and 1800.011-second foreground run showed no client exited without proper shutdown sequence. Full run saved 150/150 edits and captured 1815 samples; peak/stable/final Private Bytes 798.17/657.82/232.52 MiB. Six observed PIDs exited after 30 seconds and isolated HOME/fixture were cleaned; two watcher-path warnings remain and stable memory is 157.82 MiB over the 500 MiB target. Evidence: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-030127104.* and ...030253128.*; lifecycle analysis: docs/diagnostics/2026-10-29-p00/p00.4-lsp-graceful-shutdown.md. P00.4 post-close cross-platform validation: WSL init.sh --fast passed; CI 40758401730, macOS probe 40758401692, Linux WPE probe 40758401773 passed at 5e6e0ce. Detailed scope and limits: docs/diagnostics/2026-10-29-p00/p00.4-cross-platform-validation-followup-20261029.md.\nP00.4 WSL Linux 主应用 runner follow-up（2026-10-29）：加入 app/linux runner 与 bundle Rust SO；build_core 按 rustc host triple 选库，Windows Git Bash/WSL 两端产物验证通过；Linux Release build、6 项 FFI 对拍、cargo fmt/Clippy、flutter analyze 与 init.sh --fast（122 项）通过。证据：docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-main-runner.md。仅为 WSL build/FFI 证据，真实 DRM/WPE GBM 与 docs/04 产品内存压力验收仍未完成；feat-022 保持 in-progress。 P00.4 Windows 前台 Rust+RA 完整复跑（2026-10-29）：1800.011秒、150/150次保存、1817个内存样本，Private Bytes 峰值/稳定/最终 846.68/661.44/233.00 MiB；稳定值超500 MiB目标161.44 MiB。marker/hash通过，4个观察PID关闭+30秒均退出，临时HOME/fixture清理、前台恢复；stderr无非优雅shutdown警告但仍有两条watcher-path告警。独立follow-up不并入原三轮中位数，P00.4仍blocked。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-043806492.json/.md/-activity.json/-probe.stderr.log。 P00.4 WSLg Linux 主应用 cgroup 交互探索（2026-10-29）：512 MiB/swap=0 无 LSP 单轮保存通过；真实 Rust Analyzer 在 512 MiB scope 被 OOM killer 终止；1 GiB 单轮编辑保存退出通过，memory.current 峰值 903749632 bytes（861.9 MiB），OOM=0。成功退出仍有 FlutterEngineRemoveView warning。仅探索单轮，不满足 docs/04 各档三轮及长时产品进程树验收；P00.4 保持 blocked。证据：docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md。 GitHub CI run 40772304233（提交 e0256b2）全绿：Harness、Ubuntu/Windows Rust fmt/Clippy/tests、Flutter analyze 与 122 项测试通过；该 CI 不替代 cgroup/DRM/官方服务验收。 本机会话收尾完整 bash init.sh 退出 0：Rust workspace tests、Clippy、build_core 与 Flutter 122 项测试通过；P00.3 recovery fixture 用时 2:36。 P00.4 WSL Linux Release 主应用 cgroup v2 重复矩阵：31 次尝试，scope 含 xvfb-run/Xvfb/应用/子服务，swap=0；no-RA 256/512/1024 MiB 保存关闭 3/4、3/3、3/3，RA 1 GiB 3/3 保存关闭、RA 64–512 MiB 各 3/3 systemd OOM。256 MiB no-RA 的原 marker 失败保留并另补第4次通过。短时 WSLg/software-GL 结果不等于 docs/04 长时矩阵；P00.4 保持 blocked。证据：docs/diagnostics/2026-10-29-p00/p00.4-wsl-main-app-cgroup-matrix.md/.json；旧单轮 Xvfb scope 边界更正见 p00.4-wsl-linux-cgroup-interaction.md。 P00.4 WSL Rust+RA 长时 cgroup follow-up：1 GiB/swap=0、scope含Xvfb/主应用/服务，1800.000秒、150/150次保存；峰值memory.current 837.59 MiB，scope PSS 924.75 MiB、OOM=0；关闭+30.002秒Alula退出码0且RA/proc-macro退出。产品进程树尾部10分钟PSS中位数870.53 MiB，超500 MiB目标370.53 MiB；前后10分钟中位数上升约13 MiB，单轮不证明稳定；watcher与FlutterEngineRemoveView告警仍在。WSLg/Xvfb/software-GL单轮不覆盖idle/模型/同场景VS Code。证据：docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-30m-cgroup-1024-20261028-223917.md/.json。 P00.4 Windows Alula Rust+RA 前台完整复跑（2026-10-29）：1800.015秒、150/150次保存、1815样本，Private Bytes峰值/稳定/最终841.89/657.93/233.85 MiB；marker/hash通过，6个观察PID关闭+30秒均退出，HOME/fixture清理、前台恢复；两条watcher-path告警，无非优雅shutdown告警。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-065714888.*。 同服务 Windows VS Code 1.142.0 Stable + rust-analyzer 1.97.1 隔离空闲补充对照已完成：600样本、实际759.872秒、stable Private Bytes 1267.18 MiB；一次启动前台恢复后继续，关闭+30秒进程全退。该对照非锁定 Code-OSS 1.145.0-dev，不替代完整 P00.4 对照。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle.{json,md}。 WSLg/Xvfb/Linux Release 主应用 1GiB、swap=0、真实RA 的10分钟idle：600秒无输入，memory.current峰值803.91 MiB、scope PSS峰值889.30 MiB、单核归一CPU 8.036%、OOM=0，关闭+30秒RA/proc-macro退出；单轮软件渲染证据。P00.4/feat-022仍in-progress/blocked，P01不开始。证据：docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-10m-idle-cgroup-1024-20261029-065450.*。 阶段提交 c7f0d9bc9817d36e0dad73f7b14c018ccca51f8f 已推送到 PR #1；CI run 40791174980（Flutter analyze/test、Ubuntu/Windows Rust、Harness）、40791174984（macOS WKWebView/Safari）和 40791174974（Linux WPE）全部通过。 P00.4 Windows run3 process attribution: 13 tail snapshots from the existing activity JSON show rust-analyzer server median 425.05 MiB, Alula 226.11 MiB, launcher 3.21 MiB, proc-macro 2.86 MiB; paired process-tree median 657.38 MiB, consistent with 657.93 MiB one-second stable Private Bytes. Derived report: docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-065714888-process-breakdown.md. WSL `init.sh --fast` revalidation passed Rust tests, build_core, and Flutter 122 tests after offline `flutter pub get --enforce-lockfile` from the existing Windows Pub Cache; no tracked pubspec change. P00.4 Windows VS Code same-service idle 隔离复跑（2026-10-29）：新建空 user-data/shared-data，复用仅含 rust-analyzer 0.3.3089 的隔离扩展；同服务 rust-analyzer 1.97.1。600样本/783.187秒，Private Bytes 峰值/时间尾段40%上中位/最终1651.25/1324.33/1322.04 MiB，RA可见，一次启动焦点恢复后采样继续，13个PID关闭+30秒全退；临时profile/shared-data已清理。版本不是固定Code-OSS 1.145.0-dev，不能代替完整对照。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle-rerun-20261029-002522.{json,md}、同前缀.log/.ps1。指标口径修正：原始采样保持不变，现按 tools/mem-probe::summarize 的时间尾段算法重算两轮 stable 值，分别为 1267.18/1324.33 MiB。 P00.4 VS Code 同服务 idle 第三轮（2026-10-29）：VS Code 1.142.0 Stable + rust-analyzer 1.97.1，600点/762.063秒，Private Bytes 峰值/时间尾段稳定/末值1689.98/1298.38/1306.09 MiB；三轮稳定中位数1298.38 MiB；启动一次焦点恢复，13个PID关闭+30秒全退。版本非固定 Code-OSS，idle 仅补充证据。另有 `cachePriming.enable=false` 120秒隔离烟测，稳定差约4 MiB且峰值更高约104 MiB，不据此改产品配置。详情 docs/03 与 docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle-repeat-20261029-011501.md、p00.4-windows-alula-rust-lsp-cachepriming-off-20261029-091012539.md。 P00.4 WSLg/Xvfb Rust+RA idle observations (2026-10-29): existing run plus two valid 600-second repeats at 1 GiB/swap=0; peak memory.current 803.91/809.56/821.54 MiB, scope PSS 889.30/880.26/892.16 MiB, OOM=0, app exit=0 and no RA after +30s. New repeats attribute 146.97–154.79 CPU seconds to Alula; idle CPU differs from the older sample and needs WSL software-GL follow-up. One short UI-close preflight ending SIGTERM is excluded and recorded in docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-ui-preflight-20261029.{json,md}. Summary and evidence: docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-3run-summary-20261029.md, repeat2/repeat3 JSON+Markdown, p00.4-wsl-rust-ra-idle-repeat.py, and p00.4-wsl-rust-ra-idle-ui-check-src-main-20261029.png. This is WSLg/Xvfb evidence only; 500 MiB target, DRM/WPE GBM/DMABUF, Microsoft service authorization, matched VS Code, and full docs/04 product matrix remain open; feat-022 stays in-progress/blocked. Stage commit 07515f3 was pushed; CI 40806485257, Linux WPE probe 40806485215, and macOS Web Engine probe 40806485341 all succeeded. These checks do not satisfy the remaining external/platform gates. Windows VS Code same-service idle 隔离复跑 2（2026-10-29）：VS Code 1.142.0 + rust-analyzer 1.97.1，600 点/729.671 秒，Private Bytes 峰值/尾段稳定/末值 1630.83/1351.11/1343.63 MiB；13 个观察 PID 关闭+30秒退出，启动焦点恢复一次，隔离 profile/扩展/shared-data 已清理。四轮 idle 稳定值中位数 1311.36 MiB。非固定 Code-OSS 版本、非编辑负载，不完成 docs/04 或 P00.4；状态保持 in-progress。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle-repeat2-20261029-024524.{json,md}、p00.4-windows-vscode-rust-lsp-idle-20261029-134127345.log、p00.4-vscode-rust-lsp-idle-repeat2-20261029-024524.ps1。 P00.4 LRU 容量隔离筛选（2026-10-29）：Alula Windows Release + rust-analyzer 1.97.1 临时配置 capacity=128/32/16，均确认 RA 读取配置且无配置错误。16 的 120 秒筛选尾段稳定 Private Bytes 593.06 MiB，但 1800 秒/150 次保存长测为峰值/稳定/最终 858.18/659.96/236.84 MiB；稳定值比既有无此限制 run3 的 657.93 MiB 高 2.03 MiB，且高于 500 MiB 目标 159.96 MiB。短筛选收益未延续；不改产品默认配置、不计 docs/04 验收。四轮原始 JSON/Markdown/编辑记录与脚本见 `docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-lru-capacity-screen-20261029.md`。P00.4/feat-022 继续 in-progress/blocked，P01 不启动。 P00.4 固定版 Code-OSS 同服务 idle follow-up 完成（2026-10-29）：NLS dev-build 启动根因已定位并修复参考 checkout 生成物；600 样本/888.565秒，RA 1.97.1 可见，尾段稳定 Private Bytes 1702.66 MiB，前台未变，关闭+30秒 PID 全退且临时目录清理。证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.{json,md,log}；根因与重建过程见 p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.md。此项不替代编辑负载/完整 docs/04，P00.4 仍 blocked。 固定 server 的 per-query LRU 配置源码审计确认该设置是 no-op，未启动无效实验；证据：docs/diagnostics/2026-10-29-p00/p00.4-rust-analyzer-query-lru-config-audit.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P00"
+    },
+    {
+      "id": "feat-023",
+      "name": "P01 异步服务/上下文/进程监督",
+      "description": "request/version/cancel/背压/ABI对拍；慢/失序服务不阻塞；关工作区清空任务/进程；无全量定时轮询；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-022"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P01"
+    },
+    {
+      "id": "feat-024",
+      "name": "P02 文档事务/保存/恢复",
+      "description": "每文档撤销与跨文档事务、编码/EOL/savepoint对照；外部冲突/掉电/坏盘/超大未保存文本无静默丢失；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P02"
+    },
+    {
+      "id": "feat-025",
+      "name": "P03 编辑器输入与绘制",
+      "description": "ADR选定真实控件/文本归属；三平台IME/多光标/列选/万行长行/多视图/无障碍/内存硬门通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-024"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P03"
+    },
+    {
+      "id": "feat-026",
+      "name": "P04 编辑命令/查找/片段/diff/merge",
+      "description": "EDT全部注册子项对拍，含selection/undo/dirty/多文档预览应用回滚；不是只有可见按钮；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-025"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
+    },
+    {
+      "id": "feat-027",
+      "name": "P05 工作台界面1:1",
+      "description": "LAY/CMD页面全状态golden与键鼠焦点/拖放对照，含双侧栏/浮窗/modal/locked scrolling；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-025"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-028",
+      "name": "P06 Explorer/多根/搜索/Timeline",
+      "description": "FS/SRC全部流程；.code-workspace/ignore/dirty搜索/全局替换/watch overflow/全量可达通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-024",
+        "feat-027"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P06"
+    },
+    {
+      "id": "feat-029",
+      "name": "P07 配置/键位/主题/Profiles",
+      "description": "默认配置与优先级、when/chord/平台键位、所有随附主题图标/片段、Profiles隔离迁移一致；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-027"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P07"
+    },
+    {
+      "id": "feat-030",
+      "name": "P08 全部默认语言服务",
+      "description": "随附语言/grammar逐项fixture、JS/TS/HTML/CSS/JSON/Markdown/PHP/Emmet真实provider、Problems与完整编辑返回通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-028",
+        "feat-029"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P08"
+    },
+    {
+      "id": "feat-031",
+      "name": "P09 Git/SCM",
+      "description": "GIT全部项，含块暂存/分支远程/stash/worktree/graph/blame/conflicts；Git故障和Unicode路径对拍；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-028"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P09"
+    },
+    {
+      "id": "feat-032",
+      "name": "P10 PTY终端/shell integration",
+      "description": "TER全部项，ConPTY/Unix VT/输入/split/持久化/suggest/流控/进程回收及资源预算通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-023",
+        "feat-027",
+        "feat-029"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P10"
+    },
+    {
+      "id": "feat-033",
+      "name": "P11 Tasks/默认JS调试/Testing-Comments容器",
+      "description": "TSK/DBG全项，真实js-debug与companion/profile、外部Chrome-Edge、任务matcher；集成浏览器联调交P12，无provider不伪造默认测试能力；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-030",
+        "feat-032"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P11"
+    },
+    {
+      "id": "feat-034",
+      "name": "P12 Markdown/Notebook/media/browser",
+      "description": "NBK/MDK/WEB全项，rich/公式/Mermaid/renderer/DevTools/CDP及P11浏览器联调真实可用；安全隔离与按需内存通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-026",
+        "feat-027",
+        "feat-029",
+        "feat-030",
+        "feat-033"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P12"
+    },
+    {
+      "id": "feat-035",
+      "name": "P13 账户/同步/Cloud Changes/Ports/管理",
+      "description": "NET全项，非AI联网能力真实试跑；官方互通/注册/分发条件有证据，自建替代不能冒称官方1:1；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-028",
+        "feat-029",
+        "feat-032"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P13"
+    },
+    {
+      "id": "feat-036",
+      "name": "P14 系统/无障碍/安全/质量整合",
+      "description": "ACC全项；三平台CLI/权限/信任/可访问性/资源观测；全功能故障与性能报告通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-030",
+        "feat-031",
+        "feat-032",
+        "feat-033",
+        "feat-034",
+        "feat-035"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P14"
+    },
+    {
+      "id": "feat-037",
+      "name": "P15 全量对照与发布",
+      "description": "REL全项；原子项未映射/未验收为0，所有硬门绿；安装更新回退/资源回收/差异账本签收；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "dependencies": [
+        "feat-036"
+      ],
+      "status": "not-started",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P15"
     }
-  ]
+  ],
+  "active_track": "vscode-builtin-parity",
+  "state_authority": "docs/03-里程碑计划与验收标准.md#当前主线：VS-Code-无插件全功能-1:1",
+  "reference": {
+    "vscode": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "vscode_docs": "da213552439825628e0ab958dbde1e413dbc36bf"
+  }
 }

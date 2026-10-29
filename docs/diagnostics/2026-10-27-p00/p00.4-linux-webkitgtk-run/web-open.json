@@ -1,0 +1,35 @@
+{
+  "phase": "web-open",
+  "capturedAtMonotonicSeconds": 5.395,
+  "rootPid": 107919,
+  "webkitgtkVersion": "2.52.6",
+  "processes": [
+    {
+      "pid": 107919,
+      "ppid": 107881,
+      "comm": "python3",
+      "rss_kib": 168856,
+      "private_kib": 53172
+    },
+    {
+      "pid": 107997,
+      "ppid": 107919,
+      "comm": "WebKitNetworkPr",
+      "rss_kib": 49316,
+      "private_kib": 9068
+    },
+    {
+      "pid": 108001,
+      "ppid": 107919,
+      "comm": "WebKitWebProces",
+      "rss_kib": 214872,
+      "private_kib": 111840
+    }
+  ],
+  "initialScreenshot": {
+    "ok": true,
+    "path": "p00.4-linux-webkitgtk-open.png",
+    "width": 960,
+    "height": 640
+  }
+}

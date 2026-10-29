@@ -1,0 +1,77 @@
+{
+  "experiment": "P00.4 Linux WPE Remote Web Inspector HTTP endpoint",
+  "recordedAt": "2026-10-28",
+  "status": "remote-inspector-target-and-frontend-http-available; protocol-session-and-cdp-unverified",
+  "scope": "A standalone Flutter Linux/WPE probe was run with WEBKIT_INSPECTOR_HTTP_SERVER bound to loopback. The remote inspector target list contained the probe page and the server returned its Main.html frontend. This verifies endpoint and target discovery only; it does not verify an attached inspector command session or Chrome DevTools Protocol.",
+  "runtime": {
+    "host": "WSL2; Debian GNU/Linux 12 Bookworm container",
+    "flutter": "3.47.8 stable",
+    "webviewPlugin": "flutter_inappwebview 6.2.0-beta.3",
+    "linuxPlugin": "flutter_inappwebview_linux 0.1.0-beta.1",
+    "wpeWebKit": "2.52.6 source build",
+    "display": "Xvfb :99, 1440x900x24",
+    "probeUser": "probe (uid 1000)",
+    "WEBKIT_INSPECTOR_HTTP_SERVER": "127.0.0.1:9231",
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1"
+  },
+  "results": {
+    "replayExitCode": 0,
+    "replayPhases": [
+      "initial-loaded",
+      "mhtml-loaded",
+      "webview-destroyed"
+    ],
+    "initialPageMarker": true,
+    "initialPageCaptureAttempts": 2,
+    "mhtmlPageMarker": true,
+    "inspectorRootHttpStatus": 200,
+    "targetListed": "Alula Web Probe",
+    "targetType": "WebPage",
+    "targetUrlReportedByWPE": "about:blank",
+    "webSocketPathListed": "/socket/1/1/WebPage",
+    "inspectorFrontendHttpStatus": 200,
+    "inspectorFrontendBytes": 2680,
+    "runtimeCapabilityReport": {
+      "callDevToolsProtocolMethodSupported": false,
+      "isInspectableSettingSupported": false
+    },
+    "pluginSourceObservation": "The pinned Linux plugin implementation defaults enableDeveloperExtras to true and calls webkit_settings_set_enable_developer_extras(); the Dart platform capability metadata still reports isInspectable unsupported.",
+    "destroyed30sMemorySampleCaptured": true,
+    "memorySnapshotNames": [
+      "before-webview-memory.json",
+      "webview-open-memory.json",
+      "mhtml-reloaded-memory.json",
+      "webview-destroyed-memory.json",
+      "webview-destroyed-30s-memory.json"
+    ]
+  },
+  "limitations": [
+    "This inspector run explicitly disabled the WPE sandbox and GBM; it is endpoint feasibility evidence, not production-security or hardware-rendering evidence.",
+    "The HTTP target list and Main.html were fetched, but no inspector UI was attached and no inspector protocol command received a verified response.",
+    "The WPE Inspector protocol is not claimed to be Chrome DevTools Protocol; the pinned Flutter Linux plugin reports CDP unsupported.",
+    "No macOS WKWebView/Safari Inspector or full product integration was tested.",
+    "The captured memory snapshots are exploratory single-run values and do not satisfy docs/04 multi-round sampling."
+  ],
+  "artifacts": {
+    "environment.txt": "e61a0373ea98f4e1bd3678c75de914166550ee72de784e4df1523f896df71c0d",
+    "inspector-target-list.html": "ea44114200156efc94f879790fe3f55fbfed90d7e32150bb0c7a29b0915e9442",
+    "inspector-ui.headers": "29c3d5ffab1c373a0bfeb813068be84be4a8c0376e22339481a707e6dd731728",
+    "p00.4-web-initial-page.json": "c019d2f1957995b98922052e1f510418d9b691aa3e4c92d3214d9ac887ab5013",
+    "p00.4-web-initial-render.png": "42964f2c48bad7b9a318104fae99ae230b1a631c8e1109edf2fb2cede2309481",
+    "p00.4-web-mhtml-page.json": "712f67bd7d6aa5a0888c4223c06dc528e5ad39fd7035b4a870a82e33dd0cafc4",
+    "p00.4-web-mhtml-render.png": "6d7699237e2cee13542053347495f6714c9d138a15d3985586c9324f85044a48",
+    "probe-exit.txt": "0643ff6d7dabb8178cb82825c4a841bf3be9eab0126a60f6d723c8111f7ffa6d",
+    "probe.log": "b019885d4c0ab022a2e1751fef0af86ca6bddf6d06d8430735d3dd04b5fbd525",
+    "runner.log": "e83ad2f7fa852bf4e4bb9b46f6049c67da7cb2882ece4e7aa672c3283f489c49",
+    "xvfb.log": "87e9572cf030493a1f7ba83d385129046b224374ca1414911674b30fc44276d7",
+    "mhtml.sha256": "8d7a8f43088d4a7cf751b3029d1e55f717e753d9c5c922b0e0a0b15b8de9ca43",
+    "before-webview-memory.json": "4ebf77211e2774b5372090e64eebc19dfd92847309614c2d785155a175a7e144",
+    "webview-open-memory.json": "3803221133bfd0899b15384fde8d670f25c42934bd79f9b7d1f82db43af82070",
+    "mhtml-reloaded-memory.json": "df01e2cf642b7d06a1d9e64d2a84e54d9b1fae59f932106f6ea5fc8ae925e47f",
+    "webview-destroyed-memory.json": "96c185145a395110bdf40c8c858091e76f5328f5bd5f0c341cea78457d7d5735",
+    "webview-destroyed-30s-memory.json": "6ea95f1a0d533c9bf66e9887b877b21d993177fda7d8eea005ecbd80b1755952",
+    "inspector-ui.html.gz": "3f80c6a675d195ab8b5d1ed3f50e37dbd2f17578fe13464cf592191601590972"
+  },
+  "artifactStorageNote": "inspector-ui.html is stored gzip-compressed to preserve the original 2,680-byte HTTP body; inspector-ui.headers is normalized from CRLF to LF for repository whitespace checks."
+}

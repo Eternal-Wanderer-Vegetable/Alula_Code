@@ -1,0 +1,3 @@
+Temporary WPE image; UID 1000 with supplementary render GID 992.
+Mounted /mnt/wslg/runtime-dir as XDG_RUNTIME_DIR and host /usr/lib/wsl/lib; passed /dev/dxg and /dev/dri/renderD128; GALLIUM_DRIVER=d3d12.
+wl_display_connect=connected. Mesa emitted "failed to create dri2 screen"; eglInitialize failed with EGL_NOT_INITIALIZED (0x3001); no GLES2 config. The WPE application was not run in this Wayland EGL probe.

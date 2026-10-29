@@ -1,0 +1,27 @@
+P00.4 Debian Trixie package compatibility probe
+Date: 2026-10-28
+Purpose: test whether Debian's stable WPE package provides a buildable backend for flutter_inappwebview_linux 0.1.0-beta.1.
+
+Container: temporary Bookworm-derived container with Debian forky/sid packages; this is not a clean Debian Trixie image.
+Selected packages:
+  libwpewebkit-2.0-dev=2.48.3-1 (from Debian trixie)
+  libwpewebkit-2.0-1=2.48.3-1 (from Debian trixie)
+  libwpebackend-fdo-1.0-dev=1.16.1-1+b1 (from Debian forky/sid)
+  flutter_inappwebview_linux=0.1.0-beta.1
+
+Package inspection:
+  pkg-config --modversion wpe-webkit-2.0 -> 2.48.3
+  pkg-config --exists wpe-platform-2.0 -> not found
+  libwpewebkit-2.0-dev contains no WPEPlatform headers
+  the plugin CMake file selected its documented legacy FDO branch (HAVE_WPE_BACKEND_LEGACY=1)
+
+Build attempts:
+  First CMake generation stopped because the Trixie wpe-webkit-2.0.pc advertises a missing
+  /usr/include/wpe-webkit-2.0/wpe-platform directory. To continue evaluating the legacy FDO
+  branch only, an empty directory was created inside this temporary container; no repository or
+  plugin source was changed.
+  After flutter clean, flutter build linux --release exited 1 while compiling the plugin:
+  in_app_webview.cc:6214:23: error: use of undeclared identifier 'webkit_web_view_get_theme_color'
+
+Result: Debian Trixie's WPE 2.48.3 package plus the FDO backend does not build this plugin version.
+No compatibility macro or plugin source patch was used. No application runtime replay was reached.

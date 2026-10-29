@@ -1,0 +1,79 @@
+{
+  "experiment": "P00.4-windows-webview2-beta-plugin-regression-replay",
+  "capturedOn": "2026-10-28",
+  "scope": "One exploratory WebView2 lifecycle replay after upgrading the isolated probe to the Linux-capable plugin beta",
+  "host": {
+    "os": "Windows 11 build 26200 x64",
+    "flutter": "3.47.8 stable",
+    "dart": "3.13.7",
+    "webViewRuntime": "Microsoft Edge WebView2 Evergreen 155.0.4283.62",
+    "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
+    "windowsPackage": "flutter_inappwebview_windows 0.7.0-beta.3",
+    "linuxPackage": "flutter_inappwebview_linux 0.1.0-beta.1"
+  },
+  "checks": {
+    "flutterAnalyzeExitCode": 0,
+    "flutterTestExitCode": 0,
+    "flutterTestCount": 1,
+    "windowsReleaseBuildExitCode": 0,
+    "smokeScriptExitCode": 0,
+    "cdpMethod": "Page.captureSnapshot",
+    "cdpParameters": {
+      "format": "mhtml"
+    },
+    "mhtmlBytes": 1438,
+    "mhtmlSha256": "d35ec209b5c373dc5a8bbb238ce68c38d9da3a5376cef54e7eb3e2a89de5d150",
+    "mhtmlHasMimeVersion": true,
+    "mhtmlHasPageMarker": true,
+    "mhtmlReloadVisible": true,
+    "probeProcessExited": true,
+    "buildNotes": [
+      "The Windows plugin's NuGet dependencies were downloaded with the official NuGet CLI.",
+      "The plugin emitted a CMake CMP0175 developer warning; the Release build still succeeded."
+    ]
+  },
+  "processTreePrivateBytes": [
+    {
+      "phase": "before-webview",
+      "processes": 1,
+      "privateMiB": 197.7,
+      "evidence": "p00.4-web-beta-run/p00.4-web-before.json"
+    },
+    {
+      "phase": "webview-loaded",
+      "processes": 7,
+      "privateMiB": 372.5,
+      "evidence": "p00.4-web-beta-run/p00.4-web-open.json"
+    },
+    {
+      "phase": "mhtml-reloaded",
+      "processes": 7,
+      "privateMiB": 406.9,
+      "evidence": "p00.4-web-beta-run/p00.4-web-mhtml-open.json"
+    },
+    {
+      "phase": "webview-destroyed",
+      "processes": 1,
+      "privateMiB": 210.3,
+      "evidence": "p00.4-web-beta-run/p00.4-web-destroyed.json"
+    },
+    {
+      "phase": "webview-destroyed-30s",
+      "processes": 1,
+      "privateMiB": 203.2,
+      "evidence": "p00.4-web-beta-run/p00.4-web-destroyed-30s.json"
+    }
+  ],
+  "screenshots": [
+    "p00.4-web-beta-run/p00.4-web-open.png",
+    "p00.4-web-beta-run/p00.4-web-mhtml-opened.png"
+  ],
+  "archive": "p00.4-web-beta-run/p00.4-web-probe.mhtml",
+  "replay": "tools/web-engine-probe/scripts/run-web-smoke.ps1",
+  "limitations": [
+    "One short exploratory lifecycle sample; not the docs/04 three-run and 1/10/30 minute acceptance protocol",
+    "No complete Alula workbench memory measurement",
+    "Small offline HTML/data URI only; no authenticated, hostile, media, download, or multi-view scenarios",
+    "This Windows replay does not establish Linux WPE or macOS WKWebView behavior"
+  ]
+}

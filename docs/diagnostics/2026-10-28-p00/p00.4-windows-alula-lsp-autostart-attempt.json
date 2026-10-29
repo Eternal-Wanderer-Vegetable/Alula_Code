@@ -1,0 +1,301 @@
+{
+  "label": "alula-lsp-autostart-attempt-no-child",
+  "exe": "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+  "args": [
+    "--lsp-auto"
+  ],
+  "duration_s": 45.0,
+  "interval_s": 1.0,
+  "root_pid": 38940,
+  "platform": "windows",
+  "captured_at": "2026-10-28 09:01:31 UTC",
+  "samples": [
+    {
+      "t": 2.3e-06,
+      "total_private": 2600960,
+      "total_working_set": 7065600,
+      "n_processes": 1
+    },
+    {
+      "t": 1.001104,
+      "total_private": 103505920,
+      "total_working_set": 74387456,
+      "n_processes": 1
+    },
+    {
+      "t": 2.002153,
+      "total_private": 212111360,
+      "total_working_set": 115269632,
+      "n_processes": 1
+    },
+    {
+      "t": 3.0033973,
+      "total_private": 212111360,
+      "total_working_set": 115269632,
+      "n_processes": 1
+    },
+    {
+      "t": 4.0044743,
+      "total_private": 212111360,
+      "total_working_set": 115269632,
+      "n_processes": 1
+    },
+    {
+      "t": 5.005179,
+      "total_private": 201678848,
+      "total_working_set": 115269632,
+      "n_processes": 1
+    },
+    {
+      "t": 6.006122,
+      "total_private": 201678848,
+      "total_working_set": 115269632,
+      "n_processes": 1
+    },
+    {
+      "t": 7.0073062,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 8.0083758,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 9.0090808,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 10.0100757,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 11.0112401,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 12.0122779,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 13.0132984,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 14.014415,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 15.0153209,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 16.0160539,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 17.017131,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 18.0185539,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 19.0195179,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 20.0202645,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 21.0212829,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 22.0221658,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 23.0233914,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 24.0242742,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 25.0253408,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 26.0263885,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 27.0273118,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 28.0284893,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 29.0293193,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 30.030362,
+      "total_private": 199565312,
+      "total_working_set": 115257344,
+      "n_processes": 1
+    },
+    {
+      "t": 31.0314557,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 32.0324528,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 33.0334238,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 34.034358,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 35.0354365,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 36.0361737,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 37.0370362,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 38.0382602,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 39.0394084,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 40.0402759,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 41.0410553,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 42.0424382,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 43.0431973,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    },
+    {
+      "t": 44.0444789,
+      "total_private": 199524352,
+      "total_working_set": 115249152,
+      "n_processes": 1
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 38940,
+      "ppid": 17968,
+      "name": "alula_app.exe",
+      "working_set": 115249152,
+      "private": 199524352,
+      "peak_private": 212787200,
+      "pss": 199524352
+    }
+  ],
+  "summary": {
+    "peak_private": 212111360,
+    "stable_private": 199524352,
+    "final_private": 199524352,
+    "final_working_set": 115249152
+  }
+}

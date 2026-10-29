@@ -1,0 +1,612 @@
+{
+  "experiment": "P00.4-linux-flutter-wpe-cdp-mhtml-on-demand-memory",
+  "recordedAt": "2026-10-28",
+  "status": "default-sandbox-and-bounded-frame-poll-passed-with-cpu-rendering-limitations",
+  "scope": "Local Flutter Linux/WPE analyze, test and Release build passed against source-built WPE 2.52.6; Xvfb MHTML/screenshot/destroy replay passed. A later Debian sid GitHub Actions run 40616364735 passed dependency verification, analyze/test, Release build, memory sampler build and MHTML replay using packaged WPE WebKit 2.52.6 and WPEBackend-FDO 1.16.1. It left WebKit sandbox-disable and GBM-disable variables unset and observed bwrap, but ran inside an unconfined container with elevated capabilities. The local probe-only evidence and CI evidence do not establish production integration, CDP, Linux Inspector UI, hardware GBM or docs/04 product memory acceptance. A separate macOS 15 run 40616364760 passed the WKWebView Web Archive probe; Safari Inspector and product memory remain open.",
+  "probe": {
+    "flutterPackage": "flutter_inappwebview 6.2.0-beta.3",
+    "flutterPackageSha256": "3952d116ee93bad2946401377e7ade87b5ef200e95ecb5ba1affa1b6329a6867",
+    "linuxPackage": "flutter_inappwebview_linux 0.1.0-beta.1",
+    "linuxPackageSha256": "2e1a3b09bb911fb5a8bb155cb7f1eb1428a19b6e20363b9db48beef428b8cef5",
+    "engine": "WPE WebKit",
+    "archiveApi": "saveWebArchive with WEBKIT_SAVE_MODE_MHTML",
+    "archiveSuffix": ".mht",
+    "screenshotApi": "takeScreenshot (PNG; copies current pixel buffer without waiting for a WPE frame callback)"
+  },
+  "sourceContract": {
+    "callDevToolsProtocolMethodSupported": false,
+    "callDevToolsProtocolMethodSupportedPlatforms": [
+      "Windows WebView2"
+    ],
+    "isInspectableSupported": false,
+    "isInspectableSupportedPlatforms": [
+      "iOS WKWebView 16.4+",
+      "macOS WKWebView 13.3+",
+      "Windows WebView2"
+    ],
+    "evidence": [
+      "Pinned flutter_inappwebview_platform_interface annotations",
+      "Pinned Linux package webview_channel_delegate.cc has takeScreenshot and saveWebArchive handlers but no callDevToolsProtocolMethod handler"
+    ]
+  },
+  "runner": {
+    "workflow": ".github/workflows/p00-web-engine-linux.yml",
+    "script": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh",
+    "host": "Original local Debian GNU/Linux 12 Bookworm Docker containers; see followUpGithubActions for the later Debian sid GitHub Actions replay",
+    "wpeDevelopmentPackage": "Official WPE WebKit 2.52.6 source build installed at /work/install; not a dpkg package",
+    "wpePackageVersion": "wpe-webkit-2.0=2.52.6; wpe-platform-2.0=2.52.6; wpe-platform-headless-2.0=2.52.6",
+    "runtimeExecuted": true,
+    "expectedOutputDirectory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run",
+    "libsecretDevelopmentPackage": "libsecret-1-dev=0.20.5-3"
+  },
+  "limitations": [
+    "Local default-WebKit-sandbox replay passed only in a follow-up container with SYS_ADMIN and seccomp unconfined; it is not a normal runner/production security result. Local replay paths disabled GBM, so hardware rendering remains unverified",
+    "An unpolled default-sandbox capture had the DOM marker but produced a fully transparent PNG (1280x572 RGBA). The pinned plugin snapshots its current buffer without waiting for a frame callback. The isolated probe now captures before DOM queries and polls up to 30 times for a blue heading pixel; three follow-up replays rendered the page, and the final heading-check version succeeded on attempt 2. This mitigates the probe capture race only and does not guarantee product-level frame synchronization or behavior on other hosts",
+    "Debian sid WPE 2.54.2 build still fails because the plugin references WPE_SETTING_DISABLE_ANIMATIONS, absent from its headers; see the 2.54 build evidence",
+    "Debian Trixie WPE 2.48.3 legacy FDO fallback still fails because webkit_web_view_get_theme_color is undeclared; see the Trixie compatibility evidence",
+    "No compatibility macro or plugin source patch was used",
+    "CDP is declared unsupported by the pinned Linux plugin contract; the runtime JSON records false",
+    "The local run uses Xvfb/software GL, a source-built WPE prefix and a short memory round; it is not the Debian sid GitHub workflow or docs/04 product acceptance",
+    "Follow-up GitHub Actions run 40616364735 passed packaged WPE 2.52.6/FDO 1.16.1 analyze, test, Release build, sampler build and MHTML replay. Sandbox-disable and GBM-disable variables were unset and bwrap was observed, but the container security label was unconfined with elevated capabilities. Its one destroy+30s probe sample was 406.8 MiB private (+117.4 MiB from pre-WebView) and retained WPENetworkProcess; this neither proves a leak nor meets docs/04 repeated long-duration product gates.",
+    "Separate macOS 15 run 40616364760 passed a 693-byte Web Archive save/reload probe. Safari Web Inspector attachment and docs/04 product memory acceptance remain unverified."
+  ],
+  "sources": [
+    "https://wpewebkit.org/release/wpewebkit-2.52.6.html",
+    "https://github.com/pichillilorenzo/flutter_inappwebview/blob/master/flutter_inappwebview_linux/WPE_BACKEND.md",
+    "https://packages.debian.org/sid/amd64/libwpewebkit-2.0-dev/filelist",
+    "https://packages.debian.org/sid/libdevel/libwpewebkit-2.0-dev",
+    "https://wpewebkit.org/blog/2026-09-16-wpewebkit-2.54.html",
+    "https://packages.debian.org/en/trixie/libwpewebkit-2.0-dev",
+    "https://pub.dev/packages/flutter_inappwebview_linux/versions",
+    "https://wpewebkit.org/about/get-wpe.html"
+  ],
+  "environment": {
+    "runner": "Local Debian Bookworm Docker containers; baseline and follow-up sandbox runs; not a GitHub Actions run",
+    "reportedOs": "Debian GNU/Linux 12 (bookworm)",
+    "imageNote": "Locally cached python:3.12.14-slim-bookworm base; WPE 2.52.6 built from official release source and installed under /work/install; not a Debian WPE package or clean debian:sid CI image",
+    "flutter": "3.47.8, framework 737ba8f885, Dart 3.13.7",
+    "rust": "rustc 1.90.0, cargo 1.90.0 (mem-probe build only)",
+    "wpeWebKit": "2.52.6 source build; WPEPlatform and headless pkg-config modules 2.52.6",
+    "libwpe": "1.14.0-1",
+    "libsecretDev": "0.20.5-3",
+    "rendering": "Xvfb/software GL; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1 in both runs. Baseline set WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1; follow-up left it unset and used Docker --cap-add SYS_ADMIN --security-opt seccomp=unconfined. Hardware GBM rendering not tested",
+    "buildTools": "GCC 12.2.0 for WPE; Clang 14.0.6 for Flutter Linux plugin; CMake 3.25.1; Ninja 1.11.1"
+  },
+  "commands": [
+    {
+      "command": "flutter pub get",
+      "exitCode": 0,
+      "result": "Probe dependencies resolved through the configured Flutter pub mirror"
+    },
+    {
+      "command": "flutter analyze",
+      "exitCode": 0,
+      "result": "No issues found"
+    },
+    {
+      "command": "flutter test",
+      "exitCode": 0,
+      "result": "All tests passed (1 test)"
+    },
+    {
+      "command": "flutter build linux --release (PKG_CONFIG_PATH=/work/install/lib/pkgconfig; LD_LIBRARY_PATH=/work/install/lib:/work/install/lib/x86_64-linux-gnu; LDFLAGS=-L/work/install/lib; CXXFLAGS=-Wno-unknown-warning-option)",
+      "exitCode": 0,
+      "result": "Built build/linux/x64/release/bundle/web_engine_probe against WPE 2.52.6"
+    },
+    {
+      "command": "cargo +1.90.0 build --locked --release -p mem-probe",
+      "exitCode": 0,
+      "result": "Built Linux mem-probe"
+    },
+    {
+      "command": "tools/web-engine-probe/scripts/run-web-smoke-linux.sh <web_engine_probe> docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run (WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1; WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1)",
+      "exitCode": 0,
+      "result": "initial-loaded, mhtml-loaded and webview-destroyed phases passed; 30-second sample saved"
+    }
+  ],
+  "buildFailure": {
+    "file": "linux/flutter/ephemeral/.plugin_symlinks/flutter_inappwebview_linux/linux/in_app_webview/in_app_webview_settings.cc",
+    "line": 405,
+    "diagnostic": "use of undeclared identifier 'WPE_SETTING_DISABLE_ANIMATIONS'",
+    "availableRelatedSetting": "WPE_SETTING_REDUCED_MOTION",
+    "header": "/usr/include/wpe-webkit-2.0/wpe-platform/wpe/WPESettings.h",
+    "packages": {
+      "flutter_inappwebview": "6.2.0-beta.3",
+      "flutter_inappwebview_linux": "0.1.0-beta.1",
+      "libwpewebkit-2.0-dev": "2.54.2-1"
+    },
+    "note": "The default plugin source was built without a source patch or compatibility define. Application runtime was not reached."
+  },
+  "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-build.log",
+  "followUpCompatibility": {
+    "recordedAt": "2026-10-28",
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-trixie-compat.log",
+    "upstreamApiChange": "WPE 2.54 replaced WPE_SETTING_DISABLE_ANIMATIONS with WPE_SETTING_REDUCED_MOTION; flutter_inappwebview_linux 0.1.0-beta.1 still references the old setting",
+    "debianStableFallback": {
+      "wpeWebKit": "2.48.3-1 from Debian Trixie",
+      "backend": "WPEBackend-FDO 1.16.1-1+b1",
+      "buildExitCode": 1,
+      "diagnostic": "undeclared identifier webkit_web_view_get_theme_color",
+      "runtimeExecuted": false,
+      "environmentNote": "Tested in a Bookworm-derived mixed Debian container, not a clean Trixie image; the advertised include directory had to be created temporarily to evaluate the legacy FDO compile path"
+    },
+    "wpe2526SourceBuildReplay": {
+      "recordedAt": "2026-10-28",
+      "wpeWebKit": "2.52.6 from official source archive",
+      "buildExitCode": 0,
+      "runtimeExecuted": true,
+      "runtimeExitCode": 0,
+      "requiredContainerOverrides": [
+        "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1",
+        "WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1"
+      ],
+      "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md and p00.4-linux-wpe-2.52.6-run/",
+      "environmentNote": "Temporary Debian Bookworm Docker container; no hardware rendering; not a Debian package or GitHub Actions run"
+    }
+  },
+  "sourceBuild": {
+    "officialRelease": "WPE WebKit 2.52.6",
+    "archive": "wpewebkit-2.52.6.tar.xz",
+    "sha256": "b2bafef2751625b7fdf530f230ff0f542ff0eeba3590c3a989d931b2a55c858e",
+    "installPrefix": "/work/install (temporary container)",
+    "cmakeOptions": {
+      "ENABLE_MHTML": true,
+      "ENABLE_WPE_PLATFORM": true,
+      "ENABLE_WPE_PLATFORM_HEADLESS": true,
+      "ENABLE_WPE_LEGACY_API": false,
+      "ENABLE_DOCUMENTATION": false,
+      "ENABLE_MINIBROWSER": false,
+      "USE_LIBBACKTRACE": false
+    },
+    "ninjaBuildExitCode": 0,
+    "ninjaInstallExitCode": 0,
+    "buildSteps": 9421,
+    "warningCount": 22,
+    "warningsByClass": {
+      "-Wrestrict": 15,
+      "-Wuse-after-free": 7
+    },
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md",
+    "runLogs": [
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-cmake-configure.log.xz",
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-build-release.log.xz",
+      "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/wpe-install.log.xz"
+    ]
+  },
+  "runtimeReplay": {
+    "successful": true,
+    "overrides": {
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "1",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1"
+    },
+    "failedDefaultSandboxAttempt": "bwrap could not create a user namespace in this container",
+    "failedSoftwareScreenshotAttempt": "DOM marker loaded but WPE screenshot returned no CPU pixel buffer while GBM path was enabled",
+    "initialPage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-initial-render.png",
+      "dimensions": "1280x572",
+      "cdpSupported": false,
+      "inspectableSupported": false
+    },
+    "mhtmlReload": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-mhtml-render.png",
+      "dimensions": "1280x532",
+      "mhtmlBytes": 2587,
+      "sha256": "346ef1f3ca7e484c9f443d81ffc69bbcc8c2ccda4e777540257e906b02b31ac0",
+      "mimeVersion": "1.0"
+    },
+    "memorySamples": [
+      {
+        "phase": "before-webview",
+        "processes": 2,
+        "privateMiB": 176.9,
+        "workingSetMiB": 290.7,
+        "pssMiB": 230.9,
+        "file": "before-webview-memory.json"
+      },
+      {
+        "phase": "webview-open",
+        "processes": 3,
+        "privateMiB": 282.5,
+        "workingSetMiB": 553.9,
+        "pssMiB": 384.8,
+        "file": "webview-open-memory.json"
+      },
+      {
+        "phase": "mhtml-reloaded",
+        "processes": 3,
+        "privateMiB": 289.5,
+        "workingSetMiB": 564.4,
+        "pssMiB": 392.5,
+        "file": "mhtml-reloaded-memory.json"
+      },
+      {
+        "phase": "webview-destroyed",
+        "processes": 2,
+        "privateMiB": 219.8,
+        "workingSetMiB": 342.3,
+        "pssMiB": 278.2,
+        "file": "webview-destroyed-memory.json"
+      },
+      {
+        "phase": "webview-destroyed-30s",
+        "processes": 2,
+        "privateMiB": 219.3,
+        "workingSetMiB": 341.8,
+        "pssMiB": 277.7,
+        "file": "webview-destroyed-30s-memory.json"
+      }
+    ],
+    "webProcessExitedAfterDestroy": true,
+    "networkProcessRemainedAfterDestroy": true,
+    "memoryRounds": 1,
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/"
+  },
+  "sourceBuildEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-build.md",
+  "runtimeEvidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-run/",
+  "sandboxReplay": {
+    "successful": true,
+    "runner": "Temporary Debian 12 container with --cap-add SYS_ADMIN --security-opt seccomp=unconfined; probe user UID/GID 1000; not GitHub Actions",
+    "userNamespaceProbe": {
+      "command": "unshare --user --map-root-user true",
+      "exitCode": 0,
+      "bubblewrapMode": "0755"
+    },
+    "overrides": {
+      "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+      "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "1"
+    },
+    "observedChildProcessesWhileOpen": [
+      "bwrap",
+      "bwrap",
+      "WPEWebProcess",
+      "WPENetworkProcess"
+    ],
+    "replay": {
+      "exitCode": 0,
+      "phases": [
+        "initial-loaded",
+        "mhtml-loaded",
+        "webview-destroyed"
+      ],
+      "destroySampleSeconds": 30
+    },
+    "initialPage": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-initial-render.png",
+      "screenshotObservation": "The original unpolled PNG was fully transparent RGBA despite the DOM marker; bounded frame-poll results are recorded in framePollingFollowUp."
+    },
+    "mhtmlReload": {
+      "title": "Alula Web Probe",
+      "marker": true,
+      "screenshot": "p00.4-web-mhtml-render.png",
+      "screenshotObservation": "Rendered title and body visible",
+      "mhtmlBytes": 2587,
+      "sha256": "c76e7258be9df4075a76d8d7d1bccfdd8f8d42c35d339aaa6505df1e38c3048e",
+      "mimeVersion": "1.0"
+    },
+    "memorySamples": [
+      {
+        "phase": "before-webview",
+        "processes": 2,
+        "privateMiB": 227.0,
+        "workingSetMiB": 341.9,
+        "pssMiB": 281.5
+      },
+      {
+        "phase": "webview-open",
+        "processes": 5,
+        "privateMiB": 314.9,
+        "workingSetMiB": 600.7,
+        "pssMiB": 422.8
+      },
+      {
+        "phase": "mhtml-reloaded",
+        "processes": 5,
+        "privateMiB": 332.8,
+        "workingSetMiB": 622.2,
+        "pssMiB": 441.4
+      },
+      {
+        "phase": "webview-destroyed",
+        "processes": 2,
+        "privateMiB": 255.3,
+        "workingSetMiB": 382.5,
+        "pssMiB": 315.5
+      },
+      {
+        "phase": "destroyed-30s",
+        "processes": 2,
+        "privateMiB": 258.5,
+        "workingSetMiB": 382.1,
+        "pssMiB": 317.3
+      }
+    ],
+    "evidence": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-default-sandbox-run/"
+  },
+  "framePollingFollowUp": {
+    "recordedAt": "2026-10-28",
+    "pluginBehavior": "Pinned Linux takeScreenshot handler copies the current pixel buffer; it does not wait for a WPE frame callback.",
+    "originalUnpolledCapture": {
+      "file": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-default-sandbox-run/p00.4-web-initial-render.png",
+      "format": "RGBA 8-bit",
+      "width": 1280,
+      "height": 572,
+      "uniqueColors": 1,
+      "rgba": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pixelCount": 732160,
+      "domMarker": true
+    },
+    "probeChange": "Capture the Linux page screenshot before DOM JavaScript queries; retry up to 30 times with 100 ms spacing until a nontransparent pixel in the page heading blue range is found.",
+    "validation": {
+      "flutterAnalyzeExitCode": 0,
+      "flutterTestExitCode": 0,
+      "flutterLinuxReleaseBuildExitCode": 0,
+      "freshDefaultSandboxRuns": 3,
+      "runs": [
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run/",
+          "probeRevision": "alpha-poll; screenshot after DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 1,
+            "elapsedMs": 94
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 31
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "d09cfe246556e08b4767a4c5ab9e34de9fd025d3f44bbec679fa00a05ff9b66f",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        },
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run2/",
+          "probeRevision": "alpha-poll; screenshot after DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 1,
+            "elapsedMs": 97
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 22
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "50a51dacf21e5f5587f88f3669f0a3a6375041e3637499b21b1fbdbe7c1d9ff6",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        },
+        {
+          "directory": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-frame-poll-run3/",
+          "probeRevision": "heading-pixel poll; screenshot before DOM queries",
+          "replayExitCode": 0,
+          "phases": [
+            "initial-loaded",
+            "mhtml-loaded",
+            "webview-destroyed",
+            "destroyed-30s-sample"
+          ],
+          "webkitSandboxDisableVariable": "unset",
+          "gbmDisableVariable": "1",
+          "initialPageMarker": true,
+          "initialCapture": {
+            "attempts": 2,
+            "elapsedMs": 199
+          },
+          "initialPng": {
+            "width": 1280,
+            "height": 572,
+            "uniqueColors": 470,
+            "topColors": [
+              {
+                "rgbaOrRgb": [
+                  244,
+                  247,
+                  255
+                ],
+                "pixels": 721313
+              },
+              {
+                "rgbaOrRgb": [
+                  25,
+                  79,
+                  168
+                ],
+                "pixels": 7013
+              },
+              {
+                "rgbaOrRgb": [
+                  0,
+                  0,
+                  0
+                ],
+                "pixels": 348
+              }
+            ],
+            "fullyTransparent": false
+          },
+          "mhtmlPageMarker": true,
+          "mhtmlCapture": {
+            "attempts": 1,
+            "elapsedMs": 51
+          },
+          "mhtmlBytes": 2587,
+          "mhtmlSha256": "ee2b5842e974fa0bee4aa28304eebc7265b1c7e579541ba75332a2dd485a82f0",
+          "openProcessNames": [
+            "web_engine_prob",
+            "bwrap",
+            "bwrap",
+            "WPEWebProcess",
+            "WPENetworkProce"
+          ],
+          "destroyed30sProcessNames": [
+            "web_engine_prob",
+            "WPENetworkProce"
+          ]
+        }
+      ]
+    },
+    "interpretation": "The previous transparent image came from reading the current buffer before a painted page frame was available. The bounded wait made the probe capture robust across these local runs, including one actual retry. This is probe-only handling and does not establish a product or cross-host frame synchronization guarantee."
+  },
+  "followUpGithubActions": {
+    "headSha": "51fe0cdc971e829270682b9b454aaafb4b78958a",
+    "linuxRun": {
+      "id": 40616364735,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40616364735",
+      "evidenceDirectory": "p00.4-web-linux-run-40616364735/",
+      "conclusion": "success",
+      "wpeWebKit": "2.52.6",
+      "wpeBackendFdo": "1.16.1",
+      "webkitSandboxDisable": "unset",
+      "gbmDisable": "unset",
+      "bwrapObserved": true,
+      "containerSecurityLabel": "unconfined",
+      "initialPageCaptureAttempts": 4,
+      "initialPageCaptureElapsedMs": 465,
+      "mhtmlCaptureAttempts": 1,
+      "mhtmlCaptureElapsedMs": 50,
+      "mhtmlBytes": 2587,
+      "mhtmlSha256": "65539bc4456eb93924f1b8f7f2bcfb56676eea655c47cba259930ce74260dd5d",
+      "destroyPlus30sPrivateMiB": 406.8,
+      "destroyPlus30sPrivateDeltaFromBeforeWebViewMiB": 117.4,
+      "destroyPlus30sProcesses": [
+        "web_engine_prob",
+        "WPENetworkProce"
+      ],
+      "limitations": [
+        "single probe-only Xvfb/software-GL sample",
+        "no hardware GBM",
+        "not docs/04 product memory acceptance"
+      ]
+    },
+    "macosRun": {
+      "id": 40616364760,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40616364760",
+      "evidenceDirectory": "p00.4-web-macos-run-40616364760/",
+      "conclusion": "success",
+      "archiveBytes": 693,
+      "archiveSha256": "f99cd79f8edec867378f55eeceb2182627ca14904e60099119feaf094afc9a0d",
+      "title": "Alula Web Probe",
+      "hasProbeMarker": true,
+      "archiveParsed": true,
+      "limitations": [
+        "Web Archive probe only; not MHTML/CDP equivalence",
+        "Safari Web Inspector attachment unverified",
+        "not docs/04 product memory acceptance"
+      ]
+    }
+  }
+}

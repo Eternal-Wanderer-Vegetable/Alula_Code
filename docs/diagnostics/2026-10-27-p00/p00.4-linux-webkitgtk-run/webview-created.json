@@ -1,0 +1,22 @@
+{
+  "phase": "webview-created",
+  "capturedAtMonotonicSeconds": 4.78,
+  "rootPid": 107919,
+  "webkitgtkVersion": "2.52.6",
+  "processes": [
+    {
+      "pid": 107919,
+      "ppid": 107881,
+      "comm": "python3",
+      "rss_kib": 159656,
+      "private_kib": 63128
+    },
+    {
+      "pid": 107997,
+      "ppid": 107919,
+      "comm": "WebKitNetworkPr",
+      "rss_kib": 20376,
+      "private_kib": 5772
+    }
+  ]
+}

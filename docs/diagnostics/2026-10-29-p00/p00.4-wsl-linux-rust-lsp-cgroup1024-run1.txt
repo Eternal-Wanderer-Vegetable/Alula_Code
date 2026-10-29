@@ -1,0 +1,45 @@
+Running as unit: alula-p00-linux-lsp1024-564798.scope; invocation ID: cc8863ff82ef4f14b5f59e2ff4ef98ea
+label=p00.4-wsl-linux-rust-lsp-cgroup1024-20261029
+app_pid=564814
+window=2097155 size=1280x720
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/alula-p00-linux-lsp1024-564798.scope
+memory.max=1073741824
+memory.swap.max=0
+memory.current.initial=224600064
+rust_analyzer_processes_before_edit:
+ 564917  564814 Sl   /home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer
+save_result=passed
+marker=ALULALSPCGROUP1024RUN1
+fixture_sha256=3602d986752c018dc04b6e9df4afd97e4a1189b20a8ea003aa9dadadf740ff95
+memory.current.after_edit=892416000
+memory.events.after_edit:
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+rust_analyzer_processes_after_edit:
+ 564917  564814 Sl   /home/vegetable/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rust-analyzer
+close_result=exited
+app_exit_code=0
+memory.events.final:
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+app_log_tail:
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+2026-10-29T05:25:10.61833315+08:00  WARN notify error: No path was found.
+2026-10-29T05:25:10.672464249+08:00  WARN notify error: No path was found.
+embedder.cc (2615): 'FlutterEngineRemoveView' returned 'kInvalidArguments'. Remove view info was invalid. The implicit view cannot be removed.
+
+monitor_samples=71
+monitor_peak_memory_current=903749632
+monitor_last_memory_events=low 0; high 0; max 0; oom 0; oom_kill 0; oom_group_kill 0
+monitor_memory_max=1073741824
+monitor_memory_swap_max=0

@@ -1,0 +1,5 @@
+  54886       1 Z        0 WPEWebProcess   [WPEWebProcess] <defunct>
+  64387   64364 S     1684 heaptrack       /bin/sh /usr/bin/heaptrack -o /repo/docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-parent-heaptrack-run3/heaptrack /repo/tools/web-engine-probe/build/linux/x64/release/bundle/web_engine_probe
+  64418   64387 Sl   342448 web_engine_prob /repo/tools/web-engine-probe/build/linux/x64/release/bundle/web_engine_probe
+  64512   64418 SLl  51944 WPENetworkProce /work/install/libexec/wpe-webkit-2.0/WPENetworkProcess 1 25
+  64561   64418 SLl  222092 WPEWebProcess  /work/install/libexec/wpe-webkit-2.0/WPEWebProcess 4 30

@@ -1,0 +1,15 @@
+Date: 2026-10-28
+Container: original WPE 2.52.6 source-build Debian GNU/Linux 12 (Bookworm)
+UID/GID: 1000(probe):1000(probe)
+Display: Xvfb :127, 1280x720x24
+Renderer: Mesa software GL (swrast/llvmpipe path)
+Probe: Flutter Linux Release web_engine_probe
+LD_LIBRARY_PATH=/repo/tools/web-engine-probe/build/linux/x64/release/bundle/lib:/work/install/lib
+TMPDIR=/tmp/p00.4-linux-wpe-smaps-run2/tmp
+WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1
+P00_4_WEB_AUTO=1
+P00_4_WEB_NO_CAPTURE=1
+Actions: no screenshot, MHTML archive, or Inspector command; initial page load, widget removal, then 30-second sample.
+Measurement: sum of /proc/<pid>/smaps_rollup for app and direct WPE child processes; private = Private_Clean + Private_Dirty.
+Limit: single diagnostic run; not product integration, production sandbox, hardware GBM, leak proof, or docs/04 acceptance.

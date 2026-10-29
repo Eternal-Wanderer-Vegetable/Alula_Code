@@ -1,0 +1,42 @@
+======================================================================
+web_engine_probe [22303]: 64-bit    Footprint: 23 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+5344 KB        0 B          0 B         32    untagged (VM_ALLOCATE)
+2944 KB        0 B          0 B          4    MALLOC_SMALL
+2938 KB        0 B          0 B        910    __AUTH_CONST
+1984 KB        0 B       208 KB          1    MALLOC_NANO
+1778 KB        0 B          0 B        895    __DATA
+1728 KB        0 B          0 B         13    IOAccelerator (graphics)
+1254 KB        0 B          0 B       1940    unused dyld shared cache area
+ 960 KB        0 B          0 B          3    MALLOC_MEDIUM
+ 864 KB        0 B          0 B          9    MALLOC_TINY
+ 620 KB        0 B          0 B        335    __DATA_DIRTY
+ 578 KB        0 B          0 B          1    page table
+ 576 KB        0 B          0 B         25    ColorSync
+ 560 KB        0 B       144 KB         28    stack
+ 443 KB      48 KB          0 B        923    __DATA_CONST
+ 438 KB        0 B          0 B        670    __AUTH
+ 336 KB      11 MB          0 B         33    mapped file
+ 288 KB        0 B          0 B         36    MALLOC metadata
+ 128 KB        0 B          0 B          3    IOAccelerator
+ 128 KB        0 B          0 B          5    IOKit
+  64 KB        0 B          0 B          2    __TPRO_CONST
+  32 KB        0 B          0 B          1    Activity Tracing
+  16 KB        0 B          0 B          1    Foundation
+  16 KB        0 B          0 B          1    CoreGraphics
+  16 KB        0 B          0 B          1    os_alloc_once
+    0 B    8608 KB          0 B        947    __TEXT
+    0 B     160 KB          0 B          7    __LINKEDIT
+    0 B        0 B          0 B          1    __CTF
+    0 B        0 B          0 B          1    __FONT_DATA
+    0 B        0 B          0 B          1    __INFO_FILTER
+    ---        ---          ---        ---    ---
+  23 MB      19 MB       352 KB       6831    TOTAL
+
+Auxiliary data:
+    phys_footprint: 27 MB
+    phys_footprint_peak: 27 MB
+

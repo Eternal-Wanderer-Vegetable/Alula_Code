@@ -1,0 +1,14 @@
+{
+  "name": "alula-vscode-runtime-registry-probe",
+  "displayName": "Alula VS Code Runtime Registry Probe",
+  "description": "Temporary development-host instrumentation for the pinned P00 reference build.",
+  "publisher": "alula-internal",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.145.0"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "*"
+  ]
+}

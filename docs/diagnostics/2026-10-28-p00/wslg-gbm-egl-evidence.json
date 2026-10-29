@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-28",
+  "experiment": "P00.4 WSLg GBM/EGL capability follow-up",
+  "host": {
+    "distribution": "Ubuntu 24.04.5 LTS (noble)",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "drmDriver": "/sys/bus/faux/drivers/faux_driver",
+    "devices": [
+      {"path": "/dev/dri/renderD128", "owner": "root:render", "mode": "0660"},
+      {"path": "/dev/dri/card0", "owner": "root:video", "mode": "0660"}
+    ]
+  },
+  "installedDependencies": {
+    "libgbm1": "25.2.8-0ubuntu0.24.04.4",
+    "libgbm-dev": "25.2.8-0ubuntu0.24.04.4",
+    "libgl1-mesa-dri": "25.2.8-0ubuntu0.24.04.4",
+    "pkgConfigGbm": "25.2.8-0ubuntu0.24.04.4"
+  },
+  "deviceAccess": {
+    "account": "vegetable (uid 1000)",
+    "supplementaryGroupsAdded": ["video", "render"],
+    "verifiedGroups": ["video", "render"],
+    "note": "A fresh uid-1000 process launched after the group change was used for the ordinary-user probe. Existing sessions may need to be restarted to inherit supplementary groups."
+  },
+  "gbmProbe": {
+    "method": "Compiled C probe using gbm.h and pkg-config gbm; 64x64 XRGB8888 with GBM_BO_USE_RENDERING",
+    "compilerFlags": "gcc -Wall -Wextra -Werror",
+    "results": [
+      {
+        "device": "/dev/dri/renderD128",
+        "gbmCreateDevice": true,
+        "backend": "drm",
+        "bufferAllocated": false,
+        "failure": "DRM_IOCTL_MODE_CREATE_DUMB failed: Permission denied"
+      },
+      {
+        "device": "/dev/dri/card0",
+        "gbmCreateDevice": true,
+        "backend": "drm",
+        "bufferAllocated": true,
+        "strideBytes": 256,
+        "dmaBufFdExported": true
+      }
+    ]
+  },
+  "eglProbe": {
+    "platform": "EGL_PLATFORM_GBM_MESA",
+    "device": "/dev/dri/card0",
+    "eglInitialize": true,
+    "eglVersion": "1.5",
+    "pbufferOpenGles2ConfigCount": 0,
+    "surfacelessOpenGles2Context": true,
+    "surfacelessMakeCurrent": true,
+    "glRenderer": "llvmpipe (LLVM 20.1.2, 256 bits)"
+  },
+  "conclusion": "The WSLg faux DRM card can allocate a GBM dumb buffer and export a dma-buf, but the GBM EGL display offers no pbuffer/OpenGL ES 2 config; the created surfaceless GLES context reports llvmpipe software rendering. The render node cannot allocate a GBM buffer. This is not hardware rendering evidence and does not establish WPE GBM/DMABUF support. No WPE/WebKit app was run in this experiment. A real DRM host remains required for the P00.4 hardware gate."
+}

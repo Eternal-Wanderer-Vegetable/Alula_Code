@@ -1,0 +1,48 @@
+{
+  "runId": 40614659876,
+  "runUrl": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/40614659876",
+  "headSha": "e8539992f7b46e1a61d9bc3d602059bd65394526",
+  "runner": "ubuntu-24.04 with debian:sid container",
+  "status": "completed",
+  "conclusion": "failure",
+  "steps": {
+    "Set up job": "success",
+    "Initialize containers": "success",
+    "Install build and WPE dependencies": "success",
+    "Run actions/checkout@v4": "success",
+    "Run subosito/flutter-action@v2": "success",
+    "Run dtolnay/rust-toolchain@stable": "success",
+    "Verify WPE development packages": "success",
+    "Resolve probe dependencies": "success",
+    "Analyze and test probe": "success",
+    "Build Linux probe": "success",
+    "Build memory sampler": "success",
+    "Run WPE MHTML replay": "failure",
+    "Upload Linux probe evidence": "success",
+    "Post Run subosito/flutter-action@v2": "success",
+    "Post Run actions/checkout@v4": "success",
+    "Stop containers": "success",
+    "Complete job": "success"
+  },
+  "packages": {
+    "wpe-webkit-2.0": "2.52.6",
+    "wpe-web-process-extension-2.0": "2.52.6",
+    "wpebackend-fdo-1.0": "1.16.1"
+  },
+  "build": "Flutter Linux Release build passed.",
+  "replayFailure": "WebKit default sandbox could not start bubblewrap: bwrap failed to create a namespace; app aborted before initial-loaded.",
+  "sandboxOverrides": {
+    "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS": "unset",
+    "WEBKIT_DMABUF_RENDERER_DISABLE_GBM": "unset"
+  },
+  "mhtmlReplayAttempted": true,
+  "pageArtifactsProduced": false,
+  "files": [
+    "environment.txt",
+    "before-webview-memory.json",
+    "probe.log",
+    "xvfb.log",
+    "workflow-replay-failure.log"
+  ],
+  "resolution": "Grant SYS_ADMIN and unconfined seccomp to this isolated CI container so bubblewrap can establish WebKit namespaces; keep sandbox-disable variables unset. Retry after workflow edit."
+}

@@ -1,0 +1,103 @@
+{
+  "label": "p00.4-code-oss-rust-lsp-idle-startup-failure",
+  "captured_at_local_date": "2026-10-29",
+  "valid_memory_sample": false,
+  "target": {
+    "product": "Code-OSS 1.145.0-dev",
+    "source_commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "electron_version": "43.8.3",
+    "executable_sha256": "24C9DA29867C5547214ADDBC7AC3FBF5D4CE3B04867A26BA5AC6CB18919BD126"
+  },
+  "extension": {
+    "id": "rust-lang.rust-analyzer",
+    "version": "0.3.3089",
+    "package_manifest_sha256": "238E7888D636DCD9377961C6C1416F7BFD9A0A45EBF126DAE52F13BF1000FC57"
+  },
+  "server": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+  "isolation": {
+    "unique_user_data_per_attempt": true,
+    "unique_extensions_per_attempt": true,
+    "unique_shared_data_per_attempt": true,
+    "unique_fixture_per_attempt": true,
+    "telemetry_disabled": true,
+    "automatic_updates_disabled": true,
+    "account_sign_in": false
+  },
+  "attempts": [
+    {
+      "run_tag": "20261029-151053862",
+      "launch_method": "direct executable; source app argument omitted",
+      "samples_collected": 180,
+      "target_samples": 600,
+      "processes_observed": 1,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Electron could not find the app at the fixture path."
+    },
+    {
+      "run_tag": "20261029-151615118",
+      "launch_method": "direct executable; launcher setup error",
+      "samples_collected": 0,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "WScript shell was referenced before initialization."
+    },
+    {
+      "run_tag": "20261029-151746951",
+      "launch_method": "direct executable with source app argument and development environment",
+      "samples_collected": 240,
+      "target_samples": 600,
+      "processes_observed": 4,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Run ended before completion while only main, crashpad, GPU, and network utility processes were present."
+    },
+    {
+      "run_tag": "20261029-152747438",
+      "launch_method": "upstream scripts/code.bat; no built-in extension downloads",
+      "samples_collected": 0,
+      "startup_wait_seconds": 180,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Rust Analyzer did not appear; process inspection found no workbench renderer."
+    },
+    {
+      "run_tag": "20261029-153243091",
+      "launch_method": "upstream scripts/code.bat; visible startup with focus recovery",
+      "samples_collected": 0,
+      "startup_wait_seconds": 30,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Fast startup check found no workbench renderer."
+    }
+  ],
+  "cleanup": {
+    "isolated_code_oss_processes_remaining": 0,
+    "attempt_specific_temp_directories_remaining": 0
+  },
+  "limits": [
+    "The five failed attempts above produced no valid memory metrics and must not be compared with Alula.",
+    "A later fixed-version Code-OSS 1.145.0-dev same-server idle follow-up completed; it remains an idle-only reference with no editing workload. See p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.json.",
+    "At the time of the five attempts the precise startup cause was unresolved; follow-up identified the development NLS mismatch and confirmed the renderer after standard transpile.",
+    "P00.4 remains blocked/in-progress; P01 remains not-started."
+  ],
+  "runner": "p00.4-code-oss-rust-lsp-idle-10min.ps1",
+  "follow_up": {
+    "run_tag": "20261029-155555892",
+    "startup_error": "Error: !!! NLS MISSING: 140 !!! before renderer creation",
+    "cause": "The existing generated output used indexed production NLS messages while scripts/code.bat launched with VSCODE_DEV=1, which skips NLS loading.",
+    "repair": "Rebuilt the separate pinned reference checkout with Windows Node 24.22.1 using node build/next/index.ts transpile.",
+    "smoke_run_tag": "20261029-160447718",
+    "renderer_observed": true,
+    "renderer_first_observed_seconds": 6,
+    "matched_idle_report": "p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.json",
+    "rust_analyzer_observed": true,
+    "closed_after_30_seconds": true,
+    "isolated_data_cleaned": true
+  }
+}

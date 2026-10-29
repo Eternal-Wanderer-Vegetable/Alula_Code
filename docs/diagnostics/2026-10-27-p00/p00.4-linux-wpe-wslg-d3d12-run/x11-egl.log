@@ -1,0 +1,2 @@
+DISPLAY=:0; host /tmp/.X11-unix and /usr/lib/wsl/lib were mounted; /dev/dxg and /dev/dri/renderD128 were passed through; GALLIUM_DRIVER=d3d12.
+xdpyinfo connected to X11. Mesa in the Debian 12 WPE image reported 'libEGL warning: egl: failed to create dri2 screen' and eglInitialize failed with EGL_NOT_INITIALIZED (0x3001). The WPE application was not run in this X11 probe.

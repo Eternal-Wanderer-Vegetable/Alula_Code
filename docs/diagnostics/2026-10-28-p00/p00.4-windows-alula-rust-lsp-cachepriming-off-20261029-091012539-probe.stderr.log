@@ -1,0 +1,172 @@
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+2026-10-29T09:10:14.3023446+08:00  INFO server version 1.97.1 (8bab26f4 2026-07-14) will start
+2026-10-29T09:10:14.3067277+08:00  INFO InitializeParams: {"capabilities":{},"processId":30092,"rootUri":"file:///E:/alula_code/app/build/p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f/app/../tests/fixtures/rust-mini","workspaceFolders":[{"name":"workspace","uri":"file:///E:/alula_code/app/build/p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f/app/../tests/fixtures/rust-mini"}]}
+2026-10-29T09:10:14.32723+08:00  INFO discovered projects: [CargoToml(ManifestPath { file: AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini\\Cargo.toml") })]
+2026-10-29T09:10:14.3283458+08:00  INFO initial config: Config {
+    discovered_projects_from_filesystem: [
+        CargoToml(
+            ManifestPath {
+                file: AbsPathBuf(
+                    "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini\\Cargo.toml",
+                ),
+            },
+        ),
+    ],
+    discovered_projects_from_command: [],
+    workspace_roots: [
+        AbsPathBuf(
+            "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini",
+        ),
+    ],
+    caps: ClientCapabilities(
+        ClientCapabilities {
+            workspace: None,
+            text_document: None,
+            window: None,
+            general: None,
+            offset_encoding: None,
+            experimental: None,
+        },
+    ),
+    root_path: AbsPathBuf(
+        "E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini",
+    ),
+    snippets: [],
+    client_info: None,
+    client_config: (
+        FullConfigInput {
+            global: GlobalConfigInput,
+            workspace: WorkspaceConfigInput,
+            local: LocalConfigInput,
+            client: ClientConfigInput,
+        },
+        ConfigErrors(
+            [],
+        ),
+    ),
+    user_config: None,
+    ratoml_file: {},
+    source_root_parent_map: {},
+    validation_errors: ConfigErrors(
+        [],
+    ),
+    detached_files: [],
+}
+2026-10-29T09:10:14.3371084+08:00  INFO will fetch workspaces cause=startup
+2026-10-29T09:10:14.8459225+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:14.846004+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:14.8460175+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=false switching_from_empty_workspace=true
+2026-10-29T09:10:14.8461188+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: abandon build scripts for workspaces
+2026-10-29T09:10:14.8486524+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Spawning proc-macro servers
+2026-10-29T09:10:14.8487472+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Using proc-macro server at C:\Users\Vegetable\.rustup\toolchains\stable-x86_64-pc-windows-msvc\libexec\rust-analyzer-proc-macro-srv.exe
+2026-10-29T09:10:14.8632278+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: recreating the crate graph cause="fetched workspace"
+2026-10-29T09:10:14.8632583+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:14.8893845+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:14.8894833+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: did switch workspaces
+2026-10-29T09:10:14.889495+08:00  INFO GlobalState::handle_event{event=Event::Task}: will fetch build data cause=workspace updated
+2026-10-29T09:10:15.2200296+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: will switch workspaces cause=fetched build data
+2026-10-29T09:10:15.2200636+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: cause=fetched build data force_crate_graph_reload=false switching_from_empty_workspace=false
+2026-10-29T09:10:15.2202101+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: set build scripts to workspaces
+2026-10-29T09:10:15.2202503+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: same workspace, but new build data
+2026-10-29T09:10:15.2206258+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: recreating the crate graph cause="fetched build data"
+2026-10-29T09:10:15.2206367+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched build data"
+2026-10-29T09:10:15.2406982+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::switch_workspaces: did switch workspaces
+2026-10-29T09:10:15.2670415+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::process_changes:GlobalState::process_changes/config_change: Processing rust-analyzer.toml changes vfs_path=E:\alula_code\app\build\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\tests\fixtures\rust-mini\rust-analyzer.toml change_kind=Create
+2026-10-29T09:10:15.2677608+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::process_changes:GlobalState::process_changes/config_change: workspace rust-analyzer.toml changes vfs_path=E:\alula_code\app\build\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\tests\fixtures\rust-mini\rust-analyzer.toml source_root_id=SourceRootId(12)
+2026-10-29T09:10:15.2678109+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}:GlobalState::process_changes: updating ra-toml workspace config: [cachePriming]
+enable = false
+
+2026-10-29T09:10:15.2745886+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::Vfs}: will load proc macros cause=fetched build data
+2026-10-29T09:10:15.2762007+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:15.3800775+08:00  INFO GlobalState::handle_event{event=Event::Vfs}:GlobalState::handle_event/vfs:GlobalState::handle_vfs_msg:GlobalState::handle_vfs_msg/progress:vfs_load{total=14}:GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:10:15.7506993+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:15.7508448+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:15.7508641+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:10:15.7509779+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:10:15.7509912+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:15.7682688+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:10:15.7689969+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:23.7075901+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:10:24.0021585+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:24.0022961+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:24.0023116+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:10:24.0024054+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:10:24.002411+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:24.0181568+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:10:24.0188683+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:35.4937119+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:10:35.907155+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:35.9072779+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:35.9072904+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:10:35.9073942+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:10:35.907399+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:35.9230038+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:10:35.9236228+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:47.5361583+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:10:47.9062746+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:47.9063852+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:47.9063995+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:10:47.9064982+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:10:47.9065037+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:47.9214766+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:10:47.9221195+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:10:59.4816486+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:10:59.8434561+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:10:59.8435744+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:10:59.8435871+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:10:59.8436889+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:10:59.8436938+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:10:59.8589479+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:10:59.8596285+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:11:11.4891906+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:11:11.7889759+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:11:11.7891009+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:11:11.789117+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:11:11.7892139+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:11:11.7892194+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:11:11.8057208+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:11:11.8062853+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:11:23.512215+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:11:23.9127915+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:11:23.9129144+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:11:23.9129298+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:11:23.9130221+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:11:23.9130277+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:11:23.9287583+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:11:23.9294087+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:11:35.503916+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:11:35.8860331+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:11:35.8861525+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:11:35.8861688+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:11:35.8862633+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:11:35.8862685+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:11:35.9019965+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:11:35.9027732+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:11:47.5116763+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:11:47.8357358+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:11:47.8358587+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:11:47.8358732+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:11:47.8359722+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:11:47.8359772+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:11:47.8530883+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:11:47.8538534+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:11:59.485902+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:11:59.8105459+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:11:59.8106704+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:11:59.8106846+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:11:59.8107906+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:11:59.8107957+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:11:59.8259454+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:11:59.8265025+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:12:11.4716775+08:00  INFO GlobalState::handle_event{event=Event::FetchWorkspaces}: will fetch workspaces cause=project structure change
+2026-10-29T09:12:11.794473+08:00  INFO did fetch workspaces workspaces=[Ok(Cargo { root: Some("rust-mini"), n_packages: 1, n_sysroot_crates: 26, n_rustc_compiler_crates: 0, n_rustc_cfg: 42, n_cfg_overrides: 2, n_extra_includes: 0, toolchain: Some(Version { major: 1, minor: 97, patch: 1 }), data_layout: Ok(TargetData { data_layout: "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128", arch: Other }), set_test: true, build_scripts: "ok" })]
+2026-10-29T09:12:11.7946047+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: will switch workspaces cause=fetched workspace
+2026-10-29T09:12:11.7946191+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: cause=fetched workspace force_crate_graph_reload=true switching_from_empty_workspace=false
+2026-10-29T09:12:11.7947262+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: build scripts do not match the version of the active workspace
+2026-10-29T09:12:11.7947315+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::switch_workspaces: Building Crate Graph cause="fetched workspace"
+2026-10-29T09:12:11.8094176+08:00  INFO GlobalState::handle_event{event=Event::Task}: will load proc macros cause=fetched workspace
+2026-10-29T09:12:11.8099476+08:00  INFO GlobalState::handle_event{event=Event::Task}:GlobalState::handle_event/task:GlobalState::reload_flycheck: Spawning flycheck id=0 workspace_root=AbsPathBuf("E:\\alula_code\\app\\build\\p00.4-edit-cachepriming-off-20261029-091012539-5757c61ba1e441fd8800d5bdadf2602f\\tests\\fixtures\\rust-mini")
+2026-10-29T09:12:22.9029636+08:00  INFO server did shut down
+JSON 鎶ュ憡: E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-alula-rust-lsp-cachepriming-off-20261029-091012539.json
+Markdown 鎶ュ憡: E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-alula-rust-lsp-cachepriming-off-20261029-091012539.md
+鎽樿 [alula-rust-lsp-cachepriming-off-20261029-091012539]: 宄板€?747.2 MiB / 绋虫€?635.5 MiB / 缁撴潫 213.6 MiB锛? 杩涚▼锛?

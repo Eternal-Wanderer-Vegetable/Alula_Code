@@ -1510,10 +1510,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _pollTimer?.cancel();
     _stateSaveTimer?.cancel();
+    _shutdownLspWorkspace();
     // 退出前把未落盘的布局与会话冲写
     widget.layoutStore.save(_layout.root);
     widget.sessionStore.save(_encodeSession());
     for (final d in _allDocs) {
+      d.doc.close();
       d.controller.dispose();
     }
     for (final n in _editorFocusNodes.values) {
@@ -1527,6 +1529,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
+  }
+
+  void _shutdownLspWorkspace() {
+    final core = _core;
+    final root = _workspaceRoot;
+    if (_lspReady && core != null && root != null) {
+      try {
+        core.lsp.shutdownWorkspace(root);
+      } catch (e) {
+        debugPrint('关闭工作区语言服务器失败：$e');
+      }
+    }
   }
 
   // ---------- UI：五大区组装 ----------
@@ -1568,6 +1582,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children: [
           AlulaTitleBar(
               windowControls: widget.windowControls,
+              onCloseRequested: _shutdownLspWorkspace,
               menus: [
             (
               '文件',

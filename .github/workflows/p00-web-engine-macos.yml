@@ -1,0 +1,54 @@
+name: P00.4 macOS Web Engine Probe
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/p00-web-engine-macos.yml'
+      - 'tools/web-engine-probe/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-engine-macos:
+    name: WKWebView Web Archive replay
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+
+      - name: Resolve probe dependencies
+        run: flutter pub get
+        working-directory: tools/web-engine-probe
+
+      - name: Analyze and test probe
+        run: |
+          flutter analyze
+          flutter test
+        working-directory: tools/web-engine-probe
+
+      - name: Build macOS probe
+        run: flutter build macos --release
+        working-directory: tools/web-engine-probe
+
+      - name: Run WKWebView archive replay and Safari Inspector attach
+        run: |
+          bash tools/web-engine-probe/scripts/run-web-smoke-macos.sh \
+            tools/web-engine-probe/build/macos/Build/Products/Release/web_engine_probe.app \
+            "$RUNNER_TEMP/p00.4-web-macos"
+
+      - name: Upload macOS probe evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p00.4-web-macos-${{ github.run_id }}
+          path: ${{ runner.temp }}/p00.4-web-macos
+          if-no-files-found: warn
+          retention-days: 14

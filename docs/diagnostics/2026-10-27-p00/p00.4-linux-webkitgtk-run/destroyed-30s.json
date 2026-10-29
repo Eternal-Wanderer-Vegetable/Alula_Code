@@ -1,0 +1,22 @@
+{
+  "phase": "destroyed-30s",
+  "capturedAtMonotonicSeconds": 38.718,
+  "rootPid": 107919,
+  "webkitgtkVersion": "2.52.6",
+  "processes": [
+    {
+      "pid": 107919,
+      "ppid": 107881,
+      "comm": "python3",
+      "rss_kib": 175916,
+      "private_kib": 60456
+    },
+    {
+      "pid": 107997,
+      "ppid": 107919,
+      "comm": "WebKitNetworkPr",
+      "rss_kib": 52464,
+      "private_kib": 10784
+    }
+  ]
+}

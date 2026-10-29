@@ -1,0 +1,29 @@
+{
+    "label":  "alula-rust-lsp-edit-30m-run3-20261029-065645804",
+    "run_index":  3,
+    "preflight":  false,
+    "status":  "aborted",
+    "abort_reason":  "Foreground changed (expected 28382354, found 394532); stopped before sending more input.",
+    "aborted_at_utc":  "2026-10-28T22:56:54.0671679Z",
+    "test_started_at_utc":  "2026-10-28T22:56:45.9535726Z",
+    "edit_started_at_utc":  null,
+    "edit_elapsed_s":  0,
+    "expected_foreground_hwnd":  28382354,
+    "foreground_hwnd_at_abort":  394532,
+    "root_pid":  29652,
+    "process_tree_pids_observed":  [
+
+                                   ],
+    "process_memory_sample_interval_edits":  5,
+    "process_memory_samples":  [
+
+                               ],
+    "saved_edit_count":  0,
+    "saved_edits":  [
+
+                    ],
+    "memory_report_path":  "p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-065645804.json",
+    "memory_report_present":  false,
+    "memory_report_valid_for_acceptance":  false,
+    "note":  "An aborted attempt is not a completed duration sample. Any partial memory output is diagnostic only and must not be counted toward acceptance."
+}

@@ -1,0 +1,144 @@
+{
+  "label": "alula-rust-lsp-edit-preflight",
+  "run_index": 0,
+  "preflight": true,
+  "platform": "Windows",
+  "app_exe": "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe",
+  "mem_probe_exe": "E:\\alula_code\\target\\release\\mem-probe.exe",
+  "args": [
+    "--lsp-auto"
+  ],
+  "fixture_source": "E:\\alula_code\\tests\\fixtures\\rust-mini",
+  "isolated_fixture": "E:\\alula_code\\app\\build\\p00.4-edit-preflight-c044dc06029347db8fe217f1e8490c35\\tests\\fixtures\\rust-mini",
+  "isolated_home": "E:\\alula_code\\app\\build\\p00.4-edit-preflight-c044dc06029347db8fe217f1e8490c35\\home",
+  "edited_file": "E:\\alula_code\\app\\build\\p00.4-edit-preflight-c044dc06029347db8fe217f1e8490c35\\tests\\fixtures\\rust-mini\\src\\main.rs",
+  "baseline_sha256": "6689B6C06534079C1A006631F54D180F642D169F7A15455C50A2A7EEB2B02684",
+  "final_sha256": "C614B714D31156FF0304AB7B6878E516008F6C5295F4559511BEE1496405D1BB",
+  "final_byte_count": 755,
+  "last_saved_marker": "P00_4_PREFLIGHT_EDIT_006",
+  "edit_duration_s": 30.013,
+  "edit_interval_s": 5,
+  "edit_count": 6,
+  "test_started_at_utc": "2026-10-28T12:19:33.2216285Z",
+  "edit_started_at_utc": "2026-10-28T12:19:42.3477633Z",
+  "edit_ended_at_utc": "2026-10-28T12:20:12.3605170Z",
+  "root_pid": 14236,
+  "process_tree_pids": [
+    {
+      "pid": 7776,
+      "ppid": 53164,
+      "name": "rustc.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rustc.exe"
+    },
+    {
+      "pid": 14236,
+      "ppid": 44780,
+      "name": "alula_app.exe",
+      "executable_path": "E:\\alula_code\\app\\build\\windows\\x64\\runner\\Release\\alula_app.exe"
+    },
+    {
+      "pid": 16124,
+      "ppid": 54312,
+      "name": "rust-analyzer.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe"
+    },
+    {
+      "pid": 24500,
+      "ppid": 16124,
+      "name": "cargo.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\cargo.exe"
+    },
+    {
+      "pid": 52320,
+      "ppid": 16124,
+      "name": "rust-analyzer-proc-macro-srv.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe"
+    },
+    {
+      "pid": 53164,
+      "ppid": 24500,
+      "name": "cargo.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\cargo.exe"
+    },
+    {
+      "pid": 54312,
+      "ppid": 14236,
+      "name": "rust-analyzer.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe"
+    }
+  ],
+  "foreground_restored": true,
+  "close_check": {
+    "wait_seconds": 30,
+    "checked_at_utc": "2026-10-28T12:20:43.9532526Z",
+    "all_recorded_processes_exited": true,
+    "still_alive_pids": []
+  },
+  "memory_report": "p00.4-windows-alula-rust-lsp-edit-preflight.json",
+  "memory_summary": {
+    "peak_private": 685596672,
+    "stable_private": 677007360,
+    "final_private": 638091264,
+    "final_working_set": 580927488
+  },
+  "memory_samples": 40,
+  "edits": [
+    {
+      "cycle": 1,
+      "elapsed_s": 2.599,
+      "captured_at_utc": "2026-10-28T12:19:44.9488870Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_001",
+      "saved": true,
+      "bytes": 615,
+      "sha256": "B8AEDBC65D4234C93F1D929C8D6AC08AC9330A48CF701DFCDF52146E1C70C549"
+    },
+    {
+      "cycle": 2,
+      "elapsed_s": 7.535,
+      "captured_at_utc": "2026-10-28T12:19:49.8838127Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_002",
+      "saved": true,
+      "bytes": 643,
+      "sha256": "CD56EB64CDD062E449F0594C642D66E47B8A2F8675C25AE0D4469B3EC305CA82"
+    },
+    {
+      "cycle": 3,
+      "elapsed_s": 12.51,
+      "captured_at_utc": "2026-10-28T12:19:54.8588961Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_003",
+      "saved": true,
+      "bytes": 671,
+      "sha256": "8AA72587DACF07E4D028F5BD36F83F4CC2D5D8612B5C0B0DEA5403B3251FC0E9"
+    },
+    {
+      "cycle": 4,
+      "elapsed_s": 17.493,
+      "captured_at_utc": "2026-10-28T12:19:59.8414541Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_004",
+      "saved": true,
+      "bytes": 699,
+      "sha256": "0AD774B558C3E87863ADA314BEAA50607DE0E180FDD601F836B557C146016F2B"
+    },
+    {
+      "cycle": 5,
+      "elapsed_s": 22.517,
+      "captured_at_utc": "2026-10-28T12:20:04.8663917Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_005",
+      "saved": true,
+      "bytes": 727,
+      "sha256": "2ED931B00BE44387C49820653CB529C8C719D866844BDFBC94D1F5CA514987EE"
+    },
+    {
+      "cycle": 6,
+      "elapsed_s": 27.546,
+      "captured_at_utc": "2026-10-28T12:20:09.8947247Z",
+      "marker": "P00_4_PREFLIGHT_EDIT_006",
+      "saved": true,
+      "bytes": 755,
+      "sha256": "C614B714D31156FF0304AB7B6878E516008F6C5295F4559511BEE1496405D1BB"
+    }
+  ],
+  "edit_timer_reported_elapsed_s": 61.604422,
+  "report_correction": "The original edit_duration_s included the 30-second post-close process check because the stopwatch was not stopped at edit completion. Corrected from edit_started_at_utc and edit_ended_at_utc; the script now stops the timer at that boundary.",
+  "shutdown_stderr_observation": "All observed PIDs exited by the 30-second check, but rust-analyzer stderr included \"client exited without proper shutdown sequence\" with a backtrace; graceful LSP shutdown was not established."
+}

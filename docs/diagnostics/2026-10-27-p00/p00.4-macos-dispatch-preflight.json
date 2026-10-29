@@ -1,0 +1,31 @@
+{
+  "recorded_at": "2026-10-28T05:37:04+08:00",
+  "purpose": "Check whether the prepared macOS Web Engine probe can be dispatched from the current GitHub repository state.",
+  "local_state": {
+    "head": "3b3c7f0",
+    "branch": "codex/vscode-parity-p00",
+    "origin": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code.git",
+    "workflow_file": ".github/workflows/p00-web-engine-macos.yml",
+    "workflow_file_tracked_locally": true
+  },
+  "remote_checks": [
+    {
+      "command": "git ls-remote --heads origin codex/vscode-parity-p00",
+      "exit_code": 0,
+      "stdout": "",
+      "result": "No matching branch ref exists on origin."
+    },
+    {
+      "command": "gh workflow list",
+      "exit_code": 0,
+      "stdout": "CI\tactive\t397227235\nRelease\tactive\t397227236"
+    },
+    {
+      "command": "gh workflow view p00-web-engine-macos.yml --yaml",
+      "exit_code": 1,
+      "stdout": "HTTP 404: workflow p00-web-engine-macos.yml not found on the default branch"
+    }
+  ],
+  "dispatch_attempted": false,
+  "conclusion": "The macOS workflow exists only in the local checkout at this revision. It is not listed on the remote default branch, and the working branch has not been published. No macOS runner evidence was produced. Publishing the branch remains subject to the user's pending authorization."
+}

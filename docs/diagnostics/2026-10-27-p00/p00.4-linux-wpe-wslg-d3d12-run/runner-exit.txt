@@ -1,0 +1,3 @@
+exit_code=1
+timed out waiting for phase initial-loaded (90-second phase deadline).
+Flutter could not create an EGL context; the WPE WebProcess exited with reason=CRASHED. No initial page phase or WPE GBM frame was observed.

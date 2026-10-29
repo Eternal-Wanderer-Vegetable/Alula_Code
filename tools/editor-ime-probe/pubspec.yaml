@@ -1,0 +1,19 @@
+name: editor_ime_probe
+description: P00.4 CodeForge Windows IME, incremental input, multi-cursor and viewport experiment.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ">=3.13.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  code_forge: 11.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

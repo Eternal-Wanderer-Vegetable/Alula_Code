@@ -1,0 +1,5 @@
+Temporary WPE 2.52.6 Debian Bookworm image; UID 1000 with supplementary render GID 992.
+Passed /dev/dxg and /dev/dri/renderD128; mounted host /usr/lib/wsl/lib; GALLIUM_DRIVER=d3d12.
+render_node_open=ok fd=3
+Mesa loader: failed to retrieve device information; vgem_dri.so was not found and driver load failed.
+gbm_device=null; no GBM buffer was allocated. Probe process exited 0 after recording the null result.

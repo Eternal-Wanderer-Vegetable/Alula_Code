@@ -1,0 +1,28 @@
+Linux 572f9f60ed97 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 GNU/Linux
+PRETTY_NAME="Debian GNU/Linux forky/sid"
+NAME="Debian GNU/Linux"
+VERSION_CODENAME=forky
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+Flutter 3.47.8 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 737ba8f885 (5 days ago) • 2026-10-22 21:37:31 -0700
+Engine • hash dfd2e6cb7d319db05e3bf1503f3e2ac60f6288a2 (revision cf636b1dfb) (5 days ago) • 2026-10-23 02:13:38.000Z
+Tools • Dart 3.13.7 • DevTools 2.60.0
+wpe-webkit-2.0=2.52.6
+wpe-web-process-extension-2.0=2.52.6
+wpe-platform-2.0=not-installed
+wpe-platform-headless-2.0=not-installed
+wpebackend-fdo-1.0=1.16.1
+WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=unset
+WEBKIT_DMABUF_RENDERER_DISABLE_GBM=unset
+security-label=unconfined
+CapPrm:	00000000a82435fb
+CapEff:	00000000a82435fb
+CapBnd:	00000000a82435fb
+libepoxy-dev=1.5.10-2+b2
+libgtk-3-dev=3.24.52-3
+libwpe-1.0-dev=1.16.3-2
+libwpebackend-fdo-1.0-dev=1.16.1-1+b1
+libwpewebkit-2.0-dev=2.52.6-1

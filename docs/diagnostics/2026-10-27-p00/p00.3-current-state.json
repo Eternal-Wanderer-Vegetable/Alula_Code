@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "status": "done",
+  "reference": {
+    "pageGolden": "reference-workbench.png",
+    "alulaPageGolden": "alula-welcome.png",
+    "note": "Pinned Code-OSS capture and a real Alula Windows desktop capture are preserved. Both use 1505x1005 physical pixels, 1204x804 logical viewport, 1.25 scale, and dark theme. The Alula UI is zh-CN while the pinned reference is en-US; label-level visual comparison is deferred to P05."
+  },
+  "fixtures": [
+    {
+      "id": "parity-ref-07-undo-01",
+      "runner": "app/test/p00_risk_fixtures_test.dart",
+      "case": "Edit Cargo.toml, edit src/main.rs, then undo once in each document.",
+      "sourceInspection": "One UndoStack belongs to _WorkbenchPageState and snapshots contain no document identity.",
+      "expectedCurrentObservation": "Each active document receives the other document's snapshot.",
+      "runtimeResult": {
+        "aBeforeLength": 201,
+        "bBeforeLength": 435,
+        "aUndoRestoredOwnText": false,
+        "aUndoAppliedOtherFileSnapshot": true,
+        "bUndoRestoredOwnText": false,
+        "bUndoAppliedOtherFileSnapshot": true
+      },
+      "exitCode": 0,
+      "evidence": "flutter test app/test/p00_risk_fixtures_test.dart --reporter expanded; full init.sh replay"
+    },
+    {
+      "id": "parity-ref-07-recovery-01",
+      "runner": "app/test/p00_risk_fixtures_test.dart",
+      "case": "Accept 2,000,001 UTF-16 units in a dirty file, let the journal flush, then recreate the workbench.",
+      "sourceInspection": "_encodeSession omits dirty document text above _kMaxJournalTextChars (2,000,000).",
+      "expectedCurrentObservation": "The journal has no edited body; restoration reads the saved disk text.",
+      "runtimeResult": {
+        "acceptedUtf16Units": 2000001,
+        "journalTextPresent": false,
+        "diskUtf16Units": 5,
+        "recoveredUtf16Units": 5,
+        "recoveredFromDisk": true
+      },
+      "exitCode": 0,
+      "evidence": "flutter test app/test/p00_risk_fixtures_test.dart --reporter expanded; full init.sh replay"
+    },
+    {
+      "id": "parity-ref-07-close-process-01",
+      "runner": "cargo test -p editor-core --test p00_workspace_close -- --nocapture",
+      "case": "Start a workspace LSP, attach one document, close that document, then inspect the process.",
+      "sourceInspection": "alula_doc_close detaches the document; workspace_servers retains an Arc<LspServer>.",
+      "expectedCurrentObservation": "The LSP child remains alive after all workspace documents close.",
+      "runtimeResult": {
+        "allDocumentsClosed": true,
+        "workspaceProcessAlive": true
+      },
+      "exitCode": 0,
+      "evidence": "cargo test -p editor-core --test p00_workspace_close -- --nocapture"
+    },
+    {
+      "id": "parity-ref-07-slow-completion-01",
+      "runner": "cargo test -p editor-lsp --test p00_slow_completion -- --nocapture",
+      "case": "Ask the fake provider for completion with a 1,200 ms response delay and measure caller wait.",
+      "sourceInspection": "LspServer::completion synchronously waits for the response or timeout; Dart invokes it synchronously through FFI.",
+      "expectedCurrentObservation": "The caller remains blocked for approximately the provider delay.",
+      "runtimeResult": {
+        "configuredDelayMs": 1200,
+        "callerWaitMs": 1200,
+        "items": [
+          "delayed_completion"
+        ]
+      },
+      "exitCode": 0,
+      "evidence": "cargo test -p editor-lsp --test p00_slow_completion -- --nocapture"
+    }
+  ],
+  "referenceBehavior": {
+    "fixture": "parity-ref-07-undo-01",
+    "reference": "Code-OSS 1.145.0, commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e, Electron 43.8.3",
+    "mode": "--disable-extensions; isolated user-data and extensions directories; CDP on port 9223",
+    "operation": "Append one character to Cargo.toml and src/main.rs separately, save, switch between documents, undo once in each, save, compare with each original file.",
+    "runtimeResult": {
+      "cargoTomlEditSaved": true,
+      "cargoTomlUndoRestoredOwnText": true,
+      "mainRsEditSaved": true,
+      "mainRsUndoRestoredOwnText": true
+    },
+    "note": "This paired run confirms per-document undo history. The other three runtime fixtures are Alula characterization only; no reference-side provider was installed to impersonate a default LSP."
+  },
+  "followUpComparisons": [
+    "The Alula page capture is zh-CN while the pinned Code-OSS capture is en-US; matched-locale label/text visual comparison belongs to P05.",
+    "Code-OSS pairing for recovery, process shutdown, and delayed provider remains a later comparative check. P00.3 already has the required Alula characterization baselines for all four cases."
+  ]
+}

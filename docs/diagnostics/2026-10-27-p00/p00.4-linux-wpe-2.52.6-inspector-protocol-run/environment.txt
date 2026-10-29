@@ -1,0 +1,19 @@
+Recorded: 2026-10-28
+Host: WSL2, Debian GNU/Linux 12 container
+Probe: standalone Flutter Linux/WPE Release binary
+Flutter: 3.47.8 stable
+Dart: 3.13.7
+flutter_inappwebview: 6.2.0-beta.3
+flutter_inappwebview_linux: 0.1.0-beta.1
+WPE WebKit: 2.52.6 source build
+Probe user: UID 1000 (probe)
+Display: Xvfb :103, 1440x900x24
+WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9231
+WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+WEBKIT_DMABUF_RENDERER_DISABLE_GBM=1
+GDK_BACKEND=x11
+LIBGL_ALWAYS_SOFTWARE=1
+P00_4_WEB_AUTO=1
+
+The Inspector and probe were both inside the same container. This is not a
+GitHub Actions run or a hardware-rendering result.

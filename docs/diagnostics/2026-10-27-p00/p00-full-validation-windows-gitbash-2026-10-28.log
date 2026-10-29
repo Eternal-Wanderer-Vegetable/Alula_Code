@@ -1,0 +1,268 @@
+2026-10-28T06:03:38+08:00
+
+=== cargo fmt --check ===
+
+=== bash init.sh ===
+
+[1;36m== 1/4 Rust: cargo test --workspace ==[0m
+
+running 10 tests
+..........
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 12 tests
+............
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.53s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+.
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+[1;32m[PASS][0m cargo test
+
+[1;36m== 2/4 Rust: cargo clippy -D warnings ==[0m
+[1;32m[PASS][0m clippy
+
+[1;36m== 3/4 构建核心动态库 → app/native/ ==[0m
+    Finished `release` profile [optimized] target(s) in 0.09s
+OK: app/native/ 已就绪
+[1;32m[PASS][0m build_core
+
+[1;36m== 4/4 Flutter: flutter test (app/) ==[0m
+00:00 +0: loading E:/Alula_Code/app/test/commands_test.dart
+00:00 +0: E:/Alula_Code/app/test/commands_test.dart: 注册表 注册 / 查找 / 同 id 覆盖 / 注销
+00:00 +1: E:/Alula_Code/app/test/commands_test.dart: 注册表 label 为「分类: 名称」
+00:00 +2: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 子序列命中返回分数，不命中返回 null
+00:00 +3: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 前缀/词首命中比中段命中分高
+00:00 +4: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 连续命中比离散命中分高
+00:00 +5: E:/Alula_Code/app/test/commands_test.dart: fuzzyScore 大小写不敏感
+00:00 +6: E:/Alula_Code/app/test/commands_test.dart: search 排序 按分数降序，同分按 label 字典序
+00:00 +7: E:/Alula_Code/app/test/core_sync_test.dart: ABI 版本匹配
+00:00 +8: E:/Alula_Code/app/test/core_sync_test.dart: 打开→插入→版本回执→resync 全文一致
+00:00 +9: E:/Alula_Code/app/test/core_sync_test.dart: 过期版本被拒绝并给出 Rust 当前版本
+00:00 +10: E:/Alula_Code/app/test/core_sync_test.dart: 中文与 emoji 混排增量在 FFI 边界正确
+00:00 +11: E:/Alula_Code/app/test/core_sync_test.dart: 先删后插的 op 序列在 Rust 侧按序生效
+00:00 +12: E:/Alula_Code/app/test/core_sync_test.dart: 非法 UTF-16 边界（代理对中间）被 Rust 拒绝
+00:00 +13: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 基本命中与非重叠计数
+00:00 +14: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 大小写不敏感
+00:00 +15: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches 空查询与无命中
+00:00 +16: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches UTF-16 口径：Emoji（代理对）占 2 个 code unit，偏移不落代理对中间
+00:00 +17: E:/Alula_Code/app/test/find_replace_undo_test.dart: findMatches CRLF 与换行环境命中
+00:00 +18: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 全部替换与计数
+00:00 +19: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 大小写不敏感替换
+00:00 +20: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 替换串包含查询串不造成重叠误替换
+00:00 +21: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches UTF-16：替换文本含 Emoji
+00:00 +22: E:/Alula_Code/app/test/find_replace_undo_test.dart: replaceAllMatches 空查询原样返回
+00:00 +23: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack push/undo/redo 往返
+00:00 +24: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack coalesce 合并不压新帧：一次撤销回退整段输入
+00:00 +25: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 新变更作废 redo 栈
+00:00 +26: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 条数上限淘汰最旧
+00:00 +27: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack 总字符上限淘汰最旧（低内存纪律）
+00:00 +28: E:/Alula_Code/app/test/find_replace_undo_test.dart: UndoStack clear 清空双栈
+00:00 +29: E:/Alula_Code/app/test/git_cli_test.dart: porcelain -z 解析：修改/未跟踪/重命名/中文路径
+00:00 +30: E:/Alula_Code/app/test/git_cli_test.dart: status 命令参数：--porcelain -z
+00:00 +31: E:/Alula_Code/app/test/git_cli_test.dart: stage/unstage/commit 的参数构造
+00:00 +32: E:/Alula_Code/app/test/git_cli_test.dart: commit 空信息与 git 失败：抛 GitError
+00:00 +33: E:/Alula_Code/app/test/git_cli_test.dart: isRepo：true / false（rev-parse 失败）
+00:00 +34: E:/Alula_Code/app/test/git_cli_test.dart: diff/log 转发
+00:00 +35: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +36: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +37: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +38: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +39: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +40: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +41: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +42: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +43: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +44: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +45: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +46: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +47: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +48: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +49: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +50: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +51: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +52: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +53: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +54: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +55: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +56: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +57: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +58: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +59: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +60: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +61: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +62: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +63: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +64: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +65: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +66: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +67: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +68: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +69: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +70: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +71: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +72: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +73: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +74: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +75: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +76: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +77: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +78: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +79: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:00 +80: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +81: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +82: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +83: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +84: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +85: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +86: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +87: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +88: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +89: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +90: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +91: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +92: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +93: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +94: E:/Alula_Code/app/test/git_integration_test.dart: 全流程：status → stage → diff → commit → log → 干净
+00:01 +95: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +96: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +97: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +98: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +99: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +100: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +101: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:01 +102: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +103: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +104: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +105: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +106: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +107: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+00:02 +108: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-UNDO-01 alternating edits in two files
+P00.3_FIXTURE={"fixture":"parity-ref-07-undo-01","aBeforeLength":201,"bBeforeLength":435,"aUndoRestoredOwnText":false,"aUndoAppliedOtherFileSnapshot":true,"bUndoRestoredOwnText":false,"bUndoAppliedOtherFileSnapshot":true}
+00:02 +109: E:/Alula_Code/app/test/workspace_watcher_test.dart: 子目录事件也触发（递归）
+00:02 +110: E:/Alula_Code/app/test/workspace_watcher_test.dart: 子目录事件也触发（递归）
+00:02 +111: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:02 +112: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:03 +113: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:03 +114: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:03 +115: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:03 +116: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:06 +117: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:08 +118: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:11 +119: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:15 +120: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+00:15 +121: E:/Alula_Code/app/test/p00_risk_fixtures_test.dart: P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units
+P00.3_FIXTURE={"fixture":"parity-ref-07-recovery-01","acceptedUtf16Units":2000001,"journalTextPresent":false,"diskUtf16Units":5,"recoveredUtf16Units":5,"recoveredFromDisk":true}
+02:11 +122: All tests passed!
+[1;32m[PASS][0m flutter test
+
+[1;32m全部通过 — 满足提交前 DoD。[0m
+
+=== app flutter analyze ===
+Analyzing app...                                                
+No issues found! (ran in 2.4s)
+
+=== RESULT: full gate passed ===
