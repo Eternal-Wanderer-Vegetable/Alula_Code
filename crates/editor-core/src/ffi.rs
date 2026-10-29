@@ -9,19 +9,78 @@
 //!
 //! 诊断/补全轮询说明（docs/02 §2.2 的 FRB 事件流迁移前的过渡方案）：
 //! Dart 侧以 500ms 级别轮询 `alula_diagnostics` / `alula_syntax`；
-//! `alula_completion` 为阻塞式请求（带超时），UI 需在提示状态后调用。
+//! `alula_completion_start/poll/cancel` 提供有界、可取消的异步补全请求；
+//! `alula_completion` 保留为旧调用方的同步兼容入口。
 
+use std::collections::HashMap;
 use std::ffi::{c_char, CStr, CString};
 use std::panic::{catch_unwind, AssertUnwindSafe};
-use std::sync::{Mutex, MutexGuard, OnceLock};
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
+use std::time::{Duration, Instant};
 
 use editor_buffer::TextOp;
+use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
 use serde_json::json;
 
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 5;
+pub const ALULA_ABI_VERSION: u32 = 6;
+
+const MAX_PENDING_COMPLETIONS: usize = 32;
+static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
+
+struct PendingCompletion {
+    document_id: u64,
+    document_version: u64,
+    server: Arc<LspServer>,
+    request: LspPendingRequest,
+    deadline: Instant,
+}
+
+static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
+
+fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
+    PENDING_COMPLETIONS.get_or_init(|| Mutex::new(HashMap::new()))
+}
+
+fn pending_completions_lock() -> MutexGuard<'static, HashMap<u64, PendingCompletion>> {
+    pending_completions()
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn take_pending_completions(
+    mut matches: impl FnMut(&PendingCompletion) -> bool,
+) -> Vec<PendingCompletion> {
+    let mut pending = pending_completions_lock();
+    let ids: Vec<u64> = pending
+        .iter()
+        .filter_map(|(id, request)| matches(request).then_some(*id))
+        .collect();
+    ids.into_iter()
+        .filter_map(|id| pending.remove(&id))
+        .collect()
+}
+
+fn cancel_requests(requests: Vec<PendingCompletion>) {
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+fn cancel_completions_for_doc(id: u64) {
+    cancel_requests(take_pending_completions(|request| {
+        request.document_id == id
+    }));
+}
+
+pub(crate) fn cancel_completions_for_server(server: &Arc<LspServer>) {
+    cancel_requests(take_pending_completions(|request| {
+        Arc::ptr_eq(&request.server, server)
+    }));
+}
 
 static REGISTRY: OnceLock<Mutex<DocRegistry>> = OnceLock::new();
 
@@ -118,8 +177,12 @@ pub unsafe extern "C" fn alula_doc_apply(
             Ok(v) => v,
             Err(e) => return err_json("ParseError", json!(e.to_string())),
         };
-        match registry_lock().apply(id, base_version, &ops) {
-            Ok(version) => to_c_ptr(json!({ "ok": true, "version": version }).to_string()),
+        let result = { registry_lock().apply(id, base_version, &ops) };
+        match result {
+            Ok(version) => {
+                cancel_completions_for_doc(id);
+                to_c_ptr(json!({ "ok": true, "version": version }).to_string())
+            }
             Err(ApplyError::VersionMismatch { current }) => {
                 err_json("VersionMismatch", json!({ "current": current }))
             }
@@ -149,6 +212,7 @@ pub extern "C" fn alula_doc_resync(id: u64) -> *mut c_char {
 #[no_mangle]
 pub extern "C" fn alula_doc_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
+        cancel_completions_for_doc(id);
         let (server, uri) = {
             let reg = registry_lock();
             (reg.lsp_of(id), reg.uri_of(id))
@@ -222,6 +286,7 @@ pub unsafe extern "C" fn alula_lsp_start(
 #[no_mangle]
 pub extern "C" fn alula_lsp_stop(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
+        cancel_completions_for_doc(id);
         let server = registry_lock().detach_lsp(id);
         // detach 只移除映射；进程由调用方通过返回值决定是否显式 shutdown。
         // MVP 简化：registry 不再持有 Arc 后，shutdown 在此无引用可用——
@@ -306,7 +371,144 @@ pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_diagnostics")))
 }
 
-/// 同步补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
+/// 发起非阻塞补全请求。offset 为文档 UTF-16 口径。
+/// 成功返回 request_id 与服务端文档版本；最多允许 32 个待处理请求。
+#[no_mangle]
+pub extern "C" fn alula_completion_start(
+    id: u64,
+    offset_utf16: u64,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let position = {
+            let reg = registry_lock();
+            let Some((line, character)) = reg.line_col(id, offset_utf16 as usize) else {
+                return err_json("UnknownDoc", json!({ "id": id }));
+            };
+            let Some(uri) = reg.uri_of(id) else {
+                return err_json("UnknownDoc", json!("doc 未设置 uri"));
+            };
+            let Some(server) = reg.lsp_of(id) else {
+                return err_json("NoLsp", json!({ "id": id }));
+            };
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({ "id": id }));
+            };
+            (uri, server, line, character, version)
+        };
+        let (uri, server, line, character, version) = position;
+        let mut pending = pending_completions_lock();
+        if pending.len() >= MAX_PENDING_COMPLETIONS {
+            return err_json("Backpressure", json!({ "limit": MAX_PENDING_COMPLETIONS }));
+        }
+        let request = match server.completion_async(&uri, line, character) {
+            Ok(request) => request,
+            Err(error) => return err_json("CompletionFailed", json!(error)),
+        };
+        let request_id = NEXT_COMPLETION_ID.fetch_add(1, Ordering::Relaxed);
+        let now = Instant::now();
+        let deadline = now
+            .checked_add(Duration::from_millis(timeout_ms))
+            .unwrap_or_else(|| now + Duration::from_secs(86_400));
+        pending.insert(
+            request_id,
+            PendingCompletion {
+                document_id: id,
+                document_version: version,
+                server,
+                request,
+                deadline,
+            },
+        );
+        to_c_ptr(json!({ "ok": true, "requestId": request_id, "version": version }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_completion_start")))
+}
+
+/// 立即查询请求；状态为 pending/completed/stale/timeout/cancelled。
+#[no_mangle]
+pub extern "C" fn alula_completion_poll(request_id: u64) -> *mut c_char {
+    enum PollResult {
+        Pending,
+        Timeout(PendingCompletion),
+        Complete(PendingCompletion, serde_json::Value),
+        Failed(PendingCompletion, String),
+    }
+
+    catch_unwind(AssertUnwindSafe(|| {
+        let result = {
+            let mut requests = pending_completions_lock();
+            let Some(mut pending) = requests.remove(&request_id) else {
+                return to_c_ptr(
+                    json!({ "ok": true, "status": "cancelled", "requestId": request_id })
+                        .to_string(),
+                );
+            };
+            if Instant::now() >= pending.deadline {
+                PollResult::Timeout(pending)
+            } else {
+                match pending.request.try_recv() {
+                    Ok(Some(response)) => PollResult::Complete(pending, response),
+                    Ok(None) => {
+                        requests.insert(request_id, pending);
+                        PollResult::Pending
+                    }
+                    Err(error) => PollResult::Failed(pending, error),
+                }
+            }
+        };
+
+        match result {
+            PollResult::Pending => to_c_ptr(
+                json!({ "ok": true, "status": "pending", "requestId": request_id }).to_string(),
+            ),
+            PollResult::Timeout(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(
+                    json!({ "ok": true, "status": "timeout", "requestId": request_id }).to_string(),
+                )
+            }
+            PollResult::Complete(pending, response) => {
+                let current_version = registry_lock().version_of(pending.document_id);
+                if current_version != Some(pending.document_version) {
+                    return to_c_ptr(
+                        json!({ "ok": true, "status": "stale", "requestId": request_id })
+                            .to_string(),
+                    );
+                }
+                to_c_ptr(
+                    json!({
+                        "ok": true,
+                        "status": "completed",
+                        "requestId": request_id,
+                        "version": pending.document_version,
+                        "items": extract_completion_labels(&response),
+                    })
+                    .to_string(),
+                )
+            }
+            PollResult::Failed(mut pending, error) => {
+                let _ = pending.request.cancel();
+                err_json("CompletionFailed", json!(error))
+            }
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_completion_poll")))
+}
+
+/// 显式取消请求；重复取消是安全的。
+#[no_mangle]
+pub extern "C" fn alula_completion_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if let Some(mut pending) = pending_completions_lock().remove(&request_id) {
+            let _ = pending.request.cancel();
+        }
+        to_c_ptr(json!({ "ok": true, "status": "cancelled", "requestId": request_id }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_completion_cancel")))
+}
+
+/// 同步兼容补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
 #[no_mangle]
 pub extern "C" fn alula_completion(id: u64, offset_utf16: u64, timeout_ms: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {

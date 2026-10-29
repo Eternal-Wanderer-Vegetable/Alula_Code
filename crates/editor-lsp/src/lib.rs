@@ -4,7 +4,7 @@
 //! - Initialize/initialized 握手 + 退出握手；
 //! - didOpen / didChange（全量同步；增量同步留待 Phase 1）；
 //! - 接收 textDocument/publishDiagnostics（后台读线程，不阻塞 UI）；
-//! - textDocument/completion（同步等待 + 超时；异步化留待 FRB 迁移）；
+//! - textDocument/completion（可取消异步请求；保留同步兼容包装）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
 use std::collections::HashMap;
@@ -72,6 +72,73 @@ pub struct LspServer {
     child: Mutex<Child>,
     shared: Arc<Shared>,
     next_id: AtomicI64,
+}
+
+/// 已发送的 JSON-RPC 请求。创建与轮询均不等待服务端响应；调用方应在完成、
+/// 超时或生命周期结束时显式取消，以释放 pending 项并通知语言服务器。
+pub struct LspPendingRequest {
+    id: i64,
+    method: String,
+    receiver: mpsc::Receiver<serde_json::Value>,
+    shared: Arc<Shared>,
+    completed: bool,
+}
+
+impl LspPendingRequest {
+    pub fn id(&self) -> i64 {
+        self.id
+    }
+
+    /// 立即检查响应；None 表示仍在等待。
+    pub fn try_recv(&mut self) -> Result<Option<serde_json::Value>, String> {
+        match self.receiver.try_recv() {
+            Ok(value) => {
+                self.completed = true;
+                Ok(Some(value))
+            }
+            Err(mpsc::TryRecvError::Empty) => Ok(None),
+            Err(mpsc::TryRecvError::Disconnected) => {
+                if let Ok(mut pending) = self.shared.pending.lock() {
+                    pending.remove(&self.id);
+                }
+                self.completed = true;
+                Err(format!("请求 {} 的 LSP 响应通道已关闭", self.method))
+            }
+        }
+    }
+
+    /// 同步兼容入口使用的有界等待。
+    pub fn wait(&mut self, timeout_ms: u64) -> Result<serde_json::Value, String> {
+        match self
+            .receiver
+            .recv_timeout(Duration::from_millis(timeout_ms))
+        {
+            Ok(value) => {
+                self.completed = true;
+                Ok(value)
+            }
+            Err(_) => {
+                let _ = self.cancel();
+                Err(format!("请求 {} 响应超时（{timeout_ms}ms）", self.method))
+            }
+        }
+    }
+
+    /// 删除本地 pending 项并发送标准 LSP $/cancelRequest 通知。
+    pub fn cancel(&mut self) -> Result<(), String> {
+        if self.completed {
+            return Ok(());
+        }
+        if let Ok(mut pending) = self.shared.pending.lock() {
+            pending.remove(&self.id);
+        }
+        self.completed = true;
+        self.shared.send(&serde_json::json!({
+            "jsonrpc": "2.0",
+            "method": "$/cancelRequest",
+            "params": {"id": self.id},
+        }))
+    }
 }
 
 /// 路径 → file URI（ASCII 路径的朴素实现；含非 ASCII/空格时需 percent-encoding，
@@ -238,13 +305,12 @@ impl LspServer {
         }))
     }
 
-    /// 通用同步请求（pull diagnostics 等使用）。
-    pub fn request(
+    /// 通用异步请求：只注册 pending 并发送 JSON-RPC 消息，不等待响应。
+    pub fn request_async(
         &self,
         method: &str,
         params: serde_json::Value,
-        timeout_ms: u64,
-    ) -> Result<serde_json::Value, String> {
+    ) -> Result<LspPendingRequest, String> {
         let id = self.next_id.fetch_add(1, Ordering::SeqCst);
         let (tx, rx) = mpsc::sync_channel::<serde_json::Value>(1);
         self.shared
@@ -259,15 +325,39 @@ impl LspServer {
             self.shared.pending.lock().ok().map(|mut g| g.remove(&id));
             return Err(e);
         }
-        match rx.recv_timeout(Duration::from_millis(timeout_ms)) {
-            Ok(response) => Ok(response),
-            Err(_) => {
-                if let Ok(mut pending) = self.shared.pending.lock() {
-                    pending.remove(&id);
-                }
-                Err(format!("请求 {method} 响应超时（{timeout_ms}ms）"))
-            }
-        }
+        Ok(LspPendingRequest {
+            id,
+            method: method.to_string(),
+            receiver: rx,
+            shared: Arc::clone(&self.shared),
+            completed: false,
+        })
+    }
+
+    /// 通用同步兼容请求（pull diagnostics 等非 UI 调用使用）。
+    pub fn request(
+        &self,
+        method: &str,
+        params: serde_json::Value,
+        timeout_ms: u64,
+    ) -> Result<serde_json::Value, String> {
+        self.request_async(method, params)?.wait(timeout_ms)
+    }
+
+    /// 发送异步补全请求。返回值可立即轮询或取消。
+    pub fn completion_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<LspPendingRequest, String> {
+        self.request_async(
+            "textDocument/completion",
+            serde_json::json!({
+                "textDocument": {"uri": uri},
+                "position": {"line": line, "character": character},
+            }),
+        )
     }
 
     /// 同步补全请求（带超时）。返回每项的插入文本（insertText/textEdit.newText/label）。

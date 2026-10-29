@@ -9,10 +9,18 @@
 
 - 调度顺序改为先完成 P00–P13 的 VS Code 整体架构与默认功能复刻，再在 P14 做全功能性能/内存优化，P15 完成最终对照。Rust + rust-analyzer ≤500 MiB 暂停作为验收门；已有占用数据保留作基线，后续重新定标。
 - P00 / feat-022 按阶段交付物签收：参考来源/构建差异、贡献项导出、golden/风险夹具和三项风险实验 ADR/证据已登记。真实 DRM/WPE GBM、Microsoft 官方服务身份/许可是 P12/P13/P14 后续风险，不再阻塞 P01。
-- 当前唯一进行项转为 P01 / feat-023。架构阶段仍要求资源有界、服务按需启停、关闭后回收，并保证压力下可编辑/保存及无数据丢失；不提前做以数值占用达标为目的的优化。
+- P01 / feat-023 继续进行：P01.1 异步请求/取消/版本契约已完成，当前唯一活动切片为 P01.2 命令与上下文引擎。架构阶段仍要求资源有界、服务按需启停、关闭后回收，并保证压力下可编辑/保存及无数据丢失；不提前做以数值占用达标为目的的优化。
 - 启动基线首跑中，P00.3 `REF-07-UNDO-01` 曾因打开第二文件时的编辑时间戳落入 400ms undo coalescing 窗口而失败。测试在第二文件打开后增加 450ms 实时等待以隔离两次编辑；复跑 `bash init.sh --fast` 全通过（Rust workspace tests、build_core、Flutter 122/122），观测仍为双文档撤销串写这一既有夹具结果。
 - 提交前 GitNexus `detect-changes --scope all` 覆盖工作树 38 个文件/11 个 symbols，报告 0 个受影响流程、low risk；staged 检查覆盖本次 7 个文件/1 个 AGENTS 文档 symbol、0 个受影响流程、low risk。索引报告既有流程图截断（417 个候选入口中 217 个未排名、130 个 callee 跳过、2 次 walk 达预算），因此 0 流程仅用于本次文档变更风险评估，不代表代码图完整。
 - 本次变更文件：`AGENTS.md`、docs/03、docs/04、docs/10、`feature_list.json`、本文件与 `session-handoff.md`。
+
+### 最新进展（2026-10-29，P01.1 异步请求/取消/版本契约）
+
+- 按用户调整的顺序先做整体架构复刻；500 MiB 数值门槛暂时停用，资源有界、版本正确、关闭清理与压力下可编辑/保存仍是硬要求。P01 拆为四个有序切片；P01.1 已完成，当前唯一活动切片为 P01.2 命令与上下文引擎（权威状态见 docs/03 N.1）。
+- editor-lsp 增加可轮询/取消的 JSON-RPC 请求句柄。editor-core 增加 async completion start/poll/cancel、32 项全局上限、版本校验；编辑、关闭文档、解除 LSP 挂接和工作区关闭会取消关联请求。ABI 两侧升为 v6；workbench 使用 Future 请求，版本变更或切换文档后的旧结果不更新面板。旧同步 ABI 与 API 保留兼容。
+- 新增延迟 fake LSP 集成 fixture `crates/editor-core/tests/p01_async_completion.rs`，覆盖 start 非阻塞、编辑后取消、版本 2 返回、32 项上限及第 33 项背压、取消通知与工作区关闭；既有慢补全 fixture 继续验证同步兼容。
+- 门禁全绿：`cargo fmt --all -- --check`、`cargo test --workspace`、`cargo clippy --workspace --all-targets -- -D warnings`、`bash scripts/build_core.sh`、app 下 `flutter analyze --no-pub`、`flutter test --no-pub`（122/122）及 `bash init.sh`。
+- 契约与边界记录在 `docs/diagnostics/2026-10-29-p01/p01.1-async-completion-contract.md`。GitNexus staged 检查报 CRITICAL、35 条受影响流程；已展开 workspace shutdown/pending、同步 shutdown、文档 close 与 completion 等主路径，以逐符号 impact、源码调用点及全套 fixture/gates 核验，不用 riskSharedAxes 抵消。完整图谱仍截断（231 个候选入口未排名、135 个 callee 跳过、2 次 walk 达预算），因此保留风险记录而不宣称图谱完整。P01.1 已独立阶段提交；下一项为 P01.2 命令/context 影响分析。
 
 ### 最新进展（2026-10-29，第七十八轮，固定版 Code-OSS 30 分钟脚本编辑对照）
 

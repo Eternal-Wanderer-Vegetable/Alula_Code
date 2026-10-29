@@ -897,12 +897,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final offset = active.controller.selection.baseOffset >= 0
         ? active.controller.selection.baseOffset
         : active.controller.text.length;
-    setState(() => _statusDetail = '补全请求中…（阻塞式 FFI，MVP 过渡）');
+    setState(() => _statusDetail = '补全请求中…');
     await Future<void>.delayed(const Duration(milliseconds: 50));
     try {
-      final items =
-          active.doc.core.lsp.completion(active.id, offset, timeoutMs: 10000);
+      final completed =
+          await active.doc.core.lsp.completion(active.id, offset, timeoutMs: 10000);
       if (!mounted) return;
+      if (completed == null) {
+        if (_active?.id == active.id) {
+          setState(() => _statusDetail = '补全已取消或结果已过期');
+        }
+        return;
+      }
+      if (_active?.id != active.id || active.doc.version != completed.version) {
+        return;
+      }
+      final items = completed.items;
       setState(() {
         _completionItems = items.take(50).toList();
         _panelTab.index = 1;

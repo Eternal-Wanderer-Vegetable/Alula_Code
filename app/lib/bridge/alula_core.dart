@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 5;
+const int expectedAbiVersion = 6;
 
 enum OpType { insert, delete }
 
@@ -68,6 +68,13 @@ class ResyncResult {
   const ResyncResult(this.version, this.content);
 }
 
+class CompletionResult {
+  final int version;
+  final List<String> items;
+
+  const CompletionResult(this.version, this.items);
+}
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -103,8 +110,45 @@ class AlulaLsp {
     return (r['items'] as List).cast<Map<String, Object?>>();
   }
 
-  /// 同步补全请求（阻塞至响应或超时；MVP 过渡，FRB 迁移后异步化）。
-  List<String> completion(int id, int offsetUtf16, {int timeoutMs = 8000}) {
+  /// 异步补全；仅在请求进行时每 20ms 检查一次，取消/过期/超时返回 null。
+  Future<CompletionResult?> completion(
+    int id,
+    int offsetUtf16, {
+    int timeoutMs = 8000,
+  }) async {
+    final startJson = _core._ffi.completionStartJson(id, offsetUtf16, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    final requestId = start['requestId'] as int;
+    try {
+      while (true) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final pollJson = _core._ffi.completionPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return CompletionResult(
+              poll['version'] as int,
+              (poll['items'] as List).cast<String>(),
+            );
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知补全请求状态：${poll['status']}');
+        }
+      }
+    } finally {
+      _core._ffi.completionCancelJson(requestId);
+    }
+  }
+
+  /// 同步兼容入口；工作台使用上面的异步方法。
+  List<String> completionBlocking(int id, int offsetUtf16, {int timeoutMs = 8000}) {
     final r = jsonDecode(_core._ffi.completionJson(id, offsetUtf16, timeoutMs))
         as Map<String, Object?>;
     if (r['ok'] != true) return const [];

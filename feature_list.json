@@ -315,7 +315,7 @@
         "feat-022"
       ],
       "status": "in-progress",
-      "evidence": "当前唯一进行项（2026-10-29 用户优先级调整）：先完成 VS Code 整体架构与默认功能复刻；Rust + rust-analyzer ≤500 MiB 暂停验收，采样留作基线。实现 DoD 见 docs/03 N.2 与 P01 行；完成后进入 P02。",
+      "evidence": "P01/feat-023 总体仍 in-progress。P01.1 异步请求/取消/版本契约已完成：ABI v6 双侧握手、completion start/poll/cancel、32 请求背压、编辑/关闭/工作区关闭取消、文档版本校验与 workbench 异步 UI；fake LSP 验证及完整门禁见 docs/diagnostics/2026-10-29-p01/p01.1-async-completion-contract.md。当前唯一活动切片转为 P01.2 命令与上下文引擎，权威状态见 docs/03 N.1。500 MiB 目标暂停，架构阶段只保留生命周期/稳定性要求。",
       "track": "vscode-builtin-parity",
       "phase": "P01"
     },

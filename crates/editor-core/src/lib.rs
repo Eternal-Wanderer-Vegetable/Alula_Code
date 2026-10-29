@@ -240,6 +240,7 @@ pub fn lsp_shutdown_for_workspace(root: &str) -> Result<bool, String> {
         return Ok(false);
     };
 
+    ffi::cancel_completions_for_server(&server);
     let uris = registry_shared()
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())

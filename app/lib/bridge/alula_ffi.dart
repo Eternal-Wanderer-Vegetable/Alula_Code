@@ -111,6 +111,22 @@ class AlulaFfi {
         Pointer<Utf8> Function(int, int, int)
       >('alula_completion');
 
+  late final Pointer<Utf8> Function(int, int, int) _completionStart = lib
+      .lookupFunction<
+        Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+        Pointer<Utf8> Function(int, int, int)
+      >('alula_completion_start');
+
+  late final Pointer<Utf8> Function(int) _completionPoll = lib
+      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+        'alula_completion_poll',
+      );
+
+  late final Pointer<Utf8> Function(int) _completionCancel = lib
+      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+        'alula_completion_cancel',
+      );
+
   late final Pointer<Utf8> Function(int) _syntax = lib
       .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
         'alula_syntax',
@@ -219,6 +235,13 @@ class AlulaFfi {
 
   String completionJson(int id, int offsetUtf16, int timeoutMs) =>
       _takeJson(_completion(id, offsetUtf16, timeoutMs));
+
+  String completionStartJson(int id, int offsetUtf16, int timeoutMs) =>
+      _takeJson(_completionStart(id, offsetUtf16, timeoutMs));
+
+  String completionPollJson(int requestId) => _takeJson(_completionPoll(requestId));
+
+  String completionCancelJson(int requestId) => _takeJson(_completionCancel(requestId));
 
   String syntaxJson(int id) => _takeJson(_syntax(id));
 
