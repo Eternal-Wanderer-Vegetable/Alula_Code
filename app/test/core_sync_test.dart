@@ -29,6 +29,22 @@ void main() {
     expect(_bootstrap.core!.abiVersion, expectedAbiVersion);
   }, skip: skip);
 
+  test('资源状态与进程登记桥接可往返', () {
+    final core = _bootstrap.core!;
+    final status = core.runtime.sampleResourceStatus();
+    expect({'normal', 'warn', 'critical'}, contains(status.pressure));
+    expect(status.totalBytes, greaterThan(0));
+    expect(status.availableBytes, lessThanOrEqualTo(status.totalBytes));
+
+    const pid = 4000000000;
+    core.runtime.registerProcess(pid, 'task', 'bridge fixture', null);
+    try {
+      expect(core.runtime.processSnapshot(), isA<List<AlulaManagedProcess>>());
+    } finally {
+      core.runtime.unregisterProcess(pid);
+    }
+  }, skip: skip);
+
   test('打开→插入→版本回执→resync 全文一致', () {
     final doc = _bootstrap.core!.openDoc(9001, 'fn main() {}\n');
     expect(doc.version, 1);

@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 6;
+const int expectedAbiVersion = 7;
 
 enum OpType { insert, delete }
 
@@ -216,6 +216,94 @@ class AlulaWorkspace {
   }
 }
 
+class AlulaResourceStatus {
+  const AlulaResourceStatus({
+    required this.pressure,
+    required this.totalBytes,
+    required this.availableBytes,
+    required this.source,
+    required this.transitionedToCritical,
+    required this.stoppedSearchProcesses,
+  });
+
+  final String pressure;
+  final int totalBytes;
+  final int availableBytes;
+  final String source;
+  final bool transitionedToCritical;
+  final int stoppedSearchProcesses;
+}
+
+class AlulaManagedProcess {
+  const AlulaManagedProcess({
+    required this.rootPid,
+    required this.pid,
+    required this.parentPid,
+    required this.name,
+    required this.label,
+    required this.kind,
+    required this.workspace,
+    required this.residentBytes,
+  });
+
+  final int rootPid;
+  final int pid;
+  final int? parentPid;
+  final String name;
+  final String label;
+  final String kind;
+  final String? workspace;
+  final int residentBytes;
+}
+
+/// Process lifecycle and pressure status exposed by the Rust supervisor.
+class AlulaRuntime {
+  AlulaRuntime._(this._core);
+
+  final AlulaCore _core;
+
+  AlulaResourceStatus sampleResourceStatus() {
+    final json = _core._ffi.resourceStatusJson();
+    _check(json);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    return AlulaResourceStatus(
+      pressure: r['pressure'] as String,
+      totalBytes: r['totalBytes'] as int,
+      availableBytes: r['availableBytes'] as int,
+      source: r['source'] as String,
+      transitionedToCritical: r['transitionedToCritical'] as bool,
+      stoppedSearchProcesses: r['stoppedSearchProcesses'] as int,
+    );
+  }
+
+  List<AlulaManagedProcess> processSnapshot() {
+    final json = _core._ffi.processSnapshotJson();
+    _check(json);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    return (r['processes'] as List)
+        .cast<Map<String, Object?>>()
+        .map((process) => AlulaManagedProcess(
+              rootPid: process['rootPid'] as int,
+              pid: process['pid'] as int,
+              parentPid: process['parentPid'] as int?,
+              name: process['name'] as String,
+              label: process['label'] as String,
+              kind: process['kind'] as String,
+              workspace: process['workspace'] as String?,
+              residentBytes: process['residentBytes'] as int,
+            ))
+        .toList(growable: false);
+  }
+
+  void registerProcess(int pid, String kind, String label, String? workspace) {
+    _check(_core._ffi.processRegisterJson(pid, kind, label, workspace));
+  }
+
+  void unregisterProcess(int pid) {
+    _check(_core._ffi.processUnregisterJson(pid));
+  }
+}
+
 void _check(String json) {
   final r = jsonDecode(json) as Map<String, Object?>;
   if (r['ok'] != true) {
@@ -298,6 +386,9 @@ class AlulaCore {
 
   /// 工作区文件系统入口。
   AlulaWorkspace get workspace => AlulaWorkspace.of(this);
+
+  /// 子进程生命周期与资源压力入口。
+  AlulaRuntime get runtime => AlulaRuntime._(this);
 
   /// 加载动态库并校验 ABI 版本。
   factory AlulaCore.load() {

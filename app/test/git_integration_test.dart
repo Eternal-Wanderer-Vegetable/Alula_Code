@@ -52,6 +52,24 @@ void main() {
     expect(log.first, contains('feat: 初始内容'));
   });
 
+  test('默认 Git runner 登记 PID 且命令完成后注销', () async {
+    final registered = <(int, String, String, String?)>[];
+    final unregistered = <int>[];
+    final trackedGit = GitCli(
+      root: repo.path,
+      registerProcess: (pid, kind, label, workspace) =>
+          registered.add((pid, kind, label, workspace)),
+      unregisterProcess: unregistered.add,
+    );
+
+    expect(await trackedGit.isRepo(), isTrue);
+    expect(registered, hasLength(1));
+    expect(registered.single.$2, 'git');
+    expect(registered.single.$3, 'git rev-parse');
+    expect(registered.single.$4, repo.path);
+    expect(unregistered, [registered.single.$1]);
+  });
+
   test('unstage：暂存后可退回', () async {
     await git.stage(['notes.txt']);
     expect((await git.status()).where((e) => e.hasStagedChanges).length, 1);

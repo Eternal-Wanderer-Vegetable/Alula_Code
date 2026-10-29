@@ -7,6 +7,7 @@ members = [
     "crates/editor-lang",
     "crates/editor-workspace",
     "crates/editor-doc",
+    "crates/editor-process",
     "tools/mem-probe",
 ]
 
@@ -24,5 +25,6 @@ editor-lsp = { path = "crates/editor-lsp" }
 editor-lang = { path = "crates/editor-lang" }
 editor-workspace = { path = "crates/editor-workspace" }
 editor-doc = { path = "crates/editor-doc" }
+editor-process = { path = "crates/editor-process" }
 tree-sitter = "0.25"
 tree-sitter-rust = "0.23"

@@ -9,12 +9,13 @@
 
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read, Write};
-use std::process::{Child, ChildStdin, Command, Stdio};
+use std::process::{ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -69,7 +70,7 @@ impl Shared {
 }
 
 pub struct LspServer {
-    child: Mutex<Child>,
+    child: Mutex<SupervisedChild>,
     shared: Arc<Shared>,
     next_id: AtomicI64,
 }
@@ -171,17 +172,26 @@ impl LspServer {
         if cmd.is_empty() {
             return Err("cmd 为空".into());
         }
-        let mut child = Command::new(&cmd[0])
+        let mut command = Command::new(&cmd[0]);
+        command
             .args(&cmd[1..])
             .current_dir(workspace_root)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()
+            .stderr(Stdio::inherit());
+        let mut child = ProcessSupervisor::global()
+            .spawn(
+                &mut command,
+                ProcessMetadata::new(
+                    cmd[0].clone(),
+                    ProcessKind::LanguageServer,
+                    Some(workspace_root.to_string()),
+                ),
+            )
             .map_err(|e| format!("启动 {} 失败: {e}", cmd[0]))?;
 
-        let stdin = child.stdin.take().ok_or("无法获取 stdin")?;
-        let stdout = child.stdout.take().ok_or("无法获取 stdout")?;
+        let stdin = child.take_stdin().ok_or("无法获取 stdin")?;
+        let stdout = child.take_stdout().ok_or("无法获取 stdout")?;
 
         let shared = Arc::new(Shared::new(stdin));
         {
@@ -382,7 +392,7 @@ impl LspServer {
     /// 服务器进程是否仍在运行。
     pub fn is_alive(&self) -> bool {
         match self.child.lock() {
-            Ok(mut c) => c.try_wait().map(|s| s.is_none()).unwrap_or(false),
+            Ok(mut child) => child.try_wait().map(|s| s.is_none()).unwrap_or(false),
             Err(_) => false,
         }
     }
@@ -411,10 +421,9 @@ impl LspServer {
             }
             if Instant::now() >= deadline {
                 if let Ok(mut child) = self.child.lock() {
-                    let _ = child.kill();
-                    let _ = child.wait();
+                    let _ = child.kill_tree_and_wait();
                 }
-                return Err("LSP 未在 exit 通知后 1 秒内退出，已强制终止".into());
+                return Err("LSP 未在 exit 通知后 1 秒内退出，已强制终止其进程树".into());
             }
             std::thread::sleep(Duration::from_millis(25));
         }

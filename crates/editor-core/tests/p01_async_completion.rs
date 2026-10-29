@@ -15,7 +15,7 @@ unsafe fn take_json(ptr: *mut std::ffi::c_char) -> Value {
 
 #[test]
 fn completion_is_async_versioned_cancellable_and_bounded() {
-    assert_eq!(ffi::alula_abi_version(), 6);
+    assert_eq!(ffi::alula_abi_version(), ffi::ALULA_ABI_VERSION);
 
     let suffix = SystemTime::now()
         .duration_since(UNIX_EPOCH)

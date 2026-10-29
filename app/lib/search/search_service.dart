@@ -13,6 +13,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../process/process_lifecycle.dart';
+
 /// 一条搜索命中。
 class SearchHit {
   const SearchHit({
@@ -83,6 +85,8 @@ class SearchService {
     this.starter = Process.start,
     this.maxHits = 500,
     this.defaultBackend,
+    this.registerProcess,
+    this.unregisterProcess,
   });
 
   final String root;
@@ -94,18 +98,47 @@ class SearchService {
   /// 固定后端（测试用）；null = 自动探测。
   final SearchBackend? defaultBackend;
 
+  final ProcessRegistrar? registerProcess;
+  final ProcessUnregistrar? unregisterProcess;
+
+  Future<Process> _startTracked(
+    String executable,
+    List<String> args, {
+    required String label,
+  }) async {
+    final process = await starter(executable, args, workingDirectory: root);
+    try {
+      registerProcess?.call(process.pid, 'search', label, root);
+    } catch (_) {
+      process.kill();
+      rethrow;
+    }
+    unawaited(process.exitCode.then((_) {
+      try {
+        unregisterProcess?.call(process.pid);
+      } catch (_) {}
+    }, onError: (Object _) {
+      try {
+        unregisterProcess?.call(process.pid);
+      } catch (_) {}
+    }));
+    return process;
+  }
+
   /// 探测可用后端；都不可用返回 null。
   Future<SearchBackend?> detectBackend() async {
     try {
-      final rg = await starter('rg', ['--version'], workingDirectory: root);
+      final rg = await _startTracked('rg', ['--version'], label: 'rg --version');
       if (await rg.exitCode == 0) return SearchBackend.ripgrep;
     } catch (_) {
       // rg 不存在
     }
     try {
-      final git = await starter(
-          'git', ['rev-parse', '--is-inside-work-tree'],
-          workingDirectory: root);
+      final git = await _startTracked(
+        'git',
+        ['rev-parse', '--is-inside-work-tree'],
+        label: 'git rev-parse',
+      );
       if (await git.exitCode == 0) return SearchBackend.gitGrep;
     } catch (_) {
       // git 不可用
@@ -137,7 +170,7 @@ class SearchService {
           return;
         }
         if (resolved == SearchBackend.ripgrep) {
-          proc = await starter(
+          proc = await _startTracked(
             'rg',
             [
               '--json',
@@ -147,10 +180,10 @@ class SearchService {
               query,
               '.', // 必须显式给路径：否则 rg 见 stdin 是管道会等待输入
             ],
-            workingDirectory: root,
+            label: 'rg search',
           );
         } else {
-          proc = await starter(
+          proc = await _startTracked(
             'git',
             [
               'grep',
@@ -164,7 +197,7 @@ class SearchService {
               '.',
 
             ],
-            workingDirectory: root,
+            label: 'git grep',
           );
         }
         proc!.stdout

@@ -16,5 +16,6 @@ editor-lsp.workspace = true
 editor-lang.workspace = true
 editor-workspace.workspace = true
 editor-doc.workspace = true
+editor-process.workspace = true
 serde.workspace = true
 serde_json.workspace = true

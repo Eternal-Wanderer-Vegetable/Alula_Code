@@ -75,6 +75,29 @@ void main() {
       expect(mainHit.lineText, contains('hello alula'));
     });
 
+    test('搜索子进程登记并在退出后注销', () async {
+      final registered = <(int, String, String, String?)>[];
+      final unregistered = <int>[];
+      final svc = SearchService(
+        root: repo.path,
+        defaultBackend: SearchBackend.gitGrep,
+        starter: Process.start,
+        registerProcess: (pid, kind, label, workspace) =>
+            registered.add((pid, kind, label, workspace)),
+        unregisterProcess: unregistered.add,
+      );
+
+      final hits = await svc.search('hello').toList();
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      expect(hits, hasLength(2));
+      expect(registered, hasLength(1));
+      expect(registered.single.$2, 'search');
+      expect(registered.single.$3, 'git grep');
+      expect(registered.single.$4, repo.path);
+      expect(unregistered, [registered.single.$1]);
+    });
+
     test('rg 后端（若本机可用）：结果与 git grep 一致', () async {
       // CI 可能没有 rg（可执行文件不存在会抛异常，不只是非零退出码）
       var rgAvailable = false;

@@ -94,6 +94,28 @@ class AlulaFfi {
         Pointer<Utf8> Function(Pointer<Utf8>)
       >('alula_lsp_shutdown_workspace');
 
+  late final Pointer<Utf8> Function() _resourceStatus = lib.lookupFunction<
+      Pointer<Utf8> Function(), Pointer<Utf8> Function()>('alula_resource_status');
+
+  late final Pointer<Utf8> Function() _processSnapshot = lib.lookupFunction<
+      Pointer<Utf8> Function(), Pointer<Utf8> Function()>('alula_process_snapshot');
+
+  late final Pointer<Utf8> Function(
+    int,
+    Pointer<Utf8>,
+    Pointer<Utf8>,
+    Pointer<Utf8>,
+  ) _processRegister = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint32, Pointer<Utf8>, Pointer<Utf8>, Pointer<Utf8>),
+      Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>, Pointer<Utf8>)>(
+    'alula_process_register',
+  );
+
+  late final Pointer<Utf8> Function(int) _processUnregister = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint32), Pointer<Utf8> Function(int)>(
+    'alula_process_unregister',
+  );
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>) _lspDidOpen = lib
       .lookupFunction<
         Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -221,6 +243,31 @@ class AlulaFfi {
       malloc.free(root);
     }
   }
+
+  String resourceStatusJson() => _takeJson(_resourceStatus());
+
+  String processSnapshotJson() => _takeJson(_processSnapshot());
+
+  String processRegisterJson(
+      int pid, String kind, String label, String? workspace) {
+    final nativeKind = kind.toNativeUtf8();
+    final nativeLabel = label.toNativeUtf8();
+    final nativeWorkspace = workspace?.toNativeUtf8();
+    try {
+      return _takeJson(_processRegister(
+        pid,
+        nativeKind,
+        nativeLabel,
+        nativeWorkspace ?? nullptr,
+      ));
+    } finally {
+      malloc.free(nativeKind);
+      malloc.free(nativeLabel);
+      if (nativeWorkspace != null) malloc.free(nativeWorkspace);
+    }
+  }
+
+  String processUnregisterJson(int pid) => _takeJson(_processUnregister(pid));
 
   String lspDidOpenJson(int id, String languageId) {
     final p = languageId.toNativeUtf8();

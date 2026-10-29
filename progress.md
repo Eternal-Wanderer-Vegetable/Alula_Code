@@ -3,7 +3,14 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-10-29 优先级调整）
+## Current State（当前状态，2026-10-30 优先级调整）
+
+### 最新进展（2026-10-30，P01.3 进程监督与资源状态）
+
+- P01.3 已完成：新增 `editor-process` 统一监督 Rust LSP 与 Dart Git/搜索子进程，提供按需进程树快照、资源压力状态与临界态搜索回收；ABI 两侧同步到 v7，工作台只在工作区打开时每 30 秒采样并显示压力状态。
+- 资源回收边界：Critical 转换取消待处理补全并结束 Search 进程树；Git 修改命令不会因压力被打断，编辑/保存路径不依赖压力状态。没有以 500 MiB 占用目标验收或做数值调优，完整压力注入 UI 验收留在 P14 场景矩阵。
+- `FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh` 全部通过：Rust workspace tests、Clippy、`build_core`、Flutter 128/128。格式门、Flutter analyze、桥接/Git/搜索定向测试和进程树/临界回收测试也通过。
+- 详细实现、验证与 GitNexus 限制记录：`docs/diagnostics/2026-10-30-p01/p01.3-process-resource-supervision.md`。P01.3 已阶段提交；当前唯一活动切片转为 P01.4 事件驱动工作区生命周期。
 
 ### 最新进展（2026-10-29，P01.2 命令与上下文引擎）
 

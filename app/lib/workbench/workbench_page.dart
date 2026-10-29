@@ -115,6 +115,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late final KeybindingSet _keybindings;
   List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
+  Timer? _resourceTimer;
+  AlulaResourceStatus? _resourceStatus;
 
   // ---------- 撤销/重做（feat-010，自研栈：不依赖 TextField 内建 UndoHistory） ----------
   final UndoStack _undoStack = UndoStack();
@@ -446,6 +448,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         Future<void>.delayed(
             const Duration(milliseconds: 50), _startLsp);
       }
+      if (_workspaceRoot != null && _resourceTimer == null) {
+        _startResourceMonitoring();
+      }
     } catch (e) {
       _loadError = e.toString();
       _state = WbSyncState.error;
@@ -529,8 +534,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final workspace = data['workspace'];
       if (workspace is String && Directory(workspace).existsSync()) {
         _workspaceRoot = workspace;
-        _git = GitCli(root: workspace);
-        _searchService = SearchService(root: workspace);
+        _git = GitCli(
+          root: workspace,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
+        _searchService = SearchService(
+          root: workspace,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _attachWorkspaceWatcher();
       }
       _nextDocId = maxId + 1;
@@ -663,6 +676,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     try {
       final entries = core.workspace.listDir(path);
+      if (_workspaceRoot != path) {
+        _searchSub?.cancel();
+        _searchSub = null;
+        _searchGen++;
+        _shutdownLspWorkspace();
+        _lspReady = false;
+        _lspStarting = false;
+        _lspStatus = 'LSP 未启动';
+        _diagnostics.clear();
+        _syntaxByDoc.clear();
+        _pollTimer?.cancel();
+        _pollTimer = null;
+        for (final doc in _allDocs) {
+          doc.lspAttached = false;
+        }
+      }
       setState(() {
         _workspaceRoot = path;
         _treeRoots.clear();
@@ -675,13 +704,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toList());
         _statusDetail = '工作区：$path（${entries.length} 项）';
         _fileIndexCache = null;
-        _git = GitCli(root: path);
+        _git = GitCli(
+          root: path,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _refreshGit();
-        _searchService = SearchService(root: path);
+        _searchService = SearchService(
+          root: path,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _attachWorkspaceWatcher();
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _startResourceMonitoring();
       _syncCommandContext();
     } on AlulaException catch (e) {
       setState(() {
@@ -689,6 +727,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _state = WbSyncState.error;
       });
     }
+  }
+
+  void _startResourceMonitoring() {
+    _resourceTimer?.cancel();
+    final core = _core;
+    if (core == null || _workspaceRoot == null) return;
+
+    void sample() {
+      if (!mounted || _workspaceRoot == null) return;
+      try {
+        final status = core.runtime.sampleResourceStatus();
+        if (!mounted) return;
+        if (_resourceStatus?.pressure != status.pressure ||
+            _resourceStatus?.availableBytes != status.availableBytes) {
+          setState(() => _resourceStatus = status);
+        } else {
+          _resourceStatus = status;
+        }
+      } catch (error) {
+        debugPrint('资源状态采样失败：$error');
+      }
+    }
+
+    sample();
+    _resourceTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => sample(),
+    );
   }
 
   /// fixture 工程的跨平台探测（演示/测试默认值）。
@@ -1576,6 +1642,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();
     _shutdownLspWorkspace();
     // 退出前把未落盘的布局与会话冲写
@@ -1737,6 +1804,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             diagnosticsCount: _diagnostics.length,
             tabCount: _allDocs.length,
             abiVersion: _abiVersion,
+            resourcePressure: _resourceStatus?.pressure,
+            availableBytes: _resourceStatus?.availableBytes,
+            totalBytes: _resourceStatus?.totalBytes,
+            resourceSource: _resourceStatus?.source,
             syncCount: _syncCount,
             panelCollapsed: _layout.isCollapsed('panel'),
             onTogglePanel: () => _layout.toggleRegion('panel'),

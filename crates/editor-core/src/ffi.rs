@@ -21,12 +21,13 @@ use std::time::{Duration, Instant};
 
 use editor_buffer::TextOp;
 use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
+use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
 use serde_json::json;
 
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 6;
+pub const ALULA_ABI_VERSION: u32 = 7;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -40,6 +41,7 @@ struct PendingCompletion {
 }
 
 static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
+static RESOURCE_MONITOR: OnceLock<Mutex<Option<ResourcePressureMonitor>>> = OnceLock::new();
 
 fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
     PENDING_COMPLETIONS.get_or_init(|| Mutex::new(HashMap::new()))
@@ -68,6 +70,25 @@ fn cancel_requests(requests: Vec<PendingCompletion>) {
     for mut pending in requests {
         let _ = pending.request.cancel();
     }
+}
+
+fn cancel_all_completions() {
+    cancel_requests(take_pending_completions(|_| true));
+}
+
+fn sample_resource_pressure() -> Result<editor_process::MemorySnapshot, String> {
+    let monitor = RESOURCE_MONITOR.get_or_init(|| Mutex::new(None));
+    let mut monitor = monitor
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner());
+    if monitor.is_none() {
+        *monitor = Some(ResourcePressureMonitor::new().map_err(|e| e.to_string())?);
+    }
+    monitor
+        .as_mut()
+        .expect("resource monitor initialized")
+        .sample()
+        .map_err(|e| e.to_string())
 }
 
 fn cancel_completions_for_doc(id: u64) {
@@ -139,6 +160,129 @@ unsafe fn read_c_str<'a>(ptr: *const c_char) -> Result<&'a str, *mut c_char> {
 #[no_mangle]
 pub extern "C" fn alula_abi_version() -> u32 {
     ALULA_ABI_VERSION
+}
+
+/// Sample system/cgroup memory pressure. On a transition to Critical, cancel pending
+/// completions and stop registered search processes; document editing and saving remain enabled.
+#[no_mangle]
+pub extern "C" fn alula_resource_status() -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let snapshot = match sample_resource_pressure() {
+            Ok(snapshot) => snapshot,
+            Err(error) => return err_json("ResourceUnavailable", json!(error)),
+        };
+        let mut stopped_searches = 0;
+        let mut reclaim_error = None;
+        if snapshot.transitioned_to_critical {
+            cancel_all_completions();
+            match ProcessSupervisor::global().stop_registered_kind(ProcessKind::Search) {
+                Ok(stopped) => stopped_searches = stopped,
+                Err(error) => reclaim_error = Some(error.to_string()),
+            }
+        }
+        to_c_ptr(
+            json!({
+                "ok": true,
+                "pressure": snapshot.pressure.as_str(),
+                "totalBytes": snapshot.total_bytes,
+                "availableBytes": snapshot.available_bytes,
+                "source": snapshot.source.as_str(),
+                "transitionedToCritical": snapshot.transitioned_to_critical,
+                "stoppedSearchProcesses": stopped_searches,
+                "reclaimError": reclaim_error,
+            })
+            .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_resource_status")))
+}
+
+/// Return an on-demand process-tree snapshot for processes registered by Rust or Dart.
+#[no_mangle]
+pub extern "C" fn alula_process_snapshot() -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let processes = match ProcessSupervisor::global().snapshot() {
+            Ok(processes) => processes,
+            Err(error) => return err_json("ProcessSnapshotFailed", json!(error.to_string())),
+        };
+        let processes: Vec<_> = processes
+            .into_iter()
+            .map(|process| {
+                json!({
+                    "rootPid": process.root_pid,
+                    "pid": process.pid,
+                    "parentPid": process.parent_pid,
+                    "name": process.name,
+                    "label": process.label,
+                    "kind": process.kind.as_str(),
+                    "workspace": process.workspace,
+                    "residentBytes": process.resident_bytes,
+                })
+            })
+            .collect();
+        to_c_ptr(json!({ "ok": true, "processes": processes }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_process_snapshot")))
+}
+
+/// Register a host-layer child process (for example Dart `Process.start`) for ownership and
+/// process-tree reporting. `workspace` may be NULL.
+///
+/// # Safety
+/// `kind` and `label`, and non-null `workspace`, must point to valid NUL-terminated UTF-8 strings
+/// that remain readable for the duration of this call.
+#[no_mangle]
+pub unsafe extern "C" fn alula_process_register(
+    pid: u32,
+    kind: *const c_char,
+    label: *const c_char,
+    workspace: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let kind = match read_c_str(kind) {
+            Ok(value) => ProcessKind::from_tag(value),
+            Err(error) => return error,
+        };
+        let label = match read_c_str(label) {
+            Ok(value) => value.to_string(),
+            Err(error) => return error,
+        };
+        let workspace = if workspace.is_null() {
+            None
+        } else {
+            match read_c_str(workspace) {
+                Ok(value) => Some(value.to_string()),
+                Err(error) => return error,
+            }
+        };
+        if pid == 0 {
+            return err_json("InvalidArgument", json!("pid must be positive"));
+        }
+        match ProcessSupervisor::global().register_external(
+            pid,
+            ProcessMetadata {
+                label,
+                kind,
+                workspace,
+            },
+        ) {
+            Ok(()) => to_c_ptr(json!({ "ok": true }).to_string()),
+            Err(error) => err_json("ProcessRegisterFailed", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_process_register")))
+}
+
+/// Remove a host-layer child registration after its exit future completes.
+#[no_mangle]
+pub extern "C" fn alula_process_unregister(pid: u32) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        match ProcessSupervisor::global().unregister_external(pid) {
+            Ok(()) => to_c_ptr(json!({ "ok": true }).to_string()),
+            Err(error) => err_json("ProcessUnregisterFailed", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_process_unregister")))
 }
 
 /// 打开文档（初始全量传输仅此一次）。返回 `{"ok":true,"version":1}`。
