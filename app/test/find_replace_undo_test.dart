@@ -48,8 +48,8 @@ void main() {
     });
 
     test('大小写不敏感替换', () {
-      final r = replaceAllMatches('Foo foo FOO', 'foo', 'bar',
-          caseSensitive: false);
+      final r =
+          replaceAllMatches('Foo foo FOO', 'foo', 'bar', caseSensitive: false);
       expect(r.count, 3);
       expect(r.newText, 'bar bar bar');
     });
@@ -125,7 +125,7 @@ void main() {
       expect(st.canUndo, isFalse);
     });
 
-    test('总字符上限淘汰最旧（低内存纪律）', () {
+    test('总字符上限淘汰最旧历史帧', () {
       final st = UndoStack(maxTotalChars: 10);
       st.push(before: '12345', caret: 5, coalesce: false); // 5
       st.push(before: '67890', caret: 5, coalesce: false); // 10
@@ -142,6 +142,51 @@ void main() {
       st.clear();
       expect(st.canUndo, isFalse);
       expect(st.canRedo, isFalse);
+    });
+
+    test('共享预算跨文档淘汰最旧帧并在关闭时归还额度', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 3, maxTotalChars: 100);
+      final a = UndoStack(budget: budget);
+      final b = UndoStack(budget: budget);
+
+      a.push(before: 'a0', caret: 2, coalesce: false);
+      b.push(before: 'b0', caret: 2, coalesce: false);
+      a.push(before: 'a1', caret: 2, coalesce: false);
+      b.push(before: 'b1', caret: 2, coalesce: false);
+
+      expect(budget.totalEntries, 3);
+      expect(budget.totalChars, 6);
+      expect(a.undo('a2', 2)!.text, 'a1');
+      expect(a.canUndo, isFalse, reason: '最早的 a0 已由共享预算淘汰');
+      expect(b.canUndo, isTrue);
+
+      a.dispose();
+      expect(budget.totalEntries, 2);
+      expect(budget.totalChars, 4);
+      b.dispose();
+      expect(budget.totalEntries, 0);
+      expect(budget.totalChars, 0);
+    });
+
+    test('共享预算将 redo 帧计入总条数', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 2, maxTotalChars: 100);
+      final a = UndoStack(budget: budget);
+      final b = UndoStack(budget: budget);
+      a.push(before: 'a0', caret: 2, coalesce: false);
+      b.push(before: 'b0', caret: 2, coalesce: false);
+      a.undo('a1', 2);
+
+      expect(a.canRedo, isTrue);
+      expect(budget.totalEntries, 2);
+      b.push(before: 'b1', caret: 2, coalesce: false);
+
+      expect(a.canRedo, isTrue);
+      expect(b.undo('b2', 2)!.text, 'b1');
+      expect(b.canUndo, isFalse, reason: 'b0 已按全局最旧帧顺序淘汰');
+      expect(budget.totalEntries, 2);
+      a.dispose();
+      b.dispose();
+      expect(budget.totalEntries, 0);
     });
   });
 }

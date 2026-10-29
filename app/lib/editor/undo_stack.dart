@@ -11,20 +11,88 @@
 library;
 
 class UndoEntry {
-  const UndoEntry({required this.text, required this.caret});
+  UndoEntry({required this.text, required this.caret})
+      : sequence = _nextUndoSequence++;
 
   /// 该步骤的「变更前」全文（undo 目标态）。
   final String text;
 
   /// 变更前的光标位（UTF-16 偏移）。
   final int caret;
+
+  /// 跨文档的创建顺序，供共享预算从最旧的历史帧开始回收。
+  final int sequence;
+}
+
+int _nextUndoSequence = 0;
+
+/// 多文档 undo/redo 共用的内存与条数预算。
+///
+/// 每个文档保留独立栈；超出工作台预算时，从所有文档中回收最旧历史帧。
+class UndoHistoryBudget {
+  UndoHistoryBudget({this.maxTotalEntries = 100, this.maxTotalChars = 2000000});
+
+  final int maxTotalEntries;
+  final int maxTotalChars;
+  final Set<UndoStack> _stacks = {};
+  int _totalEntries = 0;
+  int _totalChars = 0;
+  bool _enforcing = false;
+
+  int get totalEntries => _totalEntries;
+  int get totalChars => _totalChars;
+
+  void _attach(UndoStack stack) => _stacks.add(stack);
+
+  void _added(UndoEntry entry) {
+    _totalEntries++;
+    _totalChars += entry.text.length;
+    _enforce();
+  }
+
+  void _removed(UndoEntry entry) {
+    _totalEntries--;
+    _totalChars -= entry.text.length;
+  }
+
+  void _detach(UndoStack stack) => _stacks.remove(stack);
+
+  void _enforce() {
+    if (_enforcing) return;
+    _enforcing = true;
+    try {
+      while (_totalEntries > maxTotalEntries || _totalChars > maxTotalChars) {
+        UndoStack? owner;
+        UndoEntry? oldest;
+        for (final stack in _stacks) {
+          final candidate = stack._oldestEntry;
+          if (candidate != null &&
+              (oldest == null || candidate.sequence < oldest.sequence)) {
+            owner = stack;
+            oldest = candidate;
+          }
+        }
+        if (owner == null || oldest == null) break;
+        owner._evictEntry(oldest);
+      }
+    } finally {
+      _enforcing = false;
+    }
+  }
 }
 
 class UndoStack {
-  UndoStack({this.maxEntries = 100, this.maxTotalChars = 2000000});
+  UndoStack({
+    this.maxEntries = 100,
+    this.maxTotalChars = 2000000,
+    UndoHistoryBudget? budget,
+  }) : _budget = budget {
+    _budget?._attach(this);
+  }
 
   final int maxEntries;
   final int maxTotalChars;
+  final UndoHistoryBudget? _budget;
 
   final List<UndoEntry> _undo = [];
   final List<UndoEntry> _redo = [];
@@ -43,8 +111,10 @@ class UndoStack {
     required bool coalesce,
   }) {
     if (coalesce && _undo.isNotEmpty) return;
-    _undo.add(UndoEntry(text: before, caret: caret));
-    _redo.clear();
+    _clearRedo();
+    final entry = UndoEntry(text: before, caret: caret);
+    _undo.add(entry);
+    _budget?._added(entry);
     _evictOldest();
   }
 
@@ -53,7 +123,11 @@ class UndoStack {
   UndoEntry? undo(String currentText, int currentCaret) {
     if (_undo.isEmpty) return null;
     final entry = _undo.removeLast();
-    _redo.add(UndoEntry(text: currentText, caret: currentCaret));
+    _budget?._removed(entry);
+    final redoEntry = UndoEntry(text: currentText, caret: currentCaret);
+    _redo.add(redoEntry);
+    _budget?._added(redoEntry);
+    _evictOldest();
     return entry;
   }
 
@@ -61,31 +135,60 @@ class UndoStack {
   UndoEntry? redo(String currentText, int currentCaret) {
     if (_redo.isEmpty) return null;
     final entry = _redo.removeLast();
-    _undo.add(UndoEntry(text: currentText, caret: currentCaret));
+    _budget?._removed(entry);
+    final undoEntry = UndoEntry(text: currentText, caret: currentCaret);
+    _undo.add(undoEntry);
+    _budget?._added(undoEntry);
+    _evictOldest();
     return entry;
   }
 
   void clear() {
+    for (final entry in _undo) {
+      _budget?._removed(entry);
+    }
+    for (final entry in _redo) {
+      _budget?._removed(entry);
+    }
     _undo.clear();
     _redo.clear();
   }
 
-  /// 条数/总字符双上限：从最旧开始淘汰（保留栈底之前的平衡裁剪）。
+  /// 关闭文档时释放栈并从工作台的共享预算中解除登记。
+  void dispose() {
+    clear();
+    _budget?._detach(this);
+  }
+
+  UndoEntry? get _oldestEntry {
+    if (_undo.isEmpty) return _redo.isEmpty ? null : _redo.first;
+    if (_redo.isEmpty) return _undo.first;
+    return _undo.first.sequence < _redo.first.sequence
+        ? _undo.first
+        : _redo.first;
+  }
+
+  void _evictEntry(UndoEntry entry) {
+    if (!_undo.remove(entry)) _redo.remove(entry);
+    _budget?._removed(entry);
+  }
+
+  void _clearRedo() {
+    for (final entry in _redo) {
+      _budget?._removed(entry);
+    }
+    _redo.clear();
+  }
+
+  /// 条数/总字符双上限同时计算 undo 与 redo 历史。
   void _evictOldest() {
-    while (_undo.length > maxEntries) {
-      _undo.removeAt(0);
-    }
-    var total = 0;
-    for (final e in _undo) {
-      total += e.text.length;
-    }
-    var drop = 0;
-    while (total > maxTotalChars && drop < _undo.length - 1) {
-      total -= _undo[drop].text.length;
-      drop++;
-    }
-    if (drop > 0) {
-      _undo.removeRange(0, drop);
+    var total = _undo.fold<int>(0, (sum, entry) => sum + entry.text.length) +
+        _redo.fold<int>(0, (sum, entry) => sum + entry.text.length);
+    while (_undo.length + _redo.length > maxEntries || total > maxTotalChars) {
+      final oldest = _oldestEntry;
+      if (oldest == null) break;
+      total -= oldest.text.length;
+      _evictEntry(oldest);
     }
   }
 }

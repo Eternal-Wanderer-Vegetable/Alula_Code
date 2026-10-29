@@ -118,10 +118,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _resourceTimer;
   AlulaResourceStatus? _resourceStatus;
 
-  // ---------- 撤销/重做（feat-010，自研栈：不依赖 TextField 内建 UndoHistory） ----------
-  final UndoStack _undoStack = UndoStack();
-  DateTime? _lastEditAt;
-  bool _undoRedoBusy = false; // 撤销/重做程序化写回时不入栈
+  // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
+  final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -302,8 +300,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editorActive': active != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
-      'editorCanUndo': _undoStack.canUndo,
-      'editorCanRedo': _undoStack.canRedo,
+      'editorCanUndo': active?.undoStack.canUndo ?? false,
+      'editorCanRedo': active?.undoStack.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
@@ -428,6 +426,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           doc: doc,
           controller: controller,
           savedText: welcome,
+          undoBudget: _undoHistoryBudget,
         );
         g.docs.add(untitled);
         controller.addListener(() => _onDocChanged(_untitledId));
@@ -519,6 +518,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             doc: doc,
             controller: controller,
             savedText: savedText,
+            undoBudget: _undoHistoryBudget,
           );
           target.docs.add(open);
           controller.addListener(() => _onDocChanged(id));
@@ -626,12 +626,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.savedText = newText; // 同步基准前移（失败时由失配分支恢复）
 
     // 撤销栈入帧
-    if (!_undoRedoBusy) {
+    if (!doc.undoRedoBusy) {
       final now = DateTime.now();
-      final coalesce =
-          _lastEditAt != null && now.difference(_lastEditAt!) < const Duration(milliseconds: 400);
-      _undoStack.push(before: beforeText, caret: newText.length, coalesce: coalesce);
-      _lastEditAt = now;
+      final coalesce = doc.lastEditAt != null &&
+          now.difference(doc.lastEditAt!) < const Duration(milliseconds: 400);
+      doc.undoStack.push(
+          before: beforeText, caret: newText.length, coalesce: coalesce);
+      doc.lastEditAt = now;
     }
     doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
     if (isActiveOfFocused) _syncCommandContext();
@@ -859,6 +860,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc: doc,
         controller: controller,
         savedText: content,
+        undoBudget: _undoHistoryBudget,
       );
       setState(() {
         final g = _focused;
@@ -909,6 +911,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final nextSyntax = Map<int, List<Map<String, Object?>>>.of(_syntaxByDoc)
       ..remove(id);
     doc.doc.close();
+    doc.undoStack.dispose();
     doc.controller.dispose();
     _editorFocusNodes.remove(id)?.dispose();
     setState(() {
@@ -1201,20 +1204,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final sel = active.controller.selection;
-    final entry = _undoStack.undo(
+    final entry = active.undoStack.undo(
         active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
     if (entry == null) {
       setState(() => _statusDetail = '无可撤销');
       return;
     }
-    _undoRedoBusy = true;
+    active.undoRedoBusy = true;
     final caret = entry.caret.clamp(0, entry.text.length);
-    active.controller.value = TextEditingValue(
-      text: entry.text,
-      selection: TextSelection.collapsed(offset: caret),
-    );
-    _undoRedoBusy = false;
-    _lastEditAt = null; // 撤销后不再与后续打字合并
+    try {
+      active.controller.value = TextEditingValue(
+        text: entry.text,
+        selection: TextSelection.collapsed(offset: caret),
+      );
+    } finally {
+      active.undoRedoBusy = false;
+    }
+    active.lastEditAt = null; // 撤销后不再与后续打字合并
     _onFindTextChanged();
     setState(() => _statusDetail = '已撤销');
     _scheduleStateSave();
@@ -1227,20 +1233,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final sel = active.controller.selection;
-    final entry = _undoStack.redo(
+    final entry = active.undoStack.redo(
         active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
     if (entry == null) {
       setState(() => _statusDetail = '无可重做');
       return;
     }
-    _undoRedoBusy = true;
+    active.undoRedoBusy = true;
     final caret = entry.caret.clamp(0, entry.text.length);
-    active.controller.value = TextEditingValue(
-      text: entry.text,
-      selection: TextSelection.collapsed(offset: caret),
-    );
-    _undoRedoBusy = false;
-    _lastEditAt = null;
+    try {
+      active.controller.value = TextEditingValue(
+        text: entry.text,
+        selection: TextSelection.collapsed(offset: caret),
+      );
+    } finally {
+      active.undoRedoBusy = false;
+    }
+    active.lastEditAt = null;
     _onFindTextChanged();
     setState(() => _statusDetail = '已重做');
     _scheduleStateSave();
@@ -1602,15 +1611,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             }
           }
         } else if (disk != d.controller.text) {
-          // 干净文档自动重载（_undoRedoBusy 复用为「程序化更新」闸门）
-          _undoRedoBusy = true;
-          d.controller.value = TextEditingValue(
-            text: disk,
-            selection: const TextSelection.collapsed(offset: 0),
-          );
-          d.savedText = disk;
-          d.dirtyDisk = false;
-          _undoRedoBusy = false;
+          // 干净文档自动重载时不产生撤销历史。
+          d.undoRedoBusy = true;
+          try {
+            d.controller.value = TextEditingValue(
+              text: disk,
+              selection: const TextSelection.collapsed(offset: 0),
+            );
+            d.savedText = disk;
+            d.dirtyDisk = false;
+            d.undoStack.clear();
+            d.lastEditAt = null;
+          } finally {
+            d.undoRedoBusy = false;
+          }
           if (mounted) {
             setState(() => _statusDetail = '已自动重载外部修改的 ${d.name}');
           }
@@ -1748,6 +1762,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     widget.sessionStore.save(_encodeSession());
     for (final d in _allDocs) {
       d.doc.close();
+      d.undoStack.dispose();
       d.controller.dispose();
     }
     for (final n in _editorFocusNodes.values) {
@@ -2948,7 +2963,9 @@ class OpenDoc {
     this.path,
     this.uri,
     required this.savedText,
-  })  : lspAttached = false;
+    required UndoHistoryBudget undoBudget,
+  })  : lspAttached = false,
+        undoStack = UndoStack(budget: undoBudget);
 
   final int id;
   final String? path;
@@ -2956,6 +2973,9 @@ class OpenDoc {
   final String name;
   final AlulaDoc doc;
   final TextEditingController controller;
+  final UndoStack undoStack;
+  DateTime? lastEditAt;
+  bool undoRedoBusy = false;
 
   /// 上次保存时的全文（FFI 增量同步基准；每次成功 apply 都会前移，
   /// 因此不能当「与磁盘不一致」的脏标记用）。

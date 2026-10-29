@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P02.1 每文档撤销/重做）
+
+- 已完成 P02.1：撤销/重做状态、输入合并时间和程序化写回闸门改为按文档保存；命令上下文读取当前激活文档的历史。所有打开文档共享 100 条/2,000,000 UTF-16 code unit 历史预算，redo 帧也计入；关闭文档或工作台时释放对应历史。
+- 验证通过：`cargo fmt --all -- --check`、`FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh`（Rust workspace tests、Clippy、build_core、Flutter 132/132）和 `flutter analyze --no-pub`；undo 栈与跨文档 widget 定向测试 20/20 通过。
+- `P00.3 REF-07-UNDO-01` 夹具改为验证期望行为：两个文件交错编辑后，各自 undo 恢复本文件文本，redo 恢复本文件编辑。旧 P00 现状记录仅保留为历史证据。完整 impact、GitNexus 和验收边界见 `docs/diagnostics/2026-10-30-p02/p02.1-per-document-undo.md`。
+- P02/feat-024 继续 in-progress；下一切片为 P02.2 savepoint、dirty 与 save/revert/save-as 生命周期。500 MiB 指标仍暂停，当前切片只保留历史容量和关闭释放约束。
+
 ### 最新进展（2026-10-30，P01.4 事件驱动工作区生命周期）
 
 - P01.4 已完成：workspace watcher 增加 generation 防止旧根回调，attach/detach 串行切换并取消 pending debounce；语法只对打开/编辑/attach 的单文档防抖刷新，不再每 800ms 遍历所有 LSP 文档计算语法；关闭文档、工作区切换和退出时清理对应 timer/语法状态。

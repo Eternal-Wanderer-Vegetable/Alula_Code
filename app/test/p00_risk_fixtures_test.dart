@@ -80,7 +80,7 @@ void main() {
     });
   }
 
-  testWidgets('P00.3 REF-07-UNDO-01 alternating edits in two files',
+  testWidgets('P02.1 REF-07-UNDO-01 keeps undo/redo histories per document',
       (tester) async {
     await startWorkbench(tester, _fixtureRoot);
 
@@ -108,33 +108,39 @@ void main() {
     await tester.tap(find.byType(TextField).first);
     await _pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
     final aAfterUndo = editorText(tester);
+    await _pressChord(tester, LogicalKeyboardKey.keyY, control: true);
+    final aAfterRedo = editorText(tester);
 
     await tester.tap(find.byKey(const ValueKey('tab-3')));
     await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byType(TextField).first);
     await _pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
     final bAfterUndo = editorText(tester);
+    await _pressChord(tester, LogicalKeyboardKey.keyY, control: true);
+    final bAfterRedo = editorText(tester);
 
     final observed = {
-      'fixture': 'parity-ref-07-undo-01',
+      'fixture': 'p02.1-ref-07-undo-01',
       'aBeforeLength': aBefore.length,
       'bBeforeLength': bBefore.length,
       'aUndoRestoredOwnText': aAfterUndo == aBefore,
-      'aUndoAppliedOtherFileSnapshot': aAfterUndo == bBefore,
+      'aRedoRestoredOwnEdit': aAfterRedo == '$aBefore\n# A-edit',
       'bUndoRestoredOwnText': bAfterUndo == bBefore,
-      'bUndoAppliedOtherFileSnapshot': bAfterUndo == aBefore,
+      'bRedoRestoredOwnEdit': bAfterRedo == '$bBefore\n// B-edit',
     };
-    // Current baseline: a single workbench-wide snapshot stack crosses documents.
-    expect(aAfterUndo, bBefore);
-    expect(bAfterUndo, aBefore);
+    expect(aAfterUndo, aBefore);
+    expect(aAfterRedo, '$aBefore\n# A-edit');
+    expect(bAfterUndo, bBefore);
+    expect(bAfterRedo, '$bBefore\n// B-edit');
     // ignore: avoid_print
-    print('P00.3_FIXTURE=${jsonEncode(observed)}');
+    print('P02.1_FIXTURE=${jsonEncode(observed)}');
   });
 
   testWidgets('P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units',
       (tester) async {
     final root = Directory('${temp.path}/workspace')..createSync();
-    final diskFile = File('${root.path}/large.txt')..writeAsStringSync('seed\n');
+    final diskFile = File('${root.path}/large.txt')
+      ..writeAsStringSync('seed\n');
     await startWorkbench(tester, root.path);
     await tester.tap(find.text('large.txt').first);
     await tester.pump(const Duration(milliseconds: 200));
