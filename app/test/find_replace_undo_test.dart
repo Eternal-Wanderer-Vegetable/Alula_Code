@@ -127,6 +127,21 @@ void main() {
       expect(redo.lineEnding, 'crlf');
     });
 
+    test('跨文档事务标识随 undo/redo 历史保留', () {
+      final stack = UndoStack();
+      stack.push(
+        before: 'before',
+        caret: 3,
+        coalesce: false,
+        transactionId: 'workspace-transaction-1',
+      );
+
+      final undo = stack.undo('after', 2)!;
+      expect(undo.transactionId, 'workspace-transaction-1');
+      final redo = stack.redo('before', 3)!;
+      expect(redo.transactionId, 'workspace-transaction-1');
+    });
+
     test('coalesce 合并不压新帧：一次撤销回退整段输入', () {
       final st = UndoStack();
       st.push(before: 'base', caret: 4, coalesce: false);

@@ -17,6 +17,7 @@ class UndoEntry {
     this.encoding,
     this.bom,
     this.lineEnding,
+    this.transactionId,
   }) : sequence = _nextUndoSequence++;
 
   /// 该步骤的「变更前」全文（undo 目标态）。
@@ -29,6 +30,9 @@ class UndoEntry {
   final String? encoding;
   final bool? bom;
   final String? lineEnding;
+
+  /// Shared identity for edits originating from one multi-document operation.
+  final String? transactionId;
 
   /// 跨文档的创建顺序，供共享预算从最旧的历史帧开始回收。
   final int sequence;
@@ -122,6 +126,7 @@ class UndoStack {
     String? encoding,
     bool? bom,
     String? lineEnding,
+    String? transactionId,
   }) {
     if (coalesce && _undo.isNotEmpty) return;
     _clearRedo();
@@ -131,6 +136,7 @@ class UndoStack {
       encoding: encoding,
       bom: bom,
       lineEnding: lineEnding,
+      transactionId: transactionId,
     );
     _undo.add(entry);
     _budget?._added(entry);
@@ -155,6 +161,7 @@ class UndoStack {
       encoding: encoding,
       bom: bom,
       lineEnding: lineEnding,
+      transactionId: entry.transactionId,
     );
     _redo.add(redoEntry);
     _budget?._added(redoEntry);
@@ -179,6 +186,7 @@ class UndoStack {
       encoding: encoding,
       bom: bom,
       lineEnding: lineEnding,
+      transactionId: entry.transactionId,
     );
     _undo.add(undoEntry);
     _budget?._added(undoEntry);

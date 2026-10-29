@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 10;
+const int expectedAbiVersion = 11;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -152,6 +152,25 @@ class TextOp {
             'offset_utf16': offsetUtf16,
             'len_utf16': lenUtf16,
           },
+      };
+}
+
+/// A single document's operation batch inside an atomic workspace transaction.
+class AlulaWorkspaceEditDocument {
+  const AlulaWorkspaceEditDocument({
+    required this.id,
+    required this.baseVersion,
+    required this.ops,
+  });
+
+  final int id;
+  final int baseVersion;
+  final List<TextOp> ops;
+
+  Map<String, Object?> toJson() => {
+        'id': id,
+        'base_version': baseVersion,
+        'ops': ops.map((op) => op.toJson()).toList(),
       };
 }
 
@@ -512,6 +531,12 @@ class AlulaDoc {
   }
 }
 
+class AlulaWorkspaceEditResult {
+  const AlulaWorkspaceEditResult(this.versions);
+
+  final Map<int, int> versions;
+}
+
 class AlulaCore {
   final AlulaFfi _ffi;
 
@@ -528,6 +553,28 @@ class AlulaCore {
 
   /// 子进程生命周期与资源压力入口。
   AlulaRuntime get runtime => AlulaRuntime._(this);
+
+  /// Atomically applies one operation batch to each listed document.
+  AlulaWorkspaceEditResult applyWorkspaceEdit(
+    List<AlulaWorkspaceEditDocument> documents,
+  ) {
+    final json = _ffi.workspaceEditTransactionJson(
+      jsonEncode(documents.map((document) => document.toJson()).toList()),
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error']! as Map<String, Object?>;
+      throw AlulaException(
+        error['code'] as String? ?? 'Unknown',
+        jsonEncode(error['detail']),
+      );
+    }
+    final versions = (result['versions'] as List)
+        .cast<Map<String, Object?>>()
+        .map((item) => MapEntry(item['id'] as int, item['version'] as int));
+    return AlulaWorkspaceEditResult(
+        Map.unmodifiable(Map.fromEntries(versions)));
+  }
 
   /// 加载动态库并校验 ABI 版本。
   factory AlulaCore.load() {

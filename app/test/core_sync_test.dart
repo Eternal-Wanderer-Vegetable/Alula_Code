@@ -105,6 +105,55 @@ void main() {
     expect(doc.resync().content, '{c}');
   }, skip: skip);
 
+  test('跨文档 FFI 事务成功提交且版本失败时整体不变', () {
+    final core = _bootstrap.core!;
+    final first = core.openDoc(9020, 'alpha');
+    final second = core.openDoc(9021, 'beta');
+    try {
+      final result = core.applyWorkspaceEdit([
+        AlulaWorkspaceEditDocument(
+          id: first.id,
+          baseVersion: first.version,
+          ops: const [TextOp.insert(5, '!')],
+        ),
+        AlulaWorkspaceEditDocument(
+          id: second.id,
+          baseVersion: second.version,
+          ops: const [TextOp.insert(0, 'new ')],
+        ),
+      ]);
+      first.version = result.versions[first.id]!;
+      second.version = result.versions[second.id]!;
+      expect(first.resync().content, 'alpha!');
+      expect(second.resync().content, 'new beta');
+
+      expect(
+        () => core.applyWorkspaceEdit([
+          AlulaWorkspaceEditDocument(
+            id: first.id,
+            baseVersion: first.version,
+            ops: const [TextOp.insert(0, 'changed ')],
+          ),
+          AlulaWorkspaceEditDocument(
+            id: second.id,
+            baseVersion: 1,
+            ops: const [TextOp.insert(0, 'changed ')],
+          ),
+        ]),
+        throwsA(isA<AlulaException>().having(
+          (error) => error.code,
+          'code',
+          'VersionMismatch',
+        )),
+      );
+      expect(first.resync().content, 'alpha!');
+      expect(second.resync().content, 'new beta');
+    } finally {
+      first.close();
+      second.close();
+    }
+  }, skip: skip);
+
   test('非法 UTF-16 边界（代理对中间）被 Rust 拒绝', () {
     final doc = _bootstrap.core!.openDoc(9005, 'a🚀b');
     // 🚀 占 UTF-16 1..3，offset 2 在代理对中间

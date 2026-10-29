@@ -55,6 +55,7 @@ impl std::error::Error for BufferError {}
 
 /// 权威文本状态（V1：作为 Rust 侧同步分析副本；见 docs/02 §5）。
 /// version 从 1 开始，每成功应用一个操作 +1。
+#[derive(Clone)]
 pub struct TextBuffer {
     rope: Rope,
     version: u64,

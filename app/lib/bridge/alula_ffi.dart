@@ -62,6 +62,12 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Pointer<Utf8>),
           Pointer<Utf8> Function(int, int, Pointer<Utf8>)>('alula_doc_apply');
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _workspaceEditTransaction =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_workspace_edit_transaction',
+  );
+
   late final Pointer<Utf8> Function(int) _docResync = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_doc_resync',
@@ -224,6 +230,15 @@ class AlulaFfi {
     final p = opsJson.toNativeUtf8();
     try {
       return _takeJson(_docApply(id, baseVersion, p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String workspaceEditTransactionJson(String editsJson) {
+    final p = editsJson.toNativeUtf8();
+    try {
+      return _takeJson(_workspaceEditTransaction(p));
     } finally {
       malloc.free(p);
     }

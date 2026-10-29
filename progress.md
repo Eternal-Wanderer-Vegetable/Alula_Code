@@ -811,3 +811,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 增加保留 Rust 缓冲区的 didClose FFI，Dart/Rust ABI v8 双侧握手；fake-LSP 集成测试覆盖旧 URI didClose、新 URI didOpen 与关闭次序。平台原生文件选择器未纳入本切片，使用路径输入对话框。
 - 最终门禁：cargo fmt、Flutter analyze 0 issues、FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh EXIT=0；Rust workspace、Clippy、build_core、Flutter 135/135 全绿。详见 docs/diagnostics/2026-10-30-p02/p02.3-save-as-revert.md。
 - 500 MiB 数值优化继续放在 P14；下一切片 P02.4 编码/BOM/EOL。工作树仍有其它用户未提交改动，按 staged snapshot 精确提交。
+
+## 今日会话（2026-10-30）：P02.7 跨文档 WorkspaceEdit 事务
+
+- 完成 P02.7 并关闭 P02/feat-024：ABI v11 增加 Rust 多文档事务 API，所有文档版本、编辑范围均验证成功后再替换 live buffers；任一文档版本/范围错误、重复 ID 或空事务均原子拒绝。
+- Dart planner 将 LSP UTF-16 行列映射到原文偏移，处理 LF/CRLF、emoji 代理对、重叠与多位置编辑；工作台提交后同步 Rust 版本、controller、selection、dirty/journal 状态。各文件有独立撤销帧并关联 transaction ID。
+- 证据：`docs/diagnostics/2026-10-30-p02/p02.7-workspace-edit-transaction.md`。`bash init.sh` EXIT=0，Rust workspace / Clippy / build_core / Flutter 163 项通过；`cargo fmt --check`、`flutter analyze --no-pub` 0 issues。服务端主动 `workspace/applyEdit` 接收留待 P12。
+- 用户确认架构与默认功能优先，500 MiB 数值目标继续安排到 P14。下一阶段 P03 编辑器输入与绘制，开始前按 docs/03 拆分受控子项。提交只含 P02.7 快照，既有工作区改动保留。

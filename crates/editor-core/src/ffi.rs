@@ -23,15 +23,23 @@ use editor_buffer::TextOp;
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
+use serde::Deserialize;
 use serde_json::json;
 
-use crate::{ApplyError, DocRegistry};
+use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 10;
+pub const ALULA_ABI_VERSION: u32 = 11;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
+
+#[derive(Deserialize)]
+struct WorkspaceEditDocumentInput {
+    id: u64,
+    base_version: u64,
+    ops: Vec<TextOp>,
+}
 
 struct PendingCompletion {
     document_id: u64,
@@ -336,6 +344,71 @@ pub unsafe extern "C" fn alula_doc_apply(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_apply")))
+}
+
+/// Apply a multi-document transaction after validating every document version and range.
+/// `edits_json` is an array of `{id, base_version, ops}` objects.
+///
+/// # Safety
+/// `edits_json` must be a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_workspace_edit_transaction(
+    edits_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let source = match read_c_str(edits_json) {
+            Ok(source) => source,
+            Err(error) => return error,
+        };
+        let inputs: Vec<WorkspaceEditDocumentInput> = match serde_json::from_str(source) {
+            Ok(inputs) => inputs,
+            Err(error) => return err_json("ParseError", json!(error.to_string())),
+        };
+        let edits: Vec<_> = inputs
+            .into_iter()
+            .map(|edit| (edit.id, edit.base_version, edit.ops))
+            .collect();
+        let result = { registry_lock().apply_workspace_edit(&edits) };
+        match result {
+            Ok(versions) => {
+                for (id, _) in &versions {
+                    cancel_completions_for_doc(*id);
+                }
+                to_c_ptr(
+                    json!({
+                        "ok": true,
+                        "versions": versions.iter().map(|(id, version)| json!({
+                            "id": id,
+                            "version": version,
+                        })).collect::<Vec<_>>(),
+                    })
+                    .to_string(),
+                )
+            }
+            Err(WorkspaceEditError::Empty) => {
+                err_json("InvalidWorkspaceEdit", json!("empty transaction"))
+            }
+            Err(WorkspaceEditError::DuplicateDocument { id }) => {
+                err_json("InvalidWorkspaceEdit", json!({ "duplicateDocument": id }))
+            }
+            Err(WorkspaceEditError::UnknownDocument { id }) => {
+                err_json("UnknownDoc", json!({ "id": id }))
+            }
+            Err(WorkspaceEditError::VersionMismatch { id, current }) => {
+                err_json("VersionMismatch", json!({ "id": id, "current": current }))
+            }
+            Err(WorkspaceEditError::Buffer { id, source }) => err_json(
+                "BufferError",
+                json!({ "id": id, "detail": source.to_string() }),
+            ),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_workspace_edit_transaction"),
+        )
+    })
 }
 
 /// 全量重同步：返回文档当前版本与全文，Dart 侧据此重建本地状态。
@@ -1006,6 +1079,43 @@ mod tests {
         assert_eq!(r["ok"], false);
         assert_eq!(r["error"]["code"], "VersionMismatch");
         assert_eq!(r["error"]["detail"]["current"], 1);
+    }
+
+    #[test]
+    fn workspace_edit_transaction_over_ffi_is_atomic() {
+        let first = 92_001;
+        let second = 92_002;
+        take(unsafe { alula_doc_open(first, c("alpha").as_ptr()) });
+        take(unsafe { alula_doc_open(second, c("beta").as_ptr()) });
+
+        let success = c(r#"[
+                {"id":92001,"base_version":1,"ops":[{"type":"insert","offset_utf16":5,"text":"!"}]},
+                {"id":92002,"base_version":1,"ops":[{"type":"insert","offset_utf16":0,"text":"new "}]}
+            ]"#);
+        let result = take(unsafe { alula_workspace_edit_transaction(success.as_ptr()) });
+        assert_eq!(result["ok"], true);
+        assert_eq!(
+            result["versions"],
+            json!([
+                {"id": first, "version": 2},
+                {"id": second, "version": 2},
+            ])
+        );
+        assert_eq!(take(alula_doc_resync(first))["content"], "alpha!");
+        assert_eq!(take(alula_doc_resync(second))["content"], "new beta");
+
+        let stale = c(r#"[
+                {"id":92001,"base_version":2,"ops":[{"type":"insert","offset_utf16":0,"text":"changed "}]},
+                {"id":92002,"base_version":1,"ops":[{"type":"insert","offset_utf16":0,"text":"changed "}]}
+            ]"#);
+        let result = take(unsafe { alula_workspace_edit_transaction(stale.as_ptr()) });
+        assert_eq!(result["ok"], false);
+        assert_eq!(result["error"]["code"], "VersionMismatch");
+        assert_eq!(take(alula_doc_resync(first))["content"], "alpha!");
+        assert_eq!(take(alula_doc_resync(second))["content"], "new beta");
+
+        take(alula_doc_close(first));
+        take(alula_doc_close(second));
     }
 
     #[test]

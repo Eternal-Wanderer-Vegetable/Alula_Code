@@ -20,6 +20,7 @@ import '../bridge/alula_core.dart';
 import '../editor/find_replace.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
+import '../editor/workspace_edit.dart';
 import '../git/git_cli.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
@@ -726,6 +727,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final owner = _ownerOf(docId);
     final doc = owner?.docs.where((d) => d.id == docId).firstOrNull;
     if (doc == null) return;
+    if (doc.suppressNextControllerSync) {
+      doc.suppressNextControllerSync = false;
+      return;
+    }
     final isActiveOfFocused =
         owner!.region == _focusedRegion && owner.activeDocId == docId;
     final newText = doc.controller.text;
@@ -793,6 +798,99 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     if (doc.lspAttached) _scheduleSyntaxRefresh(docId);
+  }
+
+  @visibleForTesting
+  bool applyWorkspaceEdit(WorkspaceEdit edit) {
+    final core = _core;
+    if (core == null) {
+      _statusDetail = '工作区编辑失败：核心尚未就绪';
+      return false;
+    }
+    try {
+      final snapshots = _allDocs
+          .where((doc) => doc.uri != null)
+          .map((doc) => WorkspaceDocumentSnapshot(
+                id: doc.id,
+                uri: doc.uri!,
+                version: doc.doc.version,
+                text: doc.controller.text,
+                writable: doc.path != null &&
+                    doc.diskState == DiskDocumentState.current,
+              ));
+      final plan = const WorkspaceEditPlanner().plan(edit, snapshots);
+      final docsById = {for (final doc in _allDocs) doc.id: doc};
+      final oldSelections = <int, TextSelection>{};
+      for (final change in plan.documents) {
+        final doc = docsById[change.id];
+        if (doc == null || doc.controller.text != change.before) {
+          throw WorkspaceEditException(
+            'Document changed while planning: ${change.uri}',
+          );
+        }
+        oldSelections[change.id] = doc.controller.selection;
+      }
+
+      final result = core.applyWorkspaceEdit([
+        for (final change in plan.documents)
+          AlulaWorkspaceEditDocument(
+            id: change.id,
+            baseVersion: change.baseVersion,
+            ops: change.ops,
+          ),
+      ]);
+
+      for (final change in plan.documents) {
+        final doc = docsById[change.id]!;
+        final oldSelection = oldSelections[change.id]!;
+        final caret = oldSelection.baseOffset.clamp(0, change.before.length);
+        doc.undoStack.push(
+          before: change.before,
+          caret: caret,
+          coalesce: false,
+          encoding: doc.fileOptions.encoding.id,
+          bom: doc.fileOptions.bom,
+          lineEnding: doc.fileOptions.lineEnding.id,
+          transactionId: plan.transactionId,
+        );
+        doc.doc.version = result.versions[change.id]!;
+        doc.syncText = change.after;
+        final mappedSelection = TextSelection(
+          baseOffset: mapWorkspaceEditOffset(
+            oldSelection.baseOffset.clamp(0, change.before.length),
+            change.ops,
+          ).clamp(0, change.after.length),
+          extentOffset: mapWorkspaceEditOffset(
+            oldSelection.extentOffset.clamp(0, change.before.length),
+            change.ops,
+          ).clamp(0, change.after.length),
+          affinity: oldSelection.affinity,
+          isDirectional: oldSelection.isDirectional,
+        );
+        doc.suppressNextControllerSync = true;
+        doc.controller.value = TextEditingValue(
+          text: change.after,
+          selection: mappedSelection,
+          composing: TextRange.empty,
+        );
+        doc.lastEditAt = null;
+        _updateDirty(doc);
+        if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      }
+      _scheduleStateSave();
+      _scheduleOutlineRefresh();
+      _syncCommandContext();
+      _onFindTextChanged();
+      setState(() => _statusDetail =
+          '已应用跨文档编辑事务 ${plan.transactionId}（${plan.documents.length} 个文档）');
+      return true;
+    } on WorkspaceEditException catch (error) {
+      setState(() => _statusDetail = '跨文档编辑未应用：${error.message}');
+      return false;
+    } on AlulaException catch (error) {
+      setState(() => _statusDetail = '跨文档编辑已回滚：${error.code} ${error.detail}');
+      return false;
+    }
   }
 
   // ---------- 文件夹 / 文件树 ----------
@@ -3872,6 +3970,7 @@ class OpenDoc {
   final UndoStack undoStack;
   DateTime? lastEditAt;
   bool undoRedoBusy = false;
+  bool suppressNextControllerSync = false;
 
   /// 上次保存成功时的全文（磁盘 savepoint；只在保存或外部重载时前移）。
   String savedText;

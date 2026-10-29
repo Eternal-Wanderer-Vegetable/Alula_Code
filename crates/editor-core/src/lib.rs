@@ -5,7 +5,7 @@
 //! - 版本不符即拒绝（VersionMismatch），Dart 侧应 resync 重建；
 //! - 所有 offset 为 UTF-16 口径（换算见 editor-buffer）。
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{BufferError, TextBuffer, TextOp};
@@ -20,6 +20,40 @@ pub enum ApplyError {
     VersionMismatch { current: u64 },
     Buffer(BufferError),
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum WorkspaceEditError {
+    Empty,
+    DuplicateDocument { id: u64 },
+    UnknownDocument { id: u64 },
+    VersionMismatch { id: u64, current: u64 },
+    Buffer { id: u64, source: BufferError },
+}
+
+impl std::fmt::Display for WorkspaceEditError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            WorkspaceEditError::Empty => write!(f, "workspace edit has no documents"),
+            WorkspaceEditError::DuplicateDocument { id } => {
+                write!(f, "workspace edit repeats document {id}")
+            }
+            WorkspaceEditError::UnknownDocument { id } => {
+                write!(f, "workspace edit references unknown document {id}")
+            }
+            WorkspaceEditError::VersionMismatch { id, current } => {
+                write!(
+                    f,
+                    "document {id} version mismatch; current version is {current}"
+                )
+            }
+            WorkspaceEditError::Buffer { id, source } => {
+                write!(f, "document {id} has an invalid edit range: {source}")
+            }
+        }
+    }
+}
+
+impl std::error::Error for WorkspaceEditError {}
 
 impl std::fmt::Display for ApplyError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -79,6 +113,57 @@ impl DocRegistry {
             let _ = lsp.did_change_full(uri, version as i64, &buf.text());
         }
         Ok(version)
+    }
+
+    /// Validate and stage every document edit on a clone before changing the live registry.
+    /// A version, document, or range failure therefore leaves all live documents untouched.
+    pub fn apply_workspace_edit(
+        &mut self,
+        edits: &[(u64, u64, Vec<TextOp>)],
+    ) -> Result<Vec<(u64, u64)>, WorkspaceEditError> {
+        if edits.is_empty() {
+            return Err(WorkspaceEditError::Empty);
+        }
+
+        let mut seen = HashSet::with_capacity(edits.len());
+        let mut staged = Vec::with_capacity(edits.len());
+        for (id, base_version, ops) in edits {
+            if !seen.insert(*id) {
+                return Err(WorkspaceEditError::DuplicateDocument { id: *id });
+            }
+            let current = self
+                .docs
+                .get(id)
+                .ok_or(WorkspaceEditError::UnknownDocument { id: *id })?;
+            if current.version() != *base_version {
+                return Err(WorkspaceEditError::VersionMismatch {
+                    id: *id,
+                    current: current.version(),
+                });
+            }
+            let mut candidate = current.clone();
+            candidate
+                .apply_ops(ops)
+                .map_err(|source| WorkspaceEditError::Buffer { id: *id, source })?;
+            staged.push((*id, candidate));
+        }
+
+        let mut versions = Vec::with_capacity(staged.len());
+        for (id, candidate) in staged {
+            versions.push((id, candidate.version()));
+            self.docs.insert(id, candidate);
+        }
+
+        for (id, version) in &versions {
+            if let (Some(uri), Some(lsp), Some(buffer)) =
+                (self.uris.get(id), self.lsp.get(id), self.docs.get(id))
+            {
+                // LSP sync is best-effort, matching the existing single-document apply path.
+                let _ = lsp.did_change_full(uri, *version as i64, &buffer.text());
+            }
+        }
+
+        Ok(versions)
     }
 
     pub fn content(&self, id: u64) -> Option<(u64, String)> {
@@ -293,6 +378,121 @@ mod tests {
         let mut reg = DocRegistry::new();
         let err = reg.apply(42, 1, &[]).unwrap_err();
         assert_eq!(err, ApplyError::UnknownDoc);
+    }
+
+    #[test]
+    fn workspace_edit_commits_multiple_documents_together() {
+        let mut reg = DocRegistry::new();
+        reg.open(1, "alpha");
+        reg.open(2, "beta");
+
+        let versions = reg
+            .apply_workspace_edit(&[
+                (
+                    1,
+                    1,
+                    vec![TextOp::Insert {
+                        offset_utf16: 5,
+                        text: "!".into(),
+                    }],
+                ),
+                (
+                    2,
+                    1,
+                    vec![TextOp::Insert {
+                        offset_utf16: 0,
+                        text: "new ".into(),
+                    }],
+                ),
+            ])
+            .unwrap();
+
+        assert_eq!(versions, vec![(1, 2), (2, 2)]);
+        assert_eq!(reg.content(1), Some((2, "alpha!".into())));
+        assert_eq!(reg.content(2), Some((2, "new beta".into())));
+    }
+
+    #[test]
+    fn workspace_edit_version_failure_leaves_every_document_unchanged() {
+        let mut reg = DocRegistry::new();
+        reg.open(1, "alpha");
+        reg.open(2, "beta");
+
+        let err = reg
+            .apply_workspace_edit(&[
+                (
+                    1,
+                    1,
+                    vec![TextOp::Insert {
+                        offset_utf16: 0,
+                        text: "changed ".into(),
+                    }],
+                ),
+                (
+                    2,
+                    99,
+                    vec![TextOp::Insert {
+                        offset_utf16: 0,
+                        text: "changed ".into(),
+                    }],
+                ),
+            ])
+            .unwrap_err();
+
+        assert_eq!(
+            err,
+            WorkspaceEditError::VersionMismatch { id: 2, current: 1 }
+        );
+        assert_eq!(reg.content(1), Some((1, "alpha".into())));
+        assert_eq!(reg.content(2), Some((1, "beta".into())));
+    }
+
+    #[test]
+    fn workspace_edit_invalid_range_rolls_back_prior_staged_operations() {
+        let mut reg = DocRegistry::new();
+        reg.open(1, "alpha");
+        reg.open(2, "beta");
+
+        let err = reg
+            .apply_workspace_edit(&[
+                (
+                    1,
+                    1,
+                    vec![TextOp::Insert {
+                        offset_utf16: 0,
+                        text: "changed ".into(),
+                    }],
+                ),
+                (
+                    2,
+                    1,
+                    vec![TextOp::Insert {
+                        offset_utf16: 99,
+                        text: "invalid".into(),
+                    }],
+                ),
+            ])
+            .unwrap_err();
+
+        assert!(matches!(err, WorkspaceEditError::Buffer { id: 2, .. }));
+        assert_eq!(reg.content(1), Some((1, "alpha".into())));
+        assert_eq!(reg.content(2), Some((1, "beta".into())));
+    }
+
+    #[test]
+    fn workspace_edit_rejects_duplicate_and_empty_batches() {
+        let mut reg = DocRegistry::new();
+        reg.open(1, "alpha");
+        let edit = (1, 1, vec![]);
+
+        assert_eq!(
+            reg.apply_workspace_edit(&[edit.clone(), edit]).unwrap_err(),
+            WorkspaceEditError::DuplicateDocument { id: 1 }
+        );
+        assert_eq!(
+            reg.apply_workspace_edit(&[]).unwrap_err(),
+            WorkspaceEditError::Empty
+        );
     }
 
     #[test]
