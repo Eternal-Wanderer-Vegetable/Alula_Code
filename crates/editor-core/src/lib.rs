@@ -8,7 +8,7 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
-use editor_buffer::{BufferError, TextBuffer, TextOp};
+use editor_buffer::{BufferError, TextBuffer, TextOp, TextRangeRead};
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
 
@@ -172,6 +172,18 @@ impl DocRegistry {
 
     pub fn text_of(&self, id: u64) -> Option<String> {
         self.docs.get(&id).map(|b| b.text())
+    }
+
+    /// Read a bounded UTF-16 range from the Rust-authoritative document.
+    pub fn read_range(
+        &self,
+        id: u64,
+        start_utf16: usize,
+        max_len_utf16: usize,
+    ) -> Option<Result<TextRangeRead, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.read_range_utf16(start_utf16, max_len_utf16))
     }
 
     pub fn version_of(&self, id: u64) -> Option<u64> {

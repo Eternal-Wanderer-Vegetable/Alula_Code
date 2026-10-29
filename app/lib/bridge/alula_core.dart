@@ -12,7 +12,8 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 11;
+const int expectedAbiVersion = 12;
+const int maxDocReadRangeUtf16 = 64 * 1024;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -199,6 +200,29 @@ class ResyncResult {
   final String content;
 
   const ResyncResult(this.version, this.content);
+}
+
+/// A bounded snapshot from the Rust-authoritative document.
+class TextRangeRead {
+  final int version;
+  final int totalUtf16Length;
+  final int lineCount;
+  final int startUtf16;
+  final int endUtf16;
+  final int startLine;
+  final int startCharacter;
+  final String text;
+
+  const TextRangeRead({
+    required this.version,
+    required this.totalUtf16Length,
+    required this.lineCount,
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.startLine,
+    required this.startCharacter,
+    required this.text,
+  });
 }
 
 class CompletionResult {
@@ -472,6 +496,32 @@ class AlulaDoc {
   int version;
 
   AlulaDoc._(this.core, this.id, this.version);
+
+  /// Read at most [maxLenUtf16] UTF-16 units without transferring the full file.
+  /// The returned end is adjusted to a Unicode scalar boundary.
+  TextRangeRead readRange(int startUtf16, {required int maxLenUtf16}) {
+    final json = core._ffi.docReadRangeJson(id, startUtf16, maxLenUtf16);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final range = TextRangeRead(
+      version: r['version'] as int,
+      totalUtf16Length: r['totalUtf16Length'] as int,
+      lineCount: r['lineCount'] as int,
+      startUtf16: r['startUtf16'] as int,
+      endUtf16: r['endUtf16'] as int,
+      startLine: r['startLine'] as int,
+      startCharacter: r['startCharacter'] as int,
+      text: r['text'] as String,
+    );
+    version = range.version;
+    return range;
+  }
 
   /// 提交一批增量操作；成功返回 Rust 确认的版本号（应等于 version + ops 数）。
   int apply(List<TextOp> ops) => applyWith(version, ops);

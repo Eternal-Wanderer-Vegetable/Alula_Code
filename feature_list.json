@@ -334,12 +334,12 @@
     {
       "id": "feat-025",
       "name": "P03 编辑器输入与绘制",
-      "description": "ADR选定真实控件/文本归属；三平台IME/多光标/列选/万行长行/多视图/无障碍/内存硬门通过；完整DoD见docs/03 N.2，逐项需求见docs/11。",
+      "description": "按 docs/03 的 P03.1–P03.6 分片完成编辑输入与绘制；Rust 是唯一权威文本，Flutter 持有有界视口/输入窗口；三平台 IME、多光标/列选、万行长行、多视图和无障碍门通过；500 MiB 数值优化安排在 P14。",
       "dependencies": [
         "feat-024"
       ],
-      "status": "not-started",
-      "evidence": "",
+      "status": "in-progress",
+      "evidence": "P03.1 Rust 权威文档有界 UTF-16 范围读取与 ABI v12 完成：真实 Dart↔Rust 动态库对拍覆盖 BOM、CRLF、emoji 代理对、无效边界、64 Ki 单次上限与 100k 单行分页；cargo fmt、workspace tests/Clippy、build_core、Flutter analyze 与 `bash init.sh`（165 项）全绿。报告 docs/diagnostics/2026-10-30-p03/p03.1-bounded-rust-range-read.md。当前下一片 P03.2 控件/文本所有权 ADR 与可视区原型；全文 TextField 尚未移除，P03 平台 IME/无障碍门未完成。",
       "track": "vscode-builtin-parity",
       "phase": "P03"
     },

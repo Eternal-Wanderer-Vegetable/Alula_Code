@@ -818,3 +818,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - Dart planner 将 LSP UTF-16 行列映射到原文偏移，处理 LF/CRLF、emoji 代理对、重叠与多位置编辑；工作台提交后同步 Rust 版本、controller、selection、dirty/journal 状态。各文件有独立撤销帧并关联 transaction ID。
 - 证据：`docs/diagnostics/2026-10-30-p02/p02.7-workspace-edit-transaction.md`。`bash init.sh` EXIT=0，Rust workspace / Clippy / build_core / Flutter 163 项通过；`cargo fmt --check`、`flutter analyze --no-pub` 0 issues。服务端主动 `workspace/applyEdit` 接收留待 P12。
 - 用户确认架构与默认功能优先，500 MiB 数值目标继续安排到 P14。下一阶段 P03 编辑器输入与绘制，开始前按 docs/03 拆分受控子项。提交只含 P02.7 快照，既有工作区改动保留。
+
+## 今日会话（2026-10-30）：P03.1 Rust 有界范围读取
+
+- P03 已按 docs/03 拆分 P03.1–P03.6；当前只完成 P03.1。CodeForge 11.3.0 本机候选控制器拥有完整 Rope 且 `text` getter 物化全文；P03.1 没有选择最终控件。Rust 文档模型继续为权威，组件选择和可视区原型留到 P03.2。
+- Rust `TextBuffer` 新增 UTF-16 范围切片与版本/总长度/行数/起点元数据；请求上限 64 Ki units，校验代理对边界，保留 BOM/CRLF，能分页读取 100k 单行。ABI v12 双侧增加 `alula_doc_read_range` / `AlulaDoc.readRange`，没有改变现有写入/保存入口。
+- 变更前 GitNexus 影响：TextBuffer CRITICAL（11 符号/8 流程）、DocRegistry CRITICAL（19/13）、AlulaFfi CRITICAL（44/18）。风险未按共享轴豁免；本片仅新增读 API，并由 FFI 对拍和完整门禁回归。
+- 定向 Rust（buffer 13/core 19）与 Linux FFI 对拍（Flutter 13）通过；`cargo fmt --all -- --check`、workspace Clippy、build_core、flutter analyze 及 `bash init.sh` EXIT=0，完整 Flutter 165 项通过。详细边界见 `docs/diagnostics/2026-10-30-p03/p03.1-bounded-rust-range-read.md`。
+- 工作树里的 workbench、harness、app 配置和其他文档改动未纳入 P03.1。下一切片 P03.2：控件/文本所有权 ADR 与 Rust 分页可视区原型；500 MiB 数值优化继续留 P14。

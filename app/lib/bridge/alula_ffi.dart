@@ -73,6 +73,10 @@ class AlulaFfi {
     'alula_doc_resync',
   );
 
+  late final Pointer<Utf8> Function(int, int, int) _docReadRange =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_doc_read_range');
+
   late final Pointer<Utf8> Function(int) _docClose = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_doc_close',
@@ -245,6 +249,9 @@ class AlulaFfi {
   }
 
   String docResyncJson(int id) => _takeJson(_docResync(id));
+
+  String docReadRangeJson(int id, int startUtf16, int maxLenUtf16) =>
+      _takeJson(_docReadRange(id, startUtf16, maxLenUtf16));
 
   String docCloseJson(int id) => _takeJson(_docClose(id));
 

@@ -71,6 +71,53 @@ void main() {
     expect(r.content, 'fn main() {// hello}\n');
   }, skip: skip);
 
+  test('Rust 权威文档 UTF-16 范围读取有界且不拆代理对', () {
+    final doc = _bootstrap.core!.openDoc(9030, '\u{FEFF}甲🦊\r\nsecond');
+
+    final first = doc.readRange(0, maxLenUtf16: 3);
+    expect(first.text, '\u{FEFF}甲');
+    expect(first.version, 1);
+    expect(first.totalUtf16Length, 12);
+    expect(first.lineCount, 2);
+    expect(first.startUtf16, 0);
+    expect(first.endUtf16, 2);
+    expect((first.startLine, first.startCharacter), (0, 0));
+
+    final emoji = doc.readRange(2, maxLenUtf16: 1);
+    expect(emoji.text, '🦊');
+    expect(emoji.endUtf16, 4);
+    expect((emoji.startLine, emoji.startCharacter), (0, 2));
+
+    final secondLine = doc.readRange(6, maxLenUtf16: 6);
+    expect(secondLine.text, 'second');
+    expect((secondLine.startLine, secondLine.startCharacter), (1, 0));
+
+    expect(
+      () => doc.readRange(3, maxLenUtf16: 1),
+      throwsA(isA<AlulaException>()
+          .having((e) => e.code, 'code', 'InvalidUtf16Offset')),
+    );
+    expect(
+      () => doc.readRange(0, maxLenUtf16: maxDocReadRangeUtf16 + 1),
+      throwsA(isA<AlulaException>()
+          .having((e) => e.code, 'code', 'ReadRangeTooLarge')),
+    );
+
+    doc.apply([const TextOp.insert(0, 'x')]);
+    expect(doc.readRange(0, maxLenUtf16: 1).version, 2);
+    doc.close();
+  }, skip: skip);
+
+  test('超长单行可按 UTF-16 页读取而不返回全文', () {
+    final doc = _bootstrap.core!.openDoc(9031, List.filled(100000, 'x').join());
+    final page = doc.readRange(49000, maxLenUtf16: 4096);
+    expect(page.text, List.filled(4096, 'x').join());
+    expect(page.totalUtf16Length, 100000);
+    expect(page.lineCount, 1);
+    expect(page.endUtf16, 53096);
+    doc.close();
+  }, skip: skip);
+
   test('过期版本被拒绝并给出 Rust 当前版本', () {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(

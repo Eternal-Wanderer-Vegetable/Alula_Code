@@ -19,7 +19,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
-use editor_buffer::TextOp;
+use editor_buffer::{BufferError, TextOp};
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
@@ -29,7 +29,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 11;
+pub const ALULA_ABI_VERSION: u32 = 12;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -424,6 +424,54 @@ pub extern "C" fn alula_doc_resync(id: u64) -> *mut c_char {
         None => err_json("UnknownDoc", json!({ "id": id })),
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_resync")))
+}
+
+/// Read a bounded UTF-16 range from the Rust-authoritative document.
+/// The returned JSON includes the snapshot version, document size, line count,
+/// absolute range and its line/column origin.
+#[no_mangle]
+pub extern "C" fn alula_doc_read_range(
+    id: u64,
+    start_utf16: u64,
+    max_len_utf16: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(start_utf16) = usize::try_from(start_utf16) else {
+            return err_json(
+                "InvalidArgument",
+                json!("start offset is not representable"),
+            );
+        };
+        let Ok(max_len_utf16) = usize::try_from(max_len_utf16) else {
+            return err_json("InvalidArgument", json!("read length is not representable"));
+        };
+        match registry_lock().read_range(id, start_utf16, max_len_utf16) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(range)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": range.version,
+                    "totalUtf16Length": range.total_utf16_length,
+                    "lineCount": range.line_count,
+                    "startUtf16": range.start_utf16,
+                    "endUtf16": range.end_utf16,
+                    "startLine": range.start_line,
+                    "startCharacter": range.start_character,
+                    "text": range.text,
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(BufferError::ReadRangeTooLarge { requested, max })) => err_json(
+                "ReadRangeTooLarge",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_read_range")))
 }
 
 /// 关闭文档并释放其缓冲区。
@@ -1068,6 +1116,37 @@ mod tests {
         assert_eq!(r["version"], 2);
         // offset 10 位于 ' 与 ) 之间
         assert_eq!(r["content"], "print('hi'!)\n");
+    }
+
+    #[test]
+    fn bounded_utf16_range_read_over_ffi_reports_snapshot_and_line_origin() {
+        let id = 92_811;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}甲🦊\r\nsecond").as_ptr()) });
+
+        let first = take(alula_doc_read_range(id, 0, 3));
+        assert_eq!(first["ok"], true);
+        assert_eq!(first["version"], 1);
+        assert_eq!(first["totalUtf16Length"], 12);
+        assert_eq!(first["lineCount"], 2);
+        assert_eq!(first["startUtf16"], 0);
+        assert_eq!(first["endUtf16"], 2);
+        assert_eq!(first["startLine"], 0);
+        assert_eq!(first["startCharacter"], 0);
+        assert_eq!(first["text"], "\u{FEFF}甲");
+
+        let emoji = take(alula_doc_read_range(id, 2, 1));
+        assert_eq!(emoji["text"], "🦊");
+        assert_eq!(emoji["endUtf16"], 4);
+
+        let split_surrogate = take(alula_doc_read_range(id, 3, 1));
+        assert_eq!(split_surrogate["ok"], false);
+        assert_eq!(split_surrogate["error"]["code"], "InvalidUtf16Offset");
+
+        let oversized = take(alula_doc_read_range(id, 0, 65_537));
+        assert_eq!(oversized["ok"], false);
+        assert_eq!(oversized["error"]["code"], "ReadRangeTooLarge");
+
+        take(alula_doc_close(id));
     }
 
     #[test]

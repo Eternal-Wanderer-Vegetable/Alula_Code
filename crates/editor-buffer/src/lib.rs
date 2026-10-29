@@ -7,6 +7,22 @@
 use ropey::Rope;
 use serde::{Deserialize, Serialize};
 
+/// Maximum UTF-16 units requested by one bounded document read.
+pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
+
+/// A bounded read from the Rust-authoritative document.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextRangeRead {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub start_line: usize,
+    pub start_character: usize,
+    pub text: String,
+}
+
 /// 单个增量编辑操作。offset/len 均为 UTF-16 code unit 口径。
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -30,6 +46,8 @@ pub enum BufferError {
         offset_utf16: usize,
         len_utf16: usize,
     },
+    /// A bounded read requested more than the API's per-call limit.
+    ReadRangeTooLarge { requested: usize, max: usize },
 }
 
 impl std::fmt::Display for BufferError {
@@ -46,6 +64,9 @@ impl std::fmt::Display for BufferError {
                 len_utf16,
             } => {
                 write!(f, "delete range {offset_utf16}+{len_utf16} out of bounds")
+            }
+            BufferError::ReadRangeTooLarge { requested, max } => {
+                write!(f, "read range length {requested} exceeds maximum {max}")
             }
         }
     }
@@ -79,6 +100,63 @@ impl TextBuffer {
 
     pub fn len_utf16(&self) -> usize {
         self.rope.len_utf16_cu()
+    }
+
+    /// Read a bounded UTF-16 range without materialising the whole document.
+    ///
+    /// Range starts must be valid UTF-16 boundaries. The end is shortened by
+    /// one unit when the requested boundary would split a surrogate pair. If
+    /// a one-unit request starts at a supplementary scalar, the complete
+    /// scalar is returned so callers can always advance without splitting it.
+    pub fn read_range_utf16(
+        &self,
+        start_utf16: usize,
+        max_len_utf16: usize,
+    ) -> Result<TextRangeRead, BufferError> {
+        if max_len_utf16 > MAX_READ_RANGE_UTF16 {
+            return Err(BufferError::ReadRangeTooLarge {
+                requested: max_len_utf16,
+                max: MAX_READ_RANGE_UTF16,
+            });
+        }
+
+        let start_char = self.char_idx_at_utf16(start_utf16)?;
+        let total_utf16_length = self.len_utf16();
+        let desired_end = start_utf16
+            .saturating_add(max_len_utf16)
+            .min(total_utf16_length);
+        let mut end_utf16 = desired_end;
+        let mut end_char = match self.char_idx_at_utf16(end_utf16) {
+            Ok(char_idx) => char_idx,
+            Err(BufferError::InvalidUtf16Offset { .. }) if end_utf16 > start_utf16 => {
+                end_utf16 -= 1;
+                self.char_idx_at_utf16(end_utf16)?
+            }
+            Err(error) => return Err(error),
+        };
+
+        if max_len_utf16 > 0 && end_utf16 == start_utf16 && start_utf16 < total_utf16_length {
+            end_char = start_char + 1;
+            end_utf16 = self.rope.char_to_utf16_cu(end_char);
+        }
+
+        let start_line = self.rope.char_to_line(start_char);
+        let line_start_char = self.rope.line_to_char(start_line);
+        let start_character = self
+            .rope
+            .line(start_line)
+            .char_to_utf16_cu(start_char - line_start_char);
+
+        Ok(TextRangeRead {
+            version: self.version,
+            total_utf16_length,
+            line_count: self.rope.len_lines(),
+            start_utf16,
+            end_utf16,
+            start_line,
+            start_character,
+            text: self.rope.slice(start_char..end_char).to_string(),
+        })
     }
 
     /// 应用一个操作。成功则版本号 +1。
@@ -268,6 +346,57 @@ mod tests {
         assert_eq!(buf2.line_col_utf16(2), None);
         // Emoji 行内列按 UTF-16 计：a(1) 🦊(2) → 'b' 在 (0,3)
         assert_eq!(buf2.line_col_utf16(3), Some((0, 3)));
+    }
+
+    #[test]
+    fn bounded_read_preserves_bom_crlf_and_utf16_metadata() {
+        let buf = TextBuffer::open("\u{FEFF}甲🦊\r\nsecond");
+        let first = buf.read_range_utf16(0, 3).unwrap();
+        assert_eq!(first.text, "\u{FEFF}甲");
+        assert_eq!(first.end_utf16, 2);
+        assert_eq!(first.total_utf16_length, 12);
+        assert_eq!(first.line_count, 2);
+        assert_eq!((first.start_line, first.start_character), (0, 0));
+
+        let emoji = buf.read_range_utf16(2, 1).unwrap();
+        assert_eq!(emoji.text, "🦊");
+        assert_eq!((emoji.start_line, emoji.start_character), (0, 2));
+        assert_eq!(emoji.end_utf16, 4);
+
+        let second_line = buf.read_range_utf16(6, 6).unwrap();
+        assert_eq!(second_line.text, "second");
+        assert_eq!(
+            (second_line.start_line, second_line.start_character),
+            (1, 0)
+        );
+    }
+
+    #[test]
+    fn bounded_read_rejects_surrogate_start_and_oversized_request() {
+        let buf = TextBuffer::open("a🦊b");
+        assert_eq!(
+            buf.read_range_utf16(2, 2),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 2 })
+        );
+        assert_eq!(
+            buf.read_range_utf16(0, MAX_READ_RANGE_UTF16 + 1),
+            Err(BufferError::ReadRangeTooLarge {
+                requested: MAX_READ_RANGE_UTF16 + 1,
+                max: MAX_READ_RANGE_UTF16,
+            })
+        );
+    }
+
+    #[test]
+    fn bounded_read_pages_a_very_long_single_line() {
+        let text = "x".repeat(100_000);
+        let buf = TextBuffer::open(&text);
+        let page = buf.read_range_utf16(49_000, 4_096).unwrap();
+        assert_eq!(page.text.len(), 4_096);
+        assert_eq!(page.text, "x".repeat(4_096));
+        assert_eq!(page.total_utf16_length, 100_000);
+        assert_eq!(page.line_count, 1);
+        assert_eq!(page.end_utf16, 53_096);
     }
 
     #[test]
