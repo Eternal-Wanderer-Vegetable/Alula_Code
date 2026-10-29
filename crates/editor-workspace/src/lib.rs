@@ -3,6 +3,7 @@
 //! MVP 边界（docs/03 Phase 1）：UTF-8 文本文件；二进制/非 UTF-8 文件返回
 //! BinaryFile 错误（编码处理是 Phase 1 后续任务）。文件监视（notify）下一增量接入。
 
+use editor_doc::{DecodeError, DecodedTextFile, TextEncoding};
 use serde::Serialize;
 use std::path::Path;
 
@@ -20,6 +21,7 @@ pub enum WorkspaceError {
     NotFound(String),
     NotADirectory(String),
     BinaryFile(String),
+    UnsupportedEncoding(String, String),
     Io(String),
 }
 
@@ -29,6 +31,9 @@ impl std::fmt::Display for WorkspaceError {
             WorkspaceError::NotFound(p) => write!(f, "路径不存在: {p}"),
             WorkspaceError::NotADirectory(p) => write!(f, "不是目录: {p}"),
             WorkspaceError::BinaryFile(p) => write!(f, "二进制文件（MVP 暂不支持）: {p}"),
+            WorkspaceError::UnsupportedEncoding(p, detail) => {
+                write!(f, "不支持或无法识别文件编码 ({p}): {detail}")
+            }
             WorkspaceError::Io(e) => write!(f, "IO 错误: {e}"),
         }
     }
@@ -74,17 +79,27 @@ pub fn list_dir(path: &str) -> Result<Vec<DirEntry>, WorkspaceError> {
     Ok(entries)
 }
 
-/// 读取 UTF-8 文本文件。含 NUL 或非法 UTF-8 视为二进制文件。
-pub fn read_file(path: &str) -> Result<String, WorkspaceError> {
+/// 读取受支持的文本编码并保留编码、BOM 与 EOL 元数据。
+pub fn read_file_document(
+    path: &str,
+    encoding_override: Option<TextEncoding>,
+) -> Result<DecodedTextFile, WorkspaceError> {
     let p = Path::new(path);
     if !p.exists() {
         return Err(WorkspaceError::NotFound(path.to_string()));
     }
     let bytes = std::fs::read(p).map_err(|e| WorkspaceError::Io(e.to_string()))?;
-    if bytes.contains(&0) {
-        return Err(WorkspaceError::BinaryFile(path.to_string()));
-    }
-    String::from_utf8(bytes).map_err(|_| WorkspaceError::BinaryFile(path.to_string()))
+    editor_doc::decode_file(&bytes, encoding_override).map_err(|error| match error {
+        DecodeError::BinaryContent => WorkspaceError::BinaryFile(path.to_string()),
+        DecodeError::UnsupportedEncoding(detail) | DecodeError::InvalidData(detail) => {
+            WorkspaceError::UnsupportedEncoding(path.to_string(), detail)
+        }
+    })
+}
+
+/// 读取受支持编码的文本并返回规范 LF 内容。
+pub fn read_file(path: &str) -> Result<String, WorkspaceError> {
+    read_file_document(path, None).map(|document| document.text)
 }
 
 pub fn exists(path: &str) -> bool {
@@ -144,5 +159,48 @@ mod tests {
             read_file(b.to_str().unwrap()),
             Err(WorkspaceError::BinaryFile(_))
         ));
+    }
+
+    #[test]
+    fn read_file_document_detects_bom_and_line_endings() {
+        let td = tmpdir("ws-read-encoded");
+        let path = td.path().join("utf16.txt");
+        let bytes = editor_doc::encode_file(
+            "第一行\n第二行",
+            editor_doc::TextFileOptions {
+                encoding: TextEncoding::Utf16Le,
+                bom: true,
+                line_ending: editor_doc::LineEnding::CrLf,
+            },
+        )
+        .unwrap();
+        std::fs::write(&path, bytes).unwrap();
+
+        let decoded = read_file_document(path.to_str().unwrap(), None).unwrap();
+        assert_eq!(decoded.text, "第一行\n第二行");
+        assert_eq!(decoded.options.encoding, TextEncoding::Utf16Le);
+        assert!(decoded.options.bom);
+        assert_eq!(decoded.options.line_ending, editor_doc::LineEnding::CrLf);
+    }
+
+    #[test]
+    fn read_file_document_can_reopen_with_selected_encoding() {
+        let td = tmpdir("ws-read-forced");
+        let path = td.path().join("legacy.txt");
+        let bytes = editor_doc::encode_file(
+            "你好\n世界",
+            editor_doc::TextFileOptions {
+                encoding: TextEncoding::Gbk,
+                bom: false,
+                line_ending: editor_doc::LineEnding::CrLf,
+            },
+        )
+        .unwrap();
+        std::fs::write(&path, bytes).unwrap();
+
+        let decoded = read_file_document(path.to_str().unwrap(), Some(TextEncoding::Gbk)).unwrap();
+        assert_eq!(decoded.text, "你好\n世界");
+        assert_eq!(decoded.options.encoding, TextEncoding::Gbk);
+        assert_eq!(decoded.options.line_ending, editor_doc::LineEnding::CrLf);
     }
 }

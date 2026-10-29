@@ -28,3 +28,4 @@ editor-doc = { path = "crates/editor-doc" }
 editor-process = { path = "crates/editor-process" }
 tree-sitter = "0.25"
 tree-sitter-rust = "0.23"
+encoding_rs = "0.8.42"

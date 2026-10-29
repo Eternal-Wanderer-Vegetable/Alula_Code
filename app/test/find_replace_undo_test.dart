@@ -95,6 +95,38 @@ void main() {
       expect(st.canRedo, isFalse);
     });
 
+    test('格式转换的编码/BOM/EOL 状态可随 undo/redo 往返', () {
+      final st = UndoStack();
+      st.push(
+        before: 'same text',
+        caret: 4,
+        coalesce: false,
+        encoding: 'utf-8',
+        bom: false,
+        lineEnding: 'lf',
+      );
+
+      final undo = st.undo(
+        'same text',
+        4,
+        encoding: 'utf-8',
+        bom: false,
+        lineEnding: 'crlf',
+      )!;
+      expect(undo.text, 'same text');
+      expect(undo.lineEnding, 'lf');
+
+      final redo = st.redo(
+        'same text',
+        4,
+        encoding: undo.encoding,
+        bom: undo.bom,
+        lineEnding: undo.lineEnding,
+      )!;
+      expect(redo.text, 'same text');
+      expect(redo.lineEnding, 'crlf');
+    });
+
     test('coalesce 合并不压新帧：一次撤销回退整段输入', () {
       final st = UndoStack();
       st.push(before: 'base', caret: 4, coalesce: false);

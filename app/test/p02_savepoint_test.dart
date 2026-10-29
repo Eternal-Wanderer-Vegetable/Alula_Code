@@ -183,4 +183,161 @@ void main() {
     expect(tester.widget<TextField>(editor).controller!.text, edited,
         reason: 'Revert 清空旧撤销历史');
   });
+
+  testWidgets('P02.4 行尾状态可撤销、重做并按 CRLF 保存', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: layout,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.text('note.txt').first);
+    await tester.pump(const Duration(milliseconds: 200));
+
+    final tab = find.byKey(const ValueKey('tab-2'));
+    await tester.tap(find.byKey(const ValueKey('status-line-ending')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('line-ending-crlf')));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+      find.descendant(
+          of: find.byKey(const ValueKey('status-line-ending')),
+          matching: find.text('CRLF')),
+      findsOneWidget,
+    );
+    expect(find.descendant(of: tab, matching: find.text('note.txt •')),
+        findsOneWidget,
+        reason: '行尾元数据变更会标脏');
+
+    await _pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+    expect(
+      find.descendant(
+          of: find.byKey(const ValueKey('status-line-ending')),
+          matching: find.text('LF')),
+      findsOneWidget,
+    );
+    expect(find.descendant(of: tab, matching: find.text('note.txt')),
+        findsOneWidget,
+        reason: '撤销回到磁盘元数据 savepoint');
+
+    await _pressChord(tester, LogicalKeyboardKey.keyZ,
+        control: true, shift: true);
+    expect(
+      find.descendant(
+          of: find.byKey(const ValueKey('status-line-ending')),
+          matching: find.text('CRLF')),
+      findsOneWidget,
+    );
+    expect(find.descendant(of: tab, matching: find.text('note.txt •')),
+        findsOneWidget,
+        reason: '重做恢复行尾元数据');
+
+    await _pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+    expect(file.readAsBytesSync(), 'seed\r\n'.codeUnits);
+    expect(find.descendant(of: tab, matching: find.text('note.txt •')),
+        findsNothing);
+  });
+
+  testWidgets('P02.4 使用编码保存可写入 UTF-8 BOM', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: layout,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.text('note.txt').first);
+    await tester.pump(const Duration(milliseconds: 200));
+
+    await _pressChord(tester, LogicalKeyboardKey.keyP,
+        control: true, shift: true);
+    final quickInput = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField));
+    await tester.enterText(quickInput, '使用编码保存');
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.tap(find.byKey(const ValueKey('qi-文件: 使用编码保存…')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('save-encoding-utf-8-true')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(file.readAsBytesSync().take(3).toList(), [0xEF, 0xBB, 0xBF]);
+    expect(file.readAsBytesSync().sublist(3), 'seed\n'.codeUnits);
+  });
+
+  testWidgets('P02.4 无 BOM UTF-16 可手动打开并跨会话恢复', (tester) async {
+    final utf16 = File('${workspace.path}/utf16.txt')
+      ..writeAsBytesSync([
+        0x41, 0x00, // A
+        0x0D, 0x00, // CR
+        0x0A, 0x00, // LF
+        0x42, 0x00, // B
+      ]);
+    AlulaApp app() => AlulaApp(
+          autoFolder: workspace.path,
+          layoutStore: layout,
+          sessionStore: session,
+          keybindingsStore: keybindings,
+        );
+
+    await tester.pumpWidget(app());
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.tap(find.text('utf16.txt').first);
+    await tester.pumpAndSettle();
+    expect(find.text('选择文件编码'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('reopen-encoding-utf-16le')));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(
+        tester.widget<TextField>(find.byType(TextField).first).controller!.text,
+        'A\nB');
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('status-encoding')),
+        matching: find.text('UTF-16 LE'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<Tooltip>(
+            find.ancestor(
+              of: find.text('UTF-16 LE'),
+              matching: find.byType(Tooltip),
+            ),
+          )
+          .message,
+      contains('(no BOM)'),
+    );
+    expect(utf16.readAsBytesSync(), [
+      0x41,
+      0x00,
+      0x0D,
+      0x00,
+      0x0A,
+      0x00,
+      0x42,
+      0x00,
+    ]);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.pumpWidget(app());
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byKey(const ValueKey('tab-2')), findsOneWidget);
+    expect(
+        tester.widget<TextField>(find.byType(TextField).first).controller!.text,
+        'A\nB');
+    expect(utf16.readAsBytesSync(), [
+      0x41,
+      0x00,
+      0x0D,
+      0x00,
+      0x0A,
+      0x00,
+      0x42,
+      0x00,
+    ]);
+  });
 }

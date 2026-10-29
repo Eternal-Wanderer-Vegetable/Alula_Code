@@ -21,6 +21,11 @@ class AlulaStatusBar extends StatelessWidget {
     required this.syncCount,
     required this.panelCollapsed,
     required this.onTogglePanel,
+    this.encodingLabel,
+    this.encodingTooltip,
+    this.lineEndingLabel,
+    this.onEncodingTap,
+    this.onLineEndingTap,
   });
 
   final WbSyncState state;
@@ -36,6 +41,11 @@ class AlulaStatusBar extends StatelessWidget {
   final int syncCount;
   final bool panelCollapsed;
   final VoidCallback onTogglePanel;
+  final String? encodingLabel;
+  final String? encodingTooltip;
+  final String? lineEndingLabel;
+  final VoidCallback? onEncodingTap;
+  final VoidCallback? onLineEndingTap;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +58,45 @@ class AlulaStatusBar extends StatelessWidget {
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
-          Text(
-            '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
-            'ABI v$abiVersion · 同步 $syncCount 次',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+          Flexible(
+            child: Text(
+              '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
+              'ABI v$abiVersion · 同步 $syncCount 次',
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+            ),
           ),
+          if (encodingLabel != null && onEncodingTap != null) ...[
+            const SizedBox(width: 10),
+            InkWell(
+              key: const ValueKey('status-encoding'),
+              onTap: onEncodingTap,
+              child: Tooltip(
+                message: encodingTooltip ?? '文件编码',
+                child: Text(
+                  encodingLabel!,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
+          if (lineEndingLabel != null && onLineEndingTap != null) ...[
+            const SizedBox(width: 8),
+            InkWell(
+              key: const ValueKey('status-line-ending'),
+              onTap: onLineEndingTap,
+              child: Tooltip(
+                message: '行尾格式',
+                child: Text(
+                  lineEndingLabel!,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
           if (resourcePressure != null) ...[
             const SizedBox(width: 10),
             Tooltip(
@@ -120,7 +164,8 @@ class AlulaStatusBar extends StatelessWidget {
       case WbSyncState.idle:
         return const Icon(Icons.circle_outlined, size: 12, color: Colors.grey);
       case WbSyncState.synced:
-        return const Icon(Icons.check_circle, size: 12, color: Colors.greenAccent);
+        return const Icon(Icons.check_circle,
+            size: 12, color: Colors.greenAccent);
       case WbSyncState.mismatch:
         return const Icon(Icons.warning_amber_rounded,
             size: 12, color: Colors.orangeAccent);

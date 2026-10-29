@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
-### 最新进展（2026-10-30，P02.1 每文档撤销/重做）
+### 最新进展（2026-10-30，P02.4 编码/BOM/EOL）
+
+- P02.4 已完成并通过完整门禁：Rust/Dart FFI ABI 升至 v9，支持 UTF-8、UTF-16LE/BE、GBK 与 LF/CRLF；保存/重开保留编码、BOM、EOL，编辑缓冲区统一 LF；GBK 不可表示字符会在原子替换前报错。无 BOM UTF-16 可手动选择编码打开，并能在会话恢复、Revert、外部检查中继续按 UTF-16 解码。
+- UI 增加状态栏编码/EOL 操作及文件菜单命令；EOL 元数据进入 dirty/savepoint 与有界 undo/redo。测试覆盖 BOM/CRLF FFI 往返、GBK 不可表示内容不覆盖目标、UTF-8 BOM 保存、CRLF 撤销重做与写盘、无 BOM UTF-16 打开/重启恢复、混合 EOL 归一和无末尾换行保留。
+- `cargo fmt --check`、`cargo test --workspace`、`cargo clippy --workspace --all-targets -- -D warnings`、`build_core`、`flutter analyze`、完整 Flutter 141 项与 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 全通过。详细行为、GitNexus 图谱范围与限制见 `docs/diagnostics/2026-10-30-p02/p02.4-encoding-bom-eol.md`。
+- P02 / feat-024 继续 in-progress；当前唯一活动切片转为 P02.5 外部变更、冲突、只读与孤儿文档。Rust + rust-analyzer 500 MiB 数值目标留在 P14 重定标，P02.4 未进行内存调优。
+
+### 历史进展（2026-10-30，P02.1 每文档撤销/重做）
 
 - 已完成 P02.1：撤销/重做状态、输入合并时间和程序化写回闸门改为按文档保存；命令上下文读取当前激活文档的历史。所有打开文档共享 100 条/2,000,000 UTF-16 code unit 历史预算，redo 帧也计入；关闭文档或工作台时释放对应历史。
 - 验证通过：`cargo fmt --all -- --check`、`FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh`（Rust workspace tests、Clippy、build_core、Flutter 132/132）和 `flutter analyze --no-pub`；undo 栈与跨文档 widget 定向测试 20/20 通过。

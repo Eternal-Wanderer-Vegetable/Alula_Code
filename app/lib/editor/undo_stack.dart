@@ -11,14 +11,24 @@
 library;
 
 class UndoEntry {
-  UndoEntry({required this.text, required this.caret})
-      : sequence = _nextUndoSequence++;
+  UndoEntry({
+    required this.text,
+    required this.caret,
+    this.encoding,
+    this.bom,
+    this.lineEnding,
+  }) : sequence = _nextUndoSequence++;
 
   /// 该步骤的「变更前」全文（undo 目标态）。
   final String text;
 
   /// 变更前的光标位（UTF-16 偏移）。
   final int caret;
+
+  /// 文档文件格式状态；普通编辑历史也携带这些值，以便与格式转换组合撤销。
+  final String? encoding;
+  final bool? bom;
+  final String? lineEnding;
 
   /// 跨文档的创建顺序，供共享预算从最旧的历史帧开始回收。
   final int sequence;
@@ -109,10 +119,19 @@ class UndoStack {
     required String before,
     required int caret,
     required bool coalesce,
+    String? encoding,
+    bool? bom,
+    String? lineEnding,
   }) {
     if (coalesce && _undo.isNotEmpty) return;
     _clearRedo();
-    final entry = UndoEntry(text: before, caret: caret);
+    final entry = UndoEntry(
+      text: before,
+      caret: caret,
+      encoding: encoding,
+      bom: bom,
+      lineEnding: lineEnding,
+    );
     _undo.add(entry);
     _budget?._added(entry);
     _evictOldest();
@@ -120,11 +139,23 @@ class UndoStack {
 
   /// 撤销：返回要恢复的快照；栈空返回 null。
   /// [currentText]/[currentCaret] 压入 redo 栈。
-  UndoEntry? undo(String currentText, int currentCaret) {
+  UndoEntry? undo(
+    String currentText,
+    int currentCaret, {
+    String? encoding,
+    bool? bom,
+    String? lineEnding,
+  }) {
     if (_undo.isEmpty) return null;
     final entry = _undo.removeLast();
     _budget?._removed(entry);
-    final redoEntry = UndoEntry(text: currentText, caret: currentCaret);
+    final redoEntry = UndoEntry(
+      text: currentText,
+      caret: currentCaret,
+      encoding: encoding,
+      bom: bom,
+      lineEnding: lineEnding,
+    );
     _redo.add(redoEntry);
     _budget?._added(redoEntry);
     _evictOldest();
@@ -132,11 +163,23 @@ class UndoStack {
   }
 
   /// 重做：对称返回 redo 栈顶的快照；栈空返回 null。
-  UndoEntry? redo(String currentText, int currentCaret) {
+  UndoEntry? redo(
+    String currentText,
+    int currentCaret, {
+    String? encoding,
+    bool? bom,
+    String? lineEnding,
+  }) {
     if (_redo.isEmpty) return null;
     final entry = _redo.removeLast();
     _budget?._removed(entry);
-    final undoEntry = UndoEntry(text: currentText, caret: currentCaret);
+    final undoEntry = UndoEntry(
+      text: currentText,
+      caret: currentCaret,
+      encoding: encoding,
+      bom: bom,
+      lineEnding: lineEnding,
+    );
     _undo.add(undoEntry);
     _budget?._added(undoEntry);
     _evictOldest();

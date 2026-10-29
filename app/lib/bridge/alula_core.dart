@@ -12,7 +12,117 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 8;
+const int expectedAbiVersion = 9;
+
+enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
+
+extension TextEncodingInfo on TextEncoding {
+  String get id => switch (this) {
+        TextEncoding.utf8 => 'utf-8',
+        TextEncoding.utf16Le => 'utf-16le',
+        TextEncoding.utf16Be => 'utf-16be',
+        TextEncoding.gbk => 'gbk',
+      };
+
+  String label({required bool bom}) => switch (this) {
+        TextEncoding.utf8 => bom ? 'UTF-8 with BOM' : 'UTF-8',
+        TextEncoding.utf16Le => 'UTF-16 LE${bom ? '' : ' (no BOM)'}',
+        TextEncoding.utf16Be => 'UTF-16 BE${bom ? '' : ' (no BOM)'}',
+        TextEncoding.gbk => 'GBK',
+      };
+
+  static TextEncoding? fromId(String? id) => switch (id?.toLowerCase()) {
+        'utf-8' || 'utf8' => TextEncoding.utf8,
+        'utf-16le' || 'utf16le' => TextEncoding.utf16Le,
+        'utf-16be' || 'utf16be' => TextEncoding.utf16Be,
+        'gbk' || 'gb2312' => TextEncoding.gbk,
+        _ => null,
+      };
+}
+
+enum TextLineEnding { lf, crlf }
+
+extension TextLineEndingInfo on TextLineEnding {
+  String get id => this == TextLineEnding.crlf ? 'crlf' : 'lf';
+  String get label => this == TextLineEnding.crlf ? 'CRLF' : 'LF';
+
+  static TextLineEnding? fromId(String? id) => switch (id?.toLowerCase()) {
+        'lf' => TextLineEnding.lf,
+        'crlf' => TextLineEnding.crlf,
+        _ => null,
+      };
+}
+
+class TextFileOptions {
+  const TextFileOptions({
+    required this.encoding,
+    required this.bom,
+    required this.lineEnding,
+  });
+
+  static const defaults = TextFileOptions(
+    encoding: TextEncoding.utf8,
+    bom: false,
+    lineEnding: TextLineEnding.lf,
+  );
+
+  final TextEncoding encoding;
+  final bool bom;
+  final TextLineEnding lineEnding;
+
+  TextFileOptions copyWith({
+    TextEncoding? encoding,
+    bool? bom,
+    TextLineEnding? lineEnding,
+  }) =>
+      TextFileOptions(
+        encoding: encoding ?? this.encoding,
+        bom: bom ?? this.bom,
+        lineEnding: lineEnding ?? this.lineEnding,
+      );
+
+  factory TextFileOptions.fromJson(Map<String, Object?> json) {
+    return TextFileOptions(
+      encoding: TextEncodingInfo.fromId(json['encoding'] as String?) ??
+          TextEncoding.utf8,
+      bom: json['bom'] == true,
+      lineEnding: TextLineEndingInfo.fromId(json['lineEnding'] as String?) ??
+          TextLineEnding.lf,
+    );
+  }
+
+  Map<String, Object?> toJson() => {
+        'encoding': encoding.id,
+        'bom': bom,
+        'lineEnding': lineEnding.id,
+      };
+
+  String get label => encoding.label(bom: bom);
+
+  String get statusLabel => switch (encoding) {
+        TextEncoding.utf8 => bom ? 'UTF-8 BOM' : 'UTF-8',
+        TextEncoding.utf16Le => bom ? 'UTF-16 LE BOM' : 'UTF-16 LE',
+        TextEncoding.utf16Be => bom ? 'UTF-16 BE BOM' : 'UTF-16 BE',
+        TextEncoding.gbk => 'GBK',
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      other is TextFileOptions &&
+      other.encoding == encoding &&
+      other.bom == bom &&
+      other.lineEnding == lineEnding;
+
+  @override
+  int get hashCode => Object.hash(encoding, bom, lineEnding);
+}
+
+class DecodedTextFile {
+  const DecodedTextFile({required this.content, required this.options});
+
+  final String content;
+  final TextFileOptions options;
+}
 
 enum OpType { insert, delete }
 
@@ -23,9 +133,13 @@ class TextOp {
   final String? text; // insert
   final int? lenUtf16; // delete
 
-  const TextOp.insert(this.offsetUtf16, this.text) : type = OpType.insert, lenUtf16 = null;
+  const TextOp.insert(this.offsetUtf16, this.text)
+      : type = OpType.insert,
+        lenUtf16 = null;
 
-  const TextOp.delete(this.offsetUtf16, this.lenUtf16) : type = OpType.delete, text = null;
+  const TextOp.delete(this.offsetUtf16, this.lenUtf16)
+      : type = OpType.delete,
+        text = null;
 
   Map<String, Object?> toJson() => switch (type) {
         OpType.insert => {
@@ -110,7 +224,8 @@ class AlulaLsp {
 
   /// 最新诊断快照：{severity, line, character, message, source} 列表。
   List<Map<String, Object?>> diagnostics(int id) {
-    final r = jsonDecode(_core._ffi.diagnosticsJson(id)) as Map<String, Object?>;
+    final r =
+        jsonDecode(_core._ffi.diagnosticsJson(id)) as Map<String, Object?>;
     if (r['ok'] != true) return const [];
     return (r['items'] as List).cast<Map<String, Object?>>();
   }
@@ -121,7 +236,8 @@ class AlulaLsp {
     int offsetUtf16, {
     int timeoutMs = 8000,
   }) async {
-    final startJson = _core._ffi.completionStartJson(id, offsetUtf16, timeoutMs);
+    final startJson =
+        _core._ffi.completionStartJson(id, offsetUtf16, timeoutMs);
     _check(startJson);
     final start = jsonDecode(startJson) as Map<String, Object?>;
     final requestId = start['requestId'] as int;
@@ -153,7 +269,8 @@ class AlulaLsp {
   }
 
   /// 同步兼容入口；工作台使用上面的异步方法。
-  List<String> completionBlocking(int id, int offsetUtf16, {int timeoutMs = 8000}) {
+  List<String> completionBlocking(int id, int offsetUtf16,
+      {int timeoutMs = 8000}) {
     final r = jsonDecode(_core._ffi.completionJson(id, offsetUtf16, timeoutMs))
         as Map<String, Object?>;
     if (r['ok'] != true) return const [];
@@ -196,7 +313,8 @@ class AlulaWorkspace {
 
   /// 枚举目录：[{name, path, is_dir, size}]（目录在前）。
   List<Map<String, Object?>> listDir(String path) {
-    final r = jsonDecode(_core._ffi.wsListDirJson(path)) as Map<String, Object?>;
+    final r =
+        jsonDecode(_core._ffi.wsListDirJson(path)) as Map<String, Object?>;
     if (r['ok'] != true) {
       final err = r['error'];
       throw AlulaException(
@@ -207,9 +325,10 @@ class AlulaWorkspace {
     return (r['entries'] as List).cast<Map<String, Object?>>();
   }
 
-  /// 读取 UTF-8 文本文件；二进制/非 UTF-8 抛 AlulaException('BinaryFile')。
-  String readFile(String path) {
-    final r = jsonDecode(_core._ffi.wsReadFileJson(path)) as Map<String, Object?>;
+  /// 读取受支持编码的文本，内容规范化为 LF，并保留编码/BOM/EOL 元数据。
+  DecodedTextFile readFileDocument(String path, {TextEncoding? encoding}) {
+    final r = jsonDecode(_core._ffi.wsReadFileDocumentJson(path, encoding?.id))
+        as Map<String, Object?>;
     if (r['ok'] != true) {
       final err = r['error'];
       throw AlulaException(
@@ -217,8 +336,13 @@ class AlulaWorkspace {
         jsonEncode(err),
       );
     }
-    return r['content'] as String;
+    return DecodedTextFile(
+      content: r['content'] as String,
+      options: TextFileOptions.fromJson(r),
+    );
   }
+
+  String readFile(String path) => readFileDocument(path).content;
 }
 
 class AlulaResourceStatus {
@@ -335,8 +459,8 @@ class AlulaDoc {
 
   /// 以显式 baseVersion 提交（正常编辑走 [apply]；测试与恢复路径用本方法）。
   int applyWith(int baseVersion, List<TextOp> ops) {
-    final json = core._ffi
-        .docApplyJson(id, baseVersion, jsonEncode(ops.map((o) => o.toJson()).toList()));
+    final json = core._ffi.docApplyJson(
+        id, baseVersion, jsonEncode(ops.map((o) => o.toJson()).toList()));
     final r = jsonDecode(json) as Map<String, Object?>;
     if (r['ok'] == true) {
       version = r['version'] as int;
@@ -349,9 +473,19 @@ class AlulaDoc {
     throw AlulaException(err['code'] as String, jsonEncode(err['detail']));
   }
 
-  /// 原子保存当前全文到路径（校验版本；docs/02 §6.3）。
-  void saveFile(String path) {
-    final json = core._ffi.docSaveFileJson(id, path, version);
+  /// 原子保存当前全文到路径，并应用编码/BOM/EOL（校验版本；docs/02 §6.3）。
+  void saveFile(
+    String path, {
+    TextFileOptions options = TextFileOptions.defaults,
+  }) {
+    final json = core._ffi.docSaveFileWithOptionsJson(
+      id,
+      path,
+      version,
+      options.encoding.id,
+      options.bom,
+      options.lineEnding.id,
+    );
     final r = jsonDecode(json) as Map<String, Object?>;
     if (r['ok'] != true) {
       final err = r['error']! as Map<String, Object?>;

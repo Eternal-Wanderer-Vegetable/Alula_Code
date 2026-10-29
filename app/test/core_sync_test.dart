@@ -2,6 +2,8 @@
 //
 // 前置条件：已运行 scripts/build_core（或 cargo build -p editor-core）。
 // 库缺失时整组测试自动跳过，不作为失败。
+import 'dart:io';
+
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,8 +75,8 @@ void main() {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(
       () => doc.applyWith(0, []),
-      throwsA(isA<SyncMismatchException>()
-          .having((e) => e.current, 'current', 1)),
+      throwsA(
+          isA<SyncMismatchException>().having((e) => e.current, 'current', 1)),
     );
   }, skip: skip);
 
@@ -114,5 +116,61 @@ void main() {
     // 失败后版本未变，后续正常编辑不受影响
     final v = doc.apply([const TextOp.insert(0, 'z')]);
     expect(v, 2);
+  }, skip: skip);
+
+  test('文件 FFI 往返保留 UTF-16 BOM 与 CRLF 元数据', () async {
+    final core = _bootstrap.core!;
+    final temp = await Directory.systemTemp.createTemp('alula_codec_');
+    try {
+      final source = File('${temp.path}/source.txt');
+      await source.writeAsBytes([
+        0xFF, 0xFE, // UTF-16 LE BOM
+        0x41, 0x00, // A
+        0x0D, 0x00, // CR
+        0x0A, 0x00, // LF
+        0x42, 0x00, // B
+      ]);
+      final decoded = core.workspace.readFileDocument(source.path);
+      expect(decoded.content, 'A\nB');
+      expect(decoded.options.encoding, TextEncoding.utf16Le);
+      expect(decoded.options.bom, isTrue);
+      expect(decoded.options.lineEnding, TextLineEnding.crlf);
+
+      final doc = core.openDoc(9010, decoded.content);
+      final target = '${temp.path}/roundtrip.txt';
+      doc.saveFile(target, options: decoded.options);
+      expect(await File(target).readAsBytes(), await source.readAsBytes());
+      doc.close();
+    } finally {
+      await temp.delete(recursive: true);
+    }
+  }, skip: skip);
+
+  test('GBK 编码保存遇到不可表示字符时不覆盖目标文件', () async {
+    final core = _bootstrap.core!;
+    final temp = await Directory.systemTemp.createTemp('alula_gbk_');
+    final target = File('${temp.path}/keep.txt')..writeAsStringSync('keep');
+    final doc = core.openDoc(9011, '🚀');
+    try {
+      expect(
+        () => doc.saveFile(
+          target.path,
+          options: const TextFileOptions(
+            encoding: TextEncoding.gbk,
+            bom: false,
+            lineEnding: TextLineEnding.lf,
+          ),
+        ),
+        throwsA(isA<AlulaException>().having(
+          (error) => error.code,
+          'code',
+          'UnrepresentableCharacter',
+        )),
+      );
+      expect(target.readAsStringSync(), 'keep');
+    } finally {
+      doc.close();
+      await temp.delete(recursive: true);
+    }
   }, skip: skip);
 }

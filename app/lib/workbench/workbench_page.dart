@@ -239,6 +239,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
         enablement: 'editorActive');
+    reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
+        enablement: 'editorActive');
+    reg('file.reopenWithEncoding', '文件', '使用编码重新打开…', _reopenWithEncodingActive,
+        enablement: 'editorActive');
+    reg('file.selectEol', '文件', '选择行尾…', _selectLineEndingActive,
+        enablement: 'editorActive');
     reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
         shortcut: 'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
@@ -402,6 +408,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   {
                     'id': d.id,
                     if (d.path != null) 'path': d.path,
+                    'fileOptions': d.fileOptions.toJson(),
                     if ((d.isUntitled || d.isDirty) &&
                         d.controller.text.length <= _kMaxJournalTextChars)
                       'text': d.controller.text,
@@ -490,29 +497,54 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final text = dr['text'] as String?;
           String? content;
           String savedText;
+          var fileOptions = TextFileOptions.defaults;
+          var savedFileOptions = TextFileOptions.defaults;
+          DecodedTextFile? diskFile;
           // 优先级：journal 文本（未保存内容）> 磁盘内容；脏标记不跨重启保留
           if (path != null) {
-            String? disk;
             try {
-              disk = core.workspace.readFile(path);
+              final optionsRaw = dr['fileOptions'];
+              final journalOptions = optionsRaw is Map
+                  ? TextFileOptions.fromJson(
+                      Map<String, Object?>.from(optionsRaw),
+                    )
+                  : null;
+              diskFile = _readDiskDocument(
+                core,
+                path,
+                preferredEncoding: journalOptions?.encoding,
+              );
             } on AlulaException {
-              disk = null; // 磁盘文件没了：只能靠 journal
+              diskFile = null; // 磁盘文件没了：只能靠 journal
             }
             if (text != null) {
               content = text;
-            } else if (disk != null) {
-              content = disk;
+            } else if (diskFile != null) {
+              content = diskFile.content;
             } else {
               continue;
             }
+            savedFileOptions = diskFile?.options ?? TextFileOptions.defaults;
+            final optionsRaw = dr['fileOptions'];
+            fileOptions = optionsRaw is Map
+                ? TextFileOptions.fromJson(
+                    Map<String, Object?>.from(optionsRaw),
+                  )
+                : savedFileOptions;
           } else {
             if (text == null) continue; // untitled 缺 journal 文本：跳过
             content = text;
+            final optionsRaw = dr['fileOptions'];
+            if (optionsRaw is Map) {
+              fileOptions = TextFileOptions.fromJson(
+                Map<String, Object?>.from(optionsRaw),
+              );
+            }
+            savedFileOptions = fileOptions;
           }
           savedText = content;
           final doc = core.openDoc(id, content);
-          final name =
-              path != null ? _nameOf(path) : '未命名';
+          final name = path != null ? _nameOf(path) : '未命名';
           final controller = TextEditingController(text: content);
           final open = OpenDoc(
             id: id,
@@ -522,6 +554,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             doc: doc,
             controller: controller,
             savedText: savedText,
+            fileOptions: fileOptions,
+            savedFileOptions: savedFileOptions,
+            dirtyDisk: fileOptions != savedFileOptions,
             undoBudget: _undoHistoryBudget,
           );
           target.docs.add(open);
@@ -559,8 +594,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  String _nameOf(String path) =>
-      path.replaceAll('\\', '/').split('/').last;
+  String _nameOf(String path) => path.replaceAll('\\', '/').split('/').last;
+
+  DecodedTextFile _readDiskDocument(
+    AlulaCore core,
+    String path, {
+    TextEncoding? preferredEncoding,
+  }) {
+    if (preferredEncoding != TextEncoding.utf16Le &&
+        preferredEncoding != TextEncoding.utf16Be) {
+      return core.workspace.readFileDocument(path);
+    }
+    try {
+      return core.workspace.readFileDocument(
+        path,
+        encoding: preferredEncoding,
+      );
+    } on AlulaException {
+      return core.workspace.readFileDocument(path);
+    }
+  }
 
   /// 重载文件树根（journal 恢复工作区后）。
   void _reloadTreeRoots() {
@@ -617,6 +670,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 编辑同步 ----------
 
+  void _updateDirty(OpenDoc doc) {
+    doc.dirtyDisk = doc.controller.text != doc.savedText ||
+        doc.fileOptions != doc.savedFileOptions;
+  }
+
   void _onDocChanged(int docId) {
     final owner = _ownerOf(docId);
     final doc = owner?.docs.where((d) => d.id == docId).firstOrNull;
@@ -635,10 +693,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final coalesce = doc.lastEditAt != null &&
           now.difference(doc.lastEditAt!) < const Duration(milliseconds: 400);
       doc.undoStack.push(
-          before: beforeText, caret: newText.length, coalesce: coalesce);
+        before: beforeText,
+        caret: newText.length,
+        coalesce: coalesce,
+        encoding: doc.fileOptions.encoding.id,
+        bom: doc.fileOptions.bom,
+        lineEnding: doc.fileOptions.lineEnding.id,
+      );
       doc.lastEditAt = now;
     }
-    doc.dirtyDisk = newText != doc.savedText;
+    _updateDirty(doc);
     if (isActiveOfFocused) _syncCommandContext();
     _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
     _scheduleOutlineRefresh();
@@ -666,7 +730,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       } finally {
         doc.undoRedoBusy = false;
       }
-      doc.dirtyDisk = r.content != doc.savedText;
+      _updateDirty(doc);
       if (isActiveOfFocused) {
         setState(() {
           _state = WbSyncState.mismatch;
@@ -856,8 +920,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
     }
+    DecodedTextFile file;
     try {
-      final content = core.workspace.readFile(path);
+      file = core.workspace.readFileDocument(path);
+    } on AlulaException catch (error) {
+      if (error.code != 'BinaryFile' && error.code != 'UnsupportedEncoding') {
+        setState(() => _statusDetail = '打开失败：${error.code}');
+        return;
+      }
+      if (!mounted) return;
+      final encoding = await _pickReopenEncoding(title: '选择文件编码');
+      if (!mounted || encoding == null) return;
+      try {
+        file = core.workspace.readFileDocument(path, encoding: encoding);
+      } on AlulaException catch (decodeError) {
+        setState(
+            () => _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
+        return;
+      }
+    }
+
+    try {
+      final content = file.content;
       final id = _nextDocId++;
       final doc = core.openDoc(id, content);
       final name = path.replaceAll('\\', '/').split('/').last;
@@ -870,6 +954,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc: doc,
         controller: controller,
         savedText: content,
+        fileOptions: file.options,
+        savedFileOptions: file.options,
         undoBudget: _undoHistoryBudget,
       );
       setState(() {
@@ -1148,7 +1234,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await _saveDocToPath(active, path);
   }
 
-  Future<void> _saveDocToPath(OpenDoc doc, String requestedPath) async {
+  Future<void> _saveDocToPath(
+    OpenDoc doc,
+    String requestedPath, {
+    TextFileOptions? options,
+  }) async {
+    final targetOptions = options ?? doc.fileOptions;
     final targetPath = File(requestedPath).absolute.path;
     final oldPath = doc.path;
     final pathChanged = oldPath == null ||
@@ -1213,8 +1304,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         if (_workspaceRoot != null) _refreshTree();
       }
+      doc.fileOptions = targetOptions;
+      doc.savedFileOptions = targetOptions;
       doc.savedText = doc.controller.text;
-      doc.dirtyDisk = false;
+      _updateDirty(doc);
       _syncCommandContext();
       setState(() {
         _statusDetail = lspWarning
@@ -1266,7 +1359,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     try {
-      final diskText = doc.doc.core.workspace.readFile(doc.path!);
+      final diskFile = _readDiskDocument(
+        doc.doc.core,
+        doc.path!,
+        preferredEncoding: doc.savedFileOptions.encoding,
+      );
+      final diskText = diskFile.content;
       final currentText = doc.doc.resync().content;
       final ops = diffToOps(currentText, diskText);
       if (ops.isNotEmpty) doc.doc.apply(ops);
@@ -1275,7 +1373,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           doc.controller.selection.extentOffset.clamp(0, diskText.length);
       doc.savedText = diskText;
       doc.syncText = diskText;
-      doc.dirtyDisk = false;
+      doc.fileOptions = diskFile.options;
+      doc.savedFileOptions = diskFile.options;
       doc.undoRedoBusy = true;
       try {
         doc.controller.value = TextEditingValue(
@@ -1285,6 +1384,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       } finally {
         doc.undoRedoBusy = false;
       }
+      _updateDirty(doc);
       doc.undoStack.clear();
       doc.lastEditAt = null;
       if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
@@ -1331,6 +1431,211 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     final trimmed = result?.trim();
     return trimmed == null || trimmed.isEmpty ? null : trimmed;
+  }
+
+  Future<void> _saveWithEncodingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    final options = await _pickSaveOptions(doc.fileOptions);
+    if (options == null) return;
+    final path = doc.path ?? await _showSaveAsDialog(doc);
+    if (path == null) return;
+    await _saveDocToPath(doc, path, options: options);
+  }
+
+  Future<void> _reopenWithEncodingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.path == null) {
+      setState(() => _statusDetail = '未命名文档没有磁盘编码可重新打开');
+      return;
+    }
+    final encoding = await _pickReopenEncoding();
+    if (!mounted || encoding == null) return;
+    if (doc.isDirty) {
+      final discard = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('放弃未保存的修改？'),
+          content: Text('将按 ${encoding.id} 重新读取“${doc.name}”，未保存内容会丢失。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('encoding-reopen-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('encoding-reopen-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('重新打开'),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) return;
+    }
+    try {
+      final disk = doc.doc.core.workspace.readFileDocument(
+        doc.path!,
+        encoding: encoding,
+      );
+      _replaceDocumentFromDisk(doc, disk, '已按 ${encoding.id} 重新打开 ${doc.name}');
+    } on AlulaException catch (e) {
+      setState(() => _statusDetail = '重新打开失败：${e.code} ${e.detail}');
+    }
+  }
+
+  Future<void> _showEncodingActions(OpenDoc doc) async {
+    final save = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('文件编码 · ${doc.fileOptions.label}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('使用编码重新打开…'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('使用编码保存…'),
+          ),
+        ],
+      ),
+    );
+    if (save == true) {
+      await _saveWithEncodingActive();
+    } else if (save == false) {
+      await _reopenWithEncodingActive();
+    }
+  }
+
+  Future<TextFileOptions?> _pickSaveOptions(TextFileOptions current) {
+    final options = [
+      current.copyWith(encoding: TextEncoding.utf8, bom: false),
+      current.copyWith(encoding: TextEncoding.utf8, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Le, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Le, bom: false),
+      current.copyWith(encoding: TextEncoding.utf16Be, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Be, bom: false),
+      current.copyWith(encoding: TextEncoding.gbk, bom: false),
+    ];
+    return showDialog<TextFileOptions>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('使用编码保存'),
+        children: [
+          for (final option in options)
+            SimpleDialogOption(
+              key:
+                  ValueKey('save-encoding-${option.encoding.id}-${option.bom}'),
+              onPressed: () => Navigator.pop(dialogContext, option),
+              child: Text(option.label),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<TextEncoding?> _pickReopenEncoding({
+    String title = '使用编码重新打开',
+  }) {
+    const encodings = [
+      TextEncoding.utf8,
+      TextEncoding.utf16Le,
+      TextEncoding.utf16Be,
+      TextEncoding.gbk,
+    ];
+    return showDialog<TextEncoding>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(title),
+        children: [
+          for (final encoding in encodings)
+            SimpleDialogOption(
+              key: ValueKey('reopen-encoding-${encoding.id}'),
+              onPressed: () => Navigator.pop(dialogContext, encoding),
+              child: Text(switch (encoding) {
+                TextEncoding.utf8 => 'UTF-8',
+                TextEncoding.utf16Le => 'UTF-16 LE',
+                TextEncoding.utf16Be => 'UTF-16 BE',
+                TextEncoding.gbk => 'GBK',
+              }),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectLineEndingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    final lineEnding = await showDialog<TextLineEnding>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('选择行尾'),
+        children: [
+          for (final value in TextLineEnding.values)
+            SimpleDialogOption(
+              key: ValueKey('line-ending-${value.id}'),
+              onPressed: () => Navigator.pop(dialogContext, value),
+              child: Text(value.label),
+            ),
+        ],
+      ),
+    );
+    if (lineEnding != null) _setLineEnding(doc, lineEnding);
+  }
+
+  void _setLineEnding(OpenDoc doc, TextLineEnding lineEnding) {
+    if (doc.fileOptions.lineEnding == lineEnding) return;
+    final selection = doc.controller.selection;
+    doc.undoStack.push(
+      before: doc.controller.text,
+      caret: selection.baseOffset >= 0 ? selection.baseOffset : 0,
+      coalesce: false,
+      encoding: doc.fileOptions.encoding.id,
+      bom: doc.fileOptions.bom,
+      lineEnding: doc.fileOptions.lineEnding.id,
+    );
+    doc.fileOptions = doc.fileOptions.copyWith(lineEnding: lineEnding);
+    doc.lastEditAt = null;
+    _updateDirty(doc);
+    _scheduleStateSave();
+    _syncCommandContext();
+    setState(() => _statusDetail = '行尾已更改为 ${lineEnding.label}');
+  }
+
+  void _replaceDocumentFromDisk(
+    OpenDoc doc,
+    DecodedTextFile disk, [
+    String? status,
+  ]) {
+    final currentText = doc.doc.resync().content;
+    final ops = diffToOps(currentText, disk.content);
+    if (ops.isNotEmpty) doc.doc.apply(ops);
+    final caret =
+        doc.controller.selection.extentOffset.clamp(0, disk.content.length);
+    doc.undoRedoBusy = true;
+    try {
+      doc.controller.value = TextEditingValue(
+        text: disk.content,
+        selection: TextSelection.collapsed(offset: caret),
+      );
+    } finally {
+      doc.undoRedoBusy = false;
+    }
+    doc.savedText = disk.content;
+    doc.syncText = disk.content;
+    doc.fileOptions = disk.options;
+    doc.savedFileOptions = disk.options;
+    _updateDirty(doc);
+    doc.undoStack.clear();
+    doc.lastEditAt = null;
+    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    _scheduleOutlineRefresh();
+    _scheduleStateSave();
+    _syncCommandContext();
+    setState(() => _statusDetail = status ?? '已从磁盘重新载入 ${doc.name}');
   }
 
   void _verifyIntegrity() {
@@ -1381,6 +1686,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 撤销：把快照写回 controller，经「diff → FFI」通路同步 Rust。
+  void _restoreFileOptionsFromUndo(OpenDoc doc, UndoEntry entry) {
+    final encoding = TextEncodingInfo.fromId(entry.encoding);
+    final lineEnding = TextLineEndingInfo.fromId(entry.lineEnding);
+    if (encoding == null || entry.bom == null || lineEnding == null) return;
+    doc.fileOptions = TextFileOptions(
+      encoding: encoding,
+      bom: entry.bom!,
+      lineEnding: lineEnding,
+    );
+  }
+
   void _undo() {
     final active = _active;
     if (active == null) {
@@ -1389,7 +1705,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final sel = active.controller.selection;
     final entry = active.undoStack.undo(
-        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+      active.controller.text,
+      sel.baseOffset >= 0 ? sel.baseOffset : 0,
+      encoding: active.fileOptions.encoding.id,
+      bom: active.fileOptions.bom,
+      lineEnding: active.fileOptions.lineEnding.id,
+    );
     if (entry == null) {
       setState(() => _statusDetail = '无可撤销');
       return;
@@ -1404,6 +1725,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     } finally {
       active.undoRedoBusy = false;
     }
+    _restoreFileOptionsFromUndo(active, entry);
+    _updateDirty(active);
+    _syncCommandContext();
     active.lastEditAt = null; // 撤销后不再与后续打字合并
     _onFindTextChanged();
     setState(() => _statusDetail = '已撤销');
@@ -1418,7 +1742,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final sel = active.controller.selection;
     final entry = active.undoStack.redo(
-        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+      active.controller.text,
+      sel.baseOffset >= 0 ? sel.baseOffset : 0,
+      encoding: active.fileOptions.encoding.id,
+      bom: active.fileOptions.bom,
+      lineEnding: active.fileOptions.lineEnding.id,
+    );
     if (entry == null) {
       setState(() => _statusDetail = '无可重做');
       return;
@@ -1433,6 +1762,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     } finally {
       active.undoRedoBusy = false;
     }
+    _restoreFileOptionsFromUndo(active, entry);
+    _updateDirty(active);
+    _syncCommandContext();
     active.lastEditAt = null;
     _onFindTextChanged();
     setState(() => _statusDetail = '已重做');
@@ -1781,28 +2113,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     for (final g in _groups.values) {
       for (final d in g.docs.where((d) => d.path != null)) {
-        String? disk;
+        DecodedTextFile disk;
         try {
-          disk = core.workspace.readFile(d.path!);
+          disk = _readDiskDocument(
+            core,
+            d.path!,
+            preferredEncoding: d.savedFileOptions.encoding,
+          );
         } on AlulaException {
           continue; // 文件被外部删除：V1 不处理（保留内存缓冲）
         }
         if (d.dirtyDisk) {
-          if (disk != d.savedText) {
+          if (disk.content != d.savedText ||
+              disk.options != d.savedFileOptions) {
             if (mounted) {
-              setState(() =>
-                  _statusDetail = '注意：${d.name} 在磁盘上被外部修改（本地有未保存编辑）');
+              setState(
+                  () => _statusDetail = '注意：${d.name} 在磁盘上被外部修改（本地有未保存编辑）');
             }
           }
-        } else if (disk != d.controller.text) {
+        } else if (disk.content != d.controller.text ||
+            disk.options != d.fileOptions) {
           // 干净文档自动重载时不产生撤销历史。
           d.undoRedoBusy = true;
           try {
-            d.controller.value = TextEditingValue(
-              text: disk,
-              selection: const TextSelection.collapsed(offset: 0),
-            );
-            d.savedText = disk;
+            if (disk.content != d.controller.text) {
+              d.controller.value = TextEditingValue(
+                text: disk.content,
+                selection: const TextSelection.collapsed(offset: 0),
+              );
+            }
+            d.savedText = disk.content;
+            d.fileOptions = disk.options;
+            d.savedFileOptions = disk.options;
             d.dirtyDisk = false;
             d.undoStack.clear();
             d.lastEditAt = null;
@@ -2037,11 +2379,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         TitleMenuItem('另存为…${_sc('file.saveAs')}',
                             commandId: 'file.saveAs'),
                         const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
-              ],
-            ),
-            (
-              '编辑',
-              [
+                        const TitleMenuItem('使用编码保存…',
+                            commandId: 'file.saveWithEncoding'),
+                        const TitleMenuItem('使用编码重新打开…',
+                            commandId: 'file.reopenWithEncoding'),
+                        const TitleMenuItem('选择行尾…',
+                            commandId: 'file.selectEol'),
+                      ],
+                    ),
+                    (
+                      '编辑',
+                      [
                         TitleMenuItem('撤销${_sc('editor.undo')}',
                             commandId: 'editor.undo'),
                         TitleMenuItem('重做${_sc('editor.redo')}',
@@ -2066,58 +2414,66 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             commandId: 'view.toggleSidebar'),
                         const TitleMenuItem('切换面板',
                             commandId: 'view.togglePanel'),
-              ],
-            ),
-            (
-              '帮助',
-              [
+                      ],
+                    ),
+                    (
+                      '帮助',
+                      [
                         const TitleMenuItem('关于 Alula Code',
                             commandId: 'help.about'),
-              ],
-            ),
-          ]),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _layout,
-              builder: (context, _) => WorkbenchGrid(
-                layout: _layout,
-                builders: {
-                  'activity': (_) => ActivityBar(
-                        activeView: _sidebarView,
-                        sidebarCollapsed: _layout.isCollapsed('sidebar'),
-                        onSelectView: _selectSidebarView,
-                      ),
-                  'sidebar': (_) => switch (_sidebarView) {
-                        'git' => _buildGitPanel(),
-                        'search' => _buildSearchPanel(),
-                        'outline' => _buildOutlinePanel(),
-                        _ => _buildSidebar(),
-                      },
-                  'panel': (_) => _buildPanel(),
-                  // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
-                  for (final g in _groups.values)
-                    g.region: (_) => _buildEditorArea(g),
-                },
+                      ],
+                    ),
+                  ]),
+              Expanded(
+                child: ListenableBuilder(
+                  listenable: _layout,
+                  builder: (context, _) => WorkbenchGrid(
+                    layout: _layout,
+                    builders: {
+                      'activity': (_) => ActivityBar(
+                            activeView: _sidebarView,
+                            sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                            onSelectView: _selectSidebarView,
+                          ),
+                      'sidebar': (_) => switch (_sidebarView) {
+                            'git' => _buildGitPanel(),
+                            'search' => _buildSearchPanel(),
+                            'outline' => _buildOutlinePanel(),
+                            _ => _buildSidebar(),
+                          },
+                      'panel': (_) => _buildPanel(),
+                      // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
+                      for (final g in _groups.values)
+                        g.region: (_) => _buildEditorArea(g),
+                    },
+                  ),
+                ),
               ),
-            ),
+              AlulaStatusBar(
+                state: _state,
+                detail: _statusDetail,
+                lspStatus: _lspStatus,
+                diagnosticsCount: _diagnostics.length,
+                tabCount: _allDocs.length,
+                abiVersion: _abiVersion,
+                resourcePressure: _resourceStatus?.pressure,
+                availableBytes: _resourceStatus?.availableBytes,
+                totalBytes: _resourceStatus?.totalBytes,
+                resourceSource: _resourceStatus?.source,
+                syncCount: _syncCount,
+                panelCollapsed: _layout.isCollapsed('panel'),
+                onTogglePanel: () => _layout.toggleRegion('panel'),
+                encodingLabel: _active?.fileOptions.statusLabel,
+                encodingTooltip: _active?.fileOptions.label,
+                lineEndingLabel: _active?.fileOptions.lineEnding.label,
+                onEncodingTap: _active == null
+                    ? null
+                    : () => _showEncodingActions(_active!),
+                onLineEndingTap:
+                    _active == null ? null : _selectLineEndingActive,
+              ),
+            ],
           ),
-          AlulaStatusBar(
-            state: _state,
-            detail: _statusDetail,
-            lspStatus: _lspStatus,
-            diagnosticsCount: _diagnostics.length,
-            tabCount: _allDocs.length,
-            abiVersion: _abiVersion,
-            resourcePressure: _resourceStatus?.pressure,
-            availableBytes: _resourceStatus?.availableBytes,
-            totalBytes: _resourceStatus?.totalBytes,
-            resourceSource: _resourceStatus?.source,
-            syncCount: _syncCount,
-            panelCollapsed: _layout.isCollapsed('panel'),
-            onTogglePanel: () => _layout.toggleRegion('panel'),
-          ),
-        ],
-        ),
         ),
       ),
     );
@@ -3155,6 +3511,9 @@ class OpenDoc {
     this.path,
     this.uri,
     required this.savedText,
+    this.fileOptions = TextFileOptions.defaults,
+    this.savedFileOptions = TextFileOptions.defaults,
+    this.dirtyDisk = false,
     required UndoHistoryBudget undoBudget,
   })  : lspAttached = false,
         undoStack = UndoStack(budget: undoBudget),
@@ -3172,6 +3531,12 @@ class OpenDoc {
 
   /// 上次保存成功时的全文（磁盘 savepoint；只在保存或外部重载时前移）。
   String savedText;
+
+  /// 当前打开视图的磁盘编码/BOM/换行设置。
+  TextFileOptions fileOptions;
+
+  /// 最近一次成功保存或从磁盘载入时的文件设置。
+  TextFileOptions savedFileOptions;
 
   /// 最近一次与 Rust 缓冲区一致的全文，用作下一次 FFI 增量 diff 基线。
   String syncText;

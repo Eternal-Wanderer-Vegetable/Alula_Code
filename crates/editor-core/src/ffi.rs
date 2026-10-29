@@ -20,6 +20,7 @@ use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
 use editor_buffer::TextOp;
+use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
 use serde_json::json;
@@ -27,7 +28,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 8;
+pub const ALULA_ABI_VERSION: u32 = 9;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -766,6 +767,49 @@ pub unsafe extern "C" fn alula_ws_read_file(path: *const c_char) -> *mut c_char 
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_ws_read_file")))
 }
 
+/// 读取文本文件并返回规范 LF 内容及编码/BOM/EOL 元数据；可选指定重开编码。
+///
+/// # Safety
+/// `path` 必须是合法的 NUL 结尾 UTF-8；`encoding_override` 为 NULL 或合法 UTF-8。
+#[no_mangle]
+pub unsafe extern "C" fn alula_ws_read_file_document(
+    path: *const c_char,
+    encoding_override: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let path = match read_c_str(path) {
+            Ok(s) => s,
+            Err(e) => return e,
+        };
+        let encoding = if encoding_override.is_null() {
+            None
+        } else {
+            let id = match read_c_str(encoding_override) {
+                Ok(s) => s,
+                Err(e) => return e,
+            };
+            let Some(encoding) = TextEncoding::from_id(id) else {
+                return err_json("InvalidArgument", json!({ "encoding": id }));
+            };
+            Some(encoding)
+        };
+        match editor_workspace::read_file_document(path, encoding) {
+            Ok(document) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "content": document.text,
+                    "encoding": document.options.encoding.id(),
+                    "bom": document.options.bom,
+                    "lineEnding": document.options.line_ending.id(),
+                })
+                .to_string(),
+            ),
+            Err(e) => err_json(e_code(&e), json!(e.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_ws_read_file_document")))
+}
+
 /// 将文档当前全文原子保存到指定路径（校验 base_version；docs/02 §6.3）。
 ///
 /// # Safety
@@ -799,6 +843,72 @@ pub unsafe extern "C" fn alula_doc_save_file(
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_save_file")))
 }
 
+/// 按指定编码/BOM/EOL 原子保存文档当前全文，并校验版本。
+///
+/// # Safety
+/// 所有字符串参数必须是合法的 NUL 结尾 UTF-8。
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_save_file_with_options(
+    id: u64,
+    path: *const c_char,
+    base_version: u64,
+    encoding: *const c_char,
+    bom: u8,
+    line_ending: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let path = match read_c_str(path) {
+            Ok(s) => s.to_string(),
+            Err(e) => return e,
+        };
+        let encoding_id = match read_c_str(encoding) {
+            Ok(s) => s,
+            Err(e) => return e,
+        };
+        let Some(encoding) = TextEncoding::from_id(encoding_id) else {
+            return err_json("InvalidArgument", json!({ "encoding": encoding_id }));
+        };
+        if bom > 1 {
+            return err_json("InvalidArgument", json!({ "bom": bom }));
+        }
+        let line_ending_id = match read_c_str(line_ending) {
+            Ok(s) => s,
+            Err(e) => return e,
+        };
+        let Some(line_ending) = LineEnding::from_id(line_ending_id) else {
+            return err_json("InvalidArgument", json!({ "lineEnding": line_ending_id }));
+        };
+        let (version, text) = {
+            let reg = registry_lock();
+            match reg.content(id) {
+                Some(vt) => vt,
+                None => return err_json("UnknownDoc", json!({ "id": id })),
+            }
+        };
+        if version != base_version {
+            return err_json("VersionMismatch", json!({ "current": version }));
+        }
+        let options = TextFileOptions {
+            encoding,
+            bom: bom != 0,
+            line_ending,
+        };
+        match editor_doc::atomic_save_with_options(&path, &text, options) {
+            Ok(()) => to_c_ptr(json!({ "ok": true, "version": version, "path": path }).to_string()),
+            Err(editor_doc::SaveError::UnrepresentableCharacters(encoding)) => {
+                err_json("UnrepresentableCharacter", json!({ "encoding": encoding }))
+            }
+            Err(e) => err_json("SaveFailed", json!(e.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_doc_save_file_with_options"),
+        )
+    })
+}
+
 /// didSave（触发 flycheck 等）。
 #[no_mangle]
 pub extern "C" fn alula_lsp_did_save(id: u64) -> *mut c_char {
@@ -824,6 +934,7 @@ fn e_code(e: &editor_workspace::WorkspaceError) -> &'static str {
         E::NotFound(_) => "NotFound",
         E::NotADirectory(_) => "NotADirectory",
         E::BinaryFile(_) => "BinaryFile",
+        E::UnsupportedEncoding(_, _) => "UnsupportedEncoding",
         E::Io(_) => "IoError",
     }
 }
