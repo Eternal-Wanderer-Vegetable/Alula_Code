@@ -1,0 +1,16 @@
+started_at=2026-10-28 23:41:04 UTC
+samples=60/600 elapsed_s=75 private_bytes=1341669376 processes=13 foreground_recoveries=1
+samples=120/600 elapsed_s=152.7 private_bytes=1337823232 processes=13 foreground_recoveries=1
+samples=180/600 elapsed_s=230.5 private_bytes=1336508416 processes=13 foreground_recoveries=1
+samples=240/600 elapsed_s=308.5 private_bytes=1338318848 processes=13 foreground_recoveries=1
+samples=300/600 elapsed_s=384 private_bytes=1341902848 processes=13 foreground_recoveries=1
+samples=360/600 elapsed_s=459.2 private_bytes=1325789184 processes=13 foreground_recoveries=1
+samples=420/600 elapsed_s=534.8 private_bytes=1329954816 processes=13 foreground_recoveries=1
+samples=480/600 elapsed_s=609.9 private_bytes=1339596800 processes=13 foreground_recoveries=1
+samples=540/600 elapsed_s=686 private_bytes=1331576832 processes=13 foreground_recoveries=1
+samples=600/600 elapsed_s=759.9 private_bytes=1326931968 processes=13 foreground_recoveries=1
+complete samples=600 peak_mib=1655.6 stable_mib=1280.2 final_mib=1265.5 foreground_unchanged=True foreground_recoveries=1 close_exited=True
+json=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle.json
+markdown=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle.md
+post_run_review: foreground_unchanged corrected from True to False based on 1 recorded recovery event; samples unchanged.
+post_run_review: requested_sample_count=600 actual_elapsed_s=759.872 sample_span_s=759.341 median_interval_s=1.249.

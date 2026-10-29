@@ -8,6 +8,8 @@ $fixture = Join-Path $root 'tests\fixtures\rust-mini'
 $code = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
 $outJson = Join-Path $root 'docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle.json'
 $outMarkdown = Join-Path $root 'docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle.md'
+$runTag = (Get-Date).ToString('yyyyMMdd-HHmmssfff')
+$runLog = Join-Path $root "docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle-$runTag.log"
 $durationSeconds = 600
 $intervalMilliseconds = 1000
 
@@ -17,13 +19,19 @@ if (!(Test-Path $extensions)) { throw "Isolated extension directory not found: $
 if (!(Test-Path $sharedData)) { throw "Isolated shared-data directory not found: $sharedData" }
 if (!(Test-Path $fixture)) { throw "Rust fixture not found: $fixture" }
 if ((Test-Path $outJson) -or (Test-Path $outMarkdown)) { throw 'Refusing to overwrite an existing report' }
+if (Test-Path $runLog) { throw "Refusing to overwrite run log: $runLog" }
 
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
 public static class P00Window {
   [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr hWnd);
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern bool IsWindow(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int command);
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+  [DllImport("user32.dll")] public static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
 }
 "@
 
@@ -54,7 +62,7 @@ function Get-TreeMemory([int] $RootPid) {
       }
     }
   }
-  return ,$items
+  return $items
 }
 
 function Stop-Tree([int] $RootPid) {
@@ -65,8 +73,63 @@ function Stop-Tree([int] $RootPid) {
   }
 }
 
+function Get-IsolatedWindowHandles([int] $RootPid) {
+  $handles = @()
+  foreach ($node in @(Get-TreeNodes $RootPid)) {
+    $process = Get-Process -Id ([int]$node.ProcessId) -ErrorAction SilentlyContinue
+    if ($process -and $process.MainWindowHandle -ne 0) {
+      $handles += [long]$process.MainWindowHandle
+    }
+  }
+  return @($handles | Sort-Object -Unique)
+}
+
+function Restore-IsolatedForeground {
+  $handles = @(Get-IsolatedWindowHandles $rootPid)
+  $foreground = [P00Window]::GetForegroundWindow()
+  if ($handles -notcontains $foreground.ToInt64()) { return }
+
+  $capturedAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss.fff UTC')
+  if ($foregroundBefore -eq [IntPtr]::Zero -or ![P00Window]::IsWindow($foregroundBefore)) {
+    Stop-Tree $rootPid
+    throw 'The isolated VS Code window became foreground, but the prior foreground window no longer exists; stopped the isolated run.'
+  }
+
+  [void][P00Window]::SetForegroundWindow($foregroundBefore)
+  foreach ($handle in $handles) {
+    [void][P00Window]::ShowWindow([IntPtr]$handle, 6) # SW_MINIMIZE, yielding activation to the previous window.
+  }
+  Start-Sleep -Milliseconds 50
+  if ([P00Window]::GetForegroundWindow() -ne $foregroundBefore) {
+    $previousForegroundProcessId = [uint32]0
+    [void][P00Window]::GetWindowThreadProcessId($foregroundBefore, [ref]$previousForegroundProcessId)
+    [P00Window]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero) # Alt permits foreground activation on Windows.
+    try {
+      if ($previousForegroundProcessId -ne 0) { [void]$shell.AppActivate([int]$previousForegroundProcessId) }
+      [void][P00Window]::BringWindowToTop($foregroundBefore)
+      [void][P00Window]::SetForegroundWindow($foregroundBefore)
+      Start-Sleep -Milliseconds 50
+    } finally {
+      [P00Window]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+    }
+  }
+  $restoredForeground = [P00Window]::GetForegroundWindow()
+  if ($restoredForeground -ne $foregroundBefore) {
+    Stop-Tree $rootPid
+    throw 'Could not move the isolated VS Code window behind the prior foreground window; stopped the isolated run.'
+  }
+
+  [void]$focusRecoveryEvents.Add([pscustomobject]@{
+    captured_at_utc = $capturedAt
+    isolated_foreground_hwnd = $foreground.ToInt64()
+    restored_foreground_hwnd = $restoredForeground.ToInt64()
+    restored = $true
+  })
+}
+
 $foregroundBefore = [P00Window]::GetForegroundWindow()
 $startedAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss UTC')
+[System.IO.File]::WriteAllText($runLog, "started_at=$startedAt`n", [System.Text.UTF8Encoding]::new($false))
 $arguments = @('--new-window', "--user-data-dir=$profile", "--extensions-dir=$extensions", "--shared-data-dir=$sharedData", '--disable-telemetry', '--disable-workspace-trust', $fixture)
 $quotedArguments = @($arguments | ForEach-Object { '"' + $_.Replace('"', '\"') + '"' })
 $commandLine = '"' + $code + '" ' + ($quotedArguments -join ' ')
@@ -79,17 +142,11 @@ $rootNodes = @(Get-CimInstance -ClassName Win32_Process | Where-Object {
 if ($rootNodes.Count -eq 0) { throw 'Could not locate the isolated VS Code root process.' }
 $rootPid = [int]$rootNodes[0].ProcessId
 $focusStayedStable = $true
-for ($i = 0; $i -lt 50; $i++) {
-  Start-Sleep -Milliseconds 100
-  if ([P00Window]::GetForegroundWindow() -ne $foregroundBefore) {
-    $focusStayedStable = $false
-    [void][P00Window]::SetForegroundWindow($foregroundBefore)
-    break
-  }
-}
-if (!$focusStayedStable) {
-  Stop-Tree $rootPid
-  throw 'Aborted: minimized VS Code changed the foreground window; the prior foreground was restored.'
+$focusRecoveryEvents = New-Object System.Collections.ArrayList
+$startupDeadline = [DateTime]::UtcNow.AddSeconds(5)
+while ([DateTime]::UtcNow -lt $startupDeadline) {
+  Restore-IsolatedForeground
+  Start-Sleep -Milliseconds 25
 }
 
 $timer = [System.Diagnostics.Stopwatch]::StartNew()
@@ -98,6 +155,7 @@ $observedPids = @()
 $rustAnalyzerPaths = @()
 $rustAnalyzerObserved = $false
 for ($i = 0; $i -lt $durationSeconds; $i++) {
+  Restore-IsolatedForeground
   $sampleStart = [System.Diagnostics.Stopwatch]::StartNew()
   $items = @(Get-TreeMemory $rootPid)
   if ($items.Count -eq 0) { throw "VS Code process tree disappeared at sample $i" }
@@ -113,12 +171,32 @@ for ($i = 0; $i -lt $durationSeconds; $i++) {
     total_working_set = $totalWorkingSet
     n_processes = $items.Count
   }
+  if ((($i + 1) % 60) -eq 0 -or $i -eq ($durationSeconds - 1)) {
+    $progressLine = "samples=$($i + 1)/$durationSeconds elapsed_s=$([Math]::Round($timer.Elapsed.TotalSeconds, 1)) private_bytes=$totalPrivate processes=$($items.Count) foreground_recoveries=$($focusRecoveryEvents.Count)"
+    [System.IO.File]::AppendAllText($runLog, "$progressLine`n", [System.Text.UTF8Encoding]::new($false))
+    Write-Output $progressLine
+  }
   if ($i -lt ($durationSeconds - 1)) {
     $remaining = $intervalMilliseconds - [int]$sampleStart.ElapsedMilliseconds
     if ($remaining -gt 0) { Start-Sleep -Milliseconds $remaining }
   }
 }
+Restore-IsolatedForeground
 
+$focusStayedStable = ($focusRecoveryEvents.Count -eq 0)
+$sampleIntervals = @()
+for ($sampleIndex = 1; $sampleIndex -lt $samples.Count; $sampleIndex++) {
+  $sampleIntervals += [double]$samples[$sampleIndex].t - [double]$samples[$sampleIndex - 1].t
+}
+$sortedSampleIntervals = @($sampleIntervals | Sort-Object)
+$intervalMiddle = [int][Math]::Floor($sortedSampleIntervals.Count / 2)
+$medianSampleInterval = if (($sortedSampleIntervals.Count % 2) -eq 0) {
+  ($sortedSampleIntervals[$intervalMiddle - 1] + $sortedSampleIntervals[$intervalMiddle]) / 2.0
+} else {
+  $sortedSampleIntervals[$intervalMiddle]
+}
+$actualSamplingSpan = [double]$samples[-1].t - [double]$samples[0].t
+$actualSamplingElapsed = [double]$timer.Elapsed.TotalSeconds
 $finalItems = @(Get-TreeMemory $rootPid)
 $privateValues = @($samples | ForEach-Object { [double]$_.total_private })
 $sorted = @($privateValues | Sort-Object)
@@ -161,11 +239,15 @@ $report = [ordered]@{
   isolated_shared_data = $sharedData
   telemetry_disabled = $true
   automatic_updates_disabled_by_profile_setting = $true
-  duration_s = [double]$durationSeconds
+  duration_s = [Math]::Round($actualSamplingElapsed, 3)
+  target_sample_count = $durationSeconds
   interval_s = 1.0
+  actual_sampling_span_s = [Math]::Round($actualSamplingSpan, 3)
+  actual_median_sample_interval_s = [Math]::Round($medianSampleInterval, 3)
   root_pid = $rootPid
   captured_at = $startedAt
   foreground_stayed_stable = $focusStayedStable
+  focus_recovery_events = @($focusRecoveryEvents.ToArray())
   samples = $samples
   final_processes = $finalItems
   summary = [ordered]@{
@@ -186,13 +268,14 @@ $lines = @(
   '- Runtime: Windows process-tree Private Bytes; minimized window; isolated user-data, extension, and shared-data directories; telemetry and automatic updates disabled; no account sign-in or sync.',
   "- Language service: $($report.extension), configured to use the same rust-analyzer 1.97.1 executable as Alula.",
   "- Rust Analyzer observed in the process tree: $rustAnalyzerObserved; executable paths: $($rustAnalyzerPaths -join ', ').",
-  "- Sampling: $durationSeconds seconds, 1-second interval, $($samples.Count) samples.",
-  "- Foreground window stayed unchanged: $focusStayedStable.",
+  "- Sampling: target $durationSeconds one-second samples; collected $($samples.Count) over $([Math]::Round($actualSamplingElapsed, 1)) seconds; sample span $([Math]::Round($actualSamplingSpan, 1)) seconds and median interval $([Math]::Round($medianSampleInterval, 3)) seconds.",
+  "- Foreground window stayed unchanged: $focusStayedStable; isolated-window foreground recoveries: $($focusRecoveryEvents.Count).",
+  '- If isolated VS Code briefly became foreground, the runner restored the prior foreground, minimized the isolated window without activation, and continued only after confirming focus had moved away.',
   '',
   '| Metric | Private (MiB) | Working Set (MiB) |',
   '|---|---:|---:|',
-  "| Peak | $([Math]::Round($peakPrivate / $miB, 2)) | — |",
-  "| Stable (tail 40% median) | $([Math]::Round($stable / $miB, 2)) | — |",
+  "| Peak | $([Math]::Round($peakPrivate / $miB, 2)) | - |",
+  "| Stable (tail 40% median) | $([Math]::Round($stable / $miB, 2)) | - |",
   "| Final | $([Math]::Round($finalPrivate / $miB, 2)) | $([Math]::Round($finalWorkingSet / $miB, 2)) |",
   '',
   "Close check after 30 seconds: all recorded PIDs exited = $($closeCheck.all_recorded_pids_exited).",
@@ -200,6 +283,9 @@ $lines = @(
   'Limits: This is a local same-rust-analyzer supplementary comparison on VS Code 1.142.0 Stable. The pinned reference is Code-OSS 1.145.0-dev; this run is not a version-matched or full-feature-set VS Code comparison.'
 )
 [System.IO.File]::WriteAllLines($outMarkdown, [string[]]$lines, [System.Text.UTF8Encoding]::new($false))
+$summaryLine = "complete samples=$($samples.Count) peak_mib=$([Math]::Round($peakPrivate / $miB, 1)) stable_mib=$([Math]::Round($stable / $miB, 1)) final_mib=$([Math]::Round($finalPrivate / $miB, 1)) foreground_unchanged=$focusStayedStable foreground_recoveries=$($focusRecoveryEvents.Count) close_exited=$($closeCheck.all_recorded_pids_exited)"
+[System.IO.File]::AppendAllText($runLog, "$summaryLine`njson=$outJson`nmarkdown=$outMarkdown`n", [System.Text.UTF8Encoding]::new($false))
 Write-Output "JSON report: $outJson"
 Write-Output "Markdown report: $outMarkdown"
-Write-Output "Summary: peak $([Math]::Round($peakPrivate / $miB, 1)) MiB / stable $([Math]::Round($stable / $miB, 1)) MiB / final $([Math]::Round($finalPrivate / $miB, 1)) MiB ($($finalItems.Count) processes); foreground unchanged=$focusStayedStable; close+30s exited=$($closeCheck.all_recorded_pids_exited)"
+Write-Output "Run log: $runLog"
+Write-Output "Summary: $summaryLine"

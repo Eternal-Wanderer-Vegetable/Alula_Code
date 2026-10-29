@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-29（第六十四轮：前台流程重试与 WSL cgroup 重复矩阵）
+> Last Updated：2026-10-29（第六十五轮：前台流程复跑与 VS Code idle 对照）
 
 ## 项目一句话
 
@@ -10,11 +10,11 @@ Flutter桌面工作台 + Rust编辑核心，低内存与资源压力下稳定编
 ## Current Objective
 macOS 15 Actions run 40647161201 在 HEAD `5da053b` 通过探针 analyze/test、Release build、693-byte Web Archive 同 WKWebView 重载及 Safari Web Inspector 页面级附着；附着截图显示目标页 DOM，原始证据在 `docs/diagnostics/2026-10-28-p00/p00.4-web-macos-run-40647161201/`。Linux Debian sid/WPE run 40616364735 在 HEAD `51fe0cd` 通过 MHTML 回放；sandbox-disable 与 GBM-disable 变量 unset 时观察到 bwrap，但 CI 容器 security label 为 unconfined 且 capabilities 增强，不代表生产安全 profile。Linux 单轮 Xvfb/software-GL 探针销毁+30s private 406.8 MiB、较 WebView 前高117.4 MiB，NetworkProcess 留存；不能据此证明 leak 或满足 docs/04 产品门。旧证据目录：`p00.4-web-linux-run-40616364735/`。
 
-剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；Windows Rust+RA 稳态 Private Bytes 661.44 MiB，超 500 MiB 目标 161.44 MiB；同服务 VS Code 对照未获前台测试授权；完整产品其他服务与跨平台 docs/04 场景未完成。Windows `rust-mini` 上最近 30 分钟真实 rust-analyzer 编辑复跑 stderr 没有 `client exited without proper shutdown sequence`，但仍有两条 watcher-path 警告；4 个观察 PID 在关闭+30 秒后退出。旧 WSL cgroup 单轮探索：512 MiB 无 RA 单轮可保存，含 RA 的 512 MiB OOM，1 GiB 含 RA 单轮可保存并退出（旧单轮的 Xvfb 在 systemd scope 外，峰值约 861.9 MiB）；成功退出仍打印 `FlutterEngineRemoveView returned kInvalidArguments`。新的 31 次 cgroup 矩阵将 Xvfb、应用与子服务全部纳入 scope：no-RA 256/512/1024 MiB 成功保存关闭 3/4、3/3、3/3；RA 1 GiB 3/3 成功，RA 64–512 MiB 每档 3/3 OOM。no-RA 256 MiB 一次 marker 校验失败保留，另有一次补跑成功。矩阵仅短时 WSLg/Xvfb/software-GL `rust-mini`，仍未完成 docs/04 产品矩阵。新增 1 GiB RA cgroup 长测 1800 秒、150/150 次保存；scope PSS 峰值 924.75 MiB，产品进程树尾部 PSS 中位数 870.53 MiB（高于 500 MiB 目标 370.53 MiB），关闭+30 秒 RA 服务退出；前后 10 分钟中位数增约 13 MiB，尚不能断言稳定，仍有 watcher 与 FlutterEngineRemoveView 告警。证据：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-30m-cgroup-1024-20261028-223917.md` 和 JSON。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。新矩阵：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-main-app-cgroup-matrix.md` 和同名 JSON；旧探索：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。下一步先补齐真实 DRM/WPE GBM 与授权服务/同服务 VS Code 对照缺口，保持 P00.4 blocked，不启动 P01。详情：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。
-本轮提交前 GitNexus `detect-changes --scope all` 为 low（36 files / 11 symbols / 0 affected processes），但 all scope 包含工作区既有代码改动；索引仍报告 202 flows、404 个入口候选中 204 个未纳入、123 个 callee 跳过、2 次 walk 达预算，不能把 0 affected processes 当作完整无影响证明。此次暂存范围仅为 7 个证据/状态文档。
+剩余阻塞：真实 DRM Linux 主机 WPE GBM/DMABUF；Microsoft 官方服务 client 身份/许可；最近一次 Windows Alula Rust+RA 前台编辑复跑为 1800.015 秒、150/150 次保存、1815 个样本，Private Bytes 峰值/稳定/最终 841.89/657.93/233.85 MiB；稳定值超 500 MiB 目标 157.93 MiB，6 个观察 PID 在关闭+30 秒后退出，stderr 仍有两条 watcher-path 警告但无非优雅 LSP shutdown 警告。隔离 Microsoft VS Code 1.142.0 + 相同 rust-analyzer 1.97.1 的 600 样本 idle 对照已完成，稳定 Private Bytes 1280.22 MiB，版本不匹配固定 Code-OSS。WSLg/Xvfb 主应用 Rust+RA 10 分钟 idle 单轮也已完成，1 GiB cgroup、memory.current 峰值 803.91 MiB、scope PSS 峰值 889.30 MiB、CPU 8.036%、OOM=0；完整产品其他服务与跨平台 docs/04 场景未完成。旧 WSL cgroup 单轮探索：512 MiB 无 RA 单轮可保存，含 RA 的 512 MiB OOM，1 GiB 含 RA 单轮可保存并退出（旧单轮的 Xvfb 在 systemd scope 外，峰值约 861.9 MiB）；成功退出仍打印 `FlutterEngineRemoveView returned kInvalidArguments`。新的 31 次 cgroup 矩阵将 Xvfb、应用与子服务全部纳入 scope：no-RA 256/512/1024 MiB 成功保存关闭 3/4、3/3、3/3；RA 1 GiB 3/3 成功，RA 64–512 MiB 每档 3/3 OOM。no-RA 256 MiB 一次 marker 校验失败保留，另有一次补跑成功。矩阵仅短时 WSLg/Xvfb/software-GL `rust-mini`，仍未完成 docs/04 产品矩阵。新增 1 GiB RA cgroup 长测 1800 秒、150/150 次保存；scope PSS 峰值 924.75 MiB，产品进程树尾部 PSS 中位数 870.53 MiB（高于 500 MiB 目标 370.53 MiB），关闭+30 秒 RA 服务退出；前后 10 分钟中位数增约 13 MiB，尚不能断言稳定，仍有 watcher 与 FlutterEngineRemoveView 告警。证据：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-30m-cgroup-1024-20261028-223917.md` 和 JSON。P00.4 保持 blocked，feat-022/P00 仍 in-progress；P01–P15 不开始。新矩阵：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-main-app-cgroup-matrix.md` 和同名 JSON；旧探索：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。WebKit Inspector Protocol 不等于 CDP，Linux 插件 CDP 标志仍为不支持。下一步先处理真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可，并推进完整跨平台 docs/04 内存矩阵；同服务 VS Code idle 补充对照已完成，但未匹配固定 Code-OSS 版本，保持 P00.4 blocked，不启动 P01。详情：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-linux-cgroup-interaction.md`。
+本轮 GitNexus `detect-changes --scope all` 为 low（48 files / 42 symbols / 0 affected processes）；结果包含工作区既有的 README/app 等代码改动，此次只暂存 17 个 P00.4 证据/状态文件。索引报告 202 flows、404 个入口候选中 204 个未纳入、123 个 callee 跳过、2 次 walk 达预算，因此 0 affected processes 不构成完整无影响证明。
 提交 `e0256b2` 已推送；GitHub CI run `40772304233` 全绿：Harness、Ubuntu/Windows Rust fmt/Clippy/tests、Flutter analyze 与 122 项测试通过。CI 不覆盖此处的 cgroup 完整矩阵或真实 DRM/WPE GBM。
 本机完整 `PATH=/home/vegetable/.cargo/bin:/home/vegetable/develop/flutter/bin:$PATH PUB_CACHE=/tmp/alula-pub-cache bash init.sh` 随后退出 0：Rust tests、Clippy、build_core 与 Flutter 122 项均通过；P00.3 recovery fixture 用时 2:36。
-此前一轮前台闭环复跑（2026-10-29）：1800.015 秒、150/150 次保存、1808 个样本，Private Bytes 峰值/稳定/最终值 683.19/661.77/665.47 MiB；稳定值超 500 MiB 目标 161.77 MiB。关闭+30 秒四个观察 PID 均退出，临时 HOME/fixture 清除且前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.*`。此前 `Code.exe --version` 版本预检意外启动默认 VS Code profile 并初始化应用共享存储；观察到的进程树已停止，但共享存储未检查或回滚，也没有取得对照样本。单独 VS Code 前台测试仍待用户授权。
+此前一轮前台闭环复跑（2026-10-29）：1800.015 秒、150/150 次保存、1808 个样本，Private Bytes 峰值/稳定/最终值 683.19/661.77/665.47 MiB；稳定值超 500 MiB 目标 161.77 MiB。关闭+30 秒四个观察 PID 均退出，临时 HOME/fixture 清除且前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run2-20261029-011542390.*`。此前 `Code.exe --version` 版本预检意外启动默认 VS Code profile 并初始化应用共享存储；观察到的进程树已停止，但共享存储未检查或回滚，也没有取得对照样本。该记录是当时状态；隔离 VS Code 前台对照已于第六十五轮获授权并完成，见同目录 `p00.4-windows-vscode-rust-lsp-idle.md`。
 按用户要求在前台进程意外关闭后再次完整重跑 Windows Rust+RA 编辑验收：1800.011 秒、150/150 次保存、1817 个样本，Private Bytes 峰值/稳定/最终值 846.68/661.44/233.00 MiB；稳定值超 500 MiB 目标 161.44 MiB。marker/hash 通过，关闭+30 秒 4 个观察 PID 均退出，临时 HOME/fixture 删除且前台恢复。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-alula-rust-lsp-edit-30m-run3-20261029-043806492.*`。
 Windows Git Bash 的完整门禁与 P00.3 fixture 均已复跑通过。WSL stable Rust 1.99.1 与 Flutter stable 3.47.8/Dart 3.13.7 均已原生安装；clang/CMake/Ninja/pkg-config/GTK/libstdc++/Epoxy/libsecret/GBM 开发依赖已安装，`flutter doctor -v` 确认 Linux desktop toolchain 可用（Android SDK 未安装，`eglinfo` 不可用只是诊断信息缺失）。`cargo fmt --check`、完整 `bash init.sh`、`flutter analyze --no-pub` 和 `flutter test --no-pub --concurrency=1` 全部通过，Flutter 122 项全绿。离线 Pub 依赖按锁文件解析，tracked pubspec/lock 未改。完整记录：`docs/diagnostics/2026-10-28-p00/wsl-flutter-validation.md`。root GitHub CI run 40616364863 全绿。
 WSL 登录环境中 `bash scripts/build_core.sh` 通过；主应用 `app/` 执行 `flutter build linux --release --no-pub` 时 Flutter 报告没有配置 Linux desktop project，因此没有开始编译。`tools/web-engine-probe/` 有独立 Linux runner 和 WPE CI evidence，但不能代表主应用 Linux build。把主应用 Linux scaffold 作为后续跨平台工作项，当前未新增 `app/linux`。详情同上方诊断记录。跨 OS package-config 恢复后的 `bash init.sh --fast` 日志：`docs/diagnostics/2026-10-28-p00/p00.4-wsl-init-fast-recovery-2026-10-28.log`。
@@ -188,7 +188,7 @@ The authorized branch push completed. GitHub CI run 40758401730 passed (Rust Ubu
 ## Next Session
 
 1. 按 AGENTS 启动流程重读状态并检查 GitNexus freshness。WSL Rust 与 Flutter 工具链、Windows Flutter Windows Release 构建均有本地验证；完整 `bash init.sh`、独立 Flutter analyze 和串行 test 已全绿，可避免重复全量 recovery fixture，除非代码变化要求复验。
-2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可、同服务 VS Code 前台对照，以及完整产品多服务/跨平台预算。Windows Rust+RA 已有三轮1分钟、10分钟 idle、30分钟编辑数据；30分钟编辑稳定中位数672.36 MiB，超过500 MiB预算172.36 MiB。若需要 VS Code 对照，先取得单独前台测试授权；当前只获准 Alula 编辑测试。
+2. P00.4 剩余门槛：真实 DRM 主机 WPE GBM/DMABUF、官方服务身份/许可，以及完整产品多服务/跨平台预算。Windows Rust+RA 最近一次30分钟编辑稳定态657.93 MiB，超过500 MiB预算157.93 MiB；隔离 VS Code 1.142 idle 对照已完成，但未匹配固定 Code-OSS 版本，也未覆盖编辑负载。
 3. 主应用 `app/linux` runner 已建立。WSLg/Xvfb smoke 已运行；512 MiB 无 LSP 单轮保存通过，Rust Analyzer 512 MiB OOM、1 GiB 单轮保存通过。下一步若继续预算探索，应补齐各档至少三轮与 30 分钟编辑/10 分钟 idle 的产品进程树采样；记录中的 FlutterEngineRemoveView warning 仍需归因。真实 DRM/WPE GBM 仍需外部主机。P00.4 未满足全部跨平台与内存门，完成 P00 前不启动 P01。Linux CDP 仍不支持，WPE Inspector Protocol 不等于 CDP。
 4. 后续阶段提交只暂存该阶段证据与状态文件；保留用户既有 app/、harness 等未提交变更。
 
@@ -202,5 +202,13 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 ## Next Session 首步
 
 1. 先运行 `node .gitnexus/run.cjs detect-changes --scope all --repo .`，审阅并只暂存本阶段文件；保留既有用户工作区改动。
-2. 需要继续内存门时，按 docs/04 对 64/128/256/512/1024 MiB 各档至少跑三轮，并加入长时 idle/edit、进程树与 Windows Job Object 场景；当前 WSL cgroup 只有探索单轮。
-3. 隔离 VS Code 对照仍需单独前台测试授权；真实 DRM WPE GBM/DMABUF 与 Microsoft 官方身份/许可仍缺外部接入。完整产品内存门未完成，P00 未签收前不启动 P01。
+2. 需要继续内存门时，按 docs/04 对 64/128/256/512/1024 MiB 各档至少跑三轮，并加入长时 idle/edit、进程树与 Windows Job Object 场景；当前 WSL cgroup 的 idle/edit 数据仍是单轮探索。
+3. 同服务 VS Code idle 补充对照已完成，但仍未覆盖固定 Code-OSS 版本与编辑负载；真实 DRM WPE GBM/DMABUF、Microsoft 官方身份/许可和完整产品内存门仍需解决。P00 未签收前不启动 P01。
+
+
+## Verification Update（第六十五轮）
+
+- Windows Alula Rust+RA 前台编辑完整复跑通过：1800.015 秒、150/150 次保存、1815 个样本；Private Bytes 峰值/稳定/最终 841.89/657.93/233.85 MiB，稳定值超 500 MiB 目标 157.93 MiB。marker/hash 通过、6 个观察 PID 关闭+30 秒全部退出、HOME/fixture 清理并恢复前台；仅有两条 watcher-path 告警，无非优雅关闭告警。
+- 用户授权的 Windows VS Code 同服务 idle 对照完成：600 个样本、实际 759.872 秒、峰值/稳定/最终 Private Bytes 1655.61/1280.22/1265.46 MiB。隔离实例使用相同 rust-analyzer 1.97.1；一次启动期前台切换已恢复并记录，采样期间未再切换。与 Alula 的同服务对照仍是补充证据，因为 VS Code 1.142.0 不等于 pinned Code-OSS 1.145.0-dev。
+- WSLg/Xvfb 主应用 + Rust Analyzer 10 分钟 idle 单轮通过：600 秒无输入，1 GiB/swap=0，memory.current 峰值 803.91 MiB、scope PSS 峰值 889.30 MiB、单核归一 CPU 8.036%，OOM=0；关闭+30 秒 RA/proc-macro 全退。
+- P00.4/feat-022 继续 blocked/in-progress：Alula 稳态内存超目标，真实 DRM/WPE GBM/DMABUF、官方服务身份/许可和完整产品跨平台压力矩阵未完成；P01 不启动。当前轮未改产品代码。
