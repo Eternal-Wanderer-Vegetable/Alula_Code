@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-30（P03.4.1 输入合同已提交；下一片 P03.4.2 控件/三平台 IME）
+> Last Updated：2026-10-30（P03.4.1 与 P03.4.2a 已提交；下一片 P03.4.2b 工作台接线）
 
 ## 项目目标
 
@@ -9,7 +9,7 @@
 ## 当前状态
 
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
-- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已完成并分阶段提交；完整 `bash init.sh` 通过（Flutter 175 项）。当前下一片 P03.4.2：将合同接入产品输入控件并取得 Windows/macOS/Linux IME 证据。
+- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`。P03.4.2a 独立 Flutter EditableText 输入适配器接入并测试完成；当前下一片 P03.4.2b：替换工作台全文 TextEditingController 并连通 Rust 文本状态。
 - Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合与验收门；历史与新增测量仅作基线，P14 完成整体架构后重新制定优化指标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。
 - 真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可仍有外部阻塞，按 docs/03 对应 Web/联网阶段处理，不阻塞当前 P03 编辑器切片。
 - P02.1：docs/diagnostics/2026-10-30-p02/p02.1-per-document-undo.md；P02.2：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md；P02.3：docs/diagnostics/2026-10-30-p02/p02.3-save-as-revert.md。
@@ -20,6 +20,7 @@
 - P03.2：`docs/diagnostics/2026-10-30-p03/p03.2-rust-line-offset-api.md`。ABI v13 新增行号到绝对 UTF-16 起点查询，直接使用 Rust Rope 行索引；BOM/emoji/CRLF/末尾空行与越界行由 Dart↔Rust 对拍，完整 `bash init.sh` Flutter 166 项通过。工作台全文 TextField 尚未替换，下一片 P03.3。
 - P03.3：`docs/diagnostics/2026-10-30-p03/p03.3-bounded-viewport-adr.md`。ABI v14 批量按行读取受限 UTF-16 窗口；Flutter 只读原型每页 32 行、每行最多 2,048 单元、每视图最多缓存 3 页。Rust 10k 尾页、真实 FFI 50k 行双视图滚动/选区/隔离与 100k 长行水平窗口通过。完整 `bash init.sh` 168 项、`flutter analyze`、格式门通过。原工作台仍持有全文 TextField；Delta 输入/IME、多光标、无障碍和平台验收仍未过门。
 - P03.4.1：`docs/diagnostics/2026-10-30-p03/p03.4.1-input-window-contract.md`。Rust 为唯一提交文本；Flutter 输入窗最多 64 Ki UTF-16、局部偏移映射为绝对 TextOps；IME 预编辑只作为 overlay，提交/取消/selection/composition/超限/版本失配与单槽背压由 7 项真实 FFI fixture 验证。`bash init.sh`（Flutter 175 项）和 Flutter analyze 通过。未接入工作台 TextField、未验证原生候选位置及三平台 Alula IME。
+- P03.4.2a：`docs/diagnostics/2026-10-30-p03/p03.4.2a-flutter-ime-field.md`。`RustTextInputField` 以 Flutter EditableText 平台输入客户端承载有界 session；测试 TextInput 通道上报的编辑框尺寸/非零屏幕变换、IME overlay/提交/取消和超限恢复。P03.4.1 + .2a 定向 10 项通过，`flutter analyze` 零问题。独立控件尚未接入工作台；native IME 与 candidate window 未实测。
 
 ## 工作树注意事项
 
@@ -27,5 +28,5 @@
 
 ## 下一步
 
-1. 开始 P03.4.2：把 P03.4.1 输入合同接到 P03 有界可视区控件，打通 Dirty/undo/save 与文本窗口滚动后的 selection/composition；验证实际候选窗位置、提交/取消、焦点离开和写回背压。Windows/macOS/Linux 只记录实际可运行环境的产品 IME 证据，未运行平台保持未验证。改既有符号前先按 GitNexus impact 并处理 HIGH/CRITICAL 风险。
+1. 开始 P03.4.2b：将有界输入控件接入工作台并替换文档全文 `TextEditingController`；打通 dirty/savepoint、undo/journal、查找/大纲和文档切换的 flush/composition 生命周期，再做 .2c Windows/macOS/Linux 产品 IME 实测。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review，不能以 empty caller set 视为无影响。
 2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。

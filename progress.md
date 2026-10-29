@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.4.2a Flutter 有界 EditableText 适配器）
+
+- 新增 `RustTextInputField`，以 Flutter `EditableText` 作为有界 Rust input session 的系统文本输入客户端；窗口不超过 64 Ki UTF-16。超限平台更新恢复到最近接受值并通知宿主，版本/FFI错误留 pending 并显示错误状态。宿主可显式 flush、commit 或 cancel composition；替换/移除控件前需先 flush。
+- Flutter TestTextInput channel fixture 验证 composing overlay 未提前进 Rust、候选提交最终增量、取消恢复、超限恢复/宿主通知，并记录到有尺寸和非零屏幕变换的 `setEditableSizeAndTransform` 调用。P03.4.1 + .2a 定向 10 项全过。
+- `cargo fmt --all -- --check`、`flutter analyze --no-pub`、`bash init.sh` EXIT=0；Rust workspace、Clippy、native core build 及 Flutter 全量 178 项通过（含 2,000,001 UTF-16 journal 恢复夹具）。
+- 新控件 class exact upstream impact 为 LOW（仅本切片测试 importer/caller）；其 State class 的 exact impact 报 CRITICAL，直接边仅 `createState` 与测试 import，但向上流程扩散到全仓同名 Flutter 方法。暂存检测 7 files/7 symbols/28 flows、CRITICAL；全工作树 39 files/87 flows、CRITICAL，后者含既有用户变更。未使用 shared-axis 降级；源码搜索确认 workbench 不导入该组件。图谱另报告 388 入口候选/186 callee 截断。报告：`docs/diagnostics/2026-10-30-p03/p03.4.2a-flutter-ime-field.md`。
+- 未接入工作台；Transform 通道不证明原生候选窗实际位置或 Windows/macOS/Linux IME 行为。P03.4.2b 接线前，`workbench_page.dart` 和其他现存用户修改不得混入本阶段提交。
+
 ### 最新进展（2026-10-30，P03.4.1 有界输入会话合同）
 
 - 新增 `RustTextInputWindow`：Rust 读取最多 64 Ki UTF-16 输入窗，Flutter 仅在窗口内计算 delta，并把局部 TextOp 偏移平移到文档绝对坐标；窗口总大小硬限，超限不写 Rust。
