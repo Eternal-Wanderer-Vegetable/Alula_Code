@@ -1,0 +1,14 @@
+started_at=2026-10-29 00:25:29 UTC
+samples=60/600 elapsed_s=78.8 private_bytes=1404620800 processes=13 foreground_recoveries=1
+samples=120/600 elapsed_s=156 private_bytes=1396056064 processes=13 foreground_recoveries=1
+samples=180/600 elapsed_s=233 private_bytes=1405214720 processes=13 foreground_recoveries=1
+samples=240/600 elapsed_s=310.9 private_bytes=1397469184 processes=13 foreground_recoveries=1
+samples=300/600 elapsed_s=387.4 private_bytes=1390977024 processes=13 foreground_recoveries=1
+samples=360/600 elapsed_s=465 private_bytes=1389551616 processes=13 foreground_recoveries=1
+samples=420/600 elapsed_s=542.6 private_bytes=1395662848 processes=13 foreground_recoveries=1
+samples=480/600 elapsed_s=620.5 private_bytes=1394946048 processes=13 foreground_recoveries=1
+samples=540/600 elapsed_s=700 private_bytes=1384435712 processes=13 foreground_recoveries=1
+samples=600/600 elapsed_s=782.8 private_bytes=1386254336 processes=13 foreground_recoveries=1
+complete samples=600 peak_mib=1651.2 stable_mib=1337.9 final_mib=1322 foreground_unchanged=False foreground_recoveries=1 close_exited=True
+json=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle-rerun-20261029-002522.json
+markdown=E:\alula_code\docs\diagnostics\2026-10-28-p00\p00.4-windows-vscode-rust-lsp-idle-rerun-20261029-002522.md
