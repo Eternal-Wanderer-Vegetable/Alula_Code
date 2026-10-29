@@ -24,4 +24,4 @@
 
 1. 按仓库 Startup Workflow 读取本文件和 `progress.md`，检查 `node .gitnexus/run.cjs status`；如 stale，先重建索引。
 2. 查 `docs/03` 的 P00.4 剩余 DoD，继续推进当前环境可完成的证据项；不要启动 P01。真实 DRM 主机和官方客户端身份若仍不可用，保留阻塞和准确证据。
-3. 保留当前工作树里与本轮无关的既有未提交改动；提交只选择本轮 P00.4 报告与状态登记。
+3. 阶段证据提交 `b6dd5f4` 已推送到 `origin/codex/vscode-parity-p00`；保留工作树中其余既有未提交改动，不要把它们混入后续提交。

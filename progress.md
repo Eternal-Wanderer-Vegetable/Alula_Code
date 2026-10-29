@@ -12,6 +12,7 @@
 - 报告和原始数据：`docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-idle-20261029-160631502.{json,md,log}`；旧失败诊断已补根因和修复记录。
 - 此为 idle 参考，不能替代 Alula 的 30 分钟编辑或 docs/04 完整矩阵。Alula run3 稳态仍超 500 MiB；真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可未解决，故 P00.4/feat-022 保持 blocked/in-progress，P01 不启动。
 - 提交前验证：`bash init.sh` 通过 Rust workspace tests、Clippy、`build_core` 和 Flutter 122 项测试；`cargo fmt --check` 与 `flutter analyze` 也通过（No issues found）。
+- 阶段证据提交 `b6dd5f4` 已推送到 `origin/codex/vscode-parity-p00`。
 
 
 ### 最新进展（2026-10-29，第七十四轮，Windows LRU 内存筛选）
