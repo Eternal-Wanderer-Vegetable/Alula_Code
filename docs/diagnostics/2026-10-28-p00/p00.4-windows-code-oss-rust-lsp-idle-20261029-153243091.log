@@ -1,0 +1,6 @@
+started_at=2026-10-29 07:32:43 UTC
+startup_s=0 processes=4 renderer_processes=0 rust_analyzer=0
+startup_s=10 processes=4 renderer_processes=0 rust_analyzer=0
+startup_s=20 processes=4 renderer_processes=0 rust_analyzer=0
+startup_s=30 processes=4 renderer_processes=0 rust_analyzer=0
+failed=Code-OSS did not start a workbench renderer within 30 seconds.

@@ -1,0 +1,90 @@
+{
+  "label": "p00.4-code-oss-rust-lsp-idle-startup-failure",
+  "captured_at_local_date": "2026-10-29",
+  "valid_memory_sample": false,
+  "target": {
+    "product": "Code-OSS 1.145.0-dev",
+    "source_commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "electron_version": "43.8.3",
+    "executable_sha256": "24C9DA29867C5547214ADDBC7AC3FBF5D4CE3B04867A26BA5AC6CB18919BD126"
+  },
+  "extension": {
+    "id": "rust-lang.rust-analyzer",
+    "version": "0.3.3089",
+    "package_manifest_sha256": "238E7888D636DCD9377961C6C1416F7BFD9A0A45EBF126DAE52F13BF1000FC57"
+  },
+  "server": "rust-analyzer 1.97.1 (8bab26f4 2026-07-14)",
+  "isolation": {
+    "unique_user_data_per_attempt": true,
+    "unique_extensions_per_attempt": true,
+    "unique_shared_data_per_attempt": true,
+    "unique_fixture_per_attempt": true,
+    "telemetry_disabled": true,
+    "automatic_updates_disabled": true,
+    "account_sign_in": false
+  },
+  "attempts": [
+    {
+      "run_tag": "20261029-151053862",
+      "launch_method": "direct executable; source app argument omitted",
+      "samples_collected": 180,
+      "target_samples": 600,
+      "processes_observed": 1,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Electron could not find the app at the fixture path."
+    },
+    {
+      "run_tag": "20261029-151615118",
+      "launch_method": "direct executable; launcher setup error",
+      "samples_collected": 0,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "WScript shell was referenced before initialization."
+    },
+    {
+      "run_tag": "20261029-151746951",
+      "launch_method": "direct executable with source app argument and development environment",
+      "samples_collected": 240,
+      "target_samples": 600,
+      "processes_observed": 4,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Run ended before completion while only main, crashpad, GPU, and network utility processes were present."
+    },
+    {
+      "run_tag": "20261029-152747438",
+      "launch_method": "upstream scripts/code.bat; no built-in extension downloads",
+      "samples_collected": 0,
+      "startup_wait_seconds": 180,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Rust Analyzer did not appear; process inspection found no workbench renderer."
+    },
+    {
+      "run_tag": "20261029-153243091",
+      "launch_method": "upstream scripts/code.bat; visible startup with focus recovery",
+      "samples_collected": 0,
+      "startup_wait_seconds": 30,
+      "renderer_observed": false,
+      "rust_analyzer_observed": false,
+      "valid": false,
+      "reason": "Fast startup check found no workbench renderer."
+    }
+  ],
+  "cleanup": {
+    "isolated_code_oss_processes_remaining": 0,
+    "attempt_specific_temp_directories_remaining": 0
+  },
+  "limits": [
+    "No memory metrics were produced or compared.",
+    "A separate Microsoft VS Code 1.142.0 same-server idle comparison is valid but not version-matched and has no editing workload.",
+    "The precise pinned Code-OSS startup cause remains unresolved; no Microsoft Marketplace or account sign-in path was used.",
+    "P00.4 remains blocked/in-progress; P01 remains not-started."
+  ],
+  "runner": "p00.4-code-oss-rust-lsp-idle-10min.ps1"
+}

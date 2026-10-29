@@ -678,3 +678,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 修正采样器以焦点 XTest 键盘输入打开 `rust-mini/src/main.rs`，短截图预检已看到该文件（`docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-ui-check-src-main-20261029.png`）；修正按空闲边界前样本归因进程 CPU。两个新样本中 Alula 分别消耗约 154.79/146.97 CPU 秒，RA 低于 10 秒快照分辨率；旧样本单核归一 CPU 为 8.036%，和新样本差异明显。当前归因提示 WSLg/Xvfb software-GL 路径需要单独调查，不能外推真实桌面。另一次短截图检查的 UI 关闭未在限时内退出（SIGTERM，exit -15），已从有效内存样本中排除，失败预检见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-ui-preflight-20261029.{json,md}`；三轮正式样本均为 exit 0。
 - 这三次 WSLg 观察的 scope PSS 峰值中位数 889.30 MiB，高于 500 MiB Rust+RA 目标；它们不覆盖真实 DRM/WPE GBM/DMABUF、完整 docs/04 多场景压力矩阵或同版本编辑负载。P00.4/feat-022 仍 blocked/in-progress，P01 不启动。本轮未改产品源代码。
 - 阶段提交 `07515f3` 已推送至 `codex/vscode-parity-p00`；GitHub CI `40806485257`、Linux WPE `40806485215`、macOS Web Engine `40806485341` 均成功。它们不替代原生 DRM/GBM 与完整 docs/04 产品矩阵。
+
+## 今日会话（2026-10-29 第七十轮）：固定版 Code-OSS 同服务 idle 启动诊断
+
+- 用户授权的版本匹配对照尝试未进入 Workbench：固定 Code-OSS 1.145.0-dev / Electron 43.8.3，配置同一 rust-analyzer 1.97.1 与隔离 profile、扩展、shared-data、fixture；脚本先前的直接启动和随后上游 `scripts/code.bat` 启动均未观察到 renderer/RA，没有产生有效内存样本。最后一轮在30秒 renderer 快速门失败并清理；确认没有隔离进程或临时目录遗留，也没有 Marketplace/账户登录。
+- 前面一次直接启动在4个 Code-OSS 进程下记录至240/600点后中止，另一次正确批处理入口等待180秒未见 RA；这些均无效，不与 Alula 内存比较。完整尝试、限制和日志索引见 `docs/diagnostics/2026-10-28-p00/p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}`，可重放的 fail-fast runner 为同目录 `p00.4-code-oss-rust-lsp-idle-10min.ps1`。
+- 有效的 Microsoft VS Code 1.142.0 同服务 idle 对照仍是单独补充证据，版本与固定 Code-OSS 不匹配且不含编辑负载；Windows Alula 30分钟/150次保存编辑重跑已在既有进度中记录，稳定 Private Bytes 657.93 MiB，超过500 MiB目标。P00.4/feat-022 继续 blocked/in-progress，P01 不启动；没有产品代码改动。
+- 提交前完整 `bash init.sh` EXIT=0：Rust workspace tests、Clippy、`build_core` 与 Flutter 122 项测试通过；PowerShell runner AST parse 和 evidence JSON 校验也通过。

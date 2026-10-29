@@ -236,6 +236,13 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 - P00.4 诊断提交 `07515f3` 已推送到 `codex/vscode-parity-p00`。GitHub CI run `40806485257`、Linux WPE Web Engine Probe `40806485215`、macOS Web Engine Probe `40806485341` 均成功。CI 不代表原生 DRM/WPE GBM 或完整产品内存门通过。
 - P00.4/feat-022 继续 blocked/in-progress；工作区保留既有 app/harness 修改，未混入 `07515f3`。
 
+## Verification Update（第七十轮：固定版 Code-OSS 同服务 idle 启动诊断）
+
+- 按用户授权尝试 pinned Code-OSS 1.145.0-dev + rust-analyzer 1.97.1 的隔离 idle 对照。五次启动尝试均未形成有效样本；最后两次经上游 `scripts/code.bat` 启动，进程树没有 Workbench renderer，故没有开始600点内存采样。焦点守卫在运行期间保留，失败 runner 清理了隔离进程/profile/extensions/shared-data/fixture。未走 Marketplace 或账户登录路径。
+- 记录：`docs/diagnostics/2026-10-28-p00/p00.4-code-oss-rust-lsp-idle-startup-failure-20261029.{md,json}`；可重放 fast-fail runner：`p00.4-code-oss-rust-lsp-idle-10min.ps1`。已完成的 Microsoft VS Code 1.142.0 同服务 idle 样本仍有效但版本不匹配；Alula 30分钟编辑重跑有效且稳定内存高于预算。当前无产品代码改动。
+- 提交前完整 `bash init.sh` EXIT=0：Rust tests、Clippy、`build_core` 与 Flutter 122 项通过；PowerShell runner AST parse、evidence JSON 校验通过。
+- 下次若继续补版本匹配 idle 对照，先排查 pinned 开发构建为何不创建 renderer，并在启动 smoke 成功后再跑完整600点；不要把本轮失败启动当成内存 evidence。P00.4/feat-022 仍 blocked/in-progress，P01 不启动。
+
 ## Next Session 首步更新
 
 1. 按 AGENTS 启动流程读取状态、检查 `node .gitnexus/run.cjs status`，再运行 `bash init.sh --fast`。

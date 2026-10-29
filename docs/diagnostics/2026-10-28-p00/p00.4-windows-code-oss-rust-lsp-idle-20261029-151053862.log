@@ -1,0 +1,4 @@
+started_at=2026-10-29 07:10:54 UTC
+samples=60/600 elapsed_s=65.7 private_bytes=30433280 processes=1 foreground_recoveries=0
+samples=120/600 elapsed_s=132.8 private_bytes=30367744 processes=1 foreground_recoveries=0
+samples=180/600 elapsed_s=199.9 private_bytes=30334976 processes=1 foreground_recoveries=0
