@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/editor/rust_text_input_window.dart'
+    show maxRustTextInputWindowUtf16;
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
@@ -160,19 +162,41 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     await startWorkbench(tester, root.path);
-    final recoveredText = editorText(tester);
+    final recoveredWindow = editorText(tester);
+    final recoveredSession = session.tryLoad()!;
+    final recoveredDocs = (recoveredSession['groups'] as List)
+        .expand((group) => (group as Map)['docs'] as List)
+        .cast<Map>();
+    final recoveredJournalDoc = recoveredDocs.firstWhere(
+      (doc) => (doc['path'] as String?)?.endsWith('large.txt') ?? false,
+    );
+    final recoveredJournalText = recoveredJournalDoc['text'] as String?;
+    await _pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+    await tester.pump();
+    expect(
+        find.byKey(const ValueKey('external-conflict-dialog')), findsOneWidget);
+    await tester
+        .tap(find.byKey(const ValueKey('external-conflict-confirm-overwrite')));
+    await tester.pumpAndSettle();
+    final savedText = diskFile.readAsStringSync();
     final observed = {
       'fixture': 'parity-ref-07-recovery-01',
       'acceptedUtf16Units': acceptedText.length,
       'journalTextPresent': journalTextPresent,
+      'recoveredJournalUtf16Units': recoveredJournalText?.length,
       'diskUtf16Units': diskFile.readAsStringSync().length,
-      'recoveredUtf16Units': recoveredText.length,
-      'recoveredFromJournal': recoveredText == acceptedText,
+      'boundedInputWindowUtf16Units': recoveredWindow.length,
+      'recoveredFromJournal': recoveredJournalText == acceptedText,
+      'savedRecoveredRustText': savedText == acceptedText,
     };
-    // The journal now preserves accepted edits above the former 2M threshold.
+    // The journal and Rust buffer preserve the complete edit while Flutter
+    // exposes only the bounded window after restart.
     expect(acceptedText.length, greaterThan(2000000));
     expect(journalTextPresent, isTrue);
-    expect(recoveredText, acceptedText);
+    expect(recoveredJournalText, acceptedText);
+    expect(
+        recoveredWindow.length, lessThanOrEqualTo(maxRustTextInputWindowUtf16));
+    expect(savedText, acceptedText);
     // ignore: avoid_print
     print('P00.3_FIXTURE=${jsonEncode(observed)}');
   });

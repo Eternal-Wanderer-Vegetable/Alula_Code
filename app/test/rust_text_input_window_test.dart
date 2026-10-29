@@ -77,6 +77,63 @@ void main() {
     }
   }, skip: _bootstrap.skip);
 
+  test('committed delta carries absolute inverse ops for emoji BOM and CRLF',
+      () {
+    const original = '\u{FEFF}A🦊B\r\nZ';
+    final doc = _bootstrap.core!.openDoc(9716, original);
+    try {
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 0,
+        maxWindowUtf16: 32,
+      );
+      final delta = window.applyImmediate(
+        const TextEditingValue(
+          text: '\u{FEFF}A🦁B\r\nZ',
+          selection: TextSelection.collapsed(offset: 4),
+        ),
+      );
+
+      expect(delta.previousSelection!.baseOffset, original.length);
+      expect(delta.operations.map((op) => op.toJson()).toList(), [
+        {'type': 'delete', 'offset_utf16': 2, 'len_utf16': 2},
+        {'type': 'insert', 'offset_utf16': 2, 'text': '🦁'},
+      ]);
+      expect(delta.inverseOperations.map((op) => op.toJson()).toList(), [
+        {'type': 'delete', 'offset_utf16': 2, 'len_utf16': 2},
+        {'type': 'insert', 'offset_utf16': 2, 'text': '🦊'},
+      ]);
+      expect(doc.resync().content, '\u{FEFF}A🦁B\r\nZ');
+      doc.apply(delta.inverseOperations);
+      expect(doc.resync().content, original);
+    } finally {
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('openAround keeps the initial selection in absolute UTF-16 coordinates',
+      () {
+    final source = '${'a' * 40}🦊${'b' * 40}';
+    final doc = _bootstrap.core!.openDoc(9717, source);
+    try {
+      const caret = 43; // 40 ASCII units plus the two-unit emoji plus one.
+      final window = RustTextInputWindow.openAround(
+        doc,
+        selectionUtf16: caret,
+        maxWindowUtf16: 16,
+      );
+
+      expect(window.text.length, lessThanOrEqualTo(16));
+      expect(window.startUtf16, greaterThan(0));
+      expect(
+        window.startUtf16 + window.initialValue.selection.extentOffset,
+        caret,
+      );
+    } finally {
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
   test('cancelled composition restores the committed Rust text', () {
     final doc = _bootstrap.core!.openDoc(9711, 'before|ok|after');
     try {
@@ -275,6 +332,67 @@ void main() {
       expect(window.pendingCount, 1);
       expect(window.text, 'abc');
       expect(doc.resync().content, 'xabc');
+    } finally {
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test(
+      'stale input can safely retry outside its window and preserves conflicts',
+      () {
+    final source = '${'a' * 40}middle${'b' * 40}';
+    final doc = _bootstrap.core!.openDoc(9718, source);
+    try {
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 0,
+        maxWindowUtf16: 16,
+      );
+      final pendingText = window.text.replaceRange(2, 2, 'X');
+      window.enqueue(TextEditingValue(
+        text: pendingText,
+        selection: const TextSelection.collapsed(offset: 3),
+      ));
+      doc.apply([TextOp.insert(source.length, '!')]);
+      expect(window.flushPending, throwsA(isA<SyncMismatchException>()));
+      expect(window.pendingCount, 1);
+
+      final recovered = window.recoverPending()!;
+      expect(recovered.operations, isNotEmpty);
+      expect(window.pendingCount, 0);
+      expect(
+          doc.resync().content,
+          '${source.substring(0, 2)}X'
+          '${source.substring(2)}!');
+
+      final conflictDoc = _bootstrap.core!.openDoc(9719, source);
+      try {
+        final conflictWindow = RustTextInputWindow.open(
+          conflictDoc,
+          startUtf16: 40,
+          maxWindowUtf16: 16,
+        );
+        final draft = conflictWindow.text.replaceRange(2, 3, 'x');
+        conflictWindow.enqueue(TextEditingValue(
+          text: draft,
+          selection: const TextSelection.collapsed(offset: 3),
+        ));
+        conflictDoc.apply([const TextOp.insert(42, 'remote')]);
+        expect(
+            conflictWindow.flushPending, throwsA(isA<SyncMismatchException>()));
+        expect(
+          conflictWindow.recoverPending,
+          throwsA(isA<InputWindowRecoveryConflictException>()),
+        );
+        expect(conflictWindow.pendingText, draft);
+        expect(conflictWindow.pendingCount, 1);
+        expect(
+            conflictDoc.resync().content,
+            '${source.substring(0, 42)}remote'
+            '${source.substring(42)}');
+      } finally {
+        conflictDoc.close();
+      }
     } finally {
       doc.close();
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 
 import 'rust_text_input_window.dart';
 
@@ -10,20 +11,24 @@ class RustTextInputField extends StatefulWidget {
     super.key,
     required this.inputWindow,
     this.focusNode,
+    this.scrollController,
     this.autofocus = false,
     this.style,
     this.decoration,
     this.semanticsLabel,
+    this.onTap,
     this.onDelta,
     this.onError,
   });
 
   final RustTextInputWindow inputWindow;
   final FocusNode? focusNode;
+  final ScrollController? scrollController;
   final bool autofocus;
   final TextStyle? style;
   final InputDecoration? decoration;
   final String? semanticsLabel;
+  final VoidCallback? onTap;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
 
@@ -41,6 +46,22 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   String? _errorMessage;
 
   TextEditingValue get editingValue => _controller.value;
+
+  /// Changes the local selection while keeping the input window's acknowledged
+  /// selection in step with the Flutter text-input client.
+  void setSelection(TextSelection selection) {
+    _controller.value = _controller.value.copyWith(
+      selection: selection,
+      composing: TextRange.empty,
+    );
+  }
+
+  /// Applies a local bounded value through the field's ordinary enqueue path.
+  void setEditingValue(TextEditingValue value) {
+    _controller.value = value;
+  }
+
+  void requestFocus() => _focusNode.requestFocus();
 
   @override
   void initState() {
@@ -64,13 +85,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         oldWidget.inputWindow.pendingCount == 0,
         'Flush the old input window before replacing it.',
       );
-      _controller
-        ..removeListener(_handleEditingValueChanged)
-        ..dispose();
-      _controller =
-          TextEditingController.fromValue(widget.inputWindow.initialValue)
-            ..addListener(_handleEditingValueChanged);
-      _lastAcceptedValue = _controller.value;
+      _restoreValue(widget.inputWindow.initialValue);
       _errorMessage = null;
     }
   }
@@ -92,8 +107,21 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       _lastAcceptedValue = value;
       _scheduleFlush();
     } on TextInputWindowLimitException catch (error) {
-      _restoreValue(_lastAcceptedValue);
-      _reportError(error);
+      if (value.text.length > widget.inputWindow.maxWindowUtf16) {
+        try {
+          final delta = widget.inputWindow.applyOversized(value);
+          _restoreValue(
+              delta.replacementValue ?? widget.inputWindow.initialValue);
+          _clearError();
+          widget.onDelta?.call(delta);
+        } catch (oversizedError) {
+          _restoreValue(_lastAcceptedValue);
+          _reportError(oversizedError);
+        }
+      } else {
+        _restoreValue(_lastAcceptedValue);
+        _reportError(error);
+      }
     } catch (error) {
       _reportError(error);
     }
@@ -162,6 +190,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     }
   }
 
+  void recoverPending() {
+    try {
+      final delta = widget.inputWindow.recoverPending();
+      if (delta == null) {
+        _clearError();
+        return;
+      }
+      _restoreValue(_valueForDelta(delta));
+      _clearError();
+      widget.onDelta?.call(delta);
+    } catch (error) {
+      _reportError(error);
+    }
+  }
+
+  Future<void> copyPendingDraft() async {
+    final pending = widget.inputWindow.pendingText;
+    if (pending == null) return;
+    await Clipboard.setData(ClipboardData(text: pending));
+  }
+
   TextEditingValue _valueForDelta(RustTextInputDelta delta) {
     final localSelection = delta.selectionWindow;
     return TextEditingValue(
@@ -200,7 +249,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       key: const ValueKey<String>('rust-bounded-text-input'),
       controller: _controller,
       focusNode: _focusNode,
+      scrollController: widget.scrollController,
       autofocus: widget.autofocus,
+      onTap: widget.onTap,
       keyboardType: TextInputType.multiline,
       maxLines: null,
       expands: true,
@@ -219,12 +270,38 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         children: [
           Expanded(child: field),
           if (_errorMessage case final message?)
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                message,
-                key: const ValueKey<String>('rust-bounded-text-input-error'),
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+            Material(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Text(
+                          message,
+                          key: const ValueKey<String>(
+                              'rust-bounded-text-input-error'),
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).colorScheme.onErrorContainer,
+                          ),
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: recoverPending,
+                      child: const Text('重试同步'),
+                    ),
+                    TextButton(
+                      onPressed: widget.inputWindow.pendingText == null
+                          ? null
+                          : copyPendingDraft,
+                      child: const Text('复制草稿'),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],

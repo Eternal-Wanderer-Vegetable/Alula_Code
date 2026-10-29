@@ -135,7 +135,7 @@ void main() {
     expect(doc.resync().content, 'root|你好|tail');
   }, skip: _bootstrap.skip != null);
 
-  testWidgets('oversized platform update is restored and reported to the host',
+  testWidgets('oversized platform update is committed and recentered',
       (tester) async {
     final doc = _bootstrap.core!.openDoc(9722, 'abc');
     addTearDown(doc.close);
@@ -145,6 +145,7 @@ void main() {
       maxWindowUtf16: 4,
     );
     Object? inputError;
+    final fieldKey = GlobalKey<RustTextInputFieldState>();
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -152,6 +153,7 @@ void main() {
             width: 320,
             height: 200,
             child: RustTextInputField(
+              key: fieldKey,
               inputWindow: window,
               onError: (error) => inputError = error,
             ),
@@ -171,11 +173,60 @@ void main() {
     );
     await tester.pump();
 
-    expect(inputError, isA<TextInputWindowLimitException>());
+    expect(inputError, isNull);
     expect(window.pendingCount, 0);
-    expect(window.text, 'abc');
-    expect(doc.resync().content, 'abc');
+    expect(window.text.length, lessThanOrEqualTo(window.maxWindowUtf16));
+    expect(doc.resync().content, 'abcde');
+    expect(fieldKey.currentState!.editingValue.text, window.text);
+    expect(find.byKey(const ValueKey('rust-bounded-text-input-error')),
+        findsNothing);
+  }, skip: _bootstrap.skip != null);
+
+  testWidgets('version-conflicted draft can retry when the window is unchanged',
+      (tester) async {
+    const source = 'middle text in the bounded window and tail';
+    final doc = _bootstrap.core!.openDoc(9723, source);
+    addTearDown(doc.close);
+    final window = RustTextInputWindow.open(
+      doc,
+      startUtf16: 0,
+      maxWindowUtf16: 24,
+    );
+    final fieldKey = GlobalKey<RustTextInputFieldState>();
+    final deltas = <RustTextInputDelta>[];
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SizedBox(
+          width: 400,
+          height: 200,
+          child: RustTextInputField(
+            key: fieldKey,
+            inputWindow: window,
+            onDelta: deltas.add,
+          ),
+        ),
+      ),
+    ));
+
+    final value = fieldKey.currentState!.editingValue;
+    final caret = value.selection.extentOffset;
+    fieldKey.currentState!.setEditingValue(value.copyWith(
+      text: value.text.replaceRange(caret, caret, 'X'),
+      selection: TextSelection.collapsed(offset: caret + 1),
+    ));
+    doc.apply([const TextOp.insert(source.length, '!')]);
+    await tester.pump();
     expect(find.byKey(const ValueKey('rust-bounded-text-input-error')),
         findsOneWidget);
+    expect(window.pendingCount, 1);
+
+    await tester.tap(find.text('重试同步'));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('rust-bounded-text-input-error')),
+        findsNothing);
+    expect(window.pendingCount, 0);
+    expect(doc.resync().content,
+        '${source.substring(0, caret)}X${source.substring(caret)}!');
+    expect(deltas.last.operations, isNotEmpty);
   }, skip: _bootstrap.skip != null);
 }

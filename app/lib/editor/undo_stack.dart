@@ -10,15 +10,38 @@
 ///   快照是全文本——上限保证最坏内存 ≈ maxTotalChars。
 library;
 
+import '../bridge/alula_core.dart' show TextOp;
+
 class UndoEntry {
   UndoEntry({
     required this.text,
     required this.caret,
+    int? redoCaret,
     this.encoding,
     this.bom,
     this.lineEnding,
     this.transactionId,
-  }) : sequence = _nextUndoSequence++;
+  })  : forwardBatches = null,
+        inverseBatches = null,
+        redoCaret = redoCaret ?? caret,
+        sequence = _nextUndoSequence++;
+
+  UndoEntry.operations({
+    required List<TextOp> forward,
+    required List<TextOp> inverse,
+    required this.caret,
+    required this.redoCaret,
+    this.encoding,
+    this.bom,
+    this.lineEnding,
+    this.transactionId,
+    this.redoEncoding,
+    this.redoBom,
+    this.redoLineEnding,
+  })  : text = '',
+        forwardBatches = [List<TextOp>.unmodifiable(forward)],
+        inverseBatches = [List<TextOp>.unmodifiable(inverse)],
+        sequence = _nextUndoSequence++;
 
   /// 该步骤的「变更前」全文（undo 目标态）。
   final String text;
@@ -26,13 +49,47 @@ class UndoEntry {
   /// 变更前的光标位（UTF-16 偏移）。
   final int caret;
 
+  /// 变更后的光标位 for operation-based redo.
+  int redoCaret;
+
   /// 文档文件格式状态；普通编辑历史也携带这些值，以便与格式转换组合撤销。
   final String? encoding;
   final bool? bom;
   final String? lineEnding;
 
+  String? redoEncoding;
+  bool? redoBom;
+  String? redoLineEnding;
+
   /// Shared identity for edits originating from one multi-document operation.
   final String? transactionId;
+
+  /// Present for operation history. Each batch uses coordinates relative to the
+  /// document state immediately before that batch, so a coalesced edit remains
+  /// replayable without materializing either whole-document snapshot.
+  final List<List<TextOp>>? forwardBatches;
+  final List<List<TextOp>>? inverseBatches;
+
+  bool get isOperation => forwardBatches != null;
+
+  /// Retained UTF-16 payload. Deleted text is held as insert payload in the
+  /// inverse batch, so counting insert strings covers both directions.
+  int get retainedChars {
+    final forward = forwardBatches;
+    final inverse = inverseBatches;
+    if (forward == null || inverse == null) return text.length;
+    return _insertedChars(forward) + _insertedChars(inverse);
+  }
+
+  static int _insertedChars(List<List<TextOp>> batches) => batches.fold<int>(
+        0,
+        (sum, batch) =>
+            sum +
+            batch.fold<int>(
+              0,
+              (batchSum, op) => batchSum + (op.text?.length ?? 0),
+            ),
+      );
 
   /// 跨文档的创建顺序，供共享预算从最旧的历史帧开始回收。
   final int sequence;
@@ -60,13 +117,18 @@ class UndoHistoryBudget {
 
   void _added(UndoEntry entry) {
     _totalEntries++;
-    _totalChars += entry.text.length;
+    _totalChars += entry.retainedChars;
     _enforce();
   }
 
   void _removed(UndoEntry entry) {
     _totalEntries--;
-    _totalChars -= entry.text.length;
+    _totalChars -= entry.retainedChars;
+  }
+
+  void _resized(UndoEntry entry, int oldChars) {
+    _totalChars += entry.retainedChars - oldChars;
+    _enforce();
   }
 
   void _detach(UndoStack stack) => _stacks.remove(stack);
@@ -141,6 +203,78 @@ class UndoStack {
     _undo.add(entry);
     _budget?._added(entry);
     _evictOldest();
+  }
+
+  /// Adds an operation-based history frame without retaining whole documents.
+  /// Coalesced frames replay batches in order for redo and reverse order for
+  /// undo, preserving each batch's original document-coordinate basis.
+  void pushOperations({
+    required List<TextOp> forward,
+    required List<TextOp> inverse,
+    required int caret,
+    int? redoCaret,
+    required bool coalesce,
+    String? encoding,
+    bool? bom,
+    String? lineEnding,
+    String? transactionId,
+  }) {
+    if (forward.isEmpty &&
+        inverse.isEmpty &&
+        encoding == null &&
+        bom == null &&
+        lineEnding == null) {
+      return;
+    }
+    if (coalesce && _undo.isNotEmpty && _undo.last.isOperation) {
+      final entry = _undo.last;
+      final forwardBatches = entry.forwardBatches!;
+      final inverseBatches = entry.inverseBatches!;
+      final oldChars = entry.retainedChars;
+      forwardBatches.add(List<TextOp>.unmodifiable(forward));
+      inverseBatches.insert(0, List<TextOp>.unmodifiable(inverse));
+      entry.redoCaret = redoCaret ?? caret;
+      _budget?._resized(entry, oldChars);
+      _evictOldest();
+      return;
+    }
+    _clearRedo();
+    final entry = UndoEntry.operations(
+      forward: forward,
+      inverse: inverse,
+      caret: caret,
+      redoCaret: redoCaret ?? caret,
+      encoding: encoding,
+      bom: bom,
+      lineEnding: lineEnding,
+      transactionId: transactionId,
+    );
+    _undo.add(entry);
+    _budget?._added(entry);
+    _evictOldest();
+  }
+
+  /// Moves an operation frame to redo and returns its inverse batches.
+  /// Legacy snapshot frames remain available through [undo].
+  UndoEntry? peekOperationUndo() =>
+      _undo.isNotEmpty && _undo.last.isOperation ? _undo.last : null;
+
+  UndoEntry? takeOperationUndo() {
+    if (_undo.isEmpty || !_undo.last.isOperation) return null;
+    final entry = _undo.removeLast();
+    _redo.add(entry);
+    return entry;
+  }
+
+  /// Moves an operation frame to undo and returns its forward batches.
+  UndoEntry? peekOperationRedo() =>
+      _redo.isNotEmpty && _redo.last.isOperation ? _redo.last : null;
+
+  UndoEntry? takeOperationRedo() {
+    if (_redo.isEmpty || !_redo.last.isOperation) return null;
+    final entry = _redo.removeLast();
+    _undo.add(entry);
+    return entry;
   }
 
   /// 撤销：返回要恢复的快照；栈空返回 null。
@@ -233,12 +367,12 @@ class UndoStack {
 
   /// 条数/总字符双上限同时计算 undo 与 redo 历史。
   void _evictOldest() {
-    var total = _undo.fold<int>(0, (sum, entry) => sum + entry.text.length) +
-        _redo.fold<int>(0, (sum, entry) => sum + entry.text.length);
+    var total = _undo.fold<int>(0, (sum, entry) => sum + entry.retainedChars) +
+        _redo.fold<int>(0, (sum, entry) => sum + entry.retainedChars);
     while (_undo.length + _redo.length > maxEntries || total > maxTotalChars) {
       final oldest = _oldestEntry;
       if (oldest == null) break;
-      total -= oldest.text.length;
+      total -= oldest.retainedChars;
       _evictEntry(oldest);
     }
   }

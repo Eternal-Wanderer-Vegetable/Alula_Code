@@ -20,13 +20,23 @@ class RustTextInputWindow {
     required this.document,
     required this.maxWindowUtf16,
     required TextRangeRead initialRange,
+    required TextSelection initialSelection,
   })  : _startUtf16 = initialRange.startUtf16,
         _totalUtf16Length = initialRange.totalUtf16Length,
         _version = initialRange.version,
         _text = initialRange.text,
         _presentedText = initialRange.text,
-        _committedSelectionWindow =
-            TextSelection.collapsed(offset: initialRange.text.length);
+        _committedSelectionWindow = TextSelection(
+          baseOffset: (initialSelection.baseOffset - initialRange.startUtf16)
+              .clamp(0, initialRange.text.length)
+              .toInt(),
+          extentOffset:
+              (initialSelection.extentOffset - initialRange.startUtf16)
+                  .clamp(0, initialRange.text.length)
+                  .toInt(),
+          affinity: initialSelection.affinity,
+          isDirectional: initialSelection.isDirectional,
+        );
 
   /// Reads at most [maxWindowUtf16] UTF-16 units from Rust.
   ///
@@ -37,6 +47,8 @@ class RustTextInputWindow {
     AlulaDoc document, {
     required int startUtf16,
     int maxWindowUtf16 = 8192,
+    int? selectionUtf16,
+    TextSelection? selection,
   }) {
     if (maxWindowUtf16 < 2 || maxWindowUtf16 > maxRustTextInputWindowUtf16) {
       throw ArgumentError.value(
@@ -56,6 +68,29 @@ class RustTextInputWindow {
       document: document,
       maxWindowUtf16: maxWindowUtf16,
       initialRange: range,
+      initialSelection: selection ??
+          TextSelection.collapsed(
+            offset: selectionUtf16 ?? (range.startUtf16 + range.text.length),
+          ),
+    );
+  }
+
+  /// Opens a bounded window centered on an absolute caret or selection extent.
+  factory RustTextInputWindow.openAround(
+    AlulaDoc document, {
+    required int selectionUtf16,
+    int maxWindowUtf16 = 8192,
+    TextSelection? selection,
+  }) {
+    final caret = selectionUtf16 < 0 ? 0 : selectionUtf16;
+    final startUtf16 =
+        caret > maxWindowUtf16 ~/ 2 ? caret - (maxWindowUtf16 ~/ 2) : 0;
+    return RustTextInputWindow.open(
+      document,
+      startUtf16: startUtf16,
+      maxWindowUtf16: maxWindowUtf16,
+      selectionUtf16: caret,
+      selection: selection,
     );
   }
 
@@ -83,11 +118,12 @@ class RustTextInputWindow {
   String get text => _text;
   int get pendingCount => _pending == null ? 0 : 1;
   int get coalescedInputCount => _coalescedInputCount;
+  String? get pendingText => _pending?.text ?? _composingValue?.text;
 
   /// Initial editable value with the caret at the end of this window.
   TextEditingValue get initialValue => TextEditingValue(
         text: _text,
-        selection: TextSelection.collapsed(offset: _text.length),
+        selection: _committedSelectionWindow,
       );
 
   /// Immediately writes one complete Flutter value to Rust.
@@ -115,6 +151,68 @@ class RustTextInputWindow {
     final pending = _pending;
     if (pending == null) return null;
     final delta = _apply(pending);
+    _pending = null;
+    return delta;
+  }
+
+  /// Commits a platform paste that is larger than the editable mirror.
+  ///
+  /// The platform may briefly present a value larger than this window. Rust
+  /// receives the resulting bounded-window diff immediately, then the caller
+  /// replaces the platform value with the refreshed bounded window. Failed
+  /// writes retain the one pending draft so the user can retry or copy it.
+  RustTextInputDelta applyOversized(TextEditingValue value) {
+    if (value.text.length <= maxWindowUtf16) {
+      throw ArgumentError.value(value.text.length, 'value.text.length',
+          'must exceed the input window limit');
+    }
+    try {
+      if (_hasComposition(value.composing)) {
+        _pending = value;
+        _presentedText = value.text;
+        throw TextInputWindowLimitException(
+          maxUtf16: maxWindowUtf16,
+          receivedUtf16: value.text.length,
+        );
+      }
+      final delta = _apply(value, allowOversized: true);
+      _pending = null;
+      return delta;
+    } catch (_) {
+      _pending = value;
+      _presentedText = value.text;
+      rethrow;
+    }
+  }
+
+  /// Replays pending input after a version conflict only when the authoritative
+  /// Rust text in this exact window still matches the acknowledged base text.
+  /// Edits elsewhere can then advance the version without risking an overlap.
+  RustTextInputDelta? recoverPending() {
+    final pending = _pending;
+    if (pending == null) return null;
+    final value = _hasComposition(pending.composing)
+        ? pending.copyWith(composing: TextRange.empty)
+        : pending;
+    final latest = document.readRange(
+      _startUtf16,
+      maxLenUtf16: maxWindowUtf16 - 1,
+    );
+    final coordinatesStable =
+        _startUtf16 == 0 || latest.totalUtf16Length == _totalUtf16Length;
+    if (!coordinatesStable ||
+        latest.startUtf16 != _startUtf16 ||
+        latest.text != _text) {
+      throw const InputWindowRecoveryConflictException(
+        'Rust text in the pending edit window has changed; the local draft '
+        'was kept for copying.',
+      );
+    }
+
+    _version = latest.version;
+    _totalUtf16Length = latest.totalUtf16Length;
+    final delta =
+        _apply(value, allowOversized: value.text.length > maxWindowUtf16);
     _pending = null;
     return delta;
   }
@@ -166,8 +264,12 @@ class RustTextInputWindow {
     );
   }
 
-  RustTextInputDelta _apply(TextEditingValue value) {
-    _validateWindowLength(value.text);
+  RustTextInputDelta _apply(
+    TextEditingValue value, {
+    bool allowOversized = false,
+  }) {
+    if (!allowOversized) _validateWindowLength(value.text);
+    final previousSelection = _mapSelection(_committedSelectionWindow, _text);
     final localOps = diffToOps(_text, value.text);
     final selectionWindow = _mapWindowSelection(value.selection, value.text);
     final composingWindow = _mapComposingWindow(value.composing, value.text);
@@ -189,6 +291,7 @@ class RustTextInputWindow {
     }
 
     final ops = _toDocumentOps(localOps);
+    final inverseOps = _toDocumentOps(diffToOps(value.text, _text));
     final nextLength = _totalUtf16Length + value.text.length - _text.length;
     if (nextLength < 0) {
       throw StateError(
@@ -199,22 +302,67 @@ class RustTextInputWindow {
     final nextVersion =
         ops.isEmpty ? _version : document.applyWith(_version, ops);
 
-    _text = value.text;
-    _presentedText = value.text;
     _composingValue = null;
     _version = nextVersion;
     _totalUtf16Length = nextLength;
-    if (selectionWindow != null) {
-      _committedSelectionWindow = selectionWindow;
+    final oversized = value.text.length > maxWindowUtf16;
+    final absoluteSelection = _mapSelection(value.selection, value.text);
+    if (oversized) {
+      _refreshWindowAround(absoluteSelection?.extentOffset ?? _startUtf16,
+          absoluteSelection: absoluteSelection);
+    } else {
+      _text = value.text;
+      _presentedText = value.text;
+      if (selectionWindow != null) {
+        _committedSelectionWindow = selectionWindow;
+      }
     }
+    final resultSelectionWindow =
+        oversized ? _committedSelectionWindow : selectionWindow;
     return RustTextInputDelta(
       operations: List<TextOp>.unmodifiable(ops),
       version: nextVersion,
       documentLengthUtf16: nextLength,
-      selection: _mapSelection(value.selection, value.text),
-      selectionWindow: selectionWindow,
+      selection: absoluteSelection,
+      selectionWindow: resultSelectionWindow,
       composingWindow: null,
       replacedDocumentRange: null,
+      inverseOperations: List<TextOp>.unmodifiable(inverseOps),
+      previousSelection: previousSelection,
+      replacementValue: oversized
+          ? TextEditingValue(
+              text: _text,
+              selection: _committedSelectionWindow,
+            )
+          : null,
+    );
+  }
+
+  void _refreshWindowAround(
+    int selectionUtf16, {
+    required TextSelection? absoluteSelection,
+  }) {
+    final caret = selectionUtf16.clamp(0, _totalUtf16Length).toInt();
+    final start = caret > maxWindowUtf16 ~/ 2 ? caret - maxWindowUtf16 ~/ 2 : 0;
+    final range = document.readRange(start, maxLenUtf16: maxWindowUtf16 - 1);
+    _startUtf16 = range.startUtf16;
+    _totalUtf16Length = range.totalUtf16Length;
+    _version = range.version;
+    _text = range.text;
+    _presentedText = range.text;
+    final selection =
+        absoluteSelection ?? TextSelection.collapsed(offset: caret);
+    _committedSelectionWindow = TextSelection(
+      baseOffset: _snapOffsetBeforeSurrogate(
+        range.text,
+        selection.baseOffset - range.startUtf16,
+      ),
+      extentOffset: _snapOffsetBeforeSurrogate(
+        range.text,
+        selection.extentOffset - range.startUtf16,
+      ),
+      affinity: selection.affinity,
+      isDirectional: selection.isDirectional,
     );
   }
 
@@ -318,15 +466,23 @@ class RustTextInputDelta {
     required this.composingWindow,
     required this.replacedDocumentRange,
     this.replacementValue,
+    this.inverseOperations = const [],
+    this.previousSelection,
   });
 
   final List<TextOp> operations;
+
+  /// Operations that restore the committed text before [operations].
+  final List<TextOp> inverseOperations;
   final int version;
   final int documentLengthUtf16;
 
   /// Absolute UTF-16 selection when the value is committed to Rust.
   /// Null while selection lies in an uncommitted composition overlay.
   final TextSelection? selection;
+
+  /// Absolute selection that was committed before this delta.
+  final TextSelection? previousSelection;
 
   /// Flutter-local selection, suitable for restoring the bounded input field.
   final TextSelection? selectionWindow;
@@ -353,4 +509,13 @@ class TextInputWindowLimitException implements Exception {
   @override
   String toString() =>
       'TextInputWindowLimitException($receivedUtf16 > $maxUtf16 UTF-16 units)';
+}
+
+class InputWindowRecoveryConflictException implements Exception {
+  const InputWindowRecoveryConflictException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => 'InputWindowRecoveryConflictException: $message';
 }

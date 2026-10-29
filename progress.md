@@ -5,6 +5,16 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.4.2b2/b3 工作台有界 Rust 输入）
+
+- 完成 P03.4.2b2/b3：`OpenDoc` 移除全文 `TextEditingController`，工作台现在以 Rust 文档作为文本/dirty/savepoint 权威，`RustTextInputField` 只持有最多 16,384 UTF-16 单元的本地编辑窗口。绝对 selection、窗口重定位、切换/保存/关闭前 flush 与 IME composition 提交已接入。
+- 输入增量携带前向/逆向 TextOps；UndoStack 对连续输入保留坐标有序的批次并把双向插入载荷计入共享预算。大粘贴被直接提交到 Rust 后重置到有界窗口；超大 journal 文本跨重启完整恢复。版本冲突仅在基窗及绝对坐标安全时可自动重试，否则草稿保留并可复制。
+- Rust savepoint 驱动 dirty；journal、保存、查找/替换、大纲、外部文件状态和跨文档 WorkspaceEdit 已改为从 Rust 文档读取或写入。未脏时 journal 不持久化文本；需要查询、保存或记录脏 journal 时会按需临时读取全文。超预算程序化编辑沿用受共享历史预算限制的旧快照帧。
+- 验证：`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 全量 186 项）；`cargo fmt --all -- --check`、`flutter analyze --no-pub` 零问题。定向输入/恢复用例通过；2,000,001 UTF-16 journal fixture 确认重启后 Rust 文本完整，Flutter 窗口为 16,383 单元，并显式确认冲突后完整保存到磁盘。
+- GitNexus 变更前 `RustTextInputFieldState` 为 CRITICAL（64 项/118 流程）；`enqueue` 为 UNKNOWN，源码检索确认字段 listener、FFI/widget tests 和工作台 flush 路径。提交前图谱为 6,015 节点/11,499 边/328 流程，但 422 个入口候选和 251 个 callee 被截断；重复 staged 检测为 14 文件/71 符号、受影响流程数 94–296；all 为 45 文件/76–78 符号、受影响流程数 273–294，均为 CRITICAL。一次 all 返回 PARTIAL 后重跑成功。all 包含既有用户工作树改动；计数存在波动，不能用空结果解释为无影响。
+- P03.4.2b2/b3 已关闭；P03.4 仍进行中，P03.4.2c 的 Windows/macOS/Linux Alula 原生 IME 候选定位/提交/取消实测尚未完成。500 MiB 内存目标继续按用户要求排到 P14，本切片不做整机内存目标测量。
+- 报告：`docs/diagnostics/2026-10-30-p03/p03.4.2b-workbench-bounded-rust-input.md`。
+
 ### 最新进展（2026-10-30，P03.4.2b1 Rust savepoint 合同）
 
 - Rust `TextBuffer` 持有 Rope savepoint 快照；可在成功保存时将当前内容设为 savepoint，也能在 journal 恢复时单独指定磁盘基线。dirty 与外部磁盘文本比较逐字节精确，不从 Rust Rope 物化完整 String；savepoint 操作不改变文本版本。

@@ -3,6 +3,7 @@
 // 代理对（Emoji）场景必须有专门用例。
 import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/undo_stack.dart';
+import 'package:alula_app/bridge/alula_core.dart' show TextOp;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -150,6 +151,80 @@ void main() {
       st.push(before: 'baseab', caret: 6, coalesce: true);
       final u = st.undo('baseabc', 7)!;
       expect(u.text, 'base', reason: '整段打字一次回退');
+    });
+
+    test(
+        'operation frames coalesce and move between undo/redo without snapshots',
+        () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 10);
+      final stack = UndoStack(budget: budget);
+      stack.pushOperations(
+        forward: [const TextOp.insert(3, 'a')],
+        inverse: [const TextOp.delete(3, 1)],
+        caret: 3,
+        coalesce: false,
+      );
+      stack.pushOperations(
+        forward: [const TextOp.insert(4, 'b')],
+        inverse: [const TextOp.delete(4, 1)],
+        caret: 4,
+        coalesce: true,
+      );
+
+      expect(budget.totalEntries, 1);
+      expect(budget.totalChars, 2);
+      final undo = stack.takeOperationUndo()!;
+      expect(undo.isOperation, isTrue);
+      expect(undo.text, isEmpty, reason: 'no whole-document text is retained');
+      expect(
+        undo.inverseBatches,
+        [
+          [const TextOp.delete(4, 1)],
+          [const TextOp.delete(3, 1)],
+        ],
+      );
+      expect(stack.canUndo, isFalse);
+      expect(stack.canRedo, isTrue);
+      expect(budget.totalEntries, 1, reason: 'moving to redo keeps one frame');
+
+      final redo = stack.takeOperationRedo()!;
+      expect(
+        redo.forwardBatches,
+        [
+          [const TextOp.insert(3, 'a')],
+          [const TextOp.insert(4, 'b')],
+        ],
+      );
+      expect(stack.canUndo, isTrue);
+      expect(stack.canRedo, isFalse);
+      expect(budget.totalChars, 2);
+      stack.dispose();
+      expect(budget.totalEntries, 0);
+      expect(budget.totalChars, 0);
+    });
+
+    test(
+        'operation history budget counts inserted UTF-16 payload including deletes',
+        () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 8);
+      final stack = UndoStack(budget: budget);
+      stack.pushOperations(
+        forward: [
+          const TextOp.delete(1, 2),
+          const TextOp.insert(1, 'x'),
+        ],
+        inverse: [
+          const TextOp.delete(1, 1),
+          const TextOp.insert(1, '👨'),
+        ],
+        caret: 1,
+        coalesce: false,
+      );
+
+      expect(budget.totalChars, 3, reason: 'emoji is two UTF-16 code units');
+      stack.clear();
+      expect(budget.totalChars, 0);
+      stack.dispose();
     });
 
     test('新变更作废 redo 栈', () {
