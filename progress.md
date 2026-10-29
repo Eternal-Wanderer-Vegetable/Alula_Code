@@ -657,3 +657,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - WSLg/Xvfb 主应用 1 GiB cgroup / swap=0 的真实 Rust Analyzer 10 分钟 idle：600 秒无输入，memory.current 峰值 803.91 MiB、scope PSS 峰值 889.30 MiB、单核归一 CPU 8.036%，OOM/OOM-kill=0/0；关闭+30秒 RA/proc-macro 退出。该单轮软件渲染样本不代表 DRM 主机。证据：`docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-10m-idle-cgroup-1024-20261029-065450.{json,md}`。
 - P00.4 仍 blocked：Windows Rust+RA 稳态超过 500 MiB，真实 DRM/WPE GBM/DMABUF 和 Microsoft 官方服务身份/许可仍不可用，VS Code 对照有版本差异，完整 docs/04 产品跨平台矩阵未完成；feat-022/P00 继续 in-progress，P01 不开始。没有提交产品代码。
 - P00.4 阶段证据提交 `c7f0d9b` 已推送到 PR #1。GitHub 检查全绿：CI run `40791174980`（Flutter analyze/test、Ubuntu/Windows Rust、Harness）、macOS WKWebView/Safari run `40791174984`、Linux WPE run `40791174974`。
+
+## 最新进展（2026-10-29，第六十九轮）
+
+- 按授权继续 P00.4 本地 WSL idle 观察：在既有 WSLg/Xvfb Rust+RA 10 分钟样本基础上新增两轮；每轮 1 GiB cgroup、swap=0、无输入 600 秒。峰值 `memory.current` 为 809.56/821.54 MiB，scope PSS 峰值 880.26/892.16 MiB，OOM=0，应用退出码 0，关闭+30秒 RA/proc-macro 均退出，隔离 HOME/fixture 清除。三次观察汇总见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-3run-summary-20261029.md`。
+- 修正采样器以焦点 XTest 键盘输入打开 `rust-mini/src/main.rs`，短截图预检已看到该文件（`docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-ui-check-src-main-20261029.png`）；修正按空闲边界前样本归因进程 CPU。两个新样本中 Alula 分别消耗约 154.79/146.97 CPU 秒，RA 低于 10 秒快照分辨率；旧样本单核归一 CPU 为 8.036%，和新样本差异明显。当前归因提示 WSLg/Xvfb software-GL 路径需要单独调查，不能外推真实桌面。另一次短截图检查的 UI 关闭未在限时内退出（SIGTERM，exit -15），已从有效内存样本中排除，失败预检见 `docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-ui-preflight-20261029.{json,md}`；三轮正式样本均为 exit 0。
+- 这三次 WSLg 观察的 scope PSS 峰值中位数 889.30 MiB，高于 500 MiB Rust+RA 目标；它们不覆盖真实 DRM/WPE GBM/DMABUF、完整 docs/04 多场景压力矩阵或同版本编辑负载。P00.4/feat-022 仍 blocked/in-progress，P01 不启动。本轮未改产品源代码。
