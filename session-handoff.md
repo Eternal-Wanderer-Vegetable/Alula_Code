@@ -240,3 +240,15 @@ Tree-sitter Rust-only/全文parse；lsp_stop仅detach；watcher全事件重读�
 ## Next Session 首步更新
 
 先审阅本轮 P00.4 诊断和状态文件的 staged diff，确认只包含本轮 runner、报告及状态记录；再按 GitNexus detect-changes 结果分阶段提交。后续优先追查 WSLg/Xvfb idle 中 Alula 约25–27% CPU 的来源，并继续补齐 docs/04 长时多场景产品矩阵。
+
+
+## Verification Update（第六十九轮：提交与 CI）
+
+- P00.4 诊断提交 `07515f3` 已推送到 `codex/vscode-parity-p00`。GitHub CI run `40806485257`、Linux WPE Web Engine Probe `40806485215`、macOS Web Engine Probe `40806485341` 均成功。CI 不代表原生 DRM/WPE GBM 或完整产品内存门通过。
+- P00.4/feat-022 继续 blocked/in-progress；工作区保留既有 app/harness 修改，未混入 `07515f3`。
+
+## Next Session 首步更新
+
+1. 按 AGENTS 启动流程读取状态、检查 `node .gitnexus/run.cjs status`，再运行 `bash init.sh --fast`。
+2. 继续查明 WSLg/Xvfb 下 Alula idle CPU 约 25–27% 的来源；把结果留在 P00.4 诊断范围内，不改变内存预算或功能范围。
+3. 等待真实 DRM/WPE GBM/DMABUF 与 Microsoft 官方服务身份/许可的安全接入条件；继续完善 docs/04 产品矩阵。P00/feat-022 未签收前不启动 P01。
