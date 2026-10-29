@@ -5,6 +5,21 @@
 
 ## Current State（当前状态，2026-10-29 P00 执行）
 
+### 最新进展（2026-10-29，第七十八轮，固定版 Code-OSS 30 分钟脚本编辑对照）
+
+- 固定 Code-OSS 1.145.0-dev commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e + rust-analyzer 0.3.3089/server 1.97.1，在隔离 profile/扩展/shared-data 与 rust-mini 副本上完成 1800.556 秒脚本编辑对照。临时 helper extension 用 VS Code TextEditor API 每 12 秒追加并保存一个 Rust 注释：150/150 次保存均读盘验证，最终标记齐全，源 fixture SHA-256 未变；RA 可见。
+- 采集 1484 个进程树样本、首末跨度 1798.990 秒、中位间隔 1.197 秒。Private Bytes 峰值/尾段最后 40% 上中位/末值为 2223.14/1774.34/1788.38 MiB，末 Working Set 1853.30 MiB。尾段进程组中位 Private Bytes：Code-OSS 1327.12 MiB，rust-analyzer 431.38 MiB；统计包含临时 helper extension 开销。一次启动焦点恢复后无重复，关闭+30 秒所有观察 PID 退出，临时目录清理。
+- 30 秒预检完成 6/6 次保存。首次纯窗口 API 恢复前台受 Windows 限制、未开始采样；改用短暂 Alt 授权恢复后预检和正式运行通过。该脚本编辑不是键盘延迟或 Alula 编辑体验验收；仍高于 500 MiB 产品目标，真实 DRM/WPE GBM、官方服务身份/许可与完整 docs/04 矩阵未完成。P00.4 仍 blocked/in-progress，P01 不启动。
+- 证据：docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-edit-30m-20261029-181513092.json/.md、p00.4-windows-code-oss-rust-lsp-edit-30m.ps1；预检报告 p00.4-windows-code-oss-rust-lsp-edit-preflight-20261029-181116397.json/.md。
+- bash init.sh、cargo fmt --check、flutter analyze 全部退出 0；Rust tests、Clippy、build_core、Flutter 122 项测试通过。GitNexus analyze/status 刷新完成；detect-changes --scope all 覆盖当前 43 个变更文件、20 个 symbols、0 个受影响流程、low 风险；范围包含工作树既有改动，本轮只提交限定证据文件和状态记录。
+
+### 最新进展（2026-10-29，第七十七轮，Windows VS Code 同服务 idle 复跑 3）
+
+- WSL 到 Windows PowerShell 的互操作已恢复。按用户授权，用新隔离 profile、rust-analyzer 0.3.3089 扩展副本、同服务 server 1.97.1 与 rust-mini fixture 完成 Microsoft VS Code 1.142.0 Stable idle 复跑：600 点、实际 858 秒、采样跨度 856.532 秒、中位间隔 1.422 秒；Private Bytes 峰值/尾段稳定/末值 1728.71/1431.09/1423.68 MiB，末 Working Set 1648.97 MiB。
+- RA 在进程树可见。启动时焦点恢复一次；关闭+30 秒所有记录 PID 退出，profile、扩展副本和 shared-data 已清理。该样本只补充 idle 对照，不能替代固定 Code-OSS 1.145.0-dev、30 分钟编辑或 docs/04 全矩阵。
+- 五轮 VS Code 同服务 idle 稳定值为 1267.18/1324.33/1298.38/1351.11/1431.09 MiB，中位数 1324.33 MiB；单轮间有明显差异。P00.4 保持 blocked/in-progress，P01 不启动。报告：`docs/diagnostics/2026-10-28-p00/p00.4-windows-vscode-rust-lsp-idle-rerun3-20261029-172235485.{json,md}`；日志与 runner 同目录。
+- 第七十八轮继续完成了这组提交前门禁与 GitNexus 变更分析，结果见上文；其余既有未提交改动不纳入该轮提交。
+
 ### 最新进展（2026-10-29，第七十六轮，固定版 Code-OSS Rust+RA idle 对照完成）
 
 - 复现并定位 Code-OSS 无 renderer 的根因：旧生成的 NLS-indexed `out/mainImpl.js` 与开发启动器 `VSCODE_DEV=1` 不兼容，主进程抛出 `NLS MISSING: 140`。Windows Node 24.22.1 重跑标准 dev transpile 后，30 秒隔离 smoke 在 6 秒内看到 renderer。

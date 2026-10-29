@@ -1,0 +1,761 @@
+{
+  "label": "code-oss-rust-lsp-edit-preflight",
+  "product": "Code-OSS 1.145.0-dev pinned commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "exe": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+  "source_commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "source_version": "1.145.0",
+  "source_electron_version": "",
+  "executable_sha256": "24C9DA29867C5547214ADDBC7AC3FBF5D4CE3B04867A26BA5AC6CB18919BD126",
+  "launch_method": "upstream scripts/code.bat with VSCODE_SKIP_PRELAUNCH=1; isolated user-data/extensions/shared-data paths",
+  "extension": "rust-lang.rust-analyzer 0.3.3089",
+  "extension_package_sha256": "238E7888D636DCD9377961C6C1416F7BFD9A0A45EBF126DAE52F13BF1000FC57",
+  "rust_analyzer_server": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe (rust-analyzer 1.97.1 (8bab26f4 2026-07-14))",
+  "automation_method": "isolated helper extension using vscode.TextEditor.edit and vscode.TextDocument.save; no global edit keystrokes or CDP; a transient Alt key event may authorize focus restoration",
+  "helper_extension_id": "local.p00-edit-driver",
+  "helper_extension_version": "1.0.0",
+  "helper_extension_package_sha256": "55CA342C5DA0B6F44C96B51FA5BCA319BEAFC2D0BF3E2BF20F89508EE9CE1653",
+  "helper_extension_source_sha256": "2E9949BF390BFC755E2EADF932E1ACC547B388309D70C16C25F3FC404EC50810",
+  "expected_saved_edits": 6,
+  "actual_saved_edits": 6,
+  "save_events": [
+    {
+      "index": 1,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0001",
+      "dueAtUtc": "2026-10-29T10:11:27.759Z",
+      "savedAtUtc": "2026-10-29T10:11:27.797Z",
+      "elapsedMs": 38,
+      "diskVerified": true
+    },
+    {
+      "index": 2,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0002",
+      "dueAtUtc": "2026-10-29T10:11:32.759Z",
+      "savedAtUtc": "2026-10-29T10:11:32.780Z",
+      "elapsedMs": 5021,
+      "diskVerified": true
+    },
+    {
+      "index": 3,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0003",
+      "dueAtUtc": "2026-10-29T10:11:37.759Z",
+      "savedAtUtc": "2026-10-29T10:11:37.788Z",
+      "elapsedMs": 10029,
+      "diskVerified": true
+    },
+    {
+      "index": 4,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0004",
+      "dueAtUtc": "2026-10-29T10:11:42.759Z",
+      "savedAtUtc": "2026-10-29T10:11:42.783Z",
+      "elapsedMs": 15024,
+      "diskVerified": true
+    },
+    {
+      "index": 5,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0005",
+      "dueAtUtc": "2026-10-29T10:11:47.759Z",
+      "savedAtUtc": "2026-10-29T10:11:47.790Z",
+      "elapsedMs": 20031,
+      "diskVerified": true
+    },
+    {
+      "index": 6,
+      "marker": "P00_CODE_OSS_API_20261029-181116397_0006",
+      "dueAtUtc": "2026-10-29T10:11:52.759Z",
+      "savedAtUtc": "2026-10-29T10:11:52.784Z",
+      "elapsedMs": 25025,
+      "diskVerified": true
+    }
+  ],
+  "target_fixture_sha256_before": "6689B6C06534079C1A006631F54D180F642D169F7A15455C50A2A7EEB2B02684",
+  "target_fixture_sha256_after": "A7A21CE9C890F5675A1BC1BF935E40F9A506C0B65E4FE5AC3F25C7143971D0CD",
+  "original_fixture_sha256_before": "6689B6C06534079C1A006631F54D180F642D169F7A15455C50A2A7EEB2B02684",
+  "original_fixture_sha256_after": "6689B6C06534079C1A006631F54D180F642D169F7A15455C50A2A7EEB2B02684",
+  "all_saved_markers_present": true,
+  "all_saves_verified_on_disk": true,
+  "isolated_settings_sha256": "301A001A65C531AEE7A2415FA6082E4443DB7B3E4EFCD305B0829B2DFE690181",
+  "args": [
+    "--new-window",
+    "--user-data-dir=E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-profile-20261029-181116397",
+    "--extensions-dir=E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-extensions-20261029-181116397",
+    "--shared-data-dir=E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-shared-20261029-181116397",
+    "--disable-telemetry",
+    "--disable-workspace-trust",
+    "E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-fixture-20261029-181116397"
+  ],
+  "rust_analyzer_observed": true,
+  "rust_analyzer_process_paths": [
+    "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+    "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe"
+  ],
+  "fixture": "E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-fixture-20261029-181116397",
+  "isolated_profile": "E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-profile-20261029-181116397",
+  "isolated_extensions": "E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-extensions-20261029-181116397",
+  "isolated_shared_data": "E:\\alula_code\\app\\build\\p00.4-code-oss-rust-edit-shared-20261029-181116397",
+  "isolated_data_cleaned": true,
+  "telemetry_disabled": true,
+  "automatic_updates_disabled_by_profile_setting": true,
+  "duration_s": 31.306,
+  "target_duration_s": 30,
+  "edit_interval_s": 5,
+  "target_sample_count": 25,
+  "interval_s": 1,
+  "actual_sampling_span_s": 29.623,
+  "actual_median_sample_interval_s": 1.212,
+  "root_pid": 44268,
+  "captured_at": "2026-10-29 10:11:16 UTC",
+  "foreground_stayed_stable": false,
+  "focus_recovery_events": [
+    {
+      "captured_at_utc": "2026-10-29 10:11:17.900 UTC",
+      "isolated_foreground_hwnd": 6564070,
+      "restored_foreground_hwnd": 24906696,
+      "restored": true
+    }
+  ],
+  "samples": [
+    {
+      "t": 0.608,
+      "total_private": 1679998976,
+      "total_working_set": 1943834624,
+      "n_processes": 13
+    },
+    {
+      "t": 1.9,
+      "total_private": 1779085312,
+      "total_working_set": 1989079040,
+      "n_processes": 13
+    },
+    {
+      "t": 3.353,
+      "total_private": 2009313280,
+      "total_working_set": 2175025152,
+      "n_processes": 15
+    },
+    {
+      "t": 4.671,
+      "total_private": 1860567040,
+      "total_working_set": 2038165504,
+      "n_processes": 13
+    },
+    {
+      "t": 5.95,
+      "total_private": 1831149568,
+      "total_working_set": 2006249472,
+      "n_processes": 13
+    },
+    {
+      "t": 7.114,
+      "total_private": 1839136768,
+      "total_working_set": 2009731072,
+      "n_processes": 13
+    },
+    {
+      "t": 8.368,
+      "total_private": 1845841920,
+      "total_working_set": 2017337344,
+      "n_processes": 13
+    },
+    {
+      "t": 9.582,
+      "total_private": 1876295680,
+      "total_working_set": 2047123456,
+      "n_processes": 13
+    },
+    {
+      "t": 10.824,
+      "total_private": 1882636288,
+      "total_working_set": 2053513216,
+      "n_processes": 13
+    },
+    {
+      "t": 12.062,
+      "total_private": 1887518720,
+      "total_working_set": 2054144000,
+      "n_processes": 13
+    },
+    {
+      "t": 13.277,
+      "total_private": 1891315712,
+      "total_working_set": 2058006528,
+      "n_processes": 13
+    },
+    {
+      "t": 14.64,
+      "total_private": 1935159296,
+      "total_working_set": 2100932608,
+      "n_processes": 13
+    },
+    {
+      "t": 15.815,
+      "total_private": 2211450880,
+      "total_working_set": 2370838528,
+      "n_processes": 13
+    },
+    {
+      "t": 16.954,
+      "total_private": 2277380096,
+      "total_working_set": 2432303104,
+      "n_processes": 13
+    },
+    {
+      "t": 18.149,
+      "total_private": 2278944768,
+      "total_working_set": 2432970752,
+      "n_processes": 13
+    },
+    {
+      "t": 19.374,
+      "total_private": 2092761088,
+      "total_working_set": 2246991872,
+      "n_processes": 13
+    },
+    {
+      "t": 20.584,
+      "total_private": 2101137408,
+      "total_working_set": 2251624448,
+      "n_processes": 13
+    },
+    {
+      "t": 21.779,
+      "total_private": 2106916864,
+      "total_working_set": 2251784192,
+      "n_processes": 13
+    },
+    {
+      "t": 22.983,
+      "total_private": 2054803456,
+      "total_working_set": 2197946368,
+      "n_processes": 13
+    },
+    {
+      "t": 24.275,
+      "total_private": 2064539648,
+      "total_working_set": 2209206272,
+      "n_processes": 13
+    },
+    {
+      "t": 25.45,
+      "total_private": 2071797760,
+      "total_working_set": 2216636416,
+      "n_processes": 13
+    },
+    {
+      "t": 26.658,
+      "total_private": 2024939520,
+      "total_working_set": 2165235712,
+      "n_processes": 13
+    },
+    {
+      "t": 27.836,
+      "total_private": 2011250688,
+      "total_working_set": 2148216832,
+      "n_processes": 13
+    },
+    {
+      "t": 29.03,
+      "total_private": 1972408320,
+      "total_working_set": 2110193664,
+      "n_processes": 13
+    },
+    {
+      "t": 30.231,
+      "total_private": 1970208768,
+      "total_working_set": 2109165568,
+      "n_processes": 13
+    }
+  ],
+  "process_snapshots": [
+    {
+      "t": 0.608,
+      "processes": [
+        {
+          "pid": 44268,
+          "ppid": 17208,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 368721920,
+          "working_set": 414048256
+        },
+        {
+          "pid": 48068,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 212983808,
+          "working_set": 118808576
+        },
+        {
+          "pid": 28192,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 14389248,
+          "working_set": 54308864
+        },
+        {
+          "pid": 31092,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 593821696,
+          "working_set": 615874560
+        },
+        {
+          "pid": 24256,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 115384320,
+          "working_set": 183791616
+        },
+        {
+          "pid": 44952,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 135819264,
+          "working_set": 174772224
+        },
+        {
+          "pid": 34120,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 70905856,
+          "working_set": 113930240
+        },
+        {
+          "pid": 6024,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 142123008,
+          "working_set": 184172544
+        },
+        {
+          "pid": 28432,
+          "ppid": 6024,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+          "private": 3375104,
+          "working_set": 11714560
+        },
+        {
+          "pid": 23472,
+          "ppid": 28432,
+          "name": "conhost.exe",
+          "executable_path": "C:\\windows\\system32\\conhost.exe",
+          "private": 1257472,
+          "working_set": 8101888
+        },
+        {
+          "pid": 21032,
+          "ppid": 28432,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+          "private": 15056896,
+          "working_set": 34816000
+        },
+        {
+          "pid": 19596,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3072000,
+          "working_set": 14745600
+        },
+        {
+          "pid": 24136,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3088384,
+          "working_set": 14749696
+        }
+      ]
+    },
+    {
+      "t": 13.277,
+      "processes": [
+        {
+          "pid": 44268,
+          "ppid": 17208,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 370515968,
+          "working_set": 415436800
+        },
+        {
+          "pid": 48068,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 257380352,
+          "working_set": 130527232
+        },
+        {
+          "pid": 28192,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 14438400,
+          "working_set": 54411264
+        },
+        {
+          "pid": 31092,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 582672384,
+          "working_set": 606580736
+        },
+        {
+          "pid": 24256,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 230903808,
+          "working_set": 234029056
+        },
+        {
+          "pid": 44952,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 137056256,
+          "working_set": 175964160
+        },
+        {
+          "pid": 34120,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 71020544,
+          "working_set": 114327552
+        },
+        {
+          "pid": 6024,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 151543808,
+          "working_set": 192696320
+        },
+        {
+          "pid": 28432,
+          "ppid": 6024,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+          "private": 3375104,
+          "working_set": 11714560
+        },
+        {
+          "pid": 23472,
+          "ppid": 28432,
+          "name": "conhost.exe",
+          "executable_path": "C:\\windows\\system32\\conhost.exe",
+          "private": 1257472,
+          "working_set": 8101888
+        },
+        {
+          "pid": 21032,
+          "ppid": 28432,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+          "private": 64991232,
+          "working_set": 84721664
+        },
+        {
+          "pid": 19596,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3072000,
+          "working_set": 14745600
+        },
+        {
+          "pid": 24136,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3088384,
+          "working_set": 14749696
+        }
+      ]
+    },
+    {
+      "t": 25.45,
+      "processes": [
+        {
+          "pid": 44268,
+          "ppid": 17208,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 176599040,
+          "working_set": 224444416
+        },
+        {
+          "pid": 48068,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 276799488,
+          "working_set": 133894144
+        },
+        {
+          "pid": 28192,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 14376960,
+          "working_set": 54382592
+        },
+        {
+          "pid": 31092,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 541954048,
+          "working_set": 566956032
+        },
+        {
+          "pid": 24256,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 230711296,
+          "working_set": 233865216
+        },
+        {
+          "pid": 44952,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 137052160,
+          "working_set": 175984640
+        },
+        {
+          "pid": 34120,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 71184384,
+          "working_set": 114466816
+        },
+        {
+          "pid": 6024,
+          "ppid": 44268,
+          "name": "Code - OSS.exe",
+          "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+          "private": 156839936,
+          "working_set": 197480448
+        },
+        {
+          "pid": 28432,
+          "ppid": 6024,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+          "private": 3375104,
+          "working_set": 11714560
+        },
+        {
+          "pid": 23472,
+          "ppid": 28432,
+          "name": "conhost.exe",
+          "executable_path": "C:\\windows\\system32\\conhost.exe",
+          "private": 1257472,
+          "working_set": 8101888
+        },
+        {
+          "pid": 21032,
+          "ppid": 28432,
+          "name": "rust-analyzer.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+          "private": 455487488,
+          "working_set": 465850368
+        },
+        {
+          "pid": 19596,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3072000,
+          "working_set": 14745600
+        },
+        {
+          "pid": 24136,
+          "ppid": 21032,
+          "name": "rust-analyzer-proc-macro-srv.exe",
+          "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+          "private": 3088384,
+          "working_set": 14749696
+        }
+      ]
+    }
+  ],
+  "tail_process_breakdown": [
+    {
+      "process_identity": "Code - OSS.exe [E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe]",
+      "observations": 1,
+      "tail_median_private": 1605517312,
+      "peak_private": 1605517312,
+      "final_observed_private": 1605517312,
+      "final_process_count": 8
+    },
+    {
+      "process_identity": "rust-analyzer.exe [C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe]",
+      "observations": 1,
+      "tail_median_private": 455487488,
+      "peak_private": 455487488,
+      "final_observed_private": 455487488,
+      "final_process_count": 1
+    },
+    {
+      "process_identity": "rust-analyzer-proc-macro-srv.exe [C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe]",
+      "observations": 1,
+      "tail_median_private": 6160384,
+      "peak_private": 6160384,
+      "final_observed_private": 6160384,
+      "final_process_count": 2
+    },
+    {
+      "process_identity": "rust-analyzer.exe [C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe]",
+      "observations": 1,
+      "tail_median_private": 3375104,
+      "peak_private": 3375104,
+      "final_observed_private": 3375104,
+      "final_process_count": 1
+    },
+    {
+      "process_identity": "conhost.exe [C:\\windows\\system32\\conhost.exe]",
+      "observations": 1,
+      "tail_median_private": 1257472,
+      "peak_private": 1257472,
+      "final_observed_private": 1257472,
+      "final_process_count": 1
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 44268,
+      "ppid": 17208,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 176357376,
+      "working_set": 224460800
+    },
+    {
+      "pid": 48068,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 290799616,
+      "working_set": 134959104
+    },
+    {
+      "pid": 28192,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 14376960,
+      "working_set": 54382592
+    },
+    {
+      "pid": 31092,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 513908736,
+      "working_set": 543961088
+    },
+    {
+      "pid": 24256,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 230711296,
+      "working_set": 233865216
+    },
+    {
+      "pid": 44952,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 90001408,
+      "working_set": 129126400
+    },
+    {
+      "pid": 34120,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 67313664,
+      "working_set": 110624768
+    },
+    {
+      "pid": 6024,
+      "ppid": 44268,
+      "name": "Code - OSS.exe",
+      "executable_path": "E:\\_alula_vscode_ref_4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e\\.build\\electron\\Code - OSS.exe",
+      "private": 115871744,
+      "working_set": 158101504
+    },
+    {
+      "pid": 28432,
+      "ppid": 6024,
+      "name": "rust-analyzer.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.cargo\\bin\\rust-analyzer.exe",
+      "private": 3276800,
+      "working_set": 11665408
+    },
+    {
+      "pid": 23472,
+      "ppid": 28432,
+      "name": "conhost.exe",
+      "executable_path": "C:\\windows\\system32\\conhost.exe",
+      "private": 1216512,
+      "working_set": 8081408
+    },
+    {
+      "pid": 21032,
+      "ppid": 28432,
+      "name": "rust-analyzer.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\bin\\rust-analyzer.exe",
+      "private": 455426048,
+      "working_set": 465825792
+    },
+    {
+      "pid": 19596,
+      "ppid": 21032,
+      "name": "rust-analyzer-proc-macro-srv.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+      "private": 2981888,
+      "working_set": 14696448
+    },
+    {
+      "pid": 24136,
+      "ppid": 21032,
+      "name": "rust-analyzer-proc-macro-srv.exe",
+      "executable_path": "C:\\Users\\Vegetable\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\libexec\\rust-analyzer-proc-macro-srv.exe",
+      "private": 2990080,
+      "working_set": 14696448
+    }
+  ],
+  "summary": {
+    "peak_private": 2278944768,
+    "stable_private": 2064539648,
+    "stable_method": "upper-middle of Private Bytes values from chronological last ceil(2*n/5) samples, matching tools/mem-probe::summarize",
+    "stable_tail_sample_count": 10,
+    "stable_tail_start_sample_index": 15,
+    "stable_tail_start_t_s": 19.374,
+    "final_private": 1970208768,
+    "final_working_set": 2109165568
+  },
+  "close_check": {
+    "wait_seconds": 30,
+    "checked_at": "2026-10-29 10:12:30 UTC",
+    "all_recorded_pids_exited": true,
+    "still_alive_pids": []
+  }
+}
