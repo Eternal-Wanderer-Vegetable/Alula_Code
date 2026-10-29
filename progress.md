@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.4.2b1 Rust savepoint 合同）
+
+- Rust `TextBuffer` 持有 Rope savepoint 快照；可在成功保存时将当前内容设为 savepoint，也能在 journal 恢复时单独指定磁盘基线。dirty 与外部磁盘文本比较逐字节精确，不从 Rust Rope 物化完整 String；savepoint 操作不改变文本版本。
+- ABI 升至 v15，Rust FFI 与 Dart `AlulaDoc` 双侧新增 set/mark/isDirty/matches 接口；Dart↔Rust fixture 覆盖 CJK、emoji、BOM/CRLF、编辑回到 savepoint、恢复基线和版本稳定。
+- 定向 Rust buffer/core/FFI 测试 48 项通过；新 Dart FFI 测试通过。完整 `bash init.sh` EXIT=0（Flutter 179 项；大文本 journal fixture 2,000,001 UTF-16 单元成功写入并恢复），`cargo fmt --all -- --check`、`flutter analyze --no-pub` 均通过。报告：`docs/diagnostics/2026-10-30-p03/p03.4.2b1-rust-savepoint-state.md`。
+- GitNexus pre-edit：`TextBuffer` 与 `DocRegistry` impact 均为 CRITICAL，`AlulaDoc` MEDIUM；ABI 常量为 UNKNOWN，源码确认 Rust FFI 自测及 Dart 加载握手的消费点。最终 staged detect-change 为 11 files/48 symbols、CRITICAL；all 为 43 files/54 symbols、CRITICAL，含既存用户改动。索引 5,945 nodes/307 flows 仍丢弃 404 个入口候选、192 个 callees 并截断 5 个 walk；报告保留该限制。Rope savepoint 用共享 Rope 根保持回退快照；此切片不是整机内存测量或 P14 优化。
+- 限制：本切片只建 Rust 文档状态合同，工作台依然有全文 `TextEditingController`；dirty/savepoint 目前尚未由工作台消费。P03.4.2b2 接入有界输入控件，b3 再处理 undo/journal/查找/大纲/跨文档与生命周期。
+
 ### 最新进展（2026-10-30，P03.4.2a Flutter 有界 EditableText 适配器）
 
 - 新增 `RustTextInputField`，以 Flutter `EditableText` 作为有界 Rust input session 的系统文本输入客户端；窗口不超过 64 Ki UTF-16。超限平台更新恢复到最近接受值并通知宿主，版本/FFI错误留 pending 并显示错误状态。宿主可显式 flush、commit 或 cancel composition；替换/移除控件前需先 flush。

@@ -176,6 +176,32 @@ impl DocRegistry {
         self.docs.get(&id).map(|b| b.text())
     }
 
+    pub fn mark_saved(&mut self, id: u64) -> bool {
+        let Some(buffer) = self.docs.get_mut(&id) else {
+            return false;
+        };
+        buffer.mark_saved();
+        true
+    }
+
+    pub fn set_savepoint_text(&mut self, id: u64, text: &str) -> bool {
+        let Some(buffer) = self.docs.get_mut(&id) else {
+            return false;
+        };
+        buffer.set_savepoint_text(text);
+        true
+    }
+
+    pub fn is_dirty(&self, id: u64) -> Option<bool> {
+        self.docs.get(&id).map(TextBuffer::is_dirty)
+    }
+
+    pub fn savepoint_matches_text(&self, id: u64, text: &str) -> Option<bool> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.savepoint_matches_text(text))
+    }
+
     /// Read a bounded UTF-16 range from the Rust-authoritative document.
     pub fn read_range(
         &self,
@@ -409,6 +435,53 @@ mod tests {
             .unwrap();
         assert_eq!(v, 2);
         assert_eq!(reg.content(1), Some((2, "hello!".to_string())));
+    }
+
+    #[test]
+    fn rust_savepoint_state_handles_external_baseline_and_undo_to_clean() {
+        let mut reg = DocRegistry::new();
+        assert_eq!(reg.open(17, "甲🦊\r\n"), 1);
+        assert_eq!(reg.is_dirty(17), Some(false));
+
+        reg.apply(
+            17,
+            1,
+            &[TextOp::Insert {
+                offset_utf16: 5,
+                text: "x".into(),
+            }],
+        )
+        .unwrap();
+        assert_eq!(reg.is_dirty(17), Some(true));
+        assert_eq!(reg.savepoint_matches_text(17, "甲🦊\r\n"), Some(true));
+
+        reg.apply(
+            17,
+            2,
+            &[TextOp::Delete {
+                offset_utf16: 5,
+                len_utf16: 1,
+            }],
+        )
+        .unwrap();
+        assert_eq!(reg.is_dirty(17), Some(false));
+
+        assert!(reg.set_savepoint_text(17, "disk baseline"));
+        assert_eq!(reg.is_dirty(17), Some(true));
+        assert_eq!(reg.savepoint_matches_text(17, "disk baseline"), Some(true));
+        let version = reg.version_of(17);
+        assert!(reg.mark_saved(17));
+        assert_eq!(reg.is_dirty(17), Some(false));
+        assert_eq!(reg.version_of(17), version);
+    }
+
+    #[test]
+    fn savepoint_operations_report_unknown_documents() {
+        let mut reg = DocRegistry::new();
+        assert_eq!(reg.is_dirty(99), None);
+        assert_eq!(reg.savepoint_matches_text(99, "text"), None);
+        assert!(!reg.mark_saved(99));
+        assert!(!reg.set_savepoint_text(99, "text"));
     }
 
     #[test]

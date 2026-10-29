@@ -135,13 +135,16 @@ impl std::error::Error for BufferError {}
 #[derive(Clone)]
 pub struct TextBuffer {
     rope: Rope,
+    savepoint: Rope,
     version: u64,
 }
 
 impl TextBuffer {
     pub fn open(content: &str) -> Self {
+        let rope = Rope::from_str(content);
         TextBuffer {
-            rope: Rope::from_str(content),
+            savepoint: rope.clone(),
+            rope,
             version: 1,
         }
     }
@@ -152,6 +155,26 @@ impl TextBuffer {
 
     pub fn text(&self) -> String {
         self.rope.to_string()
+    }
+
+    /// Mark the current Rope snapshot as the document savepoint.
+    pub fn mark_saved(&mut self) {
+        self.savepoint = self.rope.clone();
+    }
+
+    /// Set the savepoint to text loaded from disk or a recovery journal.
+    pub fn set_savepoint_text(&mut self, text: &str) {
+        self.savepoint = Rope::from_str(text);
+    }
+
+    /// Compare exact UTF-8 bytes without materializing either Rope as a String.
+    pub fn is_dirty(&self) -> bool {
+        !self.rope.bytes().eq(self.savepoint.bytes())
+    }
+
+    /// Compare an external snapshot with the current savepoint.
+    pub fn savepoint_matches_text(&self, text: &str) -> bool {
+        self.savepoint.bytes().eq(text.bytes())
     }
 
     pub fn len_utf16(&self) -> usize {
@@ -691,6 +714,39 @@ mod tests {
         .unwrap();
         assert_eq!(buf.text(), "{ab}");
         assert_eq!(buf.version(), 3);
+    }
+
+    #[test]
+    fn savepoint_tracks_exact_utf8_text_and_revert_without_bumping_version() {
+        let mut buf = TextBuffer::open("\u{FEFF}甲🦊\r\n");
+        assert!(!buf.is_dirty());
+        assert!(buf.savepoint_matches_text("\u{FEFF}甲🦊\r\n"));
+
+        buf.apply(&TextOp::Insert {
+            offset_utf16: buf.len_utf16(),
+            text: "x".into(),
+        })
+        .unwrap();
+        assert!(buf.is_dirty());
+        assert!(buf.savepoint_matches_text("\u{FEFF}甲🦊\r\n"));
+
+        buf.apply(&TextOp::Delete {
+            offset_utf16: buf.len_utf16() - 1,
+            len_utf16: 1,
+        })
+        .unwrap();
+        assert!(!buf.is_dirty());
+
+        let version_before_mark = buf.version();
+        buf.mark_saved();
+        assert_eq!(buf.version(), version_before_mark);
+        assert!(!buf.is_dirty());
+
+        buf.set_savepoint_text("disk 🦊\r\n");
+        assert_eq!(buf.version(), version_before_mark);
+        assert!(buf.is_dirty());
+        assert!(buf.savepoint_matches_text("disk 🦊\r\n"));
+        assert!(!buf.savepoint_matches_text("disk 🦊\n"));
     }
 
     #[test]

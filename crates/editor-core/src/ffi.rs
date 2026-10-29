@@ -29,7 +29,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 14;
+pub const ALULA_ABI_VERSION: u32 = 15;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -309,6 +309,71 @@ pub unsafe extern "C" fn alula_doc_open(id: u64, content: *const c_char) -> *mut
         to_c_ptr(json!({ "ok": true, "version": version }).to_string())
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_open")))
+}
+
+/// Set a document's disk/recovery savepoint without changing its text version.
+///
+/// # Safety
+/// `content` must be a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_set_savepoint(id: u64, content: *const c_char) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let content = match read_c_str(content) {
+            Ok(content) => content,
+            Err(error) => return error,
+        };
+        if registry_lock().set_savepoint_text(id, content) {
+            to_c_ptr(json!({ "ok": true }).to_string())
+        } else {
+            err_json("UnknownDoc", json!({ "id": id }))
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_set_savepoint")))
+}
+
+/// Mark the current document text as its savepoint without changing its version.
+#[no_mangle]
+pub extern "C" fn alula_doc_mark_saved(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if registry_lock().mark_saved(id) {
+            to_c_ptr(json!({ "ok": true }).to_string())
+        } else {
+            err_json("UnknownDoc", json!({ "id": id }))
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_mark_saved")))
+}
+
+/// Return exact dirty state compared with the Rust-owned savepoint.
+#[no_mangle]
+pub extern "C" fn alula_doc_is_dirty(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| match registry_lock().is_dirty(id) {
+        Some(dirty) => to_c_ptr(json!({ "ok": true, "dirty": dirty }).to_string()),
+        None => err_json("UnknownDoc", json!({ "id": id })),
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_is_dirty")))
+}
+
+/// Compare an external text snapshot with the Rust-owned savepoint.
+///
+/// # Safety
+/// `content` must be a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_savepoint_matches(
+    id: u64,
+    content: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let content = match read_c_str(content) {
+            Ok(content) => content,
+            Err(error) => return error,
+        };
+        match registry_lock().savepoint_matches_text(id, content) {
+            Some(matches) => to_c_ptr(json!({ "ok": true, "matches": matches }).to_string()),
+            None => err_json("UnknownDoc", json!({ "id": id })),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_savepoint_matches")))
 }
 
 /// 应用增量操作。`ops_json` 为 `TextOp` 数组的 JSON（格式见 editor-buffer）。
@@ -1228,6 +1293,59 @@ mod tests {
         assert_eq!(r["version"], 2);
         // offset 10 位于 ' 与 ) 之间
         assert_eq!(r["content"], "print('hi'!)\n");
+    }
+
+    #[test]
+    fn rust_owned_savepoint_roundtrip_over_ffi_keeps_document_version() {
+        let id = 92_814;
+        let opened = take(unsafe { alula_doc_open(id, c("甲🦊\r\n").as_ptr()) });
+        assert_eq!(opened["version"], 1);
+        assert_eq!(take(alula_doc_is_dirty(id))["dirty"], false);
+
+        let insert = c(r#"[{"type":"insert","offset_utf16":5,"text":"x"}]"#);
+        let changed = take(unsafe { alula_doc_apply(id, 1, insert.as_ptr()) });
+        assert_eq!(changed["version"], 2);
+        assert_eq!(take(alula_doc_is_dirty(id))["dirty"], true);
+        assert_eq!(
+            take(unsafe { alula_doc_savepoint_matches(id, c("甲🦊\r\n").as_ptr()) })["matches"],
+            true
+        );
+
+        let baseline = c("disk 🦊\r\n");
+        assert_eq!(
+            take(unsafe { alula_doc_set_savepoint(id, baseline.as_ptr()) })["ok"],
+            true
+        );
+        assert_eq!(take(alula_doc_resync(id))["version"], 2);
+        assert_eq!(take(alula_doc_is_dirty(id))["dirty"], true);
+        assert_eq!(
+            take(unsafe { alula_doc_savepoint_matches(id, baseline.as_ptr()) })["matches"],
+            true
+        );
+
+        assert_eq!(take(alula_doc_mark_saved(id))["ok"], true);
+        assert_eq!(take(alula_doc_is_dirty(id))["dirty"], false);
+        assert_eq!(take(alula_doc_resync(id))["version"], 2);
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn savepoint_ffi_reports_unknown_document() {
+        let id = 92_815;
+        assert_eq!(take(alula_doc_is_dirty(id))["error"]["code"], "UnknownDoc");
+        assert_eq!(
+            take(alula_doc_mark_saved(id))["error"]["code"],
+            "UnknownDoc"
+        );
+        assert_eq!(
+            take(unsafe { alula_doc_set_savepoint(id, c("baseline").as_ptr()) })["error"]["code"],
+            "UnknownDoc"
+        );
+        assert_eq!(
+            take(unsafe { alula_doc_savepoint_matches(id, c("baseline").as_ptr()) })["error"]
+                ["code"],
+            "UnknownDoc"
+        );
     }
 
     #[test]

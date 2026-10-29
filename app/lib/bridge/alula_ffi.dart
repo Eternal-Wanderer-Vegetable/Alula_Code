@@ -58,6 +58,28 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
           Pointer<Utf8> Function(int, Pointer<Utf8>)>('alula_doc_open');
 
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSetSavepoint =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_set_savepoint',
+  );
+
+  late final Pointer<Utf8> Function(int) _docMarkSaved = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_mark_saved',
+  );
+
+  late final Pointer<Utf8> Function(int) _docIsDirty = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_is_dirty',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSavepointMatches =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_savepoint_matches',
+  );
+
   late final Pointer<Utf8> Function(int, int, Pointer<Utf8>) _docApply =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Pointer<Utf8>),
           Pointer<Utf8> Function(int, int, Pointer<Utf8>)>('alula_doc_apply');
@@ -239,6 +261,28 @@ class AlulaFfi {
     final p = content.toNativeUtf8();
     try {
       return _takeJson(_docOpen(id, p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String docSetSavepointJson(int id, String content) {
+    final p = content.toNativeUtf8();
+    try {
+      return _takeJson(_docSetSavepoint(id, p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String docMarkSavedJson(int id) => _takeJson(_docMarkSaved(id));
+
+  String docIsDirtyJson(int id) => _takeJson(_docIsDirty(id));
+
+  String docSavepointMatchesJson(int id, String content) {
+    final p = content.toNativeUtf8();
+    try {
+      return _takeJson(_docSavepointMatches(id, p));
     } finally {
       malloc.free(p);
     }

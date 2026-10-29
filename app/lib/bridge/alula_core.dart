@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 14;
+const int expectedAbiVersion = 15;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 const int maxDocReadLines = 256;
 
@@ -680,6 +680,38 @@ class AlulaDoc {
 
   /// 提交一批增量操作；成功返回 Rust 确认的版本号（应等于 version + ops 数）。
   int apply(List<TextOp> ops) => applyWith(version, ops);
+
+  /// Replace the Rust-owned savepoint, for example after restoring a dirty
+  /// journal entry whose savepoint came from a different on-disk snapshot.
+  void setSavepoint(String text) {
+    _requireOk(core._ffi.docSetSavepointJson(id, text));
+  }
+
+  /// Mark the current Rust text as the savepoint after a successful save.
+  void markSaved() {
+    _requireOk(core._ffi.docMarkSavedJson(id));
+  }
+
+  /// Exact dirty comparison against the Rust-owned savepoint.
+  bool get isDirty {
+    return _requireOk(core._ffi.docIsDirtyJson(id))['dirty'] as bool;
+  }
+
+  /// Compare an external snapshot with the Rust-owned savepoint.
+  bool savepointMatches(String text) {
+    return _requireOk(core._ffi.docSavepointMatchesJson(id, text))['matches']
+        as bool;
+  }
+
+  Map<String, Object?> _requireOk(String json) {
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] == true) return result;
+    final error = result['error'] as Map<String, Object?>?;
+    throw AlulaException(
+      error?['code'] as String? ?? 'Unknown',
+      jsonEncode(error?['detail']),
+    );
+  }
 
   /// 以显式 baseVersion 提交（正常编辑走 [apply]；测试与恢复路径用本方法）。
   int applyWith(int baseVersion, List<TextOp> ops) {
