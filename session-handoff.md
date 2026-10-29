@@ -10,7 +10,7 @@
 
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
 - P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 当前 in-progress：P02.1 每文档 undo/redo 与共享历史预算、P02.2 dirty/savepoint 跨编辑/undo/redo/既有路径保存已完成；下一切片 P02.3 Save As/Revert。
-- Rust + rust-analyzer ≤500 MiB 暂时不作为验收门；历史与新增测量保留为基线，P14 重新定标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。
+- Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合与验收门；历史与新增测量仅作基线，P14 完成整体架构后重新制定优化指标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。
 - 真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可仍有外部阻塞，按 docs/03 对应阶段处理，不阻塞当前 P02。
 - P02.1 证据：docs/diagnostics/2026-10-30-p02/p02.1-per-document-undo.md。P02.2 证据与验证：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md。
 

@@ -159,7 +159,7 @@
     {
       "id": "feat-012",
       "name": "P1 性能验收：内存预算与冷启动达标",
-      "description": "遗留 Phase 1 数值优化门迁移至 P14：空工作台/普通项目/冷启动/同功能对照目标保留；Rust + rust-analyzer ≤500 MiB 暂停，复刻完成后重新定标。",
+      "description": "遗留 Phase 1 数值优化门迁移至 P14：空工作台/普通项目/冷启动/同功能对照目标保留；Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合，历史测量仅作基线，复刻完成后重新定标。",
       "dependencies": [
         "feat-010",
         "feat-011"

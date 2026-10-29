@@ -782,4 +782,4 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - 完成 P02.2：拆分磁盘 savepoint savedText 与 Rust diff 基线 syncText；undo/redo 跨已保存文本时 dirty 正确清除/恢复，Rust resync 不覆盖磁盘 savepoint。Widget fixture 覆盖 Ctrl+S、undo、redo、标签 dirty 点及磁盘内容。
 - 完整门禁 FLUTTER_BIN=/tmp/alula-flutter-serial bash init.sh 通过：Rust workspace tests、Clippy、build_core、Flutter 133/133；另有 cargo fmt --all -- --check、Flutter analyze（0 issues）、定向 19 项测试通过。细节和风险边界：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md。
-- 500 MiB Rust + rust-analyzer 目标仍按用户新优先级暂停到 P14；下一项 P02.3 Save As/Revert。现有工作树包含无关用户改动，阶段提交会按文件及内容精确选择。
+- Rust + rust-analyzer ≤500 MiB 目标已按用户调整暂时移出当前目标，历史测量仅作基线，P14 重新定标；下一项 P02.3 Save As/Revert。现有工作树包含无关用户改动，阶段提交会按文件及内容精确选择。
