@@ -4221,6 +4221,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     onDelta: (delta) => _onInputDelta(active.id, delta),
                     onPresentationChanged: () =>
                         _scheduleSelectionRefresh(active),
+                    onAltClick: (localOffset) {
+                      final previous = active.selectionSet;
+                      final offset = active.inputWindow.startUtf16 +
+                          localOffset
+                              .clamp(0, active.editingValue.text.length)
+                              .toInt();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!mounted || _active?.id != active.id) return;
+                        _setDocSelections(active, [
+                          ...previous,
+                          TextSelection.collapsed(offset: offset),
+                        ]);
+                      });
+                    },
                     onError: (error) {
                       if (!_disposing && mounted && _active?.id == active.id) {
                         setState(() {

@@ -10,7 +10,7 @@
 - 接入多光标插入、选区替换、退格/删除、列选、次级 caret/highlight、Ctrl+D/全匹配、光标历史和多选复制/剪切；格式化后的编辑仍经有界 Rust 输入窗提交。UTF-16 偏移、emoji/组合字素、CRLF、IME preedit 与次级选择映射有定向用例。
 - Workbench fixtures 验证 Ctrl+D 修改并保存两处 Rust 文本，Ctrl+Z 与 Ctrl+U 历史互不干扰，剪切落盘、CRLF 列选编辑、IME 提交和不同文档标签 selection 隔离。
 - `bash init.sh` EXIT=0：Rust workspace tests、Clippy、build_core 与 Flutter 全量 207 项通过；`cargo fmt --all -- --check` 和 `flutter analyze --no-pub` 通过。P03.5 报告：`docs/diagnostics/2026-10-30-p03/p03.5-multi-cursor-column-selection.md`。
-- P03.5 继续 in-progress：新增按行分配多光标粘贴，剪贴板行数匹配 selection 数时逐行分配，否则完整 payload 发往每个光标；UTF-16 emoji、CRLF、数量不匹配、Rust 保存由 3 个新用例验证。两份多光标定向测试 21 项通过；本轮 `bash init.sh` Rust workspace、Clippy、build_core 与 Flutter 210 项全量测试通过，`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 零问题。 精确 staged snapshot 的 Flutter 210 项、Clippy、build_core 通过；首次 Rust workspace 有一条既有 savepoint FFI resync 版本用例瞬时失败，随后同一 staged snapshot workspace 重跑与当前 workspace 重跑均通过；源码没有 Rust staged 变更。同文档多视图 selection 按 docs/03 留到 P03.7；剩余 P03.5 缺口为输入窗外 occurrence 搜索、Alt+Click pointer 坐标 fixture/阶段快照。像素级绘制对照也未完成，不启动 P03.6，不做 P14 数值优化。
+- P03.5 继续 in-progress：按行分配粘贴已有 emoji/CRLF、数量不匹配和 Rust 保存 fixtures；Alt+Click 全局坐标 fixture 验证 offset 6 次级 caret 且主 caret 保持 offset 0。当前工作树与精确 staged snapshot 的 `bash init.sh` 均通过（Flutter 211 项），Rust workspace、Clippy、build_core 全绿；两侧 `cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 均通过。GitNexus staged/all 均 CRITICAL；受影响流程计数随增量刷新波动，入口与分支预算存在截断，直接调用链已源码核对且未据此降低风险。窗口外 occurrence 搜索仍未完成；同文档多视图 selection 按 docs/03 留到 P03.7。像素级绘制对照也未完成，不启动 P03.6，不做 P14 数值优化。
 
 
 ### 最新进展（2026-10-30，P03.4.2c Windows/Linux IME 部分平台证据）

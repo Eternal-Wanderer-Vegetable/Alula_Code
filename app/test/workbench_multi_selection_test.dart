@@ -6,6 +6,8 @@ import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter/rendering.dart' show RenderEditable, RenderObject;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -132,6 +134,65 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(file.readAsStringSync(), 'left x right');
+  });
+
+  testWidgets('Alt+Click adds a cursor at the hit-tested UTF-16 position',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-alt-click-cursor');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/sample.txt').writeAsStringSync('alpha beta');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection.collapsed(offset: 0);
+    await tester.pump();
+
+    final editableRoot = tester.renderObject<RenderObject>(
+      find.descendant(of: editor, matching: find.byType(EditableText)),
+    );
+    RenderEditable? findEditable(RenderObject object) {
+      if (object is RenderEditable) return object;
+      RenderEditable? found;
+      object.visitChildren((child) {
+        found ??= findEditable(child);
+      });
+      return found;
+    }
+
+    final editable = findEditable(editableRoot)!;
+    const targetOffset = 6;
+    final caretRect = editable.getLocalRectForCaret(
+      const TextPosition(offset: targetOffset),
+    );
+    final localClick = Offset(caretRect.left + 0.1, caretRect.center.dy);
+    final globalClick = editable.localToGlobal(localClick);
+    expect(editable.getPositionForPoint(globalClick).offset, targetOffset);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.tapAt(globalClick, kind: PointerDeviceKind.mouse);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    await tester.pump();
+
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections,
+        const [TextSelection.collapsed(offset: targetOffset)]);
+    expect(controller.selection, const TextSelection.collapsed(offset: 0));
   });
 
   testWidgets('Ctrl+D adds an occurrence and typing updates both Rust ranges',

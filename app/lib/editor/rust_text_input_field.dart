@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart' show kPrimaryButton, PointerDownEvent;
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
@@ -20,6 +22,7 @@ class RustTextInputField extends StatefulWidget {
     this.decoration,
     this.semanticsLabel,
     this.onTap,
+    this.onAltClick,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
@@ -35,6 +38,7 @@ class RustTextInputField extends StatefulWidget {
   final InputDecoration? decoration;
   final String? semanticsLabel;
   final VoidCallback? onTap;
+  final ValueChanged<int>? onAltClick;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
@@ -53,6 +57,34 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   String? _errorMessage;
 
   TextEditingValue get editingValue => _controller.value;
+
+  /// Hit-tests a global pointer coordinate against this editor's text layout.
+  int? _textOffsetAtGlobalPosition(Offset globalPosition) {
+    final editable = _findEditableRenderObject(context);
+    if (editable == null) return null;
+    return editable.getPositionForPoint(globalPosition).offset;
+  }
+
+  void _handlePointerDown(PointerDownEvent event) {
+    if (event.buttons != kPrimaryButton ||
+        !HardwareKeyboard.instance.isAltPressed ||
+        HardwareKeyboard.instance.isControlPressed) {
+      return;
+    }
+    final offset = _textOffsetAtGlobalPosition(event.position);
+    if (offset != null) widget.onAltClick?.call(offset);
+  }
+
+  RenderEditable? _findEditableRenderObject(BuildContext subtree) {
+    if (subtree is StatefulElement && subtree.state is EditableTextState) {
+      return (subtree.state as EditableTextState).renderEditable;
+    }
+    RenderEditable? found;
+    subtree.visitChildElements((child) {
+      found ??= _findEditableRenderObject(child);
+    });
+    return found;
+  }
 
   /// Changes the local selection while keeping the input window's acknowledged
   /// selection in step with the Flutter text-input client.
@@ -277,24 +309,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   @override
   Widget build(BuildContext context) {
-    final field = TextField(
-      key: const ValueKey<String>('rust-bounded-text-input'),
-      controller: _controller,
-      focusNode: _focusNode,
-      scrollController: widget.scrollController,
-      inputFormatters:
-          widget.inputFormatter == null ? null : [widget.inputFormatter!],
-      autofocus: widget.autofocus,
-      onTap: widget.onTap,
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      expands: true,
-      style: widget.style ?? const TextStyle(fontFamily: 'monospace'),
-      decoration: widget.decoration ??
-          const InputDecoration(
-            border: InputBorder.none,
-            isCollapsed: true,
-          ),
+    final field = Listener(
+      onPointerDown: widget.onAltClick == null ? null : _handlePointerDown,
+      child: TextField(
+        key: const ValueKey<String>('rust-bounded-text-input'),
+        controller: _controller,
+        focusNode: _focusNode,
+        scrollController: widget.scrollController,
+        inputFormatters:
+            widget.inputFormatter == null ? null : [widget.inputFormatter!],
+        autofocus: widget.autofocus,
+        onTap: widget.onTap,
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        expands: true,
+        style: widget.style ?? const TextStyle(fontFamily: 'monospace'),
+        decoration: widget.decoration ??
+            const InputDecoration(
+              border: InputBorder.none,
+              isCollapsed: true,
+            ),
+      ),
     );
     final textStyle = DefaultTextStyle.of(context).style.merge(
           widget.style ?? const TextStyle(fontFamily: 'monospace'),
