@@ -16,7 +16,8 @@
 ## Windows — pending
 
 - There is no Windows command runner in the local WSL environment.
-- `.github/workflows/platform-availability.yml` now builds the Windows x64 Release bundle on the pushed branch, places `alula_core.dll` beside the executable, checks that the process survives startup, and uploads the bundle. Record the workflow run ID, result, and any blocker here after it finishes.
+- First native workflow run: `41060624442`. Linux passed; Windows failed at `flutter build windows --release` with “No Windows desktop project configured.” The clean checkout confirmed `app/windows/` was absent because the root `.gitignore` excluded it. The Windows runner existed only as ignored local files, so earlier local Windows build evidence did not prove a clean clone could build.
+- Remediation in progress: remove the blanket Windows-runner ignore and commit the Flutter-generated Windows runner sources. Then the branch workflow rebuilds the Windows x64 Release bundle, places `alula_core.dll` beside the executable, checks that the process survives startup, and uploads the bundle. Windows remains pending until a follow-up run passes.
 - Existing Windows editing evidence is recorded in `docs/diagnostics/2026-10-28-p00/`; it predates this current folded-viewport commit and is not a current-revision availability check.
 
 ## macOS — gated and unverified
