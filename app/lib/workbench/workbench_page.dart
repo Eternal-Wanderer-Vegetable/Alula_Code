@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import '../editor/find_replace.dart';
 import '../editor/multi_selection.dart';
+import '../editor/occurrence_search.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
 import '../editor/text_diff.dart';
@@ -953,86 +954,314 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ]);
   }
 
-  void _selectNextOccurrence({int skipMatches = 0}) {
-    final doc = _active;
-    if (doc == null) return;
-    _flushInput(doc);
-    final value = doc.editingValue;
-    final selection = value.selection;
+  String? _selectedOccurrenceNeedle(OpenDoc doc) {
+    final selection = doc.selection;
     final start = selection.baseOffset < selection.extentOffset
         ? selection.baseOffset
         : selection.extentOffset;
     final end = selection.baseOffset < selection.extentOffset
         ? selection.extentOffset
         : selection.baseOffset;
-    if (start == end) {
+    final window = doc.inputWindow;
+    final localStart = start - window.startUtf16;
+    final localEnd = end - window.startUtf16;
+    final text = doc.editingValue.text;
+    if (start == end ||
+        localStart < 0 ||
+        localEnd > text.length ||
+        localStart >= localEnd ||
+        !_isUtf16CodePointBoundary(text, localStart) ||
+        !_isUtf16CodePointBoundary(text, localEnd)) {
+      return null;
+    }
+    return text.substring(localStart, localEnd);
+  }
+
+  bool _isUtf16CodePointBoundary(String text, int offset) {
+    if (offset < 0 || offset > text.length) return false;
+    if (offset == 0 || offset == text.length) return true;
+    final previous = text.codeUnitAt(offset - 1);
+    final next = text.codeUnitAt(offset);
+    return !(previous >= 0xD800 &&
+        previous <= 0xDBFF &&
+        next >= 0xDC00 &&
+        next <= 0xDFFF);
+  }
+
+  bool _selectionOverlapsMatch(TextSelection selection, int start, int end) {
+    final low = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final high = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (low == high) return low >= start && low < end;
+    return low < end && high > start;
+  }
+
+  (int, int)? _remoteCaretDeletionRange(
+    OpenDoc doc,
+    int caret, {
+    required bool backwards,
+  }) {
+    final total = doc.inputWindow.totalUtf16Length;
+    if (backwards) {
+      var start = (caret - maxDocReadRangeUtf16 + 1)
+          .clamp(0, caret)
+          .toInt();
+      TextRangeRead range;
+      while (true) {
+        try {
+          range = doc.doc.readRange(
+            start,
+            maxLenUtf16: caret - start,
+          );
+          break;
+        } on AlulaException catch (error) {
+          if (error.code != 'InvalidUtf16Offset' || start == 0) rethrow;
+          start--;
+        }
+      }
+      final boundary = previousGraphemeBoundary(
+        range.text,
+        caret - range.startUtf16,
+      );
+      if (boundary == 0 && range.startUtf16 > 0) return null;
+      return (range.startUtf16 + boundary, caret);
+    }
+
+    if (caret >= total) return null;
+    final range = doc.doc.readRange(
+      caret,
+      maxLenUtf16: (total - caret).clamp(1, maxDocReadRangeUtf16).toInt(),
+    );
+    final boundary = nextGraphemeBoundary(range.text, 0);
+    if (boundary == range.text.length && range.endUtf16 < total) return null;
+    return (caret, caret + boundary);
+  }
+
+  void _prepareRemoteMultiSelectionEdits(
+    OpenDoc doc,
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+    TextEditingValue formattedValue,
+  ) {
+    final windowStart = doc.inputWindow.startUtf16;
+    final windowEnd = windowStart + oldValue.text.length;
+    final rawOps = diffToOps(oldValue.text, newValue.text);
+    final rawDeletedLength = rawOps
+        .where((operation) => operation.type == OpType.delete)
+        .fold<int>(0, (sum, operation) => sum + operation.lenUtf16!);
+    final insertedText = rawOps
+        .where((operation) => operation.type == OpType.insert)
+        .map((operation) => operation.text!)
+        .join();
+    final backwardsDelete = oldValue.selection.isCollapsed &&
+        rawDeletedLength > 0 &&
+        rawOps.first.offsetUtf16 < oldValue.selection.extentOffset;
+    final localOps = diffToOps(oldValue.text, formattedValue.text);
+    final localGroup = localOps.isEmpty
+        ? null
+        : _SelectionEditOffset(
+            windowStart + localOps.first.offsetUtf16,
+            localOps
+                .where((operation) => operation.type == OpType.delete)
+                .fold<int>(0, (sum, operation) => sum + operation.lenUtf16!),
+            localOps
+                .where((operation) => operation.type == OpType.insert)
+                .fold<int>(0, (sum, operation) => sum + operation.text!.length),
+          );
+    final additionalOperations = <TextOp>[];
+    final remoteGroups = <_SelectionEditOffset>[];
+    final unchangedExternal = <TextSelection>[];
+
+    for (final selection in doc.additionalSelections) {
+      final low = selection.baseOffset < selection.extentOffset
+          ? selection.baseOffset
+          : selection.extentOffset;
+      final high = selection.baseOffset < selection.extentOffset
+          ? selection.extentOffset
+          : selection.baseOffset;
+      final insideWindow = low >= windowStart && high <= windowEnd;
+      if (insideWindow) continue;
+      final beforeWindow = high <= windowStart;
+      final afterWindow = low >= windowEnd;
+      if (!beforeWindow && !afterWindow) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+
+      var editStart = low;
+      var deletedLength = high - low;
+      if (selection.isCollapsed && rawDeletedLength > 0 &&
+          oldValue.selection.isCollapsed) {
+        final range = _remoteCaretDeletionRange(
+          doc,
+          low,
+          backwards: backwardsDelete,
+        );
+        if (range == null) {
+          unchangedExternal.add(selection);
+          continue;
+        }
+        editStart = range.$1;
+        deletedLength = range.$2 - range.$1;
+      }
+      if (deletedLength == 0 && insertedText.isEmpty) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+      final editEnd = editStart + deletedLength;
+      if (localGroup != null &&
+          localGroup.deletedLength > 0 &&
+          editStart < localGroup.start + localGroup.deletedLength &&
+          localGroup.start < editEnd) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+
+      if (deletedLength > 0) {
+        additionalOperations.add(TextOp.delete(editStart, deletedLength));
+      }
+      if (insertedText.isNotEmpty) {
+        additionalOperations.add(TextOp.insert(editStart, insertedText));
+      }
+      remoteGroups.add(
+        _SelectionEditOffset(editStart, deletedLength, insertedText.length),
+      );
+    }
+
+    final groups = [
+      if (localGroup != null) localGroup,
+      ...remoteGroups,
+    ]..sort((a, b) => a.start.compareTo(b.start));
+    int mapOffset(int offset) {
+      var shift = 0;
+      for (final group in groups) {
+        if (offset < group.start) break;
+        if (offset <= group.start + group.deletedLength) {
+          return group.start + shift + group.insertedLength;
+        }
+        shift += group.insertedLength - group.deletedLength;
+      }
+      return offset + shift;
+    }
+
+    final remoteSelections = <TextSelection>[
+      for (final group in remoteGroups)
+        TextSelection.collapsed(offset: mapOffset(group.start)),
+      for (final selection in unchangedExternal)
+        TextSelection(
+          baseOffset: mapOffset(selection.baseOffset),
+          extentOffset: mapOffset(selection.extentOffset),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ];
+    doc.pendingInputOperations = List.unmodifiable(additionalOperations);
+    doc.pendingInputWindowShiftUtf16 = remoteGroups
+        .where((group) => group.start < windowStart)
+        .fold<int>(
+          0,
+          (shift, group) =>
+              shift + group.insertedLength - group.deletedLength,
+        );
+    doc.additionalSelections = List.unmodifiable(remoteSelections);
+  }
+
+  void _selectNextOccurrence({int skipMatches = 0}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
       setState(() => _statusDetail = '先选择要匹配的文本');
       return;
     }
-    final needle = value.text.substring(start, end);
-    final existing = doc.selectionSet;
-    final candidates = <int>[];
-    var scan = 0;
-    while (scan <= value.text.length - needle.length) {
-      final found = value.text.indexOf(needle, scan);
-      if (found < 0) break;
-      candidates.add(found);
-      scan = found + needle.length;
+    final primary = doc.selection;
+    final selectionEnd = primary.baseOffset < primary.extentOffset
+        ? primary.extentOffset
+        : primary.baseOffset;
+    final total = doc.inputWindow.totalUtf16Length;
+    final existing = normalizeSelectionSet([
+      primary,
+      ...doc.additionalSelections,
+    ]);
+    var remaining = skipMatches;
+    int? found;
+
+    void scanRange(int start, int end) {
+      if (found != null) return;
+      for (final offset in findTextOccurrenceOffsets(
+        needle: needle,
+        totalUtf16Length: total,
+        startUtf16: start,
+        endUtf16: end,
+        readRange: doc.doc.readRange,
+      )) {
+        final matchEnd = offset + needle.length;
+        if (existing.any(
+          (selection) => _selectionOverlapsMatch(selection, offset, matchEnd),
+        )) {
+          continue;
+        }
+        if (remaining > 0) {
+          remaining--;
+          continue;
+        }
+        found = offset;
+        return;
+      }
     }
-    final afterCaret = candidates.where((offset) => offset >= end).toList();
-    final beforeCaret = candidates.where((offset) => offset < end).toList();
-    final ordered = [...afterCaret, ...beforeCaret].where((offset) {
-      final candidateEnd = offset + needle.length;
-      return !existing.any((item) {
-        final low = (item.baseOffset < item.extentOffset
-                ? item.baseOffset
-                : item.extentOffset) -
-            doc.inputWindow.startUtf16;
-        final high = (item.baseOffset > item.extentOffset
-                ? item.baseOffset
-                : item.extentOffset) -
-            doc.inputWindow.startUtf16;
-        return low < candidateEnd && high > offset;
-      });
-    }).toList();
-    if (skipMatches >= ordered.length) return;
-    final found = ordered[skipMatches];
+
+    scanRange(selectionEnd, total);
+    scanRange(0, selectionEnd);
+    final foundOffset = found;
+    if (foundOffset == null) return;
     final match = TextSelection(
-      baseOffset: doc.inputWindow.startUtf16 + found,
-      extentOffset: doc.inputWindow.startUtf16 + found + needle.length,
+      baseOffset: foundOffset,
+      extentOffset: foundOffset + needle.length,
     );
-    _setDocSelections(doc, [...existing, match]);
+    final window = doc.inputWindow;
+    final matchOutsideWindow = match.baseOffset < window.startUtf16 ||
+        match.extentOffset > window.endUtf16;
+    _setDocSelections(
+      doc,
+      matchOutsideWindow ? [match, ...existing] : [...existing, match],
+    );
   }
 
   void _selectAllOccurrences() {
     final doc = _active;
     if (doc == null) return;
     _flushInput(doc);
-    final value = doc.editingValue;
-    final selection = value.selection;
-    final start = selection.baseOffset < selection.extentOffset
-        ? selection.baseOffset
-        : selection.extentOffset;
-    final end = selection.baseOffset < selection.extentOffset
-        ? selection.extentOffset
-        : selection.baseOffset;
-    if (start == end) {
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
       setState(() => _statusDetail = '先选择要匹配的文本');
       return;
     }
-    final needle = value.text.substring(start, end);
-    final matches = <TextSelection>[];
-    var from = 0;
-    while (from <= value.text.length - needle.length) {
-      final found = value.text.indexOf(needle, from);
-      if (found < 0) break;
-      matches.add(TextSelection(
-        baseOffset: doc.inputWindow.startUtf16 + found,
-        extentOffset: doc.inputWindow.startUtf16 + found + needle.length,
-      ));
-      from = found + needle.length;
+    final primary = doc.selection;
+    final total = doc.inputWindow.totalUtf16Length;
+    final matches = <TextSelection>[primary];
+    var truncated = false;
+    for (final offset in findTextOccurrenceOffsets(
+      needle: needle,
+      totalUtf16Length: total,
+      readRange: doc.doc.readRange,
+    )) {
+      final matchEnd = offset + needle.length;
+      if (_selectionOverlapsMatch(primary, offset, matchEnd)) continue;
+      if (matches.length >= defaultMultiCursorLimit) {
+        truncated = true;
+        break;
+      }
+      matches.add(TextSelection(baseOffset: offset, extentOffset: matchEnd));
     }
-    if (matches.isNotEmpty) _setDocSelections(doc, matches);
+    _setDocSelections(doc, matches);
+    if (truncated && mounted) {
+      setState(() => _statusDetail =
+          '已选择前 $defaultMultiCursorLimit 个匹配项（editor.multiCursorLimit）');
+    }
   }
 
   void _mergeSelections() {
@@ -4197,9 +4426,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       additionalSelections: () =>
                           _localAdditionalSelections(active),
                       onSelectionsChanged: (localSelections) {
-                        active.additionalSelections = List.unmodifiable(
-                          _absoluteSelections(active, localSelections),
-                        );
+                        final inputWindowShift =
+                            active.pendingInputWindowShiftUtf16;
+                        active.additionalSelections = List.unmodifiable([
+                          ...active.additionalSelections,
+                          for (final selection in
+                              _absoluteSelections(active, localSelections))
+                            TextSelection(
+                              baseOffset:
+                                  selection.baseOffset + inputWindowShift,
+                              extentOffset:
+                                  selection.extentOffset + inputWindowShift,
+                              affinity: selection.affinity,
+                              isDirectional: selection.isDirectional,
+                            ),
+                        ]);
+                        active.pendingInputWindowShiftUtf16 = 0;
                         active.columnSelection = null;
                       },
                       onSelectionChanged: (oldValue, newValue) {
@@ -4213,10 +4455,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         _scheduleSelectionRefresh(active);
                         _syncCommandContext();
                       },
-                      onTextChanged: () {
+                      onTextChanged: (oldValue, newValue, formattedValue) {
                         active.columnSelection = null;
+                        _prepareRemoteMultiSelectionEdits(
+                          active,
+                          oldValue,
+                          newValue,
+                          formattedValue,
+                        );
                       },
                     ),
+                    additionalOperations: () {
+                      final operations = active.pendingInputOperations;
+                      active.pendingInputOperations = const [];
+                      return operations;
+                    },
                     additionalSelections: _localAdditionalSelections(active),
                     onDelta: (delta) => _onInputDelta(active.id, delta),
                     onPresentationChanged: () =>
@@ -4591,6 +4844,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 }
 
+class _SelectionEditOffset {
+  const _SelectionEditOffset(
+    this.start,
+    this.deletedLength,
+    this.insertedLength,
+  );
+
+  final int start;
+  final int deletedLength;
+  final int insertedLength;
+}
+
 /// 打开的文档（有路径的文件，或未命名草稿）。
 class OpenDoc {
   OpenDoc({
@@ -4626,6 +4891,8 @@ class OpenDoc {
   final UndoStack undoStack;
   final SelectionHistory selectionHistory = SelectionHistory();
   List<TextSelection> additionalSelections = const [];
+  List<TextOp> pendingInputOperations = const [];
+  int pendingInputWindowShiftUtf16 = 0;
   ColumnSelectionState? columnSelection;
   DateTime? lastEditAt;
   bool undoRedoBusy = false;

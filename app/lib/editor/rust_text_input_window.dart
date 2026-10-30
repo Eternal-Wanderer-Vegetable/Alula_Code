@@ -104,6 +104,7 @@ class RustTextInputWindow {
   TextSelection _committedSelectionWindow;
   TextEditingValue? _composingValue;
   TextEditingValue? _pending;
+  List<TextOp> _pendingAdditionalOperations = const [];
   int _coalescedInputCount = 0;
 
   int get startUtf16 => _startUtf16;
@@ -139,10 +140,17 @@ class RustTextInputWindow {
   ///
   /// This coalesces Rust writeback, not Flutter's platform text-input state:
   /// the EditableText/IME connection still receives each native update.
-  void enqueue(TextEditingValue value) {
+  void enqueue(
+    TextEditingValue value, {
+    List<TextOp> additionalOperations = const [],
+  }) {
     _validateWindowLength(value.text);
     if (_pending != null) _coalescedInputCount++;
     _pending = value;
+    if (additionalOperations.isNotEmpty ||
+        _pendingAdditionalOperations.isEmpty) {
+      _pendingAdditionalOperations = List.unmodifiable(additionalOperations);
+    }
   }
 
   /// Applies the newest queued value, or returns null when the slot is empty.
@@ -150,8 +158,12 @@ class RustTextInputWindow {
   RustTextInputDelta? flushPending() {
     final pending = _pending;
     if (pending == null) return null;
-    final delta = _apply(pending);
+    final delta = _apply(
+      pending,
+      additionalOperations: _pendingAdditionalOperations,
+    );
     _pending = null;
+    _pendingAdditionalOperations = const [];
     return delta;
   }
 
@@ -161,7 +173,10 @@ class RustTextInputWindow {
   /// receives the resulting bounded-window diff immediately, then the caller
   /// replaces the platform value with the refreshed bounded window. Failed
   /// writes retain the one pending draft so the user can retry or copy it.
-  RustTextInputDelta applyOversized(TextEditingValue value) {
+  RustTextInputDelta applyOversized(
+    TextEditingValue value, {
+    List<TextOp> additionalOperations = const [],
+  }) {
     if (value.text.length <= maxWindowUtf16) {
       throw ArgumentError.value(value.text.length, 'value.text.length',
           'must exceed the input window limit');
@@ -175,11 +190,17 @@ class RustTextInputWindow {
           receivedUtf16: value.text.length,
         );
       }
-      final delta = _apply(value, allowOversized: true);
+      final delta = _apply(
+        value,
+        allowOversized: true,
+        additionalOperations: additionalOperations,
+      );
       _pending = null;
+      _pendingAdditionalOperations = const [];
       return delta;
     } catch (_) {
       _pending = value;
+      _pendingAdditionalOperations = List.unmodifiable(additionalOperations);
       _presentedText = value.text;
       rethrow;
     }
@@ -211,9 +232,13 @@ class RustTextInputWindow {
 
     _version = latest.version;
     _totalUtf16Length = latest.totalUtf16Length;
-    final delta =
-        _apply(value, allowOversized: value.text.length > maxWindowUtf16);
+    final delta = _apply(
+      value,
+      allowOversized: value.text.length > maxWindowUtf16,
+      additionalOperations: _pendingAdditionalOperations,
+    );
     _pending = null;
+    _pendingAdditionalOperations = const [];
     return delta;
   }
 
@@ -246,6 +271,7 @@ class RustTextInputWindow {
     }
     if (_composingValue == null && pending == null) return null;
     _pending = null;
+    _pendingAdditionalOperations = const [];
     _composingValue = null;
     _presentedText = _text;
     final selection = _mapSelection(_committedSelectionWindow, _text);
@@ -267,6 +293,7 @@ class RustTextInputWindow {
   RustTextInputDelta _apply(
     TextEditingValue value, {
     bool allowOversized = false,
+    List<TextOp> additionalOperations = const [],
   }) {
     if (!allowOversized) _validateWindowLength(value.text);
     final previousSelection = _mapSelection(_committedSelectionWindow, _text);
@@ -275,6 +302,9 @@ class RustTextInputWindow {
     final composingWindow = _mapComposingWindow(value.composing, value.text);
 
     if (_hasComposition(value.composing)) {
+      if (additionalOperations.isNotEmpty) {
+        throw StateError('Multi-selection edits cannot commit during preedit');
+      }
       final replacedRange =
           _compositionReplacementRange(localOps, composingWindow!);
       _presentedText = value.text;
@@ -290,9 +320,52 @@ class RustTextInputWindow {
       );
     }
 
-    final ops = _toDocumentOps(localOps);
-    final inverseOps = _toDocumentOps(diffToOps(value.text, _text));
-    final nextLength = _totalUtf16Length + value.text.length - _text.length;
+    final ops = [
+      ..._toDocumentOps(localOps),
+      ...additionalOperations,
+    ]..sort(_compareDocumentOpsDescending);
+    final editGroups = <int, _MutableTextEditGroup>{};
+    for (final op in ops) {
+      final group = editGroups.putIfAbsent(
+        op.offsetUtf16,
+        _MutableTextEditGroup.new,
+      );
+      switch (op.type) {
+        case OpType.delete:
+          group.deletedLength += op.lenUtf16!;
+          break;
+        case OpType.insert:
+          group.insertedText += op.text!;
+          break;
+      }
+    }
+    final editOffsets = editGroups.keys.toList()..sort();
+    final edits = <_TextEditGroup>[];
+    for (final offset in editOffsets) {
+      final group = editGroups[offset]!;
+      final deletedText = group.deletedLength == 0
+          ? ''
+          : document.readRange(offset, maxLenUtf16: group.deletedLength).text;
+      if (deletedText.length != group.deletedLength) {
+        throw StateError('A multi-selection edit split a UTF-16 scalar');
+      }
+      edits.add(_TextEditGroup(offset, deletedText, group.insertedText));
+    }
+    final inverseOps = <TextOp>[];
+    var nextLength = _totalUtf16Length;
+    var inputWindowShift = 0;
+    for (final edit in edits) {
+      final lengthDelta = edit.insertedText.length - edit.deletedText.length;
+      nextLength += lengthDelta;
+      if (edit.offsetUtf16 < _startUtf16) inputWindowShift += lengthDelta;
+      if (edit.insertedText.isNotEmpty) {
+        inverseOps
+            .add(TextOp.delete(edit.offsetUtf16, edit.insertedText.length));
+      }
+      if (edit.deletedText.isNotEmpty) {
+        inverseOps.add(TextOp.insert(edit.offsetUtf16, edit.deletedText));
+      }
+    }
     if (nextLength < 0) {
       throw StateError(
           'Input window edit would produce a negative document length');
@@ -305,8 +378,21 @@ class RustTextInputWindow {
     _composingValue = null;
     _version = nextVersion;
     _totalUtf16Length = nextLength;
+    _startUtf16 = (_startUtf16 + inputWindowShift).clamp(0, nextLength).toInt();
     final oversized = value.text.length > maxWindowUtf16;
-    final absoluteSelection = _mapSelection(value.selection, value.text);
+    final mappedSelection = _mapSelection(value.selection, value.text);
+    final absoluteSelection = mappedSelection == null
+        ? null
+        : TextSelection(
+            baseOffset: (mappedSelection.baseOffset + inputWindowShift)
+                .clamp(0, nextLength)
+                .toInt(),
+            extentOffset: (mappedSelection.extentOffset + inputWindowShift)
+                .clamp(0, nextLength)
+                .toInt(),
+            affinity: mappedSelection.affinity,
+            isDirectional: mappedSelection.isDirectional,
+          );
     if (oversized) {
       _refreshWindowAround(absoluteSelection?.extentOffset ?? _startUtf16,
           absoluteSelection: absoluteSelection);
@@ -453,6 +539,26 @@ class RustTextInputWindow {
         after >= 0xDC00 &&
         after <= 0xDFFF;
   }
+}
+
+int _compareDocumentOpsDescending(TextOp a, TextOp b) {
+  final byOffset = b.offsetUtf16.compareTo(a.offsetUtf16);
+  if (byOffset != 0) return byOffset;
+  if (a.type == b.type) return 0;
+  return a.type == OpType.delete ? -1 : 1;
+}
+
+class _MutableTextEditGroup {
+  int deletedLength = 0;
+  String insertedText = '';
+}
+
+class _TextEditGroup {
+  const _TextEditGroup(this.offsetUtf16, this.deletedText, this.insertedText);
+
+  final int offsetUtf16;
+  final String deletedText;
+  final String insertedText;
 }
 
 /// Rust's acknowledged result plus document-coordinate input metadata.

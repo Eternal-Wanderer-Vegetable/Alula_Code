@@ -5,13 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
-### 最新进展（2026-10-30，P03.5 多光标/列选首个工作台切片）
+### 最新进展（2026-10-30，P03.5 多光标/列选与窗口外 occurrence 完成）
 
-- 接入多光标插入、选区替换、退格/删除、列选、次级 caret/highlight、Ctrl+D/全匹配、光标历史和多选复制/剪切；格式化后的编辑仍经有界 Rust 输入窗提交。UTF-16 偏移、emoji/组合字素、CRLF、IME preedit 与次级选择映射有定向用例。
-- Workbench fixtures 验证 Ctrl+D 修改并保存两处 Rust 文本，Ctrl+Z 与 Ctrl+U 历史互不干扰，剪切落盘、CRLF 列选编辑、IME 提交和不同文档标签 selection 隔离。
-- `bash init.sh` EXIT=0：Rust workspace tests、Clippy、build_core 与 Flutter 全量 207 项通过；`cargo fmt --all -- --check` 和 `flutter analyze --no-pub` 通过。P03.5 报告：`docs/diagnostics/2026-10-30-p03/p03.5-multi-cursor-column-selection.md`。
-- P03.5 继续 in-progress：按行分配粘贴已有 emoji/CRLF、数量不匹配和 Rust 保存 fixtures；Alt+Click 全局坐标 fixture 验证 offset 6 次级 caret 且主 caret 保持 offset 0。当前工作树与精确 staged snapshot 的 `bash init.sh` 均通过（Flutter 211 项），Rust workspace、Clippy、build_core 全绿；两侧 `cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 均通过。GitNexus staged/all 均 CRITICAL；受影响流程计数随增量刷新波动，入口与分支预算存在截断，直接调用链已源码核对且未据此降低风险。窗口外 occurrence 搜索仍未完成；同文档多视图 selection 按 docs/03 留到 P03.7。像素级绘制对照也未完成，不启动 P03.6，不做 P14 数值优化。
-
+- P03.5 完成并按 `docs/03` 关闭：全文 occurrence 通过 Rust `readRange` 以 64 Ki UTF-16 页面扫描；Ctrl+D 可跨输入窗继续/环绕，Ctrl+Shift+L 上限 10,000 selection。窗口外多选编辑、ZWJ emoji 字素退格、保存、撤销/重做和代理对中间选区拒绝均有 fixture。
+- 之前已完成的插入/替换/退格、列选、IME overlay、复制/剪切、按行分配粘贴、独立 cursor history、Alt+Click 坐标与主 caret 保留证据继续有效；同一 DocumentId 多视图、屏幕阅读器和像素验收移交 P03.7。
+- 定向集合 `flutter test --no-pub test/occurrence_search_test.dart test/workbench_multi_selection_test.dart test/rust_text_input_window_test.dart test/rust_text_input_field_test.dart`（`app/`）31 项通过。完整 `bash init.sh`：Rust workspace tests、Clippy、build_core 和 Flutter 217 项通过；`cargo fmt --all -- --check` 通过；`flutter analyze --no-pub` 0 issues。
+- 变更前后 GitNexus 图谱索引范围、staged/all CRITICAL 风险与截断限制记录在 `docs/diagnostics/2026-10-30-p03/p03.5-multi-cursor-column-selection.md`；精确阶段快照门禁与检测待最终提交复核。
+- 下一唯一活动切片 P03.6 编辑器绘制系统。P03.4 macOS/原生 DRM Linux IME 与屏幕边缘候选窗继续保留平台门；同文档多视图 selection 与屏幕阅读器/关闭生命周期留 P03.7。500 MiB 数值优化留 P14。
 
 ### 最新进展（2026-10-30，P03.4.2c Windows/Linux IME 部分平台证据）
 

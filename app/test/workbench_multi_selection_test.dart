@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/editor/occurrence_search.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -284,6 +285,217 @@ void main() {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pump();
     expect(tester.widget<TextField>(editor).controller!.text, 'bar bar');
+  });
+
+  testWidgets('Ctrl+D finds and reveals an occurrence outside the input window',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-multicursor-range');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const prefix = 'foo';
+    const gapLength = 17000;
+    final fileText = '$prefix${'x' * gapLength}foo';
+    final file = File('${workspace.path}/sample.txt')
+      ..writeAsStringSync(fileText);
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection(baseOffset: 0, extentOffset: 3);
+    await tester.pump();
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    final selected = controller.selection;
+    expect(field.inputWindow.startUtf16, greaterThan(0));
+    expect(field.inputWindow.startUtf16 + selected.baseOffset,
+        fileText.lastIndexOf('foo'));
+    expect(
+        field.inputWindow.startUtf16 + selected.extentOffset, fileText.length);
+
+    final localText = controller.text;
+    const replacement = 'a👩‍💻';
+    final replacedText =
+        localText.replaceRange(selected.start, selected.end, replacement);
+    tester.testTextInput.updateEditingValue(TextEditingValue(
+      text: replacedText,
+      selection:
+          TextSelection.collapsed(offset: selected.start + replacement.length),
+    ));
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+        file.readAsStringSync(), '$replacement${'x' * gapLength}$replacement');
+
+    await tester.pump(const Duration(milliseconds: 500));
+    final caret = controller.selection.extentOffset;
+    final deleteStart = caret - '👩‍💻'.length;
+    final afterBackspace = controller.text.replaceRange(deleteStart, caret, '');
+    tester.testTextInput.updateEditingValue(TextEditingValue(
+      text: afterBackspace,
+      selection: TextSelection.collapsed(offset: deleteStart),
+    ));
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(file.readAsStringSync(), 'a${'x' * gapLength}a');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(
+        file.readAsStringSync(), '$replacement${'x' * gapLength}$replacement');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(file.readAsStringSync(), fileText);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(file.readAsStringSync(), 'a${'x' * gapLength}a');
+  });
+
+  testWidgets('Ctrl+D ignores a selection that splits an emoji surrogate pair',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-multicursor-surrogate');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/sample.txt').writeAsStringSync('a😀b 😀');
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection(baseOffset: 1, extentOffset: 2);
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('先选择要匹配的文本'), findsOneWidget);
+  });
+
+  testWidgets('Ctrl+Shift+L respects the VS Code multi-cursor limit',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-multicursor-limit');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/sample.txt').writeAsStringSync('a' * 10001);
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    tester.widget<TextField>(editor).controller!.selection =
+        const TextSelection(baseOffset: 0, extentOffset: 1);
+    await tester.pump();
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyL);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections, hasLength(defaultMultiCursorLimit - 1));
   });
 
   testWidgets('Alt+Shift+Down edits a CRLF file at each column caret',

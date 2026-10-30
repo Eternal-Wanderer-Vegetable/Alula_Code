@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
+import '../bridge/alula_core.dart';
 import 'rust_text_input_window.dart';
 
 /// A multiline Flutter input client whose document mirror is a bounded Rust
@@ -17,6 +18,7 @@ class RustTextInputField extends StatefulWidget {
     this.scrollController,
     this.inputFormatter,
     this.additionalSelections = const [],
+    this.additionalOperations,
     this.autofocus = false,
     this.style,
     this.decoration,
@@ -33,6 +35,7 @@ class RustTextInputField extends StatefulWidget {
   final ScrollController? scrollController;
   final TextInputFormatter? inputFormatter;
   final List<TextSelection> additionalSelections;
+  final List<TextOp> Function()? additionalOperations;
   final bool autofocus;
   final TextStyle? style;
   final InputDecoration? decoration;
@@ -149,15 +152,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   void _handleEditingValueChanged() {
     if (_restoringValue) return;
     final value = _controller.value;
+    final additionalOperations =
+        widget.additionalOperations?.call() ?? const <TextOp>[];
     try {
-      widget.inputWindow.enqueue(value);
-      _lastAcceptedValue = value;
-      _scheduleFlush();
+      widget.inputWindow.enqueue(
+        value,
+        additionalOperations: additionalOperations,
+      );
+      if (additionalOperations.isEmpty) {
+        _lastAcceptedValue = value;
+        _scheduleFlush();
+      } else {
+        flushPending();
+      }
     } on TextInputWindowLimitException catch (error) {
       if (value.text.length > widget.inputWindow.maxWindowUtf16) {
         try {
           final previousPresentation = widget.inputWindow.presentedText;
-          final delta = widget.inputWindow.applyOversized(value);
+          final delta = widget.inputWindow.applyOversized(
+            value,
+            additionalOperations: additionalOperations,
+          );
           _restoreValue(
               delta.replacementValue ?? widget.inputWindow.initialValue);
           _notifyPresentationChanged(previousPresentation);

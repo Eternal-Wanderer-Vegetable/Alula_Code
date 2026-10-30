@@ -33,7 +33,11 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
   final ValueChanged<List<TextSelection>> onSelectionsChanged;
   final void Function(TextEditingValue oldValue, TextEditingValue newValue)?
       onSelectionChanged;
-  final void Function()? onTextChanged;
+  final void Function(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+    TextEditingValue formattedValue,
+  )? onTextChanged;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -48,12 +52,13 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
       onSelectionChanged?.call(oldValue, newValue);
       return newValue;
     }
-    if (oldValue.text != newValue.text) onTextChanged?.call();
+    final textChanged = oldValue.text != newValue.text;
     final result = applyMultiSelectionEdit(
       oldValue: oldValue,
       newValue: newValue,
       additionalSelections: additionalSelections(),
     );
+    if (textChanged) onTextChanged?.call(oldValue, newValue, result.value);
     if (result.changed) onSelectionsChanged(result.selections);
     return result.value;
   }
@@ -589,6 +594,12 @@ int _safeGraphemeBoundary(String text, int offset, {required bool roundUp}) {
   }
   return boundary;
 }
+
+int previousGraphemeBoundary(String text, int offset) =>
+    _previousGraphemeBoundary(text, offset);
+
+int nextGraphemeBoundary(String text, int offset) =>
+    _nextGraphemeBoundary(text, offset);
 
 int _previousGraphemeBoundary(String text, int offset) {
   var start = _previousScalarBoundary(text, offset);
