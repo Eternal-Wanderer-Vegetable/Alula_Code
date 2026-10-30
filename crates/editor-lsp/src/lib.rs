@@ -24,6 +24,12 @@ pub struct Diagnostic {
     pub severity: u32,
     pub line: u64,
     pub character: u64,
+    #[serde(rename = "endLine", skip_serializing_if = "Option::is_none")]
+    pub end_line: Option<u64>,
+    #[serde(rename = "endCharacter", skip_serializing_if = "Option::is_none")]
+    pub end_character: Option<u64>,
+    #[serde(rename = "documentVersion", skip_serializing_if = "Option::is_none")]
+    pub document_version: Option<i64>,
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
@@ -541,21 +547,31 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                 .and_then(|v| v.as_str())
                 .unwrap_or("")
                 .to_string();
+            let document_version = params.get("version").and_then(|v| v.as_i64());
             let diags: Vec<Diagnostic> = params
                 .get("diagnostics")
                 .and_then(|v| v.as_array())
                 .map(|arr| {
                     arr.iter()
                         .filter_map(|d| {
-                            let range = d.get("range")?["start"].clone();
+                            let range = d.get("range")?;
+                            let start = range.get("start")?;
+                            let end = range.get("end");
                             Some(Diagnostic {
                                 severity: d.get("severity").and_then(|v| v.as_u64()).unwrap_or(3)
                                     as u32,
-                                line: range.get("line").and_then(|v| v.as_u64())?,
-                                character: range
+                                line: start.get("line").and_then(|v| v.as_u64())?,
+                                character: start
                                     .get("character")
                                     .and_then(|v| v.as_u64())
                                     .unwrap_or(0),
+                                end_line: end
+                                    .and_then(|position| position.get("line"))
+                                    .and_then(|v| v.as_u64()),
+                                end_character: end
+                                    .and_then(|position| position.get("character"))
+                                    .and_then(|v| v.as_u64()),
+                                document_version,
                                 message: d.get("message").and_then(|v| v.as_str())?.to_string(),
                                 source: d
                                     .get("source")

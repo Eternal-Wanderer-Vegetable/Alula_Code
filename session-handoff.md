@@ -39,5 +39,5 @@
 
 ## 下一步
 
-1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、LSP diagnostics/semantic 与 workspace-search provider 接线与像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退、版本化 Rust Tree-sitter 正文着色和当前文件 Find 装饰 provider 已接入。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
+1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、LSP semantic 与 workspace-search provider 接线和像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退、版本化 Rust Tree-sitter 正文着色、当前文件 Find 与版本化 LSP diagnostic range provider 已接入。diagnostic provider 的完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 通过（Flutter 232 项）；精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` Rust tests/Clippy/build_core、离线 `flutter test --no-pub`（232 项）和 Flutter analyze（0 issues）通过。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
 2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。

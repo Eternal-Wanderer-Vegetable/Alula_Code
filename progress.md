@@ -913,3 +913,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 将已有 Find 结果接入版本化 range painter。WorkBench 对活动 Rust 文档 id/version 记录结果；编辑器视图要求 Rust doc、input window 版本精确一致且无 pending/IME 文本，防止旧装饰误画。二分跳过窗口之前的 UTF-16 命中，只为当前有界窗口建立 decoration。
 - Workbench fixture 验证 emoji 前缀后的 `[3,9)`、`[12,18)` 命中与版本门控，并确认切换到另一文档时不会显示原文档命中；lower-bound 纯逻辑用例通过。定向 Find + bounded Workbench 25 项通过；工作树与精确 staged tree `ede714dc8ef6be1af009fa800856e9907d8a7c5d` 的完整 `RUST_TEST_THREADS=1 bash init.sh` 均退出 0（Flutter 229 项），cargo fmt 与 Flutter analyze 0 issues。GitNexus staged 9 files/11 symbols、all 40 files/16 symbols，均为 CRITICAL；增量图谱 affected-process 计数观测范围为 139–325，all 包含既存改动，风险与截断已记录。
 - 本次没有重写既有 `_refreshMatches` 全文 Find 算法；renderer 仅拿当前输入窗相交装饰。后续 architecture follow-up：通过 Rust `readRange` 分页生成 Find matches，并接入 LSP diagnostic/semantic 与 workspace search providers。
+
+
+## 今日会话（2026-10-30）：P03.6 LSP 诊断范围 provider
+
+- LSP publishDiagnostics 缓存保留可选 UTF-16 结束位置与 publication version；对 alula_diagnostics 的 C 签名和 ABI 版本没有改动。Workbench 将当前文档诊断位置映射为 Rust 绝对 UTF-16 ranges，要求 Rust/input/LSP 版本一致并排除 pending/IME 输入；按可见行过滤后复用已有 range painter 绘制 severity 下划线。
+- fake-LSP roundtrip 验证新增 JSON 字段；Dart provider fixture 覆盖 emoji UTF-16、跨行范围、severity、stale/unversioned/empty/invalid 与窗口外过滤。定向 Flutter 13 项、`cargo test -p editor-lsp --test roundtrip`、cargo fmt、Flutter analyze 0 issues 通过；完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 全绿（Flutter 232 项）。精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` 的 Rust tests/Clippy/build_core 与离线 `flutter test --no-pub`（232 项）、Flutter analyze（0 issues）也通过。
+- GitNexus 编辑前 Diagnostic exact CRITICAL（134 symbols/123 processes/20 modules），reader_loop exact CRITICAL（35/34 direct/7 processes/5 modules）；`_pollLanguageServices` 未入图，已用源码检索并逐段复核真实调用路径。保持 P03.6 in-progress；semantic/workspace search providers、minimap、sticky scroll、folding 与像素基线仍待完成。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。

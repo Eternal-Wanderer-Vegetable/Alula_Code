@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/find_replace.dart';
+import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
 import '../editor/rust_text_input_field.dart';
@@ -2003,8 +2004,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final d in _allDocs) {
         if (d.isUntitled || !d.lspAttached) continue;
         try {
-          diags.addAll(
-              core.lsp.diagnostics(d.id).map((m) => {...m, 'file': d.name}));
+          diags.addAll(core.lsp.diagnostics(d.id).map((diagnostic) => {
+                ...diagnostic,
+                'file': d.name,
+                '_documentId': d.id,
+              }));
         } catch (_) {}
       }
       if (!mounted) return;
@@ -2898,6 +2902,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     return decorations;
+  }
+
+  List<EditorRangeDecoration> _diagnosticDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null ||
+        doc.doc.version != window.version ||
+        _diagnostics.isEmpty) {
+      return const [];
+    }
+
+    final diagnostics = _diagnostics
+        .where((diagnostic) => diagnostic['_documentId'] == doc.id)
+        .toList(growable: false);
+    if (diagnostics.isEmpty) return const [];
+
+    final firstVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.startUtf16);
+    final lastVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.endUtf16);
+    if (doc.doc.version != window.version) return const [];
+
+    final lineOffsets = <int, DocumentLineOffset>{};
+    DocumentLineOffset lineOffset(int line) =>
+        lineOffsets.putIfAbsent(line, () => doc.doc.lineOffset(line));
+    return buildLspDiagnosticDecorations(
+      diagnostics: diagnostics,
+      documentVersion: doc.doc.version,
+      inputWindowVersion: window.version,
+      windowStartUtf16: window.startUtf16,
+      windowEndUtf16: window.endUtf16,
+      totalUtf16Length: window.totalUtf16Length,
+      documentLineCount: firstVisible.lineCount,
+      firstVisibleLine: firstVisible.firstLineNumber,
+      lastVisibleLine: lastVisible.firstLineNumber,
+      lineOffset: lineOffset,
+    );
   }
 
   void _gotoMatch(int direction) {
@@ -4450,6 +4490,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ? (_syntaxVersionByDoc[active.id] ?? -1)
         : -1;
     final findDecorations = _findDecorationsFor(active);
+    final diagnosticDecorations = _diagnosticDecorationsFor(active);
+    final rangeDecorations = [...findDecorations, ...diagnosticDecorations];
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -4477,7 +4519,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     syntaxTokens: syntaxTokens,
                     syntaxVersion: syntaxVersion,
                     syntaxTokenColor: _tokenColor,
-                    rangeDecorations: findDecorations,
+                    rangeDecorations: rangeDecorations,
                     focusNode: _focusNodeFor(g, active),
                     scrollController: active.editorScrollController,
                     inputFormatter: MultiSelectionTextInputFormatter(

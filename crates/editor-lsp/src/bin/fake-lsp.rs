@@ -55,11 +55,13 @@ fn main() {
             "initialized" => {}
             "textDocument/didOpen" => {
                 let uri = msg["params"]["textDocument"]["uri"].clone();
+                let version = msg["params"]["textDocument"]["version"].clone();
                 send(&serde_json::json!({
                     "jsonrpc": "2.0",
                     "method": "textDocument/publishDiagnostics",
                     "params": {
                         "uri": uri,
+                        "version": version,
                         "diagnostics": [{
                             "range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 1}},
                             "severity": 1,

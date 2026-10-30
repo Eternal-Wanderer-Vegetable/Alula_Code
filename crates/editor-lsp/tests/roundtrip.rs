@@ -9,7 +9,7 @@ fn full_roundtrip_against_fake_lsp() {
 
     // didOpen → 服务器推送 publishDiagnostics
     server
-        .did_open("file:///t/demo.rs", "rust", 1, "fn main() {}\n")
+        .did_open("file:///t/demo.rs", "rust", 7, "fn main() {}\n")
         .expect("didOpen");
 
     // 诊断是异步推送的：轮询等待
@@ -24,6 +24,14 @@ fn full_roundtrip_against_fake_lsp() {
     assert_eq!(diags[0].severity, 1);
     assert_eq!(diags[0].message, "fake error from fake-lsp");
     assert_eq!(diags[0].line, 0);
+    assert_eq!(diags[0].character, 0);
+    assert_eq!(diags[0].end_line, Some(0));
+    assert_eq!(diags[0].end_character, Some(1));
+    assert_eq!(diags[0].document_version, Some(7));
+    let serialized = serde_json::to_value(&diags[0]).expect("serialize diagnostic");
+    assert_eq!(serialized["endLine"], 0);
+    assert_eq!(serialized["endCharacter"], 1);
+    assert_eq!(serialized["documentVersion"], 7);
 
     // completion → 同步响应
     let items = server
