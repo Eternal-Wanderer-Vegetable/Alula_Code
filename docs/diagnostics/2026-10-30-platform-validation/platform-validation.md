@@ -1,6 +1,6 @@
 # Platform availability validation
 
-**Status: pending.** The first verification wave targets Linux and Windows. macOS packaging is gated on both passing their current revision build and availability checks; a package will not be presented as native validation evidence.
+**Project status: pending verification.** Linux and Windows first-wave build/start checks passed, followed by a macOS package build and hosted startup smoke. These runs do not close end-to-end edit/save, IME, accessibility, native DRM, or visual-parity checks. A CI artifact is recorded as a package, not as native-user acceptance.
 
 ## Linux — partial pass
 
@@ -30,11 +30,12 @@
 - Follow-up Actions run `41061997778` built the Windows Release bundle and confirmed 10-second process survival, but its cleanup step raced after terminating the already-exited process, so no artifact was uploaded.
 - Final first-wave run `41062967568`: Linux and Windows jobs both succeeded. Windows Release build, `alula_core.dll` deployment, 10-second startup survival, process cleanup, and artifact upload passed. Artifact: `alula-windows-x64-c52758e1f06262a3f862a822a1c3fed6aaa7b0bf`. This confirms Windows x64 build/start availability on the current source; it is not an editing, IME, accessibility, or visual-parity signoff.
 
-## macOS — package build in progress; native acceptance pending
+## macOS — package and hosted startup smoke passed; local native acceptance pending
 
 - Linux and Windows first-wave build/start checks passed in run `41062967568`; the gate to prepare a macOS package is satisfied.
-- The local machine has no macOS host. A Flutter macOS runner and GitHub macOS build/package smoke are being added to the branch; record the macOS workflow run and artifact name here after completion.
-- No Apple Developer signing/notarization secrets are configured in the repository. The package will be ad-hoc signed and unnotarized; native macOS interaction, IME, accessibility, and visual checks remain pending even if CI builds and starts it.
+- The Flutter macOS runner is source-controlled in `app/macos/`. GitHub Actions run [41065014669](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41065014669) completed successfully on `macos-15`: Flutter analyze/tests, Release build, Rust dylib copied beside the executable, ad-hoc signature verification, 12-second launch smoke, and package upload all passed.
+- Artifact: `alula-macos-ARM64-374fdc97c0b1a1fe65dc59817fbf6c620dfef26c`; it contains `alula-code-macos-ARM64-374fdc97c0b1a1fe65dc59817fbf6c620dfef26c.zip` and its `.sha256` file. This is a downloadable Actions artifact, not a GitHub Release asset.
+- The local machine has no macOS host. No Apple Developer signing/notarization secrets are configured, so the package is ad-hoc signed and unnotarized; Gatekeeper may require the user to approve opening it. Native macOS interaction, IME, accessibility, and visual checks remain pending.
 - The staged GitNexus graph reports `RegisterGeneratedPlugins` as CRITICAL (40 downstream symbols / 27 flows). It is ambiguous in the index; path-qualified impact still reports unrelated editor/Rust flows. Source review confirms the generated function has one caller (`MainFlutterWindow.awakeFromNib`) and registers only `screen_retriever_macos` and `window_manager`; no Dart FFI or Rust ABI code changed. Keep the graph warning recorded and rely on macOS compile/test/launch evidence to validate this generated runner path.
 
 ## Shared baseline

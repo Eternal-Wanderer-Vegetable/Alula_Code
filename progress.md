@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，Linux/Windows 可用性与 macOS 包）
+
+- GitHub Actions run `41062967568`：Linux 与 Windows x64 Release 构建、核心动态库部署、应用启动 smoke 和 artifact 上传全部通过；干净检出缺失 `app/windows/` 的问题已修复并提交。
+- GitHub Actions run `41065014669`：macOS 15 上 Flutter analyze/tests、Release `.app`、Rust dylib 同目录加载、ad-hoc 签名校验、12 秒启动 smoke 与 ARM64 zip/SHA 上传全部通过；artifact `alula-macos-ARM64-374fdc97c0b1a1fe65dc59817fbf6c620dfef26c`。
+- 项目整体仍标记待验证：当前平台证据不等于端到端编辑保存或原生 IME/无障碍/DPI/视觉签收；Mac 包未公证，且本机没有 macOS 主机。详见 `docs/diagnostics/2026-10-30-platform-validation/platform-validation.md`。
+
+
 ### 最新进展（2026-10-30，P03.6 minimap overview）
 
 - Rust ABI v17 新增全文件有界 minimap sample：均匀采样最多 512 行，每行返回最多 48 UTF-16 单元的标量安全前缀，带完整行长度、文档长度、行数和版本；不物化 Rust 全文。

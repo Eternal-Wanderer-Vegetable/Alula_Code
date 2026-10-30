@@ -1,12 +1,14 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-30（P03.5 已完成；P03.6 已接入 gutter/wrap/版本化装饰/字体回退/语法着色/LSP providers/minimap/sticky scroll/Rust scope folding 与折叠 viewport 投影；跨 OS/DPI/主题像素对照仍进行中；500 MiB 留待 P14）
+> Last Updated：2026-10-30（P03.6 folded viewport projection 已提交；Linux/Windows Release 启动验证与 macOS ARM64 CI 包已成功；项目仍待编辑保存及原生平台验收；500 MiB 留待 P14）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
+- 平台验证：Linux/Windows x64 Release 构建、核心库部署和启动 smoke 通过（run `41062967568`）；macOS 15 analyze/tests、`.app` 构建/启动与 ARM64 zip artifact 通过（run `41065014669`）。Mac artifact 未公证，本机无 macOS；项目状态仍是待验证。
+- 剩余门：当前代码端到端编辑/保存、macOS 原生 IME/无障碍/视觉与 Linux 原生 DRM 尚未签收；完整清单以 `docs/03` 为准。
 
 - P03.6 当前切片：折叠 minimap/sticky viewport 投影已接入，定向 15 项通过，完整工作树 `init.sh`（Flutter 256 项）、cargo fmt 与 Flutter analyze 均通过；精确 HEAD+index 快照 Rust/Clippy/build_core 和 Flutter 256 项 `--no-pub`、analyze 也通过；报告 `docs/diagnostics/2026-10-30-p03/p03.6-folded-viewport-projection.md`。下一步完成跨 OS/DPI/主题像素对照，阶段继续 in-progress。
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
@@ -44,5 +46,6 @@
 
 ## 下一步
 
-1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、Find occurrence overview markers、sticky scroll、折叠与像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退、版本化 Rust Tree-sitter 正文着色、当前文件 Find 与版本化 LSP diagnostic range provider 已接入。diagnostic provider 的完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 通过（Flutter 232 项）；精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` Rust tests/Clippy/build_core、离线 `flutter test --no-pub`（232 项）和 Flutter analyze（0 issues）通过。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
-2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。
+1. 继续 Linux/Windows 当前版本编辑保存烟测并登记证据；Mac ARM64 包已在 Actions 下载区生成，但保持未公证/未原生用户验收状态。
+2. 完成 P03.6 的跨 OS/DPI/主题像素、RTL/字体安装和 folded minimap/sticky-scroll 几何对照；原生 DRM Linux 与 macOS IME/无障碍环境未验证时保持 pending。
+3. 按 `docs/03` 的依赖顺序推进 P03.7 与后续功能；P00–P13 完成前不做 500 MiB 数值优化。
