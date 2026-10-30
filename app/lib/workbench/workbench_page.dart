@@ -20,6 +20,7 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
 import '../editor/editor_minimap_markers.dart';
+import '../editor/editor_sticky_scroll.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
@@ -4686,7 +4687,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        child: RustTextInputField(
+                        child: EditorStickyScroll(
+                          document: active.doc,
+                          inputWindow: active.inputWindow,
+                          scrollController: active.editorScrollController,
+                          enabled: usesRustSyntax &&
+                              active.inputWindow.pendingText == null &&
+                              active.inputWindow.version == active.doc.version,
+                          onSelectSymbol: (offset) {
+                            _flushInput(active, commitComposition: true);
+                            _focusNodeFor(g, active).requestFocus();
+                            _setDocSelection(
+                              active,
+                              TextSelection.collapsed(offset: offset),
+                            );
+                          },
+                          child: RustTextInputField(
                           key: active.inputFieldKey,
                           inputWindow: active.inputWindow,
                           syntaxTokens: syntaxTokens,
@@ -4802,6 +4818,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             contentPadding: EdgeInsets.all(12),
                           ),
                         ),
+                          ),
                       ),
                       if (constraints.maxWidth >= 720) ...[
                         const SizedBox(width: 6),

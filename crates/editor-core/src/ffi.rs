@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 18;
+pub const ALULA_ABI_VERSION: u32 = 19;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);

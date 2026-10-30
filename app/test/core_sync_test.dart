@@ -223,6 +223,25 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('Rust 符号 FFI 返回包含 BOM emoji CRLF 的闭合行范围', () {
+    const content =
+        '\u{FEFF}// 🦊\r\nfn outer() {\r\n    fn inner() {}\r\n}\r\n';
+    final doc = _bootstrap.core!.openDoc(9036, content);
+    final result = doc.core.lsp.symbols(doc.id)!;
+    final outer =
+        result.symbols.singleWhere((symbol) => symbol['name'] == 'outer');
+    final inner =
+        result.symbols.singleWhere((symbol) => symbol['name'] == 'inner');
+
+    expect(result.version, doc.version);
+    expect(outer['line'], 2);
+    expect(outer['end_line'], 4);
+    expect(outer['start_utf16'], '\u{FEFF}// 🦊\r\n'.length);
+    expect(inner['line'], 3);
+    expect(inner['end_line'], 3);
+    doc.close();
+  }, skip: skip);
+
   test('过期版本被拒绝并给出 Rust 当前版本', () {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(
