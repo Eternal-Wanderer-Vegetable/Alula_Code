@@ -74,20 +74,105 @@ jobs:
       - name: Add Rust core DLL
         shell: pwsh
         run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
-      - name: Launch Windows app
+      - name: Launch Windows app and capture visible client area
         shell: pwsh
         run: |
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+
+          public struct AlulaRect
+          {
+              public int Left;
+              public int Top;
+              public int Right;
+              public int Bottom;
+          }
+
+          public struct AlulaPoint
+          {
+              public int X;
+              public int Y;
+          }
+
+          public static class AlulaWindowApi
+          {
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool IsWindowVisible(IntPtr window);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool GetClientRect(IntPtr window, out AlulaRect rect);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool ClientToScreen(IntPtr window, ref AlulaPoint point);
+
+              [DllImport("user32.dll")]
+              public static extern bool ShowWindow(IntPtr window, int command);
+
+              [DllImport("user32.dll")]
+              public static extern bool SetForegroundWindow(IntPtr window);
+          }
+          '@
+
           $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
-          $process = Start-Process -FilePath $exe -PassThru -WindowStyle Hidden
-          Start-Sleep -Seconds 10
-          $process.Refresh()
-          if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }
-          try { if (!$process.HasExited) { $process.Kill() } } catch [System.InvalidOperationException] { }
-          if (!$process.WaitForExit(10000)) { throw "Alula process did not exit after the smoke check" }
+          $process = Start-Process -FilePath $exe -PassThru -WindowStyle Normal
+          try {
+            $deadline = (Get-Date).AddSeconds(30)
+            $window = [IntPtr]::Zero
+            do {
+              $process.Refresh()
+              if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }
+              $window = $process.MainWindowHandle
+              if ($window -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+            } while ($window -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+
+            if ($window -eq [IntPtr]::Zero) { throw "Alula did not create a top-level window" }
+            [AlulaWindowApi]::ShowWindow($window, 9) | Out-Null
+            [AlulaWindowApi]::SetForegroundWindow($window) | Out-Null
+            Start-Sleep -Seconds 2
+            if (![AlulaWindowApi]::IsWindowVisible($window)) { throw "Alula top-level window is not visible" }
+
+            $client = New-Object AlulaRect
+            if (![AlulaWindowApi]::GetClientRect($window, [ref]$client)) { throw "GetClientRect failed" }
+            $width = $client.Right - $client.Left
+            $height = $client.Bottom - $client.Top
+            if ($width -lt 640 -or $height -lt 480) { throw "Unexpected client area ${width}x${height}" }
+
+            $origin = New-Object AlulaPoint
+            if (![AlulaWindowApi]::ClientToScreen($window, [ref]$origin)) { throw "ClientToScreen failed" }
+            $bitmap = [System.Drawing.Bitmap]::new($width, $height)
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            try {
+              $graphics.CopyFromScreen($origin.X, $origin.Y, 0, 0, $bitmap.Size)
+              $capture = Join-Path $env:RUNNER_TEMP 'alula-windows-client.png'
+              $bitmap.Save($capture, [System.Drawing.Imaging.ImageFormat]::Png)
+            }
+            finally {
+              $graphics.Dispose()
+              $bitmap.Dispose()
+            }
+
+            [ordered]@{
+              processId = $process.Id
+              clientWidth = $width
+              clientHeight = $height
+              windowVisible = $true
+              screenshot = $capture
+              sha256 = (Get-FileHash $capture -Algorithm SHA256).Hash.ToLowerInvariant()
+            } | ConvertTo-Json | Set-Content (Join-Path $env:RUNNER_TEMP 'alula-windows-client.json')
+          }
+          finally {
+            try { if (!$process.HasExited) { $process.Kill() } } catch [System.InvalidOperationException] { }
+            if (!$process.WaitForExit(10000)) { throw "Alula did not exit after the visible-window smoke" }
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: alula-windows-x64-${{ github.sha }}
-          path: app/build/windows/x64/runner/Release
+          path: |
+            app/build/windows/x64/runner/Release
+            ${{ runner.temp }}/alula-windows-client.png
+            ${{ runner.temp }}/alula-windows-client.json
 
   macos:
     name: macOS build, launch smoke, and app package
