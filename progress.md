@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.4.2c Windows/Linux IME 部分平台证据）
+
+- Windows 11 Alula Release + Microsoft Pinyin 已验证预编辑和光标附近候选条、Space 提交、追加组合后 Esc 取消、点击 Explorer 失焦。ABI v15，Release DLL 哈希与 `app/native/alula_core.dll` 一致；退出后隔离 journal 记录 `你好bei'jing`，未转换拼音在失焦时保留。
+- 固定 Code-OSS 1.145.0-dev（`4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`，`scripts/code.bat`、隔离 user-data、禁用扩展）同样记录 `你好bei'jing`，候选、提交、取消和焦点离开行为与 Windows Alula 相符。微软拼音 Tab 是候选导航，不算离开编辑器的证据。
+- WSLg Linux + Fcitx5 Pinyin 的 Alula Release 通过原生输入回放：候选条在插入光标附近，Space 写入 `你好`，追加 `zhongguo` 后 Esc 保留已提交文本，点击 Explorer 后文档 journal 为 `你好bei jing`。这是 WSLg/X11，不等于原生 DRM Linux。
+- 证据与截图：`docs/diagnostics/2026-10-30-p03/p03.4.2c-native-ime-platform-evidence.md`、同目录下 `p03.4.2c-windows/` 与 `p03.4.2c-linux-wslg/`。`flutter build linux --release --no-pub` 通过；运行在隔离 profile，操作前逐次核验前台窗口，结束时进程退出且恢复 ChatGPT 前台。macOS runner 不可用；屏幕边缘候选窗夹取也未测。单独 Alt+F4 关闭 WSLg Release 实例退出码 0，但 Flutter 隐式 view 移除仍有 `kInvalidArguments` 与 GLib critical，留待 P03.7 生命周期门。
+- P03.4.2c 记为 partial、P03.4 保持 in-progress；按“先整体架构”的优先级，下一片继续 P03.5 多光标/列选择，把 macOS IME 与原生 DRM Linux 留作 P03.7 平台签收门。500 MiB 数值目标仍留待 P14，本阶段不做内存优化。
+
 ### 最新进展（2026-10-30，P03.4.2b2/b3 工作台有界 Rust 输入）
 
 - 完成 P03.4.2b2/b3：`OpenDoc` 移除全文 `TextEditingController`，工作台现在以 Rust 文档作为文本/dirty/savepoint 权威，`RustTextInputField` 只持有最多 16,384 UTF-16 单元的本地编辑窗口。绝对 selection、窗口重定位、切换/保存/关闭前 flush 与 IME composition 提交已接入。

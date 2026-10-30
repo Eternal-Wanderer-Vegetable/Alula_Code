@@ -1,0 +1,13 @@
+{
+  "platform": "Windows 11",
+  "product": "Code-OSS 1.145.0-dev",
+  "commit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "appPid": 14132,
+  "windowHandle": 2230588,
+  "preflightOnly": true,
+  "keyboardEventsSent": false,
+  "fileTitleMatched": true,
+  "userDataIsolated": true,
+  "extensionsDisabled": true,
+  "profileRoot": "C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\code-oss-p03-4-2c-14316"
+}
