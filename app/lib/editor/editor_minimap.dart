@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
 import 'editor_minimap_markers.dart';
+import 'editor_minimap_syntax.dart';
 import 'editor_rendering.dart';
 import 'rust_text_input_window.dart';
 
@@ -61,6 +62,11 @@ class EditorMinimap extends StatefulWidget {
     required this.inputWindow,
     required this.scrollController,
     required this.onNavigateToLine,
+    this.syntaxDocumentId = -1,
+    this.syntaxTokens = const [],
+    this.syntaxVersion = -1,
+    this.syntaxEnabled = false,
+    this.syntaxTokenColor,
     this.overviewMarkers = const [],
     this.width = editorMinimapWidth,
     this.lineHeight = editorMinimapLineHeight,
@@ -69,6 +75,11 @@ class EditorMinimap extends StatefulWidget {
   final RustTextInputWindow inputWindow;
   final ScrollController scrollController;
   final ValueChanged<int> onNavigateToLine;
+  final int syntaxDocumentId;
+  final List<Map<String, Object?>> syntaxTokens;
+  final int syntaxVersion;
+  final bool syntaxEnabled;
+  final Color Function(String kind)? syntaxTokenColor;
   final List<EditorMinimapMarker> overviewMarkers;
   final double width;
   final double lineHeight;
@@ -80,6 +91,13 @@ class EditorMinimap extends StatefulWidget {
 class _EditorMinimapState extends State<EditorMinimap> {
   Timer? _timer;
   DocumentMinimapSample? _sample;
+  DocumentMinimapSample? _syntaxSample;
+  List<Map<String, Object?>> _syntaxTokens = const [];
+  List<EditorMinimapSyntaxSegment> _syntaxSegments = const [];
+  int _syntaxDocumentId = -1;
+  int _syntaxVersion = -1;
+  bool _syntaxEnabled = false;
+  Color Function(String kind)? _syntaxTokenColor;
   int _sampleDocId = -1;
   int _sampleVersion = -1;
   int _pendingDocId = -1;
@@ -104,6 +122,7 @@ class _EditorMinimapState extends State<EditorMinimap> {
   void didUpdateWidget(covariant EditorMinimap oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateWindowMetadata();
+    _updateSyntaxSegments();
     final doc = widget.inputWindow.document;
     if (doc.id != _sampleDocId || doc.version != _sampleVersion) {
       _scheduleSample(const Duration(milliseconds: 120));
@@ -139,6 +158,8 @@ class _EditorMinimapState extends State<EditorMinimap> {
     }
     _timer?.cancel();
     _sample = null;
+    _syntaxSample = null;
+    _syntaxSegments = const [];
     _pendingDocId = doc.id;
     _pendingVersion = version;
     _timer = Timer(delay, () {
@@ -160,6 +181,7 @@ class _EditorMinimapState extends State<EditorMinimap> {
           _sampleVersion = sample.version;
           _pendingDocId = doc.id;
           _pendingVersion = sample.version;
+          _updateSyntaxSegments();
         });
       } catch (error) {
         _pendingDocId = -1;
@@ -167,6 +189,42 @@ class _EditorMinimapState extends State<EditorMinimap> {
         debugPrint('读取 Rust minimap 概览失败：$error');
       }
     });
+  }
+
+  void _updateSyntaxSegments() {
+    final sample = _sample;
+    final tokens = widget.syntaxTokens;
+    final colorForKind = widget.syntaxTokenColor;
+    final documentId = widget.syntaxDocumentId;
+    final version = widget.syntaxVersion;
+    final enabled = widget.syntaxEnabled;
+    if (identical(sample, _syntaxSample) &&
+        identical(tokens, _syntaxTokens) &&
+        documentId == _syntaxDocumentId &&
+        version == _syntaxVersion &&
+        enabled == _syntaxEnabled &&
+        identical(colorForKind, _syntaxTokenColor)) {
+      return;
+    }
+    _syntaxSample = sample;
+    _syntaxTokens = tokens;
+    _syntaxDocumentId = documentId;
+    _syntaxVersion = version;
+    _syntaxEnabled = enabled;
+    _syntaxTokenColor = colorForKind;
+    if (sample == null ||
+        documentId != _sampleDocId ||
+        colorForKind == null ||
+        !enabled) {
+      _syntaxSegments = const [];
+      return;
+    }
+    _syntaxSegments = buildEditorMinimapSyntaxSegments(
+      sample: sample,
+      tokens: tokens,
+      tokenVersion: version,
+      colorForKind: colorForKind,
+    );
   }
 
   void _navigateAt(Offset offset) {
@@ -211,6 +269,7 @@ class _EditorMinimapState extends State<EditorMinimap> {
                 windowFirstLine: _windowFirstLine,
                 windowLineCount: _windowLineCount,
                 overviewMarkers: widget.overviewMarkers,
+                syntaxSegments: _syntaxSegments,
                 lineHeight: widget.lineHeight,
               ),
               child: const SizedBox.expand(),
@@ -237,6 +296,7 @@ class _EditorMinimapPainter extends CustomPainter {
     required this.windowFirstLine,
     required this.windowLineCount,
     required this.overviewMarkers,
+    required this.syntaxSegments,
     required this.lineHeight,
   }) : super(repaint: scrollController);
 
@@ -247,6 +307,7 @@ class _EditorMinimapPainter extends CustomPainter {
   final int windowFirstLine;
   final int windowLineCount;
   final List<EditorMinimapMarker> overviewMarkers;
+  final List<EditorMinimapSyntaxSegment> syntaxSegments;
   final double lineHeight;
 
   @override
@@ -265,7 +326,12 @@ class _EditorMinimapPainter extends CustomPainter {
     final rowHeight =
         (size.height / current.lines.length).clamp(0.65, 1.5).toDouble();
     final linePaint = Paint()..color = const Color(0xFF858B95);
+    var syntaxIndex = 0;
     for (final line in current.lines) {
+      while (syntaxIndex < syntaxSegments.length &&
+          syntaxSegments[syntaxIndex].line < line.line) {
+        syntaxIndex++;
+      }
       if (line.utf16Length == 0) continue;
       var indent = 0;
       for (final unit in line.text.codeUnits) {
@@ -288,15 +354,28 @@ class _EditorMinimapPainter extends CustomPainter {
           .min(textWidth * unitWidth, size.width - right - drawX)
           .clamp(0.5, contentWidth)
           .toDouble();
+      final rowTop =
+          (y - rowHeight / 2).clamp(0.0, size.height - rowHeight).toDouble();
       canvas.drawRect(
-        Rect.fromLTWH(
-          drawX,
-          (y - rowHeight / 2).clamp(0.0, size.height - rowHeight).toDouble(),
-          drawWidth,
-          rowHeight,
-        ),
+        Rect.fromLTWH(drawX, rowTop, drawWidth, rowHeight),
         linePaint,
       );
+      while (syntaxIndex < syntaxSegments.length &&
+          syntaxSegments[syntaxIndex].line == line.line) {
+        final segment = syntaxSegments[syntaxIndex++];
+        final segmentX = (left + segment.startUtf16 * unitWidth)
+            .clamp(left, size.width - right)
+            .toDouble();
+        final segmentWidth =
+            (segment.endUtf16 - segment.startUtf16) * unitWidth;
+        final clippedWidth =
+            math.min(segmentWidth, size.width - right - segmentX).toDouble();
+        if (clippedWidth <= 0) continue;
+        canvas.drawRect(
+          Rect.fromLTWH(segmentX, rowTop, clippedWidth, rowHeight),
+          Paint()..color = segment.color,
+        );
+      }
     }
 
     final position =
@@ -364,5 +443,6 @@ class _EditorMinimapPainter extends CustomPainter {
       oldDelegate.windowFirstLine != windowFirstLine ||
       oldDelegate.windowLineCount != windowLineCount ||
       !listEquals(oldDelegate.overviewMarkers, overviewMarkers) ||
+      !listEquals(oldDelegate.syntaxSegments, syntaxSegments) ||
       oldDelegate.lineHeight != lineHeight;
 }

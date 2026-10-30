@@ -2,6 +2,7 @@ import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/editor_minimap.dart';
 import 'package:alula_app/editor/editor_minimap_markers.dart';
+import 'package:alula_app/editor/editor_minimap_syntax.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:alula_app/search/search_service.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,118 @@ class _CoreBootstrap {
 final _bootstrap = _CoreBootstrap();
 
 void main() {
+  test('minimap syntax ranges clip by Rust sample offsets and UTF-16 units',
+      () {
+    const sample = DocumentMinimapSample(
+      version: 4,
+      totalUtf16Length: 13,
+      lineCount: 2,
+      lines: [
+        DocumentMinimapLineSample(
+          line: 0,
+          startUtf16: 0,
+          utf16Length: 6,
+          text: '\uFEFF🦊 fn',
+        ),
+        DocumentMinimapLineSample(
+          line: 1,
+          startUtf16: 8,
+          utf16Length: 5,
+          text: 'let x',
+        ),
+      ],
+    );
+    final segments = buildEditorMinimapSyntaxSegments(
+      sample: sample,
+      tokenVersion: 4,
+      tokens: [
+        {'start_utf16': 4, 'end_utf16': 6, 'kind': 'keyword'},
+        {'start_utf16': 8, 'end_utf16': 11, 'kind': 'keyword'},
+        {'start_utf16': 12, 'end_utf16': 13, 'kind': 'variable'},
+      ],
+      colorForKind: (kind) => switch (kind) {
+        'keyword' => const Color(0xFFC586C0),
+        _ => const Color(0xFF9CDCFE),
+      },
+    );
+
+    expect(
+      segments,
+      [
+        const EditorMinimapSyntaxSegment(
+          line: 0,
+          startUtf16: 4,
+          endUtf16: 6,
+          color: Color(0xFFC586C0),
+        ),
+        const EditorMinimapSyntaxSegment(
+          line: 1,
+          startUtf16: 0,
+          endUtf16: 3,
+          color: Color(0xFFC586C0),
+        ),
+        const EditorMinimapSyntaxSegment(
+          line: 1,
+          startUtf16: 4,
+          endUtf16: 5,
+          color: Color(0xFF9CDCFE),
+        ),
+      ],
+    );
+    expect(
+      buildEditorMinimapSyntaxSegments(
+        sample: sample,
+        tokenVersion: 3,
+        tokens: [
+          {'start_utf16': 4, 'end_utf16': 6, 'kind': 'keyword'},
+        ],
+        colorForKind: (_) => const Color(0xFFC586C0),
+      ),
+      isEmpty,
+    );
+  });
+
+  test('minimap syntax paint commands have a strict global cap', () {
+    final lines = List.generate(
+      maxDocMinimapSampleLines,
+      (index) => DocumentMinimapLineSample(
+        line: index,
+        startUtf16: index * 49,
+        utf16Length: 48,
+        text: 'x' * 48,
+      ),
+      growable: false,
+    );
+    final sample = DocumentMinimapSample(
+      version: 8,
+      totalUtf16Length: 512 * 49 - 1,
+      lineCount: 512,
+      lines: lines,
+    );
+    final tokens = List.generate(512 * 48, (index) {
+      final line = index ~/ 48;
+      final column = index % 48;
+      final start = line * 49 + column;
+      return <String, Object?>{
+        'start_utf16': start,
+        'end_utf16': start + 1,
+        'kind': column.isEven ? 'a' : 'b',
+      };
+    }, growable: false);
+
+    final segments = buildEditorMinimapSyntaxSegments(
+      sample: sample,
+      tokens: tokens,
+      tokenVersion: sample.version,
+      colorForKind: (kind) =>
+          kind == 'a' ? const Color(0xFFC586C0) : const Color(0xFF9CDCFE),
+    );
+
+    expect(segments, hasLength(maxEditorMinimapSyntaxSegments));
+    expect(segments.first.line, 0);
+    expect(segments.last.line, maxDocMinimapSampleLines - 1);
+  });
+
   test('find overview markers map UTF-16 hits to sampled logical lines', () {
     const text = '\uFEFF🦊 fox\r\nnone\nfox';
     final matches = findMatches(text, 'fox');
@@ -294,17 +407,33 @@ void main() {
     addTearDown(scrollController.dispose);
     var navigatedLine = -1;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SizedBox.expand(
-            child: EditorMinimap(
-              inputWindow: window,
-              scrollController: scrollController,
-              onNavigateToLine: (line) => navigatedLine = line,
+    Widget buildMinimap({
+      List<Map<String, Object?>> syntaxTokens = const [],
+      List<EditorMinimapMarker> overviewMarkers = const [],
+    }) =>
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: EditorMinimap(
+                inputWindow: window,
+                scrollController: scrollController,
+                syntaxDocumentId: doc.id,
+                syntaxTokens: syntaxTokens,
+                syntaxVersion: doc.version,
+                syntaxEnabled: true,
+                syntaxTokenColor: (_) => const Color(0xFFC586C0),
+                overviewMarkers: overviewMarkers,
+                onNavigateToLine: (line) => navigatedLine = line,
+              ),
             ),
           ),
-        ),
+        );
+
+    await tester.pumpWidget(
+      buildMinimap(
+        syntaxTokens: const [
+          {'start_utf16': 0, 'end_utf16': 4, 'kind': 'keyword'},
+        ],
       ),
     );
     await tester.pump(const Duration(milliseconds: 150));
@@ -327,27 +456,22 @@ void main() {
         )
         .painter!;
     final previousPainter = minimapPainter();
+    await tester.pumpWidget(buildMinimap());
+    expect(minimapPainter().shouldRepaint(previousPainter), isTrue);
+
+    final plainPainter = minimapPainter();
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: SizedBox.expand(
-            child: EditorMinimap(
-              inputWindow: window,
-              scrollController: scrollController,
-              overviewMarkers: [
-                EditorMinimapMarker(
-                  documentId: doc.id,
-                  documentVersion: doc.version,
-                  line: 900,
-                  kind: EditorMinimapMarkerKind.error,
-                ),
-              ],
-              onNavigateToLine: (line) => navigatedLine = line,
-            ),
+      buildMinimap(
+        overviewMarkers: [
+          EditorMinimapMarker(
+            documentId: doc.id,
+            documentVersion: doc.version,
+            line: 900,
+            kind: EditorMinimapMarkerKind.error,
           ),
-        ),
+        ],
       ),
     );
-    expect(minimapPainter().shouldRepaint(previousPainter), isTrue);
+    expect(minimapPainter().shouldRepaint(plainPainter), isTrue);
   }, skip: _bootstrap.skip != null);
 }

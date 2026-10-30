@@ -72,6 +72,7 @@ pub struct TextMinimapSample {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TextMinimapLine {
     pub line: usize,
+    pub start_utf16: usize,
     pub utf16_length: usize,
     pub text: String,
 }
@@ -388,6 +389,8 @@ impl TextBuffer {
             } else {
                 sample_index.saturating_mul(line_count - 1) / (sample_count - 1)
             };
+            let start_char = self.rope.line_to_char(line_index);
+            let start_utf16 = self.rope.char_to_utf16_cu(start_char);
             let line = self.rope.line(line_index);
             let mut content_chars = line.len_chars();
             if content_chars > 0 && line.char(content_chars - 1) == '\n' {
@@ -412,6 +415,7 @@ impl TextBuffer {
 
             lines.push(TextMinimapLine {
                 line: line_index,
+                start_utf16,
                 utf16_length,
                 text,
             });
@@ -785,6 +789,11 @@ mod tests {
         assert_eq!(sample.lines.len(), MAX_MINIMAP_SAMPLE_LINES);
         assert_eq!(sample.lines.first().unwrap().line, 0);
         assert_eq!(sample.lines.last().unwrap().line, 9_999);
+        assert_eq!(sample.lines.first().unwrap().start_utf16, 0);
+        assert!(sample
+            .lines
+            .windows(2)
+            .all(|pair| pair[0].start_utf16 < pair[1].start_utf16));
         assert!(sample
             .lines
             .windows(2)
@@ -807,11 +816,14 @@ mod tests {
 
         assert_eq!(sample.line_count, 3);
         assert_eq!(sample.lines[0].text, "a");
+        assert_eq!(sample.lines[0].start_utf16, 0);
         assert_eq!(sample.lines[0].utf16_length, 1);
         assert_eq!(sample.lines[1].utf16_length, 160);
+        assert_eq!(sample.lines[1].start_utf16, 3);
         assert_eq!(sample.lines[1].text, "🦊".repeat(24));
         assert_eq!(sample.lines[1].text.encode_utf16().count(), 48);
         assert_eq!(sample.lines[2].text, "");
+        assert_eq!(sample.lines[2].start_utf16, 164);
         assert_eq!(sample.lines[2].utf16_length, 0);
     }
 

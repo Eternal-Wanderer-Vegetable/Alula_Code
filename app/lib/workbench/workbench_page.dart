@@ -4808,6 +4808,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         EditorMinimap(
                           inputWindow: active.inputWindow,
                           scrollController: active.editorScrollController,
+                          syntaxDocumentId: active.id,
+                          syntaxTokens: syntaxTokens,
+                          syntaxVersion: syntaxVersion,
+                          syntaxEnabled:
+                              active.inputWindow.pendingText == null &&
+                                  active.inputWindow.version ==
+                                      active.doc.version &&
+                                  syntaxVersion == active.doc.version,
+                          syntaxTokenColor: _tokenColor,
                           overviewMarkers: buildEditorMinimapMarkers(
                             documentId: active.id,
                             documentVersion: active.doc.version,

@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 17;
+pub const ALULA_ABI_VERSION: u32 = 18;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -759,6 +759,7 @@ pub extern "C" fn alula_doc_minimap_sample(id: u64) -> *mut c_char {
                     "lineCount": sample.line_count,
                     "lines": sample.lines.into_iter().map(|line| json!({
                         "line": line.line,
+                        "startUtf16": line.start_utf16,
                         "utf16Length": line.utf16_length,
                         "text": line.text,
                     })).collect::<Vec<_>>(),
@@ -1824,6 +1825,13 @@ mod tests {
         assert_eq!(sample["lines"].as_array().unwrap().len(), 512);
         assert_eq!(sample["lines"][0]["line"], 0);
         assert_eq!(sample["lines"][511]["line"], 999);
+        assert_eq!(sample["lines"][0]["startUtf16"], 0);
+        assert_eq!(
+            sample["lines"][511]["startUtf16"],
+            content[..content.rfind('\n').unwrap() + 1]
+                .encode_utf16()
+                .count()
+        );
         assert!(sample["lines"]
             .as_array()
             .unwrap()

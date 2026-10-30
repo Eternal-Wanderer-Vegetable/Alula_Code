@@ -205,6 +205,10 @@ void main() {
     expect(sample.lines, hasLength(maxDocMinimapSampleLines));
     expect(sample.lines.first.line, 0);
     expect(sample.lines.last.line, 1000);
+    expect(sample.lines.first.startUtf16, 0);
+    expect(sample.lines[1].line, 1);
+    expect(sample.lines[1].startUtf16, content.split('\n').first.length + 1);
+    expect(sample.lines.last.startUtf16, content.length);
     expect(
       sample.lines.every((line) => line.text.length <= 48),
       isTrue,

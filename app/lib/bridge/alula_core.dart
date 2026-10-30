@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 17;
+const int expectedAbiVersion = 18;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -295,11 +295,13 @@ class DocumentMinimapSample {
 
 class DocumentMinimapLineSample {
   final int line;
+  final int startUtf16;
   final int utf16Length;
   final String text;
 
   const DocumentMinimapLineSample({
     required this.line,
+    required this.startUtf16,
     required this.utf16Length,
     required this.text,
   });
@@ -742,6 +744,7 @@ class AlulaDoc {
       final line = item as Map<String, Object?>;
       return DocumentMinimapLineSample(
         line: line['line'] as int,
+        startUtf16: line['startUtf16'] as int,
         utf16Length: line['utf16Length'] as int,
         text: line['text'] as String,
       );
@@ -752,10 +755,15 @@ class AlulaDoc {
         lines.any((line) =>
             line.line < 0 ||
             line.line >= lineCount ||
+            line.startUtf16 < 0 ||
+            line.startUtf16 > (r['totalUtf16Length'] as int) ||
             line.utf16Length < 0 ||
+            line.text.length > line.utf16Length ||
             line.text.length > maxDocMinimapLineSampleUtf16) ||
         lines.indexed.any((entry) =>
-            entry.$1 > 0 && lines[entry.$1 - 1].line >= entry.$2.line)) {
+            entry.$1 > 0 &&
+            (lines[entry.$1 - 1].line >= entry.$2.line ||
+                lines[entry.$1 - 1].startUtf16 >= entry.$2.startUtf16))) {
       throw StateError('Alula returned an invalid bounded minimap sample');
     }
     final sample = DocumentMinimapSample(
