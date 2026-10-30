@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03.5 已完成；P03.6 实现切片已关闭、设备验收待验证；P03.7 多视图/无障碍/生命周期实现进行中。本轮共享 Rust 文档与独立 view state、冲突 journal 恢复副本、关闭引用计数、折叠读屏语义及双视图 50k 行/50k UTF-16 单行尾部编辑保存切片通过；完整 `init.sh` 260 项、cargo fmt、Flutter analyze 0 issues 通过。Windows 客户区/读屏、native DRM Linux、macOS、三平台 Release/IME/关闭、DPI/主题像素仍待验。500 MiB 留待 P14）
+> Last Updated：2026-10-31（P03.5 已完成；P03.6 实现切片已关闭、设备验收待验证；P03.7 多视图/无障碍/生命周期实现进行中。本轮共享 Rust 文档与独立 view state、冲突 journal 恢复副本、关闭引用计数、折叠读屏语义及双视图 50k 行/50k UTF-16 单行尾部编辑保存切片通过；本轮 `init.sh --fast`、Rust tests/build_core、Flutter 260 项通过；cargo fmt 与 Flutter analyze 全绿。CI run 41109679662 三平台 hosted build/start smoke 和 macOS test package 全绿，但 Linux native DRM、Windows 可见客户区/IME/读屏/关闭/DPI/主题仍待人工验收；macOS 原生交互待验证。500 MiB 留待 P14）
 
 ## 项目目标
 
@@ -56,4 +56,4 @@
 
 ## P03.7 CI follow-up（2026-10-31）
 
-- Commits `bfbdc2c` and `96872ca` were pushed. GitHub run `41108610038` failed on all three OS jobs because the P03.7 selective snapshot retained a P04 `_onEditorPointerDown` listener without its unstaged method. A staged-only correction now removes the listener from the P03 snapshot; commit and rerun CI before treating the branch as buildable. Preserve unrelated unstaged harness/P04/P09 work.
+- Commits `bfbdc2c`, `96872ca`, and `d531936` are pushed; `41108610038` exposed the partial-stage missing `_onEditorPointerDown` issue, then corrected run `41109679662` passed all three platform jobs and uploaded Linux, Windows, and macOS artifacts. The current branch is hosted-buildable. Keep P03.7 in-progress until native Linux DRM and Windows visible UI/accessibility/IME/lifecycle/DPI checks are supplied; preserve unrelated unstaged harness/P04/P09 work.
