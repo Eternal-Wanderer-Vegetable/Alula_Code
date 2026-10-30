@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_rendering.dart';
 import 'rust_text_input_window.dart';
 
 /// A multiline Flutter input client whose document mirror is a bounded Rust
@@ -22,13 +23,17 @@ class RustTextInputField extends StatefulWidget {
     this.autofocus = false,
     this.style,
     this.decoration,
+    this.showLineNumbers = true,
+    this.showIndentGuides = true,
+    this.whitespaceMode = EditorWhitespaceMode.none,
+    this.tabSize = 4,
     this.semanticsLabel,
     this.onTap,
     this.onAltClick,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
-  });
+  }) : assert(tabSize > 0);
 
   final RustTextInputWindow inputWindow;
   final FocusNode? focusNode;
@@ -39,6 +44,10 @@ class RustTextInputField extends StatefulWidget {
   final bool autofocus;
   final TextStyle? style;
   final InputDecoration? decoration;
+  final bool showLineNumbers;
+  final bool showIndentGuides;
+  final EditorWhitespaceMode whitespaceMode;
+  final int tabSize;
   final String? semanticsLabel;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
@@ -58,6 +67,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   bool _flushScheduled = false;
   bool _restoringValue = false;
   String? _errorMessage;
+  int _lineMetadataVersion = -1;
+  int _lineMetadataStartUtf16 = -1;
+  int _firstLineNumber = 0;
+  int _documentLineCount = 1;
 
   TextEditingValue get editingValue => _controller.value;
 
@@ -212,6 +225,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       final previousPresentation = widget.inputWindow.presentedText;
       final delta = widget.inputWindow.flushPending();
       if (delta != null) {
+        if (mounted) {
+          setState(() => _lineMetadataVersion = -1);
+        }
         _notifyPresentationChanged(previousPresentation);
         _lastAcceptedValue = _controller.value;
         _clearError();
@@ -322,8 +338,25 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     setState(() => _errorMessage = null);
   }
 
+  void _updateLineMetadata() {
+    final window = widget.inputWindow;
+    if (_lineMetadataVersion == window.version &&
+        _lineMetadataStartUtf16 == window.startUtf16) {
+      return;
+    }
+    final position =
+        resolveEditorDocumentLinePosition(window.document, window.startUtf16);
+    _lineMetadataVersion = window.version;
+    _lineMetadataStartUtf16 = window.startUtf16;
+    _firstLineNumber = position.firstLineNumber;
+    _documentLineCount = position.lineCount;
+  }
+
   @override
   Widget build(BuildContext context) {
+    _updateLineMetadata();
+    final editorStyle =
+        widget.style ?? const TextStyle(fontFamily: 'monospace');
     final field = Listener(
       onPointerDown: widget.onAltClick == null ? null : _handlePointerDown,
       child: TextField(
@@ -338,7 +371,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         keyboardType: TextInputType.multiline,
         maxLines: null,
         expands: true,
-        style: widget.style ?? const TextStyle(fontFamily: 'monospace'),
+        style: editorStyle,
         decoration: widget.decoration ??
             const InputDecoration(
               border: InputBorder.none,
@@ -347,40 +380,112 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       ),
     );
     final textStyle = DefaultTextStyle.of(context).style.merge(
-          widget.style ?? const TextStyle(fontFamily: 'monospace'),
+          editorStyle,
         );
+    final gutterStyle = textStyle.copyWith(fontSize: 11);
     final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
+    final textDirection = Directionality.of(context);
+    final textScaler = MediaQuery.textScalerOf(context);
+    final gutterWidth = widget.showLineNumbers
+        ? editorGutterWidth(
+            lineCount: _documentLineCount,
+            style: gutterStyle,
+            textScaler: textScaler,
+            textDirection: textDirection,
+          )
+        : 0.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Semantics(
-                label: widget.semanticsLabel,
-                textField: true,
-                child: field,
-              ),
-              if (widget.additionalSelections.isNotEmpty)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: CustomPaint(
-                      painter: _AdditionalSelectionsPainter(
-                        text: _controller.text,
-                        selections: widget.additionalSelections,
-                        style: textStyle,
-                        textDirection: Directionality.of(context),
-                        textScaler: MediaQuery.textScalerOf(context),
-                        padding: padding,
-                        scrollController: widget.scrollController,
-                        caretColor: Theme.of(context).colorScheme.primary,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final editorWidth = (constraints.maxWidth - gutterWidth)
+                  .clamp(1.0, double.infinity)
+                  .toDouble();
+              return ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _controller,
+                builder: (context, editingValue, _) => Row(
+                  textDirection: TextDirection.ltr,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (widget.showLineNumbers)
+                      SizedBox(
+                        key: const ValueKey<String>('rust-editor-gutter'),
+                        width: gutterWidth,
+                        child: CustomPaint(
+                          painter: EditorGutterPainter(
+                            text: editingValue.text,
+                            firstLineNumber: _firstLineNumber,
+                            style: textStyle,
+                            textDirection: textDirection,
+                            textScaler: textScaler,
+                            padding: padding,
+                            textWidth: editorWidth,
+                            scrollController: widget.scrollController,
+                            backgroundColor: const Color(0xFF191B20),
+                            foregroundColor: const Color(0xFF858585),
+                            dividerColor: const Color(0xFF2A2D33),
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Semantics(
+                            label: widget.semanticsLabel,
+                            textField: true,
+                            child: field,
+                          ),
+                          if (widget.showIndentGuides ||
+                              widget.whitespaceMode !=
+                                  EditorWhitespaceMode.none)
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: EditorTextDecorationPainter(
+                                    text: editingValue.text,
+                                    style: textStyle,
+                                    textDirection: textDirection,
+                                    textScaler: textScaler,
+                                    padding: padding,
+                                    scrollController: widget.scrollController,
+                                    showIndentGuides: widget.showIndentGuides,
+                                    tabSize: widget.tabSize,
+                                    whitespaceMode: widget.whitespaceMode,
+                                    guideColor: const Color(0x557A8290),
+                                    whitespaceColor: const Color(0xFF727983),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (widget.additionalSelections.isNotEmpty)
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: _AdditionalSelectionsPainter(
+                                    text: editingValue.text,
+                                    selections: widget.additionalSelections,
+                                    style: textStyle,
+                                    textDirection: textDirection,
+                                    textScaler: textScaler,
+                                    padding: padding,
+                                    scrollController: widget.scrollController,
+                                    caretColor:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-            ],
+              );
+            },
           ),
         ),
         if (_errorMessage case final message?)
