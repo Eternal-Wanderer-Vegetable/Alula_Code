@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
+import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
@@ -4802,6 +4803,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         EditorMinimap(
                           inputWindow: active.inputWindow,
                           scrollController: active.editorScrollController,
+                          overviewMarkers: buildEditorMinimapMarkers(
+                            documentId: active.id,
+                            documentVersion: active.doc.version,
+                            diagnostics: _diagnostics,
+                            selectedSearchDocumentId: _selectedSearchDocId,
+                            selectedSearchDocumentVersion:
+                                _selectedSearchDocVersion,
+                            selectedSearchHit: _selectedSearchHit,
+                            enabled: active.inputWindow.pendingText == null &&
+                                active.inputWindow.version ==
+                                    active.doc.version,
+                          ),
                           onNavigateToLine: (line) {
                             _flushInput(active, commitComposition: true);
                             _focusNodeFor(g, active).requestFocus();

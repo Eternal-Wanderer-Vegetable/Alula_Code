@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_minimap_markers.dart';
 import 'editor_rendering.dart';
 import 'rust_text_input_window.dart';
 
@@ -59,6 +61,7 @@ class EditorMinimap extends StatefulWidget {
     required this.inputWindow,
     required this.scrollController,
     required this.onNavigateToLine,
+    this.overviewMarkers = const [],
     this.width = editorMinimapWidth,
     this.lineHeight = editorMinimapLineHeight,
   });
@@ -66,6 +69,7 @@ class EditorMinimap extends StatefulWidget {
   final RustTextInputWindow inputWindow;
   final ScrollController scrollController;
   final ValueChanged<int> onNavigateToLine;
+  final List<EditorMinimapMarker> overviewMarkers;
   final double width;
   final double lineHeight;
 
@@ -201,10 +205,12 @@ class _EditorMinimapState extends State<EditorMinimap> {
             child: CustomPaint(
               painter: _EditorMinimapPainter(
                 sample: sample,
+                sampleDocId: _sampleDocId,
                 scrollController: widget.scrollController,
                 docLineCount: _docLineCount,
                 windowFirstLine: _windowFirstLine,
                 windowLineCount: _windowLineCount,
+                overviewMarkers: widget.overviewMarkers,
                 lineHeight: widget.lineHeight,
               ),
               child: const SizedBox.expand(),
@@ -225,18 +231,22 @@ class _EditorMinimapState extends State<EditorMinimap> {
 class _EditorMinimapPainter extends CustomPainter {
   _EditorMinimapPainter({
     required this.sample,
+    required this.sampleDocId,
     required this.scrollController,
     required this.docLineCount,
     required this.windowFirstLine,
     required this.windowLineCount,
+    required this.overviewMarkers,
     required this.lineHeight,
   }) : super(repaint: scrollController);
 
   final DocumentMinimapSample? sample;
+  final int sampleDocId;
   final ScrollController scrollController;
   final int docLineCount;
   final int windowFirstLine;
   final int windowLineCount;
+  final List<EditorMinimapMarker> overviewMarkers;
   final double lineHeight;
 
   @override
@@ -318,14 +328,41 @@ class _EditorMinimapPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1,
     );
+
+    final markerHeight = math.min(
+      size.height,
+      math.max(1.0, size.height / current.lineCount),
+    );
+    for (final marker in overviewMarkers.take(maxEditorMinimapMarkers)) {
+      if (marker.documentId != sampleDocId ||
+          marker.documentVersion != current.version ||
+          marker.line < 0 ||
+          marker.line >= current.lineCount) {
+        continue;
+      }
+      final centerY = projectEditorMinimapMarkerY(
+        line: marker.line,
+        lineCount: current.lineCount,
+        height: size.height,
+      );
+      final top = (centerY - markerHeight / 2)
+          .clamp(0.0, size.height - markerHeight)
+          .toDouble();
+      canvas.drawRect(
+        Rect.fromLTWH(size.width - 3, top, 3, markerHeight),
+        Paint()..color = marker.color,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(covariant _EditorMinimapPainter oldDelegate) =>
       oldDelegate.sample != sample ||
+      oldDelegate.sampleDocId != sampleDocId ||
       oldDelegate.scrollController != scrollController ||
       oldDelegate.docLineCount != docLineCount ||
       oldDelegate.windowFirstLine != windowFirstLine ||
       oldDelegate.windowLineCount != windowLineCount ||
+      !listEquals(oldDelegate.overviewMarkers, overviewMarkers) ||
       oldDelegate.lineHeight != lineHeight;
 }

@@ -1,6 +1,8 @@
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/editor_minimap.dart';
+import 'package:alula_app/editor/editor_minimap_markers.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
+import 'package:alula_app/search/search_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,6 +22,134 @@ class _CoreBootstrap {
 final _bootstrap = _CoreBootstrap();
 
 void main() {
+  test('overview markers are versioned, bounded, and use logical lines', () {
+    final diagnostics = [
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 8,
+        'severity': 1,
+        'line': 3,
+      },
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 7,
+        'severity': 2,
+        'line': 5,
+      },
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 8,
+        'severity': 2,
+        'line': 4,
+      },
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 8,
+        'severity': 3,
+        'line': 5,
+      },
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 8,
+        'severity': 4,
+        'line': 6,
+      },
+      <String, Object?>{
+        '_documentId': 18,
+        'documentVersion': 8,
+        'severity': 2,
+        'line': 9,
+      },
+      <String, Object?>{
+        '_documentId': 17,
+        'documentVersion': 8,
+        'severity': 2,
+        'line': -1,
+      },
+    ];
+
+    final minimapMarkers = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: diagnostics,
+      selectedSearchDocumentId: 17,
+      selectedSearchDocumentVersion: 8,
+      selectedSearchHit: const SearchHit(
+        path: 'src/main.rs',
+        line: 21,
+        lineText: 'needle',
+      ),
+      enabled: true,
+      maxMarkers: 1,
+    );
+
+    expect(minimapMarkers, hasLength(1));
+    expect(minimapMarkers.single.kind, EditorMinimapMarkerKind.search);
+    expect(minimapMarkers.single.line, 20);
+    expect(
+      buildEditorMinimapMarkers(
+        documentId: 17,
+        documentVersion: 8,
+        diagnostics: diagnostics,
+        selectedSearchDocumentId: 17,
+        selectedSearchDocumentVersion: 8,
+        selectedSearchHit: const SearchHit(
+          path: 'src/main.rs',
+          line: 21,
+          lineText: 'needle',
+        ),
+        enabled: false,
+      ),
+      isEmpty,
+    );
+    final diagnosticMarkers = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: diagnostics,
+      selectedSearchDocumentId: null,
+      selectedSearchDocumentVersion: null,
+      selectedSearchHit: null,
+      enabled: true,
+    );
+    expect(diagnosticMarkers, hasLength(4));
+    expect(
+      diagnosticMarkers.map((marker) => marker.kind),
+      [
+        EditorMinimapMarkerKind.error,
+        EditorMinimapMarkerKind.warning,
+        EditorMinimapMarkerKind.information,
+        EditorMinimapMarkerKind.hint,
+      ],
+    );
+    expect(diagnosticMarkers.map((marker) => marker.line), [3, 4, 5, 6]);
+    final boundedMarkers = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: List.generate(
+        600,
+        (line) => <String, Object?>{
+          '_documentId': 17,
+          'documentVersion': 8,
+          'severity': 1,
+          'line': line,
+        },
+      ),
+      selectedSearchDocumentId: null,
+      selectedSearchDocumentVersion: null,
+      selectedSearchHit: null,
+      enabled: true,
+    );
+    expect(boundedMarkers, hasLength(maxEditorMinimapMarkers));
+    expect(
+      projectEditorMinimapMarkerY(line: 0, lineCount: 10, height: 90),
+      0,
+    );
+    expect(
+      projectEditorMinimapMarkerY(line: 9, lineCount: 10, height: 90),
+      90,
+    );
+  });
+
   test('minimap viewport projection is bounded and tracks the input window',
       () {
     final first = projectEditorMinimapViewport(
@@ -97,5 +227,34 @@ void main() {
 
     expect(navigatedLine, 900);
     expect(doc.readMinimapSample().lines, hasLength(512));
+
+    CustomPainter minimapPainter() => tester
+        .widget<CustomPaint>(
+          find.descendant(of: minimap, matching: find.byType(CustomPaint)),
+        )
+        .painter!;
+    final previousPainter = minimapPainter();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox.expand(
+            child: EditorMinimap(
+              inputWindow: window,
+              scrollController: scrollController,
+              overviewMarkers: [
+                EditorMinimapMarker(
+                  documentId: doc.id,
+                  documentVersion: doc.version,
+                  line: 900,
+                  kind: EditorMinimapMarkerKind.error,
+                ),
+              ],
+              onNavigateToLine: (line) => navigatedLine = line,
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(minimapPainter().shouldRepaint(previousPainter), isTrue);
   }, skip: _bootstrap.skip != null);
 }
