@@ -12,18 +12,30 @@
 - `ldd app/build/linux/x64/release/bundle/alula_app`: no unresolved libraries.
 - Launch smoke: the release executable remained alive for 10 seconds and created a visible `Alula Code` 1280×720 X11 window. It used the software-rendering fallback because WSLg did not provide DRI3. The process was then stopped by the smoke script.
 - Scope limit: no edit/save interaction was performed in this run. Existing WSLg editing and cgroup evidence is recorded under `docs/diagnostics/2026-10-29-p00/`; it predates this renderer commit and does not replace a current-revision edit/save check or native DRM Linux validation.
+- The clean-commit Linux bundle was also uploaded by Actions run `41062967568` as artifact `alula-linux-x64-c52758e1f06262a3f862a822a1c3fed6aaa7b0bf`.
 
-## Windows — pending
+## First-wave build and startup gate — passed
+
+- GitHub Actions run [41062967568](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41062967568) passed both Linux and Windows jobs from commit `c52758e`.
+- Linux artifact: `alula-linux-x64-c52758e1f06262a3f862a822a1c3fed6aaa7b0bf`.
+- Windows artifact: `alula-windows-x64-c52758e1f06262a3f862a822a1c3fed6aaa7b0bf`.
+- This gate establishes clean-checkout Release build, Rust library deployment, and app startup. It does not close project verification: current-revision edit/save, native DRM, IME, accessibility, and visual parity remain open.
+
+## Windows — build/start pass; functional checks pending
 
 - There is no Windows command runner in the local WSL environment.
 - First native workflow run: `41060624442`. Linux passed; Windows failed at `flutter build windows --release` with “No Windows desktop project configured.” The clean checkout confirmed `app/windows/` was absent because the root `.gitignore` excluded it. The Windows runner existed only as ignored local files, so earlier local Windows build evidence did not prove a clean clone could build.
-- Remediation in progress: remove the blanket Windows-runner ignore and commit the Flutter-generated Windows runner sources. Then the branch workflow rebuilds the Windows x64 Release bundle, places `alula_core.dll` beside the executable, checks that the process survives startup, and uploads the bundle. Windows remains pending until a follow-up run passes.
+- Remediation: removed the blanket Windows-runner ignore and committed the Flutter-generated Windows runner sources. The branch workflow builds the Windows x64 Release bundle, places `alula_core.dll` beside the executable, checks that the process survives startup, and uploads the bundle.
 - Existing Windows editing evidence is recorded in `docs/diagnostics/2026-10-28-p00/`; it predates this current folded-viewport commit and is not a current-revision availability check.
+- Follow-up Actions run `41061997778` built the Windows Release bundle and confirmed 10-second process survival, but its cleanup step raced after terminating the already-exited process, so no artifact was uploaded.
+- Final first-wave run `41062967568`: Linux and Windows jobs both succeeded. Windows Release build, `alula_core.dll` deployment, 10-second startup survival, process cleanup, and artifact upload passed. Artifact: `alula-windows-x64-c52758e1f06262a3f862a822a1c3fed6aaa7b0bf`. This confirms Windows x64 build/start availability on the current source; it is not an editing, IME, accessibility, or visual-parity signoff.
 
-## macOS — gated and unverified
+## macOS — package build in progress; native acceptance pending
 
-- This machine has no macOS host, and the product currently has no `app/macos/` Flutter runner.
-- Do not create or distribute a macOS package until Linux and Windows first-wave checks pass. After that gate, add the macOS runner/package path and build it on a macOS GitHub Actions host. Keep native startup, IME, accessibility, and visual checks marked pending until a macOS host can run them.
+- Linux and Windows first-wave build/start checks passed in run `41062967568`; the gate to prepare a macOS package is satisfied.
+- The local machine has no macOS host. A Flutter macOS runner and GitHub macOS build/package smoke are being added to the branch; record the macOS workflow run and artifact name here after completion.
+- No Apple Developer signing/notarization secrets are configured in the repository. The package will be ad-hoc signed and unnotarized; native macOS interaction, IME, accessibility, and visual checks remain pending even if CI builds and starts it.
+- The staged GitNexus graph reports `RegisterGeneratedPlugins` as CRITICAL (40 downstream symbols / 27 flows). It is ambiguous in the index; path-qualified impact still reports unrelated editor/Rust flows. Source review confirms the generated function has one caller (`MainFlutterWindow.awakeFromNib`) and registers only `screen_retriever_macos` and `window_manager`; no Dart FFI or Rust ABI code changed. Keep the graph warning recorded and rely on macOS compile/test/launch evidence to validate this generated runner path.
 
 ## Shared baseline
 

@@ -88,3 +88,69 @@ jobs:
         with:
           name: alula-windows-x64-${{ github.sha }}
           path: app/build/windows/x64/runner/Release
+
+  macos:
+    name: macOS build, launch smoke, and app package
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        run: bash scripts/build_core.sh
+      - name: Flutter analyze and tests
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+        working-directory: app
+      - name: Build macOS Release bundle
+        run: flutter build macos --release --no-pub
+        working-directory: app
+      - name: Bundle and sign Rust core
+        run: |
+          app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
+          install -m 755 app/native/libalula_core.dylib "$app_bundle/Contents/MacOS/libalula_core.dylib"
+          codesign --force --deep --sign - "$app_bundle"
+          codesign --verify --deep --strict "$app_bundle"
+      - name: Launch macOS app
+        run: |
+          executable="app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
+          "$executable" > "$RUNNER_TEMP/alula-macos-smoke.log" 2>&1 &
+          app_pid=$!
+          sleep 12
+          if ! kill -0 "$app_pid" 2>/dev/null; then
+            cat "$RUNNER_TEMP/alula-macos-smoke.log"
+            wait "$app_pid"
+            exit 1
+          fi
+          kill -TERM "$app_pid" 2>/dev/null || true
+          for _ in $(seq 1 20); do
+            kill -0 "$app_pid" 2>/dev/null || break
+            sleep 0.25
+          done
+          if kill -0 "$app_pid" 2>/dev/null; then
+            kill -KILL "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+            echo "Alula did not stop after the launch smoke"
+            exit 1
+          fi
+          wait "$app_pid" || true
+      - name: Package macOS app
+        run: |
+          app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
+          package="$RUNNER_TEMP/alula-code-macos-${RUNNER_ARCH}-${GITHUB_SHA}.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$app_bundle" "$package"
+          shasum -a 256 "$package" > "$package.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alula-macos-${{ runner.arch }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/alula-code-macos-${{ runner.arch }}-${{ github.sha }}.zip
+            ${{ runner.temp }}/alula-code-macos-${{ runner.arch }}-${{ github.sha }}.zip.sha256
