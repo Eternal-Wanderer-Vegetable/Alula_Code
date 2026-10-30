@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import '../editor/editor_rendering.dart';
 import '../editor/find_replace.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
@@ -172,6 +173,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
+  int _matchesDocId = -1;
+  int _matchesDocVersion = -1;
   int _matchIndex = -1;
   bool _caseSensitive = false;
 
@@ -2851,6 +2854,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _refreshMatches() {
     final active = _active;
     final text = active?.text ?? '';
+    _matchesDocId = active?.id ?? -1;
+    _matchesDocVersion = active?.doc.version ?? -1;
     _matches = _findVisible
         ? findMatches(text, _findQuery.text, caseSensitive: _caseSensitive)
         : const [];
@@ -2858,6 +2863,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
     }
     if (_matches.isEmpty) _matchIndex = -1;
+  }
+
+  List<EditorRangeDecoration> _findDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (!_findVisible ||
+        _matchesDocId != doc.id ||
+        _matchesDocVersion != window.version ||
+        doc.doc.version != window.version ||
+        window.pendingText != null ||
+        _matches.isEmpty) {
+      return const [];
+    }
+
+    final windowStart = window.startUtf16;
+    final windowEnd = window.endUtf16;
+    final first = firstTextMatchEndingAfter(_matches, windowStart);
+    final decorations = <EditorRangeDecoration>[];
+    for (var index = first; index < _matches.length; index++) {
+      final match = _matches[index];
+      if (match.start >= windowEnd) break;
+      if (match.end <= windowStart || match.end <= match.start) continue;
+      final isCurrent = index == _matchIndex;
+      decorations.add(
+        EditorRangeDecoration(
+          documentVersion: window.version,
+          startUtf16: match.start,
+          endUtf16: match.end,
+          backgroundColor: isCurrent
+              ? const Color(0x66FFB000)
+              : const Color(0x33F0C674),
+          borderColor: isCurrent ? const Color(0xFFFFB000) : null,
+        ),
+      );
+    }
+    return decorations;
   }
 
   void _gotoMatch(int direction) {
@@ -4409,6 +4449,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final syntaxVersion = usesRustSyntax
         ? (_syntaxVersionByDoc[active.id] ?? -1)
         : -1;
+    final findDecorations = _findDecorationsFor(active);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -4436,6 +4477,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     syntaxTokens: syntaxTokens,
                     syntaxVersion: syntaxVersion,
                     syntaxTokenColor: _tokenColor,
+                    rangeDecorations: findDecorations,
                     focusNode: _focusNodeFor(g, active),
                     scrollController: active.editorScrollController,
                     inputFormatter: MultiSelectionTextInputFormatter(

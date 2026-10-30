@@ -906,3 +906,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 renderer widget fixture 覆盖 token 着色、陈旧版本降级、待提交本地文本降级、composition 下划线。`flutter test --no-pub test/editor_rendering_test.dart` 10 项通过；`flutter analyze --no-pub` 0 issues；完整 `RUST_TEST_THREADS=1 bash init.sh` 退出 0，Rust tests/Clippy/build_core 与 Flutter 227 项通过。精确 staged snapshot `e9b481509a7cade3971e3bbc429dd1fe364ce9f2` 也通过相同全量门禁（Flutter 227 项）；GitNexus 刷新后 staged 为 8 files/18 symbols/0 processes/LOW，全工作树 39 files/24 symbols/299 processes/CRITICAL（含既存修改），图谱遗漏/截断与编辑前共享控件 CRITICAL 风险均已记入阶段报告。
 - GitNexus 编辑前 `RustTextInputFieldState`、Workbench `_buildEditor`、`_scheduleSyntaxRefresh` 均为 CRITICAL；`_buildEditor` 影响结果 partial，真实 LSP syntax 方法名 UNKNOWN。源码调用链已核对为 `AlulaLsp.syntax` → Rust LSP/Tree-sitter → Workbench 版本化 cache → `.rs` bounded field；输入/IME/FFI 路径未改。图谱 CRITICAL/partial/UNKNOWN 不作为豁免。
 - 本阶段只暂存 syntax feature 的控件、测试、报告与 Workbench 精确 hunk；保留 Workbench 既有用户改动和其它工作树改动。下一步继续 P03.6 绘制架构（minimap/overview 等）；500 MiB 指标按用户调整继续留 P14。
+
+
+## 今日会话（2026-10-30）：P03.6 当前文档 Find 装饰 provider
+
+- 将已有 Find 结果接入版本化 range painter。WorkBench 对活动 Rust 文档 id/version 记录结果；编辑器视图要求 Rust doc、input window 版本精确一致且无 pending/IME 文本，防止旧装饰误画。二分跳过窗口之前的 UTF-16 命中，只为当前有界窗口建立 decoration。
+- Workbench fixture 验证 emoji 前缀后的 `[3,9)`、`[12,18)` 命中与版本门控，并确认切换到另一文档时不会显示原文档命中；lower-bound 纯逻辑用例通过。定向 Find + bounded Workbench 25 项通过；工作树与精确 staged tree `ede714dc8ef6be1af009fa800856e9907d8a7c5d` 的完整 `RUST_TEST_THREADS=1 bash init.sh` 均退出 0（Flutter 229 项），cargo fmt 与 Flutter analyze 0 issues。GitNexus staged 9 files/11 symbols、all 40 files/16 symbols，均为 CRITICAL；增量图谱 affected-process 计数观测范围为 139–325，all 包含既存改动，风险与截断已记录。
+- 本次没有重写既有 `_refreshMatches` 全文 Find 算法；renderer 仅拿当前输入窗相交装饰。后续 architecture follow-up：通过 Rust `readRange` 分页生成 Find matches，并接入 LSP diagnostic/semantic 与 workspace search providers。

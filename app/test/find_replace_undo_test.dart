@@ -39,6 +39,14 @@ void main() {
       final m = findMatches('x\r\nyx', 'y');
       expect(m.single.start, 3);
     });
+
+    test('有界输入窗可二分定位首个相交的 UTF-16 命中', () {
+      final matches = findMatches('a👨a👨a', 'a');
+      expect(firstTextMatchEndingAfter(matches, 0), 0);
+      expect(firstTextMatchEndingAfter(matches, 2), 1);
+      expect(firstTextMatchEndingAfter(matches, 4), 2);
+      expect(firstTextMatchEndingAfter(matches, 7), matches.length);
+    });
   });
 
   group('replaceAllMatches', () {

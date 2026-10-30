@@ -39,6 +39,23 @@ List<TextMatch> findMatches(
   return out;
 }
 
+/// Returns the first index whose ordered, non-overlapping match ends after
+/// [offsetUtf16]. This lets bounded editor views skip matches before their
+/// window without scanning or copying the full result list.
+int firstTextMatchEndingAfter(List<TextMatch> matches, int offsetUtf16) {
+  var low = 0;
+  var high = matches.length;
+  while (low < high) {
+    final middle = (low + high) >> 1;
+    if (matches[middle].end <= offsetUtf16) {
+      low = middle + 1;
+    } else {
+      high = middle;
+    }
+  }
+  return low;
+}
+
 class ReplaceAllResult {
   const ReplaceAllResult(this.newText, this.count);
 

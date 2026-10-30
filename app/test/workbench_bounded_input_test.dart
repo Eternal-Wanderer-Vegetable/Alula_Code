@@ -10,6 +10,70 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('Workbench paints find hits as versioned Rust UTF-16 ranges',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-ranges');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = '👨 needle\nx needle';
+    File('${workspace.path}/notes.txt').writeAsStringSync(source);
+    File('${workspace.path}/other.txt').writeAsStringSync('needle');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('notes.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    final findBar = find.byKey(const ValueKey('find-bar'));
+    expect(findBar, findsOneWidget);
+    await tester.enterText(
+      find.descendant(of: findBar, matching: find.byType(TextField)).first,
+      'needle',
+    );
+    await tester.pump();
+
+    final editor = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField),
+    );
+    expect(
+      editor.rangeDecorations
+          .map((decoration) => (decoration.startUtf16, decoration.endUtf16))
+          .toList(),
+      [(3, 9), (12, 18)],
+      reason: 'find ranges use document absolute UTF-16 offsets after emoji',
+    );
+    expect(
+      editor.rangeDecorations.every(
+        (decoration) =>
+            decoration.documentVersion == editor.inputWindow.version,
+      ),
+      isTrue,
+    );
+
+    await tester.tap(find.text('other.txt').first);
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+      tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField))
+          .rangeDecorations,
+      isEmpty,
+      reason: 'find hits from another document must not leak into this editor',
+    );
+  });
+
   testWidgets('workbench recenters bounded input and saves the Rust edit',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-bounded-editor');
