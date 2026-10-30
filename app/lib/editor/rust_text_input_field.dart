@@ -592,9 +592,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             .clamp(1, double.infinity)
             .toDouble(),
       );
-    final scrollY = widget.scrollController?.hasClients == true
-        ? widget.scrollController!.offset
-        : 0.0;
+    final scrollY = editorScrollOffset(widget.scrollController);
     final lineHeight = painter.preferredLineHeight;
     final lines = editorLogicalLines(_controller.text);
     EditorFoldSymbol? hit;
@@ -613,6 +611,65 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     }
     painter.dispose();
     if (hit != null) _toggleFold(layout, hit);
+  }
+
+  List<
+      ({
+        EditorFoldSymbol symbol,
+        double top,
+        double height,
+        bool collapsed,
+      })> _foldControlTargets({
+    required EditorFoldLayout layout,
+    required TextSpan textSpan,
+    required TextDirection textDirection,
+    required TextScaler textScaler,
+    required EdgeInsets padding,
+    required double textWidth,
+    required double viewportHeight,
+  }) {
+    if (layout.foldableByLine.isEmpty) return const [];
+    final painter = TextPainter(
+      text: textSpan,
+      textDirection: textDirection,
+      textScaler: textScaler,
+      textWidthBasis: TextWidthBasis.parent,
+    )..layout(
+        maxWidth: (textWidth - padding.horizontal)
+            .clamp(1, double.infinity)
+            .toDouble(),
+      );
+    final scrollY = editorScrollOffset(widget.scrollController);
+    final lineHeight = painter.preferredLineHeight;
+    final lines = editorLogicalLines(_controller.text);
+    final controls = <({
+      EditorFoldSymbol symbol,
+      double top,
+      double height,
+      bool collapsed,
+    })>[];
+    for (final entry in layout.foldableByLine.entries) {
+      if (layout.hiddenLineIndices.contains(entry.key) ||
+          entry.key < 0 ||
+          entry.key >= lines.length) {
+        continue;
+      }
+      final caret = painter.getOffsetForCaret(
+        TextPosition(offset: lines[entry.key].startUtf16),
+        Rect.fromLTWH(0, 0, 1.5, lineHeight),
+      );
+      final top = padding.top + caret.dy - scrollY;
+      if (top + lineHeight < 0 || top > viewportHeight) continue;
+      controls.add((
+        symbol: entry.value,
+        top: top,
+        height: lineHeight,
+        collapsed: layout.collapsedRanges
+            .any((range) => range.symbol.key == entry.value.key),
+      ));
+    }
+    painter.dispose();
+    return List.unmodifiable(controls);
   }
 
   void _setFocusNode(FocusNode? external) {
@@ -1069,6 +1126,82 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: editorContent,
                           ),
                         );
+                  Widget buildGutterContents() {
+                    final controls = _foldControlTargets(
+                      layout: foldLayout,
+                      textSpan: editorTextSpan,
+                      textDirection: textDirection,
+                      textScaler: textScaler,
+                      padding: padding,
+                      textWidth: contentWidth,
+                      viewportHeight: constraints.maxHeight,
+                    );
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CustomPaint(
+                          painter: EditorGutterPainter(
+                            text: editingValue.text,
+                            textSpan: editorTextSpan,
+                            firstLineNumber: _firstLineNumber,
+                            style: textStyle,
+                            textDirection: textDirection,
+                            textScaler: textScaler,
+                            padding: padding,
+                            textWidth: contentWidth,
+                            scrollController: widget.scrollController,
+                            backgroundColor: const Color(0xFF191B20),
+                            foregroundColor: const Color(0xFF858585),
+                            dividerColor: const Color(0xFF2A2D33),
+                            hiddenLineIndices: foldLayout.hiddenLineIndices,
+                            foldableLineIndices: foldLayout.foldableLineIndices,
+                            collapsedLineIndices:
+                                foldLayout.collapsedLineIndices,
+                            showLineNumbers: widget.showLineNumbers,
+                          ),
+                        ),
+                        for (final control in controls)
+                          Positioned(
+                            left: 0,
+                            top: control.top,
+                            width: 14,
+                            height: control.height,
+                            child: Semantics(
+                              key: ValueKey(
+                                'editor-fold-${control.symbol.key}',
+                              ),
+                              button: true,
+                              label: control.collapsed
+                                  ? '展开 ${control.symbol.name} 区域'
+                                  : '折叠 ${control.symbol.name} 区域',
+                              value: control.collapsed ? '已折叠' : '已展开',
+                              hint: '第 ${control.symbol.line} 行',
+                              onTap: () => _toggleFold(
+                                foldLayout,
+                                control.symbol,
+                              ),
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                excludeFromSemantics: true,
+                                onTap: () => _toggleFold(
+                                  foldLayout,
+                                  control.symbol,
+                                ),
+                                child: const SizedBox.expand(),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  }
+
+                  final scrollController = widget.scrollController;
+                  final gutterContents = scrollController == null
+                      ? buildGutterContents()
+                      : AnimatedBuilder(
+                          animation: scrollController,
+                          builder: (context, _) => buildGutterContents(),
+                        );
                   return Row(
                     textDirection: TextDirection.ltr,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1090,28 +1223,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                   ),
                           child: SizedBox(
                             width: gutterWidth,
-                            child: CustomPaint(
-                              painter: EditorGutterPainter(
-                                text: editingValue.text,
-                                textSpan: editorTextSpan,
-                                firstLineNumber: _firstLineNumber,
-                                style: textStyle,
-                                textDirection: textDirection,
-                                textScaler: textScaler,
-                                padding: padding,
-                                textWidth: contentWidth,
-                                scrollController: widget.scrollController,
-                                backgroundColor: const Color(0xFF191B20),
-                                foregroundColor: const Color(0xFF858585),
-                                dividerColor: const Color(0xFF2A2D33),
-                                hiddenLineIndices: foldLayout.hiddenLineIndices,
-                                foldableLineIndices:
-                                    foldLayout.foldableLineIndices,
-                                collapsedLineIndices:
-                                    foldLayout.collapsedLineIndices,
-                                showLineNumbers: widget.showLineNumbers,
-                              ),
-                            ),
+                            child: gutterContents,
                           ),
                         ),
                       Expanded(child: editorViewport),
@@ -1212,8 +1324,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
             .clamp(1, double.infinity)
             .toDouble(),
       );
-    final scrollY =
-        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final scrollY = editorScrollOffset(scrollController);
     final origin = Offset(padding.left, padding.top - scrollY);
     final selectionPaint = Paint()..color = const Color(0x665B9BD5);
     final caretPaint = Paint()

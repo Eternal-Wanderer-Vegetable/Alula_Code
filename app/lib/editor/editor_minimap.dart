@@ -398,8 +398,7 @@ class _EditorMinimapPainter extends CustomPainter {
       }
     }
 
-    final position =
-        scrollController.hasClients ? scrollController.position : null;
+    final position = editorPrimaryScrollPosition(scrollController);
     final viewport = projectEditorMinimapViewport(
       documentLineCount: docLineCount,
       inputWindowFirstLine: windowFirstLine,

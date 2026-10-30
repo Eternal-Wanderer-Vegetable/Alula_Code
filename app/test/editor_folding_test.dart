@@ -131,6 +131,7 @@ void main() {
     );
     final fieldKey = GlobalKey<RustTextInputFieldState>();
     var reportedFoldRanges = const <EditorDocumentLineRange>[];
+    final semantics = tester.ensureSemantics();
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -152,6 +153,7 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump();
+    expect(find.bySemanticsLabel('折叠 outer 区域'), findsOneWidget);
 
     final editableState = tester.state<EditableTextState>(
       find.byType(EditableText),
@@ -184,6 +186,14 @@ void main() {
         .painter! as EditorGutterPainter;
     expect(gutterPaintAfter.collapsedLineIndices, {0});
     expect(gutterPaintAfter.hiddenLineIndices, {1, 2, 3, 4, 5});
+    expect(find.bySemanticsLabel('展开 outer 区域'), findsOneWidget);
+    tester.semantics.tap(find.semantics.byLabel('展开 outer 区域'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('折叠 outer 区域'), findsOneWidget);
+    tester.semantics.tap(find.semantics.byLabel('折叠 outer 区域'));
+    await tester.pump();
+    expect(find.bySemanticsLabel('展开 outer 区域'), findsOneWidget);
+    semantics.dispose();
     expect(
       reportedFoldRanges,
       const [EditorDocumentLineRange(startLine: 1, endLineExclusive: 6)],

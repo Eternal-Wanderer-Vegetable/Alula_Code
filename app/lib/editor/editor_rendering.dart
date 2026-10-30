@@ -3,6 +3,19 @@ import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
 
+/// Returns one attached editor viewport even while a rebuild is replacing the
+/// bounded text window and both old and new ScrollPositions are briefly live.
+ScrollPosition? editorPrimaryScrollPosition(ScrollController? controller) {
+  if (controller == null) return null;
+  final positions = controller.positions;
+  return positions.isEmpty ? null : positions.first;
+}
+
+/// Reads the selected editor viewport's vertical offset without assuming that
+/// a ScrollController is attached to exactly one Scrollable during a frame.
+double editorScrollOffset(ScrollController? controller) =>
+    editorPrimaryScrollPosition(controller)?.pixels ?? 0.0;
+
 enum EditorWhitespaceMode { none, trailing, all }
 
 @immutable
@@ -262,8 +275,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
             .clamp(1, double.infinity)
             .toDouble(),
       );
-    final scrollY =
-        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final scrollY = editorScrollOffset(scrollController);
     final origin = Offset(padding.left, padding.top - scrollY);
     canvas.save();
     canvas.clipRect(Offset.zero & size);
@@ -425,8 +437,7 @@ class EditorGutterPainter extends CustomPainter {
             .clamp(1, double.infinity)
             .toDouble(),
       );
-    final scrollY =
-        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final scrollY = editorScrollOffset(scrollController);
     final lineHeight = textPainter.preferredLineHeight;
     final numberStyle = style.copyWith(color: foregroundColor, fontSize: 11);
     final lines = editorLogicalLines(text);
@@ -553,8 +564,7 @@ class EditorTextDecorationPainter extends CustomPainter {
             .clamp(1, double.infinity)
             .toDouble(),
       );
-    final scrollY =
-        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final scrollY = editorScrollOffset(scrollController);
     final origin = Offset(padding.left, padding.top - scrollY);
     final lineHeight = painter.preferredLineHeight;
     final lines = editorLogicalLines(text);

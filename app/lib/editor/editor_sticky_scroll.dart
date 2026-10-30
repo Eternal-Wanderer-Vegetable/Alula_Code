@@ -6,7 +6,10 @@ import '../bridge/alula_core.dart';
 import 'editor_folding.dart';
 import 'editor_minimap.dart' show projectEditorMinimapViewport;
 import 'editor_rendering.dart'
-    show editorLogicalLines, resolveEditorDocumentLinePosition;
+    show
+        editorLogicalLines,
+        editorPrimaryScrollPosition,
+        resolveEditorDocumentLinePosition;
 import 'rust_text_input_window.dart';
 
 const int maxEditorStickyScrollScopes = 5;
@@ -243,8 +246,8 @@ class _EditorStickyScrollState extends State<EditorStickyScroll> {
 
   void _updateViewport({bool notify = true}) {
     final controller = widget.scrollController;
-    if (!controller.hasClients) return;
-    final position = controller.position;
+    final position = editorPrimaryScrollPosition(controller);
+    if (position == null) return;
     final viewport = projectEditorMinimapViewport(
       documentLineCount: _documentLineCount,
       inputWindowFirstLine: _windowFirstLine,

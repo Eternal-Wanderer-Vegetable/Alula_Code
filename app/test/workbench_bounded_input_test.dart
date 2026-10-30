@@ -96,11 +96,27 @@ void main() {
     await tester.tap(find.text('large.txt').first);
     await tester.pump(const Duration(milliseconds: 300));
 
-    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.tap(find.byTooltip('拆分编辑器').first);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('large.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final viewsFinder = find.byType(RustTextInputField);
+    expect(viewsFinder, findsNWidgets(2));
+    var views = tester.widgetList<RustTextInputField>(viewsFinder).toList();
+    expect(views.map((view) => view.inputWindow.document.id).toSet(),
+        hasLength(1));
+    expect(identical(views[0].scrollController, views[1].scrollController),
+        isFalse);
+
+    final activeView = viewsFinder.last;
+    final editor = find.descendant(
+      of: activeView,
+      matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+    );
     await tester.showKeyboard(editor);
     await tester.pump();
-    var bounded =
-        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    var bounded = tester.widget<RustTextInputField>(activeView);
     var textField = tester.widget<TextField>(editor);
     final controller = textField.controller!;
     expect(controller.text.length, lessThan(source.length));
@@ -110,8 +126,7 @@ void main() {
     await tester.pump();
     await tester.pump();
 
-    bounded =
-        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    bounded = tester.widget<RustTextInputField>(activeView);
     textField = tester.widget<TextField>(editor);
     expect(bounded.inputWindow.startUtf16, greaterThan(0));
     final absoluteCaret = bounded.inputWindow.startUtf16 +
@@ -134,17 +149,18 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
+    final expected = '${source.substring(0, absoluteCaret)}X'
+        '${source.substring(absoluteCaret)}';
+    expect(file.readAsStringSync(), expected);
+    views = tester.widgetList<RustTextInputField>(viewsFinder).toList();
+    expect(views.map((view) => view.inputWindow.document.id).toSet(),
+        hasLength(1));
     expect(
-        file.readAsStringSync(),
-        '${source.substring(0, absoluteCaret)}X'
-        '${source.substring(absoluteCaret)}');
-    expect(
-      tester
-          .widget<RustTextInputField>(find.byType(RustTextInputField))
-          .inputWindow
-          .text
-          .length,
-      lessThan(20000),
+      views.every(
+          (view) => view.inputWindow.document.resync().content == expected),
+      isTrue,
+      reason: 'both views observe the saved Rust-authoritative long line',
     );
+    expect(bounded.inputWindow.text.length, lessThan(20000));
   });
 }

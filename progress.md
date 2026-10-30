@@ -5,12 +5,41 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
-### 最新进展（2026-10-30，Linux/Windows 可用性与 macOS 包）
+### 最新进展（2026-10-31，P03.6 Linux Release / WSLg）
 
-- GitHub Actions run `41062967568`：Linux 与 Windows x64 Release 构建、核心动态库部署、应用启动 smoke 和 artifact 上传全部通过；干净检出缺失 `app/windows/` 的问题已修复并提交。
-- GitHub Actions run `41065014669`：macOS 15 上 Flutter analyze/tests、Release `.app`、Rust dylib 同目录加载、ad-hoc 签名校验、12 秒启动 smoke 与 ARM64 zip/SHA 上传全部通过；artifact `alula-macos-ARM64-374fdc97c0b1a1fe65dc59817fbf6c620dfef26c`。
-- 项目整体仍标记待验证：当前平台证据不等于端到端编辑保存或原生 IME/无障碍/DPI/视觉签收；Mac 包未公证，且本机没有 macOS 主机。详见 `docs/diagnostics/2026-10-30-platform-validation/platform-validation.md`。
+- 当前工作树 `bash scripts/build_core.sh` 与 Flutter Linux Release build 均成功。以临时 HOME 和显式 Rustup/Cargo toolchain 启动 WSLg Release，窗口 1280×720，状态栏报告 rust-analyzer running、ABI v19；截图 `docs/diagnostics/2026-10-31-p03/linux-alula-release-wslg.png`。
+- 运行时 EGL 报 DRI3 unavailable。窗口管理器关闭时进程 exit 0，但 GTK/GDK、FlutterEngineRemoveView 与 rust-analyzer improper shutdown 告警仍出现；仅视为 WSLg 启动证据，不代替原生 DRM 或 P03.7 生命周期验收。报告 `docs/diagnostics/2026-10-31-p03/p03.6-linux-wslg-release-smoke.md`。
 
+### 最新进展（2026-10-31，P03.6 Windows 图形交叉检查）
+
+- Windows 11 上 Alula Release 与 Debug 的捕获仍为白色客户区；Debug Dart 主 isolate/Workbench widget tree 正常、无 Dart 异常。
+- 同机 Flutter 3.47.8 默认项目在 Impeller 与 Skia 下均白窗，Alula 关闭 Impeller/使用软件渲染仍白；Flutter 3.44.2 默认项目的旧版 Skia 路径也白窗。结果不支持“仅 3.47.8 回归”为唯一原因，但测试时 NVIDIA VRAM 为 14,739/16,303 MiB，资源因素尚未排除。
+- Release 构建零警告/错误。测试截图和环境记录见 `docs/diagnostics/2026-10-30-p03/p03.6-windows-rendering-capture.md` 与 `docs/diagnostics/2026-10-31-p03/flutter-3.44.2-default-window.png`。P03.6 仍进行中；待释放显存或选择 AMD GPU 后复测，P03.7 未启动。用户豁免 v0.1.0 测试版 Apple Developer 证书/公证门槛。
+
+
+### 最新进展（2026-10-30，P03.6 Windows rendering capture investigation）
+
+- Windows Release 包旁 `alula_core.dll` 与 `app/native/alula_core.dll` 的 SHA-256 相同；Windows 11 125% DPI / 2560×1440 runner 上固定 Code-OSS 对照画面正常。
+- 自动采集器已改用 Per-Monitor V2 DPI awareness 与 DWM 物理窗口边界。隔离启动 Alula Release 在初始、最大化和 `--lsp-auto` 场景均只得到白色客户区；该结果无法判定是产品绘制缺陷还是自动启动/采集环境问题，不登记为通过或失败。
+- P03.6 跨 OS/DPI/主题像素对照待 Windows 桌面人工启动确认；详见 `docs/diagnostics/2026-10-30-p03/p03.6-windows-rendering-capture.md`。
+
+### 最新进展（2026-10-30，P03.6 Rust 作用域折叠）
+
+- Rust Tree-sitter scope folding 已接到 `.rs` 编辑器：gutter disclosure 支持嵌套折叠；隐藏行只压缩绘制高度，Rust 全文和 UTF-16 selection/IME 坐标不变；caret、selection 或 composition 进入范围即展开。
+- 真实 Dart↔Rust 与 Flutter fixture 覆盖 emoji/CRLF、嵌套 scope、有界窗口中途切入、点击折叠、正文保持一致及 caret 进入首个隐藏行展开。全量 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust tests、Clippy、build_core、Flutter 254 项）；`flutter analyze --no-pub` 0 issues。
+- 证据：`docs/diagnostics/2026-10-30-p03/p03.6-code-folding.md`。P03.6 仍待 folded viewport 下 minimap/sticky-scroll 几何校准和跨 OS/DPI/主题像素对照；Windows 自动采集的白色画面等待人工确认；500 MiB 数值优化留待 P14。
+
+### 最新进展（2026-10-30，P03.6 sticky scroll）
+
+- Tree-sitter 符号增加 1-based inclusive `end_line`，Rust/Dart ABI 握手升至 v19。工作台浮层按当前文档版本和无 pending 输入门控，最多显示 5 层仍包住视口的 Rust scope；滚动只用已取回的符号数据，点击标题跳至定义。
+- Rust 与 Dart↔Rust fixtures 覆盖 BOM、emoji、CRLF 行范围；Flutter fixtures 覆盖范围筛选、最多层数、实际滚动与跳转。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Flutter 250 项），`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 无问题。
+- 证据：`docs/diagnostics/2026-10-30-p03/p03.6-sticky-scroll.md`。P03.6 仍待折叠及跨 OS/DPI/主题像素对照；500 MiB 数值优化留待 P14。
+
+### 最新进展（2026-10-30，P03.6 syntax-colored minimap）
+
+- ABI v18 的 Rust minimap sample 为每个代表逻辑行返回绝对 UTF-16 起点；Flutter 仅把当前文档版本中与 512×48 有界样本相交的 Tree-sitter/LSP token 绘成语法色段，并将输出段均匀采样限制在 8192。pending 输入和旧版本不绘制。
+- Rust buffer/FFI 与 Dart↔Rust BOM、emoji、CRLF 起点对拍，Flutter UTF-16 裁剪、陈旧版本、全文件覆盖采样和 8192 上限 fixtures 通过。完整 `init.sh` 通过（Flutter 246 项），cargo fmt 与 Flutter analyze 0 issues。
+- P03.6 尚余 sticky scroll、折叠和跨 OS/DPI/主题像素对照；500 MiB 数值优化留待 P14。
 
 ### 最新进展（2026-10-30，P03.6 minimap overview）
 
@@ -18,7 +47,8 @@
 - Flutter minimap 在编辑区宽度至少 720 logical pixels 时显示中性线条概览，点击/拖动调用 Rust lineOffset 跳行；viewport marker 跟随当前有界输入窗和 ScrollController，版本变更后 120 ms 合并刷新。窄窗口隐藏地图保留正文点击空间。
 - Rust editor-buffer/editor-core 51 项、Dart↔Rust 与 minimap widget fixture、responsive editor fixture 通过；完整门禁和最终测试数见报告 docs/diagnostics/2026-10-30-p03/p03.6-minimap-overview.md。
 - minimap overview markers 已接入当前版本的 LSP severity 与选中 workspace-search 行；doc/version/pending 门控，总数上限 512。定向 minimap/diagnostic/search 9 项和完整 `bash init.sh`（Flutter 243 项）通过；报告 docs/diagnostics/2026-10-30-p03/p03.6-minimap-overview-markers.md。
-- Find occurrence markers、语法色 minimap、sticky scroll、折叠、软换行下逐逻辑行 viewport 精度和跨 OS/DPI/主题像素对照仍未完成；500 MiB 继续留 P14。
+- 本轮架构切片已完成；完整 `bash init.sh`（Rust tests、Clippy、build_core、Flutter 244 项）、cargo fmt 与 Flutter analyze 均通过，细节见 `feature_list.json` 的 feat-025。
+- 后续条目按 docs/03 顺序继续；500 MiB 数值目标留待 P14。
 
 ### 最新进展（2026-10-30，P03.6 LSP semantic tokens）
 
@@ -26,6 +56,7 @@
 - Workbench 仅在 Rust 文档、输入窗口版本相同且没有本地 pending 输入时选用 LSP token；unsupported、空结果或陈旧数据继续回退到 Tree-sitter（`.rs`）。请求最多 16 个挂起项，单文档最多 100,000 tokens。
 - fake LSP roundtrip、Rust emoji+CRLF 绝对偏移、Flutter 当前版本选择与 stale/pending fallback fixture 通过；本机 rust-analyzer 临时 Rust workspace 返回并解码 20 个 semantic tokens。
 - 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过：Rust workspace tests、Clippy、build_core、Flutter 239 项；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-30-p03/p03.6-lsp-semantic-tokens.md`。
+- 精确 staged source tree `ea407c35cc614a77e6cb43939a9ac4701750f527` 也通过 Rust workspace tests/Clippy/fmt/build_core、Flutter no-pub 239 项与 analyze 0 issues；该归档无 pub.dev 凭据，故 Flutter 使用已解析依赖离线验证。
 
 ### 最新进展（2026-10-30，P03.6 workspace-search 装饰 provider）
 
@@ -955,3 +986,66 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增零基左闭右开绝对折叠行区间与统一投影，归并嵌套/重叠范围；RustTextInputField 版本化回报折叠范围，Workbench 将同一范围传给 minimap 和 sticky scroll。Minimap viewport marker 按折叠后的可见行比例定位，sticky scope 使用映射回的绝对源行；导航和 UTF-16 文本坐标不变。
 - 定向 folding/minimap/sticky 测试 15 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过，Flutter 256 项；`flutter analyze --no-pub` 0 issues。`cargo fmt --all -- --check` 通过；精确 HEAD+index 快照 Rust tests/Clippy/build_core、Flutter 256 项 `--no-pub` 与 analyze 0 issues 均通过。
 - P03.6 仍未完成：尚需跨平台、多 DPI、主题下的绘制像素对照。报告：`docs/diagnostics/2026-10-30-p03/p03.6-folded-viewport-projection.md`。
+
+### 最新进展（2026-10-30，P03.6 Windows 启动调查与 WSL 基线复核）
+
+- GitNexus 索引刷新后以 `Alula_Code` 为目标查询；Windows runner 的 `OnCreate` 可见，但 Dart `main` 的图谱 impact 为 `UNKNOWN`，已用源码与依赖包搜索核实启动路径。锁定的 `window_manager` 0.5.2 Windows handler 对 `waitUntilReadyToShow` 立即返回，不支持“等待首帧导致挂起”的解释；白屏原因仍未定位，也未改产品源码。
+- WSL 下 `RUST_TEST_THREADS=1 PUB_CACHE=/mnt/c/Users/Vegetable/AppData/Local/Pub/Cache bash init.sh --fast` 全绿：Rust workspace tests、`build_core`、Flutter 256 项。起初 `.dart_tool/package_config.json` 指向 Windows SDK，离线 `pub get --enforce-lockfile` 重建后恢复；使用锁文件强制模式。并行 Rust FFI 测试单次失败，串行复跑全绿。
+- P03.6 继续 in-progress。Windows Release 的白色客户区仍需桌面手动确认；跨 OS/DPI/主题像素对照未完成。调查报告：`docs/diagnostics/2026-10-30-p03/p03.6-windows-rendering-capture.md`。
+
+
+## 最新进展（2026-10-31，P03.6 Linux 前台编辑保存复验）
+
+- 在 WSLg Release Alula 中打开隔离 rust-mini 副本，前台将 `main.rs` 替换为 `fn main() { println!("linux-save-ok"); }`，Ctrl+S 后应用状态栏显示已保存；从临时 fixture 回读精确匹配该代码并带末尾换行，SHA-256 `1573fc4d16e7d13ab400d8f58b8ddb89756d59b39fe7b000983d1d1807ecd159`。仓库 fixture 未修改。截图 `docs/diagnostics/2026-10-31-p03/linux-alula-release-edited.png`，报告 `docs/diagnostics/2026-10-31-p03/p03.6-linux-wslg-release-smoke.md`。
+- 该结果仅是 WSLg 单次编辑/保存 smoke，不代表原生 DRM、多 DPI/主题像素、IME 或关闭生命周期通过。窗口退出码 0，但 GTK/GDK、FlutterEngineRemoveView 与 rust-analyzer improper-shutdown 告警复现，进程树已退出。P03.6 继续 in-progress。Windows 白窗复测需等显存降低或指定 AMD GPU 后继续。
+
+
+## 最新进展（2026-10-31，启动门禁修复与字体环境基线）
+
+- 初次 `bash init.sh --fast` 在 `editor-core` 并行 FFI 测试中重现 savepoint 状态异常。GitNexus 刷新后目标测试函数未入图（impact 为 UNKNOWN）；源码检索确认 `rust_owned_savepoint_roundtrip_over_ffi_keeps_document_version` 使用 ID 92,814，而 `bounded_line_windows_over_ffi_share_a_rust_snapshot` 将 92,813 + 1 分配给长行文档，形成并行共享全局注册表碰撞。将 savepoint fixture ID 改为 92,850；未改产品逻辑。单测、串行 workspace tests 和修复后的并行 `bash init.sh --fast` 均通过；后者 Rust workspace tests、build_core、Flutter 256 项全部通过，`cargo fmt --check` 通过。
+- WSLg 字体/显示基线登记于 `docs/diagnostics/2026-10-31-p03/p03.6-linux-wslg-release-smoke.md`：X11 2560×1440、96 DPI；monospace/Cascadia/Consolas fontconfig 映射、中文 glyph fallback 以及截图窗口尺寸已记录。仅为 WSLg 环境数据，不是原生 Linux 或跨平台像素对照。
+- Windows 显存只读复查为 RTX 5080 14,668/16,303 MiB，空闲 1,310 MiB，未满足降低 2–4 GiB 的复测条件；没有更改 GPU 选择或关闭进程。Windows 渲染结果仍未定论，P03.6 保持 in-progress。
+
+## 最新进展（2026-10-31，P03.6 固定 Code-OSS WSLg 参考）
+
+- 从固定 Code-OSS commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`（1.145.0 / Electron 43.8.3）建立临时 detached worktree；同一 WSLg 2560×1440、96 DPI 下将窗口设为 1280×720，打开含 `fn main() { println!("linux-save-ok"); }` 的隔离 rust-mini 文件。参考截图为 `docs/diagnostics/2026-10-31-p03/code-oss-1.145.0-linux-wslg.png`，SHA-256 `cd1b0217b2f93003089364eb5dcb62db86efef97deab036c353acab564b9ef9a`。
+- 与同尺寸 Alula WSLg 截图相比，Code-OSS 显示菜单/命令区、活动栏、Explorer、文件 breadcrumb、gutter 与状态栏；Alula 当前截图缺少这层 workbench chrome。这是明确的架构和绘制差距，不是像素验收通过。Code-OSS 为源码开发版且未完整构建内置扩展，扩展禁用、未登录；因此只登记为工作台 shell 参考。
+- Code-OSS 窗口正常关闭，临时进程、user-data、扩展目录与 Git worktree 已清理。P03.6 保持 in-progress；Windows 渲染需待显存释放 2–4 GiB 或用户指定 AMD GPU 后复测，原生 DRM 和多 DPI/主题像素门仍未完成。
+
+## 最新进展（2026-10-31，P03.6 WSLg Windows 字体解析）
+
+- WSLg 默认 fontconfig 未检索 `/mnt/c/Windows/Fonts`。建立临时进程级配置后，`fc-match` 将 Cascadia Code 解析为 `CascadiaCode.ttf`、Consolas 解析为 `consola.ttf`；没有复制字体或修改系统配置。以该配置、隔离 HOME 启动当前 Linux Release 并打开原有 rust-mini fixture，磁盘内容 hash 未变；截图 `docs/diagnostics/2026-10-31-p03/linux-alula-cascadia-wslg.png`，SHA-256 `8a9239e55039a34781f0387f2686b86d8b827cbb3b4509988c5b97973558b57e`。
+- 这只验证当前 WSLg 进程可以用到 Windows 字体，不是 DRM、多 DPI 或像素等价证据。关闭 exit code 0，但 `notify error: No path was found`、GLib/GDK critical 与 `FlutterEngineRemoveView` 告警再次出现；P03.6 保持 in-progress。
+
+## 最新进展（2026-10-31，P03.6 WSLg 2× GTK 缩放）
+
+- Linux Release 在独立 HOME 下用 `GDK_SCALE=2` / `GDK_DPI_SCALE=1` 启动，窗口 1280×800 物理像素，目标文件仍为 `fn main() { println!("linux-save-ok"); }` 且 SHA-256 不变。截图 `docs/diagnostics/2026-10-31-p03/linux-alula-gdk-scale-2x-wslg.png`（SHA-256 `9b73988e6fa04280a38d03e52038dc360437ba483cc344c348a0c4ca294c85a2`）。
+- WSLg integer-scale 2× 视口绘制正常；不是 125% fractional DPI、Windows/macOS、native DRM 或跨平台像素验收。关闭仍有 `No path was found` 与 GTK/Flutter teardown 告警。报告已登记，P03.6 保持 in-progress。
+
+## 最新进展（2026-10-31，P03.6 WSLg 折叠/viewport/sticky 实窗）
+
+- 建立 48 行隔离 Rust fixture 并用 xwd 按 Alula window id 直接采集 1280×720 客户区。折叠 `main` 后正文只显示折叠头和尾部行 45–49，minimap viewport tint 由 y=104–436 扩展到 y=104–686；继续在函数内滚动后 sticky header 显示 `main` / `Function`。折叠前后 fixture hash 均为 `594da06828d91c2dd8deca8a5b6d8e30dae58326d08f06266e4435c920a11295`。PNG 与 hash 见 `docs/diagnostics/2026-10-31-p03/p03.6-linux-wslg-release-smoke.md`。
+- 该实窗证据加强 WSLg 几何验证，但不能代替 Windows/macOS/native DRM、多 DPI/主题或无障碍验证。窗口关闭 exit 0，`No path was found` 及 GTK/Flutter teardown 告警仍在。P03.6 保持 in-progress。
+
+## 会话基线复核（2026-10-31）
+
+- 按启动守则重跑 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。
+- 当前 WSL 会话没有 `nvidia-smi`，且没有 `powershell.exe` / `pwsh.exe` / `cmd.exe` 互操作命令，因此无法刷新 Windows GPU 空闲量；未重跑 Windows 白窗诊断。P03.6 仍需在 Windows 释放 2–4 GiB 显存或指定 AMD GPU 后复测；该手动平台门未由旧显存样本替代。
+
+
+## P03.6 implementation close / P03.7 start（2026-10-31）
+
+- 本轮完整 RUST_TEST_THREADS=1 bash init.sh EXIT=0（Rust workspace tests、Clippy、build_core、Flutter 256 项）；cargo fmt --all -- --check 与 flutter analyze --no-pub 也通过。P03.6 的实现与本地自动化门关闭。
+
+- 按用户要求，设备依赖验收作为待验证项继续登记，不记作通过：Windows Release 客户区（历史自动捕获白窗且同机 Flutter 默认窗口也白窗）、原生 DRM Linux、macOS 原生交互以及跨 OS/DPI/主题像素对照移交 P14/P15。
+
+- P03.7 已启动，当前目标是同一 DocumentId 多视图的共享文本/savepoint 与独立 view state、无障碍语义，以及已有 10k/50k/长行与关闭释放的证据审计；需逐项按 docs/03 补实现和证据。
+
+## P03.7 shared-document views and editor semantics（2026-10-31）
+
+- Workbench uses one shared Rust document/savepoint/undo/LSP model for matching `DocumentId`s while each editor view owns its bounded input window, selection history, fold state, scroll controller, and group-specific focus node. All document mutation paths refresh sibling windows and map sibling UTF-16 selections through the edit operations.
+- Session restore now rebuilds repeated matching IDs as shared views. Conflicting duplicate journal text/options are retained in a separate untitled recovery draft with a visible notice. Closing one view keeps the Rust document live; closing the last view sends `didClose` and releases the Rust document/undo state.
+- Editor semantics now label a field with file and group; fold controls expose collapse/expand labels, state, line hints, and semantic tap actions. The existing gutter pointer path remains.
+- `app/test/workbench_multi_view_test.dart` covers shared identity/content, per-view input/scroll/focus and selection, edit broadcast, save, single-view close, last-view close/reopen, same-ID session restore, conflicting journal recovery, and searching/editing/saving the tail of a 50,000-line fixture in two views. The provided `fn main() { println!("linux-save-ok"); }` is the first line of the large-file save fixture. The large-window rebase regression also catches and guards transient multiple scroll-position painting.
+- `app/test/workbench_bounded_input_test.dart` now covers tail edit/save for a 50,000-UTF-16-unit single line in two views; `app/test/editor_folding_test.dart` covers semantic collapse/expand actions. Both large-file fixtures verify both views resolve to the same saved Rust text. Full `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passed: Rust workspace tests, Clippy, build_core, Flutter 260 tests. `cargo fmt --all -- --check`, `flutter analyze --no-pub` (0 issues), and targeted `git diff --check` passed. Evidence: `docs/diagnostics/2026-10-31-p03/p03.7-multiview-accessibility.md`.
+- P03.7 remains in progress pending native DRM Linux and Windows actual client area/reader, IME, Release/close, and DPI/theme checks. macOS testing remains pending per the user's unavailable environment; first establish Linux/Windows usability, then prepare its test package without claiming native macOS verification. WSLg does not count as native DRM evidence.
