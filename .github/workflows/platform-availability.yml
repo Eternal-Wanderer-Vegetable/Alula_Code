@@ -117,6 +117,9 @@ jobs:
               public static extern bool SetForegroundWindow(IntPtr window);
 
               [DllImport("user32.dll")]
+              public static extern IntPtr GetWindow(IntPtr window, uint command);
+
+              [DllImport("user32.dll")]
               public static extern uint GetDpiForWindow(IntPtr window);
 
               [DllImport("user32.dll", SetLastError = true)]
@@ -167,9 +170,10 @@ jobs:
             $uiaError = $null
             try {
               Add-Type -AssemblyName UIAutomationClient
-              $automationWindow = [System.Windows.Automation.AutomationElement]::FromHandle($window)
-              $uiaElements = $automationWindow.FindAll(
-                [System.Windows.Automation.TreeScope]::Descendants,
+              $flutterView = [AlulaWindowApi]::GetWindow($window, 5)
+              $automationView = [System.Windows.Automation.AutomationElement]::FromHandle($flutterView)
+              $uiaElements = $automationView.FindAll(
+                [System.Windows.Automation.TreeScope]::Subtree,
                 [System.Windows.Automation.Condition]::TrueCondition)
               foreach ($element in $uiaElements) {
                 try {
@@ -202,6 +206,14 @@ jobs:
               accessibleNames = @($uiaNames | Select-Object -First 100)
               uiAutomationError = $uiaError
             } | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
+
+            # Release UI Automation provider proxies before Flutter tears down
+            # the native window on WM_CLOSE.
+            $uiaElements = $null
+            $automationView = $null
+            $element = $null
+            [GC]::Collect()
+            [GC]::WaitForPendingFinalizers()
           }
           finally {
             $wmCloseSent = $false
