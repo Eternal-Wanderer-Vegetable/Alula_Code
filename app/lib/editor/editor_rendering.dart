@@ -152,6 +152,30 @@ double editorGutterWidth({
   return width.clamp(30, 112).toDouble();
 }
 
+/// Measures the bounded input window as one unwrapped line block.
+///
+/// TextField still owns multiline editing; this width is applied by the outer
+/// horizontal viewport instead of setting maxLines to one (which would filter
+/// line breaks from EditableText input).
+double editorUnwrappedTextWidth({
+  required String text,
+  required TextStyle style,
+  required TextScaler textScaler,
+  required TextDirection textDirection,
+  EdgeInsets padding = EdgeInsets.zero,
+}) {
+  final painter = TextPainter(
+    text: TextSpan(text: text, style: style),
+    textDirection: textDirection,
+    textScaler: textScaler,
+  )..layout();
+  // Keep room for EditableText's caret, selection handles, and decoration
+  // insets so the final grapheme does not wrap at the measured edge.
+  final width = painter.width + padding.horizontal + 24;
+  painter.dispose();
+  return width;
+}
+
 class EditorGutterPainter extends CustomPainter {
   EditorGutterPainter({
     required this.text,

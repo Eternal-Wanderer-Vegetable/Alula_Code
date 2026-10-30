@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show kPrimaryButton, PointerDownEvent;
-import 'package:flutter/rendering.dart' show RenderEditable;
+import 'package:flutter/rendering.dart' show AxisDirection, RenderEditable;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
@@ -25,6 +25,8 @@ class RustTextInputField extends StatefulWidget {
     this.decoration,
     this.showLineNumbers = true,
     this.showIndentGuides = true,
+    this.wordWrap = false,
+    this.horizontalScrollController,
     this.whitespaceMode = EditorWhitespaceMode.none,
     this.tabSize = 4,
     this.semanticsLabel,
@@ -46,6 +48,8 @@ class RustTextInputField extends StatefulWidget {
   final InputDecoration? decoration;
   final bool showLineNumbers;
   final bool showIndentGuides;
+  final bool wordWrap;
+  final ScrollController? horizontalScrollController;
   final EditorWhitespaceMode whitespaceMode;
   final int tabSize;
   final String? semanticsLabel;
@@ -63,7 +67,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   late TextEditingController _controller;
   late TextEditingValue _lastAcceptedValue;
   late FocusNode _focusNode;
+  late ScrollController _horizontalScrollController;
   bool _ownsFocusNode = false;
+  bool _ownsHorizontalScrollController = false;
   bool _flushScheduled = false;
   bool _restoringValue = false;
   String? _errorMessage;
@@ -71,6 +77,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _lineMetadataStartUtf16 = -1;
   int _firstLineNumber = 0;
   int _documentLineCount = 1;
+  final GlobalKey _horizontalViewportKey = GlobalKey();
 
   TextEditingValue get editingValue => _controller.value;
 
@@ -134,6 +141,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           ..addListener(_handleEditingValueChanged);
     _lastAcceptedValue = _controller.value;
     _setFocusNode(widget.focusNode);
+    _setHorizontalScrollController(widget.horizontalScrollController);
   }
 
   @override
@@ -142,6 +150,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     if (oldWidget.focusNode != widget.focusNode) {
       _disposeOwnedFocusNode();
       _setFocusNode(widget.focusNode);
+    }
+    if (oldWidget.horizontalScrollController !=
+        widget.horizontalScrollController) {
+      _disposeOwnedHorizontalScrollController();
+      _setHorizontalScrollController(widget.horizontalScrollController);
+    }
+    if (oldWidget.wordWrap && !widget.wordWrap) {
+      _scheduleCaretReveal();
     }
     if (oldWidget.inputWindow != widget.inputWindow) {
       assert(
@@ -162,8 +178,59 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     if (_ownsFocusNode) _focusNode.dispose();
   }
 
+  void _setHorizontalScrollController(ScrollController? external) {
+    _ownsHorizontalScrollController = external == null;
+    _horizontalScrollController = external ?? ScrollController();
+  }
+
+  void _disposeOwnedHorizontalScrollController() {
+    if (_ownsHorizontalScrollController) _horizontalScrollController.dispose();
+  }
+
+  void _scheduleCaretReveal() {
+    if (widget.wordWrap) return;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_horizontalScrollController.hasClients) return;
+      final selection = _controller.selection;
+      if (!selection.isValid) return;
+      final viewport =
+          _horizontalViewportKey.currentContext?.findRenderObject();
+      final editable = _findEditableRenderObject(context);
+      if (viewport is! RenderBox || !viewport.hasSize || editable == null) {
+        return;
+      }
+      final caret = editable.getLocalRectForCaret(selection.extent);
+      final caretTopLeft = editable.localToGlobal(caret.topLeft);
+      final caretBottomRight = editable.localToGlobal(caret.bottomRight);
+      final caretRect = Rect.fromPoints(caretTopLeft, caretBottomRight);
+      final viewportRect = viewport.localToGlobal(Offset.zero) & viewport.size;
+      final position = _horizontalScrollController.position;
+      var delta = 0.0;
+      if (position.axisDirection == AxisDirection.right) {
+        if (caretRect.right > viewportRect.right) {
+          delta = caretRect.right - viewportRect.right + 8;
+        } else if (caretRect.left < viewportRect.left) {
+          delta = caretRect.left - viewportRect.left - 8;
+        }
+      } else if (position.axisDirection == AxisDirection.left) {
+        if (caretRect.left < viewportRect.left) {
+          delta = viewportRect.left - caretRect.left + 8;
+        } else if (caretRect.right > viewportRect.right) {
+          delta = viewportRect.right - caretRect.right - 8;
+        }
+      }
+      if (delta == 0) return;
+      position.jumpTo(
+        (position.pixels + delta)
+            .clamp(position.minScrollExtent, position.maxScrollExtent)
+            .toDouble(),
+      );
+    });
+  }
+
   void _handleEditingValueChanged() {
     if (_restoringValue) return;
+    _scheduleCaretReveal();
     final value = _controller.value;
     final additionalOperations =
         widget.additionalOperations?.call() ?? const <TextOp>[];
@@ -357,6 +424,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _updateLineMetadata();
     final editorStyle =
         widget.style ?? const TextStyle(fontFamily: 'monospace');
+    final theme = Theme.of(context);
+    final inputBaseStyle = theme.useMaterial3
+        ? theme.textTheme.bodyLarge!
+        : theme.textTheme.titleMedium!;
     final field = Listener(
       onPointerDown: widget.onAltClick == null ? null : _handlePointerDown,
       child: TextField(
@@ -379,9 +450,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             ),
       ),
     );
-    final textStyle = DefaultTextStyle.of(context).style.merge(
-          editorStyle,
-        );
+    final textStyle = inputBaseStyle.merge(editorStyle);
     final gutterStyle = textStyle.copyWith(fontSize: 11);
     final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
@@ -406,84 +475,105 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                   .toDouble();
               return ValueListenableBuilder<TextEditingValue>(
                 valueListenable: _controller,
-                builder: (context, editingValue, _) => Row(
-                  textDirection: TextDirection.ltr,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (widget.showLineNumbers)
-                      SizedBox(
-                        key: const ValueKey<String>('rust-editor-gutter'),
-                        width: gutterWidth,
-                        child: CustomPaint(
-                          painter: EditorGutterPainter(
-                            text: editingValue.text,
-                            firstLineNumber: _firstLineNumber,
-                            style: textStyle,
-                            textDirection: textDirection,
-                            textScaler: textScaler,
-                            padding: padding,
-                            textWidth: editorWidth,
-                            scrollController: widget.scrollController,
-                            backgroundColor: const Color(0xFF191B20),
-                            foregroundColor: const Color(0xFF858585),
-                            dividerColor: const Color(0xFF2A2D33),
+                builder: (context, editingValue, _) {
+                  final contentWidth = widget.wordWrap
+                      ? editorWidth
+                      : editorUnwrappedTextWidth(
+                          text: editingValue.text,
+                          style: textStyle,
+                          textScaler: textScaler,
+                          textDirection: textDirection,
+                          padding: padding,
+                        ).clamp(editorWidth, double.infinity).toDouble();
+                  final editorContent = Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Semantics(
+                        label: widget.semanticsLabel,
+                        textField: true,
+                        child: field,
+                      ),
+                      if (widget.showIndentGuides ||
+                          widget.whitespaceMode != EditorWhitespaceMode.none)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: EditorTextDecorationPainter(
+                                text: editingValue.text,
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                showIndentGuides: widget.showIndentGuides,
+                                tabSize: widget.tabSize,
+                                whitespaceMode: widget.whitespaceMode,
+                                guideColor: const Color(0x557A8290),
+                                whitespaceColor: const Color(0xFF727983),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Semantics(
-                            label: widget.semanticsLabel,
-                            textField: true,
-                            child: field,
+                      if (widget.additionalSelections.isNotEmpty)
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: _AdditionalSelectionsPainter(
+                                text: editingValue.text,
+                                selections: widget.additionalSelections,
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                caretColor:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
                           ),
-                          if (widget.showIndentGuides ||
-                              widget.whitespaceMode !=
-                                  EditorWhitespaceMode.none)
-                            Positioned.fill(
-                              child: IgnorePointer(
-                                child: CustomPaint(
-                                  painter: EditorTextDecorationPainter(
-                                    text: editingValue.text,
-                                    style: textStyle,
-                                    textDirection: textDirection,
-                                    textScaler: textScaler,
-                                    padding: padding,
-                                    scrollController: widget.scrollController,
-                                    showIndentGuides: widget.showIndentGuides,
-                                    tabSize: widget.tabSize,
-                                    whitespaceMode: widget.whitespaceMode,
-                                    guideColor: const Color(0x557A8290),
-                                    whitespaceColor: const Color(0xFF727983),
-                                  ),
-                                ),
-                              ),
+                        ),
+                    ],
+                  );
+                  final editorViewport = widget.wordWrap
+                      ? editorContent
+                      : SingleChildScrollView(
+                          key: _horizontalViewportKey,
+                          controller: _horizontalScrollController,
+                          primary: false,
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: contentWidth,
+                            child: editorContent,
+                          ),
+                        );
+                  return Row(
+                    textDirection: TextDirection.ltr,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (widget.showLineNumbers)
+                        SizedBox(
+                          key: const ValueKey<String>('rust-editor-gutter'),
+                          width: gutterWidth,
+                          child: CustomPaint(
+                            painter: EditorGutterPainter(
+                              text: editingValue.text,
+                              firstLineNumber: _firstLineNumber,
+                              style: textStyle,
+                              textDirection: textDirection,
+                              textScaler: textScaler,
+                              padding: padding,
+                              textWidth: contentWidth,
+                              scrollController: widget.scrollController,
+                              backgroundColor: const Color(0xFF191B20),
+                              foregroundColor: const Color(0xFF858585),
+                              dividerColor: const Color(0xFF2A2D33),
                             ),
-                          if (widget.additionalSelections.isNotEmpty)
-                            Positioned.fill(
-                              child: IgnorePointer(
-                                child: CustomPaint(
-                                  painter: _AdditionalSelectionsPainter(
-                                    text: editingValue.text,
-                                    selections: widget.additionalSelections,
-                                    style: textStyle,
-                                    textDirection: textDirection,
-                                    textScaler: textScaler,
-                                    padding: padding,
-                                    scrollController: widget.scrollController,
-                                    caretColor:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                          ),
+                        ),
+                      Expanded(child: editorViewport),
+                    ],
+                  );
+                },
               );
             },
           ),
@@ -536,6 +626,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       ..removeListener(_handleEditingValueChanged)
       ..dispose();
     _disposeOwnedFocusNode();
+    _disposeOwnedHorizontalScrollController();
     super.dispose();
   }
 }

@@ -132,6 +132,184 @@ void main() {
     skip: _bootstrap.skip != null,
   );
 
+  testWidgets(
+    'no-wrap keeps multiline input and scrolls the primary caret into view',
+    (tester) async {
+      final text = '${List.filled(100, 'longword').join(' ')}\nnext';
+      final doc = _bootstrap.core!.openDoc(9752, text);
+      addTearDown(doc.close);
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 0,
+        maxWindowUtf16: 2048,
+      );
+      final horizontalScroll = ScrollController();
+      addTearDown(horizontalScroll.dispose);
+      final fieldKey = GlobalKey<RustTextInputFieldState>();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 320,
+              height: 160,
+              child: RustTextInputField(
+                key: fieldKey,
+                inputWindow: window,
+                horizontalScrollController: horizontalScroll,
+                showLineNumbers: false,
+                showIndentGuides: false,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(fieldKey.currentState!.editingValue.text, text);
+      expect(horizontalScroll.hasClients, isTrue);
+      expect(horizontalScroll.position.maxScrollExtent, greaterThan(0));
+      final editableState = tester.state<EditableTextState>(
+        find.byType(EditableText),
+      );
+      final firstCaret = editableState.renderEditable.getLocalRectForCaret(
+        const TextPosition(offset: 0),
+      );
+      final lastCaret = editableState.renderEditable.getLocalRectForCaret(
+        TextPosition(offset: text.indexOf('\n') - 1),
+      );
+      expect(lastCaret.top, firstCaret.top);
+
+      fieldKey.currentState!.setSelection(
+        TextSelection.collapsed(offset: text.indexOf('\n') - 1),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(horizontalScroll.offset, greaterThan(0));
+      final viewport = tester.getRect(find.byType(SingleChildScrollView));
+      final caret = editableState.renderEditable.getLocalRectForCaret(
+        TextPosition(offset: text.indexOf('\n') - 1),
+      );
+      final caretGlobal =
+          editableState.renderEditable.localToGlobal(caret.topLeft);
+      expect(caretGlobal.dx, greaterThanOrEqualTo(viewport.left - 1));
+      expect(caretGlobal.dx, lessThanOrEqualTo(viewport.right + 1));
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+  testWidgets(
+    'word-wrap mode fits the text field and leaves horizontal scrolling idle',
+    (tester) async {
+      final text = List.filled(100, 'longword').join(' ');
+      final doc = _bootstrap.core!.openDoc(9753, text);
+      addTearDown(doc.close);
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 0,
+        maxWindowUtf16: 2048,
+      );
+      final horizontalScroll = ScrollController();
+      addTearDown(horizontalScroll.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 320,
+              height: 160,
+              child: RustTextInputField(
+                inputWindow: window,
+                horizontalScrollController: horizontalScroll,
+                showLineNumbers: false,
+                showIndentGuides: false,
+                wordWrap: true,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(horizontalScroll.hasClients, isFalse);
+      final editableState = tester.state<EditableTextState>(
+        find.byType(EditableText),
+      );
+      final firstCaret = editableState.renderEditable.getLocalRectForCaret(
+        const TextPosition(offset: 0),
+      );
+      final lastCaret = editableState.renderEditable.getLocalRectForCaret(
+        TextPosition(offset: text.length),
+      );
+      expect(lastCaret.top, greaterThan(firstCaret.top));
+      expect(tester.takeException(), isNull);
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+  testWidgets(
+    'no-wrap caret reveal follows RTL horizontal scroll direction',
+    (tester) async {
+      final line = List.filled(100, 'שלום').join();
+      final text = '$line\nend';
+      final doc = _bootstrap.core!.openDoc(9754, text);
+      addTearDown(doc.close);
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 0,
+        maxWindowUtf16: 2048,
+      );
+      final horizontalScroll = ScrollController();
+      addTearDown(horizontalScroll.dispose);
+      final fieldKey = GlobalKey<RustTextInputFieldState>();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              body: SizedBox(
+                width: 320,
+                height: 160,
+                child: RustTextInputField(
+                  key: fieldKey,
+                  inputWindow: window,
+                  horizontalScrollController: horizontalScroll,
+                  showLineNumbers: false,
+                  showIndentGuides: false,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(horizontalScroll.position.axisDirection, AxisDirection.left);
+      expect(horizontalScroll.position.maxScrollExtent, greaterThan(0));
+      fieldKey.currentState!.setSelection(
+        TextSelection.collapsed(offset: line.length - 1),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(horizontalScroll.offset, greaterThan(0));
+      final viewport = tester.getRect(find.byType(SingleChildScrollView));
+      final editableState = tester.state<EditableTextState>(
+        find.byType(EditableText),
+      );
+      final caret = editableState.renderEditable.getLocalRectForCaret(
+        TextPosition(offset: line.length - 1),
+      );
+      final caretGlobal =
+          editableState.renderEditable.localToGlobal(caret.topLeft);
+      expect(caretGlobal.dx, greaterThanOrEqualTo(viewport.left - 1));
+      expect(caretGlobal.dx, lessThanOrEqualTo(viewport.right + 1));
+    },
+    skip: _bootstrap.skip != null,
+  );
+
   test('Rust line lookup handles a nonzero UTF-16 offset and EOF', () {
     final doc = _bootstrap.core!.openDoc(9751, 'head\n漢👩‍💻\nend\n');
     addTearDown(doc.close);
