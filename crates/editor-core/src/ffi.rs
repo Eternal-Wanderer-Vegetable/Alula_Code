@@ -1655,7 +1655,7 @@ mod tests {
 
     #[test]
     fn rust_owned_savepoint_roundtrip_over_ffi_keeps_document_version() {
-        let id = 92_814;
+        let id = 92_850;
         let opened = take(unsafe { alula_doc_open(id, c("甲🦊\r\n").as_ptr()) });
         assert_eq!(opened["version"], 1);
         assert_eq!(take(alula_doc_is_dirty(id))["dirty"], false);
