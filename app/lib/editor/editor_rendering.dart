@@ -136,6 +136,201 @@ List<int> editorWhitespaceOffsets(
   return List.unmodifiable(offsets);
 }
 
+@immutable
+class EditorRangeDecoration {
+  const EditorRangeDecoration({
+    required this.documentVersion,
+    required this.startUtf16,
+    required this.endUtf16,
+    this.backgroundColor,
+    this.borderColor,
+    this.underlineColor,
+    this.borderWidth = 1,
+    this.borderRadius = 0,
+    this.underlineWidth = 1,
+  })  : assert(startUtf16 >= 0),
+        assert(documentVersion >= 0),
+        assert(endUtf16 >= startUtf16),
+        assert(borderWidth > 0),
+        assert(borderRadius >= 0),
+        assert(underlineWidth > 0);
+
+  final int documentVersion;
+
+  /// Absolute, half-open UTF-16 range in the Rust-owned document.
+  final int startUtf16;
+  final int endUtf16;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? underlineColor;
+  final double borderWidth;
+  final double borderRadius;
+  final double underlineWidth;
+}
+
+@immutable
+class EditorResolvedRangeDecoration {
+  const EditorResolvedRangeDecoration({
+    required this.decoration,
+    required this.range,
+  });
+
+  final EditorRangeDecoration decoration;
+  final TextSelection range;
+}
+
+/// Clips document-absolute decorations to the current bounded input window.
+List<EditorResolvedRangeDecoration> resolveEditorRangeDecorations({
+  required List<EditorRangeDecoration> decorations,
+  required int windowVersion,
+  required int windowStartUtf16,
+  required int windowLengthUtf16,
+}) {
+  if (windowStartUtf16 < 0) {
+    throw RangeError.value(windowStartUtf16, 'windowStartUtf16');
+  }
+  if (windowLengthUtf16 < 0) {
+    throw RangeError.value(windowLengthUtf16, 'windowLengthUtf16');
+  }
+  final windowEnd = windowStartUtf16 + windowLengthUtf16;
+  final visible = <EditorResolvedRangeDecoration>[];
+  for (final decoration in decorations) {
+    if (decoration.documentVersion != windowVersion) continue;
+    final start = decoration.startUtf16 > windowStartUtf16
+        ? decoration.startUtf16
+        : windowStartUtf16;
+    final end =
+        decoration.endUtf16 < windowEnd ? decoration.endUtf16 : windowEnd;
+    if (start >= end) continue;
+    visible.add(
+      EditorResolvedRangeDecoration(
+        decoration: decoration,
+        range: TextSelection(
+          baseOffset: start - windowStartUtf16,
+          extentOffset: end - windowStartUtf16,
+        ),
+      ),
+    );
+  }
+  return List.unmodifiable(visible);
+}
+
+class EditorRangeDecorationPainter extends CustomPainter {
+  EditorRangeDecorationPainter({
+    required this.text,
+    required this.windowVersion,
+    required this.windowStartUtf16,
+    required this.decorations,
+    required this.style,
+    required this.textDirection,
+    required this.textScaler,
+    required this.padding,
+    required this.scrollController,
+    required this.paintBackgrounds,
+  }) : super(repaint: scrollController);
+
+  final String text;
+  final int windowVersion;
+  final int windowStartUtf16;
+  final List<EditorRangeDecoration> decorations;
+  final TextStyle style;
+  final TextDirection textDirection;
+  final TextScaler textScaler;
+  final EdgeInsets padding;
+  final ScrollController? scrollController;
+  final bool paintBackgrounds;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final ranges = resolveEditorRangeDecorations(
+      decorations: decorations,
+      windowVersion: windowVersion,
+      windowStartUtf16: windowStartUtf16,
+      windowLengthUtf16: text.length,
+    );
+    if (ranges.isEmpty) return;
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: textDirection,
+      textScaler: textScaler,
+      textWidthBasis: TextWidthBasis.parent,
+    )..layout(
+        maxWidth: (size.width - padding.horizontal)
+            .clamp(1, double.infinity)
+            .toDouble(),
+      );
+    final scrollY =
+        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final origin = Offset(padding.left, padding.top - scrollY);
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+    for (final resolved in ranges) {
+      final decoration = resolved.decoration;
+      if (paintBackgrounds && decoration.backgroundColor == null) continue;
+      if (!paintBackgrounds &&
+          decoration.borderColor == null &&
+          decoration.underlineColor == null) {
+        continue;
+      }
+      final boxes = painter.getBoxesForSelection(resolved.range);
+      for (final box in boxes) {
+        final rect = box.toRect().shift(origin);
+        if (paintBackgrounds) {
+          final color = decoration.backgroundColor;
+          if (color == null) continue;
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+              rect,
+              Radius.circular(decoration.borderRadius),
+            ),
+            Paint()..color = color,
+          );
+          continue;
+        }
+        final borderColor = decoration.borderColor;
+        if (borderColor != null) {
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+              rect,
+              Radius.circular(decoration.borderRadius),
+            ),
+            Paint()
+              ..color = borderColor
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = decoration.borderWidth,
+          );
+        }
+        final underlineColor = decoration.underlineColor;
+        if (underlineColor != null) {
+          final y = rect.bottom - decoration.underlineWidth / 2;
+          canvas.drawLine(
+            Offset(rect.left, y),
+            Offset(rect.right, y),
+            Paint()
+              ..color = underlineColor
+              ..strokeWidth = decoration.underlineWidth,
+          );
+        }
+      }
+    }
+    canvas.restore();
+    painter.dispose();
+  }
+
+  @override
+  bool shouldRepaint(covariant EditorRangeDecorationPainter oldDelegate) =>
+      oldDelegate.text != text ||
+      oldDelegate.windowVersion != windowVersion ||
+      oldDelegate.windowStartUtf16 != windowStartUtf16 ||
+      oldDelegate.decorations != decorations ||
+      oldDelegate.style != style ||
+      oldDelegate.textDirection != textDirection ||
+      oldDelegate.textScaler != textScaler ||
+      oldDelegate.padding != padding ||
+      oldDelegate.scrollController != scrollController ||
+      oldDelegate.paintBackgrounds != paintBackgrounds;
+}
+
 double editorGutterWidth({
   required int lineCount,
   required TextStyle style,

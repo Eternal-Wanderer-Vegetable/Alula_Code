@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/editor_rendering.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
@@ -48,6 +50,160 @@ void main() {
       isEmpty,
     );
   });
+
+  test('range decorations clip absolute UTF-16 spans to the input window', () {
+    const leftOverlap =
+        EditorRangeDecoration(documentVersion: 1, startUtf16: 1, endUtf16: 5);
+    const visible =
+        EditorRangeDecoration(documentVersion: 1, startUtf16: 8, endUtf16: 12);
+    const rightTouch =
+        EditorRangeDecoration(documentVersion: 1, startUtf16: 11, endUtf16: 14);
+    const stale =
+        EditorRangeDecoration(documentVersion: 0, startUtf16: 7, endUtf16: 9);
+    final resolved = resolveEditorRangeDecorations(
+      decorations: const [leftOverlap, visible, rightTouch, stale],
+      windowVersion: 1,
+      windowStartUtf16: 3,
+      windowLengthUtf16: 8,
+    );
+
+    expect(resolved, hasLength(2));
+    expect(resolved[0].decoration, same(leftOverlap));
+    expect(
+        resolved[0].range, const TextSelection(baseOffset: 0, extentOffset: 2));
+    expect(resolved[1].decoration, same(visible));
+    expect(
+        resolved[1].range, const TextSelection(baseOffset: 5, extentOffset: 8));
+  });
+
+  test('range decoration painter draws background and underline at text bounds',
+      () async {
+    const text = 'abcdef';
+    const style = TextStyle(fontFamily: 'monospace', fontSize: 18);
+    const decoration = EditorRangeDecoration(
+      documentVersion: 1,
+      startUtf16: 1,
+      endUtf16: 4,
+      backgroundColor: Color(0xFFE53935),
+      underlineColor: Color(0xFF1565C0),
+      underlineWidth: 2,
+    );
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    const size = Size(200, 40);
+    EditorRangeDecorationPainter(
+      text: text,
+      windowVersion: 1,
+      windowStartUtf16: 0,
+      decorations: const [decoration],
+      style: style,
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
+      padding: EdgeInsets.zero,
+      scrollController: null,
+      paintBackgrounds: true,
+    ).paint(canvas, size);
+    EditorRangeDecorationPainter(
+      text: text,
+      windowVersion: 1,
+      windowStartUtf16: 0,
+      decorations: const [decoration],
+      style: style,
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
+      padding: EdgeInsets.zero,
+      scrollController: null,
+      paintBackgrounds: false,
+    ).paint(canvas, size);
+    final image = await recorder.endRecording().toImage(200, 40);
+    addTearDown(image.dispose);
+    final bytes =
+        await image.toByteData(format: ui.ImageByteFormat.rawStraightRgba);
+    expect(bytes, isNotNull);
+
+    final textPainter = TextPainter(
+      text: const TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: TextScaler.noScaling,
+    )..layout(maxWidth: size.width);
+    final box = textPainter
+        .getBoxesForSelection(
+            const TextSelection(baseOffset: 1, extentOffset: 4))
+        .single
+        .toRect();
+    final x = box.center.dx.floor();
+    final backgroundY = box.center.dy.floor();
+    final underlineY = (box.bottom - decoration.underlineWidth / 2).floor();
+    final backgroundOffset = (backgroundY * 200 + x) * 4;
+    final underlineOffset = (underlineY * 200 + x) * 4;
+    expect(bytes!.getUint8(backgroundOffset), 0xE5);
+    expect(bytes.getUint8(backgroundOffset + 1), 0x39);
+    expect(bytes.getUint8(underlineOffset + 2), 0xC0);
+    expect(bytes.getUint8((30 * 200 + 180) * 4 + 3), 0);
+    textPainter.dispose();
+  });
+
+  testWidgets(
+    'RustTextInputField resolves document decorations against its input window',
+    (tester) async {
+      final doc = _bootstrap.core!.openDoc(9755, 'header\nneedle\nfooter');
+      addTearDown(doc.close);
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 7,
+        maxWindowUtf16: 64,
+      );
+      final background = EditorRangeDecoration(
+        documentVersion: window.version,
+        startUtf16: 5,
+        endUtf16: 10,
+        backgroundColor: const Color(0x407F7FFF),
+      );
+      final underline = EditorRangeDecoration(
+        documentVersion: window.version,
+        startUtf16: 9,
+        endUtf16: 13,
+        underlineColor: const Color(0xFFFFC107),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RustTextInputField(
+              inputWindow: window,
+              rangeDecorations: [background, underline],
+              showIndentGuides: false,
+              wordWrap: true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final backgroundFinder = find.byWidgetPredicate(
+        (widget) =>
+            widget is CustomPaint &&
+            widget.painter is EditorRangeDecorationPainter &&
+            (widget.painter! as EditorRangeDecorationPainter).paintBackgrounds,
+      );
+      expect(backgroundFinder, findsOneWidget);
+      final painter = tester.widget<CustomPaint>(backgroundFinder).painter!
+          as EditorRangeDecorationPainter;
+      expect(painter.windowStartUtf16, 7);
+      final resolved = resolveEditorRangeDecorations(
+        decorations: painter.decorations,
+        windowVersion: painter.windowVersion,
+        windowStartUtf16: painter.windowStartUtf16,
+        windowLengthUtf16: painter.text.length,
+      );
+      expect(resolved.map((item) => item.range), [
+        const TextSelection(baseOffset: 0, extentOffset: 3),
+        const TextSelection(baseOffset: 2, extentOffset: 6),
+      ]);
+      expect(tester.takeException(), isNull);
+    },
+    skip: _bootstrap.skip != null,
+  );
 
   testWidgets(
     'Rust-backed gutter resolves absolute line and paints bidi decorations',

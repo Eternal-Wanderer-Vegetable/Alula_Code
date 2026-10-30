@@ -27,6 +27,7 @@ class RustTextInputField extends StatefulWidget {
     this.showIndentGuides = true,
     this.wordWrap = false,
     this.horizontalScrollController,
+    this.rangeDecorations = const [],
     this.whitespaceMode = EditorWhitespaceMode.none,
     this.tabSize = 4,
     this.semanticsLabel,
@@ -50,6 +51,7 @@ class RustTextInputField extends StatefulWidget {
   final bool showIndentGuides;
   final bool wordWrap;
   final ScrollController? horizontalScrollController;
+  final List<EditorRangeDecoration> rangeDecorations;
   final EditorWhitespaceMode whitespaceMode;
   final int tabSize;
   final String? semanticsLabel;
@@ -488,6 +490,26 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                   final editorContent = Stack(
                     fit: StackFit.expand,
                     children: [
+                      if (widget.rangeDecorations.any(
+                          (decoration) => decoration.backgroundColor != null))
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: EditorRangeDecorationPainter(
+                                text: editingValue.text,
+                                windowVersion: widget.inputWindow.version,
+                                windowStartUtf16: widget.inputWindow.startUtf16,
+                                decorations: widget.rangeDecorations,
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                paintBackgrounds: true,
+                              ),
+                            ),
+                          ),
+                        ),
                       Semantics(
                         label: widget.semanticsLabel,
                         textField: true,
@@ -528,6 +550,29 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                 scrollController: widget.scrollController,
                                 caretColor:
                                     Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (widget.rangeDecorations.any(
+                        (decoration) =>
+                            decoration.borderColor != null ||
+                            decoration.underlineColor != null,
+                      ))
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: CustomPaint(
+                              painter: EditorRangeDecorationPainter(
+                                text: editingValue.text,
+                                windowVersion: widget.inputWindow.version,
+                                windowStartUtf16: widget.inputWindow.startUtf16,
+                                decorations: widget.rangeDecorations,
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                scrollController: widget.scrollController,
+                                paintBackgrounds: false,
                               ),
                             ),
                           ),

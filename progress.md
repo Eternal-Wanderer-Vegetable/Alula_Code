@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
-### 最新进展（2026-10-30，P03.6 编辑器绘制与换行模式进行中）
+### 最新进展（2026-10-30，P03.6 编辑器绘制系统进行中）
 
 - P03.5 完成并按 `docs/03` 关闭：全文 occurrence 通过 Rust `readRange` 以 64 Ki UTF-16 页面扫描；Ctrl+D 可跨输入窗继续/环绕，Ctrl+Shift+L 上限 10,000 selection。窗口外多选编辑、ZWJ emoji 字素退格、保存、撤销/重做和代理对中间选区拒绝均有 fixture。
 - 之前已完成的插入/替换/退格、列选、IME overlay、复制/剪切、按行分配粘贴、独立 cursor history、Alt+Click 坐标与主 caret 保留证据继续有效；同一 DocumentId 多视图、屏幕阅读器和像素验收移交 P03.7。
@@ -14,8 +14,10 @@
 - P03.6 已开始：Rust-backed 输入控件内新增固定左侧的绝对行号 gutter，以 Rust `lineOffset` 二分映射有界输入窗起点；新绘制层增加缩进 guides 与 none/trailing/all 空白标记。未读取文档全文，也未改变 Rust delta/IME/ABI 路径。
 - P03.6 新增默认 no-wrap 与显式 `wordWrap` 模式：按 bounded input window 的 TextPainter 度量建立横向滚动视口，仍使用 multiline TextField 并保留 LF；selection/caret 移动会用 ScrollPosition 轴方向自动显露，测试覆盖 LTR 与 RTL。
 - renderer fixture 覆盖 CRLF/UTF-16 偏移、空末行、tab stop、CJK、组合字符、ZWJ emoji、RTL/gutter 顺序与编辑值更新；P03.6 定向输入/工作台集合 21 项通过，专用 renderer 集合 3 项通过，Flutter analyze 0 issues，cargo fmt 与 Rust/Clippy/core build 门通过。基础层提交前，工作树和 `HEAD + index` 精确 staged snapshot 的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 220 项）；staged snapshot 的 cargo fmt 与 Flutter analyze 0 issues。证据见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。
+- P03.6 已加入版本化范围 decorations：以文档绝对 UTF-16 坐标提交，按 `RustTextInputWindow.version` 过滤陈旧装饰并裁剪到当前窗口；支持文字底层背景、边框和下划线。renderer 9 项 fixture 覆盖范围窗口裁剪、版本过期、实际像素与控件接线。
+- 该范围装饰切片全工作树 `RUST_TEST_THREADS=1 bash init.sh` 通过（Flutter 226 项），精确 HEAD+index 快照完整 `bash init.sh` 也通过（Flutter 226 项）；两边 `cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 均通过。
 - P03.6 默认 no-wrap/wordWrap 子切片定向 renderer 6 项通过，保留多行 LF；全工作树 `RUST_TEST_THREADS=1 bash init.sh` 退出 0（Flutter 223 项）、`cargo fmt --all -- --check` 通过、`flutter analyze --no-pub` 0 issues。HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 的独立解包快照也通过 `RUST_TEST_THREADS=1 bash init.sh`（Flutter 223 项）、cargo fmt 与 flutter analyze 0 issues。
-- P03.6 尚未完成：字体回退配置、minimap/overview、sticky scroll、折叠、行/范围 decorations 和视觉对照仍待做。P03.4 macOS/原生 DRM Linux IME 与屏幕边缘候选窗继续保留平台门；同文档多视图 selection 与屏幕阅读器/关闭生命周期留 P03.7。500 MiB 数值优化留 P14。
+- P03.6 尚未完成：字体回退配置、minimap/overview、sticky scroll、折叠、行级 decorations/provider 接线和视觉对照仍待做。P03.4 macOS/原生 DRM Linux IME 与屏幕边缘候选窗继续保留平台门；同文档多视图 selection 与屏幕阅读器/关闭生命周期留 P03.7。500 MiB 数值优化留 P14。
 
 ### 最新进展（2026-10-30，P03.4.2c Windows/Linux IME 部分平台证据）
 
