@@ -4707,6 +4707,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           inputWindow: active.inputWindow,
                           syntaxTokens: syntaxTokens,
                           syntaxVersion: syntaxVersion,
+                          enableCodeFolding: usesRustSyntax,
                           syntaxTokenColor: _tokenColor,
                           rangeDecorations: rangeDecorations,
                           focusNode: _focusNodeFor(g, active),

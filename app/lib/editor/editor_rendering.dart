@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
@@ -227,6 +228,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
     required this.padding,
     required this.scrollController,
     required this.paintBackgrounds,
+    this.textSpan,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -239,6 +241,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
   final EdgeInsets padding;
   final ScrollController? scrollController;
   final bool paintBackgrounds;
+  final TextSpan? textSpan;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -250,7 +253,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
     );
     if (ranges.isEmpty) return;
     final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: textSpan ?? TextSpan(text: text, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
@@ -324,6 +327,7 @@ class EditorRangeDecorationPainter extends CustomPainter {
       oldDelegate.windowStartUtf16 != windowStartUtf16 ||
       oldDelegate.decorations != decorations ||
       oldDelegate.style != style ||
+      oldDelegate.textSpan != textSpan ||
       oldDelegate.textDirection != textDirection ||
       oldDelegate.textScaler != textScaler ||
       oldDelegate.padding != padding ||
@@ -384,6 +388,11 @@ class EditorGutterPainter extends CustomPainter {
     required this.backgroundColor,
     required this.foregroundColor,
     required this.dividerColor,
+    this.textSpan,
+    this.hiddenLineIndices = const {},
+    this.foldableLineIndices = const {},
+    this.collapsedLineIndices = const {},
+    this.showLineNumbers = true,
   }) : super(repaint: scrollController);
 
   final String text;
@@ -397,12 +406,17 @@ class EditorGutterPainter extends CustomPainter {
   final Color backgroundColor;
   final Color foregroundColor;
   final Color dividerColor;
+  final TextSpan? textSpan;
+  final Set<int> hiddenLineIndices;
+  final Set<int> foldableLineIndices;
+  final Set<int> collapsedLineIndices;
+  final bool showLineNumbers;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawColor(backgroundColor, BlendMode.src);
     final textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: textSpan ?? TextSpan(text: text, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
@@ -417,6 +431,7 @@ class EditorGutterPainter extends CustomPainter {
     final numberStyle = style.copyWith(color: foregroundColor, fontSize: 11);
     final lines = editorLogicalLines(text);
     for (var index = 0; index < lines.length; index++) {
+      if (hiddenLineIndices.contains(index)) continue;
       final line = lines[index];
       final caret = textPainter.getOffsetForCaret(
         TextPosition(offset: line.startUtf16),
@@ -431,17 +446,36 @@ class EditorGutterPainter extends CustomPainter {
         textScaler: textScaler,
         textWidthBasis: TextWidthBasis.parent,
       )..layout(maxWidth: size.width);
-      final top = padding.top +
-          caret.dy +
-          (lineHeight - numberPainter.height) / 2 -
-          scrollY;
-      if (top + numberPainter.height >= 0 && top <= size.height) {
+      final lineTop = padding.top + caret.dy - scrollY;
+      final numberTop = lineTop + (lineHeight - numberPainter.height) / 2;
+      if (showLineNumbers &&
+          numberTop + numberPainter.height >= 0 &&
+          numberTop <= size.height) {
         numberPainter.paint(
           canvas,
-          Offset(size.width - 8 - numberPainter.width, top),
+          Offset(size.width - 8 - numberPainter.width, numberTop),
         );
       }
       numberPainter.dispose();
+      if (foldableLineIndices.contains(index) &&
+          lineTop + lineHeight >= 0 &&
+          lineTop <= size.height) {
+        final centerY = lineTop + lineHeight / 2;
+        final disclosure = Path();
+        if (collapsedLineIndices.contains(index)) {
+          disclosure
+            ..moveTo(4, centerY - 3)
+            ..lineTo(8, centerY)
+            ..lineTo(4, centerY + 3);
+        } else {
+          disclosure
+            ..moveTo(3, centerY - 2)
+            ..lineTo(9, centerY - 2)
+            ..lineTo(6, centerY + 2);
+        }
+        disclosure.close();
+        canvas.drawPath(disclosure, Paint()..color = foregroundColor);
+      }
     }
     canvas.drawLine(
       Offset(size.width - 0.5, 0),
@@ -465,7 +499,12 @@ class EditorGutterPainter extends CustomPainter {
       oldDelegate.scrollController != scrollController ||
       oldDelegate.backgroundColor != backgroundColor ||
       oldDelegate.foregroundColor != foregroundColor ||
-      oldDelegate.dividerColor != dividerColor;
+      oldDelegate.dividerColor != dividerColor ||
+      oldDelegate.textSpan != textSpan ||
+      !setEquals(oldDelegate.hiddenLineIndices, hiddenLineIndices) ||
+      !setEquals(oldDelegate.foldableLineIndices, foldableLineIndices) ||
+      !setEquals(oldDelegate.collapsedLineIndices, collapsedLineIndices) ||
+      oldDelegate.showLineNumbers != showLineNumbers;
 }
 
 class EditorTextDecorationPainter extends CustomPainter {
@@ -481,6 +520,8 @@ class EditorTextDecorationPainter extends CustomPainter {
     required this.whitespaceMode,
     required this.guideColor,
     required this.whitespaceColor,
+    this.textSpan,
+    this.hiddenLineIndices = const {},
   }) : super(repaint: scrollController);
 
   final String text;
@@ -494,6 +535,8 @@ class EditorTextDecorationPainter extends CustomPainter {
   final EditorWhitespaceMode whitespaceMode;
   final Color guideColor;
   final Color whitespaceColor;
+  final TextSpan? textSpan;
+  final Set<int> hiddenLineIndices;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -501,7 +544,7 @@ class EditorTextDecorationPainter extends CustomPainter {
       return;
     }
     final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: textSpan ?? TextSpan(text: text, style: style),
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
@@ -524,6 +567,7 @@ class EditorTextDecorationPainter extends CustomPainter {
     canvas.save();
     canvas.clipRect(Offset.zero & size);
     for (var index = 0; index < lines.length; index++) {
+      if (hiddenLineIndices.contains(index)) continue;
       final line = lines[index];
       final lineStart = painter.getOffsetForCaret(
         TextPosition(offset: line.startUtf16),
@@ -583,5 +627,7 @@ class EditorTextDecorationPainter extends CustomPainter {
       oldDelegate.tabSize != tabSize ||
       oldDelegate.whitespaceMode != whitespaceMode ||
       oldDelegate.guideColor != guideColor ||
-      oldDelegate.whitespaceColor != whitespaceColor;
+      oldDelegate.whitespaceColor != whitespaceColor ||
+      oldDelegate.textSpan != textSpan ||
+      !setEquals(oldDelegate.hiddenLineIndices, hiddenLineIndices);
 }

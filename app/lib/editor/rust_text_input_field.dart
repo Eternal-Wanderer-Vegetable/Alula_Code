@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart' show kPrimaryButton, PointerDownEvent;
@@ -6,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_folding.dart';
 import 'editor_rendering.dart';
 import 'rust_text_input_window.dart';
 
@@ -30,6 +33,7 @@ class _SyntaxTextEditingController extends TextEditingController {
   int _windowStartUtf16 = 0;
   String _windowText = '';
   Color Function(String kind)? _colorForKind;
+  List<EditorFoldRange> _foldedRanges = const [];
 
   void configureSyntax({
     required List<Map<String, Object?>> tokens,
@@ -38,6 +42,7 @@ class _SyntaxTextEditingController extends TextEditingController {
     required int windowStartUtf16,
     required String windowText,
     required Color Function(String kind)? colorForKind,
+    required List<EditorFoldRange> foldedRanges,
   }) {
     _tokens = tokens;
     _tokenVersion = tokenVersion;
@@ -45,6 +50,7 @@ class _SyntaxTextEditingController extends TextEditingController {
     _windowStartUtf16 = windowStartUtf16;
     _windowText = windowText;
     _colorForKind = colorForKind;
+    _foldedRanges = foldedRanges;
   }
 
   List<_ResolvedSyntaxToken> _visibleTokens() {
@@ -97,6 +103,19 @@ class _SyntaxTextEditingController extends TextEditingController {
     return visible;
   }
 
+  List<EditorFoldRange> _visibleFoldedRanges() {
+    if (text != _windowText || _foldedRanges.isEmpty) return const [];
+    final composing = value.composing;
+    if (!composing.isValid || composing.isCollapsed) return _foldedRanges;
+    return _foldedRanges
+        .where((range) =>
+            composing.end <= range.hiddenStartUtf16 ||
+            composing.start >= range.hiddenEndUtf16)
+        .toList(growable: false);
+  }
+
+  bool get hasVisibleFoldedRanges => _visibleFoldedRanges().isNotEmpty;
+
   @override
   TextSpan buildTextSpan({
     required BuildContext context,
@@ -104,7 +123,8 @@ class _SyntaxTextEditingController extends TextEditingController {
     required bool withComposing,
   }) {
     final visible = _visibleTokens();
-    if (visible.isEmpty) {
+    final foldedRanges = _visibleFoldedRanges();
+    if (visible.isEmpty && foldedRanges.isEmpty) {
       return super.buildTextSpan(
         context: context,
         style: style,
@@ -122,6 +142,11 @@ class _SyntaxTextEditingController extends TextEditingController {
         ..add(token.start)
         ..add(token.end);
     }
+    for (final range in foldedRanges) {
+      boundaries
+        ..add(range.hiddenStartUtf16)
+        ..add(range.hiddenEndUtf16);
+    }
     if (composing != null) {
       boundaries
         ..add(composing.start)
@@ -130,12 +155,17 @@ class _SyntaxTextEditingController extends TextEditingController {
     final sortedBoundaries = boundaries.toList()..sort();
     final spans = <InlineSpan>[];
     var tokenIndex = 0;
+    var foldedIndex = 0;
     for (var index = 0; index + 1 < sortedBoundaries.length; index++) {
       final start = sortedBoundaries[index];
       final end = sortedBoundaries[index + 1];
       if (start >= end) continue;
       while (tokenIndex < visible.length && visible[tokenIndex].end <= start) {
         tokenIndex++;
+      }
+      while (foldedIndex < foldedRanges.length &&
+          foldedRanges[foldedIndex].hiddenEndUtf16 <= start) {
+        foldedIndex++;
       }
       final token = tokenIndex < visible.length &&
               visible[tokenIndex].start <= start &&
@@ -144,12 +174,22 @@ class _SyntaxTextEditingController extends TextEditingController {
           : null;
       final isComposing =
           composing != null && composing.start <= start && composing.end >= end;
-      final segmentStyle = token == null && !isComposing
-          ? null
-          : TextStyle(
-              color: token?.color,
-              decoration: isComposing ? TextDecoration.underline : null,
-            );
+      final isFolded = foldedIndex < foldedRanges.length &&
+          foldedRanges[foldedIndex].hiddenStartUtf16 <= start &&
+          foldedRanges[foldedIndex].hiddenEndUtf16 >= end;
+      final segmentStyle = isFolded
+          ? const TextStyle(
+              color: Color(0x00000000),
+              fontSize: 0,
+              height: 0,
+              letterSpacing: 0,
+            )
+          : token == null && !isComposing
+              ? null
+              : TextStyle(
+                  color: token?.color,
+                  decoration: isComposing ? TextDecoration.underline : null,
+                );
       spans.add(
         TextSpan(
           text: text.substring(start, end),
@@ -198,6 +238,7 @@ class RustTextInputField extends StatefulWidget {
     this.syntaxTokenColor,
     this.whitespaceMode = EditorWhitespaceMode.none,
     this.tabSize = 4,
+    this.enableCodeFolding = false,
     this.semanticsLabel,
     this.onTap,
     this.onAltClick,
@@ -226,6 +267,7 @@ class RustTextInputField extends StatefulWidget {
   final Color Function(String kind)? syntaxTokenColor;
   final EditorWhitespaceMode whitespaceMode;
   final int tabSize;
+  final bool enableCodeFolding;
   final String? semanticsLabel;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
@@ -252,6 +294,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _firstLineNumber = 0;
   int _documentLineCount = 1;
   final GlobalKey _horizontalViewportKey = GlobalKey();
+  Timer? _foldSymbolsTimer;
+  int _scheduledFoldDocId = -1;
+  int _scheduledFoldVersion = -1;
+  int _foldSymbolsDocId = -1;
+  int _foldSymbolsVersion = -1;
+  List<EditorFoldSymbol> _foldSymbols = const [];
+  final Set<String> _collapsedFoldKeys = {};
+  EditorFoldLayout _lastFoldLayout = const EditorFoldLayout.empty();
 
   TextEditingValue get editingValue => _controller.value;
 
@@ -312,10 +362,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     super.initState();
     _controller = _SyntaxTextEditingController.fromValue(
       widget.inputWindow.initialValue,
-    )..addListener(_handleEditingValueChanged);
+    )
+      ..addListener(_handleEditingValueChanged)
+      ..addListener(_handleFoldSelectionChanged);
     _lastAcceptedValue = _controller.value;
     _setFocusNode(widget.focusNode);
     _setHorizontalScrollController(widget.horizontalScrollController);
+    _syncFoldSymbols();
   }
 
   @override
@@ -341,6 +394,179 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       _restoreValue(widget.inputWindow.initialValue);
       _errorMessage = null;
     }
+    _syncFoldSymbols();
+  }
+
+  void _syncFoldSymbols() {
+    if (!widget.enableCodeFolding) {
+      _foldSymbolsTimer?.cancel();
+      _foldSymbolsTimer = null;
+      _foldSymbols = const [];
+      _foldSymbolsDocId = -1;
+      _foldSymbolsVersion = -1;
+      _collapsedFoldKeys.clear();
+      return;
+    }
+    final document = widget.inputWindow.document;
+    final version = widget.inputWindow.version;
+    if (widget.inputWindow.pendingText != null || document.version != version) {
+      _foldSymbolsTimer?.cancel();
+      _foldSymbolsTimer = null;
+      _scheduledFoldDocId = -1;
+      _scheduledFoldVersion = -1;
+      return;
+    }
+    if ((_foldSymbolsDocId == document.id && _foldSymbolsVersion == version) ||
+        (_scheduledFoldDocId == document.id &&
+            _scheduledFoldVersion == version)) {
+      return;
+    }
+    _foldSymbolsTimer?.cancel();
+    _scheduledFoldDocId = document.id;
+    _scheduledFoldVersion = version;
+    _foldSymbolsTimer = Timer(const Duration(milliseconds: 350), () {
+      _foldSymbolsTimer = null;
+      _scheduledFoldDocId = -1;
+      _scheduledFoldVersion = -1;
+      if (!mounted ||
+          !widget.enableCodeFolding ||
+          widget.inputWindow.document.id != document.id ||
+          widget.inputWindow.version != version ||
+          widget.inputWindow.pendingText != null ||
+          document.version != version) {
+        return;
+      }
+      final result = document.core.lsp.symbols(document.id);
+      if (!mounted ||
+          result == null ||
+          result.version != version ||
+          widget.inputWindow.document.id != document.id ||
+          widget.inputWindow.version != version ||
+          widget.inputWindow.pendingText != null ||
+          document.version != version) {
+        return;
+      }
+      final symbols = <EditorFoldSymbol>[
+        for (final value in result.symbols)
+          if (EditorFoldSymbol.fromMap(value) case final symbol?) symbol,
+      ];
+      final validKeys = symbols.map((symbol) => symbol.key).toSet();
+      setState(() {
+        _foldSymbols = List.unmodifiable(symbols);
+        _foldSymbolsDocId = document.id;
+        _foldSymbolsVersion = version;
+        _collapsedFoldKeys.removeWhere((key) => !validKeys.contains(key));
+      });
+    });
+  }
+
+  EditorFoldLayout _buildFoldLayout(String text) {
+    final window = widget.inputWindow;
+    if (!widget.enableCodeFolding ||
+        window.pendingText != null ||
+        window.version != window.document.version ||
+        text != window.text ||
+        _foldSymbolsDocId != window.document.id ||
+        _foldSymbolsVersion != window.version) {
+      return const EditorFoldLayout.empty();
+    }
+    return buildEditorFoldLayout(
+      text: text,
+      firstDocumentLine: _firstLineNumber,
+      symbols: _foldSymbols,
+      collapsedKeys: _collapsedFoldKeys,
+    );
+  }
+
+  bool _editingValueIntersectsFold(
+    TextEditingValue value,
+    EditorFoldRange range,
+  ) {
+    bool intersects(TextRange selection) {
+      if (!selection.isValid) return false;
+      if (selection.isCollapsed) {
+        return selection.start >= range.hiddenStartUtf16 &&
+            selection.start < range.hiddenEndUtf16;
+      }
+      return selection.start < range.hiddenEndUtf16 &&
+          selection.end > range.hiddenStartUtf16;
+    }
+
+    return intersects(value.selection) || intersects(value.composing);
+  }
+
+  void _handleFoldSelectionChanged() {
+    if (!widget.enableCodeFolding ||
+        _collapsedFoldKeys.isEmpty ||
+        _controller.text != widget.inputWindow.text) {
+      return;
+    }
+    final value = _controller.value;
+    final expanded = _lastFoldLayout.collapsedRanges
+        .where((range) => _editingValueIntersectsFold(value, range))
+        .map((range) => range.symbol.key)
+        .toSet();
+    if (!expanded.any(_collapsedFoldKeys.contains)) return;
+    _collapsedFoldKeys.removeAll(expanded);
+    setState(() {});
+  }
+
+  void _toggleFold(EditorFoldLayout layout, EditorFoldSymbol symbol) {
+    if (_collapsedFoldKeys.remove(symbol.key)) {
+      setState(() {});
+      return;
+    }
+    final range = layout.foldRangesByLine.values
+        .where((candidate) => candidate.symbol.key == symbol.key)
+        .firstOrNull;
+    if (range == null ||
+        _editingValueIntersectsFold(_controller.value, range)) {
+      return;
+    }
+    setState(() => _collapsedFoldKeys.add(symbol.key));
+  }
+
+  void _handleFoldGutterTap({
+    required TapUpDetails details,
+    required EditorFoldLayout layout,
+    required TextSpan textSpan,
+    required TextDirection textDirection,
+    required TextScaler textScaler,
+    required EdgeInsets padding,
+    required double textWidth,
+  }) {
+    if (details.localPosition.dx > 14 || layout.foldableByLine.isEmpty) return;
+    final painter = TextPainter(
+      text: textSpan,
+      textDirection: textDirection,
+      textScaler: textScaler,
+      textWidthBasis: TextWidthBasis.parent,
+    )..layout(
+        maxWidth: (textWidth - padding.horizontal)
+            .clamp(1, double.infinity)
+            .toDouble(),
+      );
+    final scrollY = widget.scrollController?.hasClients == true
+        ? widget.scrollController!.offset
+        : 0.0;
+    final lineHeight = painter.preferredLineHeight;
+    final lines = editorLogicalLines(_controller.text);
+    EditorFoldSymbol? hit;
+    for (final entry in layout.foldableByLine.entries) {
+      final line = lines[entry.key];
+      final caret = painter.getOffsetForCaret(
+        TextPosition(offset: line.startUtf16),
+        Rect.fromLTWH(0, 0, 1.5, lineHeight),
+      );
+      final top = padding.top + caret.dy - scrollY;
+      if (details.localPosition.dy >= top &&
+          details.localPosition.dy <= top + lineHeight) {
+        hit = entry.value;
+        break;
+      }
+    }
+    painter.dispose();
+    if (hit != null) _toggleFold(layout, hit);
   }
 
   void _setFocusNode(FocusNode? external) {
@@ -596,6 +822,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   Widget build(BuildContext context) {
     _updateLineMetadata();
+    _syncFoldSymbols();
+    final foldLayout = _buildFoldLayout(_controller.text);
+    _lastFoldLayout = foldLayout;
     _controller.configureSyntax(
       tokens: widget.syntaxTokens,
       tokenVersion: widget.syntaxVersion,
@@ -603,6 +832,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       windowStartUtf16: widget.inputWindow.startUtf16,
       windowText: widget.inputWindow.text,
       colorForKind: widget.syntaxTokenColor,
+      foldedRanges: foldLayout.collapsedRanges,
     );
     final requestedStyle =
         widget.style ?? const TextStyle(fontFamily: 'monospace');
@@ -630,6 +860,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         maxLines: null,
         expands: true,
         style: editorStyle,
+        strutStyle:
+            _controller.hasVisibleFoldedRanges ? StrutStyle.disabled : null,
         decoration: widget.decoration ??
             const InputDecoration(
               border: InputBorder.none,
@@ -638,11 +870,18 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       ),
     );
     final textStyle = inputBaseStyle.merge(editorStyle);
+    final editorTextSpan = _controller.buildTextSpan(
+      context: context,
+      style: textStyle,
+      withComposing: true,
+    );
     final gutterStyle = textStyle.copyWith(fontSize: 11);
     final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
         .resolve(Directionality.of(context));
     final textDirection = Directionality.of(context);
     final textScaler = MediaQuery.textScalerOf(context);
+    final showGutter =
+        widget.showLineNumbers || foldLayout.foldableByLine.isNotEmpty;
     final gutterWidth = widget.showLineNumbers
         ? editorGutterWidth(
             lineCount: _documentLineCount,
@@ -650,7 +889,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             textScaler: textScaler,
             textDirection: textDirection,
           )
-        : 0.0;
+        : showGutter
+            ? 18.0
+            : 0.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -682,6 +923,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: CustomPaint(
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
+                                textSpan: editorTextSpan,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
                                 decorations: widget.rangeDecorations,
@@ -707,6 +949,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: CustomPaint(
                               painter: EditorTextDecorationPainter(
                                 text: editingValue.text,
+                                textSpan: editorTextSpan,
                                 style: textStyle,
                                 textDirection: textDirection,
                                 textScaler: textScaler,
@@ -717,6 +960,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                                 whitespaceMode: widget.whitespaceMode,
                                 guideColor: const Color(0x557A8290),
                                 whitespaceColor: const Color(0xFF727983),
+                                hiddenLineIndices: foldLayout.hiddenLineIndices,
                               ),
                             ),
                           ),
@@ -727,6 +971,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: CustomPaint(
                               painter: _AdditionalSelectionsPainter(
                                 text: editingValue.text,
+                                textSpan: editorTextSpan,
                                 selections: widget.additionalSelections,
                                 style: textStyle,
                                 textDirection: textDirection,
@@ -749,6 +994,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: CustomPaint(
                               painter: EditorRangeDecorationPainter(
                                 text: editingValue.text,
+                                textSpan: editorTextSpan,
                                 windowVersion: widget.inputWindow.version,
                                 windowStartUtf16: widget.inputWindow.startUtf16,
                                 decorations: widget.rangeDecorations,
@@ -780,23 +1026,44 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     textDirection: TextDirection.ltr,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (widget.showLineNumbers)
-                        SizedBox(
+                      if (showGutter)
+                        GestureDetector(
                           key: const ValueKey<String>('rust-editor-gutter'),
-                          width: gutterWidth,
-                          child: CustomPaint(
-                            painter: EditorGutterPainter(
-                              text: editingValue.text,
-                              firstLineNumber: _firstLineNumber,
-                              style: textStyle,
-                              textDirection: textDirection,
-                              textScaler: textScaler,
-                              padding: padding,
-                              textWidth: contentWidth,
-                              scrollController: widget.scrollController,
-                              backgroundColor: const Color(0xFF191B20),
-                              foregroundColor: const Color(0xFF858585),
-                              dividerColor: const Color(0xFF2A2D33),
+                          behavior: HitTestBehavior.opaque,
+                          onTapUp: foldLayout.foldableByLine.isEmpty
+                              ? null
+                              : (details) => _handleFoldGutterTap(
+                                    details: details,
+                                    layout: foldLayout,
+                                    textSpan: editorTextSpan,
+                                    textDirection: textDirection,
+                                    textScaler: textScaler,
+                                    padding: padding,
+                                    textWidth: contentWidth,
+                                  ),
+                          child: SizedBox(
+                            width: gutterWidth,
+                            child: CustomPaint(
+                              painter: EditorGutterPainter(
+                                text: editingValue.text,
+                                textSpan: editorTextSpan,
+                                firstLineNumber: _firstLineNumber,
+                                style: textStyle,
+                                textDirection: textDirection,
+                                textScaler: textScaler,
+                                padding: padding,
+                                textWidth: contentWidth,
+                                scrollController: widget.scrollController,
+                                backgroundColor: const Color(0xFF191B20),
+                                foregroundColor: const Color(0xFF858585),
+                                dividerColor: const Color(0xFF2A2D33),
+                                hiddenLineIndices: foldLayout.hiddenLineIndices,
+                                foldableLineIndices:
+                                    foldLayout.foldableLineIndices,
+                                collapsedLineIndices:
+                                    foldLayout.collapsedLineIndices,
+                                showLineNumbers: widget.showLineNumbers,
+                              ),
                             ),
                           ),
                         ),
@@ -854,7 +1121,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     );
     _controller
       ..removeListener(_handleEditingValueChanged)
+      ..removeListener(_handleFoldSelectionChanged)
       ..dispose();
+    _foldSymbolsTimer?.cancel();
     _disposeOwnedFocusNode();
     _disposeOwnedHorizontalScrollController();
     super.dispose();
@@ -864,6 +1133,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 class _AdditionalSelectionsPainter extends CustomPainter {
   _AdditionalSelectionsPainter({
     required this.text,
+    required this.textSpan,
     required this.selections,
     required this.style,
     required this.textDirection,
@@ -874,6 +1144,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   }) : super(repaint: scrollController);
 
   final String text;
+  final TextSpan textSpan;
   final List<TextSelection> selections;
   final TextStyle style;
   final TextDirection textDirection;
@@ -885,7 +1156,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final painter = TextPainter(
-      text: TextSpan(text: text, style: style),
+      text: textSpan,
       textDirection: textDirection,
       textScaler: textScaler,
       textWidthBasis: TextWidthBasis.parent,
@@ -933,6 +1204,7 @@ class _AdditionalSelectionsPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _AdditionalSelectionsPainter oldDelegate) =>
       oldDelegate.text != text ||
+      oldDelegate.textSpan != textSpan ||
       !listEquals(oldDelegate.selections, selections) ||
       oldDelegate.style != style ||
       oldDelegate.textDirection != textDirection ||
