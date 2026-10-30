@@ -1074,6 +1074,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Future<bool> _pasteMultiSelections(OpenDoc doc) async {
+    if (doc.additionalSelections.isEmpty) return false;
+    _flushInput(doc, commitComposition: true);
+    final clipboard = await Clipboard.getData('text/plain');
+    if (clipboard == null || !mounted || _active?.id != doc.id) return false;
+    final field = doc.inputFieldKey.currentState;
+    if (field == null) return false;
+    _flushInput(doc, commitComposition: true);
+
+    final windowStart = doc.inputWindow.startUtf16;
+    final localSelections = doc.selectionSet
+        .map((selection) => TextSelection(
+              baseOffset: selection.baseOffset - windowStart,
+              extentOffset: selection.extentOffset - windowStart,
+              affinity: selection.affinity,
+              isDirectional: selection.isDirectional,
+            ))
+        .toList(growable: false);
+    final result = applyDistributedMultiSelectionPaste(
+      oldValue: doc.editingValue,
+      selections: localSelections,
+      clipboardText: clipboard.text ?? '',
+    );
+    if (!result.changed) return true;
+
+    doc.additionalSelections = List.unmodifiable(
+      result.selections.map((selection) => TextSelection(
+            baseOffset: selection.baseOffset + windowStart,
+            extentOffset: selection.extentOffset + windowStart,
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          )),
+    );
+    doc.columnSelection = null;
+    field.setEditingValue(result.value);
+    if (mounted) setState(() {});
+    return true;
+  }
+
   Future<bool> _cutMultiSelections(OpenDoc doc) async {
     final field = doc.inputFieldKey.currentState;
     if (field == null) return false;
@@ -2390,6 +2429,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (active != null && active.additionalSelections.isNotEmpty) {
             if (key == LogicalKeyboardKey.keyC) {
               unawaited(_copyMultiSelections(active));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.keyV) {
+              unawaited(_pasteMultiSelections(active));
               return KeyEventResult.handled;
             }
             if (key == LogicalKeyboardKey.keyX) {

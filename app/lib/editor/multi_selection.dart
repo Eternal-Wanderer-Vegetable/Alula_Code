@@ -169,6 +169,75 @@ MultiSelectionEditResult applyMultiSelectionEdit({
   );
 }
 
+/// Applies a clipboard paste to a set of local UTF-16 selections.
+///
+/// When the clipboard has one line per selection, each line is inserted into
+/// its corresponding selection. Otherwise the complete clipboard payload is
+/// repeated at every selection, matching editor multi-cursor paste behavior.
+/// The first selection is the primary selection and remains the platform
+/// client's caret after the edit.
+MultiSelectionEditResult applyDistributedMultiSelectionPaste({
+  required TextEditingValue oldValue,
+  required List<TextSelection> selections,
+  required String clipboardText,
+}) {
+  final normalized = normalizeSelectionSet(selections);
+  if (normalized.length < 2) {
+    return MultiSelectionEditResult(
+      value: oldValue,
+      selections: const [],
+      changed: false,
+    );
+  }
+
+  final lines = clipboardText.split(RegExp(r'\r\n|\n|\r'));
+  final distributeLines = lines.length == normalized.length;
+  final edits = <_PasteRange>[];
+  for (var index = 0; index < normalized.length; index++) {
+    final selection = normalized[index];
+    final base = _clamp(selection.baseOffset, oldValue.text.length);
+    final extent = _clamp(selection.extentOffset, oldValue.text.length);
+    edits.add(_PasteRange(
+      base < extent ? base : extent,
+      base < extent ? extent : base,
+      distributeLines ? lines[index] : clipboardText,
+      index == 0,
+    ));
+  }
+  edits.sort((a, b) => a.start.compareTo(b.start));
+
+  var text = oldValue.text;
+  for (final edit in edits.reversed) {
+    text = text.replaceRange(edit.start, edit.end, edit.text);
+  }
+
+  var shift = 0;
+  var primaryCaret = 0;
+  final secondaryCarets = <TextSelection>[];
+  for (final edit in edits) {
+    final caret = edit.start + shift + edit.text.length;
+    if (edit.primary) {
+      primaryCaret = caret;
+    } else {
+      secondaryCarets.add(TextSelection.collapsed(offset: caret));
+    }
+    shift += edit.text.length - (edit.end - edit.start);
+  }
+
+  return MultiSelectionEditResult(
+    value: oldValue.copyWith(
+      text: text,
+      selection: TextSelection.collapsed(
+        offset: primaryCaret.clamp(0, text.length).toInt(),
+        affinity: oldValue.selection.affinity,
+      ),
+      composing: TextRange.empty,
+    ),
+    selections: List.unmodifiable(secondaryCarets),
+    changed: text != oldValue.text,
+  );
+}
+
 /// Merges duplicate or intersecting selections while keeping the primary first.
 List<TextSelection> normalizeSelectionSet(List<TextSelection> selections) {
   if (selections.isEmpty) return const [];
@@ -619,6 +688,15 @@ class _SelectionRange {
   const _SelectionRange(this.start, this.end, {this.primary = false});
   final int start;
   final int end;
+  final bool primary;
+}
+
+class _PasteRange {
+  const _PasteRange(this.start, this.end, this.text, this.primary);
+
+  final int start;
+  final int end;
+  final String text;
   final bool primary;
 }
 

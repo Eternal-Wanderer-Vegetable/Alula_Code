@@ -75,6 +75,65 @@ void main() {
     expect(file.readAsStringSync(), ' ');
   });
 
+  testWidgets('Ctrl+V distributes copied lines and saves the Rust document',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-multicursor-paste');
+    addTearDown(() async {
+      tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final file = File('${workspace.path}/sample.txt')
+      ..writeAsStringSync('foo x foo');
+    final base = temp.path.replaceAll(r'\', '/');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async => call.method == 'Clipboard.getData'
+          ? <String, Object?>{'text': 'left\r\nright'}
+          : null,
+    );
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    tester.widget<TextField>(editor).controller!.selection =
+        const TextSelection(baseOffset: 0, extentOffset: 3);
+    await tester.pump();
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyV);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    expect(tester.widget<TextField>(editor).controller!.text, 'left x right');
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections,
+        const [TextSelection.collapsed(offset: 12)]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(file.readAsStringSync(), 'left x right');
+  });
+
   testWidgets('Ctrl+D adds an occurrence and typing updates both Rust ranges',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-multicursor');

@@ -5,6 +5,51 @@ import 'package:alula_app/editor/multi_selection.dart';
 
 void main() {
   group('multi-selection input edits', () {
+    test('distributes clipboard lines across primary and secondary selections',
+        () {
+      const oldValue = TextEditingValue(
+        text: '🙂 x 🙂',
+        selection: TextSelection(baseOffset: 0, extentOffset: 2),
+      );
+      final result = applyDistributedMultiSelectionPaste(
+        oldValue: oldValue,
+        selections: const [
+          TextSelection(baseOffset: 0, extentOffset: 2),
+          TextSelection(baseOffset: 5, extentOffset: 7),
+        ],
+        clipboardText: 'left\r\nright',
+      );
+
+      expect(result.value.text, 'left x right');
+      expect(result.value.selection, const TextSelection.collapsed(offset: 4));
+      expect(result.selections, const [TextSelection.collapsed(offset: 12)]);
+      expect(result.changed, isTrue);
+    });
+
+    test('repeats the full clipboard when line count differs from cursor count',
+        () {
+      const oldValue = TextEditingValue(
+        text: 'a b c',
+        selection: TextSelection.collapsed(offset: 1),
+      );
+      final result = applyDistributedMultiSelectionPaste(
+        oldValue: oldValue,
+        selections: const [
+          TextSelection.collapsed(offset: 1),
+          TextSelection.collapsed(offset: 3),
+          TextSelection.collapsed(offset: 5),
+        ],
+        clipboardText: 'x\ny',
+      );
+
+      expect(result.value.text, 'ax\ny bx\ny cx\ny');
+      expect(result.value.selection.extentOffset, 4);
+      expect(result.selections, const [
+        TextSelection.collapsed(offset: 9),
+        TextSelection.collapsed(offset: 14),
+      ]);
+    });
+
     test('inserts at primary and secondary carets in one transformed value',
         () {
       const oldValue = TextEditingValue(
