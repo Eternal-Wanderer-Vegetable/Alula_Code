@@ -5,6 +5,151 @@ import 'editor_rendering.dart';
 const int maxEditorFoldSymbols = 4096;
 
 @immutable
+class EditorDocumentLineRange {
+  const EditorDocumentLineRange({
+    required this.startLine,
+    required this.endLineExclusive,
+  });
+
+  /// Zero-based first hidden document line.
+  final int startLine;
+
+  /// Zero-based exclusive end of the hidden document lines.
+  final int endLineExclusive;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EditorDocumentLineRange &&
+      startLine == other.startLine &&
+      endLineExclusive == other.endLineExclusive;
+
+  @override
+  int get hashCode => Object.hash(startLine, endLineExclusive);
+}
+
+typedef EditorFoldRangesChanged = void Function(
+  int documentId,
+  int documentVersion,
+  List<EditorDocumentLineRange> ranges,
+);
+
+List<EditorDocumentLineRange> normalizeEditorDocumentLineRanges(
+  Iterable<EditorDocumentLineRange> ranges, {
+  required int documentLineCount,
+}) {
+  if (documentLineCount < 1) {
+    throw RangeError.value(documentLineCount, 'documentLineCount');
+  }
+  final sorted = ranges
+      .map((range) => EditorDocumentLineRange(
+            startLine: range.startLine.clamp(0, documentLineCount).toInt(),
+            endLineExclusive:
+                range.endLineExclusive.clamp(0, documentLineCount).toInt(),
+          ))
+      .where((range) => range.endLineExclusive > range.startLine)
+      .toList()
+    ..sort((a, b) {
+      final byStart = a.startLine.compareTo(b.startLine);
+      return byStart != 0
+          ? byStart
+          : a.endLineExclusive.compareTo(b.endLineExclusive);
+    });
+  if (sorted.isEmpty) return const [];
+
+  final merged = <EditorDocumentLineRange>[];
+  var start = sorted.first.startLine;
+  var end = sorted.first.endLineExclusive;
+  for (final range in sorted.skip(1)) {
+    if (range.startLine <= end) {
+      if (range.endLineExclusive > end) end = range.endLineExclusive;
+      continue;
+    }
+    merged.add(EditorDocumentLineRange(
+      startLine: start,
+      endLineExclusive: end,
+    ));
+    start = range.startLine;
+    end = range.endLineExclusive;
+  }
+  merged.add(EditorDocumentLineRange(
+    startLine: start,
+    endLineExclusive: end,
+  ));
+  return List.unmodifiable(merged);
+}
+
+@immutable
+class EditorDocumentLineProjection {
+  EditorDocumentLineProjection({
+    required this.documentLineCount,
+    Iterable<EditorDocumentLineRange> hiddenRanges = const [],
+  }) : hiddenRanges = normalizeEditorDocumentLineRanges(
+          hiddenRanges,
+          documentLineCount: documentLineCount,
+        );
+
+  final int documentLineCount;
+  final List<EditorDocumentLineRange> hiddenRanges;
+
+  int get visibleLineCount =>
+      documentLineCount -
+      hiddenRanges.fold<int>(
+        0,
+        (count, range) => count + range.endLineExclusive - range.startLine,
+      );
+
+  /// Maps hidden lines onto their visible header row.
+  int documentLineToVisibleLine(int documentLine) {
+    final line = documentLine.clamp(0, documentLineCount - 1).toInt();
+    var hiddenBefore = 0;
+    for (final range in hiddenRanges) {
+      if (line < range.startLine) return line - hiddenBefore;
+      if (line < range.endLineExclusive) {
+        return (range.startLine - hiddenBefore - 1).clamp(0, documentLineCount);
+      }
+      hiddenBefore += range.endLineExclusive - range.startLine;
+    }
+    return (line - hiddenBefore).clamp(0, documentLineCount).toInt();
+  }
+
+  /// Maps a visible row to its source line. The exclusive end boundary is
+  /// accepted so callers can project the bottom edge of a visible viewport.
+  int visibleLineToDocumentBoundary(int visibleLine) {
+    final line = visibleLine.clamp(0, visibleLineCount).toInt();
+    var hiddenBefore = 0;
+    for (final range in hiddenRanges) {
+      final visibleStart = range.startLine - hiddenBefore;
+      if (line < visibleStart) return line + hiddenBefore;
+      hiddenBefore += range.endLineExclusive - range.startLine;
+    }
+    return (line + hiddenBefore).clamp(0, documentLineCount).toInt();
+  }
+
+  int visibleLineToDocumentLine(int visibleLine) {
+    if (visibleLineCount <= 1) return 0;
+    return visibleLineToDocumentBoundary(
+      visibleLine.clamp(0, visibleLineCount - 1).toInt(),
+    );
+  }
+
+  int visibleLineCountInRange({
+    required int startLine,
+    required int endLineExclusive,
+  }) {
+    final start = startLine.clamp(0, documentLineCount).toInt();
+    final end = endLineExclusive.clamp(start, documentLineCount).toInt();
+    var hidden = 0;
+    for (final range in hiddenRanges) {
+      final overlapStart = range.startLine > start ? range.startLine : start;
+      final overlapEnd =
+          range.endLineExclusive < end ? range.endLineExclusive : end;
+      if (overlapEnd > overlapStart) hidden += overlapEnd - overlapStart;
+    }
+    return end - start - hidden;
+  }
+}
+
+@immutable
 class EditorFoldSymbol {
   const EditorFoldSymbol({
     required this.kind,

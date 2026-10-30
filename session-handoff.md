@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-30（P03.5 已完成；P03.6 已接入 gutter/wrap/版本化装饰/字体回退/Rust 正文语法着色/LSP diagnostics/semantic tokens/workspace search，绘制系统其余能力进行中；500 MiB 留待 P14）
+> Last Updated：2026-10-30（P03.5 已完成；P03.6 已接入 gutter/wrap/版本化装饰/字体回退/语法着色/LSP providers/minimap/sticky scroll/Rust scope folding 与折叠 viewport 投影；跨 OS/DPI/主题像素对照仍进行中；500 MiB 留待 P14）
 
 ## 项目目标
 
@@ -8,6 +8,7 @@
 
 ## 当前状态
 
+- P03.6 当前切片：折叠 minimap/sticky viewport 投影已接入，定向 15 项通过，完整工作树 `init.sh`（Flutter 256 项）、cargo fmt 与 Flutter analyze 均通过；精确 HEAD+index 快照 Rust/Clippy/build_core 和 Flutter 256 项 `--no-pub`、analyze 也通过；报告 `docs/diagnostics/2026-10-30-p03/p03.6-folded-viewport-projection.md`。下一步完成跨 OS/DPI/主题像素对照，阶段继续 in-progress。
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
 - P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`，P03.4.2a Flutter EditableText 输入适配器已提交为 `c95e584`。P03.4.2b1 Rust savepoint 合同及 ABI v15、b2 工作台有界输入接线、b3 Rust dirty/undo/journal/命令接线均已完成。P03.4.2c 已得到 Windows Alula/固定 Code-OSS 与 WSLg Linux/Fcitx5 产品 IME 证据，但 macOS 与原生 DRM Linux 未验证，P03.4 保持 in-progress。P03.5 已接入多光标、列选、Rust 提交、clipboard、按行分配粘贴、cursor history、Alt+Click、Rust 全文 occurrence 与跨窗编辑，阶段已完成并提交 `3ee3c4b`；同文档多视图 selection 按 docs/03 留到 P03.7。P03.6 已进入 in-progress：行号 gutter、Rust `lineOffset` 绝对行映射、缩进 guides、空白显示及默认 no-wrap/显式 wordWrap 横向视口已接入有界输入控件；长多行文本保留 LF，LTR/RTL 主 caret 显露 fixture 通过。workspace search 选中结果也已接入版本化 UTF-16 decorations；LSP semantic full provider 已以 ABI v16 接入并通过 fake LSP、本机 rust-analyzer 及 Rust/Flutter 版本 fixture；minimap overview 已用 ABI v17 接入 512 × 48 UTF-16 有界抽样和 Rust 行跳转；LSP 诊断与选中 workspace-search 的 overview markers 已按 document/version 门控并限制为 512 个；Find markers/语法色、sticky scroll、fold 和像素对照仍待完成；字段级字体 fallback 链已接入；详见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。 wrap 子切片完整门禁：全工作树与 HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 独立快照的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 223 项）；两边 cargo fmt 通过，Flutter analyze 0 issues。
 - Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合与验收门；历史与新增测量仅作基线，P14 完成整体架构后重新制定优化指标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。

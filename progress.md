@@ -941,3 +941,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - LSP publishDiagnostics 缓存保留可选 UTF-16 结束位置与 publication version；对 alula_diagnostics 的 C 签名和 ABI 版本没有改动。Workbench 将当前文档诊断位置映射为 Rust 绝对 UTF-16 ranges，要求 Rust/input/LSP 版本一致并排除 pending/IME 输入；按可见行过滤后复用已有 range painter 绘制 severity 下划线。
 - fake-LSP roundtrip 验证新增 JSON 字段；Dart provider fixture 覆盖 emoji UTF-16、跨行范围、severity、stale/unversioned/empty/invalid 与窗口外过滤。定向 Flutter 13 项、`cargo test -p editor-lsp --test roundtrip`、cargo fmt、Flutter analyze 0 issues 通过；完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 全绿（Flutter 232 项）。精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` 的 Rust tests/Clippy/build_core 与离线 `flutter test --no-pub`（232 项）、Flutter analyze（0 issues）也通过。
 - GitNexus 编辑前 Diagnostic exact CRITICAL（134 symbols/123 processes/20 modules），reader_loop exact CRITICAL（35/34 direct/7 processes/5 modules）；`_pollLanguageServices` 未入图，已用源码检索并逐段复核真实调用路径。保持 P03.6 in-progress；semantic 与 workspace-search providers 已在后续子切片接入，minimap、sticky scroll、folding 与像素基线仍待完成。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。
+
+
+### 最新进展（2026-10-30，P03.6 折叠后的 minimap/sticky viewport）
+
+- 新增零基左闭右开绝对折叠行区间与统一投影，归并嵌套/重叠范围；RustTextInputField 版本化回报折叠范围，Workbench 将同一范围传给 minimap 和 sticky scroll。Minimap viewport marker 按折叠后的可见行比例定位，sticky scope 使用映射回的绝对源行；导航和 UTF-16 文本坐标不变。
+- 定向 folding/minimap/sticky 测试 15 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过，Flutter 256 项；`flutter analyze --no-pub` 0 issues。`cargo fmt --all -- --check` 通过；精确 HEAD+index 快照 Rust tests/Clippy/build_core、Flutter 256 项 `--no-pub` 与 analyze 0 issues 均通过。
+- P03.6 仍未完成：尚需跨平台、多 DPI、主题下的绘制像素对照。报告：`docs/diagnostics/2026-10-30-p03/p03.6-folded-viewport-projection.md`。

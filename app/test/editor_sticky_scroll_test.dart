@@ -1,4 +1,6 @@
 import 'package:alula_app/bridge/alula_core.dart';
+import 'package:alula_app/editor/editor_folding.dart';
+import 'package:alula_app/editor/editor_minimap.dart';
 import 'package:alula_app/editor/editor_sticky_scroll.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:flutter/material.dart';
@@ -111,11 +113,40 @@ void main() {
     );
   });
 
+  test('sticky scope uses projected document line after a folded body', () {
+    final viewport = projectEditorMinimapViewport(
+      documentLineCount: 7,
+      inputWindowFirstLine: 0,
+      inputWindowLineCount: 7,
+      scrollOffset: 600,
+      maxScrollExtent: 600,
+      viewportHeight: 21,
+      foldedLineRanges: const [
+        EditorDocumentLineRange(startLine: 1, endLineExclusive: 6),
+      ],
+    );
+    const scope = EditorStickySymbol(
+      kind: 'function',
+      name: 'outer',
+      startUtf16: 0,
+      line: 1,
+      endLine: 6,
+    );
+
+    expect(viewport.firstLine, 6);
+    expect(
+      buildEditorStickyScrollScopes(
+        symbols: const [scope],
+        firstVisibleLine: viewport.firstLine,
+      ),
+      isEmpty,
+    );
+  });
+
   testWidgets('sticky headers follow scrolling and jump to scope start',
       (tester) async {
     final core = _bootstrap.core!;
-    const source =
-        'fn outer() {\n  fn inner() {\n    let x = 1;\n  }\n}\n';
+    const source = 'fn outer() {\n  fn inner() {\n    let x = 1;\n  }\n}\n';
     final doc = core.openDoc(9201, source);
     final window = RustTextInputWindow.open(doc, startUtf16: 0);
     final controller = ScrollController();

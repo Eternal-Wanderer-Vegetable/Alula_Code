@@ -21,6 +21,7 @@ import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
 import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_sticky_scroll.dart';
+import '../editor/editor_folding.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
@@ -1976,6 +1977,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _updateLanguageServicePolling();
     _syncCommandContext();
+  }
+
+  void _onEditorFoldRangesChanged(
+    OpenDoc active,
+    int documentId,
+    int version,
+    List<EditorDocumentLineRange> ranges,
+  ) {
+    final owner = _ownerOf(active.id);
+    if (!mounted ||
+        active.id != documentId ||
+        active.inputWindow.version != version ||
+        owner == null ||
+        !owner.docs.contains(active)) {
+      return;
+    }
+    if (ranges.isNotEmpty &&
+        (active.inputWindow.pendingText != null ||
+            active.doc.version != version)) {
+      return;
+    }
+    if (listEquals(active.foldedLineRanges, ranges)) return;
+    active.foldedLineRanges = List.unmodifiable(ranges);
+    setState(() {});
   }
 
   /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
@@ -4691,6 +4716,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           document: active.doc,
                           inputWindow: active.inputWindow,
                           scrollController: active.editorScrollController,
+                          foldedLineRanges: active.foldedLineRanges,
                           enabled: usesRustSyntax &&
                               active.inputWindow.pendingText == null &&
                               active.inputWindow.version == active.doc.version,
@@ -4708,6 +4734,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           syntaxTokens: syntaxTokens,
                           syntaxVersion: syntaxVersion,
                           enableCodeFolding: usesRustSyntax,
+                          onFoldRangesChanged:
+                              (documentId, version, ranges) =>
+                                  _onEditorFoldRangesChanged(
+                            active,
+                            documentId,
+                            version,
+                            ranges,
+                          ),
                           syntaxTokenColor: _tokenColor,
                           rangeDecorations: rangeDecorations,
                           focusNode: _focusNodeFor(g, active),
@@ -4835,6 +4869,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       active.doc.version &&
                                   syntaxVersion == active.doc.version,
                           syntaxTokenColor: _tokenColor,
+                          foldedLineRanges: active.foldedLineRanges,
                           overviewMarkers: buildEditorMinimapMarkers(
                             documentId: active.id,
                             documentVersion: active.doc.version,
@@ -5238,6 +5273,7 @@ class OpenDoc {
   String name;
   final AlulaDoc doc;
   RustTextInputWindow inputWindow;
+  List<EditorDocumentLineRange> foldedLineRanges = const [];
   final GlobalKey<RustTextInputFieldState> inputFieldKey;
   final ScrollController editorScrollController;
   final UndoStack undoStack;

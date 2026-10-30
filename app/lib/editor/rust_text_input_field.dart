@@ -245,6 +245,7 @@ class RustTextInputField extends StatefulWidget {
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
+    this.onFoldRangesChanged,
   }) : assert(tabSize > 0);
 
   final RustTextInputWindow inputWindow;
@@ -274,6 +275,7 @@ class RustTextInputField extends StatefulWidget {
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
+  final EditorFoldRangesChanged? onFoldRangesChanged;
 
   @override
   RustTextInputFieldState createState() => RustTextInputFieldState();
@@ -302,6 +304,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   List<EditorFoldSymbol> _foldSymbols = const [];
   final Set<String> _collapsedFoldKeys = {};
   EditorFoldLayout _lastFoldLayout = const EditorFoldLayout.empty();
+  int _reportedFoldDocId = -1;
+  int _reportedFoldVersion = -1;
+  List<EditorDocumentLineRange> _reportedFoldRanges = const [];
 
   TextEditingValue get editingValue => _controller.value;
 
@@ -476,6 +481,47 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       symbols: _foldSymbols,
       collapsedKeys: _collapsedFoldKeys,
     );
+  }
+
+  void _reportFoldRanges() {
+    final callback = widget.onFoldRangesChanged;
+    if (callback == null) return;
+    final window = widget.inputWindow;
+    final document = window.document;
+    final isCurrent = widget.enableCodeFolding &&
+        window.pendingText == null &&
+        window.version == document.version &&
+        _foldSymbolsDocId == document.id &&
+        _foldSymbolsVersion == window.version;
+    final ranges = isCurrent
+        ? normalizeEditorDocumentLineRanges(
+            _foldSymbols
+                .where((symbol) => _collapsedFoldKeys.contains(symbol.key))
+                .map((symbol) => EditorDocumentLineRange(
+                      startLine: symbol.line,
+                      endLineExclusive: symbol.endLine,
+                    )),
+            documentLineCount: _documentLineCount,
+          )
+        : const <EditorDocumentLineRange>[];
+    final documentId = document.id;
+    final version = window.version;
+    if (_reportedFoldDocId == documentId &&
+        _reportedFoldVersion == version &&
+        listEquals(_reportedFoldRanges, ranges)) {
+      return;
+    }
+    _reportedFoldDocId = documentId;
+    _reportedFoldVersion = version;
+    _reportedFoldRanges = ranges;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          widget.inputWindow.document.id != documentId ||
+          widget.inputWindow.version != version) {
+        return;
+      }
+      callback(documentId, version, ranges);
+    });
   }
 
   bool _editingValueIntersectsFold(
@@ -825,6 +871,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _syncFoldSymbols();
     final foldLayout = _buildFoldLayout(_controller.text);
     _lastFoldLayout = foldLayout;
+    _reportFoldRanges();
     _controller.configureSyntax(
       tokens: widget.syntaxTokens,
       tokenVersion: widget.syntaxVersion,

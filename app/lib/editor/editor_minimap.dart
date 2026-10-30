@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_folding.dart';
 import 'editor_minimap_markers.dart';
 import 'editor_minimap_syntax.dart';
 import 'editor_rendering.dart';
@@ -29,26 +30,40 @@ EditorMinimapViewport projectEditorMinimapViewport({
   required double scrollOffset,
   required double maxScrollExtent,
   required double viewportHeight,
+  List<EditorDocumentLineRange> foldedLineRanges = const [],
   double lineHeight = editorMinimapLineHeight,
 }) {
   if (documentLineCount < 1 || inputWindowLineCount < 1 || lineHeight <= 0) {
     throw ArgumentError('minimap line counts and line height must be positive');
   }
+  final projection = EditorDocumentLineProjection(
+    documentLineCount: documentLineCount,
+    hiddenRanges: foldedLineRanges,
+  );
+  final windowVisibleLineCount = projection.visibleLineCountInRange(
+    startLine: inputWindowFirstLine,
+    endLineExclusive: inputWindowFirstLine + inputWindowLineCount,
+  );
+  final projectedWindowLineCount = math.max(1, windowVisibleLineCount).toInt();
   final visible = viewportHeight <= 0
-      ? math.min(inputWindowLineCount, 20)
+      ? math.min(projectedWindowLineCount, 20)
       : (viewportHeight / lineHeight)
           .ceil()
-          .clamp(1, inputWindowLineCount)
+          .clamp(1, projectedWindowLineCount)
           .toInt();
-  final travel = math.max(0, inputWindowLineCount - visible).toInt();
+  final travel = math.max(0, projectedWindowLineCount - visible).toInt();
   final fraction = maxScrollExtent <= 0
       ? 0.0
       : (scrollOffset / maxScrollExtent).clamp(0.0, 1.0).toDouble();
-  final first = (inputWindowFirstLine + (travel * fraction).round())
-      .clamp(0, documentLineCount - 1);
+  final firstVisibleLine =
+      (projection.documentLineToVisibleLine(inputWindowFirstLine) +
+              (travel * fraction).round())
+          .clamp(0, projection.visibleLineCount - 1)
+          .toInt();
+  final first = projection.visibleLineToDocumentLine(firstVisibleLine);
   return EditorMinimapViewport(
     first,
-    math.min(visible, documentLineCount - first).toInt(),
+    math.min(visible, projection.visibleLineCount - firstVisibleLine).toInt(),
   );
 }
 
@@ -68,6 +83,7 @@ class EditorMinimap extends StatefulWidget {
     this.syntaxEnabled = false,
     this.syntaxTokenColor,
     this.overviewMarkers = const [],
+    this.foldedLineRanges = const [],
     this.width = editorMinimapWidth,
     this.lineHeight = editorMinimapLineHeight,
   });
@@ -81,6 +97,7 @@ class EditorMinimap extends StatefulWidget {
   final bool syntaxEnabled;
   final Color Function(String kind)? syntaxTokenColor;
   final List<EditorMinimapMarker> overviewMarkers;
+  final List<EditorDocumentLineRange> foldedLineRanges;
   final double width;
   final double lineHeight;
 
@@ -268,6 +285,7 @@ class _EditorMinimapState extends State<EditorMinimap> {
                 docLineCount: _docLineCount,
                 windowFirstLine: _windowFirstLine,
                 windowLineCount: _windowLineCount,
+                foldedLineRanges: widget.foldedLineRanges,
                 overviewMarkers: widget.overviewMarkers,
                 syntaxSegments: _syntaxSegments,
                 lineHeight: widget.lineHeight,
@@ -295,6 +313,7 @@ class _EditorMinimapPainter extends CustomPainter {
     required this.docLineCount,
     required this.windowFirstLine,
     required this.windowLineCount,
+    required this.foldedLineRanges,
     required this.overviewMarkers,
     required this.syntaxSegments,
     required this.lineHeight,
@@ -306,6 +325,7 @@ class _EditorMinimapPainter extends CustomPainter {
   final int docLineCount;
   final int windowFirstLine;
   final int windowLineCount;
+  final List<EditorDocumentLineRange> foldedLineRanges;
   final List<EditorMinimapMarker> overviewMarkers;
   final List<EditorMinimapSyntaxSegment> syntaxSegments;
   final double lineHeight;
@@ -387,12 +407,20 @@ class _EditorMinimapPainter extends CustomPainter {
       scrollOffset: position?.pixels ?? 0,
       maxScrollExtent: position?.maxScrollExtent ?? 0,
       viewportHeight: position?.viewportDimension ?? 0,
+      foldedLineRanges: foldedLineRanges,
       lineHeight: lineHeight,
     );
+    final projection = EditorDocumentLineProjection(
+      documentLineCount: docLineCount,
+      hiddenRanges: foldedLineRanges,
+    );
+    final visibleFirst =
+        projection.documentLineToVisibleLine(viewport.firstLine);
+    final endDocumentLine = projection.visibleLineToDocumentBoundary(
+      visibleFirst + viewport.lineCount,
+    );
     final top = viewport.firstLine / current.lineCount * size.height;
-    final bottom = (viewport.firstLine + viewport.lineCount) /
-        current.lineCount *
-        size.height;
+    final bottom = endDocumentLine / current.lineCount * size.height;
     final rect = Rect.fromLTRB(
       1,
       top.clamp(0.0, size.height).toDouble(),
@@ -442,6 +470,7 @@ class _EditorMinimapPainter extends CustomPainter {
       oldDelegate.docLineCount != docLineCount ||
       oldDelegate.windowFirstLine != windowFirstLine ||
       oldDelegate.windowLineCount != windowLineCount ||
+      !listEquals(oldDelegate.foldedLineRanges, foldedLineRanges) ||
       !listEquals(oldDelegate.overviewMarkers, overviewMarkers) ||
       !listEquals(oldDelegate.syntaxSegments, syntaxSegments) ||
       oldDelegate.lineHeight != lineHeight;

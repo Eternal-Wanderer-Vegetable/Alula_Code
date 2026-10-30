@@ -83,6 +83,39 @@ void main() {
       expect(layout.hiddenLineIndices, {0, 1, 2});
       expect(layout.collapsedRanges.single.headerLineIndex, -1);
     });
+
+    test('document projection merges hidden rows and maps both directions', () {
+      final projection = EditorDocumentLineProjection(
+        documentLineCount: 14,
+        hiddenRanges: const [
+          EditorDocumentLineRange(startLine: 10, endLineExclusive: 12),
+          EditorDocumentLineRange(startLine: 4, endLineExclusive: 8),
+          EditorDocumentLineRange(startLine: 2, endLineExclusive: 5),
+        ],
+      );
+
+      expect(
+        projection.hiddenRanges,
+        const [
+          EditorDocumentLineRange(startLine: 2, endLineExclusive: 8),
+          EditorDocumentLineRange(startLine: 10, endLineExclusive: 12),
+        ],
+      );
+      expect(projection.visibleLineCount, 6);
+      expect(
+        List.generate(14, projection.documentLineToVisibleLine),
+        [0, 1, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3, 4, 5],
+      );
+      expect(
+        List.generate(6, projection.visibleLineToDocumentLine),
+        [0, 1, 8, 9, 12, 13],
+      );
+      expect(projection.visibleLineToDocumentBoundary(6), 14);
+      expect(
+        projection.visibleLineCountInRange(startLine: 1, endLineExclusive: 13),
+        4,
+      );
+    });
   });
 
   testWidgets('Rust scope folding keeps source offsets and expands on caret',
@@ -97,6 +130,7 @@ void main() {
       maxWindowUtf16: 256,
     );
     final fieldKey = GlobalKey<RustTextInputFieldState>();
+    var reportedFoldRanges = const <EditorDocumentLineRange>[];
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -107,6 +141,9 @@ void main() {
               key: fieldKey,
               inputWindow: window,
               enableCodeFolding: true,
+              onFoldRangesChanged: (documentId, version, ranges) {
+                reportedFoldRanges = ranges;
+              },
               style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
             ),
           ),
@@ -147,6 +184,10 @@ void main() {
         .painter! as EditorGutterPainter;
     expect(gutterPaintAfter.collapsedLineIndices, {0});
     expect(gutterPaintAfter.hiddenLineIndices, {1, 2, 3, 4, 5});
+    expect(
+      reportedFoldRanges,
+      const [EditorDocumentLineRange(startLine: 1, endLineExclusive: 6)],
+    );
 
     final foldedTop = editableState.renderEditable
         .getLocalRectForCaret(TextPosition(offset: afterOffset))
@@ -164,6 +205,7 @@ void main() {
         .top;
     expect(expandedTop, closeTo(beforeFoldTop, 1));
     expect(fieldKey.currentState!.editingValue.text, text);
+    expect(reportedFoldRanges, isEmpty);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();

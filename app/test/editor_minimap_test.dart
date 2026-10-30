@@ -3,6 +3,7 @@ import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/editor_minimap.dart';
 import 'package:alula_app/editor/editor_minimap_markers.dart';
 import 'package:alula_app/editor/editor_minimap_syntax.dart';
+import 'package:alula_app/editor/editor_folding.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:alula_app/search/search_service.dart';
 import 'package:flutter/material.dart';
@@ -382,6 +383,39 @@ void main() {
       maxScrollExtent: 0,
       viewportHeight: 210,
     );
+    final foldedTop = projectEditorMinimapViewport(
+      documentLineCount: 100,
+      inputWindowFirstLine: 0,
+      inputWindowLineCount: 100,
+      scrollOffset: 0,
+      maxScrollExtent: 1000,
+      viewportHeight: 42,
+      foldedLineRanges: const [
+        EditorDocumentLineRange(startLine: 10, endLineExclusive: 90),
+      ],
+    );
+    final foldedMiddle = projectEditorMinimapViewport(
+      documentLineCount: 100,
+      inputWindowFirstLine: 0,
+      inputWindowLineCount: 100,
+      scrollOffset: 500,
+      maxScrollExtent: 1000,
+      viewportHeight: 42,
+      foldedLineRanges: const [
+        EditorDocumentLineRange(startLine: 10, endLineExclusive: 90),
+      ],
+    );
+    final foldedBottom = projectEditorMinimapViewport(
+      documentLineCount: 100,
+      inputWindowFirstLine: 0,
+      inputWindowLineCount: 100,
+      scrollOffset: 1000,
+      maxScrollExtent: 1000,
+      viewportHeight: 42,
+      foldedLineRanges: const [
+        EditorDocumentLineRange(startLine: 10, endLineExclusive: 90),
+      ],
+    );
 
     expect(first.firstLine, 400);
     expect(first.lineCount, 10);
@@ -389,6 +423,12 @@ void main() {
     expect(last.lineCount, 10);
     expect(tail.firstLine, 95);
     expect(tail.lineCount, 5);
+    expect(foldedTop.firstLine, 0);
+    expect(foldedTop.lineCount, 2);
+    expect(foldedMiddle.firstLine, 9);
+    expect(foldedMiddle.lineCount, 2);
+    expect(foldedBottom.firstLine, 98);
+    expect(foldedBottom.lineCount, 2);
   });
 
   testWidgets('minimap paints the Rust overview and navigates by absolute line',

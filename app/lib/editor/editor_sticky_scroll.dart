@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_folding.dart';
 import 'editor_minimap.dart' show projectEditorMinimapViewport;
 import 'editor_rendering.dart'
     show editorLogicalLines, resolveEditorDocumentLinePosition;
@@ -113,6 +114,7 @@ class EditorStickyScroll extends StatefulWidget {
     required this.scrollController,
     required this.onSelectSymbol,
     required this.child,
+    this.foldedLineRanges = const [],
     this.enabled = true,
     this.lineHeight = editorStickyScrollLineHeight,
   });
@@ -122,6 +124,7 @@ class EditorStickyScroll extends StatefulWidget {
   final ScrollController scrollController;
   final ValueChanged<int> onSelectSymbol;
   final Widget child;
+  final List<EditorDocumentLineRange> foldedLineRanges;
   final bool enabled;
   final double lineHeight;
 
@@ -249,6 +252,7 @@ class _EditorStickyScrollState extends State<EditorStickyScroll> {
       scrollOffset: position.pixels,
       maxScrollExtent: position.maxScrollExtent,
       viewportHeight: position.viewportDimension,
+      foldedLineRanges: widget.foldedLineRanges,
       lineHeight: widget.lineHeight,
     );
     if (viewport.firstLine == _firstVisibleLine) return;
