@@ -4856,15 +4856,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           Expanded(
             child: Stack(
               children: [
-                Builder(
-                  builder: (editorContext) => Listener(
-                    onPointerDown: (event) => _onEditorPointerDown(
-                      g,
-                      active,
-                      editorContext,
-                      event,
-                    ),
-                    child: LayoutBuilder(
+                LayoutBuilder(
                       builder: (context, constraints) => Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -5066,8 +5058,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           ],
                         ],
                       ),
-                    ),
-                  ),
                 ),
                 if (_findVisible)
                   Positioned(top: 0, right: 12, child: _buildFindBar()),

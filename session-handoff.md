@@ -53,3 +53,7 @@
 1. 继续 P03.7：复查多视图关闭释放与 WSLg GTK/Flutter/LSP teardown 告警；本地 50k 行/长行多视图编辑保存已覆盖。
 2. 需要用户提供可运行当前 Release 的 Windows 11 环境及原生 DRM Linux 设备，执行客户区/读屏/IME/关闭和 DPI/主题验收；macOS 按用户安排先记待验证，Linux/Windows 可用后再准备测试包。
 3. P00–P13 完成前不做 500 MiB 数值优化；每个实现 slice 补 evidence、跑门禁并分阶段提交。完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
+
+## P03.7 CI follow-up（2026-10-31）
+
+- Commits `bfbdc2c` and `96872ca` were pushed. GitHub run `41108610038` failed on all three OS jobs because the P03.7 selective snapshot retained a P04 `_onEditorPointerDown` listener without its unstaged method. A staged-only correction now removes the listener from the P03 snapshot; commit and rerun CI before treating the branch as buildable. Preserve unrelated unstaged harness/P04/P09 work.
