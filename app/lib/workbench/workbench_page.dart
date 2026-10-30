@@ -28,6 +28,7 @@ import '../editor/rust_text_input_window.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
+import '../editor/workspace_search_decorations.dart';
 import '../git/git_cli.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
@@ -144,6 +145,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 搜索视图（feat-search） ----------
   final _searchQuery = TextEditingController();
   List<SearchHit> _searchHits = [];
+  SearchHit? _selectedSearchHit;
+  int _selectedSearchDocId = -1;
+  int _selectedSearchDocVersion = -1;
   bool _searching = false;
   String? _searchBackendLabel;
   bool _searchCaseSensitive = false;
@@ -2940,6 +2944,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  List<EditorRangeDecoration> _workspaceSearchDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (_selectedSearchDocId != doc.id ||
+        _selectedSearchDocVersion != doc.doc.version ||
+        window.pendingText != null ||
+        doc.doc.version != window.version) {
+      return const [];
+    }
+
+    final firstVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.startUtf16);
+    final lastVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.endUtf16);
+    if (doc.doc.version != window.version) return const [];
+
+    final lineOffsets = <int, DocumentLineOffset>{};
+    DocumentLineOffset lineOffset(int line) =>
+        lineOffsets.putIfAbsent(line, () => doc.doc.lineOffset(line));
+    return buildWorkspaceSearchDecorations(
+      hit: _selectedSearchHit,
+      documentVersion: doc.doc.version,
+      inputWindowVersion: window.version,
+      windowStartUtf16: window.startUtf16,
+      windowEndUtf16: window.endUtf16,
+      totalUtf16Length: window.totalUtf16Length,
+      documentLineCount: firstVisible.lineCount,
+      firstVisibleLine: firstVisible.firstLineNumber,
+      lastVisibleLine: lastVisible.firstLineNumber,
+      lineOffset: lineOffset,
+    );
+  }
+
+
   void _gotoMatch(int direction) {
     final active = _active;
     if (active == null) return;
@@ -3076,6 +3113,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {
       _searching = true;
       _searchHits = [];
+      _selectedSearchHit = null;
+      _selectedSearchDocId = -1;
+      _selectedSearchDocVersion = -1;
     });
     if (q.trim().isEmpty || svc == null) {
       if (mounted) setState(() => _searching = false);
@@ -3114,16 +3154,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openSearchHit(SearchHit hit) async {
     final root = _workspaceRoot;
     if (root == null) return;
+    setState(() {
+      _selectedSearchHit = null;
+      _selectedSearchDocId = -1;
+      _selectedSearchDocVersion = -1;
+    });
     final sep = root.endsWith('/') || root.endsWith('\\') ? '' : '/';
     await _openFileByPath('$root$sep${hit.path}');
+    if (!mounted) return;
     final active = _active;
     if (active == null) return;
     final lines = active.text.split('\n');
-    var offset = 0;
-    for (var i = 0; i < hit.line - 1 && i < lines.length; i++) {
-      offset += lines[i].length + 1;
-    }
-    _setDocSelection(active, TextSelection.collapsed(offset: offset));
+    final requestedLine = hit.line - 1;
+    final line = requestedLine.clamp(0, lines.length - 1).toInt();
+    final lineOffset = active.doc.lineOffset(line);
+    _setDocSelection(
+      active,
+      TextSelection.collapsed(offset: lineOffset.offsetUtf16),
+    );
+    final hitStillMatchesDocument =
+        line == requestedLine && lines[line] == hit.lineText;
+    setState(() {
+      _selectedSearchHit = hitStillMatchesDocument ? hit : null;
+      _selectedSearchDocId = hitStillMatchesDocument ? active.id : -1;
+      _selectedSearchDocVersion =
+          hitStillMatchesDocument ? active.doc.version : -1;
+    });
   }
 
   // ---------- 工作区文件监视（feat-filewatch） ----------
@@ -4491,7 +4547,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : -1;
     final findDecorations = _findDecorationsFor(active);
     final diagnosticDecorations = _diagnosticDecorationsFor(active);
-    final rangeDecorations = [...findDecorations, ...diagnosticDecorations];
+    final workspaceSearchDecorations = _workspaceSearchDecorationsFor(active);
+    final rangeDecorations = [
+      ...findDecorations,
+      ...diagnosticDecorations,
+      ...workspaceSearchDecorations,
+    ];
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(

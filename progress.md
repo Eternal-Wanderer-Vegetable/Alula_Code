@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.6 workspace-search 装饰 provider）
+
+- workspace search 选中结果现可在目标编辑器行绘制；ripgrep JSON 子命中 UTF-8 byte offsets 转为 UTF-16 ranges，git grep 后端没有子范围时回退标记整行。跳转使用 Rust `lineOffset`，仅在已载入行内容仍与命中快照相同、文档 id/version 匹配且没有 pending input 时显示；编辑后旧装饰自动消失。
+- 定向 `search_service_test.dart` 与 `workspace_search_decorations_test.dart` 共 17 项通过；`flutter analyze --no-pub` 0 issues。完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter RUST_TEST_THREADS=1 bash init.sh` EXIT=0，Rust workspace tests、Clippy、build_core 和 Flutter 237 项通过；`cargo fmt --all -- --check` 与最终 `flutter analyze --no-pub`（0 issues）通过。精确 HEAD+index tree `bd0aa159c0d99bab86b5925233161c7d3e39dbe6` 独立快照通过 cargo fmt、Rust tests/Clippy/build_core、Flutter 237 项 `--no-pub` 与 analyze 0 issues。GitNexus repeated refresh checks: staged/all 10/41 files，symbol count 18–30、affected-process 129–195，均 CRITICAL；all 含既存用户修改。图谱截断与跨语言误关联见阶段报告。
+- 报告：`docs/diagnostics/2026-10-30-p03/p03.6-workspace-search-decorations.md`。此切片只绘制当前选中的搜索结果；LSP semantic、minimap/overview、sticky scroll、fold 与像素对照仍待完成。
+
 ### 最新进展（2026-10-30，P03.6 编辑器绘制系统进行中）
 
 - P03.5 完成并按 `docs/03` 关闭：全文 occurrence 通过 Rust `readRange` 以 64 Ki UTF-16 页面扫描；Ctrl+D 可跨输入窗继续/环绕，Ctrl+Shift+L 上限 10,000 selection。窗口外多选编辑、ZWJ emoji 字素退格、保存、撤销/重做和代理对中间选区拒绝均有 fixture。
