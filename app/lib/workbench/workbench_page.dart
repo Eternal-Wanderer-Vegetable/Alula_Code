@@ -12,12 +12,14 @@ library;
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/gestures.dart' show kMiddleMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/find_replace.dart';
+import '../editor/multi_selection.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
 import '../editor/text_diff.dart';
@@ -284,6 +286,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'editorActive && editorCanRedo');
     reg('editor.find', '编辑器', '查找…', () async => _toggleFind(),
         enablement: 'editorActive');
+    reg('editor.addCursorAbove', '编辑器', '向上添加光标',
+        () async => _addCursorVertical(-1),
+        shortcut: 'Ctrl+Alt+Up', enablement: 'editorTextFocus');
+    reg('editor.addCursorBelow', '编辑器', '向下添加光标',
+        () async => _addCursorVertical(1),
+        shortcut: 'Ctrl+Alt+Down', enablement: 'editorTextFocus');
+    reg('editor.selectNextOccurrence', '编辑器', '添加下一个匹配项',
+        () async => _selectNextOccurrence(),
+        shortcut: 'Ctrl+D', enablement: 'editorTextFocus');
+    reg('editor.skipNextOccurrence', '编辑器', '跳过下一个匹配项',
+        () async => _selectNextOccurrence(skipMatches: 1),
+        shortcut: 'Ctrl+Shift+D', enablement: 'editorTextFocus');
+    reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
+        () async => _selectAllOccurrences(),
+        shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
+    reg('editor.mergeSelections', '编辑器', '合并重叠选区',
+        () async => _mergeSelections(),
+        enablement: 'editorTextFocus');
+    reg('editor.columnSelectUp', '编辑器', '向上扩展列选择',
+        () async => _moveColumnSelection(lines: -1),
+        shortcut: 'Alt+Shift+Up', enablement: 'editorTextFocus');
+    reg('editor.columnSelectDown', '编辑器', '向下扩展列选择',
+        () async => _moveColumnSelection(lines: 1),
+        shortcut: 'Alt+Shift+Down', enablement: 'editorTextFocus');
+    reg('editor.columnSelectLeft', '编辑器', '向左扩展列选择',
+        () async => _moveColumnSelection(columns: -1),
+        shortcut: 'Alt+Shift+Left', enablement: 'editorTextFocus');
+    reg('editor.columnSelectRight', '编辑器', '向右扩展列选择',
+        () async => _moveColumnSelection(columns: 1),
+        shortcut: 'Alt+Shift+Right', enablement: 'editorTextFocus');
+    reg('editor.cursorUndo', '编辑器', '撤销光标移动', () async => _cursorUndo(),
+        shortcut: 'Ctrl+U', enablement: 'editorTextFocus && cursorCanUndo');
+    reg('editor.cursorRedo', '编辑器', '重做光标移动', () async => _cursorRedo(),
+        shortcut: 'Ctrl+Shift+U',
+        enablement: 'editorTextFocus && cursorCanRedo');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -321,6 +358,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
       'editorCanUndo': active?.undoStack.canUndo ?? false,
       'editorCanRedo': active?.undoStack.canRedo ?? false,
+      'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
+      'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
@@ -793,15 +832,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  void _setDocSelection(OpenDoc doc, TextSelection selection) {
+  void _setDocSelection(OpenDoc doc, TextSelection selection) =>
+      _setDocSelections(doc, [selection]);
+
+  void _setDocSelections(
+    OpenDoc doc,
+    List<TextSelection> selections, {
+    ColumnSelectionState? columnSelection,
+    bool recordHistory = true,
+  }) {
     _flushInput(doc);
     final total = doc.inputWindow.totalUtf16Length;
-    final clamped = TextSelection(
-      baseOffset: selection.baseOffset.clamp(0, total).toInt(),
-      extentOffset: selection.extentOffset.clamp(0, total).toInt(),
-      affinity: selection.affinity,
-      isDirectional: selection.isDirectional,
-    );
+    final clampedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset: selection.baseOffset.clamp(0, total).toInt(),
+          extentOffset: selection.extentOffset.clamp(0, total).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    if (clampedSelections.isEmpty) return;
+    final previousSet = doc.selectionSet;
+    if (recordHistory) doc.selectionHistory.record(previousSet);
+    final oldAdditional = doc.additionalSelections;
+    doc.additionalSelections = List.unmodifiable(clampedSelections.skip(1));
+    doc.columnSelection = columnSelection;
+    final clamped = clampedSelections.first;
     final window = doc.inputWindow;
     final start = window.startUtf16;
     final end = window.endUtf16;
@@ -817,10 +874,294 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         affinity: clamped.affinity,
         isDirectional: clamped.isDirectional,
       ));
+      if (mounted &&
+          (!listEquals(oldAdditional, doc.additionalSelections) ||
+              previousSet.first != clamped)) {
+        setState(() {});
+      }
+      _syncCommandContext();
       return;
     }
     doc.replaceInputWindow(clamped.extentOffset, selection: clamped);
+    doc.columnSelection = null;
     if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  List<TextSelection> _localAdditionalSelections(OpenDoc doc) {
+    final window = doc.inputWindow;
+    final source = window.text;
+    final candidates = doc.additionalSelections.where((selection) {
+      final base = selection.baseOffset - window.startUtf16;
+      final extent = selection.extentOffset - window.startUtf16;
+      return base >= 0 &&
+          extent >= 0 &&
+          base <= source.length &&
+          extent <= source.length;
+    }).toList(growable: false);
+    final mapped = mapOffsetsThroughTextChange(
+      source,
+      window.presentedText,
+      candidates
+          .expand((selection) => [
+                selection.baseOffset - window.startUtf16,
+                selection.extentOffset - window.startUtf16,
+              ])
+          .toList(growable: false),
+    );
+    return List.unmodifiable([
+      for (var i = 0; i < candidates.length; i++)
+        TextSelection(
+          baseOffset: mapped[i * 2],
+          extentOffset: mapped[i * 2 + 1],
+          affinity: candidates[i].affinity,
+          isDirectional: candidates[i].isDirectional,
+        ),
+    ]);
+  }
+
+  List<TextSelection> _absoluteSelections(
+    OpenDoc doc,
+    List<TextSelection> localSelections,
+  ) =>
+      localSelections
+          .map((selection) => TextSelection(
+                baseOffset: doc.inputWindow.startUtf16 + selection.baseOffset,
+                extentOffset:
+                    doc.inputWindow.startUtf16 + selection.extentOffset,
+                affinity: selection.affinity,
+                isDirectional: selection.isDirectional,
+              ))
+          .toList(growable: false);
+
+  void _addCursorVertical(int lineDelta) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final value = doc.editingValue;
+    final text = value.text;
+    final caret = value.selection.extentOffset.clamp(0, text.length).toInt();
+    final (line, column) = lineAndColumnAt(text, caret);
+    final lineCount = '\n'.allMatches(text).length + 1;
+    final targetLine = (line + lineDelta).clamp(0, lineCount - 1).toInt();
+    final target = lineOffsetAtColumn(text, targetLine, column) +
+        doc.inputWindow.startUtf16;
+    final current = doc.selectionSet;
+    _setDocSelections(doc, [
+      ...current,
+      TextSelection.collapsed(offset: target),
+    ]);
+  }
+
+  void _selectNextOccurrence({int skipMatches = 0}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final value = doc.editingValue;
+    final selection = value.selection;
+    final start = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final end = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (start == end) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final needle = value.text.substring(start, end);
+    final existing = doc.selectionSet;
+    final candidates = <int>[];
+    var scan = 0;
+    while (scan <= value.text.length - needle.length) {
+      final found = value.text.indexOf(needle, scan);
+      if (found < 0) break;
+      candidates.add(found);
+      scan = found + needle.length;
+    }
+    final afterCaret = candidates.where((offset) => offset >= end).toList();
+    final beforeCaret = candidates.where((offset) => offset < end).toList();
+    final ordered = [...afterCaret, ...beforeCaret].where((offset) {
+      final candidateEnd = offset + needle.length;
+      return !existing.any((item) {
+        final low = (item.baseOffset < item.extentOffset
+                ? item.baseOffset
+                : item.extentOffset) -
+            doc.inputWindow.startUtf16;
+        final high = (item.baseOffset > item.extentOffset
+                ? item.baseOffset
+                : item.extentOffset) -
+            doc.inputWindow.startUtf16;
+        return low < candidateEnd && high > offset;
+      });
+    }).toList();
+    if (skipMatches >= ordered.length) return;
+    final found = ordered[skipMatches];
+    final match = TextSelection(
+      baseOffset: doc.inputWindow.startUtf16 + found,
+      extentOffset: doc.inputWindow.startUtf16 + found + needle.length,
+    );
+    _setDocSelections(doc, [...existing, match]);
+  }
+
+  void _selectAllOccurrences() {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final value = doc.editingValue;
+    final selection = value.selection;
+    final start = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final end = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (start == end) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final needle = value.text.substring(start, end);
+    final matches = <TextSelection>[];
+    var from = 0;
+    while (from <= value.text.length - needle.length) {
+      final found = value.text.indexOf(needle, from);
+      if (found < 0) break;
+      matches.add(TextSelection(
+        baseOffset: doc.inputWindow.startUtf16 + found,
+        extentOffset: doc.inputWindow.startUtf16 + found + needle.length,
+      ));
+      from = found + needle.length;
+    }
+    if (matches.isNotEmpty) _setDocSelections(doc, matches);
+  }
+
+  void _mergeSelections() {
+    final doc = _active;
+    if (doc == null) return;
+    final merged = normalizeSelectionSet(doc.selectionSet);
+    _setDocSelections(doc, merged);
+  }
+
+  List<String> _copyableSelectionTexts(OpenDoc doc) {
+    final text = doc.inputWindow.text;
+    final start = doc.inputWindow.startUtf16;
+    final lines = lineContentRangesForText(text);
+    return doc.selectionSet.map((selection) {
+      final base = selection.baseOffset - start;
+      final extent = selection.extentOffset - start;
+      final low = base < extent ? base : extent;
+      final high = base < extent ? extent : base;
+      if (low != high) return text.substring(low, high);
+      var lower = 0;
+      var upper = lines.length;
+      while (lower < upper) {
+        final middle = (lower + upper) ~/ 2;
+        if (lines[middle].$1 <= low) {
+          lower = middle + 1;
+        } else {
+          upper = middle;
+        }
+      }
+      final row = (lower - 1).clamp(0, lines.length - 1).toInt();
+      final range = lines[row];
+      return text.substring(range.$1, range.$2);
+    }).toList(growable: false);
+  }
+
+  Future<void> _copyMultiSelections(OpenDoc doc) async {
+    await Clipboard.setData(
+      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    );
+  }
+
+  Future<bool> _cutMultiSelections(OpenDoc doc) async {
+    final field = doc.inputFieldKey.currentState;
+    if (field == null) return false;
+    final selections = doc.selectionSet;
+    if (selections.length < 2 ||
+        selections.any((selection) => selection.isCollapsed)) {
+      return false;
+    }
+    await Clipboard.setData(
+      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    );
+    final value = doc.editingValue;
+    final selection = value.selection;
+    final start = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final end = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (start == end) return false;
+    field.applyFormattedValue(TextEditingValue(
+      text: value.text.replaceRange(start, end, ''),
+      selection: TextSelection.collapsed(offset: start),
+    ));
+    return true;
+  }
+
+  void _moveColumnSelection({int lines = 0, int columns = 0}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final value = doc.editingValue;
+    final text = value.text;
+    final previous = doc.columnSelection;
+    final state = previous ??
+        () {
+          final (line, column) = lineAndColumnAt(
+            text,
+            value.selection.extentOffset.clamp(0, text.length).toInt(),
+          );
+          return ColumnSelectionState(
+            anchorLine: line,
+            anchorColumn: column,
+            activeLine: line,
+            activeColumn: column,
+          );
+        }();
+    final count = '\n'.allMatches(text).length + 1;
+    final moved = state.move(lines: lines, columns: columns);
+    final bounded = ColumnSelectionState(
+      anchorLine: state.anchorLine.clamp(0, count - 1).toInt(),
+      anchorColumn: state.anchorColumn,
+      activeLine: moved.activeLine.clamp(0, count - 1).toInt(),
+      activeColumn: moved.activeColumn,
+    );
+    final local = columnSelectionsForText(text, bounded);
+    _setDocSelections(
+      doc,
+      _absoluteSelections(doc, local),
+      columnSelection: bounded,
+    );
+  }
+
+  void _cursorUndo() {
+    final doc = _active;
+    if (doc == null) return;
+    final previous = doc.selectionHistory.undo(doc.selectionSet);
+    if (previous != null) {
+      _setDocSelections(doc, previous, recordHistory: false);
+    }
+    _syncCommandContext();
+  }
+
+  void _cursorRedo() {
+    final doc = _active;
+    if (doc == null) return;
+    final next = doc.selectionHistory.redo(doc.selectionSet);
+    if (next != null) {
+      _setDocSelections(doc, next, recordHistory: false);
+    }
+    _syncCommandContext();
+  }
+
+  void _scheduleSelectionRefresh(OpenDoc doc) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _active?.id != doc.id || _disposing) return;
+      setState(() {});
+    });
   }
 
   void _applyProgrammaticEdit(
@@ -831,6 +1172,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool markSaved = false,
   }) {
     _flushInput(doc, commitComposition: true);
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
     final before = doc.doc.resync().content;
     final oldSelection = doc.selection;
     final ops = diffToOps(before, newText);
@@ -2004,22 +2347,81 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (event is! KeyDownEvent) return KeyEventResult.ignored;
         final ctrl = HardwareKeyboard.instance.isControlPressed;
         final shift = HardwareKeyboard.instance.isShiftPressed;
-        if (!ctrl) return KeyEventResult.ignored;
-        if (event.logicalKey == LogicalKeyboardKey.keyZ) {
-          _runCommand(shift ? 'editor.redo' : 'editor.undo');
+        final alt = HardwareKeyboard.instance.isAltPressed;
+        final key = event.logicalKey;
+        if (key == LogicalKeyboardKey.escape &&
+            _active?.additionalSelections.isNotEmpty == true) {
+          final active = _active!;
+          _setDocSelection(active, active.selection);
           return KeyEventResult.handled;
         }
-        if (event.logicalKey == LogicalKeyboardKey.keyY) {
-          _runCommand('editor.redo');
-          return KeyEventResult.handled;
+        if (ctrl) {
+          if (key == LogicalKeyboardKey.keyZ) {
+            _runCommand(shift ? 'editor.redo' : 'editor.undo');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyY) {
+            _runCommand('editor.redo');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyF && !shift) {
+            _runCommand('editor.find');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyH && !shift) {
+            _runCommand('editor.replace');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyD) {
+            _runCommand(shift
+                ? 'editor.skipNextOccurrence'
+                : 'editor.selectNextOccurrence');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyL && shift) {
+            _runCommand('editor.selectAllOccurrences');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyU) {
+            _runCommand(shift ? 'editor.cursorRedo' : 'editor.cursorUndo');
+            return KeyEventResult.handled;
+          }
+          final active = _active;
+          if (active != null && active.additionalSelections.isNotEmpty) {
+            if (key == LogicalKeyboardKey.keyC) {
+              unawaited(_copyMultiSelections(active));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.keyX) {
+              unawaited(_cutMultiSelections(active).then((handled) {
+                if (!handled && mounted) {
+                  setState(() => _statusDetail = '多选剪切需要每个光标都有非空选区');
+                }
+              }));
+              return KeyEventResult.handled;
+            }
+          }
+          if (alt && key == LogicalKeyboardKey.arrowUp) {
+            _runCommand('editor.addCursorAbove');
+            return KeyEventResult.handled;
+          }
+          if (alt && key == LogicalKeyboardKey.arrowDown) {
+            _runCommand('editor.addCursorBelow');
+            return KeyEventResult.handled;
+          }
         }
-        if (event.logicalKey == LogicalKeyboardKey.keyF && !shift) {
-          _runCommand('editor.find');
-          return KeyEventResult.handled;
-        }
-        if (event.logicalKey == LogicalKeyboardKey.keyH && !shift) {
-          _runCommand('editor.replace');
-          return KeyEventResult.handled;
+        if (alt && shift) {
+          final command = switch (key) {
+            LogicalKeyboardKey.arrowUp => 'editor.columnSelectUp',
+            LogicalKeyboardKey.arrowDown => 'editor.columnSelectDown',
+            LogicalKeyboardKey.arrowLeft => 'editor.columnSelectLeft',
+            LogicalKeyboardKey.arrowRight => 'editor.columnSelectRight',
+            _ => null,
+          };
+          if (command != null) {
+            _runCommand(command);
+            return KeyEventResult.handled;
+          }
         }
         return KeyEventResult.ignored;
       });
@@ -3748,7 +4150,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     inputWindow: active.inputWindow,
                     focusNode: _focusNodeFor(g, active),
                     scrollController: active.editorScrollController,
+                    inputFormatter: MultiSelectionTextInputFormatter(
+                      additionalSelections: () =>
+                          _localAdditionalSelections(active),
+                      onSelectionsChanged: (localSelections) {
+                        active.additionalSelections = List.unmodifiable(
+                          _absoluteSelections(active, localSelections),
+                        );
+                        active.columnSelection = null;
+                      },
+                      onSelectionChanged: (oldValue, newValue) {
+                        if (!oldValue.selection.isValid ||
+                            oldValue.selection == newValue.selection) {
+                          return;
+                        }
+                        active.selectionHistory.record(active.selectionSet);
+                        active.additionalSelections = const [];
+                        active.columnSelection = null;
+                        _scheduleSelectionRefresh(active);
+                        _syncCommandContext();
+                      },
+                      onTextChanged: () {
+                        active.columnSelection = null;
+                      },
+                    ),
+                    additionalSelections: _localAdditionalSelections(active),
                     onDelta: (delta) => _onInputDelta(active.id, delta),
+                    onPresentationChanged: () =>
+                        _scheduleSelectionRefresh(active),
                     onError: (error) {
                       if (!_disposing && mounted && _active?.id == active.id) {
                         setState(() {
@@ -4138,6 +4567,9 @@ class OpenDoc {
   final GlobalKey<RustTextInputFieldState> inputFieldKey;
   final ScrollController editorScrollController;
   final UndoStack undoStack;
+  final SelectionHistory selectionHistory = SelectionHistory();
+  List<TextSelection> additionalSelections = const [];
+  ColumnSelectionState? columnSelection;
   DateTime? lastEditAt;
   bool undoRedoBusy = false;
 
@@ -4178,6 +4610,18 @@ class OpenDoc {
       affinity: local.affinity,
       isDirectional: local.isDirectional,
     );
+  }
+
+  List<TextSelection> get selectionSet {
+    final window = inputWindow;
+    return normalizeSelectionSet([
+      selection,
+      ...additionalSelections.where((item) =>
+          item.baseOffset >= window.startUtf16 &&
+          item.baseOffset <= window.endUtf16 &&
+          item.extentOffset >= window.startUtf16 &&
+          item.extentOffset <= window.endUtf16),
+    ]);
   }
 
   String get text => doc.resync().content;

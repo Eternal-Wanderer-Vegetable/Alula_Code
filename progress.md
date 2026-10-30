@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.5 多光标/列选首个工作台切片）
+
+- 接入多光标插入、选区替换、退格/删除、列选、次级 caret/highlight、Ctrl+D/全匹配、光标历史和多选复制/剪切；格式化后的编辑仍经有界 Rust 输入窗提交。UTF-16 偏移、emoji/组合字素、CRLF、IME preedit 与次级选择映射有定向用例。
+- Workbench fixtures 验证 Ctrl+D 修改并保存两处 Rust 文本，Ctrl+Z 与 Ctrl+U 历史互不干扰，剪切落盘、CRLF 列选编辑、IME 提交和不同文档标签 selection 隔离。
+- `bash init.sh` EXIT=0：Rust workspace tests、Clippy、build_core 与 Flutter 全量 207 项通过；`cargo fmt --all -- --check` 和 `flutter analyze --no-pub` 通过。P03.5 报告：`docs/diagnostics/2026-10-30-p03/p03.5-multi-cursor-column-selection.md`。
+- P03.5 保持 in-progress：当前多选只在最多 16,384 UTF-16 输入窗内；同一 DocumentId 多视图 selection、窗口外 occurrence 搜索、多行粘贴按行分配、Alt+Click pointer 坐标 fixture 和像素级绘制对照还未完成。Alt+Click 分支与既存跳转定义 pointer hunk 混合，本次为隔离用户改动未暂存；后续需拆分并补 pointer fixture。本次不启动 P03.6，不做 P14 内存数值优化。
+
+
 ### 最新进展（2026-10-30，P03.4.2c Windows/Linux IME 部分平台证据）
 
 - Windows 11 Alula Release + Microsoft Pinyin 已验证预编辑和光标附近候选条、Space 提交、追加组合后 Esc 取消、点击 Explorer 失焦。ABI v15，Release DLL 哈希与 `app/native/alula_core.dll` 一致；退出后隔离 journal 记录 `你好bei'jing`，未转换拼音在失焦时保留。

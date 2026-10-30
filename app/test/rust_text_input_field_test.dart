@@ -1,4 +1,5 @@
 import 'package:alula_app/bridge/alula_core.dart';
+import 'package:alula_app/editor/multi_selection.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:flutter/material.dart';
@@ -133,6 +134,137 @@ void main() {
     expect(cancelled.operations, isEmpty);
     expect(fieldKey.currentState!.editingValue.text, '你好|tail');
     expect(doc.resync().content, 'root|你好|tail');
+  }, skip: _bootstrap.skip != null);
+
+  testWidgets('secondary carets commit together through the Rust input window',
+      (tester) async {
+    final doc = _bootstrap.core!.openDoc(9725, 'abc def');
+    addTearDown(doc.close);
+    final window = RustTextInputWindow.open(
+      doc,
+      startUtf16: 0,
+      maxWindowUtf16: 32,
+      selection: const TextSelection.collapsed(offset: 3),
+    );
+    final deltas = <RustTextInputDelta>[];
+    var secondary = const [TextSelection.collapsed(offset: 7)];
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SizedBox(
+          width: 320,
+          height: 180,
+          child: RustTextInputField(
+            inputWindow: window,
+            inputFormatter: MultiSelectionTextInputFormatter(
+              additionalSelections: () => secondary,
+              onSelectionsChanged: (value) => secondary = value,
+            ),
+            additionalSelections: secondary,
+            onDelta: deltas.add,
+          ),
+        ),
+      ),
+    ));
+    await tester
+        .showKeyboard(find.byKey(const ValueKey('rust-bounded-text-input')));
+    await tester.pump();
+
+    tester.testTextInput.updateEditingValue(
+      const TextEditingValue(
+        text: 'abcX def',
+        selection: TextSelection.collapsed(offset: 4),
+      ),
+    );
+    await tester.pump();
+
+    expect(doc.resync().content, 'abcX defX');
+    expect(secondary, const [TextSelection.collapsed(offset: 9)]);
+    expect(deltas.last.operations, isNotEmpty);
+    expect(deltas.last.operations.length, lessThanOrEqualTo(2));
+  }, skip: _bootstrap.skip != null);
+
+  testWidgets('host-generated cut edit is formatted across selected ranges',
+      (tester) async {
+    final doc = _bootstrap.core!.openDoc(9726, 'red green red');
+    addTearDown(doc.close);
+    final window = RustTextInputWindow.open(
+      doc,
+      startUtf16: 0,
+      maxWindowUtf16: 32,
+      selection: const TextSelection(baseOffset: 0, extentOffset: 3),
+    );
+    var secondary = const [TextSelection(baseOffset: 10, extentOffset: 13)];
+    final fieldKey = GlobalKey<RustTextInputFieldState>();
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SizedBox(
+          width: 320,
+          height: 180,
+          child: RustTextInputField(
+            key: fieldKey,
+            inputWindow: window,
+            inputFormatter: MultiSelectionTextInputFormatter(
+              additionalSelections: () => secondary,
+              onSelectionsChanged: (value) => secondary = value,
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    fieldKey.currentState!.applyFormattedValue(const TextEditingValue(
+      text: ' green red',
+      selection: TextSelection.collapsed(offset: 0),
+    ));
+    await tester.pump();
+
+    expect(doc.resync().content, ' green ');
+    expect(secondary, const [TextSelection.collapsed(offset: 7)]);
+  }, skip: _bootstrap.skip != null);
+
+  testWidgets(
+      'Rust accepts multi-caret edits around emoji, combining marks, CRLF',
+      (tester) async {
+    const source = '🙂\r\ne\u0301 x';
+    final doc = _bootstrap.core!.openDoc(9727, source);
+    addTearDown(doc.close);
+    final window = RustTextInputWindow.open(
+      doc,
+      startUtf16: 0,
+      maxWindowUtf16: 32,
+      selection: const TextSelection.collapsed(offset: 2),
+    );
+    var secondary = const [TextSelection.collapsed(offset: 8)];
+    final deltas = <RustTextInputDelta>[];
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SizedBox(
+          width: 320,
+          height: 180,
+          child: RustTextInputField(
+            inputWindow: window,
+            inputFormatter: MultiSelectionTextInputFormatter(
+              additionalSelections: () => secondary,
+              onSelectionsChanged: (value) => secondary = value,
+            ),
+            onDelta: deltas.add,
+          ),
+        ),
+      ),
+    ));
+    await tester
+        .showKeyboard(find.byKey(const ValueKey('rust-bounded-text-input')));
+    await tester.pump();
+    tester.testTextInput.updateEditingValue(const TextEditingValue(
+      text: '🙂Z\r\ne\u0301 x',
+      selection: TextSelection.collapsed(offset: 3),
+    ));
+    await tester.pump();
+    await tester.pump();
+
+    expect(doc.resync().content, '🙂Z\r\ne\u0301 xZ');
+    expect(secondary, const [TextSelection.collapsed(offset: 10)]);
+    expect(deltas.last.operations, isNotEmpty);
   }, skip: _bootstrap.skip != null);
 
   testWidgets('oversized platform update is committed and recentered',

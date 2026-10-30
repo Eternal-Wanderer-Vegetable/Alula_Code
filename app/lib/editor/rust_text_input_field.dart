@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +13,8 @@ class RustTextInputField extends StatefulWidget {
     required this.inputWindow,
     this.focusNode,
     this.scrollController,
+    this.inputFormatter,
+    this.additionalSelections = const [],
     this.autofocus = false,
     this.style,
     this.decoration,
@@ -19,11 +22,14 @@ class RustTextInputField extends StatefulWidget {
     this.onTap,
     this.onDelta,
     this.onError,
+    this.onPresentationChanged,
   });
 
   final RustTextInputWindow inputWindow;
   final FocusNode? focusNode;
   final ScrollController? scrollController;
+  final TextInputFormatter? inputFormatter;
+  final List<TextSelection> additionalSelections;
   final bool autofocus;
   final TextStyle? style;
   final InputDecoration? decoration;
@@ -31,6 +37,7 @@ class RustTextInputField extends StatefulWidget {
   final VoidCallback? onTap;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
+  final VoidCallback? onPresentationChanged;
 
   @override
   RustTextInputFieldState createState() => RustTextInputFieldState();
@@ -59,6 +66,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   /// Applies a local bounded value through the field's ordinary enqueue path.
   void setEditingValue(TextEditingValue value) {
     _controller.value = value;
+  }
+
+  /// Applies a host-generated edit through the same multi-selection formatter
+  /// used by platform typing, then follows the ordinary bounded writeback path.
+  void applyFormattedValue(TextEditingValue value) {
+    final formatter = widget.inputFormatter;
+    _controller.value =
+        formatter?.formatEditUpdate(_controller.value, value) ?? value;
   }
 
   void requestFocus() => _focusNode.requestFocus();
@@ -109,9 +124,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     } on TextInputWindowLimitException catch (error) {
       if (value.text.length > widget.inputWindow.maxWindowUtf16) {
         try {
+          final previousPresentation = widget.inputWindow.presentedText;
           final delta = widget.inputWindow.applyOversized(value);
           _restoreValue(
               delta.replacementValue ?? widget.inputWindow.initialValue);
+          _notifyPresentationChanged(previousPresentation);
           _clearError();
           widget.onDelta?.call(delta);
         } catch (oversizedError) {
@@ -145,8 +162,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   /// Flushes the one-slot queue. Call before saving or switching documents.
   RustTextInputDelta? flushPending() {
     try {
+      final previousPresentation = widget.inputWindow.presentedText;
       final delta = widget.inputWindow.flushPending();
       if (delta != null) {
+        _notifyPresentationChanged(previousPresentation);
         _lastAcceptedValue = _controller.value;
         _clearError();
         widget.onDelta?.call(delta);
@@ -161,8 +180,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   /// Commits the active preedit before a host save/focus operation.
   RustTextInputDelta? commitComposition() {
     try {
+      final previousPresentation = widget.inputWindow.presentedText;
       final delta = widget.inputWindow.commitComposition();
       if (delta != null) {
+        _notifyPresentationChanged(previousPresentation);
         _restoreValue(_valueForDelta(delta));
         _clearError();
         widget.onDelta?.call(delta);
@@ -177,8 +198,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   /// Cancels the active preedit and restores the text last committed to Rust.
   RustTextInputDelta? cancelComposition() {
     try {
+      final previousPresentation = widget.inputWindow.presentedText;
       final delta = widget.inputWindow.cancelComposition();
       if (delta != null) {
+        _notifyPresentationChanged(previousPresentation);
         _restoreValue(delta.replacementValue ?? _valueForDelta(delta));
         _clearError();
         widget.onDelta?.call(delta);
@@ -192,11 +215,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   void recoverPending() {
     try {
+      final previousPresentation = widget.inputWindow.presentedText;
       final delta = widget.inputWindow.recoverPending();
       if (delta == null) {
+        _notifyPresentationChanged(previousPresentation);
         _clearError();
         return;
       }
+      _notifyPresentationChanged(previousPresentation);
       _restoreValue(_valueForDelta(delta));
       _clearError();
       widget.onDelta?.call(delta);
@@ -231,6 +257,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     }
   }
 
+  void _notifyPresentationChanged(String previousPresentation) {
+    if (previousPresentation != widget.inputWindow.presentedText) {
+      widget.onPresentationChanged?.call();
+    }
+  }
+
   void _reportError(Object error) {
     if (mounted) {
       setState(() => _errorMessage = error.toString());
@@ -250,6 +282,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       controller: _controller,
       focusNode: _focusNode,
       scrollController: widget.scrollController,
+      inputFormatters:
+          widget.inputFormatter == null ? null : [widget.inputFormatter!],
       autofocus: widget.autofocus,
       onTap: widget.onTap,
       keyboardType: TextInputType.multiline,
@@ -262,50 +296,78 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             isCollapsed: true,
           ),
     );
-    return Semantics(
-      label: widget.semanticsLabel,
-      textField: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(child: field),
-          if (_errorMessage case final message?)
-            Material(
-              color: Theme.of(context).colorScheme.errorContainer,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          message,
-                          key: const ValueKey<String>(
-                              'rust-bounded-text-input-error'),
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onErrorContainer,
-                          ),
+    final textStyle = DefaultTextStyle.of(context).style.merge(
+          widget.style ?? const TextStyle(fontFamily: 'monospace'),
+        );
+    final padding = (widget.decoration?.contentPadding ?? EdgeInsets.zero)
+        .resolve(Directionality.of(context));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Semantics(
+                label: widget.semanticsLabel,
+                textField: true,
+                child: field,
+              ),
+              if (widget.additionalSelections.isNotEmpty)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: _AdditionalSelectionsPainter(
+                        text: _controller.text,
+                        selections: widget.additionalSelections,
+                        style: textStyle,
+                        textDirection: Directionality.of(context),
+                        textScaler: MediaQuery.textScalerOf(context),
+                        padding: padding,
+                        scrollController: widget.scrollController,
+                        caretColor: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        if (_errorMessage case final message?)
+          Material(
+            color: Theme.of(context).colorScheme.errorContainer,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        message,
+                        key: const ValueKey<String>(
+                            'rust-bounded-text-input-error'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
                         ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: recoverPending,
-                      child: const Text('重试同步'),
-                    ),
-                    TextButton(
-                      onPressed: widget.inputWindow.pendingText == null
-                          ? null
-                          : copyPendingDraft,
-                      child: const Text('复制草稿'),
-                    ),
-                  ],
-                ),
+                  ),
+                  TextButton(
+                    onPressed: recoverPending,
+                    child: const Text('重试同步'),
+                  ),
+                  TextButton(
+                    onPressed: widget.inputWindow.pendingText == null
+                        ? null
+                        : copyPendingDraft,
+                    child: const Text('复制草稿'),
+                  ),
+                ],
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 
@@ -321,4 +383,85 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _disposeOwnedFocusNode();
     super.dispose();
   }
+}
+
+class _AdditionalSelectionsPainter extends CustomPainter {
+  _AdditionalSelectionsPainter({
+    required this.text,
+    required this.selections,
+    required this.style,
+    required this.textDirection,
+    required this.textScaler,
+    required this.padding,
+    required this.scrollController,
+    required this.caretColor,
+  }) : super(repaint: scrollController);
+
+  final String text;
+  final List<TextSelection> selections;
+  final TextStyle style;
+  final TextDirection textDirection;
+  final TextScaler textScaler;
+  final EdgeInsets padding;
+  final ScrollController? scrollController;
+  final Color caretColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: textDirection,
+      textScaler: textScaler,
+      textWidthBasis: TextWidthBasis.parent,
+    )..layout(
+        maxWidth: (size.width - padding.horizontal)
+            .clamp(1, double.infinity)
+            .toDouble(),
+      );
+    final scrollY =
+        scrollController?.hasClients == true ? scrollController!.offset : 0.0;
+    final origin = Offset(padding.left, padding.top - scrollY);
+    final selectionPaint = Paint()..color = const Color(0x665B9BD5);
+    final caretPaint = Paint()
+      ..color = caretColor
+      ..strokeWidth = 1.5;
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+    for (final selection in selections) {
+      final base = selection.baseOffset.clamp(0, text.length).toInt();
+      final extent = selection.extentOffset.clamp(0, text.length).toInt();
+      final start = base < extent ? base : extent;
+      final end = base < extent ? extent : base;
+      if (start != end) {
+        for (final box in painter.getBoxesForSelection(
+          TextSelection(baseOffset: start, extentOffset: end),
+        )) {
+          canvas.drawRect(box.toRect().shift(origin), selectionPaint);
+        }
+      } else {
+        final caret = painter.getOffsetForCaret(
+          TextPosition(offset: extent),
+          Rect.fromLTWH(0, 0, 2, painter.preferredLineHeight),
+        );
+        canvas.drawLine(
+          origin + caret,
+          origin + caret + Offset(0, painter.preferredLineHeight),
+          caretPaint,
+        );
+      }
+    }
+    canvas.restore();
+    painter.dispose();
+  }
+
+  @override
+  bool shouldRepaint(covariant _AdditionalSelectionsPainter oldDelegate) =>
+      oldDelegate.text != text ||
+      !listEquals(oldDelegate.selections, selections) ||
+      oldDelegate.style != style ||
+      oldDelegate.textDirection != textDirection ||
+      oldDelegate.textScaler != textScaler ||
+      oldDelegate.padding != padding ||
+      oldDelegate.scrollController != scrollController ||
+      oldDelegate.caretColor != caretColor;
 }
