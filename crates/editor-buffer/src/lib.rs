@@ -11,6 +11,10 @@ use serde::{Deserialize, Serialize};
 pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
 /// Maximum number of line windows returned by one editor viewport request.
 pub const MAX_READ_LINES: usize = 256;
+/// Maximum number of representative lines returned by one minimap snapshot.
+pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
+/// Maximum text kept for each representative minimap line, in UTF-16 units.
+pub const MAX_MINIMAP_LINE_SAMPLE_UTF16: usize = 48;
 
 /// A bounded read from the Rust-authoritative document.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -52,6 +56,24 @@ pub struct TextLinesRead {
     pub line_count: usize,
     pub first_line: usize,
     pub lines: Vec<TextLineRead>,
+}
+
+/// A bounded, evenly sampled overview of a Rust-authoritative document.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextMinimapSample {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub lines: Vec<TextMinimapLine>,
+}
+
+/// One representative line in a minimap snapshot. `utf16_length` is the full
+/// line length; `text` contains only a scalar-safe prefix for rendering.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextMinimapLine {
+    pub line: usize,
+    pub utf16_length: usize,
+    pub text: String,
 }
 
 /// 单个增量编辑操作。offset/len 均为 UTF-16 code unit 口径。
@@ -351,6 +373,56 @@ impl TextBuffer {
             first_line,
             lines,
         })
+    }
+
+    /// Return an evenly sampled, bounded overview without materializing the
+    /// document. The response contains at most 512 lines × 48 UTF-16 units.
+    pub fn minimap_sample(&self) -> TextMinimapSample {
+        let line_count = self.rope.len_lines();
+        let sample_count = line_count.min(MAX_MINIMAP_SAMPLE_LINES);
+        let mut lines = Vec::with_capacity(sample_count);
+
+        for sample_index in 0..sample_count {
+            let line_index = if sample_count <= 1 {
+                0
+            } else {
+                sample_index.saturating_mul(line_count - 1) / (sample_count - 1)
+            };
+            let line = self.rope.line(line_index);
+            let mut content_chars = line.len_chars();
+            if content_chars > 0 && line.char(content_chars - 1) == '\n' {
+                content_chars -= 1;
+                if content_chars > 0 && line.char(content_chars - 1) == '\r' {
+                    content_chars -= 1;
+                }
+            }
+
+            let utf16_length = line.char_to_utf16_cu(content_chars);
+            let mut text = String::new();
+            let mut sampled_utf16 = 0;
+            for char_index in 0..content_chars {
+                let ch = line.char(char_index);
+                let units = ch.len_utf16();
+                if sampled_utf16 + units > MAX_MINIMAP_LINE_SAMPLE_UTF16 {
+                    break;
+                }
+                text.push(ch);
+                sampled_utf16 += units;
+            }
+
+            lines.push(TextMinimapLine {
+                line: line_index,
+                utf16_length,
+                text,
+            });
+        }
+
+        TextMinimapSample {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            lines,
+        }
     }
 
     /// 应用一个操作。成功则版本号 +1。
@@ -696,6 +768,51 @@ mod tests {
                 max_total_utf16: 7,
             })
         );
+    }
+
+    #[test]
+    fn minimap_sample_is_evenly_distributed_and_bounded_for_large_documents() {
+        let text = (0..10_000)
+            .map(|line| format!("line-{line}-{}", "x".repeat(100)))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let buffer = TextBuffer::open(&text);
+
+        let sample = buffer.minimap_sample();
+
+        assert_eq!(sample.version, buffer.version());
+        assert_eq!(sample.line_count, 10_000);
+        assert_eq!(sample.lines.len(), MAX_MINIMAP_SAMPLE_LINES);
+        assert_eq!(sample.lines.first().unwrap().line, 0);
+        assert_eq!(sample.lines.last().unwrap().line, 9_999);
+        assert!(sample
+            .lines
+            .windows(2)
+            .all(|pair| pair[0].line < pair[1].line));
+        assert!(sample
+            .lines
+            .iter()
+            .all(|line| line.text.encode_utf16().count() <= MAX_MINIMAP_LINE_SAMPLE_UTF16));
+        assert_eq!(
+            sample.lines.last().unwrap().utf16_length,
+            "line-9999-".len() + 100
+        );
+    }
+
+    #[test]
+    fn minimap_sample_trims_crlf_and_keeps_utf16_lengths_and_scalar_boundaries() {
+        let buffer = TextBuffer::open(&format!("a\r\n{}\n", "🦊".repeat(80)));
+
+        let sample = buffer.minimap_sample();
+
+        assert_eq!(sample.line_count, 3);
+        assert_eq!(sample.lines[0].text, "a");
+        assert_eq!(sample.lines[0].utf16_length, 1);
+        assert_eq!(sample.lines[1].utf16_length, 160);
+        assert_eq!(sample.lines[1].text, "🦊".repeat(24));
+        assert_eq!(sample.lines[1].text.encode_utf16().count(), 48);
+        assert_eq!(sample.lines[2].text, "");
+        assert_eq!(sample.lines[2].utf16_length, 0);
     }
 
     #[test]

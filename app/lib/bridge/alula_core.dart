@@ -12,7 +12,10 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 16;
+const int expectedAbiVersion = 17;
+
+const int maxDocMinimapSampleLines = 512;
+const int maxDocMinimapLineSampleUtf16 = 48;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 const int maxDocReadLines = 256;
 
@@ -272,6 +275,33 @@ class DocumentLinesRead {
     required this.lineCount,
     required this.firstLine,
     required this.lines,
+  });
+}
+
+/// A fixed-budget overview sample; line text contains only a bounded prefix.
+class DocumentMinimapSample {
+  final int version;
+  final int totalUtf16Length;
+  final int lineCount;
+  final List<DocumentMinimapLineSample> lines;
+
+  const DocumentMinimapSample({
+    required this.version,
+    required this.totalUtf16Length,
+    required this.lineCount,
+    required this.lines,
+  });
+}
+
+class DocumentMinimapLineSample {
+  final int line;
+  final int utf16Length;
+  final String text;
+
+  const DocumentMinimapLineSample({
+    required this.line,
+    required this.utf16Length,
+    required this.text,
   });
 }
 
@@ -694,6 +724,48 @@ class AlulaDoc {
     );
     version = page.version;
     return page;
+  }
+
+  /// Read at most 512 representative lines with 48 UTF-16 units per prefix.
+  DocumentMinimapSample readMinimapSample() {
+    final json = core._ffi.docMinimapSampleJson(id);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final lineCount = r['lineCount'] as int;
+    final lines = (r['lines'] as List<dynamic>).map((item) {
+      final line = item as Map<String, Object?>;
+      return DocumentMinimapLineSample(
+        line: line['line'] as int,
+        utf16Length: line['utf16Length'] as int,
+        text: line['text'] as String,
+      );
+    }).toList(growable: false);
+    if (lineCount < 1 ||
+        lines.isEmpty ||
+        lines.length > maxDocMinimapSampleLines ||
+        lines.any((line) =>
+            line.line < 0 ||
+            line.line >= lineCount ||
+            line.utf16Length < 0 ||
+            line.text.length > maxDocMinimapLineSampleUtf16) ||
+        lines.indexed.any((entry) =>
+            entry.$1 > 0 && lines[entry.$1 - 1].line >= entry.$2.line)) {
+      throw StateError('Alula returned an invalid bounded minimap sample');
+    }
+    final sample = DocumentMinimapSample(
+      version: r['version'] as int,
+      totalUtf16Length: r['totalUtf16Length'] as int,
+      lineCount: lineCount,
+      lines: lines,
+    );
+    version = sample.version;
+    return sample;
   }
 
   /// Read at most [maxLenUtf16] UTF-16 units without transferring the full file.

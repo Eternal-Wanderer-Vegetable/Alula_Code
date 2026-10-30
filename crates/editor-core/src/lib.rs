@@ -9,7 +9,8 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
-    BufferError, TextBuffer, TextLineOffset, TextLinesRead, TextOp, TextRangeRead,
+    BufferError, TextBuffer, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp,
+    TextRangeRead,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -244,6 +245,11 @@ impl DocRegistry {
                 max_total_utf16,
             )
         })
+    }
+
+    /// Read an evenly sampled, bounded overview of one Rust-owned document.
+    pub fn minimap_sample(&self, id: u64) -> Option<TextMinimapSample> {
+        self.docs.get(&id).map(TextBuffer::minimap_sample)
     }
 
     pub fn version_of(&self, id: u64) -> Option<u64> {

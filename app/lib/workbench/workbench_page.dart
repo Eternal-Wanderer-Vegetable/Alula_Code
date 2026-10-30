@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import '../editor/editor_minimap.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
@@ -4674,106 +4675,148 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           Expanded(
             child: Stack(
               children: [
-                RustTextInputField(
-                    key: active.inputFieldKey,
-                    inputWindow: active.inputWindow,
-                    syntaxTokens: syntaxTokens,
-                    syntaxVersion: syntaxVersion,
-                    syntaxTokenColor: _tokenColor,
-                    rangeDecorations: rangeDecorations,
-                    focusNode: _focusNodeFor(g, active),
-                    scrollController: active.editorScrollController,
-                    inputFormatter: MultiSelectionTextInputFormatter(
-                      additionalSelections: () =>
-                          _localAdditionalSelections(active),
-                      onSelectionsChanged: (localSelections) {
-                        final inputWindowShift =
-                            active.pendingInputWindowShiftUtf16;
-                        active.additionalSelections = List.unmodifiable([
-                          ...active.additionalSelections,
-                          for (final selection in
-                              _absoluteSelections(active, localSelections))
-                            TextSelection(
-                              baseOffset:
-                                  selection.baseOffset + inputWindowShift,
-                              extentOffset:
-                                  selection.extentOffset + inputWindowShift,
-                              affinity: selection.affinity,
-                              isDirectional: selection.isDirectional,
-                            ),
-                        ]);
-                        active.pendingInputWindowShiftUtf16 = 0;
-                        active.columnSelection = null;
-                      },
-                      onSelectionChanged: (oldValue, newValue) {
-                        if (!oldValue.selection.isValid ||
-                            oldValue.selection == newValue.selection) {
-                          return;
-                        }
-                        active.selectionHistory.record(active.selectionSet);
-                        active.additionalSelections = const [];
-                        active.columnSelection = null;
-                        _scheduleSelectionRefresh(active);
-                        _syncCommandContext();
-                      },
-                      onTextChanged: (oldValue, newValue, formattedValue) {
-                        active.columnSelection = null;
-                        _prepareRemoteMultiSelectionEdits(
-                          active,
-                          oldValue,
-                          newValue,
-                          formattedValue,
-                        );
-                      },
-                    ),
-                    additionalOperations: () {
-                      final operations = active.pendingInputOperations;
-                      active.pendingInputOperations = const [];
-                      return operations;
-                    },
-                    additionalSelections: _localAdditionalSelections(active),
-                    onDelta: (delta) => _onInputDelta(active.id, delta),
-                    onPresentationChanged: () =>
-                        _scheduleSelectionRefresh(active),
-                    onAltClick: (localOffset) {
-                      final previous = active.selectionSet;
-                      final offset = active.inputWindow.startUtf16 +
-                          localOffset
-                              .clamp(0, active.editingValue.text.length)
-                              .toInt();
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted || _active?.id != active.id) return;
-                        _setDocSelections(active, [
-                          ...previous,
-                          TextSelection.collapsed(offset: offset),
-                        ]);
-                      });
-                    },
-                    onError: (error) {
-                      if (!_disposing && mounted && _active?.id == active.id) {
-                        setState(() {
-                          _state = WbSyncState.error;
-                          _statusDetail = '输入同步失败：$error';
-                        });
-                      }
-                    },
-                    onTap: () {
-                      // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
-                      if (_focusedRegion != g.region) {
-                        final previous = _active;
-                        if (previous != null && previous.id != active.id) {
-                          _flushInput(previous, commitComposition: true);
-                        }
-                        setState(() => _focusedRegion = g.region);
-                        _syncCommandContext();
-                      }
-                    },
-                    style: const TextStyle(
-                        fontFamily: 'monospace', fontSize: 14, height: 1.5),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.all(12),
-                    ),
+                LayoutBuilder(
+                  builder: (context, constraints) => Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: RustTextInputField(
+                          key: active.inputFieldKey,
+                          inputWindow: active.inputWindow,
+                          syntaxTokens: syntaxTokens,
+                          syntaxVersion: syntaxVersion,
+                          syntaxTokenColor: _tokenColor,
+                          rangeDecorations: rangeDecorations,
+                          focusNode: _focusNodeFor(g, active),
+                          scrollController: active.editorScrollController,
+                          inputFormatter: MultiSelectionTextInputFormatter(
+                            additionalSelections: () =>
+                                _localAdditionalSelections(active),
+                            onSelectionsChanged: (localSelections) {
+                              final inputWindowShift =
+                                  active.pendingInputWindowShiftUtf16;
+                              active.additionalSelections = List.unmodifiable([
+                                ...active.additionalSelections,
+                                for (final selection in _absoluteSelections(
+                                  active,
+                                  localSelections,
+                                ))
+                                  TextSelection(
+                                    baseOffset:
+                                        selection.baseOffset + inputWindowShift,
+                                    extentOffset:
+                                        selection.extentOffset +
+                                        inputWindowShift,
+                                    affinity: selection.affinity,
+                                    isDirectional: selection.isDirectional,
+                                  ),
+                              ]);
+                              active.pendingInputWindowShiftUtf16 = 0;
+                              active.columnSelection = null;
+                            },
+                            onSelectionChanged: (oldValue, newValue) {
+                              if (!oldValue.selection.isValid ||
+                                  oldValue.selection == newValue.selection) {
+                                return;
+                              }
+                              active.selectionHistory.record(
+                                active.selectionSet,
+                              );
+                              active.additionalSelections = const [];
+                              active.columnSelection = null;
+                              _scheduleSelectionRefresh(active);
+                              _syncCommandContext();
+                            },
+                            onTextChanged:
+                                (oldValue, newValue, formattedValue) {
+                                  active.columnSelection = null;
+                                  _prepareRemoteMultiSelectionEdits(
+                                    active,
+                                    oldValue,
+                                    newValue,
+                                    formattedValue,
+                                  );
+                                },
+                          ),
+                          additionalOperations: () {
+                            final operations = active.pendingInputOperations;
+                            active.pendingInputOperations = const [];
+                            return operations;
+                          },
+                          additionalSelections: _localAdditionalSelections(
+                            active,
+                          ),
+                          onDelta: (delta) => _onInputDelta(active.id, delta),
+                          onPresentationChanged: () =>
+                              _scheduleSelectionRefresh(active),
+                          onAltClick: (localOffset) {
+                            final previous = active.selectionSet;
+                            final offset =
+                                active.inputWindow.startUtf16 +
+                                localOffset
+                                    .clamp(0, active.editingValue.text.length)
+                                    .toInt();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (!mounted || _active?.id != active.id) return;
+                              _setDocSelections(active, [
+                                ...previous,
+                                TextSelection.collapsed(offset: offset),
+                              ]);
+                            });
+                          },
+                          onError: (error) {
+                            if (!_disposing &&
+                                mounted &&
+                                _active?.id == active.id) {
+                              setState(() {
+                                _state = WbSyncState.error;
+                                _statusDetail = '输入同步失败：$error';
+                              });
+                            }
+                          },
+                          onTap: () {
+                            // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
+                            if (_focusedRegion != g.region) {
+                              final previous = _active;
+                              if (previous != null &&
+                                  previous.id != active.id) {
+                                _flushInput(previous, commitComposition: true);
+                              }
+                              setState(() => _focusedRegion = g.region);
+                              _syncCommandContext();
+                            }
+                          },
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 14,
+                            height: 1.5,
+                          ),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.all(12),
+                          ),
+                        ),
+                      ),
+                      if (constraints.maxWidth >= 720) ...[
+                        const SizedBox(width: 6),
+                        EditorMinimap(
+                          inputWindow: active.inputWindow,
+                          scrollController: active.editorScrollController,
+                          onNavigateToLine: (line) {
+                            _flushInput(active, commitComposition: true);
+                            _focusNodeFor(g, active).requestFocus();
+                            final offset = active.doc
+                                .lineOffset(line)
+                                .offsetUtf16;
+                            _setDocSelection(
+                              active,
+                              TextSelection.collapsed(offset: offset),
+                            );
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
                 if (_findVisible)
                   Positioned(top: 0, right: 12, child: _buildFindBar()),

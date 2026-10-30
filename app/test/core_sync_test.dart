@@ -187,6 +187,38 @@ void main() {
     longLine.close();
   }, skip: skip);
 
+  test('Rust minimap 抽样按文档版本返回有界均匀行前缀', () {
+    final wideLine = 'x' * 80;
+    final content = [
+      '\u{FEFF}🦊 first',
+      for (var line = 1; line < 999; line++) 'line-$line $wideLine',
+      'last\r',
+      '',
+    ].join('\n');
+    final doc = _bootstrap.core!.openDoc(9035, content);
+
+    final sample = doc.readMinimapSample();
+
+    expect(sample.version, doc.version);
+    expect(sample.lineCount, 1001);
+    expect(sample.totalUtf16Length, content.length);
+    expect(sample.lines, hasLength(maxDocMinimapSampleLines));
+    expect(sample.lines.first.line, 0);
+    expect(sample.lines.last.line, 1000);
+    expect(
+      sample.lines.every((line) => line.text.length <= 48),
+      isTrue,
+    );
+    expect(sample.lines.first.text, '\u{FEFF}🦊 first');
+    expect(sample.lines.first.utf16Length, '\u{FEFF}🦊 first'.length);
+    expect(
+      sample.lines.skip(1).every((line) =>
+          line.line > sample.lines[sample.lines.indexOf(line) - 1].line),
+      isTrue,
+    );
+    doc.close();
+  }, skip: skip);
+
   test('过期版本被拒绝并给出 Rust 当前版本', () {
     final doc = _bootstrap.core!.openDoc(9002, 'x');
     expect(

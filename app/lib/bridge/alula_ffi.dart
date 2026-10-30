@@ -113,6 +113,11 @@ class AlulaFfi {
     'alula_doc_read_lines',
   );
 
+  late final Pointer<Utf8> Function(int) _docMinimapSample = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_minimap_sample',
+  );
+
   late final Pointer<Utf8> Function(int) _docClose = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_doc_close',
@@ -342,6 +347,8 @@ class AlulaFfi {
         maxLineUtf16,
         maxTotalUtf16,
       ));
+
+  String docMinimapSampleJson(int id) => _takeJson(_docMinimapSample(id));
 
   String docCloseJson(int id) => _takeJson(_docClose(id));
 

@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.6 minimap overview）
+
+- Rust ABI v17 新增全文件有界 minimap sample：均匀采样最多 512 行，每行返回最多 48 UTF-16 单元的标量安全前缀，带完整行长度、文档长度、行数和版本；不物化 Rust 全文。
+- Flutter minimap 在编辑区宽度至少 720 logical pixels 时显示中性线条概览，点击/拖动调用 Rust lineOffset 跳行；viewport marker 跟随当前有界输入窗和 ScrollController，版本变更后 120 ms 合并刷新。窄窗口隐藏地图保留正文点击空间。
+- Rust editor-buffer/editor-core 51 项、Dart↔Rust 与 minimap widget fixture、responsive editor fixture 通过；完整门禁和最终测试数见报告 docs/diagnostics/2026-10-30-p03/p03.6-minimap-overview.md。
+- 语法色 overview markers、sticky scroll、折叠、软换行下逐逻辑行 viewport 精度和跨 OS/DPI/主题像素对照仍未完成；500 MiB 继续留 P14。
+
 ### 最新进展（2026-10-30，P03.6 LSP semantic tokens）
 
 - Rust LSP client 现在声明 semantic-token client capabilities，读取服务端 legend，并可取消地请求 `textDocument/semanticTokens/full`；Rust FFI ABI 升至 v16，按 Rust 文档版本将相对 UTF-16 token 转为绝对范围，关闭/编辑/URI 迁移/工作区关闭会取消旧请求。

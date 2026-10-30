@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 16;
+pub const ALULA_ABI_VERSION: u32 = 17;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -743,6 +743,31 @@ pub extern "C" fn alula_doc_read_lines(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_read_lines")))
+}
+
+/// Read a bounded, evenly sampled minimap snapshot from one Rust document.
+#[no_mangle]
+pub extern "C" fn alula_doc_minimap_sample(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        match registry_lock().minimap_sample(id) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(sample) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": sample.version,
+                    "totalUtf16Length": sample.total_utf16_length,
+                    "lineCount": sample.line_count,
+                    "lines": sample.lines.into_iter().map(|line| json!({
+                        "line": line.line,
+                        "utf16Length": line.utf16_length,
+                        "text": line.text,
+                    })).collect::<Vec<_>>(),
+                })
+                .to_string(),
+            ),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_minimap_sample")))
 }
 
 /// 关闭文档并释放其缓冲区。
@@ -1781,6 +1806,33 @@ mod tests {
 
         take(alula_doc_close(id));
         take(alula_doc_close(long_line_id));
+    }
+
+    #[test]
+    fn minimap_sample_over_ffi_is_versioned_and_bounded() {
+        let id = 92_840;
+        let content = (0..1_000)
+            .map(|line| format!("line-{line}-{}", "x".repeat(100)))
+            .collect::<Vec<_>>()
+            .join("\n");
+        take(unsafe { alula_doc_open(id, c(&content).as_ptr()) });
+
+        let sample = take(alula_doc_minimap_sample(id));
+        assert_eq!(sample["ok"], true);
+        assert_eq!(sample["version"], 1);
+        assert_eq!(sample["lineCount"], 1_000);
+        assert_eq!(sample["lines"].as_array().unwrap().len(), 512);
+        assert_eq!(sample["lines"][0]["line"], 0);
+        assert_eq!(sample["lines"][511]["line"], 999);
+        assert!(sample["lines"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|line| { line["text"].as_str().unwrap().encode_utf16().count() <= 48 }));
+
+        let unknown = take(alula_doc_minimap_sample(id + 1));
+        assert_eq!(unknown["error"]["code"], "UnknownDoc");
+        take(alula_doc_close(id));
     }
 
     #[test]
