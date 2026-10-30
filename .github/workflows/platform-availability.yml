@@ -1,0 +1,90 @@
+name: Platform Availability
+
+on:
+  push:
+    branches: [codex/vscode-parity-p00]
+    paths:
+      - 'app/**'
+      - 'crates/**'
+      - 'scripts/build_core.*'
+      - '.github/workflows/platform-availability.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux x64 build and launch smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Linux desktop build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev xvfb
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        run: bash scripts/build_core.sh
+      - name: Build Linux Release bundle
+        run: flutter build linux --release
+        working-directory: app
+      - name: Add Rust core and verify Linux bundle
+        run: |
+          cp app/native/libalula_core.so app/build/linux/x64/release/bundle/
+          ! ldd app/build/linux/x64/release/bundle/alula_app | grep -q 'not found'
+      - name: Launch Linux app under Xvfb
+        run: |
+          set +e
+          timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            app/build/linux/x64/release/bundle/alula_app
+          status=$?
+          set -e
+          test "$status" -eq 124
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alula-linux-x64-${{ github.sha }}
+          path: app/build/linux/x64/release/bundle
+
+  windows:
+    name: Windows x64 build and launch smoke
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        shell: bash
+        run: bash scripts/build_core.sh
+      - name: Build Windows Release bundle
+        run: flutter build windows --release
+        working-directory: app
+      - name: Add Rust core DLL
+        shell: pwsh
+        run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
+      - name: Launch Windows app
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+          $process = Start-Process -FilePath $exe -PassThru -WindowStyle Hidden
+          Start-Sleep -Seconds 10
+          $process.Refresh()
+          if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }
+          Stop-Process -Id $process.Id -Force
+          Wait-Process -Id $process.Id -Timeout 10
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alula-windows-x64-${{ github.sha }}
+          path: app/build/windows/x64/runner/Release
