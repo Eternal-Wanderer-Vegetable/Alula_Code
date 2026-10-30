@@ -205,21 +205,24 @@ jobs:
           }
           finally {
             $wmCloseSent = $false
+            $closeTimedOut = $false
             if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {
               $wmCloseSent = [AlulaWindowApi]::PostMessage(
                 $window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
             }
             if (!$process.WaitForExit(10000)) {
+              $closeTimedOut = $true
               try { $process.Kill() } catch [System.InvalidOperationException] { }
               $process.WaitForExit(10000) | Out-Null
-              throw "Alula did not exit after a WM_CLOSE request"
             }
             $process.Refresh()
-            if (!$wmCloseSent) { throw "WM_CLOSE was not delivered to the Alula window" }
-            if ($process.ExitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($process.ExitCode)" }
+            $exitCode = if ($process.HasExited) { $process.ExitCode } else { $null }
             $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
-            $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $true -Force
-            $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $process.ExitCode -Force
+            $gracefulClose = $wmCloseSent -and !$closeTimedOut -and $exitCode -eq 0
+            $metadata | Add-Member -NotePropertyName wmClosePosted -NotePropertyValue $wmCloseSent -Force
+            $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
+            $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $gracefulClose -Force
+            $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
             $metadata | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
           }
       - name: Run P03.7 Windows desktop interaction suite
@@ -228,7 +231,19 @@ jobs:
         run: |
           $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
           flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
+      - name: Verify Windows smoke lifecycle
+        if: always()
+        shell: pwsh
+        run: |
+          $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
+          if (!(Test-Path $metadataPath)) { throw "Windows client smoke metadata was not created" }
+          $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+          if (!$metadata.wmClosePosted) { throw "WM_CLOSE was not posted to the Alula window" }
+          if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
+          if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
+          if (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: alula-windows-x64-${{ github.sha }}
           path: |
