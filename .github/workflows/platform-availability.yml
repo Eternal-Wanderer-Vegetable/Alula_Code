@@ -68,6 +68,9 @@ jobs:
       - name: Build Rust core
         shell: bash
         run: bash scripts/build_core.sh
+      - name: Resolve Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+        working-directory: app
       - name: Build Windows Release bundle
         run: flutter build windows --release
         working-directory: app
@@ -112,6 +115,12 @@ jobs:
 
               [DllImport("user32.dll")]
               public static extern bool SetForegroundWindow(IntPtr window);
+
+              [DllImport("user32.dll")]
+              public static extern uint GetDpiForWindow(IntPtr window);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
           }
           '@
 
@@ -153,19 +162,72 @@ jobs:
               $bitmap.Dispose()
             }
 
+            $uiaAvailable = $false
+            $uiaNames = @()
+            $uiaError = $null
+            try {
+              Add-Type -AssemblyName UIAutomationClient
+              $automationWindow = [System.Windows.Automation.AutomationElement]::FromHandle($window)
+              $uiaElements = $automationWindow.FindAll(
+                [System.Windows.Automation.TreeScope]::Descendants,
+                [System.Windows.Automation.Condition]::TrueCondition)
+              foreach ($element in $uiaElements) {
+                try {
+                  $name = $element.Current.Name
+                  if (![string]::IsNullOrWhiteSpace($name)) { $uiaNames += $name }
+                } catch [System.Windows.Automation.ElementNotAvailableException] { }
+              }
+              $uiaAvailable = $true
+            }
+            catch {
+              $uiaError = $_.Exception.Message
+            }
+
+            $themeSettings = Get-ItemProperty `
+              -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' `
+              -ErrorAction SilentlyContinue
+            $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
             [ordered]@{
               processId = $process.Id
               clientWidth = $width
               clientHeight = $height
+              dpi = [AlulaWindowApi]::GetDpiForWindow($window)
               windowVisible = $true
               screenshot = $capture
               sha256 = (Get-FileHash $capture -Algorithm SHA256).Hash.ToLowerInvariant()
-            } | ConvertTo-Json | Set-Content (Join-Path $env:RUNNER_TEMP 'alula-windows-client.json')
+              systemUsesLightTheme = if ($themeSettings) { [bool]$themeSettings.SystemUsesLightTheme } else { $null }
+              appsUseLightTheme = if ($themeSettings) { [bool]$themeSettings.AppsUseLightTheme } else { $null }
+              uiAutomationAvailable = $uiaAvailable
+              accessibleNameCount = $uiaNames.Count
+              accessibleNames = @($uiaNames | Select-Object -First 100)
+              uiAutomationError = $uiaError
+            } | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
           }
           finally {
-            try { if (!$process.HasExited) { $process.Kill() } } catch [System.InvalidOperationException] { }
-            if (!$process.WaitForExit(10000)) { throw "Alula did not exit after the visible-window smoke" }
+            $wmCloseSent = $false
+            if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {
+              $wmCloseSent = [AlulaWindowApi]::PostMessage(
+                $window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
+            }
+            if (!$process.WaitForExit(10000)) {
+              try { $process.Kill() } catch [System.InvalidOperationException] { }
+              $process.WaitForExit(10000) | Out-Null
+              throw "Alula did not exit after a WM_CLOSE request"
+            }
+            $process.Refresh()
+            if (!$wmCloseSent) { throw "WM_CLOSE was not delivered to the Alula window" }
+            if ($process.ExitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($process.ExitCode)" }
+            $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+            $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $true -Force
+            $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $process.ExitCode -Force
+            $metadata | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
           }
+      - name: Run P03.7 Windows desktop interaction suite
+        shell: pwsh
+        working-directory: app
+        run: |
+          $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
+          flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
       - uses: actions/upload-artifact@v4
         with:
           name: alula-windows-x64-${{ github.sha }}
