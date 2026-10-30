@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-30（P03.5 已完成；P03.6 gutter/wrap/范围装饰基础进行中，500 MiB 留待 P14）
+> Last Updated：2026-10-30（P03.5 已完成；P03.6 gutter/wrap/范围装饰/字体回退/Rust 正文语法着色已接入，绘制系统其余能力进行中；500 MiB 留待 P14）
 
 ## 项目目标
 
@@ -33,7 +33,9 @@
 
 - P03.6 字体 fallback 子切片已完成实现；9 项 renderer 测试、完整工作树和精确 HEAD+index snapshot `bash init.sh`（均为 Flutter 226 项）、cargo fmt 和 Flutter analyze 0 issues 通过。平台字体实际安装与像素基线仍保留为验收项。
 
+- P03.6 Rust Tree-sitter 正文着色子切片已实现：按 syntax/document version 门控，二分定位后只绘制当前有界 UTF-16 输入窗，pending 本地文本退回 plain TextSpan，IME composing 下划线保留。定向 renderer 10 项、完整工作树与精确 staged snapshot `RUST_TEST_THREADS=1 bash init.sh`（均 Flutter 227 项）、cargo fmt 与 Flutter analyze 0 issues 通过；staged GitNexus 最新为 8 files/19 symbols/0 processes/LOW，全工作树含既存改动为 39 files/24–27 symbols/137–299 processes/CRITICAL；报告已登记，阶段快照可提交。
+
 ## 下一步
 
-1. 继续 P03.6，按 docs/03 完成RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、行级装饰/provider 接线与像素对照 fixture；gutter/空白显示、版本化范围装饰及 no-wrap/wrap 横向视口已接入。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
+1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、完整行级装饰/provider 接线与像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退及版本化 Rust Tree-sitter 正文着色已接入。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
 2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。

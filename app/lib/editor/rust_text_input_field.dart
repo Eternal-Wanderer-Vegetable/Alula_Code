@@ -21,6 +21,158 @@ const List<String> editorFontFamilyFallbacks = [
   'monospace',
 ];
 
+class _SyntaxTextEditingController extends TextEditingController {
+  _SyntaxTextEditingController.fromValue(super.value) : super.fromValue();
+
+  List<Map<String, Object?>> _tokens = const [];
+  int _tokenVersion = -1;
+  int _windowVersion = -2;
+  int _windowStartUtf16 = 0;
+  String _windowText = '';
+  Color Function(String kind)? _colorForKind;
+
+  void configureSyntax({
+    required List<Map<String, Object?>> tokens,
+    required int tokenVersion,
+    required int windowVersion,
+    required int windowStartUtf16,
+    required String windowText,
+    required Color Function(String kind)? colorForKind,
+  }) {
+    _tokens = tokens;
+    _tokenVersion = tokenVersion;
+    _windowVersion = windowVersion;
+    _windowStartUtf16 = windowStartUtf16;
+    _windowText = windowText;
+    _colorForKind = colorForKind;
+  }
+
+  List<_ResolvedSyntaxToken> _visibleTokens() {
+    final colorForKind = _colorForKind;
+    if (colorForKind == null ||
+        _tokenVersion != _windowVersion ||
+        text != _windowText ||
+        text.isEmpty ||
+        _tokens.isEmpty) {
+      return const [];
+    }
+
+    final windowEnd = _windowStartUtf16 + text.length;
+    var low = 0;
+    var high = _tokens.length;
+    // Rust returns ordered, non-overlapping document-absolute UTF-16 tokens.
+    // Skip preceding tokens without copying the complete document token list.
+    while (low < high) {
+      final middle = (low + high) >> 1;
+      final end = (_tokens[middle]['end_utf16'] as num?)?.toInt() ?? 0;
+      if (end <= _windowStartUtf16) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+
+    final visible = <_ResolvedSyntaxToken>[];
+    for (var index = low; index < _tokens.length; index++) {
+      final token = _tokens[index];
+      final absoluteStart = (token['start_utf16'] as num?)?.toInt();
+      final absoluteEnd = (token['end_utf16'] as num?)?.toInt();
+      if (absoluteStart == null || absoluteEnd == null) continue;
+      if (absoluteStart >= windowEnd) break;
+      if (absoluteEnd <= _windowStartUtf16 || absoluteEnd <= absoluteStart) {
+        continue;
+      }
+      final start =
+          absoluteStart > _windowStartUtf16 ? absoluteStart : _windowStartUtf16;
+      final end = absoluteEnd < windowEnd ? absoluteEnd : windowEnd;
+      if (start >= end) continue;
+      visible.add(
+        _ResolvedSyntaxToken(
+          start: start - _windowStartUtf16,
+          end: end - _windowStartUtf16,
+          color: colorForKind((token['kind'] as String?) ?? ''),
+        ),
+      );
+    }
+    return visible;
+  }
+
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    final visible = _visibleTokens();
+    if (visible.isEmpty) {
+      return super.buildTextSpan(
+        context: context,
+        style: style,
+        withComposing: withComposing,
+      );
+    }
+
+    final composing =
+        withComposing && value.composing.isValid && value.isComposingRangeValid
+            ? value.composing
+            : null;
+    final boundaries = <int>{0, text.length};
+    for (final token in visible) {
+      boundaries
+        ..add(token.start)
+        ..add(token.end);
+    }
+    if (composing != null) {
+      boundaries
+        ..add(composing.start)
+        ..add(composing.end);
+    }
+    final sortedBoundaries = boundaries.toList()..sort();
+    final spans = <InlineSpan>[];
+    var tokenIndex = 0;
+    for (var index = 0; index + 1 < sortedBoundaries.length; index++) {
+      final start = sortedBoundaries[index];
+      final end = sortedBoundaries[index + 1];
+      if (start >= end) continue;
+      while (tokenIndex < visible.length && visible[tokenIndex].end <= start) {
+        tokenIndex++;
+      }
+      final token = tokenIndex < visible.length &&
+              visible[tokenIndex].start <= start &&
+              visible[tokenIndex].end >= end
+          ? visible[tokenIndex]
+          : null;
+      final isComposing =
+          composing != null && composing.start <= start && composing.end >= end;
+      final segmentStyle = token == null && !isComposing
+          ? null
+          : TextStyle(
+              color: token?.color,
+              decoration: isComposing ? TextDecoration.underline : null,
+            );
+      spans.add(
+        TextSpan(
+          text: text.substring(start, end),
+          style: segmentStyle,
+        ),
+      );
+    }
+    return TextSpan(style: style, children: spans);
+  }
+}
+
+class _ResolvedSyntaxToken {
+  const _ResolvedSyntaxToken({
+    required this.start,
+    required this.end,
+    required this.color,
+  });
+
+  final int start;
+  final int end;
+  final Color color;
+}
+
 /// A multiline Flutter input client whose document mirror is a bounded Rust
 /// text window. Flutter's EditableText owns native IME and candidate geometry.
 class RustTextInputField extends StatefulWidget {
@@ -41,6 +193,9 @@ class RustTextInputField extends StatefulWidget {
     this.wordWrap = false,
     this.horizontalScrollController,
     this.rangeDecorations = const [],
+    this.syntaxTokens = const [],
+    this.syntaxVersion = -1,
+    this.syntaxTokenColor,
     this.whitespaceMode = EditorWhitespaceMode.none,
     this.tabSize = 4,
     this.semanticsLabel,
@@ -66,6 +221,9 @@ class RustTextInputField extends StatefulWidget {
   final bool wordWrap;
   final ScrollController? horizontalScrollController;
   final List<EditorRangeDecoration> rangeDecorations;
+  final List<Map<String, Object?>> syntaxTokens;
+  final int syntaxVersion;
+  final Color Function(String kind)? syntaxTokenColor;
   final EditorWhitespaceMode whitespaceMode;
   final int tabSize;
   final String? semanticsLabel;
@@ -80,7 +238,7 @@ class RustTextInputField extends StatefulWidget {
 }
 
 class RustTextInputFieldState extends State<RustTextInputField> {
-  late TextEditingController _controller;
+  late _SyntaxTextEditingController _controller;
   late TextEditingValue _lastAcceptedValue;
   late FocusNode _focusNode;
   late ScrollController _horizontalScrollController;
@@ -152,9 +310,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void initState() {
     super.initState();
-    _controller =
-        TextEditingController.fromValue(widget.inputWindow.initialValue)
-          ..addListener(_handleEditingValueChanged);
+    _controller = _SyntaxTextEditingController.fromValue(
+      widget.inputWindow.initialValue,
+    )..addListener(_handleEditingValueChanged);
     _lastAcceptedValue = _controller.value;
     _setFocusNode(widget.focusNode);
     _setHorizontalScrollController(widget.horizontalScrollController);
@@ -438,6 +596,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   Widget build(BuildContext context) {
     _updateLineMetadata();
+    _controller.configureSyntax(
+      tokens: widget.syntaxTokens,
+      tokenVersion: widget.syntaxVersion,
+      windowVersion: widget.inputWindow.version,
+      windowStartUtf16: widget.inputWindow.startUtf16,
+      windowText: widget.inputWindow.text,
+      colorForKind: widget.syntaxTokenColor,
+    );
     final requestedStyle =
         widget.style ?? const TextStyle(fontFamily: 'monospace');
     final editorStyle = requestedStyle.copyWith(

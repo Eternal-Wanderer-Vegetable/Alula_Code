@@ -211,6 +211,135 @@ void main() {
   );
 
   testWidgets(
+    'Rust token TextSpans are version-gated and preserve IME composition',
+    (tester) async {
+      final doc = _bootstrap.core!.openDoc(9756, 'prefix\nfn main() {}\n');
+      addTearDown(doc.close);
+      final window = RustTextInputWindow.open(
+        doc,
+        startUtf16: 7,
+        maxWindowUtf16: 64,
+      );
+      const keywordColor = Color(0xFFCC66DD);
+      const functionColor = Color(0xFF66CCDD);
+      const tokens = <Map<String, Object?>>[
+        {'start_utf16': 7, 'end_utf16': 9, 'kind': 'keyword'},
+        {'start_utf16': 10, 'end_utf16': 14, 'kind': 'function'},
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RustTextInputField(
+              inputWindow: window,
+              syntaxTokens: tokens,
+              syntaxVersion: window.version,
+              syntaxTokenColor: (kind) =>
+                  kind == 'keyword' ? keywordColor : functionColor,
+              showLineNumbers: false,
+              showIndentGuides: false,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      var editable = tester.widget<EditableText>(find.byType(EditableText));
+      final context = tester.element(find.byType(EditableText));
+      final highlighted = editable.controller.buildTextSpan(
+        context: context,
+        style: editable.style,
+        withComposing: false,
+      );
+      final spans = highlighted.children!.whereType<TextSpan>().toList();
+      expect(
+        spans.any(
+            (span) => span.text == 'fn' && span.style?.color == keywordColor),
+        isTrue,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RustTextInputField(
+              inputWindow: window,
+              syntaxTokens: tokens,
+              syntaxVersion: window.version + 1,
+              syntaxTokenColor: (kind) =>
+                  kind == 'keyword' ? keywordColor : functionColor,
+              showLineNumbers: false,
+              showIndentGuides: false,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      editable = tester.widget<EditableText>(find.byType(EditableText));
+      final stale = editable.controller.buildTextSpan(
+        context: tester.element(find.byType(EditableText)),
+        style: editable.style,
+        withComposing: false,
+      );
+      expect(stale.toPlainText(), window.text);
+      expect(stale.children, isNull);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: RustTextInputField(
+              inputWindow: window,
+              syntaxTokens: tokens,
+              syntaxVersion: window.version,
+              syntaxTokenColor: (kind) =>
+                  kind == 'keyword' ? keywordColor : functionColor,
+              showLineNumbers: false,
+              showIndentGuides: false,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      editable = tester.widget<EditableText>(find.byType(EditableText));
+      final originalValue = editable.controller.value;
+      final pendingValue = originalValue.copyWith(
+        text: '${originalValue.text}pending',
+        selection: TextSelection.collapsed(
+          offset: originalValue.text.length + 'pending'.length,
+        ),
+        composing: TextRange.empty,
+      );
+      editable.controller.value = pendingValue;
+      final pendingSpan = editable.controller.buildTextSpan(
+        context: tester.element(find.byType(EditableText)),
+        style: editable.style,
+        withComposing: false,
+      );
+      expect(pendingSpan.children, isNull);
+
+      editable.controller.value = editable.controller.value.copyWith(
+        text: originalValue.text,
+        selection: originalValue.selection,
+        composing: const TextRange(start: 3, end: 7),
+      );
+      final composing = editable.controller.buildTextSpan(
+        context: tester.element(find.byType(EditableText)),
+        style: editable.style,
+        withComposing: true,
+      );
+      final composingSpans = composing.children!.whereType<TextSpan>().toList();
+      expect(
+        composingSpans.any((span) =>
+            span.text == 'main' &&
+            span.style?.color == functionColor &&
+            span.style?.decoration == TextDecoration.underline),
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
+    },
+    skip: _bootstrap.skip != null,
+  );
+
+  testWidgets(
     'Rust-backed gutter resolves absolute line and paints bidi decorations',
     (tester) async {
       final doc = _bootstrap.core!.openDoc(

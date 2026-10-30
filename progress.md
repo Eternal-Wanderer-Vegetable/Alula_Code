@@ -898,3 +898,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 变更前 GitNexus：TextBuffer CRITICAL（14 符号/10 流程）、DocRegistry CRITICAL（19/13）、AlulaFfi CRITICAL（45/16）；AlulaDoc MEDIUM lower-bound（14 符号，callable value 检查 unavailable）。源码搜索未发现将 AlulaDoc 句柄保存为函数值；风险没有以 shared-axis 结果降低。
 - Rust 定向 15 buffer/20 core tests 与 Flutter 14 项 FFI 测试通过；fmt、Clippy、build_core、Flutter analyze 与完整 `bash init.sh`（166 项）全绿。2,000,001 UTF-16 恢复 fixture 约运行 5 分 22 秒后通过。报告 `docs/diagnostics/2026-10-30-p03/p03.2-rust-line-offset-api.md`。
 - 下一切片 P03.3：使用 Rust 行地址 + 有界范围读取做编辑控件/文本所有权 ADR 与可视区原型；工作台全文 TextField 仍在，三平台 IME、无障碍和多视图还未通过。P14 才重新制定和开展整机内存数值优化。
+
+
+## 今日会话（2026-10-30）：P03.6 Rust Tree-sitter 正文着色
+
+- Rust syntax provider 的版本化 UTF-16 tokens 已接到 `.rs` 正文：只在 syntax.version 与 Rust 有界输入窗版本一致、且 Flutter 当前输入文本等于已提交窗口文本时绘制；用二分定位后只建立当前窗口内的 TextSpan。旧版本或尚未 flush 的本地文本保持普通文本；IME composing 下划线与 selection/input controller 状态不改。该子片没有修改 Rust/FFI/ABI/delta 合同。
+- 新增 renderer widget fixture 覆盖 token 着色、陈旧版本降级、待提交本地文本降级、composition 下划线。`flutter test --no-pub test/editor_rendering_test.dart` 10 项通过；`flutter analyze --no-pub` 0 issues；完整 `RUST_TEST_THREADS=1 bash init.sh` 退出 0，Rust tests/Clippy/build_core 与 Flutter 227 项通过。精确 staged snapshot `e9b481509a7cade3971e3bbc429dd1fe364ce9f2` 也通过相同全量门禁（Flutter 227 项）；GitNexus 刷新后 staged 为 8 files/18 symbols/0 processes/LOW，全工作树 39 files/24 symbols/299 processes/CRITICAL（含既存修改），图谱遗漏/截断与编辑前共享控件 CRITICAL 风险均已记入阶段报告。
+- GitNexus 编辑前 `RustTextInputFieldState`、Workbench `_buildEditor`、`_scheduleSyntaxRefresh` 均为 CRITICAL；`_buildEditor` 影响结果 partial，真实 LSP syntax 方法名 UNKNOWN。源码调用链已核对为 `AlulaLsp.syntax` → Rust LSP/Tree-sitter → Workbench 版本化 cache → `.rs` bounded field；输入/IME/FFI 路径未改。图谱 CRITICAL/partial/UNKNOWN 不作为豁免。
+- 本阶段只暂存 syntax feature 的控件、测试、报告与 Workbench 精确 hunk；保留 Workbench 既有用户改动和其它工作树改动。下一步继续 P03.6 绘制架构（minimap/overview 等）；500 MiB 指标按用户调整继续留 P14。

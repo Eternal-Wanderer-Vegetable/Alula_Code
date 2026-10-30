@@ -196,6 +196,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
+  Map<int, int> _syntaxVersionByDoc = {};
   final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
   bool _polling = false;
@@ -1653,6 +1654,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStatus = 'LSP 未启动';
         _diagnostics.clear();
         _syntaxByDoc.clear();
+        _syntaxVersionByDoc.clear();
         for (final timer in _syntaxRefreshTimers.values) {
           timer.cancel();
         }
@@ -1893,12 +1895,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syntaxRefreshTimers.remove(id)?.cancel();
     final nextSyntax = Map<int, List<Map<String, Object?>>>.of(_syntaxByDoc)
       ..remove(id);
+    final nextSyntaxVersion = Map<int, int>.of(_syntaxVersionByDoc)
+      ..remove(id);
     doc.doc.close();
     doc.undoStack.dispose();
     doc.editorScrollController.dispose();
     _editorFocusNodes.remove(id)?.dispose();
     setState(() {
       _syntaxByDoc = nextSyntax;
+      _syntaxVersionByDoc = nextSyntaxVersion;
       owner.docs.remove(doc);
       if (wasActive) {
         owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
@@ -2038,6 +2043,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (syntax == null || !mounted) return;
         setState(() {
           _syntaxByDoc = {..._syntaxByDoc, docId: syntax.tokens};
+          _syntaxVersionByDoc = {..._syntaxVersionByDoc, docId: syntax.version};
         });
       } catch (error) {
         debugPrint('语法状态刷新失败（doc=$docId）：$error');
@@ -4396,6 +4402,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             style: TextStyle(color: Colors.grey.shade500)),
       );
     }
+    final usesRustSyntax = active.path?.toLowerCase().endsWith('.rs') ?? false;
+    final syntaxTokens = usesRustSyntax
+        ? (_syntaxByDoc[active.id] ?? const <Map<String, Object?>>[])
+        : const <Map<String, Object?>>[];
+    final syntaxVersion = usesRustSyntax
+        ? (_syntaxVersionByDoc[active.id] ?? -1)
+        : -1;
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -4420,6 +4433,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 RustTextInputField(
                     key: active.inputFieldKey,
                     inputWindow: active.inputWindow,
+                    syntaxTokens: syntaxTokens,
+                    syntaxVersion: syntaxVersion,
+                    syntaxTokenColor: _tokenColor,
                     focusNode: _focusNodeFor(g, active),
                     scrollController: active.editorScrollController,
                     inputFormatter: MultiSelectionTextInputFormatter(
