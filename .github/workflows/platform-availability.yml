@@ -79,6 +79,8 @@ jobs:
         run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
       - name: Launch Windows app and capture visible client area
         shell: pwsh
+        env:
+          ALULA_SKIP_UI_AUTOMATION: '1'
         run: |
           Add-Type -AssemblyName System.Drawing
           Add-Type @'
@@ -168,23 +170,26 @@ jobs:
             $uiaAvailable = $false
             $uiaNames = @()
             $uiaError = $null
-            try {
-              Add-Type -AssemblyName UIAutomationClient
-              $flutterView = [AlulaWindowApi]::GetWindow($window, 5)
-              $automationView = [System.Windows.Automation.AutomationElement]::FromHandle($flutterView)
-              $uiaElements = $automationView.FindAll(
-                [System.Windows.Automation.TreeScope]::Subtree,
-                [System.Windows.Automation.Condition]::TrueCondition)
-              foreach ($element in $uiaElements) {
-                try {
-                  $name = $element.Current.Name
-                  if (![string]::IsNullOrWhiteSpace($name)) { $uiaNames += $name }
-                } catch [System.Windows.Automation.ElementNotAvailableException] { }
+            $uiAutomationSkipped = $env:ALULA_SKIP_UI_AUTOMATION -eq '1'
+            if (!$uiAutomationSkipped) {
+              try {
+                Add-Type -AssemblyName UIAutomationClient
+                $flutterView = [AlulaWindowApi]::GetWindow($window, 5)
+                $automationView = [System.Windows.Automation.AutomationElement]::FromHandle($flutterView)
+                $uiaElements = $automationView.FindAll(
+                  [System.Windows.Automation.TreeScope]::Subtree,
+                  [System.Windows.Automation.Condition]::TrueCondition)
+                foreach ($element in $uiaElements) {
+                  try {
+                    $name = $element.Current.Name
+                    if (![string]::IsNullOrWhiteSpace($name)) { $uiaNames += $name }
+                  } catch [System.Windows.Automation.ElementNotAvailableException] { }
+                }
+                $uiaAvailable = $true
               }
-              $uiaAvailable = $true
-            }
-            catch {
-              $uiaError = $_.Exception.Message
+              catch {
+                $uiaError = $_.Exception.Message
+              }
             }
 
             $themeSettings = Get-ItemProperty `
@@ -202,6 +207,7 @@ jobs:
               systemUsesLightTheme = if ($themeSettings) { [bool]$themeSettings.SystemUsesLightTheme } else { $null }
               appsUseLightTheme = if ($themeSettings) { [bool]$themeSettings.AppsUseLightTheme } else { $null }
               uiAutomationAvailable = $uiaAvailable
+              uiAutomationSkipped = $uiAutomationSkipped
               accessibleNameCount = $uiaNames.Count
               accessibleNames = @($uiaNames | Select-Object -First 100)
               uiAutomationError = $uiaError
