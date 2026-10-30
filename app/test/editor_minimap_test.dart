@@ -1,4 +1,5 @@
 import 'package:alula_app/bridge/alula_core.dart';
+import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/editor_minimap.dart';
 import 'package:alula_app/editor/editor_minimap_markers.dart';
 import 'package:alula_app/editor/rust_text_input_window.dart';
@@ -22,6 +23,24 @@ class _CoreBootstrap {
 final _bootstrap = _CoreBootstrap();
 
 void main() {
+  test('find overview markers map UTF-16 hits to sampled logical lines', () {
+    const text = '\uFEFF🦊 fox\r\nnone\nfox';
+    final matches = findMatches(text, 'fox');
+    final lines = buildEditorMinimapFindLines(text, matches);
+
+    expect(lines, [0, 2]);
+
+    final manyLines = List.generate(600, (line) => 'hit $line').join('\n');
+    final sampled = buildEditorMinimapFindLines(
+      manyLines,
+      findMatches(manyLines, 'hit'),
+    );
+    expect(sampled, hasLength(maxEditorMinimapFindMarkers));
+    expect(sampled.first, 0);
+    expect(sampled[128], 300);
+    expect(sampled.last, 599);
+  });
+
   test('overview markers are versioned, bounded, and use logical lines', () {
     final diagnostics = [
       <String, Object?>{
@@ -122,6 +141,49 @@ void main() {
       ],
     );
     expect(diagnosticMarkers.map((marker) => marker.line), [3, 4, 5, 6]);
+    final withFindMarkers = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: diagnostics,
+      selectedSearchDocumentId: 17,
+      selectedSearchDocumentVersion: 8,
+      selectedSearchHit: const SearchHit(
+        path: 'src/main.rs',
+        line: 21,
+        lineText: 'needle',
+      ),
+      findMatchLines: [1, 7, 12],
+      findMatchesDocumentId: 17,
+      findMatchesDocumentVersion: 8,
+      enabled: true,
+    );
+    expect(withFindMarkers, hasLength(8));
+    expect(
+      withFindMarkers
+          .where((marker) => marker.kind == EditorMinimapMarkerKind.find)
+          .map((marker) => marker.line),
+      [1, 7, 12],
+    );
+    expect(withFindMarkers.last.kind, EditorMinimapMarkerKind.search);
+    final staleFindMarkers = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: const [],
+      selectedSearchDocumentId: null,
+      selectedSearchDocumentVersion: null,
+      selectedSearchHit: null,
+      findMatchLines: [1, 7, 12],
+      findMatchesDocumentId: 17,
+      findMatchesDocumentVersion: 7,
+      enabled: true,
+    );
+    expect(
+      staleFindMarkers.where(
+        (marker) => marker.kind == EditorMinimapMarkerKind.find,
+      ),
+      isEmpty,
+    );
+
     final boundedMarkers = buildEditorMinimapMarkers(
       documentId: 17,
       documentVersion: 8,
@@ -140,6 +202,37 @@ void main() {
       enabled: true,
     );
     expect(boundedMarkers, hasLength(maxEditorMinimapMarkers));
+    final combinedBound = buildEditorMinimapMarkers(
+      documentId: 17,
+      documentVersion: 8,
+      diagnostics: List.generate(
+        600,
+        (line) => <String, Object?>{
+          '_documentId': 17,
+          'documentVersion': 8,
+          'severity': 1,
+          'line': line,
+        },
+      ),
+      selectedSearchDocumentId: 17,
+      selectedSearchDocumentVersion: 8,
+      selectedSearchHit: const SearchHit(
+        path: 'src/main.rs',
+        line: 21,
+        lineText: 'needle',
+      ),
+      findMatchLines: List.generate(300, (line) => line),
+      findMatchesDocumentId: 17,
+      findMatchesDocumentVersion: 8,
+      enabled: true,
+    );
+    expect(combinedBound, hasLength(maxEditorMinimapMarkers));
+    expect(
+      combinedBound
+          .where((marker) => marker.kind == EditorMinimapMarkerKind.find),
+      hasLength(maxEditorMinimapFindMarkers),
+    );
+    expect(combinedBound.last.kind, EditorMinimapMarkerKind.search);
     expect(
       projectEditorMinimapMarkerY(line: 0, lineCount: 10, height: 90),
       0,

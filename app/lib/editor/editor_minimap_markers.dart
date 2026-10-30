@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'find_replace.dart';
 import '../search/search_service.dart';
 
 const int maxEditorMinimapMarkers = 512;
+const int maxEditorMinimapFindMarkers = 256;
 
-enum EditorMinimapMarkerKind { error, warning, information, hint, search }
+enum EditorMinimapMarkerKind { error, warning, information, hint, search, find }
 
 @immutable
 class EditorMinimapMarker {
@@ -28,6 +30,7 @@ class EditorMinimapMarker {
         EditorMinimapMarkerKind.information => const Color(0xFF42A5F5),
         EditorMinimapMarkerKind.hint => const Color(0xFF80CBC4),
         EditorMinimapMarkerKind.search => const Color(0xFF60A5FA),
+        EditorMinimapMarkerKind.find => const Color(0xFFF0C674),
       };
 
   @override
@@ -52,6 +55,9 @@ List<EditorMinimapMarker> buildEditorMinimapMarkers({
   required int? selectedSearchDocumentId,
   required int? selectedSearchDocumentVersion,
   required SearchHit? selectedSearchHit,
+  List<int> findMatchLines = const [],
+  int? findMatchesDocumentId,
+  int? findMatchesDocumentVersion,
   required bool enabled,
   int maxMarkers = maxEditorMinimapMarkers,
 }) {
@@ -62,7 +68,17 @@ List<EditorMinimapMarker> buildEditorMinimapMarkers({
       selectedSearchHit.line > 0 &&
       selectedSearchDocumentId == documentId &&
       selectedSearchDocumentVersion == documentVersion;
-  final diagnosticLimit = limit - (hasSelectedSearchHit ? 1 : 0);
+  final hasCurrentFindMatches = findMatchesDocumentId == documentId &&
+      findMatchesDocumentVersion == documentVersion &&
+      findMatchLines.isNotEmpty;
+  final findMarkerLimit = hasCurrentFindMatches
+      ? findMatchLines.length
+          .clamp(0, maxEditorMinimapFindMarkers)
+          .clamp(0, limit - (hasSelectedSearchHit ? 1 : 0))
+          .toInt()
+      : 0;
+  final diagnosticLimit =
+      limit - findMarkerLimit - (hasSelectedSearchHit ? 1 : 0);
   final overviewMarkers = <EditorMinimapMarker>[];
   for (final diagnostic in diagnostics.take(4096)) {
     if (overviewMarkers.length >= diagnosticLimit) break;
@@ -88,6 +104,20 @@ List<EditorMinimapMarker> buildEditorMinimapMarkers({
     );
   }
 
+  if (hasCurrentFindMatches) {
+    for (final line in findMatchLines.take(findMarkerLimit)) {
+      if (line < 0) continue;
+      overviewMarkers.add(
+        EditorMinimapMarker(
+          documentId: documentId,
+          documentVersion: documentVersion,
+          line: line,
+          kind: EditorMinimapMarkerKind.find,
+        ),
+      );
+    }
+  }
+
   if (hasSelectedSearchHit && overviewMarkers.length < limit) {
     overviewMarkers.add(
       EditorMinimapMarker(
@@ -102,6 +132,44 @@ List<EditorMinimapMarker> buildEditorMinimapMarkers({
 }
 
 int? _markerInt(Object? value) => value is num ? value.toInt() : null;
+
+/// Maps evenly sampled, ordered UTF-16 find matches to logical lines.
+/// The result is bounded even when a document contains many occurrences.
+List<int> buildEditorMinimapFindLines(
+  String text,
+  List<TextMatch> matches, {
+  int maxMarkers = maxEditorMinimapFindMarkers,
+}) {
+  final count = maxMarkers.clamp(0, maxEditorMinimapFindMarkers).toInt();
+  if (count == 0 || matches.isEmpty) return const [];
+
+  final sampleCount = matches.length.clamp(0, count).toInt();
+  final sampledIndices = List<int>.generate(
+    sampleCount,
+    (index) => sampleCount == 1
+        ? 0
+        : index * (matches.length - 1) ~/ (sampleCount - 1),
+    growable: false,
+  );
+  final lines = <int>[];
+  var cursor = 0;
+  var line = 0;
+  for (final index in sampledIndices) {
+    final match = matches[index];
+    if (match.start < cursor ||
+        match.start < 0 ||
+        match.end <= match.start ||
+        match.end > text.length) {
+      continue;
+    }
+    while (cursor < match.start) {
+      if (text.codeUnitAt(cursor) == 0x0A) line++;
+      cursor++;
+    }
+    lines.add(line);
+  }
+  return List.unmodifiable(lines);
+}
 
 double projectEditorMinimapMarkerY({
   required int line,

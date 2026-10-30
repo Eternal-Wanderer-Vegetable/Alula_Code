@@ -212,6 +212,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
+  List<int> _findOverviewLines = const [];
   int _matchesDocId = -1;
   int _matchesDocVersion = -1;
   int _matchIndex = -1;
@@ -2927,6 +2928,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _refreshMatches();
       } else {
         _matches = const [];
+        _findOverviewLines = const [];
         _matchIndex = -1;
       }
     });
@@ -2953,6 +2955,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _matchesDocVersion = active?.doc.version ?? -1;
     _matches = _findVisible
         ? findMatches(text, _findQuery.text, caseSensitive: _caseSensitive)
+        : const [];
+    _findOverviewLines = _findVisible
+        ? buildEditorMinimapFindLines(text, _matches)
         : const [];
     if (_matchIndex >= _matches.length) {
       _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
@@ -4811,6 +4816,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             selectedSearchDocumentVersion:
                                 _selectedSearchDocVersion,
                             selectedSearchHit: _selectedSearchHit,
+                            findMatchLines: _findOverviewLines,
+                            findMatchesDocumentId: _matchesDocId,
+                            findMatchesDocumentVersion: _matchesDocVersion,
                             enabled: active.inputWindow.pendingText == null &&
                                 active.inputWindow.version ==
                                     active.doc.version,
