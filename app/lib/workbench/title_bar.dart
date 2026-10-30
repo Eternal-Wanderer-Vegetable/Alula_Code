@@ -81,13 +81,17 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   void onWindowClose() {
     if (_closeInProgress) return;
     _closeInProgress = true;
+    unawaited(_closeWindow());
+  }
+
+  Future<void> _closeWindow() async {
     try {
       widget.onCloseRequested?.call();
-    } finally {
-      unawaited(windowManager.destroy().catchError((Object error) {
-        _closeInProgress = false;
-        debugPrint('销毁窗口失败：$error');
-      }));
+      await windowManager.setPreventClose(false);
+      await windowManager.close();
+    } catch (error) {
+      _closeInProgress = false;
+      debugPrint('关闭窗口失败：$error');
     }
   }
 
