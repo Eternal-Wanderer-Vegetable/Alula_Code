@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/editor_rendering.dart';
+import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/multi_selection.dart';
@@ -56,10 +57,41 @@ const Map<String, Color> _tokenColors = {
   'string': Color(0xFFCE9178),
   'comment': Color(0xFF6A9955),
   'type': Color(0xFF4EC9B0),
+  'struct': Color(0xFF4EC9B0),
+  'enum': Color(0xFF4EC9B0),
+  'interface': Color(0xFF4EC9B0),
+  'builtinType': Color(0xFF4EC9B0),
   'constant': Color(0xFF4FC1FF),
+  'const': Color(0xFF4FC1FF),
+  'boolean': Color(0xFF569CD6),
+  'enumMember': Color(0xFF4FC1FF),
   'number': Color(0xFFB5CEA8),
   'property': Color(0xFF9CDCFE),
   'variable': Color(0xFF9CDCFE),
+  'parameter': Color(0xFF9CDCFE),
+  'attribute': Color(0xFF9CDCFE),
+  'macro': Color(0xFF4EC9B0),
+  'procMacro': Color(0xFF4EC9B0),
+  'macroBang': Color(0xFF4EC9B0),
+  'namespace': Color(0xFF4EC9B0),
+  'typeParameter': Color(0xFF4EC9B0),
+  'decorator': Color(0xFFDCDCAA),
+  'operator': Color(0xFFD4D4D4),
+  'lifetime': Color(0xFF569CD6),
+  'selfKeyword': Color(0xFF569CD6),
+  'selfTypeKeyword': Color(0xFF569CD6),
+  'formatSpecifier': Color(0xFFCE9178),
+  'character': Color(0xFFCE9178),
+  'module': Color(0xFF4EC9B0),
+  'union': Color(0xFF4EC9B0),
+  'typeAlias': Color(0xFF4EC9B0),
+  'field': Color(0xFF9CDCFE),
+  'constParameter': Color(0xFF4FC1FF),
+  'static': Color(0xFF4FC1FF),
+  'label': Color(0xFF569CD6),
+  'derive': Color(0xFFDCDCAA),
+  'builtinAttribute': Color(0xFF9CDCFE),
+  'deriveHelper': Color(0xFF9CDCFE),
 };
 
 const int _editorInputWindowUtf16 = 16384;
@@ -205,6 +237,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final List<Map<String, Object?>> _diagnostics = [];
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
   Map<int, int> _syntaxVersionByDoc = {};
+  Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
+  Map<int, int> _semanticTokensVersionByDoc = {};
   final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
   bool _polling = false;
@@ -1663,6 +1697,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _diagnostics.clear();
         _syntaxByDoc.clear();
         _syntaxVersionByDoc.clear();
+        _semanticTokensByDoc.clear();
+        _semanticTokensVersionByDoc.clear();
         for (final timer in _syntaxRefreshTimers.values) {
           timer.cancel();
         }
@@ -1905,6 +1941,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..remove(id);
     final nextSyntaxVersion = Map<int, int>.of(_syntaxVersionByDoc)
       ..remove(id);
+    final nextSemanticTokens = Map<int, List<Map<String, Object?>>>.of(
+      _semanticTokensByDoc,
+    )..remove(id);
+    final nextSemanticTokensVersion = Map<int, int>.of(
+      _semanticTokensVersionByDoc,
+    )..remove(id);
     doc.doc.close();
     doc.undoStack.dispose();
     doc.editorScrollController.dispose();
@@ -1912,6 +1954,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {
       _syntaxByDoc = nextSyntax;
       _syntaxVersionByDoc = nextSyntaxVersion;
+      _semanticTokensByDoc = nextSemanticTokens;
+      _semanticTokensVersionByDoc = nextSemanticTokensVersion;
       owner.docs.remove(doc);
       if (wasActive) {
         owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
@@ -2051,15 +2095,56 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (current == null || !current.lspAttached) return;
       try {
         final syntax = _core?.lsp.syntax(docId);
-        if (syntax == null || !mounted) return;
-        setState(() {
-          _syntaxByDoc = {..._syntaxByDoc, docId: syntax.tokens};
-          _syntaxVersionByDoc = {..._syntaxVersionByDoc, docId: syntax.version};
-        });
+        if (!mounted) return;
+        if (syntax != null) {
+          setState(() {
+            _syntaxByDoc = {..._syntaxByDoc, docId: syntax.tokens};
+            _syntaxVersionByDoc = {
+              ..._syntaxVersionByDoc,
+              docId: syntax.version,
+            };
+          });
+        }
+        unawaited(_refreshSemanticTokens(docId));
       } catch (error) {
         debugPrint('语法状态刷新失败（doc=$docId）：$error');
       }
     });
+  }
+
+  Future<void> _refreshSemanticTokens(int docId) async {
+    final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
+    if (doc == null || !doc.lspAttached) return;
+    final requestedVersion = doc.doc.version;
+    try {
+      final result = await doc.doc.core.lsp.semanticTokens(
+        docId,
+        timeoutMs: 8000,
+      );
+      if (!mounted || result == null || result.version != requestedVersion) {
+        return;
+      }
+      final current = _allDocs.where((item) => item.id == docId).firstOrNull;
+      if (current == null ||
+          !current.lspAttached ||
+          current.doc.version != requestedVersion ||
+          current.inputWindow.version != requestedVersion ||
+          current.inputWindow.pendingText != null) {
+        return;
+      }
+      setState(() {
+        _semanticTokensByDoc = {
+          ..._semanticTokensByDoc,
+          docId: result.tokens,
+        };
+        _semanticTokensVersionByDoc = {
+          ..._semanticTokensVersionByDoc,
+          docId: result.version,
+        };
+      });
+    } catch (error) {
+      debugPrint('语义令牌刷新失败（doc=$docId）：$error');
+    }
   }
 
   // ---------- 补全 / 保存 ----------
@@ -4539,12 +4624,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     final usesRustSyntax = active.path?.toLowerCase().endsWith('.rs') ?? false;
-    final syntaxTokens = usesRustSyntax
+    final treeSyntaxTokens = usesRustSyntax
         ? (_syntaxByDoc[active.id] ?? const <Map<String, Object?>>[])
         : const <Map<String, Object?>>[];
-    final syntaxVersion = usesRustSyntax
+    final treeSyntaxVersion = usesRustSyntax
         ? (_syntaxVersionByDoc[active.id] ?? -1)
         : -1;
+    final semanticTokens = _semanticTokensByDoc[active.id] ?? const [];
+    final semanticVersion = _semanticTokensVersionByDoc[active.id] ?? -1;
+    final highlight = active.lspAttached
+        ? selectEditorHighlightTokens(
+            semanticTokens: semanticTokens,
+            semanticVersion: semanticVersion,
+            documentVersion: active.doc.version,
+            inputWindowVersion: active.inputWindow.version,
+            hasPendingInput: active.inputWindow.pendingText != null,
+            fallbackTokens: treeSyntaxTokens,
+            fallbackVersion: treeSyntaxVersion,
+          )
+        : (tokens: treeSyntaxTokens, version: treeSyntaxVersion);
+    final syntaxTokens = highlight.tokens;
+    final syntaxVersion = highlight.version;
     final findDecorations = _findDecorationsFor(active);
     final diagnosticDecorations = _diagnosticDecorationsFor(active);
     final workspaceSearchDecorations = _workspaceSearchDecorationsFor(active);

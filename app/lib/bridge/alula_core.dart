@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 15;
+const int expectedAbiVersion = 16;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 const int maxDocReadLines = 256;
 
@@ -282,6 +282,13 @@ class CompletionResult {
   const CompletionResult(this.version, this.items);
 }
 
+class SemanticTokensResult {
+  final int version;
+  final List<Map<String, Object?>> tokens;
+
+  const SemanticTokensResult(this.version, this.tokens);
+}
+
 /// LSP / 语法能力的语义封装（轮询式过渡方案，见 docs/02 §2.2）。
 class AlulaLsp {
   final AlulaCore _core;
@@ -321,6 +328,43 @@ class AlulaLsp {
         jsonDecode(_core._ffi.diagnosticsJson(id)) as Map<String, Object?>;
     if (r['ok'] != true) return const [];
     return (r['items'] as List).cast<Map<String, Object?>>();
+  }
+
+  /// Asynchronously request versioned LSP semantic tokens; unsupported servers return null.
+  Future<SemanticTokensResult?> semanticTokens(
+    int id, {
+    int timeoutMs = 8000,
+  }) async {
+    final startJson = _core._ffi.semanticTokensStartJson(id, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    if (start['supported'] != true) return null;
+    final requestId = start['requestId'] as int;
+    try {
+      while (true) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final pollJson = _core._ffi.semanticTokensPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            return SemanticTokensResult(
+              poll['version'] as int,
+              (poll['tokens'] as List).cast<Map<String, Object?>>(),
+            );
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知语义令牌请求状态：${poll['status']}');
+        }
+      }
+    } finally {
+      _core._ffi.semanticTokensCancelJson(requestId);
+    }
   }
 
   /// 异步补全；仅在请求进行时每 20ms 检查一次，取消/过期/超时返回 null。

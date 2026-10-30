@@ -2,6 +2,7 @@
 //! - initialize → 返回 capabilities
 //! - textDocument/didOpen → 推送一条 publishDiagnostics
 //! - textDocument/completion → 返回固定补全项
+//! - textDocument/semanticTokens/full → 返回 UTF-16 相对 token fixture
 //!
 //! 仅用于 editor-lsp 的集成测试，覆盖客户端的帧解析与双向消息路由。
 
@@ -49,7 +50,16 @@ fn main() {
                 send(&serde_json::json!({
                     "jsonrpc": "2.0",
                     "id": msg["id"],
-                    "result": {"capabilities": {"textDocumentSync": 1}},
+                    "result": {"capabilities": {
+                        "textDocumentSync": 1,
+                        "semanticTokensProvider": {
+                            "legend": {
+                                "tokenTypes": ["function", "variable"],
+                                "tokenModifiers": ["readonly"]
+                            },
+                            "full": true
+                        }
+                    }},
                 }));
             }
             "initialized" => {}
@@ -79,6 +89,13 @@ fn main() {
                         {"label": "fake_completion_a", "insertText": "fake_a()"},
                         {"label": "fake_completion_b"},
                     ],
+                }));
+            }
+            "textDocument/semanticTokens/full" => {
+                send(&serde_json::json!({
+                    "jsonrpc": "2.0",
+                    "id": msg["id"],
+                    "result": {"data": [0, 3, 4, 0, 1, 1, 0, 3, 1, 0]},
                 }));
             }
             "shutdown" => {

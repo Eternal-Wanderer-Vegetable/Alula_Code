@@ -5,11 +5,18 @@
 
 ## Current State（当前状态，2026-10-30 优先级调整）
 
+### 最新进展（2026-10-30，P03.6 LSP semantic tokens）
+
+- Rust LSP client 现在声明 semantic-token client capabilities，读取服务端 legend，并可取消地请求 `textDocument/semanticTokens/full`；Rust FFI ABI 升至 v16，按 Rust 文档版本将相对 UTF-16 token 转为绝对范围，关闭/编辑/URI 迁移/工作区关闭会取消旧请求。
+- Workbench 仅在 Rust 文档、输入窗口版本相同且没有本地 pending 输入时选用 LSP token；unsupported、空结果或陈旧数据继续回退到 Tree-sitter（`.rs`）。请求最多 16 个挂起项，单文档最多 100,000 tokens。
+- fake LSP roundtrip、Rust emoji+CRLF 绝对偏移、Flutter 当前版本选择与 stale/pending fallback fixture 通过；本机 rust-analyzer 临时 Rust workspace 返回并解码 20 个 semantic tokens。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过：Rust workspace tests、Clippy、build_core、Flutter 239 项；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-30-p03/p03.6-lsp-semantic-tokens.md`。
+
 ### 最新进展（2026-10-30，P03.6 workspace-search 装饰 provider）
 
 - workspace search 选中结果现可在目标编辑器行绘制；ripgrep JSON 子命中 UTF-8 byte offsets 转为 UTF-16 ranges，git grep 后端没有子范围时回退标记整行。跳转使用 Rust `lineOffset`，仅在已载入行内容仍与命中快照相同、文档 id/version 匹配且没有 pending input 时显示；编辑后旧装饰自动消失。
 - 定向 `search_service_test.dart` 与 `workspace_search_decorations_test.dart` 共 17 项通过；`flutter analyze --no-pub` 0 issues。完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter RUST_TEST_THREADS=1 bash init.sh` EXIT=0，Rust workspace tests、Clippy、build_core 和 Flutter 237 项通过；`cargo fmt --all -- --check` 与最终 `flutter analyze --no-pub`（0 issues）通过。精确 HEAD+index tree `bd0aa159c0d99bab86b5925233161c7d3e39dbe6` 独立快照通过 cargo fmt、Rust tests/Clippy/build_core、Flutter 237 项 `--no-pub` 与 analyze 0 issues。GitNexus repeated refresh checks: staged/all 10/41 files，symbol count 18–30、affected-process 129–195，均 CRITICAL；all 含既存用户修改。图谱截断与跨语言误关联见阶段报告。
-- 报告：`docs/diagnostics/2026-10-30-p03/p03.6-workspace-search-decorations.md`。此切片只绘制当前选中的搜索结果；LSP semantic、minimap/overview、sticky scroll、fold 与像素对照仍待完成。
+- 报告：`docs/diagnostics/2026-10-30-p03/p03.6-workspace-search-decorations.md`。此切片只绘制当前选中的搜索结果；minimap/overview、sticky scroll、fold 与像素对照仍待完成。
 
 ### 最新进展（2026-10-30，P03.6 编辑器绘制系统进行中）
 
@@ -918,11 +925,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - 将已有 Find 结果接入版本化 range painter。WorkBench 对活动 Rust 文档 id/version 记录结果；编辑器视图要求 Rust doc、input window 版本精确一致且无 pending/IME 文本，防止旧装饰误画。二分跳过窗口之前的 UTF-16 命中，只为当前有界窗口建立 decoration。
 - Workbench fixture 验证 emoji 前缀后的 `[3,9)`、`[12,18)` 命中与版本门控，并确认切换到另一文档时不会显示原文档命中；lower-bound 纯逻辑用例通过。定向 Find + bounded Workbench 25 项通过；工作树与精确 staged tree `ede714dc8ef6be1af009fa800856e9907d8a7c5d` 的完整 `RUST_TEST_THREADS=1 bash init.sh` 均退出 0（Flutter 229 项），cargo fmt 与 Flutter analyze 0 issues。GitNexus staged 9 files/11 symbols、all 40 files/16 symbols，均为 CRITICAL；增量图谱 affected-process 计数观测范围为 139–325，all 包含既存改动，风险与截断已记录。
-- 本次没有重写既有 `_refreshMatches` 全文 Find 算法；renderer 仅拿当前输入窗相交装饰。后续 architecture follow-up：通过 Rust `readRange` 分页生成 Find matches，并接入 LSP diagnostic/semantic 与 workspace search providers。
+- 本次没有重写既有 `_refreshMatches` 全文 Find 算法；renderer 仅拿当前输入窗相交装饰。后续 slices 已分别接入 LSP diagnostic、semantic-token 与 workspace-search providers；Find match enumeration 仍待单独改为 Rust `readRange` 分页。
 
 
 ## 今日会话（2026-10-30）：P03.6 LSP 诊断范围 provider
 
 - LSP publishDiagnostics 缓存保留可选 UTF-16 结束位置与 publication version；对 alula_diagnostics 的 C 签名和 ABI 版本没有改动。Workbench 将当前文档诊断位置映射为 Rust 绝对 UTF-16 ranges，要求 Rust/input/LSP 版本一致并排除 pending/IME 输入；按可见行过滤后复用已有 range painter 绘制 severity 下划线。
 - fake-LSP roundtrip 验证新增 JSON 字段；Dart provider fixture 覆盖 emoji UTF-16、跨行范围、severity、stale/unversioned/empty/invalid 与窗口外过滤。定向 Flutter 13 项、`cargo test -p editor-lsp --test roundtrip`、cargo fmt、Flutter analyze 0 issues 通过；完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 全绿（Flutter 232 项）。精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` 的 Rust tests/Clippy/build_core 与离线 `flutter test --no-pub`（232 项）、Flutter analyze（0 issues）也通过。
-- GitNexus 编辑前 Diagnostic exact CRITICAL（134 symbols/123 processes/20 modules），reader_loop exact CRITICAL（35/34 direct/7 processes/5 modules）；`_pollLanguageServices` 未入图，已用源码检索并逐段复核真实调用路径。保持 P03.6 in-progress；semantic/workspace search providers、minimap、sticky scroll、folding 与像素基线仍待完成。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。
+- GitNexus 编辑前 Diagnostic exact CRITICAL（134 symbols/123 processes/20 modules），reader_loop exact CRITICAL（35/34 direct/7 processes/5 modules）；`_pollLanguageServices` 未入图，已用源码检索并逐段复核真实调用路径。保持 P03.6 in-progress；semantic 与 workspace-search providers 已在后续子切片接入，minimap、sticky scroll、folding 与像素基线仍待完成。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。

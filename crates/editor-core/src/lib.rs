@@ -398,6 +398,7 @@ pub fn lsp_shutdown_for_workspace(root: &str) -> Result<bool, String> {
     };
 
     ffi::cancel_completions_for_server(&server);
+    ffi::cancel_semantic_tokens_for_server(&server);
     let uris = registry_shared()
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())

@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-30（P03.5 已完成；P03.6 已接入 gutter/wrap/版本化装饰/字体回退/Rust 正文语法着色/LSP diagnostics/workspace search，绘制系统其余能力进行中；500 MiB 留待 P14）
+> Last Updated：2026-10-30（P03.5 已完成；P03.6 已接入 gutter/wrap/版本化装饰/字体回退/Rust 正文语法着色/LSP diagnostics/semantic tokens/workspace search，绘制系统其余能力进行中；500 MiB 留待 P14）
 
 ## 项目目标
 
@@ -9,7 +9,7 @@
 ## 当前状态
 
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
-- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`，P03.4.2a Flutter EditableText 输入适配器已提交为 `c95e584`。P03.4.2b1 Rust savepoint 合同及 ABI v15、b2 工作台有界输入接线、b3 Rust dirty/undo/journal/命令接线均已完成。P03.4.2c 已得到 Windows Alula/固定 Code-OSS 与 WSLg Linux/Fcitx5 产品 IME 证据，但 macOS 与原生 DRM Linux 未验证，P03.4 保持 in-progress。P03.5 已接入多光标、列选、Rust 提交、clipboard、按行分配粘贴、cursor history、Alt+Click、Rust 全文 occurrence 与跨窗编辑，阶段已完成并提交 `3ee3c4b`；同文档多视图 selection 按 docs/03 留到 P03.7。P03.6 已进入 in-progress：行号 gutter、Rust `lineOffset` 绝对行映射、缩进 guides、空白显示及默认 no-wrap/显式 wordWrap 横向视口已接入有界输入控件；长多行文本保留 LF，LTR/RTL 主 caret 显露 fixture 通过。workspace search 选中结果也已接入版本化 UTF-16 decorations；minimap、sticky scroll、fold、LSP semantic provider 和像素对照仍待完成；字段级字体 fallback 链已接入；详见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。 wrap 子切片完整门禁：全工作树与 HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 独立快照的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 223 项）；两边 cargo fmt 通过，Flutter analyze 0 issues。
+- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`，P03.4.2a Flutter EditableText 输入适配器已提交为 `c95e584`。P03.4.2b1 Rust savepoint 合同及 ABI v15、b2 工作台有界输入接线、b3 Rust dirty/undo/journal/命令接线均已完成。P03.4.2c 已得到 Windows Alula/固定 Code-OSS 与 WSLg Linux/Fcitx5 产品 IME 证据，但 macOS 与原生 DRM Linux 未验证，P03.4 保持 in-progress。P03.5 已接入多光标、列选、Rust 提交、clipboard、按行分配粘贴、cursor history、Alt+Click、Rust 全文 occurrence 与跨窗编辑，阶段已完成并提交 `3ee3c4b`；同文档多视图 selection 按 docs/03 留到 P03.7。P03.6 已进入 in-progress：行号 gutter、Rust `lineOffset` 绝对行映射、缩进 guides、空白显示及默认 no-wrap/显式 wordWrap 横向视口已接入有界输入控件；长多行文本保留 LF，LTR/RTL 主 caret 显露 fixture 通过。workspace search 选中结果也已接入版本化 UTF-16 decorations；LSP semantic full provider 已以 ABI v16 接入并通过 fake LSP、本机 rust-analyzer 及 Rust/Flutter 版本 fixture；minimap、sticky scroll、fold 和像素对照仍待完成；字段级字体 fallback 链已接入；详见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。 wrap 子切片完整门禁：全工作树与 HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 独立快照的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 223 项）；两边 cargo fmt 通过，Flutter analyze 0 issues。
 - Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合与验收门；历史与新增测量仅作基线，P14 完成整体架构后重新制定优化指标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。
 - 真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可仍有外部阻塞，按 docs/03 对应 Web/联网阶段处理，不阻塞当前 P03 编辑器切片。
 - P02.1：docs/diagnostics/2026-10-30-p02/p02.1-per-document-undo.md；P02.2：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md；P02.3：docs/diagnostics/2026-10-30-p02/p02.3-save-as-revert.md。
@@ -37,7 +37,9 @@
 
 - P03.6 Find provider 已接入版本化 range painter：活动 doc/version 和 Rust/input-window 版本都需一致，pending/IME 输入时隐藏旧装饰；按 UTF-16 命中二分定位，仅构造当前输入窗 decoration。定向 Find/Workbench 25 项通过，工作树及精确 staged snapshot `ede714dc8ef6be1af009fa800856e9907d8a7c5d` 全量 init.sh 均通过（Flutter 229 项），cargo fmt/Flutter analyze 也通过；GitNexus staged 9 files/11 symbols、all 40 files/16 symbols 均为 CRITICAL；affected-process 观测范围 139–325，报告保留图谱截断与调用路径风险，子切片可提交。
 
+- P03.6 semantic tokens 子切片：ABI v16 的可取消异步 full 请求、服务器 legend/delta 解码和绝对 UTF-16 转换已通过 Rust/fake-LSP fixture；本机 rust-analyzer 临时 workspace 返回 20 tokens。完整 init.sh（Flutter 239 项）、cargo fmt、Flutter analyze 全绿；`docs/diagnostics/2026-10-30-p03/p03.6-lsp-semantic-tokens.md` 记录 100,000 token/文档上限与尚未做的 delta、像素对照。
+
 ## 下一步
 
-1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、LSP semantic 与 workspace-search provider 接线和像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退、版本化 Rust Tree-sitter 正文着色、当前文件 Find 与版本化 LSP diagnostic range provider 已接入。diagnostic provider 的完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 通过（Flutter 232 项）；精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` Rust tests/Clippy/build_core、离线 `flutter test --no-pub`（232 项）和 Flutter analyze（0 issues）通过。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
+1. 继续 P03.6，按 docs/03 完成 RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠与像素对照 fixture；gutter/空白显示、版本化范围装饰、no-wrap/wrap 横向视口、字段级字体回退、版本化 Rust Tree-sitter 正文着色、当前文件 Find 与版本化 LSP diagnostic range provider 已接入。diagnostic provider 的完整工作树 `RUST_TEST_THREADS=1 bash init.sh` 通过（Flutter 232 项）；精确暂存 source tree `06a8c1645aa00eb6d401962830c59b0e0c214560` Rust tests/Clippy/build_core、离线 `flutter test --no-pub`（232 项）和 Flutter analyze（0 issues）通过。报告 `docs/diagnostics/2026-10-30-p03/p03.6-lsp-diagnostic-decorations.md`。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
 2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。

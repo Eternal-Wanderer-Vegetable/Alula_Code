@@ -21,7 +21,10 @@ use std::time::{Duration, Instant};
 
 use editor_buffer::{BufferError, TextOp};
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
-use editor_lsp::{extract_completion_labels, LspPendingRequest, LspServer};
+use editor_lsp::{
+    decode_semantic_tokens, extract_completion_labels, LspPendingRequest, LspServer, SemanticToken,
+    SemanticTokenLegend,
+};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
 use serde::Deserialize;
 use serde_json::json;
@@ -29,10 +32,13 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 15;
+pub const ALULA_ABI_VERSION: u32 = 16;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
+const MAX_PENDING_SEMANTIC_TOKENS: usize = 16;
+const MAX_SEMANTIC_TOKENS_PER_DOCUMENT: usize = 100_000;
+static NEXT_SEMANTIC_TOKENS_ID: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Deserialize)]
 struct WorkspaceEditDocumentInput {
@@ -49,7 +55,18 @@ struct PendingCompletion {
     deadline: Instant,
 }
 
+struct PendingSemanticTokens {
+    document_id: u64,
+    document_version: u64,
+    server: Arc<LspServer>,
+    legend: SemanticTokenLegend,
+    request: LspPendingRequest,
+    deadline: Instant,
+}
+
 static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
+static PENDING_SEMANTIC_TOKENS: OnceLock<Mutex<HashMap<u64, PendingSemanticTokens>>> =
+    OnceLock::new();
 static RESOURCE_MONITOR: OnceLock<Mutex<Option<ResourcePressureMonitor>>> = OnceLock::new();
 
 fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
@@ -104,6 +121,81 @@ fn cancel_completions_for_doc(id: u64) {
     cancel_requests(take_pending_completions(|request| {
         request.document_id == id
     }));
+}
+
+fn pending_semantic_tokens_lock() -> MutexGuard<'static, HashMap<u64, PendingSemanticTokens>> {
+    PENDING_SEMANTIC_TOKENS
+        .get_or_init(|| Mutex::new(HashMap::new()))
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn cancel_semantic_tokens_for_doc(id: u64) {
+    let requests: Vec<_> = {
+        let mut pending = pending_semantic_tokens_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(request_id, request)| (request.document_id == id).then_some(*request_id))
+            .collect();
+        ids.into_iter()
+            .filter_map(|request_id| pending.remove(&request_id))
+            .collect()
+    };
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+pub(crate) fn cancel_semantic_tokens_for_server(server: &Arc<LspServer>) {
+    let requests: Vec<_> = {
+        let mut pending = pending_semantic_tokens_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(request_id, request)| {
+                Arc::ptr_eq(&request.server, server).then_some(*request_id)
+            })
+            .collect();
+        ids.into_iter()
+            .filter_map(|request_id| pending.remove(&request_id))
+            .collect()
+    };
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+fn semantic_token_ranges(
+    tokens: &[SemanticToken],
+    document_version: u64,
+    mut line_offset: impl FnMut(usize) -> Option<Result<editor_buffer::TextLineOffset, BufferError>>,
+) -> Result<Vec<serde_json::Value>, String> {
+    let mut absolute = Vec::with_capacity(tokens.len());
+    let mut previous_end = 0usize;
+    for token in tokens {
+        let line = line_offset(token.line as usize)
+            .ok_or_else(|| "semantic token line is outside the document".to_string())?
+            .map_err(|error| error.to_string())?;
+        if line.version != document_version {
+            return Err("semantic token document version changed".into());
+        }
+        let start = line
+            .offset_utf16
+            .checked_add(token.start_character as usize)
+            .ok_or_else(|| "semantic token start overflow".to_string())?;
+        let end = start
+            .checked_add(token.length as usize)
+            .ok_or_else(|| "semantic token end overflow".to_string())?;
+        if end > line.total_utf16_length || start < previous_end {
+            return Err("semantic token range is outside document or overlaps".into());
+        }
+        previous_end = end;
+        absolute.push(json!({
+            "start_utf16": start,
+            "end_utf16": end,
+            "kind": token.kind,
+        }));
+    }
+    Ok(absolute)
 }
 
 pub(crate) fn cancel_completions_for_server(server: &Arc<LspServer>) {
@@ -399,6 +491,7 @@ pub unsafe extern "C" fn alula_doc_apply(
         match result {
             Ok(version) => {
                 cancel_completions_for_doc(id);
+                cancel_semantic_tokens_for_doc(id);
                 to_c_ptr(json!({ "ok": true, "version": version }).to_string())
             }
             Err(ApplyError::VersionMismatch { current }) => {
@@ -438,6 +531,7 @@ pub unsafe extern "C" fn alula_workspace_edit_transaction(
             Ok(versions) => {
                 for (id, _) in &versions {
                     cancel_completions_for_doc(*id);
+                    cancel_semantic_tokens_for_doc(*id);
                 }
                 to_c_ptr(
                     json!({
@@ -656,6 +750,7 @@ pub extern "C" fn alula_doc_read_lines(
 pub extern "C" fn alula_doc_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         cancel_completions_for_doc(id);
+        cancel_semantic_tokens_for_doc(id);
         let (server, uri) = {
             let reg = registry_lock();
             (reg.lsp_of(id), reg.uri_of(id))
@@ -682,6 +777,7 @@ pub unsafe extern "C" fn alula_doc_set_uri(id: u64, uri: *const c_char) -> *mut 
             Ok(s) => s.to_string(),
             Err(e) => return e,
         };
+        cancel_semantic_tokens_for_doc(id);
         let known = registry_lock().set_uri(id, uri);
         to_c_ptr(json!({ "ok": true, "known": known }).to_string())
     }))
@@ -730,6 +826,7 @@ pub unsafe extern "C" fn alula_lsp_start(
 pub extern "C" fn alula_lsp_stop(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         cancel_completions_for_doc(id);
+        cancel_semantic_tokens_for_doc(id);
         let server = registry_lock().detach_lsp(id);
         // detach 只移除映射；进程由调用方通过返回值决定是否显式 shutdown。
         // MVP 简化：registry 不再持有 Arc 后，shutdown 在此无引用可用——
@@ -794,6 +891,7 @@ pub unsafe extern "C" fn alula_lsp_did_open(id: u64, language_id: *const c_char)
 #[no_mangle]
 pub extern "C" fn alula_lsp_did_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
+        cancel_semantic_tokens_for_doc(id);
         let reg = registry_lock();
         if reg.version_of(id).is_none() {
             return err_json("UnknownDoc", json!({ "id": id }));
@@ -835,6 +933,195 @@ pub extern "C" fn alula_diagnostics(id: u64) -> *mut c_char {
         )
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_diagnostics")))
+}
+
+/// Start one cancellable full semantic-token request for a Rust document.
+#[no_mangle]
+pub extern "C" fn alula_semantic_tokens_start(id: u64, timeout_ms: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let (uri, server, version) = {
+            let reg = registry_lock();
+            let Some(uri) = reg.uri_of(id) else {
+                return err_json("UnknownDoc", json!({ "id": id }));
+            };
+            let Some(server) = reg.lsp_of(id) else {
+                return err_json("NoLsp", json!({ "id": id }));
+            };
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({ "id": id }));
+            };
+            (uri, server, version)
+        };
+        let Some(legend) = server.semantic_token_legend() else {
+            return to_c_ptr(json!({ "ok": true, "supported": false }).to_string());
+        };
+
+        cancel_semantic_tokens_for_doc(id);
+        let request = match server.semantic_tokens_async(&uri) {
+            Ok(Some(request)) => request,
+            Ok(None) => return to_c_ptr(json!({ "ok": true, "supported": false }).to_string()),
+            Err(error) => return err_json("SemanticTokensFailed", json!(error)),
+        };
+        let mut pending = pending_semantic_tokens_lock();
+        if pending.len() >= MAX_PENDING_SEMANTIC_TOKENS {
+            drop(pending);
+            let mut request = request;
+            let _ = request.cancel();
+            return err_json(
+                "Backpressure",
+                json!({ "limit": MAX_PENDING_SEMANTIC_TOKENS }),
+            );
+        }
+        let request_id = NEXT_SEMANTIC_TOKENS_ID.fetch_add(1, Ordering::Relaxed);
+        let now = Instant::now();
+        let deadline = now
+            .checked_add(Duration::from_millis(timeout_ms))
+            .unwrap_or_else(|| now + Duration::from_secs(86_400));
+        pending.insert(
+            request_id,
+            PendingSemanticTokens {
+                document_id: id,
+                document_version: version,
+                server,
+                legend,
+                request,
+                deadline,
+            },
+        );
+        to_c_ptr(
+            json!({ "ok": true, "supported": true, "requestId": request_id, "version": version })
+                .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_semantic_tokens_start")))
+}
+
+/// Poll a semantic-token request and convert LSP relative UTF-16 positions to
+/// absolute Rust-document UTF-16 offsets only if the captured version is current.
+#[no_mangle]
+pub extern "C" fn alula_semantic_tokens_poll(request_id: u64) -> *mut c_char {
+    enum PollResult {
+        Pending,
+        Timeout(PendingSemanticTokens),
+        Complete(PendingSemanticTokens, serde_json::Value),
+        Failed(String),
+    }
+
+    catch_unwind(AssertUnwindSafe(|| {
+        let result = {
+            let mut requests = pending_semantic_tokens_lock();
+            let Some(mut pending) = requests.remove(&request_id) else {
+                return to_c_ptr(
+                    json!({ "ok": true, "status": "cancelled", "requestId": request_id })
+                        .to_string(),
+                );
+            };
+            if Instant::now() >= pending.deadline {
+                PollResult::Timeout(pending)
+            } else {
+                match pending.request.try_recv() {
+                    Ok(Some(response)) => PollResult::Complete(pending, response),
+                    Ok(None) => {
+                        requests.insert(request_id, pending);
+                        PollResult::Pending
+                    }
+                    Err(error) => PollResult::Failed(error),
+                }
+            }
+        };
+
+        match result {
+            PollResult::Pending => to_c_ptr(
+                json!({ "ok": true, "status": "pending", "requestId": request_id }).to_string(),
+            ),
+            PollResult::Timeout(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(
+                    json!({ "ok": true, "status": "timeout", "requestId": request_id }).to_string(),
+                )
+            }
+            PollResult::Failed(error) => err_json("SemanticTokensFailed", json!(error)),
+            PollResult::Complete(pending, response) => {
+                let (version, tokens) = {
+                    let reg = registry_lock();
+                    let Some(version) = reg.version_of(pending.document_id) else {
+                        return to_c_ptr(
+                            json!({ "ok": true, "status": "stale", "requestId": request_id })
+                                .to_string(),
+                        );
+                    };
+                    if version != pending.document_version {
+                        return to_c_ptr(
+                            json!({ "ok": true, "status": "stale", "requestId": request_id })
+                                .to_string(),
+                        );
+                    }
+                    let token_count = response
+                        .get("data")
+                        .and_then(serde_json::Value::as_array)
+                        .map(|data| data.len() / 5);
+                    if token_count.is_some_and(|count| count > MAX_SEMANTIC_TOKENS_PER_DOCUMENT) {
+                        return err_json(
+                            "SemanticTokensTooLarge",
+                            json!({
+                                "count": token_count,
+                                "limit": MAX_SEMANTIC_TOKENS_PER_DOCUMENT,
+                            }),
+                        );
+                    }
+                    let decoded = match decode_semantic_tokens(&response, &pending.legend) {
+                        Ok(decoded) => decoded,
+                        Err(error) => return err_json("InvalidSemanticTokens", json!(error)),
+                    };
+                    if decoded.len() > MAX_SEMANTIC_TOKENS_PER_DOCUMENT {
+                        return err_json(
+                            "SemanticTokensTooLarge",
+                            json!({
+                                "count": decoded.len(),
+                                "limit": MAX_SEMANTIC_TOKENS_PER_DOCUMENT,
+                            }),
+                        );
+                    }
+                    let absolute = match semantic_token_ranges(&decoded, version, |line| {
+                        reg.line_offset_utf16(pending.document_id, line)
+                    }) {
+                        Ok(tokens) => tokens,
+                        Err(error) if error.contains("version changed") => {
+                            return to_c_ptr(
+                                json!({ "ok": true, "status": "stale", "requestId": request_id })
+                                    .to_string(),
+                            );
+                        }
+                        Err(error) => return err_json("InvalidSemanticTokens", json!(error)),
+                    };
+                    (version, absolute)
+                };
+                to_c_ptr(
+                    json!({
+                        "ok": true,
+                        "status": "completed",
+                        "requestId": request_id,
+                        "version": version,
+                        "tokens": tokens,
+                    })
+                    .to_string(),
+                )
+            }
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_semantic_tokens_poll")))
+}
+
+/// Cancel a pending semantic-token request.
+#[no_mangle]
+pub extern "C" fn alula_semantic_tokens_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if let Some(mut pending) = pending_semantic_tokens_lock().remove(&request_id) {
+            let _ = pending.request.cancel();
+        }
+        to_c_ptr(json!({ "ok": true, "requestId": request_id }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_semantic_tokens_cancel")))
 }
 
 /// 发起非阻塞补全请求。offset 为文档 UTF-16 口径。
@@ -1262,6 +1549,51 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
+    }
+
+    #[test]
+    fn semantic_token_ffi_requires_a_registered_lsp_document() {
+        assert_eq!(
+            take(alula_semantic_tokens_start(91_000, 1_000))["error"]["code"],
+            "UnknownDoc"
+        );
+        assert_eq!(
+            take(alula_semantic_tokens_poll(91_000))["status"],
+            "cancelled"
+        );
+        assert_eq!(take(alula_semantic_tokens_cancel(91_000))["ok"], true);
+    }
+
+    #[test]
+    fn semantic_token_ranges_map_utf16_lines_to_absolute_offsets() {
+        let buffer = editor_buffer::TextBuffer::open("🦊x\r\nz");
+        let version = buffer.version();
+        let tokens = vec![
+            SemanticToken {
+                line: 0,
+                start_character: 2,
+                length: 1,
+                kind: "variable".into(),
+            },
+            SemanticToken {
+                line: 1,
+                start_character: 0,
+                length: 1,
+                kind: "function".into(),
+            },
+        ];
+        let ranges = semantic_token_ranges(&tokens, version, |line| {
+            Some(buffer.line_offset_utf16(line))
+        })
+        .unwrap();
+        assert_eq!(ranges[0]["start_utf16"], 2);
+        assert_eq!(ranges[0]["end_utf16"], 3);
+        assert_eq!(ranges[1]["start_utf16"], 5);
+        assert_eq!(ranges[1]["end_utf16"], 6);
+        assert!(semantic_token_ranges(&tokens, version + 1, |line| {
+            Some(buffer.line_offset_utf16(line))
+        })
+        .is_err());
     }
 
     #[test]

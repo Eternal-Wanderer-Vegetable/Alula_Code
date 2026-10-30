@@ -4,7 +4,7 @@
 //! - Initialize/initialized 握手 + 退出握手；
 //! - didOpen / didChange（全量同步；增量同步留待 Phase 1）；
 //! - 接收 textDocument/publishDiagnostics（后台读线程，不阻塞 UI）；
-//! - textDocument/completion（可取消异步请求；保留同步兼容包装）；
+//! - textDocument/completion / semanticTokens（可取消异步请求）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
 use std::collections::HashMap;
@@ -33,6 +33,20 @@ pub struct Diagnostic {
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SemanticTokenLegend {
+    pub token_types: Vec<String>,
+    pub token_modifiers: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SemanticToken {
+    pub line: u32,
+    pub start_character: u32,
+    pub length: u32,
+    pub kind: String,
 }
 
 struct Shared {
@@ -228,7 +242,39 @@ impl LspServer {
             "processId": std::process::id(),
             "rootUri": root_uri,
             "workspaceFolders": [{"uri": root_uri, "name": "workspace"}],
-            "capabilities": {},
+            "capabilities": {
+                "general": {"positionEncodings": ["utf-16"]},
+                "textDocument": {
+                    "semanticTokens": {
+                        "dynamicRegistration": false,
+                        "requests": {"range": false, "full": {"delta": false}},
+                        "tokenTypes": [
+                            "namespace", "type", "class", "enum", "interface", "struct",
+                            "typeParameter", "parameter", "variable", "property", "enumMember",
+                            "event", "function", "method", "macro", "keyword", "modifier",
+                            "comment", "string", "number", "regexp", "operator", "decorator",
+                            "attribute", "builtinAttribute", "builtinType", "derive",
+                            "deriveHelper", "formatSpecifier", "generic", "invalidEscapeSequence",
+                            "selfKeyword", "lifetime", "macroBang", "punctuation",
+                            "unresolvedReference", "angle", "arithmetic", "attributeBracket",
+                            "bitwise", "boolean", "brace", "bracket", "character", "colon",
+                            "comma", "comparison", "const", "constParameter", "dot",
+                            "escapeSequence", "logical", "negation", "parenthesis", "procMacro",
+                            "selfTypeKeyword", "semicolon", "toolModule", "union", "typeAlias"
+                        ],
+                        "tokenModifiers": [
+                            "declaration", "definition", "readonly", "static", "deprecated",
+                            "abstract", "async", "modification", "documentation", "defaultLibrary",
+                            "mutable", "consuming", "unsafe", "attribute", "callable", "constant",
+                            "associated", "controlFlow", "crateRoot", "injected", "intraDocLink",
+                            "library", "macro", "procMacro", "public", "reference", "trait"
+                        ],
+                        "formats": ["relative"],
+                        "overlappingTokenSupport": false,
+                        "multilineTokenSupport": false
+                    }
+                }
+            },
         });
         self.send_message(&serde_json::json!({
             "jsonrpc": "2.0", "id": id, "method": "initialize", "params": params,
@@ -360,6 +406,46 @@ impl LspServer {
         self.request_async(method, params)?.wait(timeout_ms)
     }
 
+    pub fn semantic_token_legend(&self) -> Option<SemanticTokenLegend> {
+        let capabilities = self.shared.server_capabilities.lock().ok()?;
+        let provider = capabilities
+            .as_ref()?
+            .get("capabilities")?
+            .get("semanticTokensProvider")?;
+        let full = provider.get("full")?;
+        if full != true && !full.is_object() {
+            return None;
+        }
+        let legend = provider.get("legend")?;
+        let token_types = legend
+            .get("tokenTypes")?
+            .as_array()?
+            .iter()
+            .map(|value| value.as_str().map(str::to_owned))
+            .collect::<Option<Vec<_>>>()?;
+        let token_modifiers = legend
+            .get("tokenModifiers")?
+            .as_array()?
+            .iter()
+            .map(|value| value.as_str().map(str::to_owned))
+            .collect::<Option<Vec<_>>>()?;
+        Some(SemanticTokenLegend {
+            token_types,
+            token_modifiers,
+        })
+    }
+
+    pub fn semantic_tokens_async(&self, uri: &str) -> Result<Option<LspPendingRequest>, String> {
+        if self.semantic_token_legend().is_none() {
+            return Ok(None);
+        }
+        self.request_async(
+            "textDocument/semanticTokens/full",
+            serde_json::json!({"textDocument": {"uri": normalize_uri(uri)}}),
+        )
+        .map(Some)
+    }
+
     /// 发送异步补全请求。返回值可立即轮询或取消。
     pub fn completion_async(
         &self,
@@ -462,6 +548,75 @@ pub fn extract_completion_labels(result: &serde_json::Value) -> Vec<String> {
                 .map(|s| s.to_string())
         })
         .collect()
+}
+
+pub fn decode_semantic_tokens(
+    result: &serde_json::Value,
+    legend: &SemanticTokenLegend,
+) -> Result<Vec<SemanticToken>, String> {
+    let Some(data) = result.get("data") else {
+        if result.is_null() {
+            return Ok(Vec::new());
+        }
+        return Err("semanticTokens/full 响应缺少 data".into());
+    };
+    let data = data
+        .as_array()
+        .ok_or_else(|| "semanticTokens/full data 不是数组".to_string())?;
+    let (chunks, remainder) = data.as_slice().as_chunks::<5>();
+    if !remainder.is_empty() {
+        return Err("semanticTokens/full data 长度不是 5 的倍数".into());
+    }
+
+    let mut tokens = Vec::with_capacity(chunks.len());
+    let (mut line, mut character) = (0u32, 0u32);
+    for values in chunks {
+        let value = |index: usize| {
+            values[index]
+                .as_u64()
+                .and_then(|number| u32::try_from(number).ok())
+                .ok_or_else(|| "semantic token 字段超出 u32 范围".to_string())
+        };
+        let delta_line = value(0)?;
+        let delta_start = value(1)?;
+        let length = value(2)?;
+        let token_type = value(3)? as usize;
+        let modifiers = value(4)?;
+        if length == 0 {
+            return Err("semantic token 长度为零".into());
+        }
+        if delta_line == 0 {
+            character = character
+                .checked_add(delta_start)
+                .ok_or_else(|| "semantic token character 溢出".to_string())?;
+        } else {
+            line = line
+                .checked_add(delta_line)
+                .ok_or_else(|| "semantic token line 溢出".to_string())?;
+            character = delta_start;
+        }
+        let mut kind = legend
+            .token_types
+            .get(token_type)
+            .ok_or_else(|| "semantic token type 索引超出 legend".to_string())?
+            .clone();
+        for (index, modifier) in legend.token_modifiers.iter().enumerate() {
+            if index < u32::BITS as usize && modifiers & (1 << index) != 0 {
+                kind.push('.');
+                kind.push_str(modifier);
+            }
+        }
+        character
+            .checked_add(length)
+            .ok_or_else(|| "semantic token end character 溢出".to_string())?;
+        tokens.push(SemanticToken {
+            line,
+            start_character: character,
+            length,
+            kind,
+        });
+    }
+    Ok(tokens)
 }
 
 // ---------- 后台读线程 ----------
@@ -630,5 +785,46 @@ mod tests {
         let wrapped = serde_json::json!({"isIncomplete": false, "items": [{"label": "x"}]});
         assert_eq!(extract_completion_labels(&wrapped), vec!["x"]);
         assert!(extract_completion_labels(&serde_json::Value::Null).is_empty());
+    }
+
+    #[test]
+    fn decode_semantic_tokens_uses_relative_utf16_positions_and_legend() {
+        let legend = SemanticTokenLegend {
+            token_types: vec!["function".into(), "variable".into()],
+            token_modifiers: vec!["readonly".into(), "declaration".into()],
+        };
+        let result = serde_json::json!({"data": [0, 3, 4, 0, 1, 1, 2, 3, 1, 2]});
+        assert_eq!(
+            decode_semantic_tokens(&result, &legend).unwrap(),
+            vec![
+                SemanticToken {
+                    line: 0,
+                    start_character: 3,
+                    length: 4,
+                    kind: "function.readonly".into(),
+                },
+                SemanticToken {
+                    line: 1,
+                    start_character: 2,
+                    length: 3,
+                    kind: "variable.declaration".into(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn decode_semantic_tokens_rejects_malformed_data_and_legend_indices() {
+        let legend = SemanticTokenLegend {
+            token_types: vec!["function".into()],
+            token_modifiers: vec![],
+        };
+        assert!(decode_semantic_tokens(&serde_json::json!({"data": [0, 1]}), &legend).is_err());
+        assert!(
+            decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 2, 3, 0]}), &legend).is_err()
+        );
+        assert!(
+            decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 0, 0, 0]}), &legend).is_err()
+        );
     }
 }

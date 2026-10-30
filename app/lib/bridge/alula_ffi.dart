@@ -191,6 +191,18 @@ class AlulaFfi {
     'alula_completion_cancel',
   );
 
+  late final Pointer<Utf8> Function(int, int) _semanticTokensStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_semantic_tokens_start');
+
+  late final Pointer<Utf8> Function(int) _semanticTokensPoll =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_semantic_tokens_poll');
+
+  late final Pointer<Utf8> Function(int) _semanticTokensCancel =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_semantic_tokens_cancel');
+
   late final Pointer<Utf8> Function(int) _syntax = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_syntax',
@@ -411,6 +423,15 @@ class AlulaFfi {
 
   String completionCancelJson(int requestId) =>
       _takeJson(_completionCancel(requestId));
+
+  String semanticTokensStartJson(int id, int timeoutMs) =>
+      _takeJson(_semanticTokensStart(id, timeoutMs));
+
+  String semanticTokensPollJson(int requestId) =>
+      _takeJson(_semanticTokensPoll(requestId));
+
+  String semanticTokensCancelJson(int requestId) =>
+      _takeJson(_semanticTokensCancel(requestId));
 
   String syntaxJson(int id) => _takeJson(_syntax(id));
 
