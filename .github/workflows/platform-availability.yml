@@ -82,8 +82,8 @@ jobs:
           Start-Sleep -Seconds 10
           $process.Refresh()
           if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }
-          Stop-Process -Id $process.Id -Force
-          Wait-Process -Id $process.Id -Timeout 10
+          try { if (!$process.HasExited) { $process.Kill() } } catch [System.InvalidOperationException] { }
+          if (!$process.WaitForExit(10000)) { throw "Alula process did not exit after the smoke check" }
       - uses: actions/upload-artifact@v4
         with:
           name: alula-windows-x64-${{ github.sha }}
