@@ -9,7 +9,7 @@
 ## 当前状态
 
 - 当前优先级：P00–P13 完成整体架构和默认功能复刻；P14 做全功能性能/内存优化；P15 做最终对照与发布验收。
-- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`，P03.4.2a Flutter EditableText 输入适配器已提交为 `c95e584`。P03.4.2b1 Rust savepoint 合同及 ABI v15、b2 工作台有界输入接线、b3 Rust dirty/undo/journal/命令接线均已完成。P03.4.2c 已得到 Windows Alula/固定 Code-OSS 与 WSLg Linux/Fcitx5 产品 IME 证据，但 macOS 与原生 DRM Linux 未验证，P03.4 保持 in-progress。P03.5 已接入多光标、列选、Rust 提交、clipboard、按行分配粘贴、cursor history、Alt+Click、Rust 全文 occurrence 与跨窗编辑，阶段已完成并提交 `3ee3c4b`；同文档多视图 selection 按 docs/03 留到 P03.7。P03.6 已进入 in-progress：行号 gutter、Rust `lineOffset` 绝对行映射、缩进 guides、空白显示及默认 no-wrap/显式 wordWrap 横向视口已接入有界输入控件；长多行文本保留 LF，LTR/RTL 主 caret 显露 fixture 通过。字体回退、minimap、sticky scroll、fold、行级装饰/provider 接线和像素对照仍待完成；详见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。 wrap 子切片完整门禁：全工作树与 HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 独立快照的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 223 项）；两边 cargo fmt 通过，Flutter analyze 0 issues。
+- P00 阶段交付物已签收。P01 / feat-023 的 P01.1–P01.4 已完成并分阶段提交。P02 / feat-024 的 P02.1–P02.7 全部完成并分阶段提交。P03 / feat-025 已按 docs/03 拆为 P03.1–P03.7；P03.1 范围读取提交为 `2c21662`，P03.2 按行 UTF-16 地址查询提交为 `2c6f9ab`，P03.3 ABI v14 批量行窗口/所有权 ADR/有界只读视口提交为 `e32b5fd`。P03.4.1 有界输入会话合同已提交为 `5695184`，P03.4.2a Flutter EditableText 输入适配器已提交为 `c95e584`。P03.4.2b1 Rust savepoint 合同及 ABI v15、b2 工作台有界输入接线、b3 Rust dirty/undo/journal/命令接线均已完成。P03.4.2c 已得到 Windows Alula/固定 Code-OSS 与 WSLg Linux/Fcitx5 产品 IME 证据，但 macOS 与原生 DRM Linux 未验证，P03.4 保持 in-progress。P03.5 已接入多光标、列选、Rust 提交、clipboard、按行分配粘贴、cursor history、Alt+Click、Rust 全文 occurrence 与跨窗编辑，阶段已完成并提交 `3ee3c4b`；同文档多视图 selection 按 docs/03 留到 P03.7。P03.6 已进入 in-progress：行号 gutter、Rust `lineOffset` 绝对行映射、缩进 guides、空白显示及默认 no-wrap/显式 wordWrap 横向视口已接入有界输入控件；长多行文本保留 LF，LTR/RTL 主 caret 显露 fixture 通过。minimap、sticky scroll、fold、行级装饰/provider 接线和像素对照仍待完成；字段级字体 fallback 链已接入；详见 `docs/diagnostics/2026-10-30-p03/p03.6-editor-rendering.md`。 wrap 子切片完整门禁：全工作树与 HEAD+index tree `914f6f1b45b34ea2ee2738bea93b9ca58d629ef3` 独立快照的 `RUST_TEST_THREADS=1 bash init.sh` 均通过（Flutter 223 项）；两边 cargo fmt 通过，Flutter analyze 0 issues。
 - Rust + rust-analyzer ≤500 MiB 目标暂时移出当前目标集合与验收门；历史与新增测量仅作基线，P14 完成整体架构后重新制定优化指标。P00–P13 仍须满足有界资源、关闭时回收、压力下可编辑/保存和无数据丢失要求。
 - 真实 DRM/WPE GBM 与 Microsoft 官方服务身份/许可仍有外部阻塞，按 docs/03 对应 Web/联网阶段处理，不阻塞当前 P03 编辑器切片。
 - P02.1：docs/diagnostics/2026-10-30-p02/p02.1-per-document-undo.md；P02.2：docs/diagnostics/2026-10-30-p02/p02.2-savepoint-dirty-undo.md；P02.3：docs/diagnostics/2026-10-30-p02/p02.3-save-as-revert.md。
@@ -31,7 +31,9 @@
 
 - P03.6 范围装饰子切片现已通过完整工作树与 HEAD+index 快照门禁（Flutter 226 项），cargo fmt、Clippy、build_core、Flutter analyze 均通过；报告已更新。
 
+- P03.6 字体 fallback 子切片已完成实现；9 项 renderer 测试、完整工作树和精确 HEAD+index snapshot `bash init.sh`（均为 Flutter 226 项）、cargo fmt 和 Flutter analyze 0 issues 通过。平台字体实际安装与像素基线仍保留为验收项。
+
 ## 下一步
 
-1. 继续 P03.6，按 docs/03 完成字体回退/RTL 基线、minimap/overview、sticky scroll、折叠、行级装饰/provider 接线与像素对照 fixture；gutter/空白显示、版本化范围装饰及 no-wrap/wrap 横向视口已接入。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
+1. 继续 P03.6，按 docs/03 完成RTL/字体实际安装基线、minimap/overview、sticky scroll、折叠、行级装饰/provider 接线与像素对照 fixture；gutter/空白显示、版本化范围装饰及 no-wrap/wrap 横向视口已接入。同一 DocumentId 多视图 selection 与无障碍/原生平台门按 P03.7 所有权验收。P03.4 macOS 原生 IME、原生 DRM Linux 与屏幕边缘候选夹取仍留平台签收门，不以 WSLg 或固定 Code-OSS 替代。改既有符号前先按 GitNexus impact；图谱 unknown/critical 均须结合源码调用路径 review。
 2. 按 docs/03 的依赖与切片顺序逐项推进；P00–P13 完成前不做 500 MiB 数值优化。

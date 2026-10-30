@@ -165,12 +165,14 @@ void main() {
         endUtf16: 13,
         underlineColor: const Color(0xFFFFC107),
       );
+      const fontFallback = ['Fixture Mono', 'Fixture CJK'];
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: RustTextInputField(
               inputWindow: window,
+              fontFamilyFallback: fontFallback,
               rangeDecorations: [background, underline],
               showIndentGuides: false,
               wordWrap: true,
@@ -180,6 +182,8 @@ void main() {
       );
       await tester.pump();
 
+      final editable = tester.widget<EditableText>(find.byType(EditableText));
+      expect(editable.style.fontFamilyFallback, fontFallback);
       final backgroundFinder = find.byWidgetPredicate(
         (widget) =>
             widget is CustomPaint &&
@@ -189,6 +193,7 @@ void main() {
       expect(backgroundFinder, findsOneWidget);
       final painter = tester.widget<CustomPaint>(backgroundFinder).painter!
           as EditorRangeDecorationPainter;
+      expect(painter.style.fontFamilyFallback, fontFallback);
       expect(painter.windowStartUtf16, 7);
       final resolved = resolveEditorRangeDecorations(
         decorations: painter.decorations,
@@ -240,6 +245,8 @@ void main() {
       );
       await tester.pump();
 
+      final editable = tester.widget<EditableText>(find.byType(EditableText));
+      expect(editable.style.fontFamilyFallback, editorFontFamilyFallbacks);
       final gutterFinder = find.byKey(const ValueKey('rust-editor-gutter'));
       expect(gutterFinder, findsOneWidget);
       expect(

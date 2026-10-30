@@ -9,6 +9,18 @@ import '../bridge/alula_core.dart';
 import 'editor_rendering.dart';
 import 'rust_text_input_window.dart';
 
+/// Cross-platform monospace choices for code points absent from the primary
+/// editor font. Flutter continues through this list to its platform fallback.
+const List<String> editorFontFamilyFallbacks = [
+  'Cascadia Code',
+  'Consolas',
+  'Menlo',
+  'SF Mono',
+  'Noto Sans Mono',
+  'DejaVu Sans Mono',
+  'monospace',
+];
+
 /// A multiline Flutter input client whose document mirror is a bounded Rust
 /// text window. Flutter's EditableText owns native IME and candidate geometry.
 class RustTextInputField extends StatefulWidget {
@@ -22,6 +34,7 @@ class RustTextInputField extends StatefulWidget {
     this.additionalOperations,
     this.autofocus = false,
     this.style,
+    this.fontFamilyFallback,
     this.decoration,
     this.showLineNumbers = true,
     this.showIndentGuides = true,
@@ -46,6 +59,7 @@ class RustTextInputField extends StatefulWidget {
   final List<TextOp> Function()? additionalOperations;
   final bool autofocus;
   final TextStyle? style;
+  final List<String>? fontFamilyFallback;
   final InputDecoration? decoration;
   final bool showLineNumbers;
   final bool showIndentGuides;
@@ -424,8 +438,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   Widget build(BuildContext context) {
     _updateLineMetadata();
-    final editorStyle =
+    final requestedStyle =
         widget.style ?? const TextStyle(fontFamily: 'monospace');
+    final editorStyle = requestedStyle.copyWith(
+      fontFamilyFallback: widget.fontFamilyFallback ??
+          requestedStyle.fontFamilyFallback ??
+          editorFontFamilyFallbacks,
+    );
     final theme = Theme.of(context);
     final inputBaseStyle = theme.useMaterial3
         ? theme.textTheme.bodyLarge!
