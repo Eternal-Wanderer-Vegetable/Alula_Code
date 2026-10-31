@@ -1277,7 +1277,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     doc.replaceInputWindow(clamped.extentOffset, selection: clamped);
-    doc.columnSelection = null;
+    doc.columnSelection = columnSelection;
     if (mounted) setState(() {});
     _syncCommandContext();
   }
@@ -4349,23 +4349,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _applyColumnSelectionDrag(
     OpenDoc view,
-    List<TextSelection> localSelections, {
+    ColumnSelectionState selection, {
     required bool started,
     List<TextSelection>? selectionsBeforeDrag,
   }) {
     if (!mounted || !_allDocViews.contains(view)) return;
+    _flushInput(view);
     final window = view.inputWindow;
     if (window.version != view.doc.version) return;
-    if (localSelections.isEmpty ||
-        localSelections.length > defaultMultiCursorLimit) {
+    final selectionCount =
+        (selection.activeLine - selection.anchorLine).abs() + 1;
+    if (selectionCount > defaultMultiCursorLimit) {
       return;
     }
+    final resolved = view.doc.columnSelectionsUtf16(
+      anchorLine: selection.anchorLine,
+      anchorColumnUtf16: selection.anchorColumn,
+      activeLine: selection.activeLine,
+      activeColumnUtf16: selection.activeColumn,
+      maxSelections: defaultMultiCursorLimit,
+    );
+    if (resolved.version != window.version) return;
     if (started && selectionsBeforeDrag != null) {
       view.selectionHistory.record(selectionsBeforeDrag);
     }
+    final absoluteSelections = resolved.selections
+        .map((item) => TextSelection(
+              baseOffset: item.baseOffsetUtf16,
+              extentOffset: item.extentOffsetUtf16,
+            ))
+        .toList(growable: false);
+    final primary = absoluteSelections.first;
+    const rewindowMarginUtf16 = 2048;
+    final hasDocumentTextBefore = primary.extentOffset > 0;
+    final hasDocumentTextAfter =
+        primary.extentOffset < window.totalUtf16Length;
+    final nearWindowEdge = hasDocumentTextBefore &&
+            primary.extentOffset <= window.startUtf16 + rewindowMarginUtf16 ||
+        hasDocumentTextAfter &&
+            primary.extentOffset >= window.endUtf16 - rewindowMarginUtf16;
+    if (nearWindowEdge) {
+      view.replaceInputWindow(primary.extentOffset, selection: primary);
+      view.crossWindowSelection = null;
+      view.additionalSelections = List.unmodifiable(absoluteSelections.skip(1));
+      view.columnSelection = selection;
+      if (mounted) setState(() {});
+      _syncCommandContext();
+      return;
+    }
     _setDocSelections(
       view,
-      _absoluteSelections(view, localSelections),
+      absoluteSelections,
+      columnSelection: selection,
       recordHistory: false,
     );
   }
@@ -6045,7 +6080,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 },
                                 onColumnSelectionDrag: (
                                   pointer,
-                                  localSelections, {
+                                  selection, {
                                   required started,
                                 }) {
                                   final before =
@@ -6054,7 +6089,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       .addPostFrameCallback((_) {
                                     _applyColumnSelectionDrag(
                                       active,
-                                      localSelections,
+                                      selection,
                                       started: started,
                                       selectionsBeforeDrag:
                                           before?.view == active

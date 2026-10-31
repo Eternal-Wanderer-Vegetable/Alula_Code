@@ -163,6 +163,46 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('Rust 一次返回有界矩形选择并保持 UTF-16 标量边界', () {
+    final doc = _bootstrap.core!.openDoc(9033, '\u{FEFF}a\n🦊xy\r\nz');
+    final result = doc.columnSelectionsUtf16(
+      anchorLine: 0,
+      anchorColumnUtf16: 0,
+      activeLine: 2,
+      activeColumnUtf16: 1,
+      maxSelections: 10,
+    );
+
+    expect(result.version, 1);
+    expect(
+      result.selections
+          .map((selection) => (
+                selection.line,
+                selection.baseOffsetUtf16,
+                selection.extentOffsetUtf16,
+              ))
+          .toList(),
+      [(2, 9, 10), (0, 0, 1), (1, 3, 5)],
+    );
+    expect(
+      () => doc.columnSelectionsUtf16(
+        anchorLine: 0,
+        anchorColumnUtf16: 0,
+        activeLine: 2,
+        activeColumnUtf16: 1,
+        maxSelections: 2,
+      ),
+      throwsA(
+        isA<AlulaException>().having(
+          (error) => error.code,
+          'code',
+          'ReadLineCountTooLarge',
+        ),
+      ),
+    );
+    doc.close();
+  }, skip: skip);
+
   test('Rust 行边界按 UTF-16 返回 smart Home、End 与 CRLF 位置', () {
     final doc = _bootstrap.core!.openDoc(9039, '\t 🦊value\r\nnext\n');
     final first = doc.lineBoundary(5);

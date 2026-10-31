@@ -11,6 +11,8 @@ use serde::{Deserialize, Serialize};
 pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
 /// Maximum number of line windows returned by one editor viewport request.
 pub const MAX_READ_LINES: usize = 256;
+/// Maximum rows returned for one rectangular editor selection.
+pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
 pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
 /// Maximum text kept for each representative minimap line, in UTF-16 units.
@@ -103,6 +105,17 @@ fn line_content_char_len(line: RopeSlice<'_>) -> usize {
     len
 }
 
+fn utf16_column_char(line: RopeSlice<'_>, column_utf16: usize, round_up: bool) -> usize {
+    let column_utf16 = column_utf16.min(line.len_utf16_cu());
+    let char_index = line.utf16_cu_to_char(column_utf16);
+    let actual_utf16 = line.char_to_utf16_cu(char_index);
+    if round_up && actual_utf16 < column_utf16 {
+        (char_index + 1).min(line.len_chars())
+    } else {
+        char_index
+    }
+}
+
 fn previous_word_part_boundary(line: RopeSlice<'_>, cursor: usize) -> Option<usize> {
     for boundary in (1..cursor).rev() {
         let left = line.char(boundary - 1);
@@ -180,6 +193,16 @@ pub struct TextLineBoundary {
     pub start_utf16: usize,
     pub first_non_whitespace_utf16: usize,
     pub end_utf16: usize,
+}
+
+/// One row in a rectangular selection. Offsets are absolute UTF-16 document
+/// positions; the active row is returned first for the platform caret.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextColumnSelection {
+    pub line: usize,
+    pub base_offset_utf16: usize,
+    pub extent_offset_utf16: usize,
 }
 
 /// One bounded UTF-16 window from a document line.
@@ -391,6 +414,65 @@ impl TextBuffer {
                 .char_to_utf16_cu(line_start_char + first_non_whitespace_char),
             end_utf16: self.rope.char_to_utf16_cu(line_start_char + content_len),
         })
+    }
+
+    /// Resolve the rows of a rectangular selection without reading the whole
+    /// document into the UI process. Columns use UTF-16 units; ranges are
+    /// snapped outward at scalar boundaries so a supplementary character is
+    /// never split. `max_selections` bounds the returned allocation.
+    pub fn column_selections_utf16(
+        &self,
+        anchor_line: usize,
+        anchor_column_utf16: usize,
+        active_line: usize,
+        active_column_utf16: usize,
+        max_selections: usize,
+    ) -> Result<Vec<TextColumnSelection>, BufferError> {
+        let line_count = self.rope.len_lines();
+        for line in [anchor_line, active_line] {
+            if line >= line_count {
+                return Err(BufferError::InvalidLine { line, line_count });
+            }
+        }
+        let first_line = anchor_line.min(active_line);
+        let last_line = anchor_line.max(active_line);
+        let selection_count = last_line - first_line + 1;
+        let selection_limit = max_selections.min(MAX_COLUMN_SELECTIONS);
+        if selection_count > selection_limit {
+            return Err(BufferError::ReadLineCountTooLarge {
+                requested: selection_count,
+                max: selection_limit,
+            });
+        }
+
+        let anchor_is_left = anchor_column_utf16 <= active_column_utf16;
+        let low_column = anchor_column_utf16.min(active_column_utf16);
+        let high_column = anchor_column_utf16.max(active_column_utf16);
+        let mut selections = Vec::with_capacity(selection_count);
+        for line_index in first_line..=last_line {
+            let line_start_char = self.rope.line_to_char(line_index);
+            let line = self.rope.line(line_index);
+            let content = line.slice(..line_content_char_len(line));
+            let content_utf16 = content.len_utf16_cu();
+            let low = utf16_column_char(content, low_column.min(content_utf16), false);
+            let high = utf16_column_char(content, high_column.min(content_utf16), true);
+            let (base_char, extent_char) = if anchor_is_left {
+                (low, high)
+            } else {
+                (high, low)
+            };
+            let line_start_utf16 = self.rope.char_to_utf16_cu(line_start_char);
+            selections.push(TextColumnSelection {
+                line: line_index,
+                base_offset_utf16: line_start_utf16 + content.char_to_utf16_cu(base_char),
+                extent_offset_utf16: line_start_utf16 + content.char_to_utf16_cu(extent_char),
+            });
+        }
+        if let Some(active_index) = selections.iter().position(|item| item.line == active_line) {
+            let active = selections.remove(active_index);
+            selections.insert(0, active);
+        }
+        Ok(selections)
     }
 
     /// Move by one VS Code word part using absolute UTF-16 document offsets.
@@ -1051,6 +1133,57 @@ mod tests {
             Err(BufferError::InvalidLine {
                 line: 3,
                 line_count: 3,
+            })
+        );
+    }
+
+    #[test]
+    fn rectangular_selection_offsets_are_bounded_and_scalar_safe() {
+        let buffer = TextBuffer::open("\u{feff}a\n🦊xy\r\nz");
+        let selections = buffer.column_selections_utf16(0, 0, 2, 1, 10).unwrap();
+        assert_eq!(
+            selections,
+            vec![
+                TextColumnSelection {
+                    line: 2,
+                    base_offset_utf16: 9,
+                    extent_offset_utf16: 10,
+                },
+                TextColumnSelection {
+                    line: 0,
+                    base_offset_utf16: 0,
+                    extent_offset_utf16: 1,
+                },
+                TextColumnSelection {
+                    line: 1,
+                    base_offset_utf16: 3,
+                    extent_offset_utf16: 5,
+                },
+            ]
+        );
+
+        let reverse = buffer.column_selections_utf16(1, 2, 0, 0, 10).unwrap();
+        assert_eq!(reverse[0].line, 0);
+        assert!(reverse[1].base_offset_utf16 > reverse[1].extent_offset_utf16);
+        assert_eq!(reverse[1].base_offset_utf16, 5);
+        assert_eq!(reverse[1].extent_offset_utf16, 3);
+    }
+
+    #[test]
+    fn rectangular_selection_rejects_invalid_lines_and_excess_rows() {
+        let buffer = TextBuffer::open("a\nb\nc");
+        assert_eq!(
+            buffer.column_selections_utf16(0, 0, 3, 1, 10),
+            Err(BufferError::InvalidLine {
+                line: 3,
+                line_count: 3,
+            })
+        );
+        assert_eq!(
+            buffer.column_selections_utf16(0, 0, 2, 1, 2),
+            Err(BufferError::ReadLineCountTooLarge {
+                requested: 3,
+                max: 2,
             })
         );
     }

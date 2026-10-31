@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.19 / EDT-03d 完成）
+
+- 跨输入窗矩形拖选接入 Rust ABI v23 批量绝对 UTF-16 行范围；主动行优先、emoji 安全吸附、CRLF 行尾排除、BOM 按文本保留，硬上限 10,000 行。边缘拖动复用 16ms / 3,600 px/s timer，靠近 2,048 UTF-16 窗口边缘重居中，继续编辑全部选中行并 Rust 保存回读。
+- Rust buffer 2、FFI 1、Dart↔Rust 1、跨窗工作台 TargetPlatform 12 项通过（300×1,200 长文，Linux/Windows/macOS fixture）。工作树与精确 `HEAD + index` 隔离快照的完整 `bash init.sh` 均 EXIT=0（Flutter 351、Rust workspace、Clippy、build_core），两边 cargo fmt 和 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.19-cross-window-mouse-box-selection.md`。
+- 重复 GitNexus 检查均为 CRITICAL 但计数波动：staged 14 files / 16–34 symbols / 101–180 processes；全树 50 files / 20–28 symbols / 109–180 processes。索引漏掉 659/859 process-entry candidates。CRITICAL/UNKNOWN 保持未降级，私有入口已源码交叉核查。P04 / feat-026 仍进行中，P15 原生平台验收未被 TargetPlatform 用例替代。
+
 ### P15 Windows 11 exact historical artifact 自动复验（2026-10-31）
 
 - 指定的 run `41109679662` artifact `13003880930` 已重新下载并校验 ZIP/exe SHA-256；真实 Windows 11 build 26200 / AMD64 / 120 DPI（125%）下复验可见客户区、MSAA、原生 Microsoft Pinyin、双视图同步、保存回读。浅色系统 registry 值为 `1/1`，但产品仍呈暗色且编辑器仍挤在右侧窄窗。旧 binary `WM_CLOSE` 复现 `0xC000041D`。

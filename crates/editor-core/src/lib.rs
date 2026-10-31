@@ -9,8 +9,8 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
-    BufferError, TextBuffer, TextLineBoundary, TextLineOffset, TextLinesRead, TextMinimapSample,
-    TextOp, TextRangeRead, WordPartDirection,
+    BufferError, TextBuffer, TextColumnSelection, TextLineBoundary, TextLineOffset, TextLinesRead,
+    TextMinimapSample, TextOp, TextRangeRead, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -235,6 +235,28 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_boundary_utf16(offset_utf16))
+    }
+
+    /// Resolve a bounded rectangular selection using document-wide UTF-16
+    /// line/column coordinates.
+    pub fn column_selections_utf16(
+        &self,
+        id: u64,
+        anchor_line: usize,
+        anchor_column_utf16: usize,
+        active_line: usize,
+        active_column_utf16: usize,
+        max_selections: usize,
+    ) -> Option<Result<Vec<TextColumnSelection>, BufferError>> {
+        self.docs.get(&id).map(|buffer| {
+            buffer.column_selections_utf16(
+                anchor_line,
+                anchor_column_utf16,
+                active_line,
+                active_column_utf16,
+                max_selections,
+            )
+        })
     }
 
     /// Move a Rust-owned document cursor by one word part.

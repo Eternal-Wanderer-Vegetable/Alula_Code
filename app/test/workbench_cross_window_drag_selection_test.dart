@@ -31,6 +31,84 @@ void main() {
     TargetPlatform.linux,
     TargetPlatform.macOS,
   ]) {
+    testWidgets('$platform rectangular drag auto-scrolls across input windows',
+        (tester) async {
+      await _withPlatform(platform, () async {
+        final fixture = await _openDragFixture(
+          tester,
+          lineWidth: 1200,
+          lineCount: 300,
+        );
+        final initialVersion = fixture.document.version;
+        final firstPoint = _pointForOffset(tester, fixture.editor, 0);
+        final viewport = _editableRect(tester, fixture.editor);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        final gesture = await tester.startGesture(
+          firstPoint,
+          kind: PointerDeviceKind.mouse,
+          buttons: kPrimaryButton,
+        );
+        await gesture.moveTo(Offset(firstPoint.dx, viewport.bottom + 1200));
+        expect(
+          tester
+              .state<RustTextInputFieldState>(find.byType(RustTextInputField))
+              .hasActiveMouseDragAutoScrollTimer,
+          isTrue,
+        );
+        await _pumpFor(tester, const Duration(milliseconds: 700));
+        await gesture.up();
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+        await tester.pump();
+
+        final field = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        final controller = tester.widget<TextField>(fixture.editor).controller!;
+        expect(field.inputWindow.startUtf16, greaterThan(0));
+        expect(
+          field.inputWindow.startUtf16 + controller.selection.extentOffset,
+          greaterThan(fixture.initialWindowEnd),
+        );
+        expect(field.additionalSelections, isNotEmpty);
+        expect(
+          tester
+              .state<RustTextInputFieldState>(find.byType(RustTextInputField))
+              .hasActiveMouseDragAutoScrollTimer,
+          isFalse,
+        );
+        expect(fixture.document.version, initialVersion);
+        expect(fixture.document.resync().content, fixture.source);
+        expect(fixture.file.readAsStringSync(), fixture.source);
+
+        final activeOffset =
+            field.inputWindow.startUtf16 + controller.selection.extentOffset;
+        final activeLine = fixture.document.positionAt(activeOffset).line;
+        expect(activeLine, greaterThan(0));
+        final start = controller.selection.start;
+        final end = controller.selection.end;
+        tester.testTextInput.updateEditingValue(TextEditingValue(
+          text: controller.text.replaceRange(start, end, 'X'),
+          selection: TextSelection.collapsed(offset: start + 1),
+        ));
+        await tester.pump();
+        await tester.pump();
+        final expected = fixture.source
+            .split('\n')
+            .asMap()
+            .entries
+            .map((entry) =>
+                entry.key <= activeLine ? 'X${entry.value}' : entry.value)
+            .join('\n');
+        expect(fixture.document.resync().content, expected);
+        expect(fixture.document.version, greaterThan(initialVersion));
+        expect(fixture.file.readAsStringSync(), fixture.source);
+        await _save(tester);
+        expect(fixture.file.readAsStringSync(), expected);
+      });
+    });
+
     testWidgets('$platform forward and reverse drag cross the input window',
         (tester) async {
       await _withPlatform(platform, () async {

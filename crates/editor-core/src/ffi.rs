@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 22;
+pub const ALULA_ABI_VERSION: u32 = 23;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -724,6 +724,75 @@ pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
+}
+
+/// Resolve up to `max_selections` rows of a rectangular selection. Line and
+/// column positions use zero-based UTF-16 coordinates; the active row is
+/// returned first.
+#[no_mangle]
+pub extern "C" fn alula_doc_column_selections(
+    id: u64,
+    anchor_line: u64,
+    anchor_column_utf16: u64,
+    active_line: u64,
+    active_column_utf16: u64,
+    max_selections: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let values = (
+            usize::try_from(anchor_line),
+            usize::try_from(anchor_column_utf16),
+            usize::try_from(active_line),
+            usize::try_from(active_column_utf16),
+            usize::try_from(max_selections),
+        );
+        let (
+            Ok(anchor_line),
+            Ok(anchor_column_utf16),
+            Ok(active_line),
+            Ok(active_column_utf16),
+            Ok(max_selections),
+        ) = values
+        else {
+            return err_json(
+                "InvalidArgument",
+                json!("column selection position is not representable"),
+            );
+        };
+
+        let registry = registry_lock();
+        let Some(version) = registry.version_of(id) else {
+            return err_json("UnknownDoc", json!({ "id": id }));
+        };
+        match registry.column_selections_utf16(
+            id,
+            anchor_line,
+            anchor_column_utf16,
+            active_line,
+            active_column_utf16,
+            max_selections,
+        ) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(selections)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": version,
+                    "selections": selections,
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidLine { line, line_count })) => err_json(
+                "InvalidLine",
+                json!({ "line": line, "lineCount": line_count }),
+            ),
+            Some(Err(BufferError::ReadLineCountTooLarge { requested, max })) => err_json(
+                "ReadLineCountTooLarge",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_column_selections")))
 }
 
 /// Resolve the line start, smart-Home indentation target and line end for an
@@ -2157,6 +2226,31 @@ mod tests {
 
         let invalid = take(alula_doc_line_offset(id, 3));
         assert_eq!(invalid["ok"], false);
+        assert_eq!(invalid["error"]["code"], "InvalidLine");
+
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn rectangular_selection_over_ffi_returns_bounded_scalar_safe_offsets() {
+        let id = 92_819;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}a\n🦊xy\r\nz").as_ptr()) });
+
+        let result = take(alula_doc_column_selections(id, 0, 0, 2, 1, 10));
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["version"], 1);
+        assert_eq!(
+            result["selections"],
+            json!([
+                { "line": 2, "baseOffsetUtf16": 9, "extentOffsetUtf16": 10 },
+                { "line": 0, "baseOffsetUtf16": 0, "extentOffsetUtf16": 1 },
+                { "line": 1, "baseOffsetUtf16": 3, "extentOffsetUtf16": 5 },
+            ])
+        );
+
+        let too_many = take(alula_doc_column_selections(id, 0, 0, 2, 1, 2));
+        assert_eq!(too_many["error"]["code"], "ReadLineCountTooLarge");
+        let invalid = take(alula_doc_column_selections(id, 0, 0, 3, 1, 10));
         assert_eq!(invalid["error"]["code"], "InvalidLine");
 
         take(alula_doc_close(id));

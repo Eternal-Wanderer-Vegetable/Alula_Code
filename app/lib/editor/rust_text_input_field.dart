@@ -306,7 +306,7 @@ typedef CrossWindowDragSelectionChanged = void Function(
 
 typedef ColumnSelectionDragChanged = void Function(
   int pointer,
-  List<TextSelection> selections, {
+  ColumnSelectionState selection, {
   required bool started,
 });
 
@@ -335,8 +335,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _mouseDragIdleTicks = 0;
   TextSelection? _lastCrossWindowDragSelection;
   int? _columnDragPointer;
-  Offset? _columnDragAnchorPosition;
   Offset? _columnDragStartPosition;
+  Offset? _columnDragPosition;
+  int? _columnDragDocumentId;
+  int? _columnDragDocumentVersion;
+  int? _columnDragAnchorLine;
+  int? _columnDragAnchorColumnUtf16;
+  ColumnSelectionState? _lastColumnDragSelection;
   bool _columnDragMoved = false;
   Timer? _mouseDragAutoScrollTimer;
   String? _errorMessage;
@@ -387,10 +392,25 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         !keyboard.isMetaPressed) {
       final localOffset = _textOffsetAtGlobalPosition(event.position);
       if (localOffset != null) {
-        _columnDragPointer = event.pointer;
-        _columnDragAnchorPosition = event.position;
-        _columnDragStartPosition = event.position;
-        _columnDragMoved = false;
+        final window = widget.inputWindow;
+        final documentOffset = window.startUtf16 + localOffset;
+        try {
+          final boundary = window.document.lineBoundary(documentOffset);
+          if (boundary.version == window.version) {
+            _columnDragPointer = event.pointer;
+            _columnDragDocumentId = window.document.id;
+            _columnDragDocumentVersion = window.version;
+            _columnDragAnchorLine = boundary.line;
+            _columnDragAnchorColumnUtf16 = documentOffset - boundary.startUtf16;
+            _columnDragStartPosition = event.position;
+            _columnDragPosition = event.position;
+            _lastColumnDragSelection = null;
+            _columnDragMoved = false;
+          }
+        } on AlulaException {
+          // A native hit test may briefly return an invalid UTF-16 boundary;
+          // do not start a document-wide drag from inside a surrogate pair.
+        }
       }
     }
     if (widget.onCrossWindowDragSelection != null &&
@@ -464,21 +484,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     if (_columnDragPointer == event.pointer &&
         (event.buttons & kPrimaryButton) != 0) {
       final startPosition = _columnDragStartPosition;
-      final anchor = _columnDragAnchorPosition;
-      if (startPosition == null || anchor == null) return;
+      if (startPosition == null) return;
       if (!_columnDragMoved &&
           (event.position - startPosition).distance < kTouchSlop) {
         return;
       }
-      final selections = _columnSelectionsBetween(anchor, event.position);
-      if (selections == null || selections.isEmpty) return;
-      final started = !_columnDragMoved;
-      _columnDragMoved = true;
-      widget.onColumnSelectionDrag?.call(
-        event.pointer,
-        selections,
-        started: started,
-      );
+      _columnDragPosition = event.position;
+      _updateColumnSelectionDrag(event.position);
+      _updateMouseDragAutoScroll();
       return;
     }
     if (_mouseDragPointer != event.pointer ||
@@ -492,17 +505,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   void _handlePointerUp(PointerUpEvent event) {
     if (_columnDragPointer == event.pointer) {
-      final anchor = _columnDragAnchorPosition;
-      final selections = anchor == null
-          ? null
-          : _columnSelectionsBetween(anchor, event.position);
-      if (_columnDragMoved && selections != null && selections.isNotEmpty) {
-        widget.onColumnSelectionDrag?.call(
-          event.pointer,
-          selections,
-          started: false,
-        );
-      }
+      if (_columnDragMoved) _updateColumnSelectionDrag(event.position);
       _stopColumnDrag();
     }
     if (_mouseDragPointer == event.pointer) _stopMouseDrag();
@@ -514,76 +517,68 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _stopColumnDrag() {
+    if (_mouseDragPointer == null) {
+      _mouseDragAutoScrollTimer?.cancel();
+      _mouseDragAutoScrollTimer = null;
+    }
     _columnDragPointer = null;
-    _columnDragAnchorPosition = null;
     _columnDragStartPosition = null;
+    _columnDragPosition = null;
+    _columnDragDocumentId = null;
+    _columnDragDocumentVersion = null;
+    _columnDragAnchorLine = null;
+    _columnDragAnchorColumnUtf16 = null;
+    _lastColumnDragSelection = null;
     _columnDragMoved = false;
   }
 
-  List<TextSelection>? _columnSelectionsBetween(
-    Offset anchorPosition,
-    Offset activePosition,
-  ) {
-    final text = _controller.text;
-    final editable = _findEditableRenderObject(context);
-    if (text.isEmpty || editable == null) return null;
-    final anchorLine = lineAndColumnAt(
-      text,
-      editable.getPositionForPoint(anchorPosition).offset,
-    ).$1;
-    final activeLine = lineAndColumnAt(
-      text,
-      editable.getPositionForPoint(activePosition).offset,
-    ).$1;
-    final lowLine = anchorLine < activeLine ? anchorLine : activeLine;
-    final highLine = anchorLine < activeLine ? activeLine : anchorLine;
-    if (highLine - lowLine + 1 > defaultMultiCursorLimit) return null;
-    final anchorX = editable.globalToLocal(anchorPosition).dx;
-    final activeX = editable.globalToLocal(activePosition).dx;
-    final lineStarts = <int>[0];
-    for (var offset = 0; offset < text.length; offset++) {
-      if (text.codeUnitAt(offset) == 0x0a) lineStarts.add(offset + 1);
+  ColumnSelectionState? _columnSelectionAt(Offset position) {
+    final document = widget.inputWindow.document;
+    final expectedVersion = _columnDragDocumentVersion;
+    final anchorLine = _columnDragAnchorLine;
+    final anchorColumn = _columnDragAnchorColumnUtf16;
+    if (document.id != _columnDragDocumentId ||
+        document.version != expectedVersion ||
+        widget.inputWindow.version != expectedVersion ||
+        anchorLine == null ||
+        anchorColumn == null) {
+      _stopColumnDrag();
+      return null;
     }
-
-    final selections = <(int, TextSelection)>[];
-    for (var line = lowLine; line <= highLine; line++) {
-      final lineStart = lineStarts[line];
-      final lineEnd =
-          line + 1 < lineStarts.length ? lineStarts[line + 1] - 1 : text.length;
-      final caret = editable.getLocalRectForCaret(
-        TextPosition(offset: lineStart),
+    final localOffset = _textOffsetAtGlobalPosition(position);
+    if (localOffset == null) return null;
+    final documentOffset = widget.inputWindow.startUtf16 +
+        localOffset.clamp(0, widget.inputWindow.text.length).toInt();
+    try {
+      final boundary = document.lineBoundary(documentOffset);
+      if (boundary.version != expectedVersion) return null;
+      if ((boundary.line - anchorLine).abs() + 1 > defaultMultiCursorLimit) {
+        return null;
+      }
+      return ColumnSelectionState(
+        anchorLine: anchorLine,
+        anchorColumn: anchorColumn,
+        activeLine: boundary.line,
+        activeColumn: documentOffset - boundary.startUtf16,
       );
-      final y = caret.center.dy;
-      final anchorOffset = editable
-          .getPositionForPoint(
-            editable.localToGlobal(Offset(anchorX, y)),
-          )
-          .offset
-          .clamp(lineStart, lineEnd)
-          .toInt();
-      final activeOffset = editable
-          .getPositionForPoint(
-            editable.localToGlobal(Offset(activeX, y)),
-          )
-          .offset
-          .clamp(lineStart, lineEnd)
-          .toInt();
-      selections.add((
-        line,
-        TextSelection(
-          baseOffset: anchorOffset,
-          extentOffset: activeOffset,
-        )
-      ));
+    } on AlulaException {
+      return null;
     }
+  }
 
-    final activeIndex =
-        selections.indexWhere((entry) => entry.$1 == activeLine);
-    if (activeIndex > 0) {
-      final active = selections.removeAt(activeIndex);
-      selections.insert(0, active);
-    }
-    return List.unmodifiable(selections.map((entry) => entry.$2));
+  void _updateColumnSelectionDrag(Offset position) {
+    final pointer = _columnDragPointer;
+    final selection = _columnSelectionAt(position);
+    if (pointer == null || selection == null) return;
+    final started = !_columnDragMoved;
+    if (!started && selection == _lastColumnDragSelection) return;
+    _columnDragMoved = true;
+    _lastColumnDragSelection = selection;
+    widget.onColumnSelectionDrag?.call(
+      pointer,
+      selection,
+      started: started,
+    );
   }
 
   void _updateCrossWindowMouseDragSelection() {
@@ -695,7 +690,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _updateMouseDragAutoScroll() {
-    final pointer = _mouseDragPosition;
+    final pointer = _mouseDragPointer != null
+        ? _mouseDragPosition
+        : _columnDragPointer != null
+            ? _columnDragPosition
+            : null;
     final viewport = _mouseDragViewportRect();
     if (pointer == null || viewport == null) {
       _mouseDragAutoScrollTimer?.cancel();
@@ -730,11 +729,13 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _scrollWhileMouseDragIsOutside() {
-    if (!mounted || _mouseDragPointer == null) {
+    if (!mounted || (_mouseDragPointer == null && _columnDragPointer == null)) {
       _stopMouseDrag();
+      _stopColumnDrag();
       return;
     }
-    final pointer = _mouseDragPosition;
+    final pointer =
+        _mouseDragPointer != null ? _mouseDragPosition : _columnDragPosition;
     final viewport = _mouseDragViewportRect();
     if (pointer == null || viewport == null) return;
     final seconds = _mouseDragAutoScrollPeriod.inMicroseconds / 1000000;
@@ -776,10 +777,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     }
 
     final previousSelection = _lastCrossWindowDragSelection;
+    final previousColumnSelection = _lastColumnDragSelection;
     final inputWindowChanged = _mouseDragInputWindowChanged;
     _mouseDragInputWindowChanged = false;
-    _updateCrossWindowMouseDragSelection();
-    final selectionChanged = previousSelection != _lastCrossWindowDragSelection;
+    if (_mouseDragPointer != null) _updateCrossWindowMouseDragSelection();
+    if (_columnDragPointer != null) {
+      _updateColumnSelectionDrag(pointer);
+    }
+    final selectionChanged =
+        previousSelection != _lastCrossWindowDragSelection ||
+            previousColumnSelection != _lastColumnDragSelection;
     if (changed || inputWindowChanged || selectionChanged) {
       _mouseDragIdleTicks = 0;
     } else {
@@ -792,8 +799,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _stopMouseDrag() {
-    _mouseDragAutoScrollTimer?.cancel();
-    _mouseDragAutoScrollTimer = null;
+    if (_columnDragPointer == null) {
+      _mouseDragAutoScrollTimer?.cancel();
+      _mouseDragAutoScrollTimer = null;
+    }
     _mouseDragPointer = null;
     _mouseDragAnchorUtf16 = null;
     _mouseDragDocumentId = null;
@@ -815,19 +824,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   void _scheduleMouseDragCaretToViewportEdge() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _mouseDragPointer == null) return;
-      final pointer = _mouseDragPosition;
+      if (!mounted ||
+          (_mouseDragPointer == null && _columnDragPointer == null)) {
+        return;
+      }
+      final isCrossWindowDrag = _mouseDragPointer != null;
+      final pointer =
+          isCrossWindowDrag ? _mouseDragPosition : _columnDragPosition;
       final viewport = _mouseDragViewportRect();
       final selection = _lastCrossWindowDragSelection;
       final editable = _findEditableRenderObject(context);
       if (pointer == null ||
           viewport == null ||
-          selection == null ||
+          (isCrossWindowDrag && selection == null) ||
           editable == null) {
         return;
       }
-      final localOffset =
-          (selection.extentOffset - widget.inputWindow.startUtf16)
+      final localOffset = isCrossWindowDrag
+          ? (selection!.extentOffset - widget.inputWindow.startUtf16)
+              .clamp(0, widget.inputWindow.text.length)
+              .toInt()
+          : _controller.value.selection.extentOffset
               .clamp(0, widget.inputWindow.text.length)
               .toInt();
       final caret = editable.getLocalRectForCaret(
@@ -996,6 +1013,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void didUpdateWidget(covariant RustTextInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.inputWindow != widget.inputWindow &&
+        _columnDragPointer != null) {
+      _scheduleMouseDragCaretToViewportEdge();
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        final position = _columnDragPosition;
+        if (mounted && position != null && _columnDragPointer != null) {
+          _updateColumnSelectionDrag(position);
+        }
+      });
+    }
     if (oldWidget.inputWindow != widget.inputWindow &&
         _mouseDragPointer != null) {
       _mouseDragInputWindowChanged = true;

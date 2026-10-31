@@ -12,12 +12,13 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 22;
+const int expectedAbiVersion = 23;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 const int maxDocReadLines = 256;
+const int maxDocColumnSelections = 10000;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -260,6 +261,29 @@ class DocumentLineBoundary {
     required this.startUtf16,
     required this.firstNonWhitespaceUtf16,
     required this.endUtf16,
+  });
+}
+
+/// Absolute UTF-16 ranges for a bounded document-wide rectangular selection.
+class DocumentColumnSelection {
+  final int line;
+  final int baseOffsetUtf16;
+  final int extentOffsetUtf16;
+
+  const DocumentColumnSelection({
+    required this.line,
+    required this.baseOffsetUtf16,
+    required this.extentOffsetUtf16,
+  });
+}
+
+class DocumentColumnSelections {
+  final int version;
+  final List<DocumentColumnSelection> selections;
+
+  const DocumentColumnSelections({
+    required this.version,
+    required this.selections,
   });
 }
 
@@ -738,10 +762,74 @@ class AlulaDoc {
     return offset;
   }
 
+  /// Resolve up to [maxSelections] rectangular rows in Rust without reading
+  /// the full document or making one FFI call per line.
+  DocumentColumnSelections columnSelectionsUtf16({
+    required int anchorLine,
+    required int anchorColumnUtf16,
+    required int activeLine,
+    required int activeColumnUtf16,
+    required int maxSelections,
+  }) {
+    if (anchorLine < 0 ||
+        activeLine < 0 ||
+        maxSelections < 1 ||
+        maxSelections > maxDocColumnSelections) {
+      throw RangeError(
+        'Column selection lines must be non-negative and the limit must be 1..$maxDocColumnSelections',
+      );
+    }
+    if (anchorColumnUtf16 < 0 || activeColumnUtf16 < 0) {
+      throw RangeError('Column selection offsets must be non-negative');
+    }
+    final json = core._ffi.docColumnSelectionsJson(
+      id,
+      anchorLine,
+      anchorColumnUtf16,
+      activeLine,
+      activeColumnUtf16,
+      maxSelections,
+    );
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final resultVersion = r['version'] as int;
+    final selections = (r['selections'] as List<dynamic>).map((item) {
+      final selection = item as Map<String, Object?>;
+      return DocumentColumnSelection(
+        line: selection['line'] as int,
+        baseOffsetUtf16: selection['baseOffsetUtf16'] as int,
+        extentOffsetUtf16: selection['extentOffsetUtf16'] as int,
+      );
+    }).toList(growable: false);
+    if (selections.isEmpty ||
+        selections.length > maxSelections ||
+        selections.first.line != activeLine ||
+        selections.map((selection) => selection.line).toSet().length !=
+            selections.length ||
+        selections.any((selection) =>
+            selection.line < 0 ||
+            selection.baseOffsetUtf16 < 0 ||
+            selection.extentOffsetUtf16 < 0)) {
+      throw StateError('Alula returned invalid rectangular selection ranges');
+    }
+    version = resultVersion;
+    return DocumentColumnSelections(
+      version: resultVersion,
+      selections: selections,
+    );
+  }
+
   /// Resolve logical-line Home/End targets without reading line text into Dart.
   DocumentLineBoundary lineBoundary(int offsetUtf16) {
     if (offsetUtf16 < 0) {
-      throw RangeError.value(offsetUtf16, 'offsetUtf16', 'must be non-negative');
+      throw RangeError.value(
+          offsetUtf16, 'offsetUtf16', 'must be non-negative');
     }
     final json = core._ffi.docLineBoundaryJson(id, offsetUtf16);
     final r = jsonDecode(json) as Map<String, Object?>;
@@ -815,7 +903,8 @@ class AlulaDoc {
   /// Move one word part in the Rust-owned document without reading its text.
   int wordPartOffset(int offsetUtf16, {required bool left}) {
     if (offsetUtf16 < 0) {
-      throw RangeError.value(offsetUtf16, 'offsetUtf16', 'must be non-negative');
+      throw RangeError.value(
+          offsetUtf16, 'offsetUtf16', 'must be non-negative');
     }
     final json = core._ffi.docWordPartOffsetJson(
       id,
