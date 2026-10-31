@@ -5,11 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.13 / EDT-02d 完成）
+### 最新进展（2026-10-31，P04.14 / EDT-02e 完成）
 
-- P04.13 完成超长行跨 16K UTF-16 输入窗的绝对 selection：三击点在原生 selection 重居中前映射到 Rust 文档坐标，窗外端点不再截断；Flutter 仅保留本地 caret，全文 selection 通过现有 range painter 按可见窗裁剪。Rust 分块读取 Copy，Cut/Delete/Paste 走文档操作与 undo/dirty/save。
-- Windows/Linux/macOS Flutter targetPlatform 的 40,000 UTF-16 单元超长行测试确认选区两端都在当前输入窗外；纯选区和复制不改 Rust 全文/版本与磁盘字节，Cut 后显式保存回读一致。定向 3 项、鼠标选择/输入窗回归 22 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 315 项），cargo fmt 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.13-cross-window-line-selection.md`。
-- P04.14 / EDT-02e 单独补跨窗 selection 的普通输入与 IME 替换语义；之后再做拖选/边缘自动滚动。targetPlatform 自动化不替代 P15 原生键鼠、IME、读屏、DPI/主题验收；Windows 11 当前 artifact 的布局/读屏门仍待处理。既有自动化结果见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。
+- P04.14 已完成跨窗选区普通输入、粘贴和 IME 替换：emoji 普通输入与粘贴、Backspace/Delete、中文预编辑更新/取消/提交都应用到 Rust 完整绝对范围；撤销/重做、dirty 和保存回读正确。Workbench 有界输入窗硬上限 16,384 UTF-16 单元，初始化读取预留 256 单元供 composition 使用。
+- Windows/Linux/macOS Flutter TargetPlatform 定向跨窗测试 18 项、Rust 输入窗 10 项、输入控件 7 项通过。完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 330 项），cargo fmt 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.14-cross-window-ime-replacement.md`。
+- P04.13 保持超长行跨 16K 输入窗的绝对 selection：三击整行、分块 Copy、Cut/Delete/Paste 通过 undo/dirty/save；40,000 UTF-16 单元测试证明窗外 selection 两端仍完整。报告：`docs/diagnostics/2026-10-31-p04/p04.13-cross-window-line-selection.md`。
+- Flutter TargetPlatform 是合成事件，不替代 P15 原生键鼠、IME、读屏、DPI/主题验收。Windows 11 当前 artifact 的布局/读屏门仍待处理，既有记录见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。下一片为 P04.15 鼠标拖选与边缘自动滚动。
 
 ### 阶段进展（2026-10-31，P04.12 / EDT-02c 完成）
 
@@ -21,7 +22,7 @@
 
 - P04.10 覆盖 Windows/Linux/macOS targetPlatform 下的普通鼠标点击、从同一 caret 起点的正向与反向 Shift+Click；使用 RenderEditable hit-test 坐标，fixture 含 emoji，并对照 Flutter 文本、Rust 权威全文、输入窗版本和磁盘内容均未改变。
 - 定向 Flutter 3 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 300 项），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.10-mouse-click-anchor.md`。这些是 Flutter 自动化，不代表原生平台鼠标或辅助功能验收。
-- P04 / feat-026 仍是唯一活动 feature；下一步 EDT-02b 先覆盖双击词选、三击逻辑行选，再继续拖选与边缘自动滚动。
+- P04 / feat-026 仍是唯一活动 feature；P04.10–P04.14 的鼠标单击、双击、三击、跨窗全行选择及输入替换已登记；下一步 P04.15 / EDT-02f 覆盖跨窗拖选和边缘自动滚动。
 
 ### 阶段进展（2026-10-31，P04.9 / EDT-01f 完成）
 
@@ -963,7 +964,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 依据 `docs/03` 开始 P04.14 / EDT-02e：为跨窗绝对 selection 映射普通字符输入与 IME 替换，先做 GitNexus impact；完成后再登记拖选与边缘自动滚动切片。
+1. 依据 `docs/03` 开始 P04.15 / EDT-02f：实现跨窗鼠标拖选与视口边缘自动滚动，先做 GitNexus impact 并单独验证。
 2. 保持 P04 / feat-026 为唯一活动 feature；每片按 docs/03 验收、留证据并分阶段提交。
 3. EV-P03 Linux DRM、Windows 11 UIA/读屏/DPI/主题与 macOS 原生行为继续留在 P15 验收门；P00–P13 完成前不做 500 MiB 数值优化，全部计划完成后继续补齐 CI Release 与 v0.1.0 测试 PR。
 

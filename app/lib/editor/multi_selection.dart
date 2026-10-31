@@ -26,6 +26,7 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
     required this.additionalSelections,
     required this.onSelectionsChanged,
     this.onSelectionChanged,
+    this.onCrossWindowTextInput,
     this.onTextChanged,
   });
 
@@ -33,6 +34,10 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
   final ValueChanged<List<TextSelection>> onSelectionsChanged;
   final void Function(TextEditingValue oldValue, TextEditingValue newValue)?
       onSelectionChanged;
+  final TextEditingValue? Function(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  )? onCrossWindowTextInput;
   final void Function(
     TextEditingValue oldValue,
     TextEditingValue newValue,
@@ -53,6 +58,10 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
       return newValue;
     }
     final textChanged = oldValue.text != newValue.text;
+    if (textChanged) {
+      final crossWindowValue = onCrossWindowTextInput?.call(oldValue, newValue);
+      if (crossWindowValue != null) return crossWindowValue;
+    }
     final result = applyMultiSelectionEdit(
       oldValue: oldValue,
       newValue: newValue,

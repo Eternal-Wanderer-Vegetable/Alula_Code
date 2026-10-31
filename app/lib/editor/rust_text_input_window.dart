@@ -19,6 +19,7 @@ class RustTextInputWindow {
   RustTextInputWindow._({
     required this.document,
     required this.maxWindowUtf16,
+    required this.compositionReserveUtf16,
     required TextRangeRead initialRange,
     required TextSelection initialSelection,
   })  : _startUtf16 = initialRange.startUtf16,
@@ -47,6 +48,7 @@ class RustTextInputWindow {
     AlulaDoc document, {
     required int startUtf16,
     int maxWindowUtf16 = 8192,
+    int compositionReserveUtf16 = 0,
     int? selectionUtf16,
     TextSelection? selection,
   }) {
@@ -57,9 +59,17 @@ class RustTextInputWindow {
         'must be between 2 and $maxRustTextInputWindowUtf16',
       );
     }
+    if (compositionReserveUtf16 < 0 ||
+        compositionReserveUtf16 >= maxWindowUtf16 - 1) {
+      throw ArgumentError.value(
+        compositionReserveUtf16,
+        'compositionReserveUtf16',
+        'must leave at least one UTF-16 unit for the initial range',
+      );
+    }
     final range = document.readRange(
       startUtf16,
-      maxLenUtf16: maxWindowUtf16 - 1,
+      maxLenUtf16: maxWindowUtf16 - compositionReserveUtf16 - 1,
     );
     if (range.text.length > maxWindowUtf16) {
       throw StateError('Rust returned a text window beyond its requested cap');
@@ -67,6 +77,7 @@ class RustTextInputWindow {
     return RustTextInputWindow._(
       document: document,
       maxWindowUtf16: maxWindowUtf16,
+      compositionReserveUtf16: compositionReserveUtf16,
       initialRange: range,
       initialSelection: selection ??
           TextSelection.collapsed(
@@ -80,6 +91,7 @@ class RustTextInputWindow {
     AlulaDoc document, {
     required int selectionUtf16,
     int maxWindowUtf16 = 8192,
+    int compositionReserveUtf16 = 0,
     TextSelection? selection,
   }) {
     final caret = selectionUtf16 < 0 ? 0 : selectionUtf16;
@@ -89,6 +101,7 @@ class RustTextInputWindow {
       document,
       startUtf16: startUtf16,
       maxWindowUtf16: maxWindowUtf16,
+      compositionReserveUtf16: compositionReserveUtf16,
       selectionUtf16: caret,
       selection: selection,
     );
@@ -96,6 +109,7 @@ class RustTextInputWindow {
 
   final AlulaDoc document;
   final int maxWindowUtf16;
+  final int compositionReserveUtf16;
   int _startUtf16;
   int _totalUtf16Length;
   int _version;
@@ -120,12 +134,47 @@ class RustTextInputWindow {
   int get pendingCount => _pending == null ? 0 : 1;
   int get coalescedInputCount => _coalescedInputCount;
   String? get pendingText => _pending?.text ?? _composingValue?.text;
+  bool get hasComposition =>
+      _composingValue != null ||
+      (_pending != null && _hasComposition(_pending!.composing));
 
   /// Initial editable value with the caret at the end of this window.
   TextEditingValue get initialValue => TextEditingValue(
         text: _text,
         selection: _committedSelectionWindow,
       );
+
+  /// Reuses this mirror object after a host edit replaces a document range.
+  ///
+  /// Text input formatters and the platform text-input client can still hold a
+  /// reference to this window until the next widget build, so updating it in
+  /// place lets that same input transaction observe the new bounded snapshot.
+  /// Only an active composition overlay may be discarded; committed pending
+  /// edits must be flushed before the host calls this method.
+  void refreshAround(int selectionUtf16, {TextSelection? selection}) {
+    final pending = _pending;
+    if (pending != null && !_hasComposition(pending.composing)) {
+      throw StateError(
+          'Flush committed input before refreshing the input window');
+    }
+    final refreshed = RustTextInputWindow.openAround(
+      document,
+      selectionUtf16: selectionUtf16,
+      maxWindowUtf16: maxWindowUtf16,
+      compositionReserveUtf16: compositionReserveUtf16,
+      selection: selection ?? TextSelection.collapsed(offset: selectionUtf16),
+    );
+    _startUtf16 = refreshed._startUtf16;
+    _totalUtf16Length = refreshed._totalUtf16Length;
+    _version = refreshed._version;
+    _text = refreshed._text;
+    _presentedText = refreshed._presentedText;
+    _committedSelectionWindow = refreshed._committedSelectionWindow;
+    _composingValue = null;
+    _pending = null;
+    _pendingAdditionalOperations = const [];
+    _coalescedInputCount = 0;
+  }
 
   /// Immediately writes one complete Flutter value to Rust.
   RustTextInputDelta applyImmediate(TextEditingValue value) {
@@ -430,7 +479,10 @@ class RustTextInputWindow {
   }) {
     final caret = selectionUtf16.clamp(0, _totalUtf16Length).toInt();
     final start = caret > maxWindowUtf16 ~/ 2 ? caret - maxWindowUtf16 ~/ 2 : 0;
-    final range = document.readRange(start, maxLenUtf16: maxWindowUtf16 - 1);
+    final range = document.readRange(
+      start,
+      maxLenUtf16: maxWindowUtf16 - compositionReserveUtf16 - 1,
+    );
     _startUtf16 = range.startUtf16;
     _totalUtf16Length = range.totalUtf16Length;
     _version = range.version;

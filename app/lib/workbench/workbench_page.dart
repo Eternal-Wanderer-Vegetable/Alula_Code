@@ -109,6 +109,7 @@ const Map<String, Color> _tokenColors = {
 };
 
 const int _editorInputWindowUtf16 = 16384;
+const int _editorCompositionReserveUtf16 = 256;
 
 int _operationPayloadChars(List<List<TextOp>> batches) => batches.fold<int>(
       0,
@@ -1070,6 +1071,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.crossWindowSelection = selection;
     doc.additionalSelections = const [];
     doc.columnSelection = null;
+    // Keep a bounded caret well inside the selected line so the input window
+    // has room for IME preedit text on either side. The pointer handler must
+    // leave this new window's selection intact after this callback returns.
+    final compositionCaret = (selection.start + window.maxWindowUtf16 ~/ 2 + 1)
+        .clamp(0, window.totalUtf16Length)
+        .toInt();
+    doc.replaceInputWindow(
+      compositionCaret,
+      selection: TextSelection.collapsed(offset: compositionCaret),
+    );
     if (mounted) setState(() {});
     _syncCommandContext();
   }
@@ -1683,6 +1694,53 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     int? version,
   }) {
     _flushInput(doc, commitComposition: true);
+    _applyCrossWindowSelectionReplacement(
+      doc,
+      replacement,
+      selectedText: selectedText,
+      version: version,
+    );
+  }
+
+  TextEditingValue? _handleCrossWindowTextInput(
+    OpenDoc doc,
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (doc.crossWindowSelection == null) return null;
+    final window = doc.inputWindow;
+    final oldHadComposition =
+        oldValue.composing.isValid && !oldValue.composing.isCollapsed;
+    if (window.hasComposition &&
+        oldHadComposition &&
+        newValue.text == window.text) {
+      window.cancelComposition();
+      return window.initialValue.copyWith(
+        selection: newValue.selection,
+        composing: TextRange.empty,
+      );
+    }
+    final operations = diffToOps(window.text, newValue.text);
+    if (operations.isEmpty) return null;
+    final replacement = StringBuffer();
+    for (final operation in operations) {
+      if (operation.type == OpType.insert) replacement.write(operation.text);
+    }
+    _applyCrossWindowSelectionReplacement(
+      doc,
+      replacement.toString(),
+      refreshWindowInPlace: true,
+    );
+    return doc.inputWindow.initialValue;
+  }
+
+  void _applyCrossWindowSelectionReplacement(
+    OpenDoc doc,
+    String replacement, {
+    String? selectedText,
+    int? version,
+    bool refreshWindowInPlace = false,
+  }) {
     final selection = doc.crossWindowSelection;
     if (selection == null) return;
     final expectedVersion = version ?? doc.doc.version;
@@ -1697,7 +1755,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ];
     if (forward.isEmpty) {
       doc.crossWindowSelection = null;
-      doc.replaceInputWindow(start);
+      if (refreshWindowInPlace) {
+        doc.refreshInputWindowInPlace(start);
+      } else {
+        doc.replaceInputWindow(start);
+      }
       if (mounted) setState(() {});
       return;
     }
@@ -1717,7 +1779,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.crossWindowSelection = null;
     doc.additionalSelections = const [];
     doc.columnSelection = null;
-    doc.replaceInputWindow(start + replacement.length);
+    if (refreshWindowInPlace) {
+      doc.refreshInputWindowInPlace(start + replacement.length);
+    } else {
+      doc.replaceInputWindow(start + replacement.length);
+    }
     _refreshSiblingViews(doc, forward);
     if (mounted) setState(() {});
     _syncCommandContext();
@@ -3219,7 +3285,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final active = _active;
         final commandModifier =
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
-        if (active?.crossWindowSelection != null) {
+        final activeHasComposition =
+            active?.inputWindow.hasComposition ?? false;
+        if (active?.crossWindowSelection != null && !activeHasComposition) {
           if (commandModifier && key == LogicalKeyboardKey.keyC) {
             unawaited(_copyCrossWindowSelection(active!));
             return KeyEventResult.handled;
@@ -3240,6 +3308,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         final activeCrossSelection = active?.crossWindowSelection;
         if (key == LogicalKeyboardKey.escape &&
+            !activeHasComposition &&
             active != null &&
             activeCrossSelection != null) {
           _setDocSelection(
@@ -5711,6 +5780,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     _scheduleSelectionRefresh(active);
                                     _syncCommandContext();
                                   },
+                                  onCrossWindowTextInput:
+                                      (oldValue, newValue) =>
+                                          _handleCrossWindowTextInput(
+                                    active,
+                                    oldValue,
+                                    newValue,
+                                  ),
                                   onTextChanged:
                                       (oldValue, newValue, formattedValue) {
                                     active.columnSelection = null;
@@ -6261,6 +6337,7 @@ class OpenDoc {
           doc,
           selectionUtf16: 0,
           maxWindowUtf16: _editorInputWindowUtf16,
+          compositionReserveUtf16: _editorCompositionReserveUtf16,
         ),
         inputFieldKey = GlobalKey<RustTextInputFieldState>(),
         editorScrollController = ScrollController() {
@@ -6273,6 +6350,7 @@ class OpenDoc {
           source.doc,
           selectionUtf16: source.selection.extentOffset,
           maxWindowUtf16: _editorInputWindowUtf16,
+          compositionReserveUtf16: _editorCompositionReserveUtf16,
           selection: source.selection,
         ),
         inputFieldKey = GlobalKey<RustTextInputFieldState>(),
@@ -6379,7 +6457,15 @@ class OpenDoc {
       doc,
       selectionUtf16: clampedSelection.extentOffset,
       maxWindowUtf16: _editorInputWindowUtf16,
+      compositionReserveUtf16: _editorCompositionReserveUtf16,
       selection: clampedSelection,
+    );
+  }
+
+  void refreshInputWindowInPlace(int selectionUtf16) {
+    inputWindow.refreshAround(
+      selectionUtf16,
+      selection: TextSelection.collapsed(offset: selectionUtf16),
     );
   }
 

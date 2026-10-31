@@ -398,11 +398,6 @@ class RustTextInputFieldState extends State<RustTextInputField> {
           (window.pendingText != null && window.pendingText != window.text)) {
         return;
       }
-      final requestedLocalOffset = documentOffsetUtf16 - window.startUtf16;
-      final localOffset =
-          requestedLocalOffset < 0 || requestedLocalOffset > window.text.length
-              ? window.text.length ~/ 2
-              : requestedLocalOffset;
       final boundary = document.lineBoundary(documentOffsetUtf16);
       if (boundary.version != version) return;
 
@@ -438,7 +433,6 @@ class RustTextInputFieldState extends State<RustTextInputField> {
             baseOffset: boundary.startUtf16,
             extentOffset: selectionEnd,
           ));
-          setSelection(TextSelection.collapsed(offset: localOffset));
         }
         return;
       }
