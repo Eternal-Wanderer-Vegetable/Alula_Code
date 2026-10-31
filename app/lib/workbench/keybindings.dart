@@ -237,6 +237,8 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result['view.togglePanel'] = 'cmd+j';
+        result['editor.action.joinLines'] = 'ctrl+j';
         result['workbench.action.navigateBack'] = 'ctrl+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
         result['editor.selectNextOccurrence'] = 'cmd+d';

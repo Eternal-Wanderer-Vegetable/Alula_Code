@@ -357,5 +357,25 @@ void main() {
       expect(ks.commandForChord(parseChord('ctrl+x')!), isNull,
           reason: 'meta 修饰键非法被忽略');
     });
+    test('Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+j')!),
+          'view.togglePanel',
+        );
+        expect(keybindings.shortcutFor('editor.action.joinLines'), isNull);
+      }
+      expect(
+        mac.commandForChord(parseChord('ctrl+j')!),
+        'editor.action.joinLines',
+      );
+      expect(mac.shortcutFor('editor.action.joinLines'), 'Ctrl+J');
+      expect(mac.commandForChord(parseChord('cmd+j')!), 'view.togglePanel');
+      expect(mac.shortcutFor('view.togglePanel'), 'Meta+J');
+    });
   });
 }

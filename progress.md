@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.38 / EDT-07e 完成）
+
+- 完成固定 Code-OSS Join Lines 命令。macOS 用 Ctrl+J，面板切换改 Cmd+J；Windows/Linux 继续用 Ctrl+J 切面板，合并行从命令面板调用。Rust UTF-16 行范围和撤销预算内文本读取，经版本校验后一次 TextOps 批量应用，保持 undo/redo、dirty、Find、分屏同步和保存路径，无 ABI 变化。
+- 三平台 targetPlatform fixture 覆盖单光标、选区、多 occurrence 光标、空行、EOF、undo/redo、双视图及 BOM+CRLF 保存回读；定向 22 项通过。detached `HEAD ad7063a` 精确功能快照 `bash init.sh` 通过，Flutter 482、Rust workspace、Clippy、build_core；cargo fmt 检查通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.38-join-lines.md`。本地 Windows 11 精确旧 artifact 自动回放结果已记录在 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`；编辑/IME 一组通过，主题/布局/读屏焦点/关闭门失败，保持 P15 pending。
+- GitNexus 编辑前 `_registerCommands` / `WorkbenchPage` CRITICAL、`KeybindingSet` LOW；提交前 staged（9 files）、all（46 files）和 compare `main`（1350 files）均 CRITICAL。重复检查的符号/流程计数有波动，不作为风险边界；fresh index 有 712/912 入口候选未排名、340 callees 跳过和 9 次 walk 达预算，风险不降级。只包含 P04.38 的提交推送待完成。P04 其它 EDT-07 操作、P15 原生平台验收继续开放。
+
 ### 最新进展（2026-11-01，P04.37 / EDT-07d 完成）
 
 - 固定 Code-OSS 默认 Move Line Up/Down 命令与三平台 Alt+↑/↓。Rust UTF-16 行地址解析；端点跟踪覆盖下一行第 1 列、反向选择、多光标相邻行和空行；首尾行为按源码 no-op。单次预算内 TextOps 事务接入撤销/重做、dirty、split view 与保存回读。

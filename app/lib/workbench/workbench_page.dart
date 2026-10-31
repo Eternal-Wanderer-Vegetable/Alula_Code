@@ -402,7 +402,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+B');
     reg('view.togglePanel', '查看', '切换面板',
         () async => _layout.toggleRegion('panel'),
-        shortcut: 'Ctrl+J');
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+J'
+            : 'Ctrl+J');
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
@@ -641,6 +643,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.moveLinesDownAction', '编辑器', '向下移动行',
         () => _moveLines(down: true),
         shortcut: 'Alt+Down', enablement: 'editorTextFocus');
+    reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
+        enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -3540,6 +3545,484 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _setDocSelections(doc, clampedSelections);
     }
     if (mounted) setState(() => _statusDetail = down ? '已向下移动行' : '已向上移动行');
+  }
+
+  Future<void> _joinLines() async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final crossWindow = doc.crossWindowSelection;
+    final selections = normalizeSelectionSet(
+      crossWindow == null
+          ? [doc.selection, ...doc.additionalSelections]
+          : [crossWindow],
+    );
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '合并行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentLineOffset documentStart;
+    final lineSelections = <({
+      TextSelection selection,
+      int order,
+      int startLine,
+      int endLine,
+      bool primary,
+    })>[];
+    try {
+      documentStart = doc.doc.lineOffset(0);
+      if (documentStart.version != expectedVersion) {
+        throw StateError('文档版本在读取行数时发生变化');
+      }
+      for (var order = 0; order < selections.length; order++) {
+        final selection = selections[order];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('文档版本在解析合并行选区时发生变化');
+        }
+        lineSelections.add((
+          selection: selection,
+          order: order,
+          startLine: start.line,
+          endLine: end.line,
+          primary: order == 0,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '合并行未应用：$error');
+      return;
+    }
+
+    lineSelections.sort((a, b) {
+      final byStart = a.selection.start.compareTo(b.selection.start);
+      if (byStart != 0) return byStart;
+      final byEnd = a.selection.end.compareTo(b.selection.end);
+      return byEnd != 0 ? byEnd : a.order.compareTo(b.order);
+    });
+    final reducedSelections = <({
+      TextSelection selection,
+      int startLine,
+      int endLine,
+      bool primary,
+    })>[];
+    for (final current in lineSelections) {
+      if (reducedSelections.isEmpty) {
+        reducedSelections.add((
+          selection: current.selection,
+          startLine: current.startLine,
+          endLine: current.endLine,
+          primary: current.primary,
+        ));
+        continue;
+      }
+
+      final previous = reducedSelections.last;
+      if (previous.selection.isCollapsed) {
+        if (previous.endLine == current.startLine) {
+          // Code-OSS keeps the later same-line selection and transfers the
+          // primary cursor when the earlier one was primary.
+          reducedSelections
+            ..removeLast()
+            ..add((
+              selection: current.selection,
+              startLine: current.startLine,
+              endLine: current.endLine,
+              primary: previous.primary || current.primary,
+            ));
+          continue;
+        }
+        if (current.startLine > previous.endLine + 1) {
+          reducedSelections.add((
+            selection: current.selection,
+            startLine: current.startLine,
+            endLine: current.endLine,
+            primary: current.primary,
+          ));
+          continue;
+        }
+      } else if (current.startLine > previous.endLine) {
+        reducedSelections.add((
+          selection: current.selection,
+          startLine: current.startLine,
+          endLine: current.endLine,
+          primary: current.primary,
+        ));
+        continue;
+      }
+
+      final mergedSelection = TextSelection(
+        baseOffset: previous.selection.start,
+        extentOffset: previous.selection.end > current.selection.end
+            ? previous.selection.end
+            : current.selection.end,
+        affinity: previous.selection.affinity,
+        isDirectional: false,
+      );
+      reducedSelections
+        ..removeLast()
+        ..add((
+          selection: mergedSelection,
+          startLine: previous.startLine,
+          endLine: previous.endLine > current.endLine
+              ? previous.endLine
+              : current.endLine,
+          primary: previous.primary || current.primary,
+        ));
+    }
+
+    final plans = <({
+      TextSelection selection,
+      bool primary,
+      bool collapsed,
+      bool sameLine,
+      int rangeStart,
+      int rangeEnd,
+      int startCharacter,
+      int endCharacter,
+      int selectionEndSuffix,
+      String removed,
+      String inserted,
+      int columnDeltaOffset,
+      bool join,
+    })>[];
+    var payloadChars = 0;
+    try {
+      for (final lines in reducedSelections) {
+        final start = doc.doc.positionAt(lines.selection.start);
+        final end = doc.doc.positionAt(lines.selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('文档版本在解析合并行范围时发生变化');
+        }
+        final endLine = lines.selection.isCollapsed || start.line == end.line
+            ? (start.line < documentStart.lineCount - 1
+                ? start.line + 1
+                : start.line)
+            : end.line;
+        final first = doc.doc.lineOffset(start.line);
+        final last = doc.doc.lineOffset(endLine);
+        if (first.version != expectedVersion ||
+            last.version != expectedVersion) {
+          throw StateError('文档版本在读取合并行边界时发生变化');
+        }
+        final lastBoundary = doc.doc.lineBoundary(last.offsetUtf16);
+        if (lastBoundary.version != expectedVersion ||
+            lastBoundary.line != endLine ||
+            lastBoundary.endUtf16 < first.offsetUtf16) {
+          throw StateError('Rust 返回了无效的合并行边界');
+        }
+        final sameLine = start.line == end.line;
+        if (endLine == start.line) {
+          plans.add((
+            selection: lines.selection,
+            primary: lines.primary,
+            collapsed: lines.selection.isCollapsed,
+            sameLine: sameLine,
+            rangeStart: first.offsetUtf16,
+            rangeEnd: lastBoundary.endUtf16,
+            startCharacter: start.character,
+            endCharacter: end.character,
+            selectionEndSuffix: 0,
+            removed: '',
+            inserted: '',
+            columnDeltaOffset: 0,
+            join: false,
+          ));
+          continue;
+        }
+
+        final rangeLength = lastBoundary.endUtf16 - first.offsetUtf16;
+        final remaining = _undoHistoryBudget.maxTotalChars - payloadChars;
+        if (rangeLength < 0 || rangeLength > remaining ~/ 2) {
+          throw StateError(
+              '合并行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final removed = _readDocumentRange(
+          doc,
+          first.offsetUtf16,
+          lastBoundary.endUtf16,
+        );
+        if (removed.length != rangeLength) {
+          throw StateError('Rust 返回的合并行文本长度与 UTF-16 范围不符');
+        }
+        final joined = _joinLineContents(removed);
+        final cost = removed.length + joined.text.length;
+        if (cost > remaining) {
+          throw StateError(
+              '合并行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        payloadChars += cost;
+        final endLineLength = lastBoundary.endUtf16 - last.offsetUtf16;
+        final suffix = endLineLength - end.character;
+        if (suffix < 0) {
+          throw StateError('Rust 返回了无效的合并行选区末尾');
+        }
+        plans.add((
+          selection: lines.selection,
+          primary: lines.primary,
+          collapsed: lines.selection.isCollapsed,
+          sameLine: sameLine,
+          rangeStart: first.offsetUtf16,
+          rangeEnd: lastBoundary.endUtf16,
+          startCharacter: start.character,
+          endCharacter: end.character,
+          selectionEndSuffix: suffix,
+          removed: removed,
+          inserted: joined.text,
+          columnDeltaOffset: joined.columnDeltaOffset,
+          join: true,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '合并行未应用：$error');
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '合并行未应用：文档版本已变化');
+      return;
+    }
+
+    final changedIndices = <int>[
+      for (var index = 0; index < plans.length; index++)
+        if (plans[index].join && plans[index].removed != plans[index].inserted)
+          index,
+    ];
+    final planStartsAfterEdits = <int>[];
+    var cumulativeDelta = 0;
+    for (final plan in plans) {
+      planStartsAfterEdits.add(plan.rangeStart + cumulativeDelta);
+      if (plan.join && plan.removed != plan.inserted) {
+        cumulativeDelta += plan.inserted.length - plan.removed.length;
+      }
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final index in changedIndices.reversed) {
+      final plan = plans[index];
+      final mappedStart = planStartsAfterEdits[index];
+      forward.add(TextOp.delete(
+        plan.rangeStart,
+        plan.rangeEnd - plan.rangeStart,
+      ));
+      if (plan.inserted.isNotEmpty) {
+        forward.add(TextOp.insert(plan.rangeStart, plan.inserted));
+        inverse.add(TextOp.delete(mappedStart, plan.inserted.length));
+      }
+      inverse.add(TextOp.insert(mappedStart, plan.removed));
+    }
+
+    final mappedByPlan = <TextSelection>[];
+    TextSelection? mappedPrimary;
+    for (var index = 0; index < plans.length; index++) {
+      final plan = plans[index];
+      final mappedStart = planStartsAfterEdits[index];
+      late final TextSelection mapped;
+      if (!plan.join) {
+        if (plan.collapsed) {
+          mapped = TextSelection.collapsed(
+            offset: mappedStart + plan.rangeEnd - plan.rangeStart,
+            affinity: plan.selection.affinity,
+          );
+        } else {
+          mapped = TextSelection(
+            baseOffset: mappedStart + plan.startCharacter,
+            extentOffset: mappedStart + plan.endCharacter,
+            affinity: plan.selection.affinity,
+            isDirectional: false,
+          );
+        }
+      } else if (plan.collapsed) {
+        mapped = TextSelection.collapsed(
+          offset: mappedStart + plan.inserted.length - plan.columnDeltaOffset,
+          affinity: plan.selection.affinity,
+        );
+      } else if (plan.sameLine) {
+        mapped = TextSelection(
+          baseOffset: mappedStart + plan.startCharacter,
+          extentOffset: mappedStart + plan.endCharacter,
+          affinity: plan.selection.affinity,
+          isDirectional: false,
+        );
+      } else {
+        mapped = TextSelection(
+          baseOffset: mappedStart + plan.startCharacter,
+          extentOffset:
+              mappedStart + plan.inserted.length - plan.selectionEndSuffix - 1,
+          affinity: plan.selection.affinity,
+          isDirectional: false,
+        );
+      }
+      if (plan.primary) {
+        mappedPrimary = mapped;
+      } else {
+        mappedByPlan.add(mapped);
+      }
+    }
+    final newLength = documentStart.totalUtf16Length + cumulativeDelta;
+    final mappedSelections = normalizeSelectionSet([
+      if (mappedPrimary != null)
+        TextSelection(
+          baseOffset: mappedPrimary.baseOffset.clamp(0, newLength).toInt(),
+          extentOffset: mappedPrimary.extentOffset.clamp(0, newLength).toInt(),
+          affinity: mappedPrimary.affinity,
+          isDirectional: mappedPrimary.isDirectional,
+        ),
+      for (final selection in mappedByPlan)
+        TextSelection(
+          baseOffset: selection.baseOffset.clamp(0, newLength).toInt(),
+          extentOffset: selection.extentOffset.clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+
+    if (forward.isNotEmpty) {
+      try {
+        doc.doc.applyWith(expectedVersion, forward);
+      } on AlulaException catch (error) {
+        if (mounted) {
+          setState(
+              () => _statusDetail = '合并行未应用：${error.code} ${error.detail}');
+        }
+        return;
+      }
+      _recordDocumentOperations(
+        doc,
+        forward: forward,
+        inverse: inverse,
+        beforeCaret: selections.first.extentOffset,
+        afterCaret: mappedSelections.first.extentOffset,
+        coalesce: false,
+      );
+      _setDocSelections(doc, mappedSelections, recordHistory: false);
+      doc.replaceInputWindow(
+        mappedSelections.first.extentOffset,
+        selection: mappedSelections.first,
+      );
+      _refreshSiblingViews(doc, forward);
+      _onFindTextChanged();
+      _syncCommandContext();
+    } else {
+      _setDocSelections(doc, mappedSelections);
+    }
+    if (mounted) setState(() => _statusDetail = '已合并行');
+  }
+
+  ({String text, int columnDeltaOffset}) _joinLineContents(String source) {
+    var firstLineEnd = source.indexOf('\n');
+    if (firstLineEnd < 0) return (text: source, columnDeltaOffset: 0);
+
+    final joined = StringBuffer();
+    final trailingWhitespace = StringBuffer();
+    var joinedLength = 0;
+    var trailingLength = 0;
+    var lastCodeUnit = -1;
+
+    bool isWhitespace(int value) =>
+        value == 0x0009 ||
+        value == 0x000a ||
+        value == 0x000b ||
+        value == 0x000c ||
+        value == 0x000d ||
+        value == 0x0020 ||
+        value == 0x00a0 ||
+        value == 0x1680 ||
+        (value >= 0x2000 && value <= 0x200a) ||
+        value == 0x2028 ||
+        value == 0x2029 ||
+        value == 0x202f ||
+        value == 0x205f ||
+        value == 0x3000 ||
+        value == 0xfeff;
+
+    void appendInitialLine(String line) {
+      var suffixStart = line.length;
+      while (
+          suffixStart > 0 && isWhitespace(line.codeUnitAt(suffixStart - 1))) {
+        suffixStart--;
+      }
+      joined.write(line.substring(0, suffixStart));
+      joinedLength += suffixStart;
+      trailingWhitespace.write(line.substring(suffixStart));
+      trailingLength = line.length - suffixStart;
+      if (line.isNotEmpty) lastCodeUnit = line.codeUnitAt(line.length - 1);
+    }
+
+    void flushTrailingWhitespace() {
+      if (trailingLength == 0) return;
+      joined.write(trailingWhitespace.toString());
+      joinedLength += trailingLength;
+      trailingWhitespace.clear();
+      trailingLength = 0;
+    }
+
+    void appendJoinedLine(String line) {
+      flushTrailingWhitespace();
+      var suffixStart = line.length;
+      while (
+          suffixStart > 0 && isWhitespace(line.codeUnitAt(suffixStart - 1))) {
+        suffixStart--;
+      }
+      joined.write(line.substring(0, suffixStart));
+      joinedLength += suffixStart;
+      trailingWhitespace.write(line.substring(suffixStart));
+      trailingLength = line.length - suffixStart;
+      if (line.isNotEmpty) lastCodeUnit = line.codeUnitAt(line.length - 1);
+    }
+
+    appendInitialLine(source.substring(0, firstLineEnd));
+    var cursor = firstLineEnd + 1;
+    var columnDeltaOffset = 0;
+    while (cursor <= source.length) {
+      final nextNewline = source.indexOf('\n', cursor);
+      final end = nextNewline < 0 ? source.length : nextNewline;
+      final line = source.substring(cursor, end);
+      var firstNonWhitespace = 0;
+      while (firstNonWhitespace < line.length &&
+          isWhitespace(line.codeUnitAt(firstNonWhitespace))) {
+        firstNonWhitespace++;
+      }
+      if (firstNonWhitespace < line.length) {
+        var insertSpace = true;
+        if (joinedLength + trailingLength == 0) insertSpace = false;
+        if (insertSpace && (lastCodeUnit == 0x0020 || lastCodeUnit == 0x0009)) {
+          trailingWhitespace
+            ..clear()
+            ..write(' ');
+          trailingLength = 1;
+          lastCodeUnit = 0x0020;
+          insertSpace = false;
+        }
+        if (insertSpace) {
+          flushTrailingWhitespace();
+          joined.write(' ');
+          joinedLength++;
+          lastCodeUnit = 0x0020;
+        }
+        final content = line.substring(firstNonWhitespace);
+        appendJoinedLine(content);
+        columnDeltaOffset = content.length + (insertSpace ? 1 : 0);
+      } else {
+        columnDeltaOffset = 0;
+      }
+      if (nextNewline < 0) break;
+      cursor = nextNewline + 1;
+    }
+
+    final result = StringBuffer()
+      ..write(joined.toString())
+      ..write(trailingWhitespace.toString());
+    return (text: result.toString(), columnDeltaOffset: columnDeltaOffset);
   }
 
   Future<void> _insertLine({required bool before}) async {
