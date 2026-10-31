@@ -7,8 +7,12 @@ import 'package:flutter/gestures.dart'
         kDoubleTapSlop,
         kDoubleTapTimeout,
         kPrimaryButton,
+        kTouchSlop,
         PointerDeviceKind,
-        PointerDownEvent;
+        PointerDownEvent,
+        PointerMoveEvent,
+        PointerUpEvent,
+        PointerCancelEvent;
 import 'package:flutter/rendering.dart' show AxisDirection, RenderEditable;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -249,6 +253,7 @@ class RustTextInputField extends StatefulWidget {
     this.onTap,
     this.onAltClick,
     this.onCrossWindowLineSelection,
+    this.onCrossWindowDragSelection,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
@@ -280,6 +285,7 @@ class RustTextInputField extends StatefulWidget {
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
   final ValueChanged<TextSelection>? onCrossWindowLineSelection;
+  final CrossWindowDragSelectionChanged? onCrossWindowDragSelection;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
@@ -289,6 +295,11 @@ class RustTextInputField extends StatefulWidget {
   RustTextInputFieldState createState() => RustTextInputFieldState();
 }
 
+typedef CrossWindowDragSelectionChanged = void Function(
+  TextSelection selection, {
+  required bool started,
+});
+
 class RustTextInputFieldState extends State<RustTextInputField> {
   late _SyntaxTextEditingController _controller;
   late TextEditingValue _lastAcceptedValue;
@@ -296,18 +307,34 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   late ScrollController _horizontalScrollController;
   bool _ownsFocusNode = false;
   bool _ownsHorizontalScrollController = false;
+  FocusNode? _listenedFocusNode;
   bool _flushScheduled = false;
   bool _restoringValue = false;
   int _mouseClickCount = 0;
   Duration? _lastMouseClickTimeStamp;
   Offset? _lastMouseClickPosition;
   int? _lastMouseClickDevice;
+  int? _mouseDragPointer;
+  int? _mouseDragAnchorUtf16;
+  int? _mouseDragDocumentId;
+  int? _mouseDragDocumentVersion;
+  Offset? _mouseDragPosition;
+  Offset? _mouseDragStartPosition;
+  bool _crossWindowMouseDrag = false;
+  bool _mouseDragInputWindowChanged = false;
+  int _mouseDragIdleTicks = 0;
+  TextSelection? _lastCrossWindowDragSelection;
+  Timer? _mouseDragAutoScrollTimer;
   String? _errorMessage;
   int _lineMetadataVersion = -1;
   int _lineMetadataStartUtf16 = -1;
   int _firstLineNumber = 0;
   int _documentLineCount = 1;
   final GlobalKey _horizontalViewportKey = GlobalKey();
+  static const Duration _mouseDragAutoScrollPeriod = Duration(
+    milliseconds: 16,
+  );
+  static const double _mouseDragMaxScrollPixelsPerSecond = 3600;
   Timer? _foldSymbolsTimer;
   int _scheduledFoldDocId = -1;
   int _scheduledFoldVersion = -1;
@@ -322,6 +349,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   TextEditingValue get editingValue => _controller.value;
 
+  @visibleForTesting
+  bool get hasActiveMouseDragAutoScrollTimer =>
+      _mouseDragAutoScrollTimer != null;
+
   /// Hit-tests a global pointer coordinate against this editor's text layout.
   int? _textOffsetAtGlobalPosition(Offset globalPosition) {
     final editable = _findEditableRenderObject(context);
@@ -330,7 +361,27 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _handlePointerDown(PointerDownEvent event) {
+    _stopMouseDrag();
     final keyboard = HardwareKeyboard.instance;
+    if (widget.onCrossWindowDragSelection != null &&
+        event.kind == PointerDeviceKind.mouse &&
+        event.buttons == kPrimaryButton &&
+        !keyboard.isAltPressed &&
+        !keyboard.isControlPressed &&
+        !keyboard.isMetaPressed &&
+        !keyboard.isShiftPressed) {
+      final localOffset = _textOffsetAtGlobalPosition(event.position);
+      if (localOffset != null) {
+        final window = widget.inputWindow;
+        _mouseDragPointer = event.pointer;
+        _mouseDragAnchorUtf16 = window.startUtf16 +
+            localOffset.clamp(0, window.text.length).toInt();
+        _mouseDragDocumentId = window.document.id;
+        _mouseDragDocumentVersion = window.version;
+        _mouseDragStartPosition = event.position;
+        _mouseDragPosition = event.position;
+      }
+    }
     if (event.buttons == kPrimaryButton &&
         keyboard.isAltPressed &&
         !keyboard.isControlPressed) {
@@ -376,6 +427,310 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         _selectLogicalLineAt(window.startUtf16 + localOffset);
       }
     }
+  }
+
+  void _handlePointerMove(PointerMoveEvent event) {
+    if (_mouseDragPointer != event.pointer ||
+        (event.buttons & kPrimaryButton) == 0) {
+      return;
+    }
+    _mouseDragPosition = event.position;
+    _updateCrossWindowMouseDragSelection();
+    _updateMouseDragAutoScroll();
+  }
+
+  void _handlePointerUp(PointerUpEvent event) {
+    if (_mouseDragPointer == event.pointer) _stopMouseDrag();
+  }
+
+  void _handlePointerCancel(PointerCancelEvent event) {
+    if (_mouseDragPointer == event.pointer) _stopMouseDrag();
+  }
+
+  void _updateCrossWindowMouseDragSelection() {
+    final anchor = _mouseDragAnchorUtf16;
+    final startPosition = _mouseDragStartPosition;
+    final position = _mouseDragPosition;
+    final document = widget.inputWindow.document;
+    if (anchor == null || startPosition == null || position == null) return;
+    if (document.id != _mouseDragDocumentId ||
+        document.version != _mouseDragDocumentVersion ||
+        widget.inputWindow.version != _mouseDragDocumentVersion) {
+      _stopMouseDrag();
+      return;
+    }
+    if (!_crossWindowMouseDrag &&
+        (position - startPosition).distance < kTouchSlop) {
+      return;
+    }
+    final localOffset = _textOffsetAtGlobalPosition(position);
+    if (localOffset == null) return;
+    final window = widget.inputWindow;
+    final boundedOffset = localOffset.clamp(0, window.text.length).toInt();
+    var extent = window.startUtf16 + boundedOffset;
+    final viewport = _mouseDragViewportRect();
+    if (viewport != null &&
+        boundedOffset == 0 &&
+        window.startUtf16 > 0 &&
+        (position.dy < viewport.top || position.dx < viewport.left)) {
+      final previous = window.document.readRange(
+        window.startUtf16 - 1,
+        maxLenUtf16: 1,
+      );
+      if (previous.version == window.version &&
+          previous.endUtf16 == window.startUtf16) {
+        extent = previous.startUtf16;
+      }
+    } else if (viewport != null &&
+        boundedOffset == window.text.length &&
+        window.endUtf16 < window.totalUtf16Length &&
+        (position.dy > viewport.bottom || position.dx > viewport.right)) {
+      final next = window.document.readRange(
+        window.endUtf16,
+        maxLenUtf16: 1,
+      );
+      if (next.version == window.version &&
+          next.startUtf16 == window.endUtf16) {
+        extent = next.endUtf16;
+      }
+    }
+    const edgeLeadUtf16 = 64;
+    final extendsBeforeWindow = window.startUtf16 > 0 &&
+        extent <= window.startUtf16 + edgeLeadUtf16 &&
+        viewport != null &&
+        (position.dy < viewport.top || position.dx < viewport.left);
+    final extendsAfterWindow = window.endUtf16 < window.totalUtf16Length &&
+        extent >= window.endUtf16 - edgeLeadUtf16 &&
+        viewport != null &&
+        (position.dy > viewport.bottom || position.dx > viewport.right);
+    final reachedWindowEdge = extent <= window.startUtf16 ||
+        extent >= window.endUtf16 ||
+        extendsBeforeWindow ||
+        extendsAfterWindow;
+    if (!_crossWindowMouseDrag && !reachedWindowEdge) return;
+
+    final started = !_crossWindowMouseDrag;
+    _crossWindowMouseDrag = true;
+    final selection = TextSelection(
+      baseOffset: anchor,
+      extentOffset: extent,
+    );
+    if (!started && selection == _lastCrossWindowDragSelection) return;
+    _lastCrossWindowDragSelection = selection;
+    widget.onCrossWindowDragSelection?.call(selection, started: started);
+  }
+
+  Rect? _mouseDragViewportRect() {
+    final editable = _findEditableRenderObject(context);
+    if (editable == null || !editable.hasSize) return null;
+    final editableRect = editable.localToGlobal(Offset.zero) & editable.size;
+    final horizontalViewport =
+        _horizontalViewportKey.currentContext?.findRenderObject();
+    if (horizontalViewport is! RenderBox || !horizontalViewport.hasSize) {
+      return editableRect;
+    }
+    final horizontalRect =
+        horizontalViewport.localToGlobal(Offset.zero) & horizontalViewport.size;
+    final top = editableRect.top > horizontalRect.top
+        ? editableRect.top
+        : horizontalRect.top;
+    final bottom = editableRect.bottom < horizontalRect.bottom
+        ? editableRect.bottom
+        : horizontalRect.bottom;
+    if (bottom <= top) return editableRect;
+    return Rect.fromLTRB(
+        horizontalRect.left, top, horizontalRect.right, bottom);
+  }
+
+  double _mouseDragEdgeVelocity(double coordinate, double start, double end) {
+    final overshoot = coordinate < start
+        ? start - coordinate
+        : coordinate > end
+            ? coordinate - end
+            : 0.0;
+    if (overshoot <= 0) return 0;
+    final speed = (300 + overshoot * 12)
+        .clamp(300.0, _mouseDragMaxScrollPixelsPerSecond)
+        .toDouble();
+    return coordinate < start ? -speed : speed;
+  }
+
+  void _updateMouseDragAutoScroll() {
+    final pointer = _mouseDragPosition;
+    final viewport = _mouseDragViewportRect();
+    if (pointer == null || viewport == null) {
+      _mouseDragAutoScrollTimer?.cancel();
+      _mouseDragAutoScrollTimer = null;
+      return;
+    }
+    final horizontalVelocity = _mouseDragEdgeVelocity(
+      pointer.dx,
+      viewport.left,
+      viewport.right,
+    );
+    final verticalVelocity = _mouseDragEdgeVelocity(
+      pointer.dy,
+      viewport.top,
+      viewport.bottom,
+    );
+    final canScrollHorizontally =
+        horizontalVelocity != 0 && _horizontalScrollController.hasClients;
+    final verticalController = widget.scrollController;
+    final canScrollVertically = verticalVelocity != 0 &&
+        verticalController != null &&
+        verticalController.hasClients;
+    if (!canScrollHorizontally && !canScrollVertically) {
+      _mouseDragAutoScrollTimer?.cancel();
+      _mouseDragAutoScrollTimer = null;
+      return;
+    }
+    _mouseDragAutoScrollTimer ??= Timer.periodic(
+      _mouseDragAutoScrollPeriod,
+      (_) => _scrollWhileMouseDragIsOutside(),
+    );
+  }
+
+  void _scrollWhileMouseDragIsOutside() {
+    if (!mounted || _mouseDragPointer == null) {
+      _stopMouseDrag();
+      return;
+    }
+    final pointer = _mouseDragPosition;
+    final viewport = _mouseDragViewportRect();
+    if (pointer == null || viewport == null) return;
+    final seconds = _mouseDragAutoScrollPeriod.inMicroseconds / 1000000;
+    var changed = false;
+
+    final horizontalVelocity = _mouseDragEdgeVelocity(
+      pointer.dx,
+      viewport.left,
+      viewport.right,
+    );
+    if (horizontalVelocity != 0 && _horizontalScrollController.hasClients) {
+      final position = _horizontalScrollController.position;
+      final next = (position.pixels + horizontalVelocity * seconds)
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      if (next != position.pixels) {
+        position.jumpTo(next);
+        changed = true;
+      }
+    }
+
+    final verticalVelocity = _mouseDragEdgeVelocity(
+      pointer.dy,
+      viewport.top,
+      viewport.bottom,
+    );
+    final verticalController = widget.scrollController;
+    if (verticalVelocity != 0 &&
+        verticalController != null &&
+        verticalController.hasClients) {
+      final position = verticalController.position;
+      final next = (position.pixels + verticalVelocity * seconds)
+          .clamp(position.minScrollExtent, position.maxScrollExtent)
+          .toDouble();
+      if (next != position.pixels) {
+        position.jumpTo(next);
+        changed = true;
+      }
+    }
+
+    final previousSelection = _lastCrossWindowDragSelection;
+    final inputWindowChanged = _mouseDragInputWindowChanged;
+    _mouseDragInputWindowChanged = false;
+    _updateCrossWindowMouseDragSelection();
+    final selectionChanged = previousSelection != _lastCrossWindowDragSelection;
+    if (changed || inputWindowChanged || selectionChanged) {
+      _mouseDragIdleTicks = 0;
+    } else {
+      _mouseDragIdleTicks++;
+      if (_mouseDragIdleTicks >= 3) {
+        _mouseDragAutoScrollTimer?.cancel();
+        _mouseDragAutoScrollTimer = null;
+      }
+    }
+  }
+
+  void _stopMouseDrag() {
+    _mouseDragAutoScrollTimer?.cancel();
+    _mouseDragAutoScrollTimer = null;
+    _mouseDragPointer = null;
+    _mouseDragAnchorUtf16 = null;
+    _mouseDragDocumentId = null;
+    _mouseDragDocumentVersion = null;
+    _mouseDragPosition = null;
+    _mouseDragStartPosition = null;
+    _crossWindowMouseDrag = false;
+    _mouseDragInputWindowChanged = false;
+    _mouseDragIdleTicks = 0;
+    _lastCrossWindowDragSelection = null;
+  }
+
+  void _handleFocusChanged() {
+    if (!_focusNode.hasFocus) _stopMouseDrag();
+  }
+
+  void _scheduleMouseDragCaretToViewportEdge() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _mouseDragPointer == null) return;
+      final pointer = _mouseDragPosition;
+      final viewport = _mouseDragViewportRect();
+      final selection = _lastCrossWindowDragSelection;
+      final editable = _findEditableRenderObject(context);
+      if (pointer == null ||
+          viewport == null ||
+          selection == null ||
+          editable == null) {
+        return;
+      }
+      final localOffset =
+          (selection.extentOffset - widget.inputWindow.startUtf16)
+              .clamp(0, widget.inputWindow.text.length)
+              .toInt();
+      final caret = editable.getLocalRectForCaret(
+        TextPosition(offset: localOffset),
+      );
+      final caretGlobal = Rect.fromPoints(
+        editable.localToGlobal(caret.topLeft),
+        editable.localToGlobal(caret.bottomRight),
+      );
+
+      final verticalController = widget.scrollController;
+      if (verticalController != null && verticalController.hasClients) {
+        final position = verticalController.position;
+        double? delta;
+        if (pointer.dy > viewport.bottom) {
+          delta = caretGlobal.bottom - viewport.bottom;
+        } else if (pointer.dy < viewport.top) {
+          delta = caretGlobal.top - viewport.top;
+        }
+        if (delta != null) {
+          position.jumpTo(
+            (position.pixels + delta)
+                .clamp(position.minScrollExtent, position.maxScrollExtent)
+                .toDouble(),
+          );
+        }
+      }
+
+      if (_horizontalScrollController.hasClients) {
+        final position = _horizontalScrollController.position;
+        double? delta;
+        if (pointer.dx > viewport.right) {
+          delta = caretGlobal.right - viewport.right;
+        } else if (pointer.dx < viewport.left) {
+          delta = caretGlobal.left - viewport.left;
+        }
+        if (delta != null) {
+          position.jumpTo(
+            (position.pixels + delta)
+                .clamp(position.minScrollExtent, position.maxScrollExtent)
+                .toDouble(),
+          );
+        }
+      }
+    });
   }
 
   void _resetMouseClickSequence() {
@@ -499,6 +854,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void didUpdateWidget(covariant RustTextInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.inputWindow != widget.inputWindow &&
+        _mouseDragPointer != null) {
+      _mouseDragInputWindowChanged = true;
+      _mouseDragIdleTicks = 0;
+      _scheduleMouseDragCaretToViewportEdge();
+    }
     if (oldWidget.focusNode != widget.focusNode) {
       _disposeOwnedFocusNode();
       _setFocusNode(widget.focusNode);
@@ -793,11 +1154,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _setFocusNode(FocusNode? external) {
+    _listenedFocusNode?.removeListener(_handleFocusChanged);
     _ownsFocusNode = external == null;
     _focusNode = external ?? FocusNode();
+    _listenedFocusNode = _focusNode;
+    _listenedFocusNode!.addListener(_handleFocusChanged);
   }
 
   void _disposeOwnedFocusNode() {
+    _listenedFocusNode?.removeListener(_handleFocusChanged);
+    _listenedFocusNode = null;
     if (_ownsFocusNode) _focusNode.dispose();
   }
 
@@ -1071,6 +1437,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         : theme.textTheme.titleMedium!;
     final field = Listener(
       onPointerDown: _handlePointerDown,
+      onPointerMove: _handlePointerMove,
+      onPointerUp: _handlePointerUp,
+      onPointerCancel: _handlePointerCancel,
       child: TextField(
         key: const ValueKey<String>('rust-bounded-text-input'),
         controller: _controller,
@@ -1394,6 +1763,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   @override
   void dispose() {
+    _stopMouseDrag();
     assert(
       widget.inputWindow.pendingCount == 0,
       'Flush the bounded input window before removing this widget.',

@@ -1085,6 +1085,47 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
   }
 
+  void _setCrossWindowDragSelection(
+    OpenDoc doc,
+    TextSelection selection, {
+    required bool started,
+  }) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null && window.pendingText != window.text ||
+        window.version != doc.doc.version ||
+        selection.start < 0 ||
+        selection.end > window.totalUtf16Length ||
+        selection.isCollapsed) {
+      return;
+    }
+    if (started) {
+      doc.selectionHistory.record(doc.selectionSet);
+      doc.additionalSelections = const [];
+      doc.columnSelection = null;
+    }
+    doc.crossWindowSelection = selection;
+    const rewindowMarginUtf16 = 2048;
+    final extent = selection.extentOffset;
+    final hasDocumentTextBeyondExtent =
+        extent > 0 && extent < window.totalUtf16Length;
+    if (hasDocumentTextBeyondExtent &&
+        (started ||
+            extent <= window.startUtf16 + rewindowMarginUtf16 ||
+            extent >= window.endUtf16 - rewindowMarginUtf16)) {
+      _flushInput(doc);
+      final currentWindow = doc.inputWindow;
+      if (extent <= currentWindow.startUtf16 + rewindowMarginUtf16 ||
+          extent >= currentWindow.endUtf16 - rewindowMarginUtf16) {
+        doc.replaceInputWindow(
+          extent,
+          selection: TextSelection.collapsed(offset: extent),
+        );
+      }
+    }
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
   void _moveWordPart({required bool left, bool extendSelection = false}) {
     final doc = _active;
     if (doc == null) return;
@@ -5833,6 +5874,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     _setCrossWindowLineSelection(
                                   active,
                                   selection,
+                                ),
+                                onCrossWindowDragSelection: (
+                                  selection, {
+                                  required started,
+                                }) =>
+                                    _setCrossWindowDragSelection(
+                                  active,
+                                  selection,
+                                  started: started,
                                 ),
                                 onError: (error) {
                                   if (!_disposing &&
