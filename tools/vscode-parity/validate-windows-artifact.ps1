@@ -80,6 +80,56 @@ public static class AlulaArtifactMsaa
         return snapshot;
     }
 
+    public static bool InvokeNamed(IntPtr window, string targetName)
+    {
+        IAccessible root = null;
+        try
+        {
+            Guid iid = IidIAccessible;
+            int hr = AccessibleObjectFromWindow(window, 0xFFFFFFFC, ref iid, out root);
+            return hr == 0 && root != null && InvokeNamed(root, targetName, 1);
+        }
+        catch { return false; }
+        finally
+        {
+            if (root != null && Marshal.IsComObject(root)) Marshal.FinalReleaseComObject(root);
+        }
+    }
+
+    private static bool InvokeNamed(IAccessible accessible, string targetName, int depth)
+    {
+        if (accessible == null || depth > 8) return false;
+        int count = 0;
+        try { count = Math.Min(accessible.accChildCount, 100); } catch { return false; }
+        for (int id = 1; id <= count; id++)
+        {
+            string name = null;
+            try { name = accessible.get_accName(id); } catch { }
+            if (String.Equals(name, targetName, StringComparison.Ordinal))
+            {
+                try { accessible.accDoDefaultAction(id); return true; } catch { }
+            }
+
+            object raw = null;
+            IAccessible nested = null;
+            try { raw = accessible.get_accChild(id); } catch { }
+            nested = raw as IAccessible;
+            if (nested != null && !Object.ReferenceEquals(nested, accessible))
+            {
+                try { if (InvokeNamed(nested, targetName, depth + 1)) return true; }
+                finally
+                {
+                    if (Marshal.IsComObject(nested)) Marshal.FinalReleaseComObject(nested);
+                }
+            }
+            else if (raw != null && Marshal.IsComObject(raw))
+            {
+                Marshal.FinalReleaseComObject(raw);
+            }
+        }
+        return false;
+    }
+
     private static void Walk(IAccessible accessible, AlulaArtifactMsaaSnapshot snapshot, string parentPath, int depth)
     {
         if (accessible == null || depth > 8 || snapshot.Nodes.Count >= 250) return;
@@ -278,32 +328,58 @@ try {
         Send-ArtifactKeys '{ENTER}' 1200
       }
       function Open-ArtifactWorkspace([string]$path) {
-        Send-ArtifactKeys '^+p'
-        Start-Sleep -Milliseconds 250
-        $paletteSnapshot = [AlulaArtifactMsaa]::Capture($child)
-        $interactionResult.commandPaletteNames = @($paletteSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
-        Set-Clipboard -Value '打开文件夹'
-        Send-ArtifactKeys '^v'
-        Send-ArtifactKeys '{ENTER}' 700
+        if (![AlulaArtifactMsaa]::InvokeNamed($child, '打开文件夹')) {
+          $initialSnapshot = [AlulaArtifactMsaa]::Capture($child)
+          $interactionResult.commandPaletteNames = @($initialSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+          throw "Could not invoke the accessible Open Folder button; names: $($interactionResult.commandPaletteNames -join ' | ')"
+        }
+        Start-Sleep -Milliseconds 700
         $dialogSnapshot = [AlulaArtifactMsaa]::Capture($child)
         $interactionResult.openFolderDialogNames = @($dialogSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
         if (@($interactionResult.openFolderDialogNames | Where-Object { $_ -like '*文件夹路径*' }).Count -eq 0) {
-          throw "Command Palette did not open the folder dialog; accessible names: $($interactionResult.openFolderDialogNames -join ' | ')"
+          throw "The accessible Open Folder button did not open the folder dialog; names: $($interactionResult.openFolderDialogNames -join ' | ')"
         }
         Send-ArtifactKeys '^a'
         Paste-ArtifactText $path
-        # The dialog autofocuses its path field. Tab moves through Cancel then
-        # Open, so activation is independent of the runner's window geometry.
-        Send-ArtifactKeys '{TAB}'
-        Send-ArtifactKeys '{TAB}'
-        Send-ArtifactKeys '{ENTER}' 1400
+        if (![AlulaArtifactMsaa]::InvokeNamed($child, '打开')) {
+          # The dialog autofocuses its path field. Tab moves through Cancel then
+          # Open when the button has no accessible default action.
+          Send-ArtifactKeys '{TAB}'
+          Send-ArtifactKeys '{TAB}'
+          Send-ArtifactKeys '{ENTER}' 1400
+        } else {
+          Start-Sleep -Milliseconds 1400
+        }
         $workspaceSnapshot = [AlulaArtifactMsaa]::Capture($child)
         $interactionResult.workspaceTreeNames = @($workspaceSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
         if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -like '*rust-mini*' -or $_ -eq 'src' -or $_ -eq 'Cargo.toml' }).Count -eq 0) {
           throw "Opening tests/fixtures/rust-mini did not populate the accessible workspace tree; names: $($interactionResult.workspaceTreeNames -join ' | ')"
         }
+        if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -eq 'src' }).Count -gt 0) {
+          [void][AlulaArtifactMsaa]::InvokeNamed($child, 'src')
+          Start-Sleep -Milliseconds 350
+          $expandedSnapshot = [AlulaArtifactMsaa]::Capture($child)
+          $interactionResult.workspaceTreeNames = @($expandedSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        }
+      }
+      function Open-ArtifactSourceFile() {
+        if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -eq 'main.rs' }).Count -gt 0 -and
+            [AlulaArtifactMsaa]::InvokeNamed($child, 'main.rs')) {
+          Start-Sleep -Milliseconds 1200
+          return
+        }
+        # If the file tree does not expose an invokable Rust item, use the
+        # application's Quick Open after explicitly focusing the editor.
+        Click-ArtifactEditor 0.67
+        Open-ArtifactFile 'main.rs'
+        Start-Sleep -Milliseconds 500
       }
       function Run-ArtifactPaletteCommand([string]$query) {
+        if ([AlulaArtifactMsaa]::InvokeNamed($child, $query)) {
+          Start-Sleep -Milliseconds 500
+          return
+        }
+        Click-ArtifactEditor 0.67
         Send-ArtifactKeys '^+p'
         Set-Clipboard -Value $query
         Send-ArtifactKeys '^v'
@@ -334,7 +410,7 @@ try {
       }
 
       Open-ArtifactWorkspace (Split-Path -Parent (Split-Path -Parent $fixtureFile))
-      Open-ArtifactFile 'main.rs'
+      Open-ArtifactSourceFile
       Start-Sleep -Milliseconds 500
       $child = [AlulaArtifactWindow]::GetWindow($window, 5)
       $openedSnapshot = [AlulaArtifactMsaa]::Capture($child)
@@ -398,7 +474,12 @@ try {
       if (!(Wait-ForArtifactText $sampleText)) { throw 'The saved sample could not be restored after the IME probe' }
 
       Run-ArtifactPaletteCommand '拆分编辑器'
-      Open-ArtifactFile 'main.rs'
+      if ([AlulaArtifactMsaa]::InvokeNamed($child, 'main.rs')) {
+        Start-Sleep -Milliseconds 900
+      } else {
+        Click-ArtifactEditor 0.76
+        Open-ArtifactFile 'main.rs'
+      }
       Click-ArtifactEditor 0.76
       Send-ArtifactKeys '^{END}'
       Paste-ArtifactText "`n// view-2"
