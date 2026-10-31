@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，属于 P15/发行门。Windows 11 当前 Release artifact run 41177214462 在 125%/dark 单配置下通过 Microsoft Pinyin、双视图保存回读与正常关闭；交互后截图存在大面积空白左侧区域，布局视觉验收 pending；Narrator 焦点/播报及 DPI/主题矩阵也 pending。用户指定的旧 run 41109679662 artifact 同机编辑/保存/IME/双视图交互通过但关闭为 0xC000041D，属于旧二进制。P04 / feat-026 是唯一活动 feature；P04.1–P04.12 已完成。最新 P04.12 / EDT-02c Linux 三击行选择用 Rust `lineBoundary` 补齐 LF，三平台 targetPlatform × LF/CRLF 来源/无终止符末行共 9 项通过；完整 `bash init.sh`（Flutter 313 项）、cargo fmt、Flutter analyze（0 issues）通过。证据：`docs/diagnostics/2026-10-31-p04/p04.12-mouse-triple-click.md`。P04.13 / EDT-02d 已登记：处理整行超出 16K 输入窗时的绝对范围选择；下一步先做 GitNexus impact，再开始该切片。原生 DRM Linux/macOS 原生行为仍 pending；500 MiB 留 P14。）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，属于 P15/发行门。Windows 11 当前 Release artifact run 41177214462 在 125%/dark 单配置下通过 Microsoft Pinyin、双视图保存回读与正常关闭；交互后截图存在大面积空白左侧区域，布局视觉验收 pending；Narrator 焦点/播报及 DPI/主题矩阵也 pending。用户指定的旧 run 41109679662 artifact 同机编辑/保存/IME/双视图交互通过但关闭为 0xC000041D，属于旧二进制。P04 / feat-026 是唯一活动 feature；P04.1–P04.13 已完成。最新 P04.13 / EDT-02d 在 16K 输入窗外保留整行绝对 UTF-16 selection，分块 Copy，Cut/Delete/Paste 走 Rust 文档操作和 undo/dirty/save；40,000 UTF-16 单元行在 Windows/Linux/macOS Flutter targetPlatform 下验证，纯 selection/copy 不改文档版本/磁盘，Cut 后保存回读一致。定向 3 项，鼠标/输入窗回归 22 项，完整 `bash init.sh`（Flutter 315 项）、cargo fmt、Flutter analyze（0 issues）通过。证据：`docs/diagnostics/2026-10-31-p04/p04.13-cross-window-line-selection.md`。P04.14 / EDT-02e 下一步处理跨窗 selection 的普通字符与 IME 替换语义。原生 DRM Linux/macOS 原生行为仍 pending；500 MiB 留 P14。）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。Windows 11 当前 Release artifact 在 125%/dark 单配置下通过系统 Microsoft Pinyin、双视图编辑/保存回读与正常关闭；交互后截图有大面积空白左侧区域，布局视觉验收 pending，Narrator 焦点/播报和 DPI/主题矩阵也未验证。旧 run 41109679662 artifact 的 WM_CLOSE 0xC000041D 仍保留为历史二进制结果。P04.1–P04.12 已完成；最新 EDT-02c 三击选择由 Windows/Linux/macOS targetPlatform × LF/CRLF 来源/无终止符末行共 9 项验证，Rust 权威全文/版本与磁盘字节不变。完整 `bash init.sh`（Flutter 313 项）、cargo fmt、Clippy、build_core 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.12-mouse-triple-click.md`。P04 / feat-026 仍是唯一活动 feature；P04.13 / EDT-02d 先补跨 16K 输入窗超长行的完整选择映射，再处理拖选与边缘自动滚动。原生 DRM Linux/macOS 平台验收仍 pending。
+- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。Windows 11 当前 Release artifact 在 125%/dark 单配置下通过系统 Microsoft Pinyin、双视图编辑/保存回读与正常关闭；交互后截图有大面积空白左侧区域，布局视觉验收 pending，Narrator 焦点/播报和 DPI/主题矩阵也未验证。旧 run 41109679662 artifact 的 WM_CLOSE 0xC000041D 仍保留为历史二进制结果。P04.1–P04.13 已完成；最新 EDT-02d 已登记绝对跨窗选择、40,000 UTF-16 单元 selection/copy/cut/save 对拍，三平台 targetPlatform 3 项通过；完整 `bash init.sh`（Flutter 315 项）、cargo fmt、Clippy、build_core 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.13-cross-window-line-selection.md`。P04 / feat-026 仍是唯一活动 feature；P04.14 / EDT-02e 接着处理跨窗选区的普通输入与 IME 替换，再登记拖选/边缘自动滚动。原生 DRM Linux/macOS 平台验收仍 pending。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -50,7 +50,7 @@
 
 ## 下一步
 
-1. 依据 `docs/10`、固定版本 source coverage 与 `docs/03`，拆解并登记 P04 剩余编辑命令/查找/片段/diff/merge 子切片，再做 GitNexus impact；保持一次只推进一个切片。
+1. 按 `docs/03` 开始 P04.14 / EDT-02e，先做 GitNexus impact，再实现并测试跨窗绝对 selection 的普通输入与 IME 替换；完成后做鼠标拖选/边缘自动滚动切片。
 2. 调查 Windows exact Release artifact run 41171194040 的 `flutter_windows.dll` WM_CLOSE fault；修复只进入新构建验收，历史 artifact 仍保留失败结果。
 3. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；Linux/Windows target usability 达标后再提供 macOS 测试包。P00–P13 完成前不做 500 MiB 数值优化；完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
 

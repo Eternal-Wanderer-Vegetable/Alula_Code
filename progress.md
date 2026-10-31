@@ -5,11 +5,17 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.12 / EDT-02c 完成）
+### 最新进展（2026-10-31，P04.13 / EDT-02d 完成）
+
+- P04.13 完成超长行跨 16K UTF-16 输入窗的绝对 selection：三击点在原生 selection 重居中前映射到 Rust 文档坐标，窗外端点不再截断；Flutter 仅保留本地 caret，全文 selection 通过现有 range painter 按可见窗裁剪。Rust 分块读取 Copy，Cut/Delete/Paste 走文档操作与 undo/dirty/save。
+- Windows/Linux/macOS Flutter targetPlatform 的 40,000 UTF-16 单元超长行测试确认选区两端都在当前输入窗外；纯选区和复制不改 Rust 全文/版本与磁盘字节，Cut 后显式保存回读一致。定向 3 项、鼠标选择/输入窗回归 22 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 315 项），cargo fmt 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.13-cross-window-line-selection.md`。
+- P04.14 / EDT-02e 单独补跨窗 selection 的普通输入与 IME 替换语义；之后再做拖选/边缘自动滚动。targetPlatform 自动化不替代 P15 原生键鼠、IME、读屏、DPI/主题验收；Windows 11 当前 artifact 的布局/读屏门仍待处理。既有自动化结果见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。
+
+### 阶段进展（2026-10-31，P04.12 / EDT-02c 完成）
 
 - P04.12 对齐 Code-OSS 三击 LineSelect：Linux 用 Rust `lineBoundary` 补齐默认选择漏掉的行尾 LF；Windows/Linux/macOS targetPlatform 下 LF、CRLF 来源（Rust 文本当前归一化为 LF）、无终止符末行各通过，fixture 含 emoji。Flutter/Rust 全文与版本及磁盘字节不变。
 - 定向 Flutter 9 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 313 项），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.12-mouse-triple-click.md`。
-- P04.12 的校正受 16K UTF-16 输入窗限制；整行跨窗时仍不能映射完整选择，已在 docs/03 登记 P04.13 / EDT-02d。下一步先处理超长行跨窗选择，再推进拖选与边缘自动滚动。Windows 11 artifact 自动化结果及仍待处理的布局/读屏门见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。
+- P04.12 的整行跨窗缺口由 P04.13 处理。Windows 11 artifact 自动化结果及仍待处理的布局/读屏门见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。
 
 ### 阶段进展（2026-10-31，P04.10 / EDT-02a 完成）
 
@@ -957,9 +963,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 继续关闭 P00.4 风险门：在真实 DRM 主机验证 WPE GBM/DMABUF，处理服务身份/许可边界，并完成 docs/04 三轮长时多场景采样。
-2. 主产品 `app/` 缺 Linux desktop runner；Flutter host toolchain 已就绪，`flutter build linux` 仍因项目未配置而无法开始。将 scaffold 工作按 docs/03 依赖排到后续跨平台阶段；独立 WPE probe 已有 Linux runner。
-3. P00/feat-022 完成前不启动依赖它的 P01；当前仍有 WPE 硬件、官方服务和产品内存验收阻塞。
+1. 依据 `docs/03` 开始 P04.14 / EDT-02e：为跨窗绝对 selection 映射普通字符输入与 IME 替换，先做 GitNexus impact；完成后再登记拖选与边缘自动滚动切片。
+2. 保持 P04 / feat-026 为唯一活动 feature；每片按 docs/03 验收、留证据并分阶段提交。
+3. EV-P03 Linux DRM、Windows 11 UIA/读屏/DPI/主题与 macOS 原生行为继续留在 P15 验收门；P00–P13 完成前不做 500 MiB 数值优化，全部计划完成后继续补齐 CI Release 与 v0.1.0 测试 PR。
 
 
 ## 今日会话（2026-10-29 第六十五轮）：完整复跑与同服务空闲对照

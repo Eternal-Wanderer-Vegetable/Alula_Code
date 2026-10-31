@@ -248,6 +248,7 @@ class RustTextInputField extends StatefulWidget {
     this.semanticsLabel,
     this.onTap,
     this.onAltClick,
+    this.onCrossWindowLineSelection,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
@@ -278,6 +279,7 @@ class RustTextInputField extends StatefulWidget {
   final String? semanticsLabel;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
+  final ValueChanged<TextSelection>? onCrossWindowLineSelection;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
@@ -336,7 +338,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       if (offset != null) widget.onAltClick?.call(offset);
     }
 
-    if (defaultTargetPlatform != TargetPlatform.linux ||
+    final supportsDesktopTripleClick =
+        defaultTargetPlatform == TargetPlatform.linux ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS;
+    if (!supportsDesktopTripleClick ||
         event.kind != PointerDeviceKind.mouse ||
         event.buttons != kPrimaryButton ||
         keyboard.isAltPressed ||
@@ -364,7 +370,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
     if (_mouseClickCount == 3) {
       _resetMouseClickSequence();
-      _selectLogicalLineAt(event.position);
+      final localOffset = _textOffsetAtGlobalPosition(event.position);
+      if (localOffset != null) {
+        final window = widget.inputWindow;
+        _selectLogicalLineAt(window.startUtf16 + localOffset);
+      }
     }
   }
 
@@ -375,7 +385,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _lastMouseClickDevice = null;
   }
 
-  void _selectLogicalLineAt(Offset globalPosition) {
+  void _selectLogicalLineAt(int documentOffsetUtf16) {
     final initialWindow = widget.inputWindow;
     final document = initialWindow.document;
     final documentId = document.id;
@@ -385,12 +395,15 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       final window = widget.inputWindow;
       if (window.document.id != documentId ||
           window.version != version ||
-          window.pendingText != null) {
+          (window.pendingText != null && window.pendingText != window.text)) {
         return;
       }
-      final localOffset = _textOffsetAtGlobalPosition(globalPosition);
-      if (localOffset == null) return;
-      final boundary = document.lineBoundary(window.startUtf16 + localOffset);
+      final requestedLocalOffset = documentOffsetUtf16 - window.startUtf16;
+      final localOffset =
+          requestedLocalOffset < 0 || requestedLocalOffset > window.text.length
+              ? window.text.length ~/ 2
+              : requestedLocalOffset;
+      final boundary = document.lineBoundary(documentOffsetUtf16);
       if (boundary.version != version) return;
 
       var selectionEnd = boundary.endUtf16;
@@ -411,7 +424,26 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
       final localStart = boundary.startUtf16 - window.startUtf16;
       final localEnd = selectionEnd - window.startUtf16;
+      final spansInputWindow = boundary.startUtf16 < window.startUtf16 ||
+          selectionEnd > window.endUtf16;
+      if (spansInputWindow) {
+        final callback = widget.onCrossWindowLineSelection;
+        if (callback == null) {
+          setSelection(TextSelection(
+            baseOffset: localStart.clamp(0, window.text.length).toInt(),
+            extentOffset: localEnd.clamp(0, window.text.length).toInt(),
+          ));
+        } else {
+          callback(TextSelection(
+            baseOffset: boundary.startUtf16,
+            extentOffset: selectionEnd,
+          ));
+          setSelection(TextSelection.collapsed(offset: localOffset));
+        }
+        return;
+      }
       if (localStart < 0 ||
+          localStart > window.text.length ||
           localEnd > window.text.length ||
           localStart > localEnd) {
         return;

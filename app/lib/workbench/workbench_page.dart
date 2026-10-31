@@ -1000,6 +1000,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String? beforeSnapshot,
     String? transactionId,
   }) {
+    if (forward.isNotEmpty) doc.crossWindowSelection = null;
     final retainedOperationChars = _operationPayloadChars([forward, inverse]);
     if (beforeSnapshot != null &&
         retainedOperationChars > _undoHistoryBudget.maxTotalChars) {
@@ -1055,6 +1056,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _setDocSelection(OpenDoc doc, TextSelection selection) =>
       _setDocSelections(doc, [selection]);
+
+  void _setCrossWindowLineSelection(OpenDoc doc, TextSelection selection) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null && window.pendingText != window.text ||
+        window.version != doc.doc.version ||
+        selection.start < 0 ||
+        selection.end > window.totalUtf16Length ||
+        selection.start == selection.end) {
+      return;
+    }
+    doc.selectionHistory.record(doc.selectionSet);
+    doc.crossWindowSelection = selection;
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
 
   void _moveWordPart({required bool left, bool extendSelection = false}) {
     final doc = _active;
@@ -1170,6 +1188,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (clampedSelections.isEmpty) return;
     final previousSet = doc.selectionSet;
     if (recordHistory) doc.selectionHistory.record(previousSet);
+    doc.crossWindowSelection = null;
     final oldAdditional = doc.additionalSelections;
     doc.additionalSelections = List.unmodifiable(clampedSelections.skip(1));
     doc.columnSelection = columnSelection;
@@ -1609,6 +1628,120 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }).toList(growable: false);
   }
 
+  String _readDocumentRange(OpenDoc doc, int startUtf16, int endUtf16) {
+    if (startUtf16 < 0 || endUtf16 < startUtf16) {
+      throw RangeError('Invalid document range $startUtf16..$endUtf16');
+    }
+    final expectedVersion = doc.doc.version;
+    final text = StringBuffer();
+    var cursor = startUtf16;
+    while (cursor < endUtf16) {
+      final range = doc.doc.readRange(
+        cursor,
+        maxLenUtf16:
+            (endUtf16 - cursor).clamp(1, maxDocReadRangeUtf16 - 1).toInt(),
+      );
+      if (range.version != expectedVersion ||
+          range.startUtf16 != cursor ||
+          range.endUtf16 <= cursor ||
+          range.endUtf16 > endUtf16) {
+        throw StateError('Document changed while reading a selected range');
+      }
+      text.write(range.text);
+      cursor = range.endUtf16;
+    }
+    return text.toString();
+  }
+
+  Future<void> _copyCrossWindowSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> _cutCrossWindowSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.crossWindowSelection;
+    if (selection == null || selection.isCollapsed) return;
+    final version = doc.doc.version;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted ||
+        doc.doc.version != version ||
+        doc.crossWindowSelection != selection) {
+      return;
+    }
+    _replaceCrossWindowSelection(doc, '', selectedText: text, version: version);
+  }
+
+  void _replaceCrossWindowSelection(
+    OpenDoc doc,
+    String replacement, {
+    String? selectedText,
+    int? version,
+  }) {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    final expectedVersion = version ?? doc.doc.version;
+    if (doc.doc.version != expectedVersion) return;
+    final removed =
+        selectedText ?? _readDocumentRange(doc, selection.start, selection.end);
+    final start = selection.start;
+    final forward = <TextOp>[
+      if (selection.start != selection.end)
+        TextOp.delete(selection.start, selection.end - selection.start),
+      if (replacement.isNotEmpty) TextOp.insert(start, replacement),
+    ];
+    if (forward.isEmpty) {
+      doc.crossWindowSelection = null;
+      doc.replaceInputWindow(start);
+      if (mounted) setState(() {});
+      return;
+    }
+    final inverse = <TextOp>[
+      if (replacement.isNotEmpty) TextOp.delete(start, replacement.length),
+      if (removed.isNotEmpty) TextOp.insert(start, removed),
+    ];
+    doc.doc.applyWith(expectedVersion, forward);
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selection.extentOffset,
+      afterCaret: start + replacement.length,
+      coalesce: false,
+    );
+    doc.crossWindowSelection = null;
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
+    doc.replaceInputWindow(start + replacement.length);
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  Future<void> _pasteCrossWindowSelection(OpenDoc doc) async {
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    _flushInput(doc, commitComposition: true);
+    final version = doc.doc.version;
+    final clipboard = await Clipboard.getData('text/plain');
+    if (!mounted ||
+        clipboard == null ||
+        doc.doc.version != version ||
+        doc.crossWindowSelection != selection) {
+      return;
+    }
+    _replaceCrossWindowSelection(
+      doc,
+      clipboard.text ?? '',
+      version: version,
+    );
+  }
+
   Future<void> _copyMultiSelections(OpenDoc doc) async {
     await Clipboard.setData(
       ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
@@ -1789,6 +1922,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final isActiveOfFocused =
         owner.region == _focusedRegion && identical(owner.active, doc);
     final ops = delta.operations;
+    if (ops.isNotEmpty) doc.crossWindowSelection = null;
     if (ops.isNotEmpty && !doc.undoRedoBusy) {
       final now = DateTime.now();
       final coalesce = doc.lastEditAt != null &&
@@ -1843,6 +1977,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (siblings.isEmpty) return 0;
     final total = source.doc.readRange(0, maxLenUtf16: 2).totalUtf16Length;
     for (final view in siblings) {
+      view.crossWindowSelection = null;
       if (view.inputWindow.pendingCount > 0 ||
           view.inputWindow.pendingText != null) {
         // Keep the local draft intact. This indicates a focus/flush ordering
@@ -3076,12 +3211,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return _editorFocusNodes.putIfAbsent(_focusKeyFor(g, doc), () {
       return FocusNode(onKeyEvent: (node, event) {
         if (event is! KeyDownEvent) return KeyEventResult.ignored;
+        final meta = HardwareKeyboard.instance.isMetaPressed;
         final ctrl = HardwareKeyboard.instance.isControlPressed;
         final shift = HardwareKeyboard.instance.isShiftPressed;
         final alt = HardwareKeyboard.instance.isAltPressed;
         final key = event.logicalKey;
+        final active = _active;
+        final commandModifier =
+            defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
+        if (active?.crossWindowSelection != null) {
+          if (commandModifier && key == LogicalKeyboardKey.keyC) {
+            unawaited(_copyCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (commandModifier && key == LogicalKeyboardKey.keyX) {
+            unawaited(_cutCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (commandModifier && key == LogicalKeyboardKey.keyV) {
+            unawaited(_pasteCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.delete ||
+              key == LogicalKeyboardKey.backspace) {
+            _replaceCrossWindowSelection(active!, '');
+            return KeyEventResult.handled;
+          }
+        }
+        final activeCrossSelection = active?.crossWindowSelection;
         if (key == LogicalKeyboardKey.escape &&
-            _active?.additionalSelections.isNotEmpty == true) {
+            active != null &&
+            activeCrossSelection != null) {
+          _setDocSelection(
+            active,
+            TextSelection.collapsed(offset: activeCrossSelection.end),
+          );
+          return KeyEventResult.handled;
+        }
+        if (key == LogicalKeyboardKey.escape &&
+            active?.additionalSelections.isNotEmpty == true) {
           final active = _active!;
           _setDocSelection(active, active.selection);
           return KeyEventResult.handled;
@@ -3117,7 +3285,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _runCommand(shift ? 'editor.cursorRedo' : 'editor.cursorUndo');
             return KeyEventResult.handled;
           }
-          final active = _active;
           if (active != null && active.additionalSelections.isNotEmpty) {
             if (key == LogicalKeyboardKey.keyC) {
               unawaited(_copyMultiSelections(active));
@@ -3197,6 +3364,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _finishHistoryChange(OpenDoc doc, String status) {
+    doc.crossWindowSelection = null;
     _updateDirty(doc);
     _syncCommandContext();
     doc.lastEditAt = null;
@@ -3862,6 +4030,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final alt = HardwareKeyboard.instance.isAltPressed;
     final gotoModifier = control || meta;
     if (!gotoModifier && !alt) {
+      if (view.crossWindowSelection != null) {
+        view.crossWindowSelection = null;
+        if (mounted) setState(() {});
+        _syncCommandContext();
+      }
       if (view.additionalSelections.isNotEmpty) {
         final previous = view.selectionSet;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -5413,6 +5586,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ...diagnosticDecorations,
       ...workspaceSearchDecorations,
     ];
+    final crossWindowSelection = active.crossWindowSelection;
+    if (crossWindowSelection != null) {
+      rangeDecorations.add(
+        EditorRangeDecoration(
+          documentVersion: active.inputWindow.version,
+          startUtf16: crossWindowSelection.start,
+          endUtf16: crossWindowSelection.end,
+          backgroundColor:
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.34),
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -5518,6 +5703,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                             newValue.selection) {
                                       return;
                                     }
+                                    active.crossWindowSelection = null;
                                     active.selectionHistory
                                         .record(active.selectionSet);
                                     active.additionalSelections = const [];
@@ -5567,6 +5753,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     ]);
                                   });
                                 },
+                                onCrossWindowLineSelection: (selection) =>
+                                    _setCrossWindowLineSelection(
+                                  active,
+                                  selection,
+                                ),
                                 onError: (error) {
                                   if (!_disposing &&
                                       mounted &&
@@ -6133,6 +6324,7 @@ class OpenDoc {
   List<TextOp> pendingInputOperations = const [];
   int pendingInputWindowShiftUtf16 = 0;
   ColumnSelectionState? columnSelection;
+  TextSelection? crossWindowSelection;
   bool _viewDisposed = false;
 
   /// Current Flutter value is bounded by [inputWindow.maxWindowUtf16].
@@ -6141,6 +6333,8 @@ class OpenDoc {
 
   /// Current selection converted from the input-window-local UTF-16 offsets.
   TextSelection get selection {
+    final crossWindow = crossWindowSelection;
+    if (crossWindow != null) return crossWindow;
     final local = editingValue.selection;
     if (!local.isValid) {
       return TextSelection.collapsed(offset: inputWindow.startUtf16);
