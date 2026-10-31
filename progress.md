@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.15 / EDT-02f 完成）
+### 最新进展（2026-10-31，P04.16 / EDT-03a 完成）
+
+- P04.16 修正“跳过匹配”行为为 VS Code 的 `editor.action.moveSelectionToNextFindMatch`：Ctrl/Command+K 后 Ctrl/Command+D 移动最后一个匹配选区，保留主选区；Ctrl/Command+D 仍添加下一个 occurrence。bounded Rust scanner 跳过已被其他选区覆盖的匹配，selection history 支持 Ctrl+U 撤销和 Ctrl+Shift+U 重做。
+- `flutter test --no-pub test/keybindings_test.dart test/workbench_multi_selection_test.dart` 通过 22 项；`flutter analyze --no-pub` 0 issues，`cargo fmt --all -- --check` 通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 341 项）。由 HEAD 和暂存补丁组成的隔离快照也完整 `bash init.sh` 通过，cargo fmt、Flutter analyze 均通过。报告：`docs/diagnostics/2026-10-31-p04/p04.16-move-last-occurrence-selection.md`。
+- GitNexus `_selectNextOccurrence` 为 UNKNOWN（该工作树私有符号不在提交索引）；外围 `WorkbenchPage` upstream 为 CRITICAL（115 个符号、135 条流程、20 个模块）。代码路径经源码核对，风险和索引限制保留。P15 的原生键盘/IME/读屏/DPI 验收仍待验证。
+
+### 前一片进展（2026-10-31，P04.15 / EDT-02f 完成）
 
 - P04.15 实现跨窗鼠标拖选和边缘自动滚动：指针从有界输入窗拖至边缘后，选区端点以 Rust 绝对 UTF-16 坐标连续更新；窗口重居中后可继续跨页拖动。滚动计时器以 16 ms 节拍、最高 3,600 px/s 运行，并在松开、取消、失焦、dispose、返回视口或到达滚动边界时停止。绝对 selection 仍使用既有 range painter 与 Copy/Cut/Delete 路径。
 - 新三平台 TargetPlatform fixture 9 项通过：正向/反向跨 16K 窗口、emoji、范围装饰、Copy/Cut/Delete 与保存回读；纯选区不改 Rust 文本/版本或磁盘。计时器松开/取消/失焦/销毁清理均有断言。跨窗行选择 18 项、鼠标选择 3 项、Rust 输入控件 7 项、输入窗 10 项通过。

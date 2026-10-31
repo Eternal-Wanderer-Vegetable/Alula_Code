@@ -193,7 +193,6 @@ class KeybindingSet {
     'editor.addCursorAbove': 'ctrl+alt+arrowup',
     'editor.addCursorBelow': 'ctrl+alt+arrowdown',
     'editor.selectNextOccurrence': 'ctrl+d',
-    'editor.skipNextOccurrence': 'ctrl+shift+d',
     'editor.selectAllOccurrences': 'ctrl+shift+l',
     'editor.columnSelectUp': 'alt+shift+arrowup',
     'editor.columnSelectDown': 'alt+shift+arrowdown',
@@ -223,6 +222,8 @@ class KeybindingSet {
       case TargetPlatform.macOS:
         result['workbench.action.navigateBack'] = 'ctrl+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result['editor.selectNextOccurrence'] = 'cmd+d';
+        result['editor.selectAllOccurrences'] = 'cmd+shift+l';
         result['editor.wordPartLeft'] = 'ctrl+alt+arrowleft';
         result['editor.wordPartLeftSelect'] = 'ctrl+alt+shift+arrowleft';
         result['editor.wordPartRight'] = 'ctrl+alt+arrowright';

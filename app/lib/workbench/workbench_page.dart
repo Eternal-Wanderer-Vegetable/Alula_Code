@@ -380,10 +380,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+Alt+Down', enablement: 'editorTextFocus');
     reg('editor.selectNextOccurrence', '编辑器', '添加下一个匹配项',
         () async => _selectNextOccurrence(),
-        shortcut: 'Ctrl+D', enablement: 'editorTextFocus');
-    reg('editor.skipNextOccurrence', '编辑器', '跳过下一个匹配项',
-        () async => _selectNextOccurrence(skipMatches: 1),
-        shortcut: 'Ctrl+Shift+D', enablement: 'editorTextFocus');
+        shortcut:
+            defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+D' : 'Ctrl+D',
+        enablement: 'editorTextFocus');
+    reg('editor.action.moveSelectionToNextFindMatch', '编辑器', '移动最后选区到下一个匹配项',
+        () async => _moveLastSelectionToNextOccurrence(),
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+K Cmd+D'
+            : 'Ctrl+K Ctrl+D',
+        enablement: 'editorTextFocus');
     reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
         () async => _selectAllOccurrences(),
         shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
@@ -1384,6 +1389,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return low < end && high > start;
   }
 
+  int? _nextUnselectedOccurrence(
+    OpenDoc doc, {
+    required String needle,
+    required int startAfterUtf16,
+    required List<TextSelection> existingSelections,
+  }) {
+    final total = doc.inputWindow.totalUtf16Length;
+    final startAfter = startAfterUtf16.clamp(0, total).toInt();
+    int? found;
+
+    void scanRange(int start, int end) {
+      if (found != null) return;
+      for (final offset in findTextOccurrenceOffsets(
+        needle: needle,
+        totalUtf16Length: total,
+        startUtf16: start,
+        endUtf16: end,
+        readRange: doc.doc.readRange,
+      )) {
+        final matchEnd = offset + needle.length;
+        if (existingSelections.any(
+          (selection) => _selectionOverlapsMatch(selection, offset, matchEnd),
+        )) {
+          continue;
+        }
+        found = offset;
+        return;
+      }
+    }
+
+    scanRange(startAfter, total);
+    scanRange(0, startAfter);
+    return found;
+  }
+
   (int, int)? _remoteCaretDeletionRange(
     OpenDoc doc,
     int caret, {
@@ -1552,7 +1592,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.additionalSelections = List.unmodifiable(remoteSelections);
   }
 
-  void _selectNextOccurrence({int skipMatches = 0}) {
+  void _selectNextOccurrence() {
     final doc = _active;
     if (doc == null) return;
     _flushInput(doc);
@@ -1565,41 +1605,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final selectionEnd = primary.baseOffset < primary.extentOffset
         ? primary.extentOffset
         : primary.baseOffset;
-    final total = doc.inputWindow.totalUtf16Length;
     final existing = normalizeSelectionSet([
       primary,
       ...doc.additionalSelections,
     ]);
-    var remaining = skipMatches;
-    int? found;
-
-    void scanRange(int start, int end) {
-      if (found != null) return;
-      for (final offset in findTextOccurrenceOffsets(
-        needle: needle,
-        totalUtf16Length: total,
-        startUtf16: start,
-        endUtf16: end,
-        readRange: doc.doc.readRange,
-      )) {
-        final matchEnd = offset + needle.length;
-        if (existing.any(
-          (selection) => _selectionOverlapsMatch(selection, offset, matchEnd),
-        )) {
-          continue;
-        }
-        if (remaining > 0) {
-          remaining--;
-          continue;
-        }
-        found = offset;
-        return;
-      }
-    }
-
-    scanRange(selectionEnd, total);
-    scanRange(0, selectionEnd);
-    final foundOffset = found;
+    final foundOffset = _nextUnselectedOccurrence(
+      doc,
+      needle: needle,
+      startAfterUtf16: selectionEnd,
+      existingSelections: existing,
+    );
     if (foundOffset == null) return;
     final match = TextSelection(
       baseOffset: foundOffset,
@@ -1612,6 +1627,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       doc,
       matchOutsideWindow ? [match, ...existing] : [...existing, match],
     );
+  }
+
+  void _moveLastSelectionToNextOccurrence() {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.isEmpty) return;
+    final movingIndex = selections.length - 1;
+    final moving = selections[movingIndex];
+    final startAfter = moving.baseOffset < moving.extentOffset
+        ? moving.extentOffset
+        : moving.baseOffset;
+    final remaining = [...selections]..removeAt(movingIndex);
+    final foundOffset = _nextUnselectedOccurrence(
+      doc,
+      needle: needle,
+      startAfterUtf16: startAfter,
+      existingSelections: remaining,
+    );
+    if (foundOffset == null) return;
+    remaining.add(TextSelection(
+      baseOffset: foundOffset,
+      extentOffset: foundOffset + needle.length,
+    ));
+    _setDocSelections(doc, remaining);
   }
 
   void _selectAllOccurrences() {
@@ -3310,6 +3359,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 焦点链更下方注册了 Ctrl+Z/Y，晚于焦点节点处理器，且会双栈打架
   /// （测试环境还会死锁）。
   final Map<String, FocusNode> _editorFocusNodes = {};
+  Timer? _pendingMoveSelectionChordTimer;
+  bool _awaitingMoveSelectionChord = false;
 
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
       '${group.region}:${doc.id}';
@@ -3328,6 +3379,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
         final activeHasComposition =
             active?.inputWindow.hasComposition ?? false;
+        if (_awaitingMoveSelectionChord) {
+          if (key == LogicalKeyboardKey.controlLeft ||
+              key == LogicalKeyboardKey.controlRight ||
+              key == LogicalKeyboardKey.metaLeft ||
+              key == LogicalKeyboardKey.metaRight ||
+              key == LogicalKeyboardKey.shiftLeft ||
+              key == LogicalKeyboardKey.shiftRight ||
+              key == LogicalKeyboardKey.altLeft ||
+              key == LogicalKeyboardKey.altRight) {
+            return KeyEventResult.ignored;
+          }
+          _pendingMoveSelectionChordTimer?.cancel();
+          _pendingMoveSelectionChordTimer = null;
+          _awaitingMoveSelectionChord = false;
+          if (commandModifier &&
+              !shift &&
+              !alt &&
+              key == LogicalKeyboardKey.keyD) {
+            _runCommand('editor.action.moveSelectionToNextFindMatch');
+            return KeyEventResult.handled;
+          }
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyK) {
+          _awaitingMoveSelectionChord = true;
+          _pendingMoveSelectionChordTimer = Timer(
+            const Duration(seconds: 5),
+            () => _awaitingMoveSelectionChord = false,
+          );
+          return KeyEventResult.handled;
+        }
+        if (commandModifier && !shift && key == LogicalKeyboardKey.keyD) {
+          _runCommand('editor.selectNextOccurrence');
+          return KeyEventResult.handled;
+        }
         if (active?.crossWindowSelection != null && !activeHasComposition) {
           if (commandModifier && key == LogicalKeyboardKey.keyC) {
             unawaited(_copyCrossWindowSelection(active!));
@@ -3379,12 +3467,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
           if (key == LogicalKeyboardKey.keyH && !shift) {
             _runCommand('editor.replace');
-            return KeyEventResult.handled;
-          }
-          if (key == LogicalKeyboardKey.keyD) {
-            _runCommand(shift
-                ? 'editor.skipNextOccurrence'
-                : 'editor.selectNextOccurrence');
             return KeyEventResult.handled;
           }
           if (key == LogicalKeyboardKey.keyL && shift) {
@@ -4642,6 +4724,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _disposing = true;
     _pendingDefinitionPointers.clear();
+    _pendingMoveSelectionChordTimer?.cancel();
     _pollTimer?.cancel();
     _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();

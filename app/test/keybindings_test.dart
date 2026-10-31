@@ -26,6 +26,22 @@ void main() {
   });
 
   group('KeybindingSet', () {
+    test('occurrence selection defaults use platform commands', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      expect(
+        windows.commandForChord(parseChord('ctrl+d')!),
+        'editor.selectNextOccurrence',
+      );
+      expect(windows.commandForChord(parseChord('ctrl+shift+d')!), isNull);
+
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        mac.commandForChord(parseChord('cmd+d')!),
+        'editor.selectNextOccurrence',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+d')!), isNull);
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
@@ -68,7 +84,8 @@ void main() {
         windows.commandForChord(parseChord('alt+arrowright')!),
         'workbench.action.navigateForward',
       );
-      expect(windows.commandForChord(parseChord('ctrl+alt+arrowleft')!), isNull);
+      expect(
+          windows.commandForChord(parseChord('ctrl+alt+arrowleft')!), isNull);
     });
 
     test('默认表可解析且包含核心键位', () {

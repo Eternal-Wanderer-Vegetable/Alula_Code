@@ -287,6 +287,87 @@ void main() {
     expect(tester.widget<TextField>(editor).controller!.text, 'bar bar');
   });
 
+  testWidgets('Ctrl+K Ctrl+D moves the last selected occurrence forward',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-move-last-occurrence');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/sample.txt').writeAsStringSync('foo foo foo foo');
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection(baseOffset: 0, extentOffset: 3);
+    await tester.pump();
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+
+    var field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections, const [
+      TextSelection(baseOffset: 4, extentOffset: 7),
+    ]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+
+    field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(controller.selection,
+        const TextSelection(baseOffset: 0, extentOffset: 3));
+    expect(field.additionalSelections, const [
+      TextSelection(baseOffset: 8, extentOffset: 11),
+    ]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyU);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections, const [
+      TextSelection(baseOffset: 4, extentOffset: 7),
+    ]);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyU);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.additionalSelections, const [
+      TextSelection(baseOffset: 8, extentOffset: 11),
+    ]);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Ctrl+D finds and reveals an occurrence outside the input window',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-multicursor-range');

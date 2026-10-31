@@ -1,16 +1,16 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P04.15 / EDT-02f 完成；P04.1–P04.15 已完成，P04 / feat-026 仍进行中。跨窗鼠标拖选现支持正反向绝对 UTF-16 selection、16K 输入窗重居中、视口边缘自动滚动、Copy/Cut/Delete 和保存回读；9 个三平台 TargetPlatform 新用例及跨窗 18、鼠标 3、输入控件 7、输入窗 10 项回归通过。完整 `bash init.sh` EXIT=0（Flutter 339、Rust workspace、Clippy、build_core），cargo fmt 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.15-cross-window-mouse-drag.md`。Windows 11 exact artifact 自动化矩阵 run `41187736069` 已完成：浅/深配置复现历史二进制 `0xC000041D`；Narrator UIA 未暴露编辑器语义，14 次 Tab 都停在窗口根；同 SHA 的 14 项源交互测试通过。报告：`docs/diagnostics/2026-10-31-p03/p03.7-windows11-theme-narrator-41187736069.md`。EV-P03-WIN11-UI-A11Y-DPI、原生 DRM Linux 与 macOS 原生验收仍 pending；500 MiB 留 P14。）
+> Last Updated：2026-10-31（P04.16 / EDT-03a 完成；P04.1–P04.16 已完成，P04 / feat-026 仍进行中。Ctrl/Command+K Ctrl/Command+D 移动最后 occurrence selection，Ctrl/Command+D 添加下一个匹配；支持 selection undo/redo。定向 22 项、完整 `bash init.sh` 与隔离暂存快照均 EXIT=0（Flutter 341）、cargo fmt 与 Flutter analyze 通过。证据：`docs/diagnostics/2026-10-31-p04/p04.16-move-last-occurrence-selection.md`。P15 原生平台门仍待验证，500 MiB 留 P14。）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。Windows 11 当前构建在 125%/dark 单配置下有编辑、保存回读、Microsoft Pinyin、双视图和关闭通过，但交互后截图左侧空区仍需视觉复核。自动化精确旧 run 41109679662 artifact 的 run 41187736069 在浅/深主题下复现历史关闭异常；Narrator UIA 语义/焦点断言失败；该 runner 无 IMM context、96 DPI，且不录制读屏语音。报告 `docs/diagnostics/2026-10-31-p03/p03.7-windows11-theme-narrator-41187736069.md`。P04.1–P04.15 已完成，P04 / feat-026 仍在进行中；最新 EDT-02f 支持跨窗正反向拖选、自动滚动、Copy/Cut/Delete 与保存回读。完整 `bash init.sh`（Flutter 339）、cargo fmt、Clippy、build_core 和 Flutter analyze（0 issues）通过；报告 `docs/diagnostics/2026-10-31-p04/p04.15-cross-window-mouse-drag.md`。下一步从 docs/03、docs/11 选择尚未完成的 EDT 原子项；原生 DRM Linux/macOS 与 Windows 11 视觉/读屏仍 pending。
+- 当前状态更新（2026-10-31）：P03 / feat-025 的实现出口已关闭，EV-P03-* 留待 P15。Windows 11 exact historical artifact run `41187736069` 仍记录关闭 `0xC000041D` 与 Narrator UIA 语义/焦点门失败；该结果不外推到新构建。P04.1–P04.16 已完成，feat-026 仍进行中；最新 EDT-03a 实现 Ctrl/Command+K Ctrl/Command+D 移动最后 occurrence selection，定向 22 项及当前/隔离暂存快照完整 `bash init.sh`（Flutter 341）通过。P15 原生 DRM Linux、Windows 11 视觉/读屏/IME/DPI 与 macOS 仍 pending。
 
-- EDT-02f 涉及 `app/lib/editor/rust_text_input_field.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/workbench_cross_window_drag_selection_test.dart` 与对应 P04.15 证据/状态文件。提交前须选择性暂存 workbench_page.dart 的两个 EDT-02f hunk，保留该文件里原有 Git/SCM 用户改动；其他既有工作树改动均不纳入本切片提交。
-- Next Session 首步：阅读 `docs/03` 与 `docs/11`，把 EDT-03 多光标剩余项拆为下一个原子切片并先做 GitNexus upstream impact。继续保留 P15 平台验收待验证状态，不推进数值化内存优化。
+- P04.16 涉及 `app/lib/workbench/keybindings.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/keybindings_test.dart`、`app/test/workbench_multi_selection_test.dart` 与本片证据/状态文件。`workbench_page.dart` 与 `keybindings.dart` 含本片以外的既有工作树改动；提交时只暂存 P04.16 对应 hunks。
+- Next Session 首步：阅读 `docs/03` 与 `docs/11`，继续拆 EDT-03 剩余多光标/box-selection 原子项并先做 GitNexus upstream impact。保持 P15 平台验收 pending，不推进 P14 数值化内存优化。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
