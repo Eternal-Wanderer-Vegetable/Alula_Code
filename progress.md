@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### P15 Windows 11 自动回放（2026-11-01 归档）
+
+- 自动运行 GitHub Actions [41221325692](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41221325692)，下载并运行指定 artifact run 41109679662。Windows 11 Enterprise build 26200 ARM64/x64 emulation 在 96 DPI 下完成可见客户区、MSAA、双视图和保存回读；独立源码交互 job 的 14 项 Flutter Windows 桌面测试全部通过。
+- Release artifact 仍未过验收：light registry 设置下渲染仍为暗色；runner 没有 IMM context，不能验证真实 Pinyin；Narrator UIA 只有窗口/FlutterView，没有四项必需语义节点；`WM_CLOSE` 与无无障碍查询对照都以 `0xC000041D` 退出。截图、metadata、Narrator/关闭诊断与 source log：`docs/diagnostics/2026-11-01-p03/p03.7-windows11-hosted-artifact-41221325692.md`。
+- P03.7 / EV-P03-WIN11-UI-A11Y-DPI 与 P15 保持 pending。真实 x64 Windows 11 的 125%/Pinyin 结果仍以既有 exact-artifact 报告为准；本次 96 DPI ARM64 emulation 不替代原生 x64、语音采集或 DPI 矩阵。
+
+
 ### 最新进展（2026-11-01，P04.43 / EDT-08c 完成）
 
 - 新增固定 Code-OSS `editor.action.transformToCamelcase` 命令，无默认快捷键。Rust 按固定规则分别处理单行与多行分隔符、Unicode 首词大小写边界、ECMAScript whitespace，以及后续片段首 UTF-16 code unit；通过 ABI v29 的 NUL-safe JSON FFI 调用。编辑事务沿用 P04.41/42 的 Rust 权威范围、selection/caret 映射、版本/预算检查、undo/redo、dirty、Find、双视图与保存。
