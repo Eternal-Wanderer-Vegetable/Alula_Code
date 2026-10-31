@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.39 / EDT-07f 完成）
+
+- 完成升序/降序 Sort Lines 命令，按固定 Code-OSS 行为处理单行选区全文排序、列 1 排除末行、全选区原子 no-op、降序反转、多选计划、版本/重叠/撤销预算与 100,000 行上限；Rust TextOps 单批提交并同步 selection、undo/redo、dirty、Find、输入窗和兄弟视图。无 ABI 改动。区域排序仍有已登记差异：Dart code-unit comparison 不能匹配上游 runtime `Intl.Collator` 的语言/大小写/重音结果。
+- 三平台 TargetPlatform 工作台测试 6 项通过，覆盖升降序、全文 caret、列 1 端点、分屏、undo/redo、BOM+CRLF 保存回读与多光标原子取消。精确 detached `HEAD bd24edf` 快照的 `bash init.sh` 通过：Rust workspace、Clippy、build_core、Flutter 488；cargo fmt 检查通过；`app/` Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.39-sort-lines.md`。
+- GitNexus 编辑前 WorkbenchPage impact 为 CRITICAL，命令注册与 KeybindingSet 为 LOW；fresh index 为 8,715 nodes / 27,433 edges / 389 reported flows，但 713/913 入口未排名、341 callees 跳过、9 walks 达预算。检测结果保留 CRITICAL/截断，不降级。
+
 ### 最新进展（2026-11-01，P04.38 / EDT-07e 完成）
 
 - 完成固定 Code-OSS Join Lines 命令。macOS 用 Ctrl+J，面板切换改 Cmd+J；Windows/Linux 继续用 Ctrl+J 切面板，合并行从命令面板调用。Rust UTF-16 行范围和撤销预算内文本读取，经版本校验后一次 TextOps 批量应用，保持 undo/redo、dirty、Find、分屏同步和保存路径，无 ABI 变化。

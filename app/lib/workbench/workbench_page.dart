@@ -643,6 +643,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.moveLinesDownAction', '编辑器', '向下移动行',
         () => _moveLines(down: true),
         shortcut: 'Alt+Down', enablement: 'editorTextFocus');
+    reg('editor.action.sortLinesAscending', '编辑器', '按升序排序行',
+        () => _sortLines(descending: false),
+        enablement: 'editorTextFocus');
+    reg('editor.action.sortLinesDescending', '编辑器', '按降序排序行',
+        () => _sortLines(descending: true),
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -3545,6 +3551,221 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _setDocSelections(doc, clampedSelections);
     }
     if (mounted) setState(() => _statusDetail = down ? '已向下移动行' : '已向上移动行');
+  }
+
+  Future<void> _sortLines({required bool descending}) async {
+    const maxSortLines = 100000;
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    var selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted && selections.length > maxDocLineDeleteSelections) {
+        setState(() =>
+            _statusDetail = '行排序已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final documentStart = doc.doc.lineOffset(0);
+    if (documentStart.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '行排序未应用：文档版本已变化');
+      return;
+    }
+
+    if (selections.length == 1) {
+      try {
+        final selection = selections.single;
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的行排序选区');
+        }
+        if (start.line == end.line) {
+          // Code-OSS sorts the complete document for a single-line selection.
+          selections = [
+            TextSelection(
+              baseOffset: 0,
+              extentOffset: documentStart.totalUtf16Length,
+            ),
+          ];
+        }
+      } on Object catch (error) {
+        if (mounted) setState(() => _statusDetail = '行排序未应用：$error');
+        return;
+      }
+    }
+
+    final plans = <({
+      TextSelection selection,
+      bool primary,
+      int start,
+      int end,
+      String removed,
+      String inserted,
+    })>[];
+    var payloadChars = 0;
+    try {
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的行排序范围');
+        }
+
+        var endLine = end.line;
+        if (end.character == 0) endLine--;
+        // A one-line range cannot be sorted. Code-OSS cancels the whole
+        // command if any selection has no sortable line range.
+        if (start.line >= endLine) return;
+        final lineCount = endLine - start.line + 1;
+        if (lineCount > maxSortLines) {
+          throw StateError('排序范围超过 $maxSortLines 行上限');
+        }
+
+        final first = doc.doc.lineOffset(start.line);
+        final last = doc.doc.lineOffset(endLine);
+        if (first.version != expectedVersion ||
+            last.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的行排序边界');
+        }
+        final boundary = doc.doc.lineBoundary(last.offsetUtf16);
+        if (boundary.version != expectedVersion ||
+            boundary.line != endLine ||
+            boundary.endUtf16 < first.offsetUtf16) {
+          throw StateError('Rust 返回了无效的行排序边界');
+        }
+
+        final rangeLength = boundary.endUtf16 - first.offsetUtf16;
+        final remaining = _undoHistoryBudget.maxTotalChars - payloadChars;
+        if (rangeLength < 0 || rangeLength > remaining ~/ 2) {
+          throw StateError(
+              '行排序撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final removed = _readDocumentRange(
+          doc,
+          first.offsetUtf16,
+          boundary.endUtf16,
+        );
+        if (removed.length != rangeLength) {
+          throw StateError('Rust 返回的行排序文本长度与 UTF-16 范围不符');
+        }
+
+        final lines = removed.split('\n');
+        if (lines.length != lineCount) {
+          throw StateError('Rust 返回的行排序内容与行数不符');
+        }
+        final sorted = List<String>.of(lines)..sort((a, b) => a.compareTo(b));
+        final ordered = descending ? sorted.reversed.toList() : sorted;
+        final inserted = ordered.join('\n');
+        if (inserted == removed) return;
+        if (inserted.length != removed.length) {
+          throw StateError('行排序改变了文本长度');
+        }
+        payloadChars += removed.length + inserted.length;
+        plans.add((
+          selection: selection,
+          primary: index == 0,
+          start: first.offsetUtf16,
+          end: boundary.endUtf16,
+          removed: removed,
+          inserted: inserted,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '行排序未应用：$error');
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '行排序未应用：文档版本已变化');
+      return;
+    }
+
+    plans.sort((a, b) => a.start.compareTo(b.start));
+    for (var index = 1; index < plans.length; index++) {
+      if (plans[index].start < plans[index - 1].end) {
+        if (mounted) {
+          setState(() => _statusDetail = '行排序已取消：多个选区的行范围重叠');
+        }
+        return;
+      }
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in plans.reversed) {
+      forward
+        ..add(TextOp.delete(plan.start, plan.end - plan.start))
+        ..add(TextOp.insert(plan.start, plan.inserted));
+      inverse
+        ..add(TextOp.delete(plan.start, plan.inserted.length))
+        ..add(TextOp.insert(plan.start, plan.removed));
+    }
+
+    TextSelection mapSelection(
+      ({
+        TextSelection selection,
+        bool primary,
+        int start,
+        int end,
+        String removed,
+        String inserted,
+      }) plan,
+    ) {
+      final forwardSelection =
+          plan.selection.baseOffset <= plan.selection.extentOffset;
+      final mappedStart = plan.start;
+      final mappedEnd = plan.selection.end <= plan.end
+          ? plan.start + plan.inserted.length
+          : plan.selection.end;
+      return TextSelection(
+        baseOffset: forwardSelection ? mappedStart : mappedEnd,
+        extentOffset: forwardSelection ? mappedEnd : mappedStart,
+        affinity: plan.selection.affinity,
+        isDirectional: plan.selection.isDirectional,
+      );
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final plan in plans.where((plan) => plan.primary))
+        mapSelection(plan),
+      for (final plan in plans.where((plan) => !plan.primary))
+        mapSelection(plan),
+    ]);
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '行排序未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = descending ? '已按降序排序行' : '已按升序排序行');
+    }
   }
 
   Future<void> _joinLines() async {
