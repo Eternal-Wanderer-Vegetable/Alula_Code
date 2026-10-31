@@ -413,6 +413,10 @@ $interactionResult = [ordered]@{
   namesBeforeFolderButton = @()
   openFolderDialogNames = @()
   openFolderDialogValues = @()
+  saveMenuNames = @()
+  saveRoute = 'not-attempted'
+  fixturePath = $fixtureFile
+  fixtureTextAfterSave = $null
   workspaceTreeNames = @()
   openFileMenuNames = @()
   quickOpenNames = @()
@@ -646,10 +650,29 @@ try {
       Paste-ArtifactText $sampleText
       $pastedSnapshot = [AlulaArtifactMsaa]::Capture($child)
       $interactionResult.editorValuesAfterPaste = @($pastedSnapshot.Nodes | Where-Object { $_.Value } | ForEach-Object { $_.Value })
-      $interactionResult.saveKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x53)
-      if ($interactionResult.saveKeyEventsSent -ne 4) { throw "SendInput save chord inserted $($interactionResult.saveKeyEventsSent) of 4 keyboard events" }
+      $saveInvokedFromMenu = $false
+      if (Click-ArtifactAccessibleNode '文件. 文件') {
+        Start-Sleep -Milliseconds 250
+        $saveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.saveMenuNames = @($saveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        $saveItems = @($interactionResult.saveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+        if ($saveItems.Count -gt 0) {
+          $saveInvokedFromMenu = Click-ArtifactAccessibleNode $saveItems[0]
+        }
+      }
+      if ($saveInvokedFromMenu) {
+        $interactionResult.saveRoute = 'file-menu'
+      } else {
+        $interactionResult.saveKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x53)
+        if ($interactionResult.saveKeyEventsSent -ne 4) { throw "SendInput save chord inserted $($interactionResult.saveKeyEventsSent) of 4 keyboard events" }
+        $interactionResult.saveRoute = 'sendinput-control-s'
+      }
       Start-Sleep -Milliseconds 700
-      if (!(Wait-ForArtifactText $sampleText)) { throw 'The exact Release artifact did not save the linux-save-ok sample to disk' }
+      $interactionResult.fixtureTextAfterSave = Read-ArtifactFixture
+      if (!(Wait-ForArtifactText $sampleText)) {
+        $interactionResult.fixtureTextAfterSave = Read-ArtifactFixture
+        throw 'The exact Release artifact did not save the linux-save-ok sample to disk'
+      }
       $interactionResult.savedAndReadBack = $true
 
       $childForIme = [AlulaArtifactWindow]::GetWindow($window, 5)
