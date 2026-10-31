@@ -20,7 +20,8 @@ use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
 use editor_buffer::{
-    BufferError, LineDeleteDirection, TextOp, WordDeleteDirection, WordPartDirection,
+    transform_case_text, BufferError, LineDeleteDirection, TextOp, WordDeleteDirection,
+    WordPartDirection,
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
@@ -34,7 +35,10 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 26;
+pub const ALULA_ABI_VERSION: u32 = 27;
+
+const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
+const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -49,6 +53,12 @@ struct WorkspaceEditDocumentInput {
     id: u64,
     base_version: u64,
     ops: Vec<TextOp>,
+}
+
+#[derive(Deserialize)]
+struct TextCaseInput {
+    text: String,
+    uppercase: bool,
 }
 
 struct PendingCompletion {
@@ -325,6 +335,39 @@ unsafe fn read_c_str<'a>(ptr: *const c_char) -> Result<&'a str, *mut c_char> {
 #[no_mangle]
 pub extern "C" fn alula_abi_version() -> u32 {
     ALULA_ABI_VERSION
+}
+
+/// Apply a full Unicode case mapping to a JSON-encoded text fragment.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_text_transform_case(request_json: *const c_char) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_CASE_TRANSFORM_INPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_INPUT_BYTES }),
+            );
+        }
+        let request: TextCaseInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let transformed = transform_case_text(&request.text, request.uppercase);
+        if transformed.len() > MAX_CASE_TRANSFORM_OUTPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_OUTPUT_BYTES }),
+            );
+        }
+        to_c_ptr(json!({ "ok": true, "text": transformed }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_text_transform_case")))
 }
 
 /// Sample system/cgroup memory pressure. On a transition to Critical, cancel pending
@@ -2246,6 +2289,20 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
+    }
+
+    #[test]
+    fn case_transform_ffi_uses_full_unicode_mapping_and_preserves_nul() {
+        let upper = c(r#"{"text":"straße\u0000ﬃ","uppercase":true}"#);
+        assert_eq!(
+            take(unsafe { alula_text_transform_case(upper.as_ptr()) })["text"],
+            "STRASSE\0FFI"
+        );
+        let lower = c(r#"{"text":"İ","uppercase":false}"#);
+        assert_eq!(
+            take(unsafe { alula_text_transform_case(lower.as_ptr()) })["text"],
+            "i\u{307}"
+        );
     }
 
     #[test]

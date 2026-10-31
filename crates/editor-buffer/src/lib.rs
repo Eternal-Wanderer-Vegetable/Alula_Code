@@ -26,6 +26,15 @@ pub const MAX_MINIMAP_LINE_SAMPLE_UTF16: usize = 48;
 
 const WORD_SEPARATORS: &str = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
 
+/// Apply Unicode full case mappings to a text fragment.
+pub fn transform_case_text(text: &str, uppercase: bool) -> String {
+    if uppercase {
+        text.to_uppercase()
+    } else {
+        text.to_lowercase()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WordPartDirection {
     Left,
@@ -1194,6 +1203,14 @@ mod tests {
         let buf = TextBuffer::open("hello\nworld\n");
         assert_eq!(buf.version(), 1);
         assert_eq!(buf.text(), "hello\nworld\n");
+    }
+
+    #[test]
+    fn case_transform_uses_full_unicode_mappings() {
+        assert_eq!(transform_case_text("straße", true), "STRASSE");
+        assert_eq!(transform_case_text("ﬃ", true), "FFI");
+        assert_eq!(transform_case_text("İ", false), "i\u{307}");
+        assert_eq!(transform_case_text("A\0B", true), "A\0B");
     }
 
     #[test]

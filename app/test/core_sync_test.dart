@@ -31,6 +31,15 @@ void main() {
     expect(_bootstrap.core!.abiVersion, expectedAbiVersion);
   }, skip: skip);
 
+  test('Rust FFI case conversion preserves full Unicode mappings and NUL', () {
+    final core = _bootstrap.core!;
+    expect(
+      core.transformCaseText('straße\u0000ﬃ', uppercase: true),
+      'STRASSE\u0000FFI',
+    );
+    expect(core.transformCaseText('İ', uppercase: false), 'i\u0307');
+  }, skip: skip);
+
   test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
     final core = _bootstrap.core!;
     const sample = 'fn main() { println!("linux-save-ok"); }\n';

@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 26;
+const int expectedAbiVersion = 27;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -1361,6 +1361,22 @@ class AlulaCore {
 
   /// 核心 ABI 版本（加载时已校验）。
   int get abiVersion => _ffi.abiVersion();
+
+  /// Apply a Rust-backed Unicode full case mapping to a bounded text fragment.
+  String transformCaseText(String text, {required bool uppercase}) {
+    final json = _ffi.textTransformCaseJson(
+      jsonEncode({'text': text, 'uppercase': uppercase}),
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error']! as Map<String, Object?>;
+      throw AlulaException(
+        error['code'] as String? ?? 'Unknown',
+        jsonEncode(error['detail']),
+      );
+    }
+    return result['text'] as String;
+  }
 
   /// LSP / 语法能力入口。
   AlulaLsp get lsp => AlulaLsp.of(this);

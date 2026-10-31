@@ -652,6 +652,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.removeDuplicateLines', '编辑器', '删除重复行',
         _removeDuplicateLines,
         enablement: 'editorTextFocus');
+    reg('editor.action.transformToUppercase', '编辑器', '转换为大写',
+        () => _transformCase(uppercase: true),
+        enablement: 'editorTextFocus');
+    reg('editor.action.transformToLowercase', '编辑器', '转换为小写',
+        () => _transformCase(uppercase: false),
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4070,6 +4076,296 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = '已删除重复行');
+  }
+
+  Future<void> _transformCase({required bool uppercase}) async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted && selections.length > maxDocLineDeleteSelections) {
+        setState(
+          () =>
+              _statusDetail = '文本大小写转换已取消：选区数超过 $maxDocLineDeleteSelections 上限',
+        );
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final ranges =
+        <(int, int), ({int start, int end, String removed, String inserted})>{};
+    final selectionPlans =
+        <({TextSelection selection, (int, int)? range, bool selectedText})>[];
+    const wordSeparators = r"""`~!@#$%^&*()-=+[{]}\|;:'",.<>/?""";
+    final whitespace = RegExp(r'\s');
+    final decimalWord = RegExp(r'-?\d*\.\d[A-Za-z0-9_]*');
+
+    bool isSeparator(String text, int offset) {
+      final unit = text.substring(offset, offset + 1);
+      return wordSeparators.contains(unit) || whitespace.hasMatch(unit);
+    }
+
+    (int, int)? findDefaultWord(String text, int caret) {
+      var cursor = 0;
+      while (cursor < text.length) {
+        final decimal = decimalWord.matchAsPrefix(text, cursor);
+        if (decimal != null) {
+          final start = cursor;
+          final end = decimal.end;
+          cursor = end;
+          if (start <= caret && caret <= end) return (start, end);
+          continue;
+        }
+        if (isSeparator(text, cursor)) {
+          cursor++;
+          continue;
+        }
+        final start = cursor;
+        var end = cursor + 1;
+        while (end < text.length && !isSeparator(text, end)) {
+          end++;
+        }
+        cursor = end;
+        if (start <= caret && caret <= end) return (start, end);
+      }
+      return null;
+    }
+
+    var payloadChars = 0;
+    try {
+      for (final selection in selections) {
+        final selectedText = !selection.isCollapsed;
+        var editStart = selection.start;
+        var editEnd = selection.end;
+
+        if (!selectedText) {
+          final position = doc.doc.positionAt(editStart);
+          final boundary = doc.doc.lineBoundary(editStart);
+          if (position.version != expectedVersion ||
+              boundary.version != expectedVersion ||
+              boundary.line != position.line ||
+              editStart < boundary.startUtf16 ||
+              editStart > boundary.endUtf16) {
+            throw StateError('Rust 返回了过期或无效的大小写转换光标位置');
+          }
+
+          // Code-OSS limits configured-word lookup to a 1,000 UTF-16-unit
+          // window centered on the caret on exceptionally long lines.
+          const maxWordLookupUtf16 = 1000;
+          final lineLength = boundary.endUtf16 - boundary.startUtf16;
+          final column = editStart - boundary.startUtf16 + 1;
+          var windowStart = 0;
+          var windowEnd = lineLength;
+          if (lineLength > maxWordLookupUtf16) {
+            windowStart = (column - maxWordLookupUtf16 ~/ 2)
+                .clamp(0, lineLength)
+                .toInt();
+            windowEnd = (column + maxWordLookupUtf16 ~/ 2)
+                .clamp(windowStart, lineLength)
+                .toInt();
+          }
+          final lineText = _readDocumentRange(
+            doc,
+            boundary.startUtf16 + windowStart,
+            boundary.startUtf16 + windowEnd,
+          );
+          final word = findDefaultWord(lineText, column - 1 - windowStart);
+          if (word == null) {
+            selectionPlans.add((
+              selection: selection,
+              range: null,
+              selectedText: false,
+            ));
+            continue;
+          }
+          editStart = boundary.startUtf16 + windowStart + word.$1;
+          editEnd = boundary.startUtf16 + windowStart + word.$2;
+        }
+
+        final key = (editStart, editEnd);
+        if (!ranges.containsKey(key)) {
+          final rangeLength = editEnd - editStart;
+          final remaining = _undoHistoryBudget.maxTotalChars - payloadChars;
+          if (rangeLength < 0 || rangeLength > remaining ~/ 2) {
+            throw StateError(
+              '文本大小写转换撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限',
+            );
+          }
+          final removed = _readDocumentRange(doc, editStart, editEnd);
+          if (removed.length != rangeLength) {
+            throw StateError('Rust 返回的大小写转换文本长度与 UTF-16 范围不符');
+          }
+          final inserted = _core?.transformCaseText(
+                removed,
+                uppercase: uppercase,
+              ) ??
+              (throw StateError('Alula Rust 核心未初始化'));
+          final editPayloadChars = removed.length + inserted.length;
+          if (editPayloadChars > remaining) {
+            throw StateError(
+              '文本大小写转换撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限',
+            );
+          }
+          if (inserted != removed) payloadChars += editPayloadChars;
+          ranges[key] = (
+            start: editStart,
+            end: editEnd,
+            removed: removed,
+            inserted: inserted,
+          );
+        }
+        selectionPlans.add((
+          selection: selection,
+          range: key,
+          selectedText: selectedText,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '文本大小写转换未应用：$error');
+      }
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) {
+        setState(() => _statusDetail = '文本大小写转换未应用：文档版本已变化');
+      }
+      return;
+    }
+
+    final orderedRanges = ranges.values.toList()
+      ..sort((a, b) => a.start.compareTo(b.start));
+    for (var index = 1; index < orderedRanges.length; index++) {
+      if (orderedRanges[index].start < orderedRanges[index - 1].end) {
+        if (mounted) {
+          setState(() => _statusDetail = '文本大小写转换已取消：多个编辑范围重叠');
+        }
+        return;
+      }
+    }
+
+    final mappedRanges =
+        <
+          ({
+            int start,
+            int end,
+            String removed,
+            String inserted,
+            int mappedStart,
+          })
+        >[];
+    var cumulativeDelta = 0;
+    for (final range in orderedRanges) {
+      final mappedStart = range.start + cumulativeDelta;
+      mappedRanges.add((
+        start: range.start,
+        end: range.end,
+        removed: range.removed,
+        inserted: range.inserted,
+        mappedStart: mappedStart,
+      ));
+      cumulativeDelta += range.inserted.length - range.removed.length;
+    }
+
+    int mapOffset(int offset) {
+      var delta = 0;
+      for (final range in mappedRanges) {
+        if (offset < range.start) return offset + delta;
+        if (offset <= range.end) {
+          final relative = (offset - range.start)
+              .clamp(0, range.inserted.length)
+              .toInt();
+          return range.mappedStart + relative;
+        }
+        delta += range.inserted.length - range.removed.length;
+      }
+      return offset + delta;
+    }
+
+    final mappedSelections = <TextSelection>[];
+    for (final plan in selectionPlans) {
+      final key = plan.range;
+      if (key == null) {
+        mappedSelections.add(plan.selection);
+        continue;
+      }
+      final range = ranges[key]!;
+      if (plan.selectedText) {
+        final mappedStart = mapOffset(range.start);
+        final mappedEnd = mappedStart + range.inserted.length;
+        final forward =
+            plan.selection.baseOffset <= plan.selection.extentOffset;
+        mappedSelections.add(
+          TextSelection(
+            baseOffset: forward ? mappedStart : mappedEnd,
+            extentOffset: forward ? mappedEnd : mappedStart,
+            affinity: plan.selection.affinity,
+            isDirectional: plan.selection.isDirectional,
+          ),
+        );
+      } else {
+        final offset = mapOffset(plan.selection.extentOffset);
+        mappedSelections.add(
+          TextSelection(
+            baseOffset: offset,
+            extentOffset: offset,
+            affinity: plan.selection.affinity,
+            isDirectional: plan.selection.isDirectional,
+          ),
+        );
+      }
+    }
+    final normalizedMappedSelections = normalizeSelectionSet(mappedSelections);
+
+    final changedRanges = mappedRanges
+        .where((range) => range.removed != range.inserted)
+        .toList(growable: false);
+    if (changedRanges.isEmpty) return;
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final range in changedRanges.reversed) {
+      forward
+        ..add(TextOp.delete(range.start, range.end - range.start))
+        ..add(TextOp.insert(range.start, range.inserted));
+      inverse
+        ..add(TextOp.delete(range.mappedStart, range.inserted.length))
+        ..add(TextOp.insert(range.mappedStart, range.removed));
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+          () => _statusDetail = '文本大小写转换未应用：${error.code} ${error.detail}',
+        );
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: normalizedMappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    _setDocSelections(doc, normalizedMappedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      normalizedMappedSelections.first.extentOffset,
+      selection: normalizedMappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = uppercase ? '已转换为大写' : '已转换为小写');
+    }
   }
 
   Future<void> _joinLines() async {

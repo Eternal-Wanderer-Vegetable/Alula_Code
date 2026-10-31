@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.41 / EDT-08a 完成）
+
+- 新增 Uppercase/Lowercase 固定命令，无默认快捷键。选区原样转换；caret 使用 VS Code 默认词分隔符和小数 token 定位，空白/空行不变；多光标范围去重后一次 Rust TextOps 事务提交。Rust 负责 Unicode full case mapping，通过 ABI v27 暴露 NUL-safe JSON 转换；选区长度随 `ß→SS` 扩展，undo/redo、dirty、保存和兄弟视图同步均覆盖。
+- 三平台工作台测试覆盖 UTF-16 emoji 偏移、Turkish-like 字母、sharp-s expansion、Alt+Click 多光标、selection/caret、空白 no-op、BOM+CRLF 保存回读、撤销/重做与分屏。Rust buffer/FFI 转换用例和核心 ABI 握手通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 498）；`cargo fmt --all -- --check` 通过；`app/ flutter analyze --no-pub` 0 issues。
+- 已登记差异：未接入语言专属 wordPattern；Rust full Unicode 映射不模拟 VS Code `toLocaleUpperCase/LowerCase` 的系统 locale 特例。title/camel/snake/transpose/numeric transforms 继续分 slice。证据：`docs/diagnostics/2026-11-01-p04/p04.41-case-conversion.md`。GitNexus 调用图风险与索引截断保留；P15 原生平台验收 pending。
+
 ### 最新进展（2026-11-01，P04.40 / EDT-07g 完成）
 
 - P04.39 `c62917d` 已推送并核对 `origin/codex/vscode-parity-p00`。随后完成 Code-OSS `editor.action.removeDuplicateLines`：单 caret/单行 selection 作用于全文，多选范围分别去重、末行含列 1 端点，精确行文本去重并保留首次出现；走 Rust UTF-16 有界读取、预算/版本/重叠门控和一个 TextOps 事务，涵盖 undo/redo、dirty、Find、分屏与保存。无 ABI 变化。
