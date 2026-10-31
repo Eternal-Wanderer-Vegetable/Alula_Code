@@ -19,6 +19,76 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - name: Clear Windows 11 ARM first-logon and WSL prompts
+        if: runner.arch == 'ARM64'
+        shell: powershell
+        run: |
+          # Hosted ARM64 images can leave the first-logon privacy page above all
+          # windows and repeatedly open a WSL update console during UI tests.
+          # The WSL redirection is the runner-images issue #14264 workaround.
+          $output = Join-Path $env:RUNNER_TEMP 'alula-windows-validation'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          foreach ($software in 'SOFTWARE', 'SOFTWARE\WOW6432Node') {
+            $key = "HKLM:\$software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\wsl.exe"
+            New-Item -Path $key -Force | Out-Null
+            New-ItemProperty -Path $key -Name Debugger -Value "$env:SystemRoot\System32\systray.exe" -PropertyType String -Force | Out-Null
+          }
+
+          Add-Type -AssemblyName System.Windows.Forms
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+          public static class AlulaRunnerDesktop {
+            [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+            [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+          }
+          '@
+
+          $before = @(Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object {
+            [ordered]@{ process = $_.ProcessName; title = $_.MainWindowTitle }
+          })
+          foreach ($key in '{ENTER}', '{ENTER}', '{ESC}', '{ESC}') {
+            [System.Windows.Forms.SendKeys]::SendWait($key)
+            Start-Sleep -Milliseconds 900
+          }
+          Get-Process -Name WWAHost -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name SystemPropertiesPerformance -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name WindowsTerminal -ErrorAction SilentlyContinue |
+            Where-Object { $_.MainWindowTitle -match 'wsl\.exe' } |
+            Stop-Process -Force -ErrorAction SilentlyContinue
+          [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+          Start-Sleep -Seconds 2
+
+          $after = @(Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object {
+            [ordered]@{ process = $_.ProcessName; title = $_.MainWindowTitle }
+          })
+          $foregroundHandle = [AlulaRunnerDesktop]::GetForegroundWindow()
+          [uint32]$foregroundProcessId = 0
+          [AlulaRunnerDesktop]::GetWindowThreadProcessId($foregroundHandle, [ref]$foregroundProcessId) | Out-Null
+          $foregroundProcess = Get-Process -Id $foregroundProcessId -ErrorAction SilentlyContinue
+          $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bitmap = [System.Drawing.Bitmap]::new($bounds.Width, $bounds.Height)
+          $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+          try {
+            $graphics.CopyFromScreen($bounds.Left, $bounds.Top, 0, 0, $bounds.Size)
+            $bitmap.Save((Join-Path $output 'runner-desktop-post-bootstrap.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+          }
+          finally { $graphics.Dispose(); $bitmap.Dispose() }
+          [ordered]@{
+            runnerArchitecture = $env:RUNNER_ARCH
+            runnerImage = $env:ImageOS
+            wslImageFileExecutionRedirects = @('SOFTWARE', 'SOFTWARE\WOW6432Node')
+            windowsBefore = $before
+            windowsAfter = $after
+            foregroundProcess = if ($foregroundProcess) { $foregroundProcess.ProcessName } else { $null }
+            foregroundWindowHandle = ('0x{0:X}' -f $foregroundHandle.ToInt64())
+            privacyHostRemaining = [bool](Get-Process -Name WWAHost -ErrorAction SilentlyContinue)
+          } | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $output 'runner-desktop-setup.json') -Encoding utf8
+
+          if (Get-Process -Name WWAHost -ErrorAction SilentlyContinue) {
+            throw 'Windows first-logon privacy experience still owns a process after desktop cleanup'
+          }
       - name: Parse Windows artifact validator with PowerShell AST
         shell: powershell
         run: |
