@@ -930,12 +930,19 @@ try {
   $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
   if ($ExerciseInteractions -and $flutterMsaaRoot) {
     $matchingEditorNodes = @($flutterMsaaRoot.nodes | Where-Object {
-      $_.Name -like '*main.rs*' -and $_.Value -like '*linux-save-ok*'
+      $_.Role -eq '42' -and $_.Value -like '*linux-save-ok*'
     })
     $interactionResult.accessibleEditorCount = $matchingEditorNodes.Count
     $interactionResult.accessibleEditorValuesMatch = $matchingEditorNodes.Count -ge 2 -and
       @($matchingEditorNodes | Where-Object { $_.Value -like '*view-2*' }).Count -ge 2
-    $interactionResult.accessibleEditorNames = @($matchingEditorNodes | ForEach-Object { $_.Name })
+    $interactionResult.accessibleEditorNames = @(
+      foreach ($editorNode in $matchingEditorNodes) {
+        $parentPath = $editorNode.Path -replace '\.\d+$', ''
+        $parentNode = @($flutterMsaaRoot.nodes | Where-Object { $_.Path -eq $parentPath } | Select-Object -First 1)
+        if ($parentNode.Count -gt 0 -and $parentNode[0].Name) { $parentNode[0].Name }
+        else { $editorNode.Name }
+      }
+    )
     for ($tab = 0; $tab -lt 8; $tab++) {
       [System.Windows.Forms.SendKeys]::SendWait('{TAB}')
       Start-Sleep -Milliseconds 100
