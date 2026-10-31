@@ -259,6 +259,26 @@ jobs:
                   return AccessibleObjectFromWindow(
                       window, unchecked((uint)-4), ref interfaceId, out accessible);
               }
+
+              public static int GetChildCount(IAccessible accessible)
+              {
+                  return accessible.accChildCount;
+              }
+
+              public static string GetName(IAccessible accessible, int childId)
+              {
+                  return accessible.get_accName(childId);
+              }
+
+              public static string GetRole(IAccessible accessible, int childId)
+              {
+                  return Convert.ToString(accessible.get_accRole(childId));
+              }
+
+              public static string GetValue(IAccessible accessible, int childId)
+              {
+                  return accessible.get_accValue(childId);
+              }
           }
           '@
                 $msaaTargets = @(
@@ -283,17 +303,17 @@ jobs:
                     $msaaAvailable = $true
                     $msaaProviders += $provider
                     try {
-                      $snapshot.rootName = $provider.get_accName([object]0)
-                      $snapshot.childCount = $provider.accChildCount
+                      $snapshot.rootName = [AlulaMsaaApi]::GetName($provider, 0)
+                      $snapshot.childCount = [AlulaMsaaApi]::GetChildCount($provider)
                       $children = @()
                       $limit = [Math]::Min($snapshot.childCount, 100)
                       for ($childId = 1; $childId -le $limit; $childId++) {
                         try {
                           $children += [ordered]@{
                             childId = $childId
-                            name = $provider.get_accName([object]$childId)
-                            role = [string]$provider.get_accRole([object]$childId)
-                            value = $provider.get_accValue([object]$childId)
+                            name = [AlulaMsaaApi]::GetName($provider, $childId)
+                            role = [AlulaMsaaApi]::GetRole($provider, $childId)
+                            value = [AlulaMsaaApi]::GetValue($provider, $childId)
                           }
                         } catch {
                           $children += [ordered]@{ childId = $childId; error = $_.Exception.Message }
