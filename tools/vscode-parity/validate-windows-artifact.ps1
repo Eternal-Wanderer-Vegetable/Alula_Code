@@ -288,11 +288,22 @@ public static class AlulaArtifactWindow
 
     public static uint SendChord(ushort virtualKey)
     {
+        return SendChord(0x11, virtualKey);
+    }
+
+    public static uint SendChord(ushort modifierKey, ushort virtualKey)
+    {
         var inputs = new AlulaArtifactInput[4];
-        inputs[0] = KeyInput(0x11, 0);
+        inputs[0] = KeyInput(modifierKey, 0);
         inputs[1] = KeyInput(virtualKey, 0);
         inputs[2] = KeyInput(virtualKey, KeyUp);
-        inputs[3] = KeyInput(0x11, KeyUp);
+        inputs[3] = KeyInput(modifierKey, KeyUp);
+        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(AlulaArtifactInput)));
+    }
+
+    public static uint SendKey(ushort virtualKey)
+    {
+        var inputs = new AlulaArtifactInput[] { KeyInput(virtualKey, 0), KeyInput(virtualKey, KeyUp) };
         return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(AlulaArtifactInput)));
     }
 
@@ -390,6 +401,7 @@ $interactionResult = [ordered]@{
   sampleText = $sampleText
   savedAndReadBack = $false
   multiviewSavedAndReadBack = $false
+  selectionKeyEventsSent = 0
   unicodeKeyEventsSent = 0
   saveKeyEventsSent = 0
   accessibleEditorCount = 0
@@ -468,8 +480,10 @@ try {
         Start-Sleep -Milliseconds $delayMs
       }
       function Paste-ArtifactText([string]$value) {
-        $selectAllInputs = [AlulaArtifactWindow]::SendChord(0x41)
-        if ($selectAllInputs -ne 4) { throw "SendInput selected-all chord inserted $selectAllInputs of 4 keyboard events" }
+        $homeInputs = [AlulaArtifactWindow]::SendKey(0x24)
+        if ($homeInputs -ne 2) { throw "SendInput home key inserted $homeInputs of 2 keyboard events" }
+        $interactionResult.selectionKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x10, 0x23)
+        if ($interactionResult.selectionKeyEventsSent -ne 4) { throw "SendInput shift-end chord inserted $($interactionResult.selectionKeyEventsSent) of 4 keyboard events" }
         $interactionResult.unicodeKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($value)
         if ($interactionResult.unicodeKeyEventsSent -ne ($value.Length * 2)) {
           throw "SendInput inserted $($interactionResult.unicodeKeyEventsSent) of $($value.Length * 2) Unicode keyboard events"
