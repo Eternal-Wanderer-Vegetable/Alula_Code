@@ -121,6 +121,13 @@ if (!(Test-Path (Join-Path $exe.DirectoryName 'alula_core.dll'))) { throw 'Artif
 $process = Start-Process -FilePath $exe.FullName -WorkingDirectory $exe.DirectoryName -PassThru -WindowStyle Normal
 $window = [IntPtr]::Zero
 $metadataPath = Join-Path $OutputDirectory 'metadata.json'
+$validationError = $null
+$closeError = $null
+$width = $null
+$height = $null
+$dpi = $null
+$msaaNodeCount = 0
+$screenshot = $null
 try {
   $deadline = (Get-Date).AddSeconds(35)
   do {
@@ -162,11 +169,9 @@ try {
 
   $child = [AlulaArtifactWindow]::GetWindow($window, 5)
   $msaa = [AlulaArtifactMsaa]::Capture($child)
-  if ($msaa.HResult -ne '0x00000000') { throw "Flutter child window MSAA unavailable: $($msaa.HResult) $($msaa.Error)" }
   $accessibleText = $msaa.Text -join "`n"
-  foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')) {
-    if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected text: $expected" }
-  }
+  $expectedMsaaText = @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
+  $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
 
   $theme = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -ErrorAction SilentlyContinue
   $os = Get-CimInstance Win32_OperatingSystem
@@ -187,36 +192,61 @@ try {
     systemUsesLightTheme = if ($theme) { [bool]$theme.SystemUsesLightTheme } else { $null }
     appsUseLightTheme = if ($theme) { [bool]$theme.AppsUseLightTheme } else { $null }
     msaaHResult = $msaa.HResult
+    msaaError = $msaa.Error
     msaaText = @($msaa.Text)
+    expectedMsaaText = $expectedMsaaText
+    missingMsaaText = $missingMsaaText
   } | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
   $msaaNodeCount = $msaa.Text.Count
+  if ($msaa.HResult -ne '0x00000000') { throw "Flutter child window MSAA unavailable: $($msaa.HResult) $($msaa.Error)" }
+  if ($missingMsaaText.Count -gt 0) { throw "MSAA tree is missing expected text: $($missingMsaaText -join ', ')" }
   $msaa = $null
   [GC]::Collect()
   [GC]::WaitForPendingFinalizers()
 }
+catch {
+  $validationError = $_.Exception.Message
+}
 finally {
   $wmCloseSent = $false
   $closeTimedOut = $false
-  if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {
-    $wmCloseSent = [AlulaArtifactWindow]::PostMessage($window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
+  $exitCode = $null
+  $closed = $false
+  try {
+    if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {
+      $wmCloseSent = [AlulaArtifactWindow]::PostMessage($window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
+    }
+    if (!$process.WaitForExit(10000)) {
+      $closeTimedOut = $true
+      try { $process.Kill() } catch [System.InvalidOperationException] { }
+      $process.WaitForExit(10000) | Out-Null
+    }
+    $process.Refresh()
+    $exitCode = if ($process.HasExited) { $process.ExitCode } else { $null }
+    $closed = $wmCloseSent -and !$closeTimedOut -and $exitCode -eq 0
+    if (Test-Path $metadataPath) {
+      $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+      $metadata | Add-Member -NotePropertyName validationError -NotePropertyValue $validationError -Force
+      $metadata | Add-Member -NotePropertyName wmClosePosted -NotePropertyValue $wmCloseSent -Force
+      $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
+      $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $closed -Force
+      $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
+      $metadata | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
+    }
   }
-  if (!$process.WaitForExit(10000)) {
-    $closeTimedOut = $true
-    try { $process.Kill() } catch [System.InvalidOperationException] { }
-    $process.WaitForExit(10000) | Out-Null
+  catch {
+    $closeError = $_.Exception.Message
   }
-  $process.Refresh()
-  $exitCode = if ($process.HasExited) { $process.ExitCode } else { $null }
-  $closed = $wmCloseSent -and !$closeTimedOut -and $exitCode -eq 0
-  if (Test-Path $metadataPath) {
-    $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
-    $metadata | Add-Member -NotePropertyName wmClosePosted -NotePropertyValue $wmCloseSent -Force
-    $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
-    $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $closed -Force
-    $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
-    $metadata | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
+  if (!$closed -and !$closeError) {
+    $closeError = "Release artifact did not close cleanly (posted=$wmCloseSent timeout=$closeTimedOut exit=$exitCode)"
   }
-  if (!$closed) { throw "Release artifact did not close cleanly (posted=$wmCloseSent timeout=$closeTimedOut exit=$exitCode)" }
+}
+
+if ($validationError -or $closeError) {
+  $failureSummary = @()
+  if ($validationError) { $failureSummary += "Artifact validation failed: $validationError" }
+  if ($closeError) { $failureSummary += "Close validation failed: $closeError" }
+  throw ($failureSummary -join '; ')
 }
 
 Write-Host "Validated visible client ${width}x${height}; DPI=$dpi; MSAA text nodes=$msaaNodeCount; screenshot=$screenshot"
