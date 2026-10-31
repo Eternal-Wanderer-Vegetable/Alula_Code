@@ -14,11 +14,25 @@ permissions:
 
 jobs:
   release-artifact:
-    name: Run the uploaded Windows Release artifact
-    runs-on: windows-latest
-    timeout-minutes: 20
+    name: Run the x64 Release artifact on Windows 11 ARM emulation
+    runs-on: windows-11-arm
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - name: Parse Windows artifact validator with PowerShell AST
+        shell: powershell
+        run: |
+          $tokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path './tools/vscode-parity/validate-windows-artifact.ps1').Path,
+            [ref]$tokens,
+            [ref]$parseErrors
+          ) | Out-Null
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
       - name: Download Windows x64 artifact from run 41109679662
         uses: actions/download-artifact@v4
         with:
@@ -26,7 +40,7 @@ jobs:
           run-id: 41109679662
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/alula-windows-release
-      - name: Capture visible window, accessibility tree, DPI/theme, and close
+      - name: Edit, save, inspect accessibility, DPI/theme, and close the exact Release artifact
         shell: powershell
         run: |
           $output = '${{ runner.temp }}/alula-windows-validation'
@@ -35,13 +49,14 @@ jobs:
           try {
             ./tools/vscode-parity/validate-windows-artifact.ps1 `
               -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
-              -OutputDirectory $output
+              -OutputDirectory $output `
+              -ExerciseInteractions
           }
           finally { Stop-Transcript | Out-Null }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: windows-artifact-41109679662-validation
+          name: windows-artifact-41109679662-win11-arm-validation
           path: ${{ runner.temp }}/alula-windows-validation
 
   source-interactions:

@@ -1,12 +1,14 @@
 ﻿param(
   [Parameter(Mandatory = $true)][string]$ArtifactDirectory,
-  [Parameter(Mandatory = $true)][string]$OutputDirectory
+  [Parameter(Mandatory = $true)][string]$OutputDirectory,
+  [switch]$ExerciseInteractions
 )
 
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName Accessibility
+Add-Type -AssemblyName System.Windows.Forms
 
 Add-Type -ReferencedAssemblies @([Accessibility.IAccessible].Assembly.Location) -TypeDefinition @'
 using System;
@@ -30,6 +32,7 @@ public sealed class AlulaArtifactMsaaNode
     public string Name { get; set; }
     public string Role { get; set; }
     public string Value { get; set; }
+    public string State { get; set; }
     public int ChildCount { get; set; }
     public string Error { get; set; }
 }
@@ -94,6 +97,7 @@ public static class AlulaArtifactMsaa
                 try { node.Name = accessible.get_accName(id); } catch (Exception error) { node.Error = error.Message; }
                 try { node.Role = Convert.ToString(accessible.get_accRole(id)); } catch (Exception error) { node.Error = error.Message; }
                 try { node.Value = accessible.get_accValue(id); } catch (Exception error) { node.Error = error.Message; }
+                try { node.State = Convert.ToString(Convert.ToInt32(accessible.get_accState(id))); } catch (Exception error) { node.Error = error.Message; }
                 try { raw = accessible.get_accChild(id); } catch { }
                 nested = raw as IAccessible;
                 if (nested == null && raw != null && Marshal.IsComObject(raw))
@@ -142,6 +146,41 @@ public static class AlulaArtifactWindow
     [DllImport("user32.dll")] public static extern IntPtr GetWindow(IntPtr hwnd, uint command);
     [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr hwnd);
     [DllImport("user32.dll", SetLastError = true)] public static extern bool PostMessage(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
+    [DllImport("user32.dll", SetLastError = true)] public static extern bool SetCursorPos(int x, int y);
+    [DllImport("user32.dll", SetLastError = true)] public static extern void mouse_event(uint flags, uint dx, uint dy, uint data, IntPtr extraInfo);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern IntPtr LoadKeyboardLayout(string layoutId, uint flags);
+    [DllImport("user32.dll")] public static extern IntPtr ActivateKeyboardLayout(IntPtr layout, uint flags);
+    [DllImport("imm32.dll")] private static extern IntPtr ImmGetContext(IntPtr window);
+    [DllImport("imm32.dll")] private static extern bool ImmSetOpenStatus(IntPtr context, bool open);
+    [DllImport("imm32.dll")] private static extern int ImmGetCompositionStringW(IntPtr context, uint index, IntPtr buffer, uint length);
+    [DllImport("imm32.dll")] private static extern bool ImmReleaseContext(IntPtr window, IntPtr context);
+
+    public static bool SetImeOpen(IntPtr window, bool open)
+    {
+        IntPtr context = ImmGetContext(window);
+        if (context == IntPtr.Zero) return false;
+        try { return ImmSetOpenStatus(context, open); }
+        finally { ImmReleaseContext(window, context); }
+    }
+
+    public static string GetImeComposition(IntPtr window)
+    {
+        IntPtr context = ImmGetContext(window);
+        if (context == IntPtr.Zero) return "";
+        try
+        {
+            int bytes = ImmGetCompositionStringW(context, 0x0008, IntPtr.Zero, 0);
+            if (bytes <= 0) return "";
+            IntPtr buffer = Marshal.AllocHGlobal(bytes);
+            try
+            {
+                int copied = ImmGetCompositionStringW(context, 0x0008, buffer, (uint)bytes);
+                return copied > 0 ? Marshal.PtrToStringUni(buffer, copied / 2) : "";
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
+        }
+        finally { ImmReleaseContext(window, context); }
+    }
 }
 '@
 
@@ -149,7 +188,41 @@ $exe = Get-ChildItem -LiteralPath $ArtifactDirectory -Filter 'alula_app.exe' -Fi
 if (!$exe) { throw "alula_app.exe was not found under $ArtifactDirectory" }
 if (!(Test-Path (Join-Path $exe.DirectoryName 'alula_core.dll'))) { throw 'Artifact is missing alula_core.dll' }
 
-$process = Start-Process -FilePath $exe.FullName -WorkingDirectory $exe.DirectoryName -PassThru -WindowStyle Normal
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
+$fixtureFile = Join-Path $repoRoot 'tests/fixtures/rust-mini/src/main.rs'
+$sampleText = 'fn main() { println!("linux-save-ok"); }'
+$fixtureBackup = $null
+$interactionResult = [ordered]@{
+  requested = [bool]$ExerciseInteractions
+  sampleText = $sampleText
+  savedAndReadBack = $false
+  multiviewSavedAndReadBack = $false
+  accessibleEditorCount = 0
+  accessibleEditorValuesMatch = $false
+  keyboardFocusNames = @()
+      keyboardFocusObserved = $false
+  imeStatus = 'not-requested'
+      imeLanguageChangePosted = $false
+  imeComposition = ''
+  imeCommittedChinese = $false
+  error = $null
+}
+if ($ExerciseInteractions) {
+  $fixtureBackup = [System.IO.File]::ReadAllBytes($fixtureFile)
+  if ($fixtureBackup.Length -eq 0) { throw "Rust fixture is empty: $fixtureFile" }
+  [System.IO.File]::WriteAllText($fixtureFile, 'fn main() { println!("baseline"); }', [System.Text.UTF8Encoding]::new($false))
+}
+$process = $null
+try {
+  $process = if ($ExerciseInteractions) {
+    Start-Process -FilePath $exe.FullName -ArgumentList '--lsp-auto' -WorkingDirectory (Join-Path $repoRoot 'app') -PassThru -WindowStyle Normal
+  } else {
+    Start-Process -FilePath $exe.FullName -WorkingDirectory $exe.DirectoryName -PassThru -WindowStyle Normal
+  }
+} catch {
+  if ($null -ne $fixtureBackup) { [System.IO.File]::WriteAllBytes($fixtureFile, $fixtureBackup) }
+  throw
+}
 $window = [IntPtr]::Zero
 $metadataPath = Join-Path $OutputDirectory 'metadata.json'
 $validationError = $null
@@ -173,6 +246,120 @@ try {
   [AlulaArtifactWindow]::SetForegroundWindow($window) | Out-Null
   Start-Sleep -Seconds 3
   if (![AlulaArtifactWindow]::IsWindowVisible($window)) { throw 'Release artifact window is not visible' }
+
+  if ($ExerciseInteractions) {
+    try {
+      function Send-ArtifactKeys([string]$keys, [int]$delayMs = 250) {
+        [System.Windows.Forms.SendKeys]::SendWait($keys)
+        Start-Sleep -Milliseconds $delayMs
+      }
+      function Paste-ArtifactText([string]$value) {
+        Set-Clipboard -Value $value
+        Send-ArtifactKeys '^v'
+      }
+      function Open-ArtifactFile([string]$query) {
+        Send-ArtifactKeys '^p'
+        Set-Clipboard -Value $query
+        Send-ArtifactKeys '^v'
+        Send-ArtifactKeys '{ENTER}' 1200
+      }
+      function Run-ArtifactPaletteCommand([string]$query) {
+        Send-ArtifactKeys '^+p'
+        Set-Clipboard -Value $query
+        Send-ArtifactKeys '^v'
+        Send-ArtifactKeys '{ENTER}' 900
+      }
+      function Click-ArtifactEditor([double]$horizontalFraction) {
+        $rect = New-Object AlulaArtifactRect
+        if (![AlulaArtifactWindow]::GetClientRect($window, [ref]$rect)) { throw 'GetClientRect failed before editor click' }
+        $point = New-Object AlulaArtifactPoint
+        $point.X = [int](($rect.Right - $rect.Left) * $horizontalFraction)
+        $point.Y = [int](($rect.Bottom - $rect.Top) * 0.30)
+        if (![AlulaArtifactWindow]::ClientToScreen($window, [ref]$point)) { throw 'ClientToScreen failed before editor click' }
+        [AlulaArtifactWindow]::SetCursorPos($point.X, $point.Y) | Out-Null
+        [AlulaArtifactWindow]::mouse_event(0x0002, 0, 0, 0, [IntPtr]::Zero)
+        [AlulaArtifactWindow]::mouse_event(0x0004, 0, 0, 0, [IntPtr]::Zero)
+        Start-Sleep -Milliseconds 300
+      }
+      function Read-ArtifactFixture() {
+        [System.IO.File]::ReadAllText($fixtureFile).Replace("`r`n", "`n")
+      }
+      function Wait-ForArtifactText([string]$expected) {
+        $deadline = (Get-Date).AddSeconds(8)
+        do {
+          if ((Read-ArtifactFixture) -ceq $expected) { return $true }
+          Start-Sleep -Milliseconds 200
+        } while ((Get-Date) -lt $deadline)
+        return $false
+      }
+
+      Open-ArtifactFile 'main.rs'
+      Click-ArtifactEditor 0.67
+      Send-ArtifactKeys '^a'
+      Paste-ArtifactText $sampleText
+      Send-ArtifactKeys '^s' 700
+      if (!(Wait-ForArtifactText $sampleText)) { throw 'The exact Release artifact did not save the linux-save-ok sample to disk' }
+      $interactionResult.savedAndReadBack = $true
+
+      $childForIme = [AlulaArtifactWindow]::GetWindow($window, 5)
+      $imeLayout = [AlulaArtifactWindow]::LoadKeyboardLayout('00000804', 1)
+      if ($imeLayout -ne [IntPtr]::Zero) {
+        $interactionResult.imeLanguageChangePosted = [AlulaArtifactWindow]::PostMessage($window, 0x0050, [IntPtr]::Zero, $imeLayout)
+        Start-Sleep -Milliseconds 350
+        $imeTarget = if ($childForIme -ne [IntPtr]::Zero) { $childForIme } else { $window }
+        $imeOpened = [AlulaArtifactWindow]::SetImeOpen($imeTarget, $true)
+        if (!$imeOpened -and $imeTarget -ne $window) {
+          $imeTarget = $window
+          $imeOpened = [AlulaArtifactWindow]::SetImeOpen($imeTarget, $true)
+        }
+        if ($imeOpened) {
+          $interactionResult.imeStatus = 'opened'
+          Click-ArtifactEditor 0.67
+          Send-ArtifactKeys '^{END}'
+          Paste-ArtifactText "`n// "
+          Send-ArtifactKeys 'nihao' 600
+          $interactionResult.imeComposition = [AlulaArtifactWindow]::GetImeComposition($imeTarget)
+          if (![string]::IsNullOrEmpty($interactionResult.imeComposition)) {
+            Send-ArtifactKeys '{ENTER}' 350
+            Send-ArtifactKeys '^s' 700
+            $imeSaved = Read-ArtifactFixture
+            $interactionResult.imeCommittedChinese = $imeSaved.Contains('你好')
+            $interactionResult.imeStatus = if ($interactionResult.imeCommittedChinese) { 'composition-committed' } else { 'composition-seen-commit-unconfirmed' }
+          } else {
+            $interactionResult.imeStatus = 'opened-without-composition'
+          }
+        } else {
+          $interactionResult.imeStatus = 'keyboard-layout-loaded-no-imm-context'
+        }
+      } else {
+        $interactionResult.imeStatus = 'simplified-chinese-ime-not-installed'
+      }
+
+      # Restore the supplied sample before checking sibling-view synchronization.
+      Click-ArtifactEditor 0.67
+      Send-ArtifactKeys '^a'
+      Paste-ArtifactText $sampleText
+      Send-ArtifactKeys '^s' 600
+      if (!(Wait-ForArtifactText $sampleText)) { throw 'The saved sample could not be restored after the IME probe' }
+
+      Run-ArtifactPaletteCommand '拆分编辑器'
+      Open-ArtifactFile 'main.rs'
+      Click-ArtifactEditor 0.76
+      Send-ArtifactKeys '^{END}'
+      Paste-ArtifactText "`n// view-2"
+      Send-ArtifactKeys '^s' 700
+      $expectedMultiviewText = "$sampleText`n// view-2"
+      if (!(Wait-ForArtifactText $expectedMultiviewText)) { throw 'The second editor view did not save and read back its edit' }
+      $interactionResult.multiviewSavedAndReadBack = $true
+      $interactionResult.fileSha256 = (Get-FileHash -LiteralPath $fixtureFile -Algorithm SHA256).Hash.ToLowerInvariant()
+      $interactionResult.finalText = Read-ArtifactFixture
+
+    }
+    catch {
+      $interactionResult.error = $_.Exception.Message
+      $validationError = "Release artifact interaction test failed: $($interactionResult.error)"
+    }
+  }
 
   $client = New-Object AlulaArtifactRect
   if (![AlulaArtifactWindow]::GetClientRect($window, [ref]$client)) { throw 'GetClientRect failed' }
@@ -293,8 +480,36 @@ try {
     }
   }
   $accessibleText = $accessibleValues -join "`n"
-  $expectedMsaaText = @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
+  $expectedMsaaText = if ($ExerciseInteractions) {
+    @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', 'linux-save-ok')
+  } else {
+    @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
+  }
   $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
+  if ($ExerciseInteractions -and $flutterMsaaRoot) {
+    $matchingEditorNodes = @($flutterMsaaRoot.nodes | Where-Object {
+      $_.Name -like '*main.rs*' -and $_.Value -like '*linux-save-ok*'
+    })
+    $interactionResult.accessibleEditorCount = $matchingEditorNodes.Count
+    $interactionResult.accessibleEditorValuesMatch = $matchingEditorNodes.Count -ge 2 -and
+      @($matchingEditorNodes | Where-Object { $_.Value -like '*view-2*' }).Count -ge 2
+    $interactionResult.accessibleEditorNames = @($matchingEditorNodes | ForEach-Object { $_.Name })
+    for ($tab = 0; $tab -lt 8; $tab++) {
+      [System.Windows.Forms.SendKeys]::SendWait('{TAB}')
+      Start-Sleep -Milliseconds 100
+      $focusSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $focusedNodes = @($focusSnapshot.Nodes | Where-Object {
+        $state = 0
+        [int]::TryParse($_.State, [ref]$state) -and (($state -band 4) -ne 0)
+      })
+      foreach ($focusedNode in $focusedNodes) {
+        if (![string]::IsNullOrWhiteSpace($focusedNode.Name)) {
+          $interactionResult.keyboardFocusNames += $focusedNode.Name
+        }
+      }
+    }
+    $interactionResult.keyboardFocusObserved = $interactionResult.keyboardFocusNames.Count -gt 0
+  }
 
   $theme = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -ErrorAction SilentlyContinue
   $os = Get-CimInstance Win32_OperatingSystem
@@ -306,6 +521,9 @@ try {
     osCaption = $os.Caption
     osVersion = $os.Version
     osBuild = $os.BuildNumber
+    runnerImage = $env:ImageOS
+    hostArchitecture = $env:PROCESSOR_ARCHITECTURE
+    artifactArchitecture = if ($ExerciseInteractions) { 'x64 on Windows x64 emulation under Windows 11 ARM' } else { 'x64' }
     clientWidth = $width
     clientHeight = $height
     dpi = $dpi
@@ -325,11 +543,17 @@ try {
     flutterMsaaNodeCount = if ($flutterMsaaRoot) { @($flutterMsaaRoot.nodes).Count } else { 0 }
     expectedMsaaText = $expectedMsaaText
     missingMsaaText = $missingMsaaText
+    editorInteraction = $interactionResult
+    accessibilityMethod = if ($ExerciseInteractions) { 'MSAA semantic tree plus MSAA focused-state keyboard traversal; Narrator speech was not captured' } else { 'UIA and MSAA tree inspection' }
   } | ConvertTo-Json -Depth 8 | Set-Content -Path $metadataPath -Encoding utf8
   $msaaNodeCount = if ($flutterMsaaRoot) { @($flutterMsaaRoot.nodes).Count } else { 0 }
   if (!$screenshotNonUniform) { throw "Client capture appears blank or uniform ($($sampledColors.Count) sampled colors)" }
   if (!$msaaAvailable) { throw "Flutter window MSAA unavailable: $msaaError" }
   if ($missingMsaaText.Count -gt 0) { throw "MSAA tree is missing expected text: $($missingMsaaText -join ', ')" }
+  if ($ExerciseInteractions -and !$interactionResult.savedAndReadBack) { throw 'Release artifact did not save the supplied sample text' }
+  if ($ExerciseInteractions -and !$interactionResult.multiviewSavedAndReadBack) { throw 'Release artifact did not complete the second-view edit/save roundtrip' }
+  if ($ExerciseInteractions -and !$interactionResult.accessibleEditorValuesMatch) { throw 'MSAA did not expose matching text in both editor views' }
+  if ($ExerciseInteractions -and !$interactionResult.keyboardFocusObserved) { throw 'The MSAA tree did not expose a focused node during keyboard traversal' }
 }
 catch {
   $validationError = $_.Exception.Message
@@ -379,6 +603,10 @@ finally {
   }
   catch {
     $closeError = $_.Exception.Message
+  }
+  if ($null -ne $fixtureBackup) {
+    try { [System.IO.File]::WriteAllBytes($fixtureFile, $fixtureBackup) }
+    catch { if (!$closeError) { $closeError = "Could not restore interaction fixture: $($_.Exception.Message)" } }
   }
   if (!$closed -and !$closeError) {
     $closeError = "Release artifact did not close cleanly (posted=$wmCloseSent timeout=$closeTimedOut exit=$exitCode)"
