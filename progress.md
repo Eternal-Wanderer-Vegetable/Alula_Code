@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.9 / EDT-01f 完成）
+### 最新进展（2026-10-31，P04.10 / EDT-02a 完成）
+
+- P04.10 覆盖 Windows/Linux/macOS targetPlatform 下的普通鼠标点击、从同一 caret 起点的正向与反向 Shift+Click；使用 RenderEditable hit-test 坐标，fixture 含 emoji，并对照 Flutter 文本、Rust 权威全文、输入窗版本和磁盘内容均未改变。
+- 定向 Flutter 3 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 300 项），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.10-mouse-click-anchor.md`。这些是 Flutter 自动化，不代表原生平台鼠标或辅助功能验收。
+- P04 / feat-026 仍是唯一活动 feature；下一步 EDT-02b 先覆盖双击词选、三击逻辑行选，再继续拖选与边缘自动滚动。
+
+### 阶段进展（2026-10-31，P04.9 / EDT-01f 完成）
 
 - P04.9 完成 PageUp/PageDown 与 Shift 选择：调用 Flutter 可视页 selection Action，macOS plain PageUp/PageDown 从默认纯滚动修正为 caret 分页。三平台 targetPlatform fixture 覆盖 viewport 移动与 anchor；4,000 行文件跨 16K 输入窗重居中，Rust 全文/版本不变。
 - 定向 Flutter 4 项通过；完整 `bash init.sh` EXIT=0（Flutter 297 项、Rust workspace、Clippy、build_core），`cargo fmt --all -- --check` 与 `flutter analyze`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.9-page-movement.md`。
