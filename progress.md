@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.43 / EDT-08c 完成）
+
+- 新增固定 Code-OSS `editor.action.transformToCamelcase` 命令，无默认快捷键。Rust 按固定规则分别处理单行与多行分隔符、Unicode 首词大小写边界、ECMAScript whitespace，以及后续片段首 UTF-16 code unit；通过 ABI v29 的 NUL-safe JSON FFI 调用。编辑事务沿用 P04.41/42 的 Rust 权威范围、selection/caret 映射、版本/预算检查、undo/redo、dirty、Find、双视图与保存。
+- 三平台 TargetPlatform 用例以 `fn main() { println!("linux-save-ok"); }` 为夹具，覆盖选词与 caret 下划线转换、分屏、undo/redo、BOM+CRLF 保存回读；Rust/FFI 覆盖 acronym、emoji、Deseret 字母、CRLF、NUL、NEL/BOM/Unicode line separator。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 506）；cargo fmt check 与 app Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.43-camel-case.md`。
+- 保留与 JS `toLocale*` 的系统 locale 和 Unicode 数据版本差异；TargetPlatform fixture 不代表 P15 原生平台验收。下一项按 EDT-08 拆解 Snake Case，仍一次只处理一个功能。
+
 ### 最新进展（2026-11-01，P04.42 / EDT-08b 完成）
 
 - 新增固定 Code-OSS `editor.action.transformToTitlecase` 命令，无默认快捷键；先 Rust full lowercase，再按上游 Unicode letter/number/apostrophe 边界把首字母 full uppercase。沿用 P04.41 的 Rust UTF-16 范围事务、selection 扩展映射、undo/redo、dirty、Find、分屏与保存路径，Rust JSON FFI ABI 升至 v28。

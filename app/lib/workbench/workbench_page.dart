@@ -661,6 +661,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.transformToTitlecase', '编辑器', '转换为标题大小写',
         () => _transformCase(uppercase: false, titleCase: true),
         enablement: 'editorTextFocus');
+    reg('editor.action.transformToCamelcase', '编辑器', '转换为驼峰命名',
+        () => _transformCase(uppercase: false, camelCase: true),
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4084,6 +4087,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _transformCase({
     required bool uppercase,
     bool titleCase = false,
+    bool camelCase = false,
   }) async {
     final doc = _active;
     if (doc == null || doc.inputWindow.hasComposition) return;
@@ -4205,9 +4209,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             throw StateError('Rust 返回的大小写转换文本长度与 UTF-16 范围不符');
           }
           final core = _core ?? (throw StateError('Alula Rust 核心未初始化'));
-          final inserted = titleCase
-              ? core.transformTitleCaseText(removed)
-              : core.transformCaseText(removed, uppercase: uppercase);
+          final inserted = camelCase
+              ? core.transformCamelCaseText(removed)
+              : titleCase
+                  ? core.transformTitleCaseText(removed)
+                  : core.transformCaseText(removed, uppercase: uppercase);
           final editPayloadChars = removed.length + inserted.length;
           if (editPayloadChars > remaining) {
             throw StateError(

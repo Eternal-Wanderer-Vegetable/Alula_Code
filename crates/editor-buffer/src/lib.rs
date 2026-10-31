@@ -58,6 +58,75 @@ pub fn transform_title_case_text(text: &str) -> String {
         .into_owned()
 }
 
+struct CamelCasePatterns {
+    single_line_word_boundary: Regex,
+    multi_line_word_boundary: Regex,
+    valid_word_start: Regex,
+}
+
+static CAMEL_CASE_PATTERNS: OnceLock<Option<CamelCasePatterns>> = OnceLock::new();
+
+fn camel_case_patterns() -> Option<&'static CamelCasePatterns> {
+    CAMEL_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(CamelCasePatterns {
+                single_line_word_boundary: Regex::new(
+                    r"[_\t-\r \u{00A0}\u{1680}\u{2000}-\u{200A}\u{2028}\u{2029}\u{202F}\u{205F}\u{3000}\u{FEFF}-]+",
+                )
+                .ok()?,
+                multi_line_word_boundary: Regex::new(r"[_-]+").ok()?,
+                // Code-OSS uses ^ with the multiline flag and lowercases the
+                // matched uppercase letter plus its following non-uppercase
+                // code point. Include all ECMAScript line terminators because
+                // Rust's multiline anchor only recognizes LF.
+                valid_word_start: Regex::new(r"(^|[\r\n\u{2028}\u{2029}])(\p{Lu}[^\p{Lu}])")
+                    .ok()?,
+            })
+        })
+        .as_ref()
+}
+
+fn uppercase_first_utf16_code_unit(text: &str) -> String {
+    let Some(first) = text.chars().next() else {
+        return String::new();
+    };
+    // The upstream implementation calls substring(0, 1) before uppercasing.
+    // A supplementary scalar is therefore passed as a lone surrogate and is
+    // left unchanged by JavaScript; preserve it rather than casing the scalar.
+    if first.len_utf16() != 1 {
+        return text.to_owned();
+    }
+    let mut result = first.to_uppercase().collect::<String>();
+    result.push_str(&text[first.len_utf8()..]);
+    result
+}
+
+/// Apply the fixed Code-OSS Unicode camel-case transform to a text fragment.
+pub fn transform_camel_case_text(text: &str) -> String {
+    let Some(patterns) = camel_case_patterns() else {
+        return text.to_owned();
+    };
+    let boundary = if text.contains(['\r', '\n']) {
+        &patterns.multi_line_word_boundary
+    } else {
+        &patterns.single_line_word_boundary
+    };
+    let mut words = boundary.split(text);
+    let Some(first_word) = words.next() else {
+        return String::new();
+    };
+    let first_word = patterns
+        .valid_word_start
+        .replace_all(first_word, |captures: &Captures<'_>| {
+            format!("{}{}", &captures[1], captures[2].to_lowercase())
+        });
+    let mut result = first_word.into_owned();
+    for word in words {
+        result.push_str(&uppercase_first_utf16_code_unit(word));
+    }
+    result
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WordPartDirection {
     Left,
@@ -1251,6 +1320,29 @@ mod tests {
             transform_title_case_text("İSTANBUL\0eCLAIR"),
             "I\u{307}Stanbul\0Eclair"
         );
+    }
+
+    #[test]
+    fn camel_case_uses_code_oss_unicode_word_boundaries() {
+        assert_eq!(transform_camel_case_text("linux-save-ok"), "linuxSaveOk");
+        assert_eq!(transform_camel_case_text("Foo-bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("FOO-bar"), "FOOBar");
+        assert_eq!(transform_camel_case_text("my name_here"), "myNameHere");
+        assert_eq!(
+            transform_camel_case_text("foo_bar\nqux-baz"),
+            "fooBar\nquxBaz"
+        );
+        assert_eq!(transform_camel_case_text("Foo\r\nBar"), "foo\r\nbar");
+        assert_eq!(transform_camel_case_text("🌱-seed"), "🌱Seed");
+        assert_eq!(transform_camel_case_text("foo-𐐀bar"), "foo𐐀bar");
+        assert_eq!(
+            transform_camel_case_text("foo\u{0085}bar"),
+            "foo\u{0085}bar"
+        );
+        assert_eq!(transform_camel_case_text("foo\u{FEFF}bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("foo\u{2028}bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("Istanbul-İzmir"), "istanbulİzmir");
+        assert_eq!(transform_camel_case_text("foo\0-bar"), "foo\0Bar");
     }
 
     #[test]
