@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.26 / EDT-06b 完成）
+
+- 普通 Enter/NumpadEnter 现在继承 selection.start 之前的行首缩进，处理多光标与选区替换；光标位于缩进中时仅复制光标前的空白，无缩进行则只插入换行。由 Rust `lineBoundary` / 有界 `readRange` 与既有 UTF-16 TextOps 完成，composition 继续交给 IME，无 ABI 变更。
+- 新增 9 个测试；与 P04.25 缩进回归合计 19 项通过，覆盖三平台 TargetPlatform、multi-cursor、双视图、undo/redo、BOM/emoji/CRLF 和保存回读。完整 `init.sh` EXIT=0（Flutter 402、Rust workspace、Clippy、build_core），cargo fmt 与 Flutter analyze（0 issues）通过。证据：`docs/diagnostics/2026-10-31-p04/p04.26-enter-indent.md`。
+- GitNexus 新方法 impact 为 CRITICAL；`_focusNodeFor` UNKNOWN、`lineBoundary` CRITICAL lower-bound，索引有跨语言漏连与过程截断，均未降级。P04 / feat-026 继续进行中；括号/引号配对与更高级智能回车仍待 EDT-06 后续切片；P15 原生键盘、IME、读屏/DPI 与 macOS 验收仍 pending。
+
 ### 最新进展（2026-10-31，P04.25 / EDT-06a 完成）
 
 - EDT-06a 完成 Tab 制表位插入、单行局部选区替换、整行/多行缩进、Shift+Tab 反缩进及 `editor.action.indentLines` / `editor.action.outdentLines` 平台快捷键。新增可见列 helper，按 Unicode grapheme 与固定 Code-OSS 全角/emoji 宽度规则计算；Rust 仍为文本权威，通过既有 UTF-16 行边界/范围读取与 TextOps 提交，无 ABI 变化。composition、版本校验、多光标重叠拒绝、双视图、undo/redo、dirty 与保存回读均覆盖。

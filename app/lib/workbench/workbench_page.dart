@@ -2546,6 +2546,177 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await Clipboard.setData(ClipboardData(text: text));
   }
 
+  Future<void> _insertNewlineWithIndent() async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(
+          () =>
+              _statusDetail = 'Enter 已取消：选区数超过 $maxDocLineDeleteSelections 上限',
+        );
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final edits = <({
+      int start,
+      int end,
+      String text,
+      String removed,
+      int selectionIndex,
+    })>[];
+    var inspectedUtf16 = 0;
+    try {
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final line = doc.doc.lineBoundary(selection.start);
+        if (line.version != expectedVersion) {
+          throw StateError('文档版本在读取 Enter 缩进时发生变化');
+        }
+
+        final prefixLength = selection.start - line.startUtf16;
+        final selectionLength = selection.end - selection.start;
+        if (prefixLength < 0 ||
+            prefixLength > _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+          throw StateError('Enter 缩进前缀超过单次操作上限');
+        }
+        inspectedUtf16 += prefixLength;
+        if (selectionLength >
+            _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+          throw StateError('Enter 选区超过单次操作上限');
+        }
+        inspectedUtf16 += selectionLength;
+
+        final prefix = _readDocumentRange(
+          doc,
+          line.startUtf16,
+          selection.start,
+        );
+        final indentation = prefix.substring(0, leadingIndentLength(prefix));
+        final removed = selection.isCollapsed
+            ? ''
+            : _readDocumentRange(doc, selection.start, selection.end);
+        edits.add((
+          start: selection.start,
+          end: selection.end,
+          text: '\n$indentation',
+          removed: removed,
+          selectionIndex: index,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = 'Enter 未应用：$error');
+      }
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = 'Enter 未应用：文档版本已变化');
+      return;
+    }
+
+    edits.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.selectionIndex.compareTo(b.selectionIndex));
+    var payloadChars = 0;
+    for (var index = 0; index < edits.length; index++) {
+      final edit = edits[index];
+      if (index > 0 &&
+          (edit.start < edits[index - 1].end ||
+              edit.start == edits[index - 1].start)) {
+        if (mounted) {
+          setState(() => _statusDetail = 'Enter 未应用：多光标编辑范围重叠');
+        }
+        return;
+      }
+      payloadChars += edit.removed.length + edit.text.length;
+    }
+    if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            'Enter 已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    var deltaBefore = 0;
+    final mappedStarts = <int>[];
+    for (final edit in edits) {
+      mappedStarts.add(edit.start + deltaBefore);
+      deltaBefore += edit.text.length - (edit.end - edit.start);
+    }
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final edit in edits.reversed) {
+      if (edit.end > edit.start) {
+        forward.add(TextOp.delete(edit.start, edit.end - edit.start));
+      }
+      forward.add(TextOp.insert(edit.start, edit.text));
+    }
+    for (var index = edits.length - 1; index >= 0; index--) {
+      final edit = edits[index];
+      final mappedStart = mappedStarts[index];
+      inverse.add(TextOp.delete(mappedStart, edit.text.length));
+      if (edit.removed.isNotEmpty) {
+        inverse.add(TextOp.insert(mappedStart, edit.removed));
+      }
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = 'Enter 未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length + deltaBefore;
+    final mappedBySelection =
+        List<TextSelection?>.filled(selections.length, null);
+    for (var index = 0; index < edits.length; index++) {
+      final edit = edits[index];
+      final caret =
+          (mappedStarts[index] + edit.text.length).clamp(0, newLength).toInt();
+      mappedBySelection[edit.selectionIndex] =
+          TextSelection.collapsed(offset: caret);
+    }
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in mappedBySelection)
+        if (selection != null) selection,
+    ]);
+    if (mappedSelections.isEmpty) return;
+
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = '已继承当前行缩进');
+    }
+  }
+
   Future<void> _cutCrossWindowSelection(OpenDoc doc) async {
     _flushInput(doc, commitComposition: true);
     final selection = doc.crossWindowSelection;
@@ -4402,6 +4573,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ));
             return KeyEventResult.handled;
           }
+        }
+        if (active != null &&
+            !activeHasComposition &&
+            !ctrl &&
+            !meta &&
+            !alt &&
+            !shift &&
+            (key == LogicalKeyboardKey.enter ||
+                key == LogicalKeyboardKey.numpadEnter)) {
+          unawaited(_insertNewlineWithIndent());
+          return KeyEventResult.handled;
         }
         if (_awaitingMoveSelectionChord) {
           if (key == LogicalKeyboardKey.controlLeft ||
