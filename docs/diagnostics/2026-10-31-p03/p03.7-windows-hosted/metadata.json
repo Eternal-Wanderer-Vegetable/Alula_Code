@@ -1,0 +1,331 @@
+{
+  "processId": 8912,
+  "osCaption": "Microsoft Windows Server 2025 Datacenter",
+  "osVersion": "10.0.26100",
+  "osBuildNumber": "26100",
+  "clientWidth": 1028,
+  "clientHeight": 711,
+  "dpi": 96,
+  "windowVisible": true,
+  "screenshot": "D:\\a\\_temp\\alula-windows-client.png",
+  "sha256": "4f076728539d0b8a23a72710cf75c56824fdf65f7de06af4c2098c9e18821aab",
+  "systemUsesLightTheme": true,
+  "appsUseLightTheme": true,
+  "uiAutomationAvailable": true,
+  "uiAutomationSkipped": false,
+  "uiAutomationElementCount": 3,
+  "accessibleNameCount": 2,
+  "accessibleNames": [
+    "Alula Code",
+    "FLUTTERVIEW"
+  ],
+  "uiAutomationRoots": [
+    {
+      "target": "topLevelWindow",
+      "elementCount": 2,
+      "accessibleNameCount": 2,
+      "accessibleNames": [
+        "Alula Code",
+        "FLUTTERVIEW"
+      ],
+      "elements": [
+        {
+          "name": "Alula Code",
+          "automationId": "",
+          "className": "FLUTTER_RUNNER_WIN32_WINDOW",
+          "frameworkId": "Win32",
+          "controlType": "ControlType.Window",
+          "localizedControlType": "window",
+          "isControlElement": true,
+          "isContentElement": true
+        },
+        {
+          "name": "FLUTTERVIEW",
+          "automationId": "",
+          "className": "FLUTTERVIEW",
+          "frameworkId": "Win32",
+          "controlType": "ControlType.Pane",
+          "localizedControlType": "pane",
+          "isControlElement": true,
+          "isContentElement": true
+        }
+      ],
+      "error": null
+    },
+    {
+      "target": "flutterChildWindow",
+      "elementCount": 1,
+      "accessibleNameCount": 1,
+      "accessibleNames": [
+        "FLUTTERVIEW"
+      ],
+      "elements": [
+        {
+          "name": "FLUTTERVIEW",
+          "automationId": "",
+          "className": "FLUTTERVIEW",
+          "frameworkId": "Win32",
+          "controlType": "ControlType.Pane",
+          "localizedControlType": "pane",
+          "isControlElement": true,
+          "isContentElement": true
+        }
+      ],
+      "error": null
+    }
+  ],
+  "uiAutomationError": null,
+  "msaaAvailable": true,
+  "msaaRoots": [
+    {
+      "target": "topLevelWindow",
+      "hresult": "0x00000000",
+      "rootName": "Alula Code",
+      "rootNameError": null,
+      "childCount": 1,
+      "children": [
+        {
+          "Path": "1",
+          "ChildId": 1,
+          "Name": null,
+          "Role": null,
+          "Value": null,
+          "ChildCount": 0,
+          "Error": "Value does not fall within the expected range."
+        }
+      ],
+      "error": null
+    },
+    {
+      "target": "flutterChildWindow",
+      "hresult": "0x00000000",
+      "rootName": null,
+      "rootNameError": null,
+      "childCount": 1,
+      "children": [
+        {
+          "Path": "1.1.1.1.1.1.1",
+          "ChildId": 1,
+          "Name": "文件. 文件",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.1.2",
+          "ChildId": 2,
+          "Name": "编辑. 编辑",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.1.3",
+          "ChildId": 3,
+          "Name": "查看. 查看",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.1.4",
+          "ChildId": 4,
+          "Name": "帮助. 帮助",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.1",
+          "ChildId": 1,
+          "Name": "Alula Code",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 4,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.2",
+          "ChildId": 2,
+          "Name": "打开文件夹",
+          "Role": "43",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.3",
+          "ChildId": 3,
+          "Name": "",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.4",
+          "ChildId": 4,
+          "Name": "拆分编辑器",
+          "Role": "43",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.5",
+          "ChildId": 5,
+          "Name": "启动 LSP（需先打开文件夹）",
+          "Role": "43",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.6",
+          "ChildId": 6,
+          "Name": "补全    Ctrl+Space",
+          "Role": "43",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.7.1",
+          "ChildId": 1,
+          "Name": "未命名",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.7",
+          "ChildId": 7,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.8.1.1",
+          "ChildId": 1,
+          "Name": "",
+          "Role": "42",
+          "Value": "// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.8.1",
+          "ChildId": 1,
+          "Name": "未命名 主编辑器",
+          "Role": "42",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.8",
+          "ChildId": 8,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.9",
+          "ChildId": 9,
+          "Name": "校验一致性",
+          "Role": "43",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.10",
+          "ChildId": 10,
+          "Name": "代码缩略图，共 3 行，点击或拖动跳转",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.11",
+          "ChildId": 11,
+          "Name": "UTF-8. UTF-8",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1.12",
+          "ChildId": 12,
+          "Name": "LF. 行尾格式",
+          "Role": "41",
+          "Value": "",
+          "ChildCount": 0,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1.1",
+          "ChildId": 1,
+          "Name": "资源管理器\n点击右上角图标打开文件夹\n已连接 Rust 核心 v19\nLSP 未启动 · 诊断 0 · 标签 1 · ABI v19 · 同步 0 次. 管理（W6）",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 12,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1.1",
+          "ChildId": 1,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1.1.1",
+          "ChildId": 1,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1.1",
+          "ChildId": 1,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        },
+        {
+          "Path": "1",
+          "ChildId": 1,
+          "Name": "",
+          "Role": "20",
+          "Value": "",
+          "ChildCount": 1,
+          "Error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "msaaError": null,
+  "wmClosePosted": true,
+  "closeTimedOut": false,
+  "gracefulClose": true,
+  "exitCode": 0
+}

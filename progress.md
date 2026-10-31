@@ -3,7 +3,14 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-10-30 优先级调整）
+## Current State（当前状态，2026-10-31 更新）
+
+### 最新进展（2026-10-31，P03.7 Windows hosted UI / MSAA）
+
+- 修复 Windows PowerShell 5.1 采集 JSON 的默认 ANSI 编码，改为 UTF-8；提交 `1ea7037 ci(windows): preserve accessible names as UTF-8` 已推送到 `codex/vscode-parity-p00`。
+- GitHub Actions run `41153011276` 的 Linux、Windows、macOS jobs 全部成功。Windows Release 可见窗口采集与 P03.7 自动交互套件通过；14 项覆盖共享文档双视图、恢复副本、50k 行尾编辑保存、多光标/剪贴板、窗口外搜索、emoji/CRLF、Flutter 模拟 IME 与 selection 隔离。WM_CLOSE 后 exit code 0。
+- Windows runner 为 Windows Server 2025 Datacenter build 26100，不是 Windows 11 客户端；窗口 1028×711、96 DPI，主题注册表报告 light。MSAA child-window 树含中文菜单、工具栏、编辑器 welcome value、UTF-8/LF 与状态栏语义；截图与 UTF-8 JSON：`docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仅为 hosted 可见 UI/MSAA 和自动化功能证据，不代表 Narrator 播报、系统 IME、Windows 11、多 DPI/主题矩阵、Linux native DRM 或 macOS 原生交互。
+- P03.7 继续 in-progress。当前外部平台门：原生 DRM Linux；Windows 11 客户端的 Narrator/键盘遍历、native IME、DPI/主题和目标发行包；macOS 原生行为待验证。用户要求 Linux/Windows 可用后再提供 macOS 测试包；500 MiB 优化目标留待 P14。
 
 ### 最新进展（2026-10-31，P03.6 Linux Release / WSLg）
 
@@ -1048,7 +1055,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - Editor semantics now label a field with file and group; fold controls expose collapse/expand labels, state, line hints, and semantic tap actions. The existing gutter pointer path remains.
 - `app/test/workbench_multi_view_test.dart` covers shared identity/content, per-view input/scroll/focus and selection, edit broadcast, save, single-view close, last-view close/reopen, same-ID session restore, conflicting journal recovery, and searching/editing/saving the tail of a 50,000-line fixture in two views. The provided `fn main() { println!("linux-save-ok"); }` is the first line of the large-file save fixture. The large-window rebase regression also catches and guards transient multiple scroll-position painting.
 - `app/test/workbench_bounded_input_test.dart` now covers tail edit/save for a 50,000-UTF-16-unit single line in two views; `app/test/editor_folding_test.dart` covers semantic collapse/expand actions. Both large-file fixtures verify both views resolve to the same saved Rust text. Full `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passed: Rust workspace tests, Clippy, build_core, Flutter 260 tests. `cargo fmt --all -- --check`, `flutter analyze --no-pub` (0 issues), and targeted `git diff --check` passed. Evidence: `docs/diagnostics/2026-10-31-p03/p03.7-multiview-accessibility.md`.
-- P03.7 remains in progress pending native DRM Linux and Windows actual client area/reader, IME, Release/close, and DPI/theme checks. macOS testing remains pending per the user's unavailable environment; first establish Linux/Windows usability, then prepare its test package without claiming native macOS verification. WSLg does not count as native DRM evidence.
+- P03.7 remains in progress. Windows Server 2025 hosted visible-client capture, Unicode MSAA, 14 desktop tests, simulated Flutter IME, and graceful close pass in run 41153011276; Windows 11 client-specific Narrator/native IME/DPI-theme/package gates and Linux native DRM remain pending. macOS native testing remains unavailable; first establish Linux/Windows usability, then prepare its test package without claiming native macOS verification. WSLg does not count as native DRM evidence.
 
 ## P03.7 CI stage-snapshot correction（2026-10-31）
 
