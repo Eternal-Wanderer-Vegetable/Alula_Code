@@ -2,7 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart' show kPrimaryButton, PointerDownEvent;
+import 'package:flutter/gestures.dart'
+    show
+        kDoubleTapSlop,
+        kDoubleTapTimeout,
+        kPrimaryButton,
+        PointerDeviceKind,
+        PointerDownEvent;
 import 'package:flutter/rendering.dart' show AxisDirection, RenderEditable;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -290,6 +296,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   bool _ownsHorizontalScrollController = false;
   bool _flushScheduled = false;
   bool _restoringValue = false;
+  int _mouseClickCount = 0;
+  Duration? _lastMouseClickTimeStamp;
+  Offset? _lastMouseClickPosition;
+  int? _lastMouseClickDevice;
   String? _errorMessage;
   int _lineMetadataVersion = -1;
   int _lineMetadataStartUtf16 = -1;
@@ -318,13 +328,97 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (event.buttons != kPrimaryButton ||
-        !HardwareKeyboard.instance.isAltPressed ||
-        HardwareKeyboard.instance.isControlPressed) {
+    final keyboard = HardwareKeyboard.instance;
+    if (event.buttons == kPrimaryButton &&
+        keyboard.isAltPressed &&
+        !keyboard.isControlPressed) {
+      final offset = _textOffsetAtGlobalPosition(event.position);
+      if (offset != null) widget.onAltClick?.call(offset);
+    }
+
+    if (defaultTargetPlatform != TargetPlatform.linux ||
+        event.kind != PointerDeviceKind.mouse ||
+        event.buttons != kPrimaryButton ||
+        keyboard.isAltPressed ||
+        keyboard.isControlPressed ||
+        keyboard.isShiftPressed ||
+        keyboard.isMetaPressed) {
+      _resetMouseClickSequence();
       return;
     }
-    final offset = _textOffsetAtGlobalPosition(event.position);
-    if (offset != null) widget.onAltClick?.call(offset);
+
+    final previousTimeStamp = _lastMouseClickTimeStamp;
+    final previousPosition = _lastMouseClickPosition;
+    final elapsed =
+        previousTimeStamp == null ? null : event.timeStamp - previousTimeStamp;
+    final continuesSequence = elapsed != null &&
+        elapsed >= Duration.zero &&
+        elapsed <= kDoubleTapTimeout &&
+        previousPosition != null &&
+        (event.position - previousPosition).distance <= kDoubleTapSlop &&
+        _lastMouseClickDevice == event.device;
+    _mouseClickCount = continuesSequence ? _mouseClickCount + 1 : 1;
+    _lastMouseClickTimeStamp = event.timeStamp;
+    _lastMouseClickPosition = event.position;
+    _lastMouseClickDevice = event.device;
+
+    if (_mouseClickCount == 3) {
+      _resetMouseClickSequence();
+      _selectLogicalLineAt(event.position);
+    }
+  }
+
+  void _resetMouseClickSequence() {
+    _mouseClickCount = 0;
+    _lastMouseClickTimeStamp = null;
+    _lastMouseClickPosition = null;
+    _lastMouseClickDevice = null;
+  }
+
+  void _selectLogicalLineAt(Offset globalPosition) {
+    final initialWindow = widget.inputWindow;
+    final document = initialWindow.document;
+    final documentId = document.id;
+    final version = initialWindow.version;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final window = widget.inputWindow;
+      if (window.document.id != documentId ||
+          window.version != version ||
+          window.pendingText != null) {
+        return;
+      }
+      final localOffset = _textOffsetAtGlobalPosition(globalPosition);
+      if (localOffset == null) return;
+      final boundary = document.lineBoundary(window.startUtf16 + localOffset);
+      if (boundary.version != version) return;
+
+      var selectionEnd = boundary.endUtf16;
+      final lineEnding = document.readRange(
+        selectionEnd,
+        maxLenUtf16: 2,
+      );
+      if (lineEnding.version != version ||
+          lineEnding.startUtf16 != selectionEnd) {
+        return;
+      }
+      if (lineEnding.text.startsWith('\r\n')) {
+        selectionEnd += 2;
+      } else if (lineEnding.text.startsWith('\n') ||
+          lineEnding.text.startsWith('\r')) {
+        selectionEnd++;
+      }
+
+      final localStart = boundary.startUtf16 - window.startUtf16;
+      final localEnd = selectionEnd - window.startUtf16;
+      if (localStart < 0 ||
+          localEnd > window.text.length ||
+          localStart > localEnd) {
+        return;
+      }
+      setSelection(
+          TextSelection(baseOffset: localStart, extentOffset: localEnd));
+    });
   }
 
   RenderEditable? _findEditableRenderObject(BuildContext subtree) {
@@ -950,7 +1044,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         ? theme.textTheme.bodyLarge!
         : theme.textTheme.titleMedium!;
     final field = Listener(
-      onPointerDown: widget.onAltClick == null ? null : _handlePointerDown,
+      onPointerDown: _handlePointerDown,
       child: TextField(
         key: const ValueKey<String>('rust-bounded-text-input'),
         controller: _controller,
