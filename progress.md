@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.4 / EDT-01a 完成）
+
+- 按 docs/11 EDT-01 开始键盘移动与选择对拍。新增 `app/test/workbench_cursor_movement_test.dart`：Windows/Linux Flutter target-platform 工作台 fixture 验证 `a😀b` 的左右箭头和 Shift 扩展不会把 UTF-16 surrogate pair 拆开；Rust 权威全文与版本保持不变。此切片只锁定字符级横向移动，word/subword、行/页/文件边界和 smart Home 继续留在 EDT-01。
+- 定向测试 2 项、全量 Flutter 273 项通过；`RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` EXIT=0，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.4-character-cursor-movement.md`。
+- P04 / feat-026 仍为唯一活动 feature；下一切片按 docs/03 登记为 word/subword 移动与选择对拍。P03 外部平台门继续 pending；Hosted Windows Release 的精确 artifact close crash 保留为该二进制的失败证据，不能由新构建或自动化替代结果覆盖。
+
 ### 最新进展（2026-10-31，P04.3 / EDT-16c 完成）
 
 - ABI v20 已接入异步 LSP definition（Location/LocationLink）、16 项在途上限、版本门控和文档关闭/LSP 停止或解绑/URI 改变/工作区关闭/Critical 压力取消；Rust 提供 BOM、CRLF、行尾和 surrogate 边界安全的 UTF-16 行列/绝对位置换算。
