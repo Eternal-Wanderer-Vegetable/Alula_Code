@@ -79,8 +79,6 @@ jobs:
         run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
       - name: Launch Windows app and capture visible client area
         shell: pwsh
-        env:
-          ALULA_SKIP_UI_AUTOMATION: '1'
         run: |
           Add-Type -AssemblyName System.Drawing
           Add-Type @'
@@ -195,9 +193,13 @@ jobs:
             $themeSettings = Get-ItemProperty `
               -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' `
               -ErrorAction SilentlyContinue
+            $operatingSystem = Get-CimInstance Win32_OperatingSystem
             $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
             [ordered]@{
               processId = $process.Id
+              osCaption = $operatingSystem.Caption
+              osVersion = $operatingSystem.Version
+              osBuildNumber = $operatingSystem.BuildNumber
               clientWidth = $width
               clientHeight = $height
               dpi = [AlulaWindowApi]::GetDpiForWindow($window)
