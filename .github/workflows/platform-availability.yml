@@ -492,13 +492,20 @@ jobs:
         run: |
           $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
           flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
-      - name: Verify Windows smoke lifecycle
+      - name: Verify Windows accessibility tree and smoke lifecycle
         if: always()
         shell: pwsh
         run: |
           $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
           if (!(Test-Path $metadataPath)) { throw "Windows client smoke metadata was not created" }
           $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+          if (!$metadata.msaaAvailable) { throw "Flutter window did not expose an MSAA provider" }
+          $flutterRoot = $metadata.msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1
+          if (!$flutterRoot) { throw "MSAA snapshot did not include the Flutter child window" }
+          $accessibleText = (@($flutterRoot.children | ForEach-Object { [string]$_.Name; [string]$_.Value }) -join "`n")
+          foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')) {
+            if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected semantic text: $expected" }
+          }
           if (!$metadata.wmClosePosted) { throw "WM_CLOSE was not posted to the Alula window" }
           if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
           if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
