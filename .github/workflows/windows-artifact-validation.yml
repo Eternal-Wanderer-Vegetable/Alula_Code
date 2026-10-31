@@ -1,0 +1,95 @@
+name: Validate Windows artifact 41109679662
+
+on:
+  push:
+    branches: [codex/vscode-parity-p00]
+    paths:
+      - '.github/workflows/windows-artifact-validation.yml'
+      - 'tools/vscode-parity/validate-windows-artifact.ps1'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  release-artifact:
+    name: Run the uploaded Windows Release artifact
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Windows x64 artifact from run 41109679662
+        uses: actions/download-artifact@v4
+        with:
+          name: alula-windows-x64-d5319369c5b5d569954e0d816daf325f3bc12a51
+          run-id: 41109679662
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/alula-windows-release
+      - name: Capture visible window, accessibility tree, DPI/theme, and close
+        shell: pwsh
+        run: |
+          $output = '${{ runner.temp }}/alula-windows-validation'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          Start-Transcript -Path (Join-Path $output 'transcript.txt') -Force | Out-Null
+          try {
+            ./tools/vscode-parity/validate-windows-artifact.ps1 `
+              -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
+              -OutputDirectory $output
+          }
+          finally { Stop-Transcript | Out-Null }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-artifact-41109679662-validation
+          path: ${{ runner.temp }}/alula-windows-validation
+
+  source-interactions:
+    name: Run editor interaction suite at artifact source SHA
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: d5319369c5b5d569954e0d816daf325f3bc12a51
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Add temporary Windows integration-test entry point
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force app/integration_test | Out-Null
+          @'
+          import 'package:integration_test/integration_test.dart';
+          import '../test/workbench_multi_selection_test.dart' as multi_selection;
+          import '../test/workbench_multi_view_test.dart' as multi_view;
+
+          void main() {
+            IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+            multi_view.main();
+            multi_selection.main();
+          }
+          '@ | Set-Content app/integration_test/windows_p03_7_desktop_test.dart -Encoding utf8
+      - name: Prepare Windows desktop interaction test
+        shell: pwsh
+        working-directory: app
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter pub add "dev:integration_test@{sdk:flutter}"
+          bash ../scripts/build_core.sh
+      - name: Run multi-view, save/read-back, and IME composition tests
+        shell: pwsh
+        working-directory: app
+        run: |
+          $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
+          flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP/windows-artifact-source-interactions.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-artifact-41109679662-source-interactions
+          path: ${{ runner.temp }}/windows-artifact-source-interactions.log
