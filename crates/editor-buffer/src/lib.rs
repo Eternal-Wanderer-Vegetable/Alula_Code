@@ -127,6 +127,42 @@ pub fn transform_camel_case_text(text: &str) -> String {
     result
 }
 
+struct SnakeCasePatterns {
+    case_boundary: Regex,
+    single_letters: Regex,
+}
+
+static SNAKE_CASE_PATTERNS: OnceLock<Option<SnakeCasePatterns>> = OnceLock::new();
+
+fn snake_case_patterns() -> Option<&'static SnakeCasePatterns> {
+    SNAKE_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(SnakeCasePatterns {
+                case_boundary: Regex::new(r"(\p{Ll})(\p{Lu})").ok()?,
+                single_letters: Regex::new(r"(\p{Lu}|\p{N})(\p{Lu})(\p{Ll})").ok()?,
+            })
+        })
+        .as_ref()
+}
+
+/// Apply the fixed Code-OSS Unicode snake-case transform to a text fragment.
+pub fn transform_snake_case_text(text: &str) -> String {
+    let Some(patterns) = snake_case_patterns() else {
+        return text.to_owned();
+    };
+    let case_boundaries = patterns
+        .case_boundary
+        .replace_all(text, |captures: &Captures<'_>| {
+            format!("{}_{}", &captures[1], &captures[2])
+        });
+    patterns
+        .single_letters
+        .replace_all(case_boundaries.as_ref(), |captures: &Captures<'_>| {
+            format!("{}_{}{}", &captures[1], &captures[2], &captures[3])
+        })
+        .to_lowercase()
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WordPartDirection {
     Left,
@@ -1343,6 +1379,26 @@ mod tests {
         assert_eq!(transform_camel_case_text("foo\u{2028}bar"), "fooBar");
         assert_eq!(transform_camel_case_text("Istanbul-İzmir"), "istanbulİzmir");
         assert_eq!(transform_camel_case_text("foo\0-bar"), "foo\0Bar");
+    }
+
+    #[test]
+    fn snake_case_uses_code_oss_unicode_case_boundaries() {
+        assert_eq!(transform_snake_case_text("fooBar"), "foo_bar");
+        assert_eq!(
+            transform_snake_case_text("XMLHttpRequest"),
+            "xml_http_request"
+        );
+        assert_eq!(transform_snake_case_text("fooBARBaz"), "foo_bar_baz");
+        assert_eq!(transform_snake_case_text("2FastNumber"), "2_fast_number");
+        assert_eq!(transform_snake_case_text("foo2Bar"), "foo2_bar");
+        assert_eq!(transform_snake_case_text("O’Neil"), "o’neil");
+        assert_eq!(transform_snake_case_text("foo__Bar"), "foo__bar");
+        assert_eq!(transform_snake_case_text("éclairÉté"), "éclair_été");
+        assert_eq!(transform_snake_case_text("A1B2"), "a1b2");
+        assert_eq!(
+            transform_snake_case_text("HTTPServer\nNextLine"),
+            "http_server\nnext_line"
+        );
     }
 
     #[test]

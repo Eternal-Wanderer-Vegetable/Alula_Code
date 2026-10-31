@@ -664,6 +664,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.transformToCamelcase', '编辑器', '转换为驼峰命名',
         () => _transformCase(uppercase: false, camelCase: true),
         enablement: 'editorTextFocus');
+    reg('editor.action.transformToSnakecase', '编辑器', '转换为蛇形命名',
+        () => _transformCase(uppercase: false, snakeCase: true),
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4088,6 +4091,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required bool uppercase,
     bool titleCase = false,
     bool camelCase = false,
+    bool snakeCase = false,
   }) async {
     final doc = _active;
     if (doc == null || doc.inputWindow.hasComposition) return;
@@ -4209,11 +4213,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             throw StateError('Rust 返回的大小写转换文本长度与 UTF-16 范围不符');
           }
           final core = _core ?? (throw StateError('Alula Rust 核心未初始化'));
-          final inserted = camelCase
-              ? core.transformCamelCaseText(removed)
-              : titleCase
-                  ? core.transformTitleCaseText(removed)
-                  : core.transformCaseText(removed, uppercase: uppercase);
+          final inserted = snakeCase
+              ? core.transformSnakeCaseText(removed)
+              : camelCase
+                  ? core.transformCamelCaseText(removed)
+                  : titleCase
+                      ? core.transformTitleCaseText(removed)
+                      : core.transformCaseText(removed, uppercase: uppercase);
           final editPayloadChars = removed.length + inserted.length;
           if (editPayloadChars > remaining) {
             throw StateError(
@@ -4376,11 +4382,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     if (mounted) {
       setState(
-        () => _statusDetail = titleCase
-            ? '已转换为标题大小写'
-            : uppercase
-                ? '已转换为大写'
-                : '已转换为小写',
+        () => _statusDetail = snakeCase
+            ? '已转换为蛇形命名'
+            : titleCase
+                ? '已转换为标题大小写'
+                : uppercase
+                    ? '已转换为大写'
+                    : '已转换为小写',
       );
     }
   }
@@ -8645,7 +8653,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (!mounted || gen != _searchGen) return;
       setState(() => _searchHits = [..._searchHits, hit]);
     }, onDone: () {
-      if (mounted && gen == _searchGen) setState(() => _searching = false);
+      if (mounted && gen == _searchGen) {
+        setState(() => _searching = false);
+      }
     }, onError: (Object e) {
       if (mounted && gen == _searchGen) {
         setState(() {

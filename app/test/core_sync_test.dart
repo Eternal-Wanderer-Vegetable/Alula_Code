@@ -56,6 +56,14 @@ void main() {
     );
   }, skip: skip);
 
+  test('Rust FFI snake case uses Unicode boundaries and preserves NUL', () {
+    final core = _bootstrap.core!;
+    expect(
+      core.transformSnakeCaseText('XMLHttpRequest\u0000fooBARBaz'),
+      'xml_http_request\u0000foo_bar_baz',
+    );
+  }, skip: skip);
+
   test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
     final core = _bootstrap.core!;
     const sample = 'fn main() { println!("linux-save-ok"); }\n';

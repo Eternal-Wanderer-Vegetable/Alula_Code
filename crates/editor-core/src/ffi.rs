@@ -20,8 +20,9 @@ use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
 use editor_buffer::{
-    transform_camel_case_text, transform_case_text, transform_title_case_text, BufferError,
-    LineDeleteDirection, TextOp, WordDeleteDirection, WordPartDirection,
+    transform_camel_case_text, transform_case_text, transform_snake_case_text,
+    transform_title_case_text, BufferError, LineDeleteDirection, TextOp, WordDeleteDirection,
+    WordPartDirection,
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
@@ -35,7 +36,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 29;
+pub const ALULA_ABI_VERSION: u32 = 30;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -63,6 +64,11 @@ struct TextCaseInput {
 
 #[derive(Deserialize)]
 struct TitleCaseInput {
+    text: String,
+}
+
+#[derive(Deserialize)]
+struct SnakeCaseInput {
     text: String,
 }
 
@@ -451,6 +457,46 @@ pub unsafe extern "C" fn alula_text_transform_camel_case(
         err_json(
             "Internal",
             json!("panic in alula_text_transform_camel_case"),
+        )
+    })
+}
+
+/// Apply the Code-OSS Unicode snake-case transform to a JSON text fragment.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_text_transform_snake_case(
+    request_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_CASE_TRANSFORM_INPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_INPUT_BYTES }),
+            );
+        }
+        let request: SnakeCaseInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let transformed = transform_snake_case_text(&request.text);
+        if transformed.len() > MAX_CASE_TRANSFORM_OUTPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_OUTPUT_BYTES }),
+            );
+        }
+        to_c_ptr(json!({ "ok": true, "text": transformed }).to_string())
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_text_transform_snake_case"),
         )
     })
 }
@@ -2405,6 +2451,15 @@ mod tests {
         assert_eq!(
             take(unsafe { alula_text_transform_camel_case(request.as_ptr()) })["text"],
             "linuxSaveOk\0FooBar"
+        );
+    }
+
+    #[test]
+    fn snake_case_ffi_uses_unicode_boundaries_and_preserves_nul() {
+        let request = c(r#"{"text":"XMLHttpRequest\u0000fooBARBaz"}"#);
+        assert_eq!(
+            take(unsafe { alula_text_transform_snake_case(request.as_ptr()) })["text"],
+            "xml_http_request\0foo_bar_baz"
         );
     }
 

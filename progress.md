@@ -12,6 +12,12 @@
 - P03.7 / EV-P03-WIN11-UI-A11Y-DPI 与 P15 保持 pending。真实 x64 Windows 11 的 125%/Pinyin 结果仍以既有 exact-artifact 报告为准；本次 96 DPI ARM64 emulation 不替代原生 x64、语音采集或 DPI 矩阵。
 
 
+### 最新进展（2026-11-01，P04.44 / EDT-08d 完成）
+
+- 新增固定 Code-OSS `editor.action.transformToSnakecase` 命令，无默认快捷键；Rust 实现 Unicode lower→upper/acronym 边界和完整 lowercase，并经 ABI v30 NUL-safe JSON FFI 调用。沿用既有 UTF-16 选区/caret 事务、撤销/重做、多视图同步和保存路径。
+- Rust buffer/FFI、Dart ABI 握手、三平台 TargetPlatform 工作台测试通过；工作台 fixture 保留用户给出的 `fn main() { println!("linux-save-ok"); }`，并覆盖 selection、caret、双视图、undo/redo、BOM+CRLF 保存回读。完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 510），cargo fmt 通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.44-snake-case.md`。
+- JS `toLocaleLowerCase` 的 locale-sensitive 行为和运行时 Unicode 数据版本仍有差异；TargetPlatform fixture 不替代 P15 原生验收。P04.43 已推送；GitNexus staged/all/compare 检查均为 CRITICAL，索引全局截断保留且未作无影响解释。
+
 ### 最新进展（2026-11-01，P04.43 / EDT-08c 完成）
 
 - 新增固定 Code-OSS `editor.action.transformToCamelcase` 命令，无默认快捷键。Rust 按固定规则分别处理单行与多行分隔符、Unicode 首词大小写边界、ECMAScript whitespace，以及后续片段首 UTF-16 code unit；通过 ABI v29 的 NUL-safe JSON FFI 调用。编辑事务沿用 P04.41/42 的 Rust 权威范围、selection/caret 映射、版本/预算检查、undo/redo、dirty、Find、双视图与保存。
