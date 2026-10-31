@@ -99,6 +99,51 @@ void main() {
     expect(doc.isDirty, isFalse);
   }, skip: skip);
 
+  test('Rust 覆写粘贴范围通过 FFI 保留 UTF-16、BOM、emoji 与 CRLF', () {
+    final core = _bootstrap.core!;
+    final doc = core.openDoc(9070, '\uFEFFa🦊b\r\nxyz');
+    final resolved = doc.overtypePasteRanges(const [
+      DocumentOvertypePasteSelection(
+        startUtf16: 2,
+        endUtf16: 2,
+        insertedUtf16: 2,
+      ),
+      DocumentOvertypePasteSelection(
+        startUtf16: 2,
+        endUtf16: 4,
+        insertedUtf16: 1,
+      ),
+      DocumentOvertypePasteSelection(
+        startUtf16: 4,
+        endUtf16: 4,
+        insertedUtf16: 99,
+      ),
+      DocumentOvertypePasteSelection(
+        startUtf16: 7,
+        endUtf16: 7,
+        insertedUtf16: 1,
+      ),
+    ]);
+    expect(resolved.version, 1);
+    expect(
+      resolved.ranges
+          .map((range) => (range.startUtf16, range.endUtf16))
+          .toList(),
+      const [(2, 4), (2, 4), (4, 5), (7, 8)],
+    );
+    expect(
+      () => doc.overtypePasteRanges(const [
+        DocumentOvertypePasteSelection(
+          startUtf16: 3,
+          endUtf16: 3,
+          insertedUtf16: 1,
+        ),
+      ]),
+      throwsA(isA<AlulaException>()),
+    );
+    doc.close();
+  }, skip: skip);
+
   test('didClose 只关闭语言文档，不释放 Rust 文本缓冲区', () {
     final core = _bootstrap.core!;
     final doc = core.openDoc(9006, 'kept after didClose');

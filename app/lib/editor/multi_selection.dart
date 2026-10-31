@@ -233,8 +233,10 @@ MultiSelectionEditResult applyDistributedMultiSelectionPaste({
     );
   }
 
-  final lines = clipboardText.split(RegExp(r'\r\n|\n|\r'));
-  final distributeLines = lines.length == normalized.length;
+  final pasteTexts = distributeClipboardPasteText(
+    clipboardText: clipboardText,
+    selectionCount: normalized.length,
+  );
   final edits = <_PasteRange>[];
   for (var index = 0; index < normalized.length; index++) {
     final selection = normalized[index];
@@ -243,7 +245,7 @@ MultiSelectionEditResult applyDistributedMultiSelectionPaste({
     edits.add(_PasteRange(
       base < extent ? base : extent,
       base < extent ? extent : base,
-      distributeLines ? lines[index] : clipboardText,
+      pasteTexts[index],
       index == 0,
     ));
   }
@@ -279,6 +281,21 @@ MultiSelectionEditResult applyDistributedMultiSelectionPaste({
     selections: List.unmodifiable(secondaryCarets),
     changed: text != oldValue.text,
   );
+}
+
+/// Applies the existing multi-cursor paste distribution rule to a clipboard
+/// payload. When the clipboard line count matches the selection count, each
+/// selection receives one line; otherwise every selection receives all text.
+List<String> distributeClipboardPasteText({
+  required String clipboardText,
+  required int selectionCount,
+}) {
+  if (selectionCount <= 0) return const [];
+  final lines = clipboardText.split(RegExp(r'\r\n|\n|\r'));
+  if (selectionCount > 1 && lines.length == selectionCount) {
+    return List.unmodifiable(lines);
+  }
+  return List<String>.filled(selectionCount, clipboardText, growable: false);
 }
 
 /// Merges duplicate or intersecting selections while keeping the primary first.

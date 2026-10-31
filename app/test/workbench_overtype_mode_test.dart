@@ -31,6 +31,20 @@ Future<void> _pressSave(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 100));
 }
 
+Future<void> _sendCommandKey(
+  WidgetTester tester,
+  TargetPlatform platform,
+  LogicalKeyboardKey key,
+) async {
+  final modifier = platform == TargetPlatform.macOS
+      ? LogicalKeyboardKey.metaLeft
+      : LogicalKeyboardKey.controlLeft;
+  await tester.sendKeyDownEvent(modifier);
+  await tester.sendKeyEvent(key);
+  await tester.sendKeyUpEvent(modifier);
+  await tester.pump();
+}
+
 Future<void> _withTargetPlatform(
   TargetPlatform platform,
   Future<void> Function() body,
@@ -125,6 +139,138 @@ void main() {
           find.byType(RustTextInputField),
         );
         expect(field.inputWindow.document.resync().content, 'aXPQcd');
+        expect(tester.takeException(), isNull);
+      });
+    });
+
+    testWidgets('$platform Ctrl/Cmd+V overwrites text and is undoable',
+        (tester) async {
+      await _withTargetPlatform(platform, () async {
+        final temp =
+            Directory.systemTemp.createTempSync('alula-overtype-paste');
+        addTearDown(() async {
+          debugDefaultTargetPlatformOverride = null;
+          tester.binding.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.platform, null);
+          await tester.pumpWidget(const SizedBox.shrink());
+          if (temp.existsSync()) temp.deleteSync(recursive: true);
+        });
+
+        final workspace = Directory('${temp.path}/workspace')..createSync();
+        final file = File('${workspace.path}/sample.txt')
+          ..writeAsStringSync('abcdef');
+        final base = temp.path.replaceAll(r'\', '/');
+        Map<dynamic, dynamic> clipboard = const {'text': 'XYZ'};
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async => call.method == 'Clipboard.getData' ? clipboard : null,
+        );
+        await tester.pumpWidget(AlulaApp(
+          autoFolder: workspace.path,
+          layoutStore: LayoutStore(path: '$base/layout.json'),
+          sessionStore: SessionStore(path: '$base/session.json'),
+          keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        ));
+        await tester.pump(const Duration(milliseconds: 600));
+        await tester.tap(find.text('sample.txt').first);
+        await tester.pump(const Duration(milliseconds: 300));
+
+        final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+        await tester.showKeyboard(editor);
+        await tester.pump();
+        await _pressToggle(tester, platform);
+        final field = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        final document = field.inputWindow.document;
+        final controller = tester.widget<TextField>(editor).controller!;
+        controller.selection = const TextSelection.collapsed(offset: 2);
+        await tester.pump();
+
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyV);
+        await tester.pump();
+        await tester.pump();
+        expect(controller.text, 'abXYZf');
+        expect(document.resync().content, 'abXYZf');
+        expect(document.isDirty, isTrue);
+
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyZ);
+        await tester.pump();
+        expect(document.resync().content, 'abcdef');
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyY);
+        await tester.pump();
+        expect(document.resync().content, 'abXYZf');
+
+        await _pressSave(tester);
+        expect(file.readAsStringSync(), 'abXYZf');
+        expect(document.resync().content, file.readAsStringSync());
+        expect(tester.takeException(), isNull);
+      });
+    });
+
+    testWidgets(
+        '$platform overtype paste distributes lines to multiple cursors',
+        (tester) async {
+      await _withTargetPlatform(platform, () async {
+        final temp =
+            Directory.systemTemp.createTempSync('alula-overtype-multicursor');
+        addTearDown(() async {
+          debugDefaultTargetPlatformOverride = null;
+          tester.binding.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.platform, null);
+          await tester.pumpWidget(const SizedBox.shrink());
+          if (temp.existsSync()) temp.deleteSync(recursive: true);
+        });
+
+        final workspace = Directory('${temp.path}/workspace')..createSync();
+        final file = File('${workspace.path}/sample.txt')
+          ..writeAsStringSync('foo foo');
+        final base = temp.path.replaceAll(r'\', '/');
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async => call.method == 'Clipboard.getData'
+              ? const <String, Object?>{'text': 'X\nYZ'}
+              : null,
+        );
+        await tester.pumpWidget(AlulaApp(
+          autoFolder: workspace.path,
+          layoutStore: LayoutStore(path: '$base/layout.json'),
+          sessionStore: SessionStore(path: '$base/session.json'),
+          keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        ));
+        await tester.pump(const Duration(milliseconds: 600));
+        await tester.tap(find.text('sample.txt').first);
+        await tester.pump(const Duration(milliseconds: 300));
+
+        final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+        await tester.showKeyboard(editor);
+        await tester.pump();
+        final controller = tester.widget<TextField>(editor).controller!;
+        controller.selection =
+            const TextSelection(baseOffset: 0, extentOffset: 3);
+        await tester.pump();
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyD);
+        final field = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(field.additionalSelections, hasLength(1));
+
+        await _pressToggle(tester, platform);
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyV);
+        await tester.pump();
+        await tester.pump();
+        expect(controller.text, 'X YZ');
+        expect(field.inputWindow.document.resync().content, 'X YZ');
+
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyZ);
+        await tester.pump();
+        expect(field.inputWindow.document.resync().content, 'foo foo');
+        await _sendCommandKey(tester, platform, LogicalKeyboardKey.keyY);
+        await tester.pump();
+        expect(field.inputWindow.document.resync().content, 'X YZ');
+
+        await _pressSave(tester);
+        expect(file.readAsStringSync(), 'X YZ');
         expect(tester.takeException(), isNull);
       });
     });

@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 25;
+const int expectedAbiVersion = 26;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -21,6 +21,7 @@ const int maxDocReadLines = 256;
 const int maxDocColumnSelections = 10000;
 const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
+const int maxDocOvertypePasteSelections = 10000;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -306,6 +307,33 @@ class DocumentDeleteRanges {
   final List<DocumentDeleteRange> ranges;
 
   const DocumentDeleteRanges({required this.version, required this.ranges});
+}
+
+/// One absolute UTF-16 selection and the inserted paste length used to query
+/// the Rust overtype-paste replacement range.
+class DocumentOvertypePasteSelection {
+  final int startUtf16;
+  final int endUtf16;
+  final int insertedUtf16;
+
+  const DocumentOvertypePasteSelection({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.insertedUtf16,
+  });
+
+  List<int> toJson() => [startUtf16, endUtf16, insertedUtf16];
+}
+
+/// A bounded batch of paste-overwrite ranges resolved against one Rust version.
+class DocumentOvertypePasteRanges {
+  final int version;
+  final List<DocumentDeleteRange> ranges;
+
+  const DocumentOvertypePasteRanges({
+    required this.version,
+    required this.ranges,
+  });
 }
 
 /// Absolute Rust-document UTF-16 offset resolved from an LSP position.
@@ -1027,6 +1055,51 @@ class AlulaDoc {
     }).toList(growable: false);
     version = result['version'] as int;
     return DocumentDeleteRanges(version: version, ranges: ranges);
+  }
+
+  /// Resolve the replacement ranges for overtype-mode paste from one Rust
+  /// document snapshot without transferring editor text to Dart.
+  DocumentOvertypePasteRanges overtypePasteRanges(
+    List<DocumentOvertypePasteSelection> selectionsUtf16,
+  ) {
+    if (selectionsUtf16.length > maxDocOvertypePasteSelections) {
+      throw RangeError.range(
+        selectionsUtf16.length,
+        0,
+        maxDocOvertypePasteSelections,
+        'selectionsUtf16.length',
+      );
+    }
+    if (selectionsUtf16.any((selection) =>
+        selection.startUtf16 < 0 ||
+        selection.endUtf16 < 0 ||
+        selection.insertedUtf16 < 0)) {
+      throw RangeError(
+          'Overtype-paste offsets and lengths must be non-negative');
+    }
+    final json = core._ffi.docOvertypePasteRangesJson(
+      id,
+      selectionsUtf16.map((selection) => selection.toJson()).toList(),
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final ranges = (result['ranges'] as List<Object?>).map((item) {
+      final range = item as Map<String, Object?>;
+      return DocumentDeleteRange(
+        startUtf16: range['startUtf16'] as int,
+        endUtf16: range['endUtf16'] as int,
+      );
+    }).toList(growable: false);
+    return DocumentOvertypePasteRanges(
+      version: result['version'] as int,
+      ranges: ranges,
+    );
   }
 
   /// Read a bounded batch of line windows without mirroring the document.

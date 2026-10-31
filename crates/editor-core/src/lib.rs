@@ -296,6 +296,18 @@ impl DocRegistry {
             .map(|buffer| buffer.line_delete_ranges_utf16(selections_utf16, direction))
     }
 
+    /// Resolve a bounded batch of overtype-paste replacement ranges against
+    /// one immutable Rust document snapshot.
+    pub fn overtype_paste_ranges_utf16(
+        &self,
+        id: u64,
+        selections_utf16: &[(usize, usize, usize)],
+    ) -> Option<Result<Vec<editor_buffer::TextDeleteRange>, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.overtype_paste_ranges_utf16(selections_utf16))
+    }
+
     /// Read a bounded page of line windows from a registered Rust document.
     pub fn read_lines(
         &self,

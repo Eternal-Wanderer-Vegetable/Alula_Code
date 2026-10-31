@@ -34,7 +34,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 25;
+pub const ALULA_ABI_VERSION: u32 = 26;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -999,6 +999,82 @@ pub unsafe extern "C" fn alula_doc_delete_line_ranges(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_delete_line_ranges")))
+}
+
+/// Resolve bounded UTF-16 paste-overwrite ranges. Each input triple is
+/// `[selectionStart, selectionEnd, insertedTextLength]`; the result is tied to
+/// the current Rust document version.
+///
+/// # Safety
+/// `ranges_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_overtype_paste_ranges(
+    id: u64,
+    ranges_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let ranges_json = match read_c_str(ranges_json) {
+            Ok(json) => json,
+            Err(error) => return error,
+        };
+        let max_json_bytes = editor_buffer::MAX_OVERTYPE_PASTE_RANGES * 66 + 2;
+        if ranges_json.len() > max_json_bytes {
+            return err_json(
+                "InvalidArgument",
+                json!({ "message": "overtype-paste range JSON exceeds the bounded input size" }),
+            );
+        }
+        let ranges: Vec<[u64; 3]> = match serde_json::from_str(ranges_json) {
+            Ok(ranges) => ranges,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let ranges: Result<Vec<(usize, usize, usize)>, _> = ranges
+            .into_iter()
+            .map(|[start, end, inserted]| {
+                usize::try_from(start).and_then(|start| {
+                    usize::try_from(end).and_then(|end| {
+                        usize::try_from(inserted).map(|inserted| (start, end, inserted))
+                    })
+                })
+            })
+            .collect();
+        let ranges = match ranges {
+            Ok(ranges) => ranges,
+            Err(_) => return err_json("InvalidArgument", json!("range is not representable")),
+        };
+
+        let registry = registry_lock();
+        match registry.overtype_paste_ranges_utf16(id, &ranges) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(ranges)) => {
+                let Some(version) = registry.version_of(id) else {
+                    return err_json("UnknownDoc", json!({ "id": id }));
+                };
+                to_c_ptr(json!({ "ok": true, "version": version, "ranges": ranges }).to_string())
+            }
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(BufferError::OvertypePasteCountTooLarge { requested, max })) => err_json(
+                "TooManySelections",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::InvalidOvertypePasteRange {
+                start_utf16,
+                end_utf16,
+            })) => err_json(
+                "InvalidRange",
+                json!({ "startUtf16": start_utf16, "endUtf16": end_utf16 }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_doc_overtype_paste_ranges"),
+        )
+    })
 }
 
 /// Convert an absolute Rust-document UTF-16 offset to an LSP UTF-16 position.
@@ -2520,6 +2596,50 @@ mod tests {
         .to_string());
         assert_eq!(
             take(unsafe { alula_doc_delete_line_ranges(id, too_many.as_ptr(), 0) })["error"]
+                ["code"],
+            "TooManySelections"
+        );
+
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn overtype_paste_ranges_over_ffi_are_batched_versioned_and_utf16_safe() {
+        let id = 93_045;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}a🦊z\r\nq").as_ptr()) });
+
+        let requests = c("[[2,2,3],[2,4,1],[7,7,2]]");
+        let result = take(unsafe { alula_doc_overtype_paste_ranges(id, requests.as_ptr()) });
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["version"], 1);
+        assert_eq!(
+            result["ranges"],
+            json!([
+                { "startUtf16": 2, "endUtf16": 5 },
+                { "startUtf16": 2, "endUtf16": 4 },
+                { "startUtf16": 7, "endUtf16": 8 },
+            ])
+        );
+
+        let split_surrogate = c("[[3,3,1]]");
+        assert_eq!(
+            take(unsafe { alula_doc_overtype_paste_ranges(id, split_surrogate.as_ptr()) })["error"]
+                ["code"],
+            "InvalidUtf16Offset"
+        );
+        let reversed = c("[[2,1,1]]");
+        assert_eq!(
+            take(unsafe { alula_doc_overtype_paste_ranges(id, reversed.as_ptr()) })["error"]
+                ["code"],
+            "InvalidRange"
+        );
+        let too_many = c(&json!(vec![
+            [0u64, 0u64, 1u64];
+            editor_buffer::MAX_OVERTYPE_PASTE_RANGES + 1
+        ])
+        .to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_overtype_paste_ranges(id, too_many.as_ptr()) })["error"]
                 ["code"],
             "TooManySelections"
         );

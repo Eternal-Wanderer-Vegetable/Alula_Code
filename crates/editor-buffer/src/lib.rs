@@ -17,6 +17,8 @@ pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
 pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
 /// Maximum number of selections accepted by one line-delete query.
 pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
+/// Maximum number of selections accepted by one overtype-paste query.
+pub const MAX_OVERTYPE_PASTE_RANGES: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
 pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
 /// Maximum text kept for each representative minimap line, in UTF-16 units.
@@ -368,8 +370,15 @@ pub enum BufferError {
     WordDeleteCountTooLarge { requested: usize, max: usize },
     /// A line-delete query contains more selections than the bounded API accepts.
     LineDeleteCountTooLarge { requested: usize, max: usize },
+    /// An overtype-paste query contains more selections than the bounded API accepts.
+    OvertypePasteCountTooLarge { requested: usize, max: usize },
     /// A line-delete selection has its end before its start.
     InvalidDeleteRange {
+        start_utf16: usize,
+        end_utf16: usize,
+    },
+    /// An overtype-paste selection has its end before its start.
+    InvalidOvertypePasteRange {
         start_utf16: usize,
         end_utf16: usize,
     },
@@ -413,12 +422,23 @@ impl std::fmt::Display for BufferError {
             BufferError::LineDeleteCountTooLarge { requested, max } => {
                 write!(f, "line-delete selection count {requested} exceeds maximum {max}")
             }
+            BufferError::OvertypePasteCountTooLarge { requested, max } => write!(
+                f,
+                "overtype-paste selection count {requested} exceeds maximum {max}"
+            ),
             BufferError::InvalidDeleteRange {
                 start_utf16,
                 end_utf16,
             } => write!(
                 f,
                 "line-delete range end {end_utf16} precedes start {start_utf16}"
+            ),
+            BufferError::InvalidOvertypePasteRange {
+                start_utf16,
+                end_utf16,
+            } => write!(
+                f,
+                "overtype-paste range end {end_utf16} precedes start {start_utf16}"
             ),
         }
     }
@@ -832,6 +852,58 @@ impl TextBuffer {
                         }
                     }
                 }
+            })
+            .collect()
+    }
+
+    /// Resolve the replacement ranges VS Code uses for paste while in
+    /// overtype mode. The inserted UTF-16 length extends the selection on its
+    /// current logical line; line terminators are never consumed. Returned
+    /// endpoints are snapped forward when the requested UTF-16 width would
+    /// split a supplementary scalar.
+    pub fn overtype_paste_ranges_utf16(
+        &self,
+        selections_utf16: &[(usize, usize, usize)],
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if selections_utf16.len() > MAX_OVERTYPE_PASTE_RANGES {
+            return Err(BufferError::OvertypePasteCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_OVERTYPE_PASTE_RANGES,
+            });
+        }
+
+        selections_utf16
+            .iter()
+            .map(|&(start_utf16, end_utf16, inserted_utf16)| {
+                if start_utf16 > end_utf16 {
+                    return Err(BufferError::InvalidOvertypePasteRange {
+                        start_utf16,
+                        end_utf16,
+                    });
+                }
+                self.char_idx_at_utf16(start_utf16)?;
+                self.char_idx_at_utf16(end_utf16)?;
+
+                let line = self.line_boundary_utf16(end_utf16)?;
+                let additional_utf16 = if start_utf16 == end_utf16 {
+                    inserted_utf16
+                } else {
+                    inserted_utf16.saturating_sub(1)
+                };
+                let requested_end = end_utf16
+                    .saturating_add(additional_utf16)
+                    .min(line.end_utf16);
+                let end_utf16 = if self.char_idx_at_utf16(requested_end).is_ok() {
+                    requested_end
+                } else {
+                    requested_end.saturating_add(1).min(line.end_utf16)
+                };
+                self.char_idx_at_utf16(end_utf16)?;
+
+                Ok(TextDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                })
             })
             .collect()
     }
@@ -1725,6 +1797,80 @@ mod tests {
             Err(BufferError::LineDeleteCountTooLarge {
                 requested: MAX_LINE_DELETE_RANGES + 1,
                 max: MAX_LINE_DELETE_RANGES,
+            })
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_use_utf16_and_stop_before_line_terminators() {
+        let buffer = TextBuffer::open("\u{FEFF}a🦊z\r\nnext");
+        assert_eq!(
+            buffer
+                .overtype_paste_ranges_utf16(&[(2, 2, 3), (2, 4, 1), (4, 4, 2), (7, 7, 2)])
+                .unwrap(),
+            vec![
+                TextDeleteRange {
+                    start_utf16: 2,
+                    end_utf16: 5,
+                },
+                TextDeleteRange {
+                    start_utf16: 2,
+                    end_utf16: 4,
+                },
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 5,
+                },
+                TextDeleteRange {
+                    start_utf16: 7,
+                    end_utf16: 9,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_snap_surrogate_and_clamp_multiline_paste_to_active_line() {
+        let emoji = TextBuffer::open("a🦊b");
+        assert_eq!(
+            emoji.overtype_paste_ranges_utf16(&[(1, 1, 1)]).unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 1,
+                end_utf16: 3,
+            }]
+        );
+
+        let multiline = TextBuffer::open("abcdef\nnext");
+        assert_eq!(
+            multiline
+                .overtype_paste_ranges_utf16(&[(1, 1, 32)])
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 1,
+                end_utf16: 6,
+            }]
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_validate_offsets_order_and_count() {
+        let buffer = TextBuffer::open("🦊\r\nx");
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&[(1, 1, 1)]),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&[(2, 1, 1)]),
+            Err(BufferError::InvalidOvertypePasteRange {
+                start_utf16: 2,
+                end_utf16: 1,
+            })
+        );
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&vec![(0, 0, 1); MAX_OVERTYPE_PASTE_RANGES + 1]),
+            Err(BufferError::OvertypePasteCountTooLarge {
+                requested: MAX_OVERTYPE_PASTE_RANGES + 1,
+                max: MAX_OVERTYPE_PASTE_RANGES,
             })
         );
     }

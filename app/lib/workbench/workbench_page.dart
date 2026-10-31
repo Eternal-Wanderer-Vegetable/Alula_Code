@@ -141,6 +141,7 @@ class WorkbenchPage extends StatefulWidget {
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.overtypeOnPaste = true,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -169,6 +170,10 @@ class WorkbenchPage extends StatefulWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+
+  /// Mirrors VS Code's editor.overtypeOnPaste default. User settings will be
+  /// wired into this editor option when P07 adds the settings store.
+  final bool overtypeOnPaste;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
@@ -2400,6 +2405,227 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return true;
   }
 
+  Future<void> _pasteOvertype(OpenDoc doc) async {
+    if (doc.inputWindow.hasComposition) return;
+    _flushInput(doc, commitComposition: true);
+    final expectedVersion = doc.doc.version;
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.isEmpty) return;
+    if (selections.length > maxDocOvertypePasteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '覆写粘贴已取消：选区数超过 $maxDocOvertypePasteSelections 上限');
+      }
+      return;
+    }
+
+    bool selectionSetUnchanged() {
+      final current = normalizeSelectionSet([
+        doc.selection,
+        ...doc.additionalSelections,
+      ]);
+      if (current.length != selections.length) return false;
+      for (var index = 0; index < current.length; index++) {
+        if (current[index].baseOffset != selections[index].baseOffset ||
+            current[index].extentOffset != selections[index].extentOffset) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    final clipboard = await Clipboard.getData('text/plain');
+    if (!mounted ||
+        clipboard == null ||
+        _active?.id != doc.id ||
+        doc.doc.version != expectedVersion ||
+        !selectionSetUnchanged()) {
+      return;
+    }
+    final clipboardText = clipboard.text ?? '';
+    if (clipboardText.isEmpty) return;
+
+    final pasteTexts = distributeClipboardPasteText(
+      clipboardText: clipboardText,
+      selectionCount: selections.length,
+    );
+    late final DocumentOvertypePasteRanges queried;
+    try {
+      queried = doc.doc.overtypePasteRanges([
+        for (var index = 0; index < selections.length; index++)
+          DocumentOvertypePasteSelection(
+            startUtf16: selections[index].start,
+            endUtf16: selections[index].end,
+            insertedUtf16: pasteTexts[index].length,
+          ),
+      ]);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '覆写粘贴范围查询失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion ||
+        queried.ranges.length != selections.length) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '覆写粘贴未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    final candidates = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+    })>[];
+    for (var index = 0; index < queried.ranges.length; index++) {
+      final range = queried.ranges[index];
+      candidates.add((
+        start: range.startUtf16,
+        end: range.endUtf16,
+        text: pasteTexts[index],
+        primary: index == 0,
+      ));
+    }
+    candidates.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.end.compareTo(b.end));
+    final merged = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+    })>[];
+    for (final range in candidates) {
+      if (merged.isEmpty || range.start >= merged.last.end) {
+        merged.add(range);
+        continue;
+      }
+      if (range.text != merged.last.text) {
+        if (mounted) {
+          setState(() => _statusDetail = '覆写粘贴已取消：多光标覆盖范围重叠且粘贴内容不同');
+        }
+        return;
+      }
+      final previous = merged.last;
+      merged[merged.length - 1] = (
+        start: previous.start,
+        end: range.end > previous.end ? range.end : previous.end,
+        text: previous.text,
+        primary: previous.primary || range.primary,
+      );
+    }
+
+    final operationChars = merged.fold<int>(
+      0,
+      (total, range) => total + (range.end - range.start) + range.text.length,
+    );
+    if (operationChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '覆写粘贴已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    final plans = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+      String removed,
+      int mappedStart,
+    })>[];
+    var shift = 0;
+    try {
+      for (final range in merged) {
+        final removed = _readDocumentRange(doc, range.start, range.end);
+        final mappedStart = range.start + shift;
+        plans.add((
+          start: range.start,
+          end: range.end,
+          text: range.text,
+          primary: range.primary,
+          removed: removed,
+          mappedStart: mappedStart,
+        ));
+        shift += range.text.length - (range.end - range.start);
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '覆写粘贴未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '覆写粘贴未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed) ...[
+        if (plan.end > plan.start)
+          TextOp.delete(plan.start, plan.end - plan.start),
+        if (plan.text.isNotEmpty) TextOp.insert(plan.start, plan.text),
+      ],
+    ];
+    if (forward.isEmpty) return;
+    final inverse = [
+      for (final plan in plans.reversed) ...[
+        if (plan.text.isNotEmpty)
+          TextOp.delete(plan.mappedStart, plan.text.length),
+        if (plan.removed.isNotEmpty)
+          TextOp.insert(plan.mappedStart, plan.removed),
+      ],
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '覆写粘贴未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final afterByPlan = <({bool primary, TextSelection selection})>[
+      for (final plan in plans)
+        (
+          primary: plan.primary,
+          selection: TextSelection.collapsed(
+            offset: plan.mappedStart + plan.text.length,
+          ),
+        ),
+    ];
+    final primaryIndex = afterByPlan.indexWhere((item) => item.primary);
+    final afterSelections = [
+      if (primaryIndex >= 0) afterByPlan[primaryIndex].selection,
+      for (var index = 0; index < afterByPlan.length; index++)
+        if (index != primaryIndex) afterByPlan[index].selection,
+    ];
+    final primarySelection = afterSelections.first;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: primarySelection.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      primarySelection.extentOffset,
+      selection: primarySelection,
+    );
+    _setDocSelections(doc, afterSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已覆写粘贴');
+  }
+
   Future<bool> _cutMultiSelections(OpenDoc doc) async {
     final field = doc.inputFieldKey.currentState;
     if (field == null) return false;
@@ -3893,7 +4119,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
           if (commandModifier && key == LogicalKeyboardKey.keyV) {
-            unawaited(_pasteCrossWindowSelection(active!));
+            unawaited(_overtypeMode && widget.overtypeOnPaste
+                ? _pasteOvertype(active!)
+                : _pasteCrossWindowSelection(active!));
             return KeyEventResult.handled;
           }
           if (key == LogicalKeyboardKey.delete ||
@@ -3917,6 +4145,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             active?.additionalSelections.isNotEmpty == true) {
           final active = _active!;
           _setDocSelection(active, active.selection);
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !alt &&
+            key == LogicalKeyboardKey.keyV &&
+            _overtypeMode &&
+            widget.overtypeOnPaste &&
+            !activeHasComposition &&
+            active != null) {
+          unawaited(_pasteOvertype(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier && !alt && key == LogicalKeyboardKey.keyZ) {
+          _runCommand(shift ? 'editor.redo' : 'editor.undo');
+          return KeyEventResult.handled;
+        }
+        if (commandModifier && !alt && key == LogicalKeyboardKey.keyY) {
+          _runCommand('editor.redo');
           return KeyEventResult.handled;
         }
         if (ctrl) {

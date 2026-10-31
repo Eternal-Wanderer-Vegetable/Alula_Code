@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.23 / EDT-05c 完成）
+### 最新进展（2026-10-31，P04.24 / EDT-05d 完成）
+
+- EDT-05d 完成覆写模式粘贴：固定 Code-OSS 默认 `editor.overtypeOnPaste=true`；Rust Rope 批量解析最多 10,000 个绝对 UTF-16 覆盖范围，ABI v26 同步 Rust FFI 与 Dart，处理 BOM、emoji 代理对、CRLF、选区扩展和跨行边界。
+- 显式 Ctrl/Cmd+V 在覆写模式下走 Rust 权威范围编辑；校验文档版本与 selection 快照，多光标按匹配行数分发、冲突重叠取消，undo/redo、dirty、双视图与保存回读接通。补齐 macOS Cmd+Z/Cmd+Y 到 Rust 文本历史。设置存储/UI 留 P07。
+- Windows/Linux/macOS TargetPlatform 9 项覆写/多光标集成、Rust buffer 3 项、FFI 1 项、Dart↔Rust 1 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 378）；`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。证据：`docs/diagnostics/2026-10-31-p04/p04.24-overtype-paste.md`。
+- GitNexus `_focusNodeFor` upstream 为 HIGH（6 节点/3 流程），跨语言调用仍含 CRITICAL/HIGH/UNKNOWN；风险未降级。P04 / feat-026 仍进行中，P15 原生平台验收保持 pending；下一切片从 `docs/03` / `docs/11` 选取。
+
+### 阶段进展（2026-10-31，P04.23 / EDT-05c 完成）
 
 - EDT-05c 完成行首/行尾删除：Rust Rope 一次解析最多 10,000 个绝对 UTF-16 选区；选区左删扩展到本行起点，右删保留选区，光标在行首/行尾时分别删除到前一行内容尾/下一行起点。覆盖 BOM、emoji、CRLF、重叠多光标、EOF/BOF；ABI v25 已同步 Rust FFI 与 Dart。
 - 工作台命令保护 IME composition，按同一 Rust 版本合并并倒序提交，撤销载荷上限 2,000,000 UTF-16 单元；双视图、dirty、undo/redo、保存回读通过。Windows/Linux 无默认键位，macOS 为 `Cmd+Backspace`、`Ctrl+K` 和 `Cmd+Delete`，命令面板可执行。用户提供的 `fn main() { println!("linux-save-ok"); }` fixture 经真实 FFI 检查 dirty 与文件回读。
