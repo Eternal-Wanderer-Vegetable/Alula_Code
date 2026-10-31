@@ -130,6 +130,8 @@ const Map<String, String> _rustAutoClosingBracketPairs = {
   '[': ']',
   '{': '}',
 };
+final RegExp _rustOnEnterCommentBefore = RegExp(r'^\s*//\s*\S|\s//\s+\S');
+final RegExp _rustOnEnterCommentAfter = RegExp(r'^(?!\s*$)');
 const String _rustAutoCloseBefore = ';:.,=}])> \t\n\r';
 const int _maxAutoClosedBracketMarkers = 10000;
 
@@ -2640,7 +2642,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : _readDocumentRange(doc, selection.start, selection.end);
         var text = '\n$indentation';
         var caretOffset = text.length;
+        var continuesRustLineComment = false;
         if (isRust &&
+            selection.isCollapsed &&
+            _rustOnEnterCommentBefore.hasMatch(prefix)) {
+          final suffixLength = line.endUtf16 - selection.end;
+          if (suffixLength >= 0 &&
+              suffixLength <=
+                  _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+            inspectedUtf16 += suffixLength;
+            final afterText = _readDocumentRange(
+              doc,
+              selection.end,
+              line.endUtf16,
+            );
+            continuesRustLineComment =
+                _rustOnEnterCommentAfter.hasMatch(afterText);
+          }
+        }
+        if (continuesRustLineComment) {
+          text = '\n$indentation// ';
+          caretOffset = text.length;
+        }
+        if (!continuesRustLineComment &&
+            isRust &&
             selection.isCollapsed &&
             selection.start > 0 &&
             selection.end < totalUtf16 &&

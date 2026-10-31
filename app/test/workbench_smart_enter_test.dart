@@ -211,6 +211,112 @@ void main() {
     }
   }
 
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    final isMac = platform == TargetPlatform.macOS;
+    platformTest(
+      '$platform Enter continues a Rust line comment before remaining text',
+      (tester) async {
+        const source = '    // leftright';
+        await _openFixture(tester, platform, source);
+        _controller(tester).selection =
+            TextSelection.collapsed(offset: source.indexOf('right'));
+        await tester.pump();
+
+        await _press(tester, LogicalKeyboardKey.enter);
+
+        const expected = '    // left\n    // right';
+        expect(_controller(tester).text, expected);
+        expect(
+          _controller(tester).selection,
+          TextSelection.collapsed(offset: expected.indexOf('right')),
+        );
+        await _press(
+          tester,
+          LogicalKeyboardKey.keyZ,
+          control: !isMac,
+          meta: isMac,
+        );
+        expect(_controller(tester).text, source);
+        await _press(
+          tester,
+          LogicalKeyboardKey.keyZ,
+          control: !isMac,
+          meta: isMac,
+          shift: true,
+        );
+        expect(_controller(tester).text, expected);
+      },
+    );
+  }
+
+  platformTest(
+    'Rust Enter continues an inline line comment using its second rule',
+    (tester) async {
+      const source = 'let x = 1; // leftright';
+      await _openFixture(tester, TargetPlatform.linux, source);
+      _controller(tester).selection =
+          TextSelection.collapsed(offset: source.indexOf('right'));
+      await tester.pump();
+
+      await _press(tester, LogicalKeyboardKey.enter);
+
+      expect(_controller(tester).text, 'let x = 1; // left\n// right');
+    },
+  );
+
+  platformTest(
+    'Rust line-comment Enter rule takes priority over an auto-closed brace',
+    (tester) async {
+      const source = '// ';
+      await _openFixture(tester, TargetPlatform.linux, source);
+      _controller(tester).selection =
+          const TextSelection.collapsed(offset: source.length);
+      await tester.pump();
+      await _typeCharacter(tester, '{');
+      expect(_controller(tester).text, '// {}');
+
+      await _press(tester, LogicalKeyboardKey.enter);
+
+      expect(_controller(tester).text, '// {\n// }');
+    },
+  );
+
+  platformTest(
+    'Rust Enter only continues a line comment when afterText has content',
+    (tester) async {
+      const source = '// left';
+      await _openFixture(tester, TargetPlatform.linux, source);
+      _controller(tester).selection =
+          const TextSelection.collapsed(offset: source.length);
+      await tester.pump();
+
+      await _press(tester, LogicalKeyboardKey.enter);
+
+      expect(_controller(tester).text, '$source\n');
+    },
+  );
+
+  platformTest(
+    'Rust comment continuation keeps a selected-text Enter on the fallback path',
+    (tester) async {
+      const source = '// leftright';
+      await _openFixture(tester, TargetPlatform.linux, source);
+      _controller(tester).selection = const TextSelection(
+        baseOffset: 7,
+        extentOffset: 8,
+      );
+      await tester.pump();
+
+      await _press(tester, LogicalKeyboardKey.enter);
+
+      expect(_controller(tester).text, '// left\night');
+    },
+  );
+
   platformTest(
     'Rust smart Enter edits the second view and saves the supplied sample',
     (tester) async {

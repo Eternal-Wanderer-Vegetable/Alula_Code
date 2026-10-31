@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.31 / EDT-06g 完成）
+
+- Rust `.rs` 行注释现在按固定 Code-OSS 两条 `onEnterRules` 续写：Enter 左侧匹配行首/行内 `//` 内容且右侧仍有非空白文本时，在新行保留原缩进并添加 `// `；行尾、右侧纯空白和非折叠选区保持普通 Enter。此规则优先于 tracked bracket smart Enter。
+- 实现使用 Rust UTF-16 行边界/范围，后缀检查计入既有操作预算；超过预算则安全回退，不改 ABI。新增 7 项用例，三平台、行内规则、tracked brace 优先级、尾部条件、选区、undo/redo 均覆盖。定向 27 项通过；完整 init.sh EXIT=0（Rust workspace、Clippy、build_core、Flutter 441），cargo fmt 与 `app/` Flutter analyze（0 issues）通过。证据：`docs/diagnostics/2026-10-31-p04/p04.31-rust-line-comment-enter.md`。
+- GitNexus `_insertNewlineWithIndent` upstream CRITICAL（61 symbols / 44 direct / 3 flows / 3 modules）；真实 Enter 调用链已核对，图谱映射异常不作风险降级。接下来从 docs/03 / docs/11 继续 P04.32；quote pairing、块注释规则仍未覆盖，P15 原生平台验证 pending。
+
 ### 最新进展（2026-10-31，P04.30 / EDT-06f 完成）
 
 - Rust `.rs` 中，Enter 现会将 Alula 自动插入且仍由 marker 跟踪的空 `()` / `[]` 展开为内层 +4 空格行与外层原缩进行，光标停在内层。非 Rust、源文件字面量括号、选区与 IME composition 继续走既有路径；复用 Rust 权威 UTF-16 TextOps 和共享 marker，无 FFI/ABI 变化。
