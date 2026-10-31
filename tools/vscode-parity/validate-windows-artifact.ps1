@@ -425,6 +425,7 @@ $interactionResult = [ordered]@{
   multiviewSaveRoute = 'not-attempted'
   multiviewTextAfterSave = $null
   multiviewEndKeyEventsSent = 0
+  multiviewEnterKeyEventsSent = 0
   multiviewAppendKeyEventsSent = 0
   workspaceTreeNames = @()
   openFileMenuNames = @()
@@ -748,13 +749,18 @@ try {
         throw 'The second editor view did not expose a focused MSAA text node before editing'
       }
       $appendText = "`n// view-2"
+      $appendBody = '// view-2'
       $expectedMultiviewText = "$sampleText$appendText"
       $interactionResult.multiviewEndKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x11, 0x23)
       if ($interactionResult.multiviewEndKeyEventsSent -ne 4) {
         throw "SendInput Ctrl+End inserted $($interactionResult.multiviewEndKeyEventsSent) of 4 keyboard events in the second view"
       }
-      $interactionResult.multiviewAppendKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($appendText)
-      $expectedAppendEventCount = $appendText.Length * 2
+      $interactionResult.multiviewEnterKeyEventsSent = [AlulaArtifactWindow]::SendKey(0x0D)
+      if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
+        throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
+      }
+      $interactionResult.multiviewAppendKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($appendBody)
+      $expectedAppendEventCount = $appendBody.Length * 2
       if ($interactionResult.multiviewAppendKeyEventsSent -ne $expectedAppendEventCount) {
         throw "SendInput appended $($interactionResult.multiviewAppendKeyEventsSent) of $expectedAppendEventCount Unicode keyboard events in the second view"
       }
