@@ -414,6 +414,7 @@ $interactionResult = [ordered]@{
   openFolderDialogNames = @()
   openFolderDialogValues = @()
   saveMenuNames = @()
+  saveMenuPollCount = 0
   saveRoute = 'not-attempted'
   fixturePath = $fixtureFile
   fixtureTextAfterSave = $null
@@ -422,6 +423,7 @@ $interactionResult = [ordered]@{
   multiviewFocusBeforeEditNodes = @()
   multiviewEditorValuesAfterEdit = @()
   multiviewSaveMenuNames = @()
+  multiviewSaveMenuPollCount = 0
   multiviewSaveRoute = 'not-attempted'
   multiviewTextAfterSave = $null
   multiviewEndKeyEventsSent = 0
@@ -662,10 +664,15 @@ try {
       $interactionResult.editorValuesAfterPaste = @($pastedSnapshot.Nodes | Where-Object { $_.Value } | ForEach-Object { $_.Value })
       $saveInvokedFromMenu = $false
       if (Click-ArtifactAccessibleNode '文件. 文件') {
-        Start-Sleep -Milliseconds 250
-        $saveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
-        $interactionResult.saveMenuNames = @($saveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
-        $saveItems = @($interactionResult.saveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+        $saveMenuDeadline = (Get-Date).AddSeconds(3)
+        $saveItems = @()
+        do {
+          Start-Sleep -Milliseconds 200
+          $saveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
+          $interactionResult.saveMenuNames = @($saveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+          $saveItems = @($interactionResult.saveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+          $interactionResult.saveMenuPollCount++
+        } while ($saveItems.Count -eq 0 -and (Get-Date) -lt $saveMenuDeadline)
         if ($saveItems.Count -gt 0) {
           $saveInvokedFromMenu = Click-ArtifactAccessibleNode $saveItems[0]
         }
@@ -673,6 +680,7 @@ try {
       if ($saveInvokedFromMenu) {
         $interactionResult.saveRoute = 'file-menu'
       } else {
+        Send-ArtifactKeys '{ESC}' 100
         $interactionResult.saveKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x53)
         if ($interactionResult.saveKeyEventsSent -ne 4) { throw "SendInput save chord inserted $($interactionResult.saveKeyEventsSent) of 4 keyboard events" }
         $interactionResult.saveRoute = 'sendinput-control-s'
@@ -774,10 +782,15 @@ try {
       }
       $multiviewSaveInvokedFromMenu = $false
       if (Click-ArtifactAccessibleNode '文件. 文件') {
-        Start-Sleep -Milliseconds 250
-        $multiviewSaveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
-        $interactionResult.multiviewSaveMenuNames = @($multiviewSaveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
-        $multiviewSaveItems = @($interactionResult.multiviewSaveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+        $multiviewSaveMenuDeadline = (Get-Date).AddSeconds(3)
+        $multiviewSaveItems = @()
+        do {
+          Start-Sleep -Milliseconds 200
+          $multiviewSaveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
+          $interactionResult.multiviewSaveMenuNames = @($multiviewSaveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+          $multiviewSaveItems = @($interactionResult.multiviewSaveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+          $interactionResult.multiviewSaveMenuPollCount++
+        } while ($multiviewSaveItems.Count -eq 0 -and (Get-Date) -lt $multiviewSaveMenuDeadline)
         if ($multiviewSaveItems.Count -gt 0) {
           $multiviewSaveInvokedFromMenu = Click-ArtifactAccessibleNode $multiviewSaveItems[0]
         }
@@ -785,6 +798,7 @@ try {
       if ($multiviewSaveInvokedFromMenu) {
         $interactionResult.multiviewSaveRoute = 'file-menu'
       } else {
+        Send-ArtifactKeys '{ESC}' 100
         $saveInputs = [AlulaArtifactWindow]::SendChord(0x53)
         if ($saveInputs -ne 4) { throw "SendInput save chord inserted $saveInputs of 4 keyboard events in the second view" }
         $interactionResult.multiviewSaveRoute = 'sendinput-control-s'
