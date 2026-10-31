@@ -174,7 +174,6 @@ jobs:
             $msaaAvailable = $false
             $msaaRoots = @()
             $msaaError = $null
-            $msaaProviders = @()
             if (!$uiAutomationSkipped) {
               try {
                 Add-Type -AssemblyName UIAutomationClient
@@ -253,32 +252,82 @@ jobs:
                   ref Guid interfaceId,
                   [MarshalAs(UnmanagedType.Interface)] out IAccessible accessible);
 
-              public static int GetClient(IntPtr window, out IAccessible accessible)
+              public static AlulaMsaaSnapshot Capture(IntPtr window)
               {
                   Guid interfaceId = IidIAccessible;
-                  return AccessibleObjectFromWindow(
+                  IAccessible accessible = null;
+                  AlulaMsaaSnapshot snapshot = new AlulaMsaaSnapshot();
+                  int result = AccessibleObjectFromWindow(
                       window, unchecked((uint)-4), ref interfaceId, out accessible);
-              }
+                  snapshot.HResult = "0x" + result.ToString("X8");
+                  if (result != 0 || accessible == null)
+                  {
+                      snapshot.Error = "AccessibleObjectFromWindow did not return IAccessible.";
+                      return snapshot;
+                  }
 
-              public static int GetChildCount(IAccessible accessible)
-              {
-                  return accessible.accChildCount;
-              }
+                  try
+                  {
+                      try { snapshot.RootName = accessible.get_accName(0); }
+                      catch (Exception exception) { snapshot.RootNameError = exception.Message; }
+                      try { snapshot.ChildCount = accessible.accChildCount; }
+                      catch (Exception exception)
+                      {
+                          snapshot.Error = "accChildCount: " + exception.Message;
+                          return snapshot;
+                      }
 
-              public static string GetName(IAccessible accessible, int childId)
-              {
-                  return accessible.get_accName(childId);
+                      int limit = Math.Min(snapshot.ChildCount, 100);
+                      for (int childId = 1; childId <= limit; childId++)
+                      {
+                          AlulaMsaaChild child = new AlulaMsaaChild();
+                          child.ChildId = childId;
+                          try { child.Name = accessible.get_accName(childId); }
+                          catch (Exception exception) { child.Error = exception.Message; }
+                          try { child.Role = Convert.ToString(accessible.get_accRole(childId)); }
+                          catch (Exception exception) { child.Error = exception.Message; }
+                          try { child.Value = accessible.get_accValue(childId); }
+                          catch (Exception exception) { child.Error = exception.Message; }
+                          snapshot.Children.Add(child);
+                      }
+                  }
+                  catch (Exception exception)
+                  {
+                      snapshot.Error = exception.GetType().FullName + ": " + exception.Message;
+                  }
+                  finally
+                  {
+                      if (Marshal.IsComObject(accessible))
+                      {
+                          Marshal.FinalReleaseComObject(accessible);
+                      }
+                  }
+                  return snapshot;
               }
+          }
 
-              public static string GetRole(IAccessible accessible, int childId)
-              {
-                  return Convert.ToString(accessible.get_accRole(childId));
-              }
+          public sealed class AlulaMsaaSnapshot
+          {
+              public string HResult { get; set; }
+              public string RootName { get; set; }
+              public string RootNameError { get; set; }
+              public int ChildCount { get; set; }
+              public System.Collections.Generic.List<AlulaMsaaChild> Children { get; private set; }
+              public string Error { get; set; }
 
-              public static string GetValue(IAccessible accessible, int childId)
+              public AlulaMsaaSnapshot()
               {
-                  return accessible.get_accValue(childId);
+                  Children = new System.Collections.Generic.List<AlulaMsaaChild>();
               }
+          }
+
+          public sealed class AlulaMsaaChild
+          {
+              public int ChildId { get; set; }
+              public string Name { get; set; }
+              public string Role { get; set; }
+              public string Value { get; set; }
+              public string Error { get; set; }
           }
           '@
                 $msaaTargets = @(
@@ -289,46 +338,21 @@ jobs:
                   }
                 )
                 foreach ($target in $msaaTargets) {
-                  $provider = $null
-                  $hresult = [AlulaMsaaApi]::GetClient($target.handle, [ref]$provider)
-                  $snapshot = [ordered]@{
-                    target = $target.name
-                    hresult = ('0x{0:X8}' -f ($hresult -band 0xFFFFFFFFL))
-                    rootName = $null
-                    childCount = 0
-                    children = @()
-                    error = $null
-                  }
-                  if ($hresult -eq 0 -and $null -ne $provider) {
+                  $result = [AlulaMsaaApi]::Capture($target.handle)
+                  if ($result.HResult -eq '0x00000000') {
                     $msaaAvailable = $true
-                    $msaaProviders += $provider
-                    try {
-                      $snapshot.rootName = [AlulaMsaaApi]::GetName($provider, 0)
-                      $snapshot.childCount = [AlulaMsaaApi]::GetChildCount($provider)
-                      $children = @()
-                      $limit = [Math]::Min($snapshot.childCount, 100)
-                      for ($childId = 1; $childId -le $limit; $childId++) {
-                        try {
-                          $children += [ordered]@{
-                            childId = $childId
-                            name = [AlulaMsaaApi]::GetName($provider, $childId)
-                            role = [AlulaMsaaApi]::GetRole($provider, $childId)
-                            value = [AlulaMsaaApi]::GetValue($provider, $childId)
-                          }
-                        } catch {
-                          $children += [ordered]@{ childId = $childId; error = $_.Exception.Message }
-                        }
-                      }
-                      $snapshot.children = @($children)
-                    } catch {
-                      $snapshot.error = $_.Exception.Message
-                      if ($null -eq $msaaError) { $msaaError = $snapshot.error }
-                    }
                   } else {
-                    $snapshot.error = 'AccessibleObjectFromWindow failed.'
-                    if ($null -eq $msaaError) { $msaaError = $snapshot.error }
+                    if ($null -eq $msaaError) { $msaaError = $result.Error }
                   }
-                  $msaaRoots += $snapshot
+                  $msaaRoots += [ordered]@{
+                    target = $target.name
+                    hresult = $result.HResult
+                    rootName = $result.RootName
+                    rootNameError = $result.RootNameError
+                    childCount = $result.ChildCount
+                    children = @($result.Children)
+                    error = $result.Error
+                  }
                 }
               } catch {
                 if ($null -eq $msaaError) { $msaaError = $_.Exception.Message }
@@ -373,12 +397,6 @@ jobs:
             $msaaTargets = $null
             $target = $null
             $element = $null
-            foreach ($provider in $msaaProviders) {
-              if ($null -ne $provider -and [System.Runtime.InteropServices.Marshal]::IsComObject($provider)) {
-                [System.Runtime.InteropServices.Marshal]::FinalReleaseComObject($provider) | Out-Null
-              }
-            }
-            $msaaProviders = $null
             [GC]::Collect()
             [GC]::WaitForPendingFinalizers()
           }
