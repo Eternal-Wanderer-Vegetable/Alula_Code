@@ -1329,19 +1329,69 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final doc = _active;
     if (doc == null) return;
     _flushInput(doc);
-    final value = doc.editingValue;
-    final text = value.text;
-    final caret = value.selection.extentOffset.clamp(0, text.length).toInt();
-    final (line, column) = lineAndColumnAt(text, caret);
-    final lineCount = '\n'.allMatches(text).length + 1;
-    final targetLine = (line + lineDelta).clamp(0, lineCount - 1).toInt();
-    final target = lineOffsetAtColumn(text, targetLine, column) +
-        doc.inputWindow.startUtf16;
-    final current = doc.selectionSet;
-    _setDocSelections(doc, [
-      ...current,
-      TextSelection.collapsed(offset: target),
+    final currentSelections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
     ]);
+    if (currentSelections.isEmpty) return;
+
+    try {
+      final caret = doc.selection.extentOffset;
+      final currentLine = doc.doc.lineBoundary(caret);
+      final firstLine = doc.doc.lineOffset(0);
+      final targetLineNumber = (currentLine.line + lineDelta)
+          .clamp(0, firstLine.lineCount - 1)
+          .toInt();
+      final targetLine = doc.doc.lineOffset(targetLineNumber);
+      final targetBoundary = doc.doc.lineBoundary(targetLine.offsetUtf16);
+      final column = (caret - currentLine.startUtf16)
+          .clamp(0, currentLine.endUtf16 - currentLine.startUtf16)
+          .toInt();
+      final targetColumn = column
+          .clamp(0, targetBoundary.endUtf16 - targetBoundary.startUtf16)
+          .toInt();
+      final desiredTarget = targetBoundary.startUtf16 + targetColumn;
+
+      // Keep the target's grapheme context bounded even on a very long line.
+      // For ordinary lines this reads from the line start; for long lines it
+      // reads at most 64 Ki UTF-16 units around the desired column.
+      final contextStart =
+          desiredTarget - targetBoundary.startUtf16 > maxDocReadRangeUtf16
+              ? desiredTarget - maxDocReadRangeUtf16 ~/ 2
+              : targetBoundary.startUtf16;
+      final available = doc.inputWindow.totalUtf16Length - contextStart;
+      if (available <= 0) return;
+      final range = doc.doc.readRange(
+        contextStart,
+        maxLenUtf16: available.clamp(1, maxDocReadRangeUtf16).toInt(),
+      );
+      final localTarget = desiredTarget - range.startUtf16;
+      if (localTarget < 0 || localTarget > range.text.length) return;
+
+      // Snap the candidate before asking Rust to validate it, because the
+      // desired UTF-16 column can otherwise land inside a surrogate pair.
+      final target = range.startUtf16 +
+          lineOffsetAtColumn(
+            range.text,
+            0,
+            localTarget,
+          );
+      // Rust rejects offsets inside surrogate pairs.
+      doc.doc.lineBoundary(target);
+      final next = TextSelection.collapsed(offset: target);
+      final window = doc.inputWindow;
+      if (target < window.startUtf16 || target > window.endUtf16) {
+        // Moving the new caret opens the correct input window while retaining
+        // previous cursors, including those that are remote from that window.
+        _setDocSelections(doc, [next, ...currentSelections]);
+      } else {
+        _setDocSelections(doc, [...currentSelections, next]);
+      }
+    } on AlulaException {
+      // A stale or invalid Rust position must not create a split-scalar caret.
+    } on RangeError {
+      // Keep the current selections if the document changed during lookup.
+    }
   }
 
   String? _selectedOccurrenceNeedle(OpenDoc doc) {

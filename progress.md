@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.17 / EDT-03b 完成）
+
+- 修复 `Ctrl+Alt+ArrowUp/Down` 在 Rust 有界输入窗里的绝对行列定位：目标行来自 Rust `lineBoundary` / `lineOffset`，目标附近读取不超过 64 Ki UTF-16 单元并在 grapheme 边界落点；跨窗重开后保留旧光标。
+- 多光标工作台测试新增 3 项：30,000 单元两行分别向上/向下越过 16 Ki 窗口，插入后 Ctrl+S 磁盘回读正确；Emoji 代理对中间的目标列安全吸附。键位/多光标定向 25 项、Flutter analyze 0 issues、cargo fmt 通过。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0：Rust workspace、Clippy、build_core 和 Flutter 344 项全绿。精确 `HEAD + 暂存补丁` 隔离快照的完整 init.sh、cargo fmt 与 Flutter analyze 也全部通过。报告：`docs/diagnostics/2026-10-31-p04/p04.17-add-cursor-above-below.md`。
+- GitNexus `_addCursorVertical` 为 UNKNOWN；外围 `WorkbenchPage` upstream 是 CRITICAL（66 symbols / 89 flows / 20 modules）。代码改动限于多光标命令；重复 staged detect 为 7 files / 7–8 symbols / 0 flows / LOW；全树 43 files 的检测从 0 / LOW（一次出现损坏路径）到 239–360 flows / CRITICAL 波动，保持高风险结论。
+
 ### 最新进展（2026-10-31，P04.16 / EDT-03a 完成）
 
 - P04.16 修正“跳过匹配”行为为 VS Code 的 `editor.action.moveSelectionToNextFindMatch`：Ctrl/Command+K 后 Ctrl/Command+D 移动最后一个匹配选区，保留主选区；Ctrl/Command+D 仍添加下一个 occurrence。bounded Rust scanner 跳过已被其他选区覆盖的匹配，selection history 支持 Ctrl+U 撤销和 Ctrl+Shift+U 重做。

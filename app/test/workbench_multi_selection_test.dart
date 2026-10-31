@@ -12,6 +12,44 @@ import 'package:flutter/rendering.dart' show RenderEditable, RenderObject;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> _pressAddCursorVertical(
+  WidgetTester tester, {
+  required bool above,
+}) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+  await tester.sendKeyEvent(
+    above ? LogicalKeyboardKey.arrowUp : LogicalKeyboardKey.arrowDown,
+  );
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+  await tester.pump();
+}
+
+Future<void> _typeAtPrimaryCaret(
+  WidgetTester tester,
+  TextEditingController controller,
+  String inserted,
+) async {
+  final caret = controller.selection.extentOffset;
+  final text = controller.text.replaceRange(caret, caret, inserted);
+  tester.testTextInput.updateEditingValue(TextEditingValue(
+    text: text,
+    selection: TextSelection.collapsed(offset: caret + inserted.length),
+  ));
+  await tester.pump();
+  await tester.pump();
+}
+
+Future<void> _saveWithCtrlS(WidgetTester tester) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 100));
+}
+
 void main() {
   testWidgets('multi-selection copy/cut writes clipboard and Rust once',
       (tester) async {
@@ -365,6 +403,141 @@ void main() {
     expect(field.additionalSelections, const [
       TextSelection(baseOffset: 8, extentOffset: 11),
     ]);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Ctrl+Alt+ArrowUp adds a cursor across a long input window',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-cursor-above');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const lineLength = 30000;
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final source = '${'a' * lineLength}\n${'b' * lineLength}';
+    final file = File('${workspace.path}/sample.rs')..writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.end);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    var controller = tester.widget<TextField>(editor).controller!;
+    var field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.inputWindow.startUtf16, greaterThan(0));
+    expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+        source.length);
+
+    await _pressAddCursorVertical(tester, above: true);
+    controller = tester.widget<TextField>(editor).controller!;
+    field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.inputWindow.startUtf16, greaterThan(0));
+    expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+        lineLength);
+
+    await _typeAtPrimaryCaret(tester, controller, 'X');
+    await _saveWithCtrlS(tester);
+    expect(
+        file.readAsStringSync(), '${'a' * lineLength}X\n${'b' * lineLength}X');
+  });
+
+  testWidgets('Ctrl+Alt+ArrowDown adds a cursor across a long input window',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-cursor-below');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const lineLength = 30000;
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final source = '${'a' * lineLength}\n${'b' * lineLength}';
+    final file = File('${workspace.path}/sample.rs')..writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.home);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    var controller = tester.widget<TextField>(editor).controller!;
+    var field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(controller.selection.extentOffset, 0);
+    expect(field.inputWindow.startUtf16, 0);
+
+    await _pressAddCursorVertical(tester, above: false);
+    controller = tester.widget<TextField>(editor).controller!;
+    field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+        lineLength + 1);
+
+    await _typeAtPrimaryCaret(tester, controller, 'X');
+    await _saveWithCtrlS(tester);
+    expect(
+        file.readAsStringSync(), 'X${'a' * lineLength}\nX${'b' * lineLength}');
+  });
+
+  testWidgets('vertical cursor snaps a UTF-16 column before an emoji',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-cursor-emoji');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/sample.rs').writeAsStringSync('a\n🙂x');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection.collapsed(offset: 1);
+    await tester.pump();
+
+    await _pressAddCursorVertical(tester, above: false);
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(controller.selection, const TextSelection.collapsed(offset: 1));
+    expect(
+        field.additionalSelections, const [TextSelection.collapsed(offset: 2)]);
+    expect(field.inputWindow.document.resync().content, 'a\n🙂x');
     expect(tester.takeException(), isNull);
   });
 
