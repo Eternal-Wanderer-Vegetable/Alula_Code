@@ -163,6 +163,72 @@ pub fn transform_snake_case_text(text: &str) -> String {
         .to_lowercase()
 }
 
+struct PascalCasePatterns {
+    word_boundary: Regex,
+    upper_case_word: Regex,
+}
+
+static PASCAL_CASE_PATTERNS: OnceLock<Option<PascalCasePatterns>> = OnceLock::new();
+
+fn pascal_case_patterns() -> Option<&'static PascalCasePatterns> {
+    PASCAL_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(PascalCasePatterns {
+                // Code-OSS keeps dots attached to the preceding segment and
+                // only treats underscore, ASCII space, tab, and hyphen as
+                // word separators.
+                word_boundary: Regex::new(r"[_ \t-]+").ok()?,
+                // JavaScript's multiline anchors also recognize CR, U+2028,
+                // and U+2029. Rust regex's multiline anchors recognize LF only.
+                upper_case_word: Regex::new(
+                    r"(?:^|[\r\n\u{2028}\u{2029}])\p{Lu}+(?:$|[\r\n\u{2028}\u{2029}])",
+                )
+                .ok()?,
+            })
+        })
+        .as_ref()
+}
+
+fn pascal_case_word(word: &str, upper_case_word: &Regex) -> String {
+    let Some(first_char) = word.chars().next() else {
+        return String::new();
+    };
+    let suffix = &word[first_char.len_utf8()..];
+    let first = if first_char.len_utf16() == 1 {
+        first_char.to_uppercase().collect::<String>()
+    } else {
+        // JavaScript charAt(0) returns half of a surrogate pair, which case
+        // mapping leaves untouched. Preserve the scalar as the visible result.
+        first_char.to_string()
+    };
+    let mut result = first;
+    if word.encode_utf16().count() > 1 && upper_case_word.is_match(word) {
+        result.push_str(&suffix.to_lowercase());
+    } else {
+        result.push_str(suffix);
+    }
+    result
+}
+
+/// Apply the fixed Code-OSS Unicode Pascal-case transform to a text fragment.
+pub fn transform_pascal_case_text(text: &str) -> String {
+    let Some(patterns) = pascal_case_patterns() else {
+        return text.to_owned();
+    };
+
+    let mut result = String::with_capacity(text.len());
+    for segment in text.split_inclusive('.') {
+        let mut words = patterns.word_boundary.split(segment);
+        if let Some(first_word) = words.next() {
+            result.push_str(&pascal_case_word(first_word, &patterns.upper_case_word));
+        }
+        for word in words {
+            result.push_str(&pascal_case_word(word, &patterns.upper_case_word));
+        }
+    }
+    result
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WordPartDirection {
     Left,
@@ -1399,6 +1465,27 @@ mod tests {
             transform_snake_case_text("HTTPServer\nNextLine"),
             "http_server\nnext_line"
         );
+    }
+
+    #[test]
+    fn pascal_case_uses_code_oss_word_and_dot_boundaries() {
+        assert_eq!(transform_pascal_case_text("linux-save-ok"), "LinuxSaveOk");
+        assert_eq!(transform_pascal_case_text("foo.bar-baz"), "Foo.BarBaz");
+        assert_eq!(transform_pascal_case_text("FOO_HTTP"), "FooHttp");
+        assert_eq!(transform_pascal_case_text("ßETA"), "SSETA");
+        assert_eq!(transform_pascal_case_text("HTTPServer"), "HTTPServer");
+        assert_eq!(transform_pascal_case_text("foo\nbar"), "Foo\nbar");
+        assert_eq!(transform_pascal_case_text("foo\nBAR"), "Foo\nbar");
+        assert_eq!(transform_pascal_case_text("foo\r\nBAR"), "Foo\r\nbar");
+        assert_eq!(
+            transform_pascal_case_text("foo\u{2028}BAR"),
+            "Foo\u{2028}bar"
+        );
+        assert_eq!(transform_pascal_case_text("éclair-été"), "ÉclairÉté");
+        assert_eq!(transform_pascal_case_text("🌱-seed"), "🌱Seed");
+        assert_eq!(transform_pascal_case_text("𐐀ABC"), "𐐀abc");
+        assert_eq!(transform_pascal_case_text("foo\0-bar"), "Foo\0Bar");
+        assert_eq!(transform_pascal_case_text("  foo--bar_\t"), "FooBar");
     }
 
     #[test]

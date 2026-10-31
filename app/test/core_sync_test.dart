@@ -64,6 +64,14 @@ void main() {
     );
   }, skip: skip);
 
+  test('Rust FFI Pascal case preserves dots, Unicode, and NUL', () {
+    final core = _bootstrap.core!;
+    expect(
+      core.transformPascalCaseText('foo.bar-baz\u0000HTTP'),
+      'Foo.BarBaz\u0000HTTP',
+    );
+  }, skip: skip);
+
   test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
     final core = _bootstrap.core!;
     const sample = 'fn main() { println!("linux-save-ok"); }\n';

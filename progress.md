@@ -1321,3 +1321,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 Code-OSS `editor.action.deleteLines`，默认 Windows/Linux Ctrl+Shift+K、macOS Cmd+Shift+K。Rust 行位置/UTF-16 边界计算出多选删除范围，按预算执行单次 TextOps，保留 undo/redo、dirty、保存与分屏同步。
 - 三平台定向 19 项全过，覆盖首行、emoji、相邻多光标、文件末尾空行、BOM/CRLF 保存回读。完整工作树 `bash init.sh` 通过：Rust workspace、Clippy、build_core、Flutter 464；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 为 0 issues。精确暂存 patch 已应用到 detached `HEAD a69cb36` 隔离 worktree，完整 `bash init.sh` 通过（Flutter 464，含 Rust workspace、Clippy、build_core）。
 - GitNexus 编辑前 `_registerCommands`、`KeybindingSet` impact 为 LOW；partial FTS、UNKNOWN 与 broader graph risk 保持未降级。详见 `docs/diagnostics/2026-11-01-p04/p04.35-delete-lines.md`。EDT-07 其他行操作与 P15 原生设备验收仍开放。
+
+## P04.45 / EDT-08e：Pascal Case 文本转换（2026-11-01）
+
+- 注册固定 Code-OSS `editor.action.transformToPascalcase`（无默认快捷键），接入已有版本校验的 Rust UTF-16 selection/caret 规划、多光标事务、selection 映射、undo/redo、dirty、Find、双视图与保存路径。Rust 保留点号并在点后分段，仅拆 `_`、ASCII 空格、tab、连字符；处理全大写词尾、Unicode 和 supplementary UTF-16 starter。NUL-safe JSON FFI ABI v31，输入/输出限 8/16 MiB。
+- 三平台 TargetPlatform fixture 验证 `linux-save-ok→LinuxSaveOk`、caret `HTTP→Http`、`foo.bar-baz→Foo.BarBaz`、分屏同步、BOM+CRLF 保存回读、undo/redo；Rust buffer/FFI 和 Dart bridge 覆盖 Unicode、emoji、CRLF、Unicode 行分隔符与 NUL。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 514），cargo fmt 和 Flutter analyze 通过。报告：`docs/diagnostics/2026-11-01-p04/p04.45-pascal-case.md`。
+- GitNexus 编辑前 `WorkbenchPage`/`TextBuffer` 保持 CRITICAL，`AlulaCore` HIGH；全局图索引截断未降级。staged/all/compare-main 最终扫描结果登记在报告。P15 原生平台验收继续 pending。

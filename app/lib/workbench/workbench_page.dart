@@ -667,6 +667,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.transformToSnakecase', '编辑器', '转换为蛇形命名',
         () => _transformCase(uppercase: false, snakeCase: true),
         enablement: 'editorTextFocus');
+    reg('editor.action.transformToPascalcase', '编辑器', '转换为帕斯卡命名',
+        () => _transformCase(uppercase: false, pascalCase: true),
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4092,6 +4095,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool titleCase = false,
     bool camelCase = false,
     bool snakeCase = false,
+    bool pascalCase = false,
   }) async {
     final doc = _active;
     if (doc == null || doc.inputWindow.hasComposition) return;
@@ -4213,9 +4217,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             throw StateError('Rust 返回的大小写转换文本长度与 UTF-16 范围不符');
           }
           final core = _core ?? (throw StateError('Alula Rust 核心未初始化'));
-          final inserted = snakeCase
-              ? core.transformSnakeCaseText(removed)
-              : camelCase
+          final inserted = pascalCase
+              ? core.transformPascalCaseText(removed)
+              : snakeCase
+                  ? core.transformSnakeCaseText(removed)
+                  : camelCase
                   ? core.transformCamelCaseText(removed)
                   : titleCase
                       ? core.transformTitleCaseText(removed)
@@ -4382,9 +4388,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     if (mounted) {
       setState(
-        () => _statusDetail = snakeCase
-            ? '已转换为蛇形命名'
-            : titleCase
+        () => _statusDetail = pascalCase
+            ? '已转换为帕斯卡命名'
+            : snakeCase
+                ? '已转换为蛇形命名'
+                : titleCase
                 ? '已转换为标题大小写'
                 : uppercase
                     ? '已转换为大写'
