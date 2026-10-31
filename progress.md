@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.28 / EDT-06d 完成）
+
+- Rust `.rs` 文件现在仅在所有光标都位于已自动插入的 `()[]{}` 之间时，按一次 Backspace 成对删除；字面量括号、非 Rust、非空选区、组合输入和跨窗选区仍走原输入路径。使用 Rust 权威 UTF-16 范围、文档版本校验与单批 TextOps，已有 marker 重映射负责移除配对记录；无 ABI 变化。
+- 新增 9 项测试，覆盖 Windows/Linux/macOS TargetPlatform、三类括号、普通字符和字面量回退、多光标、split view、undo/redo 与保存回读。`bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 423）；cargo fmt 和 Flutter analyze（0 issues）通过；精确 HEAD + 暂存补丁快照的 full init.sh（Flutter 423）、cargo fmt、Flutter analyze 也全绿。报告：`docs/diagnostics/2026-10-31-p04/p04.28-rust-paired-backspace.md`。
+- GitNexus pre-edit `_focusNodeFor` 为 HIGH，共享文档状态为 CRITICAL；staged detect 重跑为 CRITICAL（7 文件/7–11 可映射符号/114–136 流程），all-scope 为 CRITICAL（42 文件/17 符号/114–136 流程）。新私有方法仍为 UNKNOWN，调用点已源码核查；`--limit 1000` 仍截断流程列表且风险不降级。P15 原生键盘/IME/读屏/DPI 验收保持 pending。
+
 ### 最新进展（2026-10-31，P04.27 / EDT-06c 完成）
 
 - 固定 Code-OSS commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 的 Rust `language-configuration.json`，加入 Rust `()[]{}` 自动闭合、选区包围、默认 autoCloseBefore 边界与只跳过编辑器已插入 closer 的行为。使用 Rust 权威 UTF-16 TextOps，无 ABI 改动；跨 split view 共享的 auto-close marker 上限 10,000，随文档操作重映射，版本失配或对应括号删除时清除。

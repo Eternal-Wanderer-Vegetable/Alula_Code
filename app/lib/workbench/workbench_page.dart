@@ -145,6 +145,19 @@ class _AutoClosedBracketMarker {
   final String close;
 }
 
+typedef _RustBracketDeletePlan = ({
+  int start,
+  String removed,
+  int selectionIndex,
+  TextSelection selection,
+});
+
+typedef _RustBracketBackspace = ({
+  int version,
+  List<TextSelection> selections,
+  List<_RustBracketDeletePlan> plans,
+});
+
 Color _tokenColor(String kind) {
   for (final e in _tokenColors.entries) {
     if (kind.startsWith(e.key)) return e.value;
@@ -2982,6 +2995,136 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = '已输入 Rust 括号');
   }
 
+  _RustBracketBackspace? _rustBracketBackspacePlan(OpenDoc doc) {
+    if (doc.path?.toLowerCase().endsWith('.rs') != true ||
+        doc.inputWindow.hasComposition ||
+        doc.crossWindowSelection != null) {
+      return null;
+    }
+
+    try {
+      _flushInput(doc);
+      final selections = normalizeSelectionSet(doc.selectionSet);
+      if (selections.isEmpty ||
+          selections.length > maxDocLineDeleteSelections ||
+          selections.any((selection) => !selection.isCollapsed)) {
+        return null;
+      }
+
+      final version = doc.doc.version;
+      final totalUtf16 = doc.inputWindow.totalUtf16Length;
+      final plans = <_RustBracketDeletePlan>[];
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final caret = selection.extentOffset;
+        if (caret <= 0 || caret >= totalUtf16) return null;
+
+        final pair = _readDocumentRange(doc, caret - 1, caret + 1);
+        if (pair.length != 2) return null;
+        final open = pair[0];
+        final close = pair[1];
+        if (_rustAutoClosingBracketPairs[open] != close ||
+            !doc.hasAutoClosedBracketAt(caret, close)) {
+          return null;
+        }
+        plans.add((
+          start: caret - 1,
+          removed: '$open$close',
+          selectionIndex: index,
+          selection: selection,
+        ));
+      }
+      if (doc.doc.version != version) return null;
+
+      plans.sort((a, b) => a.start.compareTo(b.start));
+      for (var index = 1; index < plans.length; index++) {
+        if (plans[index].start <
+            plans[index - 1].start + plans[index - 1].removed.length) {
+          return null;
+        }
+      }
+      return (version: version, selections: selections, plans: plans);
+    } on Object {
+      return null;
+    }
+  }
+
+  Future<void> _applyRustBracketBackspace(
+    OpenDoc doc,
+    _RustBracketBackspace backspace,
+  ) async {
+    if (doc.inputWindow.hasComposition ||
+        doc.doc.version != backspace.version) {
+      return;
+    }
+    final currentSelections = normalizeSelectionSet(doc.selectionSet);
+    if (currentSelections.length != backspace.selections.length ||
+        currentSelections
+            .asMap()
+            .entries
+            .any((entry) => entry.value != backspace.selections[entry.key])) {
+      return;
+    }
+
+    final deletedUtf16 = backspace.plans.fold<int>(
+      0,
+      (total, plan) => total + plan.removed.length,
+    );
+    if (deletedUtf16 > _undoHistoryBudget.maxTotalChars) return;
+
+    final mappedStarts = List<int>.filled(backspace.selections.length, 0);
+    var removedBefore = 0;
+    for (final plan in backspace.plans) {
+      mappedStarts[plan.selectionIndex] = plan.start - removedBefore;
+      removedBefore += plan.removed.length;
+    }
+
+    final forward = [
+      for (final plan in backspace.plans.reversed)
+        TextOp.delete(plan.start, plan.removed.length),
+    ];
+    final inverse = [
+      for (final plan in backspace.plans.reversed)
+        TextOp.insert(mappedStarts[plan.selectionIndex], plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(backspace.version, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '自动配对删除未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (var index = 0; index < backspace.selections.length; index++)
+        TextSelection.collapsed(
+          offset: mappedStarts[index],
+          affinity: backspace.selections[index].affinity,
+        ),
+    ]);
+    if (mappedSelections.isEmpty) return;
+
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: backspace.selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已删除 Rust 自动配对括号');
+  }
+
   Future<void> _cutCrossWindowSelection(OpenDoc doc) async {
     _flushInput(doc, commitComposition: true);
     final selection = doc.crossWindowSelection;
@@ -4861,6 +5004,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _rustAutoClosingBracketPairs.values.contains(character))) {
           unawaited(_applyRustBracketInput(character!));
           return KeyEventResult.handled;
+        }
+        if (active != null &&
+            !ctrl &&
+            !meta &&
+            !alt &&
+            key == LogicalKeyboardKey.backspace) {
+          final backspace = _rustBracketBackspacePlan(active);
+          if (backspace != null) {
+            unawaited(_applyRustBracketBackspace(active, backspace));
+            return KeyEventResult.handled;
+          }
         }
         if (_awaitingMoveSelectionChord) {
           if (key == LogicalKeyboardKey.controlLeft ||
