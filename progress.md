@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.19 / EDT-03d 完成）
+### 最新进展（2026-10-31，P04.20 / EDT-04 完成）
+
+- 光标 undo/redo 与文本 undo/redo 分离，Windows/Linux/macOS TargetPlatform 工作台新增 6 项集成测试：光标命令不改 Rust 全文/版本；文本撤销/重做仍可用；两个文件交错操作时光标和文本历史均按文档隔离。
+- 定向测试 6 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 357 项）；`cargo fmt --all -- --check` 和 Flutter analyze（0 issues）通过。未改生产逻辑或 Rust/FFI ABI。报告：`docs/diagnostics/2026-10-31-p04/p04.20-cursor-and-text-undo-isolation.md`。
+- GitNexus SelectionHistory / WorkbenchPage 结果含 CRITICAL 与 UNKNOWN；源码已核实，风险未降级。P04 / feat-026 仍进行中；P15 原生平台验收继续 pending。下一步按 `docs/03` / `docs/11` 分解 EDT-05 插入覆写与删除。
+
+### 阶段进展（2026-10-31，P04.19 / EDT-03d 完成）
 
 - 跨输入窗矩形拖选接入 Rust ABI v23 批量绝对 UTF-16 行范围；主动行优先、emoji 安全吸附、CRLF 行尾排除、BOM 按文本保留，硬上限 10,000 行。边缘拖动复用 16ms / 3,600 px/s timer，靠近 2,048 UTF-16 窗口边缘重居中，继续编辑全部选中行并 Rust 保存回读。
 - Rust buffer 2、FFI 1、Dart↔Rust 1、跨窗工作台 TargetPlatform 12 项通过（300×1,200 长文，Linux/Windows/macOS fixture）。工作树与精确 `HEAD + index` 隔离快照的完整 `bash init.sh` 均 EXIT=0（Flutter 351、Rust workspace、Clippy、build_core），两边 cargo fmt 和 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.19-cross-window-mouse-box-selection.md`。
