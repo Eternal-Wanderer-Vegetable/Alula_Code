@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.1 完成 / P04.2 待启动）
+
+- 按用户当前目标，把代码/自动化完成状态与外部平台/人工设备验收分开：P03 / feat-025 实现出口关闭；Linux native DRM、Windows 11 Release/读屏/DPI主题和 macOS 原生环境以 EV-P03-* 明确 pending。它们不阻塞 P04–P13 的架构实现；P15/公开发行仍不得视作通过。
+- `docs/03` 的 P04 / feat-026 仍是唯一活动 feature。P04.1 / EDT-16a 已完成：F12/命令面板同文件 Rust 定义导航、精确 UTF-16 名称位置、Unicode XID、单字母边界及无符号/无匹配反馈。Widget 证据：`docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md`。下一受控切片为 P04.2 / EDT-16b（同文件 Ctrl+Click 与指针/选择交互）。工作树含其他 P04/P09 代码，阶段提交只暂存本片 hunks。
+- `flutter test --no-pub test/workbench_navigation_test.dart` 通过（1 项）；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace tests、Clippy、build_core、Flutter 261 项），`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。500 MiB 目标留 P14。
+
 ### 最新进展（2026-10-31，P03.7 Windows hosted UI / MSAA）
 
 - 修复 Windows PowerShell 5.1 采集 JSON 的默认 ANSI 编码，改为 UTF-8；提交 `1ea7037 ci(windows): preserve accessible names as UTF-8` 已推送到 `codex/vscode-parity-p00`。

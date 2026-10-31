@@ -152,6 +152,11 @@ class WorkbenchPage extends StatefulWidget {
   State<WorkbenchPage> createState() => _WorkbenchPageState();
 }
 
+final RegExp _rustIdentifierPattern = RegExp(
+  r'[_\p{XID_Start}][_\p{XID_Continue}]*',
+  unicode: true,
+);
+
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
@@ -322,6 +327,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
         () async => _verifyIntegrity(),
+        enablement: 'editorActive');
+    reg('editor.gotoDef', '编辑器', '跳转定义', () async => _gotoDefinition(),
         enablement: 'editorActive');
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
     reg('view.panelDiagnostics', '查看', '诊断面板',
@@ -3362,6 +3369,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       TextSelection.collapsed(offset: startUtf16),
     );
     setState(() {});
+  }
+
+  /// 光标处的 Rust 标识符词，支持 Unicode XID 字符与 UTF-16 偏移。
+  String _wordAt(String text, int offset) {
+    final pos = offset.clamp(0, text.length).toInt();
+    for (final match in _rustIdentifierPattern.allMatches(text)) {
+      if (pos >= match.start && pos <= match.end) return match.group(0)!;
+    }
+    return '';
+  }
+
+  /// 跳转定义（V1：仅当前文件，复用大纲的 symbols 通路；
+  /// 跨文件走 LSP definition 属 Phase 2）。
+  void _gotoDefinition() {
+    final active = _active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+    final sel = active.selection;
+    final offset = sel.baseOffset >= 0 ? sel.baseOffset : 0;
+    final word = _wordAt(active.text, offset);
+    if (word.isEmpty) {
+      setState(() => _statusDetail = '光标不在符号上');
+      return;
+    }
+    final r = active.doc.core.lsp.symbols(active.id);
+    final defs =
+        (r?.symbols ?? const []).where((s) => s['name'] == word).map((s) {
+      final start = (s['start_utf16'] as num?)?.toInt() ?? 0;
+      final lineEnd = active.text.indexOf('\n', start);
+      final declaration = active.text.substring(
+        start,
+        lineEnd < 0 ? active.text.length : lineEnd,
+      );
+      var nameOffset = -1;
+      for (final match in _rustIdentifierPattern.allMatches(declaration)) {
+        if (match.group(0) == word) {
+          nameOffset = match.start;
+          break;
+        }
+      }
+      return nameOffset < 0 ? start : start + nameOffset;
+    }).toList();
+    if (defs.isEmpty) {
+      setState(() => _statusDetail = '未找到「$word」的定义（当前文件）');
+      return;
+    }
+    // 排除光标正踩着的定义本身；跳第一个真实定义
+    final target = defs.where((d) => d != offset).isEmpty
+        ? defs.first
+        : defs.firstWhere((d) => d != offset);
+    _jumpToSymbol(target);
+    setState(() => _statusDetail = '跳转到 $word（定义）');
   }
 
   // ---------- 搜索视图 ----------

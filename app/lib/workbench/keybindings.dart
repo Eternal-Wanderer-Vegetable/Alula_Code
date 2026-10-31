@@ -171,6 +171,7 @@ class KeybindingSet {
     'editor.undo': 'ctrl+z',
     'editor.redo': 'ctrl+shift+z,ctrl+y',
     'editor.find': 'ctrl+f',
+    'editor.gotoDef': 'f12',
     'editor.replace': 'ctrl+h',
     'editor.addCursorAbove': 'ctrl+alt+arrowup',
     'editor.addCursorBelow': 'ctrl+alt+arrowdown',

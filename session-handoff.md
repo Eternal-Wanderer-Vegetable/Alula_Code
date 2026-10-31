@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03.5 已完成；P03.6 实现切片已关闭；P03.7 本地实现与 hosted Windows 自动证据已登记，仍 in-progress。共享 Rust 文档/独立 view state、冲突 journal 恢复副本、关闭引用计数、折叠语义及双视图 50k 行/50k UTF-16 单行尾部编辑保存通过；`init.sh`、Rust tests/Clippy/build_core、Flutter 260 项、cargo fmt 与 Flutter analyze 全绿。CI runs 41153011276/41153994655 三平台通过；Windows Server 2025 visible capture、14 项 P03.7 integration tests、UTF-8 MSAA tree 和必需语义断言、WM_CLOSE exit 0 见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仍待 Linux native DRM 与 Windows 11 Narrator/native IME/DPI-theme/package；macOS 原生行为待验证。500 MiB 留待 P14）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；外部设备验收 EV-P03-* pending，不阻塞后续架构代码但仍是 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1/EDT-16a 同文件 Rust 定义导航已通过 F12/命令面板、Unicode XID、单字母边界、UTF-16 BOM/emoji/CRLF 输入、无符号与无匹配 Widget fixture，报告见 `docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md`。下一步 P04.2/EDT-16b 同文件 Ctrl+Click 指针交互。P03.7 双视图/无障碍/50k 行/长行与 Windows Server 2025 hosted MSAA 证据见 `docs/diagnostics/2026-10-31-p03/`；CI runs 41153011276/41153994655 三平台通过。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03.6 实现切片已关闭；P03.7 本地实现仍进行中。多视图共享文档、独立视图状态、journal 冲突恢复、折叠读屏语义，以及双视图 50k 行/50k UTF-16 单行尾部编辑保存有本地自动化证据。runs 41153011276/41153994655 增加 Windows Server 2025 可见窗口、MSAA Unicode 树、14 项交互测试、四类语义断言和关闭退出证据；它们不替代 Windows 11 Narrator/native IME/DPI-theme，也不替代 native DRM Linux 或 macOS 原生交互。完整本地门禁：`init.sh`、cargo fmt、flutter analyze。
+- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭，外部平台验收作为 EV-P03-* 留待 P15；这些验收不阻塞后续实现。P04.1/EDT-16a 已完成，P04.2/EDT-16b 为下一受控切片。P03 的多视图/journal/语义/大文件及 hosted Windows 证据仍有效；完整本地 `init.sh`、cargo fmt、flutter analyze 已通过。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -50,8 +50,8 @@
 
 ## 下一步
 
-1. 继续 P03.7 平台门：Windows Server 2025 hosted 可见 UI、MSAA 树、14 项交互和关闭证据已通过；仍需 Windows 11 客户端的 Narrator/键盘遍历、native IME、多 DPI/主题与发行包验收。Linux Xvfb/WSLg 不等于 native DRM，真实设备项保持待验证。
-2. macOS 按用户安排先记待验证；Linux/Windows 可用后再准备未公证的 macOS 测试发行包。不要提前打开依赖 P03 的 P04；500 MiB 优化继续留待 P14。
+1. 推进 P04.2：审查并验证同文件 Ctrl+Click，重点检查指针坐标到绝对 UTF-16 位置的映射、修饰键、focus/selection 交互和无定义反馈；继续按 GitNexus impact 审核，只暂存本片 hunks。
+2. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；任何 hosted/WSLg/Xvfb 证据都不能替代它们。完成 Linux/Windows target usability 后再准备 macOS 测试包。
 3. P00–P13 完成前不做 500 MiB 数值优化；每个实现 slice 补 evidence、跑门禁并分阶段提交。完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
 
 ## P03.7 CI follow-up（2026-10-31）
