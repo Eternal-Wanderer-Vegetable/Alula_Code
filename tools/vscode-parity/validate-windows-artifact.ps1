@@ -417,6 +417,14 @@ $interactionResult = [ordered]@{
   saveRoute = 'not-attempted'
   fixturePath = $fixtureFile
   fixtureTextAfterSave = $null
+  multiviewEditorNames = @()
+  multiviewEditorValuesBeforeEdit = @()
+  multiviewEditorValuesAfterEdit = @()
+  multiviewSaveMenuNames = @()
+  multiviewSaveRoute = 'not-attempted'
+  multiviewTextAfterSave = $null
+  multiviewEndKeyEventsSent = 0
+  multiviewAppendKeyEventsSent = 0
   workspaceTreeNames = @()
   openFileMenuNames = @()
   quickOpenNames = @()
@@ -717,17 +725,56 @@ try {
       if (!(Wait-ForArtifactText $sampleText)) { throw 'The saved sample could not be restored after the IME probe' }
 
       Run-ArtifactPaletteCommand '拆分编辑器'
-      if (Click-ArtifactAccessibleNode 'main.rs' 2) {
-        Start-Sleep -Milliseconds 900
-      } else {
-        Click-ArtifactEditor 0.76
-        Open-ArtifactFile 'main.rs'
+      # _splitFocusedGroup gives the new group focus. Do not click the existing
+      # main.rs tab in the first group, which would steal focus back from it.
+      Open-ArtifactFile 'main.rs'
+      Start-Sleep -Milliseconds 500
+      $secondViewSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.multiviewEditorNames = @($secondViewSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+      $interactionResult.multiviewEditorValuesBeforeEdit = @($secondViewSnapshot.Nodes | Where-Object {
+        $_.Role -eq '42' -and $_.Value
+      } | ForEach-Object { $_.Value })
+      if (@($interactionResult.multiviewEditorValuesBeforeEdit | Where-Object { $_ -ceq $sampleText }).Count -lt 2) {
+        throw "Quick Open did not load main.rs in both editor views; text values: $($interactionResult.multiviewEditorValuesBeforeEdit -join ' | ')"
       }
-      Click-ArtifactEditor 0.76
-      Send-ArtifactKeys '^{END}'
-      Paste-ArtifactText "`n// view-2"
-      Send-ArtifactKeys '^s' 700
-      $expectedMultiviewText = "$sampleText`n// view-2"
+      $appendText = "`n// view-2"
+      $expectedMultiviewText = "$sampleText$appendText"
+      $interactionResult.multiviewEndKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x11, 0x23)
+      if ($interactionResult.multiviewEndKeyEventsSent -ne 4) {
+        throw "SendInput Ctrl+End inserted $($interactionResult.multiviewEndKeyEventsSent) of 4 keyboard events in the second view"
+      }
+      $interactionResult.multiviewAppendKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($appendText)
+      $expectedAppendEventCount = $appendText.Length * 2
+      if ($interactionResult.multiviewAppendKeyEventsSent -ne $expectedAppendEventCount) {
+        throw "SendInput appended $($interactionResult.multiviewAppendKeyEventsSent) of $expectedAppendEventCount Unicode keyboard events in the second view"
+      }
+      Start-Sleep -Milliseconds 250
+      $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.multiviewEditorValuesAfterEdit = @($secondViewEditedSnapshot.Nodes | Where-Object {
+        $_.Role -eq '42' -and $_.Value
+      } | ForEach-Object { $_.Value })
+      if (@($interactionResult.multiviewEditorValuesAfterEdit | Where-Object { $_ -ceq $expectedMultiviewText }).Count -lt 2) {
+        throw "Editing the second view did not update both views; text values: $($interactionResult.multiviewEditorValuesAfterEdit -join ' | ')"
+      }
+      $multiviewSaveInvokedFromMenu = $false
+      if (Click-ArtifactAccessibleNode '文件. 文件') {
+        Start-Sleep -Milliseconds 250
+        $multiviewSaveMenuSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.multiviewSaveMenuNames = @($multiviewSaveMenuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        $multiviewSaveItems = @($interactionResult.multiviewSaveMenuNames | Where-Object { $_ -like '保存*' -and $_ -notlike '另存为*' })
+        if ($multiviewSaveItems.Count -gt 0) {
+          $multiviewSaveInvokedFromMenu = Click-ArtifactAccessibleNode $multiviewSaveItems[0]
+        }
+      }
+      if ($multiviewSaveInvokedFromMenu) {
+        $interactionResult.multiviewSaveRoute = 'file-menu'
+      } else {
+        $saveInputs = [AlulaArtifactWindow]::SendChord(0x53)
+        if ($saveInputs -ne 4) { throw "SendInput save chord inserted $saveInputs of 4 keyboard events in the second view" }
+        $interactionResult.multiviewSaveRoute = 'sendinput-control-s'
+      }
+      Start-Sleep -Milliseconds 700
+      $interactionResult.multiviewTextAfterSave = Read-ArtifactFixture
       if (!(Wait-ForArtifactText $expectedMultiviewText)) { throw 'The second editor view did not save and read back its edit' }
       $interactionResult.multiviewSavedAndReadBack = $true
       $interactionResult.fileSha256 = (Get-FileHash -LiteralPath $fixtureFile -Algorithm SHA256).Hash.ToLowerInvariant()
