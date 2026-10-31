@@ -79,8 +79,11 @@ jobs:
         working-directory: app
         run: |
           flutter pub get --enforce-lockfile
-          flutter pub add "dev:integration_test@{sdk:flutter}"
+          if ($LASTEXITCODE -ne 0) { throw 'flutter pub get failed' }
+          flutter pub add "dev:integration_test@{sdk: flutter}"
+          if ($LASTEXITCODE -ne 0) { throw 'adding the temporary integration_test dependency failed' }
           bash ../scripts/build_core.sh
+          if ($LASTEXITCODE -ne 0) { throw 'building the Rust core failed' }
       - name: Run multi-view, save/read-back, and IME composition tests
         shell: pwsh
         working-directory: app
