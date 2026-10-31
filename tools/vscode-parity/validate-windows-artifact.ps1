@@ -315,7 +315,10 @@ $interactionResult = [ordered]@{
   openedEditorNames = @()
   namesBeforeFolderButton = @()
   openFolderDialogNames = @()
+  openFolderDialogValues = @()
   workspaceTreeNames = @()
+  openFileMenuNames = @()
+  quickOpenNames = @()
   focusBeforePasteNodes = @()
   editorValuesAfterPaste = @()
   accessibilityTargetLocations = [ordered]@{}
@@ -384,12 +387,31 @@ try {
         Send-ArtifactKeys '^v'
       }
       function Open-ArtifactFile([string]$query) {
-        Send-ArtifactKeys '^p'
+        $openedFromMenu = $false
+        if (Click-ArtifactAccessibleNode '查看. 查看') {
+          Start-Sleep -Milliseconds 250
+          $menuSnapshot = [AlulaArtifactMsaa]::Capture($child)
+          $interactionResult.openFileMenuNames = @($menuSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+          $quickOpenItem = @($interactionResult.openFileMenuNames | Where-Object { $_ -like '*快速打开文件*' } | Select-Object -First 1)
+          if ($quickOpenItem.Count -gt 0) {
+            $openedFromMenu = Click-ArtifactAccessibleNode $quickOpenItem[0]
+          }
+        }
+        if (!$openedFromMenu) {
+          Send-ArtifactKeys '{ESC}'
+          Click-ArtifactEditor 0.67
+          Send-ArtifactKeys '^p'
+        }
+        Start-Sleep -Milliseconds 300
         Set-Clipboard -Value $query
+        Send-ArtifactKeys '^a'
         Send-ArtifactKeys '^v'
+        Start-Sleep -Milliseconds 250
+        $quickSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.quickOpenNames = @($quickSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
         Send-ArtifactKeys '{ENTER}' 1200
       }
-      function Open-ArtifactWorkspace([string]$path) {
+      function Open-ArtifactWorkspace() {
         if (!(Click-ArtifactAccessibleNode '打开文件夹')) {
           $initialSnapshot = [AlulaArtifactMsaa]::Capture($child)
           $interactionResult.namesBeforeFolderButton = @($initialSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
@@ -398,12 +420,11 @@ try {
         Start-Sleep -Milliseconds 700
         $dialogSnapshot = [AlulaArtifactMsaa]::Capture($child)
         $interactionResult.openFolderDialogNames = @($dialogSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        $interactionResult.openFolderDialogValues = @($dialogSnapshot.Nodes | ForEach-Object { $_.Value } | Where-Object { $_ })
         if (@($interactionResult.openFolderDialogNames | Where-Object { $_ -eq '取消' }).Count -eq 0 -or
             @($interactionResult.openFolderDialogNames | Where-Object { $_ -eq '打开' }).Count -eq 0) {
           throw "The accessible Open Folder button did not open the folder dialog; names: $($interactionResult.openFolderDialogNames -join ' | ')"
         }
-        Send-ArtifactKeys '^a'
-        Paste-ArtifactText $path
         if (!(Click-ArtifactAccessibleNode '打开')) {
           # The dialog autofocuses its path field. Tab moves through Cancel then
           # Open when the button has no accessible default action.
@@ -489,7 +510,7 @@ try {
         return $false
       }
 
-      Open-ArtifactWorkspace (Split-Path -Parent (Split-Path -Parent $fixtureFile))
+      Open-ArtifactWorkspace
       Open-ArtifactSourceFile
       Start-Sleep -Milliseconds 500
       $child = [AlulaArtifactWindow]::GetWindow($window, 5)
