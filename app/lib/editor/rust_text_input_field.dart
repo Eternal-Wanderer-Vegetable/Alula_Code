@@ -20,6 +20,8 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import 'editor_folding.dart';
 import 'editor_rendering.dart';
+import 'multi_selection.dart';
+import 'occurrence_search.dart' show defaultMultiCursorLimit;
 import 'rust_text_input_window.dart';
 
 /// Cross-platform monospace choices for code points absent from the primary
@@ -252,6 +254,7 @@ class RustTextInputField extends StatefulWidget {
     this.semanticsLabel,
     this.onTap,
     this.onAltClick,
+    this.onColumnSelectionDrag,
     this.onCrossWindowLineSelection,
     this.onCrossWindowDragSelection,
     this.onDelta,
@@ -284,6 +287,7 @@ class RustTextInputField extends StatefulWidget {
   final String? semanticsLabel;
   final VoidCallback? onTap;
   final ValueChanged<int>? onAltClick;
+  final ColumnSelectionDragChanged? onColumnSelectionDrag;
   final ValueChanged<TextSelection>? onCrossWindowLineSelection;
   final CrossWindowDragSelectionChanged? onCrossWindowDragSelection;
   final ValueChanged<RustTextInputDelta>? onDelta;
@@ -297,6 +301,12 @@ class RustTextInputField extends StatefulWidget {
 
 typedef CrossWindowDragSelectionChanged = void Function(
   TextSelection selection, {
+  required bool started,
+});
+
+typedef ColumnSelectionDragChanged = void Function(
+  int pointer,
+  List<TextSelection> selections, {
   required bool started,
 });
 
@@ -324,6 +334,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   bool _mouseDragInputWindowChanged = false;
   int _mouseDragIdleTicks = 0;
   TextSelection? _lastCrossWindowDragSelection;
+  int? _columnDragPointer;
+  Offset? _columnDragAnchorPosition;
+  Offset? _columnDragStartPosition;
+  bool _columnDragMoved = false;
   Timer? _mouseDragAutoScrollTimer;
   String? _errorMessage;
   int _lineMetadataVersion = -1;
@@ -362,7 +376,23 @@ class RustTextInputFieldState extends State<RustTextInputField> {
 
   void _handlePointerDown(PointerDownEvent event) {
     _stopMouseDrag();
+    _stopColumnDrag();
     final keyboard = HardwareKeyboard.instance;
+    if (widget.onColumnSelectionDrag != null &&
+        event.kind == PointerDeviceKind.mouse &&
+        event.buttons == kPrimaryButton &&
+        keyboard.isAltPressed &&
+        keyboard.isShiftPressed &&
+        !keyboard.isControlPressed &&
+        !keyboard.isMetaPressed) {
+      final localOffset = _textOffsetAtGlobalPosition(event.position);
+      if (localOffset != null) {
+        _columnDragPointer = event.pointer;
+        _columnDragAnchorPosition = event.position;
+        _columnDragStartPosition = event.position;
+        _columnDragMoved = false;
+      }
+    }
     if (widget.onCrossWindowDragSelection != null &&
         event.kind == PointerDeviceKind.mouse &&
         event.buttons == kPrimaryButton &&
@@ -384,6 +414,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     }
     if (event.buttons == kPrimaryButton &&
         keyboard.isAltPressed &&
+        !keyboard.isShiftPressed &&
         !keyboard.isControlPressed) {
       final offset = _textOffsetAtGlobalPosition(event.position);
       if (offset != null) widget.onAltClick?.call(offset);
@@ -430,6 +461,26 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _handlePointerMove(PointerMoveEvent event) {
+    if (_columnDragPointer == event.pointer &&
+        (event.buttons & kPrimaryButton) != 0) {
+      final startPosition = _columnDragStartPosition;
+      final anchor = _columnDragAnchorPosition;
+      if (startPosition == null || anchor == null) return;
+      if (!_columnDragMoved &&
+          (event.position - startPosition).distance < kTouchSlop) {
+        return;
+      }
+      final selections = _columnSelectionsBetween(anchor, event.position);
+      if (selections == null || selections.isEmpty) return;
+      final started = !_columnDragMoved;
+      _columnDragMoved = true;
+      widget.onColumnSelectionDrag?.call(
+        event.pointer,
+        selections,
+        started: started,
+      );
+      return;
+    }
     if (_mouseDragPointer != event.pointer ||
         (event.buttons & kPrimaryButton) == 0) {
       return;
@@ -440,11 +491,99 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _handlePointerUp(PointerUpEvent event) {
+    if (_columnDragPointer == event.pointer) {
+      final anchor = _columnDragAnchorPosition;
+      final selections = anchor == null
+          ? null
+          : _columnSelectionsBetween(anchor, event.position);
+      if (_columnDragMoved && selections != null && selections.isNotEmpty) {
+        widget.onColumnSelectionDrag?.call(
+          event.pointer,
+          selections,
+          started: false,
+        );
+      }
+      _stopColumnDrag();
+    }
     if (_mouseDragPointer == event.pointer) _stopMouseDrag();
   }
 
   void _handlePointerCancel(PointerCancelEvent event) {
+    if (_columnDragPointer == event.pointer) _stopColumnDrag();
     if (_mouseDragPointer == event.pointer) _stopMouseDrag();
+  }
+
+  void _stopColumnDrag() {
+    _columnDragPointer = null;
+    _columnDragAnchorPosition = null;
+    _columnDragStartPosition = null;
+    _columnDragMoved = false;
+  }
+
+  List<TextSelection>? _columnSelectionsBetween(
+    Offset anchorPosition,
+    Offset activePosition,
+  ) {
+    final text = _controller.text;
+    final editable = _findEditableRenderObject(context);
+    if (text.isEmpty || editable == null) return null;
+    final anchorLine = lineAndColumnAt(
+      text,
+      editable.getPositionForPoint(anchorPosition).offset,
+    ).$1;
+    final activeLine = lineAndColumnAt(
+      text,
+      editable.getPositionForPoint(activePosition).offset,
+    ).$1;
+    final lowLine = anchorLine < activeLine ? anchorLine : activeLine;
+    final highLine = anchorLine < activeLine ? activeLine : anchorLine;
+    if (highLine - lowLine + 1 > defaultMultiCursorLimit) return null;
+    final anchorX = editable.globalToLocal(anchorPosition).dx;
+    final activeX = editable.globalToLocal(activePosition).dx;
+    final lineStarts = <int>[0];
+    for (var offset = 0; offset < text.length; offset++) {
+      if (text.codeUnitAt(offset) == 0x0a) lineStarts.add(offset + 1);
+    }
+
+    final selections = <(int, TextSelection)>[];
+    for (var line = lowLine; line <= highLine; line++) {
+      final lineStart = lineStarts[line];
+      final lineEnd =
+          line + 1 < lineStarts.length ? lineStarts[line + 1] - 1 : text.length;
+      final caret = editable.getLocalRectForCaret(
+        TextPosition(offset: lineStart),
+      );
+      final y = caret.center.dy;
+      final anchorOffset = editable
+          .getPositionForPoint(
+            editable.localToGlobal(Offset(anchorX, y)),
+          )
+          .offset
+          .clamp(lineStart, lineEnd)
+          .toInt();
+      final activeOffset = editable
+          .getPositionForPoint(
+            editable.localToGlobal(Offset(activeX, y)),
+          )
+          .offset
+          .clamp(lineStart, lineEnd)
+          .toInt();
+      selections.add((
+        line,
+        TextSelection(
+          baseOffset: anchorOffset,
+          extentOffset: activeOffset,
+        )
+      ));
+    }
+
+    final activeIndex =
+        selections.indexWhere((entry) => entry.$1 == activeLine);
+    if (activeIndex > 0) {
+      final active = selections.removeAt(activeIndex);
+      selections.insert(0, active);
+    }
+    return List.unmodifiable(selections.map((entry) => entry.$2));
   }
 
   void _updateCrossWindowMouseDragSelection() {
@@ -668,7 +807,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   }
 
   void _handleFocusChanged() {
-    if (!_focusNode.hasFocus) _stopMouseDrag();
+    if (!_focusNode.hasFocus) {
+      _stopMouseDrag();
+      _stopColumnDrag();
+    }
   }
 
   void _scheduleMouseDragCaretToViewportEdge() {
@@ -1764,6 +1906,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   @override
   void dispose() {
     _stopMouseDrag();
+    _stopColumnDrag();
     assert(
       widget.inputWindow.pendingCount == 0,
       'Flush the bounded input window before removing this widget.',

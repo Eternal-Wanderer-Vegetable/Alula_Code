@@ -21,6 +21,7 @@ import 'package:flutter/gestures.dart'
         kTouchSlop,
         PointerCancelEvent,
         PointerDownEvent,
+        PointerDeviceKind,
         PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderEditable;
@@ -254,6 +255,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
+  final Map<int, ({OpenDoc view, List<TextSelection> selections})>
+      _pendingColumnSelectionStarts = {};
   String _focusedRegion = 'editor';
   int _syncCount = 0;
   int _abiVersion = 0;
@@ -4270,7 +4273,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final control = HardwareKeyboard.instance.isControlPressed;
     final meta = HardwareKeyboard.instance.isMetaPressed;
     final alt = HardwareKeyboard.instance.isAltPressed;
+    final shift = HardwareKeyboard.instance.isShiftPressed;
     final gotoModifier = control || meta;
+    if (event.kind == PointerDeviceKind.mouse &&
+        alt &&
+        shift &&
+        !gotoModifier) {
+      _pendingColumnSelectionStarts[event.pointer] = (
+        view: view,
+        selections: view.selectionSet,
+      );
+      return;
+    }
     if (!gotoModifier && !alt) {
       if (view.crossWindowSelection != null) {
         view.crossWindowSelection = null;
@@ -4311,6 +4325,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// Apply Ctrl/Cmd+Click after EditableText has processed pointer-up selection.
   void _onEditorPointerUp(PointerUpEvent event) {
+    _pendingColumnSelectionStarts.remove(event.pointer);
     final pending = _pendingDefinitionPointers.remove(event.pointer);
     if (pending == null ||
         (event.position - pending.position).distance > kTouchSlop) {
@@ -4328,7 +4343,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _onEditorPointerCancel(PointerCancelEvent event) {
+    _pendingColumnSelectionStarts.remove(event.pointer);
     _pendingDefinitionPointers.remove(event.pointer);
+  }
+
+  void _applyColumnSelectionDrag(
+    OpenDoc view,
+    List<TextSelection> localSelections, {
+    required bool started,
+    List<TextSelection>? selectionsBeforeDrag,
+  }) {
+    if (!mounted || !_allDocViews.contains(view)) return;
+    final window = view.inputWindow;
+    if (window.version != view.doc.version) return;
+    if (localSelections.isEmpty ||
+        localSelections.length > defaultMultiCursorLimit) {
+      return;
+    }
+    if (started && selectionsBeforeDrag != null) {
+      view.selectionHistory.record(selectionsBeforeDrag);
+    }
+    _setDocSelections(
+      view,
+      _absoluteSelections(view, localSelections),
+      recordHistory: false,
+    );
   }
 
   static RenderEditable? _findRenderEditable(BuildContext ctx) {
@@ -4774,6 +4813,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _disposing = true;
     _pendingDefinitionPointers.clear();
+    _pendingColumnSelectionStarts.clear();
     _pendingMoveSelectionChordTimer?.cancel();
     _pollTimer?.cancel();
     _resourceTimer?.cancel();
@@ -6001,6 +6041,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       ...previous,
                                       TextSelection.collapsed(offset: offset),
                                     ]);
+                                  });
+                                },
+                                onColumnSelectionDrag: (
+                                  pointer,
+                                  localSelections, {
+                                  required started,
+                                }) {
+                                  final before =
+                                      _pendingColumnSelectionStarts[pointer];
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    _applyColumnSelectionDrag(
+                                      active,
+                                      localSelections,
+                                      started: started,
+                                      selectionsBeforeDrag:
+                                          before?.view == active
+                                              ? before?.selections
+                                              : null,
+                                    );
                                   });
                                 },
                                 onCrossWindowLineSelection: (selection) =>

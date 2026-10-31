@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.17 / EDT-03b 完成）
+### 最新进展（2026-10-31，P04.18 / EDT-03c 完成）
+
+- 实现 VS Code 鼠标矩形列选：Windows/Linux `Shift+Alt`、macOS `Shift+Option` 拖动按屏幕横坐标逐行命中；活动行作为主选区，并避免该组合误触发 `Alt+Click`。多行替换复用既有多光标和 Rust 保存路径。
+- 多光标工作台定向测试 17 项通过；新用例覆盖 Linux/Windows/macOS TargetPlatform、emoji、CRLF、正反方向框选、逐行编辑和磁盘回读。完整 `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter 347 项全绿；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 通过。
+- 鼠标框选限定当前 64 Ki UTF-16 输入窗；跨窗矩形自动滚动仍待单独实现。GitNexus `RustTextInputFieldState`（80 symbols / 88 flows / 20 modules）与 `WorkbenchPage`（79 / 88 / 20）upstream 均为 CRITICAL；私有入口 UNKNOWN 经源码核对，风险未降级。证据：`docs/diagnostics/2026-10-31-p04/p04.18-mouse-box-selection.md`。
+
+### 前一片进展（2026-10-31，P04.17 / EDT-03b 完成）
 
 - 修复 `Ctrl+Alt+ArrowUp/Down` 在 Rust 有界输入窗里的绝对行列定位：目标行来自 Rust `lineBoundary` / `lineOffset`，目标附近读取不超过 64 Ki UTF-16 单元并在 grapheme 边界落点；跨窗重开后保留旧光标。
 - 多光标工作台测试新增 3 项：30,000 单元两行分别向上/向下越过 16 Ki 窗口，插入后 Ctrl+S 磁盘回读正确；Emoji 代理对中间的目标列安全吸附。键位/多光标定向 25 项、Flutter analyze 0 issues、cargo fmt 通过。

@@ -808,6 +808,108 @@ void main() {
         'aXb\r\ncXd\r\nef');
   });
 
+  testWidgets('Shift+Alt mouse box selection edits and saves each visual row',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-box-selection');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final file = File('${workspace.path}/sample.txt')
+      ..writeAsStringSync('🙂a\r\n🙂b\r\n🙂c');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+
+    RenderEditable? findEditable(RenderObject object) {
+      if (object is RenderEditable) return object;
+      RenderEditable? found;
+      object.visitChildren((child) {
+        found ??= findEditable(child);
+      });
+      return found;
+    }
+
+    RenderEditable editable() => findEditable(tester.renderObject<RenderObject>(
+          find.descendant(of: editor, matching: find.byType(EditableText)),
+        ))!;
+
+    Offset pointForOffset(int offset) {
+      final render = editable();
+      final caret = render.getLocalRectForCaret(TextPosition(offset: offset));
+      return render.localToGlobal(Offset(caret.left + 0.1, caret.center.dy));
+    }
+
+    // Start just after the emoji on row one and end after the ASCII character
+    // on row three. The rectangle should hit each row by screen x.
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    final gesture = await tester.startGesture(
+      pointForOffset(2),
+      kind: PointerDeviceKind.mouse,
+    );
+    await gesture.moveTo(pointForOffset(11));
+    await tester.pump();
+    await gesture.up();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    await tester.pump();
+
+    final field =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(controller.selection,
+        const TextSelection(baseOffset: 10, extentOffset: 11));
+    expect(field.additionalSelections, const [
+      TextSelection(baseOffset: 2, extentOffset: 3),
+      TextSelection(baseOffset: 6, extentOffset: 7),
+    ]);
+
+    tester.testTextInput.updateEditingValue(TextEditingValue(
+      text: controller.text.replaceRange(10, 11, 'X'),
+      selection: const TextSelection.collapsed(offset: 11),
+    ));
+    await tester.pump();
+    await tester.pump();
+    await _saveWithCtrlS(tester);
+    expect(file.readAsStringSync(), '🙂X\r\n🙂X\r\n🙂X');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    final reverseGesture = await tester.startGesture(
+      pointForOffset(11),
+      kind: PointerDeviceKind.mouse,
+    );
+    await reverseGesture.moveTo(pointForOffset(2));
+    await tester.pump();
+    await reverseGesture.up();
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    await tester.pump();
+
+    final reversedField =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(controller.selection,
+        const TextSelection(baseOffset: 3, extentOffset: 2));
+    expect(reversedField.additionalSelections, const [
+      TextSelection(baseOffset: 7, extentOffset: 6),
+      TextSelection(baseOffset: 11, extentOffset: 10),
+    ]);
+  }, variant: TargetPlatformVariant.desktop());
+
   testWidgets('secondary occurrence follows IME preedit and commits to Rust',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-multicursor-ime');
