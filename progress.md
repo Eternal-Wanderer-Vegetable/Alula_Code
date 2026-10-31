@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.36 / EDT-07c 完成）
+
+- 新增 Code-OSS `editor.action.copyLinesUpAction` / `editor.action.copyLinesDownAction`，Windows/macOS Alt+Shift+方向键、Linux Ctrl+Alt+Shift+方向键；保留 Linux Alt+Shift 列选并将 Windows 列选移至 Ctrl+Alt+Shift，macOS 不注册列选快捷键。Rust UTF-16 行范围、预算与版本校验后由 TextOps 单批提交，更新选择/撤销/重做/分屏同步。
+- 三平台 fixture 覆盖向上/向下复制、emoji、结束于下一行第 1 列的选区、两个 occurrence caret、双视图、undo/redo 和 BOM+CRLF 保存回读。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Flutter 468、Rust workspace、Clippy、build_core）；cargo fmt 与 flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-11-01-p04/p04.36-copy-lines.md`。
+- GitNexus `KeybindingSet` upstream LOW；命令注册、复制操作与 selection helper 查询为 UNKNOWN，源码调用点已确认；入口候选/跨语言属性边截断仍记录，风险不降级。精确暂存补丁应用于 detached `HEAD 25c5285` 的完整 init.sh 通过（Flutter 468、Rust workspace、Clippy、build_core），cargo fmt 与 Flutter analyze 0 issues；GitNexus 重复 detect-changes：staged 11 files / 3 symbols / 45–152 processes / CRITICAL；all-scope 47 files / 10–18 symbols / 144–152 processes / CRITICAL，风险保留。
+
 ### 最新进展（2026-11-01，P04.33 / EDT-06i 完成）
 
 - Rust `< >` 现按固定语言配置仅作为 selection surrounding：选区输入 `<` 会成对包围；折叠光标输入 `<` 只插入一个字符，不自动闭合、不加 marker；`>` 保持普通输入。复用 UTF-16 TextOps、撤销/重做、dirty、双视图同步和保存。

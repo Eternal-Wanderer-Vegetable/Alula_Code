@@ -6,6 +6,8 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/rendering.dart' show RenderEditable, RenderObject;
@@ -754,6 +756,8 @@ void main() {
 
   testWidgets('Alt+Shift+Down edits a CRLF file at each column caret',
       (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
     final temp = Directory.systemTemp.createTempSync('alula-columnselect');
     addTearDown(() async {
       await tester.pumpWidget(const SizedBox.shrink());
@@ -806,6 +810,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(File('${workspace.path}/sample.txt').readAsStringSync(),
         'aXb\r\ncXd\r\nef');
+    debugDefaultTargetPlatformOverride = null;
   });
 
   testWidgets('Shift+Alt mouse box selection edits and saves each visual row',

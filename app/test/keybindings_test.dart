@@ -159,6 +159,56 @@ void main() {
       expect(mac.commandForChord(parseChord('ctrl+shift+k')!), isNull);
     });
 
+    test('copy-line defaults coexist with platform column-selection chords',
+        () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+
+      expect(
+        windows.commandForChord(parseChord('alt+shift+arrowup')!),
+        'editor.action.copyLinesUpAction',
+      );
+      expect(
+        windows.commandForChord(parseChord('alt+shift+arrowdown')!),
+        'editor.action.copyLinesDownAction',
+      );
+      expect(
+        windows.commandForChord(parseChord('ctrl+alt+shift+arrowup')!),
+        'editor.columnSelectUp',
+      );
+      expect(
+        windows.commandForChord(parseChord('ctrl+alt+shift+arrowdown')!),
+        'editor.columnSelectDown',
+      );
+
+      expect(
+        linux.commandForChord(parseChord('alt+shift+arrowup')!),
+        'editor.columnSelectUp',
+      );
+      expect(
+        linux.commandForChord(parseChord('alt+shift+arrowdown')!),
+        'editor.columnSelectDown',
+      );
+      expect(
+        linux.commandForChord(parseChord('ctrl+alt+shift+arrowup')!),
+        'editor.action.copyLinesUpAction',
+      );
+      expect(
+        linux.commandForChord(parseChord('ctrl+alt+shift+arrowdown')!),
+        'editor.action.copyLinesDownAction',
+      );
+
+      expect(
+        mac.commandForChord(parseChord('alt+shift+arrowup')!),
+        'editor.action.copyLinesUpAction',
+      );
+      expect(
+        mac.commandForChord(parseChord('alt+shift+arrowdown')!),
+        'editor.action.copyLinesDownAction',
+      );
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

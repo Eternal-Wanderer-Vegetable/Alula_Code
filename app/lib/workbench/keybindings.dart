@@ -199,10 +199,10 @@ class KeybindingSet {
     'editor.addCursorBelow': 'ctrl+alt+arrowdown',
     'editor.selectNextOccurrence': 'ctrl+d',
     'editor.selectAllOccurrences': 'ctrl+shift+l',
-    'editor.columnSelectUp': 'alt+shift+arrowup',
-    'editor.columnSelectDown': 'alt+shift+arrowdown',
-    'editor.columnSelectLeft': 'alt+shift+arrowleft',
-    'editor.columnSelectRight': 'alt+shift+arrowright',
+    'editor.columnSelectUp': 'ctrl+alt+shift+arrowup',
+    'editor.columnSelectDown': 'ctrl+alt+shift+arrowdown',
+    'editor.columnSelectLeft': 'ctrl+alt+shift+arrowleft',
+    'editor.columnSelectRight': 'ctrl+alt+shift+arrowright',
     'editor.cursorUndo': 'ctrl+u',
     'editor.cursorRedo': 'ctrl+shift+u',
     'editor.cursorHome': 'home',
@@ -219,6 +219,8 @@ class KeybindingSet {
     'editor.action.insertLineBefore': 'ctrl+shift+enter',
     'editor.action.insertLineAfter': 'ctrl+enter',
     'editor.action.deleteLines': 'ctrl+shift+k',
+    'editor.action.copyLinesUpAction': 'alt+shift+arrowup',
+    'editor.action.copyLinesDownAction': 'alt+shift+arrowdown',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
@@ -269,6 +271,13 @@ class KeybindingSet {
       case TargetPlatform.linux:
         result['workbench.action.navigateBack'] = 'ctrl+alt+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result['editor.columnSelectUp'] = 'alt+shift+arrowup';
+        result['editor.columnSelectDown'] = 'alt+shift+arrowdown';
+        result['editor.columnSelectLeft'] = 'alt+shift+arrowleft';
+        result['editor.columnSelectRight'] = 'alt+shift+arrowright';
+        result['editor.action.copyLinesUpAction'] = 'ctrl+alt+shift+arrowup';
+        result['editor.action.copyLinesDownAction'] =
+            'ctrl+alt+shift+arrowdown';
         break;
       default:
         break;

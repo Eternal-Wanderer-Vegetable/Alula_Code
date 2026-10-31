@@ -1,18 +1,18 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-11-01（P04.35 / EDT-07b 完成：新增删除行命令及 Ctrl/Cmd+Shift+K；三平台首行/emoji/多光标/末尾空行、undo/redo、分屏同步、BOM+CRLF 保存回读定向 19 项通过。工作树与精确暂存 patch 隔离快照完整 init.sh 均通过（Flutter 464，含 Rust workspace、Clippy、build_core），cargo fmt 与 flutter analyze 全绿。证据：`docs/diagnostics/2026-11-01-p04/p04.35-delete-lines.md`。P04 / feat-026 继续进行，EDT-07 其它行操作待实现；P15 原生 DRM Linux、Windows 读屏/主题/DPI、macOS 原生验证仍 pending；500 MiB 留 P14。）
+> Last Updated：2026-11-01（P04.36 / EDT-07c「向上/向下复制行」完成；三平台覆盖复制方向、emoji、列 1 结束范围、多光标、分屏同步、undo/redo 与 BOM+CRLF 保存回读。工作树与 detached `HEAD 25c5285` 精确 staged patch 的完整 `init.sh` 均全绿：Flutter 468、Rust workspace、Clippy、build_core；cargo fmt 与 flutter analyze 0 issues。GitNexus 重复 detect-changes staged 11 files / 3 symbols / 45–152 processes / CRITICAL；all-scope 47 / 10–18 symbols / 144–152 processes / CRITICAL，风险保留。报告：`docs/diagnostics/2026-11-01-p04/p04.36-copy-lines.md`。P04 / feat-026 仍进行中，P15 原生 DRM Linux、Windows 当前包视觉/读屏/DPI/主题与 macOS 验证仍 pending；500 MiB 留 P14。）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-01）：P03 / feat-025 的实现出口已关闭，EV-P03-* 留待 P15。run `41109679662` 精确旧 artifact 已通过自动化 Windows 11 x64 回放验证客户区、Pinyin、双视图同步与保存回读；浅色设置下界面仍为暗色/右侧窄窗，Narrator UIA 语义/焦点失败，关闭复现 `0xC000041D`。完整结果、截图与系统恢复记录在 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`。本轮重试的键鼠输入被高完整性 Task Manager 阻挡；隔离 HOME、fixture、WER 设置均恢复，旧包关闭退出码仍是 `0xC000041D`，已记录在本会话状态，不回填为通过。P04.1–P04.35 已完成，feat-026 仍进行中；P04.35 全量工作树与 detached `HEAD a69cb36` 精确暂存 patch DoD 均通过（Flutter 464，Rust workspace、Clippy、build_core、cargo fmt、flutter analyze）。原生 DRM Linux、Windows 当前包视觉/读屏/全 DPI、macOS 仍 pending；项目级可用性状态不通过。
+- 当前状态更新（2026-11-01）：P03 / feat-025 的实现出口已关闭，EV-P03-* 留待 P15。run `41109679662` 精确旧 artifact 已通过自动化 Windows 11 x64 回放验证客户区、Pinyin、双视图同步与保存回读；浅色设置下界面仍为暗色/右侧窄窗，Narrator UIA 语义/焦点失败，关闭复现 `0xC000041D`。完整结果、截图与系统恢复记录在 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`。本轮重试的键鼠输入被高完整性 Task Manager 阻挡；隔离 HOME、fixture、WER 设置均恢复，旧包关闭退出码仍是 `0xC000041D`，已记录在本会话状态，不回填为通过。P04.1–P04.36 已完成，feat-026 仍进行中；P04.35 全量工作树与 detached `HEAD a69cb36` 精确暂存 patch DoD 均通过（Flutter 464，Rust workspace、Clippy、build_core、cargo fmt、flutter analyze）。原生 DRM Linux、Windows 当前包视觉/读屏/全 DPI、macOS 仍 pending；项目级可用性状态不通过。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。
 - P04.24 新增 Rust Rope 覆写粘贴范围查询与 ABI v26、Dart bridge、工作台 Ctrl/Cmd+V 路径，并修复 macOS Cmd+Z/Y Rust 历史路由。报告 `docs/diagnostics/2026-10-31-p04/p04.24-overtype-paste.md`。工作树仍有此前未提交改动；阶段提交只纳入本片文件和 hunks。
-- Next 首步：从 `docs/03` 与 `docs/11` 核对下一个未完成 EDT 原子项并做 GitNexus upstream impact；P04.35 删除行已完成，工作树及精确 staged snapshot 门禁均已通过；现在核对最终提交内容并阶段提交。EDT-07 移动/复制/合并/排序/去重仍开放；固定 Rust 配置没有块注释 Enter 续写规则，不将其作为默认能力实现。
+- Next 首步：本轮完成 P04.36 阶段提交并推送后，新会话从 `docs/03` / `docs/11` 拆解 EDT-07d「向上/向下移动行」，编辑前做 GitNexus upstream impact。工作区仍有大量既有用户改动；后续阶段继续只暂存目标 patch。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。

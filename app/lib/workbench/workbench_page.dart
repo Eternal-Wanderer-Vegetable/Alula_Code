@@ -553,16 +553,36 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'editorTextFocus');
     reg('editor.columnSelectUp', '编辑器', '向上扩展列选择',
         () async => _moveColumnSelection(lines: -1),
-        shortcut: 'Alt+Shift+Up', enablement: 'editorTextFocus');
+        shortcut: defaultTargetPlatform == TargetPlatform.windows
+            ? 'Ctrl+Alt+Shift+Up'
+            : defaultTargetPlatform == TargetPlatform.linux
+                ? 'Alt+Shift+Up'
+                : null,
+        enablement: 'editorTextFocus');
     reg('editor.columnSelectDown', '编辑器', '向下扩展列选择',
         () async => _moveColumnSelection(lines: 1),
-        shortcut: 'Alt+Shift+Down', enablement: 'editorTextFocus');
+        shortcut: defaultTargetPlatform == TargetPlatform.windows
+            ? 'Ctrl+Alt+Shift+Down'
+            : defaultTargetPlatform == TargetPlatform.linux
+                ? 'Alt+Shift+Down'
+                : null,
+        enablement: 'editorTextFocus');
     reg('editor.columnSelectLeft', '编辑器', '向左扩展列选择',
         () async => _moveColumnSelection(columns: -1),
-        shortcut: 'Alt+Shift+Left', enablement: 'editorTextFocus');
+        shortcut: defaultTargetPlatform == TargetPlatform.windows
+            ? 'Ctrl+Alt+Shift+Left'
+            : defaultTargetPlatform == TargetPlatform.linux
+                ? 'Alt+Shift+Left'
+                : null,
+        enablement: 'editorTextFocus');
     reg('editor.columnSelectRight', '编辑器', '向右扩展列选择',
         () async => _moveColumnSelection(columns: 1),
-        shortcut: 'Alt+Shift+Right', enablement: 'editorTextFocus');
+        shortcut: defaultTargetPlatform == TargetPlatform.windows
+            ? 'Ctrl+Alt+Shift+Right'
+            : defaultTargetPlatform == TargetPlatform.linux
+                ? 'Alt+Shift+Right'
+                : null,
+        enablement: 'editorTextFocus');
     reg('editor.cursorUndo', '编辑器', '撤销光标移动', () async => _cursorUndo(),
         shortcut: 'Ctrl+U', enablement: 'editorTextFocus && cursorCanUndo');
     reg('editor.cursorRedo', '编辑器', '重做光标移动', () async => _cursorRedo(),
@@ -602,6 +622,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: defaultTargetPlatform == TargetPlatform.macOS
             ? 'Cmd+Shift+K'
             : 'Ctrl+Shift+K',
+        enablement: 'editorTextFocus');
+    reg('editor.action.copyLinesUpAction', '编辑器', '向上复制行',
+        () => _copyLines(down: false),
+        shortcut: defaultTargetPlatform == TargetPlatform.linux
+            ? 'Ctrl+Alt+Shift+Up'
+            : 'Alt+Shift+Up',
+        enablement: 'editorTextFocus');
+    reg('editor.action.copyLinesDownAction', '编辑器', '向下复制行',
+        () => _copyLines(down: true),
+        shortcut: defaultTargetPlatform == TargetPlatform.linux
+            ? 'Ctrl+Alt+Shift+Down'
+            : 'Alt+Shift+Down',
         enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
@@ -2820,6 +2852,279 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = '已删除行');
+  }
+
+  Future<void> _copyLines({required bool down}) async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final crossWindow = doc.crossWindowSelection;
+    final selections = normalizeSelectionSet(
+      crossWindow == null
+          ? [doc.selection, ...doc.additionalSelections]
+          : [crossWindow],
+    );
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '复制行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentLineOffset documentStart;
+    final lineSelections = <({
+      TextSelection selection,
+      int firstLine,
+      int lastLine,
+      int endLine,
+      int endColumn,
+      int order
+    })>[];
+    try {
+      documentStart = doc.doc.lineOffset(0);
+      if (documentStart.version != expectedVersion) {
+        throw StateError('文档版本在读取行数时发生变化');
+      }
+      if (documentStart.lineCount < 1) return;
+
+      for (var order = 0; order < selections.length; order++) {
+        final selection = selections[order];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('文档版本在解析复制行选区时发生变化');
+        }
+        var lastLine = end.line;
+        if (start.line < lastLine && end.character == 0) lastLine--;
+        lineSelections.add((
+          selection: selection,
+          firstLine: start.line,
+          lastLine: lastLine < start.line ? start.line : lastLine,
+          endLine: end.line,
+          endColumn: end.character,
+          order: order,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '复制行未应用：$error');
+      return;
+    }
+
+    final sortedSelections = [...lineSelections]..sort((a, b) {
+        final byStart = a.selection.start.compareTo(b.selection.start);
+        return byStart != 0 ? byStart : a.order.compareTo(b.order);
+      });
+    final ignoredOrders = <int>{};
+    if (sortedSelections.isNotEmpty) {
+      var previous = sortedSelections.first;
+      for (var index = 1; index < sortedSelections.length; index++) {
+        final current = sortedSelections[index];
+        if (previous.endLine == current.firstLine) {
+          if (previous.order < current.order) {
+            ignoredOrders.add(current.order);
+          } else {
+            ignoredOrders.add(previous.order);
+            previous = current;
+          }
+        } else {
+          previous = current;
+        }
+      }
+    }
+
+    final plans = <({
+      int order,
+      int firstLine,
+      int lastLine,
+      int offset,
+      String inserted,
+    })>[];
+    var insertedUtf16 = 0;
+    try {
+      for (final lines in sortedSelections) {
+        if (ignoredOrders.contains(lines.order)) continue;
+        if (lines.firstLine < 0 ||
+            lines.lastLine < lines.firstLine ||
+            lines.lastLine >= documentStart.lineCount) {
+          throw StateError('Rust 返回了无效的行复制范围');
+        }
+
+        final remainingBudget =
+            _undoHistoryBudget.maxTotalChars - insertedUtf16;
+        if (remainingBudget < 1) {
+          throw StateError(
+              '复制行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final sourceBudget = remainingBudget - 1;
+        final source = StringBuffer();
+        var sourceUtf16 = 0;
+        late final DocumentLineBoundary lastBoundary;
+        for (var line = lines.firstLine; line <= lines.lastLine; line++) {
+          final lineStart = doc.doc.lineOffset(line);
+          if (lineStart.version != expectedVersion) {
+            throw StateError('文档版本在解析复制行范围时发生变化');
+          }
+          final boundary = doc.doc.lineBoundary(lineStart.offsetUtf16);
+          if (boundary.version != expectedVersion ||
+              boundary.startUtf16 > boundary.endUtf16) {
+            throw StateError('Rust 返回了无效的行复制边界');
+          }
+          if (line > lines.firstLine) {
+            if (sourceUtf16 >= sourceBudget) {
+              throw StateError(
+                  '复制行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+            }
+            source.write('\n');
+            sourceUtf16++;
+          }
+          final lineLength = boundary.endUtf16 - boundary.startUtf16;
+          if (lineLength > sourceBudget - sourceUtf16) {
+            throw StateError(
+                '复制行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+          }
+          source.write(_readDocumentRange(
+            doc,
+            boundary.startUtf16,
+            boundary.endUtf16,
+          ));
+          sourceUtf16 += lineLength;
+          lastBoundary = boundary;
+        }
+
+        final sourceText = source.toString();
+        final inserted = down ? '$sourceText\n' : '\n$sourceText';
+        if (inserted.length > remainingBudget) {
+          throw StateError(
+              '复制行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final first = doc.doc.lineOffset(lines.firstLine);
+        if (first.version != expectedVersion) {
+          throw StateError('文档版本在读取复制行插入点时发生变化');
+        }
+        plans.add((
+          order: lines.order,
+          firstLine: lines.firstLine,
+          lastLine: lines.lastLine,
+          offset: down ? first.offsetUtf16 : lastBoundary.endUtf16,
+          inserted: inserted,
+        ));
+        insertedUtf16 += inserted.length;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '复制行未应用：$error');
+      return;
+    }
+
+    if (plans.isEmpty) return;
+    plans.sort((a, b) {
+      final byOffset = a.offset.compareTo(b.offset);
+      return byOffset != 0 ? byOffset : a.order.compareTo(b.order);
+    });
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '复制行未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.offset, plan.inserted),
+    ];
+    final inverse = <TextOp>[];
+    for (var index = plans.length - 1; index >= 0; index--) {
+      final plan = plans[index];
+      final insertedBefore = plans
+          .take(index)
+          .fold<int>(0, (sum, prior) => sum + prior.inserted.length);
+      inverse.add(TextOp.delete(
+        plan.offset + insertedBefore,
+        plan.inserted.length,
+      ));
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '复制行未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset) {
+      var mapped = offset;
+      for (final plan in plans) {
+        if (offset > plan.offset || (down && offset == plan.offset)) {
+          mapped += plan.inserted.length;
+        }
+      }
+      return mapped;
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final lines in lineSelections)
+        () {
+          var base = mapOffset(lines.selection.baseOffset);
+          var extent = mapOffset(lines.selection.extentOffset);
+          if (!down &&
+              lines.firstLine < lines.endLine &&
+              lines.endColumn == 0) {
+            for (final plan in plans) {
+              if (plan.order != lines.order) continue;
+              final insertedBefore = plans
+                  .where((other) => other.offset < plan.offset)
+                  .fold<int>(0, (sum, other) => sum + other.inserted.length);
+              final trackedEnd = plan.offset + 1 + insertedBefore;
+              if (lines.selection.baseOffset > lines.selection.extentOffset) {
+                base = trackedEnd;
+              } else {
+                extent = trackedEnd;
+              }
+              break;
+            }
+          }
+          return TextSelection(
+            baseOffset: base,
+            extentOffset: extent,
+            affinity: lines.selection.affinity,
+            isDirectional: lines.selection.isDirectional,
+          );
+        }(),
+    ]);
+    final newLength = documentStart.totalUtf16Length + insertedUtf16;
+    final clampedSelections = normalizeSelectionSet([
+      for (final selection in mappedSelections)
+        TextSelection(
+          baseOffset: selection.baseOffset.clamp(0, newLength).toInt(),
+          extentOffset: selection.extentOffset.clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: clampedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    // Record selections against the previous window first. If a copied range
+    // moved its endpoint beyond that window, _setDocSelections recenters and
+    // schedules the widget update before a local controller selection can be
+    // assigned beyond the controller's current text length.
+    _setDocSelections(doc, clampedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      clampedSelections.first.extentOffset,
+      selection: clampedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = down ? '已向下复制行' : '已向上复制行');
   }
 
   Future<void> _insertLine({required bool before}) async {
@@ -5691,16 +5996,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               return KeyEventResult.handled;
             }
           }
-          if (alt && key == LogicalKeyboardKey.arrowUp) {
+          if (alt && !shift && key == LogicalKeyboardKey.arrowUp) {
             _runCommand('editor.addCursorAbove');
             return KeyEventResult.handled;
           }
-          if (alt && key == LogicalKeyboardKey.arrowDown) {
+          if (alt && !shift && key == LogicalKeyboardKey.arrowDown) {
             _runCommand('editor.addCursorBelow');
             return KeyEventResult.handled;
           }
         }
-        if (alt && shift && defaultTargetPlatform != TargetPlatform.macOS) {
+        final columnSelectionModifierMatches = switch (defaultTargetPlatform) {
+          TargetPlatform.windows => ctrl,
+          TargetPlatform.linux => !ctrl,
+          _ => false,
+        };
+        if (alt && shift && columnSelectionModifierMatches) {
           final command = switch (key) {
             LogicalKeyboardKey.arrowUp => 'editor.columnSelectUp',
             LogicalKeyboardKey.arrowDown => 'editor.columnSelectDown',
