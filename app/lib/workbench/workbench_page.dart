@@ -12,7 +12,8 @@ library;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, listEquals;
 import 'package:flutter/gestures.dart'
     show
         kMiddleMouseButton,
@@ -3002,7 +3003,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
         }
-        if (alt && shift) {
+        if (alt && shift && defaultTargetPlatform != TargetPlatform.macOS) {
           final command = switch (key) {
             LogicalKeyboardKey.arrowUp => 'editor.columnSelectUp',
             LogicalKeyboardKey.arrowDown => 'editor.columnSelectDown',

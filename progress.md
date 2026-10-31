@@ -5,11 +5,11 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.4 / EDT-01a 完成）
+### 最新进展（2026-10-31，P04.5 / EDT-01b 完成）
 
-- 按 docs/11 EDT-01 开始键盘移动与选择对拍。新增 `app/test/workbench_cursor_movement_test.dart`：Windows/Linux Flutter target-platform 工作台 fixture 验证 `a😀b` 的左右箭头和 Shift 扩展不会把 UTF-16 surrogate pair 拆开；Rust 权威全文与版本保持不变。此切片只锁定字符级横向移动，word/subword、行/页/文件边界和 smart Home 继续留在 EDT-01。
-- 定向测试 2 项、全量 Flutter 273 项通过；`RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` EXIT=0，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.4-character-cursor-movement.md`。
-- P04 / feat-026 仍为唯一活动 feature；下一切片按 docs/03 登记为 word/subword 移动与选择对拍。P03 外部平台门继续 pending；Hosted Windows Release 的精确 artifact close crash 保留为该二进制的失败证据，不能由新构建或自动化替代结果覆盖。
+- 新增 `app/test/workbench_word_navigation_test.dart` 与平台键位 fixture：Windows/Linux Ctrl+方向键、macOS Option+方向键完成双向词移动和 Shift 选择；覆盖 CRLF 读入后的 LF 文本、第二行边界及长文档重居中后的有界窗边缘，Rust 全文与版本不变。
+- 修正历史导航默认键位与编辑器词移动冲突：Windows Alt+方向键；Linux Ctrl+Alt+- / Ctrl+Shift+-；macOS Ctrl+- / Ctrl+Shift+-。macOS Option+Shift+方向键留给原生词/段落选择，不再被列选择处理器吞掉。定向 14 项通过，完整 `bash init.sh` 通过（Flutter 278 项），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.5-word-cursor-movement.md`。
+- P04 / feat-026 仍是唯一活动 feature；下一项 P04.6 / EDT-01c 为 camelCase/下划线子词移动与选择。P03 外部平台门继续 pending；旧 Windows Release artifact close crash 保留为该二进制的失败证据，不能用新构建覆盖。
 
 ### 最新进展（2026-10-31，P04.3 / EDT-16c 完成）
 

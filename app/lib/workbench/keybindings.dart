@@ -17,6 +17,8 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show SingleActivator;
 
@@ -122,6 +124,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['arrowdown'] = LogicalKeyboardKey.arrowDown;
   m['arrowleft'] = LogicalKeyboardKey.arrowLeft;
   m['arrowright'] = LogicalKeyboardKey.arrowRight;
+  m['-'] = LogicalKeyboardKey.minus;
+  m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
   return m;
 }();
@@ -191,11 +195,38 @@ class KeybindingSet {
     'view.panelSyntax': 'f3',
   };
 
+  /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.
+  /// The word-left/right bindings use Alt on macOS, so history navigation must
+  /// move to the platform-specific minus chords there.
+  static Map<String, String> defaultsFor(TargetPlatform platform) {
+    final result = Map<String, String>.of(defaults);
+    switch (platform) {
+      case TargetPlatform.macOS:
+        result['workbench.action.navigateBack'] = 'ctrl+-';
+        result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result.remove('editor.columnSelectUp');
+        result.remove('editor.columnSelectDown');
+        result.remove('editor.columnSelectLeft');
+        result.remove('editor.columnSelectRight');
+        break;
+      case TargetPlatform.linux:
+        result['workbench.action.navigateBack'] = 'ctrl+alt+-';
+        result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        break;
+      default:
+        break;
+    }
+    return result;
+  }
+
   /// 从默认表出发应用用户覆盖（`-command` 移除；同键位串后写者胜）。
   /// [userJson] 为 keybindings.json 的原始文本；损坏或非法条目逐条忽略。
-  factory KeybindingSet.load({String? userJson}) {
+  factory KeybindingSet.load({
+    String? userJson,
+    TargetPlatform? platform,
+  }) {
     final map = <KeyChord, KeybindingBinding>{};
-    for (final e in defaults.entries) {
+    for (final e in defaultsFor(platform ?? defaultTargetPlatform).entries) {
       for (final spec in e.value.split(',')) {
         final chord = parseChord(spec.trim());
         if (chord != null) {

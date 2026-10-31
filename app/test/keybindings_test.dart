@@ -26,6 +26,41 @@ void main() {
   });
 
   group('KeybindingSet', () {
+    test('navigation defaults leave platform word-movement chords available',
+        () {
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        mac.commandForChord(parseChord('ctrl+-')!),
+        'workbench.action.navigateBack',
+      );
+      expect(
+        mac.commandForChord(parseChord('ctrl+shift+-')!),
+        'workbench.action.navigateForward',
+      );
+      expect(mac.commandForChord(parseChord('alt+arrowleft')!), isNull);
+      expect(mac.commandForChord(parseChord('alt+shift+arrowleft')!), isNull);
+
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      expect(
+        linux.commandForChord(parseChord('ctrl+alt+-')!),
+        'workbench.action.navigateBack',
+      );
+      expect(
+        linux.commandForChord(parseChord('ctrl+shift+-')!),
+        'workbench.action.navigateForward',
+      );
+
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      expect(
+        windows.commandForChord(parseChord('alt+arrowleft')!),
+        'workbench.action.navigateBack',
+      );
+      expect(
+        windows.commandForChord(parseChord('alt+arrowright')!),
+        'workbench.action.navigateForward',
+      );
+    });
+
     test('默认表可解析且包含核心键位', () {
       final ks = KeybindingSet.load();
       final resolved = ks.resolve();
