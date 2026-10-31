@@ -80,6 +80,24 @@ fn main() {
                     }));
                 });
             }
+            "textDocument/definition" => {
+                trace(&trace_path, method);
+                send(json!({
+                    "jsonrpc": "2.0",
+                    "id": message["id"],
+                    "result": [{
+                        "targetUri": "file:///workspace/target.rs",
+                        "targetRange": {
+                            "start": {"line": 1, "character": 0},
+                            "end": {"line": 1, "character": 10}
+                        },
+                        "targetSelectionRange": {
+                            "start": {"line": 1, "character": 3},
+                            "end": {"line": 1, "character": 9}
+                        }
+                    }]
+                }));
+            }
             "shutdown" => {
                 trace(&trace_path, method);
                 send(json!({

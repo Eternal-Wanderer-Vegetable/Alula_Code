@@ -34,6 +34,7 @@ import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
+import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
 import '../editor/rust_text_input_field.dart';
@@ -130,6 +131,7 @@ class WorkbenchPage extends StatefulWidget {
     SessionStore? sessionStore,
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
+    this.definitionRequest,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -151,6 +153,13 @@ class WorkbenchPage extends StatefulWidget {
 
   /// 自绘窗口控制按钮（真实窗口开启；测试关闭，避免触碰插件通道）。
   final bool windowControls;
+
+  /// Optional override for deterministic definition-navigation tests.
+  final Future<DefinitionResult?> Function(
+    int documentId,
+    int offsetUtf16,
+    int version,
+  )? definitionRequest;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
@@ -186,6 +195,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
   final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
+  final NavigationHistory _navigationHistory = NavigationHistory();
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -342,6 +352,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'editorActive');
     reg('editor.gotoDef', '编辑器', '跳转定义', () async => _gotoDefinition(),
         enablement: 'editorActive');
+    reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
+        shortcut: 'Alt+←');
+    reg('workbench.action.navigateForward', '导航', '前进', _navigateForward,
+        shortcut: 'Alt+→');
+    reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
+        _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
@@ -962,6 +978,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         lineEnding: doc.fileOptions.lineEnding.id,
         transactionId: transactionId,
       );
+    }
+    if (forward.isNotEmpty && !coalesce) {
+      final owner = _ownerOfView(doc);
+      if (owner != null) {
+        try {
+          final offset =
+              beforeCaret.clamp(0, doc.inputWindow.totalUtf16Length).toInt();
+          _navigationHistory.recordEdit(
+            _navigationLocation(doc, offset, owner.region),
+          );
+        } on AlulaException {
+          // A stale edit caret is not allowed to interrupt the edit path.
+        }
+      }
     }
     doc.lastEditAt = coalesce ? DateTime.now() : null;
     _updateDirty(doc);
@@ -2110,6 +2140,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     owner.docs.remove(doc);
     doc.disposeView();
+    if (isLastView) _navigationHistory.closeDocument(id);
     setState(() {
       _syntaxByDoc = nextSyntax;
       _syntaxVersionByDoc = nextSyntaxVersion;
@@ -3392,9 +3423,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return '';
   }
 
-  /// 跳转定义（V1：仅当前文件，复用大纲的 symbols 通路；
-  /// 跨文件走 LSP definition 属 Phase 2）。
-  void _gotoDefinition() {
+  /// Navigate with the language server when available, retaining the local
+  /// Rust outline fallback for same-file definitions.
+  Future<void> _gotoDefinition() async {
     final active = _active;
     if (active == null) return;
     _flushInput(active, commitComposition: true);
@@ -3405,6 +3436,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = '光标不在符号上');
       return;
     }
+    final sourceVersion = active.doc.version;
+    final provider = widget.definitionRequest;
+    if (provider != null || active.lspAttached) {
+      try {
+        DefinitionResult? definition;
+        if (provider != null) {
+          definition = await provider(active.id, offset, sourceVersion);
+        } else {
+          final stopwatch = Stopwatch()..start();
+          definition = await active.doc.core.lsp.definition(active.id, offset);
+          if (definition == null && stopwatch.elapsed < const Duration(seconds: 2)) {
+            await Future<void>.delayed(const Duration(milliseconds: 200));
+            if (!mounted || !identical(_active, active)) return;
+            if (active.doc.version != sourceVersion) {
+              setState(() => _statusDetail = '文档已更改，已取消跳转');
+              return;
+            }
+            definition = await active.doc.core.lsp.definition(
+              active.id,
+              offset,
+              timeoutMs: 2500,
+            );
+          }
+        }
+        if (!mounted || !identical(_active, active)) return;
+        if (active.doc.version != sourceVersion ||
+            (definition != null && definition.version != sourceVersion)) {
+          setState(() => _statusDetail = '文档已更改，已取消跳转');
+          return;
+        }
+        if (definition != null) {
+          final navigated = await _navigateToDefinition(
+            active,
+            offset,
+            definition,
+          );
+          if (!navigated && mounted) {
+            setState(() => _statusDetail = '无法打开定义位置');
+          }
+          return;
+        }
+      } catch (error) {
+        if (!mounted || !identical(_active, active)) return;
+        setState(() => _statusDetail = 'LSP 定义请求失败：$error');
+      }
+    }
+
+    _gotoDefinitionInCurrentFile(active, word, offset);
+  }
+
+  void _gotoDefinitionInCurrentFile(OpenDoc active, String word, int offset) {
     final r = active.doc.core.lsp.symbols(active.id);
     final defs =
         (r?.symbols ?? const []).where((s) => s['name'] == word).map((s) {
@@ -3431,8 +3513,196 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final target = defs.where((d) => d != offset).isEmpty
         ? defs.first
         : defs.firstWhere((d) => d != offset);
+    final owner = _ownerOfView(active);
+    if (owner != null) {
+      try {
+        final from = _navigationLocation(active, offset, owner.region);
+        final to = _navigationLocation(active, target, owner.region);
+        _navigationHistory.recordNavigation(from, to);
+      } on AlulaException {
+        // The document may have changed while its local symbols were read.
+      }
+    }
     _jumpToSymbol(target);
     setState(() => _statusDetail = '跳转到 $word（定义）');
+  }
+
+  Future<bool> _navigateToDefinition(
+    OpenDoc source,
+    int sourceOffset,
+    DefinitionResult definition,
+  ) async {
+    final path = _pathFromFileUri(definition.uri);
+    if (path == null) return false;
+    final sourceGroup = _ownerOfView(source);
+    if (sourceGroup == null) return false;
+    setState(() => _focusedRegion = sourceGroup.region);
+
+    final sameFile = source.path != null && _pathsEqual(source.path!, path);
+    if (!sameFile) await _openFileByPath(path);
+    if (!mounted || (sameFile && !identical(_active, source))) return false;
+    final target = sameFile ? source : _active;
+    if (target == null ||
+        target.path == null ||
+        !_pathsEqual(target.path!, path)) {
+      return false;
+    }
+    final targetPosition = target.doc.positionOffset(
+      definition.line,
+      definition.character,
+    );
+    final targetGroup = _ownerOfView(target);
+    if (targetGroup == null) return false;
+    final from = _navigationLocation(source, sourceOffset, sourceGroup.region);
+    final to = NavigationLocation(
+      uri: target.uri,
+      path: target.path,
+      documentId: target.id,
+      groupRegion: targetGroup.region,
+      line: targetPosition.line,
+      character: targetPosition.character,
+      version: targetPosition.version,
+    );
+    _navigationHistory.recordNavigation(from, to);
+    _setDocSelection(
+      target,
+      TextSelection.collapsed(offset: targetPosition.offsetUtf16),
+    );
+    setState(() => _statusDetail = '跳转到 ${target.name}（定义）');
+    return true;
+  }
+
+  NavigationLocation _navigationLocation(
+    OpenDoc doc,
+    int offsetUtf16,
+    String groupRegion,
+  ) {
+    final position = doc.doc.positionAt(offsetUtf16);
+    return NavigationLocation(
+      uri: doc.uri,
+      path: doc.path,
+      documentId: doc.id,
+      groupRegion: groupRegion,
+      line: position.line,
+      character: position.character,
+      version: position.version,
+    );
+  }
+
+  NavigationLocation? _currentNavigationLocation() {
+    final active = _active;
+    final group = active == null ? null : _ownerOfView(active);
+    if (active == null || group == null) return null;
+    try {
+      return _navigationLocation(
+        active,
+        active.selection.extentOffset,
+        group.region,
+      );
+    } on AlulaException {
+      return null;
+    }
+  }
+
+  Future<void> _navigateBack() async {
+    final current = _currentNavigationLocation();
+    if (current == null) return;
+    final target = _navigationHistory.goBack(current);
+    if (target == null) {
+      setState(() => _statusDetail = '没有更早的导航位置');
+      return;
+    }
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复导航位置');
+    }
+  }
+
+  Future<void> _navigateForward() async {
+    final current = _currentNavigationLocation();
+    if (current == null) return;
+    final target = _navigationHistory.goForward(current);
+    if (target == null) {
+      setState(() => _statusDetail = '没有更新的导航位置');
+      return;
+    }
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复导航位置');
+    }
+  }
+
+  Future<void> _navigateToLastEdit() async {
+    final target = _navigationHistory.lastEdit;
+    final current = _currentNavigationLocation();
+    if (target == null || current == null) {
+      setState(() => _statusDetail = '没有可用的上次编辑位置');
+      return;
+    }
+    _navigationHistory.recordNavigation(current, target);
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复上次编辑位置');
+    }
+  }
+
+  Future<bool> _restoreNavigationLocation(NavigationLocation location) async {
+    final targetGroup = _groups[location.groupRegion] ?? _focused;
+    setState(() => _focusedRegion = targetGroup.region);
+    if (location.path != null) {
+      await _openFileByPath(location.path!);
+      if (!mounted) return false;
+      final active = _active;
+      if (active == null ||
+          active.path == null ||
+          !_pathsEqual(active.path!, location.path!)) {
+        return false;
+      }
+    } else {
+      final existing = _allDocViews
+          .where((view) => view.id == location.documentId)
+          .firstOrNull;
+      if (existing == null) return false;
+      final view = targetGroup.docs
+              .where((candidate) => candidate.sameDocumentAs(existing))
+              .firstOrNull ??
+          OpenDoc.viewOf(existing);
+      setState(() {
+        if (!targetGroup.docs.contains(view)) targetGroup.docs.add(view);
+        targetGroup.activeDocId = view.id;
+      });
+    }
+
+    final active = _active;
+    if (active == null) return false;
+    DocumentPosition position;
+    try {
+      position = active.doc.positionOffset(location.line, location.character);
+    } on AlulaException catch (error) {
+      if (error.code != 'InvalidLine') return false;
+      final snapshot = active.doc.readRange(0, maxLenUtf16: 1);
+      position = active.doc.positionOffset(snapshot.lineCount - 1, 0);
+    }
+    _setDocSelection(
+      active,
+      TextSelection.collapsed(offset: position.offsetUtf16),
+    );
+    return true;
+  }
+
+  String? _pathFromFileUri(String value) {
+    try {
+      final uri = Uri.parse(value);
+      if (uri.scheme != 'file') return null;
+      return uri.toFilePath(windows: Platform.isWindows);
+    } on FormatException {
+      return null;
+    } on UnsupportedError {
+      return null;
+    }
+  }
+
+  bool _pathsEqual(String left, String right) {
+    final a = left.replaceAll('\\', '/');
+    final b = right.replaceAll('\\', '/');
+    return Platform.isWindows ? a.toLowerCase() == b.toLowerCase() : a == b;
   }
 
   /// Ctrl+Click 跳转定义：从点击的全局坐标求字符偏移。

@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 19;
+const int expectedAbiVersion = 20;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -246,6 +246,21 @@ class DocumentLineOffset {
   });
 }
 
+/// Absolute Rust-document UTF-16 offset resolved from an LSP position.
+class DocumentPosition {
+  final int version;
+  final int line;
+  final int character;
+  final int offsetUtf16;
+
+  const DocumentPosition({
+    required this.version,
+    required this.line,
+    required this.character,
+    required this.offsetUtf16,
+  });
+}
+
 /// One horizontal UTF-16 window from a line in the Rust document.
 class DocumentLineWindow {
   final int line;
@@ -314,6 +329,20 @@ class CompletionResult {
   const CompletionResult(this.version, this.items);
 }
 
+class DefinitionResult {
+  final int version;
+  final String uri;
+  final int line;
+  final int character;
+
+  const DefinitionResult({
+    required this.version,
+    required this.uri,
+    required this.line,
+    required this.character,
+  });
+}
+
 class SemanticTokensResult {
   final int version;
   final List<Map<String, Object?>> tokens;
@@ -352,6 +381,51 @@ class AlulaLsp {
   /// 发送 didClose，但保留文档缓冲区以便 URI 改变后重新打开。
   void didClose(int id) {
     _check(_core._ffi.lspDidCloseJson(id));
+  }
+
+  /// Resolve a symbol through the server's versioned definition provider.
+  /// Returns null when no target exists, the document changed, or the request
+  /// timed out.
+  Future<DefinitionResult?> definition(
+    int id,
+    int offsetUtf16, {
+    int timeoutMs = 8000,
+  }) async {
+    final startJson =
+        _core._ffi.definitionStartJson(id, offsetUtf16, timeoutMs);
+    _check(startJson);
+    final start = jsonDecode(startJson) as Map<String, Object?>;
+    final requestId = start['requestId'] as int;
+    try {
+      while (true) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        final pollJson = _core._ffi.definitionPollJson(requestId);
+        _check(pollJson);
+        final poll = jsonDecode(pollJson) as Map<String, Object?>;
+        switch (poll['status']) {
+          case 'pending':
+            continue;
+          case 'completed':
+            final target = poll['definition'];
+            if (target == null) return null;
+            final location = target as Map<String, Object?>;
+            return DefinitionResult(
+              version: poll['version'] as int,
+              uri: location['uri'] as String,
+              line: location['line'] as int,
+              character: location['character'] as int,
+            );
+          case 'stale':
+          case 'timeout':
+          case 'cancelled':
+            return null;
+          default:
+            throw StateError('未知定义请求状态：${poll['status']}');
+        }
+      }
+    } finally {
+      _core._ffi.definitionCancelJson(requestId);
+    }
   }
 
   /// 最新诊断快照：{severity, line, character, message, source} 列表。
@@ -645,6 +719,55 @@ class AlulaDoc {
     );
     version = offset.version;
     return offset;
+  }
+
+  /// Convert a zero-based LSP UTF-16 line/column to a safe absolute offset.
+  DocumentPosition positionAt(int offsetUtf16) {
+    if (offsetUtf16 < 0) {
+      throw RangeError.value(
+          offsetUtf16, 'offsetUtf16', 'must be non-negative');
+    }
+    final json = core._ffi.docPositionJson(id, offsetUtf16);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final position = DocumentPosition(
+      version: r['version'] as int,
+      line: r['line'] as int,
+      character: r['character'] as int,
+      offsetUtf16: r['offsetUtf16'] as int,
+    );
+    version = position.version;
+    return position;
+  }
+
+  DocumentPosition positionOffset(int line, int character) {
+    if (line < 0) throw RangeError.value(line, 'line', 'must be non-negative');
+    if (character < 0) {
+      throw RangeError.value(character, 'character', 'must be non-negative');
+    }
+    final json = core._ffi.docPositionOffsetJson(id, line, character);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final result = DocumentPosition(
+      version: r['version'] as int,
+      line: r['line'] as int,
+      character: r['character'] as int,
+      offsetUtf16: r['offsetUtf16'] as int,
+    );
+    version = result.version;
+    return result;
   }
 
   /// Read a bounded batch of line windows without mirroring the document.

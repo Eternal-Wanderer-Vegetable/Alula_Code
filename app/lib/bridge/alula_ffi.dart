@@ -103,6 +103,14 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
           Pointer<Utf8> Function(int, int)>('alula_doc_line_offset');
 
+  late final Pointer<Utf8> Function(int, int) _docPosition = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64, Uint64),
+      Pointer<Utf8> Function(int, int)>('alula_doc_position');
+
+  late final Pointer<Utf8> Function(int, int, int) _docPositionOffset =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_doc_position_offset');
+
   late final Pointer<Utf8> Function(int, int, int, int, int, int)
       _docReadLines =
       lib
@@ -194,6 +202,20 @@ class AlulaFfi {
   late final Pointer<Utf8> Function(int) _completionCancel = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
     'alula_completion_cancel',
+  );
+
+  late final Pointer<Utf8> Function(int, int, int) _definitionStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_definition_start');
+
+  late final Pointer<Utf8> Function(int) _definitionPoll = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_definition_poll',
+  );
+
+  late final Pointer<Utf8> Function(int) _definitionCancel = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_definition_cancel',
   );
 
   late final Pointer<Utf8> Function(int, int) _semanticTokensStart =
@@ -331,6 +353,12 @@ class AlulaFfi {
   String docLineOffsetJson(int id, int line) =>
       _takeJson(_docLineOffset(id, line));
 
+  String docPositionJson(int id, int offsetUtf16) =>
+      _takeJson(_docPosition(id, offsetUtf16));
+
+  String docPositionOffsetJson(int id, int line, int character) =>
+      _takeJson(_docPositionOffset(id, line, character));
+
   String docReadLinesJson(
     int id,
     int firstLine,
@@ -430,6 +458,15 @@ class AlulaFfi {
 
   String completionCancelJson(int requestId) =>
       _takeJson(_completionCancel(requestId));
+
+  String definitionStartJson(int id, int offsetUtf16, int timeoutMs) =>
+      _takeJson(_definitionStart(id, offsetUtf16, timeoutMs));
+
+  String definitionPollJson(int requestId) =>
+      _takeJson(_definitionPoll(requestId));
+
+  String definitionCancelJson(int requestId) =>
+      _takeJson(_definitionCancel(requestId));
 
   String semanticTokensStartJson(int id, int timeoutMs) =>
       _takeJson(_semanticTokensStart(id, timeoutMs));

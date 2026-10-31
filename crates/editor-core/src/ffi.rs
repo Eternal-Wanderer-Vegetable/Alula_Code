@@ -22,8 +22,8 @@ use std::time::{Duration, Instant};
 use editor_buffer::{BufferError, TextOp};
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
-    decode_semantic_tokens, extract_completion_labels, LspPendingRequest, LspServer, SemanticToken,
-    SemanticTokenLegend,
+    decode_semantic_tokens, extract_completion_labels, extract_definition_location,
+    DefinitionLocation, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
 };
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
 use serde::Deserialize;
@@ -32,13 +32,15 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 19;
+pub const ALULA_ABI_VERSION: u32 = 20;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
 const MAX_PENDING_SEMANTIC_TOKENS: usize = 16;
 const MAX_SEMANTIC_TOKENS_PER_DOCUMENT: usize = 100_000;
 static NEXT_SEMANTIC_TOKENS_ID: AtomicU64 = AtomicU64::new(1);
+const MAX_PENDING_DEFINITIONS: usize = 16;
+static NEXT_DEFINITION_ID: AtomicU64 = AtomicU64::new(1);
 
 #[derive(Deserialize)]
 struct WorkspaceEditDocumentInput {
@@ -64,9 +66,18 @@ struct PendingSemanticTokens {
     deadline: Instant,
 }
 
+struct PendingDefinition {
+    document_id: u64,
+    document_version: u64,
+    server: Arc<LspServer>,
+    request: LspPendingRequest,
+    deadline: Instant,
+}
+
 static PENDING_COMPLETIONS: OnceLock<Mutex<HashMap<u64, PendingCompletion>>> = OnceLock::new();
 static PENDING_SEMANTIC_TOKENS: OnceLock<Mutex<HashMap<u64, PendingSemanticTokens>>> =
     OnceLock::new();
+static PENDING_DEFINITIONS: OnceLock<Mutex<HashMap<u64, PendingDefinition>>> = OnceLock::new();
 static RESOURCE_MONITOR: OnceLock<Mutex<Option<ResourcePressureMonitor>>> = OnceLock::new();
 
 fn pending_completions() -> &'static Mutex<HashMap<u64, PendingCompletion>> {
@@ -159,6 +170,57 @@ pub(crate) fn cancel_semantic_tokens_for_server(server: &Arc<LspServer>) {
             .filter_map(|request_id| pending.remove(&request_id))
             .collect()
     };
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+fn pending_definitions_lock() -> MutexGuard<'static, HashMap<u64, PendingDefinition>> {
+    PENDING_DEFINITIONS
+        .get_or_init(|| Mutex::new(HashMap::new()))
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+fn cancel_definitions_for_doc(id: u64) {
+    let requests: Vec<_> = {
+        let mut pending = pending_definitions_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(request_id, request)| (request.document_id == id).then_some(*request_id))
+            .collect();
+        ids.into_iter()
+            .filter_map(|request_id| pending.remove(&request_id))
+            .collect()
+    };
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+pub(crate) fn cancel_definitions_for_server(server: &Arc<LspServer>) {
+    let requests: Vec<_> = {
+        let mut pending = pending_definitions_lock();
+        let ids: Vec<_> = pending
+            .iter()
+            .filter_map(|(request_id, request)| {
+                Arc::ptr_eq(&request.server, server).then_some(*request_id)
+            })
+            .collect();
+        ids.into_iter()
+            .filter_map(|request_id| pending.remove(&request_id))
+            .collect()
+    };
+    for mut pending in requests {
+        let _ = pending.request.cancel();
+    }
+}
+
+fn cancel_all_definitions() {
+    let requests: Vec<_> = pending_definitions_lock()
+        .drain()
+        .map(|(_, request)| request)
+        .collect();
     for mut pending in requests {
         let _ = pending.request.cancel();
     }
@@ -264,7 +326,7 @@ pub extern "C" fn alula_abi_version() -> u32 {
 }
 
 /// Sample system/cgroup memory pressure. On a transition to Critical, cancel pending
-/// completions and stop registered search processes; document editing and saving remain enabled.
+/// completions/definition requests and stop registered search processes; editing remains enabled.
 #[no_mangle]
 pub extern "C" fn alula_resource_status() -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
@@ -276,6 +338,7 @@ pub extern "C" fn alula_resource_status() -> *mut c_char {
         let mut reclaim_error = None;
         if snapshot.transitioned_to_critical {
             cancel_all_completions();
+            cancel_all_definitions();
             match ProcessSupervisor::global().stop_registered_kind(ProcessKind::Search) {
                 Ok(stopped) => stopped_searches = stopped,
                 Err(error) => reclaim_error = Some(error.to_string()),
@@ -663,6 +726,108 @@ pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
 }
 
+/// Convert an absolute Rust-document UTF-16 offset to an LSP UTF-16 position.
+#[no_mangle]
+pub extern "C" fn alula_doc_position(id: u64, offset_utf16: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        let reg = registry_lock();
+        let Some(version) = reg.version_of(id) else {
+            return err_json("UnknownDoc", json!({ "id": id }));
+        };
+        let Some((line, character)) = reg.line_col(id, offset_utf16) else {
+            return err_json(
+                "InvalidUtf16Offset",
+                json!({ "id": id, "offsetUtf16": offset_utf16 }),
+            );
+        };
+        to_c_ptr(
+            json!({
+                "ok": true,
+                "version": version,
+                "line": line,
+                "character": character,
+                "offsetUtf16": offset_utf16,
+            })
+            .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_position")))
+}
+
+/// Convert a zero-based LSP UTF-16 line/character position to an absolute
+/// Rust-document UTF-16 offset. Columns beyond line end are clamped; a column
+/// inside a surrogate pair is moved back to its scalar boundary.
+#[no_mangle]
+pub extern "C" fn alula_doc_position_offset(id: u64, line: u64, character: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let (line, character) = match (usize::try_from(line), usize::try_from(character)) {
+            (Ok(line), Ok(character)) => (line, character),
+            _ => return err_json("InvalidArgument", json!("position is not representable")),
+        };
+        let reg = registry_lock();
+        if reg.version_of(id).is_none() {
+            return err_json("UnknownDoc", json!({ "id": id }));
+        }
+        let Some(Ok(line_start)) = reg.line_offset_utf16(id, line) else {
+            return err_json("InvalidLine", json!({ "id": id, "line": line }));
+        };
+        let line_end = if line
+            .checked_add(1)
+            .is_some_and(|next| next < line_start.line_count)
+        {
+            let next_line = line + 1;
+            match reg.line_offset_utf16(id, next_line) {
+                Some(Ok(next)) if next.version == line_start.version => next.offset_utf16,
+                _ => return err_json("InvalidLine", json!({ "id": id, "line": next_line })),
+            }
+        } else {
+            line_start.total_utf16_length
+        };
+
+        let mut line_ending_len = 0usize;
+        if line_end > line_start.offset_utf16 {
+            if let Some(Ok(last)) = reg.read_range(id, line_end - 1, 1) {
+                if last.text == "\n" {
+                    line_ending_len = 1;
+                    if line_end >= line_start.offset_utf16 + 2 {
+                        if let Some(Ok(before_last)) = reg.read_range(id, line_end - 2, 1) {
+                            if before_last.text == "\r" {
+                                line_ending_len = 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        let content_end = line_end.saturating_sub(line_ending_len);
+        let content_len = content_end.saturating_sub(line_start.offset_utf16);
+        let mut offset_utf16 = line_start.offset_utf16 + character.min(content_len);
+        if offset_utf16 > line_start.offset_utf16
+            && matches!(
+                reg.read_range(id, offset_utf16, 1),
+                Some(Err(BufferError::InvalidUtf16Offset { .. }))
+            )
+        {
+            offset_utf16 -= 1;
+        }
+        to_c_ptr(
+            json!({
+                "ok": true,
+                "version": line_start.version,
+                "line": line,
+                "character": offset_utf16 - line_start.offset_utf16,
+                "offsetUtf16": offset_utf16,
+            })
+            .to_string(),
+        )
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_position_offset")))
+}
+
 /// Read a bounded batch of UTF-16 line windows from one Rust document snapshot.
 #[no_mangle]
 pub extern "C" fn alula_doc_read_lines(
@@ -777,6 +942,7 @@ pub extern "C" fn alula_doc_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         cancel_completions_for_doc(id);
         cancel_semantic_tokens_for_doc(id);
+        cancel_definitions_for_doc(id);
         let (server, uri) = {
             let reg = registry_lock();
             (reg.lsp_of(id), reg.uri_of(id))
@@ -804,6 +970,7 @@ pub unsafe extern "C" fn alula_doc_set_uri(id: u64, uri: *const c_char) -> *mut 
             Err(e) => return e,
         };
         cancel_semantic_tokens_for_doc(id);
+        cancel_definitions_for_doc(id);
         let known = registry_lock().set_uri(id, uri);
         to_c_ptr(json!({ "ok": true, "known": known }).to_string())
     }))
@@ -853,6 +1020,7 @@ pub extern "C" fn alula_lsp_stop(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         cancel_completions_for_doc(id);
         cancel_semantic_tokens_for_doc(id);
+        cancel_definitions_for_doc(id);
         let server = registry_lock().detach_lsp(id);
         // detach 只移除映射；进程由调用方通过返回值决定是否显式 shutdown。
         // MVP 简化：registry 不再持有 Arc 后，shutdown 在此无引用可用——
@@ -918,6 +1086,7 @@ pub unsafe extern "C" fn alula_lsp_did_open(id: u64, language_id: *const c_char)
 pub extern "C" fn alula_lsp_did_close(id: u64) -> *mut c_char {
     catch_unwind(AssertUnwindSafe(|| {
         cancel_semantic_tokens_for_doc(id);
+        cancel_definitions_for_doc(id);
         let reg = registry_lock();
         if reg.version_of(id).is_none() {
             return err_json("UnknownDoc", json!({ "id": id }));
@@ -1285,6 +1454,157 @@ pub extern "C" fn alula_completion_cancel(request_id: u64) -> *mut c_char {
         to_c_ptr(json!({ "ok": true, "status": "cancelled", "requestId": request_id }).to_string())
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_completion_cancel")))
+}
+
+/// Start a bounded, cancellable LSP definition request. `offset_utf16` is an
+/// absolute document offset in UTF-16 code units.
+#[no_mangle]
+pub extern "C" fn alula_definition_start(
+    id: u64,
+    offset_utf16: u64,
+    timeout_ms: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let (uri, server, line, character, version) = {
+            let reg = registry_lock();
+            let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+                return err_json("InvalidArgument", json!("offset is not representable"));
+            };
+            let Some(uri) = reg.uri_of(id) else {
+                return err_json("UnknownDoc", json!("doc 未设置 uri"));
+            };
+            let Some(server) = reg.lsp_of(id) else {
+                return err_json("NoLsp", json!({ "id": id }));
+            };
+            let Some(version) = reg.version_of(id) else {
+                return err_json("UnknownDoc", json!({ "id": id }));
+            };
+            let Some((line, character)) = reg.line_col(id, offset_utf16) else {
+                return err_json(
+                    "InvalidUtf16Offset",
+                    json!({ "id": id, "offsetUtf16": offset_utf16 }),
+                );
+            };
+            (uri, server, line, character, version)
+        };
+
+        cancel_definitions_for_doc(id);
+        let request = match server.definition_async(&uri, line, character) {
+            Ok(request) => request,
+            Err(error) => return err_json("DefinitionFailed", json!(error)),
+        };
+        let mut pending = pending_definitions_lock();
+        if pending.len() >= MAX_PENDING_DEFINITIONS {
+            drop(pending);
+            let mut request = request;
+            let _ = request.cancel();
+            return err_json("Backpressure", json!({ "limit": MAX_PENDING_DEFINITIONS }));
+        }
+        let request_id = NEXT_DEFINITION_ID.fetch_add(1, Ordering::Relaxed);
+        let now = Instant::now();
+        let deadline = now
+            .checked_add(Duration::from_millis(timeout_ms))
+            .unwrap_or_else(|| now + Duration::from_secs(86_400));
+        pending.insert(
+            request_id,
+            PendingDefinition {
+                document_id: id,
+                document_version: version,
+                server,
+                request,
+                deadline,
+            },
+        );
+        to_c_ptr(json!({ "ok": true, "requestId": request_id, "version": version }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_start")))
+}
+
+/// Poll a definition request. A response is returned only while the source
+/// document remains at the version captured by `alula_definition_start`.
+#[no_mangle]
+pub extern "C" fn alula_definition_poll(request_id: u64) -> *mut c_char {
+    enum PollResult {
+        Pending,
+        Timeout(PendingDefinition),
+        Complete(PendingDefinition, serde_json::Value),
+        Failed(PendingDefinition, String),
+    }
+
+    catch_unwind(AssertUnwindSafe(|| {
+        let result = {
+            let mut requests = pending_definitions_lock();
+            let Some(mut pending) = requests.remove(&request_id) else {
+                return to_c_ptr(
+                    json!({ "ok": true, "status": "cancelled", "requestId": request_id })
+                        .to_string(),
+                );
+            };
+            if Instant::now() >= pending.deadline {
+                PollResult::Timeout(pending)
+            } else {
+                match pending.request.try_recv() {
+                    Ok(Some(response)) => PollResult::Complete(pending, response),
+                    Ok(None) => {
+                        requests.insert(request_id, pending);
+                        PollResult::Pending
+                    }
+                    Err(error) => PollResult::Failed(pending, error),
+                }
+            }
+        };
+
+        match result {
+            PollResult::Pending => to_c_ptr(
+                json!({ "ok": true, "status": "pending", "requestId": request_id }).to_string(),
+            ),
+            PollResult::Timeout(mut pending) => {
+                let _ = pending.request.cancel();
+                to_c_ptr(
+                    json!({ "ok": true, "status": "timeout", "requestId": request_id }).to_string(),
+                )
+            }
+            PollResult::Complete(pending, response) => {
+                if registry_lock().version_of(pending.document_id) != Some(pending.document_version) {
+                    return to_c_ptr(
+                        json!({ "ok": true, "status": "stale", "requestId": request_id })
+                            .to_string(),
+                    );
+                }
+                let definition = extract_definition_location(&response);
+                let definition_json = definition.map_or(serde_json::Value::Null, |location: DefinitionLocation| {
+                    json!({ "uri": location.uri, "line": location.line, "character": location.character })
+                });
+                to_c_ptr(
+                    json!({
+                        "ok": true,
+                        "status": "completed",
+                        "requestId": request_id,
+                        "version": pending.document_version,
+                        "definition": definition_json,
+                    })
+                    .to_string(),
+                )
+            }
+            PollResult::Failed(mut pending, error) => {
+                let _ = pending.request.cancel();
+                err_json("DefinitionFailed", json!(error))
+            }
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_poll")))
+}
+
+/// Cancel a pending definition request. Repeated cancellation is safe.
+#[no_mangle]
+pub extern "C" fn alula_definition_cancel(request_id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if let Some(mut pending) = pending_definitions_lock().remove(&request_id) {
+            let _ = pending.request.cancel();
+        }
+        to_c_ptr(json!({ "ok": true, "requestId": request_id }).to_string())
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_definition_cancel")))
 }
 
 /// 同步兼容补全请求（阻塞至响应或超时）。offset 为文档 UTF-16 口径。
@@ -1751,6 +2071,15 @@ mod tests {
         assert_eq!(second["offsetUtf16"], 6);
         assert_eq!(second["version"], 1);
 
+        let after_emoji = take(alula_doc_position(id, 4));
+        assert_eq!(after_emoji["line"], 0);
+        assert_eq!(after_emoji["character"], 4);
+        let after_crlf = take(alula_doc_position(id, 6));
+        assert_eq!(after_crlf["line"], 1);
+        assert_eq!(after_crlf["character"], 0);
+        let split_surrogate = take(alula_doc_position(id, 3));
+        assert_eq!(split_surrogate["error"]["code"], "InvalidUtf16Offset");
+
         let third = take(alula_doc_line_offset(id, 2));
         assert_eq!(third["offsetUtf16"], 8);
 
@@ -1758,6 +2087,29 @@ mod tests {
         assert_eq!(invalid["ok"], false);
         assert_eq!(invalid["error"]["code"], "InvalidLine");
 
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn lsp_position_offset_uses_utf16_and_clamps_crlf_and_surrogates() {
+        let id = 92_818;
+        take(unsafe { alula_doc_open(id, c("\u{FEFF}a🦊\r\nb\n").as_ptr()) });
+
+        let split_pair = take(alula_doc_position_offset(id, 0, 3));
+        assert_eq!(split_pair["version"], 1);
+        assert_eq!(split_pair["offsetUtf16"], 2);
+        assert_eq!(split_pair["character"], 2);
+
+        let end_of_line = take(alula_doc_position_offset(id, 0, 99));
+        assert_eq!(end_of_line["offsetUtf16"], 4);
+        let second_line = take(alula_doc_position_offset(id, 1, 1));
+        assert_eq!(second_line["offsetUtf16"], 7);
+        let empty_line = take(alula_doc_position_offset(id, 2, 0));
+        assert_eq!(empty_line["offsetUtf16"], 8);
+
+        let invalid = take(alula_doc_position_offset(id, 3, 0));
+        assert_eq!(invalid["ok"], false);
+        assert_eq!(invalid["error"]["code"], "InvalidLine");
         take(alula_doc_close(id));
     }
 

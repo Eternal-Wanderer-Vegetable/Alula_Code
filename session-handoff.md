@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，且不阻塞架构实现但属于 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1 与 P04.2 同文件 Rust 定义导航已完成，P04.2 覆盖 Ctrl/Command+Click、点击后 selection 和非零 16K UTF-16 输入窗映射，证据见 `docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一步 P04.3/EDT-16c 跨文件 definition provider 与导航历史。精确旧 Windows artifact run 41161368714 的窗口/MSAA 语义通过，但有无 UIA/MSAA 查询的两次 WM_CLOSE 都以 0xC000041D 退出；新构建分支的 hosted Windows close 通过。原始证据见 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，且不阻塞架构实现但属于 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1–P04.3（EDT-16a/b/c）均已完成，P04.3 证据见 `docs/diagnostics/2026-10-31-p04/p04.3-cross-file-definition-navigation.md`。当前先自动化复验精确旧 Windows artifact run 41109679662 的可见 UI、编辑保存、多视图和 IME 路径；已知的 hosted Server 证据不替代 Windows 11 客户端。Windows 11 Narrator/原生 IME/DPI主题、Linux native DRM、macOS 原生行为仍 pending；500 MiB 留 P14）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；外部平台验收作为 EV-P03-* 留待 P15，不阻塞后续实现。P04.1/EDT-16a、P04.2/EDT-16b 已完成，P04.3/EDT-16c 为下一受控切片。P04.2 本地导航/完整 Flutter 263 项与 `bash init.sh`、cargo fmt、flutter analyze 全通过。
+- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。P04.1–P04.3/EDT-16a/b/c 已完成，ABI v20 跨文件 LSP definition 与有界导航历史通过 Rust/Flutter fixtures 和真实 rust-analyzer smoke。完整 `bash init.sh --fast`（Flutter 271 项）、Clippy、cargo fmt、Flutter analyze 0 issues 通过。P04 / feat-026 保持唯一活动 feature；下一 EDT 子项按 `docs/03` 顺序执行。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -50,9 +50,9 @@
 
 ## 下一步
 
-1. 推进 P04.3：实现 rust-analyzer 跨文件 definition provider 与 back/forward/last-edit 导航历史；先做 GitNexus impact，再按 UTF-16/version 与多视图行为设计 fixture。
-2. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；任何 hosted/WSLg/Xvfb 证据都不能替代它们。完成 Linux/Windows target usability 后再准备 macOS 测试包。
-3. P00–P13 完成前不做 500 MiB 数值优化；每个实现 slice 补 evidence、跑门禁并分阶段提交。完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
+1. 完成 P04.3 阶段提交后，按 `docs/03` 开始下一 EDT 子项；每次只推进一个 slice。
+2. 自动化复验精确 Windows artifact `41109679662`：编辑 `fn main() { println!("linux-save-ok"); }`、保存并从磁盘回读，覆盖双视图/selection、IME composition、可见窗口/MSAA、关闭，并采集 DPI/主题。Hosted Windows Server 结果单独标记；不得代替 Windows 11/Narrator/native IME/DPI-theme 客户端验收。
+3. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；完成 Linux/Windows target usability 后再准备 macOS 测试包。P00–P13 完成前不做 500 MiB 数值优化；完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
 
 ## P03.7 CI follow-up（2026-10-31）
 

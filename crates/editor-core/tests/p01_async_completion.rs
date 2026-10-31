@@ -1,4 +1,4 @@
-//! P01.1 verifies the async completion FFI contract and request bounds.
+//! P01.1 verifies async language requests through the FFI and their bounds.
 
 use alula_core::ffi;
 use serde_json::{json, Value};
@@ -97,6 +97,53 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
         assert_eq!(completed["version"], 2);
         assert_eq!(completed["items"], json!(["async_completion"]));
 
+        let definition = take_json(ffi::alula_definition_start(doc_id, 4, 5_000));
+        assert_eq!(definition["ok"], true);
+        assert_eq!(definition["version"], 2);
+        let definition_id = definition["requestId"].as_u64().unwrap();
+        let deadline = Instant::now() + Duration::from_secs(4);
+        let resolved = loop {
+            let response = take_json(ffi::alula_definition_poll(definition_id));
+            if response["status"] != "pending" {
+                break response;
+            }
+            assert!(Instant::now() < deadline, "definition timed out in fixture");
+            std::thread::sleep(Duration::from_millis(10));
+        };
+        assert_eq!(resolved["status"], "completed");
+        assert_eq!(resolved["version"], 2);
+        assert_eq!(
+            resolved["definition"],
+            json!({
+                "uri": "file:///workspace/target.rs",
+                "line": 1,
+                "character": 3
+            })
+        );
+
+        let stale = take_json(ffi::alula_definition_start(doc_id, 4, 5_000));
+        let stale_id = stale["requestId"].as_u64().unwrap();
+        let change =
+            CString::new(json!([{"type":"insert","offset_utf16":4,"text":"y"}]).to_string())
+                .unwrap();
+        assert_eq!(
+            take_json(ffi::alula_doc_apply(doc_id, 2, change.as_ptr()))["version"],
+            3
+        );
+        let deadline = Instant::now() + Duration::from_secs(4);
+        let stale_result = loop {
+            let response = take_json(ffi::alula_definition_poll(stale_id));
+            if response["status"] != "pending" {
+                break response;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "stale definition did not resolve"
+            );
+            std::thread::sleep(Duration::from_millis(10));
+        };
+        assert_eq!(stale_result["status"], "stale");
+
         let mut request_ids = Vec::new();
         for _ in 0..32 {
             let response = take_json(ffi::alula_completion_start(doc_id, 4, 5_000));
@@ -113,8 +160,11 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
             );
         }
 
-        let during_shutdown = take_json(ffi::alula_completion_start(doc_id, 4, 5_000));
+        let during_shutdown = take_json(ffi::alula_completion_start(doc_id, 5, 5_000));
         let during_shutdown_id = during_shutdown["requestId"].as_u64().unwrap();
+        let definition_during_shutdown = take_json(ffi::alula_definition_start(doc_id, 5, 5_000));
+        let definition_during_shutdown_id =
+            definition_during_shutdown["requestId"].as_u64().unwrap();
         assert_eq!(
             take_json(ffi::alula_lsp_shutdown_workspace(workspace.as_ptr()))["stopped"],
             true
@@ -123,11 +173,16 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
             take_json(ffi::alula_completion_poll(during_shutdown_id))["status"],
             "cancelled"
         );
+        assert_eq!(
+            take_json(ffi::alula_definition_poll(definition_during_shutdown_id))["status"],
+            "cancelled"
+        );
         assert_eq!(take_json(ffi::alula_doc_close(doc_id))["removed"], true);
     }
 
     let trace = std::fs::read_to_string(&trace_path).expect("read fake LSP trace");
     assert!(trace.contains("$/cancelRequest"));
+    assert!(trace.contains("textDocument/definition"));
     assert!(trace.ends_with("textDocument/didClose\nshutdown\nexit\n"));
     std::fs::remove_dir_all(root_path).expect("remove temporary workspace root");
 }

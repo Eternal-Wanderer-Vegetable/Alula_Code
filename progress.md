@@ -5,7 +5,15 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.2 完成 / P04.3 待启动）
+### 最新进展（2026-10-31，P04.3 / EDT-16c 完成）
+
+- ABI v20 已接入异步 LSP definition（Location/LocationLink）、16 项在途上限、版本门控和文档关闭/LSP 停止或解绑/URI 改变/工作区关闭/Critical 压力取消；Rust 提供 BOM、CRLF、行尾和 surrogate 边界安全的 UTF-16 行列/绝对位置换算。
+- 工作台先走 LSP 跨文件定义，保持同文件 Tree-sitter 回退；跨文件目标在源编辑组打开，已打开文档复用共享文档视图。back/forward 和 last-edit 历史各限 128 项，命名文件关闭后可重开，最终关闭的未命名文档从历史移除。
+- Rust workspace/FFI 与 fake LSP tests 通过；临时真实 rust-analyzer 1.99.1 smoke 返回跨文件 Location。冷启动首次查询会短暂无结果，后续重试返回目标；工作台对快速 null 响应增加了一次版本受控重试。
+- `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` 通过（Flutter 271 项）；`cargo fmt --all -- --check`、`cargo clippy --workspace --all-targets -- -D warnings`、Flutter analyze（0 issues）及导航/history 定向测试通过。完整边界、GitNexus 告警与验证限制见 `docs/diagnostics/2026-10-31-p04/p04.3-cross-file-definition-navigation.md`。
+- `docs/03` 登记 P04.3 done；P04 / feat-026 仍 in-progress。下一受控切片以 docs/03 的后续 EDT 子项为准。P03 的 Linux native DRM、Windows 11 客户端读屏/IME/DPI主题与 macOS 原生门仍 pending；先自动化复验精确 Windows artifact 交互，再开展下一 EDT 切片。
+
+### 阶段记录（2026-10-31，P04.2 完成）
 
 - 按用户当前目标，把代码/自动化完成状态与外部平台/人工设备验收分开：P03 / feat-025 实现出口关闭；Linux native DRM、Windows 11 Release/读屏/DPI主题和 macOS 原生环境以 EV-P03-* 明确 pending。它们不阻塞 P04–P13 的架构实现；P15/公开发行仍不得视作通过。
 - `docs/03` 的 P04 / feat-026 仍是唯一活动 feature。P04.1 / EDT-16a 与 P04.2 / EDT-16b 已完成：F12/命令面板与 Ctrl/Command+Click 同文件 Rust 定义导航；覆盖 Unicode XID、单字母边界、BOM/emoji/CRLF UTF-16、修饰键、点击后 selection、非零有界输入窗映射。P04.2 证据：`docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一受控切片为 P04.3 / EDT-16c（跨文件 definition provider 与导航历史）。工作树含其他 P04/P09 代码，阶段提交只暂存本片 hunks。

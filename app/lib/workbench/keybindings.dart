@@ -172,6 +172,8 @@ class KeybindingSet {
     'editor.redo': 'ctrl+shift+z,ctrl+y',
     'editor.find': 'ctrl+f',
     'editor.gotoDef': 'f12',
+    'workbench.action.navigateBack': 'alt+arrowleft',
+    'workbench.action.navigateForward': 'alt+arrowright',
     'editor.replace': 'ctrl+h',
     'editor.addCursorAbove': 'ctrl+alt+arrowup',
     'editor.addCursorBelow': 'ctrl+alt+arrowdown',

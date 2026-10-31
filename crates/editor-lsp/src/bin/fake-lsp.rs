@@ -98,6 +98,19 @@ fn main() {
                     "result": {"data": [0, 3, 4, 0, 1, 1, 0, 3, 1, 0]},
                 }));
             }
+            "textDocument/definition" => {
+                send(&serde_json::json!({
+                    "jsonrpc": "2.0",
+                    "id": msg["id"],
+                    "result": [{
+                        "uri": "file:///t/definition-target.rs",
+                        "range": {
+                            "start": {"line": 1, "character": 3},
+                            "end": {"line": 1, "character": 9}
+                        }
+                    }],
+                }));
+            }
             "shutdown" => {
                 send(&serde_json::json!({"jsonrpc": "2.0", "id": msg["id"], "result": null}));
             }

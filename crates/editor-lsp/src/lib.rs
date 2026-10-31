@@ -4,7 +4,7 @@
 //! - Initialize/initialized 握手 + 退出握手；
 //! - didOpen / didChange（全量同步；增量同步留待 Phase 1）；
 //! - 接收 textDocument/publishDiagnostics（后台读线程，不阻塞 UI）；
-//! - textDocument/completion / semanticTokens（可取消异步请求）；
+//! - textDocument/definition / completion / semanticTokens（可取消异步请求）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
 use std::collections::HashMap;
@@ -47,6 +47,44 @@ pub struct SemanticToken {
     pub start_character: u32,
     pub length: u32,
     pub kind: String,
+}
+
+/// First usable LSP definition target. `line` and `character` use LSP's
+/// zero-based UTF-16 coordinates.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DefinitionLocation {
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+}
+
+/// Read the first Location or LocationLink from a definition response.
+/// Invalid entries are ignored so one malformed link does not hide later
+/// usable results.
+pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
+    let entries = match value {
+        serde_json::Value::Array(entries) => entries.iter().collect::<Vec<_>>(),
+        serde_json::Value::Null => return None,
+        value => vec![value],
+    };
+
+    entries.into_iter().find_map(|entry| {
+        let uri = entry
+            .get("targetUri")
+            .or_else(|| entry.get("uri"))?
+            .as_str()?;
+        let start = entry
+            .get("targetSelectionRange")
+            .or_else(|| entry.get("range"))?
+            .get("start")?;
+        let line = start.get("line")?.as_u64()?;
+        let character = start.get("character")?.as_u64()?;
+        (!uri.is_empty()).then(|| DefinitionLocation {
+            uri: uri.to_string(),
+            line,
+            character,
+        })
+    })
 }
 
 struct Shared {
@@ -446,6 +484,22 @@ impl LspServer {
         .map(Some)
     }
 
+    /// Send an asynchronous textDocument/definition request.
+    pub fn definition_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<LspPendingRequest, String> {
+        self.request_async(
+            "textDocument/definition",
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+            }),
+        )
+    }
+
     /// 发送异步补全请求。返回值可立即轮询或取消。
     pub fn completion_async(
         &self,
@@ -826,5 +880,39 @@ mod tests {
         assert!(
             decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 0, 0, 0]}), &legend).is_err()
         );
+    }
+
+    #[test]
+    fn definition_response_accepts_location_and_location_link_utf16_positions() {
+        let location = serde_json::json!({
+            "uri": "file:///workspace/target.rs",
+            "range": {"start": {"line": 2, "character": 5}}
+        });
+        assert_eq!(
+            extract_definition_location(&location),
+            Some(DefinitionLocation {
+                uri: "file:///workspace/target.rs".into(),
+                line: 2,
+                character: 5,
+            })
+        );
+
+        let links = serde_json::json!([
+            {"not": "a location"},
+            {
+                "targetUri": "file:///workspace/target.rs",
+                "targetRange": {"start": {"line": 8, "character": 0}},
+                "targetSelectionRange": {"start": {"line": 3, "character": 7}}
+            }
+        ]);
+        assert_eq!(
+            extract_definition_location(&links),
+            Some(DefinitionLocation {
+                uri: "file:///workspace/target.rs".into(),
+                line: 3,
+                character: 7,
+            })
+        );
+        assert_eq!(extract_definition_location(&serde_json::Value::Null), None);
     }
 }

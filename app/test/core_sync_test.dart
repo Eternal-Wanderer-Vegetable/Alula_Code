@@ -40,6 +40,26 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('LSP position conversions keep UTF-16, BOM, emoji and CRLF semantics',
+      () {
+    final core = _bootstrap.core!;
+    final doc = core.openDoc(9008, '\uFEFFa🦊\r\nb\n');
+
+    final afterEmoji = doc.positionAt(4);
+    expect(afterEmoji.version, 1);
+    expect(afterEmoji.line, 0);
+    expect(afterEmoji.character, 4);
+
+    final splitPair = doc.positionOffset(0, 3);
+    expect(splitPair.offsetUtf16, 2);
+    expect(splitPair.character, 2);
+    expect(doc.positionOffset(0, 99).offsetUtf16, 4);
+    expect(doc.positionOffset(1, 1).offsetUtf16, 7);
+    expect(doc.positionOffset(2, 0).offsetUtf16, 8);
+    expect(() => doc.positionAt(3), throwsA(isA<AlulaException>()));
+    doc.close();
+  }, skip: skip);
+
   test('资源状态与进程登记桥接可往返', () {
     final core = _bootstrap.core!;
     final status = core.runtime.sampleResourceStatus();
