@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，属于 P15/发行门。P04 / feat-026 是唯一活动 feature；P04.1–P04.8 已完成，P04.8 文件首尾移动/选择证据见 `docs/diagnostics/2026-10-31-p04/p04.8-file-boundary-movement.md`，完整门禁 Flutter 293 项通过；下一步拆解 P04.9 页移动。旧 Windows Release artifact run 41109679662 的 WM_CLOSE 0xC000041D 失败仍按原二进制保留，见 run 41171194040；Windows 11 Narrator/native IME/DPI主题、Linux native DRM 和 macOS 原生行为仍 pending；500 MiB 留 P14。）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，属于 P15/发行门。P04 / feat-026 是唯一活动 feature；P04.1–P04.9 已完成，P04.9 PageUp/PageDown 及 Shift 分页选择证据见 `docs/diagnostics/2026-10-31-p04/p04.9-page-movement.md`，完整门禁 Flutter 297 项通过；下一步从 docs/03 与总计划拆解 P04 剩余编辑命令切片。旧 Windows Release artifact run 41109679662 的 WM_CLOSE 0xC000041D 失败仍按原二进制保留，见 run 41171194040；Windows 11 Narrator/native IME/DPI主题、Linux native DRM 和 macOS 原生行为仍 pending；500 MiB 留 P14。）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。P04.1–P04.8 已完成；P04.8 实现 Windows/Linux Ctrl+Home/End、macOS Command+Up/Down 文件首尾移动与 Shift 选择，通过 Rust 文档总 UTF-16 长度复用有界输入窗重居中。完整 `bash init.sh` 通过（Flutter 293 项）、cargo fmt、Clippy、build_core 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.8-file-boundary-movement.md`。P04 / feat-026 仍是唯一活动 feature；下一步按 docs/03 拆解页上/下移动。P15 平台原生验收、旧 Windows Release artifact 关闭崩溃与 EV-P03 pending 门保持原记录。
+- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；EV-P03-* 留待 P15。P04.1–P04.9 已完成；P04.9 注册 PageUp/PageDown 及 Shift 选择命令，复用 Flutter 可视页 selection Action，并通过 Rust selection 回执跨有界输入窗重居中。三平台 targetPlatform fixture、4,000 行边界 fixture、完整 `bash init.sh`（Flutter 297 项）、cargo fmt、Clippy、build_core 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.9-page-movement.md`。P04 / feat-026 仍是唯一活动 feature；下一步按总计划核对并登记 P04 剩余切片。P15 原生平台验收、旧 Windows Release artifact 关闭崩溃与 EV-P03 pending 门保持原记录。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -50,7 +50,7 @@
 
 ## 下一步
 
-1. 检查 `docs/03` N.2 的剩余 EDT 项，拆解并登记 P04.9 页上/下移动后再开工；保持一次只推进一个切片。
+1. 依据 `docs/10`、固定版本 source coverage 与 `docs/03`，拆解并登记 P04 剩余编辑命令/查找/片段/diff/merge 子切片，再做 GitNexus impact；保持一次只推进一个切片。
 2. 调查 Windows exact Release artifact run 41171194040 的 `flutter_windows.dll` WM_CLOSE fault；修复只进入新构建验收，历史 artifact 仍保留失败结果。
 3. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；Linux/Windows target usability 达标后再提供 macOS 测试包。P00–P13 完成前不做 500 MiB 数值优化；完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
 

@@ -5,11 +5,16 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.8 / EDT-01e 完成）
+### 最新进展（2026-10-31，P04.9 / EDT-01f 完成）
+
+- P04.9 完成 PageUp/PageDown 与 Shift 选择：调用 Flutter 可视页 selection Action，macOS plain PageUp/PageDown 从默认纯滚动修正为 caret 分页。三平台 targetPlatform fixture 覆盖 viewport 移动与 anchor；4,000 行文件跨 16K 输入窗重居中，Rust 全文/版本不变。
+- 定向 Flutter 4 项通过；完整 `bash init.sh` EXIT=0（Flutter 297 项、Rust workspace、Clippy、build_core），`cargo fmt --all -- --check` 与 `flutter analyze`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.9-page-movement.md`。
+- P04 / feat-026 仍是唯一活动 feature；EDT-01 移动项已完成，下一步按 docs/03 与总计划核对并登记 P04 剩余命令/查找/片段/diff/merge 切片。targetPlatform 不等同真实平台键盘/IME/读屏/DPI 证据，这些仍属 P15。
+
+### 阶段进展（2026-10-31，P04.8 / EDT-01e 完成）
 
 - P04.8 增加文件开头/末尾移动与 Shift 选择；Windows/Linux Ctrl+Home/End，macOS Command+Up/Down。命令读取 Rust 文档 UTF-16 总长度并通过受控 selection 路径跨 16K 输入窗重居中，不改文本或版本。
 - 键位/工作台定向 Flutter 6 项通过，覆盖三平台键位、双向锚点与 4,000 行文档首尾跳转；完整 `bash init.sh` EXIT=0（Flutter 293 项、Rust workspace、Clippy、build_core）。`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.8-file-boundary-movement.md`。
-- P04 / feat-026 仍是唯一活动 feature；下一 EDT 子项按 `docs/03` 拆解页上/下移动。targetPlatform 不等同真实三平台键盘/IME/读屏/DPI 证据，这些仍属 P15。
 
 ### 阶段进展（2026-10-31，P04.7 / EDT-01d 完成）
 

@@ -422,6 +422,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.cursorBottomSelect', '编辑器', '选择至文件末尾',
         () async => _moveDocumentBoundary(toBottom: true, extendSelection: true),
         enablement: 'editorTextFocus');
+    reg('editor.cursorPageUp', '编辑器', '向上翻页',
+        () async => _moveCursorPage(forward: false),
+        shortcut: 'PageUp', enablement: 'editorTextFocus');
+    reg('editor.cursorPageUpSelect', '编辑器', '向上翻页并扩展选择',
+        () async => _moveCursorPage(forward: false, extendSelection: true),
+        shortcut: 'Shift+PageUp', enablement: 'editorTextFocus');
+    reg('editor.cursorPageDown', '编辑器', '向下翻页',
+        () async => _moveCursorPage(forward: true),
+        shortcut: 'PageDown', enablement: 'editorTextFocus');
+    reg('editor.cursorPageDownSelect', '编辑器', '向下翻页并扩展选择',
+        () async => _moveCursorPage(forward: true, extendSelection: true),
+        shortcut: 'Shift+PageDown', enablement: 'editorTextFocus');
     reg('editor.mergeSelections', '编辑器', '合并重叠选区',
         () async => _mergeSelections(),
         enablement: 'editorTextFocus');
@@ -1118,6 +1130,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             affinity: current.affinity,
           );
     if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveCursorPage({
+    required bool forward,
+    bool extendSelection = false,
+  }) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final context = _focusNodeFor(_focused, doc).context;
+    if (context == null) return;
+    Actions.invoke(
+      context,
+      ExtendSelectionVerticallyToAdjacentPageIntent(
+        forward: forward,
+        collapseSelection: !extendSelection,
+      ),
+    );
   }
 
   void _setDocSelections(
@@ -4407,6 +4437,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
+          if (_commands.isEnabled('editor.cursorPageUp'))
+            const SingleActivator(LogicalKeyboardKey.pageUp): () =>
+                _runCommand('editor.cursorPageUp'),
+          if (_commands.isEnabled('editor.cursorPageUpSelect'))
+            const SingleActivator(LogicalKeyboardKey.pageUp, shift: true): () =>
+                _runCommand('editor.cursorPageUpSelect'),
+          if (_commands.isEnabled('editor.cursorPageDown'))
+            const SingleActivator(LogicalKeyboardKey.pageDown): () =>
+                _runCommand('editor.cursorPageDown'),
+          if (_commands.isEnabled('editor.cursorPageDownSelect'))
+            const SingleActivator(LogicalKeyboardKey.pageDown, shift: true):
+                () => _runCommand('editor.cursorPageDownSelect'),
           for (final e in _keybindings
               .resolveBindings(matchesWhen: _commands.context.matches)
               .entries
