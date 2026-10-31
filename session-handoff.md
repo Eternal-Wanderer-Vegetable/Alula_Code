@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；外部设备验收 EV-P03-* pending，不阻塞后续架构代码但仍是 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1/EDT-16a 同文件 Rust 定义导航已通过 F12/命令面板、Unicode XID、单字母边界、UTF-16 BOM/emoji/CRLF 输入、无符号与无匹配 Widget fixture，报告见 `docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md`。下一步 P04.2/EDT-16b 同文件 Ctrl+Click 指针交互。P03.7 双视图/无障碍/50k 行/长行与 Windows Server 2025 hosted MSAA 证据见 `docs/diagnostics/2026-10-31-p03/`；CI runs 41153011276/41153994655 三平台通过。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，且不阻塞架构实现但属于 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1 与 P04.2 同文件 Rust 定义导航已完成，P04.2 覆盖 Ctrl/Command+Click、点击后 selection 和非零 16K UTF-16 输入窗映射，证据见 `docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一步 P04.3/EDT-16c 跨文件 definition provider 与导航历史。P03.7 hosted Windows 证据见 `docs/diagnostics/2026-10-31-p03/`；旧 Windows release artifact 的补充验收 run 41159673663 已捕获客户区截图，但 WM_CLOSE 退出码为 0xC000041D；源码交互 job 14 项通过，捕获脚本诊断修正及复跑待完成。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭，外部平台验收作为 EV-P03-* 留待 P15；这些验收不阻塞后续实现。P04.1/EDT-16a 已完成，P04.2/EDT-16b 为下一受控切片。P03 的多视图/journal/语义/大文件及 hosted Windows 证据仍有效；完整本地 `init.sh`、cargo fmt、flutter analyze 已通过。
+- 当前状态更新（2026-10-31）：P03 / feat-025 实现出口已关闭；外部平台验收作为 EV-P03-* 留待 P15，不阻塞后续实现。P04.1/EDT-16a、P04.2/EDT-16b 已完成，P04.3/EDT-16c 为下一受控切片。P04.2 本地导航/完整 Flutter 263 项与 `bash init.sh`、cargo fmt、flutter analyze 全通过。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -50,10 +50,15 @@
 
 ## 下一步
 
-1. 推进 P04.2：审查并验证同文件 Ctrl+Click，重点检查指针坐标到绝对 UTF-16 位置的映射、修饰键、focus/selection 交互和无定义反馈；继续按 GitNexus impact 审核，只暂存本片 hunks。
+1. 推进 P04.3：实现 rust-analyzer 跨文件 definition provider 与 back/forward/last-edit 导航历史；先做 GitNexus impact，再按 UTF-16/version 与多视图行为设计 fixture。
 2. 维持 EV-P03-LINUX-DRM、EV-P03-WIN11-UI-A11Y-DPI、EV-P03-MACOS-NATIVE pending；任何 hosted/WSLg/Xvfb 证据都不能替代它们。完成 Linux/Windows target usability 后再准备 macOS 测试包。
 3. P00–P13 完成前不做 500 MiB 数值优化；每个实现 slice 补 evidence、跑门禁并分阶段提交。完成全计划后完善 CI Release 并准备 v0.1.0 测试 PR。
 
 ## P03.7 CI follow-up（2026-10-31）
 
 - Commits `bfbdc2c`, `96872ca`, and `d531936` are pushed; `41108610038` exposed the partial-stage missing `_onEditorPointerDown` issue, then corrected run `41109679662` passed all three platform jobs and uploaded Linux, Windows, and macOS artifacts. The current branch is hosted-buildable. Windows Server 2025 visible client, Unicode MSAA, four required semantic strings, 14 interaction tests, simulated Flutter IME, and graceful close pass in runs `41153011276`/`41153994655`; Windows 11 client-specific Narrator/native IME/DPI-theme/package gates and Linux native DRM remain pending. Preserve unrelated unstaged harness/P04/P09 work.
+
+## P03.7 exact older Windows artifact follow-up (2026-10-31)
+
+- One-time workflow run `41159673663` launched the exact Windows Release artifact from `41109679662`. Its visible client-area screenshot was captured; the close request was posted but the artifact exited `0xC000041D`. The same workflow's source-SHA Windows interaction job passed all 14 tests, but built Debug source and is not evidence that the older Release binary closes cleanly.
+- The initial PowerShell capture script masked any pre-close validation exception with its close error and did not preserve metadata on that path. `tools/vscode-parity/validate-windows-artifact.ps1` has an uncommitted diagnostic-preservation fix; rerun it before deciding whether the exact artifact also failed an MSAA assertion. This hosted runner is Windows Server 2025, not Windows 11.

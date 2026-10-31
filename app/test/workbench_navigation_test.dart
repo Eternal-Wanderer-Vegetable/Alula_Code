@@ -5,9 +5,19 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+RenderEditable _findRenderEditable(RenderObject root) {
+  if (root is RenderEditable) return root;
+  RenderEditable? found;
+  root.visitChildren((child) {
+    found ??= _findRenderEditable(child);
+  });
+  return found ?? (throw StateError('No RenderEditable under test editor'));
+}
 
 void main() {
   testWidgets('F12 goes to a same-file Rust definition and reports misses',
@@ -145,5 +155,186 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.f12);
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('光标不在符号上'), findsOneWidget);
+  });
+
+  testWidgets('Control-click and Command-click jump to a Rust definition',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-pointer-nav');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source =
+        '// 🦊 pointer fixture\nfn target() {}\nfn main() {\n    target();\n}\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byType(RustTextInputField);
+    final textFieldFinder = find.descendant(
+      of: editor,
+      matching: find.byType(TextField),
+    );
+    await tester.tap(textFieldFinder);
+    await tester.pump();
+    final editableFinder = find.descendant(
+      of: editor,
+      matching: find.byType(EditableText),
+    );
+    final callOffset = source.indexOf(
+      'target();',
+      source.indexOf('fn main'),
+    );
+    final definitionOffset = source.indexOf('target()');
+
+    Future<void> jumpWith(LogicalKeyboardKey modifier) async {
+      final controller = tester.widget<TextField>(textFieldFinder).controller!;
+      controller.selection = TextSelection.collapsed(offset: callOffset);
+      await tester.pump();
+      expect(controller.selection.extentOffset, callOffset);
+      final render = _findRenderEditable(
+        tester.renderObject<RenderObject>(editableFinder),
+      );
+      final caret = render.getLocalRectForCaret(
+        TextPosition(offset: callOffset + 3),
+      );
+      final point = render.localToGlobal(caret.center);
+      final hitOffset = render.getPositionForPoint(point).offset;
+      expect(hitOffset, inInclusiveRange(callOffset, callOffset + 6));
+      await tester.sendKeyDownEvent(modifier);
+      expect(
+        modifier == LogicalKeyboardKey.controlLeft
+            ? HardwareKeyboard.instance.isControlPressed
+            : HardwareKeyboard.instance.isMetaPressed,
+        isTrue,
+      );
+      await tester.tapAt(point);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(
+        tester
+            .widget<TextField>(textFieldFinder)
+            .controller!
+            .selection
+            .extentOffset,
+        definitionOffset,
+      );
+    }
+
+    await jumpWith(LogicalKeyboardKey.controlLeft);
+    await jumpWith(LogicalKeyboardKey.metaLeft);
+  });
+
+  testWidgets('Control-click maps a bounded input window to document offsets',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-pointer-window');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final padding = List.filled(6000, '// filler 🦊\n').join();
+    final source = '// header 🦊\nfn target() {}\n$padding'
+        'fn main() {\n    target();\n}\n';
+    File('${workspace.path}/main.rs').writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editor = find.byType(RustTextInputField);
+    final textFieldFinder = find.descendant(
+      of: editor,
+      matching: find.byType(TextField),
+    );
+    await tester.tap(textFieldFinder);
+    await tester.pump();
+    final definitionOffset = source.indexOf('target()');
+    final callOffset = source.lastIndexOf('target();');
+    var field = tester.widget<RustTextInputField>(editor);
+    var controller = tester.widget<TextField>(textFieldFinder).controller!;
+    for (var attempt = 0; attempt < 8; attempt++) {
+      field = tester.widget<RustTextInputField>(editor);
+      controller = tester.widget<TextField>(textFieldFinder).controller!;
+      final windowStart = field.inputWindow.startUtf16;
+      final previousWindowEnd = windowStart + controller.text.length;
+      if (callOffset >= windowStart && callOffset + 7 <= previousWindowEnd) {
+        break;
+      }
+      controller.selection = TextSelection.collapsed(
+        offset: controller.text.length,
+      );
+      await tester.pump();
+      await tester.pump();
+      field = tester.widget<RustTextInputField>(editor);
+      controller = tester.widget<TextField>(textFieldFinder).controller!;
+      expect(
+        field.inputWindow.startUtf16 + controller.text.length,
+        greaterThan(previousWindowEnd),
+        reason: 'moving the caret to the bounded edge should rebase forward',
+      );
+    }
+
+    field = tester.widget<RustTextInputField>(editor);
+    controller = tester.widget<TextField>(textFieldFinder).controller!;
+    expect(field.inputWindow.startUtf16, greaterThan(0));
+    final localCallOffset = callOffset - field.inputWindow.startUtf16;
+    expect(localCallOffset, inInclusiveRange(0, controller.text.length - 1));
+    controller.selection = TextSelection.collapsed(offset: localCallOffset);
+    await tester.pump();
+
+    field = tester.widget<RustTextInputField>(editor);
+    controller = tester.widget<TextField>(textFieldFinder).controller!;
+    final scrollController = field.scrollController!;
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+      await tester.pump();
+    }
+    field = tester.widget<RustTextInputField>(editor);
+    final editableFinder = find.descendant(
+      of: editor,
+      matching: find.byType(EditableText),
+    );
+    final render = _findRenderEditable(
+      tester.renderObject<RenderObject>(editableFinder),
+    );
+    final caret = render.getLocalRectForCaret(
+      TextPosition(offset: localCallOffset + 3),
+    );
+    final point = render.localToGlobal(caret.center);
+    expect(tester.getRect(editor).contains(point), isTrue);
+    expect(
+      render.getPositionForPoint(point).offset,
+      inInclusiveRange(localCallOffset, localCallOffset + 6),
+    );
+    final absoluteWindowStart = field.inputWindow.startUtf16;
+    expect(absoluteWindowStart, greaterThan(0));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tapAt(point);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump();
+
+    final navigatedController =
+        tester.widget<TextField>(textFieldFinder).controller!;
+    expect(navigatedController.selection.extentOffset, definitionOffset);
   });
 }

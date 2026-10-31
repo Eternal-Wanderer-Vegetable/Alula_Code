@@ -5,11 +5,11 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.1 完成 / P04.2 待启动）
+### 最新进展（2026-10-31，P04.2 完成 / P04.3 待启动）
 
 - 按用户当前目标，把代码/自动化完成状态与外部平台/人工设备验收分开：P03 / feat-025 实现出口关闭；Linux native DRM、Windows 11 Release/读屏/DPI主题和 macOS 原生环境以 EV-P03-* 明确 pending。它们不阻塞 P04–P13 的架构实现；P15/公开发行仍不得视作通过。
-- `docs/03` 的 P04 / feat-026 仍是唯一活动 feature。P04.1 / EDT-16a 已完成：F12/命令面板同文件 Rust 定义导航、精确 UTF-16 名称位置、Unicode XID、单字母边界及无符号/无匹配反馈。Widget 证据：`docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md`。下一受控切片为 P04.2 / EDT-16b（同文件 Ctrl+Click 与指针/选择交互）。工作树含其他 P04/P09 代码，阶段提交只暂存本片 hunks。
-- `flutter test --no-pub test/workbench_navigation_test.dart` 通过（1 项）；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace tests、Clippy、build_core、Flutter 261 项），`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。500 MiB 目标留 P14。
+- `docs/03` 的 P04 / feat-026 仍是唯一活动 feature。P04.1 / EDT-16a 与 P04.2 / EDT-16b 已完成：F12/命令面板与 Ctrl/Command+Click 同文件 Rust 定义导航；覆盖 Unicode XID、单字母边界、BOM/emoji/CRLF UTF-16、修饰键、点击后 selection、非零有界输入窗映射。P04.2 证据：`docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一受控切片为 P04.3 / EDT-16c（跨文件 definition provider 与导航历史）。工作树含其他 P04/P09 代码，阶段提交只暂存本片 hunks。
+- `flutter test --no-pub test/workbench_navigation_test.dart` 通过（3 项）；完整 Flutter 测试 263 项通过。`RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace tests、Clippy、build_core、Flutter 263 项），`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。GitNexus staged detect 报 CRITICAL/139 flows；Dart 调用边误连跨语言探针，真实 Listener 入口与 staged hunks 已核对，残余图谱风险记在 P04.2 报告。500 MiB 目标留 P14。
 
 ### 最新进展（2026-10-31，P03.7 Windows hosted UI / MSAA）
 

@@ -351,7 +351,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P04 active. P04.1 (EDT-16a) complete: same-file Rust go-to-definition through F12 and Command Palette, exact identifier selection, Unicode XID names, one-letter boundary case, BOM/emoji/CRLF UTF-16 fixture, no-symbol and no-match feedback. Widget evidence: docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md. Next controlled slice P04.2 (EDT-16b): same-file Ctrl+Click and pointer/selection interactions. Cross-file providers, navigation history and remaining EDT rows stay open.",
+      "evidence": "P04 active. P04.1 (EDT-16a) complete: same-file Rust go-to-definition through F12 and Command Palette, exact identifier selection, Unicode XID names, one-letter boundary case, BOM/emoji/CRLF UTF-16 fixture, no-symbol and no-match feedback. P04.2 (EDT-16b) complete: same-file Ctrl/Command+Click, pointer-up selection timing, drag/cancel guard, and bounded-window absolute UTF-16 mapping. Evidence: docs/diagnostics/2026-10-31-p04/p04.1-same-file-definition.md and docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md; Flutter full suite 263 passed and analyze 0 issues. Next controlled slice P04.3: cross-file provider and navigation history. Remaining EDT rows stay open.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     },

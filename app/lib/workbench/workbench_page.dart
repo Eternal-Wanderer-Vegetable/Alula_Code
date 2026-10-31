@@ -13,8 +13,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show listEquals;
-import 'package:flutter/gestures.dart' show kMiddleMouseButton;
+import 'package:flutter/gestures.dart'
+    show
+        kMiddleMouseButton,
+        kPrimaryButton,
+        kTouchSlop,
+        PointerCancelEvent,
+        PointerDownEvent,
+        PointerUpEvent;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
@@ -230,6 +238,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
+  final Map<
+      int,
+      ({EditorGroup group, OpenDoc view, int offset, Offset position})>
+      _pendingDefinitionPointers = {};
   String _focusedRegion = 'editor';
   int _syncCount = 0;
   int _abiVersion = 0;
@@ -3423,6 +3435,87 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _statusDetail = '跳转到 $word（定义）');
   }
 
+  /// Ctrl+Click 跳转定义：从点击的全局坐标求字符偏移。
+  void _onEditorPointerDown(
+    EditorGroup group,
+    OpenDoc view,
+    BuildContext editorContext,
+    PointerDownEvent event,
+  ) {
+    _pendingDefinitionPointers.remove(event.pointer);
+    if (event.buttons != kPrimaryButton) return;
+    final control = HardwareKeyboard.instance.isControlPressed;
+    final meta = HardwareKeyboard.instance.isMetaPressed;
+    final alt = HardwareKeyboard.instance.isAltPressed;
+    final gotoModifier = control || meta;
+    if (!gotoModifier && !alt) {
+      if (view.additionalSelections.isNotEmpty) {
+        final previous = view.selectionSet;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !identical(_active, view)) return;
+          view.selectionHistory.record(previous);
+          view.additionalSelections = const [];
+          view.columnSelection = null;
+          setState(() {});
+          _syncCommandContext();
+        });
+      }
+      return;
+    }
+    if (!editorContext.mounted) return;
+    final fieldContext = view.inputFieldKey.currentState?.context;
+    if (fieldContext == null) return;
+    final editable = _findRenderEditable(fieldContext);
+    if (editable == null) return;
+    final pos = editable.getPositionForPoint(event.position);
+    final active = view;
+    final localOffset =
+        pos.offset.clamp(0, active.editingValue.text.length).toInt();
+    final offset = active.inputWindow.startUtf16 + localOffset;
+    if (alt && !gotoModifier) return;
+    _pendingDefinitionPointers[event.pointer] = (
+      group: group,
+      view: active,
+      offset: offset,
+      position: event.position,
+    );
+  }
+
+  /// Apply Ctrl/Cmd+Click after EditableText has processed pointer-up selection.
+  void _onEditorPointerUp(PointerUpEvent event) {
+    final pending = _pendingDefinitionPointers.remove(event.pointer);
+    if (pending == null ||
+        (event.position - pending.position).distance > kTouchSlop) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !identical(_active, pending.view)) return;
+      _focusedRegion = pending.group.region;
+      _setDocSelection(
+        pending.view,
+        TextSelection.collapsed(offset: pending.offset),
+      );
+      _runCommand('editor.gotoDef');
+    });
+  }
+
+  void _onEditorPointerCancel(PointerCancelEvent event) {
+    _pendingDefinitionPointers.remove(event.pointer);
+  }
+
+  static RenderEditable? _findRenderEditable(BuildContext ctx) {
+    return _findRenderEditableOf(ctx.findRenderObject());
+  }
+
+  static RenderEditable? _findRenderEditableOf(RenderObject? obj) {
+    if (obj is RenderEditable) return obj;
+    RenderEditable? found;
+    obj?.visitChildren((child) {
+      found ??= _findRenderEditableOf(child);
+    });
+    return found;
+  }
+
   // ---------- 搜索视图 ----------
 
   Future<void> _runSearch() async {
@@ -3852,6 +3945,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    _pendingDefinitionPointers.clear();
     _pollTimer?.cancel();
     _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();
@@ -4915,7 +5009,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           Expanded(
             child: Stack(
               children: [
-                LayoutBuilder(
+                Builder(
+                  builder: (editorContext) => Listener(
+                    onPointerDown: (event) => _onEditorPointerDown(
+                      g,
+                      active,
+                      editorContext,
+                      event,
+                    ),
+                    onPointerUp: _onEditorPointerUp,
+                    onPointerCancel: _onEditorPointerCancel,
+                    child: LayoutBuilder(
                       builder: (context, constraints) => Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -5117,6 +5221,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           ],
                         ],
                       ),
+                    ),
+                  ),
                 ),
                 if (_findVisible)
                   Positioned(top: 0, right: 12, child: _buildFindBar()),
