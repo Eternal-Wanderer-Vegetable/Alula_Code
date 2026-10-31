@@ -313,6 +313,7 @@ $interactionResult = [ordered]@{
   quickOpenQuery = if ($ExerciseInteractions) { 'main.rs' } else { $null }
   launchMode = if ($ExerciseInteractions) { 'standard launch; fixture opened through MSAA-targeted UI clicks' } else { 'standard launch' }
   openedEditorNames = @()
+  initialAccessibilityReady = $false
   namesBeforeFolderButton = @()
   openFolderDialogNames = @()
   openFolderDialogValues = @()
@@ -508,6 +509,20 @@ try {
           Start-Sleep -Milliseconds 200
         } while ((Get-Date) -lt $deadline)
         return $false
+      }
+
+      # Flutter's Windows MSAA tree can become available several seconds after
+      # the native window first appears. Warm it up before attempting a hit
+      # test so a transient empty tree is not mistaken for a missing control.
+      $accessibilityDeadline = (Get-Date).AddSeconds(12)
+      do {
+        $initialSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.namesBeforeFolderButton = @($initialSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        $interactionResult.initialAccessibilityReady = @($interactionResult.namesBeforeFolderButton | Where-Object { $_ -eq '打开文件夹' }).Count -gt 0
+        if (!$interactionResult.initialAccessibilityReady) { Start-Sleep -Milliseconds 250 }
+      } while (!$interactionResult.initialAccessibilityReady -and (Get-Date) -lt $accessibilityDeadline)
+      if (!$interactionResult.initialAccessibilityReady) {
+        throw "Flutter MSAA did not expose the Open Folder button before interaction; names: $($interactionResult.namesBeforeFolderButton -join ' | ')"
       }
 
       Open-ArtifactWorkspace
