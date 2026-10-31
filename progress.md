@@ -5,6 +5,11 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### P15 Windows 11 exact historical artifact 自动复验（2026-10-31）
+
+- 指定的 run `41109679662` artifact `13003880930` 已重新下载并校验 ZIP/exe SHA-256；真实 Windows 11 build 26200 / AMD64 / 120 DPI（125%）下复验可见客户区、MSAA、原生 Microsoft Pinyin、双视图同步、保存回读。浅色系统 registry 值为 `1/1`，但产品仍呈暗色且编辑器仍挤在右侧窄窗。旧 binary `WM_CLOSE` 复现 `0xC000041D`。
+- Narrator 探针只有两个 UIA 节点，无 LegacyIAccessible/预期语义，14 次 Tab 都落在 FLUTTERVIEW；未捕获语音。系统原始 dark theme 和 fixture SHA 已恢复。Windows 11 关闭/视觉/读屏门仍未通过；同机 100%/150% DPI 与语音证据仍 pending，详见 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`。
+
 ### 最新进展（2026-10-31，P04.18 / EDT-03c 完成）
 
 - 实现 VS Code 鼠标矩形列选：Windows/Linux `Shift+Alt`、macOS `Shift+Option` 拖动按屏幕横坐标逐行命中；活动行作为主选区，并避免该组合误触发 `Alt+Click`。多行替换复用既有多光标和 Rust 保存路径。
