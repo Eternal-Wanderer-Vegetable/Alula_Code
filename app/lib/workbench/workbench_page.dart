@@ -41,6 +41,7 @@ import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
 import '../editor/rust_text_input_field.dart';
+import '../editor/rust_string_context.dart';
 import '../editor/rust_text_input_window.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
@@ -129,6 +130,11 @@ const Map<String, String> _rustAutoClosingBracketPairs = {
   '(': ')',
   '[': ']',
   '{': '}',
+};
+const Map<String, String> _rustAutoClosingQuotePairs = {'"': '"'};
+const Map<String, String> _rustAutoClosingPairs = {
+  ..._rustAutoClosingBracketPairs,
+  ..._rustAutoClosingQuotePairs,
 };
 final RegExp _rustOnEnterCommentBefore = RegExp(r'^\s*//\s*\S|\s//\s+\S');
 final RegExp _rustOnEnterCommentAfter = RegExp(r'^(?!\s*$)');
@@ -1103,6 +1109,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (g.activeDocId == null && g.docs.isNotEmpty) {
         g.activeDocId = g.docs.last.id;
       }
+      for (final doc in _allDocs) {
+        if (doc.path?.toLowerCase().endsWith('.rs') == true) {
+          _scheduleSyntaxRefresh(doc.id);
+        }
+      }
       _state = WbSyncState.idle;
       _statusDetail = _journalRecoveryNotice ?? '已连接 Rust 核心 v$_abiVersion';
       var openedFolder = false;
@@ -1523,7 +1534,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (forward.isNotEmpty) {
       _scheduleStateSave();
       _scheduleOutlineRefresh();
-      if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      _scheduleSyntaxRefresh(doc.id);
     }
   }
 
@@ -2813,10 +2824,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    final closer = _rustAutoClosingBracketPairs[character];
+    final closer = _rustAutoClosingPairs[character];
     final isOpening = closer != null;
-    if (!isOpening &&
-        !_rustAutoClosingBracketPairs.values.contains(character)) {
+    if (!isOpening && !_rustAutoClosingPairs.values.contains(character)) {
       return;
     }
 
@@ -2862,14 +2872,36 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final nextCharacter = selection.end < totalUtf16
             ? _readDocumentRange(doc, selection.end, selection.end + 1)
             : '';
+        if (character == '"' &&
+            selection.isCollapsed &&
+            nextCharacter == character &&
+            doc.hasAutoClosedBracketAt(selection.start, character)) {
+          plans.add((
+            start: selection.start,
+            end: selection.end,
+            replacement: '',
+            removed: '',
+            selectionIndex: index,
+            baseInReplacement: 1,
+            extentInReplacement: 1,
+            original: selection,
+            skipExistingCloser: true,
+            addAutoClosedMarker: false,
+            closeInReplacement: -1,
+          ));
+          continue;
+        }
         if (isOpening) {
           final wrapSelection = !selection.isCollapsed;
+          final mayAutoCloseInContext = character != '"' ||
+              _rustStringContextAt(doc, selection.start) ==
+                  RustStringContext.outside;
           final canCloseBefore = nextCharacter.isEmpty ||
               _rustAutoCloseBefore.contains(nextCharacter);
           final alreadyHasCloser =
               selection.isCollapsed && nextCharacter == closer;
-          final appendCloser =
-              wrapSelection || (canCloseBefore && !alreadyHasCloser);
+          final appendCloser = wrapSelection ||
+              (mayAutoCloseInContext && canCloseBefore && !alreadyHasCloser);
           final replacement = wrapSelection
               ? '$character$removed$closer'
               : appendCloser
@@ -3031,7 +3063,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc.addAutoClosedBracketMarker(
           openOffsetUtf16: mappedStarts[index],
           closeOffsetUtf16: mappedStarts[index] + plan.closeInReplacement,
-          close: _rustAutoClosingBracketPairs[character]!,
+          close: _rustAutoClosingPairs[character]!,
         );
       }
     }
@@ -3077,7 +3109,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (pair.length != 2) return null;
         final open = pair[0];
         final close = pair[1];
-        if (_rustAutoClosingBracketPairs[open] != close ||
+        if (_rustAutoClosingPairs[open] != close ||
             !doc.hasAutoClosedBracketAt(caret, close)) {
           return null;
         }
@@ -3706,7 +3738,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     _scheduleOutlineRefresh();
     _scheduleStateSave();
-    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    _scheduleSyntaxRefresh(doc.id);
     if (mounted) setState(() {});
   }
 
@@ -3902,7 +3934,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (change.ops.isNotEmpty) _refreshSiblingViews(doc, change.ops);
         doc.lastEditAt = null;
         _updateDirty(doc);
-        if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+        _scheduleSyntaxRefresh(doc.id);
       }
       _scheduleStateSave();
       _scheduleOutlineRefresh();
@@ -4102,7 +4134,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         });
         _scheduleStateSave();
         _syncCommandContext();
-        if (view.lspAttached) _scheduleSyntaxRefresh(view.id);
+        _scheduleSyntaxRefresh(view.id);
         return;
       }
     }
@@ -4146,6 +4178,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         g.docs.add(open);
         g.activeDocId = id;
       });
+      _scheduleSyntaxRefresh(id);
       _syncCommandContext();
       _scheduleStateSave();
       if (_lspReady) {
@@ -4153,7 +4186,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           core.lsp.setUri(id, open.uri!);
           core.lsp.didOpen(id, languageId: _languageIdOf(path));
           open.lspAttached = true;
-          _scheduleSyntaxRefresh(id);
         } catch (_) {}
       }
       _updateLanguageServicePolling();
@@ -4371,13 +4403,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _scheduleSyntaxRefresh(int docId) {
     final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
-    if (doc == null || !doc.lspAttached) return;
+    if (doc == null || doc.path?.toLowerCase().endsWith('.rs') != true) return;
     _syntaxRefreshTimers.remove(docId)?.cancel();
     _syntaxRefreshTimers[docId] = Timer(const Duration(milliseconds: 80), () {
       _syntaxRefreshTimers.remove(docId);
       if (!mounted) return;
       final current = _allDocs.where((item) => item.id == docId).firstOrNull;
-      if (current == null || !current.lspAttached) return;
+      if (current == null ||
+          current.path?.toLowerCase().endsWith('.rs') != true) {
+        return;
+      }
       try {
         final syntax = _core?.lsp.syntax(docId);
         if (!mounted) return;
@@ -4390,12 +4425,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             };
           });
         }
-        unawaited(_refreshSemanticTokens(docId));
+        if (current.lspAttached) unawaited(_refreshSemanticTokens(docId));
       } catch (error) {
         debugPrint('语法状态刷新失败（doc=$docId）：$error');
       }
     });
   }
+
+  RustStringContext _rustStringContextAt(OpenDoc doc, int offsetUtf16) =>
+      rustStringContextAt(
+        tokens: _syntaxByDoc[doc.id] ?? const <Map<String, Object?>>[],
+        tokenVersion: _syntaxVersionByDoc[doc.id] ?? -1,
+        documentVersion: doc.doc.version,
+        offsetUtf16: offsetUtf16,
+      );
 
   Future<void> _refreshSemanticTokens(int docId) async {
     final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
@@ -4717,7 +4760,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _updateDirty(doc);
       doc.undoStack.clear();
       doc.lastEditAt = null;
-      if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      _scheduleSyntaxRefresh(doc.id);
       _scheduleOutlineRefresh();
       _scheduleStateSave();
       _syncCommandContext();
@@ -4962,7 +5005,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _updateDirty(doc);
     doc.undoStack.clear();
     doc.lastEditAt = null;
-    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    _scheduleSyntaxRefresh(doc.id);
     _scheduleOutlineRefresh();
     _scheduleStateSave();
     _syncCommandContext();
@@ -5054,8 +5097,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !alt &&
             !_overtypeMode &&
             active.path?.toLowerCase().endsWith('.rs') == true &&
-            (_rustAutoClosingBracketPairs.containsKey(character) ||
-                _rustAutoClosingBracketPairs.values.contains(character))) {
+            (_rustAutoClosingPairs.containsKey(character) ||
+                _rustAutoClosingPairs.values.contains(character))) {
           unawaited(_applyRustBracketInput(character!));
           return KeyEventResult.handled;
         }
@@ -5274,7 +5317,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _scheduleOutlineRefresh();
     _scheduleStateSave();
-    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    _scheduleSyntaxRefresh(doc.id);
     if (mounted) setState(() => _statusDetail = status);
   }
 

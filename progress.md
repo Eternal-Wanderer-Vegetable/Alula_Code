@@ -3,7 +3,13 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-10-31 更新）
+## Current State（当前状态，2026-11-01 更新）
+
+### 最新进展（2026-11-01，P04.32 / EDT-06h 完成）
+
+- Rust `.rs` 双引号现按固定 Code-OSS 规则自动闭合：只在当前 Tree-sitter 快照的 `string` token 外配对；选区包围独立按 `surroundingPairs` 工作。Tree-sitter 本地刷新不要求启动 rust-analyzer，快照版本不匹配时按普通字符插入。只有仍由 marker 跟踪的右引号才会被跳过或与 Backspace 成对删除。
+- 实现复用 Rust UTF-16 TextOps、既有 marker cap、撤销/重做、split view 和保存路径，无 ABI 变化。新增 9 项测试；定向回归 48 项通过，完整 `RUST_TEST_THREADS=1 bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 450），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。证据：`docs/diagnostics/2026-11-01-p04/p04.32-rust-double-quote-pairs.md`。
+- GitNexus `_applyRustBracketInput` 编辑前 upstream CRITICAL（53 reported processes / 9 modules），直接调用者为 `_focusNodeFor`；图谱其余映射异常不作降级依据。单引号配对、`<>` selection surrounding、块注释 Enter 与 P15 原生平台验收仍未覆盖；下一片从 `docs/03` / `docs/11` 拆解 P04.33。
 
 ### 最新进展（2026-10-31，P04.31 / EDT-06g 完成）
 

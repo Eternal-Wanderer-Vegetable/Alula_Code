@@ -300,4 +300,82 @@ void main() {
     await _typeCharacter(tester, '(');
     expect(_controller(tester).text, '');
   });
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    platformTest('$platform Rust double quotes auto-close and overtype',
+        (tester) async {
+      final (_, file) = await _openFixture(tester, platform, '');
+
+      await _typeCharacter(tester, '"');
+      expect(_controller(tester).text, '""');
+      expect(
+        _controller(tester).selection,
+        const TextSelection.collapsed(offset: 1),
+      );
+
+      await _typeCharacter(tester, '"');
+      expect(_controller(tester).text, '""');
+      expect(
+        _controller(tester).selection,
+        const TextSelection.collapsed(offset: 2),
+      );
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '""');
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(_controller(tester).text, '');
+      await _press(tester, LogicalKeyboardKey.keyY, control: true);
+      expect(_controller(tester).text, '""');
+    });
+  }
+
+  platformTest('Rust quote pairing is disabled inside string tokens',
+      (tester) async {
+    await _openFixture(tester, TargetPlatform.linux, 'let s = "text";');
+    _controller(tester).selection = const TextSelection.collapsed(offset: 10);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    await _typeCharacter(tester, '"');
+    expect(_controller(tester).text, 'let s = "t"ext";');
+  });
+
+  platformTest('Rust quotes surround a selection using UTF-16 TextOps',
+      (tester) async {
+    final (_, file) = await _openFixture(
+      tester,
+      TargetPlatform.linux,
+      '\uFEFF😀\r\n',
+    );
+    _controller(tester).selection = const TextSelection(
+      baseOffset: 0,
+      extentOffset: 2,
+    );
+    await tester.pump();
+
+    await _typeCharacter(tester, '"');
+    expect(_controller(tester).text, '"😀"\n');
+    expect(
+      _controller(tester).selection,
+      const TextSelection(baseOffset: 1, extentOffset: 3),
+    );
+    await _press(tester, LogicalKeyboardKey.keyS, control: true);
+    await tester.pump(const Duration(milliseconds: 100));
+    final bytes = file.readAsBytesSync();
+    expect(bytes.take(3).toList(), [0xef, 0xbb, 0xbf]);
+    expect(utf8.decode(bytes.skip(3).toList()), '"😀"\r\n');
+  });
+
+  platformTest('Rust Backspace removes its auto-closed quote pair once',
+      (tester) async {
+    await _openFixture(tester, TargetPlatform.linux, '');
+    await _typeCharacter(tester, '"');
+    expect(_controller(tester).text, '""');
+
+    await _press(tester, LogicalKeyboardKey.backspace);
+    expect(_controller(tester).text, '');
+  });
 }
