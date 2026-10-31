@@ -166,6 +166,51 @@ void main() {
     );
   }
 
+  for (final pair in <List<String>>[
+    ['(', ')'],
+    ['[', ']'],
+  ]) {
+    for (final platform in [
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+      TargetPlatform.macOS,
+    ]) {
+      final isMac = platform == TargetPlatform.macOS;
+      platformTest(
+        '$platform Enter expands an auto-inserted Rust ${pair[0]}${pair[1]} pair',
+        (tester) async {
+          await _openFixture(tester, platform, '');
+          await _typeCharacter(tester, pair[0]);
+          expect(_controller(tester).text, '${pair[0]}${pair[1]}');
+
+          await _press(tester, LogicalKeyboardKey.enter);
+
+          final expanded = '${pair[0]}\n    \n${pair[1]}';
+          expect(_controller(tester).text, expanded);
+          expect(
+            _controller(tester).selection,
+            const TextSelection.collapsed(offset: 6),
+          );
+          await _press(
+            tester,
+            LogicalKeyboardKey.keyZ,
+            control: !isMac,
+            meta: isMac,
+          );
+          expect(_controller(tester).text, '${pair[0]}${pair[1]}');
+          await _press(
+            tester,
+            LogicalKeyboardKey.keyZ,
+            control: !isMac,
+            meta: isMac,
+            shift: true,
+          );
+          expect(_controller(tester).text, expanded);
+        },
+      );
+    }
+  }
+
   platformTest(
     'Rust smart Enter edits the second view and saves the supplied sample',
     (tester) async {

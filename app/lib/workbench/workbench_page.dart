@@ -2644,7 +2644,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             selection.isCollapsed &&
             selection.start > 0 &&
             selection.end < totalUtf16 &&
-            doc.hasAutoClosedBracketAt(selection.end, '}')) {
+            _rustAutoClosingBracketPairs.entries.any((pair) =>
+                doc.hasAutoClosedBracketAt(selection.end, pair.value))) {
           if (2 > _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
             throw StateError('Rust 括号检查超过单次操作上限');
           }
@@ -2654,7 +2655,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             selection.start - 1,
             selection.end + 1,
           );
-          if (pair == '{}') {
+          if (pair.length == 2 &&
+              _rustAutoClosingBracketPairs[pair[0]] == pair[1]) {
             final innerIndentation = '$indentation    ';
             text = '\n$innerIndentation\n$indentation';
             caretOffset = 1 + innerIndentation.length;
