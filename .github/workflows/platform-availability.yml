@@ -276,20 +276,7 @@ jobs:
                           snapshot.Error = "accChildCount: " + exception.Message;
                           return snapshot;
                       }
-
-                      int limit = Math.Min(snapshot.ChildCount, 100);
-                      for (int childId = 1; childId <= limit; childId++)
-                      {
-                          AlulaMsaaChild child = new AlulaMsaaChild();
-                          child.ChildId = childId;
-                          try { child.Name = accessible.get_accName(childId); }
-                          catch (Exception exception) { child.Error = exception.Message; }
-                          try { child.Role = Convert.ToString(accessible.get_accRole(childId)); }
-                          catch (Exception exception) { child.Error = exception.Message; }
-                          try { child.Value = accessible.get_accValue(childId); }
-                          catch (Exception exception) { child.Error = exception.Message; }
-                          snapshot.Children.Add(child);
-                      }
+                      CaptureChildren(accessible, "", 1, snapshot);
                   }
                   catch (Exception exception)
                   {
@@ -304,6 +291,81 @@ jobs:
                   }
                   return snapshot;
               }
+
+              private static void CaptureChildren(
+                  IAccessible accessible,
+                  string parentPath,
+                  int depth,
+                  AlulaMsaaSnapshot snapshot)
+              {
+                  if (depth > 8 || snapshot.Children.Count >= 250) return;
+                  int childCount = accessible.accChildCount;
+                  int limit = Math.Min(childCount, 100);
+                  for (int childId = 1; childId <= limit; childId++)
+                  {
+                      if (snapshot.Children.Count >= 250) return;
+                      AlulaMsaaNode node = new AlulaMsaaNode();
+                      node.Path = string.IsNullOrEmpty(parentPath)
+                          ? childId.ToString()
+                          : parentPath + "." + childId.ToString();
+                      node.ChildId = childId;
+                      object rawChild = null;
+                      IAccessible nested = null;
+                      try
+                      {
+                          try { node.Name = accessible.get_accName(childId); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+                          try { node.Role = Convert.ToString(accessible.get_accRole(childId)); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+                          try { node.Value = accessible.get_accValue(childId); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+
+                          try
+                          {
+                              rawChild = accessible.get_accChild(childId);
+                              if (rawChild is IAccessible)
+                              {
+                                  nested = (IAccessible)rawChild;
+                              }
+                              else if (rawChild != null && Marshal.IsComObject(rawChild))
+                              {
+                                  IntPtr unknown = Marshal.GetIUnknownForObject(rawChild);
+                                  try
+                                  {
+                                      nested = (IAccessible)Marshal.GetTypedObjectForIUnknown(
+                                          unknown, typeof(IAccessible));
+                                  }
+                                  catch { }
+                                  finally { Marshal.Release(unknown); }
+                              }
+                          }
+                          catch (Exception exception) { node.Error = exception.Message; }
+
+                          if (nested != null && !Object.ReferenceEquals(nested, accessible))
+                          {
+                              try
+                              {
+                                  node.ChildCount = nested.accChildCount;
+                                  CaptureChildren(nested, node.Path, depth + 1, snapshot);
+                              }
+                              catch (Exception exception) { node.Error = exception.Message; }
+                          }
+                          snapshot.Children.Add(node);
+                      }
+                      finally
+                      {
+                          if (nested != null && Marshal.IsComObject(nested) &&
+                              !Object.ReferenceEquals(nested, accessible))
+                          {
+                              Marshal.FinalReleaseComObject(nested);
+                          }
+                          else if (nested == null && rawChild != null && Marshal.IsComObject(rawChild))
+                          {
+                              Marshal.FinalReleaseComObject(rawChild);
+                          }
+                      }
+                  }
+              }
           }
 
           public sealed class AlulaMsaaSnapshot
@@ -312,21 +374,23 @@ jobs:
               public string RootName { get; set; }
               public string RootNameError { get; set; }
               public int ChildCount { get; set; }
-              public System.Collections.Generic.List<AlulaMsaaChild> Children { get; private set; }
+              public System.Collections.Generic.List<AlulaMsaaNode> Children { get; private set; }
               public string Error { get; set; }
 
               public AlulaMsaaSnapshot()
               {
-                  Children = new System.Collections.Generic.List<AlulaMsaaChild>();
+                  Children = new System.Collections.Generic.List<AlulaMsaaNode>();
               }
           }
 
-          public sealed class AlulaMsaaChild
+          public sealed class AlulaMsaaNode
           {
+              public string Path { get; set; }
               public int ChildId { get; set; }
               public string Name { get; set; }
               public string Role { get; set; }
               public string Value { get; set; }
+              public int ChildCount { get; set; }
               public string Error { get; set; }
           }
           '@
