@@ -27,7 +27,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/alula-windows-release
       - name: Capture visible window, accessibility tree, DPI/theme, and close
-        shell: pwsh
+        shell: powershell
         run: |
           $output = '${{ runner.temp }}/alula-windows-validation'
           New-Item -ItemType Directory -Force -Path $output | Out-Null
