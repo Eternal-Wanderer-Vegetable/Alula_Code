@@ -171,6 +171,10 @@ jobs:
             $uiaRootSnapshots = @()
             $uiaError = $null
             $uiAutomationSkipped = $env:ALULA_SKIP_UI_AUTOMATION -eq '1'
+            $msaaAvailable = $false
+            $msaaRoots = @()
+            $msaaError = $null
+            $msaaProviders = @()
             if (!$uiAutomationSkipped) {
               try {
                 Add-Type -AssemblyName UIAutomationClient
@@ -228,6 +232,87 @@ jobs:
               } catch {
                 if ($null -eq $uiaError) { $uiaError = $_.Exception.Message }
               }
+
+              try {
+                Add-Type -AssemblyName Accessibility
+                $accessibilityAssembly = [Accessibility.IAccessible].Assembly.Location
+                Add-Type -ReferencedAssemblies @($accessibilityAssembly) -TypeDefinition @'
+          using System;
+          using System.Runtime.InteropServices;
+          using Accessibility;
+
+          public static class AlulaMsaaApi
+          {
+              private static readonly Guid IidIAccessible =
+                  new Guid("618736E0-3C3D-11CF-810C-00AA00389B71");
+
+              [DllImport("oleacc.dll", PreserveSig = true)]
+              private static extern int AccessibleObjectFromWindow(
+                  IntPtr window,
+                  uint objectId,
+                  ref Guid interfaceId,
+                  [MarshalAs(UnmanagedType.Interface)] out IAccessible accessible);
+
+              public static int GetClient(IntPtr window, out IAccessible accessible)
+              {
+                  Guid interfaceId = IidIAccessible;
+                  return AccessibleObjectFromWindow(
+                      window, unchecked((uint)-4), ref interfaceId, out accessible);
+              }
+          }
+          '@
+                $msaaTargets = @(
+                  [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+                  [pscustomobject]@{
+                    name = 'flutterChildWindow'
+                    handle = [AlulaWindowApi]::GetWindow($window, 5)
+                  }
+                )
+                foreach ($target in $msaaTargets) {
+                  $provider = $null
+                  $hresult = [AlulaMsaaApi]::GetClient($target.handle, [ref]$provider)
+                  $snapshot = [ordered]@{
+                    target = $target.name
+                    hresult = ('0x{0:X8}' -f ($hresult -band 0xFFFFFFFFL))
+                    rootName = $null
+                    childCount = 0
+                    children = @()
+                    error = $null
+                  }
+                  if ($hresult -eq 0 -and $null -ne $provider) {
+                    $msaaAvailable = $true
+                    $msaaProviders += $provider
+                    try {
+                      $snapshot.rootName = $provider.get_accName([object]0)
+                      $snapshot.childCount = $provider.accChildCount
+                      $children = @()
+                      $limit = [Math]::Min($snapshot.childCount, 100)
+                      for ($childId = 1; $childId -le $limit; $childId++) {
+                        try {
+                          $children += [ordered]@{
+                            childId = $childId
+                            name = $provider.get_accName([object]$childId)
+                            role = [string]$provider.get_accRole([object]$childId)
+                            value = $provider.get_accValue([object]$childId)
+                          }
+                        } catch {
+                          $children += [ordered]@{ childId = $childId; error = $_.Exception.Message }
+                        }
+                      }
+                      $snapshot.children = @($children)
+                    } catch {
+                      $snapshot.error = $_.Exception.Message
+                      if ($null -eq $msaaError) { $msaaError = $snapshot.error }
+                    }
+                  } else {
+                    $snapshot.error = 'AccessibleObjectFromWindow failed.'
+                    if ($null -eq $msaaError) { $msaaError = $snapshot.error }
+                  }
+                  $msaaRoots += $snapshot
+                }
+              } catch {
+                if ($null -eq $msaaError) { $msaaError = $_.Exception.Message }
+              }
             }
 
             $themeSettings = Get-ItemProperty `
@@ -255,6 +340,9 @@ jobs:
               accessibleNames = @($uiaNames | Select-Object -First 100)
               uiAutomationRoots = @($uiaRootSnapshots)
               uiAutomationError = $uiaError
+              msaaAvailable = $msaaAvailable
+              msaaRoots = @($msaaRoots)
+              msaaError = $msaaError
             } | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
 
             # Release UI Automation provider proxies before Flutter tears down
@@ -262,8 +350,15 @@ jobs:
             $descendants = $null
             $automationRoot = $null
             $uiaTargets = $null
+            $msaaTargets = $null
             $target = $null
             $element = $null
+            foreach ($provider in $msaaProviders) {
+              if ($null -ne $provider -and [System.Runtime.InteropServices.Marshal]::IsComObject($provider)) {
+                [System.Runtime.InteropServices.Marshal]::FinalReleaseComObject($provider) | Out-Null
+              }
+            }
+            $msaaProviders = $null
             [GC]::Collect()
             [GC]::WaitForPendingFinalizers()
           }
