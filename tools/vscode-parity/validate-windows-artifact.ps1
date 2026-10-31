@@ -199,8 +199,12 @@ $interactionResult = [ordered]@{
   multiviewSavedAndReadBack = $false
   accessibleEditorCount = 0
   accessibleEditorValuesMatch = $false
-  quickOpenQuery = if ($ExerciseInteractions) { 'src/main.rs' } else { $null }
+  quickOpenQuery = if ($ExerciseInteractions) { 'main.rs' } else { $null }
+  launchMode = if ($ExerciseInteractions) { 'standard launch; fixture opened through Command Palette' } else { 'standard launch' }
   openedEditorNames = @()
+  commandPaletteNames = @()
+  openFolderDialogNames = @()
+  workspaceTreeNames = @()
   focusBeforePasteNodes = @()
   editorValuesAfterPaste = @()
   keyboardFocusNames = @()
@@ -219,7 +223,11 @@ if ($ExerciseInteractions) {
 $process = $null
 try {
   $process = if ($ExerciseInteractions) {
-    Start-Process -FilePath $exe.FullName -ArgumentList '--lsp-auto' -WorkingDirectory (Join-Path $repoRoot 'app') -PassThru -WindowStyle Normal
+    # Launch the artifact the same way a user launches it. The optional
+    # --lsp-auto path has correlated with intermittent missing-window results
+    # on hosted ARM64 x64 emulation; open the fixture through the UI and keep
+    # that startup behavior out of this editor interaction check.
+    Start-Process -FilePath $exe.FullName -WorkingDirectory (Join-Path $repoRoot 'app') -PassThru -WindowStyle Normal
   } else {
     Start-Process -FilePath $exe.FullName -WorkingDirectory $exe.DirectoryName -PassThru -WindowStyle Normal
   }
@@ -250,6 +258,8 @@ try {
   [AlulaArtifactWindow]::SetForegroundWindow($window) | Out-Null
   Start-Sleep -Seconds 3
   if (![AlulaArtifactWindow]::IsWindowVisible($window)) { throw 'Release artifact window is not visible' }
+  $child = [AlulaArtifactWindow]::GetWindow($window, 5)
+  if ($child -eq [IntPtr]::Zero) { $child = $window }
 
   if ($ExerciseInteractions) {
     try {
@@ -266,6 +276,32 @@ try {
         Set-Clipboard -Value $query
         Send-ArtifactKeys '^v'
         Send-ArtifactKeys '{ENTER}' 1200
+      }
+      function Open-ArtifactWorkspace([string]$path) {
+        Send-ArtifactKeys '^+p'
+        Start-Sleep -Milliseconds 250
+        $paletteSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.commandPaletteNames = @($paletteSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        Set-Clipboard -Value '打开文件夹'
+        Send-ArtifactKeys '^v'
+        Send-ArtifactKeys '{ENTER}' 700
+        $dialogSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.openFolderDialogNames = @($dialogSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        if (@($interactionResult.openFolderDialogNames | Where-Object { $_ -like '*文件夹路径*' }).Count -eq 0) {
+          throw "Command Palette did not open the folder dialog; accessible names: $($interactionResult.openFolderDialogNames -join ' | ')"
+        }
+        Send-ArtifactKeys '^a'
+        Paste-ArtifactText $path
+        # The dialog autofocuses its path field. Tab moves through Cancel then
+        # Open, so activation is independent of the runner's window geometry.
+        Send-ArtifactKeys '{TAB}'
+        Send-ArtifactKeys '{TAB}'
+        Send-ArtifactKeys '{ENTER}' 1400
+        $workspaceSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.workspaceTreeNames = @($workspaceSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+        if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -like '*rust-mini*' -or $_ -eq 'src' -or $_ -eq 'Cargo.toml' }).Count -eq 0) {
+          throw "Opening tests/fixtures/rust-mini did not populate the accessible workspace tree; names: $($interactionResult.workspaceTreeNames -join ' | ')"
+        }
       }
       function Run-ArtifactPaletteCommand([string]$query) {
         Send-ArtifactKeys '^+p'
@@ -297,7 +333,8 @@ try {
         return $false
       }
 
-      Open-ArtifactFile 'src/main.rs'
+      Open-ArtifactWorkspace (Split-Path -Parent (Split-Path -Parent $fixtureFile))
+      Open-ArtifactFile 'main.rs'
       Start-Sleep -Milliseconds 500
       $child = [AlulaArtifactWindow]::GetWindow($window, 5)
       $openedSnapshot = [AlulaArtifactMsaa]::Capture($child)
