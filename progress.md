@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.10 / EDT-02a 完成）
+### 最新进展（2026-10-31，P04.11 / EDT-02b 完成）
+
+- P04.11 验证 Windows/Linux/macOS targetPlatform 下的双击 word selection，emoji 后的 `beta` 以 UTF-16 `[9,13)` 选中；Flutter 文本、Rust 权威全文/版本和磁盘字节不变。
+- 定向 Flutter 3 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 303 项），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.11-mouse-double-click.md`。
+- P04 / feat-026 仍是唯一活动 feature；下一步 EDT-02c 对齐双击后的三击行选择，然后拆分拖选与边缘自动滚动。
+
+### 阶段进展（2026-10-31，P04.10 / EDT-02a 完成）
 
 - P04.10 覆盖 Windows/Linux/macOS targetPlatform 下的普通鼠标点击、从同一 caret 起点的正向与反向 Shift+Click；使用 RenderEditable hit-test 坐标，fixture 含 emoji，并对照 Flutter 文本、Rust 权威全文、输入窗版本和磁盘内容均未改变。
 - 定向 Flutter 3 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 300 项），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.10-mouse-click-anchor.md`。这些是 Flutter 自动化，不代表原生平台鼠标或辅助功能验收。
