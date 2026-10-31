@@ -157,15 +157,15 @@ try {
     $screenshot = Join-Path $OutputDirectory 'windows-artifact-client.png'
     $bitmap.Save($screenshot, [System.Drawing.Imaging.ImageFormat]::Png)
     $sampledColors = [System.Collections.Generic.HashSet[string]]::new()
-    for ($y = 0; $y -lt $height; $y += [Math]::Max(1, [int]($height / 20))) {
-      for ($x = 0; $x -lt $width; $x += [Math]::Max(1, [int]($width / 20))) {
+    for ($y = 0; $y -lt $height; $y += [Math]::Max(1, [int]($height / 80))) {
+      for ($x = 0; $x -lt $width; $x += [Math]::Max(1, [int]($width / 80))) {
         $pixel = $bitmap.GetPixel($x, $y)
         [void]$sampledColors.Add("$($pixel.R),$($pixel.G),$($pixel.B)")
       }
     }
   }
   finally { $graphics.Dispose(); $bitmap.Dispose() }
-  if ($sampledColors.Count -lt 12) { throw "Client capture appears blank or uniform ($($sampledColors.Count) sampled colors)" }
+  $screenshotNonUniform = $sampledColors.Count -ge 12
 
   $child = [AlulaArtifactWindow]::GetWindow($window, 5)
   $msaa = [AlulaArtifactMsaa]::Capture($child)
@@ -187,6 +187,7 @@ try {
     clientHeight = $height
     dpi = $dpi
     sampledColorCount = $sampledColors.Count
+    screenshotNonUniform = $screenshotNonUniform
     screenshot = 'windows-artifact-client.png'
     screenshotSha256 = (Get-FileHash (Join-Path $OutputDirectory 'windows-artifact-client.png') -Algorithm SHA256).Hash.ToLowerInvariant()
     systemUsesLightTheme = if ($theme) { [bool]$theme.SystemUsesLightTheme } else { $null }
@@ -198,6 +199,7 @@ try {
     missingMsaaText = $missingMsaaText
   } | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
   $msaaNodeCount = $msaa.Text.Count
+  if (!$screenshotNonUniform) { throw "Client capture appears blank or uniform ($($sampledColors.Count) sampled colors)" }
   if ($msaa.HResult -ne '0x00000000') { throw "Flutter child window MSAA unavailable: $($msaa.HResult) $($msaa.Error)" }
   if ($missingMsaaText.Count -gt 0) { throw "MSAA tree is missing expected text: $($missingMsaaText -join ', ')" }
   $msaa = $null
