@@ -10,7 +10,6 @@ Add-Type -AssemblyName Accessibility
 
 Add-Type -ReferencedAssemblies @([Accessibility.IAccessible].Assembly.Location) -TypeDefinition @'
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Accessibility;
 
@@ -18,8 +17,8 @@ public sealed class AlulaArtifactMsaaSnapshot
 {
     public string HResult { get; set; }
     public string Error { get; set; }
-    public List<string> Text { get; private set; }
-    public AlulaArtifactMsaaSnapshot() { Text = new List<string>(); }
+    public string[] Text { get; set; }
+    public AlulaArtifactMsaaSnapshot() { Text = new string[0]; }
 }
 
 public static class AlulaArtifactMsaa
@@ -43,32 +42,38 @@ public static class AlulaArtifactMsaa
             IAccessible root;
             int hr = AccessibleObjectFromWindow(window, 0xFFFFFFFC, ref iid, out root);
             snapshot.HResult = "0x" + hr.ToString("X8");
-            if (hr == 0 && root != null) Walk(root, snapshot.Text, 0);
+            if (hr == 0 && root != null) Walk(root, snapshot, 0);
         }
         catch (Exception error) { snapshot.Error = error.ToString(); }
         return snapshot;
     }
 
-    private static void Add(List<string> text, string value)
+    private static void Add(AlulaArtifactMsaaSnapshot snapshot, string value)
     {
-        if (!String.IsNullOrWhiteSpace(value) && text.Count < 2000) text.Add(value);
+        if (!String.IsNullOrWhiteSpace(value) && snapshot.Text.Length < 2000)
+        {
+            string[] expanded = new string[snapshot.Text.Length + 1];
+            Array.Copy(snapshot.Text, expanded, snapshot.Text.Length);
+            expanded[expanded.Length - 1] = value;
+            snapshot.Text = expanded;
+        }
     }
 
-    private static void Walk(IAccessible accessible, List<string> text, int depth)
+    private static void Walk(IAccessible accessible, AlulaArtifactMsaaSnapshot snapshot, int depth)
     {
-        if (accessible == null || depth > 8 || text.Count >= 2000) return;
-        try { Add(text, accessible.get_accName(0)); } catch { }
-        try { Add(text, accessible.get_accValue(0)); } catch { }
+        if (accessible == null || depth > 8 || snapshot.Text.Length >= 2000) return;
+        try { Add(snapshot, accessible.get_accName(0)); } catch { }
+        try { Add(snapshot, accessible.get_accValue(0)); } catch { }
         int count = 0;
         try { count = Math.Min(accessible.accChildCount, 100); } catch { return; }
-        for (int id = 1; id <= count && text.Count < 2000; id++)
+        for (int id = 1; id <= count && snapshot.Text.Length < 2000; id++)
         {
             object raw = null;
             IAccessible nested = null;
             try
             {
-                try { Add(text, accessible.get_accName(id)); } catch { }
-                try { Add(text, accessible.get_accValue(id)); } catch { }
+                try { Add(snapshot, accessible.get_accName(id)); } catch { }
+                try { Add(snapshot, accessible.get_accValue(id)); } catch { }
                 try { raw = accessible.get_accChild(id); } catch { }
                 nested = raw as IAccessible;
                 if (nested == null && raw != null && Marshal.IsComObject(raw))
@@ -78,7 +83,7 @@ public static class AlulaArtifactMsaa
                     catch { }
                     finally { Marshal.Release(unknown); }
                 }
-                if (nested != null) Walk(nested, text, depth + 1);
+                if (nested != null) Walk(nested, snapshot, depth + 1);
             }
             catch { }
             finally
