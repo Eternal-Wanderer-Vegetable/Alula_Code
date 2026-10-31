@@ -8,7 +8,7 @@
 ### 最新进展（2026-10-31，P03.7 Windows hosted UI / MSAA）
 
 - 修复 Windows PowerShell 5.1 采集 JSON 的默认 ANSI 编码，改为 UTF-8；提交 `1ea7037 ci(windows): preserve accessible names as UTF-8` 已推送到 `codex/vscode-parity-p00`。
-- GitHub Actions run `41153011276` 的 Linux、Windows、macOS jobs 全部成功。Windows Release 可见窗口采集与 P03.7 自动交互套件通过；14 项覆盖共享文档双视图、恢复副本、50k 行尾编辑保存、多光标/剪贴板、窗口外搜索、emoji/CRLF、Flutter 模拟 IME 与 selection 隔离。WM_CLOSE 后 exit code 0。
+- GitHub Actions runs `41153011276` 与 `41153994655` 的 Linux、Windows、macOS jobs 全部成功；后者加入 MSAA 必需字符串断言（打开文件夹、UTF-8、LF、欢迎编辑器文本）。Windows Release 可见窗口采集与 P03.7 自动交互套件通过；14 项覆盖共享文档双视图、恢复副本、50k 行尾编辑保存、多光标/剪贴板、窗口外搜索、emoji/CRLF、Flutter 模拟 IME 与 selection 隔离。WM_CLOSE 后 exit code 0。
 - Windows runner 为 Windows Server 2025 Datacenter build 26100，不是 Windows 11 客户端；窗口 1028×711、96 DPI，主题注册表报告 light。MSAA child-window 树含中文菜单、工具栏、编辑器 welcome value、UTF-8/LF 与状态栏语义；截图与 UTF-8 JSON：`docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仅为 hosted 可见 UI/MSAA 和自动化功能证据，不代表 Narrator 播报、系统 IME、Windows 11、多 DPI/主题矩阵、Linux native DRM 或 macOS 原生交互。
 - P03.7 继续 in-progress。当前外部平台门：原生 DRM Linux；Windows 11 客户端的 Narrator/键盘遍历、native IME、DPI/主题和目标发行包；macOS 原生行为待验证。用户要求 Linux/Windows 可用后再提供 macOS 测试包；500 MiB 优化目标留待 P14。
 

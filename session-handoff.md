@@ -1,13 +1,13 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03.5 已完成；P03.6 实现切片已关闭；P03.7 本地实现与 hosted Windows 自动证据已登记，仍 in-progress。共享 Rust 文档/独立 view state、冲突 journal 恢复副本、关闭引用计数、折叠语义及双视图 50k 行/50k UTF-16 单行尾部编辑保存通过；`init.sh`、Rust tests/Clippy/build_core、Flutter 260 项、cargo fmt 与 Flutter analyze 全绿。CI run 41153011276 三平台通过；Windows Server 2025 visible capture、14 项 P03.7 integration tests、UTF-8 MSAA tree、WM_CLOSE exit 0 见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仍待 Linux native DRM 与 Windows 11 Narrator/native IME/DPI-theme/package；macOS 原生行为待验证。500 MiB 留待 P14）
+> Last Updated：2026-10-31（P03.5 已完成；P03.6 实现切片已关闭；P03.7 本地实现与 hosted Windows 自动证据已登记，仍 in-progress。共享 Rust 文档/独立 view state、冲突 journal 恢复副本、关闭引用计数、折叠语义及双视图 50k 行/50k UTF-16 单行尾部编辑保存通过；`init.sh`、Rust tests/Clippy/build_core、Flutter 260 项、cargo fmt 与 Flutter analyze 全绿。CI runs 41153011276/41153994655 三平台通过；Windows Server 2025 visible capture、14 项 P03.7 integration tests、UTF-8 MSAA tree 和必需语义断言、WM_CLOSE exit 0 见 `docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仍待 Linux native DRM 与 Windows 11 Narrator/native IME/DPI-theme/package；macOS 原生行为待验证。500 MiB 留待 P14）
 
 ## 项目目标
 
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-10-31）：P03.6 实现切片已关闭；P03.7 本地实现仍进行中。多视图共享文档、独立视图状态、journal 冲突恢复、折叠读屏语义，以及双视图 50k 行/50k UTF-16 单行尾部编辑保存有本地自动化证据。run 41153011276 增加 Windows Server 2025 可见窗口、MSAA Unicode 树、14 项交互测试和关闭退出证据；它不替代 Windows 11 Narrator/native IME/DPI-theme，也不替代 native DRM Linux 或 macOS 原生交互。完整本地门禁：`init.sh`、cargo fmt、flutter analyze。
+- 当前状态更新（2026-10-31）：P03.6 实现切片已关闭；P03.7 本地实现仍进行中。多视图共享文档、独立视图状态、journal 冲突恢复、折叠读屏语义，以及双视图 50k 行/50k UTF-16 单行尾部编辑保存有本地自动化证据。runs 41153011276/41153994655 增加 Windows Server 2025 可见窗口、MSAA Unicode 树、14 项交互测试、四类语义断言和关闭退出证据；它们不替代 Windows 11 Narrator/native IME/DPI-theme，也不替代 native DRM Linux 或 macOS 原生交互。完整本地门禁：`init.sh`、cargo fmt、flutter analyze。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。
@@ -56,4 +56,4 @@
 
 ## P03.7 CI follow-up（2026-10-31）
 
-- Commits `bfbdc2c`, `96872ca`, and `d531936` are pushed; `41108610038` exposed the partial-stage missing `_onEditorPointerDown` issue, then corrected run `41109679662` passed all three platform jobs and uploaded Linux, Windows, and macOS artifacts. The current branch is hosted-buildable. Windows Server 2025 visible client, Unicode MSAA, 14 interaction tests, simulated Flutter IME, and graceful close also pass in run `41153011276`; Windows 11 client-specific Narrator/native IME/DPI-theme/package gates and Linux native DRM remain pending. Preserve unrelated unstaged harness/P04/P09 work.
+- Commits `bfbdc2c`, `96872ca`, and `d531936` are pushed; `41108610038` exposed the partial-stage missing `_onEditorPointerDown` issue, then corrected run `41109679662` passed all three platform jobs and uploaded Linux, Windows, and macOS artifacts. The current branch is hosted-buildable. Windows Server 2025 visible client, Unicode MSAA, four required semantic strings, 14 interaction tests, simulated Flutter IME, and graceful close pass in runs `41153011276`/`41153994655`; Windows 11 client-specific Narrator/native IME/DPI-theme/package gates and Linux native DRM remain pending. Preserve unrelated unstaged harness/P04/P09 work.
