@@ -586,6 +586,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+[' : 'Ctrl+[',
       enablement: 'editorTextFocus',
     );
+    reg('editor.action.insertLineBefore', '编辑器', '在上方插入行',
+        () => _insertLine(before: true),
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+Shift+Enter'
+            : 'Ctrl+Shift+Enter',
+        enablement: 'editorTextFocus');
+    reg('editor.action.insertLineAfter', '编辑器', '在下方插入行',
+        () => _insertLine(before: false),
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+Enter'
+            : 'Ctrl+Enter',
+        enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -2592,6 +2604,211 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (selection == null) return;
     final text = _readDocumentRange(doc, selection.start, selection.end);
     await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> _insertLine({required bool before}) async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '插入行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final plans = <({
+      int start,
+      String text,
+      bool preserveSelection,
+      List<int> selectionIndices,
+    })>[];
+    final planByStart = <int, int>{};
+    var inspectedUtf16 = 0;
+
+    void addPlan({
+      required int start,
+      required String text,
+      required bool preserveSelection,
+      required int selectionIndex,
+    }) {
+      final existingIndex = planByStart[start];
+      if (existingIndex == null) {
+        planByStart[start] = plans.length;
+        plans.add((
+          start: start,
+          text: text,
+          preserveSelection: preserveSelection,
+          selectionIndices: [selectionIndex],
+        ));
+        return;
+      }
+      final existing = plans[existingIndex];
+      if (existing.text != text ||
+          existing.preserveSelection != preserveSelection) {
+        throw StateError('多个光标在同一行插入位置产生了冲突');
+      }
+      existing.selectionIndices.add(selectionIndex);
+    }
+
+    try {
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final position = doc.doc.positionAt(selection.extentOffset);
+        if (position.version != expectedVersion) {
+          throw StateError('文档版本在解析插入行位置时发生变化');
+        }
+
+        if (before && position.line == 0) {
+          // VS Code keeps the original cursor/selection on the source line
+          // when inserting the first line at the beginning of the document.
+          addPlan(
+            start: 0,
+            text: '\n',
+            preserveSelection: true,
+            selectionIndex: index,
+          );
+          continue;
+        }
+
+        final targetLine = before ? position.line - 1 : position.line;
+        final lineStart = doc.doc.lineOffset(targetLine);
+        if (lineStart.version != expectedVersion) {
+          throw StateError('文档版本在读取插入行边界时发生变化');
+        }
+        final boundary = doc.doc.lineBoundary(lineStart.offsetUtf16);
+        if (boundary.version != expectedVersion) {
+          throw StateError('文档版本在读取插入行边界时发生变化');
+        }
+        final indentLength =
+            boundary.firstNonWhitespaceUtf16 - boundary.startUtf16;
+        if (indentLength < 0 ||
+            indentLength > _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+          throw StateError('插入行缩进超过单次读取上限');
+        }
+        inspectedUtf16 += indentLength;
+        final indentation = _readDocumentRange(
+          doc,
+          boundary.startUtf16,
+          boundary.firstNonWhitespaceUtf16,
+        );
+        final text = '\n$indentation';
+        addPlan(
+          start: boundary.endUtf16,
+          text: text,
+          preserveSelection: false,
+          selectionIndex: index,
+        );
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '插入行未应用：$error');
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '插入行未应用：文档版本已变化');
+      return;
+    }
+    plans.sort((a, b) => a.start.compareTo(b.start));
+    final payloadChars =
+        plans.fold<int>(0, (sum, plan) => sum + plan.text.length);
+    if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '插入行已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    var deltaBefore = 0;
+    final mappedStarts = <int>[];
+    for (final plan in plans) {
+      mappedStarts.add(plan.start + deltaBefore);
+      deltaBefore += plan.text.length;
+    }
+    final forward = <TextOp>[
+      for (final plan in plans.reversed) TextOp.insert(plan.start, plan.text),
+    ];
+    final inverse = <TextOp>[
+      for (var index = plans.length - 1; index >= 0; index--)
+        TextOp.delete(mappedStarts[index], plans[index].text.length),
+    ];
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '插入行未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length + deltaBefore;
+    final mappedBySelection =
+        List<TextSelection?>.filled(selections.length, null);
+    for (var planIndex = 0; planIndex < plans.length; planIndex++) {
+      final plan = plans[planIndex];
+      final mappedStart = mappedStarts[planIndex];
+      for (final selectionIndex in plan.selectionIndices) {
+        final selection = selections[selectionIndex];
+        if (plan.preserveSelection) {
+          int mapOffset(int offset) {
+            var delta = 0;
+            for (final prior in plans) {
+              if (prior.start > offset) break;
+              delta += prior.text.length;
+            }
+            return (offset + delta).clamp(0, newLength).toInt();
+          }
+
+          mappedBySelection[selectionIndex] = TextSelection(
+            baseOffset: mapOffset(selection.baseOffset),
+            extentOffset: mapOffset(selection.extentOffset),
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          );
+        } else {
+          mappedBySelection[selectionIndex] =
+              TextSelection.collapsed(offset: mappedStart + plan.text.length);
+        }
+      }
+    }
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in mappedBySelection)
+        if (selection != null)
+          TextSelection(
+            baseOffset: selection.baseOffset.clamp(0, newLength).toInt(),
+            extentOffset: selection.extentOffset.clamp(0, newLength).toInt(),
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          ),
+    ]);
+    if (mappedSelections.isEmpty) return;
+
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = before ? '已在上方插入行' : '已在下方插入行');
   }
 
   Future<void> _insertNewlineWithIndent() async {

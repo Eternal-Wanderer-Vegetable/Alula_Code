@@ -115,6 +115,33 @@ void main() {
       );
     });
 
+    test(
+        'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
+        () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+shift+enter')!),
+          'editor.action.insertLineBefore',
+        );
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+enter')!),
+          'editor.action.insertLineAfter',
+        );
+      }
+      expect(
+        mac.commandForChord(parseChord('cmd+shift+enter')!),
+        'editor.action.insertLineBefore',
+      );
+      expect(
+        mac.commandForChord(parseChord('cmd+enter')!),
+        'editor.action.insertLineAfter',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+enter')!), isNull);
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

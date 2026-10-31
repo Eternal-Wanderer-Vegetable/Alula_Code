@@ -1247,3 +1247,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 复测用户指定的 run `41109679662` 精确历史 artifact：同一保存/IME/双视图交互通过，但关闭以 `0xC000041D` 结束；无 UIA/MSAA 查询的对照启动也复现。该结论只属于旧二进制；当前 `d3a7a56` artifact 关闭 exit 0。
 - Narrator UIA 树未暴露预期控件，14 次 Tab 探针均未形成可验证焦点遍历，且未采集播报音频，因此读屏验收仍 pending。当前只覆盖 125%/dark，不代表 DPI/主题矩阵。复用脚本对当前构建输出的 `artifactArchitecture` 字段错误声称 ARM64 仿真；同机 WMI/CPU 确认为 x64（AMD Ryzen 7 9700X）。报告及筛选后的截图、metadata、日志、脚本：`docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/README.md`。
 - 测试 fixture `tests/fixtures/rust-mini/src/main.rs` 已恢复，SHA-256 与测试前相同；验证进程已退出。项目级平台验收继续 pending：原生 DRM Linux、Windows Narrator/焦点与多 DPI/主题、macOS 原生行为未通过。本机无法提供 macOS 环境；依用户要求先满足 Linux/Windows 可用性，再提供 macOS 测试包。
+
+## P04.34 / EDT-07a：在上方/下方插入行（2026-11-01）
+
+- 对齐固定 Code-OSS 1.145.0-dev 的 `editor.action.insertLineBefore` / `editor.action.insertLineAfter` 和 Ctrl/Cmd+Enter 键位；行位置、行首/行尾及 UTF-16 文本修改继续由 Rust 权威文档提供，工作台经 TextOps 单批提交。
+- 三平台 Flutter targetPlatform 测试验证首行 insert-before 光标行为、上下插入、Rust 双视图同步、undo/redo，以及 `fn main() { println!("linux-save-ok"); }` 保存回读。定向 18 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 在工作树与精确 `HEAD 1388175 + staged patch` 隔离快照均 EXIT=0（Rust workspace、Clippy、build_core、Flutter 460）；`cargo fmt --all -- --check`、Flutter analyze（0 issues）通过。
+- GitNexus 编辑前风险：`WorkbenchPage` CRITICAL（295 affected symbols / 72 processes / 20 modules），`_insertNewlineWithIndent` CRITICAL（71 / 56 / 15），`KeybindingSet` LOW。Staged detect 为 9 files / 4 symbols / 140 processes / CRITICAL；all-scope 为 45 / 16 / 140 / CRITICAL，包含其它未暂存修改。更改未修改既有 Enter 实现；EDT-07 的移动/复制/删除/合并/排序/去重仍未完成。
+- 证据：`docs/diagnostics/2026-11-01-p04/p04.34-insert-line-above-below.md`。targetPlatform 自动化不替代 P15 原生平台验收。

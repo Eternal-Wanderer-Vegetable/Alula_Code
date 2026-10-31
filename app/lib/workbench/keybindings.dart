@@ -216,6 +216,8 @@ class KeybindingSet {
     'editor.action.toggleOvertypeInsertMode': 'insert',
     'editor.action.indentLines': 'ctrl+bracketright',
     'editor.action.outdentLines': 'ctrl+bracketleft',
+    'editor.action.insertLineBefore': 'ctrl+shift+enter',
+    'editor.action.insertLineAfter': 'ctrl+enter',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
@@ -251,6 +253,8 @@ class KeybindingSet {
         result['editor.action.toggleOvertypeInsertMode'] = 'cmd+alt+o';
         result['editor.action.indentLines'] = 'cmd+bracketright';
         result['editor.action.outdentLines'] = 'cmd+bracketleft';
+        result['editor.action.insertLineBefore'] = 'cmd+shift+enter';
+        result['editor.action.insertLineAfter'] = 'cmd+enter';
         result['deleteWordLeft'] = 'alt+backspace';
         result['deleteWordRight'] = 'alt+delete';
         result['deleteAllLeft'] = 'cmd+backspace';
