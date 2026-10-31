@@ -3,6 +3,7 @@
 // 代理对（Emoji）场景必须有专门用例。
 import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/undo_stack.dart';
+import 'package:alula_app/bridge/alula_core.dart' show TextOp;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -38,6 +39,14 @@ void main() {
       final m = findMatches('x\r\nyx', 'y');
       expect(m.single.start, 3);
     });
+
+    test('有界输入窗可二分定位首个相交的 UTF-16 命中', () {
+      final matches = findMatches('a👨a👨a', 'a');
+      expect(firstTextMatchEndingAfter(matches, 0), 0);
+      expect(firstTextMatchEndingAfter(matches, 2), 1);
+      expect(firstTextMatchEndingAfter(matches, 4), 2);
+      expect(firstTextMatchEndingAfter(matches, 7), matches.length);
+    });
   });
 
   group('replaceAllMatches', () {
@@ -48,8 +57,8 @@ void main() {
     });
 
     test('大小写不敏感替换', () {
-      final r = replaceAllMatches('Foo foo FOO', 'foo', 'bar',
-          caseSensitive: false);
+      final r =
+          replaceAllMatches('Foo foo FOO', 'foo', 'bar', caseSensitive: false);
       expect(r.count, 3);
       expect(r.newText, 'bar bar bar');
     });
@@ -95,6 +104,53 @@ void main() {
       expect(st.canRedo, isFalse);
     });
 
+    test('格式转换的编码/BOM/EOL 状态可随 undo/redo 往返', () {
+      final st = UndoStack();
+      st.push(
+        before: 'same text',
+        caret: 4,
+        coalesce: false,
+        encoding: 'utf-8',
+        bom: false,
+        lineEnding: 'lf',
+      );
+
+      final undo = st.undo(
+        'same text',
+        4,
+        encoding: 'utf-8',
+        bom: false,
+        lineEnding: 'crlf',
+      )!;
+      expect(undo.text, 'same text');
+      expect(undo.lineEnding, 'lf');
+
+      final redo = st.redo(
+        'same text',
+        4,
+        encoding: undo.encoding,
+        bom: undo.bom,
+        lineEnding: undo.lineEnding,
+      )!;
+      expect(redo.text, 'same text');
+      expect(redo.lineEnding, 'crlf');
+    });
+
+    test('跨文档事务标识随 undo/redo 历史保留', () {
+      final stack = UndoStack();
+      stack.push(
+        before: 'before',
+        caret: 3,
+        coalesce: false,
+        transactionId: 'workspace-transaction-1',
+      );
+
+      final undo = stack.undo('after', 2)!;
+      expect(undo.transactionId, 'workspace-transaction-1');
+      final redo = stack.redo('before', 3)!;
+      expect(redo.transactionId, 'workspace-transaction-1');
+    });
+
     test('coalesce 合并不压新帧：一次撤销回退整段输入', () {
       final st = UndoStack();
       st.push(before: 'base', caret: 4, coalesce: false);
@@ -103,6 +159,80 @@ void main() {
       st.push(before: 'baseab', caret: 6, coalesce: true);
       final u = st.undo('baseabc', 7)!;
       expect(u.text, 'base', reason: '整段打字一次回退');
+    });
+
+    test(
+        'operation frames coalesce and move between undo/redo without snapshots',
+        () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 10);
+      final stack = UndoStack(budget: budget);
+      stack.pushOperations(
+        forward: [const TextOp.insert(3, 'a')],
+        inverse: [const TextOp.delete(3, 1)],
+        caret: 3,
+        coalesce: false,
+      );
+      stack.pushOperations(
+        forward: [const TextOp.insert(4, 'b')],
+        inverse: [const TextOp.delete(4, 1)],
+        caret: 4,
+        coalesce: true,
+      );
+
+      expect(budget.totalEntries, 1);
+      expect(budget.totalChars, 2);
+      final undo = stack.takeOperationUndo()!;
+      expect(undo.isOperation, isTrue);
+      expect(undo.text, isEmpty, reason: 'no whole-document text is retained');
+      expect(
+        undo.inverseBatches,
+        [
+          [const TextOp.delete(4, 1)],
+          [const TextOp.delete(3, 1)],
+        ],
+      );
+      expect(stack.canUndo, isFalse);
+      expect(stack.canRedo, isTrue);
+      expect(budget.totalEntries, 1, reason: 'moving to redo keeps one frame');
+
+      final redo = stack.takeOperationRedo()!;
+      expect(
+        redo.forwardBatches,
+        [
+          [const TextOp.insert(3, 'a')],
+          [const TextOp.insert(4, 'b')],
+        ],
+      );
+      expect(stack.canUndo, isTrue);
+      expect(stack.canRedo, isFalse);
+      expect(budget.totalChars, 2);
+      stack.dispose();
+      expect(budget.totalEntries, 0);
+      expect(budget.totalChars, 0);
+    });
+
+    test(
+        'operation history budget counts inserted UTF-16 payload including deletes',
+        () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 8);
+      final stack = UndoStack(budget: budget);
+      stack.pushOperations(
+        forward: [
+          const TextOp.delete(1, 2),
+          const TextOp.insert(1, 'x'),
+        ],
+        inverse: [
+          const TextOp.delete(1, 1),
+          const TextOp.insert(1, '👨'),
+        ],
+        caret: 1,
+        coalesce: false,
+      );
+
+      expect(budget.totalChars, 3, reason: 'emoji is two UTF-16 code units');
+      stack.clear();
+      expect(budget.totalChars, 0);
+      stack.dispose();
     });
 
     test('新变更作废 redo 栈', () {
@@ -125,7 +255,7 @@ void main() {
       expect(st.canUndo, isFalse);
     });
 
-    test('总字符上限淘汰最旧（低内存纪律）', () {
+    test('总字符上限淘汰最旧历史帧', () {
       final st = UndoStack(maxTotalChars: 10);
       st.push(before: '12345', caret: 5, coalesce: false); // 5
       st.push(before: '67890', caret: 5, coalesce: false); // 10
@@ -142,6 +272,51 @@ void main() {
       st.clear();
       expect(st.canUndo, isFalse);
       expect(st.canRedo, isFalse);
+    });
+
+    test('共享预算跨文档淘汰最旧帧并在关闭时归还额度', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 3, maxTotalChars: 100);
+      final a = UndoStack(budget: budget);
+      final b = UndoStack(budget: budget);
+
+      a.push(before: 'a0', caret: 2, coalesce: false);
+      b.push(before: 'b0', caret: 2, coalesce: false);
+      a.push(before: 'a1', caret: 2, coalesce: false);
+      b.push(before: 'b1', caret: 2, coalesce: false);
+
+      expect(budget.totalEntries, 3);
+      expect(budget.totalChars, 6);
+      expect(a.undo('a2', 2)!.text, 'a1');
+      expect(a.canUndo, isFalse, reason: '最早的 a0 已由共享预算淘汰');
+      expect(b.canUndo, isTrue);
+
+      a.dispose();
+      expect(budget.totalEntries, 2);
+      expect(budget.totalChars, 4);
+      b.dispose();
+      expect(budget.totalEntries, 0);
+      expect(budget.totalChars, 0);
+    });
+
+    test('共享预算将 redo 帧计入总条数', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 2, maxTotalChars: 100);
+      final a = UndoStack(budget: budget);
+      final b = UndoStack(budget: budget);
+      a.push(before: 'a0', caret: 2, coalesce: false);
+      b.push(before: 'b0', caret: 2, coalesce: false);
+      a.undo('a1', 2);
+
+      expect(a.canRedo, isTrue);
+      expect(budget.totalEntries, 2);
+      b.push(before: 'b1', caret: 2, coalesce: false);
+
+      expect(a.canRedo, isTrue);
+      expect(b.undo('b2', 2)!.text, 'b1');
+      expect(b.canUndo, isFalse, reason: 'b0 已按全局最旧帧顺序淘汰');
+      expect(budget.totalEntries, 2);
+      a.dispose();
+      b.dispose();
+      expect(budget.totalEntries, 0);
     });
   });
 }

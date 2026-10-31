@@ -1,0 +1,839 @@
+{
+    "artifactSourceCommit":  "d5319369c5b5d569954e0d816daf325f3bc12a51",
+    "artifactFile":  "C:\\a\\_temp\\alula-windows-release\\alula_app.exe",
+    "processId":  2656,
+    "osCaption":  "Microsoft Windows 11 Enterprise",
+    "osVersion":  "10.0.26200",
+    "osBuild":  "26200",
+    "runnerImage":  "win11-vs2026-arm64",
+    "hostArchitecture":  "ARM64",
+    "artifactArchitecture":  "x64 on Windows x64 emulation under Windows 11 ARM",
+    "clientWidth":  1028,
+    "clientHeight":  711,
+    "dpi":  96,
+    "sampledColorCount":  25,
+    "screenshotNonUniform":  true,
+    "screenshot":  "windows-artifact-client.png",
+    "screenshotSha256":  "5a3b3e7a2573450e32797b05010aabf5b34c1fd901acdd9c2b4a699e026f56ee",
+    "systemUsesLightTheme":  false,
+    "appsUseLightTheme":  false,
+    "uiAutomationAvailable":  true,
+    "uiAutomationError":  null,
+    "uiAutomationRoots":  [
+                              {
+                                  "target":  "topLevelWindow",
+                                  "elementCount":  2,
+                                  "elements":  [
+                                                   {
+                                                       "name":  "Alula Code",
+                                                       "automationId":  "",
+                                                       "className":  "FLUTTER_RUNNER_WIN32_WINDOW",
+                                                       "frameworkId":  "Win32",
+                                                       "controlType":  "ControlType.Window",
+                                                       "isControlElement":  true,
+                                                       "isContentElement":  true
+                                                   },
+                                                   {
+                                                       "name":  "FLUTTERVIEW",
+                                                       "automationId":  "",
+                                                       "className":  "FLUTTERVIEW",
+                                                       "frameworkId":  "Win32",
+                                                       "controlType":  "ControlType.Pane",
+                                                       "isControlElement":  true,
+                                                       "isContentElement":  true
+                                                   }
+                                               ],
+                                  "error":  null
+                              },
+                              {
+                                  "target":  "flutterChildWindow",
+                                  "elementCount":  1,
+                                  "elements":  [
+                                                   {
+                                                       "name":  "FLUTTERVIEW",
+                                                       "automationId":  "",
+                                                       "className":  "FLUTTERVIEW",
+                                                       "frameworkId":  "Win32",
+                                                       "controlType":  "ControlType.Pane",
+                                                       "isControlElement":  true,
+                                                       "isContentElement":  true
+                                                   }
+                                               ],
+                                  "error":  null
+                              }
+                          ],
+    "msaaAvailable":  true,
+    "msaaError":  null,
+    "msaaRoots":  [
+                      {
+                          "target":  "topLevelWindow",
+                          "hresult":  "0x00000000",
+                          "rootName":  "Alula Code",
+                          "childCount":  1,
+                          "nodes":  [
+                                        {
+                                            "Path":  "1",
+                                            "ChildId":  1,
+                                            "Name":  null,
+                                            "Role":  null,
+                                            "Value":  null,
+                                            "State":  null,
+                                            "ChildCount":  0,
+                                            "Error":  "Value does not fall within the expected range."
+                                        }
+                                    ],
+                          "error":  null
+                      },
+                      {
+                          "target":  "flutterChildWindow",
+                          "hresult":  "0x00000000",
+                          "rootName":  null,
+                          "childCount":  1,
+                          "nodes":  [
+                                        {
+                                            "Path":  "1.1.1.1.1.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "文件. 文件",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3146752",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.1.2",
+                                            "ChildId":  2,
+                                            "Name":  "编辑. 编辑",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3146752",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.1.3",
+                                            "ChildId":  3,
+                                            "Name":  "查看. 查看",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3146752",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.1.4",
+                                            "ChildId":  4,
+                                            "Name":  "帮助. 帮助",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3146752",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "Alula Code",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  4,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.2",
+                                            "ChildId":  2,
+                                            "Name":  "打开文件夹",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.3.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  2,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.3.1.2",
+                                            "ChildId":  2,
+                                            "Name":  "Cargo.lock",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.3.1.3",
+                                            "ChildId":  3,
+                                            "Name":  "Cargo.toml",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.3.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  3,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.3",
+                                            "ChildId":  3,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.4",
+                                            "ChildId":  4,
+                                            "Name":  "",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.5",
+                                            "ChildId":  5,
+                                            "Name":  "拆分编辑器",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.6",
+                                            "ChildId":  6,
+                                            "Name":  "启动 LSP",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.7",
+                                            "ChildId":  7,
+                                            "Name":  "补全    Ctrl+Space",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.8.1",
+                                            "ChildId":  1,
+                                            "Name":  "未命名",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.8.2",
+                                            "ChildId":  2,
+                                            "Name":  "main.rs",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.8",
+                                            "ChildId":  8,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  2,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.9",
+                                            "ChildId":  9,
+                                            "Name":  "src",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.10",
+                                            "ChildId":  10,
+                                            "Name":  "main.rs",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.11",
+                                            "ChildId":  11,
+                                            "Name":  "校验一致性",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.12.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "42",
+                                            "Value":  "fn main() { println!(\"linux-save-ok\"); }\n// view-2",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.12.1",
+                                            "ChildId":  1,
+                                            "Name":  "main.rs 主编辑器",
+                                            "Role":  "42",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.12",
+                                            "ChildId":  12,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.13",
+                                            "ChildId":  13,
+                                            "Name":  "",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.14",
+                                            "ChildId":  14,
+                                            "Name":  "拆分编辑器",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.15",
+                                            "ChildId":  15,
+                                            "Name":  "启动 LSP",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.16",
+                                            "ChildId":  16,
+                                            "Name":  "补全    Ctrl+Space",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.17.1",
+                                            "ChildId":  1,
+                                            "Name":  "main.rs",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.17",
+                                            "ChildId":  17,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.18",
+                                            "ChildId":  18,
+                                            "Name":  "src",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.19",
+                                            "ChildId":  19,
+                                            "Name":  "main.rs",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.20",
+                                            "ChildId":  20,
+                                            "Name":  "校验一致性",
+                                            "Role":  "43",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.21.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "42",
+                                            "Value":  "fn main() { println!(\"linux-save-ok\"); }\n// view-2",
+                                            "State":  "3145732",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.21.1",
+                                            "ChildId":  1,
+                                            "Name":  "main.rs 编辑器 2",
+                                            "Role":  "42",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.21",
+                                            "ChildId":  21,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.22",
+                                            "ChildId":  22,
+                                            "Name":  "UTF-8. UTF-8",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1.23",
+                                            "ChildId":  23,
+                                            "Name":  "LF. 行尾格式",
+                                            "Role":  "41",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  0,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "rust-mini\n › \n › \n已原子保存 main.rs（v12）\nLSP 未启动 · 诊断 0 · 标签 3 · ABI v19 · 同步 11 次\n资源正常. 管理（W6）",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  23,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1.1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        },
+                                        {
+                                            "Path":  "1",
+                                            "ChildId":  1,
+                                            "Name":  "",
+                                            "Role":  "20",
+                                            "Value":  "",
+                                            "State":  "3145728",
+                                            "ChildCount":  1,
+                                            "Error":  null
+                                        }
+                                    ],
+                          "error":  null
+                      }
+                  ],
+    "flutterMsaaChildCount":  1,
+    "flutterMsaaNodeCount":  43,
+    "expectedMsaaText":  [
+                             "打开文件夹",
+                             "UTF-8. UTF-8",
+                             "LF. 行尾格式",
+                             "linux-save-ok"
+                         ],
+    "missingMsaaText":  [
+
+                        ],
+    "editorInteraction":  {
+                              "requested":  true,
+                              "sampleText":  "fn main() { println!(\"linux-save-ok\"); }",
+                              "savedAndReadBack":  true,
+                              "multiviewSavedAndReadBack":  true,
+                              "selectionKeyEventsSent":  4,
+                              "unicodeKeyEventsSent":  80,
+                              "saveKeyEventsSent":  0,
+                              "accessibleEditorCount":  2,
+                              "accessibleEditorValuesMatch":  true,
+                              "quickOpenQuery":  "main.rs",
+                              "launchMode":  "standard launch; fixture opened through MSAA-targeted UI clicks",
+                              "openedEditorNames":  [
+                                                        "文件. 文件",
+                                                        "编辑. 编辑",
+                                                        "查看. 查看",
+                                                        "帮助. 帮助",
+                                                        "Alula Code",
+                                                        "打开文件夹",
+                                                        "Cargo.lock",
+                                                        "Cargo.toml",
+                                                        "拆分编辑器",
+                                                        "启动 LSP",
+                                                        "补全    Ctrl+Space",
+                                                        "未命名",
+                                                        "main.rs",
+                                                        "src",
+                                                        "main.rs",
+                                                        "main.rs 主编辑器",
+                                                        "校验一致性",
+                                                        "代码缩略图，共 1 行，点击或拖动跳转",
+                                                        "UTF-8. UTF-8",
+                                                        "LF. 行尾格式",
+                                                        "rust-mini\n › \n工作区：C:\\a\\Alula_Code\\Alula_Code\\app/../tests/fixtures/rust-mini（3 项）\nLSP 未启动 · 诊断 0 · 标签 2 · ABI v19 · 同步 0 次\n资源正常. 管理（W6）"
+                                                    ],
+                              "initialAccessibilityReady":  true,
+                              "namesBeforeFolderButton":  [
+                                                              "文件. 文件",
+                                                              "编辑. 编辑",
+                                                              "查看. 查看",
+                                                              "帮助. 帮助",
+                                                              "Alula Code",
+                                                              "打开文件夹",
+                                                              "拆分编辑器",
+                                                              "启动 LSP（需先打开文件夹）",
+                                                              "补全    Ctrl+Space",
+                                                              "未命名",
+                                                              "未命名 主编辑器",
+                                                              "校验一致性",
+                                                              "代码缩略图，共 3 行，点击或拖动跳转",
+                                                              "UTF-8. UTF-8",
+                                                              "LF. 行尾格式",
+                                                              "资源管理器\n点击右上角图标打开文件夹\n已连接 Rust 核心 v19\nLSP 未启动 · 诊断 0 · 标签 1 · ABI v19 · 同步 0 次. 管理（W6）"
+                                                          ],
+                              "openFolderDialogNames":  [
+                                                            "打开文件夹",
+                                                            "取消",
+                                                            "打开",
+                                                            "Alert"
+                                                        ],
+                              "openFolderDialogValues":  [
+
+                                                         ],
+                              "saveMenuNames":  [
+                                                    "打开文件夹",
+                                                    "保存    Ctrl+S",
+                                                    "另存为…    Ctrl+Shift+S",
+                                                    "从磁盘还原",
+                                                    "使用编码保存…",
+                                                    "使用编码重新打开…",
+                                                    "选择行尾…",
+                                                    "Popup menu"
+                                                ],
+                              "saveMenuPollCount":  1,
+                              "saveRoute":  "file-menu",
+                              "fixturePath":  "C:\\a\\Alula_Code\\Alula_Code\\tests\\fixtures\\rust-mini\\src\\main.rs",
+                              "fixtureTextAfterSave":  "fn main() { println!(\"linux-save-ok\"); }",
+                              "multiviewEditorNames":  [
+                                                           "文件. 文件",
+                                                           "编辑. 编辑",
+                                                           "查看. 查看",
+                                                           "帮助. 帮助",
+                                                           "Alula Code",
+                                                           "打开文件夹",
+                                                           "Cargo.lock",
+                                                           "Cargo.toml",
+                                                           "拆分编辑器",
+                                                           "启动 LSP",
+                                                           "补全    Ctrl+Space",
+                                                           "未命名",
+                                                           "main.rs",
+                                                           "src",
+                                                           "main.rs",
+                                                           "校验一致性",
+                                                           "main.rs 主编辑器",
+                                                           "拆分编辑器",
+                                                           "启动 LSP",
+                                                           "补全    Ctrl+Space",
+                                                           "main.rs",
+                                                           "src",
+                                                           "main.rs",
+                                                           "校验一致性",
+                                                           "main.rs 编辑器 2",
+                                                           "UTF-8. UTF-8",
+                                                           "LF. 行尾格式",
+                                                           "rust-mini\n › \n › \n已拆分编辑器：editor → editor-2\nLSP 未启动 · 诊断 0 · 标签 3 · ABI v19 · 同步 9 次\n资源正常. 管理（W6）"
+                                                       ],
+                              "multiviewEditorValuesBeforeEdit":  [
+                                                                      "fn main() { println!(\"linux-save-ok\"); }",
+                                                                      "fn main() { println!(\"linux-save-ok\"); }"
+                                                                  ],
+                              "multiviewFocusBeforeEditNodes":  [
+                                                                    {
+                                                                        "path":  "1.1.1.1.1.21.1.1",
+                                                                        "name":  "",
+                                                                        "value":  "fn main() { println!(\"linux-save-ok\"); }",
+                                                                        "role":  "42"
+                                                                    }
+                                                                ],
+                              "multiviewEditorValuesAfterEdit":  [
+                                                                     "fn main() { println!(\"linux-save-ok\"); }\n// view-2",
+                                                                     "fn main() { println!(\"linux-save-ok\"); }\n// view-2"
+                                                                 ],
+                              "multiviewSaveMenuNames":  [
+                                                             "打开文件夹",
+                                                             "保存    Ctrl+S",
+                                                             "另存为…    Ctrl+Shift+S",
+                                                             "从磁盘还原",
+                                                             "使用编码保存…",
+                                                             "使用编码重新打开…",
+                                                             "选择行尾…",
+                                                             "Popup menu"
+                                                         ],
+                              "multiviewSaveMenuPollCount":  1,
+                              "multiviewSaveRoute":  "file-menu",
+                              "multiviewTextAfterSave":  "fn main() { println!(\"linux-save-ok\"); }\n// view-2",
+                              "multiviewEndKeyEventsSent":  4,
+                              "multiviewEnterKeyEventsSent":  2,
+                              "multiviewAppendKeyEventsSent":  18,
+                              "workspaceTreeNames":  [
+                                                         "文件. 文件",
+                                                         "编辑. 编辑",
+                                                         "查看. 查看",
+                                                         "帮助. 帮助",
+                                                         "Alula Code",
+                                                         "打开文件夹",
+                                                         "Cargo.lock",
+                                                         "Cargo.toml",
+                                                         "拆分编辑器",
+                                                         "启动 LSP",
+                                                         "补全    Ctrl+Space",
+                                                         "未命名",
+                                                         "未命名 主编辑器",
+                                                         "校验一致性",
+                                                         "代码缩略图，共 3 行，点击或拖动跳转",
+                                                         "UTF-8. UTF-8",
+                                                         "LF. 行尾格式",
+                                                         "rust-mini\n工作区：C:\\a\\Alula_Code\\Alula_Code\\app/../tests/fixtures/rust-mini（3 项）\nLSP 未启动 · 诊断 0 · 标签 1 · ABI v19 · 同步 0 次\n资源正常. 管理（W6）"
+                                                     ],
+                              "openFileMenuNames":  [
+                                                        "命令面板    Ctrl+Shift+P",
+                                                        "快速打开文件…    Ctrl+P",
+                                                        "搜索…    Ctrl+Shift+F",
+                                                        "大纲",
+                                                        "切换侧栏",
+                                                        "切换面板",
+                                                        "Popup menu"
+                                                    ],
+                              "quickOpenNames":  [
+                                                     "按文件名筛选（工作区内，最多索引 2000 个文件）",
+                                                     "main.rs\nC:\\a\\Alula_Code\\Alula_Code\\app/../tests/fixtures/rust-mini\\src\\main.rs",
+                                                     "Cargo.lock\nC:\\a\\Alula_Code\\Alula_Code\\app/../tests/fixtures/rust-mini\\Cargo.lock",
+                                                     "Cargo.toml\nC:\\a\\Alula_Code\\Alula_Code\\app/../tests/fixtures/rust-mini\\Cargo.toml"
+                                                 ],
+                              "focusBeforePasteNodes":  [
+                                                            {
+                                                                "path":  "1.1.1.1.1.11.1.1",
+                                                                "name":  "",
+                                                                "role":  "42"
+                                                            }
+                                                        ],
+                              "editorValuesAfterPaste":  [
+                                                             "fn main() { println!(\"linux-save-ok\"); }"
+                                                         ],
+                              "accessibilityTargetLocations":  {
+                                                                   "打开文件夹":  [
+                                                                                 263,
+                                                                                 53,
+                                                                                 33,
+                                                                                 32
+                                                                             ],
+                                                                   "打开":  [
+                                                                              677,
+                                                                              410,
+                                                                              77,
+                                                                              33
+                                                                          ],
+                                                                   "src":  [
+                                                                               62,
+                                                                               92,
+                                                                               236,
+                                                                               23
+                                                                           ],
+                                                                   "查看. 查看":  [
+                                                                                  195,
+                                                                                  12,
+                                                                                  46,
+                                                                                  34
+                                                                              ],
+                                                                   "快速打开文件…    Ctrl+P":  [
+                                                                                             195,
+                                                                                             87,
+                                                                                             169,
+                                                                                             35
+                                                                                         ],
+                                                                   "文件. 文件":  [
+                                                                                  106,
+                                                                                  12,
+                                                                                  46,
+                                                                                  34
+                                                                              ],
+                                                                   "保存    Ctrl+S":  [
+                                                                                        106,
+                                                                                        87,
+                                                                                        169,
+                                                                                        35
+                                                                                    ],
+                                                                   "拆分编辑器":  [
+                                                                                 912,
+                                                                                 49,
+                                                                                 32,
+                                                                                 32
+                                                                             ]
+                                                               },
+                              "keyboardFocusNames":  [
+                                                         "rust-mini\n › \n › \n已原子保存 main.rs（v12）\nLSP 未启动 · 诊断 0 · 标签 3 · ABI v19 · 同步 11 次\n资源正常. 管理（W6）",
+                                                         "文件. 文件",
+                                                         "编辑. 编辑",
+                                                         "查看. 查看",
+                                                         "帮助. 帮助"
+                                                     ],
+                              "keyboardFocusObserved":  true,
+                              "imeStatus":  "keyboard-layout-loaded-no-imm-context",
+                              "imeLanguageChangePosted":  true,
+                              "imeComposition":  "",
+                              "imeCommittedChinese":  false,
+                              "error":  null,
+                              "fileSha256":  "30c35570a7ba07a8387b6bebf81778af31d324773cf70dfc9d435d5aa539237e",
+                              "finalText":  "fn main() { println!(\"linux-save-ok\"); }\n// view-2",
+                              "accessibleEditorNames":  [
+                                                            "main.rs 主编辑器",
+                                                            "main.rs 编辑器 2"
+                                                        ]
+                          },
+    "accessibilityMethod":  "MSAA semantic tree plus MSAA focused-state keyboard traversal; Narrator speech was not captured",
+    "validationError":  null,
+    "wmClosePosted":  true,
+    "closeTimedOut":  false,
+    "gracefulClose":  false,
+    "exitCode":  -1073740771,
+    "noAccessibilityCloseControl":  {
+                                        "accessibilityQueried":  false,
+                                        "windowCreated":  true,
+                                        "wmClosePosted":  true,
+                                        "closeTimedOut":  false,
+                                        "exitCode":  -1073740771,
+                                        "error":  null
+                                    },
+    "closeCrashDiagnostics":  {
+                                  "startedAt":  "2026-10-31T02:13:35.1539151-07:00",
+                                  "eventQueryError":  null,
+                                  "applicationFaultEvents":  [
+                                                                 {
+                                                                     "id":  1000,
+                                                                     "provider":  "Application Error",
+                                                                     "time":  "2026-10-31T02:14:20.6437358-07:00",
+                                                                     "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc000041d\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0x9B4\r\nFaulting application start time: 0x1DD691834579E17\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: c84ea776-9663-46ac-8b72-dedd07daecf9\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                                                 },
+                                                                 {
+                                                                     "id":  1000,
+                                                                     "provider":  "Application Error",
+                                                                     "time":  "2026-10-31T02:14:19.9997448-07:00",
+                                                                     "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc0000005\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0x9B4\r\nFaulting application start time: 0x1DD691834579E17\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: d39b465c-8e74-4ea4-84a3-dc4ef5a6cc38\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                                                 },
+                                                                 {
+                                                                     "id":  1000,
+                                                                     "provider":  "Application Error",
+                                                                     "time":  "2026-10-31T02:14:16.0003094-07:00",
+                                                                     "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc000041d\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0xA60\r\nFaulting application start time: 0x1DD69181B7C0AC7\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: 0b412f22-dfdf-4e9b-9a73-6ed7e83c22f1\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                                                 },
+                                                                 {
+                                                                     "id":  1000,
+                                                                     "provider":  "Application Error",
+                                                                     "time":  "2026-10-31T02:14:13.6819523-07:00",
+                                                                     "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc0000005\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0xA60\r\nFaulting application start time: 0x1DD69181B7C0AC7\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: bc69cde0-23e8-495f-a6d4-754b4a32bcc0\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                                                 }
+                                                             ],
+                                  "crashDumps":  [
+
+                                                 ]
+                              }
+}

@@ -4,6 +4,7 @@
 /// 语义封装（JSON 解析、版本管理）在 alula_core.dart，UI 不要直接使用本文件。
 library;
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -54,96 +55,274 @@ class AlulaFfi {
       .lookupFunction<Uint32 Function(), int Function()>('alula_abi_version');
 
   // *mut c_char 返回值一律视为调用方持有，读取后必须 stringFree。
-  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docOpen = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
-        Pointer<Utf8> Function(int, Pointer<Utf8>)
-      >('alula_doc_open');
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docOpen =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>('alula_doc_open');
 
-  late final Pointer<Utf8> Function(int, int, Pointer<Utf8>) _docApply = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Uint64, Pointer<Utf8>),
-        Pointer<Utf8> Function(int, int, Pointer<Utf8>)
-      >('alula_doc_apply');
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSetSavepoint =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_set_savepoint',
+  );
 
-  late final Pointer<Utf8> Function(int) _docResync = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_doc_resync',
-      );
+  late final Pointer<Utf8> Function(int) _docMarkSaved = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_mark_saved',
+  );
 
-  late final Pointer<Utf8> Function(int) _docClose = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_doc_close',
-      );
+  late final Pointer<Utf8> Function(int) _docIsDirty = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_is_dirty',
+  );
 
-  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSetUri = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
-        Pointer<Utf8> Function(int, Pointer<Utf8>)
-      >('alula_doc_set_uri');
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSavepointMatches =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_savepoint_matches',
+  );
 
-  late final Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>) _lspStart = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Pointer<Utf8>),
-        Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>)
-      >('alula_lsp_start');
+  late final Pointer<Utf8> Function(int, int, Pointer<Utf8>) _docApply =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, int, Pointer<Utf8>)>('alula_doc_apply');
 
-  late final Pointer<Utf8> Function(Pointer<Utf8>) _lspShutdownWorkspace = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Pointer<Utf8>),
-        Pointer<Utf8> Function(Pointer<Utf8>)
-      >('alula_lsp_shutdown_workspace');
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _workspaceEditTransaction =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_workspace_edit_transaction',
+  );
 
-  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _lspDidOpen = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
-        Pointer<Utf8> Function(int, Pointer<Utf8>)
-      >('alula_lsp_did_open');
+  late final Pointer<Utf8> Function(int) _docResync = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_resync',
+  );
 
-  late final Pointer<Utf8> Function(int) _diagnostics = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_diagnostics',
-      );
+  late final Pointer<Utf8> Function(int, int, int) _docReadRange =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_doc_read_range');
 
-  late final Pointer<Utf8> Function(int, int, int) _completion = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Uint64, Uint64),
-        Pointer<Utf8> Function(int, int, int)
-      >('alula_completion');
+  late final Pointer<Utf8> Function(int, int) _docLineOffset =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_doc_line_offset');
 
-  late final Pointer<Utf8> Function(int) _syntax = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_syntax',
-      );
+  late final Pointer<Utf8> Function(int, int, int, int, int, int)
+      _docColumnSelections = lib.lookupFunction<
+          Pointer<Utf8> Function(
+              Uint64, Uint64, Uint64, Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int, int, int, int)>(
+    'alula_doc_column_selections',
+  );
 
-  late final Pointer<Utf8> Function(int) _symbols = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_symbols',
-      );
+  late final Pointer<Utf8> Function(int, int) _docLineBoundary =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_doc_line_boundary');
 
-  late final Pointer<Utf8> Function(Pointer<Utf8>) _wsListDir = lib
-      .lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+  late final Pointer<Utf8> Function(int, int, int) _docWordPartOffset =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint32),
+          Pointer<Utf8> Function(int, int, int)>('alula_doc_word_part_offset');
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _docDeleteWordRanges = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint32),
+          Pointer<Utf8> Function(int, Pointer<Utf8>, int)>(
+    'alula_doc_delete_word_ranges',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _docDeleteLineRanges = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint32),
+          Pointer<Utf8> Function(int, Pointer<Utf8>, int)>(
+    'alula_doc_delete_line_ranges',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>)
+      _docOvertypePasteRanges = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_overtype_paste_ranges',
+  );
+
+  late final Pointer<Utf8> Function(int, int) _docPosition = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64, Uint64),
+      Pointer<Utf8> Function(int, int)>('alula_doc_position');
+
+  late final Pointer<Utf8> Function(int, int, int) _docPositionOffset =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_doc_position_offset');
+
+  late final Pointer<Utf8> Function(int, int, int, int, int, int)
+      _docReadLines =
+      lib
+          .lookupFunction<
+              Pointer<Utf8> Function(
+                  Uint64, Uint64, Uint64, Uint64, Uint64, Uint64),
+              Pointer<Utf8> Function(int, int, int, int, int, int)>(
+    'alula_doc_read_lines',
+  );
+
+  late final Pointer<Utf8> Function(int) _docMinimapSample = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_minimap_sample',
+  );
+
+  late final Pointer<Utf8> Function(int) _docClose = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_doc_close',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docSetUri =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>('alula_doc_set_uri');
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>)
+      _lspStart = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Pointer<Utf8>),
+          Pointer<Utf8> Function(
+              int, Pointer<Utf8>, Pointer<Utf8>)>('alula_lsp_start');
+
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _lspShutdownWorkspace =
+      lib.lookupFunction<
+          Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(
+              Pointer<Utf8>)>('alula_lsp_shutdown_workspace');
+
+  late final Pointer<Utf8> Function() _resourceStatus =
+      lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+          'alula_resource_status');
+
+  late final Pointer<Utf8> Function() _processSnapshot =
+      lib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+          'alula_process_snapshot');
+
+  late final Pointer<Utf8> Function(
+    int,
+    Pointer<Utf8>,
+    Pointer<Utf8>,
+    Pointer<Utf8>,
+  ) _processRegister = lib.lookupFunction<
+      Pointer<Utf8> Function(
+          Uint32, Pointer<Utf8>, Pointer<Utf8>, Pointer<Utf8>),
+      Pointer<Utf8> Function(int, Pointer<Utf8>, Pointer<Utf8>, Pointer<Utf8>)>(
+    'alula_process_register',
+  );
+
+  late final Pointer<Utf8> Function(int) _processUnregister =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint32),
+          Pointer<Utf8> Function(int)>(
+    'alula_process_unregister',
+  );
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _lspDidOpen =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>('alula_lsp_did_open');
+
+  late final Pointer<Utf8> Function(int) _lspDidClose = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64),
+      Pointer<Utf8> Function(int)>('alula_lsp_did_close');
+
+  late final Pointer<Utf8> Function(int) _diagnostics = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_diagnostics',
+  );
+
+  late final Pointer<Utf8> Function(int, int, int) _completion =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_completion');
+
+  late final Pointer<Utf8> Function(int, int, int) _completionStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_completion_start');
+
+  late final Pointer<Utf8> Function(int) _completionPoll = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_completion_poll',
+  );
+
+  late final Pointer<Utf8> Function(int) _completionCancel = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_completion_cancel',
+  );
+
+  late final Pointer<Utf8> Function(int, int, int) _definitionStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint64),
+          Pointer<Utf8> Function(int, int, int)>('alula_definition_start');
+
+  late final Pointer<Utf8> Function(int) _definitionPoll = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_definition_poll',
+  );
+
+  late final Pointer<Utf8> Function(int) _definitionCancel = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_definition_cancel',
+  );
+
+  late final Pointer<Utf8> Function(int, int) _semanticTokensStart =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_semantic_tokens_start');
+
+  late final Pointer<Utf8> Function(int) _semanticTokensPoll =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_semantic_tokens_poll');
+
+  late final Pointer<Utf8> Function(int) _semanticTokensCancel =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_semantic_tokens_cancel');
+
+  late final Pointer<Utf8> Function(int) _syntax = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_syntax',
+  );
+
+  late final Pointer<Utf8> Function(int) _symbols = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_symbols',
+  );
+
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _wsListDir =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>('alula_ws_list_dir');
 
-  late final Pointer<Utf8> Function(Pointer<Utf8>) _wsReadFile = lib
-      .lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _wsReadFile =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>('alula_ws_read_file');
 
-  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int) _docSaveFile = lib
-      .lookupFunction<
-        Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint64),
-        Pointer<Utf8> Function(int, Pointer<Utf8>, int)
-      >('alula_doc_save_file');
+  late final Pointer<Utf8> Function(Pointer<Utf8>, Pointer<Utf8>)
+      _wsReadFileDocument = lib.lookupFunction<
+          Pointer<Utf8> Function(Pointer<Utf8>, Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>, Pointer<Utf8>)>(
+    'alula_ws_read_file_document',
+  );
 
-  late final Pointer<Utf8> Function(int) _lspDidSave = lib
-      .lookupFunction<Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
-        'alula_lsp_did_save',
-      );
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int) _docSaveFile =
+      lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint64),
+          Pointer<Utf8> Function(
+              int, Pointer<Utf8>, int)>('alula_doc_save_file');
 
-  late final void Function(Pointer<Utf8>) _stringFree = lib
-      .lookupFunction<Void Function(Pointer<Utf8>), void Function(Pointer<Utf8>)>(
-        'alula_string_free',
-      );
+  late final Pointer<Utf8> Function(
+    int,
+    Pointer<Utf8>,
+    int,
+    Pointer<Utf8>,
+    int,
+    Pointer<Utf8>,
+  ) _docSaveFileWithOptions = lib.lookupFunction<
+      Pointer<Utf8> Function(
+          Uint64, Pointer<Utf8>, Uint64, Pointer<Utf8>, Uint8, Pointer<Utf8>),
+      Pointer<Utf8> Function(
+          int, Pointer<Utf8>, int, Pointer<Utf8>, int, Pointer<Utf8>)>(
+    'alula_doc_save_file_with_options',
+  );
+
+  late final Pointer<Utf8> Function(int) _lspDidSave = lib.lookupFunction<
+      Pointer<Utf8> Function(Uint64), Pointer<Utf8> Function(int)>(
+    'alula_lsp_did_save',
+  );
+
+  late final void Function(Pointer<Utf8>) _stringFree = lib.lookupFunction<
+      Void Function(Pointer<Utf8>), void Function(Pointer<Utf8>)>(
+    'alula_string_free',
+  );
 
   AlulaFfi(this.lib);
 
@@ -164,6 +343,28 @@ class AlulaFfi {
     }
   }
 
+  String docSetSavepointJson(int id, String content) {
+    final p = content.toNativeUtf8();
+    try {
+      return _takeJson(_docSetSavepoint(id, p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String docMarkSavedJson(int id) => _takeJson(_docMarkSaved(id));
+
+  String docIsDirtyJson(int id) => _takeJson(_docIsDirty(id));
+
+  String docSavepointMatchesJson(int id, String content) {
+    final p = content.toNativeUtf8();
+    try {
+      return _takeJson(_docSavepointMatches(id, p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
   String docApplyJson(int id, int baseVersion, String opsJson) {
     final p = opsJson.toNativeUtf8();
     try {
@@ -173,7 +374,108 @@ class AlulaFfi {
     }
   }
 
+  String workspaceEditTransactionJson(String editsJson) {
+    final p = editsJson.toNativeUtf8();
+    try {
+      return _takeJson(_workspaceEditTransaction(p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
   String docResyncJson(int id) => _takeJson(_docResync(id));
+
+  String docReadRangeJson(int id, int startUtf16, int maxLenUtf16) =>
+      _takeJson(_docReadRange(id, startUtf16, maxLenUtf16));
+
+  String docLineOffsetJson(int id, int line) =>
+      _takeJson(_docLineOffset(id, line));
+
+  String docColumnSelectionsJson(
+    int id,
+    int anchorLine,
+    int anchorColumnUtf16,
+    int activeLine,
+    int activeColumnUtf16,
+    int maxSelections,
+  ) =>
+      _takeJson(_docColumnSelections(
+        id,
+        anchorLine,
+        anchorColumnUtf16,
+        activeLine,
+        activeColumnUtf16,
+        maxSelections,
+      ));
+
+  String docLineBoundaryJson(int id, int offsetUtf16) =>
+      _takeJson(_docLineBoundary(id, offsetUtf16));
+
+  String docWordPartOffsetJson(int id, int offsetUtf16, int direction) =>
+      _takeJson(_docWordPartOffset(id, offsetUtf16, direction));
+
+  String docDeleteWordRangesJson(
+    int id,
+    List<int> offsetsUtf16,
+    int direction,
+  ) {
+    final offsets = jsonEncode(offsetsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docDeleteWordRanges(id, offsets, direction));
+    } finally {
+      malloc.free(offsets);
+    }
+  }
+
+  String docDeleteLineRangesJson(
+    int id,
+    List<List<int>> selectionsUtf16,
+    int direction,
+  ) {
+    final selections = jsonEncode(selectionsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docDeleteLineRanges(id, selections, direction));
+    } finally {
+      malloc.free(selections);
+    }
+  }
+
+  String docOvertypePasteRangesJson(
+    int id,
+    List<List<int>> selectionsUtf16,
+  ) {
+    final selections = jsonEncode(selectionsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docOvertypePasteRanges(id, selections));
+    } finally {
+      malloc.free(selections);
+    }
+  }
+
+  String docPositionJson(int id, int offsetUtf16) =>
+      _takeJson(_docPosition(id, offsetUtf16));
+
+  String docPositionOffsetJson(int id, int line, int character) =>
+      _takeJson(_docPositionOffset(id, line, character));
+
+  String docReadLinesJson(
+    int id,
+    int firstLine,
+    int maxLines,
+    int horizontalStartUtf16,
+    int maxLineUtf16,
+    int maxTotalUtf16,
+  ) =>
+      _takeJson(_docReadLines(
+        id,
+        firstLine,
+        maxLines,
+        horizontalStartUtf16,
+        maxLineUtf16,
+        maxTotalUtf16,
+      ));
+
+  String docMinimapSampleJson(int id) => _takeJson(_docMinimapSample(id));
 
   String docCloseJson(int id) => _takeJson(_docClose(id));
 
@@ -206,6 +508,31 @@ class AlulaFfi {
     }
   }
 
+  String resourceStatusJson() => _takeJson(_resourceStatus());
+
+  String processSnapshotJson() => _takeJson(_processSnapshot());
+
+  String processRegisterJson(
+      int pid, String kind, String label, String? workspace) {
+    final nativeKind = kind.toNativeUtf8();
+    final nativeLabel = label.toNativeUtf8();
+    final nativeWorkspace = workspace?.toNativeUtf8();
+    try {
+      return _takeJson(_processRegister(
+        pid,
+        nativeKind,
+        nativeLabel,
+        nativeWorkspace ?? nullptr,
+      ));
+    } finally {
+      malloc.free(nativeKind);
+      malloc.free(nativeLabel);
+      if (nativeWorkspace != null) malloc.free(nativeWorkspace);
+    }
+  }
+
+  String processUnregisterJson(int pid) => _takeJson(_processUnregister(pid));
+
   String lspDidOpenJson(int id, String languageId) {
     final p = languageId.toNativeUtf8();
     try {
@@ -215,10 +542,39 @@ class AlulaFfi {
     }
   }
 
+  String lspDidCloseJson(int id) => _takeJson(_lspDidClose(id));
+
   String diagnosticsJson(int id) => _takeJson(_diagnostics(id));
 
   String completionJson(int id, int offsetUtf16, int timeoutMs) =>
       _takeJson(_completion(id, offsetUtf16, timeoutMs));
+
+  String completionStartJson(int id, int offsetUtf16, int timeoutMs) =>
+      _takeJson(_completionStart(id, offsetUtf16, timeoutMs));
+
+  String completionPollJson(int requestId) =>
+      _takeJson(_completionPoll(requestId));
+
+  String completionCancelJson(int requestId) =>
+      _takeJson(_completionCancel(requestId));
+
+  String definitionStartJson(int id, int offsetUtf16, int timeoutMs) =>
+      _takeJson(_definitionStart(id, offsetUtf16, timeoutMs));
+
+  String definitionPollJson(int requestId) =>
+      _takeJson(_definitionPoll(requestId));
+
+  String definitionCancelJson(int requestId) =>
+      _takeJson(_definitionCancel(requestId));
+
+  String semanticTokensStartJson(int id, int timeoutMs) =>
+      _takeJson(_semanticTokensStart(id, timeoutMs));
+
+  String semanticTokensPollJson(int requestId) =>
+      _takeJson(_semanticTokensPoll(requestId));
+
+  String semanticTokensCancelJson(int requestId) =>
+      _takeJson(_semanticTokensCancel(requestId));
 
   String syntaxJson(int id) => _takeJson(_syntax(id));
 
@@ -242,12 +598,57 @@ class AlulaFfi {
     }
   }
 
+  String wsReadFileDocumentJson(String path, String? encodingOverride) {
+    final p = path.toNativeUtf8();
+    final encoding = encodingOverride?.toNativeUtf8();
+    try {
+      return _takeJson(
+        _wsReadFileDocument(
+          p,
+          encoding ?? Pointer<Utf8>.fromAddress(0),
+        ),
+      );
+    } finally {
+      malloc.free(p);
+      if (encoding != null) malloc.free(encoding);
+    }
+  }
+
   String docSaveFileJson(int id, String path, int baseVersion) {
     final p = path.toNativeUtf8();
     try {
       return _takeJson(_docSaveFile(id, p, baseVersion));
     } finally {
       malloc.free(p);
+    }
+  }
+
+  String docSaveFileWithOptionsJson(
+    int id,
+    String path,
+    int baseVersion,
+    String encodingId,
+    bool bom,
+    String lineEndingId,
+  ) {
+    final p = path.toNativeUtf8();
+    final encoding = encodingId.toNativeUtf8();
+    final lineEnding = lineEndingId.toNativeUtf8();
+    try {
+      return _takeJson(
+        _docSaveFileWithOptions(
+          id,
+          p,
+          baseVersion,
+          encoding,
+          bom ? 1 : 0,
+          lineEnding,
+        ),
+      );
+    } finally {
+      malloc.free(p);
+      malloc.free(encoding);
+      malloc.free(lineEnding);
     }
   }
 

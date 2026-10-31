@@ -1,0 +1,243 @@
+name: Validate Windows artifact 41109679662
+
+on:
+  push:
+    branches: [codex/vscode-parity-p00]
+    paths:
+      - '.github/workflows/windows-artifact-validation.yml'
+      - 'tools/vscode-parity/validate-windows-artifact.ps1'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  release-artifact:
+    name: Run the x64 Release artifact on Windows 11 ARM (${{ matrix.theme }})
+    runs-on: windows-11-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [light, dark]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clear Windows 11 ARM first-logon and WSL prompts
+        if: runner.arch == 'ARM64'
+        shell: powershell
+        run: |
+          # Hosted ARM64 images can leave the first-logon privacy page above all
+          # windows and repeatedly open a WSL update console during UI tests.
+          # The WSL redirection is the runner-images issue #14264 workaround.
+          $output = Join-Path $env:RUNNER_TEMP 'alula-windows-validation'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          foreach ($software in 'SOFTWARE', 'SOFTWARE\WOW6432Node') {
+            $key = "HKLM:\$software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\wsl.exe"
+            New-Item -Path $key -Force | Out-Null
+            New-ItemProperty -Path $key -Name Debugger -Value "$env:SystemRoot\System32\systray.exe" -PropertyType String -Force | Out-Null
+          }
+
+          Add-Type -AssemblyName System.Windows.Forms
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+          public static class AlulaRunnerDesktop {
+            [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+            [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+          }
+          '@
+
+          $before = @(Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object {
+            [ordered]@{ process = $_.ProcessName; title = $_.MainWindowTitle }
+          })
+          foreach ($key in '{ENTER}', '{ENTER}', '{ESC}', '{ESC}') {
+            [System.Windows.Forms.SendKeys]::SendWait($key)
+            Start-Sleep -Milliseconds 900
+          }
+          Get-Process -Name WWAHost -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name SystemPropertiesPerformance -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name wsl -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name WindowsTerminal -ErrorAction SilentlyContinue |
+            Where-Object { $_.MainWindowTitle -match 'wsl\.exe' } |
+            Stop-Process -Force -ErrorAction SilentlyContinue
+          [System.Windows.Forms.SendKeys]::SendWait('{ESC}')
+          Start-Sleep -Seconds 2
+
+          $after = @(Get-Process | Where-Object { $_.MainWindowHandle -ne 0 } | ForEach-Object {
+            [ordered]@{ process = $_.ProcessName; title = $_.MainWindowTitle }
+          })
+          $foregroundHandle = [AlulaRunnerDesktop]::GetForegroundWindow()
+          [uint32]$foregroundProcessId = 0
+          [AlulaRunnerDesktop]::GetWindowThreadProcessId($foregroundHandle, [ref]$foregroundProcessId) | Out-Null
+          $foregroundProcess = Get-Process -Id $foregroundProcessId -ErrorAction SilentlyContinue
+          $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bitmap = [System.Drawing.Bitmap]::new($bounds.Width, $bounds.Height)
+          $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+          try {
+            $graphics.CopyFromScreen($bounds.Left, $bounds.Top, 0, 0, $bounds.Size)
+            $bitmap.Save((Join-Path $output 'runner-desktop-post-bootstrap.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+          }
+          finally { $graphics.Dispose(); $bitmap.Dispose() }
+          [ordered]@{
+            runnerArchitecture = $env:RUNNER_ARCH
+            runnerImage = $env:ImageOS
+            wslImageFileExecutionRedirects = @('SOFTWARE', 'SOFTWARE\WOW6432Node')
+            windowsBefore = $before
+            windowsAfter = $after
+            foregroundProcess = if ($foregroundProcess) { $foregroundProcess.ProcessName } else { $null }
+            foregroundWindowHandle = ('0x{0:X}' -f $foregroundHandle.ToInt64())
+            privacyHostRemaining = [bool](Get-Process -Name WWAHost -ErrorAction SilentlyContinue)
+            wslPromptRemaining = [bool](Get-Process -Name wsl -ErrorAction SilentlyContinue)
+          } | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $output 'runner-desktop-setup.json') -Encoding utf8
+
+          if (Get-Process -Name WWAHost -ErrorAction SilentlyContinue) {
+            throw 'Windows first-logon privacy experience still owns a process after desktop cleanup'
+          }
+          if (Get-Process -Name wsl -ErrorAction SilentlyContinue) {
+            throw 'The WSL update console still owns a process after desktop cleanup'
+          }
+      - name: Parse Windows artifact validator with PowerShell AST
+        shell: powershell
+        run: |
+          $tokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path './tools/vscode-parity/validate-windows-artifact.ps1').Path,
+            [ref]$tokens,
+            [ref]$parseErrors
+          ) | Out-Null
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+      - name: Download Windows x64 artifact from run 41109679662
+        uses: actions/download-artifact@v4
+        with:
+          name: alula-windows-x64-d5319369c5b5d569954e0d816daf325f3bc12a51
+          run-id: 41109679662
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/alula-windows-release
+      - name: Configure isolated Windows theme sample
+        shell: powershell
+        run: |
+          $themeName = '${{ matrix.theme }}'
+          $lightValue = if ($themeName -eq 'light') { 1 } else { 0 }
+          $themeKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+          New-Item -Path $themeKey -Force | Out-Null
+          New-ItemProperty -Path $themeKey -Name AppsUseLightTheme -PropertyType DWord -Value $lightValue -Force | Out-Null
+          New-ItemProperty -Path $themeKey -Name SystemUsesLightTheme -PropertyType DWord -Value $lightValue -Force | Out-Null
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+          public static class AlulaThemeBroadcast {
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern IntPtr SendMessageTimeout(IntPtr window, uint message, UIntPtr wParam, string lParam, uint flags, uint timeout, out UIntPtr result);
+            public static void Refresh() {
+              UIntPtr result;
+              SendMessageTimeout(new IntPtr(0xffff), 0x001A, UIntPtr.Zero, "ImmersiveColorSet", 0x0002, 2000, out result);
+            }
+          }
+          '@
+          [AlulaThemeBroadcast]::Refresh()
+          $output = '${{ runner.temp }}/alula-windows-validation'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          [ordered]@{
+            requestedTheme = $themeName
+            appsUseLightTheme = (Get-ItemPropertyValue -Path $themeKey -Name AppsUseLightTheme)
+            systemUsesLightTheme = (Get-ItemPropertyValue -Path $themeKey -Name SystemUsesLightTheme)
+          } | ConvertTo-Json | Set-Content (Join-Path $output 'theme-matrix.json') -Encoding utf8
+      - name: Edit, save, inspect accessibility, DPI/theme, and close the exact Release artifact
+        shell: powershell
+        run: |
+          $output = '${{ runner.temp }}/alula-windows-validation'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          Start-Transcript -Path (Join-Path $output 'transcript.txt') -Force | Out-Null
+          try {
+            ./tools/vscode-parity/validate-windows-artifact.ps1 `
+              -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
+              -OutputDirectory $output `
+              -ExerciseInteractions
+          }
+          finally { Stop-Transcript | Out-Null }
+      - name: Probe Narrator, UIA semantics, and keyboard focus on the exact artifact
+        if: always()
+        shell: powershell
+        run: |
+          $output = '${{ runner.temp }}/alula-windows-validation/narrator'
+          New-Item -ItemType Directory -Force -Path $output | Out-Null
+          & ./docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/scripts/run-narrator-validation.ps1 `
+            -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
+            -OutputDirectory $output
+      - name: Assert Narrator and keyboard focus evidence
+        if: always()
+        shell: powershell
+        run: |
+          $resultPath = '${{ runner.temp }}/alula-windows-validation/narrator/screenreader-result.json'
+          if (!(Test-Path -LiteralPath $resultPath)) { throw 'Narrator probe did not write screenreader-result.json' }
+          $result = Get-Content -LiteralPath $resultPath -Raw | ConvertFrom-Json
+          if ($result.error) { throw "Narrator probe error: $($result.error)" }
+          if (!$result.narratorProcessObserved) { throw 'Windows Narrator process was not observed' }
+          if ($result.focusTraversal.Count -ne 14) { throw "Expected 14 focus probes, got $($result.focusTraversal.Count)" }
+          if ($result.missingSemanticText.Count -gt 0) {
+            throw "UIA tree is missing required semantic text: $($result.missingSemanticText -join ', ')"
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-artifact-41109679662-win11-arm-${{ matrix.theme }}-validation
+          path: ${{ runner.temp }}/alula-windows-validation
+
+  source-interactions:
+    name: Run editor interaction suite at artifact source SHA
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: d5319369c5b5d569954e0d816daf325f3bc12a51
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Add temporary Windows integration-test entry point
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force app/integration_test | Out-Null
+          @'
+          import 'package:integration_test/integration_test.dart';
+          import '../test/workbench_multi_selection_test.dart' as multi_selection;
+          import '../test/workbench_multi_view_test.dart' as multi_view;
+
+          void main() {
+            IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+            multi_view.main();
+            multi_selection.main();
+          }
+          '@ | Set-Content app/integration_test/windows_p03_7_desktop_test.dart -Encoding utf8
+      - name: Prepare Windows desktop interaction test
+        shell: pwsh
+        working-directory: app
+        run: |
+          flutter pub get --enforce-lockfile
+          if ($LASTEXITCODE -ne 0) { throw 'flutter pub get failed' }
+          flutter pub add "dev:integration_test@{sdk: flutter}"
+          if ($LASTEXITCODE -ne 0) { throw 'adding the temporary integration_test dependency failed' }
+          bash ../scripts/build_core.sh
+          if ($LASTEXITCODE -ne 0) { throw 'building the Rust core failed' }
+      - name: Run multi-view, save/read-back, and IME composition tests
+        shell: pwsh
+        working-directory: app
+        run: |
+          $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
+          flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart 2>&1 | Tee-Object -FilePath "$env:RUNNER_TEMP/windows-artifact-source-interactions.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-artifact-41109679662-source-interactions
+          path: ${{ runner.temp }}/windows-artifact-source-interactions.log

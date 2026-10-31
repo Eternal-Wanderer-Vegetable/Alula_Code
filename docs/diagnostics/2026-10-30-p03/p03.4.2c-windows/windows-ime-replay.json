@@ -1,0 +1,28 @@
+{
+  "platform": "Windows 11",
+  "product": "Alula Code Release",
+  "inputMethod": "Microsoft Pinyin (user input profile)",
+  "rustAbi": 15,
+  "coreHashMatchesBundle": true,
+  "appPid": 44300,
+  "windowHandle": 86714408,
+  "originalForegroundCaptured": true,
+  "finalForegroundBeforeRestore": 86714408,
+  "screenshots": [
+    "windows-before.png",
+    "windows-compose.png",
+    "windows-commit.png",
+    "windows-cancel-before.png",
+    "windows-cancelled.png",
+    "windows-tab-before.png",
+    "windows-focus-before.png",
+    "windows-focus-after.png"
+  ],
+  "sequences": [
+    "Ctrl+A; Alt+Shift; nihao; Space",
+    "zhongguo; Escape",
+    "beijing; Tab (candidate navigation)",
+    "beijing; click Explorer Activity Bar"
+  ],
+  "profileRoot": "C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\alula-p03-4-2c-17876"
+}

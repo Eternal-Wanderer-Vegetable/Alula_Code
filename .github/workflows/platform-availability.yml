@@ -1,0 +1,586 @@
+name: Platform Availability
+
+on:
+  push:
+    branches: [codex/vscode-parity-p00]
+    paths:
+      - 'app/**'
+      - 'crates/**'
+      - 'scripts/build_core.*'
+      - '.github/workflows/platform-availability.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    name: Linux x64 build and launch smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Linux desktop build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev xvfb
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        run: bash scripts/build_core.sh
+      - name: Build Linux Release bundle
+        run: flutter build linux --release
+        working-directory: app
+      - name: Add Rust core and verify Linux bundle
+        run: |
+          cp app/native/libalula_core.so app/build/linux/x64/release/bundle/
+          ! ldd app/build/linux/x64/release/bundle/alula_app | grep -q 'not found'
+      - name: Launch Linux app under Xvfb
+        run: |
+          set +e
+          timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            app/build/linux/x64/release/bundle/alula_app
+          status=$?
+          set -e
+          test "$status" -eq 124
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alula-linux-x64-${{ github.sha }}
+          path: app/build/linux/x64/release/bundle
+
+  windows:
+    name: Windows x64 build and launch smoke
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        shell: bash
+        run: bash scripts/build_core.sh
+      - name: Resolve Flutter dependencies
+        run: flutter pub get --enforce-lockfile
+        working-directory: app
+      - name: Build Windows Release bundle
+        run: flutter build windows --release
+        working-directory: app
+      - name: Add Rust core DLL
+        shell: pwsh
+        run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
+      - name: Launch Windows app and capture visible client area
+        shell: powershell
+        run: |
+          Add-Type -AssemblyName System.Drawing
+          Add-Type @'
+          using System;
+          using System.Runtime.InteropServices;
+
+          public struct AlulaRect
+          {
+              public int Left;
+              public int Top;
+              public int Right;
+              public int Bottom;
+          }
+
+          public struct AlulaPoint
+          {
+              public int X;
+              public int Y;
+          }
+
+          public static class AlulaWindowApi
+          {
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool IsWindowVisible(IntPtr window);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool GetClientRect(IntPtr window, out AlulaRect rect);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool ClientToScreen(IntPtr window, ref AlulaPoint point);
+
+              [DllImport("user32.dll")]
+              public static extern bool ShowWindow(IntPtr window, int command);
+
+              [DllImport("user32.dll")]
+              public static extern bool SetForegroundWindow(IntPtr window);
+
+              [DllImport("user32.dll")]
+              public static extern IntPtr GetWindow(IntPtr window, uint command);
+
+              [DllImport("user32.dll")]
+              public static extern uint GetDpiForWindow(IntPtr window);
+
+              [DllImport("user32.dll", SetLastError = true)]
+              public static extern bool PostMessage(IntPtr window, uint message, IntPtr wParam, IntPtr lParam);
+          }
+          '@
+
+          $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+          $process = Start-Process -FilePath $exe -PassThru -WindowStyle Normal
+          try {
+            $deadline = (Get-Date).AddSeconds(30)
+            $window = [IntPtr]::Zero
+            do {
+              $process.Refresh()
+              if ($process.HasExited) { throw "Alula exited during startup (code $($process.ExitCode))" }
+              $window = $process.MainWindowHandle
+              if ($window -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+            } while ($window -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+
+            if ($window -eq [IntPtr]::Zero) { throw "Alula did not create a top-level window" }
+            [AlulaWindowApi]::ShowWindow($window, 9) | Out-Null
+            [AlulaWindowApi]::SetForegroundWindow($window) | Out-Null
+            Start-Sleep -Seconds 2
+            if (![AlulaWindowApi]::IsWindowVisible($window)) { throw "Alula top-level window is not visible" }
+
+            $client = New-Object AlulaRect
+            if (![AlulaWindowApi]::GetClientRect($window, [ref]$client)) { throw "GetClientRect failed" }
+            $width = $client.Right - $client.Left
+            $height = $client.Bottom - $client.Top
+            if ($width -lt 640 -or $height -lt 480) { throw "Unexpected client area ${width}x${height}" }
+
+            $origin = New-Object AlulaPoint
+            if (![AlulaWindowApi]::ClientToScreen($window, [ref]$origin)) { throw "ClientToScreen failed" }
+            $bitmap = [System.Drawing.Bitmap]::new($width, $height)
+            $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+            try {
+              $graphics.CopyFromScreen($origin.X, $origin.Y, 0, 0, $bitmap.Size)
+              $capture = Join-Path $env:RUNNER_TEMP 'alula-windows-client.png'
+              $bitmap.Save($capture, [System.Drawing.Imaging.ImageFormat]::Png)
+            }
+            finally {
+              $graphics.Dispose()
+              $bitmap.Dispose()
+            }
+
+            $uiaAvailable = $false
+            $uiaNames = @()
+            $uiaElementCount = 0
+            $uiaRootSnapshots = @()
+            $uiaError = $null
+            $uiAutomationSkipped = $env:ALULA_SKIP_UI_AUTOMATION -eq '1'
+            $msaaAvailable = $false
+            $msaaRoots = @()
+            $msaaError = $null
+            if (!$uiAutomationSkipped) {
+              try {
+                Add-Type -AssemblyName UIAutomationClient
+                $uiaTargets = @(
+                  [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+                  [pscustomobject]@{
+                    name = 'flutterChildWindow'
+                    handle = [AlulaWindowApi]::GetWindow($window, 5)
+                  }
+                )
+                foreach ($target in $uiaTargets) {
+                  $targetNames = @()
+                  $targetElements = @()
+                  $targetError = $null
+                  $descendants = $null
+                  try {
+                    $automationRoot = [System.Windows.Automation.AutomationElement]::FromHandle($target.handle)
+                    $descendants = $automationRoot.FindAll(
+                      [System.Windows.Automation.TreeScope]::Subtree,
+                      [System.Windows.Automation.Condition]::TrueCondition)
+                    foreach ($element in $descendants) {
+                      try {
+                        $current = $element.Current
+                        if (![string]::IsNullOrWhiteSpace($current.Name)) { $targetNames += $current.Name }
+                        if ($targetElements.Count -lt 100) {
+                          $targetElements += [ordered]@{
+                            name = $current.Name
+                            automationId = $current.AutomationId
+                            className = $current.ClassName
+                            frameworkId = $current.FrameworkId
+                            controlType = $current.ControlType.ProgrammaticName
+                            localizedControlType = $current.LocalizedControlType
+                            isControlElement = $current.IsControlElement
+                            isContentElement = $current.IsContentElement
+                          }
+                        }
+                      } catch [System.Windows.Automation.ElementNotAvailableException] { }
+                    }
+                    $uiaAvailable = $true
+                    $uiaElementCount += $descendants.Count
+                  } catch {
+                    $targetError = $_.Exception.Message
+                    if ($null -eq $uiaError) { $uiaError = $targetError }
+                  }
+                  $uiaRootSnapshots += [ordered]@{
+                    target = $target.name
+                    elementCount = if ($descendants) { $descendants.Count } else { 0 }
+                    accessibleNameCount = $targetNames.Count
+                    accessibleNames = @($targetNames | Select-Object -First 100)
+                    elements = @($targetElements)
+                    error = $targetError
+                  }
+                  if ($target.name -eq 'topLevelWindow') { $uiaNames = $targetNames }
+                }
+              } catch {
+                if ($null -eq $uiaError) { $uiaError = $_.Exception.Message }
+              }
+
+              try {
+                Add-Type -AssemblyName Accessibility
+                $accessibilityAssembly = [Accessibility.IAccessible].Assembly.Location
+                Add-Type -ReferencedAssemblies @($accessibilityAssembly) -TypeDefinition @'
+          using System;
+          using System.Runtime.InteropServices;
+          using Accessibility;
+
+          public static class AlulaMsaaApi
+          {
+              private static readonly Guid IidIAccessible =
+                  new Guid("618736E0-3C3D-11CF-810C-00AA00389B71");
+
+              [DllImport("oleacc.dll", PreserveSig = true)]
+              private static extern int AccessibleObjectFromWindow(
+                  IntPtr window,
+                  uint objectId,
+                  ref Guid interfaceId,
+                  [MarshalAs(UnmanagedType.Interface)] out IAccessible accessible);
+
+              public static AlulaMsaaSnapshot Capture(IntPtr window)
+              {
+                  Guid interfaceId = IidIAccessible;
+                  IAccessible accessible = null;
+                  AlulaMsaaSnapshot snapshot = new AlulaMsaaSnapshot();
+                  int result = AccessibleObjectFromWindow(
+                      window, unchecked((uint)-4), ref interfaceId, out accessible);
+                  snapshot.HResult = "0x" + result.ToString("X8");
+                  if (result != 0 || accessible == null)
+                  {
+                      snapshot.Error = "AccessibleObjectFromWindow did not return IAccessible.";
+                      return snapshot;
+                  }
+
+                  try
+                  {
+                      try { snapshot.RootName = accessible.get_accName(0); }
+                      catch (Exception exception) { snapshot.RootNameError = exception.Message; }
+                      try { snapshot.ChildCount = accessible.accChildCount; }
+                      catch (Exception exception)
+                      {
+                          snapshot.Error = "accChildCount: " + exception.Message;
+                          return snapshot;
+                      }
+                      CaptureChildren(accessible, "", 1, snapshot);
+                  }
+                  catch (Exception exception)
+                  {
+                      snapshot.Error = exception.GetType().FullName + ": " + exception.Message;
+                  }
+                  finally
+                  {
+                      if (Marshal.IsComObject(accessible))
+                      {
+                          Marshal.FinalReleaseComObject(accessible);
+                      }
+                  }
+                  return snapshot;
+              }
+
+              private static void CaptureChildren(
+                  IAccessible accessible,
+                  string parentPath,
+                  int depth,
+                  AlulaMsaaSnapshot snapshot)
+              {
+                  if (depth > 8 || snapshot.Children.Count >= 250) return;
+                  int childCount = accessible.accChildCount;
+                  int limit = Math.Min(childCount, 100);
+                  for (int childId = 1; childId <= limit; childId++)
+                  {
+                      if (snapshot.Children.Count >= 250) return;
+                      AlulaMsaaNode node = new AlulaMsaaNode();
+                      node.Path = string.IsNullOrEmpty(parentPath)
+                          ? childId.ToString()
+                          : parentPath + "." + childId.ToString();
+                      node.ChildId = childId;
+                      object rawChild = null;
+                      IAccessible nested = null;
+                      try
+                      {
+                          try { node.Name = accessible.get_accName(childId); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+                          try { node.Role = Convert.ToString(accessible.get_accRole(childId)); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+                          try { node.Value = accessible.get_accValue(childId); }
+                          catch (Exception exception) { node.Error = exception.Message; }
+
+                          try
+                          {
+                              rawChild = accessible.get_accChild(childId);
+                              if (rawChild is IAccessible)
+                              {
+                                  nested = (IAccessible)rawChild;
+                              }
+                              else if (rawChild != null && Marshal.IsComObject(rawChild))
+                              {
+                                  IntPtr unknown = Marshal.GetIUnknownForObject(rawChild);
+                                  try
+                                  {
+                                      nested = (IAccessible)Marshal.GetTypedObjectForIUnknown(
+                                          unknown, typeof(IAccessible));
+                                  }
+                                  catch { }
+                                  finally { Marshal.Release(unknown); }
+                              }
+                          }
+                          catch (Exception exception) { node.Error = exception.Message; }
+
+                          if (nested != null && !Object.ReferenceEquals(nested, accessible))
+                          {
+                              try
+                              {
+                                  node.ChildCount = nested.accChildCount;
+                                  CaptureChildren(nested, node.Path, depth + 1, snapshot);
+                              }
+                              catch (Exception exception) { node.Error = exception.Message; }
+                          }
+                          snapshot.Children.Add(node);
+                      }
+                      finally
+                      {
+                          if (nested != null && Marshal.IsComObject(nested) &&
+                              !Object.ReferenceEquals(nested, accessible))
+                          {
+                              Marshal.FinalReleaseComObject(nested);
+                          }
+                          else if (nested == null && rawChild != null && Marshal.IsComObject(rawChild))
+                          {
+                              Marshal.FinalReleaseComObject(rawChild);
+                          }
+                      }
+                  }
+              }
+          }
+
+          public sealed class AlulaMsaaSnapshot
+          {
+              public string HResult { get; set; }
+              public string RootName { get; set; }
+              public string RootNameError { get; set; }
+              public int ChildCount { get; set; }
+              public System.Collections.Generic.List<AlulaMsaaNode> Children { get; private set; }
+              public string Error { get; set; }
+
+              public AlulaMsaaSnapshot()
+              {
+                  Children = new System.Collections.Generic.List<AlulaMsaaNode>();
+              }
+          }
+
+          public sealed class AlulaMsaaNode
+          {
+              public string Path { get; set; }
+              public int ChildId { get; set; }
+              public string Name { get; set; }
+              public string Role { get; set; }
+              public string Value { get; set; }
+              public int ChildCount { get; set; }
+              public string Error { get; set; }
+          }
+          '@
+                $msaaTargets = @(
+                  [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+                  [pscustomobject]@{
+                    name = 'flutterChildWindow'
+                    handle = [AlulaWindowApi]::GetWindow($window, 5)
+                  }
+                )
+                foreach ($target in $msaaTargets) {
+                  $result = [AlulaMsaaApi]::Capture($target.handle)
+                  if ($result.HResult -eq '0x00000000') {
+                    $msaaAvailable = $true
+                  } else {
+                    if ($null -eq $msaaError) { $msaaError = $result.Error }
+                  }
+                  $msaaRoots += [ordered]@{
+                    target = $target.name
+                    hresult = $result.HResult
+                    rootName = $result.RootName
+                    rootNameError = $result.RootNameError
+                    childCount = $result.ChildCount
+                    children = @($result.Children)
+                    error = $result.Error
+                  }
+                }
+              } catch {
+                if ($null -eq $msaaError) { $msaaError = $_.Exception.Message }
+              }
+            }
+
+            $themeSettings = Get-ItemProperty `
+              -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' `
+              -ErrorAction SilentlyContinue
+            $operatingSystem = Get-CimInstance Win32_OperatingSystem
+            $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
+            [ordered]@{
+              processId = $process.Id
+              osCaption = $operatingSystem.Caption
+              osVersion = $operatingSystem.Version
+              osBuildNumber = $operatingSystem.BuildNumber
+              clientWidth = $width
+              clientHeight = $height
+              dpi = [AlulaWindowApi]::GetDpiForWindow($window)
+              windowVisible = $true
+              screenshot = $capture
+              sha256 = (Get-FileHash $capture -Algorithm SHA256).Hash.ToLowerInvariant()
+              systemUsesLightTheme = if ($themeSettings) { [bool]$themeSettings.SystemUsesLightTheme } else { $null }
+              appsUseLightTheme = if ($themeSettings) { [bool]$themeSettings.AppsUseLightTheme } else { $null }
+              uiAutomationAvailable = $uiaAvailable
+              uiAutomationSkipped = $uiAutomationSkipped
+              uiAutomationElementCount = $uiaElementCount
+              accessibleNameCount = $uiaNames.Count
+              accessibleNames = @($uiaNames | Select-Object -First 100)
+              uiAutomationRoots = @($uiaRootSnapshots)
+              uiAutomationError = $uiaError
+              msaaAvailable = $msaaAvailable
+              msaaRoots = @($msaaRoots)
+              msaaError = $msaaError
+            } | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
+
+            # Release UI Automation provider proxies before Flutter tears down
+            # the native window on WM_CLOSE.
+            $descendants = $null
+            $automationRoot = $null
+            $uiaTargets = $null
+            $msaaTargets = $null
+            $target = $null
+            $element = $null
+            [GC]::Collect()
+            [GC]::WaitForPendingFinalizers()
+          }
+          finally {
+            $wmCloseSent = $false
+            $closeTimedOut = $false
+            if (!$process.HasExited -and $window -ne [IntPtr]::Zero) {
+              $wmCloseSent = [AlulaWindowApi]::PostMessage(
+                $window, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
+            }
+            if (!$process.WaitForExit(10000)) {
+              $closeTimedOut = $true
+              try { $process.Kill() } catch [System.InvalidOperationException] { }
+              $process.WaitForExit(10000) | Out-Null
+            }
+            $process.Refresh()
+            $exitCode = if ($process.HasExited) { $process.ExitCode } else { $null }
+            $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+            $gracefulClose = $wmCloseSent -and !$closeTimedOut -and $exitCode -eq 0
+            $metadata | Add-Member -NotePropertyName wmClosePosted -NotePropertyValue $wmCloseSent -Force
+            $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
+            $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $gracefulClose -Force
+            $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
+            $metadata | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
+          }
+      - name: Run P03.7 Windows desktop interaction suite
+        shell: pwsh
+        working-directory: app
+        run: |
+          $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
+          flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
+      - name: Verify Windows accessibility tree and smoke lifecycle
+        if: always()
+        shell: pwsh
+        run: |
+          $metadataPath = Join-Path $env:RUNNER_TEMP 'alula-windows-client.json'
+          if (!(Test-Path $metadataPath)) { throw "Windows client smoke metadata was not created" }
+          $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+          if (!$metadata.msaaAvailable) { throw "Flutter window did not expose an MSAA provider" }
+          $flutterRoot = $metadata.msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1
+          if (!$flutterRoot) { throw "MSAA snapshot did not include the Flutter child window" }
+          $accessibleText = (@($flutterRoot.children | ForEach-Object { [string]$_.Name; [string]$_.Value }) -join "`n")
+          foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')) {
+            if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected semantic text: $expected" }
+          }
+          if (!$metadata.wmClosePosted) { throw "WM_CLOSE was not posted to the Alula window" }
+          if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
+          if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
+          if (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: alula-windows-x64-${{ github.sha }}
+          path: |
+            app/build/windows/x64/runner/Release
+            ${{ runner.temp }}/alula-windows-client.png
+            ${{ runner.temp }}/alula-windows-client.json
+
+  macos:
+    name: macOS build, launch smoke, and app package
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+      - name: Build Rust core
+        run: bash scripts/build_core.sh
+      - name: Flutter analyze and tests
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+        working-directory: app
+      - name: Build macOS Release bundle
+        run: flutter build macos --release --no-pub
+        working-directory: app
+      - name: Bundle and sign Rust core
+        run: |
+          app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
+          install -m 755 app/native/libalula_core.dylib "$app_bundle/Contents/MacOS/libalula_core.dylib"
+          codesign --force --deep --sign - "$app_bundle"
+          codesign --verify --deep --strict "$app_bundle"
+      - name: Launch macOS app
+        run: |
+          executable="app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
+          "$executable" > "$RUNNER_TEMP/alula-macos-smoke.log" 2>&1 &
+          app_pid=$!
+          sleep 12
+          if ! kill -0 "$app_pid" 2>/dev/null; then
+            cat "$RUNNER_TEMP/alula-macos-smoke.log"
+            wait "$app_pid"
+            exit 1
+          fi
+          kill -TERM "$app_pid" 2>/dev/null || true
+          for _ in $(seq 1 20); do
+            kill -0 "$app_pid" 2>/dev/null || break
+            sleep 0.25
+          done
+          if kill -0 "$app_pid" 2>/dev/null; then
+            kill -KILL "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+            echo "Alula did not stop after the launch smoke"
+            exit 1
+          fi
+          wait "$app_pid" || true
+      - name: Package macOS app
+        run: |
+          app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
+          package="$RUNNER_TEMP/alula-code-macos-${RUNNER_ARCH}-${GITHUB_SHA}.zip"
+          ditto -c -k --sequesterRsrc --keepParent "$app_bundle" "$package"
+          shasum -a 256 "$package" > "$package.sha256"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alula-macos-${{ runner.arch }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/alula-code-macos-${{ runner.arch }}-${{ github.sha }}.zip
+            ${{ runner.temp }}/alula-code-macos-${{ runner.arch }}-${{ github.sha }}.zip.sha256

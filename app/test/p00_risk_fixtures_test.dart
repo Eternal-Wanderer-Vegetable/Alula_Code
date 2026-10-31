@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/editor/rust_text_input_window.dart'
+    show maxRustTextInputWindowUtf16;
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
@@ -80,7 +82,7 @@ void main() {
     });
   }
 
-  testWidgets('P00.3 REF-07-UNDO-01 alternating edits in two files',
+  testWidgets('P02.1 REF-07-UNDO-01 keeps undo/redo histories per document',
       (tester) async {
     await startWorkbench(tester, _fixtureRoot);
 
@@ -97,6 +99,9 @@ void main() {
     await tester.tap(find.text('main.rs').first);
     await tester.pump(const Duration(milliseconds: 200));
     final bBefore = editorText(tester);
+    // File activation may update the shared edit timestamp. Let its coalescing
+    // window expire so this fixture records two independent document edits.
+    await waitWallClock(tester, const Duration(milliseconds: 450));
     await tester.enterText(find.byType(TextField).first, '$bBefore\n// B-edit');
     await tester.pump(const Duration(milliseconds: 500));
 
@@ -105,33 +110,39 @@ void main() {
     await tester.tap(find.byType(TextField).first);
     await _pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
     final aAfterUndo = editorText(tester);
+    await _pressChord(tester, LogicalKeyboardKey.keyY, control: true);
+    final aAfterRedo = editorText(tester);
 
     await tester.tap(find.byKey(const ValueKey('tab-3')));
     await tester.pump(const Duration(milliseconds: 100));
     await tester.tap(find.byType(TextField).first);
     await _pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
     final bAfterUndo = editorText(tester);
+    await _pressChord(tester, LogicalKeyboardKey.keyY, control: true);
+    final bAfterRedo = editorText(tester);
 
     final observed = {
-      'fixture': 'parity-ref-07-undo-01',
+      'fixture': 'p02.1-ref-07-undo-01',
       'aBeforeLength': aBefore.length,
       'bBeforeLength': bBefore.length,
       'aUndoRestoredOwnText': aAfterUndo == aBefore,
-      'aUndoAppliedOtherFileSnapshot': aAfterUndo == bBefore,
+      'aRedoRestoredOwnEdit': aAfterRedo == '$aBefore\n# A-edit',
       'bUndoRestoredOwnText': bAfterUndo == bBefore,
-      'bUndoAppliedOtherFileSnapshot': bAfterUndo == aBefore,
+      'bRedoRestoredOwnEdit': bAfterRedo == '$bBefore\n// B-edit',
     };
-    // Current baseline: a single workbench-wide snapshot stack crosses documents.
-    expect(aAfterUndo, bBefore);
-    expect(bAfterUndo, aBefore);
+    expect(aAfterUndo, aBefore);
+    expect(aAfterRedo, '$aBefore\n# A-edit');
+    expect(bAfterUndo, bBefore);
+    expect(bAfterRedo, '$bBefore\n// B-edit');
     // ignore: avoid_print
-    print('P00.3_FIXTURE=${jsonEncode(observed)}');
+    print('P02.1_FIXTURE=${jsonEncode(observed)}');
   });
 
   testWidgets('P00.3 REF-07-RECOVERY-01 unsaved text above 2M UTF-16 units',
       (tester) async {
     final root = Directory('${temp.path}/workspace')..createSync();
-    final diskFile = File('${root.path}/large.txt')..writeAsStringSync('seed\n');
+    final diskFile = File('${root.path}/large.txt')
+      ..writeAsStringSync('seed\n');
     await startWorkbench(tester, root.path);
     await tester.tap(find.text('large.txt').first);
     await tester.pump(const Duration(milliseconds: 200));
@@ -151,19 +162,41 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     await startWorkbench(tester, root.path);
-    final recoveredText = editorText(tester);
+    final recoveredWindow = editorText(tester);
+    final recoveredSession = session.tryLoad()!;
+    final recoveredDocs = (recoveredSession['groups'] as List)
+        .expand((group) => (group as Map)['docs'] as List)
+        .cast<Map>();
+    final recoveredJournalDoc = recoveredDocs.firstWhere(
+      (doc) => (doc['path'] as String?)?.endsWith('large.txt') ?? false,
+    );
+    final recoveredJournalText = recoveredJournalDoc['text'] as String?;
+    await _pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+    await tester.pump();
+    expect(
+        find.byKey(const ValueKey('external-conflict-dialog')), findsOneWidget);
+    await tester
+        .tap(find.byKey(const ValueKey('external-conflict-confirm-overwrite')));
+    await tester.pumpAndSettle();
+    final savedText = diskFile.readAsStringSync();
     final observed = {
       'fixture': 'parity-ref-07-recovery-01',
       'acceptedUtf16Units': acceptedText.length,
       'journalTextPresent': journalTextPresent,
+      'recoveredJournalUtf16Units': recoveredJournalText?.length,
       'diskUtf16Units': diskFile.readAsStringSync().length,
-      'recoveredUtf16Units': recoveredText.length,
-      'recoveredFromDisk': recoveredText == diskFile.readAsStringSync(),
+      'boundedInputWindowUtf16Units': recoveredWindow.length,
+      'recoveredFromJournal': recoveredJournalText == acceptedText,
+      'savedRecoveredRustText': savedText == acceptedText,
     };
-    // Current baseline: the journal omits the accepted edit and reloads disk text.
+    // The journal and Rust buffer preserve the complete edit while Flutter
+    // exposes only the bounded window after restart.
     expect(acceptedText.length, greaterThan(2000000));
-    expect(journalTextPresent, isFalse);
-    expect(recoveredText, diskFile.readAsStringSync());
+    expect(journalTextPresent, isTrue);
+    expect(recoveredJournalText, acceptedText);
+    expect(
+        recoveredWindow.length, lessThanOrEqualTo(maxRustTextInputWindowUtf16));
+    expect(savedText, acceptedText);
     // ignore: avoid_print
     print('P00.3_FIXTURE=${jsonEncode(observed)}');
   });

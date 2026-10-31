@@ -1,0 +1,7 @@
+Product: Alula Code Linux Release
+Environment: WSLg/X11
+Close path: window-manager Alt+F4 (foreground target verified)
+Process exit code: 0
+Foreground restored: ChatGPT
+Isolated temporary profile: cleaned
+Observed shutdown output: see linux-close-app.log (GLib critical and FlutterEngineRemoveView kInvalidArguments warning)

@@ -22,34 +22,45 @@ class WorkspaceWatcher {
   StreamSubscription<FileSystemEvent>? _sub;
   Timer? _timer;
   bool _started = false;
+  int _generation = 0;
 
   bool get isWatching => _started;
 
   Future<void> start() async {
     if (_started) return;
+    final generation = ++_generation;
+    _started = true;
     try {
-      _sub = Directory(root)
-          .watch(recursive: true)
-          .listen((_) => _poke(),
-              onError: (Object _) {
+      final subscription = Directory(root).watch(recursive: true).listen((_) {
+        if (generation == _generation && _started) _poke(generation);
+      }, onError: (Object _) {
         // 事件洪峰/平台限制等错误：丢弃事件但不打断（防抖回调已足够）
       });
-      _started = true;
+      if (generation != _generation) {
+        await subscription.cancel();
+        return;
+      }
+      _sub = subscription;
     } catch (_) {
+      _sub = null;
       _started = false; // 平台不支持：静默降级为无监视
     }
   }
 
-  void _poke() {
+  void _poke(int generation) {
     _timer?.cancel();
-    _timer = Timer(debounce, onChanged);
+    _timer = Timer(debounce, () {
+      if (generation == _generation && _started) onChanged();
+    });
   }
 
   Future<void> stop() async {
-    await _sub?.cancel();
-    _sub = null;
+    ++_generation;
+    _started = false;
     _timer?.cancel();
     _timer = null;
-    _started = false;
+    final subscription = _sub;
+    _sub = null;
+    await subscription?.cancel();
   }
 }

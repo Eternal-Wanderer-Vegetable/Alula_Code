@@ -12,14 +12,39 @@ library;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/gestures.dart' show kMiddleMouseButton;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, listEquals;
+import 'package:flutter/gestures.dart'
+    show
+        kMiddleMouseButton,
+        kPrimaryButton,
+        kTouchSlop,
+        PointerCancelEvent,
+        PointerDownEvent,
+        PointerDeviceKind,
+        PointerUpEvent;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderEditable;
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import '../editor/editor_minimap.dart';
+import '../editor/editor_minimap_markers.dart';
+import '../editor/editor_sticky_scroll.dart';
+import '../editor/editor_folding.dart';
+import '../editor/editor_rendering.dart';
+import '../editor/editor_highlight_tokens.dart';
 import '../editor/find_replace.dart';
+import '../editor/lsp_diagnostic_decorations.dart';
+import '../editor/navigation_history.dart';
+import '../editor/multi_selection.dart';
+import '../editor/occurrence_search.dart';
+import '../editor/rust_text_input_field.dart';
+import '../editor/rust_text_input_window.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
+import '../editor/workspace_edit.dart';
+import '../editor/workspace_search_decorations.dart';
 import '../git/git_cli.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
@@ -47,11 +72,57 @@ const Map<String, Color> _tokenColors = {
   'string': Color(0xFFCE9178),
   'comment': Color(0xFF6A9955),
   'type': Color(0xFF4EC9B0),
+  'struct': Color(0xFF4EC9B0),
+  'enum': Color(0xFF4EC9B0),
+  'interface': Color(0xFF4EC9B0),
+  'builtinType': Color(0xFF4EC9B0),
   'constant': Color(0xFF4FC1FF),
+  'const': Color(0xFF4FC1FF),
+  'boolean': Color(0xFF569CD6),
+  'enumMember': Color(0xFF4FC1FF),
   'number': Color(0xFFB5CEA8),
   'property': Color(0xFF9CDCFE),
   'variable': Color(0xFF9CDCFE),
+  'parameter': Color(0xFF9CDCFE),
+  'attribute': Color(0xFF9CDCFE),
+  'macro': Color(0xFF4EC9B0),
+  'procMacro': Color(0xFF4EC9B0),
+  'macroBang': Color(0xFF4EC9B0),
+  'namespace': Color(0xFF4EC9B0),
+  'typeParameter': Color(0xFF4EC9B0),
+  'decorator': Color(0xFFDCDCAA),
+  'operator': Color(0xFFD4D4D4),
+  'lifetime': Color(0xFF569CD6),
+  'selfKeyword': Color(0xFF569CD6),
+  'selfTypeKeyword': Color(0xFF569CD6),
+  'formatSpecifier': Color(0xFFCE9178),
+  'character': Color(0xFFCE9178),
+  'module': Color(0xFF4EC9B0),
+  'union': Color(0xFF4EC9B0),
+  'typeAlias': Color(0xFF4EC9B0),
+  'field': Color(0xFF9CDCFE),
+  'constParameter': Color(0xFF4FC1FF),
+  'static': Color(0xFF4FC1FF),
+  'label': Color(0xFF569CD6),
+  'derive': Color(0xFFDCDCAA),
+  'builtinAttribute': Color(0xFF9CDCFE),
+  'deriveHelper': Color(0xFF9CDCFE),
 };
+
+const int _editorInputWindowUtf16 = 16384;
+const int _editorCompositionReserveUtf16 = 256;
+
+int _operationPayloadChars(List<List<TextOp>> batches) => batches.fold<int>(
+      0,
+      (sum, batch) =>
+          sum + batch.fold<int>(0, (n, op) => n + (op.text?.length ?? 0)),
+    );
+
+bool _isPrintableOvertypeCharacter(String? character) =>
+    character != null &&
+    character.isNotEmpty &&
+    character.runes
+        .every((codePoint) => codePoint >= 0x20 && codePoint != 0x7f);
 
 Color _tokenColor(String kind) {
   for (final e in _tokenColors.entries) {
@@ -69,6 +140,8 @@ class WorkbenchPage extends StatefulWidget {
     SessionStore? sessionStore,
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
+    this.definitionRequest,
+    this.overtypeOnPaste = true,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -91,6 +164,17 @@ class WorkbenchPage extends StatefulWidget {
   /// 自绘窗口控制按钮（真实窗口开启；测试关闭，避免触碰插件通道）。
   final bool windowControls;
 
+  /// Optional override for deterministic definition-navigation tests.
+  final Future<DefinitionResult?> Function(
+    int documentId,
+    int offsetUtf16,
+    int version,
+  )? definitionRequest;
+
+  /// Mirrors VS Code's editor.overtypeOnPaste default. User settings will be
+  /// wired into this editor option when P07 adds the settings store.
+  final bool overtypeOnPaste;
+
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
   static final KeybindingsStore _defaultKeybindingsStore = KeybindingsStore();
@@ -98,6 +182,11 @@ class WorkbenchPage extends StatefulWidget {
   @override
   State<WorkbenchPage> createState() => _WorkbenchPageState();
 }
+
+final RegExp _rustIdentifierPattern = RegExp(
+  r'[_\p{XID_Start}][_\p{XID_Continue}]*',
+  unicode: true,
+);
 
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
@@ -109,17 +198,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
-  final CommandRegistry _commands = CommandRegistry();
+  final CommandService _commands = CommandService();
 
   /// 键位集合（默认表 + 用户 keybindings.json 覆盖，docs/09 W3-2）。
   late final KeybindingSet _keybindings;
   List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
+  Timer? _resourceTimer;
+  AlulaResourceStatus? _resourceStatus;
 
-  // ---------- 撤销/重做（feat-010，自研栈：不依赖 TextField 内建 UndoHistory） ----------
-  final UndoStack _undoStack = UndoStack();
-  DateTime? _lastEditAt;
-  bool _undoRedoBusy = false; // 撤销/重做程序化写回时不入栈
+  // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
+  final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
+  final NavigationHistory _navigationHistory = NavigationHistory();
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -128,6 +218,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 搜索视图（feat-search） ----------
   final _searchQuery = TextEditingController();
   List<SearchHit> _searchHits = [];
+  SearchHit? _selectedSearchHit;
+  int _selectedSearchDocId = -1;
+  int _selectedSearchDocVersion = -1;
   bool _searching = false;
   String? _searchBackendLabel;
   bool _searchCaseSensitive = false;
@@ -135,6 +228,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _searchGen = 0;
   SearchService? _searchService;
   WorkspaceWatcher? _watcher;
+  int _watcherGeneration = 0;
+  Future<void> _watcherTransition = Future<void>.value();
 
   // ---------- 大纲视图（feat-outline） ----------
   final List<({String kind, String name, int startUtf16, int line})>
@@ -156,25 +251,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
+  List<int> _findOverviewLines = const [];
+  int _matchesDocId = -1;
+  int _matchesDocVersion = -1;
   int _matchIndex = -1;
   bool _caseSensitive = false;
-
-  /// journal 单文档文本上限（字符）：超出不落 journal（内容只存在于内存，
-  /// 崩溃后该文档回退为磁盘内容）。低内存纪律：journal 不做无界缓冲。
-  static const _kMaxJournalTextChars = 2000000;
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
+  final Map<
+      int,
+      ({EditorGroup group, OpenDoc view, int offset, Offset position})>
+      _pendingDefinitionPointers = {};
+  final Map<int, ({OpenDoc view, List<TextSelection> selections})>
+      _pendingColumnSelectionStarts = {};
   String _focusedRegion = 'editor';
   int _syncCount = 0;
-  int _lastLatencyUs = 0;
   int _abiVersion = 0;
 
   WbSyncState _state = WbSyncState.idle;
+  bool _overtypeMode = false;
+  bool _disposing = false;
   String _statusDetail = '初始化…';
+  String? _journalRecoveryNotice;
+  String? _journalSaveError;
 
   // LSP / 语法
   bool _lspStarting = false;
@@ -182,6 +285,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _lspStatus = 'LSP 未启动';
   final List<Map<String, Object?>> _diagnostics = [];
   Map<int, List<Map<String, Object?>>> _syntaxByDoc = {};
+  Map<int, int> _syntaxVersionByDoc = {};
+  Map<int, List<Map<String, Object?>>> _semanticTokensByDoc = {};
+  Map<int, int> _semanticTokensVersionByDoc = {};
+  final Map<int, Timer> _syntaxRefreshTimers = {};
   Timer? _pollTimer;
   bool _polling = false;
   List<String> _completionItems = const [];
@@ -197,53 +304,231 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout = WorkbenchLayout(root: saved);
     }
     _layout.addListener(_scheduleStateSave);
-    _keybindings = KeybindingSet.load(
-        userJson: widget.keybindingsStore.tryLoadText());
+    _keybindings =
+        KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _registerCommands();
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
       _groups['editor'] = EditorGroup('editor');
     }
     _initCore();
+    _syncCommandContext();
+    _commands.addListener(_onCommandServiceChanged);
   }
 
   /// 命令注册（W3-1）：菜单/键位/命令面板统一入口。
   void _registerCommands() {
-    void reg(String id, String category, String title,
-        Future<void> Function() run, [String? shortcut]) {
+    void reg(
+        String id, String category, String title, Future<void> Function() run,
+        {String? shortcut,
+        String? when,
+        String? enablement,
+        Future<void> Function(Object? arguments)? runWithArguments}) {
       _commands.register(Command(
-          id: id, category: category, title: title, run: run, shortcut: shortcut));
+        id: id,
+        category: category,
+        title: title,
+        run: run,
+        shortcut: shortcut,
+        when: when,
+        enablement: enablement,
+        runWithArguments: runWithArguments,
+      ));
     }
 
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
-    reg('file.save', '文件', '保存', _saveActive, 'Ctrl+S');
+    reg('file.save', '文件', '保存', _saveActive,
+        shortcut: 'Ctrl+S', enablement: 'editorActive');
+    reg('file.saveAs', '文件', '另存为…', _saveAsActive,
+        shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+    reg('file.revert', '文件', '从磁盘还原', _revertActive,
+        enablement: 'editorActive');
+    reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
+        enablement: 'editorActive');
+    reg('file.reopenWithEncoding', '文件', '使用编码重新打开…', _reopenWithEncodingActive,
+        enablement: 'editorActive');
+    reg('file.selectEol', '文件', '选择行尾…', _selectLineEndingActive,
+        enablement: 'editorActive');
     reg('view.commandPalette', '查看', '命令面板', () async => _showCommandPalette(),
-        'Ctrl+Shift+P');
+        shortcut: 'Ctrl+Shift+P');
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
-        'Ctrl+P');
+        shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
     reg('view.toggleSidebar', '查看', '切换侧栏',
-        () async => _layout.toggleRegion('sidebar'), 'Ctrl+B');
+        () async => _layout.toggleRegion('sidebar'),
+        shortcut: 'Ctrl+B');
     reg('view.togglePanel', '查看', '切换面板',
-        () async => _layout.toggleRegion('panel'), 'Ctrl+J');
+        () async => _layout.toggleRegion('panel'),
+        shortcut: 'Ctrl+J');
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
+    reg(
+      'editor.action.toggleOvertypeInsertMode',
+      '编辑器',
+      '切换覆写/插入模式',
+      () async => _toggleOvertypeInsertMode(),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Alt+O'
+          : 'Insert',
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'deleteWordLeft',
+      '编辑器',
+      '删除至词首',
+      () => _deleteWord(left: true),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Alt+Backspace'
+          : 'Ctrl+Backspace',
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'deleteWordRight',
+      '编辑器',
+      '删除至词尾',
+      () => _deleteWord(left: false),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Alt+Delete'
+          : 'Ctrl+Delete',
+      enablement: 'editorTextFocus',
+    );
     reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg(
+      'deleteAllLeft',
+      '编辑器',
+      '删除至行首',
+      () => _deleteAllToBoundary(left: true),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Backspace'
+          : null,
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'deleteAllRight',
+      '编辑器',
+      '删除至行尾',
+      () => _deleteAllToBoundary(left: false),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Ctrl+K, Cmd+Delete'
+          : null,
+      enablement: 'editorTextFocus',
+    );
     reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
-        'Ctrl+Space');
+        shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
-        () async => _verifyIntegrity());
+        () async => _verifyIntegrity(),
+        enablement: 'editorActive');
+    reg('editor.gotoDef', '编辑器', '跳转定义', () async => _gotoDefinition(),
+        enablement: 'editorActive');
+    reg('workbench.action.navigateBack', '导航', '后退', _navigateBack,
+        shortcut: 'Alt+←');
+    reg('workbench.action.navigateForward', '导航', '前进', _navigateForward,
+        shortcut: 'Alt+→');
+    reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
+        _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
         () async => _panelTab.animateTo(1));
-    reg('view.panelSyntax', '查看', '语法面板',
-        () async => _panelTab.animateTo(2));
-    reg('editor.undo', '编辑器', '撤销', () async => _undo());
-    reg('editor.redo', '编辑器', '重做', () async => _redo());
-    reg('editor.find', '编辑器', '查找…', () async => _toggleFind());
-    reg('editor.replace', '编辑器', '替换…', () async => _openReplace());
-    reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp);
+    reg('view.panelSyntax', '查看', '语法面板', () async => _panelTab.animateTo(2));
+    reg('editor.undo', '编辑器', '撤销', () async => _undo(),
+        enablement: 'editorActive && editorCanUndo');
+    reg('editor.redo', '编辑器', '重做', () async => _redo(),
+        enablement: 'editorActive && editorCanRedo');
+    reg('editor.find', '编辑器', '查找…', () async => _toggleFind(),
+        enablement: 'editorActive');
+    reg('editor.addCursorAbove', '编辑器', '向上添加光标',
+        () async => _addCursorVertical(-1),
+        shortcut: 'Ctrl+Alt+Up', enablement: 'editorTextFocus');
+    reg('editor.addCursorBelow', '编辑器', '向下添加光标',
+        () async => _addCursorVertical(1),
+        shortcut: 'Ctrl+Alt+Down', enablement: 'editorTextFocus');
+    reg('editor.selectNextOccurrence', '编辑器', '添加下一个匹配项',
+        () async => _selectNextOccurrence(),
+        shortcut:
+            defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+D' : 'Ctrl+D',
+        enablement: 'editorTextFocus');
+    reg('editor.action.moveSelectionToNextFindMatch', '编辑器', '移动最后选区到下一个匹配项',
+        () async => _moveLastSelectionToNextOccurrence(),
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+K Cmd+D'
+            : 'Ctrl+K Ctrl+D',
+        enablement: 'editorTextFocus');
+    reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
+        () async => _selectAllOccurrences(),
+        shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
+    reg('editor.wordPartLeft', '编辑器', '向左移动子词',
+        () async => _moveWordPart(left: true),
+        enablement: 'editorTextFocus');
+    reg('editor.wordPartLeftSelect', '编辑器', '向左扩展子词选择',
+        () async => _moveWordPart(left: true, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.wordPartRight', '编辑器', '向右移动子词',
+        () async => _moveWordPart(left: false),
+        enablement: 'editorTextFocus');
+    reg('editor.wordPartRightSelect', '编辑器', '向右扩展子词选择',
+        () async => _moveWordPart(left: false, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorHome', '编辑器', '移至行首（缩进感知）',
+        () async => _moveLineBoundary(toEnd: false),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorHomeSelect', '编辑器', '选择至行首（缩进感知）',
+        () async => _moveLineBoundary(toEnd: false, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorEnd', '编辑器', '移至行尾',
+        () async => _moveLineBoundary(toEnd: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorEndSelect', '编辑器', '选择至行尾',
+        () async => _moveLineBoundary(toEnd: true, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorTop', '编辑器', '移至文件开头',
+        () async => _moveDocumentBoundary(toBottom: false),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorTopSelect', '编辑器', '选择至文件开头',
+        () async => _moveDocumentBoundary(toBottom: false, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorBottom', '编辑器', '移至文件末尾',
+        () async => _moveDocumentBoundary(toBottom: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorBottomSelect', '编辑器', '选择至文件末尾',
+        () async => _moveDocumentBoundary(toBottom: true, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorPageUp', '编辑器', '向上翻页',
+        () async => _moveCursorPage(forward: false),
+        shortcut: 'PageUp', enablement: 'editorTextFocus');
+    reg('editor.cursorPageUpSelect', '编辑器', '向上翻页并扩展选择',
+        () async => _moveCursorPage(forward: false, extendSelection: true),
+        shortcut: 'Shift+PageUp', enablement: 'editorTextFocus');
+    reg('editor.cursorPageDown', '编辑器', '向下翻页',
+        () async => _moveCursorPage(forward: true),
+        shortcut: 'PageDown', enablement: 'editorTextFocus');
+    reg('editor.cursorPageDownSelect', '编辑器', '向下翻页并扩展选择',
+        () async => _moveCursorPage(forward: true, extendSelection: true),
+        shortcut: 'Shift+PageDown', enablement: 'editorTextFocus');
+    reg('editor.mergeSelections', '编辑器', '合并重叠选区',
+        () async => _mergeSelections(),
+        enablement: 'editorTextFocus');
+    reg('editor.columnSelectUp', '编辑器', '向上扩展列选择',
+        () async => _moveColumnSelection(lines: -1),
+        shortcut: 'Alt+Shift+Up', enablement: 'editorTextFocus');
+    reg('editor.columnSelectDown', '编辑器', '向下扩展列选择',
+        () async => _moveColumnSelection(lines: 1),
+        shortcut: 'Alt+Shift+Down', enablement: 'editorTextFocus');
+    reg('editor.columnSelectLeft', '编辑器', '向左扩展列选择',
+        () async => _moveColumnSelection(columns: -1),
+        shortcut: 'Alt+Shift+Left', enablement: 'editorTextFocus');
+    reg('editor.columnSelectRight', '编辑器', '向右扩展列选择',
+        () async => _moveColumnSelection(columns: 1),
+        shortcut: 'Alt+Shift+Right', enablement: 'editorTextFocus');
+    reg('editor.cursorUndo', '编辑器', '撤销光标移动', () async => _cursorUndo(),
+        shortcut: 'Ctrl+U', enablement: 'editorTextFocus && cursorCanUndo');
+    reg('editor.cursorRedo', '编辑器', '重做光标移动', () async => _cursorRedo(),
+        shortcut: 'Ctrl+Shift+U',
+        enablement: 'editorTextFocus && cursorCanRedo');
+    reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
+        enablement: 'editorActive');
+    reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
+        enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
   }
 
@@ -255,13 +540,385 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 执行命令（键位/菜单/面板统一出口）；未知 id（用户键位指向不存在的命令）
   /// 给状态栏提示而不是静默吞掉。
-  void _runCommand(String id) {
-    final c = _commands.byId(id);
-    if (c == null) {
-      setState(() => _statusDetail = '命令不存在：$id（检查 keybindings.json）');
+  void _runCommand(String id, {Object? arguments}) {
+    unawaited(_commands.execute(id, arguments: arguments).then((status) {
+      if (!mounted) return;
+      if (status == CommandExecutionStatus.unknown) {
+        setState(() => _statusDetail = '命令不存在：$id（检查 keybindings.json）');
+      } else if (status == CommandExecutionStatus.disabled ||
+          status == CommandExecutionStatus.hidden) {
+        setState(() => _statusDetail = '命令当前不可用：$id');
+      } else if (status == CommandExecutionStatus.unsupportedArguments) {
+        setState(() => _statusDetail = '命令不接受参数：$id');
+      }
+    }));
+  }
+
+  Future<void> _deleteAllToBoundary({required bool left}) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) {
+        setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      }
       return;
     }
-    c.run();
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '行边界删除已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentDeleteRanges queried;
+    try {
+      queried = doc.doc.lineDeleteRanges(
+        selections
+            .map((selection) => DocumentDeleteRange(
+                  startUtf16: selection.start,
+                  endUtf16: selection.end,
+                ))
+            .toList(growable: false),
+        left: left,
+      );
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '行边界删除失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion ||
+        queried.ranges.length != selections.length) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '行边界删除未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    final candidates = <({int start, int end})>[];
+    for (final range in queried.ranges) {
+      if (range.startUtf16 < range.endUtf16) {
+        candidates.add((start: range.startUtf16, end: range.endUtf16));
+      }
+    }
+    if (candidates.isEmpty) return;
+
+    candidates.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.end.compareTo(b.end));
+    final merged = <({int start, int end})>[];
+    for (final range in candidates) {
+      if (merged.isEmpty || range.start > merged.last.end) {
+        merged.add(range);
+      } else if (range.end > merged.last.end) {
+        merged[merged.length - 1] = (start: merged.last.start, end: range.end);
+      }
+    }
+
+    final deletedUtf16 = merged.fold<int>(
+      0,
+      (total, range) => total + range.end - range.start,
+    );
+    if (deletedUtf16 > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '行边界删除已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    final plans = <({int start, int end, String removed, int mappedStart})>[];
+    var removedBefore = 0;
+    try {
+      for (final range in merged) {
+        plans.add((
+          start: range.start,
+          end: range.end,
+          removed: _readDocumentRange(doc, range.start, range.end),
+          mappedStart: range.start - removedBefore,
+        ));
+        removedBefore += range.end - range.start;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '行边界删除未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '行边界删除未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.delete(plan.start, plan.end - plan.start),
+    ];
+    final inverse = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.mappedStart, plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '行边界删除未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset) {
+      var removed = 0;
+      for (final plan in plans) {
+        if (offset < plan.start) break;
+        if (offset <= plan.end) return plan.start - removed;
+        removed += plan.end - plan.start;
+      }
+      return offset - removed;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length - deletedUtf16;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset:
+              mapOffset(selection.baseOffset).clamp(0, newLength).toInt(),
+          extentOffset:
+              mapOffset(selection.extentOffset).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    final beforeCaret = selections.first.extentOffset;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = left ? '已删除至行首' : '已删除至行尾');
+    }
+  }
+
+
+  void _syncCommandContext() {
+    final active = _active;
+    _commands.context.setValues({
+      'editorActive': active != null,
+      'editorDirty': active?.isDirty ?? false,
+      'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
+      'editorCanUndo': active?.undoStack.canUndo ?? false,
+      'editorCanRedo': active?.undoStack.canRedo ?? false,
+      'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
+      'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
+      'workspaceOpen': _workspaceRoot != null,
+      'lspStarting': _lspStarting,
+      'lspReady': _lspReady,
+    });
+  }
+
+  void _onCommandServiceChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _toggleOvertypeInsertMode() {
+    final active = _active;
+    if (active == null) return;
+    active.clearPendingOvertypeInput();
+    _flushInput(active, commitComposition: true);
+    if (!mounted) return;
+    setState(() {
+      _overtypeMode = !_overtypeMode;
+      _statusDetail = _overtypeMode ? '覆写模式' : '插入模式';
+    });
+  }
+
+  Future<void> _deleteWord({required bool left}) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) {
+        setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      }
+      return;
+    }
+    if (doc.crossWindowSelection != null) {
+      _replaceCrossWindowSelection(doc, '');
+      return;
+    }
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.length > maxDocWordDeleteCarets) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '单词删除已取消：光标数超过 $maxDocWordDeleteCarets 上限');
+      }
+      return;
+    }
+
+    final collapsed = selections.where((item) => item.isCollapsed).toList();
+    final expectedVersion = doc.doc.version;
+    late final DocumentDeleteRanges queried;
+    try {
+      queried = doc.doc.wordDeleteRanges(
+        collapsed.map((item) => item.extentOffset).toList(growable: false),
+        left: left,
+      );
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '单词删除失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '单词删除未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    var collapsedIndex = 0;
+    final candidates = <({int start, int end})>[];
+    for (final selection in selections) {
+      if (selection.isCollapsed) {
+        final range = queried.ranges[collapsedIndex++];
+        if (range.startUtf16 < range.endUtf16) {
+          candidates.add((start: range.startUtf16, end: range.endUtf16));
+        }
+      } else {
+        candidates.add((start: selection.start, end: selection.end));
+      }
+    }
+    if (candidates.isEmpty) return;
+
+    candidates.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.end.compareTo(b.end));
+    final merged = <({int start, int end})>[];
+    for (final range in candidates) {
+      if (merged.isEmpty || range.start > merged.last.end) {
+        merged.add(range);
+      } else if (range.end > merged.last.end) {
+        merged[merged.length - 1] = (
+          start: merged.last.start,
+          end: range.end,
+        );
+      }
+    }
+
+    final deletedUtf16 = merged.fold<int>(
+      0,
+      (total, range) => total + range.end - range.start,
+    );
+    if (deletedUtf16 > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '单词删除已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    final plans = <({int start, int end, String removed, int mappedStart})>[];
+    var removedBefore = 0;
+    try {
+      for (final range in merged) {
+        plans.add((
+          start: range.start,
+          end: range.end,
+          removed: _readDocumentRange(doc, range.start, range.end),
+          mappedStart: range.start - removedBefore,
+        ));
+        removedBefore += range.end - range.start;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '单词删除未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '单词删除未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.delete(plan.start, plan.end - plan.start),
+    ];
+    final inverse = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.mappedStart, plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '单词删除未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset) {
+      var removed = 0;
+      for (final plan in plans) {
+        if (offset < plan.start) break;
+        if (offset <= plan.end) return plan.start - removed;
+        removed += plan.end - plan.start;
+      }
+      return offset - removed;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length - deletedUtf16;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset:
+              mapOffset(selection.baseOffset).clamp(0, newLength).toInt(),
+          extentOffset:
+              mapOffset(selection.extentOffset).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    final beforeCaret = selections.first.extentOffset;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = left ? '已删除至词首' : '已删除至词尾');
+    }
   }
 
   void _showCommandPalette() {
@@ -270,8 +927,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '输入命令名（> 前缀可省）',
       items: [
         for (final c in _commands.all)
-          QuickItem(label: c.label, detail: c.shortcut, onRun: c.run),
+          QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
       ],
+      commands: _commands,
     );
   }
 
@@ -329,7 +987,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
       widget.layoutStore.save(_layout.root);
-      widget.sessionStore.save(_encodeSession());
+      final saved = widget.sessionStore.save(_encodeSession());
+      if (!mounted) return;
+      if (!saved) {
+        setState(() {
+          _journalSaveError = '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。'
+              '${widget.sessionStore.lastSaveError ?? ''}';
+        });
+      } else if (_journalSaveError != null) {
+        setState(() => _journalSaveError = null);
+      }
     });
   }
 
@@ -349,9 +1016,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   {
                     'id': d.id,
                     if (d.path != null) 'path': d.path,
-                    if ((d.isUntitled || d.isDirty) &&
-                        d.controller.text.length <= _kMaxJournalTextChars)
-                      'text': d.controller.text,
+                    'fileOptions': d.fileOptions.toJson(),
+                    'savedFileOptions': d.savedFileOptions.toJson(),
+                    if (d.isUntitled || d.isDirty)
+                      'text': d.doc.resync().content,
                   }
               ],
             }
@@ -367,26 +1035,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       // journal 没有未命名文档时才建欢迎页（避免恢复后出现重复未命名）
       final g = _focused;
       if (!g.docs.any((d) => d.isUntitled)) {
-        const welcome =
-            '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
+        const welcome = '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
         final doc = core.openDoc(_untitledId, welcome);
-        final controller = TextEditingController(text: welcome);
         final untitled = OpenDoc(
           id: _untitledId,
           name: '未命名',
           doc: doc,
-          controller: controller,
-          savedText: welcome,
+          undoBudget: _undoHistoryBudget,
         );
         g.docs.add(untitled);
-        controller.addListener(() => _onDocChanged(_untitledId));
         _scheduleStateSave();
       }
       if (g.activeDocId == null && g.docs.isNotEmpty) {
         g.activeDocId = g.docs.last.id;
       }
       _state = WbSyncState.idle;
-      _statusDetail = '已连接 Rust 核心 v$_abiVersion';
+      _statusDetail = _journalRecoveryNotice ?? '已连接 Rust 核心 v$_abiVersion';
       var openedFolder = false;
       if (_workspaceRoot == null &&
           widget.autoFolder != null &&
@@ -397,8 +1061,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _reloadTreeRoots();
       }
       if (openedFolder && widget.autoLsp) {
-        Future<void>.delayed(
-            const Duration(milliseconds: 50), _startLsp);
+        Future<void>.delayed(const Duration(milliseconds: 50), _startLsp);
+      }
+      if (_workspaceRoot != null && _resourceTimer == null) {
+        _startResourceMonitoring();
       }
     } catch (e) {
       _loadError = e.toString();
@@ -408,15 +1074,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 恢复上次会话（W2-4）：组/标签/焦点/工作区 + 未保存文本。
-  /// 脏文件的脏标记不跨重启保留（内容优先）：恢复后 savedText = 恢复文本，
-  /// 首次编辑从恢复文本继续增量同步。journal 损坏一律按全新会话启动。
+  /// 带路径的 journal 文本与当前磁盘不同时保留两侧并要求显式处理；旧 journal
+  /// 没有已保存基线时也采取保守冲突提示，避免首次 Ctrl+S 静默覆盖磁盘。
+  /// journal 损坏一律按全新会话启动。
   void _restoreSession(AlulaCore core) {
     final data = widget.sessionStore.tryLoad();
+    _journalRecoveryNotice = switch (widget.sessionStore.lastLoadStatus) {
+      SessionLoadStatus.recoveredFromBackup =>
+        '会话 journal 主文件不可用，已从上一个有效备份恢复；最近一次会话状态可能不完整。',
+      SessionLoadStatus.recoveredFromTemporary =>
+        '检测到上次保存被中断，已从校验通过的临时 journal 恢复。',
+      SessionLoadStatus.invalid =>
+        '会话 journal 和备份均无法校验；未保存文本可能无法恢复，现有文件已从磁盘打开。',
+      SessionLoadStatus.unsupportedVersion => '会话 journal 版本不受支持，未载入其中的未保存文本。',
+      SessionLoadStatus.notFound ||
+      SessionLoadStatus.loaded ||
+      SessionLoadStatus.legacy =>
+        null,
+    };
     if (data == null) return;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
       var maxId = 1;
+      final restoredDocuments = <int, OpenDoc>{};
       for (final gr in groupsRaw) {
         if (gr is! Map) continue;
         final region = gr['region'];
@@ -431,49 +1112,147 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (id == null) continue;
           final path = dr['path'] as String?;
           final text = dr['text'] as String?;
+          final existing = restoredDocuments[id];
+          if (existing != null) {
+            final optionsRaw = dr['fileOptions'];
+            final duplicateOptions = optionsRaw is Map
+                ? TextFileOptions.fromJson(
+                    Map<String, Object?>.from(optionsRaw),
+                  )
+                : existing.fileOptions;
+            if (existing.path != path ||
+                (text != null && text != existing.text) ||
+                duplicateOptions != existing.fileOptions) {
+              var recoveryText = text;
+              var recoveryOptions = duplicateOptions;
+              if (recoveryText == null && path != null) {
+                try {
+                  final disk = _readDiskDocument(core, path);
+                  recoveryText = disk.content;
+                  recoveryOptions = disk.options;
+                } on AlulaException {
+                  // Fall back to the first same-id copy if this path vanished.
+                }
+              }
+              recoveryText ??= existing.text;
+              final recoveryId = ++maxId;
+              final recoveryCoreDoc = core.openDoc(recoveryId, recoveryText);
+              recoveryCoreDoc.setSavepoint('');
+              final recovery = OpenDoc(
+                id: recoveryId,
+                name: '恢复副本（${path == null ? existing.name : _nameOf(path)}）',
+                doc: recoveryCoreDoc,
+                fileOptions: recoveryOptions,
+                savedFileOptions: recoveryOptions,
+                dirtyDisk: true,
+                undoBudget: _undoHistoryBudget,
+              );
+              target.docs.add(recovery);
+              _journalRecoveryNotice = '会话中的同文档副本内容或文件设置冲突；已将冲突内容保留为未命名恢复副本。';
+              continue;
+            }
+            target.docs.add(OpenDoc.viewOf(existing));
+            if (id > maxId) maxId = id;
+            continue;
+          }
           String? content;
           String savedText;
-          // 优先级：journal 文本（未保存内容）> 磁盘内容；脏标记不跨重启保留
+          var fileOptions = TextFileOptions.defaults;
+          var savedFileOptions = TextFileOptions.defaults;
+          var diskState = DiskDocumentState.current;
+          var conflictBaselineKnown = true;
+          DecodedTextFile? diskFile;
+          Map<String, Object?>? journalOptions;
+          Map<String, Object?>? journalSavedOptions;
+          // journal 文本保留本地编辑；磁盘文本作为当前可验证的 savepoint。
           if (path != null) {
-            String? disk;
+            final optionsRaw = dr['fileOptions'];
+            journalOptions = optionsRaw is Map
+                ? Map<String, Object?>.from(optionsRaw)
+                : null;
+            final savedOptionsRaw = dr['savedFileOptions'];
+            journalSavedOptions = savedOptionsRaw is Map
+                ? Map<String, Object?>.from(savedOptionsRaw)
+                : null;
             try {
-              disk = core.workspace.readFile(path);
-            } on AlulaException {
-              disk = null; // 磁盘文件没了：只能靠 journal
+              final options = journalOptions == null
+                  ? null
+                  : TextFileOptions.fromJson(journalOptions);
+              diskFile = _readDiskDocument(
+                core,
+                path,
+                preferredEncoding: options?.encoding,
+              );
+            } on AlulaException catch (error) {
+              diskFile = null;
+              diskState = error.code == 'NotFound'
+                  ? DiskDocumentState.missing
+                  : DiskDocumentState.unavailable;
             }
             if (text != null) {
               content = text;
-            } else if (disk != null) {
-              content = disk;
+            } else if (diskFile != null) {
+              content = diskFile.content;
             } else {
               continue;
+            }
+            final priorSavedFileOptions = journalSavedOptions == null
+                ? diskFile?.options ?? TextFileOptions.defaults
+                : TextFileOptions.fromJson(journalSavedOptions);
+            savedFileOptions = diskFile?.options ?? priorSavedFileOptions;
+            fileOptions = text != null && journalOptions != null
+                ? TextFileOptions.fromJson(journalOptions)
+                : diskFile?.options ?? savedFileOptions;
+            final optionsDifferFromDisk = fileOptions != diskFile?.options;
+            final savedOptionsDifferFromDisk = journalSavedOptions == null ||
+                priorSavedFileOptions != diskFile?.options;
+            if (diskFile != null &&
+                (content != diskFile.content ||
+                    optionsDifferFromDisk && savedOptionsDifferFromDisk)) {
+              diskState = DiskDocumentState.conflict;
+              conflictBaselineKnown = false;
             }
           } else {
             if (text == null) continue; // untitled 缺 journal 文本：跳过
             content = text;
+            final optionsRaw = dr['fileOptions'];
+            if (optionsRaw is Map) {
+              fileOptions = TextFileOptions.fromJson(
+                Map<String, Object?>.from(optionsRaw),
+              );
+            }
+            savedFileOptions = fileOptions;
           }
-          savedText = content;
+          savedText = diskFile?.content ?? content;
           final doc = core.openDoc(id, content);
-          final name =
-              path != null ? _nameOf(path) : '未命名';
-          final controller = TextEditingController(text: content);
+          if (savedText != content) doc.setSavepoint(savedText);
+          final name = path != null ? _nameOf(path) : '未命名';
           final open = OpenDoc(
             id: id,
             path: path,
             uri: path != null ? _pathToUri(path) : null,
             name: name,
             doc: doc,
-            controller: controller,
-            savedText: savedText,
+            fileOptions: fileOptions,
+            savedFileOptions: savedFileOptions,
+            dirtyDisk: path == null
+                ? false
+                : diskFile == null ||
+                    content != diskFile.content ||
+                    fileOptions != diskFile.options,
+            diskState: diskState,
+            conflictBaselineKnown: conflictBaselineKnown,
+            undoBudget: _undoHistoryBudget,
           );
           target.docs.add(open);
-          controller.addListener(() => _onDocChanged(id));
+          restoredDocuments[id] = open;
           if (id > maxId) maxId = id;
         }
         final active = (gr['active'] as num?)?.toInt();
         if (target.docs.isNotEmpty) {
-          target.activeDocId =
-              target.docs.any((d) => d.id == active) ? active : target.docs.last.id;
+          target.activeDocId = target.docs.any((d) => d.id == active)
+              ? active
+              : target.docs.last.id;
         }
       }
       final focused = data['focused'];
@@ -483,8 +1262,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final workspace = data['workspace'];
       if (workspace is String && Directory(workspace).existsSync()) {
         _workspaceRoot = workspace;
-        _git = GitCli(root: workspace);
-        _searchService = SearchService(root: workspace);
+        _git = GitCli(
+          root: workspace,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
+        _searchService = SearchService(
+          root: workspace,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _attachWorkspaceWatcher();
       }
       _nextDocId = maxId + 1;
@@ -493,8 +1280,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  String _nameOf(String path) =>
-      path.replaceAll('\\', '/').split('/').last;
+  String _nameOf(String path) => path.replaceAll('\\', '/').split('/').last;
+
+  DecodedTextFile _readDiskDocument(
+    AlulaCore core,
+    String path, {
+    TextEncoding? preferredEncoding,
+  }) {
+    if (preferredEncoding != TextEncoding.utf16Le &&
+        preferredEncoding != TextEncoding.utf16Be) {
+      return core.workspace.readFileDocument(path);
+    }
+    try {
+      return core.workspace.readFileDocument(
+        path,
+        encoding: preferredEncoding,
+      );
+    } on AlulaException {
+      return core.workspace.readFileDocument(path);
+    }
+  }
 
   /// 重载文件树根（journal 恢复工作区后）。
   void _reloadTreeRoots() {
@@ -518,14 +1323,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 焦点组（组被移除时回退到第一个组）。
-  EditorGroup get _focused =>
-      _groups[_focusedRegion] ?? _groups.values.first;
+  EditorGroup get _focused => _groups[_focusedRegion] ?? _groups.values.first;
 
   OpenDoc? get _active => _focused.active;
 
-  Iterable<OpenDoc> get _allDocs sync* {
+  Iterable<OpenDoc> get _allDocViews sync* {
     for (final g in _groups.values) {
       yield* g.docs;
+    }
+  }
+
+  /// One representative per Rust document, for document-scoped services.
+  Iterable<OpenDoc> get _allDocs sync* {
+    final seen = <Object>{};
+    for (final view in _allDocViews) {
+      if (seen.add(view._shared)) yield view;
+    }
+  }
+
+  Iterable<OpenDoc> _viewsOf(OpenDoc document) sync* {
+    for (final view in _allDocViews) {
+      if (view.sameDocumentAs(document)) yield view;
     }
   }
 
@@ -538,7 +1356,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return null;
   }
 
+  EditorGroup? _ownerOfView(OpenDoc view) {
+    for (final g in _groups.values) {
+      if (g.docs.any((candidate) => identical(candidate, view))) return g;
+    }
+    return null;
+  }
+
   bool _isEditorRegion(String r) => r == 'editor' || r.startsWith('editor-');
+
+  String _editorSemanticsLabel(EditorGroup group, OpenDoc doc) {
+    if (group.region == 'editor') return '${doc.name} 主编辑器';
+    final ordinal = group.region.startsWith('editor-')
+        ? group.region.substring('editor-'.length)
+        : group.region;
+    return '${doc.name} 编辑器 $ordinal';
+  }
 
   /// 布局树里的编辑器叶子 ↔ 组状态对齐（启动恢复/拆分后调用）。
   void _ensureGroupsFromLayout() {
@@ -551,61 +1384,1584 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 编辑同步 ----------
 
-  void _onDocChanged(int docId) {
-    final owner = _ownerOf(docId);
-    final doc = owner?.docs.where((d) => d.id == docId).firstOrNull;
-    if (doc == null) return;
-    final isActiveOfFocused =
-        owner!.region == _focusedRegion && owner.activeDocId == docId;
-    final newText = doc.controller.text;
-    final beforeText = doc.savedText; // 撤销快照基线（必须在基准前移前捕获）
-    final ops = diffToOps(beforeText, newText);
-    if (ops.isEmpty) return;
-    doc.savedText = newText; // 同步基准前移（失败时由失配分支恢复）
+  void _updateDirty(OpenDoc doc) {
+    doc.dirtyDisk = doc.doc.isDirty ||
+        doc.fileOptions != doc.savedFileOptions ||
+        doc.path != null &&
+            (doc.diskState == DiskDocumentState.missing ||
+                doc.diskState == DiskDocumentState.unavailable);
+  }
 
-    // 撤销栈入帧
-    if (!_undoRedoBusy) {
-      final now = DateTime.now();
-      final coalesce =
-          _lastEditAt != null && now.difference(_lastEditAt!) < const Duration(milliseconds: 400);
-      _undoStack.push(before: beforeText, caret: newText.length, coalesce: coalesce);
-      _lastEditAt = now;
+  void _flushInput(OpenDoc doc, {bool commitComposition = false}) {
+    final field = doc.inputFieldKey.currentState;
+    if (field != null) {
+      if (commitComposition) {
+        field.commitComposition();
+      } else {
+        field.flushPending();
+      }
+      return;
     }
-    doc.dirtyDisk = true; // 有未保存的用户编辑（同步失配分支同样视为脏）
-    _scheduleStateSave(); // 编辑内容变化 → journal 防抖更新
-    _scheduleOutlineRefresh();
-    final sw = Stopwatch()..start();
-    try {
-      final version = doc.doc.apply(ops);
-      sw.stop();
-      if (isActiveOfFocused) {
-        setState(() {
-          _state = WbSyncState.synced;
-          _syncCount++;
-          _lastLatencyUs = sw.elapsedMicroseconds;
-          _statusDetail = '已同步 v$version（${ops.length} op，$_lastLatencyUs µs）';
-        });
-      }
-    } on SyncMismatchException catch (e) {
-      final r = doc.doc.resync();
-      doc.controller.value = TextEditingValue(
-        text: r.content,
-        selection: TextSelection.collapsed(offset: r.content.length),
+    final delta = commitComposition
+        ? doc.inputWindow.commitComposition()
+        : doc.inputWindow.flushPending();
+    if (delta != null) _onInputDelta(doc, delta);
+  }
+
+  void _recordDocumentOperations(
+    OpenDoc doc, {
+    required List<TextOp> forward,
+    required List<TextOp> inverse,
+    required int beforeCaret,
+    required int afterCaret,
+    required bool coalesce,
+    String? beforeSnapshot,
+    String? transactionId,
+  }) {
+    if (forward.isNotEmpty) doc.crossWindowSelection = null;
+    final retainedOperationChars = _operationPayloadChars([forward, inverse]);
+    if (beforeSnapshot != null &&
+        retainedOperationChars > _undoHistoryBudget.maxTotalChars) {
+      // A whole-document replacement can need more memory as two directional
+      // delta payloads than the existing history budget allows. Keep its
+      // pre-edit state as the single bounded legacy frame instead.
+      doc.undoStack.push(
+        before: beforeSnapshot,
+        caret: beforeCaret,
+        coalesce: false,
+        encoding: doc.fileOptions.encoding.id,
+        bom: doc.fileOptions.bom,
+        lineEnding: doc.fileOptions.lineEnding.id,
+        transactionId: transactionId,
       );
-      doc.savedText = r.content;
-      if (isActiveOfFocused) {
+    } else {
+      doc.undoStack.pushOperations(
+        forward: forward,
+        inverse: inverse,
+        caret: beforeCaret,
+        redoCaret: afterCaret,
+        coalesce: coalesce,
+        encoding: doc.fileOptions.encoding.id,
+        bom: doc.fileOptions.bom,
+        lineEnding: doc.fileOptions.lineEnding.id,
+        transactionId: transactionId,
+      );
+    }
+    if (forward.isNotEmpty && !coalesce) {
+      final owner = _ownerOfView(doc);
+      if (owner != null) {
+        try {
+          final offset =
+              beforeCaret.clamp(0, doc.inputWindow.totalUtf16Length).toInt();
+          _navigationHistory.recordEdit(
+            _navigationLocation(doc, offset, owner.region),
+          );
+        } on AlulaException {
+          // A stale edit caret is not allowed to interrupt the edit path.
+        }
+      }
+    }
+    doc.lastEditAt = coalesce ? DateTime.now() : null;
+    _updateDirty(doc);
+    if (_disposing) return;
+    if (_active?.id == doc.id) _syncCommandContext();
+    if (forward.isNotEmpty) {
+      _scheduleStateSave();
+      _scheduleOutlineRefresh();
+      if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    }
+  }
+
+  void _setDocSelection(OpenDoc doc, TextSelection selection) =>
+      _setDocSelections(doc, [selection]);
+
+  void _setCrossWindowLineSelection(OpenDoc doc, TextSelection selection) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null && window.pendingText != window.text ||
+        window.version != doc.doc.version ||
+        selection.start < 0 ||
+        selection.end > window.totalUtf16Length ||
+        selection.start == selection.end) {
+      return;
+    }
+    doc.selectionHistory.record(doc.selectionSet);
+    doc.crossWindowSelection = selection;
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
+    // Keep a bounded caret well inside the selected line so the input window
+    // has room for IME preedit text on either side. The pointer handler must
+    // leave this new window's selection intact after this callback returns.
+    final compositionCaret = (selection.start + window.maxWindowUtf16 ~/ 2 + 1)
+        .clamp(0, window.totalUtf16Length)
+        .toInt();
+    doc.replaceInputWindow(
+      compositionCaret,
+      selection: TextSelection.collapsed(offset: compositionCaret),
+    );
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  void _setCrossWindowDragSelection(
+    OpenDoc doc,
+    TextSelection selection, {
+    required bool started,
+  }) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null && window.pendingText != window.text ||
+        window.version != doc.doc.version ||
+        selection.start < 0 ||
+        selection.end > window.totalUtf16Length ||
+        selection.isCollapsed) {
+      return;
+    }
+    if (started) {
+      doc.selectionHistory.record(doc.selectionSet);
+      doc.additionalSelections = const [];
+      doc.columnSelection = null;
+    }
+    doc.crossWindowSelection = selection;
+    const rewindowMarginUtf16 = 2048;
+    final extent = selection.extentOffset;
+    final hasDocumentTextBeyondExtent =
+        extent > 0 && extent < window.totalUtf16Length;
+    if (hasDocumentTextBeyondExtent &&
+        (started ||
+            extent <= window.startUtf16 + rewindowMarginUtf16 ||
+            extent >= window.endUtf16 - rewindowMarginUtf16)) {
+      _flushInput(doc);
+      final currentWindow = doc.inputWindow;
+      if (extent <= currentWindow.startUtf16 + rewindowMarginUtf16 ||
+          extent >= currentWindow.endUtf16 - rewindowMarginUtf16) {
+        doc.replaceInputWindow(
+          extent,
+          selection: TextSelection.collapsed(offset: extent),
+        );
+      }
+    }
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  void _moveWordPart({required bool left, bool extendSelection = false}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final current = doc.selection;
+    if (!extendSelection && !current.isCollapsed) {
+      _setDocSelection(
+        doc,
+        TextSelection.collapsed(offset: left ? current.start : current.end),
+      );
+      return;
+    }
+    final destination = doc.doc.wordPartOffset(
+      current.extentOffset,
+      left: left,
+    );
+    final next = extendSelection
+        ? TextSelection(
+            baseOffset: current.baseOffset,
+            extentOffset: destination,
+            affinity: current.affinity,
+            isDirectional: current.isDirectional,
+          )
+        : TextSelection.collapsed(offset: destination, affinity: current.affinity);
+    if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveLineBoundary({required bool toEnd, bool extendSelection = false}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final current = doc.selection;
+    final boundary = doc.doc.lineBoundary(current.extentOffset);
+    final destination = toEnd
+        ? boundary.endUtf16
+        : boundary.firstNonWhitespaceUtf16 != boundary.startUtf16 &&
+                current.extentOffset == boundary.firstNonWhitespaceUtf16
+            ? boundary.startUtf16
+            : boundary.firstNonWhitespaceUtf16;
+    final next = extendSelection
+        ? TextSelection(
+            baseOffset: current.baseOffset,
+            extentOffset: destination,
+            affinity: current.affinity,
+            isDirectional: current.isDirectional,
+          )
+        : TextSelection.collapsed(
+            offset: destination,
+            affinity: current.affinity,
+          );
+    if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveDocumentBoundary({
+    required bool toBottom,
+    bool extendSelection = false,
+  }) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final current = doc.selection;
+    final destination = toBottom ? doc.inputWindow.totalUtf16Length : 0;
+    final next = extendSelection
+        ? TextSelection(
+            baseOffset: current.baseOffset,
+            extentOffset: destination,
+            affinity: current.affinity,
+            isDirectional: current.isDirectional,
+          )
+        : TextSelection.collapsed(
+            offset: destination,
+            affinity: current.affinity,
+          );
+    if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveCursorPage({
+    required bool forward,
+    bool extendSelection = false,
+  }) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final context = _focusNodeFor(_focused, doc).context;
+    if (context == null) return;
+    Actions.invoke(
+      context,
+      ExtendSelectionVerticallyToAdjacentPageIntent(
+        forward: forward,
+        collapseSelection: !extendSelection,
+      ),
+    );
+  }
+
+  void _setDocSelections(
+    OpenDoc doc,
+    List<TextSelection> selections, {
+    ColumnSelectionState? columnSelection,
+    bool recordHistory = true,
+  }) {
+    _flushInput(doc);
+    final total = doc.inputWindow.totalUtf16Length;
+    final clampedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset: selection.baseOffset.clamp(0, total).toInt(),
+          extentOffset: selection.extentOffset.clamp(0, total).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    if (clampedSelections.isEmpty) return;
+    final previousSet = doc.selectionSet;
+    if (recordHistory) doc.selectionHistory.record(previousSet);
+    doc.crossWindowSelection = null;
+    final oldAdditional = doc.additionalSelections;
+    doc.additionalSelections = List.unmodifiable(clampedSelections.skip(1));
+    doc.columnSelection = columnSelection;
+    final clamped = clampedSelections.first;
+    final window = doc.inputWindow;
+    final start = window.startUtf16;
+    final end = window.endUtf16;
+    final field = doc.inputFieldKey.currentState;
+    if (clamped.baseOffset >= start &&
+        clamped.baseOffset <= end &&
+        clamped.extentOffset >= start &&
+        clamped.extentOffset <= end &&
+        field != null) {
+      field.setSelection(TextSelection(
+        baseOffset: clamped.baseOffset - start,
+        extentOffset: clamped.extentOffset - start,
+        affinity: clamped.affinity,
+        isDirectional: clamped.isDirectional,
+      ));
+      if (mounted &&
+          (!listEquals(oldAdditional, doc.additionalSelections) ||
+              previousSet.first != clamped)) {
+        setState(() {});
+      }
+      _syncCommandContext();
+      return;
+    }
+    doc.replaceInputWindow(clamped.extentOffset, selection: clamped);
+    doc.columnSelection = columnSelection;
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  List<TextSelection> _localAdditionalSelections(OpenDoc doc) {
+    final window = doc.inputWindow;
+    final source = window.text;
+    final candidates = doc.additionalSelections.where((selection) {
+      final base = selection.baseOffset - window.startUtf16;
+      final extent = selection.extentOffset - window.startUtf16;
+      return base >= 0 &&
+          extent >= 0 &&
+          base <= source.length &&
+          extent <= source.length;
+    }).toList(growable: false);
+    final mapped = mapOffsetsThroughTextChange(
+      source,
+      window.presentedText,
+      candidates
+          .expand((selection) => [
+                selection.baseOffset - window.startUtf16,
+                selection.extentOffset - window.startUtf16,
+              ])
+          .toList(growable: false),
+    );
+    return List.unmodifiable([
+      for (var i = 0; i < candidates.length; i++)
+        TextSelection(
+          baseOffset: mapped[i * 2],
+          extentOffset: mapped[i * 2 + 1],
+          affinity: candidates[i].affinity,
+          isDirectional: candidates[i].isDirectional,
+        ),
+    ]);
+  }
+
+  List<TextSelection> _absoluteSelections(
+    OpenDoc doc,
+    List<TextSelection> localSelections,
+  ) =>
+      localSelections
+          .map((selection) => TextSelection(
+                baseOffset: doc.inputWindow.startUtf16 + selection.baseOffset,
+                extentOffset:
+                    doc.inputWindow.startUtf16 + selection.extentOffset,
+                affinity: selection.affinity,
+                isDirectional: selection.isDirectional,
+              ))
+          .toList(growable: false);
+
+  void _addCursorVertical(int lineDelta) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final currentSelections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (currentSelections.isEmpty) return;
+
+    try {
+      final caret = doc.selection.extentOffset;
+      final currentLine = doc.doc.lineBoundary(caret);
+      final firstLine = doc.doc.lineOffset(0);
+      final targetLineNumber = (currentLine.line + lineDelta)
+          .clamp(0, firstLine.lineCount - 1)
+          .toInt();
+      final targetLine = doc.doc.lineOffset(targetLineNumber);
+      final targetBoundary = doc.doc.lineBoundary(targetLine.offsetUtf16);
+      final column = (caret - currentLine.startUtf16)
+          .clamp(0, currentLine.endUtf16 - currentLine.startUtf16)
+          .toInt();
+      final targetColumn = column
+          .clamp(0, targetBoundary.endUtf16 - targetBoundary.startUtf16)
+          .toInt();
+      final desiredTarget = targetBoundary.startUtf16 + targetColumn;
+
+      // Keep the target's grapheme context bounded even on a very long line.
+      // For ordinary lines this reads from the line start; for long lines it
+      // reads at most 64 Ki UTF-16 units around the desired column.
+      final contextStart =
+          desiredTarget - targetBoundary.startUtf16 > maxDocReadRangeUtf16
+              ? desiredTarget - maxDocReadRangeUtf16 ~/ 2
+              : targetBoundary.startUtf16;
+      final available = doc.inputWindow.totalUtf16Length - contextStart;
+      if (available <= 0) return;
+      final range = doc.doc.readRange(
+        contextStart,
+        maxLenUtf16: available.clamp(1, maxDocReadRangeUtf16).toInt(),
+      );
+      final localTarget = desiredTarget - range.startUtf16;
+      if (localTarget < 0 || localTarget > range.text.length) return;
+
+      // Snap the candidate before asking Rust to validate it, because the
+      // desired UTF-16 column can otherwise land inside a surrogate pair.
+      final target = range.startUtf16 +
+          lineOffsetAtColumn(
+            range.text,
+            0,
+            localTarget,
+          );
+      // Rust rejects offsets inside surrogate pairs.
+      doc.doc.lineBoundary(target);
+      final next = TextSelection.collapsed(offset: target);
+      final window = doc.inputWindow;
+      if (target < window.startUtf16 || target > window.endUtf16) {
+        // Moving the new caret opens the correct input window while retaining
+        // previous cursors, including those that are remote from that window.
+        _setDocSelections(doc, [next, ...currentSelections]);
+      } else {
+        _setDocSelections(doc, [...currentSelections, next]);
+      }
+    } on AlulaException {
+      // A stale or invalid Rust position must not create a split-scalar caret.
+    } on RangeError {
+      // Keep the current selections if the document changed during lookup.
+    }
+  }
+
+  String? _selectedOccurrenceNeedle(OpenDoc doc) {
+    final selection = doc.selection;
+    final start = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final end = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    final window = doc.inputWindow;
+    final localStart = start - window.startUtf16;
+    final localEnd = end - window.startUtf16;
+    final text = doc.editingValue.text;
+    if (start == end ||
+        localStart < 0 ||
+        localEnd > text.length ||
+        localStart >= localEnd ||
+        !_isUtf16CodePointBoundary(text, localStart) ||
+        !_isUtf16CodePointBoundary(text, localEnd)) {
+      return null;
+    }
+    return text.substring(localStart, localEnd);
+  }
+
+  bool _isUtf16CodePointBoundary(String text, int offset) {
+    if (offset < 0 || offset > text.length) return false;
+    if (offset == 0 || offset == text.length) return true;
+    final previous = text.codeUnitAt(offset - 1);
+    final next = text.codeUnitAt(offset);
+    return !(previous >= 0xD800 &&
+        previous <= 0xDBFF &&
+        next >= 0xDC00 &&
+        next <= 0xDFFF);
+  }
+
+  bool _selectionOverlapsMatch(TextSelection selection, int start, int end) {
+    final low = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final high = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (low == high) return low >= start && low < end;
+    return low < end && high > start;
+  }
+
+  int? _nextUnselectedOccurrence(
+    OpenDoc doc, {
+    required String needle,
+    required int startAfterUtf16,
+    required List<TextSelection> existingSelections,
+  }) {
+    final total = doc.inputWindow.totalUtf16Length;
+    final startAfter = startAfterUtf16.clamp(0, total).toInt();
+    int? found;
+
+    void scanRange(int start, int end) {
+      if (found != null) return;
+      for (final offset in findTextOccurrenceOffsets(
+        needle: needle,
+        totalUtf16Length: total,
+        startUtf16: start,
+        endUtf16: end,
+        readRange: doc.doc.readRange,
+      )) {
+        final matchEnd = offset + needle.length;
+        if (existingSelections.any(
+          (selection) => _selectionOverlapsMatch(selection, offset, matchEnd),
+        )) {
+          continue;
+        }
+        found = offset;
+        return;
+      }
+    }
+
+    scanRange(startAfter, total);
+    scanRange(0, startAfter);
+    return found;
+  }
+
+  (int, int)? _remoteCaretDeletionRange(
+    OpenDoc doc,
+    int caret, {
+    required bool backwards,
+  }) {
+    final total = doc.inputWindow.totalUtf16Length;
+    if (backwards) {
+      var start = (caret - maxDocReadRangeUtf16 + 1).clamp(0, caret).toInt();
+      TextRangeRead range;
+      while (true) {
+        try {
+          range = doc.doc.readRange(
+            start,
+            maxLenUtf16: caret - start,
+          );
+          break;
+        } on AlulaException catch (error) {
+          if (error.code != 'InvalidUtf16Offset' || start == 0) rethrow;
+          start--;
+        }
+      }
+      final boundary = previousGraphemeBoundary(
+        range.text,
+        caret - range.startUtf16,
+      );
+      if (boundary == 0 && range.startUtf16 > 0) return null;
+      return (range.startUtf16 + boundary, caret);
+    }
+
+    if (caret >= total) return null;
+    final range = doc.doc.readRange(
+      caret,
+      maxLenUtf16: (total - caret).clamp(1, maxDocReadRangeUtf16).toInt(),
+    );
+    final boundary = nextGraphemeBoundary(range.text, 0);
+    if (boundary == range.text.length && range.endUtf16 < total) return null;
+    return (caret, caret + boundary);
+  }
+
+  void _prepareRemoteMultiSelectionEdits(
+    OpenDoc doc,
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+    TextEditingValue formattedValue,
+  ) {
+    final windowStart = doc.inputWindow.startUtf16;
+    final windowEnd = windowStart + oldValue.text.length;
+    final rawOps = diffToOps(oldValue.text, newValue.text);
+    final rawDeletedLength = rawOps
+        .where((operation) => operation.type == OpType.delete)
+        .fold<int>(0, (sum, operation) => sum + operation.lenUtf16!);
+    final insertedText = rawOps
+        .where((operation) => operation.type == OpType.insert)
+        .map((operation) => operation.text!)
+        .join();
+    final backwardsDelete = oldValue.selection.isCollapsed &&
+        rawDeletedLength > 0 &&
+        rawOps.first.offsetUtf16 < oldValue.selection.extentOffset;
+    final localOps = diffToOps(oldValue.text, formattedValue.text);
+    final localGroup = localOps.isEmpty
+        ? null
+        : _SelectionEditOffset(
+            windowStart + localOps.first.offsetUtf16,
+            localOps
+                .where((operation) => operation.type == OpType.delete)
+                .fold<int>(0, (sum, operation) => sum + operation.lenUtf16!),
+            localOps
+                .where((operation) => operation.type == OpType.insert)
+                .fold<int>(0, (sum, operation) => sum + operation.text!.length),
+          );
+    final additionalOperations = <TextOp>[];
+    final remoteGroups = <_SelectionEditOffset>[];
+    final unchangedExternal = <TextSelection>[];
+
+    for (final selection in doc.additionalSelections) {
+      final low = selection.baseOffset < selection.extentOffset
+          ? selection.baseOffset
+          : selection.extentOffset;
+      final high = selection.baseOffset < selection.extentOffset
+          ? selection.extentOffset
+          : selection.baseOffset;
+      final insideWindow = low >= windowStart && high <= windowEnd;
+      if (insideWindow) continue;
+      final beforeWindow = high <= windowStart;
+      final afterWindow = low >= windowEnd;
+      if (!beforeWindow && !afterWindow) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+
+      var editStart = low;
+      var deletedLength = high - low;
+      if (selection.isCollapsed &&
+          rawDeletedLength > 0 &&
+          oldValue.selection.isCollapsed) {
+        final range = _remoteCaretDeletionRange(
+          doc,
+          low,
+          backwards: backwardsDelete,
+        );
+        if (range == null) {
+          unchangedExternal.add(selection);
+          continue;
+        }
+        editStart = range.$1;
+        deletedLength = range.$2 - range.$1;
+      }
+      if (deletedLength == 0 && insertedText.isEmpty) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+      final editEnd = editStart + deletedLength;
+      if (localGroup != null &&
+          localGroup.deletedLength > 0 &&
+          editStart < localGroup.start + localGroup.deletedLength &&
+          localGroup.start < editEnd) {
+        unchangedExternal.add(selection);
+        continue;
+      }
+
+      if (deletedLength > 0) {
+        additionalOperations.add(TextOp.delete(editStart, deletedLength));
+      }
+      if (insertedText.isNotEmpty) {
+        additionalOperations.add(TextOp.insert(editStart, insertedText));
+      }
+      remoteGroups.add(
+        _SelectionEditOffset(editStart, deletedLength, insertedText.length),
+      );
+    }
+
+    final groups = [
+      if (localGroup != null) localGroup,
+      ...remoteGroups,
+    ]..sort((a, b) => a.start.compareTo(b.start));
+    int mapOffset(int offset) {
+      var shift = 0;
+      for (final group in groups) {
+        if (offset < group.start) break;
+        if (offset <= group.start + group.deletedLength) {
+          return group.start + shift + group.insertedLength;
+        }
+        shift += group.insertedLength - group.deletedLength;
+      }
+      return offset + shift;
+    }
+
+    final remoteSelections = <TextSelection>[
+      for (final group in remoteGroups)
+        TextSelection.collapsed(offset: mapOffset(group.start)),
+      for (final selection in unchangedExternal)
+        TextSelection(
+          baseOffset: mapOffset(selection.baseOffset),
+          extentOffset: mapOffset(selection.extentOffset),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ];
+    doc.pendingInputOperations = List.unmodifiable(additionalOperations);
+    doc.pendingInputWindowShiftUtf16 =
+        remoteGroups.where((group) => group.start < windowStart).fold<int>(
+              0,
+              (shift, group) =>
+                  shift + group.insertedLength - group.deletedLength,
+            );
+    doc.additionalSelections = List.unmodifiable(remoteSelections);
+  }
+
+  void _selectNextOccurrence() {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final primary = doc.selection;
+    final selectionEnd = primary.baseOffset < primary.extentOffset
+        ? primary.extentOffset
+        : primary.baseOffset;
+    final existing = normalizeSelectionSet([
+      primary,
+      ...doc.additionalSelections,
+    ]);
+    final foundOffset = _nextUnselectedOccurrence(
+      doc,
+      needle: needle,
+      startAfterUtf16: selectionEnd,
+      existingSelections: existing,
+    );
+    if (foundOffset == null) return;
+    final match = TextSelection(
+      baseOffset: foundOffset,
+      extentOffset: foundOffset + needle.length,
+    );
+    final window = doc.inputWindow;
+    final matchOutsideWindow = match.baseOffset < window.startUtf16 ||
+        match.extentOffset > window.endUtf16;
+    _setDocSelections(
+      doc,
+      matchOutsideWindow ? [match, ...existing] : [...existing, match],
+    );
+  }
+
+  void _moveLastSelectionToNextOccurrence() {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.isEmpty) return;
+    final movingIndex = selections.length - 1;
+    final moving = selections[movingIndex];
+    final startAfter = moving.baseOffset < moving.extentOffset
+        ? moving.extentOffset
+        : moving.baseOffset;
+    final remaining = [...selections]..removeAt(movingIndex);
+    final foundOffset = _nextUnselectedOccurrence(
+      doc,
+      needle: needle,
+      startAfterUtf16: startAfter,
+      existingSelections: remaining,
+    );
+    if (foundOffset == null) return;
+    remaining.add(TextSelection(
+      baseOffset: foundOffset,
+      extentOffset: foundOffset + needle.length,
+    ));
+    _setDocSelections(doc, remaining);
+  }
+
+  void _selectAllOccurrences() {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final needle = _selectedOccurrenceNeedle(doc);
+    if (needle == null) {
+      setState(() => _statusDetail = '先选择要匹配的文本');
+      return;
+    }
+    final primary = doc.selection;
+    final total = doc.inputWindow.totalUtf16Length;
+    final matches = <TextSelection>[primary];
+    var truncated = false;
+    for (final offset in findTextOccurrenceOffsets(
+      needle: needle,
+      totalUtf16Length: total,
+      readRange: doc.doc.readRange,
+    )) {
+      final matchEnd = offset + needle.length;
+      if (_selectionOverlapsMatch(primary, offset, matchEnd)) continue;
+      if (matches.length >= defaultMultiCursorLimit) {
+        truncated = true;
+        break;
+      }
+      matches.add(TextSelection(baseOffset: offset, extentOffset: matchEnd));
+    }
+    _setDocSelections(doc, matches);
+    if (truncated && mounted) {
+      setState(() => _statusDetail =
+          '已选择前 $defaultMultiCursorLimit 个匹配项（editor.multiCursorLimit）');
+    }
+  }
+
+  void _mergeSelections() {
+    final doc = _active;
+    if (doc == null) return;
+    final merged = normalizeSelectionSet(doc.selectionSet);
+    _setDocSelections(doc, merged);
+  }
+
+  List<String> _copyableSelectionTexts(OpenDoc doc) {
+    final text = doc.inputWindow.text;
+    final start = doc.inputWindow.startUtf16;
+    final lines = lineContentRangesForText(text);
+    return doc.selectionSet.map((selection) {
+      final base = selection.baseOffset - start;
+      final extent = selection.extentOffset - start;
+      final low = base < extent ? base : extent;
+      final high = base < extent ? extent : base;
+      if (low != high) return text.substring(low, high);
+      var lower = 0;
+      var upper = lines.length;
+      while (lower < upper) {
+        final middle = (lower + upper) ~/ 2;
+        if (lines[middle].$1 <= low) {
+          lower = middle + 1;
+        } else {
+          upper = middle;
+        }
+      }
+      final row = (lower - 1).clamp(0, lines.length - 1).toInt();
+      final range = lines[row];
+      return text.substring(range.$1, range.$2);
+    }).toList(growable: false);
+  }
+
+  String _readDocumentRange(OpenDoc doc, int startUtf16, int endUtf16) {
+    if (startUtf16 < 0 || endUtf16 < startUtf16) {
+      throw RangeError('Invalid document range $startUtf16..$endUtf16');
+    }
+    final expectedVersion = doc.doc.version;
+    final text = StringBuffer();
+    var cursor = startUtf16;
+    while (cursor < endUtf16) {
+      final range = doc.doc.readRange(
+        cursor,
+        maxLenUtf16:
+            (endUtf16 - cursor).clamp(1, maxDocReadRangeUtf16 - 1).toInt(),
+      );
+      if (range.version != expectedVersion ||
+          range.startUtf16 != cursor ||
+          range.endUtf16 <= cursor ||
+          range.endUtf16 > endUtf16) {
+        throw StateError('Document changed while reading a selected range');
+      }
+      text.write(range.text);
+      cursor = range.endUtf16;
+    }
+    return text.toString();
+  }
+
+  Future<void> _copyCrossWindowSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> _cutCrossWindowSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.crossWindowSelection;
+    if (selection == null || selection.isCollapsed) return;
+    final version = doc.doc.version;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted ||
+        doc.doc.version != version ||
+        doc.crossWindowSelection != selection) {
+      return;
+    }
+    _replaceCrossWindowSelection(doc, '', selectedText: text, version: version);
+  }
+
+  void _replaceCrossWindowSelection(
+    OpenDoc doc,
+    String replacement, {
+    String? selectedText,
+    int? version,
+  }) {
+    _flushInput(doc, commitComposition: true);
+    _applyCrossWindowSelectionReplacement(
+      doc,
+      replacement,
+      selectedText: selectedText,
+      version: version,
+    );
+  }
+
+  TextEditingValue? _handleCrossWindowTextInput(
+    OpenDoc doc,
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (doc.crossWindowSelection == null) return null;
+    final window = doc.inputWindow;
+    final oldHadComposition =
+        oldValue.composing.isValid && !oldValue.composing.isCollapsed;
+    if (window.hasComposition &&
+        oldHadComposition &&
+        newValue.text == window.text) {
+      window.cancelComposition();
+      return window.initialValue.copyWith(
+        selection: newValue.selection,
+        composing: TextRange.empty,
+      );
+    }
+    final operations = diffToOps(window.text, newValue.text);
+    if (operations.isEmpty) return null;
+    final replacement = StringBuffer();
+    for (final operation in operations) {
+      if (operation.type == OpType.insert) replacement.write(operation.text);
+    }
+    _applyCrossWindowSelectionReplacement(
+      doc,
+      replacement.toString(),
+      refreshWindowInPlace: true,
+    );
+    return doc.inputWindow.initialValue;
+  }
+
+  void _applyCrossWindowSelectionReplacement(
+    OpenDoc doc,
+    String replacement, {
+    String? selectedText,
+    int? version,
+    bool refreshWindowInPlace = false,
+  }) {
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    final expectedVersion = version ?? doc.doc.version;
+    if (doc.doc.version != expectedVersion) return;
+    final removed =
+        selectedText ?? _readDocumentRange(doc, selection.start, selection.end);
+    final start = selection.start;
+    final forward = <TextOp>[
+      if (selection.start != selection.end)
+        TextOp.delete(selection.start, selection.end - selection.start),
+      if (replacement.isNotEmpty) TextOp.insert(start, replacement),
+    ];
+    if (forward.isEmpty) {
+      doc.crossWindowSelection = null;
+      if (refreshWindowInPlace) {
+        doc.refreshInputWindowInPlace(start);
+      } else {
+        doc.replaceInputWindow(start);
+      }
+      if (mounted) setState(() {});
+      return;
+    }
+    final inverse = <TextOp>[
+      if (replacement.isNotEmpty) TextOp.delete(start, replacement.length),
+      if (removed.isNotEmpty) TextOp.insert(start, removed),
+    ];
+    doc.doc.applyWith(expectedVersion, forward);
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selection.extentOffset,
+      afterCaret: start + replacement.length,
+      coalesce: false,
+    );
+    doc.crossWindowSelection = null;
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
+    if (refreshWindowInPlace) {
+      doc.refreshInputWindowInPlace(start + replacement.length);
+    } else {
+      doc.replaceInputWindow(start + replacement.length);
+    }
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    _syncCommandContext();
+  }
+
+  Future<void> _pasteCrossWindowSelection(OpenDoc doc) async {
+    final selection = doc.crossWindowSelection;
+    if (selection == null) return;
+    _flushInput(doc, commitComposition: true);
+    final version = doc.doc.version;
+    final clipboard = await Clipboard.getData('text/plain');
+    if (!mounted ||
+        clipboard == null ||
+        doc.doc.version != version ||
+        doc.crossWindowSelection != selection) {
+      return;
+    }
+    _replaceCrossWindowSelection(
+      doc,
+      clipboard.text ?? '',
+      version: version,
+    );
+  }
+
+  Future<void> _copyMultiSelections(OpenDoc doc) async {
+    await Clipboard.setData(
+      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    );
+  }
+
+  Future<bool> _pasteMultiSelections(OpenDoc doc) async {
+    if (doc.additionalSelections.isEmpty) return false;
+    _flushInput(doc, commitComposition: true);
+    final clipboard = await Clipboard.getData('text/plain');
+    if (clipboard == null || !mounted || _active?.id != doc.id) return false;
+    final field = doc.inputFieldKey.currentState;
+    if (field == null) return false;
+    _flushInput(doc, commitComposition: true);
+
+    final windowStart = doc.inputWindow.startUtf16;
+    final localSelections = doc.selectionSet
+        .map((selection) => TextSelection(
+              baseOffset: selection.baseOffset - windowStart,
+              extentOffset: selection.extentOffset - windowStart,
+              affinity: selection.affinity,
+              isDirectional: selection.isDirectional,
+            ))
+        .toList(growable: false);
+    final result = applyDistributedMultiSelectionPaste(
+      oldValue: doc.editingValue,
+      selections: localSelections,
+      clipboardText: clipboard.text ?? '',
+    );
+    if (!result.changed) return true;
+
+    doc.additionalSelections = List.unmodifiable(
+      result.selections.map((selection) => TextSelection(
+            baseOffset: selection.baseOffset + windowStart,
+            extentOffset: selection.extentOffset + windowStart,
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          )),
+    );
+    doc.columnSelection = null;
+    field.setEditingValue(result.value);
+    if (mounted) setState(() {});
+    return true;
+  }
+
+  Future<void> _pasteOvertype(OpenDoc doc) async {
+    if (doc.inputWindow.hasComposition) return;
+    _flushInput(doc, commitComposition: true);
+    final expectedVersion = doc.doc.version;
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.isEmpty) return;
+    if (selections.length > maxDocOvertypePasteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '覆写粘贴已取消：选区数超过 $maxDocOvertypePasteSelections 上限');
+      }
+      return;
+    }
+
+    bool selectionSetUnchanged() {
+      final current = normalizeSelectionSet([
+        doc.selection,
+        ...doc.additionalSelections,
+      ]);
+      if (current.length != selections.length) return false;
+      for (var index = 0; index < current.length; index++) {
+        if (current[index].baseOffset != selections[index].baseOffset ||
+            current[index].extentOffset != selections[index].extentOffset) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    final clipboard = await Clipboard.getData('text/plain');
+    if (!mounted ||
+        clipboard == null ||
+        _active?.id != doc.id ||
+        doc.doc.version != expectedVersion ||
+        !selectionSetUnchanged()) {
+      return;
+    }
+    final clipboardText = clipboard.text ?? '';
+    if (clipboardText.isEmpty) return;
+
+    final pasteTexts = distributeClipboardPasteText(
+      clipboardText: clipboardText,
+      selectionCount: selections.length,
+    );
+    late final DocumentOvertypePasteRanges queried;
+    try {
+      queried = doc.doc.overtypePasteRanges([
+        for (var index = 0; index < selections.length; index++)
+          DocumentOvertypePasteSelection(
+            startUtf16: selections[index].start,
+            endUtf16: selections[index].end,
+            insertedUtf16: pasteTexts[index].length,
+          ),
+      ]);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '覆写粘贴范围查询失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion ||
+        queried.ranges.length != selections.length) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '覆写粘贴未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    final candidates = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+    })>[];
+    for (var index = 0; index < queried.ranges.length; index++) {
+      final range = queried.ranges[index];
+      candidates.add((
+        start: range.startUtf16,
+        end: range.endUtf16,
+        text: pasteTexts[index],
+        primary: index == 0,
+      ));
+    }
+    candidates.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.end.compareTo(b.end));
+    final merged = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+    })>[];
+    for (final range in candidates) {
+      if (merged.isEmpty || range.start >= merged.last.end) {
+        merged.add(range);
+        continue;
+      }
+      if (range.text != merged.last.text) {
+        if (mounted) {
+          setState(() => _statusDetail = '覆写粘贴已取消：多光标覆盖范围重叠且粘贴内容不同');
+        }
+        return;
+      }
+      final previous = merged.last;
+      merged[merged.length - 1] = (
+        start: previous.start,
+        end: range.end > previous.end ? range.end : previous.end,
+        text: previous.text,
+        primary: previous.primary || range.primary,
+      );
+    }
+
+    final operationChars = merged.fold<int>(
+      0,
+      (total, range) => total + (range.end - range.start) + range.text.length,
+    );
+    if (operationChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '覆写粘贴已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    final plans = <({
+      int start,
+      int end,
+      String text,
+      bool primary,
+      String removed,
+      int mappedStart,
+    })>[];
+    var shift = 0;
+    try {
+      for (final range in merged) {
+        final removed = _readDocumentRange(doc, range.start, range.end);
+        final mappedStart = range.start + shift;
+        plans.add((
+          start: range.start,
+          end: range.end,
+          text: range.text,
+          primary: range.primary,
+          removed: removed,
+          mappedStart: mappedStart,
+        ));
+        shift += range.text.length - (range.end - range.start);
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '覆写粘贴未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '覆写粘贴未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed) ...[
+        if (plan.end > plan.start)
+          TextOp.delete(plan.start, plan.end - plan.start),
+        if (plan.text.isNotEmpty) TextOp.insert(plan.start, plan.text),
+      ],
+    ];
+    if (forward.isEmpty) return;
+    final inverse = [
+      for (final plan in plans.reversed) ...[
+        if (plan.text.isNotEmpty)
+          TextOp.delete(plan.mappedStart, plan.text.length),
+        if (plan.removed.isNotEmpty)
+          TextOp.insert(plan.mappedStart, plan.removed),
+      ],
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '覆写粘贴未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final afterByPlan = <({bool primary, TextSelection selection})>[
+      for (final plan in plans)
+        (
+          primary: plan.primary,
+          selection: TextSelection.collapsed(
+            offset: plan.mappedStart + plan.text.length,
+          ),
+        ),
+    ];
+    final primaryIndex = afterByPlan.indexWhere((item) => item.primary);
+    final afterSelections = [
+      if (primaryIndex >= 0) afterByPlan[primaryIndex].selection,
+      for (var index = 0; index < afterByPlan.length; index++)
+        if (index != primaryIndex) afterByPlan[index].selection,
+    ];
+    final primarySelection = afterSelections.first;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: primarySelection.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      primarySelection.extentOffset,
+      selection: primarySelection,
+    );
+    _setDocSelections(doc, afterSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已覆写粘贴');
+  }
+
+  Future<bool> _cutMultiSelections(OpenDoc doc) async {
+    final field = doc.inputFieldKey.currentState;
+    if (field == null) return false;
+    final selections = doc.selectionSet;
+    if (selections.length < 2 ||
+        selections.any((selection) => selection.isCollapsed)) {
+      return false;
+    }
+    await Clipboard.setData(
+      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    );
+    final value = doc.editingValue;
+    final selection = value.selection;
+    final start = selection.baseOffset < selection.extentOffset
+        ? selection.baseOffset
+        : selection.extentOffset;
+    final end = selection.baseOffset < selection.extentOffset
+        ? selection.extentOffset
+        : selection.baseOffset;
+    if (start == end) return false;
+    field.applyFormattedValue(TextEditingValue(
+      text: value.text.replaceRange(start, end, ''),
+      selection: TextSelection.collapsed(offset: start),
+    ));
+    return true;
+  }
+
+  void _moveColumnSelection({int lines = 0, int columns = 0}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final value = doc.editingValue;
+    final text = value.text;
+    final previous = doc.columnSelection;
+    final state = previous ??
+        () {
+          final (line, column) = lineAndColumnAt(
+            text,
+            value.selection.extentOffset.clamp(0, text.length).toInt(),
+          );
+          return ColumnSelectionState(
+            anchorLine: line,
+            anchorColumn: column,
+            activeLine: line,
+            activeColumn: column,
+          );
+        }();
+    final count = '\n'.allMatches(text).length + 1;
+    final moved = state.move(lines: lines, columns: columns);
+    final bounded = ColumnSelectionState(
+      anchorLine: state.anchorLine.clamp(0, count - 1).toInt(),
+      anchorColumn: state.anchorColumn,
+      activeLine: moved.activeLine.clamp(0, count - 1).toInt(),
+      activeColumn: moved.activeColumn,
+    );
+    final local = columnSelectionsForText(text, bounded);
+    _setDocSelections(
+      doc,
+      _absoluteSelections(doc, local),
+      columnSelection: bounded,
+    );
+  }
+
+  void _cursorUndo() {
+    final doc = _active;
+    if (doc == null) return;
+    final previous = doc.selectionHistory.undo(doc.selectionSet);
+    if (previous != null) {
+      _setDocSelections(doc, previous, recordHistory: false);
+    }
+    _syncCommandContext();
+  }
+
+  void _cursorRedo() {
+    final doc = _active;
+    if (doc == null) return;
+    final next = doc.selectionHistory.redo(doc.selectionSet);
+    if (next != null) {
+      _setDocSelections(doc, next, recordHistory: false);
+    }
+    _syncCommandContext();
+  }
+
+  void _scheduleSelectionRefresh(OpenDoc doc) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _active?.id != doc.id || _disposing) return;
+      setState(() {});
+    });
+  }
+
+  void _applyProgrammaticEdit(
+    OpenDoc doc,
+    String newText, {
+    required TextSelection selection,
+    bool clearHistory = false,
+    bool markSaved = false,
+  }) {
+    _flushInput(doc, commitComposition: true);
+    doc.additionalSelections = const [];
+    doc.columnSelection = null;
+    final before = doc.doc.resync().content;
+    final oldSelection = doc.selection;
+    final ops = diffToOps(before, newText);
+    if (ops.isNotEmpty) {
+      final inverse = diffToOps(newText, before);
+      doc.doc.apply(ops);
+      _recordDocumentOperations(
+        doc,
+        forward: ops,
+        inverse: inverse,
+        beforeCaret: oldSelection.baseOffset,
+        afterCaret: selection.extentOffset,
+        coalesce: false,
+        beforeSnapshot: before,
+      );
+    }
+    if (markSaved) doc.doc.setSavepoint(newText);
+    if (clearHistory) doc.undoStack.clear();
+    doc.replaceInputWindow(selection.extentOffset, selection: selection);
+    if (ops.isNotEmpty) _refreshSiblingViews(doc, ops);
+    doc.lastEditAt = null;
+    _updateDirty(doc);
+    _syncCommandContext();
+    _scheduleOutlineRefresh();
+    _scheduleStateSave();
+    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    if (mounted) setState(() {});
+  }
+
+  void _onInputDelta(OpenDoc doc, RustTextInputDelta delta) {
+    final owner = _ownerOfView(doc);
+    if (owner == null) return;
+    final isActiveOfFocused =
+        owner.region == _focusedRegion && identical(owner.active, doc);
+    final ops = delta.operations;
+    if (ops.isNotEmpty) doc.crossWindowSelection = null;
+    if (ops.isNotEmpty && !doc.undoRedoBusy) {
+      final now = DateTime.now();
+      final coalesce = doc.lastEditAt != null &&
+          now.difference(doc.lastEditAt!) < const Duration(milliseconds: 400);
+      final beforeSelection = delta.previousSelection;
+      final afterSelection = delta.selection;
+      final beforeCaret = beforeSelection?.baseOffset ??
+          beforeSelection?.extentOffset ??
+          afterSelection?.baseOffset ??
+          0;
+      _recordDocumentOperations(
+        doc,
+        forward: ops,
+        inverse: delta.inverseOperations,
+        coalesce: coalesce,
+        beforeCaret: beforeCaret,
+        afterCaret: afterSelection?.extentOffset ?? beforeCaret,
+      );
+    }
+    _updateDirty(doc);
+    final refreshedSiblingViews =
+        ops.isEmpty ? 0 : _refreshSiblingViews(doc, ops);
+    if (isActiveOfFocused && !_disposing) _syncCommandContext();
+    if (ops.isNotEmpty) {
+      if (_findVisible && !_disposing) _onFindTextChanged();
+      if ((isActiveOfFocused || refreshedSiblingViews > 0) &&
+          mounted &&
+          !_disposing) {
         setState(() {
-          _state = WbSyncState.mismatch;
-          _statusDetail = '版本失配（Rust 已到 v${e.current}），已重同步至 v${r.version}';
+          if (isActiveOfFocused) {
+            _state = WbSyncState.synced;
+            _syncCount++;
+            _statusDetail = '已同步 v${delta.version}（${ops.length} op）';
+          }
         });
       }
-    } catch (e) {
-      if (isActiveOfFocused) {
-        setState(() {
-          _state = WbSyncState.error;
-          _statusDetail = '同步失败：$e';
-        });
+    }
+
+    final selection = delta.selection;
+    if (!_disposing &&
+        selection != null &&
+        _shouldRecenterInputWindow(doc, selection)) {
+      doc.replaceInputWindow(selection.extentOffset);
+      if (mounted) setState(() {});
+    }
+  }
+
+  int _refreshSiblingViews(OpenDoc source, List<TextOp> operations) {
+    final siblings = _viewsOf(source)
+        .where((view) => !identical(view, source))
+        .toList(growable: false);
+    if (siblings.isEmpty) return 0;
+    final total = source.doc.readRange(0, maxLenUtf16: 2).totalUtf16Length;
+    for (final view in siblings) {
+      view.crossWindowSelection = null;
+      if (view.inputWindow.pendingCount > 0 ||
+          view.inputWindow.pendingText != null) {
+        // Keep the local draft intact. This indicates a focus/flush ordering
+        // defect and must never silently discard uncommitted text.
+        _statusDetail = '同文档另一视图仍有未提交输入；已保留其本地草稿';
+        continue;
       }
+      TextSelection mapSelection(TextSelection selection) => TextSelection(
+            baseOffset: mapWorkspaceEditOffset(
+              selection.baseOffset,
+              operations,
+            ).clamp(0, total).toInt(),
+            extentOffset: mapWorkspaceEditOffset(
+              selection.extentOffset,
+              operations,
+            ).clamp(0, total).toInt(),
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          );
+      final mapped = mapSelection(view.selection);
+      view.additionalSelections = List.unmodifiable(
+        view.additionalSelections.map(mapSelection),
+      );
+      view.columnSelection = null;
+      view.replaceInputWindow(mapped.extentOffset, selection: mapped);
+    }
+    return siblings.length;
+  }
+
+  bool _shouldRecenterInputWindow(OpenDoc doc, TextSelection selection) {
+    final window = doc.inputWindow;
+    if (window.startUtf16 == 0 && window.endUtf16 >= window.totalUtf16Length) {
+      return false;
+    }
+    final local = selection.extentOffset - window.startUtf16;
+    final margin = window.maxWindowUtf16 ~/ 8;
+    return (window.startUtf16 > 0 && local < margin) ||
+        (window.endUtf16 < window.totalUtf16Length &&
+            local > window.text.length - margin);
+  }
+
+  @visibleForTesting
+  bool applyWorkspaceEdit(WorkspaceEdit edit) {
+    final core = _core;
+    if (core == null) {
+      _statusDetail = '工作区编辑失败：核心尚未就绪';
+      return false;
+    }
+    try {
+      for (final doc in _allDocViews) {
+        _flushInput(doc, commitComposition: true);
+      }
+      final snapshots = _allDocs
+          .where((doc) => doc.uri != null)
+          .map((doc) => WorkspaceDocumentSnapshot(
+                id: doc.id,
+                uri: doc.uri!,
+                version: doc.doc.version,
+                text: doc.text,
+                writable: doc.path != null &&
+                    doc.diskState == DiskDocumentState.current,
+              ));
+      final plan = const WorkspaceEditPlanner().plan(edit, snapshots);
+      final docsById = {for (final doc in _allDocs) doc.id: doc};
+      final oldSelections = <int, TextSelection>{};
+      for (final change in plan.documents) {
+        final doc = docsById[change.id];
+        if (doc == null || doc.text != change.before) {
+          throw WorkspaceEditException(
+            'Document changed while planning: ${change.uri}',
+          );
+        }
+        oldSelections[change.id] = doc.selection;
+      }
+
+      final result = core.applyWorkspaceEdit([
+        for (final change in plan.documents)
+          AlulaWorkspaceEditDocument(
+            id: change.id,
+            baseVersion: change.baseVersion,
+            ops: change.ops,
+          ),
+      ]);
+
+      for (final change in plan.documents) {
+        final doc = docsById[change.id]!;
+        final oldSelection = oldSelections[change.id]!;
+        final caret = oldSelection.baseOffset.clamp(0, change.before.length);
+        final mappedSelection = TextSelection(
+          baseOffset: mapWorkspaceEditOffset(
+            oldSelection.baseOffset.clamp(0, change.before.length).toInt(),
+            change.ops,
+          ).clamp(0, change.after.length).toInt(),
+          extentOffset: mapWorkspaceEditOffset(
+            oldSelection.extentOffset.clamp(0, change.before.length).toInt(),
+            change.ops,
+          ).clamp(0, change.after.length).toInt(),
+          affinity: oldSelection.affinity,
+          isDirectional: oldSelection.isDirectional,
+        );
+        final inverse = diffToOps(change.after, change.before);
+        if (_operationPayloadChars([change.ops, inverse]) >
+            _undoHistoryBudget.maxTotalChars) {
+          doc.undoStack.push(
+            before: change.before,
+            caret: caret,
+            coalesce: false,
+            encoding: doc.fileOptions.encoding.id,
+            bom: doc.fileOptions.bom,
+            lineEnding: doc.fileOptions.lineEnding.id,
+            transactionId: plan.transactionId,
+          );
+        } else {
+          doc.undoStack.pushOperations(
+            forward: change.ops,
+            inverse: inverse,
+            caret: caret,
+            redoCaret: mappedSelection.extentOffset,
+            coalesce: false,
+            encoding: doc.fileOptions.encoding.id,
+            bom: doc.fileOptions.bom,
+            lineEnding: doc.fileOptions.lineEnding.id,
+            transactionId: plan.transactionId,
+          );
+        }
+        doc.doc.version = result.versions[change.id]!;
+        doc.replaceInputWindow(mappedSelection.extentOffset);
+        if (change.ops.isNotEmpty) _refreshSiblingViews(doc, change.ops);
+        doc.lastEditAt = null;
+        _updateDirty(doc);
+        if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      }
+      _scheduleStateSave();
+      _scheduleOutlineRefresh();
+      _syncCommandContext();
+      _onFindTextChanged();
+      setState(() => _statusDetail =
+          '已应用跨文档编辑事务 ${plan.transactionId}（${plan.documents.length} 个文档）');
+      return true;
+    } on WorkspaceEditException catch (error) {
+      setState(() => _statusDetail = '跨文档编辑未应用：${error.message}');
+      return false;
+    } on AlulaException catch (error) {
+      setState(() => _statusDetail = '跨文档编辑已回滚：${error.code} ${error.detail}');
+      return false;
     }
   }
 
@@ -616,6 +2972,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     try {
       final entries = core.workspace.listDir(path);
+      if (_workspaceRoot != path) {
+        _searchSub?.cancel();
+        _searchSub = null;
+        _searchGen++;
+        _shutdownLspWorkspace();
+        _lspReady = false;
+        _lspStarting = false;
+        _lspStatus = 'LSP 未启动';
+        _diagnostics.clear();
+        _syntaxByDoc.clear();
+        _syntaxVersionByDoc.clear();
+        _semanticTokensByDoc.clear();
+        _semanticTokensVersionByDoc.clear();
+        for (final timer in _syntaxRefreshTimers.values) {
+          timer.cancel();
+        }
+        _syntaxRefreshTimers.clear();
+        _pollTimer?.cancel();
+        _pollTimer = null;
+        for (final doc in _allDocs) {
+          doc.lspAttached = false;
+        }
+      }
       setState(() {
         _workspaceRoot = path;
         _treeRoots.clear();
@@ -628,19 +3007,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toList());
         _statusDetail = '工作区：$path（${entries.length} 项）';
         _fileIndexCache = null;
-        _git = GitCli(root: path);
+        _git = GitCli(
+          root: path,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _refreshGit();
-        _searchService = SearchService(root: path);
-        _attachWorkspaceWatcher();
+        _searchService = SearchService(
+          root: path,
+          registerProcess: core.runtime.registerProcess,
+          unregisterProcess: core.runtime.unregisterProcess,
+        );
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _attachWorkspaceWatcher();
+      _updateLanguageServicePolling();
+      _startResourceMonitoring();
+      _syncCommandContext();
     } on AlulaException catch (e) {
       setState(() {
         _statusDetail = '打开文件夹失败：${e.code}';
         _state = WbSyncState.error;
       });
     }
+  }
+
+  void _startResourceMonitoring() {
+    _resourceTimer?.cancel();
+    final core = _core;
+    if (core == null || _workspaceRoot == null) return;
+
+    void sample() {
+      if (!mounted || _workspaceRoot == null) return;
+      try {
+        final status = core.runtime.sampleResourceStatus();
+        if (!mounted) return;
+        if (_resourceStatus?.pressure != status.pressure ||
+            _resourceStatus?.availableBytes != status.availableBytes) {
+          setState(() => _resourceStatus = status);
+        } else {
+          _resourceStatus = status;
+        }
+      } catch (error) {
+        debugPrint('资源状态采样失败：$error');
+      }
+    }
+
+    sample();
+    _resourceTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => sample(),
+    );
   }
 
   /// fixture 工程的跨平台探测（演示/测试默认值）。
@@ -709,47 +3127,81 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openFileByPath(String path) async {
     final core = _core;
     if (core == null) return;
-    // 已在任何组打开 → 跳转到所在组并激活（对标 VS Code 单实例语义）
+    final previous = _active;
+    if (previous != null) _flushInput(previous, commitComposition: true);
+    // 同一文件在不同组打开时共享 Rust 文档，但为组创建独立视图状态。
     for (final g in _groups.values) {
-      for (final d in g.docs) {
-        if (d.path == path) {
-          setState(() {
-            g.activeDocId = d.id;
-            _focusedRegion = g.region;
-          });
-          return;
-        }
+      final existing = g.docs.where((d) => d.path == path).firstOrNull;
+      if (existing != null) {
+        final target = _focused;
+        final view = identical(g, target)
+            ? existing
+            : target.docs
+                    .where((candidate) => candidate.sameDocumentAs(existing))
+                    .firstOrNull ??
+                OpenDoc.viewOf(existing);
+        setState(() {
+          if (!target.docs.contains(view)) target.docs.add(view);
+          target.activeDocId = view.id;
+          _focusedRegion = target.region;
+        });
+        _scheduleStateSave();
+        _syncCommandContext();
+        if (view.lspAttached) _scheduleSyntaxRefresh(view.id);
+        return;
       }
     }
+    DecodedTextFile file;
     try {
-      final content = core.workspace.readFile(path);
+      file = core.workspace.readFileDocument(path);
+    } on AlulaException catch (error) {
+      if (error.code != 'BinaryFile' && error.code != 'UnsupportedEncoding') {
+        setState(() => _statusDetail = '打开失败：${error.code}');
+        return;
+      }
+      if (!mounted) return;
+      final encoding = await _pickReopenEncoding(title: '选择文件编码');
+      if (!mounted || encoding == null) return;
+      try {
+        file = core.workspace.readFileDocument(path, encoding: encoding);
+      } on AlulaException catch (decodeError) {
+        setState(
+            () => _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
+        return;
+      }
+    }
+
+    try {
+      final content = file.content;
       final id = _nextDocId++;
       final doc = core.openDoc(id, content);
       final name = path.replaceAll('\\', '/').split('/').last;
-      final controller = TextEditingController(text: content);
       final open = OpenDoc(
         id: id,
         path: path,
         uri: _pathToUri(path),
         name: name,
         doc: doc,
-        controller: controller,
-        savedText: content,
+        fileOptions: file.options,
+        savedFileOptions: file.options,
+        undoBudget: _undoHistoryBudget,
       );
       setState(() {
         final g = _focused;
         g.docs.add(open);
         g.activeDocId = id;
       });
+      _syncCommandContext();
       _scheduleStateSave();
-      controller.addListener(() => _onDocChanged(id));
       if (_lspReady) {
         try {
           core.lsp.setUri(id, open.uri!);
           core.lsp.didOpen(id, languageId: _languageIdOf(path));
           open.lspAttached = true;
+          _scheduleSyntaxRefresh(id);
         } catch (_) {}
       }
+      _updateLanguageServicePolling();
     } on AlulaException catch (e) {
       setState(() {
         _statusDetail =
@@ -772,17 +3224,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : 'file:///$p';
   }
 
-  void _closeDoc(int id) {
-    final owner = _ownerOf(id);
+  void _closeDoc(int id, {EditorGroup? group}) {
+    final owner = group ??
+        (_focused.docs.any((doc) => doc.id == id) ? _focused : _ownerOf(id));
     if (owner == null) return;
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
+    _flushInput(doc, commitComposition: true);
     final wasActive = owner.activeDocId == id;
-    doc.doc.close();
-    doc.controller.dispose();
-    _editorFocusNodes.remove(id)?.dispose();
+    final focusKey = _focusKeyFor(owner, doc);
+    _editorFocusNodes.remove(focusKey)?.dispose();
+    final isLastView = doc.sharedViewCount == 1;
+    if (isLastView) {
+      _syntaxRefreshTimers.remove(id)?.cancel();
+      if (doc.lspAttached && _lspReady) {
+        try {
+          doc.doc.core.lsp.didClose(id);
+        } catch (_) {}
+      }
+    }
+    final nextSyntax = Map<int, List<Map<String, Object?>>>.of(_syntaxByDoc);
+    final nextSyntaxVersion = Map<int, int>.of(_syntaxVersionByDoc);
+    final nextSemanticTokens =
+        Map<int, List<Map<String, Object?>>>.of(_semanticTokensByDoc);
+    final nextSemanticTokensVersion =
+        Map<int, int>.of(_semanticTokensVersionByDoc);
+    if (isLastView) {
+      nextSyntax.remove(id);
+      nextSyntaxVersion.remove(id);
+      nextSemanticTokens.remove(id);
+      nextSemanticTokensVersion.remove(id);
+    }
+    owner.docs.remove(doc);
+    doc.disposeView();
+    if (isLastView) _navigationHistory.closeDocument(id);
     setState(() {
-      owner.docs.remove(doc);
+      _syntaxByDoc = nextSyntax;
+      _syntaxVersionByDoc = nextSyntaxVersion;
+      _semanticTokensByDoc = nextSemanticTokens;
+      _semanticTokensVersionByDoc = nextSemanticTokensVersion;
       if (wasActive) {
         owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
       }
@@ -796,10 +3276,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       _scheduleStateSave();
     });
+    _updateLanguageServicePolling();
+    _syncCommandContext();
+  }
+
+  void _onEditorFoldRangesChanged(
+    OpenDoc active,
+    int documentId,
+    int version,
+    List<EditorDocumentLineRange> ranges,
+  ) {
+    final owner = _ownerOfView(active);
+    if (!mounted ||
+        active.id != documentId ||
+        active.inputWindow.version != version ||
+        owner == null ||
+        !owner.docs.any((view) => identical(view, active))) {
+      return;
+    }
+    if (ranges.isNotEmpty &&
+        (active.inputWindow.pendingText != null ||
+            active.doc.version != version)) {
+      return;
+    }
+    if (listEquals(active.foldedLineRanges, ranges)) return;
+    active.foldedLineRanges = List.unmodifiable(ranges);
+    setState(() {});
   }
 
   /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
   void _splitFocusedGroup() {
+    final active = _active;
+    if (active != null) _flushInput(active, commitComposition: true);
     final region = _focusedRegion;
     var i = 2;
     while (_groups.containsKey('editor-$i')) {
@@ -816,6 +3324,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
     });
+    _syncCommandContext();
   }
 
   // ---------- LSP ----------
@@ -828,6 +3337,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _lspStarting = true;
       _lspStatus = '正在启动 rust-analyzer…';
     });
+    _syncCommandContext();
     await Future<void>.delayed(const Duration(milliseconds: 50));
     try {
       // Rust 侧按工作区复用服务器进程；挂接用任一已打开文档 id 均可
@@ -837,52 +3347,133 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _lspStarting = false;
         _lspStatus = 'rust-analyzer 运行中';
       });
+      _syncCommandContext();
       for (final d in _allDocs) {
         if (!d.isUntitled && !d.lspAttached) {
           try {
             core.lsp.setUri(d.id, d.uri!);
             core.lsp.didOpen(d.id, languageId: _languageIdOf(d.path!));
             d.lspAttached = true;
+            _scheduleSyntaxRefresh(d.id);
           } catch (_) {}
         }
       }
-      _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
-        _pollLanguageServices();
-      });
+      _updateLanguageServicePolling();
     } catch (e) {
       setState(() {
         _lspStarting = false;
         _lspStatus = '启动失败：$e';
       });
+      _syncCommandContext();
     }
   }
 
   void _pollLanguageServices() {
     final core = _core;
     if (core == null || _polling || !_lspReady) return;
+    if (!_allDocs.any((doc) => doc.lspAttached && !doc.isUntitled)) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+      return;
+    }
     _polling = true;
     try {
       final diags = <Map<String, Object?>>[];
-      final syntax = <int, List<Map<String, Object?>>>{};
       for (final d in _allDocs) {
         if (d.isUntitled || !d.lspAttached) continue;
         try {
-          diags.addAll(
-              core.lsp.diagnostics(d.id).map((m) => {...m, 'file': d.name}));
+          diags.addAll(core.lsp.diagnostics(d.id).map((diagnostic) => {
+                ...diagnostic,
+                'file': d.name,
+                '_documentId': d.id,
+              }));
         } catch (_) {}
-        final s = core.lsp.syntax(d.id);
-        if (s != null) syntax[d.id] = s.tokens;
       }
       if (!mounted) return;
       setState(() {
         _diagnostics
           ..clear()
           ..addAll(diags);
-        _syntaxByDoc = syntax;
       });
     } catch (_) {
     } finally {
       _polling = false;
+    }
+  }
+
+  void _updateLanguageServicePolling() {
+    final shouldPoll =
+        _lspReady && _allDocs.any((doc) => doc.lspAttached && !doc.isUntitled);
+    if (!shouldPoll) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+      return;
+    }
+    _pollTimer ??= Timer.periodic(const Duration(milliseconds: 800), (_) {
+      _pollLanguageServices();
+    });
+  }
+
+  void _scheduleSyntaxRefresh(int docId) {
+    final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
+    if (doc == null || !doc.lspAttached) return;
+    _syntaxRefreshTimers.remove(docId)?.cancel();
+    _syntaxRefreshTimers[docId] = Timer(const Duration(milliseconds: 80), () {
+      _syntaxRefreshTimers.remove(docId);
+      if (!mounted) return;
+      final current = _allDocs.where((item) => item.id == docId).firstOrNull;
+      if (current == null || !current.lspAttached) return;
+      try {
+        final syntax = _core?.lsp.syntax(docId);
+        if (!mounted) return;
+        if (syntax != null) {
+          setState(() {
+            _syntaxByDoc = {..._syntaxByDoc, docId: syntax.tokens};
+            _syntaxVersionByDoc = {
+              ..._syntaxVersionByDoc,
+              docId: syntax.version,
+            };
+          });
+        }
+        unawaited(_refreshSemanticTokens(docId));
+      } catch (error) {
+        debugPrint('语法状态刷新失败（doc=$docId）：$error');
+      }
+    });
+  }
+
+  Future<void> _refreshSemanticTokens(int docId) async {
+    final doc = _allDocs.where((item) => item.id == docId).firstOrNull;
+    if (doc == null || !doc.lspAttached) return;
+    final requestedVersion = doc.doc.version;
+    try {
+      final result = await doc.doc.core.lsp.semanticTokens(
+        docId,
+        timeoutMs: 8000,
+      );
+      if (!mounted || result == null || result.version != requestedVersion) {
+        return;
+      }
+      final current = _allDocs.where((item) => item.id == docId).firstOrNull;
+      if (current == null ||
+          !current.lspAttached ||
+          current.doc.version != requestedVersion ||
+          current.inputWindow.version != requestedVersion ||
+          current.inputWindow.pendingText != null) {
+        return;
+      }
+      setState(() {
+        _semanticTokensByDoc = {
+          ..._semanticTokensByDoc,
+          docId: result.tokens,
+        };
+        _semanticTokensVersionByDoc = {
+          ..._semanticTokensVersionByDoc,
+          docId: result.version,
+        };
+      });
+    } catch (error) {
+      debugPrint('语义令牌刷新失败（doc=$docId）：$error');
     }
   }
 
@@ -894,15 +3485,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = '补全需要先打开文件夹并启动 LSP');
       return;
     }
-    final offset = active.controller.selection.baseOffset >= 0
-        ? active.controller.selection.baseOffset
-        : active.controller.text.length;
-    setState(() => _statusDetail = '补全请求中…（阻塞式 FFI，MVP 过渡）');
+    _flushInput(active, commitComposition: true);
+    final offset = active.selection.baseOffset >= 0
+        ? active.selection.baseOffset
+        : active.inputWindow.startUtf16 + active.editingValue.text.length;
+    setState(() => _statusDetail = '补全请求中…');
     await Future<void>.delayed(const Duration(milliseconds: 50));
     try {
-      final items =
-          active.doc.core.lsp.completion(active.id, offset, timeoutMs: 10000);
+      final completed = await active.doc.core.lsp
+          .completion(active.id, offset, timeoutMs: 10000);
       if (!mounted) return;
+      if (completed == null) {
+        if (_active?.id == active.id) {
+          setState(() => _statusDetail = '补全已取消或结果已过期');
+        }
+        return;
+      }
+      if (_active?.id != active.id || active.doc.version != completed.version) {
+        return;
+      }
+      final items = completed.items;
       setState(() {
         _completionItems = items.take(50).toList();
         _panelTab.index = 1;
@@ -917,9 +3519,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _insertCompletion(String text) {
     final active = _active;
     if (active == null) return;
-    final sel = active.controller.selection;
-    final pos = sel.baseOffset >= 0 ? sel.baseOffset : active.controller.text.length;
-    final t = active.controller.text;
+    final value = active.editingValue;
+    final sel = value.selection;
+    final pos = sel.baseOffset >= 0 ? sel.baseOffset : value.text.length;
+    final t = value.text;
     var start = pos;
     while (start > 0) {
       final cu = t.codeUnitAt(start - 1);
@@ -930,50 +3533,507 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (!isIdent) break;
       start--;
     }
-    active.controller.value = TextEditingValue(
+    active.inputFieldKey.currentState?.setEditingValue(TextEditingValue(
       text: t.replaceRange(start, pos, text),
       selection: TextSelection.collapsed(offset: start + text.length),
-    );
+    ));
   }
 
   Future<void> _saveActive() async {
     final active = _active;
     if (active == null) return;
     if (active.isUntitled) {
-      setState(() => _statusDetail = '未命名文档不支持保存（请从文件树打开文件）');
+      await _saveAsActive();
       return;
     }
+    await _saveDocToPath(active, active.path!);
+  }
+
+  Future<void> _saveAsActive() async {
+    final active = _active;
+    if (active == null) return;
+    await _saveAsDoc(active);
+  }
+
+  Future<void> _saveAsDoc(OpenDoc doc) async {
+    final path = await _showSaveAsDialog(doc);
+    if (path == null) return;
+    await _saveDocToPath(doc, path);
+  }
+
+  Future<void> _saveDocToPath(
+    OpenDoc doc,
+    String requestedPath, {
+    TextFileOptions? options,
+  }) async {
+    _flushInput(doc, commitComposition: true);
+    final targetOptions = options ?? doc.fileOptions;
+    final targetPath = File(requestedPath).absolute.path;
+    final oldPath = doc.path;
+    final pathChanged = oldPath == null ||
+        _canonicalPath(oldPath) != _canonicalPath(targetPath);
+
+    if (!pathChanged && doc.diskState == DiskDocumentState.missing) {
+      setState(() => _statusDetail = '${doc.name} 已不在原路径；缓冲区仍保留，请使用“另存为”保存');
+      return;
+    }
+    if (!pathChanged && doc.diskState == DiskDocumentState.unavailable) {
+      setState(() => _statusDetail = '无法核对 ${doc.name} 的磁盘版本；请重试读取或使用“另存为”');
+      return;
+    }
+    if (!pathChanged && doc.diskState == DiskDocumentState.conflict) {
+      final action = await showDialog<_ConflictSaveAction>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          key: const ValueKey('external-conflict-dialog'),
+          title: const Text('磁盘版本已变化'),
+          content: Text(
+            '“${doc.name}”在磁盘上的内容与本地缓冲区不同。选择覆盖磁盘、另存本地内容，或返回继续编辑。',
+          ),
+          actions: [
+            TextButton(
+              key: const ValueKey('external-conflict-cancel'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.cancel),
+              child: const Text('继续编辑'),
+            ),
+            TextButton(
+              key: const ValueKey('external-conflict-save-as'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.saveAs),
+              child: const Text('另存为…'),
+            ),
+            FilledButton(
+              key: const ValueKey('external-conflict-confirm-overwrite'),
+              onPressed: () =>
+                  Navigator.pop(dialogContext, _ConflictSaveAction.overwrite),
+              child: const Text('覆盖磁盘文件'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (action == _ConflictSaveAction.saveAs) {
+        await _saveAsDoc(doc);
+        return;
+      }
+      if (action != _ConflictSaveAction.overwrite) return;
+    }
+
+    if (pathChanged &&
+        _allDocs.any((other) =>
+            !identical(other, doc) &&
+            other.path != null &&
+            _canonicalPath(other.path!) == _canonicalPath(targetPath))) {
+      setState(() => _statusDetail = '该路径已在其他标签中打开');
+      return;
+    }
+
+    if (pathChanged && File(targetPath).existsSync()) {
+      final overwrite = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('覆盖文件？'),
+          content: Text('目标文件已存在：\n$targetPath'),
+          actions: [
+            TextButton(
+              key: const ValueKey('save-as-overwrite-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('save-as-overwrite-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('覆盖'),
+            ),
+          ],
+        ),
+      );
+      if (overwrite != true) return;
+    }
+
     try {
-      active.doc.saveFile(active.path!);
-      active.savedText = active.controller.text;
-      active.dirtyDisk = false;
+      doc.doc.saveFile(targetPath, options: targetOptions);
+      doc.doc.markSaved();
+      var lspWarning = false;
+      if (pathChanged) {
+        if (doc.lspAttached && _lspReady) {
+          try {
+            doc.doc.core.lsp.didClose(doc.id);
+          } catch (_) {}
+        }
+        doc.path = targetPath;
+        doc.uri = _pathToUri(targetPath);
+        doc.name = _nameOf(targetPath);
+        if (_lspReady) {
+          try {
+            doc.doc.core.lsp.setUri(doc.id, doc.uri!);
+            doc.doc.core.lsp.didOpen(
+              doc.id,
+              languageId: _languageIdOf(targetPath),
+            );
+            doc.lspAttached = true;
+          } catch (_) {
+            doc.lspAttached = false;
+            lspWarning = true;
+          }
+        }
+        if (_workspaceRoot != null) _refreshTree();
+      }
+      doc.fileOptions = targetOptions;
+      doc.savedFileOptions = targetOptions;
+      doc.diskState = DiskDocumentState.current;
+      doc.conflictBaselineKnown = true;
+      _updateDirty(doc);
+      _syncCommandContext();
       setState(() {
-        _statusDetail = '已原子保存 ${active.name}（v${active.doc.version}）';
+        _statusDetail = lspWarning
+            ? '已保存 ${doc.name}，语言服务未能重新打开文档'
+            : '已原子保存 ${doc.name}（v${doc.doc.version}）';
       });
       _scheduleStateSave(); // 保存后 journal 里的 text 分支消失（转干净）
-      if (active.lspAttached && _lspReady) {
+      if (doc.lspAttached && _lspReady) {
         try {
-          active.doc.core.lsp.didSave(active.id);
+          doc.doc.core.lsp.didSave(doc.id);
         } catch (_) {}
       }
     } on AlulaException catch (e) {
       setState(() {
         _state = WbSyncState.error;
         _statusDetail = '保存失败：${e.code} ${e.detail}';
+        if (e.code == 'ReadOnlyFile') {
+          doc.diskState = DiskDocumentState.readOnly;
+        }
       });
     }
+  }
+
+  Future<void> _revertActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.isUntitled) {
+      setState(() => _statusDetail = '未命名文档没有磁盘版本可还原');
+      return;
+    }
+    if (doc.dirtyDisk) {
+      final discard = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('放弃未保存的修改？'),
+          content: Text('将从磁盘重新载入“${doc.name}”，未保存内容会丢失。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('revert-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('revert-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('还原'),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) return;
+    }
+
+    try {
+      _flushInput(doc, commitComposition: true);
+      final diskFile = _readDiskDocument(
+        doc.doc.core,
+        doc.path!,
+        preferredEncoding: doc.savedFileOptions.encoding,
+      );
+      final diskText = diskFile.content;
+      final currentText = doc.doc.resync().content;
+      final ops = diffToOps(currentText, diskText);
+      if (ops.isNotEmpty) doc.doc.apply(ops);
+
+      final caret =
+          doc.selection.extentOffset.clamp(0, diskText.length).toInt();
+      doc.doc.setSavepoint(diskText);
+      doc.fileOptions = diskFile.options;
+      doc.savedFileOptions = diskFile.options;
+      doc.diskState = DiskDocumentState.current;
+      doc.conflictBaselineKnown = true;
+      doc.replaceInputWindow(caret);
+      if (ops.isNotEmpty) _refreshSiblingViews(doc, ops);
+      _updateDirty(doc);
+      doc.undoStack.clear();
+      doc.lastEditAt = null;
+      if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+      _scheduleOutlineRefresh();
+      _scheduleStateSave();
+      _syncCommandContext();
+      setState(() => _statusDetail = '已从磁盘还原 ${doc.name}');
+    } on AlulaException catch (e) {
+      setState(() {
+        _state = WbSyncState.error;
+        _statusDetail = '还原失败：${e.code} ${e.detail}';
+        if (e.code == 'NotFound') {
+          doc.diskState = DiskDocumentState.missing;
+        }
+      });
+    }
+  }
+
+  Future<String?> _showSaveAsDialog(OpenDoc doc) async {
+    final root = _workspaceRoot ?? Directory.current.path;
+    final defaultPath = doc.path ??
+        '$root${Platform.pathSeparator}${doc.isUntitled ? 'untitled.txt' : doc.name}';
+    var selectedPath = defaultPath;
+    final result = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('另存为'),
+        content: TextFormField(
+          key: const ValueKey('save-as-path'),
+          initialValue: defaultPath,
+          onChanged: (value) => selectedPath = value,
+          decoration: const InputDecoration(labelText: '文件路径'),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('save-as-confirm'),
+            onPressed: () => Navigator.pop(dialogContext, selectedPath),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+    final trimmed = result?.trim();
+    return trimmed == null || trimmed.isEmpty ? null : trimmed;
+  }
+
+  Future<void> _saveWithEncodingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    final options = await _pickSaveOptions(doc.fileOptions);
+    if (options == null) return;
+    final path = doc.path ?? await _showSaveAsDialog(doc);
+    if (path == null) return;
+    await _saveDocToPath(doc, path, options: options);
+  }
+
+  Future<void> _reopenWithEncodingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.path == null) {
+      setState(() => _statusDetail = '未命名文档没有磁盘编码可重新打开');
+      return;
+    }
+    final encoding = await _pickReopenEncoding();
+    if (!mounted || encoding == null) return;
+    if (doc.isDirty) {
+      final discard = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('放弃未保存的修改？'),
+          content: Text('将按 ${encoding.id} 重新读取“${doc.name}”，未保存内容会丢失。'),
+          actions: [
+            TextButton(
+              key: const ValueKey('encoding-reopen-cancel'),
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              key: const ValueKey('encoding-reopen-confirm'),
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('重新打开'),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) return;
+    }
+    try {
+      final disk = doc.doc.core.workspace.readFileDocument(
+        doc.path!,
+        encoding: encoding,
+      );
+      _replaceDocumentFromDisk(doc, disk, '已按 ${encoding.id} 重新打开 ${doc.name}');
+    } on AlulaException catch (e) {
+      setState(() => _statusDetail = '重新打开失败：${e.code} ${e.detail}');
+    }
+  }
+
+  Future<void> _showEncodingActions(OpenDoc doc) async {
+    final save = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('文件编码 · ${doc.fileOptions.label}'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('使用编码重新打开…'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('使用编码保存…'),
+          ),
+        ],
+      ),
+    );
+    if (save == true) {
+      await _saveWithEncodingActive();
+    } else if (save == false) {
+      await _reopenWithEncodingActive();
+    }
+  }
+
+  Future<TextFileOptions?> _pickSaveOptions(TextFileOptions current) {
+    final options = [
+      current.copyWith(encoding: TextEncoding.utf8, bom: false),
+      current.copyWith(encoding: TextEncoding.utf8, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Le, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Le, bom: false),
+      current.copyWith(encoding: TextEncoding.utf16Be, bom: true),
+      current.copyWith(encoding: TextEncoding.utf16Be, bom: false),
+      current.copyWith(encoding: TextEncoding.gbk, bom: false),
+    ];
+    return showDialog<TextFileOptions>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('使用编码保存'),
+        children: [
+          for (final option in options)
+            SimpleDialogOption(
+              key:
+                  ValueKey('save-encoding-${option.encoding.id}-${option.bom}'),
+              onPressed: () => Navigator.pop(dialogContext, option),
+              child: Text(option.label),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<TextEncoding?> _pickReopenEncoding({
+    String title = '使用编码重新打开',
+  }) {
+    const encodings = [
+      TextEncoding.utf8,
+      TextEncoding.utf16Le,
+      TextEncoding.utf16Be,
+      TextEncoding.gbk,
+    ];
+    return showDialog<TextEncoding>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(title),
+        children: [
+          for (final encoding in encodings)
+            SimpleDialogOption(
+              key: ValueKey('reopen-encoding-${encoding.id}'),
+              onPressed: () => Navigator.pop(dialogContext, encoding),
+              child: Text(switch (encoding) {
+                TextEncoding.utf8 => 'UTF-8',
+                TextEncoding.utf16Le => 'UTF-16 LE',
+                TextEncoding.utf16Be => 'UTF-16 BE',
+                TextEncoding.gbk => 'GBK',
+              }),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectLineEndingActive() async {
+    final doc = _active;
+    if (doc == null) return;
+    final lineEnding = await showDialog<TextLineEnding>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: const Text('选择行尾'),
+        children: [
+          for (final value in TextLineEnding.values)
+            SimpleDialogOption(
+              key: ValueKey('line-ending-${value.id}'),
+              onPressed: () => Navigator.pop(dialogContext, value),
+              child: Text(value.label),
+            ),
+        ],
+      ),
+    );
+    if (lineEnding != null) _setLineEnding(doc, lineEnding);
+  }
+
+  void _setLineEnding(OpenDoc doc, TextLineEnding lineEnding) {
+    if (doc.fileOptions.lineEnding == lineEnding) return;
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.selection;
+    doc.undoStack.pushOperations(
+      forward: const [],
+      inverse: const [],
+      caret: selection.baseOffset >= 0 ? selection.baseOffset : 0,
+      redoCaret: selection.extentOffset,
+      coalesce: false,
+      encoding: doc.fileOptions.encoding.id,
+      bom: doc.fileOptions.bom,
+      lineEnding: doc.fileOptions.lineEnding.id,
+    );
+    doc.fileOptions = doc.fileOptions.copyWith(lineEnding: lineEnding);
+    doc.lastEditAt = null;
+    _updateDirty(doc);
+    _scheduleStateSave();
+    _syncCommandContext();
+    setState(() => _statusDetail = '行尾已更改为 ${lineEnding.label}');
+  }
+
+  void _replaceDocumentFromDisk(
+    OpenDoc doc,
+    DecodedTextFile disk, [
+    String? status,
+  ]) {
+    _flushInput(doc, commitComposition: true);
+    final currentText = doc.doc.resync().content;
+    final ops = diffToOps(currentText, disk.content);
+    if (ops.isNotEmpty) doc.doc.apply(ops);
+    final caret =
+        doc.selection.extentOffset.clamp(0, disk.content.length).toInt();
+    doc.doc.setSavepoint(disk.content);
+    doc.fileOptions = disk.options;
+    doc.savedFileOptions = disk.options;
+    doc.diskState = DiskDocumentState.current;
+    doc.conflictBaselineKnown = true;
+    doc.replaceInputWindow(caret);
+    if (ops.isNotEmpty) _refreshSiblingViews(doc, ops);
+    _updateDirty(doc);
+    doc.undoStack.clear();
+    doc.lastEditAt = null;
+    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    _scheduleOutlineRefresh();
+    _scheduleStateSave();
+    _syncCommandContext();
+    setState(() => _statusDetail = status ?? '已从磁盘重新载入 ${doc.name}');
   }
 
   void _verifyIntegrity() {
     final active = _active;
     if (active == null) return;
+    _flushInput(active, commitComposition: true);
     final r = active.doc.resync();
-    final matches = r.content == active.controller.text;
+    final window = active.inputWindow;
+    final validRange =
+        window.startUtf16 >= 0 && window.endUtf16 <= r.content.length;
+    final expected = validRange
+        ? r.content.substring(window.startUtf16, window.endUtf16)
+        : '';
+    final matches = validRange &&
+        r.version == window.version &&
+        r.content.length == window.totalUtf16Length &&
+        expected == window.text;
     setState(() {
       _state = matches ? WbSyncState.synced : WbSyncState.mismatch;
       _statusDetail = matches
-          ? '一致性校验通过：本地与 Rust v${r.version} 完全一致'
-          : '不一致！Rust v${r.version} 的内容与本地不同（见日志）';
+          ? '一致性校验通过：输入窗与 Rust v${r.version} 完全一致'
+          : '不一致！输入窗与 Rust v${r.version} 不一致（见日志）';
     });
   }
 
@@ -981,61 +4041,283 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 撤销/重做/查找键位。必须在这里抢——TextField 内建 UndoHistory 在
   /// 焦点链更下方注册了 Ctrl+Z/Y，晚于焦点节点处理器，且会双栈打架
   /// （测试环境还会死锁）。
-  final Map<int, FocusNode> _editorFocusNodes = {};
+  final Map<String, FocusNode> _editorFocusNodes = {};
+  Timer? _pendingMoveSelectionChordTimer;
+  bool _awaitingMoveSelectionChord = false;
+
+  String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
+      '${group.region}:${doc.id}';
 
   FocusNode _focusNodeFor(EditorGroup g, OpenDoc doc) {
-    return _editorFocusNodes.putIfAbsent(doc.id, () {
+    return _editorFocusNodes.putIfAbsent(_focusKeyFor(g, doc), () {
       return FocusNode(onKeyEvent: (node, event) {
         if (event is! KeyDownEvent) return KeyEventResult.ignored;
+        final meta = HardwareKeyboard.instance.isMetaPressed;
         final ctrl = HardwareKeyboard.instance.isControlPressed;
         final shift = HardwareKeyboard.instance.isShiftPressed;
-        if (!ctrl) return KeyEventResult.ignored;
-        if (event.logicalKey == LogicalKeyboardKey.keyZ) {
-          shift ? _redo() : _undo();
+        final alt = HardwareKeyboard.instance.isAltPressed;
+        final key = event.logicalKey;
+        final active = _active;
+        final character = event.character;
+        if (_overtypeMode &&
+            !ctrl &&
+            !alt &&
+            !meta &&
+            _isPrintableOvertypeCharacter(character)) {
+          active?.expectOvertypeInput(character!);
+        } else {
+          active?.clearPendingOvertypeInput();
+        }
+        final commandModifier =
+            defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
+        final activeHasComposition =
+            active?.inputWindow.hasComposition ?? false;
+        if (_awaitingMoveSelectionChord) {
+          if (key == LogicalKeyboardKey.controlLeft ||
+              key == LogicalKeyboardKey.controlRight ||
+              key == LogicalKeyboardKey.metaLeft ||
+              key == LogicalKeyboardKey.metaRight ||
+              key == LogicalKeyboardKey.shiftLeft ||
+              key == LogicalKeyboardKey.shiftRight ||
+              key == LogicalKeyboardKey.altLeft ||
+              key == LogicalKeyboardKey.altRight) {
+            return KeyEventResult.ignored;
+          }
+          _pendingMoveSelectionChordTimer?.cancel();
+          _pendingMoveSelectionChordTimer = null;
+          _awaitingMoveSelectionChord = false;
+          if (commandModifier &&
+              !shift &&
+              !alt &&
+              key == LogicalKeyboardKey.keyD) {
+            _runCommand('editor.action.moveSelectionToNextFindMatch');
+            return KeyEventResult.handled;
+          }
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyK) {
+          _awaitingMoveSelectionChord = true;
+          _pendingMoveSelectionChordTimer = Timer(
+            const Duration(seconds: 5),
+            () => _awaitingMoveSelectionChord = false,
+          );
           return KeyEventResult.handled;
         }
-        if (event.logicalKey == LogicalKeyboardKey.keyY) {
-          _redo();
+        if (commandModifier && !shift && key == LogicalKeyboardKey.keyD) {
+          _runCommand('editor.selectNextOccurrence');
           return KeyEventResult.handled;
         }
-        if (event.logicalKey == LogicalKeyboardKey.keyF && !shift) {
-          _toggleFind();
+        if (active?.crossWindowSelection != null && !activeHasComposition) {
+          if (commandModifier && key == LogicalKeyboardKey.keyC) {
+            unawaited(_copyCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (commandModifier && key == LogicalKeyboardKey.keyX) {
+            unawaited(_cutCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (commandModifier && key == LogicalKeyboardKey.keyV) {
+            unawaited(_overtypeMode && widget.overtypeOnPaste
+                ? _pasteOvertype(active!)
+                : _pasteCrossWindowSelection(active!));
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.delete ||
+              key == LogicalKeyboardKey.backspace) {
+            _replaceCrossWindowSelection(active!, '');
+            return KeyEventResult.handled;
+          }
+        }
+        final activeCrossSelection = active?.crossWindowSelection;
+        if (key == LogicalKeyboardKey.escape &&
+            !activeHasComposition &&
+            active != null &&
+            activeCrossSelection != null) {
+          _setDocSelection(
+            active,
+            TextSelection.collapsed(offset: activeCrossSelection.end),
+          );
           return KeyEventResult.handled;
         }
-        if (event.logicalKey == LogicalKeyboardKey.keyH && !shift) {
-          _openReplace();
+        if (key == LogicalKeyboardKey.escape &&
+            active?.additionalSelections.isNotEmpty == true) {
+          final active = _active!;
+          _setDocSelection(active, active.selection);
           return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !alt &&
+            key == LogicalKeyboardKey.keyV &&
+            _overtypeMode &&
+            widget.overtypeOnPaste &&
+            !activeHasComposition &&
+            active != null) {
+          unawaited(_pasteOvertype(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier && !alt && key == LogicalKeyboardKey.keyZ) {
+          _runCommand(shift ? 'editor.redo' : 'editor.undo');
+          return KeyEventResult.handled;
+        }
+        if (commandModifier && !alt && key == LogicalKeyboardKey.keyY) {
+          _runCommand('editor.redo');
+          return KeyEventResult.handled;
+        }
+        if (ctrl) {
+          if (key == LogicalKeyboardKey.keyZ) {
+            _runCommand(shift ? 'editor.redo' : 'editor.undo');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyY) {
+            _runCommand('editor.redo');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyF && !shift) {
+            _runCommand('editor.find');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyH && !shift) {
+            _runCommand('editor.replace');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyL && shift) {
+            _runCommand('editor.selectAllOccurrences');
+            return KeyEventResult.handled;
+          }
+          if (key == LogicalKeyboardKey.keyU) {
+            _runCommand(shift ? 'editor.cursorRedo' : 'editor.cursorUndo');
+            return KeyEventResult.handled;
+          }
+          if (active != null && active.additionalSelections.isNotEmpty) {
+            if (key == LogicalKeyboardKey.keyC) {
+              unawaited(_copyMultiSelections(active));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.keyV) {
+              unawaited(_pasteMultiSelections(active));
+              return KeyEventResult.handled;
+            }
+            if (key == LogicalKeyboardKey.keyX) {
+              unawaited(_cutMultiSelections(active).then((handled) {
+                if (!handled && mounted) {
+                  setState(() => _statusDetail = '多选剪切需要每个光标都有非空选区');
+                }
+              }));
+              return KeyEventResult.handled;
+            }
+          }
+          if (alt && key == LogicalKeyboardKey.arrowUp) {
+            _runCommand('editor.addCursorAbove');
+            return KeyEventResult.handled;
+          }
+          if (alt && key == LogicalKeyboardKey.arrowDown) {
+            _runCommand('editor.addCursorBelow');
+            return KeyEventResult.handled;
+          }
+        }
+        if (alt && shift && defaultTargetPlatform != TargetPlatform.macOS) {
+          final command = switch (key) {
+            LogicalKeyboardKey.arrowUp => 'editor.columnSelectUp',
+            LogicalKeyboardKey.arrowDown => 'editor.columnSelectDown',
+            LogicalKeyboardKey.arrowLeft => 'editor.columnSelectLeft',
+            LogicalKeyboardKey.arrowRight => 'editor.columnSelectRight',
+            _ => null,
+          };
+          if (command != null) {
+            _runCommand(command);
+            return KeyEventResult.handled;
+          }
         }
         return KeyEventResult.ignored;
       });
     });
   }
 
-  /// 撤销：把快照写回 controller，经「diff → FFI」通路同步 Rust。
+  /// Restore the file-format state retained by a history frame.
+  void _restoreFileOptionsFromUndo(OpenDoc doc, UndoEntry entry) {
+    final encoding = TextEncodingInfo.fromId(entry.encoding);
+    final lineEnding = TextLineEndingInfo.fromId(entry.lineEnding);
+    if (encoding == null || entry.bom == null || lineEnding == null) return;
+    doc.fileOptions = TextFileOptions(
+      encoding: encoding,
+      bom: entry.bom!,
+      lineEnding: lineEnding,
+    );
+  }
+
+  void _restoreRedoFileOptions(OpenDoc doc, UndoEntry entry) {
+    final encoding = TextEncodingInfo.fromId(entry.redoEncoding);
+    final lineEnding = TextLineEndingInfo.fromId(entry.redoLineEnding);
+    if (encoding == null || entry.redoBom == null || lineEnding == null) return;
+    doc.fileOptions = TextFileOptions(
+      encoding: encoding,
+      bom: entry.redoBom!,
+      lineEnding: lineEnding,
+    );
+  }
+
+  List<TextOp> _applyHistoryBatches(
+    OpenDoc doc,
+    List<List<TextOp>>? batches,
+  ) {
+    if (batches == null) return const [];
+    final operations = batches.expand((batch) => batch).toList(growable: false);
+    if (operations.isNotEmpty) doc.doc.apply(operations);
+    return operations;
+  }
+
+  void _finishHistoryChange(OpenDoc doc, String status) {
+    doc.crossWindowSelection = null;
+    _updateDirty(doc);
+    _syncCommandContext();
+    doc.lastEditAt = null;
+    _onFindTextChanged();
+    _scheduleOutlineRefresh();
+    _scheduleStateSave();
+    if (doc.lspAttached) _scheduleSyntaxRefresh(doc.id);
+    if (mounted) setState(() => _statusDetail = status);
+  }
+
   void _undo() {
     final active = _active;
     if (active == null) {
       setState(() => _statusDetail = '撤销需要打开的文档');
       return;
     }
-    final sel = active.controller.selection;
-    final entry = _undoStack.undo(
-        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+    _flushInput(active, commitComposition: true);
+    final operation = active.undoStack.peekOperationUndo();
+    if (operation != null) {
+      final operations = _applyHistoryBatches(active, operation.inverseBatches);
+      operation.redoEncoding = active.fileOptions.encoding.id;
+      operation.redoBom = active.fileOptions.bom;
+      operation.redoLineEnding = active.fileOptions.lineEnding.id;
+      active.undoStack.takeOperationUndo();
+      _restoreFileOptionsFromUndo(active, operation);
+      active.replaceInputWindow(operation.caret);
+      if (operations.isNotEmpty) _refreshSiblingViews(active, operations);
+      _finishHistoryChange(active, '已撤销');
+      return;
+    }
+    final currentText = active.doc.resync().content;
+    final entry = active.undoStack.undo(
+      currentText,
+      active.selection.baseOffset,
+      encoding: active.fileOptions.encoding.id,
+      bom: active.fileOptions.bom,
+      lineEnding: active.fileOptions.lineEnding.id,
+    );
     if (entry == null) {
       setState(() => _statusDetail = '无可撤销');
       return;
     }
-    _undoRedoBusy = true;
-    final caret = entry.caret.clamp(0, entry.text.length);
-    active.controller.value = TextEditingValue(
-      text: entry.text,
-      selection: TextSelection.collapsed(offset: caret),
-    );
-    _undoRedoBusy = false;
-    _lastEditAt = null; // 撤销后不再与后续打字合并
-    _onFindTextChanged();
-    setState(() => _statusDetail = '已撤销');
-    _scheduleStateSave();
+    final ops = diffToOps(currentText, entry.text);
+    if (ops.isNotEmpty) active.doc.apply(ops);
+    _restoreFileOptionsFromUndo(active, entry);
+    active.replaceInputWindow(entry.caret);
+    if (ops.isNotEmpty) _refreshSiblingViews(active, ops);
+    _finishHistoryChange(active, '已撤销');
   }
 
   void _redo() {
@@ -1044,24 +4326,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = '重做需要打开的文档');
       return;
     }
-    final sel = active.controller.selection;
-    final entry = _undoStack.redo(
-        active.controller.text, sel.baseOffset >= 0 ? sel.baseOffset : 0);
+    _flushInput(active, commitComposition: true);
+    final operation = active.undoStack.peekOperationRedo();
+    if (operation != null) {
+      final operations = _applyHistoryBatches(active, operation.forwardBatches);
+      active.undoStack.takeOperationRedo();
+      _restoreRedoFileOptions(active, operation);
+      active.replaceInputWindow(operation.redoCaret);
+      if (operations.isNotEmpty) _refreshSiblingViews(active, operations);
+      _finishHistoryChange(active, '已重做');
+      return;
+    }
+    final currentText = active.doc.resync().content;
+    final entry = active.undoStack.redo(
+      currentText,
+      active.selection.baseOffset,
+      encoding: active.fileOptions.encoding.id,
+      bom: active.fileOptions.bom,
+      lineEnding: active.fileOptions.lineEnding.id,
+    );
     if (entry == null) {
       setState(() => _statusDetail = '无可重做');
       return;
     }
-    _undoRedoBusy = true;
-    final caret = entry.caret.clamp(0, entry.text.length);
-    active.controller.value = TextEditingValue(
-      text: entry.text,
-      selection: TextSelection.collapsed(offset: caret),
-    );
-    _undoRedoBusy = false;
-    _lastEditAt = null;
-    _onFindTextChanged();
-    setState(() => _statusDetail = '已重做');
-    _scheduleStateSave();
+    final ops = diffToOps(currentText, entry.text);
+    if (ops.isNotEmpty) active.doc.apply(ops);
+    _restoreFileOptionsFromUndo(active, entry);
+    active.replaceInputWindow(entry.caret);
+    if (ops.isNotEmpty) _refreshSiblingViews(active, ops);
+    _finishHistoryChange(active, '已重做');
   }
 
   // ---------- 查找/替换 ----------
@@ -1074,6 +4367,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _refreshMatches();
       } else {
         _matches = const [];
+        _findOverviewLines = const [];
         _matchIndex = -1;
       }
     });
@@ -1095,33 +4389,139 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _refreshMatches() {
     final active = _active;
-    final text = active?.controller.text ?? '';
+    final text = active?.text ?? '';
+    _matchesDocId = active?.id ?? -1;
+    _matchesDocVersion = active?.doc.version ?? -1;
     _matches = _findVisible
         ? findMatches(text, _findQuery.text, caseSensitive: _caseSensitive)
         : const [];
+    _findOverviewLines =
+        _findVisible ? buildEditorMinimapFindLines(text, _matches) : const [];
     if (_matchIndex >= _matches.length) {
       _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
     }
     if (_matches.isEmpty) _matchIndex = -1;
   }
 
+  List<EditorRangeDecoration> _findDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (!_findVisible ||
+        _matchesDocId != doc.id ||
+        _matchesDocVersion != window.version ||
+        doc.doc.version != window.version ||
+        window.pendingText != null ||
+        _matches.isEmpty) {
+      return const [];
+    }
+
+    final windowStart = window.startUtf16;
+    final windowEnd = window.endUtf16;
+    final first = firstTextMatchEndingAfter(_matches, windowStart);
+    final decorations = <EditorRangeDecoration>[];
+    for (var index = first; index < _matches.length; index++) {
+      final match = _matches[index];
+      if (match.start >= windowEnd) break;
+      if (match.end <= windowStart || match.end <= match.start) continue;
+      final isCurrent = index == _matchIndex;
+      decorations.add(
+        EditorRangeDecoration(
+          documentVersion: window.version,
+          startUtf16: match.start,
+          endUtf16: match.end,
+          backgroundColor:
+              isCurrent ? const Color(0x66FFB000) : const Color(0x33F0C674),
+          borderColor: isCurrent ? const Color(0xFFFFB000) : null,
+        ),
+      );
+    }
+    return decorations;
+  }
+
+  List<EditorRangeDecoration> _diagnosticDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (window.pendingText != null ||
+        doc.doc.version != window.version ||
+        _diagnostics.isEmpty) {
+      return const [];
+    }
+
+    final diagnostics = _diagnostics
+        .where((diagnostic) => diagnostic['_documentId'] == doc.id)
+        .toList(growable: false);
+    if (diagnostics.isEmpty) return const [];
+
+    final firstVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.startUtf16);
+    final lastVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.endUtf16);
+    if (doc.doc.version != window.version) return const [];
+
+    final lineOffsets = <int, DocumentLineOffset>{};
+    DocumentLineOffset lineOffset(int line) =>
+        lineOffsets.putIfAbsent(line, () => doc.doc.lineOffset(line));
+    return buildLspDiagnosticDecorations(
+      diagnostics: diagnostics,
+      documentVersion: doc.doc.version,
+      inputWindowVersion: window.version,
+      windowStartUtf16: window.startUtf16,
+      windowEndUtf16: window.endUtf16,
+      totalUtf16Length: window.totalUtf16Length,
+      documentLineCount: firstVisible.lineCount,
+      firstVisibleLine: firstVisible.firstLineNumber,
+      lastVisibleLine: lastVisible.firstLineNumber,
+      lineOffset: lineOffset,
+    );
+  }
+
+  List<EditorRangeDecoration> _workspaceSearchDecorationsFor(OpenDoc doc) {
+    final window = doc.inputWindow;
+    if (_selectedSearchDocId != doc.id ||
+        _selectedSearchDocVersion != doc.doc.version ||
+        window.pendingText != null ||
+        doc.doc.version != window.version) {
+      return const [];
+    }
+
+    final firstVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.startUtf16);
+    final lastVisible =
+        resolveEditorDocumentLinePosition(doc.doc, window.endUtf16);
+    if (doc.doc.version != window.version) return const [];
+
+    final lineOffsets = <int, DocumentLineOffset>{};
+    DocumentLineOffset lineOffset(int line) =>
+        lineOffsets.putIfAbsent(line, () => doc.doc.lineOffset(line));
+    return buildWorkspaceSearchDecorations(
+      hit: _selectedSearchHit,
+      documentVersion: doc.doc.version,
+      inputWindowVersion: window.version,
+      windowStartUtf16: window.startUtf16,
+      windowEndUtf16: window.endUtf16,
+      totalUtf16Length: window.totalUtf16Length,
+      documentLineCount: firstVisible.lineCount,
+      firstVisibleLine: firstVisible.firstLineNumber,
+      lastVisibleLine: lastVisible.firstLineNumber,
+      lineOffset: lineOffset,
+    );
+  }
+
   void _gotoMatch(int direction) {
     final active = _active;
     if (active == null) return;
+    _flushInput(active, commitComposition: true);
     _refreshMatches();
     if (_matches.isEmpty) {
       setState(() => _matchIndex = -1);
       return;
     }
-    final sel = active.controller.selection;
+    final sel = active.selection;
     final from = sel.baseOffset >= 0 ? sel.baseOffset : 0;
-    final m = direction > 0
-        ? findNext(_matches, from)
-        : findPrevious(_matches, from);
+    final m =
+        direction > 0 ? findNext(_matches, from) : findPrevious(_matches, from);
     _matchIndex = _matches.indexOf(m!);
-    active.controller.value = TextEditingValue(
-      text: active.controller.text,
-      selection: TextSelection(baseOffset: m.start, extentOffset: m.end),
+    _setDocSelection(
+      active,
+      TextSelection(baseOffset: m.start, extentOffset: m.end),
     );
     setState(() {});
   }
@@ -1129,48 +4529,53 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _replaceCurrent() {
     final active = _active;
     if (active == null) return;
+    _flushInput(active, commitComposition: true);
     _refreshMatches();
     if (_matches.isEmpty) {
       setState(() => _statusDetail = '无匹配');
       return;
     }
-    final sel = active.controller.selection;
+    final sel = active.selection;
     final from = sel.baseOffset >= 0 ? sel.baseOffset : 0;
     var m = findNext(_matches, from)!;
     var isOnMatch = sel.baseOffset == m.start && sel.extentOffset == m.end;
     if (!isOnMatch) {
       // 先跳转到该匹配，再按一次才替换（与 VS Code 语义一致）
       _matchIndex = _matches.indexOf(m);
-      active.controller.value = TextEditingValue(
-        text: active.controller.text,
-        selection: TextSelection(baseOffset: m.start, extentOffset: m.end),
+      _setDocSelection(
+        active,
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
       );
       setState(() {});
       return;
     }
-    final t = active.controller.text;
-    active.controller.value = TextEditingValue(
-      text: t.replaceRange(m.start, m.end, _replaceInput.text),
-      selection:
-          TextSelection.collapsed(offset: m.start + _replaceInput.text.length),
+    final t = active.text;
+    final replaced = t.replaceRange(m.start, m.end, _replaceInput.text);
+    _applyProgrammaticEdit(
+      active,
+      replaced,
+      selection: TextSelection.collapsed(
+        offset: m.start + _replaceInput.text.length,
+      ),
     );
     _refreshMatches();
-    setState(() => _statusDetail =
-        '已替换 1 处（剩余 ${_matches.length} 处）');
+    setState(() => _statusDetail = '已替换 1 处（剩余 ${_matches.length} 处）');
   }
 
   void _replaceAll() {
     final active = _active;
     if (active == null) return;
-    final r = replaceAllMatches(active.controller.text, _findQuery.text,
-        _replaceInput.text,
+    _flushInput(active, commitComposition: true);
+    final r = replaceAllMatches(
+        active.text, _findQuery.text, _replaceInput.text,
         caseSensitive: _caseSensitive);
     if (r.count == 0) {
       setState(() => _statusDetail = '无匹配');
       return;
     }
-    active.controller.value = TextEditingValue(
-      text: r.newText,
+    _applyProgrammaticEdit(
+      active,
+      r.newText,
       selection: TextSelection.collapsed(offset: r.newText.length),
     );
     _refreshMatches();
@@ -1218,13 +4623,460 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _jumpToSymbol(int startUtf16) {
     final active = _active;
     if (active == null) return;
-    final t = active.controller.text;
-    final offset = startUtf16.clamp(0, t.length);
-    active.controller.value = TextEditingValue(
-      text: t,
-      selection: TextSelection.collapsed(offset: offset),
+    _setDocSelection(
+      active,
+      TextSelection.collapsed(offset: startUtf16),
     );
     setState(() {});
+  }
+
+  /// 光标处的 Rust 标识符词，支持 Unicode XID 字符与 UTF-16 偏移。
+  String _wordAt(String text, int offset) {
+    final pos = offset.clamp(0, text.length).toInt();
+    for (final match in _rustIdentifierPattern.allMatches(text)) {
+      if (pos >= match.start && pos <= match.end) return match.group(0)!;
+    }
+    return '';
+  }
+
+  /// Navigate with the language server when available, retaining the local
+  /// Rust outline fallback for same-file definitions.
+  Future<void> _gotoDefinition() async {
+    final active = _active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+    final sel = active.selection;
+    final offset = sel.baseOffset >= 0 ? sel.baseOffset : 0;
+    final word = _wordAt(active.text, offset);
+    if (word.isEmpty) {
+      setState(() => _statusDetail = '光标不在符号上');
+      return;
+    }
+    final sourceVersion = active.doc.version;
+    final provider = widget.definitionRequest;
+    if (provider != null || active.lspAttached) {
+      try {
+        DefinitionResult? definition;
+        if (provider != null) {
+          definition = await provider(active.id, offset, sourceVersion);
+        } else {
+          final stopwatch = Stopwatch()..start();
+          definition = await active.doc.core.lsp.definition(active.id, offset);
+          if (definition == null && stopwatch.elapsed < const Duration(seconds: 2)) {
+            await Future<void>.delayed(const Duration(milliseconds: 200));
+            if (!mounted || !identical(_active, active)) return;
+            if (active.doc.version != sourceVersion) {
+              setState(() => _statusDetail = '文档已更改，已取消跳转');
+              return;
+            }
+            definition = await active.doc.core.lsp.definition(
+              active.id,
+              offset,
+              timeoutMs: 2500,
+            );
+          }
+        }
+        if (!mounted || !identical(_active, active)) return;
+        if (active.doc.version != sourceVersion ||
+            (definition != null && definition.version != sourceVersion)) {
+          setState(() => _statusDetail = '文档已更改，已取消跳转');
+          return;
+        }
+        if (definition != null) {
+          final navigated = await _navigateToDefinition(
+            active,
+            offset,
+            definition,
+          );
+          if (!navigated && mounted) {
+            setState(() => _statusDetail = '无法打开定义位置');
+          }
+          return;
+        }
+      } catch (error) {
+        if (!mounted || !identical(_active, active)) return;
+        setState(() => _statusDetail = 'LSP 定义请求失败：$error');
+      }
+    }
+
+    _gotoDefinitionInCurrentFile(active, word, offset);
+  }
+
+  void _gotoDefinitionInCurrentFile(OpenDoc active, String word, int offset) {
+    final r = active.doc.core.lsp.symbols(active.id);
+    final defs =
+        (r?.symbols ?? const []).where((s) => s['name'] == word).map((s) {
+      final start = (s['start_utf16'] as num?)?.toInt() ?? 0;
+      final lineEnd = active.text.indexOf('\n', start);
+      final declaration = active.text.substring(
+        start,
+        lineEnd < 0 ? active.text.length : lineEnd,
+      );
+      var nameOffset = -1;
+      for (final match in _rustIdentifierPattern.allMatches(declaration)) {
+        if (match.group(0) == word) {
+          nameOffset = match.start;
+          break;
+        }
+      }
+      return nameOffset < 0 ? start : start + nameOffset;
+    }).toList();
+    if (defs.isEmpty) {
+      setState(() => _statusDetail = '未找到「$word」的定义（当前文件）');
+      return;
+    }
+    // 排除光标正踩着的定义本身；跳第一个真实定义
+    final target = defs.where((d) => d != offset).isEmpty
+        ? defs.first
+        : defs.firstWhere((d) => d != offset);
+    final owner = _ownerOfView(active);
+    if (owner != null) {
+      try {
+        final from = _navigationLocation(active, offset, owner.region);
+        final to = _navigationLocation(active, target, owner.region);
+        _navigationHistory.recordNavigation(from, to);
+      } on AlulaException {
+        // The document may have changed while its local symbols were read.
+      }
+    }
+    _jumpToSymbol(target);
+    setState(() => _statusDetail = '跳转到 $word（定义）');
+  }
+
+  Future<bool> _navigateToDefinition(
+    OpenDoc source,
+    int sourceOffset,
+    DefinitionResult definition,
+  ) async {
+    final path = _pathFromFileUri(definition.uri);
+    if (path == null) return false;
+    final sourceGroup = _ownerOfView(source);
+    if (sourceGroup == null) return false;
+    setState(() => _focusedRegion = sourceGroup.region);
+
+    final sameFile = source.path != null && _pathsEqual(source.path!, path);
+    if (!sameFile) await _openFileByPath(path);
+    if (!mounted || (sameFile && !identical(_active, source))) return false;
+    final target = sameFile ? source : _active;
+    if (target == null ||
+        target.path == null ||
+        !_pathsEqual(target.path!, path)) {
+      return false;
+    }
+    final targetPosition = target.doc.positionOffset(
+      definition.line,
+      definition.character,
+    );
+    final targetGroup = _ownerOfView(target);
+    if (targetGroup == null) return false;
+    final from = _navigationLocation(source, sourceOffset, sourceGroup.region);
+    final to = NavigationLocation(
+      uri: target.uri,
+      path: target.path,
+      documentId: target.id,
+      groupRegion: targetGroup.region,
+      line: targetPosition.line,
+      character: targetPosition.character,
+      version: targetPosition.version,
+    );
+    _navigationHistory.recordNavigation(from, to);
+    _setDocSelection(
+      target,
+      TextSelection.collapsed(offset: targetPosition.offsetUtf16),
+    );
+    setState(() => _statusDetail = '跳转到 ${target.name}（定义）');
+    return true;
+  }
+
+  NavigationLocation _navigationLocation(
+    OpenDoc doc,
+    int offsetUtf16,
+    String groupRegion,
+  ) {
+    final position = doc.doc.positionAt(offsetUtf16);
+    return NavigationLocation(
+      uri: doc.uri,
+      path: doc.path,
+      documentId: doc.id,
+      groupRegion: groupRegion,
+      line: position.line,
+      character: position.character,
+      version: position.version,
+    );
+  }
+
+  NavigationLocation? _currentNavigationLocation() {
+    final active = _active;
+    final group = active == null ? null : _ownerOfView(active);
+    if (active == null || group == null) return null;
+    try {
+      return _navigationLocation(
+        active,
+        active.selection.extentOffset,
+        group.region,
+      );
+    } on AlulaException {
+      return null;
+    }
+  }
+
+  Future<void> _navigateBack() async {
+    final current = _currentNavigationLocation();
+    if (current == null) return;
+    final target = _navigationHistory.goBack(current);
+    if (target == null) {
+      setState(() => _statusDetail = '没有更早的导航位置');
+      return;
+    }
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复导航位置');
+    }
+  }
+
+  Future<void> _navigateForward() async {
+    final current = _currentNavigationLocation();
+    if (current == null) return;
+    final target = _navigationHistory.goForward(current);
+    if (target == null) {
+      setState(() => _statusDetail = '没有更新的导航位置');
+      return;
+    }
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复导航位置');
+    }
+  }
+
+  Future<void> _navigateToLastEdit() async {
+    final target = _navigationHistory.lastEdit;
+    final current = _currentNavigationLocation();
+    if (target == null || current == null) {
+      setState(() => _statusDetail = '没有可用的上次编辑位置');
+      return;
+    }
+    _navigationHistory.recordNavigation(current, target);
+    if (!await _restoreNavigationLocation(target) && mounted) {
+      setState(() => _statusDetail = '无法恢复上次编辑位置');
+    }
+  }
+
+  Future<bool> _restoreNavigationLocation(NavigationLocation location) async {
+    final targetGroup = _groups[location.groupRegion] ?? _focused;
+    setState(() => _focusedRegion = targetGroup.region);
+    if (location.path != null) {
+      await _openFileByPath(location.path!);
+      if (!mounted) return false;
+      final active = _active;
+      if (active == null ||
+          active.path == null ||
+          !_pathsEqual(active.path!, location.path!)) {
+        return false;
+      }
+    } else {
+      final existing = _allDocViews
+          .where((view) => view.id == location.documentId)
+          .firstOrNull;
+      if (existing == null) return false;
+      final view = targetGroup.docs
+              .where((candidate) => candidate.sameDocumentAs(existing))
+              .firstOrNull ??
+          OpenDoc.viewOf(existing);
+      setState(() {
+        if (!targetGroup.docs.contains(view)) targetGroup.docs.add(view);
+        targetGroup.activeDocId = view.id;
+      });
+    }
+
+    final active = _active;
+    if (active == null) return false;
+    DocumentPosition position;
+    try {
+      position = active.doc.positionOffset(location.line, location.character);
+    } on AlulaException catch (error) {
+      if (error.code != 'InvalidLine') return false;
+      final snapshot = active.doc.readRange(0, maxLenUtf16: 1);
+      position = active.doc.positionOffset(snapshot.lineCount - 1, 0);
+    }
+    _setDocSelection(
+      active,
+      TextSelection.collapsed(offset: position.offsetUtf16),
+    );
+    return true;
+  }
+
+  String? _pathFromFileUri(String value) {
+    try {
+      final uri = Uri.parse(value);
+      if (uri.scheme != 'file') return null;
+      return uri.toFilePath(windows: Platform.isWindows);
+    } on FormatException {
+      return null;
+    } on UnsupportedError {
+      return null;
+    }
+  }
+
+  bool _pathsEqual(String left, String right) {
+    final a = left.replaceAll('\\', '/');
+    final b = right.replaceAll('\\', '/');
+    return Platform.isWindows ? a.toLowerCase() == b.toLowerCase() : a == b;
+  }
+
+  /// Ctrl+Click 跳转定义：从点击的全局坐标求字符偏移。
+  void _onEditorPointerDown(
+    EditorGroup group,
+    OpenDoc view,
+    BuildContext editorContext,
+    PointerDownEvent event,
+  ) {
+    view.clearPendingOvertypeInput();
+    _pendingDefinitionPointers.remove(event.pointer);
+    if (event.buttons != kPrimaryButton) return;
+    final control = HardwareKeyboard.instance.isControlPressed;
+    final meta = HardwareKeyboard.instance.isMetaPressed;
+    final alt = HardwareKeyboard.instance.isAltPressed;
+    final shift = HardwareKeyboard.instance.isShiftPressed;
+    final gotoModifier = control || meta;
+    if (event.kind == PointerDeviceKind.mouse &&
+        alt &&
+        shift &&
+        !gotoModifier) {
+      _pendingColumnSelectionStarts[event.pointer] = (
+        view: view,
+        selections: view.selectionSet,
+      );
+      return;
+    }
+    if (!gotoModifier && !alt) {
+      if (view.crossWindowSelection != null) {
+        view.crossWindowSelection = null;
+        if (mounted) setState(() {});
+        _syncCommandContext();
+      }
+      if (view.additionalSelections.isNotEmpty) {
+        final previous = view.selectionSet;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !identical(_active, view)) return;
+          view.selectionHistory.record(previous);
+          view.additionalSelections = const [];
+          view.columnSelection = null;
+          setState(() {});
+          _syncCommandContext();
+        });
+      }
+      return;
+    }
+    if (!editorContext.mounted) return;
+    final fieldContext = view.inputFieldKey.currentState?.context;
+    if (fieldContext == null) return;
+    final editable = _findRenderEditable(fieldContext);
+    if (editable == null) return;
+    final pos = editable.getPositionForPoint(event.position);
+    final active = view;
+    final localOffset =
+        pos.offset.clamp(0, active.editingValue.text.length).toInt();
+    final offset = active.inputWindow.startUtf16 + localOffset;
+    if (alt && !gotoModifier) return;
+    _pendingDefinitionPointers[event.pointer] = (
+      group: group,
+      view: active,
+      offset: offset,
+      position: event.position,
+    );
+  }
+
+  /// Apply Ctrl/Cmd+Click after EditableText has processed pointer-up selection.
+  void _onEditorPointerUp(PointerUpEvent event) {
+    _pendingColumnSelectionStarts.remove(event.pointer);
+    final pending = _pendingDefinitionPointers.remove(event.pointer);
+    if (pending == null ||
+        (event.position - pending.position).distance > kTouchSlop) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !identical(_active, pending.view)) return;
+      _focusedRegion = pending.group.region;
+      _setDocSelection(
+        pending.view,
+        TextSelection.collapsed(offset: pending.offset),
+      );
+      _runCommand('editor.gotoDef');
+    });
+  }
+
+  void _onEditorPointerCancel(PointerCancelEvent event) {
+    _pendingColumnSelectionStarts.remove(event.pointer);
+    _pendingDefinitionPointers.remove(event.pointer);
+  }
+
+  void _applyColumnSelectionDrag(
+    OpenDoc view,
+    ColumnSelectionState selection, {
+    required bool started,
+    List<TextSelection>? selectionsBeforeDrag,
+  }) {
+    if (!mounted || !_allDocViews.contains(view)) return;
+    _flushInput(view);
+    final window = view.inputWindow;
+    if (window.version != view.doc.version) return;
+    final selectionCount =
+        (selection.activeLine - selection.anchorLine).abs() + 1;
+    if (selectionCount > defaultMultiCursorLimit) {
+      return;
+    }
+    final resolved = view.doc.columnSelectionsUtf16(
+      anchorLine: selection.anchorLine,
+      anchorColumnUtf16: selection.anchorColumn,
+      activeLine: selection.activeLine,
+      activeColumnUtf16: selection.activeColumn,
+      maxSelections: defaultMultiCursorLimit,
+    );
+    if (resolved.version != window.version) return;
+    if (started && selectionsBeforeDrag != null) {
+      view.selectionHistory.record(selectionsBeforeDrag);
+    }
+    final absoluteSelections = resolved.selections
+        .map((item) => TextSelection(
+              baseOffset: item.baseOffsetUtf16,
+              extentOffset: item.extentOffsetUtf16,
+            ))
+        .toList(growable: false);
+    final primary = absoluteSelections.first;
+    const rewindowMarginUtf16 = 2048;
+    final hasDocumentTextBefore = primary.extentOffset > 0;
+    final hasDocumentTextAfter =
+        primary.extentOffset < window.totalUtf16Length;
+    final nearWindowEdge = hasDocumentTextBefore &&
+            primary.extentOffset <= window.startUtf16 + rewindowMarginUtf16 ||
+        hasDocumentTextAfter &&
+            primary.extentOffset >= window.endUtf16 - rewindowMarginUtf16;
+    if (nearWindowEdge) {
+      view.replaceInputWindow(primary.extentOffset, selection: primary);
+      view.crossWindowSelection = null;
+      view.additionalSelections = List.unmodifiable(absoluteSelections.skip(1));
+      view.columnSelection = selection;
+      if (mounted) setState(() {});
+      _syncCommandContext();
+      return;
+    }
+    _setDocSelections(
+      view,
+      absoluteSelections,
+      columnSelection: selection,
+      recordHistory: false,
+    );
+  }
+
+  static RenderEditable? _findRenderEditable(BuildContext ctx) {
+    return _findRenderEditableOf(ctx.findRenderObject());
+  }
+
+  static RenderEditable? _findRenderEditableOf(RenderObject? obj) {
+    if (obj is RenderEditable) return obj;
+    RenderEditable? found;
+    obj?.visitChildren((child) {
+      found ??= _findRenderEditableOf(child);
+    });
+    return found;
   }
 
   // ---------- 搜索视图 ----------
@@ -1238,6 +5090,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {
       _searching = true;
       _searchHits = [];
+      _selectedSearchHit = null;
+      _selectedSearchDocId = -1;
+      _selectedSearchDocVersion = -1;
     });
     if (q.trim().isEmpty || svc == null) {
       if (mounted) setState(() => _searching = false);
@@ -1276,35 +5131,96 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openSearchHit(SearchHit hit) async {
     final root = _workspaceRoot;
     if (root == null) return;
+    setState(() {
+      _selectedSearchHit = null;
+      _selectedSearchDocId = -1;
+      _selectedSearchDocVersion = -1;
+    });
     final sep = root.endsWith('/') || root.endsWith('\\') ? '' : '/';
     await _openFileByPath('$root$sep${hit.path}');
+    if (!mounted) return;
     final active = _active;
     if (active == null) return;
-    final lines = active.controller.text.split('\n');
-    var offset = 0;
-    for (var i = 0; i < hit.line - 1 && i < lines.length; i++) {
-      offset += lines[i].length + 1;
-    }
-    active.controller.value = TextEditingValue(
-      text: active.controller.text,
-      selection: TextSelection.collapsed(offset: offset),
+    final lines = active.text.split('\n');
+    final requestedLine = hit.line - 1;
+    final line = requestedLine.clamp(0, lines.length - 1).toInt();
+    final lineOffset = active.doc.lineOffset(line);
+    _setDocSelection(
+      active,
+      TextSelection.collapsed(offset: lineOffset.offsetUtf16),
     );
+    final hitStillMatchesDocument =
+        line == requestedLine && lines[line] == hit.lineText;
+    setState(() {
+      _selectedSearchHit = hitStillMatchesDocument ? hit : null;
+      _selectedSearchDocId = hitStillMatchesDocument ? active.id : -1;
+      _selectedSearchDocVersion =
+          hitStillMatchesDocument ? active.doc.version : -1;
+    });
   }
 
   // ---------- 工作区文件监视（feat-filewatch） ----------
 
   void _attachWorkspaceWatcher() {
     final root = _workspaceRoot;
-    if (root == null) return;
-    _watcher?.stop();
-    _watcher = WorkspaceWatcher(root: root, onChanged: _onWorkspaceChanged)
-      ..start();
+    final current = _watcher;
+    if (root == null) {
+      _stopWorkspaceWatcher();
+      return;
+    }
+    if (current != null && current.root == root && current.isWatching) return;
+
+    final generation = ++_watcherGeneration;
+    _watcher = null;
+    _watcherTransition =
+        _watcherTransition.catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 上次切换失败：$error');
+    }).then((_) async {
+      await current?.stop();
+      if (!mounted ||
+          generation != _watcherGeneration ||
+          _workspaceRoot != root) {
+        return;
+      }
+      final watcher = WorkspaceWatcher(
+        root: root,
+        onChanged: () {
+          if (mounted &&
+              generation == _watcherGeneration &&
+              _workspaceRoot == root) {
+            unawaited(_onWorkspaceChanged(root));
+          }
+        },
+      );
+      _watcher = watcher;
+      await watcher.start();
+      if (generation != _watcherGeneration && identical(_watcher, watcher)) {
+        _watcher = null;
+        await watcher.stop();
+      }
+    }).catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 切换失败：$error');
+    });
+  }
+
+  void _stopWorkspaceWatcher() {
+    ++_watcherGeneration;
+    final watcher = _watcher;
+    _watcher = null;
+    _watcherTransition =
+        _watcherTransition.catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 切换失败：$error');
+    }).then((_) async {
+      await watcher?.stop();
+    }).catchError((Object error, StackTrace stack) {
+      debugPrint('工作区 watcher 停止失败：$error');
+    });
   }
 
   /// 外部变更（防抖后）：刷新文件树 + Git 状态；打开文档若在磁盘上被外部
   /// 修改，干净文档自动重载、脏文档仅提示（不覆盖本地编辑）。
-  Future<void> _onWorkspaceChanged() async {
-    if (!mounted) return;
+  Future<void> _onWorkspaceChanged(String root) async {
+    if (!mounted || _workspaceRoot != root) return;
     _refreshTree();
     _refreshGit();
     await _checkExternalChanges();
@@ -1358,35 +5274,117 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     for (final g in _groups.values) {
       for (final d in g.docs.where((d) => d.path != null)) {
-        String? disk;
+        _flushInput(d, commitComposition: true);
+        DecodedTextFile disk;
         try {
-          disk = core.workspace.readFile(d.path!);
-        } on AlulaException {
-          continue; // 文件被外部删除：V1 不处理（保留内存缓冲）
-        }
-        if (d.dirtyDisk) {
-          if (disk != d.savedText) {
-            if (mounted) {
-              setState(() =>
-                  _statusDetail = '注意：${d.name} 在磁盘上被外部修改（本地有未保存编辑）');
+          disk = _readDiskDocument(
+            core,
+            d.path!,
+            preferredEncoding: d.savedFileOptions.encoding,
+          );
+        } on AlulaException catch (error) {
+          final nextState = error.code == 'NotFound'
+              ? DiskDocumentState.missing
+              : DiskDocumentState.unavailable;
+          if (d.diskState != nextState) {
+            d.diskState = nextState;
+            _updateDirty(d);
+            if (error.code == 'NotFound') {
+              _statusDetail = '${d.name} 已从磁盘删除或移动；本地缓冲区仍可编辑';
+            } else {
+              _statusDetail = '读取 ${d.name} 的磁盘版本失败：${error.code}';
             }
           }
-        } else if (disk != d.controller.text) {
-          // 干净文档自动重载（_undoRedoBusy 复用为「程序化更新」闸门）
-          _undoRedoBusy = true;
-          d.controller.value = TextEditingValue(
-            text: disk,
-            selection: const TextSelection.collapsed(offset: 0),
-          );
-          d.savedText = disk;
+          continue;
+        }
+        final currentText = d.doc.resync().content;
+        final diskMatchesBuffer =
+            disk.content == currentText && disk.options == d.fileOptions;
+        if (diskMatchesBuffer) {
+          d.doc.markSaved();
+          d.savedFileOptions = disk.options;
           d.dirtyDisk = false;
-          _undoRedoBusy = false;
-          if (mounted) {
-            setState(() => _statusDetail = '已自动重载外部修改的 ${d.name}');
+          if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
+            d.conflictBaselineKnown = true;
           }
+          continue;
+        }
+        if (d.dirtyDisk) {
+          final diskMatchesSavepoint = d.doc.savepointMatches(disk.content) &&
+              disk.options == d.savedFileOptions;
+          if (d.diskState == DiskDocumentState.conflict &&
+              !d.conflictBaselineKnown) {
+            // 旧 session journal 没有原文快照；直到两侧收敛或用户显式处理，
+            // 保持冲突状态，不能因为重新读取同一磁盘版本而解除提示。
+            continue;
+          }
+          if (!diskMatchesSavepoint) {
+            d.diskState = DiskDocumentState.conflict;
+            d.conflictBaselineKnown = true;
+            _statusDetail = '注意：${d.name} 在磁盘上被外部修改；本地编辑已保留';
+          } else if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
+            d.conflictBaselineKnown = true;
+          }
+        } else if (d.diskState == DiskDocumentState.conflict) {
+          // 即使本地通过 undo 回到旧 savepoint，已发现的外部冲突也要显式处理；
+          // watcher 的后续事件不能把任一侧静默替换掉。
+          continue;
+        } else if (disk.content != currentText ||
+            disk.options != d.fileOptions) {
+          // 干净文档自动重载时保留光标、选区与每文档滚动位置，不产生撤销历史。
+          final oldSelection = d.selection;
+          int clampOffset(int offset) =>
+              offset.clamp(0, disk.content.length).toInt();
+          final selection = TextSelection(
+            baseOffset: clampOffset(oldSelection.baseOffset),
+            extentOffset: clampOffset(oldSelection.extentOffset),
+            affinity: oldSelection.affinity,
+            isDirectional: oldSelection.isDirectional,
+          );
+          final oldScrollOffset =
+              editorPrimaryScrollPosition(d.editorScrollController)?.pixels;
+          final reloadOps = diffToOps(currentText, disk.content);
+          if (reloadOps.isNotEmpty) d.doc.apply(reloadOps);
+          d.doc.setSavepoint(disk.content);
+          d.replaceInputWindow(selection.extentOffset, selection: selection);
+          if (reloadOps.isNotEmpty) _refreshSiblingViews(d, reloadOps);
+          d.fileOptions = disk.options;
+          d.savedFileOptions = disk.options;
+          d.dirtyDisk = false;
+          d.undoStack.clear();
+          d.lastEditAt = null;
+          if (d.diskState != DiskDocumentState.readOnly) {
+            d.diskState = DiskDocumentState.current;
+          }
+          d.conflictBaselineKnown = true;
+          _statusDetail = '已自动重载外部修改的 ${d.name}';
+          if (oldScrollOffset != null) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              for (final position in d.editorScrollController.positions
+                  .toList(growable: false)) {
+                position.jumpTo(
+                  oldScrollOffset
+                      .clamp(
+                        position.minScrollExtent,
+                        position.maxScrollExtent,
+                      )
+                      .toDouble(),
+                );
+              }
+            });
+          }
+        } else if (d.diskState == DiskDocumentState.missing ||
+            d.diskState == DiskDocumentState.unavailable) {
+          d.diskState = DiskDocumentState.current;
+          d.conflictBaselineKnown = true;
         }
       }
     }
+    if (mounted) setState(() {});
+    _syncCommandContext();
     _scheduleStateSave();
   }
 
@@ -1464,7 +5462,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (!mounted) return;
       setState(() {
         _gitDiff = d.isEmpty ? '（无文本差异：可能是二进制文件或全新文件）' : d;
-        _gitDiffPath = e.origPath == null ? e.path : '${e.origPath} → ${e.path}';
+        _gitDiffPath =
+            e.origPath == null ? e.path : '${e.origPath} → ${e.path}';
         _gitDiffStaged = staged;
       });
       _panelTab.animateTo(3);
@@ -1508,23 +5507,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   @override
   void dispose() {
+    _disposing = true;
+    _pendingDefinitionPointers.clear();
+    _pendingColumnSelectionStarts.clear();
+    _pendingMoveSelectionChordTimer?.cancel();
     _pollTimer?.cancel();
+    _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();
+    for (final d in _allDocViews) {
+      _flushInput(d, commitComposition: true);
+    }
     _shutdownLspWorkspace();
     // 退出前把未落盘的布局与会话冲写
     widget.layoutStore.save(_layout.root);
     widget.sessionStore.save(_encodeSession());
-    for (final d in _allDocs) {
-      d.doc.close();
-      d.controller.dispose();
+    for (final d in _allDocViews.toList()) {
+      d.disposeView();
     }
     for (final n in _editorFocusNodes.values) {
       n.dispose();
     }
     _searchSub?.cancel();
+    _commands
+      ..removeListener(_onCommandServiceChanged)
+      ..dispose();
     _searchQuery.dispose();
     _outlineTimer?.cancel();
-    _watcher?.stop();
+    _stopWorkspaceWatcher();
+    for (final timer in _syntaxRefreshTimers.values) {
+      timer.cancel();
+    }
+    _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _commitMessage.dispose();
     _layout.dispose();
@@ -1556,13 +5569,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.error_outline, size: 40, color: Colors.redAccent),
+                const Icon(Icons.error_outline,
+                    size: 40, color: Colors.redAccent),
                 const SizedBox(height: 12),
                 const Text('无法加载 Alula 核心',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 SelectableText(_loadError,
-                    style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+                    style:
+                        const TextStyle(fontFamily: 'monospace', fontSize: 12)),
               ],
             ),
           ),
@@ -1573,94 +5589,141 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
-          for (final e in _keybindings.resolve().entries)
-            e.key: () => _runCommand(e.value),
+          if (_commands.isEnabled('editor.cursorPageUp'))
+            const SingleActivator(LogicalKeyboardKey.pageUp): () =>
+                _runCommand('editor.cursorPageUp'),
+          if (_commands.isEnabled('editor.cursorPageUpSelect'))
+            const SingleActivator(LogicalKeyboardKey.pageUp, shift: true): () =>
+                _runCommand('editor.cursorPageUpSelect'),
+          if (_commands.isEnabled('editor.cursorPageDown'))
+            const SingleActivator(LogicalKeyboardKey.pageDown): () =>
+                _runCommand('editor.cursorPageDown'),
+          if (_commands.isEnabled('editor.cursorPageDownSelect'))
+            const SingleActivator(LogicalKeyboardKey.pageDown, shift: true):
+                () => _runCommand('editor.cursorPageDownSelect'),
+          for (final e in _keybindings
+              .resolveBindings(matchesWhen: _commands.context.matches)
+              .entries
+              .where((entry) => _commands.isEnabled(entry.value.commandId)))
+            e.key: () =>
+                _runCommand(e.value.commandId, arguments: e.value.arguments),
         },
         child: Focus(
-        autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
-        child: Column(
-        children: [
-          AlulaTitleBar(
-              windowControls: widget.windowControls,
-              onCloseRequested: _shutdownLspWorkspace,
-              menus: [
-            (
-              '文件',
-              [
-                TitleMenuItem('打开文件夹', _showOpenFolderDialog),
-                TitleMenuItem('保存${_sc('file.save')}', _saveActive),
-              ],
-            ),
-            (
-              '编辑',
-              [
-                TitleMenuItem('撤销${_sc('editor.undo')}', _undo),
-                TitleMenuItem('重做${_sc('editor.redo')}', _redo),
-                TitleMenuItem('查找…${_sc('editor.find')}', _toggleFind),
-                TitleMenuItem('替换…${_sc('editor.replace')}', _openReplace),
-              ],
-            ),
-            (
-              '查看',
-              [
-                TitleMenuItem(
-                    '命令面板${_sc('view.commandPalette')}', _showCommandPalette),
-                TitleMenuItem(
-                    '快速打开文件…${_sc('view.quickOpen')}', _showQuickOpen),
-                TitleMenuItem('搜索…${_sc('view.search')}', () {
-                  _selectSidebarView('search');
-                }),
-                TitleMenuItem('大纲', () => _selectSidebarView('outline')),
-                TitleMenuItem(
-                    '切换侧栏', () => _layout.toggleRegion('sidebar')),
-                TitleMenuItem('切换面板', () => _layout.toggleRegion('panel')),
-              ],
-            ),
-            (
-              '帮助',
-              [
-                TitleMenuItem('关于 Alula Code', _showAbout),
-              ],
-            ),
-          ]),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: _layout,
-              builder: (context, _) => WorkbenchGrid(
-                layout: _layout,
-                builders: {
-                  'activity': (_) => ActivityBar(
-                        activeView: _sidebarView,
-                        sidebarCollapsed: _layout.isCollapsed('sidebar'),
-                        onSelectView: _selectSidebarView,
-                      ),
-                  'sidebar': (_) => switch (_sidebarView) {
-                        'git' => _buildGitPanel(),
-                        'search' => _buildSearchPanel(),
-                        'outline' => _buildOutlinePanel(),
-                        _ => _buildSidebar(),
-                      },
-                  'panel': (_) => _buildPanel(),
-                  // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
-                  for (final g in _groups.values)
-                    g.region: (_) => _buildEditorArea(g),
-                },
+          autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
+          child: Column(
+            children: [
+              AlulaTitleBar(
+                  commands: _commands,
+                  windowControls: widget.windowControls,
+                  onCloseRequested: _shutdownLspWorkspace,
+                  menus: [
+                    (
+                      '文件',
+                      [
+                        const TitleMenuItem('打开文件夹',
+                            commandId: 'file.openFolder'),
+                        TitleMenuItem('保存${_sc('file.save')}',
+                            commandId: 'file.save'),
+                        TitleMenuItem('另存为…${_sc('file.saveAs')}',
+                            commandId: 'file.saveAs'),
+                        const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
+                        const TitleMenuItem('使用编码保存…',
+                            commandId: 'file.saveWithEncoding'),
+                        const TitleMenuItem('使用编码重新打开…',
+                            commandId: 'file.reopenWithEncoding'),
+                        const TitleMenuItem('选择行尾…',
+                            commandId: 'file.selectEol'),
+                      ],
+                    ),
+                    (
+                      '编辑',
+                      [
+                        TitleMenuItem('撤销${_sc('editor.undo')}',
+                            commandId: 'editor.undo'),
+                        TitleMenuItem('重做${_sc('editor.redo')}',
+                            commandId: 'editor.redo'),
+                        TitleMenuItem('查找…${_sc('editor.find')}',
+                            commandId: 'editor.find'),
+                        TitleMenuItem('替换…${_sc('editor.replace')}',
+                            commandId: 'editor.replace'),
+                      ],
+                    ),
+                    (
+                      '查看',
+                      [
+                        TitleMenuItem('命令面板${_sc('view.commandPalette')}',
+                            commandId: 'view.commandPalette'),
+                        TitleMenuItem('快速打开文件…${_sc('view.quickOpen')}',
+                            commandId: 'view.quickOpen'),
+                        TitleMenuItem('搜索…${_sc('view.search')}',
+                            commandId: 'view.search'),
+                        const TitleMenuItem('大纲', commandId: 'view.outline'),
+                        const TitleMenuItem('切换侧栏',
+                            commandId: 'view.toggleSidebar'),
+                        const TitleMenuItem('切换面板',
+                            commandId: 'view.togglePanel'),
+                      ],
+                    ),
+                    (
+                      '帮助',
+                      [
+                        const TitleMenuItem('关于 Alula Code',
+                            commandId: 'help.about'),
+                      ],
+                    ),
+                  ]),
+              Expanded(
+                child: ListenableBuilder(
+                  listenable: _layout,
+                  builder: (context, _) => WorkbenchGrid(
+                    layout: _layout,
+                    builders: {
+                      'activity': (_) => ActivityBar(
+                            activeView: _sidebarView,
+                            sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                            onSelectView: _selectSidebarView,
+                          ),
+                      'sidebar': (_) => switch (_sidebarView) {
+                            'git' => _buildGitPanel(),
+                            'search' => _buildSearchPanel(),
+                            'outline' => _buildOutlinePanel(),
+                            _ => _buildSidebar(),
+                          },
+                      'panel': (_) => _buildPanel(),
+                      // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
+                      for (final g in _groups.values)
+                        g.region: (_) => _buildEditorArea(g),
+                    },
+                  ),
+                ),
               ),
-            ),
+              AlulaStatusBar(
+                state: _state,
+                detail: _statusDetail,
+                lspStatus: _lspStatus,
+                diagnosticsCount: _diagnostics.length,
+                tabCount: _allDocViews.length,
+                abiVersion: _abiVersion,
+                resourcePressure: _resourceStatus?.pressure,
+                availableBytes: _resourceStatus?.availableBytes,
+                totalBytes: _resourceStatus?.totalBytes,
+                resourceSource: _resourceStatus?.source,
+                syncCount: _syncCount,
+                panelCollapsed: _layout.isCollapsed('panel'),
+                onTogglePanel: () => _layout.toggleRegion('panel'),
+                encodingLabel: _active?.fileOptions.statusLabel,
+                encodingTooltip: _active?.fileOptions.label,
+                lineEndingLabel: _active?.fileOptions.lineEnding.label,
+                overtypeMode: _overtypeMode && _active != null,
+                onToggleOvertype: _toggleOvertypeInsertMode,
+                onEncodingTap: _active == null
+                    ? null
+                    : () => _showEncodingActions(_active!),
+                onLineEndingTap:
+                    _active == null ? null : _selectLineEndingActive,
+              ),
+            ],
           ),
-          AlulaStatusBar(
-            state: _state,
-            detail: _statusDetail,
-            lspStatus: _lspStatus,
-            diagnosticsCount: _diagnostics.length,
-            tabCount: _allDocs.length,
-            abiVersion: _abiVersion,
-            syncCount: _syncCount,
-            panelCollapsed: _layout.isCollapsed('panel'),
-            onTogglePanel: () => _layout.toggleRegion('panel'),
-          ),
-        ],
-        ),
         ),
       ),
     );
@@ -1690,12 +5753,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     child: Text(
                       active == null
                           ? '无打开文档'
-                          : (_outlineSymbols.isEmpty
-                              ? '未发现符号（仅支持 Rust）'
-                              : ''),
+                          : (_outlineSymbols.isEmpty ? '未发现符号（仅支持 Rust）' : ''),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.grey.shade500, fontSize: 12),
+                      style:
+                          TextStyle(color: Colors.grey.shade500, fontSize: 12),
                     ),
                   )
                 : ListView.builder(
@@ -1728,8 +5789,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               overflow: TextOverflow.ellipsis),
                           subtitle: Text('行 ${sym.line}',
                               style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey.shade500)),
+                                  fontSize: 10, color: Colors.grey.shade500)),
                           onTap: () => _jumpToSymbol(sym.startUtf16),
                         ),
                       );
@@ -1786,7 +5846,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 IconButton(
                   tooltip: '区分大小写',
                   onPressed: () {
-                    setState(() => _searchCaseSensitive = !_searchCaseSensitive);
+                    setState(
+                        () => _searchCaseSensitive = !_searchCaseSensitive);
                   },
                   icon: Text('Aa',
                       style: TextStyle(
@@ -1820,8 +5881,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ? Center(
                     child: Text(
                       _searching ? '' : '输入关键词后回车搜索',
-                      style: TextStyle(
-                          color: Colors.grey.shade500, fontSize: 12),
+                      style:
+                          TextStyle(color: Colors.grey.shade500, fontSize: 12),
                     ),
                   )
                 : ListView.builder(
@@ -1831,20 +5892,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       return Material(
                         type: MaterialType.transparency,
                         child: ListTile(
-                        key: ValueKey('search-hit-$i'),
-                        dense: true,
-                        title: Text(hit.lineText,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 12)),
-                        subtitle: Text(
-                            '${_nameOf(hit.path)} · 行 ${hit.line}',
-                            style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.grey.shade500),
-                            overflow: TextOverflow.ellipsis),
-                        onTap: () => _openSearchHit(hit),
-                      ),
+                          key: ValueKey('search-hit-$i'),
+                          dense: true,
+                          title: Text(hit.lineText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12)),
+                          subtitle: Text('${_nameOf(hit.path)} · 行 ${hit.line}',
+                              style: TextStyle(
+                                  fontSize: 10, color: Colors.grey.shade500),
+                              overflow: TextOverflow.ellipsis),
+                          onTap: () => _openSearchHit(hit),
+                        ),
                       );
                     },
                   ),
@@ -1868,10 +5927,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       );
     }
-    final staged =
-        _gitEntries.where((e) => e.hasStagedChanges).toList();
-    final changes =
-        _gitEntries.where((e) => !e.hasStagedChanges).toList();
+    final staged = _gitEntries.where((e) => e.hasStagedChanges).toList();
+    final changes = _gitEntries.where((e) => !e.hasStagedChanges).toList();
     return Container(
       color: const Color(0xFF181B20),
       child: Column(
@@ -1888,8 +5945,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 Icon(Icons.call_split, size: 13, color: Colors.grey.shade500),
                 const SizedBox(width: 4),
                 Text(_gitBranch,
-                    style: TextStyle(
-                        color: Colors.grey.shade400, fontSize: 11)),
+                    style:
+                        TextStyle(color: Colors.grey.shade400, fontSize: 11)),
                 IconButton(
                   tooltip: '刷新',
                   onPressed: _refreshGit,
@@ -1923,9 +5980,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     key: const ValueKey('commit-button'),
                     onPressed: staged.isEmpty ? null : _gitCommit,
                     icon: const Icon(Icons.check, size: 14),
-                    label: Text(staged.isEmpty
-                        ? '没有暂存的更改'
-                        : '提交（${staged.length}）'),
+                    label: Text(
+                        staged.isEmpty ? '没有暂存的更改' : '提交（${staged.length}）'),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       textStyle: const TextStyle(fontSize: 12),
@@ -1957,8 +6013,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     children: [
                       if (staged.isNotEmpty) ...[
                         _gitSectionHeader('暂存的更改（${staged.length}）'),
-                        for (final e in staged)
-                          _gitTile(e, stagedEntry: true),
+                        for (final e in staged) _gitTile(e, stagedEntry: true),
                       ],
                       if (changes.isNotEmpty) ...[
                         _gitSectionHeader('更改（${changes.length}）'),
@@ -1995,7 +6050,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               fontSize: 11,
               color: e.isUntracked
                   ? Colors.greenAccent
-                  : (stagedEntry ? Colors.lightGreenAccent : Colors.orangeAccent))),
+                    : (stagedEntry
+                        ? Colors.lightGreenAccent
+                        : Colors.orangeAccent))),
       title: Text(name,
           style: const TextStyle(fontSize: 12),
           overflow: TextOverflow.ellipsis),
@@ -2033,9 +6090,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               children: [
                 Expanded(
                   child: Text(
-                    _workspaceRoot == null
-                        ? '资源管理器'
-                        : _nameOf(_workspaceRoot!),
+                    _workspaceRoot == null ? '资源管理器' : _nameOf(_workspaceRoot!),
                     style: const TextStyle(
                         fontSize: 11, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
@@ -2043,7 +6098,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ),
                 IconButton(
                   tooltip: '打开文件夹',
-                  onPressed: _showOpenFolderDialog,
+                  onPressed: () => _runCommand('file.openFolder'),
                   icon: const Icon(Icons.folder_open, size: 15),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -2081,9 +6136,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
         child: Container(
           padding: EdgeInsets.only(left: 8.0 + depth * 14, top: 3, bottom: 3),
-          color: activePaths.contains(node.path)
-              ? const Color(0xFF20252E)
-              : null,
+          color:
+              activePaths.contains(node.path) ? const Color(0xFF20252E) : null,
           child: Row(
             children: [
               Icon(
@@ -2130,8 +6184,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null || active.path == null || _workspaceRoot == null) {
       return const SizedBox.shrink();
     }
-    final normRoot =
-        _normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '');
+    final normRoot = _normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '');
     final normPath = _normPath(active.path!);
     var rel = normPath.startsWith('$normRoot/')
         ? normPath.substring(normRoot.length + 1)
@@ -2148,8 +6201,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           for (var i = 0; i < segments.length; i++) ...[
             if (i > 0)
               Text(' › ',
-                  style: TextStyle(
-                      color: Colors.grey.shade600, fontSize: 11)),
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
             GestureDetector(
               onTap: () => _revealInExplorer(segments, i),
               child: Text(
@@ -2166,6 +6218,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String _normPath(String p) => p.replaceAll('\\', '/');
 
+  String _canonicalPath(String path) {
+    final absolute = _normPath(File(path).absolute.path);
+    return Platform.isWindows ? absolute.toLowerCase() : absolute;
+  }
+
   /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
   void _revealInExplorer(List<String> segments, int index) {
     if (_workspaceRoot == null || index >= segments.length - 1) {
@@ -2174,7 +6231,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.showRegion('sidebar');
     final target =
         '${_normPath(_workspaceRoot!).replaceAll(RegExp(r'/+$'), '')}/'
-            '${segments.take(index + 1).join('/')}';
+        '${segments.take(index + 1).join('/')}';
     void walk(List<TreeNode> nodes) {
       for (final n in nodes) {
         final np = _normPath(n.path);
@@ -2209,7 +6266,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
           IconButton(
             tooltip: '拆分编辑器',
-            onPressed: _splitFocusedGroup,
+            onPressed: () => _runCommand('editor.split'),
             icon: const Icon(Icons.splitscreen, size: 16),
             visualDensity: VisualDensity.compact,
           ),
@@ -2217,20 +6274,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             tooltip: _lspReady
                 ? 'LSP 运行中'
                 : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP'),
-            onPressed: (_lspReady || _workspaceRoot == null) ? null : _startLsp,
+            onPressed: _commands.isEnabled('lsp.start')
+                ? () => _runCommand('lsp.start')
+                : null,
             icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow,
                 size: 16),
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
             tooltip: '补全    Ctrl+Space',
-            onPressed: _requestCompletion,
+            onPressed: _commands.isEnabled('editor.completion')
+                ? () => _runCommand('editor.completion')
+                : null,
             icon: const Icon(Icons.autorenew, size: 16),
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
             tooltip: '校验一致性',
-            onPressed: _verifyIntegrity,
+            onPressed: _commands.isEnabled('editor.verifyIntegrity')
+                ? () => _runCommand('editor.verifyIntegrity')
+                : null,
             icon: const Icon(Icons.fact_check_outlined, size: 16),
             visualDensity: VisualDensity.compact,
           ),
@@ -2243,10 +6306,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(EditorGroup g, OpenDoc d) {
     final tab = InkWell(
-      onTap: () => setState(() {
-        g.activeDocId = d.id;
-        _focusedRegion = g.region;
-      }),
+      onTap: () {
+        final current = _active;
+        if (current != null && !identical(current, d)) {
+          _flushInput(current, commitComposition: true);
+        }
+        setState(() {
+          g.activeDocId = d.id;
+          _focusedRegion = g.region;
+        });
+        _syncCommandContext();
+      },
       child: Container(
         key: ValueKey('tab-${d.id}'),
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -2264,11 +6334,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           children: [
             Text('${d.name}${d.isDirty ? " •" : ""}',
                 style: const TextStyle(fontSize: 12)),
+            if (d.diskState != DiskDocumentState.current) ...[
+              const SizedBox(width: 4),
+              Icon(
+                switch (d.diskState) {
+                  DiskDocumentState.current => Icons.check,
+                  DiskDocumentState.conflict => Icons.sync_problem_outlined,
+                  DiskDocumentState.missing => Icons.file_present_outlined,
+                  DiskDocumentState.readOnly => Icons.lock_outline,
+                  DiskDocumentState.unavailable => Icons.warning_amber_outlined,
+                },
+                key: ValueKey('tab-disk-state-${d.id}'),
+                size: 13,
+                color: d.diskState == DiskDocumentState.conflict
+                    ? Colors.orangeAccent
+                    : Colors.blueGrey.shade300,
+              ),
+            ],
             const SizedBox(width: 6),
             InkWell(
-              onTap: () => _closeDoc(d.id),
-              child: Icon(Icons.close,
-                  size: 12, color: Colors.grey.shade500),
+              key: ValueKey('close-tab-${g.region}-${d.id}'),
+              onTap: () => _closeDoc(d.id, group: g),
+              child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
             ),
           ],
         ),
@@ -2295,7 +6382,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         child: Listener(
           // 中键关闭（kMiddleMouseButton），不影响左键激活
           onPointerDown: (e) {
-            if (e.buttons == kMiddleMouseButton) _closeDoc(d.id);
+            if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
           },
           child: tab,
         ),
@@ -2308,11 +6395,139 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final from = g.docs.indexWhere((d) => d.id == draggedId);
     final to = g.docs.indexWhere((d) => d.id == targetId);
     if (from < 0 || to < 0 || from == to) return;
+    final moved = g.docs[from];
+    _editorFocusNodes.remove(_focusKeyFor(g, moved))?.dispose();
     setState(() {
       final doc = g.docs.removeAt(from);
       g.docs.insert(to, doc);
     });
     _scheduleStateSave();
+  }
+
+  Widget _buildDiskStateBanner(OpenDoc doc) {
+    final (icon, message, color) = switch (doc.diskState) {
+      DiskDocumentState.current => (
+          Icons.check_circle_outline,
+          '',
+          Colors.transparent
+        ),
+      DiskDocumentState.conflict => (
+          Icons.sync_problem_outlined,
+          '磁盘上的 ${doc.name} 已变化，本地缓冲区仍保留。',
+          Colors.orange.shade900
+        ),
+      DiskDocumentState.missing => (
+          Icons.file_present_outlined,
+          '${doc.name} 已从磁盘删除或移动；缓冲区仍可编辑。',
+          Colors.blueGrey.shade800
+        ),
+      DiskDocumentState.readOnly => (
+          Icons.lock_outline,
+          '${doc.name} 是只读文件，原文件未被覆盖。',
+          Colors.blueGrey.shade800
+        ),
+      DiskDocumentState.unavailable => (
+          Icons.warning_amber_outlined,
+          '无法读取 ${doc.name} 的当前磁盘版本；本地缓冲区已保留。',
+          Colors.red.shade900
+        ),
+    };
+    final actions = switch (doc.diskState) {
+      DiskDocumentState.current => const <Widget>[],
+      DiskDocumentState.conflict => <Widget>[
+          TextButton(
+            key: const ValueKey('external-reload'),
+            onPressed: _revertActive,
+            child: const Text('从磁盘重载'),
+          ),
+          TextButton(
+            key: const ValueKey('external-overwrite'),
+            onPressed: () => _saveDocToPath(doc, doc.path!),
+            child: const Text('覆盖磁盘…'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.missing => <Widget>[
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.readOnly => <Widget>[
+          TextButton(
+            key: const ValueKey('external-retry-save'),
+            onPressed: () => _saveDocToPath(doc, doc.path!),
+            child: const Text('重试保存'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+      DiskDocumentState.unavailable => <Widget>[
+          TextButton(
+            key: const ValueKey('external-retry-read'),
+            onPressed: _checkExternalChanges,
+            child: const Text('重试读取'),
+          ),
+          TextButton(
+            key: const ValueKey('external-save-as'),
+            onPressed: () => _saveAsDoc(doc),
+            child: const Text('另存为…'),
+          ),
+        ],
+    };
+    return Container(
+      key: ValueKey('disk-state-${doc.id}'),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.32),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: Colors.white70),
+              const SizedBox(width: 6),
+              Expanded(
+                child:
+                    Text(message, maxLines: 2, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          ),
+          if (actions.isNotEmpty)
+            Wrap(spacing: 4, runSpacing: 0, children: actions),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJournalNoticeBanner({
+    required String key,
+    required String message,
+    required VoidCallback onDismiss,
+  }) {
+    return Container(
+      key: ValueKey(key),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 6),
+      child: MaterialBanner(
+        content: Text(message),
+        actions: [
+          TextButton(onPressed: onDismiss, child: const Text('关闭提示')),
+        ],
+      ),
+    );
   }
 
   Widget _buildEditor(EditorGroup g) {
@@ -2323,30 +6538,335 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             style: TextStyle(color: Colors.grey.shade500)),
       );
     }
+    final usesRustSyntax = active.path?.toLowerCase().endsWith('.rs') == true;
+    final treeSyntaxTokens = usesRustSyntax
+        ? _syntaxByDoc[active.id] ?? const <Map<String, Object?>>[]
+        : const <Map<String, Object?>>[];
+    final treeSyntaxVersion =
+        usesRustSyntax ? _syntaxVersionByDoc[active.id] ?? -1 : -1;
+    final semanticTokens = _semanticTokensByDoc[active.id] ?? const [];
+    final semanticVersion = _semanticTokensVersionByDoc[active.id] ?? -1;
+    final highlight = active.lspAttached
+        ? selectEditorHighlightTokens(
+            semanticTokens: semanticTokens,
+            semanticVersion: semanticVersion,
+            documentVersion: active.doc.version,
+            inputWindowVersion: active.inputWindow.version,
+            hasPendingInput: active.inputWindow.pendingText != null,
+            fallbackTokens: treeSyntaxTokens,
+            fallbackVersion: treeSyntaxVersion,
+          )
+        : (tokens: treeSyntaxTokens, version: treeSyntaxVersion);
+    final syntaxTokens = highlight.tokens;
+    final syntaxVersion = highlight.version;
+    final findDecorations = _findDecorationsFor(active);
+    final diagnosticDecorations = _diagnosticDecorationsFor(active);
+    final workspaceSearchDecorations = _workspaceSearchDecorationsFor(active);
+    final rangeDecorations = [
+      ...findDecorations,
+      ...diagnosticDecorations,
+      ...workspaceSearchDecorations,
+    ];
+    final crossWindowSelection = active.crossWindowSelection;
+    if (crossWindowSelection != null) {
+      rangeDecorations.add(
+        EditorRangeDecoration(
+          documentVersion: active.inputWindow.version,
+          startUtf16: crossWindowSelection.start,
+          endUtf16: crossWindowSelection.end,
+          backgroundColor:
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.34),
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Stack(
+      child: Column(
         children: [
-          TextField(
-            focusNode: _focusNodeFor(g, active),
-            controller: active.controller,
-            maxLines: null,
-            expands: true,
-            onTap: () {
-              // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
-              if (_focusedRegion != g.region) {
-                setState(() => _focusedRegion = g.region);
-              }
-            },
-            style: const TextStyle(
-                fontFamily: 'monospace', fontSize: 14, height: 1.5),
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.all(12),
+          if (_journalRecoveryNotice != null)
+            _buildJournalNoticeBanner(
+              key: 'journal-recovery-banner',
+              message: _journalRecoveryNotice!,
+              onDismiss: () => setState(() => _journalRecoveryNotice = null),
+            ),
+          if (_journalSaveError != null)
+            _buildJournalNoticeBanner(
+              key: 'journal-save-error-banner',
+              message: _journalSaveError!,
+              onDismiss: () => setState(() => _journalSaveError = null),
+            ),
+          if (active.diskState != DiskDocumentState.current)
+            _buildDiskStateBanner(active),
+          Expanded(
+            child: Stack(
+              children: [
+                Builder(
+                  builder: (editorContext) => Listener(
+                    onPointerDown: (event) => _onEditorPointerDown(
+                      g,
+                      active,
+                      editorContext,
+                      event,
+                    ),
+                    onPointerUp: _onEditorPointerUp,
+                    onPointerCancel: _onEditorPointerCancel,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: EditorStickyScroll(
+                              document: active.doc,
+                              inputWindow: active.inputWindow,
+                              scrollController: active.editorScrollController,
+                              foldedLineRanges: active.foldedLineRanges,
+                              enabled: usesRustSyntax &&
+                                  active.inputWindow.pendingText == null &&
+                                  active.inputWindow.version ==
+                                      active.doc.version,
+                              onSelectSymbol: (offset) {
+                                _flushInput(active, commitComposition: true);
+                                _focusNodeFor(g, active).requestFocus();
+                                _setDocSelection(
+                                  active,
+                                  TextSelection.collapsed(offset: offset),
+                                );
+                              },
+                              child: RustTextInputField(
+                                key: active.inputFieldKey,
+                                inputWindow: active.inputWindow,
+                                syntaxTokens: syntaxTokens,
+                                syntaxVersion: syntaxVersion,
+                                enableCodeFolding: usesRustSyntax,
+                                semanticsLabel:
+                                    _editorSemanticsLabel(g, active),
+                                onFoldRangesChanged:
+                                    (documentId, version, ranges) =>
+                                        _onEditorFoldRangesChanged(
+                                  active,
+                                  documentId,
+                                  version,
+                                  ranges,
+                                ),
+                                syntaxTokenColor: _tokenColor,
+                                rangeDecorations: rangeDecorations,
+                                focusNode: _focusNodeFor(g, active),
+                                scrollController: active.editorScrollController,
+                                inputFormatter:
+                                    MultiSelectionTextInputFormatter(
+                                  additionalSelections: () =>
+                                      _localAdditionalSelections(active),
+                                  onSelectionsChanged: (localSelections) {
+                                    final inputWindowShift =
+                                        active.pendingInputWindowShiftUtf16;
+                                    active.additionalSelections =
+                                        List.unmodifiable([
+                                      ...active.additionalSelections,
+                                      for (final selection
+                                          in _absoluteSelections(
+                                              active, localSelections))
+                                        TextSelection(
+                                          baseOffset: selection.baseOffset +
+                                              inputWindowShift,
+                                          extentOffset: selection.extentOffset +
+                                              inputWindowShift,
+                                          affinity: selection.affinity,
+                                          isDirectional:
+                                              selection.isDirectional,
+                                        ),
+                                    ]);
+                                    active.pendingInputWindowShiftUtf16 = 0;
+                                    active.columnSelection = null;
+                                  },
+                                  onSelectionChanged: (oldValue, newValue) {
+                                    if (!oldValue.selection.isValid ||
+                                        oldValue.selection ==
+                                            newValue.selection) {
+                                      return;
+                                    }
+                                    active.crossWindowSelection = null;
+                                    active.selectionHistory
+                                        .record(active.selectionSet);
+                                    active.additionalSelections = const [];
+                                    active.columnSelection = null;
+                                    _scheduleSelectionRefresh(active);
+                                    _syncCommandContext();
+                                  },
+                                  onCrossWindowTextInput:
+                                      (oldValue, newValue) =>
+                                          _handleCrossWindowTextInput(
+                                    active,
+                                    oldValue,
+                                    newValue,
+                                  ),
+                                  shouldOvertypeInput: (insertedText) =>
+                                      active.consumeOvertypeInput(
+                                    insertedText,
+                                    enabled: _overtypeMode,
+                                  ),
+                                  onTextChanged:
+                                      (oldValue, newValue, formattedValue) {
+                                    active.columnSelection = null;
+                                    _prepareRemoteMultiSelectionEdits(
+                                      active,
+                                      oldValue,
+                                      newValue,
+                                      formattedValue,
+                                    );
+                                  },
+                                ),
+                                additionalOperations: () {
+                                  final operations =
+                                      active.pendingInputOperations;
+                                  active.pendingInputOperations = const [];
+                                  return operations;
+                                },
+                                additionalSelections:
+                                    _localAdditionalSelections(active),
+                                onDelta: (delta) =>
+                                    _onInputDelta(active, delta),
+                                onPresentationChanged: () =>
+                                    _scheduleSelectionRefresh(active),
+                                onAltClick: (localOffset) {
+                                  final previous = active.selectionSet;
+                                  final offset = active.inputWindow.startUtf16 +
+                                      localOffset
+                                          .clamp(0,
+                                              active.editingValue.text.length)
+                                          .toInt();
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    if (!mounted ||
+                                        !identical(_active, active)) {
+                                      return;
+                                    }
+                                    _setDocSelections(active, [
+                                      ...previous,
+                                      TextSelection.collapsed(offset: offset),
+                                    ]);
+                                  });
+                                },
+                                onColumnSelectionDrag: (
+                                  pointer,
+                                  selection, {
+                                  required started,
+                                }) {
+                                  final before =
+                                      _pendingColumnSelectionStarts[pointer];
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    _applyColumnSelectionDrag(
+                                      active,
+                                      selection,
+                                      started: started,
+                                      selectionsBeforeDrag:
+                                          before?.view == active
+                                              ? before?.selections
+                                              : null,
+                                    );
+                                  });
+                                },
+                                onCrossWindowLineSelection: (selection) =>
+                                    _setCrossWindowLineSelection(
+                                  active,
+                                  selection,
+                                ),
+                                onCrossWindowDragSelection: (
+                                  selection, {
+                                  required started,
+                                }) =>
+                                    _setCrossWindowDragSelection(
+                                  active,
+                                  selection,
+                                  started: started,
+                                ),
+                                onError: (error) {
+                                  if (!_disposing &&
+                                      mounted &&
+                                      identical(_active, active)) {
+                                    setState(() {
+                                      _state = WbSyncState.error;
+                                      _statusDetail = '输入同步失败：$error';
+                                    });
+                                  }
+                                },
+                                onTap: () {
+                                  // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
+                                  final previous = _active;
+                                  if (previous != null &&
+                                      !identical(previous, active)) {
+                                    _flushInput(previous,
+                                        commitComposition: true);
+                                  }
+                                  if (_focusedRegion != g.region) {
+                                    setState(() => _focusedRegion = g.region);
+                                    _syncCommandContext();
+                                  }
+                                },
+                                style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontSize: 14,
+                                    height: 1.5),
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (constraints.maxWidth >= 720) ...[
+                            const SizedBox(width: 6),
+                            EditorMinimap(
+                              inputWindow: active.inputWindow,
+                              scrollController: active.editorScrollController,
+                              syntaxDocumentId: active.id,
+                              syntaxTokens: syntaxTokens,
+                              syntaxVersion: syntaxVersion,
+                              syntaxEnabled:
+                                  active.inputWindow.pendingText == null &&
+                                      active.inputWindow.version ==
+                                          active.doc.version &&
+                                      syntaxVersion == active.doc.version,
+                              syntaxTokenColor: _tokenColor,
+                              foldedLineRanges: active.foldedLineRanges,
+                              overviewMarkers: buildEditorMinimapMarkers(
+                                documentId: active.id,
+                                documentVersion: active.doc.version,
+                                diagnostics: _diagnostics,
+                                selectedSearchDocumentId: _selectedSearchDocId,
+                                selectedSearchDocumentVersion:
+                                    _selectedSearchDocVersion,
+                                selectedSearchHit: _selectedSearchHit,
+                                findMatchLines: _findOverviewLines,
+                                findMatchesDocumentId: _matchesDocId,
+                                findMatchesDocumentVersion: _matchesDocVersion,
+                                enabled:
+                                    active.inputWindow.pendingText == null &&
+                                        active.inputWindow.version ==
+                                            active.doc.version,
+                              ),
+                              onNavigateToLine: (line) {
+                                _flushInput(active, commitComposition: true);
+                                _focusNodeFor(g, active).requestFocus();
+                                final offset =
+                                    active.doc.lineOffset(line).offsetUtf16;
+                                _setDocSelection(
+                                  active,
+                                  TextSelection.collapsed(offset: offset),
+                                );
+                              },
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                if (_findVisible)
+                  Positioned(top: 0, right: 12, child: _buildFindBar()),
+              ],
             ),
           ),
-          if (_findVisible)
-            Positioned(top: 0, right: 12, child: _buildFindBar()),
         ],
       ),
     );
@@ -2368,9 +6888,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         decoration: BoxDecoration(
           color: const Color(0xFF252932),
           borderRadius: BorderRadius.circular(6),
-          boxShadow: const [
-            BoxShadow(blurRadius: 12, color: Colors.black45)
-          ],
+          boxShadow: const [BoxShadow(blurRadius: 12, color: Colors.black45)],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -2383,14 +6901,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     autofocus: true,
                     style: const TextStyle(fontSize: 12),
                     decoration: const InputDecoration(
-                        hintText: '查找', isDense: true, border: InputBorder.none),
+                        hintText: '查找',
+                        isDense: true,
+                        border: InputBorder.none),
                     onChanged: (_) => _onFindTextChanged(),
                     onSubmitted: (_) => _gotoMatch(1),
                   ),
                 ),
                 Text(count,
-                    style: TextStyle(
-                        color: Colors.grey.shade500, fontSize: 11)),
+                    style:
+                        TextStyle(color: Colors.grey.shade500, fontSize: 11)),
                 IconButton(
                   tooltip: '区分大小写',
                   onPressed: () {
@@ -2421,7 +6941,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ),
                 IconButton(
                   tooltip: '关闭',
-                  onPressed: _toggleFind,
+                  onPressed: () => _runCommand('editor.find'),
                   icon: const Icon(Icons.close, size: 14),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -2469,6 +6989,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children: [
           TabBar(
             controller: _panelTab,
+            onTap: (index) {
+              const commandIds = [
+                'view.panelDiagnostics',
+                'view.panelCompletions',
+                'view.panelSyntax',
+              ];
+              if (index < commandIds.length) _runCommand(commandIds[index]);
+            },
             isScrollable: true,
             tabAlignment: TabAlignment.start,
             tabs: const [
@@ -2621,9 +7149,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     const maxPreviewChars = 20000;
-    final full = active.controller.text;
     final previewText =
-        full.length > maxPreviewChars ? full.substring(0, maxPreviewChars) : full;
+        active.doc.readRange(0, maxLenUtf16: maxPreviewChars).text;
     final u16Units = previewText.length;
 
     final spans = <TextSpan>[];
@@ -2666,35 +7193,266 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 }
 
 /// 打开的文档（有路径的文件，或未命名草稿）。
-class OpenDoc {
-  OpenDoc({
+class _SelectionEditOffset {
+  const _SelectionEditOffset(
+    this.start,
+    this.deletedLength,
+    this.insertedLength,
+  );
+
+  final int start;
+  final int deletedLength;
+  final int insertedLength;
+}
+
+class _SharedOpenDocState {
+  _SharedOpenDocState({
     required this.id,
     required this.name,
     required this.doc,
-    required this.controller,
+    required this.undoStack,
     this.path,
     this.uri,
-    required this.savedText,
-  })  : lspAttached = false;
+    this.fileOptions = TextFileOptions.defaults,
+    this.savedFileOptions = TextFileOptions.defaults,
+    this.dirtyDisk = false,
+    this.diskState = DiskDocumentState.current,
+    this.conflictBaselineKnown = true,
+  });
 
   final int id;
-  final String? path;
-  final String? uri;
-  final String name;
+  String? path;
+  String? uri;
+  String name;
   final AlulaDoc doc;
-  final TextEditingController controller;
-
-  /// 上次保存时的全文（FFI 增量同步基准；每次成功 apply 都会前移，
-  /// 因此不能当「与磁盘不一致」的脏标记用）。
-  String savedText;
+  final UndoStack undoStack;
+  TextFileOptions fileOptions;
+  TextFileOptions savedFileOptions;
   bool lspAttached = false;
+  bool dirtyDisk;
+  DiskDocumentState diskState;
+  bool conflictBaselineKnown;
+  DateTime? lastEditAt;
+  bool undoRedoBusy = false;
+  int viewCount = 0;
+  bool closed = false;
 
-  /// 与磁盘不一致（有未保存的用户编辑）：编辑置位、saveFile 复位。
-  bool dirtyDisk = false;
+  void retainView() {
+    if (closed) throw StateError('Cannot add a view to a closed document');
+    viewCount++;
+  }
+
+  void releaseView() {
+    if (closed || viewCount <= 0) return;
+    viewCount--;
+    if (viewCount == 0) {
+      closed = true;
+      doc.close();
+      undoStack.dispose();
+    }
+  }
+}
+
+class OpenDoc {
+  OpenDoc({
+    required int id,
+    required String name,
+    required AlulaDoc doc,
+    String? path,
+    String? uri,
+    TextFileOptions fileOptions = TextFileOptions.defaults,
+    TextFileOptions savedFileOptions = TextFileOptions.defaults,
+    bool dirtyDisk = false,
+    DiskDocumentState diskState = DiskDocumentState.current,
+    bool conflictBaselineKnown = true,
+    required UndoHistoryBudget undoBudget,
+  })  : _shared = _SharedOpenDocState(
+          id: id,
+          name: name,
+          path: path,
+          uri: uri,
+          doc: doc,
+          fileOptions: fileOptions,
+          savedFileOptions: savedFileOptions,
+          dirtyDisk: dirtyDisk,
+          diskState: diskState,
+          conflictBaselineKnown: conflictBaselineKnown,
+          undoStack: UndoStack(budget: undoBudget),
+        ),
+        inputWindow = RustTextInputWindow.openAround(
+          doc,
+          selectionUtf16: 0,
+          maxWindowUtf16: _editorInputWindowUtf16,
+          compositionReserveUtf16: _editorCompositionReserveUtf16,
+        ),
+        inputFieldKey = GlobalKey<RustTextInputFieldState>(),
+        editorScrollController = ScrollController() {
+    _shared.retainView();
+  }
+
+  OpenDoc._viewOf(OpenDoc source)
+      : _shared = source._shared,
+        inputWindow = RustTextInputWindow.openAround(
+          source.doc,
+          selectionUtf16: source.selection.extentOffset,
+          maxWindowUtf16: _editorInputWindowUtf16,
+          compositionReserveUtf16: _editorCompositionReserveUtf16,
+          selection: source.selection,
+        ),
+        inputFieldKey = GlobalKey<RustTextInputFieldState>(),
+        editorScrollController = ScrollController(),
+        additionalSelections = List.unmodifiable(source.additionalSelections),
+        foldedLineRanges = List.unmodifiable(source.foldedLineRanges) {
+    _shared.retainView();
+  }
+
+  factory OpenDoc.viewOf(OpenDoc source) => OpenDoc._viewOf(source);
+
+  final _SharedOpenDocState _shared;
+  int get id => _shared.id;
+  String? get path => _shared.path;
+  set path(String? value) => _shared.path = value;
+  String? get uri => _shared.uri;
+  set uri(String? value) => _shared.uri = value;
+  String get name => _shared.name;
+  set name(String value) => _shared.name = value;
+  AlulaDoc get doc => _shared.doc;
+  TextFileOptions get fileOptions => _shared.fileOptions;
+  set fileOptions(TextFileOptions value) => _shared.fileOptions = value;
+  TextFileOptions get savedFileOptions => _shared.savedFileOptions;
+  set savedFileOptions(TextFileOptions value) =>
+      _shared.savedFileOptions = value;
+  bool get lspAttached => _shared.lspAttached;
+  set lspAttached(bool value) => _shared.lspAttached = value;
+  bool get dirtyDisk => _shared.dirtyDisk;
+  set dirtyDisk(bool value) => _shared.dirtyDisk = value;
+  DiskDocumentState get diskState => _shared.diskState;
+  set diskState(DiskDocumentState value) => _shared.diskState = value;
+  bool get conflictBaselineKnown => _shared.conflictBaselineKnown;
+  set conflictBaselineKnown(bool value) =>
+      _shared.conflictBaselineKnown = value;
+  DateTime? get lastEditAt => _shared.lastEditAt;
+  set lastEditAt(DateTime? value) => _shared.lastEditAt = value;
+  bool get undoRedoBusy => _shared.undoRedoBusy;
+  set undoRedoBusy(bool value) => _shared.undoRedoBusy = value;
+  UndoStack get undoStack => _shared.undoStack;
+  int get sharedViewCount => _shared.viewCount;
+  bool get sharesDocument => !_shared.closed;
+
+  RustTextInputWindow inputWindow;
+  List<EditorDocumentLineRange> foldedLineRanges = const [];
+  final GlobalKey<RustTextInputFieldState> inputFieldKey;
+  final ScrollController editorScrollController;
+  final SelectionHistory selectionHistory = SelectionHistory();
+  List<TextSelection> additionalSelections = const [];
+  List<TextOp> pendingInputOperations = const [];
+  int pendingInputWindowShiftUtf16 = 0;
+  ColumnSelectionState? columnSelection;
+  TextSelection? crossWindowSelection;
+  String? _pendingOvertypeCharacter;
+  DateTime? _pendingOvertypeAt;
+  bool _viewDisposed = false;
+
+  void expectOvertypeInput(String character) {
+    _pendingOvertypeCharacter = character;
+    _pendingOvertypeAt = DateTime.now();
+  }
+
+  void clearPendingOvertypeInput() {
+    _pendingOvertypeCharacter = null;
+    _pendingOvertypeAt = null;
+  }
+
+  bool consumeOvertypeInput(String insertedText, {required bool enabled}) {
+    final pending = _pendingOvertypeCharacter;
+    final recordedAt = _pendingOvertypeAt;
+    clearPendingOvertypeInput();
+    return enabled &&
+        pending == insertedText &&
+        recordedAt != null &&
+        DateTime.now().difference(recordedAt) <= const Duration(seconds: 2);
+  }
+
+  /// Current Flutter value is bounded by [inputWindow.maxWindowUtf16].
+  TextEditingValue get editingValue =>
+      inputFieldKey.currentState?.editingValue ?? inputWindow.initialValue;
+
+  /// Current selection converted from the input-window-local UTF-16 offsets.
+  TextSelection get selection {
+    final crossWindow = crossWindowSelection;
+    if (crossWindow != null) return crossWindow;
+    final local = editingValue.selection;
+    if (!local.isValid) {
+      return TextSelection.collapsed(offset: inputWindow.startUtf16);
+    }
+    return TextSelection(
+      baseOffset: (inputWindow.startUtf16 + local.baseOffset)
+          .clamp(0, inputWindow.totalUtf16Length)
+          .toInt(),
+      extentOffset: (inputWindow.startUtf16 + local.extentOffset)
+          .clamp(0, inputWindow.totalUtf16Length)
+          .toInt(),
+      affinity: local.affinity,
+      isDirectional: local.isDirectional,
+    );
+  }
+
+  List<TextSelection> get selectionSet {
+    final window = inputWindow;
+    return normalizeSelectionSet([
+      selection,
+      ...additionalSelections.where((item) =>
+          item.baseOffset >= window.startUtf16 &&
+          item.baseOffset <= window.endUtf16 &&
+          item.extentOffset >= window.startUtf16 &&
+          item.extentOffset <= window.endUtf16),
+    ]);
+  }
+
+  String get text => doc.resync().content;
+
+  void replaceInputWindow(int selectionUtf16, {TextSelection? selection}) {
+    final total = doc.readRange(0, maxLenUtf16: 2).totalUtf16Length;
+    final clampedSelection = TextSelection(
+      baseOffset:
+          (selection?.baseOffset ?? selectionUtf16).clamp(0, total).toInt(),
+      extentOffset:
+          (selection?.extentOffset ?? selectionUtf16).clamp(0, total).toInt(),
+      affinity: selection?.affinity ?? TextAffinity.downstream,
+      isDirectional: selection?.isDirectional ?? false,
+    );
+    inputWindow = RustTextInputWindow.openAround(
+      doc,
+      selectionUtf16: clampedSelection.extentOffset,
+      maxWindowUtf16: _editorInputWindowUtf16,
+      compositionReserveUtf16: _editorCompositionReserveUtf16,
+      selection: clampedSelection,
+    );
+  }
+
+  void refreshInputWindowInPlace(int selectionUtf16) {
+    inputWindow.refreshAround(
+      selectionUtf16,
+      selection: TextSelection.collapsed(offset: selectionUtf16),
+    );
+  }
 
   bool get isDirty => dirtyDisk;
   bool get isUntitled => path == null;
+
+  bool sameDocumentAs(OpenDoc other) => identical(_shared, other._shared);
+
+  void disposeView() {
+    if (_viewDisposed) return;
+    _viewDisposed = true;
+    editorScrollController.dispose();
+    _shared.releaseView();
+  }
 }
+
+enum DiskDocumentState { current, conflict, missing, readOnly, unavailable }
+
+enum _ConflictSaveAction { cancel, saveAs, overwrite }
 
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {

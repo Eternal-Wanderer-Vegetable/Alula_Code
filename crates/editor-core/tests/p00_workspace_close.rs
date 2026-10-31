@@ -60,6 +60,21 @@ fn closing_one_document_keeps_shared_server_alive_and_workspace_shutdown_is_grac
             );
         }
 
+        let old_uri_close = take_json(ffi::alula_lsp_did_close(second_doc_id));
+        assert_eq!(old_uri_close["ok"], true);
+        assert_eq!(old_uri_close["closed"], true);
+        let new_uri = CString::new(format!("file://{}/renamed.rs", root)).unwrap();
+        assert!(
+            take_json(ffi::alula_doc_set_uri(second_doc_id, new_uri.as_ptr()))["known"]
+                .as_bool()
+                .unwrap()
+        );
+        let language = CString::new("rust").unwrap();
+        assert_eq!(
+            take_json(ffi::alula_lsp_did_open(second_doc_id, language.as_ptr()))["ok"],
+            true
+        );
+
         assert!(take_json(ffi::alula_doc_close(first_doc_id))["removed"]
             .as_bool()
             .unwrap());
@@ -87,6 +102,8 @@ fn closing_one_document_keeps_shared_server_alive_and_workspace_shutdown_is_grac
         trace.lines().collect::<Vec<_>>(),
         [
             "textDocument/didOpen",
+            "textDocument/didOpen",
+            "textDocument/didClose",
             "textDocument/didOpen",
             "textDocument/didClose",
             "textDocument/didClose",

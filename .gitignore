@@ -11,9 +11,7 @@ target/
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-app/windows/
-# Keep the Linux Flutter runner source-controlled for native WSL/Linux builds.
-app/macos/
+# Keep Flutter desktop runner sources source-controlled for native builds.
 app/android/
 app/ios/
 app/web/

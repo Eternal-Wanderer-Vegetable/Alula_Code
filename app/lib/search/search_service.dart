@@ -13,12 +13,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../process/process_lifecycle.dart';
+
 /// 一条搜索命中。
 class SearchHit {
   const SearchHit({
     required this.path,
     required this.line,
     required this.lineText,
+    this.matchRanges = const [],
   });
 
   /// 相对工作区根的路径（'/' 分隔）。
@@ -29,6 +32,18 @@ class SearchHit {
 
   /// 该行文本（已去行尾换行）。
   final String lineText;
+
+  /// Relative UTF-16 match ranges. Backends that do not provide submatch
+  /// offsets leave this empty; the editor can then mark the result line.
+  final List<SearchHitRange> matchRanges;
+}
+
+/// A half-open match range relative to [SearchHit.lineText], in UTF-16 units.
+class SearchHitRange {
+  const SearchHitRange({required this.startUtf16, required this.endUtf16});
+
+  final int startUtf16;
+  final int endUtf16;
 }
 
 /// 解析 ripgrep `--json` 的单行输出；只关心 match 事件，其余返回 null。
@@ -49,8 +64,53 @@ SearchHit? parseRgJsonLine(String line) {
   final textObj = linesObj is Map ? linesObj['text'] : null;
   final pathText = pathObj is Map ? pathObj['text'] : null;
   if (pathText is! String || lineNum is! int || textObj is! String) return null;
+  final lineText = textObj.endsWith('\n')
+      ? textObj.substring(0, textObj.length - 1)
+      : textObj;
+  final submatches = data['submatches'];
+  final ranges = <SearchHitRange>[];
+  if (submatches is List) {
+    for (final submatch in submatches) {
+      if (submatch is! Map) continue;
+      final startByte = submatch['start'];
+      final endByte = submatch['end'];
+      if (startByte is! int || endByte is! int || endByte <= startByte) {
+        continue;
+      }
+      final start = _utf16OffsetAtUtf8Byte(lineText, startByte);
+      final end = _utf16OffsetAtUtf8Byte(lineText, endByte);
+      if (start == null || end == null || end <= start) continue;
+      ranges.add(SearchHitRange(startUtf16: start, endUtf16: end));
+    }
+  }
   return SearchHit(
-      path: pathText, line: lineNum, lineText: textObj.trimRight());
+    path: pathText,
+    line: lineNum,
+    lineText: lineText,
+    matchRanges: List.unmodifiable(ranges),
+  );
+}
+
+/// Converts a UTF-8 byte boundary from ripgrep into Dart's UTF-16 offsets.
+/// Returns null when the byte offset splits a UTF-8 code point.
+int? _utf16OffsetAtUtf8Byte(String text, int byteOffset) {
+  if (byteOffset < 0) return null;
+  var bytes = 0;
+  var utf16 = 0;
+  for (final rune in text.runes) {
+    if (bytes == byteOffset) return utf16;
+    final runeBytes = rune <= 0x7f
+        ? 1
+        : rune <= 0x7ff
+            ? 2
+            : rune <= 0xffff
+                ? 3
+                : 4;
+    if (byteOffset < bytes + runeBytes) return null;
+    bytes += runeBytes;
+    utf16 += rune > 0xffff ? 2 : 1;
+  }
+  return bytes == byteOffset ? utf16 : null;
 }
 
 /// 解析 `git grep -n` 输出行（path:line:text；路径内含冒号按前三段切）。
@@ -83,6 +143,8 @@ class SearchService {
     this.starter = Process.start,
     this.maxHits = 500,
     this.defaultBackend,
+    this.registerProcess,
+    this.unregisterProcess,
   });
 
   final String root;
@@ -94,18 +156,48 @@ class SearchService {
   /// 固定后端（测试用）；null = 自动探测。
   final SearchBackend? defaultBackend;
 
+  final ProcessRegistrar? registerProcess;
+  final ProcessUnregistrar? unregisterProcess;
+
+  Future<Process> _startTracked(
+    String executable,
+    List<String> args, {
+    required String label,
+  }) async {
+    final process = await starter(executable, args, workingDirectory: root);
+    try {
+      registerProcess?.call(process.pid, 'search', label, root);
+    } catch (_) {
+      process.kill();
+      rethrow;
+    }
+    unawaited(process.exitCode.then((_) {
+      try {
+        unregisterProcess?.call(process.pid);
+      } catch (_) {}
+    }, onError: (Object _) {
+      try {
+        unregisterProcess?.call(process.pid);
+      } catch (_) {}
+    }));
+    return process;
+  }
+
   /// 探测可用后端；都不可用返回 null。
   Future<SearchBackend?> detectBackend() async {
     try {
-      final rg = await starter('rg', ['--version'], workingDirectory: root);
+      final rg =
+          await _startTracked('rg', ['--version'], label: 'rg --version');
       if (await rg.exitCode == 0) return SearchBackend.ripgrep;
     } catch (_) {
       // rg 不存在
     }
     try {
-      final git = await starter(
-          'git', ['rev-parse', '--is-inside-work-tree'],
-          workingDirectory: root);
+      final git = await _startTracked(
+        'git',
+        ['rev-parse', '--is-inside-work-tree'],
+        label: 'git rev-parse',
+      );
       if (await git.exitCode == 0) return SearchBackend.gitGrep;
     } catch (_) {
       // git 不可用
@@ -137,7 +229,7 @@ class SearchService {
           return;
         }
         if (resolved == SearchBackend.ripgrep) {
-          proc = await starter(
+          proc = await _startTracked(
             'rg',
             [
               '--json',
@@ -147,10 +239,10 @@ class SearchService {
               query,
               '.', // 必须显式给路径：否则 rg 见 stdin 是管道会等待输入
             ],
-            workingDirectory: root,
+            label: 'rg search',
           );
         } else {
-          proc = await starter(
+          proc = await _startTracked(
             'git',
             [
               'grep',
@@ -162,9 +254,8 @@ class SearchService {
               query,
               '--',
               '.',
-
             ],
-            workingDirectory: root,
+            label: 'git grep',
           );
         }
         proc!.stdout

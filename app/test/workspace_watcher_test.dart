@@ -46,6 +46,43 @@ void main() {
     expect(calls, 0, reason: 'stop 后不再回调');
   });
 
+  test('stop 会取消已排队的防抖回调', () async {
+    var calls = 0;
+    final w = WorkspaceWatcher(
+        root: dir.path,
+        debounce: const Duration(milliseconds: 150),
+        onChanged: () => calls++);
+    await w.start();
+
+    File('${dir.path}${Platform.pathSeparator}pending.txt')
+        .writeAsStringSync('x');
+    await Future<void>.delayed(const Duration(milliseconds: 40));
+    await w.stop();
+    await Future<void>.delayed(const Duration(milliseconds: 250));
+
+    expect(calls, 0, reason: 'detach 时取消尚未到期的事件回调');
+    expect(w.isWatching, isFalse);
+  });
+
+  test('反复 start/stop 后仍只有一个活动订阅', () async {
+    var calls = 0;
+    final w = WorkspaceWatcher(
+        root: dir.path,
+        debounce: const Duration(milliseconds: 100),
+        onChanged: () => calls++);
+
+    await w.start();
+    await w.stop();
+    await w.start();
+    await w.start();
+    File('${dir.path}${Platform.pathSeparator}restart.txt')
+        .writeAsStringSync('x');
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+
+    expect(calls, 1, reason: '重复 attach 不应重复订阅同一工作区');
+    await w.stop();
+  });
+
   test('子目录事件也触发（递归）', () async {
     var calls = 0;
     final w = WorkspaceWatcher(

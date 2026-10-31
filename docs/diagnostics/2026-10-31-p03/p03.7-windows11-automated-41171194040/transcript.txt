@@ -1,0 +1,23 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20261030220703
+Username: runnervmmaf2v\runneradmin
+RunAs User: runnervmmaf2v\runneradmin
+Configuration Name:
+Machine: runnervmmaf2v (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.EXE -command . 'C:\a\_temp\2bfa8abd-cd17-4d12-af3a-a369fe58cd52.ps1'
+Process ID: 6728
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS>TerminatingError(): "Close validation failed: Release artifact did not close cleanly (posted=True timeout=False exit=-1073740771)"
+**********************
+Windows PowerShell transcript end
+End time: 20261030220750
+**********************
