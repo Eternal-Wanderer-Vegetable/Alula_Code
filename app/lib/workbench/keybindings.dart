@@ -221,6 +221,8 @@ class KeybindingSet {
     'editor.action.deleteLines': 'ctrl+shift+k',
     'editor.action.copyLinesUpAction': 'alt+shift+arrowup',
     'editor.action.copyLinesDownAction': 'alt+shift+arrowdown',
+    'editor.action.moveLinesUpAction': 'alt+arrowup',
+    'editor.action.moveLinesDownAction': 'alt+arrowdown',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',

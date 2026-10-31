@@ -209,6 +209,26 @@ void main() {
       );
     });
 
+    test('move-line defaults use Alt+Up and Alt+Down on every platform', () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keybindings = KeybindingSet.load(platform: platform);
+        expect(
+          keybindings.commandForChord(parseChord('alt+arrowup')!),
+          'editor.action.moveLinesUpAction',
+          reason: '$platform',
+        );
+        expect(
+          keybindings.commandForChord(parseChord('alt+arrowdown')!),
+          'editor.action.moveLinesDownAction',
+          reason: '$platform',
+        );
+      }
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

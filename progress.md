@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.37 / EDT-07d 完成）
+
+- 固定 Code-OSS 默认 Move Line Up/Down 命令与三平台 Alt+↑/↓。Rust UTF-16 行地址解析；端点跟踪覆盖下一行第 1 列、反向选择、多光标相邻行和空行；首尾行为按源码 no-op。单次预算内 TextOps 事务接入撤销/重做、dirty、split view 与保存回读。
+- 新增 7 项定向用例：三平台移动、空行和多 occurrence-selection；组合 keybinding + 行移动套件 27 项通过。全量 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 478）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。证据：`docs/diagnostics/2026-11-01-p04/p04.37-move-lines.md`。
+- 差异保留：Code-OSS 根据语言 `indentRules` / `onEnter` 对移动行进行 autoIndent；Alula 目前保留原缩进，完整语言配置缩进行为仍待办。GitNexus 编辑前 `WorkbenchPage` 与 `_registerCommands` 为 CRITICAL（分别 67/111 flows/20 modules 与 48 项/44 direct/2 flows/6 modules），`KeybindingSet` LOW；风险不降级。detached `HEAD ca9f7b5` 精确暂存 9 文件补丁的完整 init.sh、cargo fmt 与 Flutter analyze 均通过。GitNexus staged（9 files）、all（45 files，含既有改动）和 compare `main`（1348 files）均 CRITICAL；重复检查 observed affected-process 范围分别为 169–389、173–389、388–389。图谱报告 710/910 入口候选未排名、340 callees 跳过、9 次 walk 到预算。文档映射噪声不用于降级。分阶段提交待执行。
+
 ### 最新进展（2026-11-01，P04.36 / EDT-07c 完成）
 
 - 新增 Code-OSS `editor.action.copyLinesUpAction` / `editor.action.copyLinesDownAction`，Windows/macOS Alt+Shift+方向键、Linux Ctrl+Alt+Shift+方向键；保留 Linux Alt+Shift 列选并将 Windows 列选移至 Ctrl+Alt+Shift，macOS 不注册列选快捷键。Rust UTF-16 行范围、预算与版本校验后由 TextOps 单批提交，更新选择/撤销/重做/分屏同步。

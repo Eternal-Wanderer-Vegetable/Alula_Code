@@ -635,6 +635,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? 'Ctrl+Alt+Shift+Down'
             : 'Alt+Shift+Down',
         enablement: 'editorTextFocus');
+    reg('editor.action.moveLinesUpAction', '编辑器', '向上移动行',
+        () => _moveLines(down: false),
+        shortcut: 'Alt+Up', enablement: 'editorTextFocus');
+    reg('editor.action.moveLinesDownAction', '编辑器', '向下移动行',
+        () => _moveLines(down: true),
+        shortcut: 'Alt+Down', enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -3125,6 +3131,415 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = down ? '已向下复制行' : '已向上复制行');
+  }
+
+  Future<void> _moveLines({required bool down}) async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final crossWindow = doc.crossWindowSelection;
+    final selections = normalizeSelectionSet(
+      crossWindow == null
+          ? [doc.selection, ...doc.additionalSelections]
+          : [crossWindow],
+    );
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '移动行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentLineOffset documentStart;
+    final lineSelections = <({
+      TextSelection selection,
+      int firstLine,
+      int lastLine,
+      int rawEndLine,
+      int rawEndColumn,
+      int order,
+    })>[];
+    try {
+      documentStart = doc.doc.lineOffset(0);
+      if (documentStart.version != expectedVersion) {
+        throw StateError('文档版本在读取行数时发生变化');
+      }
+      if (documentStart.lineCount < 2) return;
+
+      for (var order = 0; order < selections.length; order++) {
+        final selection = selections[order];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('文档版本在解析移动行选区时发生变化');
+        }
+        var lastLine = end.line;
+        if (start.line < lastLine && end.character == 0) lastLine--;
+        lineSelections.add((
+          selection: selection,
+          firstLine: start.line,
+          lastLine: lastLine < start.line ? start.line : lastLine,
+          rawEndLine: end.line,
+          rawEndColumn: end.character,
+          order: order,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '移动行未应用：$error');
+      return;
+    }
+
+    // Code-OSS checks the ordered selection endpoints before shrinking an
+    // exclusive next-line column-one endpoint. Keep that boundary behavior:
+    // a range ending on the final row cannot move down, even when that row is
+    // excluded from the selected line block.
+    final movable = lineSelections
+        .where((lines) => down
+            ? lines.rawEndLine < documentStart.lineCount - 1
+            : lines.firstLine > 0)
+        .toList()
+      ..sort((a, b) {
+        final byStart = a.firstLine.compareTo(b.firstLine);
+        if (byStart != 0) return byStart;
+        final byEnd = a.lastLine.compareTo(b.lastLine);
+        return byEnd != 0 ? byEnd : a.order.compareTo(b.order);
+      });
+    if (movable.isEmpty) return;
+
+    final groups = <({int firstLine, int lastLine, List<int> orders})>[];
+    for (final lines in movable) {
+      if (groups.isEmpty || lines.firstLine > groups.last.lastLine + 1) {
+        groups.add((
+          firstLine: lines.firstLine,
+          lastLine: lines.lastLine,
+          orders: [lines.order],
+        ));
+      } else {
+        final previous = groups.removeLast();
+        groups.add((
+          firstLine: previous.firstLine,
+          lastLine: lines.lastLine > previous.lastLine
+              ? lines.lastLine
+              : previous.lastLine,
+          orders: [...previous.orders, lines.order],
+        ));
+      }
+    }
+
+    final plans = <({
+      int firstLine,
+      int lastLine,
+      int start,
+      int end,
+      int adjacentStart,
+      int adjacentEnd,
+      int selectedStart,
+      int selectedEnd,
+      int movedEndOffset,
+      int selectionDelta,
+      List<int> orders,
+      String removed,
+      String inserted,
+    })>[];
+    var payloadChars = 0;
+    try {
+      for (final group in groups) {
+        if (down && group.lastLine >= documentStart.lineCount - 1) continue;
+        if (!down && group.firstLine <= 0) continue;
+
+        final first = doc.doc.lineOffset(group.firstLine);
+        final last = doc.doc.lineOffset(group.lastLine);
+        if (first.version != expectedVersion ||
+            last.version != expectedVersion) {
+          throw StateError('文档版本在读取移动行边界时发生变化');
+        }
+        final selectedEndBoundary = doc.doc.lineBoundary(last.offsetUtf16);
+        if (selectedEndBoundary.version != expectedVersion) {
+          throw StateError('文档版本在读取移动行末尾时发生变化');
+        }
+
+        late final int start;
+        late final int end;
+        late final int adjacentStart;
+        late final int adjacentEnd;
+        late final int selectedStart;
+        late final int selectedEnd;
+        late final int movedEndOffset;
+        late final int selectionDelta;
+        if (down) {
+          final neighbor = doc.doc.lineOffset(group.lastLine + 1);
+          final neighborBoundary = doc.doc.lineBoundary(neighbor.offsetUtf16);
+          if (neighbor.version != expectedVersion ||
+              neighborBoundary.version != expectedVersion) {
+            throw StateError('文档版本在读取下方移动行时发生变化');
+          }
+          start = first.offsetUtf16;
+          end = neighborBoundary.endUtf16;
+          adjacentStart = neighbor.offsetUtf16;
+          adjacentEnd = neighborBoundary.endUtf16;
+          selectedStart = first.offsetUtf16;
+          selectedEnd = selectedEndBoundary.endUtf16;
+          if (end < neighbor.offsetUtf16 || selectedEnd < selectedStart) {
+            throw StateError('Rust 返回了无效的向下移动行边界');
+          }
+          final rangeLength = end - start;
+          if (rangeLength < 0 ||
+              rangeLength >
+                  (_undoHistoryBudget.maxTotalChars - payloadChars) ~/ 2) {
+            throw StateError(
+                '移动行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+          }
+          final removed = _readDocumentRange(doc, start, end);
+          final selectedText = removed.substring(0, selectedEnd - start);
+          final neighborText = removed.substring(neighbor.offsetUtf16 - start);
+          final inserted = '$neighborText\n$selectedText';
+          if (inserted.length != rangeLength) {
+            throw StateError('向下移动行未保持 UTF-16 范围长度');
+          }
+          final neighborLength =
+              neighborBoundary.endUtf16 - neighbor.offsetUtf16;
+          movedEndOffset = start + inserted.length + 1;
+          selectionDelta = neighborLength + 1;
+          final cost = removed.length + inserted.length;
+          if (cost > _undoHistoryBudget.maxTotalChars - payloadChars) {
+            throw StateError(
+                '移动行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+          }
+          payloadChars += cost;
+          plans.add((
+            firstLine: group.firstLine,
+            lastLine: group.lastLine,
+            start: start,
+            end: end,
+            adjacentStart: adjacentStart,
+            adjacentEnd: adjacentEnd,
+            selectedStart: selectedStart,
+            selectedEnd: selectedEnd,
+            movedEndOffset: movedEndOffset,
+            selectionDelta: selectionDelta,
+            orders: group.orders,
+            removed: removed,
+            inserted: inserted,
+          ));
+        } else {
+          final previous = doc.doc.lineOffset(group.firstLine - 1);
+          final previousBoundary = doc.doc.lineBoundary(previous.offsetUtf16);
+          if (previous.version != expectedVersion ||
+              previousBoundary.version != expectedVersion) {
+            throw StateError('文档版本在读取上方移动行时发生变化');
+          }
+          start = previous.offsetUtf16;
+          end = selectedEndBoundary.endUtf16;
+          adjacentStart = previous.offsetUtf16;
+          adjacentEnd = previousBoundary.endUtf16;
+          selectedStart = first.offsetUtf16;
+          selectedEnd = selectedEndBoundary.endUtf16;
+          if (selectedStart < start || end < selectedEnd) {
+            throw StateError('Rust 返回了无效的向上移动行边界');
+          }
+          final rangeLength = end - start;
+          if (rangeLength < 0 ||
+              rangeLength >
+                  (_undoHistoryBudget.maxTotalChars - payloadChars) ~/ 2) {
+            throw StateError(
+                '移动行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+          }
+          final removed = _readDocumentRange(doc, start, end);
+          final previousEnd = previousBoundary.endUtf16;
+          final previousText = removed.substring(0, previousEnd - start);
+          final selectedText = removed.substring(
+            selectedStart - start,
+            selectedEnd - start,
+          );
+          final inserted = '$selectedText\n$previousText';
+          if (inserted.length != rangeLength) {
+            throw StateError('向上移动行未保持 UTF-16 范围长度');
+          }
+          final previousLength =
+              previousBoundary.endUtf16 - previous.offsetUtf16;
+          movedEndOffset = start + selectedText.length + 1;
+          selectionDelta = -(previousLength + 1);
+          final cost = removed.length + inserted.length;
+          if (cost > _undoHistoryBudget.maxTotalChars - payloadChars) {
+            throw StateError(
+                '移动行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+          }
+          payloadChars += cost;
+          plans.add((
+            firstLine: group.firstLine,
+            lastLine: group.lastLine,
+            start: start,
+            end: end,
+            adjacentStart: adjacentStart,
+            adjacentEnd: adjacentEnd,
+            selectedStart: selectedStart,
+            selectedEnd: selectedEnd,
+            movedEndOffset: movedEndOffset,
+            selectionDelta: selectionDelta,
+            orders: group.orders,
+            removed: removed,
+            inserted: inserted,
+          ));
+        }
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '移动行未应用：$error');
+      return;
+    }
+
+    if (plans.isEmpty) return;
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '移动行未应用：文档版本已变化');
+      return;
+    }
+
+    final changedPlans = plans.where((plan) => plan.removed != plan.inserted);
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in changedPlans.toList()
+      ..sort((a, b) => b.start.compareTo(a.start))) {
+      forward
+        ..add(TextOp.delete(plan.start, plan.end - plan.start))
+        ..add(TextOp.insert(plan.start, plan.inserted));
+      inverse
+        ..add(TextOp.delete(plan.start, plan.inserted.length))
+        ..add(TextOp.insert(plan.start, plan.removed));
+    }
+
+    if (forward.isNotEmpty) {
+      try {
+        doc.doc.applyWith(expectedVersion, forward);
+      } on AlulaException catch (error) {
+        if (mounted) {
+          setState(
+              () => _statusDetail = '移动行未应用：${error.code} ${error.detail}');
+        }
+        return;
+      }
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final lines in lineSelections)
+        () {
+          ({
+            int firstLine,
+            int lastLine,
+            int start,
+            int end,
+            int adjacentStart,
+            int adjacentEnd,
+            int selectedStart,
+            int selectedEnd,
+            int movedEndOffset,
+            int selectionDelta,
+            List<int> orders,
+            String removed,
+            String inserted,
+          })? plan;
+          for (final candidate in plans) {
+            if (candidate.orders.contains(lines.order)) {
+              plan = candidate;
+              break;
+            }
+          }
+          final currentPlan = plan;
+          int mapOffset(int offset, {bool orderedEnd = false}) {
+            final isExclusiveLineEnd = orderedEnd &&
+                lines.rawEndLine > lines.firstLine &&
+                lines.rawEndColumn == 0;
+            if (isExclusiveLineEnd &&
+                currentPlan != null &&
+                lines.rawEndLine > currentPlan.lastLine) {
+              return currentPlan.movedEndOffset;
+            }
+            for (final candidate in plans) {
+              if (offset < candidate.start || offset > candidate.end) {
+                continue;
+              }
+              if (down) {
+                if (offset >= candidate.adjacentStart) {
+                  return candidate.start + offset - candidate.adjacentStart;
+                }
+                final adjacentLength =
+                    candidate.adjacentEnd - candidate.adjacentStart;
+                return candidate.start +
+                    adjacentLength +
+                    1 +
+                    offset -
+                    candidate.selectedStart;
+              }
+              if (offset >= candidate.selectedStart) {
+                return candidate.start + offset - candidate.selectedStart;
+              }
+              final selectedLength =
+                  candidate.selectedEnd - candidate.selectedStart;
+              return candidate.start +
+                  selectedLength +
+                  1 +
+                  offset -
+                  candidate.adjacentStart;
+            }
+            return offset;
+          }
+
+          final orderedEnd = lines.selection.end;
+          final baseIsEnd = lines.selection.baseOffset == orderedEnd &&
+              lines.selection.baseOffset != lines.selection.extentOffset;
+          final extentIsEnd = lines.selection.extentOffset == orderedEnd &&
+              lines.selection.baseOffset != lines.selection.extentOffset;
+          return TextSelection(
+            baseOffset: mapOffset(
+              lines.selection.baseOffset,
+              orderedEnd: baseIsEnd,
+            ),
+            extentOffset: mapOffset(
+              lines.selection.extentOffset,
+              orderedEnd: extentIsEnd,
+            ),
+            affinity: lines.selection.affinity,
+            isDirectional: lines.selection.isDirectional,
+          );
+        }(),
+    ]);
+    final clampedSelections = normalizeSelectionSet([
+      for (final selection in mappedSelections)
+        TextSelection(
+          baseOffset: selection.baseOffset
+              .clamp(0, documentStart.totalUtf16Length)
+              .toInt(),
+          extentOffset: selection.extentOffset
+              .clamp(0, documentStart.totalUtf16Length)
+              .toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+
+    if (forward.isNotEmpty) {
+      _recordDocumentOperations(
+        doc,
+        forward: forward,
+        inverse: inverse,
+        beforeCaret: selections.first.extentOffset,
+        afterCaret: clampedSelections.first.extentOffset,
+        coalesce: false,
+      );
+      _setDocSelections(doc, clampedSelections, recordHistory: false);
+      doc.replaceInputWindow(
+        clampedSelections.first.extentOffset,
+        selection: clampedSelections.first,
+      );
+      _refreshSiblingViews(doc, forward);
+      _onFindTextChanged();
+      _syncCommandContext();
+    } else {
+      _setDocSelections(doc, clampedSelections);
+    }
+    if (mounted) setState(() => _statusDetail = down ? '已向下移动行' : '已向上移动行');
   }
 
   Future<void> _insertLine({required bool before}) async {
