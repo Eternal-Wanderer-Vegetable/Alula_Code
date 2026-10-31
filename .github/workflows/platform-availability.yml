@@ -78,7 +78,7 @@ jobs:
         shell: pwsh
         run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
       - name: Launch Windows app and capture visible client area
-        shell: pwsh
+        shell: powershell
         run: |
           Add-Type -AssemblyName System.Drawing
           Add-Type @'
