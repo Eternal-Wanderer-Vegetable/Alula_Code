@@ -134,6 +134,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['arrowdown'] = LogicalKeyboardKey.arrowDown;
   m['arrowleft'] = LogicalKeyboardKey.arrowLeft;
   m['arrowright'] = LogicalKeyboardKey.arrowRight;
+  m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
+  m['bracketright'] = LogicalKeyboardKey.bracketRight;
   m['-'] = LogicalKeyboardKey.minus;
   m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
@@ -212,6 +214,8 @@ class KeybindingSet {
     'editor.cursorBottom': 'ctrl+end',
     'editor.cursorBottomSelect': 'ctrl+shift+end',
     'editor.action.toggleOvertypeInsertMode': 'insert',
+    'editor.action.indentLines': 'ctrl+bracketright',
+    'editor.action.outdentLines': 'ctrl+bracketleft',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
@@ -245,6 +249,8 @@ class KeybindingSet {
         result['editor.cursorBottom'] = 'cmd+arrowdown';
         result['editor.cursorBottomSelect'] = 'shift+cmd+arrowdown';
         result['editor.action.toggleOvertypeInsertMode'] = 'cmd+alt+o';
+        result['editor.action.indentLines'] = 'cmd+bracketright';
+        result['editor.action.outdentLines'] = 'cmd+bracketleft';
         result['deleteWordLeft'] = 'alt+backspace';
         result['deleteWordRight'] = 'alt+delete';
         result['deleteAllLeft'] = 'cmd+backspace';

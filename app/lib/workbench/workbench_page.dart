@@ -34,6 +34,7 @@ import '../editor/editor_sticky_scroll.dart';
 import '../editor/editor_folding.dart';
 import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
+import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/navigation_history.dart';
@@ -525,6 +526,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.cursorRedo', '编辑器', '重做光标移动', () async => _cursorRedo(),
         shortcut: 'Ctrl+Shift+U',
         enablement: 'editorTextFocus && cursorCanRedo');
+    reg(
+      'editor.action.indentLines',
+      '编辑器',
+      '缩进选中行',
+      () => _applyIndentation(tabOperation: false),
+      shortcut:
+          defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+]' : 'Ctrl+]',
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'editor.action.outdentLines',
+      '编辑器',
+      '减少选中行缩进',
+      () => _applyIndentation(outdent: true, tabOperation: false),
+      shortcut:
+          defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+[' : 'Ctrl+[',
+      enablement: 'editorTextFocus',
+    );
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -2214,6 +2233,309 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       cursor = range.endUtf16;
     }
     return text.toString();
+  }
+
+  Future<void> _applyIndentation({
+    bool outdent = false,
+    required bool tabOperation,
+  }) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) {
+        setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      }
+      return;
+    }
+
+    final hadCrossWindowSelection = doc.crossWindowSelection != null;
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '缩进已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final edits = <({
+      int start,
+      int end,
+      String text,
+      String removed,
+      bool collapseSelection,
+    })>[];
+    final lineIntervals = <({int first, int last})>[];
+    try {
+      for (final selection in selections) {
+        final startBoundary = doc.doc.lineBoundary(selection.start);
+        final endBoundary = doc.doc.lineBoundary(selection.end);
+        if (startBoundary.version != expectedVersion ||
+            endBoundary.version != expectedVersion) {
+          throw StateError('文档版本在解析缩进行时发生变化');
+        }
+
+        if (tabOperation && !outdent) {
+          if (selection.isCollapsed) {
+            if (selection.extentOffset - startBoundary.startUtf16 >
+                _undoHistoryBudget.maxTotalChars) {
+              throw StateError('Tab 光标行前缀超过单次操作上限');
+            }
+            final prefix = _readDocumentRange(
+              doc,
+              startBoundary.startUtf16,
+              selection.extentOffset,
+            );
+            final inserted = indentationTabText(prefix);
+            edits.add((
+              start: selection.extentOffset,
+              end: selection.extentOffset,
+              text: inserted,
+              removed: '',
+              collapseSelection: false,
+            ));
+            continue;
+          }
+
+          final isWholeSingleLine = startBoundary.line == endBoundary.line &&
+              selection.start == startBoundary.startUtf16 &&
+              selection.end == endBoundary.endUtf16;
+          if (startBoundary.line == endBoundary.line && !isWholeSingleLine) {
+            if (selection.end - selection.start >
+                _undoHistoryBudget.maxTotalChars) {
+              throw StateError('Tab 选区超过单次操作上限');
+            }
+            final prefix = _readDocumentRange(
+              doc,
+              startBoundary.startUtf16,
+              selection.start,
+            );
+            final inserted = indentationTabText(prefix);
+            edits.add((
+              start: selection.start,
+              end: selection.end,
+              text: inserted,
+              removed: _readDocumentRange(doc, selection.start, selection.end),
+              collapseSelection: true,
+            ));
+            continue;
+          }
+        }
+
+        var lastLine = endBoundary.line;
+        if (!selection.isCollapsed &&
+            lastLine > startBoundary.line &&
+            selection.end == endBoundary.startUtf16) {
+          lastLine--;
+        }
+        if (lastLine < startBoundary.line) lastLine = startBoundary.line;
+        lineIntervals.add((first: startBoundary.line, last: lastLine));
+      }
+
+      lineIntervals.sort((a, b) => a.first != b.first
+          ? a.first.compareTo(b.first)
+          : a.last.compareTo(b.last));
+      final mergedIntervals = <({int first, int last})>[];
+      for (final interval in lineIntervals) {
+        if (mergedIntervals.isEmpty ||
+            interval.first > mergedIntervals.last.last) {
+          mergedIntervals.add(interval);
+        } else if (interval.last > mergedIntervals.last.last) {
+          mergedIntervals[mergedIntervals.length - 1] = (
+            first: mergedIntervals.last.first,
+            last: interval.last,
+          );
+        }
+      }
+
+      var affectedUtf16 = 0;
+      var affectedLines = 0;
+      for (final interval in mergedIntervals) {
+        final first = doc.doc.lineOffset(interval.first);
+        final lastStart = doc.doc.lineOffset(interval.last);
+        final last = doc.doc.lineBoundary(lastStart.offsetUtf16);
+        if (first.version != expectedVersion ||
+            lastStart.version != expectedVersion ||
+            last.version != expectedVersion) {
+          throw StateError('文档版本在读取缩进行时发生变化');
+        }
+        final lineCount = interval.last - interval.first + 1;
+        affectedLines += lineCount;
+        final rangeLength = last.endUtf16 - first.offsetUtf16;
+        affectedUtf16 += rangeLength;
+        if (affectedLines > maxDocLineDeleteSelections ||
+            affectedUtf16 > _undoHistoryBudget.maxTotalChars) {
+          throw StateError('缩进范围超过单次操作上限');
+        }
+
+        final text = _readDocumentRange(doc, first.offsetUtf16, last.endUtf16);
+        final lines = text.split('\n');
+        if (lines.length != lineCount) {
+          throw StateError('Rust 行边界与读取文本不一致');
+        }
+        var lineOffset = first.offsetUtf16;
+        for (var index = 0; index < lines.length; index++) {
+          final line = lines[index];
+          final skipEmptySelectionLine =
+              interval.first != interval.last && line.isEmpty && !outdent;
+          if (!skipEmptySelectionLine) {
+            final newIndent = shiftLineIndentation(line, outdent: outdent);
+            if (newIndent != null) {
+              final oldIndentLength = leadingIndentLength(line);
+              final oldIndent = line.substring(0, oldIndentLength);
+              if (oldIndent != newIndent) {
+                edits.add((
+                  start: lineOffset,
+                  end: lineOffset + oldIndentLength,
+                  text: newIndent,
+                  removed: oldIndent,
+                  collapseSelection: false,
+                ));
+              }
+            }
+          }
+          lineOffset += line.length + (index + 1 < lines.length ? 1 : 0);
+        }
+      }
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '缩进未应用：$error');
+      }
+      return;
+    }
+
+    if (edits.isEmpty) return;
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '缩进未应用：文档版本已变化');
+      return;
+    }
+
+    edits.sort((a, b) => a.start.compareTo(b.start));
+    var payloadChars = 0;
+    for (var index = 0; index < edits.length; index++) {
+      final edit = edits[index];
+      if (index > 0 &&
+          (edit.start < edits[index - 1].end ||
+              edit.start == edits[index - 1].start)) {
+        if (mounted) setState(() => _statusDetail = '缩进未应用：多光标编辑范围重叠');
+        return;
+      }
+      payloadChars += edit.removed.length + edit.text.length;
+    }
+    if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '缩进已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    var deltaBefore = 0;
+    final mappedStarts = <int>[];
+    for (final edit in edits) {
+      mappedStarts.add(edit.start + deltaBefore);
+      deltaBefore += edit.text.length - (edit.end - edit.start);
+    }
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final edit in edits.reversed) {
+      if (edit.end > edit.start) {
+        forward.add(TextOp.delete(edit.start, edit.end - edit.start));
+      }
+      if (edit.text.isNotEmpty) {
+        forward.add(TextOp.insert(edit.start, edit.text));
+      }
+    }
+    for (var index = edits.length - 1; index >= 0; index--) {
+      final edit = edits[index];
+      final mappedStart = mappedStarts[index];
+      if (edit.text.isNotEmpty) {
+        inverse.add(TextOp.delete(mappedStart, edit.text.length));
+      }
+      if (edit.removed.isNotEmpty) {
+        inverse.add(TextOp.insert(mappedStart, edit.removed));
+      }
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '缩进未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset, {required bool preserveEditStart}) {
+      var delta = 0;
+      for (final edit in edits) {
+        if (offset < edit.start) break;
+        final mappedStart = edit.start + delta;
+        if (offset == edit.start && preserveEditStart) return mappedStart;
+        if (offset <= edit.end) return mappedStart + edit.text.length;
+        delta += edit.text.length - (edit.end - edit.start);
+      }
+      return offset + delta;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length + deltaBefore;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        () {
+          final replacement = edits.where((edit) =>
+              edit.collapseSelection &&
+              selection.start == edit.start &&
+              selection.end == edit.end);
+          if (replacement.isNotEmpty) {
+            final edit = replacement.first;
+            final offset = mapOffset(edit.end, preserveEditStart: false);
+            final caret = offset.clamp(0, newLength).toInt();
+            return TextSelection.collapsed(offset: caret);
+          }
+          return TextSelection(
+            baseOffset: mapOffset(
+              selection.baseOffset,
+              preserveEditStart: !selection.isCollapsed,
+            ).clamp(0, newLength).toInt(),
+            extentOffset: mapOffset(
+              selection.extentOffset,
+              preserveEditStart: !selection.isCollapsed,
+            ).clamp(0, newLength).toInt(),
+            affinity: selection.affinity,
+            isDirectional: selection.isDirectional,
+          );
+        }(),
+    ]);
+    if (mappedSelections.isEmpty) return;
+    final beforeCaret = selections.first.extentOffset;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    if (hadCrossWindowSelection) {
+      _setCrossWindowLineSelection(doc, mappedSelections.first);
+    } else {
+      _setDocSelections(doc, mappedSelections, recordHistory: false);
+    }
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = outdent ? '已减少行缩进' : '已缩进行');
+    }
   }
 
   Future<void> _copyCrossWindowSelection(OpenDoc doc) async {
@@ -4072,6 +4394,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
         final activeHasComposition =
             active?.inputWindow.hasComposition ?? false;
+        if (active != null && !activeHasComposition) {
+          if (!ctrl && !meta && !alt && key == LogicalKeyboardKey.tab) {
+            unawaited(_applyIndentation(
+              outdent: shift,
+              tabOperation: true,
+            ));
+            return KeyEventResult.handled;
+          }
+        }
         if (_awaitingMoveSelectionChord) {
           if (key == LogicalKeyboardKey.controlLeft ||
               key == LogicalKeyboardKey.controlRight ||

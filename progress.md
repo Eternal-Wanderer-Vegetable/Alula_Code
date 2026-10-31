@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.25 / EDT-06a 完成）
+
+- EDT-06a 完成 Tab 制表位插入、单行局部选区替换、整行/多行缩进、Shift+Tab 反缩进及 `editor.action.indentLines` / `editor.action.outdentLines` 平台快捷键。新增可见列 helper，按 Unicode grapheme 与固定 Code-OSS 全角/emoji 宽度规则计算；Rust 仍为文本权威，通过既有 UTF-16 行边界/范围读取与 TextOps 提交，无 ABI 变化。composition、版本校验、多光标重叠拒绝、双视图、undo/redo、dirty 与保存回读均覆盖。
+- 三平台 TargetPlatform 定向 15 项通过，含用户给出的 Rust `linux-save-ok` fixture 回读；`flutter analyze` 0 issues、cargo fmt 通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 393）。证据：`docs/diagnostics/2026-10-31-p04/p04.25-tab-indent.md`。
+- GitNexus `_registerCommands` upstream LOW；`indentationVisibleColumn` impact CRITICAL（3 个符号/39 个流程/12 个模块），staged detect 多次 CRITICAL（16–25 个符号/69–151 个流程），all-scope 47 文件/27 符号/69–141 流程 CRITICAL。`_applyIndentation`、`defaultsFor`、`_focusNodeFor` 精确查询为 UNKNOWN，源码调用点已核对；不相关流程混入且索引丢弃 696/896 个入口候选、跳过 334 个 callee、9 条 walk 超预算，风险未降级，保留 `_focusNodeFor` 的 CRITICAL。P04 / feat-026 继续进行中；自动缩进和括号/引号配对留 EDT-06 后续切片，设置接入留 P07，P15 原生验收仍 pending。
+
 ### 最新进展（2026-10-31，P04.24 / EDT-05d 完成）
 
 - EDT-05d 完成覆写模式粘贴：固定 Code-OSS 默认 `editor.overtypeOnPaste=true`；Rust Rope 批量解析最多 10,000 个绝对 UTF-16 覆盖范围，ABI v26 同步 Rust FFI 与 Dart，处理 BOM、emoji 代理对、CRLF、选区扩展和跨行边界。
