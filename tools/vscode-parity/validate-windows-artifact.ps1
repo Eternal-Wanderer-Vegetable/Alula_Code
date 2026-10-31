@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true)][string]$ArtifactDirectory,
   [Parameter(Mandatory = $true)][string]$OutputDirectory
 )
@@ -17,8 +17,21 @@ public sealed class AlulaArtifactMsaaSnapshot
 {
     public string HResult { get; set; }
     public string Error { get; set; }
-    public string[] Text { get; set; }
-    public AlulaArtifactMsaaSnapshot() { Text = new string[0]; }
+    public string RootName { get; set; }
+    public int ChildCount { get; set; }
+    public System.Collections.Generic.List<AlulaArtifactMsaaNode> Nodes { get; private set; }
+    public AlulaArtifactMsaaSnapshot() { Nodes = new System.Collections.Generic.List<AlulaArtifactMsaaNode>(); }
+}
+
+public sealed class AlulaArtifactMsaaNode
+{
+    public string Path { get; set; }
+    public int ChildId { get; set; }
+    public string Name { get; set; }
+    public string Role { get; set; }
+    public string Value { get; set; }
+    public int ChildCount { get; set; }
+    public string Error { get; set; }
 }
 
 public static class AlulaArtifactMsaa
@@ -36,44 +49,51 @@ public static class AlulaArtifactMsaa
     public static AlulaArtifactMsaaSnapshot Capture(IntPtr window)
     {
         var snapshot = new AlulaArtifactMsaaSnapshot();
+        IAccessible root = null;
         try
         {
             Guid iid = IidIAccessible;
-            IAccessible root;
             int hr = AccessibleObjectFromWindow(window, 0xFFFFFFFC, ref iid, out root);
             snapshot.HResult = "0x" + hr.ToString("X8");
-            if (hr == 0 && root != null) Walk(root, snapshot, 0);
+            if (hr != 0 || root == null)
+            {
+                snapshot.Error = "AccessibleObjectFromWindow did not return IAccessible.";
+                return snapshot;
+            }
+            try { snapshot.RootName = root.get_accName(0); } catch { }
+            try { snapshot.ChildCount = root.accChildCount; }
+            catch (Exception error)
+            {
+                snapshot.Error = "accChildCount: " + error.Message;
+                return snapshot;
+            }
+            Walk(root, snapshot, "", 1);
         }
         catch (Exception error) { snapshot.Error = error.ToString(); }
+        finally
+        {
+            if (root != null && Marshal.IsComObject(root)) Marshal.FinalReleaseComObject(root);
+        }
         return snapshot;
     }
 
-    private static void Add(AlulaArtifactMsaaSnapshot snapshot, string value)
+    private static void Walk(IAccessible accessible, AlulaArtifactMsaaSnapshot snapshot, string parentPath, int depth)
     {
-        if (!String.IsNullOrWhiteSpace(value) && snapshot.Text.Length < 2000)
-        {
-            string[] expanded = new string[snapshot.Text.Length + 1];
-            Array.Copy(snapshot.Text, expanded, snapshot.Text.Length);
-            expanded[expanded.Length - 1] = value;
-            snapshot.Text = expanded;
-        }
-    }
-
-    private static void Walk(IAccessible accessible, AlulaArtifactMsaaSnapshot snapshot, int depth)
-    {
-        if (accessible == null || depth > 8 || snapshot.Text.Length >= 2000) return;
-        try { Add(snapshot, accessible.get_accName(0)); } catch { }
-        try { Add(snapshot, accessible.get_accValue(0)); } catch { }
+        if (accessible == null || depth > 8 || snapshot.Nodes.Count >= 250) return;
         int count = 0;
         try { count = Math.Min(accessible.accChildCount, 100); } catch { return; }
-        for (int id = 1; id <= count && snapshot.Text.Length < 2000; id++)
+        for (int id = 1; id <= count && snapshot.Nodes.Count < 250; id++)
         {
+            var node = new AlulaArtifactMsaaNode();
+            node.Path = String.IsNullOrEmpty(parentPath) ? id.ToString() : parentPath + "." + id.ToString();
+            node.ChildId = id;
             object raw = null;
             IAccessible nested = null;
             try
             {
-                try { Add(snapshot, accessible.get_accName(id)); } catch { }
-                try { Add(snapshot, accessible.get_accValue(id)); } catch { }
+                try { node.Name = accessible.get_accName(id); } catch (Exception error) { node.Error = error.Message; }
+                try { node.Role = Convert.ToString(accessible.get_accRole(id)); } catch (Exception error) { node.Error = error.Message; }
+                try { node.Value = accessible.get_accValue(id); } catch (Exception error) { node.Error = error.Message; }
                 try { raw = accessible.get_accChild(id); } catch { }
                 nested = raw as IAccessible;
                 if (nested == null && raw != null && Marshal.IsComObject(raw))
@@ -83,13 +103,24 @@ public static class AlulaArtifactMsaa
                     catch { }
                     finally { Marshal.Release(unknown); }
                 }
-                if (nested != null) Walk(nested, snapshot, depth + 1);
+                if (nested != null && !Object.ReferenceEquals(nested, accessible))
+                {
+                    try
+                    {
+                        node.ChildCount = nested.accChildCount;
+                        Walk(nested, snapshot, node.Path, depth + 1);
+                    }
+                    catch (Exception error) { node.Error = error.Message; }
+                }
+                snapshot.Nodes.Add(node);
             }
             catch { }
             finally
             {
-                if (nested != null && Marshal.IsComObject(nested)) Marshal.ReleaseComObject(nested);
-                else if (nested == null && raw != null && Marshal.IsComObject(raw)) Marshal.ReleaseComObject(raw);
+                if (nested != null && Marshal.IsComObject(nested) && !Object.ReferenceEquals(nested, accessible))
+                    Marshal.FinalReleaseComObject(nested);
+                else if (nested == null && raw != null && Marshal.IsComObject(raw))
+                    Marshal.FinalReleaseComObject(raw);
             }
         }
     }
@@ -169,9 +200,46 @@ try {
 
   $child = [AlulaArtifactWindow]::GetWindow($window, 5)
   $msaa = [AlulaArtifactMsaa]::Capture($child)
-  $accessibleText = $msaa.Text -join "`n"
+  $accessibleValues = New-Object 'System.Collections.Generic.List[string]'
+  if (![string]::IsNullOrWhiteSpace($msaa.RootName)) { $accessibleValues.Add($msaa.RootName) }
+  foreach ($node in $msaa.Nodes) {
+    if (![string]::IsNullOrWhiteSpace($node.Name)) { $accessibleValues.Add($node.Name) }
+    if (![string]::IsNullOrWhiteSpace($node.Value)) { $accessibleValues.Add($node.Value) }
+  }
+  $accessibleText = $accessibleValues -join "`n"
   $expectedMsaaText = @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
   $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
+
+  $uiaAvailable = $false
+  $uiaError = $null
+  $uiaElements = @()
+  $uiaRoot = $null
+  $uiaDescendants = $null
+  $uiaElement = $null
+  try {
+    Add-Type -AssemblyName UIAutomationClient
+    $uiaRoot = [System.Windows.Automation.AutomationElement]::FromHandle($child)
+    $uiaDescendants = $uiaRoot.FindAll(
+      [System.Windows.Automation.TreeScope]::Subtree,
+      [System.Windows.Automation.Condition]::TrueCondition)
+    $uiaAvailable = $true
+    for ($index = 0; $index -lt [Math]::Min($uiaDescendants.Count, 150); $index++) {
+      try {
+        $uiaElement = $uiaDescendants.Item($index)
+        $current = $uiaElement.Current
+        $uiaElements += [ordered]@{
+          name = $current.Name
+          automationId = $current.AutomationId
+          className = $current.ClassName
+          controlType = $current.ControlType.ProgrammaticName
+          isControlElement = $current.IsControlElement
+          isContentElement = $current.IsContentElement
+        }
+      }
+      catch [System.Windows.Automation.ElementNotAvailableException] { }
+    }
+  }
+  catch { $uiaError = $_.Exception.Message }
 
   $theme = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -ErrorAction SilentlyContinue
   $os = Get-CimInstance Win32_OperatingSystem
@@ -192,24 +260,39 @@ try {
     screenshotSha256 = (Get-FileHash (Join-Path $OutputDirectory 'windows-artifact-client.png') -Algorithm SHA256).Hash.ToLowerInvariant()
     systemUsesLightTheme = if ($theme) { [bool]$theme.SystemUsesLightTheme } else { $null }
     appsUseLightTheme = if ($theme) { [bool]$theme.AppsUseLightTheme } else { $null }
+    uiAutomationAvailable = $uiaAvailable
+    uiAutomationError = $uiaError
+    uiAutomationElements = @($uiaElements)
     msaaHResult = $msaa.HResult
     msaaError = $msaa.Error
-    msaaText = @($msaa.Text)
+    msaaRootName = $msaa.RootName
+    msaaChildCount = $msaa.ChildCount
+    msaaNodeCount = $msaa.Nodes.Count
+    msaaNodes = @($msaa.Nodes)
     expectedMsaaText = $expectedMsaaText
     missingMsaaText = $missingMsaaText
-  } | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
-  $msaaNodeCount = $msaa.Text.Count
+  } | ConvertTo-Json -Depth 7 | Set-Content -Path $metadataPath -Encoding utf8
+  $msaaNodeCount = $msaa.Nodes.Count
   if (!$screenshotNonUniform) { throw "Client capture appears blank or uniform ($($sampledColors.Count) sampled colors)" }
   if ($msaa.HResult -ne '0x00000000') { throw "Flutter child window MSAA unavailable: $($msaa.HResult) $($msaa.Error)" }
   if ($missingMsaaText.Count -gt 0) { throw "MSAA tree is missing expected text: $($missingMsaaText -join ', ')" }
-  $msaa = $null
-  [GC]::Collect()
-  [GC]::WaitForPendingFinalizers()
 }
 catch {
   $validationError = $_.Exception.Message
 }
 finally {
+  # Drop all UIA provider proxies even when a semantic assertion fails. Leaving
+  # them alive while WM_CLOSE tears down Flutter can crash the desktop process.
+  $msaa = $null
+  $accessibleValues = $null
+  $node = $null
+  $uiaElement = $null
+  $current = $null
+  $uiaDescendants = $null
+  $uiaRoot = $null
+  [GC]::Collect()
+  [GC]::WaitForPendingFinalizers()
+
   $wmCloseSent = $false
   $closeTimedOut = $false
   $exitCode = $null
@@ -233,7 +316,7 @@ finally {
       $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
       $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $closed -Force
       $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
-      $metadata | ConvertTo-Json -Depth 5 | Set-Content -Path $metadataPath -Encoding utf8
+      $metadata | ConvertTo-Json -Depth 7 | Set-Content -Path $metadataPath -Encoding utf8
     }
   }
   catch {
