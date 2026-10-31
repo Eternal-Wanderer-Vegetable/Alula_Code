@@ -1,6 +1,6 @@
 # session-handoff.md — 会话交接
 
-> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，且不阻塞架构实现但属于 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1 与 P04.2 同文件 Rust 定义导航已完成，P04.2 覆盖 Ctrl/Command+Click、点击后 selection 和非零 16K UTF-16 输入窗映射，证据见 `docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一步 P04.3/EDT-16c 跨文件 definition provider 与导航历史。P03.7 hosted Windows 证据见 `docs/diagnostics/2026-10-31-p03/`；旧 Windows release artifact 的补充验收 run 41159673663 已捕获客户区截图，但 WM_CLOSE 退出码为 0xC000041D；源码交互 job 14 项通过，捕获脚本诊断修正及复跑待完成。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
+> Last Updated：2026-10-31（P03 / feat-025 实现出口完成；EV-P03-* 设备验收仍 pending，且不阻塞架构实现但属于 P15/发行门。P04 / feat-026 为当前唯一活动 feature；P04.1 与 P04.2 同文件 Rust 定义导航已完成，P04.2 覆盖 Ctrl/Command+Click、点击后 selection 和非零 16K UTF-16 输入窗映射，证据见 `docs/diagnostics/2026-10-31-p04/p04.2-same-file-ctrl-click-definition.md`。下一步 P04.3/EDT-16c 跨文件 definition provider 与导航历史。精确旧 Windows artifact run 41161368714 的窗口/MSAA 语义通过，但有无 UIA/MSAA 查询的两次 WM_CLOSE 都以 0xC000041D 退出；新构建分支的 hosted Windows close 通过。原始证据见 `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`。Linux native DRM、Windows 11 Release/Narrator/DPI主题、macOS 原生行为仍 pending；500 MiB 留 P14）
 
 ## 项目目标
 
@@ -60,5 +60,4 @@
 
 ## P03.7 exact older Windows artifact follow-up (2026-10-31)
 
-- One-time workflow run `41159673663` launched the exact Windows Release artifact from `41109679662`. Its visible client-area screenshot was captured; the close request was posted but the artifact exited `0xC000041D`. The same workflow's source-SHA Windows interaction job passed all 14 tests, but built Debug source and is not evidence that the older Release binary closes cleanly.
-- The initial PowerShell capture script masked any pre-close validation exception with its close error and did not preserve metadata on that path. `tools/vscode-parity/validate-windows-artifact.ps1` has an uncommitted diagnostic-preservation fix; rerun it before deciding whether the exact artifact also failed an MSAA assertion. This hosted runner is Windows Server 2025, not Windows 11.
+- Exact artifact run `41161368714` captured a visible 1028×711 client at 96 DPI on Windows Server 2025, exposed 24 MSAA nodes, and passed all four semantic-string assertions. The close request returned `0xC000041D`; a second no-accessibility launch returned the same code, so the historical artifact close failure is independent of UIA/MSAA inspection. Source-SHA Debug interaction run `41160604795` passed 14 tests, including save/read-back and simulated Flutter IME. The rebuilt branch passed its hosted Windows close smoke in run `41160297066`; these results apply to different binaries. Full boundary/evidence: `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`.

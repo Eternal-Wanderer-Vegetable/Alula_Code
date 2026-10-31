@@ -18,6 +18,12 @@
 - Windows runner 为 Windows Server 2025 Datacenter build 26100，不是 Windows 11 客户端；窗口 1028×711、96 DPI，主题注册表报告 light。MSAA child-window 树含中文菜单、工具栏、编辑器 welcome value、UTF-8/LF 与状态栏语义；截图与 UTF-8 JSON：`docs/diagnostics/2026-10-31-p03/p03.7-windows-hosted/`。仅为 hosted 可见 UI/MSAA 和自动化功能证据，不代表 Narrator 播报、系统 IME、Windows 11、多 DPI/主题矩阵、Linux native DRM 或 macOS 原生交互。
 - P03.7 继续 in-progress。当前外部平台门：原生 DRM Linux；Windows 11 客户端的 Narrator/键盘遍历、native IME、DPI/主题和目标发行包；macOS 原生行为待验证。用户要求 Linux/Windows 可用后再提供 macOS 测试包；500 MiB 优化目标留待 P14。
 
+### 最新进展（2026-10-31，P03.7 exact Windows artifact recheck）
+
+- Validator fixes `2754b07`, `07b0542`, and `93092f0` are pushed. Exact artifact run `41161368714` passes visible-client, DPI/theme capture, UIA availability, MSAA traversal, and all four semantic-string assertions on Windows Server 2025 build 26100 (1028×711, 96 DPI, light system theme). Raw files are in `docs/diagnostics/2026-10-31-p03/p03.7-windows-artifact-41109679662/`.
+- The historical Release binary fails `WM_CLOSE` with exit code `0xC000041D`; a second launch with no UIA/MSAA queries fails with the same code, showing that the capture procedure did not cause the close failure. Source-SHA run `41160604795` passed all 14 Windows interaction tests on a Debug runner, including save/read-back and Flutter-simulated IME; it does not prove those interactions on the downloaded Release binary. Rebuilt branch run `41160297066` passed its Windows visible capture, MSAA assertions, 14 desktop tests, and graceful close; its Linux hosted availability job passed. Neither is Windows 11 client or native DRM Linux evidence. Focused report: `docs/diagnostics/2026-10-31-p03/p03.7-exact-windows-artifact-41109679662.md`.
+- Windows 11 Narrator/native IME/DPI-theme and Linux native DRM remain pending. Keep the historical artifact close failure visible; do not replace its result with a later build's result.
+
 ### 最新进展（2026-10-31，P03.6 Linux Release / WSLg）
 
 - 当前工作树 `bash scripts/build_core.sh` 与 Flutter Linux Release build 均成功。以临时 HOME 和显式 Rustup/Cargo toolchain 启动 WSLg Release，窗口 1280×720，状态栏报告 rust-analyzer running、ABI v19；截图 `docs/diagnostics/2026-10-31-p03/linux-alula-release-wslg.png`。
