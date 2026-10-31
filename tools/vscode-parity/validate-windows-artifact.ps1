@@ -449,6 +449,14 @@ if ($ExerciseInteractions) {
   [System.IO.File]::WriteAllText($fixtureFile, 'fn main() { println!("baseline"); }', [System.Text.UTF8Encoding]::new($false))
 }
 $process = $null
+$validationStartedAt = Get-Date
+$crashDumpDirectory = Join-Path $OutputDirectory 'crash-dumps'
+New-Item -ItemType Directory -Force -Path $crashDumpDirectory | Out-Null
+$werLocalDumpKey = 'HKCU:\Software\Microsoft\Windows\Windows Error Reporting\LocalDumps\alula_app.exe'
+New-Item -Path $werLocalDumpKey -Force | Out-Null
+New-ItemProperty -Path $werLocalDumpKey -Name DumpFolder -Value $crashDumpDirectory -PropertyType ExpandString -Force | Out-Null
+New-ItemProperty -Path $werLocalDumpKey -Name DumpType -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -Path $werLocalDumpKey -Name DumpCount -Value 4 -PropertyType DWord -Force | Out-Null
 try {
   $process = if ($ExerciseInteractions) {
     # Launch the artifact the same way a user launches it. The optional
@@ -1127,9 +1135,50 @@ finally {
 }
 $controlPath = Join-Path $OutputDirectory 'no-accessibility-close-control.json'
 $controlClose | ConvertTo-Json -Depth 3 | Set-Content -Path $controlPath -Encoding utf8
+$applicationFaultEvents = @()
+$applicationFaultQueryError = $null
+try {
+  $applicationFaultEvents = @(
+    Get-WinEvent -FilterHashtable @{
+      LogName = 'Application'
+      Id = 1000, 1001
+      StartTime = $validationStartedAt
+    } -ErrorAction Stop |
+      Where-Object { $_.Message -match 'alula_app\.exe' } |
+      Select-Object -First 10 |
+      ForEach-Object {
+        [ordered]@{
+          id = $_.Id
+          provider = $_.ProviderName
+          time = $_.TimeCreated.ToString('o')
+          message = $_.Message
+        }
+      }
+  )
+} catch {
+  $applicationFaultQueryError = $_.Exception.Message
+}
+$crashDumps = @(
+  Get-ChildItem -LiteralPath $crashDumpDirectory -Filter '*.dmp' -File -ErrorAction SilentlyContinue |
+    ForEach-Object {
+      [ordered]@{
+        name = $_.Name
+        length = $_.Length
+        sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+      }
+    }
+)
+$closeCrashDiagnostics = [ordered]@{
+  startedAt = $validationStartedAt.ToString('o')
+  eventQueryError = $applicationFaultQueryError
+  applicationFaultEvents = $applicationFaultEvents
+  crashDumps = $crashDumps
+}
+$closeCrashDiagnostics | ConvertTo-Json -Depth 6 | Set-Content -Path (Join-Path $OutputDirectory 'close-crash-diagnostics.json') -Encoding utf8
 if (Test-Path $metadataPath) {
   $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
   $metadata | Add-Member -NotePropertyName noAccessibilityCloseControl -NotePropertyValue $controlClose -Force
+  $metadata | Add-Member -NotePropertyName closeCrashDiagnostics -NotePropertyValue $closeCrashDiagnostics -Force
   $metadata | ConvertTo-Json -Depth 9 | Set-Content -Path $metadataPath -Encoding utf8
 }
 
