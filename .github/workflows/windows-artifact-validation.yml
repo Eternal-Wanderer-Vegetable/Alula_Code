@@ -54,6 +54,7 @@ jobs:
           }
           Get-Process -Name WWAHost -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
           Get-Process -Name SystemPropertiesPerformance -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          Get-Process -Name wsl -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
           Get-Process -Name WindowsTerminal -ErrorAction SilentlyContinue |
             Where-Object { $_.MainWindowTitle -match 'wsl\.exe' } |
             Stop-Process -Force -ErrorAction SilentlyContinue
@@ -84,10 +85,14 @@ jobs:
             foregroundProcess = if ($foregroundProcess) { $foregroundProcess.ProcessName } else { $null }
             foregroundWindowHandle = ('0x{0:X}' -f $foregroundHandle.ToInt64())
             privacyHostRemaining = [bool](Get-Process -Name WWAHost -ErrorAction SilentlyContinue)
+            wslPromptRemaining = [bool](Get-Process -Name wsl -ErrorAction SilentlyContinue)
           } | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $output 'runner-desktop-setup.json') -Encoding utf8
 
           if (Get-Process -Name WWAHost -ErrorAction SilentlyContinue) {
             throw 'Windows first-logon privacy experience still owns a process after desktop cleanup'
+          }
+          if (Get-Process -Name wsl -ErrorAction SilentlyContinue) {
+            throw 'The WSL update console still owns a process after desktop cleanup'
           }
       - name: Parse Windows artifact validator with PowerShell AST
         shell: powershell
