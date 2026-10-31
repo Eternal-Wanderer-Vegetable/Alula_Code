@@ -398,7 +398,8 @@ try {
         Start-Sleep -Milliseconds 700
         $dialogSnapshot = [AlulaArtifactMsaa]::Capture($child)
         $interactionResult.openFolderDialogNames = @($dialogSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
-        if (@($interactionResult.openFolderDialogNames | Where-Object { $_ -like '*文件夹路径*' }).Count -eq 0) {
+        if (@($interactionResult.openFolderDialogNames | Where-Object { $_ -eq '取消' }).Count -eq 0 -or
+            @($interactionResult.openFolderDialogNames | Where-Object { $_ -eq '打开' }).Count -eq 0) {
           throw "The accessible Open Folder button did not open the folder dialog; names: $($interactionResult.openFolderDialogNames -join ' | ')"
         }
         Send-ArtifactKeys '^a'
