@@ -103,6 +103,10 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
           Pointer<Utf8> Function(int, int)>('alula_doc_line_offset');
 
+  late final Pointer<Utf8> Function(int, int) _docLineBoundary =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64),
+          Pointer<Utf8> Function(int, int)>('alula_doc_line_boundary');
+
   late final Pointer<Utf8> Function(int, int, int) _docWordPartOffset =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint32),
           Pointer<Utf8> Function(int, int, int)>('alula_doc_word_part_offset');
@@ -356,6 +360,9 @@ class AlulaFfi {
 
   String docLineOffsetJson(int id, int line) =>
       _takeJson(_docLineOffset(id, line));
+
+  String docLineBoundaryJson(int id, int offsetUtf16) =>
+      _takeJson(_docLineBoundary(id, offsetUtf16));
 
   String docWordPartOffsetJson(int id, int offsetUtf16, int direction) =>
       _takeJson(_docWordPartOffset(id, offsetUtf16, direction));

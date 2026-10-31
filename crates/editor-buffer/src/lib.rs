@@ -172,6 +172,16 @@ pub struct TextLineOffset {
     pub offset_utf16: usize,
 }
 
+/// UTF-16 boundaries for the logical line containing one absolute offset.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineBoundary {
+    pub version: u64,
+    pub line: usize,
+    pub start_utf16: usize,
+    pub first_non_whitespace_utf16: usize,
+    pub end_utf16: usize,
+}
+
 /// One bounded UTF-16 window from a document line.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TextLineRead {
@@ -351,6 +361,35 @@ impl TextBuffer {
             line_count,
             line,
             offset_utf16: self.rope.char_to_utf16_cu(char_index),
+        })
+    }
+
+    /// Resolve Home/End targets for the logical line containing an absolute
+    /// UTF-16 offset. Leading spaces and tabs form the smart-Home indentation
+    /// boundary. Line terminators, including CRLF, are excluded from End.
+    pub fn line_boundary_utf16(
+        &self,
+        offset_utf16: usize,
+    ) -> Result<TextLineBoundary, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let first_non_whitespace_char = line
+            .slice(..content_len)
+            .chars()
+            .position(|ch| ch != ' ' && ch != '\t')
+            .unwrap_or(content_len);
+
+        Ok(TextLineBoundary {
+            version: self.version,
+            line: line_index,
+            start_utf16: self.rope.char_to_utf16_cu(line_start_char),
+            first_non_whitespace_utf16: self
+                .rope
+                .char_to_utf16_cu(line_start_char + first_non_whitespace_char),
+            end_utf16: self.rope.char_to_utf16_cu(line_start_char + content_len),
         })
     }
 
@@ -1014,6 +1053,45 @@ mod tests {
                 line_count: 3,
             })
         );
+    }
+
+    #[test]
+    fn line_boundaries_are_utf16_absolute_and_exclude_crlf() {
+        let buffer = TextBuffer::open("\t  🦊value \r\n \t\nfinal\n");
+
+        let first = buffer.line_boundary_utf16(5).unwrap();
+        assert_eq!(first.version, 1);
+        assert_eq!(first.line, 0);
+        assert_eq!(first.start_utf16, 0);
+        assert_eq!(first.first_non_whitespace_utf16, 3);
+        assert_eq!(first.end_utf16, 11);
+
+        let blank = buffer.line_boundary_utf16(13).unwrap();
+        assert_eq!(blank.line, 1);
+        assert_eq!(blank.start_utf16, 13);
+        assert_eq!(blank.first_non_whitespace_utf16, 15);
+        assert_eq!(blank.end_utf16, 15);
+
+        let final_empty = buffer.line_boundary_utf16(buffer.len_utf16()).unwrap();
+        assert_eq!(final_empty.line, 3);
+        assert_eq!(final_empty.start_utf16, 22);
+        assert_eq!(final_empty.first_non_whitespace_utf16, 22);
+        assert_eq!(final_empty.end_utf16, 22);
+
+        assert_eq!(
+            buffer.line_boundary_utf16(4),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 4 })
+        );
+    }
+
+    #[test]
+    fn line_boundaries_find_smart_home_on_a_long_rope_line() {
+        let indentation = " ".repeat(100_000);
+        let buffer = TextBuffer::open(&format!("{indentation}🦊tail"));
+        let boundary = buffer.line_boundary_utf16(100_004).unwrap();
+        assert_eq!(boundary.start_utf16, 0);
+        assert_eq!(boundary.first_non_whitespace_utf16, 100_000);
+        assert_eq!(boundary.end_utf16, 100_006);
     }
 
     #[test]

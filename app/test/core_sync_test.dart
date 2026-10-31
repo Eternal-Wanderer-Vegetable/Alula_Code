@@ -163,6 +163,29 @@ void main() {
     doc.close();
   }, skip: skip);
 
+  test('Rust 行边界按 UTF-16 返回 smart Home、End 与 CRLF 位置', () {
+    final doc = _bootstrap.core!.openDoc(9039, '\t 🦊value\r\nnext\n');
+    final first = doc.lineBoundary(5);
+    expect(first.version, 1);
+    expect(first.line, 0);
+    expect(first.startUtf16, 0);
+    expect(first.firstNonWhitespaceUtf16, 2);
+    expect(first.endUtf16, 9);
+
+    final nextLine = doc.lineBoundary(12);
+    expect(nextLine.line, 1);
+    expect(nextLine.startUtf16, 11);
+    expect(nextLine.firstNonWhitespaceUtf16, 11);
+    expect(nextLine.endUtf16, 15);
+
+    expect(
+      () => doc.lineBoundary(3),
+      throwsA(isA<AlulaException>()
+          .having((error) => error.code, 'code', 'InvalidUtf16Offset')),
+    );
+    doc.close();
+  }, skip: skip);
+
   test('Rust 可视区批量按行读取保留 UTF-16 边界并支持长行窗口', () {
     final doc = _bootstrap.core!.openDoc(9033, '\u{FEFF}a🦊\r\nsecond\n');
     final page = doc.readLines(

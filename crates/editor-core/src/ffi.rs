@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 21;
+pub const ALULA_ABI_VERSION: u32 = 22;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -724,6 +724,36 @@ pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
+}
+
+/// Resolve the line start, smart-Home indentation target and line end for an
+/// absolute UTF-16 document offset.
+#[no_mangle]
+pub extern "C" fn alula_doc_line_boundary(id: u64, offset_utf16: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        match registry_lock().line_boundary_utf16(id, offset_utf16) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(boundary)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": boundary.version,
+                    "line": boundary.line,
+                    "startUtf16": boundary.start_utf16,
+                    "firstNonWhitespaceUtf16": boundary.first_non_whitespace_utf16,
+                    "endUtf16": boundary.end_utf16,
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_boundary")))
 }
 
 /// Move a document cursor to the adjacent VS Code word-part boundary.
@@ -2175,6 +2205,30 @@ mod tests {
         let invalid_direction = take(alula_doc_word_part_offset(id, 0, 2));
         assert_eq!(invalid_direction["error"]["code"], "InvalidArgument");
         assert_eq!(take(alula_doc_resync(id))["version"], 1);
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn line_boundary_over_ffi_reports_smart_home_and_line_end_targets() {
+        let id = 93_042;
+        take(unsafe { alula_doc_open(id, c("\t 🦊value\r\nnext").as_ptr()) });
+
+        let boundary = take(alula_doc_line_boundary(id, 5));
+        assert_eq!(boundary["ok"], true);
+        assert_eq!(boundary["version"], 1);
+        assert_eq!(boundary["line"], 0);
+        assert_eq!(boundary["startUtf16"], 0);
+        assert_eq!(boundary["firstNonWhitespaceUtf16"], 2);
+        assert_eq!(boundary["endUtf16"], 9);
+
+        let next_line = take(alula_doc_line_boundary(id, 12));
+        assert_eq!(next_line["line"], 1);
+        assert_eq!(next_line["startUtf16"], 11);
+        assert_eq!(next_line["endUtf16"], 15);
+
+        let split_surrogate = take(alula_doc_line_boundary(id, 3));
+        assert_eq!(split_surrogate["ok"], false);
+        assert_eq!(split_surrogate["error"]["code"], "InvalidUtf16Offset");
         take(alula_doc_close(id));
     }
 

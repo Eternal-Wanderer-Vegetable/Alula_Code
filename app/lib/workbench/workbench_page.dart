@@ -398,6 +398,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.wordPartRightSelect', '编辑器', '向右扩展子词选择',
         () async => _moveWordPart(left: false, extendSelection: true),
         enablement: 'editorTextFocus');
+    reg('editor.cursorHome', '编辑器', '移至行首（缩进感知）',
+        () async => _moveLineBoundary(toEnd: false),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorHomeSelect', '编辑器', '选择至行首（缩进感知）',
+        () async => _moveLineBoundary(toEnd: false, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorEnd', '编辑器', '移至行尾',
+        () async => _moveLineBoundary(toEnd: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorEndSelect', '编辑器', '选择至行尾',
+        () async => _moveLineBoundary(toEnd: true, extendSelection: true),
+        enablement: 'editorTextFocus');
     reg('editor.mergeSelections', '编辑器', '合并重叠选区',
         () async => _mergeSelections(),
         enablement: 'editorTextFocus');
@@ -1044,6 +1056,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             isDirectional: current.isDirectional,
           )
         : TextSelection.collapsed(offset: destination, affinity: current.affinity);
+    if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveLineBoundary({required bool toEnd, bool extendSelection = false}) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final current = doc.selection;
+    final boundary = doc.doc.lineBoundary(current.extentOffset);
+    final destination = toEnd
+        ? boundary.endUtf16
+        : boundary.firstNonWhitespaceUtf16 != boundary.startUtf16 &&
+                current.extentOffset == boundary.firstNonWhitespaceUtf16
+            ? boundary.startUtf16
+            : boundary.firstNonWhitespaceUtf16;
+    final next = extendSelection
+        ? TextSelection(
+            baseOffset: current.baseOffset,
+            extentOffset: destination,
+            affinity: current.affinity,
+            isDirectional: current.isDirectional,
+          )
+        : TextSelection.collapsed(
+            offset: destination,
+            affinity: current.affinity,
+          );
     if (next != current) _setDocSelection(doc, next);
   }
 

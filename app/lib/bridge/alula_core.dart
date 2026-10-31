@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 21;
+const int expectedAbiVersion = 22;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -243,6 +243,23 @@ class DocumentLineOffset {
     required this.lineCount,
     required this.line,
     required this.offsetUtf16,
+  });
+}
+
+/// Rust-owned UTF-16 targets for Home/End on one logical document line.
+class DocumentLineBoundary {
+  final int version;
+  final int line;
+  final int startUtf16;
+  final int firstNonWhitespaceUtf16;
+  final int endUtf16;
+
+  const DocumentLineBoundary({
+    required this.version,
+    required this.line,
+    required this.startUtf16,
+    required this.firstNonWhitespaceUtf16,
+    required this.endUtf16,
   });
 }
 
@@ -719,6 +736,31 @@ class AlulaDoc {
     );
     version = offset.version;
     return offset;
+  }
+
+  /// Resolve logical-line Home/End targets without reading line text into Dart.
+  DocumentLineBoundary lineBoundary(int offsetUtf16) {
+    if (offsetUtf16 < 0) {
+      throw RangeError.value(offsetUtf16, 'offsetUtf16', 'must be non-negative');
+    }
+    final json = core._ffi.docLineBoundaryJson(id, offsetUtf16);
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    final boundary = DocumentLineBoundary(
+      version: r['version'] as int,
+      line: r['line'] as int,
+      startUtf16: r['startUtf16'] as int,
+      firstNonWhitespaceUtf16: r['firstNonWhitespaceUtf16'] as int,
+      endUtf16: r['endUtf16'] as int,
+    );
+    version = boundary.version;
+    return boundary;
   }
 
   /// Convert a zero-based LSP UTF-16 line/column to a safe absolute offset.

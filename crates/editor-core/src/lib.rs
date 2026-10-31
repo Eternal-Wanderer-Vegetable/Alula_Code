@@ -9,8 +9,8 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
-    BufferError, TextBuffer, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp,
-    TextRangeRead, WordPartDirection,
+    BufferError, TextBuffer, TextLineBoundary, TextLineOffset, TextLinesRead, TextMinimapSample,
+    TextOp, TextRangeRead, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -224,6 +224,17 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_offset_utf16(line))
+    }
+
+    /// Resolve Home/End boundaries for the line containing an absolute offset.
+    pub fn line_boundary_utf16(
+        &self,
+        id: u64,
+        offset_utf16: usize,
+    ) -> Option<Result<TextLineBoundary, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.line_boundary_utf16(offset_utf16))
     }
 
     /// Move a Rust-owned document cursor by one word part.

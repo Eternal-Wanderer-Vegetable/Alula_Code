@@ -29,15 +29,18 @@ class KeyChord {
     this.control = false,
     this.shift = false,
     this.alt = false,
+    this.meta = false,
   });
 
   final LogicalKeyboardKey key;
   final bool control;
   final bool shift;
   final bool alt;
+  final bool meta;
 
   SingleActivator toActivator() =>
-      SingleActivator(key, control: control, shift: shift, alt: alt);
+      SingleActivator(key,
+          control: control, shift: shift, alt: alt, meta: meta);
 
   /// 展示串（'Ctrl+Shift+P' 风格）。
   String get display {
@@ -45,6 +48,7 @@ class KeyChord {
       if (control) 'Ctrl',
       if (shift) 'Shift',
       if (alt) 'Alt',
+      if (meta) 'Meta',
       _displayKey(key),
     ];
     return parts.join('+');
@@ -56,10 +60,11 @@ class KeyChord {
       other.key == key &&
       other.control == control &&
       other.shift == shift &&
-      other.alt == alt;
+      other.alt == alt &&
+      other.meta == meta;
 
   @override
-  int get hashCode => Object.hash(key, control, shift, alt);
+  int get hashCode => Object.hash(key, control, shift, alt, meta);
 }
 
 /// A keybinding target with optional command arguments and a context condition.
@@ -120,6 +125,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['space'] = LogicalKeyboardKey.space;
   m['enter'] = LogicalKeyboardKey.enter;
   m['tab'] = LogicalKeyboardKey.tab;
+  m['home'] = LogicalKeyboardKey.home;
+  m['end'] = LogicalKeyboardKey.end;
   m['arrowup'] = LogicalKeyboardKey.arrowUp;
   m['arrowdown'] = LogicalKeyboardKey.arrowDown;
   m['arrowleft'] = LogicalKeyboardKey.arrowLeft;
@@ -140,6 +147,7 @@ KeyChord? parseChord(String spec) {
   var control = false;
   var shift = false;
   var alt = false;
+  var meta = false;
   for (final p in parts) {
     switch (p) {
       case 'ctrl':
@@ -149,11 +157,14 @@ KeyChord? parseChord(String spec) {
         shift = true;
       case 'alt':
         alt = true;
+      case 'cmd':
+        meta = true;
       default:
         return null; // 未知修饰键：整条作废（宁可不下发也不误触发）
     }
   }
-  return KeyChord(key: key, control: control, shift: shift, alt: alt);
+  return KeyChord(
+      key: key, control: control, shift: shift, alt: alt, meta: meta);
 }
 
 /// 键位集合：默认表 + 用户覆盖 → 可直接喂给 CallbackShortcuts 的映射。
@@ -190,6 +201,10 @@ class KeybindingSet {
     'editor.columnSelectRight': 'alt+shift+arrowright',
     'editor.cursorUndo': 'ctrl+u',
     'editor.cursorRedo': 'ctrl+shift+u',
+    'editor.cursorHome': 'home',
+    'editor.cursorHomeSelect': 'shift+home',
+    'editor.cursorEnd': 'end',
+    'editor.cursorEndSelect': 'shift+end',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
@@ -208,6 +223,12 @@ class KeybindingSet {
         result['editor.wordPartLeftSelect'] = 'ctrl+alt+shift+arrowleft';
         result['editor.wordPartRight'] = 'ctrl+alt+arrowright';
         result['editor.wordPartRightSelect'] = 'ctrl+alt+shift+arrowright';
+        result['editor.cursorHome'] = 'home,cmd+arrowleft,ctrl+a';
+        result['editor.cursorHomeSelect'] =
+            'shift+home,shift+cmd+arrowleft,ctrl+shift+a';
+        result['editor.cursorEnd'] = 'end,cmd+arrowright,ctrl+e';
+        result['editor.cursorEndSelect'] =
+            'shift+end,shift+cmd+arrowright,ctrl+shift+e';
         result.remove('editor.columnSelectUp');
         result.remove('editor.columnSelectDown');
         result.remove('editor.columnSelectLeft');

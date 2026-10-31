@@ -5,11 +5,17 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.6 / EDT-01c 完成）
+### 最新进展（2026-10-31，P04.7 / EDT-01d 完成）
+
+- P04.7 将 Home/End 行边界查询放在 Rust Rope 内，ABI v22 返回 UTF-16 行首、缩进后的首个非空白位置和排除 CRLF 的行尾。工作台实现 smart Home 来回、End 及 Shift 锚点；macOS 支持 Command+左右键与 Ctrl+A/E，Windows/Linux 使用 Home/End。
+- Rust buffer 2 项、FFI 1 项和 Flutter 定向 25 项通过；覆盖 emoji/代理对边界、CRLF/空行、100K 空白缩进、20K 缩进行跨 16K 输入窗、三平台 targetPlatform、文本/版本不变。`bash init.sh` EXIT=0（Flutter 287 项、Rust workspace、Clippy、build_core）；`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.7-home-end-smart-home.md`。
+- P04 / feat-026 仍是唯一活动 feature；下一 EDT 子项按 `docs/03` 继续拆解页移动/文件首尾。targetPlatform 不是原生键盘、IME、读屏或 DPI/主题证据；这些仍属 P15。
+
+### 阶段进展（2026-10-31，P04.6 / EDT-01c 完成）
 
 - 固定 Code-OSS `1.145.0-dev` commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 的 word-part 行为已接入：macOS Ctrl+Option+左右方向键与 Shift 选择；Windows/Linux 不注册该默认 chord。Rust Rope 按绝对 UTF-16 偏移计算 camelCase、缩写、下划线/连字符和普通分隔符边界，跨输入窗时重居中，Rust 文本和版本保持不变。
 - 新增 ABI v21 `alula_doc_word_part_offset`；Rust 子词单测 4 项、editor-core FFI 对拍 1 项、键位与工作台 Flutter 定向测试 16 项通过。`bash init.sh` EXIT=0（Flutter 280 项、Rust workspace、Clippy、build_core）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.6-word-part-movement.md`。
-- P04 / feat-026 仍是唯一活动 feature；P04.6 完成后，下一 EDT 子项需先按 `docs/03` 剩余要求拆解。Flutter targetPlatform 测试不等同真实 macOS 键盘、IME 或辅助功能验收；这些仍属 P15。历史 Windows Release artifact 的 close crash 和其他 EV-P03 pending 门保持原记录。
+- P04 / feat-026 仍是唯一活动 feature。Flutter targetPlatform 测试不等同真实 macOS 键盘、IME 或辅助功能验收；这些仍属 P15。历史 Windows Release artifact 的 close crash 和其他 EV-P03 pending 门保持原记录。
 
 ### 阶段进展（2026-10-31，P04.5 / EDT-01b 完成）
 
