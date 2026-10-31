@@ -199,10 +199,14 @@ $interactionResult = [ordered]@{
   multiviewSavedAndReadBack = $false
   accessibleEditorCount = 0
   accessibleEditorValuesMatch = $false
+  quickOpenQuery = if ($ExerciseInteractions) { 'src/main.rs' } else { $null }
+  openedEditorNames = @()
+  focusBeforePasteNodes = @()
+  editorValuesAfterPaste = @()
   keyboardFocusNames = @()
-      keyboardFocusObserved = $false
+  keyboardFocusObserved = $false
   imeStatus = 'not-requested'
-      imeLanguageChangePosted = $false
+  imeLanguageChangePosted = $false
   imeComposition = ''
   imeCommittedChinese = $false
   error = $null
@@ -293,10 +297,24 @@ try {
         return $false
       }
 
-      Open-ArtifactFile 'main.rs'
+      Open-ArtifactFile 'src/main.rs'
+      Start-Sleep -Milliseconds 500
+      $child = [AlulaArtifactWindow]::GetWindow($window, 5)
+      $openedSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.openedEditorNames = @($openedSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+      if (@($interactionResult.openedEditorNames | Where-Object { $_ -like '*main.rs*' }).Count -eq 0) {
+        throw "Quick Open did not activate src/main.rs; accessible names: $($interactionResult.openedEditorNames -join ' | ')"
+      }
       Click-ArtifactEditor 0.67
+      $focusSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.focusBeforePasteNodes = @($focusSnapshot.Nodes | Where-Object {
+        $state = 0
+        [int]::TryParse($_.State, [ref]$state) -and (($state -band 4) -ne 0)
+      } | ForEach-Object { [ordered]@{ path = $_.Path; name = $_.Name; role = $_.Role } })
       Send-ArtifactKeys '^a'
       Paste-ArtifactText $sampleText
+      $pastedSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.editorValuesAfterPaste = @($pastedSnapshot.Nodes | Where-Object { $_.Value } | ForEach-Object { $_.Value })
       Send-ArtifactKeys '^s' 700
       if (!(Wait-ForArtifactText $sampleText)) { throw 'The exact Release artifact did not save the linux-save-ok sample to disk' }
       $interactionResult.savedAndReadBack = $true
@@ -385,7 +403,7 @@ try {
   finally { $graphics.Dispose(); $bitmap.Dispose() }
   $screenshotNonUniform = $sampledColors.Count -ge 12
 
-  $child = [AlulaArtifactWindow]::GetWindow($window, 5)
+  if ($child -eq [IntPtr]::Zero) { $child = [AlulaArtifactWindow]::GetWindow($window, 5) }
   $uiaAvailable = $false
   $uiaError = $null
   $uiaRoots = @()
