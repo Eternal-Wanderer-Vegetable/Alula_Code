@@ -10,6 +10,12 @@
 - P04.15 实现跨窗鼠标拖选和边缘自动滚动：指针从有界输入窗拖至边缘后，选区端点以 Rust 绝对 UTF-16 坐标连续更新；窗口重居中后可继续跨页拖动。滚动计时器以 16 ms 节拍、最高 3,600 px/s 运行，并在松开、取消、失焦、dispose、返回视口或到达滚动边界时停止。绝对 selection 仍使用既有 range painter 与 Copy/Cut/Delete 路径。
 - 新三平台 TargetPlatform fixture 9 项通过：正向/反向跨 16K 窗口、emoji、范围装饰、Copy/Cut/Delete 与保存回读；纯选区不改 Rust 文本/版本或磁盘。计时器松开/取消/失焦/销毁清理均有断言。跨窗行选择 18 项、鼠标选择 3 项、Rust 输入控件 7 项、输入窗 10 项通过。
 - 完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 339 项）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.15-cross-window-mouse-drag.md`。GitNexus 对 `RustTextInputFieldState` / `RustTextInputField` / `OpenDoc` 报 CRITICAL，私有方法结果 UNKNOWN 且有路径损坏；源码引用已核对，限制记录在报告中。
+
+### Windows 11 exact artifact automation (2026-10-31)
+
+- Pushed commit `1359981` adds an isolated light/dark registry matrix and Narrator/UIA focus probe for the exact Release artifact from run `41109679662`.
+- Windows 11 ARM64 runner (x64 emulation) run `41187736069`: both themes completed edit, dual-view save/read-back and Narrator probe. Both confirm the old artifact still exits `0xC000041D`; no-UIA close controls match. Narrator UIA exposes only the app root and `FLUTTERVIEW`; 14 Tab probes return the same window node and expected semantic names are missing. The separate source-SHA integration job passed 14 tests including simulated Flutter IME.
+- Evidence: `docs/diagnostics/2026-10-31-p03/p03.7-windows11-theme-narrator-41187736069.md`. P15 remains pending for 125/150% DPI, native x64/native IME, actual Narrator speech, and visual review of the blank left split. This exact old binary's failure is not a result for later builds.
 - P04 / feat-026 仍进行中；下一片按 docs/03 与 docs/11 选取尚未完成的 EDT 原子项。targetPlatform 合成鼠标不替代 P15 原生鼠标/辅助功能验收；Windows 11 视觉/读屏、原生 DRM Linux 与 macOS 原生验收仍待签收。
 
 ### 阶段进展（2026-10-31，P04.14 / EDT-02e 完成）
