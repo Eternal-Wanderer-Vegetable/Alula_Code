@@ -46,6 +46,31 @@ Future<void> _typeCharacter(WidgetTester tester, String character) async {
   await tester.pump();
 }
 
+Future<void> _typeThroughTextInput(
+  WidgetTester tester,
+  String character,
+) async {
+  final controller = _controller(tester);
+  final selection = controller.selection;
+  final text = controller.text.replaceRange(
+    selection.start,
+    selection.end,
+    character,
+  );
+  final caret = selection.start + character.length;
+  await tester.sendKeyDownEvent(
+    LogicalKeyboardKey.keyA,
+    character: character,
+  );
+  tester.testTextInput.updateEditingValue(TextEditingValue(
+    text: text,
+    selection: TextSelection.collapsed(offset: caret),
+  ));
+  await tester.pump();
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.keyA);
+  await tester.pump();
+}
+
 Future<void> _press(
   WidgetTester tester,
   LogicalKeyboardKey key, {
@@ -377,5 +402,122 @@ void main() {
 
     await _press(tester, LogicalKeyboardKey.backspace);
     expect(_controller(tester).text, '');
+  });
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    platformTest('$platform Rust angle pair surrounds a selection only',
+        (tester) async {
+      const source = 'fn main() { println!("linux-save-ok"); }';
+      final (_, file) = await _openFixture(tester, platform, source);
+      _controller(tester).selection =
+          const TextSelection(baseOffset: 0, extentOffset: source.length);
+      await tester.pump();
+
+      await _typeCharacter(tester, '<');
+      const wrapped = '<$source>';
+      expect(_controller(tester).text, wrapped);
+      expect(
+        _controller(tester).selection,
+        const TextSelection(baseOffset: 1, extentOffset: source.length + 1),
+      );
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), wrapped);
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(_controller(tester).text, source);
+      await _press(tester, LogicalKeyboardKey.keyY, control: true);
+      expect(_controller(tester).text, wrapped);
+
+      _controller(tester).selection =
+          const TextSelection.collapsed(offset: wrapped.length);
+      await tester.pump();
+      _controller(tester).selection =
+          const TextSelection.collapsed(offset: wrapped.length - 1);
+      await tester.pump();
+      await _typeThroughTextInput(tester, '>');
+      expect(_controller(tester).text, '$wrapped>');
+    });
+  }
+
+  platformTest('Rust angle surrounding preserves UTF-16, BOM, and CRLF',
+      (tester) async {
+    final (_, file) = await _openFixture(
+      tester,
+      TargetPlatform.linux,
+      '\uFEFFalpha 😀\r\nomega',
+    );
+    _controller(tester).selection = const TextSelection(
+      baseOffset: 6,
+      extentOffset: 8,
+    );
+    await tester.pump();
+
+    await _typeCharacter(tester, '<');
+    expect(_controller(tester).text, 'alpha <😀>\nomega');
+    expect(
+      _controller(tester).selection,
+      const TextSelection(baseOffset: 7, extentOffset: 9),
+    );
+    await _press(tester, LogicalKeyboardKey.keyS, control: true);
+    await tester.pump(const Duration(milliseconds: 100));
+    final bytes = file.readAsBytesSync();
+    expect(bytes.take(3).toList(), [0xef, 0xbb, 0xbf]);
+    expect(utf8.decode(bytes.skip(3).toList()), 'alpha <😀>\r\nomega');
+  });
+
+  platformTest('Rust angle opener at a caret is inserted without a closer',
+      (tester) async {
+    await _openFixture(tester, TargetPlatform.linux, '');
+
+    await _typeCharacter(tester, '<');
+    expect(_controller(tester).text, '<');
+    expect(
+      _controller(tester).selection,
+      const TextSelection.collapsed(offset: 1),
+    );
+    await _typeThroughTextInput(tester, '>');
+    expect(_controller(tester).text, '<>');
+  });
+
+  platformTest('Rust angle selection surrounding synchronizes split views',
+      (tester) async {
+    const source = 'fn main() { println!("linux-save-ok"); }';
+    final (_, file) = await _openFixture(
+      tester,
+      TargetPlatform.linux,
+      source,
+    );
+    await tester.tap(find.byTooltip('拆分编辑器').first);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('sample.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    final fields = find.byType(RustTextInputField);
+    expect(fields, findsNWidgets(2));
+    await tester.showKeyboard(
+      find.descendant(
+        of: fields.at(1),
+        matching: find.byType(TextField),
+      ),
+    );
+    _controller(tester, index: 1).selection =
+        const TextSelection(baseOffset: 0, extentOffset: source.length);
+    await tester.pump();
+
+    await _typeCharacter(tester, '<');
+    const wrapped = '<fn main() { println!("linux-save-ok"); }>';
+    final views = tester.widgetList<RustTextInputField>(fields).toList();
+    expect(views[0].inputWindow.initialValue.text, wrapped);
+    expect(views[1].inputWindow.initialValue.text, wrapped);
+    expect(
+      views[0].inputWindow.document.resync().content,
+      wrapped,
+    );
+    await _press(tester, LogicalKeyboardKey.keyS, control: true);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(file.readAsStringSync(), wrapped);
   });
 }

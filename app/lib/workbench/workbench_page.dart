@@ -136,6 +136,7 @@ const Map<String, String> _rustAutoClosingPairs = {
   ..._rustAutoClosingBracketPairs,
   ..._rustAutoClosingQuotePairs,
 };
+const Map<String, String> _rustSelectionSurroundingPairs = {'<': '>'};
 final RegExp _rustOnEnterCommentBefore = RegExp(r'^\s*//\s*\S|\s//\s+\S');
 final RegExp _rustOnEnterCommentAfter = RegExp(r'^(?!\s*$)');
 const String _rustAutoCloseBefore = ';:.,=}])> \t\n\r';
@@ -2824,7 +2825,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    final closer = _rustAutoClosingPairs[character];
+    final autoCloser = _rustAutoClosingPairs[character];
+    final closer = autoCloser ?? _rustSelectionSurroundingPairs[character];
     final isOpening = closer != null;
     if (!isOpening && !_rustAutoClosingPairs.values.contains(character)) {
       return;
@@ -2893,15 +2895,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         if (isOpening) {
           final wrapSelection = !selection.isCollapsed;
-          final mayAutoCloseInContext = character != '"' ||
-              _rustStringContextAt(doc, selection.start) ==
-                  RustStringContext.outside;
+          final mayAutoCloseInContext = autoCloser != null &&
+              (character != '"' ||
+                  _rustStringContextAt(doc, selection.start) ==
+                      RustStringContext.outside);
           final canCloseBefore = nextCharacter.isEmpty ||
               _rustAutoCloseBefore.contains(nextCharacter);
           final alreadyHasCloser =
               selection.isCollapsed && nextCharacter == closer;
           final appendCloser = wrapSelection ||
-              (mayAutoCloseInContext && canCloseBefore && !alreadyHasCloser);
+              (autoCloser != null &&
+                  mayAutoCloseInContext &&
+                  canCloseBefore &&
+                  !alreadyHasCloser);
           final replacement = wrapSelection
               ? '$character$removed$closer'
               : appendCloser
@@ -2921,8 +2927,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 : character.length,
             original: selection,
             skipExistingCloser: false,
-            addAutoClosedMarker: appendCloser,
-            closeInReplacement: appendCloser ? replacement.length - 1 : -1,
+            addAutoClosedMarker: autoCloser != null && appendCloser,
+            closeInReplacement: autoCloser != null && appendCloser
+                ? replacement.length - 1
+                : -1,
           ));
           continue;
         }
@@ -5098,7 +5106,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !_overtypeMode &&
             active.path?.toLowerCase().endsWith('.rs') == true &&
             (_rustAutoClosingPairs.containsKey(character) ||
-                _rustAutoClosingPairs.values.contains(character))) {
+                _rustAutoClosingPairs.values.contains(character) ||
+                character == '<')) {
           unawaited(_applyRustBracketInput(character!));
           return KeyEventResult.handled;
         }

@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.33 / EDT-06i 完成）
+
+- Rust `< >` 现按固定语言配置仅作为 selection surrounding：选区输入 `<` 会成对包围；折叠光标输入 `<` 只插入一个字符，不自动闭合、不加 marker；`>` 保持普通输入。复用 UTF-16 TextOps、撤销/重做、dirty、双视图同步和保存。
+- 新增 6 项工作台用例，覆盖三平台 TargetPlatform、Rust 示例、BOM/emoji/CRLF、普通 `>` 输入和 split view 保存回读。定向 bracket suite 24 项、P04.32–P04.33 组合回归 54 项通过；精确 `HEAD c816662 + staged patch` 隔离快照全量 init.sh EXIT=0（Flutter 456、Rust workspace、Clippy、build_core），cargo fmt 和 Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.33-rust-angle-selection-surrounding.md`。
+- GitNexus staged 与 all-scope detect 均为 CRITICAL；流程数随文档文字变化，不据此降级编辑前 impact。`_applyRustBracketInput` upstream CRITICAL（66 symbols / 51 processes / 15 modules），`_focusNodeFor` UNKNOWN；源码调用点已核对，风险不降级。下一 slice 候选为 Rust 块注释 Enter 规则。
+
 ### 最新进展（2026-11-01，P04.32 / EDT-06h 完成）
 
 - Rust `.rs` 双引号现按固定 Code-OSS 规则自动闭合：只在当前 Tree-sitter 快照的 `string` token 外配对；选区包围独立按 `surroundingPairs` 工作。Tree-sitter 本地刷新不要求启动 rust-analyzer，快照版本不匹配时按普通字符插入。只有仍由 marker 跟踪的右引号才会被跳过或与 Backspace 成对删除。
