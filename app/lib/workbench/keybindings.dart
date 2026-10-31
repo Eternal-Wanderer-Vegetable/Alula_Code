@@ -247,6 +247,8 @@ class KeybindingSet {
         result['editor.action.toggleOvertypeInsertMode'] = 'cmd+alt+o';
         result['deleteWordLeft'] = 'alt+backspace';
         result['deleteWordRight'] = 'alt+delete';
+        result['deleteAllLeft'] = 'cmd+backspace';
+        result['deleteAllRight'] = 'ctrl+k,cmd+delete';
         result.remove('editor.columnSelectUp');
         result.remove('editor.columnSelectDown');
         result.remove('editor.columnSelectLeft');

@@ -9,8 +9,9 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
-    BufferError, TextBuffer, TextColumnSelection, TextLineBoundary, TextLineOffset, TextLinesRead,
-    TextMinimapSample, TextOp, TextRangeRead, WordDeleteDirection, WordPartDirection,
+    BufferError, LineDeleteDirection, TextBuffer, TextColumnSelection, TextDeleteRange,
+    TextLineBoundary, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp, TextRangeRead,
+    WordDeleteDirection, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -281,6 +282,18 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.word_delete_ranges_utf16(offsets_utf16, direction))
+    }
+
+    /// Resolve a bounded batch of line-boundary delete ranges against one document version.
+    pub fn line_delete_ranges_utf16(
+        &self,
+        id: u64,
+        selections_utf16: &[(usize, usize)],
+        direction: LineDeleteDirection,
+    ) -> Option<Result<Vec<TextDeleteRange>, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.line_delete_ranges_utf16(selections_utf16, direction))
     }
 
     /// Read a bounded page of line windows from a registered Rust document.

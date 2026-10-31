@@ -94,6 +94,27 @@ void main() {
       );
     });
 
+    test('line-boundary deletion follows the pinned platform keybindings', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+            keybindings.commandForChord(parseChord('cmd+backspace')!), isNull);
+        expect(keybindings.commandForChord(parseChord('ctrl+k')!), isNull);
+        expect(keybindings.commandForChord(parseChord('cmd+delete')!), isNull);
+      }
+      expect(
+        mac.commandForChord(parseChord('cmd+backspace')!),
+        'deleteAllLeft',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+k')!), 'deleteAllRight');
+      expect(
+        mac.commandForChord(parseChord('cmd+delete')!),
+        'deleteAllRight',
+      );
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

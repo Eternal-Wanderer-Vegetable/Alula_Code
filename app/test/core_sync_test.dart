@@ -64,6 +64,41 @@ void main() {
     expect(await File(path).readAsString(), sample);
   }, skip: skip);
 
+  test('Rust 示例行边界删除通过 FFI 标脏并保存回读', () async {
+    final core = _bootstrap.core!;
+    const sample = 'fn main() { println!("linux-save-ok"); }\n';
+    final doc = core.openDoc(9040, sample);
+    final selectedEnd = sample.indexOf('println!') + 'println!'.length;
+    final resolved = doc.lineDeleteRanges(
+      [DocumentDeleteRange(startUtf16: selectedEnd - 2, endUtf16: selectedEnd)],
+      left: true,
+    );
+    expect(resolved.version, 1);
+    expect(resolved.ranges, hasLength(1));
+    expect(resolved.ranges.single.startUtf16, 0);
+    expect(resolved.ranges.single.endUtf16, selectedEnd);
+
+    final range = resolved.ranges.single;
+    doc.apply(
+      [TextOp.delete(range.startUtf16, range.endUtf16 - range.startUtf16)],
+    );
+    final edited = sample.replaceRange(range.startUtf16, range.endUtf16, '');
+    expect(doc.resync().content, edited);
+    expect(doc.isDirty, isTrue);
+
+    final temporary =
+        await Directory.systemTemp.createTemp('alula_line_delete');
+    final path = '${temporary.path}${Platform.pathSeparator}main.rs';
+    addTearDown(() async {
+      doc.close();
+      if (temporary.existsSync()) await temporary.delete(recursive: true);
+    });
+    doc.saveFile(path);
+    doc.markSaved();
+    expect(await File(path).readAsString(), edited);
+    expect(doc.isDirty, isFalse);
+  }, skip: skip);
+
   test('didClose 只关闭语言文档，不释放 Rust 文本缓冲区', () {
     final core = _bootstrap.core!;
     final doc = core.openDoc(9006, 'kept after didClose');

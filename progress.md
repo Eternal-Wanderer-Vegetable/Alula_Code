@@ -5,12 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.22 / EDT-05b 完成）
+### 最新进展（2026-10-31，P04.23 / EDT-05c 完成）
 
-- EDT-05b 完成单词删除：Windows/Linux `Ctrl+Backspace` / `Ctrl+Delete`，macOS `Alt+Backspace` / `Alt+Delete`。Rust Rope 按绝对 UTF-16 范围解析词删除，处理空白、CRLF、BOF/EOF、长行与多光标；ABI 从 v23 升为 v24，Rust FFI 和 Dart bridge 同步。
-- 工作台按倒序提交合并后的多光标/选区删除，IME composition 活跃时保留编辑态；逆操作载荷超过 2,000,000 字时拒绝删除。用户提供的 `fn main() { println!("linux-save-ok"); }` fixture 验证删除回读与保存恢复；工作台用例覆盖单光标、多光标、选区、undo/redo、dirty/save。
-- Rust buffer 4 项、FFI 1 项、keybindings 13 项、core_sync 21 项与两个工作台用例通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 368）；cargo fmt 与 Flutter analyze（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.22-word-delete.md`。
-- GitNexus 重建图谱有 675 个入口候选未排序、327 个 callee 被跳过、9 条遍历预算截断；编辑前 impact 和当前查询含 CRITICAL/UNKNOWN，未按低计数降级。P04 / feat-026 仍进行中；P15 原生平台验收继续 pending。下一片 P04.23 / EDT-05c 行边界删除。
+- EDT-05c 完成行首/行尾删除：Rust Rope 一次解析最多 10,000 个绝对 UTF-16 选区；选区左删扩展到本行起点，右删保留选区，光标在行首/行尾时分别删除到前一行内容尾/下一行起点。覆盖 BOM、emoji、CRLF、重叠多光标、EOF/BOF；ABI v25 已同步 Rust FFI 与 Dart。
+- 工作台命令保护 IME composition，按同一 Rust 版本合并并倒序提交，撤销载荷上限 2,000,000 UTF-16 单元；双视图、dirty、undo/redo、保存回读通过。Windows/Linux 无默认键位，macOS 为 `Cmd+Backspace`、`Ctrl+K` 和 `Cmd+Delete`，命令面板可执行。用户提供的 `fn main() { println!("linux-save-ok"); }` fixture 经真实 FFI 检查 dirty 与文件回读。
+- Rust buffer 2 项、FFI 1 项、keybindings 1 项、core_sync 1 项、工作台 1 项定向用例通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 371）；`cargo fmt --all -- --check` 通过，Flutter analyze 为 0 issues；HEAD+index 隔离快照门禁也全绿。报告：`docs/diagnostics/2026-10-31-p04/p04.23-line-boundary-delete.md`。
+- GitNexus 相关调用图仍含 CRITICAL/HIGH/UNKNOWN，索引有 683 个入口候选未排序、331 个 callee 被跳过、9 条遍历预算截断，未按低计数降级。P04 / feat-026 仍进行中；P15 原生平台验收继续 pending。下一切片依 `docs/03` 与 `docs/11` 选择并拆解尚未完成的 EDT 项。
 
 ### 阶段进展（2026-10-31，P04.19 / EDT-03d 完成）
 
@@ -1014,7 +1014,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 依据 `docs/03` 开始 P04.23 / EDT-05c：拆解并实现行边界删除；编辑前先做 GitNexus impact，再添加定向验证。
+1. 从 `docs/03` 与 `docs/11` 选择下一个未完成 EDT 子项；先更新权威里程碑拆解并做 GitNexus impact，再实现一项。
 2. 保持 P04 / feat-026 为唯一活动 feature；每片按 docs/03 验收、留证据并分阶段提交。
 3. EV-P03 Linux DRM、Windows 11 UIA/读屏/DPI/主题与 macOS 原生行为继续留在 P15 验收门；P00–P13 完成前不做 500 MiB 数值优化，全部计划完成后继续补齐 CI Release 与 v0.1.0 测试 PR。
 

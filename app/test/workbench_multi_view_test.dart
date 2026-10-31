@@ -367,4 +367,117 @@ void main() {
     expect(tailViewAfterSave.scrollController!.positions.length, 1);
     expect(file.readAsStringSync(), expected);
   });
+
+  testWidgets('P04.23 行边界删除支持选区、多光标、双视图和撤销保存', (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-line-delete');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = 'alpha\nbravo\ncharlie';
+    final file = File('${workspace.path}/main.rs')..writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+    File('$base/keybindings.json').writeAsStringSync('''
+[
+  {"key":"ctrl+alt+backspace","command":"deleteAllLeft"},
+  {"key":"ctrl+alt+delete","command":"deleteAllRight"}
+]
+''');
+
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.byTooltip('拆分编辑器').first);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('main.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final fieldsFinder = find.byType(RustTextInputField);
+    expect(fieldsFinder, findsNWidgets(2));
+    Finder textFieldAt(int index) => find.descendant(
+          of: fieldsFinder.at(index),
+          matching: find.byType(TextField),
+        );
+    await tester.showKeyboard(textFieldAt(1));
+    await tester.pump();
+
+    var controller = tester.widget<TextField>(textFieldAt(1)).controller!;
+    controller.selection = const TextSelection(baseOffset: 7, extentOffset: 9);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.backspace);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    const afterLeft = 'alpha\nvo\ncharlie';
+    var views = tester.widgetList<RustTextInputField>(fieldsFinder).toList();
+    expect(views.first.inputWindow.document.resync().content, afterLeft);
+    expect(views.last.inputWindow.document.resync().content, afterLeft);
+    expect(views.first.inputWindow.document.isDirty, isTrue);
+    expect(
+        tester.widget<TextField>(textFieldAt(0)).controller!.text, afterLeft);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(views.first.inputWindow.document.resync().content, source);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(views.first.inputWindow.document.resync().content, afterLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(file.readAsStringSync(), afterLeft);
+    expect(views.first.inputWindow.document.isDirty, isFalse);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    views = tester.widgetList<RustTextInputField>(fieldsFinder).toList();
+    expect(views.first.inputWindow.document.resync().content, source);
+    controller = tester.widget<TextField>(textFieldAt(1)).controller!;
+    controller.selection = const TextSelection.collapsed(offset: 1);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    const afterRight = 'a\nb\ncharlie';
+    views = tester.widgetList<RustTextInputField>(fieldsFinder).toList();
+    expect(views.first.inputWindow.document.resync().content, afterRight);
+    expect(views.last.inputWindow.document.resync().content, afterRight);
+    expect(views.first.inputWindow.document.isDirty, isTrue);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(file.readAsStringSync(), afterRight);
+    expect(views.first.inputWindow.document.isDirty, isFalse);
+  });
 }

@@ -19,7 +19,9 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
-use editor_buffer::{BufferError, TextOp, WordDeleteDirection, WordPartDirection};
+use editor_buffer::{
+    BufferError, LineDeleteDirection, TextOp, WordDeleteDirection, WordPartDirection,
+};
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_location,
@@ -32,7 +34,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 24;
+pub const ALULA_ABI_VERSION: u32 = 25;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -924,6 +926,79 @@ pub unsafe extern "C" fn alula_doc_delete_word_ranges(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_delete_word_ranges")))
+}
+
+/// Resolve line-boundary delete ranges for a JSON array of absolute UTF-16
+/// selection pairs. `direction` is 0 for left and 1 for right; at most 10,000
+/// selections are accepted.
+///
+/// # Safety
+/// `selections_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_delete_line_ranges(
+    id: u64,
+    selections_json: *const c_char,
+    direction: u32,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let selections_json = match read_c_str(selections_json) {
+            Ok(json) => json,
+            Err(error) => return error,
+        };
+        let max_json_bytes = editor_buffer::MAX_LINE_DELETE_RANGES * 44 + 2;
+        if selections_json.len() > max_json_bytes {
+            return err_json(
+                "InvalidArgument",
+                json!({ "message": "selection list JSON exceeds the bounded input size" }),
+            );
+        }
+        let selections: Vec<[u64; 2]> = match serde_json::from_str(selections_json) {
+            Ok(selections) => selections,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let direction = match direction {
+            0 => LineDeleteDirection::Left,
+            1 => LineDeleteDirection::Right,
+            value => return err_json("InvalidArgument", json!({ "direction": value })),
+        };
+        let selections: Result<Vec<(usize, usize)>, _> = selections
+            .into_iter()
+            .map(|[start, end]| {
+                usize::try_from(start)
+                    .and_then(|start| usize::try_from(end).map(|end| (start, end)))
+            })
+            .collect();
+        let selections = match selections {
+            Ok(selections) => selections,
+            Err(_) => return err_json("InvalidArgument", json!("offset is not representable")),
+        };
+        let registry = registry_lock();
+        match registry.line_delete_ranges_utf16(id, &selections, direction) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(ranges)) => {
+                let Some(version) = registry.version_of(id) else {
+                    return err_json("UnknownDoc", json!({ "id": id }));
+                };
+                to_c_ptr(json!({ "ok": true, "version": version, "ranges": ranges }).to_string())
+            }
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(BufferError::LineDeleteCountTooLarge { requested, max })) => err_json(
+                "TooManySelections",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::InvalidDeleteRange {
+                start_utf16,
+                end_utf16,
+            })) => err_json(
+                "InvalidRange",
+                json!({ "startUtf16": start_utf16, "endUtf16": end_utf16 }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_delete_line_ranges")))
 }
 
 /// Convert an absolute Rust-document UTF-16 offset to an LSP UTF-16 position.
@@ -2399,6 +2474,54 @@ mod tests {
             take(unsafe { alula_doc_delete_word_ranges(id, too_many.as_ptr(), 0) })["error"]
                 ["code"],
             "TooManyCarets"
+        );
+
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn line_delete_ranges_over_ffi_are_batched_versioned_and_utf16_safe() {
+        let id = 93_044;
+        take(unsafe { alula_doc_open(id, c("🦊a\r\nb").as_ptr()) });
+
+        let right_at_line_end = c("[[3,3]]");
+        let right =
+            take(unsafe { alula_doc_delete_line_ranges(id, right_at_line_end.as_ptr(), 1) });
+        assert_eq!(right["ok"], true);
+        assert_eq!(right["version"], 1);
+        assert_eq!(right["ranges"], json!([{ "startUtf16": 3, "endUtf16": 5 }]));
+
+        let left_at_next_line = c("[[5,5]]");
+        let left = take(unsafe { alula_doc_delete_line_ranges(id, left_at_next_line.as_ptr(), 0) });
+        assert_eq!(left["ranges"][0]["startUtf16"], 3);
+        assert_eq!(left["ranges"][0]["endUtf16"], 5);
+
+        let split_surrogate = c("[[1,1]]");
+        assert_eq!(
+            take(unsafe { alula_doc_delete_line_ranges(id, split_surrogate.as_ptr(), 0) })["error"]
+                ["code"],
+            "InvalidUtf16Offset"
+        );
+        let reversed = c("[[2,1]]");
+        assert_eq!(
+            take(unsafe { alula_doc_delete_line_ranges(id, reversed.as_ptr(), 0) })["error"]
+                ["code"],
+            "InvalidRange"
+        );
+        assert_eq!(
+            take(unsafe { alula_doc_delete_line_ranges(id, right_at_line_end.as_ptr(), 2) })
+                ["error"]["code"],
+            "InvalidArgument"
+        );
+        let too_many = c(&json!(vec![
+            [0u64, 0u64];
+            editor_buffer::MAX_LINE_DELETE_RANGES + 1
+        ])
+        .to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_delete_line_ranges(id, too_many.as_ptr(), 0) })["error"]
+                ["code"],
+            "TooManySelections"
         );
 
         take(alula_doc_close(id));

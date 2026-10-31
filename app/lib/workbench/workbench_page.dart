@@ -387,6 +387,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'editorTextFocus',
     );
     reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg(
+      'deleteAllLeft',
+      '编辑器',
+      '删除至行首',
+      () => _deleteAllToBoundary(left: true),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Backspace'
+          : null,
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'deleteAllRight',
+      '编辑器',
+      '删除至行尾',
+      () => _deleteAllToBoundary(left: false),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Ctrl+K, Cmd+Delete'
+          : null,
+      enablement: 'editorTextFocus',
+    );
     reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
         shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
     reg('editor.verifyIntegrity', '编辑器', '校验一致性',
@@ -528,6 +548,169 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }));
   }
+
+  Future<void> _deleteAllToBoundary({required bool left}) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) {
+        setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      }
+      return;
+    }
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '行边界删除已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentDeleteRanges queried;
+    try {
+      queried = doc.doc.lineDeleteRanges(
+        selections
+            .map((selection) => DocumentDeleteRange(
+                  startUtf16: selection.start,
+                  endUtf16: selection.end,
+                ))
+            .toList(growable: false),
+        left: left,
+      );
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '行边界删除失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion ||
+        queried.ranges.length != selections.length) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '行边界删除未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    final candidates = <({int start, int end})>[];
+    for (final range in queried.ranges) {
+      if (range.startUtf16 < range.endUtf16) {
+        candidates.add((start: range.startUtf16, end: range.endUtf16));
+      }
+    }
+    if (candidates.isEmpty) return;
+
+    candidates.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.end.compareTo(b.end));
+    final merged = <({int start, int end})>[];
+    for (final range in candidates) {
+      if (merged.isEmpty || range.start > merged.last.end) {
+        merged.add(range);
+      } else if (range.end > merged.last.end) {
+        merged[merged.length - 1] = (start: merged.last.start, end: range.end);
+      }
+    }
+
+    final deletedUtf16 = merged.fold<int>(
+      0,
+      (total, range) => total + range.end - range.start,
+    );
+    if (deletedUtf16 > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '行边界删除已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    final plans = <({int start, int end, String removed, int mappedStart})>[];
+    var removedBefore = 0;
+    try {
+      for (final range in merged) {
+        plans.add((
+          start: range.start,
+          end: range.end,
+          removed: _readDocumentRange(doc, range.start, range.end),
+          mappedStart: range.start - removedBefore,
+        ));
+        removedBefore += range.end - range.start;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '行边界删除未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '行边界删除未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.delete(plan.start, plan.end - plan.start),
+    ];
+    final inverse = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.mappedStart, plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '行边界删除未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset) {
+      var removed = 0;
+      for (final plan in plans) {
+        if (offset < plan.start) break;
+        if (offset <= plan.end) return plan.start - removed;
+        removed += plan.end - plan.start;
+      }
+      return offset - removed;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length - deletedUtf16;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset:
+              mapOffset(selection.baseOffset).clamp(0, newLength).toInt(),
+          extentOffset:
+              mapOffset(selection.extentOffset).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    final beforeCaret = selections.first.extentOffset;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = left ? '已删除至行首' : '已删除至行尾');
+    }
+  }
+
 
   void _syncCommandContext() {
     final active = _active;

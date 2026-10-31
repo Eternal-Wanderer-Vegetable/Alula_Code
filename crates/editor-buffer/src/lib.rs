@@ -15,6 +15,8 @@ pub const MAX_READ_LINES: usize = 256;
 pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
 /// Maximum number of caret positions accepted by one word-delete query.
 pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
+/// Maximum number of selections accepted by one line-delete query.
+pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
 pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
 /// Maximum text kept for each representative minimap line, in UTF-16 units.
@@ -30,6 +32,12 @@ pub enum WordPartDirection {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WordDeleteDirection {
+    Left,
+    Right,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LineDeleteDirection {
     Left,
     Right,
 }
@@ -358,6 +366,13 @@ pub enum BufferError {
     ReadLineCountTooLarge { requested: usize, max: usize },
     /// A word-delete query contains more caret positions than the bounded API accepts.
     WordDeleteCountTooLarge { requested: usize, max: usize },
+    /// A line-delete query contains more selections than the bounded API accepts.
+    LineDeleteCountTooLarge { requested: usize, max: usize },
+    /// A line-delete selection has its end before its start.
+    InvalidDeleteRange {
+        start_utf16: usize,
+        end_utf16: usize,
+    },
 }
 
 impl std::fmt::Display for BufferError {
@@ -395,6 +410,16 @@ impl std::fmt::Display for BufferError {
             BufferError::WordDeleteCountTooLarge { requested, max } => {
                 write!(f, "word-delete caret count {requested} exceeds maximum {max}")
             }
+            BufferError::LineDeleteCountTooLarge { requested, max } => {
+                write!(f, "line-delete selection count {requested} exceeds maximum {max}")
+            }
+            BufferError::InvalidDeleteRange {
+                start_utf16,
+                end_utf16,
+            } => write!(
+                f,
+                "line-delete range end {end_utf16} precedes start {start_utf16}"
+            ),
         }
     }
 }
@@ -727,6 +752,87 @@ impl TextBuffer {
         offsets_utf16
             .iter()
             .map(|&offset| self.word_delete_range_utf16(offset, direction))
+            .collect()
+    }
+
+    /// Resolve VS Code style delete-to-line-boundary ranges for absolute
+    /// UTF-16 selections from one immutable buffer version. `Left` extends a
+    /// nonempty selection to its line start; `Right` keeps that selection.
+    pub fn line_delete_ranges_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        direction: LineDeleteDirection,
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if selections_utf16.len() > MAX_LINE_DELETE_RANGES {
+            return Err(BufferError::LineDeleteCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_LINE_DELETE_RANGES,
+            });
+        }
+
+        selections_utf16
+            .iter()
+            .map(|&(start_utf16, end_utf16)| {
+                if start_utf16 > end_utf16 {
+                    return Err(BufferError::InvalidDeleteRange {
+                        start_utf16,
+                        end_utf16,
+                    });
+                }
+                self.char_idx_at_utf16(start_utf16)?;
+                self.char_idx_at_utf16(end_utf16)?;
+
+                let boundary = self.line_boundary_utf16(start_utf16)?;
+                if start_utf16 < end_utf16 {
+                    let range_start = match direction {
+                        LineDeleteDirection::Left => boundary.start_utf16,
+                        LineDeleteDirection::Right => start_utf16,
+                    };
+                    return Ok(TextDeleteRange {
+                        start_utf16: range_start,
+                        end_utf16,
+                    });
+                }
+
+                match direction {
+                    LineDeleteDirection::Left if start_utf16 == boundary.start_utf16 => {
+                        if boundary.line == 0 {
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16,
+                            })
+                        } else {
+                            let previous_line_start = self.rope.line_to_char(boundary.line - 1);
+                            let previous_line = self.rope.line(boundary.line - 1);
+                            let previous_content_end =
+                                previous_line_start + line_content_char_len(previous_line);
+                            Ok(TextDeleteRange {
+                                start_utf16: self.rope.char_to_utf16_cu(previous_content_end),
+                                end_utf16: start_utf16,
+                            })
+                        }
+                    }
+                    LineDeleteDirection::Left => Ok(TextDeleteRange {
+                        start_utf16: boundary.start_utf16,
+                        end_utf16: start_utf16,
+                    }),
+                    LineDeleteDirection::Right => {
+                        let next_line = boundary.line + 1;
+                        if start_utf16 >= boundary.end_utf16 && next_line < self.rope.len_lines() {
+                            let next_line_start = self.rope.line_to_char(next_line);
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16: self.rope.char_to_utf16_cu(next_line_start),
+                            })
+                        } else {
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16: boundary.end_utf16.max(start_utf16),
+                            })
+                        }
+                    }
+                }
+            })
             .collect()
     }
 
@@ -1518,6 +1624,108 @@ mod tests {
         assert_eq!(
             buffer.line_boundary_utf16(4),
             Err(BufferError::InvalidUtf16Offset { offset_utf16: 4 })
+        );
+    }
+
+    #[test]
+    fn line_delete_ranges_follow_boundary_and_selection_semantics() {
+        let buffer = TextBuffer::open("ab\r\ncd\nxy");
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(4, 4)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 4,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(2, 2)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 4,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(5, 6)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 4,
+                end_utf16: 6,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(5, 6)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 6,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(4, 4), (5, 5)], LineDeleteDirection::Right,)
+                .unwrap(),
+            vec![
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 6,
+                },
+                TextDeleteRange {
+                    start_utf16: 5,
+                    end_utf16: 6,
+                },
+            ]
+        );
+
+        let unicode = TextBuffer::open("\u{FEFF}a🦊x\r\nb");
+        assert_eq!(
+            unicode
+                .line_delete_ranges_utf16(&[(7, 7)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 7,
+            }]
+        );
+        assert_eq!(
+            unicode
+                .line_delete_ranges_utf16(&[(5, 5)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 7,
+            }]
+        );
+    }
+
+    #[test]
+    fn line_delete_ranges_validate_utf16_offsets_ranges_and_count() {
+        let buffer = TextBuffer::open("🦊\r\nx");
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(&[(1, 1)], LineDeleteDirection::Left),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(&[(2, 1)], LineDeleteDirection::Right),
+            Err(BufferError::InvalidDeleteRange {
+                start_utf16: 2,
+                end_utf16: 1,
+            })
+        );
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(
+                &vec![(0, 0); MAX_LINE_DELETE_RANGES + 1],
+                LineDeleteDirection::Left,
+            ),
+            Err(BufferError::LineDeleteCountTooLarge {
+                requested: MAX_LINE_DELETE_RANGES + 1,
+                max: MAX_LINE_DELETE_RANGES,
+            })
         );
     }
 

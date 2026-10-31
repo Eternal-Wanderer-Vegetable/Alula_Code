@@ -127,6 +127,13 @@ class AlulaFfi {
     'alula_doc_delete_word_ranges',
   );
 
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _docDeleteLineRanges = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint32),
+          Pointer<Utf8> Function(int, Pointer<Utf8>, int)>(
+    'alula_doc_delete_line_ranges',
+  );
+
   late final Pointer<Utf8> Function(int, int) _docPosition = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64, Uint64),
       Pointer<Utf8> Function(int, int)>('alula_doc_position');
@@ -410,6 +417,19 @@ class AlulaFfi {
       return _takeJson(_docDeleteWordRanges(id, offsets, direction));
     } finally {
       malloc.free(offsets);
+    }
+  }
+
+  String docDeleteLineRangesJson(
+    int id,
+    List<List<int>> selectionsUtf16,
+    int direction,
+  ) {
+    final selections = jsonEncode(selectionsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docDeleteLineRanges(id, selections, direction));
+    } finally {
+      malloc.free(selections);
     }
   }
 
