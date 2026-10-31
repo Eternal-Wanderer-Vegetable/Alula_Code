@@ -264,4 +264,118 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
   }
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('$platform title-cases Unicode selections and caret words',
+        (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      tester.view.physicalSize = const Size(1200, 760);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final temp = Directory.systemTemp.createTempSync('alula-title-case');
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        if (temp.existsSync()) temp.deleteSync(recursive: true);
+      });
+      final workspace = Directory('${temp.path}/workspace')..createSync();
+      const source = "ßETA O’NEIL don't rock'n'roll 2FAST\nΩMEGA";
+      const converted = "SSeta O’Neil Don't Rock'n'roll 2fast\nΩmega";
+      const sourceUtf16Length = 41;
+      const convertedUtf16Length = 42;
+      final file = File('${workspace.path}/sample.txt')
+        ..writeAsBytesSync([
+          0xef,
+          0xbb,
+          0xbf,
+          ...utf8.encode(source.replaceAll('\n', '\r\n')),
+        ]);
+      final base = temp.path.replaceAll(r'\', '/');
+      await tester.pumpWidget(
+        AlulaApp(
+          autoFolder: workspace.path,
+          layoutStore: LayoutStore(path: '$base/layout.json'),
+          sessionStore: SessionStore(path: '$base/session.json'),
+          keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.tap(find.text('sample.txt').first);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.byTooltip('拆分编辑器').first);
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.tap(find.text('sample.txt').first);
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final fields = find.byType(RustTextInputField);
+      expect(fields, findsNWidgets(2));
+      Finder textFieldAt(int index) => find.descendant(
+            of: fields.at(index),
+            matching: find.byType(TextField),
+          );
+      final primaryField = textFieldAt(0);
+      await tester.tap(primaryField);
+      await tester.showKeyboard(primaryField);
+      var controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, source);
+      expect(source.length, sourceUtf16Length);
+      expect(converted.length, convertedUtf16Length);
+      controller.selection =
+          const TextSelection(baseOffset: 0, extentOffset: sourceUtf16Length);
+      await tester.pump();
+
+      await _invokeCaseCommand(tester, '转换为标题大小写');
+      controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, converted);
+      expect(
+        controller.selection,
+        const TextSelection(baseOffset: 0, extentOffset: convertedUtf16Length),
+      );
+      expect(
+          tester.widget<TextField>(textFieldAt(1)).controller!.text, converted);
+
+      await _pressSave(tester);
+      expect(
+        file.readAsBytesSync(),
+        <int>[
+          0xef,
+          0xbb,
+          0xbf,
+          ...utf8.encode(converted.replaceAll('\n', '\r\n')),
+        ],
+      );
+      await _pressHistory(tester, redo: false);
+      controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, source);
+      expect(tester.widget<TextField>(textFieldAt(1)).controller!.text, source);
+      await _pressHistory(tester, redo: true);
+      controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, converted);
+
+      await tester.tap(primaryField);
+      controller = tester.widget<TextField>(primaryField).controller!;
+      final rollStart = controller.text.indexOf('roll');
+      controller.selection = TextSelection.collapsed(offset: rollStart + 2);
+      await tester.pump();
+      await _invokeCaseCommand(tester, '转换为标题大小写');
+      controller = tester.widget<TextField>(primaryField).controller!;
+      const caretConverted = "SSeta O’Neil Don't Rock'n'Roll 2fast\nΩmega";
+      expect(controller.text, caretConverted);
+      expect(tester.widget<TextField>(textFieldAt(1)).controller!.text,
+          caretConverted);
+      await _pressHistory(tester, redo: false);
+      controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, converted);
+      await _pressHistory(tester, redo: true);
+      controller = tester.widget<TextField>(primaryField).controller!;
+      expect(controller.text, caretConverted);
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
 }

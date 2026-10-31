@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.42 / EDT-08b 完成）
+
+- 新增固定 Code-OSS `editor.action.transformToTitlecase` 命令，无默认快捷键；先 Rust full lowercase，再按上游 Unicode letter/number/apostrophe 边界把首字母 full uppercase。沿用 P04.41 的 Rust UTF-16 范围事务、selection 扩展映射、undo/redo、dirty、Find、分屏与保存路径，Rust JSON FFI ABI 升至 v28。
+- 三平台 TargetPlatform 测试验证选区/caret、`ß→SS` 长度变化、ASCII/curly apostrophe、Unicode letter/number、组合符、双视图、BOM+CRLF 保存回读及 undo/redo。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 502）；cargo fmt check 通过，app Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.42-title-case.md`。
+- 已登记 JS locale-sensitive case 与 Rust locale-independent mapping 的差异、Unicode 数据版本边界；Windows 11 UIA/Narrator、DPI/主题和原生 IME 仍在 P15。P04.41 commit `12987d0` 已推送。
+
 ### 最新进展（2026-11-01，P04.41 / EDT-08a 完成）
 
 - 新增 Uppercase/Lowercase 固定命令，无默认快捷键。选区原样转换；caret 使用 VS Code 默认词分隔符和小数 token 定位，空白/空行不变；多光标范围去重后一次 Rust TextOps 事务提交。Rust 负责 Unicode full case mapping，通过 ABI v27 暴露 NUL-safe JSON 转换；选区长度随 `ß→SS` 扩展，undo/redo、dirty、保存和兄弟视图同步均覆盖。

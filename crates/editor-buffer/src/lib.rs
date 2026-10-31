@@ -4,8 +4,10 @@
 //! UTF-16 code unit；本 crate 负责向 Ropey 的 char 索引换算，并拒绝落在
 //! 代理对中间等非法边界上的操作。
 
+use regex::{Captures, Regex};
 use ropey::{Rope, RopeSlice};
 use serde::{Deserialize, Serialize};
+use std::sync::OnceLock;
 
 /// Maximum UTF-16 units requested by one bounded document read.
 pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
@@ -33,6 +35,27 @@ pub fn transform_case_text(text: &str, uppercase: bool) -> String {
     } else {
         text.to_lowercase()
     }
+}
+
+static TITLE_CASE_BOUNDARY: OnceLock<Option<Regex>> = OnceLock::new();
+
+fn title_case_boundary() -> Option<&'static Regex> {
+    TITLE_CASE_BOUNDARY
+        .get_or_init(|| Regex::new(r"(?m)(^|[^\p{L}\p{N}']|((^|\P{L})'))\p{L}").ok())
+        .as_ref()
+}
+
+/// Apply the fixed Code-OSS Unicode title-boundary transform to a text fragment.
+pub fn transform_title_case_text(text: &str) -> String {
+    let Some(boundary) = title_case_boundary() else {
+        return text.to_owned();
+    };
+    let lowered = text.to_lowercase();
+    boundary
+        .replace_all(&lowered, |captures: &Captures<'_>| {
+            captures[0].to_uppercase()
+        })
+        .into_owned()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1211,6 +1234,23 @@ mod tests {
         assert_eq!(transform_case_text("ﬃ", true), "FFI");
         assert_eq!(transform_case_text("İ", false), "i\u{307}");
         assert_eq!(transform_case_text("A\0B", true), "A\0B");
+    }
+
+    #[test]
+    fn title_case_uses_code_oss_unicode_letter_boundaries() {
+        assert_eq!(transform_title_case_text("hELLO wORLD"), "Hello World");
+        assert_eq!(
+            transform_title_case_text("DON'T rock'n'roll 'tIS"),
+            "Don't Rock'n'roll 'Tis"
+        );
+        assert_eq!(
+            transform_title_case_text("ßETA O’NEIL 2FAST\nΩMEGA"),
+            "SSeta O’Neil 2fast\nΩmega"
+        );
+        assert_eq!(
+            transform_title_case_text("İSTANBUL\0eCLAIR"),
+            "I\u{307}Stanbul\0Eclair"
+        );
     }
 
     #[test]

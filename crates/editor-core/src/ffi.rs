@@ -20,8 +20,8 @@ use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
 use editor_buffer::{
-    transform_case_text, BufferError, LineDeleteDirection, TextOp, WordDeleteDirection,
-    WordPartDirection,
+    transform_case_text, transform_title_case_text, BufferError, LineDeleteDirection, TextOp,
+    WordDeleteDirection, WordPartDirection,
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
@@ -35,7 +35,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 27;
+pub const ALULA_ABI_VERSION: u32 = 28;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -59,6 +59,11 @@ struct WorkspaceEditDocumentInput {
 struct TextCaseInput {
     text: String,
     uppercase: bool,
+}
+
+#[derive(Deserialize)]
+struct TitleCaseInput {
+    text: String,
 }
 
 struct PendingCompletion {
@@ -368,6 +373,46 @@ pub unsafe extern "C" fn alula_text_transform_case(request_json: *const c_char) 
         to_c_ptr(json!({ "ok": true, "text": transformed }).to_string())
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_text_transform_case")))
+}
+
+/// Apply the Code-OSS Unicode title-boundary transform to a JSON text fragment.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_text_transform_title_case(
+    request_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_CASE_TRANSFORM_INPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_INPUT_BYTES }),
+            );
+        }
+        let request: TitleCaseInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let transformed = transform_title_case_text(&request.text);
+        if transformed.len() > MAX_CASE_TRANSFORM_OUTPUT_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_CASE_TRANSFORM_OUTPUT_BYTES }),
+            );
+        }
+        to_c_ptr(json!({ "ok": true, "text": transformed }).to_string())
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_text_transform_title_case"),
+        )
+    })
 }
 
 /// Sample system/cgroup memory pressure. On a transition to Critical, cancel pending
@@ -2302,6 +2347,15 @@ mod tests {
         assert_eq!(
             take(unsafe { alula_text_transform_case(lower.as_ptr()) })["text"],
             "i\u{307}"
+        );
+    }
+
+    #[test]
+    fn title_case_ffi_uses_unicode_boundaries_and_preserves_nul() {
+        let request = c(r#"{"text":"ßETA\u0000eCLAIR"}"#);
+        assert_eq!(
+            take(unsafe { alula_text_transform_title_case(request.as_ptr()) })["text"],
+            "SSeta\0Eclair"
         );
     }
 

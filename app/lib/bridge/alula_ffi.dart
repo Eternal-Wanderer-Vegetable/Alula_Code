@@ -60,6 +60,12 @@ class AlulaFfi {
     'alula_text_transform_case',
   );
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _textTransformTitleCase =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_text_transform_title_case',
+  );
+
   // *mut c_char 返回值一律视为调用方持有，读取后必须 stringFree。
   late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docOpen =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -344,6 +350,15 @@ class AlulaFfi {
     final p = requestJson.toNativeUtf8();
     try {
       return _takeJson(_textTransformCase(p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String textTransformTitleCaseJson(String requestJson) {
+    final p = requestJson.toNativeUtf8();
+    try {
+      return _takeJson(_textTransformTitleCase(p));
     } finally {
       malloc.free(p);
     }

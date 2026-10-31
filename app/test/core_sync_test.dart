@@ -40,6 +40,14 @@ void main() {
     expect(core.transformCaseText('İ', uppercase: false), 'i\u0307');
   }, skip: skip);
 
+  test('Rust FFI title case uses Unicode boundaries and preserves NUL', () {
+    final core = _bootstrap.core!;
+    expect(
+      core.transformTitleCaseText("ßETA\u0000o’NEIL don't"),
+      "SSeta\u0000O’Neil Don't",
+    );
+  }, skip: skip);
+
   test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
     final core = _bootstrap.core!;
     const sample = 'fn main() { println!("linux-save-ok"); }\n';
