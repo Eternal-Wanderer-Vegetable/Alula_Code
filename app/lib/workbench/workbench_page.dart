@@ -410,6 +410,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.cursorEndSelect', '编辑器', '选择至行尾',
         () async => _moveLineBoundary(toEnd: true, extendSelection: true),
         enablement: 'editorTextFocus');
+    reg('editor.cursorTop', '编辑器', '移至文件开头',
+        () async => _moveDocumentBoundary(toBottom: false),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorTopSelect', '编辑器', '选择至文件开头',
+        () async => _moveDocumentBoundary(toBottom: false, extendSelection: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorBottom', '编辑器', '移至文件末尾',
+        () async => _moveDocumentBoundary(toBottom: true),
+        enablement: 'editorTextFocus');
+    reg('editor.cursorBottomSelect', '编辑器', '选择至文件末尾',
+        () async => _moveDocumentBoundary(toBottom: true, extendSelection: true),
+        enablement: 'editorTextFocus');
     reg('editor.mergeSelections', '编辑器', '合并重叠选区',
         () async => _mergeSelections(),
         enablement: 'editorTextFocus');
@@ -1071,6 +1083,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 current.extentOffset == boundary.firstNonWhitespaceUtf16
             ? boundary.startUtf16
             : boundary.firstNonWhitespaceUtf16;
+    final next = extendSelection
+        ? TextSelection(
+            baseOffset: current.baseOffset,
+            extentOffset: destination,
+            affinity: current.affinity,
+            isDirectional: current.isDirectional,
+          )
+        : TextSelection.collapsed(
+            offset: destination,
+            affinity: current.affinity,
+          );
+    if (next != current) _setDocSelection(doc, next);
+  }
+
+  void _moveDocumentBoundary({
+    required bool toBottom,
+    bool extendSelection = false,
+  }) {
+    final doc = _active;
+    if (doc == null) return;
+    _flushInput(doc);
+    final current = doc.selection;
+    final destination = toBottom ? doc.inputWindow.totalUtf16Length : 0;
     final next = extendSelection
         ? TextSelection(
             baseOffset: current.baseOffset,

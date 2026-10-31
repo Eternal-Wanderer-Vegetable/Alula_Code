@@ -5,11 +5,17 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.7 / EDT-01d 完成）
+### 最新进展（2026-10-31，P04.8 / EDT-01e 完成）
+
+- P04.8 增加文件开头/末尾移动与 Shift 选择；Windows/Linux Ctrl+Home/End，macOS Command+Up/Down。命令读取 Rust 文档 UTF-16 总长度并通过受控 selection 路径跨 16K 输入窗重居中，不改文本或版本。
+- 键位/工作台定向 Flutter 6 项通过，覆盖三平台键位、双向锚点与 4,000 行文档首尾跳转；完整 `bash init.sh` EXIT=0（Flutter 293 项、Rust workspace、Clippy、build_core）。`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.8-file-boundary-movement.md`。
+- P04 / feat-026 仍是唯一活动 feature；下一 EDT 子项按 `docs/03` 拆解页上/下移动。targetPlatform 不等同真实三平台键盘/IME/读屏/DPI 证据，这些仍属 P15。
+
+### 阶段进展（2026-10-31，P04.7 / EDT-01d 完成）
 
 - P04.7 将 Home/End 行边界查询放在 Rust Rope 内，ABI v22 返回 UTF-16 行首、缩进后的首个非空白位置和排除 CRLF 的行尾。工作台实现 smart Home 来回、End 及 Shift 锚点；macOS 支持 Command+左右键与 Ctrl+A/E，Windows/Linux 使用 Home/End。
 - Rust buffer 2 项、FFI 1 项和 Flutter 定向 25 项通过；覆盖 emoji/代理对边界、CRLF/空行、100K 空白缩进、20K 缩进行跨 16K 输入窗、三平台 targetPlatform、文本/版本不变。`bash init.sh` EXIT=0（Flutter 287 项、Rust workspace、Clippy、build_core）；`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.7-home-end-smart-home.md`。
-- P04 / feat-026 仍是唯一活动 feature；下一 EDT 子项按 `docs/03` 继续拆解页移动/文件首尾。targetPlatform 不是原生键盘、IME、读屏或 DPI/主题证据；这些仍属 P15。
+- P04 / feat-026 仍是唯一活动 feature。targetPlatform 不是原生键盘、IME、读屏或 DPI/主题证据；这些仍属 P15。
 
 ### 阶段进展（2026-10-31，P04.6 / EDT-01c 完成）
 

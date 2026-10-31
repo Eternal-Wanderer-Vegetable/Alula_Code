@@ -205,6 +205,10 @@ class KeybindingSet {
     'editor.cursorHomeSelect': 'shift+home',
     'editor.cursorEnd': 'end',
     'editor.cursorEndSelect': 'shift+end',
+    'editor.cursorTop': 'ctrl+home',
+    'editor.cursorTopSelect': 'ctrl+shift+home',
+    'editor.cursorBottom': 'ctrl+end',
+    'editor.cursorBottomSelect': 'ctrl+shift+end',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
@@ -229,6 +233,10 @@ class KeybindingSet {
         result['editor.cursorEnd'] = 'end,cmd+arrowright,ctrl+e';
         result['editor.cursorEndSelect'] =
             'shift+end,shift+cmd+arrowright,ctrl+shift+e';
+        result['editor.cursorTop'] = 'cmd+arrowup';
+        result['editor.cursorTopSelect'] = 'shift+cmd+arrowup';
+        result['editor.cursorBottom'] = 'cmd+arrowdown';
+        result['editor.cursorBottomSelect'] = 'shift+cmd+arrowdown';
         result.remove('editor.columnSelectUp');
         result.remove('editor.columnSelectDown');
         result.remove('editor.columnSelectLeft');
