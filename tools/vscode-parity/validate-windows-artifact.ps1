@@ -419,6 +419,7 @@ $interactionResult = [ordered]@{
   fixtureTextAfterSave = $null
   multiviewEditorNames = @()
   multiviewEditorValuesBeforeEdit = @()
+  multiviewFocusBeforeEditNodes = @()
   multiviewEditorValuesAfterEdit = @()
   multiviewSaveMenuNames = @()
   multiviewSaveRoute = 'not-attempted'
@@ -736,6 +737,15 @@ try {
       } | ForEach-Object { $_.Value })
       if (@($interactionResult.multiviewEditorValuesBeforeEdit | Where-Object { $_ -ceq $sampleText }).Count -lt 2) {
         throw "Quick Open did not load main.rs in both editor views; text values: $($interactionResult.multiviewEditorValuesBeforeEdit -join ' | ')"
+      }
+      Click-ArtifactEditor 0.76
+      $multiviewFocusSnapshot = [AlulaArtifactMsaa]::Capture($child)
+      $interactionResult.multiviewFocusBeforeEditNodes = @($multiviewFocusSnapshot.Nodes | Where-Object {
+        $state = 0
+        $_.Role -eq '42' -and [int]::TryParse($_.State, [ref]$state) -and (($state -band 4) -ne 0)
+      } | ForEach-Object { [ordered]@{ path = $_.Path; name = $_.Name; value = $_.Value; role = $_.Role } })
+      if ($interactionResult.multiviewFocusBeforeEditNodes.Count -eq 0) {
+        throw 'The second editor view did not expose a focused MSAA text node before editing'
       }
       $appendText = "`n// view-2"
       $expectedMultiviewText = "$sampleText$appendText"
