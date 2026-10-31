@@ -247,8 +247,90 @@ using System;
 using System.Runtime.InteropServices;
 public struct AlulaArtifactRect { public int Left; public int Top; public int Right; public int Bottom; }
 public struct AlulaArtifactPoint { public int X; public int Y; }
+[StructLayout(LayoutKind.Sequential)]
+public struct AlulaArtifactKeyboardInput
+{
+    public ushort VirtualKey;
+    public ushort ScanCode;
+    public uint Flags;
+    public uint Time;
+    public IntPtr ExtraInfo;
+}
+[StructLayout(LayoutKind.Sequential)]
+public struct AlulaArtifactMouseInput
+{
+    public int Dx;
+    public int Dy;
+    public uint MouseData;
+    public uint Flags;
+    public uint Time;
+    public IntPtr ExtraInfo;
+}
+[StructLayout(LayoutKind.Explicit)]
+public struct AlulaArtifactInputUnion
+{
+    [FieldOffset(0)] public AlulaArtifactKeyboardInput Keyboard;
+    [FieldOffset(0)] public AlulaArtifactMouseInput Mouse;
+}
+[StructLayout(LayoutKind.Sequential)]
+public struct AlulaArtifactInput
+{
+    public uint Type;
+    public AlulaArtifactInputUnion Union;
+}
 public static class AlulaArtifactWindow
 {
+    private const uint InputKeyboard = 1;
+    private const uint KeyUp = 2;
+    private const uint Unicode = 4;
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint inputCount, [In] AlulaArtifactInput[] inputs, int inputSize);
+
+    public static uint SendChord(ushort virtualKey)
+    {
+        var inputs = new AlulaArtifactInput[4];
+        inputs[0] = KeyInput(0x11, 0);
+        inputs[1] = KeyInput(virtualKey, 0);
+        inputs[2] = KeyInput(virtualKey, KeyUp);
+        inputs[3] = KeyInput(0x11, KeyUp);
+        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(AlulaArtifactInput)));
+    }
+
+    public static uint SendUnicodeText(string text)
+    {
+        var inputs = new AlulaArtifactInput[text.Length * 2];
+        for (int i = 0; i < text.Length; i++)
+        {
+            inputs[i * 2] = UnicodeInput(text[i], Unicode);
+            inputs[i * 2 + 1] = UnicodeInput(text[i], Unicode | KeyUp);
+        }
+        return SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(AlulaArtifactInput)));
+    }
+
+    private static AlulaArtifactInput KeyInput(ushort virtualKey, uint flags)
+    {
+        return new AlulaArtifactInput
+        {
+            Type = InputKeyboard,
+            Union = new AlulaArtifactInputUnion
+            {
+                Keyboard = new AlulaArtifactKeyboardInput { VirtualKey = virtualKey, Flags = flags }
+            }
+        };
+    }
+
+    private static AlulaArtifactInput UnicodeInput(char character, uint flags)
+    {
+        return new AlulaArtifactInput
+        {
+            Type = InputKeyboard,
+            Union = new AlulaArtifactInputUnion
+            {
+                Keyboard = new AlulaArtifactKeyboardInput { ScanCode = character, Flags = flags }
+            }
+        };
+    }
+
     [DllImport("user32.dll", SetLastError = true)] public static extern bool IsWindowVisible(IntPtr hwnd);
     [DllImport("user32.dll", SetLastError = true)] public static extern bool GetClientRect(IntPtr hwnd, out AlulaArtifactRect rect);
     [DllImport("user32.dll", SetLastError = true)] public static extern bool ClientToScreen(IntPtr hwnd, ref AlulaArtifactPoint point);
@@ -308,6 +390,8 @@ $interactionResult = [ordered]@{
   sampleText = $sampleText
   savedAndReadBack = $false
   multiviewSavedAndReadBack = $false
+  unicodeKeyEventsSent = 0
+  saveKeyEventsSent = 0
   accessibleEditorCount = 0
   accessibleEditorValuesMatch = $false
   quickOpenQuery = if ($ExerciseInteractions) { 'main.rs' } else { $null }
@@ -384,8 +468,12 @@ try {
         Start-Sleep -Milliseconds $delayMs
       }
       function Paste-ArtifactText([string]$value) {
-        Set-Clipboard -Value $value
-        Send-ArtifactKeys '^v'
+        $selectAllInputs = [AlulaArtifactWindow]::SendChord(0x41)
+        if ($selectAllInputs -ne 4) { throw "SendInput selected-all chord inserted $selectAllInputs of 4 keyboard events" }
+        $interactionResult.unicodeKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($value)
+        if ($interactionResult.unicodeKeyEventsSent -ne ($value.Length * 2)) {
+          throw "SendInput inserted $($interactionResult.unicodeKeyEventsSent) of $($value.Length * 2) Unicode keyboard events"
+        }
       }
       function Open-ArtifactFile([string]$query) {
         $openedFromMenu = $false
@@ -544,7 +632,9 @@ try {
       Paste-ArtifactText $sampleText
       $pastedSnapshot = [AlulaArtifactMsaa]::Capture($child)
       $interactionResult.editorValuesAfterPaste = @($pastedSnapshot.Nodes | Where-Object { $_.Value } | ForEach-Object { $_.Value })
-      Send-ArtifactKeys '^s' 700
+      $interactionResult.saveKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x53)
+      if ($interactionResult.saveKeyEventsSent -ne 4) { throw "SendInput save chord inserted $($interactionResult.saveKeyEventsSent) of 4 keyboard events" }
+      Start-Sleep -Milliseconds 700
       if (!(Wait-ForArtifactText $sampleText)) { throw 'The exact Release artifact did not save the linux-save-ok sample to disk' }
       $interactionResult.savedAndReadBack = $true
 
