@@ -96,6 +96,67 @@ public static class AlulaArtifactMsaa
         }
     }
 
+    public static int[] LocationByName(IntPtr window, string targetName)
+    {
+        IAccessible root = null;
+        try
+        {
+            Guid iid = IidIAccessible;
+            int hr = AccessibleObjectFromWindow(window, 0xFFFFFFFC, ref iid, out root);
+            if (hr != 0 || root == null) return null;
+            return LocationByName(root, targetName, 1);
+        }
+        catch { return null; }
+        finally
+        {
+            if (root != null && Marshal.IsComObject(root)) Marshal.FinalReleaseComObject(root);
+        }
+    }
+
+    private static int[] LocationByName(IAccessible accessible, string targetName, int depth)
+    {
+        if (accessible == null || depth > 8) return null;
+        int count = 0;
+        try { count = Math.Min(accessible.accChildCount, 100); } catch { return null; }
+        for (int id = 1; id <= count; id++)
+        {
+            string name = null;
+            try { name = accessible.get_accName(id); } catch { }
+            if (String.Equals(name, targetName, StringComparison.Ordinal))
+            {
+                try
+                {
+                    int left, top, width, height;
+                    accessible.accLocation(out left, out top, out width, out height, id);
+                    if (width > 0 && height > 0) return new int[] { left, top, width, height };
+                }
+                catch { }
+            }
+
+            object raw = null;
+            IAccessible nested = null;
+            try { raw = accessible.get_accChild(id); } catch { }
+            nested = raw as IAccessible;
+            if (nested != null && !Object.ReferenceEquals(nested, accessible))
+            {
+                try
+                {
+                    int[] location = LocationByName(nested, targetName, depth + 1);
+                    if (location != null) return location;
+                }
+                finally
+                {
+                    if (Marshal.IsComObject(nested)) Marshal.FinalReleaseComObject(nested);
+                }
+            }
+            else if (raw != null && Marshal.IsComObject(raw))
+            {
+                Marshal.FinalReleaseComObject(raw);
+            }
+        }
+        return null;
+    }
+
     private static bool InvokeNamed(IAccessible accessible, string targetName, int depth)
     {
         if (accessible == null || depth > 8) return false;
@@ -250,13 +311,14 @@ $interactionResult = [ordered]@{
   accessibleEditorCount = 0
   accessibleEditorValuesMatch = $false
   quickOpenQuery = if ($ExerciseInteractions) { 'main.rs' } else { $null }
-  launchMode = if ($ExerciseInteractions) { 'standard launch; fixture opened through Command Palette' } else { 'standard launch' }
+  launchMode = if ($ExerciseInteractions) { 'standard launch; fixture opened through MSAA-targeted UI clicks' } else { 'standard launch' }
   openedEditorNames = @()
-  commandPaletteNames = @()
+  namesBeforeFolderButton = @()
   openFolderDialogNames = @()
   workspaceTreeNames = @()
   focusBeforePasteNodes = @()
   editorValuesAfterPaste = @()
+  accessibilityTargetLocations = [ordered]@{}
   keyboardFocusNames = @()
   keyboardFocusObserved = $false
   imeStatus = 'not-requested'
@@ -328,10 +390,10 @@ try {
         Send-ArtifactKeys '{ENTER}' 1200
       }
       function Open-ArtifactWorkspace([string]$path) {
-        if (![AlulaArtifactMsaa]::InvokeNamed($child, '打开文件夹')) {
+        if (!(Click-ArtifactAccessibleNode '打开文件夹')) {
           $initialSnapshot = [AlulaArtifactMsaa]::Capture($child)
-          $interactionResult.commandPaletteNames = @($initialSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
-          throw "Could not invoke the accessible Open Folder button; names: $($interactionResult.commandPaletteNames -join ' | ')"
+          $interactionResult.namesBeforeFolderButton = @($initialSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
+          throw "Could not click the accessible Open Folder button; names: $($interactionResult.namesBeforeFolderButton -join ' | ')"
         }
         Start-Sleep -Milliseconds 700
         $dialogSnapshot = [AlulaArtifactMsaa]::Capture($child)
@@ -341,7 +403,7 @@ try {
         }
         Send-ArtifactKeys '^a'
         Paste-ArtifactText $path
-        if (![AlulaArtifactMsaa]::InvokeNamed($child, '打开')) {
+        if (!(Click-ArtifactAccessibleNode '打开')) {
           # The dialog autofocuses its path field. Tab moves through Cancel then
           # Open when the button has no accessible default action.
           Send-ArtifactKeys '{TAB}'
@@ -356,7 +418,7 @@ try {
           throw "Opening tests/fixtures/rust-mini did not populate the accessible workspace tree; names: $($interactionResult.workspaceTreeNames -join ' | ')"
         }
         if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -eq 'src' }).Count -gt 0) {
-          [void][AlulaArtifactMsaa]::InvokeNamed($child, 'src')
+          [void](Click-ArtifactAccessibleNode 'src')
           Start-Sleep -Milliseconds 350
           $expandedSnapshot = [AlulaArtifactMsaa]::Capture($child)
           $interactionResult.workspaceTreeNames = @($expandedSnapshot.Nodes | ForEach-Object { $_.Name } | Where-Object { $_ })
@@ -364,7 +426,7 @@ try {
       }
       function Open-ArtifactSourceFile() {
         if (@($interactionResult.workspaceTreeNames | Where-Object { $_ -eq 'main.rs' }).Count -gt 0 -and
-            [AlulaArtifactMsaa]::InvokeNamed($child, 'main.rs')) {
+            (Click-ArtifactAccessibleNode 'main.rs' 2)) {
           Start-Sleep -Milliseconds 1200
           return
         }
@@ -375,7 +437,7 @@ try {
         Start-Sleep -Milliseconds 500
       }
       function Run-ArtifactPaletteCommand([string]$query) {
-        if ([AlulaArtifactMsaa]::InvokeNamed($child, $query)) {
+        if (Click-ArtifactAccessibleNode $query) {
           Start-Sleep -Milliseconds 500
           return
         }
@@ -396,6 +458,23 @@ try {
         [AlulaArtifactWindow]::mouse_event(0x0002, 0, 0, 0, [IntPtr]::Zero)
         [AlulaArtifactWindow]::mouse_event(0x0004, 0, 0, 0, [IntPtr]::Zero)
         Start-Sleep -Milliseconds 300
+      }
+      function Click-ArtifactAccessibleNode([string]$name, [int]$clickCount = 1) {
+        $location = [AlulaArtifactMsaa]::LocationByName($child, $name)
+        $interactionResult.accessibilityTargetLocations[$name] = if ($location) { @($location) } else { $null }
+        if ($location -and $location.Count -ge 4) {
+          $x = [int]($location[0] + ($location[2] / 2))
+          $y = [int]($location[1] + ($location[3] / 2))
+          if (![AlulaArtifactWindow]::SetCursorPos($x, $y)) { return $false }
+          for ($click = 0; $click -lt $clickCount; $click++) {
+            [AlulaArtifactWindow]::mouse_event(0x0002, 0, 0, 0, [IntPtr]::Zero)
+            [AlulaArtifactWindow]::mouse_event(0x0004, 0, 0, 0, [IntPtr]::Zero)
+            Start-Sleep -Milliseconds 80
+          }
+          Start-Sleep -Milliseconds 300
+          return $true
+        }
+        return [AlulaArtifactMsaa]::InvokeNamed($child, $name)
       }
       function Read-ArtifactFixture() {
         [System.IO.File]::ReadAllText($fixtureFile).Replace("`r`n", "`n")
@@ -474,7 +553,7 @@ try {
       if (!(Wait-ForArtifactText $sampleText)) { throw 'The saved sample could not be restored after the IME probe' }
 
       Run-ArtifactPaletteCommand '拆分编辑器'
-      if ([AlulaArtifactMsaa]::InvokeNamed($child, 'main.rs')) {
+      if (Click-ArtifactAccessibleNode 'main.rs' 2) {
         Start-Sleep -Milliseconds 900
       } else {
         Click-ArtifactEditor 0.76
