@@ -451,7 +451,7 @@ jobs:
               msaaAvailable = $msaaAvailable
               msaaRoots = @($msaaRoots)
               msaaError = $msaaError
-            } | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
+            } | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
 
             # Release UI Automation provider proxies before Flutter tears down
             # the native window on WM_CLOSE.
@@ -484,7 +484,7 @@ jobs:
             $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
             $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $gracefulClose -Force
             $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
-            $metadata | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
+            $metadata | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
           }
       - name: Run P03.7 Windows desktop interaction suite
         shell: pwsh
