@@ -199,47 +199,102 @@ try {
   $screenshotNonUniform = $sampledColors.Count -ge 12
 
   $child = [AlulaArtifactWindow]::GetWindow($window, 5)
-  $msaa = [AlulaArtifactMsaa]::Capture($child)
-  $accessibleValues = New-Object 'System.Collections.Generic.List[string]'
-  if (![string]::IsNullOrWhiteSpace($msaa.RootName)) { $accessibleValues.Add($msaa.RootName) }
-  foreach ($node in $msaa.Nodes) {
-    if (![string]::IsNullOrWhiteSpace($node.Name)) { $accessibleValues.Add($node.Name) }
-    if (![string]::IsNullOrWhiteSpace($node.Value)) { $accessibleValues.Add($node.Value) }
-  }
-  $accessibleText = $accessibleValues -join "`n"
-  $expectedMsaaText = @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
-  $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
-
   $uiaAvailable = $false
   $uiaError = $null
-  $uiaElements = @()
+  $uiaRoots = @()
   $uiaRoot = $null
   $uiaDescendants = $null
   $uiaElement = $null
   try {
     Add-Type -AssemblyName UIAutomationClient
-    $uiaRoot = [System.Windows.Automation.AutomationElement]::FromHandle($child)
-    $uiaDescendants = $uiaRoot.FindAll(
-      [System.Windows.Automation.TreeScope]::Subtree,
-      [System.Windows.Automation.Condition]::TrueCondition)
-    $uiaAvailable = $true
-    for ($index = 0; $index -lt [Math]::Min($uiaDescendants.Count, 150); $index++) {
+    $uiaTargets = @(
+      [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+      [pscustomobject]@{ name = 'flutterChildWindow'; handle = $child }
+    )
+    foreach ($target in $uiaTargets) {
+      $targetElements = @()
+      $targetError = $null
       try {
-        $uiaElement = $uiaDescendants.Item($index)
-        $current = $uiaElement.Current
-        $uiaElements += [ordered]@{
-          name = $current.Name
-          automationId = $current.AutomationId
-          className = $current.ClassName
-          controlType = $current.ControlType.ProgrammaticName
-          isControlElement = $current.IsControlElement
-          isContentElement = $current.IsContentElement
+        $uiaRoot = [System.Windows.Automation.AutomationElement]::FromHandle($target.handle)
+        $uiaDescendants = $uiaRoot.FindAll(
+          [System.Windows.Automation.TreeScope]::Subtree,
+          [System.Windows.Automation.Condition]::TrueCondition)
+        $uiaAvailable = $true
+        for ($index = 0; $index -lt [Math]::Min($uiaDescendants.Count, 150); $index++) {
+          try {
+            $uiaElement = $uiaDescendants.Item($index)
+            $current = $uiaElement.Current
+            $targetElements += [ordered]@{
+              name = $current.Name
+              automationId = $current.AutomationId
+              className = $current.ClassName
+              frameworkId = $current.FrameworkId
+              controlType = $current.ControlType.ProgrammaticName
+              isControlElement = $current.IsControlElement
+              isContentElement = $current.IsContentElement
+            }
+          }
+          catch [System.Windows.Automation.ElementNotAvailableException] { }
         }
       }
-      catch [System.Windows.Automation.ElementNotAvailableException] { }
+      catch {
+        $targetError = $_.Exception.Message
+        if ($null -eq $uiaError) { $uiaError = $targetError }
+      }
+      $uiaRoots += [ordered]@{
+        target = $target.name
+        elementCount = if ($uiaDescendants) { $uiaDescendants.Count } else { 0 }
+        elements = @($targetElements)
+        error = $targetError
+      }
+      $uiaElement = $null
+      $current = $null
+      $uiaDescendants = $null
+      $uiaRoot = $null
     }
   }
   catch { $uiaError = $_.Exception.Message }
+
+  # Query UI Automation before MSAA. Flutter enables its semantic tree when an
+  # accessibility client inspects the native view.
+  $msaaRoots = @()
+  $msaaAvailable = $false
+  $msaaError = $null
+  $msaaTargets = @(
+    [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+    [pscustomobject]@{ name = 'flutterChildWindow'; handle = $child }
+  )
+  foreach ($target in $msaaTargets) {
+    $snapshot = [AlulaArtifactMsaa]::Capture($target.handle)
+    if ($snapshot.HResult -eq '0x00000000') {
+      $msaaAvailable = $true
+    }
+    elseif ($null -eq $msaaError) {
+      $msaaError = $snapshot.Error
+    }
+    $msaaRoots += [ordered]@{
+      target = $target.name
+      hresult = $snapshot.HResult
+      rootName = $snapshot.RootName
+      childCount = $snapshot.ChildCount
+      nodes = @($snapshot.Nodes)
+      error = $snapshot.Error
+    }
+  }
+  $flutterMsaaRoot = $msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1
+  $accessibleValues = New-Object 'System.Collections.Generic.List[string]'
+  if ($flutterMsaaRoot -and ![string]::IsNullOrWhiteSpace($flutterMsaaRoot.rootName)) {
+    $accessibleValues.Add($flutterMsaaRoot.rootName)
+  }
+  if ($flutterMsaaRoot) {
+    foreach ($node in $flutterMsaaRoot.nodes) {
+      if (![string]::IsNullOrWhiteSpace($node.Name)) { $accessibleValues.Add($node.Name) }
+      if (![string]::IsNullOrWhiteSpace($node.Value)) { $accessibleValues.Add($node.Value) }
+    }
+  }
+  $accessibleText = $accessibleValues -join "`n"
+  $expectedMsaaText = @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')
+  $missingMsaaText = @($expectedMsaaText | Where-Object { !$accessibleText.Contains($_) })
 
   $theme = Get-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize' -ErrorAction SilentlyContinue
   $os = Get-CimInstance Win32_OperatingSystem
@@ -262,19 +317,18 @@ try {
     appsUseLightTheme = if ($theme) { [bool]$theme.AppsUseLightTheme } else { $null }
     uiAutomationAvailable = $uiaAvailable
     uiAutomationError = $uiaError
-    uiAutomationElements = @($uiaElements)
-    msaaHResult = $msaa.HResult
-    msaaError = $msaa.Error
-    msaaRootName = $msaa.RootName
-    msaaChildCount = $msaa.ChildCount
-    msaaNodeCount = $msaa.Nodes.Count
-    msaaNodes = @($msaa.Nodes)
+    uiAutomationRoots = @($uiaRoots)
+    msaaAvailable = $msaaAvailable
+    msaaError = $msaaError
+    msaaRoots = @($msaaRoots)
+    flutterMsaaChildCount = if ($flutterMsaaRoot) { $flutterMsaaRoot.childCount } else { 0 }
+    flutterMsaaNodeCount = if ($flutterMsaaRoot) { @($flutterMsaaRoot.nodes).Count } else { 0 }
     expectedMsaaText = $expectedMsaaText
     missingMsaaText = $missingMsaaText
-  } | ConvertTo-Json -Depth 7 | Set-Content -Path $metadataPath -Encoding utf8
-  $msaaNodeCount = $msaa.Nodes.Count
+  } | ConvertTo-Json -Depth 8 | Set-Content -Path $metadataPath -Encoding utf8
+  $msaaNodeCount = if ($flutterMsaaRoot) { @($flutterMsaaRoot.nodes).Count } else { 0 }
   if (!$screenshotNonUniform) { throw "Client capture appears blank or uniform ($($sampledColors.Count) sampled colors)" }
-  if ($msaa.HResult -ne '0x00000000') { throw "Flutter child window MSAA unavailable: $($msaa.HResult) $($msaa.Error)" }
+  if (!$msaaAvailable) { throw "Flutter window MSAA unavailable: $msaaError" }
   if ($missingMsaaText.Count -gt 0) { throw "MSAA tree is missing expected text: $($missingMsaaText -join ', ')" }
 }
 catch {
@@ -283,13 +337,17 @@ catch {
 finally {
   # Drop all UIA provider proxies even when a semantic assertion fails. Leaving
   # them alive while WM_CLOSE tears down Flutter can crash the desktop process.
-  $msaa = $null
   $accessibleValues = $null
   $node = $null
   $uiaElement = $null
   $current = $null
   $uiaDescendants = $null
   $uiaRoot = $null
+  $uiaTargets = $null
+  $msaaTargets = $null
+  $target = $null
+  $snapshot = $null
+  $flutterMsaaRoot = $null
   [GC]::Collect()
   [GC]::WaitForPendingFinalizers()
 
@@ -316,7 +374,7 @@ finally {
       $metadata | Add-Member -NotePropertyName closeTimedOut -NotePropertyValue $closeTimedOut -Force
       $metadata | Add-Member -NotePropertyName gracefulClose -NotePropertyValue $closed -Force
       $metadata | Add-Member -NotePropertyName exitCode -NotePropertyValue $exitCode -Force
-      $metadata | ConvertTo-Json -Depth 7 | Set-Content -Path $metadataPath -Encoding utf8
+      $metadata | ConvertTo-Json -Depth 8 | Set-Content -Path $metadataPath -Encoding utf8
     }
   }
   catch {
