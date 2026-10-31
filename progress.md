@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.40 / EDT-07g 完成）
+
+- P04.39 `c62917d` 已推送并核对 `origin/codex/vscode-parity-p00`。随后完成 Code-OSS `editor.action.removeDuplicateLines`：单 caret/单行 selection 作用于全文，多选范围分别去重、末行含列 1 端点，精确行文本去重并保留首次出现；走 Rust UTF-16 有界读取、预算/版本/重叠门控和一个 TextOps 事务，涵盖 undo/redo、dirty、Find、分屏与保存。无 ABI 变化。
+- 新增 6 项 Windows/Linux/macOS TargetPlatform 工作台测试，覆盖大小写/空白/空行、BOM+CRLF、选区边界、保留行 caret、undo/redo、分屏及保存回读。基于 `HEAD c62917d` 的隔离 stage 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 494），cargo fmt 与 app Flutter analyze 0 issues。证据：`docs/diagnostics/2026-11-01-p04/p04.40-delete-duplicate-lines.md`。
+- 固定 Code-OSS 对单 caret 全文去重使用 `executeEdits` 内部 tracked-selection 映射；Alula 显式映射到首次保留行，重复行内部 caret 的原生 marker-collapse 仍待比较。GitNexus WorkbenchPage upstream impact CRITICAL，刷新图谱有未排名入口和 walk 截断，保持风险不降级。P15 原生平台/读屏/IME/DPI/主题/发行门继续 pending；500 MiB 留 P14。
+
 ### 最新进展（2026-11-01，P04.39 / EDT-07f 完成）
 
 - 完成升序/降序 Sort Lines 命令，按固定 Code-OSS 行为处理单行选区全文排序、列 1 排除末行、全选区原子 no-op、降序反转、多选计划、版本/重叠/撤销预算与 100,000 行上限；Rust TextOps 单批提交并同步 selection、undo/redo、dirty、Find、输入窗和兄弟视图。无 ABI 改动。区域排序仍有已登记差异：Dart code-unit comparison 不能匹配上游 runtime `Intl.Collator` 的语言/大小写/重音结果。

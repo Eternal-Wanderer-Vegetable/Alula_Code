@@ -649,6 +649,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.sortLinesDescending', '编辑器', '按降序排序行',
         () => _sortLines(descending: true),
         enablement: 'editorTextFocus');
+    reg('editor.action.removeDuplicateLines', '编辑器', '删除重复行',
+        _removeDuplicateLines,
+        enablement: 'editorTextFocus');
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -3766,6 +3769,307 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) {
       setState(() => _statusDetail = descending ? '已按降序排序行' : '已按升序排序行');
     }
+  }
+
+  Future<void> _removeDuplicateLines() async {
+    const maxDeduplicateLines = 100000;
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    var selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted && selections.length > maxDocLineDeleteSelections) {
+        setState(() =>
+            _statusDetail = '删除重复行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final documentStart = doc.doc.lineOffset(0);
+    if (documentStart.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '删除重复行未应用：文档版本已变化');
+      return;
+    }
+    if (documentStart.lineCount == 1 && documentStart.totalUtf16Length == 0) {
+      return;
+    }
+
+    final originalSelections = List<TextSelection>.of(selections);
+    var updateSelection = true;
+    if (selections.length == 1) {
+      try {
+        final selection = selections.single;
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的重复行选区');
+        }
+        if (start.line == end.line) {
+          // Code-OSS promotes a single-line selection or caret to the full file.
+          selections = [
+            TextSelection(
+              baseOffset: 0,
+              extentOffset: documentStart.totalUtf16Length,
+            ),
+          ];
+          updateSelection = false;
+        }
+      } on Object catch (error) {
+        if (mounted) setState(() => _statusDetail = '删除重复行未应用：$error');
+        return;
+      }
+    }
+
+    final plans = <({
+      TextSelection selection,
+      bool primary,
+      int start,
+      int end,
+      int firstLine,
+      String removed,
+      String inserted,
+      List<int> oldLineToNewLine,
+      List<int> insertedLineStarts,
+      List<int> insertedLineLengths,
+    })>[];
+    var payloadChars = 0;
+    try {
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的重复行范围');
+        }
+        final lineCount = end.line - start.line + 1;
+        if (lineCount < 1 || lineCount > maxDeduplicateLines) {
+          throw StateError('重复行范围超过 $maxDeduplicateLines 行上限');
+        }
+
+        final first = doc.doc.lineOffset(start.line);
+        final last = doc.doc.lineOffset(end.line);
+        if (first.version != expectedVersion ||
+            last.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的重复行边界');
+        }
+        final boundary = doc.doc.lineBoundary(last.offsetUtf16);
+        if (boundary.version != expectedVersion ||
+            boundary.line != end.line ||
+            boundary.endUtf16 < first.offsetUtf16) {
+          throw StateError('Rust 返回了无效的重复行边界');
+        }
+
+        final rangeLength = boundary.endUtf16 - first.offsetUtf16;
+        final remaining = _undoHistoryBudget.maxTotalChars - payloadChars;
+        if (rangeLength < 0 || rangeLength > remaining ~/ 2) {
+          throw StateError(
+              '删除重复行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final removed = _readDocumentRange(
+          doc,
+          first.offsetUtf16,
+          boundary.endUtf16,
+        );
+        if (removed.length != rangeLength) {
+          throw StateError('Rust 返回的重复行文本长度与 UTF-16 范围不符');
+        }
+
+        final sourceLines = removed.split('\n');
+        if (sourceLines.length != lineCount) {
+          throw StateError('Rust 返回的重复行内容与行数不符');
+        }
+        final uniqueLineIndexes = <String, int>{};
+        final uniqueLines = <String>[];
+        final oldLineToNewLine = <int>[];
+        for (final line in sourceLines) {
+          final existingIndex = uniqueLineIndexes[line];
+          if (existingIndex != null) {
+            oldLineToNewLine.add(existingIndex);
+          } else {
+            final newIndex = uniqueLines.length;
+            uniqueLineIndexes[line] = newIndex;
+            uniqueLines.add(line);
+            oldLineToNewLine.add(newIndex);
+          }
+        }
+        final insertedLineStarts = <int>[];
+        var lineStart = 0;
+        for (final line in uniqueLines) {
+          insertedLineStarts.add(lineStart);
+          lineStart += line.length + 1;
+        }
+        final inserted = uniqueLines.join('\n');
+        payloadChars += removed.length + inserted.length;
+        plans.add((
+          selection: originalSelections[index],
+          primary: index == 0,
+          start: first.offsetUtf16,
+          end: boundary.endUtf16,
+          firstLine: start.line,
+          removed: removed,
+          inserted: inserted,
+          oldLineToNewLine: oldLineToNewLine,
+          insertedLineStarts: insertedLineStarts,
+          insertedLineLengths: [for (final line in uniqueLines) line.length],
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '删除重复行未应用：$error');
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) {
+        setState(() => _statusDetail = '删除重复行未应用：文档版本已变化');
+      }
+      return;
+    }
+
+    plans.sort((a, b) => a.start.compareTo(b.start));
+    for (var index = 1; index < plans.length; index++) {
+      if (plans[index].start < plans[index - 1].end) {
+        if (mounted) {
+          setState(() => _statusDetail = '删除重复行已取消：多个选区的行范围重叠');
+        }
+        return;
+      }
+    }
+
+    final mappedPlans = <({
+      TextSelection selection,
+      bool primary,
+      int start,
+      int end,
+      int firstLine,
+      String removed,
+      String inserted,
+      List<int> oldLineToNewLine,
+      List<int> insertedLineStarts,
+      List<int> insertedLineLengths,
+      int mappedStart,
+    })>[];
+    var cumulativeDelta = 0;
+    for (final plan in plans) {
+      final mappedStart = plan.start + cumulativeDelta;
+      mappedPlans.add((
+        selection: plan.selection,
+        primary: plan.primary,
+        start: plan.start,
+        end: plan.end,
+        firstLine: plan.firstLine,
+        removed: plan.removed,
+        inserted: plan.inserted,
+        oldLineToNewLine: plan.oldLineToNewLine,
+        insertedLineStarts: plan.insertedLineStarts,
+        insertedLineLengths: plan.insertedLineLengths,
+        mappedStart: mappedStart,
+      ));
+      cumulativeDelta += plan.inserted.length - plan.removed.length;
+    }
+
+    int mapOffsetThroughEdits(int offset) {
+      var delta = 0;
+      for (final plan in mappedPlans) {
+        if (plan.removed == plan.inserted) continue;
+        if (offset < plan.start) break;
+        if (offset > plan.end) {
+          delta += plan.inserted.length - plan.removed.length;
+          continue;
+        }
+        final position = doc.doc.positionAt(offset);
+        if (position.version != expectedVersion) {
+          throw StateError('Rust 返回了过期的重复行光标位置');
+        }
+        final oldLineIndex = position.line - plan.firstLine;
+        if (oldLineIndex < 0 || oldLineIndex >= plan.oldLineToNewLine.length) {
+          throw StateError('Rust 返回了无效的重复行光标行');
+        }
+        final newLineIndex = plan.oldLineToNewLine[oldLineIndex];
+        final column = position.character
+            .clamp(0, plan.insertedLineLengths[newLineIndex])
+            .toInt();
+        return plan.mappedStart +
+            plan.insertedLineStarts[newLineIndex] +
+            column;
+      }
+      return offset + delta;
+    }
+
+    TextSelection mapWholeDocumentSelection(TextSelection selection) =>
+        TextSelection(
+          baseOffset: mapOffsetThroughEdits(selection.baseOffset),
+          extentOffset: mapOffsetThroughEdits(selection.extentOffset),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        );
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final plan in mappedPlans.where((plan) => plan.primary))
+        updateSelection
+            ? TextSelection(
+                baseOffset: plan.mappedStart,
+                extentOffset: plan.mappedStart + plan.inserted.length,
+              )
+            : mapWholeDocumentSelection(plan.selection),
+      for (final plan in mappedPlans.where((plan) => !plan.primary))
+        updateSelection
+            ? TextSelection(
+                baseOffset: plan.mappedStart,
+                extentOffset: plan.mappedStart + plan.inserted.length,
+              )
+            : mapWholeDocumentSelection(plan.selection),
+    ]);
+
+    final changedPlans = mappedPlans
+        .where((plan) => plan.removed != plan.inserted)
+        .toList(growable: false);
+    if (changedPlans.isEmpty) {
+      if (updateSelection) _setDocSelections(doc, mappedSelections);
+      if (mounted) setState(() => _statusDetail = '未发现重复行');
+      return;
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in changedPlans.reversed) {
+      forward
+        ..add(TextOp.delete(plan.start, plan.end - plan.start))
+        ..add(TextOp.insert(plan.start, plan.inserted));
+      inverse
+        ..add(TextOp.delete(plan.mappedStart, plan.inserted.length))
+        ..add(TextOp.insert(plan.mappedStart, plan.removed));
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '删除重复行未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: originalSelections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已删除重复行');
   }
 
   Future<void> _joinLines() async {
