@@ -385,6 +385,63 @@ finally {
   }
 }
 
+$controlClose = [ordered]@{
+  accessibilityQueried = $false
+  windowCreated = $false
+  wmClosePosted = $false
+  closeTimedOut = $false
+  exitCode = $null
+  error = $null
+}
+$controlProcess = $null
+$controlWindow = [IntPtr]::Zero
+try {
+  # Compare with a second launch that receives no UIA/MSAA queries. This tells
+  # us whether the exact older binary crashes on WM_CLOSE independently of the
+  # accessibility inspection performed above.
+  $controlProcess = Start-Process -FilePath $exe.FullName -WorkingDirectory $exe.DirectoryName -PassThru -WindowStyle Normal
+  $controlDeadline = (Get-Date).AddSeconds(35)
+  do {
+    $controlProcess.Refresh()
+    if ($controlProcess.HasExited) { throw "Control launch exited during startup with code $($controlProcess.ExitCode)" }
+    $controlWindow = $controlProcess.MainWindowHandle
+    if ($controlWindow -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+  } while ($controlWindow -eq [IntPtr]::Zero -and (Get-Date) -lt $controlDeadline)
+  if ($controlWindow -eq [IntPtr]::Zero) { throw 'Control launch did not create a top-level window' }
+  $controlClose.windowCreated = $true
+  $controlClose.wmClosePosted = [AlulaArtifactWindow]::PostMessage(
+    $controlWindow, 0x0010, [IntPtr]::Zero, [IntPtr]::Zero)
+  if (!$controlProcess.WaitForExit(10000)) {
+    $controlClose.closeTimedOut = $true
+    try { $controlProcess.Kill() } catch [System.InvalidOperationException] { }
+    $controlProcess.WaitForExit(10000) | Out-Null
+  }
+  $controlProcess.Refresh()
+  $controlClose.exitCode = if ($controlProcess.HasExited) { $controlProcess.ExitCode } else { $null }
+}
+catch {
+  $controlClose.error = $_.Exception.Message
+}
+finally {
+  if ($controlProcess) {
+    try {
+      if (!$controlProcess.HasExited) {
+        $controlProcess.Kill()
+        $controlProcess.WaitForExit(10000) | Out-Null
+      }
+    }
+    catch [System.InvalidOperationException] { }
+    $controlProcess.Dispose()
+  }
+}
+$controlPath = Join-Path $OutputDirectory 'no-accessibility-close-control.json'
+$controlClose | ConvertTo-Json -Depth 3 | Set-Content -Path $controlPath -Encoding utf8
+if (Test-Path $metadataPath) {
+  $metadata = Get-Content $metadataPath -Raw | ConvertFrom-Json
+  $metadata | Add-Member -NotePropertyName noAccessibilityCloseControl -NotePropertyValue $controlClose -Force
+  $metadata | ConvertTo-Json -Depth 9 | Set-Content -Path $metadataPath -Encoding utf8
+}
+
 if ($validationError -or $closeError) {
   $failureSummary = @()
   if ($validationError) { $failureSummary += "Artifact validation failed: $validationError" }
