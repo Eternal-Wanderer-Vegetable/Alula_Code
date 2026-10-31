@@ -1254,3 +1254,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 三平台 Flutter targetPlatform 测试验证首行 insert-before 光标行为、上下插入、Rust 双视图同步、undo/redo，以及 `fn main() { println!("linux-save-ok"); }` 保存回读。定向 18 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 在工作树与精确 `HEAD 1388175 + staged patch` 隔离快照均 EXIT=0（Rust workspace、Clippy、build_core、Flutter 460）；`cargo fmt --all -- --check`、Flutter analyze（0 issues）通过。
 - GitNexus 编辑前风险：`WorkbenchPage` CRITICAL（295 affected symbols / 72 processes / 20 modules），`_insertNewlineWithIndent` CRITICAL（71 / 56 / 15），`KeybindingSet` LOW。Staged detect 为 9 files / 4 symbols / 140 processes / CRITICAL；all-scope 为 45 / 16 / 140 / CRITICAL，包含其它未暂存修改。更改未修改既有 Enter 实现；EDT-07 的移动/复制/删除/合并/排序/去重仍未完成。
 - 证据：`docs/diagnostics/2026-11-01-p04/p04.34-insert-line-above-below.md`。targetPlatform 自动化不替代 P15 原生平台验收。
+
+## P04.35 / EDT-07b：删除行（2026-11-01）
+
+- 新增 Code-OSS `editor.action.deleteLines`，默认 Windows/Linux Ctrl+Shift+K、macOS Cmd+Shift+K。Rust 行位置/UTF-16 边界计算出多选删除范围，按预算执行单次 TextOps，保留 undo/redo、dirty、保存与分屏同步。
+- 三平台定向 19 项全过，覆盖首行、emoji、相邻多光标、文件末尾空行、BOM/CRLF 保存回读。完整工作树 `bash init.sh` 通过：Rust workspace、Clippy、build_core、Flutter 464；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 为 0 issues。精确暂存 patch 已应用到 detached `HEAD a69cb36` 隔离 worktree，完整 `bash init.sh` 通过（Flutter 464，含 Rust workspace、Clippy、build_core）。
+- GitNexus 编辑前 `_registerCommands`、`KeybindingSet` impact 为 LOW；partial FTS、UNKNOWN 与 broader graph risk 保持未降级。详见 `docs/diagnostics/2026-11-01-p04/p04.35-delete-lines.md`。EDT-07 其他行操作与 P15 原生设备验收仍开放。

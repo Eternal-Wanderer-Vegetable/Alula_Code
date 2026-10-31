@@ -142,6 +142,23 @@ void main() {
       expect(mac.commandForChord(parseChord('ctrl+enter')!), isNull);
     });
 
+    test('line deletion uses Ctrl/Cmd+Shift+K on each platform', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+shift+k')!),
+          'editor.action.deleteLines',
+        );
+      }
+      expect(
+        mac.commandForChord(parseChord('cmd+shift+k')!),
+        'editor.action.deleteLines',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+shift+k')!), isNull);
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

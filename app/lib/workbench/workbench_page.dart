@@ -598,6 +598,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? 'Cmd+Enter'
             : 'Ctrl+Enter',
         enablement: 'editorTextFocus');
+    reg('editor.action.deleteLines', '编辑器', '删除行', _deleteLines,
+        shortcut: defaultTargetPlatform == TargetPlatform.macOS
+            ? 'Cmd+Shift+K'
+            : 'Ctrl+Shift+K',
+        enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
@@ -2604,6 +2609,217 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (selection == null) return;
     final text = _readDocumentRange(doc, selection.start, selection.end);
     await Clipboard.setData(ClipboardData(text: text));
+  }
+
+  Future<void> _deleteLines() async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final crossWindow = doc.crossWindowSelection;
+    final selections = normalizeSelectionSet(
+      crossWindow == null
+          ? [doc.selection, ...doc.additionalSelections]
+          : [crossWindow],
+    );
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '删除行已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentLineOffset documentStart;
+    final lineSelections =
+        <({int firstLine, int lastLine, int column, int order})>[];
+    try {
+      documentStart = doc.doc.lineOffset(0);
+      if (documentStart.version != expectedVersion) {
+        throw StateError('文档版本在读取行数时发生变化');
+      }
+      if (documentStart.lineCount == 1 && documentStart.totalUtf16Length == 0) {
+        return;
+      }
+
+      for (var order = 0; order < selections.length; order++) {
+        final selection = selections[order];
+        final start = doc.doc.positionAt(selection.start);
+        final end = doc.doc.positionAt(selection.end);
+        final active = doc.doc.positionAt(selection.extentOffset);
+        if (start.version != expectedVersion ||
+            end.version != expectedVersion ||
+            active.version != expectedVersion) {
+          throw StateError('文档版本在解析删除行选区时发生变化');
+        }
+        var lastLine = end.line;
+        if (start.line < lastLine && end.character == 0) lastLine--;
+        lineSelections.add((
+          firstLine: start.line,
+          lastLine: lastLine < start.line ? start.line : lastLine,
+          column: active.character + 1,
+          order: order,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '删除行未应用：$error');
+      return;
+    }
+
+    lineSelections.sort((a, b) {
+      final byStart = a.firstLine.compareTo(b.firstLine);
+      if (byStart != 0) return byStart;
+      final byEnd = a.lastLine.compareTo(b.lastLine);
+      return byEnd != 0 ? byEnd : a.order.compareTo(b.order);
+    });
+    final mergedLines =
+        <({int firstLine, int lastLine, int column, int order})>[];
+    for (final current in lineSelections) {
+      if (mergedLines.isEmpty ||
+          current.firstLine > mergedLines.last.lastLine + 1) {
+        mergedLines.add(current);
+        continue;
+      }
+      final previous = mergedLines.removeLast();
+      mergedLines.add((
+        firstLine: previous.firstLine,
+        lastLine: current.lastLine > previous.lastLine
+            ? current.lastLine
+            : previous.lastLine,
+        column: previous.column,
+        order: previous.order,
+      ));
+    }
+
+    final plans = <({
+      int start,
+      int end,
+      String removed,
+      int mappedStart,
+      int mappedCursor,
+    })>[];
+    var deletedUtf16 = 0;
+    try {
+      for (final lines in mergedLines) {
+        final first = doc.doc.lineOffset(lines.firstLine);
+        if (first.version != expectedVersion) {
+          throw StateError('文档版本在解析删除行范围时发生变化');
+        }
+
+        late final int start;
+        late final int end;
+        late final int targetStart;
+        late final int targetEnd;
+        if (lines.lastLine < documentStart.lineCount - 1) {
+          final next = doc.doc.lineOffset(lines.lastLine + 1);
+          if (next.version != expectedVersion) {
+            throw StateError('文档版本在解析删除行范围时发生变化');
+          }
+          final target = doc.doc.lineBoundary(next.offsetUtf16);
+          if (target.version != expectedVersion) {
+            throw StateError('文档版本在读取删除后光标位置时发生变化');
+          }
+          start = first.offsetUtf16;
+          end = next.offsetUtf16;
+          targetStart = target.startUtf16;
+          targetEnd = target.endUtf16;
+        } else if (lines.firstLine > 0) {
+          final previous = doc.doc.lineOffset(lines.firstLine - 1);
+          if (previous.version != expectedVersion) {
+            throw StateError('文档版本在解析删除行范围时发生变化');
+          }
+          final target = doc.doc.lineBoundary(previous.offsetUtf16);
+          if (target.version != expectedVersion) {
+            throw StateError('文档版本在读取删除后光标位置时发生变化');
+          }
+          start = target.endUtf16;
+          end = documentStart.totalUtf16Length;
+          targetStart = target.startUtf16;
+          targetEnd = target.endUtf16;
+        } else {
+          start = 0;
+          end = documentStart.totalUtf16Length;
+          targetStart = 0;
+          targetEnd = 0;
+        }
+
+        if (start < 0 || end < start || end > documentStart.totalUtf16Length) {
+          throw StateError('Rust 返回了无效的整行删除范围');
+        }
+        final removedLength = end - start;
+        if (removedLength == 0) continue;
+        if (removedLength > _undoHistoryBudget.maxTotalChars - deletedUtf16) {
+          throw StateError(
+              '删除行撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        final removed = _readDocumentRange(doc, start, end);
+        final localColumn =
+            (lines.column - 1).clamp(0, targetEnd - targetStart).toInt();
+        final cursorBeforeDeletion = targetStart + localColumn;
+        plans.add((
+          start: start,
+          end: end,
+          removed: removed,
+          mappedStart: start - deletedUtf16,
+          mappedCursor: cursorBeforeDeletion <= start
+              ? cursorBeforeDeletion - deletedUtf16
+              : cursorBeforeDeletion - deletedUtf16 - removedLength,
+        ));
+        deletedUtf16 += removedLength;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '删除行未应用：$error');
+      return;
+    }
+
+    if (plans.isEmpty) return;
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '删除行未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.delete(plan.start, plan.end - plan.start),
+    ];
+    final inverse = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.mappedStart, plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '删除行未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final newLength = documentStart.totalUtf16Length - deletedUtf16;
+    final mappedSelections = normalizeSelectionSet([
+      for (final plan in plans)
+        TextSelection.collapsed(
+          offset: plan.mappedCursor.clamp(0, newLength).toInt(),
+        ),
+    ]);
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已删除行');
   }
 
   Future<void> _insertLine({required bool before}) async {

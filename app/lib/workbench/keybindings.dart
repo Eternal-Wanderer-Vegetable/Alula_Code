@@ -218,6 +218,7 @@ class KeybindingSet {
     'editor.action.outdentLines': 'ctrl+bracketleft',
     'editor.action.insertLineBefore': 'ctrl+shift+enter',
     'editor.action.insertLineAfter': 'ctrl+enter',
+    'editor.action.deleteLines': 'ctrl+shift+k',
     'deleteWordLeft': 'ctrl+backspace',
     'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
@@ -255,6 +256,7 @@ class KeybindingSet {
         result['editor.action.outdentLines'] = 'cmd+bracketleft';
         result['editor.action.insertLineBefore'] = 'cmd+shift+enter';
         result['editor.action.insertLineAfter'] = 'cmd+enter';
+        result['editor.action.deleteLines'] = 'cmd+shift+k';
         result['deleteWordLeft'] = 'alt+backspace';
         result['deleteWordRight'] = 'alt+delete';
         result['deleteAllLeft'] = 'cmd+backspace';
