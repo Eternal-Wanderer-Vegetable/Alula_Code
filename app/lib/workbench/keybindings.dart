@@ -204,6 +204,10 @@ class KeybindingSet {
       case TargetPlatform.macOS:
         result['workbench.action.navigateBack'] = 'ctrl+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result['editor.wordPartLeft'] = 'ctrl+alt+arrowleft';
+        result['editor.wordPartLeftSelect'] = 'ctrl+alt+shift+arrowleft';
+        result['editor.wordPartRight'] = 'ctrl+alt+arrowright';
+        result['editor.wordPartRightSelect'] = 'ctrl+alt+shift+arrowright';
         result.remove('editor.columnSelectUp');
         result.remove('editor.columnSelectDown');
         result.remove('editor.columnSelectLeft');

@@ -60,6 +60,25 @@ Future<void> _pressWordArrow(
   await tester.pump();
 }
 
+Future<void> _pressWordPartArrow(
+  WidgetTester tester, {
+  required LogicalKeyboardKey arrow,
+  required bool extendSelection,
+}) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+  if (extendSelection) {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  }
+  await tester.sendKeyEvent(arrow);
+  if (extendSelection) {
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  }
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+}
+
 void main() {
   for (final platform in [
     TargetPlatform.windows,
@@ -150,6 +169,144 @@ void main() {
       }
     });
   }
+
+  testWidgets('macOS Ctrl+Option moves and extends subword selections',
+      (tester) async {
+    try {
+      await _openWordFixture(
+        tester,
+        TargetPlatform.macOS,
+        text: 'thisIsACamelCaseVar\r\nsnake_case',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      var controller = tester.widget<TextField>(editor).controller!;
+      final document = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField))
+          .inputWindow
+          .document;
+      final sourceVersion = document.version;
+      const normalizedText = 'thisIsACamelCaseVar\nsnake_case';
+      expect(controller.text, normalizedText);
+
+      controller.selection = const TextSelection.collapsed(offset: 0);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowRight,
+        extendSelection: false,
+      );
+      expect(controller.selection, const TextSelection.collapsed(offset: 4));
+
+      controller.selection = const TextSelection.collapsed(offset: 0);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowRight,
+        extendSelection: true,
+      );
+      expect(
+        controller.selection,
+        const TextSelection(baseOffset: 0, extentOffset: 4),
+      );
+
+      controller.selection = const TextSelection.collapsed(offset: 19);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowLeft,
+        extendSelection: true,
+      );
+      expect(
+        controller.selection,
+        const TextSelection(baseOffset: 19, extentOffset: 16),
+      );
+
+      controller.selection = const TextSelection.collapsed(offset: 20);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowRight,
+        extendSelection: false,
+      );
+      expect(controller.selection, const TextSelection.collapsed(offset: 25));
+
+      controller.selection = const TextSelection.collapsed(offset: 30);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowLeft,
+        extendSelection: false,
+      );
+      expect(controller.selection, const TextSelection.collapsed(offset: 26));
+
+      expect(document.resync().content, normalizedText);
+      expect(document.version, sourceVersion,
+          reason: 'subword navigation must not edit the Rust document');
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('macOS subword movement crosses the bounded input window',
+      (tester) async {
+    try {
+      final source = '${'a' * 20000}CamelCase';
+      await _openWordFixture(
+        tester,
+        TargetPlatform.macOS,
+        text: source,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      var controller = tester.widget<TextField>(editor).controller!;
+      final document = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField))
+          .inputWindow
+          .document;
+      final sourceVersion = document.version;
+
+      controller.selection = const TextSelection.collapsed(offset: 0);
+      await tester.pump();
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowRight,
+        extendSelection: false,
+      );
+      var field =
+          tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(field.inputWindow.startUtf16, greaterThan(0));
+      expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+          20000);
+      expect(controller.text.length, lessThan(source.length));
+
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowRight,
+        extendSelection: false,
+      );
+      field = tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+          20005);
+
+      await _pressWordPartArrow(
+        tester,
+        arrow: LogicalKeyboardKey.arrowLeft,
+        extendSelection: true,
+      );
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(field.inputWindow.startUtf16 + controller.selection.baseOffset,
+          20005);
+      expect(field.inputWindow.startUtf16 + controller.selection.extentOffset,
+          20000);
+
+      expect(document.resync().content, source);
+      expect(document.version, sourceVersion,
+          reason: 'bounded-window movement must not edit Rust text');
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 
   testWidgets('word-left remains bounded near a recentered input window edge',
       (tester) async {

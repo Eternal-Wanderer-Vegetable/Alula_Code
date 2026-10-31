@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 20;
+const int expectedAbiVersion = 21;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -768,6 +768,28 @@ class AlulaDoc {
     );
     version = result.version;
     return result;
+  }
+
+  /// Move one word part in the Rust-owned document without reading its text.
+  int wordPartOffset(int offsetUtf16, {required bool left}) {
+    if (offsetUtf16 < 0) {
+      throw RangeError.value(offsetUtf16, 'offsetUtf16', 'must be non-negative');
+    }
+    final json = core._ffi.docWordPartOffsetJson(
+      id,
+      offsetUtf16,
+      left ? 0 : 1,
+    );
+    final r = jsonDecode(json) as Map<String, Object?>;
+    if (r['ok'] != true) {
+      final err = r['error'];
+      throw AlulaException(
+        err is Map ? (err['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(err),
+      );
+    }
+    version = r['version'] as int;
+    return r['offsetUtf16'] as int;
   }
 
   /// Read a bounded batch of line windows without mirroring the document.

@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
     BufferError, TextBuffer, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp,
-    TextRangeRead,
+    TextRangeRead, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -224,6 +224,18 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_offset_utf16(line))
+    }
+
+    /// Move a Rust-owned document cursor by one word part.
+    pub fn word_part_offset_utf16(
+        &self,
+        id: u64,
+        offset_utf16: usize,
+        direction: WordPartDirection,
+    ) -> Option<Result<usize, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.word_part_offset_utf16(offset_utf16, direction))
     }
 
     /// Read a bounded page of line windows from a registered Rust document.

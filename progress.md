@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.5 / EDT-01b 完成）
+### 最新进展（2026-10-31，P04.6 / EDT-01c 完成）
+
+- 固定 Code-OSS `1.145.0-dev` commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 的 word-part 行为已接入：macOS Ctrl+Option+左右方向键与 Shift 选择；Windows/Linux 不注册该默认 chord。Rust Rope 按绝对 UTF-16 偏移计算 camelCase、缩写、下划线/连字符和普通分隔符边界，跨输入窗时重居中，Rust 文本和版本保持不变。
+- 新增 ABI v21 `alula_doc_word_part_offset`；Rust 子词单测 4 项、editor-core FFI 对拍 1 项、键位与工作台 Flutter 定向测试 16 项通过。`bash init.sh` EXIT=0（Flutter 280 项、Rust workspace、Clippy、build_core）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.6-word-part-movement.md`。
+- P04 / feat-026 仍是唯一活动 feature；P04.6 完成后，下一 EDT 子项需先按 `docs/03` 剩余要求拆解。Flutter targetPlatform 测试不等同真实 macOS 键盘、IME 或辅助功能验收；这些仍属 P15。历史 Windows Release artifact 的 close crash 和其他 EV-P03 pending 门保持原记录。
+
+### 阶段进展（2026-10-31，P04.5 / EDT-01b 完成）
 
 - 新增 `app/test/workbench_word_navigation_test.dart` 与平台键位 fixture：Windows/Linux Ctrl+方向键、macOS Option+方向键完成双向词移动和 Shift 选择；覆盖 CRLF 读入后的 LF 文本、第二行边界及长文档重居中后的有界窗边缘，Rust 全文与版本不变。
 - 修正历史导航默认键位与编辑器词移动冲突：Windows Alt+方向键；Linux Ctrl+Alt+- / Ctrl+Shift+-；macOS Ctrl+- / Ctrl+Shift+-。macOS Option+Shift+方向键留给原生词/段落选择，不再被列选择处理器吞掉。定向 14 项通过，完整 `bash init.sh` 通过（Flutter 278 项），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.5-word-cursor-movement.md`。

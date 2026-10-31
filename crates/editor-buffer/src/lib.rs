@@ -4,7 +4,7 @@
 //! UTF-16 code unit；本 crate 负责向 Ropey 的 char 索引换算，并拒绝落在
 //! 代理对中间等非法边界上的操作。
 
-use ropey::Rope;
+use ropey::{Rope, RopeSlice};
 use serde::{Deserialize, Serialize};
 
 /// Maximum UTF-16 units requested by one bounded document read.
@@ -15,6 +15,139 @@ pub const MAX_READ_LINES: usize = 256;
 pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
 /// Maximum text kept for each representative minimap line, in UTF-16 units.
 pub const MAX_MINIMAP_LINE_SAMPLE_UTF16: usize = 48;
+
+const WORD_SEPARATORS: &str = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WordPartDirection {
+    Left,
+    Right,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct WordToken {
+    start: usize,
+    end: usize,
+    is_separator: bool,
+}
+
+fn word_char_class(ch: char) -> Option<bool> {
+    if ch == ' ' || ('\t'..='\r').contains(&ch) {
+        return None;
+    }
+    Some(WORD_SEPARATORS.contains(ch))
+}
+
+fn previous_word_token(line: RopeSlice<'_>, before: usize) -> Option<WordToken> {
+    let mut index = before.min(line.len_chars());
+    let class = loop {
+        if index == 0 {
+            return None;
+        }
+        index -= 1;
+        if let Some(class) = word_char_class(line.char(index)) {
+            break class;
+        }
+    };
+
+    let mut start = index;
+    while start > 0 && word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn next_word_token(line: RopeSlice<'_>, from: usize) -> Option<WordToken> {
+    let mut index = from.min(line.len_chars());
+    let class = loop {
+        if index == line.len_chars() {
+            return None;
+        }
+        if let Some(class) = word_char_class(line.char(index)) {
+            break class;
+        }
+        index += 1;
+    };
+
+    let mut start = index;
+    while start > 0 && word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn line_content_char_len(line: RopeSlice<'_>) -> usize {
+    let mut len = line.len_chars();
+    if len > 0 && line.char(len - 1) == '\n' {
+        len -= 1;
+        if len > 0 && line.char(len - 1) == '\r' {
+            len -= 1;
+        }
+    }
+    len
+}
+
+fn previous_word_part_boundary(line: RopeSlice<'_>, cursor: usize) -> Option<usize> {
+    for boundary in (1..cursor).rev() {
+        let left = line.char(boundary - 1);
+        let right = line.char(boundary);
+        if (left == '_' && right != '_')
+            || (left == '-' && right != '-')
+            || ((left.is_ascii_lowercase() || left.is_ascii_digit()) && right.is_ascii_uppercase())
+        {
+            return Some(boundary);
+        }
+        if left.is_ascii_uppercase()
+            && right.is_ascii_uppercase()
+            && boundary + 1 < line.len_chars()
+        {
+            let right_right = line.char(boundary + 1);
+            if right_right.is_ascii_lowercase() || right_right.is_ascii_digit() {
+                return Some(boundary);
+            }
+        }
+    }
+    None
+}
+
+fn next_word_part_boundary(line: RopeSlice<'_>, cursor: usize) -> Option<usize> {
+    for boundary in (cursor + 1)..line.len_chars() {
+        let left = line.char(boundary - 1);
+        let right = line.char(boundary);
+        if (left != '_' && right == '_')
+            || (left != '-' && right == '-')
+            || ((left.is_ascii_lowercase() || left.is_ascii_digit()) && right.is_ascii_uppercase())
+        {
+            return Some(boundary);
+        }
+        if left.is_ascii_uppercase()
+            && right.is_ascii_uppercase()
+            && boundary + 1 < line.len_chars()
+        {
+            let right_right = line.char(boundary + 1);
+            if right_right.is_ascii_lowercase() || right_right.is_ascii_digit() {
+                return Some(boundary);
+            }
+        }
+    }
+    None
+}
 
 /// A bounded read from the Rust-authoritative document.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -219,6 +352,88 @@ impl TextBuffer {
             line,
             offset_utf16: self.rope.char_to_utf16_cu(char_index),
         })
+    }
+
+    /// Move by one VS Code word part using absolute UTF-16 document offsets.
+    /// The operation scans only the current Rope line and never materializes
+    /// the full document or line as a `String`.
+    pub fn word_part_offset_utf16(
+        &self,
+        offset_utf16: usize,
+        direction: WordPartDirection,
+    ) -> Result<usize, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let cursor = caret_char.saturating_sub(line_start_char).min(content_len);
+        let content = line.slice(..content_len);
+        let line_start_utf16 = self.rope.char_to_utf16_cu(line_start_char);
+        let cursor_utf16 = line_start_utf16 + content.char_to_utf16_cu(cursor);
+
+        match direction {
+            WordPartDirection::Left if cursor == 0 => {
+                if line_index == 0 {
+                    return Ok(cursor_utf16);
+                }
+                let previous_line_start = self.rope.line_to_char(line_index - 1);
+                let previous_line = self.rope.line(line_index - 1);
+                let previous_content_len = line_content_char_len(previous_line);
+                return Ok(self.rope.char_to_utf16_cu(previous_line_start)
+                    + previous_line.char_to_utf16_cu(previous_content_len));
+            }
+            WordPartDirection::Right if cursor == content_len => {
+                if line_index + 1 == self.rope.len_lines() {
+                    return Ok(cursor_utf16);
+                }
+                return Ok(self
+                    .rope
+                    .char_to_utf16_cu(self.rope.line_to_char(line_index + 1)));
+            }
+            _ => {}
+        }
+
+        let destination = match direction {
+            WordPartDirection::Left => {
+                let previous_token = previous_word_token(content, cursor);
+                let word_start = previous_token.map_or(0, |token| token.start);
+                let word_end = previous_token.map_or(0, |token| {
+                    if cursor <= token.end {
+                        previous_word_token(content, token.start).map_or(0, |previous| previous.end)
+                    } else {
+                        token.end
+                    }
+                });
+                let subword = previous_word_part_boundary(content, cursor).unwrap_or(0);
+                word_start.max(word_end).max(subword)
+            }
+            WordPartDirection::Right => {
+                let next_token = next_word_token(content, cursor);
+                let word_start = next_token.map_or(content_len, |token| {
+                    if cursor >= token.start {
+                        next_word_token(content, token.end).map_or(content_len, |next| next.start)
+                    } else {
+                        token.start
+                    }
+                });
+                let word_end = next_token.map_or(content_len, |token| {
+                    if token.is_separator
+                        && token.end - token.start == 1
+                        && token.end < content_len
+                        && word_char_class(content.char(token.end)) == Some(false)
+                    {
+                        next_word_token(content, token.end).map_or(content_len, |next| next.end)
+                    } else {
+                        token.end
+                    }
+                });
+                let subword = next_word_part_boundary(content, cursor).unwrap_or(content_len);
+                word_start.min(word_end).min(subword)
+            }
+        };
+
+        Ok(line_start_utf16 + content.char_to_utf16_cu(destination))
     }
 
     /// Read a bounded UTF-16 range without materialising the whole document.
@@ -616,6 +831,122 @@ mod tests {
         assert_eq!(buf2.line_col_utf16(2), None);
         // Emoji 行内列按 UTF-16 计：a(1) 🦊(2) → 'b' 在 (0,3)
         assert_eq!(buf2.line_col_utf16(3), Some((0, 3)));
+    }
+
+    #[test]
+    fn word_part_movement_matches_camel_and_acronym_boundaries() {
+        let buffer = TextBuffer::open("thisIsACamelCaseVar");
+        let expected = [0, 4, 6, 7, 12, 16, 19];
+        let mut offset = 0;
+        let mut stops = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Right)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            stops.push(offset);
+        }
+        assert_eq!(stops, expected);
+
+        let mut offset = buffer.len_utf16();
+        let mut reverse = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Left)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            reverse.push(offset);
+        }
+        assert_eq!(reverse, expected.into_iter().rev().collect::<Vec<_>>());
+
+        let acronym = TextBuffer::open("HTTPServer");
+        assert_eq!(
+            acronym.word_part_offset_utf16(0, WordPartDirection::Right),
+            Ok(4)
+        );
+    }
+
+    #[test]
+    fn word_part_movement_splits_underscores_and_skips_default_separators() {
+        let buffer = TextBuffer::open("snake_case;next");
+        let mut offset = 0;
+        let mut right = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Right)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            right.push(offset);
+        }
+        assert_eq!(right, [0, 5, 10, 11, 15]);
+
+        let mut offset = buffer.len_utf16();
+        let mut left = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Left)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            left.push(offset);
+        }
+        assert_eq!(left, [15, 11, 10, 6, 0]);
+    }
+
+    #[test]
+    fn word_part_movement_keeps_emoji_scalar_safe_and_crosses_crlf_lines() {
+        let unicode = TextBuffer::open("go🦊ToValue");
+        assert_eq!(
+            unicode
+                .word_part_offset_utf16(0, WordPartDirection::Right)
+                .unwrap(),
+            6
+        );
+        assert_eq!(
+            unicode
+                .word_part_offset_utf16(unicode.len_utf16(), WordPartDirection::Left)
+                .unwrap(),
+            6
+        );
+        assert!(unicode
+            .word_part_offset_utf16(3, WordPartDirection::Left)
+            .is_err());
+
+        let crlf = TextBuffer::open("firstPart\r\nnextPart");
+        assert_eq!(
+            crlf.word_part_offset_utf16(9, WordPartDirection::Right)
+                .unwrap(),
+            11
+        );
+        assert_eq!(
+            crlf.word_part_offset_utf16(11, WordPartDirection::Left)
+                .unwrap(),
+            9
+        );
+    }
+
+    #[test]
+    fn word_part_movement_scans_long_rope_lines_without_window_limits() {
+        let prefix = "a".repeat(100_000);
+        let buffer = TextBuffer::open(&format!("{prefix}CamelCase"));
+        let end = buffer.len_utf16();
+        assert_eq!(
+            buffer
+                .word_part_offset_utf16(end, WordPartDirection::Left)
+                .unwrap(),
+            100_005
+        );
     }
 
     #[test]

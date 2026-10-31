@@ -19,7 +19,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
-use editor_buffer::{BufferError, TextOp};
+use editor_buffer::{BufferError, TextOp, WordPartDirection};
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_location,
@@ -32,7 +32,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 20;
+pub const ALULA_ABI_VERSION: u32 = 21;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -724,6 +724,48 @@ pub extern "C" fn alula_doc_line_offset(id: u64, line: u64) -> *mut c_char {
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_line_offset")))
+}
+
+/// Move a document cursor to the adjacent VS Code word-part boundary.
+/// `direction` is 0 for left and 1 for right; offsets use UTF-16 code units.
+#[no_mangle]
+pub extern "C" fn alula_doc_word_part_offset(
+    id: u64,
+    offset_utf16: u64,
+    direction: u32,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let Ok(offset_utf16) = usize::try_from(offset_utf16) else {
+            return err_json("InvalidArgument", json!("offset is not representable"));
+        };
+        let direction = match direction {
+            0 => WordPartDirection::Left,
+            1 => WordPartDirection::Right,
+            value => return err_json("InvalidArgument", json!({ "direction": value })),
+        };
+        let registry = registry_lock();
+        match registry.word_part_offset_utf16(id, offset_utf16, direction) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(destination)) => {
+                let Some(version) = registry.version_of(id) else {
+                    return err_json("UnknownDoc", json!({ "id": id }));
+                };
+                to_c_ptr(
+                    json!({
+                        "ok": true,
+                        "version": version,
+                        "offsetUtf16": destination,
+                    })
+                    .to_string(),
+                )
+            }
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_word_part_offset")))
 }
 
 /// Convert an absolute Rust-document UTF-16 offset to an LSP UTF-16 position.
@@ -2110,6 +2152,29 @@ mod tests {
         let invalid = take(alula_doc_position_offset(id, 3, 0));
         assert_eq!(invalid["ok"], false);
         assert_eq!(invalid["error"]["code"], "InvalidLine");
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn word_part_offset_over_ffi_uses_utf16_and_keeps_document_version() {
+        let id = 93_041;
+        take(unsafe { alula_doc_open(id, c("go🦊ToValue\r\nsnake_case").as_ptr()) });
+
+        let right = take(alula_doc_word_part_offset(id, 0, 1));
+        assert_eq!(right["ok"], true);
+        assert_eq!(right["version"], 1);
+        assert_eq!(right["offsetUtf16"], 6);
+
+        let left = take(alula_doc_word_part_offset(id, 11, 0));
+        assert_eq!(left["offsetUtf16"], 6);
+        let previous_line = take(alula_doc_word_part_offset(id, 13, 0));
+        assert_eq!(previous_line["offsetUtf16"], 11);
+
+        let split_surrogate = take(alula_doc_word_part_offset(id, 3, 0));
+        assert_eq!(split_surrogate["error"]["code"], "InvalidUtf16Offset");
+        let invalid_direction = take(alula_doc_word_part_offset(id, 0, 2));
+        assert_eq!(invalid_direction["error"]["code"], "InvalidArgument");
+        assert_eq!(take(alula_doc_resync(id))["version"], 1);
         take(alula_doc_close(id));
     }
 

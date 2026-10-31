@@ -39,6 +39,14 @@ void main() {
       );
       expect(mac.commandForChord(parseChord('alt+arrowleft')!), isNull);
       expect(mac.commandForChord(parseChord('alt+shift+arrowleft')!), isNull);
+      expect(
+        mac.commandForChord(parseChord('ctrl+alt+arrowleft')!),
+        'editor.wordPartLeft',
+      );
+      expect(
+        mac.commandForChord(parseChord('ctrl+alt+shift+arrowright')!),
+        'editor.wordPartRightSelect',
+      );
 
       final linux = KeybindingSet.load(platform: TargetPlatform.linux);
       expect(
@@ -49,6 +57,7 @@ void main() {
         linux.commandForChord(parseChord('ctrl+shift+-')!),
         'workbench.action.navigateForward',
       );
+      expect(linux.commandForChord(parseChord('ctrl+alt+arrowleft')!), isNull);
 
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);
       expect(
@@ -59,6 +68,7 @@ void main() {
         windows.commandForChord(parseChord('alt+arrowright')!),
         'workbench.action.navigateForward',
       );
+      expect(windows.commandForChord(parseChord('ctrl+alt+arrowleft')!), isNull);
     });
 
     test('默认表可解析且包含核心键位', () {
