@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.27 / EDT-06c 完成）
+
+- 固定 Code-OSS commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 的 Rust `language-configuration.json`，加入 Rust `()[]{}` 自动闭合、选区包围、默认 autoCloseBefore 边界与只跳过编辑器已插入 closer 的行为。使用 Rust 权威 UTF-16 TextOps，无 ABI 改动；跨 split view 共享的 auto-close marker 上限 10,000，随文档操作重映射，版本失配或对应括号删除时清除。
+- 12 项目标测试通过，覆盖 Windows/Linux/macOS TargetPlatform、multi-cursor、选区、undo/redo、dirty/save/readback、BOM/emoji/CRLF、普通编辑后 skip、字面量 closer、split view 与非 Rust 文档。完整 `bash init.sh` EXIT=0（Flutter 414、Rust workspace、Clippy、build_core）；`cargo fmt --all -- --check` 与 `flutter analyze`（0 issues）通过。报告：`docs/diagnostics/2026-10-31-p04/p04.27-rust-bracket-pairs.md`。
+- GitNexus `_SharedOpenDocState` impact 为 CRITICAL（247 节点/76 流程/20 模块）；图谱缺失边、UNKNOWN 与遍历截断保留，未降级。P04 / feat-026 继续进行中；自动成对删除、引号配对与括号内智能回车留后续 EDT-06 切片。Windows 11 历史 artifact 自动回放已记入 P15；项目级 Windows 主题/布局、Narrator 与退出门仍未通过，原生 DRM Linux 和 macOS 仍 pending。
+
 ### 最新进展（2026-10-31，P04.26 / EDT-06b 完成）
 
 - 普通 Enter/NumpadEnter 现在继承 selection.start 之前的行首缩进，处理多光标与选区替换；光标位于缩进中时仅复制光标前的空白，无缩进行则只插入换行。由 Rust `lineBoundary` / 有界 `readRange` 与既有 UTF-16 TextOps 完成，composition 继续交给 IME，无 ABI 变更。

@@ -125,6 +125,26 @@ bool _isPrintableOvertypeCharacter(String? character) =>
     character.runes
         .every((codePoint) => codePoint >= 0x20 && codePoint != 0x7f);
 
+const Map<String, String> _rustAutoClosingBracketPairs = {
+  '(': ')',
+  '[': ']',
+  '{': '}',
+};
+const String _rustAutoCloseBefore = ';:.,=}])> \t\n\r';
+const int _maxAutoClosedBracketMarkers = 10000;
+
+class _AutoClosedBracketMarker {
+  _AutoClosedBracketMarker({
+    required this.openOffsetUtf16,
+    required this.closeOffsetUtf16,
+    required this.close,
+  });
+
+  int openOffsetUtf16;
+  int closeOffsetUtf16;
+  final String close;
+}
+
 Color _tokenColor(String kind) {
   for (final e in _tokenColors.entries) {
     if (kind.startsWith(e.key)) return e.value;
@@ -1438,6 +1458,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String? transactionId,
   }) {
     if (forward.isNotEmpty) doc.crossWindowSelection = null;
+    if (forward.isNotEmpty) doc.remapAutoClosedBracketMarkers(forward);
     final retainedOperationChars = _operationPayloadChars([forward, inverse]);
     if (beforeSnapshot != null &&
         retainedOperationChars > _undoHistoryBudget.maxTotalChars) {
@@ -2715,6 +2736,250 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) {
       setState(() => _statusDetail = '已继承当前行缩进');
     }
+  }
+
+  Future<void> _applyRustBracketInput(String character) async {
+    final doc = _active;
+    if (doc == null ||
+        doc.inputWindow.hasComposition ||
+        doc.path?.toLowerCase().endsWith('.rs') != true) {
+      return;
+    }
+
+    final closer = _rustAutoClosingBracketPairs[character];
+    final isOpening = closer != null;
+    if (!isOpening &&
+        !_rustAutoClosingBracketPairs.values.contains(character)) {
+      return;
+    }
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '括号输入已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final totalUtf16 = doc.inputWindow.totalUtf16Length;
+    final plans = <({
+      int start,
+      int end,
+      String replacement,
+      String removed,
+      int selectionIndex,
+      int baseInReplacement,
+      int extentInReplacement,
+      TextSelection original,
+      bool skipExistingCloser,
+      bool addAutoClosedMarker,
+      int closeInReplacement,
+    })>[];
+    var inspectedUtf16 = 0;
+    try {
+      for (var index = 0; index < selections.length; index++) {
+        final selection = selections[index];
+        final selectedLength = selection.end - selection.start;
+        if (selectedLength >
+            _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+          throw StateError('选区超过单次操作上限');
+        }
+        inspectedUtf16 += selectedLength;
+
+        final removed = selection.isCollapsed
+            ? ''
+            : _readDocumentRange(doc, selection.start, selection.end);
+        final nextCharacter = selection.end < totalUtf16
+            ? _readDocumentRange(doc, selection.end, selection.end + 1)
+            : '';
+        if (isOpening) {
+          final wrapSelection = !selection.isCollapsed;
+          final canCloseBefore = nextCharacter.isEmpty ||
+              _rustAutoCloseBefore.contains(nextCharacter);
+          final alreadyHasCloser =
+              selection.isCollapsed && nextCharacter == closer;
+          final appendCloser =
+              wrapSelection || (canCloseBefore && !alreadyHasCloser);
+          final replacement = wrapSelection
+              ? '$character$removed$closer'
+              : appendCloser
+                  ? '$character$closer'
+                  : character;
+          plans.add((
+            start: selection.start,
+            end: selection.end,
+            replacement: replacement,
+            removed: removed,
+            selectionIndex: index,
+            baseInReplacement: wrapSelection
+                ? 1 + selection.baseOffset - selection.start
+                : character.length,
+            extentInReplacement: wrapSelection
+                ? 1 + selection.extentOffset - selection.start
+                : character.length,
+            original: selection,
+            skipExistingCloser: false,
+            addAutoClosedMarker: appendCloser,
+            closeInReplacement: appendCloser ? replacement.length - 1 : -1,
+          ));
+          continue;
+        }
+
+        final skipExistingCloser = selection.isCollapsed &&
+            nextCharacter == character &&
+            nextCharacter.isNotEmpty &&
+            doc.hasAutoClosedBracketAt(selection.start, character);
+        plans.add((
+          start: selection.start,
+          end: selection.end,
+          replacement: skipExistingCloser ? '' : character,
+          removed: removed,
+          selectionIndex: index,
+          baseInReplacement: skipExistingCloser ? 1 : character.length,
+          extentInReplacement: skipExistingCloser ? 1 : character.length,
+          original: selection,
+          skipExistingCloser: skipExistingCloser,
+          addAutoClosedMarker: false,
+          closeInReplacement: -1,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '括号输入未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '括号输入未应用：文档版本已变化');
+      return;
+    }
+
+    plans.sort((a, b) => a.start != b.start
+        ? a.start.compareTo(b.start)
+        : a.selectionIndex.compareTo(b.selectionIndex));
+    var payloadChars = 0;
+    for (var index = 0; index < plans.length; index++) {
+      final plan = plans[index];
+      if (index > 0 &&
+          (plan.start < plans[index - 1].end ||
+              plan.start == plans[index - 1].start)) {
+        if (mounted) {
+          setState(() => _statusDetail = '括号输入未应用：多光标编辑范围重叠');
+        }
+        return;
+      }
+      payloadChars += plan.removed.length + plan.replacement.length;
+    }
+    if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '括号输入已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    var deltaBefore = 0;
+    final mappedSelections =
+        List<TextSelection?>.filled(selections.length, null);
+    final mappedStarts = List<int>.filled(plans.length, 0);
+    for (var index = 0; index < plans.length; index++) {
+      final plan = plans[index];
+      final mappedStart = plan.start + deltaBefore;
+      mappedStarts[index] = mappedStart;
+      mappedSelections[plan.selectionIndex] = TextSelection(
+        baseOffset: mappedStart + plan.baseInReplacement,
+        extentOffset: mappedStart + plan.extentInReplacement,
+        affinity: plan.original.affinity,
+        isDirectional: plan.original.isDirectional,
+      );
+      deltaBefore += plan.replacement.length - (plan.end - plan.start);
+    }
+    final orderedSelections = normalizeSelectionSet([
+      for (final selection in mappedSelections)
+        if (selection != null) selection,
+    ]);
+    if (orderedSelections.isEmpty) return;
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in plans.reversed) {
+      if (plan.skipExistingCloser) continue;
+      if (plan.end > plan.start) {
+        forward.add(TextOp.delete(plan.start, plan.end - plan.start));
+      }
+      forward.add(TextOp.insert(plan.start, plan.replacement));
+    }
+    for (var index = plans.length - 1; index >= 0; index--) {
+      final plan = plans[index];
+      if (plan.skipExistingCloser) continue;
+      final mappedStart = mappedStarts[index];
+      inverse.add(TextOp.delete(mappedStart, plan.replacement.length));
+      if (plan.removed.isNotEmpty) {
+        inverse.add(TextOp.insert(mappedStart, plan.removed));
+      }
+    }
+    if (forward.isEmpty) {
+      for (var index = 0; index < plans.length; index++) {
+        final plan = plans[index];
+        if (plan.skipExistingCloser) {
+          doc.consumeAutoClosedBracketAt(mappedStarts[index], character);
+        }
+      }
+      _setDocSelections(doc, orderedSelections);
+      if (mounted) setState(() => _statusDetail = '已跳过现有右括号');
+      return;
+    }
+    if (_operationPayloadChars([forward, inverse]) >
+        _undoHistoryBudget.maxTotalChars) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '括号输入已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+      }
+      return;
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '括号输入未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: orderedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    for (var index = 0; index < plans.length; index++) {
+      final plan = plans[index];
+      if (plan.skipExistingCloser) {
+        doc.consumeAutoClosedBracketAt(mappedStarts[index], character);
+      } else if (plan.addAutoClosedMarker) {
+        doc.addAutoClosedBracketMarker(
+          openOffsetUtf16: mappedStarts[index],
+          closeOffsetUtf16: mappedStarts[index] + plan.closeInReplacement,
+          close: _rustAutoClosingBracketPairs[character]!,
+        );
+      }
+    }
+    doc.replaceInputWindow(
+      orderedSelections.first.extentOffset,
+      selection: orderedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    _setDocSelections(doc, orderedSelections, recordHistory: false);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已输入 Rust 括号');
   }
 
   Future<void> _cutCrossWindowSelection(OpenDoc doc) async {
@@ -4583,6 +4848,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             (key == LogicalKeyboardKey.enter ||
                 key == LogicalKeyboardKey.numpadEnter)) {
           unawaited(_insertNewlineWithIndent());
+          return KeyEventResult.handled;
+        }
+        if (active != null &&
+            !activeHasComposition &&
+            !ctrl &&
+            !meta &&
+            !alt &&
+            !_overtypeMode &&
+            active.path?.toLowerCase().endsWith('.rs') == true &&
+            (_rustAutoClosingBracketPairs.containsKey(character) ||
+                _rustAutoClosingBracketPairs.values.contains(character))) {
+          unawaited(_applyRustBracketInput(character!));
           return KeyEventResult.handled;
         }
         if (_awaitingMoveSelectionChord) {
@@ -7731,7 +8008,7 @@ class _SharedOpenDocState {
     this.dirtyDisk = false,
     this.diskState = DiskDocumentState.current,
     this.conflictBaselineKnown = true,
-  });
+  }) : autoClosedBracketMarkerVersion = doc.version;
 
   final int id;
   String? path;
@@ -7749,6 +8026,158 @@ class _SharedOpenDocState {
   bool undoRedoBusy = false;
   int viewCount = 0;
   bool closed = false;
+  final List<_AutoClosedBracketMarker> autoClosedBracketMarkers = [];
+  int autoClosedBracketMarkerVersion;
+
+  void remapAutoClosedBracketMarkers(List<TextOp> operations) {
+    if (operations.isEmpty) return;
+    if (autoClosedBracketMarkerVersion != doc.version - operations.length) {
+      autoClosedBracketMarkers.clear();
+      autoClosedBracketMarkerVersion = doc.version;
+      return;
+    }
+
+    final edits = <({int start, int deletedLength, int insertedLength})>[];
+    var previousOffset = 0x7fffffffffffffff;
+    for (final operation in operations) {
+      final start = operation.offsetUtf16;
+      if (start > previousOffset) {
+        // TextOps normally arrive in descending document order. If a caller
+        // supplies a sequential batch instead, discard metadata rather than
+        // risk a false overtype after applying an uncertain transform.
+        autoClosedBracketMarkers.clear();
+        autoClosedBracketMarkerVersion = doc.version;
+        return;
+      }
+      previousOffset = start;
+      if (edits.isEmpty || edits.last.start != start) {
+        edits.add((start: start, deletedLength: 0, insertedLength: 0));
+      }
+      final edit = edits.last;
+      edits[edits.length - 1] = operation.type == OpType.insert
+          ? (
+              start: start,
+              deletedLength: edit.deletedLength,
+              insertedLength:
+                  edit.insertedLength + (operation.text?.length ?? 0),
+            )
+          : (
+              start: start,
+              deletedLength: edit.deletedLength + (operation.lenUtf16 ?? 0),
+              insertedLength: edit.insertedLength,
+            );
+    }
+
+    final ascendingEdits = edits.reversed.toList(growable: false);
+    final deletedRanges = <({int start, int end})>[];
+    final rawEvents = <({int threshold, int delta})>[];
+    var previousEnd = -1;
+    for (final edit in ascendingEdits) {
+      if (edit.start < previousEnd) {
+        autoClosedBracketMarkers.clear();
+        autoClosedBracketMarkerVersion = doc.version;
+        return;
+      }
+      final end = edit.start + edit.deletedLength;
+      if (edit.deletedLength > 0) {
+        deletedRanges.add((start: edit.start, end: end));
+        rawEvents.add((
+          threshold: end,
+          delta: edit.insertedLength - edit.deletedLength,
+        ));
+        previousEnd = end;
+      } else if (edit.insertedLength > 0) {
+        rawEvents.add((threshold: edit.start, delta: edit.insertedLength));
+        previousEnd = edit.start;
+      }
+    }
+    rawEvents.sort((a, b) => a.threshold.compareTo(b.threshold));
+    final thresholds = <int>[];
+    final prefixDeltas = <int>[];
+    var runningDelta = 0;
+    for (var index = 0; index < rawEvents.length;) {
+      final threshold = rawEvents[index].threshold;
+      var delta = 0;
+      while (
+          index < rawEvents.length && rawEvents[index].threshold == threshold) {
+        delta += rawEvents[index++].delta;
+      }
+      runningDelta += delta;
+      thresholds.add(threshold);
+      prefixDeltas.add(runningDelta);
+    }
+
+    int? mapOffset(int offsetUtf16) {
+      var low = 0;
+      var high = deletedRanges.length;
+      while (low < high) {
+        final middle = (low + high) ~/ 2;
+        if (deletedRanges[middle].start <= offsetUtf16) {
+          low = middle + 1;
+        } else {
+          high = middle;
+        }
+      }
+      if (low > 0 && offsetUtf16 < deletedRanges[low - 1].end) return null;
+
+      low = 0;
+      high = thresholds.length;
+      while (low < high) {
+        final middle = (low + high) ~/ 2;
+        if (thresholds[middle] <= offsetUtf16) {
+          low = middle + 1;
+        } else {
+          high = middle;
+        }
+      }
+      final delta = low == 0 ? 0 : prefixDeltas[low - 1];
+      return offsetUtf16 + delta;
+    }
+
+    autoClosedBracketMarkers.removeWhere((marker) {
+      final open = mapOffset(marker.openOffsetUtf16);
+      final close = mapOffset(marker.closeOffsetUtf16);
+      if (open == null || close == null) return true;
+      marker.openOffsetUtf16 = open;
+      marker.closeOffsetUtf16 = close;
+      return false;
+    });
+    autoClosedBracketMarkerVersion = doc.version;
+  }
+
+  bool hasAutoClosedBracketAt(int offsetUtf16, String close) {
+    if (autoClosedBracketMarkerVersion != doc.version) {
+      autoClosedBracketMarkers.clear();
+      autoClosedBracketMarkerVersion = doc.version;
+      return false;
+    }
+    return autoClosedBracketMarkers.any((marker) =>
+        marker.closeOffsetUtf16 == offsetUtf16 && marker.close == close);
+  }
+
+  void addAutoClosedBracketMarker({
+    required int openOffsetUtf16,
+    required int closeOffsetUtf16,
+    required String close,
+  }) {
+    if (autoClosedBracketMarkerVersion != doc.version) {
+      autoClosedBracketMarkers.clear();
+      autoClosedBracketMarkerVersion = doc.version;
+    }
+    if (autoClosedBracketMarkers.length >= _maxAutoClosedBracketMarkers) {
+      autoClosedBracketMarkers.removeAt(0);
+    }
+    autoClosedBracketMarkers.add(_AutoClosedBracketMarker(
+      openOffsetUtf16: openOffsetUtf16,
+      closeOffsetUtf16: closeOffsetUtf16,
+      close: close,
+    ));
+  }
+
+  void consumeAutoClosedBracketAt(int offsetUtf16, String close) {
+    autoClosedBracketMarkers.removeWhere((marker) =>
+        marker.closeOffsetUtf16 == offsetUtf16 && marker.close == close);
+  }
 
   void retainView() {
     if (closed) throw StateError('Cannot add a view to a closed document');
@@ -7760,6 +8189,7 @@ class _SharedOpenDocState {
     viewCount--;
     if (viewCount == 0) {
       closed = true;
+      autoClosedBracketMarkers.clear();
       doc.close();
       undoStack.dispose();
     }
@@ -7851,6 +8281,26 @@ class OpenDoc {
   UndoStack get undoStack => _shared.undoStack;
   int get sharedViewCount => _shared.viewCount;
   bool get sharesDocument => !_shared.closed;
+
+  void remapAutoClosedBracketMarkers(List<TextOp> operations) =>
+      _shared.remapAutoClosedBracketMarkers(operations);
+
+  bool hasAutoClosedBracketAt(int offsetUtf16, String close) =>
+      _shared.hasAutoClosedBracketAt(offsetUtf16, close);
+
+  void addAutoClosedBracketMarker({
+    required int openOffsetUtf16,
+    required int closeOffsetUtf16,
+    required String close,
+  }) =>
+      _shared.addAutoClosedBracketMarker(
+        openOffsetUtf16: openOffsetUtf16,
+        closeOffsetUtf16: closeOffsetUtf16,
+        close: close,
+      );
+
+  void consumeAutoClosedBracketAt(int offsetUtf16, String close) =>
+      _shared.consumeAutoClosedBracketAt(offsetUtf16, close);
 
   RustTextInputWindow inputWindow;
   List<EditorDocumentLineRange> foldedLineRanges = const [];
