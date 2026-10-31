@@ -2603,8 +2603,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       String text,
       String removed,
       int selectionIndex,
+      int caretOffset,
     })>[];
     var inspectedUtf16 = 0;
+    final isRust = doc.path?.toLowerCase().endsWith('.rs') == true;
+    final totalUtf16 = doc.inputWindow.totalUtf16Length;
     try {
       for (var index = 0; index < selections.length; index++) {
         final selection = selections[index];
@@ -2635,12 +2638,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final removed = selection.isCollapsed
             ? ''
             : _readDocumentRange(doc, selection.start, selection.end);
+        var text = '\n$indentation';
+        var caretOffset = text.length;
+        if (isRust &&
+            selection.isCollapsed &&
+            selection.start > 0 &&
+            selection.end < totalUtf16 &&
+            doc.hasAutoClosedBracketAt(selection.end, '}')) {
+          if (2 > _undoHistoryBudget.maxTotalChars - inspectedUtf16) {
+            throw StateError('Rust 括号检查超过单次操作上限');
+          }
+          inspectedUtf16 += 2;
+          final pair = _readDocumentRange(
+            doc,
+            selection.start - 1,
+            selection.end + 1,
+          );
+          if (pair == '{}') {
+            final innerIndentation = '$indentation    ';
+            text = '\n$innerIndentation\n$indentation';
+            caretOffset = 1 + innerIndentation.length;
+          }
+        }
         edits.add((
           start: selection.start,
           end: selection.end,
-          text: '\n$indentation',
+          text: text,
           removed: removed,
           selectionIndex: index,
+          caretOffset: caretOffset,
         ));
       }
     } on Object catch (error) {
@@ -2716,8 +2742,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         List<TextSelection?>.filled(selections.length, null);
     for (var index = 0; index < edits.length; index++) {
       final edit = edits[index];
-      final caret =
-          (mappedStarts[index] + edit.text.length).clamp(0, newLength).toInt();
+      final caret = (mappedStarts[index] + edit.caretOffset)
+          .clamp(0, newLength)
+          .toInt();
       mappedBySelection[edit.selectionIndex] =
           TextSelection.collapsed(offset: caret);
     }

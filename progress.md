@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
+### 最新进展（2026-10-31，P04.29 / EDT-06e 完成）
+
+- Rust `.rs` 中，Enter 处于 Alula 自动插入并仍由 marker 跟踪的空 `{}` 内时，会展开为内层加 4 空格及外层原缩进两行，光标进入内层；非 Rust、源文件字面量括号、选区与 IME composition 继续沿原 Enter 路径。复用 Rust 权威 UTF-16 TextOps、版本检查、预算和共享 marker，无 FFI/ABI 变化。
+- 新增 5 个 Flutter 用例，覆盖 Windows/Linux/macOS TargetPlatform、undo/redo、未标记源括号回退，以及在 split view 中插入并保存 `println!("linux-save-ok");`。Enter 定向回归 14 项通过；`bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 428），cargo fmt 与 Flutter analyze（0 issues）通过；精确 HEAD + 暂存补丁隔离快照的 init.sh（Flutter 428）、cargo fmt 与 analyze 也全绿。报告：`docs/diagnostics/2026-10-31-p04/p04.29-rust-smart-enter.md`。
+- GitNexus `_insertNewlineWithIndent` upstream LOW（5 符号/2 流程，但 callable-value 关系仍 lower-bound）；`_focusNodeFor` upstream HIGH（6 符号/3 流程）。不使用 `riskSharedAxes` 降级。接下来继续 EDT-06；token-aware 源括号/注释规则、`()` / `[]` 与引号仍未覆盖，P15 原生验证保持 pending。
+
 ### 最新进展（2026-10-31，P04.28 / EDT-06d 完成）
 
 - Rust `.rs` 文件现在仅在所有光标都位于已自动插入的 `()[]{}` 之间时，按一次 Backspace 成对删除；字面量括号、非 Rust、非空选区、组合输入和跨窗选区仍走原输入路径。使用 Rust 权威 UTF-16 范围、文档版本校验与单批 TextOps，已有 marker 重映射负责移除配对记录；无 ABI 变化。
