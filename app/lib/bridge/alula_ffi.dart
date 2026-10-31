@@ -4,6 +4,7 @@
 /// 语义封装（JSON 解析、版本管理）在 alula_core.dart，UI 不要直接使用本文件。
 library;
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -118,6 +119,13 @@ class AlulaFfi {
   late final Pointer<Utf8> Function(int, int, int) _docWordPartOffset =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint64, Uint32),
           Pointer<Utf8> Function(int, int, int)>('alula_doc_word_part_offset');
+
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>, int)
+      _docDeleteWordRanges = lib.lookupFunction<
+          Pointer<Utf8> Function(Uint64, Pointer<Utf8>, Uint32),
+          Pointer<Utf8> Function(int, Pointer<Utf8>, int)>(
+    'alula_doc_delete_word_ranges',
+  );
 
   late final Pointer<Utf8> Function(int, int) _docPosition = lib.lookupFunction<
       Pointer<Utf8> Function(Uint64, Uint64),
@@ -391,6 +399,19 @@ class AlulaFfi {
 
   String docWordPartOffsetJson(int id, int offsetUtf16, int direction) =>
       _takeJson(_docWordPartOffset(id, offsetUtf16, direction));
+
+  String docDeleteWordRangesJson(
+    int id,
+    List<int> offsetsUtf16,
+    int direction,
+  ) {
+    final offsets = jsonEncode(offsetsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docDeleteWordRanges(id, offsets, direction));
+    } finally {
+      malloc.free(offsets);
+    }
+  }
 
   String docPositionJson(int id, int offsetUtf16) =>
       _takeJson(_docPosition(id, offsetUtf16));

@@ -12,13 +12,14 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 23;
+const int expectedAbiVersion = 24;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
 const int maxDocReadRangeUtf16 = 64 * 1024;
 const int maxDocReadLines = 256;
 const int maxDocColumnSelections = 10000;
+const int maxDocWordDeleteCarets = 10000;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -285,6 +286,25 @@ class DocumentColumnSelections {
     required this.version,
     required this.selections,
   });
+}
+
+/// One absolute UTF-16 deletion range from a Rust document snapshot.
+class DocumentDeleteRange {
+  final int startUtf16;
+  final int endUtf16;
+
+  const DocumentDeleteRange({
+    required this.startUtf16,
+    required this.endUtf16,
+  });
+}
+
+/// A bounded batch of word-delete ranges resolved against one document version.
+class DocumentDeleteRanges {
+  final int version;
+  final List<DocumentDeleteRange> ranges;
+
+  const DocumentDeleteRanges({required this.version, required this.ranges});
 }
 
 /// Absolute Rust-document UTF-16 offset resolved from an LSP position.
@@ -921,6 +941,47 @@ class AlulaDoc {
     }
     version = r['version'] as int;
     return r['offsetUtf16'] as int;
+  }
+
+  /// Resolve VS Code style word-delete ranges for a bounded set of absolute
+  /// UTF-16 carets without transferring document text to Dart.
+  DocumentDeleteRanges wordDeleteRanges(
+    List<int> offsetsUtf16, {
+    required bool left,
+  }) {
+    if (offsetsUtf16.length > maxDocWordDeleteCarets) {
+      throw RangeError.range(
+        offsetsUtf16.length,
+        0,
+        maxDocWordDeleteCarets,
+        'offsetsUtf16.length',
+      );
+    }
+    if (offsetsUtf16.any((offset) => offset < 0)) {
+      throw RangeError('Word-delete offsets must be non-negative');
+    }
+    final json = core._ffi.docDeleteWordRangesJson(
+      id,
+      offsetsUtf16,
+      left ? 0 : 1,
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final ranges = (result['ranges'] as List<Object?>).map((item) {
+      final range = item as Map<String, Object?>;
+      return DocumentDeleteRange(
+        startUtf16: range['startUtf16'] as int,
+        endUtf16: range['endUtf16'] as int,
+      );
+    }).toList(growable: false);
+    version = result['version'] as int;
+    return DocumentDeleteRanges(version: version, ranges: ranges);
   }
 
   /// Read a bounded batch of line windows without mirroring the document.

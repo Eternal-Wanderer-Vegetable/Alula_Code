@@ -62,6 +62,38 @@ void main() {
       );
     });
 
+    test('word delete follows the pinned platform keybindings', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        windows.commandForChord(parseChord('ctrl+backspace')!),
+        'deleteWordLeft',
+      );
+      expect(
+        windows.commandForChord(parseChord('ctrl+delete')!),
+        'deleteWordRight',
+      );
+      expect(
+        linux.commandForChord(parseChord('ctrl+backspace')!),
+        'deleteWordLeft',
+      );
+      expect(
+        linux.commandForChord(parseChord('ctrl+delete')!),
+        'deleteWordRight',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+backspace')!), isNull);
+      expect(mac.commandForChord(parseChord('ctrl+delete')!), isNull);
+      expect(
+        mac.commandForChord(parseChord('alt+backspace')!),
+        'deleteWordLeft',
+      );
+      expect(
+        mac.commandForChord(parseChord('alt+delete')!),
+        'deleteWordRight',
+      );
+    });
+
     test('navigation defaults leave platform word-movement chords available',
         () {
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

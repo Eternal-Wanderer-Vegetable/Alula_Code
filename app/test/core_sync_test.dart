@@ -31,6 +31,39 @@ void main() {
     expect(_bootstrap.core!.abiVersion, expectedAbiVersion);
   }, skip: skip);
 
+  test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
+    final core = _bootstrap.core!;
+    const sample = 'fn main() { println!("linux-save-ok"); }\n';
+    final doc = core.openDoc(9009, sample);
+    final wordEnd = sample.indexOf('linux') + 'linux'.length;
+    final resolved = doc.wordDeleteRanges([wordEnd], left: true);
+    expect(resolved.version, 1);
+    expect(resolved.ranges, hasLength(1));
+    expect(resolved.ranges.single.startUtf16, wordEnd - 'linux'.length);
+    expect(resolved.ranges.single.endUtf16, wordEnd);
+
+    final range = resolved.ranges.single;
+    doc.apply(
+        [TextOp.delete(range.startUtf16, range.endUtf16 - range.startUtf16)]);
+    final edited = sample.replaceRange(range.startUtf16, range.endUtf16, '');
+    expect(doc.resync().content, edited);
+
+    final temporary =
+        await Directory.systemTemp.createTemp('alula_word_delete');
+    final path = '${temporary.path}${Platform.pathSeparator}main.rs';
+    addTearDown(() async {
+      doc.close();
+      if (temporary.existsSync()) await temporary.delete(recursive: true);
+    });
+    doc.saveFile(path);
+    expect(await File(path).readAsString(), edited);
+
+    doc.apply([TextOp.insert(range.startUtf16, 'linux')]);
+    expect(doc.resync().content, sample);
+    doc.saveFile(path);
+    expect(await File(path).readAsString(), sample);
+  }, skip: skip);
+
   test('didClose 只关闭语言文档，不释放 Rust 文本缓冲区', () {
     final core = _bootstrap.core!;
     final doc = core.openDoc(9006, 'kept after didClose');

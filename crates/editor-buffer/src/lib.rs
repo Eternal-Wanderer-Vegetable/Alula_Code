@@ -13,6 +13,8 @@ pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
 pub const MAX_READ_LINES: usize = 256;
 /// Maximum rows returned for one rectangular editor selection.
 pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
+/// Maximum number of caret positions accepted by one word-delete query.
+pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
 pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
 /// Maximum text kept for each representative minimap line, in UTF-16 units.
@@ -27,6 +29,20 @@ pub enum WordPartDirection {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WordDeleteDirection {
+    Left,
+    Right,
+}
+
+/// A deletion range in absolute UTF-16 document coordinates.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextDeleteRange {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct WordToken {
     start: usize,
     end: usize,
@@ -38,6 +54,67 @@ fn word_char_class(ch: char) -> Option<bool> {
         return None;
     }
     Some(WORD_SEPARATORS.contains(ch))
+}
+
+fn delete_word_char_class(ch: char) -> Option<bool> {
+    if ch == ' ' || ch == '\t' {
+        return None;
+    }
+    Some(WORD_SEPARATORS.contains(ch))
+}
+
+fn delete_previous_word_token(line: RopeSlice<'_>, before: usize) -> Option<WordToken> {
+    let mut index = before.min(line.len_chars());
+    let class = loop {
+        if index == 0 {
+            return None;
+        }
+        index -= 1;
+        if let Some(class) = delete_word_char_class(line.char(index)) {
+            break class;
+        }
+    };
+
+    let mut start = index;
+    while start > 0 && delete_word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && delete_word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn delete_next_word_token(line: RopeSlice<'_>, from: usize) -> Option<WordToken> {
+    let mut index = from.min(line.len_chars());
+    let class = loop {
+        if index == line.len_chars() {
+            return None;
+        }
+        if let Some(class) = delete_word_char_class(line.char(index)) {
+            break class;
+        }
+        index += 1;
+    };
+
+    let mut start = index;
+    while start > 0 && delete_word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && delete_word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
 }
 
 fn previous_word_token(line: RopeSlice<'_>, before: usize) -> Option<WordToken> {
@@ -279,6 +356,8 @@ pub enum BufferError {
     },
     /// A viewport request contains too many line windows.
     ReadLineCountTooLarge { requested: usize, max: usize },
+    /// A word-delete query contains more caret positions than the bounded API accepts.
+    WordDeleteCountTooLarge { requested: usize, max: usize },
 }
 
 impl std::fmt::Display for BufferError {
@@ -312,6 +391,9 @@ impl std::fmt::Display for BufferError {
             ),
             BufferError::ReadLineCountTooLarge { requested, max } => {
                 write!(f, "line window count {requested} exceeds maximum {max}")
+            }
+            BufferError::WordDeleteCountTooLarge { requested, max } => {
+                write!(f, "word-delete caret count {requested} exceeds maximum {max}")
             }
         }
     }
@@ -555,6 +637,97 @@ impl TextBuffer {
         };
 
         Ok(line_start_utf16 + content.char_to_utf16_cu(destination))
+    }
+
+    /// Resolve a VS Code style delete-word range without materialising the
+    /// document. The scan is limited to the current logical line and all
+    /// returned offsets use UTF-16 code units.
+    pub fn word_delete_range_utf16(
+        &self,
+        offset_utf16: usize,
+        direction: WordDeleteDirection,
+    ) -> Result<TextDeleteRange, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let cursor = caret_char.saturating_sub(line_start_char).min(content_len);
+        let content = line.slice(..content_len);
+
+        let (start_char, end_char) = match direction {
+            WordDeleteDirection::Left if cursor == 0 => {
+                if line_index == 0 {
+                    (caret_char, caret_char)
+                } else {
+                    let previous_line_start = self.rope.line_to_char(line_index - 1);
+                    let previous_line = self.rope.line(line_index - 1);
+                    let previous_content_len = line_content_char_len(previous_line);
+                    (previous_line_start + previous_content_len, line_start_char)
+                }
+            }
+            WordDeleteDirection::Left => {
+                let mut whitespace_start = cursor;
+                while whitespace_start > 0
+                    && matches!(content.char(whitespace_start - 1), ' ' | '\t')
+                {
+                    whitespace_start -= 1;
+                }
+                if cursor - whitespace_start > 1 {
+                    (line_start_char + whitespace_start, caret_char)
+                } else {
+                    let start =
+                        delete_previous_word_token(content, cursor).map_or(0, |token| token.start);
+                    (line_start_char + start, caret_char)
+                }
+            }
+            WordDeleteDirection::Right => {
+                let mut whitespace_end = cursor;
+                while whitespace_end < content_len
+                    && matches!(content.char(whitespace_end), ' ' | '\t')
+                {
+                    whitespace_end += 1;
+                }
+                if whitespace_end > cursor {
+                    (caret_char, line_start_char + whitespace_end)
+                } else if let Some(token) = delete_next_word_token(content, cursor) {
+                    (caret_char, line_start_char + token.end)
+                } else if cursor < content_len || line_index + 1 == self.rope.len_lines() {
+                    (caret_char, line_start_char + content_len)
+                } else {
+                    let next_line_start = self.rope.line_to_char(line_index + 1);
+                    let next_line = self.rope.line(line_index + 1);
+                    let next_content_len = line_content_char_len(next_line);
+                    let next_content = next_line.slice(..next_content_len);
+                    let next_end = delete_next_word_token(next_content, 0)
+                        .map_or(next_content_len, |token| token.start);
+                    (caret_char, next_line_start + next_end)
+                }
+            }
+        };
+
+        Ok(TextDeleteRange {
+            start_utf16: self.rope.char_to_utf16_cu(start_char),
+            end_utf16: self.rope.char_to_utf16_cu(end_char),
+        })
+    }
+
+    /// Resolve many word-delete ranges against one immutable buffer version.
+    pub fn word_delete_ranges_utf16(
+        &self,
+        offsets_utf16: &[usize],
+        direction: WordDeleteDirection,
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if offsets_utf16.len() > MAX_WORD_DELETE_CARETS {
+            return Err(BufferError::WordDeleteCountTooLarge {
+                requested: offsets_utf16.len(),
+                max: MAX_WORD_DELETE_CARETS,
+            });
+        }
+        offsets_utf16
+            .iter()
+            .map(|&offset| self.word_delete_range_utf16(offset, direction))
+            .collect()
     }
 
     /// Read a bounded UTF-16 range without materialising the whole document.
@@ -952,6 +1125,137 @@ mod tests {
         assert_eq!(buf2.line_col_utf16(2), None);
         // Emoji 行内列按 UTF-16 计：a(1) 🦊(2) → 'b' 在 (0,3)
         assert_eq!(buf2.line_col_utf16(3), Some((0, 3)));
+    }
+
+    #[test]
+    fn word_delete_matches_vs_code_space_and_word_rules() {
+        let left = TextBuffer::open("aa bb");
+        assert_eq!(
+            left.word_delete_range_utf16(3, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 3,
+            })
+        );
+
+        let many_spaces = TextBuffer::open("aa   bb");
+        assert_eq!(
+            many_spaces.word_delete_range_utf16(5, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 5,
+            })
+        );
+        assert_eq!(
+            many_spaces.word_delete_range_utf16(2, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 5,
+            })
+        );
+
+        assert_eq!(
+            left.word_delete_range_utf16(3, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 3,
+                end_utf16: 5,
+            })
+        );
+        assert_eq!(
+            left.word_delete_range_utf16(0, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 0,
+            })
+        );
+        assert_eq!(
+            left.word_delete_range_utf16(5, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 5,
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_crosses_crlf_to_next_line_word_start() {
+        let buffer = TextBuffer::open("aa\r\n   bb\ncc");
+        assert_eq!(
+            buffer.word_delete_range_utf16(2, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 7,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(7, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 4,
+                end_utf16: 7,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(10, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 9,
+                end_utf16: 10,
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_uses_utf16_boundaries_and_scans_beyond_editor_window() {
+        let buffer = TextBuffer::open("fn🦊Value");
+        assert_eq!(
+            buffer.word_delete_range_utf16(4, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 4,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(3, WordDeleteDirection::Left),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 3 })
+        );
+
+        let long = format!("{} 🦊end", "word".repeat(5000));
+        let long_buffer = TextBuffer::open(&long);
+        let expected_end = "word".repeat(5000).encode_utf16().count() + 1;
+        assert_eq!(
+            long_buffer.word_delete_range_utf16(expected_end, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: expected_end,
+                end_utf16: long_buffer.len_utf16(),
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_batches_ranges_and_bounds_caret_count() {
+        let buffer = TextBuffer::open("one two");
+        assert_eq!(
+            buffer.word_delete_ranges_utf16(&[3, 7], WordDeleteDirection::Left),
+            Ok(vec![
+                TextDeleteRange {
+                    start_utf16: 0,
+                    end_utf16: 3,
+                },
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 7,
+                },
+            ])
+        );
+        assert_eq!(
+            buffer.word_delete_ranges_utf16(
+                &vec![0; MAX_WORD_DELETE_CARETS + 1],
+                WordDeleteDirection::Right,
+            ),
+            Err(BufferError::WordDeleteCountTooLarge {
+                requested: MAX_WORD_DELETE_CARETS + 1,
+                max: MAX_WORD_DELETE_CARETS,
+            })
+        );
     }
 
     #[test]

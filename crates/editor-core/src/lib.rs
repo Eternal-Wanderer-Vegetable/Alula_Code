@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
     BufferError, TextBuffer, TextColumnSelection, TextLineBoundary, TextLineOffset, TextLinesRead,
-    TextMinimapSample, TextOp, TextRangeRead, WordPartDirection,
+    TextMinimapSample, TextOp, TextRangeRead, WordDeleteDirection, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -269,6 +269,18 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.word_part_offset_utf16(offset_utf16, direction))
+    }
+
+    /// Resolve a bounded batch of delete-word ranges against one document version.
+    pub fn word_delete_ranges_utf16(
+        &self,
+        id: u64,
+        offsets_utf16: &[usize],
+        direction: WordDeleteDirection,
+    ) -> Option<Result<Vec<editor_buffer::TextDeleteRange>, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.word_delete_ranges_utf16(offsets_utf16, direction))
     }
 
     /// Read a bounded page of line windows from a registered Rust document.

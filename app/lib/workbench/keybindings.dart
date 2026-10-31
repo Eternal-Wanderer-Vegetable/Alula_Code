@@ -128,6 +128,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['home'] = LogicalKeyboardKey.home;
   m['end'] = LogicalKeyboardKey.end;
   m['insert'] = LogicalKeyboardKey.insert;
+  m['backspace'] = LogicalKeyboardKey.backspace;
+  m['delete'] = LogicalKeyboardKey.delete;
   m['arrowup'] = LogicalKeyboardKey.arrowUp;
   m['arrowdown'] = LogicalKeyboardKey.arrowDown;
   m['arrowleft'] = LogicalKeyboardKey.arrowLeft;
@@ -210,6 +212,8 @@ class KeybindingSet {
     'editor.cursorBottom': 'ctrl+end',
     'editor.cursorBottomSelect': 'ctrl+shift+end',
     'editor.action.toggleOvertypeInsertMode': 'insert',
+    'deleteWordLeft': 'ctrl+backspace',
+    'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
@@ -241,6 +245,8 @@ class KeybindingSet {
         result['editor.cursorBottom'] = 'cmd+arrowdown';
         result['editor.cursorBottomSelect'] = 'shift+cmd+arrowdown';
         result['editor.action.toggleOvertypeInsertMode'] = 'cmd+alt+o';
+        result['deleteWordLeft'] = 'alt+backspace';
+        result['deleteWordRight'] = 'alt+delete';
         result.remove('editor.columnSelectUp');
         result.remove('editor.columnSelectDown');
         result.remove('editor.columnSelectLeft');

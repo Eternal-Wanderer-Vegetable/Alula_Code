@@ -19,10 +19,13 @@ Future<void> pressChord(
   LogicalKeyboardKey key, {
   bool control = false,
   bool shift = false,
+  bool alt = false,
 }) async {
   if (control) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
   if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  if (alt) await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
   await tester.sendKeyEvent(key);
+  if (alt) await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
   if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
   if (control) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
   await tester.pump();
@@ -437,6 +440,95 @@ void main() {
             .text,
         '${before}XX',
         reason: '撤销应恢复替换前文本（Rust 侧经 diff 反向同步）');
+  });
+
+  testWidgets('P04.22 Ctrl+Delete/Backspace 删除单词并可撤销重做保存', (tester) async {
+    await tester.runAsync(() async {
+      const sample = 'fn main() { println!("linux-save-ok"); }\n';
+      final workspace = createP025Workspace(tmp, content: sample);
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await tester.tap(find.byType(EditableText).first);
+      await tester.pump();
+      await pressChord(tester, LogicalKeyboardKey.home, control: true);
+      await pressChord(tester, LogicalKeyboardKey.delete, control: true);
+
+      final file = File('${workspace.path}/note.txt');
+      const firstWordDeleted = ' main() { println!("linux-save-ok"); }\n';
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), firstWordDeleted);
+
+      await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), sample);
+
+      final editorController =
+          tester.widget<TextField>(find.byType(TextField).first).controller!;
+      editorController.selection = const TextSelection(
+        baseOffset: 0,
+        extentOffset: 2,
+      );
+      await tester.pump();
+      await pressChord(tester, LogicalKeyboardKey.delete, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), firstWordDeleted);
+
+      await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), sample);
+
+      await pressChord(tester, LogicalKeyboardKey.keyZ,
+          control: true, shift: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), firstWordDeleted);
+
+      await pressChord(tester, LogicalKeyboardKey.end, control: true);
+      await pressChord(tester, LogicalKeyboardKey.backspace, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(
+        file.readAsStringSync(),
+        firstWordDeleted.substring(0, firstWordDeleted.length - 1),
+      );
+
+      await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), firstWordDeleted);
+    });
+  });
+
+  testWidgets('P04.22 多光标单词删除按倒序同步并可撤销', (tester) async {
+    await tester.runAsync(() async {
+      const sample = 'one two\none three\n';
+      final workspace = createP025Workspace(tmp, content: sample);
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await tester.tap(find.byType(EditableText).first);
+      await tester.pump();
+      await pressChord(tester, LogicalKeyboardKey.home, control: true);
+      await pressChord(
+        tester,
+        LogicalKeyboardKey.arrowDown,
+        control: true,
+        alt: true,
+      );
+      await pressChord(tester, LogicalKeyboardKey.delete, control: true);
+
+      final file = File('${workspace.path}/note.txt');
+      const deleted = ' two\n three\n';
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), deleted);
+
+      await pressChord(tester, LogicalKeyboardKey.keyZ, control: true);
+      await pressChord(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(file.readAsStringSync(), sample);
+    });
   });
 
   testWidgets('feat-git 面板：视图切换/状态/暂存/提交', (tester) async {
