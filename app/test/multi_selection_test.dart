@@ -71,6 +71,92 @@ void main() {
       expect(result.changed, isTrue);
     });
 
+    test('overtype replaces the next full UTF-16 grapheme', () {
+      const text = '\uFEFF🙂e\u0301\r\nx';
+      const oldValue = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: 1),
+      );
+      final result = applyMultiSelectionEdit(
+        oldValue: oldValue,
+        newValue: oldValue.copyWith(
+          text: '\uFEFFZ🙂e\u0301\r\nx',
+          selection: const TextSelection.collapsed(offset: 2),
+        ),
+        additionalSelections: const [],
+        shouldOvertypeInput: (inserted) => inserted == 'Z',
+      );
+
+      expect(result.value.text, '\uFEFFZe\u0301\r\nx');
+      expect(result.value.selection, const TextSelection.collapsed(offset: 2));
+      expect(result.changed, isTrue);
+    });
+
+    test('overtype stops at CRLF and respects selected-text replacement', () {
+      const text = 'ab\r\ncd';
+      const oldValue = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: 2),
+      );
+      final beforeLineBreak = applyMultiSelectionEdit(
+        oldValue: oldValue,
+        newValue: oldValue.copyWith(
+          text: 'abX\r\ncd',
+          selection: const TextSelection.collapsed(offset: 3),
+        ),
+        additionalSelections: const [],
+        shouldOvertypeInput: (_) => true,
+      );
+      expect(beforeLineBreak.value.text, 'abX\r\ncd');
+
+      const selected = TextEditingValue(
+        text: 'abcd',
+        selection: TextSelection(baseOffset: 1, extentOffset: 2),
+      );
+      final replacesSelection = applyMultiSelectionEdit(
+        oldValue: selected,
+        newValue: selected.copyWith(
+          text: 'aXcd',
+          selection: const TextSelection.collapsed(offset: 2),
+        ),
+        additionalSelections: const [],
+        shouldOvertypeInput: (_) => true,
+      );
+      expect(replacesSelection.value.text, 'aXcd');
+    });
+
+    test('overtype applies to secondary carets while plain input stays insert',
+        () {
+      const oldValue = TextEditingValue(
+        text: 'foo bar',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+      final overtype = applyMultiSelectionEdit(
+        oldValue: oldValue,
+        newValue: oldValue.copyWith(
+          text: 'Xfoo bar',
+          selection: const TextSelection.collapsed(offset: 1),
+        ),
+        additionalSelections: const [TextSelection.collapsed(offset: 4)],
+        shouldOvertypeInput: (_) => true,
+      );
+      expect(overtype.value.text, 'Xoo Xar');
+      expect(overtype.selections, const [TextSelection.collapsed(offset: 5)]);
+
+      final insertion = applyMultiSelectionEdit(
+        oldValue: const TextEditingValue(
+          text: 'ab',
+          selection: TextSelection.collapsed(offset: 0),
+        ),
+        newValue: const TextEditingValue(
+          text: 'Xab',
+          selection: TextSelection.collapsed(offset: 1),
+        ),
+        additionalSelections: const [],
+      );
+      expect(insertion.value.text, 'Xab');
+    });
+
     test('replaces selected matches and keeps Rust-facing UTF-16 positions',
         () {
       const oldValue = TextEditingValue(

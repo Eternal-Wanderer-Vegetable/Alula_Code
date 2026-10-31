@@ -26,6 +26,8 @@ class AlulaStatusBar extends StatelessWidget {
     this.lineEndingLabel,
     this.onEncodingTap,
     this.onLineEndingTap,
+    this.overtypeMode = false,
+    this.onToggleOvertype,
   });
 
   final WbSyncState state;
@@ -46,6 +48,8 @@ class AlulaStatusBar extends StatelessWidget {
   final String? lineEndingLabel;
   final VoidCallback? onEncodingTap;
   final VoidCallback? onLineEndingTap;
+  final bool overtypeMode;
+  final VoidCallback? onToggleOvertype;
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +97,20 @@ class AlulaStatusBar extends StatelessWidget {
                 child: Text(
                   lineEndingLabel!,
                   style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
+          if (overtypeMode && onToggleOvertype != null) ...[
+            const SizedBox(width: 8),
+            InkWell(
+              key: const ValueKey('status-overtype'),
+              onTap: onToggleOvertype,
+              child: const Tooltip(
+                message: '启用插入模式',
+                child: Text(
+                  'OVR',
+                  style: TextStyle(color: Color(0xFFE8E8E8), fontSize: 11),
                 ),
               ),
             ),

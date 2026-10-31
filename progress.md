@@ -5,11 +5,11 @@
 
 ## Current State（当前状态，2026-10-31 更新）
 
-### 最新进展（2026-10-31，P04.20 / EDT-04 完成）
+### 最新进展（2026-10-31，P04.21 / EDT-05a 完成）
 
-- 光标 undo/redo 与文本 undo/redo 分离，Windows/Linux/macOS TargetPlatform 工作台新增 6 项集成测试：光标命令不改 Rust 全文/版本；文本撤销/重做仍可用；两个文件交错操作时光标和文本历史均按文档隔离。
-- 定向测试 6 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 357 项）；`cargo fmt --all -- --check` 和 Flutter analyze（0 issues）通过。未改生产逻辑或 Rust/FFI ABI。报告：`docs/diagnostics/2026-10-31-p04/p04.20-cursor-and-text-undo-isolation.md`。
-- GitNexus SelectionHistory / WorkbenchPage 结果含 CRITICAL 与 UNKNOWN；源码已核实，风险未降级。P04 / feat-026 仍进行中；P15 原生平台验收继续 pending。下一步按 `docs/03` / `docs/11` 分解 EDT-05 插入覆写与删除。
+- EDT-05a 增加工作台级插入/覆写切换：Windows/Linux `Insert`、macOS `Cmd+Alt+O`，覆写状态显示 `OVR`。与物理可打印按键匹配的单次字符输入替换后一个完整 grapheme，并同步多光标；CRLF/EOF 不越界。paste、程序化与未匹配的多字符输入仍为插入，IME preedit 不被改写。
+- Windows/Linux/macOS TargetPlatform 定向 33 项通过，覆盖 BOM/emoji/组合字素/CRLF、状态栏点击退出覆写、Rust 权威全文与保存回读。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 364 项）；`cargo fmt --all -- --check` 通过，Flutter analyze 为 0 issues。报告：`docs/diagnostics/2026-10-31-p04/p04.21-overtype-insert-mode.md`。
+- GitNexus `applyMultiSelectionEdit` upstream 为 CRITICAL（493 节点、67 流程、20 模块），WorkbenchPage/KeybindingSet 还含 UNKNOWN；未降级图谱风险。P04 / feat-026 仍进行中；P15 原生平台验收继续 pending。下一片先按 `docs/03` 分解 EDT-05b 词删除命令。
 
 ### 阶段进展（2026-10-31，P04.19 / EDT-03d 完成）
 
@@ -1013,7 +1013,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 依据 `docs/03` 开始 P04.15 / EDT-02f：实现跨窗鼠标拖选与视口边缘自动滚动，先做 GitNexus impact 并单独验证。
+1. 依据 `docs/03` 开始 P04.22 / EDT-05b：拆解并实现词删除命令；编辑前先做 GitNexus impact，再添加定向验证。
 2. 保持 P04 / feat-026 为唯一活动 feature；每片按 docs/03 验收、留证据并分阶段提交。
 3. EV-P03 Linux DRM、Windows 11 UIA/读屏/DPI/主题与 macOS 原生行为继续留在 P15 验收门；P00–P13 完成前不做 500 MiB 数值优化，全部计划完成后继续补齐 CI Release 与 v0.1.0 测试 PR。
 

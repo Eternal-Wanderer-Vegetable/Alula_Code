@@ -28,6 +28,7 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
     this.onSelectionChanged,
     this.onCrossWindowTextInput,
     this.onTextChanged,
+    this.shouldOvertypeInput,
   });
 
   final List<TextSelection> Function() additionalSelections;
@@ -43,6 +44,7 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
     TextEditingValue formattedValue,
   )? onTextChanged;
+  final bool Function(String insertedText)? shouldOvertypeInput;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -50,25 +52,34 @@ class MultiSelectionTextInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     if (newValue.composing.isValid && !newValue.composing.isCollapsed) {
+      shouldOvertypeInput?.call('');
       return newValue;
     }
     if (oldValue.text == newValue.text &&
         oldValue.selection != newValue.selection) {
+      shouldOvertypeInput?.call('');
       onSelectionChanged?.call(oldValue, newValue);
       return newValue;
     }
     final textChanged = oldValue.text != newValue.text;
     if (textChanged) {
       final crossWindowValue = onCrossWindowTextInput?.call(oldValue, newValue);
-      if (crossWindowValue != null) return crossWindowValue;
+      if (crossWindowValue != null) {
+        shouldOvertypeInput?.call('');
+        return crossWindowValue;
+      }
     }
+    final secondarySelections = additionalSelections();
     final result = applyMultiSelectionEdit(
       oldValue: oldValue,
       newValue: newValue,
-      additionalSelections: additionalSelections(),
+      additionalSelections: secondarySelections,
+      shouldOvertypeInput: shouldOvertypeInput,
     );
     if (textChanged) onTextChanged?.call(oldValue, newValue, result.value);
-    if (result.changed) onSelectionsChanged(result.selections);
+    if (result.changed && secondarySelections.isNotEmpty) {
+      onSelectionsChanged(result.selections);
+    }
     return result.value;
   }
 }
@@ -79,9 +90,9 @@ MultiSelectionEditResult applyMultiSelectionEdit({
   required TextEditingValue oldValue,
   required TextEditingValue newValue,
   required List<TextSelection> additionalSelections,
+  bool Function(String insertedText)? shouldOvertypeInput,
 }) {
-  if (additionalSelections.isEmpty ||
-      oldValue.text == newValue.text ||
+  if (oldValue.text == newValue.text ||
       newValue.composing.isValid && !newValue.composing.isCollapsed) {
     return MultiSelectionEditResult(
       value: newValue,
@@ -107,9 +118,22 @@ MultiSelectionEditResult applyMultiSelectionEdit({
       .where((op) => op.type == OpType.insert)
       .map((op) => op.text ?? '')
       .join();
+  final overtypeRequested =
+      inserted.isNotEmpty && shouldOvertypeInput?.call(inserted) == true;
+  final overtypeInsertion =
+      overtypeRequested && deletedLength == 0 && oldValue.selection.isCollapsed;
+  if (additionalSelections.isEmpty && !overtypeInsertion) {
+    return MultiSelectionEditResult(
+      value: newValue,
+      selections: const [],
+      changed: false,
+    );
+  }
   final primaryRange = _SelectionRange(
     start,
-    start + deletedLength,
+    overtypeInsertion
+        ? _nextOvertypeBoundary(oldValue.text, start)
+        : start + deletedLength,
     primary: true,
   );
   final backwardsDelete = oldValue.selection.isCollapsed &&
@@ -132,6 +156,11 @@ MultiSelectionEditResult applyMultiSelectionEdit({
       final deleteEnd =
           backwardsDelete ? caret : _nextGraphemeBoundary(oldValue.text, caret);
       edits.add(_SelectionRange(deleteStart, deleteEnd));
+    } else if (overtypeInsertion) {
+      edits.add(_SelectionRange(
+        low,
+        _nextOvertypeBoundary(oldValue.text, low),
+      ));
     } else {
       edits.add(_SelectionRange(low, low));
     }
@@ -653,6 +682,16 @@ int _nextGraphemeBoundary(String text, int offset) {
     break;
   }
   return end;
+}
+
+int _nextOvertypeBoundary(String text, int offset) {
+  if (offset >= text.length ||
+      _safeGraphemeBoundary(text, offset, roundUp: true) != offset) {
+    return offset;
+  }
+  final codeUnit = text.codeUnitAt(offset);
+  if (codeUnit == 0x0A || codeUnit == 0x0D) return offset;
+  return _nextGraphemeBoundary(text, offset);
 }
 
 int _previousScalarBoundary(String text, int offset) {

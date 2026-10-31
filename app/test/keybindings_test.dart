@@ -15,6 +15,7 @@ void main() {
 
       expect(parseChord('f8')!.key, LogicalKeyboardKey.f8);
       expect(parseChord('ctrl+space')!.key, LogicalKeyboardKey.space);
+      expect(parseChord('insert')!.key, LogicalKeyboardKey.insert);
       expect(parseChord(' Control + S ')!.control, isTrue, reason: '空白与大小写容忍');
     });
 
@@ -40,6 +41,25 @@ void main() {
         'editor.selectNextOccurrence',
       );
       expect(mac.commandForChord(parseChord('ctrl+d')!), isNull);
+    });
+
+    test('overtype toggle follows the pinned platform keybindings', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        windows.commandForChord(parseChord('insert')!),
+        'editor.action.toggleOvertypeInsertMode',
+      );
+      expect(
+        linux.commandForChord(parseChord('insert')!),
+        'editor.action.toggleOvertypeInsertMode',
+      );
+      expect(mac.commandForChord(parseChord('insert')!), isNull);
+      expect(
+        mac.commandForChord(parseChord('cmd+alt+o')!),
+        'editor.action.toggleOvertypeInsertMode',
+      );
     });
 
     test('navigation defaults leave platform word-movement chords available',

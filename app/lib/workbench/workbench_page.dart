@@ -118,6 +118,12 @@ int _operationPayloadChars(List<List<TextOp>> batches) => batches.fold<int>(
           sum + batch.fold<int>(0, (n, op) => n + (op.text?.length ?? 0)),
     );
 
+bool _isPrintableOvertypeCharacter(String? character) =>
+    character != null &&
+    character.isNotEmpty &&
+    character.runes
+        .every((codePoint) => codePoint >= 0x20 && codePoint != 0x7f);
+
 Color _tokenColor(String kind) {
   for (final e in _tokenColors.entries) {
     if (kind.startsWith(e.key)) return e.value;
@@ -262,6 +268,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _abiVersion = 0;
 
   WbSyncState _state = WbSyncState.idle;
+  bool _overtypeMode = false;
   bool _disposing = false;
   String _statusDetail = '初始化…';
   String? _journalRecoveryNotice;
@@ -349,6 +356,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _layout.toggleRegion('panel'),
         shortcut: 'Ctrl+J');
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
+    reg(
+      'editor.action.toggleOvertypeInsertMode',
+      '编辑器',
+      '切换覆写/插入模式',
+      () async => _toggleOvertypeInsertMode(),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Alt+O'
+          : 'Insert',
+      enablement: 'editorTextFocus',
+    );
     reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
     reg('editor.completion', '编辑器', '触发补全', _requestCompletion,
         shortcut: 'Ctrl+Space', enablement: 'editorActive && lspReady');
@@ -510,6 +527,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _onCommandServiceChanged() {
     if (mounted) setState(() {});
+  }
+
+  void _toggleOvertypeInsertMode() {
+    final active = _active;
+    if (active == null) return;
+    active.clearPendingOvertypeInput();
+    _flushInput(active, commitComposition: true);
+    if (!mounted) return;
+    setState(() {
+      _overtypeMode = !_overtypeMode;
+      _statusDetail = _overtypeMode ? '覆写模式' : '插入模式';
+    });
   }
 
   void _showCommandPalette() {
@@ -3428,6 +3457,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final alt = HardwareKeyboard.instance.isAltPressed;
         final key = event.logicalKey;
         final active = _active;
+        final character = event.character;
+        if (_overtypeMode &&
+            !ctrl &&
+            !alt &&
+            !meta &&
+            _isPrintableOvertypeCharacter(character)) {
+          active?.expectOvertypeInput(character!);
+        } else {
+          active?.clearPendingOvertypeInput();
+        }
         final commandModifier =
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
         final activeHasComposition =
@@ -4268,6 +4307,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     BuildContext editorContext,
     PointerDownEvent event,
   ) {
+    view.clearPendingOvertypeInput();
     _pendingDefinitionPointers.remove(event.pointer);
     if (event.buttons != kPrimaryButton) return;
     final control = HardwareKeyboard.instance.isControlPressed;
@@ -5053,6 +5093,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 encodingLabel: _active?.fileOptions.statusLabel,
                 encodingTooltip: _active?.fileOptions.label,
                 lineEndingLabel: _active?.fileOptions.lineEnding.label,
+                overtypeMode: _overtypeMode && _active != null,
+                onToggleOvertype: _toggleOvertypeInsertMode,
                 onEncodingTap: _active == null
                     ? null
                     : () => _showEncodingActions(_active!),
@@ -6036,6 +6078,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     oldValue,
                                     newValue,
                                   ),
+                                  shouldOvertypeInput: (insertedText) =>
+                                      active.consumeOvertypeInput(
+                                    insertedText,
+                                    enabled: _overtypeMode,
+                                  ),
                                   onTextChanged:
                                       (oldValue, newValue, formattedValue) {
                                     active.columnSelection = null;
@@ -6681,7 +6728,29 @@ class OpenDoc {
   int pendingInputWindowShiftUtf16 = 0;
   ColumnSelectionState? columnSelection;
   TextSelection? crossWindowSelection;
+  String? _pendingOvertypeCharacter;
+  DateTime? _pendingOvertypeAt;
   bool _viewDisposed = false;
+
+  void expectOvertypeInput(String character) {
+    _pendingOvertypeCharacter = character;
+    _pendingOvertypeAt = DateTime.now();
+  }
+
+  void clearPendingOvertypeInput() {
+    _pendingOvertypeCharacter = null;
+    _pendingOvertypeAt = null;
+  }
+
+  bool consumeOvertypeInput(String insertedText, {required bool enabled}) {
+    final pending = _pendingOvertypeCharacter;
+    final recordedAt = _pendingOvertypeAt;
+    clearPendingOvertypeInput();
+    return enabled &&
+        pending == insertedText &&
+        recordedAt != null &&
+        DateTime.now().difference(recordedAt) <= const Duration(seconds: 2);
+  }
 
   /// Current Flutter value is bounded by [inputWindow.maxWindowUtf16].
   TextEditingValue get editingValue =>
