@@ -167,26 +167,66 @@ jobs:
 
             $uiaAvailable = $false
             $uiaNames = @()
+            $uiaElementCount = 0
+            $uiaRootSnapshots = @()
             $uiaError = $null
             $uiAutomationSkipped = $env:ALULA_SKIP_UI_AUTOMATION -eq '1'
             if (!$uiAutomationSkipped) {
               try {
                 Add-Type -AssemblyName UIAutomationClient
-                $flutterView = [AlulaWindowApi]::GetWindow($window, 5)
-                $automationView = [System.Windows.Automation.AutomationElement]::FromHandle($flutterView)
-                $uiaElements = $automationView.FindAll(
-                  [System.Windows.Automation.TreeScope]::Subtree,
-                  [System.Windows.Automation.Condition]::TrueCondition)
-                foreach ($element in $uiaElements) {
+                $uiaTargets = @(
+                  [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
+                  [pscustomobject]@{
+                    name = 'flutterChildWindow'
+                    handle = [AlulaWindowApi]::GetWindow($window, 5)
+                  }
+                )
+                foreach ($target in $uiaTargets) {
+                  $targetNames = @()
+                  $targetElements = @()
+                  $targetError = $null
+                  $descendants = $null
                   try {
-                    $name = $element.Current.Name
-                    if (![string]::IsNullOrWhiteSpace($name)) { $uiaNames += $name }
-                  } catch [System.Windows.Automation.ElementNotAvailableException] { }
+                    $automationRoot = [System.Windows.Automation.AutomationElement]::FromHandle($target.handle)
+                    $descendants = $automationRoot.FindAll(
+                      [System.Windows.Automation.TreeScope]::Subtree,
+                      [System.Windows.Automation.Condition]::TrueCondition)
+                    foreach ($element in $descendants) {
+                      try {
+                        $current = $element.Current
+                        if (![string]::IsNullOrWhiteSpace($current.Name)) { $targetNames += $current.Name }
+                        if ($targetElements.Count -lt 100) {
+                          $targetElements += [ordered]@{
+                            name = $current.Name
+                            automationId = $current.AutomationId
+                            className = $current.ClassName
+                            frameworkId = $current.FrameworkId
+                            controlType = $current.ControlType.ProgrammaticName
+                            localizedControlType = $current.LocalizedControlType
+                            isControlElement = $current.IsControlElement
+                            isContentElement = $current.IsContentElement
+                          }
+                        }
+                      } catch [System.Windows.Automation.ElementNotAvailableException] { }
+                    }
+                    $uiaAvailable = $true
+                    $uiaElementCount += $descendants.Count
+                  } catch {
+                    $targetError = $_.Exception.Message
+                    if ($null -eq $uiaError) { $uiaError = $targetError }
+                  }
+                  $uiaRootSnapshots += [ordered]@{
+                    target = $target.name
+                    elementCount = if ($descendants) { $descendants.Count } else { 0 }
+                    accessibleNameCount = $targetNames.Count
+                    accessibleNames = @($targetNames | Select-Object -First 100)
+                    elements = @($targetElements)
+                    error = $targetError
+                  }
+                  if ($target.name -eq 'topLevelWindow') { $uiaNames = $targetNames }
                 }
-                $uiaAvailable = $true
-              }
-              catch {
-                $uiaError = $_.Exception.Message
+              } catch {
+                if ($null -eq $uiaError) { $uiaError = $_.Exception.Message }
               }
             }
 
@@ -210,15 +250,19 @@ jobs:
               appsUseLightTheme = if ($themeSettings) { [bool]$themeSettings.AppsUseLightTheme } else { $null }
               uiAutomationAvailable = $uiaAvailable
               uiAutomationSkipped = $uiAutomationSkipped
+              uiAutomationElementCount = $uiaElementCount
               accessibleNameCount = $uiaNames.Count
               accessibleNames = @($uiaNames | Select-Object -First 100)
+              uiAutomationRoots = @($uiaRootSnapshots)
               uiAutomationError = $uiaError
             } | ConvertTo-Json -Depth 4 | Set-Content $metadataPath
 
             # Release UI Automation provider proxies before Flutter tears down
             # the native window on WM_CLOSE.
-            $uiaElements = $null
-            $automationView = $null
+            $descendants = $null
+            $automationRoot = $null
+            $uiaTargets = $null
+            $target = $null
             $element = $null
             [GC]::Collect()
             [GC]::WaitForPendingFinalizers()
