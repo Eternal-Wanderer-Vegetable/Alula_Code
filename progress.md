@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.52 / EDT-09e 完成）
+
+- 对照固定 Code-OSS `editor.action.insertFinalNewLine` 注册无默认快捷键的命令面板项。每次在全文 EOF 插入一个当前 EOL；已有末尾换行时仍会追加另一个。由于 Alula 文档缓冲统一为 LF，通过 Rust 权威 TextOps 插入 LF，保存时沿用文档 EOL 元数据。
+- 命令检查只读与 IME 状态，按独立撤销帧提交；插入前后版本校验、映射 selection（EOF 光标右移，前置选区不变）、刷新输入窗口与分屏，接通 dirty、Find、undo/redo 和保存回读。ABI 未改。
+- 新增 4 个 Flutter 用例：Windows/Linux/macOS `TargetPlatform` 下覆盖 UTF-8 BOM、CRLF、emoji、中间/EOF 选区、分屏、保存、撤销/重做、重复执行；空文件也能执行。定向测试全过。最终完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 548）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.52-insert-final-newline.md`。
+- Code-OSS 保存设置 `files.insertFinalNewline` 与 `files.trimFinalNewlines` 尚未实现；本次只交付显式命令。P15 原生 Windows UIA/关闭/主题/DPI、Linux DRM 与 macOS 验收保持 pending。
+
 ### 最新进展（2026-11-01，P04.51 / EDT-09d 完成）
 
 - 新增 `editor.action.indentationToSpaces` 与 `editor.action.indentationToTabs` 命令面板项。Rust Rope 规划器只转换全文每行的前导空格/tab，绝对偏移使用 UTF-16；转 tab 保留不足 tabSize 的余数，保留 BOM、行尾与 CR/LF/CRLF。Rust/Dart FFI 升至 ABI v37，界限为 32 Mi UTF-16 扫描、10,000 行编辑、2,000,000 UTF-16 undo payload、5 MiB 响应和 tabSize 1–32。

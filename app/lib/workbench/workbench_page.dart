@@ -523,6 +523,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () => _convertIndentation(insertSpaces: false),
       enablement: 'editorTextFocus',
     );
+    reg(
+      'editor.action.insertFinalNewLine',
+      '编辑器',
+      '插入末尾换行',
+      _insertFinalNewLine,
+      enablement: 'editorTextFocus',
+    );
     reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
         () async => _selectAllOccurrences(),
         shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
@@ -4836,6 +4843,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) {
       setState(() => _statusDetail = insertSpaces ? '已将缩进转换为空格' : '已将缩进转换为制表符');
     }
+  }
+
+  Future<void> _insertFinalNewLine() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.diskState == DiskDocumentState.readOnly) {
+      if (mounted) setState(() => _statusDetail = '当前文件为只读状态');
+      return;
+    }
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      return;
+    }
+
+    _flushInput(doc);
+    final expectedVersion = doc.doc.version;
+    final originalLength = doc.inputWindow.totalUtf16Length;
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) setState(() => _statusDetail = '插入末尾换行已取消：选区数超出上限');
+      return;
+    }
+    if (selections.any((selection) =>
+        selection.baseOffset < 0 ||
+        selection.extentOffset < 0 ||
+        selection.baseOffset > originalLength ||
+        selection.extentOffset > originalLength)) {
+      if (mounted) setState(() => _statusDetail = '插入末尾换行已取消：选区超出文档范围');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '插入末尾换行已取消：文档版本已变化');
+      return;
+    }
+
+    const eol = '\n';
+    final forward = <TextOp>[TextOp.insert(originalLength, eol)];
+    final inverse = <TextOp>[TextOp.delete(originalLength, eol.length)];
+    final newLength = originalLength + eol.length;
+    int mapOffset(int offset) =>
+        (offset < originalLength ? offset : offset + eol.length)
+            .clamp(0, newLength)
+            .toInt();
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset: mapOffset(selection.baseOffset),
+          extentOffset: mapOffset(selection.extentOffset),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    if (mappedSelections.isEmpty) return;
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on SyncMismatchException catch (error) {
+      if (mounted) setState(() => _statusDetail = '未插入末尾换行：$error');
+      return;
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '未插入末尾换行：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已在文档末尾插入换行');
   }
 
   Future<void> _toggleLineComment() async {
