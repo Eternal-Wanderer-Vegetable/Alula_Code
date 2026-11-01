@@ -541,17 +541,21 @@ jobs:
           channel: stable
           cache: true
       - name: Build Rust core
+        id: build_rust_core
         run: bash scripts/build_core.sh
       - name: Flutter analyze and tests
+        id: flutter_tests
         run: |
           flutter pub get
           flutter analyze
           flutter test
         working-directory: app
       - name: Build macOS Release bundle
+        id: macos_release
         run: flutter build macos --release --no-pub
         working-directory: app
       - name: Verify native macOS clipboard formats
+        id: macos_clipboard
         run: flutter test --no-pub -d macos --reporter expanded integration_test/editor_clipboard_desktop_test.dart
         working-directory: app
       - name: Compile native macOS drag/drop input helper
@@ -617,12 +621,15 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Bundle and sign Rust core
+        id: bundle_core
+        if: ${{ always() && !cancelled() && steps.build_rust_core.outcome == 'success' && steps.flutter_tests.outcome == 'success' && steps.macos_release.outcome == 'success' && steps.macos_clipboard.outcome == 'success' }}
         run: |
           app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
           install -m 755 app/native/libalula_core.dylib "$app_bundle/Contents/MacOS/libalula_core.dylib"
           codesign --force --deep --sign - "$app_bundle"
           codesign --verify --deep --strict "$app_bundle"
       - name: Launch macOS app
+        if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
         run: |
           executable="app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
           "$executable" > "$RUNNER_TEMP/alula-macos-smoke.log" 2>&1 &
@@ -726,12 +733,15 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Package macOS app
+        id: macos_package
+        if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
         run: |
           app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
           package="$RUNNER_TEMP/alula-code-macos-${RUNNER_ARCH}-${GITHUB_SHA}.zip"
           ditto -c -k --sequesterRsrc --keepParent "$app_bundle" "$package"
           shasum -a 256 "$package" > "$package.sha256"
       - uses: actions/upload-artifact@v4
+        if: ${{ always() && !cancelled() && steps.macos_package.outcome == 'success' }}
         with:
           name: alula-macos-${{ runner.arch }}-${{ github.sha }}
           path: |
