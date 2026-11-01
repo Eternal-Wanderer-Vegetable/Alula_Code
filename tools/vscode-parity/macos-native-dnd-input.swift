@@ -64,9 +64,6 @@ func postMouseEvent(_ type: CGEventType, at point: CGPoint) throws {
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  if type == .leftMouseDown || type == .leftMouseDragged {
-    event.flags.insert(.maskLeftMouseDown)
-  }
   event.post(tap: .cghidEventTap)
 }
 
