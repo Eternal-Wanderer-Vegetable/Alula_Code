@@ -54,11 +54,11 @@ func frame(of element: AXUIElement) -> CGRect? {
 func postMouseEvent(
   _ type: CGEventType,
   at point: CGPoint,
-  to processIdentifier: pid_t
+  source: CGEventSource
 ) throws {
   guard
     let event = CGEvent(
-      mouseEventSource: nil,
+      mouseEventSource: source,
       mouseType: type,
       mouseCursorPosition: point,
       mouseButton: .left
@@ -68,7 +68,7 @@ func postMouseEvent(
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  event.postToPid(processIdentifier)
+  event.post(tap: .cghidEventTap)
 }
 
 func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
@@ -246,9 +246,15 @@ func run() throws {
   print("Source local point: \(sourceOffset); screen point: \(source)")
   print("Target local point: \(targetOffset); screen point: \(target)")
 
-  try postMouseEvent(.mouseMoved, at: source, to: app.processIdentifier)
+  guard let eventSource = CGEventSource(stateID: .combinedSessionState) else {
+    throw NSError(domain: "AlulaMacDnd", code: 11, userInfo: [
+      NSLocalizedDescriptionKey: "Could not create a combined-session event source"
+    ])
+  }
+
+  try postMouseEvent(.mouseMoved, at: source, source: eventSource)
   Thread.sleep(forTimeInterval: 0.3)
-  try postMouseEvent(.leftMouseDown, at: source, to: app.processIdentifier)
+  try postMouseEvent(.leftMouseDown, at: source, source: eventSource)
   Thread.sleep(forTimeInterval: 0.2)
   for step in 1...24 {
     let progress = CGFloat(step) / 24
@@ -259,12 +265,12 @@ func run() throws {
     try postMouseEvent(
       .leftMouseDragged,
       at: point,
-      to: app.processIdentifier
+      source: eventSource
     )
     Thread.sleep(forTimeInterval: 0.04)
   }
   Thread.sleep(forTimeInterval: 0.5)
-  try postMouseEvent(.leftMouseUp, at: target, to: app.processIdentifier)
+  try postMouseEvent(.leftMouseUp, at: target, source: eventSource)
   print("AppKit mouse location after drag: \(NSEvent.mouseLocation)")
   print("Posted native mouse drag from Flutter source to target coordinates")
 }
