@@ -20,12 +20,16 @@ func labels(of element: AXUIElement) -> [String] {
 
 func frame(of element: AXUIElement) -> CGRect? {
   guard
-    let positionValue = attribute(element, "AXPosition") as? AXValue,
-    let sizeValue = attribute(element, "AXSize") as? AXValue
+    let positionRaw = attribute(element, "AXPosition"),
+    let sizeRaw = attribute(element, "AXSize"),
+    CFGetTypeID(positionRaw) == AXValueGetTypeID(),
+    CFGetTypeID(sizeRaw) == AXValueGetTypeID()
   else {
     return nil
   }
 
+  let positionValue = positionRaw as! AXValue
+  let sizeValue = sizeRaw as! AXValue
   var position = CGPoint.zero
   var size = CGSize.zero
   guard
@@ -140,7 +144,7 @@ func run() throws {
       NSLocalizedDescriptionKey: "Could not find the running Alula integration-test app"
     ])
   }
-  _ = app.activate(options: [.activateIgnoringOtherApps])
+  _ = app.activate(options: [])
   let appElement = AXUIElementCreateApplication(app.processIdentifier)
   guard let windows = attribute(appElement, "AXWindows") as? [AXUIElement],
         let window = windows.first else {
