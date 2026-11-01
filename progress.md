@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.52 / EDT-09e 完成）
+### 最新进展（2026-11-01，P04.53 / EDT-10a 完成）
+
+- 完成空选区复制当前行：单光标空选区按 Ctrl+C/Cmd+C 复制 Rust 文档当前逻辑行并附加 EOL；Windows clipboard 强制 CRLF，Linux/macOS 遵循文档行尾元数据。读取通过 Rust `lineBoundary` 与版本校验的有界范围读取；复制不改文档、selection、dirty 或磁盘。
+- 新增 Windows/Linux/macOS `TargetPlatform` 集成 fixture，覆盖无末尾换行的末行、Windows CRLF、Linux LF、macOS CRLF，并确认文本/磁盘字节不变；定向 3 项通过。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter 551；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-11-01-p04/p04.53-empty-selection-copy-line.md`。
+- EDT-10 后续剪切、多光标空选区、clipboard metadata 与富文本仍待拆分；P15 原生设备与辅助功能验收保持 pending。
+
+### 上一片进展（2026-11-01，P04.52 / EDT-09e 完成）
 
 - 对照固定 Code-OSS `editor.action.insertFinalNewLine` 注册无默认快捷键的命令面板项。每次在全文 EOF 插入一个当前 EOL；已有末尾换行时仍会追加另一个。由于 Alula 文档缓冲统一为 LF，通过 Rust 权威 TextOps 插入 LF，保存时沿用文档 EOL 元数据。
 - 命令检查只读与 IME 状态，按独立撤销帧提交；插入前后版本校验、映射 selection（EOF 光标右移，前置选区不变）、刷新输入窗口与分屏，接通 dirty、Find、undo/redo 和保存回读。ABI 未改。

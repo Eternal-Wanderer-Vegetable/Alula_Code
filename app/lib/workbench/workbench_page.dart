@@ -7030,6 +7030,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Future<void> _copyEmptySelectionLine(OpenDoc doc) async {
+    _flushInput(doc);
+    final selection = doc.selection;
+    if (!selection.isCollapsed || doc.additionalSelections.isNotEmpty) return;
+
+    final version = doc.doc.version;
+    final line = doc.doc.lineBoundary(selection.extentOffset);
+    if (line.version != version) return;
+    final text = _readDocumentRange(doc, line.startUtf16, line.endUtf16);
+    if (doc.doc.version != version) return;
+
+    final eol = defaultTargetPlatform == TargetPlatform.windows ||
+            doc.fileOptions.lineEnding.id == 'crlf'
+        ? '\r\n'
+        : '\n';
+    await Clipboard.setData(ClipboardData(text: '$text$eol'));
+  }
+
   Future<bool> _pasteMultiSelections(OpenDoc doc) async {
     if (doc.additionalSelections.isEmpty) return false;
     _flushInput(doc, commitComposition: true);
@@ -8881,6 +8899,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             active?.additionalSelections.isNotEmpty == true) {
           final active = _active!;
           _setDocSelection(active, active.selection);
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyC &&
+            !activeHasComposition &&
+            active != null &&
+            active.additionalSelections.isEmpty &&
+            active.selection.isCollapsed) {
+          unawaited(_copyEmptySelectionLine(active));
           return KeyEventResult.handled;
         }
         if (commandModifier &&
