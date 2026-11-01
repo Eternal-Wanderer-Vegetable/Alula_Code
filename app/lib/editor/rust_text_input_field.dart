@@ -18,10 +18,12 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import 'editor_native_text_drag_drop.dart';
 import 'editor_folding.dart';
 import 'editor_rendering.dart';
 import 'multi_selection.dart';
 import 'occurrence_search.dart' show defaultMultiCursorLimit;
+import 'text_drag_drop.dart';
 import 'rust_text_input_window.dart';
 
 /// Cross-platform monospace choices for code points absent from the primary
@@ -257,6 +259,8 @@ class RustTextInputField extends StatefulWidget {
     this.onColumnSelectionDrag,
     this.onCrossWindowLineSelection,
     this.onCrossWindowDragSelection,
+    this.onTextDragDrop,
+    this.onTextDragCompleted,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
@@ -290,6 +294,8 @@ class RustTextInputField extends StatefulWidget {
   final ColumnSelectionDragChanged? onColumnSelectionDrag;
   final ValueChanged<TextSelection>? onCrossWindowLineSelection;
   final CrossWindowDragSelectionChanged? onCrossWindowDragSelection;
+  final ValueChanged<EditorTextDragDropRequest>? onTextDragDrop;
+  final EditorTextDragCompleted? onTextDragCompleted;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
@@ -353,6 +359,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   static const Duration _mouseDragAutoScrollPeriod = Duration(
     milliseconds: 16,
   );
+
+  int _nextEditorTextDragToken = 1;
   static const double _mouseDragMaxScrollPixelsPerSecond = 3600;
   Timer? _foldSymbolsTimer;
   int _scheduledFoldDocId = -1;
@@ -377,6 +385,109 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     final editable = _findEditableRenderObject(context);
     if (editable == null) return null;
     return editable.getPositionForPoint(globalPosition).offset;
+  }
+
+  EditorTextDragPayload? _editorTextDragPayloadAt(Offset globalPosition) {
+    final window = widget.inputWindow;
+    if (widget.onTextDragDrop == null ||
+        window.hasComposition ||
+        window.pendingCount != 0 ||
+        window.version != window.document.version) {
+      return null;
+    }
+    final selection = _controller.selection;
+    if (!selection.isValid ||
+        selection.isCollapsed ||
+        selection.start < 0 ||
+        selection.end > _controller.text.length ||
+        selection.end - selection.start > maxEditorTextDragUtf16) {
+      return null;
+    }
+    final localOffset = _textOffsetAtGlobalPosition(globalPosition);
+    if (localOffset == null ||
+        localOffset < selection.start ||
+        localOffset >= selection.end) {
+      return null;
+    }
+    final documentStart = window.startUtf16 + selection.start;
+    final selectedLength = selection.end - selection.start;
+    try {
+      final range = window.document.readRange(
+        documentStart,
+        maxLenUtf16: selectedLength,
+      );
+      if (range.version != window.version ||
+          range.startUtf16 != documentStart ||
+          range.endUtf16 != documentStart + selectedLength ||
+          range.text.length != selectedLength ||
+          range.text !=
+              _controller.text.substring(selection.start, selection.end)) {
+        return null;
+      }
+      return EditorTextDragPayload(
+        selection: EditorTextDragSelection(
+          documentId: window.document.id,
+          documentVersion: window.version,
+          startUtf16: documentStart,
+          endUtf16: documentStart + selectedLength,
+        ),
+        selectedText: range.text,
+        token: _nextEditorTextDragToken++,
+      );
+    } on AlulaException {
+      return null;
+    }
+  }
+
+  EditorTextDragDropRequest? _buildEditorTextDropRequest(
+    EditorTextDragPayload payload,
+    Offset globalPosition,
+    EditorTextDropOperation operation,
+  ) {
+    final window = widget.inputWindow;
+    if (widget.onTextDragDrop == null ||
+        window.hasComposition ||
+        window.pendingCount != 0 ||
+        window.version != window.document.version ||
+        payload.selection.documentId != window.document.id ||
+        payload.selection.documentVersion != window.version ||
+        payload.selection.endUtf16 > window.totalUtf16Length) {
+      return null;
+    }
+    final localOffset = _textOffsetAtGlobalPosition(globalPosition);
+    if (localOffset == null ||
+        localOffset < 0 ||
+        localOffset > _controller.text.length ||
+        !_isUtf16Boundary(_controller.text, localOffset)) {
+      return null;
+    }
+    final targetOffset = window.startUtf16 + localOffset;
+    final source = payload.selection;
+    final isInsideSource =
+        targetOffset > source.startUtf16 && targetOffset < source.endUtf16;
+    if (isInsideSource ||
+        (operation == EditorTextDropOperation.move &&
+            (targetOffset == source.startUtf16 ||
+                targetOffset == source.endUtf16))) {
+      return null;
+    }
+    return EditorTextDragDropRequest(
+      payload: payload,
+      targetDocumentId: window.document.id,
+      targetDocumentVersion: window.version,
+      targetOffsetUtf16: targetOffset,
+      operation: operation,
+    );
+  }
+
+  bool _isUtf16Boundary(String text, int offset) {
+    if (offset <= 0 || offset >= text.length) return true;
+    final before = text.codeUnitAt(offset - 1);
+    final after = text.codeUnitAt(offset);
+    return !(before >= 0xD800 &&
+        before <= 0xDBFF &&
+        after >= 0xDC00 &&
+        after <= 0xDFFF);
   }
 
   void _handlePointerDown(PointerDownEvent event) {
@@ -1784,6 +1895,19 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: editorContent,
                           ),
                         );
+                  final dragDropViewport = EditorNativeTextDragDrop(
+                    enabled: widget.onTextDragDrop != null &&
+                        !kIsWeb &&
+                        (defaultTargetPlatform == TargetPlatform.linux ||
+                            defaultTargetPlatform == TargetPlatform.windows ||
+                            defaultTargetPlatform == TargetPlatform.macOS),
+                    payloadAt: _editorTextDragPayloadAt,
+                    buildDropRequest: _buildEditorTextDropRequest,
+                    onDrop: (request) => widget.onTextDragDrop?.call(request),
+                    onDragCompleted: (payload, operation) =>
+                        widget.onTextDragCompleted?.call(payload, operation),
+                    child: editorViewport,
+                  );
                   Widget buildGutterContents() {
                     final controls = _foldControlTargets(
                       layout: foldLayout,
@@ -1884,7 +2008,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                             child: gutterContents,
                           ),
                         ),
-                      Expanded(child: editorViewport),
+                      Expanded(child: dragDropViewport),
                     ],
                   );
                 },

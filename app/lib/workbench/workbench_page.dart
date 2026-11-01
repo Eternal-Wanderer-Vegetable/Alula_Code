@@ -38,6 +38,7 @@ import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
 import '../editor/clipboard_metadata.dart';
 import '../editor/editor_clipboard.dart';
+import '../editor/text_drag_drop.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
@@ -256,6 +257,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
   final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
   final NavigationHistory _navigationHistory = NavigationHistory();
+  final Set<int> _appliedLocalEditorTextDragTokens = <int>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -1602,6 +1604,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (view.sameDocumentAs(document)) yield view;
     }
   }
+
+  bool _canStartEditorTextDragDrop(OpenDoc document) =>
+      !_disposing &&
+      _viewsOf(document).every((view) =>
+          view.inputWindow.version == view.doc.version &&
+          view.inputWindow.pendingCount == 0 &&
+          !view.inputWindow.hasComposition &&
+          view.pendingInputOperations.isEmpty &&
+          view.pendingInputWindowShiftUtf16 == 0);
 
   EditorGroup? _ownerOf(int docId) {
     for (final g in _groups.values) {
@@ -7894,6 +7905,156 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() {});
   }
 
+  void _onSameDocumentTextDrop(
+    OpenDoc view,
+    EditorTextDragDropRequest request,
+  ) {
+    if (_disposing ||
+        _appliedLocalEditorTextDragTokens.contains(request.payload.token)) {
+      return;
+    }
+    final document = view.doc;
+    final source = request.payload.selection;
+    final views = _viewsOf(view).toList(growable: false);
+    if (request.targetDocumentId != document.id ||
+        request.targetDocumentVersion != source.documentVersion ||
+        document.version != source.documentVersion ||
+        views.any((item) =>
+            item.inputWindow.pendingCount != 0 ||
+            item.inputWindow.hasComposition ||
+            item.pendingInputOperations.isNotEmpty ||
+            item.pendingInputWindowShiftUtf16 != 0)) {
+      return;
+    }
+
+    final beforeCaret = view.selection.extentOffset;
+    late final TextRangeRead sourceRange;
+    try {
+      sourceRange = document.readRange(
+        source.startUtf16,
+        maxLenUtf16: source.lengthUtf16,
+      );
+    } on AlulaException {
+      return;
+    }
+    if (sourceRange.version != source.documentVersion ||
+        sourceRange.startUtf16 != source.startUtf16 ||
+        sourceRange.endUtf16 != source.endUtf16 ||
+        sourceRange.text != request.payload.selectedText) {
+      return;
+    }
+    final plan = planSameDocumentTextDrag(
+      source: source,
+      targetDocumentId: request.targetDocumentId,
+      targetDocumentVersion: request.targetDocumentVersion,
+      targetDocumentLengthUtf16: sourceRange.totalUtf16Length,
+      targetOffsetUtf16: request.targetOffsetUtf16,
+      selectedText: sourceRange.text,
+      operation: request.operation,
+    );
+    if (plan == null) return;
+
+    try {
+      document.applyWith(source.documentVersion, plan.forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '文本拖放未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    if (_appliedLocalEditorTextDragTokens.length >= 32) {
+      _appliedLocalEditorTextDragTokens.remove(
+        _appliedLocalEditorTextDragTokens.first,
+      );
+    }
+    _appliedLocalEditorTextDragTokens.add(request.payload.token);
+    final caret = TextSelection.collapsed(offset: plan.afterCaretUtf16);
+    view.additionalSelections = const [];
+    view.columnSelection = null;
+    _recordDocumentOperations(
+      view,
+      forward: plan.forward,
+      inverse: plan.inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: plan.afterCaretUtf16,
+      coalesce: false,
+    );
+    view.replaceInputWindow(plan.afterCaretUtf16, selection: caret);
+    _refreshSiblingViews(view, plan.forward);
+    final owner = _ownerOfView(view);
+    if (owner != null) _focusNodeFor(owner, view).requestFocus();
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() {});
+  }
+
+  void _onEditorTextDragCompleted(
+    OpenDoc sourceView,
+    EditorTextDragPayload payload,
+    EditorTextDropOperation operation,
+  ) {
+    final alreadyApplied =
+        _appliedLocalEditorTextDragTokens.remove(payload.token);
+    if (alreadyApplied ||
+        operation != EditorTextDropOperation.move ||
+        _disposing) {
+      return;
+    }
+    final document = sourceView.doc;
+    final source = payload.selection;
+    final views = _viewsOf(sourceView).toList(growable: false);
+    if (document.version != source.documentVersion ||
+        views.any((item) =>
+            item.inputWindow.pendingCount != 0 ||
+            item.inputWindow.hasComposition ||
+            item.pendingInputOperations.isNotEmpty ||
+            item.pendingInputWindowShiftUtf16 != 0)) {
+      return;
+    }
+
+    late final TextRangeRead sourceRange;
+    try {
+      sourceRange = document.readRange(
+        source.startUtf16,
+        maxLenUtf16: source.lengthUtf16,
+      );
+    } on AlulaException {
+      return;
+    }
+    if (sourceRange.version != source.documentVersion ||
+        sourceRange.startUtf16 != source.startUtf16 ||
+        sourceRange.endUtf16 != source.endUtf16 ||
+        sourceRange.text != payload.selectedText) {
+      return;
+    }
+
+    final beforeCaret = sourceView.selection.extentOffset;
+    final forward = [TextOp.delete(source.startUtf16, source.lengthUtf16)];
+    final inverse = [TextOp.insert(source.startUtf16, sourceRange.text)];
+    try {
+      document.applyWith(source.documentVersion, forward);
+    } on AlulaException {
+      return;
+    }
+    sourceView.additionalSelections = const [];
+    sourceView.columnSelection = null;
+    _recordDocumentOperations(
+      sourceView,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: source.startUtf16,
+      coalesce: false,
+    );
+    final caret = TextSelection.collapsed(offset: source.startUtf16);
+    sourceView.replaceInputWindow(source.startUtf16, selection: caret);
+    _refreshSiblingViews(sourceView, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() {});
+  }
+
   void _onInputDelta(OpenDoc doc, RustTextInputDelta delta) {
     final owner = _ownerOfView(doc);
     if (owner == null) return;
@@ -12055,6 +12216,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   active,
                                   selection,
                                   started: started,
+                                ),
+                                onTextDragDrop:
+                                    _canStartEditorTextDragDrop(active)
+                                        ? (request) => _onSameDocumentTextDrop(
+                                              active,
+                                              request,
+                                            )
+                                        : null,
+                                onTextDragCompleted: (payload, operation) =>
+                                    _onEditorTextDragCompleted(
+                                  active,
+                                  payload,
+                                  operation,
                                 ),
                                 onError: (error) {
                                   if (!_disposing &&

@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.59 / EDT-11a 进行中）
+
+- 接入有界同文档原生文本拖放：同视图/分屏视图 move/copy、绝对 UTF-16 payload、Rust 版本与源范围复核、单帧 undo/redo、stale/IME/pending 输入保护；拖出提供 `text/plain`，系统确认 move 后只在源版本仍有效时删除源文本。外部拖入、多文档 provider 与 Paste As 留后续切片。
+- 定向测试 8 项通过，其中包括 Rust FFI 上 BOM、CRLF、emoji move + inverse；完整快速总门禁 `bash init.sh --fast` EXIT=0（Rust workspace、build_core、Flutter 589），Flutter analyze 0 issues，Linux Release bundle 构建通过。报告：`docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
+- 近期 CI red 已核对原始日志：`41267446041` Windows Clippy 的 `set_readonly(false)` lint；`41278747568` Windows 多选测试断言与 macOS clipboard 前台启动测试失败；`41279726799` Windows clipboard metadata 断言失败。后续 `41280923105`、`41280920056`、`41281811415` 转绿。失败日志没有 Alula 崩溃/`0xC000041D`；修复 CI 可恢复门禁，但尚不能解释旧崩溃。拖放 Flutter 合成桌面手势未启动原生 provider；Xvfb 原生 app 可打开隔离工作区，但真实 DnD 尚未验证。新 Windows Release/CI 待本阶段提交后检查；拖放依赖仍属实验阶段，若出现原生构建/进程回归先停用 adapter。旧 exact Windows `0xC000041D` 仍留 P15。
+- GitNexus 本阶段 pre-edit `RustTextInputFieldState` upstream impact 为 CRITICAL（117 symbols、145 flows、20 modules）；提交前 `detect-changes --scope all --limit 5000` 重跑仍为 CRITICAL（全树 49 files、16 symbols、394 affected processes，另有 384 条流程未展示）。扫描包括工作树既有改动，风险保留且计数不归属本切片。
+
 ### 最新进展（2026-11-01，P04.58 / EDT-10f 完成）
 
 - 富文本桌面剪贴板已接入 plain text、Code-OSS v1 `vscode-editor-data` 和有界 HTML token 输出；剪切、单选/空选区/多光标复制及粘贴读取复用统一适配。Linux 原生回读曾把自定义 target 返回为 UTF-8 bytes；解码器现在接受 `String`/`Uint8List` 并设置 1 MiB 上限。
