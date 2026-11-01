@@ -266,6 +266,27 @@ func run() throws {
     ])
   }
 
+  let windowFrame = frame(of: window) ?? contentFrame
+  let titleBarPoint = CGPoint(x: windowFrame.midX, y: windowFrame.minY + 12)
+  try postMouseEvent(.mouseMoved, at: titleBarPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.1)
+  try postMouseEvent(.leftMouseDown, at: titleBarPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.1)
+  try postMouseEvent(.leftMouseUp, at: titleBarPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.3)
+  let frontmost = attribute(appElement, "AXFrontmost") as? Bool ?? false
+  let focused = attribute(window, "AXFocused") as? Bool ?? false
+  let main = attribute(window, "AXMain") as? Bool ?? false
+  print(
+    "After title-bar activation: frontmost=\(frontmost), " +
+      "focused=\(focused), main=\(main)"
+  )
+  guard frontmost && focused && main else {
+    throw NSError(domain: "AlulaMacDnd", code: 12, userInfo: [
+      NSLocalizedDescriptionKey: "App window did not become focused after title-bar activation"
+    ])
+  }
+
   try postMouseEvent(.mouseMoved, at: source, source: eventSource)
   Thread.sleep(forTimeInterval: 0.3)
   try postMouseEvent(.leftMouseDown, at: source, source: eventSource)
