@@ -1,0 +1,16 @@
+Windows 11 exact artifact rerun
+
+Date: 2026-11-01. GitHub Actions run 41109679662, Windows x64, source d5319369c5b5d569954e0d816daf325f3bc12a51. Executable SHA-256: caeff20300b7096bdd118bcf47a38f53cf1198fe4b97a9318f956189dcbd2e97.
+
+Host: Windows 11 Pro for Workstations build 26200, AMD64, 120 DPI (125%), dark system/app theme. Test used the isolated temporary profile and rust-mini fixture. Fixture was restored to SHA-256 6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684.
+
+Results:
+- Client rendering: nonuniform 1267x712 client. The active editor is confined to a narrow pane at far right and most of the client is blank; visual usability fails.
+- Two views: synchronized edit in view 2 appeared in both views and was saved/read back.
+- Save/read-back: supplied Rust sample and final multiview text were read back from disk.
+- Microsoft Pinyin: ni'hao composition, 你好 commit, cancellation of a subsequent composition, and committed-text save/read-back passed.
+- Close: WM_CLOSE exited without timeout but with -1073740771 (0xC000041D). A no-accessibility close control reproduced it; Windows reports an access violation in flutter_windows.dll.
+- Narrator/UIA: separate probe found only Alula Code and FLUTTERVIEW (2 descendants), 0 LegacyIAccessible patterns, all four expected semantic labels missing, and 14 Tab probes on the same window node. Speech audio was not captured.
+- Theme/DPI: this rerun covers dark theme at 125% only. The prior 125% light-theme replay kept the dark workbench despite light registry values. 100%/150% and theme switching remain untested.
+
+Evidence files: windows-artifact-client.png; windows-ime-composition.png; windows-ime-committed.png; windows-ime-cancel-before.png; metadata.json; no-accessibility-close-control.json; close-crash-diagnostics.json; transcript.txt. Narrator probe files are in the sibling codex-rerun-20261101-taskmgr-closed-2-narrator directory.
