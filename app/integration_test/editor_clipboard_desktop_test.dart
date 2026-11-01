@@ -34,7 +34,11 @@ void main() {
     final clipboardHtml = await reader.readValue(Formats.htmlText);
     expect(clipboardHtml, contains('<div style="white-space:pre;">'));
     expect(clipboardHtml, contains('<span style="color:#C586C0;">fn</span>'));
-    expect(reader.canProvide(EditorClipboard.vscodeEditorDataFormat), isTrue);
+    expect(
+      reader.canProvide(EditorClipboard.vscodeEditorDataFormat),
+      isTrue,
+      reason: 'Native formats: ${reader.platformFormats.join(', ')}',
+    );
     final rawMetadata = await reader.readValue(
       EditorClipboard.vscodeEditorDataFormat,
     );

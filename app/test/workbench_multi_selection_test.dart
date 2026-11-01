@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/editor/clipboard_metadata.dart';
+import 'package:alula_app/editor/editor_clipboard.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/editor/occurrence_search.dart';
 import 'package:alula_app/main.dart';
@@ -84,6 +85,13 @@ Future<void> _altClickAtOffset(
 }
 
 void main() {
+  setUpAll(() {
+    EditorClipboard.forceFlutterClipboardFallbackForTesting = true;
+  });
+  tearDownAll(() {
+    EditorClipboard.forceFlutterClipboardFallbackForTesting = false;
+  });
+
   testWidgets('single-selection copy and cut keep the Rust document in sync',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-single-clip');

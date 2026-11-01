@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:alula_app/editor/clipboard_metadata.dart';
 import 'package:alula_app/editor/editor_clipboard.dart';
 import 'package:alula_app/editor/rich_text_clipboard.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:super_clipboard/super_clipboard.dart';
@@ -76,6 +78,22 @@ void main() {
     expect(bytes, raw);
     expect(string, raw);
     expect(oversized, isNull);
+  });
+
+  test('macOS metadata includes a registered pasteboard type', () {
+    final previousPlatform = debugDefaultTargetPlatformOverride;
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    addTearDown(() {
+      debugDefaultTargetPlatformOverride = previousPlatform;
+    });
+
+    expect(
+      EditorClipboard.vscodeEditorDataFormat.codec.encodingFormats,
+      containsAll([
+        'vscode-editor-data',
+        'com.microsoft.vscode-editor-data',
+      ]),
+    );
   });
 
   test('rich HTML clips exact UTF-16 token ranges and escapes source text', () {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
@@ -24,14 +25,32 @@ class EditorClipboard {
   static const _nativeClipboardTimeout = Duration(seconds: 2);
   static const _maxEditorDataBytes = 1024 * 1024;
   static bool _nativeClipboardDisabled = false;
+
+  /// Lets widget tests keep using the mocked Flutter clipboard channel.
+  ///
+  /// Native clipboard interoperability is covered separately by the desktop
+  /// integration smoke, where the real system clipboard is available.
+  @visibleForTesting
+  static bool forceFlutterClipboardFallbackForTesting = false;
+
   static const _vscodeEditorDataCodec = SimplePlatformCodec<String>(
     formats: ['vscode-editor-data'],
+    onDecode: _decodeVscodeEditorData,
+  );
+  static const _macVscodeEditorDataCodec = SimplePlatformCodec<String>(
+    // AppKit only retains registered, reverse-DNS pasteboard types. Keep the
+    // Code-OSS MIME as the first candidate for Electron-based peers, and add
+    // an AppKit-valid equivalent for native pasteboard round trips.
+    formats: [
+      'vscode-editor-data',
+      'com.microsoft.vscode-editor-data',
+    ],
     onDecode: _decodeVscodeEditorData,
   );
 
   static const vscodeEditorDataFormat = SimpleValueFormat<String>(
     linux: _vscodeEditorDataCodec,
-    macos: _vscodeEditorDataCodec,
+    macos: _macVscodeEditorDataCodec,
     windows: _vscodeEditorDataCodec,
     fallback: _vscodeEditorDataCodec,
   );
@@ -62,7 +81,7 @@ class EditorClipboard {
     String? html,
   }) async {
     var wroteNativeClipboard = false;
-    if (!_nativeClipboardDisabled) {
+    if (!_nativeClipboardDisabled && !forceFlutterClipboardFallbackForTesting) {
       try {
         final clipboard = SystemClipboard.instance;
         if (clipboard != null) {
@@ -90,7 +109,7 @@ class EditorClipboard {
   static Future<EditorClipboardPayload?> read() async {
     String? text;
     String? rawEditorData;
-    if (!_nativeClipboardDisabled) {
+    if (!_nativeClipboardDisabled && !forceFlutterClipboardFallbackForTesting) {
       try {
         final clipboard = SystemClipboard.instance;
         if (clipboard != null) {
