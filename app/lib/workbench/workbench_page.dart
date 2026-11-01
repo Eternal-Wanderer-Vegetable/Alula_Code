@@ -670,6 +670,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.action.transformToPascalcase', '编辑器', '转换为帕斯卡命名',
         () => _transformCase(uppercase: false, pascalCase: true),
         enablement: 'editorTextFocus');
+    reg(
+      'editor.action.transposeLetters',
+      '编辑器',
+      '转置字母',
+      _transposeLetters,
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+T' : null,
+      enablement: 'editorTextFocus',
+    );
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4088,6 +4096,155 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = '已删除重复行');
+  }
+
+  Future<void> _transposeLetters() async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocTransposeCarets) {
+      if (mounted && selections.length > maxDocTransposeCarets) {
+        setState(
+            () => _statusDetail = '字母转置已取消：光标数超过 $maxDocTransposeCarets 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final carets = selections
+        .where((selection) => selection.isCollapsed)
+        .map((selection) => selection.extentOffset)
+        .toList(growable: false);
+    late final DocumentTransposePlans queried;
+    try {
+      queried = doc.doc.transposeRanges(carets);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '字母转置失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion ||
+        queried.plans.length != carets.length) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) {
+        setState(() => _statusDetail = '字母转置未应用：文档同步版本已变化');
+      }
+      return;
+    }
+
+    final ranges = <(int, int), DocumentTransposePlan>{};
+    final mappedSelections = <TextSelection>[];
+    var caretIndex = 0;
+    try {
+      for (final selection in selections) {
+        if (!selection.isCollapsed) {
+          mappedSelections.add(selection);
+          continue;
+        }
+        final plan = queried.plans[caretIndex++];
+        if (plan == null) {
+          mappedSelections.add(selection);
+          continue;
+        }
+        if (plan.startUtf16 < 0 ||
+            plan.endUtf16 <= plan.startUtf16 ||
+            plan.removedText.length != plan.endUtf16 - plan.startUtf16 ||
+            plan.insertedText.length != plan.removedText.length) {
+          throw StateError('Rust 返回了无效的 UTF-16 字母转置计划');
+        }
+        final key = (plan.startUtf16, plan.endUtf16);
+        final existing = ranges[key];
+        if (existing != null &&
+            (existing.removedText != plan.removedText ||
+                existing.insertedText != plan.insertedText)) {
+          throw StateError('Rust 对相同字母转置范围返回了不同文本');
+        }
+        ranges[key] = plan;
+        mappedSelections.add(TextSelection.collapsed(
+          offset: plan.endUtf16,
+          affinity: selection.affinity,
+        ));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '字母转置未应用：$error');
+      return;
+    }
+
+    final orderedRanges = ranges.values.toList()
+      ..sort((a, b) => a.startUtf16.compareTo(b.startUtf16));
+    for (var index = 1; index < orderedRanges.length; index++) {
+      if (orderedRanges[index].startUtf16 < orderedRanges[index - 1].endUtf16) {
+        if (mounted) {
+          setState(() => _statusDetail = '字母转置已取消：多个编辑范围重叠');
+        }
+        return;
+      }
+    }
+
+    var payloadChars = 0;
+    final changedRanges = orderedRanges
+        .where((plan) => plan.removedText != plan.insertedText)
+        .toList(growable: false);
+    for (final plan in changedRanges) {
+      payloadChars += plan.removedText.length + plan.insertedText.length;
+      if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+        if (mounted) {
+          setState(() => _statusDetail =
+              '字母转置已取消：撤销文本超出 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        return;
+      }
+    }
+
+    final normalizedSelections = normalizeSelectionSet(mappedSelections);
+    if (changedRanges.isEmpty) {
+      _setDocSelections(doc, normalizedSelections);
+      doc.replaceInputWindow(
+        normalizedSelections.first.extentOffset,
+        selection: normalizedSelections.first,
+      );
+      return;
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in changedRanges.reversed) {
+      forward
+        ..add(TextOp.delete(plan.startUtf16, plan.endUtf16 - plan.startUtf16))
+        ..add(TextOp.insert(plan.startUtf16, plan.insertedText));
+      inverse
+        ..add(TextOp.delete(plan.startUtf16, plan.insertedText.length))
+        ..add(TextOp.insert(plan.startUtf16, plan.removedText));
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '字母转置未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: normalizedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    _setDocSelections(doc, normalizedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      normalizedSelections.first.extentOffset,
+      selection: normalizedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已转置字母');
   }
 
   Future<void> _transformCase({

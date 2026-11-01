@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.46 / EDT-08f 完成）
+
+- 新增固定 Code-OSS `editor.action.transposeLetters` 命令，macOS Ctrl+T、Windows/Linux 无默认键位；Rust UTF-16 计划支持 LF、CRLF、CR、Unicode scalar 与 NUL-safe FFI ABI v32。工作台复用有版本门控的单批 TextOps，接入独立多光标、selection 跳过、重叠范围原子取消、undo/redo、dirty、Find、分屏和保存。
+- Rust buffer/FFI 转置定向 5 项与 Flutter bridge/工作台定向 34 项通过；最终完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 520），`cargo fmt --all -- --check` 和 `flutter analyze --no-pub` 通过（0 issues）。报告：`docs/diagnostics/2026-11-01-p04/p04.46-transpose-letters.md`。
+- 交叠多光标编辑范围采用全批次取消；固定版 Code-OSS 在该冲突场景尚无原生自动化对照。P15 原生 Windows/Linux/macOS 验收仍 pending；下一个 EDT-08 切片为数值替换。
+
 ### P15 Windows 11 自动回放（2026-11-01 归档）
 
 - 自动运行 GitHub Actions [41221325692](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41221325692)，下载并运行指定 artifact run 41109679662。Windows 11 Enterprise build 26200 ARM64/x64 emulation 在 96 DPI 下完成可见客户区、MSAA、双视图和保存回读；独立源码交互 job 的 14 项 Flutter Windows 桌面测试全部通过。

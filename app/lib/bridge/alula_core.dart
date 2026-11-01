@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 31;
+const int expectedAbiVersion = 32;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -21,6 +21,7 @@ const int maxDocReadLines = 256;
 const int maxDocColumnSelections = 10000;
 const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
+const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
@@ -307,6 +308,29 @@ class DocumentDeleteRanges {
   final List<DocumentDeleteRange> ranges;
 
   const DocumentDeleteRanges({required this.version, required this.ranges});
+}
+
+/// One Code-OSS transpose replacement resolved against a Rust document version.
+class DocumentTransposePlan {
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final String insertedText;
+
+  const DocumentTransposePlan({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.insertedText,
+  });
+}
+
+/// A bounded batch of transpose plans; null entries are edge no-ops.
+class DocumentTransposePlans {
+  final int version;
+  final List<DocumentTransposePlan?> plans;
+
+  const DocumentTransposePlans({required this.version, required this.plans});
 }
 
 /// One absolute UTF-16 selection and the inserted paste length used to query
@@ -1055,6 +1079,42 @@ class AlulaDoc {
     }).toList(growable: false);
     version = result['version'] as int;
     return DocumentDeleteRanges(version: version, ranges: ranges);
+  }
+
+  /// Resolve Code-OSS transpose plans without transferring document text to Dart.
+  DocumentTransposePlans transposeRanges(List<int> offsetsUtf16) {
+    if (offsetsUtf16.length > maxDocTransposeCarets) {
+      throw RangeError.range(
+        offsetsUtf16.length,
+        0,
+        maxDocTransposeCarets,
+        'offsetsUtf16.length',
+      );
+    }
+    if (offsetsUtf16.any((offset) => offset < 0)) {
+      throw RangeError('Transpose offsets must be non-negative');
+    }
+    final json = core._ffi.docTransposeRangesJson(id, offsetsUtf16);
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final plans = (result['plans'] as List<Object?>).map((item) {
+      if (item == null) return null;
+      final plan = item as Map<String, Object?>;
+      return DocumentTransposePlan(
+        startUtf16: plan['startUtf16'] as int,
+        endUtf16: plan['endUtf16'] as int,
+        removedText: plan['removedText'] as String,
+        insertedText: plan['insertedText'] as String,
+      );
+    }).toList(growable: false);
+    version = result['version'] as int;
+    return DocumentTransposePlans(version: version, plans: plans);
   }
 
   /// Resolve the replacement ranges for overtype-mode paste from one Rust

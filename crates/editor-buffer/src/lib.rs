@@ -19,6 +19,8 @@ pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
 pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
 /// Maximum number of selections accepted by one line-delete query.
 pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
+/// Maximum number of caret positions accepted by one transpose query.
+pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
 /// Maximum number of selections accepted by one overtype-paste query.
 pub const MAX_OVERTYPE_PASTE_RANGES: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
@@ -255,6 +257,24 @@ pub struct TextDeleteRange {
     pub end_utf16: usize,
 }
 
+/// One Code-OSS transpose operation resolved against a Rust document snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextTransposePlan {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TransposeLineBounds {
+    start_char: usize,
+    end_char: usize,
+    previous_line_end_char: Option<usize>,
+    next_line_start_char: Option<usize>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct WordToken {
     start: usize,
@@ -391,6 +411,19 @@ fn line_content_char_len(line: RopeSlice<'_>) -> usize {
         if len > 0 && line.char(len - 1) == '\r' {
             len -= 1;
         }
+    }
+    len
+}
+
+fn transpose_line_content_char_len(line: RopeSlice<'_>) -> usize {
+    let mut len = line.len_chars();
+    if len > 0 && line.char(len - 1) == '\n' {
+        len -= 1;
+        if len > 0 && line.char(len - 1) == '\r' {
+            len -= 1;
+        }
+    } else if len > 0 && line.char(len - 1) == '\r' {
+        len -= 1;
     }
     len
 }
@@ -580,6 +613,8 @@ pub enum BufferError {
         start_utf16: usize,
         end_utf16: usize,
     },
+    /// A transpose query contains more caret positions than the bounded API accepts.
+    TransposeCountTooLarge { requested: usize, max: usize },
     /// An overtype-paste selection has its end before its start.
     InvalidOvertypePasteRange {
         start_utf16: usize,
@@ -624,6 +659,9 @@ impl std::fmt::Display for BufferError {
             }
             BufferError::LineDeleteCountTooLarge { requested, max } => {
                 write!(f, "line-delete selection count {requested} exceeds maximum {max}")
+            }
+            BufferError::TransposeCountTooLarge { requested, max } => {
+                write!(f, "transpose caret count {requested} exceeds maximum {max}")
             }
             BufferError::OvertypePasteCountTooLarge { requested, max } => write!(
                 f,
@@ -1057,6 +1095,102 @@ impl TextBuffer {
                 }
             })
             .collect()
+    }
+
+    /// Resolve the Code-OSS transpose range for each collapsed UTF-16 caret.
+    /// Each result is `None` when the action has no character pair to swap.
+    pub fn transpose_ranges_utf16(
+        &self,
+        offsets_utf16: &[usize],
+    ) -> Result<Vec<Option<TextTransposePlan>>, BufferError> {
+        if offsets_utf16.len() > MAX_TRANSPOSE_CARETS {
+            return Err(BufferError::TransposeCountTooLarge {
+                requested: offsets_utf16.len(),
+                max: MAX_TRANSPOSE_CARETS,
+            });
+        }
+
+        offsets_utf16
+            .iter()
+            .map(|&offset_utf16| self.transpose_range_utf16(offset_utf16))
+            .collect()
+    }
+
+    fn transpose_range_utf16(
+        &self,
+        offset_utf16: usize,
+    ) -> Result<Option<TextTransposePlan>, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_bounds = self.transpose_line_bounds(caret_char);
+        // VS Code positions stop before line terminators. A caret inside CRLF
+        // is normalized to that same logical line end.
+        let caret_char = caret_char.clamp(line_bounds.start_char, line_bounds.end_char);
+
+        if line_bounds.start_char == 0 && caret_char == 0 {
+            return Ok(None);
+        }
+
+        let end_char = if caret_char == line_bounds.end_char {
+            caret_char
+        } else {
+            self.transpose_right_position(caret_char)
+        };
+        let middle_char = self.transpose_left_position(end_char);
+        let begin_char = self.transpose_left_position(middle_char);
+        if begin_char >= middle_char || middle_char >= end_char {
+            return Ok(None);
+        }
+
+        let left_text = self.rope.slice(begin_char..middle_char).to_string();
+        let right_text = self.rope.slice(middle_char..end_char).to_string();
+        let mut inserted_text = String::with_capacity(left_text.len() + right_text.len());
+        inserted_text.push_str(&right_text);
+        inserted_text.push_str(&left_text);
+
+        Ok(Some(TextTransposePlan {
+            start_utf16: self.rope.char_to_utf16_cu(begin_char),
+            end_utf16: self.rope.char_to_utf16_cu(end_char),
+            removed_text: format!("{left_text}{right_text}"),
+            inserted_text,
+        }))
+    }
+
+    fn transpose_line_bounds(&self, position_char: usize) -> TransposeLineBounds {
+        let rope_line = self.rope.char_to_line(position_char);
+        let line_start = self.rope.line_to_char(rope_line);
+        let line = self.rope.line(rope_line);
+        let line_end = line_start + transpose_line_content_char_len(line);
+        let previous_line_end = if rope_line > 0 {
+            let previous_line_start = self.rope.line_to_char(rope_line - 1);
+            let previous_line = self.rope.line(rope_line - 1);
+            Some(previous_line_start + transpose_line_content_char_len(previous_line))
+        } else {
+            None
+        };
+
+        TransposeLineBounds {
+            start_char: line_start,
+            end_char: line_end,
+            previous_line_end_char: previous_line_end,
+            next_line_start_char: (rope_line + 1 < self.rope.len_lines())
+                .then(|| self.rope.line_to_char(rope_line + 1)),
+        }
+    }
+
+    fn transpose_left_position(&self, position_char: usize) -> usize {
+        let bounds = self.transpose_line_bounds(position_char);
+        if position_char > bounds.start_char {
+            return position_char - 1;
+        }
+        bounds.previous_line_end_char.unwrap_or(bounds.start_char)
+    }
+
+    fn transpose_right_position(&self, position_char: usize) -> usize {
+        let bounds = self.transpose_line_bounds(position_char);
+        if position_char < bounds.end_char {
+            return position_char + 1;
+        }
+        bounds.next_line_start_char.unwrap_or(bounds.end_char)
     }
 
     /// Resolve the replacement ranges VS Code uses for paste while in
@@ -2089,6 +2223,118 @@ mod tests {
             Err(BufferError::LineDeleteCountTooLarge {
                 requested: MAX_LINE_DELETE_RANGES + 1,
                 max: MAX_LINE_DELETE_RANGES,
+            })
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_match_code_oss_caret_and_end_of_line_rules() {
+        let buffer = TextBuffer::open("abc\nxy");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[1, 3]).unwrap(),
+            vec![
+                Some(TextTransposePlan {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                    removed_text: "ab".to_owned(),
+                    inserted_text: "ba".to_owned(),
+                }),
+                Some(TextTransposePlan {
+                    start_utf16: 1,
+                    end_utf16: 3,
+                    removed_text: "bc".to_owned(),
+                    inserted_text: "cb".to_owned(),
+                }),
+            ]
+        );
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[3]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 1,
+                end_utf16: 3,
+                removed_text: "bc".to_owned(),
+                inserted_text: "cb".to_owned(),
+            })]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_swap_unicode_scalars_and_crlf_boundary_tokens() {
+        let unicode = TextBuffer::open("🦊a");
+        assert_eq!(
+            unicode.transpose_ranges_utf16(&[2]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 0,
+                end_utf16: 3,
+                removed_text: "🦊a".to_owned(),
+                inserted_text: "a🦊".to_owned(),
+            })]
+        );
+        assert_eq!(
+            unicode.transpose_ranges_utf16(&[1]),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+
+        let crlf = TextBuffer::open("ab\r\ncd");
+        assert_eq!(
+            crlf.transpose_ranges_utf16(&[4]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 2,
+                end_utf16: 5,
+                removed_text: "\r\nc".to_owned(),
+                inserted_text: "c\r\n".to_owned(),
+            })]
+        );
+
+        let cr_only = TextBuffer::open("ab\rcd");
+        assert_eq!(cr_only.rope.len_lines(), 2);
+        assert_eq!(
+            cr_only.transpose_ranges_utf16(&[2, 3]).unwrap(),
+            vec![
+                Some(TextTransposePlan {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                    removed_text: "ab".to_owned(),
+                    inserted_text: "ba".to_owned(),
+                }),
+                Some(TextTransposePlan {
+                    start_utf16: 2,
+                    end_utf16: 4,
+                    removed_text: "\rc".to_owned(),
+                    inserted_text: "c\r".to_owned(),
+                }),
+            ]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_keep_file_start_and_single_character_noops() {
+        let buffer = TextBuffer::open("a");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[0, 1]).unwrap(),
+            vec![None, None]
+        );
+        assert_eq!(
+            TextBuffer::open("a\n")
+                .transpose_ranges_utf16(&[2])
+                .unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 0,
+                end_utf16: 2,
+                removed_text: "a\n".to_owned(),
+                inserted_text: "\na".to_owned(),
+            })]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_validate_count_limit() {
+        let buffer = TextBuffer::open("ab");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&vec![0; MAX_TRANSPOSE_CARETS + 1]),
+            Err(BufferError::TransposeCountTooLarge {
+                requested: MAX_TRANSPOSE_CARETS + 1,
+                max: MAX_TRANSPOSE_CARETS,
             })
         );
     }

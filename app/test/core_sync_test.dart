@@ -72,6 +72,27 @@ void main() {
     );
   }, skip: skip);
 
+  test('Rust FFI transpose resolves UTF-16 and CRLF boundary plans', () {
+    final core = _bootstrap.core!;
+    final doc = core.openDoc(9045, 'ab\r\ncd');
+    addTearDown(doc.close);
+
+    final resolved = doc.transposeRanges([4]);
+    expect(resolved.version, 1);
+    expect(resolved.plans, hasLength(1));
+    expect(resolved.plans.single!.startUtf16, 2);
+    expect(resolved.plans.single!.endUtf16, 5);
+    expect(resolved.plans.single!.removedText, '\r\nc');
+    expect(resolved.plans.single!.insertedText, 'c\r\n');
+
+    final plan = resolved.plans.single!;
+    doc.apply([
+      TextOp.delete(plan.startUtf16, plan.endUtf16 - plan.startUtf16),
+      TextOp.insert(plan.startUtf16, plan.insertedText),
+    ]);
+    expect(doc.resync().content, 'abc\r\nd');
+  }, skip: skip);
+
   test('Rust 示例词删除通过 FFI 可撤销并保存回读', () async {
     final core = _bootstrap.core!;
     const sample = 'fn main() { println!("linux-save-ok"); }\n';

@@ -164,6 +164,12 @@ class AlulaFfi {
     'alula_doc_delete_line_ranges',
   );
 
+  late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docTransposeRanges =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
+          Pointer<Utf8> Function(int, Pointer<Utf8>)>(
+    'alula_doc_transpose_ranges',
+  );
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>)
       _docOvertypePasteRanges = lib.lookupFunction<
           Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -512,6 +518,15 @@ class AlulaFfi {
       return _takeJson(_docDeleteLineRanges(id, selections, direction));
     } finally {
       malloc.free(selections);
+    }
+  }
+
+  String docTransposeRangesJson(int id, List<int> offsetsUtf16) {
+    final offsets = jsonEncode(offsetsUtf16).toNativeUtf8();
+    try {
+      return _takeJson(_docTransposeRanges(id, offsets));
+    } finally {
+      malloc.free(offsets);
     }
   }
 

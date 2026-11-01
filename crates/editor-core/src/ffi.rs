@@ -36,10 +36,11 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 31;
+pub const ALULA_ABI_VERSION: u32 = 32;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
+const MAX_TRANSPOSE_OUTPUT_BYTES: usize = 2 * 1024 * 1024;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -1218,6 +1219,67 @@ pub unsafe extern "C" fn alula_doc_delete_line_ranges(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_delete_line_ranges")))
+}
+
+/// Resolve bounded Code-OSS transpose edit plans for a JSON array of absolute
+/// UTF-16 caret offsets. At most 10,000 caret positions are accepted.
+///
+/// # Safety
+/// `offsets_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_transpose_ranges(
+    id: u64,
+    offsets_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let offsets_json = match read_c_str(offsets_json) {
+            Ok(json) => json,
+            Err(error) => return error,
+        };
+        let max_json_bytes = editor_buffer::MAX_TRANSPOSE_CARETS * 21 + 2;
+        if offsets_json.len() > max_json_bytes {
+            return err_json(
+                "InvalidArgument",
+                json!({ "message": "caret list JSON exceeds the bounded input size" }),
+            );
+        }
+        let offsets: Vec<u64> = match serde_json::from_str(offsets_json) {
+            Ok(offsets) => offsets,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let offsets: Result<Vec<usize>, _> = offsets.into_iter().map(usize::try_from).collect();
+        let offsets = match offsets {
+            Ok(offsets) => offsets,
+            Err(_) => return err_json("InvalidArgument", json!("offset is not representable")),
+        };
+
+        let registry = registry_lock();
+        match registry.transpose_ranges_utf16(id, &offsets) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(plans)) => {
+                let Some(version) = registry.version_of(id) else {
+                    return err_json("UnknownDoc", json!({ "id": id }));
+                };
+                let result = json!({ "ok": true, "version": version, "plans": plans }).to_string();
+                if result.len() > MAX_TRANSPOSE_OUTPUT_BYTES {
+                    return err_json(
+                        "OutputTooLarge",
+                        json!({ "maxBytes": MAX_TRANSPOSE_OUTPUT_BYTES }),
+                    );
+                }
+                to_c_ptr(result)
+            }
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(BufferError::TransposeCountTooLarge { requested, max })) => err_json(
+                "TooManyCarets",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(error)) => err_json("InvalidRange", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_transpose_ranges")))
 }
 
 /// Resolve bounded UTF-16 paste-overwrite ranges. Each input triple is
@@ -2870,6 +2932,46 @@ mod tests {
         );
 
         take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn transpose_ranges_over_ffi_are_versioned_and_utf16_safe() {
+        let id = 93_046;
+        take(unsafe { alula_doc_open(id, c("🦊a").as_ptr()) });
+
+        let offsets = c("[2,0]");
+        let result = take(unsafe { alula_doc_transpose_ranges(id, offsets.as_ptr()) });
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["version"], 1);
+        assert_eq!(result["plans"][0]["startUtf16"], 0);
+        assert_eq!(result["plans"][0]["endUtf16"], 3);
+        assert_eq!(result["plans"][0]["removedText"], "🦊a");
+        assert_eq!(result["plans"][0]["insertedText"], "a🦊");
+        assert_eq!(result["plans"][1], serde_json::Value::Null);
+
+        let split_surrogate = c("[1]");
+        assert_eq!(
+            take(unsafe { alula_doc_transpose_ranges(id, split_surrogate.as_ptr()) })["error"]
+                ["code"],
+            "InvalidUtf16Offset"
+        );
+        let too_many = c(&json!(vec![0u64; editor_buffer::MAX_TRANSPOSE_CARETS + 1]).to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_transpose_ranges(id, too_many.as_ptr()) })["error"]["code"],
+            "TooManyCarets"
+        );
+
+        take(alula_doc_close(id));
+
+        let nul_id = 93_047;
+        take(unsafe { alula_doc_open(nul_id, c("a").as_ptr()) });
+        let insert_nul = c(r#"[{"type":"insert","offset_utf16":0,"text":"\u0000"}]"#);
+        take(unsafe { alula_doc_apply(nul_id, 1, insert_nul.as_ptr()) });
+        let after_nul = c("[1]");
+        let nul_result = take(unsafe { alula_doc_transpose_ranges(nul_id, after_nul.as_ptr()) });
+        assert_eq!(nul_result["plans"][0]["removedText"], "\0a");
+        assert_eq!(nul_result["plans"][0]["insertedText"], "a\0");
+        take(alula_doc_close(nul_id));
     }
 
     #[test]

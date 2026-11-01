@@ -11,7 +11,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 use editor_buffer::{
     BufferError, LineDeleteDirection, TextBuffer, TextColumnSelection, TextDeleteRange,
     TextLineBoundary, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp, TextRangeRead,
-    WordDeleteDirection, WordPartDirection,
+    TextTransposePlan, WordDeleteDirection, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -294,6 +294,17 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_delete_ranges_utf16(selections_utf16, direction))
+    }
+
+    /// Resolve a bounded batch of Code-OSS transpose plans against one document version.
+    pub fn transpose_ranges_utf16(
+        &self,
+        id: u64,
+        offsets_utf16: &[usize],
+    ) -> Option<Result<Vec<Option<TextTransposePlan>>, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.transpose_ranges_utf16(offsets_utf16))
     }
 
     /// Resolve a bounded batch of overtype-paste replacement ranges against
