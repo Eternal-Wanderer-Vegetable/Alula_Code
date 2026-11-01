@@ -338,6 +338,18 @@ impl DocRegistry {
             .map(TextBuffer::trim_trailing_whitespace_utf16)
     }
 
+    /// Resolve a bounded full-document indentation conversion from one Rope snapshot.
+    pub fn convert_indentation_utf16(
+        &self,
+        id: u64,
+        insert_spaces: bool,
+        tab_size: usize,
+    ) -> Option<Result<editor_buffer::TextIndentationPlan, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.convert_indentation_utf16(insert_spaces, tab_size))
+    }
+
     /// Resolve a bounded batch of Code-OSS transpose plans against one document version.
     pub fn transpose_ranges_utf16(
         &self,

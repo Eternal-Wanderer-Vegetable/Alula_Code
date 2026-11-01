@@ -36,7 +36,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 36;
+pub const ALULA_ABI_VERSION: u32 = 37;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -44,6 +44,7 @@ const MAX_TRANSPOSE_OUTPUT_BYTES: usize = 2 * 1024 * 1024;
 const MAX_NUMBER_ADJUSTMENT_JSON_BYTES: usize = 16 * 1024;
 const MAX_LINE_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_LINE_COMMENT_SELECTIONS * 44 + 256;
 const MAX_BLOCK_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_BLOCK_COMMENT_SELECTIONS * 44 + 512;
+const MAX_INDENTATION_CONVERSION_OUTPUT_BYTES: usize = 5 * 1024 * 1024;
 const MAX_TRIM_TRAILING_WHITESPACE_OUTPUT_BYTES: usize = 1024 * 1024;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
@@ -1519,6 +1520,60 @@ pub extern "C" fn alula_doc_trim_trailing_whitespace(id: u64) -> *mut c_char {
             json!("panic in alula_doc_trim_trailing_whitespace"),
         )
     })
+}
+
+/// Resolve a bounded full-document indentation conversion plan. `insert_spaces`
+/// must be 0 or 1; all edit coordinates are absolute UTF-16 offsets.
+#[no_mangle]
+pub extern "C" fn alula_doc_convert_indentation(
+    id: u64,
+    insert_spaces: u8,
+    tab_size: u64,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        if insert_spaces > 1 {
+            return err_json("InvalidArgument", json!({ "insertSpaces": insert_spaces }));
+        }
+        let Ok(tab_size) = usize::try_from(tab_size) else {
+            return err_json("InvalidArgument", json!("tab size is not representable"));
+        };
+        let registry = registry_lock();
+        match registry.convert_indentation_utf16(id, insert_spaces == 1, tab_size) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(plan)) => {
+                let output = json!({ "ok": true, "plan": plan }).to_string();
+                if output.len() > MAX_INDENTATION_CONVERSION_OUTPUT_BYTES {
+                    return err_json(
+                        "TextTooLarge",
+                        json!({
+                            "requested": output.len(),
+                            "max": MAX_INDENTATION_CONVERSION_OUTPUT_BYTES,
+                        }),
+                    );
+                }
+                to_c_ptr(output)
+            }
+            Some(Err(BufferError::InvalidIndentationTabSize { requested, max })) => err_json(
+                "InvalidArgument",
+                json!({ "tabSize": requested, "max": max }),
+            ),
+            Some(Err(BufferError::IndentationConversionScanTooLarge { requested, max }))
+            | Some(Err(BufferError::IndentationConversionPayloadTooLarge { requested, max })) => {
+                err_json(
+                    "TextTooLarge",
+                    json!({ "requested": requested, "max": max }),
+                )
+            }
+            Some(Err(BufferError::IndentationConversionEditCountTooLarge { requested, max })) => {
+                err_json(
+                    "TooManyEdits",
+                    json!({ "requested": requested, "max": max }),
+                )
+            }
+            Some(Err(error)) => err_json("InvalidArgument", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_convert_indentation")))
 }
 
 /// Resolve bounded Code-OSS transpose edit plans for a JSON array of absolute
@@ -3398,6 +3453,41 @@ mod tests {
         assert_eq!(
             take(alula_doc_trim_trailing_whitespace(id + 1))["error"]["code"],
             "UnknownDoc"
+        );
+
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn indentation_conversion_over_ffi_returns_versioned_utf16_edits() {
+        let id = 93_053;
+        take(unsafe { alula_doc_open(id, c("😀\r\n    value").as_ptr()) });
+
+        let result = take(alula_doc_convert_indentation(id, 0, 4));
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["plan"]["version"], 1);
+        assert_eq!(result["plan"]["insertSpaces"], false);
+        assert_eq!(result["plan"]["tabSize"], 4);
+        assert_eq!(
+            result["plan"]["edits"],
+            json!([{
+                "startUtf16": 4,
+                "endUtf16": 8,
+                "removedText": "    ",
+                "insertedText": "\t"
+            }])
+        );
+        assert_eq!(
+            take(alula_doc_convert_indentation(id + 1, 1, 4))["error"]["code"],
+            "UnknownDoc"
+        );
+        assert_eq!(
+            take(alula_doc_convert_indentation(id, 2, 4))["error"]["code"],
+            "InvalidArgument"
+        );
+        assert_eq!(
+            take(alula_doc_convert_indentation(id, 1, 33))["error"]["code"],
+            "InvalidArgument"
         );
 
         take(alula_doc_close(id));

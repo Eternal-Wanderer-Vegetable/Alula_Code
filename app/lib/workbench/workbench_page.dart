@@ -509,6 +509,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : 'Ctrl+K Ctrl+X',
       enablement: 'editorTextFocus',
     );
+    reg(
+      'editor.action.indentationToSpaces',
+      '编辑器',
+      '将缩进转换为空格',
+      () => _convertIndentation(insertSpaces: true),
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'editor.action.indentationToTabs',
+      '编辑器',
+      '将缩进转换为制表符',
+      () => _convertIndentation(insertSpaces: false),
+      enablement: 'editorTextFocus',
+    );
     reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
         () async => _selectAllOccurrences(),
         shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
@@ -2502,7 +2516,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               startBoundary.startUtf16,
               selection.extentOffset,
             );
-            final inserted = indentationTabText(prefix);
+            final inserted = indentationTabText(
+              prefix,
+              tabSize: doc.tabSize,
+              indentSize: doc.tabSize,
+              insertSpaces: doc.insertSpaces,
+            );
             edits.add((
               start: selection.extentOffset,
               end: selection.extentOffset,
@@ -2526,7 +2545,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               startBoundary.startUtf16,
               selection.start,
             );
-            final inserted = indentationTabText(prefix);
+            final inserted = indentationTabText(
+              prefix,
+              tabSize: doc.tabSize,
+              indentSize: doc.tabSize,
+              insertSpaces: doc.insertSpaces,
+            );
             edits.add((
               start: selection.start,
               end: selection.end,
@@ -2595,7 +2619,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final skipEmptySelectionLine =
               interval.first != interval.last && line.isEmpty && !outdent;
           if (!skipEmptySelectionLine) {
-            final newIndent = shiftLineIndentation(line, outdent: outdent);
+            final newIndent = shiftLineIndentation(
+              line,
+              outdent: outdent,
+              tabSize: doc.tabSize,
+              indentSize: doc.tabSize,
+              insertSpaces: doc.insertSpaces,
+            );
             if (newIndent != null) {
               final oldIndentLength = leadingIndentLength(line);
               final oldIndent = line.substring(0, oldIndentLength);
@@ -4647,6 +4677,167 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = '已修剪行尾空格');
   }
 
+  Future<void> _convertIndentation({required bool insertSpaces}) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.diskState == DiskDocumentState.readOnly) {
+      if (mounted) setState(() => _statusDetail = '当前文件为只读状态');
+      return;
+    }
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      return;
+    }
+
+    _flushInput(doc);
+    final expectedVersion = doc.doc.version;
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted) setState(() => _statusDetail = '缩进转换已取消：选区数超出上限');
+      return;
+    }
+
+    late final DocumentIndentationPlan plan;
+    var payloadUtf16 = 0;
+    try {
+      plan = doc.doc.convertIndentation(
+        insertSpaces: insertSpaces,
+        tabSize: doc.tabSize,
+      );
+      if (plan.version != expectedVersion ||
+          plan.insertSpaces != insertSpaces ||
+          plan.tabSize != doc.tabSize ||
+          doc.doc.version != expectedVersion) {
+        throw StateError('Rust 返回了过期的缩进转换计划');
+      }
+      var previousEnd = 0;
+      for (final edit in plan.edits) {
+        if (edit.startUtf16 < previousEnd ||
+            edit.endUtf16 <= edit.startUtf16 ||
+            edit.endUtf16 > doc.inputWindow.totalUtf16Length ||
+            edit.endUtf16 - edit.startUtf16 != edit.removedText.length) {
+          throw StateError('Rust 返回了无效的缩进转换范围');
+        }
+        final actual = _readDocumentRange(
+          doc,
+          edit.startUtf16,
+          edit.endUtf16,
+        );
+        if (actual != edit.removedText ||
+            actual.runes.any((rune) => rune != 0x20 && rune != 0x09) ||
+            edit.insertedText.runes
+                .any((rune) => rune != 0x20 && rune != 0x09)) {
+          throw StateError('Rust 缩进转换计划与权威全文不一致');
+        }
+        payloadUtf16 += actual.length + edit.insertedText.length;
+        if (payloadUtf16 > _undoHistoryBudget.maxTotalChars) {
+          throw StateError('缩进转换超过撤销文本上限');
+        }
+        previousEnd = edit.endUtf16;
+      }
+      if (doc.doc.version != expectedVersion) {
+        throw StateError('文档版本已变化');
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '未转换缩进：$error');
+      return;
+    }
+
+    if (plan.edits.isEmpty) {
+      doc.insertSpaces = insertSpaces;
+      if (mounted) {
+        setState(() => _statusDetail = insertSpaces ? '缩进模式：空格' : '缩进模式：制表符');
+      }
+      return;
+    }
+
+    var deltaBefore = 0;
+    final mappedStarts = <int>[];
+    for (final edit in plan.edits) {
+      mappedStarts.add(edit.startUtf16 + deltaBefore);
+      deltaBefore += edit.insertedText.length - edit.removedText.length;
+    }
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final edit in plan.edits.reversed) {
+      if (edit.removedText.isNotEmpty) {
+        forward.add(TextOp.delete(
+          edit.startUtf16,
+          edit.removedText.length,
+        ));
+      }
+      if (edit.insertedText.isNotEmpty) {
+        forward.add(TextOp.insert(edit.startUtf16, edit.insertedText));
+      }
+    }
+    for (var index = plan.edits.length - 1; index >= 0; index--) {
+      final edit = plan.edits[index];
+      final mappedStart = mappedStarts[index];
+      if (edit.insertedText.isNotEmpty) {
+        inverse.add(TextOp.delete(mappedStart, edit.insertedText.length));
+      }
+      if (edit.removedText.isNotEmpty) {
+        inverse.add(TextOp.insert(mappedStart, edit.removedText));
+      }
+    }
+
+    int mapOffset(int offset) {
+      var delta = 0;
+      for (final edit in plan.edits) {
+        if (offset < edit.startUtf16) break;
+        final mappedStart = edit.startUtf16 + delta;
+        if (offset <= edit.endUtf16) {
+          return mappedStart + edit.insertedText.length;
+        }
+        delta += edit.insertedText.length - edit.removedText.length;
+      }
+      return offset + delta;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length + deltaBefore;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset:
+              mapOffset(selection.baseOffset).clamp(0, newLength).toInt(),
+          extentOffset:
+              mapOffset(selection.extentOffset).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    if (mappedSelections.isEmpty) return;
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '未转换缩进：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    doc.insertSpaces = insertSpaces;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) {
+      setState(() => _statusDetail = insertSpaces ? '已将缩进转换为空格' : '已将缩进转换为制表符');
+    }
+  }
+
   Future<void> _toggleLineComment() async {
     final doc = _active;
     if (doc == null) return;
@@ -6078,7 +6269,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
           if (pair.length == 2 &&
               _rustAutoClosingBracketPairs[pair[0]] == pair[1]) {
-            final innerIndentation = '$indentation    ';
+            final innerIndentation =
+                '$indentation${indentationString(doc.tabSize, tabSize: doc.tabSize, insertSpaces: doc.insertSpaces)}';
             text = '\n$innerIndentation\n$indentation';
             caretOffset = 1 + innerIndentation.length;
           }
@@ -11094,6 +11286,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               child: RustTextInputField(
                                 key: active.inputFieldKey,
                                 inputWindow: active.inputWindow,
+                                tabSize: active.tabSize,
                                 syntaxTokens: syntaxTokens,
                                 syntaxVersion: syntaxVersion,
                                 enableCodeFolding: usesRustSyntax,
@@ -11691,6 +11884,8 @@ class _SharedOpenDocState {
   bool dirtyDisk;
   DiskDocumentState diskState;
   bool conflictBaselineKnown;
+  bool insertSpaces = true;
+  int tabSize = 4;
   DateTime? lastEditAt;
   bool undoRedoBusy = false;
   int viewCount = 0;
@@ -11943,6 +12138,10 @@ class OpenDoc {
   bool get conflictBaselineKnown => _shared.conflictBaselineKnown;
   set conflictBaselineKnown(bool value) =>
       _shared.conflictBaselineKnown = value;
+  bool get insertSpaces => _shared.insertSpaces;
+  set insertSpaces(bool value) => _shared.insertSpaces = value;
+  int get tabSize => _shared.tabSize;
+  set tabSize(int value) => _shared.tabSize = value;
   DateTime? get lastEditAt => _shared.lastEditAt;
   set lastEditAt(DateTime? value) => _shared.lastEditAt = value;
   bool get undoRedoBusy => _shared.undoRedoBusy;

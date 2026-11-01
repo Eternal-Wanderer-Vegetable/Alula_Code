@@ -190,6 +190,12 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Uint64),
           Pointer<Utf8> Function(int)>('alula_doc_trim_trailing_whitespace');
 
+  late final Pointer<Utf8> Function(int, int, int) _docConvertIndentation =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64, Uint8, Uint64),
+          Pointer<Utf8> Function(int, int, int)>(
+    'alula_doc_convert_indentation',
+  );
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>)
       _docOvertypePasteRanges = lib.lookupFunction<
           Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -599,6 +605,13 @@ class AlulaFfi {
 
   String docTrimTrailingWhitespaceJson(int id) =>
       _takeJson(_docTrimTrailingWhitespace(id));
+
+  String docConvertIndentationJson(
+    int id, {
+    required bool insertSpaces,
+    required int tabSize,
+  }) =>
+      _takeJson(_docConvertIndentation(id, insertSpaces ? 1 : 0, tabSize));
 
   String docOvertypePasteRangesJson(
     int id,

@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.51 / EDT-09d 完成）
+
+- 新增 `editor.action.indentationToSpaces` 与 `editor.action.indentationToTabs` 命令面板项。Rust Rope 规划器只转换全文每行的前导空格/tab，绝对偏移使用 UTF-16；转 tab 保留不足 tabSize 的余数，保留 BOM、行尾与 CR/LF/CRLF。Rust/Dart FFI 升至 ABI v37，界限为 32 Mi UTF-16 扫描、10,000 行编辑、2,000,000 UTF-16 undo payload、5 MiB 响应和 tabSize 1–32。
+- 工作台校验 Rust 版本与每段原文后一次性 TextOps 提交，接通选区映射、undo/redo、dirty、Find、分屏与 BOM+CRLF 保存回读。同文档分屏共享 transient `insertSpaces`；后续 Tab、行缩进/反缩进及括号内自动缩进使用该模式。当前 tabSize 固定为 4，设置持久化/UI 留 P07，状态栏缩进选择器尚未接入。
+- Rust 定向 buffer 2 项、FFI 1 项与 Flutter 三平台 `TargetPlatform` fixture 3 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 544），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.51-indentation-conversion.md`。
+- Windows 11 exact artifact run `41109679662` 的自动原生回放记录在 P03.7 报告：客户区和双视图编辑同步、保存回读、Microsoft Pinyin 通过；关闭时 Flutter 崩溃，UIA/Narrator 标签与布局未通过。该证据仍只覆盖暗色 125% DPI；主题切换、100%/150%、原生 DRM Linux 和 macOS 保持 P15 pending。
+
 ### 最新进展（2026-11-01，P04.50 / EDT-09c 完成）
 
 - P04.50 完成固定 Code-OSS `editor.action.trimTrailingWhitespace`：Windows/Linux `Ctrl+K Ctrl+X`，macOS `Cmd+K Cmd+X`。Rust Rope 版本化 UTF-16 planner 只删除行尾 ASCII 空格/tab，保留 CR/LF/CRLF 与 NBSP；扫描、edit 数、删除/undo payload 和 FFI JSON 响应均设上限。ABI 双侧升至 v36，工作台校验删除全文与版本，批量接入 selection 映射、undo/redo、dirty、Find、双视图及 BOM+CRLF 保存回读；双段键位解析也接入当前注册的多键序列。

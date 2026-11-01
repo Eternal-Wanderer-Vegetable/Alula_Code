@@ -41,6 +41,14 @@ pub const MAX_TRAILING_WHITESPACE_SCAN_UTF16: usize = 32 * 1024 * 1024;
 pub const MAX_TRAILING_WHITESPACE_EDITS: usize = 10_000;
 /// Maximum UTF-16 text deleted by one trim-whitespace command.
 pub const MAX_TRAILING_WHITESPACE_DELETE_UTF16: usize = 2_000_000;
+/// Maximum UTF-16 document length scanned by indentation conversion.
+pub const MAX_INDENTATION_CONVERSION_SCAN_UTF16: usize = 32 * 1024 * 1024;
+/// Maximum changed indentation prefixes returned by one conversion command.
+pub const MAX_INDENTATION_CONVERSION_EDITS: usize = 10_000;
+/// Maximum removed plus inserted indentation payload retained for undo.
+pub const MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16: usize = 2_000_000;
+/// Maximum tab size accepted by editor indentation commands.
+pub const MAX_INDENTATION_TAB_SIZE: usize = 32;
 /// Maximum number of caret positions accepted by one transpose query.
 pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
 /// Maximum UTF-16 units inspected around a numeric adjustment caret.
@@ -779,6 +787,26 @@ pub struct TextTrimTrailingWhitespacePlan {
     pub edits: Vec<TextDeleteRange>,
 }
 
+/// One leading-whitespace replacement produced by indentation conversion.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextIndentationEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// Full-document indentation conversion resolved from one Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextIndentationPlan {
+    pub version: u64,
+    pub insert_spaces: bool,
+    pub tab_size: usize,
+    pub edits: Vec<TextIndentationEdit>,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct TransposeLineBounds {
     start_char: usize,
@@ -1183,6 +1211,14 @@ pub enum BufferError {
     TrailingWhitespaceEditCountTooLarge { requested: usize, max: usize },
     /// A trim request would exceed the bounded undo payload.
     TrailingWhitespaceDeleteTooLarge { requested: usize, max: usize },
+    /// The requested indentation tab size is outside the supported range.
+    InvalidIndentationTabSize { requested: usize, max: usize },
+    /// The complete indentation conversion scan exceeds its bounded document size.
+    IndentationConversionScanTooLarge { requested: usize, max: usize },
+    /// An indentation conversion produces too many changed lines.
+    IndentationConversionEditCountTooLarge { requested: usize, max: usize },
+    /// The conversion's removed and inserted text exceeds its bounded undo payload.
+    IndentationConversionPayloadTooLarge { requested: usize, max: usize },
     /// A transpose query contains more caret positions than the bounded API accepts.
     TransposeCountTooLarge { requested: usize, max: usize },
     /// An overtype-paste selection has its end before its start.
@@ -1273,6 +1309,22 @@ impl std::fmt::Display for BufferError {
             BufferError::TrailingWhitespaceDeleteTooLarge { requested, max } => write!(
                 f,
                 "trailing-whitespace delete payload {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::InvalidIndentationTabSize { requested, max } => write!(
+                f,
+                "indentation tab size {requested} is outside the supported range 1..={max}"
+            ),
+            BufferError::IndentationConversionScanTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::IndentationConversionEditCountTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion edit count {requested} exceeds maximum {max}"
+            ),
+            BufferError::IndentationConversionPayloadTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion payload {requested} exceeds maximum {max} UTF-16 units"
             ),
             BufferError::TransposeCountTooLarge { requested, max } => {
                 write!(f, "transpose caret count {requested} exceeds maximum {max}")
@@ -2240,6 +2292,168 @@ impl TextBuffer {
 
         Ok(TextTrimTrailingWhitespacePlan {
             version: self.version,
+            edits,
+        })
+    }
+
+    /// Convert only the leading spaces/tabs on every line, matching the fixed
+    /// Code-OSS indentation conversion actions. Line endings and all text after
+    /// the first non-indentation character remain unchanged.
+    pub fn convert_indentation_utf16(
+        &self,
+        insert_spaces: bool,
+        tab_size: usize,
+    ) -> Result<TextIndentationPlan, BufferError> {
+        fn convert_prefix(prefix: &str, insert_spaces: bool, tab_size: usize) -> String {
+            let mut converted = String::with_capacity(prefix.len());
+            if insert_spaces {
+                for ch in prefix.chars() {
+                    if ch == '\t' {
+                        converted.push_str(&" ".repeat(tab_size));
+                    } else {
+                        converted.push(ch);
+                    }
+                }
+            } else {
+                let mut chars = prefix.chars().peekable();
+                while let Some(ch) = chars.next() {
+                    if ch != ' ' {
+                        converted.push(ch);
+                        continue;
+                    }
+                    let mut run = 1usize;
+                    while chars.peek() == Some(&' ') {
+                        chars.next();
+                        run += 1;
+                    }
+                    converted.push_str(&"\t".repeat(run / tab_size));
+                    converted.push_str(&" ".repeat(run % tab_size));
+                }
+            }
+            converted
+        }
+
+        fn push_prefix_edit(
+            edits: &mut Vec<TextIndentationEdit>,
+            payload_utf16: &mut usize,
+            prefix: &str,
+            start_utf16: usize,
+            insert_spaces: bool,
+            tab_size: usize,
+        ) -> Result<(), BufferError> {
+            if prefix.is_empty() {
+                return Ok(());
+            }
+            let inserted_text = convert_prefix(prefix, insert_spaces, tab_size);
+            if inserted_text == prefix {
+                return Ok(());
+            }
+            let requested_edits = edits.len() + 1;
+            if requested_edits > MAX_INDENTATION_CONVERSION_EDITS {
+                return Err(BufferError::IndentationConversionEditCountTooLarge {
+                    requested: requested_edits,
+                    max: MAX_INDENTATION_CONVERSION_EDITS,
+                });
+            }
+            // Prefixes contain ASCII spaces/tabs only, so byte and UTF-16
+            // lengths are identical here.
+            let requested_payload = payload_utf16
+                .saturating_add(prefix.len())
+                .saturating_add(inserted_text.len());
+            if requested_payload > MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16 {
+                return Err(BufferError::IndentationConversionPayloadTooLarge {
+                    requested: requested_payload,
+                    max: MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16,
+                });
+            }
+            edits.push(TextIndentationEdit {
+                start_utf16,
+                end_utf16: start_utf16 + prefix.len(),
+                removed_text: prefix.to_owned(),
+                inserted_text,
+            });
+            *payload_utf16 = requested_payload;
+            Ok(())
+        }
+
+        if tab_size == 0 || tab_size > MAX_INDENTATION_TAB_SIZE {
+            return Err(BufferError::InvalidIndentationTabSize {
+                requested: tab_size,
+                max: MAX_INDENTATION_TAB_SIZE,
+            });
+        }
+        let scan_utf16 = self.len_utf16();
+        if scan_utf16 > MAX_INDENTATION_CONVERSION_SCAN_UTF16 {
+            return Err(BufferError::IndentationConversionScanTooLarge {
+                requested: scan_utf16,
+                max: MAX_INDENTATION_CONVERSION_SCAN_UTF16,
+            });
+        }
+
+        let mut edits = Vec::new();
+        let mut payload_utf16 = 0usize;
+        let mut prefix = String::new();
+        let mut prefix_start_utf16 = 0usize;
+        let mut offset_utf16 = 0usize;
+        let mut at_line_start = true;
+        let mut chars = self.rope.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if offset_utf16 == 0 && ch == '\u{feff}' {
+                // The preserved file BOM precedes the first line's editable
+                // indentation but is not itself part of that indentation.
+                offset_utf16 += 1;
+                prefix_start_utf16 = offset_utf16;
+                continue;
+            }
+            if ch == '\r' || ch == '\n' {
+                push_prefix_edit(
+                    &mut edits,
+                    &mut payload_utf16,
+                    &prefix,
+                    prefix_start_utf16,
+                    insert_spaces,
+                    tab_size,
+                )?;
+                prefix.clear();
+                offset_utf16 += 1;
+                if ch == '\r' && chars.peek() == Some(&'\n') {
+                    chars.next();
+                    offset_utf16 += 1;
+                }
+                prefix_start_utf16 = offset_utf16;
+                at_line_start = true;
+            } else if at_line_start && (ch == ' ' || ch == '\t') {
+                prefix.push(ch);
+                offset_utf16 += 1;
+            } else {
+                if at_line_start {
+                    push_prefix_edit(
+                        &mut edits,
+                        &mut payload_utf16,
+                        &prefix,
+                        prefix_start_utf16,
+                        insert_spaces,
+                        tab_size,
+                    )?;
+                    prefix.clear();
+                    at_line_start = false;
+                }
+                offset_utf16 += ch.len_utf16();
+            }
+        }
+        push_prefix_edit(
+            &mut edits,
+            &mut payload_utf16,
+            &prefix,
+            prefix_start_utf16,
+            insert_spaces,
+            tab_size,
+        )?;
+
+        Ok(TextIndentationPlan {
+            version: self.version,
+            insert_spaces,
+            tab_size,
             edits,
         })
     }
@@ -3880,6 +4094,77 @@ mod tests {
         assert!(matches!(
             too_much_whitespace.trim_trailing_whitespace_utf16(),
             Err(BufferError::TrailingWhitespaceDeleteTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn indentation_conversion_changes_only_leading_whitespace_and_keeps_utf16_offsets() {
+        let buffer = TextBuffer::open("\u{feff}     x\r\n😀\n        end");
+        let plan = buffer.convert_indentation_utf16(false, 4).unwrap();
+        assert_eq!(plan.version, 1);
+        assert!(!plan.insert_spaces);
+        assert_eq!(plan.tab_size, 4);
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextIndentationEdit {
+                    start_utf16: 1,
+                    end_utf16: 6,
+                    removed_text: "     ".to_owned(),
+                    inserted_text: "\t ".to_owned(),
+                },
+                TextIndentationEdit {
+                    start_utf16: 12,
+                    end_utf16: 20,
+                    removed_text: "        ".to_owned(),
+                    inserted_text: "\t\t".to_owned(),
+                },
+            ]
+        );
+
+        let tabs = TextBuffer::open("😀\r\n\t\tvalue\n");
+        let plan = tabs.convert_indentation_utf16(true, 2).unwrap();
+        assert_eq!(
+            plan.edits,
+            vec![TextIndentationEdit {
+                start_utf16: 4,
+                end_utf16: 6,
+                removed_text: "\t\t".to_owned(),
+                inserted_text: "    ".to_owned(),
+            }]
+        );
+    }
+
+    #[test]
+    fn indentation_conversion_preserves_remainder_noops_and_validates_bounds() {
+        let buffer = TextBuffer::open("  x\r\n   y\n");
+        assert!(buffer
+            .convert_indentation_utf16(false, 4)
+            .unwrap()
+            .edits
+            .is_empty());
+        let tabs = TextBuffer::open("   x\r\n\t y\n");
+        assert!(tabs
+            .convert_indentation_utf16(false, 4)
+            .unwrap()
+            .edits
+            .is_empty());
+        assert!(matches!(
+            buffer.convert_indentation_utf16(true, 0),
+            Err(BufferError::InvalidIndentationTabSize { .. })
+        ));
+
+        let too_many_lines =
+            TextBuffer::open(&"    x\n".repeat(MAX_INDENTATION_CONVERSION_EDITS + 1));
+        assert!(matches!(
+            too_many_lines.convert_indentation_utf16(false, 4),
+            Err(BufferError::IndentationConversionEditCountTooLarge { .. })
+        ));
+        let too_much_payload =
+            TextBuffer::open(&"\t".repeat(MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16 / 2 + 1));
+        assert!(matches!(
+            too_much_payload.convert_indentation_utf16(true, 2),
+            Err(BufferError::IndentationConversionPayloadTooLarge { .. })
         ));
     }
 

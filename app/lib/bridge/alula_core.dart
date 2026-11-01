@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 36;
+const int expectedAbiVersion = 37;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -24,6 +24,8 @@ const int maxDocLineDeleteSelections = 10000;
 const int maxDocLineCommentSelections = 10000;
 const int maxDocBlockCommentSelections = 10000;
 const int maxDocTrailingWhitespaceEdits = 10000;
+const int maxDocIndentationConversionEdits = 10000;
+const int maxDocIndentationConversionPayloadUtf16 = 2000000;
 const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
 const int maxNumberAdjustmentWindowUtf16 = 1000;
@@ -312,6 +314,36 @@ class DocumentDeleteRanges {
   final List<DocumentDeleteRange> ranges;
 
   const DocumentDeleteRanges({required this.version, required this.ranges});
+}
+
+/// One leading-whitespace replacement from a Rust indentation plan.
+class DocumentIndentationEdit {
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final String insertedText;
+
+  const DocumentIndentationEdit({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.insertedText,
+  });
+}
+
+/// Bounded full-document indentation conversion for one Rust snapshot.
+class DocumentIndentationPlan {
+  final int version;
+  final bool insertSpaces;
+  final int tabSize;
+  final List<DocumentIndentationEdit> edits;
+
+  const DocumentIndentationPlan({
+    required this.version,
+    required this.insertSpaces,
+    required this.tabSize,
+    required this.edits,
+  });
 }
 
 /// One Code-OSS transpose replacement resolved against a Rust document version.
@@ -1195,6 +1227,68 @@ class AlulaDoc {
     }
     this.version = version;
     return DocumentDeleteRanges(version: version, ranges: ranges);
+  }
+
+  /// Resolve Code-OSS indentation conversion against a Rust-owned snapshot.
+  DocumentIndentationPlan convertIndentation({
+    required bool insertSpaces,
+    int tabSize = 4,
+  }) {
+    final result = jsonDecode(core._ffi.docConvertIndentationJson(
+      id,
+      insertSpaces: insertSpaces,
+      tabSize: tabSize,
+    )) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final rawPlan = result['plan'] as Map<String, Object?>;
+    final version = rawPlan['version'] as int;
+    final plannedInsertSpaces = rawPlan['insertSpaces'] as bool;
+    final plannedTabSize = rawPlan['tabSize'] as int;
+    if (plannedInsertSpaces != insertSpaces || plannedTabSize != tabSize) {
+      throw StateError('Rust returned a different indentation mode');
+    }
+    final rawEdits = rawPlan['edits'] as List<Object?>;
+    if (rawEdits.length > maxDocIndentationConversionEdits) {
+      throw StateError('Alula returned too many indentation edits');
+    }
+    var previousEnd = 0;
+    var payloadUtf16 = 0;
+    bool isWhitespace(String text) =>
+        text.runes.every((rune) => rune == 0x20 || rune == 0x09);
+    final edits = rawEdits.map((item) {
+      final edit = item as Map<String, Object?>;
+      final parsed = DocumentIndentationEdit(
+        startUtf16: edit['startUtf16'] as int,
+        endUtf16: edit['endUtf16'] as int,
+        removedText: edit['removedText'] as String,
+        insertedText: edit['insertedText'] as String,
+      );
+      if (parsed.startUtf16 < previousEnd ||
+          parsed.endUtf16 <= parsed.startUtf16 ||
+          parsed.endUtf16 - parsed.startUtf16 != parsed.removedText.length ||
+          !isWhitespace(parsed.removedText) ||
+          !isWhitespace(parsed.insertedText)) {
+        throw StateError('Alula returned an invalid indentation edit');
+      }
+      previousEnd = parsed.endUtf16;
+      payloadUtf16 += parsed.removedText.length + parsed.insertedText.length;
+      if (payloadUtf16 > maxDocIndentationConversionPayloadUtf16) {
+        throw StateError('Alula returned an oversized indentation plan');
+      }
+      return parsed;
+    }).toList(growable: false);
+    return DocumentIndentationPlan(
+      version: version,
+      insertSpaces: plannedInsertSpaces,
+      tabSize: plannedTabSize,
+      edits: edits,
+    );
   }
 
   /// Resolve Code-OSS line-comment edits from the Rust-authoritative snapshot.
