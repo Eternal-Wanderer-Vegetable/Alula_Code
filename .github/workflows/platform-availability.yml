@@ -571,6 +571,50 @@ jobs:
             wait "$app_pid"
             app_status=$?
             set -e
+            if command -v lldb >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
+              python3 - "$executable" "$RUNNER_TEMP/alula-macos-lldb.log" <<'PY'
+          import os
+          import signal
+          import subprocess
+          import sys
+
+          executable, log_path = sys.argv[1:]
+          command = [
+              "lldb",
+              "--batch",
+              "-o",
+              "process handle SIGSEGV -s true -n true -p false",
+              "-o",
+              "run",
+              "-o",
+              "thread backtrace all",
+              "--",
+              executable,
+          ]
+          with open(log_path, "w", encoding="utf-8") as output:
+              process = subprocess.Popen(
+                  command,
+                  stdout=output,
+                  stderr=subprocess.STDOUT,
+                  start_new_session=True,
+              )
+              try:
+                  status = process.wait(timeout=25)
+              except subprocess.TimeoutExpired:
+                  output.write("\nLLDB run timed out; stopping debugger.\n")
+                  os.killpg(process.pid, signal.SIGINT)
+                  try:
+                      status = process.wait(timeout=5)
+                  except subprocess.TimeoutExpired:
+                      os.killpg(process.pid, signal.SIGKILL)
+                      status = process.wait()
+              output.write(f"\nLLDB_EXIT_STATUS={status}\n")
+          print(f"LLDB diagnostic log: {log_path}")
+          PY
+              cat "$RUNNER_TEMP/alula-macos-lldb.log"
+            else
+              echo "lldb/python3 unavailable; skipping debugger backtrace"
+            fi
             exit "$app_status"
           fi
           kill -TERM "$app_pid" 2>/dev/null || true
@@ -590,12 +634,21 @@ jobs:
         run: |
           diagnostics="$RUNNER_TEMP/alula-macos-diagnostics"
           mkdir -p "$diagnostics"
-          smoke_log="$RUNNER_TEMP/alula-macos-smoke.log"
-          if [[ -f "$smoke_log" ]]; then
-            cp "$smoke_log" "$diagnostics/"
-          fi
+          for log in alula-macos-smoke.log alula-macos-lldb.log; do
+            if [[ -f "$RUNNER_TEMP/$log" ]]; then
+              cp "$RUNNER_TEMP/$log" "$diagnostics/"
+            fi
+          done
           reports="$HOME/Library/Logs/DiagnosticReports"
           if [[ -d "$reports" ]]; then
+            for _ in $(seq 1 10); do
+              if find "$reports" -maxdepth 1 -type f \
+                \( -name 'alula_app*.ips' -o -name 'alula_app*.crash' \) \
+                -mmin -15 -print -quit | grep -q .; then
+                break
+              fi
+              sleep 2
+            done
             find "$reports" -maxdepth 1 -type f \
               \( -name 'alula_app*.ips' -o -name 'alula_app*.crash' \) \
               -mmin -15 -exec cp -p {} "$diagnostics/" \; 2>/dev/null || true

@@ -1,4 +1,4 @@
-> Last Updated：2026-11-01（P04.59 / EDT-11a 实现及本地门禁通过，状态 in-progress：同文档拖放 planner/native adapter 已接入；Flutter 589、Rust workspace、core build、Flutter analyze 0 issues、Linux Release build 全绿。CI `41281811415` 全绿但早于本次依赖，本阶段 commit 后需确认 Windows Release/CI。近期历史 red 分别为 Windows lint/测试断言与 macOS clipboard 测试启动失败，后续 run 转绿且没有 app crash/`0xC000041D` 记录。Xvfb app 启动与隔离工作区打开通过；合成 Flutter 手势没有启动原生拖放 provider，真实 DnD smoke 仍 pending。GitNexus upstream impact 为 CRITICAL（`RustTextInputFieldState`：117 symbols/145 flows/20 modules）；全树 detect 为 CRITICAL（49 files/16 symbols/394 processes，另有 384 条流程未展示），保留此风险且不归属本切片。外部拖入、跨文档 provider 与 Paste As 留后续 EDT-11 子片；旧精确 artifact `0xC000041D` 仍由 P15 验证。）
+> Last Updated：2026-11-01（P04.59 / EDT-11a 本地门禁通过，Linux/Windows CI 通过。当前 P04.59 macOS Release 启动在 `41284895881` 两次及 `41286880964` 重复 SIGSEGV/139；父提交 `200d6de` 的 macOS 重跑 `41280920056` 成功。artifact `13076090868` 只有 Impeller smoke stderr，没有 `.ips/.crash`；当前 workflow 增加 LLDB 栈与 crash report 采集。栈取得并修复前不打包 macOS；原生 DnD UI 仍待验收，P04.59 保持 in-progress。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,10 +9,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-01）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 同文档拖放代码与本地门禁完成，等待本阶段 Linux/Windows Release CI 和原生拖放验收。历史 red job 已按 `41267446041`、`41278747568`、`41279726799` 日志归因为 lint/test assertion/platform test startup，后续 `41280923105`、`41280920056`、`41281811415` 已转绿；目前未见与 exact artifact `0xC000041D` 对应的 crash 证据。保留本次 GitNexus CRITICAL（49 files / 16 symbols / 394 processes；384 个流程未展示）与 upstream CRITICAL 状态，不按总数降级。
+- 当前状态更新（2026-11-01）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 同文档拖放代码与本地门禁完成，保持 in-progress。PR CI `41284900506` 全绿；Platform Availability `41286880964` 的 Linux/Windows lane 通过，macOS launch SIGSEGV/139。父提交 `200d6de` 的 macOS rerun `41280920056` 成功，当前回归与 P04.59 变更同步；crash artifact `13076090868` 只有 smoke log，LLDB stack 尚待。macOS 包暂不发布，原生拖放 UI 尚未验收；旧 exact artifact `0xC000041D` 仍由 P15 独立复核。
 
 - 当前阶段涉及文件：`app/lib/editor/text_drag_drop.dart`、`app/lib/editor/editor_native_text_drag_drop.dart`、`app/lib/editor/rust_text_input_field.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/text_drag_drop_test.dart`、`app/pubspec.yaml` / lock、`docs/03` 与 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。工作树保留大量其他既有修改；阶段提交只暂存本阶段文件与精确 hunks。
-- 下一步首件：完成本阶段精确暂存/提交并 push，确认新 Linux/Windows release 与 Platform Availability CI。CI 通过后记录 run/artifact，继续 EDT-11 下一子切片（跨文档，再外部 provider/Paste As）；真实原生拖放 GUI 互动仍需有效操作证据，若必须用户操作再联系用户，避免激活 Narrator。
+- 下一步首件：提交并 push 当前 macOS LLDB/crash-report 诊断 workflow，等待新 Platform Availability run 获取栈；按栈定位 P04.59 启动回归，修复后复跑 Linux/Windows/macOS。Release 启动通过后再回到原生 DnD UI 验收；保持单 feature，不推进后续 EDT-11 子片直到 P04.59 有证据收尾。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。
