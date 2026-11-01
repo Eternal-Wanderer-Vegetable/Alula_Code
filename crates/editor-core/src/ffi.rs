@@ -36,7 +36,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 35;
+pub const ALULA_ABI_VERSION: u32 = 36;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -44,6 +44,7 @@ const MAX_TRANSPOSE_OUTPUT_BYTES: usize = 2 * 1024 * 1024;
 const MAX_NUMBER_ADJUSTMENT_JSON_BYTES: usize = 16 * 1024;
 const MAX_LINE_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_LINE_COMMENT_SELECTIONS * 44 + 256;
 const MAX_BLOCK_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_BLOCK_COMMENT_SELECTIONS * 44 + 512;
+const MAX_TRIM_TRAILING_WHITESPACE_OUTPUT_BYTES: usize = 1024 * 1024;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -1468,6 +1469,56 @@ pub unsafe extern "C" fn alula_doc_toggle_block_comment(
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_toggle_block_comment")))
+}
+
+/// Resolve a bounded Code-OSS trim-trailing-whitespace plan for one document.
+/// The returned deletion ranges use absolute UTF-16 offsets.
+#[no_mangle]
+pub extern "C" fn alula_doc_trim_trailing_whitespace(id: u64) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let registry = registry_lock();
+        match registry.trim_trailing_whitespace_utf16(id) {
+            None => err_json("UnknownDoc", json!({ "id": id })),
+            Some(Ok(plan)) => {
+                let output = json!({
+                    "ok": true,
+                    "version": plan.version,
+                    "edits": plan.edits,
+                })
+                .to_string();
+                if output.len() > MAX_TRIM_TRAILING_WHITESPACE_OUTPUT_BYTES {
+                    return err_json(
+                        "TextTooLarge",
+                        json!({
+                            "requested": output.len(),
+                            "max": MAX_TRIM_TRAILING_WHITESPACE_OUTPUT_BYTES,
+                        }),
+                    );
+                }
+                to_c_ptr(output)
+            }
+            Some(Err(BufferError::TrailingWhitespaceScanTooLarge { requested, max }))
+            | Some(Err(BufferError::TrailingWhitespaceDeleteTooLarge { requested, max })) => {
+                err_json(
+                    "TextTooLarge",
+                    json!({ "requested": requested, "max": max }),
+                )
+            }
+            Some(Err(BufferError::TrailingWhitespaceEditCountTooLarge { requested, max })) => {
+                err_json(
+                    "TooManyEdits",
+                    json!({ "requested": requested, "max": max }),
+                )
+            }
+            Some(Err(error)) => err_json("InvalidArgument", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_doc_trim_trailing_whitespace"),
+        )
+    })
 }
 
 /// Resolve bounded Code-OSS transpose edit plans for a JSON array of absolute
@@ -3326,6 +3377,29 @@ mod tests {
             "TooManySelections"
         );
         take(alula_doc_close(emoji_id));
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_over_ffi_returns_versioned_utf16_ranges() {
+        let id = 93_051;
+        take(unsafe { alula_doc_open(id, c("🦊x \t\r\n\t").as_ptr()) });
+
+        let result = take(alula_doc_trim_trailing_whitespace(id));
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["version"], 1);
+        assert_eq!(
+            result["edits"],
+            json!([
+                { "startUtf16": 3, "endUtf16": 5 },
+                { "startUtf16": 7, "endUtf16": 8 },
+            ])
+        );
+        assert_eq!(
+            take(alula_doc_trim_trailing_whitespace(id + 1))["error"]["code"],
+            "UnknownDoc"
+        );
+
         take(alula_doc_close(id));
     }
 

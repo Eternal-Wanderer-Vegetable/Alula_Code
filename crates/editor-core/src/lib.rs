@@ -11,8 +11,8 @@ use std::sync::{Arc, Mutex, OnceLock};
 use editor_buffer::{
     BufferError, LineDeleteDirection, TextBlockCommentPlan, TextBuffer, TextColumnSelection,
     TextDeleteRange, TextLineBoundary, TextLineCommentPlan, TextLineOffset, TextLinesRead,
-    TextMinimapSample, TextOp, TextRangeRead, TextTransposePlan, WordDeleteDirection,
-    WordPartDirection,
+    TextMinimapSample, TextOp, TextRangeRead, TextTransposePlan, TextTrimTrailingWhitespacePlan,
+    WordDeleteDirection, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -326,6 +326,16 @@ impl DocRegistry {
                 insert_space,
             )
         })
+    }
+
+    /// Resolve all trailing-whitespace ranges against one bounded document snapshot.
+    pub fn trim_trailing_whitespace_utf16(
+        &self,
+        id: u64,
+    ) -> Option<Result<TextTrimTrailingWhitespacePlan, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(TextBuffer::trim_trailing_whitespace_utf16)
     }
 
     /// Resolve a bounded batch of Code-OSS transpose plans against one document version.

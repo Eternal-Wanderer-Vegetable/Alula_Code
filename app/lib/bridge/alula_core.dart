@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 35;
+const int expectedAbiVersion = 36;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -23,6 +23,7 @@ const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
 const int maxDocLineCommentSelections = 10000;
 const int maxDocBlockCommentSelections = 10000;
+const int maxDocTrailingWhitespaceEdits = 10000;
 const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
 const int maxNumberAdjustmentWindowUtf16 = 1000;
@@ -1158,6 +1159,41 @@ class AlulaDoc {
       );
     }).toList(growable: false);
     version = result['version'] as int;
+    return DocumentDeleteRanges(version: version, ranges: ranges);
+  }
+
+  /// Resolve bounded ASCII-space/tab deletions against the Rust document.
+  DocumentDeleteRanges trimTrailingWhitespace() {
+    final result = jsonDecode(core._ffi.docTrimTrailingWhitespaceJson(id))
+        as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final version = result['version'] as int;
+    final rawRanges = result['edits'] as List<Object?>;
+    if (rawRanges.length > maxDocTrailingWhitespaceEdits) {
+      throw StateError('Alula returned too many trailing-whitespace edits');
+    }
+    final ranges = rawRanges.map((item) {
+      final range = item as Map<String, Object?>;
+      return DocumentDeleteRange(
+        startUtf16: range['startUtf16'] as int,
+        endUtf16: range['endUtf16'] as int,
+      );
+    }).toList(growable: false);
+    var previousEnd = 0;
+    for (final range in ranges) {
+      if (range.startUtf16 < previousEnd ||
+          range.endUtf16 <= range.startUtf16) {
+        throw StateError('Alula returned invalid trailing-whitespace ranges');
+      }
+      previousEnd = range.endUtf16;
+    }
+    this.version = version;
     return DocumentDeleteRanges(version: version, ranges: ranges);
   }
 

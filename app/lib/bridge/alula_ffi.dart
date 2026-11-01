@@ -186,6 +186,9 @@ class AlulaFfi {
           Pointer<Utf8> Function(Pointer<Utf8>)>(
     'alula_doc_toggle_block_comment',
   );
+  late final Pointer<Utf8> Function(int) _docTrimTrailingWhitespace =
+      lib.lookupFunction<Pointer<Utf8> Function(Uint64),
+          Pointer<Utf8> Function(int)>('alula_doc_trim_trailing_whitespace');
 
   late final Pointer<Utf8> Function(int, Pointer<Utf8>)
       _docOvertypePasteRanges = lib.lookupFunction<
@@ -593,6 +596,9 @@ class AlulaFfi {
       malloc.free(request);
     }
   }
+
+  String docTrimTrailingWhitespaceJson(int id) =>
+      _takeJson(_docTrimTrailingWhitespace(id));
 
   String docOvertypePasteRangesJson(
     int id,

@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.49 / EDT-09b 完成）
+### 最新进展（2026-11-01，P04.50 / EDT-09c 完成）
+
+- P04.50 完成固定 Code-OSS `editor.action.trimTrailingWhitespace`：Windows/Linux `Ctrl+K Ctrl+X`，macOS `Cmd+K Cmd+X`。Rust Rope 版本化 UTF-16 planner 只删除行尾 ASCII 空格/tab，保留 CR/LF/CRLF 与 NBSP；扫描、edit 数、删除/undo payload 和 FFI JSON 响应均设上限。ABI 双侧升至 v36，工作台校验删除全文与版本，批量接入 selection 映射、undo/redo、dirty、Find、双视图及 BOM+CRLF 保存回读；双段键位解析也接入当前注册的多键序列。
+- Rust buffer/core/FFI、Dart bridge、KeybindingSet 与三平台 TargetPlatform fixture 通过；定向 Flutter 27 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 541）；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 均通过（0 issues）。
+- 本片只实现显式命令；Code-OSS 保存设置 `files.trimTrailingWhitespace`（默认关闭）和 auto-save 光标行跳过尚未接入。32 Mi UTF-16 扫描/2,000,000 UTF-16 删除上限会安全拒绝超限文档；极大文档与原生平台行为尚未对照。报告与 GitNexus 结果：`docs/diagnostics/2026-11-01-p04/p04.50-trim-trailing-whitespace.md`。P15 原生 Windows/Linux/macOS 验收仍 pending。
+
+### 上一片进展（2026-11-01，P04.49 / EDT-09b 完成）
 
 - P04.49 完成固定 Code-OSS Toggle Block Comment：Rust UTF-16 planner、NUL-safe FFI ABI v35，Windows/macOS Alt+Shift+A、Linux Ctrl+Shift+A。Rust/JS/TS 配置 `/*` 与 `*/`，接入空 caret pair、选区包围/取消、Code-OSS selection mapping、版本/全文一致性校验、undo budget、undo/redo、dirty、Find、分屏与 BOM+CRLF 保存回读。planner 限制 10,000 选区、endpoint line 64 Ki UTF-16、总扫描 2,000,000 UTF-16、token 16 visible ASCII；超限与重叠选择原子拒绝。Rust 66、FFI/core 44，Flutter 定向 25 与全量 535 通过；cargo fmt 和 Flutter analyze 0 issues。Python/plaintext 及其他语言的 block token 暂未接入，P15 原生 Windows/Linux/macOS 验收仍 pending。证据：`docs/diagnostics/2026-11-01-p04/p04.49-toggle-block-comment.md`。
 

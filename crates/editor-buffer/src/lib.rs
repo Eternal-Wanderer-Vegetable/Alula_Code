@@ -35,6 +35,12 @@ pub const MAX_BLOCK_COMMENT_LINE_UTF16: usize = 64 * 1024;
 pub const MAX_BLOCK_COMMENT_SCAN_UTF16: usize = 2_000_000;
 /// Maximum UTF-16 width of a configured block-comment token.
 pub const MAX_BLOCK_COMMENT_TOKEN_UTF16: usize = 16;
+/// Maximum UTF-16 document length scanned by the explicit trim-whitespace command.
+pub const MAX_TRAILING_WHITESPACE_SCAN_UTF16: usize = 32 * 1024 * 1024;
+/// Maximum number of trailing-whitespace ranges returned by one command.
+pub const MAX_TRAILING_WHITESPACE_EDITS: usize = 10_000;
+/// Maximum UTF-16 text deleted by one trim-whitespace command.
+pub const MAX_TRAILING_WHITESPACE_DELETE_UTF16: usize = 2_000_000;
 /// Maximum number of caret positions accepted by one transpose query.
 pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
 /// Maximum UTF-16 units inspected around a numeric adjustment caret.
@@ -765,6 +771,14 @@ pub struct TextBlockCommentPlan {
     pub selections: Vec<TextBlockCommentSelection>,
 }
 
+/// All-document trailing-whitespace ranges resolved from one Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextTrimTrailingWhitespacePlan {
+    pub version: u64,
+    pub edits: Vec<TextDeleteRange>,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct TransposeLineBounds {
     start_char: usize,
@@ -1163,6 +1177,12 @@ pub enum BufferError {
     BlockCommentLineTooLarge { requested: usize, max: usize },
     /// Distinct selections would produce conflicting block-comment edits.
     OverlappingBlockCommentSelections,
+    /// The whole-document trim scan exceeds the command's bounded input size.
+    TrailingWhitespaceScanTooLarge { requested: usize, max: usize },
+    /// A trim request contains too many trailing-whitespace ranges.
+    TrailingWhitespaceEditCountTooLarge { requested: usize, max: usize },
+    /// A trim request would exceed the bounded undo payload.
+    TrailingWhitespaceDeleteTooLarge { requested: usize, max: usize },
     /// A transpose query contains more caret positions than the bounded API accepts.
     TransposeCountTooLarge { requested: usize, max: usize },
     /// An overtype-paste selection has its end before its start.
@@ -1242,6 +1262,18 @@ impl std::fmt::Display for BufferError {
             BufferError::OverlappingBlockCommentSelections => {
                 write!(f, "block-comment selections would produce overlapping edits")
             }
+            BufferError::TrailingWhitespaceScanTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::TrailingWhitespaceEditCountTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace edit count {requested} exceeds maximum {max}"
+            ),
+            BufferError::TrailingWhitespaceDeleteTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace delete payload {requested} exceeds maximum {max} UTF-16 units"
+            ),
             BufferError::TransposeCountTooLarge { requested, max } => {
                 write!(f, "transpose caret count {requested} exceeds maximum {max}")
             }
@@ -2125,6 +2157,90 @@ impl TextBuffer {
             version: self.version,
             edits,
             selections,
+        })
+    }
+
+    /// Resolve the fixed Code-OSS explicit trim-trailing-whitespace command.
+    /// Only ASCII space and tab are trimmed; CR, LF, and CRLF line endings are
+    /// preserved. The complete scan and undo payload are bounded atomically.
+    pub fn trim_trailing_whitespace_utf16(
+        &self,
+    ) -> Result<TextTrimTrailingWhitespacePlan, BufferError> {
+        fn push_trim_range(
+            edits: &mut Vec<TextDeleteRange>,
+            deleted_utf16: &mut usize,
+            start_utf16: usize,
+            end_utf16: usize,
+        ) -> Result<(), BufferError> {
+            if start_utf16 >= end_utf16 {
+                return Ok(());
+            }
+            let requested_deleted = deleted_utf16.saturating_add(end_utf16 - start_utf16);
+            if requested_deleted > MAX_TRAILING_WHITESPACE_DELETE_UTF16 {
+                return Err(BufferError::TrailingWhitespaceDeleteTooLarge {
+                    requested: requested_deleted,
+                    max: MAX_TRAILING_WHITESPACE_DELETE_UTF16,
+                });
+            }
+            let requested_edits = edits.len() + 1;
+            if requested_edits > MAX_TRAILING_WHITESPACE_EDITS {
+                return Err(BufferError::TrailingWhitespaceEditCountTooLarge {
+                    requested: requested_edits,
+                    max: MAX_TRAILING_WHITESPACE_EDITS,
+                });
+            }
+            edits.push(TextDeleteRange {
+                start_utf16,
+                end_utf16,
+            });
+            *deleted_utf16 = requested_deleted;
+            Ok(())
+        }
+
+        let scan_utf16 = self.len_utf16();
+        if scan_utf16 > MAX_TRAILING_WHITESPACE_SCAN_UTF16 {
+            return Err(BufferError::TrailingWhitespaceScanTooLarge {
+                requested: scan_utf16,
+                max: MAX_TRAILING_WHITESPACE_SCAN_UTF16,
+            });
+        }
+
+        let mut edits = Vec::new();
+        let mut deleted_utf16 = 0usize;
+        let mut offset_utf16 = 0usize;
+        let mut last_non_whitespace_end_utf16 = 0usize;
+        let mut chars = self.rope.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if ch == '\r' || ch == '\n' {
+                push_trim_range(
+                    &mut edits,
+                    &mut deleted_utf16,
+                    last_non_whitespace_end_utf16,
+                    offset_utf16,
+                )?;
+                offset_utf16 += ch.len_utf16();
+                if ch == '\r' && chars.peek() == Some(&'\n') {
+                    chars.next();
+                    offset_utf16 += 1;
+                }
+                last_non_whitespace_end_utf16 = offset_utf16;
+            } else {
+                offset_utf16 += ch.len_utf16();
+                if ch != ' ' && ch != '\t' {
+                    last_non_whitespace_end_utf16 = offset_utf16;
+                }
+            }
+        }
+        push_trim_range(
+            &mut edits,
+            &mut deleted_utf16,
+            last_non_whitespace_end_utf16,
+            offset_utf16,
+        )?;
+
+        Ok(TextTrimTrailingWhitespacePlan {
+            version: self.version,
+            edits,
         })
     }
 
@@ -3690,6 +3806,80 @@ mod tests {
         assert!(matches!(
             long_line.toggle_block_comment_utf16(&[(0, 0)], "/*", "*/", true),
             Err(BufferError::BlockCommentLineTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_returns_utf16_ranges_and_preserves_line_endings() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊x \t\r\n\t\rz\u{00A0} \t");
+        let plan = buffer.trim_trailing_whitespace_utf16().unwrap();
+        assert_eq!(plan.version, buffer.version());
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 6,
+                },
+                TextDeleteRange {
+                    start_utf16: 8,
+                    end_utf16: 9,
+                },
+                TextDeleteRange {
+                    start_utf16: 12,
+                    end_utf16: 14,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_handles_blank_lines_empty_text_and_noop() {
+        let buffer = TextBuffer::open(" \t\r\nvalue\n\t");
+        assert_eq!(
+            buffer.trim_trailing_whitespace_utf16().unwrap().edits,
+            vec![
+                TextDeleteRange {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                },
+                TextDeleteRange {
+                    start_utf16: 10,
+                    end_utf16: 11,
+                },
+            ]
+        );
+        assert!(TextBuffer::open("")
+            .trim_trailing_whitespace_utf16()
+            .unwrap()
+            .edits
+            .is_empty());
+        assert!(TextBuffer::open("value\n")
+            .trim_trailing_whitespace_utf16()
+            .unwrap()
+            .edits
+            .is_empty());
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_rejects_scan_edit_and_undo_budget_overflow() {
+        let long_document = TextBuffer::open(&"x".repeat(MAX_TRAILING_WHITESPACE_SCAN_UTF16 + 1));
+        assert!(matches!(
+            long_document.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceScanTooLarge { .. })
+        ));
+
+        let too_many_lines = TextBuffer::open(&"x  \n".repeat(MAX_TRAILING_WHITESPACE_EDITS + 1));
+        assert!(matches!(
+            too_many_lines.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceEditCountTooLarge { .. })
+        ));
+
+        let too_much_whitespace =
+            TextBuffer::open(&" ".repeat(MAX_TRAILING_WHITESPACE_DELETE_UTF16 + 1));
+        assert!(matches!(
+            too_much_whitespace.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceDeleteTooLarge { .. })
         ));
     }
 

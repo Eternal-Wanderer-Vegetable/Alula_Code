@@ -499,6 +499,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? 'Cmd+K Cmd+D'
             : 'Ctrl+K Ctrl+D',
         enablement: 'editorTextFocus');
+    reg(
+      'editor.action.trimTrailingWhitespace',
+      '编辑器',
+      '修剪尾随空格',
+      _trimTrailingWhitespace,
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+K Cmd+X'
+          : 'Ctrl+K Ctrl+X',
+      enablement: 'editorTextFocus',
+    );
     reg('editor.selectAllOccurrences', '编辑器', '选择所有匹配项',
         () async => _selectAllOccurrences(),
         shortcut: 'Ctrl+Shift+L', enablement: 'editorTextFocus');
@@ -4524,6 +4534,119 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = '已转置字母');
   }
 
+  Future<void> _trimTrailingWhitespace() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.diskState == DiskDocumentState.readOnly) {
+      if (mounted) setState(() => _statusDetail = '当前文件为只读状态');
+      return;
+    }
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      return;
+    }
+
+    _flushInput(doc);
+    final expectedVersion = doc.doc.version;
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty) return;
+    late final DocumentDeleteRanges plan;
+    final removedTexts = <String>[];
+    var deletedBefore = 0;
+    var previousEnd = 0;
+    try {
+      plan = doc.doc.trimTrailingWhitespace();
+      if (plan.version != expectedVersion ||
+          plan.ranges.length > maxDocTrailingWhitespaceEdits) {
+        throw StateError('Rust 返回了过期或超限的行尾空格计划');
+      }
+      for (final range in plan.ranges) {
+        if (range.startUtf16 < previousEnd ||
+            range.endUtf16 <= range.startUtf16 ||
+            range.endUtf16 > doc.inputWindow.totalUtf16Length) {
+          throw StateError('Rust 返回了无效或重叠的 UTF-16 删除范围');
+        }
+        final removed = _readDocumentRange(
+          doc,
+          range.startUtf16,
+          range.endUtf16,
+        );
+        if (removed.length != range.endUtf16 - range.startUtf16 ||
+            removed.isEmpty ||
+            removed.runes.any((rune) => rune != 0x20 && rune != 0x09)) {
+          throw StateError('Rust 行尾空格计划与权威全文不一致');
+        }
+        if (removed.length > _undoHistoryBudget.maxTotalChars - deletedBefore) {
+          throw StateError('修剪行尾空格超过撤销文本上限');
+        }
+        removedTexts.add(removed);
+        deletedBefore += removed.length;
+        previousEnd = range.endUtf16;
+      }
+      if (doc.doc.version != expectedVersion) {
+        throw StateError('文档版本已变化');
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '未修剪行尾空格：$error');
+      return;
+    }
+    if (plan.ranges.isEmpty) return;
+
+    final forward = <TextOp>[
+      for (final range in plan.ranges.reversed)
+        TextOp.delete(range.startUtf16, range.endUtf16 - range.startUtf16),
+    ];
+    final inverse = <TextOp>[
+      for (var index = 0; index < plan.ranges.length; index++)
+        TextOp.insert(plan.ranges[index].startUtf16, removedTexts[index]),
+    ];
+
+    int mapOffset(int offset) {
+      var deleted = 0;
+      for (final range in plan.ranges) {
+        if (offset < range.startUtf16) break;
+        if (offset <= range.endUtf16) return range.startUtf16 - deleted;
+        deleted += range.endUtf16 - range.startUtf16;
+      }
+      return offset - deleted;
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset: mapOffset(selection.baseOffset),
+          extentOffset: mapOffset(selection.extentOffset),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '未修剪行尾空格：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已修剪行尾空格');
+  }
+
   Future<void> _toggleLineComment() async {
     final doc = _active;
     if (doc == null) return;
@@ -8311,6 +8434,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _editorFocusNodes = {};
   Timer? _pendingMoveSelectionChordTimer;
   bool _awaitingMoveSelectionChord = false;
+  KeyChord? _pendingChordPrefix;
 
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
       '${group.region}:${doc.id}';
@@ -8383,6 +8507,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
         }
+        final currentChord = KeyChord(
+          key: key,
+          control: ctrl,
+          shift: shift,
+          alt: alt,
+          meta: meta,
+        );
         if (_awaitingMoveSelectionChord) {
           if (key == LogicalKeyboardKey.controlLeft ||
               key == LogicalKeyboardKey.controlRight ||
@@ -8397,22 +8528,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _pendingMoveSelectionChordTimer?.cancel();
           _pendingMoveSelectionChordTimer = null;
           _awaitingMoveSelectionChord = false;
-          if (commandModifier &&
-              !shift &&
-              !alt &&
-              key == LogicalKeyboardKey.keyD) {
-            _runCommand('editor.action.moveSelectionToNextFindMatch');
+          final prefix = _pendingChordPrefix;
+          _pendingChordPrefix = null;
+          final binding = prefix == null
+              ? null
+              : _keybindings.bindingForSequence([prefix, currentChord]);
+          if (binding != null &&
+              _commands.context.matches(binding.when) &&
+              _commands.isEnabled(binding.commandId)) {
+            _runCommand(binding.commandId, arguments: binding.arguments);
             return KeyEventResult.handled;
           }
         }
-        if (commandModifier &&
-            !shift &&
-            !alt &&
-            key == LogicalKeyboardKey.keyK) {
+        if (_keybindings.hasSequencePrefix(
+          currentChord,
+          matchesWhen: _commands.context.matches,
+          isCommandEnabled: _commands.isEnabled,
+        )) {
           _awaitingMoveSelectionChord = true;
+          _pendingChordPrefix = currentChord;
           _pendingMoveSelectionChordTimer = Timer(
             const Duration(seconds: 5),
-            () => _awaitingMoveSelectionChord = false,
+            () {
+              _awaitingMoveSelectionChord = false;
+              _pendingChordPrefix = null;
+            },
           );
           return KeyEventResult.handled;
         }
@@ -9829,6 +9969,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pendingDefinitionPointers.clear();
     _pendingColumnSelectionStarts.clear();
     _pendingMoveSelectionChordTimer?.cancel();
+    _pendingChordPrefix = null;
     _pollTimer?.cancel();
     _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();

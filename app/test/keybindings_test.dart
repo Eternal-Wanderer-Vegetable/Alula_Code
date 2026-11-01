@@ -26,6 +26,16 @@ void main() {
     });
   });
 
+  group('parseChordSequence', () {
+    test('parses two strokes and displays each chord', () {
+      final sequence = parseChordSequence('ctrl+k cmd+x')!;
+      expect(sequence.chords, [parseChord('ctrl+k'), parseChord('cmd+x')]);
+      expect(sequence.display, 'Ctrl+K Meta+X');
+      expect(parseChordSequence('ctrl+k'), isNull);
+      expect(parseChordSequence('ctrl+k invalid+x'), isNull);
+    });
+  });
+
   group('KeybindingSet', () {
     test('occurrence selection defaults use platform commands', () {
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);
@@ -108,10 +118,45 @@ void main() {
         mac.commandForChord(parseChord('cmd+backspace')!),
         'deleteAllLeft',
       );
-      expect(mac.commandForChord(parseChord('ctrl+k')!), 'deleteAllRight');
+      expect(mac.commandForChord(parseChord('ctrl+k')!), isNull);
       expect(
-        mac.commandForChord(parseChord('cmd+delete')!),
+        mac.bindingForSequence(
+          [parseChord('ctrl+k')!, parseChord('cmd+delete')!],
+        )?.commandId,
         'deleteAllRight',
+      );
+    });
+
+    test('trailing-whitespace and move-selection chords are platform sequences',
+        () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+x')!],
+          )?.commandId,
+          'editor.action.trimTrailingWhitespace',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+d')!],
+          )?.commandId,
+          'editor.action.moveSelectionToNextFindMatch',
+        );
+      }
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+x')!],
+        )?.commandId,
+        'editor.action.trimTrailingWhitespace',
+      );
+      expect(mac.shortcutFor('editor.action.trimTrailingWhitespace'),
+          'Meta+K Meta+X');
+      expect(
+        windows.hasSequencePrefix(parseChord('ctrl+k')!),
+        isTrue,
       );
     });
 
@@ -312,8 +357,11 @@ void main() {
     test('默认表可解析且包含核心键位', () {
       final ks = KeybindingSet.load();
       final resolved = ks.resolve();
-      final expectedChords = KeybindingSet.defaults.values
-          .fold<int>(0, (n, v) => n + v.split(',').length);
+      final expectedChords = KeybindingSet.defaults.values.fold<int>(
+          0,
+          (n, v) =>
+              n +
+              v.split(',').where((spec) => parseChord(spec) != null).length);
       expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
@@ -330,6 +378,40 @@ void main() {
           reason: '重绑定语义：同命令旧默认键位让位');
       expect(ks.shortcutFor('view.quickOpen'), 'Ctrl+Alt+F',
           reason: '展示跟随用户重绑定');
+    });
+
+    test('用户键位可覆盖与移除双段默认键位', () {
+      final ks = KeybindingSet.load(
+        userJson: '[{"key":"ctrl+alt+f ctrl+alt+g",'
+            '"command":"editor.action.trimTrailingWhitespace"}]',
+        platform: TargetPlatform.windows,
+      );
+      expect(
+        ks.bindingForSequence(
+          [parseChord('ctrl+alt+f')!, parseChord('ctrl+alt+g')!],
+        )?.commandId,
+        'editor.action.trimTrailingWhitespace',
+      );
+      expect(
+        ks.bindingForSequence(
+          [parseChord('ctrl+k')!, parseChord('ctrl+x')!],
+        ),
+        isNull,
+      );
+      expect(ks.shortcutFor('editor.action.trimTrailingWhitespace'),
+          'Ctrl+Alt+F Ctrl+Alt+G');
+
+      final removed = KeybindingSet.load(
+        userJson: '[{"key":"ctrl+k ctrl+x",'
+            '"command":"-editor.action.trimTrailingWhitespace"}]',
+        platform: TargetPlatform.windows,
+      );
+      expect(
+        removed.bindingForSequence(
+          [parseChord('ctrl+k')!, parseChord('ctrl+x')!],
+        ),
+        isNull,
+      );
     });
 
     test('键位携带参数和 when 条件并参与上下文过滤', () {
@@ -375,8 +457,11 @@ void main() {
 
     test('损坏 JSON：只用默认键位', () {
       final ks = KeybindingSet.load(userJson: '[{"key": broken');
-      final expectedChords = KeybindingSet.defaults.values
-          .fold<int>(0, (n, v) => n + v.split(',').length);
+      final expectedChords = KeybindingSet.defaults.values.fold<int>(
+          0,
+          (n, v) =>
+              n +
+              v.split(',').where((spec) => parseChord(spec) != null).length);
       expect(ks.resolve().length, expectedChords);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
       expect(ks2.resolve().length, expectedChords);
