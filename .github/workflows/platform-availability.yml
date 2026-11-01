@@ -6,6 +6,7 @@ on:
     paths:
       - 'app/**'
       - 'crates/**'
+      - 'tools/vscode-parity/macos-native-dnd-input.swift'
       - 'scripts/build_core.*'
       - '.github/workflows/platform-availability.yml'
 
