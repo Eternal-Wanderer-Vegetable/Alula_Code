@@ -68,7 +68,7 @@ func postMouseEvent(
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  event.post(tap: .cgAnnotatedSessionEventTap)
+  event.post(tap: .cgSessionEventTap)
 }
 
 func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
