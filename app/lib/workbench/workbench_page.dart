@@ -2419,32 +2419,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _setDocSelections(doc, merged);
   }
 
-  List<String> _copyableSelectionTexts(OpenDoc doc) {
-    final text = doc.inputWindow.text;
-    final start = doc.inputWindow.startUtf16;
-    final lines = lineContentRangesForText(text);
-    return doc.selectionSet.map((selection) {
-      final base = selection.baseOffset - start;
-      final extent = selection.extentOffset - start;
-      final low = base < extent ? base : extent;
-      final high = base < extent ? extent : base;
-      if (low != high) return text.substring(low, high);
-      var lower = 0;
-      var upper = lines.length;
-      while (lower < upper) {
-        final middle = (lower + upper) ~/ 2;
-        if (lines[middle].$1 <= low) {
-          lower = middle + 1;
-        } else {
-          upper = middle;
-        }
-      }
-      final row = (lower - 1).clamp(0, lines.length - 1).toInt();
-      final range = lines[row];
-      return text.substring(range.$1, range.$2);
-    }).toList(growable: false);
-  }
-
   List<String>? _copyableDocumentSelectionTexts(
     OpenDoc doc,
     List<TextSelection> selections, {
@@ -7423,29 +7397,221 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Future<bool> _cutMultiSelections(OpenDoc doc) async {
-    final field = doc.inputFieldKey.currentState;
-    if (field == null) return false;
-    final selections = doc.selectionSet;
-    if (selections.length < 2 ||
-        selections.any((selection) => selection.isCollapsed)) {
+    _flushInput(doc);
+    if (!identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition) {
       return false;
     }
-    await Clipboard.setData(
-      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.length < 2) return false;
+    if (selections.length > maxDocLineDeleteSelections) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = '多光标剪切已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return false;
+    }
+
+    final version = doc.doc.version;
+    final documentStart = doc.doc.lineOffset(0);
+    if (documentStart.version != version) return false;
+
+    final deleteRanges = <({int start, int end})>[];
+    try {
+      for (final selection in selections) {
+        late final int start;
+        late final int end;
+        if (selection.isCollapsed) {
+          final position = doc.doc.positionAt(selection.extentOffset);
+          final line = doc.doc.lineBoundary(selection.extentOffset);
+          if (position.version != version || line.version != version) {
+            throw StateError('文档版本在解析多光标剪切范围时发生变化');
+          }
+          if (position.line + 1 < documentStart.lineCount) {
+            final nextLine = doc.doc.lineOffset(position.line + 1);
+            if (nextLine.version != version) {
+              throw StateError('文档版本在解析多光标剪切行尾时发生变化');
+            }
+            start = line.startUtf16;
+            end = nextLine.offsetUtf16;
+          } else if (position.line > 0) {
+            final previousLine = doc.doc.lineOffset(position.line - 1);
+            if (previousLine.version != version) {
+              throw StateError('文档版本在解析多光标剪切行首时发生变化');
+            }
+            final previousBoundary =
+                doc.doc.lineBoundary(previousLine.offsetUtf16);
+            if (previousBoundary.version != version) {
+              throw StateError('文档版本在解析多光标剪切行首时发生变化');
+            }
+            start = previousBoundary.endUtf16;
+            end = documentStart.totalUtf16Length;
+          } else {
+            start = line.startUtf16;
+            end = documentStart.totalUtf16Length;
+          }
+        } else {
+          start = selection.start;
+          end = selection.end;
+        }
+        if (start < 0 || end < start || end > documentStart.totalUtf16Length) {
+          throw StateError('Rust 返回了无效的多光标剪切范围');
+        }
+        if (start != end) deleteRanges.add((start: start, end: end));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '多光标剪切未应用：$error');
+      return false;
+    }
+
+    deleteRanges.sort((a, b) {
+      final byStart = a.start.compareTo(b.start);
+      return byStart != 0 ? byStart : a.end.compareTo(b.end);
+    });
+    final mergedRanges = <({int start, int end})>[];
+    for (final range in deleteRanges) {
+      if (mergedRanges.isEmpty || range.start > mergedRanges.last.end) {
+        mergedRanges.add(range);
+      } else if (range.end > mergedRanges.last.end) {
+        final previous = mergedRanges.removeLast();
+        mergedRanges.add((start: previous.start, end: range.end));
+      }
+    }
+
+    final plans = <({int start, int end, String removed, int mappedStart})>[];
+    var deletedUtf16 = 0;
+    try {
+      for (final range in mergedRanges) {
+        final removedLength = range.end - range.start;
+        if (removedLength > _undoHistoryBudget.maxTotalChars - deletedUtf16) {
+          throw StateError(
+            '多光标剪切撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限',
+          );
+        }
+        final removed = _readDocumentRange(doc, range.start, range.end);
+        if (doc.doc.version != version) {
+          throw StateError('文档版本在读取多光标剪切文本时发生变化');
+        }
+        plans.add((
+          start: range.start,
+          end: range.end,
+          removed: removed,
+          mappedStart: range.start - deletedUtf16,
+        ));
+        deletedUtf16 += removedLength;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '多光标剪切未应用：$error');
+      return false;
+    }
+
+    final documentEol = doc.fileOptions.lineEnding.id == 'crlf' ? '\r\n' : '\n';
+    final forceCrLf = defaultTargetPlatform == TargetPlatform.windows;
+    final copied = _copyableDocumentSelectionTexts(
+      doc,
+      selections,
+      version: version,
+      lineEol: forceCrLf ? '\r\n' : documentEol,
+      forceCrLf: forceCrLf,
     );
-    final value = doc.editingValue;
-    final selection = value.selection;
-    final start = selection.baseOffset < selection.extentOffset
-        ? selection.baseOffset
-        : selection.extentOffset;
-    final end = selection.baseOffset < selection.extentOffset
-        ? selection.extentOffset
-        : selection.baseOffset;
-    if (start == end) return false;
-    field.applyFormattedValue(TextEditingValue(
-      text: value.text.replaceRange(start, end, ''),
-      selection: TextSelection.collapsed(offset: start),
-    ));
+    final currentSelections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (copied == null ||
+        doc.doc.version != version ||
+        !identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        !listEquals(selections, currentSelections)) {
+      return false;
+    }
+
+    try {
+      await Clipboard.setData(
+        ClipboardData(text: copied.join(documentEol)),
+      );
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '多光标剪切未应用：$error');
+      return false;
+    }
+    final selectionsAfterClipboard = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (!mounted ||
+        !identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.doc.version != version ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        !listEquals(selections, selectionsAfterClipboard)) {
+      return false;
+    }
+    if (plans.isEmpty) return true;
+
+    final forward = [
+      for (final plan in plans.reversed)
+        TextOp.delete(plan.start, plan.end - plan.start),
+    ];
+    final inverse = [
+      for (final plan in plans.reversed)
+        TextOp.insert(plan.mappedStart, plan.removed),
+    ];
+    try {
+      doc.doc.applyWith(version, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '多光标剪切未应用：${error.code} ${error.detail}');
+      }
+      return false;
+    }
+
+    int mapCaret(int offset) {
+      var deletedBefore = 0;
+      for (final plan in plans) {
+        if (offset < plan.start) return offset - deletedBefore;
+        if (offset <= plan.end) return plan.mappedStart;
+        deletedBefore += plan.end - plan.start;
+      }
+      return offset - deletedBefore;
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection.collapsed(
+          offset: mapCaret(
+            selection.isCollapsed ? selection.extentOffset : selection.start,
+          ),
+          affinity: selection.affinity,
+        ),
+    ]);
+    if (mappedSelections.isEmpty) return false;
+    doc.columnSelection = null;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已多光标剪切');
     return true;
   }
 
@@ -9048,6 +9214,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return KeyEventResult.handled;
         }
         if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyX &&
+            !activeHasComposition &&
+            active != null &&
+            active.additionalSelections.isNotEmpty) {
+          unawaited(_cutMultiSelections(active).then((handled) {
+            if (!handled && mounted) {
+              setState(() => _statusDetail = '多光标剪切未执行（文档只读或状态已变化）');
+            }
+          }));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
             !alt &&
             key == LogicalKeyboardKey.keyV &&
             _overtypeMode &&
@@ -9093,14 +9273,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           if (active != null && active.additionalSelections.isNotEmpty) {
             if (key == LogicalKeyboardKey.keyV) {
               unawaited(_pasteMultiSelections(active));
-              return KeyEventResult.handled;
-            }
-            if (key == LogicalKeyboardKey.keyX) {
-              unawaited(_cutMultiSelections(active).then((handled) {
-                if (!handled && mounted) {
-                  setState(() => _statusDetail = '多选剪切需要每个光标都有非空选区');
-                }
-              }));
               return KeyEventResult.handled;
             }
           }
