@@ -10,6 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> _deleteDirectoryWithRetry(Directory directory) async {
+  for (var attempt = 0; attempt < 50; attempt++) {
+    if (!directory.existsSync()) return;
+    try {
+      await directory.delete(recursive: true);
+      return;
+    } on FileSystemException {
+      if (attempt == 49) rethrow;
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+}
+
 void main() {
   testWidgets(
     'the same Rust document opens in two groups with independent view state',
@@ -17,7 +30,8 @@ void main() {
       final temp = Directory.systemTemp.createTempSync('alula-multiview');
       addTearDown(() async {
         await tester.pumpWidget(const SizedBox.shrink());
-        if (temp.existsSync()) temp.deleteSync(recursive: true);
+        await tester.pump(const Duration(milliseconds: 100));
+        await _deleteDirectoryWithRetry(temp);
       });
 
       final workspace = Directory('${temp.path}/workspace')..createSync();
