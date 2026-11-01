@@ -193,6 +193,7 @@ class KeybindingSet {
     'editor.redo': 'ctrl+shift+z,ctrl+y',
     'editor.find': 'ctrl+f',
     'editor.action.commentLine': 'ctrl+/',
+    'editor.action.blockComment': 'alt+shift+a',
     'editor.gotoDef': 'f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
     'workbench.action.navigateForward': 'alt+arrowright',
@@ -276,6 +277,7 @@ class KeybindingSet {
         result.remove('editor.columnSelectRight');
         break;
       case TargetPlatform.linux:
+        result['editor.action.blockComment'] = 'ctrl+shift+a';
         result['workbench.action.navigateBack'] = 'ctrl+alt+-';
         result['workbench.action.navigateForward'] = 'ctrl+shift+-';
         result['editor.columnSelectUp'] = 'alt+shift+arrowup';

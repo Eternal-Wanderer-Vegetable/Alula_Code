@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 34;
+const int expectedAbiVersion = 35;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -22,6 +22,7 @@ const int maxDocColumnSelections = 10000;
 const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
 const int maxDocLineCommentSelections = 10000;
+const int maxDocBlockCommentSelections = 10000;
 const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
 const int maxNumberAdjustmentWindowUtf16 = 1000;
@@ -356,6 +357,45 @@ class DocumentLineCommentPlan {
   final List<DocumentLineCommentEdit> edits;
 
   const DocumentLineCommentPlan({required this.version, required this.edits});
+}
+
+/// One Code-OSS block-comment edit resolved by the Rust UTF-16 planner.
+class DocumentBlockCommentEdit {
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final String insertedText;
+
+  const DocumentBlockCommentEdit({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.insertedText,
+  });
+}
+
+/// One mapped selection returned by the Rust block-comment planner.
+class DocumentBlockCommentSelection {
+  final int startUtf16;
+  final int endUtf16;
+
+  const DocumentBlockCommentSelection({
+    required this.startUtf16,
+    required this.endUtf16,
+  });
+}
+
+/// Block-comment edits and mapped selections tied to one Rust document version.
+class DocumentBlockCommentPlan {
+  final int version;
+  final List<DocumentBlockCommentEdit> edits;
+  final List<DocumentBlockCommentSelection> selections;
+
+  const DocumentBlockCommentPlan({
+    required this.version,
+    required this.edits,
+    required this.selections,
+  });
 }
 
 /// One Emmet numeric edit resolved by the Rust UTF-16 planner.
@@ -1164,6 +1204,67 @@ class AlulaDoc {
     }).toList(growable: false);
     version = result['version'] as int;
     return DocumentLineCommentPlan(version: version, edits: edits);
+  }
+
+  /// Resolve Code-OSS block-comment edits from the Rust-authoritative snapshot.
+  DocumentBlockCommentPlan toggleBlockComment(
+    List<DocumentDeleteRange> selectionsUtf16,
+    String startToken,
+    String endToken, {
+    required bool insertSpace,
+  }) {
+    if (selectionsUtf16.length > maxDocBlockCommentSelections) {
+      throw RangeError.range(
+        selectionsUtf16.length,
+        0,
+        maxDocBlockCommentSelections,
+        'selectionsUtf16.length',
+      );
+    }
+    if (selectionsUtf16.any(
+        (selection) => selection.startUtf16 < 0 || selection.endUtf16 < 0)) {
+      throw RangeError('Block-comment selection offsets must be non-negative');
+    }
+    final json = core._ffi.docToggleBlockCommentJson(
+      id,
+      selectionsUtf16
+          .map((selection) => [selection.startUtf16, selection.endUtf16])
+          .toList(growable: false),
+      startToken,
+      endToken,
+      insertSpace: insertSpace,
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final edits = (result['edits'] as List<Object?>).map((item) {
+      final edit = item as Map<String, Object?>;
+      return DocumentBlockCommentEdit(
+        startUtf16: edit['startUtf16'] as int,
+        endUtf16: edit['endUtf16'] as int,
+        removedText: edit['removedText'] as String,
+        insertedText: edit['insertedText'] as String,
+      );
+    }).toList(growable: false);
+    final mappedSelections =
+        (result['selections'] as List<Object?>).map((item) {
+      final selection = item as Map<String, Object?>;
+      return DocumentBlockCommentSelection(
+        startUtf16: selection['startUtf16'] as int,
+        endUtf16: selection['endUtf16'] as int,
+      );
+    }).toList(growable: false);
+    version = result['version'] as int;
+    return DocumentBlockCommentPlan(
+      version: version,
+      edits: edits,
+      selections: mappedSelections,
+    );
   }
 
   /// Resolve Code-OSS transpose plans without transferring document text to Dart.

@@ -181,6 +181,11 @@ class AlulaFfi {
           Pointer<Utf8> Function(Pointer<Utf8>)>(
     'alula_doc_toggle_line_comment',
   );
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _docToggleBlockComment =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_doc_toggle_block_comment',
+  );
 
   late final Pointer<Utf8> Function(int, Pointer<Utf8>)
       _docOvertypePasteRanges = lib.lookupFunction<
@@ -563,6 +568,27 @@ class AlulaFfi {
     }).toNativeUtf8();
     try {
       return _takeJson(_docToggleLineComment(request));
+    } finally {
+      malloc.free(request);
+    }
+  }
+
+  String docToggleBlockCommentJson(
+    int id,
+    List<List<int>> selectionsUtf16,
+    String startToken,
+    String endToken, {
+    required bool insertSpace,
+  }) {
+    final request = jsonEncode({
+      'id': id,
+      'selections': selectionsUtf16,
+      'startToken': startToken,
+      'endToken': endToken,
+      'insertSpace': insertSpace,
+    }).toNativeUtf8();
+    try {
+      return _takeJson(_docToggleBlockComment(request));
     } finally {
       malloc.free(request);
     }

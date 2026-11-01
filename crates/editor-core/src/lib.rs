@@ -9,9 +9,10 @@ use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
-    BufferError, LineDeleteDirection, TextBuffer, TextColumnSelection, TextDeleteRange,
-    TextLineBoundary, TextLineCommentPlan, TextLineOffset, TextLinesRead, TextMinimapSample,
-    TextOp, TextRangeRead, TextTransposePlan, WordDeleteDirection, WordPartDirection,
+    BufferError, LineDeleteDirection, TextBlockCommentPlan, TextBuffer, TextColumnSelection,
+    TextDeleteRange, TextLineBoundary, TextLineCommentPlan, TextLineOffset, TextLinesRead,
+    TextMinimapSample, TextOp, TextRangeRead, TextTransposePlan, WordDeleteDirection,
+    WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -306,6 +307,25 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.toggle_line_comment_utf16(selections_utf16, line_comment))
+    }
+
+    /// Resolve a bounded Code-OSS toggle-block-comment plan against one document snapshot.
+    pub fn toggle_block_comment_utf16(
+        &self,
+        id: u64,
+        selections_utf16: &[(usize, usize)],
+        start_token: &str,
+        end_token: &str,
+        insert_space: bool,
+    ) -> Option<Result<TextBlockCommentPlan, BufferError>> {
+        self.docs.get(&id).map(|buffer| {
+            buffer.toggle_block_comment_utf16(
+                selections_utf16,
+                start_token,
+                end_token,
+                insert_space,
+            )
+        })
     }
 
     /// Resolve a bounded batch of Code-OSS transpose plans against one document version.

@@ -5,7 +5,11 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.48 / EDT-09a 完成）
+### 最新进展（2026-11-01，P04.49 / EDT-09b 完成）
+
+- P04.49 完成固定 Code-OSS Toggle Block Comment：Rust UTF-16 planner、NUL-safe FFI ABI v35，Windows/macOS Alt+Shift+A、Linux Ctrl+Shift+A。Rust/JS/TS 配置 `/*` 与 `*/`，接入空 caret pair、选区包围/取消、Code-OSS selection mapping、版本/全文一致性校验、undo budget、undo/redo、dirty、Find、分屏与 BOM+CRLF 保存回读。planner 限制 10,000 选区、endpoint line 64 Ki UTF-16、总扫描 2,000,000 UTF-16、token 16 visible ASCII；超限与重叠选择原子拒绝。Rust 66、FFI/core 44，Flutter 定向 25 与全量 535 通过；cargo fmt 和 Flutter analyze 0 issues。Python/plaintext 及其他语言的 block token 暂未接入，P15 原生 Windows/Linux/macOS 验收仍 pending。证据：`docs/diagnostics/2026-11-01-p04/p04.49-toggle-block-comment.md`。
+
+### 上一片进展（2026-11-01，P04.48 / EDT-09a 完成）
 
 - P04.48 完成固定 Code-OSS Toggle Line Comment：Rust UTF-16 planner、NUL-safe FFI ABI v34、Windows/Linux Ctrl+/ 与 macOS Cmd+/，接通 Rust/Python/TypeScript/JavaScript token、版本/全文一致性校验、撤销预算、selection、undo/redo、dirty、Find、双视图与 BOM+CRLF 保存回读。Rust 和 FFI 用例覆盖空白行、行尾 column-1、emoji/CRLF 与边界；三平台 workbench 测试覆盖快捷键、分屏、保存、撤销重做、Python 与 plaintext。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 530），cargo fmt 与 Flutter analyze 0 issues。重叠多选区采取保守整批拒绝；未知语言安全 no-op；块注释与 EDT-09 其余清理项仍待后续切片。证据：`docs/diagnostics/2026-11-01-p04/p04.48-toggle-line-comment.md`。P15 原生 Windows/Linux/macOS 验收仍 pending。
 

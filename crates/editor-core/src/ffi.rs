@@ -36,13 +36,14 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 34;
+pub const ALULA_ABI_VERSION: u32 = 35;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
 const MAX_TRANSPOSE_OUTPUT_BYTES: usize = 2 * 1024 * 1024;
 const MAX_NUMBER_ADJUSTMENT_JSON_BYTES: usize = 16 * 1024;
 const MAX_LINE_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_LINE_COMMENT_SELECTIONS * 44 + 256;
+const MAX_BLOCK_COMMENT_JSON_BYTES: usize = editor_buffer::MAX_BLOCK_COMMENT_SELECTIONS * 44 + 512;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -96,6 +97,16 @@ struct LineCommentInput {
     id: u64,
     selections: Vec<[u64; 2]>,
     line_comment: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct BlockCommentInput {
+    id: u64,
+    selections: Vec<[u64; 2]>,
+    start_token: String,
+    end_token: String,
+    insert_space: bool,
 }
 
 struct PendingCompletion {
@@ -1369,6 +1380,94 @@ pub unsafe extern "C" fn alula_doc_toggle_line_comment(request_json: *const c_ch
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_toggle_line_comment")))
+}
+
+/// Resolve a bounded Code-OSS toggle-block-comment edit plan for absolute UTF-16
+/// selections in one Rust document snapshot.
+///
+/// # Safety
+/// request_json must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_doc_toggle_block_comment(
+    request_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_json = match read_c_str(request_json) {
+            Ok(json) => json,
+            Err(error) => return error,
+        };
+        if request_json.len() > MAX_BLOCK_COMMENT_JSON_BYTES {
+            return err_json(
+                "InvalidArgument",
+                json!({ "message": "block-comment request JSON exceeds the bounded input size" }),
+            );
+        }
+        let input: BlockCommentInput = match serde_json::from_str(request_json) {
+            Ok(input) => input,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let selections: Result<Vec<(usize, usize)>, _> = input
+            .selections
+            .into_iter()
+            .map(|[start, end]| {
+                usize::try_from(start)
+                    .and_then(|start| usize::try_from(end).map(|end| (start, end)))
+            })
+            .collect();
+        let selections = match selections {
+            Ok(selections) => selections,
+            Err(_) => return err_json("InvalidArgument", json!("offset is not representable")),
+        };
+
+        let registry = registry_lock();
+        match registry.toggle_block_comment_utf16(
+            input.id,
+            &selections,
+            &input.start_token,
+            &input.end_token,
+            input.insert_space,
+        ) {
+            None => err_json("UnknownDoc", json!({ "id": input.id })),
+            Some(Ok(plan)) => to_c_ptr(
+                json!({
+                    "ok": true,
+                    "version": plan.version,
+                    "edits": plan.edits,
+                    "selections": plan.selections,
+                })
+                .to_string(),
+            ),
+            Some(Err(BufferError::InvalidUtf16Offset { offset_utf16 })) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Some(Err(BufferError::InvalidDeleteRange {
+                start_utf16,
+                end_utf16,
+            })) => err_json(
+                "InvalidRange",
+                json!({ "startUtf16": start_utf16, "endUtf16": end_utf16 }),
+            ),
+            Some(Err(BufferError::BlockCommentCountTooLarge { requested, max })) => err_json(
+                "TooManySelections",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::InvalidBlockCommentToken)) => err_json(
+                "InvalidToken",
+                json!({ "startToken": input.start_token, "endToken": input.end_token }),
+            ),
+            Some(Err(BufferError::BlockCommentScanTooLarge { requested, max }))
+            | Some(Err(BufferError::BlockCommentLineTooLarge { requested, max })) => err_json(
+                "TextTooLarge",
+                json!({ "requested": requested, "max": max }),
+            ),
+            Some(Err(BufferError::OverlappingBlockCommentSelections)) => err_json(
+                "OverlappingSelections",
+                json!("selections would produce overlapping block-comment edits"),
+            ),
+            Some(Err(error)) => err_json("InvalidArgument", json!(error.to_string())),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_doc_toggle_block_comment")))
 }
 
 /// Resolve bounded Code-OSS transpose edit plans for a JSON array of absolute
@@ -3159,6 +3258,74 @@ mod tests {
             take(unsafe { alula_doc_toggle_line_comment(too_many.as_ptr()) })["error"]["code"],
             "TooManySelections"
         );
+        take(alula_doc_close(id));
+    }
+
+    #[test]
+    fn toggle_block_comment_over_ffi_returns_versioned_edits_and_selection_mapping() {
+        let id = 93_049;
+        take(unsafe { alula_doc_open(id, c("let value = 42;").as_ptr()) });
+        let request = c(&json!({
+            "id": id,
+            "selections": [[4, 9]],
+            "startToken": "/*",
+            "endToken": "*/",
+            "insertSpace": true,
+        })
+        .to_string());
+        let result = take(unsafe { alula_doc_toggle_block_comment(request.as_ptr()) });
+        assert_eq!(result["ok"], true);
+        assert_eq!(result["version"], 1);
+        assert_eq!(result["edits"].as_array().unwrap().len(), 2);
+        assert_eq!(result["edits"][0]["insertedText"], "/* ");
+        assert_eq!(result["edits"][1]["insertedText"], " */");
+        assert_eq!(result["selections"][0]["startUtf16"], 7);
+        assert_eq!(result["selections"][0]["endUtf16"], 12);
+
+        let emoji_id = 93_050;
+        take(unsafe { alula_doc_open(emoji_id, c("🦊a").as_ptr()) });
+        let split_surrogate = c(&json!({
+            "id": emoji_id,
+            "selections": [[1, 1]],
+            "startToken": "/*",
+            "endToken": "*/",
+            "insertSpace": true,
+        })
+        .to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_toggle_block_comment(split_surrogate.as_ptr()) })["error"]
+                ["code"],
+            "InvalidUtf16Offset"
+        );
+        let invalid_token = c(&json!({
+            "id": id,
+            "selections": [[0, 0]],
+            "startToken": "/* ",
+            "endToken": "*/",
+            "insertSpace": true,
+        })
+        .to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_toggle_block_comment(invalid_token.as_ptr()) })["error"]
+                ["code"],
+            "InvalidToken"
+        );
+        let too_many = c(&json!({
+            "id": id,
+            "selections": vec![
+                [0u64, 0u64];
+                editor_buffer::MAX_BLOCK_COMMENT_SELECTIONS + 1
+            ],
+            "startToken": "/*",
+            "endToken": "*/",
+            "insertSpace": true,
+        })
+        .to_string());
+        assert_eq!(
+            take(unsafe { alula_doc_toggle_block_comment(too_many.as_ptr()) })["error"]["code"],
+            "TooManySelections"
+        );
+        take(alula_doc_close(emoji_id));
         take(alula_doc_close(id));
     }
 

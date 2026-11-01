@@ -7,6 +7,7 @@
 use regex::{Captures, Regex};
 use ropey::{Rope, RopeSlice};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::OnceLock;
 
 /// Maximum UTF-16 units requested by one bounded document read.
@@ -26,6 +27,14 @@ pub const MAX_LINE_COMMENT_LINES: usize = 10_000;
 pub const MAX_LINE_COMMENT_INDENT_UTF16: usize = 16_384;
 /// Maximum UTF-16 width of a configured line-comment token.
 pub const MAX_LINE_COMMENT_TOKEN_UTF16: usize = 16;
+/// Maximum number of selections accepted by one block-comment query.
+pub const MAX_BLOCK_COMMENT_SELECTIONS: usize = 10_000;
+/// Maximum UTF-16 length of one endpoint line inspected by a block-comment query.
+pub const MAX_BLOCK_COMMENT_LINE_UTF16: usize = 64 * 1024;
+/// Maximum cumulative UTF-16 text inspected by one block-comment request.
+pub const MAX_BLOCK_COMMENT_SCAN_UTF16: usize = 2_000_000;
+/// Maximum UTF-16 width of a configured block-comment token.
+pub const MAX_BLOCK_COMMENT_TOKEN_UTF16: usize = 16;
 /// Maximum number of caret positions accepted by one transpose query.
 pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
 /// Maximum UTF-16 units inspected around a numeric adjustment caret.
@@ -729,6 +738,33 @@ pub struct TextLineCommentPlan {
     pub edits: Vec<TextLineCommentEdit>,
 }
 
+/// One bounded edit produced by the Code-OSS block-comment toggle.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// One selection after Code-OSS block-comment cursor mapping.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentSelection {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+}
+
+/// Block-comment edits and mapped selections from one immutable Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentPlan {
+    pub version: u64,
+    pub edits: Vec<TextBlockCommentEdit>,
+    pub selections: Vec<TextBlockCommentSelection>,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct TransposeLineBounds {
     start_char: usize,
@@ -864,6 +900,40 @@ fn next_word_token(line: RopeSlice<'_>, from: usize) -> Option<WordToken> {
         end,
         is_separator: class,
     })
+}
+
+fn string_byte_at_char(text: &str, char_offset: usize) -> usize {
+    text.char_indices()
+        .nth(char_offset)
+        .map_or(text.len(), |(byte_offset, _)| byte_offset)
+}
+
+fn last_token_index(text: &str, token: &str, max_start_char: usize) -> Option<usize> {
+    let max_start_byte = string_byte_at_char(text, max_start_char);
+    for (byte_offset, _) in text.char_indices().rev() {
+        if byte_offset <= max_start_byte && text[byte_offset..].starts_with(token) {
+            return Some(text[..byte_offset].chars().count());
+        }
+    }
+    None
+}
+
+fn first_token_index(text: &str, token: &str, min_start_char: usize) -> Option<usize> {
+    let min_start_byte = string_byte_at_char(text, min_start_char);
+    for (byte_offset, _) in text.char_indices() {
+        if byte_offset >= min_start_byte && text[byte_offset..].starts_with(token) {
+            return Some(text[..byte_offset].chars().count());
+        }
+    }
+    None
+}
+
+fn contains_ascii_case_insensitive(haystack: &str, needle: &str) -> bool {
+    !needle.is_empty()
+        && haystack
+            .as_bytes()
+            .windows(needle.len())
+            .any(|window| window.eq_ignore_ascii_case(needle.as_bytes()))
 }
 
 fn line_content_char_len(line: RopeSlice<'_>) -> usize {
@@ -1083,6 +1153,16 @@ pub enum BufferError {
     OverlappingLineCommentSelections,
     /// A line has more leading whitespace than the bounded comment planner accepts.
     LineCommentIndentTooLarge { requested: usize, max: usize },
+    /// A block-comment query contains more selections than the bounded API accepts.
+    BlockCommentCountTooLarge { requested: usize, max: usize },
+    /// A configured block-comment token must be short, visible ASCII.
+    InvalidBlockCommentToken,
+    /// A block-comment request would inspect too much endpoint-line text.
+    BlockCommentScanTooLarge { requested: usize, max: usize },
+    /// An endpoint line exceeds the bounded block-comment scan length.
+    BlockCommentLineTooLarge { requested: usize, max: usize },
+    /// Distinct selections would produce conflicting block-comment edits.
+    OverlappingBlockCommentSelections,
     /// A transpose query contains more caret positions than the bounded API accepts.
     TransposeCountTooLarge { requested: usize, max: usize },
     /// An overtype-paste selection has its end before its start.
@@ -1144,6 +1224,24 @@ impl std::fmt::Display for BufferError {
                 f,
                 "line-comment indentation {requested} exceeds maximum {max} UTF-16 units"
             ),
+            BufferError::BlockCommentCountTooLarge { requested, max } => write!(
+                f,
+                "block-comment selection count {requested} exceeds maximum {max}"
+            ),
+            BufferError::InvalidBlockCommentToken => {
+                write!(f, "block-comment tokens must be short visible ASCII")
+            }
+            BufferError::BlockCommentScanTooLarge { requested, max } => write!(
+                f,
+                "block-comment endpoint scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::BlockCommentLineTooLarge { requested, max } => write!(
+                f,
+                "block-comment endpoint line {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::OverlappingBlockCommentSelections => {
+                write!(f, "block-comment selections would produce overlapping edits")
+            }
             BufferError::TransposeCountTooLarge { requested, max } => {
                 write!(f, "transpose caret count {requested} exceeds maximum {max}")
             }
@@ -1752,6 +1850,281 @@ impl TextBuffer {
         Ok(TextLineCommentPlan {
             version: self.version,
             edits,
+        })
+    }
+
+    /// Resolve the fixed Code-OSS block-comment toggle against one immutable
+    /// document snapshot. Endpoint-line and total inspection sizes are bounded.
+    pub fn toggle_block_comment_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        start_token: &str,
+        end_token: &str,
+        insert_space: bool,
+    ) -> Result<TextBlockCommentPlan, BufferError> {
+        if selections_utf16.len() > MAX_BLOCK_COMMENT_SELECTIONS {
+            return Err(BufferError::BlockCommentCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_BLOCK_COMMENT_SELECTIONS,
+            });
+        }
+        let valid_token = |token: &str| {
+            !token.is_empty()
+                && token.encode_utf16().count() <= MAX_BLOCK_COMMENT_TOKEN_UTF16
+                && token.bytes().all(|byte| (0x21..=0x7e).contains(&byte))
+        };
+        if !valid_token(start_token) || !valid_token(end_token) {
+            return Err(BufferError::InvalidBlockCommentToken);
+        }
+
+        let mut unique_selections = selections_utf16.to_vec();
+        for &(start_utf16, end_utf16) in &unique_selections {
+            if start_utf16 > end_utf16 {
+                return Err(BufferError::InvalidDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                });
+            }
+            self.char_idx_at_utf16(start_utf16)?;
+            self.char_idx_at_utf16(end_utf16)?;
+        }
+        unique_selections.sort_unstable();
+        unique_selections.dedup();
+        for pair in unique_selections.windows(2) {
+            let previous = pair[0];
+            let current = pair[1];
+            if previous.1 > current.0 || (previous.0 == previous.1 && previous.0 == current.0) {
+                return Err(BufferError::OverlappingBlockCommentSelections);
+            }
+        }
+
+        let start_token_chars = start_token.chars().count();
+        let end_token_chars = end_token.chars().count();
+        let mut inspected_utf16 = 0usize;
+        let mut edits = Vec::with_capacity(unique_selections.len().saturating_mul(2));
+        let mut mapped_by_selection = HashMap::with_capacity(unique_selections.len());
+
+        for &(start_utf16, end_utf16) in &unique_selections {
+            let start_char = self.char_idx_at_utf16(start_utf16)?;
+            let end_char = self.char_idx_at_utf16(end_utf16)?;
+            let start_line_index = self.rope.char_to_line(start_char);
+            let end_line_index = self.rope.char_to_line(end_char);
+            let start_line = self.rope.line(start_line_index);
+            let end_line = self.rope.line(end_line_index);
+            let start_content_len = line_content_char_len(start_line);
+            let end_content_len = line_content_char_len(end_line);
+            let start_content = start_line.slice(..start_content_len);
+            let end_content = end_line.slice(..end_content_len);
+
+            if start_content.len_utf16_cu() > MAX_BLOCK_COMMENT_LINE_UTF16 {
+                return Err(BufferError::BlockCommentLineTooLarge {
+                    requested: start_content.len_utf16_cu(),
+                    max: MAX_BLOCK_COMMENT_LINE_UTF16,
+                });
+            }
+            inspected_utf16 = inspected_utf16.saturating_add(start_content.len_utf16_cu());
+            if end_line_index != start_line_index {
+                if end_content.len_utf16_cu() > MAX_BLOCK_COMMENT_LINE_UTF16 {
+                    return Err(BufferError::BlockCommentLineTooLarge {
+                        requested: end_content.len_utf16_cu(),
+                        max: MAX_BLOCK_COMMENT_LINE_UTF16,
+                    });
+                }
+                inspected_utf16 = inspected_utf16.saturating_add(end_content.len_utf16_cu());
+            }
+            if inspected_utf16 > MAX_BLOCK_COMMENT_SCAN_UTF16 {
+                return Err(BufferError::BlockCommentScanTooLarge {
+                    requested: inspected_utf16,
+                    max: MAX_BLOCK_COMMENT_SCAN_UTF16,
+                });
+            }
+
+            let start_text = start_content.to_string();
+            let end_text = if start_line_index == end_line_index {
+                start_text.clone()
+            } else {
+                end_content.to_string()
+            };
+            let start_line_char = self.rope.line_to_char(start_line_index);
+            let end_line_char = self.rope.line_to_char(end_line_index);
+            let start_column = start_char
+                .saturating_sub(start_line_char)
+                .min(start_content_len);
+            let end_column = end_char.saturating_sub(end_line_char).min(end_content_len);
+            let start_token_index = last_token_index(
+                &start_text,
+                start_token,
+                start_column.saturating_add(start_token_chars),
+            );
+            let end_token_index = first_token_index(
+                &end_text,
+                end_token,
+                end_column.saturating_sub(end_token_chars),
+            );
+
+            let mut should_remove = start_token_index.is_some() && end_token_index.is_some();
+            if let (Some(start_index), Some(end_index)) = (start_token_index, end_token_index) {
+                if start_line_index == end_line_index {
+                    if end_index < start_index + start_token_chars {
+                        should_remove = false;
+                    } else {
+                        let between_start =
+                            string_byte_at_char(&start_text, start_index + start_token_chars);
+                        let between_end = string_byte_at_char(&start_text, end_index);
+                        if contains_ascii_case_insensitive(
+                            &start_text[between_start..between_end],
+                            end_token,
+                        ) {
+                            should_remove = false;
+                        }
+                    }
+                } else {
+                    let after_start =
+                        string_byte_at_char(&start_text, start_index + start_token_chars);
+                    let before_end = string_byte_at_char(&end_text, end_index);
+                    if contains_ascii_case_insensitive(&start_text[after_start..], end_token)
+                        || contains_ascii_case_insensitive(&end_text[..before_end], end_token)
+                    {
+                        should_remove = false;
+                    }
+                }
+            }
+
+            if !should_remove {
+                if start_utf16 == end_utf16 {
+                    let mut inserted_text =
+                        String::with_capacity(start_token.len() + end_token.len() + 2);
+                    inserted_text.push_str(start_token);
+                    inserted_text.push_str("  ");
+                    inserted_text.push_str(end_token);
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16,
+                        end_utf16,
+                        removed_text: String::new(),
+                        inserted_text,
+                    });
+                    let caret = start_utf16 + start_token.encode_utf16().count() + 1;
+                    mapped_by_selection.insert((start_utf16, end_utf16), (caret, caret));
+                } else {
+                    let mut open_text = String::from(start_token);
+                    if insert_space {
+                        open_text.push(' ');
+                    }
+                    let mut close_text = String::new();
+                    if insert_space {
+                        close_text.push(' ');
+                    }
+                    close_text.push_str(end_token);
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16,
+                        end_utf16: start_utf16,
+                        removed_text: String::new(),
+                        inserted_text: open_text.clone(),
+                    });
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16: end_utf16,
+                        end_utf16,
+                        removed_text: String::new(),
+                        inserted_text: close_text,
+                    });
+                    let opening_units = open_text.encode_utf16().count();
+                    mapped_by_selection.insert(
+                        (start_utf16, end_utf16),
+                        (start_utf16 + opening_units, end_utf16 + opening_units),
+                    );
+                }
+                continue;
+            }
+
+            let start_index = start_token_index.expect("paired token start");
+            let end_index = end_token_index.expect("paired token end");
+            let open_start_char = start_line_char + start_index;
+            let mut open_end_index = start_index + start_token_chars;
+            if insert_space
+                && open_end_index < start_content_len
+                && start_content.char(open_end_index) == ' '
+            {
+                open_end_index += 1;
+            }
+            let mut close_start_index = end_index;
+            if insert_space
+                && close_start_index > 0
+                && end_content.char(close_start_index - 1) == ' '
+            {
+                close_start_index -= 1;
+            }
+            let close_start_char = end_line_char + close_start_index;
+            let close_end_char = end_line_char + end_index + end_token_chars;
+            let open_end_char = start_line_char + open_end_index;
+            let open_start_utf16 = self.rope.char_to_utf16_cu(open_start_char);
+            let open_end_utf16 = self.rope.char_to_utf16_cu(open_end_char);
+            let close_start_utf16 = self.rope.char_to_utf16_cu(close_start_char);
+            let close_end_utf16 = self.rope.char_to_utf16_cu(close_end_char);
+
+            if start_line_index == end_line_index && close_start_index <= open_end_index {
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: open_start_utf16,
+                    end_utf16: close_end_utf16,
+                    removed_text: self.rope.slice(open_start_char..close_end_char).to_string(),
+                    inserted_text: String::new(),
+                });
+                mapped_by_selection.insert(
+                    (start_utf16, end_utf16),
+                    (open_start_utf16, open_start_utf16),
+                );
+            } else {
+                let open_removed = self.rope.slice(open_start_char..open_end_char).to_string();
+                let close_removed = self
+                    .rope
+                    .slice(close_start_char..close_end_char)
+                    .to_string();
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: open_start_utf16,
+                    end_utf16: open_end_utf16,
+                    removed_text: open_removed.clone(),
+                    inserted_text: String::new(),
+                });
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: close_start_utf16,
+                    end_utf16: close_end_utf16,
+                    removed_text: close_removed,
+                    inserted_text: String::new(),
+                });
+                let mapped_end =
+                    close_start_utf16.saturating_sub(open_removed.encode_utf16().count());
+                mapped_by_selection.insert(
+                    (start_utf16, end_utf16),
+                    (open_start_utf16, mapped_end.max(open_start_utf16)),
+                );
+            }
+        }
+
+        edits.sort_by_key(|edit| (edit.start_utf16, edit.end_utf16));
+        for pair in edits.windows(2) {
+            let previous = &pair[0];
+            let current = &pair[1];
+            if previous.end_utf16 > current.start_utf16
+                || (previous.start_utf16 == previous.end_utf16
+                    && current.start_utf16 == current.end_utf16
+                    && previous.start_utf16 == current.start_utf16)
+            {
+                return Err(BufferError::OverlappingBlockCommentSelections);
+            }
+        }
+        let selections = selections_utf16
+            .iter()
+            .map(|selection| {
+                let (start_utf16, end_utf16) = mapped_by_selection[selection];
+                TextBlockCommentSelection {
+                    start_utf16,
+                    end_utf16,
+                }
+            })
+            .collect();
+        Ok(TextBlockCommentPlan {
+            version: self.version,
+            edits,
+            selections,
         })
     }
 
@@ -3160,6 +3533,163 @@ mod tests {
         assert!(matches!(
             long_indent.toggle_line_comment_utf16(&[(0, 0)], "//"),
             Err(BufferError::LineCommentIndentTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn toggle_block_comment_wraps_selection_and_maps_it_to_inner_text() {
+        let buffer = TextBuffer::open("let value = 42;");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(4, 9)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.version, buffer.version());
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextBlockCommentEdit {
+                    start_utf16: 4,
+                    end_utf16: 4,
+                    removed_text: String::new(),
+                    inserted_text: "/* ".to_owned(),
+                },
+                TextBlockCommentEdit {
+                    start_utf16: 9,
+                    end_utf16: 9,
+                    removed_text: String::new(),
+                    inserted_text: " */".to_owned(),
+                },
+            ]
+        );
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 7,
+                end_utf16: 12,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_inserts_empty_pair_and_maps_caret_inside() {
+        let buffer = TextBuffer::open("alpha");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(2, 2)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(
+            plan.edits,
+            vec![TextBlockCommentEdit {
+                start_utf16: 2,
+                end_utf16: 2,
+                removed_text: String::new(),
+                inserted_text: "/*  */".to_owned(),
+            }]
+        );
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 5,
+                end_utf16: 5,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_removes_tokens_and_selects_inner_text() {
+        let text = "before /* value */ after";
+        let buffer = TextBuffer::open(text);
+        let start = text.find("value").unwrap();
+        let end = start + "value".len();
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(start, end)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].removed_text, "/* ");
+        assert_eq!(plan.edits[1].removed_text, " */");
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: start - 3,
+                end_utf16: end - 3,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_empty_pair_and_nested_end_token_follow_upstream_toggle() {
+        let empty = TextBuffer::open("x /*  */ y");
+        let empty_plan = empty
+            .toggle_block_comment_utf16(&[(5, 5)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(empty_plan.edits.len(), 1);
+        assert_eq!(empty_plan.edits[0].removed_text, "/*  */");
+        assert_eq!(
+            empty_plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 2,
+                end_utf16: 2,
+            }]
+        );
+
+        let nested = TextBuffer::open("/* first */ second */");
+        let plan = nested
+            .toggle_block_comment_utf16(&[(0, nested.len_utf16())], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].inserted_text, "/* ");
+        assert_eq!(plan.edits[1].inserted_text, " */");
+    }
+
+    #[test]
+    fn toggle_block_comment_uses_utf16_offsets_with_bom_emoji_and_crlf() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊x\r\ny");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(1, 3)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits[0].start_utf16, 1);
+        assert_eq!(plan.edits[1].start_utf16, 3);
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 4,
+                end_utf16: 6,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_rejects_invalid_tokens_overlaps_and_unbounded_inputs() {
+        let buffer = TextBuffer::open("🦊\nline");
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(1, 1)], "/*", "*/", true),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(0, 0)], "/* ", "*/", true),
+            Err(BufferError::InvalidBlockCommentToken)
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(0, 3), (2, 4)], "/*", "*/", true),
+            Err(BufferError::OverlappingBlockCommentSelections)
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(
+                &vec![(0, 0); MAX_BLOCK_COMMENT_SELECTIONS + 1],
+                "/*",
+                "*/",
+                true,
+            ),
+            Err(BufferError::BlockCommentCountTooLarge {
+                requested: MAX_BLOCK_COMMENT_SELECTIONS + 1,
+                max: MAX_BLOCK_COMMENT_SELECTIONS,
+            })
+        );
+        let long_line = TextBuffer::open(&format!(
+            "{}x",
+            " ".repeat(MAX_BLOCK_COMMENT_LINE_UTF16 + 1)
+        ));
+        assert!(matches!(
+            long_line.toggle_block_comment_utf16(&[(0, 0)], "/*", "*/", true),
+            Err(BufferError::BlockCommentLineTooLarge { .. })
         ));
     }
 

@@ -176,6 +176,23 @@ void main() {
       expect(mac.commandForChord(parseChord('ctrl+/')!), isNull);
     });
 
+    test('block comment uses Alt+Shift+A or Linux Ctrl+Shift+A', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, mac]) {
+        expect(
+          keybindings.commandForChord(parseChord('alt+shift+a')!),
+          'editor.action.blockComment',
+        );
+      }
+      expect(
+        linux.commandForChord(parseChord('ctrl+shift+a')!),
+        'editor.action.blockComment',
+      );
+      expect(windows.commandForChord(parseChord('ctrl+shift+a')!), isNull);
+    });
+
     test('copy-line defaults coexist with platform column-selection chords',
         () {
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);
