@@ -11,8 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
   characters: ^1.4.1
+  super_clipboard: ^0.9.1
+  # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
   ffi: ^2.1.0
   window_manager: ^0.5.2
 

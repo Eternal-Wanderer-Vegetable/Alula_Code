@@ -37,10 +37,12 @@ import '../editor/editor_highlight_tokens.dart';
 import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
 import '../editor/clipboard_metadata.dart';
+import '../editor/editor_clipboard.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
+import '../editor/rich_text_clipboard.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_string_context.dart';
 import '../editor/rust_text_input_window.dart';
@@ -2807,15 +2809,68 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  String? _richHtmlForCopy(
+    OpenDoc doc,
+    String text,
+    int selectionStartUtf16,
+  ) {
+    final languageId =
+        doc.path == null ? 'plaintext' : _languageIdOf(doc.path!);
+    if (languageId != 'rust' ||
+        _syntaxVersionByDoc[doc.id] != doc.doc.version) {
+      return null;
+    }
+    return buildRichTextClipboardHtml(
+      text: text,
+      selectionStartUtf16: selectionStartUtf16,
+      languageId: languageId,
+      tokens: _syntaxByDoc[doc.id] ?? const <Map<String, Object?>>[],
+      colorForToken: (kind) {
+        final value = _tokenColor(kind).toARGB32() & 0x00FFFFFF;
+        return '#${value.toRadixString(16).padLeft(6, '0')}';
+      },
+    );
+  }
+
+  Future<void> _writeEditorClipboardCopy(
+    OpenDoc doc,
+    String text, {
+    required int selectionStartUtf16,
+    String? htmlText,
+    bool includeHtml = true,
+    bool isFromEmptySelection = false,
+    List<String>? multiCursorText,
+  }) async {
+    final html = includeHtml
+        ? htmlText ?? _richHtmlForCopy(doc, text, selectionStartUtf16)
+        : null;
+    final languageId =
+        doc.path == null ? 'plaintext' : _languageIdOf(doc.path!);
+    await EditorClipboard.write(
+      text: text,
+      html: html,
+      metadata: EditorClipboardMetadata(
+        isFromEmptySelection: isFromEmptySelection,
+        isBlock: doc.columnSelection != null,
+        multiCursorText: multiCursorText,
+        mode: html == null ? null : languageId,
+      ),
+    );
+  }
+
   Future<void> _copyCrossWindowSelection(OpenDoc doc) async {
     _flushInput(doc, commitComposition: true);
     final selection = doc.crossWindowSelection;
     if (selection == null) return;
+    final version = doc.doc.version;
     final text = _readDocumentRange(doc, selection.start, selection.end);
-    await Clipboard.setData(ClipboardData(text: text));
-    EditorClipboardMetadataStore.shared.record(
+    if (doc.doc.version != version || doc.crossWindowSelection != selection) {
+      return;
+    }
+    await _writeEditorClipboardCopy(
+      doc,
       text,
-      const EditorClipboardMetadata(),
+      selectionStartUtf16: selection.start,
     );
   }
 
@@ -6916,10 +6971,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (selection == null || selection.isCollapsed) return;
     final version = doc.doc.version;
     final text = _readDocumentRange(doc, selection.start, selection.end);
-    await Clipboard.setData(ClipboardData(text: text));
-    EditorClipboardMetadataStore.shared.record(
+    await _writeEditorClipboardCopy(
+      doc,
       text,
-      const EditorClipboardMetadata(),
+      selectionStartUtf16: selection.start,
     );
     if (!mounted ||
         doc.doc.version != version ||
@@ -7036,7 +7091,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (selection == null) return;
     _flushInput(doc, commitComposition: true);
     final version = doc.doc.version;
-    final clipboard = await Clipboard.getData('text/plain');
+    final clipboard = await EditorClipboard.read();
     if (!mounted ||
         clipboard == null ||
         doc.doc.version != version ||
@@ -7045,7 +7100,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _replaceCrossWindowSelection(
       doc,
-      clipboard.text ?? '',
+      clipboard.text,
       version: version,
     );
   }
@@ -7088,10 +7143,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final clipboardText = copied.join(documentEol);
-    await Clipboard.setData(ClipboardData(text: clipboardText));
-    EditorClipboardMetadataStore.shared.record(
+    await _writeEditorClipboardCopy(
+      doc,
       clipboardText,
-      EditorClipboardMetadata(multiCursorText: copied),
+      selectionStartUtf16: selections.first.start,
+      includeHtml: false,
+      multiCursorText: copied,
     );
   }
 
@@ -7111,11 +7168,92 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ? '\r\n'
         : '\n';
     final clipboardText = '$text$eol';
-    await Clipboard.setData(ClipboardData(text: clipboardText));
-    EditorClipboardMetadataStore.shared.record(
+    await _writeEditorClipboardCopy(
+      doc,
       clipboardText,
-      const EditorClipboardMetadata(isFromEmptySelection: true),
+      selectionStartUtf16: line.startUtf16,
+      htmlText: _richHtmlForCopy(doc, text, line.startUtf16),
+      isFromEmptySelection: true,
     );
+  }
+
+  Future<void> _copySingleSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.selection;
+    if (!identical(_active, doc) ||
+        selection.isCollapsed ||
+        doc.additionalSelections.isNotEmpty ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition) {
+      return;
+    }
+    final version = doc.doc.version;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    if (doc.doc.version != version ||
+        !identical(_active, doc) ||
+        doc.selection != selection ||
+        doc.additionalSelections.isNotEmpty ||
+        doc.inputWindow.hasComposition) {
+      return;
+    }
+    await _writeEditorClipboardCopy(
+      doc,
+      text,
+      selectionStartUtf16: selection.start,
+    );
+  }
+
+  Future<void> _cutSingleSelection(OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final selection = doc.selection;
+    if (!identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        selection.isCollapsed ||
+        doc.additionalSelections.isNotEmpty ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition) {
+      return;
+    }
+    final version = doc.doc.version;
+    final text = _readDocumentRange(doc, selection.start, selection.end);
+    if (doc.doc.version != version) return;
+    try {
+      await _writeEditorClipboardCopy(
+        doc,
+        text,
+        selectionStartUtf16: selection.start,
+      );
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '剪切未执行：剪贴板写入失败：$error');
+      return;
+    }
+
+    final field = doc.inputFieldKey.currentState;
+    final oldValue = doc.editingValue;
+    final windowStart = doc.inputWindow.startUtf16;
+    final localStart = selection.start - windowStart;
+    final localEnd = selection.end - windowStart;
+    if (!mounted ||
+        !identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.doc.version != version ||
+        doc.selection != selection ||
+        doc.additionalSelections.isNotEmpty ||
+        doc.inputWindow.hasComposition ||
+        field == null ||
+        localStart < 0 ||
+        localEnd < localStart ||
+        localEnd > oldValue.text.length ||
+        oldValue.text.substring(localStart, localEnd) != text) {
+      return;
+    }
+    field.setEditingValue(TextEditingValue(
+      text: oldValue.text.replaceRange(localStart, localEnd, ''),
+      selection: TextSelection.collapsed(offset: localStart),
+      composing: TextRange.empty,
+    ));
+    doc.columnSelection = null;
+    _flushInput(doc);
   }
 
   Future<void> _cutEmptySelectionLine(OpenDoc doc) async {
@@ -7141,10 +7279,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ? '\r\n'
         : '\n';
     final clipboardText = '$text$eol';
-    await Clipboard.setData(ClipboardData(text: clipboardText));
-    EditorClipboardMetadataStore.shared.record(
+    await _writeEditorClipboardCopy(
+      doc,
       clipboardText,
-      const EditorClipboardMetadata(isFromEmptySelection: true),
+      selectionStartUtf16: line.startUtf16,
+      htmlText: _richHtmlForCopy(doc, text, line.startUtf16),
+      isFromEmptySelection: true,
     );
 
     if (!mounted ||
@@ -7163,11 +7303,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<bool> _pasteMultiSelections(OpenDoc doc) async {
     if (doc.additionalSelections.isEmpty) return false;
     _flushInput(doc, commitComposition: true);
-    final clipboard = await Clipboard.getData('text/plain');
+    final clipboard = await EditorClipboard.read();
     if (clipboard == null || !mounted || _active?.id != doc.id) return false;
-    final clipboardText = clipboard.text ?? '';
-    final clipboardMetadata =
-        EditorClipboardMetadataStore.shared.lookup(clipboardText);
+    final clipboardText = clipboard.text;
+    final clipboardMetadata = clipboard.metadata;
     final field = doc.inputFieldKey.currentState;
     if (field == null) return false;
     _flushInput(doc, commitComposition: true);
@@ -7235,7 +7374,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return true;
     }
 
-    final clipboard = await Clipboard.getData('text/plain');
+    final clipboard = await EditorClipboard.read();
     if (!mounted ||
         clipboard == null ||
         _active?.id != doc.id ||
@@ -7243,9 +7382,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !selectionSetUnchanged()) {
       return;
     }
-    final clipboardText = clipboard.text ?? '';
-    final clipboardMetadata =
-        EditorClipboardMetadataStore.shared.lookup(clipboardText);
+    final clipboardText = clipboard.text;
+    final clipboardMetadata = clipboard.metadata;
     if (clipboardText.isEmpty) return;
 
     final pasteTexts = distributeClipboardPasteText(
@@ -7569,10 +7707,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     try {
       final clipboardText = copied.join(documentEol);
-      await Clipboard.setData(ClipboardData(text: clipboardText));
-      EditorClipboardMetadataStore.shared.record(
+      await _writeEditorClipboardCopy(
+        doc,
         clipboardText,
-        EditorClipboardMetadata(multiCursorText: copied),
+        selectionStartUtf16: selections.first.start,
+        includeHtml: false,
+        multiCursorText: copied,
       );
     } on Object catch (error) {
       if (mounted) setState(() => _statusDetail = '多光标剪切未应用：$error');
@@ -9235,8 +9375,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !activeHasComposition &&
             active != null &&
             active.additionalSelections.isEmpty &&
+            !active.selection.isCollapsed) {
+          unawaited(_copySingleSelection(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyC &&
+            !activeHasComposition &&
+            active != null &&
+            active.additionalSelections.isEmpty &&
             active.selection.isCollapsed) {
           unawaited(_copyEmptySelectionLine(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyX &&
+            !activeHasComposition &&
+            active != null &&
+            active.additionalSelections.isEmpty &&
+            !active.selection.isCollapsed) {
+          unawaited(_cutSingleSelection(active));
           return KeyEventResult.handled;
         }
         if (commandModifier &&

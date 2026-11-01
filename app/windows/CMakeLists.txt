@@ -87,6 +87,17 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
+# Bundle the Rust core beside the executable so dart:ffi always loads the
+# library built for this source tree instead of a stale DLL from an old build.
+set(ALULA_CORE_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/../native/alula_core.dll")
+if(NOT EXISTS "${ALULA_CORE_LIBRARY}")
+  message(FATAL_ERROR
+    "Missing ${ALULA_CORE_LIBRARY}; run scripts/build_core.ps1 from the repository root first.")
+endif()
+install(FILES "${ALULA_CORE_LIBRARY}"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  COMPONENT Runtime)
+
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"

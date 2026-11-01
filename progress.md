@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
+### 最新进展（2026-11-01，P04.58 / EDT-10f 进行中）
+
+- 富文本桌面剪贴板已接入 plain text、Code-OSS v1 `vscode-editor-data` 和有界 HTML token 输出；剪切、单选/空选区/多光标复制及粘贴读取复用统一适配。Linux 原生回读曾把自定义 target 返回为 UTF-8 bytes；解码器现在接受 `String`/`Uint8List` 并设置 1 MiB 上限。
+- Linux Xvfb 原生剪贴板集成测试通过，覆盖 plain text、HTML 和 metadata 往返；定向套件 25 项通过。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 579），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues，Linux Release bundle 构建通过。报告：`docs/diagnostics/2026-11-01-p04/p04.58-rich-text-clipboard.md`。
+- 结合用户提供的线索复核 CI：重复 Windows CI 红灯集中在 Clippy 测试 fixture lint，修复后后续 runs 连续绿；另一次 Windows integration 红灯是 50k 行测试的临时目录 teardown 文件占用，后续关闭 smoke 通过。两类失败都没有报告 Alula crash/`0xC000041D`，不能当作旧 artifact 崩溃的根因；P15 旧精确 artifact 复核仍 pending。
+- GitNexus `EditorClipboard` upstream impact 为 CRITICAL（171 impacted nodes、72 reported flows、20 modules、2 direct callers），结果有截断和跨语言边界，保留最高风险。 提交前 all-scope `detect-changes --limit 1000` 为 CRITICAL（54 files、10 symbols、339 processes；流程清单仍截断），含未归属当前切片的既有用户改动，保留最高风险。CI Linux/Windows/macOS 原生剪贴板 smoke push 后待确认；P04.58 保持 `in-progress`，P15 原生剪贴板验收 pending。
+
 ### 最新进展（2026-11-01，P04.57 / EDT-10e 完成）
 
 - 完成多光标 clipboard metadata：用有界单条纯文本 sidecar 精确匹配最近一次复制，恢复包含内嵌换行的 `multiCursorText`；目标光标按文档顺序映射，CRLF/CR 片段归一为文档 LF。普通/覆写多光标粘贴接入；外部剪贴板、文本变化、数量不符与超限退回普通纯文本路径。记录上限 64 Ki UTF-16 文本、64 Ki 分段总量和 10,000 项；不改 ABI。

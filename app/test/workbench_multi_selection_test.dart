@@ -84,6 +84,66 @@ Future<void> _altClickAtOffset(
 }
 
 void main() {
+  testWidgets('single-selection copy and cut keep the Rust document in sync',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-single-clip');
+    addTearDown(() async {
+      EditorClipboardMetadataStore.shared.clear();
+      tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    final file = File('${workspace.path}/sample.rs')
+      ..writeAsStringSync('fn main() { println!("linux-save-ok"); }\n');
+    final base = temp.path.replaceAll(r'\', '/');
+    Map<dynamic, dynamic> clipboard = const {};
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          clipboard = Map<dynamic, dynamic>.from(call.arguments as Map);
+        }
+        if (call.method == 'Clipboard.getData') return clipboard;
+        return null;
+      },
+    );
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('sample.rs').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.showKeyboard(editor);
+    await tester.pump();
+    final controller = tester.widget<TextField>(editor).controller!;
+    controller.selection = const TextSelection(baseOffset: 0, extentOffset: 2);
+    await tester.pump();
+    await tester.pump();
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyC);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    expect(clipboard['text'], 'fn');
+    expect(EditorClipboardMetadataStore.shared.lookup('fn')?.mode, 'rust');
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyX);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.pump();
+    expect(controller.text, ' main() { println!("linux-save-ok"); }\n');
+    await _saveWithCtrlS(tester);
+    expect(file.readAsStringSync(), ' main() { println!("linux-save-ok"); }\n');
+  });
+
   testWidgets('multi-selection copy/cut writes clipboard and Rust once',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-multicursor-clip');
