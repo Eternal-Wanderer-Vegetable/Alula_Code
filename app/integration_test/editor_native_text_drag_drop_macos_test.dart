@@ -32,85 +32,107 @@ void main() {
         token: 41,
       );
       final dropReceived = Completer<EditorTextDragDropRequest>();
+      void recordPointerEvent(String type, PointerEvent event) {
+        File('${directory.path}/pointer-events.jsonl').writeAsStringSync(
+          '${jsonEncode({
+                'type': type,
+                'x': event.position.dx,
+                'y': event.position.dy,
+                'buttons': event.buttons,
+                'kind': event.kind.name,
+                'timestampMicros': event.timeStamp.inMicroseconds,
+              })}\n',
+          mode: FileMode.append,
+        );
+      }
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Center(
-              child: EditorNativeTextDragDrop(
-                enabled: true,
-                payloadAt: (position) {
-                  File('${directory.path}/payload-at.jsonl').writeAsStringSync(
-                    '${jsonEncode({'x': position.dx, 'y': position.dy})}\n',
-                    mode: FileMode.append,
-                  );
-                  return payload;
-                },
-                buildDropRequest: (candidate, position, operation) {
-                  File('${directory.path}/drop-over.jsonl').writeAsStringSync(
-                    '${jsonEncode({
-                          'x': position.dx,
-                          'y': position.dy,
-                          'operation': operation.name,
-                        })}\n',
-                    mode: FileMode.append,
-                  );
-                  return EditorTextDragDropRequest(
-                    payload: candidate,
-                    targetDocumentId: candidate.selection.documentId,
-                    targetDocumentVersion: candidate.selection.documentVersion,
-                    targetOffsetUtf16: 11,
-                    operation: operation,
-                  );
-                },
-                onDrop: (request) {
-                  if (!dropReceived.isCompleted) {
-                    dropReceived.complete(request);
-                  }
-                  File('${directory.path}/drop.json').writeAsStringSync(
-                    jsonEncode({
-                      'selectedText': request.payload.selectedText,
-                      'operation': request.operation.name,
-                      'targetOffsetUtf16': request.targetOffsetUtf16,
-                    }),
-                  );
-                },
-                onDragCompleted: (candidate, operation) {
-                  File('${directory.path}/drag-completed.json')
-                      .writeAsStringSync(
-                    jsonEncode({
-                      'selectedText': candidate.selectedText,
-                      'operation': operation.name,
-                    }),
-                  );
-                },
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Semantics(
-                      container: true,
-                      identifier: 'alula-dnd-source',
-                      label: 'ALULA DND SOURCE',
-                      child: const SizedBox(
-                        key: ValueKey('alula-dnd-source'),
-                        width: 240,
-                        height: 90,
-                        child: Center(child: Text('Drag source')),
+              child: Listener(
+                behavior: HitTestBehavior.translucent,
+                onPointerDown: (event) => recordPointerEvent('down', event),
+                onPointerMove: (event) => recordPointerEvent('move', event),
+                onPointerUp: (event) => recordPointerEvent('up', event),
+                onPointerCancel: (event) => recordPointerEvent('cancel', event),
+                child: EditorNativeTextDragDrop(
+                  enabled: true,
+                  payloadAt: (position) {
+                    File('${directory.path}/payload-at.jsonl')
+                        .writeAsStringSync(
+                      '${jsonEncode({'x': position.dx, 'y': position.dy})}\n',
+                      mode: FileMode.append,
+                    );
+                    return payload;
+                  },
+                  buildDropRequest: (candidate, position, operation) {
+                    File('${directory.path}/drop-over.jsonl').writeAsStringSync(
+                      '${jsonEncode({
+                            'x': position.dx,
+                            'y': position.dy,
+                            'operation': operation.name,
+                          })}\n',
+                      mode: FileMode.append,
+                    );
+                    return EditorTextDragDropRequest(
+                      payload: candidate,
+                      targetDocumentId: candidate.selection.documentId,
+                      targetDocumentVersion:
+                          candidate.selection.documentVersion,
+                      targetOffsetUtf16: 11,
+                      operation: operation,
+                    );
+                  },
+                  onDrop: (request) {
+                    if (!dropReceived.isCompleted) {
+                      dropReceived.complete(request);
+                    }
+                    File('${directory.path}/drop.json').writeAsStringSync(
+                      jsonEncode({
+                        'selectedText': request.payload.selectedText,
+                        'operation': request.operation.name,
+                        'targetOffsetUtf16': request.targetOffsetUtf16,
+                      }),
+                    );
+                  },
+                  onDragCompleted: (candidate, operation) {
+                    File('${directory.path}/drag-completed.json')
+                        .writeAsStringSync(
+                      jsonEncode({
+                        'selectedText': candidate.selectedText,
+                        'operation': operation.name,
+                      }),
+                    );
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Semantics(
+                        container: true,
+                        identifier: 'alula-dnd-source',
+                        label: 'ALULA DND SOURCE',
+                        child: const SizedBox(
+                          key: ValueKey('alula-dnd-source'),
+                          width: 240,
+                          height: 90,
+                          child: Center(child: Text('Drag source')),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 120),
-                    Semantics(
-                      container: true,
-                      identifier: 'alula-dnd-target',
-                      label: 'ALULA DND TARGET',
-                      child: const SizedBox(
-                        key: ValueKey('alula-dnd-target'),
-                        width: 240,
-                        height: 90,
-                        child: Center(child: Text('Drop target')),
+                      const SizedBox(height: 120),
+                      Semantics(
+                        container: true,
+                        identifier: 'alula-dnd-target',
+                        label: 'ALULA DND TARGET',
+                        child: const SizedBox(
+                          key: ValueKey('alula-dnd-target'),
+                          width: 240,
+                          height: 90,
+                          child: Center(child: Text('Drop target')),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
