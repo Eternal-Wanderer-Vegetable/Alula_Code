@@ -19,6 +19,16 @@ func labels(of element: AXUIElement) -> [String] {
 }
 
 func frame(of element: AXUIElement) -> CGRect? {
+  if let frameRaw = attribute(element, "AXFrame"),
+     CFGetTypeID(frameRaw) == AXValueGetTypeID()
+  {
+    let frameValue = frameRaw as! AXValue
+    var rect = CGRect.zero
+    if AXValueGetValue(frameValue, .cgRect, &rect), !rect.isEmpty {
+      return rect
+    }
+  }
+
   guard
     let positionRaw = attribute(element, "AXPosition"),
     let sizeRaw = attribute(element, "AXSize"),
@@ -152,6 +162,23 @@ func logAccessibilityDiagnostics(
     describe("window[\(index)]", window)
   }
 
+  var visited = 0
+  func dumpTree(_ element: AXUIElement, depth: Int) {
+    guard depth < 12, visited < 300 else { return }
+    visited += 1
+    let role = attribute(element, "AXRole") as? String ?? "<no-role>"
+    let subrole = attribute(element, "AXSubrole") as? String ?? "<no-subrole>"
+    let descendants = children(of: element)
+    let indentation = String(repeating: " ", count: depth * 2)
+    print(
+      "AX tree \(indentation)role=\(role) subrole=\(subrole) " +
+        "labels=\(labels(of: element)) frame=\(frame(of: element).map(NSStringFromRect) ?? "<no-frame>") " +
+        "children=\(descendants.count)"
+    )
+    for child in descendants { dumpTree(child, depth: depth + 1) }
+  }
+  for window in windows { dumpTree(window, depth: 0) }
+
   let onScreenWindows = CGWindowListCopyWindowInfo(
     [.optionOnScreenOnly, .excludeDesktopElements],
     kCGNullWindowID
@@ -181,7 +208,7 @@ func run() throws {
 
   let directory = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
   let ready = directory.appendingPathComponent("ready")
-  let deadline = Date().addingTimeInterval(50)
+  let deadline = Date().addingTimeInterval(25)
   while !FileManager.default.fileExists(atPath: ready.path), Date() < deadline {
     Thread.sleep(forTimeInterval: 0.1)
   }
