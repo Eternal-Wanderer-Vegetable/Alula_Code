@@ -39,15 +39,30 @@ void main() {
             body: Center(
               child: EditorNativeTextDragDrop(
                 enabled: true,
-                payloadAt: (_) => payload,
-                buildDropRequest: (candidate, _, operation) =>
-                    EditorTextDragDropRequest(
-                  payload: candidate,
-                  targetDocumentId: candidate.selection.documentId,
-                  targetDocumentVersion: candidate.selection.documentVersion,
-                  targetOffsetUtf16: 11,
-                  operation: operation,
-                ),
+                payloadAt: (position) {
+                  File('${directory.path}/payload-at.jsonl').writeAsStringSync(
+                    '${jsonEncode({'x': position.dx, 'y': position.dy})}\n',
+                    mode: FileMode.append,
+                  );
+                  return payload;
+                },
+                buildDropRequest: (candidate, position, operation) {
+                  File('${directory.path}/drop-over.jsonl').writeAsStringSync(
+                    '${jsonEncode({
+                          'x': position.dx,
+                          'y': position.dy,
+                          'operation': operation.name,
+                        })}\n',
+                    mode: FileMode.append,
+                  );
+                  return EditorTextDragDropRequest(
+                    payload: candidate,
+                    targetDocumentId: candidate.selection.documentId,
+                    targetDocumentVersion: candidate.selection.documentVersion,
+                    targetOffsetUtf16: 11,
+                    operation: operation,
+                  );
+                },
                 onDrop: (request) {
                   if (!dropReceived.isCompleted) {
                     dropReceived.complete(request);
@@ -60,7 +75,15 @@ void main() {
                     }),
                   );
                 },
-                onDragCompleted: (_, __) {},
+                onDragCompleted: (candidate, operation) {
+                  File('${directory.path}/drag-completed.json')
+                      .writeAsStringSync(
+                    jsonEncode({
+                      'selectedText': candidate.selectedText,
+                      'operation': operation.name,
+                    }),
+                  );
+                },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -64,6 +64,9 @@ func postMouseEvent(_ type: CGEventType, at point: CGPoint) throws {
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
+  if type == .leftMouseDown || type == .leftMouseDragged {
+    event.flags.insert(.maskLeftMouseDown)
+  }
   event.post(tap: .cghidEventTap)
 }
 
@@ -257,6 +260,7 @@ func run() throws {
   }
   Thread.sleep(forTimeInterval: 0.5)
   try postMouseEvent(.leftMouseUp, at: target)
+  print("AppKit mouse location after drag: \(NSEvent.mouseLocation)")
   print("Posted native mouse drag from Flutter source to target coordinates")
 }
 
