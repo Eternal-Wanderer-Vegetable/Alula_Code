@@ -37,6 +37,11 @@ class EditorClipboard {
     formats: ['vscode-editor-data'],
     onDecode: _decodeVscodeEditorData,
   );
+  static const _windowsVscodeEditorDataCodec = SimplePlatformCodec<String>(
+    formats: ['vscode-editor-data'],
+    onEncode: _encodeWindowsVscodeEditorData,
+    onDecode: _decodeVscodeEditorData,
+  );
   static const _macVscodeEditorDataCodec = SimplePlatformCodec<String>(
     // AppKit only retains registered, reverse-DNS pasteboard types. Keep the
     // Code-OSS MIME as the first candidate for Electron-based peers, and add
@@ -51,9 +56,15 @@ class EditorClipboard {
   static const vscodeEditorDataFormat = SimpleValueFormat<String>(
     linux: _vscodeEditorDataCodec,
     macos: _macVscodeEditorDataCodec,
-    windows: _vscodeEditorDataCodec,
+    windows: _windowsVscodeEditorDataCodec,
     fallback: _vscodeEditorDataCodec,
   );
+
+  static Uint8List _encodeWindowsVscodeEditorData(
+    String value,
+    PlatformFormat _,
+  ) =>
+      Uint8List.fromList(utf8.encode(value));
 
   static Future<String?> _decodeVscodeEditorData(
     PlatformDataProvider provider,
@@ -61,18 +72,59 @@ class EditorClipboard {
   ) async {
     final data = provider.getData(format);
     final value = await data;
-    if (value is String &&
-        value.length <= EditorClipboardMetadata.maxClipboardMetadataUtf16) {
-      return value;
+    if (value is String) {
+      final normalized = _withoutTrailingNulls(value);
+      if (normalized.length <=
+          EditorClipboardMetadata.maxClipboardMetadataUtf16) {
+        return normalized;
+      }
     }
     if (value is Uint8List && value.lengthInBytes <= _maxEditorDataBytes) {
       try {
-        return utf8.decode(value);
+        final decoded = _decodeClipboardDataBytes(value);
+        final normalized = _withoutTrailingNulls(decoded);
+        if (normalized.length <=
+            EditorClipboardMetadata.maxClipboardMetadataUtf16) {
+          return normalized;
+        }
+        return null;
       } on FormatException {
         return null;
       }
     }
     return null;
+  }
+
+  static String _decodeClipboardDataBytes(Uint8List value) {
+    final isUtf16 = value.length.isEven &&
+        value.length >= 2 &&
+        ((value[0] == 0xFF && value[1] == 0xFE) ||
+            (value[0] == 0xFE && value[1] == 0xFF) ||
+            value[0] == 0 ||
+            value[1] == 0);
+    if (!isUtf16) return utf8.decode(value);
+
+    final hasLittleEndianBom = value[0] == 0xFF && value[1] == 0xFE;
+    final hasBigEndianBom = value[0] == 0xFE && value[1] == 0xFF;
+    final littleEndian =
+        hasLittleEndianBom || (!hasBigEndianBom && value[0] != 0);
+    var offset = hasLittleEndianBom || hasBigEndianBom ? 2 : 0;
+    final codeUnits = <int>[];
+    while (offset < value.length) {
+      final first = value[offset++];
+      final second = value[offset++];
+      codeUnits
+          .add(littleEndian ? first | (second << 8) : (first << 8) | second);
+    }
+    return String.fromCharCodes(codeUnits);
+  }
+
+  static String _withoutTrailingNulls(String value) {
+    var end = value.length;
+    while (end > 0 && value.codeUnitAt(end - 1) == 0) {
+      end--;
+    }
+    return end == value.length ? value : value.substring(0, end);
   }
 
   static Future<void> write({

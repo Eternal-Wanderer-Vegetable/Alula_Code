@@ -43,7 +43,11 @@ void main() {
       EditorClipboard.vscodeEditorDataFormat,
     );
     final metadata = EditorClipboardMetadata.decodeClipboardJson(rawMetadata!);
-    expect(metadata, isNotNull);
+    expect(
+      metadata,
+      isNotNull,
+      reason: 'Raw metadata code units: ${rawMetadata.codeUnits}',
+    );
     expect(metadata!.mode, 'rust');
     expect(
         metadata.multiCursorText, ['fn main() {', 'println!("clipboard"); }']);

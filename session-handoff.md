@@ -1,4 +1,4 @@
-> Last Updated：2026-11-01（P04.58 / EDT-10f 进行中：桌面富文本剪贴板已接入；Linux Xvfb 原生 text/html/vscode-editor-data 往返通过，定向回归 26 项通过，init.sh Flutter 579、Rust workspace/Clippy/build_core、cargo fmt、Flutter analyze 0 issues 通过。首轮 hosted run `41278747568` 的 Linux lane 通过；Windows P03.7 mock channel 测试与真实剪贴板写入冲突，macOS 未回报原始 metadata 类型。已加测试 fallback 与 AppKit reverse-DNS 类型，等待 follow-up hosted 验证。报告记录 CI 失败和旧 `0xC000041D` 的关联结论；CI 未给出旧 crash 根因。下一步：提交并推送 scoped CI 修正、等待 Windows/macOS 重跑；P15 OS 验收继续 pending。）
+> Last Updated：2026-11-01（P04.58 / EDT-10f 进行中：Linux/macOS hosted lane 全绿，macOS 原生 clipboard roundtrip 与发行包通过；Windows P03.7 已通过，原生 metadata smoke 发现 Windows String 按 UTF-16LE NUL 写入后 JSON 解码失败。现已加 UTF-8 raw writer 和 UTF-16/NUL readback 兼容，定向 27 项与 Flutter analyze 0 issues 通过，等待 Windows hosted 重跑。完整 init.sh Flutter 579、Rust workspace/Clippy/build_core、cargo fmt 均通过。CI 失败与旧 `0xC000041D` 关联结论已记录；目前没有新 run 报告 Alula crash，旧 crash 仍由 P15 验证。下一步：提交 Windows MIME 修正、推送并等待 Platform Availability；P15 OS 验收继续 pending。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,12 +9,12 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-01）：P04.1–P04.57 已交付，P04.58 / EDT-10f 正在完成富文本系统剪贴板。Linux Xvfb 原生适配/往返通过；首轮 hosted Linux lane 通过，Windows shared suite 与 mock channel 冲突、macOS 原始 metadata 类型不回读，修正已准备 follow-up。CI 失败没有解释 exact artifact `0xC000041D`，旧 crash 仍是 P15 原生验证项。保留 GitNexus CRITICAL 与列表截断记录。
+- 当前状态更新（2026-11-01）：P04.1–P04.57 已交付，P04.58 / EDT-10f 正在完成富文本系统剪贴板。follow-up hosted run `41279726799` 的 Linux/macOS 全绿、Windows P03.7 通过；Windows native metadata 编码修正后等待重跑。CI 未提供 exact artifact `0xC000041D` 的 crash 根因，旧 crash 仍是 P15 原生验证项。保留 GitNexus CRITICAL 与列表截断记录。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。
 - P04.24 新增 Rust Rope 覆写粘贴范围查询与 ABI v26、Dart bridge、工作台 Ctrl/Cmd+V 路径，并修复 macOS Cmd+Z/Y Rust 历史路由。报告 `docs/diagnostics/2026-10-31-p04/p04.24-overtype-paste.md`。工作树仍有此前未提交改动；阶段提交只纳入本片文件和 hunks。
-- Next 首步：刷新 GitNexus 并执行 staged/all-scope `detect-changes`，仅暂存 EditorClipboard 测试 fallback、macOS metadata 类型和对应验收记录；提交并推送，等待 Platform Availability follow-up。不要纳入工作树中 harness、P03、P04 其他历史切片与诊断文件的既存变更。
+- Next 首步：刷新 GitNexus 并执行 staged/all-scope `detect-changes`，仅暂存 Windows UTF-8 metadata writer/readback、边界测试和对应验收记录；提交并推送，等待 Windows native clipboard smoke。不要纳入工作树中 harness、P03、P04 其他历史切片与诊断文件的既存变更。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。

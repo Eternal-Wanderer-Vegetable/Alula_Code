@@ -8,10 +8,11 @@
 ### 最新进展（2026-11-01，P04.58 / EDT-10f 进行中）
 
 - 富文本桌面剪贴板已接入 plain text、Code-OSS v1 `vscode-editor-data` 和有界 HTML token 输出；剪切、单选/空选区/多光标复制及粘贴读取复用统一适配。Linux 原生回读曾把自定义 target 返回为 UTF-8 bytes；解码器现在接受 `String`/`Uint8List` 并设置 1 MiB 上限。
-- Linux Xvfb 原生剪贴板集成测试通过，覆盖 plain text、HTML 和 metadata 往返；定向套件原为 25 项；CI 修正后 26 项通过。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 579），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues，Linux Release bundle 构建通过。报告：`docs/diagnostics/2026-11-01-p04/p04.58-rich-text-clipboard.md`。
-- 结合用户提供的线索复核 CI：历史重复 Windows CI 红灯集中在 Clippy 测试 fixture lint，修复后后续 runs 连续绿；一次 50k 行临时目录 teardown 占用是测试清理竞态。新提交首轮 run `41278747568` 的 Linux lane 全绿；Windows P03.7 失败是共享用例绕过 mock 写入真实剪贴板，macOS 缺少可回读的 AppKit 自定义类型。已加入显式 mock fallback 与 macOS reverse-DNS metadata 类型，26 项定向回归通过，等待 hosted 重跑。日志均未报告应用崩溃/`0xC000041D`；CI 反复失败线索揭示了真实剪贴板回归，但不解释旧 artifact crash；P15 旧精确 artifact 复核仍 pending。
-- GitNexus `EditorClipboard` upstream impact 为 CRITICAL（171 impacted nodes、72 reported flows、20 modules、2 direct callers），结果有截断和跨语言边界，保留最高风险。 提交前 all-scope `detect-changes --limit 1000` 为 CRITICAL（54 files、10 symbols、339 processes；流程清单仍截断），含未归属当前切片的既有用户改动，保留最高风险。CI follow-up Linux/Windows/macOS 原生剪贴板 smoke 待确认；P04.58 保持 `in-progress`，P15 原生剪贴板验收 pending。
+- Linux Xvfb 原生剪贴板集成测试通过，覆盖 plain text、HTML 和 metadata 往返；定向套件原为 25 项；CI 修正后 27 项通过。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 579），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues，Linux Release bundle 构建通过。报告：`docs/diagnostics/2026-11-01-p04/p04.58-rich-text-clipboard.md`。
+- 结合用户提供的线索复核 CI：历史重复 Windows CI 红灯集中在 Clippy 测试 fixture lint，修复后后续 runs 连续绿；一次 50k 行临时目录 teardown 占用是测试清理竞态。P04.58 首轮 `41278747568` Linux lane 全绿，发现 Windows P03.7 mock/native channel 冲突和 macOS custom type 映射；follow-up `41279726799` 的 Linux/macOS 全 lane 通过（含 macOS clipboard roundtrip/package），Windows P03.7 通过但原生 metadata UTF-16LE NUL 解码失败。现改为 Windows 原生 raw UTF-8 并兼容 UTF-16LE/BE 与结尾 NUL，定向回归 27 项、Flutter analyze 0 issues，等待 Windows hosted 重跑。所有这些 run 均未报告应用崩溃/`0xC000041D`；CI 线索发现的是功能适配缺陷，不解释旧 artifact crash；P15 旧精确 artifact 复核仍 pending。
+- GitNexus `EditorClipboard` upstream impact 为 CRITICAL（171 impacted nodes、72 reported flows、20 modules、2 direct callers），结果有截断和跨语言边界，保留最高风险。 提交前 all-scope `detect-changes --limit 1000` 为 CRITICAL（54 files、10 symbols、339 processes；流程清单仍截断），含未归属当前切片的既有用户改动，保留最高风险。CI follow-up Windows 原生剪贴板 smoke 待确认（Linux/macOS 已通过）；P04.58 保持 `in-progress`，P15 原生剪贴板验收 pending。
 - CI 修正后、提交前再次执行全树 GitNexus detect：CRITICAL，48 files、13 symbols、169–293 processes（重复扫描间波动），流程清单仍截断；工作树还含其他既有改动，风险不按总数归属或降级。分析已刷新，Flutter analyze 无问题。
+- Windows native MIME 修正后的 precommit detect 同样为 CRITICAL：47 files、14 symbols，重复扫描 175–394 processes、165–384 条未展开；检测含有既有工作树改动，保留风险且不把数字当作本切片影响数量。
 
 ### 最新进展（2026-11-01，P04.57 / EDT-10e 完成）
 

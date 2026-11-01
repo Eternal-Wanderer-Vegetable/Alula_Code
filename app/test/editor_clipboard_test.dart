@@ -96,6 +96,35 @@ void main() {
     );
   });
 
+  test('Windows metadata uses raw UTF-8 and reads UTF-16 clipboard text',
+      () async {
+    final previousPlatform = debugDefaultTargetPlatformOverride;
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    addTearDown(() {
+      debugDefaultTargetPlatformOverride = previousPlatform;
+    });
+
+    final raw = jsonEncode(
+      const EditorClipboardMetadata(mode: 'rust').toClipboardJson(),
+    );
+    final codec = EditorClipboard.vscodeEditorDataFormat.codec;
+    final encoded = codec.encode(raw, 'vscode-editor-data');
+    expect(encoded, isA<Uint8List>());
+    expect(utf8.decode(encoded! as Uint8List), raw);
+
+    final utf16LeNullTerminated = <int>[];
+    for (final unit in [...raw.codeUnits, 0]) {
+      utf16LeNullTerminated
+        ..add(unit & 0xFF)
+        ..add(unit >> 8);
+    }
+    final decoded = await codec.decode(
+      _ClipboardDataProvider(Uint8List.fromList(utf16LeNullTerminated)),
+      'vscode-editor-data',
+    );
+    expect(decoded, raw);
+  });
+
   test('rich HTML clips exact UTF-16 token ranges and escapes source text', () {
     const source = '😀<&\n';
     final html = buildRichTextClipboardHtml(
