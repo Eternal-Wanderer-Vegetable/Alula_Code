@@ -68,7 +68,7 @@ func postMouseEvent(
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  event.post(tap: .cgSessionEventTap)
+  event.post(tap: .cghidEventTap)
 }
 
 func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
@@ -257,6 +257,7 @@ func run() throws {
   )
   print("Alula PID: \(app.processIdentifier)")
   print("Flutter content frame: \(NSStringFromRect(contentFrame)); DPR: \(devicePixelRatio)")
+  print("CoreGraphics injection tap: cghidEventTap")
   print("Source local point: \(sourceOffset); screen point: \(source)")
   print("Target local point: \(targetOffset); screen point: \(target)")
 
