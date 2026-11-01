@@ -367,6 +367,14 @@ mod tests {
         tempfile::tempdir().unwrap()
     }
 
+    #[cfg(windows)]
+    #[allow(clippy::permissions_set_readonly_false)] // Clear only the Windows file attribute so TempDir can delete the fixture.
+    fn clear_readonly_test_file(path: &std::path::Path) {
+        let mut permissions = std::fs::metadata(path).unwrap().permissions();
+        permissions.set_readonly(false);
+        std::fs::set_permissions(path, permissions).unwrap();
+    }
+
     #[test]
     fn save_creates_and_overwrites() {
         let td = tmpdir("doc-save");
@@ -542,9 +550,8 @@ mod tests {
             permissions
         };
         #[cfg(windows)]
-        let mut permissions = std::fs::metadata(&target).unwrap().permissions();
-        #[cfg(windows)]
-        permissions.set_readonly(false);
+        clear_readonly_test_file(&target);
+        #[cfg(unix)]
         std::fs::set_permissions(&target, permissions).unwrap();
     }
 }
