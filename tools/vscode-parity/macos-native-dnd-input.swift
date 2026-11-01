@@ -161,9 +161,8 @@ func logAccessibilityDiagnostics(
   {
     let owner = info[kCGWindowOwnerName as String] as? String ?? "<nil>"
     let title = info[kCGWindowName as String] as? String ?? "<nil>"
-    let bounds = (info[kCGWindowBounds as String] as? CFDictionary)
-      .flatMap { CGRect(dictionaryRepresentation: $0) }
-    print("CGWindow: owner=\(owner), title=\(title), bounds=\(bounds.map(NSStringFromRect) ?? "<no-bounds>")")
+    let bounds = String(describing: info[kCGWindowBounds as String] ?? "<nil>")
+    print("CGWindow: owner=\(owner), title=\(title), bounds=\(bounds)")
   }
 }
 
