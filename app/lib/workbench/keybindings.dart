@@ -136,6 +136,7 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['arrowright'] = LogicalKeyboardKey.arrowRight;
   m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
   m['bracketright'] = LogicalKeyboardKey.bracketRight;
+  m['/'] = LogicalKeyboardKey.slash;
   m['-'] = LogicalKeyboardKey.minus;
   m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
@@ -191,6 +192,7 @@ class KeybindingSet {
     'editor.undo': 'ctrl+z',
     'editor.redo': 'ctrl+shift+z,ctrl+y',
     'editor.find': 'ctrl+f',
+    'editor.action.commentLine': 'ctrl+/',
     'editor.gotoDef': 'f12',
     'workbench.action.navigateBack': 'alt+arrowleft',
     'workbench.action.navigateForward': 'alt+arrowright',
@@ -237,6 +239,7 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
         result['editor.action.joinLines'] = 'ctrl+j';
         result['workbench.action.navigateBack'] = 'ctrl+-';

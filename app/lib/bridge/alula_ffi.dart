@@ -176,6 +176,12 @@ class AlulaFfi {
     'alula_doc_transpose_ranges',
   );
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _docToggleLineComment =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_doc_toggle_line_comment',
+  );
+
   late final Pointer<Utf8> Function(int, Pointer<Utf8>)
       _docOvertypePasteRanges = lib.lookupFunction<
           Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -542,6 +548,23 @@ class AlulaFfi {
       return _takeJson(_docTransposeRanges(id, offsets));
     } finally {
       malloc.free(offsets);
+    }
+  }
+
+  String docToggleLineCommentJson(
+    int id,
+    List<List<int>> selectionsUtf16,
+    String lineComment,
+  ) {
+    final request = jsonEncode({
+      'id': id,
+      'selections': selectionsUtf16,
+      'lineComment': lineComment,
+    }).toNativeUtf8();
+    try {
+      return _takeJson(_docToggleLineComment(request));
+    } finally {
+      malloc.free(request);
     }
   }
 

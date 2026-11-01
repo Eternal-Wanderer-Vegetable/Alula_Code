@@ -10,8 +10,8 @@ use std::sync::{Arc, Mutex, OnceLock};
 
 use editor_buffer::{
     BufferError, LineDeleteDirection, TextBuffer, TextColumnSelection, TextDeleteRange,
-    TextLineBoundary, TextLineOffset, TextLinesRead, TextMinimapSample, TextOp, TextRangeRead,
-    TextTransposePlan, WordDeleteDirection, WordPartDirection,
+    TextLineBoundary, TextLineCommentPlan, TextLineOffset, TextLinesRead, TextMinimapSample,
+    TextOp, TextRangeRead, TextTransposePlan, WordDeleteDirection, WordPartDirection,
 };
 use editor_lang::SyntaxEngine;
 use editor_lsp::LspServer;
@@ -294,6 +294,18 @@ impl DocRegistry {
         self.docs
             .get(&id)
             .map(|buffer| buffer.line_delete_ranges_utf16(selections_utf16, direction))
+    }
+
+    /// Resolve a bounded Code-OSS toggle-line-comment plan against one document snapshot.
+    pub fn toggle_line_comment_utf16(
+        &self,
+        id: u64,
+        selections_utf16: &[(usize, usize)],
+        line_comment: &str,
+    ) -> Option<Result<TextLineCommentPlan, BufferError>> {
+        self.docs
+            .get(&id)
+            .map(|buffer| buffer.toggle_line_comment_utf16(selections_utf16, line_comment))
     }
 
     /// Resolve a bounded batch of Code-OSS transpose plans against one document version.

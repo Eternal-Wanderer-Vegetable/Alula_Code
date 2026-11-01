@@ -19,6 +19,13 @@ pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
 pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
 /// Maximum number of selections accepted by one line-delete query.
 pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
+/// Maximum number of selections and logical lines changed by one comment command.
+pub const MAX_LINE_COMMENT_SELECTIONS: usize = 10_000;
+pub const MAX_LINE_COMMENT_LINES: usize = 10_000;
+/// Maximum leading whitespace scanned on one line while finding the comment position.
+pub const MAX_LINE_COMMENT_INDENT_UTF16: usize = 16_384;
+/// Maximum UTF-16 width of a configured line-comment token.
+pub const MAX_LINE_COMMENT_TOKEN_UTF16: usize = 16;
 /// Maximum number of caret positions accepted by one transpose query.
 pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
 /// Maximum UTF-16 units inspected around a numeric adjustment caret.
@@ -704,6 +711,24 @@ pub struct TextTransposePlan {
     pub inserted_text: String,
 }
 
+/// One bounded edit produced by the Code-OSS line-comment toggle.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextLineCommentEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// Line-comment edits resolved from one immutable Rust document snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextLineCommentPlan {
+    pub version: u64,
+    pub edits: Vec<TextLineCommentEdit>,
+}
+
 #[derive(Debug, Clone, Copy)]
 struct TransposeLineBounds {
     start_char: usize,
@@ -1050,6 +1075,14 @@ pub enum BufferError {
         start_utf16: usize,
         end_utf16: usize,
     },
+    /// A line-comment query contains too many selections or affected lines.
+    LineCommentCountTooLarge { requested: usize, max: usize },
+    /// A line-comment token must be a short, non-whitespace ASCII token.
+    InvalidLineCommentToken,
+    /// Two distinct selections would toggle at least one shared logical line.
+    OverlappingLineCommentSelections,
+    /// A line has more leading whitespace than the bounded comment planner accepts.
+    LineCommentIndentTooLarge { requested: usize, max: usize },
     /// A transpose query contains more caret positions than the bounded API accepts.
     TransposeCountTooLarge { requested: usize, max: usize },
     /// An overtype-paste selection has its end before its start.
@@ -1097,6 +1130,20 @@ impl std::fmt::Display for BufferError {
             BufferError::LineDeleteCountTooLarge { requested, max } => {
                 write!(f, "line-delete selection count {requested} exceeds maximum {max}")
             }
+            BufferError::LineCommentCountTooLarge { requested, max } => write!(
+                f,
+                "line-comment selection or line count {requested} exceeds maximum {max}"
+            ),
+            BufferError::InvalidLineCommentToken => {
+                write!(f, "line-comment token must be a short non-whitespace ASCII token")
+            }
+            BufferError::OverlappingLineCommentSelections => {
+                write!(f, "line-comment selections cover overlapping logical lines")
+            }
+            BufferError::LineCommentIndentTooLarge { requested, max } => write!(
+                f,
+                "line-comment indentation {requested} exceeds maximum {max} UTF-16 units"
+            ),
             BufferError::TransposeCountTooLarge { requested, max } => {
                 write!(f, "transpose caret count {requested} exceeds maximum {max}")
             }
@@ -1532,6 +1579,180 @@ impl TextBuffer {
                 }
             })
             .collect()
+    }
+
+    /// Resolve the fixed Code-OSS toggle-line-comment command against one
+    /// immutable document snapshot. The caller supplies the language's line
+    /// token; VS Code defaults `insertSpace` and `ignoreEmptyLines` to true.
+    pub fn toggle_line_comment_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        line_comment: &str,
+    ) -> Result<TextLineCommentPlan, BufferError> {
+        if selections_utf16.len() > MAX_LINE_COMMENT_SELECTIONS {
+            return Err(BufferError::LineCommentCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_LINE_COMMENT_SELECTIONS,
+            });
+        }
+        if line_comment.is_empty()
+            || line_comment.encode_utf16().count() > MAX_LINE_COMMENT_TOKEN_UTF16
+            || !line_comment
+                .bytes()
+                .all(|byte| (0x21..=0x7e).contains(&byte))
+        {
+            return Err(BufferError::InvalidLineCommentToken);
+        }
+
+        let line_comment_chars = line_comment.chars().count();
+        let mut line_ranges = Vec::with_capacity(selections_utf16.len());
+        for &(start_utf16, end_utf16) in selections_utf16 {
+            if start_utf16 > end_utf16 {
+                return Err(BufferError::InvalidDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                });
+            }
+            let start_char = self.char_idx_at_utf16(start_utf16)?;
+            let end_char = self.char_idx_at_utf16(end_utf16)?;
+            let start_line = self.rope.char_to_line(start_char);
+            let mut end_line = self.rope.char_to_line(end_char);
+
+            // VS Code does not include a selection's end line when the range
+            // ends at column 1 on that following line.
+            if start_utf16 < end_utf16 && end_line > start_line {
+                let end_boundary = self.line_boundary_utf16(end_utf16)?;
+                if end_utf16 == end_boundary.start_utf16 {
+                    end_line -= 1;
+                }
+            }
+            line_ranges.push((start_line, end_line));
+        }
+
+        line_ranges.sort_unstable();
+        line_ranges.dedup();
+        let mut total_lines = 0usize;
+        let mut previous_end = None;
+        for &(first, last) in &line_ranges {
+            if previous_end.is_some_and(|end| first <= end) {
+                return Err(BufferError::OverlappingLineCommentSelections);
+            }
+            let count = last.saturating_sub(first).saturating_add(1);
+            total_lines = total_lines.saturating_add(count);
+            if total_lines > MAX_LINE_COMMENT_LINES {
+                return Err(BufferError::LineCommentCountTooLarge {
+                    requested: total_lines,
+                    max: MAX_LINE_COMMENT_LINES,
+                });
+            }
+            previous_end = Some(last);
+        }
+
+        #[derive(Clone, Copy)]
+        struct LineInfo {
+            line: usize,
+            comment_offset_char: usize,
+            blank: bool,
+            commented: bool,
+        }
+
+        let mut edits = Vec::new();
+        for (first_line, last_line) in line_ranges {
+            let mut line_info = Vec::with_capacity(last_line - first_line + 1);
+            let mut only_whitespace_lines = true;
+
+            for line_index in first_line..=last_line {
+                let line_start_char = self.rope.line_to_char(line_index);
+                let line = self.rope.line(line_index);
+                let content_len = line_content_char_len(line);
+                let content = line.slice(..content_len);
+                let mut indentation_utf16 = 0usize;
+                let mut comment_offset_char = content_len;
+                let mut blank = true;
+                for (char_offset, ch) in content.chars().enumerate() {
+                    if ch.is_whitespace() {
+                        indentation_utf16 = indentation_utf16.saturating_add(ch.len_utf16());
+                        if indentation_utf16 > MAX_LINE_COMMENT_INDENT_UTF16 {
+                            return Err(BufferError::LineCommentIndentTooLarge {
+                                requested: indentation_utf16,
+                                max: MAX_LINE_COMMENT_INDENT_UTF16,
+                            });
+                        }
+                    } else {
+                        comment_offset_char = char_offset;
+                        blank = false;
+                        break;
+                    }
+                }
+                if !blank {
+                    only_whitespace_lines = false;
+                }
+                let marker_end_char = comment_offset_char + line_comment_chars;
+                let commented = marker_end_char <= content.len_chars()
+                    && content
+                        .slice(comment_offset_char..marker_end_char)
+                        .chars()
+                        .eq(line_comment.chars());
+                line_info.push(LineInfo {
+                    line: line_index,
+                    comment_offset_char,
+                    blank,
+                    commented,
+                });
+                let _ = line_start_char;
+            }
+
+            let should_remove_comments = !only_whitespace_lines
+                && line_info
+                    .iter()
+                    .filter(|line| !line.blank)
+                    .all(|line| line.commented);
+
+            for info in line_info {
+                // Code-OSS ignores blank lines when a selection also contains
+                // source text, but toggles an all-whitespace selection on.
+                if info.blank && !only_whitespace_lines {
+                    continue;
+                }
+
+                let line_start_char = self.rope.line_to_char(info.line);
+                let line = self.rope.line(info.line);
+                let content_len = line_content_char_len(line);
+                let content = line.slice(..content_len);
+                let start_char = line_start_char + info.comment_offset_char;
+                let start_utf16 = self.rope.char_to_utf16_cu(start_char);
+
+                if should_remove_comments {
+                    let marker_end_char = info.comment_offset_char + line_comment_chars;
+                    let remove_space = marker_end_char < content.len_chars()
+                        && content.char(marker_end_char) == ' ';
+                    let end_char = start_char + line_comment_chars + usize::from(remove_space);
+                    let removed_text = self.rope.slice(start_char..end_char).to_string();
+                    edits.push(TextLineCommentEdit {
+                        start_utf16,
+                        end_utf16: self.rope.char_to_utf16_cu(end_char),
+                        removed_text,
+                        inserted_text: String::new(),
+                    });
+                } else {
+                    let mut inserted_text = String::with_capacity(line_comment.len() + 1);
+                    inserted_text.push_str(line_comment);
+                    inserted_text.push(' ');
+                    edits.push(TextLineCommentEdit {
+                        start_utf16,
+                        end_utf16: start_utf16,
+                        removed_text: String::new(),
+                        inserted_text,
+                    });
+                }
+            }
+        }
+
+        edits.sort_by_key(|edit| (edit.start_utf16, edit.end_utf16));
+        Ok(TextLineCommentPlan {
+            version: self.version,
+            edits,
+        })
     }
 
     /// Resolve the Code-OSS transpose range for each collapsed UTF-16 caret.
@@ -2781,6 +3002,165 @@ mod tests {
                 max: MAX_LINE_DELETE_RANGES,
             })
         );
+    }
+
+    #[test]
+    fn toggle_line_comment_adds_and_removes_indented_lines() {
+        let buffer = TextBuffer::open("  alpha\n\tbeta\n");
+        let added = buffer.toggle_line_comment_utf16(&[(0, 13)], "//").unwrap();
+        assert_eq!(added.version, buffer.version());
+        assert_eq!(
+            added.edits,
+            vec![
+                TextLineCommentEdit {
+                    start_utf16: 2,
+                    end_utf16: 2,
+                    removed_text: String::new(),
+                    inserted_text: "// ".to_owned(),
+                },
+                TextLineCommentEdit {
+                    start_utf16: 9,
+                    end_utf16: 9,
+                    removed_text: String::new(),
+                    inserted_text: "// ".to_owned(),
+                },
+            ]
+        );
+
+        let commented = TextBuffer::open("  // alpha\n\t// beta\n");
+        let removed = commented
+            .toggle_line_comment_utf16(&[(0, 19)], "//")
+            .unwrap();
+        assert_eq!(
+            removed.edits,
+            vec![
+                TextLineCommentEdit {
+                    start_utf16: 2,
+                    end_utf16: 5,
+                    removed_text: "// ".to_owned(),
+                    inserted_text: String::new(),
+                },
+                TextLineCommentEdit {
+                    start_utf16: 12,
+                    end_utf16: 15,
+                    removed_text: "// ".to_owned(),
+                    inserted_text: String::new(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_ignores_blank_lines_in_mixed_selection() {
+        let buffer = TextBuffer::open("alpha\n  \n beta\n");
+        let plan = buffer
+            .toggle_line_comment_utf16(&[(0, buffer.len_utf16())], "#")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(0, "# "), (10, "# ")]
+        );
+
+        let mixed_comments = TextBuffer::open("// first\nsecond");
+        let plan = mixed_comments
+            .toggle_line_comment_utf16(&[(0, mixed_comments.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(0, "// "), (9, "// ")]
+        );
+
+        let whitespace = TextBuffer::open("  \n\t");
+        let plan = whitespace
+            .toggle_line_comment_utf16(&[(0, whitespace.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(2, "// "), (4, "// ")]
+        );
+        let commented_whitespace = TextBuffer::open("  // \n\t// ");
+        let plan = commented_whitespace
+            .toggle_line_comment_utf16(&[(0, commented_whitespace.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.removed_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(2, "// "), (7, "// ")]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_excludes_selection_end_at_next_line_column_one() {
+        let buffer = TextBuffer::open("one\ntwo\nthree");
+        let plan = buffer.toggle_line_comment_utf16(&[(0, 4)], "//").unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| edit.start_utf16)
+                .collect::<Vec<_>>(),
+            vec![0]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_uses_utf16_offsets_with_bom_emoji_and_crlf() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊 x\r\ny");
+        let plan = buffer.toggle_line_comment_utf16(&[(0, 8)], "//").unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].start_utf16, 0);
+        assert_eq!(plan.edits[1].start_utf16, 7);
+    }
+
+    #[test]
+    fn toggle_line_comment_deduplicates_identical_selections_and_rejects_overlap() {
+        let buffer = TextBuffer::open("one\ntwo\nthree");
+        let plan = buffer
+            .toggle_line_comment_utf16(&[(0, 3), (0, 3), (8, 13)], "//")
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(0, 4), (2, 5)], "//"),
+            Err(BufferError::OverlappingLineCommentSelections)
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_rejects_invalid_offsets_token_and_unbounded_inputs() {
+        let buffer = TextBuffer::open("🦊\nline");
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(1, 1)], "//"),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(0, 0)], "// "),
+            Err(BufferError::InvalidLineCommentToken)
+        );
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&vec![(0, 0); MAX_LINE_COMMENT_SELECTIONS + 1], "//"),
+            Err(BufferError::LineCommentCountTooLarge {
+                requested: MAX_LINE_COMMENT_SELECTIONS + 1,
+                max: MAX_LINE_COMMENT_SELECTIONS,
+            })
+        );
+        let long_indent = TextBuffer::open(&format!(
+            "{}x",
+            " ".repeat(MAX_LINE_COMMENT_INDENT_UTF16 + 1)
+        ));
+        assert!(matches!(
+            long_indent.toggle_line_comment_utf16(&[(0, 0)], "//"),
+            Err(BufferError::LineCommentIndentTooLarge { .. })
+        ));
     }
 
     #[test]

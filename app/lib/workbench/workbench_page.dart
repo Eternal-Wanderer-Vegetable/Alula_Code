@@ -720,6 +720,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+T' : null,
       enablement: 'editorTextFocus',
     );
+    reg(
+      'editor.action.commentLine',
+      '编辑器',
+      '切换行注释',
+      _toggleLineComment,
+      shortcut:
+          defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+/' : 'Ctrl+/',
+      enablement: 'editorTextFocus',
+    );
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
         shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
@@ -4504,6 +4513,176 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = '已转置字母');
   }
+
+  Future<void> _toggleLineComment() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) setState(() => _statusDetail = '输入法组合输入中，已保留当前编辑');
+      return;
+    }
+
+    final languageId =
+        doc.path == null ? 'plaintext' : _languageIdOf(doc.path!);
+    final lineComment = switch (languageId) {
+      'rust' || 'typescript' => '//',
+      'python' => '#',
+      _ => null,
+    };
+    if (lineComment == null) {
+      if (mounted) setState(() => _statusDetail = '当前语言没有配置行注释符');
+      return;
+    }
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineCommentSelections) {
+      if (mounted && selections.length > maxDocLineCommentSelections) {
+        setState(() =>
+            _statusDetail = '行注释已取消：选区数超过 $maxDocLineCommentSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    late final DocumentLineCommentPlan queried;
+    try {
+      queried = doc.doc.toggleLineComment(
+        [
+          for (final selection in selections)
+            DocumentDeleteRange(
+              startUtf16: selection.start,
+              endUtf16: selection.end,
+            ),
+        ],
+        lineComment,
+      );
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '行注释未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    if (queried.version != expectedVersion) {
+      doc.replaceInputWindow(doc.selection.extentOffset);
+      if (mounted) setState(() => _statusDetail = '行注释未应用：文档同步版本已变化');
+      return;
+    }
+    if (queried.edits.isEmpty) return;
+
+    var payloadChars = 0;
+    var previousStart = -1;
+    var previousEnd = -1;
+    final mappedStarts = <int>[];
+    var deltaBefore = 0;
+    try {
+      for (final edit in queried.edits) {
+        if (edit.startUtf16 < 0 ||
+            edit.endUtf16 < edit.startUtf16 ||
+            edit.endUtf16 > doc.inputWindow.totalUtf16Length ||
+            edit.removedText.length != edit.endUtf16 - edit.startUtf16 ||
+            edit.startUtf16 < previousEnd ||
+            edit.startUtf16 == previousStart) {
+          throw StateError('Rust 返回了无效或重叠的 UTF-16 行注释计划');
+        }
+        if (_readDocumentRange(doc, edit.startUtf16, edit.endUtf16) !=
+            edit.removedText) {
+          throw StateError('Rust 行注释计划与权威全文不一致');
+        }
+        payloadChars += edit.removedText.length + edit.insertedText.length;
+        if (payloadChars > _undoHistoryBudget.maxTotalChars) {
+          throw StateError('撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        mappedStarts.add(edit.startUtf16 + deltaBefore);
+        deltaBefore +=
+            edit.insertedText.length - (edit.endUtf16 - edit.startUtf16);
+        previousStart = edit.startUtf16;
+        previousEnd = edit.endUtf16;
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = '行注释未应用：$error');
+      return;
+    }
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = '行注释未应用：文档版本已变化');
+      return;
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final edit in queried.edits.reversed) {
+      if (edit.endUtf16 > edit.startUtf16) {
+        forward.add(
+            TextOp.delete(edit.startUtf16, edit.endUtf16 - edit.startUtf16));
+      }
+      if (edit.insertedText.isNotEmpty) {
+        forward.add(TextOp.insert(edit.startUtf16, edit.insertedText));
+      }
+    }
+    for (var index = queried.edits.length - 1; index >= 0; index--) {
+      final edit = queried.edits[index];
+      final mappedStart = mappedStarts[index];
+      if (edit.insertedText.isNotEmpty) {
+        inverse.add(TextOp.delete(mappedStart, edit.insertedText.length));
+      }
+      if (edit.removedText.isNotEmpty) {
+        inverse.add(TextOp.insert(mappedStart, edit.removedText));
+      }
+    }
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '行注释未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    int mapOffset(int offset) {
+      var delta = 0;
+      for (final edit in queried.edits) {
+        if (offset < edit.startUtf16) break;
+        final mappedStart = edit.startUtf16 + delta;
+        if (edit.startUtf16 == edit.endUtf16 && offset == edit.startUtf16) {
+          return mappedStart + edit.insertedText.length;
+        }
+        if (offset <= edit.endUtf16) return mappedStart;
+        delta += edit.insertedText.length - (edit.endUtf16 - edit.startUtf16);
+      }
+      return offset + delta;
+    }
+
+    final newLength = doc.inputWindow.totalUtf16Length + deltaBefore;
+    final mappedSelections = normalizeSelectionSet([
+      for (final selection in selections)
+        TextSelection(
+          baseOffset:
+              mapOffset(selection.baseOffset).clamp(0, newLength).toInt(),
+          extentOffset:
+              mapOffset(selection.extentOffset).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        ),
+    ]);
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已切换行注释');
+  }
+
 
   Future<void> _transformCase({
     required bool uppercase,

@@ -159,6 +159,23 @@ void main() {
       expect(mac.commandForChord(parseChord('ctrl+shift+k')!), isNull);
     });
 
+    test('line comment toggle uses Ctrl+/ or Cmd+/ by platform', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+/')!),
+          'editor.action.commentLine',
+        );
+      }
+      expect(
+        mac.commandForChord(parseChord('cmd+/')!),
+        'editor.action.commentLine',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+/')!), isNull);
+    });
+
     test('copy-line defaults coexist with platform column-selection chords',
         () {
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);

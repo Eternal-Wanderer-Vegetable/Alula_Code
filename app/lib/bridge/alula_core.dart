@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 33;
+const int expectedAbiVersion = 34;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -21,6 +21,7 @@ const int maxDocReadLines = 256;
 const int maxDocColumnSelections = 10000;
 const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
+const int maxDocLineCommentSelections = 10000;
 const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
 const int maxNumberAdjustmentWindowUtf16 = 1000;
@@ -332,6 +333,29 @@ class DocumentTransposePlans {
   final List<DocumentTransposePlan?> plans;
 
   const DocumentTransposePlans({required this.version, required this.plans});
+}
+
+/// One Code-OSS line-comment edit resolved by the Rust UTF-16 planner.
+class DocumentLineCommentEdit {
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final String insertedText;
+
+  const DocumentLineCommentEdit({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.insertedText,
+  });
+}
+
+/// A bounded set of line-comment edits tied to one Rust document version.
+class DocumentLineCommentPlan {
+  final int version;
+  final List<DocumentLineCommentEdit> edits;
+
+  const DocumentLineCommentPlan({required this.version, required this.edits});
 }
 
 /// One Emmet numeric edit resolved by the Rust UTF-16 planner.
@@ -1095,6 +1119,51 @@ class AlulaDoc {
     }).toList(growable: false);
     version = result['version'] as int;
     return DocumentDeleteRanges(version: version, ranges: ranges);
+  }
+
+  /// Resolve Code-OSS line-comment edits from the Rust-authoritative snapshot.
+  DocumentLineCommentPlan toggleLineComment(
+    List<DocumentDeleteRange> selectionsUtf16,
+    String lineComment,
+  ) {
+    if (selectionsUtf16.length > maxDocLineCommentSelections) {
+      throw RangeError.range(
+        selectionsUtf16.length,
+        0,
+        maxDocLineCommentSelections,
+        'selectionsUtf16.length',
+      );
+    }
+    if (selectionsUtf16.any(
+        (selection) => selection.startUtf16 < 0 || selection.endUtf16 < 0)) {
+      throw RangeError('Line-comment selection offsets must be non-negative');
+    }
+    final json = core._ffi.docToggleLineCommentJson(
+      id,
+      selectionsUtf16
+          .map((selection) => [selection.startUtf16, selection.endUtf16])
+          .toList(growable: false),
+      lineComment,
+    );
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error'];
+      throw AlulaException(
+        error is Map ? (error['code'] as String? ?? 'Unknown') : 'Unknown',
+        jsonEncode(error),
+      );
+    }
+    final edits = (result['edits'] as List<Object?>).map((item) {
+      final edit = item as Map<String, Object?>;
+      return DocumentLineCommentEdit(
+        startUtf16: edit['startUtf16'] as int,
+        endUtf16: edit['endUtf16'] as int,
+        removedText: edit['removedText'] as String,
+        insertedText: edit['insertedText'] as String,
+      );
+    }).toList(growable: false);
+    version = result['version'] as int;
+    return DocumentLineCommentPlan(version: version, edits: edits);
   }
 
   /// Resolve Code-OSS transpose plans without transferring document text to Dart.
