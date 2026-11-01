@@ -114,6 +114,59 @@ func waitForAnchor(
   return nil
 }
 
+func logAccessibilityDiagnostics(
+  app: NSRunningApplication,
+  applicationElement: AXUIElement,
+  windows: [AXUIElement]
+) {
+  print(
+    "App: name=\(app.localizedName ?? "<nil>"), " +
+      "bundle=\(app.bundleURL?.path ?? "<nil>"), pid=\(app.processIdentifier), " +
+      "active=\(app.isActive), activationPolicy=\(app.activationPolicy.rawValue), " +
+      "trusted=\(AXIsProcessTrusted())"
+  )
+
+  func describe(_ label: String, _ element: AXUIElement) {
+    var pid: pid_t = 0
+    let pidResult = AXUIElementGetPid(element, &pid)
+    var names: CFArray?
+    let namesResult = AXUIElementCopyAttributeNames(element, &names)
+    let attributes = names as? [String] ?? []
+    var rawChildren: CFTypeRef?
+    let childrenResult = AXUIElementCopyAttributeValue(
+      element,
+      "AXChildren" as CFString,
+      &rawChildren
+    )
+    let childCount = (rawChildren as? [AXUIElement])?.count
+    print(
+      "AX \(label): pid=\(pid) pidStatus=\(pidResult.rawValue), " +
+        "attributesStatus=\(namesResult.rawValue), attributes=\(attributes), " +
+        "childrenStatus=\(childrenResult.rawValue), childCount=\(String(describing: childCount)), " +
+        "labels=\(labels(of: element)), frame=\(frame(of: element).map(NSStringFromRect) ?? "<no-frame>")"
+    )
+  }
+
+  describe("application", applicationElement)
+  for (index, window) in windows.enumerated() {
+    describe("window[\(index)]", window)
+  }
+
+  let onScreenWindows = CGWindowListCopyWindowInfo(
+    [.optionOnScreenOnly, .excludeDesktopElements],
+    kCGNullWindowID
+  ) as? [[String: Any]] ?? []
+  for info in onScreenWindows where
+    (info[kCGWindowOwnerPID as String] as? pid_t) == app.processIdentifier
+  {
+    let owner = info[kCGWindowOwnerName as String] as? String ?? "<nil>"
+    let title = info[kCGWindowName as String] as? String ?? "<nil>"
+    let bounds = (info[kCGWindowBounds as String] as? CFDictionary)
+      .flatMap { CGRect(dictionaryRepresentation: $0) }
+    print("CGWindow: owner=\(owner), title=\(title), bounds=\(bounds.map(NSStringFromRect) ?? "<no-bounds>")")
+  }
+}
+
 func run() throws {
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
@@ -152,6 +205,11 @@ func run() throws {
       NSLocalizedDescriptionKey: "Alula has no accessible window"
     ])
   }
+  logAccessibilityDiagnostics(
+    app: app,
+    applicationElement: appElement,
+    windows: windows
+  )
 
   guard let (_, sourceFrame) = waitForAnchor(
     appElement: window,
