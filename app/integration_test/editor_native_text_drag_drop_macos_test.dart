@@ -69,6 +69,7 @@ void main() {
                       identifier: 'alula-dnd-source',
                       label: 'ALULA DND SOURCE',
                       child: const SizedBox(
+                        key: ValueKey('alula-dnd-source'),
                         width: 240,
                         height: 90,
                         child: Center(child: Text('Drag source')),
@@ -80,6 +81,7 @@ void main() {
                       identifier: 'alula-dnd-target',
                       label: 'ALULA DND TARGET',
                       child: const SizedBox(
+                        key: ValueKey('alula-dnd-target'),
                         width: 240,
                         height: 90,
                         child: Center(child: Text('Drop target')),
@@ -93,6 +95,27 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      File('${directory.path}/layout.json').writeAsStringSync(
+        jsonEncode({
+          'source': {
+            'x': tester
+                .getCenter(find.byKey(const ValueKey('alula-dnd-source')))
+                .dx,
+            'y': tester
+                .getCenter(find.byKey(const ValueKey('alula-dnd-source')))
+                .dy,
+          },
+          'target': {
+            'x': tester
+                .getCenter(find.byKey(const ValueKey('alula-dnd-target')))
+                .dx,
+            'y': tester
+                .getCenter(find.byKey(const ValueKey('alula-dnd-target')))
+                .dy,
+          },
+          'devicePixelRatio': tester.view.devicePixelRatio,
+        }),
+      );
       File('${directory.path}/ready').writeAsStringSync('ready');
 
       final request = await tester.runAsync(

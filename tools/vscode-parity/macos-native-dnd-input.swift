@@ -51,30 +51,6 @@ func frame(of element: AXUIElement) -> CGRect? {
   return CGRect(origin: position, size: size)
 }
 
-func findElement(
-  in root: AXUIElement,
-  matching needle: String,
-  depth: Int = 0,
-  visited: inout Int
-) -> AXUIElement? {
-  guard depth < 24, visited < 20_000 else { return nil }
-  visited += 1
-  if labels(of: root).contains(where: { $0.localizedCaseInsensitiveContains(needle) }) {
-    return root
-  }
-  for child in children(of: root) {
-    if let result = findElement(
-      in: child,
-      matching: needle,
-      depth: depth + 1,
-      visited: &visited
-    ) {
-      return result
-    }
-  }
-  return nil
-}
-
 func postMouseEvent(_ type: CGEventType, at point: CGPoint) throws {
   guard
     let event = CGEvent(
@@ -99,25 +75,6 @@ func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
       return name.contains("alula") || path.contains("alula_app.app")
     }) {
       return app
-    }
-    Thread.sleep(forTimeInterval: 0.25)
-  }
-  return nil
-}
-
-func waitForAnchor(
-  appElement: AXUIElement,
-  needle: String,
-  deadline: Date
-) -> (AXUIElement, CGRect)? {
-  while Date() < deadline {
-    var visited = 0
-    if let element = findElement(
-      in: appElement,
-      matching: needle,
-      visited: &visited
-    ), let elementFrame = frame(of: element), !elementFrame.isEmpty {
-      return (element, elementFrame)
     }
     Thread.sleep(forTimeInterval: 0.25)
   }
@@ -193,6 +150,17 @@ func logAccessibilityDiagnostics(
   }
 }
 
+func layoutPoint(from layout: [String: Any], key: String) throws -> CGPoint {
+  guard let coordinates = layout[key] as? [String: Any],
+        let x = coordinates["x"] as? Double,
+        let y = coordinates["y"] as? Double else {
+    throw NSError(domain: "AlulaMacDnd", code: 7, userInfo: [
+      NSLocalizedDescriptionKey: "Missing logical coordinates for \(key) in layout.json"
+    ])
+  }
+  return CGPoint(x: CGFloat(x), y: CGFloat(y))
+}
+
 func run() throws {
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
@@ -237,40 +205,42 @@ func run() throws {
     windows: windows
   )
 
-  guard let (_, sourceFrame) = waitForAnchor(
-    appElement: window,
-    needle: "alula-dnd-source",
-    deadline: deadline
-  ) else {
-    var visited = 0
-    func dump(_ element: AXUIElement, depth: Int) {
-      guard depth < 8, visited < 300 else { return }
-      visited += 1
-      let bounds = frame(of: element).map(NSStringFromRect) ?? "<no-frame>"
-      let indentation = String(repeating: " ", count: depth * 2)
-      print("AX \(indentation)\(labels(of: element)) \(bounds)")
-      for child in children(of: element) { dump(child, depth: depth + 1) }
-    }
-    dump(window, depth: 0)
-    throw NSError(domain: "AlulaMacDnd", code: 7, userInfo: [
-      NSLocalizedDescriptionKey: "Could not locate AX source anchor"
+  guard let contentView = children(of: window).first(where: {
+    (attribute($0, "AXRole") as? String) == "AXGroup"
+  }), let contentFrame = frame(of: contentView) else {
+    throw NSError(domain: "AlulaMacDnd", code: 8, userInfo: [
+      NSLocalizedDescriptionKey: "Could not locate the Flutter content view frame"
     ])
   }
-  guard let (_, targetFrame) = waitForAnchor(
-    appElement: window,
-    needle: "alula-dnd-target",
-    deadline: deadline
-  ) else {
-    throw NSError(domain: "AlulaMacDnd", code: 8, userInfo: [
-      NSLocalizedDescriptionKey: "Could not locate AX target anchor"
+  let layoutURL = directory.appendingPathComponent("layout.json")
+  let layoutData = try Data(contentsOf: layoutURL)
+  guard let layout = try JSONSerialization.jsonObject(with: layoutData) as? [String: Any] else {
+    throw NSError(domain: "AlulaMacDnd", code: 9, userInfo: [
+      NSLocalizedDescriptionKey: "layout.json is not a JSON object"
+    ])
+  }
+  let sourceOffset = try layoutPoint(from: layout, key: "source")
+  let targetOffset = try layoutPoint(from: layout, key: "target")
+  let devicePixelRatio = layout["devicePixelRatio"] as? Double ?? 1
+  guard CGRect(origin: .zero, size: contentFrame.size).contains(sourceOffset),
+        CGRect(origin: .zero, size: contentFrame.size).contains(targetOffset) else {
+    throw NSError(domain: "AlulaMacDnd", code: 10, userInfo: [
+      NSLocalizedDescriptionKey: "Flutter test coordinates are outside the native content view"
     ])
   }
 
-  let source = CGPoint(x: sourceFrame.midX, y: sourceFrame.midY)
-  let target = CGPoint(x: targetFrame.midX, y: targetFrame.midY)
+  let source = CGPoint(
+    x: contentFrame.minX + sourceOffset.x,
+    y: contentFrame.minY + sourceOffset.y
+  )
+  let target = CGPoint(
+    x: contentFrame.minX + targetOffset.x,
+    y: contentFrame.minY + targetOffset.y
+  )
   print("Alula PID: \(app.processIdentifier)")
-  print("Source AX frame: \(NSStringFromRect(sourceFrame)); point: \(source)")
-  print("Target AX frame: \(NSStringFromRect(targetFrame)); point: \(target)")
+  print("Flutter content frame: \(NSStringFromRect(contentFrame)); DPR: \(devicePixelRatio)")
+  print("Source local point: \(sourceOffset); screen point: \(source)")
+  print("Target local point: \(targetOffset); screen point: \(target)")
 
   try postMouseEvent(.mouseMoved, at: source)
   Thread.sleep(forTimeInterval: 0.3)
@@ -287,7 +257,7 @@ func run() throws {
   }
   Thread.sleep(forTimeInterval: 0.5)
   try postMouseEvent(.leftMouseUp, at: target)
-  print("Posted native mouse drag from source anchor to target anchor")
+  print("Posted native mouse drag from Flutter source to target coordinates")
 }
 
 do {
