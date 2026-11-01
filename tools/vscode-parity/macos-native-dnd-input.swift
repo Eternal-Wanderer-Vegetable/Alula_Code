@@ -51,7 +51,11 @@ func frame(of element: AXUIElement) -> CGRect? {
   return CGRect(origin: position, size: size)
 }
 
-func postMouseEvent(_ type: CGEventType, at point: CGPoint) throws {
+func postMouseEvent(
+  _ type: CGEventType,
+  at point: CGPoint,
+  to processIdentifier: pid_t
+) throws {
   guard
     let event = CGEvent(
       mouseEventSource: nil,
@@ -64,7 +68,7 @@ func postMouseEvent(_ type: CGEventType, at point: CGPoint) throws {
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  event.post(tap: .cghidEventTap)
+  event.postToPid(processIdentifier)
 }
 
 func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
@@ -242,9 +246,9 @@ func run() throws {
   print("Source local point: \(sourceOffset); screen point: \(source)")
   print("Target local point: \(targetOffset); screen point: \(target)")
 
-  try postMouseEvent(.mouseMoved, at: source)
+  try postMouseEvent(.mouseMoved, at: source, to: app.processIdentifier)
   Thread.sleep(forTimeInterval: 0.3)
-  try postMouseEvent(.leftMouseDown, at: source)
+  try postMouseEvent(.leftMouseDown, at: source, to: app.processIdentifier)
   Thread.sleep(forTimeInterval: 0.2)
   for step in 1...24 {
     let progress = CGFloat(step) / 24
@@ -252,11 +256,15 @@ func run() throws {
       x: source.x + (target.x - source.x) * progress,
       y: source.y + (target.y - source.y) * progress
     )
-    try postMouseEvent(.leftMouseDragged, at: point)
+    try postMouseEvent(
+      .leftMouseDragged,
+      at: point,
+      to: app.processIdentifier
+    )
     Thread.sleep(forTimeInterval: 0.04)
   }
   Thread.sleep(forTimeInterval: 0.5)
-  try postMouseEvent(.leftMouseUp, at: target)
+  try postMouseEvent(.leftMouseUp, at: target, to: app.processIdentifier)
   print("AppKit mouse location after drag: \(NSEvent.mouseLocation)")
   print("Posted native mouse drag from Flutter source to target coordinates")
 }
