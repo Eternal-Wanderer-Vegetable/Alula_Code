@@ -8,9 +8,9 @@
 ### 最新进展（2026-11-01，P04.59 / EDT-11a 进行中）
 
 - 接入有界同文档原生文本拖放：同视图/分屏视图 move/copy、绝对 UTF-16 payload、Rust 版本与源范围复核、单帧 undo/redo、stale/IME/pending 输入保护；拖出提供 `text/plain`，系统确认 move 后只在源版本仍有效时删除源文本。外部拖入、多文档 provider 与 Paste As 留后续切片。
-- 定向测试 8 项通过，其中包括 Rust FFI 上 BOM、CRLF、emoji move + inverse；完整快速总门禁 `bash init.sh --fast` EXIT=0（Rust workspace、build_core、Flutter 589），Flutter analyze 0 issues，Linux Release bundle 构建通过。报告：`docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
-- 本阶段 commit `e34b2a0` 的 PR CI `41284900506` 全绿，Linux/Windows Platform Availability `41286880964` 全过；macOS Release launch 在 `41284895881` 两次及 `41286880964` 重复 SIGSEGV/139，发生在 Impeller Metal 初始化约 12 秒后。父提交 `200d6de` 的 macOS job 于 `41280920056` 重跑成功，故回归与 P04.59 代码同步；但 crash artifact `13076090868` 只有 smoke log，尚无栈，当前新诊断 workflow 增加 LLDB 重跑与 crash report 等待。macOS 包暂不发布。旧 CI reds 是 lint/测试断言/clipboard test 启动问题，没有旧 Windows `0xC000041D` 证据；该 artifact 仍由 P15 验证。拖放 Flutter 合成手势未启动原生 provider；Xvfb 打开隔离工作区通过，原生 DnD 验收仍 pending。
-- GitNexus 本阶段 pre-edit `RustTextInputFieldState` upstream impact 为 CRITICAL（117 symbols、145 flows、20 modules）；提交前 `detect-changes --scope all --limit 5000` 重跑仍为 CRITICAL（全树 49 files、16 symbols、394 affected processes，另有 384 条流程未展示）。扫描包括工作树既有改动，风险保留且计数不归属本切片。
+- run `41288093654` 的 `.ips` 报告（artifact `13076640390`）已提供 macOS faulting thread：`objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView:` 的 registry context 为空，后续栈位于 `super_native_extensions`。插件在 main queue 异步发布 FlutterView，DropRegion/Draggable 首帧会请求它；高置信推测是启动时序重叠。当前修复只将 macOS 原生拖放壳推迟到首帧后，Linux/Windows 无延迟，并新增首帧 widget 回归。新 hosted CI 尚待触发，当前不能称 crash 已修复。旧 CI reds 多为 lint/断言/clipboard test 启动问题，不代表进程崩溃；历史 Windows `0xC000041D` 仍由 P15 独立验证。
+- crash 修复本地回归：新增 widget test 通过；完整 `flutter test` 590 项通过；`flutter analyze` 0 issues；`cargo fmt --check` 通过；`bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 590）。`flutter test -d linux` 合成手势仍未启动原生 drag provider；Xvfb 打开隔离工作区通过，原生 DnD 交互仍 pending。macOS 包暂不发布。
+- GitNexus 本阶段 pre-edit `EditorNativeTextDragDrop` upstream impact 为 CRITICAL（79 symbols、145 processes、20 modules）；`RustTextInputFieldState` 也为 CRITICAL（48/114/20）。最新提交前全树 detect 为 CRITICAL（46 files、18 symbols），重复扫描流程计数在 274–388 间波动；staged detect 为 CRITICAL（7 files、7 symbols），同样观测到 274–388 流程，含测试入口 `main` 与文档 section，流程只展示前 10 条。保留风险，不把全树/通用名称匹配计数归属本切片或降级。
 
 ### 最新进展（2026-11-01，P04.58 / EDT-10f 完成）
 

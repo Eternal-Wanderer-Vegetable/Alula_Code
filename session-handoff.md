@@ -1,4 +1,4 @@
-> Last Updated：2026-11-01（P04.59 / EDT-11a 本地门禁通过，Linux/Windows CI 通过。当前 P04.59 macOS Release 启动在 `41284895881` 两次及 `41286880964` 重复 SIGSEGV/139；父提交 `200d6de` 的 macOS 重跑 `41280920056` 成功。artifact `13076090868` 只有 Impeller smoke stderr，没有 `.ips/.crash`；当前 workflow 增加 LLDB 栈与 crash report 采集。栈取得并修复前不打包 macOS；原生 DnD UI 仍待验收，P04.59 保持 in-progress。）
+> Last Updated：2026-11-01（P04.59 / EDT-11a 的 macOS SIGSEGV 已取得 `.ips`：run `41288093654` artifact `13076640390` 显示 `IrondashEngineContextPlugin getFlutterView:` registry context 为空，调用来自 `super_native_extensions` 原生拖放初始化。已在工作树加 macOS 首帧后挂载拖放壳的时序缓解和 widget 回归测试；本地 `cargo fmt --check`、`flutter analyze`、`bash init.sh` 均通过，Flutter 590 项。需先完成 GitNexus precommit 检查、阶段提交并 push，观察新 Platform Availability macOS launch；若仍崩溃，继续按新报告定位。macOS 包与原生 DnD 交互验收仍 pending。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,10 +9,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-01）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 同文档拖放代码与本地门禁完成，保持 in-progress。PR CI `41284900506` 全绿；Platform Availability `41286880964` 的 Linux/Windows lane 通过，macOS launch SIGSEGV/139。父提交 `200d6de` 的 macOS rerun `41280920056` 成功，当前回归与 P04.59 变更同步；crash artifact `13076090868` 只有 smoke log，LLDB stack 尚待。macOS 包暂不发布，原生拖放 UI 尚未验收；旧 exact artifact `0xC000041D` 仍由 P15 独立复核。
+- 当前状态更新（2026-11-01）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 保持 in-progress。Platform Availability `41288093654` 的 Linux/Windows、macOS tests/build/clipboard 通过，但 macOS launch SIGSEGV/139；`.ips` faulting frame 为 `IrondashEngineContextPlugin getFlutterView:`（registry entry 缺失），后续 frames 位于 `super_native_extensions`。工作树有 macOS 原生拖放首帧后启动缓解和回归测试，尚未由 hosted macOS CI 验证；本地 full init 590、analyze、fmt 均通过。macOS 包暂不发布，原生拖放 UI 尚未验收；旧 exact artifact `0xC000041D` 仍由 P15 独立复核。
 
-- 当前阶段涉及文件：`app/lib/editor/text_drag_drop.dart`、`app/lib/editor/editor_native_text_drag_drop.dart`、`app/lib/editor/rust_text_input_field.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/text_drag_drop_test.dart`、`app/pubspec.yaml` / lock、`docs/03` 与 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。工作树保留大量其他既有修改；阶段提交只暂存本阶段文件与精确 hunks。
-- 下一步首件：提交并 push 当前 macOS LLDB/crash-report 诊断 workflow，等待新 Platform Availability run 获取栈；按栈定位 P04.59 启动回归，修复后复跑 Linux/Windows/macOS。Release 启动通过后再回到原生 DnD UI 验收；保持单 feature，不推进后续 EDT-11 子片直到 P04.59 有证据收尾。
+- 当前阶段涉及文件：`app/lib/editor/editor_native_text_drag_drop.dart`、新增 `app/test/editor_native_text_drag_drop_test.dart`、原 `text_drag_drop.dart` / `rust_text_input_field.dart` / `workbench_page.dart`、`app/pubspec.yaml` / lock、`docs/03` 与 P04.59 诊断报告。工作树保留大量其他既有修改；阶段提交只暂存本次 fix/test/status evidence。
+- 下一步首件：GitNexus detect changes、检查仅目标文件/hunks 进入提交，提交并 push首帧时序缓解；监控新 Platform Availability/macOS release smoke。若通过，再回到原生 DnD UI 交互验收；若失败，下载新 `.ips` 并继续定位。P04.59 完成前不推进其他 EDT-11 子片。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。

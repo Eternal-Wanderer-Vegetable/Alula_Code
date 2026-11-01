@@ -48,7 +48,21 @@ class EditorNativeTextDragDrop extends StatefulWidget {
 }
 
 class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
+  bool _nativeDragDropReady = defaultTargetPlatform != TargetPlatform.macOS;
   EditorTextDragPayload? _pendingPayload;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_nativeDragDropReady) {
+      // The macOS engine-context plugin publishes its FlutterView from a
+      // main-queue callback after plugin registration. Do not let the native
+      // drag/drop package request that view during the app's first frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _nativeDragDropReady = true);
+      });
+    }
+  }
 
   bool _isLocationDraggable(Offset globalPosition) {
     final payload = widget.payloadAt(globalPosition);
@@ -135,7 +149,7 @@ class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.enabled) return widget.child;
+    if (!widget.enabled || !_nativeDragDropReady) return widget.child;
     return DragItemWidget(
       dragItemProvider: _provideDragItem,
       allowedOperations: () => const [DropOperation.move, DropOperation.copy],
