@@ -2445,6 +2445,49 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }).toList(growable: false);
   }
 
+  List<String>? _copyableDocumentSelectionTexts(
+    OpenDoc doc,
+    List<TextSelection> selections, {
+    required int version,
+    required String lineEol,
+    required bool forceCrLf,
+  }) {
+    final ordered = List<TextSelection>.of(selections)
+      ..sort((a, b) => a.start.compareTo(b.start));
+    final result = <String>[];
+    int? previousEmptyLineStart;
+    for (final selection in ordered) {
+      if (doc.doc.version != version) return null;
+      if (selection.isCollapsed) {
+        final line = doc.doc.lineBoundary(selection.extentOffset);
+        if (line.version != version) return null;
+        if (line.startUtf16 == previousEmptyLineStart) continue;
+        final lineText = _readDocumentRange(
+          doc,
+          line.startUtf16,
+          line.endUtf16,
+        );
+        if (doc.doc.version != version) return null;
+        final copiedLine =
+            forceCrLf ? lineText.replaceAll('\n', '\r\n') : lineText;
+        result.add('$copiedLine$lineEol');
+        previousEmptyLineStart = line.startUtf16;
+      } else {
+        final selectedText = _readDocumentRange(
+          doc,
+          selection.start,
+          selection.end,
+        );
+        if (doc.doc.version != version) return null;
+        result.add(
+          forceCrLf ? selectedText.replaceAll('\n', '\r\n') : selectedText,
+        );
+        previousEmptyLineStart = null;
+      }
+    }
+    return result;
+  }
+
   String _readDocumentRange(OpenDoc doc, int startUtf16, int endUtf16) {
     if (startUtf16 < 0 || endUtf16 < startUtf16) {
       throw RangeError('Invalid document range $startUtf16..$endUtf16');
@@ -7025,9 +7068,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Future<void> _copyMultiSelections(OpenDoc doc) async {
-    await Clipboard.setData(
-      ClipboardData(text: _copyableSelectionTexts(doc).join('\n')),
+    _flushInput(doc);
+    if (!identical(_active, doc) ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        doc.additionalSelections.isEmpty) {
+      return;
+    }
+
+    final selections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (selections.length < 2) return;
+    final version = doc.doc.version;
+    final documentEol = doc.fileOptions.lineEnding.id == 'crlf' ? '\r\n' : '\n';
+    final forceCrLf = defaultTargetPlatform == TargetPlatform.windows;
+    final lineEol = forceCrLf ? '\r\n' : documentEol;
+    final copied = _copyableDocumentSelectionTexts(
+      doc,
+      selections,
+      version: version,
+      lineEol: lineEol,
+      forceCrLf: forceCrLf,
     );
+    final currentSelections = normalizeSelectionSet([
+      doc.selection,
+      ...doc.additionalSelections,
+    ]);
+    if (copied == null ||
+        doc.doc.version != version ||
+        !identical(_active, doc) ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        !listEquals(selections, currentSelections)) {
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: copied.join(documentEol)));
   }
 
   Future<void> _copyEmptySelectionLine(OpenDoc doc) async {
@@ -8944,6 +9021,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             key == LogicalKeyboardKey.keyC &&
             !activeHasComposition &&
             active != null &&
+            active.additionalSelections.isNotEmpty) {
+          unawaited(_copyMultiSelections(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyC &&
+            !activeHasComposition &&
+            active != null &&
             active.additionalSelections.isEmpty &&
             active.selection.isCollapsed) {
           unawaited(_copyEmptySelectionLine(active));
@@ -9004,10 +9091,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
           if (active != null && active.additionalSelections.isNotEmpty) {
-            if (key == LogicalKeyboardKey.keyC) {
-              unawaited(_copyMultiSelections(active));
-              return KeyEventResult.handled;
-            }
             if (key == LogicalKeyboardKey.keyV) {
               unawaited(_pasteMultiSelections(active));
               return KeyEventResult.handled;

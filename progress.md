@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.54 / EDT-10b 完成）
+### 最新进展（2026-11-01，P04.55 / EDT-10c 完成）
+
+- 完成多光标空选区复制：Ctrl/Cmd+C 按文档顺序处理 Rust 绝对 UTF-16 选区；空光标复制当前逻辑行和 EOL，同一行重复空光标去重，非空选区复制所选文本，各段按文档 EOL 拼接。Windows 强制 CRLF，Linux/macOS 使用文件 EOL 元数据；读取可越过有界输入窗，并校验版本与 selection 快照，不改变 buffer、dirty 或磁盘。多选剪切路径未改，无 ABI 变化。
+- 新增 4 项测试：Windows/Linux/macOS TargetPlatform EOL fixture，以及 12,000 UTF-16 单元行的输入窗外光标 fixture。与既有多光标测试组合共 21 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 559）；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-11-01-p04/p04.55-empty-selection-multicursor-copy.md`。
+- CI 复核：run `41267446041` 只在 Windows Clippy 的只读 fixture 清理 lint 失败，已由 `fd54663` 修复；CI run `41270079204` 全绿。Platform Availability run `41270075211`（代码仍是 P04.55 前的 `a75359e`）通过 Linux/Windows 构建启动、Windows 桌面交互/辅助功能与 macOS 打包启动。此前 Clippy 失败未启动应用，因此没有证据说明它导致关闭崩溃；P15 运行时复验仍单独 pending。
+- 下一步拆 EDT-10 剩余多光标空选区剪切、clipboard metadata / rich text；平台 TargetPlatform fixture 不代替原生 P15 验收。
+
+### 上一片进展（2026-11-01，P04.54 / EDT-10b 完成）
 
 - 完成空选区剪切当前行：Ctrl+X/Cmd+X 先复制 Rust 当前逻辑行并附加平台/文件 EOL，再通过已有 Rust 权威删除行事务删除该行。中间行删除后续分隔符，末行删除前置分隔符，单行文档变为空文档；剪贴板写入后重新核对版本、焦点、光标与可写状态。
 - 新增 4 项 Windows/Linux/macOS `TargetPlatform` fixture，覆盖 Windows 强制 CRLF、emoji 中间行、单行文档、Linux 无末尾换行末行、macOS CRLF 文件空行；验证 clipboard、Rust 全文、dirty、undo/redo 和显式保存前磁盘不变。定向 4 项通过。
