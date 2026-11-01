@@ -9,7 +9,7 @@
 
 - 完成多光标 clipboard metadata：用有界单条纯文本 sidecar 精确匹配最近一次复制，恢复包含内嵌换行的 `multiCursorText`；目标光标按文档顺序映射，CRLF/CR 片段归一为文档 LF。普通/覆写多光标粘贴接入；外部剪贴板、文本变化、数量不符与超限退回普通纯文本路径。记录上限 64 Ki UTF-16 文本、64 Ki 分段总量和 10,000 项；不改 ABI。
 - 新增元数据 exact-match、不可变快照、失效、界限、混合行尾、分发回退/文档顺序与 Windows/Linux 工作台测试，定向组合 45 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 573）；`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.57-clipboard-metadata.md`。
-- CI 失败复核：重复 Windows Clippy 失败是测试 fixture 对 `set_readonly(false)` 的 lint，未启动 Alula，已由 `fd54663` 修复；一次 Windows integration 失败来自 50k 行 fixture 临时目录删除 race，应用启动/关闭与后续可访问性步骤成功。修复后 CI `41273828946` 和三平台 Platform Availability `41273053709` 全绿。上述失败不解释历史 `0xC000041D`；该 artifact 仍需 P15 原生复核。
+- CI 失败复核：重复 Windows Clippy 失败是测试 fixture 对 `set_readonly(false)` 的 lint，未启动 Alula，已由 `fd54663` 修复；一次 Windows integration 失败来自 50k 行 fixture 临时目录删除 race，应用启动/关闭与后续可访问性步骤成功。P04.57 commit `1f37b41` 的 CI `41275162368` 与 Platform Availability `41275159178`（Linux Xvfb、Windows 可见窗口/交互/辅助功能/WM_CLOSE、macOS Release 打包与启动）全绿。上述失败不解释历史 `0xC000041D`；该 artifact 仍需 P15 原生复核。
 - 提交前 GitNexus `detect-changes --scope all` 报告 51 files、32 symbols、151 affected processes，risk=CRITICAL。全量工作树含大量既有改动，命令返回的符号/流程列表有省略，按最高风险记录，不以计数或截断降级；详见 P04.57 报告。
 - 下一步：按固定 Code-OSS 对照拆解 `text/html` 与 `vscode-editor-data` 富文本剪贴板；P15 的 Linux DRM、Windows UIA/IME/关闭/主题/DPI 与 macOS 原生验收仍 pending。
 
