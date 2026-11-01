@@ -21,4 +21,8 @@ The repeated Clippy failure itself does not explain the historical Flutter shutd
 - `cargo fmt --all -- --check` — passed.
 - `flutter analyze --no-pub` — passed with no issues.
 
-The current Linux run does not compile the `#[cfg(windows)]` helper. The post-fix Windows CI result is the platform confirmation and will be added after that run completes.
+## Post-fix CI and platform result
+
+Commit `fd546639` cleared the repeated lint. CI run [41267836439](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41267836439) completed successfully: Windows Rust (including Clippy and tests), Ubuntu Rust, Flutter analyze/tests, and harness validation all passed. The Windows `windows-latest` job compiled the `#[cfg(windows)]` helper with the CI stable toolchain.
+
+Platform Availability run [41267833196](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41267833196) also completed successfully for Linux x64, Windows x64, and macOS ARM64. Its current-source Windows Release build passed the P03.7 desktop interaction checks, including a graceful `WM_CLOSE` exit. That workflow did not start Narrator. These hosted-runner results establish that the current branch builds and closes cleanly in CI; they do not erase the separate native Windows 11 failure of the older exact artifact from run 41109679662. The fix itself is test-only and cannot directly alter the shipped Flutter binary, so the old-artifact crash was not caused by this Clippy issue.
