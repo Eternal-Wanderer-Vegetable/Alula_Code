@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.53 / EDT-10a 完成）
+### 最新进展（2026-11-01，P04.54 / EDT-10b 完成）
+
+- 完成空选区剪切当前行：Ctrl+X/Cmd+X 先复制 Rust 当前逻辑行并附加平台/文件 EOL，再通过已有 Rust 权威删除行事务删除该行。中间行删除后续分隔符，末行删除前置分隔符，单行文档变为空文档；剪贴板写入后重新核对版本、焦点、光标与可写状态。
+- 新增 4 项 Windows/Linux/macOS `TargetPlatform` fixture，覆盖 Windows 强制 CRLF、emoji 中间行、单行文档、Linux 无末尾换行末行、macOS CRLF 文件空行；验证 clipboard、Rust 全文、dirty、undo/redo 和显式保存前磁盘不变。定向 4 项通过。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter 555；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub`（0 issues）通过。报告：`docs/diagnostics/2026-11-01-p04/p04.54-empty-selection-cut-line.md`。
+- EDT-10 剩余多光标空选区与 clipboard metadata / rich text 仍待拆分；P15 原生设备与辅助功能验收保持 pending。
+
+### 上一片进展（2026-11-01，P04.53 / EDT-10a 完成）
 
 - 完成空选区复制当前行：单光标空选区按 Ctrl+C/Cmd+C 复制 Rust 文档当前逻辑行并附加 EOL；Windows clipboard 强制 CRLF，Linux/macOS 遵循文档行尾元数据。读取通过 Rust `lineBoundary` 与版本校验的有界范围读取；复制不改文档、selection、dirty 或磁盘。
 - 新增 Windows/Linux/macOS `TargetPlatform` 集成 fixture，覆盖无末尾换行的末行、Windows CRLF、Linux LF、macOS CRLF，并确认文本/磁盘字节不变；定向 3 项通过。

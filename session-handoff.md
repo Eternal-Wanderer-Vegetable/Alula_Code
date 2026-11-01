@@ -1,4 +1,4 @@
-> Last Updated：2026-11-01（P04.53 / EDT-10a Empty Selection Copy Line 完成；单光标空选区 Ctrl/Cmd+C 复制整行并附加平台/文档 EOL；定向 3 项通过，完整 init.sh Flutter 551、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P04.54 下一步拆空选区剪切；P15 原生验收继续 pending。）
+> Last Updated：2026-11-01（P04.54 / EDT-10b Empty Selection Cut Line 完成；单光标空选区 Ctrl/Cmd+X 复制整行后删除当前行并附加正确 EOL；定向 4 项通过，完整 init.sh Flutter 555、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。下一片拆 EDT-10 剩余多光标空选区语义；P15 原生验收继续 pending。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,12 +9,12 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-01）：P03 / feat-025 实现出口关闭，EV-P03-* 留待 P15；Windows exact-artifact replay 的通过项与失败项见 `docs/diagnostics/2026-11-01-p03/p03.7-windows11-hosted-artifact-41221325692.md` 与 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/codex-rerun-20261101-taskmgr-closed-2-run/summary.txt`。P04.1–P04.53 切片已交付，feat-026 仍进行中；最新 EDT-10a 证据见 `docs/diagnostics/2026-11-01-p04/p04.53-empty-selection-copy-line.md`。上一片 P04.52 证据为 `docs/diagnostics/2026-11-01-p04/p04.52-insert-final-newline.md`。CI Windows Clippy 修复 `fd54663` 与后续 hosted 平台通过记录见 `docs/diagnostics/2026-11-01-ci-windows-clippy.md`。下一切片从 EDT-10 空选区剪切开始。整体项目可用性门仍未通过：Linux DRM、Windows UIA/关闭/主题/DPI 与 macOS 验收 pending。
+- 当前状态更新（2026-11-01）：P03 / feat-025 实现出口关闭，EV-P03-* 留待 P15；Windows exact-artifact replay 的通过项与失败项见 `docs/diagnostics/2026-11-01-p03/p03.7-windows11-hosted-artifact-41221325692.md` 与 `docs/diagnostics/2026-10-31-p03/p03.7-windows-11-artifact-41109679662/codex-rerun-20261101-taskmgr-closed-2-run/summary.txt`。P04.1–P04.54 切片已交付，feat-026 仍进行中；最新 EDT-10b 证据见 `docs/diagnostics/2026-11-01-p04/p04.54-empty-selection-cut-line.md`。上一片 P04.53 证据为 `docs/diagnostics/2026-11-01-p04/p04.53-empty-selection-copy-line.md`。CI Windows Clippy 修复 `fd54663` 与后续 hosted 平台通过记录见 `docs/diagnostics/2026-11-01-ci-windows-clippy.md`。下一切片先核对 EDT-10 的多光标空选区 copy/cut 语义与 DoD。整体项目可用性门仍未通过：Linux DRM、Windows UIA/关闭/主题/DPI 与 macOS 验收 pending。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。
 - P04.24 新增 Rust Rope 覆写粘贴范围查询与 ABI v26、Dart bridge、工作台 Ctrl/Cmd+V 路径，并修复 macOS Cmd+Z/Y Rust 历史路由。报告 `docs/diagnostics/2026-10-31-p04/p04.24-overtype-paste.md`。工作树仍有此前未提交改动；阶段提交只纳入本片文件和 hunks。
-- Next 首步：按 `docs/03` / `docs/11` 推进 P04.54 EDT-10b 空选区剪切当前行；先核对固定 Code-OSS 行为、DoD 与 GitNexus impact，再一次只推进一个切片。阶段提交只包含对应切片；继续自动化推进 Linux/Windows 平台证据与 P15，不把 TargetPlatform fixture 计作原生验收。保存设置 `files.insertFinalNewline` / `files.trimFinalNewlines` 仍与 P04.52 显式命令分开安排。
+- Next 首步：按 `docs/03` / `docs/11` 与固定 Code-OSS 源码，拆 EDT-10 剩余多光标空选区 copy/cut 语义；先核对 DoD 与 GitNexus impact，再一次只推进一个切片。阶段提交只包含对应切片；继续自动化推进 Linux/Windows 平台证据与 P15，不把 TargetPlatform fixture 计作原生验收。保存设置 `files.insertFinalNewline` / `files.trimFinalNewlines` 仍与 P04.52 显式命令分开安排。
 
 - 本会话重新执行 `bash init.sh --fast`，EXIT=0：Rust workspace tests、`build_core`、Flutter 256 项通过。当前 WSL 没有 `nvidia-smi` / Windows 命令互操作，无法刷新显存状态；Windows Release 白窗复测仍待用户释放 2–4 GiB 显存或指定 AMD GPU。
 - P03.6 新增 WSLg 实窗折叠/滚动截图：折叠 `main` 后 minimap viewport marker 覆盖整个可见源范围，滚动时 sticky header 显示 `main` / `Function`。文件 `docs/diagnostics/2026-10-31-p03/linux-alula-fold-before-wslg.png`、`linux-alula-fold-after-wslg.png`、`linux-alula-sticky-scroll-wslg.png`；仅 WSLg 证据。

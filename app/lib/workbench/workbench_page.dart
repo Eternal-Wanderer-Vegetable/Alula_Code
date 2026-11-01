@@ -7048,6 +7048,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await Clipboard.setData(ClipboardData(text: '$text$eol'));
   }
 
+  Future<void> _cutEmptySelectionLine(OpenDoc doc) async {
+    _flushInput(doc);
+    final selection = doc.selection;
+    if (!identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        !selection.isCollapsed ||
+        doc.additionalSelections.isNotEmpty) {
+      return;
+    }
+
+    final version = doc.doc.version;
+    final line = doc.doc.lineBoundary(selection.extentOffset);
+    if (line.version != version) return;
+    final text = _readDocumentRange(doc, line.startUtf16, line.endUtf16);
+    if (doc.doc.version != version) return;
+
+    final eol = defaultTargetPlatform == TargetPlatform.windows ||
+            doc.fileOptions.lineEnding.id == 'crlf'
+        ? '\r\n'
+        : '\n';
+    await Clipboard.setData(ClipboardData(text: '$text$eol'));
+
+    if (!mounted ||
+        !identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.doc.version != version ||
+        doc.selection != selection ||
+        doc.crossWindowSelection != null ||
+        doc.inputWindow.hasComposition ||
+        doc.additionalSelections.isNotEmpty) {
+      return;
+    }
+    await _deleteLines();
+  }
+
   Future<bool> _pasteMultiSelections(OpenDoc doc) async {
     if (doc.additionalSelections.isEmpty) return false;
     _flushInput(doc, commitComposition: true);
@@ -8910,6 +8947,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             active.additionalSelections.isEmpty &&
             active.selection.isCollapsed) {
           unawaited(_copyEmptySelectionLine(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyX &&
+            !activeHasComposition &&
+            active != null &&
+            active.additionalSelections.isEmpty &&
+            active.selection.isCollapsed) {
+          unawaited(_cutEmptySelectionLine(active));
           return KeyEventResult.handled;
         }
         if (commandModifier &&
