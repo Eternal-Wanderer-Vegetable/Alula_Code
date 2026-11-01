@@ -5,11 +5,15 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.46 / EDT-08f 完成）
+### 最新进展（2026-11-01，P04.47 / EDT-08g 完成）
+
+- P04.47 完成固定 Code-OSS Emmet 六项数值变换：Rust UTF-16 bounded planner 与 NUL-safe FFI ABI v33，工作台按版本校验并单批提交，接通 selection、undo/redo、dirty、Find、分屏与 BOM+CRLF 保存回读。Rust/FFI/bridge/工作台覆盖六种步长、舍入/格式边界、多光标和无数字 no-op。完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 525），cargo fmt 和 Flutter analyze 0 issues；详细差异与 GitNexus 限制见 `docs/diagnostics/2026-11-01-p04/p04.47-emmet-numeric-transform.md`。超长 token 窗口边界与重叠多光标差异已登记；P15 原生验收仍 pending。
+
+### 上一片进展（2026-11-01，P04.46 / EDT-08f 完成）
 
 - 新增固定 Code-OSS `editor.action.transposeLetters` 命令，macOS Ctrl+T、Windows/Linux 无默认键位；Rust UTF-16 计划支持 LF、CRLF、CR、Unicode scalar 与 NUL-safe FFI ABI v32。工作台复用有版本门控的单批 TextOps，接入独立多光标、selection 跳过、重叠范围原子取消、undo/redo、dirty、Find、分屏和保存。
 - Rust buffer/FFI 转置定向 5 项与 Flutter bridge/工作台定向 34 项通过；最终完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 520），`cargo fmt --all -- --check` 和 `flutter analyze --no-pub` 通过（0 issues）。报告：`docs/diagnostics/2026-11-01-p04/p04.46-transpose-letters.md`。
-- 交叠多光标编辑范围采用全批次取消；固定版 Code-OSS 在该冲突场景尚无原生自动化对照。P15 原生 Windows/Linux/macOS 验收仍 pending；下一个 EDT-08 切片为数值替换。
+- 交叠多光标编辑范围采用全批次取消；固定版 Code-OSS 在该冲突场景尚无原生自动化对照。P15 原生 Windows/Linux/macOS 验收仍 pending。
 
 ### P15 Windows 11 自动回放（2026-11-01 归档）
 

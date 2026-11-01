@@ -21,6 +21,8 @@ pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
 pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
 /// Maximum number of caret positions accepted by one transpose query.
 pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
+/// Maximum UTF-16 units inspected around a numeric adjustment caret.
+pub const MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16: usize = 1_000;
 /// Maximum number of selections accepted by one overtype-paste query.
 pub const MAX_OVERTYPE_PASTE_RANGES: usize = 10_000;
 /// Maximum number of representative lines returned by one minimap snapshot.
@@ -36,6 +38,441 @@ pub fn transform_case_text(text: &str, uppercase: bool) -> String {
         text.to_uppercase()
     } else {
         text.to_lowercase()
+    }
+}
+
+/// A bounded Emmet numeric adjustment for one UTF-16 caret in a line window.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextNumberAdjustmentPlan {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NumberAdjustmentError {
+    InvalidUtf16Offset { offset_utf16: usize },
+    InvalidDelta { delta_milli: i32 },
+    WindowTooLarge { requested: usize, max: usize },
+    TruncatedNumber,
+    PrecisionOutOfRange { requested: usize, max: usize },
+}
+
+impl std::fmt::Display for NumberAdjustmentError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidUtf16Offset { offset_utf16 } => {
+                write!(f, "invalid UTF-16 caret offset {offset_utf16}")
+            }
+            Self::InvalidDelta { delta_milli } => {
+                write!(f, "unsupported numeric adjustment delta {delta_milli}")
+            }
+            Self::WindowTooLarge { requested, max } => {
+                write!(f, "numeric window {requested} exceeds maximum {max}")
+            }
+            Self::TruncatedNumber => write!(f, "numeric token crosses the bounded line window"),
+            Self::PrecisionOutOfRange { requested, max } => {
+                write!(f, "decimal precision {requested} exceeds maximum {max}")
+            }
+        }
+    }
+}
+
+/// Locate and update the ASCII decimal number at an Emmet command caret.
+///
+/// `delta_milli` accepts the six built-in Emmet step sizes: ±100 (0.1),
+/// ±1,000 (1), and ±10,000 (10). The caller supplies a bounded slice of the
+/// logical line plus flags indicating whether the slice includes each line
+/// boundary. This lets long lines work near a caret without copying them in
+/// full; a number cut by the window is rejected atomically.
+pub fn adjust_number_under_caret(
+    line_window: &str,
+    caret_utf16: usize,
+    delta_milli: i32,
+    includes_line_start: bool,
+    includes_line_end: bool,
+) -> Result<Option<TextNumberAdjustmentPlan>, NumberAdjustmentError> {
+    const MAX_TO_FIXED_DIGITS: usize = 100;
+    const ALLOWED_DELTAS: [i32; 6] = [-10_000, -1_000, -100, 100, 1_000, 10_000];
+
+    if line_window.encode_utf16().count() > MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 {
+        return Err(NumberAdjustmentError::WindowTooLarge {
+            requested: line_window.encode_utf16().count(),
+            max: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16,
+        });
+    }
+    if !ALLOWED_DELTAS.contains(&delta_milli) {
+        return Err(NumberAdjustmentError::InvalidDelta { delta_milli });
+    }
+    let Some(caret_byte) = byte_index_at_utf16(line_window, caret_utf16) else {
+        return Err(NumberAdjustmentError::InvalidUtf16Offset {
+            offset_utf16: caret_utf16,
+        });
+    };
+
+    let bytes = line_window.as_bytes();
+    let mut start_byte = caret_byte;
+    let mut saw_dot = false;
+    let mut saw_minus = false;
+    while start_byte > 0 {
+        let ch = bytes[start_byte - 1];
+        if ch == b'-' {
+            saw_minus = true;
+            start_byte -= 1;
+            break;
+        } else if ch == b'.' && !saw_dot {
+            saw_dot = true;
+            start_byte -= 1;
+        } else if ch.is_ascii_digit() {
+            start_byte -= 1;
+        } else {
+            break;
+        }
+    }
+
+    let mut end_byte = caret_byte;
+    if bytes.get(end_byte) == Some(&b'-') && !saw_minus {
+        end_byte += 1;
+    }
+    while end_byte < bytes.len() {
+        let ch = bytes[end_byte];
+        if ch == b'.' && !saw_dot && bytes.get(end_byte + 1).is_some_and(u8::is_ascii_digit) {
+            saw_dot = true;
+            end_byte += 1;
+        } else if ch.is_ascii_digit() {
+            end_byte += 1;
+        } else {
+            break;
+        }
+    }
+
+    if start_byte == end_byte {
+        return Ok(None);
+    }
+    if (start_byte == 0 && !includes_line_start) || (end_byte == bytes.len() && !includes_line_end)
+    {
+        return Err(NumberAdjustmentError::TruncatedNumber);
+    }
+
+    let removed_text = &line_window[start_byte..end_byte];
+    let Ok(number) = removed_text.parse::<f64>() else {
+        return Ok(None);
+    };
+    if number.is_nan() {
+        return Ok(None);
+    }
+
+    let decimals = removed_text
+        .rsplit_once('.')
+        .filter(|(_, fraction)| {
+            !fraction.is_empty() && fraction.bytes().all(|b| b.is_ascii_digit())
+        })
+        .map_or(1, |(_, fraction)| fraction.len());
+    if decimals > MAX_TO_FIXED_DIGITS {
+        return Err(NumberAdjustmentError::PrecisionOutOfRange {
+            requested: decimals,
+            max: MAX_TO_FIXED_DIGITS,
+        });
+    }
+
+    let delta = f64::from(delta_milli) / 1000.0;
+    let mut inserted_text = js_to_fixed(number + delta, decimals);
+    strip_zero_fraction(&mut inserted_text);
+    preserve_leading_zero_width(removed_text, &mut inserted_text);
+    if removed_text.starts_with("-.") || removed_text.starts_with('.') {
+        omit_integer_part(&mut inserted_text);
+    }
+
+    let start_utf16 = line_window[..start_byte].encode_utf16().count();
+    let end_utf16 = start_utf16 + removed_text.encode_utf16().count();
+    Ok(Some(TextNumberAdjustmentPlan {
+        start_utf16,
+        end_utf16,
+        removed_text: removed_text.to_owned(),
+        inserted_text,
+    }))
+}
+
+fn byte_index_at_utf16(text: &str, offset_utf16: usize) -> Option<usize> {
+    let mut consumed = 0usize;
+    for (byte, ch) in text.char_indices() {
+        if consumed == offset_utf16 {
+            return Some(byte);
+        }
+        let next = consumed + ch.len_utf16();
+        if offset_utf16 < next {
+            return None;
+        }
+        consumed = next;
+    }
+    (consumed == offset_utf16).then_some(text.len())
+}
+
+fn js_to_fixed(number: f64, decimals: usize) -> String {
+    if number.is_nan() {
+        return "NaN".to_owned();
+    }
+    if number.is_infinite() {
+        return if number.is_sign_negative() {
+            "-Infinity".to_owned()
+        } else {
+            "Infinity".to_owned()
+        };
+    }
+    if number.abs() >= 1e21 {
+        return js_number_to_string(number);
+    }
+
+    let negative = number < 0.0;
+    let bits = number.abs().to_bits();
+    let exponent_bits = ((bits >> 52) & 0x7ff) as i32;
+    let fraction = bits & ((1u64 << 52) - 1);
+    let (mantissa, exponent2) = if exponent_bits == 0 {
+        (fraction, -1074)
+    } else {
+        ((1u64 << 52) | fraction, exponent_bits - 1023 - 52)
+    };
+
+    let mut scaled = BigUint::from_u64(mantissa);
+    for _ in 0..decimals {
+        scaled.mul_small(5);
+    }
+    let shift = exponent2 + decimals as i32;
+    let rounded = if shift >= 0 {
+        scaled.shl_bits(shift as usize)
+    } else {
+        let dropped = (-shift) as usize;
+        let mut integer = scaled.shr_bits(dropped);
+        if dropped > 0 && scaled.bit(dropped - 1) {
+            integer.increment();
+        }
+        integer
+    };
+    let mut digits = rounded.to_decimal();
+    if decimals > 0 {
+        if digits.len() <= decimals {
+            digits.insert_str(0, &"0".repeat(decimals + 1 - digits.len()));
+        }
+        digits.insert(digits.len() - decimals, '.');
+    }
+    if negative {
+        digits.insert(0, '-');
+    }
+    digits
+}
+
+/// JavaScript Number#toString formatting for the ≥1e21 branch of toFixed.
+fn js_number_to_string(number: f64) -> String {
+    if number.is_nan() {
+        return "NaN".to_owned();
+    }
+    if number.is_infinite() {
+        return if number.is_sign_negative() {
+            "-Infinity".to_owned()
+        } else {
+            "Infinity".to_owned()
+        };
+    }
+
+    let negative = number < 0.0;
+    let mut representation = number.abs().to_string();
+    let exponent_from_repr = if let Some(index) = representation.find(['e', 'E']) {
+        let exponent = representation[index + 1..].parse::<i32>().unwrap_or(0);
+        representation.truncate(index);
+        exponent
+    } else {
+        0
+    };
+    let dot_index = representation.find('.').unwrap_or(representation.len());
+    let mut digits: String = representation.chars().filter(|ch| *ch != '.').collect();
+    let leading_zeros = digits.bytes().take_while(|b| *b == b'0').count();
+    if leading_zeros == digits.len() {
+        return "0".to_owned();
+    }
+    let exponent10 = dot_index as i32 - leading_zeros as i32 - 1 + exponent_from_repr;
+    digits.drain(..leading_zeros);
+    while digits.len() > 1 && digits.ends_with('0') {
+        digits.pop();
+    }
+    let mut result = String::new();
+    if negative {
+        result.push('-');
+    }
+    result.push(digits.as_bytes()[0] as char);
+    if digits.len() > 1 {
+        result.push('.');
+        result.push_str(&digits[1..]);
+    }
+    result.push('e');
+    if exponent10 >= 0 {
+        result.push('+');
+    }
+    result.push_str(&exponent10.to_string());
+    result
+}
+
+fn strip_zero_fraction(text: &mut String) {
+    let Some(dot) = text.find('.') else {
+        return;
+    };
+    if text[dot + 1..].bytes().all(|b| b == b'0') {
+        text.truncate(dot);
+    }
+}
+
+fn preserve_leading_zero_width(original: &str, replacement: &mut String) {
+    let bytes = original.as_bytes();
+    let sign_len = usize::from(bytes.first() == Some(&b'-'));
+    if bytes.len() <= sign_len + 1
+        || bytes[sign_len] != b'0'
+        || !bytes[sign_len + 1].is_ascii_digit()
+    {
+        return;
+    }
+    let original_width = bytes[sign_len..]
+        .iter()
+        .take_while(|byte| byte.is_ascii_digit())
+        .count();
+    let replacement_bytes = replacement.as_bytes();
+    let replacement_sign = usize::from(replacement_bytes.first() == Some(&b'-'));
+    let replacement_width = replacement_bytes[replacement_sign..]
+        .iter()
+        .take_while(|byte| byte.is_ascii_digit())
+        .count();
+    if replacement_width > 0 && replacement_width < original_width {
+        replacement.insert_str(
+            replacement_sign,
+            &"0".repeat(original_width - replacement_width),
+        );
+    }
+}
+
+fn omit_integer_part(text: &mut String) {
+    let bytes = text.as_bytes();
+    let sign_len = usize::from(bytes.first() == Some(&b'-'));
+    let zero_count = bytes[sign_len..]
+        .iter()
+        .take_while(|byte| **byte == b'0')
+        .count();
+    if zero_count > 0 {
+        text.drain(sign_len..sign_len + zero_count);
+    }
+}
+
+#[derive(Default)]
+struct BigUint(Vec<u32>);
+
+impl BigUint {
+    fn from_u64(value: u64) -> Self {
+        let low = value as u32;
+        let high = (value >> 32) as u32;
+        let mut limbs = vec![low];
+        if high > 0 {
+            limbs.push(high);
+        }
+        while limbs.last() == Some(&0) {
+            limbs.pop();
+        }
+        Self(limbs)
+    }
+
+    fn mul_small(&mut self, multiplier: u32) {
+        let mut carry = 0u64;
+        for limb in &mut self.0 {
+            let value = u64::from(*limb) * u64::from(multiplier) + carry;
+            *limb = value as u32;
+            carry = value >> 32;
+        }
+        if carry > 0 {
+            self.0.push(carry as u32);
+        }
+    }
+
+    fn shl_bits(&self, bits: usize) -> Self {
+        if self.0.is_empty() {
+            return Self::default();
+        }
+        let words = bits / 32;
+        let residual = bits % 32;
+        let mut result = vec![0; words];
+        let mut carry = 0u64;
+        for limb in &self.0 {
+            let value = (u64::from(*limb) << residual) | carry;
+            result.push(value as u32);
+            carry = value >> 32;
+        }
+        if carry > 0 {
+            result.push(carry as u32);
+        }
+        Self(result)
+    }
+
+    fn shr_bits(&self, bits: usize) -> Self {
+        let words = bits / 32;
+        if words >= self.0.len() {
+            return Self::default();
+        }
+        let residual = bits % 32;
+        let mut result = Vec::with_capacity(self.0.len() - words);
+        for index in words..self.0.len() {
+            let mut limb = self.0[index] >> residual;
+            if residual > 0 && index + 1 < self.0.len() {
+                limb |= self.0[index + 1] << (32 - residual);
+            }
+            result.push(limb);
+        }
+        while result.last() == Some(&0) {
+            result.pop();
+        }
+        Self(result)
+    }
+
+    fn bit(&self, index: usize) -> bool {
+        self.0
+            .get(index / 32)
+            .is_some_and(|limb| limb & (1u32 << (index % 32)) != 0)
+    }
+
+    fn increment(&mut self) {
+        for limb in &mut self.0 {
+            let (next, overflow) = limb.overflowing_add(1);
+            *limb = next;
+            if !overflow {
+                return;
+            }
+        }
+        self.0.push(1);
+    }
+
+    fn div_rem_small(&mut self, divisor: u32) -> u32 {
+        let mut remainder = 0u64;
+        for limb in self.0.iter_mut().rev() {
+            let current = (remainder << 32) | u64::from(*limb);
+            *limb = (current / u64::from(divisor)) as u32;
+            remainder = current % u64::from(divisor);
+        }
+        while self.0.last() == Some(&0) {
+            self.0.pop();
+        }
+        remainder as u32
+    }
+
+    fn to_decimal(&self) -> String {
+        if self.0.is_empty() {
+            return "0".to_owned();
+        }
+        let mut value = Self(self.0.clone());
+        let mut chunks = Vec::new();
+        while !value.0.is_empty() {
+            chunks.push(value.div_rem_small(1_000_000_000));
+        }
+        let mut result = chunks.pop().unwrap_or_default().to_string();
+        for chunk in chunks.iter().rev() {
+            result.push_str(&format!("{chunk:09}"));
+        }
+        result
     }
 }
 
@@ -1525,6 +1962,125 @@ impl TextBuffer {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn adjustment(
+        text: &str,
+        caret_utf16: usize,
+        delta_milli: i32,
+    ) -> Result<Option<TextNumberAdjustmentPlan>, NumberAdjustmentError> {
+        adjust_number_under_caret(text, caret_utf16, delta_milli, true, true)
+    }
+
+    #[test]
+    fn number_adjustment_matches_emmet_steps_and_formatting() {
+        let cases = [
+            ("hello 123.43 there", 12, 100, "123.53"),
+            ("hello 999.9 there", 11, 100, "1000"),
+            ("hello 123.43 there", 12, -100, "123.33"),
+            ("hello 100 there", 9, -100, "99.9"),
+            ("x=007", 5, 1_000, "008"),
+            ("x=-07", 5, -1_000, "-08"),
+            ("x=.1", 4, -100, ""),
+            ("x=-.1", 5, 100, ""),
+        ];
+
+        for (text, caret, delta, expected) in cases {
+            let plan = adjustment(text, caret, delta).unwrap().unwrap();
+            assert_eq!(plan.inserted_text, expected, "{text} += {delta}");
+            assert_eq!(
+                &text[byte_index_at_utf16(text, plan.start_utf16).unwrap()
+                    ..byte_index_at_utf16(text, plan.end_utf16).unwrap()],
+                plan.removed_text
+            );
+        }
+
+        for (text, caret, delta, expected) in [
+            ("x=10", 4, 100, "10.1"),
+            ("x=10", 4, 1_000, "11"),
+            ("x=10", 4, 10_000, "20"),
+            ("x=10", 4, -100, "9.9"),
+            ("x=10", 4, -1_000, "9"),
+            ("x=10", 4, -10_000, "0"),
+        ] {
+            assert_eq!(
+                adjustment(text, caret, delta)
+                    .unwrap()
+                    .unwrap()
+                    .inserted_text,
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn number_adjustment_uses_javascript_tofixed_tie_rounding() {
+        assert_eq!(js_to_fixed(1.15, 1), "1.1");
+        assert_eq!(js_to_fixed(1.25, 1), "1.3");
+        assert_eq!(js_to_fixed(-1.25, 1), "-1.3");
+    }
+
+    #[test]
+    fn number_adjustment_scans_from_selection_right_edge_and_utf16_caret() {
+        let text = "🦊 value=12.3";
+        let number_end = text.encode_utf16().count();
+        let plan = adjustment(text, number_end, 100).unwrap().unwrap();
+        assert_eq!(plan.removed_text, "12.3");
+        assert_eq!(plan.start_utf16, 9);
+        assert_eq!(plan.end_utf16, 13);
+        assert_eq!(plan.inserted_text, "12.4");
+
+        assert_eq!(
+            adjustment("🦊1", 1, 100),
+            Err(NumberAdjustmentError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(adjustment("abc", 3, 100).unwrap(), None);
+    }
+
+    #[test]
+    fn number_adjustment_rejects_truncated_windows_precision_and_invalid_steps() {
+        assert_eq!(
+            adjust_number_under_caret("12", 2, 100, false, false),
+            Err(NumberAdjustmentError::TruncatedNumber)
+        );
+        assert_eq!(
+            adjust_number_under_caret("12", 0, 100, false, true),
+            Err(NumberAdjustmentError::TruncatedNumber)
+        );
+        let too_precise = format!("1.{}", "1".repeat(101));
+        assert_eq!(
+            adjustment(&too_precise, too_precise.encode_utf16().count(), 100),
+            Err(NumberAdjustmentError::PrecisionOutOfRange {
+                requested: 101,
+                max: 100,
+            })
+        );
+        assert_eq!(
+            adjustment("12", 2, 250),
+            Err(NumberAdjustmentError::InvalidDelta { delta_milli: 250 })
+        );
+        assert_eq!(
+            adjustment(&"1".repeat(MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 + 1), 1, 100),
+            Err(NumberAdjustmentError::WindowTooLarge {
+                requested: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 + 1,
+                max: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16,
+            })
+        );
+    }
+
+    #[test]
+    fn js_number_to_string_uses_exponential_notation_at_fixed_threshold() {
+        assert_eq!(js_to_fixed(1e20, 1), "100000000000000000000.0");
+        assert_eq!(js_to_fixed(1e21, 1), "1e+21");
+        assert_eq!(js_to_fixed(-1e21, 1), "-1e+21");
+        let large_integer = "1000000000000000000000";
+        assert_eq!(
+            adjustment(large_integer, large_integer.len(), 10_000)
+                .unwrap()
+                .unwrap()
+                .inserted_text,
+            "1e+21"
+        );
+    }
 
     #[test]
     fn open_assigns_version_one_and_keeps_content() {

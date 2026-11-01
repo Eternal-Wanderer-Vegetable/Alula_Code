@@ -12,7 +12,7 @@ import 'alula_ffi.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 32;
+const int expectedAbiVersion = 33;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -23,6 +23,7 @@ const int maxDocWordDeleteCarets = 10000;
 const int maxDocLineDeleteSelections = 10000;
 const int maxDocTransposeCarets = 10000;
 const int maxDocOvertypePasteSelections = 10000;
+const int maxNumberAdjustmentWindowUtf16 = 1000;
 
 enum TextEncoding { utf8, utf16Le, utf16Be, gbk }
 
@@ -331,6 +332,21 @@ class DocumentTransposePlans {
   final List<DocumentTransposePlan?> plans;
 
   const DocumentTransposePlans({required this.version, required this.plans});
+}
+
+/// One Emmet numeric edit resolved by the Rust UTF-16 planner.
+class TextNumberAdjustmentPlan {
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final String insertedText;
+
+  const TextNumberAdjustmentPlan({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.insertedText,
+  });
 }
 
 /// One absolute UTF-16 selection and the inserted paste length used to query
@@ -1492,6 +1508,52 @@ class AlulaCore {
       );
     }
     return result['text'] as String;
+  }
+
+  /// Resolve a numeric transform in one bounded logical-line slice.
+  TextNumberAdjustmentPlan? adjustNumberText({
+    required String text,
+    required int caretUtf16,
+    required int deltaMilli,
+    required bool includesLineStart,
+    required bool includesLineEnd,
+  }) {
+    final textLength = text.codeUnits.length;
+    if (textLength > maxNumberAdjustmentWindowUtf16) {
+      throw RangeError.range(
+        textLength,
+        0,
+        maxNumberAdjustmentWindowUtf16,
+        'text.codeUnits.length',
+      );
+    }
+    if (caretUtf16 < 0 || caretUtf16 > textLength) {
+      throw RangeError.range(caretUtf16, 0, textLength, 'caretUtf16');
+    }
+    final json = _ffi.textAdjustNumberJson(jsonEncode({
+      'text': text,
+      'caretUtf16': caretUtf16,
+      'deltaMilli': deltaMilli,
+      'includesLineStart': includesLineStart,
+      'includesLineEnd': includesLineEnd,
+    }));
+    final result = jsonDecode(json) as Map<String, Object?>;
+    if (result['ok'] != true) {
+      final error = result['error']! as Map<String, Object?>;
+      throw AlulaException(
+        error['code'] as String? ?? 'Unknown',
+        jsonEncode(error['detail']),
+      );
+    }
+    final value = result['plan'];
+    if (value == null) return null;
+    final plan = value as Map<String, Object?>;
+    return TextNumberAdjustmentPlan(
+      startUtf16: plan['startUtf16'] as int,
+      endUtf16: plan['endUtf16'] as int,
+      removedText: plan['removedText'] as String,
+      insertedText: plan['insertedText'] as String,
+    );
   }
 
   /// LSP / 语法能力入口。

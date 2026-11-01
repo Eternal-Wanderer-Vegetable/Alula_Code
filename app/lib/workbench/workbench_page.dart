@@ -671,6 +671,48 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () => _transformCase(uppercase: false, pascalCase: true),
         enablement: 'editorTextFocus');
     reg(
+      'editor.emmet.action.incrementNumberByOneTenth',
+      'Emmet',
+      '增加 0.1',
+      () => _adjustEmmetNumber(100),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.emmet.action.incrementNumberByOne',
+      'Emmet',
+      '增加 1',
+      () => _adjustEmmetNumber(1000),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.emmet.action.incrementNumberByTen',
+      'Emmet',
+      '增加 10',
+      () => _adjustEmmetNumber(10000),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.emmet.action.decrementNumberByOneTenth',
+      'Emmet',
+      '减少 0.1',
+      () => _adjustEmmetNumber(-100),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.emmet.action.decrementNumberByOne',
+      'Emmet',
+      '减少 1',
+      () => _adjustEmmetNumber(-1000),
+      enablement: 'editorActive',
+    );
+    reg(
+      'editor.emmet.action.decrementNumberByTen',
+      'Emmet',
+      '减少 10',
+      () => _adjustEmmetNumber(-10000),
+      enablement: 'editorActive',
+    );
+    reg(
       'editor.action.transposeLetters',
       '编辑器',
       '转置字母',
@@ -4096,6 +4138,222 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() => _statusDetail = '已删除重复行');
+  }
+
+  Future<void> _adjustEmmetNumber(int deltaMilli) async {
+    final doc = _active;
+    if (doc == null || doc.inputWindow.hasComposition) return;
+
+    _flushInput(doc);
+    final selections = normalizeSelectionSet(doc.selectionSet);
+    if (selections.isEmpty || selections.length > maxDocLineDeleteSelections) {
+      if (mounted && selections.length > maxDocLineDeleteSelections) {
+        setState(() => _statusDetail =
+            'Emmet 数值调整已取消：选区数超过 $maxDocLineDeleteSelections 上限');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final ranges = <(int, int), TextNumberAdjustmentPlan>{};
+    final selectionPlans = <({TextSelection selection, (int, int)? range})>[];
+    var payloadChars = 0;
+    try {
+      for (final selection in selections) {
+        // Code-OSS resolves the number from the selection's right endpoint,
+        // whether the selection is forward or reversed.
+        final caret = selection.end;
+        final position = doc.doc.positionAt(caret);
+        final boundary = doc.doc.lineBoundary(caret);
+        if (position.version != expectedVersion ||
+            boundary.version != expectedVersion ||
+            boundary.line != position.line ||
+            caret < boundary.startUtf16 ||
+            caret > boundary.endUtf16) {
+          throw StateError('Rust 返回了过期或无效的 Emmet 数值光标位置');
+        }
+
+        const windowLimit = maxNumberAdjustmentWindowUtf16;
+        final lineLength = boundary.endUtf16 - boundary.startUtf16;
+        final column = caret - boundary.startUtf16;
+        var windowStart = 0;
+        var windowEnd = lineLength;
+        if (lineLength > windowLimit) {
+          windowStart =
+              (column - windowLimit ~/ 2).clamp(0, lineLength).toInt();
+          windowEnd = (column + windowLimit ~/ 2)
+              .clamp(windowStart, lineLength)
+              .toInt();
+        }
+        final absoluteWindowStart = boundary.startUtf16 + windowStart;
+        final absoluteWindowEnd = boundary.startUtf16 + windowEnd;
+        final text = _readDocumentRange(
+          doc,
+          absoluteWindowStart,
+          absoluteWindowEnd,
+        );
+        if (text.codeUnits.length != windowEnd - windowStart) {
+          throw StateError('Rust 返回的 Emmet 数值窗口 UTF-16 长度不一致');
+        }
+        final relativePlan =
+            (_core ?? (throw StateError('Alula Rust 核心未初始化'))).adjustNumberText(
+          text: text,
+          caretUtf16: caret - absoluteWindowStart,
+          deltaMilli: deltaMilli,
+          includesLineStart: windowStart == 0,
+          includesLineEnd: windowEnd == lineLength,
+        );
+        if (relativePlan == null) {
+          selectionPlans.add((selection: selection, range: null));
+          continue;
+        }
+        if (relativePlan.startUtf16 < 0 ||
+            relativePlan.endUtf16 <= relativePlan.startUtf16 ||
+            relativePlan.endUtf16 > text.codeUnits.length ||
+            relativePlan.removedText.codeUnits.length !=
+                relativePlan.endUtf16 - relativePlan.startUtf16) {
+          throw StateError('Rust 返回了无效的 Emmet 数值范围');
+        }
+        final start = absoluteWindowStart + relativePlan.startUtf16;
+        final end = absoluteWindowStart + relativePlan.endUtf16;
+        if (_readDocumentRange(doc, start, end) != relativePlan.removedText) {
+          throw StateError('Emmet 数值计划与 Rust 文档内容不一致');
+        }
+        final plan = TextNumberAdjustmentPlan(
+          startUtf16: start,
+          endUtf16: end,
+          removedText: relativePlan.removedText,
+          insertedText: relativePlan.insertedText,
+        );
+        final key = (start, end);
+        final existing = ranges[key];
+        if (existing != null &&
+            (existing.removedText != plan.removedText ||
+                existing.insertedText != plan.insertedText)) {
+          throw StateError('Rust 对相同 Emmet 数值范围返回了不同文本');
+        }
+        ranges[key] = plan;
+        selectionPlans.add((selection: selection, range: key));
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = 'Emmet 数值调整未应用：$error');
+      return;
+    }
+
+    if (doc.doc.version != expectedVersion) {
+      if (mounted) setState(() => _statusDetail = 'Emmet 数值调整未应用：文档版本已变化');
+      return;
+    }
+
+    final orderedRanges = ranges.values.toList()
+      ..sort((a, b) => a.startUtf16.compareTo(b.startUtf16));
+    for (var index = 1; index < orderedRanges.length; index++) {
+      if (orderedRanges[index].startUtf16 < orderedRanges[index - 1].endUtf16) {
+        if (mounted) {
+          setState(() => _statusDetail = 'Emmet 数值调整已取消：多个编辑范围重叠');
+        }
+        return;
+      }
+    }
+
+    final mappedRanges = <({
+      int start,
+      int end,
+      String removed,
+      String inserted,
+      int mappedStart,
+    })>[];
+    for (final plan in orderedRanges) {
+      final mappedStart = plan.startUtf16 + payloadChars;
+      mappedRanges.add((
+        start: plan.startUtf16,
+        end: plan.endUtf16,
+        removed: plan.removedText,
+        inserted: plan.insertedText,
+        mappedStart: mappedStart,
+      ));
+      if (plan.removedText != plan.insertedText) {
+        payloadChars += plan.insertedText.length - plan.removedText.length;
+      }
+    }
+
+    int mapOffset(int offset) {
+      var delta = 0;
+      for (final range in mappedRanges) {
+        if (offset < range.start) return offset + delta;
+        if (offset <= range.end) {
+          final relative =
+              (offset - range.start).clamp(0, range.inserted.length).toInt();
+          return range.mappedStart + relative;
+        }
+        delta += range.inserted.length - range.removed.length;
+      }
+      return offset + delta;
+    }
+
+    final mappedSelections = normalizeSelectionSet([
+      for (final plan in selectionPlans)
+        TextSelection(
+          baseOffset: mapOffset(plan.selection.baseOffset),
+          extentOffset: mapOffset(plan.selection.extentOffset),
+          affinity: plan.selection.affinity,
+          isDirectional: plan.selection.isDirectional,
+        ),
+    ]);
+    final changedRanges = mappedRanges
+        .where((plan) => plan.removed != plan.inserted)
+        .toList(growable: false);
+    if (changedRanges.isEmpty) return;
+
+    var undoChars = 0;
+    for (final plan in changedRanges) {
+      undoChars += plan.removed.length + plan.inserted.length;
+      if (undoChars > _undoHistoryBudget.maxTotalChars) {
+        if (mounted) {
+          setState(() => _statusDetail =
+              'Emmet 数值调整已取消：撤销文本超过 ${_undoHistoryBudget.maxTotalChars} 字符上限');
+        }
+        return;
+      }
+    }
+
+    final forward = <TextOp>[];
+    final inverse = <TextOp>[];
+    for (final plan in changedRanges.reversed) {
+      forward
+        ..add(TextOp.delete(plan.start, plan.end - plan.start))
+        ..add(TextOp.insert(plan.start, plan.inserted));
+      inverse
+        ..add(TextOp.delete(plan.mappedStart, plan.inserted.length))
+        ..add(TextOp.insert(plan.mappedStart, plan.removed));
+    }
+
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() =>
+            _statusDetail = 'Emmet 数值调整未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: mappedSelections.first.extentOffset,
+      coalesce: false,
+    );
+    _setDocSelections(doc, mappedSelections, recordHistory: false);
+    doc.replaceInputWindow(
+      mappedSelections.first.extentOffset,
+      selection: mappedSelections.first,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已调整 Emmet 数值');
   }
 
   Future<void> _transposeLetters() async {

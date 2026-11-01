@@ -84,6 +84,12 @@ class AlulaFfi {
     'alula_text_transform_pascal_case',
   );
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _textAdjustNumber =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_text_adjust_number',
+  );
+
   // *mut c_char 返回值一律视为调用方持有，读取后必须 stringFree。
   late final Pointer<Utf8> Function(int, Pointer<Utf8>) _docOpen =
       lib.lookupFunction<Pointer<Utf8> Function(Uint64, Pointer<Utf8>),
@@ -410,6 +416,15 @@ class AlulaFfi {
     final p = requestJson.toNativeUtf8();
     try {
       return _takeJson(_textTransformPascalCase(p));
+    } finally {
+      malloc.free(p);
+    }
+  }
+
+  String textAdjustNumberJson(String requestJson) {
+    final p = requestJson.toNativeUtf8();
+    try {
+      return _takeJson(_textAdjustNumber(p));
     } finally {
       malloc.free(p);
     }

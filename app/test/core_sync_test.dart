@@ -72,6 +72,43 @@ void main() {
     );
   }, skip: skip);
 
+  test('Rust FFI numeric transform resolves bounded UTF-16 plans', () {
+    final core = _bootstrap.core!;
+    final plan = core.adjustNumberText(
+      text: '🦊 x=12.3\u0000',
+      caretUtf16: 9,
+      deltaMilli: 100,
+      includesLineStart: true,
+      includesLineEnd: true,
+    );
+    expect(plan, isNotNull);
+    expect(plan!.startUtf16, 5);
+    expect(plan.endUtf16, 9);
+    expect(plan.removedText, '12.3');
+    expect(plan.insertedText, '12.4');
+
+    expect(
+      () => core.adjustNumberText(
+        text: '🦊1',
+        caretUtf16: 1,
+        deltaMilli: 100,
+        includesLineStart: true,
+        includesLineEnd: true,
+      ),
+      throwsA(isA<AlulaException>()),
+    );
+    expect(
+      () => core.adjustNumberText(
+        text: List<String>.filled(1001, '1').join(),
+        caretUtf16: 1,
+        deltaMilli: 100,
+        includesLineStart: true,
+        includesLineEnd: true,
+      ),
+      throwsRangeError,
+    );
+  }, skip: skip);
+
   test('Rust FFI transpose resolves UTF-16 and CRLF boundary plans', () {
     final core = _bootstrap.core!;
     final doc = core.openDoc(9045, 'ab\r\ncd');

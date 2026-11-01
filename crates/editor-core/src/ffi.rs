@@ -20,9 +20,9 @@ use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
 use std::time::{Duration, Instant};
 
 use editor_buffer::{
-    transform_camel_case_text, transform_case_text, transform_pascal_case_text,
-    transform_snake_case_text, transform_title_case_text, BufferError, LineDeleteDirection, TextOp,
-    WordDeleteDirection, WordPartDirection,
+    adjust_number_under_caret, transform_camel_case_text, transform_case_text,
+    transform_pascal_case_text, transform_snake_case_text, transform_title_case_text, BufferError,
+    LineDeleteDirection, NumberAdjustmentError, TextOp, WordDeleteDirection, WordPartDirection,
 };
 use editor_doc::{LineEnding, TextEncoding, TextFileOptions};
 use editor_lsp::{
@@ -36,11 +36,12 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 32;
+pub const ALULA_ABI_VERSION: u32 = 33;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
 const MAX_TRANSPOSE_OUTPUT_BYTES: usize = 2 * 1024 * 1024;
+const MAX_NUMBER_ADJUSTMENT_JSON_BYTES: usize = 16 * 1024;
 
 const MAX_PENDING_COMPLETIONS: usize = 32;
 static NEXT_COMPLETION_ID: AtomicU64 = AtomicU64::new(1);
@@ -76,6 +77,16 @@ struct SnakeCaseInput {
 #[derive(Deserialize)]
 struct PascalCaseInput {
     text: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct NumberAdjustmentInput {
+    text: String,
+    caret_utf16: usize,
+    delta_milli: i32,
+    includes_line_start: bool,
+    includes_line_end: bool,
 }
 
 struct PendingCompletion {
@@ -545,6 +556,59 @@ pub unsafe extern "C" fn alula_text_transform_pascal_case(
             json!("panic in alula_text_transform_pascal_case"),
         )
     })
+}
+
+/// Resolve one bounded Emmet numeric adjustment inside a logical-line window.
+/// All caret/range offsets in the request and response are UTF-16 code units.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_text_adjust_number(request_json: *const c_char) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_NUMBER_ADJUSTMENT_JSON_BYTES {
+            return err_json(
+                "TextTooLarge",
+                json!({ "maxBytes": MAX_NUMBER_ADJUSTMENT_JSON_BYTES }),
+            );
+        }
+        let request: NumberAdjustmentInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        match adjust_number_under_caret(
+            &request.text,
+            request.caret_utf16,
+            request.delta_milli,
+            request.includes_line_start,
+            request.includes_line_end,
+        ) {
+            Ok(plan) => to_c_ptr(json!({ "ok": true, "plan": plan }).to_string()),
+            Err(NumberAdjustmentError::InvalidUtf16Offset { offset_utf16 }) => {
+                err_json("InvalidUtf16Offset", json!({ "offsetUtf16": offset_utf16 }))
+            }
+            Err(NumberAdjustmentError::InvalidDelta { delta_milli }) => {
+                err_json("InvalidArgument", json!({ "deltaMilli": delta_milli }))
+            }
+            Err(NumberAdjustmentError::WindowTooLarge { requested, max }) => err_json(
+                "TextTooLarge",
+                json!({ "requestedUtf16": requested, "maxUtf16": max }),
+            ),
+            Err(NumberAdjustmentError::TruncatedNumber) => err_json(
+                "TruncatedNumber",
+                json!("numeric token crosses the bounded line window"),
+            ),
+            Err(NumberAdjustmentError::PrecisionOutOfRange { requested, max }) => err_json(
+                "PrecisionOutOfRange",
+                json!({ "requested": requested, "max": max }),
+            ),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_text_adjust_number")))
 }
 
 /// Sample system/cgroup memory pressure. On a transition to Critical, cancel pending
@@ -2576,6 +2640,40 @@ mod tests {
         assert_eq!(
             take(unsafe { alula_text_transform_pascal_case(request.as_ptr()) })["text"],
             "Foo.BarBaz\0HTTP"
+        );
+    }
+
+    #[test]
+    fn number_adjustment_ffi_is_utf16_bounded_and_nul_safe() {
+        let request = c(
+            r#"{"text":"🦊 x=12.3\u0000","caretUtf16":9,"deltaMilli":100,"includesLineStart":true,"includesLineEnd":true}"#,
+        );
+        let result = take(unsafe { alula_text_adjust_number(request.as_ptr()) });
+        assert_eq!(result["ok"], true);
+        assert_eq!(
+            result["plan"],
+            json!({
+                "startUtf16": 5,
+                "endUtf16": 9,
+                "removedText": "12.3",
+                "insertedText": "12.4",
+            })
+        );
+
+        let split_surrogate = c(
+            r#"{"text":"🦊1","caretUtf16":1,"deltaMilli":100,"includesLineStart":true,"includesLineEnd":true}"#,
+        );
+        assert_eq!(
+            take(unsafe { alula_text_adjust_number(split_surrogate.as_ptr()) })["error"]["code"],
+            "InvalidUtf16Offset"
+        );
+
+        let truncated = c(
+            r#"{"text":"12","caretUtf16":2,"deltaMilli":100,"includesLineStart":false,"includesLineEnd":false}"#,
+        );
+        assert_eq!(
+            take(unsafe { alula_text_adjust_number(truncated.as_ptr()) })["error"]["code"],
+            "TruncatedNumber"
         );
     }
 
