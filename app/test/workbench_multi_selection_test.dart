@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:alula_app/editor/clipboard_metadata.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/editor/occurrence_search.dart';
 import 'package:alula_app/main.dart';
@@ -50,6 +51,36 @@ Future<void> _saveWithCtrlS(WidgetTester tester) async {
   await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 100));
+}
+
+Future<void> _altClickAtOffset(
+  WidgetTester tester,
+  Finder editor,
+  int offset,
+) async {
+  final editableRoot = tester.renderObject<RenderObject>(
+    find.descendant(of: editor, matching: find.byType(EditableText)),
+  );
+  RenderEditable? findEditable(RenderObject object) {
+    if (object is RenderEditable) return object;
+    RenderEditable? found;
+    object.visitChildren((child) {
+      found ??= findEditable(child);
+    });
+    return found;
+  }
+
+  final editable = findEditable(editableRoot)!;
+  final caret = editable.getLocalRectForCaret(TextPosition(offset: offset));
+  final point = editable.localToGlobal(
+    Offset(caret.left + 0.1, caret.center.dy),
+  );
+  expect(editable.getPositionForPoint(point).offset, offset);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+  await tester.tapAt(point, kind: PointerDeviceKind.mouse);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+  await tester.pump();
+  await tester.pump();
 }
 
 void main() {
@@ -176,6 +207,117 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(file.readAsStringSync(), 'left x right');
   });
+
+  for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+    testWidgets('$platform multi-cursor paste restores copied multiline chunks',
+        (tester) async {
+      debugDefaultTargetPlatformOverride = platform;
+      try {
+        final temp =
+            Directory.systemTemp.createTempSync('alula-clipboard-meta');
+        addTearDown(() async {
+          EditorClipboardMetadataStore.shared.clear();
+          tester.binding.defaultBinaryMessenger
+              .setMockMethodCallHandler(SystemChannels.platform, null);
+          await tester.pumpWidget(const SizedBox.shrink());
+          if (temp.existsSync()) temp.deleteSync(recursive: true);
+        });
+        final workspace = Directory('${temp.path}/workspace')..createSync();
+        final file = File('${workspace.path}/sample.txt')
+          ..writeAsStringSync('one\ntwo\nx beta\n');
+        final base = temp.path.replaceAll(r'\', '/');
+        Map<dynamic, dynamic> clipboard = const {};
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          (call) async {
+            if (call.method == 'Clipboard.setData') {
+              clipboard = Map<dynamic, dynamic>.from(call.arguments as Map);
+            }
+            if (call.method == 'Clipboard.getData') return clipboard;
+            return null;
+          },
+        );
+        await tester.pumpWidget(AlulaApp(
+          autoFolder: workspace.path,
+          layoutStore: LayoutStore(path: '$base/layout.json'),
+          sessionStore: SessionStore(path: '$base/session.json'),
+          keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        ));
+        await tester.pump(const Duration(milliseconds: 600));
+        await tester.tap(find.text('sample.txt').first);
+        await tester.pump(const Duration(milliseconds: 300));
+        final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+        await tester.showKeyboard(editor);
+        await tester.pump();
+        final controller = tester.widget<TextField>(editor).controller!;
+
+        controller.selection =
+            const TextSelection(baseOffset: 0, extentOffset: 7);
+        await tester.pump();
+        await tester.pump();
+        await _altClickAtOffset(tester, editor, 14);
+        var field = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(field.additionalSelections,
+            const [TextSelection.collapsed(offset: 14)]);
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyC);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        await tester.pump();
+        expect(
+          clipboard['text'],
+          platform == TargetPlatform.windows
+              ? 'one\r\ntwo\nx beta\r\n'
+              : 'one\ntwo\nx beta\n',
+        );
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+        controller.selection =
+            const TextSelection(baseOffset: 8, extentOffset: 9);
+        await tester.pump();
+        await tester.pump();
+        await _altClickAtOffset(tester, editor, 15);
+        field = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(field.additionalSelections,
+            const [TextSelection.collapsed(offset: 15)]);
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyV);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        await tester.pump();
+        const pasted = 'one\ntwo\none\ntwo beta\nx beta\n';
+        expect(controller.text, pasted);
+        expect(file.readAsStringSync(), 'one\ntwo\nx beta\n');
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        await tester.pump();
+        expect(controller.text, 'one\ntwo\nx beta\n');
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        await tester.pump();
+        expect(controller.text, pasted);
+        await _saveWithCtrlS(tester);
+        expect(file.readAsStringSync(), pasted);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
 
   testWidgets('Alt+Click adds a cursor at the hit-tested UTF-16 position',
       (tester) async {

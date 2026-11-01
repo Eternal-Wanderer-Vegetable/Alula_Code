@@ -216,13 +216,14 @@ MultiSelectionEditResult applyMultiSelectionEdit({
 ///
 /// When the clipboard has one line per selection, each line is inserted into
 /// its corresponding selection. Otherwise the complete clipboard payload is
-/// repeated at every selection, matching editor multi-cursor paste behavior.
-/// The first selection is the primary selection and remains the platform
-/// client's caret after the edit.
+/// repeated at every selection. Matching copied cursor chunks are assigned by
+/// document order, even when the primary selection is elsewhere. The first
+/// selection remains the platform client's caret after the edit.
 MultiSelectionEditResult applyDistributedMultiSelectionPaste({
   required TextEditingValue oldValue,
   required List<TextSelection> selections,
   required String clipboardText,
+  List<String>? multiCursorText,
 }) {
   final normalized = normalizeSelectionSet(selections);
   if (normalized.length < 2) {
@@ -236,6 +237,10 @@ MultiSelectionEditResult applyDistributedMultiSelectionPaste({
   final pasteTexts = distributeClipboardPasteText(
     clipboardText: clipboardText,
     selectionCount: normalized.length,
+    multiCursorText: multiCursorText,
+    selectionStartOffsets: [
+      for (final selection in normalized) selection.start
+    ],
   );
   final edits = <_PasteRange>[];
   for (var index = 0; index < normalized.length; index++) {
@@ -283,14 +288,37 @@ MultiSelectionEditResult applyDistributedMultiSelectionPaste({
   );
 }
 
-/// Applies the existing multi-cursor paste distribution rule to a clipboard
-/// payload. When the clipboard line count matches the selection count, each
-/// selection receives one line; otherwise every selection receives all text.
+/// Applies multi-cursor paste distribution to a clipboard payload. Matching
+/// editor metadata takes precedence; otherwise, when the clipboard line count
+/// matches the selection count, each selection receives one line. In all other
+/// cases every selection receives the complete clipboard text.
 List<String> distributeClipboardPasteText({
   required String clipboardText,
   required int selectionCount,
+  List<String>? multiCursorText,
+  List<int>? selectionStartOffsets,
 }) {
   if (selectionCount <= 0) return const [];
+  if (multiCursorText != null && multiCursorText.length == selectionCount) {
+    final copied = [
+      for (final text in multiCursorText)
+        text.replaceAll(RegExp(r'\r\n|\r'), '\n'),
+    ];
+    if (selectionStartOffsets != null &&
+        selectionStartOffsets.length == selectionCount) {
+      final orderedIndices =
+          List<int>.generate(selectionCount, (index) => index)
+            ..sort((a, b) => selectionStartOffsets[a].compareTo(
+                  selectionStartOffsets[b],
+                ));
+      final bySelection = List<String>.filled(selectionCount, '');
+      for (var copiedIndex = 0; copiedIndex < selectionCount; copiedIndex++) {
+        bySelection[orderedIndices[copiedIndex]] = copied[copiedIndex];
+      }
+      return List<String>.unmodifiable(bySelection);
+    }
+    return List<String>.unmodifiable(copied);
+  }
   final lines = clipboardText.split(RegExp(r'\r\n|\n|\r'));
   if (selectionCount > 1 && lines.length == selectionCount) {
     return List.unmodifiable(lines);

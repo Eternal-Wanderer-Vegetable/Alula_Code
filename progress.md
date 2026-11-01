@@ -5,13 +5,21 @@
 
 ## Current State（当前状态，2026-11-01 更新）
 
-### 最新进展（2026-11-01，P04.56 / EDT-10d 完成）
+### 最新进展（2026-11-01，P04.57 / EDT-10e 完成）
+
+- 完成多光标 clipboard metadata：用有界单条纯文本 sidecar 精确匹配最近一次复制，恢复包含内嵌换行的 `multiCursorText`；目标光标按文档顺序映射，CRLF/CR 片段归一为文档 LF。普通/覆写多光标粘贴接入；外部剪贴板、文本变化、数量不符与超限退回普通纯文本路径。记录上限 64 Ki UTF-16 文本、64 Ki 分段总量和 10,000 项；不改 ABI。
+- 新增元数据 exact-match、不可变快照、失效、界限、混合行尾、分发回退/文档顺序与 Windows/Linux 工作台测试，定向组合 45 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 573）；`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.57-clipboard-metadata.md`。
+- CI 失败复核：重复 Windows Clippy 失败是测试 fixture 对 `set_readonly(false)` 的 lint，未启动 Alula，已由 `fd54663` 修复；一次 Windows integration 失败来自 50k 行 fixture 临时目录删除 race，应用启动/关闭与后续可访问性步骤成功。修复后 CI `41273828946` 和三平台 Platform Availability `41273053709` 全绿。上述失败不解释历史 `0xC000041D`；该 artifact 仍需 P15 原生复核。
+- 提交前 GitNexus `detect-changes --scope all` 报告 51 files、32 symbols、151 affected processes，risk=CRITICAL。全量工作树含大量既有改动，命令返回的符号/流程列表有省略，按最高风险记录，不以计数或截断降级；详见 P04.57 报告。
+- 下一步：按固定 Code-OSS 对照拆解 `text/html` 与 `vscode-editor-data` 富文本剪贴板；P15 的 Linux DRM、Windows UIA/IME/关闭/主题/DPI 与 macOS 原生验收仍 pending。
+
+### 上一片（2026-11-01，P04.56 / EDT-10d 完成）
 
 - 多光标 `Ctrl/Cmd+X` 已覆盖混合非空选区与空光标：非空范围剪切选中文字，空光标复制并删除 Rust 权威整行；处理中间/末行 EOL，读取输入窗外绝对 UTF-16 范围，版本与选择快照校验后一次 Rust 事务接通 undo/redo、dirty、双视图、Find 和显式保存。无 ABI 变化。
 - 新增 Windows/Linux/macOS `TargetPlatform` fixture 及 3×12,000 UTF-16 单元长行窗口外光标 fixture；与复制、单光标空行剪切和多选回归合计 29 项通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 563）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。报告：`docs/diagnostics/2026-11-01-p04/p04.56-empty-selection-multicursor-cut.md`。
 - CI 故障复核扩大到 6 个连续 Windows CI 失败 run（41260806566、41262203418、41264327454、41264593223、41266093481、41267027526），均只在 Windows Clippy 因 `permissions_set_readonly_false` fixture 清理 lint 失败；这些 job 没构建/启动 Alula，修复已在 `fd54663`。P04.56 commit `fc032cf` 的 CI `41273058892` 全绿；Platform Availability `41273053709` 的 Linux/Windows/macOS lane 全通过，包含 Windows 交互/辅助功能/WM_CLOSE 与 macOS 构建打包。另一个 41264323909 integration 失败发生于 fixture 目录删除 race，应用关闭结果仍为 `gracefulClose=true` / exit 0。该失败簇不能解释旧 artifact 的 `0xC000041D`；当前 Windows hosted close smoke 通过，但旧 crash 是否对所有原生用户会话修复仍由 P15 验证。
 - GitNexus 复核：staged 与 all-scope detect 跨重复扫描都在 HIGH/CRITICAL 间波动，按最高风险保留 CRITICAL；compare-main 多次为 CRITICAL 且列表 capped。当前分析仍漏 817 entry points、399 callees、10 truncated walks。shared `_copyableDocumentSelectionTexts` upstream CRITICAL 保持不降级；报告保留源码复核与测试证据。
-- 下一步：按固定 Code-OSS 对照推进 clipboard metadata / rich-text clipboard slice。P15 的 Linux DRM、Windows UIA/IME/关闭/主题/DPI 与 macOS 原生验收仍 pending。
+- 下一步：按固定 Code-OSS 对照推进 rich-text clipboard slice。P15 的 Linux DRM、Windows UIA/IME/关闭/主题/DPI 与 macOS 原生验收仍 pending。
 
 ### 最新进展（2026-11-01，P04.55 / EDT-10c 完成）
 

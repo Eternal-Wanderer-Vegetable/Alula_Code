@@ -36,6 +36,7 @@ import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
+import '../editor/clipboard_metadata.dart';
 import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
@@ -2812,6 +2813,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (selection == null) return;
     final text = _readDocumentRange(doc, selection.start, selection.end);
     await Clipboard.setData(ClipboardData(text: text));
+    EditorClipboardMetadataStore.shared.record(
+      text,
+      const EditorClipboardMetadata(),
+    );
   }
 
   Future<void> _deleteLines() async {
@@ -6912,6 +6917,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final version = doc.doc.version;
     final text = _readDocumentRange(doc, selection.start, selection.end);
     await Clipboard.setData(ClipboardData(text: text));
+    EditorClipboardMetadataStore.shared.record(
+      text,
+      const EditorClipboardMetadata(),
+    );
     if (!mounted ||
         doc.doc.version != version ||
         doc.crossWindowSelection != selection) {
@@ -7078,7 +7087,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         !listEquals(selections, currentSelections)) {
       return;
     }
-    await Clipboard.setData(ClipboardData(text: copied.join(documentEol)));
+    final clipboardText = copied.join(documentEol);
+    await Clipboard.setData(ClipboardData(text: clipboardText));
+    EditorClipboardMetadataStore.shared.record(
+      clipboardText,
+      EditorClipboardMetadata(multiCursorText: copied),
+    );
   }
 
   Future<void> _copyEmptySelectionLine(OpenDoc doc) async {
@@ -7096,7 +7110,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             doc.fileOptions.lineEnding.id == 'crlf'
         ? '\r\n'
         : '\n';
-    await Clipboard.setData(ClipboardData(text: '$text$eol'));
+    final clipboardText = '$text$eol';
+    await Clipboard.setData(ClipboardData(text: clipboardText));
+    EditorClipboardMetadataStore.shared.record(
+      clipboardText,
+      const EditorClipboardMetadata(isFromEmptySelection: true),
+    );
   }
 
   Future<void> _cutEmptySelectionLine(OpenDoc doc) async {
@@ -7121,7 +7140,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             doc.fileOptions.lineEnding.id == 'crlf'
         ? '\r\n'
         : '\n';
-    await Clipboard.setData(ClipboardData(text: '$text$eol'));
+    final clipboardText = '$text$eol';
+    await Clipboard.setData(ClipboardData(text: clipboardText));
+    EditorClipboardMetadataStore.shared.record(
+      clipboardText,
+      const EditorClipboardMetadata(isFromEmptySelection: true),
+    );
 
     if (!mounted ||
         !identical(_active, doc) ||
@@ -7141,6 +7165,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _flushInput(doc, commitComposition: true);
     final clipboard = await Clipboard.getData('text/plain');
     if (clipboard == null || !mounted || _active?.id != doc.id) return false;
+    final clipboardText = clipboard.text ?? '';
+    final clipboardMetadata =
+        EditorClipboardMetadataStore.shared.lookup(clipboardText);
     final field = doc.inputFieldKey.currentState;
     if (field == null) return false;
     _flushInput(doc, commitComposition: true);
@@ -7157,7 +7184,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final result = applyDistributedMultiSelectionPaste(
       oldValue: doc.editingValue,
       selections: localSelections,
-      clipboardText: clipboard.text ?? '',
+      clipboardText: clipboardText,
+      multiCursorText: clipboardMetadata?.multiCursorText,
     );
     if (!result.changed) return true;
 
@@ -7216,11 +7244,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final clipboardText = clipboard.text ?? '';
+    final clipboardMetadata =
+        EditorClipboardMetadataStore.shared.lookup(clipboardText);
     if (clipboardText.isEmpty) return;
 
     final pasteTexts = distributeClipboardPasteText(
       clipboardText: clipboardText,
       selectionCount: selections.length,
+      multiCursorText: clipboardMetadata?.multiCursorText,
+      selectionStartOffsets: [
+        for (final selection in selections) selection.start
+      ],
     );
     late final DocumentOvertypePasteRanges queried;
     try {
@@ -7534,8 +7568,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     try {
-      await Clipboard.setData(
-        ClipboardData(text: copied.join(documentEol)),
+      final clipboardText = copied.join(documentEol);
+      await Clipboard.setData(ClipboardData(text: clipboardText));
+      EditorClipboardMetadataStore.shared.record(
+        clipboardText,
+        EditorClipboardMetadata(multiCursorText: copied),
       );
     } on Object catch (error) {
       if (mounted) setState(() => _statusDetail = '多光标剪切未应用：$error');

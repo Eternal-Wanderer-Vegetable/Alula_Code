@@ -50,6 +50,47 @@ void main() {
       ]);
     });
 
+    test('uses copied cursor chunks when a chunk contains newlines', () {
+      const oldValue = TextEditingValue(
+        text: 'a b',
+        selection: TextSelection(baseOffset: 0, extentOffset: 1),
+      );
+      final result = applyDistributedMultiSelectionPaste(
+        oldValue: oldValue,
+        selections: const [
+          TextSelection(baseOffset: 0, extentOffset: 1),
+          TextSelection(baseOffset: 2, extentOffset: 3),
+        ],
+        clipboardText: 'L1\nL2\nR',
+        multiCursorText: const ['L1\nL2', 'R'],
+      );
+
+      expect(result.value.text, 'L1\nL2 R');
+      expect(result.value.selection, const TextSelection.collapsed(offset: 5));
+      expect(result.selections, const [TextSelection.collapsed(offset: 7)]);
+      expect(result.changed, isTrue);
+    });
+
+    test('falls back when copied cursor count no longer matches', () {
+      final distributed = distributeClipboardPasteText(
+        clipboardText: 'left\nright',
+        selectionCount: 3,
+        multiCursorText: const ['only one'],
+      );
+
+      expect(distributed, const ['left\nright', 'left\nright', 'left\nright']);
+    });
+
+    test('normalizes copied Windows line endings to the document model', () {
+      final distributed = distributeClipboardPasteText(
+        clipboardText: 'first\r\nsecond\r\nthird\r\n',
+        selectionCount: 2,
+        multiCursorText: const ['first\r\nsecond', 'third\r\n'],
+      );
+
+      expect(distributed, const ['first\nsecond', 'third\n']);
+    });
+
     test('inserts at primary and secondary carets in one transformed value',
         () {
       const oldValue = TextEditingValue(
@@ -278,6 +319,18 @@ void main() {
       expect(result.value, composing);
       expect(result.changed, isFalse);
     });
+  });
+
+  test('assigns copied cursor chunks by document order', () {
+    expect(
+      distributeClipboardPasteText(
+        clipboardText: 'first\nlater',
+        selectionCount: 2,
+        multiCursorText: const ['first', 'later'],
+        selectionStartOffsets: const [9, 0],
+      ),
+      const ['later', 'first'],
+    );
   });
 
   test('normalization merges overlaps and keeps primary selection first', () {
