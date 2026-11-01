@@ -301,6 +301,25 @@ func run() throws {
     ])
   }
 
+  let neutralPoint = CGPoint(
+    x: (source.x + target.x) / 2,
+    y: (source.y + target.y) / 2
+  )
+  print("Neutral Flutter-area click: \(neutralPoint)")
+  try postMouseEvent(.mouseMoved, at: neutralPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.1)
+  try postMouseEvent(.leftMouseDown, at: neutralPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.1)
+  try postMouseEvent(.leftMouseUp, at: neutralPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.5)
+  let pointerEventsURL = directory.appendingPathComponent("pointer-events.jsonl")
+  if FileManager.default.fileExists(atPath: pointerEventsURL.path) {
+    let pointerEvents = try String(contentsOf: pointerEventsURL, encoding: .utf8)
+    print("Flutter pointer events after neutral click:\n\(pointerEvents)")
+  } else {
+    print("Flutter pointer events after neutral click: <none>")
+  }
+
   try postMouseEvent(.mouseMoved, at: source, source: eventSource)
   Thread.sleep(forTimeInterval: 0.3)
   try postMouseEvent(.leftMouseDown, at: source, source: eventSource)
