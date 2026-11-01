@@ -110,10 +110,13 @@ func logAccessibilityDiagnostics(
       &rawChildren
     )
     let childCount = (rawChildren as? [AXUIElement])?.count
+    let focused = attribute(element, "AXFocused") as? Bool
+    let main = attribute(element, "AXMain") as? Bool
     print(
       "AX \(label): pid=\(pid) pidStatus=\(pidResult.rawValue), " +
         "attributesStatus=\(namesResult.rawValue), attributes=\(attributes), " +
         "childrenStatus=\(childrenResult.rawValue), childCount=\(String(describing: childCount)), " +
+        "focused=\(String(describing: focused)), main=\(String(describing: main)), " +
         "labels=\(labels(of: element)), frame=\(frame(of: element).map(NSStringFromRect) ?? "<no-frame>")"
     )
   }
@@ -202,6 +205,17 @@ func run() throws {
     throw NSError(domain: "AlulaMacDnd", code: 6, userInfo: [
       NSLocalizedDescriptionKey: "Alula has no accessible window"
     ])
+  }
+  let raiseResult = AXUIElementPerformAction(window, kAXRaiseAction as CFString)
+  print("AX raise window result: \(raiseResult.rawValue)")
+  let focusDeadline = Date().addingTimeInterval(3)
+  while Date() < focusDeadline {
+    _ = app.activate(options: [])
+    let frontmost = attribute(appElement, "AXFrontmost") as? Bool ?? false
+    let focused = attribute(window, "AXFocused") as? Bool ?? false
+    let main = attribute(window, "AXMain") as? Bool ?? false
+    if frontmost && focused && main { break }
+    Thread.sleep(forTimeInterval: 0.1)
   }
   logAccessibilityDiagnostics(
     app: app,
