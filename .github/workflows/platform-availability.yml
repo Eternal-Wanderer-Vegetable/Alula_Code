@@ -553,6 +553,67 @@ jobs:
       - name: Verify native macOS clipboard formats
         run: flutter test --no-pub -d macos --reporter expanded integration_test/editor_clipboard_desktop_test.dart
         working-directory: app
+      - name: Compile native macOS drag/drop input helper
+        run: swiftc -O -framework AppKit -framework ApplicationServices tools/vscode-parity/macos-native-dnd-input.swift -o "$RUNNER_TEMP/alula-native-dnd-input"
+      - name: Grant accessibility permission to the drag/drop input helper
+        # The permission is limited to the ephemeral CI input helper, not Alula.
+        uses: xa11y/setup-a11y@e2064beb86f6d1f8ae93eaf599962083de872f0d
+        with:
+          macos-tcc-client: ${{ runner.temp }}/alula-native-dnd-input
+      - name: Verify native macOS text drag/drop interaction
+        env:
+          ALULA_MACOS_DND_DIR: ${{ runner.temp }}/alula-macos-native-dnd
+        run: |
+          set -euo pipefail
+          mkdir -p "$ALULA_MACOS_DND_DIR"
+          flutter test --no-pub -d macos --reporter expanded integration_test/editor_native_text_drag_drop_macos_test.dart > "$ALULA_MACOS_DND_DIR/flutter-test.log" 2>&1 &
+          flutter_pid=$!
+          cleanup() {
+            if kill -0 "$flutter_pid" 2>/dev/null; then
+              kill -TERM "$flutter_pid" 2>/dev/null || true
+              wait "$flutter_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 90); do
+            if [[ -f "$ALULA_MACOS_DND_DIR/ready" ]]; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$flutter_pid" 2>/dev/null; then
+              cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+              wait "$flutter_pid"
+            fi
+            sleep 1
+          done
+          if [[ "$ready" -ne 1 ]]; then
+            cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+            echo "macOS drag/drop integration test did not become ready"
+            exit 1
+          fi
+
+          if ! "$RUNNER_TEMP/alula-native-dnd-input" "$ALULA_MACOS_DND_DIR" > "$ALULA_MACOS_DND_DIR/input-helper.log" 2>&1; then
+            cat "$ALULA_MACOS_DND_DIR/input-helper.log"
+            cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+            exit 1
+          fi
+          cat "$ALULA_MACOS_DND_DIR/input-helper.log"
+          if ! wait "$flutter_pid"; then
+            cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+            exit 1
+          fi
+          trap - EXIT
+          cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+      - name: Upload macOS native drag/drop interaction diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-macos-native-dnd-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-macos-native-dnd
+          if-no-files-found: warn
+          retention-days: 7
       - name: Bundle and sign Rust core
         run: |
           app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
