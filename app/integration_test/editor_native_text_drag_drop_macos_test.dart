@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:alula_app/editor/editor_native_text_drag_drop.dart';
 import 'package:alula_app/editor/text_drag_drop.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -46,11 +47,23 @@ void main() {
         );
       }
 
+      void pointerRoute(PointerEvent event) {
+        recordPointerEvent('router', event);
+      }
+
+      GestureBinding.instance.pointerRouter.addGlobalRoute(pointerRoute);
+      addTearDown(
+        () => GestureBinding.instance.pointerRouter.removeGlobalRoute(
+          pointerRoute,
+        ),
+      );
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Center(
               child: Listener(
+                key: const ValueKey('alula-pointer-logger'),
                 behavior: HitTestBehavior.translucent,
                 onPointerDown: (event) => recordPointerEvent('down', event),
                 onPointerMove: (event) => recordPointerEvent('move', event),
@@ -140,6 +153,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      final pointerLoggerRect =
+          tester.getRect(find.byKey(const ValueKey('alula-pointer-logger')));
       File('${directory.path}/layout.json').writeAsStringSync(
         jsonEncode({
           'source': {
@@ -159,6 +174,12 @@ void main() {
                 .dy,
           },
           'devicePixelRatio': tester.view.devicePixelRatio,
+          'pointerLoggerRect': {
+            'left': pointerLoggerRect.left,
+            'top': pointerLoggerRect.top,
+            'right': pointerLoggerRect.right,
+            'bottom': pointerLoggerRect.bottom,
+          },
         }),
       );
       File('${directory.path}/ready').writeAsStringSync('ready');
