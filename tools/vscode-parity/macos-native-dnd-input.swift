@@ -266,17 +266,42 @@ func run() throws {
     ])
   }
 
-  let windowFrame = frame(of: window) ?? contentFrame
-  let titleBarPoint = CGPoint(x: windowFrame.midX, y: windowFrame.minY + 12)
-  try postMouseEvent(.mouseMoved, at: titleBarPoint, source: eventSource)
-  Thread.sleep(forTimeInterval: 0.1)
-  try postMouseEvent(.leftMouseDown, at: titleBarPoint, source: eventSource)
-  Thread.sleep(forTimeInterval: 0.1)
-  try postMouseEvent(.leftMouseUp, at: titleBarPoint, source: eventSource)
+  let focusedAttribute = kAXFocusedAttribute as CFString
+  var focusSettable = DarwinBoolean(false)
+  let focusSettableResult = AXUIElementIsAttributeSettable(
+    window,
+    focusedAttribute,
+    &focusSettable
+  )
+  print(
+    "AX focused settable: status=\(focusSettableResult.rawValue), " +
+      "settable=\(focusSettable.boolValue)"
+  )
+  if focusSettableResult == .success && focusSettable.boolValue {
+    let setFocusResult = AXUIElementSetAttributeValue(
+      window,
+      focusedAttribute,
+      kCFBooleanTrue
+    )
+    print("AX set focused result: \(setFocusResult.rawValue)")
+  }
   Thread.sleep(forTimeInterval: 0.3)
-  let frontmost = attribute(appElement, "AXFrontmost") as? Bool ?? false
-  let focused = attribute(window, "AXFocused") as? Bool ?? false
-  let main = attribute(window, "AXMain") as? Bool ?? false
+  var frontmost = attribute(appElement, "AXFrontmost") as? Bool ?? false
+  var focused = attribute(window, "AXFocused") as? Bool ?? false
+  var main = attribute(window, "AXMain") as? Bool ?? false
+  if !(frontmost && focused && main) {
+    let windowFrame = frame(of: window) ?? contentFrame
+    let titleBarPoint = CGPoint(x: windowFrame.midX, y: windowFrame.minY + 12)
+    try postMouseEvent(.mouseMoved, at: titleBarPoint, source: eventSource)
+    Thread.sleep(forTimeInterval: 0.1)
+    try postMouseEvent(.leftMouseDown, at: titleBarPoint, source: eventSource)
+    Thread.sleep(forTimeInterval: 0.1)
+    try postMouseEvent(.leftMouseUp, at: titleBarPoint, source: eventSource)
+    Thread.sleep(forTimeInterval: 0.3)
+    frontmost = attribute(appElement, "AXFrontmost") as? Bool ?? false
+    focused = attribute(window, "AXFocused") as? Bool ?? false
+    main = attribute(window, "AXMain") as? Bool ?? false
+  }
   print(
     "After title-bar activation: frontmost=\(frontmost), " +
       "focused=\(focused), main=\(main)"
