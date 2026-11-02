@@ -54,7 +54,8 @@ func frame(of element: AXUIElement) -> CGRect? {
 func postMouseEvent(
   _ type: CGEventType,
   at point: CGPoint,
-  source: CGEventSource
+  source: CGEventSource,
+  targetPID: pid_t? = nil
 ) throws {
   guard
     let event = CGEvent(
@@ -68,7 +69,11 @@ func postMouseEvent(
       NSLocalizedDescriptionKey: "Could not construct CoreGraphics mouse event"
     ])
   }
-  event.post(tap: .cghidEventTap)
+  if let targetPID {
+    CGEventPostToPid(targetPID, event)
+  } else {
+    event.post(tap: .cghidEventTap)
+  }
 }
 
 func clickWithSystemEvents(at point: CGPoint) -> String {
@@ -356,16 +361,42 @@ func run() throws {
   print("System Events neutral click: \(clickWithSystemEvents(at: neutralPoint))")
   Thread.sleep(forTimeInterval: 0.5)
   let pointerEventsURL = directory.appendingPathComponent("pointer-events.jsonl")
-  if FileManager.default.fileExists(atPath: pointerEventsURL.path) {
-    let pointerEvents = try String(contentsOf: pointerEventsURL, encoding: .utf8)
-    print("Flutter pointer events after neutral click:\n\(pointerEvents)")
+  let previousPointerEvents =
+    (try? String(contentsOf: pointerEventsURL, encoding: .utf8)) ?? ""
+  try postMouseEvent(
+    .mouseMoved,
+    at: neutralPoint,
+    source: eventSource,
+    targetPID: app.processIdentifier
+  )
+  Thread.sleep(forTimeInterval: 0.5)
+  let pointerEventsAfterTargetedMove =
+    (try? String(contentsOf: pointerEventsURL, encoding: .utf8)) ?? ""
+  let processTargetedInputRouted =
+    pointerEventsAfterTargetedMove.count > previousPointerEvents.count
+  print("CGEventPostToPid pointer route: \(processTargetedInputRouted)")
+  if !pointerEventsAfterTargetedMove.isEmpty {
+    print(
+      "Flutter pointer events after neutral click:\n\(pointerEventsAfterTargetedMove)"
+    )
   } else {
     print("Flutter pointer events after neutral click: <none>")
   }
 
-  try postMouseEvent(.mouseMoved, at: source, source: eventSource)
+  let dragTargetPID = processTargetedInputRouted ? app.processIdentifier : nil
+  try postMouseEvent(
+    .mouseMoved,
+    at: source,
+    source: eventSource,
+    targetPID: dragTargetPID
+  )
   Thread.sleep(forTimeInterval: 0.3)
-  try postMouseEvent(.leftMouseDown, at: source, source: eventSource)
+  try postMouseEvent(
+    .leftMouseDown,
+    at: source,
+    source: eventSource,
+    targetPID: dragTargetPID
+  )
   Thread.sleep(forTimeInterval: 0.2)
   for step in 1...24 {
     let progress = CGFloat(step) / 24
@@ -376,14 +407,25 @@ func run() throws {
     try postMouseEvent(
       .leftMouseDragged,
       at: point,
-      source: eventSource
+      source: eventSource,
+      targetPID: dragTargetPID
     )
     Thread.sleep(forTimeInterval: 0.04)
   }
   Thread.sleep(forTimeInterval: 0.5)
-  try postMouseEvent(.leftMouseUp, at: target, source: eventSource)
+  try postMouseEvent(
+    .leftMouseUp,
+    at: target,
+    source: eventSource,
+    targetPID: dragTargetPID
+  )
   print("AppKit mouse location after drag: \(NSEvent.mouseLocation)")
-  print("Posted native mouse drag from Flutter source to target coordinates")
+  let postingMechanism =
+    dragTargetPID == nil ? "cghidEventTap" : "CGEventPostToPid"
+  print(
+    "Posted native mouse drag from Flutter source to target coordinates " +
+      "using \(postingMechanism)"
+  )
 }
 
 do {
