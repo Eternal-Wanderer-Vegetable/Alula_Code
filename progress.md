@@ -5,11 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.73 / EDT-12b9 `$CLIPBOARD` 片段变量，本地验证通过，hosted 待补）
+### 最新进展（2026-11-03，P04.73 / EDT-12b9 `$CLIPBOARD` 片段变量，PR CI 与 Linux/Windows hosted 通过）
 
 - 按固定 Code-OSS 1.145.0 `ClipboardBasedVariableResolver` 接入纯文本 clipboard 变量；空剪贴板走 `${CLIPBOARD:default}` fallback。异步读取后验证文档版本、活动文档、选区、输入值、输入窗和字段实例，变化/异常/超时拒绝插入；限制为 256 Ki UTF-16，无 Rust/ABI 改动。
 - 定向 parser/workbench 55 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 678），cargo fmt 与 app/ Flutter analyze 通过。编辑前默认阈值 impact 为 UNKNOWN，源码搜索确认调用；随后使用 1 MiB threshold 纳入 527,241-byte 工作台文件，关键 upstream impact 均 LOW，staged/all 为 9 files/23 symbols/0 resolved processes。流程 walk 截断与跨语言 property 漏链保留在 `docs/diagnostics/2026-11-03-p04/p04.73-clipboard-snippet-variable.md`。
-- P04.73 implementation/doc commit 与 hosted PR CI、Platform Availability 待提交后补证。PR #2 继续保持 draft；macOS 原生 DnD/P15、历史 Windows/macOS crash 根因仍未结案。本机未启动 GUI/Narrator。
+- 实现 commit `6acf224` 已 push。PR CI `41522434210` 全绿；Platform Availability `41522426147` 的 Linux/Windows jobs 全绿。Linux Release/clipboard/Xvfb launch 与原生 move、cross-document copy、external text drop 通过；Windows Release、P03.7 interaction、DnD、clipboard、MSAA 与 `WM_CLOSE` exit code 0 通过。Windows artifact `13178576904`、Linux DnD artifact `13177508754`。
+- macOS Platform Availability 首次 attempt 因 runner 未分配而取消；只重跑该 job 的 attempt 2 成功，产出 ARM64 package artifact `13180740858`。启动 artifact `13179618766` 只有 Impeller 行，无 crash report；DnD artifact `13179558811` 因 pointer route=false 全部 skip，不视为原生通过。近期 3 个 Windows hosted 红灯已分类为一个 PowerShell probe parse error（应用未启动）和两个 MSAA 文本断言（诊断 JSON 都显示 graceful close / exit 0），不是 crash；旧 Windows binary `0xC000041D` 与历史 macOS SIGSEGV 的 source-level 根因仍未结案。证据：`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。本机未启动 GUI/Narrator。
 
 ### 最新进展（2026-11-03，P04.72 / EDT-12b8 `$WORKSPACE_NAME` / `$WORKSPACE_FOLDER`，已推送并通过 hosted CI 与 Linux/Windows 验证）
 
