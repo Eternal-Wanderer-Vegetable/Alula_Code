@@ -5,12 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.76 / EDT-12c3 嵌套片段占位符，本地实现阶段）
+### 最新进展（2026-11-03，P04.76 / EDT-12c3 嵌套片段占位符，托管验收完成）
 
-- 对照固定 Code-OSS 1.145.0，parser 现在递归解析占位符默认值，将首个非空默认树复制到镜像；session 跟踪嵌套 occurrence 的祖先关系，子项编辑更新父范围，父项替换时嵌套子范围保持稳定。支持 UTF-16/emoji，深度上限 32；transforms 仍 fail closed。无 Rust/ABI 改动。
-- parser/session/workbench 定向 80 项通过，含 Windows/Linux/macOS `TargetPlatform` fixture、嵌套镜像/父子导航、Emoji 坐标及 CRLF 保存读回。完整 `init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter 697），cargo fmt 与 Flutter analyze 0 issues；本机 GUI/Narrator 未启动。
-- 编辑前图谱警告：`expandSnippetTemplate` 与 `_SnippetTemplateParser` 为 CRITICAL，`SnippetSession.applyOperations` MEDIUM，`SnippetPlaceholderRange` UNKNOWN；刷新后 `_SnippetTemplateParser` 显示 LOW，但 `SnippetPlaceholderRange` 与通用 `applyOperations` 映射为 CRITICAL，跨层误链/遗漏边界和源码核验登记在 `docs/diagnostics/2026-11-03-p04/p04.76-nested-snippet-placeholders.md`。重复 staged/all scan 为 11 files/21 symbols/CRITICAL；affected-process counts 随 report/status 文案变化在 86–163 间波动；保持 CRITICAL，不把变化读成风险降低。CLI 未标 partial/truncated，映射风险不因源码范围较窄或测试通过而降级。
-- P04.76 尚未提交/推送，hosted CI 待触发；PR #2 保持 OPEN draft。macOS hosted build/package 后续可继续，macOS 原生 DnD/IME 与 P15 原生设备门仍待主机。历史 Windows `0xC000041D` 与 macOS SIGSEGV 根因未结案；近期多数 CI 红灯属 probe/fixture，不显示相同崩溃栈，分类见 crash correlation 报告。
+- 固定 Code-OSS 1.145.0 的嵌套默认值与镜像 tabstop 已实现；session 同步跟踪父子范围，支持 UTF-16/emoji，嵌套深度上限 32，transforms 继续 fail closed；无 Rust/ABI 改动。实现提交 `a5a137888eb2d48aedbf0c3077025d043042ee7a` 已推送。
+- parser/session/workbench 定向 80 项通过；完整 `init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter 697），cargo fmt 与 Flutter analyze 0 issues。PR CI [`41543818701`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41543818701) 四项全绿；Platform Availability [`41543813557`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41543813557) 的 Linux/Windows/macOS jobs 通过。
+- Linux DnD artifact `13188595395` 记录 20 个 Flutter pointer events 与 move/copy/external-text drop。Windows artifact `13188850992` 记录可见客户区、UI Automation 与 WM_CLOSE exit 0；DnD artifact `13187717018` 记录 13 个 pointer events 与三种 drop。macOS ARM64 包 `13187783861` 已生成，startup `13188093501` 仅 Impeller 初始化；DnD artifact `13189006426` 因 pointer route=false 跳过，不能算原生 DnD 通过。详见 `docs/diagnostics/2026-11-03-p04/p04.76-nested-snippet-placeholders.md`。
+- 用户补充的崩溃假设已对照 CI 失败证据复核：历史 Windows `0xC000041D` 是实际异常关闭，修复同类进程崩溃可能消除此类失败；但近期重复红灯主要是 PowerShell/probe/fixture、不可用的 DnD 注入路由和可访问性断言，不都伴随应用崩溃证据。CI 中出现同类红灯时应先核对进程退出码、崩溃报告和失败步骤，再判断是否由应用崩溃导致。历史 Windows 与 macOS SIGSEGV 根因仍未结案，当前绿灯只是非复现；见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- GitNexus staged/all 扫描覆盖 11 files / 21 symbols，均报 CRITICAL；affected-process 计数随文案变化为 86–163。保留 CRITICAL、UNKNOWN 及索引跨层映射限制，不作为低风险。PR #2 仍为 OPEN draft。本机 GUI/Narrator 未启动；原生 macOS DnD/IME 与 P15 设备验收仍待 macOS 主机。
 
 ### 最新进展（2026-11-03，P04.75 / EDT-12c2 选择占位符建议与接受，托管验收完成）
 
