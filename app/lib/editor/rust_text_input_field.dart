@@ -247,6 +247,7 @@ class RustTextInputField extends StatefulWidget {
     this.wordWrap = false,
     this.horizontalScrollController,
     this.rangeDecorations = const [],
+    this.caretOverlay,
     this.syntaxTokens = const [],
     this.syntaxVersion = -1,
     this.syntaxTokenColor,
@@ -283,6 +284,10 @@ class RustTextInputField extends StatefulWidget {
   final bool wordWrap;
   final ScrollController? horizontalScrollController;
   final List<EditorRangeDecoration> rangeDecorations;
+
+  /// Optional popup positioned beside the local caret and clamped to the
+  /// visible editor viewport.
+  final Widget? caretOverlay;
   final List<Map<String, Object?>> syntaxTokens;
   final int syntaxVersion;
   final Color Function(String kind)? syntaxTokenColor;
@@ -358,6 +363,11 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   int _firstLineNumber = 0;
   int _documentLineCount = 1;
   final GlobalKey _horizontalViewportKey = GlobalKey();
+  final GlobalKey _editorOverlayStackKey = GlobalKey();
+  Rect? _caretRectInOverlay;
+  bool _caretOverlayUpdateScheduled = false;
+  ScrollController? _listenedCaretVerticalScrollController;
+  ScrollController? _listenedCaretHorizontalScrollController;
   static const Duration _mouseDragAutoScrollPeriod = Duration(
     milliseconds: 16,
   );
@@ -1152,7 +1162,9 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _lastAcceptedValue = _controller.value;
     _setFocusNode(widget.focusNode);
     _setHorizontalScrollController(widget.horizontalScrollController);
+    _syncCaretOverlayScrollListeners();
     _syncFoldSymbols();
+    _scheduleCaretOverlayUpdate();
   }
 
   @override
@@ -1183,6 +1195,14 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       _disposeOwnedHorizontalScrollController();
       _setHorizontalScrollController(widget.horizontalScrollController);
     }
+    if (oldWidget.scrollController != widget.scrollController ||
+        oldWidget.horizontalScrollController !=
+            widget.horizontalScrollController ||
+        oldWidget.caretOverlay != widget.caretOverlay) {
+      _syncCaretOverlayScrollListeners();
+      _scheduleCaretOverlayUpdate();
+    }
+    if (widget.caretOverlay == null) _caretRectInOverlay = null;
     if (oldWidget.wordWrap && !widget.wordWrap) {
       _scheduleCaretReveal();
     }
@@ -1486,6 +1506,51 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _horizontalScrollController = external ?? ScrollController();
   }
 
+  void _syncCaretOverlayScrollListeners() {
+    _listenedCaretVerticalScrollController
+        ?.removeListener(_scheduleCaretOverlayUpdate);
+    _listenedCaretHorizontalScrollController
+        ?.removeListener(_scheduleCaretOverlayUpdate);
+    _listenedCaretVerticalScrollController =
+        widget.caretOverlay == null ? null : widget.scrollController;
+    _listenedCaretHorizontalScrollController =
+        widget.caretOverlay == null ? null : _horizontalScrollController;
+    _listenedCaretVerticalScrollController
+        ?.addListener(_scheduleCaretOverlayUpdate);
+    _listenedCaretHorizontalScrollController
+        ?.addListener(_scheduleCaretOverlayUpdate);
+  }
+
+  void _scheduleCaretOverlayUpdate() {
+    if (widget.caretOverlay == null || _caretOverlayUpdateScheduled) return;
+    _caretOverlayUpdateScheduled = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _caretOverlayUpdateScheduled = false;
+      if (!mounted || widget.caretOverlay == null) return;
+      final selection = _controller.selection;
+      final editable = _findEditableRenderObject(context);
+      final overlayObject =
+          _editorOverlayStackKey.currentContext?.findRenderObject();
+      if (!selection.isValid ||
+          editable == null ||
+          overlayObject is! RenderBox ||
+          !overlayObject.hasSize) {
+        return;
+      }
+      final caret = editable.getLocalRectForCaret(selection.extent);
+      final globalRect = Rect.fromPoints(
+        editable.localToGlobal(caret.topLeft),
+        editable.localToGlobal(caret.bottomRight),
+      );
+      final localRect = Rect.fromPoints(
+        overlayObject.globalToLocal(globalRect.topLeft),
+        overlayObject.globalToLocal(globalRect.bottomRight),
+      );
+      if (_caretRectInOverlay == localRect) return;
+      setState(() => _caretRectInOverlay = localRect);
+    });
+  }
+
   void _disposeOwnedHorizontalScrollController() {
     if (_ownsHorizontalScrollController) _horizontalScrollController.dispose();
   }
@@ -1534,6 +1599,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   void _handleEditingValueChanged() {
     if (_restoringValue) return;
     _scheduleCaretReveal();
+    _scheduleCaretOverlayUpdate();
     final value = _controller.value;
     final additionalOperations =
         widget.additionalOperations?.call() ?? const <TextOp>[];
@@ -2026,31 +2092,47 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           animation: scrollController,
                           builder: (context, _) => buildGutterContents(),
                         );
-                  return Row(
-                    textDirection: TextDirection.ltr,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  return Stack(
+                    key: _editorOverlayStackKey,
+                    fit: StackFit.expand,
+                    clipBehavior: Clip.hardEdge,
                     children: [
-                      if (showGutter)
-                        GestureDetector(
-                          key: const ValueKey<String>('rust-editor-gutter'),
-                          behavior: HitTestBehavior.opaque,
-                          onTapUp: foldLayout.foldableByLine.isEmpty
-                              ? null
-                              : (details) => _handleFoldGutterTap(
-                                    details: details,
-                                    layout: foldLayout,
-                                    textSpan: editorTextSpan,
-                                    textDirection: textDirection,
-                                    textScaler: textScaler,
-                                    padding: padding,
-                                    textWidth: contentWidth,
-                                  ),
-                          child: SizedBox(
-                            width: gutterWidth,
-                            child: gutterContents,
-                          ),
+                      Positioned.fill(
+                        child: Row(
+                          textDirection: TextDirection.ltr,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (showGutter)
+                              GestureDetector(
+                                key: const ValueKey<String>(
+                                    'rust-editor-gutter'),
+                                behavior: HitTestBehavior.opaque,
+                                onTapUp: foldLayout.foldableByLine.isEmpty
+                                    ? null
+                                    : (details) => _handleFoldGutterTap(
+                                          details: details,
+                                          layout: foldLayout,
+                                          textSpan: editorTextSpan,
+                                          textDirection: textDirection,
+                                          textScaler: textScaler,
+                                          padding: padding,
+                                          textWidth: contentWidth,
+                                        ),
+                                child: SizedBox(
+                                  width: gutterWidth,
+                                  child: gutterContents,
+                                ),
+                              ),
+                            Expanded(child: dragDropViewport),
+                          ],
                         ),
-                      Expanded(child: dragDropViewport),
+                      ),
+                      if (widget.caretOverlay case final overlay?)
+                        if (_caretRectInOverlay case final caretRect?)
+                          CustomSingleChildLayout(
+                            delegate: _CaretOverlayPositionDelegate(caretRect),
+                            child: overlay,
+                          ),
                     ],
                   );
                 },
@@ -2100,6 +2182,10 @@ class RustTextInputFieldState extends State<RustTextInputField> {
   void dispose() {
     _stopMouseDrag();
     _stopColumnDrag();
+    _listenedCaretVerticalScrollController
+        ?.removeListener(_scheduleCaretOverlayUpdate);
+    _listenedCaretHorizontalScrollController
+        ?.removeListener(_scheduleCaretOverlayUpdate);
     assert(
       widget.inputWindow.pendingCount == 0,
       'Flush the bounded input window before removing this widget.',
@@ -2113,6 +2199,39 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _disposeOwnedHorizontalScrollController();
     super.dispose();
   }
+}
+
+class _CaretOverlayPositionDelegate extends SingleChildLayoutDelegate {
+  const _CaretOverlayPositionDelegate(this.caretRect);
+
+  final Rect caretRect;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    return BoxConstraints(
+      maxWidth: (constraints.maxWidth - 16).clamp(0.0, double.infinity),
+      maxHeight: (constraints.maxHeight - 16).clamp(0.0, double.infinity),
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final maxLeft =
+        (size.width - childSize.width - 8).clamp(0.0, double.infinity);
+    final left = caretRect.left.clamp(8.0, maxLeft).toDouble();
+    final below = caretRect.bottom + 4;
+    final preferredTop = below + childSize.height <= size.height
+        ? below
+        : caretRect.top - childSize.height - 4;
+    final maxTop =
+        (size.height - childSize.height - 8).clamp(0.0, double.infinity);
+    final top = preferredTop.clamp(8.0, maxTop).toDouble();
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(covariant _CaretOverlayPositionDelegate oldDelegate) =>
+      oldDelegate.caretRect != caretRect;
 }
 
 class _AdditionalSelectionsPainter extends CustomPainter {

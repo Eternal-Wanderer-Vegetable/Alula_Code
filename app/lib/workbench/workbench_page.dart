@@ -49,6 +49,7 @@ import '../editor/rust_text_input_field.dart';
 import '../editor/rust_string_context.dart';
 import '../editor/rust_text_input_window.dart';
 import '../editor/snippet_session.dart';
+import '../editor/snippet_choice_suggestion_list.dart';
 import '../editor/snippet_template.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
@@ -357,6 +358,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   SnippetSession? _snippetSession;
   int? _snippetSessionDocId;
   OpenDoc? _snippetSessionView;
+  SnippetSession? _snippetChoiceUiSession;
+  int? _snippetChoiceUiTabstop;
+  int _snippetChoiceSelectedIndex = 0;
+  bool _snippetChoiceDismissed = false;
   List<TextOp>? _pendingSnippetOperations;
   bool _disposing = false;
   String _statusDetail = '初始化…';
@@ -10162,11 +10167,135 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return session;
   }
 
+  void _syncSnippetChoiceUi(SnippetSession session) {
+    if (identical(_snippetChoiceUiSession, session) &&
+        _snippetChoiceUiTabstop == session.currentTabstop) {
+      return;
+    }
+    _snippetChoiceUiSession = session;
+    _snippetChoiceUiTabstop = session.currentTabstop;
+    _snippetChoiceSelectedIndex = 0;
+    _snippetChoiceDismissed = false;
+  }
+
+  void _previewSnippetChoice(
+    SnippetSession session,
+    int optionIndex,
+  ) {
+    if (!identical(_snippetSession, session)) return;
+    _syncSnippetChoiceUi(session);
+    final options = session.activeChoiceRange?.choice?.options;
+    if (options == null || options.isEmpty) return;
+    final index = optionIndex % options.length;
+    if (_snippetChoiceSelectedIndex == index && !_snippetChoiceDismissed) {
+      return;
+    }
+    setState(() {
+      _snippetChoiceSelectedIndex = index;
+      _snippetChoiceDismissed = false;
+    });
+  }
+
+  void _moveSnippetChoiceHighlight(
+    SnippetSession session, {
+    required bool forward,
+  }) {
+    if (!identical(_snippetSession, session)) return;
+    _syncSnippetChoiceUi(session);
+    final options = session.activeChoiceRange?.choice?.options;
+    if (options == null || options.isEmpty) return;
+    final delta = forward ? 1 : -1;
+    final index = (_snippetChoiceSelectedIndex + delta) % options.length;
+    setState(() {
+      _snippetChoiceSelectedIndex = index < 0 ? index + options.length : index;
+      _snippetChoiceDismissed = false;
+    });
+  }
+
+  void _acceptSnippetChoice(
+    OpenDoc doc,
+    SnippetSession session,
+    int optionIndex,
+  ) {
+    if (!identical(_snippetSession, session) ||
+        _snippetSessionDocId != doc.id ||
+        session.version != doc.doc.version) {
+      return;
+    }
+    final choiceRange = session.activeChoiceRange;
+    final options = choiceRange?.choice?.options;
+    final field = doc.inputFieldKey.currentState;
+    if (choiceRange == null ||
+        options == null ||
+        options.isEmpty ||
+        field == null) {
+      return;
+    }
+    final index = optionIndex.clamp(0, options.length - 1).toInt();
+    final replacement = options[index];
+    final window = doc.inputWindow;
+    final globalSelections = session.currentSelections;
+    if (globalSelections.isEmpty ||
+        globalSelections.any((selection) =>
+            selection.start < window.startUtf16 ||
+            selection.end > window.endUtf16)) {
+      _clearSnippetSession();
+      return;
+    }
+
+    // Force the primary and mirror ranges to cover the whole choice so the
+    // regular multi-selection formatter replaces each linked occurrence.
+    _setDocSelections(doc, globalSelections);
+    final value = field.editingValue;
+    final primary = value.selection;
+    final expectedStart = choiceRange.startUtf16 - window.startUtf16;
+    final expectedEnd = choiceRange.endUtf16 - window.startUtf16;
+    if (!primary.isValid ||
+        primary.start != expectedStart ||
+        primary.end != expectedEnd) {
+      _clearSnippetSession();
+      return;
+    }
+    final nextText = value.text.replaceRange(
+      primary.start,
+      primary.end,
+      replacement,
+    );
+    field.applyFormattedValue(TextEditingValue(
+      text: nextText,
+      selection: TextSelection.collapsed(
+        offset: primary.start + replacement.length,
+      ),
+    ));
+    field.flushPending();
+
+    if (!identical(_snippetSession, session)) return;
+    if (session.version != doc.doc.version) {
+      _clearSnippetSession();
+      return;
+    }
+    if (!session.moveNext()) {
+      _clearSnippetSession(clearSecondarySelections: false);
+      return;
+    }
+    _snippetSessionView = doc;
+    _syncSnippetChoiceUi(session);
+    _setDocSelections(doc, session.currentSelections);
+    if (session.isAtFinalTabstop) {
+      _clearSnippetSession(clearSecondarySelections: false);
+    }
+    field.requestFocus();
+  }
+
   void _clearSnippetSession({bool clearSecondarySelections = true}) {
     final view = _snippetSessionView;
     _snippetSession = null;
     _snippetSessionDocId = null;
     _snippetSessionView = null;
+    _snippetChoiceUiSession = null;
+    _snippetChoiceUiTabstop = null;
+    _snippetChoiceSelectedIndex = 0;
+    _snippetChoiceDismissed = false;
     _pendingSnippetOperations = null;
     if (!clearSecondarySelections || view == null) return;
     if (view.additionalSelections.isNotEmpty) {
@@ -10710,44 +10839,79 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final activeHasComposition =
             active?.inputWindow.hasComposition ?? false;
         final snippetSession = _snippetSession;
-        if (active != null &&
-            snippetSession != null &&
-            !activeHasComposition) {
+        if (active != null && snippetSession != null && !activeHasComposition) {
           if (_snippetSessionDocId != active.id ||
               snippetSession.version != active.doc.version) {
             _clearSnippetSession();
-          } else if (!ctrl &&
-              !meta &&
-              !alt &&
-              key == LogicalKeyboardKey.tab) {
-            _flushInput(active);
-            if (!identical(_snippetSession, snippetSession) ||
-                snippetSession.version != active.doc.version) {
-              _clearSnippetSession();
+          } else {
+            _syncSnippetChoiceUi(snippetSession);
+            final activeChoice = snippetSession.activeChoiceRange?.choice;
+            if (!ctrl &&
+                !meta &&
+                !alt &&
+                activeChoice != null &&
+                (key == LogicalKeyboardKey.arrowDown ||
+                    key == LogicalKeyboardKey.arrowUp)) {
+              _moveSnippetChoiceHighlight(
+                snippetSession,
+                forward: key == LogicalKeyboardKey.arrowDown,
+              );
               return KeyEventResult.handled;
             }
-            if (shift) {
-              snippetSession.movePrevious();
-            } else {
-              snippetSession.moveNext();
+            if (!ctrl &&
+                !meta &&
+                !alt &&
+                activeChoice != null &&
+                (key == LogicalKeyboardKey.enter ||
+                    key == LogicalKeyboardKey.numpadEnter)) {
+              _acceptSnippetChoice(
+                active,
+                snippetSession,
+                _snippetChoiceSelectedIndex,
+              );
+              return KeyEventResult.handled;
             }
-            _snippetSessionView = active;
-            _setDocSelections(active, snippetSession.currentSelections);
-            if (snippetSession.isAtFinalTabstop) {
-              _clearSnippetSession(clearSecondarySelections: false);
+            if (!ctrl && !meta && !alt && key == LogicalKeyboardKey.tab) {
+              if (!shift && activeChoice != null) {
+                _acceptSnippetChoice(
+                  active,
+                  snippetSession,
+                  _snippetChoiceSelectedIndex,
+                );
+                return KeyEventResult.handled;
+              }
+              _flushInput(active);
+              if (!identical(_snippetSession, snippetSession) ||
+                  snippetSession.version != active.doc.version) {
+                _clearSnippetSession();
+                return KeyEventResult.handled;
+              }
+              if (shift) {
+                snippetSession.movePrevious();
+              } else {
+                snippetSession.moveNext();
+              }
+              _snippetSessionView = active;
+              _syncSnippetChoiceUi(snippetSession);
+              _setDocSelections(active, snippetSession.currentSelections);
+              if (snippetSession.isAtFinalTabstop) {
+                _clearSnippetSession(clearSecondarySelections: false);
+              }
+              return KeyEventResult.handled;
             }
-            return KeyEventResult.handled;
-          } else if (!ctrl &&
-              !meta &&
-              !alt &&
-              key == LogicalKeyboardKey.escape) {
-            final caret = active.selection.extentOffset;
-            _clearSnippetSession();
-            _setDocSelections(
-              active,
-              [TextSelection.collapsed(offset: caret)],
-            );
-            return KeyEventResult.handled;
+            if (!ctrl && !meta && !alt && key == LogicalKeyboardKey.escape) {
+              if (activeChoice != null && !_snippetChoiceDismissed) {
+                setState(() => _snippetChoiceDismissed = true);
+                return KeyEventResult.handled;
+              }
+              final caret = active.selection.extentOffset;
+              _clearSnippetSession();
+              _setDocSelections(
+                active,
+                [TextSelection.collapsed(offset: caret)],
+              );
+              return KeyEventResult.handled;
+            }
           }
         }
         if (active != null && !activeHasComposition) {
@@ -13540,6 +13704,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       );
     }
+    final snippetSession = _snippetSessionFor(active);
+    final choiceRange = snippetSession?.activeChoiceRange;
+    final choiceOptions = choiceRange?.choice?.options;
+    Widget? choiceOverlay;
+    if (snippetSession != null) {
+      _syncSnippetChoiceUi(snippetSession);
+      if (choiceOptions != null &&
+          choiceOptions.isNotEmpty &&
+          !_snippetChoiceDismissed) {
+        choiceOverlay = SnippetChoiceSuggestionList(
+          options: choiceOptions,
+          selectedIndex:
+              _snippetChoiceSelectedIndex.clamp(0, choiceOptions.length - 1),
+          onPreview: (index) => _previewSnippetChoice(snippetSession, index),
+          onAccept: (index) =>
+              _acceptSnippetChoice(active, snippetSession, index),
+        );
+      }
+    }
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -13612,6 +13795,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ),
                                 syntaxTokenColor: _tokenColor,
                                 rangeDecorations: rangeDecorations,
+                                caretOverlay: choiceOverlay,
                                 focusNode: _focusNodeFor(g, active),
                                 scrollController: active.editorScrollController,
                                 inputFormatter:

@@ -197,7 +197,8 @@ void main() {
     });
   }
 
-  testWidgets('choice snippet inserts its first option and mirrors edits',
+  testWidgets(
+      'choice suggestions preview and accept with linked UTF-16 ranges, save and undo',
       (tester) async {
     try {
       tester.view.physicalSize = const Size(1100, 720);
@@ -207,6 +208,55 @@ void main() {
       final (_, file) = await _openSnippetFixture(
         tester,
         TargetPlatform.linux,
+        initialText: '🙂\r\nx',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 3);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'${1|blue,green|}-$1$0',
+      );
+
+      expect(controller.text, '🙂\nblue-bluex');
+      expect(controller.selection,
+          const TextSelection(baseOffset: 3, extentOffset: 7));
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsOneWidget);
+      await _press(tester, LogicalKeyboardKey.arrowDown);
+      expect(
+        find.byKey(const ValueKey('snippet-choice-option-highlighted-1')),
+        findsOneWidget,
+      );
+      expect(controller.text, '🙂\nblue-bluex');
+      await _press(tester, LogicalKeyboardKey.enter);
+      expect(controller.text, '🙂\ngreen-greenx');
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '🙂\r\ngreen-greenx');
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(controller.text, '🙂\nblue-bluex');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('choice click and Tab accept mirror every linked occurrence',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
       );
       final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       final controller = tester.widget<TextField>(editor).controller!;
@@ -215,18 +265,81 @@ void main() {
 
       await _insertSnippetFromPalette(
         tester,
-        template: r'${1|blue,green|}-$1$0',
+        template: r'${1|blue,green|}-$1-${2:end}-$0',
       );
-
-      expect(controller.text, 'xblue-blue');
+      expect(controller.text, 'xblue-blue-end-');
+      await tester.tap(
+        find.byKey(const ValueKey('snippet-choice-option-1')),
+      );
+      await tester.pump();
+      expect(controller.text, 'xgreen-green-end-');
       expect(controller.selection,
-          const TextSelection(baseOffset: 1, extentOffset: 5));
-      await _replaceCurrentSelection(tester, 'golden');
-      expect(controller.text, 'xgolden-golden');
+          const TextSelection(baseOffset: 13, extentOffset: 16));
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+
+      await _press(tester, LogicalKeyboardKey.tab, shift: true);
+      expect(controller.selection,
+          const TextSelection(baseOffset: 1, extentOffset: 6));
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsOneWidget);
+      await _press(tester, LogicalKeyboardKey.tab);
+      expect(controller.text, 'xblue-blue-end-');
+      expect(controller.selection,
+          const TextSelection(baseOffset: 11, extentOffset: 14));
 
       await _press(tester, LogicalKeyboardKey.keyS, control: true);
       await tester.pump(const Duration(milliseconds: 100));
-      expect(file.readAsStringSync(), 'xgolden-golden');
+      expect(file.readAsStringSync(), 'xblue-blue-end-');
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(controller.text, 'xgreen-green-end-');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('Escape dismisses choices before leaving the snippet session',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await _openSnippetFixture(tester, TargetPlatform.linux);
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'${1:pre}-$1-${2|blue,green|}-$0',
+      );
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+      await _press(tester, LogicalKeyboardKey.tab);
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsOneWidget);
+      await _press(tester, LogicalKeyboardKey.tab, shift: true);
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+      expect(controller.selection,
+          const TextSelection(baseOffset: 1, extentOffset: 4));
+      await _press(tester, LogicalKeyboardKey.tab);
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsOneWidget);
+      await _press(tester, LogicalKeyboardKey.escape);
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+      expect(controller.selection,
+          const TextSelection(baseOffset: 9, extentOffset: 13));
+      await _press(tester, LogicalKeyboardKey.escape);
+      expect(find.byKey(const ValueKey('snippet-choice-suggestion-list')),
+          findsNothing);
+      expect(controller.selection, const TextSelection.collapsed(offset: 13));
+      await _replaceCurrentSelection(tester, '!');
+      expect(controller.text, 'xpre-pre-blue!-');
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;
