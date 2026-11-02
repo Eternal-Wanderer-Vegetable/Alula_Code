@@ -261,6 +261,7 @@ class RustTextInputField extends StatefulWidget {
     this.onCrossWindowDragSelection,
     this.onTextDragDrop,
     this.onTextDragCompleted,
+    this.onExternalTextDrop,
     this.onDelta,
     this.onError,
     this.onPresentationChanged,
@@ -296,6 +297,7 @@ class RustTextInputField extends StatefulWidget {
   final CrossWindowDragSelectionChanged? onCrossWindowDragSelection;
   final ValueChanged<EditorTextDragDropRequest>? onTextDragDrop;
   final EditorTextDragCompleted? onTextDragCompleted;
+  final ValueChanged<EditorExternalTextDropRequest>? onExternalTextDrop;
   final ValueChanged<RustTextInputDelta>? onDelta;
   final ValueChanged<Object>? onError;
   final VoidCallback? onPresentationChanged;
@@ -477,6 +479,30 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       targetDocumentVersion: window.version,
       targetOffsetUtf16: targetOffset,
       operation: operation,
+    );
+  }
+
+  EditorExternalTextDropTarget? _buildExternalTextDropTarget(
+    Offset globalPosition,
+  ) {
+    final window = widget.inputWindow;
+    if (widget.onExternalTextDrop == null ||
+        window.hasComposition ||
+        window.pendingCount != 0 ||
+        window.version != window.document.version) {
+      return null;
+    }
+    final localOffset = _textOffsetAtGlobalPosition(globalPosition);
+    if (localOffset == null ||
+        localOffset < 0 ||
+        localOffset > _controller.text.length ||
+        !_isUtf16Boundary(_controller.text, localOffset)) {
+      return null;
+    }
+    return EditorExternalTextDropTarget(
+      targetDocumentId: window.document.id,
+      targetDocumentVersion: window.version,
+      targetOffsetUtf16: window.startUtf16 + localOffset,
     );
   }
 
@@ -1896,7 +1922,8 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                           ),
                         );
                   final dragDropViewport = EditorNativeTextDragDrop(
-                    enabled: widget.onTextDragDrop != null &&
+                    enabled: (widget.onTextDragDrop != null ||
+                            widget.onExternalTextDrop != null) &&
                         !kIsWeb &&
                         (defaultTargetPlatform == TargetPlatform.linux ||
                             defaultTargetPlatform == TargetPlatform.windows ||
@@ -1906,6 +1933,12 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                     onDrop: (request) => widget.onTextDragDrop?.call(request),
                     onDragCompleted: (payload, operation) =>
                         widget.onTextDragCompleted?.call(payload, operation),
+                    editorExternalTextDropTargetAt:
+                        widget.onExternalTextDrop == null
+                            ? null
+                            : _buildExternalTextDropTarget,
+                    onExternalTextDrop: (request) =>
+                        widget.onExternalTextDrop?.call(request),
                     child: editorViewport,
                   );
                   Widget buildGutterContents() {

@@ -134,6 +134,99 @@ class EditorTextDragDropRequest {
 }
 
 @immutable
+class EditorExternalTextDropTarget {
+  const EditorExternalTextDropTarget({
+    required this.targetDocumentId,
+    required this.targetDocumentVersion,
+    required this.targetOffsetUtf16,
+  });
+
+  final int targetDocumentId;
+  final int targetDocumentVersion;
+  final int targetOffsetUtf16;
+}
+
+@immutable
+class EditorExternalTextDropRequest {
+  const EditorExternalTextDropRequest({
+    required this.externalTextTarget,
+    required this.plainText,
+  });
+
+  final EditorExternalTextDropTarget externalTextTarget;
+  final String plainText;
+}
+
+@immutable
+class EditorExternalTextDropPlan {
+  const EditorExternalTextDropPlan({
+    required this.plainText,
+    required this.forwardOperations,
+    required this.inverseOperations,
+    required this.caretAfterInsertUtf16,
+    required this.resultLengthUtf16,
+  });
+
+  final String plainText;
+  final List<TextOp> forwardOperations;
+  final List<TextOp> inverseOperations;
+  final int caretAfterInsertUtf16;
+  final int resultLengthUtf16;
+}
+
+/// Plans one bounded plain-text insertion from an external drag source.
+/// Document offsets and limits use UTF-16 code units.
+EditorExternalTextDropPlan? planEditorExternalPlainTextDrop({
+  required int targetDocumentId,
+  required int targetDocumentVersion,
+  required int currentDocumentId,
+  required int currentDocumentVersion,
+  required int targetDocumentLengthUtf16,
+  required int targetOffsetUtf16,
+  required String text,
+}) {
+  if (targetDocumentId != currentDocumentId ||
+      targetDocumentVersion <= 0 ||
+      targetDocumentVersion != currentDocumentVersion ||
+      targetDocumentLengthUtf16 < 0 ||
+      targetOffsetUtf16 < 0 ||
+      targetOffsetUtf16 > targetDocumentLengthUtf16 ||
+      text.isEmpty ||
+      text.length > maxEditorTextDragUtf16 ||
+      !_hasValidUtf16(text)) {
+    return null;
+  }
+
+  final normalized = text.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+  if (normalized.isEmpty || normalized.length > maxEditorTextDragUtf16) {
+    return null;
+  }
+  final insertedLength = normalized.length;
+  return EditorExternalTextDropPlan(
+    plainText: normalized,
+    forwardOperations: [TextOp.insert(targetOffsetUtf16, normalized)],
+    inverseOperations: [TextOp.delete(targetOffsetUtf16, insertedLength)],
+    caretAfterInsertUtf16: targetOffsetUtf16 + insertedLength,
+    resultLengthUtf16: targetDocumentLengthUtf16 + insertedLength,
+  );
+}
+
+bool _hasValidUtf16(String text) {
+  for (var index = 0; index < text.length; index++) {
+    final unit = text.codeUnitAt(index);
+    if (unit >= 0xD800 && unit <= 0xDBFF) {
+      if (index + 1 >= text.length) return false;
+      final next = text.codeUnitAt(index + 1);
+      if (next < 0xDC00 || next > 0xDFFF) return false;
+      index++;
+    } else if (unit >= 0xDC00 && unit <= 0xDFFF) {
+      return false;
+    }
+  }
+  return true;
+}
+
+@immutable
 class EditorTextDragEditPlan {
   const EditorTextDragEditPlan({
     required this.forward,

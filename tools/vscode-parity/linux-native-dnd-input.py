@@ -97,6 +97,8 @@ def main() -> int:
             scale = float(layout["devicePixelRatio"])
             source_x = round(float(layout["source"]["x"]) * scale)
             source_y = round(float(layout["source"]["y"]) * scale)
+            external_source_x = round(float(layout["externalSource"]["x"]) * scale)
+            external_source_y = round(float(layout["externalSource"]["y"]) * scale)
             target_x = round(float(layout["target"]["x"]) * scale)
             target_y = round(float(layout["target"]["y"]) * scale)
 
@@ -128,6 +130,34 @@ def main() -> int:
             if completed != {"selectedText": "alpha", "operation": "move"}:
                 raise AssertionError(f"Unexpected drag completion: {completed!r}")
 
+            run_xdotool(
+                "mousemove", "--sync", "--window", window_id,
+                str(external_source_x), str(external_source_y),
+            )
+            time.sleep(0.4)
+            run_xdotool("mousedown", "1")
+            time.sleep(0.3)
+            for step in range(1, 25):
+                x = round(external_source_x + (target_x - external_source_x) * step / 24)
+                y = round(external_source_y + (target_y - external_source_y) * step / 24)
+                run_xdotool("mousemove", "--sync", "--window", window_id, str(x), str(y))
+                time.sleep(0.04)
+            time.sleep(0.5)
+            run_xdotool("mouseup", "1")
+
+            wait_for(diagnostics / "external-drop.json", process, timeout=15)
+            external_drop = json.loads(
+                (diagnostics / "external-drop.json").read_text()
+            )
+            expected_external = {
+                "text": "external text",
+                "targetDocumentId": 7002,
+                "targetDocumentVersion": 4,
+                "targetOffsetUtf16": 6,
+            }
+            if external_drop != expected_external:
+                raise AssertionError(f"Unexpected external drop result: {external_drop!r}")
+
             pointer_events = [
                 json.loads(line)
                 for line in (diagnostics / "pointer-events.jsonl").read_text().splitlines()
@@ -141,6 +171,7 @@ def main() -> int:
                 "layout": layout,
                 "drop": result,
                 "dragCompleted": completed,
+                "externalDrop": external_drop,
                 "flutterPointerEventCount": len(pointer_events),
                 "flutterPointerEventTypes": sorted(pointer_types),
             }

@@ -213,12 +213,19 @@ def main() -> int:
             scale = float(layout["devicePixelRatio"])
             source_x = origin.x + round(float(layout["source"]["x"]) * scale)
             source_y = origin.y + round(float(layout["source"]["y"]) * scale)
+            external_source_x = origin.x + round(
+                float(layout["externalSource"]["x"]) * scale
+            )
+            external_source_y = origin.y + round(
+                float(layout["externalSource"]["y"]) * scale
+            )
             target_x = origin.x + round(float(layout["target"]["x"]) * scale)
             target_y = origin.y + round(float(layout["target"]["y"]) * scale)
             client_width = client.right - client.left
             client_height = client.bottom - client.top
             for label, x, y in (
                 ("source", source_x, source_y),
+                ("external source", external_source_x, external_source_y),
                 ("target", target_x, target_y),
             ):
                 client_x = x - origin.x
@@ -242,6 +249,10 @@ def main() -> int:
                 "clientScreenOrigin": {"x": origin.x, "y": origin.y},
                 "devicePixelRatio": scale,
                 "sourceScreen": {"x": source_x, "y": source_y},
+                "externalSourceScreen": {
+                    "x": external_source_x,
+                    "y": external_source_y,
+                },
                 "targetScreen": {"x": target_x, "y": target_y},
             }
             (diagnostics / "input-helper.json").write_text(
@@ -278,6 +289,41 @@ def main() -> int:
             if completed != {"selectedText": "alpha", "operation": "move"}:
                 raise AssertionError(f"Unexpected drag completion: {completed!r}")
 
+            set_cursor(external_source_x, external_source_y)
+            time.sleep(0.4)
+            user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+            button_is_down = True
+            time.sleep(0.25)
+            for step in range(1, 25):
+                x = round(
+                    external_source_x
+                    + (target_x - external_source_x) * step / 24
+                )
+                y = round(
+                    external_source_y
+                    + (target_y - external_source_y) * step / 24
+                )
+                set_cursor(x, y)
+                time.sleep(0.04)
+            time.sleep(0.5)
+            user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+            button_is_down = False
+
+            wait_for(diagnostics / "external-drop.json", process, timeout=20)
+            external_drop = json.loads(
+                (diagnostics / "external-drop.json").read_text(encoding="utf-8")
+            )
+            expected_external = {
+                "text": "external text",
+                "targetDocumentId": 7002,
+                "targetDocumentVersion": 4,
+                "targetOffsetUtf16": 6,
+            }
+            if external_drop != expected_external:
+                raise AssertionError(
+                    f"Unexpected external drop result: {external_drop!r}"
+                )
+
             pointer_events = read_json_lines(diagnostics / "pointer-events.jsonl")
             pointer_types = {str(event["type"]) for event in pointer_events}
             if not {"down", "move"}.issubset(pointer_types):
@@ -299,6 +345,7 @@ def main() -> int:
                 "layout": layout,
                 "drop": drop,
                 "dragCompleted": completed,
+                "externalDrop": external_drop,
                 "flutterPointerEventCount": len(pointer_events),
                 "flutterPointerEventTypes": sorted(pointer_types),
             }

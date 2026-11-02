@@ -1614,6 +1614,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           view.pendingInputOperations.isEmpty &&
           view.pendingInputWindowShiftUtf16 == 0);
 
+  bool _canReceiveExternalTextDrop(OpenDoc document) =>
+      document.diskState == DiskDocumentState.current &&
+      _canStartEditorTextDragDrop(document);
+
   EditorGroup? _ownerOf(int docId) {
     for (final g in _groups.values) {
       for (final d in g.docs) {
@@ -7989,6 +7993,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() {});
   }
 
+  void _onExternalTextDrop(
+    OpenDoc view,
+    EditorExternalTextDropRequest request,
+  ) {
+    if (_disposing || !_canReceiveExternalTextDrop(view)) return;
+    final document = view.doc;
+    final target = request.externalTextTarget;
+    if (target.targetDocumentId != document.id ||
+        target.targetDocumentVersion != document.version ||
+        view.inputWindow.version != target.targetDocumentVersion) {
+      return;
+    }
+    final plan = planEditorExternalPlainTextDrop(
+      targetDocumentId: target.targetDocumentId,
+      targetDocumentVersion: target.targetDocumentVersion,
+      currentDocumentId: document.id,
+      currentDocumentVersion: document.version,
+      targetDocumentLengthUtf16: view.inputWindow.totalUtf16Length,
+      targetOffsetUtf16: target.targetOffsetUtf16,
+      text: request.plainText,
+    );
+    if (plan == null) return;
+
+    final beforeCaret = view.selection.extentOffset;
+    try {
+      document.applyWith(
+        target.targetDocumentVersion,
+        plan.forwardOperations,
+      );
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '外部文本拖放未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    final caret = TextSelection.collapsed(offset: plan.caretAfterInsertUtf16);
+    view.additionalSelections = const [];
+    view.columnSelection = null;
+    _recordDocumentOperations(
+      view,
+      forward: plan.forwardOperations,
+      inverse: plan.inverseOperations,
+      beforeCaret: beforeCaret,
+      afterCaret: plan.caretAfterInsertUtf16,
+      coalesce: false,
+    );
+    view.replaceInputWindow(plan.caretAfterInsertUtf16, selection: caret);
+    _refreshSiblingViews(view, plan.forwardOperations);
+    final owner = _ownerOfView(view);
+    if (owner != null) _focusNodeFor(owner, view).requestFocus();
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() {});
+  }
+
   void _onEditorTextDragCompleted(
     OpenDoc sourceView,
     EditorTextDragPayload payload,
@@ -12220,6 +12280,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 onTextDragDrop:
                                     _canStartEditorTextDragDrop(active)
                                         ? (request) => _onSameDocumentTextDrop(
+                                              active,
+                                              request,
+                                            )
+                                        : null,
+                                onExternalTextDrop:
+                                    _canReceiveExternalTextDrop(active)
+                                        ? (request) => _onExternalTextDrop(
                                               active,
                                               request,
                                             )

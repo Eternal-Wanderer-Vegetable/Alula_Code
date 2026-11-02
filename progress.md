@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
-### 最新进展（2026-11-02，P04.59 / EDT-11a 进行中）
+### 最新进展（2026-11-02，P04.60 / EDT-11b 外部纯文本拖入）
+
+- 新增单项 `text/plain` 外部拖入：`DataReader` 异步读取（10 秒超时并取消）、65,536 UTF-16 上限、stale/IME/pending/只读状态保护、CRLF/CR 到 LF 归一、Rust 单次插入与单步 undo；串接光标、分屏、dirty、Find、语法和保存路径。localData 类型可识别但损坏时不会退化为外部复制；未改 ABI/Rust GUI 依赖。
+- `text_drag_drop_test.dart` 与 adapter widget 定向 12 项通过；Linux X11 本地原生 probe 在 Xvfb 中分别完成内部 move 与外部 plain-text copy，external callback 收到 `external text`、document 7002/v4/offset 6。最终复跑证据：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop-linux-xvfb-final2/`。`cargo fmt --all -- --check`、`flutter analyze`（0 issues）及完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 593）通过。
+- Windows fixture/helper 已加入同一外部文本场景，等待本片提交后的 hosted CI 结果；真实 macOS native DnD 仍 pending。按用户要求继续实现 Linux/Windows 首批功能，macOS 未验收保留为平台验收/发行门，不阻止下一片架构工作。P04.59 同文档 DnD 也保持 macOS pending；CI runner 假红与历史真实 SIGSEGV 的 readiness-handshake 修复分别记录，近期启动 smoke 未复现真实崩溃。GitNexus staged/all 变更审计仍报 CRITICAL 并将新私有拖放方法映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；证据与未解决风险见 P04.60 报告，不宣称图谱审计 clean。
+- 报告：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop.md`。当前下一步：GitNexus 变更审计后仅暂存本片精确文件/hunks、阶段提交并 push，查看 Windows hosted probe 与 PR CI，再补录 artifact。
+
+### CI 修复记录（2026-11-02，P04.59 / EDT-11a）
 
 - commit `5c1c501` 修复 Windows 两类 CI 假红：50,000 行测试 teardown 先卸载并排空 100ms，再以最多 5 秒重试删除；原生拖放探针接受插件接管时的 pointer cancel。定向 `flutter test --no-pub --reporter expanded test/workbench_multi_view_test.dart` 5 项通过，Dart format 与 Python AST 检查通过。Platform `41400262650` 和 PR CI `41400267570` 全绿，Windows P03.7、clipboard、accessibility、close smoke 均通过；DnD artifact `13121491263` 为 alpha/move/UTF-16 offset 11。Linux X11 artifact `13120289367` 通过。macOS hosted DnD artifact `13121237662` 明确因输入路由不可用而 SKIP；startup artifact `13121502027` 无 `.ips`/`.crash`，ARM64 验证包 `13121626550` 不是 v0.1.0 发行包。P04.59 仍待真实 macOS 原生拖放验收。详见 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
 

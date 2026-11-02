@@ -18,6 +18,9 @@ typedef EditorTextDropRequestBuilder = EditorTextDragDropRequest? Function(
   EditorTextDropOperation operation,
 );
 
+typedef EditorExternalTextDropTargetBuilder = EditorExternalTextDropTarget?
+    Function(Offset globalPosition);
+
 typedef EditorTextDragCompleted = void Function(
   EditorTextDragPayload payload,
   EditorTextDropOperation operation,
@@ -35,6 +38,8 @@ class EditorNativeTextDragDrop extends StatefulWidget {
     required this.buildDropRequest,
     required this.onDrop,
     required this.onDragCompleted,
+    this.editorExternalTextDropTargetAt,
+    this.onExternalTextDrop,
     required this.child,
   });
 
@@ -43,6 +48,8 @@ class EditorNativeTextDragDrop extends StatefulWidget {
   final EditorTextDropRequestBuilder buildDropRequest;
   final ValueChanged<EditorTextDragDropRequest> onDrop;
   final EditorTextDragCompleted onDragCompleted;
+  final EditorExternalTextDropTargetBuilder? editorExternalTextDropTargetAt;
+  final ValueChanged<EditorExternalTextDropRequest>? onExternalTextDrop;
   final Widget child;
 
   @override
@@ -124,19 +131,78 @@ class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
     return allowed.contains(nativeOperation) ? requested : null;
   }
 
+  DropOperation? _chooseExternalPlainTextDropOperation(
+    Set<DropOperation> allowed,
+  ) {
+    if (allowed.contains(DropOperation.copy)) return DropOperation.copy;
+    if (allowed.contains(DropOperation.move)) return DropOperation.move;
+    return null;
+  }
+
+  bool _isAlulaLocalItem(DropItem item) {
+    final localData = item.localData;
+    return localData is Map &&
+        localData['kind'] == EditorTextDragSelection.localDataKind;
+  }
+
+  DropItem? _externalPlainTextItem(DropSession session) {
+    if (session.items.length != 1) return null;
+    final item = session.items.single;
+    if (_isAlulaLocalItem(item) || !item.canProvide(Formats.plainText)) {
+      return null;
+    }
+    return item;
+  }
+
+  Future<String?> _readPlainText(DropItem item) async {
+    final reader = item.dataReader;
+    if (reader == null || !reader.canProvide(Formats.plainText)) return null;
+
+    final completer = Completer<String?>();
+    final progress = reader.getValue<String>(
+      Formats.plainText,
+      (value) {
+        if (!completer.isCompleted) completer.complete(value);
+      },
+      onError: (_) {
+        if (!completer.isCompleted) completer.complete(null);
+      },
+    );
+    if (progress == null) return null;
+    try {
+      return await completer.future.timeout(const Duration(seconds: 10));
+    } on Object {
+      progress.cancel();
+      return null;
+    }
+  }
+
   DropOperation _onDropOver(DropOverEvent event) {
     final payload = _payloadFromSession(event.session);
-    final operation = _requestedOperation(event.session.allowedOperations);
-    if (payload == null || operation == null) return DropOperation.none;
-    final request = widget.buildDropRequest(
-      payload,
-      event.position.global,
-      operation,
-    );
-    if (request == null) return DropOperation.none;
-    return operation == EditorTextDropOperation.copy
-        ? DropOperation.copy
-        : DropOperation.move;
+    if (payload != null) {
+      final operation = _requestedOperation(event.session.allowedOperations);
+      if (operation == null) return DropOperation.none;
+      final request = widget.buildDropRequest(
+        payload,
+        event.position.global,
+        operation,
+      );
+      if (request == null) return DropOperation.none;
+      return operation == EditorTextDropOperation.copy
+          ? DropOperation.copy
+          : DropOperation.move;
+    }
+
+    if (widget.onExternalTextDrop == null ||
+        widget.editorExternalTextDropTargetAt == null ||
+        _externalPlainTextItem(event.session) == null ||
+        widget.editorExternalTextDropTargetAt!(event.position.global) == null) {
+      return DropOperation.none;
+    }
+    return _chooseExternalPlainTextDropOperation(
+          event.session.allowedOperations,
+        ) ??
+        DropOperation.none;
   }
 
   Future<void> _onPerformDrop(PerformDropEvent event) async {
@@ -146,13 +212,30 @@ class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
       DropOperation.copy => EditorTextDropOperation.copy,
       _ => null,
     };
-    if (payload == null || operation == null) return;
-    final request = widget.buildDropRequest(
-      payload,
+    if (payload != null) {
+      if (operation == null) return;
+      final request = widget.buildDropRequest(
+        payload,
+        event.position.global,
+        operation,
+      );
+      if (request != null) widget.onDrop(request);
+      return;
+    }
+
+    final item = _externalPlainTextItem(event.session);
+    final target = widget.editorExternalTextDropTargetAt?.call(
       event.position.global,
-      operation,
     );
-    if (request != null) widget.onDrop(request);
+    if (item == null || target == null || operation == null) return;
+    final text = await _readPlainText(item);
+    if (text == null) return;
+    widget.onExternalTextDrop?.call(
+      EditorExternalTextDropRequest(
+        externalTextTarget: target,
+        plainText: text,
+      ),
+    );
   }
 
   @override
@@ -164,7 +247,10 @@ class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
       child: DraggableWidget(
         isLocationDraggable: _isLocationDraggable,
         child: DropRegion(
-          formats: const [],
+          formats: widget.onExternalTextDrop != null &&
+                  widget.editorExternalTextDropTargetAt != null
+              ? const [Formats.plainText]
+              : const [],
           hitTestBehavior: HitTestBehavior.opaque,
           onDropOver: _onDropOver,
           onPerformDrop: _onPerformDrop,

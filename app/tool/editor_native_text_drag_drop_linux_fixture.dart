@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:alula_app/editor/editor_native_text_drag_drop.dart';
 import 'package:alula_app/editor/text_drag_drop.dart';
 import 'package:flutter/material.dart';
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +27,10 @@ class _LinuxNativeDragFixture extends StatefulWidget {
 }
 
 class _LinuxNativeDragFixtureState extends State<_LinuxNativeDragFixture> {
+  final GlobalKey _externalSourceKey = GlobalKey();
+  final GlobalKey _internalSourceKey = GlobalKey();
+  final GlobalKey _targetKey = GlobalKey();
+
   static const _payload = EditorTextDragPayload(
     selection: EditorTextDragSelection(
       documentId: 7001,
@@ -41,25 +46,35 @@ class _LinuxNativeDragFixtureState extends State<_LinuxNativeDragFixture> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final size =
-          WidgetsBinding.instance.platformDispatcher.views.first.physicalSize;
-      final ratio = WidgetsBinding
-          .instance.platformDispatcher.views.first.devicePixelRatio;
-      _writeLayout(size / ratio, ratio);
+      final view = WidgetsBinding.instance.platformDispatcher.views.first;
+      _writeLayout(view.devicePixelRatio);
       File('${widget.directory.path}/ready').writeAsStringSync('ready');
     });
   }
 
-  void _writeLayout(Size logicalSize, double devicePixelRatio) {
-    final left = logicalSize.width / 2 - 120;
-    final top = logicalSize.height / 2 - 195;
+  void _writeLayout(double devicePixelRatio) {
+    Offset centerOf(GlobalKey key) {
+      final box = key.currentContext!.findRenderObject()! as RenderBox;
+      return box.localToGlobal(box.size.center(Offset.zero));
+    }
+
+    Map<String, double> jsonPoint(Offset point) =>
+        {'x': point.dx, 'y': point.dy};
+
     File('${widget.directory.path}/layout.json').writeAsStringSync(
       jsonEncode({
-        'source': {'x': left + 120, 'y': top + 45},
-        'target': {'x': left + 120, 'y': top + 90 + 120 + 45},
+        'source': jsonPoint(centerOf(_internalSourceKey)),
+        'externalSource': jsonPoint(centerOf(_externalSourceKey)),
+        'target': jsonPoint(centerOf(_targetKey)),
         'devicePixelRatio': devicePixelRatio,
       }),
     );
+  }
+
+  bool _isExternalSource(Offset position) {
+    final box = _externalSourceKey.currentContext?.findRenderObject();
+    if (box is! RenderBox) return false;
+    return box.size.contains(box.globalToLocal(position));
   }
 
   void _recordPointer(String type, PointerEvent event) {
@@ -92,7 +107,7 @@ class _LinuxNativeDragFixtureState extends State<_LinuxNativeDragFixture> {
                   '${jsonEncode({'x': position.dx, 'y': position.dy})}\n',
                   mode: FileMode.append,
                 );
-                return _payload;
+                return _isExternalSource(position) ? null : _payload;
               },
               buildDropRequest: (payload, position, operation) {
                 File('${widget.directory.path}/drop-over.jsonl')
@@ -130,28 +145,74 @@ class _LinuxNativeDragFixtureState extends State<_LinuxNativeDragFixture> {
                   }),
                 );
               },
-              child: const Center(
+              editorExternalTextDropTargetAt: (position) =>
+                  _isExternalSource(position)
+                      ? null
+                      : const EditorExternalTextDropTarget(
+                          targetDocumentId: 7002,
+                          targetDocumentVersion: 4,
+                          targetOffsetUtf16: 6,
+                        ),
+              onExternalTextDrop: (request) {
+                File('${widget.directory.path}/external-drop.json')
+                    .writeAsStringSync(
+                  jsonEncode({
+                    'text': request.plainText,
+                    'targetDocumentId':
+                        request.externalTextTarget.targetDocumentId,
+                    'targetDocumentVersion':
+                        request.externalTextTarget.targetDocumentVersion,
+                    'targetOffsetUtf16':
+                        request.externalTextTarget.targetOffsetUtf16,
+                  }),
+                );
+              },
+              child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      key: ValueKey('alula-dnd-source'),
+                      key: _internalSourceKey,
                       width: 240,
                       height: 90,
-                      child: Center(child: Text('Drag source')),
+                      child: const Center(child: Text('Drag source')),
                     ),
-                    SizedBox(height: 120),
+                    const SizedBox(height: 16),
                     SizedBox(
-                      key: ValueKey('alula-dnd-target'),
+                      key: _externalSourceKey,
                       width: 240,
                       height: 90,
-                      child: Center(child: Text('Drop target')),
+                      child: const _ExternalPlainTextSource(),
+                    ),
+                    const SizedBox(height: 120),
+                    SizedBox(
+                      key: _targetKey,
+                      width: 240,
+                      height: 90,
+                      child: const Center(child: Text('Drop target')),
                     ),
                   ],
                 ),
               ),
             ),
           ),
+        ),
+      );
+}
+
+class _ExternalPlainTextSource extends StatelessWidget {
+  const _ExternalPlainTextSource();
+
+  @override
+  Widget build(BuildContext context) => DragItemWidget(
+        dragItemProvider: (_) async {
+          final item = DragItem();
+          item.add(Formats.plainText('external text'));
+          return item;
+        },
+        allowedOperations: () => const [DropOperation.copy],
+        child: const DraggableWidget(
+          child: Center(child: Text('External text source')),
         ),
       );
 }

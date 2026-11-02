@@ -111,6 +111,59 @@ void main() {
     });
   });
 
+  group('external plain-text drops', () {
+    test('normalizes line endings and keeps Unicode insert undoable', () {
+      const text = 'x\r\n😀\ry';
+      final plan = planEditorExternalPlainTextDrop(
+        targetDocumentId: 12,
+        targetDocumentVersion: 5,
+        currentDocumentId: 12,
+        currentDocumentVersion: 5,
+        targetDocumentLengthUtf16: 4,
+        targetOffsetUtf16: 3,
+        text: text,
+      );
+
+      expect(plan, isNotNull);
+      expect(plan!.plainText, 'x\n😀\ny');
+      expect(plan.caretAfterInsertUtf16, 9);
+      final inserted = applyTextOps('A😀B', plan.forwardOperations);
+      expect(inserted, 'A😀x\n😀\nyB');
+      expect(inserted.length, plan.resultLengthUtf16);
+      expect(applyTextOps(inserted, plan.inverseOperations), 'A😀B');
+    });
+
+    test('rejects stale, out-of-range, empty, invalid, and oversized text', () {
+      EditorExternalTextDropPlan? plan({
+        int documentId = 12,
+        int documentVersion = 5,
+        int currentVersion = 5,
+        int documentLength = 4,
+        int offset = 2,
+        String text = 'ok',
+      }) =>
+          planEditorExternalPlainTextDrop(
+            targetDocumentId: documentId,
+            targetDocumentVersion: documentVersion,
+            currentDocumentId: 12,
+            currentDocumentVersion: currentVersion,
+            targetDocumentLengthUtf16: documentLength,
+            targetOffsetUtf16: offset,
+            text: text,
+          );
+
+      expect(plan(documentId: 13), isNull);
+      expect(plan(documentVersion: 4), isNull);
+      expect(plan(offset: 5), isNull);
+      expect(plan(text: ''), isNull);
+      expect(plan(text: String.fromCharCode(0xD800)), isNull);
+      expect(
+        plan(text: List<String>.filled(maxEditorTextDragUtf16 + 1, 'x').join()),
+        isNull,
+      );
+    });
+  });
+
   group('same-document drag edits', () {
     test('moves text before its source with emoji-safe UTF-16 offsets', () {
       const sourceText = 'A😀BC';
