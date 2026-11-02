@@ -130,6 +130,49 @@ void main() {
     });
   });
 
+  group('snippetCurrentWordVariables', () {
+    test('uses the default word definition at the cursor position', () {
+      expect(
+        snippetCurrentWordVariables('alpha.beta -12.5ms', 2),
+        {'TM_CURRENT_WORD': 'alpha'},
+      );
+      expect(
+        snippetCurrentWordVariables('alpha.beta -12.5ms', 5),
+        {'TM_CURRENT_WORD': 'alpha'},
+      );
+      expect(
+        snippetCurrentWordVariables('alpha.beta -12.5ms', 6),
+        {'TM_CURRENT_WORD': 'beta'},
+      );
+      expect(
+        snippetCurrentWordVariables('alpha.beta -12.5ms', 14),
+        {'TM_CURRENT_WORD': '-12.5ms'},
+      );
+    });
+
+    test('uses UTF-16 cursor columns and returns no value off a word', () {
+      expect(
+        snippetCurrentWordVariables('🙂 value', 4),
+        {'TM_CURRENT_WORD': 'value'},
+      );
+      expect(
+        snippetCurrentWordVariables('🙂 value', 2),
+        {'TM_CURRENT_WORD': '🙂'},
+      );
+      expect(snippetCurrentWordVariables('   ', 2), isEmpty);
+      expect(
+        () => snippetCurrentWordVariables('word', 5),
+        throwsRangeError,
+      );
+    });
+
+    test('bounds long-line lookup to the Code-OSS context window', () {
+      final line = "${'a' * 100}Q${'a' * 1100}";
+      final variables = snippetCurrentWordVariables(line, 600);
+      expect(variables['TM_CURRENT_WORD'], 'a' * 1000);
+    });
+  });
+
   group('snippetTemplateUsesVariable', () {
     test('recognizes plain, braced, and defaulted references', () {
       expect(
@@ -141,6 +184,15 @@ void main() {
       expect(
         snippetTemplateUsesVariable(
             r'${TM_CURRENT_LINE:fallback}', 'TM_CURRENT_LINE'),
+        isTrue,
+      );
+      expect(
+        snippetTemplateUsesVariable(r'$TM_CURRENT_WORD', 'TM_CURRENT_WORD'),
+        isTrue,
+      );
+      expect(
+        snippetTemplateUsesVariable(
+            r'${TM_CURRENT_WORD:fallback}', 'TM_CURRENT_WORD'),
         isTrue,
       );
     });
@@ -156,6 +208,20 @@ void main() {
       expect(
         snippetTemplateUsesVariable(
             r'${TM_SELECTED_TEXT:$TM_CURRENT_LINE}', 'TM_CURRENT_LINE'),
+        isFalse,
+      );
+      expect(
+        snippetTemplateUsesVariable(r'\$TM_CURRENT_WORD', 'TM_CURRENT_WORD'),
+        isFalse,
+      );
+      expect(
+        snippetTemplateUsesVariable(
+            r'$TM_CURRENT_WORD_SUFFIX', 'TM_CURRENT_WORD'),
+        isFalse,
+      );
+      expect(
+        snippetTemplateUsesVariable(
+            r'${TM_SELECTED_TEXT:$TM_CURRENT_WORD}', 'TM_CURRENT_WORD'),
         isFalse,
       );
     });
@@ -265,6 +331,24 @@ void main() {
 
       expect(expansion.text, r'<let $TM_FILENAME = 🦊;>');
       expect(expansion.tabstopOrder, [0]);
+    });
+
+    test('expands current word and preserves unresolved references', () {
+      expect(
+        expandSnippetTemplate(
+          r'<$TM_CURRENT_WORD>${TM_CURRENT_WORD:fallback}',
+          variables: snippetCurrentWordVariables('let value', 6),
+        ).text,
+        '<value>value',
+      );
+      expect(
+        expandSnippetTemplate(r'$TM_CURRENT_WORD').text,
+        r'$TM_CURRENT_WORD',
+      );
+      expect(
+        expandSnippetTemplate(r'${TM_CURRENT_WORD:fallback}').text,
+        r'${TM_CURRENT_WORD:fallback}',
+      );
     });
 
     test('preserves malformed placeholder syntax as literal text', () {

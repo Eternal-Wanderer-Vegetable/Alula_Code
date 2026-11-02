@@ -9787,7 +9787,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           maxLines: 8,
           decoration: const InputDecoration(
             labelText: '片段模板',
-            helperText: r'支持 $1、${1:默认值}、$0、$TM_SELECTED_TEXT 和 $TM_CURRENT_LINE',
+            helperText:
+                r'支持 $1、${1:默认值}、$0、$TM_SELECTED_TEXT、$TM_CURRENT_LINE 和 $TM_CURRENT_WORD',
           ),
         ),
         actions: [
@@ -9861,44 +9862,130 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       userHome: Platform.environment[homeVariable],
     );
     final currentLineVariables = <String, String>{};
-    if (snippetTemplateUsesVariable(template, 'TM_CURRENT_LINE')) {
-      late final String currentLine;
+    final currentWordVariables = <String, String>{};
+    final needsCurrentLine =
+        snippetTemplateUsesVariable(template, 'TM_CURRENT_LINE');
+    final needsCurrentWord =
+        snippetTemplateUsesVariable(template, 'TM_CURRENT_WORD');
+    if (needsCurrentLine || needsCurrentWord) {
       try {
         final boundary = doc.doc.lineBoundary(selection.extentOffset);
-        if (boundary.version != window.version) {
+        if (cursorPosition.version != boundary.version ||
+            boundary.version != window.version) {
           doc.replaceInputWindow(selection.extentOffset);
           if (mounted) setState(() => _statusDetail = '片段插入未应用：文档同步版本已变化');
           return;
         }
-        final lineLengthUtf16 = boundary.endUtf16 - boundary.startUtf16;
-        if (lineLengthUtf16 > window.maxWindowUtf16) {
-          if (mounted) setState(() => _statusDetail = '当前行过长，无法在片段输入窗中展开');
-          return;
-        }
-        if (lineLengthUtf16 == 0) {
-          currentLine = '';
-        } else {
-          final lineRange = doc.doc.readRange(
-            boundary.startUtf16,
-            maxLenUtf16: lineLengthUtf16,
-          );
-          if (lineRange.version != boundary.version ||
-              lineRange.startUtf16 != boundary.startUtf16 ||
-              lineRange.endUtf16 != boundary.endUtf16 ||
-              lineRange.text.length != lineLengthUtf16) {
-            doc.replaceInputWindow(selection.extentOffset);
-            if (mounted) setState(() => _statusDetail = '当前行读取失败：文档同步版本已变化');
+        if (needsCurrentLine) {
+          final lineLengthUtf16 = boundary.endUtf16 - boundary.startUtf16;
+          if (lineLengthUtf16 > window.maxWindowUtf16) {
+            if (mounted) {
+              setState(() => _statusDetail = '当前行过长，无法在片段输入窗中展开');
+            }
             return;
           }
-          currentLine = lineRange.text;
+          if (lineLengthUtf16 == 0) {
+            currentLineVariables.addAll(snippetCurrentLineVariables(''));
+          } else {
+            final lineRange = doc.doc.readRange(
+              boundary.startUtf16,
+              maxLenUtf16: lineLengthUtf16,
+            );
+            if (lineRange.version != boundary.version ||
+                lineRange.startUtf16 != boundary.startUtf16 ||
+                lineRange.endUtf16 != boundary.endUtf16 ||
+                lineRange.text.length != lineLengthUtf16) {
+              doc.replaceInputWindow(selection.extentOffset);
+              if (mounted) {
+                setState(() => _statusDetail = '当前行读取失败：文档同步版本已变化');
+              }
+              return;
+            }
+            currentLineVariables.addAll(
+              snippetCurrentLineVariables(lineRange.text),
+            );
+          }
+        }
+        if (needsCurrentWord) {
+          final caretOffset = selection.extentOffset;
+          final lineLengthUtf16 = boundary.endUtf16 - boundary.startUtf16;
+          var contextStart = boundary.startUtf16;
+          var contextEnd = boundary.endUtf16;
+          if (lineLengthUtf16 > snippetCurrentWordContextUtf16) {
+            const halfContext = snippetCurrentWordContextUtf16 ~/ 2;
+            final lineColumnUtf16 = caretOffset - boundary.startUtf16;
+            final desiredStart =
+                boundary.startUtf16 + lineColumnUtf16 + 1 - halfContext;
+            if (desiredStart > contextStart) contextStart = desiredStart;
+            final desiredEnd =
+                boundary.startUtf16 + lineColumnUtf16 + 1 + halfContext;
+            if (desiredEnd < contextEnd) contextEnd = desiredEnd;
+          }
+
+          late final DocumentPosition contextPosition;
+          try {
+            contextPosition = doc.doc.positionAt(contextStart);
+          } on AlulaException catch (error) {
+            if (error.code != 'InvalidUtf16Offset' ||
+                contextStart <= boundary.startUtf16) {
+              rethrow;
+            }
+            contextStart--;
+            contextPosition = doc.doc.positionAt(contextStart);
+          }
+          if (contextPosition.version != boundary.version ||
+              contextPosition.offsetUtf16 != contextStart) {
+            doc.replaceInputWindow(selection.extentOffset);
+            if (mounted) {
+              setState(() => _statusDetail = '当前单词读取失败：文档同步版本已变化');
+            }
+            return;
+          }
+          if (contextEnd - contextStart > snippetCurrentWordContextUtf16) {
+            contextEnd = contextStart + snippetCurrentWordContextUtf16;
+          }
+          if (contextEnd < caretOffset || contextStart > caretOffset) {
+            doc.replaceInputWindow(selection.extentOffset);
+            if (mounted) {
+              setState(() => _statusDetail = '当前单词读取失败：光标范围无效');
+            }
+            return;
+          }
+          if (contextEnd == contextStart) {
+            currentWordVariables.addAll(snippetCurrentWordVariables('', 0));
+          } else {
+            final wordRange = doc.doc.readRange(
+              contextStart,
+              maxLenUtf16: contextEnd - contextStart,
+            );
+            if (wordRange.version != boundary.version ||
+                wordRange.startUtf16 != contextStart ||
+                wordRange.endUtf16 < caretOffset ||
+                wordRange.endUtf16 > contextEnd ||
+                wordRange.text.length !=
+                    wordRange.endUtf16 - wordRange.startUtf16) {
+              doc.replaceInputWindow(selection.extentOffset);
+              if (mounted) {
+                setState(() => _statusDetail = '当前单词读取失败：文档同步版本已变化');
+              }
+              return;
+            }
+            currentWordVariables.addAll(
+              snippetCurrentWordVariables(
+                wordRange.text,
+                caretOffset - wordRange.startUtf16,
+              ),
+            );
+          }
         }
       } on AlulaException catch (error) {
         if (mounted) {
-          setState(() => _statusDetail = '当前行读取失败：${error.code} ${error.detail}');
+          final variableName = needsCurrentLine ? '当前行' : '当前单词';
+          setState(() => _statusDetail =
+              '$variableName 读取失败：${error.code} ${error.detail}');
         }
         return;
       }
-      currentLineVariables.addAll(snippetCurrentLineVariables(currentLine));
     }
     late final SnippetExpansion expansion;
     try {
@@ -9910,6 +9997,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ...pathVariables,
           ...lineVariables,
           ...currentLineVariables,
+          ...currentWordVariables,
         },
       );
     } on SnippetTemplateException catch (error) {

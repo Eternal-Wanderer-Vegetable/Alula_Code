@@ -1,35 +1,31 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.69 / EDT-12b5 `$TM_CURRENT_LINE` is complete and pushed as `ed56d58`; follow-up hosted evidence is being recorded. Local targeted tests (35), full `init.sh` (Rust workspace, Clippy, build_core, Flutter 658), cargo fmt, and Flutter analyze all passed. PR CI `41502782763` and Platform Availability `41502776628` are fully green. Linux and Windows hosted DnD/clipboard/launch/close checks passed. macOS ARM64 `.app` validation package artifact `13170707375` exists; macOS native DnD was explicitly skipped because the hosted pointer route is unavailable, so native Mac validation remains pending. Do not launch local GUI/Narrator.
+> Last Updated: 2026-11-03. P04.70 / EDT-12b6 `$TM_CURRENT_WORD` implementation is locally complete. Full `bash init.sh` passes (Rust workspace, Clippy, core build, Flutter 664); `cargo fmt --all -- --check` and `flutter analyze --no-pub` pass; focused parser/workbench suite has 41 passing tests. Code, evidence, and plan status are recorded locally. GitNexus staged/all scans pass at 9 files / 19 symbols / 0 resolved flows / LOW. `compare --base-ref main` reports CRITICAL across 1551 files because this branch is 2345 commits ahead of the merge base; preserve this branch-wide warning in the report. Commit/push to `codex/vscode-parity-p00` and hosted CI are the remaining steps. Avoid launching local GUI/Narrator.
 
 ## Current Objective
 
-Continue the fixed Code-OSS VS Code parity plan. `docs/03-里程碑计划与验收标准.md` is the only authoritative task/DoD source. P04 / feat-026 remains the single active feature. Next EDT-12 candidate is `$TM_CURRENT_WORD`; verify pinned Code-OSS 1.145.0 behavior and run GitNexus impact before editing. Continue one sub-item at a time. Memory-target optimization remains deferred until overall architecture parity is complete.
+Finish P04.70 by running GitNexus `detect-changes` on staged/all changes, committing the feature/evidence, pushing the authorized branch, and waiting for PR CI plus Platform Availability. Record hosted results in docs and `feature_list.json`; only then select the next single P04 sub-item from `docs/03-里程碑计划与验收标准.md`. `docs/03` is the only authoritative task/DoD source. Memory-target optimization remains deferred until architecture parity is complete.
 
 ## Current Evidence and Files
 
-- P04.69 implementation commit: `ed56d58` on `codex/vscode-parity-p00`.
-- Local evidence: `docs/diagnostics/2026-11-03-p04/p04.69-current-line-snippet-variable.md`.
-- Crash/CI classification: `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`.
-- Hosted CI run: `41502782763` (Flutter, Rust Ubuntu/Windows, harness all pass).
-- Hosted platform run: `41502776628` (Linux/Windows/macOS jobs success). Linux/Windows artifacts record real pointer/drop interactions; Windows close lifecycle smoke passed.
-- macOS ARM64 validation package: artifact `13170707375`, a packaged `.app` ZIP. It is not the v0.1.0 release. macOS DnD artifact `13169863681` says pointer route false/no Flutter events and explicitly skips; startup artifact `13170916969` contains only Impeller initialization, no crash report.
+- P04.70 implementation: `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, and the two snippet test files.
+- P04.70 evidence: `docs/diagnostics/2026-11-03-p04/p04.70-current-word-snippet-variable.md`.
+- Plan row: P04.70 is in progress in `docs/03-里程碑计划与验收标准.md`; `feat-026` remains in progress.
+- Code-OSS 1.145.0 reference commit: `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`. Alula currently has no per-language `wordPattern`, so current-word uses the default word definition and a bounded 1000 UTF-16 context.
+- GitNexus pre-edit impact: `expandSnippetTemplate`, `snippetCurrentLineVariables`, and `_insertSnippetTemplate` all reported LOW; the final staged/all scans are LOW; the broad compare-main CRITICAL is documented as branch history.
+- CI/crash report: `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Run `41458740387` failed a Windows MSAA welcome-text assertion after requesting focus. Run `41370553563` separately recorded a macOS DnD pointer-route timeout and a real launch SIGSEGV (exit 139). Run `41505691264` is a successful baseline PR CI run; none of these claims permanent crash resolution.
 
-Root `/mnt/e/alula_code` contains extensive pre-existing unstaged user changes, including edits to `app/lib/workbench/workbench_page.dart`. Preserve every unrelated hunk and stage only explicitly requested milestone changes. PR #2 remains draft; do not mark ready, merge, or publish v0.1.0 before the full plan/release gates.
-
-## CI and Crash Follow-up
-
-The user's CI concern is documented in `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Many historical reds came from probes/fixtures; the old exact Windows Release artifact genuinely exited `0xC000041D` on close. New P04.69 hosted Windows close checks pass and no new crash was reported, but this is non-reproduction evidence only. The historical macOS SIGSEGV is still not proven permanently fixed. Hosted macOS native DnD remains unverified because its input route is unavailable.
+Root `/mnt/e/alula_code` contains extensive pre-existing unstaged user changes, including edits to `app/lib/workbench/workbench_page.dart`. Continue only in `/tmp/alula-p04.70-next` and preserve unrelated root changes. PR #2 stays draft; do not mark ready, merge, or publish v0.1.0 before full plan/release gates.
 
 ## Blockers and Constraints
 
-- No macOS native test host is available; native DnD/IME and device validation remain pending.
-- Avoid local GUI and Narrator because prior UI checks triggered Narrator repeatedly.
-- 500 MiB process-memory target is suspended until architecture parity is complete.
-- GitNexus index has unresolved cross-language references and truncated walks. Keep UNKNOWN/HIGH/CRITICAL warnings explicit; do not treat missing callers or zero flows as proof of no impact.
+- No macOS native test host is available; native DnD/IME/device validation remains pending.
+- Avoid local GUI and Narrator because earlier GUI checks triggered Narrator repeatedly.
+- 500 MiB process-memory target remains suspended until architecture parity is complete.
+- GitNexus has unresolved cross-language references and truncated walks. UNKNOWN/HIGH/CRITICAL warnings remain explicit; missing callers or zero resolved flows are not proof of no impact.
 
 ## Next Steps
 
-1. Finish committing and pushing the hosted evidence update for P04.69 after GitNexus staged/all review.
-2. Select `$TM_CURRENT_WORD` as the next single EDT-12 slice; read its Code-OSS reference, check index freshness, run impact, then implement in a clean worktree.
-3. Keep release CI work and v0.1.0 publication deferred until all plan milestones are complete.
+1. Final `detect-changes` staged/all scans are complete; compare-main branch divergence is recorded in the evidence report.
+2. Commit and push P04.70 and wait for hosted CI/platform lanes. Correct failures before marking the milestone done.
+3. Update P04.70 hosted evidence and then select the next single EDT-12 slice.

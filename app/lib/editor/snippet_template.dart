@@ -131,6 +131,53 @@ Map<String, String> snippetCurrentLineVariables(String currentLine) => {
       'TM_CURRENT_LINE': currentLine,
     };
 
+const int snippetCurrentWordContextUtf16 = 1000;
+final RegExp _snippetDefaultWordDefinition = RegExp(
+  r'''(-?\d*\.\d\w*)|([^\`\~\!\@\#\$\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)''',
+);
+
+/// Returns Code-OSS's default word at [zeroBasedColumnUtf16].
+///
+/// Alula does not yet expose per-language `wordPattern` configuration, so
+/// this uses the default word definition. The search window matches the
+/// bounded 1000-code-unit context used by Code-OSS for long lines.
+Map<String, String> snippetCurrentWordVariables(
+  String lineContext,
+  int zeroBasedColumnUtf16,
+) {
+  if (zeroBasedColumnUtf16 < 0 || zeroBasedColumnUtf16 > lineContext.length) {
+    throw RangeError.range(
+      zeroBasedColumnUtf16,
+      0,
+      lineContext.length,
+      'zeroBasedColumnUtf16',
+    );
+  }
+
+  var text = lineContext;
+  var textOffset = 0;
+  if (text.length > snippetCurrentWordContextUtf16) {
+    const halfContext = snippetCurrentWordContextUtf16 ~/ 2;
+    var start = zeroBasedColumnUtf16 + 1 - halfContext;
+    if (start < 0) {
+      start = 0;
+    } else {
+      textOffset = start;
+    }
+    var end = zeroBasedColumnUtf16 + 1 + halfContext;
+    if (end > text.length) end = text.length;
+    text = text.substring(start, end);
+  }
+
+  final position = zeroBasedColumnUtf16 - textOffset;
+  for (final match in _snippetDefaultWordDefinition.allMatches(text)) {
+    if (match.start <= position && position <= match.end) {
+      return {'TM_CURRENT_WORD': match.group(0)!};
+    }
+  }
+  return const {};
+}
+
 /// Reports whether [template] contains a syntactically recognized [name]
 /// variable reference. Escaped variables and text inside another variable's
 /// default value are not references because the snippet parser keeps both
@@ -247,7 +294,8 @@ String _snippetPathLabel(
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
 /// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
 /// `$TM_DIRECTORY_BASE`, `$TM_FILEPATH`, `$TM_LINE_INDEX`, and `$TM_LINE_NUMBER`
-/// variables.
+/// variables, plus `$TM_CURRENT_LINE` and `$TM_CURRENT_WORD` when supplied by
+/// the workbench.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
 /// for later parity slices; unsupported choice/transform forms fail explicitly

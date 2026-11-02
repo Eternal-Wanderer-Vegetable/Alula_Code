@@ -333,6 +333,72 @@ void main() {
     }
   });
 
+  testWidgets('current-word variable uses the Rust cursor and saves',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: 'before\r\n🙂prefix targetSuffix\r\nlast',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 20);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_CURRENT_WORD>$0',
+      );
+
+      const expectedEditor =
+          'before\n🙂prefix targ<targetSuffix>etSuffix\nlast';
+      const expectedOnDisk =
+          'before\r\n🙂prefix targ<targetSuffix>etSuffix\r\nlast';
+      expect(controller.text, expectedEditor);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), expectedOnDisk);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('current-word variable bounds long-line reads', (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final longWord = "${'a' * 100}Q${'a' * 1100}";
+      final expected = "${'a' * 100}Q${'a' * 2100}";
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: longWord,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 600);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(tester, template: r'$TM_CURRENT_WORD');
+
+      expect(controller.text, expected);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), expected);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets(
       'current-line variable rejects a line larger than the input window',
       (tester) async {

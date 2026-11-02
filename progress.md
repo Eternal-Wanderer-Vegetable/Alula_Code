@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.70 / EDT-12b6 当前单词片段变量，本地完成待 hosted CI）
+
+- 按固定 Code-OSS 1.145.0 增加 `$TM_CURRENT_WORD`：从活动光标 extent 解析当前 word；Alula 尚无每语言 `wordPattern` 配置，本项采用 Code-OSS 默认 word definition。只在模板真正引用变量时读取，通过 Rust 行边界、合法 UTF-16 起点与同版本 `readRange` 读取最多 1000 单元上下文；无 Rust/ABI 改动，未命中保持未知变量原式。
+- 定向 parser/workbench 41 项全绿，覆盖分隔符/word 边界、十进制数、Emoji 与 UTF-16、CRLF 保存回读、未知变量、长行 1000 单元窗口。最终完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 664），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 为 0 issues。GitNexus staged/all 均为 9 files/19 symbols/0 resolved flows、LOW；compare-main 为 CRITICAL，因 parity 分支与 main 相差 2345 commits/1550 files，已在证据报告保留该宽范围告警。代码与本地证据待提交、推送；hosted CI 待补。
+- CI 复查：run `41458740387` 的 Windows 红灯是 MSAA 快照缺少欢迎语的语义文本断言；run `41370553563` 有真实 macOS launch SIGSEGV/exit 139，另有无 pointer events 的 DnD 探针超时。当前基线 PR run `41505691264` 成功，不能把它们合并成单一原因，也不能把新构建未复现当作永久修复。详见 `docs/diagnostics/2026-11-03-p04/p04.70-current-word-snippet-variable.md`。
+
 ### 最新进展（2026-11-03，P04.69 / EDT-12b5 当前行片段变量，已提交并通过 hosted CI）
 
 - 按固定 Code-OSS 1.145.0 增加 `$TM_CURRENT_LINE`，按插入前光标所在逻辑行展开，去掉 CR/LF 行终止符并保留行内容原样；只有模板确实包含可解析变量时才读取 Rust 行范围。超出 16,384 UTF-16 输入窗上限、版本不一致或读取不完整时不做部分编辑。无 Rust/ABI 改动。
