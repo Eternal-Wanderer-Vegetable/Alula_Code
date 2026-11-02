@@ -70,7 +70,7 @@ func postMouseEvent(
     ])
   }
   if let targetPID {
-    CGEventPostToPid(targetPID, event)
+    event.postToPid(targetPID)
   } else {
     event.post(tap: .cghidEventTap)
   }
