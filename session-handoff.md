@@ -1,17 +1,18 @@
-> Last Updated：2026-11-02（P04.63 / EDT-11e 已完成：代码/fixture 提交 `8c4ca9c` 已 push；PR CI `41447739900` 全绿，Platform `41447732320` 的三平台 native clipboard formats 全通过。Linux lane 全绿；macOS clipboard/DnD/startup/package 全过；Windows app launch、P03.7 interaction 和 clipboard 通过，但 Windows DnD probe 等待 drop.json 超时（artifact 记录 down/move/cancel），accessibility 又缺少“打开一个文件夹开始工作”语义文本。三个 OS launch smoke 成功、无新 crash stack；两项 Windows 红灯独立于 P04.63 clipboard DoD。完整本地 init.sh EXIT=0（Flutter 617）、cargo fmt 与 flutter analyze 0 issues。GitNexus staged scan 结果曾在 CRITICAL、no-symbol/not-clean 与 LOW/0 flows 间波动，不能宣称风险 clean；compare-main 整分支 CRITICAL/capped，图谱警告已归档。不要启动本机 GUI以免触发讲述人；下一步按 docs/03 选择下一项，保留 Windows DnD/accessibility 后续；500 MiB 留 P14。）
+> Last Updated：2026-11-02（P03.7 hosted accessibility follow-up 已修复并验证：`40b8444` 暴露当前有界编辑器文本到 Semantics。完整 `bash init.sh` EXIT=0（Flutter 618）；PR CI `41461810249` 与 Platform Availability `41461800457` 全绿。Windows 当前构建的 focused MSAA welcome value、P03.7 interaction、native DnD/clipboard 与 WM_CLOSE exit 0 检查均通过；Linux lane 通过；macOS hosted build/launch/package 通过。此前 run `41458740387` 的 focused MSAA field 仍 Value 空、但窗口关闭 exit 0，属于语义暴露 bug，不是崩溃。报告：`docs/diagnostics/2026-11-02-p03/p03.7-msaa-editor-value.md`。不要在本机启动 GUI/讲述人。Windows 11 Narrator/DPI/主题、Linux DRM、macOS 原生设备仍待验；旧固定 artifact 的 `0xC000041D` 不因新构建通过而改变。）
 
 ## Current Objective
-P04.63 / EDT-11e is complete. Continue the fixed Code-OSS parity plan using docs/03 as the task-state source; the next slice must be selected from its dependency-ready rows.
+继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。P03.7 语义修复已完成，选择下一项依赖满足的 in-progress/not-started 切片。
 
 ## Blockers and Follow-ups
-Windows native DnD probe in Platform run 41447732320 timed out after pointer down/move/cancel without drop.json; Windows accessibility smoke lacks “打开一个文件夹开始工作”. These are separate from P04.63 clipboard acceptance. No new crash stack was found; all three platform launch smokes passed.
+- Windows 11 Narrator/键盘焦点遍历与 DPI/主题矩阵、Linux native DRM、macOS 原生设备验收仍 pending；macOS CI 包仅为验证 artifact。
+- P04.59 macOS 原生 DnD 仍 pending。CI 红灯调查和 P03.7 语义修复已记录在 diagnostics；不把它们与历史 crash 混同。
+- 不在本机启动 GUI，避免触发讲述人。
 
 ## Files Involved
-`app/lib/editor/editor_clipboard.dart`, `app/lib/editor/paste_as.dart`, `app/integration_test/editor_clipboard_desktop_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, and the P04.63 diagnostic report.
+`app/lib/editor/rust_text_input_field.dart`, `app/test/rust_text_input_field_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-02-p03/p03.7-msaa-editor-value.md`。
 
 ## Recommended Next Step
-Read the dependency-ready in-progress/not-started rows in docs/03 and their linked evidence before editing. Keep Windows DnD and P03.7 accessibility as separate follow-up slices. Do not launch a local desktop GUI because it triggers Narrator.
-
+从 docs/03 和 feature_list 中选择依赖满足的下一项单独切片；先检查其 linked evidence 和 GitNexus impact。继续按范围分阶段提交，保留 P15 外部平台验收门。
 
 > Last Updated：2026-11-02（P04.63 / EDT-11e Paste As 本地实现与精确 staged 快照门禁已完成：detached worktree 的 `init.sh` EXIT=0（Flutter 617）、cargo fmt、flutter analyze 0 issues；真实桌面 clipboard round trip 已接入 Platform Availability。GitNexus 已刷新并完成 staged/compare 检查：重复 staged scans 为 14 files/32–46 symbols/395–430 flows、CRITICAL；graph field-name 扩散、567 跨语言漏链及 process truncation 记录在 P04.63 报告，不作风险降级。当前精确 14-file staged snapshot 待 commit/push，之后跟进 Linux/Windows hosted MIME round-trip 和 PR CI；通过后登记 P04.63 done。近期 CI 红灯日志无产品崩溃栈；唯一确认 crash `41370553563` 是独立 macOS startup SIGSEGV，`9f2c70a` 后 smoke 未复现。macOS DnD artifact `13135045729` 明确 SKIP。不要操作桌面 GUI，避免触发讲述人；500 MiB 留 P14。）
 

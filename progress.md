@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
+### 最新进展（2026-11-02，P03.7 hosted MSAA 编辑器文本）
+
+- 修复 Windows hosted CI 的 focused editor `Value` 为空：`RustTextInputField` 的语义节点现在发布当前有界输入窗文本；新增无 GUI widget 回归，证明中文 welcome 文本及 label 都可从 Semantics 读取。修复前测试复现空 value，修复后 `rust_text_input_field_test.dart` 8 项通过。
+- `bash init.sh` EXIT=0（Rust workspace tests、Clippy、build_core、Flutter 618 项）；commit `40b8444` 已 push。PR CI `41461810249` 与 Platform Availability `41461800457` 全绿；Windows 当前 Release 的 accessibility 与正常关闭检查通过，Linux lane 通过。macOS build/launch/package lane 通过，但不替代原生 Mac 设备验收。
+- 失败分类：前置 run `41458740387` 的 MSAA `State & 4` 已确认焦点真实到位，`Value` 为空；其截图仍可见 welcome 文本。关闭元数据显示 WM_CLOSE 正常、未超时、exit 0。该红灯是语义暴露缺陷，不是崩溃。当前修复提升 CI 检测信号，不据此声称消除了运行时崩溃。
+- 历史 Windows 固定旧 artifact 的 `0xC000041D` 和 macOS startup SIGSEGV `41370553563` 均与本次语义问题分开；现有 macOS readiness handshake 后 smoke 未复现 SIGSEGV。Windows 11 Narrator/DPI/主题、Linux native DRM 与 macOS native device 门仍 pending。完整证据：`docs/diagnostics/2026-11-02-p03/p03.7-msaa-editor-value.md`。
+
 ### 最新进展（2026-11-02，P04.63 / EDT-11e Paste As 核心实现）
 
 - `EditorClipboard` 现在读取有界 plain/HTML/URI 多 MIME snapshot，并支持 Linux、Windows、macOS URI-list 及平台 file/regular URI formats。新增 Paste As provider/config pipeline：plain text、显式 HTML、绝对 URI/path、工作区 relative path；注册 `editor.action.pasteAs`、`editor.action.pasteAsText`、`editor.changePasteType`、`editor.hidePasteWidget`，默认 Ctrl/Cmd+Shift+V。普通 paste 保持纯文本优先，功能关闭时普通 Ctrl/Cmd+V 仍可用；粘贴后选项为不抢编辑焦点的浮层。
