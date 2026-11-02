@@ -71,6 +71,46 @@ func postMouseEvent(
   event.post(tap: .cghidEventTap)
 }
 
+func clickWithSystemEvents(at point: CGPoint) -> String {
+  let process = Process()
+  process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+  process.arguments = [
+    "-e",
+    "tell application \"System Events\" to click at {\(Int(point.x)), \(Int(point.y))}",
+  ]
+  let output = Pipe()
+  let errors = Pipe()
+  process.standardOutput = output
+  process.standardError = errors
+
+  do {
+    try process.run()
+  } catch {
+    return "could not start osascript: \(error)"
+  }
+
+  let deadline = Date().addingTimeInterval(5)
+  while process.isRunning && Date() < deadline {
+    Thread.sleep(forTimeInterval: 0.05)
+  }
+  if process.isRunning {
+    process.terminate()
+    process.waitUntilExit()
+    return "osascript timed out after 5 seconds"
+  }
+
+  process.waitUntilExit()
+  let standardOutput = String(
+    data: output.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  let standardError = String(
+    data: errors.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  return "status=\(process.terminationStatus), stdout=\(standardOutput), stderr=\(standardError)"
+}
+
 func waitForRunningAlula(deadline: Date) -> NSRunningApplication? {
   while Date() < deadline {
     if let app = NSWorkspace.shared.runningApplications.first(where: { app in
@@ -312,6 +352,8 @@ func run() throws {
   try postMouseEvent(.leftMouseDown, at: neutralPoint, source: eventSource)
   Thread.sleep(forTimeInterval: 0.1)
   try postMouseEvent(.leftMouseUp, at: neutralPoint, source: eventSource)
+  Thread.sleep(forTimeInterval: 0.5)
+  print("System Events neutral click: \(clickWithSystemEvents(at: neutralPoint))")
   Thread.sleep(forTimeInterval: 0.5)
   let pointerEventsURL = directory.appendingPathComponent("pointer-events.jsonl")
   if FileManager.default.fileExists(atPath: pointerEventsURL.path) {
