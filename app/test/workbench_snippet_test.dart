@@ -197,6 +197,42 @@ void main() {
     });
   }
 
+  testWidgets('choice snippet inserts its first option and mirrors edits',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.linux,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'${1|blue,green|}-$1$0',
+      );
+
+      expect(controller.text, 'xblue-blue');
+      expect(controller.selection,
+          const TextSelection(baseOffset: 1, extentOffset: 5));
+      await _replaceCurrentSelection(tester, 'golden');
+      expect(controller.text, 'xgolden-golden');
+
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'xgolden-golden');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('selected-text variable inserts the original UTF-16 selection',
       (tester) async {
     try {

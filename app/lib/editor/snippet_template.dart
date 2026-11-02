@@ -4,17 +4,26 @@ import 'package:path/path.dart' as path;
 ///
 /// Offsets use Dart string indices, which are UTF-16 code units and therefore
 /// match the editor's Rust FFI protocol.
+class SnippetChoice {
+  SnippetChoice(Iterable<String> options)
+      : options = List.unmodifiable(options);
+
+  final List<String> options;
+}
+
 class SnippetPlaceholderRange {
   const SnippetPlaceholderRange({
     required this.index,
     required this.startUtf16,
     required this.endUtf16,
+    this.choice,
   });
 
   /// Positive indices are visited in ascending order; zero is the final stop.
   final int index;
   final int startUtf16;
   final int endUtf16;
+  final SnippetChoice? choice;
 
   int get lengthUtf16 => endUtf16 - startUtf16;
 }
@@ -396,9 +405,10 @@ String _snippetPathLabel(
 /// variables, plus `$TM_CURRENT_LINE` and `$TM_CURRENT_WORD` when supplied by
 /// the workbench, and `$CLIPBOARD` when the system clipboard has text.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
-/// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
-/// for later parity slices; unsupported choice/transform forms fail explicitly
-/// instead of producing a partial edit.
+/// are kept verbatim. Positive-index choices support `${1|one,two|}` and
+/// TextMate's `\,`, `\|`, and `\\` choice escapes. Transforms and nested
+/// placeholders remain unsupported and fail explicitly instead of producing a
+/// partial edit.
 SnippetExpansion expandSnippetTemplate(
   String template, {
   Map<String, String> variables = const {},
@@ -407,6 +417,7 @@ SnippetExpansion expandSnippetTemplate(
   int maxExpandedUtf16 = 256 * 1024,
   int maxPlaceholderOccurrences = 512,
   int maxTabstopIndex = 10000,
+  int maxChoiceOptions = 256,
 }) {
   if (template.length > maxTemplateUtf16) {
     throw const SnippetTemplateException('template exceeds the size limit', 0);
@@ -419,6 +430,7 @@ SnippetExpansion expandSnippetTemplate(
     maxExpandedUtf16: maxExpandedUtf16,
     maxPlaceholderOccurrences: maxPlaceholderOccurrences,
     maxTabstopIndex: maxTabstopIndex,
+    maxChoiceOptions: maxChoiceOptions,
   );
   return parser.parse();
 }
@@ -426,12 +438,15 @@ SnippetExpansion expandSnippetTemplate(
 class _SnippetSegment {
   const _SnippetSegment.text(this.text)
       : index = null,
-        defaultText = null;
+        defaultText = null,
+        choice = null;
 
-  const _SnippetSegment.placeholder(this.index, this.defaultText) : text = null;
+  const _SnippetSegment.placeholder(this.index, this.defaultText, {this.choice})
+      : text = null;
 
   final String? text;
   final int? index;
+  final SnippetChoice? choice;
 
   /// `null` means a mirror; an empty string is an explicit empty default.
   final String? defaultText;
@@ -445,6 +460,7 @@ class _SnippetTemplateParser {
     required this.maxExpandedUtf16,
     required this.maxPlaceholderOccurrences,
     required this.maxTabstopIndex,
+    required this.maxChoiceOptions,
   }) : _units = template.codeUnits;
 
   static const int _dollar = 0x24;
@@ -464,6 +480,7 @@ class _SnippetTemplateParser {
   final int maxExpandedUtf16;
   final int maxPlaceholderOccurrences;
   final int maxTabstopIndex;
+  final int maxChoiceOptions;
   final List<_SnippetSegment> _segments = [];
   int _offset = 0;
   int _placeholderCount = 0;
@@ -548,13 +565,19 @@ class _SnippetTemplateParser {
       _offset = cursor + 1;
       return _SnippetSegment.placeholder(index, null);
     }
-    if (marker == _pipe || marker == _slash) {
-      throw SnippetTemplateException(
-        marker == _pipe
-            ? 'choice placeholders are not supported yet'
-            : 'transforms are not supported yet',
-        start,
+    if (marker == _pipe) {
+      if (index == 0) return null;
+      final parsedChoice = _parseChoice(cursor + 1);
+      if (parsedChoice == null) return null;
+      _offset = parsedChoice.endOffset;
+      return _SnippetSegment.placeholder(
+        index,
+        parsedChoice.choice.options.first,
+        choice: parsedChoice.choice,
       );
+    }
+    if (marker == _slash) {
+      throw SnippetTemplateException('transforms are not supported yet', start);
     }
     if (marker != _colon) return null;
 
@@ -587,6 +610,54 @@ class _SnippetTemplateParser {
       cursor++;
     }
     // An incomplete `${n:...` is ordinary text in TextMate snippets.
+    return null;
+  }
+
+  _ParsedSnippetChoice? _parseChoice(int cursor) {
+    final options = <String>[];
+    var option = StringBuffer();
+    var optionCount = 0;
+    while (cursor < _units.length) {
+      final unit = _units[cursor];
+      if (unit == _backslash) {
+        if (cursor + 1 >= _units.length) return null;
+        final escaped = _units[cursor + 1];
+        if (escaped == _backslash || escaped == _pipe || escaped == 0x2c) {
+          option.writeCharCode(escaped);
+          cursor += 2;
+        } else {
+          option.writeCharCode(unit);
+          cursor++;
+        }
+        continue;
+      }
+      if (unit == 0x2c) {
+        if (option.isEmpty) return null;
+        optionCount++;
+        if (optionCount <= maxChoiceOptions) options.add(option.toString());
+        option = StringBuffer();
+        cursor++;
+        continue;
+      }
+      if (unit == _pipe) {
+        if (option.isEmpty ||
+            cursor + 1 >= _units.length ||
+            _units[cursor + 1] != _closeBrace) {
+          return null;
+        }
+        optionCount++;
+        if (optionCount > maxChoiceOptions) {
+          throw SnippetTemplateException(
+            'choice option count exceeds the limit',
+            cursor,
+          );
+        }
+        options.add(option.toString());
+        return _ParsedSnippetChoice(SnippetChoice(options), cursor + 2);
+      }
+      option.writeCharCode(unit);
+      cursor++;
+    }
     return null;
   }
 
@@ -702,6 +773,7 @@ class _SnippetTemplateParser {
         index: index,
         startUtf16: start,
         endUtf16: outputOffset,
+        choice: segment.choice,
       ));
     }
     if (insertFinalTabstop &&
@@ -718,4 +790,11 @@ class _SnippetTemplateParser {
       placeholders: placeholders,
     );
   }
+}
+
+class _ParsedSnippetChoice {
+  const _ParsedSnippetChoice(this.choice, this.endOffset);
+
+  final SnippetChoice choice;
+  final int endOffset;
 }

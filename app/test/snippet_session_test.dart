@@ -27,6 +27,50 @@ void main() {
       expect(session.currentTabstop, 2);
     });
 
+    test('preserves active choice metadata while linked ranges are edited', () {
+      final expansion =
+          expandSnippetTemplate(r'${1|blue,green|} / $1 ${2:done}$0');
+      final session = SnippetSession(
+        expansion,
+        documentOffsetUtf16: 20,
+        version: 3,
+      );
+
+      expect(session.activeChoiceRange?.choice?.options, ['blue', 'green']);
+      expect(
+        session.applyOperations(
+          const [
+            TextOp.delete(20, 4),
+            TextOp.insert(20, 'golden'),
+            TextOp.delete(27, 4),
+            TextOp.insert(27, 'golden'),
+          ],
+          nextVersion: 4,
+        ),
+        isTrue,
+      );
+      final activeChoice = session.activeChoiceRange;
+      expect(activeChoice, isNotNull);
+      expect(activeChoice!.startUtf16, 20);
+      expect(activeChoice.endUtf16, 26);
+      expect(activeChoice.choice?.options, ['blue', 'green']);
+      expect(session.moveNext(), isTrue);
+      expect(session.activeChoiceRange, isNull);
+    });
+
+    test('only exposes choice metadata from the first active occurrence', () {
+      final session = SnippetSession(
+        expandSnippetTemplate(r'$1 ${1|one,two|}'),
+        documentOffsetUtf16: 0,
+        version: 1,
+      );
+
+      expect(session.currentRanges, hasLength(2));
+      expect(session.currentRanges.first.choice, isNull);
+      expect(session.currentRanges.last.choice?.options, ['one', 'two']);
+      expect(session.activeChoiceRange, isNull);
+    });
+
     test('maps manual selection positions across linked placeholders', () {
       final expansion = expandSnippetTemplate(r'${1:name}-$1-${2:value}');
       final session = SnippetSession(

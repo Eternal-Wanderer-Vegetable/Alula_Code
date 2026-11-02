@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.74 / EDT-12c1 选择占位符解析与 session 元数据，本地门禁通过）
+
+- 对齐固定 Code-OSS 1.145.0 的正整数 choice tabstop；首项展开、逗号/竖线/反斜杠转义、畸形或空 choice 文本回退；选择元数据关联精确范围并随 session 镜像编辑保留。每个 choice 限 256 个选项，UTF-16 范围与既有片段上限不变，无 Rust/ABI 修改。建议列表和选项接受另行拆分，当前不宣称完整交互。
+- parser 44 项、session 7 项和 workbench 插入/镜像编辑/保存读回 fixture 通过。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 686）；`cargo fmt --all -- --check` 与 `flutter analyze --no-pub` 通过。本机未启动 GUI/Narrator。
+- 编辑前 GitNexus：`SnippetExpansion`、`_SnippetTemplateParser`、`_parsePlaceholder`、`SnippetSession` impact LOW；`SnippetPlaceholderRange` MEDIUM、11 impacted，含 `_buildEditor` flow。已核对 parser/session/workbench 调用链和文本引用；残余跨语言属性边、未排名入口及截断 walks 记于 `docs/diagnostics/2026-11-03-p04/p04.74-choice-snippet-parser.md`。PR CI / hosted 平台包验证待提交。
+
 ### 最新进展（2026-11-03，P04.73 / EDT-12b9 `$CLIPBOARD` 片段变量，PR CI 与 Linux/Windows hosted 通过）
 
 - 按固定 Code-OSS 1.145.0 `ClipboardBasedVariableResolver` 接入纯文本 clipboard 变量；空剪贴板走 `${CLIPBOARD:default}` fallback。异步读取后验证文档版本、活动文档、选区、输入值、输入窗和字段实例，变化/异常/超时拒绝插入；限制为 256 Ki UTF-16，无 Rust/ABI 改动。

@@ -418,6 +418,74 @@ void main() {
       expect(expansion.rangesFor(1), hasLength(3));
     });
 
+    test('expands choice placeholders from the first option and links mirrors',
+        () {
+      final expansion = expandSnippetTemplate(r'${1|one,two|}-$1$0');
+
+      expect(expansion.text, 'one-one');
+      expect(expansion.tabstopOrder, [1, 0]);
+      expect(expansion.rangesFor(1), hasLength(2));
+      expect(expansion.rangesFor(1).first.choice?.options, ['one', 'two']);
+      expect(expansion.rangesFor(1).last.choice, isNull);
+    });
+
+    test('unescapes choice commas, pipes, and backslashes', () {
+      final expansion = expandSnippetTemplate(
+        r'${1|\,comma,pipe\|value,back\\slash|}',
+      );
+
+      expect(expansion.text, ',comma');
+      expect(
+        expansion.rangesFor(1).single.choice?.options,
+        [',comma', 'pipe|value', r'back\slash'],
+      );
+    });
+
+    test('keeps malformed and empty choice expressions as literal text', () {
+      for (final template in [
+        r'${1||}',
+        r'${1|one,,two|}',
+        r'${1|one,two,|}',
+        r'${1|one,two',
+        r'${0|one,two|}',
+      ]) {
+        final expansion = expandSnippetTemplate(template);
+        expect(expansion.text, template, reason: template);
+        expect(expansion.placeholders, isEmpty, reason: template);
+      }
+    });
+
+    test('bounds choice option count', () {
+      expect(
+        () => expandSnippetTemplate(
+          r'${1|one,two,three|}',
+          maxChoiceOptions: 2,
+        ),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+      const incomplete = r'${1|one,two';
+      expect(
+        expandSnippetTemplate(incomplete, maxChoiceOptions: 1).text,
+        incomplete,
+      );
+    });
+
+    test('keeps choice range offsets in UTF-16 units across emoji and CRLF',
+        () {
+      final expansion = expandSnippetTemplate('🙂\r\n\${1|猫,fox|}-\$1');
+
+      expect(expansion.text, '🙂\r\n猫-猫');
+      expect(
+        expansion
+            .rangesFor(1)
+            .map((range) => [range.startUtf16, range.endUtf16]),
+        [
+          [4, 5],
+          [6, 7],
+        ],
+      );
+    });
+
     test('adds an implicit final cursor stop when omitted', () {
       final expansion = expandSnippetTemplate(r'${1:name}-$1');
 
@@ -514,11 +582,7 @@ void main() {
       expect(expandSnippetTemplate(r'$x').text, r'$x');
     });
 
-    test('rejects unsupported nested, choice, and transform syntax', () {
-      expect(
-        () => expandSnippetTemplate(r'${1|one,two|}'),
-        throwsA(isA<SnippetTemplateException>()),
-      );
+    test('rejects unsupported nested and transform syntax', () {
       expect(
         () => expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
         throwsA(isA<SnippetTemplateException>()),

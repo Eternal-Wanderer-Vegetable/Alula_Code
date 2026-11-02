@@ -29,6 +29,13 @@ class SnippetSession {
   List<SnippetPlaceholderRange> get currentRanges =>
       List.unmodifiable(_rangesByIndex[_currentIndex] ?? const []);
 
+  /// The active occurrence's choice, when the first range is a TextMate choice.
+  SnippetPlaceholderRange? get activeChoiceRange {
+    final ranges = currentRanges;
+    if (ranges.isEmpty || ranges.first.choice == null) return null;
+    return ranges.first;
+  }
+
   List<TextSelection> get currentSelections => [
         for (final range in currentRanges)
           TextSelection(
@@ -192,6 +199,7 @@ class SnippetSession {
           index: range.index,
           startUtf16: start,
           endUtf16: end,
+          choice: range.choice,
         ));
       }
       updated[entry.key] = ranges;
@@ -215,6 +223,7 @@ class SnippetSession {
             index: range.index,
             startUtf16: documentOffsetUtf16 + range.startUtf16,
             endUtf16: documentOffsetUtf16 + range.endUtf16,
+            choice: range.choice,
           ));
     }
     return result;
