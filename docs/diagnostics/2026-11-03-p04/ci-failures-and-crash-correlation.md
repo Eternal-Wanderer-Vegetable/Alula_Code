@@ -1,6 +1,6 @@
 # CI failures and runtime crash correlation
 
-Date: 2026-11-03. Repository: `Eternal-Wanderer-Vegetable/Alula_Code`; branch: `codex/vscode-parity-p00`; audited HEAD: `6acf224` plus follow-up hosted evidence.
+Date: 2026-11-03. Repository: `Eternal-Wanderer-Vegetable/Alula_Code`; branch: `codex/vscode-parity-p00`; audited HEAD: `816ac70` plus hosted evidence.
 
 ## Recent Actions sample
 
@@ -8,8 +8,8 @@ The latest 100 GitHub Actions runs on this branch contained:
 
 | Workflow | Successful | Failed | What the failures show |
 |---|---:|---:|---|
-| CI | 56 | 1 | The lone failure (`41372387516`) was Flutter Analyze scanning Cargokit's standalone vendored build tool. It did not launch Alula; `1fbda68` corrected the analyzer scope. |
-| Platform Availability | 14 | 28 | This history includes hosted input routing, UIA/MSAA assertions, script encoding, native clipboard fixtures, and teardown failures. The latest relevant Windows failures (`41456756543`, `41458740387`) stop on semantic-text assertions. They do not establish a runtime crash. |
+| CI | 59 | 1 | In the latest 100 Actions records, the lone failed CI run (`41372387516`) was Flutter Analyze scanning Cargokit's standalone vendored build tool. It did not launch Alula; `1fbda68` corrected the analyzer scope. |
+| Platform Availability | 22 | 17 | This history includes hosted input routing, UIA/MSAA assertions, script encoding, native clipboard fixtures, and teardown failures. The latest relevant Windows failures (`41456756543`, `41458740387`) stop on semantic-text assertions. They do not establish a runtime crash. |
 | Validate Windows artifact 41109679662 | 0 | 1 | This separate replay does contain a genuine close crash in the exact historical Release artifact, described below. |
 
 The counts reflect a development history of repeated probe and fixture changes, not a current failure rate. Latest PR CI run [`41487367300`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41487367300) passed.
@@ -35,6 +35,12 @@ PR CI run [`41522434210`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Co
 We replayed the logs and Windows client metadata for three recent failed Platform Availability runs. Run [`41454766999`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41454766999) failed while PowerShell parsed the launch-probe script (`Try statement is missing its Catch or Finally block` and missing braces); the client metadata was never created, so the application did not launch. Runs [`41456756543`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41456756543) and [`41458740387`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41458740387) failed an MSAA welcome-text assertion. Their uploaded Windows diagnostics artifacts [`13147652451`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41456756543/artifacts/13147652451) and [`13148109083`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41458740387/artifacts/13148109083) both show `wmClosePosted=true`, `closeTimedOut=false`, `exitCode=0`, and `gracefulClose=true`. These failures identify a probe-script parse problem and an accessibility assertion gap, not a product crash. The later `6acf224` Windows job passed the same launch/accessibility/close lane. The initial macOS job for run `41522426147` was canceled before runner assignment (no runner name and no steps). Re-running only that job as attempt 2 (`125551356670`) completed successfully and produced the ARM64 package; cancellation did not involve an app process.
 
 The macOS startup SIGSEGV in run [`41370553563`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41370553563) remains a distinct historical issue. The readiness handshake/nil guards in `9f2c70a` were followed by successful startup smokes without a new `.ips` or `.crash`; that is non-reproduction evidence, not proof of permanent elimination.
+
+### P04.74 hosted run and current failure sample
+
+PR CI run [`41530306532`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41530306532) passed. Platform Availability run [`41530299036`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41530299036) passed Linux, Windows, and macOS jobs. Linux/Windows launch and interaction lanes passed; the Windows close metadata records `wmClosePosted=true`, `closeTimedOut=false`, `gracefulClose=true`, and `exitCode=0`. macOS ARM64 package [`13181539579`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41530299036/artifacts/13181539579) was produced. Its startup diagnostic [`13181299922`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41530299036/artifacts/13181299922) contains only the Metal Impeller initialization line; no crash report was captured. The macOS DnD artifact [`13183156152`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41530299036/artifacts/13183156152) says the synthetic pointer route was unavailable and all native DnD tests were skipped.
+
+A fresh sample of the latest 100 Actions records contains 59 successes and one failure among CI runs, and 22 successes and 17 failures among Platform Availability runs. The one failed CI run is the vendored Cargokit analyzer-scope issue above. Platform failures remain a mix of runner/input/probe/test-fixture failures, plus the separately documented historical macOS startup SIGSEGV; they are not one common crash signature. In particular, the latest P04.74 run passed, but that only supplies non-reproduction evidence for this build. It does not establish a source-level fix for the old Windows `0xC000041D` binary or macOS startup SIGSEGV.
 
 ## Finding
 

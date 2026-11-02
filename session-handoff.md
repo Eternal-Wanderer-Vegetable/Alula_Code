@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.73 / EDT-12b9 implementation and hosted evidence are pushed. Current work is P04.74 / EDT-12c1 choice placeholder parser/session metadata; local DoD passed with Flutter 686, and hosted checks are pending.
+> Last Updated: 2026-11-03. P04.74 / EDT-12c1 implementation (`816ac70`) and hosted evidence are complete. PR CI `41530306532` and Platform Availability `41530299036` passed; hosted artifacts are recorded in the P04.74 report. Next slice is EDT-12c2 choice suggestion list/acceptance UI.
 
 ## Current Objective
 
-Complete the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. Current P04.74 supports choice parsing, first-option expansion, immutable options metadata, session range rebasing, and a Linux workbench save/readback fixture. The suggestion list and accepting a choice are intentionally separate open work. Memory-target optimization stays deferred. PR #2 (`codex/vscode-parity-p00`) remains OPEN draft; do not publish v0.1.0 or mark the PR ready before all plan and release gates.
+Complete the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. P04.74 supports choice parsing, first-option expansion, immutable options metadata, session range rebasing, and a Linux workbench save/readback fixture. Hosted Linux/Windows availability passed; macOS ARM64 packaging passed while native DnD remains skipped on the hosted runner. The next single slice is the choice suggestion list and acceptance UI. Memory-target optimization stays deferred. PR #2 (`codex/vscode-parity-p00`) remains OPEN draft; do not publish v0.1.0 or mark the PR ready before all plan and release gates.
 
 ## Current P04.74 Change
 
@@ -18,7 +18,7 @@ Complete the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. C
 ## GitNexus and CI/Crash Evidence
 
 - Bound GitNexus repo: `/tmp/alula-p04.70-next`, indexed base `1ccd3f2`. Before editing, `SnippetExpansion`, `_SnippetTemplateParser`, `_parsePlaceholder`, and `SnippetSession` reported LOW; `SnippetPlaceholderRange` MEDIUM (11 impacted including `_buildEditor`). Residual cross-language property edges and budget-truncated flows are not an all-clear. The final staged/all scan is still required before commit.
-- `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` distinguishes recent PowerShell/MSAA probe failures from historical Windows `0xC000041D` and macOS SIGSEGV. Current recent hosted close probes exit 0; this does not prove the historical binary crashes are permanently repaired.
+- `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` distinguishes recent PowerShell/MSAA probe failures from historical Windows `0xC000041D` and macOS SIGSEGV. Current hosted close probes exit 0, including P04.74 Windows metadata; the latest macOS startup artifact contains no crash report. These are non-reproduction results, not proof that historical crash causes are permanently repaired.
 
 ## Blockers and Constraints
 
@@ -29,6 +29,6 @@ Complete the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. C
 
 ## Next Steps
 
-1. Finish report and tracking updates, run fresh GitNexus staged/all scans (rerun if partial/truncated), and commit/push the P04.74 implementation stage.
-2. Collect PR CI and Platform Availability Linux/Windows/macOS jobs and artifacts; record Mac native-only tests as pending where the hosted runner cannot route input.
-3. Make a separate hosted-evidence docs commit. Then continue with the next single EDT-12 slice: choice suggestion list and acceptance UI.
+1. Verify the P04.74 hosted-evidence docs commit is pushed and the worktree is clean; implementation commit `816ac70` and hosted evidence must remain separate stages.
+2. Confirm the evidence-only commit CI finishes successfully. Keep PR #2 open as draft.
+3. Continue with the next single EDT-12 slice: choice suggestion list and acceptance UI; keep macOS native DnD/P15 and historical crash root-cause checks pending.
