@@ -9788,7 +9788,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           decoration: const InputDecoration(
             labelText: '片段模板',
             helperText:
-                r'支持 $1、${1:默认值}、$0、$TM_SELECTED_TEXT、$TM_CURRENT_LINE 和 $TM_CURRENT_WORD',
+                r'支持 $1、${1:默认值}、$0、$TM_SELECTED_TEXT、$TM_CURRENT_LINE、$TM_CURRENT_WORD 和 $RELATIVE_FILEPATH',
           ),
         ),
         actions: [
@@ -9861,6 +9861,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       windows: Platform.isWindows,
       userHome: Platform.environment[homeVariable],
     );
+    final relativeFilePathVariables =
+        snippetTemplateUsesVariable(template, 'RELATIVE_FILEPATH')
+            ? snippetRelativeFilePathVariables(
+                doc.uri == null ? null : doc.path,
+                _workspaceRoot,
+                windows: Platform.isWindows,
+                userHome: Platform.environment[homeVariable],
+              )
+            : const <String, String>{};
     final currentLineVariables = <String, String>{};
     final currentWordVariables = <String, String>{};
     final needsCurrentLine =
@@ -9995,6 +10004,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           'TM_SELECTED_TEXT': selectedText,
           ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
           ...pathVariables,
+          ...relativeFilePathVariables,
           ...lineVariables,
           ...currentLineVariables,
           ...currentWordVariables,

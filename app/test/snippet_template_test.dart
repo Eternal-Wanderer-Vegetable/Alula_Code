@@ -103,6 +103,61 @@ void main() {
     });
   });
 
+  group('snippetRelativeFilePathVariables', () {
+    test('returns a workspace relative path without a root prefix', () {
+      expect(
+        snippetRelativeFilePathVariables(
+          '/home/alice/project/src/main.rs',
+          '/home/alice/project',
+          windows: false,
+          userHome: '/home/alice',
+        ),
+        {'RELATIVE_FILEPATH': 'src/main.rs'},
+      );
+    });
+
+    test('returns empty for the workspace root and untitled documents', () {
+      expect(
+        snippetRelativeFilePathVariables(
+          '/workspace',
+          '/workspace/',
+          windows: false,
+        ),
+        {'RELATIVE_FILEPATH': ''},
+      );
+      expect(
+        snippetRelativeFilePathVariables(null, '/workspace', windows: false),
+        {'RELATIVE_FILEPATH': ''},
+      );
+    });
+
+    test('uses the absolute label when there is no containing workspace', () {
+      expect(
+        snippetRelativeFilePathVariables(
+          '/home/alice/other/main.rs',
+          '/home/alice/project',
+          windows: false,
+          userHome: '/home/alice',
+        ),
+        {'RELATIVE_FILEPATH': '~/other/main.rs'},
+      );
+    });
+
+    test(
+        'normalizes Windows relative paths and compares root case-insensitively',
+        () {
+      expect(
+        snippetRelativeFilePathVariables(
+          r'C:\Workspace\src\..\src\main.rs',
+          r'c:\workspace',
+          windows: true,
+          userHome: r'C:\Users\Alice',
+        ),
+        {'RELATIVE_FILEPATH': r'src\main.rs'},
+      );
+    });
+  });
+
   group('snippetLineVariables', () {
     test('formats zero-based and one-based line numbers', () {
       expect(

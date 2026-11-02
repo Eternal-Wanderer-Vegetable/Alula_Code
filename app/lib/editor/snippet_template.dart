@@ -111,6 +111,60 @@ Map<String, String> snippetDocumentPathVariables(
   };
 }
 
+/// Returns Code-OSS's built-in relative filepath variable for a document.
+///
+/// A file inside [workspaceRoot] is labeled relative to that root, without a
+/// root-name prefix. Files outside the root (or with no root) use the same
+/// normalized absolute label as `TM_FILEPATH`. Untitled documents are empty.
+Map<String, String> snippetRelativeFilePathVariables(
+  String? filePath,
+  String? workspaceRoot, {
+  required bool windows,
+  String? userHome,
+}) {
+  if (filePath == null || filePath.isEmpty) {
+    return const {'RELATIVE_FILEPATH': ''};
+  }
+
+  final context = path.Context(
+    style: windows ? path.Style.windows : path.Style.posix,
+  );
+  final normalizedFile = context.normalize(filePath);
+  final normalizedRoot = workspaceRoot == null || workspaceRoot.isEmpty
+      ? null
+      : context.normalize(workspaceRoot);
+  if (normalizedRoot != null) {
+    final fileForComparison =
+        windows ? normalizedFile.toLowerCase() : normalizedFile;
+    final rootForComparison =
+        windows ? normalizedRoot.toLowerCase() : normalizedRoot;
+    if (fileForComparison == rootForComparison) {
+      return const {'RELATIVE_FILEPATH': ''};
+    }
+
+    final separator = context.separator;
+    final rootPrefix = normalizedRoot.endsWith(separator)
+        ? normalizedRoot
+        : '$normalizedRoot$separator';
+    final prefixForComparison = windows ? rootPrefix.toLowerCase() : rootPrefix;
+    if (fileForComparison.startsWith(prefixForComparison)) {
+      final relativePath = context.normalize(
+        normalizedFile.substring(rootPrefix.length),
+      );
+      return {'RELATIVE_FILEPATH': relativePath};
+    }
+  }
+
+  return {
+    'RELATIVE_FILEPATH': _snippetPathLabel(
+      normalizedFile,
+      context: context,
+      windows: windows,
+      userHome: userHome,
+    ),
+  };
+}
+
 /// Returns the zero-based and one-based line variables for a document line.
 Map<String, String> snippetLineVariables(int zeroBasedLine) {
   if (zeroBasedLine < 0) {
@@ -293,7 +347,8 @@ String _snippetPathLabel(
 ///
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
 /// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
-/// `$TM_DIRECTORY_BASE`, `$TM_FILEPATH`, `$TM_LINE_INDEX`, and `$TM_LINE_NUMBER`
+/// `$TM_DIRECTORY_BASE`, `$TM_FILEPATH`, `$RELATIVE_FILEPATH`,
+/// `$TM_LINE_INDEX`, and `$TM_LINE_NUMBER`
 /// variables, plus `$TM_CURRENT_LINE` and `$TM_CURRENT_WORD` when supplied by
 /// the workbench.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables

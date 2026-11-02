@@ -299,6 +299,38 @@ void main() {
     }
   });
 
+  testWidgets(
+      'relative filepath variable resolves against the open folder and saves',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.linux,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$RELATIVE_FILEPATH>$0',
+      );
+
+      expect(controller.text, 'x<sample.rs>');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'x<sample.rs>');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('current-line variable reads the full Rust line without CRLF',
       (tester) async {
     try {

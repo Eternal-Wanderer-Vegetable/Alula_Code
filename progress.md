@@ -5,6 +5,11 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.71 / EDT-12b7 `$RELATIVE_FILEPATH`，本地门禁通过待 hosted CI）
+
+- 对齐 Code-OSS 1.145.0：当前 workspace root 内返回不带根名的相对路径，使用宿主分隔符；路径等于 root 和 untitled 文档为空；无 root 或文档位于 root 外时回退到规范化绝对路径标签。仅在模板引用时计算，复用现有 Rust snippet 输入、撤销与保存路径，无 ABI 改动。
+- 定向 parser/workbench 46 项通过；`bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 669），cargo fmt 与 `flutter analyze --no-pub` 均通过。GitNexus 1 MiB index 后的三个代码入口 impact 为 LOW；`_workspaceRoot` property 仍 UNKNOWN，文本核对确认真实读写点，详细遗漏与截断数见 `docs/diagnostics/2026-11-03-p04/p04.71-relative-filepath-snippet-variable.md`。hosted CI 与 Linux/Windows 可用性待推送。
+
 ### 最新进展（2026-11-03，P04.70 / EDT-12b6 当前单词片段变量，已提交并通过 PR CI 与 Linux/Windows hosted 可用性）
 
 - 按固定 Code-OSS 1.145.0 增加 `$TM_CURRENT_WORD`：从活动光标 extent 解析当前 word；Alula 尚无每语言 `wordPattern` 配置，本项采用 Code-OSS 默认 word definition。只在模板真正引用变量时读取，通过 Rust 行边界、合法 UTF-16 起点与同版本 `readRange` 读取最多 1000 单元上下文；无 Rust/ABI 改动，未命中保持未知变量原式。
@@ -37,7 +42,7 @@
 
 - 用户提醒反复 CI 失败可能与崩溃有关；复核 recent 100 runs 后更正分类：PR CI 有 56 success / 1 failure，唯一失败是未启动 Alula 的 vendored Cargokit analyzer；Platform Availability 为 14 success / 28 failure，多数是输入路由、UIA/MSAA、脚本或 fixture 失败；另一个独立 Windows artifact validation failure 确实捕获旧 Release binary `d5319369` 在 `WM_CLOSE` 后以 `0xC000041D` 退出。该旧 binary 的无 UIA/MSAA 对照也崩溃，Windows 事件指向 `flutter_windows.dll` access violation。重建分支 `189e920` 在 run `41482157012` 的 Windows close lifecycle smoke 通过（该步骤断言 exit code 为 0）；当前 PR CI `41487367300` 也通过。详细证据与因果边界见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。CI 的旧 artifact 回放确实暴露过真实产品崩溃；多数其他红灯仍是探针/runner 假红。Hosted 失败本身不会让本机进程崩溃，修正测试信号不能替代修复运行时关闭路径。旧 artifact 与 P15 Windows 11 验收继续 pending；不在本机启动 GUI/Narrator。
 - 后续 P04.67/P04.68/P04.69 的 PR CI 与 Platform Availability 均全绿，三平台 Release/launch/package smoke 无新 crash；P04.69 Linux/Windows DnD pointer/drop 路由真实通过，macOS DnD artifact `13169863681` 仍因 hosted pointer route=false SKIP。P04.69 Windows close/accessibility smoke 通过，旧 Release artifact 的 `0xC000041D` 仍是历史真实崩溃；当前绿灯只说明新构建本次未复现，不证明永久修复。macOS startup artifact `13170916969` 只有 Impeller 日志，无 crash report；历史 SIGSEGV `41370553563` 仍未证明永久消除。
-- P04.70 同样全绿：PR CI `41508722759`，Platform Availability `41508714990`。Windows hosted accessibility 和正常关闭检查通过；Linux/Windows 拖放实际通过。macOS DnD 仍因 runner 的 pointer route unavailable 明确跳过；startup artifact `13171469477` 仅有 Impeller 行。历史 Windows close 崩溃 `0xC000041D` 与 macOS SIGSEGV `41370553563` 继续作为未证明永久修复的历史缺陷跟踪。
+- P04.70 同样全绿：PR CI `41508722759`，Platform Availability `41508714990`；其 hosted 证据文档提交的 CI `41511068018` 也通过。Windows hosted accessibility 和正常关闭检查通过；Linux/Windows 拖放实际通过。macOS DnD 仍因 runner 的 pointer route unavailable 明确跳过；startup artifact `13171469477` 仅有 Impeller 行。历史 Windows close 崩溃 `0xC000041D` 与 macOS SIGSEGV `41370553563` 继续作为未证明永久修复的历史缺陷跟踪。
 
 ### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 

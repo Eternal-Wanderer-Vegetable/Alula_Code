@@ -1,18 +1,18 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.70 / EDT-12b6 `$TM_CURRENT_WORD` is complete and pushed as `d519eb4`. Local `bash init.sh`, cargo fmt, flutter analyze, and 41 focused parser/workbench tests pass. PR CI `41508722759` and Platform Availability `41508714990` are fully green. Linux and Windows hosted Release, clipboard, native DnD, and launch checks pass; Windows visible-client, P03.7, MSAA, and graceful close checks pass. macOS ARM64 package artifact `13171663410` exists and hosted build/clipboard/startup/package pass; native DnD artifact `13173027491` explicitly skips because the runner does not route synthetic pointer events to Flutter. Startup artifact `13171469477` contains only an Impeller initialization line, no crash report. Historical SIGSEGV is not declared permanently fixed. Avoid launching local GUI/Narrator.
+> Last Updated: 2026-11-03. P04.71 / EDT-12b7 `$RELATIVE_FILEPATH` is locally implemented. Targeted parser/workbench tests (46), full `bash init.sh` (Rust workspace, Clippy, build_core, Flutter 669), cargo fmt, and Flutter analyze all pass. GitNexus was force-reindexed at a 1 MiB cap to include the 524,794-byte workbench file; impacts for the parser/path helper/workbench insertion are LOW. `_workspaceRoot` remains UNKNOWN in property-impact analysis, with its source uses text-confirmed and unchanged. Hosted CI/platform checks for P04.71 are pending. Avoid launching local GUI/Narrator.
 
 ## Current Objective
 
-Continue the fixed Code-OSS parity plan with the next single eligible P04 item from `docs/03-里程碑计划与验收标准.md`. P04.70 is done after hosted PR CI and Linux/Windows availability passed; retain macOS native DnD/device checks as pending. `docs/03` is the only authoritative task/DoD source. Memory-target optimization remains deferred until architecture parity is complete.
+Finish P04.71 by running staged/all GitNexus change scans, committing and pushing the implementation/evidence, then waiting for PR CI and Linux/Windows Platform Availability. Record hosted results before selecting the next single P04 item from `docs/03-里程碑计划与验收标准.md`. P04.70 is done; macOS native DnD/device checks remain pending. Memory-target optimization stays deferred until architecture parity is complete.
 
 ## Current Evidence and Files
 
-- P04.70 implementation: `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, and the two snippet test files.
-- P04.70 evidence: `docs/diagnostics/2026-11-03-p04/p04.70-current-word-snippet-variable.md`.
-- Plan row: P04.70 is done in `docs/03-里程碑计划与验收标准.md`; `feat-026` remains in progress because P04 has open subtasks.
+- P04.71 implementation: `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, and the two snippet test files.
+- P04.71 evidence: `docs/diagnostics/2026-11-03-p04/p04.71-relative-filepath-snippet-variable.md`.
+- Plan row: P04.71 is in progress pending hosted checks; P04.70 is done. `feat-026` remains in progress because P04 has open subtasks.
 - Code-OSS 1.145.0 reference commit: `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`. Alula currently has no per-language `wordPattern`, so current-word uses the default word definition and a bounded 1000 UTF-16 context.
-- GitNexus pre-edit impact: `expandSnippetTemplate`, `snippetCurrentLineVariables`, and `_insertSnippetTemplate` all reported LOW; the final staged/all scans are LOW; the broad compare-main CRITICAL is documented as branch history.
+- GitNexus pre-edit impact: `expandSnippetTemplate`, `snippetDocumentPathVariables`, and `_insertSnippetTemplate` all reported LOW after rebuilding the index with a 1 MiB file cap. `_workspaceRoot` impact is UNKNOWN; source usages were confirmed. Index cross-language gaps and process truncation remain documented.
 - CI/crash report: `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Run `41458740387` failed a Windows MSAA welcome-text assertion after requesting focus. Run `41370553563` separately recorded a macOS DnD pointer-route timeout and a real launch SIGSEGV (exit 139). Run `41505691264` is a successful baseline PR CI run; none of these claims permanent crash resolution.
 
 Root `/mnt/e/alula_code` contains extensive pre-existing unstaged user changes, including edits to `app/lib/workbench/workbench_page.dart`. Continue only in `/tmp/alula-p04.70-next` and preserve unrelated root changes. PR #2 stays draft; do not mark ready, merge, or publish v0.1.0 before full plan/release gates.
@@ -26,6 +26,6 @@ Root `/mnt/e/alula_code` contains extensive pre-existing unstaged user changes, 
 
 ## Next Steps
 
-1. P04.70 implementation and hosted runs are complete; record the CI evidence update with fresh GitNexus staged/all scans, commit, and push.
-2. Select the next single eligible P04 item from `docs/03-里程碑计划与验收标准.md`; check GitNexus freshness and impact before source edits.
-3. Continue one item at a time and keep release CI / v0.1.0 publication gated on the full plan.
+1. Run `detect-changes` on P04.71 staged and all-scope changes and review the focused diff.
+2. Commit/push the P04.71 implementation and local evidence; wait for hosted PR CI and Linux/Windows availability.
+3. Add hosted evidence and then select the next single P04 item. Keep release CI / v0.1.0 publication gated on the full plan.
