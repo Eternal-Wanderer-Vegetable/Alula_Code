@@ -85,13 +85,17 @@ class MainFlutterWindow: NSWindow {
     to target: CGPoint,
     diagnosticsDirectory: URL
   ) throws {
-    guard let flutterView = (contentViewController as? FlutterViewController)?.view,
-          let window = flutterView.window
+    guard let flutterViewController = contentViewController as? FlutterViewController,
+          let window = flutterViewController.view.window,
+          let flutterEventView = findFlutterEventView(in: flutterViewController.view)
     else {
       throw NSError(
         domain: "AlulaNativeDndTest",
         code: 1,
-        userInfo: [NSLocalizedDescriptionKey: "Flutter view has no window"]
+        userInfo: [
+          NSLocalizedDescriptionKey:
+            "Flutter event view or its window is unavailable",
+        ]
       )
     }
 
@@ -102,6 +106,7 @@ class MainFlutterWindow: NSWindow {
       "phase": "window-ready",
       "isVisible": window.isVisible,
       "isKeyWindow": window.isKeyWindow,
+      "eventViewClass": NSStringFromClass(type(of: flutterEventView)),
       "frame": [
         "x": Double(window.frame.origin.x),
         "y": Double(window.frame.origin.y),
@@ -111,14 +116,14 @@ class MainFlutterWindow: NSWindow {
     ], to: diagnosticsDirectory)
 
     func windowPoint(for flutterPoint: CGPoint) -> CGPoint {
-      let nativeY = flutterView.isFlipped
+      let nativeY = flutterEventView.isFlipped
         ? flutterPoint.y
-        : flutterView.bounds.height - flutterPoint.y
+        : flutterEventView.bounds.height - flutterPoint.y
       let localPoint = CGPoint(
         x: flutterPoint.x,
         y: nativeY
       )
-      return flutterView.convert(localPoint, to: nil)
+      return flutterEventView.convert(localPoint, to: nil)
     }
 
     let sourcePoint = windowPoint(for: source)
@@ -172,13 +177,13 @@ class MainFlutterWindow: NSWindow {
         self.nativeDndTestEventNumber += 1
         switch eventType {
         case .mouseMoved:
-          flutterView.mouseMoved(with: event)
+          flutterEventView.mouseMoved(with: event)
         case .leftMouseDown:
-          flutterView.mouseDown(with: event)
+          flutterEventView.mouseDown(with: event)
         case .leftMouseDragged:
-          flutterView.mouseDragged(with: event)
+          flutterEventView.mouseDragged(with: event)
         case .leftMouseUp:
-          flutterView.mouseUp(with: event)
+          flutterEventView.mouseUp(with: event)
         default:
           break
         }
@@ -191,6 +196,19 @@ class MainFlutterWindow: NSWindow {
         ], to: diagnosticsDirectory)
       }
     }
+  }
+
+  private func findFlutterEventView(in view: NSView) -> NSView? {
+    let className = NSStringFromClass(type(of: view))
+    if className.split(separator: ".").last == "FlutterView" {
+      return view
+    }
+    for subview in view.subviews {
+      if let flutterView = findFlutterEventView(in: subview) {
+        return flutterView
+      }
+    }
+    return nil
   }
 
   private func appendNativeDndDiagnostic(
