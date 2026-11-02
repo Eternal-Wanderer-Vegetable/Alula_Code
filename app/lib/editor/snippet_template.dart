@@ -49,13 +49,27 @@ class SnippetTemplateException implements Exception {
       'SnippetTemplateException($message at UTF-16 $offsetUtf16)';
 }
 
+/// Returns the built-in filename variables for a named document.
+///
+/// Untitled documents resolve both variables to the empty string. A leading
+/// dot is not treated as an extension separator, matching Code-OSS behavior.
+Map<String, String> snippetFilenameVariables(String? filename) {
+  final value = filename ?? '';
+  final extensionStart = value.lastIndexOf('.');
+  final baseName = extensionStart <= 0
+      ? value
+      : value.substring(0, extensionStart);
+  return {'TM_FILENAME': value, 'TM_FILENAME_BASE': baseName};
+}
+
 /// Parses the basic TextMate placeholder subset used by snippet sessions.
 ///
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
-/// `$TM_SELECTED_TEXT` variable. `\$`, `\}`, and `\\` escape their following
-/// character. Unknown variables are kept verbatim. Choice, transform, and
-/// nested-placeholder syntax is kept for later parity slices; unsupported
-/// choice/transform forms fail explicitly instead of producing a partial edit.
+/// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, and `$TM_FILENAME_BASE` variables.
+/// `\$`, `\}`, and `\\` escape their following character. Unknown variables
+/// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
+/// for later parity slices; unsupported choice/transform forms fail explicitly
+/// instead of producing a partial edit.
 SnippetExpansion expandSnippetTemplate(
   String template, {
   Map<String, String> variables = const {},

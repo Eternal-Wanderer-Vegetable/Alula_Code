@@ -9852,11 +9852,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final selectedText = value.text.substring(localStart, localEnd);
+    final filenameVariables =
+        snippetFilenameVariables(doc.uri == null ? null : doc.name);
     late final SnippetExpansion expansion;
     try {
       expansion = expandSnippetTemplate(
         template,
-        variables: {'TM_SELECTED_TEXT': selectedText},
+        variables: {
+          'TM_SELECTED_TEXT': selectedText,
+          ...filenameVariables,
+        },
       );
     } on SnippetTemplateException catch (error) {
       if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');

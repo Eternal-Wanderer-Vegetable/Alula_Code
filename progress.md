@@ -5,11 +5,17 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
+### 最新进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量）
+
+- 片段变量新增 `$TM_FILENAME` 与 `$TM_FILENAME_BASE`，flush 后从活动命名文档 basename 解析；base 只去掉最后扩展名，dotfile 保留。未命名文档当前解析为空字符串。无 Rust/ABI 改动。
+- 定向 parser/session/workbench 24 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 642），cargo fmt 与 Flutter analyze 0 issues。实现参考固定 Code-OSS 1.145.0；报告 `docs/diagnostics/2026-11-03-p04/p04.66-filename-snippet-variables.md`。未启动本机 GUI/Narrator。
+- 编辑前 GitNexus impact：`_insertSnippetTemplate` LOW（2 上游入口）、`expandSnippetTemplate` LOW（3 符号）；`OpenDoc.uri` 与测试 main 的 UNKNOWN 已文本核实。当前本地代码通过；最终 staged scan 为 9 files/18 symbols/0 flows、LOW；PR CI 与 Platform Availability 待登记；不要把 hosted pending 标为通过。
+
+### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 
 - 新增 `$TM_SELECTED_TEXT` 与花括号形式；输入 flush 后捕获输入窗内单选区原文，按纯文本展开，不增 tabstop；空选区值为空，unknown variables 保留，变量 transform fail closed。没有 Rust/ABI 变化。
 - 定向 parser/session/workbench 20 项通过，含 emoji 代理对与保存回读；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 638），cargo fmt 通过，Flutter analyze 0 issues。精确 staged detached snapshot 也通过完整门禁。GitNexus staged scan LOW；私有 parser 方法 UNKNOWN 与索引截断限制已登记。没有本机 GUI。
-- commit `a46d63f` 已 push；本项 PR CI 41476559731 与 Platform Availability 41476548776 三平台 lane 全绿。Windows Release/启动、交互、拖放、剪贴板和关闭检查通过；Linux/macOS Release smoke 与 macOS package 通过。macOS startup artifact 13158197946 只有 Impeller 日志，无 `.ips`/`.crash`。历史 CI 红灯已归类为 Windows MSAA/UIA 语义断言、Windows PowerShell 中文脚本编码错误及单 URI clipboard fixture 断言，均无应用崩溃栈；不在本机启动 GUI/Narrator。唯一确认 SIGSEGV 41370553563 单独追踪，不因 CI 绿灯宣称永久消除。下一步从 docs/03 选择 EDT-12 的一项后续功能。证据：`docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
+- commit `a46d63f` 已 push；本项 PR CI 41476559731 与 Platform Availability 41476548776 三平台 lane 全绿。Windows Release/启动、交互、拖放、剪贴板和关闭检查通过；Linux/macOS Release smoke 与 macOS package 通过。macOS startup artifact 13158197946 只有 Impeller 日志，无 `.ips`/`.crash`。历史 CI 红灯已归类为 Windows MSAA/UIA 语义断言、Windows PowerShell 中文脚本编码错误及单 URI clipboard fixture 断言，均无应用崩溃栈；不在本机启动 GUI/Narrator。唯一确认 SIGSEGV 41370553563 单独追踪，不因 CI 绿灯宣称永久消除。证据：`docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
 
 ### 阶段进展（2026-11-02，P04.64 / EDT-12a 基础片段会话）
 

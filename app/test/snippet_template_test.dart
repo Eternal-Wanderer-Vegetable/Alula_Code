@@ -3,6 +3,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:alula_app/editor/snippet_template.dart';
 
 void main() {
+  group('snippetFilenameVariables', () {
+    test('uses the filename and removes only its final extension', () {
+      expect(
+        snippetFilenameVariables('archive.tar.rs'),
+        {'TM_FILENAME': 'archive.tar.rs', 'TM_FILENAME_BASE': 'archive.tar'},
+      );
+      expect(
+        snippetFilenameVariables('README'),
+        {'TM_FILENAME': 'README', 'TM_FILENAME_BASE': 'README'},
+      );
+    });
+
+    test('preserves dotfiles and resolves an untitled name to empty', () {
+      expect(
+        snippetFilenameVariables('.env'),
+        {'TM_FILENAME': '.env', 'TM_FILENAME_BASE': '.env'},
+      );
+      expect(
+        snippetFilenameVariables(null),
+        {'TM_FILENAME': '', 'TM_FILENAME_BASE': ''},
+      );
+    });
+  });
+
   group('expandSnippetTemplate', () {
     test('expands defaults, linked tabstops, and the final cursor stop', () {
       final expansion = expandSnippetTemplate(r'let ${1:name} = $1;$0');
@@ -85,6 +109,18 @@ void main() {
       );
 
       expect(expansion.text, isEmpty);
+    });
+
+    test('expands filename variables without turning them into tabstops', () {
+      final expansion = expandSnippetTemplate(
+        r'$TM_FILENAME ${TM_FILENAME_BASE:fallback}$0',
+        variables: {
+          ...snippetFilenameVariables('archive.tar.rs'),
+        },
+      );
+
+      expect(expansion.text, 'archive.tar.rs archive.tar');
+      expect(expansion.tabstopOrder, [0]);
     });
 
     test('preserves malformed placeholder syntax as literal text', () {

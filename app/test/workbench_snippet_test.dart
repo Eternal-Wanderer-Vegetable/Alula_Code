@@ -227,4 +227,35 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     }
   });
+
+  testWidgets('filename variables use the active document basename',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_FILENAME|${TM_FILENAME_BASE:fallback}>$0',
+      );
+
+      expect(controller.text, 'x<sample.rs|sample>');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'x<sample.rs|sample>');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }
