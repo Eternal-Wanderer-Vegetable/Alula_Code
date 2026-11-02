@@ -1,4 +1,4 @@
-> Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。CI run `41370553563` 在首帧门控后再次捕获同一 macOS EngineContext 空 registry SIGSEGV；commit `9f2c70a` vendored readiness handshake + nil guard，`1fbda68` 修正根 analyzer 对 Cargokit build tool 的误扫描。PR CI `41372733476` 全绿；Platform Availability `41372729161` 的 Linux/Windows、macOS tests/Release/clipboard/launch 全部通过，startup artifact `13110192618` 无 crash report，验证包 `13110471628` 可下载。Platform job 仅因 macOS DnD 注入事件未进入 Flutter pointer router 而红，artifact `13110660773` 有 40 秒 drop timeout。真实 macOS 原生拖放仍未验收；验证包不是 v0.1.0 公开发行。）
+> Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。`41370553563` 确认 macOS EngineContext 空 registry 启动 SIGSEGV；`9f2c70a` 加 readiness handshake + nil guard 后，多次 Release launch smoke 未再复现。PR CI `41380284226` 与 Platform Availability `41380278756` 全绿：Linux/Windows lane 通过，macOS analyze/tests/Release/clipboard/launch/package 通过。DnD artifact `13113691238` 显示合成输入路由 false、测试 `All tests skipped`，无 teardown 异常；这不是原生拖放验收。startup artifact `13113715849` 只有 Impeller log，macOS ARM64 验证包 `13113154351` 不是 v0.1.0 公开发行。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,10 +9,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-02）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 保持 in-progress。已把 macOS 空 registry 崩溃从间歇性 `.ips` 栈转为显式 readiness handshake，并用一次 hosted Release launch smoke 观察到未复现；继续保留 crash-report 观察。修复后 PR CI `41372733476` 全绿；Platform Availability `41372729161` Linux/Windows 与 macOS build/launch 全通过，唯一红灯是 hosted DnD 输入没有到达 Flutter pointer router。主证据与 artifact 见 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。旧 Windows exact artifact `0xC000041D` 仍由 P15 独立验证。
+- 当前状态更新（2026-11-02）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 保持 in-progress。启动 `.ips` 根因是 macOS EngineContext 空 registry，readiness handshake 已合入；最新 PR CI `41380284226`、Platform Availability `41380278756` 全绿，startup artifact `13113715849` 无 crash report。反复红灯已拆分为实际启动崩溃、CI 输入不可达导致的 DnD 超时、以及 SKIP 分支的测试清理错误；最新 DnD 测试 artifact `13113691238` 为显式 `All tests skipped` 且无清理异常，不能据此认为真实拖放已通过。真实 macOS 原生 DnD 和旧 Windows exact artifact `0xC000041D` 仍待 P15/原生验收。
 
-- 当前阶段涉及文件：`app/lib/editor/editor_native_text_drag_drop.dart`、`app/packages/irondash_engine_context/`、`app/pubspec.yaml` / `app/pubspec.lock`、`app/analysis_options.yaml`（只提交 Cargokit exclude 行）、`app/test/editor_native_text_drag_drop_test.dart` 与 P04.59 报告；两个修复 commit 已 push。工作树还有其他预存用户改动，不要纳入当前证据提交。
-- 下一步首件：只在 P04.59 范围内继续追 macOS hosted DnD 注入路径，先读 `tools/vscode-parity/macos-native-dnd-input.swift` 和 `platform-availability.yml`，评估定向 `CGEventPostToPid` / Flutter pointer route 探针；只用 hosted CI，不操作用户本机 GUI，避免触发讲述人。真实原生 DnD 未有效验收前不推进 EDT-11 后续切片。
+- 当前阶段涉及文件：`app/lib/editor/editor_native_text_drag_drop.dart`、`app/packages/irondash_engine_context/`、`app/pubspec.yaml` / `app/pubspec.lock`、`app/analysis_options.yaml`（只提交 Cargokit exclude 行）、`app/integration_test/editor_native_text_drag_drop_macos_test.dart`、`.github/workflows/platform-availability.yml` 与 P04.59 报告；修复提交 `9f2c70a`、`1fbda68`、`dadfcdd`、`64216dd`、`fd136b1` 均已 push。工作树还有其他预存用户改动，不要纳入当前证据提交。
+- 下一步首件：仍只做 P04.59，评估 hosted macOS 上可让指针事件进入 Flutter 的自动化方式，或在存在可靠 macOS GUI 环境时完成实际选区拖动与 drop 验收。当前不要操作用户本机 GUI，避免触发讲述人。SKIP 仅用于 runner 无输入能力，不可将 P04.59 标成 done；有效原生 DnD 验收前不推进 EDT-11 后续切片。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。

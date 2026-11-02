@@ -7,11 +7,10 @@
 
 ### 最新进展（2026-11-02，P04.59 / EDT-11a 进行中）
 
-- 复查发现首帧后再挂载拖放壳仍不能彻底消除启动竞态：Platform Availability `41370553563` 再次给出 `objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView:` 空 registry context 的 `.ips`。commit `9f2c70a` vendored `irondash_engine_context 0.5.5`，让 macOS `getEngineHandle` 等待主队列上的 FlutterView 发布后再返回，并为 registry getter 增加 nil guard；editor 拖放区域等 readiness handshake 成功后才挂载。
-- 第一次 CI `41372387516` 暴露根 Flutter analyzer 会扫描 Cargokit 自身构建工具且找不到它独立的开发依赖。commit `1fbda68` 将该子目录排除出 Alula app analyze 范围；本地完整 `flutter analyze` 0 issues，PR CI `41372733476` 的 Flutter analyze/tests、Rust Ubuntu/Windows 和文档门均通过。
-- Platform Availability `41372729161` 的 Linux/Windows lane 全绿；macOS analyze/tests、Release build、clipboard 和 app launch smoke 通过。startup artifact `13110192618` 只有 Impeller 启动日志，无 `.ips`/`.crash`，本轮未复现启动 SIGSEGV。macOS ARM64 验证包 `13110471628` 不是公开 v0.1.0 发行。
-- Platform job 因 macOS 原生 DnD 输入回放 40 秒未收到 drop 而保持红灯。artifact `13110660773` 中 helper 显示 mouse location 已改变，但中性点击后 Flutter pointer event 日志仍为空；这只能说明 hosted runner 输入没有进入 Flutter pointer router，不能判定真实用户 DnD 结果。此轮证据记录在 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。GitNexus 编辑前 class impact 为 LOW（6 symbols），本阶段 staged 检测为 72 files / 2 symbols / LOW / 0 affected processes；all-scope 检测含其他现存工作区改动，为 111 files / 30 symbols / LOW / 0 affected processes，结果不代表所有未索引跨语言关系已排除。
-- 下一步仍在 P04.59 范围内排查 macOS CI 输入路由与原生 drop 验收；不用本机 GUI，避免触发讲述人。真实 macOS 原生拖放未验收前不推进 EDT-11 后续子项；500 MiB 优化仍留 P14。
+- CI 证据区分了真实崩溃与测试假红：`41370553563` 的 macOS `.ips` 为真实启动 SIGSEGV，栈顶 `objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView:`。commit `9f2c70a` 增加 `irondash_engine_context 0.5.5` 的 FlutterView readiness handshake 和 nil guard，`EditorNativeTextDragDrop` 等 handshake 成功后才创建原生区域。修复后的多次独立 Release launch smoke 未复现崩溃，最新 startup artifact `13113715849` 只有 Impeller 初始化日志；继续保留 crash-report 观察。
+- 已修复根 analyzer 扫描 Cargokit 独立 build tool 的失败（`1fbda68`）。PR CI `41380284226` 的 Flutter analyze/tests、Rust Ubuntu/Windows 和文档门全绿；Platform Availability `41380278756` 的 Linux、Windows 全 lane 通过，macOS analyze/tests、Release、clipboard、launch smoke 与 package 通过。
+- macOS DnD 注入仍不能进入 Flutter：helper 的 `CGEventPostToPid pointer route` 为 false，Flutter pointer log 为空。workflow 现在将该 hosted-input 限制明确标为 SKIP；artifact `13113691238` 显示 `All tests skipped` 且无 teardown 异常。此前 `41375984424` 的 40 秒超时被 `dadfcdd` 改为显式 skip；`41377581941` 暴露进程过早结束的 temporary listener 清理错误，`64216dd` 改为 marker 协作退出，`41379092637` 又暴露 SemanticsHandle 清理问题，已由 `fd136b1` 修复并经最新 CI 验证。历史 `.ips` 启动崩溃与这些 runner/test 清理问题是不同故障。
+- 最新 macOS ARM64 验证包 artifact `13113154351` 不是 v0.1.0 发行包；P04.59 仍 in-progress，因为 hosted DnD 被跳过，不能据此判定真实拖放成功。下一步继续寻找可实际路由 macOS 指针事件的验收环境；当前不操作本机 GUI，避免触发讲述人。真实原生拖放未验收前不推进 EDT-11 后续子项；500 MiB 优化仍留 P14。报告：`docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
 
 ### 前次记录（2026-11-01，P04.59 / EDT-11a 进行中）
 
