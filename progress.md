@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.73 / EDT-12b9 `$CLIPBOARD` 片段变量，本地验证通过，hosted 待补）
+
+- 按固定 Code-OSS 1.145.0 `ClipboardBasedVariableResolver` 接入纯文本 clipboard 变量；空剪贴板走 `${CLIPBOARD:default}` fallback。异步读取后验证文档版本、活动文档、选区、输入值、输入窗和字段实例，变化/异常/超时拒绝插入；限制为 256 Ki UTF-16，无 Rust/ABI 改动。
+- 定向 parser/workbench 55 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 678），cargo fmt 与 app/ Flutter analyze 通过。编辑前默认阈值 impact 为 UNKNOWN，源码搜索确认调用；随后使用 1 MiB threshold 纳入 527,241-byte 工作台文件，关键 upstream impact 均 LOW，staged/all 为 9 files/23 symbols/0 resolved processes。流程 walk 截断与跨语言 property 漏链保留在 `docs/diagnostics/2026-11-03-p04/p04.73-clipboard-snippet-variable.md`。
+- P04.73 implementation/doc commit 与 hosted PR CI、Platform Availability 待提交后补证。PR #2 继续保持 draft；macOS 原生 DnD/P15、历史 Windows/macOS crash 根因仍未结案。本机未启动 GUI/Narrator。
+
 ### 最新进展（2026-11-03，P04.72 / EDT-12b8 `$WORKSPACE_NAME` / `$WORKSPACE_FOLDER`，已推送并通过 hosted CI 与 Linux/Windows 验证）
 
 - 按固定 Code-OSS 1.145.0 单文件夹 resolver 增加工作区名称与路径变量。名称使用根目录 basename，路径是规范化绝对路径并小写 Windows drive letter；路径不缩写 home。只有模板引用变量时才解析，无工作区时显式空值。无 Rust/ABI 改动。

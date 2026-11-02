@@ -162,6 +162,50 @@ void main() {
     });
   });
 
+  group('snippetClipboardVariables', () {
+    test('preserves clipboard text and leaves empty clipboard unresolved', () {
+      expect(
+        snippetClipboardVariables('copied 🙂\nsecond line'),
+        {'CLIPBOARD': 'copied 🙂\nsecond line'},
+      );
+      expect(snippetClipboardVariables(null), isEmpty);
+      expect(snippetClipboardVariables(''), isEmpty);
+    });
+
+    test('uses a clipboard variable default only when clipboard text is empty',
+        () {
+      expect(
+        expandSnippetTemplate(
+          r'${CLIPBOARD:fallback}|$CLIPBOARD',
+          variables: snippetClipboardVariables('value'),
+        ).text,
+        'value|value',
+      );
+      expect(
+        expandSnippetTemplate(
+          r'${CLIPBOARD:fallback}|$CLIPBOARD',
+          variables: snippetClipboardVariables(''),
+        ).text,
+        'fallback|',
+      );
+      expect(
+        expandSnippetTemplate(
+          r'${CLIPBOARD:line\$value}',
+          variables: snippetClipboardVariables(null),
+        ).text,
+        'line\$value',
+      );
+    });
+
+    test('escaped clipboard references stay literal and are not resolved', () {
+      expect(snippetTemplateUsesVariable(r'\$CLIPBOARD', 'CLIPBOARD'), isFalse);
+      expect(
+        expandSnippetTemplate(r'\$CLIPBOARD', variables: const {}).text,
+        r'$CLIPBOARD',
+      );
+    });
+  });
+
   group('snippetRelativeFilePathVariables', () {
     test('returns a workspace relative path without a root prefix', () {
       expect(

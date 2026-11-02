@@ -141,6 +141,19 @@ Map<String, String> snippetWorkspaceVariables(
   };
 }
 
+const int maxSnippetClipboardUtf16 = 256 * 1024;
+
+/// Returns the clipboard snippet variable when it contains text.
+///
+/// Code-OSS leaves an empty clipboard variable unresolved so a variable's
+/// default can be used. The parser applies that fallback only to `CLIPBOARD`;
+/// other unresolved variables keep Alula's existing literal-preservation
+/// behavior.
+Map<String, String> snippetClipboardVariables(String? clipboardText) {
+  if (clipboardText == null || clipboardText.isEmpty) return const {};
+  return {'CLIPBOARD': clipboardText};
+}
+
 /// Returns Code-OSS's built-in relative filepath variable for a document.
 ///
 /// A file inside [workspaceRoot] is labeled relative to that root, without a
@@ -381,7 +394,7 @@ String _snippetPathLabel(
 /// `$TM_LINE_INDEX`, `$TM_LINE_NUMBER`, `$WORKSPACE_NAME`, and
 /// `$WORKSPACE_FOLDER`
 /// variables, plus `$TM_CURRENT_LINE` and `$TM_CURRENT_WORD` when supplied by
-/// the workbench.
+/// the workbench, and `$CLIPBOARD` when the system clipboard has text.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
 /// for later parity slices; unsupported choice/transform forms fail explicitly
@@ -594,17 +607,20 @@ class _SnippetTemplateParser {
       cursor++;
     }
     final name = String.fromCharCodes(_units.sublist(nameStart, cursor));
+    String? defaultValue;
     if (braced) {
       if (cursor < _units.length && _units[cursor] == _closeBrace) {
         cursor++;
       } else if (cursor < _units.length && _units[cursor] == _colon) {
         cursor++;
+        final value = StringBuffer();
         var closed = false;
         while (cursor < _units.length) {
           final unit = _units[cursor];
           if (unit == _backslash && cursor + 1 < _units.length) {
             final escaped = _units[cursor + 1];
             if (_isEscapable(escaped)) {
+              value.writeCharCode(escaped);
               cursor += 2;
               continue;
             }
@@ -614,9 +630,11 @@ class _SnippetTemplateParser {
             closed = true;
             break;
           }
+          value.writeCharCode(unit);
           cursor++;
         }
         if (!closed) return null;
+        defaultValue = value.toString();
       } else if (cursor < _units.length && _units[cursor] == _slash) {
         throw SnippetTemplateException(
           'variable transforms are not supported yet',
@@ -630,6 +648,9 @@ class _SnippetTemplateParser {
 
     final value = variables[name];
     _offset = cursor;
+    if (name == 'CLIPBOARD' && (value == null || value.isEmpty)) {
+      return _SnippetSegment.text(defaultValue ?? '');
+    }
     return _SnippetSegment.text(value ?? template.substring(start, cursor));
   }
 

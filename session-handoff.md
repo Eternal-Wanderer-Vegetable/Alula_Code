@@ -1,33 +1,37 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.72 / EDT-12b8 `$WORKSPACE_NAME` / `$WORKSPACE_FOLDER` is complete and pushed as `f2905ff`. Local focused tests (50), full `bash init.sh` (Rust workspace, Clippy, build_core, Flutter 673), cargo fmt, and Flutter analyze pass. PR CI `41516872987` and Platform Availability `41516863565` are fully green. Linux/Windows DnD and Windows graceful close pass; macOS ARM64 package is available, while macOS native DnD remains explicitly skipped because the pointer route is unavailable. Historical crashes are not declared permanently fixed. Avoid local GUI/Narrator.
+> Last Updated: 2026-11-03. P04.73 / EDT-12b9 `$CLIPBOARD` implementation is locally validated and recorded in `docs/03`, `feature_list.json`, `progress.md`, and `docs/diagnostics/2026-11-03-p04/p04.73-clipboard-snippet-variable.md`. It is not committed yet; finish GitNexus staged/all-scope analysis, then commit and push the implementation slice. Hosted PR CI and Platform Availability evidence remain pending.
 
 ## Current Objective
 
-Continue the fixed Code-OSS parity plan with the next single eligible P04 slice from `docs/03-里程碑计划与验收标准.md`. P04.72 is done; keep macOS native DnD/device checks pending. Memory-target optimization stays deferred until architecture parity is complete.
+Continue the fixed Code-OSS 1.145.0 parity plan, one P04 slice at a time. P04.72 is hosted-validated; P04.73 is the current local implementation. Keep memory-target optimization deferred until architecture parity is complete. PR #2 stays OPEN draft; do not publish v0.1.0 or mark the PR ready before the full plan and release gates.
 
-## Current Evidence and Files
+## Current P04.73 Change
 
-- P04.72 implementation: `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, and the two snippet test files. It adds the single-folder `WORKSPACE_NAME` / `WORKSPACE_FOLDER` variables without Rust or ABI changes.
-- P04.72 evidence: `docs/diagnostics/2026-11-03-p04/p04.72-workspace-snippet-variables.md`.
-- P04.71 implementation: `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, and the two snippet test files.
-- P04.71 evidence: `docs/diagnostics/2026-11-03-p04/p04.71-relative-filepath-snippet-variable.md`.
-- Plan row: P04.72, P04.71, and P04.70 are done; `feat-026` remains in progress because P04 has open subtasks.
-- Code-OSS 1.145.0 reference commit: `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`. P04.72 follows its single-folder workspace resolver: basename for name and absolute fsPath for folder. Current-word still uses the default word definition and bounded 1000 UTF-16 context.
-- GitNexus P04.72 pre-edit impact: `expandSnippetTemplate`, `snippetTemplateUsesVariable`, and `_insertSnippetTemplate` report LOW on the fresh 1 MiB index. `_workspaceRoot` context identifies the property, but read/write edges are not fully linked; source usages were confirmed. Index cross-language gaps and process truncation remain documented.
-- CI/crash report: `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Run `41458740387` failed a Windows MSAA welcome-text assertion after requesting focus. Run `41370553563` separately recorded a macOS DnD pointer-route timeout and a real launch SIGSEGV (exit 139). Run `41505691264` is a successful baseline PR CI run; none of these claims permanent crash resolution.
+- `app/lib/editor/snippet_template.dart`: add `$CLIPBOARD` resolver values, empty-clipboard default fallback, and a 256 Ki UTF-16 bound.
+- `app/lib/workbench/workbench_page.dart`: read clipboard only when the template uses the variable; after the async read, require the active document, Rust version, input window, selection, input value, and field instance to remain current.
+- `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`: parser/default/escape, clipboard insertion and save readback, and stale async snapshot rejection.
+- No Rust or ABI changes. No local GUI or Narrator was launched.
+- Local evidence: focused parser/workbench 55 passed; `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0 with Flutter 678; `cargo fmt --all -- --check` and `app/` `flutter analyze --no-pub` pass.
+- Pinned upstream resolver source: `https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib/snippet/browser/snippetVariables.ts`.
 
-Root `/mnt/e/alula_code` contains extensive pre-existing unstaged user changes, including edits to `app/lib/workbench/workbench_page.dart`. Continue only in `/tmp/alula-p04.70-next` and preserve unrelated root changes. PR #2 stays draft; do not mark ready, merge, or publish v0.1.0 before full plan/release gates.
+## GitNexus and Crash Evidence
+
+- The pre-edit default-threshold index skipped `workbench_page.dart` and returned UNKNOWN for parser callers; text search confirmed existing production call sites. A fresh `GITNEXUS_MAX_FILE_SIZE=1024` index includes the 527,241-byte file and reports key impacts LOW. Staged/all scans cover 9 files/23 symbols/LOW, while flow walks remain truncated; do not infer safety from 0 flow counts.
+- GitNexus also warns of unresolved cross-language property edges and dropped/truncated process walks. Refresh after edits and run staged/all-scope `detect-changes`; re-run if output is partial/truncated.
+- `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` tracks historical Windows `0xC000041D` and macOS SIGSEGV separately from CI/test-fixture failures. New green builds are non-reproduction evidence, not proof of permanent repair. Continue to avoid local GUI/Narrator.
 
 ## Blockers and Constraints
 
-- No macOS native test host is available; native DnD/IME/device validation remains pending.
-- Avoid local GUI and Narrator because earlier GUI checks triggered Narrator repeatedly.
-- 500 MiB process-memory target remains suspended until architecture parity is complete.
-- GitNexus has unresolved cross-language references and truncated walks. UNKNOWN/HIGH/CRITICAL warnings remain explicit; missing callers or zero resolved flows are not proof of no impact.
+- No macOS native test host is available; macOS native DnD/IME/device checks stay pending.
+- Windows and Linux remain the first platform availability gates.
+- Do not edit the unrelated dirty root checkout `/mnt/e/alula_code`; use the isolated worktree `/tmp/alula-p04.70-next` only.
+- Current authorized remote is `origin/codex/vscode-parity-p00`; push is authorized. Preserve the open draft PR.
 
 ## Next Steps
 
-1. Select the next single eligible P04 item from docs/03 and refresh GitNexus before editing.
-2. Continue one item at a time; run local DoD, record hosted checks and crash boundaries, then commit/push.
-3. Keep macOS native DnD/device validation pending and release CI / v0.1.0 publication gated on the full plan.
+1. Complete GitNexus staged/all-scope scan for P04.73 and document its exact warnings/coverage.
+2. Commit and push the P04.73 implementation with status marked local-complete/hosted-pending.
+3. Wait for PR CI and Platform Availability; inspect Linux/Windows results and macOS hosted-only scope without calling skipped native DnD a pass.
+4. Add hosted run/artifact evidence in a docs-only follow-up commit.
+5. Select the next single open EDT-12 subitem from `docs/03`; leave choice/transform/nested/user-snippet configuration open until individually implemented and evidenced.

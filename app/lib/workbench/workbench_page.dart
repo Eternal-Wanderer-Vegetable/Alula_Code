@@ -9855,6 +9855,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final selectedText = value.text.substring(localStart, localEnd);
     final cursorPosition = doc.doc.positionAt(selection.extentOffset);
     final lineVariables = snippetLineVariables(cursorPosition.line);
+    final clipboardVariables = <String, String>{};
+    if (snippetTemplateUsesVariable(template, 'CLIPBOARD')) {
+      try {
+        final clipboard = await EditorClipboard.read().timeout(
+          const Duration(seconds: 6),
+        );
+        final currentWindow = doc.inputWindow;
+        if (!mounted ||
+            _active?.id != doc.id ||
+            doc.doc.version != window.version ||
+            currentWindow.version != window.version ||
+            currentWindow.startUtf16 != window.startUtf16 ||
+            doc.selection != selection ||
+            doc.editingValue != value ||
+            !identical(doc.inputFieldKey.currentState, field)) {
+          if (mounted) {
+            setState(
+              () => _statusDetail = '片段插入未应用：读取剪贴板时编辑状态已变化',
+            );
+          }
+          return;
+        }
+
+        final clipboardText = clipboard?.text;
+        if (clipboardText != null &&
+            clipboardText.length > maxSnippetClipboardUtf16) {
+          if (mounted) {
+            setState(() => _statusDetail = '剪贴板内容过长，无法用于片段插入');
+          }
+          return;
+        }
+        clipboardVariables.addAll(snippetClipboardVariables(clipboardText));
+      } on TimeoutException {
+        if (mounted) setState(() => _statusDetail = '读取剪贴板超时，片段未插入');
+        return;
+      } on Object {
+        if (mounted) setState(() => _statusDetail = '读取剪贴板失败，片段未插入');
+        return;
+      }
+    }
     final homeVariable = Platform.isWindows ? 'USERPROFILE' : 'HOME';
     final pathVariables = snippetDocumentPathVariables(
       doc.uri == null ? null : doc.path,
@@ -10012,6 +10052,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         variables: {
           'TM_SELECTED_TEXT': selectedText,
           ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
+          ...clipboardVariables,
           ...pathVariables,
           ...relativeFilePathVariables,
           ...workspaceVariables,

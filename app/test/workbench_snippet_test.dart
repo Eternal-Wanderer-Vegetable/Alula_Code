@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:alula_app/editor/editor_clipboard.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/editor/snippet_template.dart';
 import 'package:alula_app/main.dart';
@@ -331,6 +333,115 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       expect(file.readAsStringSync(), 'x$inserted');
     } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('clipboard variable inserts the clipboard text and saves',
+      (tester) async {
+    final previousClipboardFallback =
+        EditorClipboard.forceFlutterClipboardFallbackForTesting;
+    EditorClipboard.forceFlutterClipboardFallbackForTesting = true;
+    var clipboardReads = 0;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.getData') {
+          clipboardReads++;
+          return const {'text': 'copied 🙂'};
+        }
+        return null;
+      },
+    );
+    addTearDown(() {
+      EditorClipboard.forceFlutterClipboardFallbackForTesting =
+          previousClipboardFallback;
+      tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<${CLIPBOARD:fallback}>$0',
+      );
+
+      expect(controller.text, 'x<copied 🙂>');
+      expect(clipboardReads, 1);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'x<copied 🙂>');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('clipboard read does not apply to an edited document snapshot',
+      (tester) async {
+    final previousClipboardFallback =
+        EditorClipboard.forceFlutterClipboardFallbackForTesting;
+    EditorClipboard.forceFlutterClipboardFallbackForTesting = true;
+    final clipboardResult = Completer<Map<String, String>>();
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) => call.method == 'Clipboard.getData'
+          ? clipboardResult.future
+          : Future<Object?>.value(null),
+    );
+    addTearDown(() {
+      EditorClipboard.forceFlutterClipboardFallbackForTesting =
+          previousClipboardFallback;
+      tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.linux,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$CLIPBOARD>$0',
+      );
+      await tester.showKeyboard(editor);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'changed',
+        selection: TextSelection.collapsed(offset: 7),
+      ));
+      await tester.pump();
+
+      clipboardResult.complete(const {'text': 'stale clipboard'});
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(controller.text, 'changed');
+      expect(file.readAsStringSync(), 'x');
+    } finally {
+      if (!clipboardResult.isCompleted) {
+        clipboardResult.complete(const {'text': 'unused'});
+      }
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;
     }
