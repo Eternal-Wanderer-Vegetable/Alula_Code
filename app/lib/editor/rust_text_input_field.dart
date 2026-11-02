@@ -1846,6 +1846,7 @@ class RustTextInputFieldState extends State<RustTextInputField> {
                         ),
                       Semantics(
                         label: widget.semanticsLabel,
+                        value: editingValue.text,
                         textField: true,
                         child: field,
                       ),

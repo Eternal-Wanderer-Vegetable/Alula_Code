@@ -21,6 +21,39 @@ class _CoreBootstrap {
 final _bootstrap = _CoreBootstrap();
 
 void main() {
+  testWidgets('editor semantics exposes the visible text field value',
+      (tester) async {
+    const visibleText = '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
+    final doc = _bootstrap.core!.openDoc(9722, visibleText);
+    addTearDown(doc.close);
+    final window = RustTextInputWindow.open(
+      doc,
+      startUtf16: 0,
+      maxWindowUtf16: 128,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: RustTextInputField(
+            inputWindow: window,
+            semanticsLabel: '未命名 主编辑器',
+          ),
+        ),
+      ),
+    );
+
+    final semantics = tester.ensureSemantics();
+    expect(find.bySemanticsLabel('未命名 主编辑器'), findsOneWidget);
+    expect(
+      tester
+          .getSemantics(find.bySemanticsLabel('未命名 主编辑器'))
+          .getSemanticsData()
+          .value,
+      visibleText,
+    );
+    semantics.dispose();
+  }, skip: _bootstrap.skip != null);
+
   testWidgets('bounded EditableText registers a positioned native input client',
       (tester) async {
     final doc = _bootstrap.core!.openDoc(9720, 'prefix|text input');
