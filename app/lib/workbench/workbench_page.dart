@@ -258,6 +258,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final UndoHistoryBudget _undoHistoryBudget = UndoHistoryBudget();
   final NavigationHistory _navigationHistory = NavigationHistory();
   final Set<int> _appliedLocalEditorTextDragTokens = <int>{};
+  final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -1688,6 +1689,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required bool coalesce,
     String? beforeSnapshot,
     String? transactionId,
+    List<int>? linkedDocumentIds,
   }) {
     if (forward.isNotEmpty) doc.crossWindowSelection = null;
     if (forward.isNotEmpty) doc.remapAutoClosedBracketMarkers(forward);
@@ -1705,6 +1707,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         bom: doc.fileOptions.bom,
         lineEnding: doc.fileOptions.lineEnding.id,
         transactionId: transactionId,
+        linkedDocumentIds: linkedDocumentIds,
       );
     } else {
       doc.undoStack.pushOperations(
@@ -1717,6 +1720,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         bom: doc.fileOptions.bom,
         lineEnding: doc.fileOptions.lineEnding.id,
         transactionId: transactionId,
+        linkedDocumentIds: linkedDocumentIds,
       );
     }
     if (forward.isNotEmpty && !coalesce) {
@@ -8001,6 +8005,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     OpenDoc targetView,
     EditorTextDragDropRequest request,
   ) {
+    if (request.operation == EditorTextDropOperation.move) {
+      _onCrossDocumentTextMoveDrop(targetView, request);
+      return;
+    }
     if (_disposing ||
         request.operation != EditorTextDropOperation.copy ||
         !_canStartEditorTextDragDrop(targetView)) {
@@ -8088,6 +8096,169 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() {});
   }
 
+  void _onCrossDocumentTextMoveDrop(
+    OpenDoc targetView,
+    EditorTextDragDropRequest request,
+  ) {
+    final token = request.payload.token;
+    if (_disposing ||
+        request.operation != EditorTextDropOperation.move ||
+        _appliedLocalEditorTextDragTokens.contains(token) ||
+        _rejectedCrossDocumentMoveTokens.contains(token)) {
+      return;
+    }
+    if (_rejectedCrossDocumentMoveTokens.length >= 32) {
+      _rejectedCrossDocumentMoveTokens.remove(
+        _rejectedCrossDocumentMoveTokens.first,
+      );
+    }
+    // A rejected internal drop must not fall through to dragCompleted's
+    // external-move source deletion.
+    _rejectedCrossDocumentMoveTokens.add(token);
+
+    final targetDocument = targetView.doc;
+    final source = request.payload.selection;
+    if (request.targetDocumentId != targetDocument.id ||
+        request.targetDocumentVersion != targetDocument.version ||
+        targetView.inputWindow.version != request.targetDocumentVersion ||
+        targetView.diskState != DiskDocumentState.current ||
+        !_canStartEditorTextDragDrop(targetView)) {
+      return;
+    }
+    final sourceView = _allDocs
+        .where((candidate) => candidate.id == source.documentId)
+        .firstOrNull;
+    if (sourceView == null ||
+        sourceView.diskState != DiskDocumentState.current ||
+        sourceView.doc.version != source.documentVersion ||
+        !_canStartEditorTextDragDrop(sourceView)) {
+      return;
+    }
+
+    late final TextRangeRead sourceRange;
+    try {
+      sourceRange = sourceView.doc.readRange(
+        source.startUtf16,
+        maxLenUtf16: source.lengthUtf16,
+      );
+    } on AlulaException {
+      return;
+    }
+    if (sourceRange.version != source.documentVersion ||
+        sourceRange.startUtf16 != source.startUtf16 ||
+        sourceRange.endUtf16 != source.endUtf16 ||
+        sourceRange.text != request.payload.selectedText) {
+      return;
+    }
+
+    final plan = planEditorCrossDocumentTextMove(
+      request: request,
+      currentSourceDocumentId: sourceView.doc.id,
+      currentSourceDocumentVersion: sourceRange.version,
+      sourceDocumentLengthUtf16: sourceRange.totalUtf16Length,
+      currentSourceText: sourceRange.text,
+      currentTargetDocumentId: targetDocument.id,
+      currentTargetDocumentVersion: targetDocument.version,
+      targetDocumentLengthUtf16: targetView.inputWindow.totalUtf16Length,
+    );
+    if (plan == null) return;
+
+    final beforeSourceCaret = sourceView.selection.extentOffset;
+    final beforeTargetCaret = targetView.selection.extentOffset;
+    final linkedDocumentIds = List<int>.unmodifiable(
+      [sourceView.doc.id, targetDocument.id],
+    );
+    final transactionId =
+        'cross-document-move-${DateTime.now().microsecondsSinceEpoch}-$token';
+    late final AlulaWorkspaceEditResult result;
+    try {
+      result = targetDocument.core.applyWorkspaceEdit([
+        AlulaWorkspaceEditDocument(
+          id: sourceView.doc.id,
+          baseVersion: source.documentVersion,
+          ops: plan.sourceForwardOperations,
+        ),
+        AlulaWorkspaceEditDocument(
+          id: targetDocument.id,
+          baseVersion: request.targetDocumentVersion,
+          ops: plan.targetForwardOperations,
+        ),
+      ]);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '跨文档文本移动已回滚：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    sourceView.doc.version = result.versions[sourceView.doc.id]!;
+    targetDocument.version = result.versions[targetDocument.id]!;
+    _undoHistoryBudget.beginBatch();
+    try {
+      _recordDocumentOperations(
+        sourceView,
+        forward: plan.sourceForwardOperations,
+        inverse: plan.sourceInverseOperations,
+        beforeCaret: beforeSourceCaret,
+        afterCaret: plan.sourceCaretUtf16,
+        coalesce: false,
+        transactionId: transactionId,
+        linkedDocumentIds: linkedDocumentIds,
+      );
+      _recordDocumentOperations(
+        targetView,
+        forward: plan.targetForwardOperations,
+        inverse: plan.targetInverseOperations,
+        beforeCaret: beforeTargetCaret,
+        afterCaret: plan.targetCaretUtf16,
+        coalesce: false,
+        transactionId: transactionId,
+        linkedDocumentIds: linkedDocumentIds,
+      );
+    } finally {
+      _undoHistoryBudget.endBatch();
+    }
+
+    sourceView.replaceInputWindow(
+      plan.sourceCaretUtf16,
+      selection: TextSelection.collapsed(offset: plan.sourceCaretUtf16),
+    );
+    targetView.additionalSelections = const [];
+    targetView.columnSelection = null;
+    targetView.replaceInputWindow(
+      plan.targetCaretUtf16,
+      selection: TextSelection.collapsed(offset: plan.targetCaretUtf16),
+    );
+    _refreshSiblingViews(sourceView, plan.sourceForwardOperations);
+    _refreshSiblingViews(targetView, plan.targetForwardOperations);
+    sourceView.lastEditAt = null;
+    targetView.lastEditAt = null;
+    _updateDirty(sourceView);
+    _updateDirty(targetView);
+    _scheduleSyntaxRefresh(sourceView.id);
+    _scheduleSyntaxRefresh(targetView.id);
+
+    _rejectedCrossDocumentMoveTokens.remove(token);
+    if (_appliedLocalEditorTextDragTokens.length >= 32) {
+      _appliedLocalEditorTextDragTokens.remove(
+        _appliedLocalEditorTextDragTokens.first,
+      );
+    }
+    _appliedLocalEditorTextDragTokens.add(token);
+    targetView.additionalSelections = const [];
+    targetView.columnSelection = null;
+    final owner = _ownerOfView(targetView);
+    if (owner != null) _focusNodeFor(owner, targetView).requestFocus();
+    _onFindTextChanged();
+    _syncCommandContext();
+    _scheduleOutlineRefresh();
+    _scheduleStateSave();
+    if (mounted) {
+      setState(() => _statusDetail = '已移动文本（撤销事务 $transactionId）');
+    }
+  }
+
   void _onExternalTextDrop(
     OpenDoc view,
     EditorExternalTextDropRequest request,
@@ -8151,7 +8322,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   ) {
     final alreadyApplied =
         _appliedLocalEditorTextDragTokens.remove(payload.token);
+    final rejectedCrossDocumentMove =
+        _rejectedCrossDocumentMoveTokens.remove(payload.token);
     if (alreadyApplied ||
+        rejectedCrossDocumentMove ||
         operation != EditorTextDropOperation.move ||
         _disposing) {
       return;
@@ -9868,6 +10042,117 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = status);
   }
 
+  void _applyLinkedWorkspaceHistory(
+    OpenDoc active,
+    UndoEntry activeEntry, {
+    required bool redo,
+  }) {
+    final transactionId = activeEntry.transactionId;
+    final linkedDocumentIds = activeEntry.linkedDocumentIds;
+    void reject(String reason) {
+      if (mounted) setState(() => _statusDetail = reason);
+    }
+
+    if (transactionId == null ||
+        linkedDocumentIds == null ||
+        linkedDocumentIds.length != 2 ||
+        !linkedDocumentIds.contains(active.id)) {
+      reject('跨文档移动历史无效，未修改文档');
+      return;
+    }
+
+    final viewsById = {for (final doc in _allDocs) doc.id: doc};
+    viewsById[active.id] = active;
+    final participants = <({OpenDoc doc, UndoEntry entry, List<TextOp> ops})>[];
+    for (final id in linkedDocumentIds) {
+      final doc = viewsById[id];
+      if (doc == null) {
+        reject('跨文档移动无法${redo ? '重做' : '撤销'}：参与文档已关闭');
+        return;
+      }
+      if (!_canStartEditorTextDragDrop(doc)) {
+        reject('跨文档移动无法${redo ? '重做' : '撤销'}：请先提交参与文档的输入或 IME');
+        return;
+      }
+      final entry = redo
+          ? doc.undoStack.peekOperationRedo()
+          : doc.undoStack.peekOperationUndo();
+      final entryIds = entry?.linkedDocumentIds;
+      if (entry == null ||
+          !entry.isLinkedWorkspaceTransaction ||
+          entry.transactionId != transactionId ||
+          entryIds == null ||
+          entryIds.length != linkedDocumentIds.length ||
+          !linkedDocumentIds.every(entryIds.contains)) {
+        reject('跨文档移动无法${redo ? '重做' : '撤销'}：请先处理参与文档中的后续编辑');
+        return;
+      }
+      final batches = redo ? entry.forwardBatches : entry.inverseBatches;
+      if (batches == null) {
+        reject('跨文档移动历史不完整，未修改文档');
+        return;
+      }
+      final operations = batches.expand((batch) => batch).toList(
+            growable: false,
+          );
+      if (operations.isEmpty) {
+        reject('跨文档移动历史为空，未修改文档');
+        return;
+      }
+      participants.add((doc: doc, entry: entry, ops: operations));
+    }
+
+    final core = _core;
+    if (core == null) {
+      reject('跨文档移动无法${redo ? '重做' : '撤销'}：核心尚未就绪');
+      return;
+    }
+
+    late final AlulaWorkspaceEditResult result;
+    try {
+      result = core.applyWorkspaceEdit([
+        for (final participant in participants)
+          AlulaWorkspaceEditDocument(
+            id: participant.doc.id,
+            baseVersion: participant.doc.doc.version,
+            ops: participant.ops,
+          ),
+      ]);
+    } on AlulaException catch (error) {
+      reject('跨文档移动${redo ? '重做' : '撤销'}已回滚：${error.code} ${error.detail}');
+      return;
+    }
+
+    for (final participant in participants) {
+      final doc = participant.doc;
+      final entry = participant.entry;
+      doc.doc.version = result.versions[doc.id]!;
+      if (redo) {
+        doc.undoStack.takeOperationRedo();
+        _restoreRedoFileOptions(doc, entry);
+        doc.replaceInputWindow(entry.redoCaret);
+      } else {
+        entry.redoEncoding = doc.fileOptions.encoding.id;
+        entry.redoBom = doc.fileOptions.bom;
+        entry.redoLineEnding = doc.fileOptions.lineEnding.id;
+        doc.undoStack.takeOperationUndo();
+        _restoreFileOptionsFromUndo(doc, entry);
+        doc.replaceInputWindow(entry.caret);
+      }
+      doc.crossWindowSelection = null;
+      doc.lastEditAt = null;
+      _refreshSiblingViews(doc, participant.ops);
+      if (!identical(doc, active)) {
+        _updateDirty(doc);
+        _scheduleSyntaxRefresh(doc.id);
+      }
+    }
+    _finishHistoryChange(
+      active,
+      redo ? '已重做跨文档移动' : '已撤销跨文档移动',
+    );
+  }
+
   void _undo() {
     final active = _active;
     if (active == null) {
@@ -9877,6 +10162,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _flushInput(active, commitComposition: true);
     final operation = active.undoStack.peekOperationUndo();
     if (operation != null) {
+      if (operation.isLinkedWorkspaceTransaction) {
+        _applyLinkedWorkspaceHistory(active, operation, redo: false);
+        return;
+      }
       final operations = _applyHistoryBatches(active, operation.inverseBatches);
       operation.redoEncoding = active.fileOptions.encoding.id;
       operation.redoBom = active.fileOptions.bom;
@@ -9917,6 +10206,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _flushInput(active, commitComposition: true);
     final operation = active.undoStack.peekOperationRedo();
     if (operation != null) {
+      if (operation.isLinkedWorkspaceTransaction) {
+        _applyLinkedWorkspaceHistory(active, operation, redo: true);
+        return;
+      }
       final operations = _applyHistoryBatches(active, operation.forwardBatches);
       active.undoStack.takeOperationRedo();
       _restoreRedoFileOptions(active, operation);

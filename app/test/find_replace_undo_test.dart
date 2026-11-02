@@ -318,5 +318,111 @@ void main() {
       b.dispose();
       expect(budget.totalEntries, 0);
     });
+
+    test('linked workspace history clears both document frames together', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 100);
+      final source = UndoStack(budget: budget);
+      final target = UndoStack(budget: budget);
+      const linkedIds = [31, 32];
+
+      source.pushOperations(
+        forward: const [TextOp.delete(2, 3)],
+        inverse: const [TextOp.insert(2, 'abc')],
+        caret: 2,
+        coalesce: false,
+        transactionId: 'move-1',
+        linkedDocumentIds: linkedIds,
+      );
+      target.pushOperations(
+        forward: const [TextOp.insert(4, 'abc')],
+        inverse: const [TextOp.delete(4, 3)],
+        caret: 4,
+        coalesce: false,
+        transactionId: 'move-1',
+        linkedDocumentIds: linkedIds,
+      );
+      expect(budget.totalEntries, 2);
+
+      source.dispose();
+
+      expect(source.canUndo, isFalse);
+      expect(target.canUndo, isFalse);
+      expect(budget.totalEntries, 0);
+      expect(budget.totalChars, 0);
+      target.dispose();
+    });
+
+    test('linked redo is removed from both stacks when either side branches',
+        () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 10, maxTotalChars: 100);
+      final source = UndoStack(budget: budget);
+      final target = UndoStack(budget: budget);
+      const linkedIds = [41, 42];
+
+      source.pushOperations(
+        forward: const [TextOp.delete(0, 1)],
+        inverse: const [TextOp.insert(0, 'x')],
+        caret: 0,
+        coalesce: false,
+        transactionId: 'move-2',
+        linkedDocumentIds: linkedIds,
+      );
+      target.pushOperations(
+        forward: const [TextOp.insert(0, 'x')],
+        inverse: const [TextOp.delete(0, 1)],
+        caret: 1,
+        coalesce: false,
+        transactionId: 'move-2',
+        linkedDocumentIds: linkedIds,
+      );
+      source.takeOperationUndo();
+      target.takeOperationUndo();
+      expect(source.canRedo, isTrue);
+      expect(target.canRedo, isTrue);
+
+      source.push(before: 'branched', caret: 0, coalesce: false);
+
+      expect(source.canRedo, isFalse);
+      expect(target.canRedo, isFalse);
+      expect(source.canUndo, isTrue, reason: '新的分支帧仍保留');
+      expect(budget.totalEntries, 1);
+      source.dispose();
+      target.dispose();
+    });
+
+    test('shared budget eviction removes a linked pair atomically', () {
+      final budget = UndoHistoryBudget(maxTotalEntries: 1, maxTotalChars: 100);
+      final source = UndoStack(budget: budget);
+      final target = UndoStack(budget: budget);
+      const linkedIds = [51, 52];
+
+      budget.beginBatch();
+      try {
+        source.pushOperations(
+          forward: const [TextOp.delete(0, 1)],
+          inverse: const [TextOp.insert(0, 'x')],
+          caret: 0,
+          coalesce: false,
+          transactionId: 'move-3',
+          linkedDocumentIds: linkedIds,
+        );
+        target.pushOperations(
+          forward: const [TextOp.insert(0, 'x')],
+          inverse: const [TextOp.delete(0, 1)],
+          caret: 1,
+          coalesce: false,
+          transactionId: 'move-3',
+          linkedDocumentIds: linkedIds,
+        );
+      } finally {
+        budget.endBatch();
+      }
+
+      expect(source.canUndo, isFalse);
+      expect(target.canUndo, isFalse);
+      expect(budget.totalEntries, 0);
+      source.dispose();
+      target.dispose();
+    });
   });
 }

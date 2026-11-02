@@ -61,7 +61,7 @@ final _coreBootstrap = _CoreBootstrap();
 
 void main() {
   testWidgets(
-    'cross-document local drag accepts explicit copy and rejects move',
+    'cross-document local drag routes explicit copy and default move',
     (tester) async {
       final previousPlatform = debugDefaultTargetPlatformOverride;
       debugDefaultTargetPlatformOverride = TargetPlatform.linux;
@@ -147,8 +147,18 @@ void main() {
         final moveOperation = await region.onDropOver(
           DropOverEvent(session: session, position: position),
         );
-        expect(moveOperation, DropOperation.none);
-        expect(received, hasLength(1));
+        expect(moveOperation, DropOperation.move);
+        await region.onPerformDrop(
+          PerformDropEvent(
+            session: session,
+            position: position,
+            acceptedOperation: moveOperation,
+          ),
+        );
+        expect(received, hasLength(2));
+        expect(received.last.operation, EditorTextDropOperation.move);
+        expect(received.last.targetDocumentId, targetDocument.id);
+        expect(received.last.targetDocumentVersion, targetDocument.version);
       } finally {
         debugDefaultTargetPlatformOverride = previousPlatform;
       }

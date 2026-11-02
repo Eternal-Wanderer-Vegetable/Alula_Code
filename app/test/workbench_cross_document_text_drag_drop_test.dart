@@ -157,4 +157,208 @@ void main() {
       expect(sourceField.inputWindow.document.resync().content, sourceText);
     },
   );
+
+  testWidgets(
+    'cross-document move edits and undoes both documents atomically',
+    (tester) async {
+      final temp = Directory.systemTemp.createTempSync('alula-cross-doc-move');
+      addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+
+      final workspace = Directory('${temp.path}/workspace')..createSync();
+      const sourceText = 'fn source() { println!("alpha"); }';
+      const targetText = 'fn target() {}';
+      final sourceFile = File('${workspace.path}/source.rs')
+        ..writeAsStringSync(sourceText);
+      final targetFile = File('${workspace.path}/target.rs')
+        ..writeAsStringSync(targetText);
+      final base = temp.path.replaceAll(r'\', '/');
+      final layoutStore = LayoutStore(path: '$base/layout.json');
+      final sessionStore = SessionStore(path: '$base/session.json');
+      sessionStore.save({
+        'v': 1,
+        'focused': 'editor',
+        'workspace': workspace.path,
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 97642,
+            'docs': [
+              {'id': 97641, 'path': sourceFile.path},
+              {'id': 97642, 'path': targetFile.path},
+            ],
+          },
+        ],
+      });
+
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+      ));
+      await tester.pump(const Duration(milliseconds: 600));
+
+      await tester.tap(find.text('source.rs').first);
+      await tester.pump(const Duration(milliseconds: 250));
+      final sourceField = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      final sourceDocument = sourceField.inputWindow.document;
+      expect(sourceDocument.id, 97641);
+      expect(sourceDocument.resync().content, sourceText);
+      final selectionStart = sourceText.indexOf('alpha');
+      final sourceVersion = sourceDocument.version;
+
+      await tester.tap(find.text('target.rs').first);
+      await tester.pump(const Duration(milliseconds: 250));
+      final targetField = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      final targetDocument = targetField.inputWindow.document;
+      expect(targetDocument.id, 97642);
+      expect(targetField.onTextDragDrop, isNotNull);
+      expect(sourceField.onTextDragCompleted, isNotNull);
+
+      final payload = EditorTextDragPayload(
+        selection: EditorTextDragSelection(
+          documentId: sourceDocument.id,
+          documentVersion: sourceVersion,
+          startUtf16: selectionStart,
+          endUtf16: selectionStart + 'alpha'.length,
+        ),
+        selectedText: 'alpha',
+        token: 97641,
+      );
+      targetField.onTextDragDrop!(EditorTextDragDropRequest(
+        payload: payload,
+        targetDocumentId: targetDocument.id,
+        targetDocumentVersion: targetDocument.version,
+        targetOffsetUtf16: targetText.length,
+        operation: EditorTextDropOperation.move,
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(sourceDocument.resync().content,
+          sourceText.replaceFirst('alpha', ''));
+      expect(targetDocument.resync().content, '${targetText}alpha');
+      expect(sourceDocument.isDirty, isTrue);
+      expect(targetDocument.isDirty, isTrue);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content, sourceText);
+      expect(targetDocument.resync().content, targetText);
+      expect(sourceDocument.isDirty, isFalse);
+      expect(targetDocument.isDirty, isFalse);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyY);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content,
+          sourceText.replaceFirst('alpha', ''));
+      expect(targetDocument.resync().content, '${targetText}alpha');
+      expect(sourceDocument.isDirty, isTrue);
+      expect(targetDocument.isDirty, isTrue);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(targetFile.readAsStringSync(), '${targetText}alpha');
+      expect(targetDocument.isDirty, isFalse);
+
+      await tester.tap(find.text('source.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(
+          sourceFile.readAsStringSync(), sourceText.replaceFirst('alpha', ''));
+      expect(sourceDocument.isDirty, isFalse);
+
+      await tester.enterText(find.byType(EditableText), '!');
+      await tester.pump(const Duration(milliseconds: 50));
+      final sourceWithFollowUp = sourceDocument.resync().content;
+      expect(sourceWithFollowUp, isNot(sourceText.replaceFirst('alpha', '')));
+
+      await tester.tap(find.text('target.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content, sourceWithFollowUp);
+      expect(targetDocument.resync().content, '${targetText}alpha');
+
+      await tester.tap(find.text('source.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content,
+          sourceText.replaceFirst('alpha', ''));
+
+      await tester.tap(find.text('target.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content, sourceText);
+      expect(targetDocument.resync().content, targetText);
+
+      await tester.tap(find.text('source.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyY);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content,
+          sourceText.replaceFirst('alpha', ''));
+      expect(targetDocument.resync().content, '${targetText}alpha');
+      expect(sourceDocument.isDirty, isFalse);
+      expect(targetDocument.isDirty, isFalse);
+
+      // A stale target version is rejected by the internal move handler. The
+      // drag-completed fallback must not then delete text from the source.
+      final beforeRejectedDropSource = sourceDocument.resync().content;
+      final beforeRejectedDropTarget = targetDocument.resync().content;
+      final rejectedPayload = EditorTextDragPayload(
+        selection: EditorTextDragSelection(
+          documentId: sourceDocument.id,
+          documentVersion: sourceDocument.version,
+          startUtf16: sourceText.indexOf('println'),
+          endUtf16: sourceText.indexOf('println') + 'println'.length,
+        ),
+        selectedText: 'println',
+        token: 97643,
+      );
+      await tester.tap(find.text('target.rs').first);
+      await tester.pump(const Duration(milliseconds: 100));
+      final currentTargetField = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      currentTargetField.onTextDragDrop!(EditorTextDragDropRequest(
+        payload: rejectedPayload,
+        targetDocumentId: targetDocument.id,
+        targetDocumentVersion: targetDocument.version + 1,
+        targetOffsetUtf16: targetDocument.resync().content.length,
+        operation: EditorTextDropOperation.move,
+      ));
+      sourceField.onTextDragCompleted!(
+        rejectedPayload,
+        EditorTextDropOperation.move,
+      );
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(sourceDocument.resync().content, beforeRejectedDropSource);
+      expect(targetDocument.resync().content, beforeRejectedDropTarget);
+      expect(sourceFile.readAsStringSync(), beforeRejectedDropSource);
+      expect(targetFile.readAsStringSync(), beforeRejectedDropTarget);
+    },
+  );
 }

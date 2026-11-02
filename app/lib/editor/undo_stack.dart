@@ -21,10 +21,18 @@ class UndoEntry {
     this.bom,
     this.lineEnding,
     this.transactionId,
+    List<int>? linkedDocumentIds,
   })  : forwardBatches = null,
         inverseBatches = null,
         redoCaret = redoCaret ?? caret,
-        sequence = _nextUndoSequence++;
+        linkedDocumentIds = _freezeLinkedDocumentIds(linkedDocumentIds),
+        sequence = _nextUndoSequence++ {
+    _validateLinkedTransaction(
+      transactionId,
+      linkedDocumentIds,
+      isOperation: false,
+    );
+  }
 
   UndoEntry.operations({
     required List<TextOp> forward,
@@ -38,10 +46,18 @@ class UndoEntry {
     this.redoEncoding,
     this.redoBom,
     this.redoLineEnding,
+    List<int>? linkedDocumentIds,
   })  : text = '',
         forwardBatches = [List<TextOp>.unmodifiable(forward)],
         inverseBatches = [List<TextOp>.unmodifiable(inverse)],
-        sequence = _nextUndoSequence++;
+        linkedDocumentIds = _freezeLinkedDocumentIds(linkedDocumentIds),
+        sequence = _nextUndoSequence++ {
+    _validateLinkedTransaction(
+      transactionId,
+      linkedDocumentIds,
+      isOperation: true,
+    );
+  }
 
   /// 该步骤的「变更前」全文（undo 目标态）。
   final String text;
@@ -63,6 +79,12 @@ class UndoEntry {
 
   /// Shared identity for edits originating from one multi-document operation.
   final String? transactionId;
+
+  /// Documents whose history frame must move and be evicted as one transaction.
+  /// Null preserves the existing per-document undo semantics.
+  final List<int>? linkedDocumentIds;
+
+  bool get isLinkedWorkspaceTransaction => linkedDocumentIds != null;
 
   /// Present for operation history. Each batch uses coordinates relative to the
   /// document state immediately before that batch, so a coalesced edit remains
@@ -97,6 +119,31 @@ class UndoEntry {
 
 int _nextUndoSequence = 0;
 
+List<int>? _freezeLinkedDocumentIds(List<int>? ids) {
+  if (ids == null) return null;
+  final unique = ids.toSet();
+  if (ids.length < 2 || unique.length != ids.length) {
+    throw ArgumentError.value(ids, 'linkedDocumentIds',
+        'must contain at least two distinct document ids');
+  }
+  return List<int>.unmodifiable(ids);
+}
+
+void _validateLinkedTransaction(
+  String? transactionId,
+  List<int>? ids, {
+  required bool isOperation,
+}) {
+  if (ids != null && !isOperation) {
+    throw ArgumentError.value(ids, 'linkedDocumentIds',
+        'linked document history requires operation-based frames');
+  }
+  if (ids != null && (transactionId == null || transactionId.isEmpty)) {
+    throw ArgumentError.value(transactionId, 'transactionId',
+        'is required for linked document history');
+  }
+}
+
 /// 多文档 undo/redo 共用的内存与条数预算。
 ///
 /// 每个文档保留独立栈；超出工作台预算时，从所有文档中回收最旧历史帧。
@@ -109,16 +156,35 @@ class UndoHistoryBudget {
   int _totalEntries = 0;
   int _totalChars = 0;
   bool _enforcing = false;
+  int _batchDepth = 0;
+  final Set<String> _removingLinkedTransactions = {};
 
   int get totalEntries => _totalEntries;
   int get totalChars => _totalChars;
+  bool get _isBatching => _batchDepth != 0;
 
   void _attach(UndoStack stack) => _stacks.add(stack);
+
+  /// Defer shared and per-stack eviction until all linked frames are inserted.
+  void beginBatch() => _batchDepth++;
+
+  void endBatch() {
+    if (_batchDepth == 0) {
+      throw StateError('Undo history batch is not active.');
+    }
+    _batchDepth--;
+    if (_batchDepth == 0) {
+      for (final stack in _stacks.toList(growable: false)) {
+        stack._evictOldest();
+      }
+      _enforce();
+    }
+  }
 
   void _added(UndoEntry entry) {
     _totalEntries++;
     _totalChars += entry.retainedChars;
-    _enforce();
+    if (_batchDepth == 0) _enforce();
   }
 
   void _removed(UndoEntry entry) {
@@ -128,10 +194,21 @@ class UndoHistoryBudget {
 
   void _resized(UndoEntry entry, int oldChars) {
     _totalChars += entry.retainedChars - oldChars;
-    _enforce();
+    if (_batchDepth == 0) _enforce();
   }
 
   void _detach(UndoStack stack) => _stacks.remove(stack);
+
+  void _removeLinkedTransaction(String transactionId) {
+    if (!_removingLinkedTransactions.add(transactionId)) return;
+    try {
+      for (final stack in _stacks.toList(growable: false)) {
+        stack._removeLinkedTransaction(transactionId);
+      }
+    } finally {
+      _removingLinkedTransactions.remove(transactionId);
+    }
+  }
 
   void _enforce() {
     if (_enforcing) return;
@@ -189,6 +266,7 @@ class UndoStack {
     bool? bom,
     String? lineEnding,
     String? transactionId,
+    List<int>? linkedDocumentIds,
   }) {
     if (coalesce && _undo.isNotEmpty) return;
     _clearRedo();
@@ -199,6 +277,7 @@ class UndoStack {
       bom: bom,
       lineEnding: lineEnding,
       transactionId: transactionId,
+      linkedDocumentIds: linkedDocumentIds,
     );
     _undo.add(entry);
     _budget?._added(entry);
@@ -218,6 +297,7 @@ class UndoStack {
     bool? bom,
     String? lineEnding,
     String? transactionId,
+    List<int>? linkedDocumentIds,
   }) {
     if (forward.isEmpty &&
         inverse.isEmpty &&
@@ -226,7 +306,11 @@ class UndoStack {
         lineEnding == null) {
       return;
     }
-    if (coalesce && _undo.isNotEmpty && _undo.last.isOperation) {
+    if (coalesce &&
+        linkedDocumentIds == null &&
+        _undo.isNotEmpty &&
+        _undo.last.isOperation &&
+        !_undo.last.isLinkedWorkspaceTransaction) {
       final entry = _undo.last;
       final forwardBatches = entry.forwardBatches!;
       final inverseBatches = entry.inverseBatches!;
@@ -248,6 +332,7 @@ class UndoStack {
       bom: bom,
       lineEnding: lineEnding,
       transactionId: transactionId,
+      linkedDocumentIds: linkedDocumentIds,
     );
     _undo.add(entry);
     _budget?._added(entry);
@@ -296,6 +381,7 @@ class UndoStack {
       bom: bom,
       lineEnding: lineEnding,
       transactionId: entry.transactionId,
+      linkedDocumentIds: entry.linkedDocumentIds,
     );
     _redo.add(redoEntry);
     _budget?._added(redoEntry);
@@ -321,6 +407,7 @@ class UndoStack {
       bom: bom,
       lineEnding: lineEnding,
       transactionId: entry.transactionId,
+      linkedDocumentIds: entry.linkedDocumentIds,
     );
     _undo.add(undoEntry);
     _budget?._added(undoEntry);
@@ -329,11 +416,16 @@ class UndoStack {
   }
 
   void clear() {
-    for (final entry in _undo) {
-      _budget?._removed(entry);
+    final linkedIds = <String>{
+      for (final entry in [..._undo, ..._redo])
+        if (entry.isLinkedWorkspaceTransaction && entry.transactionId != null)
+          entry.transactionId!,
+    };
+    for (final id in linkedIds) {
+      _budget?._removeLinkedTransaction(id);
     }
-    for (final entry in _redo) {
-      _budget?._removed(entry);
+    for (final entry in [..._undo, ..._redo]) {
+      _removeEntryLocally(entry);
     }
     _undo.clear();
     _redo.clear();
@@ -354,19 +446,48 @@ class UndoStack {
   }
 
   void _evictEntry(UndoEntry entry) {
-    if (!_undo.remove(entry)) _redo.remove(entry);
+    final transactionId = entry.transactionId;
+    if (entry.isLinkedWorkspaceTransaction &&
+        transactionId != null &&
+        _budget != null) {
+      _budget._removeLinkedTransaction(transactionId);
+      return;
+    }
+    _removeEntryLocally(entry);
+  }
+
+  void _removeLinkedTransaction(String transactionId) {
+    for (final entry in [..._undo, ..._redo]) {
+      if (entry.isLinkedWorkspaceTransaction &&
+          entry.transactionId == transactionId) {
+        _removeEntryLocally(entry);
+      }
+    }
+  }
+
+  void _removeEntryLocally(UndoEntry entry) {
+    if (!_undo.remove(entry) && !_redo.remove(entry)) return;
     _budget?._removed(entry);
   }
 
   void _clearRedo() {
-    for (final entry in _redo) {
-      _budget?._removed(entry);
+    final linkedIds = {
+      for (final entry in _redo)
+        if (entry.isLinkedWorkspaceTransaction && entry.transactionId != null)
+          entry.transactionId!,
+    };
+    for (final id in linkedIds) {
+      _budget?._removeLinkedTransaction(id);
+    }
+    for (final entry in _redo.toList(growable: false)) {
+      _removeEntryLocally(entry);
     }
     _redo.clear();
   }
 
   /// 条数/总字符双上限同时计算 undo 与 redo 历史。
   void _evictOldest() {
+    if (_budget?._isBatching ?? false) return;
     var total = _undo.fold<int>(0, (sum, entry) => sum + entry.retainedChars) +
         _redo.fold<int>(0, (sum, entry) => sum + entry.retainedChars);
     while (_undo.length + _redo.length > maxEntries || total > maxTotalChars) {

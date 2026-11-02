@@ -312,9 +312,82 @@ EditorTextDragEditPlan? planSameDocumentTextDrag({
   );
 }
 
+@immutable
+class EditorCrossDocumentTextMovePlan {
+  const EditorCrossDocumentTextMovePlan({
+    required this.sourceForwardOperations,
+    required this.sourceInverseOperations,
+    required this.targetForwardOperations,
+    required this.targetInverseOperations,
+    required this.sourceCaretUtf16,
+    required this.targetCaretUtf16,
+    required this.sourceResultLengthUtf16,
+    required this.targetResultLengthUtf16,
+  });
+
+  final List<TextOp> sourceForwardOperations;
+  final List<TextOp> sourceInverseOperations;
+  final List<TextOp> targetForwardOperations;
+  final List<TextOp> targetInverseOperations;
+  final int sourceCaretUtf16;
+  final int targetCaretUtf16;
+  final int sourceResultLengthUtf16;
+  final int targetResultLengthUtf16;
+}
+
+/// Plans both sides of an atomic cross-document text move. Versions, offsets,
+/// and lengths use UTF-16 code units.
+EditorCrossDocumentTextMovePlan? planEditorCrossDocumentTextMove({
+  required EditorTextDragDropRequest request,
+  required int currentSourceDocumentId,
+  required int currentSourceDocumentVersion,
+  required int sourceDocumentLengthUtf16,
+  required String currentSourceText,
+  required int currentTargetDocumentId,
+  required int currentTargetDocumentVersion,
+  required int targetDocumentLengthUtf16,
+}) {
+  final source = request.payload.selection;
+  final selectedText = request.payload.selectedText;
+  final sourceLength = source.lengthUtf16;
+  if (request.operation != EditorTextDropOperation.move ||
+      source.documentId == request.targetDocumentId ||
+      source.documentId != currentSourceDocumentId ||
+      source.documentVersion <= 0 ||
+      source.documentVersion != currentSourceDocumentVersion ||
+      source.startUtf16 < 0 ||
+      sourceDocumentLengthUtf16 < 0 ||
+      source.endUtf16 > sourceDocumentLengthUtf16 ||
+      sourceLength <= 0 ||
+      sourceLength > maxEditorTextDragUtf16 ||
+      selectedText.length != sourceLength ||
+      selectedText != currentSourceText ||
+      !_hasValidUtf16(selectedText) ||
+      request.targetDocumentId != currentTargetDocumentId ||
+      request.targetDocumentVersion <= 0 ||
+      request.targetDocumentVersion != currentTargetDocumentVersion ||
+      targetDocumentLengthUtf16 < 0 ||
+      request.targetOffsetUtf16 < 0 ||
+      request.targetOffsetUtf16 > targetDocumentLengthUtf16) {
+    return null;
+  }
+
+  final sourceStart = source.startUtf16;
+  final targetOffset = request.targetOffsetUtf16;
+  return EditorCrossDocumentTextMovePlan(
+    sourceForwardOperations: [TextOp.delete(sourceStart, sourceLength)],
+    sourceInverseOperations: [TextOp.insert(sourceStart, selectedText)],
+    targetForwardOperations: [TextOp.insert(targetOffset, selectedText)],
+    targetInverseOperations: [TextOp.delete(targetOffset, sourceLength)],
+    sourceCaretUtf16: sourceStart,
+    targetCaretUtf16: targetOffset + sourceLength,
+    sourceResultLengthUtf16: sourceDocumentLengthUtf16 - sourceLength,
+    targetResultLengthUtf16: targetDocumentLengthUtf16 + sourceLength,
+  );
+}
+
 /// Plans a copy from one open Rust document into another. Cross-document
-/// moves stay disabled until source deletion and destination insertion can be
-/// committed and undone as one transaction.
+/// moves are handled separately so both documents can be committed atomically.
 EditorTextDragEditPlan? planEditorCrossDocumentTextCopy({
   required EditorTextDragDropRequest request,
   required int currentSourceDocumentId,

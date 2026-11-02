@@ -458,7 +458,6 @@ class RustTextInputFieldState extends State<RustTextInputField> {
         source.lengthUtf16 <= 0 ||
         source.lengthUtf16 > maxEditorTextDragUtf16 ||
         payload.selectedText.length != source.lengthUtf16 ||
-        (!sameDocument && operation != EditorTextDropOperation.copy) ||
         (sameDocument &&
             (source.documentVersion != window.version ||
                 source.endUtf16 > window.totalUtf16Length))) {

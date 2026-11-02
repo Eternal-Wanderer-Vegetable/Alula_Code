@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
+### 最新进展（2026-11-02，P04.62 / EDT-11d 跨文档 Move 与联动撤销）
+
+- 跨文档 builder 现在支持默认 Move 与显式 Copy。Move 在 Rust workspace 原子事务内删除源范围并插入目标；两侧用同一 linked transaction id 记录历史。Ctrl+Z/Y 从任一参与文档发起会验证两侧栈顶后原子撤销/重做；栈顶失配拒绝且内容不变。关闭/clear、redo 分叉及本地或共享历史预算淘汰均成对移除帧。拒绝的内部 Move 不会落入 dragCompleted 的源删除回退。
+- planner 和工作台用例覆盖 UTF-16 emoji、stale payload/目标版本、move/drop route、两文档 dirty/savepoint/保存回读、双文档 undo/redo、后续单文档编辑导致的 fail-closed、被拒 drop 不误删源；UndoStack 用例覆盖 close、redo branch 与共享预算淘汰。未改 Rust 或 ABI。
+- `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter 605 tests 全过；`cargo fmt --check` 通过，`flutter analyze` 0 issues。最后追加栈顶失配 widget assertions 后，完整目标工作台 2 tests 再通过。P04.62 报告：`docs/diagnostics/2026-11-02-p04/p04.62-cross-document-text-move.md`。
+- GitNexus 编辑前 `_buildEditorTextDropRequest` impact 为 UNKNOWN/no callers，经文本搜索确认其由 `EditorNativeTextDragDrop.buildDropRequest` 调用；`EditorNativeTextDragDrop` 类 impact CRITICAL（363 symbols / 142 processes / 20 modules），该类未改。Rust workspace transaction 入口已有 CRITICAL 影响提示，保持复用、不修改函数或 ABI。
+- CI 历史失败分类仍见 P04.61 报告：runner 输入/teardown/analyzer 假红不等同产品崩溃；真实 SIGSEGV `41370553563` 的 readiness handshake/nil guard 修复后 smoke 未复现，但也不构成绝对无崩溃证明。当前 PR CI 等待本阶段 push 后确认 Linux/Windows；macOS 原生 DnD 保持待验证，500 MiB 优化留在 P14。
+
 ### 最新进展（2026-11-02，P04.61 / EDT-11c 跨文档文本拖放复制）
 
 - 跨文档 local text payload 现在支持显式 Copy：目标控件按不同 Rust 文档分支处理，默认 Move 被拒；源文档在 drop 时重读选区并核验 id/version/UTF-16 内容，目标文档版本、输入窗、IME 与 pending 状态也要匹配。目标使用 Rust 单次 insert，进入目标 undo/dirty/Find/保存和分屏同步；源文本保持不变。没有 Rust/ABI 变更。跨文档 Move 留待原子事务与跨文档撤销实现。
