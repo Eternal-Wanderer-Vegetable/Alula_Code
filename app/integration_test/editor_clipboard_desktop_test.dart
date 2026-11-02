@@ -1,5 +1,6 @@
 import 'package:alula_app/editor/clipboard_metadata.dart';
 import 'package:alula_app/editor/editor_clipboard.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -59,11 +60,19 @@ void main() {
         contains('<span style="color:#C586C0;">fn</span>'));
     expect(pasteAsSnapshot?.metadata?.mode, 'rust');
 
-    final fileUriItem = DataWriterItem()
-      ..add(Formats.fileUri(Uri.parse('file:///workspace/src/main.rs')));
-    final webUriItem = DataWriterItem()
-      ..add(Formats.uri(NamedUri(Uri.parse('https://example.test/item'))));
-    await clipboard.write([fileUriItem, webUriItem]);
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      final fileUriItem = DataWriterItem()
+        ..add(Formats.fileUri(Uri.parse('file:///workspace/src/main.rs')));
+      final webUriItem = DataWriterItem()
+        ..add(Formats.uri(NamedUri(Uri.parse('https://example.test/item'))));
+      await clipboard.write([fileUriItem, webUriItem]);
+    } else {
+      const uriList =
+          'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n';
+      final uriItem = DataWriterItem()
+        ..add(EditorClipboard.uriListFormat(uriList));
+      await clipboard.write([uriItem]);
+    }
     final uriSnapshot = await EditorClipboard.readForPasteAs();
     expect(
       uriSnapshot?.uriList
