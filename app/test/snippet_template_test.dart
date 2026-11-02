@@ -120,6 +120,47 @@ void main() {
     });
   });
 
+  group('snippetCurrentLineVariables', () {
+    test('keeps the current line verbatim, including empty lines', () {
+      expect(
+        snippetCurrentLineVariables(r'  call($TM_FILENAME); 🦊'),
+        {'TM_CURRENT_LINE': r'  call($TM_FILENAME); 🦊'},
+      );
+      expect(snippetCurrentLineVariables(''), {'TM_CURRENT_LINE': ''});
+    });
+  });
+
+  group('snippetTemplateUsesVariable', () {
+    test('recognizes plain, braced, and defaulted references', () {
+      expect(
+          snippetTemplateUsesVariable(r'$TM_CURRENT_LINE', 'TM_CURRENT_LINE'),
+          isTrue);
+      expect(
+          snippetTemplateUsesVariable(r'${TM_CURRENT_LINE}', 'TM_CURRENT_LINE'),
+          isTrue);
+      expect(
+        snippetTemplateUsesVariable(
+            r'${TM_CURRENT_LINE:fallback}', 'TM_CURRENT_LINE'),
+        isTrue,
+      );
+    });
+
+    test('ignores escaped references, suffixes, and nested default text', () {
+      expect(
+          snippetTemplateUsesVariable(r'\$TM_CURRENT_LINE', 'TM_CURRENT_LINE'),
+          isFalse);
+      expect(
+          snippetTemplateUsesVariable(
+              r'$TM_CURRENT_LINE_SUFFIX', 'TM_CURRENT_LINE'),
+          isFalse);
+      expect(
+        snippetTemplateUsesVariable(
+            r'${TM_SELECTED_TEXT:$TM_CURRENT_LINE}', 'TM_CURRENT_LINE'),
+        isFalse,
+      );
+    });
+  });
+
   group('expandSnippetTemplate', () {
     test('expands defaults, linked tabstops, and the final cursor stop', () {
       final expansion = expandSnippetTemplate(r'let ${1:name} = $1;$0');
@@ -213,6 +254,16 @@ void main() {
       );
 
       expect(expansion.text, 'archive.tar.rs archive.tar');
+      expect(expansion.tabstopOrder, [0]);
+    });
+
+    test('expands current-line contents once as literal text', () {
+      final expansion = expandSnippetTemplate(
+        r'<$TM_CURRENT_LINE>$0',
+        variables: snippetCurrentLineVariables(r'let $TM_FILENAME = 🦊;'),
+      );
+
+      expect(expansion.text, r'<let $TM_FILENAME = 🦊;>');
       expect(expansion.tabstopOrder, [0]);
     });
 

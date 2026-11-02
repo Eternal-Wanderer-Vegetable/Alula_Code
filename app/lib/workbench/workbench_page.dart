@@ -9787,7 +9787,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           maxLines: 8,
           decoration: const InputDecoration(
             labelText: '片段模板',
-            helperText: r'支持 $1、${1:默认值}、$0 和 $TM_SELECTED_TEXT',
+            helperText: r'支持 $1、${1:默认值}、$0、$TM_SELECTED_TEXT 和 $TM_CURRENT_LINE',
           ),
         ),
         actions: [
@@ -9860,6 +9860,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       windows: Platform.isWindows,
       userHome: Platform.environment[homeVariable],
     );
+    final currentLineVariables = <String, String>{};
+    if (snippetTemplateUsesVariable(template, 'TM_CURRENT_LINE')) {
+      late final String currentLine;
+      try {
+        final boundary = doc.doc.lineBoundary(selection.extentOffset);
+        if (boundary.version != window.version) {
+          doc.replaceInputWindow(selection.extentOffset);
+          if (mounted) setState(() => _statusDetail = '片段插入未应用：文档同步版本已变化');
+          return;
+        }
+        final lineLengthUtf16 = boundary.endUtf16 - boundary.startUtf16;
+        if (lineLengthUtf16 > window.maxWindowUtf16) {
+          if (mounted) setState(() => _statusDetail = '当前行过长，无法在片段输入窗中展开');
+          return;
+        }
+        if (lineLengthUtf16 == 0) {
+          currentLine = '';
+        } else {
+          final lineRange = doc.doc.readRange(
+            boundary.startUtf16,
+            maxLenUtf16: lineLengthUtf16,
+          );
+          if (lineRange.version != boundary.version ||
+              lineRange.startUtf16 != boundary.startUtf16 ||
+              lineRange.endUtf16 != boundary.endUtf16 ||
+              lineRange.text.length != lineLengthUtf16) {
+            doc.replaceInputWindow(selection.extentOffset);
+            if (mounted) setState(() => _statusDetail = '当前行读取失败：文档同步版本已变化');
+            return;
+          }
+          currentLine = lineRange.text;
+        }
+      } on AlulaException catch (error) {
+        if (mounted) {
+          setState(() => _statusDetail = '当前行读取失败：${error.code} ${error.detail}');
+        }
+        return;
+      }
+      currentLineVariables.addAll(snippetCurrentLineVariables(currentLine));
+    }
     late final SnippetExpansion expansion;
     try {
       expansion = expandSnippetTemplate(
@@ -9869,6 +9909,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
           ...pathVariables,
           ...lineVariables,
+          ...currentLineVariables,
         },
       );
     } on SnippetTemplateException catch (error) {

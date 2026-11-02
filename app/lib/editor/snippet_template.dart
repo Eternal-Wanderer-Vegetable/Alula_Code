@@ -58,9 +58,8 @@ class SnippetTemplateException implements Exception {
 Map<String, String> snippetFilenameVariables(String? filename) {
   final value = filename ?? '';
   final extensionStart = value.lastIndexOf('.');
-  final baseName = extensionStart <= 0
-      ? value
-      : value.substring(0, extensionStart);
+  final baseName =
+      extensionStart <= 0 ? value : value.substring(0, extensionStart);
   return {'TM_FILENAME': value, 'TM_FILENAME_BASE': baseName};
 }
 
@@ -126,6 +125,99 @@ Map<String, String> snippetLineVariables(int zeroBasedLine) {
     'TM_LINE_NUMBER': '${zeroBasedLine + 1}',
   };
 }
+
+/// Returns the current logical line variable without reparsing its contents.
+Map<String, String> snippetCurrentLineVariables(String currentLine) => {
+      'TM_CURRENT_LINE': currentLine,
+    };
+
+/// Reports whether [template] contains a syntactically recognized [name]
+/// variable reference. Escaped variables and text inside another variable's
+/// default value are not references because the snippet parser keeps both
+/// literal.
+bool snippetTemplateUsesVariable(String template, String name) {
+  final units = template.codeUnits;
+  var offset = 0;
+  while (offset < units.length) {
+    final unit = units[offset];
+    if (unit == 0x5c &&
+        offset + 1 < units.length &&
+        _isSnippetEscape(units[offset + 1])) {
+      offset += 2;
+      continue;
+    }
+    if (unit != 0x24) {
+      offset++;
+      continue;
+    }
+
+    var cursor = offset + 1;
+    var braced = false;
+    if (cursor < units.length && units[cursor] == 0x7b) {
+      braced = true;
+      cursor++;
+    }
+    if (cursor >= units.length || !_isSnippetVariableStart(units[cursor])) {
+      offset++;
+      continue;
+    }
+
+    final nameStart = cursor++;
+    while (cursor < units.length && _isSnippetVariablePart(units[cursor])) {
+      cursor++;
+    }
+    final matches =
+        String.fromCharCodes(units.sublist(nameStart, cursor)) == name;
+    if (!braced) {
+      if (matches) return true;
+      offset = cursor;
+      continue;
+    }
+
+    if (cursor < units.length && units[cursor] == 0x7d) {
+      if (matches) return true;
+      offset = cursor + 1;
+      continue;
+    }
+    if (cursor < units.length && units[cursor] == 0x3a) {
+      cursor++;
+      var closed = false;
+      while (cursor < units.length) {
+        if (units[cursor] == 0x5c &&
+            cursor + 1 < units.length &&
+            _isSnippetEscape(units[cursor + 1])) {
+          cursor += 2;
+          continue;
+        }
+        if (units[cursor] == 0x7d) {
+          cursor++;
+          closed = true;
+          break;
+        }
+        cursor++;
+      }
+      if (closed) {
+        if (matches) return true;
+        offset = cursor;
+        continue;
+      }
+    }
+
+    // Malformed and transformed variables are not resolved by this parser.
+    offset++;
+  }
+  return false;
+}
+
+bool _isSnippetEscape(int unit) => unit == 0x24 || unit == 0x7d || unit == 0x5c;
+
+bool _isSnippetVariableStart(int unit) =>
+    (unit >= 0x41 && unit <= 0x5a) ||
+    (unit >= 0x61 && unit <= 0x7a) ||
+    unit == 0x5f;
+
+bool _isSnippetVariablePart(int unit) =>
+    _isSnippetVariableStart(unit) || (unit >= 0x30 && unit <= 0x39);
 
 String _snippetPathLabel(
   String value, {

@@ -299,6 +299,102 @@ void main() {
     }
   });
 
+  testWidgets('current-line variable reads the full Rust line without CRLF',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: 'before\r\nse🙂cond\r\nlast',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 11);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_CURRENT_LINE>$0',
+      );
+
+      const expectedEditor = 'before\nse🙂<se🙂cond>cond\nlast';
+      const expectedOnDisk = 'before\r\nse🙂<se🙂cond>cond\r\nlast';
+      expect(controller.text, expectedEditor);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), expectedOnDisk);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'current-line variable rejects a line larger than the input window',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final oversizedLine = 'a' * 16385;
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: oversizedLine,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      final visibleText = controller.text;
+      controller.selection = const TextSelection.collapsed(offset: 8192);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'$TM_CURRENT_LINE',
+      );
+
+      expect(controller.text, visibleText);
+      expect(file.readAsStringSync(), oversizedLine);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('ordinary snippet does not read or reject an oversized line',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final oversizedLine = 'a' * 16385;
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: oversizedLine,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 8192);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(tester, template: r'<$0>');
+
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '${'a' * 8192}<>${'a' * (16385 - 8192)}');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('line variables use the Rust document cursor line and save',
       (tester) async {
     try {

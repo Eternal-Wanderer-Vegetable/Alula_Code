@@ -5,6 +5,11 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.69 / EDT-12b5 当前行片段变量，本地完成，hosted CI 待提交后验证）
+
+- 按固定 Code-OSS 1.145.0 增加 `$TM_CURRENT_LINE`，按插入前光标所在逻辑行展开，去掉 CR/LF 行终止符并保留行内容原样；只有模板确实包含可解析变量时才读取 Rust 行范围。超出 16,384 UTF-16 输入窗上限、版本不一致或读取不完整时不做部分编辑。无 Rust/ABI 改动。
+- 新增纯 helper 与 parser/widget 回归，覆盖普通/花括号/default 变量、转义与后缀、嵌套默认文本、emoji、CRLF 保存、当前行超长拒绝、普通片段在长行仍能保存。定向 35 项、完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 658）、cargo fmt 与 Flutter analyze 0 issues；GitNexus staged/all 均为 9 files/24 symbols/0 resolved processes/LOW，但保留 518 跨语言漏链与流程预算截断警告。本机 GUI/Narrator 未启动。证据：`docs/diagnostics/2026-11-03-p04/p04.69-current-line-snippet-variable.md`。
+
 ### 最新进展（2026-11-03，P04.68 / EDT-12b4 行号片段变量，已提交并通过 hosted CI）
 
 - 按固定 Code-OSS 1.145.0 增加 `$TM_LINE_INDEX`（0-based）和 `$TM_LINE_NUMBER`（1-based），均根据插入前活动选区 extent 所在行计算。工作台 flush 并校验输入后读取 Rust 权威位置，再经纯 helper 展开；无 Rust/ABI 改动。
