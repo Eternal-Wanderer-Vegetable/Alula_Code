@@ -20,7 +20,14 @@ void main() {
       final directory = Directory(directoryPath!);
       directory.createSync(recursive: true);
       final semanticsHandle = tester.ensureSemantics();
-      addTearDown(semanticsHandle.dispose);
+      var semanticsHandleActive = true;
+      void disposeSemanticsHandle() {
+        if (!semanticsHandleActive) return;
+        semanticsHandleActive = false;
+        semanticsHandle.dispose();
+      }
+
+      addTearDown(disposeSemanticsHandle);
 
       const payload = EditorTextDragPayload(
         selection: EditorTextDragSelection(
@@ -195,6 +202,7 @@ void main() {
             await Future<void>.delayed(const Duration(milliseconds: 100));
           }
           if (inputRouteUnavailable.existsSync()) {
+            disposeSemanticsHandle();
             markTestSkipped(
               'Hosted macOS runner did not route synthetic pointer events to Flutter.',
             );
