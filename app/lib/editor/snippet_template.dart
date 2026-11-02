@@ -111,6 +111,36 @@ Map<String, String> snippetDocumentPathVariables(
   };
 }
 
+/// Returns Code-OSS's built-in workspace variables for the opened folder.
+///
+/// Alula currently supports one workspace folder, so its name is the root
+/// folder basename and its folder value is the normalized absolute path.
+/// Unlike document path labels, workspace folders are not abbreviated to `~`.
+Map<String, String> snippetWorkspaceVariables(
+  String? workspaceRoot, {
+  required bool windows,
+}) {
+  if (workspaceRoot == null || workspaceRoot.isEmpty) {
+    return const {
+      'WORKSPACE_NAME': '',
+      'WORKSPACE_FOLDER': '',
+    };
+  }
+
+  final context = path.Context(
+    style: windows ? path.Style.windows : path.Style.posix,
+  );
+  final normalizedRoot = context.normalize(workspaceRoot);
+  return {
+    'WORKSPACE_NAME': context.basename(normalizedRoot),
+    'WORKSPACE_FOLDER': _snippetPathLabel(
+      normalizedRoot,
+      context: context,
+      windows: windows,
+    ),
+  };
+}
+
 /// Returns Code-OSS's built-in relative filepath variable for a document.
 ///
 /// A file inside [workspaceRoot] is labeled relative to that root, without a
@@ -348,7 +378,8 @@ String _snippetPathLabel(
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
 /// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
 /// `$TM_DIRECTORY_BASE`, `$TM_FILEPATH`, `$RELATIVE_FILEPATH`,
-/// `$TM_LINE_INDEX`, and `$TM_LINE_NUMBER`
+/// `$TM_LINE_INDEX`, `$TM_LINE_NUMBER`, `$WORKSPACE_NAME`, and
+/// `$WORKSPACE_FOLDER`
 /// variables, plus `$TM_CURRENT_LINE` and `$TM_CURRENT_WORD` when supplied by
 /// the workbench.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables

@@ -299,6 +299,43 @@ void main() {
     }
   });
 
+  testWidgets('workspace variables use the opened folder and save',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.linux,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      final variables = snippetWorkspaceVariables(
+        file.parent.path,
+        windows: Platform.isWindows,
+      );
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$WORKSPACE_NAME|$WORKSPACE_FOLDER>$0',
+      );
+
+      final inserted = '<${variables['WORKSPACE_NAME']}|'
+          '${variables['WORKSPACE_FOLDER']}>';
+      expect(controller.text, 'x$inserted');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'x$inserted');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets(
       'relative filepath variable resolves against the open folder and saves',
       (tester) async {

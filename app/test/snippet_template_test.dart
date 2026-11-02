@@ -103,6 +103,65 @@ void main() {
     });
   });
 
+  group('snippetWorkspaceVariables', () {
+    test('returns the folder basename and an absolute POSIX path', () {
+      expect(
+        snippetWorkspaceVariables('/home/alice/project/..', windows: false),
+        {
+          'WORKSPACE_NAME': 'alice',
+          'WORKSPACE_FOLDER': '/home/alice',
+        },
+      );
+      expect(
+        snippetWorkspaceVariables('/home/alice/project', windows: false),
+        {
+          'WORKSPACE_NAME': 'project',
+          'WORKSPACE_FOLDER': '/home/alice/project',
+        },
+      );
+    });
+
+    test('normalizes Windows paths and preserves UNC roots', () {
+      expect(
+        snippetWorkspaceVariables(
+          r'C:\workspace\project\..',
+          windows: true,
+        ),
+        {
+          'WORKSPACE_NAME': 'workspace',
+          'WORKSPACE_FOLDER': r'c:\workspace',
+        },
+      );
+      expect(
+        snippetWorkspaceVariables(
+          r'\\server\share\workspace',
+          windows: true,
+        ),
+        {
+          'WORKSPACE_NAME': 'workspace',
+          'WORKSPACE_FOLDER': r'\\server\share\workspace',
+        },
+      );
+    });
+
+    test('resolves an unopened workspace to empty strings', () {
+      expect(
+        snippetWorkspaceVariables(null, windows: false),
+        {
+          'WORKSPACE_NAME': '',
+          'WORKSPACE_FOLDER': '',
+        },
+      );
+      expect(
+        snippetWorkspaceVariables('', windows: true),
+        {
+          'WORKSPACE_NAME': '',
+          'WORKSPACE_FOLDER': '',
+        },
+      );
+    });
+  });
+
   group('snippetRelativeFilePathVariables', () {
     test('returns a workspace relative path without a root prefix', () {
       expect(

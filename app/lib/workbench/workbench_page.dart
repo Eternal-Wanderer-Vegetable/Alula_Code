@@ -9870,6 +9870,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 userHome: Platform.environment[homeVariable],
               )
             : const <String, String>{};
+    final needsWorkspaceVariables =
+        snippetTemplateUsesVariable(template, 'WORKSPACE_NAME') ||
+            snippetTemplateUsesVariable(template, 'WORKSPACE_FOLDER');
+    final workspaceVariables = needsWorkspaceVariables
+        ? snippetWorkspaceVariables(
+            _workspaceRoot,
+            windows: Platform.isWindows,
+          )
+        : const <String, String>{};
     final currentLineVariables = <String, String>{};
     final currentWordVariables = <String, String>{};
     final needsCurrentLine =
@@ -10005,6 +10014,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
           ...pathVariables,
           ...relativeFilePathVariables,
+          ...workspaceVariables,
           ...lineVariables,
           ...currentLineVariables,
           ...currentWordVariables,
