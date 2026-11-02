@@ -11,6 +11,9 @@
 - provider edits 校验 activity/doc version/focus/selections，通过一次 Rust `applyWith` 和单帧 undo；替换 provider 先撤销前一 provider 再应用新值。测试覆盖多格式、URI workspace containment、provider switching、一次 undo/redo、保存回读与设置关闭回退。无 Rust/ABI 改动。
 - 定向 Paste As/clipboard/widget tests 全过；`RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 617），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues；从 HEAD 05afc0d 应用精确 14-file staged patch 的 detached worktree 再跑 init/fmt/analyze 也全部通过；task-scope diff check 通过。真实桌面 clipboard round trip 已加到 Platform Availability integration，不在本机启动 GUI，以免触发 Narrator。
 - 状态仍为 in-progress，等待 PR CI 与 Platform Availability Linux/Windows hosted MIME round-trip 通过后再登记完成；macOS hosted job 仅作为格式/build 辅助，原生 DnD 仍 pending。刷新后的 GitNexus staged 结果重复扫描为 CRITICAL（14 files、32–46 symbols、395–430 flows），compare-main 同为 CRITICAL 且清单 capped；跨语言漏链与预算截断已写入报告，未将图谱风险记为 clean。设置值由 `AlulaApp` 注入，持久化/Settings UI 留 P07；Markdown providers 留 P08/P12。CI 红灯未见产品崩溃栈；报告记录最新 run 与已确认 crash 的区别。
+- 首次 P04.63 push 的 PR CI `41441416426` 通过；Platform `41441408464` 三平台均只在 native clipboard 验收步骤失败。Linux 去掉 URI-list 末尾 CRLF，Windows URI 字符串/字节带尾随 NUL，macOS 把多 URI 的 CRLF 编码为 `%0D%0A`。修复已本地完成：尾随 NUL 清理、按 URI 记录验收、macOS 聚合列表改用纯文本格式，并以多个原生 URI 项测试平台读取。Windows job 另有旧 accessibility semantic label 断言失败，未纳入此切片。完整 Dart suite 617 tests 与 Analyze 0 issues 通过；hosted 复跑待提交。
+
+- 跟进 GitNexus：staged 6 files / 5 symbols / 0 flows / LOW；_decodeUriList 为 UNKNOWN（属性 dispatch 未建边，文本检索已核实 codec registrations 和 unit test）；scope all 重复结果 45 files / 17–18 symbols / LOW；compare-main 1,565 files / 1,566–1,604 symbols / 430 flows / CRITICAL 且列表 capped，代表整条分支，不作为本次 follow-up 风险评级。索引的 567 跨语言属性漏链与流程截断见 P04.63 报告。
 
 ### 最新进展（2026-11-02，P04.62 / EDT-11d 跨文档 Move 与联动撤销）
 

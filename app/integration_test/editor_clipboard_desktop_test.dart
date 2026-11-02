@@ -59,15 +59,18 @@ void main() {
         contains('<span style="color:#C586C0;">fn</span>'));
     expect(pasteAsSnapshot?.metadata?.mode, 'rust');
 
-    const uriList =
-        'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n';
-    final uriItem = DataWriterItem();
-    uriItem
-      ..add(Formats.plainText('uri fallback'))
-      ..add(EditorClipboard.uriListFormat(uriList));
-    await clipboard.write([uriItem]);
+    final fileUriItem = DataWriterItem()
+      ..add(Formats.fileUri(Uri.parse('file:///workspace/src/main.rs')));
+    final webUriItem = DataWriterItem()
+      ..add(Formats.uri(NamedUri(Uri.parse('https://example.test/item'))));
+    await clipboard.write([fileUriItem, webUriItem]);
     final uriSnapshot = await EditorClipboard.readForPasteAs();
-    expect(uriSnapshot?.text, 'uri fallback');
-    expect(uriSnapshot?.uriList, uriList);
+    expect(
+      uriSnapshot?.uriList
+          ?.split(RegExp(r'\r?\n'))
+          .where((uri) => uri.isNotEmpty)
+          .toList(),
+      ['file:///workspace/src/main.rs', 'https://example.test/item'],
+    );
   });
 }

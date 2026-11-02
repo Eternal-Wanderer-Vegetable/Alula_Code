@@ -100,11 +100,11 @@ class EditorClipboard {
       onDecode: _decodeUriList,
     ),
     macos: SimplePlatformCodec<String>(
-      formats: [
-        'public.file-url',
-        'public.url',
-        'public.utf8-plain-text',
-      ],
+      // URI lists can contain multiple entries, while AppKit's URL UTIs
+      // represent one URL and percent-escape list separators. Keep this
+      // aggregate representation as text; native URL pasteboard items are
+      // read individually by _readNativeUriItems.
+      formats: ['public.utf8-plain-text'],
       onDecode: _decodeUriList,
     ),
     windows: SimplePlatformCodec<String>(
@@ -162,11 +162,12 @@ class EditorClipboard {
   ) async {
     final value = await provider.getData(format);
     if (value is String) {
-      return value.length <= maxPasteAsUriListUtf16 ? value : null;
+      final normalized = _withoutTrailingNulls(value);
+      return normalized.length <= maxPasteAsUriListUtf16 ? normalized : null;
     }
     if (value is Uint8List && value.lengthInBytes <= 256 * 1024) {
       try {
-        final decoded = _decodeClipboardDataBytes(value);
+        final decoded = _withoutTrailingNulls(_decodeClipboardDataBytes(value));
         return decoded.length <= maxPasteAsUriListUtf16 ? decoded : null;
       } on FormatException {
         return null;

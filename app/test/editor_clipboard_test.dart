@@ -94,6 +94,10 @@ void main() {
         'com.microsoft.vscode-editor-data',
       ]),
     );
+    expect(
+      EditorClipboard.uriListFormat.codec.encodingFormats,
+      ['public.utf8-plain-text'],
+    );
   });
 
   test('Windows metadata uses raw UTF-8 and reads UTF-16 clipboard text',
@@ -128,11 +132,25 @@ void main() {
   test('URI-list clipboard format decodes text and rejects oversized values',
       () async {
     final codec = EditorClipboard.uriListFormat.codec;
+    const uriList =
+        'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n';
     final decoded = await codec.decode(
-      const _ClipboardDataProvider(
-        'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n',
-      ),
+      const _ClipboardDataProvider(uriList),
       'text/uri-list',
+    );
+    final windowsString = await codec.decode(
+      const _ClipboardDataProvider('$uriList\u0000'),
+      'UniformResourceLocatorW',
+    );
+    final windowsUtf16 = Uint8List.fromList([
+      for (final unit in '$uriList\u0000'.codeUnits) ...[
+        unit & 0xFF,
+        unit >> 8,
+      ],
+    ]);
+    final windowsBytes = await codec.decode(
+      _ClipboardDataProvider(windowsUtf16),
+      'UniformResourceLocatorW',
     );
     final oversized = await codec.decode(
       _ClipboardDataProvider('x' * (64 * 1024 + 1)),
@@ -141,6 +159,8 @@ void main() {
 
     expect(decoded,
         'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n');
+    expect(windowsString, uriList);
+    expect(windowsBytes, uriList);
     expect(oversized, isNull);
   });
 
