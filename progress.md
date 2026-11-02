@@ -13,7 +13,7 @@
 
 ### CI 稳定性跟进（2026-11-03）
 
-- 用户提醒反复 CI 失败可能与崩溃有关；此前失败分类见 P04.65 报告，现有红灯是 UIA/MSAA 断言、PowerShell 编码和 clipboard fixture，均未见应用 crash stack。当前 P04.66 的 PR CI 与三平台 smoke 全绿，macOS startup artifact 仅 Impeller 行；这些证据不建立 CI 红灯与 crash 的因果，也不证明 SIGSEGV 41370553563 已永久消失。遇到新红灯时优先保全完整日志、runner artifact 与 crash report，再判断是断言/脚本/应用崩溃。
+- 用户提醒反复 CI 失败可能与崩溃有关；复核 recent 100 runs 后更正分类：PR CI 有 56 success / 1 failure，唯一失败是未启动 Alula 的 vendored Cargokit analyzer；Platform Availability 为 14 success / 28 failure，多数是输入路由、UIA/MSAA、脚本或 fixture 失败；另一个独立 Windows artifact validation failure 确实捕获旧 Release binary `d5319369` 在 `WM_CLOSE` 后以 `0xC000041D` 退出。该旧 binary 的无 UIA/MSAA 对照也崩溃，Windows 事件指向 `flutter_windows.dll` access violation。重建分支 `189e920` 在 run `41482157012` 的 Windows close lifecycle smoke 通过（该步骤断言 exit code 为 0）；当前 PR CI `41487367300` 也通过。详细证据与因果边界见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。CI 的旧 artifact 回放确实暴露过真实产品崩溃；多数其他红灯仍是探针/runner 假红。Hosted 失败本身不会让本机进程崩溃，修正测试信号不能替代修复运行时关闭路径。旧 artifact 与 P15 Windows 11 验收继续 pending；不在本机启动 GUI/Narrator。
 
 ### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 

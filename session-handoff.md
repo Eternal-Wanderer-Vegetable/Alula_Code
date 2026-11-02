@@ -1,4 +1,4 @@
-> Last Updated：2026-11-03（P04.66 / EDT-12b2 已由 189e920 提交/push；定向 24 项、本地 Flutter 642、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 全绿。PR CI 41482164944 与 Platform Availability 41482157012 全绿；Linux/Windows/macOS Release/启动与打包 smoke 通过，macOS DnD 因 hosted pointer route=false 明确 skipped，startup artifact 13161417248 仅 Impeller 日志、无 .ips/.crash。证据见 docs/diagnostics/2026-11-03-p04/p04.66-filename-snippet-variables.md。历史 CI 红灯没有 crash stack；真实 SIGSEGV 41370553563 仍作为独立待证问题，不能因本轮绿色 smoke 宣称已永久修复。不要启动本机 GUI/讲述人；Windows Narrator/DPI、Linux DRM、macOS 原生 DnD/IME 验收仍 pending。）
+> Last Updated：2026-11-03（P04.66 / EDT-12b2 已由 189e920 提交/push；定向 24 项、本地 Flutter 642、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 全绿。PR CI 41482164944 与 Platform Availability 41482157012 全绿；Linux/Windows/macOS Release/启动与打包 smoke 通过，当前 Windows close lifecycle 检查通过；macOS DnD 因 hosted pointer route=false 明确 skipped，startup artifact 13161417248 仅 Impeller 日志、无 .ips/.crash。用户提醒 CI 反复失败可能关联崩溃；复核发现旧 Windows Release artifact `d5319369` 在 `41454766973` 两种主题关闭均以 `0xC000041D` 退出（历史无 UIA 对照同样失败），而多数近期 Platform 红灯仍为 UIA/MSAA、脚本或 fixture 问题。当前 PR CI `41487367300` 通过。证据见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。这证明旧二进制有真实关闭 crash，不证明 CI 红灯造成 crash；不要将旧 artifact 结果套到新构建。macOS SIGSEGV 41370553563 仍未证明永久消除。不要启动本机 GUI/讲述人；Windows Narrator/DPI、Linux DRM、macOS 原生 DnD/IME 验收仍 pending。）
 
 ## Current Objective
 继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 docs/03-里程碑计划与验收标准.md 为准。P04.66 / EDT-12b2 文件名片段变量已完成并通过本地与 hosted 门禁；下一项沿 EDT-12 选择一个子功能。用户指出反复 CI 失败可能与崩溃有关；新红灯优先完整保全日志、artifact 与 crash report，按断言/脚本/应用崩溃分类，并确认是否有可复现因果。
@@ -6,7 +6,7 @@
 ## Blockers and Follow-ups
 - P15 外部验收仍 pending：Windows 11 Narrator/键盘焦点与 DPI/主题矩阵、Linux native DRM、macOS 原生 DnD/IME。macOS hosted DnD artifact 明确 SKIP，不能替代真机验收。
 - EDT-12 后续 choice/其他变量/transform/嵌套与用户片段配置未实现。
-- 历史 CI 红灯没有应用 crash stack；真实 macOS SIGSEGV 41370553563 是独立待证问题。9f2c70a 后 smoke 未复现，最新 startup artifact 仅 Impeller 日志；不宣称 crash 永久消除。
+- CI/crash 分类：少数失败是未启动应用的 analyzer/script/fixture 错误；旧 Windows artifact run 41454766973 的 `d5319369` 二进制在关闭阶段真实返回 `0xC000041D`，无 UIA 对照复现；重建分支 189e920 的 hosted Windows close smoke 通过。macOS startup SIGSEGV 41370553563 是另一条独立待证问题，9f2c70a 后 smoke 未复现，最新 startup artifact 仅 Impeller 日志；不宣称 crash 永久消除。完整审计见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
 - 当前 GitNexus refreshed impact 对 expandSnippetTemplate 报 CRITICAL（76 symbols/142 processes）；这是未来任何代码编辑前必须复核的风险，不能用旧隔离扫描降级。
 - 不在本机启动 GUI，避免触发讲述人。
 
