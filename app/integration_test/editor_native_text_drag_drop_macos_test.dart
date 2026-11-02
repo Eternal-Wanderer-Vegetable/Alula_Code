@@ -184,9 +184,31 @@ void main() {
       );
       File('${directory.path}/ready').writeAsStringSync('ready');
 
-      final request = await tester.runAsync(
-        () => dropReceived.future.timeout(const Duration(seconds: 40)),
+      final inputRouteUnavailable =
+          File('${directory.path}/input-route-unavailable');
+      final request = await tester.runAsync<EditorTextDragDropRequest?>(
+        () async {
+          final deadline = DateTime.now().add(const Duration(seconds: 40));
+          while (!dropReceived.isCompleted &&
+              !inputRouteUnavailable.existsSync() &&
+              DateTime.now().isBefore(deadline)) {
+            await Future<void>.delayed(const Duration(milliseconds: 100));
+          }
+          if (inputRouteUnavailable.existsSync()) {
+            markTestSkipped(
+              'Hosted macOS runner did not route synthetic pointer events to Flutter.',
+            );
+            return null;
+          }
+          if (!dropReceived.isCompleted) {
+            throw TimeoutException(
+              'Native drag/drop did not complete within 40 seconds.',
+            );
+          }
+          return dropReceived.future;
+        },
       );
+      if (inputRouteUnavailable.existsSync()) return;
       await tester.pump();
 
       expect(request, isNotNull);

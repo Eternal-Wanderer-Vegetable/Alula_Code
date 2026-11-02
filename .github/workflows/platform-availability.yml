@@ -607,12 +607,19 @@ jobs:
           fi
           cat "$ALULA_MACOS_DND_DIR/input-helper.log"
           if grep -q '^CGEventPostToPid pointer route: false$' "$ALULA_MACOS_DND_DIR/input-helper.log"; then
+            printf 'Hosted runner did not route synthetic pointer events to Flutter.\n' > "$ALULA_MACOS_DND_DIR/input-route-unavailable"
             echo "::notice::Hosted macOS runner did not route synthetic pointer input to Flutter; native drag/drop remains unverified and the interaction probe is skipped."
             {
               echo '## macOS native text drag/drop: skipped'
               echo
               echo 'The hosted runner did not deliver the neutral synthetic pointer event to Flutter (`CGEventPostToPid pointer route: false`; no Flutter pointer events were observed). This is an input-route limitation, so this run does not verify native drag/drop. See the uploaded `alula-macos-native-dnd` artifact.'
             } >> "$GITHUB_STEP_SUMMARY"
+            if ! wait "$flutter_pid"; then
+              cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
+              exit 1
+            fi
+            trap - EXIT
+            cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 0
           fi
           if ! wait "$flutter_pid"; then
