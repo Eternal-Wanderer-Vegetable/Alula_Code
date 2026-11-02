@@ -17,6 +17,8 @@ class SnippetPlaceholderRange {
     required this.startUtf16,
     required this.endUtf16,
     this.choice,
+    this.occurrenceId = 0,
+    this.ancestorOccurrenceIds = const [],
   });
 
   /// Positive indices are visited in ascending order; zero is the final stop.
@@ -24,6 +26,8 @@ class SnippetPlaceholderRange {
   final int startUtf16;
   final int endUtf16;
   final SnippetChoice? choice;
+  final int occurrenceId;
+  final List<int> ancestorOccurrenceIds;
 
   int get lengthUtf16 => endUtf16 - startUtf16;
 }
@@ -395,7 +399,7 @@ String _snippetPathLabel(
   return '~${label.substring(normalizedHome.length)}';
 }
 
-/// Parses the basic TextMate placeholder subset used by snippet sessions.
+/// Parses the bounded TextMate placeholder subset used by snippet sessions.
 ///
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
 /// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
@@ -406,9 +410,9 @@ String _snippetPathLabel(
 /// the workbench, and `$CLIPBOARD` when the system clipboard has text.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Positive-index choices support `${1|one,two|}` and
-/// TextMate's `\,`, `\|`, and `\\` choice escapes. Transforms and nested
-/// placeholders remain unsupported and fail explicitly instead of producing a
-/// partial edit.
+/// TextMate's `\,`, `\|`, and `\\` choice escapes. Placeholder defaults can
+/// contain nested placeholders up to a fixed depth. Transforms remain
+/// unsupported and fail explicitly instead of producing a partial edit.
 SnippetExpansion expandSnippetTemplate(
   String template, {
   Map<String, String> variables = const {},
@@ -431,6 +435,7 @@ SnippetExpansion expandSnippetTemplate(
     maxPlaceholderOccurrences: maxPlaceholderOccurrences,
     maxTabstopIndex: maxTabstopIndex,
     maxChoiceOptions: maxChoiceOptions,
+    maxNestingDepth: 32,
   );
   return parser.parse();
 }
@@ -438,18 +443,21 @@ SnippetExpansion expandSnippetTemplate(
 class _SnippetSegment {
   const _SnippetSegment.text(this.text)
       : index = null,
-        defaultText = null,
+        defaultSegments = null,
         choice = null;
 
-  const _SnippetSegment.placeholder(this.index, this.defaultText, {this.choice})
-      : text = null;
+  const _SnippetSegment.placeholder(
+    this.index,
+    this.defaultSegments, {
+    this.choice,
+  }) : text = null;
 
   final String? text;
   final int? index;
   final SnippetChoice? choice;
 
-  /// `null` means a mirror; an empty string is an explicit empty default.
-  final String? defaultText;
+  /// `null` means a mirror; an empty list is an explicit empty default.
+  final List<_SnippetSegment>? defaultSegments;
 }
 
 class _SnippetTemplateParser {
@@ -461,6 +469,7 @@ class _SnippetTemplateParser {
     required this.maxPlaceholderOccurrences,
     required this.maxTabstopIndex,
     required this.maxChoiceOptions,
+    required this.maxNestingDepth,
   }) : _units = template.codeUnits;
 
   static const int _dollar = 0x24;
@@ -481,20 +490,45 @@ class _SnippetTemplateParser {
   final int maxPlaceholderOccurrences;
   final int maxTabstopIndex;
   final int maxChoiceOptions;
-  final List<_SnippetSegment> _segments = [];
+  final int maxNestingDepth;
   int _offset = 0;
-  int _placeholderCount = 0;
 
   SnippetExpansion parse() {
+    final segments = _parseSequence(stopAtClose: false, nestingDepth: 0);
+    if (_countPlaceholders(segments) > maxPlaceholderOccurrences) {
+      throw SnippetTemplateException(
+        'placeholder count exceeds the limit',
+        _offset,
+      );
+    }
+    return _render(segments);
+  }
+
+  int _countPlaceholders(List<_SnippetSegment> segments) {
+    var count = 0;
+    for (final segment in segments) {
+      if (segment.index != null) count++;
+      final children = segment.defaultSegments;
+      if (children != null) count += _countPlaceholders(children);
+    }
+    return count;
+  }
+
+  List<_SnippetSegment> _parseSequence({
+    required bool stopAtClose,
+    required int nestingDepth,
+  }) {
+    final segments = <_SnippetSegment>[];
     final literal = StringBuffer();
     void flushLiteral() {
       if (literal.isEmpty) return;
-      _segments.add(_SnippetSegment.text(literal.toString()));
+      segments.add(_SnippetSegment.text(literal.toString()));
       literal.clear();
     }
 
     while (_offset < _units.length) {
       final unit = _units[_offset];
+      if (stopAtClose && unit == _closeBrace) break;
       if (unit == _backslash && _offset + 1 < _units.length) {
         final escaped = _units[_offset + 1];
         if (_isEscapable(escaped)) {
@@ -504,23 +538,16 @@ class _SnippetTemplateParser {
         }
       }
       if (unit == _dollar) {
-        final placeholder = _parsePlaceholder();
+        final placeholder = _parsePlaceholder(nestingDepth: nestingDepth);
         if (placeholder != null) {
           flushLiteral();
-          _segments.add(placeholder);
-          _placeholderCount++;
-          if (_placeholderCount > maxPlaceholderOccurrences) {
-            throw SnippetTemplateException(
-              'placeholder count exceeds the limit',
-              _offset,
-            );
-          }
+          segments.add(placeholder);
           continue;
         }
         final variable = _parseVariable();
         if (variable != null) {
           flushLiteral();
-          _segments.add(variable);
+          segments.add(variable);
           continue;
         }
       }
@@ -528,13 +555,13 @@ class _SnippetTemplateParser {
       _offset++;
     }
     flushLiteral();
-    return _render();
+    return segments;
   }
 
   bool _isEscapable(int unit) =>
       unit == _dollar || unit == _closeBrace || unit == _backslash;
 
-  _SnippetSegment? _parsePlaceholder() {
+  _SnippetSegment? _parsePlaceholder({required int nestingDepth}) {
     final start = _offset;
     var cursor = start + 1;
     var braced = false;
@@ -572,7 +599,7 @@ class _SnippetTemplateParser {
       _offset = parsedChoice.endOffset;
       return _SnippetSegment.placeholder(
         index,
-        parsedChoice.choice.options.first,
+        [_SnippetSegment.text(parsedChoice.choice.options.first)],
         choice: parsedChoice.choice,
       );
     }
@@ -581,36 +608,24 @@ class _SnippetTemplateParser {
     }
     if (marker != _colon) return null;
 
-    cursor++;
-    final defaultText = StringBuffer();
-    while (cursor < _units.length) {
-      final unit = _units[cursor];
-      if (unit == _backslash && cursor + 1 < _units.length) {
-        final escaped = _units[cursor + 1];
-        if (_isEscapable(escaped)) {
-          defaultText.writeCharCode(escaped);
-          cursor += 2;
-          continue;
-        }
-      }
-      if (unit == _closeBrace) {
-        _offset = cursor + 1;
-        return _SnippetSegment.placeholder(index, defaultText.toString());
-      }
-      if (unit == _dollar && cursor + 1 < _units.length) {
-        final next = _units[cursor + 1];
-        if (_isDigit(next) || next == _openBrace) {
-          throw SnippetTemplateException(
-            'nested placeholders are not supported yet',
-            cursor,
-          );
-        }
-      }
-      defaultText.writeCharCode(unit);
-      cursor++;
+    if (nestingDepth >= maxNestingDepth) {
+      throw SnippetTemplateException(
+        'placeholder nesting exceeds the limit',
+        start,
+      );
     }
-    // An incomplete `${n:...` is ordinary text in TextMate snippets.
-    return null;
+    _offset = cursor + 1;
+    final defaultSegments = _parseSequence(
+      stopAtClose: true,
+      nestingDepth: nestingDepth + 1,
+    );
+    if (_offset >= _units.length || _units[_offset] != _closeBrace) {
+      // An incomplete `${n:...` is ordinary text in TextMate snippets.
+      _offset = start;
+      return null;
+    }
+    _offset++;
+    return _SnippetSegment.placeholder(index, defaultSegments);
   }
 
   _ParsedSnippetChoice? _parseChoice(int cursor) {
@@ -734,19 +749,25 @@ class _SnippetTemplateParser {
 
   bool _isDigit(int unit) => unit >= _zero && unit <= _nine;
 
-  SnippetExpansion _render() {
-    final defaults = <int, String>{};
-    for (final segment in _segments) {
-      final index = segment.index;
-      final value = segment.defaultText;
-      if (index != null && index != 0 && value != null && value.isNotEmpty) {
-        defaults.putIfAbsent(index, () => value);
+  SnippetExpansion _render(List<_SnippetSegment> segments) {
+    final defaults = <int, List<_SnippetSegment>>{};
+    void collectDefaults(List<_SnippetSegment> children) {
+      for (final segment in children) {
+        final index = segment.index;
+        final value = segment.defaultSegments;
+        if (index != null && index != 0 && value != null && value.isNotEmpty) {
+          defaults.putIfAbsent(index, () => value);
+        }
+        if (value != null) collectDefaults(value);
       }
     }
+
+    collectDefaults(segments);
 
     final output = StringBuffer();
     final placeholders = <SnippetPlaceholderRange>[];
     var outputOffset = 0;
+    var nextOccurrenceId = 1;
     void append(String value) {
       if (outputOffset + value.length > maxExpandedUtf16) {
         throw SnippetTemplateException(
@@ -758,24 +779,52 @@ class _SnippetTemplateParser {
       outputOffset += value.length;
     }
 
-    for (final segment in _segments) {
-      final index = segment.index;
-      if (index == null) {
-        append(segment.text!);
-        continue;
+    void renderSegments(
+      List<_SnippetSegment> children, {
+      List<int> ancestors = const [],
+      Set<int> expandingDefaults = const {},
+    }) {
+      for (final segment in children) {
+        final index = segment.index;
+        if (index == null) {
+          append(segment.text!);
+          continue;
+        }
+
+        if (placeholders.length >= maxPlaceholderOccurrences) {
+          throw SnippetTemplateException(
+            'rendered placeholder count exceeds the limit',
+            _offset,
+          );
+        }
+        final start = outputOffset;
+        final ownDefault = segment.defaultSegments;
+        final selectedDefault = index == 0 || expandingDefaults.contains(index)
+            ? ownDefault ?? const <_SnippetSegment>[]
+            : defaults[index] ?? ownDefault ?? const <_SnippetSegment>[];
+        final occurrenceId = nextOccurrenceId++;
+        renderSegments(
+          selectedDefault,
+          ancestors: [...ancestors, occurrenceId],
+          expandingDefaults: {...expandingDefaults, index},
+        );
+        placeholders.add(SnippetPlaceholderRange(
+          index: index,
+          startUtf16: start,
+          endUtf16: outputOffset,
+          choice: segment.choice,
+          occurrenceId: occurrenceId,
+          ancestorOccurrenceIds: List.unmodifiable(ancestors),
+        ));
       }
-      final start = outputOffset;
-      final ownDefault = segment.defaultText;
-      final value =
-          index == 0 ? ownDefault ?? '' : defaults[index] ?? ownDefault ?? '';
-      append(value);
-      placeholders.add(SnippetPlaceholderRange(
-        index: index,
-        startUtf16: start,
-        endUtf16: outputOffset,
-        choice: segment.choice,
-      ));
     }
+
+    renderSegments(segments);
+    placeholders.sort((left, right) {
+      final byStart = left.startUtf16.compareTo(right.startUtf16);
+      if (byStart != 0) return byStart;
+      return right.endUtf16.compareTo(left.endUtf16);
+    });
     if (insertFinalTabstop &&
         placeholders.isNotEmpty &&
         placeholders.every((placeholder) => placeholder.index != 0)) {

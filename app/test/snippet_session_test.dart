@@ -121,6 +121,83 @@ void main() {
       expect(session.currentRanges.single.startUtf16, 25);
     });
 
+    test('nested child edits update both child and enclosing ranges', () {
+      final expansion = expandSnippetTemplate(r'${1:pre ${2:🙂x}}$0');
+      final session = SnippetSession(
+        expansion,
+        documentOffsetUtf16: 10,
+        version: 1,
+      );
+
+      expect(session.currentSelections.single,
+          const TextSelection(baseOffset: 10, extentOffset: 17));
+      expect(session.moveNext(), isTrue);
+      expect(session.currentSelections.single,
+          const TextSelection(baseOffset: 14, extentOffset: 17));
+      final operations = session.operationsForMirroredEdit(
+        primarySelection: const TextSelection(baseOffset: 14, extentOffset: 17),
+        editStartUtf16: 14,
+        deletedUtf16: 3,
+        insertedText: 'ok',
+      );
+
+      expect(operations, isNotNull);
+      expect(session.applyOperations(operations!, nextVersion: 2), isTrue);
+      expect(session.currentRanges.single.startUtf16, 14);
+      expect(session.currentRanges.single.endUtf16, 16);
+      expect(session.movePrevious(), isTrue);
+      expect(session.currentRanges.single.startUtf16, 10);
+      expect(session.currentRanges.single.endUtf16, 16);
+      expect(session.moveNext(), isTrue);
+      expect(session.moveNext(), isTrue);
+      expect(session.currentRanges.single.startUtf16, 16);
+    });
+
+    test('nested empty child remains inside its parent when edited', () {
+      final session = SnippetSession(
+        expandSnippetTemplate(r'${1:pre ${2:x}}$0'),
+        documentOffsetUtf16: 10,
+        version: 3,
+      );
+
+      final replaceParent = session.operationsForMirroredEdit(
+        primarySelection: const TextSelection(baseOffset: 10, extentOffset: 15),
+        editStartUtf16: 10,
+        deletedUtf16: 5,
+        insertedText: 'done',
+      );
+      expect(replaceParent, isNotNull);
+      expect(session.applyOperations(replaceParent!, nextVersion: 4), isTrue);
+
+      final extendParent = session.operationsForMirroredEdit(
+        primarySelection: const TextSelection.collapsed(offset: 14),
+        editStartUtf16: 14,
+        deletedUtf16: 0,
+        insertedText: '!',
+      );
+      expect(extendParent, isNotNull);
+      expect(session.applyOperations(extendParent!, nextVersion: 5), isTrue);
+      expect(session.currentRanges.single.endUtf16, 15);
+
+      expect(session.moveNext(), isTrue);
+      expect(session.currentSelections.single,
+          const TextSelection.collapsed(offset: 15));
+
+      final typeInChild = session.operationsForMirroredEdit(
+        primarySelection: const TextSelection.collapsed(offset: 15),
+        editStartUtf16: 15,
+        deletedUtf16: 0,
+        insertedText: 'Y',
+      );
+      expect(typeInChild, isNotNull);
+      expect(session.applyOperations(typeInChild!, nextVersion: 6), isTrue);
+      expect(session.currentRanges.single.startUtf16, 15);
+      expect(session.currentRanges.single.endUtf16, 16);
+      expect(session.movePrevious(), isTrue);
+      expect(session.currentRanges.single.startUtf16, 10);
+      expect(session.currentRanges.single.endUtf16, 16);
+    });
+
     test('plans mirrored edits without collapsing across intervening text', () {
       final expansion = expandSnippetTemplate(r'${1:name} = $1; ${2:value}$0');
       final session = SnippetSession(

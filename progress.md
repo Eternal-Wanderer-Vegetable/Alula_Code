@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.76 / EDT-12c3 嵌套片段占位符，本地实现阶段）
+
+- 对照固定 Code-OSS 1.145.0，parser 现在递归解析占位符默认值，将首个非空默认树复制到镜像；session 跟踪嵌套 occurrence 的祖先关系，子项编辑更新父范围，父项替换时嵌套子范围保持稳定。支持 UTF-16/emoji，深度上限 32；transforms 仍 fail closed。无 Rust/ABI 改动。
+- parser/session/workbench 定向 80 项通过，含 Windows/Linux/macOS `TargetPlatform` fixture、嵌套镜像/父子导航、Emoji 坐标及 CRLF 保存读回。完整 `init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter 697），cargo fmt 与 Flutter analyze 0 issues；本机 GUI/Narrator 未启动。
+- 编辑前图谱警告：`expandSnippetTemplate` 与 `_SnippetTemplateParser` 为 CRITICAL，`SnippetSession.applyOperations` MEDIUM，`SnippetPlaceholderRange` UNKNOWN；刷新后 `_SnippetTemplateParser` 显示 LOW，但 `SnippetPlaceholderRange` 与通用 `applyOperations` 映射为 CRITICAL，跨层误链/遗漏边界和源码核验登记在 `docs/diagnostics/2026-11-03-p04/p04.76-nested-snippet-placeholders.md`。重复 staged/all scan 为 11 files/21 symbols/CRITICAL；affected-process counts 随 report/status 文案变化在 86–163 间波动；保持 CRITICAL，不把变化读成风险降低。CLI 未标 partial/truncated，映射风险不因源码范围较窄或测试通过而降级。
+- P04.76 尚未提交/推送，hosted CI 待触发；PR #2 保持 OPEN draft。macOS hosted build/package 后续可继续，macOS 原生 DnD/IME 与 P15 原生设备门仍待主机。历史 Windows `0xC000041D` 与 macOS SIGSEGV 根因未结案；近期多数 CI 红灯属 probe/fixture，不显示相同崩溃栈，分类见 crash correlation 报告。
+
 ### 最新进展（2026-11-03，P04.75 / EDT-12c2 选择占位符建议与接受，托管验收完成）
 
 - P04.74 实现与托管证据阶段已完成：`816ac70` / `08723ef` 已推送；PR CI `41530306532`、文档提交 CI `41533891548` 与 Platform Availability `41530299036` 均通过。历史 CI 红灯分类及“绿灯不等于历史崩溃根因已修复”已记录于 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。

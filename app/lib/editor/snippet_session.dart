@@ -167,6 +167,28 @@ class SnippetSession {
         var deltaInside = 0;
         var touched = false;
         final isActiveGroup = entry.key == _currentIndex;
+        final isAncestorOfActive = !isActiveGroup &&
+            currentRanges.any(
+              (active) => active.ancestorOccurrenceIds.contains(
+                range.occurrenceId,
+              ),
+            );
+        final isDescendantOfActive = !isActiveGroup &&
+            currentRanges.any(
+              (active) =>
+                  active.occurrenceId != range.occurrenceId &&
+                  range.ancestorOccurrenceIds.contains(active.occurrenceId),
+            );
+        if (isAncestorOfActive || isDescendantOfActive) {
+          final nestedRange = _trackNestedRange(
+            range,
+            edits,
+            includeBoundaryInsertions: isAncestorOfActive,
+          );
+          if (nestedRange == null) return false;
+          ranges.add(nestedRange);
+          continue;
+        }
         for (final edit in edits) {
           final editDelta = edit.insertedUtf16 - edit.deletedUtf16;
           if (isActiveGroup &&
@@ -200,6 +222,8 @@ class SnippetSession {
           startUtf16: start,
           endUtf16: end,
           choice: range.choice,
+          occurrenceId: range.occurrenceId,
+          ancestorOccurrenceIds: range.ancestorOccurrenceIds,
         ));
       }
       updated[entry.key] = ranges;
@@ -224,10 +248,65 @@ class SnippetSession {
             startUtf16: documentOffsetUtf16 + range.startUtf16,
             endUtf16: documentOffsetUtf16 + range.endUtf16,
             choice: range.choice,
+            occurrenceId: range.occurrenceId,
+            ancestorOccurrenceIds: range.ancestorOccurrenceIds,
           ));
     }
     return result;
   }
+}
+
+SnippetPlaceholderRange? _trackNestedRange(
+  SnippetPlaceholderRange range,
+  List<_SnippetEditBatch> edits, {
+  required bool includeBoundaryInsertions,
+}) {
+  final isEmpty = range.startUtf16 == range.endUtf16;
+  final start = _transformOffsetThroughEdits(
+    range.startUtf16,
+    edits,
+    rightAffinity: !includeBoundaryInsertions,
+  );
+  final end = _transformOffsetThroughEdits(
+    range.endUtf16,
+    edits,
+    rightAffinity: includeBoundaryInsertions || isEmpty,
+  );
+  if (start < 0 || end < start) return null;
+  return SnippetPlaceholderRange(
+    index: range.index,
+    startUtf16: start,
+    endUtf16: end,
+    choice: range.choice,
+    occurrenceId: range.occurrenceId,
+    ancestorOccurrenceIds: range.ancestorOccurrenceIds,
+  );
+}
+
+int _transformOffsetThroughEdits(
+  int offset,
+  List<_SnippetEditBatch> edits, {
+  required bool rightAffinity,
+}) {
+  var shiftBefore = 0;
+  for (final edit in edits) {
+    final start = edit.offsetUtf16;
+    final end = edit.deleteEndUtf16;
+    final delta = edit.insertedUtf16 - edit.deletedUtf16;
+    if (offset < start) break;
+    if (offset > end || (offset == end && end > start)) {
+      shiftBefore += delta;
+      continue;
+    }
+    if (start == end) {
+      return offset + shiftBefore + (rightAffinity ? edit.insertedUtf16 : 0);
+    }
+    if (offset == end) {
+      return start + shiftBefore + edit.insertedUtf16;
+    }
+    return start + shiftBefore + (rightAffinity ? edit.insertedUtf16 : 0);
+  }
+  return offset + shiftBefore;
 }
 
 class _SnippetEditBatch {

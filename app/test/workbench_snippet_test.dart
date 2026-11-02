@@ -195,6 +195,67 @@ void main() {
         debugDefaultTargetPlatformOverride = null;
       }
     });
+
+    testWidgets('$platform nested snippet tabstop edits mirror and save',
+        (tester) async {
+      try {
+        tester.view.physicalSize = const Size(1100, 720);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final (_, file) = await _openSnippetFixture(
+          tester,
+          platform,
+          initialText: '🙂\r\nx',
+        );
+        final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+        final controller = tester.widget<TextField>(editor).controller!;
+        controller.selection = const TextSelection.collapsed(offset: 3);
+        await tester.pump();
+
+        await _insertSnippetFromPalette(
+          tester,
+          template: r'${1:outer ${2:inner}}-$1-$2$0',
+        );
+        expect(controller.text, '🙂\nouter inner-outer inner-innerx');
+        expect(controller.selection,
+            const TextSelection(baseOffset: 3, extentOffset: 14));
+
+        await _press(tester, LogicalKeyboardKey.tab);
+        expect(controller.selection,
+            const TextSelection(baseOffset: 9, extentOffset: 14));
+        final input = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(input.additionalSelections, hasLength(2));
+        expect(input.additionalSelections[0],
+            const TextSelection(baseOffset: 21, extentOffset: 26));
+        expect(input.additionalSelections[1],
+            const TextSelection(baseOffset: 27, extentOffset: 32));
+
+        await _replaceCurrentSelection(tester, '🙂z');
+        expect(controller.text, '🙂\nouter 🙂z-outer 🙂z-🙂zx');
+        await _press(tester, LogicalKeyboardKey.tab, shift: true);
+        expect(controller.selection,
+            const TextSelection(baseOffset: 3, extentOffset: 12));
+        final updatedInput = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(updatedInput.additionalSelections, hasLength(1));
+        expect(updatedInput.additionalSelections.single,
+            const TextSelection(baseOffset: 13, extentOffset: 22));
+        await _press(tester, LogicalKeyboardKey.tab);
+        await _press(tester, LogicalKeyboardKey.tab);
+        expect(controller.selection, const TextSelection.collapsed(offset: 26));
+
+        await _press(tester, LogicalKeyboardKey.keyS, control: true);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(file.readAsStringSync(), '🙂\r\nouter 🙂z-outer 🙂z-🙂zx');
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
   }
 
   testWidgets(

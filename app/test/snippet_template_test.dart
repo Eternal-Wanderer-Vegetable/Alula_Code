@@ -582,7 +582,18 @@ void main() {
       expect(expandSnippetTemplate(r'$x').text, r'$x');
     });
 
-    test('rejects unsupported nested and transform syntax', () {
+    test('counts nested placeholders once when an outer default is incomplete',
+        () {
+      final expansion = expandSnippetTemplate(
+        r'${1:${2:x}',
+        maxPlaceholderOccurrences: 1,
+      );
+
+      expect(expansion.text, r'${1:x');
+      expect(expansion.tabstopOrder, [2, 0]);
+    });
+
+    test('rejects unsupported transform syntax', () {
       expect(
         () => expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
         throwsA(isA<SnippetTemplateException>()),
@@ -591,8 +602,73 @@ void main() {
         () => expandSnippetTemplate(r'${TM_SELECTED_TEXT/(.*)/$1/}'),
         throwsA(isA<SnippetTemplateException>()),
       );
+    });
+
+    test('expands nested placeholders and keeps their linked ranges', () {
+      final expansion =
+          expandSnippetTemplate(r'${1:outer ${2:inner}} / $1 / $2');
+
+      expect(expansion.text, 'outer inner / outer inner / inner');
+      expect(expansion.tabstopOrder, [1, 2, 0]);
       expect(
-        () => expandSnippetTemplate(r'${1:${2:nested}}'),
+        expansion.rangesFor(1).map((range) => [
+              range.startUtf16,
+              range.endUtf16,
+              range.ancestorOccurrenceIds,
+            ]),
+        [
+          [0, 11, <int>[]],
+          [14, 25, <int>[]],
+        ],
+      );
+      expect(
+        expansion.rangesFor(2).map((range) => [
+              range.startUtf16,
+              range.endUtf16,
+              range.ancestorOccurrenceIds,
+            ]),
+        [
+          [
+            6,
+            11,
+            [expansion.rangesFor(1).first.occurrenceId]
+          ],
+          [
+            20,
+            25,
+            [expansion.rangesFor(1).last.occurrenceId]
+          ],
+          [28, 33, <int>[]],
+        ],
+      );
+    });
+
+    test('nested offsets remain UTF-16 and escaped braces stay literal', () {
+      final expansion = expandSnippetTemplate(r'${1:🦊 ${2:🙂x}}$0');
+
+      expect(expansion.text, '🦊 🙂x');
+      expect(expansion.rangesFor(1).single.lengthUtf16, 6);
+      expect(expansion.rangesFor(2).single.startUtf16, 3);
+      expect(expansion.rangesFor(2).single.endUtf16, 6);
+      expect(
+        expandSnippetTemplate(r'${1:literal \${2:not-a-tabstop\}}').text,
+        r'literal ${2:not-a-tabstop}',
+      );
+    });
+
+    test('bounds nested depth and rendered mirror range growth', () {
+      final nested =
+          '${List.filled(33, r'${1:').join()}x${List.filled(33, '}').join()}';
+      expect(
+        () => expandSnippetTemplate(nested),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+
+      expect(
+        () => expandSnippetTemplate(
+          r'${1:${2:${3:${4:x}}}}$1$1$1$1',
+          maxPlaceholderOccurrences: 8,
+        ),
         throwsA(isA<SnippetTemplateException>()),
       );
     });

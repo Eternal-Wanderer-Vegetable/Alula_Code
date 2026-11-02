@@ -14,6 +14,8 @@ analyzer:
     - build/**
     - windows/**
     - packages/irondash_engine_context/cargokit/**
+    - macos/**
+    - linux/**
 
 linter:
   # The lint rules applied to this project can be customized in the

@@ -1,45 +1,34 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.74 / EDT-12c1 (`816ac70`, `08723ef`) and P04.75 / EDT-12c2 implementation (`58fdd31`) are pushed. P04.75 local DoD and hosted CI / Linux / Windows / macOS build-package checks passed; the separate hosted-evidence documentation commit is being prepared. PR #2 remains OPEN draft.
+> Last Updated: 2026-11-03. P04.75 implementation and hosted evidence (`58fdd31`, `9c29534`) are pushed. P04.76 / EDT-12c3 nested snippet placeholders is implemented locally in `/tmp/alula-p04.70-next`; targeted snippet tests pass (80). Full local gates passed; candidate staged/all scans completed with CRITICAL risk. PR #2 remains OPEN draft.
 
 ## Current Objective
 
-Complete the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. P04.75 adds the active-choice list, arrow preview, click/Enter/Tab accept, Shift+Tab navigation, and Escape dismissal while preserving the session; local and hosted checks pass. Linux/Windows availability and macOS ARM64 packaging passed. Memory-target optimization stays deferred. PR #2 (`codex/vscode-parity-p00`) remains OPEN draft; do not publish v0.1.0 or mark the PR ready before all plan and release gates.
+Continue the fixed Code-OSS 1.145.0 parity plan one milestone slice at a time. Current slice P04.76 adds nested snippet defaults and linked nested tabstops, without Rust/ABI changes. Linux and Windows remain the first product usability gates; produce a macOS package after they pass, while recording native macOS validation as pending. Memory optimization stays deferred. Do not publish v0.1.0, mark PR #2 ready, or merge before the plan and release gates are complete.
 
-## Previous P04.74 Change
+## P04.76 Local Change
 
-- `app/lib/editor/snippet_template.dart`: parse positive-index `${n|...|}` choices, decode `\,`, `\|`, `\\`, use the first option initially, keep malformed choices literal, and cap one choice at 256 options.
-- `app/lib/editor/snippet_session.dart`: expose the active first-occurrence choice range and preserve its metadata as linked ranges shift.
-- Tests cover parser escapes/fallback/bounds, UTF-16 emoji/CRLF coordinates, metadata rebasing, first-occurrence semantics, insertion, mirror editing, and save/readback. No Rust/ABI changes.
-- Local: parser 44, session 7, widget choice fixture passed; `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0 with Flutter 686; cargo fmt and app Flutter analyze pass. No local GUI/Narrator.
-- Pinned upstream: [`snippetParser.ts`](https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib/snippet/browser/snippetParser.ts), [`snippetSession.ts`](https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/editor/contrib/snippet/browser/snippetSession.ts).
-- Report: `docs/diagnostics/2026-11-03-p04/p04.74-choice-snippet-parser.md`.
+- `app/lib/editor/snippet_template.dart`: recursively parse nested placeholder defaults, replicate nested ranges across mirrors, retain occurrence ancestry, keep UTF-16 offsets, and enforce depth/output/occurrence limits. Nested transforms remain unsupported.
+- `app/lib/editor/snippet_session.dart`: track nested child and parent ranges through mirrored edits, including empty-child boundary cases.
+- Tests cover parser trees, mirror ancestry, parent/child range changes, emoji offsets, tabstop order, incomplete syntax limits, and Windows/Linux/macOS TargetPlatform save/readback fixtures with CRLF on disk.
+- Targeted parser/session/workbench suite passed: 80 tests. Full `init.sh` EXIT=0 (Rust workspace, Clippy, core build, Flutter 697), `cargo fmt --all -- --check`, and Flutter analyze (0 issues) passed. Candidate staged/all scans: 11 files / 21 symbols, CRITICAL; staged/all affected-process counts varied 86–163 as report/status prose changed; retain CRITICAL without treating the variation as risk reduction. The refreshed CLI did not report partial/truncated results; retain this CRITICAL warning.
+- Flutter analyzer migration added the `macos/**` and `linux/**` generated platform exclusions in `app/analysis_options.yaml`.
+- No local desktop GUI or Narrator was launched.
 
+## GitNexus and Crash Review
 
-## Current P04.75 Change
-
-- Added the bounded, caret-anchored choice list with Up/Down preview, click/Enter/Tab acceptance, Shift+Tab navigation, and two-stage Escape behavior.
-- Choice acceptance selects the complete active and linked ranges, applies through the existing multi-selection formatter/Rust input path, and moves to the next tabstop. No Rust/ABI change; `_onInputDelta` and `_setDocSelections` implementations remain untouched.
-- Local validation passed: full `init.sh` with 688 Flutter tests, `cargo fmt --all -- --check`, and Flutter analyze. No local GUI/Narrator.
-- Final staged/all graph scans report 8 changed files at CRITICAL, with 52–180 affected-process entries across refreshed snapshots; exact caret-scroll helper risk is MEDIUM and class-level `RustTextInputFieldState` remains CRITICAL (380 impacted); review and limitations are recorded in `docs/diagnostics/2026-11-03-p04/p04.75-choice-snippet-ui.md`.
-- Hosted PR CI `41537293168` passed all jobs; Platform Availability `41537286459` passed Linux, Windows, and macOS. Linux/Windows package and native interaction evidence passed; Windows close metadata has exit code 0. macOS package/startup passed, while native DnD is skipped because `CGEventPostToPid pointer route=false`. Artifacts and limitations are in the P04.75 report.
-- Latest 100 Actions records: CI 61/61 success; Platform Availability 23 success / 15 failure. Recent red platform checks are probes/fixtures; one Windows launch run (`41454766999`) failed parsing PowerShell before launching Alula. Keep this distinct from the confirmed historical Windows `0xC000041D` and macOS SIGSEGV, whose source-level roots remain unresolved. See `ci-failures-and-crash-correlation.md`.
-- Keep macOS native DnD/IME/P15 and historical crash root-cause status pending.
-
-## GitNexus and CI/Crash Evidence
-
-- Bound GitNexus repo: `/tmp/alula-p04.70-next`, refreshed at `58fdd31`. Before editing, `SnippetExpansion`, `_SnippetTemplateParser`, `_parsePlaceholder`, and `SnippetSession` reported LOW; `SnippetPlaceholderRange` MEDIUM (11 impacted including `_buildEditor`). After an intermediate no-symbol-overlap result was repeated, final staged/all/compare scans mapped only documentation sections across 6 docs/status files, 0 affected processes, LOW, with no partial/truncated output. Residual cross-language edges and budget-truncated flows remain.
-- `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` distinguishes recent PowerShell/MSAA probe failures from historical Windows `0xC000041D` and macOS SIGSEGV. Current hosted close probes exit 0, including P04.74 Windows metadata; the latest macOS startup artifact contains no crash report. These are non-reproduction results, not proof that historical crash causes are permanently repaired.
+- Pre-edit graph: `expandSnippetTemplate` and `_SnippetTemplateParser` were CRITICAL, `SnippetSession.applyOperations` MEDIUM, and `SnippetPlaceholderRange` UNKNOWN. After reindex, the parser impact is LOW; `SnippetPlaceholderRange` and generic `applyOperations` return CRITICAL with unrelated mapped paths, while `SnippetSession` and `expandSnippetTemplate` are UNKNOWN. Source search confirms the concrete snippet call sites. Keep these warnings and their limitations in the P04.76 report; finish staged/all scans before commit.
+- Most recent repeated CI failures were MSAA assertions, fixture/probe errors, DnD pointer-route skips, or PowerShell parsing; they do not show a common application crash signature. The older exact Windows `0xC000041D` and macOS SIGSEGV remain unresolved product crash findings. Current hosted successes are non-reproductions, not source-level fixes. See `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`.
 
 ## Blockers and Constraints
 
-- No macOS native test host is available; native DnD/IME/P15 checks stay pending. Linux and Windows are first usability gates; a macOS package follows when those gates pass.
-- Avoid local desktop GUI/Narrator; use Flutter test binding and hosted CI.
-- Work only in `/tmp/alula-p04.70-next`; do not edit the unrelated root checkout `/mnt/e/alula_code`.
-- Push to `origin/codex/vscode-parity-p00` is authorized. Preserve PR #2 as open draft.
+- No native macOS test host is available. Keep native DnD/IME and P15 device checks pending; hosted macOS build/package evidence does not replace them.
+- Do not launch local GUI or Narrator.
+- Work only in `/tmp/alula-p04.70-next`; do not edit `/mnt/e/alula_code`.
+- Push to `origin/codex/vscode-parity-p00` is authorized. Keep PR #2 OPEN draft.
 
 ## Next Steps
 
-1. Finish the P04.75 hosted-evidence documentation stage: reindex GitNexus, scan staged/all changes, then commit and push docs03, progress, handoff, feature evidence, and diagnostic reports.
-2. Confirm the documentation commit's PR CI; keep PR #2 open as draft and do not publish v0.1.0 or mark the PR ready.
-3. Choose and decompose the next unfinished EDT item from `docs/03` and `docs/11`; retain macOS native DnD/IME/P15 and historical crash root-cause checks as pending.
+1. Re-stage the report update and rerun staged/all GitNexus scans on the final staged snapshot; retain CRITICAL/UNKNOWN warnings and check for partial/truncated results.
+2. Review the final diff and commit the P04.76 implementation/status stage; push with `git push origin HEAD:codex/vscode-parity-p00`.
+3. Wait for PR CI and Platform Availability, then commit/push hosted evidence as a separate docs stage. Keep PR #2 draft; do not publish a release.
