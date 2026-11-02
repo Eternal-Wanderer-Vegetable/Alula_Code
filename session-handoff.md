@@ -1,4 +1,4 @@
-> Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。上一阶段 commit `0157e7f` 已 push；PR CI `41395923079` 与 Platform Availability `41395917970` 全绿，Linux hosted X11 DnD artifact `13118594194` 通过 `alpha / move / UTF-16 offset 11`。Windows 新增 native DnD Debug fixture + Win32 24 点输入脚本和 always-upload 诊断，但尚待 push 后 Windows runner 真实执行；本地完整 init、cargo fmt、Flutter analyze 通过。macOS Release/launch/package 通过，但 DnD artifact `13119946021` 明确 route false/SKIP，不是原生拖放验收；startup artifact `13119378925` 无 `.ips` / `.crash`。近期 CI 红灯和真实启动崩溃 `41370553563` 已分开记录；`9f2c70a` readiness handshake/nil guard 后未复现。验证包 artifacts `13118923216`/`13119138490`/`13119677748` 不是 v0.1.0 发行包。）
+> Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。commit `5c1c501` 已 push；Platform `41400262650` 与 PR CI `41400267570` 全绿。Linux X11 / Windows 原生 DnD 都通过，Windows artifact `13121491263` 为 alpha/move/UTF-16 offset 11；P03.7 大文件 teardown 与 pointer-cancel probe 假红已修复。macOS hosted pointer route 仍 false 并明确 SKIP，真实 macOS DnD 待验证；startup artifact `13121502027` 无 `.ips` / `.crash`。Mac ARM64 artifact `13121626550` 是验证包，不是 v0.1.0 发行包。）
 
 > Last Updated：2026-11-01（P04.45 / EDT-08e Pascal Case 完成；Rust Unicode transform、NUL-safe JSON FFI ABI v31；完整 init.sh Flutter 514、Rust workspace、Clippy、build_core 全过，cargo fmt 与 Flutter analyze 0 issues。P15 原生 Windows UIA/关闭/主题、IME、DPI、Linux DRM 与 macOS 仍待验证；500 MiB 留 P14。）
 
@@ -9,10 +9,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-02）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 保持 in-progress。commit `0157e7f` 已 push；PR CI `41395923079` 与 Platform Availability `41395917970` 全绿，Linux hosted X11 native DnD artifact `13118594194` 完成 `alpha / move / UTF-16 offset 11`。本次新增 Windows hosted native DnD probe，尚待该 runner 实测；完整本地 DoD 通过。macOS Release/launch/package 通过，route-check artifact `13119946021` 的 `CGEventPostToPid pointer route: false` 和 SKIP 仍不构成原生拖放验收；startup artifact `13119378925` 无 `.ips` / `.crash`。近期 CI 失败分类见 P04.59 报告；`41370553563` 是真实 EngineContext 启动 SIGSEGV，`9f2c70a` readiness handshake 后近期 smoke 未复现。旧 Windows exact artifact `0xC000041D` 仍待 P15/原生验收。
+- 当前状态更新（2026-11-02）：P04.1–P04.58 / EDT-10f 已完成；P04.59 / EDT-11a 保持 in-progress。commit `5c1c501` 已 push；PR CI `41400267570`、Platform `41400262650` 全绿。Linux hosted X11 和 Windows hosted native DnD 都完成 alpha/move/UTF-16 offset 11；Windows P03.7 大文件 teardown、P03.7 interactions、clipboard、accessibility 与 close smoke 均通过。macOS release/launch/package 通过，DnD 输入路由不可用并明确 SKIP；真实 macOS 原生 DnD 仍 pending。历史真实 SIGSEGV `41370553563` 的 readiness handshake 修复后本轮未复现，startup artifact `13121502027` 无 crash report。
 
-- 当前阶段涉及文件：新增 `app/tool/editor_native_text_drag_drop_windows_fixture.dart`、`tools/vscode-parity/windows-native-dnd-input.py` 与 `.github/workflows/platform-availability.yml` Windows lane 接线；P04.59 report/docs03/feature_list/progress/session-handoff 的状态记录。不要暂存工作树其他既存改动。
-- 下一步首件：对当前 Windows probe 执行 GitNexus staged/all detect，精确暂存并 push，检查 Windows DnD artifact、PR CI 与其余 release/clipboard/accessibility 步骤；如果失败，按诊断 artifact 修复输入或生命周期。macOS 原生拖放仍待验证且用户当前无设备；不操作用户本机 GUI（避免触发讲述人），不将 route-check SKIP 当成功，也不推进 EDT-11 后续切片。
+- 当前阶段涉及文件：P04.59 诊断记录、docs/03、feature_list、progress 与 session-handoff；CI 修复 commit `5c1c501` 涉及 `app/test/workbench_multi_view_test.dart`、`tools/vscode-parity/windows-native-dnd-input.py`。不要暂存工作树其他既存改动。
+- 下一步首件：保持 P04.59 `in-progress`，等待可路由的真实 macOS 原生拖放证据；用户当前无 macOS 测试设备，因此不将 route-check SKIP 当验收，也不发布 v0.1.0。不要操作用户本机 GUI（避免触发讲述人）。按 docs/03 的 one-feature-at-a-time 纪律继续，500 MiB 优化仍留 P14。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。
