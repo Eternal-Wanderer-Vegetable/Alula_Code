@@ -5,12 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.75 / EDT-12c2 选择占位符建议与接受，进行中）
+### 最新进展（2026-11-03，P04.75 / EDT-12c2 选择占位符建议与接受，托管验收完成）
 
 - P04.74 实现与托管证据阶段已完成：`816ac70` / `08723ef` 已推送；PR CI `41530306532`、文档提交 CI `41533891548` 与 Platform Availability `41530299036` 均通过。历史 CI 红灯分类及“绿灯不等于历史崩溃根因已修复”已记录于 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
-- EDT-12c2 实现已完成并通过本地验证：caret 附近有界 choice 列表，支持上下键预览、点击/Enter/Tab 接受、Shift+Tab 前跳、Escape 先关闭列表；通过既有多选区 formatter 与 Rust delta 替换 linked ranges 并推进 tabstop。定向 snippet widget 19 项通过；完整 `init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter 688），cargo fmt、Flutter analyze 通过。实现与 hosted evidence 尚未提交。
+- EDT-12c2 实现 commit `58fdd31540c8a3e1054e11dcb9000de2e282d1e1` 已推送；caret 附近有界 choice 列表支持上下键预览、点击/Enter/Tab 接受、Shift+Tab 前跳、Escape 先关闭列表；通过既有多选区 formatter 与 Rust delta 替换 linked ranges 并推进 tabstop。定向 snippet widget 19 项通过；完整 `init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter 688），cargo fmt、Flutter analyze 通过。
 - 最终 GitNexus staged/all-scope 均报 8 files/CRITICAL；重复刷新时 affected-process 数在重复扫描间为 52–180；caret scroll helper 为 MEDIUM 13 impacted，`RustTextInputFieldState` 类级风险为 CRITICAL 380。`_focusNodeFor` 预编辑为 HIGH；`_onInputDelta` / `_setDocSelections` 为 CRITICAL 且实现未改。完整风险与索引遗漏见 `docs/diagnostics/2026-11-03-p04/p04.75-choice-snippet-ui.md`。
-- CI 红灯/崩溃关系已检查：近期 analyzer/probe/MSAA/fixture 红灯与旧 Windows `0xC000041D`、历史 macOS SIGSEGV 属不同证据类；新 close/startup 为非复现，未找到旧 crash 的源码根因。本项不声称修复崩溃。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。本地 GUI/Narrator 不启动；Linux/Windows 优先验证，macOS 原生 DnD/IME/P15 待设备。
+- PR CI run `41537293168` 全绿；Platform Availability run `41537286459` 的 Linux/Windows/macOS jobs 全绿。Linux Xvfb launch 与真实 DnD 通过；Windows P03.7、clipboard、MSAA、可见客户区与 WM_CLOSE exit 0 通过，close artifact 无 crash；macOS ARM64 package/clipboard/startup 通过，DnD 因 `CGEventPostToPid pointer route=false` 跳过。CI/崩溃复核的最新 100 条记录为 CI 61/61 成功、Platform Availability 23 成功/15 失败；红灯主要为验证探针/fixture，其中 `41454766999` 是 PowerShell 解析错误，未启动 Alula。旧 Windows `0xC000041D` 与历史 macOS SIGSEGV 仍是独立、未定位根因的崩溃证据，当前成功运行不声称修复它们。报告：`docs/diagnostics/2026-11-03-p04/p04.75-choice-snippet-ui.md`、`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。无本机 GUI/Narrator。
+- 实现阶段已提交并推送；当前仅待把托管证据和状态更新作为独立文档阶段提交。Linux/Windows 首批可用性通过；macOS 包已在托管 runner 生成，原生 DnD/IME/P15 仍待设备。
 
 ### 最新进展（2026-11-03，P04.74 / EDT-12c1 选择占位符解析与 session 元数据，本地门禁通过）
 
