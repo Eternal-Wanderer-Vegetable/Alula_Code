@@ -96,6 +96,68 @@ public static class AlulaArtifactMsaa
         }
     }
 
+    public static bool FocusTextFieldNamed(IntPtr window, string targetName)
+    {
+        IAccessible root = null;
+        try
+        {
+            Guid iid = IidIAccessible;
+            int hr = AccessibleObjectFromWindow(window, 0xFFFFFFFC, ref iid, out root);
+            if (hr != 0 || root == null) return false;
+            return FocusTextFieldNamed(root, targetName, 1);
+        }
+        catch { return false; }
+        finally
+        {
+            if (root != null && Marshal.IsComObject(root)) Marshal.FinalReleaseComObject(root);
+        }
+    }
+
+    private static bool FocusTextFieldNamed(IAccessible accessible, string targetName, int depth)
+    {
+        if (accessible == null || depth > 8) return false;
+        int count = 0;
+        try { count = Math.Min(accessible.accChildCount, 100); } catch { return false; }
+        for (int id = 1; id <= count; id++)
+        {
+            string name = null;
+            object role = null;
+            try { name = accessible.get_accName(id); } catch { }
+            try { role = accessible.get_accRole(id); } catch { }
+            if (String.Equals(name, targetName, StringComparison.Ordinal) &&
+                Convert.ToString(role) == "42")
+            {
+                try { accessible.accSelect(1, id); return true; } catch { return false; }
+            }
+
+            object raw = null;
+            IAccessible nested = null;
+            try
+            {
+                raw = accessible.get_accChild(id);
+                nested = raw as IAccessible;
+                if (nested == null && raw != null && Marshal.IsComObject(raw))
+                {
+                    IntPtr unknown = Marshal.GetIUnknownForObject(raw);
+                    try { nested = (IAccessible)Marshal.GetTypedObjectForIUnknown(unknown, typeof(IAccessible)); }
+                    catch { }
+                    finally { Marshal.Release(unknown); }
+                }
+                if (nested != null && !Object.ReferenceEquals(nested, accessible) &&
+                    FocusTextFieldNamed(nested, targetName, depth + 1)) return true;
+            }
+            catch { }
+            finally
+            {
+                if (nested != null && Marshal.IsComObject(nested) && !Object.ReferenceEquals(nested, accessible))
+                    Marshal.FinalReleaseComObject(nested);
+                else if (nested == null && raw != null && Marshal.IsComObject(raw))
+                    Marshal.FinalReleaseComObject(raw);
+            }
+        }
+        return false;
+    }
+
     public static int[] LocationByName(IntPtr window, string targetName)
     {
         IAccessible root = null;
@@ -911,6 +973,11 @@ try {
   $msaaRoots = @()
   $msaaAvailable = $false
   $msaaError = $null
+  $msaaEditorFocusRequested = $false
+  if (!$ExerciseInteractions) {
+    $msaaEditorFocusRequested = [AlulaArtifactMsaa]::FocusTextFieldNamed($child, '未命名 主编辑器')
+    if ($msaaEditorFocusRequested) { Start-Sleep -Milliseconds 250 }
+  }
   $msaaTargets = @(
     [pscustomobject]@{ name = 'topLevelWindow'; handle = $window },
     [pscustomobject]@{ name = 'flutterChildWindow'; handle = $child }
@@ -1008,6 +1075,7 @@ try {
     uiAutomationError = $uiaError
     uiAutomationRoots = @($uiaRoots)
     msaaAvailable = $msaaAvailable
+    msaaEditorFocusRequested = $msaaEditorFocusRequested
     msaaError = $msaaError
     msaaRoots = @($msaaRoots)
     flutterMsaaChildCount = if ($flutterMsaaRoot) { $flutterMsaaRoot.childCount } else { 0 }

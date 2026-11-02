@@ -200,6 +200,7 @@ jobs:
             $msaaAvailable = $false
             $msaaRoots = @()
             $msaaError = $null
+            $msaaEditorFocusRequested = $false
             if (!$uiAutomationSkipped) {
               try {
                 Add-Type -AssemblyName UIAutomationClient
@@ -318,6 +319,84 @@ jobs:
                   return snapshot;
               }
 
+              public static bool FocusTextFieldNamed(IntPtr window, string targetName)
+              {
+                  Guid interfaceId = IidIAccessible;
+                  IAccessible accessible = null;
+                  int result = AccessibleObjectFromWindow(
+                      window, unchecked((uint)-4), ref interfaceId, out accessible);
+                  if (result != 0 || accessible == null) return false;
+                  try { return FocusTextFieldNamed(accessible, targetName, 1); }
+                  finally
+                  {
+                      if (Marshal.IsComObject(accessible))
+                      {
+                          Marshal.FinalReleaseComObject(accessible);
+                      }
+                  }
+              }
+
+              private static bool FocusTextFieldNamed(
+                  IAccessible accessible, string targetName, int depth)
+              {
+                  if (accessible == null || depth > 8) return false;
+                  int childCount = 0;
+                  try { childCount = Math.Min(accessible.accChildCount, 100); }
+                  catch { return false; }
+                  for (int childId = 1; childId <= childCount; childId++)
+                  {
+                      string name = null;
+                      object role = null;
+                      try { name = accessible.get_accName(childId); } catch { }
+                      try { role = accessible.get_accRole(childId); } catch { }
+                      if (String.Equals(name, targetName, StringComparison.Ordinal) &&
+                          Convert.ToString(role) == "42")
+                      {
+                          try { accessible.accSelect(1, childId); return true; }
+                          catch { return false; }
+                      }
+
+                      object rawChild = null;
+                      IAccessible nested = null;
+                      try
+                      {
+                          rawChild = accessible.get_accChild(childId);
+                          nested = rawChild as IAccessible;
+                          if (nested == null && rawChild != null && Marshal.IsComObject(rawChild))
+                          {
+                              IntPtr unknown = Marshal.GetIUnknownForObject(rawChild);
+                              try
+                              {
+                                  nested = (IAccessible)Marshal.GetTypedObjectForIUnknown(
+                                      unknown, typeof(IAccessible));
+                              }
+                              catch { }
+                              finally { Marshal.Release(unknown); }
+                          }
+                          if (nested != null && !Object.ReferenceEquals(nested, accessible) &&
+                              FocusTextFieldNamed(nested, targetName, depth + 1))
+                          {
+                              return true;
+                          }
+                      }
+                      catch { }
+                      finally
+                      {
+                          if (nested != null && Marshal.IsComObject(nested) &&
+                              !Object.ReferenceEquals(nested, accessible))
+                          {
+                              Marshal.FinalReleaseComObject(nested);
+                          }
+                          else if (nested == null && rawChild != null &&
+                              Marshal.IsComObject(rawChild))
+                          {
+                              Marshal.FinalReleaseComObject(rawChild);
+                          }
+                      }
+                  }
+                  return false;
+              }
+
               private static void CaptureChildren(
                   IAccessible accessible,
                   string parentPath,
@@ -427,6 +506,9 @@ jobs:
                     handle = [AlulaWindowApi]::GetWindow($window, 5)
                   }
                 )
+                $msaaEditorFocusRequested = [AlulaMsaaApi]::FocusTextFieldNamed(
+                  $msaaTargets[1].handle, '未命名 主编辑器')
+                if ($msaaEditorFocusRequested) { Start-Sleep -Milliseconds 250 }
                 foreach ($target in $msaaTargets) {
                   $result = [AlulaMsaaApi]::Capture($target.handle)
                   if ($result.HResult -eq '0x00000000') {
@@ -475,6 +557,7 @@ jobs:
               uiAutomationRoots = @($uiaRootSnapshots)
               uiAutomationError = $uiaError
               msaaAvailable = $msaaAvailable
+              msaaEditorFocusRequested = $msaaEditorFocusRequested
               msaaRoots = @($msaaRoots)
               msaaError = $msaaError
             } | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
@@ -546,6 +629,7 @@ jobs:
           if (!$metadata.msaaAvailable) { throw "Flutter window did not expose an MSAA provider" }
           $flutterRoot = $metadata.msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1
           if (!$flutterRoot) { throw "MSAA snapshot did not include the Flutter child window" }
+          if (!$metadata.msaaEditorFocusRequested) { throw "MSAA could not focus the unnamed editor before reading its text value" }
           $accessibleText = (@($flutterRoot.children | ForEach-Object { [string]$_.Name; [string]$_.Value }) -join "`n")
           foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')) {
             if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected semantic text: $expected" }
