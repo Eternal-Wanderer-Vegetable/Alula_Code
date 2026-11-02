@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.59 / EDT-11a 同文档文本拖放，首批平台验收完成）
+
+- 复用最新 PR CI `41543818701` 与 Platform Availability `41543813557` 作为当前代码快照的回归证据：Linux/Windows hosted DnD 均有实际 Flutter pointer events，并记录同文档 move、跨文档 copy、外部文本 drop；Flutter 全量测试覆盖同文档 copy/undo、边界与 UTF-16/CRLF。证据与 artifact 号见 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
+- Windows hosted 客户区、UI Automation 与 WM_CLOSE exit 0 通过；macOS ARM64 hosted package 已生成，但其 DnD probe 因 `CGEventPostToPid pointer route=false` 明确跳过。按平台优先级，P04.59 对 Linux/Windows 首批验收标为 done；原生 macOS DnD 继续待验证。无本机 GUI/Narrator。
+- CI run `41546512782`（证据文档提交）全绿。成功 run 不能消除历史 Windows `0xC000041D` 或 macOS SIGSEGV；近期 probe/fixture/DnD route/accessibility 红灯需按退出码与 crash artifact 分类，不能一概归为崩溃或声称已修复。
+
 ### 最新进展（2026-11-03，P04.76 / EDT-12c3 嵌套片段占位符，托管验收完成）
 
 - 固定 Code-OSS 1.145.0 的嵌套默认值与镜像 tabstop 已实现；session 同步跟踪父子范围，支持 UTF-16/emoji，嵌套深度上限 32，transforms 继续 fail closed；无 Rust/ABI 改动。实现提交 `a5a137888eb2d48aedbf0c3077025d043042ee7a` 已推送。
