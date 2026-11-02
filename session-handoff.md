@@ -1,4 +1,4 @@
-> Last Updated：2026-11-02（P04.60 / EDT-11b 完成本地实现与门禁，当前切片已暂存，待阶段提交/push 与 hosted CI。新增单项 `text/plain` 外部拖入，Linux X11/Xvfb 原生内部+外部拖放通过；`cargo fmt --check`、Flutter analyze 0 issues、完整 `bash init.sh` EXIT=0 / Flutter 593。Windows hosted 双路径探针待本片 push 后确认。GitNexus staged/all 仍报 CRITICAL：新拖放方法被映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；诊断与限制见 P04.60 报告，不宣称 clean。P04.59 macOS 原生拖放仍 pending，按用户指示不阻塞架构续做；保留为 Mac 平台 DoD/发行门。近期 CI runner 失败与历史真实 SIGSEGV 分开记录，`9f2c70a` readiness handshake 后启动 smoke 未复现崩溃。）
+> Last Updated：2026-11-02（P04.60 / EDT-11b 已提交/push 为 `7b0d9fe`。本地门禁与 Linux hosted、Windows hosted 双路径探针通过；Platform `41406646083`、PR CI `41406657349` 全绿。Windows artifact `13123619387` 记录外部 text 与内部 move；Linux artifact `13124021682` 通过。macOS Release/launch/package lane 通过，验证包 artifact `13124228046`；原生 DnD artifact `13124456866` 因输入路由不可用明确 SKIP，startup artifact `13124661113` 无 `.ips` / `.crash`，所以 Mac DnD 仍待验。GitNexus staged/all 仍报 CRITICAL：新拖放方法被映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；诊断与限制见 P04.60 报告，不宣称 clean。近期 runner 假红与历史真实 SIGSEGV 分开记录，`9f2c70a` readiness handshake 后启动 smoke 未复现崩溃。）
 
 > Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。commit `5c1c501` 已 push；Platform `41400262650` 与 PR CI `41400267570` 全绿。Linux X11 / Windows 原生 DnD 都通过，Windows artifact `13121491263` 为 alpha/move/UTF-16 offset 11；P03.7 大文件 teardown 与 pointer-cancel probe 假红已修复。macOS hosted pointer route 仍 false 并明确 SKIP，真实 macOS DnD 待验证；startup artifact `13121502027` 无 `.ips` / `.crash`。Mac ARM64 artifact `13121626550` 是验证包，不是 v0.1.0 发行包。）
 
@@ -11,10 +11,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-02）：P04.60 / EDT-11b 外部纯文本拖入完成本地实现与门禁，等待 Windows hosted probe/PR CI。Linux X11/Xvfb 内部 move 与外部 plain-text copy 原生输入均通过；全量 Rust/Clippy/build_core/Flutter 593 与 fmt/analyze 门禁全绿。GitNexus staged/all 审计仍为 CRITICAL，报告保留此图谱风险并记录源码核验结果。P04.59 / EDT-11a macOS native drag/drop 继续 pending，但按用户安排不阻止后续架构切片；Mac release/完整 N.2 平台验收仍需真实设备。历史 CI runner 假红与 `41370553563` 的真实 SIGSEGV 分开，readiness-handshake 后 startup smoke 未复现崩溃。
+- 当前状态更新（2026-11-02）：P04.60 / EDT-11b 外部纯文本拖入的本地门禁、Linux/Windows hosted 双路径探针、PR CI 均通过。macOS Release/launch/package hosted 通过，macOS DnD 因输入路由 SKIP 并继续待验；按用户安排不阻止后续架构切片。GitNexus staged/all 审计仍为 CRITICAL，报告保留此图谱风险并记录源码核验结果。历史 CI runner 假红与 `41370553563` 的真实 SIGSEGV 分开，readiness-handshake 后 startup smoke 未复现崩溃。
 
 - 当前阶段涉及文件：P04.60 `app/lib/editor/{text_drag_drop.dart,editor_native_text_drag_drop.dart,rust_text_input_field.dart}`、`app/lib/workbench/workbench_page.dart`（仅本片两个新增 hunk）、定向测试、Linux/Windows hosted DnD fixture/helper、P04.60 诊断与 docs/03/feature_list/progress/session-handoff，以及 P04.59 macOS pending 文案。不要暂存工作树其他既存改动。
-- 下一步首件：按用户既有授权提交并 push P04.60 单片；查看本片 Windows native DnD 与 PR CI，记录 hosted artifact 并保持 Mac 原生拖放待验。随后从 docs/03 选择 EDT-11 后续单一切片。不要操作用户本机 GUI（避免触发讲述人）。500 MiB 优化仍留 P14。
+- 下一步首件：从 docs/03 选择 EDT-11 的一个后续架构切片，遵守 one-feature-at-a-time。不要操作用户本机 GUI（避免触发讲述人）。500 MiB 优化仍留 P14；Mac 原生 DnD 保持发行与完整平台验收门。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。

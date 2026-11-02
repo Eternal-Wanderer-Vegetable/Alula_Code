@@ -9,8 +9,9 @@
 
 - 新增单项 `text/plain` 外部拖入：`DataReader` 异步读取（10 秒超时并取消）、65,536 UTF-16 上限、stale/IME/pending/只读状态保护、CRLF/CR 到 LF 归一、Rust 单次插入与单步 undo；串接光标、分屏、dirty、Find、语法和保存路径。localData 类型可识别但损坏时不会退化为外部复制；未改 ABI/Rust GUI 依赖。
 - `text_drag_drop_test.dart` 与 adapter widget 定向 12 项通过；Linux X11 本地原生 probe 在 Xvfb 中分别完成内部 move 与外部 plain-text copy，external callback 收到 `external text`、document 7002/v4/offset 6。最终复跑证据：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop-linux-xvfb-final2/`。`cargo fmt --all -- --check`、`flutter analyze`（0 issues）及完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 593）通过。
-- Windows fixture/helper 已加入同一外部文本场景，等待本片提交后的 hosted CI 结果；真实 macOS native DnD 仍 pending。按用户要求继续实现 Linux/Windows 首批功能，macOS 未验收保留为平台验收/发行门，不阻止下一片架构工作。P04.59 同文档 DnD 也保持 macOS pending；CI runner 假红与历史真实 SIGSEGV 的 readiness-handshake 修复分别记录，近期启动 smoke 未复现真实崩溃。GitNexus staged/all 变更审计仍报 CRITICAL 并将新私有拖放方法映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；证据与未解决风险见 P04.60 报告，不宣称图谱审计 clean。
-- 报告：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop.md`。当前下一步：GitNexus 变更审计后仅暂存本片精确文件/hunks、阶段提交并 push，查看 Windows hosted probe 与 PR CI，再补录 artifact。
+- Linux 本地/hosted 与 Windows hosted 的内部 move、外部纯文本 copy 双路径均通过。Platform Availability [`41406646083`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41406646083)、PR CI [`41406657349`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41406657349) 全绿；Windows artifact `13123619387` 回报 `external text` / 7002/v4/offset 6 及 `alpha` / move / offset 11，pointer cancel 伴随成功 drop。macOS Release/launch/package 通过，原生 DnD artifact `13124456866` 明确 SKIP，启动 artifact `13124661113` 无 `.ips`/`.crash`；ARM64 验证包 `13124228046` 不是 v0.1.0 发行件。真实 macOS native DnD 仍 pending，按用户要求保留发行/完整平台验收门，不阻止下一片架构工作。P04.59 同文档 DnD 也保持 macOS pending。
+- CI 线索复核：近期红灯主要来自 `Platform Availability` 的输入/teardown 测试路径；常规 CI run `41406657349` 全绿。修复后本次 Linux/Windows lanes 全过；历史真实 SIGSEGV `41370553563` 与 runner 假红分开，`9f2c70a` readiness handshake 后近期启动 smoke 未复现。GitNexus staged/all 变更审计仍报 CRITICAL 并将新私有拖放方法映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；证据与未解决风险见 P04.60 报告，不宣称图谱审计 clean。
+- 报告：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop.md`。下一步：按 docs/03 选择 EDT-11 的一个后续架构切片；macOS DnD 保持待验。
 
 ### CI 修复记录（2026-11-02，P04.59 / EDT-11a）
 
