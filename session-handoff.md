@@ -1,20 +1,20 @@
-> Last Updated：2026-11-03（P04.68 / EDT-12b4 行号片段变量已在隔离 worktree 完成本地门禁：定向 28 项、完整 `init.sh`（Rust workspace/Clippy/build_core/Flutter 651）、cargo fmt、Flutter analyze 0 issues。现正补齐文档、GitNexus staged/all 检查，再将精确补丁转入根仓、提交/push 并查看 hosted CI。P04.67 commit `6606b77` 的 PR CI `41492442098` 已通过；Platform `41492433894` 的 Linux/Windows lanes 通过，macOS job `125447447277` 正在 Flutter 测试步骤。分支 `codex/vscode-parity-p00`，当前 HEAD `6606b77`。不启动本机 GUI/Narrator。
+> Last Updated：2026-11-03（P04.68 / EDT-12b4 已提交/push 为 `6d29a77`，本地 DoD 与 hosted CI 均通过：PR CI `41497584820`、Platform Availability `41497575540` 全绿；Linux/Windows Release、launch、interaction 通过，macOS Release/clipboard/startup/package 通过。macOS DnD artifact `13168442013` 明确 SKIP（CGEventPostToPid pointer route=false），ARM64 validation artifact `13167398677` 不是 v0.1.0 release；startup artifact `13168835425` 仅 Impeller 日志，无 crash report。P04.67 hosted evidence 也补齐于 run `41492433894`。下一项准备 P04.69：按 Code-OSS 1.145.0 语义实现 `$TM_CURRENT_LINE`，先做 GitNexus impact/调用图复核；只修改 isolation worktree，不能碰根仓现有用户改动。不要启动本机 GUI/Narrator。分支 `codex/vscode-parity-p00`，当前 HEAD `6d29a77`。
 
 ## Current Objective
-继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。唯一活动 feature 为 P04 / feat-026。当前 P04.68 / EDT-12b4 支持 `$TM_LINE_INDEX` 和 `$TM_LINE_NUMBER`，本地实现与门禁完成；待最终 GitNexus scan、精确转入根仓/提交/push，并检查该提交 CI。
+继续固定版本 VS Code 无插件复刻计划，状态和 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。唯一活动 feature 是 P04 / feat-026。P04.68 / EDT-12b4 已完成本地与 Linux/Windows/macOS hosted build/launch/package smoke；macOS 原生 DnD/设备验收保持 pending。下一切片暂定 EDT-12b5 `$TM_CURRENT_LINE`，以固定 Code-OSS 语义核实和 GitNexus pre-edit impact 为开工门。
 
 ## Blockers and Follow-ups
-- P04.67 Platform macOS runner rerun 正在进行；Linux 与 Windows lanes 已通过。没有本地 macOS 设备，Mac 原生验证仍记为待验证。
+- macOS hosted DnD fixture因 runner pointer route=false 显式 SKIP；本机无 Mac，原生 DnD/IME 仍待真实设备验证，不阻塞下一架构切片。
 - P15 外部验收仍 pending：Windows 11 Narrator/焦点与 DPI/主题矩阵、Linux native DRM、macOS 原生 DnD/IME。避免本机启动 GUI，以免触发讲述人。
-- EDT-12 的当前行/单词、相对路径、clipboard/workspace variables、choice/transform/嵌套及用户片段配置仍开放；按 docs/03 单切片推进。
-- CI/crash 分类见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。历史旧 Windows binary `d5319369` 的 WM_CLOSE `0xC000041D` 已被无 UIA 对照复现；重建分支 close smoke 通过。macOS startup SIGSEGV `41370553563` 尚不能称为永久消除。
-- 隔离快照对 `expandSnippetTemplate` 的 LOW 不能覆盖根仓 GitNexus 曾报 CRITICAL 的风险；后续编辑该符号前需复核 impact。
+- EDT-12 仍有 `$TM_CURRENT_WORD`、`RELATIVE_FILEPATH`、clipboard/workspace variables、choice/transform/nested、多光标与用户片段配置。按 docs/03 单切片推进。
+- CI/crash 分类见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。旧 Windows binary `d5319369` 的 WM_CLOSE `0xC000041D` 已被无 UIA 对照复现；重建分支 close smoke 通过。历史 macOS startup SIGSEGV `41370553563` 仍未证明永久消除。
+- 隔离快照对 `expandSnippetTemplate` 的 LOW 不覆盖根仓曾报 CRITICAL 的影响；修改该符号前重新查询并保留风险告警。
 
 ## Files Involved
-`app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`。
+当前验证证据：`docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`, `docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`, `feature_list.json`, `progress.md`, `session-handoff.md`。下一代码切片先看 `app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`。
 
 ## Recommended Next Step
-先在 `/tmp/alula-p04.68-clean` 补完证据记录并运行 GitNexus `detect-changes --scope staged` 与 `--scope all`（若 partial/truncated 则重跑）；随后将仅含上述 P04.68 内容的 patch 应用到根仓并精确暂存，确认 staged patch 与隔离 snapshot 完全一致、既有用户工作树改动仍未暂存，再提交/push。跟踪 P04.68 PR CI/Platform lanes 和仍在运行的 P04.67 macOS rerun；失败时采集完整 logs/artifacts，区分 runner、断言、脚本与应用 crash。
+在干净 HEAD `6d29a77` 的独立 worktree 执行 GitNexus status/analyze，查询固定 Code-OSS `$TM_CURRENT_LINE` resolver 的 selection position 行语义，并对 `expandSnippetTemplate`、`_insertSnippetTemplate` 与 `AlulaDoc` 行 range/read APIs 做 impact；复核 UNKNOWN/CRITICAL 与跨语言漏链后，再实现一个 `$TM_CURRENT_LINE` 子项并加 emoji/CRLF/超长行和保存回读覆盖。先跑本地 targeted tests + 完整 `init.sh`、fmt/analyze，再更新证据和 staged/all graph scan；根仓用户 worktree 只在最终精确 staged apply 时触及对应代码 hunk。
 
 > Last Updated：2026-11-02（P04.63 / EDT-11e Paste As 本地实现与精确 staged 快照门禁已完成：detached worktree 的 `init.sh` EXIT=0（Flutter 617）、cargo fmt、flutter analyze 0 issues；真实桌面 clipboard round trip 已接入 Platform Availability。GitNexus 已刷新并完成 staged/compare 检查：重复 staged scans 为 14 files/32–46 symbols/395–430 flows、CRITICAL；graph field-name 扩散、567 跨语言漏链及 process truncation 记录在 P04.63 报告，不作风险降级。当前精确 14-file staged snapshot 待 commit/push，之后跟进 Linux/Windows hosted MIME round-trip 和 PR CI；通过后登记 P04.63 done。近期 CI 红灯日志无产品崩溃栈；唯一确认 crash `41370553563` 是独立 macOS startup SIGSEGV，`9f2c70a` 后 smoke 未复现。macOS DnD artifact `13135045729` 明确 SKIP。不要操作桌面 GUI，避免触发讲述人；500 MiB 留 P14。）
 

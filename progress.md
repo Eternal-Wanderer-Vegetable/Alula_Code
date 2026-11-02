@@ -5,15 +5,15 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.68 / EDT-12b4 行号片段变量，本地门禁通过）
+### 最新进展（2026-11-03，P04.68 / EDT-12b4 行号片段变量，已提交并通过 hosted CI）
 
 - 按固定 Code-OSS 1.145.0 增加 `$TM_LINE_INDEX`（0-based）和 `$TM_LINE_NUMBER`（1-based），均根据插入前活动选区 extent 所在行计算。工作台 flush 并校验输入后读取 Rust 权威位置，再经纯 helper 展开；无 Rust/ABI 改动。
-- 定向 parser/workbench 28 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 651）；cargo fmt、Flutter analyze 0 issues 与 diff check 通过。覆盖 emoji 前缀后第二行插入、负行号拒绝和保存回读。未启动本机 GUI/Narrator。证据：`docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`。阶段 staged scan、提交与本项 hosted CI 待完成。
+- 定向 parser/workbench 28 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 651）；cargo fmt、Flutter analyze 0 issues。commit `6d29a77` 已 push。PR CI `41497584820` 全绿；Platform Availability `41497575540` 全部 job success。Linux/Windows Release、启动与交互 lanes 通过；macOS Release、clipboard、startup/package 通过并产出 ARM64 验证包 `13167398677`。macOS 原生 DnD artifact `13168442013` 因 `CGEventPostToPid pointer route: false` 明确跳过，不能算原生 DnD 通过；startup artifact `13168835425` 只有 Impeller 日志，无 `.ips`/`.crash`。本机未启动 GUI/Narrator。证据：`docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`。
 
-### 阶段进展（2026-11-03，P04.67 / EDT-12b3 文件路径片段变量，已提交）
+### 阶段进展（2026-11-03，P04.67 / EDT-12b3 文件路径片段变量，已提交并完成 hosted smoke）
 
-- 对齐固定 Code-OSS 1.145.0 的 `$TM_DIRECTORY`、`$TM_DIRECTORY_BASE`、`$TM_FILEPATH`：命名文档按主机路径风格规范化，POSIX/macOS home 下缩写为 `~`，Windows 盘符小写，根目录 basename 为空；untitled 三变量为空。替换沿现有 Rust 输入、撤销与保存路径，无 ABI 改动。
-- 定向 25 项与完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 648）、cargo fmt、Flutter analyze 0 issues 全绿；提交 `6606b77` 已 push。PR CI `41492442098` 通过；Platform Availability `41492433894` 的 Linux 与 Windows lanes 通过。Mac job 首次排队时被取消，已单独 rerun（job `125447447277`），当前进行到 Flutter analyze/tests，Release/package 尚未开始。证据：`docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`。未启动本机 GUI/Narrator；Mac lane 完成后更新结果。
+- 对齐固定 Code-OSS 1.145.0 的 `$TM_DIRECTORY`、`$TM_DIRECTORY_BASE`、`$TM_FILEPATH`：命名文档按主机路径风格规范化，POSIX/macOS home 下缩写为 `~`，Windows 盘符小写，根目录 basename 为空；untitled 三变量为空。沿现有 Rust 输入、撤销与保存路径，无 ABI 改动。
+- 定向 25 项与完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 648）、cargo fmt、Flutter analyze 0 issues 全绿；commit `6606b77` 已 push。PR CI `41492442098` 全绿；Platform Availability `41492433894` 的 Linux、Windows、macOS jobs 全部 success。Linux/Windows Release、launch、native interaction smoke 通过；macOS Release、clipboard、startup/package 通过并产出 ARM64 验证包 `13167546753`。macOS DnD artifact `13166693448` 明确 SKIP（hosted pointer route=false），startup artifact `13166678983` 只有 Impeller 日志，无 crash report；macOS 原生行为仍需真实设备验证。未启动本机 GUI/Narrator。证据：`docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`。
 
 ### 阶段进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量，已完成）
 
@@ -24,6 +24,7 @@
 ### CI 稳定性跟进（2026-11-03）
 
 - 用户提醒反复 CI 失败可能与崩溃有关；复核 recent 100 runs 后更正分类：PR CI 有 56 success / 1 failure，唯一失败是未启动 Alula 的 vendored Cargokit analyzer；Platform Availability 为 14 success / 28 failure，多数是输入路由、UIA/MSAA、脚本或 fixture 失败；另一个独立 Windows artifact validation failure 确实捕获旧 Release binary `d5319369` 在 `WM_CLOSE` 后以 `0xC000041D` 退出。该旧 binary 的无 UIA/MSAA 对照也崩溃，Windows 事件指向 `flutter_windows.dll` access violation。重建分支 `189e920` 在 run `41482157012` 的 Windows close lifecycle smoke 通过（该步骤断言 exit code 为 0）；当前 PR CI `41487367300` 也通过。详细证据与因果边界见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。CI 的旧 artifact 回放确实暴露过真实产品崩溃；多数其他红灯仍是探针/runner 假红。Hosted 失败本身不会让本机进程崩溃，修正测试信号不能替代修复运行时关闭路径。旧 artifact 与 P15 Windows 11 验收继续 pending；不在本机启动 GUI/Narrator。
+- 后续 P04.67/P04.68 的 PR CI 与 Platform Availability 均全绿，三平台 Release/launch/package smoke 无新 crash；macOS DnD 的两次 SKIP 都因 hosted pointer route=false。历史 SIGSEGV `41370553563` 仍不能据此宣称永久修复。
 
 ### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 
