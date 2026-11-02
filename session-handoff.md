@@ -1,16 +1,16 @@
-> Last Updated：2026-11-02（P04.65 / EDT-12b1 `$TM_SELECTED_TEXT` 已实现：flush 后捕获 UTF-16 单选区值并纯文本展开，空值/未知变量/transform fail-closed 有测试；定向 20 项、全量 Flutter 638、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 和精确 staged detached snapshot 全绿。报告 `docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。P04.64 的 PR CI 41473221940 与 Platform Availability 41473213540 全绿；前置 MSAA 红灯为 Value 文本断言，不是崩溃栈。choice、其他变量、transform、嵌套与用户片段配置仍开放。不要启动本机 GUI/讲述人；Windows 11 原生 Narrator/DPI、Linux DRM、macOS 原生设备/IME 验收 pending。）
+> Last Updated：2026-11-03（P04.65 / EDT-12b1 `$TM_SELECTED_TEXT` 已实现并以 `a46d63f` 提交/push：定向 20 项、完整 Flutter 638、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 和精确 staged snapshot 全绿。PR CI `41476559731`、Platform Availability `41476548776` 三平台 lanes 全绿；macOS startup artifact `13158197946` 只有 Impeller 日志，无 `.ips`/`.crash`。历史 CI 红灯分类见 `docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`：MSAA/UIA 语义断言、PowerShell 脚本编码错误、clipboard fixture 断言，未见应用 crash stack；唯一确认 SIGSEGV `41370553563` 仍单独追踪。choice、其他变量、transform、嵌套与用户片段配置仍开放。不要启动本机 GUI/讲述人；Windows 11 原生 Narrator/DPI、Linux DRM、macOS 原生设备/IME 验收 pending。）
 
 ## Current Objective
-继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。P04.64 / EDT-12a 已实现并通过本地门禁，完成本 slice 的 staged graph 检查、阶段提交和 push 后再选下一项。
+继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。P04.65 / EDT-12b1 已提交并通过本地门禁与 hosted CI；按 docs/03 和 feature_list 选择 EDT-12 的下一项单一切片。
 
 ## Blockers and Follow-ups
 - Windows 11 Narrator/键盘焦点遍历与 DPI/主题矩阵、Linux native DRM、macOS 原生设备验收仍 pending；macOS CI 包仅为验证 artifact。
-- P04.64 hosted PR CI 尚未运行；EDT-12 后续 choice/变量/转换/嵌套与用户片段配置未实现。
+- EDT-12 后续 choice/其他变量/transform/嵌套与用户片段配置未实现。
 - P04.59 macOS 原生 DnD、Windows 11 Narrator/DPI/主题、Linux native DRM、macOS 原生设备仍 pending。CI 红灯调查和 P03.7 语义修复已记录在 diagnostics；不把它们与历史 crash 混同。
 - 不在本机启动 GUI，避免触发讲述人。
 
 ## Files Involved
-`app/lib/editor/snippet_template.dart`, `app/lib/editor/snippet_session.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/snippet_session_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。
+`app/lib/editor/snippet_template.dart`, `app/lib/editor/snippet_session.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/snippet_session_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
 
 ## Recommended Next Step
 按 docs/03 与 feature_list 选择 EDT-12 的下一项单一切片；先做 GitNexus impact，再实现、精确 staged 验证、登记证据和分阶段提交/push。保留 P15 外部平台验收门。

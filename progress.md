@@ -3,13 +3,13 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-02 更新）
+## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-02，P04.65 / EDT-12b1 选中文本片段变量）
+### 最新进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 
 - 新增 `$TM_SELECTED_TEXT` 与花括号形式；输入 flush 后捕获输入窗内单选区原文，按纯文本展开，不增 tabstop；空选区值为空，unknown variables 保留，变量 transform fail closed。没有 Rust/ABI 变化。
 - 定向 parser/session/workbench 20 项通过，含 emoji 代理对与保存回读；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 638），cargo fmt 通过，Flutter analyze 0 issues。精确 staged detached snapshot 也通过完整门禁。GitNexus staged scan LOW；私有 parser 方法 UNKNOWN 与索引截断限制已登记。没有本机 GUI。
-- P04.64 hosted PR CI 41473221940 与三平台 Platform Availability 41473213540 全绿。旧 run 41458740387 是 MSAA welcome text assertion 红灯，不是崩溃栈；历史 SIGSEGV 41370553563 单独记录。下一步从 docs/03 分解 EDT-12 后续的一项功能。证据：`docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
+- commit `a46d63f` 已 push；本项 PR CI 41476559731 与 Platform Availability 41476548776 三平台 lane 全绿。Windows Release/启动、交互、拖放、剪贴板和关闭检查通过；Linux/macOS Release smoke 与 macOS package 通过。macOS startup artifact 13158197946 只有 Impeller 日志，无 `.ips`/`.crash`。历史 CI 红灯已归类为 Windows MSAA/UIA 语义断言、Windows PowerShell 中文脚本编码错误及单 URI clipboard fixture 断言，均无应用崩溃栈；不在本机启动 GUI/Narrator。唯一确认 SIGSEGV 41370553563 单独追踪，不因 CI 绿灯宣称永久消除。下一步从 docs/03 选择 EDT-12 的一项后续功能。证据：`docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
 
 ### 阶段进展（2026-11-02，P04.64 / EDT-12a 基础片段会话）
 
