@@ -106,6 +106,7 @@ class MainFlutterWindow: NSWindow {
       "phase": "window-ready",
       "isVisible": window.isVisible,
       "isKeyWindow": window.isKeyWindow,
+      "isApplicationActive": NSApp.isActive,
       "eventViewClass": NSStringFromClass(type(of: flutterEventView)),
       "frame": [
         "x": Double(window.frame.origin.x),
@@ -175,18 +176,7 @@ class MainFlutterWindow: NSWindow {
           return
         }
         self.nativeDndTestEventNumber += 1
-        switch eventType {
-        case .mouseMoved:
-          flutterEventView.mouseMoved(with: event)
-        case .leftMouseDown:
-          flutterEventView.mouseDown(with: event)
-        case .leftMouseDragged:
-          flutterEventView.mouseDragged(with: event)
-        case .leftMouseUp:
-          flutterEventView.mouseUp(with: event)
-        default:
-          break
-        }
+        NSApp.sendEvent(event)
         self.appendNativeDndDiagnostic([
           "phase": "event-dispatched",
           "eventType": String(describing: eventType),
