@@ -1,0 +1,29 @@
+{
+  "windowId": "2097155",
+  "layout": {
+    "source": {
+      "x": 640.0,
+      "y": 210.0
+    },
+    "target": {
+      "x": 640.0,
+      "y": 420.0
+    },
+    "devicePixelRatio": 1.0
+  },
+  "drop": {
+    "selectedText": "alpha",
+    "operation": "move",
+    "targetOffsetUtf16": 11
+  },
+  "dragCompleted": {
+    "selectedText": "alpha",
+    "operation": "move"
+  },
+  "flutterPointerEventCount": 7,
+  "flutterPointerEventTypes": [
+    "down",
+    "move",
+    "up"
+  ]
+}
