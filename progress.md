@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.61 / EDT-11c 跨文档文本拖放复制，首批平台验收完成）
+
+- PR CI [`41548372182`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41548372182) 全部 job 通过，覆盖 Flutter 全量测试/analyze、Rust Linux/Windows 与 harness；工作台 handler 测试验证源文档不变、目标 undo/redo 和保存读回。
+- Platform Availability [`41543813557`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41543813557) hosted build/package lanes 通过。Linux DnD artifact `13188595395` 记录 20 个 Flutter pointer events，Windows artifact `13187717018` 记录 13 个；两端均记录显式 Ctrl 跨文档 Copy、同文档 move 和外部文本 drop。native adapter probe 与工作台 widget lifecycle 是分开的验收证据。
+- P04.61 对首批 Linux/Windows hosted gate 标为 done。macOS artifact `13189006426` 因 `CGEventPostToPid` pointer route unavailable 明确跳过，macOS 原生 DnD 与任意第三方 drag source 互操作仍待验证。
+- 全绿 CI 不构成崩溃修复结论：历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍未解决；没有把 DnD fixture/probe 结果归因成崩溃证据。详见 `docs/diagnostics/2026-11-02-p04/p04.61-cross-document-text-copy.md` 与 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+
 ### 最新进展（2026-11-03，P04.60 / EDT-11b 外部纯文本拖入，首批平台验收完成）
 
 - 本地验收合同覆盖 `text/plain` receiver、UTF-16 hit-test、65,536-unit 上限、stale/非法/只读/IME/pending 操作拒绝、CRLF 归一、单步 undo/dirty/保存路径；full Flutter tests 和完整 `init.sh` 既有证据均通过。
