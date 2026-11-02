@@ -298,4 +298,36 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     }
   });
+
+  testWidgets('line variables use the Rust document cursor line and save',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: '🙂x\nsecond',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 5);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_LINE_INDEX|$TM_LINE_NUMBER>$0',
+      );
+
+      expect(controller.text, '🙂x\ns<1|2>econd');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '🙂x\ns<1|2>econd');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }

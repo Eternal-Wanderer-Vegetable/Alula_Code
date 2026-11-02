@@ -112,6 +112,21 @@ Map<String, String> snippetDocumentPathVariables(
   };
 }
 
+/// Returns the zero-based and one-based line variables for a document line.
+Map<String, String> snippetLineVariables(int zeroBasedLine) {
+  if (zeroBasedLine < 0) {
+    throw RangeError.value(
+      zeroBasedLine,
+      'zeroBasedLine',
+      'must be non-negative',
+    );
+  }
+  return {
+    'TM_LINE_INDEX': '$zeroBasedLine',
+    'TM_LINE_NUMBER': '${zeroBasedLine + 1}',
+  };
+}
+
 String _snippetPathLabel(
   String value, {
   required path.Context context,
@@ -139,7 +154,8 @@ String _snippetPathLabel(
 ///
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
 /// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
-/// `$TM_DIRECTORY_BASE`, and `$TM_FILEPATH` variables.
+/// `$TM_DIRECTORY_BASE`, `$TM_FILEPATH`, `$TM_LINE_INDEX`, and `$TM_LINE_NUMBER`
+/// variables.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
 /// for later parity slices; unsupported choice/transform forms fail explicitly

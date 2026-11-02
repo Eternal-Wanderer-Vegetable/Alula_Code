@@ -1,20 +1,20 @@
-> Last Updated：2026-11-03（P04.67 / EDT-12b3 路径片段变量本地门禁通过：定向 25 项、完整 init.sh Flutter 648、Rust workspace/Clippy/build_core、cargo fmt、Flutter analyze 0 issues 全绿。GitNexus staged scan 为 11 files/4 symbols/0 processes/LOW、all-scope 为 11 files/4 symbols/0 processes/LOW；502 跨语言字段访问、852 未探索入口、447 跳过 callee、13 条预算截断 walk 已记录，不按零流程降级风险。阶段证据：docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md。待将精确阶段 patch 应用于根仓、提交/push 并检查 hosted CI；无本机 GUI/Narrator。）
+> Last Updated：2026-11-03（P04.68 / EDT-12b4 行号片段变量已在隔离 worktree 完成本地门禁：定向 28 项、完整 `init.sh`（Rust workspace/Clippy/build_core/Flutter 651）、cargo fmt、Flutter analyze 0 issues。现正补齐文档、GitNexus staged/all 检查，再将精确补丁转入根仓、提交/push 并查看 hosted CI。P04.67 commit `6606b77` 的 PR CI `41492442098` 已通过；Platform `41492433894` 的 Linux/Windows lanes 通过，macOS job `125447447277` 正在 Flutter 测试步骤。分支 `codex/vscode-parity-p00`，当前 HEAD `6606b77`。不启动本机 GUI/Narrator。
 
 ## Current Objective
-继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 docs/03-里程碑计划与验收标准.md 为准。当前唯一活动 feature 为 P04 / feat-026；P04.67 / EDT-12b3 路径变量已通过本地代码门禁，正在完成 GitNexus 最终扫描、精确暂存提交与 hosted CI 检查。后续 EDT-12 项目仍按单切片推进。
+继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。唯一活动 feature 为 P04 / feat-026。当前 P04.68 / EDT-12b4 支持 `$TM_LINE_INDEX` 和 `$TM_LINE_NUMBER`，本地实现与门禁完成；待最终 GitNexus scan、精确转入根仓/提交/push，并检查该提交 CI。
 
 ## Blockers and Follow-ups
-- P15 外部验收仍 pending：Windows 11 Narrator/键盘焦点与 DPI/主题矩阵、Linux native DRM、macOS 原生 DnD/IME。macOS hosted DnD artifact 明确 SKIP，不能替代真机验收。
-- EDT-12 其他上下文变量、choice/transform/嵌套及用户片段配置仍未实现；P04.67 证据不代替原生 Windows/macOS 路径和设备验证。
-- 用户提醒的 CI/crash 分类已登记：旧 Windows artifact run 41454766973 的 `d5319369` 二进制在关闭阶段真实返回 `0xC000041D`，无 UIA 对照复现；重建分支 189e920 的 hosted Windows close smoke 通过。macOS startup SIGSEGV 41370553563 是独立待证问题；不宣称永久消除。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
-- 根仓刷新后的 `expandSnippetTemplate` impact 曾报 CRITICAL（76 symbols/142 processes）；任何后续代码编辑前必须复核该风险，不得用隔离快照 LOW 降级。
-- 不在本机启动 GUI，避免触发讲述人。
+- P04.67 Platform macOS runner rerun 正在进行；Linux 与 Windows lanes 已通过。没有本地 macOS 设备，Mac 原生验证仍记为待验证。
+- P15 外部验收仍 pending：Windows 11 Narrator/焦点与 DPI/主题矩阵、Linux native DRM、macOS 原生 DnD/IME。避免本机启动 GUI，以免触发讲述人。
+- EDT-12 的当前行/单词、相对路径、clipboard/workspace variables、choice/transform/嵌套及用户片段配置仍开放；按 docs/03 单切片推进。
+- CI/crash 分类见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。历史旧 Windows binary `d5319369` 的 WM_CLOSE `0xC000041D` 已被无 UIA 对照复现；重建分支 close smoke 通过。macOS startup SIGSEGV `41370553563` 尚不能称为永久消除。
+- 隔离快照对 `expandSnippetTemplate` 的 LOW 不能覆盖根仓 GitNexus 曾报 CRITICAL 的风险；后续编辑该符号前需复核 impact。
 
 ## Files Involved
-`app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, `app/pubspec.yaml`, `app/pubspec.lock`, `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`。
+`app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`。
 
 ## Recommended Next Step
-在根仓先核对既有用户工作树，仅应用 P04.67 精确阶段 patch 并按内容暂存；确认 staged diff 不含其他改动后提交/push 已授权分支，检查该提交的 PR CI 与 Platform Availability。若 CI 红灯，下载完整日志和 artifacts，按 runner/断言/脚本/应用 crash 分类并修复后再推进；CI 通过后按 docs/03 选择 EDT-12 下一项。
+先在 `/tmp/alula-p04.68-clean` 补完证据记录并运行 GitNexus `detect-changes --scope staged` 与 `--scope all`（若 partial/truncated 则重跑）；随后将仅含上述 P04.68 内容的 patch 应用到根仓并精确暂存，确认 staged patch 与隔离 snapshot 完全一致、既有用户工作树改动仍未暂存，再提交/push。跟踪 P04.68 PR CI/Platform lanes 和仍在运行的 P04.67 macOS rerun；失败时采集完整 logs/artifacts，区分 runner、断言、脚本与应用 crash。
 
 > Last Updated：2026-11-02（P04.63 / EDT-11e Paste As 本地实现与精确 staged 快照门禁已完成：detached worktree 的 `init.sh` EXIT=0（Flutter 617）、cargo fmt、flutter analyze 0 issues；真实桌面 clipboard round trip 已接入 Platform Availability。GitNexus 已刷新并完成 staged/compare 检查：重复 staged scans 为 14 files/32–46 symbols/395–430 flows、CRITICAL；graph field-name 扩散、567 跨语言漏链及 process truncation 记录在 P04.63 报告，不作风险降级。当前精确 14-file staged snapshot 待 commit/push，之后跟进 Linux/Windows hosted MIME round-trip 和 PR CI；通过后登记 P04.63 done。近期 CI 红灯日志无产品崩溃栈；唯一确认 crash `41370553563` 是独立 macOS startup SIGSEGV，`9f2c70a` 后 smoke 未复现。macOS DnD artifact `13135045729` 明确 SKIP。不要操作桌面 GUI，避免触发讲述人；500 MiB 留 P14。）
 

@@ -103,6 +103,23 @@ void main() {
     });
   });
 
+  group('snippetLineVariables', () {
+    test('formats zero-based and one-based line numbers', () {
+      expect(
+        snippetLineVariables(0),
+        {'TM_LINE_INDEX': '0', 'TM_LINE_NUMBER': '1'},
+      );
+      expect(
+        snippetLineVariables(41),
+        {'TM_LINE_INDEX': '41', 'TM_LINE_NUMBER': '42'},
+      );
+    });
+
+    test('rejects a negative document line', () {
+      expect(() => snippetLineVariables(-1), throwsRangeError);
+    });
+  });
+
   group('expandSnippetTemplate', () {
     test('expands defaults, linked tabstops, and the final cursor stop', () {
       final expansion = expandSnippetTemplate(r'let ${1:name} = $1;$0');

@@ -5,10 +5,15 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.67 / EDT-12b3 文件路径片段变量，本地门禁通过）
+### 最新进展（2026-11-03，P04.68 / EDT-12b4 行号片段变量，本地门禁通过）
+
+- 按固定 Code-OSS 1.145.0 增加 `$TM_LINE_INDEX`（0-based）和 `$TM_LINE_NUMBER`（1-based），均根据插入前活动选区 extent 所在行计算。工作台 flush 并校验输入后读取 Rust 权威位置，再经纯 helper 展开；无 Rust/ABI 改动。
+- 定向 parser/workbench 28 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 651）；cargo fmt、Flutter analyze 0 issues 与 diff check 通过。覆盖 emoji 前缀后第二行插入、负行号拒绝和保存回读。未启动本机 GUI/Narrator。证据：`docs/diagnostics/2026-11-03-p04/p04.68-line-number-snippet-variables.md`。阶段 staged scan、提交与本项 hosted CI 待完成。
+
+### 阶段进展（2026-11-03，P04.67 / EDT-12b3 文件路径片段变量，已提交）
 
 - 对齐固定 Code-OSS 1.145.0 的 `$TM_DIRECTORY`、`$TM_DIRECTORY_BASE`、`$TM_FILEPATH`：命名文档按主机路径风格规范化，POSIX/macOS home 下缩写为 `~`，Windows 盘符小写，根目录 basename 为空；untitled 三变量为空。替换沿现有 Rust 输入、撤销与保存路径，无 ABI 改动。
-- 新增 POSIX、Windows drive/root/UNC、home 纯函数用例和活动文档插入/保存回读用例；定向 25 项通过。完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 648），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。GitNexus 精确 staged scan 为 11 files/4 symbols/0 affected processes、LOW；all-scope 为 11 files/4 symbols/0 affected processes、LOW。索引漏链/预算截断不视作零风险，细节见证据报告。未启动本机 GUI/Narrator；hosted CI 待提交触发，P15 原生平台验收仍 pending。
+- 定向 25 项与完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 648）、cargo fmt、Flutter analyze 0 issues 全绿；提交 `6606b77` 已 push。PR CI `41492442098` 通过；Platform Availability `41492433894` 的 Linux 与 Windows lanes 通过。Mac job 首次排队时被取消，已单独 rerun（job `125447447277`），当前进行到 Flutter analyze/tests，Release/package 尚未开始。证据：`docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`。未启动本机 GUI/Narrator；Mac lane 完成后更新结果。
 
 ### 阶段进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量，已完成）
 

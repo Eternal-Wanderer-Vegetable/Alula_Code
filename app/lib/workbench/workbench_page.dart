@@ -9852,6 +9852,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final selectedText = value.text.substring(localStart, localEnd);
+    final cursorPosition = doc.doc.positionAt(selection.extentOffset);
+    final lineVariables = snippetLineVariables(cursorPosition.line);
     final homeVariable = Platform.isWindows ? 'USERPROFILE' : 'HOME';
     final pathVariables = snippetDocumentPathVariables(
       doc.uri == null ? null : doc.path,
@@ -9866,6 +9868,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           'TM_SELECTED_TEXT': selectedText,
           ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
           ...pathVariables,
+          ...lineVariables,
         },
       );
     } on SnippetTemplateException catch (error) {
