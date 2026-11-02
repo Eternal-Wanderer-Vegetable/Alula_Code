@@ -349,8 +349,9 @@ jobs:
                       object role = null;
                       try { name = accessible.get_accName(childId); } catch { }
                       try { role = accessible.get_accRole(childId); } catch { }
-                      if (String.Equals(name, targetName, StringComparison.Ordinal) &&
-                          Convert.ToString(role) == "42")
+                      if (Convert.ToString(role) == "42" &&
+                          (String.IsNullOrEmpty(targetName) ||
+                              String.Equals(name, targetName, StringComparison.Ordinal)))
                       {
                           try { accessible.accSelect(1, childId); return true; }
                           catch { return false; }
@@ -507,7 +508,7 @@ jobs:
                   }
                 )
                 $msaaEditorFocusRequested = [AlulaMsaaApi]::FocusTextFieldNamed(
-                  $msaaTargets[1].handle, '未命名 主编辑器')
+                  $msaaTargets[1].handle, '')
                 if ($msaaEditorFocusRequested) { Start-Sleep -Milliseconds 250 }
                 foreach ($target in $msaaTargets) {
                   $result = [AlulaMsaaApi]::Capture($target.handle)

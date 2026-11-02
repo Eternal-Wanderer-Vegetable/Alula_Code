@@ -124,8 +124,9 @@ public static class AlulaArtifactMsaa
             object role = null;
             try { name = accessible.get_accName(id); } catch { }
             try { role = accessible.get_accRole(id); } catch { }
-            if (String.Equals(name, targetName, StringComparison.Ordinal) &&
-                Convert.ToString(role) == "42")
+            if (Convert.ToString(role) == "42" &&
+                (String.IsNullOrEmpty(targetName) ||
+                    String.Equals(name, targetName, StringComparison.Ordinal)))
             {
                 try { accessible.accSelect(1, id); return true; } catch { return false; }
             }
@@ -975,7 +976,7 @@ try {
   $msaaError = $null
   $msaaEditorFocusRequested = $false
   if (!$ExerciseInteractions) {
-    $msaaEditorFocusRequested = [AlulaArtifactMsaa]::FocusTextFieldNamed($child, '未命名 主编辑器')
+    $msaaEditorFocusRequested = [AlulaArtifactMsaa]::FocusTextFieldNamed($child, '')
     if ($msaaEditorFocusRequested) { Start-Sleep -Milliseconds 250 }
   }
   $msaaTargets = @(

@@ -1,11 +1,6 @@
 name: Validate Windows artifact 41109679662
 
 on:
-  push:
-    branches: [codex/vscode-parity-p00]
-    paths:
-      - '.github/workflows/windows-artifact-validation.yml'
-      - 'tools/vscode-parity/validate-windows-artifact.ps1'
   workflow_dispatch:
 
 permissions:
