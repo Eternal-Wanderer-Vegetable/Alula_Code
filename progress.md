@@ -3,9 +3,17 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-01 更新）
+## Current State（当前状态，2026-11-02 更新）
 
-### 最新进展（2026-11-01，P04.59 / EDT-11a 进行中）
+### 最新进展（2026-11-02，P04.59 / EDT-11a 进行中）
+
+- 复查发现首帧后再挂载拖放壳仍不能彻底消除启动竞态：Platform Availability `41370553563` 再次给出 `objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView:` 空 registry context 的 `.ips`。commit `9f2c70a` vendored `irondash_engine_context 0.5.5`，让 macOS `getEngineHandle` 等待主队列上的 FlutterView 发布后再返回，并为 registry getter 增加 nil guard；editor 拖放区域等 readiness handshake 成功后才挂载。
+- 第一次 CI `41372387516` 暴露根 Flutter analyzer 会扫描 Cargokit 自身构建工具且找不到它独立的开发依赖。commit `1fbda68` 将该子目录排除出 Alula app analyze 范围；本地完整 `flutter analyze` 0 issues，PR CI `41372733476` 的 Flutter analyze/tests、Rust Ubuntu/Windows 和文档门均通过。
+- Platform Availability `41372729161` 的 Linux/Windows lane 全绿；macOS analyze/tests、Release build、clipboard 和 app launch smoke 通过。startup artifact `13110192618` 只有 Impeller 启动日志，无 `.ips`/`.crash`，本轮未复现启动 SIGSEGV。macOS ARM64 验证包 `13110471628` 不是公开 v0.1.0 发行。
+- Platform job 因 macOS 原生 DnD 输入回放 40 秒未收到 drop 而保持红灯。artifact `13110660773` 中 helper 显示 mouse location 已改变，但中性点击后 Flutter pointer event 日志仍为空；这只能说明 hosted runner 输入没有进入 Flutter pointer router，不能判定真实用户 DnD 结果。此轮证据记录在 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。GitNexus 编辑前 class impact 为 LOW（6 symbols），本阶段 staged 检测为 72 files / 2 symbols / LOW / 0 affected processes；all-scope 检测含其他现存工作区改动，为 111 files / 30 symbols / LOW / 0 affected processes，结果不代表所有未索引跨语言关系已排除。
+- 下一步仍在 P04.59 范围内排查 macOS CI 输入路由与原生 drop 验收；不用本机 GUI，避免触发讲述人。真实 macOS 原生拖放未验收前不推进 EDT-11 后续子项；500 MiB 优化仍留 P14。
+
+### 前次记录（2026-11-01，P04.59 / EDT-11a 进行中）
 
 - 接入有界同文档原生文本拖放：同视图/分屏视图 move/copy、绝对 UTF-16 payload、Rust 版本与源范围复核、单帧 undo/redo、stale/IME/pending 输入保护；拖出提供 `text/plain`，系统确认 move 后只在源版本仍有效时删除源文本。外部拖入、多文档 provider 与 Paste As 留后续切片。
 - run `41288093654` 的 `.ips` 报告（artifact `13076640390`）显示 macOS faulting thread 为 `objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView:`，registry context 为空，后续栈位于 `super_native_extensions`。插件在 main queue 异步发布 FlutterView，首帧 DropRegion/Draggable 会请求它；高置信假设是启动时序重叠。commit `2cca8e6` 将 macOS 原生拖放壳推迟到首帧后，Linux/Windows 不延迟，并新增首帧 widget 回归。其 PR CI `41290051650` 与 Platform Availability `41290048090` 的 attempt 1、2 均全绿；两次 macOS Release launch smoke 均未复现 SIGSEGV，也未产生 crash report。此前重复 CI 红灯中，Clippy lint、断言、剪贴板解码及 fixture teardown 竞态均发生在测试/构建路径，不能单独解释应用崩溃；历史 Windows `0xC000041D` 仍由 P15 独立验证。
