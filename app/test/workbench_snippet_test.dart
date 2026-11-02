@@ -1,0 +1,194 @@
+import 'dart:io';
+
+import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/keybindings.dart';
+import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+Future<(Directory, File)> _openSnippetFixture(
+  WidgetTester tester,
+  TargetPlatform platform,
+) async {
+  debugDefaultTargetPlatformOverride = platform;
+  final temp = Directory.systemTemp.createTempSync('alula-snippet');
+  addTearDown(() async {
+    if (temp.existsSync()) await temp.delete(recursive: true);
+  });
+  final workspace = Directory('${temp.path}/workspace')..createSync();
+  final file = File('${workspace.path}/sample.rs')..writeAsStringSync('x');
+  final base = temp.path.replaceAll(r'\', '/');
+  await tester.pumpWidget(AlulaApp(
+    autoFolder: workspace.path,
+    layoutStore: LayoutStore(path: '$base/layout.json'),
+    sessionStore: SessionStore(path: '$base/session.json'),
+    keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+  ));
+  await tester.pump(const Duration(milliseconds: 600));
+  await tester.tap(find.text('sample.rs').first);
+  await tester.pump(const Duration(milliseconds: 300));
+  final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+  await tester.showKeyboard(editor);
+  await tester.pump();
+  return (temp, file);
+}
+
+Future<void> _insertSnippetFromPalette(
+  WidgetTester tester, {
+  required String template,
+}) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.enterText(find.byType(TextField).last, '插入片段');
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tap(find.text('编辑器: 插入片段…').last);
+  await tester.pump(const Duration(milliseconds: 100));
+  final input = find.byKey(const ValueKey('snippet-template-input'));
+  await tester.enterText(input, template);
+  await tester.tap(find.byKey(const ValueKey('snippet-template-confirm')));
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.pump();
+}
+
+Future<void> _replaceCurrentSelection(WidgetTester tester, String replacement,
+    {bool pump = true}) async {
+  final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+  final value = tester.widget<TextField>(editor).controller!.value;
+  final selection = value.selection;
+  final text = value.text.replaceRange(
+    selection.start,
+    selection.end,
+    replacement,
+  );
+  tester.testTextInput.updateEditingValue(TextEditingValue(
+    text: text,
+    selection: TextSelection.collapsed(
+      offset: selection.start + replacement.length,
+    ),
+  ));
+  if (pump) await tester.pump();
+}
+
+Future<void> _press(
+  WidgetTester tester,
+  LogicalKeyboardKey key, {
+  bool control = false,
+  bool meta = false,
+  bool shift = false,
+}) async {
+  if (control) await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  if (meta) await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+  if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyEvent(key);
+  if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  if (meta) await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+  if (control) await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+  await tester.pump();
+}
+
+void main() {
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    final isMac = platform == TargetPlatform.macOS;
+    testWidgets('$platform snippet mirrors edits, navigates, saves and undoes',
+        (tester) async {
+      try {
+        tester.view.physicalSize = const Size(1100, 720);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final (_, file) = await _openSnippetFixture(tester, platform);
+        final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+        var controller = tester.widget<TextField>(editor).controller!;
+        controller.selection = const TextSelection.collapsed(offset: 1);
+        await tester.pump();
+
+        await _insertSnippetFromPalette(
+          tester,
+          template: r'${1:name} = $1; ${2:value}$0',
+        );
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.text, 'xname = name; value');
+        expect(controller.selection,
+            const TextSelection(baseOffset: 1, extentOffset: 5));
+        expect(
+          tester
+              .widget<RustTextInputField>(find.byType(RustTextInputField))
+              .additionalSelections,
+          hasLength(1),
+        );
+
+        await _press(
+          tester,
+          LogicalKeyboardKey.keyZ,
+          control: !isMac,
+          meta: isMac,
+        );
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.text, 'x');
+
+        controller.selection = const TextSelection.collapsed(offset: 1);
+        await tester.pump();
+        await _insertSnippetFromPalette(
+          tester,
+          template: r'${1:name} = $1; ${2:value}$0',
+        );
+        await _replaceCurrentSelection(tester, 'foo', pump: false);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.text, 'xfoo = foo; value');
+
+        await _press(tester, LogicalKeyboardKey.tab);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.selection,
+            const TextSelection(baseOffset: 12, extentOffset: 17));
+        await _press(tester, LogicalKeyboardKey.tab, shift: true);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.selection,
+            const TextSelection(baseOffset: 1, extentOffset: 4));
+        await _press(tester, LogicalKeyboardKey.tab);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.selection,
+            const TextSelection(baseOffset: 12, extentOffset: 17));
+        await _replaceCurrentSelection(tester, 'bar');
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.text, 'xfoo = foo; bar');
+
+        await _press(tester, LogicalKeyboardKey.tab);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.selection, const TextSelection.collapsed(offset: 15));
+        await _press(tester, LogicalKeyboardKey.keyS, control: true);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(file.readAsStringSync(), 'xfoo = foo; bar');
+
+        await _insertSnippetFromPalette(
+          tester,
+          template: r'${1:again} $1',
+        );
+        await _press(tester, LogicalKeyboardKey.escape);
+        controller = tester.widget<TextField>(editor).controller!;
+        expect(controller.selection.isCollapsed, isTrue);
+        expect(
+          tester
+              .widget<RustTextInputField>(find.byType(RustTextInputField))
+              .additionalSelections,
+          isEmpty,
+        );
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+  }
+}

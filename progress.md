@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
+### 最新进展（2026-11-02，P04.64 / EDT-12a 基础片段会话）
+
+- 新增有界 TextMate 子集展开与绝对 UTF-16 Tabstop session；支持编号占位符/默认值镜像、Tab/Shift+Tab、最终光标、Esc 取消及模板命令。插入和镜像编辑沿用 Rust 文档输入/撤销路径；多选区、组合输入与窗外选区插入明确拒绝。未知变量保留文本，choice/transform/nested 明确拒绝，完整 EDT-12 仍开放。
+- 解析器/session/工作台定向 17 项通过；Windows/Linux/macOS target-platform 工作台覆盖未刷帧 Tab、镜像编辑、Shift+Tab、Esc、撤销与保存读回。完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 635），`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues；精确 staged detached snapshot 也通过完整门禁。没有本机 GUI 或原生设备测试。编辑前 GitNexus 三个共享入口均为 CRITICAL；最终 staged scan 为 MEDIUM，但索引截断限制和编辑前风险均保留在报告中。实现与验证边界见 `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。
+- 后续首项：按 docs/03 分解 EDT-12b（变量/choice/转换等）或其他依赖满足切片；先完成本阶段 staged graph 检查和提交，再继续。macOS/Linux DRM/Windows 11 原生验收与发布门保持 pending。
+
 ### 最新进展（2026-11-02，P03.7 hosted MSAA 编辑器文本）
 
 - 修复 Windows hosted CI 的 focused editor `Value` 为空：`RustTextInputField` 的语义节点现在发布当前有界输入窗文本；新增无 GUI widget 回归，证明中文 welcome 文本及 label 都可从 Semantics 读取。修复前测试复现空 value，修复后 `rust_text_input_field_test.dart` 8 项通过。

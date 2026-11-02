@@ -48,6 +48,8 @@ import '../editor/rich_text_clipboard.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_string_context.dart';
 import '../editor/rust_text_input_window.dart';
+import '../editor/snippet_session.dart';
+import '../editor/snippet_template.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
@@ -352,6 +354,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _overtypeMode = false;
   bool _pasteSelectorOpen = false;
   _PasteAsSession? _lastPasteAsSession;
+  SnippetSession? _snippetSession;
+  int? _snippetSessionDocId;
+  OpenDoc? _snippetSessionView;
+  List<TextOp>? _pendingSnippetOperations;
   bool _disposing = false;
   String _statusDetail = '初始化…';
   String? _journalRecoveryNotice;
@@ -469,6 +475,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '粘贴为纯文本',
       _pasteAsText,
       enablement: 'editorTextFocus',
+    );
+    reg(
+      'editor.action.insertSnippet',
+      '编辑器',
+      '插入片段…',
+      _showInsertSnippetDialog,
+      enablement: 'editorTextFocus',
+      runWithArguments: _insertSnippetFromArguments,
     );
     reg(
       'editor.changePasteType',
@@ -9759,6 +9773,199 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ));
   }
 
+  Future<void> _showInsertSnippetDialog() async {
+    final controller = TextEditingController(text: r'${1:name} = $1;$0');
+    final template = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('插入片段'),
+        content: TextField(
+          key: const ValueKey('snippet-template-input'),
+          controller: controller,
+          autofocus: true,
+          minLines: 3,
+          maxLines: 8,
+          decoration: const InputDecoration(
+            labelText: '片段模板',
+            helperText: r'支持 $1、${1:默认值} 和 $0',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('snippet-template-confirm'),
+            onPressed: () => Navigator.pop(dialogContext, controller.text),
+            child: const Text('插入'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (template != null) await _insertSnippetTemplate(template);
+  }
+
+  Future<void> _insertSnippetFromArguments(Object? arguments) async {
+    String? template;
+    if (arguments is String) {
+      template = arguments;
+    } else if (arguments is Map) {
+      final candidate = arguments['snippet'] ?? arguments['template'];
+      if (candidate is String) template = candidate;
+    }
+    if (template == null) {
+      await _showInsertSnippetDialog();
+      return;
+    }
+    await _insertSnippetTemplate(template);
+  }
+
+  Future<void> _insertSnippetTemplate(String template) async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) setState(() => _statusDetail = '输入法组合输入中，无法插入片段');
+      return;
+    }
+
+    late final SnippetExpansion expansion;
+    try {
+      expansion = expandSnippetTemplate(template);
+    } on SnippetTemplateException catch (error) {
+      if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');
+      return;
+    }
+
+    _flushInput(doc);
+    final selection = doc.selection;
+    final window = doc.inputWindow;
+    final field = doc.inputFieldKey.currentState;
+    final localStart = selection.start - window.startUtf16;
+    final localEnd = selection.end - window.startUtf16;
+    if (field == null ||
+        doc.crossWindowSelection != null ||
+        doc.columnSelection != null ||
+        doc.additionalSelections.isNotEmpty ||
+        !selection.isValid ||
+        localStart < 0 ||
+        localEnd > window.text.length ||
+        window.version != doc.doc.version) {
+      if (mounted) setState(() => _statusDetail = '片段插入需要输入窗内的单个选区');
+      return;
+    }
+
+    final value = doc.editingValue;
+    final nextLength = value.text.length - (localEnd - localStart) +
+        expansion.text.length;
+    if (nextLength > window.maxWindowUtf16) {
+      if (mounted) setState(() => _statusDetail = '片段展开后超过当前输入窗上限');
+      return;
+    }
+
+    _clearSnippetSession();
+    final replacement = value.text.replaceRange(
+      localStart,
+      localEnd,
+      expansion.text,
+    );
+    final firstTabstop = expansion.tabstopOrder.firstOrNull;
+    final firstRange = firstTabstop == null
+        ? null
+        : expansion.rangesFor(firstTabstop).firstOrNull;
+    final nextSelection = firstRange == null
+        ? TextSelection.collapsed(offset: localStart + expansion.text.length)
+        : TextSelection(
+            baseOffset: localStart + firstRange.startUtf16,
+            extentOffset: localStart + firstRange.endUtf16,
+          );
+
+    doc.lastEditAt = null;
+    field.applyFormattedValue(TextEditingValue(
+      text: replacement,
+      selection: nextSelection,
+    ));
+    field.flushPending();
+
+    final absoluteStart = window.startUtf16 + localStart;
+    if (firstTabstop != null) {
+      final session = SnippetSession(
+        expansion,
+        documentOffsetUtf16: absoluteStart,
+        version: doc.doc.version,
+      );
+      _snippetSession = session;
+      _snippetSessionDocId = doc.id;
+      _snippetSessionView = doc;
+      _setDocSelections(doc, session.currentSelections);
+    } else {
+      _setDocSelections(doc, [
+        TextSelection.collapsed(offset: absoluteStart + expansion.text.length),
+      ]);
+    }
+    field.requestFocus();
+    if (mounted) setState(() => _statusDetail = '已插入片段');
+  }
+
+  List<TextOp>? _snippetOperationsForInput(
+    OpenDoc doc,
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final session = _snippetSessionFor(doc);
+    if (session == null) return null;
+    final localOperations = diffToOps(oldValue.text, newValue.text);
+    if (localOperations.isEmpty) return const [];
+    final editStart = doc.inputWindow.startUtf16 +
+        localOperations.first.offsetUtf16;
+    final deletedUtf16 = localOperations
+        .where((operation) => operation.type == OpType.delete)
+        .fold<int>(0, (length, operation) => length + operation.lenUtf16!);
+    final insertedText = localOperations
+        .where((operation) => operation.type == OpType.insert)
+        .map((operation) => operation.text!)
+        .join();
+    final primarySelection = oldValue.selection;
+    if (!primarySelection.isValid) return null;
+    final planned = session.operationsForMirroredEdit(
+      primarySelection: TextSelection(
+        baseOffset:
+            doc.inputWindow.startUtf16 + primarySelection.baseOffset,
+        extentOffset:
+            doc.inputWindow.startUtf16 + primarySelection.extentOffset,
+        affinity: primarySelection.affinity,
+        isDirectional: primarySelection.isDirectional,
+      ),
+      editStartUtf16: editStart,
+      deletedUtf16: deletedUtf16,
+      insertedText: insertedText,
+    );
+    return planned;
+  }
+
+  SnippetSession? _snippetSessionFor(OpenDoc doc) {
+    final session = _snippetSession;
+    if (session == null) return null;
+    if (_snippetSessionDocId != doc.id || session.version != doc.doc.version) {
+      return null;
+    }
+    return session;
+  }
+
+  void _clearSnippetSession({bool clearSecondarySelections = true}) {
+    final view = _snippetSessionView;
+    _snippetSession = null;
+    _snippetSessionDocId = null;
+    _snippetSessionView = null;
+    _pendingSnippetOperations = null;
+    if (!clearSecondarySelections || view == null) return;
+    if (view.additionalSelections.isNotEmpty) {
+      view.additionalSelections = const [];
+      if (mounted) _scheduleSelectionRefresh(view);
+    }
+  }
+
   Future<void> _saveActive() async {
     final active = _active;
     if (active == null) return;
@@ -10293,6 +10500,47 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
         final activeHasComposition =
             active?.inputWindow.hasComposition ?? false;
+        final snippetSession = _snippetSession;
+        if (active != null &&
+            snippetSession != null &&
+            !activeHasComposition) {
+          if (_snippetSessionDocId != active.id ||
+              snippetSession.version != active.doc.version) {
+            _clearSnippetSession();
+          } else if (!ctrl &&
+              !meta &&
+              !alt &&
+              key == LogicalKeyboardKey.tab) {
+            _flushInput(active);
+            if (!identical(_snippetSession, snippetSession) ||
+                snippetSession.version != active.doc.version) {
+              _clearSnippetSession();
+              return KeyEventResult.handled;
+            }
+            if (shift) {
+              snippetSession.movePrevious();
+            } else {
+              snippetSession.moveNext();
+            }
+            _snippetSessionView = active;
+            _setDocSelections(active, snippetSession.currentSelections);
+            if (snippetSession.isAtFinalTabstop) {
+              _clearSnippetSession(clearSecondarySelections: false);
+            }
+            return KeyEventResult.handled;
+          } else if (!ctrl &&
+              !meta &&
+              !alt &&
+              key == LogicalKeyboardKey.escape) {
+            final caret = active.selection.extentOffset;
+            _clearSnippetSession();
+            _setDocSelections(
+              active,
+              [TextSelection.collapsed(offset: caret)],
+            );
+            return KeyEventResult.handled;
+          }
+        }
         if (active != null && !activeHasComposition) {
           if (!ctrl && !meta && !alt && key == LogicalKeyboardKey.tab) {
             unawaited(_applyIndentation(
@@ -13192,7 +13440,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     active.crossWindowSelection = null;
                                     active.selectionHistory
                                         .record(active.selectionSet);
-                                    active.additionalSelections = const [];
+                                    final session =
+                                        _snippetSessionFor(active);
+                                    if (session == null) {
+                                      if (_snippetSession != null &&
+                                          _snippetSessionDocId != active.id) {
+                                        _clearSnippetSession();
+                                      }
+                                      active.additionalSelections = const [];
+                                    } else {
+                                      final inputWindowShift =
+                                          active.inputWindow.startUtf16;
+                                      final absoluteSelection = TextSelection(
+                                        baseOffset: newValue
+                                                .selection.baseOffset +
+                                            inputWindowShift,
+                                        extentOffset: newValue
+                                                .selection.extentOffset +
+                                            inputWindowShift,
+                                        affinity: newValue.selection.affinity,
+                                        isDirectional:
+                                            newValue.selection.isDirectional,
+                                      );
+                                      final mirrors = session
+                                          .mirrorSelection(absoluteSelection);
+                                      if (mirrors == null) {
+                                        _clearSnippetSession(
+                                            clearSecondarySelections: false);
+                                        active.additionalSelections = const [];
+                                      } else {
+                                        _snippetSessionView = active;
+                                        active.additionalSelections =
+                                            List.unmodifiable(mirrors);
+                                      }
+                                    }
                                     active.columnSelection = null;
                                     _scheduleSelectionRefresh(active);
                                     _syncCommandContext();
@@ -13212,6 +13493,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   onTextChanged:
                                       (oldValue, newValue, formattedValue) {
                                     active.columnSelection = null;
+                                    _pendingSnippetOperations =
+                                        _snippetOperationsForInput(
+                                      active,
+                                      oldValue,
+                                      newValue,
+                                    );
                                     _prepareRemoteMultiSelectionEdits(
                                       active,
                                       oldValue,
@@ -13228,8 +13515,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 },
                                 additionalSelections:
                                     _localAdditionalSelections(active),
-                                onDelta: (delta) =>
-                                    _onInputDelta(active, delta),
+                                onDelta: (delta) {
+                                  _onInputDelta(active, delta);
+                                  final session = _snippetSession;
+                                  if (session == null ||
+                                      _snippetSessionDocId != active.id) {
+                                    return;
+                                  }
+                                  final mirroredOperations =
+                                      _pendingSnippetOperations;
+                                  _pendingSnippetOperations = null;
+                                  if (delta.operations.isNotEmpty &&
+                                      delta.version <= session.version) {
+                                    _clearSnippetSession();
+                                    return;
+                                  }
+                                  if (delta.operations.isNotEmpty &&
+                                      mirroredOperations == null) {
+                                    _clearSnippetSession();
+                                    return;
+                                  }
+                                  if (!session.applyOperations(
+                                    delta.operations.isEmpty
+                                        ? const []
+                                        : mirroredOperations!,
+                                    nextVersion: delta.version,
+                                  )) {
+                                    _clearSnippetSession();
+                                  }
+                                },
                                 onPresentationChanged: () =>
                                     _scheduleSelectionRefresh(active),
                                 onAltClick: (localOffset) {
