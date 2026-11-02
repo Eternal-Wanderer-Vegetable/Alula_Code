@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.60 / EDT-11b 外部纯文本拖入，首批平台验收完成）
+
+- 本地验收合同覆盖 `text/plain` receiver、UTF-16 hit-test、65,536-unit 上限、stale/非法/只读/IME/pending 操作拒绝、CRLF 归一、单步 undo/dirty/保存路径；full Flutter tests 和完整 `init.sh` 既有证据均通过。
+- 当前 PR CI [`41543818701`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41543818701) 与 Platform Availability [`41543813557`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41543813557) 通过。Linux DnD artifact `13188595395` 记录 20 个 Flutter pointer events，Windows artifact `13187717018` 记录 13 个；两者均完成 external-text drop，另有同文档 move 与跨文档 copy。doc-only CI [`41546512782`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41546512782) 全绿。
+- 本切片标为 done 的范围是 Linux/Windows hosted receiver gate；source 是 Flutter fixture，第三方应用间 source interoperability 未测。macOS ARM64 package `13187783861` 已生成，但 DnD artifact `13189006426` 因 pointer route=false 跳过，原生 macOS DnD/IME 仍待设备。本机 GUI/Narrator 未启动。
+- 本轮没有 CI crash artifact；旧 Windows `0xC000041D` 和 macOS SIGSEGV 继续未结。当前红灯分类依据退出码、crash artifact 和失败步骤，不把 probe/fixture 路由问题归为产品崩溃或宣称根因已修复。详见 `docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop.md` 与 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+
 ### 最新进展（2026-11-03，P04.59 / EDT-11a 同文档文本拖放，首批平台验收完成）
 
 - 复用最新 PR CI `41543818701` 与 Platform Availability `41543813557` 作为当前代码快照的回归证据：Linux/Windows hosted DnD 均有实际 Flutter pointer events，并记录同文档 move、跨文档 copy、外部文本 drop；Flutter 全量测试覆盖同文档 copy/undo、边界与 UTF-16/CRLF。证据与 artifact 号见 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
