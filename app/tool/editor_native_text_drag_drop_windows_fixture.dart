@@ -119,26 +119,44 @@ class _WindowsNativeDragFixtureState extends State<_WindowsNativeDragFixture> {
                       })}\n',
                   mode: FileMode.append,
                 );
+                final isCopy = operation == EditorTextDropOperation.copy;
                 return EditorTextDragDropRequest(
                   payload: payload,
-                  targetDocumentId: payload.selection.documentId,
-                  targetDocumentVersion: payload.selection.documentVersion,
-                  targetOffsetUtf16: 11,
+                  targetDocumentId:
+                      isCopy ? 7002 : payload.selection.documentId,
+                  targetDocumentVersion:
+                      isCopy ? 4 : payload.selection.documentVersion,
+                  targetOffsetUtf16: isCopy ? 6 : 11,
                   operation: operation,
                 );
               },
               onDrop: (request) {
-                File('${widget.directory.path}/drop.json').writeAsStringSync(
-                  jsonEncode({
-                    'selectedText': request.payload.selectedText,
-                    'operation': request.operation.name,
-                    'targetOffsetUtf16': request.targetOffsetUtf16,
-                  }),
-                );
+                final isCopy =
+                    request.operation == EditorTextDropOperation.copy;
+                final fileName =
+                    isCopy ? 'cross-document-drop.json' : 'drop.json';
+                final result = isCopy
+                    ? {
+                        'selectedText': request.payload.selectedText,
+                        'operation': request.operation.name,
+                        'targetDocumentId': request.targetDocumentId,
+                        'targetDocumentVersion': request.targetDocumentVersion,
+                        'targetOffsetUtf16': request.targetOffsetUtf16,
+                      }
+                    : {
+                        'selectedText': request.payload.selectedText,
+                        'operation': request.operation.name,
+                        'targetOffsetUtf16': request.targetOffsetUtf16,
+                      };
+                File('${widget.directory.path}/$fileName')
+                    .writeAsStringSync(jsonEncode(result));
               },
               onDragCompleted: (payload, operation) {
-                File('${widget.directory.path}/drag-completed.json')
-                    .writeAsStringSync(
+                final isCopy = operation == EditorTextDropOperation.copy;
+                final fileName = isCopy
+                    ? 'cross-document-drag-completed.json'
+                    : 'drag-completed.json';
+                File('${widget.directory.path}/$fileName').writeAsStringSync(
                   jsonEncode({
                     'selectedText': payload.selectedText,
                     'operation': operation.name,

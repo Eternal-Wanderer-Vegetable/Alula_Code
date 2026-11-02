@@ -130,6 +130,68 @@ def main() -> int:
             if completed != {"selectedText": "alpha", "operation": "move"}:
                 raise AssertionError(f"Unexpected drag completion: {completed!r}")
 
+            run_xdotool("keydown", "Control_L")
+            try:
+                run_xdotool(
+                    "mousemove", "--sync", "--window", window_id,
+                    str(source_x), str(source_y),
+                )
+                time.sleep(0.3)
+                run_xdotool("mousedown", "1")
+                time.sleep(0.3)
+                for step in range(1, 25):
+                    x = round(source_x + (target_x - source_x) * step / 24)
+                    y = round(source_y + (target_y - source_y) * step / 24)
+                    run_xdotool(
+                        "mousemove", "--sync", "--window", window_id,
+                        str(x), str(y),
+                    )
+                    time.sleep(0.04)
+                time.sleep(0.5)
+                run_xdotool("mouseup", "1")
+            finally:
+                run_xdotool("keyup", "Control_L")
+
+            wait_for(diagnostics / "cross-document-drop.json", process, timeout=15)
+            wait_for(
+                diagnostics / "cross-document-drag-completed.json",
+                process,
+                timeout=5,
+            )
+            cross_document_drop = json.loads(
+                (diagnostics / "cross-document-drop.json").read_text()
+            )
+            cross_document_completed = json.loads(
+                (diagnostics / "cross-document-drag-completed.json").read_text()
+            )
+            expected_copy = {
+                "selectedText": "alpha",
+                "operation": "copy",
+                "targetDocumentId": 7002,
+                "targetDocumentVersion": 4,
+                "targetOffsetUtf16": 6,
+            }
+            if cross_document_drop != expected_copy:
+                raise AssertionError(
+                    f"Unexpected cross-document copy result: {cross_document_drop!r}"
+                )
+            if cross_document_completed != {
+                "selectedText": "alpha",
+                "operation": "copy",
+            }:
+                raise AssertionError(
+                    "Unexpected cross-document drag completion: "
+                    f"{cross_document_completed!r}"
+                )
+            drop_over = [
+                json.loads(line)
+                for line in (diagnostics / "drop-over.jsonl").read_text().splitlines()
+            ]
+            if not any(event.get("operation") == "copy" for event in drop_over):
+                raise AssertionError(
+                    f"Ctrl drag never routed Copy to the native drop target: {drop_over!r}"
+                )
+
             run_xdotool(
                 "mousemove", "--sync", "--window", window_id,
                 str(external_source_x), str(external_source_y),
@@ -171,7 +233,10 @@ def main() -> int:
                 "layout": layout,
                 "drop": result,
                 "dragCompleted": completed,
+                "crossDocumentDrop": cross_document_drop,
+                "crossDocumentDragCompleted": cross_document_completed,
                 "externalDrop": external_drop,
+                "dropOverOperations": [event["operation"] for event in drop_over],
                 "flutterPointerEventCount": len(pointer_events),
                 "flutterPointerEventTypes": sorted(pointer_types),
             }

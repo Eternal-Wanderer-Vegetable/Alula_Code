@@ -1,0 +1,89 @@
+{
+  "windowId": "2097155",
+  "layout": {
+    "source": {
+      "x": 640.0,
+      "y": 202.0
+    },
+    "externalSource": {
+      "x": 640.0,
+      "y": 308.0
+    },
+    "target": {
+      "x": 640.0,
+      "y": 518.0
+    },
+    "devicePixelRatio": 1.0
+  },
+  "drop": {
+    "selectedText": "alpha",
+    "operation": "move",
+    "targetOffsetUtf16": 11
+  },
+  "dragCompleted": {
+    "selectedText": "alpha",
+    "operation": "move"
+  },
+  "crossDocumentDrop": {
+    "selectedText": "alpha",
+    "operation": "copy",
+    "targetDocumentId": 7002,
+    "targetDocumentVersion": 4,
+    "targetOffsetUtf16": 6
+  },
+  "crossDocumentDragCompleted": {
+    "selectedText": "alpha",
+    "operation": "copy"
+  },
+  "externalDrop": {
+    "text": "external text",
+    "targetDocumentId": 7002,
+    "targetDocumentVersion": 4,
+    "targetOffsetUtf16": 6
+  },
+  "dropOverOperations": [
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "move",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy",
+    "copy"
+  ],
+  "flutterPointerEventCount": 15,
+  "flutterPointerEventTypes": [
+    "down",
+    "move",
+    "up"
+  ]
+}

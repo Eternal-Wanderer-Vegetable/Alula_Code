@@ -20,6 +20,8 @@ PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 SW_RESTORE = 9
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
+VK_CONTROL = 0x11
+KEYEVENTF_KEYUP = 0x0002
 
 
 class RECT(ctypes.Structure):
@@ -62,6 +64,7 @@ def _configure_apis() -> None:
     user32.SetCursorPos.argtypes = [ctypes.c_int, ctypes.c_int]
     user32.SetCursorPos.restype = wintypes.BOOL
     user32.mouse_event.argtypes = [wintypes.DWORD, wintypes.DWORD, wintypes.DWORD, wintypes.DWORD, ctypes.c_size_t]
+    user32.keybd_event.argtypes = [wintypes.BYTE, wintypes.BYTE, wintypes.DWORD, ctypes.c_size_t]
     kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
     kernel32.OpenProcess.restype = wintypes.HANDLE
     kernel32.QueryFullProcessImageNameW.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.LPWSTR, ctypes.POINTER(wintypes.DWORD)]
@@ -171,6 +174,7 @@ def main() -> int:
     log_path = diagnostics / "flutter-run.log"
     process: subprocess.Popen[str] | None = None
     button_is_down = False
+    control_is_down = False
 
     try:
         with log_path.open("w", encoding="utf-8") as log:
@@ -289,6 +293,64 @@ def main() -> int:
             if completed != {"selectedText": "alpha", "operation": "move"}:
                 raise AssertionError(f"Unexpected drag completion: {completed!r}")
 
+            user32.keybd_event(VK_CONTROL, 0, 0, 0)
+            control_is_down = True
+            set_cursor(source_x, source_y)
+            time.sleep(0.4)
+            user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+            button_is_down = True
+            time.sleep(0.25)
+            for step in range(1, 25):
+                x = round(source_x + (target_x - source_x) * step / 24)
+                y = round(source_y + (target_y - source_y) * step / 24)
+                set_cursor(x, y)
+                time.sleep(0.04)
+            time.sleep(0.5)
+            user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+            button_is_down = False
+            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+            control_is_down = False
+
+            wait_for(diagnostics / "cross-document-drop.json", process, timeout=20)
+            wait_for(
+                diagnostics / "cross-document-drag-completed.json",
+                process,
+                timeout=10,
+            )
+            cross_document_drop = json.loads(
+                (diagnostics / "cross-document-drop.json").read_text(encoding="utf-8")
+            )
+            cross_document_completed = json.loads(
+                (diagnostics / "cross-document-drag-completed.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            expected_copy = {
+                "selectedText": "alpha",
+                "operation": "copy",
+                "targetDocumentId": 7002,
+                "targetDocumentVersion": 4,
+                "targetOffsetUtf16": 6,
+            }
+            if cross_document_drop != expected_copy:
+                raise AssertionError(
+                    f"Unexpected cross-document copy result: {cross_document_drop!r}"
+                )
+            if cross_document_completed != {
+                "selectedText": "alpha",
+                "operation": "copy",
+            }:
+                raise AssertionError(
+                    "Unexpected cross-document drag completion: "
+                    f"{cross_document_completed!r}"
+                )
+            drop_over = read_json_lines(diagnostics / "drop-over.jsonl")
+            if not any(event.get("operation") == "copy" for event in drop_over):
+                raise AssertionError(
+                    "Ctrl drag never routed Copy to the native drop target: "
+                    f"{drop_over!r}"
+                )
+
             set_cursor(external_source_x, external_source_y)
             time.sleep(0.4)
             user32.mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
@@ -345,7 +407,10 @@ def main() -> int:
                 "layout": layout,
                 "drop": drop,
                 "dragCompleted": completed,
+                "crossDocumentDrop": cross_document_drop,
+                "crossDocumentDragCompleted": cross_document_completed,
                 "externalDrop": external_drop,
+                "dropOverOperations": [str(event["operation"]) for event in drop_over],
                 "flutterPointerEventCount": len(pointer_events),
                 "flutterPointerEventTypes": sorted(pointer_types),
             }
@@ -369,6 +434,8 @@ def main() -> int:
     finally:
         if button_is_down:
             user32.mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+        if control_is_down:
+            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
         if process is not None and process.poll() is None:
             subprocess.run(
                 ["taskkill", "/PID", str(process.pid), "/T", "/F"],

@@ -8,6 +8,7 @@ on:
       - 'crates/**'
       - 'tools/vscode-parity/macos-native-dnd-input.swift'
       - 'tools/vscode-parity/linux-native-dnd-input.py'
+      - 'tools/vscode-parity/windows-native-dnd-input.py'
       - 'scripts/build_core.*'
       - '.github/workflows/platform-availability.yml'
 
@@ -43,7 +44,7 @@ jobs:
         id: linux_clipboard
         run: xvfb-run -a flutter test --no-pub -d linux --reporter expanded integration_test/editor_clipboard_desktop_test.dart
         working-directory: app
-      - name: Verify native Linux text drag/drop interaction
+      - name: Verify native Linux move, copy, and external text drag/drop
         run: xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 python3 tools/vscode-parity/linux-native-dnd-input.py "$RUNNER_TEMP/alula-linux-native-dnd"
       - name: Upload Linux native drag/drop diagnostics
         if: always()
@@ -518,7 +519,7 @@ jobs:
         run: |
           $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
           flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
-      - name: Verify native Windows text drag/drop interaction
+      - name: Verify native Windows move, copy, and external text drag/drop
         if: ${{ always() && !cancelled() && steps.build_rust_core.outcome == 'success' && steps.windows_release.outcome == 'success' && steps.windows_core_bundle.outcome == 'success' }}
         shell: pwsh
         run: python tools/vscode-parity/windows-native-dnd-input.py "$env:RUNNER_TEMP\alula-windows-native-dnd"
