@@ -5,10 +5,10 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.69 / EDT-12b5 当前行片段变量，本地完成，hosted CI 待提交后验证）
+### 最新进展（2026-11-03，P04.69 / EDT-12b5 当前行片段变量，已提交并通过 hosted CI）
 
 - 按固定 Code-OSS 1.145.0 增加 `$TM_CURRENT_LINE`，按插入前光标所在逻辑行展开，去掉 CR/LF 行终止符并保留行内容原样；只有模板确实包含可解析变量时才读取 Rust 行范围。超出 16,384 UTF-16 输入窗上限、版本不一致或读取不完整时不做部分编辑。无 Rust/ABI 改动。
-- 新增纯 helper 与 parser/widget 回归，覆盖普通/花括号/default 变量、转义与后缀、嵌套默认文本、emoji、CRLF 保存、当前行超长拒绝、普通片段在长行仍能保存。定向 35 项、完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 658）、cargo fmt 与 Flutter analyze 0 issues；GitNexus staged/all 均为 9 files/24 symbols/0 resolved processes/LOW，但保留 518 跨语言漏链与流程预算截断警告。本机 GUI/Narrator 未启动。证据：`docs/diagnostics/2026-11-03-p04/p04.69-current-line-snippet-variable.md`。
+- 新增纯 helper 与 parser/widget 回归，覆盖普通/花括号/default 变量、转义与后缀、嵌套默认文本、emoji、CRLF 保存、当前行超长拒绝、普通片段在长行仍能保存。定向 35 项、完整 `init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 658）、cargo fmt 与 Flutter analyze 0 issues；GitNexus staged/all 均为 9 files/24 symbols/0 resolved processes/LOW，但保留 518 跨语言漏链与流程预算截断警告。commit `ed56d58` 已 push。PR CI `41502782763` 全绿；Platform Availability `41502776628` 全 jobs success。Linux/Windows DnD 实测成功；Windows close/accessibility smoke 通过。macOS `.app` ARM64 zip artifact `13170707375` 已产出；原生 DnD artifact `13169863681` 因 pointer route=false SKIP，startup artifact `13170916969` 仅 Impeller 日志。历史 Windows crash 与 macOS SIGSEGV 未宣称永久修复。本机 GUI/Narrator 未启动。证据：`docs/diagnostics/2026-11-03-p04/p04.69-current-line-snippet-variable.md`。
 
 ### 最新进展（2026-11-03，P04.68 / EDT-12b4 行号片段变量，已提交并通过 hosted CI）
 
@@ -29,7 +29,7 @@
 ### CI 稳定性跟进（2026-11-03）
 
 - 用户提醒反复 CI 失败可能与崩溃有关；复核 recent 100 runs 后更正分类：PR CI 有 56 success / 1 failure，唯一失败是未启动 Alula 的 vendored Cargokit analyzer；Platform Availability 为 14 success / 28 failure，多数是输入路由、UIA/MSAA、脚本或 fixture 失败；另一个独立 Windows artifact validation failure 确实捕获旧 Release binary `d5319369` 在 `WM_CLOSE` 后以 `0xC000041D` 退出。该旧 binary 的无 UIA/MSAA 对照也崩溃，Windows 事件指向 `flutter_windows.dll` access violation。重建分支 `189e920` 在 run `41482157012` 的 Windows close lifecycle smoke 通过（该步骤断言 exit code 为 0）；当前 PR CI `41487367300` 也通过。详细证据与因果边界见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。CI 的旧 artifact 回放确实暴露过真实产品崩溃；多数其他红灯仍是探针/runner 假红。Hosted 失败本身不会让本机进程崩溃，修正测试信号不能替代修复运行时关闭路径。旧 artifact 与 P15 Windows 11 验收继续 pending；不在本机启动 GUI/Narrator。
-- 后续 P04.67/P04.68 的 PR CI 与 Platform Availability 均全绿，三平台 Release/launch/package smoke 无新 crash；macOS DnD 的两次 SKIP 都因 hosted pointer route=false。历史 SIGSEGV `41370553563` 仍不能据此宣称永久修复。
+- 后续 P04.67/P04.68/P04.69 的 PR CI 与 Platform Availability 均全绿，三平台 Release/launch/package smoke 无新 crash；P04.69 Linux/Windows DnD pointer/drop 路由真实通过，macOS DnD artifact `13169863681` 仍因 hosted pointer route=false SKIP。P04.69 Windows close/accessibility smoke 通过，旧 Release artifact 的 `0xC000041D` 仍是历史真实崩溃；当前绿灯只说明新构建本次未复现，不证明永久修复。macOS startup artifact `13170916969` 只有 Impeller 日志，无 crash report；历史 SIGSEGV `41370553563` 仍未证明永久消除。
 
 ### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 
