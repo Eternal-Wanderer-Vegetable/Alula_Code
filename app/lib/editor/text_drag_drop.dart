@@ -311,3 +311,50 @@ EditorTextDragEditPlan? planSameDocumentTextDrag({
     resultLengthUtf16: targetDocumentLengthUtf16,
   );
 }
+
+/// Plans a copy from one open Rust document into another. Cross-document
+/// moves stay disabled until source deletion and destination insertion can be
+/// committed and undone as one transaction.
+EditorTextDragEditPlan? planEditorCrossDocumentTextCopy({
+  required EditorTextDragDropRequest request,
+  required int currentSourceDocumentId,
+  required int currentSourceDocumentVersion,
+  required int sourceDocumentLengthUtf16,
+  required String currentSourceText,
+  required int currentTargetDocumentId,
+  required int currentTargetDocumentVersion,
+  required int targetDocumentLengthUtf16,
+}) {
+  final source = request.payload.selection;
+  final selectedText = request.payload.selectedText;
+  final sourceLength = source.lengthUtf16;
+  if (request.operation != EditorTextDropOperation.copy ||
+      source.documentId == request.targetDocumentId ||
+      source.documentId != currentSourceDocumentId ||
+      source.documentVersion <= 0 ||
+      source.documentVersion != currentSourceDocumentVersion ||
+      source.startUtf16 < 0 ||
+      sourceDocumentLengthUtf16 < 0 ||
+      source.endUtf16 > sourceDocumentLengthUtf16 ||
+      sourceLength <= 0 ||
+      sourceLength > maxEditorTextDragUtf16 ||
+      selectedText.length != sourceLength ||
+      selectedText != currentSourceText ||
+      !_hasValidUtf16(selectedText) ||
+      request.targetDocumentId != currentTargetDocumentId ||
+      request.targetDocumentVersion <= 0 ||
+      request.targetDocumentVersion != currentTargetDocumentVersion ||
+      targetDocumentLengthUtf16 < 0 ||
+      request.targetOffsetUtf16 < 0 ||
+      request.targetOffsetUtf16 > targetDocumentLengthUtf16) {
+    return null;
+  }
+
+  return EditorTextDragEditPlan(
+    forward: [TextOp.insert(request.targetOffsetUtf16, selectedText)],
+    inverse: [TextOp.delete(request.targetOffsetUtf16, sourceLength)],
+    insertOffsetUtf16: request.targetOffsetUtf16,
+    afterCaretUtf16: request.targetOffsetUtf16 + sourceLength,
+    resultLengthUtf16: targetDocumentLengthUtf16 + sourceLength,
+  );
+}

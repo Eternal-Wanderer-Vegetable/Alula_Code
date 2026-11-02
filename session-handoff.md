@@ -1,4 +1,6 @@
-> Last Updated：2026-11-02（P04.60 / EDT-11b 已提交/push 为 `7b0d9fe`。本地门禁与 Linux hosted、Windows hosted 双路径探针通过；Platform `41406646083`、PR CI `41406657349` 全绿。Windows artifact `13123619387` 记录外部 text 与内部 move；Linux artifact `13124021682` 通过。macOS Release/launch/package lane 通过，验证包 artifact `13124228046`；原生 DnD artifact `13124456866` 因输入路由不可用明确 SKIP，startup artifact `13124661113` 无 `.ips` / `.crash`，所以 Mac DnD 仍待验。GitNexus staged/all 仍报 CRITICAL：新拖放方法被映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；诊断与限制见 P04.60 报告，不宣称 clean。近期 runner 假红与历史真实 SIGSEGV 分开记录，`9f2c70a` readiness handshake 后启动 smoke 未复现崩溃。）
+> Last Updated：2026-11-02（P04.61 / EDT-11c 跨文档文本拖放复制已实现，尚待本次 push 后 hosted PR CI。显式 Copy 重新核验源文档 id/version/范围与目标版本，仅在目标文档执行 Rust 单次 insert 并接入 undo；跨文档 Move 暂拒，待原子事务/跨文档撤销。本地 full init.sh EXIT=0（Flutter 597），cargo fmt 与 Flutter analyze 通过。GitNexus 输入控件影响仍为 CRITICAL，文档化于 P04.61 报告。不要操作用户本机 GUI；Mac 原生 DnD 继续待验，500 MiB 留 P14。）
+
+> Last Updated：2026-11-02（P04.60 / EDT-11b 已提交/push 为 `7b0d9fe`，后续证据更新独立提交 `8e2ed3f`。本地门禁与 Linux hosted、Windows hosted 双路径探针通过；Platform `41406646083`、PR CI `41406657349` 全绿。Windows artifact `13123619387` 记录外部 text 与内部 move；Linux artifact `13124021682` 通过。macOS Release/launch/package lane 通过，验证包 artifact `13124228046`；原生 DnD artifact `13124456866` 因输入路由不可用明确 SKIP，startup artifact `13124661113` 无 `.ips` / `.crash`，所以 Mac DnD 仍待验。GitNexus staged/all 仍报 CRITICAL：新拖放方法被映射到无源码引用的 Build/ApplyWorkspaceEdit 流程；诊断与限制见 P04.60 报告，不宣称 clean。近期 runner 假红与历史真实 SIGSEGV 分开记录，`9f2c70a` readiness handshake 后启动 smoke 未复现崩溃。）
 
 > Last Updated：2026-11-02（P04.59 / EDT-11a 仍 in-progress。commit `5c1c501` 已 push；Platform `41400262650` 与 PR CI `41400267570` 全绿。Linux X11 / Windows 原生 DnD 都通过，Windows artifact `13121491263` 为 alpha/move/UTF-16 offset 11；P03.7 大文件 teardown 与 pointer-cancel probe 假红已修复。macOS hosted pointer route 仍 false 并明确 SKIP，真实 macOS DnD 待验证；startup artifact `13121502027` 无 `.ips` / `.crash`。Mac ARM64 artifact `13121626550` 是验证包，不是 v0.1.0 发行包。）
 
@@ -11,10 +13,10 @@
 按 docs/10-VSCode无插件全功能复刻总计划.md，使用 Flutter + Rust 复刻固定版本 VS Code 默认非 AI 能力。docs/03 是状态、依赖与 DoD 的唯一权威；一次只推进一个 feature 切片。
 
 ## 当前状态
-- 当前状态更新（2026-11-02）：P04.60 / EDT-11b 外部纯文本拖入的本地门禁、Linux/Windows hosted 双路径探针、PR CI 均通过。macOS Release/launch/package hosted 通过，macOS DnD 因输入路由 SKIP 并继续待验；按用户安排不阻止后续架构切片。GitNexus staged/all 审计仍为 CRITICAL，报告保留此图谱风险并记录源码核验结果。历史 CI runner 假红与 `41370553563` 的真实 SIGSEGV 分开，readiness-handshake 后 startup smoke 未复现崩溃。
+- 当前状态更新（2026-11-02）：P04.61 / EDT-11c 已实现跨文档显式复制；本地 planner、Rust FFI、DropRegion hit-test、完整 init.sh（Flutter 597）、cargo fmt 与 analyze 均通过。待 push 后复核 Linux/Windows PR CI。跨文档默认 Move 暂拒，需下一片落实原子事务与撤销；P04.59/P04.60 与 macOS native DnD 仍待完整平台验收。近期 CI 假红与历史真实 SIGSEGV 分开记录；P04.61 GitNexus 输入控件图谱仍 CRITICAL。
 
-- 当前阶段涉及文件：P04.60 `app/lib/editor/{text_drag_drop.dart,editor_native_text_drag_drop.dart,rust_text_input_field.dart}`、`app/lib/workbench/workbench_page.dart`（仅本片两个新增 hunk）、定向测试、Linux/Windows hosted DnD fixture/helper、P04.60 诊断与 docs/03/feature_list/progress/session-handoff，以及 P04.59 macOS pending 文案。不要暂存工作树其他既存改动。
-- 下一步首件：从 docs/03 选择 EDT-11 的一个后续架构切片，遵守 one-feature-at-a-time。不要操作用户本机 GUI（避免触发讲述人）。500 MiB 优化仍留 P14；Mac 原生 DnD 保持发行与完整平台验收门。
+- 当前阶段涉及文件：P04.61 `app/lib/editor/{text_drag_drop.dart,rust_text_input_field.dart}`、`app/lib/workbench/workbench_page.dart`（新增 cross-document dispatch/handler hunk）、`app/test/{text_drag_drop_test.dart,editor_cross_document_text_drag_drop_test.dart}` 与报告/docs 状态文件。工作树其他既存改动不暂存。
+- 下一步首件：先提交并 push P04.61，复核 hosted PR CI；再实现 EDT-11 跨文档 Move 的 Rust 原子事务及双文档撤销。不要操作用户本机 GUI（避免触发讲述人）。500 MiB 优化仍留 P14；Mac 原生 DnD 保持发行与完整平台验收门。
 
 - P04.26 Enter 缩进继承已完成，报告与 `docs/03` / `feature_list.json` / `progress.md` 已登记。阶段提交只包含 workbench 中 Enter 两个目标 hunk、自动缩进测试与本 slice 证据文件；工作树其他用户改动不纳入。
 - P04.25 新增 `app/lib/editor/indentation.dart` 与工作台 Tab/缩进行命令；无 Rust/ABI 改动。阶段提交仅包含该 slice 目标文件/hunks。

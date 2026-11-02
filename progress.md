@@ -5,7 +5,16 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
-### 最新进展（2026-11-02，P04.60 / EDT-11b 外部纯文本拖入）
+### 最新进展（2026-11-02，P04.61 / EDT-11c 跨文档文本拖放复制）
+
+- 跨文档 local text payload 现在支持显式 Copy：目标控件按不同 Rust 文档分支处理，默认 Move 被拒；源文档在 drop 时重读选区并核验 id/version/UTF-16 内容，目标文档版本、输入窗、IME 与 pending 状态也要匹配。目标使用 Rust 单次 insert，进入目标 undo/dirty/Find/保存和分屏同步；源文本保持不变。没有 Rust/ABI 变更。跨文档 Move 留待原子事务与跨文档撤销实现。
+- 新增 planner 边界与真实 Rust FFI 回归，以及 `DropRegion`/`RustTextInputField` widget 测试：Ctrl Copy 被接受，Move 被拒；source 与 target 版本/范围、emoji UTF-16、非法 surrogate、逆操作覆盖。`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 597）；`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues。
+- 新 widget test 直接构造 Flutter `DropSession` 事件，不依赖 macOS/Linux/Windows hosted OS 合成鼠标路由；它测试实际 target hit-test builder 和拖放适配，不等于跨文档原生鼠标验收。待 push 后读取 Linux/Windows PR CI；P04.59/P04.60 Linux 与 Windows native probe 已有 hosted 证据。macOS DnD 路由 false/SKIP 继续待验。
+- CI 线索继续区分测试假红与真实崩溃：近期常规 CI 与 Platform Availability 曾全绿；历史启动 SIGSEGV `41370553563` 属于 `IrondashEngineContextPlugin.getFlutterView` 时序，`9f2c70a` handshake/nil guard 后的 launch smoke 未复现。新确定性测试改善路由逻辑覆盖，但不证明崩溃修复。
+- GitNexus 编辑前影响保留 CRITICAL：RustTextInputFieldState 365 节点/75 流程/20 模块，`_buildEditorTextDropRequest` 151/11/7；窄 `_onSameDocumentTextDrop` 为 LOW。图谱含无关调用边、557 个跨语言属性读取不链接，索引有 931 个 entry 候选与 449 个 callee 未覆盖。报告记录源码核验与边界，不降级风险：`docs/diagnostics/2026-11-02-p04/p04.61-cross-document-text-copy.md`。
+- 下一步：完成跨文档 Move 的原子事务/撤销设计，再继续 EDT-11 link/image provider 与 Paste As；Mac DnD 保持待验证，500 MiB 目标仍留 P14。
+
+### 前次进展（2026-11-02，P04.60 / EDT-11b 外部纯文本拖入）
 
 - 新增单项 `text/plain` 外部拖入：`DataReader` 异步读取（10 秒超时并取消）、65,536 UTF-16 上限、stale/IME/pending/只读状态保护、CRLF/CR 到 LF 归一、Rust 单次插入与单步 undo；串接光标、分屏、dirty、Find、语法和保存路径。localData 类型可识别但损坏时不会退化为外部复制；未改 ABI/Rust GUI 依赖。
 - `text_drag_drop_test.dart` 与 adapter widget 定向 12 项通过；Linux X11 本地原生 probe 在 Xvfb 中分别完成内部 move 与外部 plain-text copy，external callback 收到 `external text`、document 7002/v4/offset 6。最终复跑证据：`docs/diagnostics/2026-11-02-p04/p04.60-external-plain-text-drop-linux-xvfb-final2/`。`cargo fmt --all -- --check`、`flutter analyze`（0 issues）及完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 593）通过。

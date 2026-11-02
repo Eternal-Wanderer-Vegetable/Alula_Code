@@ -350,4 +350,164 @@ void main() {
       expect(doc.resync().content, original);
     }, skip: _coreBootstrap.skip);
   });
+
+  group('cross-document text drag copy', () {
+    const source = EditorTextDragSelection(
+      documentId: 11,
+      documentVersion: 8,
+      startUtf16: 2,
+      endUtf16: 7,
+    );
+    const request = EditorTextDragDropRequest(
+      payload: EditorTextDragPayload(
+        selection: source,
+        selectedText: 'alpha',
+        token: 44,
+      ),
+      targetDocumentId: 22,
+      targetDocumentVersion: 10,
+      targetOffsetUtf16: 3,
+      operation: EditorTextDropOperation.copy,
+    );
+
+    test('plans a bounded emoji-safe insertion with inverse operations', () {
+      final plan = planEditorCrossDocumentTextCopy(
+        request: request,
+        currentSourceDocumentId: 11,
+        currentSourceDocumentVersion: 8,
+        sourceDocumentLengthUtf16: '🙂alpha'.length,
+        currentSourceText: 'alpha',
+        currentTargetDocumentId: 22,
+        currentTargetDocumentVersion: 10,
+        targetDocumentLengthUtf16: 'B🙂C'.length,
+      );
+
+      expect(plan, isNotNull);
+      expect(
+        applyTextOps('B🙂C', plan!.forward),
+        'B🙂alphaC',
+      );
+      expect(plan.afterCaretUtf16, 8);
+      expect(plan.resultLengthUtf16, 'B🙂alphaC'.length);
+      expect(applyTextOps('B🙂alphaC', plan.inverse), 'B🙂C');
+    });
+
+    test('rejects stale, same-document, move, and malformed source snapshots',
+        () {
+      EditorTextDragEditPlan? plan({
+        EditorTextDragDropRequest value = request,
+        int sourceId = 11,
+        int sourceVersion = 8,
+        int sourceLength = 7,
+        String sourceText = 'alpha',
+        int targetId = 22,
+        int targetVersion = 10,
+        int targetLength = 4,
+        int targetOffset = 3,
+      }) =>
+          planEditorCrossDocumentTextCopy(
+            request: EditorTextDragDropRequest(
+              payload: value.payload,
+              targetDocumentId: value.targetDocumentId,
+              targetDocumentVersion: value.targetDocumentVersion,
+              targetOffsetUtf16: targetOffset,
+              operation: value.operation,
+            ),
+            currentSourceDocumentId: sourceId,
+            currentSourceDocumentVersion: sourceVersion,
+            sourceDocumentLengthUtf16: sourceLength,
+            currentSourceText: sourceText,
+            currentTargetDocumentId: targetId,
+            currentTargetDocumentVersion: targetVersion,
+            targetDocumentLengthUtf16: targetLength,
+          );
+
+      expect(plan(sourceVersion: 9), isNull);
+      expect(plan(sourceText: 'other'), isNull);
+      expect(plan(sourceId: 12), isNull);
+      expect(plan(targetVersion: 11), isNull);
+      expect(plan(targetOffset: 5), isNull);
+      expect(plan(targetId: 11), isNull);
+      expect(
+        plan(
+          value: const EditorTextDragDropRequest(
+            payload: EditorTextDragPayload(
+              selection: source,
+              selectedText: 'alpha',
+              token: 44,
+            ),
+            targetDocumentId: 22,
+            targetDocumentVersion: 10,
+            targetOffsetUtf16: 3,
+            operation: EditorTextDropOperation.move,
+          ),
+        ),
+        isNull,
+      );
+      expect(
+        plan(
+          value: const EditorTextDragDropRequest(
+            payload: EditorTextDragPayload(
+              selection: source,
+              selectedText: '\u{D800}',
+              token: 44,
+            ),
+            targetDocumentId: 22,
+            targetDocumentVersion: 10,
+            targetOffsetUtf16: 3,
+            operation: EditorTextDropOperation.copy,
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('copies through Rust without changing the source document', () {
+      const sourceText = 'left 😀beta right';
+      const targetText = 'target 🙂';
+      final sourceDoc = _coreBootstrap.core!.openDoc(97611, sourceText);
+      final targetDoc = _coreBootstrap.core!.openDoc(97612, targetText);
+      addTearDown(sourceDoc.close);
+      addTearDown(targetDoc.close);
+      const selectedText = 'beta';
+      final start = sourceText.indexOf(selectedText);
+      final actualRequest = EditorTextDragDropRequest(
+        payload: EditorTextDragPayload(
+          selection: EditorTextDragSelection(
+            documentId: sourceDoc.id,
+            documentVersion: sourceDoc.version,
+            startUtf16: start,
+            endUtf16: start + selectedText.length,
+          ),
+          selectedText: selectedText,
+          token: 45,
+        ),
+        targetDocumentId: targetDoc.id,
+        targetDocumentVersion: targetDoc.version,
+        targetOffsetUtf16: targetText.length,
+        operation: EditorTextDropOperation.copy,
+      );
+      final sourceRange = sourceDoc.readRange(
+        start,
+        maxLenUtf16: selectedText.length,
+      );
+      final plan = planEditorCrossDocumentTextCopy(
+        request: actualRequest,
+        currentSourceDocumentId: sourceDoc.id,
+        currentSourceDocumentVersion: sourceRange.version,
+        sourceDocumentLengthUtf16: sourceRange.totalUtf16Length,
+        currentSourceText: sourceRange.text,
+        currentTargetDocumentId: targetDoc.id,
+        currentTargetDocumentVersion: targetDoc.version,
+        targetDocumentLengthUtf16: targetText.length,
+      );
+
+      expect(plan, isNotNull);
+      targetDoc.applyWith(actualRequest.targetDocumentVersion, plan!.forward);
+      expect(sourceDoc.resync().content, sourceText);
+      expect(targetDoc.resync().content, '$targetText$selectedText');
+      targetDoc.applyWith(targetDoc.version, plan.inverse);
+      expect(targetDoc.resync().content, targetText);
+    }, skip: _coreBootstrap.skip);
+  });
 }

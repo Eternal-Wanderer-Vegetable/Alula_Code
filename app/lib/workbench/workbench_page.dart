@@ -7919,6 +7919,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final document = view.doc;
     final source = request.payload.selection;
+    if (source.documentId != document.id) {
+      _onCrossDocumentTextCopyDrop(view, request);
+      return;
+    }
     final views = _viewsOf(view).toList(growable: false);
     if (request.targetDocumentId != document.id ||
         request.targetDocumentVersion != source.documentVersion ||
@@ -7988,6 +7992,97 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _refreshSiblingViews(view, plan.forward);
     final owner = _ownerOfView(view);
     if (owner != null) _focusNodeFor(owner, view).requestFocus();
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() {});
+  }
+
+  void _onCrossDocumentTextCopyDrop(
+    OpenDoc targetView,
+    EditorTextDragDropRequest request,
+  ) {
+    if (_disposing ||
+        request.operation != EditorTextDropOperation.copy ||
+        !_canStartEditorTextDragDrop(targetView)) {
+      return;
+    }
+
+    final targetDocument = targetView.doc;
+    final source = request.payload.selection;
+    if (request.targetDocumentId != targetDocument.id ||
+        request.targetDocumentVersion != targetDocument.version ||
+        targetView.inputWindow.version != request.targetDocumentVersion) {
+      return;
+    }
+    final sourceView = _allDocs
+        .where((candidate) => candidate.id == source.documentId)
+        .firstOrNull;
+    if (sourceView == null ||
+        sourceView.doc.version != source.documentVersion ||
+        !_canStartEditorTextDragDrop(sourceView)) {
+      return;
+    }
+
+    late final TextRangeRead sourceRange;
+    try {
+      sourceRange = sourceView.doc.readRange(
+        source.startUtf16,
+        maxLenUtf16: source.lengthUtf16,
+      );
+    } on AlulaException {
+      return;
+    }
+    if (sourceRange.version != source.documentVersion ||
+        sourceRange.startUtf16 != source.startUtf16 ||
+        sourceRange.endUtf16 != source.endUtf16 ||
+        sourceRange.text != request.payload.selectedText) {
+      return;
+    }
+
+    final plan = planEditorCrossDocumentTextCopy(
+      request: request,
+      currentSourceDocumentId: sourceView.doc.id,
+      currentSourceDocumentVersion: sourceRange.version,
+      sourceDocumentLengthUtf16: sourceRange.totalUtf16Length,
+      currentSourceText: sourceRange.text,
+      currentTargetDocumentId: targetDocument.id,
+      currentTargetDocumentVersion: targetDocument.version,
+      targetDocumentLengthUtf16: targetView.inputWindow.totalUtf16Length,
+    );
+    if (plan == null) return;
+
+    final beforeCaret = targetView.selection.extentOffset;
+    try {
+      targetDocument.applyWith(request.targetDocumentVersion, plan.forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '跨文档文本复制未应用：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    if (_appliedLocalEditorTextDragTokens.length >= 32) {
+      _appliedLocalEditorTextDragTokens.remove(
+        _appliedLocalEditorTextDragTokens.first,
+      );
+    }
+    _appliedLocalEditorTextDragTokens.add(request.payload.token);
+    targetView.additionalSelections = const [];
+    targetView.columnSelection = null;
+    _recordDocumentOperations(
+      targetView,
+      forward: plan.forward,
+      inverse: plan.inverse,
+      beforeCaret: beforeCaret,
+      afterCaret: plan.afterCaretUtf16,
+      coalesce: false,
+    );
+    final caret = TextSelection.collapsed(offset: plan.afterCaretUtf16);
+    targetView.replaceInputWindow(plan.afterCaretUtf16, selection: caret);
+    _refreshSiblingViews(targetView, plan.forward);
+    final owner = _ownerOfView(targetView);
+    if (owner != null) _focusNodeFor(owner, targetView).requestFocus();
     _onFindTextChanged();
     _syncCommandContext();
     if (mounted) setState(() {});

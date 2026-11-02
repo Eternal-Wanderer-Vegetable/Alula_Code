@@ -447,13 +447,21 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     EditorTextDropOperation operation,
   ) {
     final window = widget.inputWindow;
+    final source = payload.selection;
+    final sameDocument = source.documentId == window.document.id;
     if (widget.onTextDragDrop == null ||
         window.hasComposition ||
         window.pendingCount != 0 ||
         window.version != window.document.version ||
-        payload.selection.documentId != window.document.id ||
-        payload.selection.documentVersion != window.version ||
-        payload.selection.endUtf16 > window.totalUtf16Length) {
+        source.documentVersion <= 0 ||
+        source.startUtf16 < 0 ||
+        source.lengthUtf16 <= 0 ||
+        source.lengthUtf16 > maxEditorTextDragUtf16 ||
+        payload.selectedText.length != source.lengthUtf16 ||
+        (!sameDocument && operation != EditorTextDropOperation.copy) ||
+        (sameDocument &&
+            (source.documentVersion != window.version ||
+                source.endUtf16 > window.totalUtf16Length))) {
       return null;
     }
     final localOffset = _textOffsetAtGlobalPosition(globalPosition);
@@ -464,14 +472,15 @@ class RustTextInputFieldState extends State<RustTextInputField> {
       return null;
     }
     final targetOffset = window.startUtf16 + localOffset;
-    final source = payload.selection;
-    final isInsideSource =
-        targetOffset > source.startUtf16 && targetOffset < source.endUtf16;
-    if (isInsideSource ||
-        (operation == EditorTextDropOperation.move &&
-            (targetOffset == source.startUtf16 ||
-                targetOffset == source.endUtf16))) {
-      return null;
+    if (sameDocument) {
+      final isInsideSource =
+          targetOffset > source.startUtf16 && targetOffset < source.endUtf16;
+      if (isInsideSource ||
+          (operation == EditorTextDropOperation.move &&
+              (targetOffset == source.startUtf16 ||
+                  targetOffset == source.endUtf16))) {
+        return null;
+      }
     }
     return EditorTextDragDropRequest(
       payload: payload,
