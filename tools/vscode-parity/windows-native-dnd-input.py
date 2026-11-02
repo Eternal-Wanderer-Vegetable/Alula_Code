@@ -280,9 +280,14 @@ def main() -> int:
 
             pointer_events = read_json_lines(diagnostics / "pointer-events.jsonl")
             pointer_types = {str(event["type"]) for event in pointer_events}
-            if not {"down", "move", "up"}.issubset(pointer_types):
+            if not {"down", "move"}.issubset(pointer_types):
                 raise AssertionError(
                     f"Flutter did not receive the complete pointer path: {pointer_types!r}"
+                )
+            if not {"up", "cancel"}.intersection(pointer_types):
+                raise AssertionError(
+                    "Flutter received neither pointer-up nor pointer-cancel to end the drag: "
+                    f"{pointer_types!r}"
                 )
             if not (diagnostics / "payload-at.jsonl").exists():
                 raise AssertionError("Flutter never asked the source for a drag payload.")

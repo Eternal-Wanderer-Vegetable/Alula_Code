@@ -23,16 +23,21 @@ Future<void> _deleteDirectoryWithRetry(Directory directory) async {
   }
 }
 
+Future<void> _unmountAndDeleteTempDirectory(
+  WidgetTester tester,
+  Directory directory,
+) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump(const Duration(milliseconds: 100));
+  await _deleteDirectoryWithRetry(directory);
+}
+
 void main() {
   testWidgets(
     'the same Rust document opens in two groups with independent view state',
     (tester) async {
       final temp = Directory.systemTemp.createTempSync('alula-multiview');
-      addTearDown(() async {
-        await tester.pumpWidget(const SizedBox.shrink());
-        await tester.pump(const Duration(milliseconds: 100));
-        await _deleteDirectoryWithRetry(temp);
-      });
+      addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
 
       final workspace = Directory('${temp.path}/workspace')..createSync();
       const sample = 'fn main() { println!("linux-save-ok"); }';
@@ -264,10 +269,7 @@ void main() {
   testWidgets('the tail of a 50000-line document remains editable and saveable',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-large-tail-save');
-    addTearDown(() async {
-      await tester.pumpWidget(const SizedBox.shrink());
-      if (temp.existsSync()) temp.deleteSync(recursive: true);
-    });
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
 
     final workspace = Directory('${temp.path}/workspace')..createSync();
     const firstLine = 'fn main() { println!("linux-save-ok"); }';
