@@ -184,6 +184,7 @@ void main() {
           'sourceY': source.dy,
           'targetX': target.dx,
           'targetY': target.dy,
+          'diagnosticsPath': directory.path,
         });
         File('${directory.path}/native-input-scheduled')
             .writeAsStringSync('ok');

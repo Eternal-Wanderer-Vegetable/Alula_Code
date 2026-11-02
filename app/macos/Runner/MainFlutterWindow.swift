@@ -3,7 +3,7 @@ import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
   #if DEBUG
-  // Available only to integration tests so synthetic events enter AppKit's queue.
+  // Available only to integration tests for native view-level drag input.
   private var nativeDndTestChannel: FlutterMethodChannel?
   private var nativeDndTestEventNumber = 1
   #endif
@@ -48,7 +48,8 @@ class MainFlutterWindow: NSWindow {
             let sourceX = (arguments["sourceX"] as? NSNumber)?.doubleValue,
             let sourceY = (arguments["sourceY"] as? NSNumber)?.doubleValue,
             let targetX = (arguments["targetX"] as? NSNumber)?.doubleValue,
-            let targetY = (arguments["targetY"] as? NSNumber)?.doubleValue
+            let targetY = (arguments["targetY"] as? NSNumber)?.doubleValue,
+            let diagnosticsPath = arguments["diagnosticsPath"] as? String
       else {
         result(FlutterError(
           code: "invalid_native_drag",
@@ -61,7 +62,11 @@ class MainFlutterWindow: NSWindow {
       do {
         try self.scheduleNativeDrag(
           from: CGPoint(x: sourceX, y: sourceY),
-          to: CGPoint(x: targetX, y: targetY)
+          to: CGPoint(x: targetX, y: targetY),
+          diagnosticsDirectory: URL(
+            fileURLWithPath: diagnosticsPath,
+            isDirectory: true
+          )
         )
         result(nil)
       } catch {
@@ -75,7 +80,11 @@ class MainFlutterWindow: NSWindow {
     nativeDndTestChannel = channel
   }
 
-  private func scheduleNativeDrag(from source: CGPoint, to target: CGPoint) throws {
+  private func scheduleNativeDrag(
+    from source: CGPoint,
+    to target: CGPoint,
+    diagnosticsDirectory: URL
+  ) throws {
     guard let flutterView = (contentViewController as? FlutterViewController)?.view,
           let window = flutterView.window
     else {
@@ -88,6 +97,18 @@ class MainFlutterWindow: NSWindow {
 
     _ = NSApp.activate(ignoringOtherApps: true)
     window.makeKeyAndOrderFront(nil)
+
+    appendNativeDndDiagnostic([
+      "phase": "window-ready",
+      "isVisible": window.isVisible,
+      "isKeyWindow": window.isKeyWindow,
+      "frame": [
+        "x": Double(window.frame.origin.x),
+        "y": Double(window.frame.origin.y),
+        "width": Double(window.frame.width),
+        "height": Double(window.frame.height),
+      ],
+    ], to: diagnosticsDirectory)
 
     func windowPoint(for flutterPoint: CGPoint) -> CGPoint {
       let nativeY = flutterView.isFlipped
@@ -121,8 +142,15 @@ class MainFlutterWindow: NSWindow {
     for (index, eventDescription) in events.enumerated() {
       DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.04) {
         [weak self, weak window] in
-        guard let self, let window, window.isVisible else { return }
+        guard let self, let window else { return }
         let eventType = eventDescription.0
+        guard window.isVisible else {
+          self.appendNativeDndDiagnostic([
+            "phase": "event-skipped-hidden-window",
+            "eventType": String(describing: eventType),
+          ], to: diagnosticsDirectory)
+          return
+        }
         let isPressed = eventType == .leftMouseDown || eventType == .leftMouseDragged
         guard let event = NSEvent.mouseEvent(
           with: eventType,
@@ -134,10 +162,58 @@ class MainFlutterWindow: NSWindow {
           eventNumber: self.nativeDndTestEventNumber,
           clickCount: 1,
           pressure: isPressed ? 1 : 0
-        ) else { return }
+        ) else {
+          self.appendNativeDndDiagnostic([
+            "phase": "event-create-failed",
+            "eventType": String(describing: eventType),
+          ], to: diagnosticsDirectory)
+          return
+        }
         self.nativeDndTestEventNumber += 1
-        NSApp.postEvent(event, atStart: false)
+        switch eventType {
+        case .mouseMoved:
+          flutterView.mouseMoved(with: event)
+        case .leftMouseDown:
+          flutterView.mouseDown(with: event)
+        case .leftMouseDragged:
+          flutterView.mouseDragged(with: event)
+        case .leftMouseUp:
+          flutterView.mouseUp(with: event)
+        default:
+          break
+        }
+        self.appendNativeDndDiagnostic([
+          "phase": "event-dispatched",
+          "eventType": String(describing: eventType),
+          "eventNumber": self.nativeDndTestEventNumber - 1,
+          "x": Double(eventDescription.1.x),
+          "y": Double(eventDescription.1.y),
+        ], to: diagnosticsDirectory)
       }
+    }
+  }
+
+  private func appendNativeDndDiagnostic(
+    _ value: [String: Any],
+    to directory: URL
+  ) {
+    guard var data = try? JSONSerialization.data(
+      withJSONObject: value,
+      options: [.sortedKeys]
+    ) else { return }
+    data.append(0x0A)
+    let fileURL = directory.appendingPathComponent("native-events.jsonl")
+    if FileManager.default.fileExists(atPath: fileURL.path),
+       let file = try? FileHandle(forWritingTo: fileURL) {
+      defer { try? file.close() }
+      do {
+        try file.seekToEnd()
+        try file.write(contentsOf: data)
+      } catch {
+        return
+      }
+    } else {
+      FileManager.default.createFile(atPath: fileURL.path, contents: data)
     }
   }
   #endif
