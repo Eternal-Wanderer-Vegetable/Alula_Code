@@ -29,7 +29,7 @@ class MainFlutterWindow: NSWindow {
   ) {
     let channel = FlutterMethodChannel(
       name: "alula/native_dnd_test",
-      binaryMessenger: flutterViewController
+      binaryMessenger: flutterViewController.engine.binaryMessenger
     )
     channel.setMethodCallHandler { [weak self] call, result in
       guard let self else {
