@@ -5,11 +5,15 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量）
+### 最新进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量，已完成）
 
 - 片段变量新增 `$TM_FILENAME` 与 `$TM_FILENAME_BASE`，flush 后从活动命名文档 basename 解析；base 只去掉最后扩展名，dotfile 保留。未命名文档当前解析为空字符串。无 Rust/ABI 改动。
-- 定向 parser/session/workbench 24 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 642），cargo fmt 与 Flutter analyze 0 issues。实现参考固定 Code-OSS 1.145.0；报告 `docs/diagnostics/2026-11-03-p04/p04.66-filename-snippet-variables.md`。未启动本机 GUI/Narrator。
-- 编辑前 GitNexus impact：`_insertSnippetTemplate` LOW（2 上游入口）、`expandSnippetTemplate` LOW（3 符号）；`OpenDoc.uri` 与测试 main 的 UNKNOWN 已文本核实。当前本地代码通过；最终 staged scan 为 9 files/18 symbols/0 flows、LOW；PR CI 与 Platform Availability 待登记；不要把 hosted pending 标为通过。
+- 定向 parser/session/workbench 24 项通过；完整 bash init.sh EXIT=0（Rust workspace、Clippy、build_core、Flutter 642），cargo fmt 与 Flutter analyze 0 issues。实现参考固定 Code-OSS 1.145.0；提交 189e920 已 push。PR CI 41482164944、Platform Availability 41482157012 三平台 Release/启动与打包 smoke 全绿；macOS DnD 因 hosted pointer route=false skipped，startup artifact 13161417248 只有 Impeller 日志、无 .ips/.crash。未启动本机 GUI/Narrator。
+- 编辑前隔离索引 impact：_insertSnippetTemplate LOW（2 上游入口）、expandSnippetTemplate LOW（3 符号）；OpenDoc.uri 与测试 main 的 UNKNOWN 已文本核实。提交前最终 staged scan 为 9 files/18 symbols/0 flows、LOW。提交后刷新根仓索引时，expandSnippetTemplate impact 报 CRITICAL（76 symbols/142 processes），与隔离快照结果不同；本次证据登记不改代码，未来改该符号前必须复核这项风险与跨语言漏链。
+
+### CI 稳定性跟进（2026-11-03）
+
+- 用户提醒反复 CI 失败可能与崩溃有关；此前失败分类见 P04.65 报告，现有红灯是 UIA/MSAA 断言、PowerShell 编码和 clipboard fixture，均未见应用 crash stack。当前 P04.66 的 PR CI 与三平台 smoke 全绿，macOS startup artifact 仅 Impeller 行；这些证据不建立 CI 红灯与 crash 的因果，也不证明 SIGSEGV 41370553563 已永久消失。遇到新红灯时优先保全完整日志、runner artifact 与 crash report，再判断是断言/脚本/应用崩溃。
 
 ### 阶段进展（2026-11-03，P04.65 / EDT-12b1 选中文本片段变量）
 
