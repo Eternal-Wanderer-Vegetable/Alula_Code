@@ -217,6 +217,7 @@ class KeybindingSet {
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
     'editor.completion': 'ctrl+space,f8',
+    'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
     // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
     'editor.undo': 'ctrl+z',
@@ -272,6 +273,7 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result['editor.action.pasteAs'] = 'cmd+shift+v';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
         result['editor.action.joinLines'] = 'ctrl+j';

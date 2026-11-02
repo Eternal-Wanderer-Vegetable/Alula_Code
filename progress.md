@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
+### 最新进展（2026-11-02，P04.63 / EDT-11e Paste As 核心实现）
+
+- `EditorClipboard` 现在读取有界 plain/HTML/URI 多 MIME snapshot，并支持 Linux、Windows、macOS URI-list 及平台 file/regular URI formats。新增 Paste As provider/config pipeline：plain text、显式 HTML、绝对 URI/path、工作区 relative path；注册 `editor.action.pasteAs`、`editor.action.pasteAsText`、`editor.changePasteType`、`editor.hidePasteWidget`，默认 Ctrl/Cmd+Shift+V。普通 paste 保持纯文本优先，功能关闭时普通 Ctrl/Cmd+V 仍可用；粘贴后选项为不抢编辑焦点的浮层。
+- provider edits 校验 activity/doc version/focus/selections，通过一次 Rust `applyWith` 和单帧 undo；替换 provider 先撤销前一 provider 再应用新值。测试覆盖多格式、URI workspace containment、provider switching、一次 undo/redo、保存回读与设置关闭回退。无 Rust/ABI 改动。
+- 定向 Paste As/clipboard/widget tests 全过；`RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 617），`cargo fmt --all -- --check` 通过，`flutter analyze --no-pub` 0 issues；从 HEAD 05afc0d 应用精确 14-file staged patch 的 detached worktree 再跑 init/fmt/analyze 也全部通过；task-scope diff check 通过。真实桌面 clipboard round trip 已加到 Platform Availability integration，不在本机启动 GUI，以免触发 Narrator。
+- 状态仍为 in-progress，等待 PR CI 与 Platform Availability Linux/Windows hosted MIME round-trip 通过后再登记完成；macOS hosted job 仅作为格式/build 辅助，原生 DnD 仍 pending。刷新后的 GitNexus staged 结果重复扫描为 CRITICAL（14 files、32–46 symbols、395–430 flows），compare-main 同为 CRITICAL 且清单 capped；跨语言漏链与预算截断已写入报告，未将图谱风险记为 clean。设置值由 `AlulaApp` 注入，持久化/Settings UI 留 P07；Markdown providers 留 P08/P12。CI 红灯未见产品崩溃栈；报告记录最新 run 与已确认 crash 的区别。
+
 ### 最新进展（2026-11-02，P04.62 / EDT-11d 跨文档 Move 与联动撤销）
 
 - 跨文档 builder 现在支持默认 Move 与显式 Copy。Move 在 Rust workspace 原子事务内删除源范围并插入目标；两侧用同一 linked transaction id 记录历史。Ctrl+Z/Y 从任一参与文档发起会验证两侧栈顶后原子撤销/重做；栈顶失配拒绝且内容不变。关闭/clear、redo 分叉及本地或共享历史预算淘汰均成对移除帧。拒绝的内部 Move 不会落入 dragCompleted 的源删除回退。
@@ -14,7 +21,7 @@
 - GitNexus 编辑前 `_buildEditorTextDropRequest` impact 为 UNKNOWN/no callers，经文本搜索确认其由 `EditorNativeTextDragDrop.buildDropRequest` 调用；`EditorNativeTextDragDrop` 类 impact CRITICAL（363 symbols / 142 processes / 20 modules），该类未改。Rust workspace transaction 入口已有 CRITICAL 影响提示，保持复用、不修改函数或 ABI。
 - CI 红灯审计（`gh run list --branch codex/vscode-parity-p00 --limit 100`）：主 CI 54 success / 1 failure；Platform Availability 11 success / 34 failure。主 CI 唯一失败是已由 `1fbda68` 修复的 vendored Cargokit analyzer 误扫；抽查的 Platform 红灯为 macOS 合成 pointer route、Windows pointer-cancel 断言、Windows 临时目录 teardown 与一次 Swift adapter 编译问题。`5c1c501`、显式 `input-route-unavailable` SKIP 路径和后续 Swift 修正后，最新 PR CI `41433034281` 与 Platform `41430397498` 都通过。该统计反映开发迭代中的历史尝试，不应当作当前故障率；macOS DnD 仍未验收。
 - CI 假红没有启动 Alula或可提供崩溃栈。唯一确认产品 crash 为 `41370553563` macOS startup SIGSEGV；`9f2c70a` readiness handshake/nil guards 后的 launch smoke 未复现。CI 稳定有助于发现回归，但当前证据不支持把 runner/test 红灯当作该 crash 的原因。详见 `docs/diagnostics/2026-11-02-p04/p04.62-cross-document-text-move.md`。
-- P04.62 已完成并有 Linux/Windows CI 证据；macOS 原生 DnD 仍单独 pending，500 MiB 优化留在 P14。已按固定 Code-OSS source coverage 登记 P04.63 / EDT-11e：多 MIME snapshot、text/HTML/URI 默认 providers、Paste As 命令/选项与单步替代事务。细分见 `docs/diagnostics/2026-11-02-p04/p04.63-paste-as-core-plan.md`；下一步先对 `EditorClipboard`、clipboard payload 与工作台粘贴入口做 GitNexus impact，再开始该切片。Markdown URL/文件/图片 providers 留 P08/P12。
+- P04.62 已完成并有 Linux/Windows CI 证据；macOS 原生 DnD 仍单独 pending，500 MiB 优化留在 P14。P04.63 当前实现完成并等待 hosted native MIME 验收；Settings UI/持久化留 P07，Markdown URL/文件/图片 providers 留 P08/P12。
 
 ### 最新进展（2026-11-02，P04.61 / EDT-11c 跨文档文本拖放复制）
 

@@ -43,6 +43,7 @@ import '../editor/lsp_diagnostic_decorations.dart';
 import '../editor/navigation_history.dart';
 import '../editor/multi_selection.dart';
 import '../editor/occurrence_search.dart';
+import '../editor/paste_as.dart';
 import '../editor/rich_text_clipboard.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_string_context.dart';
@@ -171,6 +172,26 @@ typedef _RustBracketBackspace = ({
   List<_RustBracketDeletePlan> plans,
 });
 
+class _PasteAsSession {
+  const _PasteAsSession({
+    required this.documentId,
+    required this.version,
+    required this.payload,
+    required this.beforeSelections,
+    required this.afterSelections,
+    required this.providerId,
+    required this.wasCrossWindow,
+  });
+
+  final int documentId;
+  final int version;
+  final EditorPasteAsPayload payload;
+  final List<TextSelection> beforeSelections;
+  final List<TextSelection> afterSelections;
+  final String providerId;
+  final bool wasCrossWindow;
+}
+
 Color _tokenColor(String kind) {
   for (final e in _tokenColors.entries) {
     if (kind.startsWith(e.key)) return e.value;
@@ -189,6 +210,7 @@ class WorkbenchPage extends StatefulWidget {
     this.windowControls = false,
     this.definitionRequest,
     this.overtypeOnPaste = true,
+    this.pasteAsConfiguration = const PasteAsConfiguration(),
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -221,6 +243,11 @@ class WorkbenchPage extends StatefulWidget {
   /// Mirrors VS Code's editor.overtypeOnPaste default. User settings will be
   /// wired into this editor option when P07 adds the settings store.
   final bool overtypeOnPaste;
+
+  /// Editor Paste As behavior. The settings store can hydrate this value when
+  /// the settings surface lands; command and keybinding behavior is available
+  /// independently of that UI.
+  final PasteAsConfiguration pasteAsConfiguration;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
@@ -323,6 +350,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   WbSyncState _state = WbSyncState.idle;
   bool _overtypeMode = false;
+  bool _pasteSelectorOpen = false;
+  _PasteAsSession? _lastPasteAsSession;
   bool _disposing = false;
   String _statusDetail = '初始化…';
   String? _journalRecoveryNotice;
@@ -421,6 +450,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ? 'Cmd+Alt+O'
           : 'Insert',
       enablement: 'editorTextFocus',
+    );
+    reg(
+      'editor.action.pasteAs',
+      '编辑器',
+      '粘贴为…',
+      () => _pasteAs(),
+      shortcut: defaultTargetPlatform == TargetPlatform.macOS
+          ? 'Cmd+Shift+V'
+          : 'Ctrl+Shift+V',
+      enablement: 'editorTextFocus',
+      runWithArguments: (arguments) =>
+          _pasteAs(providerId: _pasteAsProviderId(arguments)),
+    );
+    reg(
+      'editor.action.pasteAsText',
+      '编辑器',
+      '粘贴为纯文本',
+      _pasteAsText,
+      enablement: 'editorTextFocus',
+    );
+    reg(
+      'editor.changePasteType',
+      '编辑器',
+      '更改粘贴类型…',
+      _changePasteType,
+      enablement: 'editorTextFocus',
+      runWithArguments: (arguments) =>
+          _changePasteType(providerId: _pasteAsProviderId(arguments)),
+    );
+    reg(
+      'editor.hidePasteWidget',
+      '编辑器',
+      '隐藏粘贴选项',
+      _hidePasteWidget,
     );
     reg(
       'deleteWordLeft',
@@ -7105,6 +7168,523 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
   }
 
+  List<PasteAsOption> _pasteAsOptions(
+    EditorPasteAsPayload payload, {
+    bool automatic = false,
+  }) {
+    final options = buildPasteAsOptions(
+      plainText: payload.hasPlainText ? payload.text : null,
+      html: payload.html,
+      uriList: payload.uriList,
+      workspaceRoot: _workspaceRoot,
+      preferences: widget.pasteAsConfiguration.preferences,
+    );
+    return automatic
+        ? options.where((option) => option.id != 'html').toList(growable: false)
+        : options;
+  }
+
+  String? _pasteAsProviderId(Object? arguments) {
+    if (arguments is String) return arguments;
+    if (arguments is Map) {
+      final providerId =
+          arguments['kind'] ?? arguments['providerId'] ?? arguments['id'];
+      return providerId is String ? providerId : null;
+    }
+    return null;
+  }
+
+  List<TextSelection> _pasteSelectionSnapshot(OpenDoc doc) =>
+      doc.crossWindowSelection == null
+          ? normalizeSelectionSet([doc.selection, ...doc.additionalSelections])
+          : [doc.crossWindowSelection!];
+
+  bool _pasteSelectionSnapshotMatches(
+    OpenDoc doc,
+    List<TextSelection> expected, {
+    required bool crossWindow,
+  }) {
+    if (crossWindow) {
+      return expected.length == 1 &&
+          doc.crossWindowSelection == expected.single;
+    }
+    return doc.crossWindowSelection == null &&
+        listEquals(
+          normalizeSelectionSet([doc.selection, ...doc.additionalSelections]),
+          expected,
+        );
+  }
+
+  Future<void> _pasteAs({String? providerId}) async {
+    if (!widget.pasteAsConfiguration.enabled) return;
+    _lastPasteAsSession = null;
+    final doc = _active;
+    if (doc == null || doc.diskState == DiskDocumentState.readOnly) return;
+    _flushInput(doc, commitComposition: true);
+    final expectedVersion = doc.doc.version;
+    final expectedFocus = FocusManager.instance.primaryFocus;
+    final selections = List<TextSelection>.unmodifiable(
+      _pasteSelectionSnapshot(doc),
+    );
+    final wasCrossWindow = doc.crossWindowSelection != null;
+    if (selections.isEmpty || doc.inputWindow.hasComposition) return;
+
+    final payload = await EditorClipboard.readForPasteAs();
+    if (!mounted ||
+        payload == null ||
+        !identical(_active, doc) ||
+        doc.doc.version != expectedVersion ||
+        FocusManager.instance.primaryFocus != expectedFocus ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          selections,
+          crossWindow: wasCrossWindow,
+        )) {
+      return;
+    }
+    final options = _pasteAsOptions(payload);
+    if (providerId case final requested?) {
+      final option = options
+          .where((item) => item.id == requested || item.kind == requested)
+          .firstOrNull;
+      if (option != null) {
+        await _applyPasteAsOption(
+          doc,
+          option,
+          payload: payload,
+          expectedVersion: expectedVersion,
+          selections: selections,
+          wasCrossWindow: wasCrossWindow,
+        );
+      }
+      return;
+    }
+    if (options.isEmpty) {
+      if (mounted) setState(() => _statusDetail = '剪贴板没有可用的粘贴格式');
+      return;
+    }
+    await _showPasteAsSelector(
+      doc,
+      payload: payload,
+      options: options,
+      expectedVersion: expectedVersion,
+      selections: selections,
+      wasCrossWindow: wasCrossWindow,
+    );
+  }
+
+  Future<void> _pasteAsText() async {
+    if (!widget.pasteAsConfiguration.enabled) return;
+    _lastPasteAsSession = null;
+    final doc = _active;
+    if (doc == null || doc.diskState == DiskDocumentState.readOnly) return;
+    _flushInput(doc, commitComposition: true);
+    final expectedVersion = doc.doc.version;
+    final expectedFocus = FocusManager.instance.primaryFocus;
+    final selections = List<TextSelection>.unmodifiable(
+      _pasteSelectionSnapshot(doc),
+    );
+    final wasCrossWindow = doc.crossWindowSelection != null;
+    final payload = await EditorClipboard.readForPasteAs();
+    if (!mounted ||
+        payload == null ||
+        !payload.hasPlainText ||
+        !identical(_active, doc) ||
+        doc.doc.version != expectedVersion ||
+        FocusManager.instance.primaryFocus != expectedFocus ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          selections,
+          crossWindow: wasCrossWindow,
+        )) {
+      return;
+    }
+    await _applyPasteAsOption(
+      doc,
+      PasteAsOption(
+        id: 'text',
+        kind: 'text.plain',
+        label: 'Insert Plain Text',
+        text: payload.text,
+      ),
+      payload: payload,
+      expectedVersion: expectedVersion,
+      selections: selections,
+      wasCrossWindow: wasCrossWindow,
+    );
+  }
+
+  Future<void> _pasteDefault(OpenDoc doc) async {
+    if (doc.diskState == DiskDocumentState.readOnly) {
+      return;
+    }
+    _lastPasteAsSession = null;
+    _flushInput(doc, commitComposition: true);
+    final expectedVersion = doc.doc.version;
+    final expectedFocus = FocusManager.instance.primaryFocus;
+    final selections = List<TextSelection>.unmodifiable(
+      _pasteSelectionSnapshot(doc),
+    );
+    final wasCrossWindow = doc.crossWindowSelection != null;
+    final payload = widget.pasteAsConfiguration.enabled
+        ? await EditorClipboard.readForPasteAs()
+        : await EditorClipboard.read().then(
+            (plainText) => plainText == null
+                ? null
+                : EditorPasteAsPayload.fromPlainText(plainText),
+          );
+    if (!mounted ||
+        payload == null ||
+        !identical(_active, doc) ||
+        doc.doc.version != expectedVersion ||
+        FocusManager.instance.primaryFocus != expectedFocus ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          selections,
+          crossWindow: wasCrossWindow,
+        )) {
+      return;
+    }
+    final options = _pasteAsOptions(payload, automatic: true);
+    if (options.isEmpty) return;
+    await _applyPasteAsOption(
+      doc,
+      options.first,
+      payload: payload,
+      expectedVersion: expectedVersion,
+      selections: selections,
+      wasCrossWindow: wasCrossWindow,
+    );
+  }
+
+  Future<void> _showPasteAsSelector(
+    OpenDoc doc, {
+    required EditorPasteAsPayload payload,
+    required List<PasteAsOption> options,
+    required int expectedVersion,
+    required List<TextSelection> selections,
+    required bool wasCrossWindow,
+    Future<void> Function(PasteAsOption option)? onSelect,
+  }) async {
+    if (options.isEmpty || !mounted) return;
+    _pasteSelectorOpen = true;
+    try {
+      await QuickInput.show(
+        context,
+        hint: '选择粘贴格式',
+        items: [
+          for (final option in options)
+            QuickItem(
+              label: option.label,
+              detail: option.id,
+              onRun: () async {
+                if (onSelect != null) {
+                  await onSelect(option);
+                } else {
+                  await _applyPasteAsOption(
+                    doc,
+                    option,
+                    payload: payload,
+                    expectedVersion: expectedVersion,
+                    selections: selections,
+                    wasCrossWindow: wasCrossWindow,
+                  );
+                }
+              },
+            ),
+        ],
+      );
+    } finally {
+      _pasteSelectorOpen = false;
+    }
+  }
+
+  Future<_PasteAsSession?> _applyPasteAsOption(
+    OpenDoc doc,
+    PasteAsOption option, {
+    required EditorPasteAsPayload payload,
+    required int expectedVersion,
+    required List<TextSelection> selections,
+    required bool wasCrossWindow,
+  }) async {
+    _flushInput(doc, commitComposition: true);
+    if (!mounted ||
+        !identical(_active, doc) ||
+        doc.diskState == DiskDocumentState.readOnly ||
+        doc.inputWindow.hasComposition ||
+        doc.doc.version != expectedVersion ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          selections,
+          crossWindow: wasCrossWindow,
+        )) {
+      return null;
+    }
+    if (option.text.isEmpty) return null;
+    if (option.text.length > maxPasteAsPlainTextUtf16) {
+      if (mounted) setState(() => _statusDetail = '粘贴内容超过安全上限，已取消');
+      return null;
+    }
+
+    if (wasCrossWindow) {
+      _replaceCrossWindowSelection(
+        doc,
+        option.text,
+        version: expectedVersion,
+      );
+      if (doc.doc.version == expectedVersion) return null;
+      final after =
+          List<TextSelection>.unmodifiable(_pasteSelectionSnapshot(doc));
+      return _lastPasteAsSession = _PasteAsSession(
+        documentId: doc.id,
+        version: doc.doc.version,
+        payload: payload,
+        beforeSelections: selections,
+        afterSelections: after,
+        providerId: option.id,
+        wasCrossWindow: true,
+      );
+    }
+
+    final normalized = normalizeSelectionSet(selections);
+    if (normalized.isEmpty) return null;
+    final multiCursorText =
+        option.id == 'text' ? payload.metadata?.multiCursorText : null;
+    final pasteTexts = distributeClipboardPasteText(
+      clipboardText: option.text,
+      selectionCount: normalized.length,
+      multiCursorText: multiCursorText,
+      selectionStartOffsets: [
+        for (final selection in normalized) selection.start,
+      ],
+    );
+    final plans = <({
+      int start,
+      int end,
+      String text,
+      String removed,
+      int mappedStart,
+      bool primary,
+    })>[];
+    final orderedSelections = [
+      for (var index = 0; index < normalized.length; index++)
+        (index: index, selection: normalized[index]),
+    ]..sort((a, b) => a.selection.start.compareTo(b.selection.start));
+    var shift = 0;
+    try {
+      for (final entry in orderedSelections) {
+        final index = entry.index;
+        final selection = entry.selection;
+        final start = selection.start;
+        final end = selection.end;
+        final removed = _readDocumentRange(doc, start, end);
+        plans.add((
+          start: start,
+          end: end,
+          text: pasteTexts[index],
+          removed: removed,
+          mappedStart: start + shift,
+          primary: index == 0,
+        ));
+        shift += pasteTexts[index].length - (end - start);
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _statusDetail = 'Paste As 范围读取失败：$error');
+      return null;
+    }
+    if (doc.doc.version != expectedVersion ||
+        !_pasteSelectionSnapshotMatches(doc, selections, crossWindow: false)) {
+      return null;
+    }
+
+    final operationChars = plans.fold<int>(
+      0,
+      (total, plan) => total + plan.removed.length + plan.text.length,
+    );
+    if (operationChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) setState(() => _statusDetail = '粘贴内容超过撤销历史上限，已取消');
+      return null;
+    }
+    final forward = [
+      for (final plan in plans.reversed) ...[
+        if (plan.end > plan.start)
+          TextOp.delete(plan.start, plan.end - plan.start),
+        if (plan.text.isNotEmpty) TextOp.insert(plan.start, plan.text),
+      ],
+    ];
+    if (forward.isEmpty) return null;
+    final inverse = [
+      for (final plan in plans.reversed) ...[
+        if (plan.text.isNotEmpty)
+          TextOp.delete(plan.mappedStart, plan.text.length),
+        if (plan.removed.isNotEmpty)
+          TextOp.insert(plan.mappedStart, plan.removed),
+      ],
+    ];
+    try {
+      doc.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = 'Paste As 未应用：${error.code} ${error.detail}');
+      }
+      return null;
+    }
+
+    final orderedAfter = [
+      for (final plan in plans)
+        (
+          primary: plan.primary,
+          selection: TextSelection.collapsed(
+            offset: plan.mappedStart + plan.text.length,
+          ),
+        ),
+    ];
+    final primaryIndex = orderedAfter.indexWhere((entry) => entry.primary);
+    final afterSelections = List<TextSelection>.unmodifiable([
+      if (primaryIndex >= 0) orderedAfter[primaryIndex].selection,
+      for (var index = 0; index < orderedAfter.length; index++)
+        if (index != primaryIndex) orderedAfter[index].selection,
+    ]);
+    final primarySelection = afterSelections.first;
+    _recordDocumentOperations(
+      doc,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: selections.first.extentOffset,
+      afterCaret: primarySelection.extentOffset,
+      coalesce: false,
+    );
+    doc.additionalSelections = List.unmodifiable(afterSelections.skip(1));
+    doc.columnSelection = null;
+    doc.crossWindowSelection = null;
+    doc.replaceInputWindow(
+      primarySelection.extentOffset,
+      selection: primarySelection,
+    );
+    _refreshSiblingViews(doc, forward);
+    _onFindTextChanged();
+    _syncCommandContext();
+    if (mounted) setState(() => _statusDetail = '已粘贴：${option.label}');
+    return _lastPasteAsSession = _PasteAsSession(
+      documentId: doc.id,
+      version: doc.doc.version,
+      payload: payload,
+      beforeSelections: List<TextSelection>.unmodifiable(selections),
+      afterSelections: afterSelections,
+      providerId: option.id,
+      wasCrossWindow: false,
+    );
+  }
+
+  Future<void> _changePasteType({String? providerId}) async {
+    if (!widget.pasteAsConfiguration.enabled) return;
+    final session = _lastPasteAsSession;
+    final doc = _active;
+    if (session == null || doc == null || session.documentId != doc.id) {
+      await _pasteAs(providerId: providerId);
+      return;
+    }
+    if (doc.doc.version != session.version ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          session.afterSelections,
+          crossWindow: false,
+        )) {
+      _lastPasteAsSession = null;
+      await _pasteAs(providerId: providerId);
+      return;
+    }
+    final options = _pasteAsOptions(session.payload);
+    if (options.isEmpty) return;
+    if (providerId case final requested?) {
+      final option = options
+          .where((item) => item.id == requested || item.kind == requested)
+          .firstOrNull;
+      if (option != null) await _changePasteAsProvider(session, option);
+      return;
+    }
+    await _showPasteAsSelector(
+      doc,
+      payload: session.payload,
+      options: options,
+      expectedVersion: session.version,
+      selections: session.afterSelections,
+      wasCrossWindow: false,
+      onSelect: (option) => _changePasteAsProvider(session, option),
+    );
+  }
+
+  Future<void> _changePasteAsProvider(
+    _PasteAsSession session,
+    PasteAsOption option,
+  ) async {
+    if (session.providerId == option.id) return;
+    final doc = _active;
+    if (doc == null ||
+        doc.id != session.documentId ||
+        doc.doc.version != session.version ||
+        !_pasteSelectionSnapshotMatches(
+          doc,
+          session.afterSelections,
+          crossWindow: false,
+        )) {
+      _lastPasteAsSession = null;
+      return;
+    }
+    _undo();
+    if (!mounted || !identical(_active, doc)) return;
+    if (session.wasCrossWindow) {
+      doc.crossWindowSelection = session.beforeSelections.single;
+    } else {
+      doc.crossWindowSelection = null;
+      doc.additionalSelections =
+          List.unmodifiable(session.beforeSelections.skip(1));
+      doc.columnSelection = null;
+      doc.replaceInputWindow(
+        session.beforeSelections.first.extentOffset,
+        selection: session.beforeSelections.first,
+      );
+    }
+    if (mounted) setState(() {});
+    await WidgetsBinding.instance.endOfFrame;
+    await _applyPasteAsOption(
+      doc,
+      option,
+      payload: session.payload,
+      expectedVersion: doc.doc.version,
+      selections: session.beforeSelections,
+      wasCrossWindow: session.wasCrossWindow,
+    );
+  }
+
+  Future<void> _hidePasteWidget() async {
+    if (_pasteSelectorOpen && mounted) {
+      await Navigator.of(context).maybePop();
+    }
+    if (mounted && _lastPasteAsSession != null) {
+      setState(() => _lastPasteAsSession = null);
+    }
+  }
+
+  bool _shouldShowPasteAsWidget(EditorGroup group) {
+    final session = _lastPasteAsSession;
+    final doc = group.active;
+    return widget.pasteAsConfiguration.enabled &&
+        widget.pasteAsConfiguration.showPasteSelector == 'afterPaste' &&
+        session != null &&
+        doc != null &&
+        identical(_active, doc) &&
+        session.documentId == doc.id &&
+        session.version == doc.doc.version &&
+        _pasteSelectionSnapshotMatches(
+          doc,
+          session.afterSelections,
+          crossWindow: false,
+        ) &&
+        _pasteAsOptions(session.payload, automatic: true).length > 1;
+  }
+
   Future<void> _pasteCrossWindowSelection(OpenDoc doc) async {
     final selection = doc.crossWindowSelection;
     if (selection == null) return;
@@ -9819,7 +10399,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             unawaited(_cutCrossWindowSelection(active!));
             return KeyEventResult.handled;
           }
-          if (commandModifier && key == LogicalKeyboardKey.keyV) {
+          if (commandModifier && !shift && key == LogicalKeyboardKey.keyV) {
             unawaited(_overtypeMode && widget.overtypeOnPaste
                 ? _pasteOvertype(active!)
                 : _pasteCrossWindowSelection(active!));
@@ -9917,6 +10497,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return KeyEventResult.handled;
         }
         if (commandModifier &&
+            !shift &&
             !alt &&
             key == LogicalKeyboardKey.keyV &&
             _overtypeMode &&
@@ -9924,6 +10505,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             !activeHasComposition &&
             active != null) {
           unawaited(_pasteOvertype(active));
+          return KeyEventResult.handled;
+        }
+        if (commandModifier &&
+            !shift &&
+            !alt &&
+            key == LogicalKeyboardKey.keyV &&
+            !activeHasComposition &&
+            active != null &&
+            widget.pasteAsConfiguration.enabled) {
+          unawaited(_pasteDefault(active));
           return KeyEventResult.handled;
         }
         if (commandModifier && !alt && key == LogicalKeyboardKey.keyZ) {
@@ -12049,15 +12640,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 编辑器区：标签条 + 编辑器 ----------
 
   Widget _buildEditorArea(EditorGroup g) {
-    return Container(
-      color: const Color(0xFF14161A),
-      child: Column(
-        children: [
-          _buildTabStrip(g),
-          const Divider(height: 1),
-          _buildBreadcrumb(g),
-          Expanded(child: _buildEditor(g)),
-        ],
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.escape): () =>
+            unawaited(_hidePasteWidget()),
+      },
+      child: Container(
+        color: const Color(0xFF14161A),
+        child: Column(
+          children: [
+            _buildTabStrip(g),
+            const Divider(height: 1),
+            _buildBreadcrumb(g),
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _buildEditor(g),
+                  if (_shouldShowPasteAsWidget(g))
+                    Positioned(
+                      top: 6,
+                      right: 12,
+                      child: Material(
+                        color: const Color(0xFF252932),
+                        elevation: 8,
+                        borderRadius: BorderRadius.circular(6),
+                        child: TextButton.icon(
+                          key: const ValueKey('paste-as-widget'),
+                          onPressed: () => _changePasteType(),
+                          icon: const Icon(Icons.content_paste_go, size: 16),
+                          label: const Text('Change Paste Type'),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -5,6 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
 import 'clipboard_metadata.dart';
+import 'paste_as.dart'
+    show
+        maxPasteAsPlainTextUtf16,
+        maxPasteAsUriCount,
+        maxPasteAsUriListUtf16,
+        parsePasteAsUriList;
+import 'rich_text_clipboard.dart' show maxClipboardHtmlUtf16;
 
 /// Clipboard snapshot used by editor paste commands.
 class EditorClipboardPayload {
@@ -12,6 +19,28 @@ class EditorClipboardPayload {
 
   final String text;
   final EditorClipboardMetadata? metadata;
+}
+
+/// Multi-MIME snapshot used only by Paste As provider resolution.
+class EditorPasteAsPayload {
+  const EditorPasteAsPayload({
+    required this.text,
+    this.containsPlainText = true,
+    this.metadata,
+    this.html,
+    this.uriList,
+  });
+
+  final String text;
+  final bool containsPlainText;
+  final EditorClipboardMetadata? metadata;
+  final String? html;
+  final String? uriList;
+
+  bool get hasPlainText => containsPlainText;
+
+  factory EditorPasteAsPayload.fromPlainText(EditorClipboardPayload payload) =>
+      EditorPasteAsPayload(text: payload.text, metadata: payload.metadata);
 }
 
 /// Writes the interoperable text, optional rich HTML, and Code-OSS metadata.
@@ -32,6 +61,11 @@ class EditorClipboard {
   /// integration smoke, where the real system clipboard is available.
   @visibleForTesting
   static bool forceFlutterClipboardFallbackForTesting = false;
+
+  /// Supplies deterministic multi-MIME snapshots to workbench widget tests.
+  @visibleForTesting
+  static Future<EditorPasteAsPayload?> Function()?
+      readForPasteAsOverrideForTesting;
 
   static const _vscodeEditorDataCodec = SimplePlatformCodec<String>(
     formats: ['vscode-editor-data'],
@@ -58,6 +92,33 @@ class EditorClipboard {
     macos: _macVscodeEditorDataCodec,
     windows: _windowsVscodeEditorDataCodec,
     fallback: _vscodeEditorDataCodec,
+  );
+
+  static const uriListFormat = SimpleValueFormat<String>(
+    linux: SimplePlatformCodec<String>(
+      formats: ['text/uri-list'],
+      onDecode: _decodeUriList,
+    ),
+    macos: SimplePlatformCodec<String>(
+      formats: [
+        'public.file-url',
+        'public.url',
+        'public.utf8-plain-text',
+      ],
+      onDecode: _decodeUriList,
+    ),
+    windows: SimplePlatformCodec<String>(
+      formats: [
+        'text/uri-list',
+        'UniformResourceLocatorW',
+        'UniformResourceLocator'
+      ],
+      onDecode: _decodeUriList,
+    ),
+    fallback: SimplePlatformCodec<String>(
+      formats: ['text/uri-list'],
+      onDecode: _decodeUriList,
+    ),
   );
 
   static Uint8List _encodeWindowsVscodeEditorData(
@@ -88,6 +149,25 @@ class EditorClipboard {
           return normalized;
         }
         return null;
+      } on FormatException {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  static Future<String?> _decodeUriList(
+    PlatformDataProvider provider,
+    PlatformFormat format,
+  ) async {
+    final value = await provider.getData(format);
+    if (value is String) {
+      return value.length <= maxPasteAsUriListUtf16 ? value : null;
+    }
+    if (value is Uint8List && value.lengthInBytes <= 256 * 1024) {
+      try {
+        final decoded = _decodeClipboardDataBytes(value);
+        return decoded.length <= maxPasteAsUriListUtf16 ? decoded : null;
       } on FormatException {
         return null;
       }
@@ -159,7 +239,29 @@ class EditorClipboard {
   }
 
   static Future<EditorClipboardPayload?> read() async {
+    final payload = await _readSnapshot(includeOptionalFormats: false);
+    return payload?.hasPlainText == true
+        ? EditorClipboardPayload(
+            text: payload!.text, metadata: payload.metadata)
+        : null;
+  }
+
+  /// Reads the bounded native MIME snapshot used by explicit Paste As actions.
+  /// Plain text remains optional so an HTML-only or URI-only clipboard can be
+  /// offered by its matching provider without becoming the ordinary paste.
+  static Future<EditorPasteAsPayload?> readForPasteAs() {
+    final override = readForPasteAsOverrideForTesting;
+    return override != null
+        ? override()
+        : _readSnapshot(includeOptionalFormats: true);
+  }
+
+  static Future<EditorPasteAsPayload?> _readSnapshot({
+    required bool includeOptionalFormats,
+  }) async {
     String? text;
+    String? html;
+    String? uriList;
     String? rawEditorData;
     if (!_nativeClipboardDisabled && !forceFlutterClipboardFallbackForTesting) {
       try {
@@ -172,6 +274,33 @@ class EditorClipboard {
                 .readValue(Formats.plainText)
                 .timeout(_nativeClipboardTimeout);
           }
+          if (includeOptionalFormats && reader.canProvide(Formats.htmlText)) {
+            final value = await reader
+                .readValue(Formats.htmlText)
+                .timeout(_nativeClipboardTimeout);
+            if (value != null && value.length <= maxClipboardHtmlUtf16) {
+              html = value;
+            }
+          }
+          if (includeOptionalFormats && reader.canProvide(uriListFormat)) {
+            uriList = await reader
+                .readValue(uriListFormat)
+                .timeout(_nativeClipboardTimeout);
+          }
+          if (includeOptionalFormats) {
+            final nativeUriItems = await _readNativeUriItems(reader)
+                .timeout(_nativeClipboardTimeout);
+            if (uriList == null) {
+              uriList = nativeUriItems;
+            } else {
+              final existingUris = parsePasteAsUriList(uriList);
+              final itemUris = parsePasteAsUriList(nativeUriItems);
+              if (existingUris.isNotEmpty &&
+                  itemUris.length > existingUris.length) {
+                uriList = nativeUriItems;
+              }
+            }
+          }
           if (reader.canProvide(vscodeEditorDataFormat)) {
             rawEditorData = await reader
                 .readValue(vscodeEditorDataFormat)
@@ -183,16 +312,59 @@ class EditorClipboard {
       }
     }
 
+    if (includeOptionalFormats &&
+        text != null &&
+        text.length > maxPasteAsPlainTextUtf16) {
+      text = null;
+    }
     text ??= (await Clipboard.getData('text/plain'))?.text;
-    if (text == null) return null;
+    if (!includeOptionalFormats && text != null) {
+      return EditorPasteAsPayload(
+        text: text,
+        containsPlainText: true,
+        metadata: EditorClipboardMetadataStore.shared.lookup(text),
+      );
+    }
+    if (includeOptionalFormats &&
+        text != null &&
+        text.length > maxPasteAsPlainTextUtf16) {
+      text = null;
+    }
+    if (text == null && html == null && uriList == null) return null;
 
-    final localMetadata = EditorClipboardMetadataStore.shared.lookup(text);
+    final localMetadata =
+        text == null ? null : EditorClipboardMetadataStore.shared.lookup(text);
     final nativeMetadata = rawEditorData == null
         ? null
         : EditorClipboardMetadata.decodeClipboardJson(rawEditorData);
-    return EditorClipboardPayload(
-      text: text,
+    return EditorPasteAsPayload(
+      text: text ?? '',
+      containsPlainText: text != null,
       metadata: nativeMetadata ?? localMetadata,
+      html: html,
+      uriList: uriList,
     );
+  }
+
+  static Future<String?> _readNativeUriItems(ClipboardReader reader) async {
+    final values = <String>[];
+    for (final item in reader.items.take(maxPasteAsUriCount + 1)) {
+      Uri? uri;
+      if (item.canProvide(Formats.fileUri)) {
+        uri = await item
+            .readValue(Formats.fileUri)
+            .timeout(_nativeClipboardTimeout);
+      }
+      if (uri == null && item.canProvide(Formats.uri)) {
+        final namedUri =
+            await item.readValue(Formats.uri).timeout(_nativeClipboardTimeout);
+        uri = namedUri?.uri;
+      }
+      if (uri != null) {
+        values.add(uri.toString());
+        if (values.length > maxPasteAsUriCount) return null;
+      }
+    }
+    return values.isEmpty ? null : values.join('\r\n');
   }
 }

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'bridge/alula_core.dart';
+import 'editor/paste_as.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
@@ -59,6 +60,7 @@ class AlulaApp extends StatelessWidget {
     this.keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.pasteAsConfiguration = const PasteAsConfiguration(),
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -88,6 +90,9 @@ class AlulaApp extends StatelessWidget {
     int version,
   )? definitionRequest;
 
+  /// Editor Paste As settings forwarded to the workbench.
+  final PasteAsConfiguration pasteAsConfiguration;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -105,6 +110,7 @@ class AlulaApp extends StatelessWidget {
         keybindingsStore: keybindingsStore,
         windowControls: windowControls,
         definitionRequest: definitionRequest,
+        pasteAsConfiguration: pasteAsConfiguration,
       ),
     );
   }

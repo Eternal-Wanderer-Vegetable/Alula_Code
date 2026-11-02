@@ -125,6 +125,25 @@ void main() {
     expect(decoded, raw);
   });
 
+  test('URI-list clipboard format decodes text and rejects oversized values',
+      () async {
+    final codec = EditorClipboard.uriListFormat.codec;
+    final decoded = await codec.decode(
+      const _ClipboardDataProvider(
+        'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n',
+      ),
+      'text/uri-list',
+    );
+    final oversized = await codec.decode(
+      _ClipboardDataProvider('x' * (64 * 1024 + 1)),
+      'text/uri-list',
+    );
+
+    expect(decoded,
+        'file:///workspace/src/main.rs\r\nhttps://example.test/item\r\n');
+    expect(oversized, isNull);
+  });
+
   test('rich HTML clips exact UTF-16 token ranges and escapes source text', () {
     const source = '😀<&\n';
     final html = buildRichTextClipboardHtml(
