@@ -425,6 +425,8 @@ jobs:
                           catch (Exception exception) { node.Error = exception.Message; }
                           try { node.Value = accessible.get_accValue(childId); }
                           catch (Exception exception) { node.Error = exception.Message; }
+                          try { node.State = Convert.ToInt32(accessible.get_accState(childId)); }
+                          catch (Exception exception) { node.Error = exception.Message; }
 
                           try
                           {
@@ -496,6 +498,7 @@ jobs:
               public string Name { get; set; }
               public string Role { get; set; }
               public string Value { get; set; }
+              public int State { get; set; }
               public int ChildCount { get; set; }
               public string Error { get; set; }
           }
@@ -631,8 +634,12 @@ jobs:
           $flutterRoot = $metadata.msaaRoots | Where-Object { $_.target -eq 'flutterChildWindow' } | Select-Object -First 1
           if (!$flutterRoot) { throw "MSAA snapshot did not include the Flutter child window" }
           if (!$metadata.msaaEditorFocusRequested) { throw "MSAA could not focus the unnamed editor before reading its text value" }
+          $editorNode = $flutterRoot.children | Where-Object { $_.Role -eq '42' } | Select-Object -First 1
+          if (!$editorNode) { throw "MSAA tree did not expose an editor text field" }
+          if (([int]$editorNode.State -band 4) -eq 0) { throw "MSAA focus request did not focus the editor text field" }
+          if (!$editorNode.Value.Contains('打开一个文件夹开始工作')) { throw "Focused MSAA editor value is missing the visible welcome text" }
           $accessibleText = (@($flutterRoot.children | ForEach-Object { [string]$_.Name; [string]$_.Value }) -join "`n")
-          foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式', '打开一个文件夹开始工作')) {
+          foreach ($expected in @('打开文件夹', 'UTF-8. UTF-8', 'LF. 行尾格式')) {
             if (!$accessibleText.Contains($expected)) { throw "MSAA tree is missing expected semantic text: $expected" }
           }
           if (!$metadata.wmClosePosted) { throw "WM_CLOSE was not posted to the Alula window" }
