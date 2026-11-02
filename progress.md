@@ -7,6 +7,8 @@
 
 ### 最新进展（2026-11-02，P04.59 / EDT-11a 进行中）
 
+- P04.59 新增 Windows hosted 原生拖放验证：隔离 Flutter fixture + Win32 鼠标轨迹脚本；将记录并校验 Flutter Pointer down/move/up、source payload、drop-over、move drop 与 drag-completed，失败诊断始终上传。它会独立于 P03.7 interaction suite 执行。Windows runner 结果待提交后确认；此环境无法执行 Win32 注入。提交前 `bash init.sh` EXIT=0（Flutter 590，Rust workspace/Clippy/build_core）、`cargo fmt --all -- --check`、`flutter analyze`（0 issues）和 Python/YAML 静态解析通过。报告：`docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
+
 - 本轮提交 `0157e7f` 已 push；PR CI [`41395923079`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41395923079) 与 Platform Availability [`41395917970`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41395917970) 全绿。Linux hosted X11 native DnD 通过，artifact `13118594194` 收到 down/move/up 并完成 alpha/move/UTF-16 offset 11；Windows Release/交互/剪贴板/UIA/关闭 smoke 通过；macOS Release/clipboard/launch/package 通过。macOS route-check artifact `13119946021` 明确 route false 并 `All tests skipped`，所以仍不是 macOS 原生拖放验收。macOS startup artifact `13119378925` 仅有 Impeller 与窗口/AX 诊断，无 `.ips` / `.crash`；验证包 artifacts `13118923216`/`13119138490`/`13119677748` 不是 v0.1.0 发行包。
 - 近期 CI 失败分类已复核并登记至 P04.59 报告：`41390211533`、`41388377556`、`41384798476` 是 macOS 合成事件无法路由；`41379092637` 是 probe teardown；`41386803238` 还包括 Windows fixture 临时目录句柄未释放（errno 32）；`41383442312` 是 macOS 集成测试桥接 Swift 编译错误。真实应用崩溃仍特指 `41370553563` 的 EngineContext 空 registry SIGSEGV；`9f2c70a` readiness handshake/nil guard 后本轮 launch smoke 未复现。见 `docs/diagnostics/2026-11-01-p04/p04.59-same-document-text-drag.md`。
 

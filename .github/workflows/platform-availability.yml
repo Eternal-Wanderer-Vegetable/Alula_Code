@@ -88,15 +88,18 @@ jobs:
           channel: stable
           cache: true
       - name: Build Rust core
+        id: build_rust_core
         shell: bash
         run: bash scripts/build_core.sh
       - name: Resolve Flutter dependencies
         run: flutter pub get --enforce-lockfile
         working-directory: app
       - name: Build Windows Release bundle
+        id: windows_release
         run: flutter build windows --release
         working-directory: app
       - name: Add Rust core DLL
+        id: windows_core_bundle
         shell: pwsh
         run: Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Release/ -Force
       - name: Launch Windows app and capture visible client area
@@ -509,12 +512,26 @@ jobs:
             $metadata | ConvertTo-Json -Depth 4 | Set-Content -Path $metadataPath -Encoding UTF8
           }
       - name: Run P03.7 Windows desktop interaction suite
+        id: windows_p037
         shell: pwsh
         working-directory: app
         run: |
           $env:ALULA_CORE_PATH = (Resolve-Path native/alula_core.dll).Path
           flutter test --no-pub -d windows --reporter expanded integration_test/windows_p03_7_desktop_test.dart
+      - name: Verify native Windows text drag/drop interaction
+        if: ${{ always() && !cancelled() && steps.build_rust_core.outcome == 'success' && steps.windows_release.outcome == 'success' && steps.windows_core_bundle.outcome == 'success' }}
+        shell: pwsh
+        run: python tools/vscode-parity/windows-native-dnd-input.py "$env:RUNNER_TEMP\alula-windows-native-dnd"
+      - name: Upload Windows native drag/drop diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-windows-native-dnd-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-windows-native-dnd
+          if-no-files-found: warn
+          retention-days: 7
       - name: Verify native Windows clipboard formats
+        if: ${{ always() && !cancelled() && steps.build_rust_core.outcome == 'success' }}
         shell: pwsh
         working-directory: app
         run: flutter test --no-pub -d windows --reporter expanded integration_test/editor_clipboard_desktop_test.dart
