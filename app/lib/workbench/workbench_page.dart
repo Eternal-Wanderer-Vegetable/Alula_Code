@@ -9787,7 +9787,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           maxLines: 8,
           decoration: const InputDecoration(
             labelText: '片段模板',
-            helperText: r'支持 $1、${1:默认值} 和 $0',
+            helperText: r'支持 $1、${1:默认值}、$0 和 $TM_SELECTED_TEXT',
           ),
         ),
         actions: [
@@ -9830,33 +9830,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    late final SnippetExpansion expansion;
-    try {
-      expansion = expandSnippetTemplate(template);
-    } on SnippetTemplateException catch (error) {
-      if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');
-      return;
-    }
-
     _flushInput(doc);
     final selection = doc.selection;
     final window = doc.inputWindow;
     final field = doc.inputFieldKey.currentState;
     final localStart = selection.start - window.startUtf16;
     final localEnd = selection.end - window.startUtf16;
+    final value = doc.editingValue;
     if (field == null ||
         doc.crossWindowSelection != null ||
         doc.columnSelection != null ||
         doc.additionalSelections.isNotEmpty ||
         !selection.isValid ||
         localStart < 0 ||
+        localStart > value.text.length ||
         localEnd > window.text.length ||
+        localEnd > value.text.length ||
         window.version != doc.doc.version) {
       if (mounted) setState(() => _statusDetail = '片段插入需要输入窗内的单个选区');
       return;
     }
 
-    final value = doc.editingValue;
+    final selectedText = value.text.substring(localStart, localEnd);
+    late final SnippetExpansion expansion;
+    try {
+      expansion = expandSnippetTemplate(
+        template,
+        variables: {'TM_SELECTED_TEXT': selectedText},
+      );
+    } on SnippetTemplateException catch (error) {
+      if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');
+      return;
+    }
+
     final nextLength = value.text.length - (localEnd - localStart) +
         expansion.text.length;
     if (nextLength > window.maxWindowUtf16) {

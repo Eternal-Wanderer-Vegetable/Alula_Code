@@ -12,15 +12,17 @@ import 'package:flutter_test/flutter_test.dart';
 
 Future<(Directory, File)> _openSnippetFixture(
   WidgetTester tester,
-  TargetPlatform platform,
-) async {
+  TargetPlatform platform, {
+  String initialText = 'x',
+}) async {
   debugDefaultTargetPlatformOverride = platform;
   final temp = Directory.systemTemp.createTempSync('alula-snippet');
   addTearDown(() async {
     if (temp.existsSync()) await temp.delete(recursive: true);
   });
   final workspace = Directory('${temp.path}/workspace')..createSync();
-  final file = File('${workspace.path}/sample.rs')..writeAsStringSync('x');
+  final file = File('${workspace.path}/sample.rs')
+    ..writeAsStringSync(initialText);
   final base = temp.path.replaceAll(r'\', '/');
   await tester.pumpWidget(AlulaApp(
     autoFolder: workspace.path,
@@ -191,4 +193,38 @@ void main() {
       }
     });
   }
+
+  testWidgets('selected-text variable inserts the original UTF-16 selection',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: '🙂x',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection =
+          const TextSelection(baseOffset: 0, extentOffset: 2);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_SELECTED_TEXT>$0',
+      );
+
+      expect(controller.text, '<🙂>x');
+      expect(controller.selection, const TextSelection.collapsed(offset: 4));
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '<🙂>x');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }

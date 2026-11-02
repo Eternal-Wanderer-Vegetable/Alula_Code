@@ -67,6 +67,26 @@ void main() {
       expect(expansion.text, r'$x } \ a}b a}b ${TM_FILENAME} $TM_FILENAME');
     });
 
+    test('expands selected text as literal text without a tabstop', () {
+      final expansion = expandSnippetTemplate(
+        r'<$TM_SELECTED_TEXT> ${TM_SELECTED_TEXT} \$TM_SELECTED_TEXT ${TM_FILENAME}$0',
+        variables: const {'TM_SELECTED_TEXT': '🙂x'},
+      );
+
+      expect(expansion.text, r'<🙂x> 🙂x $TM_SELECTED_TEXT ${TM_FILENAME}');
+      expect(expansion.tabstopOrder, [0]);
+      expect(expansion.rangesFor(0).single.startUtf16, expansion.text.length);
+    });
+
+    test('uses an explicitly resolved empty selected-text variable', () {
+      final expansion = expandSnippetTemplate(
+        r'${TM_SELECTED_TEXT:fallback}',
+        variables: const {'TM_SELECTED_TEXT': ''},
+      );
+
+      expect(expansion.text, isEmpty);
+    });
+
     test('preserves malformed placeholder syntax as literal text', () {
       expect(expandSnippetTemplate(r'${1:unfinished').text, r'${1:unfinished');
       expect(expandSnippetTemplate(r'$x').text, r'$x');
@@ -79,6 +99,10 @@ void main() {
       );
       expect(
         () => expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+      expect(
+        () => expandSnippetTemplate(r'${TM_SELECTED_TEXT/(.*)/$1/}'),
         throwsA(isA<SnippetTemplateException>()),
       );
       expect(

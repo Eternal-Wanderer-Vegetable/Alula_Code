@@ -1,4 +1,4 @@
-> Last Updated：2026-11-02（P04.64 / EDT-12a 基础片段占位符会话已实现：TextMate 基础展开、镜像编辑、Tab/Shift+Tab、最终光标、Esc、撤销和保存回读；三平台 target-platform widget tests 通过。完整 `bash init.sh` EXIT=0（Flutter 635、Rust workspace/Clippy/build_core），cargo fmt 检查通过，Flutter analyze 0 issues；精确 staged detached snapshot 通过完整门禁。最终 staged GitNexus scan MEDIUM，保留编辑前 CRITICAL 及索引截断限制。报告 `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。当前只完成基础子集；choice/变量/转换/嵌套/用户片段配置仍开放。PR CI 待 push 后确认。不要在本机启动 GUI/讲述人；原生 Windows 11/Linux DRM/macOS 验收仍 pending。）
+> Last Updated：2026-11-02（P04.65 / EDT-12b1 `$TM_SELECTED_TEXT` 已实现：flush 后捕获 UTF-16 单选区值并纯文本展开，空值/未知变量/transform fail-closed 有测试；定向 20 项、全量 Flutter 638、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 和精确 staged detached snapshot 全绿。报告 `docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。P04.64 的 PR CI 41473221940 与 Platform Availability 41473213540 全绿；前置 MSAA 红灯为 Value 文本断言，不是崩溃栈。choice、其他变量、transform、嵌套与用户片段配置仍开放。不要启动本机 GUI/讲述人；Windows 11 原生 Narrator/DPI、Linux DRM、macOS 原生设备/IME 验收 pending。）
 
 ## Current Objective
 继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 `docs/03-里程碑计划与验收标准.md` 为准。P04.64 / EDT-12a 已实现并通过本地门禁，完成本 slice 的 staged graph 检查、阶段提交和 push 后再选下一项。
@@ -13,7 +13,7 @@
 `app/lib/editor/snippet_template.dart`, `app/lib/editor/snippet_session.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/snippet_session_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。
 
 ## Recommended Next Step
-先完成 P04.64 的 staged-only snapshot 检查、GitNexus detect-changes 与阶段提交/push；随后从 docs/03 和 feature_list 选 EDT-12b 或其他依赖满足的单一切片。保留 P15 外部平台验收门。
+按 docs/03 与 feature_list 选择 EDT-12 的下一项单一切片；先做 GitNexus impact，再实现、精确 staged 验证、登记证据和分阶段提交/push。保留 P15 外部平台验收门。
 
 > Last Updated：2026-11-02（P04.63 / EDT-11e Paste As 本地实现与精确 staged 快照门禁已完成：detached worktree 的 `init.sh` EXIT=0（Flutter 617）、cargo fmt、flutter analyze 0 issues；真实桌面 clipboard round trip 已接入 Platform Availability。GitNexus 已刷新并完成 staged/compare 检查：重复 staged scans 为 14 files/32–46 symbols/395–430 flows、CRITICAL；graph field-name 扩散、567 跨语言漏链及 process truncation 记录在 P04.63 报告，不作风险降级。当前精确 14-file staged snapshot 待 commit/push，之后跟进 Linux/Windows hosted MIME round-trip 和 PR CI；通过后登记 P04.63 done。近期 CI 红灯日志无产品崩溃栈；唯一确认 crash `41370553563` 是独立 macOS startup SIGSEGV，`9f2c70a` 后 smoke 未复现。macOS DnD artifact `13135045729` 明确 SKIP。不要操作桌面 GUI，避免触发讲述人；500 MiB 留 P14。）
 

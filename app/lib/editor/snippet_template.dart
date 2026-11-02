@@ -51,12 +51,14 @@ class SnippetTemplateException implements Exception {
 
 /// Parses the basic TextMate placeholder subset used by snippet sessions.
 ///
-/// Supported forms are `$1`, `${1}`, `${1:default}`, and `$0`. `\$`, `\}`,
-/// and `\\` escape their following character. Choice, variable, transform, and
+/// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
+/// `$TM_SELECTED_TEXT` variable. `\$`, `\}`, and `\\` escape their following
+/// character. Unknown variables are kept verbatim. Choice, transform, and
 /// nested-placeholder syntax is kept for later parity slices; unsupported
 /// choice/transform forms fail explicitly instead of producing a partial edit.
 SnippetExpansion expandSnippetTemplate(
   String template, {
+  Map<String, String> variables = const {},
   bool insertFinalTabstop = true,
   int maxTemplateUtf16 = 64 * 1024,
   int maxExpandedUtf16 = 256 * 1024,
@@ -69,6 +71,7 @@ SnippetExpansion expandSnippetTemplate(
 
   final parser = _SnippetTemplateParser(
     template,
+    variables: variables,
     insertFinalTabstop: insertFinalTabstop,
     maxExpandedUtf16: maxExpandedUtf16,
     maxPlaceholderOccurrences: maxPlaceholderOccurrences,
@@ -94,6 +97,7 @@ class _SnippetSegment {
 class _SnippetTemplateParser {
   _SnippetTemplateParser(
     this.template, {
+    required this.variables,
     required this.insertFinalTabstop,
     required this.maxExpandedUtf16,
     required this.maxPlaceholderOccurrences,
@@ -112,6 +116,7 @@ class _SnippetTemplateParser {
 
   final String template;
   final List<int> _units;
+  final Map<String, String> variables;
   final bool insertFinalTabstop;
   final int maxExpandedUtf16;
   final int maxPlaceholderOccurrences;
@@ -150,6 +155,12 @@ class _SnippetTemplateParser {
               _offset,
             );
           }
+          continue;
+        }
+        final variable = _parseVariable();
+        if (variable != null) {
+          flushLiteral();
+          _segments.add(variable);
           continue;
         }
       }
@@ -235,6 +246,69 @@ class _SnippetTemplateParser {
     // An incomplete `${n:...` is ordinary text in TextMate snippets.
     return null;
   }
+
+  _SnippetSegment? _parseVariable() {
+    final start = _offset;
+    var cursor = start + 1;
+    var braced = false;
+    if (cursor < _units.length && _units[cursor] == _openBrace) {
+      braced = true;
+      cursor++;
+    }
+    if (cursor >= _units.length || !_isVariableStart(_units[cursor])) {
+      return null;
+    }
+
+    final nameStart = cursor++;
+    while (cursor < _units.length && _isVariablePart(_units[cursor])) {
+      cursor++;
+    }
+    final name = String.fromCharCodes(_units.sublist(nameStart, cursor));
+    if (braced) {
+      if (cursor < _units.length && _units[cursor] == _closeBrace) {
+        cursor++;
+      } else if (cursor < _units.length && _units[cursor] == _colon) {
+        cursor++;
+        var closed = false;
+        while (cursor < _units.length) {
+          final unit = _units[cursor];
+          if (unit == _backslash && cursor + 1 < _units.length) {
+            final escaped = _units[cursor + 1];
+            if (_isEscapable(escaped)) {
+              cursor += 2;
+              continue;
+            }
+          }
+          if (unit == _closeBrace) {
+            cursor++;
+            closed = true;
+            break;
+          }
+          cursor++;
+        }
+        if (!closed) return null;
+      } else if (cursor < _units.length && _units[cursor] == _slash) {
+        throw SnippetTemplateException(
+          'variable transforms are not supported yet',
+          start,
+        );
+      } else {
+        // Leave malformed expressions untouched for a later parity slice.
+        return null;
+      }
+    }
+
+    final value = variables[name];
+    _offset = cursor;
+    return _SnippetSegment.text(value ?? template.substring(start, cursor));
+  }
+
+  bool _isVariableStart(int unit) =>
+      (unit >= 0x41 && unit <= 0x5a) ||
+      (unit >= 0x61 && unit <= 0x7a) ||
+      unit == 0x5f;
+
+  bool _isVariablePart(int unit) => _isVariableStart(unit) || _isDigit(unit);
 
   bool _isDigit(int unit) => unit >= _zero && unit <= _nine;
 

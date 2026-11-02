@@ -5,11 +5,16 @@
 
 ## Current State（当前状态，2026-11-02 更新）
 
-### 最新进展（2026-11-02，P04.64 / EDT-12a 基础片段会话）
+### 最新进展（2026-11-02，P04.65 / EDT-12b1 选中文本片段变量）
 
-- 新增有界 TextMate 子集展开与绝对 UTF-16 Tabstop session；支持编号占位符/默认值镜像、Tab/Shift+Tab、最终光标、Esc 取消及模板命令。插入和镜像编辑沿用 Rust 文档输入/撤销路径；多选区、组合输入与窗外选区插入明确拒绝。未知变量保留文本，choice/transform/nested 明确拒绝，完整 EDT-12 仍开放。
-- 解析器/session/工作台定向 17 项通过；Windows/Linux/macOS target-platform 工作台覆盖未刷帧 Tab、镜像编辑、Shift+Tab、Esc、撤销与保存读回。完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 635），`cargo fmt --all -- --check` 通过，`flutter analyze` 0 issues；精确 staged detached snapshot 也通过完整门禁。没有本机 GUI 或原生设备测试。编辑前 GitNexus 三个共享入口均为 CRITICAL；最终 staged scan 为 MEDIUM，但索引截断限制和编辑前风险均保留在报告中。实现与验证边界见 `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。
-- 后续首项：按 docs/03 分解 EDT-12b（变量/choice/转换等）或其他依赖满足切片；先完成本阶段 staged graph 检查和提交，再继续。macOS/Linux DRM/Windows 11 原生验收与发布门保持 pending。
+- 新增 `$TM_SELECTED_TEXT` 与花括号形式；输入 flush 后捕获输入窗内单选区原文，按纯文本展开，不增 tabstop；空选区值为空，unknown variables 保留，变量 transform fail closed。没有 Rust/ABI 变化。
+- 定向 parser/session/workbench 20 项通过，含 emoji 代理对与保存回读；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 638），cargo fmt 通过，Flutter analyze 0 issues。精确 staged detached snapshot 也通过完整门禁。GitNexus staged scan LOW；私有 parser 方法 UNKNOWN 与索引截断限制已登记。没有本机 GUI。
+- P04.64 hosted PR CI 41473221940 与三平台 Platform Availability 41473213540 全绿。旧 run 41458740387 是 MSAA welcome text assertion 红灯，不是崩溃栈；历史 SIGSEGV 41370553563 单独记录。下一步从 docs/03 分解 EDT-12 后续的一项功能。证据：`docs/diagnostics/2026-11-02-p04/p04.65-selected-text-snippet-variable.md`。
+
+### 阶段进展（2026-11-02，P04.64 / EDT-12a 基础片段会话）
+
+- 基础 TextMate 子集支持编号占位符/默认值镜像、Tab/Shift+Tab、最终光标、Esc 取消及模板命令；镜像编辑沿用 Rust 输入与撤销路径。多选区、composition 和窗外插入拒绝；choice/transform/nested/其他变量仍开放。
+- 解析器/session/工作台定向 17 项通过；完整 `bash init.sh` EXIT=0（Flutter 635），cargo fmt 与 Flutter analyze 0 issues。报告 `docs/diagnostics/2026-11-02-p04/p04.64-snippet-session.md`。P04.64 hosted PR CI 与三平台 Release/launch lanes 随后通过，原生设备/IME 仍 pending。
 
 ### 最新进展（2026-11-02，P03.7 hosted MSAA 编辑器文本）
 
