@@ -13,7 +13,7 @@
 - CI 线索复核：PR run `41372387516` 的 Flutter Analyze 误扫 vendored Cargokit `build_tool` 且缺其独立 pub 依赖，已由 `1fbda68` 排除；Windows run `41398574665` 的 pointer cancel 断言假红和 `41386803238` 的大文件 teardown 锁文件已由 `5c1c501` 修复；macOS `41390211533` 是 hosted AppKit 输入无法 foreground/route，现作为 `input-route-unavailable` pending，不计通过。唯一确认的启动 SIGSEGV 是 `41370553563`，`9f2c70a` readiness handshake/nil guard 后多个 Release smoke 未复现；不得将测试假红等同 crash，也不把 smoke 当绝对无崩溃证明。
 - Linux Xvfb 和 hosted Linux/Windows 原生 Ctrl+拖放均通过：adapter fixture 的 drop-over 报 copy，callback 收到目标 doc 7002/v4、UTF-16 offset 6；同文档 move 与外部 text 路径仍过。OS 输入 probe 不直接调用工作台 handler，真实 handler 由独立 widget test 经 PR CI 复核。Linux 本地证据 `docs/diagnostics/2026-11-02-p04/p04.61-cross-document-text-copy-linux-xvfb/`；hosted artifacts `13129633026` / `13130780116`。完整 `init.sh` 再次 EXIT=0（Flutter 598、Rust workspace、Clippy、build_core）；Flutter analyze 与 cargo fmt 通过。
 - GitNexus 原预编辑索引报告 CRITICAL；重新索引至 `0eccaf3` 后 `_onCrossDocumentTextCopyDrop` 与 `RustTextInputFieldState` 当前 impact 为 LOW/exact，但 `_buildEditorTextDropRequest` 为 UNKNOWN/no callers，文本搜索确认它作为 `DropRegion.buildDropRequest` callback 使用。图谱仍提示 557 个跨语言属性访问未链接，风险和索引变化见 `docs/diagnostics/2026-11-02-p04/p04.61-cross-document-text-copy.md`，不把低风险或 UNKNOWN 当作路径完整证明。
-- 下一步：为 EDT-11 跨文档 Move 在 docs/03 拆出原子事务与双文档撤销切片，再实现并验证；Linux/Windows Ctrl Copy 已有 hosted evidence。macOS DnD 仍 pending（artifact `13130327858` 明确 route unavailable），500 MiB 目标仍留 P14。
+- 下一步：P04.62 / EDT-11d 已在 docs/03 定义：复用 P02.7 Rust workspace 原子事务，新增跨文档 Move 的 linked undo/redo；先实现 pair history 的清除、关闭、预算淘汰语义，再接入拖放。Linux/Windows Ctrl Copy 已有 hosted evidence；macOS DnD 仍 pending（artifact `13130327858` 明确 route unavailable），500 MiB 目标仍留 P14。
 
 ### 前次进展（2026-11-02，P04.60 / EDT-11b 外部纯文本拖入）
 
