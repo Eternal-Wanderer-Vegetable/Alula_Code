@@ -17,6 +17,7 @@ dependencies:
   ffi: ^2.1.0
   window_manager: ^0.5.2
   super_drag_and_drop: ^0.9.1
+  irondash_engine_context: ^0.5.5
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +25,13 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+
+dependency_overrides:
+  # Upstream publishes the macOS engine handle before its FlutterView registry
+  # entry exists. Keep the native fix local until upstream includes the same
+  # readiness handshake.
+  irondash_engine_context:
+    path: packages/irondash_engine_context
 
 flutter:
   uses-material-design: true

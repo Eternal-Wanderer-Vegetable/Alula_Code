@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:irondash_engine_context/irondash_engine_context.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 
 import 'text_drag_drop.dart';
@@ -55,13 +58,18 @@ class _EditorNativeTextDragDropState extends State<EditorNativeTextDragDrop> {
   void initState() {
     super.initState();
     if (!_nativeDragDropReady) {
-      // The macOS engine-context plugin publishes its FlutterView from a
-      // main-queue callback after plugin registration. Do not let the native
-      // drag/drop package request that view during the app's first frame.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) setState(() => _nativeDragDropReady = true);
-      });
+      unawaited(_waitForEngineContext());
     }
+  }
+
+  Future<void> _waitForEngineContext() async {
+    try {
+      await EngineContext.instance.getEngineHandle();
+    } on Object catch (error) {
+      debugPrint('macOS native drag/drop is unavailable: $error');
+      return;
+    }
+    if (mounted) setState(() => _nativeDragDropReady = true);
   }
 
   bool _isLocationDraggable(Offset globalPosition) {

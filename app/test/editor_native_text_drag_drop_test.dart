@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 
 void main() {
-  testWidgets('macOS native drag/drop waits until after the first frame',
+  testWidgets('macOS native drag/drop waits for the engine context handshake',
       (tester) async {
     final previousPlatform = debugDefaultTargetPlatformOverride;
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
