@@ -9852,15 +9852,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final selectedText = value.text.substring(localStart, localEnd);
-    final filenameVariables =
-        snippetFilenameVariables(doc.uri == null ? null : doc.name);
+    final homeVariable = Platform.isWindows ? 'USERPROFILE' : 'HOME';
+    final pathVariables = snippetDocumentPathVariables(
+      doc.uri == null ? null : doc.path,
+      windows: Platform.isWindows,
+      userHome: Platform.environment[homeVariable],
+    );
     late final SnippetExpansion expansion;
     try {
       expansion = expandSnippetTemplate(
         template,
         variables: {
           'TM_SELECTED_TEXT': selectedText,
-          ...filenameVariables,
+          ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
+          ...pathVariables,
         },
       );
     } on SnippetTemplateException catch (error) {

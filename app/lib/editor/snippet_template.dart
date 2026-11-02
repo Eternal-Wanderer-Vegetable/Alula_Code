@@ -1,3 +1,5 @@
+import 'package:path/path.dart' as path;
+
 /// A bounded TextMate snippet template expansion for the editor.
 ///
 /// Offsets use Dart string indices, which are UTF-16 code units and therefore
@@ -62,10 +64,82 @@ Map<String, String> snippetFilenameVariables(String? filename) {
   return {'TM_FILENAME': value, 'TM_FILENAME_BASE': baseName};
 }
 
+/// Returns the local path variables for a named document.
+///
+/// Labels use the host path style, normalize separators, lowercase a Windows
+/// drive letter like Code-OSS, and abbreviate paths under [userHome] on
+/// non-Windows hosts. Untitled documents resolve to empty strings.
+Map<String, String> snippetDocumentPathVariables(
+  String? filePath, {
+  required bool windows,
+  String? userHome,
+}) {
+  if (filePath == null || filePath.isEmpty) {
+    return const {
+      'TM_DIRECTORY': '',
+      'TM_DIRECTORY_BASE': '',
+      'TM_FILEPATH': '',
+    };
+  }
+
+  final context = path.Context(
+    style: windows ? path.Style.windows : path.Style.posix,
+  );
+  final normalizedPath = context.normalize(filePath);
+  final directory = context.dirname(normalizedPath);
+  final hasDirectory = directory != '.';
+  final pathLabel = _snippetPathLabel(
+    normalizedPath,
+    context: context,
+    windows: windows,
+    userHome: userHome,
+  );
+  final directoryLabel = hasDirectory
+      ? _snippetPathLabel(
+          directory,
+          context: context,
+          windows: windows,
+          userHome: userHome,
+        )
+      : '';
+
+  return {
+    'TM_DIRECTORY': directoryLabel,
+    'TM_DIRECTORY_BASE': hasDirectory && context.dirname(directory) != directory
+        ? context.basename(directory)
+        : '',
+    'TM_FILEPATH': pathLabel,
+  };
+}
+
+String _snippetPathLabel(
+  String value, {
+  required path.Context context,
+  required bool windows,
+  String? userHome,
+}) {
+  final label = context.normalize(value);
+  if (windows) {
+    return label.replaceFirstMapped(
+      RegExp(r'^([A-Z]):'),
+      (match) => '${match[1]!.toLowerCase()}:',
+    );
+  }
+
+  if (userHome == null || userHome.isEmpty) return label;
+  final normalizedHome = context.normalize(userHome);
+  if (label == normalizedHome) return '~';
+  final homePrefix = normalizedHome == '/' ? '/' : '$normalizedHome/';
+  if (!label.startsWith(homePrefix)) return label;
+  if (normalizedHome == '/') return '~/${label.substring(1)}';
+  return '~${label.substring(normalizedHome.length)}';
+}
+
 /// Parses the basic TextMate placeholder subset used by snippet sessions.
 ///
 /// Supported forms are `$1`, `${1}`, `${1:default}`, `$0`, and the
-/// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, and `$TM_FILENAME_BASE` variables.
+/// `$TM_SELECTED_TEXT`, `$TM_FILENAME`, `$TM_FILENAME_BASE`, `$TM_DIRECTORY`,
+/// `$TM_DIRECTORY_BASE`, and `$TM_FILEPATH` variables.
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Choice, transform, and nested-placeholder syntax is kept
 /// for later parity slices; unsupported choice/transform forms fail explicitly

@@ -27,6 +27,82 @@ void main() {
     });
   });
 
+  group('snippetDocumentPathVariables', () {
+    test('formats nested POSIX paths and tildifies the home directory', () {
+      expect(
+        snippetDocumentPathVariables(
+          '/home/alice/project/src/main.rs',
+          windows: false,
+          userHome: '/home/alice',
+        ),
+        {
+          'TM_DIRECTORY': '~/project/src',
+          'TM_DIRECTORY_BASE': 'src',
+          'TM_FILEPATH': '~/project/src/main.rs',
+        },
+      );
+    });
+
+    test('keeps POSIX filesystem-root parent behavior', () {
+      expect(
+        snippetDocumentPathVariables('/main.rs', windows: false),
+        {
+          'TM_DIRECTORY': '/',
+          'TM_DIRECTORY_BASE': '',
+          'TM_FILEPATH': '/main.rs',
+        },
+      );
+    });
+
+    test('normalizes Windows drive paths and lowercases the drive letter', () {
+      expect(
+        snippetDocumentPathVariables(
+          r'C:\workspace\src\..\src\main.rs',
+          windows: true,
+          userHome: r'C:\Users\Alice',
+        ),
+        {
+          'TM_DIRECTORY': r'c:\workspace\src',
+          'TM_DIRECTORY_BASE': 'src',
+          'TM_FILEPATH': r'c:\workspace\src\main.rs',
+        },
+      );
+    });
+
+    test('handles Windows drive roots and UNC paths', () {
+      expect(
+        snippetDocumentPathVariables(r'C:\main.rs', windows: true),
+        {
+          'TM_DIRECTORY': r'c:\',
+          'TM_DIRECTORY_BASE': '',
+          'TM_FILEPATH': r'c:\main.rs',
+        },
+      );
+      expect(
+        snippetDocumentPathVariables(
+          r'\\server\share\src\main.rs',
+          windows: true,
+        ),
+        {
+          'TM_DIRECTORY': r'\\server\share\src',
+          'TM_DIRECTORY_BASE': 'src',
+          'TM_FILEPATH': r'\\server\share\src\main.rs',
+        },
+      );
+    });
+
+    test('returns empty variables for untitled documents', () {
+      expect(
+        snippetDocumentPathVariables(null, windows: false),
+        {
+          'TM_DIRECTORY': '',
+          'TM_DIRECTORY_BASE': '',
+          'TM_FILEPATH': '',
+        },
+      );
+    });
+  });
+
   group('expandSnippetTemplate', () {
     test('expands defaults, linked tabstops, and the final cursor stop', () {
       final expansion = expandSnippetTemplate(r'let ${1:name} = $1;$0');

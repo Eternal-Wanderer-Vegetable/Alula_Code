@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/editor/snippet_template.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -253,6 +254,45 @@ void main() {
       await _press(tester, LogicalKeyboardKey.keyS, control: true);
       await tester.pump(const Duration(milliseconds: 100));
       expect(file.readAsStringSync(), 'x<sample.rs|sample>');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('path variables use the active document path and save',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.linux,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      final homeVariable = Platform.isWindows ? 'USERPROFILE' : 'HOME';
+      final variables = snippetDocumentPathVariables(
+        file.path,
+        windows: Platform.isWindows,
+        userHome: Platform.environment[homeVariable],
+      );
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<$TM_DIRECTORY|$TM_DIRECTORY_BASE|$TM_FILEPATH>$0',
+      );
+
+      final inserted = '<${variables['TM_DIRECTORY']}|'
+          '${variables['TM_DIRECTORY_BASE']}|${variables['TM_FILEPATH']}>';
+      expect(controller.text, 'x$inserted');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'x$inserted');
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;

@@ -1,20 +1,20 @@
-> Last Updated：2026-11-03（P04.66 / EDT-12b2 已由 189e920 提交/push；定向 24 项、本地 Flutter 642、Rust workspace/Clippy/build_core、cargo fmt、flutter analyze 0 issues 全绿。PR CI 41482164944 与 Platform Availability 41482157012 全绿；Linux/Windows/macOS Release/启动与打包 smoke 通过，当前 Windows close lifecycle 检查通过；macOS DnD 因 hosted pointer route=false 明确 skipped，startup artifact 13161417248 仅 Impeller 日志、无 .ips/.crash。用户提醒 CI 反复失败可能关联崩溃；复核发现旧 Windows Release artifact `d5319369` 在 `41454766973` 两种主题关闭均以 `0xC000041D` 退出（历史无 UIA 对照同样失败），而多数近期 Platform 红灯仍为 UIA/MSAA、脚本或 fixture 问题。当前 PR CI `41487367300` 通过。证据见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。这证明旧二进制有真实关闭 crash，不证明 CI 红灯造成 crash；不要将旧 artifact 结果套到新构建。macOS SIGSEGV 41370553563 仍未证明永久消除。不要启动本机 GUI/讲述人；Windows Narrator/DPI、Linux DRM、macOS 原生 DnD/IME 验收仍 pending。）
+> Last Updated：2026-11-03（P04.67 / EDT-12b3 路径片段变量本地门禁通过：定向 25 项、完整 init.sh Flutter 648、Rust workspace/Clippy/build_core、cargo fmt、Flutter analyze 0 issues 全绿。GitNexus staged scan 为 11 files/4 symbols/0 processes/LOW、all-scope 为 11 files/4 symbols/0 processes/LOW；502 跨语言字段访问、852 未探索入口、447 跳过 callee、13 条预算截断 walk 已记录，不按零流程降级风险。阶段证据：docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md。待将精确阶段 patch 应用于根仓、提交/push 并检查 hosted CI；无本机 GUI/Narrator。）
 
 ## Current Objective
-继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 docs/03-里程碑计划与验收标准.md 为准。P04.66 / EDT-12b2 文件名片段变量已完成并通过本地与 hosted 门禁；下一项沿 EDT-12 选择一个子功能。用户指出反复 CI 失败可能与崩溃有关；新红灯优先完整保全日志、artifact 与 crash report，按断言/脚本/应用崩溃分类，并确认是否有可复现因果。
+继续执行固定版本 VS Code 无插件复刻计划；状态与 DoD 以 docs/03-里程碑计划与验收标准.md 为准。当前唯一活动 feature 为 P04 / feat-026；P04.67 / EDT-12b3 路径变量已通过本地代码门禁，正在完成 GitNexus 最终扫描、精确暂存提交与 hosted CI 检查。后续 EDT-12 项目仍按单切片推进。
 
 ## Blockers and Follow-ups
 - P15 外部验收仍 pending：Windows 11 Narrator/键盘焦点与 DPI/主题矩阵、Linux native DRM、macOS 原生 DnD/IME。macOS hosted DnD artifact 明确 SKIP，不能替代真机验收。
-- EDT-12 后续 choice/其他变量/transform/嵌套与用户片段配置未实现。
-- CI/crash 分类：少数失败是未启动应用的 analyzer/script/fixture 错误；旧 Windows artifact run 41454766973 的 `d5319369` 二进制在关闭阶段真实返回 `0xC000041D`，无 UIA 对照复现；重建分支 189e920 的 hosted Windows close smoke 通过。macOS startup SIGSEGV 41370553563 是另一条独立待证问题，9f2c70a 后 smoke 未复现，最新 startup artifact 仅 Impeller 日志；不宣称 crash 永久消除。完整审计见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
-- 当前 GitNexus refreshed impact 对 expandSnippetTemplate 报 CRITICAL（76 symbols/142 processes）；这是未来任何代码编辑前必须复核的风险，不能用旧隔离扫描降级。
+- EDT-12 其他上下文变量、choice/transform/嵌套及用户片段配置仍未实现；P04.67 证据不代替原生 Windows/macOS 路径和设备验证。
+- 用户提醒的 CI/crash 分类已登记：旧 Windows artifact run 41454766973 的 `d5319369` 二进制在关闭阶段真实返回 `0xC000041D`，无 UIA 对照复现；重建分支 189e920 的 hosted Windows close smoke 通过。macOS startup SIGSEGV 41370553563 是独立待证问题；不宣称永久消除。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- 根仓刷新后的 `expandSnippetTemplate` impact 曾报 CRITICAL（76 symbols/142 processes）；任何后续代码编辑前必须复核该风险，不得用隔离快照 LOW 降级。
 - 不在本机启动 GUI，避免触发讲述人。
 
 ## Files Involved
-`app/lib/editor/snippet_template.dart`, `app/lib/editor/snippet_session.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/snippet_template_test.dart`, `app/test/snippet_session_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-03-p04/p04.66-filename-snippet-variables.md`。
+`app/lib/editor/snippet_template.dart`, `app/lib/workbench/workbench_page.dart`, `app/pubspec.yaml`, `app/pubspec.lock`, `app/test/snippet_template_test.dart`, `app/test/workbench_snippet_test.dart`, `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`, `docs/diagnostics/2026-11-03-p04/p04.67-file-path-snippet-variables.md`。
 
 ## Recommended Next Step
-先检查是否有新 CI 红灯；若有，下载完整日志/artifacts 并区分 runner/断言/脚本/应用 crash，再决定是否修复。若无新红灯，按 docs/03 与 feature_list 选择 EDT-12 下一项单一切片；编辑前刷新 GitNexus 并复核 expandSnippetTemplate 的 CRITICAL impact，完成精确 staged scan、DoD 与证据后分阶段提交/push。保留 P15 外部平台验收门。
+在根仓先核对既有用户工作树，仅应用 P04.67 精确阶段 patch 并按内容暂存；确认 staged diff 不含其他改动后提交/push 已授权分支，检查该提交的 PR CI 与 Platform Availability。若 CI 红灯，下载完整日志和 artifacts，按 runner/断言/脚本/应用 crash 分类并修复后再推进；CI 通过后按 docs/03 选择 EDT-12 下一项。
 
 > Last Updated：2026-11-02（P04.63 / EDT-11e Paste As 本地实现与精确 staged 快照门禁已完成：detached worktree 的 `init.sh` EXIT=0（Flutter 617）、cargo fmt、flutter analyze 0 issues；真实桌面 clipboard round trip 已接入 Platform Availability。GitNexus 已刷新并完成 staged/compare 检查：重复 staged scans 为 14 files/32–46 symbols/395–430 flows、CRITICAL；graph field-name 扩散、567 跨语言漏链及 process truncation 记录在 P04.63 报告，不作风险降级。当前精确 14-file staged snapshot 待 commit/push，之后跟进 Linux/Windows hosted MIME round-trip 和 PR CI；通过后登记 P04.63 done。近期 CI 红灯日志无产品崩溃栈；唯一确认 crash `41370553563` 是独立 macOS startup SIGSEGV，`9f2c70a` 后 smoke 未复现。macOS DnD artifact `13135045729` 明确 SKIP。不要操作桌面 GUI，避免触发讲述人；500 MiB 留 P14。）
 

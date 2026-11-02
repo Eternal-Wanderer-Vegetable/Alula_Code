@@ -5,7 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量，已完成）
+### 最新进展（2026-11-03，P04.67 / EDT-12b3 文件路径片段变量，本地门禁通过）
+
+- 对齐固定 Code-OSS 1.145.0 的 `$TM_DIRECTORY`、`$TM_DIRECTORY_BASE`、`$TM_FILEPATH`：命名文档按主机路径风格规范化，POSIX/macOS home 下缩写为 `~`，Windows 盘符小写，根目录 basename 为空；untitled 三变量为空。替换沿现有 Rust 输入、撤销与保存路径，无 ABI 改动。
+- 新增 POSIX、Windows drive/root/UNC、home 纯函数用例和活动文档插入/保存回读用例；定向 25 项通过。完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 648），`cargo fmt --all -- --check` 通过，Flutter analyze 0 issues。GitNexus 精确 staged scan 为 11 files/4 symbols/0 affected processes、LOW；all-scope 为 11 files/4 symbols/0 affected processes、LOW。索引漏链/预算截断不视作零风险，细节见证据报告。未启动本机 GUI/Narrator；hosted CI 待提交触发，P15 原生平台验收仍 pending。
+
+### 阶段进展（2026-11-03，P04.66 / EDT-12b2 文件名片段变量，已完成）
 
 - 片段变量新增 `$TM_FILENAME` 与 `$TM_FILENAME_BASE`，flush 后从活动命名文档 basename 解析；base 只去掉最后扩展名，dotfile 保留。未命名文档当前解析为空字符串。无 Rust/ABI 改动。
 - 定向 parser/session/workbench 24 项通过；完整 bash init.sh EXIT=0（Rust workspace、Clippy、build_core、Flutter 642），cargo fmt 与 Flutter analyze 0 issues。实现参考固定 Code-OSS 1.145.0；提交 189e920 已 push。PR CI 41482164944、Platform Availability 41482157012 三平台 Release/启动与打包 smoke 全绿；macOS DnD 因 hosted pointer route=false skipped，startup artifact 13161417248 只有 Impeller 日志、无 .ips/.crash。未启动本机 GUI/Narrator。
