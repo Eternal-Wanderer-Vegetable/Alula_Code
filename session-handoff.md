@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.99 / EDT-17g diff navigation and hosted Linux/Windows/macOS package gates are complete; the next EDT-17 slice must be registered before code edits.
+> Last Updated: 2026-11-04. P04.99 / EDT-17g is complete; P04.100 / EDT-17h is registered for Git Diff F1 navigation actions.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are being committed. Next, register a narrow EDT-17 slice for Command Palette exposure of the pinned diff-review actions, then run fresh GitNexus impact before editing code. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are pushed. P04.100 now covers Command Palette exposure of pinned accessible-diff actions; run GitNexus impact before code edits. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -29,7 +29,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; P04.99 code SHA `ce78c3f8cc2242c89f9976a46a5a3c44270f4a0e` is pushed, with docs/evidence commit pending.
+- Worktree: `/tmp/alula-p04.70-next`; P04.99 code and hosted evidence are pushed through `0deff5f`; P04.100 registration is the current docs-only slice.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -37,7 +37,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 - P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
 - The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
-- The pinned F1/Command Palette exposure for `editor.action.diffReview.next/prev` remains an explicit EDT-17 gap; register it as P04.100 before implementation.
+- P04.100 / EDT-17h is registered to expose `editor.action.accessibleDiffViewer.next/prev` in the Git Diff Command Palette. No code edits have started.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -59,7 +59,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
 2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
 3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Register P04.100 for Command Palette availability of the pinned diff-review actions in `docs/03`, then refresh GitNexus and run impact before editing code.
+4. Refresh GitNexus and run impact for the command service and Git Diff view before editing P04.100 code.
 
 ## Recommended Next Step
 

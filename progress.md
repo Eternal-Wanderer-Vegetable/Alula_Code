@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.100 / EDT-17h：F1 差异导航命令（已登记，未开工）
+
+- P04.99 已完成后，固定 Code-OSS 源码复核确认 F1 命令的实际 ID 为 editor.action.accessibleDiffViewer.next/prev（不是 editor.action.diffReview.*）；其标题分别为 Go to Next/Previous Difference，带 f1: true、isInDiffEditor 前置条件以及 F7/Shift+F7 键位。
+- 已在 docs/03-里程碑计划与验收标准.md 登记 P04.100：在活动且可导航的 Git Diff patch viewer 中通过命令面板执行已有下一处/上一处状态，确保只移动一次；覆盖隐藏/禁用条件、环绕与两种视图。下一步刷新/核对 GitNexus impact 后再改代码。
+- 本轮 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast 通过：Rust workspace 71+46、build_core、Flutter 844；PR #2 仍 OPEN/draft。本机 GUI/Narrator 未启动。
+- CI 与崩溃关联按 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md 分类：常规 CI 最新 100 条全绿；Platform Availability 的历史红灯多为输入路由、验证器或可访问性断言，未显示与旧 Windows close crash 相同的异常签名。旧 Windows crash 在后续修正 artifact 回放未复现，可能已缓解但根因仍未证实。
+
+
 ### P04.99 / EDT-17g：Git unified diff 差异导航（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 F7 / Shift+F7 上一处/下一处差异导航，跨末/首处循环；连续删除/新增块视为一处，no-newline marker 不拆块。inline 与 side-by-side 都居中揭示并高亮目标，工具栏按钮与 live region 播报序号/总数/行号；patch 更新重置索引，无差异/raw fallback 禁用导航。实现入口为纯模型 `GitDiffPatchView`，无 Rust/ABI 或文本修改。
