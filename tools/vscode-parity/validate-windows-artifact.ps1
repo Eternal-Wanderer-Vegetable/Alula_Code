@@ -492,7 +492,7 @@ $interactionResult = [ordered]@{
   multiviewTextAfterSave = $null
   multiviewEndKeyEventsSent = 0
   multiviewEnterKeyEventsSent = 0
-  multiviewAppendKeyEventsSent = 0
+  multiviewAppendInputRoute = 'not-attempted'
   workspaceTreeNames = @()
   openFileMenuNames = @()
   quickOpenNames = @()
@@ -839,16 +839,23 @@ try {
       if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
         throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
       }
-      $interactionResult.multiviewAppendKeyEventsSent = [AlulaArtifactWindow]::SendUnicodeText($appendBody)
-      $expectedAppendEventCount = $appendBody.Length * 2
-      if ($interactionResult.multiviewAppendKeyEventsSent -ne $expectedAppendEventCount) {
-        throw "SendInput appended $($interactionResult.multiviewAppendKeyEventsSent) of $expectedAppendEventCount Unicode keyboard events in the second view"
-      }
-      Start-Sleep -Milliseconds 250
-      $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
-      $interactionResult.multiviewEditorValuesAfterEdit = @($secondViewEditedSnapshot.Nodes | Where-Object {
-        $_.Role -eq '42' -and $_.Value
-      } | ForEach-Object { $_.Value })
+      # The x64 app under Windows 11 ARM accepts SendInput key events but has
+      # intermittently dropped KEYEVENTF_UNICODE characters after splitting a
+      # view. Use the same clipboard/paste route as Quick Open, then poll the
+      # exact synchronized editor values instead of treating accepted events as
+      # proof that text reached the app.
+      $interactionResult.multiviewAppendInputRoute = 'clipboard-paste'
+      Set-Clipboard -Value $appendBody
+      Send-ArtifactKeys '^v' 500
+      $multiviewEditDeadline = (Get-Date).AddSeconds(5)
+      do {
+        $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
+        $interactionResult.multiviewEditorValuesAfterEdit = @($secondViewEditedSnapshot.Nodes | Where-Object {
+          $_.Role -eq '42' -and $_.Value
+        } | ForEach-Object { $_.Value })
+        if (@($interactionResult.multiviewEditorValuesAfterEdit | Where-Object { $_ -ceq $expectedMultiviewText }).Count -ge 2) { break }
+        Start-Sleep -Milliseconds 200
+      } while ((Get-Date) -lt $multiviewEditDeadline)
       if (@($interactionResult.multiviewEditorValuesAfterEdit | Where-Object { $_ -ceq $expectedMultiviewText }).Count -lt 2) {
         throw "Editing the second view did not update both views; text values: $($interactionResult.multiviewEditorValuesAfterEdit -join ' | ')"
       }
