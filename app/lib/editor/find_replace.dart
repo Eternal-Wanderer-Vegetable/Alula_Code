@@ -26,18 +26,54 @@ List<TextMatch> findMatches(
   String text,
   String query, {
   bool caseSensitive = false,
+  bool wholeWord = false,
 }) {
   if (query.isEmpty) return const [];
-  final t = caseSensitive ? text : text.toLowerCase();
-  final q = caseSensitive ? query : query.toLowerCase();
   final out = <TextMatch>[];
-  var i = t.indexOf(q);
-  while (i >= 0) {
-    out.add(TextMatch(i, i + q.length));
-    i = t.indexOf(q, i + q.length);
+  if (caseSensitive) {
+    var offset = text.indexOf(query);
+    while (offset >= 0) {
+      final end = offset + query.length;
+      if (!wholeWord || _isWholeWordRange(text, offset, end)) {
+        out.add(TextMatch(offset, end));
+      }
+      offset = text.indexOf(query, end);
+    }
+    return out;
+  }
+
+  // Matching against a lowercased copy can shift UTF-16 offsets when Unicode
+  // lowercasing expands a character (for example U+0130). RegExp reports
+  // ranges in the original string while preserving literal, non-overlapping
+  // matching semantics.
+  final literal = RegExp(RegExp.escape(query), caseSensitive: false);
+  for (final match in literal.allMatches(text)) {
+    final start = match.start;
+    final end = match.end;
+    if (!wholeWord || _isWholeWordRange(text, start, end)) {
+      out.add(TextMatch(start, end));
+    }
   }
   return out;
 }
+
+const _defaultFindWordSeparators = r"""`~!@#$%^&*()-=+[{]}\|;:'",.<>/?""";
+final _findWhitespace = RegExp(r'\s');
+
+bool _isWholeWordRange(String text, int start, int end) =>
+    _isFindWordStart(text, start) && _isFindWordEnd(text, end);
+
+bool _isFindWordStart(String text, int offset) =>
+    offset <= 0 || _isFindWordSeparator(text.substring(offset - 1, offset));
+
+bool _isFindWordEnd(String text, int offset) =>
+    offset >= text.length ||
+    _isFindWordSeparator(text.substring(offset, offset + 1));
+
+bool _isFindWordSeparator(String codeUnit) =>
+    codeUnit == '\uFEFF' ||
+    _defaultFindWordSeparators.contains(codeUnit) ||
+    _findWhitespace.hasMatch(codeUnit);
 
 /// Returns the first index whose ordered, non-overlapping match ends after
 /// [offsetUtf16]. This lets bounded editor views skip matches before their
@@ -69,8 +105,14 @@ ReplaceAllResult replaceAllMatches(
   String query,
   String replacement, {
   bool caseSensitive = false,
+  bool wholeWord = false,
 }) {
-  final matches = findMatches(text, query, caseSensitive: caseSensitive);
+  final matches = findMatches(
+    text,
+    query,
+    caseSensitive: caseSensitive,
+    wholeWord: wholeWord,
+  );
   if (matches.isEmpty) return ReplaceAllResult(text, 0);
   final buf = StringBuffer();
   var cursor = 0;

@@ -40,6 +40,30 @@ void main() {
       expect(m.single.start, 3);
     });
 
+    test('全字匹配遵循分隔符并保持 Emoji 与 CRLF 的 UTF-16 偏移', () {
+      const text = '👨foo foo_bar foo-bar\r\nfoo';
+      expect(findMatches(text, 'foo'), hasLength(4));
+      expect(
+        findMatches(text, 'foo', wholeWord: true)
+            .map((match) => (match.start, match.end))
+            .toList(),
+        [(14, 17), (23, 26)],
+      );
+    });
+
+    test('大小写不敏感匹配返回原文 UTF-16 偏移', () {
+      const text = '\u0130foo FOO';
+      expect(
+        findMatches(text, 'foo').map((match) => match.start).toList(),
+        [1, 5],
+      );
+    });
+
+    test('BOM 作为空白边界支持全字匹配', () {
+      expect(findMatches('\uFEFFword\uFEFF', 'word', wholeWord: true),
+          hasLength(1));
+    });
+
     test('有界输入窗可二分定位首个相交的 UTF-16 命中', () {
       final matches = findMatches('a👨a👨a', 'a');
       expect(firstTextMatchEndingAfter(matches, 0), 0);
@@ -61,6 +85,17 @@ void main() {
           replaceAllMatches('Foo foo FOO', 'foo', 'bar', caseSensitive: false);
       expect(r.count, 3);
       expect(r.newText, 'bar bar bar');
+    });
+
+    test('全字替换不改写单词内部的相同子串', () {
+      final r = replaceAllMatches(
+        'foo foobar foo_bar foo-bar\r\nfoo',
+        'foo',
+        'X',
+        wholeWord: true,
+      );
+      expect(r.count, 3);
+      expect(r.newText, 'X foobar foo_bar X-bar\r\nX');
     });
 
     test('替换串包含查询串不造成重叠误替换', () {

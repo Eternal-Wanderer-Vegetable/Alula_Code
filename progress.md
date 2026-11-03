@@ -5,6 +5,11 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 当前工作（2026-11-03，P04.80 / EDT-13a 全字匹配，in-progress）
+
+- 查找栏加入全字匹配开关，按同一命中结果驱动计数、编辑器高亮和小地图标记；当前/全部替换及上下导航复用该结果。分隔符采用工作台现有 Code-OSS 默认 word-separator 集合并将空白视为边界。大小写不敏感匹配改为在原文上匹配，以避免 Unicode 小写映射改变长度后 UTF-16 命中偏移漂移。
+- 纯逻辑与工作台集成用例已加入，覆盖 Emoji、CRLF、BOM、下划线边界、UTF-16 偏移、当前替换与全部替换。定向 find/workbench 测试 33 项通过；完整 `FLUTTER_BIN=... bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **721**）；`cargo fmt --all -- --check`、`app/` 内 `flutter analyze --no-pub`（0 issues）及 `git diff --check` 通过。本机 GUI/Narrator 未启动。剩余工作：GitNexus 变更检查、分阶段提交及 hosted Linux/Windows/macOS package gate。
+
 ### 最新进展（2026-11-03，P04.79 / EDT-12e 多光标片段插入，首批 hosted 门禁通过）
 
 - 多光标 snippet 按各自选区解析 selected text、行号、当前行与当前词，共用文件/工作区/剪贴板变量。最多 64 个同一有界输入窗内的普通选区；占位符总数最多 4096、每个 tabstop transforms 最多 64。所有展开经过快照校验后，以一个 Rust transaction 和一个 undo 帧写入；tabstop/镜像/choice/transform 同步导航，多行 transform 保留每个插入点缩进。IME、列选、跨窗、交叠/无效选区、超限、超时和 stale state 在事务前拒绝。无 Rust/ABI 改动。

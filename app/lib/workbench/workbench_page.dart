@@ -356,6 +356,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _matchesDocVersion = -1;
   int _matchIndex = -1;
   bool _caseSensitive = false;
+  bool _wholeWord = false;
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
@@ -12265,7 +12266,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _matchesDocId = active?.id ?? -1;
     _matchesDocVersion = active?.doc.version ?? -1;
     _matches = _findVisible
-        ? findMatches(text, _findQuery.text, caseSensitive: _caseSensitive)
+        ? findMatches(
+            text,
+            _findQuery.text,
+            caseSensitive: _caseSensitive,
+            wholeWord: _wholeWord,
+          )
         : const [];
     _findOverviewLines =
         _findVisible ? buildEditorMinimapFindLines(text, _matches) : const [];
@@ -12440,7 +12446,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _flushInput(active, commitComposition: true);
     final r = replaceAllMatches(
         active.text, _findQuery.text, _replaceInput.text,
-        caseSensitive: _caseSensitive);
+        caseSensitive: _caseSensitive, wholeWord: _wholeWord);
     if (r.count == 0) {
       setState(() => _statusDetail = '无匹配');
       return;
@@ -14934,6 +14940,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       style: TextStyle(
                           fontSize: 11,
                           color: _caseSensitive
+                              ? Colors.lightBlueAccent
+                              : Colors.grey.shade400)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  key: const ValueKey('find-whole-word'),
+                  tooltip: '全字匹配',
+                  onPressed: () {
+                    setState(() {
+                      _wholeWord = !_wholeWord;
+                      _refreshMatches();
+                    });
+                  },
+                  icon: Text('ab',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: _wholeWord
                               ? Colors.lightBlueAccent
                               : Colors.grey.shade400)),
                   visualDensity: VisualDensity.compact,

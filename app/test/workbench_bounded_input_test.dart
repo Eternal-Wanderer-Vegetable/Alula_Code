@@ -10,6 +10,71 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('find whole-word toggle refreshes count and editor highlights',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-whole-word');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const source = '👨foo foo_bar foo-bar\r\nfoo';
+    File('${workspace.path}/notes.txt').writeAsStringSync(source);
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('notes.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    final findBar = find.byKey(const ValueKey('find-bar'));
+    await tester.enterText(
+      find.descendant(of: findBar, matching: find.byType(TextField)).first,
+      'foo',
+    );
+    await tester.pump();
+    expect(find.text('-/4'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('全字匹配'));
+    await tester.pump();
+    expect(find.text('-/2'), findsOneWidget);
+    final editor = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField),
+    );
+    expect(
+      editor.rangeDecorations
+          .map((decoration) => (decoration.startUtf16, decoration.endUtf16))
+          .toList(),
+      [(14, 17), (22, 25)],
+    );
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyH);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    final fields =
+        find.descendant(of: findBar, matching: find.byType(TextField));
+    await tester.enterText(fields.at(1), 'X');
+    await tester.tap(find.byTooltip('替换').first);
+    await tester.pump();
+    await tester.tap(find.byTooltip('替换').first);
+    await tester.pump(const Duration(milliseconds: 100));
+    final document = tester
+        .widget<RustTextInputField>(find.byType(RustTextInputField))
+        .inputWindow
+        .document;
+    expect(document.resync().content, '👨foo foo_bar X-bar\nfoo');
+  });
+
   testWidgets('Workbench paints find hits as versioned Rust UTF-16 ranges',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-find-ranges');
