@@ -123,6 +123,68 @@ void main() {
     });
   });
 
+  group('preserve-case replacement', () {
+    test('keeps upper, lower, title and first-character case patterns', () {
+      expect(buildPreserveCaseReplacement('FOO', 'bAR'), 'BAR');
+      expect(buildPreserveCaseReplacement('foo', 'bAR'), 'bar');
+      expect(buildPreserveCaseReplacement('Foo', 'bAR'), 'BAR');
+      expect(buildPreserveCaseReplacement('fOo', 'bAR'), 'bAR');
+    });
+
+    test('preserves matching kebab and snake case segments', () {
+      expect(
+          buildPreserveCaseReplacement('HTTP-Server', 'new-path'), 'NEW-Path');
+      expect(buildPreserveCaseReplacement('FOO_BAR', 'new_name'), 'NEW_NAME');
+    });
+
+    test('matches Unicode case expansion and leaves empty matches unchanged',
+        () async {
+      expect(buildPreserveCaseReplacement('ẞ', 'straße'), 'STRASSE');
+      expect(buildPreserveCaseReplacement('foo', 'İ'), 'i\u0307');
+      expect(buildPreserveCaseReplacement('foo', 'ΟΣ'), 'ος');
+      expect(buildPreserveCaseReplacement('foo', 'ßΣ'), 'ßς');
+      expect(buildPreserveCaseReplacement('', 'bAR'), 'bAR');
+      final zeroWidth = await replaceRegexMatches(
+        'aa',
+        r'(?=a)',
+        'bAR',
+        preserveCase: true,
+      );
+      expect(zeroWidth.newText, 'bARabARa');
+      expect(zeroWidth.count, 2);
+    });
+
+    test('literal and static regex replacements preserve each match', () async {
+      final literal = replaceAllMatches(
+        'FOO Foo foo fOo',
+        'foo',
+        'bAR',
+        preserveCase: true,
+      );
+      expect(literal.newText, 'BAR BAR bar bAR');
+
+      final regex = await replaceRegexMatches(
+        'FOO Foo foo fOo',
+        'foo',
+        'bAR',
+        preserveCase: true,
+      );
+      expect(regex.newText, 'BAR BAR bar bAR');
+      expect(regex.count, 4);
+    });
+
+    test('capture templates retain their own casing without extra mapping',
+        () async {
+      final result = await replaceRegexMatches(
+        'FOO Foo foo fOo',
+        r'(foo)',
+        r'$1-x',
+        preserveCase: true,
+      );
+      expect(result.newText, 'FOO-x Foo-x foo-x fOo-x');
+    });
+  });
+
   group('findRegexMatches', () {
     test('finds capture-bearing patterns used by regex replacement', () async {
       final result = await findRegexMatches('foo_1 foo_2', r'foo_(\d+)');

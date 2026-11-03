@@ -380,6 +380,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Completer<void>? _findReplaceWorkerCancellation;
   bool _caseSensitive = false;
   bool _wholeWord = false;
+  bool _preserveCase = false;
   bool _regexFind = false;
   bool _findInSelection = false;
   List<TextMatchScope> _findSelectionScopes = const [];
@@ -12315,6 +12316,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleFindHistoryUpdate();
   }
 
+  void _togglePreserveCase() {
+    _cancelRegexReplace();
+    setState(() => _preserveCase = !_preserveCase);
+  }
+
   KeyEventResult _handleFindHistoryKey({
     required bool replace,
     required KeyEvent event,
@@ -12780,6 +12786,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
       final query = _findQuery.text;
       final replacement = _replaceInput.text;
+      final preserveCase = _preserveCase;
       final text = active.text;
       final docId = active.id;
       final docVersion = active.doc.version;
@@ -12796,6 +12803,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           replacement,
           caseSensitive: _caseSensitive,
           wholeWord: _wholeWord,
+          preserveCase: preserveCase,
           scopes: scopes,
           targetStart: match.start,
           cancelSignal: cancellation.future,
@@ -12816,7 +12824,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           !_findVisible ||
           !_regexFind ||
           _findQuery.text != query ||
-          _replaceInput.text != replacement) {
+          _replaceInput.text != replacement ||
+          _preserveCase != preserveCase) {
         return;
       }
       if (result.error != null) {
@@ -12868,12 +12877,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final t = active.text;
-    final replaced = t.replaceRange(m.start, m.end, _replaceInput.text);
+    final replacement = _preserveCase
+        ? buildPreserveCaseReplacement(
+            t.substring(m.start, m.end),
+            _replaceInput.text,
+          )
+        : _replaceInput.text;
+    final replaced = t.replaceRange(m.start, m.end, replacement);
     _applyProgrammaticEdit(
       active,
       replaced,
       selection: TextSelection.collapsed(
-        offset: m.start + _replaceInput.text.length,
+        offset: m.start + replacement.length,
       ),
     );
     _refreshMatches();
@@ -12892,6 +12907,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _findPending = false;
       final query = _findQuery.text;
       final replacement = _replaceInput.text;
+      final preserveCase = _preserveCase;
       final text = active.text;
       final docId = active.id;
       final docVersion = active.doc.version;
@@ -12907,6 +12923,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           replacement,
           caseSensitive: _caseSensitive,
           wholeWord: _wholeWord,
+          preserveCase: preserveCase,
           scopes: scopes,
           cancelSignal: cancellation.future,
         );
@@ -12926,7 +12943,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           !_findVisible ||
           !_regexFind ||
           _findQuery.text != query ||
-          _replaceInput.text != replacement) {
+          _replaceInput.text != replacement ||
+          _preserveCase != preserveCase) {
         return;
       }
       if (result.error != null) {
@@ -12953,6 +12971,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         active.text, _findQuery.text, _replaceInput.text,
         caseSensitive: _caseSensitive,
         wholeWord: _wholeWord,
+        preserveCase: _preserveCase,
         scopes: _findInSelection ? _findSelectionScopes : null);
     if (r.count == 0) {
       setState(() => _statusDetail = '无匹配');
@@ -15570,6 +15589,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       onChanged: _onReplaceTextChanged,
                     ),
                   ),
+                  ),
+                  IconButton(
+                    key: const ValueKey('find-preserve-case'),
+                    tooltip: '保留大小写',
+                    isSelected: _preserveCase,
+                    onPressed: _togglePreserveCase,
+                    icon: Text('Aa',
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: _preserveCase
+                                ? Colors.lightBlueAccent
+                                : Colors.grey.shade400)),
+                    visualDensity: VisualDensity.compact,
                   ),
                   IconButton(
                     tooltip: '替换',

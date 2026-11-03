@@ -8,6 +8,8 @@ library;
 import 'dart:async';
 import 'dart:isolate';
 
+import 'unicode_case_mapping.dart';
+
 class TextMatch {
   const TextMatch(this.start, this.end);
 
@@ -139,6 +141,7 @@ Future<ReplaceRegexMatchesResult> replaceRegexMatches(
   String replacement, {
   bool caseSensitive = false,
   bool wholeWord = false,
+  bool preserveCase = false,
   List<TextMatchScope>? scopes,
   int? targetStart,
   Duration timeout = findRegexMatchTimeout,
@@ -170,6 +173,7 @@ Future<ReplaceRegexMatchesResult> replaceRegexMatches(
             ?.map((scope) => <int>[scope.start, scope.end])
             .toList(growable: false),
         targetStart,
+        preserveCase,
       ],
       errorsAreFatal: true,
     );
@@ -386,6 +390,7 @@ void _replaceRegexWorker(List<Object?> message) {
   final wholeWord = message[5]! as bool;
   final rawScopes = message[6] as List<Object?>?;
   final targetStart = message[7] as int?;
+  final preserveCase = message[8]! as bool;
   final scopes = rawScopes
       ?.whereType<List<Object?>>()
       .where((range) => range.length == 2 && range[0] is int && range[1] is int)
@@ -410,7 +415,10 @@ void _replaceRegexWorker(List<Object?> message) {
             wholeWord && !_isWholeWordRange(text, start, end)) {
           return false;
         }
-        final inserted = replacePattern.expand(match);
+        final inserted = replacePattern.expand(
+          match,
+          preserveCase: preserveCase,
+        );
         final newText = text.replaceRange(start, end, inserted);
         if (newText.length > maxRegexReplaceOutputUtf16) {
           throw const _RegexReplaceOutputLimit();
@@ -490,7 +498,7 @@ void _replaceRegexWorker(List<Object?> message) {
         return;
       }
       write(text.substring(cursor, start));
-      write(replacePattern.expand(match));
+      write(replacePattern.expand(match, preserveCase: preserveCase));
       cursor = end;
       count++;
     }
@@ -565,6 +573,9 @@ class _RegexReplacePattern {
   _RegexReplacePattern(this._pieces);
 
   final List<_RegexReplacePiece> _pieces;
+
+  bool get hasReplacementPatterns =>
+      _pieces.any((piece) => piece.matchIndex != null);
 
   static _RegexReplacePattern parse(String source) {
     final pieces = <_RegexReplacePiece>[];
@@ -645,7 +656,7 @@ class _RegexReplacePattern {
     return _RegexReplacePattern(List.unmodifiable(pieces));
   }
 
-  String expand(RegExpMatch match) {
+  String expand(RegExpMatch match, {bool preserveCase = false}) {
     final output = StringBuffer();
     for (final piece in _pieces) {
       if (piece.staticValue != null) {
@@ -661,7 +672,10 @@ class _RegexReplacePattern {
             : _applyRegexCaseOps(value ?? '', piece.caseOps),
       );
     }
-    return output.toString();
+    final expanded = output.toString();
+    return preserveCase && !hasReplacementPatterns
+        ? buildPreserveCaseReplacement(match.group(0) ?? '', expanded)
+        : expanded;
   }
 }
 
@@ -894,6 +908,7 @@ ReplaceAllResult replaceAllMatches(
   String replacement, {
   bool caseSensitive = false,
   bool wholeWord = false,
+  bool preserveCase = false,
   List<TextMatchScope>? scopes,
 }) {
   final matches = findMatches(
@@ -909,11 +924,93 @@ ReplaceAllResult replaceAllMatches(
   for (final m in matches) {
     buf
       ..write(text.substring(cursor, m.start))
-      ..write(replacement);
+      ..write(preserveCase
+          ? buildPreserveCaseReplacement(
+              text.substring(m.start, m.end),
+              replacement,
+            )
+          : replacement);
     cursor = m.end;
   }
   buf.write(text.substring(cursor));
   return ReplaceAllResult(buf.toString(), matches.length);
+}
+
+/// Applies the Code-OSS Preserve Case transformation to one static value.
+/// Regex templates with captures are intentionally handled by their explicit
+/// capture and case-operation syntax instead.
+String buildPreserveCaseReplacement(String source, String replacement) {
+  if (source.isEmpty || replacement.isEmpty) return replacement;
+
+  List<String> splitSegments(String value, int separator) {
+    final segments = <String>[];
+    var start = 0;
+    for (var index = 0; index < value.length; index++) {
+      if (value.codeUnitAt(index) != separator) continue;
+      segments.add(value.substring(start, index));
+      start = index + 1;
+    }
+    segments.add(value.substring(start));
+    return segments;
+  }
+
+  final sourceHasHyphen = source.contains('-');
+  final replacementHasHyphen = replacement.contains('-');
+  final sourceHasUnderscore = source.contains('_');
+  final replacementHasUnderscore = replacement.contains('_');
+  if (sourceHasHyphen &&
+      replacementHasHyphen &&
+      !sourceHasUnderscore &&
+      !replacementHasUnderscore &&
+      sourceHasHyphen == replacementHasHyphen) {
+    final sourceSegments = splitSegments(source, 0x2D);
+    final replacementSegments = splitSegments(replacement, 0x2D);
+    if (sourceSegments.length == replacementSegments.length) {
+      return List<String>.generate(
+        sourceSegments.length,
+        (index) => buildPreserveCaseReplacement(
+          sourceSegments[index],
+          replacementSegments[index],
+        ),
+        growable: false,
+      ).join('-');
+    }
+  }
+  if (sourceHasUnderscore &&
+      replacementHasUnderscore &&
+      !sourceHasHyphen &&
+      !replacementHasHyphen &&
+      sourceHasUnderscore == replacementHasUnderscore) {
+    final sourceSegments = splitSegments(source, 0x5F);
+    final replacementSegments = splitSegments(replacement, 0x5F);
+    if (sourceSegments.length == replacementSegments.length) {
+      return List<String>.generate(
+        sourceSegments.length,
+        (index) => buildPreserveCaseReplacement(
+          sourceSegments[index],
+          replacementSegments[index],
+        ),
+        growable: false,
+      ).join('_');
+    }
+  }
+
+  if (unicodeFullUppercase(source) == source) {
+    return unicodeFullUppercase(replacement);
+  }
+  if (unicodeFullLowercase(source) == source) {
+    return unicodeFullLowercase(replacement);
+  }
+
+  final sourceFirst = String.fromCharCode(source.codeUnitAt(0));
+  final replacementFirst = String.fromCharCode(replacement.codeUnitAt(0));
+  if (unicodeFullLowercase(sourceFirst) != sourceFirst) {
+    return '${unicodeFullUppercase(replacementFirst)}${replacement.substring(1)}';
+  }
+  if (unicodeFullLowercase(sourceFirst) == sourceFirst) {
+    return '${unicodeFullLowercase(replacementFirst)}${replacement.substring(1)}';
+  }
+  return replacement;
 }
 
 /// 查找下一个命中（从 [from] 起环形）；无命中返回 null。

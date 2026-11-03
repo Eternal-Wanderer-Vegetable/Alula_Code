@@ -38,6 +38,122 @@ String _documentText(WidgetTester tester) => tester
     .content;
 
 void main() {
+  testWidgets('preserve-case applies to a literal current replacement',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-literal-case-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/notes.txt').writeAsStringSync('Foo foo');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('notes.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await _pressChord(tester, LogicalKeyboardKey.keyH);
+    await tester.enterText(
+        find.byKey(const ValueKey('find-query-input')), 'foo');
+    await tester.enterText(
+      find.byKey(const ValueKey('replace-query-input')),
+      'bar',
+    );
+    await tester.tap(find.byKey(const ValueKey('find-preserve-case')));
+    await tester.tap(find.byTooltip('替换'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('替换'));
+    await tester.pumpAndSettle();
+    expect(_documentText(tester), 'Bar foo');
+  });
+
+  testWidgets(
+    'preserve-case toggle applies to regex current/all replacement and undo',
+    (tester) async {
+      final temp = Directory.systemTemp.createTempSync('alula-regex-case-');
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        if (temp.existsSync()) temp.deleteSync(recursive: true);
+      });
+
+      final workspace = Directory('${temp.path}/workspace')..createSync();
+      final file = File('${workspace.path}/notes.txt')
+        ..writeAsStringSync('foo FOO Foo');
+      final base = temp.path.replaceAll(r'\', '/');
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: LayoutStore(path: '$base/layout.json'),
+        sessionStore: SessionStore(path: '$base/session.json'),
+        keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+      ));
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.tap(find.text('notes.txt').first);
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await _pressChord(tester, LogicalKeyboardKey.keyH);
+      await tester.enterText(
+          find.byKey(const ValueKey('find-query-input')), 'foo');
+      await tester.enterText(
+        find.byKey(const ValueKey('replace-query-input')),
+        'bar',
+      );
+      await tester.tap(find.byKey(const ValueKey('find-regex')));
+      expect(
+        tester
+            .widget<IconButton>(
+                find.byKey(const ValueKey('find-preserve-case')))
+            .isSelected,
+        isFalse,
+      );
+      await tester.tap(find.byKey(const ValueKey('find-preserve-case')));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<IconButton>(
+                find.byKey(const ValueKey('find-preserve-case')))
+            .isSelected,
+        isTrue,
+      );
+      await _waitForIsolates(tester);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('替换'));
+      await _waitForIsolates(tester);
+      await tester.pumpAndSettle();
+      expect(_documentText(tester), 'foo FOO Foo',
+          reason: 'the first click selects the next match');
+      await tester.tap(find.byTooltip('替换'));
+      await _waitForIsolates(tester);
+      await tester.pumpAndSettle();
+      expect(_documentText(tester), 'bar FOO Foo');
+
+      await tester.tap(find.byType(RustTextInputField));
+      await _pressChord(tester, LogicalKeyboardKey.keyZ);
+      expect(_documentText(tester), 'foo FOO Foo');
+      await _pressChord(tester, LogicalKeyboardKey.keyZ, shift: true);
+      expect(_documentText(tester), 'bar FOO Foo');
+
+      await tester.tap(find.byTooltip('全部替换'));
+      await _waitForIsolates(tester);
+      await tester.pumpAndSettle();
+      expect(_documentText(tester), 'bar BAR Bar');
+      await tester.tap(find.byType(RustTextInputField));
+      await _pressChord(tester, LogicalKeyboardKey.keyS);
+      expect(file.readAsStringSync(), 'bar BAR Bar');
+      await _pressChord(tester, LogicalKeyboardKey.keyZ);
+      expect(_documentText(tester), 'bar FOO Foo');
+      await _pressChord(tester, LogicalKeyboardKey.keyZ, shift: true);
+      expect(_documentText(tester), 'bar BAR Bar');
+    },
+  );
+
   testWidgets(
     'regex current and replace-all edits use one undo step and save back',
     (tester) async {
