@@ -5,11 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（已登记，待实现）
+### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（已完成）
 
 - 完成 P04.104 / EDT-17l：inline unchanged-region folding 默认关闭，严格 source row 映射，3 行上下文/20 行逐次展开。代码 `43e35cd`，本地 full init.sh (Flutter 881)、analyze 0、focused 9/相关回归 46、GitNexus all-scope detect 保留 CRITICAL。PR CI `41706323129` 与 Linux/Windows/macOS Platform Availability `41706312269` 通过；P04.104 证据提交 `26cdf35` 的 PR CI `41709174313` 四 job 也全部通过（Harness、Linux/Windows Rust、Flutter analyze、881 tests）。平台包 artifact：Linux `13266685006`、Windows `13267056042`、macOS `13267221143`。Linux/Windows native DnD 与 Windows UIA/MSAA/graceful close 通过；macOS hosted DnD pointer route unavailable，device gate 保持 P15。
 - 当前 SHA 无 crash signal/dump 或非零应用退出；P04.104 不涉及启动/关闭路径，不能作为 crash fix。历史真实 Windows/macOS 崩溃与 ARM SendKeys assertion race 分开记录，详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
-- 下一片 EDT-18a：活动文件与 clipboard 快照比较预览。依据固定 Code-OSS `CompareWithClipboardAction`；实现 F1/快捷键入口和有界 side-by-side read-only snapshot preview，异步 clipboard 后校验 Rust doc identity/version，临时数据不落盘；编辑右侧与 apply/revert 保持后续项。DoD/初查：`docs/03-里程碑计划与验收标准.md`、`docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`。
+- P04.105 / EDT-18a 完成：活动文件与剪贴板只读 side-by-side 比较；F1/File 与 Ctrl/Cmd+K,C；异步 clipboard 后复核 view/id/resource/version，关闭、切换、编辑均取消；2M UTF-16 与 DiffViewModel 行/row/work 预算超限整体拒绝。完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 891）、`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）与 focused suites 通过。代码 commit `f1d204a5c3a0414ce4fb7edd6063efaeeb3ef290` 已推送；PR CI [41713133917](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713133917) 四 job 全绿（Flutter 891）；Platform Availability [41713121910](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713121910) Linux x64、Windows x64、macOS ARM64 build/test/startup/package 全成功。Artifacts: Linux `13268317746`, Windows `13269382552`, macOS `13269977828`; Linux/Windows DnD 23/13 events 与三种 drop 结果均通过，Windows 1028×711、96 DPI、WM_CLOSE exit 0。Linux smoke 的 124 与 macOS smoke 的 SIGTERM 15 均由 watchdog 在进程存活 12 秒后按设计发出，macOS startup artifact `13270312636` 只有 Impeller 初始化行、无 crash report。macOS hosted DnD pointer route unavailable 保留 P15；构建出现 `com.alula.alula_app` 无效 Bundle ID warning，后续 release packaging 修正。完整证据与 crash 边界见 `docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`。
+- 关闭竞态测试捕获到已有 minimap 后台 overview 请求在文档关闭后收到 `UnknownDoc`，现有 catch/log 处理，测试通过，无未捕获异常或进程崩溃证据。记为下一步 minimap async-close 诊断；不扩大 P04.105 代码范围。
 
 ### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已完成）
 
@@ -27,11 +28,11 @@
 - 包 artifacts：Linux 13262593289、Windows 13262834152、macOS ARM64 13265030361。macOS startup diagnostics 13263044741。报告：docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md。
 - GitNexus 保留 UNKNOWN/CRITICAL：代码 all-scope 4 files / 10 symbols / 432 flows / CRITICAL，仅显示前 10；新增 projection function impact 报 41 上游节点并包含与产品函数无文本引用的异名类型。精确 rg 确认产品入口只在 git_diff_patch_view.dart，其他引用均为测试；不降级告警。
 
-### Windows ARM artifact validator 输入首键问题（下一项单独跟进）
+### Windows ARM artifact validator 输入首键问题（已通过同工件复验）
 
 - 用户指出 CI 反复失败可能与崩溃有关。2026-11-03 的五个 Windows 11 ARM workflow_dispatch artifact replay runs 41623366222、41624838142、41625760177、41626282817、41626759894 都因第二视图编辑/保存断言失败；不是常规 PR CI。
-- run 41626759894 的浅色工件 13226531608 记录四个 MSAA editor values 完全同步，但 SendKeys 丢失首字符 v，实际值为换行后 iew-2，因此脚本在保存前失败。深色工件 13227025780 完整输入 view-2 并保存回读成功。两份工件均 gracefulClose=true、exitCode=0、Application Fault 和 crash dump 为空。证据表明这是 hosted ARM 验收输入竞态，不是这几次运行里的应用崩溃；保持精确文本断言，不通过放宽 DoD 消除红灯。
-- 下一步单独登记并稳定 validator 文本输入路线，再用同一 Windows ARM Release artifact 覆盖浅/深主题；每次仍核对进程退出和 crash diagnostics。当前 SHA 的 PR CI 与三平台作业均成功。详见 docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md。
+- run 41626759894 的浅色工件 13226531608 记录输入后四个 MSAA editor values 均为换行后 `iew-2`，自动输入漏掉首字符 `v`，保存前精确文本断言失败；同 run 深色工件 13227025780 的 `view-2` 保存回读成功。失败 session 正常关闭、exitCode=0，Application Fault 和 crash dump 为空，因此这五次重验失败不是应用崩溃证据。
+- validator commit `34f1511` 在 Enter 后等待 350 ms，并把 SendKeys 文本改为逐字符 100 ms 间隔；同一旧 Release artifact 的复验 run [41627307864](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864) 浅色/深色两 job 均通过，四个视图同步并保存回读精确 `view-2`，gracefulClose=true、exitCode=0，crash diagnostics 为空。保持精确文本断言；这是 hosted ARM 验收输入稳定化，不是应用 crash 修复。详见 docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md、docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md 与 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
 
 ### P04.102 / EDT-17j：Git diff moved-block 配对模型（模型切片完成）
 
