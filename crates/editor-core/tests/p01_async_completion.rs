@@ -165,9 +165,14 @@ fn completion_is_async_versioned_cancellable_and_bounded() {
         let definition_during_shutdown = take_json(ffi::alula_definition_start(doc_id, 5, 5_000));
         let definition_during_shutdown_id =
             definition_during_shutdown["requestId"].as_u64().unwrap();
+        let shutdown = take_json(ffi::alula_lsp_shutdown_workspace(workspace.as_ptr()));
         assert_eq!(
-            take_json(ffi::alula_lsp_shutdown_workspace(workspace.as_ptr()))["stopped"],
-            true
+            shutdown["ok"], true,
+            "workspace shutdown FFI response: {shutdown}"
+        );
+        assert_eq!(
+            shutdown["stopped"], true,
+            "workspace shutdown FFI response: {shutdown}"
         );
         assert_eq!(
             take_json(ffi::alula_completion_poll(during_shutdown_id))["status"],

@@ -2,9 +2,11 @@
 
 use serde_json::{json, Value};
 use std::{
+    collections::HashSet,
     fs::OpenOptions,
     io::{BufRead, BufReader, Write},
     path::PathBuf,
+    sync::{Arc, Condvar, Mutex},
     thread,
     time::Duration,
 };
@@ -57,6 +59,7 @@ fn main() {
         .unwrap_or(250);
     let stdin = std::io::stdin();
     let mut reader = BufReader::new(stdin.lock());
+    let pending_completions = Arc::new((Mutex::new(HashSet::<i64>::new()), Condvar::new()));
     while let Some(message) = read_message(&mut reader) {
         let method = message.get("method").and_then(Value::as_str).unwrap_or("");
         match method {
@@ -65,19 +68,48 @@ fn main() {
                 "id": message["id"],
                 "result": {"capabilities": {"textDocumentSync": 1}},
             })),
-            "textDocument/didOpen"
-            | "textDocument/didChange"
-            | "textDocument/didClose"
-            | "$/cancelRequest" => trace(&trace_path, method),
+            "textDocument/didOpen" | "textDocument/didChange" | "textDocument/didClose" => {
+                trace(&trace_path, method)
+            }
+            "$/cancelRequest" => {
+                trace(&trace_path, method);
+                if let Some(request_id) = message.pointer("/params/id").and_then(Value::as_i64) {
+                    if let Ok(mut pending) = pending_completions.0.lock() {
+                        pending.remove(&request_id);
+                    }
+                    pending_completions.1.notify_all();
+                }
+            }
             "textDocument/completion" => {
                 let request_id = message["id"].clone();
+                let Some(pending_id) = request_id.as_i64() else {
+                    continue;
+                };
+                if let Ok(mut pending) = pending_completions.0.lock() {
+                    pending.insert(pending_id);
+                }
+                let pending_completions = Arc::clone(&pending_completions);
                 thread::spawn(move || {
-                    thread::sleep(Duration::from_millis(delay_ms));
-                    send(json!({
-                        "jsonrpc": "2.0",
-                        "id": request_id,
-                        "result": [{"label": "async_completion"}],
-                    }));
+                    let (pending, cancelled) = &*pending_completions;
+                    let Ok(pending) = pending.lock() else {
+                        return;
+                    };
+                    let Ok((mut pending, _)) = cancelled.wait_timeout_while(
+                        pending,
+                        Duration::from_millis(delay_ms),
+                        |active| active.contains(&pending_id),
+                    ) else {
+                        return;
+                    };
+                    let should_respond = pending.remove(&pending_id);
+                    drop(pending);
+                    if should_respond {
+                        send(json!({
+                            "jsonrpc": "2.0",
+                            "id": request_id,
+                            "result": [{"label": "async_completion"}],
+                        }));
+                    }
                 });
             }
             "textDocument/definition" => {
