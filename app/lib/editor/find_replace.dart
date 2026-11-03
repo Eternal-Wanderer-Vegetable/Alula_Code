@@ -28,6 +28,14 @@ class TextMatchScope {
   final int end;
 }
 
+/// Code-OSS caps selection-seeded Find text strictly below 512 Ki UTF-16
+/// code units so opening Find cannot copy an unbounded selection into its
+/// query field.
+const int maxFindSelectionSeedUtf16 = 524288;
+
+bool isFindSelectionSeedLengthSupported(int lengthUtf16) =>
+    lengthUtf16 > 0 && lengthUtf16 < maxFindSelectionSeedUtf16;
+
 /// Clips scopes to the document and merges overlapping (but not adjacent)
 /// ranges so a match is never duplicated across overlapping selections.
 List<TextMatchScope> normalizeTextMatchScopes(

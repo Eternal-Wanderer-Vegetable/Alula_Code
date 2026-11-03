@@ -12273,13 +12273,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 查找/替换 ----------
 
   void _toggleFind() {
-    if (_findVisible) _flushFindHistory();
-    setState(() {
-      _findVisible = !_findVisible;
-      if (_findVisible) {
-        _replaceVisible = false;
-        _refreshMatches();
-      } else {
+    if (_findVisible) {
+      _flushFindHistory();
+      setState(() {
+        _findVisible = false;
         _findGeneration++;
         _cancelRegexFind();
         _cancelRegexReplace();
@@ -12289,8 +12286,66 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _matches = const [];
         _findOverviewLines = const [];
         _matchIndex = -1;
+      });
+      return;
+    }
+
+    final active = _active;
+    final seed = active == null ? null : _findSelectionSeed(active);
+    setState(() {
+      if (seed != null) {
+        _findQuery.value = TextEditingValue(
+          text: seed,
+          selection: TextSelection.collapsed(offset: seed.length),
+        );
+        _findHistory.noteEdit(seed);
       }
+      _findVisible = true;
+      _replaceVisible = false;
+      _refreshMatches();
     });
+    if (seed != null) _scheduleFindHistoryUpdate();
+  }
+
+  String? _findSelectionSeed(OpenDoc doc) {
+    final window = doc.inputWindow;
+    final version = doc.doc.version;
+    if (window.version != version ||
+        window.hasComposition ||
+        window.pendingText != null ||
+        doc.pendingInputOperations.isNotEmpty) {
+      return null;
+    }
+
+    final selection = doc.selection;
+    final start = selection.start;
+    final end = selection.end;
+    final length = end - start;
+    if (!isFindSelectionSeedLengthSupported(length)) return null;
+
+    try {
+      final startLine = doc.doc.lineBoundary(start);
+      final endLine = doc.doc.lineBoundary(end);
+      if (startLine.version != version ||
+          endLine.version != version ||
+          startLine.line != endLine.line ||
+          doc.doc.version != version) {
+        return null;
+      }
+
+      final selectedText = _readDocumentRange(doc, start, end);
+      if (doc.doc.version != version ||
+          selectedText.length != length ||
+          selectedText.isEmpty ||
+          selectedText.contains('\n')) {
+        return null;
+      }
+      return _regexFind ? RegExp.escape(selectedText) : selectedText;
+    } catch (_) {
+      // Opening Find must remain available if a selection goes stale while it
+      // is being read; in that case keep the query the user already had.
+      return null;
+    }
   }
 
   void _openReplace() {

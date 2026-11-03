@@ -128,6 +128,109 @@ void main() {
     );
   });
 
+  testWidgets('Ctrl+F seeds Find from a single-line UTF-16 selection',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-seed-emoji-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const source = '🍁foo | 🍁foo';
+    final file = await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    const selection = TextSelection(baseOffset: 0, extentOffset: 5);
+    editorState.setSelection(selection);
+    await tester.pump();
+    final document = editorState.widget.inputWindow.document;
+    final version = document.version;
+    final bytes = file.readAsBytesSync();
+
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    final queryField = tester.widget<TextField>(
+      find.byKey(const ValueKey('find-query-input')),
+    );
+    expect(queryField.controller!.text, '🍁foo');
+    expect(find.text('-/2'), findsOneWidget);
+    expect(editorState.editingValue.selection, selection);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(file.readAsBytesSync(), bytes);
+
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyZ);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(file.readAsBytesSync(), bytes);
+  });
+
+  testWidgets(
+      'regex Find seed escapes metacharacters and multiline keeps query',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-seed-regex-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const selected = 'a+b?*';
+    const source = 'a+b?* aXbZZ\nsecond';
+    final file = await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    final document = editorState.widget.inputWindow.document;
+    final version = document.version;
+    final bytes = file.readAsBytesSync();
+
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    await tester.tap(find.byKey(const ValueKey('find-regex')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+
+    const singleLineSelection =
+        TextSelection(baseOffset: 0, extentOffset: selected.length);
+    editorState.setSelection(singleLineSelection);
+    editorState.requestFocus();
+    await tester.pump();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    await _waitForIsolates(tester);
+    await tester.pumpAndSettle();
+    final queryField = tester.widget<TextField>(
+      find.byKey(const ValueKey('find-query-input')),
+    );
+    final escaped = RegExp.escape(selected);
+    expect(queryField.controller!.text, escaped);
+    expect(find.text('-/1'), findsOneWidget);
+    expect(editorState.editingValue.selection, singleLineSelection);
+
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+    final multilineSelection = TextSelection(
+      baseOffset: 0,
+      extentOffset: source.indexOf('\n') + 1,
+    );
+    editorState.setSelection(multilineSelection);
+    editorState.requestFocus();
+    await tester.pump();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+
+    final reopenedQuery = tester.widget<TextField>(
+      find.byKey(const ValueKey('find-query-input')),
+    );
+    expect(reopenedQuery.controller!.text, escaped);
+    expect(editorState.editingValue.selection, multilineSelection);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(file.readAsBytesSync(), bytes);
+  });
+
   testWidgets(
       'Alt+Enter selects literal hits and keeps the current hit primary',
       (tester) async {
