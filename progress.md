@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.87 / EDT-15b：查找栏 Shift+Enter 导航上一个命中（已完成）
+
+- Find 输入框聚焦时，裸 Shift+Enter / Shift+NumpadEnter 导航上一个命中，普通 Enter 继续下一个；Replace 输入框不触发 Find。命中循环按绝对 UTF-16 偏移，更新选区但不改文本、文档版本、dirty/savepoint 或文本 undo。定向 workbench 测试 9 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter **773**），cargo fmt 与 Flutter analyze（0 issues）通过。本机未启动 GUI/Narrator。
+- 代码 commit `7523df2` 已推送。PR CI [`41596896260`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41596896260) 四 job 全绿。Platform Availability [`41596889965`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41596889965) Linux/Windows/macOS jobs 全绿：Linux DnD artifact `13212783060` 记录 21 个 pointer events 及同文档 move、跨文档 copy、外部文本 drop；Windows DnD artifact `13212788474` 记录三种 drop 结果，Windows clipboard、UIA/MSAA 与 graceful close 检查通过；macOS ARM64 包 `13213275616`、startup diagnostics `13213196011` 已生成，DnD artifact `13213825783` 标注 input route unavailable、native DnD skip。
+- 最新 100 条 branch Actions：常规 CI 66 成功/0 失败，Platform Availability 27 成功/6 失败，另有一条历史 Windows artifact replay failure。新 run 全绿但仅是当前构建的非复现证据，不能据此宣称旧包关闭崩溃已缓解；反复平台 probe 红灯与历史 `0xC000041D` 仍无共同故障签名。GitNexus impact 因 Workbench 跨语言/宽类误连报 CRITICAL，实际 Find/Replace Focus 两调用点已源码核对；代码 all-scope 3 files/2 symbols/0 processes/LOW，staged evidence gate 6 files/2 symbols/0 processes/LOW；compare-main 重复为 1,577 files/2,501–2,536 symbols/402–404 flows/CRITICAL 且 capped、计数波动，不记为 clean。详见 `docs/diagnostics/2026-11-03-p04/p04.87-shift-enter-previous-find-match.md` 和 `ci-failures-and-crash-correlation.md`。
+
 ### P04.86 / EDT-15a：查找栏 Alt+Enter 选择全部命中（已完成）
 
 - Find 与 Replace 输入框接入 Code-OSS 默认 Alt+Enter，按 literal/regex、大小写、全字和 Find-in-Selection 选中命中；丢弃过期、非法正则结果，保留当前精确命中为 primary，最多 10,000 个 UTF-16 选区并显示截断状态。单次选择历史更新，不修改文本/dirty/savepoint。定向 Flutter 68 项、完整 `init.sh`（Rust tests、Clippy、build_core、Flutter **772**）、`cargo fmt --check`、`flutter analyze`（0 issues）通过。本机未启动桌面 GUI/Narrator。
