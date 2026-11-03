@@ -839,14 +839,12 @@ try {
       if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
         throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
       }
-      # The x64 app under Windows 11 ARM accepts SendInput key events but has
-      # intermittently dropped KEYEVENTF_UNICODE characters after splitting a
-      # view. Use the same clipboard/paste route as Quick Open, then poll the
-      # exact synchronized editor values instead of treating accepted events as
-      # proof that text reached the app.
-      $interactionResult.multiviewAppendInputRoute = 'clipboard-paste'
-      Set-Clipboard -Value $appendBody
-      Send-ArtifactKeys '^v' 500
+      # KEYEVENTF_UNICODE and clipboard paste were accepted by Windows but did
+      # not reach the focused split editor on the ARM runner. Send ordinary
+      # virtual-key keystrokes, matching physical typing, and verify the exact
+      # synchronized editor values instead of trusting accepted event counts.
+      $interactionResult.multiviewAppendInputRoute = 'sendkeys-ascii'
+      Send-ArtifactKeys $appendBody 500
       $multiviewEditDeadline = (Get-Date).AddSeconds(5)
       do {
         $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
