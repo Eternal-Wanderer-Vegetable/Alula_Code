@@ -5,11 +5,19 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.103 / EDT-17k：Git diff moved-block side-by-side 视图（已登记，进行中）
+### P04.103 / EDT-17k：Git diff moved-block side-by-side 视图（已完成）
 
-- 接续 P04.102 exact model；先将源 patch row 严格映射到 projection side-by-side rows，再按 Code-OSS 1.145.0 默认关闭的 `experimental.showMoves` 规则提供 opt-in 边框/连接线。Alula 当前以每视图 toggle 提供入口；持久化设置另行规划。inline/raw fallback 不显示标记，任一映射错误不得部分绘制。
-- GitNexus `Alula_Code` index `9954459`：GitDiffPatchView/State/row upstream impact 均 UNKNOWN；source search 确认 `workbench_page.dart` 一个产品入口和多组测试调用点，保留 UNKNOWN/CRITICAL，不解释为未使用。固定源码、测试标准与范围见 `docs/03-里程碑计划与验收标准.md`、`docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md`。
-- 与用户提出的 CI/crash 关联假设一致，后续按 SHA/job 分离 crash signature 与 runner 队列/取消。P04.102 Platform Availability 的 macOS job 在 queued 阶段以零步骤取消导致 workflow failure，无应用进程可崩溃；Linux/Windows jobs 成功。
+- 完成严格的 patch source row → projection side-by-side row 映射；映射不一致时所有 moved marks 整体 fallback。每视图 toggle 默认关闭；side-by-side 开启后绘制原/修改边框和中心连接线，inline/raw fallback 不显示，patch 更新会清掉旧投影。Alula 每视图入口与 Code-OSS 全局 diffEditor.experimental.showMoves 设置位置不同，持久化未纳入本切片。
+- 25 个 focused projection/view/patch 测试通过。完整 bash init.sh 通过：Rust workspace、Clippy、build_core、Flutter analyze 0 issues、Flutter 872 tests；cargo fmt、git diff check、Harness 100/100 和 feature_list.json 校验通过。代码 commit 56b343e3b19a9e4adc360e24f7107beeae9d9756 已推送。
+- PR CI run 41700110715 四 job 全绿。Platform Availability run 41700098639 的 Linux x64、Windows x64 与 macOS ARM64 jobs 全绿；Windows P03.7 交互、DnD、clipboard/accessibility/graceful close exit 0 均通过。macOS package/startup 成功；hosted synthetic pointer route 不可用，因此 macOS 原生 DnD 仍是 P15 device gate。
+- 包 artifacts：Linux 13262593289、Windows 13262834152、macOS ARM64 13265030361。macOS startup diagnostics 13263044741。报告：docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md。
+- GitNexus 保留 UNKNOWN/CRITICAL：代码 all-scope 4 files / 10 symbols / 432 flows / CRITICAL，仅显示前 10；新增 projection function impact 报 41 上游节点并包含与产品函数无文本引用的异名类型。精确 rg 确认产品入口只在 git_diff_patch_view.dart，其他引用均为测试；不降级告警。
+
+### Windows ARM artifact validator 输入首键问题（下一项单独跟进）
+
+- 用户指出 CI 反复失败可能与崩溃有关。2026-11-03 的五个 Windows 11 ARM workflow_dispatch artifact replay runs 41623366222、41624838142、41625760177、41626282817、41626759894 都因第二视图编辑/保存断言失败；不是常规 PR CI。
+- run 41626759894 的浅色工件 13226531608 记录四个 MSAA editor values 完全同步，但 SendKeys 丢失首字符 v，实际值为换行后 iew-2，因此脚本在保存前失败。深色工件 13227025780 完整输入 view-2 并保存回读成功。两份工件均 gracefulClose=true、exitCode=0、Application Fault 和 crash dump 为空。证据表明这是 hosted ARM 验收输入竞态，不是这几次运行里的应用崩溃；保持精确文本断言，不通过放宽 DoD 消除红灯。
+- 下一步单独登记并稳定 validator 文本输入路线，再用同一 Windows ARM Release artifact 覆盖浅/深主题；每次仍核对进程退出和 crash diagnostics。当前 SHA 的 PR CI 与三平台作业均成功。详见 docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md。
 
 ### P04.102 / EDT-17j：Git diff moved-block 配对模型（模型切片完成）
 

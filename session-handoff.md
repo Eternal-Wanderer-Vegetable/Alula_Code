@@ -1,57 +1,49 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.102 / EDT-17j model commit `0959e3c0a24ab5776a9575c3e709ad39d642da53` and its evidence/state record are pushed to `codex/vscode-parity-p00`. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.103 / EDT-17k code commit 56b343e3b19a9e4adc360e24f7107beeae9d9756 is pushed; this evidence/state commit closes the slice. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-Continue P04 / `feat-026` toward fixed-version VS Code editor and Git Diff parity. P04.102 delivered and verified the bounded pure-Dart moved-block model. P04.103 / EDT-17k is now registered to map those source patch rows into side-by-side projection rows and render opt-in default-off moved block outlines/connectors. No implementation has started yet; see the P04.103 report for scope and GitNexus warnings.
+Continue P04 / feat-026 toward fixed-version VS Code editor and Git Diff parity. P04.103 delivers an opt-in default-off moved-block presentation for side-by-side Git diffs. The 500 MiB numeric memory target remains deferred to P14.
 
-## Current Slice: P04.103 / EDT-17k
+## Latest Slice: P04.103 / EDT-17k
 
-- Registered in `docs/03-里程碑计划与验收标准.md`; implementation has not started. Code-OSS 1.145.0 defaults `diffEditor.experimental.showMoves` to false and enables it only for side-by-side view. Alula will provide a per-view opt-in toggle for this slice because it has no global settings UI.
-- Work first on strict source-patch-row to projected-row mapping, then old/new outlines and connector drawing. Any mapping failure must suppress all moved marks; inline and raw fallback do not display them. Keep approximate/unchanged move detection and preference persistence out of scope.
-- GitNexus impact for `GitDiffPatchView`, its State, and `_GitDiffPatchRow` is `UNKNOWN`; exact source search confirmed one product instantiation in `workbench_page.dart` and several tests. Preserve the graph uncertainty. Details and fixed sources: `docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md`.
+- Strictly maps P04.102 moved-block source rows into projected side-by-side rows. Any missing, duplicate, out-of-range, mismatched, non-contiguous, or overlapping mapping suppresses every moved decoration.
+- The per-view toolbar toggle defaults off. Side-by-side mode shows both outlines and a central connector; inline/raw fallback shows none. Patch updates clear old projected state. No Rust/ABI/parser/settings persistence changes.
+- 25 focused tests pass. Full bash init.sh passed: Rust workspace, Clippy, core build, Flutter analyze (0 issues), Flutter 872; cargo fmt, diff check, and Harness 100/100 pass.
+- PR CI [41700110715](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41700110715) passed all four jobs. Platform Availability [41700098639](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41700098639) passed Linux x64, Windows x64, and macOS ARM64. macOS package artifact [13265030361](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41700098639/artifacts/13265030361); Linux [13262593289](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41700098639/artifacts/13262593289); Windows [13262834152](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41700098639/artifacts/13262834152). macOS hosted DnD route was unavailable, so native macOS DnD/IME remain P15 device gates.
+- GitNexus warnings remain unresolved: edited views had UNKNOWN impact before code; post-change detect reports CRITICAL and many unrelated name-linked processes. Exact source search shows one product caller for the new projector and tests. See docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md.
 
-## Latest Slice: P04.102 / EDT-17j
+## CI Failure and Crash Classification
 
-- Pinned Code-OSS 1.145.0 has `experimental.showMoves: false`; the model covers a conservative subset of `DefaultLinesDiffComputer.computeMovedLines` (exact trim-equivalent blocks only, not approximate similarity or unchanged moves). Minimum 3 lines, 15 normalized UTF-16 units, 2 substantial lines. Full criteria are in `docs/03-里程碑计划与验收标准.md`.
-- 13 focused Flutter tests pass. `cargo fmt --all -- --check` and full `bash init.sh` pass: Rust workspace, Clippy, `build_core`, Flutter analyze 0 issues, Flutter 865 tests.
-- PR CI [`41695398743`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695398743) passed all four jobs. Platform Availability [`41695384851`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695384851) passed Linux x64 and Windows x64. Linux package/DnD artifacts: `13261255894` / `13261180829`; Windows package/DnD: `13262211045` / `13261241203`.
-- The macOS ARM64 job in run `41695384851` was canceled while queued, with zero steps; the overall Platform Availability workflow therefore concluded failure, but there was no app build/launch/crash on macOS. Do not claim a package for this SHA. Prior P04.101 macOS package/startup evidence remains recorded separately; native macOS DnD stays P15 pending.
-- `tools/mem-probe` headless Linux sample on an identical 1,965,278 UTF-16 / 16,382-row fixture measured final PSS 178.8 MiB parser-only and 181.2 MiB with matcher (+2.4 MiB). It is a single Dart process model sample, not desktop product memory. The 500 MiB optimization target remains deferred to P14.
-- GitNexus staged/all scan reported 9 files, 29 symbols, 430 affected flows, CRITICAL. Re-running with `--limit 1000` still displayed only 10 flows. The index reports 438 flows but warns that 758/958 entry candidates were dropped and 365 callees skipped. Full-repository exact source search before the report was added found no product runtime callsite for the new matcher. Preserve this CRITICAL graph limitation; do not reinterpret it as low risk. Details: `docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md`.
+The five 2026-11-03 Windows ARM artifact replay runs 41623366222, 41624838142, 41625760177, 41626282817, and 41626759894 failed the second-view text assertion. Run 41626759894 artifacts show all four MSAA editor nodes synchronized to the same text, but the Windows ARM SendKeys route dropped its first character; the light sample was missing “v” from “view-2”, while the dark sample saved/read back the exact string. Both closed gracefully with exit code 0 and no Application Fault event or crash dump. This is an input-harness race, not crash evidence for those runs. The current code SHA's Windows P03.7 suite and graceful close passed in Platform Availability 41700098639. Preserve this harness issue for a separate follow-up; do not weaken exact text/save assertions or record it as a crash fix. Historical Windows 0xC000041D and pre-9f2c70a macOS SIGSEGV evidence remain in docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.
 
-## CI and Crash Evidence
-
-The regular PR CI run is green, with no failure or crash signature. Platform Availability concluded failure only because the macOS job was canceled while queued before any step; no app process ran there. The user suspects repeated CI failures may be related to application crashes. For any recurrence, correlate the exact SHA and job with process exit code, crash signature/dump, and runner logs; distinguish process faults from test assertions, timeouts, or runner queue issues, and do not treat a successful rerun as a fix. This slice is not wired into the product and does not exercise startup, window teardown, plugin lifecycle, or the historical crash paths; it cannot establish a crash fix. Historical evidence and confidence limits remain in `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Avoid local GUI/accessibility actions that can launch Narrator. No desktop GUI or Narrator was started during P04.102.
+P04.102's earlier macOS job was canceled while queued with zero steps; that remains true for that SHA. P04.103's successor SHA now has successful macOS package/startup evidence. No local desktop GUI or Narrator was launched.
 
 ## Workspace and PR
 
-- Worktree: `/tmp/alula-p04.70-next`; latest code commit `0959e3c0a24ab5776a9575c3e709ad39d642da53` is pushed. P04.102 evidence/state is recorded in this handoff and the linked diagnostics.
-- Push target: `origin/codex/vscode-parity-p00`; user authorized pushes to this branch.
-- PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2). Do not merge or publish v0.1.0.
+- Worktree: /tmp/alula-p04.70-next. Code commit 56b343e is pushed; this commit records evidence and state.
+- Push target: origin/codex/vscode-parity-p00; user authorized pushes to this branch.
+- PR #2: [OPEN/draft](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2). Do not merge or publish v0.1.0 before the plan gates are complete.
 
 ## Blockers / Risks
 
-- Retry or obtain a macOS runner result for Platform Availability run `41695384851` or its successor; the current job was canceled before any step and provides no macOS build/package evidence.
-- Native macOS DnD/IME and device acceptance remain P15 gates; Linux DRM hardware remains unavailable.
-- Historical Windows `0xC000041D` and pre-`9f2c70a` macOS SIGSEGV remain evidence-qualified mitigations, not controlled root-cause proof.
-- GitNexus graph output is truncated/noisy and retains CRITICAL risk for this slice.
+- Native Linux DRM and native macOS DnD/IME/device acceptance remain P15 gates.
+- macOS hosted DnD artifact records synthetic pointer routing unavailable; package/build/startup success is not native DnD evidence.
+- Windows ARM artifact validator has a reproducible first-character SendKeys race on an older artifact; preserve it as a harness issue.
+- GitNexus graph remains CRITICAL/UNKNOWN for this slice; do not downgrade from the raw impact count.
+- Historical Windows 0xC000041D and pre-9f2c70a macOS SIGSEGV remain evidence-qualified mitigations, not controlled root-cause proof.
 
 ## Files Involved
 
-- Model: `app/lib/git/git_diff_moved_blocks.dart`
-- Tests: `app/test/git_diff_moved_blocks_test.dart`
-- Plan/state: `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`
-- Evidence: `docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md`, `docs/diagnostics/2026-11-04-p04/p04.102-moved-blocks-probe.dart`, `docs/diagnostics/2026-11-04-p04/evidence/p04.102-*`
+- Product: app/lib/git/git_diff_patch_view.dart, app/lib/git/git_diff_moved_blocks_projection.dart
+- Tests: app/test/git_diff_moved_blocks_projection_test.dart, app/test/git_diff_moved_blocks_view_test.dart
+- State: docs/03-里程碑计划与验收标准.md, feature_list.json, progress.md, session-handoff.md
+- Evidence: docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md
 
 ## Next Session Startup
 
-1. Read `AGENTS.md`, this file, and `progress.md`.
-2. Check `node .gitnexus/run.cjs status`; refresh if stale. Run `bash init.sh --fast`.
-3. Recheck whether a macOS runner becomes available for run `41695384851` or a successor; record only executed job evidence.
-4. Choose one next P04 slice from `docs/03`, register it before code, and run GitNexus query/context/impact before edits.
-
-## Recommended Next Step
-
-Implement registered P04.103 with strict row mapping, default-off side-by-side moved marks/connectors, and all-or-nothing fallback. Track the canceled macOS job as an external runner validation gap without blocking architecture work. Do not broaden into approximate matching, unchanged-region folding, settings persistence, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
+1. Read AGENTS.md, this handoff, and progress.md.
+2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
+3. Choose one dependency-ready P04 slice from docs/03, register it before code, and run GitNexus query/context/impact before edits. Keep the Windows ARM input-harness finding in the pending work list and preserve the user's architecture-before-optimization priority.
+4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.
