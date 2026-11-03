@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.98 / EDT-17f side-by-side Git diff code commit `6a247c7` is pushed; its evidence and state are recorded in this docs update.
+> Last Updated: 2026-11-03. P04.98 / EDT-17f is complete. P01.5 is registered as an in-progress Windows CI fake-LSP shutdown-fixture follow-up after the first-attempt `p01_async_completion` failure on the same SHA later passed.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current slice: stabilize the Windows CI fake-LSP cancellation/shutdown fixture and improve failure diagnostics, then return to EDT-17. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Slice: P04.98 / EDT-17f
 
@@ -20,6 +20,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - Latest 100 branch regular CI runs have 100 successful final conclusions. The latest 100 Platform Availability runs have 54 successes / 46 historical failures; the newest failure remains `41458740387`, followed by 54 successful runs through `41659454431`.
 - CI has captured real faults before: macOS FlutterView/Irondash startup SIGSEGV and the old Windows artifact `d5319369` close exit `0xC000041D`. Their source-level causes remain unresolved; current hosted close/startup passes are non-reproduction evidence only.
 - P04.98's first-attempt Rust test failure was a missing `stopped` field in the FFI response with process exit 1, not an observed OS process crash. If it recurs, first print the full FFI response and collect child exit state before attributing it. See [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md).
+- The focused follow-up is limited to the fake test server/test diagnostics. The recent platform probe failures and historical application crashes have different signatures; no causal relationship or crash mitigation is established.
 
 ## Current Workspace State
 
@@ -43,7 +44,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
 2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
 3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Choose the next EDT-17 gap and register its scope/DoD in `docs/03-里程碑计划与验收标准.md` before coding.
+4. Complete registered P01.5: make fake LSP cancellation interrupt delayed fixture work, report full shutdown JSON on assertion failure, and repeat the Windows focused test. Then return to the next EDT-17 gap.
 
 ## Recommended Next Step
 

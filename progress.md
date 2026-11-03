@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（进行中）
+
+- P04.98 的 PR CI 首次 attempt 在 `p01_async_completion` 的 workspace shutdown FFI 断言处失败，返回错误 JSON（`stopped` 为缺失字段）；测试进程以断言退出码 1，没有 Rust panic、Windows 应用故障记录或 crash dump。同 SHA 重跑通过。失败日志没有打印原始错误 JSON，因此错误原因仍未直接观测。
+- 当前审计假设是 fake LSP 对已取消 completion 仍保留延迟线程，退出时可能使进程回收竞争；先改进 fixture 的取消响应与断言诊断，再在 Windows CI 重复焦点用例验证。生产 `LspServer.shutdown`、超时与 ABI 不在本切片范围；不得把 CI 稳定化称为历史 `0xC000041D` 修复。
+- GitNexus 对生产 `lsp_shutdown_for_workspace` 的 impact 报 `CRITICAL`（127 impacted）；本切片不修改该生产函数。fixture `main` 的索引 impact 为 `UNKNOWN`，精确源码搜索确认仅由 `p01_async_completion` 通过 Cargo 测试二进制调用。
+
 ### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（已完成）
 
 - `windows-artifact-validation.yml` 现可选 run/artifact/source SHA，Narrator 与旧源码交互 job 默认关闭。Windows ARM 的多视图编辑回放先后暴露 clipboard 粘贴与 SendKeys 注入丢字符；在回车后等待 350 ms、逐字符间隔 100 ms 后，保留严格同步/保存回读断言的最终 light/dark 两组均通过。当前 run `41627307864` 使用 Platform Availability `41618233435` 的 x64 Release artifact（source `1129d607`，Windows 11 Enterprise ARM64 x64 仿真，96 DPI）；两组四视图同步、保存回读 `view-2` 一致，WM_CLOSE exit 0，无 Application Error 或 crash dump。讲述人未启动。证据 artifacts [`13225549631`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13225549631)（light）和 [`13226642379`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13226642379)（dark）。
