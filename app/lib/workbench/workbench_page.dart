@@ -12274,9 +12274,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _toggleFind() {
     if (_findVisible) {
+      final active = _active;
+      final group = _focused;
       _flushFindHistory();
       setState(() {
         _findVisible = false;
+        _clearFindSelectionScope();
         _findGeneration++;
         _cancelRegexFind();
         _cancelRegexReplace();
@@ -12287,6 +12290,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _findOverviewLines = const [];
         _matchIndex = -1;
       });
+      if (active != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted &&
+              !_disposing &&
+              identical(_active, active) &&
+              identical(_focused, group)) {
+            _focusNodeFor(group, active).requestFocus();
+          }
+        });
+      }
       return;
     }
 
@@ -15656,6 +15669,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): _toggleFind,
+        const SingleActivator(LogicalKeyboardKey.escape, shift: true):
+            _toggleFind,
       },
       child: Container(
         key: const ValueKey('find-bar'),
