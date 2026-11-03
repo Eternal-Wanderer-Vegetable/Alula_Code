@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.99 is complete; P04.100 has local implementation and DoD evidence, with hosted validation pending.
+> Last Updated: 2026-11-04. P04.100 / EDT-17h is complete for its registered scope; code is pushed and hosted evidence/state updates are prepared in the worktree. P04 and the overall parity plan remain in progress.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are pushed. P04.100 implements pinned accessible-diff actions through the existing Command Palette; fresh GitNexus impact was run before edits and its CRITICAL/UNKNOWN warnings are recorded. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.100 adds pinned accessible-diff actions through the existing Command Palette. Its local DoD, PR CI, Linux/Windows hosted usability, and macOS ARM64 build/package/startup gates passed. Hosted macOS native DnD was skipped because the runner could not route synthetic pointer events; physical macOS interaction remains pending under P15. Fresh GitNexus impact and its CRITICAL/UNKNOWN warnings are recorded. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -29,7 +29,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; P04.99 and P04.100 registration commits are pushed; P04.100 implementation is in the working tree with local DoD passed.
+- Worktree: `/tmp/alula-p04.70-next`; code commit `0b792fd` and P04.100 local implementation are pushed. Current worktree contains hosted-evidence/status documentation changes for a separate evidence commit.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -37,7 +37,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 - P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
 - The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
-- P04.100 / EDT-17h local implementation is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev in an active, navigable Git Diff tab; 3 new widget tests and full local DoD pass. Commit/push the code stage, wait for PR CI and Linux/Windows/macOS availability, then update evidence.
+- P04.100 / EDT-17h is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev only in an active, navigable Git Diff tab. Three new widget tests and full local DoD pass. PR CI `41678408601` passed (847 Flutter tests); Platform Availability `41678397272` passed Linux/Windows/macOS build/package/startup. macOS DnD was explicitly skipped for unavailable pointer routing. Windows graceful close exit 0; no current app-crash signal. See `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -51,16 +51,16 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Files Involved
 
-- Code: `app/lib/git/git_diff_navigation.dart`, `app/lib/git/git_diff_patch_view.dart`, `app/test/git_diff_navigation_test.dart`.
-- Evidence/state: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md`, `docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, `progress.md`, `feature_list.json`, and this handoff.
+- Code: `app/lib/git/git_diff_commands.dart`, `app/lib/git/git_diff_navigation.dart`, `app/lib/git/git_diff_patch_view.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/git_diff_command_test.dart`, and the existing navigation tests.
+- Evidence/state: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`, `docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md`, `docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, `progress.md`, `feature_list.json`, and this handoff.
 
 ## Next Session Startup
 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
 2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
 3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Commit/push the verified P04.100 code stage, then inspect its PR CI and Platform Availability runs; do not mark complete until hosted evidence is recorded.
+4. Commit/push the P04.100 evidence-only state update, confirm PR #2 remains OPEN/draft, then select the next dependency-ready item from `docs/03`.
 
 ## Recommended Next Step
 
-Finish P04.100 hosted Linux/Windows/macOS validation and record evidence; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+Select the next P04 item from `docs/03` after the P04.100 evidence commit. Keep the macOS DnD route skip and historical Windows crash cause explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
