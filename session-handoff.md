@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.95 / EDT-17c implementation, local DoD, and hosted CI/platform checks are complete. Code commit `e2e3aa3` is pushed; the final status/evidence update is still uncommitted.
+> Last Updated: 2026-11-03. P04.95 / EDT-17c is complete and pushed as `c4e3f9d`. P04.96 / EDT-17d is registered, implemented, and locally validated; hosted checks and final evidence remain pending.
 
 ## Current Objective
 
@@ -19,6 +19,15 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - PR CI [`41641937089`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641937089) passed all four jobs with 814 Flutter tests. Platform Availability [`41641927566`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641927566) passed Linux/Windows/macOS; macOS DnD was skipped because hosted pointer routing was unavailable.
 - GitNexus 1.6.12 index was refreshed at `e2e3aa3`. New-model upstream impact reports CRITICAL and unrelated cross-flow callers; exact source search confirms no production caller. Staged/all/compare scans also reported CRITICAL/capped results and are recorded without downgrading the warnings.
 
+## Next Active Slice: P04.96 / EDT-17d
+
+- Replaced the existing Git Diff panel's plain unified-patch text with a bounded, lazy inline list showing file/hunk metadata, old/new line numbers, and context/add/remove colors; preserves line-level selection and falls back to the complete raw patch for unsupported or over-budget input.
+- Scope and DoD are registered in `docs/03-里程碑计划与验收标准.md`. Limits: 2,000,000 UTF-16 units and 16,384 display rows; no partial parse. Side-by-side, generic full-text comparison, word highlighting, moved blocks, folding, and navigation remain later slices.
+- GitNexus index is current at `c4e3f9d`. `workbench_page.dart` is omitted due to the analyzer's file-size limit; impacts for `_buildGitDiffPanel` and `_showGitDiff` are UNKNOWN/not found. Source search confirmed their panel call sites, plus production/test `GitCli.diff` references. Treat graph results as unresolved.
+- Local DoD passed: focused parser/widget suite (7), full `bash init.sh` (Rust workspace/Clippy/build_core, Flutter 821), `cargo fmt --all -- --check`, Flutter analyze (0 issues), harness validator 100/100, JSON and diff checks. No local GUI/Narrator.
+- Docs-only PR CI [`41644966760`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41644966760) completed successfully: Flutter analyze/tests, Rust Linux/Windows, and harness all passed. Hosted check for the new app code is pending push.
+- Fresh GitNexus index (1,263 files): parser impact CRITICAL (98 symbols/31 flows) with context showing unrelated test `main`, composition/LSP/paint flows; renderer impact UNKNOWN; workbench file is skipped due to size. Repeated staged/all-scope is 8 files/15 symbols/341–377 flows/CRITICAL; compare-main is 1,597 files/1,397–1,462 symbols/399 flows/CRITICAL and capped. Exact source search only confirms parser/view/tests and one workbench panel call; keep all graph warnings unresolved in final evidence.
+
 ## CI and Crash Finding
 
 - Before the P04.95 push, the newest 100 regular CI runs all passed. The newest 100 Platform Availability runs contained 47 historical failures, followed by 53 consecutive successful runs through `41636589670`.
@@ -27,8 +36,8 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Work in `/tmp/alula-p04.70-next`; checkout is detached at `e2e3aa3`. Pushes to `origin/codex/vscode-parity-p00` are authorized with `git push origin HEAD:codex/vscode-parity-p00`.
-- P04.95 code commit `e2e3aa3` is pushed. Uncommitted status/evidence changes: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, P04.94/P04.95 diagnostic reports, `feature_list.json`, `progress.md`, and this handoff.
+- Work in `/tmp/alula-p04.70-next`; checkout is detached at `c4e3f9d`. Pushes to `origin/codex/vscode-parity-p00` are authorized with `git push origin HEAD:codex/vscode-parity-p00`.
+- P04.96 code plus registration/progress state are staged locally and not committed. Worktree remains detached at `c4e3f9d`; code commit and hosted validation are next.
 - PR #2 remains OPEN/draft. Do not publish v0.1.0 or merge.
 - CI, Linux, Windows, and macOS all passed. Linux/Windows DnD artifacts record 23/12 pointer events and move/copy/external-text routes; macOS startup log contains only the Impeller line, and native macOS DnD was skipped for `input-route-unavailable`.
 
@@ -40,4 +49,4 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Next Session First Step
 
-Refresh GitNexus after the final doc edits, run staged/all/compare checks, commit the state/evidence separately, and push to `codex/vscode-parity-p00`. Keep PR #2 open/draft. Then register the next EDT-17 slice before coding. Preserve the unresolved crash evidence and avoid local GUI/accessibility actions that can start Narrator.
+Implement P04.96 in the already scoped files, run focused and full local DoD, refresh GitNexus and record staged/all/compare results, then commit/push the code and evidence in stages. Keep PR #2 open/draft. Preserve the unresolved crash evidence and avoid local GUI/accessibility actions that can start Narrator.

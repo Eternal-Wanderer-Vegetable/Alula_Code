@@ -33,6 +33,14 @@
 - 当前分支最近 100 次常规 CI 全绿；Platform Availability 最近 100 次有 47 次历史失败，但最新 53 次连续通过。早期 macOS 启动 SIGSEGV 曾触发生命周期路径修复；历史 Windows 旧 artifact 的 `0xC000041D` 仍未定位。近期 Windows ARM 自动输入丢字红灯已通过节奏修复稳定复验，失败 session 无 crash 证据。具体样本和边界见 CI 关联报告。
 - Hosted checks for code commit `e2e3aa3` passed: PR CI [`41641937089`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641937089) (814 Flutter tests, Rust Windows/Linux, harness) and Platform Availability [`41641927566`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641927566) (Linux/Windows/macOS). Linux/Windows DnD artifacts recorded 23/12 pointer events and move/copy/external-text routes; macOS ARM64 package/startup passed while native DnD was skipped for unavailable pointer routing. P04.95 report contains artifact links and the distinction from the unresolved historical crash.
 
+### P04.96 / EDT-17d：Git unified diff 行内渲染（进行中，范围已登记）
+
+- 将现有 Git Diff 面板从纯 unified patch 文本升级为带行号、hunk、上下文/新增/删除着色的惰性行列表；保留逐行选择。解析上限 2,000,000 UTF-16 units / 16,384 行，畸形、二进制、元数据-only 与超限输入回退完整原文，不返回部分解析结果。
+- 定向 parser/widget 用例覆盖多 hunk、零起始行号、CRLF/BOM/Emoji、无末尾换行、畸形输入与预算回退。本机不启动 GUI 或可访问性工具；本地 DoD 已通过，hosted Linux/Windows smoke 留待推送验证。
+- GitNexus 1.6.12 索引在 `c4e3f9d` 新鲜。`workbench_page.dart` 超过分析器大小上限，`_buildGitDiffPanel`/`_showGitDiff` 未解析；源码搜索核实单一面板构建点、单一 `_showGitDiff` 调用点和 `GitCli.diff` 的生产/测试引用。GitCli `diff` 的 impact 为 UNKNOWN（无解析边），不是 unused 结论。
+- 实现和本地 DoD 已完成，hosted 验证待推送：新增有界 unified patch parser/lazy row renderer 并接入 Git Diff panel；7 个 parser/widget 测试通过；完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter **821**），`cargo fmt --all -- --check`、Flutter analyze（0 issues）、harness validator（100/100）、JSON 与 diff check 通过。本机未启动 GUI/Narrator。
+- 新索引覆盖 1,263 个文件；`parseGitDiffPatch` impact 返回 CRITICAL（98 symbols/31 flows），context 列出无关 test `main`、编辑组合/LSP/paint 流程；`GitDiffPatchView` 返回 UNKNOWN。精确源码搜索只找到新 parser/renderer、面板接线和本次测试引用。保留 CRITICAL/UNKNOWN 警告，不宣称图谱 clean。完整 staged/all-scope 为 8 files/15 symbols/341–377 processes/CRITICAL；compare-main 为 1,597 files/1,397–1,462 symbols/399 processes/CRITICAL 且清单 capped。流程关联未能由源码调用核实，仍按未解决风险登记。
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。

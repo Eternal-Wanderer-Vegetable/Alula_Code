@@ -58,6 +58,7 @@ import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
 import '../editor/workspace_search_decorations.dart';
 import '../git/git_cli.dart';
+import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
@@ -16117,16 +16118,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ),
         const Divider(height: 1),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(8),
-            child: SelectableText(
-              _gitDiff,
-              style: const TextStyle(
-                  fontFamily: 'monospace', fontSize: 11, height: 1.4),
-            ),
-          ),
-        ),
+        Expanded(child: GitDiffPatchView(patch: _gitDiff)),
       ],
     );
   }
