@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.100 / EDT-17h is complete for its registered scope; code is pushed and hosted evidence/state updates are prepared in the worktree. P04 and the overall parity plan remain in progress.
+> Last Updated: 2026-11-04. P04.100 / EDT-17h is complete and pushed. P04.101 / EDT-17i is registered and is the active slice. The CI crash-correlation follow-up is pushed; documentation CI passed. P04 and the overall parity plan remain in progress.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.100 adds pinned accessible-diff actions through the existing Command Palette. Its local DoD, PR CI, Linux/Windows hosted usability, and macOS ARM64 build/package/startup gates passed. Hosted macOS native DnD was skipped because the runner could not route synthetic pointer events; physical macOS interaction remains pending under P15. Fresh GitNexus impact and its CRITICAL/UNKNOWN warnings are recorded. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Active slice P04.101 integrates default trim-whitespace ignoring into Git unified diff rows, reusing the existing bounded line/view models and preserving full raw fallback. The pinned default is `diffEditor.ignoreTrimWhitespace: true`; exact registered scope and tests are in `docs/03`. Before code edits, refresh GitNexus and run concept/context/impact for the affected diff projection/view symbols; preserve UNKNOWN/CRITICAL warnings because `workbench_page.dart` is omitted from the index. P04.100 remains complete; its local DoD, PR CI, Linux/Windows hosted usability, and macOS ARM64 build/package/startup gates passed. Hosted macOS native DnD was skipped because the runner could not route synthetic pointer events; physical macOS interaction remains pending under P15. The CI crash report now links four pre-`9f2c70a` macOS SIGSEGV starts to the engine-context registry race, with 49 post-fix hosted platform passes and no recurrence; this is strong mitigation evidence, not controlled proof. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -29,7 +29,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; code commit `0b792fd` and P04.100 local implementation are pushed. Current worktree contains hosted-evidence/status documentation changes for a separate evidence commit.
+- Worktree: `/tmp/alula-p04.70-next`; P04.100 code commit `0b792fd` and CI/crash evidence commit `e2b5e61` are pushed. P04.101 registration is being prepared before code changes.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -38,6 +38,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
 - The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
 - P04.100 / EDT-17h is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev only in an active, navigable Git Diff tab. Three new widget tests and full local DoD pass. PR CI `41678408601` passed (847 Flutter tests); Platform Availability `41678397272` passed Linux/Windows/macOS build/package/startup. macOS DnD was explicitly skipped for unavailable pointer routing. Windows graceful close exit 0; no current app-crash signal. See `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`.
+- P04.101 / EDT-17i is registered in `docs/03`: match pinned default `ignoreTrimWhitespace=true` in the Git unified diff view, preserve both sides in side-by-side mode, neutralize only trim-equivalent rows, and exclude those rows from highlight/navigation. Run GitNexus query/context/impact before touching code. Reuse existing bounded line/view models where possible; if exact row/source mapping or budget proof fails, retain full raw-patch fallback and narrow the slice.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -63,4 +64,4 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Recommended Next Step
 
-Select the next P04 item from `docs/03` after the P04.100 evidence commit. Keep the macOS DnD route skip and historical Windows crash cause explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+After registering P04.101, refresh GitNexus, run impact analysis for the projection/view symbols, implement the bounded trim-whitespace slice, and complete local DoD plus hosted Linux/Windows/macOS package/startup checks. Keep the macOS DnD route skip and historical Windows crash cause explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.

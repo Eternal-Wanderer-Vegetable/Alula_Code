@@ -5,6 +5,11 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### 下一切片：P04.101 / EDT-17i（已登记，进行中）
+
+- 对齐固定 Code-OSS 1.145.0 `diffEditor.ignoreTrimWhitespace=true` 默认行为，将 Git unified diff hunk 内首尾空白等价行投影为中性行；保留双侧内容/行号、选择与 hunk/marker，且不计入 word highlight / diff navigation。内部空白仍视为实际改动，不能跨 hunk 配对；超限或不一致时完整 raw patch fallback。实现门禁与测试范围以 `docs/03-里程碑计划与验收标准.md` 的 P04.101 为准。
+- 本轮新增 CI crash 相关性证据：4 个 `9f2c70a` 前 macOS 启动失败以 SIGSEGV/exit 139 退出；两个 `.ips` 栈指向 `IrondashEngineContextPlugin getFlutterView` 的空 registry 访问。该提交增加 readiness handshake/nil guard 后的 49 次平台成功运行未再复现。详情见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。文档提交 `e2b5e61` 的常规 CI run `41682651483` 已通过。
+
 ### P04.100 / EDT-17h：F1 差异导航命令（已完成注册范围）
 
 - 固定 Code-OSS 1.145.0 F1 action ID 已校正为 editor.action.accessibleDiffViewer.next/prev；新增本地化命令并接入现有 CommandService/QuickInput。命令只在 Git Diff 面板 tab 活动且解析出可导航差异时出现；点击复用 GitDiffPatchView 当前 index、环绕、滚动揭示和播报路径，每次执行一个方向。
