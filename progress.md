@@ -5,11 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已登记，待实现）
+### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已完成）
 
-- 固定 Code-OSS 1.145.0 默认 hideUnchangedRegions=false、上下文 3 行、最少隐藏 3 行、reveal 20 行；Alula 拟在 inline 每视图 toggle 默认关闭。只折叠同 hunk 内 changed runs 之间不少于 9 行的 context，边缘各保留 3 行；导航按 source row 严格重映射，映射不一致时整体关闭。
-- 不跨 hunk/file，不折叠 changed/metadata/marker/leading/trailing context；不改 patch parser/Rust/ABI/side-by-side/持久化/P14。DoD 与 pinned sources：docs/03-里程碑计划与验收标准.md、docs/diagnostics/2026-11-04-p04/p04.104-inline-unchanged-regions.md。
-- 编辑前 GitNexus index 对齐到 56b343e；GitDiffPatchView impact UNKNOWN，保留零 caller 的图谱不确定性。rg 确认 workbench_page.dart 一个产品实例和多组测试入口。
+- 固定 Code-OSS 1.145.0 默认 hideUnchangedRegions=false、上下文 3 行、最少隐藏 3 行、reveal 20 行；inline 每视图 toggle 默认关闭。只折叠同 hunk 内 changed runs 之间不少于 9 行的 context，边缘各保留 3 行；导航按 source row 映射到折叠后的可见行，映射不一致时整体回退。
+- 独立 Dart projection + Git Diff inline view 已实现：不跨 hunk/file，不折叠 changed/metadata/marker/leading/trailing context；patch 更新清理开关和 reveal 状态；不改 parser/Rust/ABI/side-by-side/持久化/P14。代码 commit `43e35cd2124b8a936c64876f9592e5f7674835ee` 已推送。
+- Focused 投影/widget 9/9；相关 Git Diff patch/whitespace/navigation/moved-block 回归 46/46；`bash init.sh` Rust workspace 71+46、Clippy、build_core、Flutter 881 全通过；Flutter analyze 0、cargo fmt、git diff check、Harness 100/100、JSON 校验通过。
+- PR CI `41706323129` 四 job 全通过；Platform Availability `41706312269` 的 Linux x64、Windows x64、macOS ARM64 job 全通过。Linux/Windows Release、clipboard、DnD、启动，Windows UIA/MSAA 和 graceful close 均成功；macOS ARM64 Release/package/startup 成功。Packages: Linux `13266685006`, Windows `13267056042`, macOS `13267221143`; Linux DnD `13265773731` (23 events), Windows DnD `13267245821` (14 events), macOS DnD `13267476544` 明确记录 hosted pointer route 不可用，因此 macOS device DnD 仍未验收。当前 SHA 无 crash/非零退出证据；此 UI slice 也未触及启动/关闭路径。详见 docs/diagnostics/2026-11-04-p04/p04.104-inline-unchanged-regions.md 和 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+- 编辑前 GitNexus GitDiffPatchView/State impact UNKNOWN、共享 projection CRITICAL；实现后 detect-changes 仍为 CRITICAL（4 files、7 symbols、434 flows），新 projector impact 44 nodes/43 direct/CRITICAL。保留图谱风险；精确 rg 确认单一 workbench 产品入口与测试调用点。
 
 ### P04.103 / EDT-17k：Git diff moved-block side-by-side 视图（已完成）
 

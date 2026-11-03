@@ -1,20 +1,24 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.103 / EDT-17k is complete and pushed; P04.104 / EDT-17l is registered and implementation is in progress. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.104 / EDT-17l code commit 43e35cd2124b8a936c64876f9592e5f7674835ee is pushed; local DoD, PR CI, and Linux/Windows/macOS hosted build/startup/package checks passed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
 Continue P04 / feat-026 toward fixed-version VS Code editor and Git Diff parity. Current slice P04.104 delivers conservative inline folding for unchanged Git diff context. P04.103's default-off moved-block presentation for side-by-side Git diffs is complete. The 500 MiB numeric memory target remains deferred to P14.
 
-## Current Slice: P04.104 / EDT-17l
+## Completed Slice: P04.104 / EDT-17l
 
 - Implement inline unchanged-region folding only, off by default, using pinned Code-OSS 1.145.0 defaults: preserve 3 context rows on either side, require at least 3 hidden rows, reveal at most 20 per action.
 - Fold only within one hunk between changed runs; preserve leading/trailing context and all metadata, markers and changed rows. Strict source mapping failure disables folding. Navigation must target visible projected rows.
 - Patch update clears reveal state. No Rust/ABI/parser/side-by-side/persistence/P14 changes.
 - Registration and pinned reference: `docs/diagnostics/2026-11-04-p04/p04.104-inline-unchanged-regions.md`; `docs/03-里程碑计划与验收标准.md` is authoritative for DoD.
 - GitNexus `GitDiffPatchView` impact remains UNKNOWN with zero resolved callers. Exact text search confirmed one workbench product instance; preserve the unresolved graph risk.
+- Code SHA `43e35cd2124b8a936c64876f9592e5f7674835ee` is pushed. Local focused tests 9, related tests 46, full init.sh Flutter 881; analyze 0, cargo fmt, Harness 100/100 pass.
+- PR CI `41706323129` passed all four jobs; Platform Availability `41706312269` passed Linux x64, Windows x64, and macOS ARM64. Linux and Windows native DnD and Windows UIA/MSAA/graceful close passed; macOS package/startup passed but hosted pointer route is unavailable, so native macOS DnD remains a P15 device gate. Artifact IDs and crash classification are recorded in the P04.104 evidence page.
+- This slice produced no crash signal/dump or nonzero app exit in hosted checks. It does not change startup/close paths and is not a crash fix.
+- Post-change GitNexus all-scope risk remains CRITICAL (4 files, 7 symbols, 434 affected flows); new projector impact 44/43 direct/CRITICAL and context is lower-bound. Preserve risk and exact search evidence in the report.
 
-## Latest Slice: P04.103 / EDT-17k
+## Previous Slice: P04.103 / EDT-17k
 
 - Strictly maps P04.102 moved-block source rows into projected side-by-side rows. Any missing, duplicate, out-of-range, mismatched, non-contiguous, or overlapping mapping suppresses every moved decoration.
 - The per-view toolbar toggle defaults off. Side-by-side mode shows both outlines and a central connector; inline/raw fallback shows none. Patch updates clear old projected state. No Rust/ABI/parser/settings persistence changes.
@@ -53,5 +57,5 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
-3. Continue P04.104 only; do not open another feature until its evidence/state is committed. Before Dart edits, refresh/check GitNexus and run required impact/context/query and exact caller search; preserve UNKNOWN/CRITICAL warnings.
+3. Complete and push the P04.104 evidence/state commit, then check docs/03 for the next ready P04 child and register only that slice before editing. Classify CI failures by exact SHA, exit status, assertions/timeouts, and crash artifacts; don't label harness input races as application crashes.
 4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.
