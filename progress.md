@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已登记，待实现）
+
+- 固定 Code-OSS 1.145.0 默认 hideUnchangedRegions=false、上下文 3 行、最少隐藏 3 行、reveal 20 行；Alula 拟在 inline 每视图 toggle 默认关闭。只折叠同 hunk 内 changed runs 之间不少于 9 行的 context，边缘各保留 3 行；导航按 source row 严格重映射，映射不一致时整体关闭。
+- 不跨 hunk/file，不折叠 changed/metadata/marker/leading/trailing context；不改 patch parser/Rust/ABI/side-by-side/持久化/P14。DoD 与 pinned sources：docs/03-里程碑计划与验收标准.md、docs/diagnostics/2026-11-04-p04/p04.104-inline-unchanged-regions.md。
+- 编辑前 GitNexus index 对齐到 56b343e；GitDiffPatchView impact UNKNOWN，保留零 caller 的图谱不确定性。rg 确认 workbench_page.dart 一个产品实例和多组测试入口。
+
 ### P04.103 / EDT-17k：Git diff moved-block side-by-side 视图（已完成）
 
 - 完成严格的 patch source row → projection side-by-side row 映射；映射不一致时所有 moved marks 整体 fallback。每视图 toggle 默认关闭；side-by-side 开启后绘制原/修改边框和中心连接线，inline/raw fallback 不显示，patch 更新会清掉旧投影。Alula 每视图入口与 Code-OSS 全局 diffEditor.experimental.showMoves 设置位置不同，持久化未纳入本切片。

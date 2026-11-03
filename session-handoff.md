@@ -1,10 +1,18 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.103 / EDT-17k code commit 56b343e3b19a9e4adc360e24f7107beeae9d9756 is pushed; this evidence/state commit closes the slice. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.103 / EDT-17k is complete and pushed; P04.104 / EDT-17l is registered and implementation is in progress. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-Continue P04 / feat-026 toward fixed-version VS Code editor and Git Diff parity. P04.103 delivers an opt-in default-off moved-block presentation for side-by-side Git diffs. The 500 MiB numeric memory target remains deferred to P14.
+Continue P04 / feat-026 toward fixed-version VS Code editor and Git Diff parity. Current slice P04.104 delivers conservative inline folding for unchanged Git diff context. P04.103's default-off moved-block presentation for side-by-side Git diffs is complete. The 500 MiB numeric memory target remains deferred to P14.
+
+## Current Slice: P04.104 / EDT-17l
+
+- Implement inline unchanged-region folding only, off by default, using pinned Code-OSS 1.145.0 defaults: preserve 3 context rows on either side, require at least 3 hidden rows, reveal at most 20 per action.
+- Fold only within one hunk between changed runs; preserve leading/trailing context and all metadata, markers and changed rows. Strict source mapping failure disables folding. Navigation must target visible projected rows.
+- Patch update clears reveal state. No Rust/ABI/parser/side-by-side/persistence/P14 changes.
+- Registration and pinned reference: `docs/diagnostics/2026-11-04-p04/p04.104-inline-unchanged-regions.md`; `docs/03-里程碑计划与验收标准.md` is authoritative for DoD.
+- GitNexus `GitDiffPatchView` impact remains UNKNOWN with zero resolved callers. Exact text search confirmed one workbench product instance; preserve the unresolved graph risk.
 
 ## Latest Slice: P04.103 / EDT-17k
 
@@ -45,5 +53,5 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
-3. Choose one dependency-ready P04 slice from docs/03, register it before code, and run GitNexus query/context/impact before edits. Keep the Windows ARM input-harness finding in the pending work list and preserve the user's architecture-before-optimization priority.
+3. Continue P04.104 only; do not open another feature until its evidence/state is committed. Before Dart edits, refresh/check GitNexus and run required impact/context/query and exact caller search; preserve UNKNOWN/CRITICAL warnings.
 4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.
