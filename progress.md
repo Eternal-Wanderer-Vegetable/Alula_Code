@@ -5,11 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（进行中）
+### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（已完成）
 
 - P04.98 的 PR CI 首次 attempt 在 `p01_async_completion` 的 workspace shutdown FFI 断言处失败，返回错误 JSON（`stopped` 为缺失字段）；测试进程以断言退出码 1，没有 Rust panic、Windows 应用故障记录或 crash dump。同 SHA 重跑通过。失败日志没有打印原始错误 JSON，因此错误原因仍未直接观测。
-- 当前审计假设是 fake LSP 对已取消 completion 仍保留延迟线程，退出时可能使进程回收竞争；先改进 fixture 的取消响应与断言诊断，再在 Windows CI 重复焦点用例验证。生产 `LspServer.shutdown`、超时与 ABI 不在本切片范围；不得把 CI 稳定化称为历史 `0xC000041D` 修复。
-- GitNexus 对生产 `lsp_shutdown_for_workspace` 的 impact 报 `CRITICAL`（127 impacted）；本切片不修改该生产函数。fixture `main` 的索引 impact 为 `UNKNOWN`，精确源码搜索确认仅由 `p01_async_completion` 通过 Cargo 测试二进制调用。
+- fake LSP 原先只记录 `$/cancelRequest`，已取消的延迟 completion worker 仍休眠到期；现在用活动 request 集合与 Condvar 让取消立即唤醒 worker。测试失败时打印完整 shutdown FFI JSON。Linux 焦点用例连续 10/10 通过；Windows hosted CI 焦点用例 10/10 通过。原失败的完整 FFI error 没有留存，因此这解释仍是最可能的 fixture 竞争，不能声称根因已被直接捕获。
+- `bash init.sh` 全绿：Rust workspace（71+46）、Clippy、`build_core`、Flutter 836；另有 cargo fmt、Flutter analyze 0 issues、Harness 100/100。PR CI [`41666117480`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41666117480) 四 job 全通过。生产 `LspServer.shutdown`、超时与 ABI 未改；这项 CI 修正不证明缓解历史 `0xC000041D`。
+- GitNexus 对生产 `lsp_shutdown_for_workspace` 的 impact 报 `CRITICAL`（126 impacted）；本切片不修改该生产函数。fixture `main` 的索引 impact 为 `UNKNOWN`，精确源码搜索确认仅由 `p01_async_completion` 通过 Cargo 测试二进制调用。
 
 ### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（已完成）
 

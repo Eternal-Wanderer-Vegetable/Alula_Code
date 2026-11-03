@@ -314,8 +314,8 @@
       "dependencies": [
         "feat-022"
       ],
-  "status": "in-progress",
-  "evidence": "P01.1–P01.4 implementation slices are complete. P01.5 is active: stabilize the Windows CI fake-LSP asynchronous workspace-shutdown fixture and improve its failure diagnostics; see docs/03. Do not classify this CI/test-fixture follow-up as a production shutdown fix or historical crash mitigation.",
+      "status": "done",
+      "evidence": "P01.1–P01.5 complete. P01.5 stabilizes the Windows CI fake-LSP asynchronous workspace-shutdown fixture; Linux focus case 10/10, Windows CI focus case 10/10, and PR CI run 41666117480 all passed. Production LSP/ABI were not changed, and historical crash mitigation is not claimed. Details: docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P01"
     },
