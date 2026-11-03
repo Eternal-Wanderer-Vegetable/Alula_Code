@@ -5,6 +5,15 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.85 / EDT-14b：替换保留大小写（本地 DoD 与首批 hosted gates 通过）
+
+- 默认关闭的 Preserve Case 控件支持普通文本/正则当前与全部替换；覆盖全大写、全小写、首字符及 kebab/snake 分段，Unicode 16 多码点大写、点号 I、词尾 sigma；动态捕获/大小写模板不重复转换。正则 worker 的取消/上限/stale guard、selection scope、UTF-16/CRLF/emoji/零宽、单步 undo 与保存读回保持。
+- 定向测试 61 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter **765**）；cargo fmt、Flutter analyze（0 issues）、Dart 格式及 diff check 通过。本机未启动 GUI/Narrator。
+- 代码 commit `3949d8d` 已推送。PR CI [`41588501685`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588501685) 四 job 全绿。Platform Availability [`41588495748`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748) Linux/Windows/macOS job 全绿：Linux DnD artifact `13209266941` 记录 22 pointer events 和 move/copy/external-text；Windows artifact `13208928420` 记录 13 events、1028×681 客户区、DPR 1.0 与三类 drop，release/accessibility/graceful-close 通过；macOS ARM64 包 `13210135594` 生成，startup artifact `13209333872` 只有 Metal/Impeller 行；macOS DnD artifact `13209009030` 明确 route unavailable、零 pointer event、all tests skipped。
+- 当前分支最新 100 条 Actions：常规 CI 65 成功/0 失败，Platform Availability 28 成功/6 失败，另有一条旧 Windows artifact replay failure。红灯抽查是 MSAA/clipboard 断言或 PowerShell 中文乱码导致的 probe parse failure；单独的旧 artifact replay 确为旧二进制关闭 `0xC000041D`。稳定 CI probe 有助于诊断，但这批探针红灯本身不证明引起/缓解本机 crash。当前 green runs 仅 non-reproduction evidence。详见 `docs/diagnostics/2026-11-03-p04/p04.85-preserve-case.md` 和 `ci-failures-and-crash-correlation.md`。
+- GitNexus 代码变更 all-scope 6 files/12 symbols/0 resolved processes/LOW；helper impact 2 direct/0 processes/LOW。fresh re-index 后，本次文档状态更新 all-scope 为 5 files/1 symbol/0 processes/LOW；compare-main 为 1,574 files/2,770 symbols/384 flows/CRITICAL、列表 capped，风险保留。`workbench_page.dart` 超过 512 KiB 索引上限。
+
+
 ### P04.84 / EDT-14a：正则替换捕获组与替换串语法（已完成本地 DoD 与优先 hosted gates）
 
 - 依 Code-OSS 1.145.0 实现 `$&`、`$0`–`$99`、`$$`、换行/制表/字面反斜线与捕获组大小写变换操作；支持正则当前替换与全部替换。沿用可取消 750 ms isolate、19,999 命中/有界输出、selection scope、零宽推进与 Rust 单 undo transaction；超时、取消、截断与 stale-result 均不写入。Preserve-case 留待 EDT-14 后续切片。
