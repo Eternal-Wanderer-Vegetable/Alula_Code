@@ -300,6 +300,7 @@ final RegExp _rustIdentifierPattern = RegExp(
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
+  static const _findBarInitialWidth = 419.0;
 
   AlulaCore? _core;
   String _loadError = '';
@@ -326,6 +327,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
   bool _replaceVisible = false;
+  double _findBarWidth = _findBarInitialWidth;
+  double _findQueryInputWidth = 0;
+  bool _findQueryWidthUpdateScheduled = false;
   late final FindReplaceHistoryStore _findHistoryStore =
       widget.findReplaceHistoryStore ??
       FindReplaceHistoryStore(
@@ -15648,7 +15652,40 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ),
                 ),
                 if (_findVisible)
-                  Positioned(top: 0, right: 12, child: _buildFindBar()),
+                  Positioned.fill(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final minimapInset = constraints.maxWidth >= 720
+                            ? editorMinimapWidth + 6
+                            : 0.0;
+                        final maxAvailableWidth = (constraints.maxWidth -
+                                24 -
+                                minimapInset)
+                            .clamp(0.0, double.infinity)
+                            .toDouble();
+                        return Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              right: 12 + minimapInset,
+                            ),
+                            child: SizedBox(
+                              key: const ValueKey(
+                                'find-bar-available-bounds',
+                              ),
+                              width: maxAvailableWidth,
+                              child: Align(
+                                alignment: Alignment.topRight,
+                                child: _buildFindBar(
+                                  maxAvailableWidth: maxAvailableWidth,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
               ],
             ),
           ),
@@ -15657,8 +15694,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  void _updateFindBarWidthFromDrag(double horizontalDelta, double maxWidth) {
+    if (maxWidth <= _findBarInitialWidth) return;
+    final currentWidth = _findBarWidth > maxWidth ? maxWidth : _findBarWidth;
+    final nextWidth = (currentWidth - horizontalDelta)
+        .clamp(_findBarInitialWidth, maxWidth)
+        .toDouble();
+    if ((nextWidth - _findBarWidth).abs() < 0.5) return;
+    setState(() => _findBarWidth = nextWidth);
+  }
+
+  void _toggleFindBarWidth(double maxWidth) {
+    if (maxWidth <= _findBarInitialWidth) return;
+    final currentWidth = _findBarWidth > maxWidth ? maxWidth : _findBarWidth;
+    final nextWidth = currentWidth <= _findBarInitialWidth + 0.5
+        ? maxWidth
+        : _findBarInitialWidth;
+    if ((nextWidth - _findBarWidth).abs() < 0.5) return;
+    setState(() => _findBarWidth = nextWidth);
+  }
+
+  void _scheduleFindQueryWidthUpdate(double width) {
+    if (!width.isFinite ||
+        (_findQueryInputWidth - width).abs() < 0.5 ||
+        _findQueryWidthUpdateScheduled) {
+      return;
+    }
+    _findQueryWidthUpdateScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _findQueryWidthUpdateScheduled = false;
+      if (!mounted || (_findQueryInputWidth - width).abs() < 0.5) return;
+      setState(() => _findQueryInputWidth = width);
+    });
+  }
+
   /// 查找/替换栏（feat-010，对标 VS Code 编辑器右上角浮层）。
-  Widget _buildFindBar() {
+  Widget _buildFindBar({required double maxAvailableWidth}) {
+    final maxWidth = maxAvailableWidth.isFinite && maxAvailableWidth >= 0
+        ? maxAvailableWidth
+        : _findBarWidth;
+    final width = _findBarWidth > maxWidth ? maxWidth : _findBarWidth;
     final count = _findPending
         ? '查找中…'
         : _findError != null
@@ -15666,6 +15741,245 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : _matches.isEmpty
                 ? (_findQuery.text.isEmpty ? '' : '无匹配')
                 : '${_matchIndex < 0 ? '-' : _matchIndex + 1}/${_matches.length}${_findMatchesTruncated ? '+' : ''}';
+
+    Widget buildFindInput() => LayoutBuilder(
+          builder: (context, constraints) {
+            _scheduleFindQueryWidthUpdate(constraints.maxWidth);
+            return Focus(
+              onKeyEvent: (node, event) => _handleFindInputKey(
+                replace: false,
+                event: event,
+              ),
+              child: TextField(
+                key: const ValueKey('find-query-input'),
+                controller: _findQuery,
+                autofocus: true,
+                style: const TextStyle(fontSize: 12),
+                decoration: const InputDecoration(
+                  hintText: '查找',
+                  isDense: true,
+                  border: InputBorder.none,
+                ),
+                onChanged: (_) => _onFindTextChanged(),
+                onSubmitted: (_) => _gotoMatch(1),
+              ),
+            );
+          },
+        );
+
+    final findControls = <Widget>[
+      Tooltip(
+        message: _findError ??
+            (_findMatchesTruncated
+                ? '结果过多，仅显示前 $maxFindRegexMatches 项'
+                : count),
+        child: Text(
+          count,
+          style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+        ),
+      ),
+      IconButton(
+        tooltip: '区分大小写',
+        onPressed: () {
+          setState(() {
+            _caseSensitive = !_caseSensitive;
+            _refreshMatches();
+          });
+          _scheduleFindHistoryUpdate();
+        },
+        icon: Text('Aa',
+            style: TextStyle(
+                fontSize: 11,
+                color: _caseSensitive
+                    ? Colors.lightBlueAccent
+                    : Colors.grey.shade400)),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        key: const ValueKey('find-whole-word'),
+        tooltip: '全字匹配',
+        onPressed: () {
+          setState(() {
+            _wholeWord = !_wholeWord;
+            _refreshMatches();
+          });
+          _scheduleFindHistoryUpdate();
+        },
+        icon: Text('ab',
+            style: TextStyle(
+                fontSize: 11,
+                color: _wholeWord
+                    ? Colors.lightBlueAccent
+                    : Colors.grey.shade400)),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        key: const ValueKey('find-in-selection'),
+        tooltip: '在选区中查找',
+        isSelected: _findInSelection,
+        onPressed: _findInSelection || _hasFindSelection()
+            ? _toggleFindInSelection
+            : null,
+        icon: Text(
+          '[]',
+          style: TextStyle(
+            fontSize: 11,
+            color: _findInSelection
+                ? Colors.lightBlueAccent
+                : Colors.grey.shade400,
+          ),
+        ),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        key: const ValueKey('find-regex'),
+        tooltip: '使用正则表达式',
+        onPressed: () {
+          setState(() {
+            _regexFind = !_regexFind;
+            _refreshMatches();
+          });
+          _scheduleFindHistoryUpdate();
+        },
+        icon: Text('.*',
+            style: TextStyle(
+                fontSize: 12,
+                color: _regexFind
+                    ? Colors.lightBlueAccent
+                    : Colors.grey.shade400)),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '上一个匹配',
+        onPressed: () => _gotoMatch(-1),
+        icon: const Icon(Icons.keyboard_arrow_up, size: 16),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '下一个匹配',
+        onPressed: () => _gotoMatch(1),
+        icon: const Icon(Icons.keyboard_arrow_down, size: 16),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '关闭',
+        onPressed: () => _runCommand('editor.find'),
+        icon: const Icon(Icons.close, size: 14),
+        visualDensity: VisualDensity.compact,
+      ),
+    ];
+
+    Widget buildFindRow(double availableWidth) {
+      if (availableWidth >= 360) {
+        return Row(
+          children: [Expanded(child: buildFindInput()), ...findControls],
+        );
+      }
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(children: [Expanded(child: buildFindInput())]),
+          Wrap(
+            alignment: WrapAlignment.end,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: findControls,
+          ),
+        ],
+      );
+    }
+
+    Widget buildReplaceInput(double availableWidth) {
+      final requestedWidth = _findQueryInputWidth > 0
+          ? _findQueryInputWidth
+          : availableWidth;
+      final inputWidth = requestedWidth > availableWidth
+          ? availableWidth
+          : requestedWidth;
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: SizedBox(
+          width: inputWidth,
+          child: Focus(
+            onKeyEvent: (node, event) => _handleFindInputKey(
+              replace: true,
+              event: event,
+            ),
+            child: TextField(
+              key: const ValueKey('replace-query-input'),
+              controller: _replaceInput,
+              style: const TextStyle(fontSize: 12),
+              decoration: const InputDecoration(
+                hintText: '替换为',
+                isDense: true,
+                border: InputBorder.none,
+              ),
+              onChanged: _onReplaceTextChanged,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final replaceControls = <Widget>[
+      IconButton(
+        key: const ValueKey('find-preserve-case'),
+        tooltip: '保留大小写',
+        isSelected: _preserveCase,
+        onPressed: _togglePreserveCase,
+        icon: Text('Aa',
+            style: TextStyle(
+                fontSize: 11,
+                color: _preserveCase
+                    ? Colors.lightBlueAccent
+                    : Colors.grey.shade400)),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '替换',
+        onPressed: _replaceCurrent,
+        icon: const Icon(Icons.find_replace, size: 15),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '全部替换',
+        onPressed: _replaceAll,
+        icon: const Icon(Icons.done_all, size: 15),
+        visualDensity: VisualDensity.compact,
+      ),
+    ];
+
+    Widget buildReplaceRow(double availableWidth) {
+      if (availableWidth < 360) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: availableWidth,
+              child: buildReplaceInput(availableWidth),
+            ),
+            Wrap(
+              alignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: replaceControls,
+            ),
+          ],
+        );
+      }
+      return Row(
+        children: [
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) =>
+                  buildReplaceInput(constraints.maxWidth),
+            ),
+          ),
+          ...replaceControls,
+        ],
+      );
+    }
+
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): _toggleFind,
@@ -15674,187 +15988,55 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: Container(
         key: const ValueKey('find-bar'),
-        width: 470,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        width: width,
+        padding: const EdgeInsets.only(right: 10, top: 6, bottom: 6),
         decoration: BoxDecoration(
           color: const Color(0xFF252932),
           borderRadius: BorderRadius.circular(6),
           boxShadow: const [BoxShadow(blurRadius: 12, color: Colors.black45)],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Focus(
-                    onKeyEvent: (node, event) => _handleFindInputKey(
-                      replace: false,
-                      event: event,
-                    ),
-                    child: TextField(
-                      key: const ValueKey('find-query-input'),
-                      controller: _findQuery,
-                      autofocus: true,
-                      style: const TextStyle(fontSize: 12),
-                      decoration: const InputDecoration(
-                          hintText: '查找',
-                          isDense: true,
-                          border: InputBorder.none),
-                      onChanged: (_) => _onFindTextChanged(),
-                      onSubmitted: (_) => _gotoMatch(1),
-                    ),
-                  ),
-                ),
-                Tooltip(
-                  message: _findError ??
-                      (_findMatchesTruncated
-                          ? '结果过多，仅显示前 $maxFindRegexMatches 项'
-                          : count),
-                  child: Text(
-                    count,
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
-                  ),
-                ),
-                IconButton(
-                  tooltip: '区分大小写',
-                  onPressed: () {
-                    setState(() {
-                      _caseSensitive = !_caseSensitive;
-                      _refreshMatches();
-                    });
-                    _scheduleFindHistoryUpdate();
-                  },
-                  icon: Text('Aa',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: _caseSensitive
-                              ? Colors.lightBlueAccent
-                              : Colors.grey.shade400)),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  key: const ValueKey('find-whole-word'),
-                  tooltip: '全字匹配',
-                  onPressed: () {
-                    setState(() {
-                      _wholeWord = !_wholeWord;
-                      _refreshMatches();
-                    });
-                    _scheduleFindHistoryUpdate();
-                  },
-                  icon: Text('ab',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: _wholeWord
-                              ? Colors.lightBlueAccent
-                              : Colors.grey.shade400)),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  key: const ValueKey('find-in-selection'),
-                  tooltip: '在选区中查找',
-                  isSelected: _findInSelection,
-                  onPressed: _findInSelection || _hasFindSelection()
-                      ? _toggleFindInSelection
-                      : null,
-                  icon: Text(
-                    '[]',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: _findInSelection
-                          ? Colors.lightBlueAccent
-                          : Colors.grey.shade400,
-                    ),
-                  ),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  key: const ValueKey('find-regex'),
-                  tooltip: '使用正则表达式',
-                  onPressed: () {
-                    setState(() {
-                      _regexFind = !_regexFind;
-                      _refreshMatches();
-                    });
-                    _scheduleFindHistoryUpdate();
-                  },
-                  icon: Text('.*',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: _regexFind
-                              ? Colors.lightBlueAccent
-                              : Colors.grey.shade400)),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  tooltip: '上一个匹配',
-                  onPressed: () => _gotoMatch(-1),
-                  icon: const Icon(Icons.keyboard_arrow_up, size: 16),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  tooltip: '下一个匹配',
-                  onPressed: () => _gotoMatch(1),
-                  icon: const Icon(Icons.keyboard_arrow_down, size: 16),
-                  visualDensity: VisualDensity.compact,
-                ),
-                IconButton(
-                  tooltip: '关闭',
-                  onPressed: () => _runCommand('editor.find'),
-                  icon: const Icon(Icons.close, size: 14),
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
-            ),
-            if (_replaceVisible)
-              Row(
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                  child: Focus(
-                    onKeyEvent: (node, event) => _handleFindInputKey(
-                      replace: true,
-                      event: event,
+                  LayoutBuilder(
+                    builder: (context, constraints) =>
+                        buildFindRow(constraints.maxWidth),
+                  ),
+                  if (_replaceVisible)
+                    LayoutBuilder(
+                      builder: (context, constraints) =>
+                          buildReplaceRow(constraints.maxWidth),
                     ),
-                    child: TextField(
-                      key: const ValueKey('replace-query-input'),
-                      controller: _replaceInput,
-                      style: const TextStyle(fontSize: 12),
-                      decoration: const InputDecoration(
-                          hintText: '替换为',
-                          isDense: true,
-                          border: InputBorder.none),
-                      onChanged: _onReplaceTextChanged,
-                    ),
-                  ),
-                  ),
-                  IconButton(
-                    key: const ValueKey('find-preserve-case'),
-                    tooltip: '保留大小写',
-                    isSelected: _preserveCase,
-                    onPressed: _togglePreserveCase,
-                    icon: Text('Aa',
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: _preserveCase
-                                ? Colors.lightBlueAccent
-                                : Colors.grey.shade400)),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  IconButton(
-                    tooltip: '替换',
-                    onPressed: _replaceCurrent,
-                    icon: const Icon(Icons.find_replace, size: 15),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  IconButton(
-                    tooltip: '全部替换',
-                    onPressed: _replaceAll,
-                    icon: const Icon(Icons.done_all, size: 15),
-                    visualDensity: VisualDensity.compact,
-                  ),
                 ],
               ),
+            ),
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 10,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.resizeLeftRight,
+                child: GestureDetector(
+                  key: const ValueKey('find-bar-resize-handle'),
+                  behavior: HitTestBehavior.opaque,
+                  onHorizontalDragUpdate: (details) =>
+                      _updateFindBarWidthFromDrag(details.delta.dx, maxWidth),
+                  onDoubleTap: () => _toggleFindBarWidth(maxWidth),
+                  child: Center(
+                    child: Container(
+                      width: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      color: Colors.white24,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
