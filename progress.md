@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.82 / EDT-13c：选区内查找（本地 DoD 与 hosted gates 通过）
+
+- 查找栏新增“在选区中查找”切换；普通/正则结果共用原文 UTF-16 选区范围，驱动计数、导航、高亮、当前替换与全部替换。多选区范围有序、重叠合并、相邻范围保持隔离；捕获末尾 CR/LF/CRLF 时去除行尾换行。范围绑定文档 id/version，过期后清除并退出选区模式；无 Rust/ABI 改动。
+- 定向 find/workbench 48 项通过；完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **736**）；`cargo fmt --all -- --check`、Flutter analyze（0 issues）、Dart format check 与 `git diff --check` 通过。本机 GUI/Narrator 未启动。代码 commit `60fd9ef`、导航回归测试 commit `d713321` 已推送。
+- GitNexus 编辑前 `findMatches` exact/LOW，直接 dependent `replaceAllMatches`；regex/replace callsites 为 UNKNOWN 后用源码搜索确认。staged/all scan 5 files/12 symbols/0 resolved processes/LOW；compare-main 1564 files/2804 symbols/383 flows/CRITICAL，清单 capped，按累计分支差异保留。详见诊断报告。
+- 最新 100 条 Actions：CI 65/65 通过，Platform Availability 27 成功/7 失败；7 个平台红灯定位为 MSAA 文本断言、PowerShell launch-probe 解析、clipboard 与 DnD 输入检查。独立历史 Windows artifact replay 仍报告 `0xC000041D`；这些平台红灯日志未见该退出码或 macOS SIGSEGV，不据此声称缓解崩溃。P04.82 PR CI `41575408281` 与 Platform Availability `41575402869` 均通过；四个 CI job 通过（Flutter 736），Linux/Windows/macOS hosted jobs 成功。Linux、Windows 可用性证据及 macOS ARM64 包详见阶段报告；macOS DnD 因 hosted pointer route 不可用而跳过。证据：`docs/diagnostics/2026-11-03-p04/p04.82-selection-scoped-find.md` 与 `ci-failures-and-crash-correlation.md`。
+
 ### P04.81 / EDT-13b：安全正则查找（本地与 hosted gates 通过；原生 macOS DnD 待设备验证）
 
 - 查找栏新增正则开关，与大小写/全字选项组合；普通表达式逐行匹配，显式跨行表达式规范化 CRLF 并映射回原 UTF-16 范围。短生命周期 isolate 限时 750 ms、支持 supersede cancellation、表达式 1,000 UTF-16 与结果 19,999 上限；错误、超时和截断有可见反馈。请求 generation、文档 id/version 与查询选项均校验后才可写 UI。零宽匹配可连续导航；正则替换在 EDT-14 前禁用。不改 Rust/ABI。
