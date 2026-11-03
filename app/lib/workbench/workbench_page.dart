@@ -357,6 +357,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _matchIndex = -1;
   bool _caseSensitive = false;
   bool _wholeWord = false;
+  bool _regexFind = false;
+  bool _findPending = false;
+  bool _findMatchesTruncated = false;
+  String? _findError;
+  int _findGeneration = 0;
+  Completer<void>? _findWorkerCancellation;
+  Future<void> _pendingFind = Future<void>.value();
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
@@ -12239,6 +12246,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _replaceVisible = false;
         _refreshMatches();
       } else {
+        _findGeneration++;
+        _cancelRegexFind();
+        _pendingFind = Future<void>.value();
+        _findPending = false;
+        _findError = null;
         _matches = const [];
         _findOverviewLines = const [];
         _matchIndex = -1;
@@ -12261,11 +12273,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _refreshMatches() {
+    _cancelRegexFind();
+    _pendingFind = Future<void>.value();
     final active = _active;
     final text = active?.text ?? '';
+    final generation = ++_findGeneration;
     _matchesDocId = active?.id ?? -1;
     _matchesDocVersion = active?.doc.version ?? -1;
-    _matches = _findVisible
+    _findPending = false;
+    _findMatchesTruncated = false;
+    _findError = null;
+    if (_findVisible &&
+        _regexFind &&
+        active != null &&
+        _findQuery.text.isNotEmpty) {
+      final query = _findQuery.text;
+      final docId = active.id;
+      final docVersion = active.doc.version;
+      final caseSensitive = _caseSensitive;
+      final wholeWord = _wholeWord;
+      final cancellation = Completer<void>();
+      _findWorkerCancellation = cancellation;
+      _matches = const [];
+      _findOverviewLines = const [];
+      _matchIndex = -1;
+      _findPending = true;
+      _pendingFind = _resolveRegexFind(
+        generation: generation,
+        text: text,
+        query: query,
+        docId: docId,
+        docVersion: docVersion,
+        caseSensitive: caseSensitive,
+        wholeWord: wholeWord,
+        cancellation: cancellation,
+      );
+      return;
+    }
+    _matches = _findVisible && !_regexFind
         ? findMatches(
             text,
             _findQuery.text,
@@ -12279,6 +12324,68 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
     }
     if (_matches.isEmpty) _matchIndex = -1;
+  }
+
+  Future<void> _resolveRegexFind({
+    required int generation,
+    required String text,
+    required String query,
+    required int docId,
+    required int docVersion,
+    required bool caseSensitive,
+    required bool wholeWord,
+    required Completer<void> cancellation,
+  }) async {
+    late final FindRegexMatchesResult result;
+    try {
+      result = await findRegexMatches(
+        text,
+        query,
+        caseSensitive: caseSensitive,
+        wholeWord: wholeWord,
+        cancelSignal: cancellation.future,
+      );
+    } finally {
+      if (!cancellation.isCompleted) cancellation.complete();
+      if (identical(_findWorkerCancellation, cancellation)) {
+        _findWorkerCancellation = null;
+      }
+    }
+    if (!mounted || generation != _findGeneration) return;
+    final active = _active;
+    if (!_findVisible ||
+        !_regexFind ||
+        active?.id != docId ||
+        active?.doc.version != docVersion ||
+        _findQuery.text != query ||
+        _caseSensitive != caseSensitive ||
+        _wholeWord != wholeWord ||
+        result.cancelled) {
+      _matches = const [];
+      _findOverviewLines = const [];
+      _matchIndex = -1;
+      _findPending = false;
+      setState(() {});
+      return;
+    }
+    _matches = result.matches;
+    _findMatchesTruncated = result.truncated;
+    _findError = result.error;
+    _findPending = false;
+    _findOverviewLines = buildEditorMinimapFindLines(text, _matches);
+    if (_matchIndex >= _matches.length) {
+      _matchIndex = _matches.isEmpty ? -1 : _matches.length - 1;
+    }
+    if (_matches.isEmpty) _matchIndex = -1;
+    setState(() {});
+  }
+
+  void _cancelRegexFind() {
+    final cancellation = _findWorkerCancellation;
+    _findWorkerCancellation = null;
+    if (cancellation != null && !cancellation.isCompleted) {
+      cancellation.complete();
+    }
   }
 
   List<EditorRangeDecoration> _findDecorationsFor(OpenDoc doc) {
@@ -12383,23 +12490,52 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  void _gotoMatch(int direction) {
+  Future<void> _gotoMatch(int direction) async {
     final active = _active;
     if (active == null) return;
     _flushInput(active, commitComposition: true);
+    final selection = active.selection;
+    final previousIndex = _matchIndex;
+    final wasOnCurrentMatch = _matchesDocId == active.id &&
+        _matchesDocVersion == active.doc.version &&
+        previousIndex >= 0 &&
+        previousIndex < _matches.length &&
+        _matches[previousIndex].start == selection.baseOffset &&
+        _matches[previousIndex].end == selection.extentOffset;
     _refreshMatches();
+    final findGeneration = _findGeneration;
+    if (_regexFind) await _pendingFind;
+    if (!mounted ||
+        _disposing ||
+        findGeneration != _findGeneration ||
+        !identical(_active, active) ||
+        active.doc.version != _matchesDocVersion) {
+      return;
+    }
+    if (_findError != null) {
+      setState(() => _statusDetail = _findError!);
+      return;
+    }
     if (_matches.isEmpty) {
       setState(() => _matchIndex = -1);
       return;
     }
-    final sel = active.selection;
-    final from = sel.baseOffset >= 0 ? sel.baseOffset : 0;
-    final m =
-        direction > 0 ? findNext(_matches, from) : findPrevious(_matches, from);
-    _matchIndex = _matches.indexOf(m!);
+    TextMatch? match;
+    if (wasOnCurrentMatch) {
+      final nextIndex =
+          (previousIndex + direction + _matches.length) % _matches.length;
+      match = _matches[nextIndex];
+    } else {
+      final from = direction > 0 ? selection.extentOffset : selection.baseOffset;
+      match = direction > 0
+          ? findNext(_matches, from)
+          : findPrevious(_matches, from);
+    }
+    if (match == null) return;
+    _matchIndex = _matches.indexOf(match);
     _setDocSelection(
       active,
-      TextSelection(baseOffset: m.start, extentOffset: m.end),
+      TextSelection(baseOffset: match.start, extentOffset: match.end),
     );
     setState(() {});
   }
@@ -12407,6 +12543,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _replaceCurrent() {
     final active = _active;
     if (active == null) return;
+    if (_regexFind) {
+      setState(() => _statusDetail = '正则替换暂不可用');
+      return;
+    }
     _flushInput(active, commitComposition: true);
     _refreshMatches();
     if (_matches.isEmpty) {
@@ -12443,6 +12583,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _replaceAll() {
     final active = _active;
     if (active == null) return;
+    if (_regexFind) {
+      setState(() => _statusDetail = '正则替换暂不可用');
+      return;
+    }
     _flushInput(active, commitComposition: true);
     final r = replaceAllMatches(
         active.text, _findQuery.text, _replaceInput.text,
@@ -13388,6 +13532,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    _findGeneration++;
+    _cancelRegexFind();
     _pendingDefinitionPointers.clear();
     _pendingColumnSelectionStarts.clear();
     _pendingMoveSelectionChordTimer?.cancel();
@@ -14891,9 +15037,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 查找/替换栏（feat-010，对标 VS Code 编辑器右上角浮层）。
   Widget _buildFindBar() {
-    final count = _matches.isEmpty
-        ? (_findQuery.text.isEmpty ? '' : '无匹配')
-        : '${_matchIndex < 0 ? '-' : _matchIndex + 1}/${_matches.length}';
+    final count = _findPending
+        ? '查找中…'
+        : _findError != null
+            ? '正则错误'
+            : _matches.isEmpty
+                ? (_findQuery.text.isEmpty ? '' : '无匹配')
+                : '${_matchIndex < 0 ? '-' : _matchIndex + 1}/${_matches.length}${_findMatchesTruncated ? '+' : ''}';
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): _toggleFind,
@@ -14925,9 +15075,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     onSubmitted: (_) => _gotoMatch(1),
                   ),
                 ),
-                Text(count,
-                    style:
-                        TextStyle(color: Colors.grey.shade500, fontSize: 11)),
+                Tooltip(
+                  message: _findError ??
+                      (_findMatchesTruncated
+                          ? '结果过多，仅显示前 $maxFindRegexMatches 项'
+                          : count),
+                  child: Text(
+                    count,
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  ),
+                ),
                 IconButton(
                   tooltip: '区分大小写',
                   onPressed: () {
@@ -14957,6 +15114,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       style: TextStyle(
                           fontSize: 11,
                           color: _wholeWord
+                              ? Colors.lightBlueAccent
+                              : Colors.grey.shade400)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  key: const ValueKey('find-regex'),
+                  tooltip: '使用正则表达式',
+                  onPressed: () {
+                    setState(() {
+                      _regexFind = !_regexFind;
+                      _refreshMatches();
+                    });
+                  },
+                  icon: Text('.*',
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: _regexFind
                               ? Colors.lightBlueAccent
                               : Colors.grey.shade400)),
                   visualDensity: VisualDensity.compact,
@@ -14995,14 +15169,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ),
                   ),
                   IconButton(
-                    tooltip: '替换',
-                    onPressed: _replaceCurrent,
+                    tooltip: _regexFind ? '正则替换暂不可用' : '替换',
+                    onPressed: _regexFind ? null : _replaceCurrent,
                     icon: const Icon(Icons.find_replace, size: 15),
                     visualDensity: VisualDensity.compact,
                   ),
                   IconButton(
-                    tooltip: '全部替换',
-                    onPressed: _replaceAll,
+                    tooltip: _regexFind ? '正则替换暂不可用' : '全部替换',
+                    onPressed: _regexFind ? null : _replaceAll,
                     icon: const Icon(Icons.done_all, size: 15),
                     visualDensity: VisualDensity.compact,
                   ),

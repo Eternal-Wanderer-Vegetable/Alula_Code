@@ -1,6 +1,8 @@
 // find_replace + undo_stack 纯逻辑单测（feat-010）。
 // UTF-16 口径：Dart String 索引天然是 UTF-16 code unit，与 FFI 协议一致；
 // 代理对（Emoji）场景必须有专门用例。
+import 'dart:async';
+
 import 'package:alula_app/editor/find_replace.dart';
 import 'package:alula_app/editor/undo_stack.dart';
 import 'package:alula_app/bridge/alula_core.dart' show TextOp;
@@ -70,6 +72,85 @@ void main() {
       expect(firstTextMatchEndingAfter(matches, 2), 1);
       expect(firstTextMatchEndingAfter(matches, 4), 2);
       expect(firstTextMatchEndingAfter(matches, 7), matches.length);
+    });
+  });
+
+  group('findRegexMatches', () {
+    test('line anchors work on each CRLF line with original UTF-16 offsets',
+        () async {
+      final result = await findRegexMatches('👨foo\r\nfoo-bar\r\nfoo', r'^foo');
+      expect(result.error, isNull);
+      expect(
+        result.matches.map((match) => (match.start, match.end)).toList(),
+        [(7, 10), (16, 19)],
+      );
+    });
+
+    test('explicit multiline expression normalizes CRLF and maps full ranges',
+        () async {
+      final result = await findRegexMatches('foo\r\nbar', r'foo\nbar');
+      expect(result.error, isNull);
+      expect(result.matches.map((match) => (match.start, match.end)).toList(),
+          [(0, 8)]);
+    });
+
+    test('case and whole-word switches filter regex matches independently',
+        () async {
+      final result = await findRegexMatches(
+        'Aba ab AB',
+        'ab',
+        caseSensitive: false,
+        wholeWord: true,
+      );
+      expect(result.error, isNull);
+      expect(result.matches.map((match) => (match.start, match.end)).toList(),
+          [(4, 6), (7, 9)]);
+    });
+
+    test('zero-width regex matches progress across UTF-16 text', () async {
+      final result = await findRegexMatches('👨aa', r'(?=a)');
+      expect(result.error, isNull);
+      expect(result.matches.map((match) => (match.start, match.end)).toList(),
+          [(2, 2), (3, 3)]);
+    });
+
+    test('invalid and overlong patterns return visible errors', () async {
+      final invalid = await findRegexMatches('abc', '[');
+      expect(invalid.error, isNotNull);
+      final tooLong = await findRegexMatches(
+        'abc',
+        'a' * (maxFindRegexPatternUtf16 + 1),
+      );
+      expect(tooLong.error, contains('长度限制'));
+    });
+
+    test('match collection is capped and marks truncated results', () async {
+      final result = await findRegexMatches('a' * 20001, 'a');
+      expect(result.matches, hasLength(maxFindRegexMatches));
+      expect(result.truncated, isTrue);
+    });
+
+    test('timed-out workers return without exposing partial results', () async {
+      final result = await findRegexMatches(
+        '${'a' * 20000}b',
+        r'^(a+)+$',
+        timeout: const Duration(milliseconds: 15),
+      );
+      expect(result.timedOut, isTrue);
+      expect(result.matches, isEmpty);
+    });
+
+    test('superseded worker can be cancelled immediately', () async {
+      final cancel = Completer<void>();
+      final pending = findRegexMatches(
+        'a' * 10000,
+        r'^(a+)+$',
+        cancelSignal: cancel.future,
+      );
+      cancel.complete();
+      final result = await pending;
+      expect(result.cancelled, isTrue);
+      expect(result.matches, isEmpty);
     });
   });
 

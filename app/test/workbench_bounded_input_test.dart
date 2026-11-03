@@ -75,6 +75,82 @@ void main() {
     expect(document.resync().content, '👨foo foo_bar X-bar\nfoo');
   });
 
+  testWidgets('regex find runs asynchronously and rejects stale results',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-regex');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/notes.txt').writeAsStringSync(
+      'foo\nfoo-bar\nbar\nfoo',
+    );
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('notes.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final findBar = find.byKey(const ValueKey('find-bar'));
+    final query = find
+        .descendant(
+          of: findBar,
+          matching: find.byType(TextField),
+        )
+        .first;
+    await tester.enterText(query, '^foo');
+    await tester.tap(find.byKey(const ValueKey('find-regex')));
+    await tester.pump();
+    await tester.enterText(query, r'^bar$');
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump();
+
+    expect(find.text('-/1'), findsOneWidget);
+    final editor = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField),
+    );
+    expect(
+      editor.rangeDecorations
+          .map((decoration) => (decoration.startUtf16, decoration.endUtf16))
+          .toList(),
+      [(12, 15)],
+      reason:
+          r'the older ^foo result must not overwrite the latest ^bar$ query',
+    );
+
+    await tester.enterText(query, r'(?=a)');
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump();
+    expect(find.text('-/2'), findsOneWidget);
+    await tester.tap(find.byTooltip('下一个匹配'));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump();
+    expect(find.text('1/2'), findsOneWidget);
+    await tester.tap(find.byTooltip('下一个匹配'));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump();
+    expect(find.text('2/2'), findsOneWidget);
+  });
+
   testWidgets('Workbench paints find hits as versioned Rust UTF-16 ranges',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-find-ranges');

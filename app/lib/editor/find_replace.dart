@@ -5,6 +5,9 @@
 /// Emoji 用例由单测锁定。
 library;
 
+import 'dart:async';
+import 'dart:isolate';
+
 class TextMatch {
   const TextMatch(this.start, this.end);
 
@@ -19,6 +22,239 @@ class FindMatchesResult {
   const FindMatchesResult(this.matches);
 
   final List<TextMatch> matches;
+}
+
+/// Bounded result from regex search. A timeout or invalid expression is
+/// returned as data so the find widget can report it without throwing.
+class FindRegexMatchesResult {
+  const FindRegexMatchesResult({
+    this.matches = const [],
+    this.error,
+    this.timedOut = false,
+    this.truncated = false,
+    this.cancelled = false,
+  });
+
+  final List<TextMatch> matches;
+  final String? error;
+  final bool timedOut;
+  final bool truncated;
+  final bool cancelled;
+}
+
+const int maxFindRegexPatternUtf16 = 1000;
+const int maxFindRegexMatches = 19999;
+const Duration findRegexMatchTimeout = Duration(milliseconds: 750);
+
+/// Runs regex matching off the UI isolate. The worker is terminated on
+/// timeout, and the returned ranges always use original UTF-16 offsets.
+Future<FindRegexMatchesResult> findRegexMatches(
+  String text,
+  String pattern, {
+  bool caseSensitive = false,
+  bool wholeWord = false,
+  Duration timeout = findRegexMatchTimeout,
+  Future<void>? cancelSignal,
+}) async {
+  if (pattern.isEmpty) return const FindRegexMatchesResult();
+  if (pattern.length > maxFindRegexPatternUtf16) {
+    return const FindRegexMatchesResult(error: '正则表达式超过长度限制');
+  }
+
+  final replyPort = ReceivePort();
+  Isolate? worker;
+  try {
+    worker = await Isolate.spawn<List<Object?>>(
+      _findRegexWorker,
+      <Object?>[
+        replyPort.sendPort,
+        text,
+        pattern,
+        caseSensitive,
+        wholeWord,
+      ],
+      errorsAreFatal: true,
+    );
+    final response = await Future.any<Object?>([
+      replyPort.first.timeout(timeout),
+      if (cancelSignal != null)
+        cancelSignal.then((_) => const _FindRegexCancelled()),
+    ]);
+    if (response is _FindRegexCancelled) {
+      return const FindRegexMatchesResult(cancelled: true);
+    }
+    if (response is! Map<Object?, Object?> || response['ok'] != true) {
+      final error = response is Map<Object?, Object?>
+          ? response['error'] as String? ?? '正则查找失败'
+          : '正则查找工作线程返回无效结果';
+      return FindRegexMatchesResult(error: error);
+    }
+    final rawMatches = response['matches'];
+    if (rawMatches is! List<Object?>) {
+      return const FindRegexMatchesResult(error: '正则查找结果无效');
+    }
+    final matches = <TextMatch>[];
+    for (final raw in rawMatches) {
+      if (raw is! List<Object?> ||
+          raw.length != 2 ||
+          raw[0] is! int ||
+          raw[1] is! int) {
+        return const FindRegexMatchesResult(error: '正则查找范围无效');
+      }
+      matches.add(TextMatch(raw[0]! as int, raw[1]! as int));
+    }
+    return FindRegexMatchesResult(
+      matches: List<TextMatch>.unmodifiable(matches),
+      truncated: response['truncated'] == true,
+    );
+  } on TimeoutException {
+    return const FindRegexMatchesResult(error: '正则查找超时', timedOut: true);
+  } catch (error) {
+    return FindRegexMatchesResult(error: '正则查找失败: $error');
+  } finally {
+    worker?.kill(priority: Isolate.immediate);
+    replyPort.close();
+  }
+}
+
+class _FindRegexCancelled {
+  const _FindRegexCancelled();
+}
+
+void _findRegexWorker(List<Object?> message) {
+  final replyPort = message[0]! as SendPort;
+  final text = message[1]! as String;
+  final pattern = message[2]! as String;
+  final caseSensitive = message[3]! as bool;
+  final wholeWord = message[4]! as bool;
+  try {
+    final regex = RegExp(
+      pattern,
+      caseSensitive: caseSensitive,
+      multiLine: true,
+      unicode: true,
+    );
+    final matches = <List<int>>[];
+    var truncated = false;
+
+    void addMatch(int start, int end) {
+      if (wholeWord && !_isWholeWordRange(text, start, end)) return;
+      if (matches.length == maxFindRegexMatches) {
+        truncated = true;
+        return;
+      }
+      matches.add(<int>[start, end]);
+    }
+
+    if (_isMultilineRegexSource(pattern)) {
+      final normalized = _normalizeFindLineEndings(text);
+      final offsetMapper = _FindOriginalOffsetMapper(text);
+      for (final match in regex.allMatches(normalized)) {
+        final start = offsetMapper.toOriginal(match.start);
+        final end = offsetMapper.toOriginal(match.end);
+        addMatch(start, end);
+        if (truncated) break;
+      }
+    } else {
+      var lineStart = 0;
+      while (lineStart <= text.length) {
+        var lineEnd = lineStart;
+        while (lineEnd < text.length &&
+            text.codeUnitAt(lineEnd) != 0x0A &&
+            text.codeUnitAt(lineEnd) != 0x0D) {
+          lineEnd++;
+        }
+        final line = text.substring(lineStart, lineEnd);
+        for (final match in regex.allMatches(line)) {
+          addMatch(lineStart + match.start, lineStart + match.end);
+          if (truncated) break;
+        }
+        if (truncated || lineEnd == text.length) break;
+        lineStart = lineEnd + 1;
+        if (text.codeUnitAt(lineEnd) == 0x0D &&
+            lineStart < text.length &&
+            text.codeUnitAt(lineStart) == 0x0A) {
+          lineStart++;
+        }
+      }
+    }
+    replyPort.send(<String, Object?>{
+      'ok': true,
+      'matches': matches,
+      'truncated': truncated,
+    });
+  } catch (error) {
+    replyPort.send(<String, Object?>{'ok': false, 'error': '$error'});
+  }
+}
+
+bool _isMultilineRegexSource(String pattern) {
+  var escaped = false;
+  var inCharacterClass = false;
+  for (final unit in pattern.codeUnits) {
+    if (escaped) {
+      if (!inCharacterClass && (unit == 0x6E || unit == 0x72 || unit == 0x57)) {
+        return true;
+      }
+      escaped = false;
+      continue;
+    }
+    if (unit == 0x5C) {
+      escaped = true;
+    } else if (unit == 0x5B) {
+      inCharacterClass = true;
+    } else if (unit == 0x5D) {
+      inCharacterClass = false;
+    } else if (!inCharacterClass && (unit == 0x0A || unit == 0x0D)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+String _normalizeFindLineEndings(String text) {
+  final normalized = StringBuffer();
+  var index = 0;
+  while (index < text.length) {
+    final unit = text.codeUnitAt(index);
+    if (unit == 0x0D) {
+      final end = index +
+          (index + 1 < text.length && text.codeUnitAt(index + 1) == 0x0A
+              ? 2
+              : 1);
+      normalized.write('\n');
+      index = end;
+    } else {
+      normalized.writeCharCode(unit);
+      index++;
+    }
+  }
+  return normalized.toString();
+}
+
+/// Converts monotonically increasing normalized offsets without retaining an
+/// O(document length) offset table (which is expensive for large files).
+class _FindOriginalOffsetMapper {
+  _FindOriginalOffsetMapper(this.original);
+
+  final String original;
+  int _normalizedOffset = 0;
+  int _originalOffset = 0;
+
+  int toOriginal(int targetOffset) {
+    while (_normalizedOffset < targetOffset) {
+      final unit = original.codeUnitAt(_originalOffset);
+      if (unit == 0x0D &&
+          _originalOffset + 1 < original.length &&
+          original.codeUnitAt(_originalOffset + 1) == 0x0A) {
+        _originalOffset += 2;
+      } else {
+        _originalOffset++;
+      }
+      _normalizedOffset++;
+    }
+    return _originalOffset;
+  }
 }
 
 /// 非重叠顺序查找全部命中；[query] 为空返回空列表。
