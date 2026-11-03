@@ -5,12 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### P04.81 / EDT-13b：安全正则查找（本地门禁通过，hosted CI 待验证）
+### P04.81 / EDT-13b：安全正则查找（本地与 hosted gates 通过；原生 macOS DnD 待设备验证）
 
 - 查找栏新增正则开关，与大小写/全字选项组合；普通表达式逐行匹配，显式跨行表达式规范化 CRLF 并映射回原 UTF-16 范围。短生命周期 isolate 限时 750 ms、支持 supersede cancellation、表达式 1,000 UTF-16 与结果 19,999 上限；错误、超时和截断有可见反馈。请求 generation、文档 id/version 与查询选项均校验后才可写 UI。零宽匹配可连续导航；正则替换在 EDT-14 前禁用。不改 Rust/ABI。
 - 定向 find/workbench 42 项通过；完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **730**），`cargo fmt --all -- --check`、Flutter analyze（0 issues）与 `git diff --check` 通过。本机 GUI/Narrator 未启动。代码 commit `4aa5a62`。
-- 编辑前 GitNexus `findMatches` impact 为 exact/LOW（直接调用者 `replaceAllMatches`）；`_refreshMatches` 为 UNKNOWN，因为 >512 KiB 的工作台文件被跳过，源码核对确认其调用点并保留限制。staged/all 检查 5 files / 13 symbols / 0 processes / LOW；compare-main 仍因累计分支差异报 CRITICAL（1563 files / 2769 symbols / 383 flows），不视为切片级风险。诊断：`docs/diagnostics/2026-11-03-p04/p04.81-regex-find.md`。
-- 重复 CI 红灯与历史崩溃相关性继续按已留存证据审慎判断：近期 Windows MSAA/PowerShell probe 和 macOS DnD 失败没有已知 crash signature；本功能的 worker 上限提升正则路径本身的容错，不能宣称修复历史 Windows `0xC000041D` 或 macOS SIGSEGV。PR CI / Platform Availability 待 push 触发后记录。
+- PR CI [`41572068725`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41572068725) 四个 job 全绿：Flutter Analyze 0 issues / 730 tests，Linux/Windows Rust format、Clippy、workspace tests 和 harness 通过。Platform Availability [`41572064300`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41572064300) Linux、Windows、macOS jobs 全 success。Linux package/DnD artifacts `13201737448` / `13202171502`；Windows app/DnD `13201683521` / `13201803465`，可见客户区 1028×681、devicePixelRatio 1.0、13 pointer events，记录同文档 move、跨文档 copy、外部文本 drop，accessibility/关闭 smoke 通过；macOS ARM64 包 artifact `13202790735`。
+- 编辑前 GitNexus `findMatches` impact 为 exact/LOW（直接调用者 `replaceAllMatches`）；`_refreshMatches` 为 UNKNOWN，因为 >512 KiB 的工作台文件被跳过，源码核对确认其调用点并保留限制。代码 staged/all 检查 5 files / 13 symbols / 0 processes / LOW；compare-main 为 CRITICAL（1563 files / 2769 symbols / 383 flows），反映累计分支差异。最终 hosted-evidence 文档 staged/all scan 为 LOW、0 affected processes；compare-main 仍因累计分支差异为 CRITICAL。诊断：`docs/diagnostics/2026-11-03-p04/p04.81-regex-find.md`。
+- macOS startup artifact `13202780734` 只有 Impeller 初始化行、无 crash report；DnD artifact `13202362754` 记录 `CGEventPostToPid pointer route: false` 且所有 DnD 测试 skipped，因此原生 macOS DnD 仍待设备。此次 hosted run 未复现历史 Windows `0xC000041D` 或 macOS SIGSEGV；worker timeout/cancellation 是正则路径的保护，不声称修复历史 crash。重复 CI 红灯与已知 crash 签名关联仍无证据，详见 `ci-failures-and-crash-correlation.md` 与 `p04.81-regex-find.md`。
 
 ### 最新进展（2026-11-03，P04.80 / EDT-13a 全字匹配，hosted gates 通过）
 

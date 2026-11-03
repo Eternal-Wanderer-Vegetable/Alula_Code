@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.80 / EDT-13a is hosted-validated. P04.81 / EDT-13b regex Find code commit `4aa5a62` passes local DoD; its in-progress evidence is committed separately and hosted CI is pending push. PR #2 remains OPEN and draft.
+> Last Updated: 2026-11-03. P04.80 / EDT-13a is hosted-validated. P04.81 / EDT-13b regex Find code commit `4aa5a62` and evidence commit `097d547` are pushed; PR CI `41572068725` and Platform Availability `41572064300` passed. PR #2 remains OPEN and draft.
 
 ## Current Objective
 
@@ -19,7 +19,8 @@ Continue the fixed Code-OSS 1.145.0 parity plan one slice at a time. Prioritize 
 
 - Regex Find runs in a short-lived, cancellable 750 ms isolate; pattern and result limits are 1,000 and 19,999. Line anchors, explicit multiline matching, whole-word/case options, original UTF-16 ranges, zero-width navigation, invalid/timeout/truncation feedback, stale query and document guards are covered. Regex Replace/capture is deferred to EDT-14; selection scope and history remain later EDT-13 items.
 - Full local DoD passed: `bash init.sh` (Rust workspace/Clippy/core build, Flutter 730), cargo fmt, Flutter analyze (0 issues); 42 focused find/workbench tests passed. No Rust/ABI change and no local GUI/Narrator.
-- Code commit `4aa5a62`. Diagnostic and status files record local evidence and wait for hosted CI / Platform Availability after push: `docs/diagnostics/2026-11-03-p04/p04.81-regex-find.md`.
+- PR CI `41572068725` passed all four jobs with Flutter Analyze 0 issues and 730 tests. Platform Availability `41572064300` passed Linux/Windows/macOS jobs. Windows artifact `13201683521` plus DnD artifact `13201803465`: visible client 1028×681, devicePixelRatio 1.0, 13 pointer events, same-document move, cross-document copy, external text drop, accessibility and close smoke pass. macOS ARM64 package `13202790735`; startup artifact `13202780734` contains only Impeller initialization. DnD artifact `13202362754` records pointer route unavailable and all tests skipped; native macOS DnD/IME and P15 remain pending.
+- Code commit `4aa5a62`, interim evidence commit `097d547`. Final hosted evidence and run URLs are in `docs/diagnostics/2026-11-03-p04/p04.81-regex-find.md`.
 - GitNexus before-edit: `findMatches` exact/LOW with `replaceAllMatches` as one direct dependent. `_refreshMatches` is UNKNOWN because `workbench_page.dart` is skipped above 512 KiB; source call sites were inspected. Staged/all risk LOW; compare-main CRITICAL reflects accumulated branch divergence. The graph index also omits the large workbench file and has cross-language/flow-budget limits.
 - Recurring CI red checks remain a hypothesis for the historical crashes, not an established cause. Existing audit found no shared crash signature in sampled probe/fixture failures. This regex worker reduces UI blocking risk for pathological patterns but does not fix the historical Windows `0xC000041D` or macOS SIGSEGV.
 
@@ -36,7 +37,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one slice at a time. Prioritize 
 
 ## Next Session
 
-1. Push the staged documentation commit and inspect PR CI / Platform Availability. On green hosted gates, record run/artifact evidence and change P04.81 from in-progress to done; then choose the next EDT-13 gap (selection scope, multiline behavior, or history) and run GitNexus impact before edits.
+1. Finish the evidence documentation commit for P04.81, then choose the next EDT-13 gap (selection scope, multiline behavior, or history) and run GitNexus impact before edits.
 2. Keep PR #2 OPEN and draft. Do not start the local desktop GUI or Narrator. Do not publish v0.1.0 or mark the PR ready.
 
 ## Constraints
