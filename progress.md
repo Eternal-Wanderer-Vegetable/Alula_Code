@@ -10,6 +10,13 @@
 - `windows-artifact-validation.yml` 现可选 run/artifact/source SHA，Narrator 与旧源码交互 job 默认关闭。Windows ARM 的多视图编辑回放先后暴露 clipboard 粘贴与 SendKeys 注入丢字符；在回车后等待 350 ms、逐字符间隔 100 ms 后，保留严格同步/保存回读断言的最终 light/dark 两组均通过。当前 run `41627307864` 使用 Platform Availability `41618233435` 的 x64 Release artifact（source `1129d607`，Windows 11 Enterprise ARM64 x64 仿真，96 DPI）；两组四视图同步、保存回读 `view-2` 一致，WM_CLOSE exit 0，无 Application Error 或 crash dump。讲述人未启动。证据 artifacts [`13225549631`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13225549631)（light）和 [`13226642379`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13226642379)（dark）。
 - 验证器修正 commit `34f1511` 已推送。PR CI [`41627306984`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627306984) 四个 job 全绿。先前 ARM 红灯是测试输入注入丢字符，相关 session 仍正常关闭且没有崩溃诊断；这提升 CI 信号质量，但不解释或修复历史旧 artifact 的 `0xC000041D`。历史 crash root cause 仍待定位。详见 [`p04.92-win11-arm-current-artifact.md`](docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md) 与 [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
 
+### P04.93 / EDT-17a：有界逐行差异模型（已完成）
+
+- 按固定 Code-OSS `4bda7217` `DefaultLinesDiffComputer` 新增纯 Dart Myers 行对齐模型；返回 1-based、end-exclusive hunk，支持插入/删除/替换和分离变化，默认忽略首尾空白。UTF-16 输入、每侧行数、frontier 历史槽和比较操作均有上限；到限后返回明确标记的粗粒度全文 hunk。
+- 新增 10 个定向用例，含 300 组 seeded 随机行输入；覆盖重复行稳定性、行范围映射、首尾空白、BOM/Emoji/CRLF、空文本/末尾换行和资源上限。
+- 完整 `bash init.sh` 通过：Rust workspace、Clippy、build_core、Flutter **793**；`cargo fmt --all -- --check`、`cd app && flutter analyze --no-pub`（0 issues）、harness 100/100 与 `git diff --check` 通过。报告：[`p04.93-line-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.93-line-diff-model.md)。
+- 此切片只交付 line-diff model，未接入 UI；inline/side-by-side、word diff、moved blocks、unchanged folding 与导航仍属于 EDT-17 后续任务。GitNexus 的 diff 概念检索无相关调用流，超大 `workbench_page.dart` 不在索引中；保留 UNKNOWN 与 compare-main CRITICAL/capped 图谱限制。
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。
