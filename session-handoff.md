@@ -1,8 +1,8 @@
-> Last Updated: 2026-11-04. P04.106 / EDT-18b is complete and pushed at fe6c13fe76a891eaceffa95025e2f073cffdadfa. PR CI 41727303547 and Linux/Windows/macOS Platform Availability 41727292646 all passed; macOS hosted native DnD input remains unavailable and is still a P15 device gate. PR #2 stays OPEN/draft.
+> Last Updated: 2026-11-04. P04.106 / EDT-18b is complete; PR CI 41727303547 and Platform Availability 41727292646 passed, and evidence commit e4974a0 passed PR CI 41731775379. P04.107 / EDT-18c scope is registered to make the compare modified side edit the Rust-authoritative active document. PR #2 stays OPEN/draft.
 
 ## Current Objective
 
-P04.106 / EDT-18b is complete: workbench.files.action.compareWithSaved compares the active Rust-authoritative document with a bounded, decoded disk snapshot in a read-only side-by-side preview. Product commit 8f1ba78 and hosted evidence/state commits 50bd30a plus fe6c13f are pushed to origin/codex/vscode-parity-p00. Local DoD passed with Flutter 901 tests, Rust workspace, Clippy, core build, cargo fmt, and Flutter analyze. PR CI 41727303547 and Linux/Windows/macOS Platform Availability 41727292646 passed. P04/EDT-18 remains in progress; decompose the next separate EDT-18 item into docs/03 before implementation. Keep PR #2 OPEN/draft and avoid local GUI/Narrator checks.
+P04.106 / EDT-18b is complete and pushed. Product SHA fe6c13fe76a891eaceffa95025e2f073cffdadfa passed PR CI 41727303547 and Linux/Windows/macOS Platform Availability 41727292646; evidence commit e4974a08a3b40ec07b0248025d95c803393dd01a passed PR CI 41731775379. P04.107 / EDT-18c is now the only active slice: make the modified pane of clipboard/saved comparisons edit the same Rust-authoritative active document while the original snapshot stays read-only. Its DoD is in docs/03. First run GitNexus impact for SnapshotComparePreview, RustTextInputField, and the skipped workbench command routes, then implement and verify. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
 
 ## Previous Slice: P04.104 / EDT-17l
 
@@ -32,7 +32,7 @@ P04.106 Platform Availability 41727292646 passed Linux x64, Windows x64, and mac
 
 ## Workspace and PR
 
-- Worktree: /tmp/alula-p04.70-next (detached); remote origin/codex/vscode-parity-p00 contains the P04.106 product SHA fe6c13fe76a891eaceffa95025e2f073cffdadfa and its hosted validation evidence.
+- Worktree: /tmp/alula-p04.70-next (detached at e4974a0); remote origin/codex/vscode-parity-p00 contains P04.106 product SHA fe6c13f and its validated evidence.
 - Push target: origin/codex/vscode-parity-p00; authorization to push this branch persists.
 - PR #2 is OPEN/draft: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2. Do not merge or publish v0.1.0 before plan gates are complete.
 
@@ -54,6 +54,6 @@ P04.106 Platform Availability 41727292646 passed Linux x64, Windows x64, and mac
 ## Next Session Startup
 
 1. Read AGENTS.md, this handoff, and progress.md.
-2. Review the remaining EDT-18 scope in docs/10 and select the next concrete operation after compare-with-saved.
-3. Register its independent scope, pinned VS Code behavior, dependencies, and DoD in docs/03 before editing source.
-4. Run GitNexus impact before code changes; keep the one-feature-at-a-time rule. Keep PR #2 OPEN/draft and do not launch local GUI/Narrator.
+2. Start P04.107 / EDT-18c from the registered docs/03 DoD.
+3. Run GitNexus impact for SnapshotComparePreview, RustTextInputField, and each workbench handler before edits; preserve UNKNOWN/CRITICAL and confirm skipped file call sites with exact search.
+4. Keep the original snapshot read-only, Rust as the only modified-text authority, P04.107 separate from Explorer/apply-revert/three-way tasks, and PR #2 OPEN/draft. Do not launch local GUI/Narrator.

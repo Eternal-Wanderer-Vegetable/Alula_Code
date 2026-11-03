@@ -5,7 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（已完成）
+### P04.107 / EDT-18c：活动文件比较的修改侧可编辑（scope 已登记，in-progress）
+
+- 下一项只推进 Compare with Clipboard / Compare with Saved 的 modified pane 编辑能力：编辑同一活动 Rust 文档，original clipboard/disk snapshot 只读；已接受编辑经现有 Rust TextOp/FFI 路径，动态 diff、同文档双视图、selection/undo/redo/dirty/savepoint 与保存回读保持一致。
+- 动态 diff 继续遵守 UTF-16、2,000,000 UTF-16 与既有行/row/work 限制；预算不足时显式 fallback 但保留 Rust 编辑，不呈现部分差异。文档关闭/切换/预览关闭时防止 stale 写入；不改 Rust/ABI/保存协议。DoD 与边界已登记在 docs/03 P04.107。上游固定版 CompareWithClipboardAction 在 fileActions.ts 820–868 将活动文件作为 modified resource 打开： https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/files/browser/fileActions.ts#L820-L868。
+- 开工前 GitNexus index 刷新到 evidence SHA e4974a0：10,862 nodes / 46,269 edges / 442 flows；5 个大文件（含 workbench_page.dart）跳过，708 个跨语言 property sites 未连接，771/971 个 flow candidates 未选入，13 次 walk budget-cut。Concept query 未找到可靠 compare execution flow；SnapshotComparePreview context 显示 incoming compatibility wrapper，outgoing 为 build/row renderer。需先对 SnapshotComparePreview、RustTextInputField、compare handler 做 impact；UNKNOWN/CRITICAL 都保留并精确搜索，不作 clean 判断。
+- P04.106 / EDT-18b 已完成，详见下方记录；代码 SHA fe6c13fe76a891eaceffa95025e2f073cffdadfa 的 PR CI 41727303547 与三平台 Platform Availability 41727292646 通过；docs evidence SHA e4974a08a3b40ec07b0248025d95c803393dd01a 的 PR CI 41731775379 也通过。macOS 包 artifact 已生成，hosted 原生 DnD 因指针路由不可用仍待 P15 设备验证。
+
+### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（此前完成）
 
 - 固定 Code-OSS workbench.files.action.compareWithSaved 已接入 File/命令面板及 Ctrl+K、D；macOS 为 Cmd+K、D。磁盘快照为 original，Rust 权威活动文本为 modified，打开只读 side-by-side 预览；stat 先行限制 6,000,016 bytes，合并输入不超过 2,000,000 UTF-16，并复用差异模型预算。文档切换、编辑、关闭，缺失/二进制/超限磁盘文件均取消整次预览，不写回文档或磁盘。
 - 保存比较 widget 9/9；完整 bash init.sh 全绿：Rust workspace、Clippy、core build、Flutter 901；cargo fmt --all -- --check 与 flutter analyze --no-pub 通过（0 issues）。本次启动守则 bash init.sh --fast 也全绿。没有启动本机 GUI/Narrator。
