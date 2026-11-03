@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 import 'git_diff_navigation.dart';
 import 'git_diff_patch.dart';
-import 'git_diff_side_by_side.dart';
+import 'git_diff_whitespace_projection.dart';
 import 'git_diff_word_highlights.dart';
 
 enum GitDiffPatchPresentation { inline, sideBySide }
@@ -42,9 +42,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
 
   final Object _navigationOwner = Object();
   late GitDiffPatchResult _result;
-  late GitDiffPatchWordResult _wordChanges;
-  late List<GitDiffPatchChange> _changeTargets;
-  GitDiffSideBySideResult? _sideBySideRows;
+  late GitDiffProjectionResult _projection;
   GitDiffPatchPresentation _presentation = GitDiffPatchPresentation.inline;
   int _currentChangeIndex = -1;
   bool? _reportedNavigationAvailability;
@@ -72,7 +70,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     } else {
       widget.navigationController?.updateAvailability(
         owner: _navigationOwner,
-        canNavigate: _changeTargets.isNotEmpty,
+        canNavigate: _projection.changes.isNotEmpty,
       );
     }
     _notifyNavigationAvailability(
@@ -98,12 +96,12 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     widget.navigationController?.attach(
       owner: _navigationOwner,
       navigateToChange: _navigateToChange,
-      canNavigate: _changeTargets.isNotEmpty,
+      canNavigate: _projection.changes.isNotEmpty,
     );
   }
 
   void _notifyNavigationAvailability({bool force = false}) {
-    final canNavigate = _changeTargets.isNotEmpty;
+    final canNavigate = _projection.changes.isNotEmpty;
     widget.navigationController?.updateAvailability(
       owner: _navigationOwner,
       canNavigate: canNavigate,
@@ -121,13 +119,8 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
 
   void _parsePatch() {
     _result = parseGitDiffPatch(widget.patch);
-    _wordChanges = computeGitDiffPatchWordChanges(_result);
-    _changeTargets = computeGitDiffPatchChanges(_result);
+    _projection = projectGitDiffPatchIgnoringTrimWhitespace(_result);
     _currentChangeIndex = -1;
-    _sideBySideRows = _presentation == GitDiffPatchPresentation.sideBySide &&
-            _result.canRender
-        ? computeGitDiffSideBySideRows(_result)
-        : null;
   }
 
   void _resetScrollPositions() {
@@ -142,7 +135,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   KeyEventResult _handleNavigationKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent ||
         event.logicalKey != LogicalKeyboardKey.f7 ||
-        _changeTargets.isEmpty) {
+        _projection.changes.isEmpty) {
       return KeyEventResult.ignored;
     }
     _navigateToChange(
@@ -152,7 +145,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   }
 
   void _navigateToChange(int direction) {
-    final count = _changeTargets.length;
+    final count = _projection.changes.length;
     if (count == 0) return;
 
     final current = _currentChangeIndex;
@@ -167,7 +160,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
 
   void _revealCurrentChange() {
     if (_currentChangeIndex < 0 ||
-        _currentChangeIndex >= _changeTargets.length) {
+        _currentChangeIndex >= _projection.changes.length) {
       return;
     }
 
@@ -176,17 +169,9 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
         useSideBySide ? _sideBySideScrollController : _inlineScrollController;
     if (!controller.hasClients) return;
 
-    final target = _changeTargets[_currentChangeIndex];
-    var rowIndex = target.firstRowIndex;
-    if (useSideBySide) {
-      final rows = _sideBySideRows?.rows ?? const <GitDiffSideBySideRow>[];
-      final projectedIndex = rows.indexWhere(
-        (row) =>
-            row.originalLine?.rowIndex == target.firstRowIndex ||
-            row.modifiedLine?.rowIndex == target.firstRowIndex,
-      );
-      if (projectedIndex >= 0) rowIndex = projectedIndex;
-    }
+    final target = _projection.changes[_currentChangeIndex];
+    final rowIndex =
+        useSideBySide ? target.sideBySideRowIndex : target.inlineRowIndex;
 
     final position = controller.position;
     final rowTop = 4 + rowIndex * _diffRowHeight;
@@ -202,27 +187,21 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     ));
   }
 
-  int? _currentSideBySideRowIndex(List<GitDiffSideBySideRow> rows) {
+  int? _currentSideBySideRowIndex() {
     if (_currentChangeIndex < 0 ||
-        _currentChangeIndex >= _changeTargets.length) {
+        _currentChangeIndex >= _projection.changes.length) {
       return null;
     }
-    final sourceRowIndex = _changeTargets[_currentChangeIndex].firstRowIndex;
-    final index = rows.indexWhere(
-      (row) =>
-          row.originalLine?.rowIndex == sourceRowIndex ||
-          row.modifiedLine?.rowIndex == sourceRowIndex,
-    );
-    return index < 0 ? null : index;
+    return _projection.changes[_currentChangeIndex].sideBySideRowIndex;
   }
 
   String _changeAnnouncement() {
-    if (_changeTargets.isEmpty) return '无差异';
+    if (_projection.changes.isEmpty) return '无差异';
     if (_currentChangeIndex < 0) {
-      return '尚未选择差异，共 ${_changeTargets.length} 处';
+      return '尚未选择差异，共 ${_projection.changes.length} 处';
     }
 
-    final target = _changeTargets[_currentChangeIndex];
+    final target = _projection.changes[_currentChangeIndex];
     final lines = <String>[];
     if (target.originalLineNumber != null) {
       lines.add('原文第 ${target.originalLineNumber} 行');
@@ -231,7 +210,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
       lines.add('修改后第 ${target.modifiedLineNumber} 行');
     }
     final location = lines.isEmpty ? '' : '，${lines.join('，')}';
-    return '差异 ${_currentChangeIndex + 1} / ${_changeTargets.length}$location';
+    return '差异 ${_currentChangeIndex + 1} / ${_projection.changes.length}$location';
   }
 
   Widget _buildNavigationToolbar({
@@ -240,7 +219,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   }) {
     final displayedChange =
         _currentChangeIndex < 0 ? 0 : _currentChangeIndex + 1;
-    final countText = '$displayedChange / ${_changeTargets.length}';
+    final countText = '$displayedChange / ${_projection.changes.length}';
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -251,7 +230,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
           constraints: const BoxConstraints.tightFor(width: 32, height: 32),
           padding: EdgeInsets.zero,
           onPressed:
-              _changeTargets.isEmpty ? null : () => _navigateToChange(-1),
+              _projection.changes.isEmpty ? null : () => _navigateToChange(-1),
           icon: const Icon(Icons.keyboard_arrow_up, size: 18),
         ),
         IconButton(
@@ -260,7 +239,8 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
           visualDensity: VisualDensity.compact,
           constraints: const BoxConstraints.tightFor(width: 32, height: 32),
           padding: EdgeInsets.zero,
-          onPressed: _changeTargets.isEmpty ? null : () => _navigateToChange(1),
+          onPressed:
+              _projection.changes.isEmpty ? null : () => _navigateToChange(1),
           icon: const Icon(Icons.keyboard_arrow_down, size: 18),
         ),
         Semantics(
@@ -292,8 +272,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
               icon: const Icon(Icons.view_column_outlined, size: 14),
               label: const Text('并排'),
               tooltip: sideBySideAvailable ? '并排差异' : '并排差异需要至少 640 逻辑像素宽度',
-              enabled:
-                  sideBySideAvailable && (_sideBySideRows?.canRender ?? true),
+              enabled: sideBySideAvailable && _projection.canRender,
             ),
           ],
           selected: {
@@ -305,10 +284,6 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
             final presentation = selection.first;
             setState(() {
               _presentation = presentation;
-              if (presentation == GitDiffPatchPresentation.sideBySide &&
-                  _sideBySideRows == null) {
-                _sideBySideRows = computeGitDiffSideBySideRows(_result);
-              }
             });
             if (_currentChangeIndex >= 0) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -323,11 +298,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
 
   @override
   Widget build(BuildContext context) {
-    final sideBySideFallback =
-        _presentation == GitDiffPatchPresentation.sideBySide &&
-            _sideBySideRows != null &&
-            !_sideBySideRows!.canRender;
-    if (!_result.canRender || sideBySideFallback) {
+    if (!_result.canRender || !_projection.canRender) {
       return SingleChildScrollView(
         padding: const EdgeInsets.all(8),
         child: SelectableText(
@@ -350,8 +321,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
           final sideBySideAvailable =
               constraints.maxWidth >= _sideBySideMinimumWidth;
           final useSideBySide = sideBySideAvailable &&
-              _presentation == GitDiffPatchPresentation.sideBySide &&
-              (_sideBySideRows?.canRender ?? false);
+              _presentation == GitDiffPatchPresentation.sideBySide;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -381,23 +351,23 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
         controller: _inlineScrollController,
         padding: const EdgeInsets.symmetric(vertical: 4),
         itemExtent: _diffRowHeight,
-        itemCount: _result.lines.length,
+        itemCount: _projection.inlineRows.length,
         itemBuilder: (context, index) {
-          final line = _result.lines[index];
+          final row = _projection.inlineRows[index];
+          final line = row.line;
           final isCurrentChangeTarget = _currentChangeIndex >= 0 &&
-              _changeTargets[_currentChangeIndex].firstRowIndex ==
-                  line.rowIndex;
+              _projection.changes[_currentChangeIndex].inlineRowIndex == index;
           return _GitDiffPatchRow(
             line: line,
-            wordChanges: _wordChanges.changesForRow(index),
+            wordChanges: row.wordChanges,
             isCurrentChangeTarget: isCurrentChangeTarget,
           );
         },
       );
 
   Widget _buildSideBySideList() {
-    final rows = _sideBySideRows?.rows ?? const <GitDiffSideBySideRow>[];
-    final currentRowIndex = _currentSideBySideRowIndex(rows);
+    final rows = _projection.rows;
+    final currentRowIndex = _currentSideBySideRowIndex();
     return ListView.builder(
       key: const ValueKey('git-diff-side-by-side-rows'),
       controller: _sideBySideScrollController,
@@ -412,7 +382,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   }
 
   Widget _buildSideBySideRow(
-    GitDiffSideBySideRow row, {
+    GitDiffProjectionRow row, {
     required bool isCurrentChangeTarget,
   }) {
     final fullWidthLine = row.fullWidthLine;
@@ -456,18 +426,34 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
           isCurrentChangeTarget ? _currentChangeDecoration : null,
       child: Row(
         children: [
-          Expanded(child: _buildSideBySideCell(row.originalLine, 'old')),
+          Expanded(
+            child: _buildSideBySideCell(
+              row.originalLine,
+              'old',
+              wordChanges: row.originalWordChanges,
+            ),
+          ),
           const SizedBox(
             width: 1,
             child: ColoredBox(color: Color(0xFF3C3C3C)),
           ),
-          Expanded(child: _buildSideBySideCell(row.modifiedLine, 'new')),
+          Expanded(
+            child: _buildSideBySideCell(
+              row.modifiedLine,
+              'new',
+              wordChanges: row.modifiedWordChanges,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSideBySideCell(GitDiffPatchLine? line, String side) {
+  Widget _buildSideBySideCell(
+    GitDiffPatchLine? line,
+    String side, {
+    required List<GitDiffWordRange> wordChanges,
+  }) {
     if (line == null) {
       return Container(
         key: ValueKey('git-diff-side-by-side-$side-empty'),
@@ -523,7 +509,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
               textColor,
               rowIndex: line.rowIndex,
               side: side,
-              wordChanges: _wordChanges.changesForRow(line.rowIndex),
+              wordChanges: wordChanges,
               highlightBackground: highlightBackground,
               highlightForeground: highlightForeground,
             ),
@@ -553,7 +539,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     Color color, {
     required int rowIndex,
     required String side,
-    required GitDiffPatchWordLineChanges? wordChanges,
+    required List<GitDiffWordRange> wordChanges,
     required Color highlightBackground,
     required Color highlightForeground,
   }) {
@@ -563,10 +549,9 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
       fontSize: 11,
       height: 1.4,
     );
-    final ranges = wordChanges?.ranges ?? const <GitDiffWordRange>[];
     final spans = _buildSideBySideWordSpans(
       value,
-      ranges,
+      wordChanges,
       highlightBackground,
       highlightForeground,
     );
@@ -628,7 +613,7 @@ class _GitDiffPatchRow extends StatelessWidget {
   });
 
   final GitDiffPatchLine line;
-  final GitDiffPatchWordLineChanges? wordChanges;
+  final List<GitDiffWordRange> wordChanges;
   final bool isCurrentChangeTarget;
 
   @override
@@ -730,7 +715,7 @@ class _GitDiffPatchRow extends StatelessWidget {
     Color color, {
     int? rowIndex,
     String? keyPrefix,
-    GitDiffPatchWordLineChanges? wordChanges,
+    List<GitDiffWordRange>? wordChanges,
     Color? highlightBackground,
     Color? highlightForeground,
   }) {
@@ -740,7 +725,7 @@ class _GitDiffPatchRow extends StatelessWidget {
       fontSize: 11,
       height: 1.4,
     );
-    final ranges = wordChanges?.ranges ?? const <GitDiffWordRange>[];
+    final ranges = wordChanges ?? const <GitDiffWordRange>[];
     final spans = _buildWordSpans(
       value,
       ranges,

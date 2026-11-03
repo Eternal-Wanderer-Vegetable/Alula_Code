@@ -342,6 +342,47 @@ void main() {
       );
     });
 
+    testWidgets(
+        'folds trim-equivalent lines and keeps substantive diff navigation',
+        (tester) async {
+      const patch = 'diff --git a/file.txt b/file.txt\n'
+          '@@ -1,2 +1,2 @@\n'
+          '-  stable  \n'
+          '+stable\n'
+          '-internal  gap\n'
+          '+internal gap\n';
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: GitDiffPatchView(patch: patch)),
+      ));
+
+      expect(find.text('stable'), findsOneWidget);
+      expect(find.text('  stable  '), findsNothing);
+      expect(find.text('internal  gap'), findsOneWidget);
+      expect(find.text('internal gap'), findsOneWidget);
+      expect(find.text('0 / 1'), findsOneWidget);
+      expect(find.byKey(const ValueKey('git-diff-text-4')), findsOneWidget);
+      expect(find.byKey(const ValueKey('git-diff-text-5')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('git-diff-next-change')));
+      await tester.pumpAndSettle();
+      expect(find.text('1 / 1'), findsOneWidget);
+
+      await tester.tap(find.text('并排'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('git-diff-side-by-side-rows')),
+          findsOneWidget);
+      final oldNeutralCell = tester.widget<Container>(
+        find.byKey(const ValueKey('git-diff-side-by-side-old-cell-2')),
+      );
+      final newNeutralCell = tester.widget<Container>(
+        find.byKey(const ValueKey('git-diff-side-by-side-new-cell-3')),
+      );
+      expect(oldNeutralCell.color, Colors.transparent);
+      expect(newNeutralCell.color, Colors.transparent);
+      expect(find.text('  stable  '), findsOneWidget);
+      expect(find.text('stable'), findsOneWidget);
+    });
+
     testWidgets('keeps the full raw patch visible on parser fallback',
         (tester) async {
       const patch = 'diff --git a/image.png b/image.png\nGIT binary patch\n';
