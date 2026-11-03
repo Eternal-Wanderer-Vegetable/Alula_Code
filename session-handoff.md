@@ -1,15 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.96 / EDT-17d evidence commit 735a465 is pushed; final PR CI run 41650426521 passed all four jobs. P04.97 / EDT-17e is registered in docs/03 and is now the active implementation slice.
+> Last Updated: 2026-11-03. P04.97 / EDT-17e implementation and hosted evidence are complete; code commit 0eaacac is pushed. This handoff will be refreshed after the evidence commit.
 
 ## Current Objective
 
 Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Do not publish v0.1.0, mark PR #2 ready, or merge.
-
-## Latest Completed Slice: P04.94 / EDT-17b
-
-- Added bounded pure-Dart UTF-16 character/word ranges with Code-OSS ASCII word-boundary expansion, full local DoD, and hosted Linux/Windows/macOS validation. Evidence: [`p04.94-word-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.94-word-diff-model.md).
-- Historical Windows ARM `0xC000041D` remains unresolved; P04.94 green CI is non-reproduction evidence only.
 
 ## Completed Slice: P04.95 / EDT-17c
 
@@ -27,12 +22,12 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - Local DoD passed: focused parser/widget suite (7), full `bash init.sh` (Rust workspace/Clippy/build_core, Flutter 821), `cargo fmt --all -- --check`, Flutter analyze (0 issues), harness validator 100/100, JSON and diff checks. No local GUI/Narrator.
 - PR CI [`41647025365`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41647025365) passed all four jobs, including 821 Flutter tests. Platform Availability [`41647018011`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41647018011) passed Linux x64, Windows x64, and macOS ARM64. Linux/Windows DnD artifacts record 19/13 pointer events and move/copy/external-text routes. macOS DnD was skipped for unavailable hosted pointer routing. Full evidence: [`p04.96-git-diff-patch-renderer.md`](docs/diagnostics/2026-11-03-p04/p04.96-git-diff-patch-renderer.md).
 
-## Active Slice: P04.97 / EDT-17e
+## Latest Completed Slice: P04.97 / EDT-17e
 
-- Implement bounded UTF-16 word highlights for ordinally paired removed/added rows in one contiguous Git unified-diff change block. Keep unpaired lines, context and hunk boundaries distinct; rich selectable text retains the existing full raw-patch fallback.
-- Budgets registered in docs/03: 8,192 pairs, 262,144 aggregate UTF-16 input units, 2,000,000 aggregate work, and 1,000,000 trace cells per pair. Any exhausted budget or word-model fallback paints the whole paired lines and records why. No Rust/ABI or numeric memory changes.
-- Before code edits, GitNexus index was refreshed and bound to /tmp/alula-p04.70-next at 735a465. computeWordDiff impact is CRITICAL (75 nodes/31 flows) with clearly unrelated graph mappings; GitDiffPatchView is UNKNOWN because workbench_page.dart exceeds index size cap. Source search confirms existing word-diff use in diff_view_model.dart and a single production GitDiffPatchView construction in the large Workbench file. All-scope doc scans varied between 0 affected processes/LOW and 84–377/CRITICAL; high-risk flow lists were capped and unrelated, so the 0 result is not an all-clear. Keep warnings unresolved and recheck before commit.
-- Last completed P04.96 evidence run 41650426521 passed Rust Linux/Windows, harness, and Flutter (821); local init.sh --fast passed. Historic Windows close crash remains unresolved. No local desktop or accessibility interaction.
+- Paired removed/added rows only inside contiguous blocks per unified hunk; word ranges use the existing UTF-16 word diff and render as selectable rich text. Context and unmatched rows stay unpaired. Aggregate caps: 8,192 pairs, 262,144 UTF-16 input units, 2,000,000 work reservation, 1,000,000 trace cells per pair. Fallback paints full paired lines with a reason; full raw-patch fallback remains.
+- Local DoD passed: 15 focused tests, full init.sh (Rust workspace/Clippy/build_core, Flutter 829), cargo fmt, Flutter analyze 0 issues, harness 100/100, JSON and diff check. No local GUI/Narrator; no Rust/ABI or numerical memory changes. Evidence: docs/diagnostics/2026-11-03-p04/p04.97-git-diff-word-highlight.md.
+- Code commit 0eaacac is pushed. PR CI 41653070567 passed all four jobs. Platform Availability 41653061611 passed Linux x64, Windows x64, and macOS ARM64 build/package smoke. Linux/Windows DnD artifacts record 22/13 pointer events and move/copy/external-text routes; Windows client 1028×681 at DPR 1.0. macOS package/startup passed, while native DnD artifact 13238189464 is explicitly skipped due unavailable input route.
+- GitNexus impact remains CRITICAL for computeGitDiffPatchWordChanges (76/31) and UNKNOWN for GitDiffPatchView. Staged detection: 3 files / 14 symbols / 376 flows / CRITICAL with capped/unmatched paths. workbench_page.dart exceeded the index's 512 KiB cap. Do not call the graph clean. Current green smoke does not resolve historical Windows 0xC000041D.
 
 ## CI and Crash Finding
 
@@ -43,9 +38,9 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 ## Current Workspace State
 
 - Work in `/tmp/alula-p04.70-next`; checkout is detached and pushes to `origin/codex/vscode-parity-p00` are authorized with `git push origin HEAD:codex/vscode-parity-p00`.
-- P04.96 code commit `44807f2` is pushed; this commit contains its final evidence and state update.
+- P04.97 code commit `0eaacac` is pushed; the P04.97 evidence/state update is the current docs-only change.
 - PR #2 remains OPEN/draft. Do not publish v0.1.0 or merge.
-- CI, Linux, Windows, and macOS all passed. Linux/Windows DnD artifacts record 23/12 pointer events and move/copy/external-text routes; macOS startup log contains only the Impeller line, and native macOS DnD was skipped for `input-route-unavailable`.
+- P04.97 PR CI and Platform Availability passed. Linux/Windows DnD artifacts record 22/13 pointer events and move/copy/external-text routes; macOS startup log contains only the Impeller line, and native macOS DnD was skipped for `input-route-unavailable`.
 
 ## Open Validation Gaps
 
@@ -53,6 +48,6 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - Native macOS DnD/IME, Linux DRM hardware, and P15 device gates remain open. Hosted macOS DnD must be recorded as skipped when pointer routing is unavailable.
 - EDT-17 visual diff features remain open; do not report the diff editor complete.
 
-## Next Session First Step
+## Next Step
 
-Register the next EDT-17 slice in `docs/03-里程碑计划与验收标准.md` before coding; prioritize connecting word-level ranges to rendered changed lines while retaining explicit work budgets and complete-text fallback. Refresh GitNexus, preserve every CRITICAL/UNKNOWN warning, and continue with local/hosted checks in staged commits. Keep PR #2 open/draft. Preserve the unresolved crash evidence and avoid local GUI/accessibility actions that can start Narrator.
+After the P04.97 evidence commit, register the next EDT-17 slice in `docs/03-里程碑计划与验收标准.md` before coding. Continue the user-facing diff editor parity gaps from the fixed Code-OSS matrix, retain explicit work budgets and complete-text fallback, refresh GitNexus before edits, and preserve every CRITICAL/UNKNOWN warning. Keep PR #2 open/draft. Preserve the unresolved crash evidence and avoid local GUI/accessibility actions that can start Narrator.
