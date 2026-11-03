@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（已登记，待实现）
+
+- 完成 P04.104 / EDT-17l：inline unchanged-region folding 默认关闭，严格 source row 映射，3 行上下文/20 行逐次展开。代码 `43e35cd`，本地 full init.sh (Flutter 881)、analyze 0、focused 9/相关回归 46、GitNexus all-scope detect 保留 CRITICAL。PR CI `41706323129` 与 Linux/Windows/macOS Platform Availability `41706312269` 通过；P04.104 证据提交 `26cdf35` 的 PR CI `41709174313` 四 job 也全部通过（Harness、Linux/Windows Rust、Flutter analyze、881 tests）。平台包 artifact：Linux `13266685006`、Windows `13267056042`、macOS `13267221143`。Linux/Windows native DnD 与 Windows UIA/MSAA/graceful close 通过；macOS hosted DnD pointer route unavailable，device gate 保持 P15。
+- 当前 SHA 无 crash signal/dump 或非零应用退出；P04.104 不涉及启动/关闭路径，不能作为 crash fix。历史真实 Windows/macOS 崩溃与 ARM SendKeys assertion race 分开记录，详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- 下一片 EDT-18a：活动文件与 clipboard 快照比较预览。依据固定 Code-OSS `CompareWithClipboardAction`；实现 F1/快捷键入口和有界 side-by-side read-only snapshot preview，异步 clipboard 后校验 Rust doc identity/version，临时数据不落盘；编辑右侧与 apply/revert 保持后续项。DoD/初查：`docs/03-里程碑计划与验收标准.md`、`docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`。
+
 ### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已完成）
 
 - 固定 Code-OSS 1.145.0 默认 hideUnchangedRegions=false、上下文 3 行、最少隐藏 3 行、reveal 20 行；inline 每视图 toggle 默认关闭。只折叠同 hunk 内 changed runs 之间不少于 9 行的 context，边缘各保留 3 行；导航按 source row 映射到折叠后的可见行，映射不一致时整体回退。

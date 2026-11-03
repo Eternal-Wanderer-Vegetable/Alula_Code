@@ -1,12 +1,21 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.104 / EDT-17l code commit 43e35cd2124b8a936c64876f9592e5f7674835ee is pushed; local DoD, PR CI, and Linux/Windows/macOS hosted build/startup/package checks passed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.104 / EDT-17l and its evidence/state are pushed and verified. P04.105 / EDT-18a is registered; implementation not started. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-Continue P04 / feat-026 toward fixed-version VS Code editor and Git Diff parity. Current slice P04.104 delivers conservative inline folding for unchanged Git diff context. P04.103's default-off moved-block presentation for side-by-side Git diffs is complete. The 500 MiB numeric memory target remains deferred to P14.
+Continue P04 / feat-026 toward fixed-version VS Code editor, Git Diff, and compare-operation parity. Current slice P04.105 is an active-file versus clipboard snapshot compare preview, based on fixed Code-OSS 1.145.0. P04.104's inline unchanged-region folding is complete. The 500 MiB numeric memory target remains deferred to P14.
 
-## Completed Slice: P04.104 / EDT-17l
+## Current Slice: P04.105 / EDT-18a
+
+- Register `workbench.files.action.compareWithClipboard`, F1/File command and Ctrl/Cmd+K, C. Compare a Rust-authoritative active document snapshot with one clipboard snapshot in a bounded side-by-side, read-only preview.
+- Validate active document identity/version after asynchronous clipboard read. Cancel stale requests visibly. Keep temporary clipboard model in memory and dispose it when preview closes; do not write clipboard text to disk/session/history.
+- Do not claim editable right pane, selected-file compare, saved-version compare, apply/revert or three-way merge in this slice.
+- Fixed source, DoD, GitNexus boundary notes: `docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`; `docs/03-里程碑计划与验收标准.md` is authoritative.
+- P04.104 evidence commit `26cdf35` pushed; its PR CI `41709174313` passed all four jobs. P04.104 code SHA `43e35cd` local, PR CI and Linux/Windows/macOS Platform Availability all passed; macOS device DnD remains a P15 gate.
+- Before any Dart code edit, refresh GitNexus and run impact/context for the concrete command registration, diff view model and workbench entry. Existing `computeDiffViewModel` context is lower-bound; `CommandService` impact UNKNOWN/zero callers; `workbench_page.dart` is >512 KiB/skipped. Retain UNKNOWN/CRITICAL and verify exact callsites by search.
+
+## Previous Slice: P04.104 / EDT-17l
 
 - Implement inline unchanged-region folding only, off by default, using pinned Code-OSS 1.145.0 defaults: preserve 3 context rows on either side, require at least 3 hidden rows, reveal at most 20 per action.
 - Fold only within one hunk between changed runs; preserve leading/trailing context and all metadata, markers and changed rows. Strict source mapping failure disables folding. Navigation must target visible projected rows.
@@ -57,5 +66,5 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
-3. Complete and push the P04.104 evidence/state commit, then check docs/03 for the next ready P04 child and register only that slice before editing. Classify CI failures by exact SHA, exit status, assertions/timeouts, and crash artifacts; don't label harness input races as application crashes.
+3. Check P04.105 registration on docs-only CI, then refresh GitNexus and complete the registered clipboard compare slice only. Classify CI failures by exact SHA, exit status, assertions/timeouts, and crash artifacts; don't label harness input races as application crashes.
 4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.
