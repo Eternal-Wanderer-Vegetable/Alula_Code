@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'git_diff_navigation.dart';
+import 'git_diff_moved_blocks.dart';
+import 'git_diff_moved_blocks_projection.dart';
 import 'git_diff_patch.dart';
 import 'git_diff_whitespace_projection.dart';
 import 'git_diff_word_highlights.dart';
@@ -44,6 +46,10 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   late GitDiffPatchResult _result;
   late GitDiffProjectionResult _projection;
   GitDiffPatchPresentation _presentation = GitDiffPatchPresentation.inline;
+  bool _showMovedBlocks = false;
+  GitDiffMovedBlocksProjectionResult? _movedBlocksProjection;
+  final Map<int, _GitDiffMovedBlockLineMarker> _originalMovedLineMarkers = {};
+  final Map<int, _GitDiffMovedBlockLineMarker> _modifiedMovedLineMarkers = {};
   int _currentChangeIndex = -1;
   bool? _reportedNavigationAvailability;
   final ScrollController _inlineScrollController = ScrollController();
@@ -121,6 +127,49 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     _result = parseGitDiffPatch(widget.patch);
     _projection = projectGitDiffPatchIgnoringTrimWhitespace(_result);
     _currentChangeIndex = -1;
+    _updateMovedBlocksProjection();
+  }
+
+  void _toggleMovedBlocks() {
+    setState(() {
+      _showMovedBlocks = !_showMovedBlocks;
+      _updateMovedBlocksProjection();
+    });
+  }
+
+  void _updateMovedBlocksProjection() {
+    _movedBlocksProjection = null;
+    _originalMovedLineMarkers.clear();
+    _modifiedMovedLineMarkers.clear();
+    if (!_showMovedBlocks || !_result.canRender || !_projection.canRender) {
+      return;
+    }
+
+    final movedBlocks = computeGitDiffMovedBlocks(widget.patch);
+    final projected = projectGitDiffMovedBlocks(
+      movedBlocks,
+      _result,
+      _projection,
+    );
+    if (!projected.canRender) return;
+    _movedBlocksProjection = projected;
+
+    for (final block in projected.blocks) {
+      for (var offset = 0; offset < block.block.lineCount; offset++) {
+        final isStart = offset == 0;
+        final isEnd = offset + 1 == block.block.lineCount;
+        _originalMovedLineMarkers[block.originalStartRowIndex + offset] =
+            _GitDiffMovedBlockLineMarker(
+          isStart: isStart,
+          isEnd: isEnd,
+        );
+        _modifiedMovedLineMarkers[block.modifiedStartRowIndex + offset] =
+            _GitDiffMovedBlockLineMarker(
+          isStart: isStart,
+          isEnd: isEnd,
+        );
+      }
+    }
   }
 
   void _resetScrollPositions() {
@@ -258,6 +307,22 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
           ),
         ),
         const SizedBox(width: 4),
+        if (sideBySideAvailable)
+          IconButton(
+            key: const ValueKey('git-diff-toggle-moved-blocks'),
+            tooltip: '移动代码块标记（仅并排视图）',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints.tightFor(width: 32, height: 32),
+            padding: EdgeInsets.zero,
+            onPressed: _toggleMovedBlocks,
+            style: _showMovedBlocks
+                ? IconButton.styleFrom(
+                    backgroundColor: const Color(0x332DA44E),
+                    foregroundColor: const Color(0xFFC3E6CB),
+                  )
+                : null,
+            icon: const Icon(Icons.compare_arrows, size: 16),
+          ),
         SegmentedButton<GitDiffPatchPresentation>(
           key: const ValueKey('git-diff-presentation-toggle'),
           segments: [
@@ -368,7 +433,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   Widget _buildSideBySideList() {
     final rows = _projection.rows;
     final currentRowIndex = _currentSideBySideRowIndex();
-    return ListView.builder(
+    final list = ListView.builder(
       key: const ValueKey('git-diff-side-by-side-rows'),
       controller: _sideBySideScrollController,
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -379,6 +444,34 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
         isCurrentChangeTarget: index == currentRowIndex,
       ),
     );
+    final movedBlocks = _movedBlocksProjection?.blocks ?? const [];
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        list,
+        if (_showMovedBlocks && movedBlocks.isNotEmpty)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedBuilder(
+                animation: _sideBySideScrollController,
+                builder: (context, _) => CustomPaint(
+                  key: const ValueKey('git-diff-moved-block-connectors'),
+                  painter: _GitDiffMovedBlocksConnectorPainter(
+                    blocks: movedBlocks,
+                    scrollOffset: _sideBySideScrollOffset,
+                    rowHeight: _diffRowHeight,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  double get _sideBySideScrollOffset {
+    final positions = _sideBySideScrollController.positions;
+    return positions.length == 1 ? positions.single.pixels : 0;
   }
 
   Widget _buildSideBySideRow(
@@ -431,17 +524,24 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
               row.originalLine,
               'old',
               wordChanges: row.originalWordChanges,
+              movedMarker: _originalMovedLineMarkers[row.rowIndex],
             ),
           ),
           const SizedBox(
-            width: 1,
-            child: ColoredBox(color: Color(0xFF3C3C3C)),
+            width: 26,
+            child: Center(
+              child: SizedBox(
+                width: 1,
+                child: ColoredBox(color: Color(0xFF3C3C3C)),
+              ),
+            ),
           ),
           Expanded(
             child: _buildSideBySideCell(
               row.modifiedLine,
               'new',
               wordChanges: row.modifiedWordChanges,
+              movedMarker: _modifiedMovedLineMarkers[row.rowIndex],
             ),
           ),
         ],
@@ -453,6 +553,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     GitDiffPatchLine? line,
     String side, {
     required List<GitDiffWordRange> wordChanges,
+    _GitDiffMovedBlockLineMarker? movedMarker,
   }) {
     if (line == null) {
       return Container(
@@ -484,8 +585,24 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
         : const Color(0xFFE6FFE9);
 
     return Container(
-      key: ValueKey('git-diff-side-by-side-$side-cell-${line.rowIndex}'),
+      key: ValueKey(movedMarker == null
+          ? 'git-diff-side-by-side-$side-cell-${line.rowIndex}'
+          : 'git-diff-moved-$side-cell-${line.rowIndex}'),
       color: background,
+      foregroundDecoration: movedMarker == null
+          ? null
+          : BoxDecoration(
+              border: Border(
+                top: movedMarker.isStart
+                    ? const BorderSide(color: Color(0xFFB08D57), width: 1)
+                    : BorderSide.none,
+                bottom: movedMarker.isEnd
+                    ? const BorderSide(color: Color(0xFFB08D57), width: 1)
+                    : BorderSide.none,
+                left: const BorderSide(color: Color(0xFFB08D57), width: 1),
+                right: const BorderSide(color: Color(0xFFB08D57), width: 1),
+              ),
+            ),
       child: Row(
         children: [
           _buildLineNumber(
@@ -603,6 +720,87 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     }
     return spans;
   }
+}
+
+class _GitDiffMovedBlockLineMarker {
+  const _GitDiffMovedBlockLineMarker({
+    required this.isStart,
+    required this.isEnd,
+  });
+
+  final bool isStart;
+  final bool isEnd;
+}
+
+class _GitDiffMovedBlocksConnectorPainter extends CustomPainter {
+  const _GitDiffMovedBlocksConnectorPainter({
+    required this.blocks,
+    required this.scrollOffset,
+    required this.rowHeight,
+  });
+
+  final List<GitDiffProjectedMovedBlock> blocks;
+  final double scrollOffset;
+  final double rowHeight;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (blocks.isEmpty) return;
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+
+    final centerX = size.width / 2;
+    final leftX = centerX - 12;
+    final rightX = centerX + 12;
+    final stroke = Paint()
+      ..color = const Color(0xCCB08D57)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    final arrow = Paint()
+      ..color = const Color(0xCCB08D57)
+      ..style = PaintingStyle.fill;
+
+    double centerOf(int start, int end) =>
+        4 + ((start + end) / 2) * rowHeight - scrollOffset;
+
+    for (final block in blocks) {
+      final originalY = centerOf(
+        block.originalStartRowIndex,
+        block.originalEndRowIndexExclusive,
+      );
+      final modifiedY = centerOf(
+        block.modifiedStartRowIndex,
+        block.modifiedEndRowIndexExclusive,
+      );
+      if ((originalY < 0 && modifiedY < 0) ||
+          (originalY > size.height && modifiedY > size.height)) {
+        continue;
+      }
+
+      final path = Path()
+        ..moveTo(leftX, originalY)
+        ..cubicTo(
+            centerX - 4, originalY, centerX + 4, modifiedY, rightX, modifiedY);
+      canvas.drawPath(path, stroke);
+
+      const arrowSize = 4.0;
+      final arrowPath = Path()
+        ..moveTo(rightX, modifiedY)
+        ..lineTo(rightX - arrowSize, modifiedY - arrowSize / 2)
+        ..lineTo(rightX - arrowSize, modifiedY + arrowSize / 2)
+        ..close();
+      canvas.drawPath(arrowPath, arrow);
+    }
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(
+          covariant _GitDiffMovedBlocksConnectorPainter oldDelegate) =>
+      oldDelegate.blocks != blocks ||
+      oldDelegate.scrollOffset != scrollOffset ||
+      oldDelegate.rowHeight != rowHeight;
 }
 
 class _GitDiffPatchRow extends StatelessWidget {
