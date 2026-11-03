@@ -36,6 +36,7 @@ import '../editor/editor_rendering.dart';
 import '../editor/editor_highlight_tokens.dart';
 import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
+import '../editor/find_replace_history.dart';
 import '../editor/clipboard_metadata.dart';
 import '../editor/editor_clipboard.dart';
 import '../editor/text_drag_drop.dart';
@@ -61,6 +62,7 @@ import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
 import 'commands.dart';
+import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'keybindings.dart';
@@ -235,6 +237,9 @@ class WorkbenchPage extends StatefulWidget {
     this.definitionRequest,
     this.overtypeOnPaste = true,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
+    this.findReplaceHistoryConfiguration =
+        const FindReplaceHistoryConfiguration(),
+    this.findReplaceHistoryStore,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -273,6 +278,12 @@ class WorkbenchPage extends StatefulWidget {
   /// independently of that UI.
   final PasteAsConfiguration pasteAsConfiguration;
 
+  /// Find/replace history options are hydrated by the settings store in P07.
+  final FindReplaceHistoryConfiguration findReplaceHistoryConfiguration;
+
+  /// Optional per-workspace history store (tests can use a temporary folder).
+  final FindReplaceHistoryStore? findReplaceHistoryStore;
+
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
   static final KeybindingsStore _defaultKeybindingsStore = KeybindingsStore();
@@ -302,6 +313,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late final KeybindingSet _keybindings;
   List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
   Timer? _stateSaveTimer;
+  Timer? _findHistoryTimer;
   Timer? _resourceTimer;
   AlulaResourceStatus? _resourceStatus;
 
@@ -314,6 +326,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
   bool _replaceVisible = false;
+  late final FindReplaceHistoryStore _findHistoryStore =
+      widget.findReplaceHistoryStore ??
+      FindReplaceHistoryStore(
+        directory: '${widget.sessionStore.resolvePath()}.find-history',
+      );
+  final FindReplaceHistoryNavigator _findHistory =
+      FindReplaceHistoryNavigator();
+  final FindReplaceHistoryNavigator _replaceHistory =
+      FindReplaceHistoryNavigator();
+  String? _findHistoryWorkspaceIdentity;
 
   // ---------- 搜索视图（feat-search） ----------
   final _searchQuery = TextEditingController();
@@ -1403,6 +1425,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _core = core;
       _abiVersion = core.abiVersion;
       _restoreSession(core);
+      _loadFindHistoryForWorkspace(_workspaceRoot);
       // journal 没有未命名文档时才建欢迎页（避免恢复后出现重复未命名）
       final g = _focused;
       if (!g.docs.any((d) => d.isUntitled)) {
@@ -9235,6 +9258,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (core == null) return;
     try {
       final entries = core.workspace.listDir(path);
+      final historyWorkspaceChanged = _findHistoryWorkspaceIdentity !=
+          FindReplaceHistoryStore.workspaceIdentity(path);
+      if (historyWorkspaceChanged) _flushFindHistory();
       if (_workspaceRoot != path) {
         _searchSub?.cancel();
         _searchSub = null;
@@ -9284,6 +9310,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _loadFindHistoryForWorkspace(path);
       _attachWorkspaceWatcher();
       _updateLanguageServicePolling();
       _startResourceMonitoring();
@@ -12244,6 +12271,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 查找/替换 ----------
 
   void _toggleFind() {
+    if (_findVisible) _flushFindHistory();
     setState(() {
       _findVisible = !_findVisible;
       if (_findVisible) {
@@ -12268,12 +12296,99 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _replaceVisible = true;
       _refreshMatches();
     });
+    _scheduleFindHistoryUpdate();
   }
 
   void _onFindTextChanged() {
     if (!_findVisible) return;
+    _findHistory.noteEdit(_findQuery.text);
+    _scheduleFindHistoryUpdate();
     _refreshMatches();
     setState(() {});
+  }
+
+  void _onReplaceTextChanged(String value) {
+    _replaceHistory.noteEdit(value);
+    _scheduleFindHistoryUpdate();
+  }
+
+  KeyEventResult _handleFindHistoryKey({
+    required bool replace,
+    required KeyEvent event,
+  }) {
+    if ((event is! KeyDownEvent && event is! KeyRepeatEvent) ||
+        HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isAltPressed ||
+        HardwareKeyboard.instance.isMetaPressed ||
+        HardwareKeyboard.instance.isShiftPressed) {
+      return KeyEventResult.ignored;
+    }
+    final isPrevious = event.logicalKey == LogicalKeyboardKey.arrowUp;
+    if (!isPrevious && event.logicalKey != LogicalKeyboardKey.arrowDown) {
+      return KeyEventResult.ignored;
+    }
+    final history = replace ? _replaceHistory : _findHistory;
+    final controller = replace ? _replaceInput : _findQuery;
+    final value = isPrevious
+        ? history.previous(controller.text)
+        : history.next();
+    if (value == null) return KeyEventResult.ignored;
+    setState(() {
+      controller.value = TextEditingValue(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+      if (!replace) _refreshMatches();
+    });
+    _scheduleFindHistoryUpdate();
+    return KeyEventResult.handled;
+  }
+
+  void _loadFindHistoryForWorkspace(String? workspaceRoot) {
+    final identity = FindReplaceHistoryStore.workspaceIdentity(workspaceRoot);
+    if (_findHistoryWorkspaceIdentity == identity) return;
+    final configuration = widget.findReplaceHistoryConfiguration;
+    final saved = configuration.findScope == FindReplaceHistoryScope.workspace ||
+            configuration.replaceScope == FindReplaceHistoryScope.workspace
+        ? _findHistoryStore.load(workspaceRoot)
+        : const FindReplaceHistorySnapshot();
+    _findHistory.replaceEntries(
+      configuration.findScope == FindReplaceHistoryScope.workspace
+          ? saved.find
+          : const [],
+    );
+    _replaceHistory.replaceEntries(
+      configuration.replaceScope == FindReplaceHistoryScope.workspace
+          ? saved.replace
+          : const [],
+    );
+    _findHistoryWorkspaceIdentity = identity;
+  }
+
+  void _scheduleFindHistoryUpdate() {
+    if (!_findVisible) return;
+    _findHistoryTimer?.cancel();
+    _findHistoryTimer = Timer(const Duration(milliseconds: 500), () {
+      _flushFindHistory();
+    });
+  }
+
+  void _flushFindHistory() {
+    _findHistoryTimer?.cancel();
+    _findHistoryTimer = null;
+    final changed = _findHistory.record(_findQuery.text) |
+        _replaceHistory.record(_replaceInput.text);
+    if (!changed) return;
+    final configuration = widget.findReplaceHistoryConfiguration;
+    _findHistoryStore.save(
+      _workspaceRoot,
+      find: configuration.findScope == FindReplaceHistoryScope.workspace
+          ? _findHistory.entries
+          : null,
+      replace: configuration.replaceScope == FindReplaceHistoryScope.workspace
+          ? _replaceHistory.entries
+          : null,
+    );
   }
 
   List<TextMatchScope> _captureFindSelectionScopes(OpenDoc doc) {
@@ -12308,6 +12423,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _clearFindSelectionScope();
         _refreshMatches();
       });
+      _scheduleFindHistoryUpdate();
       return;
     }
     final active = _active;
@@ -12322,6 +12438,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _findScopeDocVersion = active.doc.version;
       _refreshMatches();
     });
+    _scheduleFindHistoryUpdate();
   }
 
   void _refreshMatches() {
@@ -12606,6 +12723,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _replaceCurrent() {
+    _scheduleFindHistoryUpdate();
     final active = _active;
     if (active == null) return;
     if (_regexFind) {
@@ -12646,6 +12764,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _replaceAll() {
+    _scheduleFindHistoryUpdate();
     final active = _active;
     if (active == null) return;
     if (_regexFind) {
@@ -13608,6 +13727,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pollTimer?.cancel();
     _resourceTimer?.cancel();
     _stateSaveTimer?.cancel();
+    _flushFindHistory();
     for (final d in _allDocViews) {
       _flushInput(d, commitComposition: true);
     }
@@ -13626,6 +13746,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..removeListener(_onCommandServiceChanged)
       ..dispose();
     _searchQuery.dispose();
+    _findQuery.dispose();
+    _replaceInput.dispose();
     _outlineTimer?.cancel();
     _stopWorkspaceWatcher();
     for (final timer in _syntaxRefreshTimers.values) {
@@ -15130,16 +15252,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _findQuery,
-                    autofocus: true,
-                    style: const TextStyle(fontSize: 12),
-                    decoration: const InputDecoration(
-                        hintText: '查找',
-                        isDense: true,
-                        border: InputBorder.none),
-                    onChanged: (_) => _onFindTextChanged(),
-                    onSubmitted: (_) => _gotoMatch(1),
+                  child: Focus(
+                    onKeyEvent: (node, event) => _handleFindHistoryKey(
+                      replace: false,
+                      event: event,
+                    ),
+                    child: TextField(
+                      key: const ValueKey('find-query-input'),
+                      controller: _findQuery,
+                      autofocus: true,
+                      style: const TextStyle(fontSize: 12),
+                      decoration: const InputDecoration(
+                          hintText: '查找',
+                          isDense: true,
+                          border: InputBorder.none),
+                      onChanged: (_) => _onFindTextChanged(),
+                      onSubmitted: (_) => _gotoMatch(1),
+                    ),
                   ),
                 ),
                 Tooltip(
@@ -15159,6 +15288,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       _caseSensitive = !_caseSensitive;
                       _refreshMatches();
                     });
+                    _scheduleFindHistoryUpdate();
                   },
                   icon: Text('Aa',
                       style: TextStyle(
@@ -15176,6 +15306,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       _wholeWord = !_wholeWord;
                       _refreshMatches();
                     });
+                    _scheduleFindHistoryUpdate();
                   },
                   icon: Text('ab',
                       style: TextStyle(
@@ -15211,6 +15342,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       _regexFind = !_regexFind;
                       _refreshMatches();
                     });
+                    _scheduleFindHistoryUpdate();
                   },
                   icon: Text('.*',
                       style: TextStyle(
@@ -15244,14 +15376,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Row(
                 children: [
                   Expanded(
+                  child: Focus(
+                    onKeyEvent: (node, event) => _handleFindHistoryKey(
+                      replace: true,
+                      event: event,
+                    ),
                     child: TextField(
+                      key: const ValueKey('replace-query-input'),
                       controller: _replaceInput,
                       style: const TextStyle(fontSize: 12),
                       decoration: const InputDecoration(
                           hintText: '替换为',
                           isDense: true,
                           border: InputBorder.none),
+                      onChanged: _onReplaceTextChanged,
                     ),
+                  ),
                   ),
                   IconButton(
                     tooltip: _regexFind ? '正则替换暂不可用' : '替换',

@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.83 / EDT-13d：查找与替换历史（本地 DoD 完成，hosted pending）
+
+- 查找和替换历史默认按工作区保存，也支持 `editor.find.history` / `editor.find.replaceHistory = never` 仅内存保留；每栏最多 100 项，Up/Down 浏览 MRU 并恢复编辑草稿，重复值提升到最新。记录采用 500 ms debounce；每条最多 524,288 UTF-16 单元、最多保留 16 个工作区记录，损坏或超大 journal 回退为空；无 Rust/ABI 改动。
+- 聚焦历史测试 11 项通过；完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter RUST_TEST_THREADS=1 bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **747**）；cargo fmt、Flutter analyze（0 issues）、新增 Dart 文件格式检查与 `git diff --check` 通过。本机未启动 GUI/Narrator。
+- GitNexus 最终 all-scope 报告 11 files / 46–47 symbols / 1 process / MEDIUM（`Save → _stableHash`），但大工作台文件超过 512 KiB 索引上限；compare-main 为 1,571 files / 384 flows / CRITICAL、清单 capped；重复刷新索引后的符号总数不稳定，保留为累计分支差异风险。CI 失败采样未显示与已知 Windows `0xC000041D` 或 macOS SIGSEGV 相同签名，不宣称存在因果关系或已缓解崩溃。详见 `docs/diagnostics/2026-11-03-p04/p04.83-find-replace-history.md` 与 `ci-failures-and-crash-correlation.md`。
+- P04.83 的 PR CI、Linux/Windows hosted usability 和 macOS hosted package 结果待本地实现提交后核验；该切片保持 in-progress。
+
 ### P04.82 / EDT-13c：选区内查找（本地 DoD 与 hosted gates 通过）
 
 - 查找栏新增“在选区中查找”切换；普通/正则结果共用原文 UTF-16 选区范围，驱动计数、导航、高亮、当前替换与全部替换。多选区范围有序、重叠合并、相邻范围保持隔离；捕获末尾 CR/LF/CRLF 时去除行尾换行。范围绑定文档 id/version，过期后清除并退出选区模式；无 Rust/ABI 改动。

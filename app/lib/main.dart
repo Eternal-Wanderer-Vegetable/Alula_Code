@@ -14,7 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'bridge/alula_core.dart';
+import 'editor/find_replace_history.dart';
 import 'editor/paste_as.dart';
+import 'workbench/find_history_store.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
@@ -61,6 +63,9 @@ class AlulaApp extends StatelessWidget {
     this.windowControls = false,
     this.definitionRequest,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
+    this.findReplaceHistoryConfiguration =
+        const FindReplaceHistoryConfiguration(),
+    this.findReplaceHistoryStore,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -93,6 +98,12 @@ class AlulaApp extends StatelessWidget {
   /// Editor Paste As settings forwarded to the workbench.
   final PasteAsConfiguration pasteAsConfiguration;
 
+  /// Find/replace history options are hydrated by the settings store in P07.
+  final FindReplaceHistoryConfiguration findReplaceHistoryConfiguration;
+
+  /// Optional per-workspace history store (tests can use a temporary folder).
+  final FindReplaceHistoryStore? findReplaceHistoryStore;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -111,6 +122,8 @@ class AlulaApp extends StatelessWidget {
         windowControls: windowControls,
         definitionRequest: definitionRequest,
         pasteAsConfiguration: pasteAsConfiguration,
+        findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
+        findReplaceHistoryStore: findReplaceHistoryStore,
       ),
     );
   }
