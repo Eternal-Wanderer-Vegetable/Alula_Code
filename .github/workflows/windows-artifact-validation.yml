@@ -1,7 +1,33 @@
-name: Validate Windows artifact 41109679662
+name: Validate Windows artifact on Windows 11 ARM
 
 on:
   workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: Actions run that contains the Windows x64 Release artifact
+        required: true
+        default: '41109679662'
+        type: string
+      artifact_name:
+        description: Exact Windows x64 Release artifact name from that run
+        required: true
+        default: alula-windows-x64-d5319369c5b5d569954e0d816daf325f3bc12a51
+        type: string
+      artifact_source_commit:
+        description: Full source SHA recorded in validation metadata
+        required: true
+        default: d5319369c5b5d569954e0d816daf325f3bc12a51
+        type: string
+      run_narrator_probe:
+        description: Explicitly launch Windows Narrator and run UIA focus checks
+        required: false
+        default: false
+        type: boolean
+      run_legacy_source_interactions:
+        description: Run the separate editor interaction suite at legacy source d5319369
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   actions: read
@@ -107,11 +133,11 @@ jobs:
             $parseErrors | ForEach-Object { Write-Error $_.Message }
             exit 1
           }
-      - name: Download Windows x64 artifact from run 41109679662
+      - name: Download Windows x64 artifact from run ${{ inputs.artifact_run_id }}
         uses: actions/download-artifact@v4
         with:
-          name: alula-windows-x64-d5319369c5b5d569954e0d816daf325f3bc12a51
-          run-id: 41109679662
+          name: ${{ inputs.artifact_name }}
+          run-id: ${{ inputs.artifact_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: ${{ runner.temp }}/alula-windows-release
       - name: Configure isolated Windows theme sample
@@ -153,11 +179,12 @@ jobs:
             ./tools/vscode-parity/validate-windows-artifact.ps1 `
               -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
               -OutputDirectory $output `
+              -ArtifactSourceCommit '${{ inputs.artifact_source_commit }}' `
               -ExerciseInteractions
           }
           finally { Stop-Transcript | Out-Null }
       - name: Probe Narrator, UIA semantics, and keyboard focus on the exact artifact
-        if: always()
+        if: ${{ always() && inputs.run_narrator_probe }}
         shell: powershell
         run: |
           $output = '${{ runner.temp }}/alula-windows-validation/narrator'
@@ -166,7 +193,7 @@ jobs:
             -ArtifactDirectory '${{ runner.temp }}/alula-windows-release' `
             -OutputDirectory $output
       - name: Assert Narrator and keyboard focus evidence
-        if: always()
+        if: ${{ always() && inputs.run_narrator_probe }}
         shell: powershell
         run: |
           $resultPath = '${{ runner.temp }}/alula-windows-validation/narrator/screenreader-result.json'
@@ -181,11 +208,12 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: windows-artifact-41109679662-win11-arm-${{ matrix.theme }}-validation
+          name: windows-artifact-${{ inputs.artifact_run_id }}-win11-arm-${{ matrix.theme }}-validation
           path: ${{ runner.temp }}/alula-windows-validation
 
   source-interactions:
-    name: Run editor interaction suite at artifact source SHA
+    name: Optional editor interaction suite at legacy source SHA
+    if: ${{ inputs.run_legacy_source_interactions }}
     runs-on: windows-latest
     timeout-minutes: 35
     steps:
@@ -234,5 +262,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: windows-artifact-41109679662-source-interactions
+          name: windows-artifact-${{ github.run_id }}-legacy-source-interactions
           path: ${{ runner.temp }}/windows-artifact-source-interactions.log

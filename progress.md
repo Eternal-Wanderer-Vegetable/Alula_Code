@@ -5,6 +5,10 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（进行中）
+
+- 已确认现有 `windows-artifact-validation.yml` 和 PowerShell validator 写死旧 artifact `d5319369`，且默认启动 Narrator/旧源码交互 job。文件 impact 为 UNKNOWN；文本核对确认 workflow 是唯一脚本调用点。all-scope CRITICAL 6 files/1 progress-section symbol/99–340 mapped processes，compare-main 也为 CRITICAL；保留未解决告警，详情见 `p04.92-win11-arm-current-artifact.md`。正在将 run ID、artifact 名与 source SHA 参数化，Narrator 和旧源码交互改为显式 opt-in（默认 false），随后在 hosted Windows 11 ARM light/dark runner 复放当前 run `41618233435` 的 x64 Release 包，采集 close/exit/crash 证据。
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。

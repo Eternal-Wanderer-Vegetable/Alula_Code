@@ -1,6 +1,7 @@
 ﻿param(
   [Parameter(Mandatory = $true)][string]$ArtifactDirectory,
   [Parameter(Mandatory = $true)][string]$OutputDirectory,
+  [string]$ArtifactSourceCommit = 'd5319369c5b5d569954e0d816daf325f3bc12a51',
   [switch]$ExerciseInteractions
 )
 
@@ -1054,7 +1055,7 @@ try {
   $os = Get-CimInstance Win32_OperatingSystem
   $dpi = [AlulaArtifactWindow]::GetDpiForWindow($window)
   [ordered]@{
-    artifactSourceCommit = 'd5319369c5b5d569954e0d816daf325f3bc12a51'
+    artifactSourceCommit = $ArtifactSourceCommit
     artifactFile = $exe.FullName
     processId = $process.Id
     osCaption = $os.Caption
