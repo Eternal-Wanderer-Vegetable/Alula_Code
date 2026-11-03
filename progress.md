@@ -3,7 +3,7 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-03 更新）
+## Current State（当前状态，2026-11-04 更新）
 
 ### P04.99 / EDT-17g：Git unified diff 差异导航（进行中）
 
@@ -11,6 +11,9 @@
 - 当前实现入口为 GitDiffPatchView，GitNexus repo/worktree /tmp/alula-p04.70-next，索引刷新到 8eed9eb。GitDiffPatchView upstream impact 为 UNKNOWN（0 个可解析调用）；workbench_page.dart 超过 512 KiB 被跳过。精确搜索确认生产调用位于 workbench_page.dart:16121，另有 5 个 widget-test 构造点；不把 UNKNOWN 当成无影响。
 - P01.5 fake-LSP CI fixture follow-up 已于 8eed9eb 完成并推送；PR CI 41666117480 四项成功，Windows 重复关闭用例 10/10。改动未触碰生产 shutdown 或窗口层，历史 0xC000041D 仍未定位。
 - 计划与验收边界见 docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md。
+- 导航模型与 GitDiffPatchView 已实现：连续新增/删除块合并、marker 不拆块；F7 / Shift+F7 与前后按钮循环导航，inline/side-by-side 居中揭示并高亮目标，live region 播报序号/总数/行号，patch 更新重置索引。无差异与 raw fallback 禁用按钮。
+- 本地 DoD 全绿：完整 init.sh（Rust 71+46、Clippy、build_core、Flutter 844）、cargo fmt、Flutter analyze 0 issues、Harness 100/100；定向导航与 patch widget 25/25。代码提交前 hosted CI pending。
+- 提交前 GitNexus staged/all 重复报告 385 processes / CRITICAL / capped（10 项 + 375 omitted），展示流程与 Flutter diff helper 不匹配；class impact with-tests 为 CRITICAL 173/140/20，without-tests 为 UNKNOWN。保留最高风险，不视为 clean。完整扫描与验证记录见 p04.99-diff-navigation.md。
 
 
 ### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（已完成）

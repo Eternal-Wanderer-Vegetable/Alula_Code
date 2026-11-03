@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P01.5 Windows CI fake-LSP follow-up is complete; P04.99 / EDT-17g diff navigation is the active slice.
+> Last Updated: 2026-11-04. P01.5 Windows CI fake-LSP follow-up is complete; P04.99 / EDT-17g diff navigation is the active slice.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current slice: implement P04.99 / EDT-17g Git unified-diff navigation, then complete local DoD, hosted CI evidence, staged commit, and push. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current slice: P04.99 implementation and full local DoD are complete; code/evidence commit is being prepared, then hosted PR CI and Platform Availability must be checked. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -34,6 +34,10 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
 ## Active Slice / Risks
+
+- P04.99 implementation complete locally: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Full init.sh and 844 Flutter tests passed; hosted checks are pending.
+- GitNexus staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. Preserve warning, see P04.99 report.
+
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
 - GitNexus GitDiffPatchView impact was UNKNOWN because the >512 KiB workbench caller is omitted. Exact source search found workbench_page.dart:16121; keep the graph limitation visible. Re-index and rerun impact immediately before code edits.
