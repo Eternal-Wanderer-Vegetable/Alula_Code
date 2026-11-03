@@ -1,8 +1,8 @@
-> Last Updated: 2026-11-04. P04.106 / EDT-18b implementation and local DoD are complete (Flutter 901); product commit 8f1ba78 and state commit 50bd30a are local. CI 41719529276 ended in runner communication failure after every job step passed; push next to retest the product SHA. PR #2 stays OPEN/draft.
+> Last Updated: 2026-11-04. P04.106 / EDT-18b is complete and pushed at fe6c13fe76a891eaceffa95025e2f073cffdadfa. PR CI 41727303547 and Linux/Windows/macOS Platform Availability 41727292646 all passed; macOS hosted native DnD input remains unavailable and is still a P15 device gate. PR #2 stays OPEN/draft.
 
 ## Current Objective
 
-P04.106 / EDT-18b code is implemented and locally committed as 8f1ba78: VS Code workbench.files.action.compareWithSaved (File command, Ctrl/Cmd+K then D), using a bounded disk snapshot and current Rust-authoritative text in a read-only side-by-side preview. Local bash init.sh passed with 901 Flutter tests; Flutter analyze is clean and cargo fmt passes. CI run 41719529276 is terminal failure because the hosted Windows runner lost communication after every step passed. Push the local commits to the authorized origin/codex/vscode-parity-p00 branch to run CI on the product SHA. Then review PR CI and Linux/Windows/macOS Platform Availability; update docs/03 to done only after those hosted gates pass. Keep PR #2 OPEN/draft and avoid GUI/Narrator checks.
+P04.106 / EDT-18b is complete: workbench.files.action.compareWithSaved compares the active Rust-authoritative document with a bounded, decoded disk snapshot in a read-only side-by-side preview. Product commit 8f1ba78 and hosted evidence/state commits 50bd30a plus fe6c13f are pushed to origin/codex/vscode-parity-p00. Local DoD passed with Flutter 901 tests, Rust workspace, Clippy, core build, cargo fmt, and Flutter analyze. PR CI 41727303547 and Linux/Windows/macOS Platform Availability 41727292646 passed. P04/EDT-18 remains in progress; decompose the next separate EDT-18 item into docs/03 before implementation. Keep PR #2 OPEN/draft and avoid local GUI/Narrator checks.
 
 ## Previous Slice: P04.104 / EDT-17l
 
@@ -28,11 +28,11 @@ P04.106 / EDT-18b code is implemented and locally committed as 8f1ba78: VS Code 
 
 The five 2026-11-03 Windows ARM artifact replay runs 41623366222, 41624838142, 41625760177, 41626282817, and 41626759894 failed the second-view text assertion because SendKeys dropped its first post-newline character (`v` in `view-2`). Those processes closed with exit code 0 and no Application Fault event or crash dump. Validator commit `34f1511` added a post-Enter wait and per-character pacing; same-artifact light/dark replay 41627307864 then passed exact edit/save/read-back. Keep this classified as hosted input stabilization, not a crash fix. Historical Windows 0xC000041D and pre-9f2c70a macOS SIGSEGV and mitigations remain in docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.
 
-P04.102's earlier macOS job was canceled while queued with zero steps; that remains true for that SHA. P04.103's successor SHA now has successful macOS package/startup evidence. No local desktop GUI or Narrator was launched.
+P04.106 Platform Availability 41727292646 passed Linux x64, Windows x64, and macOS ARM64 build/test/startup/package. Linux and Windows native DnD checks passed; macOS DnD was skipped because the hosted runner could not route synthetic pointer input (CGEventPostToPid pointer route: false) and remains a P15 device gate. macOS stayed alive through the 12-second startup smoke; the harness then sent SIGTERM, and diagnostics contain no crash report. No local desktop GUI or Narrator was launched.
 
 ## Workspace and PR
 
-- Worktree: /tmp/alula-p04.70-next; local HEAD was state commit 50bd30a (parent product commit 8f1ba78, whose parent is aa022621). This separate docs commit records the hosted runner communication failure and updates the CI/crash status.
+- Worktree: /tmp/alula-p04.70-next (detached); remote origin/codex/vscode-parity-p00 contains the P04.106 product SHA fe6c13fe76a891eaceffa95025e2f073cffdadfa and its hosted validation evidence.
 - Push target: origin/codex/vscode-parity-p00; authorization to push this branch persists.
 - PR #2 is OPEN/draft: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2. Do not merge or publish v0.1.0 before plan gates are complete.
 
@@ -54,6 +54,6 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 ## Next Session Startup
 
 1. Read AGENTS.md, this handoff, and progress.md.
-2. Check whether CI run 41719529276 reached a terminal conclusion; record the Windows job's final state.
-3. Run GitNexus all-scope detect-changes on the completed source/state diff, commit in stages, and push to the authorized branch.
-4. Wait for PR CI and Linux/Windows/macOS Platform Availability, then finalize P04.106 evidence/status in a separate commit. Keep PR #2 OPEN/draft; do not launch local GUI/Narrator.
+2. Review the remaining EDT-18 scope in docs/10 and select the next concrete operation after compare-with-saved.
+3. Register its independent scope, pinned VS Code behavior, dependencies, and DoD in docs/03 before editing source.
+4. Run GitNexus impact before code changes; keep the one-feature-at-a-time rule. Keep PR #2 OPEN/draft and do not launch local GUI/Narrator.

@@ -5,15 +5,17 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（本地完成，等待 hosted gates）
+### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（已完成）
 
 - 固定 Code-OSS workbench.files.action.compareWithSaved 已接入 File/命令面板及 Ctrl+K、D；macOS 为 Cmd+K、D。磁盘快照为 original，Rust 权威活动文本为 modified，打开只读 side-by-side 预览；stat 先行限制 6,000,016 bytes，合并输入不超过 2,000,000 UTF-16，并复用差异模型预算。文档切换、编辑、关闭，缺失/二进制/超限磁盘文件均取消整次预览，不写回文档或磁盘。
-- 保存比较 widget 9/9；含 dirty/clean、不变状态与 undo、磁盘外改、BOM/CRLF/emoji、oversize/missing/binary、stat 等待期间切换视图/编辑/关闭。完整 bash init.sh 全绿：Rust workspace、Clippy、core build、Flutter 901；cargo fmt --all -- --check 与 flutter analyze --no-pub 通过（0 issues）；diff check 通过。未启动 GUI/Narrator。
-- 实现后的 GitNexus 图谱跳过含超大 Workbench 在内的 5 个文件；跨语言属性、flow candidates 和 walk budget 告警保留。SnapshotComparePreview impact LOW；CommandService UNKNOWN/0 及 computeDiffViewModel CRITICAL 均保留，精确搜索核实新入口；computeDiffViewModel 未修改。最后一次 staged-worktree all-scope detect-changes 报 13 files / 23 symbols / 434 flows / CRITICAL，流程主要由通用 title 属性匹配产生；相邻增量索引快照曾报 13/29/0/LOW。保留 CRITICAL 与图谱不稳定告警，不把零 flow 解释为无影响或把 434 解释为真实产品流程数。详见 P04.106 报告。
-- CI 观察：branch 最新 100 regular CI 为 99 success + 1 runner communication failure (41719529276)。Windows 每个 step 含 Complete job 都 success，随后 job 注释称 hosted runner lost communication；无失败 step/test/crash artifact，底因未确定。Platform Availability 最新 100 为 55 success / 45 failure；最新 red 41695384851 的 Linux/Windows 成功，macOS runner queued 时零步骤取消。历史真实 Windows/macOS 崩溃与 harness/runner 红灯分开跟踪；本切片不改启动/关闭路径，不声称 crash fix。详见 P04.106 报告及 ci-failures-and-crash-correlation.md。
-- 产品实现 commit 8f1ba78 与状态 commit 50bd30a 已本地生成，尚未推送。状态 CI 41719529276 已终结为 hosted runner communication failure（所有步骤通过、无应用崩溃证据）；将其记录后推送至 origin/codex/vscode-parity-p00，以新 SHA 重跑 PR CI 和 Linux/Windows/macOS Platform Availability。全部通过后再把 docs/03 改为 done。PR #2 保持 OPEN/draft。
+- 保存比较 widget 9/9；完整 bash init.sh 全绿：Rust workspace、Clippy、core build、Flutter 901；cargo fmt --all -- --check 与 flutter analyze --no-pub 通过（0 issues）。本次启动守则 bash init.sh --fast 也全绿。没有启动本机 GUI/Narrator。
+- PR CI [41727303547](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41727303547) 在 SHA fe6c13fe76a891eaceffa95025e2f073cffdadfa 四 job 全通过。Platform Availability [41727292646](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41727292646) 的 Linux x64、Windows x64、macOS ARM64 build/test/startup/package job 全通过；包 artifacts：Linux 13274942383、Windows 13275866747、macOS 13274164639。
+- Linux/Windows hosted native move/copy/external-text DnD 都成功，diagnostics 分别为 13273658708 和 13274418074。macOS 包与启动 smoke 成功，但 DnD artifact 13275379020 显示 hosted CGEventPostToPid pointer route: false、交互跳过，macOS 原生 DnD 仍留 P15。macOS startup artifact 13275923616 只有 Metal/Impeller 初始化行，无 crash report；12 秒存活后由 harness SIGTERM 清理。Bundle ID com.alula.alula_app 的无效下划线 warning 留给 release packaging 修正。
+- 最近 100 条 branch Actions 记录：regular CI 69/70 成功（唯一 runner communication failure 为 41719529276，随后同 SHA run 41727303547 全绿）；Platform Availability 23/24 成功（唯一失败 41695384851 是 macOS runner 分配前零步骤取消）；Windows artifact validator 1/6 成功，5 个旧断言失败都因 SendKeys 丢首字符，进程 exit 0 且无 crash dump。不同红灯按 runner、排队或测试输入问题分类；历史 Windows/macOS 真崩溃及证据限定见 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+- GitNexus 风险边界保持不变：大文件跳过、跨语言 property/flow 预算告警未解除；全量 changes 仍为 CRITICAL/UNKNOWN 风险证据，不声称 clean scan。P04.106 不修改启动/关闭路径，也不声称修复 crash。
+- P04.106 本地与 hosted DoD 已完成，证据页：docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md。P04 / EDT-18 仍在进行；下一项先从总计划中分解为独立 DoD 并登记到 docs/03，再开始实现。
 
-### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（最近完成）
+### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（此前完成）
 
 - 完成 P04.104 / EDT-17l：inline unchanged-region folding 默认关闭，严格 source row 映射，3 行上下文/20 行逐次展开。代码 `43e35cd`，本地 full init.sh (Flutter 881)、analyze 0、focused 9/相关回归 46、GitNexus all-scope detect 保留 CRITICAL。PR CI `41706323129` 与 Linux/Windows/macOS Platform Availability `41706312269` 通过；P04.104 证据提交 `26cdf35` 的 PR CI `41709174313` 四 job 也全部通过（Harness、Linux/Windows Rust、Flutter analyze、881 tests）。平台包 artifact：Linux `13266685006`、Windows `13267056042`、macOS `13267221143`。Linux/Windows native DnD 与 Windows UIA/MSAA/graceful close 通过；macOS hosted DnD pointer route unavailable，device gate 保持 P15。
 - 当前 SHA 无 crash signal/dump 或非零应用退出；P04.104 不涉及启动/关闭路径，不能作为 crash fix。历史真实 Windows/macOS 崩溃与 ARM SendKeys assertion race 分开记录，详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
