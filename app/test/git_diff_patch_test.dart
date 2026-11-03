@@ -354,5 +354,73 @@ void main() {
       expect(find.textContaining('GIT binary patch'), findsOneWidget);
       expect(find.byKey(const ValueKey('git-diff-patch-rows')), findsNothing);
     });
+
+    testWidgets('switches to aligned selectable side-by-side word rows',
+        (tester) async {
+      const patch = 'diff --git a/file.txt b/file.txt\n'
+          '@@ -1 +1 @@\n'
+          '-fooBar\n'
+          '+fooBaz\n';
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: GitDiffPatchView(patch: patch)),
+      ));
+
+      await tester.tap(find.text('并排'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('git-diff-side-by-side-rows')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('git-diff-patch-rows')), findsNothing);
+      expect(find.byKey(const ValueKey('git-diff-side-by-side-full-1')),
+          findsOneWidget);
+      final original = tester.widget<SelectableText>(
+        find.byKey(const ValueKey('git-diff-side-by-side-old-text-2')),
+      );
+      final modified = tester.widget<SelectableText>(
+        find.byKey(const ValueKey('git-diff-side-by-side-new-text-3')),
+      );
+      expect(original.textSpan!.toPlainText(), 'fooBar');
+      expect(modified.textSpan!.toPlainText(), 'fooBaz');
+      expect(
+        original.textSpan!.children!.cast<TextSpan>().any(
+            (span) => span.style?.backgroundColor == const Color(0xFF70272B)),
+        isTrue,
+      );
+      expect(
+        modified.textSpan!.children!.cast<TextSpan>().any(
+            (span) => span.style?.backgroundColor == const Color(0xFF285E37)),
+        isTrue,
+      );
+
+      await tester.tap(find.text('内联'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('git-diff-patch-rows')), findsOneWidget);
+    });
+
+    testWidgets('disables side-by-side at narrow widths', (tester) async {
+      const patch = 'diff --git a/file.txt b/file.txt\n'
+          '@@ -1 +1 @@\n'
+          '-old\n'
+          '+new\n';
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 600,
+            child: GitDiffPatchView(patch: patch),
+          ),
+        ),
+      ));
+
+      final toggle = tester.widget<SegmentedButton<GitDiffPatchPresentation>>(
+        find.byKey(const ValueKey('git-diff-presentation-toggle')),
+      );
+      final sideBySide = toggle.segments.singleWhere(
+        (segment) => segment.value == GitDiffPatchPresentation.sideBySide,
+      );
+      expect(sideBySide.enabled, isFalse);
+      expect(find.byKey(const ValueKey('git-diff-patch-rows')), findsOneWidget);
+      expect(find.byKey(const ValueKey('git-diff-side-by-side-rows')),
+          findsNothing);
+    });
   });
 }
