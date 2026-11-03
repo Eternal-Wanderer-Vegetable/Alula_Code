@@ -23,10 +23,14 @@ const BoxDecoration _currentChangeDecoration = BoxDecoration(
 class GitDiffPatchView extends StatefulWidget {
   const GitDiffPatchView({
     required this.patch,
+    this.navigationController,
+    this.onNavigationAvailabilityChanged,
     super.key,
   });
 
   final String patch;
+  final GitDiffPatchNavigationController? navigationController;
+  final ValueChanged<bool>? onNavigationAvailabilityChanged;
 
   @override
   State<GitDiffPatchView> createState() => _GitDiffPatchViewState();
@@ -36,12 +40,14 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   static const double _sideBySideMinimumWidth = 640;
   static const double _diffRowHeight = 20;
 
+  final Object _navigationOwner = Object();
   late GitDiffPatchResult _result;
   late GitDiffPatchWordResult _wordChanges;
   late List<GitDiffPatchChange> _changeTargets;
   GitDiffSideBySideResult? _sideBySideRows;
   GitDiffPatchPresentation _presentation = GitDiffPatchPresentation.inline;
   int _currentChangeIndex = -1;
+  bool? _reportedNavigationAvailability;
   final ScrollController _inlineScrollController = ScrollController();
   final ScrollController _sideBySideScrollController = ScrollController();
 
@@ -49,6 +55,8 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   void initState() {
     super.initState();
     _parsePatch();
+    _attachNavigationController();
+    _notifyNavigationAvailability(force: true);
   }
 
   @override
@@ -58,13 +66,57 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
       _parsePatch();
       _resetScrollPositions();
     }
+    if (oldWidget.navigationController != widget.navigationController) {
+      oldWidget.navigationController?.detach(owner: _navigationOwner);
+      _attachNavigationController();
+    } else {
+      widget.navigationController?.updateAvailability(
+        owner: _navigationOwner,
+        canNavigate: _changeTargets.isNotEmpty,
+      );
+    }
+    _notifyNavigationAvailability(
+      force: oldWidget.onNavigationAvailabilityChanged !=
+          widget.onNavigationAvailabilityChanged,
+    );
   }
 
   @override
   void dispose() {
+    final callback = widget.onNavigationAvailabilityChanged;
+    final wasAvailable = _reportedNavigationAvailability ?? false;
+    widget.navigationController?.detach(owner: _navigationOwner);
+    if (wasAvailable && callback != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => callback(false));
+    }
     _inlineScrollController.dispose();
     _sideBySideScrollController.dispose();
     super.dispose();
+  }
+
+  void _attachNavigationController() {
+    widget.navigationController?.attach(
+      owner: _navigationOwner,
+      navigateToChange: _navigateToChange,
+      canNavigate: _changeTargets.isNotEmpty,
+    );
+  }
+
+  void _notifyNavigationAvailability({bool force = false}) {
+    final canNavigate = _changeTargets.isNotEmpty;
+    widget.navigationController?.updateAvailability(
+      owner: _navigationOwner,
+      canNavigate: canNavigate,
+    );
+    final callback = widget.onNavigationAvailabilityChanged;
+    if (callback == null ||
+        (!force && _reportedNavigationAvailability == canNavigate)) {
+      return;
+    }
+    _reportedNavigationAvailability = canNavigate;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) callback(canNavigate);
+    });
   }
 
   void _parsePatch() {

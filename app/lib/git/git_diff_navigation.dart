@@ -3,6 +3,50 @@ library;
 
 import 'git_diff_patch.dart';
 
+/// A bounded bridge from workbench commands to the mounted Git diff view.
+///
+/// The view owns parsing, the current target index, and reveal behavior. This
+/// object only forwards one requested direction to that mounted state.
+class GitDiffPatchNavigationController {
+  Object? _owner;
+  void Function(int direction)? _navigateToChange;
+  bool _canNavigate = false;
+
+  bool get canNavigate => _canNavigate && _navigateToChange != null;
+
+  void attach({
+    required Object owner,
+    required void Function(int direction) navigateToChange,
+    required bool canNavigate,
+  }) {
+    _owner = owner;
+    _navigateToChange = navigateToChange;
+    _canNavigate = canNavigate;
+  }
+
+  void updateAvailability({required Object owner, required bool canNavigate}) {
+    if (!identical(_owner, owner)) return;
+    _canNavigate = canNavigate;
+  }
+
+  void detach({required Object owner}) {
+    if (!identical(_owner, owner)) return;
+    _owner = null;
+    _navigateToChange = null;
+    _canNavigate = false;
+  }
+
+  bool navigateNext() => _navigate(1);
+
+  bool navigatePrevious() => _navigate(-1);
+
+  bool _navigate(int direction) {
+    if (!canNavigate) return false;
+    _navigateToChange!(direction);
+    return true;
+  }
+}
+
 class GitDiffPatchChange {
   const GitDiffPatchChange({
     required this.firstRowIndex,

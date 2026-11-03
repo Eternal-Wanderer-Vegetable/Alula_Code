@@ -5,12 +5,16 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.100 / EDT-17h：F1 差异导航命令（已登记，未开工）
+### P04.100 / EDT-17h：F1 差异导航命令（本地实现完成，hosted gate 待跑）
 
-- P04.99 已完成后，固定 Code-OSS 源码复核确认 F1 命令的实际 ID 为 editor.action.accessibleDiffViewer.next/prev（不是 editor.action.diffReview.*）；其标题分别为 Go to Next/Previous Difference，带 f1: true、isInDiffEditor 前置条件以及 F7/Shift+F7 键位。
-- 已在 docs/03-里程碑计划与验收标准.md 登记 P04.100：在活动且可导航的 Git Diff patch viewer 中通过命令面板执行已有下一处/上一处状态，确保只移动一次；覆盖隐藏/禁用条件、环绕与两种视图。下一步刷新/核对 GitNexus impact 后再改代码。
-- 本轮 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast 通过：Rust workspace 71+46、build_core、Flutter 844；PR #2 仍 OPEN/draft。本机 GUI/Narrator 未启动。
-- CI 与崩溃关联按 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md 分类：常规 CI 最新 100 条全绿；Platform Availability 的历史红灯多为输入路由、验证器或可访问性断言，未显示与旧 Windows close crash 相同的异常签名。旧 Windows crash 在后续修正 artifact 回放未复现，可能已缓解但根因仍未证实。
+- 固定 Code-OSS 1.145.0 F1 action ID 已校正为 editor.action.accessibleDiffViewer.next/prev；新增本地化命令并接入现有 CommandService/QuickInput。命令只在 Git Diff 面板 tab 活动且解析出可导航差异时出现；点击复用 GitDiffPatchView 当前 index、环绕、滚动揭示和播报路径，每次执行一个方向。
+- 新的 GitDiffPatchNavigationController 仅持有一个当前 view 的有界回调；状态销毁时按 owner detach。命令上下文随 TabController 变化和 patch parser availability 更新。没有 Rust/ABI、文本、diff parser/模型或内存预算改动。
+- 新增 3 个 palette widget 用例，连同导航套件 11/11 通过；覆盖 next/previous exactly-once、环绕、side-by-side、fallback/no-change 与 inactive context。
+- 本地完整 DoD 通过：bash init.sh（Rust 71+46、Clippy、build_core、Flutter 847）；cargo fmt --all -- --check；flutter analyze --no-pub（0 issues）；Harness 100/100；JSON/diff check 通过。本机 GUI/Narrator 未启动。
+- P04.100 的 GitNexus impact 保留 CommandService class CRITICAL 172 / 140 processes / 20 modules、GitDiffPatchView class CRITICAL 196 / 140 / 20，以及 workbench_page.dart 超 512 KiB 未入索引造成的 UNKNOWN；_navigateToChange 方法影响 LOW（2 callers）。见 docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md。
+- 文档提交 CI 41676126810 全绿，但不是本代码版本证据。PR CI 与 Linux/Windows/macOS hosted availability 将在代码提交后完成；此项暂不标记 done。
+- CI 崩溃关系按 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md 分类：近期常规 CI 未显示应用崩溃信号；历史 Platform Availability 红灯多为 probe/输入路由/可访问性断言，不能等同产品崩溃。Windows 旧关闭故障可能已缓解但根因未证实。
+
 
 
 ### P04.99 / EDT-17g：Git unified diff 差异导航（已完成）

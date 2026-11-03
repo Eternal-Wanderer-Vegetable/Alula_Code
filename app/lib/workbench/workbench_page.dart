@@ -58,6 +58,8 @@ import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
 import '../editor/workspace_search_decorations.dart';
 import '../git/git_cli.dart';
+import '../git/git_diff_commands.dart';
+import '../git/git_diff_navigation.dart';
 import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
@@ -310,6 +312,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   final CommandService _commands = CommandService();
+  final GitDiffPatchNavigationController _gitDiffNavigation =
+      GitDiffPatchNavigationController();
 
   /// 键位集合（默认表 + 用户 keybindings.json 覆盖，docs/09 W3-2）。
   late final KeybindingSet _keybindings;
@@ -460,6 +464,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _registerCommands();
+    _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
       _groups['editor'] = EditorGroup('editor');
@@ -930,6 +935,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
         enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
+    registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
   }
 
   /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
@@ -1130,7 +1136,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'workspaceOpen': _workspaceRoot != null,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
+      gitDiffViewActiveContextKey: _panelTab.index == 3,
+      gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
+  }
+
+  void _onGitDiffNavigationAvailabilityChanged(bool _) {
+    if (mounted) _syncCommandContext();
   }
 
   void _onCommandServiceChanged() {
@@ -14183,6 +14195,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands
       ..removeListener(_onCommandServiceChanged)
       ..dispose();
+    _panelTab.removeListener(_syncCommandContext);
     _searchQuery.dispose();
     _findQuery.dispose();
     _replaceInput.dispose();
@@ -16110,7 +16123,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
               IconButton(
                 tooltip: '清除',
-                onPressed: () => setState(() => _gitDiff = ''),
+                onPressed: () {
+                  setState(() => _gitDiff = '');
+                  _onGitDiffNavigationAvailabilityChanged(false);
+                },
                 icon: const Icon(Icons.close, size: 14),
                 visualDensity: VisualDensity.compact,
               ),
@@ -16118,7 +16134,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ),
         const Divider(height: 1),
-        Expanded(child: GitDiffPatchView(patch: _gitDiff)),
+        Expanded(
+          child: GitDiffPatchView(
+            patch: _gitDiff,
+            navigationController: _gitDiffNavigation,
+            onNavigationAvailabilityChanged:
+                _onGitDiffNavigationAvailabilityChanged,
+          ),
+        ),
       ],
     );
   }

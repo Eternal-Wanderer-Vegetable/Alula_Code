@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.99 / EDT-17g is complete; P04.100 / EDT-17h is registered for Git Diff F1 navigation actions.
+> Last Updated: 2026-11-04. P04.99 is complete; P04.100 has local implementation and DoD evidence, with hosted validation pending.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are pushed. P04.100 now covers Command Palette exposure of pinned accessible-diff actions; run GitNexus impact before code edits. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are pushed. P04.100 implements pinned accessible-diff actions through the existing Command Palette; fresh GitNexus impact was run before edits and its CRITICAL/UNKNOWN warnings are recorded. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -29,7 +29,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; P04.99 code and hosted evidence are pushed through `0deff5f`; P04.100 registration is the current docs-only slice.
+- Worktree: `/tmp/alula-p04.70-next`; P04.99 and P04.100 registration commits are pushed; P04.100 implementation is in the working tree with local DoD passed.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -37,7 +37,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 - P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
 - The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
-- P04.100 / EDT-17h is registered to expose `editor.action.accessibleDiffViewer.next/prev` in the Git Diff Command Palette. No code edits have started.
+- P04.100 / EDT-17h local implementation is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev in an active, navigable Git Diff tab; 3 new widget tests and full local DoD pass. Commit/push the code stage, wait for PR CI and Linux/Windows/macOS availability, then update evidence.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -59,8 +59,8 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
 2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
 3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Refresh GitNexus and run impact for the command service and Git Diff view before editing P04.100 code.
+4. Commit/push the verified P04.100 code stage, then inspect its PR CI and Platform Availability runs; do not mark complete until hosted evidence is recorded.
 
 ## Recommended Next Step
 
-Register and implement P04.100, preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+Finish P04.100 hosted Linux/Windows/macOS validation and record evidence; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
