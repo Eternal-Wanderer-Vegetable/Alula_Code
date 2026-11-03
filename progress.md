@@ -5,14 +5,14 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.78 / EDT-12d2 片段占位符转换，Linux/Windows 门禁与 macOS 包通过）
+### 最新进展（2026-11-03，P04.79 / EDT-12e 多光标片段插入，首批 hosted 门禁通过）
 
-- 已实现 TextMate `${n/regex/format/options}` placeholder transforms：在 Tab、Shift+Tab 或 choice 接受离开当前 tabstop 前按 occurrence 当前文本转换；无匹配且无非空 else/default 时保留原文本。多行结果采用插入行缩进，保存复原 CRLF；所有转换写入单个 Rust transaction 并可撤销，无 Rust/ABI 变更。
-- 转换 worker 有输入/输出/数量/时限上限；worker 返回后再次核对文档/session/controller、版本、输入窗和选择，期间编辑或关闭即丢弃 stale 结果。定向 parser/session/workbench 94 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **713**），`cargo fmt --all -- --check` 和 `flutter analyze --no-pub`（0 issues）通过。
-- 代码提交 `08e0bcf` 已推送。PR CI [`41558120044`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558120044) 四 job 全绿，713 Flutter tests。Platform Availability [`41558114011`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558114011) Linux、Windows、macOS jobs 全成功；Linux DnD artifact `13196160378` 记录 20 pointer events 和 move/copy/external text；Windows client artifact `13196261237` 记录可见 1028×711 客户区、96 DPI、UI Automation 可用和 graceful WM_CLOSE/exit 0，Windows DnD artifact `13196326313` 记录 13 events 与三类 drop。macOS ARM64 包 artifact `13196901039` 生成，startup artifact `13196940996` 只有 Metal Impeller 行，无 `.ips`/`.crash`。
-- macOS DnD artifact `13196636638` 记录 `CGEventPostToPid pointer route: false`、没有 Flutter pointer events、`All tests skipped`，不是原生 DnD 通过。macOS 原生 DnD/IME 和 P15 设备检查仍待原生主机；本机 GUI/Narrator 未启动。
-- 本切片新增的异步 placeholder 转换竞态由并发编辑回归测试覆盖，当前 CI 未复现。截至代码 commit `08e0bcf`，最新 100 次 branch Actions 计数为 CI 63 成功/0 失败、Platform Availability 24 成功/12 失败；平台红灯仍集中在 MSAA/clipboard/DnD/交互探针，历史精确旧 Windows `0xC000041D` 与 macOS SIGSEGV 仍未找到根因。本次绿灯是非复现证据，不代表历史崩溃已修复。分类见 `ci-failures-and-crash-correlation.md`。
-- GitNexus 精确 7 files/14 symbols 对照与 all-scope 都为 CRITICAL，影响进程列表部分截断；`main` 对照覆盖完整历史分支并同为 CRITICAL/截断。索引在提交后刷新至 `08e0bcf` 并确认 up-to-date。保留图谱警告，不将其解释为无影响；细节见 `docs/diagnostics/2026-11-03-p04/p04.78-snippet-placeholder-transforms.md`。
+- 多光标 snippet 按各自选区解析 selected text、行号、当前行与当前词，共用文件/工作区/剪贴板变量。最多 64 个同一有界输入窗内的普通选区；占位符总数最多 4096、每个 tabstop transforms 最多 64。所有展开经过快照校验后，以一个 Rust transaction 和一个 undo 帧写入；tabstop/镜像/choice/transform 同步导航，多行 transform 保留每个插入点缩进。IME、列选、跨窗、交叠/无效选区、超限、超时和 stale state 在事务前拒绝。无 Rust/ABI 改动。
+- 新增测试覆盖各选区变量、Emoji/UTF-16、不同缩进、多行 transform、镜像编辑、Tab/Shift+Tab、CRLF 保存回读、undo/redo，以及 65 选区拒绝且文本/磁盘不变。定向 parser/session/workbench 41 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **716**），cargo fmt 与 Flutter analyze（0 issues）通过。本机 GUI/Narrator 未启动。
+- 代码 commit `511ec3c` 已推送。PR CI [`41563561890`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41563561890) 四个 job 全绿，Flutter 716 tests。Platform Availability [`41563556374`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41563556374) Linux、Windows、macOS 全通过：Linux DnD artifact `13198557247` 记录 23 events 和 move/copy/external text；Windows client artifact `13197713446` 记录可见 1028×711 客户区、96 DPI、UI Automation/MSAA 与 graceful WM_CLOSE/exit 0，DnD artifact `13197498664` 记录 11 events 和三类 drop。macOS ARM64 包 artifact `13198960553` 已生成，startup artifact `13198499420` 只有 Impeller 行、无 crash report。
+- macOS DnD artifact `13199565067` 明确显示 synthetic pointer route unavailable，所有 DnD 测试 skip；不算 macOS 原生 DnD 通过。原生 DnD/IME 和 P15 设备检查仍待原生主机。
+- 最新 100 次 branch Actions 计数：CI 63 成功/0 失败，Platform Availability 25 成功/11 失败，另有 1 条历史 Windows artifact 验收失败。当前 P04.79 两个 run 均通过；此前红灯主要是 accessibility、clipboard、DnD、交互夹具与启动脚本探针。历史精确 Windows `0xC000041D` 和 macOS SIGSEGV 仍无源码根因；本轮退出/启动正常只属未复现证据。修复探针可减少误报、提升诊断质量，但不等于修复崩溃。分类见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- GitNexus staged 扫描覆盖 5 files/18 symbols/0 resolved flows、LOW；all-scope 覆盖 6 files/22 symbols、LOW。工作台文件超过索引源文件限制，关键 handler 图仍 UNKNOWN；compare-main 的 CRITICAL 结果覆盖该分支累计历史变更，不能当作本切片风险结论。具体边界和 hosted artifact 见 `docs/diagnostics/2026-11-03-p04/p04.79-multicursor-snippets.md`。
 
 ### 最新进展（2026-11-03，P04.77 / EDT-12d1 片段变量转换，首批 hosted 门禁通过）
 
