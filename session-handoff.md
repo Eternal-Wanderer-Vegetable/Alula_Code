@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.97 / EDT-17e implementation and hosted evidence are complete; code commit 0eaacac is pushed. This handoff will be refreshed after the evidence commit.
+> Last Updated: 2026-11-03. P04.97 / EDT-17e code commit 0eaacac and evidence commit b2b370d are pushed. P04.98 / EDT-17f side-by-side Git diff is registered as the next slice.
 
 ## Current Objective
 
@@ -38,7 +38,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 ## Current Workspace State
 
 - Work in `/tmp/alula-p04.70-next`; checkout is detached and pushes to `origin/codex/vscode-parity-p00` are authorized with `git push origin HEAD:codex/vscode-parity-p00`.
-- P04.97 code commit `0eaacac` is pushed; the P04.97 evidence/state update is the current docs-only change.
+- P04.97 code commit `0eaacac` and evidence/state commit `b2b370d` are pushed. P04.98 EDT-17f is registered in docs/03 and is waiting for impact review before implementation.
 - PR #2 remains OPEN/draft. Do not publish v0.1.0 or merge.
 - P04.97 PR CI and Platform Availability passed. Linux/Windows DnD artifacts record 22/13 pointer events and move/copy/external-text routes; macOS startup log contains only the Impeller line, and native macOS DnD was skipped for `input-route-unavailable`.
 
@@ -46,7 +46,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 - Historical Windows 11 ARM `0xC000041D` source cause is unresolved; current x64-emulation replay is non-reproduction evidence only.
 - Native macOS DnD/IME, Linux DRM hardware, and P15 device gates remain open. Hosted macOS DnD must be recorded as skipped when pointer routing is unavailable.
-- EDT-17 visual diff features remain open; do not report the diff editor complete.
+- EDT-17 remains open after inline Git patch rendering and word highlights; side-by-side, moved blocks, whitespace options, unchanged folding, navigation, and full diff-editor integration remain.
 
 ## Next Step
 

@@ -49,6 +49,12 @@
 - GitNexus new function impact CRITICAL（76/31），view UNKNOWN；staged scan 3 files/14 symbols/376 flows/CRITICAL，流程明细 capped 且不匹配准确源码调用。workbench_page.dart 大于 512 KiB，caller 未入图；保留所有图谱风险。源码和 CI/crash 边界见 docs/diagnostics/2026-11-03-p04/p04.97-git-diff-word-highlight.md、ci-failures-and-crash-correlation.md。
 - 代码 commit 0eaacac 已推送。当前 green CI 只是 non-reproduction evidence；历史 Windows 11 ARM 关闭时 0xC000041D 仍未定位。
 
+### P04.98 / EDT-17f：Git unified diff 并排视图（已登记，待实现）
+
+- 下一切片在现有 Git Diff 视图增加 inline / side-by-side 切换；复用 bounded patch 与 word-range 模型，让上下文、配对变化、额外插入/删除行和元数据在两栏保持稳定映射与可选择性。单滚动序列保证同步；窄布局回退 inline，完整 raw-patch fallback 保留。
+- DoD 与边界已登记在 `docs/03-里程碑计划与验收标准.md`。不扩展到任意文件比较、moved blocks、忽略空白、folding、导航、apply/revert 或 Rust/ABI。
+- GitNexus 索引 fresh 于 `b2b370d`，但 diff query/context 未能解析实际 workbench caller；`workbench_page.dart` 超过 512 KiB 索引上限，源码位置为 16121。保留 UNKNOWN 与不相关流程映射警告；代码编辑前重新跑 impact。
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。
