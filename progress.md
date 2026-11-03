@@ -5,6 +5,15 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### 最新进展（2026-11-03，P04.78 / EDT-12d2 片段占位符转换，Linux/Windows 门禁与 macOS 包通过）
+
+- 已实现 TextMate `${n/regex/format/options}` placeholder transforms：在 Tab、Shift+Tab 或 choice 接受离开当前 tabstop 前按 occurrence 当前文本转换；无匹配且无非空 else/default 时保留原文本。多行结果采用插入行缩进，保存复原 CRLF；所有转换写入单个 Rust transaction 并可撤销，无 Rust/ABI 变更。
+- 转换 worker 有输入/输出/数量/时限上限；worker 返回后再次核对文档/session/controller、版本、输入窗和选择，期间编辑或关闭即丢弃 stale 结果。定向 parser/session/workbench 94 项通过；完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **713**），`cargo fmt --all -- --check` 和 `flutter analyze --no-pub`（0 issues）通过。
+- 代码提交 `08e0bcf` 已推送。PR CI [`41558120044`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558120044) 四 job 全绿，713 Flutter tests。Platform Availability [`41558114011`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558114011) Linux、Windows、macOS jobs 全成功；Linux DnD artifact `13196160378` 记录 20 pointer events 和 move/copy/external text；Windows client artifact `13196261237` 记录可见 1028×711 客户区、96 DPI、UI Automation 可用和 graceful WM_CLOSE/exit 0，Windows DnD artifact `13196326313` 记录 13 events 与三类 drop。macOS ARM64 包 artifact `13196901039` 生成，startup artifact `13196940996` 只有 Metal Impeller 行，无 `.ips`/`.crash`。
+- macOS DnD artifact `13196636638` 记录 `CGEventPostToPid pointer route: false`、没有 Flutter pointer events、`All tests skipped`，不是原生 DnD 通过。macOS 原生 DnD/IME 和 P15 设备检查仍待原生主机；本机 GUI/Narrator 未启动。
+- 本切片新增的异步 placeholder 转换竞态由并发编辑回归测试覆盖，当前 CI 未复现。截至代码 commit `08e0bcf`，最新 100 次 branch Actions 计数为 CI 63 成功/0 失败、Platform Availability 24 成功/12 失败；平台红灯仍集中在 MSAA/clipboard/DnD/交互探针，历史精确旧 Windows `0xC000041D` 与 macOS SIGSEGV 仍未找到根因。本次绿灯是非复现证据，不代表历史崩溃已修复。分类见 `ci-failures-and-crash-correlation.md`。
+- GitNexus 精确 7 files/14 symbols 对照与 all-scope 都为 CRITICAL，影响进程列表部分截断；`main` 对照覆盖完整历史分支并同为 CRITICAL/截断。索引在提交后刷新至 `08e0bcf` 并确认 up-to-date。保留图谱警告，不将其解释为无影响；细节见 `docs/diagnostics/2026-11-03-p04/p04.78-snippet-placeholder-transforms.md`。
+
 ### 最新进展（2026-11-03，P04.77 / EDT-12d1 片段变量转换，首批 hosted 门禁通过）
 
 - 支持 `${VAR/regex/format/options}` 变量转换，捕获组、TextMate conditional/default/case formats 与 `gimsu` flags；未知变量以空字符串进入 transform，转换结果纯文本。64 transforms、regex/format 512 UTF-16、总输入/输出各 256 Ki UTF-16、worker 750 ms 上限，超限/错误在 Rust 事务前 fail closed；placeholder transform 仍开放，无 Rust/ABI 改动。
