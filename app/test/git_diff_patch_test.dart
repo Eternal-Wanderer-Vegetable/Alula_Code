@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alula_app/git/git_diff_patch.dart';
 import 'package:alula_app/git/git_diff_patch_view.dart';
+import 'package:alula_app/git/git_diff_word_highlights.dart';
 
 void main() {
   group('parseGitDiffPatch', () {
@@ -126,6 +127,163 @@ void main() {
     });
   });
 
+  group('computeGitDiffPatchWordChanges', () {
+    test('pairs replaced rows and maps UTF-16 ranges to both sides', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.rs b/file.rs\n'
+        '@@ -1 +1 @@\n'
+        '-😀 oldValue\n'
+        '+😀 newValue\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(patch);
+      final removed = result.changesForRow(2)!;
+      final added = result.changesForRow(3)!;
+
+      expect(result.pairedCount, 1);
+      expect(result.computedPairCount, 1);
+      expect(result.fallbackPairCount, 0);
+      expect(removed.fallbackReason, isNull);
+      expect(added.fallbackReason, isNull);
+      expect(removed.ranges.single.startUtf16, 3);
+      expect(added.ranges.single.startUtf16, 3);
+      expect(removed.ranges.single.endUtf16, '😀 oldValue'.length);
+      expect(added.ranges.single.endUtf16, '😀 newValue'.length);
+    });
+
+    test('pairs rows only within each contiguous change block', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1,3 +1,3 @@\n'
+        '-oldA\n'
+        '+newA\n'
+        ' same\n'
+        '-oldB\n'
+        '+newB\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(patch);
+
+      expect(result.pairedCount, 2);
+      expect(result.changesForRow(2), isNotNull);
+      expect(result.changesForRow(3), isNotNull);
+      expect(result.changesForRow(5), isNotNull);
+      expect(result.changesForRow(6), isNotNull);
+      expect(result.changesForRow(4), isNull);
+    });
+
+    test('keeps excess insertions and deletions unpaired', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1,1 +1,2 @@\n'
+        '-old\n'
+        '+first\n'
+        '+second\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(patch);
+
+      expect(result.pairedCount, 1);
+      expect(result.changesForRow(2), isNotNull);
+      expect(result.changesForRow(3), isNotNull);
+      expect(result.changesForRow(4), isNull);
+    });
+
+    test('keeps no-newline markers inside the replacement block', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1 +1 @@\n'
+        '-old'
+        '\n\\ No newline at end of file\n'
+        '+new'
+        '\n\\ No newline at end of file\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(patch);
+
+      expect(result.pairedCount, 1);
+      expect(result.changesForRow(2), isNotNull);
+      expect(result.changesForRow(4), isNotNull);
+    });
+
+    test('falls back to full paired lines when aggregate input is exceeded',
+        () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1 +1 @@\n'
+        '-old text\n'
+        '+new text\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(
+        patch,
+        options: const GitDiffPatchWordOptions(
+          maxAggregateInputCodeUnits: 2,
+        ),
+      );
+
+      final removed = result.changesForRow(2)!;
+      final added = result.changesForRow(3)!;
+      expect(result.computedPairCount, 0);
+      expect(result.fallbackPairCount, 1);
+      expect(
+        removed.fallbackReason,
+        GitDiffPatchWordFallbackReason.aggregateInputLimit,
+      );
+      expect(removed.ranges.single.endUtf16, 'old text'.length);
+      expect(added.ranges.single.endUtf16, 'new text'.length);
+    });
+
+    test('records per-pair work fallback as whole-line changes', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1 +1 @@\n'
+        '-old text\n'
+        '+new text\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(
+        patch,
+        options: const GitDiffPatchWordOptions(maxAggregateWork: 1),
+      );
+
+      expect(result.fallbackPairCount, 1);
+      expect(
+        result.changesForRow(2)!.fallbackReason,
+        GitDiffPatchWordFallbackReason.wordWorkLimit,
+      );
+      expect(result.changesForRow(2)!.ranges.single.endUtf16, 8);
+    });
+
+    test('caps paired rows and marks remaining pairs explicitly', () {
+      final patch = parseGitDiffPatch(
+        'diff --git a/file.txt b/file.txt\n'
+        '@@ -1,2 +1,2 @@\n'
+        '-oldA\n'
+        '+newA\n'
+        '-oldB\n'
+        '+newB\n',
+      );
+
+      final result = computeGitDiffPatchWordChanges(
+        patch,
+        options: const GitDiffPatchWordOptions(
+          maxPairs: 1,
+          maxAggregateWork: 1000,
+        ),
+      );
+
+      expect(result.pairedCount, 2);
+      expect(result.computedPairCount, 1);
+      expect(result.fallbackPairCount, 1);
+      expect(
+        result.changesForRow(4)!.fallbackReason,
+        GitDiffPatchWordFallbackReason.pairLimit,
+      );
+      expect(result.changesForRow(4)!.ranges.single.endUtf16, 4);
+    });
+  });
+
   group('GitDiffPatchView', () {
     testWidgets('renders hunk and colored, numbered source rows lazily',
         (tester) async {
@@ -149,6 +307,39 @@ void main() {
       );
       expect(removed.color, const Color(0x33CF222E));
       expect(added.color, const Color(0x332DA44E));
+    });
+
+    testWidgets('renders changed word portions in selectable source rows',
+        (tester) async {
+      const patch = 'diff --git a/file.txt b/file.txt\n'
+          '@@ -1 +1 @@\n'
+          '-fooBar\n'
+          '+fooBaz\n';
+      await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: GitDiffPatchView(patch: patch)),
+      ));
+
+      final removed = tester.widget<SelectableText>(
+        find.byKey(const ValueKey('git-diff-text-2')),
+      );
+      final added = tester.widget<SelectableText>(
+        find.byKey(const ValueKey('git-diff-text-3')),
+      );
+      final removedSpans = removed.textSpan!.children!.cast<TextSpan>();
+      final addedSpans = added.textSpan!.children!.cast<TextSpan>();
+
+      expect(removed.textSpan!.toPlainText(), 'fooBar');
+      expect(added.textSpan!.toPlainText(), 'fooBaz');
+      expect(
+        removedSpans.any(
+            (span) => span.style?.backgroundColor == const Color(0xFF70272B)),
+        isTrue,
+      );
+      expect(
+        addedSpans.any(
+            (span) => span.style?.backgroundColor == const Color(0xFF285E37)),
+        isTrue,
+      );
     });
 
     testWidgets('keeps the full raw patch visible on parser fallback',

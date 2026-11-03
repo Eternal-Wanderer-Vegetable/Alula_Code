@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'git_diff_patch.dart';
+import 'git_diff_word_highlights.dart';
 
 /// Lazy inline renderer for a Git unified text patch.
 class GitDiffPatchView extends StatefulWidget {
@@ -17,19 +18,25 @@ class GitDiffPatchView extends StatefulWidget {
 
 class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   late GitDiffPatchResult _result;
+  late GitDiffPatchWordResult _wordChanges;
 
   @override
   void initState() {
     super.initState();
-    _result = parseGitDiffPatch(widget.patch);
+    _parsePatch();
   }
 
   @override
   void didUpdateWidget(covariant GitDiffPatchView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.patch != widget.patch) {
-      _result = parseGitDiffPatch(widget.patch);
+      _parsePatch();
     }
+  }
+
+  void _parsePatch() {
+    _result = parseGitDiffPatch(widget.patch);
+    _wordChanges = computeGitDiffPatchWordChanges(_result);
   }
 
   @override
@@ -53,16 +60,22 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
       key: const ValueKey('git-diff-patch-rows'),
       padding: const EdgeInsets.symmetric(vertical: 4),
       itemCount: _result.lines.length,
-      itemBuilder: (context, index) =>
-          _GitDiffPatchRow(line: _result.lines[index]),
+      itemBuilder: (context, index) => _GitDiffPatchRow(
+        line: _result.lines[index],
+        wordChanges: _wordChanges.changesForRow(index),
+      ),
     );
   }
 }
 
 class _GitDiffPatchRow extends StatelessWidget {
-  const _GitDiffPatchRow({required this.line});
+  const _GitDiffPatchRow({
+    required this.line,
+    required this.wordChanges,
+  });
 
   final GitDiffPatchLine line;
+  final GitDiffPatchWordLineChanges? wordChanges;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +136,20 @@ class _GitDiffPatchRow extends StatelessWidget {
             ),
           ),
         ),
-        Expanded(child: _buildSelectableText(line.text, textColor)),
+        Expanded(
+          child: _buildSelectableText(
+            line.text,
+            textColor,
+            rowIndex: line.rowIndex,
+            wordChanges: wordChanges,
+            highlightBackground: line.kind == GitDiffPatchLineKind.removed
+                ? const Color(0xFF70272B)
+                : const Color(0xFF285E37),
+            highlightForeground: line.kind == GitDiffPatchLineKind.removed
+                ? const Color(0xFFFFE5E7)
+                : const Color(0xFFE6FFE9),
+          ),
+        ),
       ],
     );
   }
@@ -143,18 +169,80 @@ class _GitDiffPatchRow extends StatelessWidget {
         ),
       );
 
-  Widget _buildSelectableText(String value, Color color) =>
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SelectableText(
-          value,
-          maxLines: 1,
-          style: TextStyle(
-            color: color,
-            fontFamily: 'monospace',
-            fontSize: 11,
-            height: 1.4,
-          ),
+  Widget _buildSelectableText(
+    String value,
+    Color color, {
+    int? rowIndex,
+    GitDiffPatchWordLineChanges? wordChanges,
+    Color? highlightBackground,
+    Color? highlightForeground,
+  }) {
+    final textStyle = TextStyle(
+      color: color,
+      fontFamily: 'monospace',
+      fontSize: 11,
+      height: 1.4,
+    );
+    final ranges = wordChanges?.ranges ?? const <GitDiffWordRange>[];
+    final spans = _buildWordSpans(
+      value,
+      ranges,
+      highlightBackground,
+      highlightForeground,
+    );
+    final key =
+        rowIndex == null ? null : ValueKey<String>('git-diff-text-$rowIndex');
+    final selectable = spans == null
+        ? SelectableText(
+            value,
+            key: key,
+            maxLines: 1,
+            style: textStyle,
+          )
+        : SelectableText.rich(
+            TextSpan(style: textStyle, children: spans),
+            key: key,
+            maxLines: 1,
+          );
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: selectable,
+    );
+  }
+
+  List<TextSpan>? _buildWordSpans(
+    String value,
+    List<GitDiffWordRange> ranges,
+    Color? background,
+    Color? foreground,
+  ) {
+    if (ranges.isEmpty || background == null || foreground == null) {
+      return null;
+    }
+    final spans = <TextSpan>[];
+    var cursor = 0;
+    for (final range in ranges) {
+      if (range.startUtf16 < cursor ||
+          range.endUtf16 <= range.startUtf16 ||
+          range.endUtf16 > value.length) {
+        return null;
+      }
+      if (range.startUtf16 > cursor) {
+        spans.add(TextSpan(text: value.substring(cursor, range.startUtf16)));
+      }
+      spans.add(TextSpan(
+        text: value.substring(range.startUtf16, range.endUtf16),
+        style: TextStyle(
+          backgroundColor: background,
+          color: foreground,
         ),
-      );
+      ));
+      cursor = range.endUtf16;
+    }
+    if (cursor < value.length) {
+      spans.add(TextSpan(text: value.substring(cursor)));
+    }
+    return spans;
+  }
 }
