@@ -160,6 +160,36 @@ void main() {
       );
     });
 
+    test('compare with clipboard uses Ctrl/Cmd+K then C', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('c')!],
+          )?.commandId,
+          'workbench.files.action.compareWithClipboard',
+        );
+        expect(
+          keybindings.shortcutFor(
+            'workbench.files.action.compareWithClipboard',
+          ),
+          'Ctrl+K C',
+        );
+      }
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('c')!],
+        )?.commandId,
+        'workbench.files.action.compareWithClipboard',
+      );
+      expect(
+        mac.shortcutFor('workbench.files.action.compareWithClipboard'),
+        'Meta+K C',
+      );
+    });
+
     test(
         'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
         () {

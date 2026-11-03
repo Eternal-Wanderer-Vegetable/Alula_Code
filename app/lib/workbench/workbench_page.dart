@@ -29,6 +29,8 @@ import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
+import '../editor/clipboard_compare_preview.dart';
+import '../editor/diff_view_model.dart';
 import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_sticky_scroll.dart';
 import '../editor/editor_folding.dart';
@@ -499,6 +501,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
         shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+    reg(
+      'workbench.files.action.compareWithClipboard',
+      '文件',
+      '比较活动文件与剪贴板',
+      _compareActiveFileWithClipboard,
+      shortcut: _keybindings.shortcutFor(
+        'workbench.files.action.compareWithClipboard',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
         enablement: 'editorActive');
     reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
@@ -958,6 +971,109 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         setState(() => _statusDetail = '命令不接受参数：$id');
       }
     }));
+  }
+
+  Future<void> _compareActiveFileWithClipboard() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      if (mounted) {
+        setState(() => _statusDetail = '输入法组合输入中，比较已取消');
+      }
+      return;
+    }
+
+    try {
+      _flushInput(doc);
+      final documentId = doc.id;
+      final documentPath = doc.path;
+      final documentUri = doc.uri;
+      final documentName = doc.name;
+      final probe = doc.doc.readRange(0, maxLenUtf16: 1);
+      final documentVersion = probe.version;
+      final documentLength = probe.totalUtf16Length;
+      const maxCompareInputUtf16 = 2000000;
+      if (documentLength > maxCompareInputUtf16) {
+        _showClipboardCompareStatus(
+            '比较已取消：活动文件超过 2,000,000 UTF-16 单元上限');
+        return;
+      }
+      final documentText = _readDocumentRange(doc, 0, documentLength);
+      if (doc.doc.version != documentVersion ||
+          !_isClipboardCompareSnapshotCurrent(
+            doc,
+            documentId,
+            documentPath,
+            documentUri,
+            documentName,
+            documentVersion,
+          )) {
+        _showClipboardCompareStatus('比较已取消：活动文件快照已变化');
+        return;
+      }
+
+      final clipboard = await EditorClipboard.read();
+      if (!mounted) return;
+      if (!_isClipboardCompareSnapshotCurrent(
+        doc,
+        documentId,
+        documentPath,
+        documentUri,
+        documentName,
+        documentVersion,
+      )) {
+        _showClipboardCompareStatus('比较已取消：读取剪贴板期间活动文件已变化');
+        return;
+      }
+      if (clipboard == null) {
+        _showClipboardCompareStatus('比较已取消：剪贴板没有纯文本内容');
+        return;
+      }
+      if (documentText.length + clipboard.text.length > maxCompareInputUtf16) {
+        _showClipboardCompareStatus(
+            '比较已取消：文件与剪贴板合计超过 2,000,000 UTF-16 单元');
+        return;
+      }
+
+      final diff = computeDiffViewModel(clipboard.text, documentText);
+      if (diff.isApproximate) {
+        _showClipboardCompareStatus('比较已取消：差异超过当前预览预算，未显示部分结果');
+        return;
+      }
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => ClipboardComparePreview(
+          title: '剪贴板 ↔ $documentName',
+          originalLabel: '剪贴板',
+          modifiedLabel: documentName,
+          diff: diff,
+          onClose: () => Navigator.of(dialogContext).pop(),
+        ),
+      );
+    } on Object catch (error) {
+      _showClipboardCompareStatus('比较失败：$error');
+    }
+  }
+
+  bool _isClipboardCompareSnapshotCurrent(
+    OpenDoc doc,
+    int documentId,
+    String? documentPath,
+    String? documentUri,
+    String documentName,
+    int documentVersion,
+  ) =>
+      mounted &&
+      identical(_active, doc) &&
+      _allDocViews.any((view) => identical(view, doc)) &&
+      doc.id == documentId &&
+      doc.path == documentPath &&
+      doc.uri == documentUri &&
+      doc.name == documentName &&
+      doc.doc.version == documentVersion;
+
+  void _showClipboardCompareStatus(String message) {
+    if (mounted) setState(() => _statusDetail = message);
   }
 
   Future<void> _deleteAllToBoundary({required bool left}) async {
@@ -14293,6 +14409,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             commandId: 'file.save'),
                         TitleMenuItem('另存为…${_sc('file.saveAs')}',
                             commandId: 'file.saveAs'),
+                        TitleMenuItem(
+                          '比较活动文件与剪贴板${_sc('workbench.files.action.compareWithClipboard')}',
+                          commandId:
+                              'workbench.files.action.compareWithClipboard',
+                        ),
                         const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
                         const TitleMenuItem('使用编码保存…',
                             commandId: 'file.saveWithEncoding'),
