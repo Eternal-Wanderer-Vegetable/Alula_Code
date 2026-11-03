@@ -17,6 +17,12 @@
 - 完整 `bash init.sh` 通过：Rust workspace、Clippy、build_core、Flutter **793**；`cargo fmt --all -- --check`、`cd app && flutter analyze --no-pub`（0 issues）、harness 100/100 与 `git diff --check` 通过。报告：[`p04.93-line-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.93-line-diff-model.md)。
 - 此切片只交付 line-diff model，未接入 UI；inline/side-by-side、word diff、moved blocks、unchanged folding 与导航仍属于 EDT-17 后续任务。GitNexus 的 diff 概念检索无相关调用流，超大 `workbench_page.dart` 不在索引中；保留 UNKNOWN 与 compare-main CRITICAL/capped 图谱限制。
 
+### P04.94 / EDT-17b：有界字符差异与整词范围扩展模型（已完成）
+
+- 新增纯 Dart `computeWordDiff`：按 UTF-16 code unit 做 Myers 字符对齐，以 Code-OSS `LinesSliceCharSequence` ASCII `[A-Za-z0-9]` word 边界和 `3 * equal < oldWordLength + newWordLength` 扩展低相似度变更。双方范围 0-based、end-exclusive；边界外扩以免切开代理对。合计输入最多 262,144 code units，trace 最多 1,000,000 cells，搜索与扩展最多 2,000,000 work；超限回退完整文本 hunk。最终门逐字检查每个 unchanged gap，必要时合并到无不等 gap，否则显式 alignment-invariant 回退。
+- 9 个定向测试全过，另有 200 组 seeded 随机字符串对拍验证范围单调、未变区一致和代理对边界安全。完整 `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter **802**；`cargo fmt --all -- --check`、Flutter analyze（0 issues）、harness validator（100/100）和 `git diff --check` 全过。报告：[`p04.94-word-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.94-word-diff-model.md)。
+- 该模型尚未接入 P04.93 行 hunk 或 Workbench。inline/side-by-side、moved blocks、unchanged folding、差异导航及 SCM 入口继续属于 EDT-17 后续项。开工时 GitNexus 刷新至 `ca2600e`，提示跨语言属性未连边与流程候选截断；diff 查询没有命中真实 diff flow，`workbench_page.dart` 超过索引大小上限。新增模块生产调用为零；保留此边界，接线时重新做 impact。
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。
