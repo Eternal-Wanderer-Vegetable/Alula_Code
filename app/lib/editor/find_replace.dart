@@ -33,8 +33,34 @@ class TextMatchScope {
 /// query field.
 const int maxFindSelectionSeedUtf16 = 524288;
 
+/// Code-OSS `getWordAtText` default maximum text window for word lookup.
+const int maxFindWordContextUtf16 = 1000;
+
 bool isFindSelectionSeedLengthSupported(int lengthUtf16) =>
     lengthUtf16 > 0 && lengthUtf16 < maxFindSelectionSeedUtf16;
+
+final RegExp _defaultFindWordPattern = RegExp(
+  r'''(-?\d*\.\d\w*)|([^`~!@#\$%^&*()\-=+\[\]{}\\|;:'",.<>/?\s]+)''',
+);
+
+/// Returns the Code-OSS default word containing [positionUtf16], including
+/// positions exactly at either edge of a word. Offsets use Dart's UTF-16
+/// indexing, matching the editor and FFI contract.
+TextMatch? defaultFindWordMatchAtPosition(String text, int positionUtf16) {
+  if (positionUtf16 < 0 || positionUtf16 > text.length) return null;
+  for (final match in _defaultFindWordPattern.allMatches(text)) {
+    if (match.start <= positionUtf16 && positionUtf16 <= match.end) {
+      return TextMatch(match.start, match.end);
+    }
+    if (match.start > positionUtf16) break;
+  }
+  return null;
+}
+
+String? defaultFindWordAtPosition(String text, int positionUtf16) {
+  final match = defaultFindWordMatchAtPosition(text, positionUtf16);
+  return match == null ? null : text.substring(match.start, match.end);
+}
 
 /// Clips scopes to the document and merges overlapping (but not adjacent)
 /// ranges so a match is never duplicated across overlapping selections.

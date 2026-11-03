@@ -231,6 +231,119 @@ void main() {
     expect(file.readAsBytesSync(), bytes);
   });
 
+  testWidgets('Ctrl+F seeds the default word at an empty UTF-16 caret',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-word-seed-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const source = '🍁alpha foo.bar -12.5e3';
+    final file = await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    final document = editorState.widget.inputWindow.document;
+    const caret = 5;
+    const selection = TextSelection.collapsed(offset: caret);
+    editorState.setSelection(selection);
+    await tester.pump();
+    final version = document.version;
+    final bytes = file.readAsBytesSync();
+
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    final queryField = tester.widget<TextField>(
+      find.byKey(const ValueKey('find-query-input')),
+    );
+    expect(queryField.controller!.text, '🍁alpha');
+    expect(find.text('-/1'), findsOneWidget);
+    expect(editorState.editingValue.selection, selection);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(file.readAsBytesSync(), bytes);
+
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyZ);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(file.readAsBytesSync(), bytes);
+  });
+
+  testWidgets(
+      'regex Find seeds the current word and keeps prior query on a separator',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-word-regex-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const source = 'alpha beta +';
+    await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    editorState.setSelection(const TextSelection.collapsed(offset: 8));
+    editorState.requestFocus();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    await tester.tap(find.byKey(const ValueKey('find-regex')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+
+    editorState.setSelection(const TextSelection.collapsed(offset: 8));
+    editorState.requestFocus();
+    await tester.pump();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    await _waitForIsolates(tester);
+    await tester.pumpAndSettle();
+    final queryFinder = find.byKey(const ValueKey('find-query-input'));
+    final queryField = tester.widget<TextField>(queryFinder);
+    expect(queryField.controller!.text, 'beta');
+    expect(find.text('-/1'), findsOneWidget);
+
+    await tester.enterText(queryFinder, 'remember');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('关闭'));
+    await tester.pumpAndSettle();
+    editorState.setSelection(const TextSelection.collapsed(offset: 11));
+    editorState.requestFocus();
+    await tester.pump();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+    final reopenedQuery = tester.widget<TextField>(
+      find.byKey(const ValueKey('find-query-input')),
+    );
+    expect(reopenedQuery.controller!.text, 'remember');
+  });
+
+  testWidgets('Ctrl+F bounds long-line word lookup to Code-OSS window',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-word-window-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    final source = List<String>.filled(1600, 'x').join();
+    await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    editorState.setSelection(const TextSelection.collapsed(offset: 800));
+    editorState.requestFocus();
+    await tester.pump();
+    await _pressChord(tester, LogicalKeyboardKey.keyF);
+
+    final query = tester
+        .widget<TextField>(
+          find.byKey(const ValueKey('find-query-input')),
+        )
+        .controller!
+        .text;
+    expect(query, source.substring(301, 1301));
+    expect(query.length, 1000);
+  });
+
   testWidgets(
       'Alt+Enter selects literal hits and keeps the current hit primary',
       (tester) async {

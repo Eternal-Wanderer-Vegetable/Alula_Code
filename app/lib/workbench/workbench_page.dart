@@ -12318,6 +12318,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final selection = doc.selection;
+    if (selection.isCollapsed) {
+      return _findWordAtCaretSeed(doc, selection.extentOffset, version);
+    }
     final start = selection.start;
     final end = selection.end;
     final length = end - start;
@@ -12344,6 +12347,68 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     } catch (_) {
       // Opening Find must remain available if a selection goes stale while it
       // is being read; in that case keep the query the user already had.
+      return null;
+    }
+  }
+
+  String? _findWordAtCaretSeed(OpenDoc doc, int caretUtf16, int version) {
+    try {
+      final line = doc.doc.lineBoundary(caretUtf16);
+      if (line.version != version ||
+          line.startUtf16 > caretUtf16 ||
+          caretUtf16 > line.endUtf16 ||
+          doc.doc.version != version) {
+        return null;
+      }
+
+      const halfWindowUtf16 = maxFindWordContextUtf16 ~/ 2;
+      var contextStart = caretUtf16 - line.startUtf16 > halfWindowUtf16 - 1
+          ? caretUtf16 - halfWindowUtf16 + 1
+          : line.startUtf16;
+      var contextEnd = line.endUtf16 - caretUtf16 > halfWindowUtf16 + 1
+          ? caretUtf16 + halfWindowUtf16 + 1
+          : line.endUtf16;
+
+      if (contextStart > line.startUtf16) {
+        try {
+          final position = doc.doc.positionAt(contextStart);
+          if (position.version != version ||
+              position.offsetUtf16 != contextStart) {
+            return null;
+          }
+        } on AlulaException catch (error) {
+          if (error.code != 'InvalidUtf16Offset') return null;
+          contextStart--;
+        }
+      }
+      if (contextEnd < line.endUtf16) {
+        try {
+          final position = doc.doc.positionAt(contextEnd);
+          if (position.version != version ||
+              position.offsetUtf16 != contextEnd) {
+            return null;
+          }
+        } on AlulaException catch (error) {
+          if (error.code != 'InvalidUtf16Offset') return null;
+          contextEnd++;
+        }
+      }
+
+      final text = _readDocumentRange(doc, contextStart, contextEnd);
+      if (doc.doc.version != version ||
+          text.length != contextEnd - contextStart) {
+        return null;
+      }
+      final match =
+          defaultFindWordMatchAtPosition(text, caretUtf16 - contextStart);
+      if (match == null || !isFindSelectionSeedLengthSupported(match.length)) {
+        return null;
+      }
+      final word = text.substring(match.start, match.end);
+      return _regexFind ? RegExp.escape(word) : word;
+    } catch (_) {
+      // Find must still open with the previous query if the caret's line is
+      // stale or cannot be read at valid UTF-16 boundaries.
       return null;
     }
   }
