@@ -100,3 +100,23 @@ The user noted that repeated CI failures might be related to the observed crashe
 - Clipboard and remaining DnD failures are assertion/interaction failures in their corresponding jobs. The sampled failure logs do not report the historical Windows exception code or a macOS startup SIGSEGV.
 
 This audit found no shared crash signature between the repeated Platform Availability reds and the separately confirmed historical crashes. Correcting these checks can make platform validation more reliable and reveal future regressions sooner; the evidence does not support claiming that fixing the current red checks would mitigate the old Windows `0xC000041D` or macOS startup SIGSEGV. The latest P04.80 Platform Availability run passed all jobs, while the last 100-run sample remains a historical sample rather than an estimate of current failure probability.
+
+### P04.83 current-build run (2026-11-03)
+
+PR CI run [`41580497304`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41580497304)
+passed all four jobs, including Flutter analyze and **747 tests**, Linux and
+Windows Rust jobs, and harness validation. Platform Availability run
+[`41580492090`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41580492090)
+passed Linux, Windows, and macOS jobs. Linux and Windows native DnD fixtures
+recorded 23 and 12 pointer events respectively, and the Windows P03.7 suite
+passed 25 tests. The macOS ARM64 package was produced. Its native DnD helper
+reported `CGEventPostToPid pointer route: false`, so native macOS DnD remained
+skipped rather than passed.
+
+The latest 100 branch Actions records now contain 65 successful/0 failed CI
+runs, 28 successful/6 failed Platform Availability runs, and one separate
+historical failed Windows artifact replay. The new runs are green and contain
+no recorded failure; this is non-reproduction evidence only. The sampled
+historical platform reds still have no shared known crash signature with the
+old Windows `0xC000041D` replay or macOS startup SIGSEGV. Neither historical
+source cause is resolved, and no causal link or crash mitigation is claimed.

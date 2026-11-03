@@ -5,12 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### P04.83 / EDT-13d：查找与替换历史（本地 DoD 完成，hosted pending）
+### P04.83 / EDT-13d：查找与替换历史（本地 DoD 与优先 hosted gates 通过）
 
 - 查找和替换历史默认按工作区保存，也支持 `editor.find.history` / `editor.find.replaceHistory = never` 仅内存保留；每栏最多 100 项，Up/Down 浏览 MRU 并恢复编辑草稿，重复值提升到最新。记录采用 500 ms debounce；每条最多 524,288 UTF-16 单元、最多保留 16 个工作区记录，损坏或超大 journal 回退为空；无 Rust/ABI 改动。
 - 聚焦历史测试 11 项通过；完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter RUST_TEST_THREADS=1 bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **747**）；cargo fmt、Flutter analyze（0 issues）、新增 Dart 文件格式检查与 `git diff --check` 通过。本机未启动 GUI/Narrator。
-- GitNexus 最终 all-scope 报告 11 files / 46–47 symbols / 1 process / MEDIUM（`Save → _stableHash`），但大工作台文件超过 512 KiB 索引上限；compare-main 为 1,571 files / 384 flows / CRITICAL、清单 capped；重复刷新索引后的符号总数不稳定，保留为累计分支差异风险。CI 失败采样未显示与已知 Windows `0xC000041D` 或 macOS SIGSEGV 相同签名，不宣称存在因果关系或已缓解崩溃。详见 `docs/diagnostics/2026-11-03-p04/p04.83-find-replace-history.md` 与 `ci-failures-and-crash-correlation.md`。
-- P04.83 的 PR CI、Linux/Windows hosted usability 和 macOS hosted package 结果待本地实现提交后核验；该切片保持 in-progress。
+- 代码 commit `1c9fa40` 已推送。PR CI [`41580497304`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41580497304) 四 job 全绿（Flutter analyze 0 issues、747 tests、Rust Linux/Windows、Harness）。Platform Availability [`41580492090`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41580492090) 三平台 job 全通过：Linux artifacts `13205786160` / `13206030917` 记录 23 pointer events 与 move/copy/external-text；Windows artifacts `13205298478` / `13205333334` 记录 1028×681、DPR 1.0、P03.7 25 tests、12 pointer events、clipboard/MSAA/graceful close 通过；macOS ARM64 package `13206037907` 已生成，DnD artifact `13206461728` 因 pointer route unavailable 跳过，startup diagnostics `13206326998` 已保留。原生 macOS DnD/IME 与 P15 仍待设备。
+- GitNexus all-scope 为 11 files / 46–47 symbols / 1 process / MEDIUM（`Save → _stableHash`），但 `workbench_page.dart` 超过 512 KiB 索引限制；compare-main 为 1,571 files / 384 flows / CRITICAL、清单 capped，重复刷新后的符号总数不稳定。最新 100 条 branch Actions：CI 65/65 成功、Platform Availability 28 成功/6 失败、另有 1 条历史 Windows artifact replay failure。失败样本没有与 Windows `0xC000041D` 或 macOS SIGSEGV 相同的已知签名；本轮绿灯是 non-reproduction evidence，不代表崩溃已缓解。证据：`docs/diagnostics/2026-11-03-p04/p04.83-find-replace-history.md` 与 `ci-failures-and-crash-correlation.md`。
 
 ### P04.82 / EDT-13c：选区内查找（本地 DoD 与 hosted gates 通过）
 
