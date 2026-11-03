@@ -1,12 +1,16 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P01.5 Windows CI fake-LSP shutdown-fixture follow-up is complete; PR CI `41666117480` passed all four jobs, including 10/10 Windows repetitions. Return to P04 / EDT-17.
+> Last Updated: 2026-11-03. P01.5 Windows CI fake-LSP follow-up is complete; P04.99 / EDT-17g diff navigation is the active slice.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current next action: select and register the next EDT-17 gap in `docs/03`, then implement it. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current slice: implement P04.99 / EDT-17g Git unified-diff navigation, then complete local DoD, hosted CI evidence, staged commit, and push. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
-## Latest Completed Slice: P04.98 / EDT-17f
+## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
+
+- Fake server cancellation now wakes and exits delayed completion workers. Linux and Windows focus runs passed 10/10; PR CI 41666117480 passed all four jobs. The original failed FFI error was not captured. Production LSP/ABI and window code were unchanged; historical application crash root cause remains unresolved.
+
+## Previous Architecture Slice: P04.98 / EDT-17f
 
 - Added inline / side-by-side mode to Git Diff, preserving bounded patch source rows, paired word highlights, selectable text, line numbers, metadata/no-newline rows, and synchronized vertical alignment. Under 640 logical px the view remains inline; unsupported or over-budget patches retain the complete raw patch.
 - Seven new tests; focused patch/side-by-side suite 22 passed. Full `bash init.sh` passed with Rust workspace, Clippy, `build_core`, and Flutter 836; cargo fmt, Flutter analyze (0 issues), and harness validator (100/100) passed. No local GUI/Narrator; no Rust/ABI change. Evidence: [`p04.98-git-diff-side-by-side.md`](docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md).
@@ -29,11 +33,16 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
+## Active Slice / Risks
+
+- P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
+- GitNexus GitDiffPatchView impact was UNKNOWN because the >512 KiB workbench caller is omitted. Exact source search found workbench_page.dart:16121; keep the graph limitation visible. Re-index and rerun impact immediately before code edits.
+
 ## Blockers / Risks
 
 - Historical Windows `0xC000041D` source cause; native Windows 11 acceptance.
 - Native macOS DnD/IME, Linux DRM hardware, and P15 device gates. Hosted macOS DnD must remain marked skipped when pointer routing is unavailable.
-- EDT-17 remains open: moved blocks, whitespace option, unchanged-region folding, diff navigation, and broader diff-editor integration.
+- EDT-17 remains open: moved blocks, whitespace option, unchanged-region folding, generic compare-editor integration, and other registered diff gaps.
 
 ## Files Involved
 
@@ -49,4 +58,4 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Recommended Next Step
 
-Preserve all GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+Implement P04.99 in scope, preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.

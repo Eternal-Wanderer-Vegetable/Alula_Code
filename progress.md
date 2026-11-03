@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.99 / EDT-17g：Git unified diff 差异导航（进行中）
+
+- 已按固定 Code-OSS 1.145.0 行为登记导航切片：F7 / Shift+F7 分别跳转下一处/上一处，越过文件边界时循环；连续删除/新增块视为同一处差异，marker 留在块内。固定源码 commands.ts 注册 editor.action.diffReview.next/prev；diffEditorWidget.goToDiff 在边界回到首/末差异并居中揭示。
+- 当前实现入口为 GitDiffPatchView，GitNexus repo/worktree /tmp/alula-p04.70-next，索引刷新到 8eed9eb。GitDiffPatchView upstream impact 为 UNKNOWN（0 个可解析调用）；workbench_page.dart 超过 512 KiB 被跳过。精确搜索确认生产调用位于 workbench_page.dart:16121，另有 5 个 widget-test 构造点；不把 UNKNOWN 当成无影响。
+- P01.5 fake-LSP CI fixture follow-up 已于 8eed9eb 完成并推送；PR CI 41666117480 四项成功，Windows 重复关闭用例 10/10。改动未触碰生产 shutdown 或窗口层，历史 0xC000041D 仍未定位。
+- 计划与验收边界见 docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md。
+
+
 ### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（已完成）
 
 - P04.98 的 PR CI 首次 attempt 在 `p01_async_completion` 的 workspace shutdown FFI 断言处失败，返回错误 JSON（`stopped` 为缺失字段）；测试进程以断言退出码 1，没有 Rust panic、Windows 应用故障记录或 crash dump。同 SHA 重跑通过。失败日志没有打印原始错误 JSON，因此错误原因仍未直接观测。
