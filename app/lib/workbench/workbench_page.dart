@@ -122,6 +122,9 @@ const Map<String, Color> _tokenColors = {
 
 const int _editorInputWindowUtf16 = 16384;
 const int _editorCompositionReserveUtf16 = 256;
+const int _maxSnippetInsertionSelections = 64;
+const int _maxSnippetInsertionPlaceholderOccurrences = 4096;
+const Duration _snippetMultiCursorExpansionTimeout = Duration(seconds: 8);
 
 int _operationPayloadChars(List<List<TextOp>> batches) => batches.fold<int>(
       0,
@@ -134,6 +137,23 @@ bool _isPrintableOvertypeCharacter(String? character) =>
     character.isNotEmpty &&
     character.runes
         .every((codePoint) => codePoint >= 0x20 && codePoint != 0x7f);
+
+class _SnippetInsertionPlan {
+  _SnippetInsertionPlan({
+    required this.startUtf16,
+    required this.endUtf16,
+    required this.removedText,
+    required this.expansion,
+    required this.lineLeadingWhitespace,
+  });
+
+  final int startUtf16;
+  final int endUtf16;
+  final String removedText;
+  final SnippetExpansion expansion;
+  final String lineLeadingWhitespace;
+  late int mappedStartUtf16;
+}
 
 const Map<String, String> _rustAutoClosingBracketPairs = {
   '(': ')',
@@ -9839,6 +9859,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
+    if (doc.additionalSelections.isNotEmpty) {
+      await _insertSnippetTemplateAtSelections(doc, template);
+      return;
+    }
     _flushInput(doc);
     final selection = doc.selection;
     final window = doc.inputWindow;
@@ -10148,6 +10172,454 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = '已插入片段');
   }
 
+  Future<void> _insertSnippetTemplateAtSelections(
+    OpenDoc doc,
+    String template,
+  ) async {
+    _flushInput(doc);
+    final window = doc.inputWindow;
+    final field = doc.inputFieldKey.currentState;
+    final value = doc.editingValue;
+    final primarySelection = doc.selection;
+    final selections = doc.selectionSet;
+    final additionalSelections = List<TextSelection>.of(
+      doc.additionalSelections,
+    );
+    final capacity = window.maxWindowUtf16 - window.compositionReserveUtf16 - 1;
+    if (field == null ||
+        doc.crossWindowSelection != null ||
+        doc.columnSelection != null ||
+        window.version != doc.doc.version ||
+        window.pendingText != null ||
+        selections.isEmpty ||
+        additionalSelections.length + 1 > _maxSnippetInsertionSelections ||
+        additionalSelections.any((selection) =>
+            !selection.isValid ||
+            selection.start < window.startUtf16 ||
+            selection.end > window.endUtf16) ||
+        selections.any((selection) =>
+            !selection.isValid ||
+            selection.start < window.startUtf16 ||
+            selection.end > window.endUtf16 ||
+            selection.start - window.startUtf16 > value.text.length ||
+            selection.end - window.startUtf16 > value.text.length)) {
+      if (mounted) {
+        setState(() => _statusDetail =
+            '多光标片段插入仅支持同一输入窗内最多 $_maxSnippetInsertionSelections 个普通选区');
+      }
+      return;
+    }
+
+    final expectedVersion = doc.doc.version;
+    final windowStart = window.startUtf16;
+    final windowText = window.text;
+    bool isCurrentSnapshot() {
+      final currentWindow = doc.inputWindow;
+      return mounted &&
+          !_disposing &&
+          identical(_active, doc) &&
+          doc.doc.version == expectedVersion &&
+          identical(doc.inputFieldKey.currentState, field) &&
+          currentWindow.version == window.version &&
+          currentWindow.startUtf16 == windowStart &&
+          currentWindow.text == windowText &&
+          doc.editingValue == value &&
+          doc.selection == primarySelection &&
+          listEquals(doc.selectionSet, selections) &&
+          listEquals(doc.additionalSelections, additionalSelections) &&
+          doc.crossWindowSelection == null &&
+          doc.columnSelection == null &&
+          !currentWindow.hasComposition;
+    }
+
+    final clipboardVariables = <String, String>{};
+    if (snippetTemplateUsesVariable(template, 'CLIPBOARD')) {
+      try {
+        final clipboard = await EditorClipboard.read().timeout(
+          const Duration(seconds: 6),
+        );
+        if (!isCurrentSnapshot()) {
+          if (mounted) {
+            setState(() => _statusDetail = '片段插入未应用：读取剪贴板时编辑状态已变化');
+          }
+          return;
+        }
+        final clipboardText = clipboard?.text;
+        if (clipboardText != null &&
+            clipboardText.length > maxSnippetClipboardUtf16) {
+          if (mounted) setState(() => _statusDetail = '剪贴板内容过长，无法用于片段插入');
+          return;
+        }
+        clipboardVariables.addAll(snippetClipboardVariables(clipboardText));
+      } on TimeoutException {
+        if (mounted) setState(() => _statusDetail = '读取剪贴板超时，片段未插入');
+        return;
+      } on Object {
+        if (mounted) setState(() => _statusDetail = '读取剪贴板失败，片段未插入');
+        return;
+      }
+    }
+
+    final homeVariable = Platform.isWindows ? 'USERPROFILE' : 'HOME';
+    final commonVariables = <String, String>{
+      ...snippetFilenameVariables(doc.uri == null ? null : doc.name),
+      ...clipboardVariables,
+      ...snippetDocumentPathVariables(
+        doc.uri == null ? null : doc.path,
+        windows: Platform.isWindows,
+        userHome: Platform.environment[homeVariable],
+      ),
+      if (snippetTemplateUsesVariable(template, 'RELATIVE_FILEPATH'))
+        ...snippetRelativeFilePathVariables(
+          doc.uri == null ? null : doc.path,
+          _workspaceRoot,
+          windows: Platform.isWindows,
+          userHome: Platform.environment[homeVariable],
+        ),
+      if (snippetTemplateUsesVariable(template, 'WORKSPACE_NAME') ||
+          snippetTemplateUsesVariable(template, 'WORKSPACE_FOLDER'))
+        ...snippetWorkspaceVariables(
+          _workspaceRoot,
+          windows: Platform.isWindows,
+        ),
+    };
+    final needsCurrentLine =
+        snippetTemplateUsesVariable(template, 'TM_CURRENT_LINE');
+    final needsCurrentWord =
+        snippetTemplateUsesVariable(template, 'TM_CURRENT_WORD');
+
+    Map<String, String> variablesForSelection(TextSelection selection) {
+      final localStart = selection.start - windowStart;
+      final localEnd = selection.end - windowStart;
+      final selectedText = value.text.substring(localStart, localEnd);
+      final cursorPosition = doc.doc.positionAt(selection.extentOffset);
+      if (cursorPosition.version != expectedVersion ||
+          cursorPosition.offsetUtf16 != selection.extentOffset) {
+        throw const SnippetTemplateException(
+          '选区位置已过期，无法读取片段变量',
+          0,
+        );
+      }
+      final variables = <String, String>{
+        'TM_SELECTED_TEXT': selectedText,
+        ...snippetLineVariables(cursorPosition.line),
+      };
+      if (!needsCurrentLine && !needsCurrentWord) return variables;
+
+      final boundary = doc.doc.lineBoundary(selection.extentOffset);
+      if (boundary.version != expectedVersion) {
+        throw const SnippetTemplateException(
+          '文档版本已变化，无法读取片段行上下文',
+          0,
+        );
+      }
+      final lineLengthUtf16 = boundary.endUtf16 - boundary.startUtf16;
+      if (needsCurrentLine) {
+        if (lineLengthUtf16 > window.maxWindowUtf16) {
+          throw const SnippetTemplateException('当前行过长，无法在片段输入窗中展开', 0);
+        }
+        final lineText = lineLengthUtf16 == 0
+            ? ''
+            : (() {
+                final range = doc.doc.readRange(
+                  boundary.startUtf16,
+                  maxLenUtf16: lineLengthUtf16,
+                );
+                if (range.version != expectedVersion ||
+                    range.startUtf16 != boundary.startUtf16 ||
+                    range.endUtf16 != boundary.endUtf16 ||
+                    range.text.length != lineLengthUtf16) {
+                  throw const SnippetTemplateException(
+                    '当前行读取时文档版本已变化',
+                    0,
+                  );
+                }
+                return range.text;
+              })();
+        variables.addAll(snippetCurrentLineVariables(lineText));
+      }
+      if (!needsCurrentWord) return variables;
+
+      final caretOffset = selection.extentOffset;
+      var contextStart = boundary.startUtf16;
+      var contextEnd = boundary.endUtf16;
+      if (lineLengthUtf16 > snippetCurrentWordContextUtf16) {
+        const halfContext = snippetCurrentWordContextUtf16 ~/ 2;
+        final lineColumnUtf16 = caretOffset - boundary.startUtf16;
+        final desiredStart =
+            boundary.startUtf16 + lineColumnUtf16 + 1 - halfContext;
+        if (desiredStart > contextStart) contextStart = desiredStart;
+        final desiredEnd =
+            boundary.startUtf16 + lineColumnUtf16 + 1 + halfContext;
+        if (desiredEnd < contextEnd) contextEnd = desiredEnd;
+      }
+      late final DocumentPosition contextPosition;
+      try {
+        contextPosition = doc.doc.positionAt(contextStart);
+      } on AlulaException catch (error) {
+        if (error.code != 'InvalidUtf16Offset' ||
+            contextStart <= boundary.startUtf16) {
+          rethrow;
+        }
+        contextStart--;
+        contextPosition = doc.doc.positionAt(contextStart);
+      }
+      if (contextPosition.version != expectedVersion ||
+          contextPosition.offsetUtf16 != contextStart) {
+        throw const SnippetTemplateException(
+          '当前单词读取时文档版本已变化',
+          0,
+        );
+      }
+      if (contextEnd - contextStart > snippetCurrentWordContextUtf16) {
+        contextEnd = contextStart + snippetCurrentWordContextUtf16;
+      }
+      if (contextEnd < caretOffset || contextStart > caretOffset) {
+        throw const SnippetTemplateException('当前单词上下文范围无效', 0);
+      }
+      var wordText = '';
+      if (contextEnd > contextStart) {
+        final range = doc.doc.readRange(
+          contextStart,
+          maxLenUtf16: contextEnd - contextStart,
+        );
+        if (range.version != expectedVersion ||
+            range.startUtf16 != contextStart ||
+            range.endUtf16 < caretOffset ||
+            range.endUtf16 > contextEnd ||
+            range.text.length != range.endUtf16 - range.startUtf16) {
+          throw const SnippetTemplateException(
+            '当前单词读取时文档版本已变化',
+            0,
+          );
+        }
+        wordText = range.text;
+      }
+      variables.addAll(snippetCurrentWordVariables(
+        wordText,
+        caretOffset - contextStart,
+      ));
+      return variables;
+    }
+
+    final expansions = <SnippetExpansion>[];
+    final deadline = DateTime.now().add(_snippetMultiCursorExpansionTimeout);
+    try {
+      for (final selection in selections) {
+        final remaining = deadline.difference(DateTime.now());
+        if (remaining <= Duration.zero) {
+          throw TimeoutException('multi-cursor snippet expansion timed out');
+        }
+        final variables = {
+          ...commonVariables,
+          ...variablesForSelection(selection),
+        };
+        final expansion = await expandSnippetTemplate(
+          template,
+          variables: variables,
+        ).timeout(remaining);
+        if (!isCurrentSnapshot()) {
+          if (mounted) setState(() => _statusDetail = '片段插入未应用：展开期间编辑状态已变化');
+          return;
+        }
+        expansions.add(expansion);
+      }
+    } on SnippetTemplateException catch (error) {
+      if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');
+      return;
+    } on TimeoutException {
+      if (mounted) setState(() => _statusDetail = '多光标片段展开超时，未应用任何更改');
+      return;
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(
+            () => _statusDetail = '片段变量读取失败：${error.code} ${error.detail}');
+      }
+      return;
+    }
+
+    if (!isCurrentSnapshot()) {
+      if (mounted) setState(() => _statusDetail = '片段插入未应用：编辑状态已变化');
+      return;
+    }
+    final expectedTabstops = expansions.first.tabstopOrder;
+    var placeholderCount = 0;
+    final transformsByTabstop = <int, int>{};
+    for (final expansion in expansions) {
+      if (!listEquals(expansion.tabstopOrder, expectedTabstops)) {
+        if (mounted) setState(() => _statusDetail = '片段各选区展开结果不一致，未应用任何更改');
+        return;
+      }
+      placeholderCount += expansion.placeholders.length;
+      if (placeholderCount > _maxSnippetInsertionPlaceholderOccurrences) {
+        if (mounted) setState(() => _statusDetail = '片段占位符总数超过上限，未应用任何更改');
+        return;
+      }
+      for (final placeholder in expansion.placeholders) {
+        if (placeholder.transform != null) {
+          transformsByTabstop.update(
+            placeholder.index,
+            (count) => count + 1,
+            ifAbsent: () => 1,
+          );
+        }
+      }
+    }
+    if (transformsByTabstop.values.any(
+      (count) => count > maxSnippetVariableTransforms,
+    )) {
+      if (mounted) {
+        setState(() => _statusDetail = '单个 tabstop 的转换数超过上限，未应用任何更改');
+      }
+      return;
+    }
+
+    final plansBySelection = <_SnippetInsertionPlan>[];
+    for (var index = 0; index < selections.length; index++) {
+      final selection = selections[index];
+      final localStart = selection.start - windowStart;
+      final localEnd = selection.end - windowStart;
+      final lineBreakBefore =
+          localStart == 0 ? -1 : value.text.lastIndexOf('\n', localStart - 1);
+      final linePrefix = value.text.substring(lineBreakBefore + 1, localStart);
+      final leadingWhitespace =
+          RegExp(r'^[ \t]*').firstMatch(linePrefix)?.group(0) ?? '';
+      plansBySelection.add(_SnippetInsertionPlan(
+        startUtf16: selection.start,
+        endUtf16: selection.end,
+        removedText: value.text.substring(localStart, localEnd),
+        expansion: expansions[index],
+        lineLeadingWhitespace: leadingWhitespace,
+      ));
+    }
+    final orderedPlans = [...plansBySelection]
+      ..sort((left, right) => left.startUtf16.compareTo(right.startUtf16));
+    var shift = 0;
+    for (var index = 0; index < orderedPlans.length; index++) {
+      final plan = orderedPlans[index];
+      if (index > 0 && plan.startUtf16 < orderedPlans[index - 1].endUtf16) {
+        if (mounted) setState(() => _statusDetail = '多光标片段选区相交，未应用任何更改');
+        return;
+      }
+      plan.mappedStartUtf16 = plan.startUtf16 + shift;
+      shift += plan.expansion.text.length - (plan.endUtf16 - plan.startUtf16);
+    }
+    final groupStart = orderedPlans.first.mappedStartUtf16;
+    final groupEnd = orderedPlans.last.mappedStartUtf16 +
+        orderedPlans.last.expansion.text.length;
+    if (groupEnd - groupStart > capacity) {
+      if (mounted) setState(() => _statusDetail = '多光标片段展开后超出输入窗范围，未应用任何更改');
+      return;
+    }
+    final operationChars = orderedPlans.fold<int>(
+      0,
+      (total, plan) =>
+          total + plan.removedText.length + plan.expansion.text.length,
+    );
+    if (operationChars > _undoHistoryBudget.maxTotalChars) {
+      if (mounted) setState(() => _statusDetail = '多光标片段超出撤销历史上限，未应用任何更改');
+      return;
+    }
+
+    final forward = <TextOp>[
+      for (final plan in orderedPlans.reversed) ...[
+        if (plan.endUtf16 > plan.startUtf16)
+          TextOp.delete(plan.startUtf16, plan.endUtf16 - plan.startUtf16),
+        if (plan.expansion.text.isNotEmpty)
+          TextOp.insert(plan.startUtf16, plan.expansion.text),
+      ],
+    ];
+    final inverse = <TextOp>[];
+    for (final plan in orderedPlans.reversed) {
+      if (plan.expansion.text.isNotEmpty) {
+        inverse.add(TextOp.delete(
+          plan.mappedStartUtf16,
+          plan.expansion.text.length,
+        ));
+      }
+      if (plan.removedText.isNotEmpty) {
+        inverse.add(TextOp.insert(plan.mappedStartUtf16, plan.removedText));
+      }
+    }
+
+    if (!isCurrentSnapshot()) {
+      if (mounted) setState(() => _statusDetail = '片段插入未应用：编辑状态已变化');
+      return;
+    }
+    if (forward.isNotEmpty) {
+      try {
+        doc.doc.applyWith(expectedVersion, forward);
+      } on AlulaException catch (error) {
+        if (mounted) {
+          setState(
+              () => _statusDetail = '片段插入未应用：${error.code} ${error.detail}');
+        }
+        return;
+      }
+    }
+    _clearSnippetSession(clearSecondarySelections: false);
+
+    final session = expectedTabstops.isEmpty
+        ? null
+        : SnippetSession.fromInsertions(
+            insertions: [
+              for (final plan in plansBySelection)
+                (
+                  expansion: plan.expansion,
+                  documentOffsetUtf16: plan.mappedStartUtf16,
+                  lineLeadingWhitespace: plan.lineLeadingWhitespace,
+                ),
+            ],
+            version: doc.doc.version,
+          );
+    final afterSelections = session?.currentSelections ??
+        [
+          for (final plan in plansBySelection)
+            TextSelection.collapsed(
+              offset: plan.mappedStartUtf16 + plan.expansion.text.length,
+            ),
+        ];
+    final nextPrimarySelection = afterSelections.first;
+    if (forward.isNotEmpty) {
+      _recordDocumentOperations(
+        doc,
+        forward: forward,
+        inverse: inverse,
+        beforeCaret: primarySelection.extentOffset,
+        afterCaret: nextPrimarySelection.extentOffset,
+        coalesce: false,
+      );
+    }
+
+    final freeBefore = capacity - (groupEnd - groupStart);
+    final nextWindowStart =
+        (groupStart - freeBefore ~/ 2).clamp(0, groupStart).toInt();
+    final nextWindow = RustTextInputWindow.open(
+      doc.doc,
+      startUtf16: nextWindowStart,
+      maxWindowUtf16: window.maxWindowUtf16,
+      compositionReserveUtf16: window.compositionReserveUtf16,
+      selection: nextPrimarySelection,
+    );
+    doc.inputWindow = nextWindow;
+    field.restoreInputWindow(nextWindow);
+    if (session != null) {
+      _snippetSession = session;
+      _snippetSessionDocId = doc.id;
+      _snippetSessionView = doc;
+    }
+    _setDocSelections(doc, afterSelections, recordHistory: false);
+    if (forward.isNotEmpty) {
+      _refreshSiblingViews(doc, forward);
+      _onFindTextChanged();
+    }
+    _syncCommandContext();
+    field.requestFocus();
+    if (mounted) {
+      setState(() => _statusDetail = '已在 ${selections.length} 个光标处插入片段');
+    }
+  }
+
   List<TextOp>? _snippetOperationsForInput(
     OpenDoc doc,
     TextEditingValue oldValue,
@@ -10395,7 +10867,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final range = transforms[index];
         final text = _normalizeSnippetPlaceholderTransform(
           evaluated[index],
-          session.lineLeadingWhitespace,
+          session.lineLeadingWhitespaceFor(range),
         );
         totalOutputUtf16 += text.length;
         if (totalOutputUtf16 > maxSnippetVariableTransformOutputUtf16) {

@@ -3,6 +3,12 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import 'snippet_template.dart';
 
+typedef SnippetSessionInsertion = ({
+  SnippetExpansion expansion,
+  int documentOffsetUtf16,
+  String lineLeadingWhitespace,
+});
+
 /// Tracks one active snippet's tabstops in absolute document UTF-16 offsets.
 class SnippetSession {
   SnippetSession(
@@ -10,12 +16,61 @@ class SnippetSession {
     required int documentOffsetUtf16,
     required this.version,
     this.lineLeadingWhitespace = '',
-  })  : _tabstopOrder = expansion.tabstopOrder,
+    Map<int, String> lineLeadingWhitespaceByOccurrenceId = const {},
+  })  : _lineLeadingWhitespaceByOccurrenceId =
+            Map.unmodifiable(lineLeadingWhitespaceByOccurrenceId),
+        _tabstopOrder = expansion.tabstopOrder,
         _rangesByIndex = _groupRanges(expansion, documentOffsetUtf16),
         _currentIndex = expansion.tabstopOrder.first;
 
+  factory SnippetSession.fromInsertions({
+    required List<SnippetSessionInsertion> insertions,
+    required int version,
+  }) {
+    if (insertions.isEmpty) {
+      throw ArgumentError.value(insertions, 'insertions', 'must not be empty');
+    }
+
+    var nextOccurrenceId = 1;
+    final placeholders = <SnippetPlaceholderRange>[];
+    final indentationByOccurrenceId = <int, String>{};
+    for (final insertion in insertions) {
+      final occurrenceIds = <int, int>{};
+      int remapOccurrenceId(int occurrenceId) => occurrenceIds.putIfAbsent(
+            occurrenceId,
+            () => nextOccurrenceId++,
+          );
+
+      for (final range in insertion.expansion.placeholders) {
+        final occurrenceId = remapOccurrenceId(range.occurrenceId);
+        placeholders.add(SnippetPlaceholderRange(
+          index: range.index,
+          startUtf16: insertion.documentOffsetUtf16 + range.startUtf16,
+          endUtf16: insertion.documentOffsetUtf16 + range.endUtf16,
+          choice: range.choice,
+          occurrenceId: occurrenceId,
+          ancestorOccurrenceIds: range.ancestorOccurrenceIds
+              .map(remapOccurrenceId)
+              .toList(growable: false),
+          transform: range.transform,
+        ));
+        indentationByOccurrenceId[occurrenceId] =
+            insertion.lineLeadingWhitespace;
+      }
+    }
+
+    return SnippetSession(
+      SnippetExpansion(text: '', placeholders: placeholders),
+      documentOffsetUtf16: 0,
+      version: version,
+      lineLeadingWhitespace: insertions.first.lineLeadingWhitespace,
+      lineLeadingWhitespaceByOccurrenceId: indentationByOccurrenceId,
+    );
+  }
+
   final List<int> _tabstopOrder;
   final Map<int, List<SnippetPlaceholderRange>> _rangesByIndex;
+  final Map<int, String> _lineLeadingWhitespaceByOccurrenceId;
   int _currentIndex;
 
   /// The Rust document version whose coordinates these ranges describe.
@@ -24,6 +79,10 @@ class SnippetSession {
   /// Whitespace before the snippet on its initial line, used by multiline
   /// placeholder transforms to align continuation lines.
   final String lineLeadingWhitespace;
+
+  String lineLeadingWhitespaceFor(SnippetPlaceholderRange range) =>
+      _lineLeadingWhitespaceByOccurrenceId[range.occurrenceId] ??
+      lineLeadingWhitespace;
 
   int get currentTabstop => _currentIndex;
   bool get isAtFinalTabstop => _currentIndex == 0;

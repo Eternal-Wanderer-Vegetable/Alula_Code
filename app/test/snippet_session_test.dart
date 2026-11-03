@@ -284,5 +284,49 @@ void main() {
       expect(session.version, 2);
       expect(session.currentRanges.first.startUtf16, 20);
     });
+
+    test('combines cursor expansions with unique ranges and per-cursor indent',
+        () async {
+      final firstExpansion = await expandSnippetTemplate(r'${1:x}-$1-$0');
+      final secondExpansion = await expandSnippetTemplate(r'${1:x}-$1-$0');
+      final session = SnippetSession.fromInsertions(
+        insertions: [
+          (
+            expansion: firstExpansion,
+            documentOffsetUtf16: 10,
+            lineLeadingWhitespace: '  ',
+          ),
+          (
+            expansion: secondExpansion,
+            documentOffsetUtf16: 30,
+            lineLeadingWhitespace: '    ',
+          ),
+        ],
+        version: 9,
+      );
+
+      final firstTabstopRanges = session.currentRanges;
+      expect(firstTabstopRanges, hasLength(4));
+      expect(
+        firstTabstopRanges.map((range) => range.occurrenceId).toSet(),
+        hasLength(4),
+      );
+      expect(
+        firstTabstopRanges
+            .map(session.lineLeadingWhitespaceFor)
+            .toList(growable: false),
+        ['  ', '  ', '    ', '    '],
+      );
+
+      expect(session.moveNext(), isTrue);
+      expect(
+        session.currentRanges
+            .map((range) => [range.startUtf16, range.endUtf16]),
+        [
+          [14, 14],
+          [34, 34],
+        ],
+      );
+    });
   });
 }

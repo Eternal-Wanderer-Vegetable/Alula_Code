@@ -1141,6 +1141,16 @@ class RustTextInputFieldState extends State<RustTextInputField> {
     _controller.value = value;
   }
 
+  /// Restores the input mirror after its Rust-backed window has been replaced.
+  /// Unlike [setEditingValue], this does not enqueue an edit against the old
+  /// window that the field widget is still bound to until the next rebuild.
+  void restoreInputWindow(RustTextInputWindow inputWindow) {
+    if (widget.inputWindow.pendingCount != 0) {
+      throw StateError('Flush the old input window before replacing it.');
+    }
+    _restoreValue(inputWindow.initialValue);
+  }
+
   /// Applies a host-generated edit through the same multi-selection formatter
   /// used by platform typing, then follows the ordinary bounded writeback path.
   void applyFormattedValue(TextEditingValue value) {

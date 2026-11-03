@@ -1062,6 +1062,127 @@ void main() {
   });
 
   testWidgets(
+      'multi-cursor snippet resolves each selection and keeps per-line transform indentation',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: '  🙂 name\r\n    🦊 name',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      var controller = tester.widget<TextField>(editor).controller!;
+      controller.selection =
+          const TextSelection(baseOffset: 5, extentOffset: 9);
+      await tester.pump();
+
+      await _press(tester, LogicalKeyboardKey.keyD, control: true);
+      final field =
+          tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      expect(field.additionalSelections, const [
+        TextSelection(baseOffset: 17, extentOffset: 21),
+      ]);
+
+      await _insertSnippetFromPalette(
+        tester,
+        template:
+            '\$TM_LINE_NUMBER:\$TM_SELECTED_TEXT:\$TM_CURRENT_LINE:\$TM_CURRENT_WORD-\${1:x}-\${2:y}-\${2/x/\${1:-fallback\nnext}/}\$0',
+      );
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(
+        controller.text,
+        '  🙂 1:name:  🙂 name:name-x-y-y\n'
+        '    🦊 2:name:    🦊 name:name-x-y-y',
+      );
+
+      await _press(tester, LogicalKeyboardKey.tab);
+      await _replaceCurrentSelection(tester, 'dog');
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(
+        controller.text,
+        '  🙂 1:name:  🙂 name:name-x-dog-dog\n'
+        '    🦊 2:name:    🦊 name:name-x-dog-dog',
+      );
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+
+      const transformed = '  🙂 1:name:  🙂 name:name-x-dog-fallback\n  next\n'
+          '    🦊 2:name:    🦊 name:name-x-dog-fallback\n    next';
+      controller = tester.widget<TextField>(editor).controller!;
+      expect(controller.text, transformed);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), transformed.replaceAll('\n', '\r\n'));
+
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(
+        tester.widget<TextField>(editor).controller!.text,
+        '  🙂 1:name:  🙂 name:name-x-dog-dog\n'
+        '    🦊 2:name:    🦊 name:name-x-dog-dog',
+      );
+      await _press(tester, LogicalKeyboardKey.keyY, control: true);
+      expect(tester.widget<TextField>(editor).controller!.text, transformed);
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(tester.widget<TextField>(editor).controller!.text,
+          '  🙂 name\n    🦊 name');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('multi-cursor snippet rejects selection counts above its bound',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final initialText = List<String>.filled(65, 'name').join(' ');
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: initialText,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection =
+          const TextSelection(baseOffset: 0, extentOffset: 4);
+      await tester.pump();
+      for (var index = 1; index < 65; index++) {
+        await _press(tester, LogicalKeyboardKey.keyD, control: true);
+      }
+      expect(
+        tester
+            .widget<RustTextInputField>(find.byType(RustTextInputField))
+            .additionalSelections,
+        hasLength(64),
+      );
+
+      await _insertSnippetFromPalette(tester, template: r'${1:x}$0');
+
+      expect(controller.text, initialText);
+      expect(file.readAsStringSync(), initialText);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
       'placeholder transforms run on Shift+Tab with UTF-16, multiline, and CRLF save',
       (tester) async {
     try {
