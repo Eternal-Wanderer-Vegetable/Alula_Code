@@ -11,13 +11,13 @@ Continue P04 / `feat-026` toward fixed-version VS Code editor and Git Diff parit
 - Pinned Code-OSS 1.145.0 has `experimental.showMoves: false`; the model covers a conservative subset of `DefaultLinesDiffComputer.computeMovedLines` (exact trim-equivalent blocks only, not approximate similarity or unchanged moves). Minimum 3 lines, 15 normalized UTF-16 units, 2 substantial lines. Full criteria are in `docs/03-里程碑计划与验收标准.md`.
 - 13 focused Flutter tests pass. `cargo fmt --all -- --check` and full `bash init.sh` pass: Rust workspace, Clippy, `build_core`, Flutter analyze 0 issues, Flutter 865 tests.
 - PR CI [`41695398743`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695398743) passed all four jobs. Platform Availability [`41695384851`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695384851) passed Linux x64 and Windows x64. Linux package/DnD artifacts: `13261255894` / `13261180829`; Windows package/DnD: `13262211045` / `13261241203`.
-- macOS ARM64 job in run `41695384851` was still `queued` at handoff capture. Do not mark it passed or claim a package for this SHA. Prior P04.101 macOS package/startup evidence remains recorded separately; native macOS DnD stays P15 pending.
+- The macOS ARM64 job in run `41695384851` was canceled while queued, with zero steps; the overall Platform Availability workflow therefore concluded failure, but there was no app build/launch/crash on macOS. Do not claim a package for this SHA. Prior P04.101 macOS package/startup evidence remains recorded separately; native macOS DnD stays P15 pending.
 - `tools/mem-probe` headless Linux sample on an identical 1,965,278 UTF-16 / 16,382-row fixture measured final PSS 178.8 MiB parser-only and 181.2 MiB with matcher (+2.4 MiB). It is a single Dart process model sample, not desktop product memory. The 500 MiB optimization target remains deferred to P14.
 - GitNexus staged/all scan reported 9 files, 29 symbols, 430 affected flows, CRITICAL. Re-running with `--limit 1000` still displayed only 10 flows. The index reports 438 flows but warns that 758/958 entry candidates were dropped and 365 callees skipped. Full-repository exact source search before the report was added found no product runtime callsite for the new matcher. Preserve this CRITICAL graph limitation; do not reinterpret it as low risk. Details: `docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md`.
 
 ## CI and Crash Evidence
 
-The current regular CI run is green, with no failure or crash signature. The user suspects repeated CI failures may be related to application crashes. For any recurrence, correlate the exact SHA and job with process exit code, crash signature/dump, and runner logs; distinguish process faults from test assertions, timeouts, or runner queue issues, and do not treat a successful rerun as a fix. This slice is not wired into the product and does not exercise startup, window teardown, plugin lifecycle, or the historical crash paths; it cannot establish a crash fix. Historical evidence and confidence limits remain in `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Avoid local GUI/accessibility actions that can launch Narrator. No desktop GUI or Narrator was started during P04.102.
+The regular PR CI run is green, with no failure or crash signature. Platform Availability concluded failure only because the macOS job was canceled while queued before any step; no app process ran there. The user suspects repeated CI failures may be related to application crashes. For any recurrence, correlate the exact SHA and job with process exit code, crash signature/dump, and runner logs; distinguish process faults from test assertions, timeouts, or runner queue issues, and do not treat a successful rerun as a fix. This slice is not wired into the product and does not exercise startup, window teardown, plugin lifecycle, or the historical crash paths; it cannot establish a crash fix. Historical evidence and confidence limits remain in `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Avoid local GUI/accessibility actions that can launch Narrator. No desktop GUI or Narrator was started during P04.102.
 
 ## Workspace and PR
 
@@ -27,7 +27,7 @@ The current regular CI run is green, with no failure or crash signature. The use
 
 ## Blockers / Risks
 
-- Check whether the macOS job in Platform Availability run `41695384851` leaves the queue; if it does, record the actual result. Queued is not success.
+- Retry or obtain a macOS runner result for Platform Availability run `41695384851` or its successor; the current job was canceled before any step and provides no macOS build/package evidence.
 - Native macOS DnD/IME and device acceptance remain P15 gates; Linux DRM hardware remains unavailable.
 - Historical Windows `0xC000041D` and pre-`9f2c70a` macOS SIGSEGV remain evidence-qualified mitigations, not controlled root-cause proof.
 - GitNexus graph output is truncated/noisy and retains CRITICAL risk for this slice.
@@ -43,9 +43,9 @@ The current regular CI run is green, with no failure or crash signature. The use
 
 1. Read `AGENTS.md`, this file, and `progress.md`.
 2. Check `node .gitnexus/run.cjs status`; refresh if stale. Run `bash init.sh --fast`.
-3. Recheck macOS job status for run `41695384851`; record only verified evidence.
+3. Recheck whether a macOS runner becomes available for run `41695384851` or a successor; record only executed job evidence.
 4. Choose one next P04 slice from `docs/03`, register it before code, and run GitNexus query/context/impact before edits.
 
 ## Recommended Next Step
 
-After recording the macOS queue outcome, decompose P04.103 as the view integration for moved-block markers and navigation/source mapping, keeping `showMoves` off by default and preserving raw-patch fallback. Verify the precise Code-OSS interaction first; do not broaden into approximate matching, unchanged-region folding, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
+Proceed to decompose P04.103 as the view integration for moved-block markers and navigation/source mapping, keeping `showMoves` off by default and preserving raw-patch fallback. Track the canceled macOS job as an external runner validation gap without blocking independent architecture work. Verify the precise Code-OSS interaction first; do not broaden into approximate matching, unchanged-region folding, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
