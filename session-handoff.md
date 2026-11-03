@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.89 / EDT-15d is complete. Code commit `879e3a6` and P04.89 evidence/status updates are being committed separately. PR CI `41605702841` and Platform Availability `41605695280` passed; PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-03. P04.89 / EDT-15d is complete. Code commit `879e3a6`, evidence commit `5402d71`, and CI close-metadata correction `2ddd70e` are pushed. Code PR CI `41605702841`, latest docs PR CI `41608891135`, and Platform Availability `41605695280` passed; PR #2 remains OPEN/draft.
 
 ## Current Objective
 
