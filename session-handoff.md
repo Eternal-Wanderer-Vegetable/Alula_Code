@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.91 / EDT-15f is complete locally and on hosted CI. Code commit `1129d60` is pushed to `codex/vscode-parity-p00`; evidence/state updates are in the current worktree. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-03. P04.91 / EDT-15f is complete locally and on hosted CI. Code commit `1129d60` and evidence/state commit `fa7ee33` are pushed to `codex/vscode-parity-p00`. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
