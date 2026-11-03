@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.88 / EDT-15c：Find 从单行文本选区初始化 query（已完成）
+
+- `editor.find` / Ctrl+F 从关闭状态打开 Find 时，按固定 Code-OSS 1.145.0 默认行为，从 Rust 权威文档读取非空单行主选区（长度严格小于 524,288 UTF-16 code units）；regex 模式按字面转义。多行、空、超长、stale、存在未提交输入/IME 或读取失败时保留旧 query。Ctrl+H Replace 与光标处单词种子不在本片；后者列为 P04.89。
+- 定向 12 项、完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh`（Rust workspace/Clippy/build_core/Flutter **776**）、`cargo fmt --all -- --check`、Flutter analyze（0 issues）、`git diff --check` 均通过；检查 query/regex 命中、emoji UTF-16、selection、Rust 文档版本、dirty、磁盘字节与 Ctrl+Z。未在本机启动 GUI/Narrator。
+- 代码 commit `fd53c85` 已推送。PR CI [`41600604418`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41600604418) 四 job 全绿。Platform Availability [`41600596922`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41600596922) Linux/Windows/macOS jobs 全绿：Linux DnD artifact `13214372411` 记录 22 pointer events 与三种 drop route；Windows 包 `13215235646`、DnD artifact `13215390378` 记录可见客户区、13 pointer events、三种 route 和 graceful-close/accessibility 检查；macOS ARM64 包 `13215810663`、启动诊断 `13215860416` 生成，DnD artifact `13215191894` 标记 input route unavailable、native DnD skip。
+- 最近 100 条 branch Actions：常规 CI 65 成功/0 失败、Platform Availability 28 成功/6 失败，另有一条旧 Windows artifact replay 崩溃。平台 probe 红灯仍与旧包 `0xC000041D` 无共同故障签名；本次绿色 close/startup 只是非复现证据，不声称修复崩溃。GitNexus 代码 all-scope 5 files/5 symbols/0 processes/LOW；文档 staging 刷新后多次扫描为 CRITICAL，Section symbols 5–12、flows 16–37，文本搜索未在六个文档 diff 中找到 RunBuildCommand/Cargokit 名称，保留 cross-document mapping 警告；docs compare-main 1,579 files/2,731–2,955 symbols/400 flows/CRITICAL、列表 capped。详见 `docs/diagnostics/2026-11-03-p04/p04.88-selection-seeded-find.md` 和 `ci-failures-and-crash-correlation.md`。
+
+
 ### P04.87 / EDT-15b：查找栏 Shift+Enter 导航上一个命中（已完成）
 
 - Find 输入框聚焦时，裸 Shift+Enter / Shift+NumpadEnter 导航上一个命中，普通 Enter 继续下一个；Replace 输入框不触发 Find。命中循环按绝对 UTF-16 偏移，更新选区但不改文本、文档版本、dirty/savepoint 或文本 undo。定向 workbench 测试 9 项通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter **773**），cargo fmt 与 Flutter analyze（0 issues）通过。本机未启动 GUI/Narrator。
