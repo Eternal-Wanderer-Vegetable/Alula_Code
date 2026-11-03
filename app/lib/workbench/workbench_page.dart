@@ -12353,6 +12353,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return KeyEventResult.handled;
   }
 
+  KeyEventResult _handleFindInputKey({
+    required bool replace,
+    required KeyEvent event,
+  }) {
+    final key = event.logicalKey;
+    final isEnter = key == LogicalKeyboardKey.enter ||
+        key == LogicalKeyboardKey.numpadEnter;
+    if (event is KeyDownEvent &&
+        isEnter &&
+        HardwareKeyboard.instance.isAltPressed &&
+        !HardwareKeyboard.instance.isControlPressed &&
+        !HardwareKeyboard.instance.isMetaPressed &&
+        !HardwareKeyboard.instance.isShiftPressed) {
+      unawaited(_selectAllFindMatches());
+      return KeyEventResult.handled;
+    }
+    return _handleFindHistoryKey(replace: replace, event: event);
+  }
+
   void _loadFindHistoryForWorkspace(String? workspaceRoot) {
     final identity = FindReplaceHistoryStore.workspaceIdentity(workspaceRoot);
     if (_findHistoryWorkspaceIdentity == identity) return;
@@ -12738,6 +12757,80 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       TextSelection(baseOffset: match.start, extentOffset: match.end),
     );
     setState(() {});
+  }
+
+  Future<void> _selectAllFindMatches() async {
+    final active = _active;
+    if (active == null || !_findVisible) return;
+    _flushInput(active, commitComposition: true);
+
+    final documentId = active.id;
+    final documentVersion = active.doc.version;
+    final query = _findQuery.text;
+    final regex = _regexFind;
+    final caseSensitive = _caseSensitive;
+    final wholeWord = _wholeWord;
+    final selectionScopeEnabled = _findInSelection;
+    final scopeDocumentId = _findScopeDocId;
+    final scopeDocumentVersion = _findScopeDocVersion;
+
+    _refreshMatches();
+    final generation = _findGeneration;
+    if (regex) await _pendingFind;
+    if (!mounted ||
+        _disposing ||
+        !_findVisible ||
+        generation != _findGeneration ||
+        !identical(_active, active) ||
+        active.id != documentId ||
+        active.doc.version != documentVersion ||
+        _matchesDocId != documentId ||
+        _matchesDocVersion != documentVersion ||
+        _findQuery.text != query ||
+        _regexFind != regex ||
+        _caseSensitive != caseSensitive ||
+        _wholeWord != wholeWord ||
+        _findInSelection != selectionScopeEnabled ||
+        _findScopeDocId != scopeDocumentId ||
+        _findScopeDocVersion != scopeDocumentVersion ||
+        _findPending) {
+      return;
+    }
+    if (_findError != null) {
+      setState(() => _statusDetail = _findError!);
+      return;
+    }
+
+    final currentSelection = active.selection;
+    final preferredMatch = TextMatch(
+      currentSelection.start,
+      currentSelection.end,
+    );
+    final plan = buildFindMatchSelectionPlan(
+      matches: _matches,
+      maxMatches: defaultMultiCursorLimit,
+      preferredMatch: preferredMatch,
+    );
+    if (plan.matches.isEmpty) return;
+
+    final selections = <TextSelection>[
+      for (var index = 0; index < plan.matches.length; index++)
+        if (index == 0 &&
+            plan.matches[index].start == preferredMatch.start &&
+            plan.matches[index].end == preferredMatch.end)
+          currentSelection
+        else
+          TextSelection(
+            baseOffset: plan.matches[index].start,
+            extentOffset: plan.matches[index].end,
+          ),
+    ];
+    _setDocSelections(active, selections);
+    if (plan.truncated || _findMatchesTruncated) {
+      setState(() => _statusDetail =
+          '已选择 ${plan.matches.length} 个匹配项（达到 editor.multiCursorLimit 上限）');
+    }
+    _focusNodeFor(_focused, active).requestFocus();
   }
 
   Future<void> _replaceCurrent() async {
@@ -15450,7 +15543,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               children: [
                 Expanded(
                   child: Focus(
-                    onKeyEvent: (node, event) => _handleFindHistoryKey(
+                    onKeyEvent: (node, event) => _handleFindInputKey(
                       replace: false,
                       event: event,
                     ),
@@ -15574,7 +15667,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 children: [
                   Expanded(
                   child: Focus(
-                    onKeyEvent: (node, event) => _handleFindHistoryKey(
+                    onKeyEvent: (node, event) => _handleFindInputKey(
                       replace: true,
                       event: event,
                     ),

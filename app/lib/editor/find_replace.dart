@@ -88,6 +88,48 @@ class FindMatchesResult {
   final List<TextMatch> matches;
 }
 
+class FindMatchSelectionPlan {
+  const FindMatchSelectionPlan({
+    required this.matches,
+    required this.truncated,
+  });
+
+  final List<TextMatch> matches;
+  final bool truncated;
+}
+
+/// Selects at most [maxMatches] results and puts an already selected match
+/// first so the editor can retain it as the primary selection.
+FindMatchSelectionPlan buildFindMatchSelectionPlan({
+  required List<TextMatch> matches,
+  required int maxMatches,
+  TextMatch? preferredMatch,
+}) {
+  if (maxMatches < 1) {
+    throw ArgumentError.value(maxMatches, 'maxMatches', 'must be positive');
+  }
+  if (matches.isEmpty) {
+    return const FindMatchSelectionPlan(matches: [], truncated: false);
+  }
+
+  final preferredIndex = preferredMatch == null
+      ? -1
+      : matches.indexWhere((match) =>
+          match.start == preferredMatch.start &&
+          match.end == preferredMatch.end);
+  final selected = <TextMatch>[];
+  if (preferredIndex >= 0) selected.add(matches[preferredIndex]);
+  for (var index = 0;
+      index < matches.length && selected.length < maxMatches;
+      index++) {
+    if (index != preferredIndex) selected.add(matches[index]);
+  }
+  return FindMatchSelectionPlan(
+    matches: List.unmodifiable(selected),
+    truncated: matches.length > selected.length,
+  );
+}
+
 /// Bounded result from regex search. A timeout or invalid expression is
 /// returned as data so the find widget can report it without throwing.
 class FindRegexMatchesResult {

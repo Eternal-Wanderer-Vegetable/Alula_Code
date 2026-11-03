@@ -4,6 +4,8 @@
 import 'dart:async';
 
 import 'package:alula_app/editor/find_replace.dart';
+import 'package:alula_app/editor/occurrence_search.dart'
+    show defaultMultiCursorLimit;
 import 'package:alula_app/editor/undo_stack.dart';
 import 'package:alula_app/bridge/alula_core.dart' show TextOp;
 import 'package:flutter_test/flutter_test.dart';
@@ -120,6 +122,50 @@ void main() {
       expect(firstTextMatchEndingAfter(matches, 2), 1);
       expect(firstTextMatchEndingAfter(matches, 4), 2);
       expect(firstTextMatchEndingAfter(matches, 7), matches.length);
+    });
+  });
+
+  group('find match selection plan', () {
+    const matches = [
+      TextMatch(0, 3),
+      TextMatch(5, 8),
+      TextMatch(10, 13),
+    ];
+
+    test('keeps the current match primary within the selection limit', () {
+      final plan = buildFindMatchSelectionPlan(
+        matches: matches,
+        maxMatches: 2,
+        preferredMatch: matches.last,
+      );
+
+      expect(plan.matches, [matches.last, matches.first]);
+      expect(plan.truncated, isTrue);
+    });
+
+    test('uses document order without a preferred match and respects exact cap',
+        () {
+      final plan = buildFindMatchSelectionPlan(
+        matches: matches.take(2).toList(),
+        maxMatches: 2,
+      );
+
+      expect(plan.matches, matches.take(2));
+      expect(plan.truncated, isFalse);
+    });
+
+    test('caps the plan at editor.multiCursorLimit', () {
+      final allMatches = List.generate(
+        defaultMultiCursorLimit + 1,
+        (index) => TextMatch(index * 2, index * 2 + 1),
+      );
+      final plan = buildFindMatchSelectionPlan(
+        matches: allMatches,
+        maxMatches: defaultMultiCursorLimit,
+      );
+
+      expect(plan.matches, hasLength(defaultMultiCursorLimit));
+      expect(plan.truncated, isTrue);
     });
   });
 
