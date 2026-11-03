@@ -11,7 +11,7 @@
 - 保存比较 widget 9/9；含 dirty/clean、不变状态与 undo、磁盘外改、BOM/CRLF/emoji、oversize/missing/binary、stat 等待期间切换视图/编辑/关闭。完整 bash init.sh 全绿：Rust workspace、Clippy、core build、Flutter 901；cargo fmt --all -- --check 与 flutter analyze --no-pub 通过（0 issues）；diff check 通过。未启动 GUI/Narrator。
 - 实现后的 GitNexus 图谱跳过含超大 Workbench 在内的 5 个文件；跨语言属性、flow candidates 和 walk budget 告警保留。SnapshotComparePreview impact LOW；CommandService UNKNOWN/0 及 computeDiffViewModel CRITICAL 均保留，精确搜索核实新入口；computeDiffViewModel 未修改。最后一次 staged-worktree all-scope detect-changes 报 13 files / 23 symbols / 434 flows / CRITICAL，流程主要由通用 title 属性匹配产生；相邻增量索引快照曾报 13/29/0/LOW。保留 CRITICAL 与图谱不稳定告警，不把零 flow 解释为无影响或把 434 解释为真实产品流程数。详见 P04.106 报告。
 - CI 观察：branch 最新 100 regular CI 为 99 terminal success + 1 nonterminal (41719529276)；Windows 所有 step 含 Complete job 为 success，但 GitHub run/job 仍 in_progress。Platform Availability 最新 100 为 55 success / 45 failure；最新 red 41695384851 的 Linux/Windows 成功，macOS runner queued 时零步骤取消。历史真实 Windows/macOS 崩溃与非崩溃 harness 红灯分开跟踪；本切片不改启动/关闭路径，不声称 crash fix。详见 docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md 和 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
-- 代码/测试/状态待独立 commit 并推送到 origin/codex/vscode-parity-p00；完成 PR CI 与 Linux/Windows/macOS Platform Availability 后，再把 docs/03 改为 done 并登记最终证据。PR #2 保持 OPEN/draft。
+- 产品与本地状态已在 commit 8f1ba78；该 commit 尚未推送。等待状态 run 41719529276 终结后推送至 origin/codex/vscode-parity-p00，完成 PR CI 与 Linux/Windows/macOS Platform Availability 后，再把 docs/03 改为 done 并登记最终证据。PR #2 保持 OPEN/draft。
 
 ### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（最近完成）
 
