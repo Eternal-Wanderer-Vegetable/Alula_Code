@@ -25,6 +25,14 @@
 
 - Hosted acceptance after push: PR CI [`41636601665`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636601665) passed all four jobs; Platform Availability [`41636589670`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670) passed Linux x64, Windows x64, and macOS ARM64. Linux/Windows DnD recorded 21/13 Flutter pointer events and move/cross-document copy/external-text outcomes. macOS ARM64 package and launch passed; DnD was skipped due unavailable hosted pointer routing. Artifacts are linked from the P04.94 diagnostic report. These green checks do not resolve the historical Windows ARM `0xC000041D`.
 
+### P04.95 / EDT-17c：有界行/词差异视图行模型（已完成）
+
+- 新增纯 Dart `computeDiffViewModel` 组合行 hunk 与 UTF-16 word ranges，按顺序配对替换行，保留额外插入/删除行；验证两侧源行精确一次且顺序不变。支持空尾行、CRLF/BOM/Emoji、首尾空白策略、分离 hunk 和 1:N/N:1；最大合并输入 2,000,000 UTF-16 units、16,384 行、聚合 word 输入 262,144 units、聚合 word work 2,000,000 steps。行模型超限不返回部分 rows 并保留全文；inline 超限保留整行且报告 fallback reason。
+- 12 个定向用例和 200 组 seeded 随机文本对拍通过。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter **814**）；`cargo fmt --all -- --check`、Flutter analyze（0 issues）、harness 100/100、JSON 与 `git diff --check` 通过。无 GUI/Narrator。
+- GitNexus 对新 `computeDiffViewModel` 的 impact 报 CRITICAL（65 symbols/29 processes）；context/flows 指向无关工作台路径。精确源码搜索确认无生产调用者，只有新模型内部和新测试引用；图谱风险作为未解决分析器误连保留，不降级。报告与当前 CI/崩溃关系复核：[`p04.95-diff-view-row-model.md`](docs/diagnostics/2026-11-03-p04/p04.95-diff-view-row-model.md)、[`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
+- 当前分支最近 100 次常规 CI 全绿；Platform Availability 最近 100 次有 47 次历史失败，但最新 53 次连续通过。早期 macOS 启动 SIGSEGV 曾触发生命周期路径修复；历史 Windows 旧 artifact 的 `0xC000041D` 仍未定位。近期 Windows ARM 自动输入丢字红灯已通过节奏修复稳定复验，失败 session 无 crash 证据。具体样本和边界见 CI 关联报告。
+- Hosted checks for code commit `e2e3aa3` passed: PR CI [`41641937089`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641937089) (814 Flutter tests, Rust Windows/Linux, harness) and Platform Availability [`41641927566`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41641927566) (Linux/Windows/macOS). Linux/Windows DnD artifacts recorded 23/12 pointer events and move/copy/external-text routes; macOS ARM64 package/startup passed while native DnD was skipped for unavailable pointer routing. P04.95 report contains artifact links and the distinction from the unresolved historical crash.
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。
