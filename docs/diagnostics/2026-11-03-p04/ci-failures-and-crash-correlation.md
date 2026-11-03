@@ -1,6 +1,6 @@
 # CI failures and runtime crash correlation
 
-Date: 2026-11-03. Repository: `Eternal-Wanderer-Vegetable/Alula_Code`; branch: `codex/vscode-parity-p00`; latest follow-up HEAD: `08e0bcf` plus hosted evidence.
+Date: 2026-11-03. Repository: `Eternal-Wanderer-Vegetable/Alula_Code`; branch: `codex/vscode-parity-p00`; latest follow-up HEAD: `75c0690` plus hosted evidence.
 
 ## Recent Actions sample
 
@@ -8,11 +8,11 @@ The latest 100 GitHub Actions runs on this branch contained:
 
 | Workflow | Successful | Failed | What the failures show |
 |---|---:|---:|---|
-| CI | 63 | 0 | All 63 CI records in the latest sample passed, including PR run [`41558120044`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558120044). The previously observed vendored Cargokit analyzer-scope failure is outside this latest sample after `1fbda68` corrected the analyzer scope. |
-| Platform Availability | 24 | 12 | Red jobs in this sample stop in Windows MSAA/semantic-text checks, clipboard or DnD input routes, one P03.7 interaction, or a Windows launch-probe parse failure. They do not share a crash signature. The latest current-build run [`41558114011`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41558114011) passed all three platform jobs. |
+| CI | 64 | 0 | All 64 CI records in the latest sample passed, including P04.80 PR run [`41567576972`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567576972) (Flutter 721 tests). The previously observed vendored Cargokit analyzer-scope failure is outside this latest sample after `1fbda68` corrected the analyzer scope. |
+| Platform Availability | 26 | 9 | Red jobs in this sample stop in Windows MSAA/semantic-text checks, clipboard or DnD input routes, one P03.7 interaction, or a Windows launch-probe parse failure. They do not share a crash signature. P04.80 current-build run [`41567572708`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708) passed all three platform jobs. |
 | Validate Windows artifact 41109679662 | 0 | 1 | This separate replay does contain a genuine close crash in the exact historical Release artifact, described below. |
 
-These are the latest 100 branch Actions records as of `08e0bcf`, not a stable failure-rate estimate. Platform Availability had 24 successful and 12 failed runs in that sample; the CI workflow had no failures in the sample. A historical artifact replay remains the separate failed run with a confirmed application crash.
+These are the latest 100 branch Actions records as of `75c0690`, not a stable failure-rate estimate. Platform Availability had 26 successful and 9 failed runs in that sample; the CI workflow had no failures in the sample. A historical artifact replay remains the separate failed run with a confirmed application crash.
 
 ## Confirmed historical Windows crash
 
@@ -83,3 +83,9 @@ PR CI run [41563561890](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code
 The latest 100 branch Actions records now contain 63 successful/0 failed CI runs, 25 successful/11 failed Platform Availability runs, and one historical failed Windows-artifact validation run. The P04.79 current run passed. The remaining platform reds are earlier probe/fixture failures, including accessibility and semantic assertions, clipboard/DnD routes, one interaction check, and a launch-script parse path; none of those records supplies a current OS crash signature. The exact historical Windows 0xC000041D replay and macOS startup SIGSEGV remain separate confirmed crash findings whose source-level causes are unresolved. Current Windows close exit 0 and macOS startup without a crash report add non-reproduction evidence only.
 
 The user's observation that repeated CI failures may relate to local crashes is now recorded separately from these facts: correcting flaky or incomplete probes can improve diagnostic signal, but a probe failure without a process crash does not establish a causal link to the local runtime crash. No local desktop GUI or Narrator was started.
+
+### P04.80 current-build run (2026-11-03)
+
+PR CI run [`41567576972`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567576972) passed all four jobs: Flutter analyze, **721 tests**, Rust Linux/Windows format, Clippy and tests, and harness validation. Platform Availability run [`41567572708`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708) passed Linux, Windows and macOS jobs. Linux Release/Xvfb artifact [`13199094910`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13199094910) launched; DnD artifact [`13200150196`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13200150196) records 23 Flutter pointer events and same-document move, cross-document copy, and external text. Windows client artifact [`13200580572`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13200580572) records a visible 1028×711 client, 96 DPI, UI Automation/MSAA, and graceful `WM_CLOSE` (`exitCode=0`); Windows DnD artifact [`13200650257`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13200650257) records the same three drag/drop routes. macOS ARM64 package [`13199499668`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13199499668) was produced; startup artifact [`13199609840`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13199609840) contains only the Impeller initialization line with no `.ips`/`.crash`. macOS DnD artifact [`13199239830`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708/artifacts/13199239830) explicitly records `input-route-unavailable` and is not native DnD evidence.
+
+The P04.80 change is limited to Dart find matching and workbench option state; no Rust, FFI, platform startup, window-lifecycle, or native embedding code changed. That scope comparison is an inference from the source diff. The current run generated no new Windows close crash or macOS startup report, which is non-reproduction evidence only; it neither identifies nor fixes the historical Windows `0xC000041D` or macOS SIGSEGV source causes. The new workflow attempts are green, but this does not establish that the whole-word find change mitigates those crashes.

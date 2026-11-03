@@ -5,10 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 当前工作（2026-11-03，P04.80 / EDT-13a 全字匹配，in-progress）
+### 最新进展（2026-11-03，P04.80 / EDT-13a 全字匹配，hosted gates 通过）
 
-- 查找栏加入全字匹配开关，按同一命中结果驱动计数、编辑器高亮和小地图标记；当前/全部替换及上下导航复用该结果。分隔符采用工作台现有 Code-OSS 默认 word-separator 集合并将空白视为边界。大小写不敏感匹配改为在原文上匹配，以避免 Unicode 小写映射改变长度后 UTF-16 命中偏移漂移。
-- 纯逻辑与工作台集成用例已加入，覆盖 Emoji、CRLF、BOM、下划线边界、UTF-16 偏移、当前替换与全部替换。定向 find/workbench 测试 33 项通过；完整 `FLUTTER_BIN=... bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **721**）；`cargo fmt --all -- --check`、`app/` 内 `flutter analyze --no-pub`（0 issues）及 `git diff --check` 通过。本机 GUI/Narrator 未启动。剩余工作：GitNexus 变更检查、分阶段提交及 hosted Linux/Windows/macOS package gate。
+- 查找栏新增全字匹配开关，按工作台默认分隔符、空白与 BOM 计算边界。大小写/全字选项可独立组合；相同命中列表驱动计数、前后循环、编辑器和 minimap 高亮、当前替换/全部替换。大小写不敏感命中基于原文返回 UTF-16 偏移，修正 U+0130 等 lower-case 长度扩展造成的范围错位；无 Rust/ABI 改动。
+- 定向 `find_replace_undo_test.dart` + `workbench_bounded_input_test.dart` 33 项通过，覆盖 Emoji、CRLF、BOM、默认分隔符、underscore 边界、Unicode offset、whole-word replace-all 与工作台当前替换。完整 `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **721**）；`cargo fmt --all -- --check`、`app/` Flutter analyze（0 issues）、`git diff --check` 通过。本机 GUI/Narrator 未启动。
+- 实现提交 `75c0690` 已推送。PR CI [`41567576972`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567576972) 四个 job 全绿；Platform Availability [`41567572708`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41567572708) 三个平台 job 全绿。Linux Release/Xvfb 和原生 DnD artifact `13199094910` / `13200150196` 通过；Windows 可见 1028×711、96 DPI、UIA/MSAA 与 graceful close、DnD move/copy/external-text artifacts `13200580572` / `13200650257` 通过；macOS ARM64 hosted package `13199499668` 生成，startup artifact `13199609840` 只有 Impeller 行、无 crash report。macOS DnD artifact `13199239830` 因 input route unavailable 跳过，原生 macOS DnD/IME 仍待设备。
+- 最新 100 条 branch Actions：CI 64 success/0 failure，Platform Availability 26 success/9 failure，另有 1 条 exact historical Windows artifact replay failure。P04.80 两个新 run 均成功；近期 probe/fixture 红灯与旧二进制的历史 crash 不共享已知 crash signature。Windows `0xC000041D` 和 macOS SIGSEGV 根因未明，当前通过仅是 non-reproduction 证据。见 `docs/diagnostics/2026-11-03-p04/p04.80-whole-word-find.md` 与 `ci-failures-and-crash-correlation.md`。
 
 ### 最新进展（2026-11-03，P04.79 / EDT-12e 多光标片段插入，首批 hosted 门禁通过）
 

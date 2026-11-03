@@ -1,28 +1,37 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.79 / EDT-12e and its documentation evidence are committed and pushed (`511ec3c`, `da382b5`). PR #2 remains OPEN and draft. P04.80 / EDT-13a whole-word find is now in progress.
+> Last Updated: 2026-11-03. P04.80 / EDT-13a whole-word find implementation `75c0690` and hosted evidence are complete. PR CI `41567576972` and Platform Availability `41567572708` passed; docs evidence is being committed separately. PR #2 remains OPEN and draft.
 
 ## Current Objective
 
 Continue the fixed Code-OSS 1.145.0 parity plan one slice at a time. Prioritize Linux and Windows usability and then hosted macOS packages. Architecture and features come before numeric memory optimization; the 500 MiB target remains deferred. Native macOS DnD/IME and P15 device checks remain pending because no native macOS host is available. Do not publish v0.1.0, mark PR #2 ready, or merge.
 
-## P04.80 / EDT-13a Current State
+## P04.80 / EDT-13a State
 
-- Add a find-bar whole-word toggle using the workbench's existing default word-separator set plus whitespace. One filtered match list must drive counts, previous/next navigation, editor decorations, minimap markers, current replacement, and replace-all.
-- Case-sensitive and whole-word modes remain independent. Case-insensitive matching must report positions in the original UTF-16 string even where Unicode lowercase mapping changes length.
-- Logic and workbench integration cases cover punctuation/underscore boundaries, emoji, CRLF, BOM, case mapping, current replacement and replace-all. The focused find/workbench suite passed (33); full `bash init.sh` passed (Rust workspace, Clippy, core build, Flutter 721). `cargo fmt --all -- --check`, `app/` Flutter analyze (0 issues), and `git diff --check` passed.
-- GitNexus impact: `findMatches` exact/LOW; `replaceAllMatches` UNKNOWN, confirmed used by source search. `workbench_page.dart` exceeds the GitNexus source-file indexing threshold; its relevant handlers are treated as UNKNOWN and were confirmed by text search. No Rust/ABI change is planned.
-- The latest P04.79 host runs passed. Historical Windows `0xC000041D` and macOS startup SIGSEGV remain unresolved and have not been correlated to recent CI probe/fixture failures; current green close/start smoke is non-reproduction evidence only.
+- Whole-word find is implemented and complete: one filtered match list drives count, cycling navigation, editor/minimap highlights, current replacement and replace-all. Case-sensitive and whole-word modes are independent. Literal case-insensitive matches preserve original UTF-16 offsets across lowercase-expanding Unicode.
+- Full local DoD passed: `bash init.sh` (Rust workspace, Clippy, core build, Flutter 721), `cargo fmt --all -- --check`, `app/` Flutter analyze (0 issues); 33 focused find/workbench cases passed. No Rust/ABI change. No local GUI or Narrator started.
+- PR CI `41567576972` and Platform Availability `41567572708` all passed. Linux and Windows hosted usability checks passed; a macOS ARM64 hosted package was produced. macOS DnD was explicitly skipped because the runner could not route pointer input. Native macOS DnD/IME and P15 remain pending.
+- Latest 100 branch records: CI 64 success / 0 failures; Platform Availability 26 success / 9 failures; separate exact historical Windows artifact replay 0 success / 1 failure. Historical Windows `0xC000041D` and macOS SIGSEGV remain unresolved; current green smoke runs are non-reproduction evidence only. The P04.80 Dart-only find change has no observed crash mitigation evidence.
+- Evidence: `docs/diagnostics/2026-11-03-p04/p04.80-whole-word-find.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`.
 
-## Next Steps
+## Blockers
 
-1. Finish GitNexus change analysis; preserve UNKNOWN/truncation caveats and review the final diff.
-2. Commit the P04.80 implementation, push the authorized branch, and wait for PR CI plus Platform Availability Linux/Windows evidence and hosted macOS package evidence.
-3. Record run/artifact evidence in `docs/03`, `progress.md`, `session-handoff.md`, and a P04.80 diagnostic report; make a separate documentation-stage commit.
-4. Keep the PR OPEN and draft. Do not run the local desktop GUI or Narrator. Native macOS DnD/IME and P15 remain pending.
+- Native macOS DnD/IME and P15 still require a native device/host; hosted DnD explicitly skipped due unavailable input route.
+- Historical Windows `0xC000041D` and macOS startup SIGSEGV source causes remain unresolved. Current CI/close/start checks did not reproduce them.
+
+## Files
+
+- P04.80 implementation is in `app/lib/editor/find_replace.dart` and `app/lib/workbench/workbench_page.dart`, with `find_replace_undo_test.dart` and `workbench_bounded_input_test.dart` coverage (commit `75c0690`).
+- This documentation-stage commit updates `docs/03`, `progress.md`, `feature_list.json`, this handoff, and the P04.80/crash-correlation diagnostics.
+
+## Next Session
+
+1. Complete this documentation-stage commit and push it.
+2. Read `docs/03` and `docs/11`, choose the next dependency-ready EDT-13 slice, and run GitNexus impact before source edits.
+3. Keep PR #2 OPEN and draft. Do not start the local desktop GUI or Narrator. Do not publish v0.1.0 or mark the PR ready.
 
 ## Constraints
 
 - Work only in `/tmp/alula-p04.70-next`; never edit `/mnt/e/alula_code`.
-- Pushes to `origin/codex/vscode-parity-p00` are authorized. Current checkout is detached; use `git push origin HEAD:codex/vscode-parity-p00`.
+- Pushes to `origin/codex/vscode-parity-p00` are authorized. Current checkout is detached; push with `git push origin HEAD:codex/vscode-parity-p00`.
 - Avoid local GUI/accessibility tests that can trigger Narrator.
