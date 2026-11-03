@@ -7,6 +7,7 @@ import 'git_diff_navigation.dart';
 import 'git_diff_moved_blocks.dart';
 import 'git_diff_moved_blocks_projection.dart';
 import 'git_diff_patch.dart';
+import 'git_diff_unchanged_regions_projection.dart';
 import 'git_diff_whitespace_projection.dart';
 import 'git_diff_word_highlights.dart';
 
@@ -47,6 +48,9 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
   late GitDiffProjectionResult _projection;
   GitDiffPatchPresentation _presentation = GitDiffPatchPresentation.inline;
   bool _showMovedBlocks = false;
+  bool _foldUnchangedRegions = false;
+  final Map<int, int> _revealedUnchangedLinesByRegion = {};
+  GitDiffUnchangedRegionsProjectionResult? _unchangedRegionsProjection;
   GitDiffMovedBlocksProjectionResult? _movedBlocksProjection;
   final Map<int, _GitDiffMovedBlockLineMarker> _originalMovedLineMarkers = {};
   final Map<int, _GitDiffMovedBlockLineMarker> _modifiedMovedLineMarkers = {};
@@ -127,6 +131,9 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     _result = parseGitDiffPatch(widget.patch);
     _projection = projectGitDiffPatchIgnoringTrimWhitespace(_result);
     _currentChangeIndex = -1;
+    _foldUnchangedRegions = false;
+    _revealedUnchangedLinesByRegion.clear();
+    _unchangedRegionsProjection = null;
     _updateMovedBlocksProjection();
   }
 
@@ -134,6 +141,42 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     setState(() {
       _showMovedBlocks = !_showMovedBlocks;
       _updateMovedBlocksProjection();
+    });
+  }
+
+  void _toggleUnchangedRegions() {
+    if (_foldUnchangedRegions) {
+      setState(() {
+        _foldUnchangedRegions = false;
+        _unchangedRegionsProjection = null;
+      });
+      return;
+    }
+
+    final projected = projectGitDiffInlineUnchangedRegions(
+      _result,
+      _projection,
+      revealedLineCountByRegionStart: _revealedUnchangedLinesByRegion,
+    );
+    setState(() {
+      _foldUnchangedRegions = true;
+      _unchangedRegionsProjection = projected;
+    });
+  }
+
+  void _revealUnchangedRegion(int startSourceRowIndex, int totalHiddenCount) {
+    final current = _revealedUnchangedLinesByRegion[startSourceRowIndex] ?? 0;
+    final next =
+        (current + const GitDiffUnchangedRegionsOptions().revealLineCount)
+            .clamp(0, totalHiddenCount)
+            .toInt();
+    setState(() {
+      _revealedUnchangedLinesByRegion[startSourceRowIndex] = next;
+      _unchangedRegionsProjection = projectGitDiffInlineUnchangedRegions(
+        _result,
+        _projection,
+        revealedLineCountByRegionStart: _revealedUnchangedLinesByRegion,
+      );
     });
   }
 
@@ -220,7 +263,7 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
 
     final target = _projection.changes[_currentChangeIndex];
     final rowIndex =
-        useSideBySide ? target.sideBySideRowIndex : target.inlineRowIndex;
+        useSideBySide ? target.sideBySideRowIndex : _inlineRowForChange(target);
 
     final position = controller.position;
     final rowTop = 4 + rowIndex * _diffRowHeight;
@@ -242,6 +285,15 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
       return null;
     }
     return _projection.changes[_currentChangeIndex].sideBySideRowIndex;
+  }
+
+  int _inlineRowForChange(GitDiffProjectionChange change) {
+    if (_foldUnchangedRegions) {
+      final mapped = _unchangedRegionsProjection
+          ?.visibleInlineRowBySourceRow[change.firstRowIndex];
+      if (mapped != null) return mapped;
+    }
+    return change.inlineRowIndex;
   }
 
   String _changeAnnouncement() {
@@ -322,6 +374,24 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
                   )
                 : null,
             icon: const Icon(Icons.compare_arrows, size: 16),
+          ),
+        if (!useSideBySide)
+          IconButton(
+            key: const ValueKey('git-diff-toggle-unchanged-regions'),
+            tooltip: _foldUnchangedRegions ? '显示完整未变更上下文' : '折叠未变更区域',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints.tightFor(width: 32, height: 32),
+            padding: EdgeInsets.zero,
+            onPressed: _toggleUnchangedRegions,
+            style: _foldUnchangedRegions
+                ? IconButton.styleFrom(
+                    backgroundColor: const Color(0x33264F78),
+                  )
+                : null,
+            icon: Icon(
+              _foldUnchangedRegions ? Icons.unfold_more : Icons.unfold_less,
+              size: 16,
+            ),
           ),
         SegmentedButton<GitDiffPatchPresentation>(
           key: const ValueKey('git-diff-presentation-toggle'),
@@ -411,24 +481,72 @@ class _GitDiffPatchViewState extends State<GitDiffPatchView> {
     );
   }
 
-  Widget _buildInlineList() => ListView.builder(
-        key: const ValueKey('git-diff-patch-rows'),
-        controller: _inlineScrollController,
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        itemExtent: _diffRowHeight,
-        itemCount: _projection.inlineRows.length,
-        itemBuilder: (context, index) {
-          final row = _projection.inlineRows[index];
-          final line = row.line;
-          final isCurrentChangeTarget = _currentChangeIndex >= 0 &&
-              _projection.changes[_currentChangeIndex].inlineRowIndex == index;
-          return _GitDiffPatchRow(
-            line: line,
-            wordChanges: row.wordChanges,
-            isCurrentChangeTarget: isCurrentChangeTarget,
-          );
-        },
-      );
+  Widget _buildInlineList() {
+    final folded =
+        _foldUnchangedRegions && _unchangedRegionsProjection?.canRender == true
+            ? _unchangedRegionsProjection
+            : null;
+    return ListView.builder(
+      key: const ValueKey('git-diff-patch-rows'),
+      controller: _inlineScrollController,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      itemExtent: _diffRowHeight,
+      itemCount: folded?.rows.length ?? _projection.inlineRows.length,
+      itemBuilder: (context, index) {
+        if (folded != null) {
+          final displayRow = folded.rows[index];
+          if (displayRow.isCollapsedRegion) {
+            return _buildCollapsedUnchangedRegion(displayRow);
+          }
+        }
+        final row =
+            folded?.rows[index].inlineRow ?? _projection.inlineRows[index];
+        final line = row.line;
+        final isCurrentChangeTarget = _currentChangeIndex >= 0 &&
+            _inlineRowForChange(_projection.changes[_currentChangeIndex]) ==
+                index;
+        return _GitDiffPatchRow(
+          line: line,
+          wordChanges: row.wordChanges,
+          isCurrentChangeTarget: isCurrentChangeTarget,
+        );
+      },
+    );
+  }
+
+  Widget _buildCollapsedUnchangedRegion(GitDiffInlineDisplayRow row) {
+    final startSourceRowIndex = row.unchangedRegionStartSourceRowIndex!;
+    final semanticsLabel = '未变更上下文已折叠，剩余 ${row.hiddenLineCount} 行；激活后最多展开 '
+        '${const GitDiffUnchangedRegionsOptions().revealLineCount} 行';
+    return Semantics(
+      button: true,
+      label: semanticsLabel,
+      child: InkWell(
+        key: ValueKey('git-diff-expand-unchanged-$startSourceRowIndex'),
+        onTap: () => _revealUnchangedRegion(
+          startSourceRowIndex,
+          row.totalHiddenLineCount,
+        ),
+        child: Container(
+          height: _diffRowHeight,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          color: const Color(0x22264F78),
+          child: ExcludeSemantics(
+            child: Text(
+              '… 展开剩余 ${row.hiddenLineCount} 行未变更内容',
+              maxLines: 1,
+              style: const TextStyle(
+                color: Color(0xFF9CDCFE),
+                fontFamily: 'monospace',
+                fontSize: 10,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildSideBySideList() {
     final rows = _projection.rows;
