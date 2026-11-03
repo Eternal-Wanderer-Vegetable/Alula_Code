@@ -5,9 +5,10 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（进行中）
+### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（已完成）
 
-- 已确认现有 `windows-artifact-validation.yml` 和 PowerShell validator 写死旧 artifact `d5319369`，且默认启动 Narrator/旧源码交互 job。文件 impact 为 UNKNOWN；文本核对确认 workflow 是唯一脚本调用点。all-scope CRITICAL 6 files/1 progress-section symbol/99–340 mapped processes，compare-main 也为 CRITICAL；保留未解决告警，详情见 `p04.92-win11-arm-current-artifact.md`。正在将 run ID、artifact 名与 source SHA 参数化，Narrator 和旧源码交互改为显式 opt-in（默认 false），随后在 hosted Windows 11 ARM light/dark runner 复放当前 run `41618233435` 的 x64 Release 包，采集 close/exit/crash 证据。
+- `windows-artifact-validation.yml` 现可选 run/artifact/source SHA，Narrator 与旧源码交互 job 默认关闭。Windows ARM 的多视图编辑回放先后暴露 clipboard 粘贴与 SendKeys 注入丢字符；在回车后等待 350 ms、逐字符间隔 100 ms 后，保留严格同步/保存回读断言的最终 light/dark 两组均通过。当前 run `41627307864` 使用 Platform Availability `41618233435` 的 x64 Release artifact（source `1129d607`，Windows 11 Enterprise ARM64 x64 仿真，96 DPI）；两组四视图同步、保存回读 `view-2` 一致，WM_CLOSE exit 0，无 Application Error 或 crash dump。讲述人未启动。证据 artifacts [`13225549631`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13225549631)（light）和 [`13226642379`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13226642379)（dark）。
+- 验证器修正 commit `34f1511` 已推送。PR CI [`41627306984`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627306984) 四个 job 全绿。先前 ARM 红灯是测试输入注入丢字符，相关 session 仍正常关闭且没有崩溃诊断；这提升 CI 信号质量，但不解释或修复历史旧 artifact 的 `0xC000041D`。历史 crash root cause 仍待定位。详见 [`p04.92-win11-arm-current-artifact.md`](docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md) 与 [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
 
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
