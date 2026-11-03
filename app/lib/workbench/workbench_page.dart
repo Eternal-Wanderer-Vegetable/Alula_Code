@@ -358,6 +358,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _caseSensitive = false;
   bool _wholeWord = false;
   bool _regexFind = false;
+  bool _findInSelection = false;
+  List<TextMatchScope> _findSelectionScopes = const [];
+  int _findScopeDocId = -1;
+  int _findScopeDocVersion = -1;
   bool _findPending = false;
   bool _findMatchesTruncated = false;
   String? _findError;
@@ -12272,6 +12276,54 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
+  List<TextMatchScope> _captureFindSelectionScopes(OpenDoc doc) {
+    final text = doc.text;
+    return findScopesFromSelections(
+      text,
+      doc.selectionSet.map(
+        (selection) => TextMatchScope(
+          selection.baseOffset,
+          selection.extentOffset,
+        ),
+      ),
+    );
+  }
+
+  void _clearFindSelectionScope() {
+    _findInSelection = false;
+    _findSelectionScopes = const [];
+    _findScopeDocId = -1;
+    _findScopeDocVersion = -1;
+  }
+
+  bool _hasFindSelection() =>
+      _active?.selectionSet.any(
+        (selection) => !selection.isCollapsed,
+      ) ??
+      false;
+
+  void _toggleFindInSelection() {
+    if (_findInSelection) {
+      setState(() {
+        _clearFindSelectionScope();
+        _refreshMatches();
+      });
+      return;
+    }
+    final active = _active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+    final scopes = _captureFindSelectionScopes(active);
+    if (scopes.isEmpty) return;
+    setState(() {
+      _findInSelection = true;
+      _findSelectionScopes = scopes;
+      _findScopeDocId = active.id;
+      _findScopeDocVersion = active.doc.version;
+      _refreshMatches();
+    });
+  }
+
   void _refreshMatches() {
     _cancelRegexFind();
     _pendingFind = Future<void>.value();
@@ -12283,6 +12335,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _findPending = false;
     _findMatchesTruncated = false;
     _findError = null;
+    if (_findInSelection &&
+        (active == null ||
+            active.id != _findScopeDocId ||
+            active.doc.version != _findScopeDocVersion)) {
+      _clearFindSelectionScope();
+      _statusDetail = '文档或选区已改变，已退出选区查找';
+    }
+    final scopes = _findInSelection ? _findSelectionScopes : null;
     if (_findVisible &&
         _regexFind &&
         active != null &&
@@ -12306,6 +12366,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         docVersion: docVersion,
         caseSensitive: caseSensitive,
         wholeWord: wholeWord,
+        scopes: scopes,
         cancellation: cancellation,
       );
       return;
@@ -12316,6 +12377,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _findQuery.text,
             caseSensitive: _caseSensitive,
             wholeWord: _wholeWord,
+            scopes: scopes,
           )
         : const [];
     _findOverviewLines =
@@ -12334,6 +12396,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     required int docVersion,
     required bool caseSensitive,
     required bool wholeWord,
+    required List<TextMatchScope>? scopes,
     required Completer<void> cancellation,
   }) async {
     late final FindRegexMatchesResult result;
@@ -12343,6 +12406,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         query,
         caseSensitive: caseSensitive,
         wholeWord: wholeWord,
+        scopes: scopes,
         cancelSignal: cancellation.future,
       );
     } finally {
@@ -12360,6 +12424,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _findQuery.text != query ||
         _caseSensitive != caseSensitive ||
         _wholeWord != wholeWord ||
+        _findInSelection != (scopes != null) ||
         result.cancelled) {
       _matches = const [];
       _findOverviewLines = const [];
@@ -12590,7 +12655,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _flushInput(active, commitComposition: true);
     final r = replaceAllMatches(
         active.text, _findQuery.text, _replaceInput.text,
-        caseSensitive: _caseSensitive, wholeWord: _wholeWord);
+        caseSensitive: _caseSensitive,
+        wholeWord: _wholeWord,
+        scopes: _findInSelection ? _findSelectionScopes : null);
     if (r.count == 0) {
       setState(() => _statusDetail = '无匹配');
       return;
@@ -15116,6 +15183,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           color: _wholeWord
                               ? Colors.lightBlueAccent
                               : Colors.grey.shade400)),
+                  visualDensity: VisualDensity.compact,
+                ),
+                IconButton(
+                  key: const ValueKey('find-in-selection'),
+                  tooltip: '在选区中查找',
+                  isSelected: _findInSelection,
+                  onPressed: _findInSelection || _hasFindSelection()
+                      ? _toggleFindInSelection
+                      : null,
+                  icon: Text(
+                    '[]',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: _findInSelection
+                          ? Colors.lightBlueAccent
+                          : Colors.grey.shade400,
+                    ),
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
                 IconButton(

@@ -18,6 +18,68 @@ class TextMatch {
   int get length => end - start;
 }
 
+/// A half-open search range in original document UTF-16 code units.
+class TextMatchScope {
+  const TextMatchScope(this.start, this.end);
+
+  final int start;
+  final int end;
+}
+
+/// Clips scopes to the document and merges overlapping (but not adjacent)
+/// ranges so a match is never duplicated across overlapping selections.
+List<TextMatchScope> normalizeTextMatchScopes(
+  Iterable<TextMatchScope> scopes,
+  int textLength,
+) {
+  final ordered = scopes
+      .map((scope) => TextMatchScope(
+            scope.start.clamp(0, textLength).toInt(),
+            scope.end.clamp(0, textLength).toInt(),
+          ))
+      .where((scope) => scope.end > scope.start)
+      .toList()
+    ..sort((left, right) => left.start.compareTo(right.start));
+  if (ordered.length < 2) return List.unmodifiable(ordered);
+
+  final merged = <TextMatchScope>[ordered.first];
+  for (final scope in ordered.skip(1)) {
+    final previous = merged.last;
+    if (scope.start < previous.end) {
+      merged[merged.length - 1] = TextMatchScope(
+        previous.start,
+        scope.end > previous.end ? scope.end : previous.end,
+      );
+    } else {
+      merged.add(scope);
+    }
+  }
+  return List.unmodifiable(merged);
+}
+
+/// Captures non-empty editor selections as search scopes. A trailing line
+/// ending is omitted when the selection ends at column 1 on the next line.
+List<TextMatchScope> findScopesFromSelections(
+  String text,
+  Iterable<TextMatchScope> selections,
+) {
+  final scopes = <TextMatchScope>[];
+  for (final selection in selections) {
+    var start =
+        selection.start < selection.end ? selection.start : selection.end;
+    var end = selection.start < selection.end ? selection.end : selection.start;
+    start = start.clamp(0, text.length).toInt();
+    end = end.clamp(0, text.length).toInt();
+    if (end <= start) continue;
+    if (text.codeUnitAt(end - 1) == 0x0A) {
+      end--;
+      if (end > start && text.codeUnitAt(end - 1) == 0x0D) end--;
+    }
+    if (end > start) scopes.add(TextMatchScope(start, end));
+  }
+  return normalizeTextMatchScopes(scopes, text.length);
+}
+
 class FindMatchesResult {
   const FindMatchesResult(this.matches);
 
@@ -53,12 +115,18 @@ Future<FindRegexMatchesResult> findRegexMatches(
   String pattern, {
   bool caseSensitive = false,
   bool wholeWord = false,
+  List<TextMatchScope>? scopes,
   Duration timeout = findRegexMatchTimeout,
   Future<void>? cancelSignal,
 }) async {
   if (pattern.isEmpty) return const FindRegexMatchesResult();
   if (pattern.length > maxFindRegexPatternUtf16) {
     return const FindRegexMatchesResult(error: '正则表达式超过长度限制');
+  }
+  final normalizedScopes =
+      scopes == null ? null : normalizeTextMatchScopes(scopes, text.length);
+  if (normalizedScopes != null && normalizedScopes.isEmpty) {
+    return const FindRegexMatchesResult();
   }
 
   final replyPort = ReceivePort();
@@ -72,6 +140,9 @@ Future<FindRegexMatchesResult> findRegexMatches(
         pattern,
         caseSensitive,
         wholeWord,
+        normalizedScopes
+            ?.map((scope) => <int>[scope.start, scope.end])
+            .toList(growable: false),
       ],
       errorsAreFatal: true,
     );
@@ -127,6 +198,15 @@ void _findRegexWorker(List<Object?> message) {
   final pattern = message[2]! as String;
   final caseSensitive = message[3]! as bool;
   final wholeWord = message[4]! as bool;
+  final rawScopes = message[5] as List<Object?>?;
+  final scopes = rawScopes
+      ?.whereType<List<Object?>>()
+      .where((range) => range.length == 2 && range[0] is int && range[1] is int)
+      .map((range) => TextMatchScope(
+            range[0]! as int,
+            range[1]! as int,
+          ))
+      .toList(growable: false);
   try {
     final regex = RegExp(
       pattern,
@@ -138,6 +218,7 @@ void _findRegexWorker(List<Object?> message) {
     var truncated = false;
 
     void addMatch(int start, int end) {
+      if (scopes != null && !_isWithinFindScopes(scopes, start, end)) return;
       if (wholeWord && !_isWholeWordRange(text, start, end)) return;
       if (matches.length == maxFindRegexMatches) {
         truncated = true;
@@ -263,17 +344,25 @@ List<TextMatch> findMatches(
   String query, {
   bool caseSensitive = false,
   bool wholeWord = false,
+  List<TextMatchScope>? scopes,
 }) {
   if (query.isEmpty) return const [];
+  final searchScopes = scopes == null
+      ? [TextMatchScope(0, text.length)]
+      : normalizeTextMatchScopes(scopes, text.length);
+  if (searchScopes.isEmpty) return const [];
   final out = <TextMatch>[];
   if (caseSensitive) {
-    var offset = text.indexOf(query);
-    while (offset >= 0) {
-      final end = offset + query.length;
-      if (!wholeWord || _isWholeWordRange(text, offset, end)) {
-        out.add(TextMatch(offset, end));
+    for (final scope in searchScopes) {
+      var offset = text.indexOf(query, scope.start);
+      while (offset >= 0 && offset < scope.end) {
+        final end = offset + query.length;
+        if (end > scope.end) break;
+        if (!wholeWord || _isWholeWordRange(text, offset, end)) {
+          out.add(TextMatch(offset, end));
+        }
+        offset = text.indexOf(query, end);
       }
-      offset = text.indexOf(query, end);
     }
     return out;
   }
@@ -283,14 +372,39 @@ List<TextMatch> findMatches(
   // ranges in the original string while preserving literal, non-overlapping
   // matching semantics.
   final literal = RegExp(RegExp.escape(query), caseSensitive: false);
-  for (final match in literal.allMatches(text)) {
-    final start = match.start;
-    final end = match.end;
-    if (!wholeWord || _isWholeWordRange(text, start, end)) {
-      out.add(TextMatch(start, end));
+  for (final scope in searchScopes) {
+    for (final match in literal.allMatches(text, scope.start)) {
+      if (match.start >= scope.end) break;
+      if (match.end > scope.end) break;
+      final start = match.start;
+      final end = match.end;
+      if (!wholeWord || _isWholeWordRange(text, start, end)) {
+        out.add(TextMatch(start, end));
+      }
     }
   }
   return out;
+}
+
+bool _isWithinFindScopes(
+  List<TextMatchScope> scopes,
+  int start,
+  int end,
+) {
+  var low = 0;
+  var high = scopes.length;
+  while (low < high) {
+    final middle = (low + high) >> 1;
+    final scope = scopes[middle];
+    if (start < scope.start) {
+      high = middle;
+    } else if (start > scope.end || (start == scope.end && end > start)) {
+      low = middle + 1;
+    } else {
+      return end <= scope.end;
+    }
+  }
+  return false;
 }
 
 const _defaultFindWordSeparators = r"""`~!@#$%^&*()-=+[{]}\|;:'",.<>/?""";
@@ -342,12 +456,14 @@ ReplaceAllResult replaceAllMatches(
   String replacement, {
   bool caseSensitive = false,
   bool wholeWord = false,
+  List<TextMatchScope>? scopes,
 }) {
   final matches = findMatches(
     text,
     query,
     caseSensitive: caseSensitive,
     wholeWord: wholeWord,
+    scopes: scopes,
   );
   if (matches.isEmpty) return ReplaceAllResult(text, 0);
   final buf = StringBuffer();

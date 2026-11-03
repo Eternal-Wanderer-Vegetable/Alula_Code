@@ -66,6 +66,54 @@ void main() {
           hasLength(1));
     });
 
+    test('选区范围裁剪并保留 Unicode、CRLF 原文 UTF-16 偏移', () {
+      const text = '👨foo\r\nfoo';
+      final scopes = [
+        const TextMatchScope(2, 5),
+        const TextMatchScope(7, 10),
+      ];
+      expect(
+        findMatches(text, 'foo', scopes: scopes)
+            .map((match) => (match.start, match.end))
+            .toList(),
+        [(2, 5), (7, 10)],
+      );
+    });
+
+    test('独立相邻选区不能拼成跨边界命中，重叠选区不重复命中', () {
+      expect(
+        findMatches(
+          'foo',
+          'foo',
+          scopes: const [TextMatchScope(0, 2), TextMatchScope(2, 3)],
+        ),
+        isEmpty,
+      );
+      expect(
+        findMatches(
+          'foo foo',
+          'foo',
+          scopes: const [
+            TextMatchScope(0, 4),
+            TextMatchScope(1, 5),
+            TextMatchScope(4, 7),
+          ],
+        ).map((match) => match.start).toList(),
+        [0, 4],
+      );
+    });
+
+    test('selection capture trims trailing CRLF and keeps disjoint selections',
+        () {
+      expect(
+        findScopesFromSelections(
+          'foo\r\nbar\n',
+          const [TextMatchScope(0, 5), TextMatchScope(5, 9)],
+        ).map((scope) => (scope.start, scope.end)).toList(),
+        [(0, 3), (5, 8)],
+      );
+    });
+
     test('有界输入窗可二分定位首个相交的 UTF-16 命中', () {
       final matches = findMatches('a👨a👨a', 'a');
       expect(firstTextMatchEndingAfter(matches, 0), 0);
@@ -105,6 +153,28 @@ void main() {
       expect(result.error, isNull);
       expect(result.matches.map((match) => (match.start, match.end)).toList(),
           [(4, 6), (7, 9)]);
+    });
+
+    test('selection scopes filter regex results without joining boundaries',
+        () async {
+      final crossing = await findRegexMatches(
+        'foo\nbar',
+        r'foo\nbar',
+        scopes: const [TextMatchScope(0, 3), TextMatchScope(4, 7)],
+      );
+      expect(crossing.error, isNull);
+      expect(crossing.matches, isEmpty);
+
+      final scoped = await findRegexMatches(
+        '👨foo\r\nbar',
+        r'foo\nbar',
+        scopes: const [TextMatchScope(2, 10)],
+      );
+      expect(scoped.error, isNull);
+      expect(
+        scoped.matches.map((match) => (match.start, match.end)).toList(),
+        [(2, 10)],
+      );
     });
 
     test('zero-width regex matches progress across UTF-16 text', () async {
@@ -189,6 +259,17 @@ void main() {
       final r = replaceAllMatches('a-a', 'a', '👨');
       expect(r.newText, '👨-👨');
       expect(r.count, 2);
+    });
+
+    test('选区内全部替换保留范围外文本', () {
+      final r = replaceAllMatches(
+        'foo foo',
+        'foo',
+        'X',
+        scopes: const [TextMatchScope(0, 3)],
+      );
+      expect(r.newText, 'X foo');
+      expect(r.count, 1);
     });
 
     test('空查询原样返回', () {

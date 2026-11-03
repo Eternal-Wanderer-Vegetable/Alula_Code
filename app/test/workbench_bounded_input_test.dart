@@ -10,6 +10,79 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('find selection scope limits matches and replacement',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-find-selection');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/notes.txt').writeAsStringSync('foo foo\nbar');
+    final base = temp.path.replaceAll(r'\', '/');
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: workspace.path,
+      layoutStore: LayoutStore(path: '$base/layout.json'),
+      sessionStore: SessionStore(path: '$base/session.json'),
+      keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.tap(find.text('notes.txt').first);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    tester
+        .state<RustTextInputFieldState>(find.byType(RustTextInputField))
+        .setSelection(const TextSelection(baseOffset: 0, extentOffset: 3));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final findBar = find.byKey(const ValueKey('find-bar'));
+    final fields =
+        find.descendant(of: findBar, matching: find.byType(TextField));
+    await tester.enterText(fields.first, 'foo');
+    await tester.pump();
+    expect(find.text('-/2'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('find-in-selection')));
+    await tester.pump();
+    expect(find.text('-/1'), findsOneWidget);
+    expect(
+      tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField))
+          .rangeDecorations
+          .map((decoration) => (decoration.startUtf16, decoration.endUtf16))
+          .toList(),
+      [(0, 3)],
+    );
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyH);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 100));
+    final replaceFields =
+        find.descendant(of: findBar, matching: find.byType(TextField));
+    await tester.enterText(replaceFields.at(1), 'X');
+    await tester.tap(find.byTooltip('全部替换'));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final editor = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField),
+    );
+    expect(editor.inputWindow.document.resync().content, 'X foo\nbar');
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(const ValueKey('find-in-selection')))
+          .isSelected,
+      isFalse,
+      reason: 'editing invalidates the captured version-bound scope',
+    );
+    expect(find.text('-/1'), findsOneWidget);
+  });
+
   testWidgets('find whole-word toggle refreshes count and editor highlights',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-find-whole-word');
