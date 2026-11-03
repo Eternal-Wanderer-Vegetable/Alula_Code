@@ -1,9 +1,21 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import 'diff_view_model.dart';
 
-/// Read-only, side-by-side comparison of two bounded text snapshots.
-/// Source text is already bounded and projected by DiffViewModel.
+class SnapshotComparePresentation {
+  const SnapshotComparePresentation({
+    this.diff,
+    this.isUpdating = false,
+    this.fallbackMessage,
+  });
+
+  final DiffViewModelResult? diff;
+  final bool isUpdating;
+  final String? fallbackMessage;
+}
+
+/// Side-by-side comparison with an optional Rust-backed modified editor.
 class SnapshotComparePreview extends StatelessWidget {
   const SnapshotComparePreview({
     super.key,
@@ -14,6 +26,9 @@ class SnapshotComparePreview extends StatelessWidget {
     required this.onClose,
     required this.keyPrefix,
     this.closeTooltip = '关闭比较预览',
+    this.presentation,
+    this.originalText,
+    this.modifiedEditorBuilder,
   });
 
   final String title;
@@ -23,6 +38,12 @@ class SnapshotComparePreview extends StatelessWidget {
   final VoidCallback onClose;
   final String keyPrefix;
   final String closeTooltip;
+  final ValueListenable<SnapshotComparePresentation>? presentation;
+  final String? originalText;
+  final Widget Function(
+    BuildContext context,
+    SnapshotComparePresentation presentation,
+  )? modifiedEditorBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -60,18 +81,171 @@ class SnapshotComparePreview extends StatelessWidget {
                 ),
               ),
               const Divider(height: 1),
-              _headerRow(context),
-              const Divider(height: 1),
-              Expanded(
-                child: ListView.builder(
-                  key: ValueKey('$keyPrefix-rows'),
-                  itemCount: diff.rows.length,
-                  itemBuilder: (context, index) => _diffRow(diff.rows[index]),
+              if (presentation != null &&
+                  originalText != null &&
+                  modifiedEditorBuilder != null)
+                ValueListenableBuilder<SnapshotComparePresentation>(
+                  valueListenable: presentation!,
+                  builder: (context, state, _) => _editableComparison(
+                    context,
+                    state,
+                    originalText!,
+                    modifiedEditorBuilder!,
+                  ),
+                )
+              else ...[
+                _headerRow(context),
+                const Divider(height: 1),
+                Expanded(
+                  child: ListView.builder(
+                    key: ValueKey('$keyPrefix-rows'),
+                    itemCount: diff.rows.length,
+                    itemBuilder: (context, index) => _diffRow(diff.rows[index]),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _editableComparison(
+    BuildContext context,
+    SnapshotComparePresentation state,
+    String original,
+    Widget Function(BuildContext, SnapshotComparePresentation) editorBuilder,
+  ) {
+    final style = Theme.of(context).textTheme.labelLarge;
+    final exactDiff = state.diff != null && !state.isUpdating;
+    final changedRows = exactDiff
+        ? state.diff!.rows
+            .where((row) => row.kind != DiffViewRowKind.unchanged)
+            .length
+        : 0;
+    final status = state.isUpdating
+        ? '正在更新差异…'
+        : state.fallbackMessage ?? (exactDiff ? '差异行：$changedRows' : '');
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              _headerCell(originalLabel, style),
+              const VerticalDivider(width: 1),
+              _headerCell('$modifiedLabel（可编辑）', style),
+            ],
+          ),
+          if (status.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Text(
+                status,
+                key: ValueKey('$keyPrefix-diff-status'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          const Divider(height: 1),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Container(
+                    key: ValueKey('$keyPrefix-original-pane'),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest
+                        .withValues(alpha: 0.18),
+                    child: exactDiff
+                        ? ListView.builder(
+                            key: ValueKey('$keyPrefix-original-text'),
+                            itemCount: state.diff!.rows.length,
+                            itemBuilder: (context, index) {
+                              final row = state.diff!.rows[index];
+                              final background = switch (row.kind) {
+                                DiffViewRowKind.modified ||
+                                DiffViewRowKind.deleted =>
+                                  const Color(0x553F1D20),
+                                _ => Colors.transparent,
+                              };
+                              return SizedBox(
+                                height: 26,
+                                child: Container(
+                                  color: background,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 48,
+                                        child: Text(
+                                          row.originalLineNumber?.toString() ??
+                                              '',
+                                          key: ValueKey(
+                                            '$keyPrefix-original-line-${row.rowIndex}',
+                                          ),
+                                          textAlign: TextAlign.right,
+                                          style: const TextStyle(
+                                            color: Color(0xFF9299A5),
+                                            fontFamily: 'monospace',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: SelectableText(
+                                            row.originalText ?? '',
+                                            key: ValueKey(
+                                              '$keyPrefix-original-text-${row.rowIndex}',
+                                            ),
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Color(0xFFD4D8DE),
+                                              fontFamily: 'monospace',
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        : SingleChildScrollView(
+                            padding: const EdgeInsets.all(10),
+                            child: SelectableText(
+                              original,
+                              key: ValueKey('$keyPrefix-original-text'),
+                              style: const TextStyle(
+                                fontFamily: 'monospace',
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+                const VerticalDivider(width: 1, thickness: 1),
+                Expanded(
+                  child: KeyedSubtree(
+                    key: ValueKey('$keyPrefix-modified-pane'),
+                    child: editorBuilder(context, state),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

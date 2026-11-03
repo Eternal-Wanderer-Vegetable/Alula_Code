@@ -123,7 +123,14 @@ void main() {
 
       expect(find.text('已保存版本 ↔ sample.rs'), findsOneWidget);
       expect(find.text('external saved'), findsOneWidget);
-      expect(find.text('active draft'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('saved-compare-modified-editor')),
+        findsOneWidget,
+      );
+      expect(
+        field.inputWindow.document.resync().content,
+        'active draft\ncommon!',
+      );
       expect(
           find.byKey(const ValueKey('saved-compare-preview')), findsOneWidget);
       expect(controller.text, textBefore);
@@ -154,6 +161,111 @@ void main() {
     }
   });
 
+  testWidgets(
+      'saved comparison edits the Rust document, syncs its sibling, and saves',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    try {
+      final (_, file) = await _openFixture(
+        tester,
+        initialText: '\uFEFFsaved 😀\r\nline',
+      );
+      await _replaceText(tester, 'draft 😀\nline');
+      final diskOriginal = file.readAsBytesSync();
+      final mainFieldFinder = find.byType(RustTextInputField).first;
+      final document = tester
+          .widget<RustTextInputField>(mainFieldFinder)
+          .inputWindow
+          .document;
+
+      await _pressSavedChord(tester);
+      await _finishSavedCompare(tester);
+
+      final comparePane = find.byKey(
+        const ValueKey('saved-compare-modified-pane'),
+      );
+      final compareInput = find.descendant(
+        of: comparePane,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      expect(compareInput, findsOneWidget);
+      final compareField = tester.widget<RustTextInputField>(
+        find.descendant(
+          of: comparePane,
+          matching: find.byType(RustTextInputField),
+        ),
+      );
+      expect(identical(compareField.inputWindow.document, document), isTrue);
+
+      await tester.showKeyboard(compareInput);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'edited 🐈\nline!',
+        selection: TextSelection.collapsed(offset: 15),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 140));
+      await tester.pump();
+
+      expect(document.resync().content, 'edited 🐈\nline!');
+      expect(document.isDirty, isTrue);
+      expect(file.readAsBytesSync(), orderedEquals(diskOriginal));
+      expect(
+        tester.widget<RustTextInputField>(mainFieldFinder).inputWindow.version,
+        document.version,
+      );
+      expect(
+        find.byKey(const ValueKey('saved-compare-diff-status')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const ValueKey('saved-compare-close')));
+      await tester.pumpAndSettle();
+      await tester.showKeyboard(
+        find.descendant(
+          of: mainFieldFinder,
+          matching: find.byType(TextField),
+        ),
+      );
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      await tester.pump();
+      expect(document.resync().content, 'draft 😀\nline');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      await tester.pump();
+      expect(document.resync().content, 'edited 🐈\nline!');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      expect(
+        file.readAsBytesSync(),
+        orderedEquals([
+          0xEF,
+          0xBB,
+          0xBF,
+          ...utf8.encode('edited 🐈\r\nline!'),
+        ]),
+      );
+      expect(document.isDirty, isFalse);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('compares a BOM/CRLF disk snapshot as normalized text',
       (tester) async {
     tester.view.physicalSize = const Size(1100, 800);
@@ -175,11 +287,137 @@ void main() {
       expect(
           find.byKey(const ValueKey('saved-compare-preview')), findsOneWidget);
       expect(find.text('saved 😀'), findsOneWidget);
-      expect(find.text('old 😀'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('saved-compare-modified-editor')),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<RustTextInputField>(find.byType(RustTextInputField).first)
+            .inputWindow
+            .document
+            .resync()
+            .content,
+        'old 😀\nnext',
+      );
       final sessionFile = File('${temp.path}/session.json');
       if (sessionFile.existsSync()) {
         expect(sessionFile.readAsStringSync(), isNot(contains('saved 😀')));
       }
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('diff budget fallback keeps accepted compare edits in Rust',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    try {
+      await _openFixture(tester, initialText: 'base');
+      final document = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField).first)
+          .inputWindow
+          .document;
+      await _pressSavedChord(tester);
+      await _finishSavedCompare(tester);
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('saved-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+      final oversizedDiff = String.fromCharCodes(List<int>.filled(8192, 0x0A));
+      tester.testTextInput.updateEditingValue(TextEditingValue(
+        text: oversizedDiff,
+        selection: TextSelection.collapsed(offset: oversizedDiff.length),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 140));
+      await tester.pump();
+
+      expect(document.resync().content, oversizedDiff);
+      expect(document.isDirty, isTrue);
+      expect(find.textContaining('差异预算已达到'), findsOneWidget);
+      expect(find.text('base'), findsOneWidget);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('closing compared document dismisses its editor before switching',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    try {
+      final (_, sampleFile) = await _openFixture(
+        tester,
+        withSecondFile: true,
+      );
+      final oldDocument = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField).first)
+          .inputWindow
+          .document;
+      await _pressSavedChord(tester);
+      await _finishSavedCompare(tester);
+
+      final comparePane = find.byKey(
+        const ValueKey('saved-compare-modified-pane'),
+      );
+      await tester.showKeyboard(find.descendant(
+        of: comparePane,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      ));
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'compare edit',
+        selection: TextSelection.collapsed(offset: 12),
+      ));
+      await tester.pump();
+      await tester.pump();
+      expect(oldDocument.resync().content, 'compare edit');
+
+      tester
+          .widget<InkWell>(
+            find.byKey(
+              ValueKey('close-tab-editor-${oldDocument.id}'),
+            ),
+          )
+          .onTap!
+          .call();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('saved-compare-preview')), findsNothing);
+      expect(find.byKey(const ValueKey('saved-compare-modified-editor')),
+          findsNothing);
+      await tester.tap(find.text('other.rs').first);
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final activeFieldFinder = find.byType(RustTextInputField).first;
+      final newDocument = tester
+          .widget<RustTextInputField>(activeFieldFinder)
+          .inputWindow
+          .document;
+      expect(newDocument.id, isNot(oldDocument.id));
+      await tester.showKeyboard(find.descendant(
+        of: activeFieldFinder,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      ));
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'other edit',
+        selection: TextSelection.collapsed(offset: 10),
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      expect(newDocument.resync().content, 'other edit');
+      expect(sampleFile.readAsStringSync(), 'saved line\ncommon');
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;
@@ -195,10 +433,12 @@ void main() {
 
     try {
       final (_, file) = await _openFixture(tester, initialText: 'same\ntext');
-      final field = tester.widget<RustTextInputField>(
-        find.byType(RustTextInputField),
+      final mainFieldFinder = find.byType(RustTextInputField).first;
+      final field = tester.widget<RustTextInputField>(mainFieldFinder);
+      final editor = find.descendant(
+        of: mainFieldFinder,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
       );
-      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       final textBefore = tester.widget<TextField>(editor).controller!.text;
       final versionBefore = field.inputWindow.document.version;
       final diskBefore = file.readAsStringSync();

@@ -9,6 +9,9 @@ class ClipboardComparePreview extends SnapshotComparePreview {
     required super.modifiedLabel,
     required super.diff,
     required super.onClose,
+    super.presentation,
+    super.originalText,
+    super.modifiedEditorBuilder,
   }) : super(
           keyPrefix: 'clipboard-compare',
         );

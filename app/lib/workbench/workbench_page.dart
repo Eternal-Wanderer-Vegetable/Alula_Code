@@ -29,7 +29,6 @@ import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
-import '../editor/clipboard_compare_preview.dart';
 import '../editor/snapshot_compare_preview.dart';
 import '../editor/diff_view_model.dart';
 import '../editor/editor_minimap_markers.dart';
@@ -414,6 +413,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
+  final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
   final Map<
       int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
@@ -1087,16 +1087,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return;
       }
       if (!mounted) return;
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => SnapshotComparePreview(
-          title: '已保存版本 ↔ $documentName',
-          originalLabel: '已保存版本',
-          modifiedLabel: documentName,
-          diff: diff,
-          keyPrefix: 'saved-compare',
-          onClose: () => Navigator.of(dialogContext).pop(),
-        ),
+      await _showEditableSnapshotCompare(
+        source: doc,
+        title: '已保存版本 ↔ $documentName',
+        originalLabel: '已保存版本',
+        modifiedLabel: documentName,
+        originalText: saved.content,
+        initialDiff: diff,
+        keyPrefix: 'saved-compare',
       );
     } on AlulaException catch (error) {
       final message = switch (error.code) {
@@ -1131,6 +1129,207 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _showSavedCompareStatus(String message) {
     if (mounted) setState(() => _statusDetail = message);
+  }
+
+  Future<void> _showEditableSnapshotCompare({
+    required OpenDoc source,
+    required String title,
+    required String originalLabel,
+    required String modifiedLabel,
+    required String originalText,
+    required DiffViewModelResult initialDiff,
+    required String keyPrefix,
+  }) async {
+    final view = OpenDoc.viewOf(source);
+    final binding = _SnapshotCompareBinding(
+      source: source,
+      view: view,
+      originalText: originalText,
+      initialDiff: initialDiff,
+    );
+    _snapshotCompareViews[view] = binding;
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) {
+          binding.closeRoute = () {
+            if (Navigator.of(dialogContext, rootNavigator: true).canPop()) {
+              Navigator.of(dialogContext, rootNavigator: true).pop();
+            }
+          };
+          return SnapshotComparePreview(
+            title: title,
+            originalLabel: originalLabel,
+            modifiedLabel: modifiedLabel,
+            diff: initialDiff,
+            keyPrefix: keyPrefix,
+            originalText: originalText,
+            presentation: binding.presentation,
+            modifiedEditorBuilder: (context, state) => _buildCompareEditor(
+              binding,
+              state,
+              keyPrefix,
+            ),
+            onClose: binding.closeRoute!,
+          );
+        },
+      );
+    } finally {
+      _snapshotCompareViews.remove(view);
+      binding.dispose();
+    }
+  }
+
+  Widget _buildCompareEditor(
+    _SnapshotCompareBinding binding,
+    SnapshotComparePresentation presentation,
+    String keyPrefix,
+  ) {
+    final view = binding.view;
+    final diff = presentation.isUpdating ? null : presentation.diff;
+    final decorations = diff == null
+        ? const <EditorRangeDecoration>[]
+        : _snapshotCompareDecorations(diff, view.inputWindow.version);
+    return Semantics(
+      key: ValueKey('$keyPrefix-modified-editor'),
+      label: '${view.name} 比较修改侧编辑器',
+      child: RustTextInputField(
+        key: view.inputFieldKey,
+        inputWindow: view.inputWindow,
+        scrollController: view.editorScrollController,
+        tabSize: view.tabSize,
+        autofocus: true,
+        semanticsLabel: '${view.name} 比较修改侧编辑器',
+        rangeDecorations: decorations,
+        style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+        onDelta: (delta) {
+          if (binding.isDisposed ||
+              !identical(_snapshotCompareViews[view], binding) ||
+              !view.sameDocumentAs(binding.source)) {
+            return;
+          }
+          if (_ownerOfView(view) == null) {
+            try {
+              if (delta.inverseOperations.isNotEmpty) {
+                view.doc.applyWith(delta.version, delta.inverseOperations);
+              }
+            } on Object {
+              // A closed/stale view never redirects its write to another doc.
+            }
+            binding.closeRoute?.call();
+            return;
+          }
+          _onInputDelta(view, delta);
+        },
+        onError: (error) {
+          if (mounted && !binding.isDisposed) {
+            setState(() => _statusDetail = '比较编辑未同步：$error');
+          }
+        },
+      ),
+    );
+  }
+
+  List<EditorRangeDecoration> _snapshotCompareDecorations(
+    DiffViewModelResult diff,
+    int documentVersion,
+  ) {
+    final changedKinds = <int, DiffViewRowKind>{};
+    for (final row in diff.rows) {
+      final line = row.modifiedLineNumber;
+      if (line == null || row.kind == DiffViewRowKind.unchanged) continue;
+      changedKinds[line] = row.kind;
+    }
+    if (changedKinds.isEmpty) return const [];
+
+    final lineRanges = <int, (int, int)>{};
+    final text = diff.modifiedText;
+    var lineNumber = 1;
+    var lineStart = 0;
+    for (var offset = 0; offset <= text.length; offset++) {
+      if (offset == text.length || text.codeUnitAt(offset) == 0x0A) {
+        if (changedKinds.containsKey(lineNumber)) {
+          lineRanges[lineNumber] = (lineStart, offset);
+        }
+        lineNumber++;
+        lineStart = offset + 1;
+      }
+    }
+
+    return [
+      for (final entry in lineRanges.entries)
+        EditorRangeDecoration(
+          documentVersion: documentVersion,
+          startUtf16: entry.value.$1,
+          endUtf16:
+              entry.value.$1 == entry.value.$2 && entry.value.$2 < text.length
+                  ? entry.value.$2 + 1
+                  : entry.value.$2,
+          backgroundColor: changedKinds[entry.key] == DiffViewRowKind.inserted
+              ? const Color(0x55303F2E)
+              : const Color(0x553F1D20),
+        ),
+    ];
+  }
+
+  void _scheduleSnapshotCompareDiff(_SnapshotCompareBinding binding) {
+    if (binding.isDisposed ||
+        !mounted ||
+        !identical(_snapshotCompareViews[binding.view], binding)) {
+      return;
+    }
+    binding.timer?.cancel();
+    binding.presentation.value = const SnapshotComparePresentation(
+      isUpdating: true,
+    );
+    binding.timer = Timer(const Duration(milliseconds: 100), () {
+      _refreshSnapshotCompareDiff(binding);
+    });
+  }
+
+  void _refreshSnapshotCompareDiff(_SnapshotCompareBinding binding) {
+    final view = binding.view;
+    if (binding.isDisposed ||
+        !mounted ||
+        !identical(_snapshotCompareViews[view], binding) ||
+        _ownerOfView(view) == null) {
+      return;
+    }
+    const maxCompareInputUtf16 = 2000000;
+    try {
+      final version = view.doc.version;
+      final length = view.doc.readRange(0, maxLenUtf16: 1).totalUtf16Length;
+      if (binding.originalText.length + length > maxCompareInputUtf16) {
+        binding.presentation.value = const SnapshotComparePresentation(
+          fallbackMessage: '差异超过 2,000,000 UTF-16 单元预算；完整编辑仍可继续',
+        );
+        return;
+      }
+      final modified = _readDocumentRange(view, 0, length);
+      if (view.doc.version != version) {
+        _scheduleSnapshotCompareDiff(binding);
+        return;
+      }
+      final diff = computeDiffViewModel(binding.originalText, modified);
+      if (view.doc.version != version) {
+        _scheduleSnapshotCompareDiff(binding);
+        return;
+      }
+      if (diff.isApproximate) {
+        final reason = diff.fallbackReason?.name ??
+            diff.lineDiff.fallbackReason?.name ??
+            '差异行或单词预算';
+        binding.presentation.value = SnapshotComparePresentation(
+          fallbackMessage: '差异预算已达到（$reason）；完整编辑仍可继续',
+        );
+      } else {
+        binding.presentation.value = SnapshotComparePresentation(diff: diff);
+      }
+    } on Object catch (error) {
+      binding.presentation.value = SnapshotComparePresentation(
+        fallbackMessage: '差异更新失败；完整编辑仍可继续（$error）',
+      );
+    }
   }
 
   Future<void> _compareActiveFileWithClipboard() async {
@@ -1200,15 +1399,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _showClipboardCompareStatus('比较已取消：差异超过当前预览预算，未显示部分结果');
         return;
       }
-      await showDialog<void>(
-        context: context,
-        builder: (dialogContext) => ClipboardComparePreview(
-          title: '剪贴板 ↔ $documentName',
-          originalLabel: '剪贴板',
-          modifiedLabel: documentName,
-          diff: diff,
-          onClose: () => Navigator.of(dialogContext).pop(),
-        ),
+      await _showEditableSnapshotCompare(
+        source: doc,
+        title: '剪贴板 ↔ $documentName',
+        originalLabel: '剪贴板',
+        modifiedLabel: documentName,
+        originalText: clipboard.text,
+        initialDiff: diff,
+        keyPrefix: 'clipboard-compare',
       );
     } on Object catch (error) {
       _showClipboardCompareStatus('比较失败：$error');
@@ -2039,6 +2237,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final view in _allDocViews) {
       if (view.sameDocumentAs(document)) yield view;
     }
+    for (final view in _snapshotCompareViews.keys) {
+      if (view.sameDocumentAs(document)) yield view;
+    }
   }
 
   bool _canStartEditorTextDragDrop(OpenDoc document) =>
@@ -2066,6 +2267,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   EditorGroup? _ownerOfView(OpenDoc view) {
     for (final g in _groups.values) {
       if (g.docs.any((candidate) => identical(candidate, view))) return g;
+    }
+    if (_snapshotCompareViews.containsKey(view)) {
+      for (final g in _groups.values) {
+        if (g.docs.any((candidate) => candidate.sameDocumentAs(view))) {
+          return g;
+        }
+      }
     }
     return null;
   }
@@ -9424,6 +9632,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       view.columnSelection = null;
       view.replaceInputWindow(mapped.extentOffset, selection: mapped);
     }
+    for (final binding in _snapshotCompareViews.values
+        .where((binding) => binding.view.sameDocumentAs(source))
+        .toList(growable: false)) {
+      _scheduleSnapshotCompareDiff(binding);
+    }
     return siblings.length;
   }
 
@@ -9815,7 +10028,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (owner == null) return;
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
-    _flushInput(doc, commitComposition: true);
+    for (final view in _viewsOf(doc).toList(growable: false)) {
+      _flushInput(view, commitComposition: true);
+    }
+    final compareBindings = _snapshotCompareViews.values
+        .where((binding) => binding.view.sameDocumentAs(doc))
+        .toList(growable: false);
+    if (compareBindings.isNotEmpty) {
+      for (final binding in compareBindings) {
+        binding.closeRoute?.call();
+      }
+      unawaited(
+          Future.wait(compareBindings.map((binding) => binding.closed.future))
+              .then((_) {
+        if (mounted) _closeDoc(id, group: owner);
+      }));
+      return;
+    }
     final wasActive = owner.activeDocId == id;
     final focusKey = _focusKeyFor(owner, doc);
     _editorFocusNodes.remove(focusKey)?.dispose();
@@ -11456,7 +11685,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     String requestedPath, {
     TextFileOptions? options,
   }) async {
-    _flushInput(doc, commitComposition: true);
+    for (final view in _viewsOf(doc).toList(growable: false)) {
+      _flushInput(view, commitComposition: true);
+    }
     final targetOptions = options ?? doc.fileOptions;
     final targetPath = File(requestedPath).absolute.path;
     final oldPath = doc.path;
@@ -14457,10 +14688,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final d in _allDocViews) {
       _flushInput(d, commitComposition: true);
     }
+    final compareBindings = _snapshotCompareViews.values.toList();
+    for (final binding in compareBindings) {
+      _flushInput(binding.view, commitComposition: true);
+    }
     _shutdownLspWorkspace();
     // 退出前把未落盘的布局与会话冲写
     widget.layoutStore.save(_layout.root);
     widget.sessionStore.save(_encodeSession());
+    for (final binding in compareBindings) {
+      binding.dispose();
+    }
+    _snapshotCompareViews.clear();
     for (final d in _allDocViews.toList()) {
       d.disposeView();
     }
@@ -16562,6 +16801,36 @@ class _SelectionEditOffset {
   final int start;
   final int deletedLength;
   final int insertedLength;
+}
+
+class _SnapshotCompareBinding {
+  _SnapshotCompareBinding({
+    required this.source,
+    required this.view,
+    required this.originalText,
+    required DiffViewModelResult initialDiff,
+  }) : presentation = ValueNotifier<SnapshotComparePresentation>(
+          SnapshotComparePresentation(diff: initialDiff),
+        );
+
+  final OpenDoc source;
+  final OpenDoc view;
+  final String originalText;
+  final ValueNotifier<SnapshotComparePresentation> presentation;
+  final Completer<void> closed = Completer<void>();
+  Timer? timer;
+  VoidCallback? closeRoute;
+  bool isDisposed = false;
+
+  void dispose() {
+    if (isDisposed) return;
+    isDisposed = true;
+    timer?.cancel();
+    timer = null;
+    view.disposeView();
+    presentation.dispose();
+    if (!closed.isCompleted) closed.complete();
+  }
 }
 
 class _SharedOpenDocState {

@@ -87,7 +87,7 @@ void main() {
         previousClipboardFallback;
   });
 
-  testWidgets('Ctrl+K C opens readonly comparison without editing or saving',
+  testWidgets('Ctrl+K C opens editable comparison without implicit saving',
       (tester) async {
     tester.view.physicalSize = const Size(1100, 800);
     tester.view.devicePixelRatio = 1;
@@ -126,7 +126,11 @@ void main() {
 
       expect(find.text('剪贴板 ↔ sample.rs'), findsOneWidget);
       expect(find.text('clipboard line'), findsOneWidget);
-      expect(find.text('file line'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('clipboard-compare-modified-editor')),
+        findsOneWidget,
+      );
+      expect(field.inputWindow.document.resync().content, 'file line\nshared!');
       expect(controller.text, textBefore);
       expect(controller.selection, selectionBefore);
       expect(field.inputWindow.document.version, versionBefore);
@@ -152,6 +156,65 @@ void main() {
       expect(controller.text, 'file line\nshared');
       expect(field.inputWindow.document.isDirty, isFalse);
       expect(file.readAsStringSync(), diskBefore);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('clipboard comparison edits the same Rust document',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const clipboardSnapshot = 'clipboard 😀\nshared';
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async => call.method == 'Clipboard.getData'
+          ? const {'text': clipboardSnapshot}
+          : null,
+    );
+    addTearDown(() => tester.binding.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, null));
+
+    try {
+      final (_, file) = await _openFixture(tester);
+      final mainFieldFinder = find.byType(RustTextInputField).first;
+      final document = tester
+          .widget<RustTextInputField>(mainFieldFinder)
+          .inputWindow
+          .document;
+      final diskBefore = file.readAsStringSync();
+      await _pressCompareChord(tester);
+      await tester.pumpAndSettle();
+
+      final comparePane = find.byKey(
+        const ValueKey('clipboard-compare-modified-pane'),
+      );
+      final compareInput = find.descendant(
+        of: comparePane,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'updated 🐈\nshared!',
+        selection: TextSelection.collapsed(offset: 18),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 140));
+      await tester.pump();
+
+      expect(document.resync().content, 'updated 🐈\nshared!');
+      expect(document.isDirty, isTrue);
+      expect(file.readAsStringSync(), diskBefore);
+      expect(find.text('clipboard 😀'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('clipboard-compare-diff-status')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('clipboard-compare-close')));
+      await tester.pumpAndSettle();
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;
