@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.103 / EDT-17k：Git diff moved-block side-by-side 视图（已登记，进行中）
+
+- 接续 P04.102 exact model；先将源 patch row 严格映射到 projection side-by-side rows，再按 Code-OSS 1.145.0 默认关闭的 `experimental.showMoves` 规则提供 opt-in 边框/连接线。Alula 当前以每视图 toggle 提供入口；持久化设置另行规划。inline/raw fallback 不显示标记，任一映射错误不得部分绘制。
+- GitNexus `Alula_Code` index `9954459`：GitDiffPatchView/State/row upstream impact 均 UNKNOWN；source search 确认 `workbench_page.dart` 一个产品入口和多组测试调用点，保留 UNKNOWN/CRITICAL，不解释为未使用。固定源码、测试标准与范围见 `docs/03-里程碑计划与验收标准.md`、`docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md`。
+- 与用户提出的 CI/crash 关联假设一致，后续按 SHA/job 分离 crash signature 与 runner 队列/取消。P04.102 Platform Availability 的 macOS job 在 queued 阶段以零步骤取消导致 workflow failure，无应用进程可崩溃；Linux/Windows jobs 成功。
+
 ### P04.102 / EDT-17j：Git diff moved-block 配对模型（模型切片完成）
 
 - 新增纯 Dart 有界模型，从同文件、不同 hunk 中唯一配对首尾空白等价的删除/新增块；默认长度门槛 3 行/15 UTF-16 units，重复候选、近似编辑、同 hunk 和跨文件不标记。保留原/修改行号与 patch-row 映射；超过 2,000,000 输入 units、16,384 rows 或 4,000,000 candidate text work 时完整 fallback。尚未接入产品 view/config，因此 UI 没有显示 moved-block 装饰。

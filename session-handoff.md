@@ -4,7 +4,13 @@
 
 ## Current Objective
 
-Continue P04 / `feat-026` toward fixed-version VS Code editor and Git Diff parity. P04.102 delivered a bounded pure-Dart moved-block matcher for exact, unique, trim-equivalent deletion/insertion blocks across hunks in one file. It preserves old/new line numbers and patch-row ranges and returns no partial results after parser, mapping, input, row, or work limits. The matcher is not connected to the workbench; there are no move markers, connectors, or `showMoves` setting yet.
+Continue P04 / `feat-026` toward fixed-version VS Code editor and Git Diff parity. P04.102 delivered and verified the bounded pure-Dart moved-block model. P04.103 / EDT-17k is now registered to map those source patch rows into side-by-side projection rows and render opt-in default-off moved block outlines/connectors. No implementation has started yet; see the P04.103 report for scope and GitNexus warnings.
+
+## Current Slice: P04.103 / EDT-17k
+
+- Registered in `docs/03-里程碑计划与验收标准.md`; implementation has not started. Code-OSS 1.145.0 defaults `diffEditor.experimental.showMoves` to false and enables it only for side-by-side view. Alula will provide a per-view opt-in toggle for this slice because it has no global settings UI.
+- Work first on strict source-patch-row to projected-row mapping, then old/new outlines and connector drawing. Any mapping failure must suppress all moved marks; inline and raw fallback do not display them. Keep approximate/unchanged move detection and preference persistence out of scope.
+- GitNexus impact for `GitDiffPatchView`, its State, and `_GitDiffPatchRow` is `UNKNOWN`; exact source search confirmed one product instantiation in `workbench_page.dart` and several tests. Preserve the graph uncertainty. Details and fixed sources: `docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md`.
 
 ## Latest Slice: P04.102 / EDT-17j
 
@@ -48,4 +54,4 @@ The regular PR CI run is green, with no failure or crash signature. Platform Ava
 
 ## Recommended Next Step
 
-Proceed to decompose P04.103 as the view integration for moved-block markers and navigation/source mapping, keeping `showMoves` off by default and preserving raw-patch fallback. Track the canceled macOS job as an external runner validation gap without blocking independent architecture work. Verify the precise Code-OSS interaction first; do not broaden into approximate matching, unchanged-region folding, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
+Implement registered P04.103 with strict row mapping, default-off side-by-side moved marks/connectors, and all-or-nothing fallback. Track the canceled macOS job as an external runner validation gap without blocking architecture work. Do not broaden into approximate matching, unchanged-region folding, settings persistence, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
