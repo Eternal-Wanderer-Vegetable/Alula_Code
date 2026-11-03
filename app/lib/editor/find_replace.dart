@@ -104,9 +104,117 @@ class FindRegexMatchesResult {
   final bool cancelled;
 }
 
+/// Result of a bounded regex replacement. All replacements are prepared in a
+/// worker so a pathological expression cannot block the editor isolate.
+class ReplaceRegexMatchesResult {
+  const ReplaceRegexMatchesResult({
+    this.newText,
+    this.count = 0,
+    this.caretOffset,
+    this.error,
+    this.timedOut = false,
+    this.truncated = false,
+    this.cancelled = false,
+  });
+
+  final String? newText;
+  final int count;
+  final int? caretOffset;
+  final String? error;
+  final bool timedOut;
+  final bool truncated;
+  final bool cancelled;
+}
+
 const int maxFindRegexPatternUtf16 = 1000;
 const int maxFindRegexMatches = 19999;
+const int maxRegexReplaceOutputUtf16 = 64 * 1024 * 1024;
 const Duration findRegexMatchTimeout = Duration(milliseconds: 750);
+
+/// Builds one replacement in a bounded isolate. When [targetStart] is set,
+/// only the match at that original UTF-16 offset is replaced.
+Future<ReplaceRegexMatchesResult> replaceRegexMatches(
+  String text,
+  String pattern,
+  String replacement, {
+  bool caseSensitive = false,
+  bool wholeWord = false,
+  List<TextMatchScope>? scopes,
+  int? targetStart,
+  Duration timeout = findRegexMatchTimeout,
+  Future<void>? cancelSignal,
+}) async {
+  if (pattern.isEmpty) return ReplaceRegexMatchesResult(newText: text);
+  if (pattern.length > maxFindRegexPatternUtf16) {
+    return const ReplaceRegexMatchesResult(error: '正则表达式超过长度限制');
+  }
+  final normalizedScopes =
+      scopes == null ? null : normalizeTextMatchScopes(scopes, text.length);
+  if (normalizedScopes != null && normalizedScopes.isEmpty) {
+    return ReplaceRegexMatchesResult(newText: text);
+  }
+
+  final replyPort = ReceivePort();
+  Isolate? worker;
+  try {
+    worker = await Isolate.spawn<List<Object?>>(
+      _replaceRegexWorker,
+      <Object?>[
+        replyPort.sendPort,
+        text,
+        pattern,
+        replacement,
+        caseSensitive,
+        wholeWord,
+        normalizedScopes
+            ?.map((scope) => <int>[scope.start, scope.end])
+            .toList(growable: false),
+        targetStart,
+      ],
+      errorsAreFatal: true,
+    );
+    final response = await Future.any<Object?>([
+      replyPort.first.timeout(timeout),
+      if (cancelSignal != null)
+        cancelSignal.then((_) => const _FindRegexCancelled()),
+    ]);
+    if (response is _FindRegexCancelled) {
+      return const ReplaceRegexMatchesResult(cancelled: true);
+    }
+    if (response is! Map<Object?, Object?> || response['ok'] != true) {
+      final error = response is Map<Object?, Object?>
+          ? response['error'] as String? ?? '正则替换失败'
+          : '正则替换工作线程返回无效结果';
+      return ReplaceRegexMatchesResult(error: error);
+    }
+    if (response['truncated'] == true) {
+      return const ReplaceRegexMatchesResult(
+        error: '正则替换命中数超过上限，未修改文档',
+        truncated: true,
+      );
+    }
+    final newText = response['newText'];
+    final count = response['count'];
+    final caretOffset = response['caretOffset'];
+    if (newText is! String ||
+        count is! int ||
+        (caretOffset != null && caretOffset is! int)) {
+      return const ReplaceRegexMatchesResult(error: '正则替换结果无效');
+    }
+    return ReplaceRegexMatchesResult(
+      newText: newText,
+      count: count,
+      caretOffset: caretOffset as int?,
+    );
+  } on TimeoutException {
+    return const ReplaceRegexMatchesResult(error: '正则替换超时', timedOut: true);
+  } catch (error) {
+    return ReplaceRegexMatchesResult(error: '正则替换失败: $error');
+  } finally {
+    worker?.kill(priority: Isolate.immediate);
+    replyPort.close();
+  }
+}
 
 /// Runs regex matching off the UI isolate. The worker is terminated on
 /// timeout, and the returned ranges always use original UTF-16 offsets.
@@ -267,6 +375,336 @@ void _findRegexWorker(List<Object?> message) {
   } catch (error) {
     replyPort.send(<String, Object?>{'ok': false, 'error': '$error'});
   }
+}
+
+void _replaceRegexWorker(List<Object?> message) {
+  final replyPort = message[0]! as SendPort;
+  final text = message[1]! as String;
+  final pattern = message[2]! as String;
+  final replacement = message[3]! as String;
+  final caseSensitive = message[4]! as bool;
+  final wholeWord = message[5]! as bool;
+  final rawScopes = message[6] as List<Object?>?;
+  final targetStart = message[7] as int?;
+  final scopes = rawScopes
+      ?.whereType<List<Object?>>()
+      .where((range) => range.length == 2 && range[0] is int && range[1] is int)
+      .map((range) => TextMatchScope(
+            range[0]! as int,
+            range[1]! as int,
+          ))
+      .toList(growable: false);
+
+  try {
+    final regex = RegExp(
+      pattern,
+      caseSensitive: caseSensitive,
+      multiLine: true,
+      unicode: true,
+    );
+    final replacePattern = _RegexReplacePattern.parse(replacement);
+    if (targetStart != null) {
+      bool replaceTarget(RegExpMatch match, int start, int end) {
+        if (start != targetStart ||
+            scopes != null && !_isWithinFindScopes(scopes, start, end) ||
+            wholeWord && !_isWholeWordRange(text, start, end)) {
+          return false;
+        }
+        final inserted = replacePattern.expand(match);
+        final newText = text.replaceRange(start, end, inserted);
+        if (newText.length > maxRegexReplaceOutputUtf16) {
+          throw const _RegexReplaceOutputLimit();
+        }
+        replyPort.send(<String, Object?>{
+          'ok': true,
+          'newText': newText,
+          'count': 1,
+          'caretOffset': start + inserted.length,
+        });
+        return true;
+      }
+
+      if (_isMultilineRegexSource(pattern)) {
+        final normalized = _normalizeFindLineEndings(text);
+        final offsetMapper = _FindOriginalOffsetMapper(text);
+        for (final match in regex.allMatches(normalized)) {
+          final start = offsetMapper.toOriginal(match.start);
+          final end = offsetMapper.toOriginal(match.end);
+          if (replaceTarget(match, start, end)) return;
+        }
+      } else {
+        var lineStart = 0;
+        while (lineStart <= text.length) {
+          var lineEnd = lineStart;
+          while (lineEnd < text.length &&
+              text.codeUnitAt(lineEnd) != 0x0A &&
+              text.codeUnitAt(lineEnd) != 0x0D) {
+            lineEnd++;
+          }
+          final line = text.substring(lineStart, lineEnd);
+          for (final match in regex.allMatches(line)) {
+            if (replaceTarget(
+              match,
+              lineStart + match.start,
+              lineStart + match.end,
+            )) {
+              return;
+            }
+          }
+          if (lineEnd == text.length) break;
+          lineStart = lineEnd + 1;
+          if (text.codeUnitAt(lineEnd) == 0x0D &&
+              lineStart < text.length &&
+              text.codeUnitAt(lineStart) == 0x0A) {
+            lineStart++;
+          }
+        }
+      }
+      replyPort.send(<String, Object?>{
+        'ok': true,
+        'newText': text,
+        'count': 0,
+      });
+      return;
+    }
+
+    final output = StringBuffer();
+    var outputLength = 0;
+    var cursor = 0;
+    var count = 0;
+    var truncated = false;
+
+    void write(String value) {
+      if (outputLength + value.length > maxRegexReplaceOutputUtf16) {
+        throw const _RegexReplaceOutputLimit();
+      }
+      output.write(value);
+      outputLength += value.length;
+    }
+
+    void addMatch(RegExpMatch match, int start, int end) {
+      if (scopes != null && !_isWithinFindScopes(scopes, start, end)) return;
+      if (wholeWord && !_isWholeWordRange(text, start, end)) return;
+      if (count == maxFindRegexMatches) {
+        truncated = true;
+        return;
+      }
+      write(text.substring(cursor, start));
+      write(replacePattern.expand(match));
+      cursor = end;
+      count++;
+    }
+
+    if (_isMultilineRegexSource(pattern)) {
+      final normalized = _normalizeFindLineEndings(text);
+      final offsetMapper = _FindOriginalOffsetMapper(text);
+      for (final match in regex.allMatches(normalized)) {
+        addMatch(
+          match,
+          offsetMapper.toOriginal(match.start),
+          offsetMapper.toOriginal(match.end),
+        );
+        if (truncated) break;
+      }
+    } else {
+      var lineStart = 0;
+      while (lineStart <= text.length) {
+        var lineEnd = lineStart;
+        while (lineEnd < text.length &&
+            text.codeUnitAt(lineEnd) != 0x0A &&
+            text.codeUnitAt(lineEnd) != 0x0D) {
+          lineEnd++;
+        }
+        final line = text.substring(lineStart, lineEnd);
+        for (final match in regex.allMatches(line)) {
+          addMatch(match, lineStart + match.start, lineStart + match.end);
+          if (truncated) break;
+        }
+        if (truncated || lineEnd == text.length) break;
+        lineStart = lineEnd + 1;
+        if (text.codeUnitAt(lineEnd) == 0x0D &&
+            lineStart < text.length &&
+            text.codeUnitAt(lineStart) == 0x0A) {
+          lineStart++;
+        }
+      }
+    }
+    if (truncated) {
+      replyPort.send(<String, Object?>{'ok': true, 'truncated': true});
+      return;
+    }
+    if (count == 0) {
+      replyPort.send(<String, Object?>{
+        'ok': true,
+        'newText': text,
+        'count': 0,
+      });
+      return;
+    }
+    write(text.substring(cursor));
+    replyPort.send(<String, Object?>{
+      'ok': true,
+      'newText': output.toString(),
+      'count': count,
+    });
+  } on _RegexReplaceOutputLimit {
+    replyPort.send(<String, Object?>{
+      'ok': false,
+      'error': '正则替换结果超过 64 Mi UTF-16 上限，未修改文档',
+    });
+  } catch (error) {
+    replyPort.send(<String, Object?>{'ok': false, 'error': '$error'});
+  }
+}
+
+class _RegexReplaceOutputLimit implements Exception {
+  const _RegexReplaceOutputLimit();
+}
+
+class _RegexReplacePattern {
+  _RegexReplacePattern(this._pieces);
+
+  final List<_RegexReplacePiece> _pieces;
+
+  static _RegexReplacePattern parse(String source) {
+    final pieces = <_RegexReplacePiece>[];
+    final literal = StringBuffer();
+    final caseOps = <int>[];
+
+    void flushLiteral() {
+      if (literal.isEmpty) return;
+      pieces.add(_RegexReplacePiece.staticValue(literal.toString()));
+      literal.clear();
+    }
+
+    void emitMatch(int index) {
+      flushLiteral();
+      pieces.add(_RegexReplacePiece.matchIndex(index, List.of(caseOps)));
+      caseOps.clear();
+    }
+
+    for (var index = 0; index < source.length; index++) {
+      final unit = source.codeUnitAt(index);
+      if (unit == 0x5C) {
+        if (index + 1 == source.length) {
+          literal.writeCharCode(unit);
+          break;
+        }
+        final next = source.codeUnitAt(++index);
+        switch (next) {
+          case 0x5C:
+            literal.writeCharCode(0x5C);
+          case 0x6E:
+            literal.write('\n');
+          case 0x74:
+            literal.write('\t');
+          case 0x75: // \u: uppercase the next code unit of the next capture.
+          case 0x55: // \U: uppercase all remaining capture code units.
+          case 0x6C: // \l: lowercase the next code unit of the next capture.
+          case 0x4C: // \L: lowercase all remaining capture code units.
+            caseOps.add(next);
+          default:
+            literal
+              ..writeCharCode(0x5C)
+              ..writeCharCode(next);
+        }
+        continue;
+      }
+      if (unit != 0x24 || index + 1 == source.length) {
+        literal.writeCharCode(unit);
+        continue;
+      }
+
+      final next = source.codeUnitAt(index + 1);
+      if (next == 0x24) {
+        literal.writeCharCode(0x24);
+        index++;
+        continue;
+      }
+      if (next == 0x26 || next == 0x30) {
+        emitMatch(0);
+        index++;
+        continue;
+      }
+      if (next >= 0x31 && next <= 0x39) {
+        var matchIndex = next - 0x30;
+        index++;
+        if (index + 1 < source.length) {
+          final second = source.codeUnitAt(index + 1);
+          if (second >= 0x30 && second <= 0x39) {
+            matchIndex = matchIndex * 10 + second - 0x30;
+            index++;
+          }
+        }
+        emitMatch(matchIndex);
+        continue;
+      }
+      literal.writeCharCode(unit);
+    }
+    flushLiteral();
+    return _RegexReplacePattern(List.unmodifiable(pieces));
+  }
+
+  String expand(RegExpMatch match) {
+    final output = StringBuffer();
+    for (final piece in _pieces) {
+      if (piece.staticValue != null) {
+        output.write(piece.staticValue);
+        continue;
+      }
+      final matchIndex = piece.matchIndex!;
+      final hasMatchIndex = matchIndex <= match.groupCount;
+      final value = hasMatchIndex ? match.group(matchIndex) : null;
+      output.write(
+        !hasMatchIndex
+            ? '\$$matchIndex'
+            : _applyRegexCaseOps(value ?? '', piece.caseOps),
+      );
+    }
+    return output.toString();
+  }
+}
+
+class _RegexReplacePiece {
+  const _RegexReplacePiece._(this.staticValue, this.matchIndex, this.caseOps);
+
+  factory _RegexReplacePiece.staticValue(String value) =>
+      _RegexReplacePiece._(value, null, const []);
+
+  factory _RegexReplacePiece.matchIndex(int index, List<int> caseOps) =>
+      _RegexReplacePiece._(null, index, List.unmodifiable(caseOps));
+
+  final String? staticValue;
+  final int? matchIndex;
+  final List<int> caseOps;
+}
+
+String _applyRegexCaseOps(String value, List<int> caseOps) {
+  if (caseOps.isEmpty || value.isEmpty) return value;
+  final output = StringBuffer();
+  var opIndex = 0;
+  for (final unit in value.codeUnits) {
+    if (opIndex == caseOps.length) {
+      output.writeCharCode(unit);
+      continue;
+    }
+    final character = String.fromCharCode(unit);
+    switch (caseOps[opIndex]) {
+      case 0x55: // \U
+        output.write(character.toUpperCase());
+      case 0x75: // \u
+        output.write(character.toUpperCase());
+        opIndex++;
+      case 0x4C: // \L
+        output.write(character.toLowerCase());
+      case 0x6C: // \l
+        output.write(character.toLowerCase());
+        opIndex++;
+      default:
+        output.write(character);
+    }
+  }
+  return output.toString();
 }
 
 bool _isMultilineRegexSource(String pattern) {

@@ -124,6 +124,13 @@ void main() {
   });
 
   group('findRegexMatches', () {
+    test('finds capture-bearing patterns used by regex replacement', () async {
+      final result = await findRegexMatches('foo_1 foo_2', r'foo_(\d+)');
+      expect(result.error, isNull);
+      expect(result.matches.map((match) => (match.start, match.end)).toList(),
+          [(0, 5), (6, 11)]);
+    });
+
     test('line anchors work on each CRLF line with original UTF-16 offsets',
         () async {
       final result = await findRegexMatches('👨foo\r\nfoo-bar\r\nfoo', r'^foo');
@@ -221,6 +228,126 @@ void main() {
       final result = await pending;
       expect(result.cancelled, isTrue);
       expect(result.matches, isEmpty);
+    });
+  });
+
+  group('replaceRegexMatches', () {
+    test('capture groups and replacement escapes match Code-OSS syntax',
+        () async {
+      final result = await replaceRegexMatches(
+        'ab ab',
+        r'(a)(b)',
+        r'$0:$1:$2:$&:$$:\n:\t:\\',
+      );
+      expect(result.error, isNull);
+      expect(result.count, 2);
+      const expected = 'ab:a:b:ab:\$:\n:\t:\\';
+      expect(result.newText, '$expected $expected');
+    });
+
+    test('missing captures stay empty and out-of-range references stay literal',
+        () async {
+      final result = await replaceRegexMatches(
+        'a a',
+        r'(a)(x)?',
+        r'$1:$2:$3:$12',
+      );
+      expect(result.newText, 'a::\$3:\$12 a::\$3:\$12');
+    });
+
+    test('capture-specific case transformations apply to UTF-16 code units',
+        () async {
+      final result = await replaceRegexMatches(
+        'foo BAR',
+        r'(f)(oo) (B)(AR)',
+        r'\u$1\U$2 \L$3\l$4',
+      );
+      expect(result.newText, 'FOO baR');
+      final allLower = await replaceRegexMatches('ABC', r'([A-Z]+)', r'\L$1');
+      expect(allLower.newText, 'abc');
+    });
+
+    test('multiline captures retain surrounding CRLF and map original offsets',
+        () async {
+      final result = await replaceRegexMatches(
+        'foo\r\nbar foo\r\nbar',
+        r'(foo)\n(bar)',
+        r'$2:$1',
+      );
+      expect(result.error, isNull);
+      expect(result.newText, 'bar:foo bar:foo');
+      expect(result.count, 2);
+    });
+
+    test('zero-width replace-all advances through emoji-prefixed UTF-16 text',
+        () async {
+      final result = await replaceRegexMatches('👨aa\r\nfoo', r'(?=a)', 'X');
+      expect(result.error, isNull);
+      expect(result.newText, '👨XaXa\r\nfoo');
+      expect(result.count, 2);
+    });
+
+    test('current replacement targets one zero-width match and reports caret',
+        () async {
+      final result = await replaceRegexMatches(
+        'aa a',
+        r'(?=a)',
+        'X',
+        targetStart: 1,
+      );
+      expect(result.error, isNull);
+      expect(result.newText, 'aXa a');
+      expect(result.count, 1);
+      expect(result.caretOffset, 2);
+      final missing = await replaceRegexMatches(
+        'aa a',
+        r'(?=a)',
+        'X',
+        targetStart: 4,
+      );
+      expect(missing.newText, 'aa a');
+      expect(missing.count, 0);
+    });
+
+    test('selection scopes constrain regex replacement without joining ranges',
+        () async {
+      final result = await replaceRegexMatches(
+        'foo\nbar foo\nbar',
+        r'foo\nbar',
+        'X',
+        scopes: const [TextMatchScope(0, 3), TextMatchScope(4, 7)],
+      );
+      expect(result.newText, 'foo\nbar foo\nbar');
+      expect(result.count, 0);
+    });
+
+    test(
+        'invalid, timed-out, cancelled and over-limit work never returns edits',
+        () async {
+      final invalid = await replaceRegexMatches('abc', '[', 'x');
+      expect(invalid.error, isNotNull);
+      final timedOut = await replaceRegexMatches(
+        '${'a' * 20000}b',
+        r'^(a+)+$',
+        'x',
+        timeout: const Duration(milliseconds: 15),
+      );
+      expect(timedOut.timedOut, isTrue);
+      expect(timedOut.newText, isNull);
+      final cancel = Completer<void>();
+      final pending = replaceRegexMatches(
+        'a' * 10000,
+        r'^(a+)+$',
+        'x',
+        cancelSignal: cancel.future,
+      );
+      cancel.complete();
+      final cancelled = await pending;
+      expect(cancelled.cancelled, isTrue);
+      expect(cancelled.newText, isNull);
+      final tooMany = await replaceRegexMatches('a' * 20000, 'a', 'x');
+      expect(tooMany.truncated, isTrue);
+      expect(tooMany.newText, isNull);
     });
   });
 

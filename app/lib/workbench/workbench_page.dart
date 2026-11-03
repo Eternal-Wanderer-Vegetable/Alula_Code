@@ -377,6 +377,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int _matchesDocId = -1;
   int _matchesDocVersion = -1;
   int _matchIndex = -1;
+  Completer<void>? _findReplaceWorkerCancellation;
   bool _caseSensitive = false;
   bool _wholeWord = false;
   bool _regexFind = false;
@@ -12280,6 +12281,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       } else {
         _findGeneration++;
         _cancelRegexFind();
+        _cancelRegexReplace();
         _pendingFind = Future<void>.value();
         _findPending = false;
         _findError = null;
@@ -12308,6 +12310,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _onReplaceTextChanged(String value) {
+    _cancelRegexReplace();
     _replaceHistory.noteEdit(value);
     _scheduleFindHistoryUpdate();
   }
@@ -12443,6 +12446,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _refreshMatches() {
     _cancelRegexFind();
+    _cancelRegexReplace();
     _pendingFind = Future<void>.value();
     final active = _active;
     final text = active?.text ?? '';
@@ -12565,6 +12569,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _cancelRegexFind() {
     final cancellation = _findWorkerCancellation;
     _findWorkerCancellation = null;
+    if (cancellation != null && !cancellation.isCompleted) {
+      cancellation.complete();
+    }
+  }
+
+  void _cancelRegexReplace() {
+    final cancellation = _findReplaceWorkerCancellation;
+    _findReplaceWorkerCancellation = null;
     if (cancellation != null && !cancellation.isCompleted) {
       cancellation.complete();
     }
@@ -12722,12 +12734,117 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
-  void _replaceCurrent() {
+  Future<void> _replaceCurrent() async {
     _scheduleFindHistoryUpdate();
     final active = _active;
     if (active == null) return;
     if (_regexFind) {
-      setState(() => _statusDetail = '正则替换暂不可用');
+      _flushInput(active, commitComposition: true);
+      _refreshMatches();
+      final findGeneration = _findGeneration;
+      if (_findPending) await _pendingFind;
+      if (!mounted ||
+          _disposing ||
+          findGeneration != _findGeneration ||
+          !identical(_active, active) ||
+          !_findVisible ||
+          !_regexFind) {
+        return;
+      }
+      if (_findError != null) {
+        setState(() => _statusDetail = _findError!);
+        return;
+      }
+      if (_matches.isEmpty) {
+        setState(() => _statusDetail = '无匹配');
+        return;
+      }
+      final selection = active.selection;
+      final from = selection.baseOffset >= 0 ? selection.baseOffset : 0;
+      final match = findNext(_matches, from);
+      if (match == null) {
+        setState(() => _statusDetail = '无匹配');
+        return;
+      }
+      final isOnMatch = selection.baseOffset == match.start &&
+          selection.extentOffset == match.end;
+      if (!isOnMatch) {
+        _matchIndex = _matches.indexOf(match);
+        _setDocSelection(
+          active,
+          TextSelection(baseOffset: match.start, extentOffset: match.end),
+        );
+        setState(() {});
+        return;
+      }
+
+      final query = _findQuery.text;
+      final replacement = _replaceInput.text;
+      final text = active.text;
+      final docId = active.id;
+      final docVersion = active.doc.version;
+      final generation = _findGeneration;
+      final scopes = _findInSelection ? _findSelectionScopes : null;
+      _cancelRegexReplace();
+      final cancellation = Completer<void>();
+      _findReplaceWorkerCancellation = cancellation;
+      late final ReplaceRegexMatchesResult result;
+      try {
+        result = await replaceRegexMatches(
+          text,
+          query,
+          replacement,
+          caseSensitive: _caseSensitive,
+          wholeWord: _wholeWord,
+          scopes: scopes,
+          targetStart: match.start,
+          cancelSignal: cancellation.future,
+        );
+      } finally {
+        if (!cancellation.isCompleted) cancellation.complete();
+        if (identical(_findReplaceWorkerCancellation, cancellation)) {
+          _findReplaceWorkerCancellation = null;
+        }
+      }
+      if (!mounted ||
+          _disposing ||
+          result.cancelled ||
+          generation != _findGeneration ||
+          !identical(_active, active) ||
+          active.id != docId ||
+          active.doc.version != docVersion ||
+          !_findVisible ||
+          !_regexFind ||
+          _findQuery.text != query ||
+          _replaceInput.text != replacement) {
+        return;
+      }
+      if (result.error != null) {
+        setState(() => _statusDetail = result.error!);
+        return;
+      }
+      if (result.count == 0 || result.newText == null) {
+        setState(() => _statusDetail = '无匹配');
+        return;
+      }
+      final newText = result.newText!;
+      _applyProgrammaticEdit(
+        active,
+        newText,
+        selection: TextSelection.collapsed(
+          offset: result.caretOffset ?? newText.length,
+        ),
+      );
+      _refreshMatches();
+      final refreshGeneration = _findGeneration;
+      if (_findPending) await _pendingFind;
+      if (!mounted ||
+          _disposing ||
+          refreshGeneration != _findGeneration ||
+          !identical(_active, active)) {
+        return;
+      }
+      setState(() => _statusDetail = '已替换 1 处（剩余 ${_matches.length} 处）');
       return;
     }
     _flushInput(active, commitComposition: true);
@@ -12763,12 +12880,72 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _statusDetail = '已替换 1 处（剩余 ${_matches.length} 处）');
   }
 
-  void _replaceAll() {
+  Future<void> _replaceAll() async {
     _scheduleFindHistoryUpdate();
     final active = _active;
     if (active == null) return;
     if (_regexFind) {
-      setState(() => _statusDetail = '正则替换暂不可用');
+      _flushInput(active, commitComposition: true);
+      _refreshMatches();
+      _cancelRegexFind();
+      final generation = ++_findGeneration;
+      _findPending = false;
+      final query = _findQuery.text;
+      final replacement = _replaceInput.text;
+      final text = active.text;
+      final docId = active.id;
+      final docVersion = active.doc.version;
+      final scopes = _findInSelection ? _findSelectionScopes : null;
+      _cancelRegexReplace();
+      final cancellation = Completer<void>();
+      _findReplaceWorkerCancellation = cancellation;
+      late final ReplaceRegexMatchesResult result;
+      try {
+        result = await replaceRegexMatches(
+          text,
+          query,
+          replacement,
+          caseSensitive: _caseSensitive,
+          wholeWord: _wholeWord,
+          scopes: scopes,
+          cancelSignal: cancellation.future,
+        );
+      } finally {
+        if (!cancellation.isCompleted) cancellation.complete();
+        if (identical(_findReplaceWorkerCancellation, cancellation)) {
+          _findReplaceWorkerCancellation = null;
+        }
+      }
+      if (!mounted ||
+          _disposing ||
+          result.cancelled ||
+          generation != _findGeneration ||
+          !identical(_active, active) ||
+          active.id != docId ||
+          active.doc.version != docVersion ||
+          !_findVisible ||
+          !_regexFind ||
+          _findQuery.text != query ||
+          _replaceInput.text != replacement) {
+        return;
+      }
+      if (result.error != null) {
+        setState(() => _statusDetail = result.error!);
+        return;
+      }
+      if (result.count == 0 || result.newText == null) {
+        setState(() => _statusDetail = '无匹配');
+        return;
+      }
+      final newText = result.newText!;
+      _applyProgrammaticEdit(
+        active,
+        newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+      );
+      _refreshMatches();
+      setState(() => _statusDetail = '已替换 ${result.count} 处');
+      _scheduleStateSave();
       return;
     }
     _flushInput(active, commitComposition: true);
@@ -13720,6 +13897,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _disposing = true;
     _findGeneration++;
     _cancelRegexFind();
+    _cancelRegexReplace();
     _pendingDefinitionPointers.clear();
     _pendingColumnSelectionStarts.clear();
     _pendingMoveSelectionChordTimer?.cancel();
@@ -15394,14 +15572,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ),
                   ),
                   IconButton(
-                    tooltip: _regexFind ? '正则替换暂不可用' : '替换',
-                    onPressed: _regexFind ? null : _replaceCurrent,
+                    tooltip: '替换',
+                    onPressed: _replaceCurrent,
                     icon: const Icon(Icons.find_replace, size: 15),
                     visualDensity: VisualDensity.compact,
                   ),
                   IconButton(
-                    tooltip: _regexFind ? '正则替换暂不可用' : '全部替换',
-                    onPressed: _regexFind ? null : _replaceAll,
+                    tooltip: '全部替换',
+                    onPressed: _replaceAll,
                     icon: const Icon(Icons.done_all, size: 15),
                     visualDensity: VisualDensity.compact,
                   ),
