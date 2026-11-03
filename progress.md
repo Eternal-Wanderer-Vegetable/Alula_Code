@@ -5,13 +5,14 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
-### 最新进展（2026-11-03，P04.77 / EDT-12d1 片段变量转换，本地门禁完成，托管 CI 待跑）
+### 最新进展（2026-11-03，P04.77 / EDT-12d1 片段变量转换，首批 hosted 门禁通过）
 
 - 支持 `${VAR/regex/format/options}` 变量转换，捕获组、TextMate conditional/default/case formats 与 `gimsu` flags；未知变量以空字符串进入 transform，转换结果纯文本。64 transforms、regex/format 512 UTF-16、总输入/输出各 256 Ki UTF-16、worker 750 ms 上限，超限/错误在 Rust 事务前 fail closed；placeholder transform 仍开放，无 Rust/ABI 改动。
 - 异步 worker 完成后校验活动文档、Rust 版本、输入窗、选区和字段实例；新增工作台用例覆盖当前行转换的 emoji/CRLF 保存回读、worker 运行中编辑、关闭工作台。局部工作台集成首次暴露了新异步路径可能在 controller dispose 后继续回写的竞态；快照保护和两条回归用例通过。它是本切片找到的新生命周期风险，不解释历史 Windows `0xC000041D` 或 macOS SIGSEGV。
 - 最新完整 `bash init.sh` EXIT=0（Rust workspace、Clippy、core build、Flutter **708**）；`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）、`git diff --check` 均通过。针对 snippet parser/session/workbench 文件的完整用例通过。本机 GUI/Narrator 未启动。
 - 受控 Linux/WSL Dart harness mem-probe 79 samples/8 s：100×128 Ki UTF-16 plain variable 的峰值/稳态为 211.8/180.3 MiB；variable transform 为 216.8/175.8 MiB。只说明这两次短 harness 观察到峰值约 +5 MiB、无稳态上升；不等同于 Alula GUI，也不可与 Windows 2026-10-26 工作台基线作跨系统预算比较。证据及限制见 `docs/diagnostics/2026-11-03-p04/p04.77-snippet-variable-transforms.md`。
-- GitNexus 最终 staged/all 两项均覆盖 13 files 并报告 CRITICAL；CLI 只列前 10 个流程名，余下结果被省略。长篇状态文档重新索引后扫描计数有波动，因此只记录稳定的 CRITICAL 与覆盖边界，不固化流程计数。常见 `parse`/跨语言映射保留为未解决风险，不作为实际可达流程或安全豁免。工作台 `workbench_page.dart` 超过 512 KiB 未入索引；源码核对和 impact 结果见报告。实现提交和 hosted CI 仍待完成。
+- PR CI [`41553470823`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41553470823) 四个 job 全绿，Flutter analyze 0 issues、全量 708 tests passed，包含 worker 等待期间编辑/关闭编辑器的生命周期回归。Platform Availability [`41553465771`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41553465771) 的 Linux/Windows/macOS jobs 全成功；Linux DnD 23 pointer events、Windows DnD 12，均验证 move/copy/external text，Windows close metadata 为 gracefulClose=true/exitCode=0，macOS ARM64 包已构建。macOS DnD因 input route unavailable 跳过；startup artifact 仅 Impeller 行、无 `.ips`/`.crash`。这些是当前构建未复现证据，不说明历史 Windows `0xC000041D` 或 macOS SIGSEGV 已根治。P04.77 完成首批 hosted gate；macOS 原生 DnD/IME、P15 设备门仍开放。详见 `p04.77-snippet-variable-transforms.md` 与 `ci-failures-and-crash-correlation.md`。
+- GitNexus 最终 staged/all 两项均覆盖 13 files 并报告 CRITICAL；CLI 只列前 10 个流程名，余下结果被省略。长篇状态文档重新索引后扫描计数有波动，因此只记录稳定的 CRITICAL 与覆盖边界，不固化流程计数。常见 `parse`/跨语言映射保留为未解决风险，不作为实际可达流程或安全豁免。工作台 `workbench_page.dart` 超过 512 KiB 未入索引；源码核对和 impact 结果见报告。
 
 ### 最新进展（2026-11-03，P04.61 / EDT-11c 跨文档文本拖放复制，首批平台验收完成）
 
