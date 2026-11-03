@@ -1,23 +1,8 @@
-# Session Handoff
-
-> Last Updated: 2026-11-04. P04.105 / EDT-18a code and evidence are ready for the separate evidence/state commit: local DoD, PR CI 41713133917, and Linux/Windows/macOS Platform Availability 41713121910 passed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.105 / EDT-18a code and hosted evidence are complete. Evidence/state commit 0a42273 PR CI 41717176873 passed all four jobs. Startup bash init.sh --fast passed (Flutter 891). P04.106 / EDT-18b is registered; implementation has not started.
 
 ## Current Objective
 
-Continue P04 / feat-026 toward fixed-version VS Code editor, Git Diff, and compare-operation parity. P04.105 active-file versus clipboard snapshot compare preview is complete. After its evidence/state commit, read docs/03 and docs/11 to select and register the next single EDT-18 operation before implementation. The 500 MiB numeric memory target remains deferred to P14.
-
-## Completed Slice: P04.105 / EDT-18a
-
-- Register `workbench.files.action.compareWithClipboard`, F1/File command and Ctrl/Cmd+K, C. Compare a Rust-authoritative active document snapshot with one clipboard snapshot in a bounded side-by-side, read-only preview.
-- Validate active document identity/version after asynchronous clipboard read. Cancel stale requests visibly. Keep temporary clipboard model in memory and dispose it when preview closes; do not write clipboard text to disk/session/history.
-- Do not claim editable right pane, selected-file compare, saved-version compare, apply/revert or three-way merge in this slice.
-- Local gates passed on final implementation: `bash init.sh` (Rust workspace, Clippy, core build, Flutter 891), `cargo fmt --all -- --check`, `flutter analyze --no-pub` (0 issues), focused keybinding/preview/workbench suites. New tests cover close/switch/edit races, empty/no-text clipboard, line budget, BOM/emoji/CRLF, and document/selection/dirty/undo/disk invariants.
-- Close-race test logs a caught pre-existing minimap overview `UnknownDoc` after document close; track as an adjacent diagnostic only. It is not an unhandled exception or crash signal.
-- Fixed source, DoD, GitNexus boundary notes: `docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`; `docs/03-里程碑计划与验收标准.md` is authoritative.
-- Code commit `f1d204a5c3a0414ce4fb7edd6063efaeeb3ef290` pushed. PR CI `41713133917` passed all four jobs (Flutter 891); Platform Availability `41713121910` passed Linux x64, Windows x64, and macOS ARM64 build/test/startup/package. Artifacts: Linux `13268317746`, Windows `13269382552`, macOS `13269977828`; artifact details and process-exit/crash classification are in the P04.105 report.
-- macOS hosted native DnD pointer routing was unavailable and remains a P15 device gate. The macOS build warns that `com.alula.alula_app` has an invalid underscore in its bundle identifier; track the identifier fix in release packaging. No local GUI or Narrator was started.
-- P04.104 evidence commit `26cdf35` pushed; its PR CI `41709174313` passed all four jobs. P04.104 code SHA `43e35cd` local, PR CI and Linux/Windows/macOS Platform Availability all passed; macOS device DnD remains a P15 gate.
-- Before any Dart code edit, refresh GitNexus and run impact/context for the concrete command registration, diff view model and workbench entry. Existing `computeDiffViewModel` context is lower-bound; `CommandService` impact UNKNOWN/zero callers; `workbench_page.dart` is >512 KiB/skipped. Retain UNKNOWN/CRITICAL and verify exact callsites by search.
+Implement one registered P04.106 slice: VS Code workbench.files.action.compareWithSaved (File command, Ctrl/Cmd+K then D), using the current Rust-authoritative active document and a bounded on-disk text snapshot in a read-only side-by-side preview. Follow docs/03-里程碑计划与验收标准.md and docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md. Keep P04 one feature at a time, run GitNexus impact/context before editing any code, preserve UNKNOWN/CRITICAL findings and verify Workbench callsites by exact search. Then run local DoD, update evidence/state, GitNexus detect-changes, commit and push to origin/codex/vscode-parity-p00. Keep PR #2 OPEN/draft.
 
 ## Previous Slice: P04.104 / EDT-17l
 
@@ -62,14 +47,14 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 ## Files Involved
 
-- Product: app/lib/editor/clipboard_compare_preview.dart, Workbench command/keybinding registration
-- Tests: app/test/clipboard_compare_preview_test.dart, app/test/workbench_clipboard_compare_test.dart, app/test/keybindings_test.dart
+- Planned product files: app/lib/workbench/workbench_page.dart and a reusable read-only snapshot compare view under app/lib/editor/
+- Planned tests: app/test/workbench_saved_compare_test.dart, snapshot preview tests, and app/test/keybindings_test.dart
 - State: docs/03-里程碑计划与验收标准.md, feature_list.json, progress.md, session-handoff.md
-- Evidence: docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md, docs/diagnostics/2026-11-04-p04/p04.103-moved-block-view.md, and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md
+- Evidence: docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md, docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md, and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md
 
 ## Next Session Startup
 
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
-3. Refresh GitNexus and run all-scope detect-changes for pending documentation; commit/push P04.105 evidence/state separately. Verify its PR CI, then select and register one next EDT-18 operation from docs/03 and docs/11 before coding.
+3. Finish and push the P04.106 registration/state commit, verify its PR CI, then run impact/context for actual code symbols and implement only this slice.
 4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.

@@ -12,6 +12,13 @@
 - P04.105 / EDT-18a 完成：活动文件与剪贴板只读 side-by-side 比较；F1/File 与 Ctrl/Cmd+K,C；异步 clipboard 后复核 view/id/resource/version，关闭、切换、编辑均取消；2M UTF-16 与 DiffViewModel 行/row/work 预算超限整体拒绝。完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 891）、`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）与 focused suites 通过。代码 commit `f1d204a5c3a0414ce4fb7edd6063efaeeb3ef290` 已推送；PR CI [41713133917](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713133917) 四 job 全绿（Flutter 891）；Platform Availability [41713121910](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713121910) Linux x64、Windows x64、macOS ARM64 build/test/startup/package 全成功。Artifacts: Linux `13268317746`, Windows `13269382552`, macOS `13269977828`; Linux/Windows DnD 23/13 events 与三种 drop 结果均通过，Windows 1028×711、96 DPI、WM_CLOSE exit 0。Linux smoke 的 124 与 macOS smoke 的 SIGTERM 15 均由 watchdog 在进程存活 12 秒后按设计发出，macOS startup artifact `13270312636` 只有 Impeller 初始化行、无 crash report。macOS hosted DnD pointer route unavailable 保留 P15；构建出现 `com.alula.alula_app` 无效 Bundle ID warning，后续 release packaging 修正。完整证据与 crash 边界见 `docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`。
 - 关闭竞态测试捕获到已有 minimap 后台 overview 请求在文档关闭后收到 `UnknownDoc`，现有 catch/log 处理，测试通过，无未捕获异常或进程崩溃证据。记为下一步 minimap async-close 诊断；不扩大 P04.105 代码范围。
 
+### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（已登记，待实现）
+
+- 下一个单功能切片已登记在 docs/03-里程碑计划与验收标准.md：File 命令 workbench.files.action.compareWithSaved，Ctrl/Cmd+K、D；磁盘文本为 original、Rust 权威活动全文为 modified，预览只读。
+- 复用 DiffViewModel 限制并设定 6,000,016-byte 磁盘读取前限额、两侧 2,000,000 UTF-16 上限；保存状态/undo/selection/磁盘均不得受影响。实现前需重做具体 GitNexus impact/context，保留 UNKNOWN/CRITICAL 后以精确搜索核实超大 workbench 文件调用点。
+- CI 相关新证据：state SHA 0a42273 的 PR CI 41717176873 四 job 全绿（Flutter 891、Harness、Linux/Windows Rust 与 Windows LSP shutdown 10 次重复）；没有新 crash signal。此前 ARM artifact replay failure 仍是 SendKeys 输入注入问题，历史 Windows/macOS crash 仍需按证据区分。报告：docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+- 会话启动 bash init.sh --fast 通过（Rust workspace、core build、Flutter 891），本机未启动 GUI/Narrator。
+
 ### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已完成）
 
 - 固定 Code-OSS 1.145.0 默认 hideUnchangedRegions=false、上下文 3 行、最少隐藏 3 行、reveal 20 行；inline 每视图 toggle 默认关闭。只折叠同 hunk 内 changed runs 之间不少于 9 行的 context，边缘各保留 3 行；导航按 source row 映射到折叠后的可见行，映射不一致时整体回退。
