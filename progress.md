@@ -5,6 +5,15 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.102 / EDT-17j：Git diff moved-block 配对模型（模型切片完成）
+
+- 新增纯 Dart 有界模型，从同文件、不同 hunk 中唯一配对首尾空白等价的删除/新增块；默认长度门槛 3 行/15 UTF-16 units，重复候选、近似编辑、同 hunk 和跨文件不标记。保留原/修改行号与 patch-row 映射；超过 2,000,000 输入 units、16,384 rows 或 4,000,000 candidate text work 时完整 fallback。尚未接入产品 view/config，因此 UI 没有显示 moved-block 装饰。
+- 代码与模型证据 commit `0959e3c0a24ab5776a9575c3e709ad39d642da53` 已推送至 `codex/vscode-parity-p00`。13 个定向 Flutter 测试通过；`cargo fmt --check` 与完整 `bash init.sh` 通过（Rust workspace/Clippy/build_core、Flutter analyze 0 issues、Flutter 865 tests）。
+- PR CI [`41695398743`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695398743) 四 job 全绿。Platform Availability [`41695384851`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695384851) Linux x64、Windows x64 jobs 全绿；Linux package/DnD artifacts `13261255894`/`13261180829`，Windows `13262211045`/`13261241203`。macOS ARM64 job 在取证时仍 queued，因此不记作通过；物理 macOS DnD 仍属 P15。
+- 相同 1,965,278 UTF-16 / 16,382 row headless fixture 经 tools/mem-probe：parser-only 末次 PSS 178.8 MiB、模型 181.2 MiB（+2.4 MiB）；不是产品进程占用，不调整 P14 数值目标。GitNexus all-scope 9 files / 29 symbols / 430 affected flows / CRITICAL，输出仍只列前 10；全仓精确搜索未发现产品运行时 callsite。保留图谱风险，不将其解释为低风险。诊断：[`p04.102-moved-block-model.md`](docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md)。
+- 本轮 CI 无失败或崩溃信号；但模型未接入 workbench，不触及启动/窗口关闭/插件生命周期，不能证明修复历史崩溃。PR #2 保持 OPEN/draft；未启动本机 GUI/Narrator。
+- 用户补充怀疑反复 CI 失败可能与应用崩溃相关。后续遇到失败时，应按同一 SHA 对照进程退出码、crash signature/dump 与 runner 日志，区分真实进程崩溃、断言失败、超时及 runner 排队；重跑通过不作为修复证据。历史记录见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+
 ### P04.101 / EDT-17i（已完成注册范围）
 
 - 固定 Code-OSS 1.145.0 的 diffEditor.ignoreTrimWhitespace=true 已接入 Git unified diff：逐 hunk 投影首尾空白等价行，side-by-side 保留双方原文与行号；内部空白继续着色，超限/映射不一致时完整 raw patch fallback。实现与 DoD 见 docs/03-里程碑计划与验收标准.md。

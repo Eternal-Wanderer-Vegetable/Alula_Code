@@ -1,67 +1,51 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.101 / EDT-17i implementation e39a648 and evidence/state commit 2f390e0 are pushed. Local DoD, PR CI 41687279291, evidence-update PR CI 41690547161, and Linux/Windows/macOS Platform Availability 41687266257 passed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.102 / EDT-17j model commit `0959e3c0a24ab5776a9575c3e709ad39d642da53` and its evidence/state record are pushed to `codex/vscode-parity-p00`. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.101 / EDT-17i is complete as registered. Local full DoD passed; PR CI 41687279291 passed all four jobs with Flutter 852; Platform Availability 41687266257 passed Linux x64, Windows x64, and macOS ARM64 build/package/startup. Linux artifacts: 13255511248/13256755398. Windows artifacts: 13255204860/13255244745; visible client area 1028×681, UIA/MSAA and graceful WM_CLOSE exit 0 passed. macOS package/startup artifacts: 13256467168/13256402126. macOS native DnD was skipped because CGEventPostToPid pointer route=false and no Flutter pointer events; artifact 13255502756. Its 12-second startup smoke was intentionally stopped with SIGTERM; no .ips/.crash was found. The headless model probe adds about 4.1 MiB and is not product GUI evidence. Historical crash evidence links four pre-9f2c70a macOS SIGSEGV starts to the engine-context registry readiness race; 49 later hosted runs did not recur, which supports targeted mitigation but is not controlled proof. Keep native macOS device input under P15. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not merge or publish v0.1.0. Avoid local GUI/accessibility actions that could trigger Narrator.
+Continue P04 / `feat-026` toward fixed-version VS Code editor and Git Diff parity. P04.102 delivered a bounded pure-Dart moved-block matcher for exact, unique, trim-equivalent deletion/insertion blocks across hunks in one file. It preserves old/new line numbers and patch-row ranges and returns no partial results after parser, mapping, input, row, or work limits. The matcher is not connected to the workbench; there are no move markers, connectors, or `showMoves` setting yet.
 
-## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
+## Latest Slice: P04.102 / EDT-17j
 
-- Fake server cancellation now wakes and exits delayed completion workers. Linux and Windows focus runs passed 10/10; PR CI 41666117480 passed all four jobs. The original failed FFI error was not captured. Production LSP/ABI and window code were unchanged; historical application crash root cause remains unresolved.
+- Pinned Code-OSS 1.145.0 has `experimental.showMoves: false`; the model covers a conservative subset of `DefaultLinesDiffComputer.computeMovedLines` (exact trim-equivalent blocks only, not approximate similarity or unchanged moves). Minimum 3 lines, 15 normalized UTF-16 units, 2 substantial lines. Full criteria are in `docs/03-里程碑计划与验收标准.md`.
+- 13 focused Flutter tests pass. `cargo fmt --all -- --check` and full `bash init.sh` pass: Rust workspace, Clippy, `build_core`, Flutter analyze 0 issues, Flutter 865 tests.
+- PR CI [`41695398743`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695398743) passed all four jobs. Platform Availability [`41695384851`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695384851) passed Linux x64 and Windows x64. Linux package/DnD artifacts: `13261255894` / `13261180829`; Windows package/DnD: `13262211045` / `13261241203`.
+- macOS ARM64 job in run `41695384851` was still `queued` at handoff capture. Do not mark it passed or claim a package for this SHA. Prior P04.101 macOS package/startup evidence remains recorded separately; native macOS DnD stays P15 pending.
+- `tools/mem-probe` headless Linux sample on an identical 1,965,278 UTF-16 / 16,382-row fixture measured final PSS 178.8 MiB parser-only and 181.2 MiB with matcher (+2.4 MiB). It is a single Dart process model sample, not desktop product memory. The 500 MiB optimization target remains deferred to P14.
+- GitNexus staged/all scan reported 9 files, 29 symbols, 430 affected flows, CRITICAL. Re-running with `--limit 1000` still displayed only 10 flows. The index reports 438 flows but warns that 758/958 entry candidates were dropped and 365 callees skipped. Full-repository exact source search before the report was added found no product runtime callsite for the new matcher. Preserve this CRITICAL graph limitation; do not reinterpret it as low risk. Details: `docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md`.
 
-## Previous Architecture Slice: P04.98 / EDT-17f
+## CI and Crash Evidence
 
-- Added inline / side-by-side mode to Git Diff, preserving bounded patch source rows, paired word highlights, selectable text, line numbers, metadata/no-newline rows, and synchronized vertical alignment. Under 640 logical px the view remains inline; unsupported or over-budget patches retain the complete raw patch.
-- Seven new tests; focused patch/side-by-side suite 22 passed. Full `bash init.sh` passed with Rust workspace, Clippy, `build_core`, and Flutter 836; cargo fmt, Flutter analyze (0 issues), and harness validator (100/100) passed. No local GUI/Narrator; no Rust/ABI change. Evidence: [`p04.98-git-diff-side-by-side.md`](docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md).
-- Headless Dart/Linux model probe at the 16,384-row cap recorded tail `total_private` 201.5 MiB baseline / 202.8 MiB candidate. This is a directional model sample, not product GUI evidence or a change to the deferred memory target.
-- PR CI [`41659471482`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659471482) final attempt 2 passed all four jobs with Flutter 836 tests. The first Windows Rust attempt failed an existing async LSP workspace-shutdown assertion; the same SHA rerun passed. The raw FFI error was not captured, so retain it as an unresolved intermittent shutdown assertion, not a proven false alarm or crash.
-- Platform Availability [`41659454431`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431) passed Linux x64, Windows x64, and macOS ARM64 package/startup jobs. Linux/Windows hosted DnD passed move/copy/external-text routes. Windows visible client/UIA and graceful close exit 0 passed. macOS DnD was skipped for unavailable hosted pointer routing.
-- GitNexus warnings remain unresolved: exact workbench caller is omitted because `workbench_page.dart` exceeds 512 KiB; view impact is UNKNOWN, parser/word projection impacts and staged/all scans report unrelated CRITICAL flows. The evidence report records scope and counts.
+The current regular CI run is green, with no failure or crash signature. The user suspects repeated CI failures may be related to application crashes. For any recurrence, correlate the exact SHA and job with process exit code, crash signature/dump, and runner logs; distinguish process faults from test assertions, timeouts, or runner queue issues, and do not treat a successful rerun as a fix. This slice is not wired into the product and does not exercise startup, window teardown, plugin lifecycle, or the historical crash paths; it cannot establish a crash fix. Historical evidence and confidence limits remain in `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`. Avoid local GUI/accessibility actions that can launch Narrator. No desktop GUI or Narrator was started during P04.102.
 
-## CI and Crash Finding
+## Workspace and PR
 
-- Latest 100 branch regular CI runs have 100 successful final conclusions. The latest 100 Platform Availability runs have 54 successes / 46 historical failures; the newest failure remains `41458740387`, followed by 54 successful runs through `41670544291`.
-- CI has captured real faults before. For the old Windows `d5319369` artifact, source comparison found that `CoUninitialize()` ran before `FlutterWindow` destruction; commit `c2b787f` moved controller destruction before COM teardown. The newer `1129d607` artifact passed a Windows 11 ARM light/dark replay, so the old close crash is likely mitigated, although the exception lacks a confirmed stack and this is not a single-variable proof. Four pre-`9f2c70a` macOS startup failures ended in SIGSEGV/exit 139. Two retained `.ips` files show `objc_loadWeakRetained` → `IrondashEngineContextPlugin getFlutterView` → Rust engine-context lookup → `super_native_extensions::drag_manager`, dereferencing an unpublished FlutterView registry entry. Commit `9f2c70a` adds an engine-context readiness handshake and nil guard; 49 later successful Platform Availability runs have not reproduced the launch crash. This is a strong targeted mitigation signal, not a controlled proof. The 25 recurring macOS DnD route failures are input-routing skips/failures, separate from the crash.
-- P04.98's first-attempt Rust test failure was a missing `stopped` field in the FFI response with process exit 1, not an observed OS process crash. If it recurs, first print the full FFI response and collect child exit state before attributing it. See [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md).
-- Recent platform red runs primarily concern input routing, accessibility assertions, or validation probes; they are not all crashes. The P01.5 fake-LSP fixture follow-up improves test determinism only and does not explain either historical application fault. See `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`.
-- P01.5 outcome: the fake server now interrupts canceled delayed completion workers. Linux and Windows focused repetitions passed 10/10, and PR CI run [`41666117480`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41666117480) passed all four jobs. This makes the shutdown regression fixture more deterministic; the original failure's FFI error was not captured, and the old application crash remains unresolved.
-
-## Current Workspace State
-
-- Worktree: /tmp/alula-p04.70-next; implementation e39a648 and evidence/state 2f390e0 are pushed to codex/vscode-parity-p00. The worktree is clean.
-- Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
-- PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
-
-## Active Slice / Risks
-
-- P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
-- The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
-- P04.100 / EDT-17h is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev only in an active, navigable Git Diff tab. Three new widget tests and full local DoD pass. PR CI `41678408601` passed (847 Flutter tests); Platform Availability `41678397272` passed Linux/Windows/macOS build/package/startup. macOS DnD was explicitly skipped for unavailable pointer routing. Windows graceful close exit 0; no current app-crash signal. See `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`.
-- P04.101 / EDT-17i is implemented and pushed. New projection keeps whitespace-equivalent rows neutral, retains both sides/line numbers and markers, and falls back to the full raw patch on budget or mapping uncertainty. P04.101 local DoD, PR CI and Linux/Windows/macOS hosted build/package/startup gates passed. macOS DnD was explicitly skipped for unavailable synthetic pointer routing; physical macOS interaction remains a P15 gate. Code impact had CRITICAL/UNKNOWN warnings, including the unindexed >512 KiB workbench_page.dart; keep these visible. See docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md.
-
-
-- P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
-- GitNexus GitDiffPatchView impact was UNKNOWN because the >512 KiB workbench caller is omitted. Exact source search found workbench_page.dart:16121; keep the graph limitation visible. Re-index and rerun impact immediately before code edits.
+- Worktree: `/tmp/alula-p04.70-next`; latest code commit `0959e3c0a24ab5776a9575c3e709ad39d642da53` is pushed. P04.102 evidence/state is recorded in this handoff and the linked diagnostics.
+- Push target: `origin/codex/vscode-parity-p00`; user authorized pushes to this branch.
+- PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2). Do not merge or publish v0.1.0.
 
 ## Blockers / Risks
 
-- Historical Windows `0xC000041D` is likely mitigated by `c2b787f`, but the exact fault is unproven; native Windows 11 device acceptance remains open.
-- Native macOS DnD/IME, Linux DRM hardware, and P15 device gates. Hosted macOS DnD must remain marked skipped when pointer routing is unavailable.
-- EDT-17 remains open: moved blocks, whitespace option, unchanged-region folding, generic compare-editor integration, and other registered diff gaps.
+- Check whether the macOS job in Platform Availability run `41695384851` leaves the queue; if it does, record the actual result. Queued is not success.
+- Native macOS DnD/IME and device acceptance remain P15 gates; Linux DRM hardware remains unavailable.
+- Historical Windows `0xC000041D` and pre-`9f2c70a` macOS SIGSEGV remain evidence-qualified mitigations, not controlled root-cause proof.
+- GitNexus graph output is truncated/noisy and retains CRITICAL risk for this slice.
 
 ## Files Involved
 
-- Code: app/lib/git/git_diff_whitespace_projection.dart, app/lib/git/git_diff_patch_view.dart, app/test/git_diff_whitespace_projection_test.dart, and app/test/git_diff_patch_test.dart. The caller in app/lib/workbench/workbench_page.dart remains outside the GitNexus index due its size.
-- Evidence/state: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md and evidence/, docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md, progress.md, feature_list.json, and this handoff.
+- Model: `app/lib/git/git_diff_moved_blocks.dart`
+- Tests: `app/test/git_diff_moved_blocks_test.dart`
+- Plan/state: `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`
+- Evidence: `docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md`, `docs/diagnostics/2026-11-04-p04/p04.102-moved-blocks-probe.dart`, `docs/diagnostics/2026-11-04-p04/evidence/p04.102-*`
 
 ## Next Session Startup
 
-1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
-2. Confirm the worktree is clean, branch head includes implementation e39a648 and evidence/state commit 2f390e0, and PR #2 remains OPEN/draft.
-3. Confirm CI runs 41687279291 and 41690547161 plus Platform Availability 41687266257 are successful.
-4. Pick the next dependency-ready P04 gap from docs/03 and docs/11; register one bounded slice before code changes and run GitNexus impact first.
+1. Read `AGENTS.md`, this file, and `progress.md`.
+2. Check `node .gitnexus/run.cjs status`; refresh if stale. Run `bash init.sh --fast`.
+3. Recheck macOS job status for run `41695384851`; record only verified evidence.
+4. Choose one next P04 slice from `docs/03`, register it before code, and run GitNexus query/context/impact before edits.
 
 ## Recommended Next Step
 
-P04.101 is complete. Next decompose one remaining EDT-17 parity gap (moved blocks or unchanged-region folding) into a bounded P04 slice, check the pinned Code-OSS defaults, register it in docs/03, and run GitNexus query/context/impact before editing. Keep macOS DnD input-route skips and historical crash uncertainty explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 OPEN/draft, and avoid local GUI/accessibility actions that can start Narrator.
+After recording the macOS queue outcome, decompose P04.103 as the view integration for moved-block markers and navigation/source mapping, keeping `showMoves` off by default and preserving raw-patch fallback. Verify the precise Code-OSS interaction first; do not broaden into approximate matching, unchanged-region folding, or general compare-editor integration in the same slice. Keep PR #2 OPEN/draft and avoid local GUI/Narrator.
