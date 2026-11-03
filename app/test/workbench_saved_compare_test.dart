@@ -266,6 +266,150 @@ void main() {
     }
   });
 
+  testWidgets(
+      'compare modified pane applies insert, delete, and replace in Rust',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    try {
+      final (_, file) = await _openFixture(tester, initialText: 'base\nline');
+      final document = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField).first)
+          .inputWindow
+          .document;
+      await _pressSavedChord(tester);
+      await _finishSavedCompare(tester);
+
+      final comparePane = find.byKey(
+        const ValueKey('saved-compare-modified-pane'),
+      );
+      final compareInput = find.descendant(
+        of: comparePane,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+
+      Future<void> editCompareText(String text) async {
+        tester.testTextInput.updateEditingValue(TextEditingValue(
+          text: text,
+          selection: TextSelection.collapsed(offset: text.length),
+        ));
+        await tester.pump();
+        await tester.pump();
+      }
+
+      await editCompareText('base!\nline');
+      expect(document.resync().content, 'base!\nline');
+      expect(document.isDirty, isTrue);
+
+      await editCompareText('base\nline');
+      expect(document.resync().content, 'base\nline');
+      expect(document.isDirty, isFalse);
+
+      const replaced = 'new 🐈\nline';
+      await editCompareText(replaced);
+      expect(document.resync().content, replaced);
+      expect(document.isDirty, isTrue);
+      expect(file.readAsStringSync(), 'base\nline');
+
+      await tester.pump(const Duration(milliseconds: 140));
+      expect(
+        find.byKey(const ValueKey('saved-compare-diff-status')),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(const ValueKey('saved-compare-close')));
+      await tester.pumpAndSettle();
+      expect(document.resync().content, replaced);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'compare modified pane keeps IME preedit out of Rust until commit',
+      (tester) async {
+    tester.view.physicalSize = const Size(1100, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    try {
+      final (_, file) = await _openFixture(tester, initialText: 'base\nline');
+      final compareSource = tester
+          .widget<RustTextInputField>(find.byType(RustTextInputField).first)
+          .inputWindow
+          .document;
+      await _pressSavedChord(tester);
+      await _finishSavedCompare(tester);
+
+      final comparePane = find.byKey(
+        const ValueKey('saved-compare-modified-pane'),
+      );
+      final compareFieldFinder = find.descendant(
+        of: comparePane,
+        matching: find.byType(RustTextInputField),
+      );
+      final compareField =
+          tester.widget<RustTextInputField>(compareFieldFinder);
+      final compareInput = find.descendant(
+        of: comparePane,
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+
+      final controller = tester.widget<TextField>(compareInput).controller!;
+      final initialValue = controller.value;
+      final initialVersion = compareSource.version;
+      expect(initialValue.text, 'base\nline');
+      final caret = initialValue.selection.extentOffset;
+      expect(caret, greaterThanOrEqualTo(0));
+
+      const preedit = 'ni';
+      final preeditText = initialValue.text.replaceRange(caret, caret, preedit);
+      tester.testTextInput.updateEditingValue(TextEditingValue(
+        text: preeditText,
+        selection: TextSelection.collapsed(offset: caret + preedit.length),
+        composing: TextRange(start: caret, end: caret + preedit.length),
+      ));
+      await tester.pump();
+
+      expect(compareField.inputWindow.hasComposition, isTrue);
+      expect(compareSource.resync().content, initialValue.text);
+      expect(compareSource.version, initialVersion);
+
+      const committed = '你好';
+      tester.testTextInput.updateEditingValue(TextEditingValue(
+        text: preeditText.replaceRange(
+          caret,
+          caret + preedit.length,
+          committed,
+        ),
+        selection: TextSelection.collapsed(offset: caret + committed.length),
+        composing: TextRange.empty,
+      ));
+      await tester.pump();
+      await tester.pump();
+
+      final expected = initialValue.text.replaceRange(caret, caret, committed);
+      expect(compareField.inputWindow.hasComposition, isFalse);
+      expect(compareSource.resync().content, expected);
+      expect(compareSource.version, greaterThan(initialVersion));
+      expect(compareSource.isDirty, isTrue);
+      expect(file.readAsStringSync(), initialValue.text);
+
+      await tester.tap(find.byKey(const ValueKey('saved-compare-close')));
+      await tester.pumpAndSettle();
+      expect(compareSource.resync().content, expected);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
   testWidgets('compares a BOM/CRLF disk snapshot as normalized text',
       (tester) async {
     tester.view.physicalSize = const Size(1100, 800);
