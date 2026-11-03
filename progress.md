@@ -5,19 +5,20 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（已完成）
+### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（本地完成，等待 hosted gates）
+
+- 固定 Code-OSS workbench.files.action.compareWithSaved 已接入 File/命令面板及 Ctrl+K、D；macOS 为 Cmd+K、D。磁盘快照为 original，Rust 权威活动文本为 modified，打开只读 side-by-side 预览；stat 先行限制 6,000,016 bytes，合并输入不超过 2,000,000 UTF-16，并复用差异模型预算。文档切换、编辑、关闭，缺失/二进制/超限磁盘文件均取消整次预览，不写回文档或磁盘。
+- 保存比较 widget 9/9；含 dirty/clean、不变状态与 undo、磁盘外改、BOM/CRLF/emoji、oversize/missing/binary、stat 等待期间切换视图/编辑/关闭。完整 bash init.sh 全绿：Rust workspace、Clippy、core build、Flutter 901；cargo fmt --all -- --check 与 flutter analyze --no-pub 通过（0 issues）；diff check 通过。未启动 GUI/Narrator。
+- 实现后的 GitNexus 图谱跳过含超大 Workbench 在内的 5 个文件；跨语言属性、flow candidates 和 walk budget 告警保留。SnapshotComparePreview impact LOW；CommandService UNKNOWN/0 及 computeDiffViewModel CRITICAL 均保留，精确搜索核实新入口；computeDiffViewModel 未修改。最后一次 staged-worktree all-scope detect-changes 报 13 files / 23 symbols / 434 flows / CRITICAL，流程主要由通用 title 属性匹配产生；相邻增量索引快照曾报 13/29/0/LOW。保留 CRITICAL 与图谱不稳定告警，不把零 flow 解释为无影响或把 434 解释为真实产品流程数。详见 P04.106 报告。
+- CI 观察：branch 最新 100 regular CI 为 99 terminal success + 1 nonterminal (41719529276)；Windows 所有 step 含 Complete job 为 success，但 GitHub run/job 仍 in_progress。Platform Availability 最新 100 为 55 success / 45 failure；最新 red 41695384851 的 Linux/Windows 成功，macOS runner queued 时零步骤取消。历史真实 Windows/macOS 崩溃与非崩溃 harness 红灯分开跟踪；本切片不改启动/关闭路径，不声称 crash fix。详见 docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md 和 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+- 代码/测试/状态待独立 commit 并推送到 origin/codex/vscode-parity-p00；完成 PR CI 与 Linux/Windows/macOS Platform Availability 后，再把 docs/03 改为 done 并登记最终证据。PR #2 保持 OPEN/draft。
+
+### P04.105 / EDT-18a：活动文件与剪贴板文本比较预览（最近完成）
 
 - 完成 P04.104 / EDT-17l：inline unchanged-region folding 默认关闭，严格 source row 映射，3 行上下文/20 行逐次展开。代码 `43e35cd`，本地 full init.sh (Flutter 881)、analyze 0、focused 9/相关回归 46、GitNexus all-scope detect 保留 CRITICAL。PR CI `41706323129` 与 Linux/Windows/macOS Platform Availability `41706312269` 通过；P04.104 证据提交 `26cdf35` 的 PR CI `41709174313` 四 job 也全部通过（Harness、Linux/Windows Rust、Flutter analyze、881 tests）。平台包 artifact：Linux `13266685006`、Windows `13267056042`、macOS `13267221143`。Linux/Windows native DnD 与 Windows UIA/MSAA/graceful close 通过；macOS hosted DnD pointer route unavailable，device gate 保持 P15。
 - 当前 SHA 无 crash signal/dump 或非零应用退出；P04.104 不涉及启动/关闭路径，不能作为 crash fix。历史真实 Windows/macOS 崩溃与 ARM SendKeys assertion race 分开记录，详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
 - P04.105 / EDT-18a 完成：活动文件与剪贴板只读 side-by-side 比较；F1/File 与 Ctrl/Cmd+K,C；异步 clipboard 后复核 view/id/resource/version，关闭、切换、编辑均取消；2M UTF-16 与 DiffViewModel 行/row/work 预算超限整体拒绝。完整 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 891）、`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）与 focused suites 通过。代码 commit `f1d204a5c3a0414ce4fb7edd6063efaeeb3ef290` 已推送；PR CI [41713133917](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713133917) 四 job 全绿（Flutter 891）；Platform Availability [41713121910](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41713121910) Linux x64、Windows x64、macOS ARM64 build/test/startup/package 全成功。Artifacts: Linux `13268317746`, Windows `13269382552`, macOS `13269977828`; Linux/Windows DnD 23/13 events 与三种 drop 结果均通过，Windows 1028×711、96 DPI、WM_CLOSE exit 0。Linux smoke 的 124 与 macOS smoke 的 SIGTERM 15 均由 watchdog 在进程存活 12 秒后按设计发出，macOS startup artifact `13270312636` 只有 Impeller 初始化行、无 crash report。macOS hosted DnD pointer route unavailable 保留 P15；构建出现 `com.alula.alula_app` 无效 Bundle ID warning，后续 release packaging 修正。完整证据与 crash 边界见 `docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md`。
 - 关闭竞态测试捕获到已有 minimap 后台 overview 请求在文档关闭后收到 `UnknownDoc`，现有 catch/log 处理，测试通过，无未捕获异常或进程崩溃证据。记为下一步 minimap async-close 诊断；不扩大 P04.105 代码范围。
-
-### P04.106 / EDT-18b：活动文件与磁盘已保存版本比较（已登记，待实现）
-
-- 下一个单功能切片已登记在 docs/03-里程碑计划与验收标准.md：File 命令 workbench.files.action.compareWithSaved，Ctrl/Cmd+K、D；磁盘文本为 original、Rust 权威活动全文为 modified，预览只读。
-- 复用 DiffViewModel 限制并设定 6,000,016-byte 磁盘读取前限额、两侧 2,000,000 UTF-16 上限；保存状态/undo/selection/磁盘均不得受影响。实现前需重做具体 GitNexus impact/context，保留 UNKNOWN/CRITICAL 后以精确搜索核实超大 workbench 文件调用点。
-- CI 相关新证据：state SHA 0a42273 的 PR CI 41717176873 四 job 全绿（Flutter 891、Harness、Linux/Windows Rust 与 Windows LSP shutdown 10 次重复）；没有新 crash signal。此前 ARM artifact replay failure 仍是 SendKeys 输入注入问题，历史 Windows/macOS crash 仍需按证据区分。报告：docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
-- 会话启动 bash init.sh --fast 通过（Rust workspace、core build、Flutter 891），本机未启动 GUI/Narrator。
 
 ### P04.104 / EDT-17l：Git Diff inline 未变区域折叠（已完成）
 

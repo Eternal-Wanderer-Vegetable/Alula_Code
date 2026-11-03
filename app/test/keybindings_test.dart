@@ -190,6 +190,34 @@ void main() {
       );
     });
 
+    test('compare with saved uses Ctrl/Cmd+K then D', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('d')!],
+          )?.commandId,
+          'workbench.files.action.compareWithSaved',
+        );
+        expect(
+          keybindings.shortcutFor('workbench.files.action.compareWithSaved'),
+          'Ctrl+K D',
+        );
+      }
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('d')!],
+        )?.commandId,
+        'workbench.files.action.compareWithSaved',
+      );
+      expect(
+        mac.shortcutFor('workbench.files.action.compareWithSaved'),
+        'Meta+K D',
+      );
+    });
+
     test(
         'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
         () {

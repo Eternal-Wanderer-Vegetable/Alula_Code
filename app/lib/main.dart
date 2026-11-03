@@ -62,6 +62,7 @@ class AlulaApp extends StatelessWidget {
     this.keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.savedCompareFileStat,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
     this.findReplaceHistoryConfiguration =
         const FindReplaceHistoryConfiguration(),
@@ -95,6 +96,9 @@ class AlulaApp extends StatelessWidget {
     int version,
   )? definitionRequest;
 
+  /// Optional file-stat provider for deterministic saved-compare fixtures.
+  final Future<FileStat> Function(String path)? savedCompareFileStat;
+
   /// Editor Paste As settings forwarded to the workbench.
   final PasteAsConfiguration pasteAsConfiguration;
 
@@ -121,6 +125,7 @@ class AlulaApp extends StatelessWidget {
         keybindingsStore: keybindingsStore,
         windowControls: windowControls,
         definitionRequest: definitionRequest,
+        savedCompareFileStat: savedCompareFileStat,
         pasteAsConfiguration: pasteAsConfiguration,
         findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
         findReplaceHistoryStore: findReplaceHistoryStore,

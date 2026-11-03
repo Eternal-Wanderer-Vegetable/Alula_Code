@@ -1,8 +1,8 @@
-> Last Updated: 2026-11-04. P04.105 / EDT-18a code and hosted evidence are complete. Evidence/state commit 0a42273 PR CI 41717176873 passed all four jobs. Startup bash init.sh --fast passed (Flutter 891). P04.106 / EDT-18b is registered; implementation has not started.
+> Last Updated: 2026-11-04. P04.106 / EDT-18b implementation and local DoD are complete (Flutter 901); code commit and hosted CI/platform checks are next. PR #2 stays OPEN/draft.
 
 ## Current Objective
 
-Implement one registered P04.106 slice: VS Code workbench.files.action.compareWithSaved (File command, Ctrl/Cmd+K then D), using the current Rust-authoritative active document and a bounded on-disk text snapshot in a read-only side-by-side preview. Follow docs/03-里程碑计划与验收标准.md and docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md. Keep P04 one feature at a time, run GitNexus impact/context before editing any code, preserve UNKNOWN/CRITICAL findings and verify Workbench callsites by exact search. Then run local DoD, update evidence/state, GitNexus detect-changes, commit and push to origin/codex/vscode-parity-p00. Keep PR #2 OPEN/draft.
+P04.106 / EDT-18b code is implemented locally: VS Code workbench.files.action.compareWithSaved (File command, Ctrl/Cmd+K then D), using a bounded disk snapshot and current Rust-authoritative text in a read-only side-by-side preview. Local bash init.sh passed with 901 Flutter tests; Flutter analyze is clean and cargo fmt passes. Finish GitNexus detect-changes, commit code/state, and push to the authorized origin/codex/vscode-parity-p00 branch after the outstanding state CI run resolves. Then review PR CI and Linux/Windows/macOS Platform Availability; update docs/03 to done only after those hosted gates pass. Keep PR #2 OPEN/draft and avoid GUI/Narrator checks.
 
 ## Previous Slice: P04.104 / EDT-17l
 
@@ -32,9 +32,9 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 ## Workspace and PR
 
-- Worktree: /tmp/alula-p04.70-next. P04.105 code commit `f1d204a` is pushed; docs/evidence/state changes are pending the separate commit.
-- Push target: origin/codex/vscode-parity-p00; user authorized pushes to this branch.
-- PR #2: [OPEN/draft](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2). Do not merge or publish v0.1.0 before the plan gates are complete.
+- Worktree: /tmp/alula-p04.70-next; HEAD is the P04.106 registration/state SHA aa022621. P04.106 source/tests and local state are uncommitted.
+- Push target: origin/codex/vscode-parity-p00; authorization to push this branch persists.
+- PR #2 is OPEN/draft: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2. Do not merge or publish v0.1.0 before plan gates are complete.
 
 ## Blockers / Risks
 
@@ -47,14 +47,13 @@ P04.102's earlier macOS job was canceled while queued with zero steps; that rema
 
 ## Files Involved
 
-- Planned product files: app/lib/workbench/workbench_page.dart and a reusable read-only snapshot compare view under app/lib/editor/
-- Planned tests: app/test/workbench_saved_compare_test.dart, snapshot preview tests, and app/test/keybindings_test.dart
-- State: docs/03-里程碑计划与验收标准.md, feature_list.json, progress.md, session-handoff.md
-- Evidence: docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md, docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md, and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md
+- Product: app/lib/workbench/workbench_page.dart, app/lib/editor/snapshot_compare_preview.dart, app/lib/editor/clipboard_compare_preview.dart, app/lib/main.dart, app/lib/workbench/keybindings.dart
+- Tests: app/test/workbench_saved_compare_test.dart and app/test/keybindings_test.dart; full local suite passed with 901 tests
+- State/evidence: docs/03-里程碑计划与验收标准.md, feature_list.json, progress.md, session-handoff.md, docs/diagnostics/2026-11-04-p04/p04.106-compare-with-saved.md, docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md
 
 ## Next Session Startup
 
 1. Read AGENTS.md, this handoff, and progress.md.
-2. Check node .gitnexus/run.cjs status; refresh if stale. Run bash init.sh --fast.
-3. Finish and push the P04.106 registration/state commit, verify its PR CI, then run impact/context for actual code symbols and implement only this slice.
-4. Keep PR #2 OPEN/draft. Avoid local GUI/accessibility actions that can launch Narrator.
+2. Check whether CI run 41719529276 reached a terminal conclusion; record the Windows job's final state.
+3. Run GitNexus all-scope detect-changes on the completed source/state diff, commit in stages, and push to the authorized branch.
+4. Wait for PR CI and Linux/Windows/macOS Platform Availability, then finalize P04.106 evidence/status in a separate commit. Keep PR #2 OPEN/draft; do not launch local GUI/Narrator.

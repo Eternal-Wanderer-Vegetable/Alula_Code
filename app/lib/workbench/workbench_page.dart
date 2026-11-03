@@ -30,6 +30,7 @@ import 'package:flutter/services.dart';
 import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
 import '../editor/clipboard_compare_preview.dart';
+import '../editor/snapshot_compare_preview.dart';
 import '../editor/diff_view_model.dart';
 import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_sticky_scroll.dart';
@@ -240,6 +241,7 @@ class WorkbenchPage extends StatefulWidget {
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.savedCompareFileStat,
     this.overtypeOnPaste = true,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
     this.findReplaceHistoryConfiguration =
@@ -273,6 +275,9 @@ class WorkbenchPage extends StatefulWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+
+  /// Optional file-stat provider for deterministic saved-compare fixtures.
+  final Future<FileStat> Function(String path)? savedCompareFileStat;
 
   /// Mirrors VS Code's editor.overtypeOnPaste default. User settings will be
   /// wired into this editor option when P07 adds the settings store.
@@ -501,6 +506,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
         shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+    reg(
+      'workbench.files.action.compareWithSaved',
+      '文件',
+      '比较活动文件与已保存版本',
+      _compareActiveFileWithSaved,
+      shortcut: _keybindings.shortcutFor(
+        'workbench.files.action.compareWithSaved',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
     reg(
       'workbench.files.action.compareWithClipboard',
       '文件',
@@ -971,6 +987,150 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         setState(() => _statusDetail = '命令不接受参数：$id');
       }
     }));
+  }
+
+  Future<void> _compareActiveFileWithSaved() async {
+    final doc = _active;
+    if (doc == null) return;
+    if (doc.inputWindow.hasComposition) {
+      _showSavedCompareStatus('输入法组合输入中，比较已取消');
+      return;
+    }
+    final core = _core;
+    final path = doc.path;
+    if (core == null || path == null) {
+      _showSavedCompareStatus('比较已取消：活动文件没有可用的磁盘版本');
+      return;
+    }
+
+    try {
+      _flushInput(doc);
+      final documentId = doc.id;
+      final documentUri = doc.uri;
+      final documentName = doc.name;
+      final documentPath = doc.path;
+      final documentEncoding = doc.fileOptions.encoding;
+      final probe = doc.doc.readRange(0, maxLenUtf16: 1);
+      final documentVersion = probe.version;
+      final documentLength = probe.totalUtf16Length;
+      const maxCompareInputUtf16 = 2000000;
+      const maxSavedFileBytes = 6000016;
+      if (documentLength > maxCompareInputUtf16) {
+        _showSavedCompareStatus('比较已取消：活动文件超过 2,000,000 UTF-16 单元上限');
+        return;
+      }
+
+      final stat =
+          await (widget.savedCompareFileStat?.call(path) ?? File(path).stat());
+      if (!_isSavedCompareSnapshotCurrent(
+        doc,
+        documentId,
+        documentPath,
+        documentUri,
+        documentName,
+        documentVersion,
+      )) {
+        _showSavedCompareStatus('比较已取消：读取磁盘期间活动文件已变化');
+        return;
+      }
+      if (stat.type != FileSystemEntityType.file) {
+        _showSavedCompareStatus(
+          stat.type == FileSystemEntityType.notFound
+              ? '比较已取消：已保存磁盘版本不存在或不可读取'
+              : '比较已取消：活动路径不是可读取的文件',
+        );
+        return;
+      }
+      if (stat.size > maxSavedFileBytes) {
+        _showSavedCompareStatus('比较已取消：已保存文件超过 6,000,016 字节上限');
+        return;
+      }
+
+      final saved = _readDiskDocument(
+        core,
+        path,
+        preferredEncoding: documentEncoding,
+      );
+      if (!_isSavedCompareSnapshotCurrent(
+        doc,
+        documentId,
+        documentPath,
+        documentUri,
+        documentName,
+        documentVersion,
+      )) {
+        _showSavedCompareStatus('比较已取消：读取磁盘期间活动文件已变化');
+        return;
+      }
+      if (saved.content.length + documentLength > maxCompareInputUtf16) {
+        _showSavedCompareStatus('比较已取消：活动文件与磁盘文本合计超过 2,000,000 UTF-16 单元');
+        return;
+      }
+
+      final documentText = _readDocumentRange(doc, 0, documentLength);
+      if (doc.doc.version != documentVersion ||
+          !_isSavedCompareSnapshotCurrent(
+            doc,
+            documentId,
+            documentPath,
+            documentUri,
+            documentName,
+            documentVersion,
+          )) {
+        _showSavedCompareStatus('比较已取消：活动文件快照已变化');
+        return;
+      }
+
+      final diff = computeDiffViewModel(saved.content, documentText);
+      if (diff.isApproximate) {
+        _showSavedCompareStatus('比较已取消：差异超过当前预览预算，未显示部分结果');
+        return;
+      }
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (dialogContext) => SnapshotComparePreview(
+          title: '已保存版本 ↔ $documentName',
+          originalLabel: '已保存版本',
+          modifiedLabel: documentName,
+          diff: diff,
+          keyPrefix: 'saved-compare',
+          onClose: () => Navigator.of(dialogContext).pop(),
+        ),
+      );
+    } on AlulaException catch (error) {
+      final message = switch (error.code) {
+        'BinaryFile' => '比较已取消：磁盘版本是二进制文件',
+        'UnsupportedEncoding' => '比较已取消：磁盘版本使用不支持的文本编码',
+        _ => '比较失败：无法读取磁盘版本（${error.code}）',
+      };
+      _showSavedCompareStatus(message);
+    } on FileSystemException {
+      _showSavedCompareStatus('比较已取消：已保存磁盘版本不存在或不可读取');
+    } on Object catch (error) {
+      _showSavedCompareStatus('比较失败：$error');
+    }
+  }
+
+  bool _isSavedCompareSnapshotCurrent(
+    OpenDoc doc,
+    int documentId,
+    String? documentPath,
+    String? documentUri,
+    String documentName,
+    int documentVersion,
+  ) =>
+      mounted &&
+      identical(_active, doc) &&
+      _allDocViews.any((view) => identical(view, doc)) &&
+      doc.id == documentId &&
+      doc.path == documentPath &&
+      doc.uri == documentUri &&
+      doc.name == documentName &&
+      doc.doc.version == documentVersion;
+
+  void _showSavedCompareStatus(String message) {
+    if (mounted) setState(() => _statusDetail = message);
   }
 
   Future<void> _compareActiveFileWithClipboard() async {

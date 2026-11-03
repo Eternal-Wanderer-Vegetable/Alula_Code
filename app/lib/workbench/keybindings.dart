@@ -217,6 +217,7 @@ class KeybindingSet {
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
+    'workbench.files.action.compareWithSaved': 'ctrl+k d',
     'editor.completion': 'ctrl+space,f8',
     'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
@@ -275,6 +276,7 @@ class KeybindingSet {
     switch (platform) {
       case TargetPlatform.macOS:
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
+        result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
