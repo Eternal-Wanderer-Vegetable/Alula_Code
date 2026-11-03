@@ -23,6 +23,8 @@
 - 9 个定向测试全过，另有 200 组 seeded 随机字符串对拍验证范围单调、未变区一致和代理对边界安全。完整 `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter **802**；`cargo fmt --all -- --check`、Flutter analyze（0 issues）、harness validator（100/100）和 `git diff --check` 全过。报告：[`p04.94-word-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.94-word-diff-model.md)。
 - 该模型尚未接入 P04.93 行 hunk 或 Workbench。inline/side-by-side、moved blocks、unchanged folding、差异导航及 SCM 入口继续属于 EDT-17 后续项。开工时 GitNexus 刷新至 `ca2600e`，提示跨语言属性未连边与流程候选截断；diff 查询没有命中真实 diff flow，`workbench_page.dart` 超过索引大小上限。新增模块生产调用为零；保留此边界，接线时重新做 impact。
 
+- Hosted acceptance after push: PR CI [`41636601665`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636601665) passed all four jobs; Platform Availability [`41636589670`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670) passed Linux x64, Windows x64, and macOS ARM64. Linux/Windows DnD recorded 21/13 Flutter pointer events and move/cross-document copy/external-text outcomes. macOS ARM64 package and launch passed; DnD was skipped due unavailable hosted pointer routing. Artifacts are linked from the P04.94 diagnostic report. These green checks do not resolve the historical Windows ARM `0xC000041D`.
+
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
 - 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。

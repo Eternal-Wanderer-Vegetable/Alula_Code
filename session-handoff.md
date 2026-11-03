@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.94 / EDT-17b bounded character/word diff model and local DoD are complete. Code commit `39a5592` is local; evidence/state changes are being committed separately before push. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-03. P04.94 / EDT-17b bounded character/word diff model, local DoD, and hosted verification are complete. Code/evidence commits `39a5592` and `57cbb40` are pushed; hosted evidence registration is the current docs-only commit stage. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
@@ -9,13 +9,13 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 ## Latest Completed Slice: P04.94 / EDT-17b
 
 - Added a bounded pure Dart UTF-16 character Myers model with Code-OSS ASCII word-boundary expansion at the pinned two-thirds threshold. It returns zero-based, end-exclusive paired text ranges, preserves surrogate pairs, and validates that unchanged gaps match before returning.
-- Nine focused cases plus 200 seeded random pairs pass; they cover local and whole-word edits, punctuation, repeats, BOM/Emoji/CRLF, limits, equal gaps and surrogate safety. `bash init.sh` passed Rust workspace, Clippy, `build_core`, and Flutter 802; `cargo fmt --all -- --check`, `flutter analyze --no-pub` (0 issues), harness 100/100, and `git diff --check` passed. Code commit: `39a5592`; P04.94 evidence/state commit is pending.
+- Nine focused cases plus 200 seeded random pairs pass; they cover local and whole-word edits, punctuation, repeats, BOM/Emoji/CRLF, limits, equal gaps and surrogate safety. `bash init.sh` passed Rust workspace, Clippy, `build_core`, and Flutter 802; `cargo fmt --all -- --check`, `flutter analyze --no-pub` (0 issues), harness 100/100, and `git diff --check` passed. Code commit: `39a5592`; local milestone/state evidence commit: `57cbb40`; hosted validation is recorded in the current staged evidence update.
 - EDT-17a line alignment and EDT-17b word ranges are separate models; no diff UI is connected. Inline/side-by-side, line-hunk integration, moved blocks, unchanged folding, accessible navigation, and Git/SCM entry points remain open. Details and graph warnings: [`p04.94-word-diff-model.md`](docs/diagnostics/2026-11-03-p04/p04.94-word-diff-model.md).
 
-## Latest Hosted Platform Evidence: P04.93 head `ca2600e`
+## Latest Hosted Platform Evidence: P04.94 head `57cbb40`
 
-- PR CI [`41631078928`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41631078928) passed all four jobs: Linux/Windows Rust, Flutter analyze + tests, and harness structure.
-- Platform Availability [`41631071185`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41631071185) passed Linux x64, Windows x64, and macOS ARM64 package/startup/interaction smoke. Artifacts: Linux [`13227783918`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41631071185/artifacts/13227783918), Windows [`13228249270`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41631071185/artifacts/13228249270), macOS ARM64 [`13229646087`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41631071185/artifacts/13229646087). P04.94 hosted CI is pending until its commits are pushed.
+- PR CI [`41636601665`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636601665) passed all four jobs: Flutter analyze/tests, Linux/Windows Rust, and harness structure.
+- Platform Availability [`41636589670`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670) passed Linux x64, Windows x64, and macOS ARM64 package/startup smokes. Release artifacts: Linux [`13230189175`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670/artifacts/13230189175), Windows [`13230509184`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670/artifacts/13230509184), macOS ARM64 [`13232455491`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670/artifacts/13232455491). Linux/Windows DnD recorded 21/13 pointer events and three drop outcomes. macOS DnD [`13232251198`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670/artifacts/13232251198) was skipped because hosted pointer routing was unavailable; startup diagnostics [`13232590066`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41636589670/artifacts/13232590066) contain only the Impeller initialization line.
 
 ## Crash and CI Finding: P04.92 / CI-Crash-01
 
@@ -26,7 +26,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 ## Current Workspace State
 
 - Work in `/tmp/alula-p04.70-next`; checkout is detached. Pushes to `origin/codex/vscode-parity-p00` are authorized with `git push origin HEAD:codex/vscode-parity-p00`.
-- P04.92 and P04.93 code/evidence commits are pushed. P04.94 code commit `39a5592` is local; docs/03, diagnostics, feature_list, progress, and handoff are unstaged for a separate evidence commit.
+- P04.92, P04.93, and P04.94 code/local-evidence commits are pushed. P04.94 hosted validation updates to docs/03, diagnostics, feature_list, progress, and handoff are staged for a separate evidence commit.
 - PR #2 must remain OPEN/draft. Do not publish v0.1.0 or merge.
 
 ## Open Validation Gaps
@@ -37,4 +37,4 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Next Session First Step
 
-Finish the P04.94 evidence commit after staged/all/compare GitNexus scans; push the code and evidence commits to `codex/vscode-parity-p00`, then verify PR and Platform Availability checks for the new head. Keep PR #2 open/draft. After hosted checks finish, register one next EDT-17 slice from `docs/11` in `docs/03` before editing. Preserve the unresolved historical crash evidence and avoid local GUI/accessibility actions that can start Narrator.
+Finish the P04.94 hosted-evidence commit after staged/all/compare GitNexus scans and push it to `codex/vscode-parity-p00`. P04.94 is then complete; register one next EDT-17 slice from `docs/11` in `docs/03` and `feature_list.json` before editing. Keep PR #2 open/draft. Preserve the unresolved historical crash evidence and avoid local GUI/accessibility actions that can start Narrator.
