@@ -12361,6 +12361,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final isEnter = key == LogicalKeyboardKey.enter ||
         key == LogicalKeyboardKey.numpadEnter;
     if (event is KeyDownEvent &&
+        !replace &&
+        isEnter &&
+        HardwareKeyboard.instance.isShiftPressed &&
+        !HardwareKeyboard.instance.isAltPressed &&
+        !HardwareKeyboard.instance.isControlPressed &&
+        !HardwareKeyboard.instance.isMetaPressed) {
+      unawaited(_gotoMatch(-1));
+      return KeyEventResult.handled;
+    }
+    if (event is KeyDownEvent &&
         isEnter &&
         HardwareKeyboard.instance.isAltPressed &&
         !HardwareKeyboard.instance.isControlPressed &&

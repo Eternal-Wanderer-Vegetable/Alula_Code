@@ -29,6 +29,14 @@ Future<void> _pressAltEnter(WidgetTester tester) async {
   await tester.pump();
 }
 
+Future<void> _pressShiftEnter(WidgetTester tester) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.enter);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.enter);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.pump();
+}
+
 Future<void> _waitForIsolates(WidgetTester tester) async {
   await tester.runAsync(
     () => Future<void>.delayed(const Duration(milliseconds: 80)),
@@ -65,6 +73,61 @@ Future<File> _launchFindWorkspace(
 }
 
 void main() {
+  testWidgets('Shift+Enter finds previous; Enter still finds next',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-find-previous-match-');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (temp.existsSync()) temp.deleteSync(recursive: true);
+    });
+    const source = 'foo foo foo';
+    await _launchFindWorkspace(tester, temp, text: source);
+    final editorFinder = find.byType(RustTextInputField);
+    final editorState = tester.state<RustTextInputFieldState>(editorFinder);
+    editorState.setSelection(const TextSelection.collapsed(offset: 0));
+    await tester.pump();
+    final documentVersion = editorState.widget.inputWindow.document.version;
+
+    await _pressChord(tester, LogicalKeyboardKey.keyH);
+    final findInput = find.byKey(const ValueKey('find-query-input'));
+    final replaceInput = find.byKey(const ValueKey('replace-query-input'));
+    await tester.enterText(findInput, 'foo');
+    await tester.pump();
+    await tester.tap(findInput);
+    await _pressShiftEnter(tester);
+    await tester.pumpAndSettle();
+
+    expect(
+      editorState.editingValue.selection,
+      const TextSelection(baseOffset: 8, extentOffset: 11),
+    );
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(
+      editorState.editingValue.selection,
+      const TextSelection(baseOffset: 0, extentOffset: 3),
+    );
+
+    await tester.tap(replaceInput);
+    await _pressShiftEnter(tester);
+    await tester.pumpAndSettle();
+    expect(
+      editorState.editingValue.selection,
+      const TextSelection(baseOffset: 0, extentOffset: 3),
+      reason: 'Shift+Enter in the Replace field must not navigate Find',
+    );
+    expect(_documentText(tester), source);
+    expect(
+      tester
+          .widget<RustTextInputField>(editorFinder)
+          .inputWindow
+          .document
+          .version,
+      documentVersion,
+    );
+  });
+
   testWidgets(
       'Alt+Enter selects literal hits and keeps the current hit primary',
       (tester) async {
