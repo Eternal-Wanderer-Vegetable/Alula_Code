@@ -31,11 +31,11 @@ Continue the fixed Code-OSS 1.145.0 parity plan one slice at a time. Prioritize 
 
 ## Next Priority
 
-The user flagged repeated CI failures as a possible contributor to crashes. First make the Windows close probe observable even when earlier accessibility/clipboard assertions fail: inspect job step conditions and artifact upload behavior, then register a narrowly scoped acceptance row before changes. Keep the confirmed historical `0xC000041D` separate from probe false reds until evidence links them. Address one failure signature at a time, run the relevant hosted workflow, and retain exact crash/close metadata. Then return to the next dependency-ready P04 slice from `docs/03`.
+The user flagged repeated CI failures as a possible contributor to crashes. The close-probe observability check is complete: the workflow already runs its close assertion and uploads metadata with `if: always()`. Five Windows artifacts from red Platform runs record clean `WM_CLOSE` exit code 0; one PowerShell parse failure did not produce close metadata. So far these CI failures do not explain or demonstrate mitigation of the historical `0xC000041D`. If pursuing CI hardening, first register one narrow acceptance slice for a specific recurring signature (MSAA semantic text, clipboard format, or PowerShell encoding), and keep it separate from the crash investigation. Then return to the next dependency-ready P04 slice from `docs/03`.
 
 ### Next Session First Step
 
-Run GitNexus status, refresh the stale index if needed, then inspect `.github/workflows/platform-availability.yml` Windows step conditions and artifact uploads. Register the CI observability slice in `docs/03` before editing it.
+Run GitNexus status and refresh the stale index if needed. If CI hardening remains the next task, choose one repeated probe failure from the recorded log/artifacts and add its acceptance row to `docs/03` before editing it; do not frame that change as a crash fix without new evidence.
 
 ## Constraints
 
