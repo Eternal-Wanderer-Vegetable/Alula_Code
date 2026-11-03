@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.84 / EDT-14a：正则替换捕获组与替换串语法（已完成本地 DoD 与优先 hosted gates）
+
+- 依 Code-OSS 1.145.0 实现 `$&`、`$0`–`$99`、`$$`、换行/制表/字面反斜线与捕获组大小写变换操作；支持正则当前替换与全部替换。沿用可取消 750 ms isolate、19,999 命中/有界输出、selection scope、零宽推进与 Rust 单 undo transaction；超时、取消、截断与 stale-result 均不写入。Preserve-case 留待 EDT-14 后续切片。
+- 新增 11 项替换测试。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter **758**）；cargo fmt、Flutter analyze（0 issues）、新/改 Dart 文件格式检查与 `git diff --check` 通过。本机未启动桌面 GUI/Narrator。
+- 代码 commit `8eb2d34` 已推送。PR CI [`41584189165`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41584189165) 四个 job 全绿（Flutter 758）。Platform Availability [`41584184923`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41584184923) Linux/Windows/macOS job 全绿。Linux artifacts `13207296631`/`13207371568` 记录 Xvfb launch、22 pointer events 与同文档 move/跨文档 copy/外部文本 drop；Windows artifacts `13207317283`/`13207886549` 记录 1028×711 可见客户区、96 DPI、UI Automation/MSAA、graceful close exit 0、13 pointer events 与三类 drop。macOS ARM64 package `13208125947`；DnD artifact `13206989416` 显示 pointer route unavailable、交互跳过；startup diagnostics `13207084453` 只有 Impeller 初始化行、无 crash report。
+- latest 100 branch Actions 仍为 CI 65 成功/0 失败、Platform Availability 28 成功/6 失败、另有一条历史 Windows artifact replay failure。重复平台红灯是无障碍/MSAA、clipboard、DnD 或 launch-probe 断言/解析失败；当前 green runs 仅是 non-reproduction evidence，未建立与 Windows `0xC000041D` / macOS SIGSEGV 的因果联系，也不声称缓解崩溃。详见 `docs/diagnostics/2026-11-03-p04/p04.84-regex-capture-replacement.md` 与 `ci-failures-and-crash-correlation.md`。
+- GitNexus re-index at `8eb2d34` succeeded. Post-code all-scope was 4 files/13 symbols/0 resolved processes/LOW; after status/evidence edits all-scope was 5 tracked files/9 symbols/0 resolved processes/LOW (new untracked report omitted). `workbench_page.dart` remains over the 512 KiB index limit, so zero process count is not complete coverage. Two refreshed compare-main scans reported 1,572 files/2,902–2,903 symbols/384 flows/CRITICAL with capped listing, reflecting cumulative branch divergence.
+
 ### P04.83 / EDT-13d：查找与替换历史（本地 DoD 与优先 hosted gates 通过）
 
 - 查找和替换历史默认按工作区保存，也支持 `editor.find.history` / `editor.find.replaceHistory = never` 仅内存保留；每栏最多 100 项，Up/Down 浏览 MRU 并恢复编辑草稿，重复值提升到最新。记录采用 500 ms debounce；每条最多 524,288 UTF-16 单元、最多保留 16 个工作区记录，损坏或超大 journal 回退为空；无 Rust/ABI 改动。

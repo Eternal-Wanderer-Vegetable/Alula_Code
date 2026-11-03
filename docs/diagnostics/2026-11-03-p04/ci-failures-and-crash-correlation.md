@@ -120,3 +120,24 @@ no recorded failure; this is non-reproduction evidence only. The sampled
 historical platform reds still have no shared known crash signature with the
 old Windows `0xC000041D` replay or macOS startup SIGSEGV. Neither historical
 source cause is resolved, and no causal link or crash mitigation is claimed.
+
+### P04.84 current-build run (2026-11-03)
+
+PR CI run [`41584189165`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41584189165)
+passed all four jobs, including Flutter analyze and **758 tests**, Linux and
+Windows Rust checks, and harness validation. Platform Availability run
+[`41584184923`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41584184923)
+passed Linux, Windows, and macOS jobs. Linux and Windows artifacts recorded
+22 and 13 Flutter pointer events with all three DnD routes. Windows client
+metadata records a visible 1028×711 window at 96 DPI, UI Automation/MSAA
+availability, and graceful close with exit code 0. The macOS ARM64 package was
+produced; its startup artifact contains only the Impeller initialization line
+and no crash report. The macOS DnD artifact again reports
+`CGEventPostToPid pointer route: false`, so native macOS DnD was skipped.
+
+The rolling 100-run branch sample remains 65 successful/0 failed CI runs,
+28 successful/6 failed Platform Availability runs, and one separate historical
+Windows artifact replay failure. The current green runs do not reproduce the
+historical crash signatures. Recurring platform reds still identify test/probe
+failures, not a demonstrated cause of or mitigation for either the Windows
+`0xC000041D` close crash or macOS startup SIGSEGV.
