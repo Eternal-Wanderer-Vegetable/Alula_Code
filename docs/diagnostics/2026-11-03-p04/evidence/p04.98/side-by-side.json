@@ -1,0 +1,129 @@
+{
+  "label": "p04.98-headless-side-by-side",
+  "exe": "/home/vegetable/develop/flutter/bin/cache/dart-sdk/bin/dart",
+  "args": [
+    "--packages=/tmp/alula-p04.70-next/app/.dart_tool/package_config.json",
+    "/tmp/p04.98-side-by-side-probe.dart",
+    "side-by-side"
+  ],
+  "duration_s": 8.0,
+  "interval_s": 0.5,
+  "root_pid": 796456,
+  "platform": "linux",
+  "captured_at": "2026-11-03 15:03:33 UTC",
+  "samples": [
+    {
+      "t": 3e-7,
+      "total_private": 156643328,
+      "total_working_set": 160497664,
+      "n_processes": 1
+    },
+    {
+      "t": 0.501094827,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 1.002091309,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 1.503101922,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 2.004100281,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 2.505150536,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 3.006096972,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 3.507100632,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 4.008096435,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 4.509109264,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 5.010090186,
+      "total_private": 212717568,
+      "total_working_set": 215052288,
+      "n_processes": 1
+    },
+    {
+      "t": 5.511096736,
+      "total_private": 212672512,
+      "total_working_set": 215007232,
+      "n_processes": 1
+    },
+    {
+      "t": 6.012107599,
+      "total_private": 212672512,
+      "total_working_set": 215007232,
+      "n_processes": 1
+    },
+    {
+      "t": 6.513088441,
+      "total_private": 212672512,
+      "total_working_set": 215007232,
+      "n_processes": 1
+    },
+    {
+      "t": 7.014099101,
+      "total_private": 212672512,
+      "total_working_set": 215007232,
+      "n_processes": 1
+    },
+    {
+      "t": 7.515086863,
+      "total_private": 212672512,
+      "total_working_set": 215007232,
+      "n_processes": 1
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 796456,
+      "ppid": 796441,
+      "name": "dart:p04.98-sid",
+      "working_set": 215007232,
+      "private": 212672512,
+      "peak_private": 0,
+      "pss": 212698112
+    }
+  ],
+  "summary": {
+    "peak_private": 212717568,
+    "stable_private": 212672512,
+    "final_private": 212672512,
+    "final_working_set": 215007232
+  }
+}

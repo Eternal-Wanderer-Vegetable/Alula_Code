@@ -49,11 +49,14 @@
 - GitNexus new function impact CRITICAL（76/31），view UNKNOWN；staged scan 3 files/14 symbols/376 flows/CRITICAL，流程明细 capped 且不匹配准确源码调用。workbench_page.dart 大于 512 KiB，caller 未入图；保留所有图谱风险。源码和 CI/crash 边界见 docs/diagnostics/2026-11-03-p04/p04.97-git-diff-word-highlight.md、ci-failures-and-crash-correlation.md。
 - 代码 commit 0eaacac 已推送。当前 green CI 只是 non-reproduction evidence；历史 Windows 11 ARM 关闭时 0xC000041D 仍未定位。
 
-### P04.98 / EDT-17f：Git unified diff 并排视图（已登记，待实现）
+### P04.98 / EDT-17f：Git unified diff 并排视图（已完成首批 hosted gate）
 
-- 下一切片在现有 Git Diff 视图增加 inline / side-by-side 切换；复用 bounded patch 与 word-range 模型，让上下文、配对变化、额外插入/删除行和元数据在两栏保持稳定映射与可选择性。单滚动序列保证同步；窄布局回退 inline，完整 raw-patch fallback 保留。
-- DoD 与边界已登记在 `docs/03-里程碑计划与验收标准.md`。不扩展到任意文件比较、moved blocks、忽略空白、folding、导航、apply/revert 或 Rust/ABI。
-- GitNexus 索引 fresh 于 `b2b370d`，但 diff query/context 未能解析实际 workbench caller；`workbench_page.dart` 超过 512 KiB 索引上限，源码位置为 16121。保留 UNKNOWN 与不相关流程映射警告；代码编辑前重新跑 impact。
+- Git Diff 增加 inline / side-by-side 切换；复用有界 patch/word diff 源行，左右分别编号并保持 selectable 高亮，同一行序列同步垂直滚动。上下文、hunk metadata 和 no-newline marker 跨栏；连续删除/新增按序配对，超限仍完整回退原 patch，宽度小于 640 logical px 时只提供 inline。新增纯投影 5 项与 widget 2 项测试；定向 suite 22 项、完整 `bash init.sh`（Rust workspace/Clippy/build_core、Flutter 836）、cargo fmt、Flutter analyze（0 issues）、Harness 100/100 均通过。无 Rust/ABI 改动，无本机 GUI/Narrator。
+- Headless Linux/WSL Dart 模型 probe 对 16,384 行/8,191 词对做 10 秒对照，`total_private` 尾部值基线 201.5 MiB、并排 202.8 MiB（方向性 +1.3 MiB）；峰值 204.2/202.9 MiB。该样本不是 Alula 桌面进程或 Windows 产品基线；原始 JSON 与脚本在 `docs/diagnostics/2026-11-03-p04/evidence/p04.98/`，不改变数值内存优化延期决定。
+- GitNexus fresh index 覆盖 1,272 个文件，仍跳过 >512 KiB 的 `workbench_page.dart`。本次 docs/evidence staged/all 扫描报 9 文件/1 symbol/385 flows/CRITICAL；唯一识别符号是文档 section，流程却映射到无关 build/LSP 代码。完整记录误连与截断，不把扫描当作 clean。
+- 代码 commit `6a247c7` 已推送。PR CI [`41659471482`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659471482) 最终 attempt 2 四 job 全绿（Flutter 836 tests）；首次 Windows Rust attempt 的既有 `p01_async_completion` 测试在 workspace shutdown 断言遇到缺失 `stopped` 字段、exit 1，未见 crash signature。耗时 3.03 秒；前一次与同 SHA rerun 均 1.80 秒通过。原始 FFI error 未输出，根因保留未定，后续复现时先增加诊断并采集子进程退出状态，不把重跑当成修复。
+- Platform Availability [`41659454431`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431) Linux x64、Windows x64、macOS ARM64 jobs 全通过。Linux/Windows DnD artifacts [`13240454720`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431/artifacts/13240454720) / [`13241223425`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431/artifacts/13241223425) 记录 23/13 events 与 move/copy/external-text；Windows 可见客户区 1028×711、96 DPI、UIA available、WM_CLOSE exit 0。macOS ARM64 package [`13242307358`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431/artifacts/13242307358) 与 startup [`13242572135`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431/artifacts/13242572135) 通过；macOS DnD [`13243135661`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41659454431/artifacts/13243135661) 因 hosted pointer route unavailable skip。
+- 最新 100 条 branch 常规 CI 最终结论 100 成功；Platform Availability 54 成功/46 历史失败，最近 54 条连续成功。旧 Windows artifact `0xC000041D` 和 macOS 启动 SIGSEGV 仍未定位；当前 smoke 是 non-reproduction evidence。完整报告：[`p04.98-git-diff-side-by-side.md`](docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md)、[`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
 
 ### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
 
