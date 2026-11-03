@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.96 / EDT-17d code commit `44807f2` is pushed; local DoD, PR CI, and Linux/Windows/macOS ARM64 hosted checks are complete. The evidence report and state updates are included with this commit.
+> Last Updated: 2026-11-03. P04.96 / EDT-17d evidence commit 735a465 is pushed; final PR CI run 41650426521 passed all four jobs. P04.97 / EDT-17e is registered in docs/03 and is now the active implementation slice.
 
 ## Current Objective
 
@@ -26,6 +26,13 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - GitNexus index was refreshed after implementation and covers 1,263 files. `workbench_page.dart` is omitted due to the analyzer's file-size limit; impacts for `_buildGitDiffPanel` and `_showGitDiff` are UNKNOWN/not found. Parser impact is CRITICAL (98 symbols/31 flows); repeated staged/all scans are 341–377 flows/CRITICAL, compare-main is 399 flows/CRITICAL and capped. Source search confirms parser/view/tests and one workbench panel call; all graph warnings remain unresolved.
 - Local DoD passed: focused parser/widget suite (7), full `bash init.sh` (Rust workspace/Clippy/build_core, Flutter 821), `cargo fmt --all -- --check`, Flutter analyze (0 issues), harness validator 100/100, JSON and diff checks. No local GUI/Narrator.
 - PR CI [`41647025365`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41647025365) passed all four jobs, including 821 Flutter tests. Platform Availability [`41647018011`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41647018011) passed Linux x64, Windows x64, and macOS ARM64. Linux/Windows DnD artifacts record 19/13 pointer events and move/copy/external-text routes. macOS DnD was skipped for unavailable hosted pointer routing. Full evidence: [`p04.96-git-diff-patch-renderer.md`](docs/diagnostics/2026-11-03-p04/p04.96-git-diff-patch-renderer.md).
+
+## Active Slice: P04.97 / EDT-17e
+
+- Implement bounded UTF-16 word highlights for ordinally paired removed/added rows in one contiguous Git unified-diff change block. Keep unpaired lines, context and hunk boundaries distinct; rich selectable text retains the existing full raw-patch fallback.
+- Budgets registered in docs/03: 8,192 pairs, 262,144 aggregate UTF-16 input units, 2,000,000 aggregate work, and 1,000,000 trace cells per pair. Any exhausted budget or word-model fallback paints the whole paired lines and records why. No Rust/ABI or numeric memory changes.
+- Before code edits, GitNexus index was refreshed and bound to /tmp/alula-p04.70-next at 735a465. computeWordDiff impact is CRITICAL (75 nodes/31 flows) with clearly unrelated graph mappings; GitDiffPatchView is UNKNOWN because workbench_page.dart exceeds index size cap. Source search confirms existing word-diff use in diff_view_model.dart and a single production GitDiffPatchView construction in the large Workbench file. All-scope doc scans varied between 0 affected processes/LOW and 84–377/CRITICAL; high-risk flow lists were capped and unrelated, so the 0 result is not an all-clear. Keep warnings unresolved and recheck before commit.
+- Last completed P04.96 evidence run 41650426521 passed Rust Linux/Windows, harness, and Flutter (821); local init.sh --fast passed. Historic Windows close crash remains unresolved. No local desktop or accessibility interaction.
 
 ## CI and Crash Finding
 
