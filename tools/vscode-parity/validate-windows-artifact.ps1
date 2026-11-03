@@ -567,6 +567,12 @@ try {
         [System.Windows.Forms.SendKeys]::SendWait($keys)
         Start-Sleep -Milliseconds $delayMs
       }
+      function Send-ArtifactText([string]$text, [int]$keyDelayMs = 50) {
+        foreach ($character in $text.ToCharArray()) {
+          [System.Windows.Forms.SendKeys]::SendWait([string]$character)
+          if ($keyDelayMs -gt 0) { Start-Sleep -Milliseconds $keyDelayMs }
+        }
+      }
       function Paste-ArtifactText([string]$value) {
         $homeInputs = [AlulaArtifactWindow]::SendKey(0x24)
         if ($homeInputs -ne 2) { throw "SendInput home key inserted $homeInputs of 2 keyboard events" }
@@ -839,12 +845,11 @@ try {
       if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
         throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
       }
-      # KEYEVENTF_UNICODE and clipboard paste were accepted by Windows but did
-      # not reach the focused split editor on the ARM runner. Send ordinary
-      # virtual-key keystrokes, matching physical typing, and verify the exact
-      # synchronized editor values instead of trusting accepted event counts.
-      $interactionResult.multiviewAppendInputRoute = 'sendkeys-ascii'
-      Send-ArtifactKeys $appendBody 500
+      # The ARM runner dropped one of two adjacent slash keypresses when the
+      # sequence was queued as a single SendKeys call. Pace ordinary virtual
+      # keys like physical typing and verify the exact synchronized values.
+      $interactionResult.multiviewAppendInputRoute = 'sendkeys-ascii-paced'
+      Send-ArtifactText $appendBody 50
       $multiviewEditDeadline = (Get-Date).AddSeconds(5)
       do {
         $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
