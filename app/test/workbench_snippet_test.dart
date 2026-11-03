@@ -1016,4 +1016,138 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     }
   });
+
+  testWidgets('placeholder transforms run on Tab, save, and undo',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template:
+            r'${1:name}-${1/(.*)/${1:/upcase}/}-${1/(.*)/${1:/downcase}/}$0',
+      );
+      await _replaceCurrentSelection(tester, 'CaRgO');
+      expect(controller.text, 'xCaRgO-CaRgO-CaRgO');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+
+      expect(controller.text, 'xCaRgO-CARGO-cargo');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'xCaRgO-CARGO-cargo');
+
+      await _press(tester, LogicalKeyboardKey.keyZ, control: true);
+      expect(controller.text, 'xCaRgO-CaRgO-CaRgO');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'placeholder transforms run on Shift+Tab with UTF-16, multiline, and CRLF save',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: '🙂\r\n  ',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 5);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: '\${1:x}-\${2:y}-\${2/x/\${1:-fallback\nnext}/}\$0',
+      );
+      await _press(tester, LogicalKeyboardKey.tab);
+      await _replaceCurrentSelection(tester, 'dog');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+
+      expect(controller.text, '🙂\n  x-dog-fallback\n  next');
+      expect(controller.selection,
+          const TextSelection(baseOffset: 5, extentOffset: 6));
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), '🙂\r\n  x-dog-fallback\r\n  next');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('placeholder transform drops its result after a concurrent edit',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'${1:a}-${1/(a|aa)+$/FAIL/}$0',
+      );
+      final slowValue = "${'a' * 48}b";
+      await _replaceCurrentSelection(tester, slowValue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'xchanged-changed',
+        selection: TextSelection.collapsed(offset: 16),
+      ));
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 900)),
+      );
+      await tester.pump();
+
+      expect(controller.text, 'xchanged-changed');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'xchanged-changed');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alula_app/editor/snippet_template.dart';
+import 'package:alula_app/editor/snippet_variable_transform.dart';
 
 void main() {
   group('snippetFilenameVariables', () {
@@ -679,11 +680,34 @@ void main() {
       expect(expansion.text, 'matched');
     });
 
-    test('keeps placeholder transforms unsupported and fails closed', () async {
-      await expectLater(
-        expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
-        throwsA(isA<SnippetTemplateException>()),
+    test('parses placeholder transforms and defers them until tabstop exit',
+        () async {
+      final expansion = await expandSnippetTemplate(
+        r'${1:name}-${1/([a-z]+)/${1:/upcase}/g}-${1/x/${1:-fallback}/}$0',
       );
+
+      expect(expansion.text, 'name-name-name');
+      final ranges = expansion.rangesFor(1);
+      expect(ranges, hasLength(3));
+      expect(ranges.first.transform, isNull);
+      expect(ranges[1].transform?.pattern, r'([a-z]+)');
+      expect(ranges[1].transform?.applyFormatWhenNoMatch, isFalse);
+      expect(ranges[2].transform?.applyFormatWhenNoMatch, isTrue);
+
+      final unmatched = await applySnippetVariableTransforms([
+        ranges[2].transform!.withValue('dog'),
+      ]);
+      expect(unmatched, ['fallback']);
+
+      final noElse = await applySnippetVariableTransforms([
+        ranges[1].transform!.withValue('123'),
+      ]);
+      expect(noElse, ['123']);
+    });
+
+    test('keeps an incomplete placeholder transform literal', () async {
+      const template = r'${1/regex/format/options';
+      expect((await expandSnippetTemplate(template)).text, template);
       await expectLater(
         expandSnippetTemplate(r'${TM_FILENAME/[a-z]+/\}'),
         throwsA(isA<SnippetTemplateException>()),

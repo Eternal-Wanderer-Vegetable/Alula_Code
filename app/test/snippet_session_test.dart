@@ -125,6 +125,38 @@ void main() {
       expect(session.currentRanges.single.startUtf16, 25);
     });
 
+    test('tracks an independently transformed placeholder mirror', () async {
+      final expansion = await expandSnippetTemplate(
+        r'${1:name}-${1/(.*)/${1:/upcase} suffix/}$0',
+      );
+      final session = SnippetSession(
+        expansion,
+        documentOffsetUtf16: 5,
+        version: 8,
+      );
+      final transformed = session.currentRanges.last;
+      expect(transformed.transform, isNotNull);
+
+      expect(
+        session.applyOperations(
+          [
+            TextOp.delete(transformed.startUtf16, transformed.lengthUtf16),
+            TextOp.insert(transformed.startUtf16, 'NAME suffix'),
+          ],
+          nextVersion: 9,
+          allowPartialActiveGroup: true,
+        ),
+        isTrue,
+      );
+      expect(session.currentRanges.first.transform, isNull);
+      expect(session.currentRanges.last.transform, isNotNull);
+      expect(session.currentRanges.last.startUtf16, 10);
+      expect(session.currentRanges.last.endUtf16, 21);
+      expect(session.moveNext(), isTrue);
+      expect(session.currentSelections.single,
+          const TextSelection.collapsed(offset: 21));
+    });
+
     test('nested child edits update both child and enclosing ranges', () async {
       final expansion = await expandSnippetTemplate(r'${1:pre ${2:🙂x}}$0');
       final session = SnippetSession(

@@ -21,6 +21,7 @@ class SnippetPlaceholderRange {
     this.choice,
     this.occurrenceId = 0,
     this.ancestorOccurrenceIds = const [],
+    this.transform,
   });
 
   /// Positive indices are visited in ascending order; zero is the final stop.
@@ -30,6 +31,7 @@ class SnippetPlaceholderRange {
   final SnippetChoice? choice;
   final int occurrenceId;
   final List<int> ancestorOccurrenceIds;
+  final SnippetVariableTransform? transform;
 
   int get lengthUtf16 => endUtf16 - startUtf16;
 }
@@ -522,12 +524,14 @@ class _SnippetSegment {
       : index = null,
         defaultSegments = null,
         choice = null,
+        transform = null,
         variableTransform = null;
 
   const _SnippetSegment.placeholder(
     this.index,
     this.defaultSegments, {
     this.choice,
+    this.transform,
   })  : text = null,
         variableTransform = null;
 
@@ -535,12 +539,14 @@ class _SnippetSegment {
       : text = null,
         index = null,
         defaultSegments = null,
-        choice = null;
+        choice = null,
+        transform = null;
 
   final String? text;
   final int? index;
   final SnippetChoice? choice;
   final SnippetVariableTransform? variableTransform;
+  final SnippetVariableTransform? transform;
 
   /// `null` means a mirror; an empty list is an explicit empty default.
   final List<_SnippetSegment>? defaultSegments;
@@ -620,6 +626,7 @@ class _SnippetTemplateParser {
                 segment.index!,
                 replace(segment.defaultSegments!),
                 choice: segment.choice,
+                transform: segment.transform,
               )
             else
               segment,
@@ -728,7 +735,23 @@ class _SnippetTemplateParser {
       );
     }
     if (marker == _slash) {
-      throw SnippetTemplateException('transforms are not supported yet', start);
+      try {
+        final parsed = _parseVariableTransform(
+          cursor + 1,
+          start: start,
+          value: '',
+          usePlaceholderNoMatchSemantics: true,
+        );
+        _offset = parsed.endOffset;
+        return _SnippetSegment.placeholder(
+          index,
+          null,
+          transform: parsed.transform,
+        );
+      } on SnippetTemplateException catch (error) {
+        if (error.message != 'unterminated variable transform') rethrow;
+        return null;
+      }
     }
     if (marker != _colon) return null;
 
@@ -871,6 +894,7 @@ class _SnippetTemplateParser {
     int cursor, {
     required int start,
     required String value,
+    bool usePlaceholderNoMatchSemantics = false,
   }) {
     final regex = _readTransformSection(cursor, start: start);
     final format = _readTransformSection(
@@ -894,6 +918,8 @@ class _SnippetTemplateParser {
         format: format.value,
         options: options.toString(),
         offsetUtf16: start,
+        applyFormatWhenNoMatch: usePlaceholderNoMatchSemantics &&
+            snippetTransformHasElseBranch(format.value),
       ),
       cursor + 1,
     );
@@ -1027,6 +1053,7 @@ class _SnippetTemplateParser {
           choice: segment.choice,
           occurrenceId: occurrenceId,
           ancestorOccurrenceIds: List.unmodifiable(ancestors),
+          transform: segment.transform,
         ));
       }
     }

@@ -9,6 +9,7 @@ class SnippetVariableTransform {
     required this.format,
     required this.options,
     required this.offsetUtf16,
+    this.applyFormatWhenNoMatch = false,
   });
 
   final String value;
@@ -16,6 +17,17 @@ class SnippetVariableTransform {
   final String format;
   final String options;
   final int offsetUtf16;
+  final bool applyFormatWhenNoMatch;
+
+  SnippetVariableTransform withValue(String nextValue) =>
+      SnippetVariableTransform(
+        value: nextValue,
+        pattern: pattern,
+        format: format,
+        options: options,
+        offsetUtf16: offsetUtf16,
+        applyFormatWhenNoMatch: applyFormatWhenNoMatch,
+      );
 }
 
 class SnippetVariableTransformException implements Exception {
@@ -81,6 +93,7 @@ Future<List<String>> applySnippetVariableTransforms(
               'pattern': transform.pattern,
               'format': transform.format,
               'options': transform.options,
+              'applyFormatWhenNoMatch': transform.applyFormatWhenNoMatch,
             },
         ],
       ],
@@ -146,6 +159,7 @@ void _snippetVariableTransformWorker(List<Object?> message) {
         pattern: job['pattern']! as String,
         format: job['format']! as String,
         options: job['options']! as String,
+        applyFormatWhenNoMatch: job['applyFormatWhenNoMatch'] == true,
       );
       outputUtf16 += value.length;
       if (outputUtf16 > maxSnippetVariableTransformOutputUtf16) {
@@ -174,6 +188,7 @@ String _replaceSnippetTransform({
   required String pattern,
   required String format,
   required String options,
+  required bool applyFormatWhenNoMatch,
 }) {
   final seenOptions = <String>{};
   for (final optionUnit in options.codeUnits) {
@@ -191,7 +206,14 @@ String _replaceSnippetTransform({
   );
 
   final first = regex.firstMatch(value);
-  if (first == null) return value;
+  if (first == null) {
+    if (!applyFormatWhenNoMatch) return value;
+    return _formatSnippetReplacement(
+      format,
+      null,
+      maxOutputUtf16: maxSnippetVariableTransformOutputUtf16,
+    );
+  }
   final matches = seenOptions.contains('g')
       ? regex.allMatches(value)
       : <RegExpMatch>[first];
@@ -221,7 +243,7 @@ String _replaceSnippetTransform({
 
 String _formatSnippetReplacement(
   String format,
-  RegExpMatch match, {
+  RegExpMatch? match, {
   required int maxOutputUtf16,
 }) {
   final units = format.codeUnits;
@@ -306,7 +328,7 @@ int _findFormatClose(List<int> units, int start) {
 
 String _formatSnippetExpression(
   String expression,
-  RegExpMatch match, {
+  RegExpMatch? match, {
   required int maxOutputUtf16,
 }) {
   String bounded(String value) {
@@ -352,9 +374,68 @@ String _formatSnippetExpression(
   throw const FormatException('unsupported capture group format');
 }
 
-String? _snippetCapture(RegExpMatch match, int group) {
+String? _snippetCapture(RegExpMatch? match, int group) {
+  if (match == null) return null;
   if (group < 0 || group > match.groupCount) return null;
   return match.group(group);
+}
+
+/// Whether a TextMate transform format declares a non-empty unmatched branch.
+/// Code-OSS only runs the replacement on a failed regex match in that case.
+bool snippetTransformHasElseBranch(String format) {
+  final units = format.codeUnits;
+  var offset = 0;
+  while (offset + 1 < units.length) {
+    if (units[offset] == 0x5c) {
+      offset += 2;
+      continue;
+    }
+    if (units[offset] != 0x24 || units[offset + 1] != 0x7b) {
+      offset++;
+      continue;
+    }
+
+    final expressionStart = offset + 2;
+    var close = expressionStart;
+    while (close < units.length) {
+      if (units[close] == 0x5c) {
+        close += 2;
+        continue;
+      }
+      if (units[close] == 0x7d) break;
+      close++;
+    }
+    if (close >= units.length) return false;
+
+    var cursor = expressionStart;
+    while (cursor < close && units[cursor] >= 0x30 && units[cursor] <= 0x39) {
+      cursor++;
+    }
+    if (cursor > expressionStart && cursor < close && units[cursor] == 0x3a) {
+      final suffixStart = cursor + 1;
+      if (suffixStart < close && units[suffixStart] == 0x2d) {
+        if (suffixStart + 1 < close) return true;
+      } else if (suffixStart < close && units[suffixStart] == 0x3f) {
+        for (var separator = suffixStart + 1; separator < close; separator++) {
+          if (units[separator] == 0x5c) {
+            separator++;
+            continue;
+          }
+          if (units[separator] == 0x3a) {
+            if (separator + 1 < close) return true;
+            break;
+          }
+        }
+      } else if (suffixStart < close &&
+          units[suffixStart] != 0x2b &&
+          units[suffixStart] != 0x2f) {
+        // `${n:else}` is TextMate's default value for a missing capture.
+        return true;
+      }
+    }
+    offset = close + 1;
+  }
+  return false;
 }
 
 (String, String) _splitSnippetConditional(String value) {

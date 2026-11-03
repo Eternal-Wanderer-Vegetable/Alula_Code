@@ -51,6 +51,7 @@ import '../editor/rust_text_input_window.dart';
 import '../editor/snippet_session.dart';
 import '../editor/snippet_choice_suggestion_list.dart';
 import '../editor/snippet_template.dart';
+import '../editor/snippet_variable_transform.dart';
 import '../editor/text_diff.dart';
 import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
@@ -362,6 +363,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   int? _snippetChoiceUiTabstop;
   int _snippetChoiceSelectedIndex = 0;
   bool _snippetChoiceDismissed = false;
+  bool _snippetNavigationPending = false;
+  int _snippetNavigationEpoch = 0;
   List<TextOp>? _pendingSnippetOperations;
   bool _disposing = false;
   String _statusDetail = '初始化…';
@@ -10121,10 +10124,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final absoluteStart = window.startUtf16 + localStart;
     if (firstTabstop != null) {
+      final lineBreakBefore =
+          localStart == 0 ? -1 : value.text.lastIndexOf('\n', localStart - 1);
+      final linePrefix = value.text.substring(lineBreakBefore + 1, localStart);
+      final lineLeadingWhitespace =
+          RegExp(r'^[ \t]*').firstMatch(linePrefix)?.group(0) ?? '';
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: absoluteStart,
         version: doc.doc.version,
+        lineLeadingWhitespace: lineLeadingWhitespace,
       );
       _snippetSession = session;
       _snippetSessionDocId = doc.id;
@@ -10291,7 +10300,299 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _clearSnippetSession();
       return;
     }
-    if (!session.moveNext()) {
+    field.requestFocus();
+    unawaited(_moveSnippetTabstop(doc, session, forward: true));
+  }
+
+  Future<void> _moveSnippetTabstop(
+    OpenDoc doc,
+    SnippetSession session, {
+    required bool forward,
+  }) async {
+    if (_snippetNavigationPending) return;
+    _flushInput(doc);
+    if (!identical(_snippetSession, session) ||
+        _snippetSessionDocId != doc.id ||
+        session.version != doc.doc.version) {
+      _clearSnippetSession();
+      return;
+    }
+
+    final transforms = session.currentRanges
+        .where((range) => range.transform != null)
+        .toList(growable: false);
+    if (transforms.isEmpty) {
+      _finishSnippetTabstopMove(doc, session, forward: forward);
+      return;
+    }
+
+    final epoch = ++_snippetNavigationEpoch;
+    _snippetNavigationPending = true;
+    final expectedVersion = session.version;
+    final window = doc.inputWindow;
+    final windowText = window.text;
+    final windowStart = window.startUtf16;
+    final windowEnd = window.endUtf16;
+    final field = doc.inputFieldKey.currentState;
+    final editingValue = field?.editingValue ?? window.initialValue;
+    final selectionSet = List<TextSelection>.of(doc.selectionSet);
+
+    bool isCurrentSnapshot() {
+      final currentWindow = doc.inputWindow;
+      return mounted &&
+          !_disposing &&
+          _snippetNavigationEpoch == epoch &&
+          identical(_snippetSession, session) &&
+          _snippetSessionDocId == doc.id &&
+          identical(_active, doc) &&
+          doc.doc.version == expectedVersion &&
+          session.version == expectedVersion &&
+          identical(doc.inputFieldKey.currentState, field) &&
+          currentWindow.version == window.version &&
+          currentWindow.startUtf16 == windowStart &&
+          currentWindow.endUtf16 == windowEnd &&
+          currentWindow.text == windowText &&
+          doc.editingValue == editingValue &&
+          listEquals(doc.selectionSet, selectionSet);
+    }
+
+    try {
+      if (transforms.length > maxSnippetVariableTransforms) {
+        throw SnippetVariableTransformException(
+          'snippet transform count exceeds the limit',
+          transforms[maxSnippetVariableTransforms].transform!.offsetUtf16,
+        );
+      }
+      var totalInputUtf16 = 0;
+      final values = <String>[];
+      for (final range in transforms) {
+        totalInputUtf16 += range.lengthUtf16;
+        if (totalInputUtf16 > maxSnippetVariableTransformInputUtf16) {
+          throw SnippetVariableTransformException(
+            'snippet transform input exceeds the size limit',
+            range.transform!.offsetUtf16,
+          );
+        }
+        values.add(_readSnippetTransformRange(
+          doc,
+          range.startUtf16,
+          range.endUtf16,
+          expectedVersion: expectedVersion,
+        ));
+      }
+      if (!isCurrentSnapshot()) return;
+
+      final evaluated = await applySnippetVariableTransforms([
+        for (var index = 0; index < transforms.length; index++)
+          transforms[index].transform!.withValue(values[index]),
+      ]);
+      if (!isCurrentSnapshot()) return;
+
+      final edits =
+          <({SnippetPlaceholderRange range, String text, String old})>[];
+      var totalOutputUtf16 = 0;
+      for (var index = 0; index < transforms.length; index++) {
+        final range = transforms[index];
+        final text = _normalizeSnippetPlaceholderTransform(
+          evaluated[index],
+          session.lineLeadingWhitespace,
+        );
+        totalOutputUtf16 += text.length;
+        if (totalOutputUtf16 > maxSnippetVariableTransformOutputUtf16) {
+          throw SnippetVariableTransformException(
+            'snippet transform output exceeds the size limit',
+            range.transform!.offsetUtf16,
+          );
+        }
+        if (text != values[index]) {
+          edits.add((range: range, text: text, old: values[index]));
+        }
+      }
+      edits.sort((left, right) =>
+          left.range.startUtf16.compareTo(right.range.startUtf16));
+      for (var index = 1; index < edits.length; index++) {
+        final previous = edits[index - 1].range;
+        final current = edits[index].range;
+        if (current.startUtf16 < previous.endUtf16 ||
+            current.startUtf16 == previous.startUtf16) {
+          throw SnippetVariableTransformException(
+            'snippet placeholder transforms overlap',
+            current.transform!.offsetUtf16,
+          );
+        }
+      }
+
+      final forwardOperations = <TextOp>[];
+      final inverse = <TextOp>[];
+      var deltaBefore = 0;
+      final mappedStarts = <int>[];
+      for (final edit in edits) {
+        mappedStarts.add(edit.range.startUtf16 + deltaBefore);
+        deltaBefore += edit.text.length - edit.old.length;
+      }
+      for (final edit in edits.reversed) {
+        if (edit.old.isNotEmpty) {
+          forwardOperations
+              .add(TextOp.delete(edit.range.startUtf16, edit.old.length));
+        }
+        if (edit.text.isNotEmpty) {
+          forwardOperations
+              .add(TextOp.insert(edit.range.startUtf16, edit.text));
+        }
+      }
+      for (var index = edits.length - 1; index >= 0; index--) {
+        final edit = edits[index];
+        final mappedStart = mappedStarts[index];
+        if (edit.text.isNotEmpty) {
+          inverse.add(TextOp.delete(mappedStart, edit.text.length));
+        }
+        if (edit.old.isNotEmpty) {
+          inverse.add(TextOp.insert(mappedStart, edit.old));
+        }
+      }
+
+      if (forwardOperations.isNotEmpty) {
+        if (!isCurrentSnapshot()) return;
+        final beforeCaret = doc.selection.extentOffset;
+        final nextVersion =
+            doc.doc.applyWith(expectedVersion, forwardOperations);
+        doc.lastEditAt = null;
+        final rangesUpdated = session.applyOperations(
+          forwardOperations,
+          nextVersion: nextVersion,
+          allowPartialActiveGroup: true,
+        );
+        if (!rangesUpdated) {
+          _recordDocumentOperations(
+            doc,
+            forward: forwardOperations,
+            inverse: inverse,
+            beforeCaret: beforeCaret,
+            afterCaret: beforeCaret,
+            coalesce: false,
+          );
+          _refreshSiblingViews(doc, forwardOperations);
+          _clearSnippetSession();
+          doc.replaceInputWindow(beforeCaret);
+          if (mounted) {
+            setState(() => _statusDetail = '片段占位符转换后无法跟踪选区');
+          }
+          _onFindTextChanged();
+          return;
+        }
+        _refreshSiblingViews(doc, forwardOperations);
+      }
+
+      final moved = forward ? session.moveNext() : session.movePrevious();
+      final selections = moved || !forward
+          ? session.currentSelections
+          : [
+              TextSelection.collapsed(
+                offset: session.currentRanges.firstOrNull?.endUtf16 ??
+                    doc.selection.extentOffset,
+              ),
+            ];
+      final afterCaret =
+          selections.firstOrNull?.extentOffset ?? doc.selection.extentOffset;
+      if (edits.isNotEmpty) {
+        _recordDocumentOperations(
+          doc,
+          forward: forwardOperations,
+          inverse: inverse,
+          beforeCaret: selectionSet.first.extentOffset,
+          afterCaret: afterCaret,
+          coalesce: false,
+        );
+      }
+      doc.replaceInputWindow(afterCaret, selection: selections.firstOrNull);
+      if (!moved && forward) {
+        _clearSnippetSession(clearSecondarySelections: false);
+        _setDocSelections(doc, selections);
+        _onFindTextChanged();
+        return;
+      }
+      _snippetSessionView = doc;
+      _syncSnippetChoiceUi(session);
+      _setDocSelections(doc, selections);
+      if (session.isAtFinalTabstop) {
+        _clearSnippetSession(clearSecondarySelections: false);
+      }
+      _onFindTextChanged();
+      field?.requestFocus();
+    } on SnippetVariableTransformException catch (error) {
+      if (isCurrentSnapshot() && mounted) {
+        setState(() => _statusDetail = '片段占位符转换失败：${error.message}');
+      }
+    } on AlulaException catch (error) {
+      if (isCurrentSnapshot() && mounted) {
+        setState(
+            () => _statusDetail = '片段占位符转换失败：${error.code} ${error.detail}');
+      }
+    } on Object catch (error) {
+      if (isCurrentSnapshot() && mounted) {
+        setState(() => _statusDetail = '片段占位符转换失败：$error');
+      }
+    } finally {
+      if (_snippetNavigationEpoch == epoch) {
+        _snippetNavigationPending = false;
+      }
+    }
+  }
+
+  String _readSnippetTransformRange(
+    OpenDoc doc,
+    int startUtf16,
+    int endUtf16, {
+    required int expectedVersion,
+  }) {
+    if (startUtf16 < 0 || endUtf16 < startUtf16) {
+      throw const SnippetVariableTransformException(
+        'snippet placeholder range is invalid',
+        0,
+      );
+    }
+    final output = StringBuffer();
+    var cursor = startUtf16;
+    while (cursor < endUtf16) {
+      final range = doc.doc.readRange(
+        cursor,
+        maxLenUtf16: (endUtf16 - cursor).clamp(1, 64 * 1024).toInt(),
+      );
+      if (range.version != expectedVersion ||
+          range.startUtf16 != cursor ||
+          range.endUtf16 <= cursor ||
+          range.endUtf16 > endUtf16 ||
+          range.text.length != range.endUtf16 - range.startUtf16) {
+        throw SnippetVariableTransformException(
+          'snippet placeholder range changed while reading',
+          startUtf16,
+        );
+      }
+      output.write(range.text);
+      cursor = range.endUtf16;
+    }
+    return output.toString();
+  }
+
+  String _normalizeSnippetPlaceholderTransform(
+    String value,
+    String lineLeadingWhitespace,
+  ) {
+    final lines = value.split(RegExp(r'\r\n|\r|\n'));
+    if (lines.length == 1) return lines.single;
+    for (var index = 1; index < lines.length; index++) {
+      lines[index] = '$lineLeadingWhitespace${lines[index]}';
+    }
+    return lines.join('\n');
+  }
+
+  void _finishSnippetTabstopMove(
+    OpenDoc doc,
+    SnippetSession session, {
+    required bool forward,
+  }) {
+    final moved = forward ? session.moveNext() : session.movePrevious();
+    if (!moved && forward) {
       _clearSnippetSession(clearSecondarySelections: false);
       return;
     }
@@ -10301,10 +10602,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (session.isAtFinalTabstop) {
       _clearSnippetSession(clearSecondarySelections: false);
     }
-    field.requestFocus();
   }
 
   void _clearSnippetSession({bool clearSecondarySelections = true}) {
+    _snippetNavigationEpoch++;
+    _snippetNavigationPending = false;
     final view = _snippetSessionView;
     _snippetSession = null;
     _snippetSessionDocId = null;
@@ -10897,23 +11199,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 );
                 return KeyEventResult.handled;
               }
-              _flushInput(active);
-              if (!identical(_snippetSession, snippetSession) ||
-                  snippetSession.version != active.doc.version) {
-                _clearSnippetSession();
-                return KeyEventResult.handled;
-              }
-              if (shift) {
-                snippetSession.movePrevious();
-              } else {
-                snippetSession.moveNext();
-              }
-              _snippetSessionView = active;
-              _syncSnippetChoiceUi(snippetSession);
-              _setDocSelections(active, snippetSession.currentSelections);
-              if (snippetSession.isAtFinalTabstop) {
-                _clearSnippetSession(clearSecondarySelections: false);
-              }
+              unawaited(_moveSnippetTabstop(
+                active,
+                snippetSession,
+                forward: !shift,
+              ));
               return KeyEventResult.handled;
             }
             if (!ctrl && !meta && !alt && key == LogicalKeyboardKey.escape) {

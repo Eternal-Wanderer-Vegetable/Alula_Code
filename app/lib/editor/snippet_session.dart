@@ -9,6 +9,7 @@ class SnippetSession {
     SnippetExpansion expansion, {
     required int documentOffsetUtf16,
     required this.version,
+    this.lineLeadingWhitespace = '',
   })  : _tabstopOrder = expansion.tabstopOrder,
         _rangesByIndex = _groupRanges(expansion, documentOffsetUtf16),
         _currentIndex = expansion.tabstopOrder.first;
@@ -19,6 +20,10 @@ class SnippetSession {
 
   /// The Rust document version whose coordinates these ranges describe.
   int version;
+
+  /// Whitespace before the snippet on its initial line, used by multiline
+  /// placeholder transforms to align continuation lines.
+  final String lineLeadingWhitespace;
 
   int get currentTabstop => _currentIndex;
   bool get isAtFinalTabstop => _currentIndex == 0;
@@ -129,10 +134,15 @@ class SnippetSession {
 
   /// Applies a committed Rust input batch to tracked placeholder ranges.
   ///
-  /// Each placeholder in the active group must receive the same edit. If an
-  /// edit crosses a placeholder boundary or misses a mirror, the session is
-  /// rejected so a later Tab cannot navigate to stale document offsets.
-  bool applyOperations(List<TextOp> operations, {required int nextVersion}) {
+  /// By default each placeholder in the active group must receive the same
+  /// edit. Placeholder transforms may set [allowPartialActiveGroup] because
+  /// each transformed mirror can produce a different replacement. An edit
+  /// crossing a placeholder boundary still rejects the session.
+  bool applyOperations(
+    List<TextOp> operations, {
+    required int nextVersion,
+    bool allowPartialActiveGroup = false,
+  }) {
     if (operations.isEmpty) {
       version = nextVersion;
       return true;
@@ -212,7 +222,9 @@ class SnippetSession {
             return false;
           }
         }
-        if (isActiveGroup && !touched) return false;
+        if (isActiveGroup && !touched && !allowPartialActiveGroup) {
+          return false;
+        }
         if (touched) touchedActiveRanges++;
         final start = range.startUtf16 + shiftBefore;
         final end = range.endUtf16 + shiftBefore + deltaInside;
@@ -224,12 +236,17 @@ class SnippetSession {
           choice: range.choice,
           occurrenceId: range.occurrenceId,
           ancestorOccurrenceIds: range.ancestorOccurrenceIds,
+          transform: range.transform,
         ));
       }
       updated[entry.key] = ranges;
     }
 
-    if (touchedActiveRanges != currentRanges.length) return false;
+    if (allowPartialActiveGroup
+        ? touchedActiveRanges == 0
+        : touchedActiveRanges != currentRanges.length) {
+      return false;
+    }
     _rangesByIndex
       ..clear()
       ..addAll(updated);
@@ -250,6 +267,7 @@ class SnippetSession {
             choice: range.choice,
             occurrenceId: range.occurrenceId,
             ancestorOccurrenceIds: range.ancestorOccurrenceIds,
+            transform: range.transform,
           ));
     }
     return result;
@@ -280,6 +298,7 @@ SnippetPlaceholderRange? _trackNestedRange(
     choice: range.choice,
     occurrenceId: range.occurrenceId,
     ancestorOccurrenceIds: range.ancestorOccurrenceIds,
+    transform: range.transform,
   );
 }
 
