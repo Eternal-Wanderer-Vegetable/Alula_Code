@@ -143,7 +143,7 @@ packages:
     source: path
     version: "0.5.5"
   irondash_message_channel:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: irondash_message_channel
       sha256: b4101669776509c76133b8917ab8cfc704d3ad92a8c450b92934dd8884a2f060
@@ -348,7 +348,7 @@ packages:
     source: hosted
     version: "0.9.1"
   super_native_extensions:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: super_native_extensions
       sha256: b9611dcb68f1047d6f3ef11af25e4e68a21b1a705bbcc3eb8cb4e9f5c3148569

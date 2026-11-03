@@ -12,6 +12,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:irondash_message_channel/irondash_message_channel.dart';
+// Test fixtures need the package's native-channel override, which is test-only.
+// ignore: implementation_imports
+import 'package:super_native_extensions/src/native/context.dart'
+    show setContextOverride;
 
 Future<(Directory, File)> _openSnippetFixture(
   WidgetTester tester,
@@ -101,6 +106,23 @@ Future<void> _press(
 }
 
 void main() {
+  setUpAll(() {
+    final mockContext = MockMessageChannelContext();
+    for (final channel in ['DragManager', 'DropManager']) {
+      mockContext.registerMockChannelHandler(
+        channel,
+        (_) async => ['ok', null],
+      );
+    }
+    setContextOverride(mockContext);
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('dev.irondash.engine_context'),
+          (call) async => call.method == 'getEngineHandle' ? 1 : null,
+        );
+  });
+
   for (final platform in [
     TargetPlatform.windows,
     TargetPlatform.linux,
@@ -717,6 +739,118 @@ void main() {
       await _press(tester, LogicalKeyboardKey.keyS, control: true);
       await tester.pump(const Duration(milliseconds: 100));
       expect(file.readAsStringSync(), expectedOnDisk);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('current-line variable transform resolves from Rust and saves',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+        initialText: 'before\r\nse🙂cond\r\nlast',
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 11);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<${TM_CURRENT_LINE/(.*)/${1:/upcase}/}>$0',
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+
+      const expectedEditor = 'before\nse🙂<SE🙂COND>cond\nlast';
+      const expectedOnDisk = 'before\r\nse🙂<SE🙂COND>cond\r\nlast';
+      expect(controller.text, expectedEditor);
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), expectedOnDisk);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('snippet transform does not overwrite edits made while resolving',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final (_, file) = await _openSnippetFixture(
+        tester,
+        TargetPlatform.windows,
+      );
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<${TM_FILENAME/(.*)/$1/}>$0',
+      );
+      expect(controller.text, 'x');
+
+      await tester.showKeyboard(editor);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'changed',
+        selection: TextSelection.collapsed(offset: 7),
+      ));
+      await tester.pump();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
+
+      expect(controller.text, 'changed');
+      await _press(tester, LogicalKeyboardKey.keyS, control: true);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'changed');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'snippet transform does not touch a controller closed while resolving',
+      (tester) async {
+    try {
+      tester.view.physicalSize = const Size(1100, 720);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await _openSnippetFixture(tester, TargetPlatform.windows);
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      final controller = tester.widget<TextField>(editor).controller!;
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+
+      await _insertSnippetFromPalette(
+        tester,
+        template: r'<${TM_FILENAME/(.*)/$1/}>$0',
+      );
+      expect(controller.text, 'x');
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pump();
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;

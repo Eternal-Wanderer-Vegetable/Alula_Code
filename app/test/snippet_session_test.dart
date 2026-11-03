@@ -7,8 +7,9 @@ import 'package:alula_app/editor/snippet_template.dart';
 
 void main() {
   group('SnippetSession', () {
-    test('visits numeric tabstops in order and leaves the final stop last', () {
-      final expansion = expandSnippetTemplate(r'${2:second} ${1:first}');
+    test('visits numeric tabstops in order and leaves the final stop last',
+        () async {
+      final expansion = await expandSnippetTemplate(r'${2:second} ${1:first}');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 10,
@@ -27,9 +28,10 @@ void main() {
       expect(session.currentTabstop, 2);
     });
 
-    test('preserves active choice metadata while linked ranges are edited', () {
+    test('preserves active choice metadata while linked ranges are edited',
+        () async {
       final expansion =
-          expandSnippetTemplate(r'${1|blue,green|} / $1 ${2:done}$0');
+          await expandSnippetTemplate(r'${1|blue,green|} / $1 ${2:done}$0');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 20,
@@ -58,9 +60,10 @@ void main() {
       expect(session.activeChoiceRange, isNull);
     });
 
-    test('only exposes choice metadata from the first active occurrence', () {
+    test('only exposes choice metadata from the first active occurrence',
+        () async {
       final session = SnippetSession(
-        expandSnippetTemplate(r'$1 ${1|one,two|}'),
+        await expandSnippetTemplate(r'$1 ${1|one,two|}'),
         documentOffsetUtf16: 0,
         version: 1,
       );
@@ -71,8 +74,9 @@ void main() {
       expect(session.activeChoiceRange, isNull);
     });
 
-    test('maps manual selection positions across linked placeholders', () {
-      final expansion = expandSnippetTemplate(r'${1:name}-$1-${2:value}');
+    test('maps manual selection positions across linked placeholders',
+        () async {
+      final expansion = await expandSnippetTemplate(r'${1:name}-$1-${2:value}');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 20,
@@ -93,8 +97,8 @@ void main() {
       );
     });
 
-    test('tracks a mirrored edit and shifts later tabstops', () {
-      final expansion = expandSnippetTemplate(r'${1:name} $1');
+    test('tracks a mirrored edit and shifts later tabstops', () async {
+      final expansion = await expandSnippetTemplate(r'${1:name} $1');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 20,
@@ -121,8 +125,8 @@ void main() {
       expect(session.currentRanges.single.startUtf16, 25);
     });
 
-    test('nested child edits update both child and enclosing ranges', () {
-      final expansion = expandSnippetTemplate(r'${1:pre ${2:🙂x}}$0');
+    test('nested child edits update both child and enclosing ranges', () async {
+      final expansion = await expandSnippetTemplate(r'${1:pre ${2:🙂x}}$0');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 10,
@@ -153,9 +157,9 @@ void main() {
       expect(session.currentRanges.single.startUtf16, 16);
     });
 
-    test('nested empty child remains inside its parent when edited', () {
+    test('nested empty child remains inside its parent when edited', () async {
       final session = SnippetSession(
-        expandSnippetTemplate(r'${1:pre ${2:x}}$0'),
+        await expandSnippetTemplate(r'${1:pre ${2:x}}$0'),
         documentOffsetUtf16: 10,
         version: 3,
       );
@@ -198,8 +202,10 @@ void main() {
       expect(session.currentRanges.single.endUtf16, 16);
     });
 
-    test('plans mirrored edits without collapsing across intervening text', () {
-      final expansion = expandSnippetTemplate(r'${1:name} = $1; ${2:value}$0');
+    test('plans mirrored edits without collapsing across intervening text',
+        () async {
+      final expansion =
+          await expandSnippetTemplate(r'${1:name} = $1; ${2:value}$0');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 1,
@@ -228,8 +234,8 @@ void main() {
     });
 
     test('rejects a missing mirror edit without publishing stale coordinates',
-        () {
-      final expansion = expandSnippetTemplate(r'${1:name} $1');
+        () async {
+      final expansion = await expandSnippetTemplate(r'${1:name} $1');
       final session = SnippetSession(
         expansion,
         documentOffsetUtf16: 20,

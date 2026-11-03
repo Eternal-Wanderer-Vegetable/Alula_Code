@@ -4,7 +4,7 @@ import 'package:alula_app/editor/snippet_template.dart';
 
 void main() {
   group('snippetFilenameVariables', () {
-    test('uses the filename and removes only its final extension', () {
+    test('uses the filename and removes only its final extension', () async {
       expect(
         snippetFilenameVariables('archive.tar.rs'),
         {'TM_FILENAME': 'archive.tar.rs', 'TM_FILENAME_BASE': 'archive.tar'},
@@ -15,7 +15,7 @@ void main() {
       );
     });
 
-    test('preserves dotfiles and resolves an untitled name to empty', () {
+    test('preserves dotfiles and resolves an untitled name to empty', () async {
       expect(
         snippetFilenameVariables('.env'),
         {'TM_FILENAME': '.env', 'TM_FILENAME_BASE': '.env'},
@@ -28,7 +28,8 @@ void main() {
   });
 
   group('snippetDocumentPathVariables', () {
-    test('formats nested POSIX paths and tildifies the home directory', () {
+    test('formats nested POSIX paths and tildifies the home directory',
+        () async {
       expect(
         snippetDocumentPathVariables(
           '/home/alice/project/src/main.rs',
@@ -43,7 +44,7 @@ void main() {
       );
     });
 
-    test('keeps POSIX filesystem-root parent behavior', () {
+    test('keeps POSIX filesystem-root parent behavior', () async {
       expect(
         snippetDocumentPathVariables('/main.rs', windows: false),
         {
@@ -54,7 +55,8 @@ void main() {
       );
     });
 
-    test('normalizes Windows drive paths and lowercases the drive letter', () {
+    test('normalizes Windows drive paths and lowercases the drive letter',
+        () async {
       expect(
         snippetDocumentPathVariables(
           r'C:\workspace\src\..\src\main.rs',
@@ -69,7 +71,7 @@ void main() {
       );
     });
 
-    test('handles Windows drive roots and UNC paths', () {
+    test('handles Windows drive roots and UNC paths', () async {
       expect(
         snippetDocumentPathVariables(r'C:\main.rs', windows: true),
         {
@@ -91,7 +93,7 @@ void main() {
       );
     });
 
-    test('returns empty variables for untitled documents', () {
+    test('returns empty variables for untitled documents', () async {
       expect(
         snippetDocumentPathVariables(null, windows: false),
         {
@@ -104,7 +106,7 @@ void main() {
   });
 
   group('snippetWorkspaceVariables', () {
-    test('returns the folder basename and an absolute POSIX path', () {
+    test('returns the folder basename and an absolute POSIX path', () async {
       expect(
         snippetWorkspaceVariables('/home/alice/project/..', windows: false),
         {
@@ -121,7 +123,7 @@ void main() {
       );
     });
 
-    test('normalizes Windows paths and preserves UNC roots', () {
+    test('normalizes Windows paths and preserves UNC roots', () async {
       expect(
         snippetWorkspaceVariables(
           r'C:\workspace\project\..',
@@ -144,7 +146,7 @@ void main() {
       );
     });
 
-    test('resolves an unopened workspace to empty strings', () {
+    test('resolves an unopened workspace to empty strings', () async {
       expect(
         snippetWorkspaceVariables(null, windows: false),
         {
@@ -163,7 +165,8 @@ void main() {
   });
 
   group('snippetClipboardVariables', () {
-    test('preserves clipboard text and leaves empty clipboard unresolved', () {
+    test('preserves clipboard text and leaves empty clipboard unresolved',
+        () async {
       expect(
         snippetClipboardVariables('copied 🙂\nsecond line'),
         {'CLIPBOARD': 'copied 🙂\nsecond line'},
@@ -173,41 +176,45 @@ void main() {
     });
 
     test('uses a clipboard variable default only when clipboard text is empty',
-        () {
+        () async {
       expect(
-        expandSnippetTemplate(
+        (await expandSnippetTemplate(
           r'${CLIPBOARD:fallback}|$CLIPBOARD',
           variables: snippetClipboardVariables('value'),
-        ).text,
+        ))
+            .text,
         'value|value',
       );
       expect(
-        expandSnippetTemplate(
+        (await expandSnippetTemplate(
           r'${CLIPBOARD:fallback}|$CLIPBOARD',
           variables: snippetClipboardVariables(''),
-        ).text,
+        ))
+            .text,
         'fallback|',
       );
       expect(
-        expandSnippetTemplate(
+        (await expandSnippetTemplate(
           r'${CLIPBOARD:line\$value}',
           variables: snippetClipboardVariables(null),
-        ).text,
+        ))
+            .text,
         'line\$value',
       );
     });
 
-    test('escaped clipboard references stay literal and are not resolved', () {
+    test('escaped clipboard references stay literal and are not resolved',
+        () async {
       expect(snippetTemplateUsesVariable(r'\$CLIPBOARD', 'CLIPBOARD'), isFalse);
       expect(
-        expandSnippetTemplate(r'\$CLIPBOARD', variables: const {}).text,
+        (await expandSnippetTemplate(r'\$CLIPBOARD', variables: const {})).text,
         r'$CLIPBOARD',
       );
     });
   });
 
   group('snippetRelativeFilePathVariables', () {
-    test('returns a workspace relative path without a root prefix', () {
+    test('returns a workspace relative path without a root prefix', () async {
       expect(
         snippetRelativeFilePathVariables(
           '/home/alice/project/src/main.rs',
@@ -219,7 +226,8 @@ void main() {
       );
     });
 
-    test('returns empty for the workspace root and untitled documents', () {
+    test('returns empty for the workspace root and untitled documents',
+        () async {
       expect(
         snippetRelativeFilePathVariables(
           '/workspace',
@@ -234,7 +242,8 @@ void main() {
       );
     });
 
-    test('uses the absolute label when there is no containing workspace', () {
+    test('uses the absolute label when there is no containing workspace',
+        () async {
       expect(
         snippetRelativeFilePathVariables(
           '/home/alice/other/main.rs',
@@ -248,7 +257,7 @@ void main() {
 
     test(
         'normalizes Windows relative paths and compares root case-insensitively',
-        () {
+        () async {
       expect(
         snippetRelativeFilePathVariables(
           r'C:\Workspace\src\..\src\main.rs',
@@ -262,7 +271,7 @@ void main() {
   });
 
   group('snippetLineVariables', () {
-    test('formats zero-based and one-based line numbers', () {
+    test('formats zero-based and one-based line numbers', () async {
       expect(
         snippetLineVariables(0),
         {'TM_LINE_INDEX': '0', 'TM_LINE_NUMBER': '1'},
@@ -273,13 +282,13 @@ void main() {
       );
     });
 
-    test('rejects a negative document line', () {
+    test('rejects a negative document line', () async {
       expect(() => snippetLineVariables(-1), throwsRangeError);
     });
   });
 
   group('snippetCurrentLineVariables', () {
-    test('keeps the current line verbatim, including empty lines', () {
+    test('keeps the current line verbatim, including empty lines', () async {
       expect(
         snippetCurrentLineVariables(r'  call($TM_FILENAME); 🦊'),
         {'TM_CURRENT_LINE': r'  call($TM_FILENAME); 🦊'},
@@ -289,7 +298,7 @@ void main() {
   });
 
   group('snippetCurrentWordVariables', () {
-    test('uses the default word definition at the cursor position', () {
+    test('uses the default word definition at the cursor position', () async {
       expect(
         snippetCurrentWordVariables('alpha.beta -12.5ms', 2),
         {'TM_CURRENT_WORD': 'alpha'},
@@ -308,7 +317,8 @@ void main() {
       );
     });
 
-    test('uses UTF-16 cursor columns and returns no value off a word', () {
+    test('uses UTF-16 cursor columns and returns no value off a word',
+        () async {
       expect(
         snippetCurrentWordVariables('🙂 value', 4),
         {'TM_CURRENT_WORD': 'value'},
@@ -324,7 +334,7 @@ void main() {
       );
     });
 
-    test('bounds long-line lookup to the Code-OSS context window', () {
+    test('bounds long-line lookup to the Code-OSS context window', () async {
       final line = "${'a' * 100}Q${'a' * 1100}";
       final variables = snippetCurrentWordVariables(line, 600);
       expect(variables['TM_CURRENT_WORD'], 'a' * 1000);
@@ -332,7 +342,7 @@ void main() {
   });
 
   group('snippetTemplateUsesVariable', () {
-    test('recognizes plain, braced, and defaulted references', () {
+    test('recognizes plain, braced, and defaulted references', () async {
       expect(
           snippetTemplateUsesVariable(r'$TM_CURRENT_LINE', 'TM_CURRENT_LINE'),
           isTrue);
@@ -355,7 +365,8 @@ void main() {
       );
     });
 
-    test('ignores escaped references, suffixes, and nested default text', () {
+    test('ignores escaped references, suffixes, and nested default text',
+        () async {
       expect(
           snippetTemplateUsesVariable(r'\$TM_CURRENT_LINE', 'TM_CURRENT_LINE'),
           isFalse);
@@ -383,11 +394,37 @@ void main() {
         isFalse,
       );
     });
+
+    test('recognizes transformed names and skips transform format literals',
+        () async {
+      expect(
+        snippetTemplateUsesVariable(
+          r'${TM_CURRENT_LINE/(.*)/${1:/upcase}/}',
+          'TM_CURRENT_LINE',
+        ),
+        isTrue,
+      );
+      expect(
+        snippetTemplateUsesVariable(
+          r'${TM_FILENAME//${1:+$CLIPBOARD}/g}',
+          'CLIPBOARD',
+        ),
+        isFalse,
+      );
+      expect(
+        snippetTemplateUsesVariable(
+          r'${TM_SELECTED_TEXT/(.*)/$TM_CURRENT_LINE/',
+          'TM_CURRENT_LINE',
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('expandSnippetTemplate', () {
-    test('expands defaults, linked tabstops, and the final cursor stop', () {
-      final expansion = expandSnippetTemplate(r'let ${1:name} = $1;$0');
+    test('expands defaults, linked tabstops, and the final cursor stop',
+        () async {
+      final expansion = await expandSnippetTemplate(r'let ${1:name} = $1;$0');
 
       expect(expansion.text, 'let name = name;');
       expect(expansion.tabstopOrder, [1, 0]);
@@ -404,23 +441,25 @@ void main() {
       expect(expansion.rangesFor(0).single.lengthUtf16, 0);
     });
 
-    test('uses the first non-empty default for earlier empty mirrors', () {
-      final expansion = expandSnippetTemplate(r'$1 ${1:} ${1:value} $1');
+    test('uses the first non-empty default for earlier empty mirrors',
+        () async {
+      final expansion = await expandSnippetTemplate(r'$1 ${1:} ${1:value} $1');
 
       expect(expansion.text, 'value value value value');
       expect(expansion.rangesFor(1), hasLength(4));
     });
 
-    test('uses one value for repeated defaults on the same tabstop', () {
-      final expansion = expandSnippetTemplate(r'${1:first} $1 ${1:later}');
+    test('uses one value for repeated defaults on the same tabstop', () async {
+      final expansion =
+          await expandSnippetTemplate(r'${1:first} $1 ${1:later}');
 
       expect(expansion.text, 'first first first');
       expect(expansion.rangesFor(1), hasLength(3));
     });
 
     test('expands choice placeholders from the first option and links mirrors',
-        () {
-      final expansion = expandSnippetTemplate(r'${1|one,two|}-$1$0');
+        () async {
+      final expansion = await expandSnippetTemplate(r'${1|one,two|}-$1$0');
 
       expect(expansion.text, 'one-one');
       expect(expansion.tabstopOrder, [1, 0]);
@@ -429,8 +468,8 @@ void main() {
       expect(expansion.rangesFor(1).last.choice, isNull);
     });
 
-    test('unescapes choice commas, pipes, and backslashes', () {
-      final expansion = expandSnippetTemplate(
+    test('unescapes choice commas, pipes, and backslashes', () async {
+      final expansion = await expandSnippetTemplate(
         r'${1|\,comma,pipe\|value,back\\slash|}',
       );
 
@@ -441,7 +480,8 @@ void main() {
       );
     });
 
-    test('keeps malformed and empty choice expressions as literal text', () {
+    test('keeps malformed and empty choice expressions as literal text',
+        () async {
       for (final template in [
         r'${1||}',
         r'${1|one,,two|}',
@@ -449,15 +489,15 @@ void main() {
         r'${1|one,two',
         r'${0|one,two|}',
       ]) {
-        final expansion = expandSnippetTemplate(template);
+        final expansion = await expandSnippetTemplate(template);
         expect(expansion.text, template, reason: template);
         expect(expansion.placeholders, isEmpty, reason: template);
       }
     });
 
-    test('bounds choice option count', () {
-      expect(
-        () => expandSnippetTemplate(
+    test('bounds choice option count', () async {
+      await expectLater(
+        expandSnippetTemplate(
           r'${1|one,two,three|}',
           maxChoiceOptions: 2,
         ),
@@ -465,14 +505,14 @@ void main() {
       );
       const incomplete = r'${1|one,two';
       expect(
-        expandSnippetTemplate(incomplete, maxChoiceOptions: 1).text,
+        (await expandSnippetTemplate(incomplete, maxChoiceOptions: 1)).text,
         incomplete,
       );
     });
 
     test('keeps choice range offsets in UTF-16 units across emoji and CRLF',
-        () {
-      final expansion = expandSnippetTemplate('🙂\r\n\${1|猫,fox|}-\$1');
+        () async {
+      final expansion = await expandSnippetTemplate('🙂\r\n\${1|猫,fox|}-\$1');
 
       expect(expansion.text, '🙂\r\n猫-猫');
       expect(
@@ -486,16 +526,16 @@ void main() {
       );
     });
 
-    test('adds an implicit final cursor stop when omitted', () {
-      final expansion = expandSnippetTemplate(r'${1:name}-$1');
+    test('adds an implicit final cursor stop when omitted', () async {
+      final expansion = await expandSnippetTemplate(r'${1:name}-$1');
 
       expect(expansion.text, 'name-name');
       expect(expansion.tabstopOrder, [1, 0]);
       expect(expansion.rangesFor(0).single.startUtf16, 9);
     });
 
-    test('keeps UTF-16 offsets across emoji and CRLF', () {
-      final expansion = expandSnippetTemplate('🙂\r\n\${1:x} \$1');
+    test('keeps UTF-16 offsets across emoji and CRLF', () async {
+      final expansion = await expandSnippetTemplate('🙂\r\n\${1:x} \$1');
 
       expect(expansion.text, '🙂\r\nx x');
       expect(
@@ -509,16 +549,16 @@ void main() {
     });
 
     test('unescapes TextMate literal escapes and preserves unknown variables',
-        () {
-      final expansion = expandSnippetTemplate(
+        () async {
+      final expansion = await expandSnippetTemplate(
         r'\$x \} \\ ${1:a\}b} $1 ${TM_FILENAME} $TM_FILENAME',
       );
 
       expect(expansion.text, r'$x } \ a}b a}b ${TM_FILENAME} $TM_FILENAME');
     });
 
-    test('expands selected text as literal text without a tabstop', () {
-      final expansion = expandSnippetTemplate(
+    test('expands selected text as literal text without a tabstop', () async {
+      final expansion = await expandSnippetTemplate(
         r'<$TM_SELECTED_TEXT> ${TM_SELECTED_TEXT} \$TM_SELECTED_TEXT ${TM_FILENAME}$0',
         variables: const {'TM_SELECTED_TEXT': '🙂x'},
       );
@@ -528,8 +568,8 @@ void main() {
       expect(expansion.rangesFor(0).single.startUtf16, expansion.text.length);
     });
 
-    test('uses an explicitly resolved empty selected-text variable', () {
-      final expansion = expandSnippetTemplate(
+    test('uses an explicitly resolved empty selected-text variable', () async {
+      final expansion = await expandSnippetTemplate(
         r'${TM_SELECTED_TEXT:fallback}',
         variables: const {'TM_SELECTED_TEXT': ''},
       );
@@ -537,8 +577,9 @@ void main() {
       expect(expansion.text, isEmpty);
     });
 
-    test('expands filename variables without turning them into tabstops', () {
-      final expansion = expandSnippetTemplate(
+    test('expands filename variables without turning them into tabstops',
+        () async {
+      final expansion = await expandSnippetTemplate(
         r'$TM_FILENAME ${TM_FILENAME_BASE:fallback}$0',
         variables: {
           ...snippetFilenameVariables('archive.tar.rs'),
@@ -549,8 +590,8 @@ void main() {
       expect(expansion.tabstopOrder, [0]);
     });
 
-    test('expands current-line contents once as literal text', () {
-      final expansion = expandSnippetTemplate(
+    test('expands current-line contents once as literal text', () async {
+      final expansion = await expandSnippetTemplate(
         r'<$TM_CURRENT_LINE>$0',
         variables: snippetCurrentLineVariables(r'let $TM_FILENAME = 🦊;'),
       );
@@ -559,32 +600,34 @@ void main() {
       expect(expansion.tabstopOrder, [0]);
     });
 
-    test('expands current word and preserves unresolved references', () {
+    test('expands current word and preserves unresolved references', () async {
       expect(
-        expandSnippetTemplate(
+        (await expandSnippetTemplate(
           r'<$TM_CURRENT_WORD>${TM_CURRENT_WORD:fallback}',
           variables: snippetCurrentWordVariables('let value', 6),
-        ).text,
+        ))
+            .text,
         '<value>value',
       );
       expect(
-        expandSnippetTemplate(r'$TM_CURRENT_WORD').text,
+        (await expandSnippetTemplate(r'$TM_CURRENT_WORD')).text,
         r'$TM_CURRENT_WORD',
       );
       expect(
-        expandSnippetTemplate(r'${TM_CURRENT_WORD:fallback}').text,
+        (await expandSnippetTemplate(r'${TM_CURRENT_WORD:fallback}')).text,
         r'${TM_CURRENT_WORD:fallback}',
       );
     });
 
-    test('preserves malformed placeholder syntax as literal text', () {
-      expect(expandSnippetTemplate(r'${1:unfinished').text, r'${1:unfinished');
-      expect(expandSnippetTemplate(r'$x').text, r'$x');
+    test('preserves malformed placeholder syntax as literal text', () async {
+      expect((await expandSnippetTemplate(r'${1:unfinished')).text,
+          r'${1:unfinished');
+      expect((await expandSnippetTemplate(r'$x')).text, r'$x');
     });
 
     test('counts nested placeholders once when an outer default is incomplete',
-        () {
-      final expansion = expandSnippetTemplate(
+        () async {
+      final expansion = await expandSnippetTemplate(
         r'${1:${2:x}',
         maxPlaceholderOccurrences: 1,
       );
@@ -593,20 +636,113 @@ void main() {
       expect(expansion.tabstopOrder, [2, 0]);
     });
 
-    test('rejects unsupported transform syntax', () {
+    test('applies variable regex transforms with groups and flags', () async {
+      final expansion = await expandSnippetTemplate(
+        r'${TM_FILENAME/(.*)\..+$/$1/} ${TM_CURRENT_WORD/[a-z]+/X/gi}',
+        variables: {
+          'TM_FILENAME': 'archive.tar.rs',
+          'TM_CURRENT_WORD': 'alpha ALPHA beta',
+        },
+      );
+
+      expect(expansion.text, 'archive.tar X X X');
+      expect(expansion.placeholders, isEmpty);
+    });
+
+    test('applies capture case and conditional formats', () async {
+      final expansion = await expandSnippetTemplate(
+        r'${NAME/(.*)/${1:/pascalcase} ${1:+set} ${2:-fallback} ${2:?yes:no}/}',
+        variables: const {'NAME': 'hello world'},
+      );
+
+      expect(expansion.text, 'HelloWorld set fallback no');
+      expect(expansion.placeholders, isEmpty);
+    });
+
+    test('supports all documented capture case formats', () async {
+      final expansion = await expandSnippetTemplate(
+        r'${NAME/(.*)/${1:/camelcase}|${1:/pascalcase}|${1:/kebabcase}|${1:/snakecase}|${1:/capitalize}|${1:/downcase}|${1:/upcase}/}',
+        variables: const {'NAME': 'hello World'},
+      );
+
       expect(
-        () => expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
+        expansion.text,
+        'helloWorld|HelloWorld|hello-world|hello_world|Hello World|hello world|HELLO WORLD',
+      );
+    });
+
+    test('transforms unresolved variables from the empty string', () async {
+      final expansion = await expandSnippetTemplate(
+        r'${UNKNOWN/(.*)/${1:+matched}${1:-empty}/}',
+      );
+
+      expect(expansion.text, 'matched');
+    });
+
+    test('keeps placeholder transforms unsupported and fails closed', () async {
+      await expectLater(
+        expandSnippetTemplate(r'${1/([a-z]+)/$1/g}'),
         throwsA(isA<SnippetTemplateException>()),
       );
-      expect(
-        () => expandSnippetTemplate(r'${TM_SELECTED_TEXT/(.*)/$1/}'),
+      await expectLater(
+        expandSnippetTemplate(r'${TM_FILENAME/[a-z]+/\}'),
         throwsA(isA<SnippetTemplateException>()),
       );
     });
 
-    test('expands nested placeholders and keeps their linked ranges', () {
+    test('rejects invalid regex and enforces transform expression limits',
+        () async {
+      await expectLater(
+        expandSnippetTemplate(r'${NAME/[/x/}', variables: const {'NAME': 'x'}),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+      final longRegex = 'a' * 513;
+      await expectLater(
+        expandSnippetTemplate('\${NAME/$longRegex/x/}',
+            variables: const {'NAME': 'x'}),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+    });
+
+    test('bounds transform count, aggregate input, and replacement output',
+        () async {
+      final tooManyTransforms = List.filled(65, r'${NAME/a/b/}').join();
+      await expectLater(
+        expandSnippetTemplate(tooManyTransforms,
+            variables: const {'NAME': 'a'}),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+      await expectLater(
+        expandSnippetTemplate(
+          r'${NAME/a/b/}',
+          variables: {'NAME': 'a' * (256 * 1024 + 1)},
+        ),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+      await expectLater(
+        expandSnippetTemplate(
+          r'${NAME/a/$0$0/g}',
+          variables: {'NAME': 'a' * (128 * 1024 + 1)},
+        ),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+    });
+
+    test('times out a pathological regex without blocking the caller isolate',
+        () async {
+      final pathologicalInput = "${'a' * 48}b";
+      await expectLater(
+        expandSnippetTemplate(
+          r'${NAME/(a|aa)+$/$0/}',
+          variables: {'NAME': pathologicalInput},
+        ),
+        throwsA(isA<SnippetTemplateException>()),
+      );
+    });
+
+    test('expands nested placeholders and keeps their linked ranges', () async {
       final expansion =
-          expandSnippetTemplate(r'${1:outer ${2:inner}} / $1 / $2');
+          await expandSnippetTemplate(r'${1:outer ${2:inner}} / $1 / $2');
 
       expect(expansion.text, 'outer inner / outer inner / inner');
       expect(expansion.tabstopOrder, [1, 2, 0]);
@@ -643,29 +779,31 @@ void main() {
       );
     });
 
-    test('nested offsets remain UTF-16 and escaped braces stay literal', () {
-      final expansion = expandSnippetTemplate(r'${1:🦊 ${2:🙂x}}$0');
+    test('nested offsets remain UTF-16 and escaped braces stay literal',
+        () async {
+      final expansion = await expandSnippetTemplate(r'${1:🦊 ${2:🙂x}}$0');
 
       expect(expansion.text, '🦊 🙂x');
       expect(expansion.rangesFor(1).single.lengthUtf16, 6);
       expect(expansion.rangesFor(2).single.startUtf16, 3);
       expect(expansion.rangesFor(2).single.endUtf16, 6);
       expect(
-        expandSnippetTemplate(r'${1:literal \${2:not-a-tabstop\}}').text,
+        (await expandSnippetTemplate(r'${1:literal \${2:not-a-tabstop\}}'))
+            .text,
         r'literal ${2:not-a-tabstop}',
       );
     });
 
-    test('bounds nested depth and rendered mirror range growth', () {
+    test('bounds nested depth and rendered mirror range growth', () async {
       final nested =
           '${List.filled(33, r'${1:').join()}x${List.filled(33, '}').join()}';
-      expect(
-        () => expandSnippetTemplate(nested),
+      await expectLater(
+        expandSnippetTemplate(nested),
         throwsA(isA<SnippetTemplateException>()),
       );
 
-      expect(
-        () => expandSnippetTemplate(
+      await expectLater(
+        expandSnippetTemplate(
           r'${1:${2:${3:${4:x}}}}$1$1$1$1',
           maxPlaceholderOccurrences: 8,
         ),
@@ -674,21 +812,21 @@ void main() {
     });
 
     test('bounds template size, expansion size, placeholder count, and indices',
-        () {
-      expect(
-        () => expandSnippetTemplate('1234', maxTemplateUtf16: 3),
+        () async {
+      await expectLater(
+        expandSnippetTemplate('1234', maxTemplateUtf16: 3),
         throwsA(isA<SnippetTemplateException>()),
       );
-      expect(
-        () => expandSnippetTemplate(r'${1:long}$1', maxExpandedUtf16: 5),
+      await expectLater(
+        expandSnippetTemplate(r'${1:long}$1', maxExpandedUtf16: 5),
         throwsA(isA<SnippetTemplateException>()),
       );
-      expect(
-        () => expandSnippetTemplate(r'${1:x}$1', maxPlaceholderOccurrences: 1),
+      await expectLater(
+        expandSnippetTemplate(r'${1:x}$1', maxPlaceholderOccurrences: 1),
         throwsA(isA<SnippetTemplateException>()),
       );
-      expect(
-        () => expandSnippetTemplate(r'$10', maxTabstopIndex: 9),
+      await expectLater(
+        expandSnippetTemplate(r'$10', maxTabstopIndex: 9),
         throwsA(isA<SnippetTemplateException>()),
       );
     });

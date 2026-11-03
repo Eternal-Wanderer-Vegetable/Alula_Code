@@ -1,5 +1,7 @@
 import 'package:path/path.dart' as path;
 
+import 'snippet_variable_transform.dart';
+
 /// A bounded TextMate snippet template expansion for the editor.
 ///
 /// Offsets use Dart string indices, which are UTF-16 code units and therefore
@@ -289,9 +291,9 @@ Map<String, String> snippetCurrentWordVariables(
 }
 
 /// Reports whether [template] contains a syntactically recognized [name]
-/// variable reference. Escaped variables and text inside another variable's
-/// default value are not references because the snippet parser keeps both
-/// literal.
+/// variable reference. Escaped variables, transform replacement text, and
+/// text inside another variable's default value are not references because
+/// the snippet parser keeps them literal.
 bool snippetTemplateUsesVariable(String template, String name) {
   final units = template.codeUnits;
   var offset = 0;
@@ -360,10 +362,84 @@ bool snippetTemplateUsesVariable(String template, String name) {
       }
     }
 
-    // Malformed and transformed variables are not resolved by this parser.
+    if (cursor < units.length && units[cursor] == 0x2f) {
+      final transformEnd = _skipSnippetVariableTransform(units, cursor);
+      if (transformEnd >= 0) {
+        if (matches) return true;
+        offset = transformEnd;
+      } else {
+        offset = _skipMalformedSnippetVariableTransform(units, cursor);
+      }
+      continue;
+    }
+
+    // Leave malformed references literal; valid transforms are handled above.
     offset++;
   }
   return false;
+}
+
+int _skipSnippetVariableTransform(List<int> units, int slashOffset) {
+  var cursor = slashOffset + 1;
+  for (var section = 0; section < 2; section++) {
+    var formatExpressionDepth = 0;
+    while (cursor < units.length) {
+      final unit = units[cursor];
+      if (unit == 0x5c && cursor + 1 < units.length) {
+        cursor += 2;
+        continue;
+      }
+      if (section == 1 &&
+          unit == 0x24 &&
+          cursor + 1 < units.length &&
+          units[cursor + 1] == 0x7b) {
+        formatExpressionDepth++;
+        cursor += 2;
+        continue;
+      }
+      if (section == 1 && unit == 0x7d && formatExpressionDepth > 0) {
+        formatExpressionDepth--;
+        cursor++;
+        continue;
+      }
+      if (unit == 0x2f && formatExpressionDepth == 0) break;
+      cursor++;
+    }
+    if (cursor >= units.length) return -1;
+    cursor++;
+  }
+
+  while (cursor < units.length && units[cursor] != 0x7d) {
+    cursor++;
+  }
+  return cursor < units.length ? cursor + 1 : -1;
+}
+
+int _skipMalformedSnippetVariableTransform(List<int> units, int slashOffset) {
+  var cursor = slashOffset + 1;
+  var nestedVariableDepth = 0;
+  while (cursor < units.length) {
+    final unit = units[cursor];
+    if (unit == 0x5c && cursor + 1 < units.length) {
+      cursor += 2;
+      continue;
+    }
+    if (unit == 0x24 &&
+        cursor + 1 < units.length &&
+        units[cursor + 1] == 0x7b) {
+      nestedVariableDepth++;
+      cursor += 2;
+      continue;
+    }
+    if (unit == 0x7d) {
+      cursor++;
+      if (nestedVariableDepth == 0) return cursor;
+      nestedVariableDepth--;
+      continue;
+    }
+    cursor++;
+  }
+  return cursor;
 }
 
 bool _isSnippetEscape(int unit) => unit == 0x24 || unit == 0x7d || unit == 0x5c;
@@ -411,9 +487,10 @@ String _snippetPathLabel(
 /// `\$`, `\}`, and `\\` escape their following character. Unknown variables
 /// are kept verbatim. Positive-index choices support `${1|one,two|}` and
 /// TextMate's `\,`, `\|`, and `\\` choice escapes. Placeholder defaults can
-/// contain nested placeholders up to a fixed depth. Transforms remain
-/// unsupported and fail explicitly instead of producing a partial edit.
-SnippetExpansion expandSnippetTemplate(
+/// contain nested placeholders up to a fixed depth. Variable transforms are
+/// evaluated in a bounded worker; placeholder transforms remain unsupported
+/// and fail explicitly instead of producing a partial edit.
+Future<SnippetExpansion> expandSnippetTemplate(
   String template, {
   Map<String, String> variables = const {},
   bool insertFinalTabstop = true,
@@ -422,7 +499,7 @@ SnippetExpansion expandSnippetTemplate(
   int maxPlaceholderOccurrences = 512,
   int maxTabstopIndex = 10000,
   int maxChoiceOptions = 256,
-}) {
+}) async {
   if (template.length > maxTemplateUtf16) {
     throw const SnippetTemplateException('template exceeds the size limit', 0);
   }
@@ -444,17 +521,26 @@ class _SnippetSegment {
   const _SnippetSegment.text(this.text)
       : index = null,
         defaultSegments = null,
-        choice = null;
+        choice = null,
+        variableTransform = null;
 
   const _SnippetSegment.placeholder(
     this.index,
     this.defaultSegments, {
     this.choice,
-  }) : text = null;
+  })  : text = null,
+        variableTransform = null;
+
+  const _SnippetSegment.variableTransform(this.variableTransform)
+      : text = null,
+        index = null,
+        defaultSegments = null,
+        choice = null;
 
   final String? text;
   final int? index;
   final SnippetChoice? choice;
+  final SnippetVariableTransform? variableTransform;
 
   /// `null` means a mirror; an empty list is an explicit empty default.
   final List<_SnippetSegment>? defaultSegments;
@@ -493,7 +579,7 @@ class _SnippetTemplateParser {
   final int maxNestingDepth;
   int _offset = 0;
 
-  SnippetExpansion parse() {
+  Future<SnippetExpansion> parse() async {
     final segments = _parseSequence(stopAtClose: false, nestingDepth: 0);
     if (_countPlaceholders(segments) > maxPlaceholderOccurrences) {
       throw SnippetTemplateException(
@@ -501,7 +587,45 @@ class _SnippetTemplateParser {
         _offset,
       );
     }
-    return _render(segments);
+    try {
+      return _render(await _resolveVariableTransforms(segments));
+    } on SnippetVariableTransformException catch (error) {
+      throw SnippetTemplateException(error.message, error.offsetUtf16);
+    }
+  }
+
+  Future<List<_SnippetSegment>> _resolveVariableTransforms(
+    List<_SnippetSegment> segments,
+  ) async {
+    final transforms = <SnippetVariableTransform>[];
+    void collect(List<_SnippetSegment> current) {
+      for (final segment in current) {
+        final transform = segment.variableTransform;
+        if (transform != null) transforms.add(transform);
+        final children = segment.defaultSegments;
+        if (children != null) collect(children);
+      }
+    }
+
+    collect(segments);
+    if (transforms.isEmpty) return segments;
+    final transformedText = await applySnippetVariableTransforms(transforms);
+    var transformIndex = 0;
+    List<_SnippetSegment> replace(List<_SnippetSegment> current) => [
+          for (final segment in current)
+            if (segment.variableTransform != null)
+              _SnippetSegment.text(transformedText[transformIndex++])
+            else if (segment.defaultSegments != null)
+              _SnippetSegment.placeholder(
+                segment.index!,
+                replace(segment.defaultSegments!),
+                choice: segment.choice,
+              )
+            else
+              segment,
+        ];
+
+    return replace(segments);
   }
 
   int _countPlaceholders(List<_SnippetSegment> segments) {
@@ -722,10 +846,13 @@ class _SnippetTemplateParser {
         if (!closed) return null;
         defaultValue = value.toString();
       } else if (cursor < _units.length && _units[cursor] == _slash) {
-        throw SnippetTemplateException(
-          'variable transforms are not supported yet',
-          start,
+        final parsed = _parseVariableTransform(
+          cursor + 1,
+          start: start,
+          value: variables[name] ?? '',
         );
+        _offset = parsed.endOffset;
+        return _SnippetSegment.variableTransform(parsed.transform);
       } else {
         // Leave malformed expressions untouched for a later parity slice.
         return null;
@@ -738,6 +865,84 @@ class _SnippetTemplateParser {
       return _SnippetSegment.text(defaultValue ?? '');
     }
     return _SnippetSegment.text(value ?? template.substring(start, cursor));
+  }
+
+  _ParsedVariableTransform _parseVariableTransform(
+    int cursor, {
+    required int start,
+    required String value,
+  }) {
+    final regex = _readTransformSection(cursor, start: start);
+    final format = _readTransformSection(
+      regex.endOffset,
+      start: start,
+      formatSection: true,
+    );
+    cursor = format.endOffset;
+    final options = StringBuffer();
+    while (cursor < _units.length && _units[cursor] != _closeBrace) {
+      options.writeCharCode(_units[cursor]);
+      cursor++;
+    }
+    if (cursor >= _units.length) {
+      throw SnippetTemplateException('unterminated variable transform', start);
+    }
+    return _ParsedVariableTransform(
+      SnippetVariableTransform(
+        value: value,
+        pattern: regex.value,
+        format: format.value,
+        options: options.toString(),
+        offsetUtf16: start,
+      ),
+      cursor + 1,
+    );
+  }
+
+  _ParsedTransformSection _readTransformSection(
+    int cursor, {
+    required int start,
+    bool formatSection = false,
+  }) {
+    final value = StringBuffer();
+    var formatExpressionDepth = 0;
+    while (cursor < _units.length) {
+      final unit = _units[cursor];
+      if (formatSection &&
+          unit == _dollar &&
+          cursor + 1 < _units.length &&
+          _units[cursor + 1] == _openBrace) {
+        formatExpressionDepth++;
+        value.writeCharCode(unit);
+        value.writeCharCode(_units[cursor + 1]);
+        cursor += 2;
+        continue;
+      }
+      if (unit == _slash && formatExpressionDepth == 0) {
+        return _ParsedTransformSection(value.toString(), cursor + 1);
+      }
+      if (unit == _backslash && cursor + 1 < _units.length) {
+        final escaped = _units[cursor + 1];
+        if (escaped == _slash || escaped == _backslash) {
+          value.writeCharCode(escaped);
+          cursor += 2;
+          continue;
+        }
+        if (formatSection && (escaped == _dollar || escaped == _closeBrace)) {
+          value
+            ..writeCharCode(unit)
+            ..writeCharCode(escaped);
+          cursor += 2;
+          continue;
+        }
+      }
+      if (formatSection && unit == _closeBrace && formatExpressionDepth > 0) {
+        formatExpressionDepth--;
+      }
+      value.writeCharCode(unit);
+      cursor++;
+    }
+    throw SnippetTemplateException('unterminated variable transform', start);
   }
 
   bool _isVariableStart(int unit) =>
@@ -753,6 +958,13 @@ class _SnippetTemplateParser {
     final defaults = <int, List<_SnippetSegment>>{};
     void collectDefaults(List<_SnippetSegment> children) {
       for (final segment in children) {
+        final transform = segment.variableTransform;
+        if (transform != null) {
+          throw SnippetTemplateException(
+            'unresolved snippet variable transform',
+            transform.offsetUtf16,
+          );
+        }
         final index = segment.index;
         final value = segment.defaultSegments;
         if (index != null && index != 0 && value != null && value.isNotEmpty) {
@@ -845,5 +1057,19 @@ class _ParsedSnippetChoice {
   const _ParsedSnippetChoice(this.choice, this.endOffset);
 
   final SnippetChoice choice;
+  final int endOffset;
+}
+
+class _ParsedTransformSection {
+  const _ParsedTransformSection(this.value, this.endOffset);
+
+  final String value;
+  final int endOffset;
+}
+
+class _ParsedVariableTransform {
+  const _ParsedVariableTransform(this.transform, this.endOffset);
+
+  final SnippetVariableTransform transform;
   final int endOffset;
 }

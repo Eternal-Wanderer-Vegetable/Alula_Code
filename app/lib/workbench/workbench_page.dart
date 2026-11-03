@@ -10052,7 +10052,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     late final SnippetExpansion expansion;
     try {
-      expansion = expandSnippetTemplate(
+      expansion = await expandSnippetTemplate(
         template,
         variables: {
           'TM_SELECTED_TEXT': selectedText,
@@ -10068,6 +10068,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     } on SnippetTemplateException catch (error) {
       if (mounted) setState(() => _statusDetail = '片段插入失败：${error.message}');
+      return;
+    }
+
+    if (!mounted) return;
+    final currentWindow = doc.inputWindow;
+    if (_active?.id != doc.id ||
+        doc.doc.version != window.version ||
+        currentWindow.version != window.version ||
+        currentWindow.startUtf16 != window.startUtf16 ||
+        currentWindow.text != window.text ||
+        doc.selection != selection ||
+        doc.editingValue != value ||
+        doc.crossWindowSelection != null ||
+        doc.columnSelection != null ||
+        doc.additionalSelections.isNotEmpty ||
+        !identical(doc.inputFieldKey.currentState, field)) {
+      if (mounted) setState(() => _statusDetail = '片段插入未应用：编辑状态已变化');
       return;
     }
 

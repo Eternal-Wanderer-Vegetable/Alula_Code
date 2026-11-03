@@ -26,6 +26,8 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  irondash_message_channel: ^0.7.0
+  super_native_extensions: ^0.9.1
 
 dependency_overrides:
   # Upstream publishes the macOS engine handle before its FlutterView registry
