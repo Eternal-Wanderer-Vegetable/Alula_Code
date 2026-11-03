@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.91 / EDT-15f：Find/Replace 查找栏水平调整（已完成）
+
+- 按固定 Code-OSS 1.145.0 实现 419 logical px 默认宽度、左侧 sash 拖动扩宽/编辑区与 Minimap 上限、双击默认/最大宽度切换、Find/Replace 输入同步及关闭重开宽度保留；窄窗口改为换行显示操作区，避免水平溢出。专用 fixture 覆盖宽度边界、双击、窄窗口、重开状态与文档/选区/磁盘不变；50,000 行双视图回归通过。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、`build_core`、Flutter **783**）；`cargo fmt --all -- --check`、Flutter analyze（0 issues）、`git diff --check` 与 harness validation（100/100）通过。本机未启动桌面 GUI 或 Narrator。
+- 代码 commit `1129d60` 已推送。PR CI [`41618241197`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41618241197) 全绿（Flutter 783）。Platform Availability [`41618233435`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41618233435) 的 Linux/Windows/macOS jobs 全部通过：Linux package/DnD `13223165628`/`13223115653`（23 pointer events、move/cross-document copy/external text）；Windows package/DnD `13222791693`/`13222457221`（可见客户区 1028×711、96 DPI、13 events 与三类 drop、WM_CLOSE graceful/exit 0）；macOS ARM64 包 `13222524463` 与 startup `13223810498` 通过，DnD `13223407455` 因 hosted pointer route unavailable 明确 skip。报告：`docs/diagnostics/2026-11-03-p04/p04.91-find-resize.md`。
+- CI/崩溃关系：历史 Windows 11 ARM 对 `d5319369` 旧 artifact 重放直接复现 `0xC000041D`；当前 Windows x64 close smoke 正常退出，但不能证明该历史根因已修复。MSAA/探针类红灯需与崩溃分别诊断；current-build Windows 11 ARM 复测仍开放。
+
 ### P04.90 / EDT-15e：关闭 Find/Replace 后恢复编辑器焦点（已完成）
 
 - Escape、Shift+Escape 与关闭按钮关闭 Find/Replace 后恢复同一活动编辑器焦点并清除 Find-in-Selection scope；保留 query，文档、选区、dirty/savepoint 与文本 undo 不变。定向查找/替换回归 22 项、关闭行为 fixture 1 项、完整 `init.sh`（Rust workspace/Clippy/build_core、Flutter **782**）、cargo fmt、Flutter analyze（0 issues）、diff check 与 harness 100/100 全通过。本机全程 headless，未启动桌面 GUI/Narrator。
