@@ -19,7 +19,7 @@ void main() {
     });
 
     final workspace = Directory('${temp.path}/workspace')..createSync();
-    File('${workspace.path}/notes.txt').writeAsStringSync('foo foo\nbar');
+    File('${workspace.path}/notes.txt').writeAsStringSync('foo foo\nfoo');
     final base = temp.path.replaceAll(r'\', '/');
     await tester.pumpWidget(AlulaApp(
       autoFolder: workspace.path,
@@ -33,30 +33,44 @@ void main() {
 
     tester
         .state<RustTextInputFieldState>(find.byType(RustTextInputField))
-        .setSelection(const TextSelection(baseOffset: 0, extentOffset: 3));
+        .setSelection(const TextSelection(baseOffset: 0, extentOffset: 7));
     await tester.pump();
+
     await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
     await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pump(const Duration(milliseconds: 100));
-
     final findBar = find.byKey(const ValueKey('find-bar'));
     final fields =
         find.descendant(of: findBar, matching: find.byType(TextField));
     await tester.enterText(fields.first, 'foo');
     await tester.pump();
-    expect(find.text('-/2'), findsOneWidget);
+    expect(find.text('-/3'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('find-in-selection')));
     await tester.pump();
-    expect(find.text('-/1'), findsOneWidget);
+    expect(find.text('-/2'), findsOneWidget);
     expect(
       tester
           .widget<RustTextInputField>(find.byType(RustTextInputField))
           .rangeDecorations
           .map((decoration) => (decoration.startUtf16, decoration.endUtf16))
           .toList(),
-      [(0, 3)],
+      [(0, 3), (4, 7)],
+    );
+
+    await tester.tap(find.byTooltip('下一个匹配'));
+    await tester.pump();
+    await tester.tap(find.byTooltip('下一个匹配'));
+    await tester.pump();
+    expect(find.text('2/2'), findsOneWidget);
+    expect(
+      tester
+          .state<RustTextInputFieldState>(find.byType(RustTextInputField))
+          .editingValue
+          .selection,
+      const TextSelection(baseOffset: 4, extentOffset: 7),
+      reason: 'navigation remains inside the captured scope',
     );
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
@@ -72,7 +86,7 @@ void main() {
     final editor = tester.widget<RustTextInputField>(
       find.byType(RustTextInputField),
     );
-    expect(editor.inputWindow.document.resync().content, 'X foo\nbar');
+    expect(editor.inputWindow.document.resync().content, 'X X\nfoo');
     expect(
       tester
           .widget<IconButton>(find.byKey(const ValueKey('find-in-selection')))
@@ -80,7 +94,7 @@ void main() {
       isFalse,
       reason: 'editing invalidates the captured version-bound scope',
     );
-    expect(find.text('-/1'), findsOneWidget);
+    expect(find.text('1/1'), findsOneWidget);
   });
 
   testWidgets('find whole-word toggle refreshes count and editor highlights',
