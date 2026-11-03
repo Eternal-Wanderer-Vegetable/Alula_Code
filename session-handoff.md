@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.101 / EDT-17i implementation e39a648 is pushed; local DoD, PR CI 41687279291, and Linux/Windows/macOS Platform Availability 41687266257 all passed. P04.101 evidence update is pending commit/push; PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.101 / EDT-17i implementation e39a648 and evidence/state commit 2f390e0 are pushed. Local DoD, PR CI 41687279291, evidence-update PR CI 41690547161, and Linux/Windows/macOS Platform Availability 41687266257 passed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
@@ -29,7 +29,7 @@ P04.101 / EDT-17i is complete as registered. Local full DoD passed; PR CI 416872
 
 ## Current Workspace State
 
-- Worktree: /tmp/alula-p04.70-next; code commit e39a648ad7af538d45eeb5ac0a0d32515cae67fc is pushed. Pending evidence/state files are under docs/diagnostics/2026-11-04-p04/, plus docs/03, progress.md, feature_list.json, and this handoff.
+- Worktree: /tmp/alula-p04.70-next; implementation e39a648 and evidence/state 2f390e0 are pushed to codex/vscode-parity-p00. The worktree is clean.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -58,10 +58,10 @@ P04.101 / EDT-17i is complete as registered. Local full DoD passed; PR CI 416872
 ## Next Session Startup
 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
-2. Finish and push the P04.101 evidence/state commit after running GitNexus detect-changes and validating harness/docs.
-3. Confirm PR #2 remains OPEN/draft and both run 41687279291 and run 41687266257 remain successful.
-4. Pick the next dependency-ready P04 gap from docs/03 and docs/11, registering one bounded slice before making changes.
+2. Confirm the worktree is clean, branch head includes implementation e39a648 and evidence/state commit 2f390e0, and PR #2 remains OPEN/draft.
+3. Confirm CI runs 41687279291 and 41690547161 plus Platform Availability 41687266257 are successful.
+4. Pick the next dependency-ready P04 gap from docs/03 and docs/11; register one bounded slice before code changes and run GitNexus impact first.
 
 ## Recommended Next Step
 
-Complete hosted verification for P04.101, determine whether any current CI failures show a new crash signature, and commit the resulting evidence/state update. Keep macOS DnD input-route skips explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+P04.101 is complete. Next decompose one remaining EDT-17 parity gap (moved blocks or unchanged-region folding) into a bounded P04 slice, check the pinned Code-OSS defaults, register it in docs/03, and run GitNexus query/context/impact before editing. Keep macOS DnD input-route skips and historical crash uncertainty explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 OPEN/draft, and avoid local GUI/accessibility actions that can start Narrator.
