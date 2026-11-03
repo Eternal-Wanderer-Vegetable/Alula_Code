@@ -834,8 +834,8 @@ try {
       if ($interactionResult.multiviewFocusBeforeEditNodes.Count -eq 0) {
         throw 'The second editor view did not expose a focused MSAA text node before editing'
       }
-      $appendText = "`n// view-2"
-      $appendBody = '// view-2'
+      $appendText = "`nview-2"
+      $appendBody = 'view-2'
       $expectedMultiviewText = "$sampleText$appendText"
       $interactionResult.multiviewEndKeyEventsSent = [AlulaArtifactWindow]::SendChord(0x11, 0x23)
       if ($interactionResult.multiviewEndKeyEventsSent -ne 4) {
@@ -845,9 +845,9 @@ try {
       if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
         throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
       }
-      # The ARM runner dropped one of two adjacent slash keypresses when the
-      # sequence was queued as a single SendKeys call. Pace ordinary virtual
-      # keys like physical typing and verify the exact synchronized values.
+      # The hosted ARM SendKeys route coalesces adjacent identical key presses
+      # (observed with '//'). Use distinct consecutive ASCII keys, pace them as
+      # physical typing, and verify the exact synchronized values.
       $interactionResult.multiviewAppendInputRoute = 'sendkeys-ascii-paced'
       Send-ArtifactText $appendBody 50
       $multiviewEditDeadline = (Get-Date).AddSeconds(5)
