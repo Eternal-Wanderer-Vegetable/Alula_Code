@@ -845,11 +845,15 @@ try {
       if ($interactionResult.multiviewEnterKeyEventsSent -ne 2) {
         throw "SendInput Enter inserted $($interactionResult.multiviewEnterKeyEventsSent) of 2 keyboard events in the second view"
       }
+      # Let the newly created line settle before physical typing. On hosted
+      # Windows 11 ARM the first SendKeys character can be dropped immediately
+      # after Enter even though the editor remains focused.
+      Start-Sleep -Milliseconds 350
       # The hosted ARM SendKeys route coalesces adjacent identical key presses
       # (observed with '//'). Use distinct consecutive ASCII keys, pace them as
       # physical typing, and verify the exact synchronized values.
       $interactionResult.multiviewAppendInputRoute = 'sendkeys-ascii-paced'
-      Send-ArtifactText $appendBody 50
+      Send-ArtifactText $appendBody 100
       $multiviewEditDeadline = (Get-Date).AddSeconds(5)
       do {
         $secondViewEditedSnapshot = [AlulaArtifactMsaa]::Capture($child)
