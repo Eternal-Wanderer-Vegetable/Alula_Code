@@ -5,10 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### 下一切片：P04.101 / EDT-17i（已登记，进行中）
+### P04.101 / EDT-17i（已完成注册范围）
 
-- 对齐固定 Code-OSS 1.145.0 `diffEditor.ignoreTrimWhitespace=true` 默认行为，将 Git unified diff hunk 内首尾空白等价行投影为中性行；保留双侧内容/行号、选择与 hunk/marker，且不计入 word highlight / diff navigation。内部空白仍视为实际改动，不能跨 hunk 配对；超限或不一致时完整 raw patch fallback。实现门禁与测试范围以 `docs/03-里程碑计划与验收标准.md` 的 P04.101 为准。
-- 本轮新增 CI crash 相关性证据：4 个 `9f2c70a` 前 macOS 启动失败以 SIGSEGV/exit 139 退出；两个 `.ips` 栈指向 `IrondashEngineContextPlugin getFlutterView` 的空 registry 访问。该提交增加 readiness handshake/nil guard 后的 49 次平台成功运行未再复现。详情见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。文档提交 `e2b5e61` 的常规 CI run `41682651483` 已通过。
+- 固定 Code-OSS 1.145.0 的 diffEditor.ignoreTrimWhitespace=true 已接入 Git unified diff：逐 hunk 投影首尾空白等价行，side-by-side 保留双方原文与行号；内部空白继续着色，超限/映射不一致时完整 raw patch fallback。实现与 DoD 见 docs/03-里程碑计划与验收标准.md。
+- 实现 commit e39a648ad7af538d45eeb5ac0a0d32515cae67fc 已推送。本地完整 DoD 通过，Flutter 852 项全绿；focused projection/patch suite 22 项，Flutter analyze 0 issues。报告：docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md。
+- PR CI run 41687279291 四 job 全绿：Harness、Ubuntu/Windows Rust、Flutter analyze 与 852 tests。Platform Availability run 41687266257 三平台 job 全 success。Linux x64 Release/clipboard/DnD（22 pointer events）/Xvfb launch 通过，artifacts 13255511248/13256755398；Windows x64 Release/launch、P03.7 interaction、clipboard、DnD（11 events）、UIA/MSAA 和 graceful close exit 0 通过，artifacts 13255204860/13255244745；macOS ARM64 Flutter 852、Release/clipboard/core signing/package 与 12 秒启动 smoke 通过，package/startup artifacts 13256467168/13256402126。macOS DnD 因 CGEventPostToPid pointer route=false 明确 skip，artifact 13255502756；设备级验收仍属 P15。此轮没有新的 crash 信号；smoke 结束处 SIGTERM 由脚本主动发送，不是崩溃。
+- 单次受限 headless Dart 模型样本的尾段 private 为 baseline 183.1 MiB、candidate 187.2 MiB（约 +4.1 MiB）；不是桌面应用或真实项目测量，仅登记给 P14。500 MiB 数值目标仍暂停。
+- CI 崩溃相关性按证据区分：4 个修复前 macOS SIGSEGV/exit 139 的 .ips 栈指向 engine-context registry readiness race；9f2c70a 后 49 次 hosted 平台成功运行无复现，支持针对性缓解但不是受控证明。平台输入路由与普通断言红灯不能归类为崩溃。报告：docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。本地未启动桌面 GUI 或讲述人。
 
 ### P04.100 / EDT-17h：F1 差异导航命令（已完成注册范围）
 

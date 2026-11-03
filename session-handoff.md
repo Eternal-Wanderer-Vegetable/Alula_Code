@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.100 / EDT-17h is complete and pushed. P04.101 / EDT-17i is registered and is the active slice. The CI crash-correlation follow-up is pushed; documentation CI passed. P04 and the overall parity plan remain in progress.
+> Last Updated: 2026-11-04. P04.101 / EDT-17i implementation e39a648 is pushed; local DoD, PR CI 41687279291, and Linux/Windows/macOS Platform Availability 41687266257 all passed. P04.101 evidence update is pending commit/push; PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Active slice P04.101 integrates default trim-whitespace ignoring into Git unified diff rows, reusing the existing bounded line/view models and preserving full raw fallback. The pinned default is `diffEditor.ignoreTrimWhitespace: true`; exact registered scope and tests are in `docs/03`. Before code edits, refresh GitNexus and run concept/context/impact for the affected diff projection/view symbols; preserve UNKNOWN/CRITICAL warnings because `workbench_page.dart` is omitted from the index. P04.100 remains complete; its local DoD, PR CI, Linux/Windows hosted usability, and macOS ARM64 build/package/startup gates passed. Hosted macOS native DnD was skipped because the runner could not route synthetic pointer events; physical macOS interaction remains pending under P15. The CI crash report now links four pre-`9f2c70a` macOS SIGSEGV starts to the engine-context registry race, with 49 post-fix hosted platform passes and no recurrence; this is strong mitigation evidence, not controlled proof. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+P04.101 / EDT-17i is complete as registered. Local full DoD passed; PR CI 41687279291 passed all four jobs with Flutter 852; Platform Availability 41687266257 passed Linux x64, Windows x64, and macOS ARM64 build/package/startup. Linux artifacts: 13255511248/13256755398. Windows artifacts: 13255204860/13255244745; visible client area 1028×681, UIA/MSAA and graceful WM_CLOSE exit 0 passed. macOS package/startup artifacts: 13256467168/13256402126. macOS native DnD was skipped because CGEventPostToPid pointer route=false and no Flutter pointer events; artifact 13255502756. Its 12-second startup smoke was intentionally stopped with SIGTERM; no .ips/.crash was found. The headless model probe adds about 4.1 MiB and is not product GUI evidence. Historical crash evidence links four pre-9f2c70a macOS SIGSEGV starts to the engine-context registry readiness race; 49 later hosted runs did not recur, which supports targeted mitigation but is not controlled proof. Keep native macOS device input under P15. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not merge or publish v0.1.0. Avoid local GUI/accessibility actions that could trigger Narrator.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -29,7 +29,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; P04.100 code commit `0b792fd` and CI/crash evidence commit `e2b5e61` are pushed. P04.101 registration is being prepared before code changes.
+- Worktree: /tmp/alula-p04.70-next; code commit e39a648ad7af538d45eeb5ac0a0d32515cae67fc is pushed. Pending evidence/state files are under docs/diagnostics/2026-11-04-p04/, plus docs/03, progress.md, feature_list.json, and this handoff.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
@@ -38,7 +38,7 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 - P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
 - The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
 - P04.100 / EDT-17h is complete: Command Palette exposes editor.action.accessibleDiffViewer.next/prev only in an active, navigable Git Diff tab. Three new widget tests and full local DoD pass. PR CI `41678408601` passed (847 Flutter tests); Platform Availability `41678397272` passed Linux/Windows/macOS build/package/startup. macOS DnD was explicitly skipped for unavailable pointer routing. Windows graceful close exit 0; no current app-crash signal. See `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`.
-- P04.101 / EDT-17i is registered in `docs/03`: match pinned default `ignoreTrimWhitespace=true` in the Git unified diff view, preserve both sides in side-by-side mode, neutralize only trim-equivalent rows, and exclude those rows from highlight/navigation. Run GitNexus query/context/impact before touching code. Reuse existing bounded line/view models where possible; if exact row/source mapping or budget proof fails, retain full raw-patch fallback and narrow the slice.
+- P04.101 / EDT-17i is implemented and pushed. New projection keeps whitespace-equivalent rows neutral, retains both sides/line numbers and markers, and falls back to the full raw patch on budget or mapping uncertainty. P04.101 local DoD, PR CI and Linux/Windows/macOS hosted build/package/startup gates passed. macOS DnD was explicitly skipped for unavailable synthetic pointer routing; physical macOS interaction remains a P15 gate. Code impact had CRITICAL/UNKNOWN warnings, including the unindexed >512 KiB workbench_page.dart; keep these visible. See docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -52,16 +52,16 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Files Involved
 
-- Code: `app/lib/git/git_diff_commands.dart`, `app/lib/git/git_diff_navigation.dart`, `app/lib/git/git_diff_patch_view.dart`, `app/lib/workbench/workbench_page.dart`, `app/test/git_diff_command_test.dart`, and the existing navigation tests.
-- Evidence/state: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md`, `docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md`, `docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, `progress.md`, `feature_list.json`, and this handoff.
+- Code: app/lib/git/git_diff_whitespace_projection.dart, app/lib/git/git_diff_patch_view.dart, app/test/git_diff_whitespace_projection_test.dart, and app/test/git_diff_patch_test.dart. The caller in app/lib/workbench/workbench_page.dart remains outside the GitNexus index due its size.
+- Evidence/state: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md and evidence/, docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md, progress.md, feature_list.json, and this handoff.
 
 ## Next Session Startup
 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
-2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
-3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Commit/push the P04.100 evidence-only state update, confirm PR #2 remains OPEN/draft, then select the next dependency-ready item from `docs/03`.
+2. Finish and push the P04.101 evidence/state commit after running GitNexus detect-changes and validating harness/docs.
+3. Confirm PR #2 remains OPEN/draft and both run 41687279291 and run 41687266257 remain successful.
+4. Pick the next dependency-ready P04 gap from docs/03 and docs/11, registering one bounded slice before making changes.
 
 ## Recommended Next Step
 
-After registering P04.101, refresh GitNexus, run impact analysis for the projection/view symbols, implement the bounded trim-whitespace slice, and complete local DoD plus hosted Linux/Windows/macOS package/startup checks. Keep the macOS DnD route skip and historical Windows crash cause explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+Complete hosted verification for P04.101, determine whether any current CI failures show a new crash signature, and commit the resulting evidence/state update. Keep macOS DnD input-route skips explicit; preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
