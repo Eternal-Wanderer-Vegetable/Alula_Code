@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.90 / EDT-15e：关闭 Find/Replace 后恢复编辑器焦点（已完成）
+
+- Escape、Shift+Escape 与关闭按钮关闭 Find/Replace 后恢复同一活动编辑器焦点并清除 Find-in-Selection scope；保留 query，文档、选区、dirty/savepoint 与文本 undo 不变。定向查找/替换回归 22 项、关闭行为 fixture 1 项、完整 `init.sh`（Rust workspace/Clippy/build_core、Flutter **782**）、cargo fmt、Flutter analyze（0 issues）、diff check 与 harness 100/100 全通过。本机全程 headless，未启动桌面 GUI/Narrator。
+- 代码 commit `c65f340` 已推送。PR CI [`41611944873`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41611944873) 四 job 全绿、Flutter 782 tests。Platform Availability [`41611937616`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41611937616) Linux/Windows/macOS jobs 全成功：Linux DnD artifact `13220110381` 记录 20 pointer events 与 move/copy/external-text 三路；Windows artifact `13219622795` 记录 13 events 与三路，client artifact `13220455435` 记录可见客户区、UIA/MSAA 与 `WM_CLOSE` exit 0；macOS ARM64 包 artifact `13220810721` 与 startup `13221135196` 生成，clipboard 通过，DnD artifact `13219549723` 因 hosted pointer route unavailable 明确 skip。
+- GitNexus `impact` 对 `_toggleFind` 与 `_clearFindSelectionScope` 均为 `UNKNOWN`（超大工作台文件未被索引）；源码搜索核实调用点。重复 all-scope 对 5 changed files 均报 CRITICAL，计数随文档映射波动且流程名与 Find 无关；compare-main 为 1,582 files、超过 1,100 symbols/389 flows，CRITICAL 且列表 capped。保留这些风险，不按 clean 处理。历史 Windows `0xC000041D` 仍未定位，本切片和绿灯 CI 不代表 crash 已修复。详见 `docs/diagnostics/2026-11-03-p04/p04.90-find-close-focus.md`。
+
 ### P04.89 / EDT-15d：Find 从光标处单词初始化 query（已完成）
 
 - `editor.find` / Ctrl+F 从关闭状态打开 Find 且主选区为空时，使用固定 Code-OSS 1.145.0 默认 word definition 从光标处读取单词；regex 模式按字面搜索。沿 Rust 权威范围读取最多 1,000 UTF-16 单元，处理长行窗口边界与 surrogate pair；无词、stale、IME 或读取失败时保留旧 query。选区非空仍走 P04.88。光标、文本/版本、dirty/savepoint、磁盘与 undo 不变。
