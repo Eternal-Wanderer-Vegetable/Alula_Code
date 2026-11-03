@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-03 更新）
 
+### P04.86 / EDT-15a：查找栏 Alt+Enter 选择全部命中（已完成）
+
+- Find 与 Replace 输入框接入 Code-OSS 默认 Alt+Enter，按 literal/regex、大小写、全字和 Find-in-Selection 选中命中；丢弃过期、非法正则结果，保留当前精确命中为 primary，最多 10,000 个 UTF-16 选区并显示截断状态。单次选择历史更新，不修改文本/dirty/savepoint。定向 Flutter 68 项、完整 `init.sh`（Rust tests、Clippy、build_core、Flutter **772**）、`cargo fmt --check`、`flutter analyze`（0 issues）通过。本机未启动桌面 GUI/Narrator。
+- 代码 commit `f24e605` 已推送到 PR #2。PR CI [`41593516002`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593516002) 四 job 全绿，Flutter analyze 0 issues/772 tests。Platform Availability [`41593509709`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709) Linux/Windows/macOS job 全绿：Linux DnD artifact `13211282750` 记录 22 pointer events 与三种 drop route；Windows artifact `13210964226` 记录可见 1028×711 客户区、96 DPI、UIA/MSAA 与 graceful `WM_CLOSE` exit 0，DnD artifact `13211671290` 记录 13 events 与三种 route；macOS ARM64 app `13212575071` 已生成，startup artifact `13212535093` 只有 Metal/Impeller 行，DnD artifact `13211931578` 明确 input route unavailable、native DnD skip。
+- CI 复核：提交前最新 100 次 branch Actions 为常规 CI 65 成功/0 失败、Platform Availability 28 成功/6 失败、旧 Windows artifact replay 1 失败；红灯是 MSAA/clipboard/probe 断言，只有旧包 replay 有 `0xC000041D` 关闭崩溃证据。Windows 关闭校验使用 `if: always()`，故平台断言失败不会跳过关闭检测；暂未发现重复平台红灯与崩溃之间的因果证据。新提交的 Linux/Windows/macOS checks 均通过，详见 `docs/diagnostics/2026-11-03-p04/p04.86-alt-enter-select-all-find-matches.md` 和 `ci-failures-and-crash-correlation.md`。
+- GitNexus 对本次工作台入口报 critical，直接函数路径为 `_handleFindInputKey → _selectAllFindMatches → _setDocSelections`；流程列表含大量不相干跨语言命名匹配。已手动检查其单一 Find/Replace 事件入口和共享 selection helper，完成 invalid/stale/limit/widget 测试；compare-main 因整分支差异仍截断，保留该限制，不声明图谱检查 clean。
+
 ### P04.85 / EDT-14b：替换保留大小写（本地 DoD 与首批 hosted gates 通过）
 
 - 默认关闭的 Preserve Case 控件支持普通文本/正则当前与全部替换；覆盖全大写、全小写、首字符及 kebab/snake 分段，Unicode 16 多码点大写、点号 I、词尾 sigma；动态捕获/大小写模板不重复转换。正则 worker 的取消/上限/stale guard、selection scope、UTF-16/CRLF/emoji/零宽、单步 undo 与保存读回保持。

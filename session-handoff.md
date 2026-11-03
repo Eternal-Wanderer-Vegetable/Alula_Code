@@ -1,28 +1,34 @@
 # Session Handoff
 
-> Last Updated: 2026-11-03. P04.85 / EDT-14b Preserve Case is complete for local DoD and the prioritized hosted gates. Code commit `3949d8d` and evidence/status updates are pushed. PR #2 remains OPEN and draft.
+> Last Updated: 2026-11-03. P04.86 / EDT-15a is complete locally and its hosted PR CI plus Linux/Windows/macOS Platform Availability gates passed. Code commit `f24e605` and its separate docs/evidence commit are pushed. PR #2 remains OPEN and draft; verify the docs commit's PR CI before starting another slice.
 
 ## Current Objective
 
 Continue the fixed Code-OSS 1.145.0 parity plan one slice at a time. Prioritize Linux and Windows usability, then hosted macOS packages. Architecture and feature parity come before numeric memory optimization; the 500 MiB target remains deferred. Native macOS DnD/IME, Linux DRM, Windows 11 multi-configuration acceptance, and P15 device checks remain pending. Do not publish v0.1.0, mark PR #2 ready, or merge.
 
-## Latest Completed Slice: P04.85 / EDT-14b
+## Latest Completed Slice: P04.86 / EDT-15a
 
-- Added a default-off, accessible Preserve Case toggle for literal and regex current/all replacement. Static patterns cover all-uppercase, all-lowercase, initial casing, and matching kebab/snake segments; Unicode 16 full casing includes multi-codepoint uppercase, dotted I, and contextual final sigma. Empty matches return the replacement unchanged; capture and case-operation templates keep their own semantics.
-- Targeted tests passed (61). Full `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passed (Rust workspace, Clippy, core build, Flutter 765). `cargo fmt --all -- --check`, Flutter analyze (0 issues), Dart formatting, and `git diff --check` passed. No local GUI or Narrator was started.
-- Code commit `3949d8d` is pushed. PR CI [`41588501685`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588501685) passed all four jobs. Platform Availability [`41588495748`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748) passed Linux, Windows, and macOS jobs. Linux artifact [`13209266941`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748/artifacts/13209266941) records 22 pointer events and all three DnD routes. Windows artifact [`13208928420`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748/artifacts/13208928420) records 13 events, a visible 1028×681 client area at DPR 1.0, and all three routes; accessibility and graceful close passed. macOS ARM64 package [`13210135594`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748/artifacts/13210135594) was produced; startup artifact [`13209333872`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748/artifacts/13209333872) contains only Metal/Impeller initialization. macOS DnD artifact [`13209009030`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41588495748/artifacts/13209009030) says pointer routing was unavailable and all DnD tests skipped.
-- The latest-100 branch sample has 65 regular CI successes/0 failures, 28 Platform Availability successes/6 failures, plus one historical Windows artifact replay failure. Sampled platform reds are MSAA/clipboard assertions or PowerShell probe encoding/parse errors. The separate old artifact replay recorded a real `0xC000041D` close crash; current hosted passes are non-reproduction evidence only. See `docs/diagnostics/2026-11-03-p04/p04.85-preserve-case.md` and `ci-failures-and-crash-correlation.md`.
-- GitNexus all-scope: 6 files / 12 symbols / 0 resolved processes / LOW. The helper impact is 2 direct / 0 processes / LOW. `workbench_page.dart` exceeds the 512 KiB index limit. The fresh compare-main scan is 1,574 files / 2,770 symbols / 384 flows / CRITICAL with a capped changed-symbol listing; retain this cumulative branch-risk note.
+- Find and Replace inputs now handle Alt+Enter/Alt+NumpadEnter to select current literal/regex matches using case, whole-word, and selection-scope options. Stale/invalid regex results do not alter selections; the exact current match stays primary, the count is capped at 10,000, and selection history is recorded once without editing document text.
+- Targeted Flutter tests passed (68). Full `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passed: Rust workspace tests, Clippy, `build_core`, Flutter **772**. `cargo fmt --check`, Flutter analyze (0 issues), and `git diff --check` passed. No local GUI/Narrator was started.
+- Code commit `f24e605` is pushed. PR CI [`41593516002`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593516002) passed all four jobs. Platform Availability [`41593509709`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709) passed all Linux, Windows, and macOS jobs. Linux x64 package [`13210938338`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13210938338) launched under Xvfb; Linux DnD [`13211282750`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13211282750) recorded 22 events and three routes. Windows package [`13210964226`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13210964226) records a visible 1028×711 client area at 96 DPI, UIA/MSAA availability, and graceful close with exit 0; Windows DnD [`13211671290`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13211671290) records 13 events and three routes. macOS ARM64 package [`13212575071`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13212575071) was produced; startup diagnostics [`13212535093`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13212535093) contain only the Metal/Impeller initialization line. macOS DnD [`13211931578`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41593509709/artifacts/13211931578) says `input-route-unavailable` and is a skip, not a pass.
+- The branch's latest-100 Actions sample remains 65 successful/0 failed regular CI, 28 successful/6 failed Platform Availability, plus one historical Windows artifact replay failure (`0xC000041D`). The sampled platform reds are MSAA/clipboard/probe assertions; Windows close smoke is `if: always()` and still ran. No causal link from those assertion failures to the historical crash is established. See [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md).
+- GitNexus includes `workbench_page.dart` only after setting `GITNEXUS_MAX_FILE_SIZE=1024`. It reports `critical` for the broad workbench class path; source review narrowed the direct route to Find/Replace Focus → `_handleFindInputKey` → `_selectAllFindMatches` → `_setDocSelections`. The shared selection helper was not modified. Compare-main remains capped after rerunning with larger limits; keep the warning and do not call it clean. Full report: [`p04.86-alt-enter-select-all-find-matches.md`](docs/diagnostics/2026-11-03-p04/p04.86-alt-enter-select-all-find-matches.md).
+
+## Current Workspace State
+
+- Code commit `f24e605` and the separate P04.86 docs/evidence commit are pushed. Status/evidence are registered in `docs/03`, `progress.md`, `feature_list.json`, `session-handoff.md`, and diagnostic reports.
+- PR #2: OPEN and draft. After pushing documentation, check its PR CI run to completion and verify the PR remains draft.
+- Local worktree: `/tmp/alula-p04.70-next` (detached HEAD); keep all work out of `/mnt/e/alula_code`.
 
 ## Next Session
 
-1. Confirm the P04.85 status/evidence commit is pushed and PR #2 CI is green.
-2. Select the next dependency-ready item in `docs/03`; register its acceptance row first if needed.
-3. Run GitNexus impact before source edits, complete one feature slice and its DoD, then record evidence before starting another.
-4. Keep PR #2 OPEN and draft. Avoid local GUI/accessibility checks that can trigger Narrator. Do not publish v0.1.0 or mark the PR ready.
+1. Check the documentation commit's PR CI result and confirm PR #2 is still OPEN/draft.
+2. Select one dependency-ready P04.87 slice from `docs/03`; register its acceptance row before editing.
+3. Run GitNexus impact and inspect caller/process risk before source edits; after implementation run local DoD, update evidence, then run all-scope and compare-main graph checks before commit.
+4. Keep the architecture-first priority. Do not publish v0.1.0, merge, or mark the PR ready.
 
 ## Constraints
 
 - Work only in `/tmp/alula-p04.70-next`; never edit `/mnt/e/alula_code`.
 - Pushes to `origin/codex/vscode-parity-p00` are authorized. This checkout is detached; push with `git push origin HEAD:codex/vscode-parity-p00`.
-- Avoid local GUI/accessibility checks that can trigger Narrator.
+- Avoid local GUI/accessibility checks that can trigger Narrator. CI-hosted checks do not run on the user's machine.
