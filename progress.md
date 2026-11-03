@@ -5,15 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.99 / EDT-17g：Git unified diff 差异导航（进行中）
+### P04.99 / EDT-17g：Git unified diff 差异导航（已完成）
 
-- 已按固定 Code-OSS 1.145.0 行为登记导航切片：F7 / Shift+F7 分别跳转下一处/上一处，越过文件边界时循环；连续删除/新增块视为同一处差异，marker 留在块内。固定源码 commands.ts 注册 editor.action.diffReview.next/prev；diffEditorWidget.goToDiff 在边界回到首/末差异并居中揭示。
-- 当前实现入口为 GitDiffPatchView，GitNexus repo/worktree /tmp/alula-p04.70-next，索引刷新到 8eed9eb。GitDiffPatchView upstream impact 为 UNKNOWN（0 个可解析调用）；workbench_page.dart 超过 512 KiB 被跳过。精确搜索确认生产调用位于 workbench_page.dart:16121，另有 5 个 widget-test 构造点；不把 UNKNOWN 当成无影响。
-- P01.5 fake-LSP CI fixture follow-up 已于 8eed9eb 完成并推送；PR CI 41666117480 四项成功，Windows 重复关闭用例 10/10。改动未触碰生产 shutdown 或窗口层，历史 0xC000041D 仍未定位。
-- 计划与验收边界见 docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md。
-- 导航模型与 GitDiffPatchView 已实现：连续新增/删除块合并、marker 不拆块；F7 / Shift+F7 与前后按钮循环导航，inline/side-by-side 居中揭示并高亮目标，live region 播报序号/总数/行号，patch 更新重置索引。无差异与 raw fallback 禁用按钮。
-- 本地 DoD 全绿：完整 init.sh（Rust 71+46、Clippy、build_core、Flutter 844）、cargo fmt、Flutter analyze 0 issues、Harness 100/100；定向导航与 patch widget 25/25。代码提交前 hosted CI pending。
-- 提交前 GitNexus staged/all 重复报告 385 processes / CRITICAL / capped（10 项 + 375 omitted），展示流程与 Flutter diff helper 不匹配；class impact with-tests 为 CRITICAL 173/140/20，without-tests 为 UNKNOWN。保留最高风险，不视为 clean。完整扫描与验证记录见 p04.99-diff-navigation.md。
+- 按固定 Code-OSS 1.145.0 实现 F7 / Shift+F7 上一处/下一处差异导航，跨末/首处循环；连续删除/新增块视为一处，no-newline marker 不拆块。inline 与 side-by-side 都居中揭示并高亮目标，工具栏按钮与 live region 播报序号/总数/行号；patch 更新重置索引，无差异/raw fallback 禁用导航。实现入口为纯模型 `GitDiffPatchView`，无 Rust/ABI 或文本修改。
+- 本地验证通过：定向导航/patch widget 25/25；完整 `init.sh`（Rust 71+46、Clippy、build_core、Flutter 844）、cargo fmt、Flutter analyze 0 issues、Harness 100/100、JSON 和 diff check 全绿。本次重新跑的 `init.sh --fast` 也全绿。本机 GUI/Narrator 未启动。
+- Code SHA `ce78c3f` 已推送。PR CI [`41670555528`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41670555528) 四 job 全绿、Flutter 844 tests；Platform Availability [`41670544291`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41670544291) Linux x64、Windows x64、macOS ARM64 jobs 全成功。Windows P03.7、DnD、clipboard、accessibility tree 和 graceful close 通过；macOS ARM64 包已产出，启动诊断无 crash report。macOS DnD artifact 记录 `CGEventPostToPid pointer route: false`，明确 skip，原生 DnD/IME 仍待 P15 设备验证。证据见 `docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md`。
+- 最新样本：regular CI 最近 100 次为 100 成功/0 失败；Platform Availability 最近 100 次为 54 成功/46 历史失败，最新失败仍是 `41458740387`，之后 54 次成功。红灯主要来自输入路由、可访问性断言与探针/验证器；没有把 assertion failure 当作进程崩溃。
+- CI 源码复核发现旧 Windows artifact `d5319369` 在 `CoUninitialize()` 后才析构 `FlutterWindow`；`c2b787f` 将 controller 析构移到 COM teardown 前。旧 artifact 在包含 UIA proxy cleanup 的脚本下仍 crash；后续含该修正的 Windows 11 ARM artifact 两主题都保存读回并 exit 0。判定为高度可能缓解历史关闭崩溃，但旧报告无确认调用栈，仍不是单变量根因证明。详见 `p04.92-win11-arm-current-artifact.md` 与 `ci-failures-and-crash-correlation.md`。
+- GitNexus implementation staged/all scan preserves CRITICAL 385 flows / capped and class impact with-tests CRITICAL 173/140/20, without-tests UNKNOWN; the >512 KiB workbench caller is skipped, so the code scan is not clean. The fresh docs-only evidence/state staged/all scan covered 7 files / 16 section symbols / 0 flows / LOW and was neither partial nor truncated. Fixed actions' F1 Command Palette exposure remains a separate EDT-17 follow-up.
 
 
 ### P01.5 Windows CI 异步 LSP 关闭 fixture 稳定性（已完成）
@@ -26,7 +25,7 @@
 ### P04.92 / CI-Crash-01：当前 Release artifact 的 Windows 11 ARM 关闭复放（已完成）
 
 - `windows-artifact-validation.yml` 现可选 run/artifact/source SHA，Narrator 与旧源码交互 job 默认关闭。Windows ARM 的多视图编辑回放先后暴露 clipboard 粘贴与 SendKeys 注入丢字符；在回车后等待 350 ms、逐字符间隔 100 ms 后，保留严格同步/保存回读断言的最终 light/dark 两组均通过。当前 run `41627307864` 使用 Platform Availability `41618233435` 的 x64 Release artifact（source `1129d607`，Windows 11 Enterprise ARM64 x64 仿真，96 DPI）；两组四视图同步、保存回读 `view-2` 一致，WM_CLOSE exit 0，无 Application Error 或 crash dump。讲述人未启动。证据 artifacts [`13225549631`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13225549631)（light）和 [`13226642379`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627307864/artifacts/13226642379)（dark）。
-- 验证器修正 commit `34f1511` 已推送。PR CI [`41627306984`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627306984) 四个 job 全绿。先前 ARM 红灯是测试输入注入丢字符，相关 session 仍正常关闭且没有崩溃诊断；这提升 CI 信号质量，但不解释或修复历史旧 artifact 的 `0xC000041D`。历史 crash root cause 仍待定位。详见 [`p04.92-win11-arm-current-artifact.md`](docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md) 与 [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
+- 验证器修正 commit `34f1511` 已推送。PR CI [`41627306984`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41627306984) 四个 job 全绿。先前 ARM 红灯是测试输入注入丢字符，相关 session 正常关闭且无崩溃诊断；这是 harness 输入问题。另经源码复核，旧 artifact 的 `CoUninitialize()` 先于 `FlutterWindow` 销毁，`c2b787f` 调整为先销毁 controller；后续新 artifact ARM light/dark 关闭通过，故旧 crash 高度可能已缓解，确切根因仍未被调用栈证实。详见 [`p04.92-win11-arm-current-artifact.md`](docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md) 与 [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md)。
 
 ### P04.93 / EDT-17a：有界逐行差异模型（已完成）
 

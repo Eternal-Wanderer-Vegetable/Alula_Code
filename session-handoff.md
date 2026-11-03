@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P01.5 Windows CI fake-LSP follow-up is complete; P04.99 / EDT-17g diff navigation is the active slice.
+> Last Updated: 2026-11-04. P04.99 / EDT-17g diff navigation and hosted Linux/Windows/macOS package gates are complete; the next EDT-17 slice must be registered before code edits.
 
 ## Current Objective
 
-Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. Current slice: P04.99 implementation and full local DoD are complete; code/evidence commit is being prepared, then hosted PR CI and Platform Availability must be checked. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
+Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. P04.99 implementation, full local DoD, PR CI, and Linux/Windows/macOS hosted package/startup gates are complete; evidence docs/state are being committed. Next, register a narrow EDT-17 slice for Command Palette exposure of the pinned diff-review actions, then run fresh GitNexus impact before editing code. Prioritize overall architecture and Linux/Windows usability, then provide hosted macOS packages. Numeric memory optimization remains deferred. Keep PR #2 OPEN/draft; do not publish v0.1.0 or merge.
 
 ## Latest Completed Follow-up: P01.5 Windows LSP shutdown fixture
 
@@ -21,22 +21,23 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## CI and Crash Finding
 
-- Latest 100 branch regular CI runs have 100 successful final conclusions. The latest 100 Platform Availability runs have 54 successes / 46 historical failures; the newest failure remains `41458740387`, followed by 54 successful runs through `41659454431`.
-- CI has captured real faults before: macOS FlutterView/Irondash startup SIGSEGV and the old Windows artifact `d5319369` close exit `0xC000041D`. Their source-level causes remain unresolved; current hosted close/startup passes are non-reproduction evidence only.
+- Latest 100 branch regular CI runs have 100 successful final conclusions. The latest 100 Platform Availability runs have 54 successes / 46 historical failures; the newest failure remains `41458740387`, followed by 54 successful runs through `41670544291`.
+- CI has captured real faults before. For the old Windows `d5319369` artifact, source comparison found that `CoUninitialize()` ran before `FlutterWindow` destruction; commit `c2b787f` moved controller destruction before COM teardown. The newer `1129d607` artifact passed a Windows 11 ARM light/dark replay, so the old close crash is likely mitigated, although the exception lacks a confirmed stack and this is not a single-variable proof. macOS FlutterView/Irondash startup SIGSEGV had a separate readiness/nil-guard change in `9f2c70a`; later startup smokes did not produce a crash report.
 - P04.98's first-attempt Rust test failure was a missing `stopped` field in the FFI response with process exit 1, not an observed OS process crash. If it recurs, first print the full FFI response and collect child exit state before attributing it. See [`ci-failures-and-crash-correlation.md`](docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md).
-- The focused follow-up is limited to the fake test server/test diagnostics. The recent platform probe failures and historical application crashes have different signatures; no causal relationship or crash mitigation is established.
+- Recent platform red runs primarily concern input routing, accessibility assertions, or validation probes; they are not all crashes. The P01.5 fake-LSP fixture follow-up improves test determinism only and does not explain either historical application fault. See `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`.
 - P01.5 outcome: the fake server now interrupts canceled delayed completion workers. Linux and Windows focused repetitions passed 10/10, and PR CI run [`41666117480`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41666117480) passed all four jobs. This makes the shutdown regression fixture more deterministic; the original failure's FFI error was not captured, and the old application crash remains unresolved.
 
 ## Current Workspace State
 
-- Worktree: `/tmp/alula-p04.70-next`; P04.98 evidence is based on code SHA `6a247c7` and the accompanying docs commit.
+- Worktree: `/tmp/alula-p04.70-next`; P04.99 code SHA `ce78c3f8cc2242c89f9976a46a5a3c44270f4a0e` is pushed, with docs/evidence commit pending.
 - Push target: `origin/codex/vscode-parity-p00`. User authorized pushes to this branch.
 - PR #2: [`OPEN/draft`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2).
 
 ## Active Slice / Risks
 
-- P04.99 implementation complete locally: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Full init.sh and 844 Flutter tests passed; hosted checks are pending.
-- GitNexus staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. Preserve warning, see P04.99 report.
+- P04.99 is complete as registered: F7 / Shift+F7, wraparound navigation, toolbar controls, current-row highlight, live accessibility status, inline/side-by-side reveal. Local DoD, PR CI 41670555528, and Platform Availability 41670544291 passed; macOS native DnD was explicitly skipped for unavailable pointer routing.
+- The P04.99 implementation staged/all scan remains CRITICAL and capped (385 flows); examples are unrelated build/LSP flows. The later docs-only evidence/state scan was 7 files / 16 symbols / 0 affected flows / LOW, not partial/truncated. Preserve both scopes in the P04.99 report.
+- The pinned F1/Command Palette exposure for `editor.action.diffReview.next/prev` remains an explicit EDT-17 gap; register it as P04.100 before implementation.
 
 
 - P04.99 / EDT-17g is registered in docs/03: implement wraparound next/previous diff navigation with F7/Shift+F7 in inline and side-by-side Git diff views. See docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md.
@@ -44,22 +45,22 @@ Continue the fixed Code-OSS 1.145.0 parity plan one registered slice at a time. 
 
 ## Blockers / Risks
 
-- Historical Windows `0xC000041D` source cause; native Windows 11 acceptance.
+- Historical Windows `0xC000041D` is likely mitigated by `c2b787f`, but the exact fault is unproven; native Windows 11 device acceptance remains open.
 - Native macOS DnD/IME, Linux DRM hardware, and P15 device gates. Hosted macOS DnD must remain marked skipped when pointer routing is unavailable.
 - EDT-17 remains open: moved blocks, whitespace option, unchanged-region folding, generic compare-editor integration, and other registered diff gaps.
 
 ## Files Involved
 
-- Code: `app/lib/git/git_diff_side_by_side.dart`, `app/lib/git/git_diff_patch_view.dart`, `app/test/git_diff_side_by_side_test.dart`, `app/test/git_diff_patch_test.dart`.
-- Evidence/state: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, `progress.md`, `feature_list.json`, and this handoff.
+- Code: `app/lib/git/git_diff_navigation.dart`, `app/lib/git/git_diff_patch_view.dart`, `app/test/git_diff_navigation_test.dart`.
+- Evidence/state: `docs/03-里程碑计划与验收标准.md`, `docs/diagnostics/2026-11-03-p04/p04.99-diff-navigation.md`, `docs/diagnostics/2026-11-03-p04/p04.92-win11-arm-current-artifact.md`, `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`, `progress.md`, `feature_list.json`, and this handoff.
 
 ## Next Session Startup
 
 1. Read `AGENTS.md`, `session-handoff.md`, and `progress.md`.
 2. Confirm the worktree is clean and the evidence commit is pushed to `codex/vscode-parity-p00`.
 3. Check PR #2 remains OPEN/draft and review the latest CI status.
-4. Review EDT-17 gaps after P04.98, register one next slice in `docs/03`, then run its GitNexus impact before editing code.
+4. Register P04.100 for Command Palette availability of the pinned diff-review actions in `docs/03`, then refresh GitNexus and run impact before editing code.
 
 ## Recommended Next Step
 
-Implement P04.99 in scope, preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
+Register and implement P04.100, preserve GitNexus UNKNOWN/CRITICAL warnings, keep PR #2 open/draft, and avoid local GUI/accessibility actions that can start Narrator.
