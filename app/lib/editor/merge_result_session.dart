@@ -3,6 +3,8 @@ import 'dart:collection';
 import '../bridge/alula_core.dart';
 
 const int maxMergeSessionInputUtf8Bytes = 8 * 1024 * 1024;
+const int _maxMergeResolutionSnapshots = 32;
+const int _maxMergeResolutionSnapshotConflicts = 1024;
 
 enum MergeResultSessionErrorCode {
   disposed,
@@ -115,7 +117,9 @@ class MergeResultSession {
         _projection = projection,
         _savedProjection = projection,
         _savedResult = projection.result,
-        _projectedVersion = projectedVersion;
+        _projectedVersion = projectedVersion {
+    _resolutionHistory.add(const {});
+  }
 
   factory MergeResultSession.open({
     required AlulaMergeApi mergeApi,
@@ -167,13 +171,17 @@ class MergeResultSession {
   String? _savedResult;
   Map<int, AlulaMergeSide> _resolutions = const {};
   Map<int, AlulaMergeSide> _savedResolutions = const {};
+  final List<Map<int, AlulaMergeSide>> _resolutionHistory = [];
   int _projectedVersion;
   int _generation = 0;
   bool _disposed = false;
+  bool _externallyChanged = false;
 
   bool get isDisposed => _disposed;
   int get generation => _generation;
-  int get unresolvedConflictCount => _currentProjection.unresolvedConflictCount;
+  int get unresolvedConflictCount => _externallyChanged
+      ? conflictCount
+      : _currentProjection.unresolvedConflictCount;
   int get conflictCount => _currentProjection.conflictCount;
   List<AlulaMergeConflict> get conflicts => _currentProjection.conflicts;
   Map<int, AlulaMergeSide> get resolutions => UnmodifiableMapView(_resolutions);
@@ -237,14 +245,7 @@ class MergeResultSession {
   /// the normal Rust document edit and undo path.
   void applyPlan(MergeResultEditPlan plan, {required int appliedVersion}) {
     _ensureActive();
-    if (!identical(plan._sessionToken, _sessionToken) ||
-        plan.generation != _generation ||
-        plan.baseVersion != _projectedVersion) {
-      throw const MergeResultSessionException(
-        MergeResultSessionErrorCode.stalePlan,
-        'The merge result changed after this edit plan was created',
-      );
-    }
+    _validatePlanIdentity(plan);
     final current = _requireResultDocument().resync();
     if (current.version != appliedVersion ||
         current.content != plan.projection.result) {
@@ -256,7 +257,52 @@ class MergeResultSession {
     _projection = plan.projection;
     _resolutions = Map.unmodifiable(plan.resolutions);
     _projectedVersion = current.version;
+    _externallyChanged = false;
+    _rememberResolutionSnapshot();
     _generation++;
+  }
+
+  /// Checks that [plan] still targets the current Rust result before the host
+  /// starts applying its operations.
+  void validatePlan(MergeResultEditPlan plan) {
+    _ensureActive();
+    _validatePlanIdentity(plan);
+    _assertCurrentResult();
+  }
+
+  /// Reconciles the merge model with the Rust-owned document after undo/redo
+  /// or when a host observes an out-of-session edit. Text matching a retained
+  /// projection restores its conflict choices; unknown text invalidates them.
+  bool reconcileCurrentResult({bool allowKnownProjectionRestore = true}) {
+    _ensureActive();
+    final current = _requireResultDocument().resync();
+    if (current.content == _currentProjection.result && !_externallyChanged) {
+      if (current.version != _projectedVersion) {
+        _projectedVersion = current.version;
+        _generation++;
+      }
+      _externallyChanged = false;
+      return true;
+    }
+
+    if (allowKnownProjectionRestore) {
+      for (final resolutions in _resolutionHistory.reversed) {
+        final candidate = _project(resolutions);
+        if (candidate.result != current.content) continue;
+        _projection = candidate;
+        _resolutions = resolutions;
+        _projectedVersion = current.version;
+        _externallyChanged = false;
+        _generation++;
+        return true;
+      }
+    }
+
+    _resolutions = const {};
+    _projectedVersion = current.version;
+    _externallyChanged = true;
+    _generation++;
+    return false;
   }
 
   /// Records the current projection after the host has completed an atomic
@@ -274,6 +320,7 @@ class MergeResultSession {
 
   MergeResultClosePrompt get closePrompt {
     _ensureActive();
+    reconcileCurrentResult();
     final document = _requireResultDocument();
     final current = document.resync();
     final matchesProjection = current.version == _projectedVersion &&
@@ -340,6 +387,7 @@ class MergeResultSession {
       if (reverted.content == _savedProjection?.result) {
         _projection = _savedProjection;
         _resolutions = Map.unmodifiable(_savedResolutions);
+        _externallyChanged = false;
       }
       _projectedVersion = reverted.version;
       _generation++;
@@ -362,6 +410,8 @@ class MergeResultSession {
     _savedResult = null;
     _resolutions = const {};
     _savedResolutions = const {};
+    _resolutionHistory.clear();
+    _externallyChanged = false;
     _generation++;
   }
 
@@ -373,6 +423,37 @@ class MergeResultSession {
     }
   }
 
+  void _rememberResolutionSnapshot() {
+    if (_resolutionHistory.isNotEmpty &&
+        _sameResolutions(_resolutionHistory.last, _resolutions)) {
+      return;
+    }
+    final conflictCount = _currentProjection.conflictCount;
+    if (conflictCount > _maxMergeResolutionSnapshotConflicts) {
+      _resolutionHistory
+        ..clear()
+        ..add(const {})
+        ..add(_resolutions);
+      return;
+    }
+    _resolutionHistory.add(_resolutions);
+    while (_resolutionHistory.length > _maxMergeResolutionSnapshots) {
+      // Preserve the original unresolved projection for a complete undo.
+      _resolutionHistory.removeAt(1);
+    }
+  }
+
+  bool _sameResolutions(
+    Map<int, AlulaMergeSide> left,
+    Map<int, AlulaMergeSide> right,
+  ) {
+    if (left.length != right.length) return false;
+    for (final entry in left.entries) {
+      if (right[entry.key] != entry.value) return false;
+    }
+    return true;
+  }
+
   AlulaMergeProjection _project(Map<int, AlulaMergeSide> resolutions) =>
       _mergeApi.project(
         base: _base!,
@@ -380,6 +461,17 @@ class MergeResultSession {
         input2: _input2!,
         resolutions: resolutions,
       );
+
+  void _validatePlanIdentity(MergeResultEditPlan plan) {
+    if (!identical(plan._sessionToken, _sessionToken) ||
+        plan.generation != _generation ||
+        plan.baseVersion != _projectedVersion) {
+      throw const MergeResultSessionException(
+        MergeResultSessionErrorCode.stalePlan,
+        'The merge result changed after this edit plan was created',
+      );
+    }
+  }
 
   MergeResultEditPlan _planProjection(
     AlulaMergeProjection nextProjection,

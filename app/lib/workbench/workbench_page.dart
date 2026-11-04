@@ -299,8 +299,11 @@ class WorkbenchPage extends StatefulWidget {
   /// Optional integration point for a merge-result owner. The workbench keeps
   /// the returned session with the shared Rust document and consumes its save
   /// and close decisions. Git conflict discovery and merge UI are separate.
-  final MergeResultSession? Function(AlulaCore core, OpenDoc resultDocument)?
-      mergeResultSessionFactory;
+  final MergeResultSession? Function(
+    AlulaCore core,
+    OpenDoc resultDocument,
+    bool Function(MergeResultEditPlan plan) applyPlan,
+  )? mergeResultSessionFactory;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
@@ -9728,10 +9731,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  bool _applyMergeResultPlan(OpenDoc doc, MergeResultEditPlan plan) {
+    final session = doc.mergeResultSession;
+    if (session == null || session.isDisposed) return false;
+
+    for (final view in _viewsOf(doc).toList(growable: false)) {
+      _flushInput(view, commitComposition: true);
+    }
+
+    try {
+      session.validatePlan(plan);
+      final nextText = plan.projection.result;
+      _applyProgrammaticEdit(
+        doc,
+        nextText,
+        selection: TextSelection.collapsed(offset: nextText.length),
+        operations: plan.operations,
+        reconcileMergeSession: false,
+      );
+      session.applyPlan(plan, appliedVersion: doc.doc.resync().version);
+      return true;
+    } on MergeResultSessionException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '合并计划未应用：${error.detail}');
+      }
+      return false;
+    } on AlulaException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '合并计划应用失败：${error.code}');
+      }
+      return false;
+    }
+  }
+
   void _applyProgrammaticEdit(
     OpenDoc doc,
     String newText, {
     required TextSelection selection,
+    List<TextOp>? operations,
+    bool reconcileMergeSession = true,
     bool clearHistory = false,
     bool markSaved = false,
   }) {
@@ -9740,7 +9778,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     doc.columnSelection = null;
     final before = doc.doc.resync().content;
     final oldSelection = doc.selection;
-    final ops = diffToOps(before, newText);
+    final ops = operations ?? diffToOps(before, newText);
     if (ops.isNotEmpty) {
       final inverse = diffToOps(newText, before);
       doc.doc.apply(ops);
@@ -9764,6 +9802,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleOutlineRefresh();
     _scheduleStateSave();
     _scheduleSyntaxRefresh(doc.id);
+    if (reconcileMergeSession) {
+      doc.mergeResultSession?.reconcileCurrentResult(
+        allowKnownProjectionRestore: false,
+      );
+    }
     if (mounted) setState(() {});
   }
 
@@ -10930,7 +10973,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final mergeSessionFactory = widget.mergeResultSessionFactory;
       if (mergeSessionFactory != null) {
         try {
-          open.mergeResultSession = mergeSessionFactory(core, open);
+          open.mergeResultSession = mergeSessionFactory(
+            core,
+            open,
+            (plan) => _applyMergeResultPlan(open, plan),
+          );
         } on Object catch (error) {
           open.disposeView();
           if (mounted) {
@@ -13698,6 +13745,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _finishHistoryChange(OpenDoc doc, String status) {
     doc.crossWindowSelection = null;
     _updateDirty(doc);
+    doc.mergeResultSession?.reconcileCurrentResult();
     _syncCommandContext();
     doc.lastEditAt = null;
     _onFindTextChanged();

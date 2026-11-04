@@ -222,7 +222,17 @@ void main() {
         )),
       );
 
+      final beforeExternalMutation =
+          session.planAcceptAll(AlulaMergeSide.input2);
       doc.apply([const TextOp.insert(0, 'external ')]);
+      expect(
+        () => session.validatePlan(beforeExternalMutation),
+        throwsA(isA<MergeResultSessionException>().having(
+          (error) => error.code,
+          'code',
+          MergeResultSessionErrorCode.staleResult,
+        )),
+      );
       expect(
         () => session.planAcceptAll(AlulaMergeSide.input2),
         throwsA(isA<MergeResultSessionException>().having(
@@ -231,6 +241,45 @@ void main() {
           MergeResultSessionErrorCode.staleResult,
         )),
       );
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('reconciles undo, redo, and manual result edits conservatively', () {
+    final opened = _openSession(
+      base: 'head\nold\ntail\n',
+      input1: 'head\nours\ntail\n',
+      input2: 'head\ntheirs\ntail\n',
+    );
+    final doc = opened.document;
+    final session = opened.session;
+    final unresolvedResult = session.projection.result;
+    try {
+      final plan = session.planResolveConflict(
+        session.conflicts.single.id,
+        AlulaMergeSide.input1,
+      );
+      _applyPlan(doc, session, plan);
+      expect(session.unresolvedConflictCount, 0);
+
+      _replaceDocument(doc, unresolvedResult);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.unresolvedConflictCount, 1);
+
+      _replaceDocument(doc, plan.projection.result);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.unresolvedConflictCount, 0);
+
+      _replaceDocument(doc, 'manual result\n');
+      expect(
+        session.reconcileCurrentResult(allowKnownProjectionRestore: false),
+        isFalse,
+      );
+      expect(session.unresolvedConflictCount, session.conflictCount);
+      expect(
+          session.closePrompt.unresolvedConflictCount, session.conflictCount);
     } finally {
       session.dispose();
       doc.close();
