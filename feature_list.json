@@ -553,7 +553,7 @@
         "feat-026"
       ],
       "status": "in-progress",
-      "evidence": "范围已登记；固定 Code-OSS 1.145.0 commands.ts 的四资源 open action。GitNexus：_registerCommands LOW，_openFileByPath MEDIUM（18 symbols/6 callers/2 process families），_applyMergeResultPlan LOW；MergeResultSession.open context lower-bound 有 2 receiver-typing dropped callers，源码搜索已核对。覆盖限制与 DoD：docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md。产品实现未开始。",
+      "evidence": "产品/test commit d6a79c9 已推送。新增 typed 四本地 URI `_open.mergeEditor` route；五个相关 merge/session/open/close suites 26/26；完整 init.sh 通过（Rust 71+50、Clippy、build_core、Flutter 957），Flutter analyze、cargo fmt --check、新增 Dart 文件格式检查通过。PR CI 41855606676 全绿。Platform Availability 41855596486 的 Linux x64 与 Windows x64 构建/启动通过，Windows 可见窗口、P03.7 interaction、DnD、clipboard/accessibility smoke 通过；包 artifacts Linux 13338870074、Windows 13338156660。macOS attempt 1 在未分配 runner (runner_id=0、无步骤/日志) 后取消；只重跑取消 job 后 attempt 2 仍 queued，等待 build/launch/package 结论，故 feat-041 保持 in-progress。GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；evidence-only scans 从 CRITICAL 映射变为 no indexed symbol overlap（not clean），均保留为未解决。impact 与 coverage 限制及 crash/CI 证据见 docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
