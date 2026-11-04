@@ -69,6 +69,32 @@ void _replaceDocument(AlulaDoc document, String replacement) {
 }
 
 void main() {
+  test('exposes immutable input snapshots only while the session is active',
+      () {
+    const base = 'base 😀\r\n';
+    const input1 = 'input one\n';
+    const input2 = 'input two\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    try {
+      expect(opened.session.baseText, base);
+      expect(opened.session.input1Text, input1);
+      expect(opened.session.input2Text, input2);
+      _replaceDocument(opened.document, 'different result');
+      expect(opened.session.baseText, base);
+      expect(opened.session.input1Text, input1);
+      expect(opened.session.input2Text, input2);
+    } finally {
+      opened.session.dispose();
+      opened.document.close();
+    }
+    expect(() => opened.session.baseText,
+        throwsA(isA<MergeResultSessionException>()));
+    expect(() => opened.session.input1Text,
+        throwsA(isA<MergeResultSessionException>()));
+    expect(() => opened.session.input2Text,
+        throwsA(isA<MergeResultSessionException>()));
+  }, skip: _bootstrap.skip);
+
   test('opens only when Rust result matches the frozen input projection', () {
     const base = 'base\n';
     const input1 = 'left\n';

@@ -41,6 +41,7 @@ import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
 import '../editor/find_replace_history.dart';
 import '../editor/merge_result_session.dart';
+import '../editor/merge_editor_surface.dart';
 import '../editor/clipboard_metadata.dart';
 import '../editor/editor_clipboard.dart';
 import '../editor/text_drag_drop.dart';
@@ -16541,6 +16542,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 编辑器区：标签条 + 编辑器 ----------
 
   Widget _buildEditorArea(EditorGroup g) {
+    final mergeSession = g.active?.mergeResultSession;
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () =>
@@ -16557,7 +16559,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  _buildEditor(g),
+                  if (mergeSession == null)
+                    _buildEditor(g)
+                  else
+                    MergeEditorSurface(
+                      key: ValueKey('merge-editor-surface-${g.region}'),
+                      base: mergeSession.baseText,
+                      input1: mergeSession.input1Text,
+                      input2: mergeSession.input2Text,
+                      resultEditor: _buildEditor(g),
+                    ),
                   if (_shouldShowPasteAsWidget(g))
                     Positioned(
                       top: 6,

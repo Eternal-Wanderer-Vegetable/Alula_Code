@@ -165,10 +165,49 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('the visible result editor saves through the Rust document',
+      (tester) async {
+    await mountAndOpen(tester);
+    final session = openedSession!;
+    final field = find.descendant(
+      of: find.byType(RustTextInputField),
+      matching: find.byType(TextField),
+    );
+    final controller = tester.widget<TextField>(field).controller!;
+    const editedResult = 'saved from merge result\n';
+    controller.value = const TextEditingValue(
+      text: editedResult,
+      selection: TextSelection.collapsed(offset: editedResult.length),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(openedDocument!.resync().content, editedResult);
+    expect(session.isDirty, isTrue);
+    expect(session.input1Text, _input1);
+    expect(session.input2Text, _input2);
+
+    await _pressControl(tester, LogicalKeyboardKey.keyS);
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(resultFile.readAsStringSync(), editedResult);
+    expect(openedDocument!.resync().content, editedResult);
+    expect(session.isDirty, isFalse);
+    expect(session.input1Text, _input1);
+    expect(session.input2Text, _input2);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('merge plan uses undo edits and synchronizes split views',
       (tester) async {
     await mountAndOpen(tester);
     final session = openedSession!;
+
+    expect(
+        find.byKey(const ValueKey('merge-editor-pane-input1')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('merge-editor-pane-input2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('merge-editor-pane-base')), findsNothing);
+    expect(find.byKey(const ValueKey('merge-editor-pane-result-frame')),
+        findsOneWidget);
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await tester.pump(const Duration(milliseconds: 200));
@@ -177,6 +216,10 @@ void main() {
 
     final fieldsFinder = find.byType(RustTextInputField);
     expect(fieldsFinder, findsNWidgets(2));
+    expect(find.byKey(const ValueKey('merge-editor-pane-input1')),
+        findsNWidgets(2));
+    expect(find.byKey(const ValueKey('merge-editor-pane-input2')),
+        findsNWidgets(2));
     var views = tester.widgetList<RustTextInputField>(fieldsFinder).toList();
     final documentId = views.first.inputWindow.document.id;
     expect(views[1].inputWindow.document.id, documentId);
@@ -260,6 +303,10 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 100));
     expect(fieldsFinder, findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('merge-editor-pane-input1')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('merge-editor-pane-input2')), findsOneWidget);
     expect(session.isDisposed, isFalse);
     expect(openedDocument!.resync().content, plan.projection.result);
 

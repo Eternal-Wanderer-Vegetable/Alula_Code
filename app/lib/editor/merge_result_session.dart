@@ -179,6 +179,21 @@ class MergeResultSession {
 
   bool get isDisposed => _disposed;
   int get generation => _generation;
+  String get baseText {
+    _ensureActive();
+    return _base!;
+  }
+
+  String get input1Text {
+    _ensureActive();
+    return _input1!;
+  }
+
+  String get input2Text {
+    _ensureActive();
+    return _input2!;
+  }
+
   int get unresolvedConflictCount => _externallyChanged
       ? conflictCount
       : _currentProjection.unresolvedConflictCount;
