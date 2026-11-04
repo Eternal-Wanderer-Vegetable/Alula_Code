@@ -350,4 +350,35 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     }
   });
+
+  testWidgets('diff row budget rejects the complete Explorer comparison',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final lines = List<String>.filled(8193, 'same');
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsStringSync(lines.join('\n'));
+      lines[8192] = 'changed';
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsStringSync(lines.join('\n'));
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      expect(
+        find.textContaining('差异超过当前预览预算'),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('explorer-compare-preview')),
+        findsNothing,
+      );
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
 }
