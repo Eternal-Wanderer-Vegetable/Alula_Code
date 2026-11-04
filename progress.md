@@ -5,11 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.109 / EDT-18e：比较编辑器块与选区回退（范围已登记；实现未开始）
+### P04.109 / EDT-18e：比较编辑器块与选区回退（已完成；P04 继续）
 
-- `docs/03` 已登记下一个 EDT-18 slice：固定 Code-OSS `diffEditor.revert`，覆盖 hunk toolbar 的 Revert Block、selection toolbar 的 Revert Selection 和 F1/命令 Revert；只将 original 快照写入 modified Rust `OpenDoc`，不修改 original/剪贴板/磁盘基线。要求精确、当前版本 diff；stale/approximate/budget fallback、IME、关闭/身份竞态必须整次拒绝。
-- 固定实现及调用语义、范围、验收标准与 GitNexus 编辑前风险见 `docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md`。`SnapshotComparePreview` impact LOW (9); `_showEditableSnapshotCompare` LOW (5); `computeDiffViewModel` CRITICAL (74/6 flows)，本 slice 计划不修改 diff model。图仍有 421 跨语言属性位点、1,012/1,212 flow candidates 未排序、545 callees 与 15 walks 截断；CRITICAL 和 coverage caveats 不豁免。
-- P04.108 / EDT-18d 已完成，六项定向 widget tests、完整本地 DoD、PR CI `41758044540`、三平台 Platform Availability `41758034721` 和证据提交 `1a5cd1b` 全部通过；详情见下节和报告。当前只推进 P04.109，不启动 P05 或其他并行 feature。
+- 已实现固定 Code-OSS diffEditor.revert：diff hunk 的 Revert Block、modified-side selection 的 Revert Selection，以及通过命令面板触发的焦点 Revert。工具栏行与精确 diff hunk 映射，命令按当前 caret/selection 与 modified-side 行范围定位；macOS 命令面板使用 Cmd+Shift+P，Windows/Linux 使用 Ctrl+Shift+P。
+- 操作只把冻结 original snapshot 写入 modified Rust OpenDoc。修改通过版本检查的 Rust 文本事务原子提交，形成一个 undo grouping，支持撤销/重做、兄弟视图同步、保存与磁盘回读。stale/approximate/budget fallback、活跃 IME、文档关闭和 identity/version 变化均在修改前拒绝。未修改 diff model、Rust/FFI/ABI 或保存协议。
+- 五项范围映射单测与五项工作台 widget 测试覆盖 UTF-16/CRLF、空行插删、selection/hunk 映射、命令面板、undo/redo、兄弟视图、BOM/non-BMP 保存回读及 IME blur 时拒绝旧 diff。完整 init.sh 通过：Rust workspace、Clippy、build_core、Flutter 923；cargo fmt、Flutter analyze（0 issues）、diff check 通过。未启动桌面 GUI 或讲述人。
+- GitNexus 最终代码扫描：5 files / 18 symbols / 3 flows / MEDIUM；预编辑 computeDiffViewModel CRITICAL 与图覆盖限制保留。产品/测试提交 2b671e5 已推送；PR CI 41767192131 四 job 全绿（Flutter 923）。Platform Availability 41767186847 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package jobs 全绿；Linux/Windows DnD 通过，Windows UIA/MSAA 与 graceful close 通过。macOS DnD artifact 13294480227 记录 hosted pointer route unavailable、交互被 skip，原生 macOS DnD 留 P15；macOS startup artifact 13294295957 只有 Impeller 初始化行。包 artifacts：Linux 13292689699、Windows 13294185107、macOS ARM64 13293522849。当前绿色与无 crash report 只是不复现证据，不声称修复历史崩溃。未启动本机 GUI 或讲述人。
+- 固定上游、实现细节、本地/hosted 验证与崩溃证据边界见 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block.md 与 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md。P04.109 完成；从 docs/03 与 docs/11 分解下一项登记后再开始。PR #2 保持 OPEN/draft。
 
 ### P04.108 / EDT-18d：Explorer 单资源两步比较（已完成；P04 继续）
 

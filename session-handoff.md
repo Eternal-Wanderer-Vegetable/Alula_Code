@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.108 / EDT-18d is complete and evidence is pushed. P04.109 / EDT-18e is registered as the only active slice; implementation has not started. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.109 / EDT-18e implementation, local DoD, PR CI, and all hosted platform jobs are complete. Product commit 2b671e5 is pushed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.109 / EDT-18e: implement only the pinned single-file diff `Revert Block`, `Revert Selection`, and `diffEditor.revert` action. Scope/DoD and pre-edit graph impact are registered in `docs/03-里程碑计划与验收标准.md` and `docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md`. Implementation has not started. P04.108 evidence commit `1a5cd1b` is pushed; PR CI `41760872371` passed, and PR #2 remains OPEN/draft. Keep original snapshots immutable, route all changes through the versioned Rust-backed modified document, guard stale/approximate/IME cases, and retain the CRITICAL `computeDiffViewModel` impact by not changing it. No local GUI/Narrator. Prior P04.108 report: `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md`.
+P04.109 / EDT-18e is complete. Product commit 2b671e5 and its hosted evidence are recorded in docs/03 and the P04.109 reports. Linux/Windows hosted smoke passed; macOS ARM64 package/startup passed, while native DnD was skipped because synthetic pointer routing was unavailable, so device validation remains P15. Commit/push the documentation/evidence stage, then identify and register the next P04 slice from docs/03 and docs/11 before implementation. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
 
 ## Repository and PR
 
@@ -39,16 +39,17 @@ P04.109 / EDT-18e: implement only the pinned single-file diff `Revert Block`, `R
 - Product/five-test snapshot CI runs `41755678771` and `41755709195` passed; six-test PR CI `41758044540` and Platform Availability `41758034721` passed all jobs. Latest Linux/Windows/macOS package artifacts are `13288599908`, `13289171782`, and `13289098296`; macOS startup diagnostics artifact is `13289078404`. Native macOS acceptance remains P15.
 - CI interpretation: recent Windows ARM validator assertion failures were keyboard-input drops with exit 0 and no crash artifact; one platform failure was macOS queued cancellation before any step. These are separate from historical Windows close/macOS startup crashes and their qualified lifecycle mitigations. This Explorer change does not touch startup/close paths. See `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md` and the CI/crash report.
 
-## P04.109 Scope and Pre-edit Analysis
+## Completed P04.109
 
-- Pinned `diffEditor.revert` exposes Revert Block per hunk and Revert Selection per selected mapping, only when the modified side is writable. The F1 command reverts line mappings intersecting the modified cursor/selection; toolbar context carries exact inner changes. Both write original text into the modified side with undo stops. Sources and range semantics: `diffEditor.contribution.ts` lines 32–67, `commands.ts` 171–197, `diffEditorWidget.ts` 674–712 at commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`.
-- GitNexus exact impacts: `SnapshotComparePreview` LOW 9; `_showEditableSnapshotCompare` LOW 5; `computeDiffViewModel` CRITICAL 74 across 6 workflows. Keep diff model untouched. Graph warnings: 421 unresolved cross-language property sites, 1,012/1,212 flow-entry candidates unranked, 545 callees skipped, 15 budget-cut walks.
-- Implementation is not started. Next: inspect the preview/editor callback path, use only the Rust-authoritative versioned edit route, add focused tests, update evidence, run graph change analysis, and commit in stages.
+- Product/test commit 2b671e53a327a1a8d4f4766497f2d5ba7b4078a1 is pushed. Full local init.sh passed with Rust workspace/Clippy/build_core and Flutter 923; cargo fmt, Flutter analyze, diff check, focused tests, and Harness 100/100 passed.
+- PR CI 41767192131 passed all four jobs. Platform Availability 41767186847 passed Linux x64, Windows x64, and macOS ARM64 build/test/launch/package jobs. Package artifacts: Linux 13292689699, Windows 13294185107, macOS ARM64 13293522849.
+- Linux/Windows native drag/drop passed; Windows accessibility and graceful close passed. The macOS DnD artifact 13294480227 records unavailable synthetic pointer routing and a skipped interaction; macOS device DnD remains a P15 gate. Startup artifact 13294295957 has only the Impeller initialization line. These runs do not establish a permanent fix for historical Windows/macOS crashes.
+- Evidence: docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block.md, docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md, and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.
 
 ## Next Session Startup
 
-1. Read `AGENTS.md`, this handoff, and `progress.md`.
-2. Run `node .gitnexus/run.cjs status`; refresh the index if stale.
-3. Run `bash init.sh --fast`.
-4. Continue only P04.109 / EDT-18e from its registered DoD; inspect Rust-backed editor mutation/selection APIs before editing.
-5. Run focused and full DOD checks, preserve UTF-16/FFI invariants and CRITICAL/UNKNOWN graph caveats, commit product and evidence separately, and push the already-authorized branch. Leave PR #2 open/draft.
+1. Read AGENTS.md, this handoff, and progress.md.
+2. Run node .gitnexus/run.cjs status; refresh the index if stale.
+3. Run bash init.sh --fast.
+4. P04.109 is complete. Review docs/03 and docs/11 to decompose and register the next single P04 slice before implementation.
+5. Keep PR #2 OPEN/draft and preserve the P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
