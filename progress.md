@@ -5,7 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.111 / EDT-19a：Rust 三方合并投影模型（本切片完成；EDT-19 继续）
+### P04.112 / EDT-19b：三方合并投影 FFI 契约（范围已登记；实现未开始）
+
+- 范围：新增无状态 JSON C ABI `alula_merge_project_json` 与 typed Dart bridge，输入 base/input1/input2、accept-all 和逐冲突选择，输出完整 result/conflicts/unresolved count；Rust/Dart 握手统一升到 ABI v38。不改 `DocRegistry`/`AlulaDoc` 编辑保存语义，不做工作台 UI、Git 冲突发现、导航/combine/Multi Diff。详见 `docs/diagnostics/2026-11-04-p04/p04.112-merge-ffi-contract-scope.md`。
+- GitNexus 预编辑：`alula_abi_version` 为 CRITICAL（34 flows/7 modules；跨语言直接边计数受查询模式影响），`AlulaCore`/`AlulaFfi`/`AlulaDoc` 的完整影响扩至 141 flows/20 modules，`DocRegistry` 为 CRITICAL（135 flows/20 modules）；`ALULA_ABI_VERSION` 为 UNKNOWN，已用文本搜索确认 Rust/Dart 握手引用。图索引的 workbench 超大文件跳过和跨语言/flow coverage 限制保留。编码前重新运行这些 exact impact。
+
+### P04.111 / EDT-19a：Rust 三方合并投影模型（已完成；EDT-19 继续）
 
 - 新增依赖零、无 GUI 的 `crates/editor-merge` workspace crate。以 base/input1/input2 计算有界 Myers 行投影：单侧与相同 overlap 自动应用；仅真正重叠的差异形成冲突，初始 result 使用 base；支持逐冲突与 accept-all 选择 input1/input2，并可读 unresolved count。范围上限：三输入合计 8 MiB UTF-8、每侧 8,192 行、每次 diff 2,000,000 个活动 trace cell、两侧合计 4,000,000 work step、1,024 conflicts、16 MiB 保留 projection。
 - 插入/替换边界可自动组合；邻接但独立的改动保持在冲突区域外。输出保留 BOM、emoji、CRLF、CR 与 final newline。所有限额失败/未知 conflict id 原子报错，不返回部分 projection。暂不接 FFI/ABI、工作台路由/界面、Rust OpenDoc 保存、组合/导航或 Git；因此 EDT-19、`feat-026` 仍未完成。

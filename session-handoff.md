@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.111 / EDT-19a is complete through local DoD and hosted Linux/Windows/macOS CI. Scope-registration commit 8b60c82 and product commit 0c261b2 are pushed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.111 / EDT-19a is complete through local DoD and hosted Linux/Windows/macOS CI. P04.112 / EDT-19b FFI-contract scope is registered; implementation is not started. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.111 is complete for this core-only slice. Local evidence: 14 model tests, full `init.sh` (Flutter 925), cargo fmt, and Flutter analyze all pass. PR CI `41782417039` passed Rust Ubuntu/Windows, Flutter analyze/test, and Harness. Platform Availability `41782412210` attempt 2 passed Linux x64, Windows x64, and macOS ARM64 build/test/launch/package. Attempt 1's macOS ArtifactService `CreateArtifact` request timed out five times; rerunning the failed job passed and produced package artifact `13301288193`. Keep EDT-19 and `feat-026` in progress; this core-only slice has no FFI, workbench route, save lifecycle, combination/navigation, or Git integration.
+P04.111 is complete for this core-only slice. Local evidence: 14 model tests, full `init.sh` (Flutter 925), cargo fmt, and Flutter analyze all pass. PR CI `41782417039` passed Rust Ubuntu/Windows, Flutter analyze/test, and Harness; evidence commit CI `41786988071` also passed all four checks. Platform Availability `41782412210` attempt 2 passed Linux x64, Windows x64, and macOS ARM64 build/test/launch/package. Attempt 1's macOS ArtifactService `CreateArtifact` request timed out five times; rerunning the failed job passed and produced package artifact `13301288193`. Keep EDT-19 and `feat-026` in progress; P04.111 has no FFI, workbench route, save lifecycle, combination/navigation, or Git integration.
 
 The GitHub artifact timeout was external to the app; CI logs show macOS build, tests, launch, and package steps succeeded. This retry is not a crash-fix claim. Windows ARM validator input drops remain documented as test-input races with Alula exit 0; historical Windows `0xC000041D` and macOS SIGSEGV remain separate and unresolved. Do not start GUI/Narrator.
 ## Repository and PR
@@ -12,7 +12,7 @@ The GitHub artifact timeout was external to the app; CI logs show macOS build, t
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- Next after evidence commit: inspect `docs/03` and the remaining EDT-19 plan, register one FFI-contract slice, and run GitNexus impact on the exact ABI/version-handshake symbols before editing. Keep full EDT-19 and `feat-026` open until workbench/result lifecycle requirements are complete.
+- Current next slice: implement the registered `docs/diagnostics/2026-11-04-p04/p04.112-merge-ffi-contract-scope.md` contract. Immediately before code edits, re-run exact GitNexus impacts for `alula_abi_version`, `AlulaCore`, `AlulaFfi`, `AlulaDoc`, and `DocRegistry`; preserve the UNKNOWN/high/critical warnings and keep `DocRegistry`/`AlulaDoc` behavior outside the edit. Keep full EDT-19 and `feat-026` open until workbench/result lifecycle requirements are complete.
 - P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe`, product `efd1ce1`, and evidence `c55ec8f` are pushed; product and evidence CI passed. Push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
