@@ -5,13 +5,13 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### 当前唯一产品切片：P04.119 / EDT-19i（planner 已实现；修复重复 macOS Git widget 断言后等待新 SHA CI）
+### 当前唯一产品切片：P04.119 / EDT-19i（已完成；下一步登记 FFI/ABI 暴露切片）
 
 - P04.118 / EDT-19h 已完成并推送产品/test commit 6cfb964 与证据 commit 662b002；当前 SHA 662b002 的 PR CI run 41916596535 四 job 全绿。P04.118 证据见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md。
 - P04.119 产品提交 70fdf1c 已推送：新增 editor-merge bounded smart-combination planner 与 9 项定向测试；不动现有 apply_changes、FFI/ABI、Dart/session 或 Workbench action。cargo test -p editor-merge 25/25、cargo fmt、package clippy、bash init.sh（Rust/Clippy/build_core/Flutter 966）及 flutter analyze 全过。实现证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-implementation.md；权威 DoD 在 docs/03 P04.119。
 - P04.119 源码变更后索引刷新为 10,681 nodes / 29,297 edges / 313 clusters / 409 flows。保留覆盖缺口：5 个 >512 KiB 文件、763 跨语言属性点、842 丢弃 entrypoint candidates、387 skipped callees、13 budget cuts。combine_conflict 同名 impact 有两个 CRITICAL 候选，context/detect-changes 混入无关流程；调用点文本核对为 crate 导出与测试。apply_changes full impact 223/193/35/7 CRITICAL，但 summary-only 重跑 101/71/35/6；变动未触及该共享 helper。详见 P04.119 implementation report；不得将图谱视作 clean。
-- 按 workflow 分别统计最近 100 次：常规 CI 100/100 成功；Platform Availability 73 成功/27 失败。P04.119 commit 70fdf1c 的 PR CI 41922489507 四 job 全绿；Platform Availability 41922478902 的 attempt 1/2 均 Linux/Windows 通过、macOS 在同一个 Git 面板暂存标题断言失败（965 通过/1 失败）。该断言固定等待 400 ms；现改为最长 10 秒状态轮询，不改生产 Git 行为。定向 widget 测试、完整 bash init.sh（Flutter 966）、cargo fmt 与 flutter analyze 本地通过；新 SHA hosted checks 待跑。两次失败均是 Flutter TestFailure/exit 1，无 app crash signature；Windows 0xC000041D 与 macOS SIGSEGV 根因仍未解决。
-- Linux/Windows 首批可用性通过；本轮 Mac 包仅 Intel x64，Apple Silicon 与 macOS native DnD 仍留 P15。保持 PR #2 OPEN/draft；先完成架构复刻，500 MiB 优化后置。
+- 最近 100 次按 workflow 独立统计：常规 CI 100/100 成功；Platform Availability 74/100 成功。测试门稳定性 commit 4bca258 的 PR CI 41931960773 四 job 全绿；Platform Availability 41931950204 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 均通过。macOS DnD artifact 13374360139 因 hosted pointer route unavailable 明确 skip，保留 P15；Mac 包不是 Apple Silicon 原生证据。
+- P04.119 的 Rust planner 与有界 Git stage widget 状态等待均已通过本地完整 DoD 和 hosted gates。此前 Platform Availability 41922478902 两次 macOS 失败都是同一 Flutter TestFailure/exit 1（965 通过/1 失败），没有 app crash signature；修复稳定了该 CI 断言，不代表 Windows 0xC000041D 或 macOS SIGSEGV 根因已解决，也没有建立 CI 红灯与设备崩溃的因果关系。PR #2 保持 OPEN/draft；下一项先登记 EDT-19j 的组合候选 FFI/ABI 契约，500 MiB 优化后置。
 
 ### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
 
@@ -35,11 +35,11 @@
 - CI/crash 复核：普通 CI `41868314580` 四 job 通过；平台运行 `41868298885` 三平台全绿，macos-26 标签解决了此前三次 runner 未分配取消。本次没有新 crash signature，但不能据此宣称历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 已根治；常见 DnD/剪贴板/无障碍红灯需按 probe 与应用故障分开。`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 记录了分类依据。
 - GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；本次最终证据 diff 的 all-scope detection 为 6 files/4 section symbols/0 affected processes/LOW。此前证据扫描曾把无关 Build/ApplyWorkspaceEdit 路径错误映射为 CRITICAL，也曾返回损坏 section 名；保留最高风险和映射不一致，不能把最新 LOW 解读为覆盖缺口消失。完整记录见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。500 MiB 优化仍后置。
 
-### P04.119 / EDT-19i：Rust Merge Editor 冲突智能组合候选规划（产品与本地 DoD 完成；待新 SHA hosted CI）
+### P04.119 / EDT-19i：Rust Merge Editor 冲突智能组合候选规划（完成；EDT-19 / feat-026 与 P15 继续）
 
 - 固定版 Code-OSS 的 Accept All Combination 遍历 modified base ranges，只将满足 eligibility 且 canBeCombined 的范围切到 both/smartCombination；候选通过 base-coordinate subrange edits 排序构造，遇到重叠或边界不符返回不可组合。实现源见 commands.ts 与 modifiedBaseRange.ts，链接和精确验收在 docs/03 P04.119。
 - planner 以 Unicode scalar 边界运行有界 Myers diff，非重叠改动按 base offset 组合，相同位置按 Input 1/Input 2 排序；重叠、内部顺序或边界重建失败时 fail closed。byte/trace/work 超限返回 CombinationError。MergeProjection 保持只读；FFI/ABI、Dart resolution state、Workbench F1 action/toolbar 下一阶段另行登记。
-- Platform Availability 41922478902 两次 macOS attempt 在 `widget_test.dart:565` 同一固定 400 ms Git stage 断言失败（各 965 passed / 1 failed），Linux/Windows 两次均通过；失败为 Flutter TestFailure/exit 1，无 crash signature。按登记的 scope amendment，仅将该测试改为最长 10 秒的状态轮询；定向测试通过，`bash init.sh` 全绿（Flutter 966），`cargo fmt --check` 与 `flutter analyze --no-pub` 通过。新 SHA 的 PR CI 与 Platform Availability 尚待运行。Graph refreshes 10,549/30,211 then 10,549/30,254 (313/409)；all-scope amendment scan 8 files/6 symbols/326 flows/CRITICAL，映射到无关测试变量、文档与 build/LSP flows；later evidence scan 19 doc sections/0 processes/LOW 且遗漏 widget test symbol。保留更高风险与覆盖缺口，不称 clean。该改动改善 CI 对异步 Git 更新的判定稳定性，不构成历史 Windows/macOS 崩溃修复。
+- Platform Availability 41922478902 两次 macOS attempt 在 `widget_test.dart:565` 同一固定 400 ms Git stage 断言失败（各 965 passed / 1 failed），Linux/Windows 两次均通过；失败为 Flutter TestFailure/exit 1，无 crash signature。按登记的 scope amendment，仅将该测试改为最长 10 秒的状态轮询；定向测试两次通过，`bash init.sh` 全绿（Flutter 966），`cargo fmt --check` 与 `flutter analyze --no-pub` 通过。修复 SHA 4bca258 的 PR CI 41931960773 四 job 全绿；Platform Availability 41931950204 三平台 build/test/launch/package 全绿。Linux package/DnD artifacts 13372576214/13371388536，Windows 13373355045/13373365021，macOS 13373561958；macOS startup 13373292643 无 crash report，DnD 13374360139 明确 skip（hosted pointer route unavailable），Apple Silicon/native DnD 留 P15。最近 100 次按 workflow 统计为 CI 100/100、Platform Availability 74/100。Graph refreshes 10,549/30,211 then 10,549/30,254 (313/409)；all-scope amendment scan 8 files/6 symbols/326 flows/CRITICAL，映射到无关测试变量、文档与 build/LSP flows；later evidence scan 19 doc sections/0 processes/LOW 且遗漏 widget test symbol。最终全范围扫描也报 8 files 无索引符号重叠并明确 not clean。保留更高风险与覆盖缺口，不称 clean。该改动改善 CI 对异步 Git 更新的判定稳定性，不构成历史 Windows/macOS 崩溃修复。
 - 代码前 GitNexus 风险：apply_changes CRITICAL 174/144/35/6，MergeConflict CRITICAL 217/1/137/20，merge FFI CRITICAL 223/193/35/6；MergeProjection UNKNOWN，planAcceptAll UNKNOWN lower-bound。保留全部 HIGH/CRITICAL/UNKNOWN，不把共享 helper 的 CRITICAL 解释为无关或豁免；本切片只增新 helper，不改 apply_changes / FFI。query 的流程映射不相关。详细证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md。
 
 ### P04.118 / EDT-19h：Merge Editor 整组按侧采纳（完成；Apple Silicon/native 验收留 P15）
@@ -47,7 +47,7 @@
 - 产品/test commit 6cfb964 已推送。新增 merge.acceptAllInput1 与 merge.acceptAllInput2 toolbar/F1 actions，分别通过 planAcceptAll 生成整组选择，并复用 Rust TextOp/Workbench undo、split synchronization 与保存路径；stale/已销毁/零冲突状态 fail closed。未修改 Rust/ABI。
 - 覆盖 Input 1/Input 2、多冲突、覆盖部分已有侧选择、BOM/emoji/CRLF、单次 undo/redo、分屏同步、磁盘保存回读与 stale/零冲突禁用。Focused suites 18/18；完整 bash init.sh 通过（Flutter 966、Rust workspace、Clippy、build_core）；cargo fmt、Flutter analyze（0 issues）与 git diff --check 通过。
 - PR CI 41909792608 四 job 全绿。Platform Availability 41909781449 的 Linux x64、Windows x64、macOS Intel x64 build/launch/package 全绿；包 artifacts 为 13361293861、13361054496、13362504934。macOS DnD 13364211629 因宿主 pointer route unavailable 明确 skip，startup 13363567297 无 crash report。Mac Rust dylib 仅 x86_64；Apple Silicon/native DnD 留 P15。发布前仍需检查 macOS Bundle Identifier 警告。
-- 最新 100 次 workflow 样本按 workflow 独立统计：CI 100 成功/0 失败，Platform Availability 73 成功/27 失败。当前 SHA 无红灯；旧 Windows 0xC000041D 和 macOS startup SIGSEGV 无新复现，但没有声称根因修复或因果消除。无本机 GUI/Narrator。完整证据与 GitNexus coverage 限制见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md 和 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md；证据 diff 的 GitNexus 扫描触及 6 文件但无索引符号重叠，报告非 clean，按未解决映射保留。
+- P04.118 时点的最新 100 次 workflow 样本是 CI 100 成功/0 失败、Platform Availability 73 成功/27 失败；随后 P04.119 新 SHA 的平台 run 三平台通过。该历史窗口不是 crash rate；旧 Windows 0xC000041D 和 macOS startup SIGSEGV 无新复现，也没有声称根因修复或因果消除。无本机 GUI/Narrator。完整证据与 GitNexus coverage 限制见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md 和 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md；证据 diff 的 GitNexus 扫描触及 6 文件但无索引符号重叠，报告非 clean，按未解决映射保留。
 
 ### P04.117 / EDT-19g：Merge Editor 冲突导航与按侧采纳（完成；Apple Silicon/native 验收留 P15）
 
