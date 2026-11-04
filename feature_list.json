@@ -539,8 +539,8 @@
         "feat-039",
         "feat-026"
       ],
-      "status": "in-progress",
-      "evidence": "范围已登记；固定 Code-OSS 1.145.0 的 MergeEditor pane/input/mixed+columns/base-hidden 参考，且完成 GitNexus 预编辑 impacts。产品实现未开始。范围/DoD：docs/diagnostics/2026-11-04-p04/p04.115-merge-editor-session-surface-scope.md。",
+      "status": "done",
+      "evidence": "产品/test commit 266e910 已推送。完整 init.sh 通过（Rust workspace 71+50、Clippy、build_core、Flutter 950）；cargo fmt --check、Flutter analyze、定向 merge-session/surface/Workbench 测试 18/18、Harness 100/100、diff check 通过。PR CI 41843592463 全绿；Platform Availability 41843582730 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package 通过。Linux DnD artifact 13330736069、Windows DnD 13331265405 通过；macOS hosted DnD 13330798167 因 pointer route unavailable 跳过，留 P15。范围、图谱覆盖限制、测试边界及 crash correlation 见 docs/diagnostics/2026-11-04-p04/p04.115-merge-editor-session-surface-scope.md 与 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
