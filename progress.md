@@ -3,7 +3,7 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-04 更新）
+## Current State（当前状态，2026-11-05 更新）
 
 ### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
 
@@ -23,9 +23,13 @@
 
 - 产品/test commit `d6a79c9` 已推送。新增 typed 四 URI `_open.mergeEditor` route；使用已打开 source 的 Rust 当前文本或 workspace 解码快照，通过 Rust 投影验证现有干净 result，再复用其 `OpenDoc` 并附加 `MergeResultSession`。重复同一 session 幂等；参数/URI 错误、别名、缺失、脏或不匹配 result 均拒绝且不写文件。
 - 五个相关 merge/session/open/close suites 26/26；新增 route tests 7 项。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust 71+50、Clippy、build_core、Flutter 957），Flutter analyze 零问题，`cargo fmt --check` 和两个新增 Dart 文件格式检查通过。没有启动本机 GUI/Narrator。
-- PR CI [`41855606676`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41855606676) 四 job 全绿。Platform Availability [`41855596486`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41855596486) 的 Linux x64、Windows x64 build/launch 和 Windows 可见窗口、P03.7 interaction、DnD、clipboard/accessibility smoke 全通过；Linux artifact `13338870074`，Windows artifact `13338156660`，DnD diagnostics `13338750276` / `13338031935`。macOS ARM64 attempt 1 排队 15 分钟后被取消；GitHub job 无 runner_id/name、无步骤和日志，故分类为 runner 未分配，不是 crash。本地已只重跑取消 job，attempt 2 仍 queued；Mac build/launch/package 和 P15 native gate 待结果。
-- GitNexus post-edit all-scope detection 为 1 file / 4 symbols / 237 flow matches / CRITICAL。示例反复把 `_openMergeEditorWithoutArguments` 计为多步路径；当前结果保留为未解决告警而非 clean。目标级 follow-up impact 对 `WorkbenchPage`、`_registerCommands`、`_openFileByPath` 为 LOW；`_openFileByPath` 上下文列出八处文本调用，包括历史调用和新 route；argument callback impact 为 UNKNOWN，经文本搜索核实了注册并由测试执行。证据文档扫描先为 5 files / 7 section symbols / 182 flow matches / CRITICAL，复扫刷新后报告 no indexed symbol overlap 且明确 not clean；保留高风险结果和未解决映射，不称 graph clean。索引仍有跨语言/flow 覆盖缺口。详见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。
+- PR CI [`41855606676`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41855606676) 四 job 全绿。Platform Availability [`41855596486`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41855596486) 的 Linux x64、Windows x64 build/launch 和 Windows 可见窗口、P03.7 interaction、DnD、clipboard/accessibility smoke 全通过；Linux artifact `13338870074`，Windows artifact `13338156660`，DnD diagnostics `13338750276` / `13338031935`。macOS ARM64 attempt 1 和 2 均排队约 15 分钟后取消；job API 两次都显示 runner_id=0、runner 名称为空、零步骤/日志，归类为 runner 未分配，不是 crash。只重跑取消的 Mac job 后 attempt 3（job `126685654623`）仍 queued；GitHub public status page 查询时显示 all systems operational。Mac build/launch/package 和 P15 native gate 待结果。
+- GitNexus post-edit all-scope detection 为 1 file / 4 symbols / 237 flow matches / CRITICAL。示例反复把 `_openMergeEditorWithoutArguments` 计为多步路径；当前结果保留为未解决告警而非 clean。目标级 follow-up impact 对 `WorkbenchPage`、`_registerCommands`、`_openFileByPath` 为 LOW；`_openFileByPath` 上下文列出八处文本调用，包括历史调用和新 route；argument callback impact 为 UNKNOWN，经文本搜索核实了注册并由测试执行。证据文档扫描先为 5 files / 7 section symbols / 182 flow matches / CRITICAL，后续复扫分别报告 no indexed symbol overlap（not clean）与 1 section symbol / 0 flows / LOW（section 名损坏）。保留高风险结果和未解决映射，不称 graph clean。索引仍有跨语言/flow 覆盖缺口。详见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。
 - 本轮成功的 PR CI/Linux/Windows run 未发现新崩溃证据；这只是当前 SHA 的通过/未复现，不能称为历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 根因修复。近期 CI reds 与 crash signatures 的分类继续见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。500 MiB 优化仍后置。
+
+- CI/crash 复核（2026-11-05 CST）：最近 100 条普通 CI 100/100 通过；Platform Availability 70 通过、29 失败、1 排队。29 个历史红灯主要是 hosted DnD/剪贴板/Windows 无障碍交互断言；run 41370553563 确有修复前 macOS startup Segmentation fault: 11，早于 9f2c70a。最新终态失败 41695384851 是 macOS runner 未分配后取消，当前 41855596486 的 Linux/Windows 通过、Mac job 126685654623 仍 queued、无 runner/steps。CI 既捕获过真实 crash，也有大量非 crash 红灯；不能把修 harness 当作 crash 修复。分类和边界详见 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+
+- GitNexus all-scope review of this evidence update reported 6 changed files / 1 indexed symbol (Section ? → session-handoff.md) / 183 affected flows / CRITICAL. Repeated scans of 6 evidence files mapped a Section ? symbol to 183, 102, and 237 unrelated flows at CRITICAL; a later scan returned LOW/0 flows but a corrupted Section name. Examples attach empty changed-symbol lists to unrelated Build/ApplyWorkspaceEdit paths. Preserve the highest risk and mapping uncertainty; do not call this graph-clean. Full detail is in the P04.116 diagnostic scope report.
 
 ### P04.114 / EDT-19d：合并结果会话与 Rust 工作副本生命周期（完成；EDT-19 / feat-026 继续）
 
