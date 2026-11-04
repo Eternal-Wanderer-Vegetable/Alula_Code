@@ -315,6 +315,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   static const _maxExplorerCompareDiskBytes = 6000016;
   static const _selectForCompareCommandId = 'selectForCompare';
   static const _compareFilesCommandId = 'compareFiles';
+  static const _compareSelectedExplorerFilesAction = 'explorer.compareSelected';
 
   AlulaCore? _core;
   String _loadError = '';
@@ -415,6 +416,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
+  final List<String> _explorerMultiSelection = [];
+  String? _explorerSelectionAnchor;
   _ExplorerCompareSelection? _explorerCompareSelection;
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
@@ -10476,7 +10479,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       setState(() {
-        if (_workspaceRoot != path) _explorerCompareSelection = null;
+        if (_workspaceRoot != path) {
+          _explorerCompareSelection = null;
+          _explorerMultiSelection.clear();
+          _explorerSelectionAnchor = null;
+        }
         _workspaceRoot = path;
         _treeRoots.clear();
         _treeRoots.addAll(entries
@@ -10486,6 +10493,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   isDir: (e['is_dir'] as bool?) ?? false,
                 ))
             .toList());
+        _pruneExplorerMultiSelection();
         _statusDetail = '工作区：$path（${entries.length} 项）';
         _fileIndexCache = null;
         _git = GitCli(
@@ -10582,7 +10590,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final core = _core;
     if (core == null) return;
     if (node.expanded) {
-      setState(() => node.expanded = false);
+      setState(() {
+        node.expanded = false;
+        _pruneExplorerMultiSelection();
+      });
       return;
     }
     if (node.children == null) {
@@ -10601,10 +10612,174 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ];
       }
     }
-    setState(() => node.expanded = true);
+    setState(() {
+      node.expanded = true;
+      _pruneExplorerMultiSelection();
+    });
   }
 
   void _openTreeFile(TreeNode node) => _openFileByPath(node.path);
+
+  List<TreeNode> _visibleExplorerFiles() {
+    final result = <TreeNode>[];
+    void visit(List<TreeNode> nodes) {
+      for (final node in nodes) {
+        if (node.path.isNotEmpty && !node.isDir) result.add(node);
+        if (node.isDir && node.expanded && node.children != null) {
+          visit(node.children!);
+        }
+      }
+    }
+
+    visit(_treeRoots);
+    return result;
+  }
+
+  bool _isExplorerFileSelected(String path) => _explorerMultiSelection
+      .any((selected) => _canonicalPath(selected) == _canonicalPath(path));
+
+  void _pruneExplorerMultiSelection() {
+    final visible = _visibleExplorerFiles()
+        .map((node) => _canonicalPath(node.path))
+        .toSet();
+    _explorerMultiSelection.removeWhere(
+      (path) => !visible.contains(_canonicalPath(path)),
+    );
+    if (_explorerSelectionAnchor != null &&
+        !visible.contains(_canonicalPath(_explorerSelectionAnchor!))) {
+      _explorerSelectionAnchor = _explorerMultiSelection.lastOrNull;
+    }
+  }
+
+  void _selectExplorerFile(TreeNode node) {
+    if (node.isDir || node.path.isEmpty) return;
+    final visibleFiles = _visibleExplorerFiles();
+    final clickedPath = _canonicalPath(node.path);
+    final clickedIndex = visibleFiles.indexWhere(
+      (file) => _canonicalPath(file.path) == clickedPath,
+    );
+    if (clickedIndex < 0) return;
+
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final keyboard = HardwareKeyboard.instance;
+    final toggle = isMac ? keyboard.isMetaPressed : keyboard.isControlPressed;
+    final extend = keyboard.isShiftPressed;
+    setState(() {
+      if (extend) {
+        var anchorIndex = _explorerSelectionAnchor == null
+            ? -1
+            : visibleFiles.indexWhere((file) =>
+                _canonicalPath(file.path) ==
+                _canonicalPath(_explorerSelectionAnchor!));
+        if (anchorIndex < 0) {
+          anchorIndex = clickedIndex;
+          _explorerSelectionAnchor = node.path;
+        }
+        final first = anchorIndex < clickedIndex ? anchorIndex : clickedIndex;
+        final last = anchorIndex > clickedIndex ? anchorIndex : clickedIndex;
+        final range = visibleFiles
+            .skip(first)
+            .take(last - first + 1)
+            .map((file) => file.path);
+        final paths = toggle ? [..._explorerMultiSelection] : <String>[];
+        for (final path in range) {
+          if (!paths.any(
+              (selected) => _canonicalPath(selected) == _canonicalPath(path))) {
+            paths.add(path);
+          }
+        }
+        _explorerMultiSelection
+          ..clear()
+          ..addAll(paths);
+      } else if (toggle) {
+        final selectedIndex = _explorerMultiSelection.indexWhere(
+          (path) => _canonicalPath(path) == clickedPath,
+        );
+        if (selectedIndex >= 0) {
+          _explorerMultiSelection.removeAt(selectedIndex);
+          if (_explorerSelectionAnchor != null &&
+              _canonicalPath(_explorerSelectionAnchor!) == clickedPath) {
+            _explorerSelectionAnchor = _explorerMultiSelection.lastOrNull;
+          }
+        } else {
+          _explorerMultiSelection.add(node.path);
+          _explorerSelectionAnchor = node.path;
+        }
+      } else {
+        _explorerMultiSelection
+          ..clear()
+          ..add(node.path);
+        _explorerSelectionAnchor = node.path;
+      }
+    });
+  }
+
+  bool _sameExplorerSelection(List<String> paths) =>
+      listEquals(_explorerMultiSelection, paths);
+
+  List<_ExplorerCompareTarget>? _targetsForExplorerSelection(
+    String root,
+    List<String> paths,
+  ) {
+    final files = <String, TreeNode>{
+      for (final file in _visibleExplorerFiles())
+        _canonicalPath(file.path): file,
+    };
+    final targets = <_ExplorerCompareTarget>[];
+    for (final path in paths) {
+      final node = files[_canonicalPath(path)];
+      if (node == null) return null;
+      targets.add(_ExplorerCompareTarget(
+        workspaceRoot: root,
+        path: node.path,
+        name: node.name,
+        isDirectory: false,
+      ));
+    }
+    return targets;
+  }
+
+  Future<void> _compareSelectedExplorerFiles(
+    List<_ExplorerCompareTarget> targets,
+  ) async {
+    final root = _workspaceRoot;
+    final core = _core;
+    final selectedPaths = List<String>.of(_explorerMultiSelection);
+    if (root == null ||
+        core == null ||
+        targets.length != 2 ||
+        selectedPaths.length != 2 ||
+        targets.any((target) =>
+            target.workspaceRoot != root ||
+            target.isDirectory ||
+            target.path.isEmpty) ||
+        _canonicalPath(targets[0].path) == _canonicalPath(targets[1].path) ||
+        !_sameExplorerSelection(
+            targets.map((target) => target.path).toList())) {
+      _showExplorerCompareStatus('比较已取消：请选择当前工作区中的两个不同文件');
+      return;
+    }
+
+    final previous = _explorerCompareSelection;
+    await _selectExplorerFileForCompare(targets.first);
+    final original = _explorerCompareSelection;
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core)) {
+      return;
+    }
+    if (!_sameExplorerSelection(selectedPaths)) {
+      _showExplorerCompareStatus('比较已取消：Explorer 选择在读取期间已变化');
+      return;
+    }
+    if (original == null ||
+        identical(original, previous) ||
+        _canonicalPath(original.requestedPath) !=
+            _canonicalPath(targets.first.path)) {
+      return;
+    }
+    await _compareSelectedExplorerFile(targets.last);
+  }
 
   Future<void> _showExplorerCompareContextMenu(
     TreeNode node,
@@ -10612,6 +10787,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   ) async {
     final root = _workspaceRoot;
     if (root == null || node.isDir || node.path.isEmpty) return;
+    if (!_isExplorerFileSelected(node.path)) {
+      setState(() {
+        _explorerMultiSelection
+          ..clear()
+          ..add(node.path);
+        _explorerSelectionAnchor = node.path;
+      });
+    }
+    final selectedPaths = List<String>.unmodifiable(_explorerMultiSelection);
+    final selectedTargets = _targetsForExplorerSelection(root, selectedPaths);
+    final canCompareSelected = selectedPaths.length == 2 &&
+        selectedTargets != null &&
+        selectedPaths.any(
+          (path) => _canonicalPath(path) == _canonicalPath(node.path),
+        );
     final selection = _explorerCompareSelection;
     final canCompareWithSelected = selection != null &&
         selection.workspaceRoot == root &&
@@ -10632,6 +10822,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           value: _selectForCompareCommandId,
           child: Text('Select for Compare'),
         ),
+        if (canCompareSelected)
+          const PopupMenuItem<String>(
+            value: _compareSelectedExplorerFilesAction,
+            child: Text('Compare Selected'),
+          ),
         if (canCompareWithSelected)
           const PopupMenuItem<String>(
             value: _compareFilesCommandId,
@@ -10640,6 +10835,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ],
     );
     if (!mounted || action == null) return;
+    if (action == _compareSelectedExplorerFilesAction) {
+      if (_workspaceRoot != root ||
+          !_sameExplorerSelection(selectedPaths) ||
+          selectedTargets == null) {
+        _showExplorerCompareStatus('比较已取消：Explorer 选择或工作区已变化');
+        return;
+      }
+      await _compareSelectedExplorerFiles(selectedTargets);
+      return;
+    }
     final target = _ExplorerCompareTarget(
       workspaceRoot: root,
       path: node.path,
@@ -15161,6 +15366,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     restore(_treeRoots);
+    _pruneExplorerMultiSelection();
     if (mounted) setState(() {});
   }
 
@@ -16046,6 +16252,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         compareSelection.workspaceRoot == _workspaceRoot &&
         _canonicalPath(compareSelection.requestedPath) ==
             _canonicalPath(node.path);
+    final isExplorerMultiSelected =
+        !node.isDir && _isExplorerFileSelected(node.path);
     return Column(children: [
       InkWell(
         key: ValueKey('explorer-node:${node.path}'),
@@ -16055,18 +16263,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _showExplorerCompareContextMenu(node, details.globalPosition)),
         onTap: () {
           if (node.isDir) {
+            setState(() {
+              _explorerMultiSelection.clear();
+              _explorerSelectionAnchor = null;
+            });
             _toggleDir(node);
+          } else if (HardwareKeyboard.instance.isShiftPressed ||
+              (defaultTargetPlatform == TargetPlatform.macOS
+                  ? HardwareKeyboard.instance.isMetaPressed
+                  : HardwareKeyboard.instance.isControlPressed)) {
+            _selectExplorerFile(node);
           } else {
+            _selectExplorerFile(node);
             _openTreeFile(node);
           }
         },
         child: Container(
           padding: EdgeInsets.only(left: 8.0 + depth * 14, top: 3, bottom: 3),
-          color: activePaths.contains(node.path)
-              ? const Color(0xFF20252E)
-              : isSelectedForCompare
-                  ? const Color(0xFF29394F)
-                  : null,
+          color: isExplorerMultiSelected
+              ? const Color(0xFF24476D)
+              : activePaths.contains(node.path)
+                  ? const Color(0xFF20252E)
+                  : isSelectedForCompare
+                      ? const Color(0xFF29394F)
+                      : null,
           child: Row(
             children: [
               Icon(

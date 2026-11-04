@@ -56,6 +56,20 @@ Future<void> _rightClickNode(WidgetTester tester, String path) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> _modifierClickNode(
+  WidgetTester tester,
+  String path,
+  LogicalKeyboardKey modifier,
+) async {
+  await tester.sendKeyDownEvent(modifier);
+  await tester.tap(
+    find.byKey(ValueKey('explorer-node:$path')),
+    kind: PointerDeviceKind.mouse,
+  );
+  await tester.sendKeyUpEvent(modifier);
+  await tester.pumpAndSettle();
+}
+
 Future<void> _finishAsyncIo(WidgetTester tester) async {
   // Each completed filesystem await resumes the handler inside FakeAsync and
   // can start the next real I/O operation; pump between wall-clock waits.
@@ -201,6 +215,120 @@ void main() {
         editor.inputWindow.document.resync().content,
         'edited through compare\nshared',
       );
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'Ctrl multi-selection compares in click order and saves the editable side',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsBytesSync(utf8.encode('\uFEFFdisk original 😀\r\nshared'));
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsBytesSync(utf8.encode('\uFEFFdisk modified\r\nshared'));
+      await _mountWorkspace(tester, temp, workspace);
+
+      await tester.tap(find.byKey(ValueKey('explorer-node:${original.path}')));
+      await tester.pump(const Duration(milliseconds: 250));
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      await tester.showKeyboard(editor);
+      await _replaceText(tester, 'dirty original 😀\nshared');
+      await _finishAsyncIo(tester);
+
+      await _modifierClickNode(
+        tester,
+        modified.path,
+        LogicalKeyboardKey.controlLeft,
+      );
+      await _rightClickNode(tester, original.path);
+      expect(find.text('Compare Selected'), findsOneWidget);
+      await _chooseContextAction(tester, 'Compare Selected');
+
+      final preview = find.byKey(const ValueKey('explorer-compare-preview'));
+      expect(preview, findsOneWidget);
+      expect(find.text('original.rs ↔ modified.rs'), findsOneWidget);
+      expect(
+        find.descendant(
+            of: preview, matching: find.textContaining('dirty original 😀')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+            of: preview, matching: find.textContaining('disk modified')),
+        findsOneWidget,
+      );
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+      await _replaceText(tester, 'saved 😀\nchanged');
+      await _saveWithCtrlS(tester);
+      expect(
+        modified.readAsBytesSync(),
+        utf8.encode('\uFEFFsaved 😀\r\nchanged'),
+      );
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'macOS Command toggles files and Shift selects visible Explorer ranges',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final first = File('${workspace.path}/a.rs')..writeAsStringSync('a');
+      final second = File('${workspace.path}/b.rs')..writeAsStringSync('b');
+      final third = File('${workspace.path}/c.rs')..writeAsStringSync('c');
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      await _mountWorkspace(tester, temp, workspace);
+
+      await tester.tap(find.byKey(ValueKey('explorer-node:${first.path}')));
+      await tester.pump(const Duration(milliseconds: 250));
+      await _modifierClickNode(
+        tester,
+        third.path,
+        LogicalKeyboardKey.shiftLeft,
+      );
+      await _rightClickNode(tester, third.path);
+      expect(find.text('Compare Selected'), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      await _modifierClickNode(
+        tester,
+        second.path,
+        LogicalKeyboardKey.shiftLeft,
+      );
+      await _rightClickNode(tester, second.path);
+      expect(find.text('Compare Selected'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      await _modifierClickNode(
+        tester,
+        second.path,
+        LogicalKeyboardKey.metaLeft,
+      );
+      await _rightClickNode(tester, first.path);
+      expect(find.text('Compare Selected'), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      await _modifierClickNode(
+        tester,
+        second.path,
+        LogicalKeyboardKey.metaLeft,
+      );
+      await _rightClickNode(tester, first.path);
+      expect(find.text('Compare Selected'), findsOneWidget);
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;
