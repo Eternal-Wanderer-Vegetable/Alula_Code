@@ -12,6 +12,12 @@
 - Platform Availability run `41813998224` attempt 1 的 Linux x64、Windows x64、macOS ARM64 jobs 全绿；Windows job 单独 attempt 2 也全绿。P03.7 Windows interaction suite 两次通过（首轮 step 约 10:30:25–10:33:00 UTC，复跑 10:47:03–10:49:10 UTC）；清理仍使用原五秒有界重试，没有扩宽上限。
 - 原三次 `errno 32` 样本仍未采集到持有句柄的进程；当前变更是 cancellation 时序缓解并经 hosted 重复验证，不是已证明的句柄根因修复，也不解释历史 Windows `0xC000041D` 或 macOS startup SIGSEGV。GitNexus 精确 `_stopWorkspaceWatcher` impact LOW（6 symbols/2 direct callers/`dispose` flow），但 `WorkspaceWatcher` class 仍 CRITICAL（436 symbols/140 flows/20 modules）；all-scope 仍 CRITICAL（3 files/2 indexed symbols/285 flows，包含无关构建/LSP路径映射），保留风险与覆盖告警。详见 `docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md` 与 `p03.7-watcher-teardown-validation.md`。
 
+### P04.115 / EDT-19e：Merge Editor 会话可视表面（已登记，进行中）
+
+- P04.114 已完成并完成 hosted 验收。当前切片为已挂载 MergeResultSession 的结果文档提供 VS Code 风格输入/结果工作区：只读冻结 input1/input2，base 可选，mixed/columns 布局，结果仍是原 Rust OpenDoc。新开 session 的 command/URI route、Git 冲突发现与冲突操作控件后续分开登记。
+- 已固定 Code-OSS 1.145.0 pane/input/layout/open action 来源；已对 `_buildEditorArea`、`_buildEditor`、`RustTextInputField`、`MergeResultSession`、`OpenDoc`、`CommandService` 做预编辑图谱影响分析。LOW/MEDIUM 风险与 `mergeResultSession` 属性 UNKNOWN、跨语言/流程覆盖限制详见 `docs/diagnostics/2026-11-04-p04/p04.115-merge-editor-session-surface-scope.md`。当前仅完成 scope registration，产品代码尚未修改。
+- 下一步：先执行 startup `node .gitnexus/run.cjs status` 与 `bash init.sh --fast`，确认注册后的基线，再在已登记的 Workbench/session view 边界内实现。不开本机 GUI/Narrator；数值内存优化仍后置。
+
 ### P04.114 / EDT-19d：合并结果会话与 Rust 工作副本生命周期（完成；EDT-19 / feat-026 继续）
 
 - 产品/test commit `c72f824` 已推送。MergeResultSession 经 Workbench factory 接入共享 Rust OpenDoc；冲突计划通过标准 Rust TextOp 和通用 undo 历史应用，多个 split view 同步；undo/redo 恢复留存投影，未知手工编辑保守地把冲突设为 unresolved。Close/save/discard/cancel、最近保存结果恢复和最后视图 teardown 均由真实 Rust 文档承载；registry 槽位复用断言通过。没有增加 Git 冲突发现、可见四栏 UI/命令或 ABI 变更。
