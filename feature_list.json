@@ -527,7 +527,7 @@
         "feat-026"
       ],
       "status": "in-progress",
-      "evidence": "产品阶段 bb79eae 已提交并推送：新增有界 MergeResultSession、UTF-16 冲突编辑计划、Rust 文档版本/全文校验、dirty/savepoint 与 Save/Discard/Cancel/未解决冲突关闭状态机；真实 FFI 定向测试 9/9，完整 init.sh（Flutter 941）、cargo fmt、flutter analyze 全绿。CI 41822659977 与 Platform Availability 41822649756 正在运行。仍未完成 Workbench 消费、split-view 同步与 undo/redo 历史对接，因此保持 in-progress。完整固定 Code-OSS 源码、图谱风险和实施证据见 docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
+      "evidence": "产品阶段 bb79eae 已提交并推送：新增有界 MergeResultSession、UTF-16 冲突编辑计划、Rust 文档版本/全文校验、dirty/savepoint 与 Save/Discard/Cancel/未解决冲突关闭状态机；真实 FFI 定向测试 9/9，完整 init.sh（Flutter 941）、cargo fmt、flutter analyze 全绿。PR CI 41822659977 和 41823278557 全绿；Platform Availability 41822649756 的 Linux/Windows/macOS 构建、原生交互、启动/打包全绿，包 artifacts 为 Linux 13316519236、Windows 13317608511、macOS 13319015919。仍未完成 Workbench 消费、split-view 同步与 undo/redo 历史对接，因此保持 in-progress。完整固定 Code-OSS 源码、图谱风险和实施证据见 docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
