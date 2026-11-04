@@ -1,11 +1,12 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.110 / EDT-18f implementation, local DoD, PR CI, and Linux/Windows/macOS hosted build/test/launch/package checks are complete. Product commit efd1ce1 and evidence commit c55ec8f are pushed; evidence CI 41776114448 passed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.110 is complete. P04.111 / EDT-19a has a registered, reviewed scope; implementation has not started at this scope-registration checkpoint. PR CI 41776793929 and local `init.sh --fast` passed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.110 / EDT-18f implementation is committed as `efd1ce1` and evidence as `c55ec8f`; both are pushed. Local DoD, product PR CI `41774434607`, Platform Availability `41774429349`, and evidence PR CI `41776114448` passed. Linux/Windows DnD passed; Windows P03.7/UIA/MSAA/graceful close passed; macOS ARM64 package and startup passed. Hosted macOS native DnD was skipped because synthetic pointer input could not be routed and remains a P15 device gate. Preserve CRITICAL/UNKNOWN graph warnings and the CI/crash evidence distinction. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
+Implement P04.111 / EDT-19a as a GUI-free Rust three-way merge projection in a new `editor-merge` workspace crate. The scope is `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`; it covers bounded base/input1/input2 projection, automatic one-sided/identical edits, unresolved conflicts initialized from base, and choosing input1/input2. FFI/UI/save/navigation/combine/Git remain later P04 work.
 
+P04.110 product and evidence commits are pushed. The latest handoff-only PR CI run `41776793929` completed all four jobs successfully; local `init.sh --fast` passed with Flutter 925. Repeated Windows ARM artifact validator failures were SendKeys input races with Alula exit 0; the same artifact passed on paced replay `41627307864`. Historical Windows `0xC000041D` and macOS SIGSEGV remain unresolved and must not be claimed fixed. No local GUI or Narrator was started.
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.

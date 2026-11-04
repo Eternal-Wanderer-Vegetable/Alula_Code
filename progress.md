@@ -5,6 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.111 / EDT-19a：Rust 三方合并投影模型（范围已登记，待实现）
+
+- P04.1–P04.110 的子切片已登记为 done，但 EDT-19 三方合并与 EDT-20 Multi Diff/批量预览仍开放，因此 `feat-026` 继续为 in-progress。当前只注册首个三方合并核心切片，不提前关闭 P04。
+- 范围：新建 GUI-free Rust `editor-merge` crate；以 base/input1/input2 生成有界投影，自动合并单侧/相同编辑，保留 divergent conflict 并从 base 初始化未解结果，支持接受 input1/input2 与 unresolved 计数。暂不接 FFI、工作台、保存、组合/导航或 Git。
+- PR CI [41776793929](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41776793929) 四个 job 全部通过；本机 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` 通过（Rust、Clippy、build_core、Flutter 925）。
+- Windows ARM artifact validator 的 5/6 个旧失败是第二视图断言中的 SendKeys 丢字符；验证进程 exit 1，但被测 Alula 进程 exit 0、无 fault/dump；同一 artifact 在 paced-input replay `41627307864` 成功。历史 Windows `0xC000041D` 与 macOS startup SIGSEGV 仍独立未定位，CI 重跑不视为 crash 修复。详细范围与 GitNexus 边界：`docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`。
+
 ### P04.110 / EDT-18f：Explorer 多选 Compare Selected（已完成）
 
 - 已实现固定 Code-OSS compareSelected 的 Explorer 双选入口：Windows/Linux Ctrl-click、macOS Cmd-click 切换文件，Shift-click 选择展开树中的可见文件区间；plain click 保留打开文件行为。恰好两项不同普通文件时，点击已选行的菜单才出现 Compare Selected；选择次序决定 original / modified。比较复用冻结原文快照与 Rust 可编辑 modified OpenDoc 路径，保存回读正确。产品 commit efd1ce1 与范围登记 commit 9c4c3fe 已推送。
