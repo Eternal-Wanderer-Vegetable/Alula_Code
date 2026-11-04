@@ -5,10 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.112 / EDT-19b：三方合并投影 FFI 契约（范围已登记；实现未开始）
+### P04.112 / EDT-19b：三方合并投影 FFI 契约（已完成；EDT-19 继续）
 
 - 范围：新增无状态 JSON C ABI `alula_merge_project_json` 与 typed Dart bridge，输入 base/input1/input2、accept-all 和逐冲突选择，输出完整 result/conflicts/unresolved count；Rust/Dart 握手统一升到 ABI v38。不改 `DocRegistry`/`AlulaDoc` 编辑保存语义，不做工作台 UI、Git 冲突发现、导航/combine/Multi Diff。详见 `docs/diagnostics/2026-11-04-p04/p04.112-merge-ffi-contract-scope.md`。
-- GitNexus 预编辑：`alula_abi_version` 为 CRITICAL（34 flows/7 modules；跨语言直接边计数受查询模式影响），`AlulaCore`/`AlulaFfi`/`AlulaDoc` 的完整影响扩至 141 flows/20 modules，`DocRegistry` 为 CRITICAL（135 flows/20 modules）；`ALULA_ABI_VERSION` 为 UNKNOWN，已用文本搜索确认 Rust/Dart 握手引用。图索引的 workbench 超大文件跳过和跨语言/flow coverage 限制保留。编码前重新运行这些 exact impact。
+- 已新增无状态 `alula_merge_project_json`，Rust/Dart ABI 同步为 v38；冲突候选、确定性 id、0-based/end-exclusive base 行范围、未解决计数、accept-all 与逐冲突覆盖均由真实 C ABI 往返。请求 16 MiB、响应 32 MiB、逐冲突请求 1,024 项上限；JSON/模型/重复或未知 id 错误不返回部分结果，Dart 按 Rust 所有权合同释放输出。没有修改 `DocRegistry` 或 `AlulaDoc` 行为。
+- 验证：Rust FFI 三用例 3/3；真实共享库 Dart→Rust 用例 4/4；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 929）；`flutter analyze --no-pub` 零问题；`cargo fmt --all -- --check`、`git diff --check`、`feature_list.json` JSON 校验通过。PR CI `41794075155` 四 job 全绿；Platform Availability `41794067407` 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package 全通过。包 artifacts：Linux `13303914267`、Windows `13304932299`、macOS `13304649644`。Windows 交互、剪贴板、可访问性和关闭检查通过；macOS 原生 DnD 因 hosted pointer route unavailable skip（artifact `13305996091`，保留 P15）；macOS startup diagnostics `13304833892` 无 crash report。Evidence commit 前 GitNexus 在 product HEAD `e08bfe9` 刷新为 9,959 nodes/302 clusters/379 flows（增量刷新间 edge count 不稳定，未作为证据）；文档-only all-scope 输出在刷新间不一致：一轮六个文档无索引符号重叠且标记 not clean，另一轮识别出 `session-handoff.md` 的 3 个章节符号、0 processes、LOW。保留图映射为未解析；产品代码 all-scope 扫描仍为 CRITICAL。覆盖警告：跳过 5 个 >512 KiB 文件、760 个跨语言 property unresolved、815 个未排名 entry candidates、369 个 skipped callees、13 个 budget-cut walks。
+- CI 崩溃线索复核：之前 Platform Availability `41695384851` 的 macOS job 在分配 runner 前零步骤取消；Windows ARM run `41626759894` 的红灯是第二视图编辑/保存断言失败，进程正常退出且无崩溃签名；paced 重放 `41627307864` 通过。本次 `41794075155` 与 `41794067407` 均全绿（macOS DnD 的明确 skip 除外），无新 crash signal。此前红灯可降低 CI 稳定性，但没有证据表明它们导致或复现历史 Windows `0xC000041D`、macOS 启动 SIGSEGV；绿色 smoke 也不构成历史崩溃修复结论。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- GitNexus 预编辑（UID-bound）：`ALULA_ABI_VERSION` 为 UNKNOWN；`alula_abi_version` 的 name-based impact 错配到 Cargokit `BuildCMakeCommand`，path-specific context 因 callable-value probe 未运行而 lower-bound，刷新间也出现空结果/异常 UID，故 export impact 保持 UNKNOWN；文本搜索确认真实 Rust/Dart 握手。`AlulaFfi` CRITICAL（2 direct、135–141 flows/20 modules）；`AlulaCore` HIGH–CRITICAL（17 direct、0–139 flows/20 modules）；`AlulaDoc` HIGH–CRITICAL（17–19 direct、0–141 flows/20 modules）；`DocRegistry` CRITICAL（1 direct、135 flows/20 modules）。跨刷新结果不稳定时保留最坏风险；summary-only/capped 输出省略 flow 轴时不能当作 all-clear。workbench 超大文件跳过和跨语言/flow coverage 限制保留。
 
 ### P04.111 / EDT-19a：Rust 三方合并投影模型（已完成；EDT-19 继续）
 
@@ -17,7 +20,7 @@
 - `cargo test -p editor-merge` 14/14 通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 925）；`cargo fmt --all -- --check`、`git diff --check`、`app/` `flutter analyze --no-pub`（0 issues）通过。
 - 产品 commit `0c261b2` 已推送。PR CI [41782417039](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41782417039) 四个 job 全绿（Rust Ubuntu/Windows、Flutter analyze/test、Harness）。Platform Availability [41782412210](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41782412210) attempt 2 的 Linux/Windows/macOS ARM64 均通过 build/test/launch/package；包 artifacts：Linux `13300425218`、Windows `13300471052`、macOS `13301288193`。Attempt 1 仅 macOS 的 GitHub ArtifactService `CreateArtifact` 五次超时；只重跑失败 job 后成功，记录为瞬时 artifact 服务故障，不是应用崩溃。CI 证据和详细诊断见 `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`。
 - GitNexus 刷新索引：9,941 nodes / 20,756 edges / 299 clusters / 446 flows；仍跳过 >512 KiB 的 workbench 文件，保留 743 个跨语言 property unresolved、800 个未排名 entry candidates、367 个 skipped callees、13 条 budget-cut walks。产品提交前 all-scope 扫描汇总 9 files / 31 symbols / 387 flows / CRITICAL；workspace/build/init 传播较广，未更改既有编辑符号或 build script。索引覆盖局限和完整风险见阶段诊断。
-- 该切片仅实现 core projection，不含 FFI/ABI/工作台/保存。EDT-19 与 `feat-026` 仍 in-progress；下一步先为剩余 merge editor 注册独立范围，再做 FFI 影响分析。历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立未定位；绿色 CI/重跑不等于 crash 修复。未启动本机 GUI/讲述人。
+- 该切片仅实现 core projection，不含工作台/保存。EDT-19 与 `feat-026` 仍 in-progress；下一项应为 Merge Editor 工作台/结果文档生命周期注册独立范围，依照 docs/03 单项推进。历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立未定位；绿色 CI/重跑不等于 crash 修复。未启动本机 GUI/讲述人。
 
 ### P04.110 / EDT-18f：Explorer 多选 Compare Selected（已完成）
 
