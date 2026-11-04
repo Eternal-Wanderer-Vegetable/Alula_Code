@@ -526,8 +526,8 @@
       "dependencies": [
         "feat-026"
       ],
-      "status": "in-progress",
-      "evidence": "产品阶段 bb79eae 已提交并推送：新增有界 MergeResultSession、UTF-16 冲突编辑计划、Rust 文档版本/全文校验、dirty/savepoint 与 Save/Discard/Cancel/未解决冲突关闭状态机；真实 FFI 定向测试 9/9，完整 init.sh（Flutter 941）、cargo fmt、flutter analyze 全绿。PR CI 41822659977 和 41823278557 全绿；Platform Availability 41822649756 的 Linux/Windows/macOS 构建、原生交互、启动/打包全绿，包 artifacts 为 Linux 13316519236、Windows 13317608511、macOS 13319015919。仍未完成 Workbench 消费、split-view 同步与 undo/redo 历史对接，因此保持 in-progress。完整固定 Code-OSS 源码、图谱风险和实施证据见 docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
+      "status": "done",
+      "evidence": "P04.114 完成，产品/test commit `c72f824` 已推送。Workbench 将合并计划经通用 Rust TextOp/undo 路径应用并同步 split views；undo/redo 可恢复已知投影，手工未知文本保守地使冲突回到 unresolved；末视图释放 session 与 Rust 文档 registry。定向真实 FFI 模型/Workbench 测试 15/15；完整 init.sh（Rust workspace 71+50、Clippy、build_core、Flutter 946）、cargo fmt、Flutter analyze 0 issues、Harness 100/100 全绿。PR CI `41835905406` 和 Platform Availability `41835896065` 全通过；包 artifacts Linux `13325577130`、Windows `13325917780`、macOS ARM64 `13327727825`。Linux/Windows DnD artifacts `13325627125`/`13327406574` 通过；macOS hosted DnD `13325819353` 因 pointer route unavailable 明确 skip，保留 P15。macOS startup diagnostics `13327298339` 仅有 Metal/Impeller 初始化行，属于非复现证据。未实现 Git 冲突发现或可见 Merge Editor UI；不关闭 EDT-19、feat-026、P15。完整固定源码、图谱告警、CI 崩溃分类和内存测量局限见 docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
