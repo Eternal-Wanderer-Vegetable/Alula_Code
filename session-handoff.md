@@ -78,5 +78,6 @@ The earlier GitHub artifact timeout was external to the app; the retried macOS b
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Run node .gitnexus/run.cjs status; refresh the index if stale.
 3. Run bash init.sh --fast.
-4. Continue registered P04.115: run startup status and `bash init.sh --fast`, then implement the session-aware editor surface within its scope and verify with headless Flutter tests.
-5. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
+4. Continue P04.116: poll CI run `41864854048` for evidence commit `d5441fc` and Platform Availability run `41855596486` macOS job `126685654623`. Record terminal outcomes in `docs/03`, `feature_list.json`, `progress.md`, and the P04.116 diagnostic. Keep P04.116 in-progress until the macOS hosted build/launch/package evidence resolves; no local GUI or Narrator is needed.
+5. If the macOS runner remains unassigned, retain that gate as pending and follow the current `docs/03` status without opening another feature before P04.116 is resolved.
+6. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
