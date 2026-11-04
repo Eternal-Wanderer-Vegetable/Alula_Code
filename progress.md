@@ -5,13 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.111 / EDT-19a：Rust 三方合并投影模型（本地 DoD 通过；产品 PR CI 待回）
+### P04.111 / EDT-19a：Rust 三方合并投影模型（本切片完成；EDT-19 继续）
 
 - 新增依赖零、无 GUI 的 `crates/editor-merge` workspace crate。以 base/input1/input2 计算有界 Myers 行投影：单侧与相同 overlap 自动应用；仅真正重叠的差异形成冲突，初始 result 使用 base；支持逐冲突与 accept-all 选择 input1/input2，并可读 unresolved count。范围上限：三输入合计 8 MiB UTF-8、每侧 8,192 行、每次 diff 2,000,000 个活动 trace cell、两侧合计 4,000,000 work step、1,024 conflicts、16 MiB 保留 projection。
 - 插入/替换边界可自动组合；邻接但独立的改动保持在冲突区域外。输出保留 BOM、emoji、CRLF、CR 与 final newline。所有限额失败/未知 conflict id 原子报错，不返回部分 projection。暂不接 FFI/ABI、工作台路由/界面、Rust OpenDoc 保存、组合/导航或 Git；因此 EDT-19、`feat-026` 仍未完成。
 - `cargo test -p editor-merge` 14/14 通过；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 925）；`cargo fmt --all -- --check`、`git diff --check`、`app/` `flutter analyze --no-pub`（0 issues）通过。
-- 产品 commit 尚未推送，PR CI 待启动。GitNexus 已刷新：9,691 nodes / 20,196 edges / 299 clusters / 446 flows；索引仍跳过 >512 KiB 的 workbench 文件，保留 743 个跨语言 property unresolved、800 个未排名 entry candidates、367 个 skipped callees、13 条 budget-cut walks。完整风险与固定上游来源见 `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`。
-- CI 线索不变：最近 Windows ARM validator 的输入 race 不构成 app crash；历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立未定位。未启动本机 GUI/讲述人。
+- 产品 commit `0c261b2` 已推送。PR CI [41782417039](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41782417039) 四个 job 全绿（Rust Ubuntu/Windows、Flutter analyze/test、Harness）。Platform Availability [41782412210](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41782412210) attempt 2 的 Linux/Windows/macOS ARM64 均通过 build/test/launch/package；包 artifacts：Linux `13300425218`、Windows `13300471052`、macOS `13301288193`。Attempt 1 仅 macOS 的 GitHub ArtifactService `CreateArtifact` 五次超时；只重跑失败 job 后成功，记录为瞬时 artifact 服务故障，不是应用崩溃。CI 证据和详细诊断见 `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`。
+- GitNexus 刷新索引：9,941 nodes / 20,756 edges / 299 clusters / 446 flows；仍跳过 >512 KiB 的 workbench 文件，保留 743 个跨语言 property unresolved、800 个未排名 entry candidates、367 个 skipped callees、13 条 budget-cut walks。产品提交前 all-scope 扫描汇总 9 files / 31 symbols / 387 flows / CRITICAL；workspace/build/init 传播较广，未更改既有编辑符号或 build script。索引覆盖局限和完整风险见阶段诊断。
+- 该切片仅实现 core projection，不含 FFI/ABI/工作台/保存。EDT-19 与 `feat-026` 仍 in-progress；下一步先为剩余 merge editor 注册独立范围，再做 FFI 影响分析。历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立未定位；绿色 CI/重跑不等于 crash 修复。未启动本机 GUI/讲述人。
 
 ### P04.110 / EDT-18f：Explorer 多选 Compare Selected（已完成）
 
