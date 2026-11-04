@@ -518,6 +518,18 @@
       "evidence": "dispose 立即启动 watcher cancellation；awaited stop 后删除 workspace 的单测通过。定向 watcher 6/6、多视图/50,000 行工作台 teardown 5/5、完整 init.sh（Flutter 932）、cargo fmt 与 flutter analyze 全绿。PR CI 41814004328 四 job 全绿；Platform Availability 41813998224 首轮三平台全绿，Windows-only attempt 2 再次通过 P03.7 suite。原始 errno 32 的持有句柄进程未直接确认，不宣称历史崩溃根因已修复。范围/分析：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md；验收：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-validation.md。",
       "track": "vscode-builtin-parity",
       "phase": "P03.7-LC"
+    },
+    {
+      "id": "feat-039",
+      "name": "P04.114 / EDT-19d 合并结果会话与 Rust 工作副本生命周期",
+      "description": "固定 Merge 输入快照、以 Rust OpenDoc 作为唯一结果文档，复用现有 savepoint/save/revert，并安全处理脏结果和未解冲突的关闭状态；不含可见四栏 UI 或 Git 冲突发现。DoD 见 docs/03 P04.114。",
+      "dependencies": [
+        "feat-026"
+      ],
+      "status": "in-progress",
+      "evidence": "范围已注册，尚未开始产品实现。固定 Code-OSS 1.145.0 input/save/revert/confirmClose 源码、GitNexus 风险、CI 崩溃关联和 init.sh --fast 证据：docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",
