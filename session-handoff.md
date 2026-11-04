@@ -1,17 +1,17 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.110 / EDT-18f implementation, local DoD, PR CI, and Linux/Windows/macOS hosted build/test/launch/package checks are complete. Evidence docs are updated and await their separate commit. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.110 / EDT-18f implementation, local DoD, PR CI, and Linux/Windows/macOS hosted build/test/launch/package checks are complete. Product commit efd1ce1 and evidence commit c55ec8f are pushed; evidence CI 41776114448 passed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.110 / EDT-18f implementation is committed as `efd1ce1` and pushed. Local DoD, PR CI `41774434607`, and Platform Availability `41774429349` passed. Linux/Windows DnD passed; Windows P03.7/UIA/MSAA/graceful close passed; macOS ARM64 package and startup passed. Hosted macOS native DnD was skipped because synthetic pointer input could not be routed and remains a P15 device gate. Product/report/progress/plan/evidence edits are ready for the separate evidence commit and push. Preserve CRITICAL/UNKNOWN graph warnings and the CI/crash evidence distinction. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
+P04.110 / EDT-18f implementation is committed as `efd1ce1` and evidence as `c55ec8f`; both are pushed. Local DoD, product PR CI `41774434607`, Platform Availability `41774429349`, and evidence PR CI `41776114448` passed. Linux/Windows DnD passed; Windows P03.7/UIA/MSAA/graceful close passed; macOS ARM64 package and startup passed. Hosted macOS native DnD was skipped because synthetic pointer input could not be routed and remains a P15 device gate. Preserve CRITICAL/UNKNOWN graph warnings and the CI/crash evidence distinction. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
 
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe` and product `efd1ce1` are pushed; P04.110 evidence/status docs are ready for separate commit. Push authorization for codex/vscode-parity-p00 persists.
+- P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe`, product `efd1ce1`, and evidence `c55ec8f` are pushed; product and evidence CI passed. Push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
 
@@ -63,5 +63,5 @@ P04.110 / EDT-18f implementation is committed as `efd1ce1` and pushed. Local DoD
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Run node .gitnexus/run.cjs status; refresh the index if stale.
 3. Run bash init.sh --fast.
-4. Run JSON/Harness/diff checks on the updated evidence records; refresh GitNexus, complete the docs-only all-scope change scan, then commit and push the P04.110 evidence stage.
-5. After that commit, select and register the next single P04 slice from docs/03 and docs/11. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
+4. Select and register the next single P04 slice from docs/03 and docs/11 before implementation.
+5. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
