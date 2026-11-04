@@ -5,13 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.108 / EDT-18d：Explorer 单资源两步比较（范围已登记，in-progress）
+### P04.108 / EDT-18d：Explorer 单资源两步比较（本地与 hosted 自动门禁通过；P04 继续）
 
-- 当前只做 Explorer 单资源 `Select for Compare` → `Compare with Selected`。被选为 original 时冻结快照；原资源已打开则取 Rust 权威当前文本，否则经 Rust workspace 解码。第二个 Explorer 文件绑定 Rust 权威 modified `OpenDoc`，复用 P04.107 可编辑预览。多选/Open Editors/标签 compare、apply/revert、三方/Multi Diff 均不属于本切片。DoD：docs/03 P04.108。
-- 固定 Code-OSS 1.145.0 上游命令映射：单资源 `selectForCompare` → `compareFiles`（`Select for Compare` → `Compare with Selected`）；`compareSelected` 是多资源命令，本切片排除。handler/menu/helper：fileConstants.ts 13–17、fileCommands.ts 187–230、fileActions.contribution.ts 398–428 与 517–535、files.ts 96–130。预实现范围和行链接：`docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare-scope.md`。
-- GitNexus impact：`_WorkbenchPageState` CRITICAL 262/141/20；`TreeNode` CRITICAL 272/141/20；`SnapshotComparePreview` CRITICAL 191/141/20；`_readDiskDocument` HIGH 69/4/3；`_refreshTree` UNKNOWN；`_registerCommands`, `_buildNode`, `_openTreeFile`, `_showEditableSnapshotCompare`, `CommandService` 各 LOW。刷新后的索引约 11,000 nodes/51,000 edges/292 clusters/442 flows；报告 735 个跨语言属性位置未链接、772/972 个进程候选未入选、13 次 budget 截断。范围登记 scans 覆盖 4 个文档/状态文件：较早结果 CRITICAL/1–4 个 section symbols/441–442 个流程匹配；另一次 LOW/5 个 unresolved `Section ?` symbols/0 affected processes；后两次 CRITICAL/1 个 section symbol/421、425 affected processes，流程名指向无关 build/LSP paths。零和高计数都不是可靠的影响证明；没有产品代码改动，保留扫描波动和风险，不声明 clean。跨语言与流程截断限制未解除；不把 UNKNOWN 当安全。
-- 验证：`bash init.sh --fast` 通过 Rust workspace、Clippy、build_core 和 Flutter 907 项；Harness 100/100，`feature_list.json` JSON 与 `git diff --check` 通过。headless Flutter 测试在既有 saved-compare close-race fixture 期间输出一条非失败的 `UnknownDoc`；全部测试仍通过，该日志没有证明进程崩溃或崩溃原因。未启动桌面窗口或讲述人。
-- 代码尚未开始；下一步先 review scope note 与当前 P04.108 行，按此 DoD 实现、测试，再分阶段提交。
+- 已实现固定 Code-OSS 1.145.0 Explorer 单资源 `selectForCompare` → `compareFiles`：原始快照在选择时冻结，已打开原文件取 Rust 权威当前文本，否则经 Rust workspace decoder；第二个 Explorer 文件绑定 Rust 权威 `OpenDoc`，复用 P04.107 可编辑预览。目录不显示动作，当前已选资源不显示第二步动作；工作区根、canonical path、文档身份/version、IME、文件字节、全文 UTF-16 与差异预算均受校验，过期或超限整次拒绝并给出状态。比较预览内也接入当前 `file.save` 快捷键。未改 Rust/FFI/ABI/保存协议；多资源 `compareSelected`、Open Editors/tabs、apply/revert 和三方/Multi Diff 仍排除。
+- 六项新增 widget tests 通过，覆盖 BOM+emoji+CRLF 磁盘解码与冻结、dirty original、读取期间源文档变更、目录/二进制/删除/切换工作区、2,000,000 UTF-16 上限、行预算超限整次拒绝，及 Rust 编辑/预览内 Ctrl+S 保存回读。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 913）；`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）、Harness（100/100）和 diff check 通过。headless suite 在已有 saved-compare close-race fixture 输出一条非失败 `UnknownDoc`，不构成崩溃证据。未启动桌面窗口或讲述人。
+- 第六测试提交 `11a494e` 的 PR CI [41758044540](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41758044540) 四个 job 全绿。Platform Availability [41758034721](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41758034721) 的 Linux x64、Windows x64、macOS ARM64 job 全绿：Linux 发布/剪贴板/拖放/Xvfb 启动通过；Windows 发布/可见客户区/P03.7 交互/拖放/剪贴板/UIA-MSAA/graceful close 通过；macOS analyze/tests、ARM64 Release、剪贴板、启动和打包通过。包 artifact：Linux `13288599908`、Windows `13289171782`、macOS ARM64 `13289098296`；macOS startup diagnostics `13289078404`，原生 DnD diagnostics Linux/Windows/macOS `13289286604`/`13289496676`/`13288899954`。macOS 包是 hosted 构建证据；本机无 macOS，原生设备交互仍留 P15。
+- CI/crash 复核：旧 Windows ARM 重放红灯来自合成键盘丢字符，退出码 0、无应用故障/转储；一次 Platform 红灯在 macOS runner 启动前零步骤取消。历史 Windows `0xC000041D` 与修复前 macOS SIGSEGV 为独立真实崩溃证据。P04.108 不改启动/窗口关闭路径；当前全绿只说明覆盖路径回归通过，不作为崩溃修复证据。GitNexus 实现前 CRITICAL/HIGH/UNKNOWN 与索引覆盖限制保留，提交前需刷新并执行 all-scope change analysis。
+- 设计、固定上游、图谱范围与完整证据见 `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare-scope.md`、`p04.108-explorer-compare.md` 与 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。本子项完成，P04 / EDT-18 后续能力仍开放。
 
 ### P04.107 / EDT-18c：活动文件比较的修改侧可编辑（已完成；P04/EDT-18 继续）
 

@@ -1,17 +1,17 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.107 / EDT-18c is complete; P04.108 / EDT-18d is registered and is the only active slice. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.108 / EDT-18d implementation, local DoD, PR CI, and hosted Linux/Windows/macOS build/package checks are complete. Product/test commits are pushed; final evidence/state docs remain uncommitted. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.108 / EDT-18d: implement only the Explorer single-resource `Select for Compare` → `Compare with Selected` workflow. The DoD is registered in `docs/03-里程碑计划与验收标准.md`; upstream and pre-edit graph evidence are in `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare-scope.md`. Implementation has not started.
+P04.108 / EDT-18d: Explorer single-resource `Select for Compare` → `Compare with Selected` is complete. Product commit `d035275`, five-test snapshot `15da959`, and six-test follow-up `11a494e` are pushed. Local full init.sh passed with Flutter 913; cargo fmt, Flutter analyze (0 issues), Harness 100/100, and diff check passed. PR CI `41758044540` and Platform Availability `41758034721` passed. Linux and Windows hosted interaction/build checks passed; macOS ARM64 Release package and launch smoke passed. The report records artifact IDs and keeps native macOS device acceptance in P15. Next: refresh GitNexus and run all-scope change analysis for evidence/state changes, commit and push the docs, then verify the docs commit's PR CI. Keep PR #2 OPEN/draft. No GUI/Narrator was started. Evidence: `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md`.
 
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- Product commit `945d9576b889cd312689b9462c1b5e0d9c110a80`; test commit `8c294309ee469463ac78f0830484fef6cbe42bc3`; P04.107 evidence/state commit `f44533e89bd05c7c9cb7fb3ec20ce998a1047c0b` is pushed. P04.108 scope registration is currently an uncommitted docs/state working-tree change.
+- Product commit `945d9576b889cd312689b9462c1b5e0d9c110a80`; test commit `8c294309ee469463ac78f0830484fef6cbe42bc3`; P04.107 evidence/state commit `f44533e89bd05c7c9cb7fb3ec20ce998a1047c0b` is pushed. P04.108 product/test commits `d035275`, `15da959`, and `11a494e` are pushed; only evidence/state docs remain uncommitted. Push authorization for `codex/vscode-parity-p00` persists.
 
 ## P04.107 Evidence
 
@@ -32,10 +32,17 @@ P04.108 / EDT-18d: implement only the Explorer single-resource `Select for Compa
 - Exact search found no current compare-selection command or Explorer menu in `app/lib` / `app/test`; the existing tree opens files on single tap. The refreshed graph has 735 unresolved cross-language property sites, 772/972 unselected flow candidates, and 13 budget-cut walks; these remain limitations, not all-clear evidence. All-scope docs scans varied from LOW/zero processes with unresolved section names to CRITICAL/421–425 matches whose process labels pointed to unrelated build/LSP flows; neither output is a clean impact determination.
 - Registration checks: `bash init.sh --fast` passed Rust workspace, Clippy, `build_core`, and Flutter 907; Harness scored 100/100. A non-failing `UnknownDoc` log appeared during the existing saved-compare close-race fixture; all tests passed, and the log does not establish a crash cause. No GUI or Narrator was started.
 
+## P04.108 Implementation and Local Verification
+
+- Explorer single-resource `selectForCompare` → `compareFiles` is implemented with frozen disk/open-document original snapshots, Rust-authoritative editable modified `OpenDoc`, canonical workspace/path and document-version guards, visible whole-operation rejection for unsupported/stale/over-budget cases, and the active save shortcut inside the preview. Multi-resource `compareSelected` and other compare surfaces remain out of scope; no Rust/FFI/ABI/save protocol changed.
+- Dedicated widget tests passed 6/6, including whole comparison rejection when diff-row limits are exceeded. Full `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0 with Flutter 913 and Rust workspace/Clippy/build_core; cargo fmt, Flutter analyze (0 issues), Harness 100/100, and diff check pass. Existing headless saved-compare close-race fixture emitted one non-failing `UnknownDoc` message; no crash conclusion is drawn. No GUI/Narrator was started.
+- Product/five-test snapshot CI runs `41755678771` and `41755709195` passed; six-test PR CI `41758044540` and Platform Availability `41758034721` passed all jobs. Latest Linux/Windows/macOS package artifacts are `13288599908`, `13289171782`, and `13289098296`; macOS startup diagnostics artifact is `13289078404`. Native macOS acceptance remains P15.
+- CI interpretation: recent Windows ARM validator assertion failures were keyboard-input drops with exit 0 and no crash artifact; one platform failure was macOS queued cancellation before any step. These are separate from historical Windows close/macOS startup crashes and their qualified lifecycle mitigations. This Explorer change does not touch startup/close paths. See `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md` and the CI/crash report.
+
 ## Next Session Startup
 
 1. Read `AGENTS.md`, this handoff, and `progress.md`.
 2. Run `node .gitnexus/run.cjs status`; refresh the index if stale.
 3. Run `bash init.sh --fast`.
-4. Continue P04.108 only from its registered DoD; first re-check GitNexus status/impact freshness, then implement the Explorer two-step workflow.
-5. Keep one feature in progress, preserve UTF-16/FFI invariants, and run all-scope GitNexus change analysis before committing.
+4. Refresh GitNexus, run `detect-changes --scope all`, retain CRITICAL/UNKNOWN and graph coverage caveats, then commit the final evidence/state docs and push the already-authorized branch.
+5. Recheck PR CI for the docs commit. Keep P04/EDT-18 open for remaining compare capabilities, preserve UTF-16/FFI invariants, and leave PR #2 open/draft.
