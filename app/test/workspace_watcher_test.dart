@@ -46,6 +46,21 @@ void main() {
     expect(calls, 0, reason: 'stop 后不再回调');
   });
 
+  test('awaited stop releases the watched workspace for directory cleanup',
+      () async {
+    final workspace = Directory('${dir.path}${Platform.pathSeparator}workspace')
+      ..createSync();
+    final watcher = WorkspaceWatcher(
+      root: workspace.path,
+      onChanged: () {},
+    );
+    await watcher.start();
+    await watcher.stop();
+
+    await workspace.delete(recursive: true);
+    expect(workspace.existsSync(), isFalse);
+  });
+
   test('stop 会取消已排队的防抖回调', () async {
     var calls = 0;
     final w = WorkspaceWatcher(

@@ -15307,11 +15307,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     ++_watcherGeneration;
     final watcher = _watcher;
     _watcher = null;
+    // Start native watch cancellation now. Waiting for a queued workspace
+    // transition can delay handle release while the workbench is disposing.
+    final stopping = watcher?.stop();
     _watcherTransition =
         _watcherTransition.catchError((Object error, StackTrace stack) {
       debugPrint('工作区 watcher 切换失败：$error');
     }).then((_) async {
-      await watcher?.stop();
+      await stopping;
     }).catchError((Object error, StackTrace stack) {
       debugPrint('工作区 watcher 停止失败：$error');
     });
