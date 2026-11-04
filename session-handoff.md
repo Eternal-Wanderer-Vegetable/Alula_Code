@@ -1,13 +1,15 @@
 # Session Handoff
 
-> Last Updated: 2026-11-05. P04.118 / EDT-19h is complete at product/test commit 6cfb964, pushed to codex/vscode-parity-p00; PR #2 remains OPEN/draft. Full local DoD and current-SHA CI/platform evidence are recorded in docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md.
+> Last Updated: 2026-11-05. P04.118 / EDT-19h is complete at product/test commit 6cfb964 and evidence commit 662b002; both are pushed to codex/vscode-parity-p00. PR #2 remains OPEN/draft. Evidence CI run 41916596535 passed all four jobs.
+> Current sole product slice: P04.119 / EDT-19i, Rust smart-combination candidate planner. The scope is registered in docs/03 and feat-044; no product edits have begun. Scope: docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md. No FFI/ABI, Dart, or Workbench action in this slice.
+> GitNexus index is fresh at 662b002 (10,495 nodes / 28,419 edges / 310 clusters / 405 flows). Preserve exact CRITICAL risks on apply_changes (174/144/35/6), MergeConflict (217/1/137/20), and merge FFI (223/193/35/6), plus UNKNOWN on MergeProjection and lower-bound UNKNOWN on planAcceptAll (two unresolved receiver callsites). Query mapping returned unrelated flows. No local GUI/Narrator.
 > CI/crash status: latest per-workflow 100-run sample is ordinary CI 100/100 successful and Platform Availability 73/100 successful. Current PR CI 41909792608 passed all four jobs; Platform Availability 41909781449 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/package. Package artifacts: 13361293861, 13361054496, 13362504934. macOS DnD 13364211629 skips on unavailable hosted pointer routing; startup diagnostics 13363567297 contain no crash report. The macOS Rust core is x86_64 only. Apple Silicon and native macOS DnD remain P15 gates. Historical Windows 0xC000041D and macOS SIGSEGV remain separate unresolved crash records.
 
 ## Current Objective
 
-P04.118 is complete. Continue the overall P04 architecture-parity plan by inspecting the pinned Code-OSS 1.145.0 merge-editor surface and remaining docs/03 acceptance gaps, then register the next bounded slice in docs/03 and feature_list.json before editing product code. Keep feat-026, EDT-19, and P15 open; defer the numeric 500 MiB optimization until after architecture parity.
+Implement only P04.119 / EDT-19i as registered in docs/03: add a pure Rust, bounded smart-combination candidate planner in crates/editor-merge with tests. Match the pinned Code-OSS subrange ordering and fail closed for overlaps, boundary failures, and budget exhaustion. Do not modify apply_changes, MergeConflict/Projection wire shape, FFI/ABI, Dart session, or Workbench commands in this slice.
 
-GitNexus was refreshed at product SHA 6cfb964 (10,166 nodes / 27,700 edges / 310 clusters / 405 flows). Coverage remains incomplete: the 512 KiB default excludes app/lib/workbench/workbench_page.dart, with cross-language property sites, dropped entrypoint candidates, skipped callees, and budget-cut walks. Preserve prior exact CRITICAL impacts. Do not start local GUI/Narrator. User requested that manual action only be reported when needed.
+Before edits, refresh GitNexus after the scope commit, re-run exact impact for the chosen insertion point, inspect upstream modifiedBaseRange.ts and test callsites, and preserve CRITICAL/UNKNOWN findings. The ordinary CI sample is 100/100 green; Platform Availability is 73/100 green. Keep the 500 MiB optimization deferred and report manual action only when needed.
 
 P04.111 is complete for its core-only slice. Local evidence: 14 model tests, full `init.sh` (Flutter 925), cargo fmt, and Flutter analyze passed. PR CI `41782417039` and Platform Availability `41782412210` attempt 2 passed; package artifacts Linux `13300425218`, Windows `13300471052`, macOS ARM64 `13301288193`. Attempt 1's macOS ArtifactService `CreateArtifact` request timed out five times; rerunning the failed job passed. P04.111 has no FFI, workbench route, save lifecycle, combination/navigation, or Git integration.
 
@@ -29,7 +31,7 @@ The earlier GitHub artifact timeout was external to the app; the retried macOS b
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- P03.7-LC (feat-038), P04.114 (feat-039), P04.117 (feat-042), and P04.118 (feat-043) are done within their registered slices. No next P04 leaf slice is registered yet. Keep broader feat-026, EDT-19, and P15 open; PR #2 stays OPEN/draft. Before release, review the macOS Bundle Identifier warning and provide the intended Intel/Apple Silicon package coverage.
+- P03.7-LC (feat-038), P04.114 (feat-039), P04.117 (feat-042), and P04.118 (feat-043) are complete. P04.119 (feat-044) is the sole active product slice; broader feat-026, EDT-19, and P15 remain open. Keep PR #2 OPEN/draft and the 500 MiB target deferred.
 - P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe`, product `efd1ce1`, and evidence `c55ec8f` are pushed; product and evidence CI passed. Push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
@@ -82,6 +84,6 @@ The earlier GitHub artifact timeout was external to the app; the retried macOS b
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Run `node .gitnexus/run.cjs status`; refresh the index if stale.
 3. Run `bash init.sh --fast` when continuing local verification.
-4. Continue the overall P04 plan: inspect fixed Code-OSS 1.145.0 sources and remaining docs/03 gates, register the next single bounded slice and feature id, then perform GitNexus impact before product edits. Preserve current CI/crash classification and P15 device gates.
+4. Continue P04.119 only: refresh GitNexus at the scope commit, perform impact on the new helper insertion point, then implement the bounded Rust planner and crate tests without changing shared apply_changes or the FFI/Workbench path.
 5. Evidence-only GitNexus scans varied from LOW/HIGH to two fresh CRITICAL results (6 files / 4 documentation sections / 91 then 83 mapped flows). Example labels map to Rust/build/Flutter tooling from diagnostic headings, while the diff is docs-only. Preserve CRITICAL, exact product-method CRITICAL impacts, and graph coverage warnings; do not call the graph clean.
 6. For each completed slice, run GitNexus change detection, update docs/03, feature_list.json, progress.md, and this handoff, then commit and push to the authorized branch. Keep PR #2 OPEN/draft, preserve P15 native-device gates, EDT-19 and feat-026, and the deferred 500 MiB target. Do not start local GUI/Narrator testing.

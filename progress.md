@@ -5,13 +5,13 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.118 / EDT-19h 已完成；下一项具体切片待登记
+### 当前唯一产品切片：P04.119 / EDT-19i（Rust 组合候选 planner 范围已登记；代码未开始）
 
-- P04.118 / EDT-19h 已通过产品实现、本地 DoD、当前 SHA hosted CI 与 Linux/Windows/macOS Intel x64 build/launch/package 验收。产品/test commit 6cfb964 已推送；当前无未完成的 P04.118 产品改动。
-- 本地证据：定向 Merge Editor suites 18/18；bash init.sh 全绿（Rust workspace、Clippy、build_core、Flutter 966）；cargo fmt --check、Flutter analyze（0 issues）与 diff check 通过。细节见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md。
-- PR CI 41909792608 四 job 全绿；Platform Availability 41909781449 三平台 build/launch/package 全绿。包 artifact：Linux 13361293861、Windows 13361054496、macOS Intel X64 13362504934。macOS startup 13363567297 无 crash report；DnD 13364211629 因 hosted pointer route unavailable 明确 skip。该包的 Rust dylib 为 x86_64；Apple Silicon 与原生 DnD 继续留在 P15。
-- 按 workflow 分别统计最近 100 次：常规 CI 100/100 成功；Platform Availability 73 成功/27 失败。当前 SHA 两个 workflow 都通过。历史 Windows 0xC000041D 与 macOS startup SIGSEGV 仍是独立崩溃记录；runner 分配、合成输入和 probe/assertion 红灯不能单凭失败判为应用崩溃，也没有证据证明它们造成用户机器崩溃。修正 CI 信号有助于区分并更稳定地捕获真实崩溃，但不等于修复运行时根因。详见 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
-- 下一步先根据固定 Code-OSS 1.145.0 来源与剩余 DoD 登记下一项具体 P04 切片及 feature id，再开工；不跳过 docs/03 唯一权威 DoD。整体 feat-026 / EDT-19 / P15 仍开放，500 MiB 数值优化仍后置，PR #2 保持 OPEN/draft。
+- P04.118 / EDT-19h 已完成并推送产品/test commit 6cfb964 与证据 commit 662b002；当前 SHA 662b002 的 PR CI run 41916596535 四 job 全绿。P04.118 证据见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md。
+- 本轮依据固定 Code-OSS AcceptAllCombination / ModifiedBaseRange.smartCombineInputs 登记 P04.119 与 feat-044。仅实现 editor-merge crate 内的纯 Rust、有界组合候选函数及 crate 测试；不动现有 apply_changes、FFI/ABI、Dart/session 或 Workbench action。权威 DoD 在 docs/03 P04.119。
+- GitNexus 索引刷新于 docs commit 662b002，当前 fresh：10,495 nodes / 28,419 edges / 310 clusters / 405 flows。风险保留：apply_changes 为 CRITICAL（174 symbols/144 direct/35 processes/6 modules）；MergeConflict 为 CRITICAL（217/1 direct/137 processes/20 modules）；alula_merge_project_json 为 CRITICAL（223/193 direct/35 processes/6 modules）；MergeProjection upstream impact 为 UNKNOWN/0 edges，文本调用点在 ffi.rs:555 与 crate tests；planAcceptAll 为 UNKNOWN lower-bound，两个 receiver callsites 在索引时被丢弃。概念 query 返回了无关流程，当前图谱不用于证明这些路径不存在。P04.119 避免修改这些共享符号，仅新增纯 helper；若实现中需要扩大范围，先重做 impact 与范围评估。详见 p04.119 scope report。
+- 按 workflow 分别统计最近 100 次：常规 CI 100/100 成功；Platform Availability 73 成功/27 失败。P04.118 当前 SHA 两个 workflow 全绿；平台失败仍按 runner、input/probe、断言和真实 crash 分开判断。历史 Windows 0xC000041D 与 macOS SIGSEGV 没有新复现，根因仍未解决。
+- Linux/Windows 首批可用性通过；本轮 Mac 包仅 Intel x64，Apple Silicon 与 macOS native DnD 仍留 P15。保持 PR #2 OPEN/draft；先完成架构复刻，500 MiB 优化后置。
 
 ### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
 
@@ -34,6 +34,12 @@
 - Platform Availability [`41868298885`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41868298885) 在 macOS 26 ARM64 runner 上成功完成三平台 Release build/test/launch/package。包 artifacts：Linux `13343417280`、Windows `13343912394`、macOS ARM64 `13344758051`。Windows 可见窗口、P03.7 interaction、DnD、clipboard/accessibility 和 graceful-close 通过；Linux clipboard、DnD、Xvfb launch 通过。macOS analyze/tests、Release bundle、clipboard、启动烟测和 `.app` 打包通过；startup diagnostics `13345880319` 没有 `.ips`/`.crash`。但 hosted macOS DnD artifact `13345521077` 记录 `CGEventPostToPid pointer route: false`、没有 Flutter pointer events，测试明确 skip，故 macOS 原生拖放保留为 P15 设备验收，不能称为通过。该次 Mac workflow 还记录 `open returned 1` 前台提示，但 clipboard 通过，独立 startup smoke 读取到活动的 Alula 窗口；它不是崩溃退出证据。
 - CI/crash 复核：普通 CI `41868314580` 四 job 通过；平台运行 `41868298885` 三平台全绿，macos-26 标签解决了此前三次 runner 未分配取消。本次没有新 crash signature，但不能据此宣称历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 已根治；常见 DnD/剪贴板/无障碍红灯需按 probe 与应用故障分开。`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 记录了分类依据。
 - GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；本次最终证据 diff 的 all-scope detection 为 6 files/4 section symbols/0 affected processes/LOW。此前证据扫描曾把无关 Build/ApplyWorkspaceEdit 路径错误映射为 CRITICAL，也曾返回损坏 section 名；保留最高风险和映射不一致，不能把最新 LOW 解读为覆盖缺口消失。完整记录见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。500 MiB 优化仍后置。
+
+### P04.119 / EDT-19i：Rust Merge Editor 冲突智能组合候选规划（范围已登记，代码未开始）
+
+- 固定版 Code-OSS 的 Accept All Combination 遍历 modified base ranges，只将满足 eligibility 且 canBeCombined 的范围切到 both/smartCombination；候选通过 base-coordinate subrange edits 排序构造，遇到重叠或边界不符返回不可组合。实现源见 commands.ts 与 modifiedBaseRange.ts，链接和精确验收在 docs/03 P04.119。
+- 本切片限定为 editor-merge 内新建纯 Rust candidate planner 与定向 crate tests。计划保持现有 projection 只读，结果为完整候选或 None；有界资源超限显式错误、不返回半成品。FFI/ABI、Dart resolution state、Workbench F1 action/toolbar 下一阶段另行登记。
+- 代码前 GitNexus 风险：apply_changes CRITICAL 174/144/35/6，MergeConflict CRITICAL 217/1/137/20，merge FFI CRITICAL 223/193/35/6；MergeProjection UNKNOWN，planAcceptAll UNKNOWN lower-bound。保留全部 HIGH/CRITICAL/UNKNOWN，不把共享 helper 的 CRITICAL 解释为无关或豁免；本切片只增新 helper，不改 apply_changes / FFI。query 的流程映射不相关。详细证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md。
 
 ### P04.118 / EDT-19h：Merge Editor 整组按侧采纳（完成；Apple Silicon/native 验收留 P15）
 
@@ -1747,8 +1753,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. P04.118 / EDT-19h 已完成并登记在 docs/03 与 feature_list.json。下一步从固定 Code-OSS 1.145.0 来源和剩余验收差距中确定一项具体 P04 切片，先登记范围/DoD 与 feature id。
-2. 新切片开工前刷新 GitNexus，完成目标符号 impact 与不变量检查；一次只推进一项，完成本地门禁、hosted 证据和状态登记后再开下一项。
+1. P04.119 / EDT-19i 是唯一活动切片；刷新 GitNexus 到 scope commit 后，对新 planner 的宿主调用边界和合并 crate 依赖做 impact，保留 apply_changes CRITICAL、MergeConflict CRITICAL、MergeProjection UNKNOWN。
+2. 仅实现 editor-merge 内独立的 bounded Rust combination candidate helper 与定向测试；不可改 apply_changes/FFI/Dart/Workbench。完成 crate/full N.2 门禁、PR CI 和证据登记后，再注册下一片 FFI/action。
 3. 保留 P15 的 Windows 11/Narrator/DPI/主题、Linux native DRM、macOS Apple Silicon/native 输入门；Release 前跟进 macOS Bundle Identifier 警告与可发布架构包。P00–P13 完成前不恢复 500 MiB 优化目标。
 
 

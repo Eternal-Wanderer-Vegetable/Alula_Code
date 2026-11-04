@@ -581,6 +581,18 @@
       "evidence": "Product/test commit 6cfb9645a6d1bd5015cdaac1f8f47c74ae4f52f9 is pushed to the authorized PR branch. Implemented merge.acceptAllInput1 / merge.acceptAllInput2 toolbar and F1 actions via MergeResultSession.planAcceptAll and the existing Rust TextOp/Workbench history/save path. Focused Merge Editor surface/Workbench suites passed 18/18; bash init.sh passed (Rust workspace, Clippy, core build, Flutter 966); cargo fmt --check and Flutter analyze (0 issues) passed. PR CI 41909792608 passed Harness, Ubuntu Rust, Windows Rust, and Flutter analyze/test. Platform Availability 41909781449 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/package. Packages: Linux 13361293861, Windows 13361054496, macOS X64 13362504934. macOS startup diagnostics 13363567297 contain no crash report; DnD artifact 13364211629 explicitly skips because the hosted pointer route is unavailable. The Rust dylib is x86_64, so Apple Silicon and native macOS DnD remain P15 pending. Latest per-workflow 100-run sample: CI 100/100 successful; Platform Availability 73/100 successful. Historical Windows 0xC000041D and macOS startup SIGSEGV remain separate crash records; current green runs are non-reproduction evidence, not a root-cause fix. Full scope/GitNexus/CI classification: docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md and docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md. No local GUI/Narrator was started.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
+    },
+    {
+      "id": "feat-044",
+      "name": "P04.119 / EDT-19i Rust Merge Editor smart-combination candidate planner",
+      "description": "Add a bounded, GUI-free Rust helper that computes a smart combination candidate for two conflict inputs relative to one base, matching the pinned Code-OSS non-overlap and ordering semantics. This slice does not expose FFI/ABI or add the Workbench command. Scope and DoD in docs/03 P04.119.",
+      "dependencies": [
+        "feat-043"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered in docs/03 P04.119 and docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md. No product edits yet. Before editing, refresh GitNexus at the scope commit and review the CRITICAL shared-helper impacts; implementation is limited to a new pure Rust helper and focused crate tests.",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",
