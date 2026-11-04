@@ -113,6 +113,8 @@ class MergeResultSession {
         _input1 = input1,
         _input2 = input2,
         _projection = projection,
+        _savedProjection = projection,
+        _savedResult = projection.result,
         _projectedVersion = projectedVersion;
 
   factory MergeResultSession.open({
@@ -161,7 +163,10 @@ class MergeResultSession {
   String? _input1;
   String? _input2;
   AlulaMergeProjection? _projection;
+  AlulaMergeProjection? _savedProjection;
+  String? _savedResult;
   Map<int, AlulaMergeSide> _resolutions = const {};
+  Map<int, AlulaMergeSide> _savedResolutions = const {};
   int _projectedVersion;
   int _generation = 0;
   bool _disposed = false;
@@ -173,6 +178,10 @@ class MergeResultSession {
   List<AlulaMergeConflict> get conflicts => _currentProjection.conflicts;
   Map<int, AlulaMergeSide> get resolutions => UnmodifiableMapView(_resolutions);
   AlulaMergeProjection get projection => _currentProjection;
+  String get latestSavedResult {
+    _ensureActive();
+    return _savedResult!;
+  }
 
   bool get isDirty => _requireResultDocument().isDirty;
 
@@ -250,10 +259,32 @@ class MergeResultSession {
     _generation++;
   }
 
+  /// Records the current projection after the host has completed an atomic
+  /// save and advanced the Rust document savepoint.
+  void recordSavepoint() {
+    final document = _requireResultDocument();
+    if (document.isDirty) {
+      throw const MergeResultSessionException(
+        MergeResultSessionErrorCode.projectionMismatch,
+        'The result document savepoint has not been advanced',
+      );
+    }
+    _rememberSavedResult(document.resync().content);
+  }
+
   MergeResultClosePrompt get closePrompt {
     _ensureActive();
-    final dirty = _requireResultDocument().isDirty;
-    final unresolved = unresolvedConflictCount;
+    final document = _requireResultDocument();
+    final current = document.resync();
+    final matchesProjection = current.version == _projectedVersion &&
+        current.content == _currentProjection.result;
+    final dirty = document.isDirty;
+    // External/manual edits invalidate side-choice certainty. Keep every
+    // conflict unresolved until a later session-aware edit path can reconcile
+    // its ranges; never let stale state advertise a clean merge.
+    final unresolved = matchesProjection
+        ? unresolvedConflictCount
+        : _currentProjection.conflictCount;
     final actions = dirty
         ? const {
             MergeResultCloseAction.save,
@@ -299,10 +330,19 @@ class MergeResultSession {
       }
       document.markSaved();
       if (document.isDirty) return MergeResultCloseOutcome.saveFailed;
+      _rememberSavedResult(afterSave.content);
     } else if (action == MergeResultCloseAction.discard) {
       if (!await revert()) return MergeResultCloseOutcome.revertFailed;
-      document.resync();
-      if (document.isDirty) return MergeResultCloseOutcome.revertFailed;
+      final reverted = document.resync();
+      if (document.isDirty || reverted.content != _savedResult) {
+        return MergeResultCloseOutcome.revertFailed;
+      }
+      if (reverted.content == _savedProjection?.result) {
+        _projection = _savedProjection;
+        _resolutions = Map.unmodifiable(_savedResolutions);
+      }
+      _projectedVersion = reverted.version;
+      _generation++;
     }
 
     await closeResultDocument();
@@ -318,8 +358,19 @@ class MergeResultSession {
     _input1 = null;
     _input2 = null;
     _projection = null;
+    _savedProjection = null;
+    _savedResult = null;
     _resolutions = const {};
+    _savedResolutions = const {};
     _generation++;
+  }
+
+  void _rememberSavedResult(String result) {
+    _savedResult = result;
+    if (result == _currentProjection.result) {
+      _savedProjection = _currentProjection;
+      _savedResolutions = Map.unmodifiable(_resolutions);
+    }
   }
 
   AlulaMergeProjection _project(Map<int, AlulaMergeSide> resolutions) =>

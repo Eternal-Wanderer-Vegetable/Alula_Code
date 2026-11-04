@@ -40,6 +40,7 @@ import '../editor/editor_highlight_tokens.dart';
 import '../editor/indentation.dart';
 import '../editor/find_replace.dart';
 import '../editor/find_replace_history.dart';
+import '../editor/merge_result_session.dart';
 import '../editor/clipboard_metadata.dart';
 import '../editor/editor_clipboard.dart';
 import '../editor/text_drag_drop.dart';
@@ -247,6 +248,7 @@ class WorkbenchPage extends StatefulWidget {
     this.findReplaceHistoryConfiguration =
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
+    this.mergeResultSessionFactory,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -294,6 +296,12 @@ class WorkbenchPage extends StatefulWidget {
   /// Optional per-workspace history store (tests can use a temporary folder).
   final FindReplaceHistoryStore? findReplaceHistoryStore;
 
+  /// Optional integration point for a merge-result owner. The workbench keeps
+  /// the returned session with the shared Rust document and consumes its save
+  /// and close decisions. Git conflict discovery and merge UI are separate.
+  final MergeResultSession? Function(AlulaCore core, OpenDoc resultDocument)?
+      mergeResultSessionFactory;
+
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
   static final KeybindingsStore _defaultKeybindingsStore = KeybindingsStore();
@@ -340,6 +348,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final NavigationHistory _navigationHistory = NavigationHistory();
   final Set<int> _appliedLocalEditorTextDragTokens = <int>{};
   final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
+  final Set<int> _mergeCloseInProgress = <int>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -10918,6 +10927,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         savedFileOptions: file.options,
         undoBudget: _undoHistoryBudget,
       );
+      final mergeSessionFactory = widget.mergeResultSessionFactory;
+      if (mergeSessionFactory != null) {
+        try {
+          open.mergeResultSession = mergeSessionFactory(core, open);
+        } on Object catch (error) {
+          open.disposeView();
+          if (mounted) {
+            setState(() => _statusDetail = '打开合并结果会话失败：$error');
+          }
+          return;
+        }
+      }
+      _updateDirty(open);
       setState(() {
         final g = _focused;
         g.docs.add(open);
@@ -10979,6 +11001,152 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }));
       return;
     }
+    final mergeSession = doc.mergeResultSession;
+    if (doc.sharedViewCount == 1 &&
+        mergeSession != null &&
+        !mergeSession.isDisposed) {
+      if (_mergeCloseInProgress.add(id)) {
+        unawaited(_closeMergeResultDocument(owner, doc, mergeSession));
+      }
+      return;
+    }
+    _closeDocNow(owner, doc);
+  }
+
+  Future<void> _closeMergeResultDocument(
+    EditorGroup owner,
+    OpenDoc doc,
+    MergeResultSession session,
+  ) async {
+    try {
+      final prompt = session.closePrompt;
+      final action = prompt.actions.length == 1 &&
+              prompt.actions.contains(MergeResultCloseAction.close)
+          ? MergeResultCloseAction.close
+          : await showDialog<MergeResultCloseAction>(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                key: const ValueKey('merge-result-close-dialog'),
+                title: const Text('关闭合并结果？'),
+                content: Text(
+                  prompt.isDirty
+                      ? '“${doc.name}”有未保存的修改，'
+                          '仍有 ${prompt.unresolvedConflictCount} 个冲突未解决。'
+                      : '仍有 ${prompt.unresolvedConflictCount} 个冲突未解决。',
+                ),
+                actions: [
+                  if (prompt.actions.contains(MergeResultCloseAction.cancel))
+                    TextButton(
+                      key: const ValueKey('merge-result-close-cancel'),
+                      onPressed: () => Navigator.pop(
+                        dialogContext,
+                        MergeResultCloseAction.cancel,
+                      ),
+                      child: const Text('继续编辑'),
+                    ),
+                  if (prompt.actions.contains(MergeResultCloseAction.discard))
+                    TextButton(
+                      key: const ValueKey('merge-result-close-discard'),
+                      onPressed: () => Navigator.pop(
+                        dialogContext,
+                        MergeResultCloseAction.discard,
+                      ),
+                      child: const Text('不保存'),
+                    ),
+                  if (prompt.actions
+                      .contains(MergeResultCloseAction.closeWithConflicts))
+                    FilledButton(
+                      key: const ValueKey('merge-result-close-with-conflicts'),
+                      onPressed: () => Navigator.pop(
+                        dialogContext,
+                        MergeResultCloseAction.closeWithConflicts,
+                      ),
+                      child: const Text('仍然关闭'),
+                    ),
+                  if (prompt.actions.contains(MergeResultCloseAction.save))
+                    FilledButton(
+                      key: const ValueKey('merge-result-close-save'),
+                      onPressed: () => Navigator.pop(
+                        dialogContext,
+                        MergeResultCloseAction.save,
+                      ),
+                      child: Text(
+                        prompt.saveLabel ==
+                                MergeResultSaveLabel.saveWithConflicts
+                            ? '保存并保留未解冲突'
+                            : '保存',
+                      ),
+                    ),
+                ],
+              ),
+            );
+      if (!mounted || action == null) return;
+
+      final outcome = await session.finishClose(
+        action,
+        save: () async {
+          if (doc.path == null) {
+            await _saveAsDoc(doc);
+          } else {
+            await _saveDocToPath(doc, doc.path!);
+          }
+          return mounted &&
+              !doc.doc.isDirty &&
+              doc.diskState == DiskDocumentState.current;
+        },
+        revert: () async {
+          try {
+            final current = doc.doc.resync();
+            final savedText = session.latestSavedResult;
+            final operations = diffToOps(current.content, savedText);
+            if (operations.isNotEmpty) {
+              doc.doc.applyWith(current.version, operations);
+            }
+            doc.doc.setSavepoint(savedText);
+            doc.fileOptions = doc.savedFileOptions;
+            doc.diskState = DiskDocumentState.current;
+            doc.conflictBaselineKnown = true;
+            doc.undoStack.clear();
+            doc.lastEditAt = null;
+            _updateDirty(doc);
+            doc.replaceInputWindow(
+              doc.selection.extentOffset.clamp(0, savedText.length).toInt(),
+            );
+            return !doc.doc.isDirty && doc.doc.resync().content == savedText;
+          } on Object {
+            return false;
+          }
+        },
+        closeResultDocument: () async {
+          if (mounted && owner.docs.any((view) => identical(view, doc))) {
+            _closeDocNow(owner, doc);
+          }
+        },
+      );
+      if (outcome != MergeResultCloseOutcome.closed && mounted) {
+        final detail = switch (outcome) {
+          MergeResultCloseOutcome.cancelled => null,
+          MergeResultCloseOutcome.saveFailed => '保存失败，合并结果仍保持打开',
+          MergeResultCloseOutcome.resultChangedDuringSave =>
+            '保存期间合并结果发生变化，文档仍保持打开',
+          MergeResultCloseOutcome.revertFailed => '无法还原到最近保存的结果，文档仍保持打开',
+          MergeResultCloseOutcome.invalidAction => '合并结果关闭操作已失效，请重试',
+          MergeResultCloseOutcome.closed => null,
+        };
+        if (detail != null) setState(() => _statusDetail = detail);
+      }
+    } on MergeResultSessionException {
+      if (mounted) {
+        setState(() => _statusDetail = '合并结果已在会话外变化，请先同步会话状态');
+      }
+    } finally {
+      _mergeCloseInProgress.remove(doc.id);
+    }
+  }
+
+  void _closeDocNow(EditorGroup owner, OpenDoc doc) {
+    if (!owner.docs.any((view) => identical(view, doc))) return;
+    final id = doc.id;
     final wasActive = owner.activeDocId == id;
     final focusKey = _focusKeyFor(owner, doc);
     _editorFocusNodes.remove(focusKey)?.dispose();
@@ -12707,8 +12875,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     try {
+      var mergeSessionOutOfSync = false;
       doc.doc.saveFile(targetPath, options: targetOptions);
       doc.doc.markSaved();
+      try {
+        doc.mergeResultSession?.recordSavepoint();
+      } on MergeResultSessionException {
+        mergeSessionOutOfSync = true;
+      }
       var lspWarning = false;
       if (pathChanged) {
         if (doc.lspAttached && _lspReady) {
@@ -12741,9 +12915,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _updateDirty(doc);
       _syncCommandContext();
       setState(() {
-        _statusDetail = lspWarning
+        final savedStatus = lspWarning
             ? '已保存 ${doc.name}，语言服务未能重新打开文档'
             : '已原子保存 ${doc.name}（v${doc.doc.version}）';
+        _statusDetail =
+            mergeSessionOutOfSync ? '$savedStatus（合并会话需要同步）' : savedStatus;
       });
       _scheduleStateSave(); // 保存后 journal 里的 text 分支消失（转干净）
       if (doc.lspAttached && _lspReady) {
@@ -17815,6 +17991,7 @@ class _SharedOpenDocState {
   String name;
   final AlulaDoc doc;
   final UndoStack undoStack;
+  MergeResultSession? mergeResultSession;
   TextFileOptions fileOptions;
   TextFileOptions savedFileOptions;
   bool lspAttached = false;
@@ -17991,6 +18168,8 @@ class _SharedOpenDocState {
     if (viewCount == 0) {
       closed = true;
       autoClosedBracketMarkers.clear();
+      mergeResultSession?.dispose();
+      mergeResultSession = null;
       doc.close();
       undoStack.dispose();
     }
@@ -18084,6 +18263,9 @@ class OpenDoc {
   bool get undoRedoBusy => _shared.undoRedoBusy;
   set undoRedoBusy(bool value) => _shared.undoRedoBusy = value;
   UndoStack get undoStack => _shared.undoStack;
+  MergeResultSession? get mergeResultSession => _shared.mergeResultSession;
+  set mergeResultSession(MergeResultSession? value) =>
+      _shared.mergeResultSession = value;
   int get sharedViewCount => _shared.viewCount;
   bool get sharesDocument => !_shared.closed;
 

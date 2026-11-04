@@ -276,6 +276,7 @@ void main() {
         },
         revert: () async => false,
         closeResultDocument: () async {
+          expect(session.latestSavedResult, 'base\nmanual ');
           closeCalls++;
           doc.close();
         },
@@ -301,6 +302,7 @@ void main() {
     final doc = opened.document;
     final session = opened.session;
     var closeCalls = 0;
+    final savedResult = session.latestSavedResult;
     try {
       _applyPlan(
         doc,
@@ -334,8 +336,8 @@ void main() {
         MergeResultCloseAction.discard,
         save: () async => false,
         revert: () async {
-          _replaceDocument(doc, base);
-          doc.setSavepoint(base);
+          _replaceDocument(doc, savedResult);
+          doc.setSavepoint(savedResult);
           return true;
         },
         closeResultDocument: () async {
