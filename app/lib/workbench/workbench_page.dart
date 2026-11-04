@@ -31,6 +31,7 @@ import '../bridge/alula_core.dart';
 import '../editor/editor_minimap.dart';
 import '../editor/snapshot_compare_preview.dart';
 import '../editor/diff_view_model.dart';
+import '../editor/diff_revert_plan.dart';
 import '../editor/editor_minimap_markers.dart';
 import '../editor/editor_sticky_scroll.dart';
 import '../editor/editor_folding.dart';
@@ -549,6 +550,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'workspaceOpen',
       enablement: 'workspaceOpen',
       runWithArguments: _compareSelectedExplorerFile,
+    );
+    reg(
+      'diffEditor.revert',
+      '差异编辑器',
+      'Revert',
+      _revertFocusedSnapshotCompare,
+      when: 'diffEditorActive',
+      enablement: 'diffEditorActive',
     );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
         enablement: 'editorActive');
@@ -1568,6 +1577,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       initialDiff: initialDiff,
     );
     _snapshotCompareViews[view] = binding;
+    _commands.context.setValue('diffEditorActive', true);
     try {
       await showDialog<void>(
         context: context,
@@ -1577,7 +1587,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Navigator.of(dialogContext, rootNavigator: true).pop();
             }
           };
-          final saveBindings = <ShortcutActivator, VoidCallback>{
+          final dialogBindings = <ShortcutActivator, VoidCallback>{
             for (final entry in _keybindings
                 .resolveBindings(matchesWhen: _commands.context.matches)
                 .entries
@@ -1589,8 +1599,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     arguments: entry.value.arguments,
                   ),
           };
+          final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+          dialogBindings[const SingleActivator(LogicalKeyboardKey.f1)] =
+              _showCommandPalette;
+          dialogBindings[SingleActivator(
+            LogicalKeyboardKey.keyP,
+            control: !isMac,
+            meta: isMac,
+            shift: true,
+          )] = _showCommandPalette;
+          dialogBindings[SingleActivator(
+            LogicalKeyboardKey.keyZ,
+            control: !isMac,
+            meta: isMac,
+          )] = _undo;
+          dialogBindings[SingleActivator(
+            LogicalKeyboardKey.keyZ,
+            control: !isMac,
+            meta: isMac,
+            shift: true,
+          )] = _redo;
+          dialogBindings[SingleActivator(
+            LogicalKeyboardKey.keyY,
+            control: !isMac,
+            meta: isMac,
+          )] = _redo;
           return CallbackShortcuts(
-            bindings: saveBindings,
+            bindings: dialogBindings,
             child: SnapshotComparePreview(
               title: title,
               originalLabel: originalLabel,
@@ -1604,6 +1639,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 state,
                 keyPrefix,
               ),
+              onRevertBlock: (hunkIndex) =>
+                  _revertSnapshotCompareHunks(binding, [hunkIndex]),
+              onRevertSelection: () => _revertSnapshotCompareSelection(
+                binding,
+                requireNonCollapsed: true,
+              ),
               onClose: binding.closeRoute!,
             ),
           );
@@ -1611,6 +1652,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     } finally {
       _snapshotCompareViews.remove(view);
+      _commands.context
+          .setValue('diffEditorActive', _snapshotCompareViews.isNotEmpty);
       binding.dispose();
     }
   }
@@ -1663,6 +1706,218 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
       ),
     );
+  }
+
+  Future<void> _revertFocusedSnapshotCompare() async {
+    if (_snapshotCompareViews.isEmpty) return;
+    await _revertSnapshotCompareSelection(
+      _snapshotCompareViews.values.last,
+      requireNonCollapsed: false,
+    );
+  }
+
+  Future<void> _revertSnapshotCompareSelection(
+    _SnapshotCompareBinding binding, {
+    required bool requireNonCollapsed,
+  }) async {
+    final view = binding.view;
+    final selection = view.selection;
+    if (requireNonCollapsed && selection.isCollapsed) {
+      _setSnapshotCompareActionMessage(binding, '请先在修改侧选中要回退的差异块');
+      return;
+    }
+    final presentation = binding.presentation.value;
+    final diff = presentation.diff;
+    if (diff == null) {
+      _setSnapshotCompareActionMessage(
+        binding,
+        presentation.isUpdating
+            ? '差异正在更新，暂时无法回退'
+            : presentation.fallbackMessage ?? '当前没有可用的精确差异',
+      );
+      return;
+    }
+    final hunkIndices = diffHunksIntersectingModifiedSelection(
+      diff,
+      selectionStartUtf16: selection.baseOffset,
+      selectionEndUtf16: selection.extentOffset,
+    );
+    if (hunkIndices.isEmpty) {
+      _setSnapshotCompareActionMessage(binding, '光标或选区没有对应的差异块');
+      return;
+    }
+    await _revertSnapshotCompareHunks(binding, hunkIndices);
+  }
+
+  Future<void> _revertSnapshotCompareHunks(
+    _SnapshotCompareBinding binding,
+    List<int> hunkIndices,
+  ) async {
+    final view = binding.view;
+    void reject(String message) =>
+        _setSnapshotCompareActionMessage(binding, message);
+
+    if (binding.isDisposed ||
+        !mounted ||
+        !identical(_snapshotCompareViews[view], binding) ||
+        !view.sameDocumentAs(binding.source) ||
+        _ownerOfView(view) == null) {
+      reject('比较文档已关闭或资源身份已变化，回退已取消');
+      return;
+    }
+    if (view.inputWindow.hasComposition) {
+      reject('输入法组合输入中，回退已取消');
+      return;
+    }
+    if (view.undoRedoBusy) {
+      reject('文档正在撤销或重做，回退已取消');
+      return;
+    }
+
+    _flushInput(view);
+    if (view.inputWindow.hasComposition ||
+        view.inputWindow.pendingCount > 0 ||
+        view.inputWindow.pendingText != null) {
+      reject('修改侧仍有未提交输入，回退已取消');
+      return;
+    }
+
+    final presentation = binding.presentation.value;
+    final diff = presentation.diff;
+    if (presentation.isUpdating ||
+        presentation.fallbackMessage != null ||
+        diff == null ||
+        diff.isApproximate ||
+        diff.originalText != binding.originalText) {
+      reject('差异不是当前精确版本，回退已取消');
+      return;
+    }
+
+    final expectedVersion = view.doc.version;
+    final probe = view.doc.readRange(0, maxLenUtf16: 1);
+    if (probe.version != expectedVersion ||
+        binding.originalText.length + probe.totalUtf16Length > 2000000) {
+      reject('文档版本已变化或超过差异预算，回退已取消');
+      return;
+    }
+    final modifiedText =
+        _readDocumentRange(view, 0, probe.totalUtf16Length);
+    if (view.doc.version != expectedVersion ||
+        !identical(binding.presentation.value, presentation) ||
+        modifiedText != diff.modifiedText) {
+      reject('修改侧文档与差异快照不一致，回退已取消');
+      return;
+    }
+
+    final ranges = diffRevertRanges(diff, hunkIndices);
+    if (ranges.isEmpty || ranges.length != hunkIndices.toSet().length) {
+      reject('差异块映射无效，未应用任何回退');
+      return;
+    }
+    final edits = [
+      for (final range in ranges)
+        (
+          start: range.modifiedStartUtf16,
+          end: range.modifiedEndUtf16,
+          oldText: modifiedText.substring(
+            range.modifiedStartUtf16,
+            range.modifiedEndUtf16,
+          ),
+          newText: binding.originalText.substring(
+            range.originalStartUtf16,
+            range.originalEndUtf16,
+          ),
+        ),
+    ];
+    if (edits.every((edit) => edit.oldText == edit.newText)) {
+      reject('差异块已与原始快照一致');
+      return;
+    }
+
+    final forward = <TextOp>[];
+    for (final edit in edits.reversed) {
+      if (edit.end > edit.start) {
+        forward.add(TextOp.delete(edit.start, edit.end - edit.start));
+      }
+      if (edit.newText.isNotEmpty) {
+        forward.add(TextOp.insert(edit.start, edit.newText));
+      }
+    }
+    final inverse = <TextOp>[];
+    for (final edit in edits) {
+      if (edit.newText.isNotEmpty) {
+        inverse.add(TextOp.delete(edit.start, edit.newText.length));
+      }
+      if (edit.oldText.isNotEmpty) {
+        inverse.add(TextOp.insert(edit.start, edit.oldText));
+      }
+    }
+    if (_operationPayloadChars([forward, inverse]) >
+        _undoHistoryBudget.maxTotalChars) {
+      reject('回退内容超过撤销历史预算，未应用任何修改');
+      return;
+    }
+
+    final beforeSelection = view.selection;
+    try {
+      view.doc.applyWith(expectedVersion, forward);
+    } on AlulaException catch (error) {
+      reject('Rust 文档拒绝回退：${error.code}');
+      return;
+    } on Object catch (error) {
+      reject('回退失败：$error');
+      return;
+    }
+
+    final newLength = modifiedText.length +
+        edits.fold<int>(0, (n, e) => n + e.newText.length - e.oldText.length);
+    TextSelection mapSelection(TextSelection selection) => TextSelection(
+          baseOffset: mapWorkspaceEditOffset(
+            selection.baseOffset,
+            forward,
+          ).clamp(0, newLength).toInt(),
+          extentOffset: mapWorkspaceEditOffset(
+            selection.extentOffset,
+            forward,
+          ).clamp(0, newLength).toInt(),
+          affinity: selection.affinity,
+          isDirectional: selection.isDirectional,
+        );
+    final afterSelection = mapSelection(beforeSelection);
+    _recordDocumentOperations(
+      view,
+      forward: forward,
+      inverse: inverse,
+      beforeCaret: beforeSelection.extentOffset,
+      afterCaret: afterSelection.extentOffset,
+      coalesce: false,
+    );
+    view.replaceInputWindow(
+      afterSelection.extentOffset,
+      selection: afterSelection,
+    );
+    view.crossWindowSelection = null;
+    _refreshSiblingViews(view, forward);
+    _scheduleSnapshotCompareDiff(binding);
+    if (_findVisible) _onFindTextChanged();
+    if (mounted) {
+      setState(() => _statusDetail = '已将所选差异块恢复为原始快照');
+    }
+  }
+
+  void _setSnapshotCompareActionMessage(
+    _SnapshotCompareBinding binding,
+    String message,
+  ) {
+    if (binding.isDisposed) return;
+    final state = binding.presentation.value;
+    binding.presentation.value = SnapshotComparePresentation(
+      diff: state.diff,
+      isUpdating: state.isUpdating,
+      fallbackMessage: state.fallbackMessage,
+      actionMessage: message,
+    );
+    if (mounted) setState(() => _statusDetail = message);
   }
 
   List<EditorRangeDecoration> _snapshotCompareDecorations(

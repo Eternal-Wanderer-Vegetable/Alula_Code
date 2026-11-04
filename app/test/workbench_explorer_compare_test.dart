@@ -84,6 +84,19 @@ Future<void> _replaceText(WidgetTester tester, String text) async {
   await tester.pump();
 }
 
+Future<void> _setTextAndSelection(
+  WidgetTester tester,
+  String text,
+  TextSelection selection,
+) async {
+  tester.testTextInput.updateEditingValue(TextEditingValue(
+    text: text,
+    selection: selection,
+  ));
+  await tester.pump();
+  await tester.pump();
+}
+
 Future<void> _saveWithCtrlS(WidgetTester tester) async {
   await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
   await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
@@ -94,7 +107,7 @@ Future<void> _saveWithCtrlS(WidgetTester tester) async {
 void main() {
   setUpAll(() {
     final mockContext = MockMessageChannelContext();
-    for (final channel in ['DragManager', 'DropManager']) {
+    for (final channel in ['DragManager', 'DropManager', 'MenuManager']) {
       mockContext.registerMockChannelHandler(
         channel,
         (_) async => ['ok', null],
@@ -188,6 +201,303 @@ void main() {
         editor.inputWindow.document.resync().content,
         'edited through compare\nshared',
       );
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('Revert Block restores one hunk and stays undoable',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsStringSync('a\nb\nc\nd');
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsStringSync('a\nB\nc\nD');
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-selection')));
+      await tester.pumpAndSettle();
+      expect(find.text('请先在修改侧选中要回退的差异块'), findsWidgets);
+
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-block-0')));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      final compareField = tester.widget<RustTextInputField>(find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byType(RustTextInputField),
+      ));
+      final compareDoc = compareField.inputWindow.document;
+      expect(compareDoc.resync().content, 'a\nb\nc\nD');
+      expect(modified.readAsStringSync(), 'a\nB\nc\nD');
+
+      await tester.showKeyboard(compareInput);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'a\nB\nc\nD');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'a\nb\nc\nD');
+
+      await _saveWithCtrlS(tester);
+      expect(modified.readAsStringSync(), 'a\nb\nc\nD');
+      expect(original.readAsStringSync(), 'a\nb\nc\nd');
+      await tester.tap(find.byKey(const ValueKey('explorer-compare-close')));
+      await tester.pumpAndSettle();
+      final primaryInput = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField).first,
+      );
+      expect(primaryInput.inputWindow.document.resync().content, 'a\nb\nc\nD');
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('Revert Selection and command palette Revert target exact hunks',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsStringSync('a\nb\nc\nd');
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsStringSync('a\nB\nc\nD');
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      final compareFieldFinder = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byType(RustTextInputField),
+      );
+      await tester.showKeyboard(compareInput);
+      await _setTextAndSelection(
+        tester,
+        'a\nB\nc\nD',
+        const TextSelection(baseOffset: 2, extentOffset: 7),
+      );
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-selection')));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      final compareDoc = tester
+          .widget<RustTextInputField>(compareFieldFinder)
+          .inputWindow
+          .document;
+      expect(compareDoc.resync().content, 'a\nb\nc\nd');
+
+      await tester.showKeyboard(compareInput);
+      await _setTextAndSelection(
+        tester,
+        'a\nb\nc\nD',
+        const TextSelection.collapsed(offset: 6),
+      );
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+      final paletteInput = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(paletteInput, 'Revert');
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('qi-差异编辑器: Revert')), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'a\nb\nc\nd');
+      await tester.tap(find.byKey(const ValueKey('explorer-compare-close')));
+      await tester.pumpAndSettle();
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('block revert handles inserted and deleted empty lines',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsStringSync('head\n\nmiddle\ntail');
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsStringSync('head\nadded\n\nmiddle\ntail');
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      final compareFieldFinder = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byType(RustTextInputField),
+      );
+      final compareDoc = tester
+          .widget<RustTextInputField>(compareFieldFinder)
+          .inputWindow
+          .document;
+
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-block-0')));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'head\n\nmiddle\ntail');
+
+      await tester.showKeyboard(compareInput);
+      await _setTextAndSelection(
+        tester,
+        'head\nmiddle\ntail',
+        const TextSelection.collapsed(offset: 16),
+      );
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-block-0')));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'head\n\nmiddle\ntail');
+      expect(original.readAsStringSync(), 'head\n\nmiddle\ntail');
+
+      await tester.showKeyboard(compareInput);
+      await _saveWithCtrlS(tester);
+      expect(modified.readAsStringSync(), 'head\n\nmiddle\ntail');
+      await tester.tap(find.byKey(const ValueKey('explorer-compare-close')));
+      await tester.pumpAndSettle();
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('block revert preserves BOM, CRLF and non-BMP text on save',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsBytesSync(utf8.encode('\uFEFFa\r\nfn 😀old\r\n\r\nz\r\n'));
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsBytesSync(utf8.encode('\uFEFFa\r\nfn 😀new\r\n\r\nz\r\n'));
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      final compareField = tester.widget<RustTextInputField>(find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byType(RustTextInputField),
+      ));
+      final compareDoc = compareField.inputWindow.document;
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-block-0')));
+      await tester.pump(const Duration(milliseconds: 150));
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'a\nfn 😀old\n\nz\n');
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+      await _saveWithCtrlS(tester);
+      expect(modified.readAsBytesSync(), original.readAsBytesSync());
+      await tester.tap(find.byKey(const ValueKey('explorer-compare-close')));
+      await tester.pumpAndSettle();
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('revert waits for a current diff after IME preedit commits on blur',
+      (tester) async {
+    try {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final original = File('${workspace.path}/original.rs')
+        ..writeAsStringSync('original text');
+      final modified = File('${workspace.path}/modified.rs')
+        ..writeAsStringSync('modified text');
+      await _mountWorkspace(tester, temp, workspace);
+
+      await _rightClickNode(tester, original.path);
+      await _chooseContextAction(tester, 'Select for Compare');
+      await _rightClickNode(tester, modified.path);
+      await _chooseContextAction(tester, 'Compare with Selected');
+
+      final compareInput = find.descendant(
+        of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+        matching: find.byKey(const ValueKey('rust-bounded-text-input')),
+      );
+      await tester.showKeyboard(compareInput);
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: 'composition',
+        selection: TextSelection.collapsed(offset: 11),
+        composing: TextRange(start: 0, end: 11),
+      ));
+      await tester.pump();
+      final compareDoc = tester
+          .widget<RustTextInputField>(find.descendant(
+            of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+            matching: find.byType(RustTextInputField),
+          ))
+          .inputWindow
+          .document;
+      expect(
+        tester
+            .widget<RustTextInputField>(find.descendant(
+              of: find.byKey(const ValueKey('explorer-compare-modified-pane')),
+              matching: find.byType(RustTextInputField),
+            ))
+            .inputWindow
+            .hasComposition,
+        isTrue,
+      );
+
+      await tester
+          .tap(find.byKey(const ValueKey('explorer-compare-revert-block-0')));
+      await tester.pumpAndSettle();
+      expect(compareDoc.resync().content, 'composition');
+      await tester.tap(find.byKey(const ValueKey('explorer-compare-close')));
+      await tester.pumpAndSettle();
     } finally {
       await tester.pumpWidget(const SizedBox.shrink());
       debugDefaultTargetPlatformOverride = null;

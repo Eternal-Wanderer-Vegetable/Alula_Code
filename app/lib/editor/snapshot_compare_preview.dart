@@ -2,17 +2,20 @@ import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import 'diff_view_model.dart';
+import 'diff_revert_plan.dart';
 
 class SnapshotComparePresentation {
   const SnapshotComparePresentation({
     this.diff,
     this.isUpdating = false,
     this.fallbackMessage,
+    this.actionMessage,
   });
 
   final DiffViewModelResult? diff;
   final bool isUpdating;
   final String? fallbackMessage;
+  final String? actionMessage;
 }
 
 /// Side-by-side comparison with an optional Rust-backed modified editor.
@@ -29,6 +32,8 @@ class SnapshotComparePreview extends StatelessWidget {
     this.presentation,
     this.originalText,
     this.modifiedEditorBuilder,
+    this.onRevertBlock,
+    this.onRevertSelection,
   });
 
   final String title;
@@ -44,6 +49,8 @@ class SnapshotComparePreview extends StatelessWidget {
     BuildContext context,
     SnapshotComparePresentation presentation,
   )? modifiedEditorBuilder;
+  final ValueChanged<int>? onRevertBlock;
+  final VoidCallback? onRevertSelection;
 
   @override
   Widget build(BuildContext context) {
@@ -124,9 +131,14 @@ class SnapshotComparePreview extends StatelessWidget {
             .where((row) => row.kind != DiffViewRowKind.unchanged)
             .length
         : 0;
+    final revertHunkRows = exactDiff && onRevertBlock != null
+        ? diffRevertToolbarRows(state.diff!)
+        : const <int, int>{};
     final status = state.isUpdating
         ? '正在更新差异…'
-        : state.fallbackMessage ?? (exactDiff ? '差异行：$changedRows' : '');
+        : state.actionMessage ??
+            state.fallbackMessage ??
+            (exactDiff ? '差异行：$changedRows' : '');
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -138,15 +150,28 @@ class SnapshotComparePreview extends StatelessWidget {
               _headerCell('$modifiedLabel（可编辑）', style),
             ],
           ),
-          if (status.isNotEmpty)
+          if (status.isNotEmpty || (exactDiff && onRevertSelection != null))
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              child: Text(
-                status,
-                key: ValueKey('$keyPrefix-diff-status'),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      status,
+                      key: ValueKey('$keyPrefix-diff-status'),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                  if (exactDiff && onRevertSelection != null)
+                    TextButton.icon(
+                      key: ValueKey('$keyPrefix-revert-selection'),
+                      onPressed: onRevertSelection,
+                      icon: const Icon(Icons.undo, size: 16),
+                      label: const Text('Revert Selection'),
+                    ),
+                ],
               ),
             ),
           const Divider(height: 1),
@@ -167,58 +192,11 @@ class SnapshotComparePreview extends StatelessWidget {
                             itemCount: state.diff!.rows.length,
                             itemBuilder: (context, index) {
                               final row = state.diff!.rows[index];
-                              final background = switch (row.kind) {
-                                DiffViewRowKind.modified ||
-                                DiffViewRowKind.deleted =>
-                                  const Color(0x553F1D20),
-                                _ => Colors.transparent,
-                              };
-                              return SizedBox(
-                                height: 26,
-                                child: Container(
-                                  color: background,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 48,
-                                        child: Text(
-                                          row.originalLineNumber?.toString() ??
-                                              '',
-                                          key: ValueKey(
-                                            '$keyPrefix-original-line-${row.rowIndex}',
-                                          ),
-                                          textAlign: TextAlign.right,
-                                          style: const TextStyle(
-                                            color: Color(0xFF9299A5),
-                                            fontFamily: 'monospace',
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: SelectableText(
-                                            row.originalText ?? '',
-                                            key: ValueKey(
-                                              '$keyPrefix-original-text-${row.rowIndex}',
-                                            ),
-                                            maxLines: 1,
-                                            style: const TextStyle(
-                                              color: Color(0xFFD4D8DE),
-                                              fontFamily: 'monospace',
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              return _editableOriginalRow(
+                                keyPrefix: keyPrefix,
+                                row: row,
+                                hunkIndex: revertHunkRows[row.rowIndex],
+                                onRevertBlock: onRevertBlock,
                               );
                             },
                           )
@@ -246,6 +224,84 @@ class SnapshotComparePreview extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _editableOriginalRow({
+    required String keyPrefix,
+    required DiffViewRow row,
+    required int? hunkIndex,
+    required ValueChanged<int>? onRevertBlock,
+  }) {
+    final background = switch (row.kind) {
+      DiffViewRowKind.modified ||
+      DiffViewRowKind.deleted =>
+        const Color(0x553F1D20),
+      _ => Colors.transparent,
+    };
+    return SizedBox(
+      height: 26,
+      child: Container(
+        color: background,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 74,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 44,
+                    child: Text(
+                      row.originalLineNumber?.toString() ?? '',
+                      key: ValueKey('$keyPrefix-original-line-${row.rowIndex}'),
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        color: Color(0xFF9299A5),
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  if (hunkIndex != null && onRevertBlock != null)
+                    SizedBox(
+                      width: 26,
+                      height: 26,
+                      child: IconButton(
+                        key: ValueKey('$keyPrefix-revert-block-$hunkIndex'),
+                        tooltip: 'Revert Block',
+                        onPressed: () => onRevertBlock(hunkIndex),
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                        constraints: const BoxConstraints.tightFor(
+                            width: 26, height: 26),
+                        icon: const Icon(Icons.arrow_forward, size: 14),
+                      ),
+                    )
+                  else
+                    const SizedBox(width: 26),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SelectableText(
+                  row.originalText ?? '',
+                  key: ValueKey('$keyPrefix-original-text-${row.rowIndex}'),
+                  maxLines: 1,
+                  style: const TextStyle(
+                    color: Color(0xFFD4D8DE),
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
