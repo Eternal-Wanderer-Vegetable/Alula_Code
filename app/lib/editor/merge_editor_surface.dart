@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import '../bridge/alula_core.dart';
 import 'package:flutter/material.dart';
 
 enum MergeEditorLayout { mixed, columns }
@@ -13,12 +14,30 @@ class MergeEditorSurface extends StatefulWidget {
     required this.input1,
     required this.input2,
     required this.resultEditor,
+    this.conflicts = const [],
+    this.resolutions = const {},
+    this.unresolvedConflictCount = 0,
+    this.activeConflict,
+    this.conflictRangesCurrent = true,
+    this.onNavigatePrevious,
+    this.onNavigateNext,
+    this.onAcceptInput1,
+    this.onAcceptInput2,
   });
 
   final String base;
   final String input1;
   final String input2;
   final Widget resultEditor;
+  final List<AlulaMergeConflict> conflicts;
+  final Map<int, AlulaMergeSide> resolutions;
+  final int unresolvedConflictCount;
+  final AlulaMergeConflict? activeConflict;
+  final bool conflictRangesCurrent;
+  final VoidCallback? onNavigatePrevious;
+  final VoidCallback? onNavigateNext;
+  final VoidCallback? onAcceptInput1;
+  final VoidCallback? onAcceptInput2;
 
   @override
   State<MergeEditorSurface> createState() => _MergeEditorSurfaceState();
@@ -54,6 +73,29 @@ class _MergeEditorSurfaceState extends State<MergeEditorSurface> {
   }
 
   Widget _buildToolbar(bool narrowColumnsFallback) {
+    final activeConflict = widget.activeConflict;
+    final activeConflictIndex = activeConflict == null
+        ? -1
+        : widget.conflicts
+            .indexWhere((conflict) => conflict.id == activeConflict.id);
+    final canNavigate =
+        widget.conflictRangesCurrent && widget.unresolvedConflictCount > 0;
+    final canAccept = widget.conflictRangesCurrent && activeConflict != null;
+    final unresolvedSummary = widget.unresolvedConflictCount == 1
+        ? '1 unresolved conflict'
+        : '${widget.unresolvedConflictCount} unresolved conflicts';
+    final conflictStatus = widget.conflicts.isEmpty
+        ? 'No conflicts'
+        : !widget.conflictRangesCurrent
+            ? 'Conflict locations are out of date'
+            : widget.unresolvedConflictCount == 0
+                ? 'All ${widget.conflicts.length} '
+                    'conflict${widget.conflicts.length == 1 ? '' : 's'} handled'
+                : activeConflictIndex >= 0
+                    ? 'Conflict ${activeConflictIndex + 1} of '
+                        '${widget.conflicts.length} · '
+                        '${widget.unresolvedConflictCount} unresolved'
+                    : unresolvedSummary;
     return SizedBox(
       height: 42,
       child: SingleChildScrollView(
@@ -64,6 +106,49 @@ class _MergeEditorSurfaceState extends State<MergeEditorSurface> {
             const Text('Merge Editor',
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
             const SizedBox(width: 12),
+            IconButton(
+              key: const ValueKey('merge-editor-previous-unhandled-conflict'),
+              tooltip: 'Go to Previous Unhandled Conflict',
+              onPressed: canNavigate ? widget.onNavigatePrevious : null,
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.keyboard_arrow_up, size: 18),
+            ),
+            IconButton(
+              key: const ValueKey('merge-editor-next-unhandled-conflict'),
+              tooltip: 'Go to Next Unhandled Conflict',
+              onPressed: canNavigate ? widget.onNavigateNext : null,
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.keyboard_arrow_down, size: 18),
+            ),
+            Semantics(
+              liveRegion: true,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  conflictStatus,
+                  key: const ValueKey('merge-editor-conflict-status'),
+                  style: const TextStyle(fontSize: 11, color: Colors.white70),
+                ),
+              ),
+            ),
+            TextButton(
+              key: const ValueKey('merge-editor-accept-input1'),
+              onPressed: canAccept &&
+                      widget.resolutions[activeConflict.id] !=
+                          AlulaMergeSide.input1
+                  ? widget.onAcceptInput1
+                  : null,
+              child: const Text('Accept Input 1'),
+            ),
+            TextButton(
+              key: const ValueKey('merge-editor-accept-input2'),
+              onPressed: canAccept &&
+                      widget.resolutions[activeConflict.id] !=
+                          AlulaMergeSide.input2
+                  ? widget.onAcceptInput2
+                  : null,
+              child: const Text('Accept Input 2'),
+            ),
             TextButton(
               key: const ValueKey('merge-editor-layout-mixed'),
               onPressed: () => setState(

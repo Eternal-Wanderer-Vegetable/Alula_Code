@@ -289,10 +289,12 @@ void main() {
       );
       _applyPlan(doc, session, plan);
       expect(session.unresolvedConflictCount, 0);
+      expect(session.hasStaleConflictRanges, isFalse);
 
       _replaceDocument(doc, unresolvedResult);
       expect(session.reconcileCurrentResult(), isTrue);
       expect(session.unresolvedConflictCount, 1);
+      expect(session.hasStaleConflictRanges, isFalse);
 
       _replaceDocument(doc, plan.projection.result);
       expect(session.reconcileCurrentResult(), isTrue);
@@ -303,6 +305,7 @@ void main() {
         session.reconcileCurrentResult(allowKnownProjectionRestore: false),
         isFalse,
       );
+      expect(session.hasStaleConflictRanges, isTrue);
       expect(session.unresolvedConflictCount, session.conflictCount);
       expect(
           session.closePrompt.unresolvedConflictCount, session.conflictCount);

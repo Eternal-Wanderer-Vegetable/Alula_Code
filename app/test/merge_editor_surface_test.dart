@@ -1,3 +1,4 @@
+import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/merge_editor_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -99,5 +100,111 @@ void main() {
     expect(find.byKey(const ValueKey('merge-editor-pane-result-frame')),
         findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('shows conflict status and routes active conflict actions',
+      (tester) async {
+    var previous = 0;
+    var next = 0;
+    var acceptInput1 = 0;
+    var acceptInput2 = 0;
+    const first = AlulaMergeConflict(
+      id: 7,
+      baseStartLine: 1,
+      baseEndLineExclusive: 2,
+      resultStartUtf16: 5,
+      resultEndUtf16: 9,
+      baseText: 'base',
+      input1Text: 'left',
+      input2Text: 'right',
+      resolution: null,
+    );
+    const second = AlulaMergeConflict(
+      id: 9,
+      baseStartLine: 4,
+      baseEndLineExclusive: 5,
+      resultStartUtf16: 20,
+      resultEndUtf16: 25,
+      baseText: 'base2',
+      input1Text: 'left2',
+      input2Text: 'right2',
+      resolution: AlulaMergeSide.input1,
+    );
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: '',
+          input1: '',
+          input2: '',
+          resultEditor: const ColoredBox(color: Colors.blueGrey),
+          conflicts: const [first, second],
+          resolutions: const {9: AlulaMergeSide.input1},
+          unresolvedConflictCount: 1,
+          activeConflict: first,
+          onNavigatePrevious: () => previous++,
+          onNavigateNext: () => next++,
+          onAcceptInput1: () => acceptInput1++,
+          onAcceptInput2: () => acceptInput2++,
+        ),
+      ),
+    ));
+
+    expect(find.text('Conflict 1 of 2 · 1 unresolved'), findsOneWidget);
+    final previousButton =
+        find.byKey(const ValueKey('merge-editor-previous-unhandled-conflict'));
+    final nextButton =
+        find.byKey(const ValueKey('merge-editor-next-unhandled-conflict'));
+    final acceptInput1Button =
+        find.byKey(const ValueKey('merge-editor-accept-input1'));
+    final acceptInput2Button =
+        find.byKey(const ValueKey('merge-editor-accept-input2'));
+    for (final finder in [
+      previousButton,
+      nextButton,
+      acceptInput1Button,
+      acceptInput2Button,
+    ]) {
+      await tester.ensureVisible(finder);
+      await tester.tap(finder);
+    }
+
+    expect(previous, 1);
+    expect(next, 1);
+    expect(acceptInput1, 1);
+    expect(acceptInput2, 1);
+
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: '',
+          input1: '',
+          input2: '',
+          resultEditor: ColoredBox(color: Colors.blueGrey),
+          conflicts: [first, second],
+          resolutions: {7: AlulaMergeSide.input2},
+          unresolvedConflictCount: 2,
+          activeConflict: first,
+          conflictRangesCurrent: false,
+        ),
+      ),
+    ));
+    expect(find.text('Conflict locations are out of date'), findsOneWidget);
+    expect(
+      tester
+          .widget<IconButton>(find.byKey(
+            const ValueKey('merge-editor-next-unhandled-conflict'),
+          ))
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextButton>(
+            find.byKey(const ValueKey('merge-editor-accept-input1')),
+          )
+          .onPressed,
+      isNull,
+    );
   });
 }

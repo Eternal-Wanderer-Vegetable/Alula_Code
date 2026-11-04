@@ -539,6 +539,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'workspaceOpen',
       runWithArguments: _openMergeEditorFromArguments,
     );
+    reg(
+      'merge.goToNextUnhandledConflict',
+      'Merge Editor',
+      'Go to Next Unhandled Conflict',
+      () async => _navigateMergeConflict(_active, forward: true),
+      when: 'mergeEditorActive',
+      enablement: 'mergeUnhandledConflictAvailable',
+    );
+    reg(
+      'merge.goToPreviousUnhandledConflict',
+      'Merge Editor',
+      'Go to Previous Unhandled Conflict',
+      () async => _navigateMergeConflict(_active, forward: false),
+      when: 'mergeEditorActive',
+      enablement: 'mergeUnhandledConflictAvailable',
+    );
+    reg(
+      'merge.toggleActiveConflictInput1',
+      'Merge Editor',
+      'Toggle Current Conflict from Left',
+      () async => _acceptActiveMergeConflict(AlulaMergeSide.input1),
+      when: 'mergeEditorActive',
+      enablement: 'mergeCurrentConflictAvailable',
+    );
+    reg(
+      'merge.toggleActiveConflictInput2',
+      'Merge Editor',
+      'Toggle Current Conflict from Right',
+      () async => _acceptActiveMergeConflict(AlulaMergeSide.input2),
+      when: 'mergeEditorActive',
+      enablement: 'mergeCurrentConflictAvailable',
+    );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
@@ -2318,6 +2350,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _syncCommandContext() {
     final active = _active;
+    final mergeSession = active?.mergeResultSession;
+    final currentMergeConflict = active == null
+        ? null
+        : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
       'editorDirty': active?.isDirty ?? false,
@@ -2329,6 +2365,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'workspaceOpen': _workspaceRoot != null,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
+      'mergeEditorActive': mergeSession != null && !mergeSession.isDisposed,
+      'mergeUnhandledConflictAvailable': mergeSession != null &&
+          !mergeSession.hasStaleConflictRanges &&
+          mergeSession.unresolvedConflictCount > 0,
+      'mergeCurrentConflictAvailable': currentMergeConflict != null,
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
@@ -9748,6 +9789,125 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  AlulaMergeConflict? _mergeConflictAtSelection(OpenDoc doc) {
+    final session = doc.mergeResultSession;
+    if (session == null ||
+        session.isDisposed ||
+        session.hasStaleConflictRanges) {
+      return null;
+    }
+
+    final selection = doc.selection;
+    for (final conflict in session.conflicts) {
+      final start = conflict.resultStartUtf16;
+      final end = conflict.resultEndUtf16;
+      if (selection.isCollapsed) {
+        final offset = selection.extentOffset;
+        if (start == end ? offset == start : offset >= start && offset < end) {
+          return conflict;
+        }
+      } else if (start == end
+          ? selection.start <= start && selection.end >= start
+          : selection.start < end && selection.end > start) {
+        return conflict;
+      }
+    }
+    return null;
+  }
+
+  void _navigateMergeConflict(OpenDoc? doc, {required bool forward}) {
+    if (doc == null || _disposing) return;
+    final session = doc.mergeResultSession;
+    if (session == null ||
+        session.isDisposed ||
+        session.hasStaleConflictRanges) {
+      return;
+    }
+
+    final conflicts = session.conflicts;
+    final resolutions = session.resolutions;
+    final unresolved = <AlulaMergeConflict>[];
+    final unresolvedIndices = <int>[];
+    for (var index = 0; index < conflicts.length; index++) {
+      final conflict = conflicts[index];
+      if (resolutions.containsKey(conflict.id)) continue;
+      unresolved.add(conflict);
+      unresolvedIndices.add(index);
+    }
+    if (unresolved.isEmpty) return;
+
+    final active = _mergeConflictAtSelection(doc);
+    final activeIndex = active == null
+        ? -1
+        : conflicts.indexWhere((conflict) => conflict.id == active.id);
+    final caret = doc.selection.extentOffset;
+    AlulaMergeConflict? target;
+    if (forward) {
+      for (var index = 0; index < unresolved.length; index++) {
+        final conflict = unresolved[index];
+        final conflictIndex = unresolvedIndices[index];
+        if (activeIndex >= 0
+            ? conflictIndex > activeIndex
+            : conflict.resultStartUtf16 > caret) {
+          target = conflict;
+          break;
+        }
+      }
+      target ??= unresolved.first;
+    } else {
+      for (var index = unresolved.length - 1; index >= 0; index--) {
+        final conflict = unresolved[index];
+        final conflictIndex = unresolvedIndices[index];
+        if (activeIndex >= 0
+            ? conflictIndex < activeIndex
+            : conflict.resultStartUtf16 < caret) {
+          target = conflict;
+          break;
+        }
+      }
+      target ??= unresolved.last;
+    }
+
+    _setDocSelections(
+      doc,
+      [TextSelection.collapsed(offset: target.resultStartUtf16)],
+      recordHistory: false,
+    );
+  }
+
+  void _acceptActiveMergeConflict(AlulaMergeSide side) {
+    final doc = _active;
+    if (doc != null) _acceptMergeConflict(doc, side);
+  }
+
+  bool _acceptMergeConflict(OpenDoc doc, AlulaMergeSide side) {
+    final session = doc.mergeResultSession;
+    final conflict = _mergeConflictAtSelection(doc);
+    if (session == null || conflict == null) return false;
+    if (session.resolutions[conflict.id] == side) return false;
+
+    try {
+      final plan = session.planResolveConflict(conflict.id, side);
+      if (!_applyMergeResultPlan(doc, plan)) return false;
+      for (final updated in session.conflicts) {
+        if (updated.id != conflict.id) continue;
+        _setDocSelections(
+          doc,
+          [TextSelection.collapsed(offset: updated.resultStartUtf16)],
+          recordHistory: false,
+        );
+        break;
+      }
+      _syncCommandContext();
+      return true;
+    } on MergeResultSessionException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '合并冲突未应用：${error.detail}');
+      }
+      return false;
+    }
+  }
+
   bool _applyMergeResultPlan(OpenDoc doc, MergeResultEditPlan plan) {
     final session = doc.mergeResultSession;
     if (session == null || session.isDisposed) return false;
@@ -9815,7 +9975,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (ops.isNotEmpty) _refreshSiblingViews(doc, ops);
     doc.lastEditAt = null;
     _updateDirty(doc);
-    _syncCommandContext();
     _scheduleOutlineRefresh();
     _scheduleStateSave();
     _scheduleSyntaxRefresh(doc.id);
@@ -9824,6 +9983,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         allowKnownProjectionRestore: false,
       );
     }
+    _syncCommandContext();
     if (mounted) setState(() {});
   }
 
@@ -10326,6 +10486,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     _updateDirty(doc);
+    final mergeSession = doc.mergeResultSession;
+    if (ops.isNotEmpty &&
+        mergeSession != null &&
+        !mergeSession.hasStaleConflictRanges) {
+      mergeSession.reconcileCurrentResult(allowKnownProjectionRestore: false);
+    }
     final refreshedSiblingViews =
         ops.isEmpty ? 0 : _refreshSiblingViews(doc, ops);
     if (isActiveOfFocused && !_disposing) _syncCommandContext();
@@ -16810,7 +16976,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 编辑器区：标签条 + 编辑器 ----------
 
   Widget _buildEditorArea(EditorGroup g) {
-    final mergeSession = g.active?.mergeResultSession;
+    final activeDoc = g.active;
+    final mergeSession = activeDoc?.mergeResultSession;
+    final activeMergeConflict = activeDoc == null
+        ? null
+        : _mergeConflictAtSelection(activeDoc);
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () =>
@@ -16836,6 +17006,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       input1: mergeSession.input1Text,
                       input2: mergeSession.input2Text,
                       resultEditor: _buildEditor(g),
+                      conflicts: mergeSession.conflicts,
+                      resolutions: mergeSession.resolutions,
+                      unresolvedConflictCount:
+                          mergeSession.unresolvedConflictCount,
+                      activeConflict: activeMergeConflict,
+                      conflictRangesCurrent:
+                          !mergeSession.hasStaleConflictRanges,
+                      onNavigatePrevious: activeDoc == null
+                          ? null
+                          : () => _navigateMergeConflict(
+                                activeDoc,
+                                forward: false,
+                              ),
+                      onNavigateNext: activeDoc == null
+                          ? null
+                          : () => _navigateMergeConflict(
+                                activeDoc,
+                                forward: true,
+                              ),
+                      onAcceptInput1: activeDoc == null
+                          ? null
+                          : () => _acceptMergeConflict(
+                                activeDoc,
+                                AlulaMergeSide.input1,
+                              ),
+                      onAcceptInput2: activeDoc == null
+                          ? null
+                          : () => _acceptMergeConflict(
+                                activeDoc,
+                                AlulaMergeSide.input2,
+                              ),
                     ),
                   if (_shouldShowPasteAsWidget(g))
                     Positioned(

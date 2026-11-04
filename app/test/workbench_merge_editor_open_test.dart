@@ -122,6 +122,212 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('navigates and accepts a conflict through F1 actions',
+      (tester) async {
+    await mount(tester);
+    expect(commands!.isVisible('merge.goToNextUnhandledConflict'), isFalse);
+    expect(
+      await openMergeEditor(request()),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(commands!.isVisible('merge.goToNextUnhandledConflict'), isTrue);
+    expect(commands!.isEnabled('merge.goToNextUnhandledConflict'), isTrue);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isFalse);
+    expect(find.text('1 unresolved conflict'), findsOneWidget);
+
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    final editorFinder = find.byKey(const ValueKey('rust-bounded-text-input'));
+    var field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.selection.extentOffset, 5);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isTrue);
+
+    await commands!.execute('merge.toggleActiveConflictInput1');
+    await tester.pump(const Duration(milliseconds: 100));
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.text, _input1);
+    expect(find.text('All 1 conflict handled'), findsOneWidget);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isTrue);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput2'), isTrue);
+    expect(resultFile.readAsStringSync(), initialResult);
+
+    expect(
+      await commands!.execute('file.save'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(resultFile.readAsStringSync(), _input1);
+
+    await commands!.execute('editor.undo');
+    await tester.pump(const Duration(milliseconds: 100));
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.text, initialResult);
+    expect(find.textContaining('1 unresolved'), findsOneWidget);
+    expect(resultFile.readAsStringSync(), _input1);
+
+    await commands!.execute('editor.redo');
+    await tester.pump(const Duration(milliseconds: 100));
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.text, _input1);
+    expect(find.text('All 1 conflict handled'), findsOneWidget);
+    expect(resultFile.readAsStringSync(), _input1);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('wraps navigation and skips conflicts already resolved',
+      (tester) async {
+    const multiBase = '\u{feff}😀\r\nstart\r\nfirst\r\nkeep1\r\n'
+        'second\r\nkeep2\r\nthird\r\nend\r\n';
+    const multiInput1 = '\u{feff}😀\r\nstart\r\nours1\r\nkeep1\r\n'
+        'ours2\r\nkeep2\r\nours3\r\nend\r\n';
+    const multiInput2 = '\u{feff}😀\r\nstart\r\ntheirs1\r\nkeep1\r\n'
+        'theirs2\r\nkeep2\r\ntheirs3\r\nend\r\n';
+    baseFile.writeAsStringSync(multiBase);
+    input1File.writeAsStringSync(multiInput1);
+    input2File.writeAsStringSync(multiInput2);
+    final core = AlulaCore.load();
+    final decodedBase = core.workspace.readFileDocument(baseFile.path).content;
+    final decodedInput1 =
+        core.workspace.readFileDocument(input1File.path).content;
+    final decodedInput2 =
+        core.workspace.readFileDocument(input2File.path).content;
+    final projection = core.merge.project(
+      base: decodedBase,
+      input1: decodedInput1,
+      input2: decodedInput2,
+    );
+    expect(projection.conflicts, hasLength(3));
+    initialResult = projection.result;
+    resultFile.writeAsStringSync(initialResult);
+
+    await mount(tester);
+    expect(
+      await openMergeEditor(request()),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editorFinder = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    var field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.selection.extentOffset,
+        projection.conflicts[0].resultStartUtf16);
+    expect(find.text('Conflict 1 of 3 · 3 unresolved'), findsOneWidget);
+
+    await commands!.execute('merge.goToPreviousUnhandledConflict');
+    await tester.pump();
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.selection.extentOffset,
+        projection.conflicts[2].resultStartUtf16);
+    expect(find.text('Conflict 3 of 3 · 3 unresolved'), findsOneWidget);
+
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 1 of 3 · 3 unresolved'), findsOneWidget);
+    await commands!.execute('merge.toggleActiveConflictInput1');
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Conflict 1 of 3 · 2 unresolved'), findsOneWidget);
+    final afterFirstAccepted = core.merge.project(
+      base: decodedBase,
+      input1: decodedInput1,
+      input2: decodedInput2,
+      resolutions: {
+        projection.conflicts[0].id: AlulaMergeSide.input1,
+      },
+    );
+
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 2 of 3 · 2 unresolved'), findsOneWidget);
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.selection.extentOffset,
+        afterFirstAccepted.conflicts[1].resultStartUtf16);
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 3 of 3 · 2 unresolved'), findsOneWidget);
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 2 of 3 · 2 unresolved'), findsOneWidget);
+
+    await commands!.execute('merge.goToPreviousUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 3 of 3 · 2 unresolved'), findsOneWidget);
+    await commands!.execute('merge.toggleActiveConflictInput2');
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Conflict 3 of 3 · 1 unresolved'), findsOneWidget);
+    await commands!.execute('merge.goToPreviousUnhandledConflict');
+    await tester.pump();
+    expect(find.text('Conflict 2 of 3 · 1 unresolved'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('navigates to and accepts a zero-width insertion conflict',
+      (tester) async {
+    const insertionBase = '\u{feff}😀\r\nbefore\nafter\n';
+    const insertionInput1 = '\u{feff}😀\r\nbefore\nours\nafter\n';
+    const insertionInput2 = '\u{feff}😀\r\nbefore\ntheirs\nafter\n';
+    baseFile.writeAsStringSync(insertionBase);
+    input1File.writeAsStringSync(insertionInput1);
+    input2File.writeAsStringSync(insertionInput2);
+    final core = AlulaCore.load();
+    final decodedBase = core.workspace.readFileDocument(baseFile.path).content;
+    final decodedInput1 =
+        core.workspace.readFileDocument(input1File.path).content;
+    final decodedInput2 =
+        core.workspace.readFileDocument(input2File.path).content;
+    final projection = core.merge.project(
+      base: decodedBase,
+      input1: decodedInput1,
+      input2: decodedInput2,
+    );
+    expect(projection.conflicts, hasLength(1));
+    expect(projection.conflicts.single.resultStartUtf16,
+        projection.conflicts.single.resultEndUtf16);
+    initialResult = projection.result;
+    resultFile.writeAsStringSync(initialResult);
+
+    await mount(tester);
+    await openMergeEditor(request());
+    await tester.pump(const Duration(milliseconds: 300));
+    await commands!.execute('merge.goToNextUnhandledConflict');
+    await tester.pump();
+
+    final editorFinder = find.byKey(const ValueKey('rust-bounded-text-input'));
+    var field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.selection.extentOffset,
+        projection.conflicts.single.resultStartUtf16);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isTrue);
+    await commands!.execute('merge.toggleActiveConflictInput2');
+    await tester.pump(const Duration(milliseconds: 100));
+    field = tester.widget<TextField>(editorFinder);
+    expect(field.controller!.text, decodedInput2);
+    expect(find.text('All 1 conflict handled'), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('manual result edits disable actions for stale conflict ranges',
+      (tester) async {
+    await mount(tester);
+    await openMergeEditor(request());
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final editorFinder = find.byKey(const ValueKey('rust-bounded-text-input'));
+    await tester.enterText(editorFinder, 'manual result\n');
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('Conflict locations are out of date'), findsOneWidget);
+    expect(commands!.isEnabled('merge.goToNextUnhandledConflict'), isFalse);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isFalse);
+    expect(resultFile.readAsStringSync(), initialResult);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('rejects a mismatching result without opening or writing it',
       (tester) async {
     const mismatchingText = 'preexisting output, keep this text\n';

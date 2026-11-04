@@ -178,6 +178,9 @@ class MergeResultSession {
   bool _externallyChanged = false;
 
   bool get isDisposed => _disposed;
+
+  /// Manual result edits can leave the frozen projection's UTF-16 ranges stale.
+  bool get hasStaleConflictRanges => _externallyChanged;
   int get generation => _generation;
   String get baseText {
     _ensureActive();
