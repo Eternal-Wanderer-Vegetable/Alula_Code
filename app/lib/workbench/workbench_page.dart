@@ -42,6 +42,7 @@ import '../editor/find_replace.dart';
 import '../editor/find_replace_history.dart';
 import '../editor/merge_result_session.dart';
 import '../editor/merge_editor_surface.dart';
+import '../editor/merge_editor_open_request.dart';
 import '../editor/clipboard_metadata.dart';
 import '../editor/editor_clipboard.dart';
 import '../editor/text_drag_drop.dart';
@@ -250,6 +251,7 @@ class WorkbenchPage extends StatefulWidget {
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
     this.mergeResultSessionFactory,
+    this.onCommandServiceReady,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -305,6 +307,10 @@ class WorkbenchPage extends StatefulWidget {
     OpenDoc resultDocument,
     bool Function(MergeResultEditPlan plan) applyPlan,
   )? mergeResultSessionFactory;
+
+  /// Host integration hook invoked after Workbench commands are registered.
+  /// The service remains owned and disposed by this Workbench.
+  final void Function(CommandService commands)? onCommandServiceReady;
 
   static final LayoutStore _defaultStore = LayoutStore();
   static final SessionStore _defaultSessionStore = SessionStore();
@@ -500,6 +506,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _initCore();
     _syncCommandContext();
     _commands.addListener(_onCommandServiceChanged);
+    widget.onCommandServiceReady?.call(_commands);
   }
 
   /// 命令注册（W3-1）：菜单/键位/命令面板统一入口。
@@ -523,6 +530,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
+    reg(
+      '_open.mergeEditor',
+      'Merge Editor',
+      'Open Merge Editor',
+      _openMergeEditorWithoutArguments,
+      when: 'workspaceOpen',
+      enablement: 'workspaceOpen',
+      runWithArguments: _openMergeEditorFromArguments,
+    );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
@@ -10909,15 +10925,263 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _showExplorerCompareStatus('比较命令当前不可用：$action');
   }
 
-  Future<void> _openFileByPath(String path) async {
+  Future<void> _openMergeEditorWithoutArguments() async {
+    _showMergeEditorOpenError(
+      'Merge Editor 需要 base、input1、input2 和 result 四个本地文件 URI。',
+    );
+  }
+
+  String? _mergeEditorLocalPath(Uri uri) {
+    if (uri.scheme != 'file' ||
+        !uri.isAbsolute ||
+        uri.path.isEmpty ||
+        !uri.path.startsWith('/') ||
+        uri.hasQuery ||
+        uri.hasFragment ||
+        (uri.host.isNotEmpty && uri.host != 'localhost')) {
+      return null;
+    }
+    try {
+      final path = uri.toFilePath(windows: Platform.isWindows);
+      if (path.isEmpty) return null;
+      return File(path).absolute.path;
+    } on Object {
+      return null;
+    }
+  }
+
+  String _mergeEditorPathIdentity(String path) {
+    final absolute = File(path).absolute.path.replaceAll('\\', '/');
+    return Platform.isWindows ? absolute.toLowerCase() : absolute;
+  }
+
+  OpenDoc? _findOpenDocumentByPath(String path) {
+    final identity = _mergeEditorPathIdentity(path);
+    for (final group in _groups.values) {
+      for (final candidate in group.docs) {
+        final candidatePath = candidate.path;
+        if (candidatePath != null &&
+            _mergeEditorPathIdentity(candidatePath) == identity) {
+          return candidate;
+        }
+      }
+    }
+    return null;
+  }
+
+  String _readMergeEditorSnapshot(AlulaCore core, String path) {
+    final open = _findOpenDocumentByPath(path);
+    if (open != null) return open.doc.resync().content;
+    return core.workspace.readFileDocument(path).content;
+  }
+
+  void _showMergeEditorOpenError(String message) {
+    if (!mounted) return;
+    setState(() => _statusDetail = message);
+  }
+
+  void _clearMergeEditorOpenStatus() {
+    if (!mounted) return;
+    setState(() => _statusDetail = '');
+  }
+
+  Future<void> _openMergeEditorFromArguments(Object? arguments) async {
+    if (arguments is! MergeEditorOpenRequest) {
+      _showMergeEditorOpenError(
+        'Merge Editor 参数无效；需要 base、input1、input2 和 result 文件 URI。',
+      );
+      return;
+    }
+    final core = _core;
+    if (core == null) {
+      _showMergeEditorOpenError('Rust 编辑核心尚未就绪。');
+      return;
+    }
+
+    final paths = [
+      _mergeEditorLocalPath(arguments.baseUri),
+      _mergeEditorLocalPath(arguments.input1Uri),
+      _mergeEditorLocalPath(arguments.input2Uri),
+      _mergeEditorLocalPath(arguments.resultUri),
+    ];
+    if (paths.any((path) => path == null)) {
+      _showMergeEditorOpenError('Merge Editor 只接受绝对本地 file URI。');
+      return;
+    }
+    final basePath = paths[0]!;
+    final input1Path = paths[1]!;
+    final input2Path = paths[2]!;
+    final resultPath = paths[3]!;
+    final resultIdentity = _mergeEditorPathIdentity(resultPath);
+    for (final sourcePath in [basePath, input1Path, input2Path]) {
+      var aliasesResult =
+          _mergeEditorPathIdentity(sourcePath) == resultIdentity;
+      if (!aliasesResult) {
+        try {
+          aliasesResult = FileSystemEntity.identicalSync(
+            sourcePath,
+            resultPath,
+          );
+        } on Object {
+          aliasesResult = false;
+        }
+      }
+      if (aliasesResult) {
+        _showMergeEditorOpenError(
+          'result 必须与 base、input1 和 input2 是不同的文件。',
+        );
+        return;
+      }
+    }
+
+    late final String base;
+    late final String input1;
+    late final String input2;
+    try {
+      base = _readMergeEditorSnapshot(core, basePath);
+      input1 = _readMergeEditorSnapshot(core, input1Path);
+      input2 = _readMergeEditorSnapshot(core, input2Path);
+    } on Object catch (error) {
+      _showMergeEditorOpenError('读取 Merge Editor 输入失败：$error');
+      return;
+    }
+
+    final existingResult = _findOpenDocumentByPath(resultPath);
+    final existingSession = existingResult?.mergeResultSession;
+    if (existingSession != null) {
+      try {
+        if (existingSession.baseText == base &&
+            existingSession.input1Text == input1 &&
+            existingSession.input2Text == input2) {
+          await _openFileByPath(existingResult?.path ?? resultPath);
+          _clearMergeEditorOpenStatus();
+          return;
+        }
+      } on Object catch (error) {
+        _showMergeEditorOpenError('现有 Merge Editor 会话不可用：$error');
+        return;
+      }
+      _showMergeEditorOpenError(
+        'result 已绑定到另一组三方输入；不会替换现有会话。',
+      );
+      return;
+    }
+    if (existingResult?.isDirty ?? false) {
+      _showMergeEditorOpenError(
+        'result 文档有未保存修改；先保存或还原后再打开 Merge Editor。',
+      );
+      return;
+    }
+
+    late final AlulaMergeProjection projection;
+    try {
+      projection = core.merge.project(
+        base: base,
+        input1: input1,
+        input2: input2,
+      );
+    } on Object catch (error) {
+      _showMergeEditorOpenError('读取或计算 Merge Editor 结果失败：$error');
+      return;
+    }
+    if (existingResult != null &&
+        existingResult.doc.resync().content != projection.result) {
+      _showMergeEditorOpenError(
+        'result 文本与 Rust 三方合并投影不一致；文件未更改。',
+      );
+      return;
+    }
+
+    await _openFileByPath(
+      existingResult?.path ?? resultPath,
+      expectedContent: projection.result,
+    );
+    if (!mounted) return;
+    final resultDocument = _findOpenDocumentByPath(resultPath);
+    if (resultDocument == null) return;
+    if (resultDocument.isDirty ||
+        resultDocument.doc.resync().content != projection.result) {
+      _showMergeEditorOpenError(
+        'result 在打开过程中发生变化；未附加 Merge Editor 会话。',
+      );
+      return;
+    }
+    final attachedSession = resultDocument.mergeResultSession;
+    if (attachedSession != null) {
+      if (attachedSession.baseText == base &&
+          attachedSession.input1Text == input1 &&
+          attachedSession.input2Text == input2) {
+        _clearMergeEditorOpenStatus();
+        return;
+      }
+      _showMergeEditorOpenError(
+        'result 已绑定到另一组三方输入；不会替换现有会话。',
+      );
+      return;
+    }
+
+    try {
+      resultDocument.mergeResultSession = MergeResultSession.open(
+        mergeApi: core.merge,
+        resultDocument: resultDocument.doc,
+        base: base,
+        input1: input1,
+        input2: input2,
+      );
+    } on Object catch (error) {
+      _showMergeEditorOpenError('创建 Merge Editor 会话失败：$error');
+      return;
+    }
+    _clearMergeEditorOpenStatus();
+    _syncCommandContext();
+  }
+
+  Future<void> _openFileByPath(
+    String path, {
+    String? expectedContent,
+  }) async {
     final core = _core;
     if (core == null) return;
+    DecodedTextFile? prevalidatedFile;
+    if (expectedContent != null) {
+      final existing = _findOpenDocumentByPath(path);
+      if (existing != null) {
+        if (existing.isDirty ||
+            existing.doc.resync().content != expectedContent) {
+          _showMergeEditorOpenError(
+            'result 文本与 Rust 三方合并投影不一致或已变化；文件未更改。',
+          );
+          return;
+        }
+      } else {
+        try {
+          prevalidatedFile = core.workspace.readFileDocument(path);
+        } on Object catch (error) {
+          _showMergeEditorOpenError('读取 Merge Editor result 失败：$error');
+          return;
+        }
+        if (prevalidatedFile.content != expectedContent) {
+          _showMergeEditorOpenError(
+            'result 文本与 Rust 三方合并投影不一致或已变化；文件未更改。',
+          );
+          return;
+        }
+      }
+    }
     final previous = _active;
     if (previous != null) _flushInput(previous, commitComposition: true);
     // 同一文件在不同组打开时共享 Rust 文档，但为组创建独立视图状态。
     for (final g in _groups.values) {
       final existing = g.docs.where((d) => d.path == path).firstOrNull;
       if (existing != null) {
+        if (expectedContent != null &&
+            (existing.isDirty ||
+                existing.doc.resync().content != expectedContent)) {
+          _showMergeEditorOpenError(
+            'result 文档在打开过程中发生变化；未附加 Merge Editor 会话。',
+          );
+          return;
+        }
         final target = _focused;
         final view = identical(g, target)
             ? existing
@@ -10937,22 +11201,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     DecodedTextFile file;
-    try {
-      file = core.workspace.readFileDocument(path);
-    } on AlulaException catch (error) {
-      if (error.code != 'BinaryFile' && error.code != 'UnsupportedEncoding') {
-        setState(() => _statusDetail = '打开失败：${error.code}');
-        return;
-      }
-      if (!mounted) return;
-      final encoding = await _pickReopenEncoding(title: '选择文件编码');
-      if (!mounted || encoding == null) return;
+    if (prevalidatedFile != null) {
+      file = prevalidatedFile;
+    } else {
       try {
-        file = core.workspace.readFileDocument(path, encoding: encoding);
-      } on AlulaException catch (decodeError) {
-        setState(
-            () => _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
-        return;
+        file = core.workspace.readFileDocument(path);
+      } on AlulaException catch (error) {
+        if (error.code != 'BinaryFile' && error.code != 'UnsupportedEncoding') {
+          setState(() => _statusDetail = '打开失败：${error.code}');
+          return;
+        }
+        if (!mounted) return;
+        final encoding = await _pickReopenEncoding(title: '选择文件编码');
+        if (!mounted || encoding == null) return;
+        try {
+          file = core.workspace.readFileDocument(path, encoding: encoding);
+        } on AlulaException catch (decodeError) {
+          setState(
+              () => _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
+          return;
+        }
       }
     }
 
