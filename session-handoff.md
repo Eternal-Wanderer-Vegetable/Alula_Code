@@ -1,11 +1,11 @@
 # Session Handoff
 
-> Last Updated: 2026-11-05. P04.116 is complete and pushed; P04.117 / EDT-19g is now registered and is the sole active product slice. PR #2 remains OPEN/draft. No local GUI or Narrator was started.
-> CI status: latest 100 ordinary CI runs are 100/100 green; latest 100 Platform Availability runs are 71 green/29 red. The two newest reds are macOS runner allocation cancellations with no steps/crash logs; subsequent macos-26 three-platform run 41868298885 passed. Older reds include hosted interaction/probe issues and a separate historical macOS SIGSEGV in run 41370553563. Current greens do not prove the old crash is fixed. Details: docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.
+> Last Updated: 2026-11-05. P04.117 / EDT-19g product implementation and local DoD are complete; product/test commit `2e29786` is pushed. PR #2 remains OPEN/draft. CI `41883761121` passed all jobs. Platform Availability `41883893086` Linux/Windows passed; macOS attempt 1 cancelled before runner assignment, attempt 2 is queued. No local GUI or Narrator was started.
+> CI/crash status: latest 100 ordinary CI runs are 100/100 green; latest 100 Platform Availability records are 71 passed, 28 failed, and the current rerun queued. The current run's Linux/Windows jobs passed; first macOS attempt cancelled after 15 minutes with runner_id=0/no steps; attempt 2 is queued. Recent historical reds were macOS runner allocation cancellations with no test steps or crash logs; later macos-26 run `41868298885` passed all platform jobs. Older reds include hosted interaction/probe issues, plus a separate historical macOS SIGSEGV in `41370553563`. User notes repeated CI failures may be related to crashes; keep this as a hypothesis and compare failure-step/exit-code/crash-artifact evidence. Current green runs do not prove the old crash is fixed. Details: docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md.
 
 ## Current Objective
 
-P04.117 / EDT-19g is the active slice. Implement the registered Merge Editor conflict navigation and per-side acceptance scope in docs/diagnostics/2026-11-05-p04/p04.117-merge-conflict-navigation-scope.md, then complete N.2 and stage product/evidence commits. Preserve unresolved GitNexus risk, keep feat-026, EDT-19, and P15 open, defer the 500 MiB optimization goal, and leave PR #2 open/draft.
+P04.117 / EDT-19g implementation is locally complete and product/test commit `2e29786` is pushed. Poll attempt 2 of Platform Availability `41883893086` for macOS; Linux/Windows and all ordinary CI jobs passed. Classify any red status by job steps, exit codes, and crash artifacts, then finalize `docs/03`, `feature_list.json`, `progress.md`, the P04.117 scope report, and this handoff. Complete the evidence commit and push it to the authorized branch. Preserve unresolved GitNexus risk, keep `feat-026`, EDT-19, and P15 open, defer the 500 MiB optimization goal, and leave PR #2 open/draft. Do not start local GUI/Narrator testing.
 
 P04.111 is complete for its core-only slice. Local evidence: 14 model tests, full `init.sh` (Flutter 925), cargo fmt, and Flutter analyze passed. PR CI `41782417039` and Platform Availability `41782412210` attempt 2 passed; package artifacts Linux `13300425218`, Windows `13300471052`, macOS ARM64 `13301288193`. Attempt 1's macOS ArtifactService `CreateArtifact` request timed out five times; rerunning the failed job passed. P04.111 has no FFI, workbench route, save lifecycle, combination/navigation, or Git integration.
 
@@ -78,8 +78,8 @@ The earlier GitHub artifact timeout was external to the app; the retried macOS b
 ## Next Session Startup
 
 1. Read AGENTS.md, this handoff, and progress.md.
-2. Run node .gitnexus/run.cjs status; refresh the index if stale.
-3. Run bash init.sh --fast.
-4. Continue P04.116: poll CI runs `41864854048` and `41866134848` and the newest Platform Availability run using the macOS 26 ARM64 label. Record terminal outcomes in `docs/03`, `feature_list.json`, `progress.md`, and the P04.116 diagnostic. Keep P04.116 in-progress until the macOS hosted build/launch/package evidence resolves; no local GUI or Narrator is needed.
-5. If the macOS runner remains unassigned, retain that gate as pending and follow the current `docs/03` status without opening another feature before P04.116 is resolved.
-6. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
+2. Run `node .gitnexus/run.cjs status`; refresh the index if stale.
+3. Run `bash init.sh --fast` when continuing local verification.
+4. Continue P04.117: poll attempt 2 of Platform Availability run `41883893086` for its queued macOS ARM64 job. Record terminal job results and crash-signature evidence in `docs/03`, `feature_list.json`, `progress.md`, and the P04.117 scope report; update the CI/crash correlation report if new evidence changes the classification.
+5. Evidence-only GitNexus scans varied from LOW/HIGH to two fresh CRITICAL results (6 files / 4 documentation sections / 91 then 83 mapped flows). Example labels map to Rust/build/Flutter tooling from diagnostic headings, while the diff is docs-only. Preserve CRITICAL, exact product-method CRITICAL impacts, and graph coverage warnings; do not call the graph clean.
+6. Commit and push the evidence update to the authorized branch. Keep PR #2 OPEN/draft, preserve P15 native-device gates, EDT-19 and `feat-026`, and the deferred 500 MiB target. Do not start local GUI/Narrator testing.
