@@ -1,6 +1,6 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.112 / EDT-19b FFI-contract slice is complete: product commit `e08bfe9`, local DoD, PR CI `41794075155`, and Linux/Windows/macOS ARM64 Platform Availability `41794067407` all passed. macOS native DnD is skipped for unavailable hosted pointer routing and stays in P15. Evidence/status commit is being prepared. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.112 / EDT-19b FFI-contract slice is complete: product commit `e08bfe9`, evidence commit `577a7ac`, local DoD, PR CI `41794075155`, evidence-commit PR CI `41797888015`, and Linux/Windows/macOS ARM64 Platform Availability `41794067407` passed. macOS native DnD is skipped for unavailable hosted pointer routing and stays in P15. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
@@ -14,7 +14,7 @@ The earlier GitHub artifact timeout was external to the app; the retried macOS b
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- Current next slice: finish the P04.112 evidence/status commit, refresh GitNexus and run all-scope change analysis before commit, push the authorized branch, and inspect the evidence commit checks. P04.112 pre-edit impact remains documented: `ALULA_ABI_VERSION` UNKNOWN; `AlulaFfi` CRITICAL; `AlulaCore`/`AlulaDoc` HIGH–CRITICAL; `DocRegistry` CRITICAL. Graph coverage/refresh limitations remain explicit, and `DocRegistry`/`AlulaDoc` behavior was not changed. Then register a separate scope for the remaining EDT-19 Merge Editor workbench/result document lifecycle; keep EDT-19, `feat-026`, and P15 open.
+- Current next slice: register a separate scope for the remaining EDT-19 Merge Editor workbench and result-document lifecycle. P04.112 pre-edit impact remains documented: `ALULA_ABI_VERSION` UNKNOWN; `AlulaFfi` CRITICAL; `AlulaCore`/`AlulaDoc` HIGH–CRITICAL; `DocRegistry` CRITICAL. Graph coverage/refresh limitations remain explicit, and `DocRegistry`/`AlulaDoc` behavior was not changed. Keep EDT-19, `feat-026`, and P15 open.
 - P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe`, product `efd1ce1`, and evidence `c55ec8f` are pushed; product and evidence CI passed. Push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
