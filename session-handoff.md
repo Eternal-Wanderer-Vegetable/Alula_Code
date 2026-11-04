@@ -1,17 +1,17 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.109 is complete and pushed. P04.110 / EDT-18f Explorer multi-select Compare Selected is registered; implementation has not started. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.110 / EDT-18f implementation, local DoD, PR CI, and Linux/Windows/macOS hosted build/test/launch/package checks are complete. Evidence docs are updated and await their separate commit. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.110 / EDT-18f: implement only the registered Explorer two-file Compare Selected route. Scope and pre-edit graph findings are in docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md. P04.109 evidence and hosted checks are complete; commits 2b671e5 and a88ba2d are pushed. Keep Explorer original/modified order and the frozen original snapshot, use the Rust-backed modified OpenDoc, and preserve the CRITICAL/UNKNOWN graph warnings. PR #2 remains OPEN/draft. No local GUI or Narrator was started.
+P04.110 / EDT-18f implementation is committed as `efd1ce1` and pushed. Local DoD, PR CI `41774434607`, and Platform Availability `41774429349` passed. Linux/Windows DnD passed; Windows P03.7/UIA/MSAA/graceful close passed; macOS ARM64 package and startup passed. Hosted macOS native DnD was skipped because synthetic pointer input could not be routed and remains a P15 device gate. Product/report/progress/plan/evidence edits are ready for the separate evidence commit and push. Preserve CRITICAL/UNKNOWN graph warnings and the CI/crash evidence distinction. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
 
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. The current P04.110 scope registration docs are uncommitted; push authorization for codex/vscode-parity-p00 persists.
+- P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. P04.110 scope registration `9c4c3fe` and product `efd1ce1` are pushed; P04.110 evidence/status docs are ready for separate commit. Push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
 
@@ -45,6 +45,12 @@ P04.110 / EDT-18f: implement only the registered Explorer two-file Compare Selec
 - Pinned source and acceptance: docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md.
 - GitNexus index is current at a88ba2d for Alula_Code (/tmp/alula-p04.70-next). SnapshotComparePreview is CRITICAL 169/17; _WorkbenchPageState is CRITICAL 224/19; _showEditableSnapshotCompare and _openTreeFile are UNKNOWN. Exact textual callsites were checked. Existing coverage warnings remain unresolved; avoid editing SnapshotComparePreview and keep the Workbench route narrow.
 
+## P04.110 Implementation and Local Verification
+
+- Product/test commit `efd1ce1` is pushed. Windows/Linux Ctrl and macOS Command multi-select, visible Shift file-range selection, exact-two-file context action, ordering, dirty original capture, editable Rust-backed modified document, and BOM/CRLF/emoji save/read-back are implemented. No Command Palette, keybinding, Rust/ABI, or startup/close changes.
+- Full local `init.sh` passed with Flutter 925, Rust workspace, Clippy, and build_core. Cargo fmt, Flutter analyze (0 issues), Harness 100/100, diff check, and the focused 13-test compare suite passed. PR CI `41774434607` passed all four jobs.
+- Platform Availability `41774429349` passed all three platform jobs. Package artifacts: Linux `13296362503`, Windows `13296383113`, macOS ARM64 `13296269888`. Linux/Windows DnD artifacts `13296357485`/`13296637171` passed; macOS DnD artifact `13297250622` records unavailable synthetic pointer routing and skip. macOS startup artifact `13296199926` contains Impeller initialization and no crash report; this is non-reproduction evidence only. Full evidence: docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected.md.
+
 ## Completed P04.109
 
 - Product/test commit 2b671e53a327a1a8d4f4766497f2d5ba7b4078a1 is pushed. Full local init.sh passed with Rust workspace/Clippy/build_core and Flutter 923; cargo fmt, Flutter analyze, diff check, focused tests, and Harness 100/100 passed.
@@ -57,5 +63,5 @@ P04.110 / EDT-18f: implement only the registered Explorer two-file Compare Selec
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Run node .gitnexus/run.cjs status; refresh the index if stale.
 3. Run bash init.sh --fast.
-4. Continue only P04.110 / EDT-18f from its registered scope; recheck tree/menu sources and exact impacts before changing code.
-5. Run focused and full DoD checks, graph change analysis, and commit product/evidence separately. Keep PR #2 OPEN/draft and preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
+4. Run JSON/Harness/diff checks on the updated evidence records; refresh GitNexus, complete the docs-only all-scope change scan, then commit and push the P04.110 evidence stage.
+5. After that commit, select and register the next single P04 slice from docs/03 and docs/11. Keep PR #2 OPEN/draft; preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.

@@ -5,11 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.110 / EDT-18f：Explorer 多选 Compare Selected（范围已登记；实现未开始）
+### P04.110 / EDT-18f：Explorer 多选 Compare Selected（已完成）
 
-- 下一 slice 是固定 Code-OSS compareSelected 的 Explorer 双选入口；第一项原文、第二项修改文，打开 pinned compare；仅精确两项普通文件显示动作。Explorer 多选、menu 条件、顺序及 DoD 已登记在 docs/03 与 docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md。
-- P04.109 Revert Block / Revert Selection 已完成，产品 commit 2b671e5、证据 commit a88ba2d 均推送；PR CI 与三平台 hosted jobs 通过。macOS native DnD hosted pointer routing unavailable 保留 P15。
-- GitNexus 在 a88ba2d 刷新并绑定 Alula_Code (/tmp/alula-p04.70-next)。SnapshotComparePreview CRITICAL 169/17，_WorkbenchPageState CRITICAL 224/19；_showEditableSnapshotCompare 与 _openTreeFile UNKNOWN，已用精确源码搜索确认调用点。跨语言属性、未排序 flow candidates 和遍历预算告警保留；_buildNode 的图上 LOW 流程与源码真实 Explorer builder 不吻合，未用于降级外层 CRITICAL。
+- 已实现固定 Code-OSS compareSelected 的 Explorer 双选入口：Windows/Linux Ctrl-click、macOS Cmd-click 切换文件，Shift-click 选择展开树中的可见文件区间；plain click 保留打开文件行为。恰好两项不同普通文件时，点击已选行的菜单才出现 Compare Selected；选择次序决定 original / modified。比较复用冻结原文快照与 Rust 可编辑 modified OpenDoc 路径，保存回读正确。产品 commit efd1ce1 与范围登记 commit 9c4c3fe 已推送。
+- 新增两项跨平台目标 Widget 测试覆盖顺序、dirty original、编辑/保存 BOM+CRLF+emoji、macOS Cmd/Shift 和单项/三项菜单 gating。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Flutter 925、Rust workspace、Clippy、build_core）；cargo fmt、Flutter analyze（0 issues）、Harness 100/100、diff check、Explorer 专项 13/13 通过。
+- PR CI [41774434607](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41774434607) 全四 job 通过，含 Flutter 925。Platform Availability [41774429349](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41774429349) 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package 全通过；Linux/Windows DnD、Windows P03.7/UIA/MSAA/graceful close 通过。包 artifacts：Linux `13296362503`、Windows `13296383113`、macOS ARM64 `13296269888`；DnD artifacts：Linux `13296357485`、Windows `13296637171`、macOS `13297250622`。macOS DnD因 synthetic pointer route unavailable 而 skip，保留 P15；启动 artifact `13296199926` 只有 Impeller 初始化行，无 crash report。绿色 smoke 是不复现证据，不是历史崩溃修复结论。PR #2 保持 OPEN/draft；不启动桌面 GUI 或讲述人。
+- CI/崩溃线索：旧 Windows 发行包关闭时 `0xC000041D` 与 macOS 启动 SIGSEGV 是真实历史崩溃；近期多数红灯为 runner/排队/输入丢字符/断言，不含崩溃信号。CI 稳定性可改善回归信号，但不得将绿色重跑记成 crash fix。见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 与本阶段报告。
+- 最终 GitNexus all-scope scan：2 files / 4 symbols / 17 affected processes / CRITICAL；路径标签仍有过连线。预编辑 `_openTreeFile` CRITICAL，若干目标 UNKNOWN；具体影响和索引覆盖限制保留在 `docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected.md`，未将图上的空结果视为无影响。
 
 ### P04.109 / EDT-18e：比较编辑器块与选区回退（已完成；P04 继续）
 
@@ -17,7 +19,7 @@
 - 操作只把冻结 original snapshot 写入 modified Rust OpenDoc。修改通过版本检查的 Rust 文本事务原子提交，形成一个 undo grouping，支持撤销/重做、兄弟视图同步、保存与磁盘回读。stale/approximate/budget fallback、活跃 IME、文档关闭和 identity/version 变化均在修改前拒绝。未修改 diff model、Rust/FFI/ABI 或保存协议。
 - 五项范围映射单测与五项工作台 widget 测试覆盖 UTF-16/CRLF、空行插删、selection/hunk 映射、命令面板、undo/redo、兄弟视图、BOM/non-BMP 保存回读及 IME blur 时拒绝旧 diff。完整 init.sh 通过：Rust workspace、Clippy、build_core、Flutter 923；cargo fmt、Flutter analyze（0 issues）、diff check 通过。未启动桌面 GUI 或讲述人。
 - GitNexus 最终代码扫描：5 files / 18 symbols / 3 flows / MEDIUM；预编辑 computeDiffViewModel CRITICAL 与图覆盖限制保留。产品/测试提交 2b671e5 已推送；PR CI 41767192131 四 job 全绿（Flutter 923）。Platform Availability 41767186847 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package jobs 全绿；Linux/Windows DnD 通过，Windows UIA/MSAA 与 graceful close 通过。macOS DnD artifact 13294480227 记录 hosted pointer route unavailable、交互被 skip，原生 macOS DnD 留 P15；macOS startup artifact 13294295957 只有 Impeller 初始化行。包 artifacts：Linux 13292689699、Windows 13294185107、macOS ARM64 13293522849。当前绿色与无 crash report 只是不复现证据，不声称修复历史崩溃。未启动本机 GUI 或讲述人。
-- 固定上游、实现细节、本地/hosted 验证与崩溃证据边界见 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block.md 与 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md。P04.109 完成；P04.110 / EDT-18f 已按 docs/11 分解并登记，是当前唯一 active slice。PR #2 保持 OPEN/draft。
+- 固定上游、实现、本地/hosted 证据与崩溃归因见 `docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected.md`、`p04.110-explorer-compare-selected-scope.md` 与 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。P04.110 完成；进入下一 slice 前仍须按 docs/03/docs/11 单项分解和登记。PR #2 保持 OPEN/draft。
 
 ### P04.108 / EDT-18d：Explorer 单资源两步比较（已完成；P04 继续）
 
