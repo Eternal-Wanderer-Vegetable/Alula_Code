@@ -1,10 +1,10 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.108 / EDT-18d implementation, local DoD, PR CI, and hosted Linux/Windows/macOS build/package checks are complete. Product/test commits are pushed; final evidence/state docs remain uncommitted. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.108 / EDT-18d is complete and evidence is pushed. P04.109 / EDT-18e is registered as the only active slice; implementation has not started. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.108 / EDT-18d: Explorer single-resource `Select for Compare` → `Compare with Selected` is complete. Product commit `d035275`, five-test snapshot `15da959`, and six-test follow-up `11a494e` are pushed. Local full init.sh passed with Flutter 913; cargo fmt, Flutter analyze (0 issues), Harness 100/100, and diff check passed. PR CI `41758044540` and Platform Availability `41758034721` passed. Linux and Windows hosted interaction/build checks passed; macOS ARM64 Release package and launch smoke passed. The report records artifact IDs and keeps native macOS device acceptance in P15. Next: refresh GitNexus and run all-scope change analysis for evidence/state changes, commit and push the docs, then verify the docs commit's PR CI. Keep PR #2 OPEN/draft. No GUI/Narrator was started. Evidence: `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md`.
+P04.109 / EDT-18e: implement only the pinned single-file diff `Revert Block`, `Revert Selection`, and `diffEditor.revert` action. Scope/DoD and pre-edit graph impact are registered in `docs/03-里程碑计划与验收标准.md` and `docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md`. Implementation has not started. P04.108 evidence commit `1a5cd1b` is pushed; PR CI `41760872371` passed, and PR #2 remains OPEN/draft. Keep original snapshots immutable, route all changes through the versioned Rust-backed modified document, guard stale/approximate/IME cases, and retain the CRITICAL `computeDiffViewModel` impact by not changing it. No local GUI/Narrator. Prior P04.108 report: `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md`.
 
 ## Repository and PR
 
@@ -39,10 +39,16 @@ P04.108 / EDT-18d: Explorer single-resource `Select for Compare` → `Compare wi
 - Product/five-test snapshot CI runs `41755678771` and `41755709195` passed; six-test PR CI `41758044540` and Platform Availability `41758034721` passed all jobs. Latest Linux/Windows/macOS package artifacts are `13288599908`, `13289171782`, and `13289098296`; macOS startup diagnostics artifact is `13289078404`. Native macOS acceptance remains P15.
 - CI interpretation: recent Windows ARM validator assertion failures were keyboard-input drops with exit 0 and no crash artifact; one platform failure was macOS queued cancellation before any step. These are separate from historical Windows close/macOS startup crashes and their qualified lifecycle mitigations. This Explorer change does not touch startup/close paths. See `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md` and the CI/crash report.
 
+## P04.109 Scope and Pre-edit Analysis
+
+- Pinned `diffEditor.revert` exposes Revert Block per hunk and Revert Selection per selected mapping, only when the modified side is writable. The F1 command reverts line mappings intersecting the modified cursor/selection; toolbar context carries exact inner changes. Both write original text into the modified side with undo stops. Sources and range semantics: `diffEditor.contribution.ts` lines 32–67, `commands.ts` 171–197, `diffEditorWidget.ts` 674–712 at commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`.
+- GitNexus exact impacts: `SnapshotComparePreview` LOW 9; `_showEditableSnapshotCompare` LOW 5; `computeDiffViewModel` CRITICAL 74 across 6 workflows. Keep diff model untouched. Graph warnings: 421 unresolved cross-language property sites, 1,012/1,212 flow-entry candidates unranked, 545 callees skipped, 15 budget-cut walks.
+- Implementation is not started. Next: inspect the preview/editor callback path, use only the Rust-authoritative versioned edit route, add focused tests, update evidence, run graph change analysis, and commit in stages.
+
 ## Next Session Startup
 
 1. Read `AGENTS.md`, this handoff, and `progress.md`.
 2. Run `node .gitnexus/run.cjs status`; refresh the index if stale.
 3. Run `bash init.sh --fast`.
-4. Refresh GitNexus, run `detect-changes --scope all`, retain CRITICAL/UNKNOWN and graph coverage caveats, then commit the final evidence/state docs and push the already-authorized branch.
-5. Recheck PR CI for the docs commit. Keep P04/EDT-18 open for remaining compare capabilities, preserve UTF-16/FFI invariants, and leave PR #2 open/draft.
+4. Continue only P04.109 / EDT-18e from its registered DoD; inspect Rust-backed editor mutation/selection APIs before editing.
+5. Run focused and full DOD checks, preserve UTF-16/FFI invariants and CRITICAL/UNKNOWN graph caveats, commit product and evidence separately, and push the already-authorized branch. Leave PR #2 open/draft.

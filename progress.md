@@ -5,7 +5,13 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.108 / EDT-18d：Explorer 单资源两步比较（本地与 hosted 自动门禁通过；P04 继续）
+### P04.109 / EDT-18e：比较编辑器块与选区回退（范围已登记；实现未开始）
+
+- `docs/03` 已登记下一个 EDT-18 slice：固定 Code-OSS `diffEditor.revert`，覆盖 hunk toolbar 的 Revert Block、selection toolbar 的 Revert Selection 和 F1/命令 Revert；只将 original 快照写入 modified Rust `OpenDoc`，不修改 original/剪贴板/磁盘基线。要求精确、当前版本 diff；stale/approximate/budget fallback、IME、关闭/身份竞态必须整次拒绝。
+- 固定实现及调用语义、范围、验收标准与 GitNexus 编辑前风险见 `docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md`。`SnapshotComparePreview` impact LOW (9); `_showEditableSnapshotCompare` LOW (5); `computeDiffViewModel` CRITICAL (74/6 flows)，本 slice 计划不修改 diff model。图仍有 421 跨语言属性位点、1,012/1,212 flow candidates 未排序、545 callees 与 15 walks 截断；CRITICAL 和 coverage caveats 不豁免。
+- P04.108 / EDT-18d 已完成，六项定向 widget tests、完整本地 DoD、PR CI `41758044540`、三平台 Platform Availability `41758034721` 和证据提交 `1a5cd1b` 全部通过；详情见下节和报告。当前只推进 P04.109，不启动 P05 或其他并行 feature。
+
+### P04.108 / EDT-18d：Explorer 单资源两步比较（已完成；P04 继续）
 
 - 已实现固定 Code-OSS 1.145.0 Explorer 单资源 `selectForCompare` → `compareFiles`：原始快照在选择时冻结，已打开原文件取 Rust 权威当前文本，否则经 Rust workspace decoder；第二个 Explorer 文件绑定 Rust 权威 `OpenDoc`，复用 P04.107 可编辑预览。目录不显示动作，当前已选资源不显示第二步动作；工作区根、canonical path、文档身份/version、IME、文件字节、全文 UTF-16 与差异预算均受校验，过期或超限整次拒绝并给出状态。比较预览内也接入当前 `file.save` 快捷键。未改 Rust/FFI/ABI/保存协议；多资源 `compareSelected`、Open Editors/tabs、apply/revert 和三方/Multi Diff 仍排除。
 - 六项新增 widget tests 通过，覆盖 BOM+emoji+CRLF 磁盘解码与冻结、dirty original、读取期间源文档变更、目录/二进制/删除/切换工作区、2,000,000 UTF-16 上限、行预算超限整次拒绝，及 Rust 编辑/预览内 Ctrl+S 保存回读。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 913）；`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）、Harness（100/100）和 diff check 通过。headless suite 在已有 saved-compare close-race fixture 输出一条非失败 `UnknownDoc`，不构成崩溃证据。未启动桌面窗口或讲述人。
