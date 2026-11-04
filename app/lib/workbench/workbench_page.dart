@@ -571,6 +571,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'mergeEditorActive',
       enablement: 'mergeCurrentConflictAvailable',
     );
+    reg(
+      'merge.acceptAllInput1',
+      'Merge Editor',
+      'Accept All Incoming Changes from Left',
+      () async => _acceptAllActiveMergeConflicts(AlulaMergeSide.input1),
+      when: 'mergeEditorActive',
+      enablement: 'mergeAllConflictsAvailable',
+    );
+    reg(
+      'merge.acceptAllInput2',
+      'Merge Editor',
+      'Accept All Current Changes from Right',
+      () async => _acceptAllActiveMergeConflicts(AlulaMergeSide.input2),
+      when: 'mergeEditorActive',
+      enablement: 'mergeAllConflictsAvailable',
+    );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
@@ -2369,6 +2385,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'mergeUnhandledConflictAvailable': mergeSession != null &&
           !mergeSession.hasStaleConflictRanges &&
           mergeSession.unresolvedConflictCount > 0,
+      'mergeAllConflictsAvailable': mergeSession != null &&
+          !mergeSession.isDisposed &&
+          !mergeSession.hasStaleConflictRanges &&
+          mergeSession.conflictCount > 0,
       'mergeCurrentConflictAvailable': currentMergeConflict != null,
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
@@ -9880,6 +9900,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (doc != null) _acceptMergeConflict(doc, side);
   }
 
+  void _acceptAllActiveMergeConflicts(AlulaMergeSide side) {
+    final doc = _active;
+    if (doc != null) _acceptAllMergeConflicts(doc, side);
+  }
+
+  bool _acceptAllMergeConflicts(OpenDoc doc, AlulaMergeSide side) {
+    final session = doc.mergeResultSession;
+    if (session == null ||
+        session.isDisposed ||
+        session.hasStaleConflictRanges ||
+        session.conflictCount == 0) {
+      return false;
+    }
+
+    try {
+      final plan = session.planAcceptAll(side);
+      if (!_applyMergeResultPlan(doc, plan)) return false;
+      _syncCommandContext();
+      return true;
+    } on MergeResultSessionException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '合并冲突未应用：${error.detail}');
+      }
+      return false;
+    }
+  }
+
   bool _acceptMergeConflict(OpenDoc doc, AlulaMergeSide side) {
     final session = doc.mergeResultSession;
     final conflict = _mergeConflictAtSelection(doc);
@@ -17034,6 +17081,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       onAcceptInput2: activeDoc == null
                           ? null
                           : () => _acceptMergeConflict(
+                                activeDoc,
+                                AlulaMergeSide.input2,
+                              ),
+                      onAcceptAllInput1: activeDoc == null
+                          ? null
+                          : () => _acceptAllMergeConflicts(
+                                activeDoc,
+                                AlulaMergeSide.input1,
+                              ),
+                      onAcceptAllInput2: activeDoc == null
+                          ? null
+                          : () => _acceptAllMergeConflicts(
                                 activeDoc,
                                 AlulaMergeSide.input2,
                               ),

@@ -23,6 +23,8 @@ class MergeEditorSurface extends StatefulWidget {
     this.onNavigateNext,
     this.onAcceptInput1,
     this.onAcceptInput2,
+    this.onAcceptAllInput1,
+    this.onAcceptAllInput2,
   });
 
   final String base;
@@ -38,6 +40,8 @@ class MergeEditorSurface extends StatefulWidget {
   final VoidCallback? onNavigateNext;
   final VoidCallback? onAcceptInput1;
   final VoidCallback? onAcceptInput2;
+  final VoidCallback? onAcceptAllInput1;
+  final VoidCallback? onAcceptAllInput2;
 
   @override
   State<MergeEditorSurface> createState() => _MergeEditorSurfaceState();
@@ -239,6 +243,11 @@ class _MergeEditorSurfaceState extends State<MergeEditorSurface> {
           key: const ValueKey('merge-editor-pane-input1'),
           title: 'Input 1',
           text: widget.input1,
+          headerAction: _bulkAcceptButton(
+            key: const ValueKey('merge-editor-accept-all-input1'),
+            tooltip: 'Accept All Incoming Changes from Left',
+            onPressed: widget.onAcceptAllInput1,
+          ),
         ),
         if (_showBase)
           _MergeSourcePane(
@@ -250,8 +259,29 @@ class _MergeEditorSurfaceState extends State<MergeEditorSurface> {
           key: const ValueKey('merge-editor-pane-input2'),
           title: 'Input 2',
           text: widget.input2,
+          headerAction: _bulkAcceptButton(
+            key: const ValueKey('merge-editor-accept-all-input2'),
+            tooltip: 'Accept All Current Changes from Right',
+            onPressed: widget.onAcceptAllInput2,
+          ),
         ),
       ];
+
+  IconButton _bulkAcceptButton({
+    required Key key,
+    required String tooltip,
+    required VoidCallback? onPressed,
+  }) {
+    final canAcceptAll =
+        widget.conflictRangesCurrent && widget.conflicts.isNotEmpty;
+    return IconButton(
+      key: key,
+      tooltip: tooltip,
+      onPressed: canAcceptAll ? onPressed : null,
+      visualDensity: VisualDensity.compact,
+      icon: const Icon(Icons.done_all, size: 16),
+    );
+  }
 
   Widget _buildResultPane() => _MergeResultPane(
         resultEditor: widget.resultEditor,
@@ -263,10 +293,12 @@ class _MergeSourcePane extends StatelessWidget {
     super.key,
     required this.title,
     required this.text,
+    this.headerAction,
   });
 
   final String title;
   final String text;
+  final Widget? headerAction;
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +308,7 @@ class _MergeSourcePane extends StatelessWidget {
       label: '$title source, read-only',
       child: _MergePaneFrame(
         title: title,
+        headerAction: headerAction,
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
           child: SelectableText(
@@ -314,10 +347,15 @@ class _MergeResultPane extends StatelessWidget {
 }
 
 class _MergePaneFrame extends StatelessWidget {
-  const _MergePaneFrame({required this.title, required this.child});
+  const _MergePaneFrame({
+    required this.title,
+    required this.child,
+    this.headerAction,
+  });
 
   final String title;
   final Widget child;
+  final Widget? headerAction;
 
   @override
   Widget build(BuildContext context) {
@@ -337,9 +375,16 @@ class _MergePaneFrame extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 9),
             alignment: Alignment.centerLeft,
             color: const Color(0xFF22252B),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 11, color: Colors.white70),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontSize: 11, color: Colors.white70),
+                  ),
+                ),
+                if (headerAction != null) headerAction!,
+              ],
             ),
           ),
           Expanded(child: child),

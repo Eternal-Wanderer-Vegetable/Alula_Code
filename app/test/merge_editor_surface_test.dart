@@ -207,4 +207,97 @@ void main() {
       isNull,
     );
   });
+
+  testWidgets('routes bulk side acceptance and disables stale or empty actions',
+      (tester) async {
+    var acceptAllInput1 = 0;
+    var acceptAllInput2 = 0;
+    const input1Conflict = AlulaMergeConflict(
+      id: 21,
+      baseStartLine: 1,
+      baseEndLineExclusive: 2,
+      resultStartUtf16: 0,
+      resultEndUtf16: 4,
+      baseText: 'base',
+      input1Text: 'left',
+      input2Text: 'right',
+      resolution: AlulaMergeSide.input1,
+    );
+    const input2Conflict = AlulaMergeConflict(
+      id: 22,
+      baseStartLine: 4,
+      baseEndLineExclusive: 5,
+      resultStartUtf16: 10,
+      resultEndUtf16: 15,
+      baseText: 'base2',
+      input1Text: 'left2',
+      input2Text: 'right2',
+      resolution: AlulaMergeSide.input2,
+    );
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: '',
+          input1: 'left\nleft2\n',
+          input2: 'right\nright2\n',
+          resultEditor: const ColoredBox(color: Colors.blueGrey),
+          conflicts: const [input1Conflict, input2Conflict],
+          resolutions: const {
+            21: AlulaMergeSide.input1,
+            22: AlulaMergeSide.input2,
+          },
+          unresolvedConflictCount: 0,
+          onAcceptAllInput1: () => acceptAllInput1++,
+          onAcceptAllInput2: () => acceptAllInput2++,
+        ),
+      ),
+    ));
+
+    final input1Button =
+        find.byKey(const ValueKey('merge-editor-accept-all-input1'));
+    final input2Button =
+        find.byKey(const ValueKey('merge-editor-accept-all-input2'));
+    expect(find.byTooltip('Accept All Incoming Changes from Left'),
+        findsOneWidget);
+    expect(find.byTooltip('Accept All Current Changes from Right'),
+        findsOneWidget);
+    expect(tester.widget<IconButton>(input1Button).onPressed, isNotNull);
+    expect(tester.widget<IconButton>(input2Button).onPressed, isNotNull);
+    await tester.tap(input1Button);
+    await tester.tap(input2Button);
+    expect(acceptAllInput1, 1);
+    expect(acceptAllInput2, 1);
+
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: '',
+          input1: 'left\n',
+          input2: 'right\n',
+          resultEditor: const ColoredBox(color: Colors.blueGrey),
+          conflicts: const [input1Conflict],
+          unresolvedConflictCount: 1,
+          conflictRangesCurrent: false,
+          onAcceptAllInput1: () => acceptAllInput1++,
+          onAcceptAllInput2: () => acceptAllInput2++,
+        ),
+      ),
+    ));
+    expect(tester.widget<IconButton>(input1Button).onPressed, isNull);
+    expect(tester.widget<IconButton>(input2Button).onPressed, isNull);
+
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: '',
+          input1: 'same\n',
+          input2: 'same\n',
+          resultEditor: ColoredBox(color: Colors.blueGrey),
+        ),
+      ),
+    ));
+    expect(tester.widget<IconButton>(input1Button).onPressed, isNull);
+    expect(tester.widget<IconButton>(input2Button).onPressed, isNull);
+  });
 }
