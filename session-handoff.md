@@ -1,12 +1,12 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.110 is complete. P04.111 / EDT-19a has a registered, reviewed scope; implementation has not started at this scope-registration checkpoint. PR CI 41776793929 and local `init.sh --fast` passed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.111 / EDT-19a implementation and local DoD are complete; product PR CI is pending. Scope-registration commit 8b60c82 is pushed. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-Implement P04.111 / EDT-19a as a GUI-free Rust three-way merge projection in a new `editor-merge` workspace crate. The scope is `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`; it covers bounded base/input1/input2 projection, automatic one-sided/identical edits, unresolved conflicts initialized from base, and choosing input1/input2. FFI/UI/save/navigation/combine/Git remain later P04 work.
+Commit and push the P04.111 Rust model in `crates/editor-merge`, then await PR CI for Ubuntu and Windows Rust jobs. Local evidence is recorded in `docs/diagnostics/2026-11-04-p04/p04.111-three-way-merge-core-scope.md`: 14 model tests, full `init.sh` (Flutter 925), cargo fmt, and Flutter analyze all pass. Keep EDT-19 and `feat-026` in progress; this core-only slice has no FFI, workbench route, save lifecycle, combination/navigation, or Git integration.
 
-P04.110 product and evidence commits are pushed. The latest handoff-only PR CI run `41776793929` completed all four jobs successfully; local `init.sh --fast` passed with Flutter 925. Repeated Windows ARM artifact validator failures were SendKeys input races with Alula exit 0; the same artifact passed on paced replay `41627307864`. Historical Windows `0xC000041D` and macOS SIGSEGV remain unresolved and must not be claimed fixed. No local GUI or Narrator was started.
+The latest pre-product PR CI `41779495385` passed. PR CI `41776793929` also passed all four jobs. Windows ARM validator input drops are documented as test-input races with Alula exit 0; historical Windows `0xC000041D` and macOS SIGSEGV remain separate and unresolved. Do not start GUI/Narrator.
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
