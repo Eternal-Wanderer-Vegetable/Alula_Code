@@ -514,8 +514,8 @@
       "dependencies": [
         "feat-025"
       ],
-      "status": "in-progress",
-      "evidence": "范围与预编辑 GitNexus/源码分析：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md。根因未证实，后续需 Windows hosted 重复验收。",
+      "status": "done",
+      "evidence": "dispose 立即启动 watcher cancellation；awaited stop 后删除 workspace 的单测通过。定向 watcher 6/6、多视图/50,000 行工作台 teardown 5/5、完整 init.sh（Flutter 932）、cargo fmt 与 flutter analyze 全绿。PR CI 41814004328 四 job 全绿；Platform Availability 41813998224 首轮三平台全绿，Windows-only attempt 2 再次通过 P03.7 suite。原始 errno 32 的持有句柄进程未直接确认，不宣称历史崩溃根因已修复。范围/分析：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md；验收：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-validation.md。",
       "track": "vscode-builtin-parity",
       "phase": "P03.7-LC"
     }

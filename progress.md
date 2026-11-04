@@ -5,11 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P03.7-LC：Windows workspace watcher teardown 跟进（进行中）
+### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
 
-- 依据三次 Windows hosted P03.7 临时目录删除失败登记单项跟进：runs `41386803238`、`41372382625`、`41306842578` 均出现 `PathAccessException / errno 32`，最近 run `41805559426` 通过但不构成根因修复。失败阶段在测试 fixture 清理，并无当前运行崩溃签名；历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立记录。
-- 句柄所有者未被 CI 记录；Dart `Directory.watch` 的 workspace root 句柄及 dispose 中异步停止链是候选。源码显示 `_stopWorkspaceWatcher` 将 `watcher.stop()` 排到 `_watcherTransition` 后；GitNexus 精确 `WorkspaceWatcher` class impact 为 CRITICAL（503 symbols / 70 flows / 20 modules，含明显过度连接），两个大型 workbench 私有方法均 UNKNOWN，因而以精确文本调用点和源码复核补充，保留图谱风险，不声称 clean。
-- 仅完成范围注册，尚未改产品代码。范围、错误样本和验收条件：`docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md`。下一步验证并修复 dispose 及时发起 cancellation，增加定向生命周期回归，在 Windows hosted P03.7 重复运行通过前不关闭此项。
+- dispose 现在在 `_watcherTransition` 队列前调用当前 watcher 的 `stop()`，让 native cancellation 立即开始；transition 仍等待同一 Future，workspace 切换 generation 语义不变。新增 watcher 单测：等待 stop 完成后可删除被监视的 workspace 目录。
+- 定向 watcher tests 6/6，多视图/50,000 行编辑保存及 teardown 5/5；完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Flutter 932、Rust workspace、Clippy、build_core），`cargo fmt --all -- --check`、`flutter analyze --no-pub` 零问题。PR CI run `41814004328` 四 job 全绿。
+- Platform Availability run `41813998224` attempt 1 的 Linux x64、Windows x64、macOS ARM64 jobs 全绿；Windows job 单独 attempt 2 也全绿。P03.7 Windows interaction suite 两次通过（首轮 step 约 10:30:25–10:33:00 UTC，复跑 10:47:03–10:49:10 UTC）；清理仍使用原五秒有界重试，没有扩宽上限。
+- 原三次 `errno 32` 样本仍未采集到持有句柄的进程；当前变更是 cancellation 时序缓解并经 hosted 重复验证，不是已证明的句柄根因修复，也不解释历史 Windows `0xC000041D` 或 macOS startup SIGSEGV。GitNexus 精确 `_stopWorkspaceWatcher` impact LOW（6 symbols/2 direct callers/`dispose` flow），但 `WorkspaceWatcher` class 仍 CRITICAL（436 symbols/140 flows/20 modules）；all-scope 仍 CRITICAL（3 files/2 indexed symbols/285 flows，包含无关构建/LSP路径映射），保留风险与覆盖告警。详见 `docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md` 与 `p03.7-watcher-teardown-validation.md`。
 
 ### P04.113 / EDT-19c：冲突在结果文本中的 UTF-16 范围映射（已完成；EDT-19 继续）
 
