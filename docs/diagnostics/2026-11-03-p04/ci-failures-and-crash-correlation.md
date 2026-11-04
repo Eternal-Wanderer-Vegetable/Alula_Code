@@ -2,6 +2,12 @@
 
 Date: 2026-11-03. Repository: `Eternal-Wanderer-Vegetable/Alula_Code`; branch: `codex/vscode-parity-p00`; P04.80 source commit: `75c0690`; documentation/evidence commit: `9f84b9c`.
 
+## Update 2026-11-05 — current workflow sample
+
+The latest 100 branch runs of ordinary CI (ci.yml) are 100/100 successful. The latest 100 Platform Availability runs are 71 successful and 29 failed. The two newest red runs, [41855596486](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41855596486) and [41695384851](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41695384851), both passed Linux and Windows; their macOS job was cancelled after 15 minutes without runner allocation, steps, or logs. The subsequent [41868298885](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41868298885) on macos-26 passed Linux, Windows, and macOS build/test/launch/package jobs.
+
+The other sampled platform reds are concentrated in hosted synthetic macOS DnD input, Windows accessibility/interaction assertions, clipboard checks, and probe failures. Run [41370553563](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41370553563) is an exception with an actual macOS app SIGSEGV / exit 139 and crash diagnostics; it is already treated as a historical product crash rather than a test assertion. These records show CI can expose a real crash, while the latest runner-queue failures and most repeated interaction reds do not indicate a local runtime crash. A green rerun is non-reproduction evidence, not proof of a permanent crash fix.
+
 ## Recent Actions sample
 
 The latest 100 GitHub Actions runs on this branch contained:

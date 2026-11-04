@@ -27,6 +27,12 @@
 - CI/crash 复核：普通 CI `41868314580` 四 job 通过；平台运行 `41868298885` 三平台全绿，macos-26 标签解决了此前三次 runner 未分配取消。本次没有新 crash signature，但不能据此宣称历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 已根治；常见 DnD/剪贴板/无障碍红灯需按 probe 与应用故障分开。`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 记录了分类依据。
 - GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；本次最终证据 diff 的 all-scope detection 为 6 files/4 section symbols/0 affected processes/LOW。此前证据扫描曾把无关 Build/ApplyWorkspaceEdit 路径错误映射为 CRITICAL，也曾返回损坏 section 名；保留最高风险和映射不一致，不能把最新 LOW 解读为覆盖缺口消失。完整记录见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。500 MiB 优化仍后置。
 
+### P04.117 / EDT-19g：Merge Editor 冲突导航与按侧采纳（范围已登记；实现待开始）
+
+- 已登记 P04.117：添加循环的前后未解决冲突导航、活动冲突状态、Input 1/Input 2 单冲突采纳，并注册固定 F1 action ids；采纳继续走 Rust-authoritative edit/undo/save 路径。Accept Combination/accept-all、Git marker discovery 和 ABI 变更明确留后续切片。
+- 当前 branch CI 样本：最近 100 次普通 CI 100/100 成功；Platform Availability 71/100 成功、29/100 失败。最近两次红灯是 macOS runner 未分配后取消，之后 macos-26 三平台复跑全绿。旧红灯主要是 synthetic DnD、accessibility/interaction、clipboard/probe；run 41370553563 有真实 macOS SIGSEGV/exit 139，已在崩溃诊断中单独登记。CI 能发现崩溃，但 queue/fixture 红灯本身不等同本机崩溃。详见 docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md。
+- 精确范围、Code-OSS 1.145.0 固定来源和 pre-edit GitNexus UNKNOWN/coverage 限制：docs/diagnostics/2026-11-05-p04/p04.117-merge-conflict-navigation-scope.md。PR #2 仍 OPEN/draft；未启动本机 GUI/Narrator，500 MiB 数值目标继续后置。
+
 ### P04.114 / EDT-19d：合并结果会话与 Rust 工作副本生命周期（完成；EDT-19 / feat-026 继续）
 
 - 产品/test commit `c72f824` 已推送。MergeResultSession 经 Workbench factory 接入共享 Rust OpenDoc；冲突计划通过标准 Rust TextOp 和通用 undo 历史应用，多个 split view 同步；undo/redo 恢复留存投影，未知手工编辑保守地把冲突设为 unresolved。Close/save/discard/cancel、最近保存结果恢复和最后视图 teardown 均由真实 Rust 文档承载；registry 槽位复用断言通过。没有增加 Git 冲突发现、可见四栏 UI/命令或 ABI 变更。
