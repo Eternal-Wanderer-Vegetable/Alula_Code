@@ -6,13 +6,22 @@
 /// - 所有 offset 为 UTF-16 code unit（Dart String 与 LSP 的天然口径）。
 library;
 
+export 'alula_merge.dart'
+    show
+        AlulaMergeApi,
+        AlulaMergeConflict,
+        AlulaMergeException,
+        AlulaMergeProjection,
+        AlulaMergeSide;
+
 import 'dart:convert';
 
 import 'alula_ffi.dart';
+import 'alula_merge.dart';
 
 /// ABI/协议版本，与 crates/editor-core/src/ffi.rs 的 ALULA_ABI_VERSION 对应，
 /// 加载时校验，防止 Rust 与 Dart 协议错位。
-const int expectedAbiVersion = 37;
+const int expectedAbiVersion = 38;
 
 const int maxDocMinimapSampleLines = 512;
 const int maxDocMinimapLineSampleUtf16 = 48;
@@ -1735,6 +1744,9 @@ class AlulaCore {
 
   AlulaCore._(this._ffi);
 
+  /// Stateless three-way merge projection entry point.
+  late final AlulaMergeApi merge = AlulaMergeApi(_ffi);
+
   /// 核心 ABI 版本（加载时已校验）。
   int get abiVersion => _ffi.abiVersion();
 
@@ -1891,11 +1903,16 @@ class AlulaCore {
   factory AlulaCore.load() {
     final ffi = AlulaFfi(loadAlulaCore());
     final abi = ffi.abiVersion();
-    if (abi != expectedAbiVersion) {
-      throw StateError('Alula 核心 ABI 版本不匹配：期望 $expectedAbiVersion，实际 $abi。'
+    validateAbiVersion(abi);
+    return AlulaCore._(ffi);
+  }
+
+  /// Rejects a Rust library compiled against a different FFI contract.
+  static void validateAbiVersion(int actual) {
+    if (actual != expectedAbiVersion) {
+      throw StateError('Alula 核心 ABI 版本不匹配：期望 $expectedAbiVersion，实际 $actual。'
           '请重新运行 scripts/build_core。');
     }
-    return AlulaCore._(ffi);
   }
 
   /// 打开文档（初始全量传输仅此一次）。

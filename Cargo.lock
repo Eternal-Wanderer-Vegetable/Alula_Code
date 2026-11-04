@@ -66,6 +66,7 @@ dependencies = [
  "editor-doc",
  "editor-lang",
  "editor-lsp",
+ "editor-merge",
  "editor-process",
  "editor-workspace",
  "serde",

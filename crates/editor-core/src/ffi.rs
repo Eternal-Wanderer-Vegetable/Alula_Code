@@ -12,8 +12,9 @@
 //! `alula_completion_start/poll/cancel` 提供有界、可取消的异步补全请求；
 //! `alula_completion` 保留为旧调用方的同步兼容入口。
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::ffi::{c_char, CStr, CString};
+use std::io::{self, Write};
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, OnceLock};
@@ -29,14 +30,15 @@ use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_location,
     DefinitionLocation, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
 };
+use editor_merge::{InputSide, MergeError, MergeProjection};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 37;
+pub const ALULA_ABI_VERSION: u32 = 38;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -71,6 +73,108 @@ struct TextCaseInput {
 #[derive(Deserialize)]
 struct TitleCaseInput {
     text: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct MergeProjectionInput {
+    base: String,
+    input1: String,
+    input2: String,
+    #[serde(default)]
+    accept_all: Option<MergeSideInput>,
+    #[serde(default)]
+    resolutions: Vec<MergeResolutionInput>,
+}
+
+#[derive(Deserialize, Clone, Copy)]
+#[serde(rename_all = "camelCase")]
+enum MergeSideInput {
+    Input1,
+    Input2,
+}
+
+impl From<MergeSideInput> for InputSide {
+    fn from(value: MergeSideInput) -> Self {
+        match value {
+            MergeSideInput::Input1 => Self::Input1,
+            MergeSideInput::Input2 => Self::Input2,
+        }
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct MergeResolutionInput {
+    conflict_id: usize,
+    side: MergeSideInput,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MergeProjectionResponse<'a> {
+    result: String,
+    conflict_count: usize,
+    unresolved_conflict_count: usize,
+    conflicts: Vec<MergeConflictResponse<'a>>,
+}
+
+#[derive(Serialize)]
+struct MergeProjectionEnvelope<'a> {
+    ok: bool,
+    #[serde(flatten)]
+    projection: MergeProjectionResponse<'a>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MergeConflictResponse<'a> {
+    id: usize,
+    base_start_line: usize,
+    base_end_line_exclusive: usize,
+    base_text: &'a str,
+    input1_text: &'a str,
+    input2_text: &'a str,
+    resolution: Option<&'static str>,
+}
+
+const MAX_MERGE_REQUEST_JSON_BYTES: usize = 16 * 1024 * 1024;
+const MAX_MERGE_RESPONSE_JSON_BYTES: usize = 32 * 1024 * 1024;
+const MAX_MERGE_RESOLUTIONS: usize = 1_024;
+
+struct BoundedJsonWriter {
+    bytes: Vec<u8>,
+    limit: usize,
+    exceeded: bool,
+}
+
+impl BoundedJsonWriter {
+    fn new(limit: usize) -> Self {
+        Self {
+            bytes: Vec::with_capacity(limit.min(64 * 1024)),
+            limit,
+            exceeded: false,
+        }
+    }
+}
+
+impl Write for BoundedJsonWriter {
+    fn write(&mut self, buffer: &[u8]) -> io::Result<usize> {
+        let Some(next_len) = self.bytes.len().checked_add(buffer.len()) else {
+            self.exceeded = true;
+            return Err(io::Error::other("merge JSON response size overflow"));
+        };
+        if next_len > self.limit {
+            self.exceeded = true;
+            return Err(io::Error::other("merge JSON response byte limit exceeded"));
+        }
+        self.bytes.extend_from_slice(buffer);
+        Ok(buffer.len())
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        Ok(())
+    }
 }
 
 #[derive(Deserialize)]
@@ -385,6 +489,123 @@ unsafe fn read_c_str<'a>(ptr: *const c_char) -> Result<&'a str, *mut c_char> {
 #[no_mangle]
 pub extern "C" fn alula_abi_version() -> u32 {
     ALULA_ABI_VERSION
+}
+
+fn merge_error_response(error: MergeError) -> *mut c_char {
+    match error {
+        MergeError::InputByteLimit => {
+            err_json("TextTooLarge", json!({ "limit": "totalInputBytes" }))
+        }
+        MergeError::LineLimit => err_json("MergeLimit", json!({ "limit": "linesPerInput" })),
+        MergeError::TraceLimit => err_json("MergeLimit", json!({ "limit": "traceCells" })),
+        MergeError::WorkLimit => err_json("MergeLimit", json!({ "limit": "work" })),
+        MergeError::ConflictLimit => err_json("MergeLimit", json!({ "limit": "conflicts" })),
+        MergeError::ProjectionLimit => {
+            err_json("MergeLimit", json!({ "limit": "projectionBytes" }))
+        }
+        MergeError::UnknownConflict(conflict_id) => {
+            err_json("UnknownConflict", json!({ "conflictId": conflict_id }))
+        }
+        MergeError::InvalidDiff => err_json("Internal", json!("invalid merge diff ranges")),
+    }
+}
+
+/// Build a bounded, stateless three-way merge projection.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_merge_project_json(request_json: *const c_char) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_MERGE_REQUEST_JSON_BYTES {
+            return err_json(
+                "RequestTooLarge",
+                json!({ "maxBytes": MAX_MERGE_REQUEST_JSON_BYTES }),
+            );
+        }
+
+        let request: MergeProjectionInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        if request.resolutions.len() > MAX_MERGE_RESOLUTIONS {
+            return err_json(
+                "MergeLimit",
+                json!({ "limit": "resolutions", "max": MAX_MERGE_RESOLUTIONS }),
+            );
+        }
+
+        let mut resolution_ids = HashSet::with_capacity(request.resolutions.len());
+        for resolution in &request.resolutions {
+            if !resolution_ids.insert(resolution.conflict_id) {
+                return err_json(
+                    "InvalidArgument",
+                    json!({ "duplicateConflictId": resolution.conflict_id }),
+                );
+            }
+        }
+
+        let mut projection =
+            match MergeProjection::new(&request.base, &request.input1, &request.input2) {
+                Ok(projection) => projection,
+                Err(error) => return merge_error_response(error),
+            };
+        if let Some(side) = request.accept_all {
+            projection.accept_all(side.into());
+        }
+        for resolution in request.resolutions {
+            if let Err(error) =
+                projection.accept_conflict(resolution.conflict_id, resolution.side.into())
+            {
+                return merge_error_response(error);
+            }
+        }
+
+        let conflicts = projection
+            .conflicts()
+            .map(|conflict| MergeConflictResponse {
+                id: conflict.id,
+                base_start_line: conflict.base_start_line,
+                base_end_line_exclusive: conflict.base_end_line_exclusive,
+                base_text: &conflict.base_text,
+                input1_text: &conflict.input1_text,
+                input2_text: &conflict.input2_text,
+                resolution: match conflict.resolution {
+                    Some(InputSide::Input1) => Some("input1"),
+                    Some(InputSide::Input2) => Some("input2"),
+                    None => None,
+                },
+            })
+            .collect();
+        let response = MergeProjectionEnvelope {
+            ok: true,
+            projection: MergeProjectionResponse {
+                result: projection.result_text(),
+                conflict_count: projection.conflict_count(),
+                unresolved_conflict_count: projection.unresolved_conflict_count(),
+                conflicts,
+            },
+        };
+        let mut writer = BoundedJsonWriter::new(MAX_MERGE_RESPONSE_JSON_BYTES);
+        if serde_json::to_writer(&mut writer, &response).is_err() {
+            if writer.exceeded {
+                return err_json(
+                    "ResponseTooLarge",
+                    json!({ "maxBytes": MAX_MERGE_RESPONSE_JSON_BYTES }),
+                );
+            }
+            return err_json("Internal", json!("failed to serialize merge projection"));
+        }
+        match String::from_utf8(writer.bytes) {
+            Ok(response_json) => to_c_ptr(response_json),
+            Err(_) => err_json("Internal", json!("merge response was not valid UTF-8")),
+        }
+    }))
+    .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_merge_project_json")))
 }
 
 /// Apply a full Unicode case mapping to a JSON-encoded text fragment.
@@ -2882,6 +3103,107 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
+        assert_eq!(alula_abi_version(), 38);
+    }
+
+    fn merge_call(request_json: &str) -> serde_json::Value {
+        let request = c(request_json);
+        take(unsafe { alula_merge_project_json(request.as_ptr()) })
+    }
+
+    #[test]
+    fn merge_projection_ffi_preserves_bom_unicode_and_mixed_line_endings() {
+        let response = merge_call(
+            &json!({
+                "base": "\u{feff}🦊\r\nbase\rend\n",
+                "input1": "\u{feff}🦊\r\nours\rend\n",
+                "input2": "\u{feff}🦊\r\nbase\rtheirs\n"
+            })
+            .to_string(),
+        );
+        assert_eq!(response["ok"], true);
+        assert_eq!(response["result"], "\u{feff}🦊\r\nours\rtheirs\n");
+        assert_eq!(response["conflictCount"], 0);
+        assert_eq!(response["unresolvedConflictCount"], 0);
+
+        let no_final_newline = merge_call(
+            &json!({
+                "base": "base",
+                "input1": "left",
+                "input2": "right",
+                "resolutions": [{ "conflictId": 0, "side": "input2" }]
+            })
+            .to_string(),
+        );
+        assert_eq!(no_final_newline["result"], "right");
+        assert_eq!(no_final_newline["conflicts"][0]["resolution"], "input2");
+    }
+
+    #[test]
+    fn merge_projection_ffi_applies_accept_all_before_per_conflict_overrides() {
+        let response = merge_call(
+            &json!({
+                "base": "a\nm\nz\n",
+                "input1": "A\nm\nUP1\n",
+                "input2": "B\nm\nDOWN2\n",
+                "acceptAll": "input1",
+                "resolutions": [{ "conflictId": 1, "side": "input2" }]
+            })
+            .to_string(),
+        );
+        assert_eq!(response["ok"], true);
+        assert_eq!(response["result"], "A\nm\nDOWN2\n");
+        assert_eq!(response["conflictCount"], 2);
+        assert_eq!(response["unresolvedConflictCount"], 0);
+        assert_eq!(response["conflicts"][0]["id"], 0);
+        assert_eq!(response["conflicts"][0]["baseStartLine"], 0);
+        assert_eq!(response["conflicts"][0]["baseEndLineExclusive"], 1);
+        assert_eq!(response["conflicts"][0]["resolution"], "input1");
+        assert_eq!(response["conflicts"][1]["resolution"], "input2");
+
+        let unresolved = merge_call(
+            &json!({
+                "base": "base",
+                "input1": "left",
+                "input2": "right"
+            })
+            .to_string(),
+        );
+        assert_eq!(unresolved["result"], "base");
+        assert_eq!(unresolved["unresolvedConflictCount"], 1);
+        assert_eq!(unresolved["conflicts"][0]["baseText"], "base");
+    }
+
+    #[test]
+    fn merge_projection_ffi_rejects_invalid_and_oversized_requests() {
+        assert_eq!(merge_call("{")["error"]["code"], "InvalidArgument");
+        assert_eq!(
+            merge_call(
+                r#"{"base":"base","input1":"left","input2":"right","resolutions":[{"conflictId":9,"side":"input1"}]}"#
+            )["error"]["code"],
+            "UnknownConflict"
+        );
+        assert_eq!(
+            merge_call(
+                r#"{"base":"base","input1":"left","input2":"right","resolutions":[{"conflictId":0,"side":"input1"},{"conflictId":0,"side":"input2"}]}"#
+            )["error"]["code"],
+            "InvalidArgument"
+        );
+
+        let oversized = " ".repeat(MAX_MERGE_REQUEST_JSON_BYTES + 1);
+        let request = c(&oversized);
+        assert_eq!(
+            take(unsafe { alula_merge_project_json(request.as_ptr()) })["error"]["code"],
+            "RequestTooLarge"
+        );
+
+        let model_limited = json!({
+            "base": "x".repeat(8 * 1024 * 1024 + 1),
+            "input1": "",
+            "input2": ""
+        })
+        .to_string();
+        assert_eq!(merge_call(&model_limited)["error"]["code"], "TextTooLarge");
     }
 
     #[test]

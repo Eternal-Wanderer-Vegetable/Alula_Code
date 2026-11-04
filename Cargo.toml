@@ -28,6 +28,7 @@ editor-lang = { path = "crates/editor-lang" }
 editor-workspace = { path = "crates/editor-workspace" }
 editor-doc = { path = "crates/editor-doc" }
 editor-process = { path = "crates/editor-process" }
+editor-merge = { path = "crates/editor-merge" }
 tree-sitter = "0.25"
 tree-sitter-rust = "0.23"
 encoding_rs = "0.8.42"

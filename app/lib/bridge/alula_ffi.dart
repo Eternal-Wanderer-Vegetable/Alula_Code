@@ -54,6 +54,10 @@ class AlulaFfi {
   late final int Function() abiVersion = lib
       .lookupFunction<Uint32 Function(), int Function()>('alula_abi_version');
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>) _mergeProjectJson =
+      lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>('alula_merge_project_json');
+
   late final Pointer<Utf8> Function(Pointer<Utf8>) _textTransformCase =
       lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>(
@@ -394,6 +398,15 @@ class AlulaFfi {
     final s = ptr.toDartString();
     _stringFree(ptr);
     return s;
+  }
+
+  String mergeProjectJson(String requestJson) {
+    final request = requestJson.toNativeUtf8();
+    try {
+      return _takeJson(_mergeProjectJson(request));
+    } finally {
+      malloc.free(request);
+    }
   }
 
   String textTransformCaseJson(String requestJson) {
