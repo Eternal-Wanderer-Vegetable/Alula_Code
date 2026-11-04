@@ -527,7 +527,7 @@
         "feat-026"
       ],
       "status": "in-progress",
-      "evidence": "范围已注册，尚未开始产品实现。固定 Code-OSS 1.145.0 input/save/revert/confirmClose 源码、GitNexus 风险、CI 崩溃关联和 init.sh --fast 证据：docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
+      "evidence": "产品阶段 bb79eae 已提交并推送：新增有界 MergeResultSession、UTF-16 冲突编辑计划、Rust 文档版本/全文校验、dirty/savepoint 与 Save/Discard/Cancel/未解决冲突关闭状态机；真实 FFI 定向测试 9/9，完整 init.sh（Flutter 941）、cargo fmt、flutter analyze 全绿。CI 41822659977 与 Platform Availability 41822649756 正在运行。仍未完成 Workbench 消费、split-view 同步与 undo/redo 历史对接，因此保持 in-progress。完整固定 Code-OSS 源码、图谱风险和实施证据见 docs/diagnostics/2026-11-04-p04/p04.114-merge-result-session-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
