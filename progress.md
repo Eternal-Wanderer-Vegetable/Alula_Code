@@ -19,6 +19,12 @@
 - CI 崩溃关联复核：最新 100 条普通 CI 100/100 成功，Platform Availability 70 成功/30 失败；本轮 PR/platform 运行无 crash signature。历史 Windows `0xC000041D` 有较可信的旧提交销毁顺序缓解线索，但原始栈/根因未证实；历史 macOS startup SIGSEGV 早于 FlutterView readiness/nil guard，后续 smoke 只证明该 runner/SHA 未复现。近期红灯主要为 harness/probe/input/accessibility 或排队取消，不能等同崩溃，也不能据绿色结果宣称历史崩溃已根治。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
 - GitNexus 本轮 exact impacts 为 LOW；all-scope change detection 6 files/35 symbols/2 flows/MEDIUM，索引仍有覆盖告警，不称 graph clean。500 MiB 目标仍后置，不作内存优化结论。详细证据与限制见 `docs/diagnostics/2026-11-04-p04/p04.115-merge-editor-session-surface-scope.md`。
 
+### P04.116 / EDT-19f：Merge Editor resource open route（范围已登记，进行中）
+
+- 在 P04.115 只负责呈现已挂载会话的基础上，下一切片新增固定 `_open.mergeEditor` 四资源 URI route：读取冻结输入并通过 Rust 投影校验现有 result；result 脏或文本与投影不一致时应无副作用拒绝，成功后复用同一个 Rust OpenDoc 并附加 session。
+- 当前仅提交了 scope registration，尚未修改产品代码。GitNexus 预编辑结果：`_registerCommands` LOW；`_openFileByPath` MEDIUM（18 symbols/6 direct callers/2 modeled process families），范围内只调用不泛化修改；`_applyMergeResultPlan` LOW。`MergeResultSession.open` 有 receiver-typing dropped caller，按下界记录并保留文本搜索核实。完整验收、固定 Code-OSS 来源和覆盖限制：`docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。
+- CI 失败与历史 Windows/macOS crash 的相关性仍按独立证据分类；最新滚动窗和本轮 P04.115 全绿结果见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。不启动本机 GUI/Narrator，不做 500 MiB 优化。
+
 ### P04.114 / EDT-19d：合并结果会话与 Rust 工作副本生命周期（完成；EDT-19 / feat-026 继续）
 
 - 产品/test commit `c72f824` 已推送。MergeResultSession 经 Workbench factory 接入共享 Rust OpenDoc；冲突计划通过标准 Rust TextOp 和通用 undo 历史应用，多个 split view 同步；undo/redo 恢复留存投影，未知手工编辑保守地把冲突设为 unresolved。Close/save/discard/cancel、最近保存结果恢复和最后视图 teardown 均由真实 Rust 文档承载；registry 槽位复用断言通过。没有增加 Git 冲突发现、可见四栏 UI/命令或 ABI 变更。
