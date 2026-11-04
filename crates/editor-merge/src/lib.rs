@@ -5,6 +5,10 @@
 //! input for each unresolved conflict. Text slices are retained verbatim so
 //! line endings, BOMs, final-newline state, and Unicode survive projection.
 
+mod combination;
+
+pub use combination::{combine_conflict, CombinationError, CombinationLimits};
+
 use std::error::Error;
 use std::fmt;
 
