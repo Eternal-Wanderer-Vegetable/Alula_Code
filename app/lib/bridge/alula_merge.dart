@@ -25,6 +25,8 @@ class AlulaMergeConflict {
     required this.id,
     required this.baseStartLine,
     required this.baseEndLineExclusive,
+    required this.resultStartUtf16,
+    required this.resultEndUtf16,
     required this.baseText,
     required this.input1Text,
     required this.input2Text,
@@ -34,6 +36,8 @@ class AlulaMergeConflict {
   final int id;
   final int baseStartLine;
   final int baseEndLineExclusive;
+  final int resultStartUtf16;
+  final int resultEndUtf16;
   final String baseText;
   final String input1Text;
   final String input2Text;
@@ -48,6 +52,8 @@ class AlulaMergeConflict {
       id: json['id'] as int,
       baseStartLine: json['baseStartLine'] as int,
       baseEndLineExclusive: json['baseEndLineExclusive'] as int,
+      resultStartUtf16: json['resultStartUtf16'] as int,
+      resultEndUtf16: json['resultEndUtf16'] as int,
       baseText: json['baseText'] as String,
       input1Text: json['input1Text'] as String,
       input2Text: json['input2Text'] as String,
@@ -84,6 +90,23 @@ class AlulaMergeProjection {
         projection.unresolvedConflictCount < 0 ||
         projection.unresolvedConflictCount > projection.conflictCount) {
       throw const FormatException('合并投影计数不一致');
+    }
+    var previousEndUtf16 = 0;
+    for (final conflict in projection.conflicts) {
+      final start = conflict.resultStartUtf16;
+      final end = conflict.resultEndUtf16;
+      if (start < previousEndUtf16 || end < start || end > projection.result.length) {
+        throw const FormatException('合并冲突 result 范围无效');
+      }
+      final expectedText = switch (conflict.resolution) {
+        AlulaMergeSide.input1 => conflict.input1Text,
+        AlulaMergeSide.input2 => conflict.input2Text,
+        null => conflict.baseText,
+      };
+      if (projection.result.substring(start, end) != expectedText) {
+        throw const FormatException('合并冲突 result 范围与当前投影不一致');
+      }
+      previousEndUtf16 = end;
     }
     return projection;
   }

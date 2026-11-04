@@ -38,7 +38,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 38;
+pub const ALULA_ABI_VERSION: u32 = 39;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -132,6 +132,8 @@ struct MergeConflictResponse<'a> {
     id: usize,
     base_start_line: usize,
     base_end_line_exclusive: usize,
+    result_start_utf16: usize,
+    result_end_utf16: usize,
     base_text: &'a str,
     input1_text: &'a str,
     input2_text: &'a str,
@@ -566,20 +568,24 @@ pub unsafe extern "C" fn alula_merge_project_json(request_json: *const c_char) -
         }
 
         let conflicts = projection
-            .conflicts()
-            .map(|conflict| MergeConflictResponse {
-                id: conflict.id,
-                base_start_line: conflict.base_start_line,
-                base_end_line_exclusive: conflict.base_end_line_exclusive,
-                base_text: &conflict.base_text,
-                input1_text: &conflict.input1_text,
-                input2_text: &conflict.input2_text,
-                resolution: match conflict.resolution {
-                    Some(InputSide::Input1) => Some("input1"),
-                    Some(InputSide::Input2) => Some("input2"),
-                    None => None,
+            .conflicts_with_result_ranges()
+            .map(
+                |(conflict, result_start_utf16, result_end_utf16)| MergeConflictResponse {
+                    id: conflict.id,
+                    base_start_line: conflict.base_start_line,
+                    base_end_line_exclusive: conflict.base_end_line_exclusive,
+                    result_start_utf16,
+                    result_end_utf16,
+                    base_text: &conflict.base_text,
+                    input1_text: &conflict.input1_text,
+                    input2_text: &conflict.input2_text,
+                    resolution: match conflict.resolution {
+                        Some(InputSide::Input1) => Some("input1"),
+                        Some(InputSide::Input2) => Some("input2"),
+                        None => None,
+                    },
                 },
-            })
+            )
             .collect();
         let response = MergeProjectionEnvelope {
             ok: true,
@@ -3103,7 +3109,7 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 38);
+        assert_eq!(alula_abi_version(), 39);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {
@@ -3137,6 +3143,8 @@ mod tests {
         );
         assert_eq!(no_final_newline["result"], "right");
         assert_eq!(no_final_newline["conflicts"][0]["resolution"], "input2");
+        assert_eq!(no_final_newline["conflicts"][0]["resultStartUtf16"], 0);
+        assert_eq!(no_final_newline["conflicts"][0]["resultEndUtf16"], 5);
     }
 
     #[test]
@@ -3158,7 +3166,11 @@ mod tests {
         assert_eq!(response["conflicts"][0]["id"], 0);
         assert_eq!(response["conflicts"][0]["baseStartLine"], 0);
         assert_eq!(response["conflicts"][0]["baseEndLineExclusive"], 1);
+        assert_eq!(response["conflicts"][0]["resultStartUtf16"], 0);
+        assert_eq!(response["conflicts"][0]["resultEndUtf16"], 2);
         assert_eq!(response["conflicts"][0]["resolution"], "input1");
+        assert_eq!(response["conflicts"][1]["resultStartUtf16"], 4);
+        assert_eq!(response["conflicts"][1]["resultEndUtf16"], 10);
         assert_eq!(response["conflicts"][1]["resolution"], "input2");
 
         let unresolved = merge_call(
@@ -3172,6 +3184,65 @@ mod tests {
         assert_eq!(unresolved["result"], "base");
         assert_eq!(unresolved["unresolvedConflictCount"], 1);
         assert_eq!(unresolved["conflicts"][0]["baseText"], "base");
+        assert_eq!(unresolved["conflicts"][0]["resultStartUtf16"], 0);
+        assert_eq!(unresolved["conflicts"][0]["resultEndUtf16"], 4);
+    }
+
+    #[test]
+    fn merge_projection_ffi_ranges_follow_unicode_choices_and_empty_deletions() {
+        let base = "\u{feff}😀\r\nold\r\nmiddle\rold2\n";
+        let input1 = "\u{feff}😀\r\nlonger 🦊\r\nmiddle\rours2\n";
+        let input2 = "\u{feff}😀\r\nincoming\r\nmiddle\rother2";
+        let unresolved =
+            merge_call(&json!({"base":base,"input1":input1,"input2":input2}).to_string());
+        assert_eq!(unresolved["conflicts"][0]["resultStartUtf16"], 5);
+        assert_eq!(unresolved["conflicts"][0]["resultEndUtf16"], 10);
+        assert_eq!(unresolved["conflicts"][1]["resultStartUtf16"], 17);
+        assert_eq!(unresolved["conflicts"][1]["resultEndUtf16"], 22);
+
+        let first_resolved = merge_call(
+            &json!({
+                "base":base,
+                "input1":input1,
+                "input2":input2,
+                "resolutions":[{"conflictId":0,"side":"input1"}]
+            })
+            .to_string(),
+        );
+        assert_eq!(first_resolved["conflicts"][1]["resultStartUtf16"], 23);
+        assert_eq!(first_resolved["conflicts"][1]["resultEndUtf16"], 28);
+
+        let both_resolved = merge_call(
+            &json!({
+                "base":base,
+                "input1":input1,
+                "input2":input2,
+                "resolutions":[
+                    {"conflictId":0,"side":"input1"},
+                    {"conflictId":1,"side":"input2"}
+                ]
+            })
+            .to_string(),
+        );
+        assert_eq!(
+            both_resolved["result"],
+            "\u{feff}😀\r\nlonger 🦊\r\nmiddle\rother2"
+        );
+        assert_eq!(both_resolved["conflicts"][1]["resultStartUtf16"], 23);
+        assert_eq!(both_resolved["conflicts"][1]["resultEndUtf16"], 29);
+
+        let deletion = merge_call(
+            &json!({
+                "base":"prefix\nremoved\nsuffix\n",
+                "input1":"prefix\nsuffix\n",
+                "input2":"prefix\nchanged\nsuffix\n",
+                "resolutions":[{"conflictId":0,"side":"input1"}]
+            })
+            .to_string(),
+        );
+        assert_eq!(deletion["result"], "prefix\nsuffix\n");
+        assert_eq!(deletion["conflicts"][0]["resultStartUtf16"], 7);
+        assert_eq!(deletion["conflicts"][0]["resultEndUtf16"], 7);
     }
 
     #[test]

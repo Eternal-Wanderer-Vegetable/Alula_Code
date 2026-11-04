@@ -266,6 +266,28 @@ impl MergeProjection {
         })
     }
 
+    /// Iterate conflicts with their half-open UTF-16 ranges in the current result.
+    ///
+    /// The range follows the active contribution: unresolved conflicts use the
+    /// base fallback, while resolved conflicts use the selected input. Callers
+    /// must recompute ranges after changing a resolution.
+    pub fn conflicts_with_result_ranges(
+        &self,
+    ) -> impl Iterator<Item = (&MergeConflict, usize, usize)> + '_ {
+        let mut result_offset_utf16 = 0;
+        self.segments.iter().filter_map(move |segment| {
+            let result_start_utf16 = result_offset_utf16;
+            let text = segment.result_text();
+            result_offset_utf16 += text.encode_utf16().count();
+            match segment {
+                MergeSegment::Text(_) => None,
+                MergeSegment::Conflict(conflict) => {
+                    Some((conflict, result_start_utf16, result_offset_utf16))
+                }
+            }
+        })
+    }
+
     pub fn conflict_count(&self) -> usize {
         self.conflicts().count()
     }
@@ -669,6 +691,26 @@ fn append_lines(output: &mut String, lines: &[&str]) {
 mod tests {
     use super::*;
 
+    fn utf16_slice(text: &str, start: usize, end: usize) -> String {
+        let units = text.encode_utf16().collect::<Vec<_>>();
+        String::from_utf16(&units[start..end]).expect("range splits only at UTF-16 boundaries")
+    }
+
+    fn assert_conflict_ranges_match_result(merge: &MergeProjection) {
+        let result = merge.result_text();
+        let result_units = result.encode_utf16().count();
+        for (conflict, start, end) in merge.conflicts_with_result_ranges() {
+            assert!(start <= end);
+            assert!(end <= result_units);
+            let expected = match conflict.resolution {
+                Some(InputSide::Input1) => &conflict.input1_text,
+                Some(InputSide::Input2) => &conflict.input2_text,
+                None => &conflict.base_text,
+            };
+            assert_eq!(utf16_slice(&result, start, end), expected.as_str());
+        }
+    }
+
     #[test]
     fn unchanged_input_returns_the_base_without_conflicts() {
         let merge = MergeProjection::new("one\ntwo\n", "one\ntwo\n", "one\ntwo\n")
@@ -745,6 +787,103 @@ mod tests {
         assert_eq!(merge.result_text(), "a\nleft-1\nc\nleft-2\ne");
         assert_eq!(merge.unresolved_conflict_count(), 0);
         assert_eq!(merge.accept_all(InputSide::Input1), 0);
+    }
+
+    #[test]
+    fn conflict_result_ranges_follow_current_utf16_projection_after_resolution() {
+        let mut merge = MergeProjection::new(
+            "\u{feff}😀\r\nold\r\nmiddle\rold2\n",
+            "\u{feff}😀\r\nlonger 🦊\r\nmiddle\rours2\n",
+            "\u{feff}😀\r\nincoming\r\nmiddle\rother2",
+        )
+        .expect("projection succeeds");
+        let result_before = merge.result_text();
+        let ranges_before = merge
+            .conflicts_with_result_ranges()
+            .map(|(conflict, start, end)| (conflict.id, start, end))
+            .collect::<Vec<_>>();
+
+        assert_eq!(ranges_before.len(), 2);
+        assert_eq!(ranges_before[0].1, 5); // BOM + surrogate pair + CRLF
+        assert_eq!(
+            utf16_slice(&result_before, ranges_before[0].1, ranges_before[0].2),
+            "old\r\n"
+        );
+        assert_conflict_ranges_match_result(&merge);
+
+        merge
+            .accept_conflict(0, InputSide::Input1)
+            .expect("first conflict exists");
+        let result_after = merge.result_text();
+        let ranges_after = merge
+            .conflicts_with_result_ranges()
+            .map(|(conflict, start, end)| (conflict.id, start, end))
+            .collect::<Vec<_>>();
+
+        assert_eq!(ranges_after[0].1, ranges_before[0].1);
+        assert_eq!(ranges_after[0].2 - ranges_after[0].1, 11);
+        assert_eq!(ranges_after[1].1, ranges_before[1].1 + 6);
+        assert_eq!(
+            utf16_slice(&result_after, ranges_after[0].1, ranges_after[0].2),
+            "longer 🦊\r\n"
+        );
+        assert_conflict_ranges_match_result(&merge);
+
+        merge
+            .accept_conflict(1, InputSide::Input2)
+            .expect("second conflict exists");
+        let final_result = merge.result_text();
+        let final_range = merge
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .nth(1)
+            .expect("second conflict exists");
+        assert_eq!(
+            utf16_slice(&final_result, final_range.0, final_range.1),
+            "other2"
+        );
+        assert!(!final_result.ends_with('\n'));
+        assert_conflict_ranges_match_result(&merge);
+    }
+
+    #[test]
+    fn conflict_result_ranges_allow_empty_deletion_contributions() {
+        let mut merge = MergeProjection::new(
+            "prefix\nremoved\nsuffix\n",
+            "prefix\nsuffix\n",
+            "prefix\nchanged\nsuffix\n",
+        )
+        .expect("projection succeeds");
+        let unresolved_range = merge
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .next()
+            .expect("conflict exists");
+        assert!(unresolved_range.0 < unresolved_range.1);
+        assert_conflict_ranges_match_result(&merge);
+
+        merge
+            .accept_conflict(0, InputSide::Input1)
+            .expect("deletion side exists");
+        let deletion_range = merge
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .next()
+            .expect("conflict exists");
+        assert_eq!(deletion_range.0, deletion_range.1);
+        assert_eq!(merge.result_text(), "prefix\nsuffix\n");
+        assert_conflict_ranges_match_result(&merge);
+
+        merge
+            .accept_conflict(0, InputSide::Input2)
+            .expect("replacement side exists");
+        let replacement_range = merge
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .next()
+            .expect("conflict exists");
+        assert_eq!(replacement_range.1 - replacement_range.0, 8);
+        assert_conflict_ranges_match_result(&merge);
     }
 
     #[test]
