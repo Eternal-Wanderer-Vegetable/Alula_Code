@@ -5,13 +5,19 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.110 / EDT-18f：Explorer 多选 Compare Selected（范围已登记；实现未开始）
+
+- 下一 slice 是固定 Code-OSS compareSelected 的 Explorer 双选入口；第一项原文、第二项修改文，打开 pinned compare；仅精确两项普通文件显示动作。Explorer 多选、menu 条件、顺序及 DoD 已登记在 docs/03 与 docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md。
+- P04.109 Revert Block / Revert Selection 已完成，产品 commit 2b671e5、证据 commit a88ba2d 均推送；PR CI 与三平台 hosted jobs 通过。macOS native DnD hosted pointer routing unavailable 保留 P15。
+- GitNexus 在 a88ba2d 刷新并绑定 Alula_Code (/tmp/alula-p04.70-next)。SnapshotComparePreview CRITICAL 169/17，_WorkbenchPageState CRITICAL 224/19；_showEditableSnapshotCompare 与 _openTreeFile UNKNOWN，已用精确源码搜索确认调用点。跨语言属性、未排序 flow candidates 和遍历预算告警保留；_buildNode 的图上 LOW 流程与源码真实 Explorer builder 不吻合，未用于降级外层 CRITICAL。
+
 ### P04.109 / EDT-18e：比较编辑器块与选区回退（已完成；P04 继续）
 
 - 已实现固定 Code-OSS diffEditor.revert：diff hunk 的 Revert Block、modified-side selection 的 Revert Selection，以及通过命令面板触发的焦点 Revert。工具栏行与精确 diff hunk 映射，命令按当前 caret/selection 与 modified-side 行范围定位；macOS 命令面板使用 Cmd+Shift+P，Windows/Linux 使用 Ctrl+Shift+P。
 - 操作只把冻结 original snapshot 写入 modified Rust OpenDoc。修改通过版本检查的 Rust 文本事务原子提交，形成一个 undo grouping，支持撤销/重做、兄弟视图同步、保存与磁盘回读。stale/approximate/budget fallback、活跃 IME、文档关闭和 identity/version 变化均在修改前拒绝。未修改 diff model、Rust/FFI/ABI 或保存协议。
 - 五项范围映射单测与五项工作台 widget 测试覆盖 UTF-16/CRLF、空行插删、selection/hunk 映射、命令面板、undo/redo、兄弟视图、BOM/non-BMP 保存回读及 IME blur 时拒绝旧 diff。完整 init.sh 通过：Rust workspace、Clippy、build_core、Flutter 923；cargo fmt、Flutter analyze（0 issues）、diff check 通过。未启动桌面 GUI 或讲述人。
 - GitNexus 最终代码扫描：5 files / 18 symbols / 3 flows / MEDIUM；预编辑 computeDiffViewModel CRITICAL 与图覆盖限制保留。产品/测试提交 2b671e5 已推送；PR CI 41767192131 四 job 全绿（Flutter 923）。Platform Availability 41767186847 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package jobs 全绿；Linux/Windows DnD 通过，Windows UIA/MSAA 与 graceful close 通过。macOS DnD artifact 13294480227 记录 hosted pointer route unavailable、交互被 skip，原生 macOS DnD 留 P15；macOS startup artifact 13294295957 只有 Impeller 初始化行。包 artifacts：Linux 13292689699、Windows 13294185107、macOS ARM64 13293522849。当前绿色与无 crash report 只是不复现证据，不声称修复历史崩溃。未启动本机 GUI 或讲述人。
-- 固定上游、实现细节、本地/hosted 验证与崩溃证据边界见 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block.md 与 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md。P04.109 完成；从 docs/03 与 docs/11 分解下一项登记后再开始。PR #2 保持 OPEN/draft。
+- 固定上游、实现细节、本地/hosted 验证与崩溃证据边界见 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block.md 与 docs/diagnostics/2026-11-04-p04/p04.109-revert-diff-block-scope.md。P04.109 完成；P04.110 / EDT-18f 已按 docs/11 分解并登记，是当前唯一 active slice。PR #2 保持 OPEN/draft。
 
 ### P04.108 / EDT-18d：Explorer 单资源两步比较（已完成；P04 继续）
 

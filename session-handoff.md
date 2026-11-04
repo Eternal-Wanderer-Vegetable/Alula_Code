@@ -1,17 +1,17 @@
 # Session Handoff
 
-> Last Updated: 2026-11-04. P04.109 / EDT-18e implementation, local DoD, PR CI, and all hosted platform jobs are complete. Product commit 2b671e5 is pushed. PR #2 remains OPEN/draft.
+> Last Updated: 2026-11-04. P04.109 is complete and pushed. P04.110 / EDT-18f Explorer multi-select Compare Selected is registered; implementation has not started. PR #2 remains OPEN/draft.
 
 ## Current Objective
 
-P04.109 / EDT-18e is complete. Product commit 2b671e5 and its hosted evidence are recorded in docs/03 and the P04.109 reports. Linux/Windows hosted smoke passed; macOS ARM64 package/startup passed, while native DnD was skipped because synthetic pointer routing was unavailable, so device validation remains P15. Commit/push the documentation/evidence stage, then identify and register the next P04 slice from docs/03 and docs/11 before implementation. Keep PR #2 OPEN/draft. No local GUI or Narrator was started.
+P04.110 / EDT-18f: implement only the registered Explorer two-file Compare Selected route. Scope and pre-edit graph findings are in docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md. P04.109 evidence and hosted checks are complete; commits 2b671e5 and a88ba2d are pushed. Keep Explorer original/modified order and the frozen original snapshot, use the Rust-backed modified OpenDoc, and preserve the CRITICAL/UNKNOWN graph warnings. PR #2 remains OPEN/draft. No local GUI or Narrator was started.
 
 ## Repository and PR
 
 - Active worktree: `/tmp/alula-p04.70-next`; use it for follow-up work. `/mnt/e/alula_code` is an older worktree.
 - Push branch: `codex/vscode-parity-p00`; push authorization for this branch persists.
 - PR #2: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/2 — OPEN/draft. Do not merge or publish v0.1.0 before the plan gates finish.
-- Product commit `945d9576b889cd312689b9462c1b5e0d9c110a80`; test commit `8c294309ee469463ac78f0830484fef6cbe42bc3`; P04.107 evidence/state commit `f44533e89bd05c7c9cb7fb3ec20ce998a1047c0b` is pushed. P04.108 product/test commits `d035275`, `15da959`, and `11a494e` are pushed; only evidence/state docs remain uncommitted. Push authorization for `codex/vscode-parity-p00` persists.
+- P04.107/P04.108 implementation and evidence commits are pushed. P04.109 product/test commit 2b671e5 and evidence commit a88ba2d are pushed. The current P04.110 scope registration docs are uncommitted; push authorization for codex/vscode-parity-p00 persists.
 
 ## P04.107 Evidence
 
@@ -39,6 +39,12 @@ P04.109 / EDT-18e is complete. Product commit 2b671e5 and its hosted evidence ar
 - Product/five-test snapshot CI runs `41755678771` and `41755709195` passed; six-test PR CI `41758044540` and Platform Availability `41758034721` passed all jobs. Latest Linux/Windows/macOS package artifacts are `13288599908`, `13289171782`, and `13289098296`; macOS startup diagnostics artifact is `13289078404`. Native macOS acceptance remains P15.
 - CI interpretation: recent Windows ARM validator assertion failures were keyboard-input drops with exit 0 and no crash artifact; one platform failure was macOS queued cancellation before any step. These are separate from historical Windows close/macOS startup crashes and their qualified lifecycle mitigations. This Explorer change does not touch startup/close paths. See `docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare.md` and the CI/crash report.
 
+## P04.110 Scope and Pre-edit Analysis
+
+- Fixed Code-OSS compareSelected is exposed from the Explorer context menu only when two file resources are selected. The first resource is original, second is modified, and the diff is pinned. This slice excludes Open Editors and editor-title routes.
+- Pinned source and acceptance: docs/diagnostics/2026-11-04-p04/p04.110-explorer-compare-selected-scope.md.
+- GitNexus index is current at a88ba2d for Alula_Code (/tmp/alula-p04.70-next). SnapshotComparePreview is CRITICAL 169/17; _WorkbenchPageState is CRITICAL 224/19; _showEditableSnapshotCompare and _openTreeFile are UNKNOWN. Exact textual callsites were checked. Existing coverage warnings remain unresolved; avoid editing SnapshotComparePreview and keep the Workbench route narrow.
+
 ## Completed P04.109
 
 - Product/test commit 2b671e53a327a1a8d4f4766497f2d5ba7b4078a1 is pushed. Full local init.sh passed with Rust workspace/Clippy/build_core and Flutter 923; cargo fmt, Flutter analyze, diff check, focused tests, and Harness 100/100 passed.
@@ -51,5 +57,5 @@ P04.109 / EDT-18e is complete. Product commit 2b671e5 and its hosted evidence ar
 1. Read AGENTS.md, this handoff, and progress.md.
 2. Run node .gitnexus/run.cjs status; refresh the index if stale.
 3. Run bash init.sh --fast.
-4. P04.109 is complete. Review docs/03 and docs/11 to decompose and register the next single P04 slice before implementation.
-5. Keep PR #2 OPEN/draft and preserve the P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
+4. Continue only P04.110 / EDT-18f from its registered scope; recheck tree/menu sources and exact impacts before changing code.
+5. Run focused and full DoD checks, graph change analysis, and commit product/evidence separately. Keep PR #2 OPEN/draft and preserve P15 native-device gates and qualified historical crash evidence. No local GUI or Narrator was started.
