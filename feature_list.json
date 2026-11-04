@@ -506,6 +506,18 @@
       "evidence": "",
       "track": "vscode-builtin-parity",
       "phase": "P15"
+    },
+    {
+      "id": "feat-038",
+      "name": "P03.7-LC Windows 工作区 watcher teardown 生命周期跟进",
+      "description": "修复 P03.7 Windows hosted 临时工作区 errno 32 清理失败候选；确保 dispose 立即发起 watcher cancellation 并覆盖挂载/切换/卸载竞态，按现有有界重试路径回归。不得将 fixture 红灯等同应用崩溃，亦不得延长重试上限掩盖句柄泄漏。",
+      "dependencies": [
+        "feat-025"
+      ],
+      "status": "in-progress",
+      "evidence": "范围与预编辑 GitNexus/源码分析：docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md。根因未证实，后续需 Windows hosted 重复验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P03.7-LC"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P03.7-LC：Windows workspace watcher teardown 跟进（进行中）
+
+- 依据三次 Windows hosted P03.7 临时目录删除失败登记单项跟进：runs `41386803238`、`41372382625`、`41306842578` 均出现 `PathAccessException / errno 32`，最近 run `41805559426` 通过但不构成根因修复。失败阶段在测试 fixture 清理，并无当前运行崩溃签名；历史 Windows `0xC000041D` 与 macOS SIGSEGV 仍独立记录。
+- 句柄所有者未被 CI 记录；Dart `Directory.watch` 的 workspace root 句柄及 dispose 中异步停止链是候选。源码显示 `_stopWorkspaceWatcher` 将 `watcher.stop()` 排到 `_watcherTransition` 后；GitNexus 精确 `WorkspaceWatcher` class impact 为 CRITICAL（503 symbols / 70 flows / 20 modules，含明显过度连接），两个大型 workbench 私有方法均 UNKNOWN，因而以精确文本调用点和源码复核补充，保留图谱风险，不声称 clean。
+- 仅完成范围注册，尚未改产品代码。范围、错误样本和验收条件：`docs/diagnostics/2026-11-04-p03/p03.7-watcher-teardown-scope.md`。下一步验证并修复 dispose 及时发起 cancellation，增加定向生命周期回归，在 Windows hosted P03.7 重复运行通过前不关闭此项。
+
 ### P04.113 / EDT-19c：冲突在结果文本中的 UTF-16 范围映射（已完成；EDT-19 继续）
 
 - `editor-merge::MergeProjection`、JSON FFI 和 typed Dart bridge 为每项冲突增加当前 projection 的 `resultStartUtf16` / `resultEndUtf16`；Rust/Dart ABI 同步由 v38 升到 v39。未解决项指向 base fallback，已解决项指向选中 input；范围有序、在 result 内，并逐字符验证其切片等于对应贡献。
