@@ -3243,6 +3243,32 @@ mod tests {
         assert_eq!(deletion["result"], "prefix\nsuffix\n");
         assert_eq!(deletion["conflicts"][0]["resultStartUtf16"], 7);
         assert_eq!(deletion["conflicts"][0]["resultEndUtf16"], 7);
+
+        let insertion = merge_call(
+            &json!({
+                "base":"before\nafter\n",
+                "input1":"before\nours\nafter\n",
+                "input2":"before\ntheirs\nafter\n"
+            })
+            .to_string(),
+        );
+        assert_eq!(insertion["conflicts"][0]["baseStartLine"], 1);
+        assert_eq!(insertion["conflicts"][0]["baseEndLineExclusive"], 1);
+        assert_eq!(insertion["conflicts"][0]["resultStartUtf16"], 7);
+        assert_eq!(insertion["conflicts"][0]["resultEndUtf16"], 7);
+
+        let accepted_insertion = merge_call(
+            &json!({
+                "base":"before\nafter\n",
+                "input1":"before\nours\nafter\n",
+                "input2":"before\ntheirs\nafter\n",
+                "resolutions":[{"conflictId":0,"side":"input2"}]
+            })
+            .to_string(),
+        );
+        assert_eq!(accepted_insertion["result"], "before\ntheirs\nafter\n");
+        assert_eq!(accepted_insertion["conflicts"][0]["resultStartUtf16"], 7);
+        assert_eq!(accepted_insertion["conflicts"][0]["resultEndUtf16"], 14);
     }
 
     #[test]

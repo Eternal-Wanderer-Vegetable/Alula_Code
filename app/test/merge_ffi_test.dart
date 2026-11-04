@@ -32,8 +32,10 @@ void _expectConflictSlicesMatchResult(AlulaMergeProjection projection) {
   var previousEndUtf16 = 0;
   for (final conflict in projection.conflicts) {
     expect(conflict.resultStartUtf16, greaterThanOrEqualTo(previousEndUtf16));
-    expect(conflict.resultEndUtf16, greaterThanOrEqualTo(conflict.resultStartUtf16));
-    expect(conflict.resultEndUtf16, lessThanOrEqualTo(projection.result.length));
+    expect(conflict.resultEndUtf16,
+        greaterThanOrEqualTo(conflict.resultStartUtf16));
+    expect(
+        conflict.resultEndUtf16, lessThanOrEqualTo(projection.result.length));
     final contribution = switch (conflict.resolution) {
       AlulaMergeSide.input1 => conflict.input1Text,
       AlulaMergeSide.input2 => conflict.input2Text,
@@ -84,7 +86,8 @@ void main() {
     _expectConflictSlicesMatchResult(resolved);
   }, skip: _skip);
 
-  test('real FFI result ranges shift with Unicode choices and allow deletion', () {
+  test('real FFI result ranges shift with Unicode choices and allow deletion',
+      () {
     final core = _bootstrap.core!;
     const base = '\u{feff}😀\r\nold\r\nmiddle\rold2\n';
     const input1 = '\u{feff}😀\r\nlonger 🦊\r\nmiddle\rours2\n';
@@ -136,6 +139,28 @@ void main() {
     expect(deletion.conflicts.single.resultStartUtf16, 7);
     expect(deletion.conflicts.single.resultEndUtf16, 7);
     _expectConflictSlicesMatchResult(deletion);
+
+    final insertion = core.merge.project(
+      base: 'before\nafter\n',
+      input1: 'before\nours\nafter\n',
+      input2: 'before\ntheirs\nafter\n',
+    );
+    expect(insertion.conflicts.single.baseStartLine, 1);
+    expect(insertion.conflicts.single.baseEndLineExclusive, 1);
+    expect(insertion.conflicts.single.resultStartUtf16, 7);
+    expect(insertion.conflicts.single.resultEndUtf16, 7);
+    _expectConflictSlicesMatchResult(insertion);
+
+    final acceptedInsertion = core.merge.project(
+      base: 'before\nafter\n',
+      input1: 'before\nours\nafter\n',
+      input2: 'before\ntheirs\nafter\n',
+      resolutions: const {0: AlulaMergeSide.input2},
+    );
+    expect(acceptedInsertion.result, 'before\ntheirs\nafter\n');
+    expect(acceptedInsertion.conflicts.single.resultStartUtf16, 7);
+    expect(acceptedInsertion.conflicts.single.resultEndUtf16, 14);
+    _expectConflictSlicesMatchResult(acceptedInsertion);
   }, skip: _skip);
 
   test('real FFI projection preserves BOM, emoji, CRLF, CR and final newline',

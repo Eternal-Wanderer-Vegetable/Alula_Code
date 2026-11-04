@@ -95,7 +95,9 @@ class AlulaMergeProjection {
     for (final conflict in projection.conflicts) {
       final start = conflict.resultStartUtf16;
       final end = conflict.resultEndUtf16;
-      if (start < previousEndUtf16 || end < start || end > projection.result.length) {
+      if (start < previousEndUtf16 ||
+          end < start ||
+          end > projection.result.length) {
         throw const FormatException('合并冲突 result 范围无效');
       }
       final expectedText = switch (conflict.resolution) {

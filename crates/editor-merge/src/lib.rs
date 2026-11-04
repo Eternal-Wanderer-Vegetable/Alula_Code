@@ -884,6 +884,36 @@ mod tests {
             .expect("conflict exists");
         assert_eq!(replacement_range.1 - replacement_range.0, 8);
         assert_conflict_ranges_match_result(&merge);
+
+        let mut insertion = MergeProjection::new(
+            "before\nafter\n",
+            "before\nours\nafter\n",
+            "before\ntheirs\nafter\n",
+        )
+        .expect("projection succeeds");
+        let unresolved_insertion = insertion
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .next()
+            .expect("insertion conflict exists");
+        assert_eq!(unresolved_insertion, (7, 7));
+        assert_conflict_ranges_match_result(&insertion);
+
+        insertion
+            .accept_conflict(0, InputSide::Input2)
+            .expect("inserted text side exists");
+        let resolved_result = insertion.result_text();
+        let resolved_insertion = insertion
+            .conflicts_with_result_ranges()
+            .map(|(_, start, end)| (start, end))
+            .next()
+            .expect("insertion conflict exists");
+        assert_eq!(resolved_insertion, (7, 14));
+        assert_eq!(
+            utf16_slice(&resolved_result, resolved_insertion.0, resolved_insertion.1),
+            "theirs\n"
+        );
+        assert_conflict_ranges_match_result(&insertion);
     }
 
     #[test]
