@@ -5,6 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
+### P04.108 / EDT-18d：Explorer 单资源两步比较（范围已登记，in-progress）
+
+- 当前只做 Explorer 单资源 `Select for Compare` → `Compare with Selected`。被选为 original 时冻结快照；原资源已打开则取 Rust 权威当前文本，否则经 Rust workspace 解码。第二个 Explorer 文件绑定 Rust 权威 modified `OpenDoc`，复用 P04.107 可编辑预览。多选/Open Editors/标签 compare、apply/revert、三方/Multi Diff 均不属于本切片。DoD：docs/03 P04.108。
+- 固定 Code-OSS 1.145.0 上游 IDs/handler/menu/helper：fileConstants.ts 13–17、fileCommands.ts 187–230、fileActions.contribution.ts 524–535、files.ts 96–130。预实现范围和行链接：`docs/diagnostics/2026-11-04-p04/p04.108-explorer-compare-scope.md`。
+- GitNexus impact：`_WorkbenchPageState` CRITICAL 262/141/20；`TreeNode` CRITICAL 272/141/20；`SnapshotComparePreview` CRITICAL 191/141/20；`_readDiskDocument` HIGH 69/4/3；`_refreshTree` UNKNOWN；`_registerCommands`, `_buildNode`, `_openTreeFile`, `_showEditableSnapshotCompare`, `CommandService` 各 LOW。刷新后的索引约 11,000 nodes/51,000 edges/292 clusters/442 flows；报告 735 个跨语言属性位置未链接、772/972 个进程候选未入选、13 次 budget 截断。范围登记 scans 覆盖 4 个文档/状态文件：较早结果 CRITICAL/1–4 个 section symbols/441–442 个流程匹配；另一次 LOW/5 个 unresolved `Section ?` symbols/0 affected processes；后两次 CRITICAL/1 个 section symbol/421、425 affected processes，流程名指向无关 build/LSP paths。零和高计数都不是可靠的影响证明；没有产品代码改动，保留扫描波动和风险，不声明 clean。跨语言与流程截断限制未解除；不把 UNKNOWN 当安全。
+- 验证：`bash init.sh --fast` 通过 Rust workspace、Clippy、build_core 和 Flutter 907 项；Harness 100/100，`feature_list.json` JSON 与 `git diff --check` 通过。headless Flutter 测试在既有 saved-compare close-race fixture 期间输出一条非失败的 `UnknownDoc`；全部测试仍通过，该日志没有证明进程崩溃或崩溃原因。未启动桌面窗口或讲述人。
+- 代码尚未开始；下一步先 review scope note 与当前 P04.108 行，按此 DoD 实现、测试，再分阶段提交。
+
 ### P04.107 / EDT-18c：活动文件比较的修改侧可编辑（已完成；P04/EDT-18 继续）
 
 - Compare with Clipboard / Compare with Saved 的 modified pane 现在编辑同一 Rust 权威活动文档；original clipboard/disk snapshot 只读，动态 diff、同文档双视图、selection/undo/redo/dirty/savepoint、保存回读与生命周期 race 维持一致。动态 diff 受 UTF-16、2,000,000 units 与现有行/row/work 预算约束，超限时保留 Rust 编辑并显示完整 fallback；没有改 Rust/ABI/保存协议。固定上游 CompareWithClipboardAction 将活动文件作为 modified resource 打开：https://github.com/microsoft/vscode/blob/4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e/src/vs/workbench/contrib/files/browser/fileActions.ts#L820-L868。
