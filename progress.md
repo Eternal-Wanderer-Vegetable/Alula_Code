@@ -5,13 +5,14 @@
 
 ## Current State（当前状态，2026-11-04 更新）
 
-### P04.113 / EDT-19c：冲突在结果文本中的 UTF-16 范围映射（范围已登记；实现未开始）
+### P04.113 / EDT-19c：冲突在结果文本中的 UTF-16 范围映射（已完成；EDT-19 继续）
 
-- 原因：P04.112 已向 Rust/Dart 暴露冲突候选和当前 result，但冲突仅有 base line range；后续结果编辑器要对齐冲突区域并局部替换，需先得到当前 projection 内的 result UTF-16 区间。
-- 范围：Rust `MergeProjection` 返回当前每个冲突在完整 result 中的 0-based/end-exclusive UTF-16 range；同步更新 JSON FFI 与 Dart typed bridge，ABI v38→v39。resolved 冲突 range 对应所选输入，unresolved 对应 base fallback；范围每次按本次 projection 计算。暂不做 UI、result `AlulaDoc`、保存/关闭、Git 冲突发现或 smart-combine。验收和 upstream 对照见 `docs/diagnostics/2026-11-04-p04/p04.113-merge-result-range-ffi-scope.md`。
-- GitNexus 预编辑：`MergeProjection` upstream 为 UNKNOWN（索引未解析调用者；文本已确认 FFI/test 调用），保留 UNKNOWN；`AlulaCore` 当前 HIGH（17 direct/22 symbols/0 processes），历史 refreshed traversals 为 HIGH–CRITICAL（最高 139 flows/20 modules）；`AlulaFfi` summary-only 当前 LOW，但既有 UID-bound traversal 为 CRITICAL（2 direct/135–141 flows/20 modules），保留 CRITICAL；`DocRegistry` CRITICAL（1 direct/79 processes/20 modules）及 `AlulaDoc` HIGH–CRITICAL 保持不改。`workbench_page.dart` 因 >512 KiB 跳过，Workbench impact 保持 UNKNOWN。跨语言、入口排序和 budget-cut 警告见范围报告。
-- 下一步：改代码前重跑 `MergeProjection`、FFI ABI/bridge、`AlulaCore`、`AlulaFfi`、`AlulaDoc` 的 exact GitNexus impact；UNKNOWN/HIGH/CRITICAL 不按低风险处理。实现后加入实际 Rust/Dart 共享库范围对拍和完整 DoD。
-- CI/崩溃线索复核：最新 100 次常规 CI 全绿；平台可用性 63 绿、36 失败、1 次 macOS 排队取消。最新实际 Windows 失败是 MSAA 缺少欢迎文案断言，但 artifact 确认窗口可见且 `WM_CLOSE` 后 exit 0。旧 Windows 50,000 行测试有 3 个失败 job；已查样本 run `41386803238` 因 teardown 删除仍被占用的临时文件失败，另两项待核对。这是待查资源生命周期线索，不能直接归作 runner 噪声。macOS DnD 是最大失败组，样本日志显示 hosted runner 无法前置 app/路由合成输入。此样本没有复现历史崩溃签名；P04.113 之后继续追踪 Windows fixture 的工作区/文档释放与 crash artifact 关联。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- `editor-merge::MergeProjection`、JSON FFI 和 typed Dart bridge 为每项冲突增加当前 projection 的 `resultStartUtf16` / `resultEndUtf16`；Rust/Dart ABI 同步由 v38 升到 v39。未解决项指向 base fallback，已解决项指向选中 input；范围有序、在 result 内，并逐字符验证其切片等于对应贡献。
+- 产品 commit `efa4288` 已推送；边界用例 follow-up `d32f5e6` 已推送。覆盖多冲突、前序冲突解决后的范围移动、同位置空 base 的竞争插入、删除、零长度贡献、emoji/代理对、BOM、CRLF/CR/LF 与末尾换行有无。Rust merge 16、core FFI 4、真实共享库 Flutter FFI 6 项通过。
+- 完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 931）；`cargo fmt --all -- --check`、Flutter analyze、`git diff --check`、feature JSON 检查通过。
+- PR CI [`41805567652`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41805567652) 四 job 全绿。Platform Availability [`41805559426`](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41805559426) 的 Linux x64、Windows x64、macOS ARM64 build/test/launch/package jobs 全通过；包 artifacts：Linux `13309658363`、Windows `13309679326`、macOS `13310188443`。Windows P03.7 交互套件此轮通过、窗口正常关闭；macOS DnD 因 hosted pointer route unavailable 跳过，保留 P15。
+- CI 关联报告刷新为最新 100 条：常规 CI 100/100 成功；平台可用性 65 成功、34 失败、1 次取消。三个旧 Windows P03.7 50,000 行 fixture teardown 失败（`41386803238`、`41372382625`、`41306842578`）均有 `errno 32` 文件仍被占用；最新 Windows P03.7 通过属于未复现，不等于根因已修复。下一步先追踪 workspace/document/测试夹具句柄释放，再开下一功能切片。近期失败没有应用崩溃签名；历史 Windows `0xC000041D` 和 macOS SIGSEGV 仍独立跟踪。见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。
+- GitNexus UNKNOWN/HIGH/CRITICAL 与 all-scope 过度扩展告警保持原级别，未把文本搜索证据解释成 clean scan。暂存文档的 GitNexus all-scope 两次结果不一致：首次 6 files / 8 symbols / 233 processes / CRITICAL（样例为无关 Build/RunBuildCommand/InitState 流程），刷新索引后复扫为 6 / 8 / 0 / LOW。保留较高 CRITICAL 和 coverage 警告，不称 clean。完整范围、实现和 hosted 证据见 `docs/diagnostics/2026-11-04-p04/p04.113-merge-result-range-ffi-scope.md`。PR #2 仍 OPEN/draft；本机未启动 GUI 或讲述人。
 
 ### P04.112 / EDT-19b：三方合并投影 FFI 契约（已完成；EDT-19 继续）
 
