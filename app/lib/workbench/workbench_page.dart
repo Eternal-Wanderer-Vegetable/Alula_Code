@@ -24,7 +24,7 @@ import 'package:flutter/gestures.dart'
         PointerDeviceKind,
         PointerUpEvent;
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderEditable;
+import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
@@ -310,6 +310,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
   static const _findBarInitialWidth = 419.0;
+  static const _maxExplorerCompareUtf16 = 2000000;
+  static const _maxExplorerCompareDiskBytes = 6000016;
+  static const _selectForCompareCommandId = 'selectForCompare';
+  static const _compareFilesCommandId = 'compareFiles';
 
   AlulaCore? _core;
   String _loadError = '';
@@ -410,12 +414,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   String? _workspaceRoot;
   final List<TreeNode> _treeRoots = [];
+  _ExplorerCompareSelection? _explorerCompareSelection;
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
-  final Map<
-      int,
+  final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
@@ -528,6 +532,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'editorActive',
       enablement: 'editorActive',
     );
+    reg(
+      _selectForCompareCommandId,
+      '文件',
+      'Select for Compare',
+      () => _selectExplorerFileForCompare(null),
+      when: 'workspaceOpen',
+      enablement: 'workspaceOpen',
+      runWithArguments: _selectExplorerFileForCompare,
+    );
+    reg(
+      _compareFilesCommandId,
+      '文件',
+      'Compare with Selected',
+      () => _compareSelectedExplorerFile(null),
+      when: 'workspaceOpen',
+      enablement: 'workspaceOpen',
+      runWithArguments: _compareSelectedExplorerFile,
+    );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
         enablement: 'editorActive');
     reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
@@ -546,9 +568,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         shortcut: 'Ctrl+B');
     reg('view.togglePanel', '查看', '切换面板',
         () async => _layout.toggleRegion('panel'),
-        shortcut: defaultTargetPlatform == TargetPlatform.macOS
-            ? 'Cmd+J'
-            : 'Ctrl+J');
+        shortcut:
+            defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
@@ -746,14 +767,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('editor.cursorTop', '编辑器', '移至文件开头',
         () async => _moveDocumentBoundary(toBottom: false),
         enablement: 'editorTextFocus');
-    reg('editor.cursorTopSelect', '编辑器', '选择至文件开头',
-        () async => _moveDocumentBoundary(toBottom: false, extendSelection: true),
+    reg(
+        'editor.cursorTopSelect',
+        '编辑器',
+        '选择至文件开头',
+        () async =>
+            _moveDocumentBoundary(toBottom: false, extendSelection: true),
         enablement: 'editorTextFocus');
     reg('editor.cursorBottom', '编辑器', '移至文件末尾',
         () async => _moveDocumentBoundary(toBottom: true),
         enablement: 'editorTextFocus');
-    reg('editor.cursorBottomSelect', '编辑器', '选择至文件末尾',
-        () async => _moveDocumentBoundary(toBottom: true, extendSelection: true),
+    reg(
+        'editor.cursorBottomSelect',
+        '编辑器',
+        '选择至文件末尾',
+        () async =>
+            _moveDocumentBoundary(toBottom: true, extendSelection: true),
         enablement: 'editorTextFocus');
     reg('editor.cursorPageUp', '编辑器', '向上翻页',
         () async => _moveCursorPage(forward: false),
@@ -957,7 +986,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'editorTextFocus',
     );
     reg('editor.action.joinLines', '编辑器', '合并行', _joinLines,
-        shortcut: defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
+        shortcut:
+            defaultTargetPlatform == TargetPlatform.macOS ? 'Ctrl+J' : null,
         enablement: 'editorTextFocus');
     reg('editor.replace', '编辑器', '替换…', () async => _openReplace(),
         enablement: 'editorActive');
@@ -1131,6 +1161,396 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = message);
   }
 
+  void _showExplorerCompareStatus(String message) {
+    if (mounted) setState(() => _statusDetail = message);
+  }
+
+  List<_ExplorerOpenDocumentIdentity> _captureExplorerOpenDocuments() => [
+        for (final doc in _allDocs)
+          if (doc.path != null)
+            (
+              doc: doc,
+              id: doc.id,
+              path: doc.path!,
+              uri: doc.uri,
+              version: doc.doc.version,
+            ),
+      ];
+
+  bool _isExplorerOpenDocumentCurrent(
+    _ExplorerOpenDocumentIdentity identity,
+  ) =>
+      identity.doc.id == identity.id &&
+      identity.doc.path == identity.path &&
+      identity.doc.uri == identity.uri &&
+      identity.doc.doc.version == identity.version &&
+      _allDocViews.any((view) => view.sameDocumentAs(identity.doc));
+
+  Future<_ExplorerOpenDocumentIdentity?> _findExplorerOpenDocument(
+    String canonicalPath,
+    List<_ExplorerOpenDocumentIdentity> candidates,
+  ) async {
+    for (final candidate in candidates) {
+      if (_canonicalPath(candidate.path) == canonicalPath) return candidate;
+    }
+    for (final candidate in candidates) {
+      try {
+        final resolved =
+            _canonicalPath(await File(candidate.path).resolveSymbolicLinks());
+        if (resolved == canonicalPath) return candidate;
+      } on FileSystemException {
+        // A stale open path is not a match for the current Explorer resource.
+      }
+    }
+    return null;
+  }
+
+  Future<_ResolvedExplorerCompareFile?> _resolveExplorerCompareFile(
+    String workspaceRoot,
+    String path,
+  ) async {
+    try {
+      final file = File(path);
+      final stat = await file.stat();
+      if (stat.type != FileSystemEntityType.file) return null;
+      final canonicalRoot = _canonicalPath(
+        await Directory(workspaceRoot).resolveSymbolicLinks(),
+      );
+      final canonicalPath = _canonicalPath(await file.resolveSymbolicLinks());
+      if (!_isStrictWorkspaceChild(canonicalRoot, canonicalPath)) return null;
+      return _ResolvedExplorerCompareFile(
+        canonicalRoot: canonicalRoot,
+        canonicalPath: canonicalPath,
+        size: stat.size,
+        modified: stat.modified,
+      );
+    } on FileSystemException {
+      return null;
+    }
+  }
+
+  bool _isStrictWorkspaceChild(String root, String path) {
+    final normalizedRoot = _canonicalPath(root).replaceAll(RegExp(r'/+$'), '');
+    final normalizedPath = _canonicalPath(path);
+    if (normalizedPath == normalizedRoot) return false;
+    final prefix = normalizedRoot.isEmpty ? '/' : '$normalizedRoot/';
+    return normalizedPath.startsWith(prefix);
+  }
+
+  bool _sameExplorerFileRevision(
+    _ResolvedExplorerCompareFile first,
+    _ResolvedExplorerCompareFile second,
+  ) =>
+      first.canonicalRoot == second.canonicalRoot &&
+      first.canonicalPath == second.canonicalPath &&
+      first.size == second.size &&
+      first.modified == second.modified;
+
+  Future<void> _selectExplorerFileForCompare(Object? arguments) async {
+    final target = arguments;
+    if (target is! _ExplorerCompareTarget) {
+      _showExplorerCompareStatus('请在资源管理器文件菜单中选择用于比较的文件');
+      return;
+    }
+    final root = _workspaceRoot;
+    final core = _core;
+    if (root == null || core == null || target.workspaceRoot != root) {
+      _showExplorerCompareStatus('选择已取消：工作区已变化');
+      return;
+    }
+    if (target.isDirectory || target.path.isEmpty) {
+      _showExplorerCompareStatus('只能选择工作区中的文件进行比较');
+      return;
+    }
+
+    final candidates = _captureExplorerOpenDocuments();
+    var source = candidates
+        .where((candidate) =>
+            _canonicalPath(candidate.path) == _canonicalPath(target.path))
+        .firstOrNull;
+    if (source != null) {
+      if (source.doc.inputWindow.hasComposition) {
+        _showExplorerCompareStatus('输入法组合输入中，选择已取消');
+        return;
+      }
+      _flushInput(source.doc);
+      source = (
+        doc: source.doc,
+        id: source.doc.id,
+        path: source.doc.path!,
+        uri: source.doc.uri,
+        version: source.doc.doc.version,
+      );
+    }
+
+    final before = await _resolveExplorerCompareFile(root, target.path);
+    if (!mounted || _workspaceRoot != root || !identical(_core, core)) {
+      _showExplorerCompareStatus('选择已取消：工作区已变化');
+      return;
+    }
+    if (before == null) {
+      _showExplorerCompareStatus('选择已取消：文件不存在、不可读或不在当前工作区内');
+      return;
+    }
+
+    source ??= await _findExplorerOpenDocument(
+      before.canonicalPath,
+      candidates,
+    );
+    if (!mounted || _workspaceRoot != root || !identical(_core, core)) {
+      _showExplorerCompareStatus('选择已取消：工作区已变化');
+      return;
+    }
+
+    String originalText;
+    if (source != null) {
+      if (!_isExplorerOpenDocumentCurrent(source)) {
+        _showExplorerCompareStatus('选择已取消：活动文档在读取期间已变化');
+        return;
+      }
+      if (source.doc.inputWindow.hasComposition) {
+        _showExplorerCompareStatus('输入法组合输入中，选择已取消');
+        return;
+      }
+      _flushInput(source.doc);
+      if (source.doc.doc.version != source.version) {
+        _showExplorerCompareStatus('选择已取消：活动文档在读取期间已变化');
+        return;
+      }
+      final probe = source.doc.doc.readRange(0, maxLenUtf16: 1);
+      if (probe.totalUtf16Length > _maxExplorerCompareUtf16) {
+        _showExplorerCompareStatus('选择已取消：原始文件超过 2,000,000 UTF-16 单元上限');
+        return;
+      }
+      if (probe.version != source.version) {
+        _showExplorerCompareStatus('选择已取消：活动文档在读取期间已变化');
+        return;
+      }
+      originalText = _readDocumentRange(source.doc, 0, probe.totalUtf16Length);
+      if (!_isExplorerOpenDocumentCurrent(source)) {
+        _showExplorerCompareStatus('选择已取消：活动文档在读取期间已变化');
+        return;
+      }
+    } else {
+      if (before.size > _maxExplorerCompareDiskBytes) {
+        _showExplorerCompareStatus('选择已取消：原始文件超过 6,000,016 字节上限');
+        return;
+      }
+      late final DecodedTextFile decoded;
+      try {
+        decoded = core.workspace.readFileDocument(target.path);
+      } on AlulaException catch (error) {
+        final message = switch (error.code) {
+          'BinaryFile' => '选择已取消：原始文件是二进制文件',
+          'UnsupportedEncoding' => '选择已取消：原始文件使用不支持的文本编码',
+          _ => '选择已取消：无法读取原始文件（${error.code}）',
+        };
+        _showExplorerCompareStatus(message);
+        return;
+      }
+      if (decoded.content.length > _maxExplorerCompareUtf16) {
+        _showExplorerCompareStatus('选择已取消：原始文件超过 2,000,000 UTF-16 单元上限');
+        return;
+      }
+      originalText = decoded.content;
+      final after = await _resolveExplorerCompareFile(root, target.path);
+      if (!mounted ||
+          _workspaceRoot != root ||
+          !identical(_core, core) ||
+          after == null ||
+          !_sameExplorerFileRevision(before, after)) {
+        _showExplorerCompareStatus('选择已取消：原始文件在读取期间已变化');
+        return;
+      }
+    }
+
+    final finalPath = await _resolveExplorerCompareFile(root, target.path);
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core) ||
+        finalPath == null ||
+        finalPath.canonicalRoot != before.canonicalRoot ||
+        finalPath.canonicalPath != before.canonicalPath ||
+        (source != null && !_isExplorerOpenDocumentCurrent(source))) {
+      _showExplorerCompareStatus('选择已取消：工作区、路径或文档身份已变化');
+      return;
+    }
+
+    final selection = _ExplorerCompareSelection(
+      workspaceRoot: root,
+      canonicalWorkspaceRoot: before.canonicalRoot,
+      requestedPath: target.path,
+      canonicalPath: before.canonicalPath,
+      name: target.name,
+      originalText: originalText,
+    );
+    setState(() {
+      _explorerCompareSelection = selection;
+      _statusDetail = '已选择 ${target.name} 用于比较';
+    });
+  }
+
+  Future<void> _compareSelectedExplorerFile(Object? arguments) async {
+    final target = arguments;
+    if (target is! _ExplorerCompareTarget) {
+      _showExplorerCompareStatus('请在资源管理器文件菜单中选择第二个比较文件');
+      return;
+    }
+    final root = _workspaceRoot;
+    final core = _core;
+    final selection = _explorerCompareSelection;
+    if (root == null ||
+        core == null ||
+        target.workspaceRoot != root ||
+        selection == null ||
+        selection.workspaceRoot != root) {
+      _showExplorerCompareStatus('比较已取消：工作区或原始选择已变化');
+      return;
+    }
+    if (target.isDirectory || target.path.isEmpty) {
+      _showExplorerCompareStatus('只能比较工作区中的文件');
+      return;
+    }
+
+    final originalBefore = await _resolveExplorerCompareFile(
+      root,
+      selection.requestedPath,
+    );
+    final modifiedBefore = await _resolveExplorerCompareFile(root, target.path);
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core) ||
+        !identical(_explorerCompareSelection, selection)) {
+      _showExplorerCompareStatus('比较已取消：工作区或原始选择已变化');
+      return;
+    }
+    if (originalBefore == null ||
+        originalBefore.canonicalRoot != selection.canonicalWorkspaceRoot ||
+        originalBefore.canonicalPath != selection.canonicalPath) {
+      _showExplorerCompareStatus('比较已取消：原始文件已删除、移动或替换');
+      return;
+    }
+    if (modifiedBefore == null ||
+        modifiedBefore.canonicalRoot != selection.canonicalWorkspaceRoot) {
+      _showExplorerCompareStatus('比较已取消：第二个文件不存在、不可读或不在当前工作区内');
+      return;
+    }
+    if (modifiedBefore.canonicalPath == selection.canonicalPath) {
+      _showExplorerCompareStatus('比较已取消：不能将同一文件与自身比较');
+      return;
+    }
+
+    final candidates = _captureExplorerOpenDocuments();
+    var existing = await _findExplorerOpenDocument(
+      modifiedBefore.canonicalPath,
+      candidates,
+    );
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_explorerCompareSelection, selection)) {
+      _showExplorerCompareStatus('比较已取消：工作区或原始选择已变化');
+      return;
+    }
+    if (existing != null) {
+      if (!_isExplorerOpenDocumentCurrent(existing)) {
+        _showExplorerCompareStatus('比较已取消：第二个活动文档在读取期间已变化');
+        return;
+      }
+      if (existing.doc.inputWindow.hasComposition) {
+        _showExplorerCompareStatus('输入法组合输入中，比较已取消');
+        return;
+      }
+      _flushInput(existing.doc);
+      if (existing.doc.doc.version != existing.version) {
+        _showExplorerCompareStatus('比较已取消：第二个活动文档在读取期间已变化');
+        return;
+      }
+    } else if (modifiedBefore.size > _maxExplorerCompareDiskBytes) {
+      _showExplorerCompareStatus('比较已取消：第二个文件超过 6,000,016 字节上限');
+      return;
+    }
+
+    await _openFileByPath(existing?.path ?? target.path);
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core) ||
+        !identical(_explorerCompareSelection, selection)) {
+      _showExplorerCompareStatus('比较已取消：工作区或原始选择已变化');
+      return;
+    }
+    final modified = _active;
+    if (modified == null ||
+        modified.path == null ||
+        _ownerOfView(modified) == null ||
+        (existing != null &&
+            (modified.doc.version != existing.version ||
+                !modified.sameDocumentAs(existing.doc)))) {
+      _showExplorerCompareStatus('比较已取消：第二个文件未能绑定到当前活动文档');
+      return;
+    }
+    if (modified.inputWindow.hasComposition) {
+      _showExplorerCompareStatus('输入法组合输入中，比较已取消');
+      return;
+    }
+    _flushInput(modified);
+    final probe = modified.doc.readRange(0, maxLenUtf16: 1);
+    if (probe.totalUtf16Length > _maxExplorerCompareUtf16) {
+      _showExplorerCompareStatus('比较已取消：第二个文件超过 2,000,000 UTF-16 单元上限');
+      return;
+    }
+    final modifiedText =
+        _readDocumentRange(modified, 0, probe.totalUtf16Length);
+    if (modified.doc.version != probe.version ||
+        (existing != null && modified.doc.version != existing.version)) {
+      _showExplorerCompareStatus('比较已取消：第二个活动文档在读取期间已变化');
+      return;
+    }
+
+    final originalAfter = await _resolveExplorerCompareFile(
+      root,
+      selection.requestedPath,
+    );
+    final modifiedAfter =
+        await _resolveExplorerCompareFile(root, modified.path!);
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core) ||
+        !identical(_explorerCompareSelection, selection) ||
+        !identical(_active, modified) ||
+        modified.doc.version != probe.version ||
+        originalAfter == null ||
+        originalAfter.canonicalRoot != selection.canonicalWorkspaceRoot ||
+        originalAfter.canonicalPath != selection.canonicalPath ||
+        modifiedAfter == null ||
+        modifiedAfter.canonicalRoot != selection.canonicalWorkspaceRoot ||
+        modifiedAfter.canonicalPath != modifiedBefore.canonicalPath ||
+        (existing == null &&
+            !_sameExplorerFileRevision(modifiedBefore, modifiedAfter))) {
+      _showExplorerCompareStatus('比较已取消：工作区、路径或文档身份在读取期间已变化');
+      return;
+    }
+
+    if (selection.originalText.length + modifiedText.length >
+        _maxExplorerCompareUtf16) {
+      _showExplorerCompareStatus('比较已取消：两侧合计超过 2,000,000 UTF-16 单元');
+      return;
+    }
+    final diff = computeDiffViewModel(selection.originalText, modifiedText);
+    if (diff.isApproximate) {
+      _showExplorerCompareStatus('比较已取消：差异超过当前预览预算，未显示部分结果');
+      return;
+    }
+    await _showEditableSnapshotCompare(
+      source: modified,
+      title: '${selection.name} ↔ ${modified.name}',
+      originalLabel: selection.name,
+      modifiedLabel: modified.name,
+      originalText: selection.originalText,
+      initialDiff: diff,
+      keyPrefix: 'explorer-compare',
+    );
+  }
+
   Future<void> _showEditableSnapshotCompare({
     required OpenDoc source,
     required String title,
@@ -1157,20 +1577,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Navigator.of(dialogContext, rootNavigator: true).pop();
             }
           };
-          return SnapshotComparePreview(
-            title: title,
-            originalLabel: originalLabel,
-            modifiedLabel: modifiedLabel,
-            diff: initialDiff,
-            keyPrefix: keyPrefix,
-            originalText: originalText,
-            presentation: binding.presentation,
-            modifiedEditorBuilder: (context, state) => _buildCompareEditor(
-              binding,
-              state,
-              keyPrefix,
+          final saveBindings = <ShortcutActivator, VoidCallback>{
+            for (final entry in _keybindings
+                .resolveBindings(matchesWhen: _commands.context.matches)
+                .entries
+                .where((entry) =>
+                    entry.value.commandId == 'file.save' &&
+                    _commands.isEnabled(entry.value.commandId)))
+              entry.key: () => _runCommand(
+                    entry.value.commandId,
+                    arguments: entry.value.arguments,
+                  ),
+          };
+          return CallbackShortcuts(
+            bindings: saveBindings,
+            child: SnapshotComparePreview(
+              title: title,
+              originalLabel: originalLabel,
+              modifiedLabel: modifiedLabel,
+              diff: initialDiff,
+              keyPrefix: keyPrefix,
+              originalText: originalText,
+              presentation: binding.presentation,
+              modifiedEditorBuilder: (context, state) => _buildCompareEditor(
+                binding,
+                state,
+                keyPrefix,
+              ),
+              onClose: binding.closeRoute!,
             ),
-            onClose: binding.closeRoute!,
           );
         },
       );
@@ -1353,8 +1788,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final documentLength = probe.totalUtf16Length;
       const maxCompareInputUtf16 = 2000000;
       if (documentLength > maxCompareInputUtf16) {
-        _showClipboardCompareStatus(
-            '比较已取消：活动文件超过 2,000,000 UTF-16 单元上限');
+        _showClipboardCompareStatus('比较已取消：活动文件超过 2,000,000 UTF-16 单元上限');
         return;
       }
       final documentText = _readDocumentRange(doc, 0, documentLength);
@@ -1389,8 +1823,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return;
       }
       if (documentText.length + clipboard.text.length > maxCompareInputUtf16) {
-        _showClipboardCompareStatus(
-            '比较已取消：文件与剪贴板合计超过 2,000,000 UTF-16 单元');
+        _showClipboardCompareStatus('比较已取消：文件与剪贴板合计超过 2,000,000 UTF-16 单元');
         return;
       }
 
@@ -1595,7 +2028,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = left ? '已删除至行首' : '已删除至行尾');
     }
   }
-
 
   void _syncCommandContext() {
     final active = _active;
@@ -2485,7 +2917,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             affinity: current.affinity,
             isDirectional: current.isDirectional,
           )
-        : TextSelection.collapsed(offset: destination, affinity: current.affinity);
+        : TextSelection.collapsed(
+            offset: destination, affinity: current.affinity);
     if (next != current) _setDocSelection(doc, next);
   }
 
@@ -5839,7 +6272,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (mounted) setState(() => _statusDetail = '已切换行注释');
   }
 
-
   Future<void> _toggleBlockComment() async {
     final doc = _active;
     if (doc == null) return;
@@ -6095,9 +6527,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           var windowStart = 0;
           var windowEnd = lineLength;
           if (lineLength > maxWordLookupUtf16) {
-            windowStart = (column - maxWordLookupUtf16 ~/ 2)
-                .clamp(0, lineLength)
-                .toInt();
+            windowStart =
+                (column - maxWordLookupUtf16 ~/ 2).clamp(0, lineLength).toInt();
             windowEnd = (column + maxWordLookupUtf16 ~/ 2)
                 .clamp(windowStart, lineLength)
                 .toInt();
@@ -6142,7 +6573,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ? core.transformCamelCaseText(removed)
                   : titleCase
                       ? core.transformTitleCaseText(removed)
-                      : core.transformCaseText(removed, uppercase: uppercase);
+                          : core.transformCaseText(removed,
+                              uppercase: uppercase);
           final editPayloadChars = removed.length + inserted.length;
           if (editPayloadChars > remaining) {
             throw StateError(
@@ -6188,16 +6620,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
 
-    final mappedRanges =
-        <
-          ({
+    final mappedRanges = <({
             int start,
             int end,
             String removed,
             String inserted,
             int mappedStart,
-          })
-        >[];
+    })>[];
     var cumulativeDelta = 0;
     for (final range in orderedRanges) {
       final mappedStart = range.start + cumulativeDelta;
@@ -6216,9 +6645,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final range in mappedRanges) {
         if (offset < range.start) return offset + delta;
         if (offset <= range.end) {
-          final relative = (offset - range.start)
-              .clamp(0, range.inserted.length)
-              .toInt();
+          final relative =
+              (offset - range.start).clamp(0, range.inserted.length).toInt();
           return range.mappedStart + relative;
         }
         delta += range.inserted.length - range.removed.length;
@@ -7189,9 +7617,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         List<TextSelection?>.filled(selections.length, null);
     for (var index = 0; index < edits.length; index++) {
       final edit = edits[index];
-      final caret = (mappedStarts[index] + edit.caretOffset)
-          .clamp(0, newLength)
-          .toInt();
+      final caret =
+          (mappedStarts[index] + edit.caretOffset).clamp(0, newLength).toInt();
       mappedBySelection[edit.selectionIndex] =
           TextSelection.collapsed(offset: caret);
     }
@@ -9450,7 +9877,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     } on AlulaException catch (error) {
       if (mounted) {
-        setState(() => _statusDetail = '外部文本拖放未应用：${error.code} ${error.detail}');
+        setState(
+            () => _statusDetail = '外部文本拖放未应用：${error.code} ${error.detail}');
       }
       return;
     }
@@ -9793,6 +10221,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       setState(() {
+        if (_workspaceRoot != path) _explorerCompareSelection = null;
         _workspaceRoot = path;
         _treeRoots.clear();
         _treeRoots.addAll(entries
@@ -9921,6 +10350,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _openTreeFile(TreeNode node) => _openFileByPath(node.path);
+
+  Future<void> _showExplorerCompareContextMenu(
+    TreeNode node,
+    Offset globalPosition,
+  ) async {
+    final root = _workspaceRoot;
+    if (root == null || node.isDir || node.path.isEmpty) return;
+    final selection = _explorerCompareSelection;
+    final canCompareWithSelected = selection != null &&
+        selection.workspaceRoot == root &&
+        _canonicalPath(selection.requestedPath) != _canonicalPath(node.path);
+    final overlay = Overlay.of(context, rootOverlay: true);
+    final renderObject = overlay.context.findRenderObject();
+    if (renderObject is! RenderBox || !renderObject.hasSize) return;
+    final localPosition = renderObject.globalToLocal(globalPosition);
+    final action = await showMenu<String>(
+      context: context,
+      useRootNavigator: true,
+      position: RelativeRect.fromRect(
+        Rect.fromLTWH(localPosition.dx, localPosition.dy, 1, 1),
+        Offset.zero & renderObject.size,
+      ),
+      items: [
+        const PopupMenuItem<String>(
+          value: _selectForCompareCommandId,
+          child: Text('Select for Compare'),
+        ),
+        if (canCompareWithSelected)
+          const PopupMenuItem<String>(
+            value: _compareFilesCommandId,
+            child: Text('Compare with Selected'),
+          ),
+      ],
+    );
+    if (!mounted || action == null) return;
+    final target = _ExplorerCompareTarget(
+      workspaceRoot: root,
+      path: node.path,
+      name: node.name,
+      isDirectory: node.isDir,
+    );
+    final status = await _commands.execute(action, arguments: target);
+    if (!mounted || status == CommandExecutionStatus.executed) return;
+    _showExplorerCompareStatus('比较命令当前不可用：$action');
+  }
 
   Future<void> _openFileByPath(String path) async {
     final core = _core;
@@ -10678,8 +11152,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    final nextLength = value.text.length - (localEnd - localStart) +
-        expansion.text.length;
+    final nextLength =
+        value.text.length - (localEnd - localStart) + expansion.text.length;
     if (nextLength > window.maxWindowUtf16) {
       if (mounted) setState(() => _statusDetail = '片段展开后超过当前输入窗上限');
       return;
@@ -11192,8 +11666,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (session == null) return null;
     final localOperations = diffToOps(oldValue.text, newValue.text);
     if (localOperations.isEmpty) return const [];
-    final editStart = doc.inputWindow.startUtf16 +
-        localOperations.first.offsetUtf16;
+    final editStart =
+        doc.inputWindow.startUtf16 + localOperations.first.offsetUtf16;
     final deletedUtf16 = localOperations
         .where((operation) => operation.type == OpType.delete)
         .fold<int>(0, (length, operation) => length + operation.lenUtf16!);
@@ -11205,8 +11679,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (!primarySelection.isValid) return null;
     final planned = session.operationsForMirroredEdit(
       primarySelection: TextSelection(
-        baseOffset:
-            doc.inputWindow.startUtf16 + primarySelection.baseOffset,
+        baseOffset: doc.inputWindow.startUtf16 + primarySelection.baseOffset,
         extentOffset:
             doc.inputWindow.startUtf16 + primarySelection.extentOffset,
         affinity: primarySelection.affinity,
@@ -12995,9 +13468,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final history = replace ? _replaceHistory : _findHistory;
     final controller = replace ? _replaceInput : _findQuery;
-    final value = isPrevious
-        ? history.previous(controller.text)
-        : history.next();
+    final value =
+        isPrevious ? history.previous(controller.text) : history.next();
     if (value == null) return KeyEventResult.ignored;
     setState(() {
       controller.value = TextEditingValue(
@@ -13043,7 +13515,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final identity = FindReplaceHistoryStore.workspaceIdentity(workspaceRoot);
     if (_findHistoryWorkspaceIdentity == identity) return;
     final configuration = widget.findReplaceHistoryConfiguration;
-    final saved = configuration.findScope == FindReplaceHistoryScope.workspace ||
+    final saved =
+        configuration.findScope == FindReplaceHistoryScope.workspace ||
             configuration.replaceScope == FindReplaceHistoryScope.workspace
         ? _findHistoryStore.load(workspaceRoot)
         : const FindReplaceHistorySnapshot();
@@ -13412,7 +13885,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           (previousIndex + direction + _matches.length) % _matches.length;
       match = _matches[nextIndex];
     } else {
-      final from = direction > 0 ? selection.extentOffset : selection.baseOffset;
+      final from =
+          direction > 0 ? selection.extentOffset : selection.baseOffset;
       match = direction > 0
           ? findNext(_matches, from)
           : findPrevious(_matches, from);
@@ -13826,7 +14300,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         } else {
           final stopwatch = Stopwatch()..start();
           definition = await active.doc.core.lsp.definition(active.id, offset);
-          if (definition == null && stopwatch.elapsed < const Duration(seconds: 2)) {
+          if (definition == null &&
+              stopwatch.elapsed < const Duration(seconds: 2)) {
             await Future<void>.delayed(const Duration(milliseconds: 200));
             if (!mounted || !identical(_active, active)) return;
             if (active.doc.version != sourceVersion) {
@@ -14207,8 +14682,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final primary = absoluteSelections.first;
     const rewindowMarginUtf16 = 2048;
     final hasDocumentTextBefore = primary.extentOffset > 0;
-    final hasDocumentTextAfter =
-        primary.extentOffset < window.totalUtf16Length;
+    final hasDocumentTextAfter = primary.extentOffset < window.totalUtf16Length;
     final nearWindowEdge = hasDocumentTextBefore &&
             primary.extentOffset <= window.startUtf16 + rewindowMarginUtf16 ||
         hasDocumentTextAfter &&
@@ -15312,8 +15786,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildNode(TreeNode node, int depth) {
     final activePaths = _allDocs.map((d) => d.path).toSet();
+    final compareSelection = _explorerCompareSelection;
+    final isSelectedForCompare = compareSelection != null &&
+        compareSelection.workspaceRoot == _workspaceRoot &&
+        _canonicalPath(compareSelection.requestedPath) ==
+            _canonicalPath(node.path);
     return Column(children: [
       InkWell(
+        key: ValueKey('explorer-node:${node.path}'),
+        onSecondaryTapUp: node.isDir || node.path.isEmpty
+            ? null
+            : (details) => unawaited(
+                _showExplorerCompareContextMenu(node, details.globalPosition)),
         onTap: () {
           if (node.isDir) {
             _toggleDir(node);
@@ -15323,8 +15807,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
         child: Container(
           padding: EdgeInsets.only(left: 8.0 + depth * 14, top: 3, bottom: 3),
-          color:
-              activePaths.contains(node.path) ? const Color(0xFF20252E) : null,
+          color: activePaths.contains(node.path)
+              ? const Color(0xFF20252E)
+              : isSelectedForCompare
+                  ? const Color(0xFF29394F)
+                  : null,
           child: Row(
             children: [
               Icon(
@@ -15924,8 +16411,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     active.crossWindowSelection = null;
                                     active.selectionHistory
                                         .record(active.selectionSet);
-                                    final session =
-                                        _snippetSessionFor(active);
+                                    final session = _snippetSessionFor(active);
                                     if (session == null) {
                                       if (_snippetSession != null &&
                                           _snippetSessionDocId != active.id) {
@@ -15936,11 +16422,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       final inputWindowShift =
                                           active.inputWindow.startUtf16;
                                       final absoluteSelection = TextSelection(
-                                        baseOffset: newValue
-                                                .selection.baseOffset +
+                                        baseOffset:
+                                            newValue.selection.baseOffset +
                                             inputWindowShift,
-                                        extentOffset: newValue
-                                                .selection.extentOffset +
+                                        extentOffset:
+                                            newValue.selection.extentOffset +
                                             inputWindowShift,
                                         affinity: newValue.selection.affinity,
                                         isDirectional:
@@ -16192,9 +16678,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         final minimapInset = constraints.maxWidth >= 720
                             ? editorMinimapWidth + 6
                             : 0.0;
-                        final maxAvailableWidth = (constraints.maxWidth -
-                                24 -
-                                minimapInset)
+                        final maxAvailableWidth =
+                            (constraints.maxWidth - 24 - minimapInset)
                             .clamp(0.0, double.infinity)
                             .toDouble();
                         return Align(
@@ -16424,12 +16909,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     Widget buildReplaceInput(double availableWidth) {
-      final requestedWidth = _findQueryInputWidth > 0
-          ? _findQueryInputWidth
-          : availableWidth;
-      final inputWidth = requestedWidth > availableWidth
-          ? availableWidth
-          : requestedWidth;
+      final requestedWidth =
+          _findQueryInputWidth > 0 ? _findQueryInputWidth : availableWidth;
+      final inputWidth =
+          requestedWidth > availableWidth ? availableWidth : requestedWidth;
       return Align(
         alignment: Alignment.centerLeft,
         child: SizedBox(
@@ -17279,6 +17762,60 @@ class EditorGroup {
 }
 
 /// 文件树节点。
+typedef _ExplorerOpenDocumentIdentity = ({
+  OpenDoc doc,
+  int id,
+  String path,
+  String? uri,
+  int version,
+});
+
+class _ExplorerCompareTarget {
+  const _ExplorerCompareTarget({
+    required this.workspaceRoot,
+    required this.path,
+    required this.name,
+    required this.isDirectory,
+  });
+
+  final String workspaceRoot;
+  final String path;
+  final String name;
+  final bool isDirectory;
+}
+
+class _ExplorerCompareSelection {
+  const _ExplorerCompareSelection({
+    required this.workspaceRoot,
+    required this.canonicalWorkspaceRoot,
+    required this.requestedPath,
+    required this.canonicalPath,
+    required this.name,
+    required this.originalText,
+  });
+
+  final String workspaceRoot;
+  final String canonicalWorkspaceRoot;
+  final String requestedPath;
+  final String canonicalPath;
+  final String name;
+  final String originalText;
+}
+
+class _ResolvedExplorerCompareFile {
+  const _ResolvedExplorerCompareFile({
+    required this.canonicalRoot,
+    required this.canonicalPath,
+    required this.size,
+    required this.modified,
+  });
+
+  final String canonicalRoot;
+  final String canonicalPath;
+  final int size;
+  final DateTime modified;
+}
+
 class TreeNode {
   TreeNode({required this.name, required this.path, required this.isDir});
 
