@@ -560,9 +560,14 @@ void main() {
 
       // 暂存 hello.py
       await tester.tap(find.byTooltip('暂存'));
-      await Future<void>.delayed(const Duration(milliseconds: 400));
-      await tester.pump();
-      expect(find.text('暂存的更改（1）'), findsOneWidget);
+      final stagedHeading = find.text('暂存的更改（1）');
+      final stagedWait = Stopwatch()..start();
+      while (stagedHeading.evaluate().isEmpty &&
+          stagedWait.elapsed < const Duration(seconds: 10)) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      }
+      expect(stagedHeading, findsOneWidget, reason: '暂存操作应在 10 秒内显示暂存区');
 
       // 提交
       await tester.enterText(

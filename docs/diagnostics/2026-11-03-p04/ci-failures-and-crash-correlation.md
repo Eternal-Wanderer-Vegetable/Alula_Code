@@ -13,6 +13,14 @@ The macOS startup diagnostics artifact [13363567297](https://github.com/Eternal-
 
 The latest platform sample still contains 27 historical failures. Existing evidence classifies observed failures into runner allocation/cancellation before app steps, hosted input-routing skips or drops, probe/parser errors, and product-facing assertions; the specific run log and process/crash artifacts are needed to classify each red. The current-SHA pass does not prove those older failures are fixed. CI can expose a real defect—the exact historical Windows artifact replay captured 0xC000041D—but a queue cancellation or failed probe does not itself establish an app crash, and there is no evidence that the recurring runner/probe reds caused the user's local crash. Better CI signal quality improves crash detection and diagnosis; it does not repair a runtime root cause on its own.
 
+### P04.119 repeated macOS Git stage widget assertion (2026-11-05)
+
+Platform Availability run [41922478902](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41922478902) attempt 1 and attempt 2 both passed Linux x64 and Windows x64, then failed the macOS `Flutter analyze and tests` step. Both attempts reported 965 tests passed and the same failure at `app/test/widget_test.dart:565`: the staged-changes heading was absent after the test's fixed 400 ms wait following a Git stage tap. The job exited 1 from `Flutter TestFailure`. No application nonzero exit code, OS crash event, or crash artifact was reported.
+
+This is a repeated CI test-gate failure, but not a repeated app crash. The test now waits for the staged heading with a 10-second bound and pumps frames while the Git subprocess/refresh completes; no production Git or Workbench code changes. The focused test and full local `bash init.sh` (Flutter 966) pass; hosted validation for the updated SHA is pending. If the state still fails to appear within the bound on a hosted runner, inspect the new logs as a possible product behavior defect before changing production code.
+
+The repeated assertion improves the case for stabilizing the CI signal. It does not connect that widget failure to the historical Windows `0xC000041D` or macOS startup SIGSEGV, and this test-only change is not a crash mitigation.
+
 ### P04.118 runs and crash hypothesis
 
 P04.118 product/test commit [6cfb964](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/commit/6cfb9645a6d1bd5015cdaac1f8f47c74ae4f52f9) adds bulk Input 1/Input 2 conflict acceptance through the existing Rust TextOp and Workbench history/save path. It does not change startup, window teardown, FFI, or platform runners. The runs above show no crash signature for this SHA; they are regression/non-reproduction evidence for the new slice, not evidence of a crash fix.

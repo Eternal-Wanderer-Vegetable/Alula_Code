@@ -5,12 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### 当前唯一产品切片：P04.119 / EDT-19i（Rust 组合候选 planner 范围已登记；代码未开始）
+### 当前唯一产品切片：P04.119 / EDT-19i（planner 已实现；修复重复 macOS Git widget 断言后等待新 SHA CI）
 
 - P04.118 / EDT-19h 已完成并推送产品/test commit 6cfb964 与证据 commit 662b002；当前 SHA 662b002 的 PR CI run 41916596535 四 job 全绿。P04.118 证据见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md。
-- 本轮依据固定 Code-OSS AcceptAllCombination / ModifiedBaseRange.smartCombineInputs 登记 P04.119 与 feat-044。仅实现 editor-merge crate 内的纯 Rust、有界组合候选函数及 crate 测试；不动现有 apply_changes、FFI/ABI、Dart/session 或 Workbench action。权威 DoD 在 docs/03 P04.119。
-- GitNexus 索引刷新于 docs commit 662b002，当前 fresh：10,495 nodes / 28,419 edges / 310 clusters / 405 flows。风险保留：apply_changes 为 CRITICAL（174 symbols/144 direct/35 processes/6 modules）；MergeConflict 为 CRITICAL（217/1 direct/137 processes/20 modules）；alula_merge_project_json 为 CRITICAL（223/193 direct/35 processes/6 modules）；MergeProjection upstream impact 为 UNKNOWN/0 edges，文本调用点在 ffi.rs:555 与 crate tests；planAcceptAll 为 UNKNOWN lower-bound，两个 receiver callsites 在索引时被丢弃。概念 query 返回了无关流程，当前图谱不用于证明这些路径不存在。P04.119 避免修改这些共享符号，仅新增纯 helper；若实现中需要扩大范围，先重做 impact 与范围评估。详见 p04.119 scope report。
-- 按 workflow 分别统计最近 100 次：常规 CI 100/100 成功；Platform Availability 73 成功/27 失败。P04.118 当前 SHA 两个 workflow 全绿；平台失败仍按 runner、input/probe、断言和真实 crash 分开判断。历史 Windows 0xC000041D 与 macOS SIGSEGV 没有新复现，根因仍未解决。
+- P04.119 产品提交 70fdf1c 已推送：新增 editor-merge bounded smart-combination planner 与 9 项定向测试；不动现有 apply_changes、FFI/ABI、Dart/session 或 Workbench action。cargo test -p editor-merge 25/25、cargo fmt、package clippy、bash init.sh（Rust/Clippy/build_core/Flutter 966）及 flutter analyze 全过。实现证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-implementation.md；权威 DoD 在 docs/03 P04.119。
+- P04.119 源码变更后索引刷新为 10,681 nodes / 29,297 edges / 313 clusters / 409 flows。保留覆盖缺口：5 个 >512 KiB 文件、763 跨语言属性点、842 丢弃 entrypoint candidates、387 skipped callees、13 budget cuts。combine_conflict 同名 impact 有两个 CRITICAL 候选，context/detect-changes 混入无关流程；调用点文本核对为 crate 导出与测试。apply_changes full impact 223/193/35/7 CRITICAL，但 summary-only 重跑 101/71/35/6；变动未触及该共享 helper。详见 P04.119 implementation report；不得将图谱视作 clean。
+- 按 workflow 分别统计最近 100 次：常规 CI 100/100 成功；Platform Availability 73 成功/27 失败。P04.119 commit 70fdf1c 的 PR CI 41922489507 四 job 全绿；Platform Availability 41922478902 的 attempt 1/2 均 Linux/Windows 通过、macOS 在同一个 Git 面板暂存标题断言失败（965 通过/1 失败）。该断言固定等待 400 ms；现改为最长 10 秒状态轮询，不改生产 Git 行为。定向 widget 测试、完整 bash init.sh（Flutter 966）、cargo fmt 与 flutter analyze 本地通过；新 SHA hosted checks 待跑。两次失败均是 Flutter TestFailure/exit 1，无 app crash signature；Windows 0xC000041D 与 macOS SIGSEGV 根因仍未解决。
 - Linux/Windows 首批可用性通过；本轮 Mac 包仅 Intel x64，Apple Silicon 与 macOS native DnD 仍留 P15。保持 PR #2 OPEN/draft；先完成架构复刻，500 MiB 优化后置。
 
 ### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
@@ -35,10 +35,11 @@
 - CI/crash 复核：普通 CI `41868314580` 四 job 通过；平台运行 `41868298885` 三平台全绿，macos-26 标签解决了此前三次 runner 未分配取消。本次没有新 crash signature，但不能据此宣称历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 已根治；常见 DnD/剪贴板/无障碍红灯需按 probe 与应用故障分开。`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 记录了分类依据。
 - GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；本次最终证据 diff 的 all-scope detection 为 6 files/4 section symbols/0 affected processes/LOW。此前证据扫描曾把无关 Build/ApplyWorkspaceEdit 路径错误映射为 CRITICAL，也曾返回损坏 section 名；保留最高风险和映射不一致，不能把最新 LOW 解读为覆盖缺口消失。完整记录见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。500 MiB 优化仍后置。
 
-### P04.119 / EDT-19i：Rust Merge Editor 冲突智能组合候选规划（范围已登记，代码未开始）
+### P04.119 / EDT-19i：Rust Merge Editor 冲突智能组合候选规划（产品与本地 DoD 完成；待新 SHA hosted CI）
 
 - 固定版 Code-OSS 的 Accept All Combination 遍历 modified base ranges，只将满足 eligibility 且 canBeCombined 的范围切到 both/smartCombination；候选通过 base-coordinate subrange edits 排序构造，遇到重叠或边界不符返回不可组合。实现源见 commands.ts 与 modifiedBaseRange.ts，链接和精确验收在 docs/03 P04.119。
-- 本切片限定为 editor-merge 内新建纯 Rust candidate planner 与定向 crate tests。计划保持现有 projection 只读，结果为完整候选或 None；有界资源超限显式错误、不返回半成品。FFI/ABI、Dart resolution state、Workbench F1 action/toolbar 下一阶段另行登记。
+- planner 以 Unicode scalar 边界运行有界 Myers diff，非重叠改动按 base offset 组合，相同位置按 Input 1/Input 2 排序；重叠、内部顺序或边界重建失败时 fail closed。byte/trace/work 超限返回 CombinationError。MergeProjection 保持只读；FFI/ABI、Dart resolution state、Workbench F1 action/toolbar 下一阶段另行登记。
+- Platform Availability 41922478902 两次 macOS attempt 在 `widget_test.dart:565` 同一固定 400 ms Git stage 断言失败（各 965 passed / 1 failed），Linux/Windows 两次均通过；失败为 Flutter TestFailure/exit 1，无 crash signature。按登记的 scope amendment，仅将该测试改为最长 10 秒的状态轮询；定向测试通过，`bash init.sh` 全绿（Flutter 966），`cargo fmt --check` 与 `flutter analyze --no-pub` 通过。新 SHA 的 PR CI 与 Platform Availability 尚待运行。Graph refreshes 10,549/30,211 then 10,549/30,254 (313/409)；all-scope amendment scan 8 files/6 symbols/326 flows/CRITICAL，映射到无关测试变量、文档与 build/LSP flows；later evidence scan 19 doc sections/0 processes/LOW 且遗漏 widget test symbol。保留更高风险与覆盖缺口，不称 clean。该改动改善 CI 对异步 Git 更新的判定稳定性，不构成历史 Windows/macOS 崩溃修复。
 - 代码前 GitNexus 风险：apply_changes CRITICAL 174/144/35/6，MergeConflict CRITICAL 217/1/137/20，merge FFI CRITICAL 223/193/35/6；MergeProjection UNKNOWN，planAcceptAll UNKNOWN lower-bound。保留全部 HIGH/CRITICAL/UNKNOWN，不把共享 helper 的 CRITICAL 解释为无关或豁免；本切片只增新 helper，不改 apply_changes / FFI。query 的流程映射不相关。详细证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md。
 
 ### P04.118 / EDT-19h：Merge Editor 整组按侧采纳（完成；Apple Silicon/native 验收留 P15）
@@ -1753,8 +1754,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. P04.119 / EDT-19i 是唯一活动切片；刷新 GitNexus 到 scope commit 后，对新 planner 的宿主调用边界和合并 crate 依赖做 impact，保留 apply_changes CRITICAL、MergeConflict CRITICAL、MergeProjection UNKNOWN。
-2. 仅实现 editor-merge 内独立的 bounded Rust combination candidate helper 与定向测试；不可改 apply_changes/FFI/Dart/Workbench。完成 crate/full N.2 门禁、PR CI 和证据登记后，再注册下一片 FFI/action。
+1. P04.119 / EDT-19i 是唯一活动切片；planner 和 CI test-gate amendment 已实现。等待新 SHA PR CI 与 Platform Availability，记录最终结论后再关闭切片。
+2. 新增的 Git panel 状态等待仅在现有 widget test 中，最大 10 秒；若 hosted 仍失败，先读取 runner/test 日志，不扩大到生产 Git/Workbench 代码，除非另行登记并重做 impact。完成该切片后再注册下一片 FFI/action。
 3. 保留 P15 的 Windows 11/Narrator/DPI/主题、Linux native DRM、macOS Apple Silicon/native 输入门；Release 前跟进 macOS Bundle Identifier 警告与可发布架构包。P00–P13 完成前不恢复 500 MiB 优化目标。
 
 

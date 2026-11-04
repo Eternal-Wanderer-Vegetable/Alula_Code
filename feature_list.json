@@ -585,12 +585,12 @@
     {
       "id": "feat-044",
       "name": "P04.119 / EDT-19i Rust Merge Editor smart-combination candidate planner",
-      "description": "Add a bounded, GUI-free Rust helper that computes a smart combination candidate for two conflict inputs relative to one base, matching the pinned Code-OSS non-overlap and ordering semantics. This slice does not expose FFI/ABI or add the Workbench command. Scope and DoD in docs/03 P04.119.",
+      "description": "Add a bounded, GUI-free Rust helper that computes a smart combination candidate for two conflict inputs relative to one base, matching the pinned Code-OSS non-overlap and ordering semantics. This slice does not expose FFI/ABI or add the Workbench command. Its acceptance scope also includes a bounded test-only wait for the existing Git stage widget assertion after two repeated macOS CI failures; no Git production behavior changes. Scope and DoD in docs/03 P04.119.",
       "dependencies": [
         "feat-043"
       ],
       "status": "in-progress",
-      "evidence": "Scope registered in docs/03 P04.119 and docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-scope.md. No product edits yet. Before editing, refresh GitNexus at the scope commit and review the CRITICAL shared-helper impacts; implementation is limited to a new pure Rust helper and focused crate tests.",
+      "evidence": "Product commit 70fdf1c adds the bounded pure-Rust combination candidate planner. Focused editor-merge tests 25/25; cargo fmt, package clippy, bash init.sh (Rust workspace/Clippy/build_core/Flutter 966), and flutter analyze pass. PR CI 41922489507 passed all four jobs. Platform Availability 41922478902 Linux/Windows passed; both macOS attempts failed identically at widget_test.dart:565 after a fixed 400 ms wait (965 passed, 1 Git stage assertion failed). A test-only bounded state wait now passes the targeted Linux widget test and full local init.sh (Flutter 966); cargo fmt and flutter analyze pass. New-SHA hosted CI pending. No crash signature was reported. GitNexus remains CRITICAL/overconnected; see docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-implementation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
