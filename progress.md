@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
+### 当前唯一产品切片：P04.118 / EDT-19h（范围已登记，尚未修改产品代码）
+
+- P04.117 / EDT-19g 已完成本地 DoD 与当前 SHA 的 hosted 取证。当前下一项只做 Input 1/Input 2 的整组按侧采纳，使用已有 `MergeResultSession.planAcceptAll` 和 Rust/Workbench 事务路径；不并行展开 smart combination 或 Complete Merge。权威 DoD 在 `docs/03` P04.118。
+- CI/crash 更新：普通 PR CI 最近 100 条 100/100 成功；Platform Availability 最近 100 条 72 成功/28 失败。`macos-26` 与 `macos-15` ARM64 runner 本轮均在启动前取消；改用 `macos-15-intel` 后，run `41900505688` 的 Linux、Windows、macOS Intel x64 build/test/launch/package 全绿，PR CI `41900518582` 四 job 全绿。Mac artifact `13360141416`，启动诊断 `13359986652` 无 crash report；DnD `13359617064` 因宿主指针路由不可用而 skip。此包的 Rust dylib 为 x86_64，Apple Silicon 原生验证仍待 P15。
+- CI 连续红灯不能一概归因崩溃：runner 分配取消、输入路由/断言失败无应用 crash 证据；历史 Windows `0xC000041D` 与 macOS startup SIGSEGV 是独立真实崩溃记录，当前绿灯只代表不复现，不等于永久修复。完整分类见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。macOS 构建 smoke 仍有 bundle identifier 格式警告，Release 前需检查。
+
 ### P03.7-LC：Windows workspace watcher teardown 跟进（完成；原始句柄所有者未直接确认）
 
 - dispose 现在在 `_watcherTransition` 队列前调用当前 watcher 的 `stop()`，让 native cancellation 立即开始；transition 仍等待同一 Future，workspace 切换 generation 语义不变。新增 watcher 单测：等待 stop 完成后可删除被监视的 workspace 目录。
@@ -27,13 +33,11 @@
 - CI/crash 复核：普通 CI `41868314580` 四 job 通过；平台运行 `41868298885` 三平台全绿，macos-26 标签解决了此前三次 runner 未分配取消。本次没有新 crash signature，但不能据此宣称历史 Windows `0xC000041D` 或 macOS startup SIGSEGV 已根治；常见 DnD/剪贴板/无障碍红灯需按 probe 与应用故障分开。`docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md` 记录了分类依据。
 - GitNexus product all-scope 为 1 file/4 symbols/237 flow matches/CRITICAL；本次最终证据 diff 的 all-scope detection 为 6 files/4 section symbols/0 affected processes/LOW。此前证据扫描曾把无关 Build/ApplyWorkspaceEdit 路径错误映射为 CRITICAL，也曾返回损坏 section 名；保留最高风险和映射不一致，不能把最新 LOW 解读为覆盖缺口消失。完整记录见 `docs/diagnostics/2026-11-04-p04/p04.116-merge-editor-open-route-scope.md`。500 MiB 优化仍后置。
 
-### P04.117 / EDT-19g：Merge Editor 冲突导航与按侧采纳（本地实现和 DoD 完成；hosted 验证中）
+### P04.117 / EDT-19g：Merge Editor 冲突导航与按侧采纳（完成；Apple Silicon/native 验收留 P15）
 
-- 产品/test commit `2e29786` 已推送至授权分支。工具栏增加冲突状态、前后未解决导航和 Input 1/Input 2；四个固定 F1 action 只在 Merge Editor 会话中可见。导航按 Rust UTF-16 结果范围循环并跳过已解决项；侧采纳复用 `planResolveConflict` / `_applyMergeResultPlan`，并保持保存、撤销/重做和双视图路径。手工文本编辑通过 `_onInputDelta` 一次性标记范围过期，在刷新 command context 前禁用旧范围操作。
-- 定向 Merge Editor surface/session/Workbench 套件 25/25。覆盖 F1 上下文、保存回读/undo/redo、多冲突前后环绕、跳过已解决冲突、接受前序冲突后的范围位移、零宽插入、BOM/emoji/CRLF 输入解码及 stale edit。全量 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` EXIT=0（Rust workspace、Clippy、build_core、Flutter 962）；`cargo fmt --check`、Flutter analyze 0 issues、`git diff --check` 通过。Harness validator 为 100/100。没有启动本机 GUI/Narrator。
-- GitNexus 使用 `--max-file-size 700` 纳入此前遗漏的 677 KB Workbench 文件；精确 `_onInputDelta` CRITICAL（122 impacted、3 direct callers、6 process anchors），`_syncCommandContext` CRITICAL（155、59 direct callers），`_applyMergeResultPlan`/`MergeEditorSurface`/`MergeResultSession` 分别 LOW。all-scope 两次为 6 files/18 symbols/0 processes/LOW，与精确 CRITICAL 结果不一致。索引仍警告 435 cross-language property sites、1,093 dropped entrypoint candidates、631 skipped callees、16 budget-cut walks，并跳过两份 >700 KiB 文件；保留更高 CRITICAL 与 coverage 限制，不称 graph clean。完整数据见 P04.117 scope 报告。
-- Evidence-only `detect-changes --scope all` 在连续扫描间波动：LOW（6 files/4 sections/0 processes）、HIGH（6/1/11），继而两次 fresh scan 为 CRITICAL（6 files/4 documentation section symbols/91 与 83 mapped flows）。映射样例为 `_applyIndentation → _takeJson`、`RunBuildCommand → SourceSpanException` 和 Rustup/build flows；工作 diff 仅含文档，这些流程来自诊断标题映射，属未解决的图谱过度扩展。保留最高 CRITICAL、产品方法 CRITICAL 与 coverage 告警；不称 graph clean。
-- 产品 PR CI `41883761121` 与两次证据提交 CI `41888007983`、`41889652457` 均四个 job 全通过。Platform Availability `41883893086` 的 Linux 与 Windows jobs 通过；macOS 四次均在 15 分钟后因未分配 runner（`runner_id=0`、0 steps）取消，停止继续机械重跑；PR #2 仍 OPEN/draft。用户提出 CI 反复失败可能与崩溃有关，作为假设按失败步骤、退出码和 crash artifact 分类：当前提交的 CI 无失败，最新 100 条普通 CI 为 100/100；Platform Availability 最近 100 条为 71 通过、29 失败。历史红灯主要来自 runner 分配取消与 hosted interaction/input/probe 断言，另有独立历史 macOS SIGSEGV 样本。Linux/Windows Release artifacts 为 `13351125775` / `13351001549`，DnD diagnostics 为 `13350832124` / `13351026470`；无 macOS artifact。现有证据没有显示 runner/fixture 红灯导致本机崩溃；本切片也不宣称修复崩溃。详见 `docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md`。500 MiB 优化仍后置，P15 设备验收保留。
+- 产品/test commit `2e29786`、本地完整 DoD 和当前分支 hosted 证据齐全。完整实现及 GitNexus 高风险/coverage 限制见 `docs/diagnostics/2026-11-05-p04/p04.117-merge-conflict-navigation-scope.md`。
+- 最新 PR CI `41900518582` 四 job 通过；Platform Availability `41900505688` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。包 artifacts `13357831986`、`13358516412`、`13360141416`。Mac DnD 因 pointer route unavailable skip；启动日志无 crash report。该 Mac 包由 Intel runner 构建，Rust dylib 只有 x86_64 slice，不能作为 Apple Silicon native 证据。
+- 为解决连续 ARM runner 0-step 取消，`macos-26`→`macos-15` ARM fallback 仍在 run `41898034610` 中被取消；`macos-15-intel` 成功分配并产出包。Windows 11、macOS 原生设备、Linux native DRM 等门仍待 P15；未启动本机 GUI/Narrator。
 
 ### P04.114 / EDT-19d：合并结果会话与 Rust 工作副本生命周期（完成；EDT-19 / feat-026 继续）
 
@@ -1734,9 +1738,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 ## Next（下一步，按 docs/03）
 
-1. 从 `docs/03` 与 `docs/11` 选择下一个未完成 EDT 子项；先更新权威里程碑拆解并做 GitNexus impact，再实现一项。
-2. 保持 P04 / feat-026 为唯一活动 feature；每片按 docs/03 验收、留证据并分阶段提交。
-3. EV-P03 Linux DRM、Windows 11 UIA/读屏/DPI/主题与 macOS 原生行为继续留在 P15 验收门；P00–P13 完成前不做 500 MiB 数值优化，全部计划完成后继续补齐 CI Release 与 v0.1.0 测试 PR。
+1. P04.118 / EDT-19h 是唯一活动产品切片；先刷新 GitNexus 索引，对 `planAcceptAll`、`_applyMergeResultPlan` 和 toolbar/action 注册点做 query/context/impact，再实现。
+2. 覆盖整组 Input 1/Input 2 采纳的 disabled/stale、单次 undo、split 同步和保存回读，跑 N.2 门禁，更新证据后阶段提交。
+3. 保留 P15 的 Windows 11/Narrator/DPI/主题、Linux native DRM、macOS ARM64/native 输入门；Release 前跟进 macOS Bundle Identifier 警告与可发布架构包。P00–P13 完成前不恢复 500 MiB 优化目标。
 
 
 ## 今日会话（2026-10-29 第六十五轮）：完整复跑与同服务空闲对照
