@@ -645,12 +645,12 @@
     {
       "id": "feat-049",
       "name": "P04.124 / EDT-20b Bulk Edit Multi Diff projection model",
-      "description": "Add a bounded pure Dart projection from selected text-only WorkspaceEdit plus immutable versioned snapshots to ordered before/after text and per-resource DiffViewModelResult values. Whole projection fails closed on stale/invalid inputs or any aggregate diff budget. No UI, Workbench route, apply/rollback, or ABI changes. DoD in docs/03 P04.124.",
+      "description": "Add a bounded pure Dart projection from selected text-only WorkspaceEdit plus immutable versioned snapshots to ordered before/after text and per-resource DiffViewModelResult values. Whole projection fails closed on stale/invalid inputs or any aggregate text, line, row, diff work, or trace-cell budget. Test/caller limits may lower but never raise the fixed ceilings. No UI, Workbench route, apply/rollback, or ABI changes. DoD in docs/03 P04.124.",
       "dependencies": [
         "feat-048"
       ],
       "status": "in-progress",
-      "evidence": "Scope and pre-edit GitNexus review registered in docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-scope.md; implementation pending.",
+      "evidence": "Scope and pre-edit GitNexus review registered in docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-scope.md; scope refinement adds aggregate line/trace-cell ceilings before implementation. Implementation pending.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
