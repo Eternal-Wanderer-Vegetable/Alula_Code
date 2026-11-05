@@ -5,8 +5,9 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.120 / EDT-19j 与 P04.121 / EDT-19k 已完成；P04 / feat-026 仍进行中
+### P04.122 / EDT-19l 进行中；P04 / feat-026 仍进行中
 
+- P04.122 / EDT-19l 已登记，当前唯一进行中的 P04 子项：实现 `mergeEditor.acceptMerge`，并确保 Ctrl/Cmd+Enter 在 Merge Editor 上下文调用完成合并、普通编辑器仍插入行；未解冲突须确认，最终 Rust 结果经原子保存并验证成功后才关闭。固定上游契约、KeybindingSet 上下文冲突、GitNexus UNKNOWN/覆盖缺口与基线见 `docs/diagnostics/2026-11-05-p04/p04.122-merge-editor-accept-merge-scope.md`。实现前 `bash init.sh --fast` 通过，Flutter 979 项全绿；P04 及 P05 状态不变。
 - P04.121 / EDT-19k 完成：产品 commit `6c2d239` 已推送。F1 `mergeEditor.acceptAllCombination` 使用 ABI v40 原子规划/应用所有可组合冲突；组合状态贯穿 UTF-16 projection、单步 Rust undo、双视图、保存/撤销/重做；历史组合候选另受 8 Mi UTF-16 快照预算保护。定向 38/38、完整 `bash init.sh`（Flutter 979）、cargo fmt、Flutter analyze 0 issues、diff check 全通过。PR CI `41954415397` 四 job 全绿。Platform Availability `41954409959` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全绿；Linux/Windows DnD 通过，macOS DnD 因 hosted pointer route unavailable 明确 skip，P15 原生/Apple Silicon 验收仍待。macOS Intel 包 `13383995573` SHA-256 `72a70538852a9f3f5fb5e0e4747b6d0181e6fc2f193fe47c062d87d02d5a4fa0`，zip 完整。实现与所有 hosted evidence：`docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-implementation.md`。
 - 内存压力样本前后峰值 674.9/812.5 MiB，进程尾部 0 且只采到 Flutter wrapper；`docs/baselines/2026-10-26` 无同工作负载样本，因此不作产品内存下降结论。P04 / feat-026 与 EDT-19 继续进行中，P05 不启动。PR #2 保持 OPEN/draft。历史 Windows `0xC000041D` 与 macOS startup SIGSEGV 未被这些通过的 CI/package 运行结案。
 

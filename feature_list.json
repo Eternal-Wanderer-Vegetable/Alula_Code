@@ -616,6 +616,19 @@
       "evidence": "P04.121 / EDT-19k product commit 6c2d2399747b5db1d6cd177e30c6efce21a96884. Local DoD: focused merge suites 38/38; full init.sh passed (Rust workspace, Clippy, build_core, Flutter 979); cargo fmt, Flutter analyze (0 issues), and diff check passed. PR CI 41954415397 all four jobs passed. Platform Availability 41954409959 passed Linux x64 (3m53s), Windows x64 (8m48s), and macOS Intel x64 (18m53s) build/test/launch/package. Artifacts: Linux 13382109043, Windows 13383255110, macOS X64 13383995573; native DnD diagnostics Linux 13382925808 / Windows 13381939208 / macOS 13383017919; macOS startup 13383586389. Linux/Windows DnD passed; macOS DnD explicitly skipped because hosted pointer routing is unavailable. macOS package SHA-256 72a70538852a9f3f5fb5e0e4747b6d0181e6fc2f193fe47c062d87d02d5a4fa0; zip integrity passed. P04/feat-026/EDT-19/P15 remain open; P05 must not start yet. Implementation report: docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-implementation.md. Earlier pre-edit GitNexus UNKNOWN and coverage warnings remain; repeated post-edit all-scope results remained CRITICAL and varied 11 files / 30-34 symbols / 18-19 flows. Do not call the graph clean.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
+    },
+    {
+      "id": "feat-047",
+      "name": "P04.122 / EDT-19l Merge Editor Complete Merge action",
+      "description": "Register mergeEditor.acceptMerge with context-scoped Ctrl/Cmd+Enter; confirm unresolved conflicts, save the authoritative result through the existing atomic/disk-conflict path, and close only after a verified save. Preserve ordinary editor line insertion and keybindings.json overrides. DoD in docs/03 P04.122.",
+      "dependencies": [
+        "feat-046",
+        "feat-039"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered at base b04f364. Pre-edit GitNexus UNKNOWN and skipped Workbench-file coverage, source contract, local baseline, and DoD are recorded in docs/diagnostics/2026-11-05-p04/p04.122-merge-editor-accept-merge-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",
