@@ -186,7 +186,10 @@ void main() {
       () => BulkEditPreviewSession(
         WorkspaceEdit([
           ...atDocumentLimit,
-          WorkspaceDocumentEdit(uri: 'file:///overflow.txt', edits: const []),
+          const WorkspaceDocumentEdit(
+            uri: 'file:///overflow.txt',
+            edits: [],
+          ),
         ]),
       ),
       throwsA(isA<BulkEditPreviewException>()),
