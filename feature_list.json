@@ -750,6 +750,18 @@
       "evidence": "产品 commit 37d8d1b；本地 KeybindingSet 28/28、File 菜单 1/1、新建回归 1/1（快捷键、File 菜单、Command Palette、独立文档、另存读回、session journal 恢复）；完整 init.sh Flutter 1,041/1,041、Rust workspace、Clippy、build_core；cargo fmt、Flutter analyze 0、Harness 100/100、JSON/diff check 通过。PR CI 42090523256 四 job 全绿。Platform Availability 42090510939 Linux/Windows/macOS Intel x64 全绿，packages 13444882188 / 13444329627 / 13447725989；Linux/Windows DnD 13443849286 / 13444559360 通过；macOS DnD 13446402871 明确 skip（host pointer route unavailable）；macOS ZIP SHA-256 5512edb3bc5d6b55f2df81e1b3242e3774ab018aa80ed17c461479516f0590b0 与 sidecar 匹配、unzip -t 通过；startup diagnostics 13448185247。完整边界、GitNexus 扫描和证据见 docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md。P05 父项及 LAY-01/macOS native menu 仍开放。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-058",
+      "name": "P05.6 LAY-01f macOS 系统原生菜单",
+      "description": "仅 macOS 使用 Flutter PlatformMenuBar 承载当前已实现的 File/Edit/View 菜单、递归子菜单、命令状态/快捷键及 About/Quit 生命周期；不补齐未实现默认菜单项。范围和编辑前 GitNexus 分析见 docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md。",
+      "dependencies": [
+        "feat-057"
+      ],
+      "status": "in-progress",
+      "evidence": "范围已登记；实现和本地/hosted 验证待补。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

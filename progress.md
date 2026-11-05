@@ -5,9 +5,10 @@
 
 ## Current State（当前状态，2026-11-06 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.4 已完成，P05.5 / LAY-01e 本地与 hosted 验证完成；P05 继续
+### P05 / feat-027 进行中；P05.1–P05.5 已完成；P05.6 / feat-058 macOS 原生菜单进行中
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
+- P05.5 / feat-057 的证据提交 `d6d1f29` 已推送；PR CI `42096263789` 四 job 全绿，本地 `bash init.sh --fast` 全绿。P05.6 / feat-058 / LAY-01f 已登记：macOS 原生菜单映射当前已实现菜单，并将 About/Quit 接回命令与关闭清理路径；实现按单项推进。范围与编辑前 GitNexus 结果见 `docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md`。
 - P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）已通过本地与 hosted 门禁并登记完成；范围、实现和逐项证据在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项仍为 `in-progress`：20 个 LAY 与 12 个 CMD 矩阵行继续逐项验收，尚未声称 LAY-01 或阶段完成。
 - P05.3 / feat-055 / LAY-01c 已完成：本地完整 `init.sh` Flutter 1,037 与 focused suites 全通过；PR CI `42070134834` 四 job 全绿；Platform Availability `42070123908` 的 Linux、Windows、macOS Intel x64 全部构建、测试、启动并打包通过。Linux/Windows 原生 DnD 通过；macOS artifact `13437054363` 记录 pointer route unavailable，按 skip 记载。macOS 包 artifact `13436534087`，SHA-256 `a866957c2fc2ddcd10e4896ab9fce5e0257602da1b924a3f9acdb0ddcda8cf03` 与 sidecar 一致且 zip 完整；启动诊断 `13436249236` 未含 crash report。P05.3 scope/evidence：`docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md`。P05/LAY-01 仍开放，默认菜单全集与 macOS 原生菜单尚未完成。
 - P05.4 / feat-056 / LAY-01d 已完成：File 菜单按 VS Code 默认组整理为 Open Folder / Save+Save As / Revert File，未实现项不作占位，Compare 与 Encoding/EOL 保留其他入口。定向 widget 1/1、完整 init.sh Flutter 1,038、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0 issues、Harness 100/100 通过；PR CI `42079988344` 四 job 全绿，Linux/Windows/macOS Intel x64 Platform Availability `42079981274` 全绿。Linux/Windows DnD `13441306811` / `13441605922` 通过；macOS DnD `13441829448` 明确 skip（合成指针路由不可用）。平台包 Linux/Windows/macOS：`13442405983` / `13441361037` / `13442660378`；macOS ZIP SHA `5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873` 与 sidecar 匹配且 unzip 完整，startup artifact `13442710356`。编辑前 GitNexus `TitleMenuItem`/`AlulaTitleBar` exact impact UNKNOWN，`workbench_page.dart` >512 KiB 未入图；文本调用点已核查。完整范围与证据见 `docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md`。下一项应按单特性流程从未完成 LAY/CMD 项中拆解并登记；P05 与 LAY-01 仍开放。
