@@ -6,9 +6,9 @@
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a and P05.2 / feat-054 / LAY-01b are complete with local and hosted evidence. P05.3 / feat-055 / LAY-01c implementation and local DoD are complete; product commit, PR CI and Linux/Windows/macOS Intel x64 hosted validation remain. Then record evidence and advance one LAY/CMD child at a time. P05 remains open.
+Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a, P05.2 / feat-054 / LAY-01b, and P05.3 / feat-055 / LAY-01c are complete with local and hosted evidence. Continue with the next single LAY-01 child: populate the full default menu surface, then separately handle macOS native-menu parity. P05 remains open.
 
-Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. Full `bash init.sh` and a fresh `bash init.sh --fast` both passed with Flutter 1,037 tests. Cargo fmt, Flutter analyze, Harness 100/100, titlebar 12/12 and related menu/drag suites passed. P05.3 product changes and evidence are uncommitted on `codex/vscode-parity-p05`; draft PR #3 already exists.
+Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. Full `bash init.sh` and a fresh `bash init.sh --fast` both passed with Flutter 1,037 tests. PR CI `42070134834` and Linux/Windows/macOS Intel x64 Platform Availability `42070123908` are all green. P05.3 product commit `5902265` is pushed to draft PR #3; its hosted evidence update is being committed separately.
 
 ## P05.1 Evidence
 
@@ -52,13 +52,13 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Recommended Next Step
 
-P05.3 is implemented and locally verified. The next action is finish the fast baseline run, review/stage the scoped diff, commit and push it, then inspect PR CI and dispatch Platform Availability if not automatically triggered. Keep P05.3 open until hosted checks finish; afterward pick the next single registered matrix item from docs/03 and docs/11.
+P05.3 hosted validation is complete. Commit/push its evidence update, then register P05.4 for full default menu population as the sole active child. Before changing menu production code, refresh GitNexus, run impact for the exact menu assembly symbols, inspect the literal caller in the >512 KiB workbench page, and create a scoped report. Keep macOS native menu as its own later child.
 
 ## Next Session
 
-1. Complete `bash init.sh --fast`; resolve any baseline failure before product submission.
-2. Commit and push the P05.3 code/evidence; check PR CI and hosted platform lanes, preserving macOS unsupported synthetic DnD as an explicit limitation.
-3. Once P05.3 hosted DoD is met, update `docs/03`, feature state, progress and handoff, then continue the next single P05 LAY/CMD matrix child.
+1. Commit and push the P05.3 hosted-evidence update; the product commit CI and three-platform availability run are green.
+2. Register P05.4 / full default menu population after `feat-055`, then analyze impacts and define scope before editing.
+3. Continue one LAY/CMD child at a time; keep native macOS menu parity separate and do not close P05 until the matrix DoD is complete.
 
 ## Baseline
 

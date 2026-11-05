@@ -722,8 +722,8 @@
       "dependencies": [
         "feat-054"
       ],
-      "status": "in-progress",
-      "evidence": "实现递归菜单 && mnemonic、Windows/Linux Alt 聚焦与访问键、独立设置开关、macOS 禁用 Alt、Esc 焦点恢复；保留 command enable/visibility 门控。title_bar_test 12/12、workbench menu integration 1/1、cross-window line/menu save 18/18、矩形 Alt+Shift 拖选三平台 3/3；完整 init.sh Flutter 1,037、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0 issues、Harness 100/100 全通过。GitNexus all-scope scans vary 8–9 files/28–44 symbols/5–11 processes (MEDIUM–HIGH); compare 15 files/74–96 symbols/10–11 processes HIGH. Menu flow mis-mappings, AlulaTitleBar caller UNKNOWN, and large-file/cross-language coverage limits are recorded. PR CI and hosted platform evidence pending product commit push. See docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
+      "status": "done",
+      "evidence": "实现递归菜单 && mnemonic、Windows/Linux Alt 聚焦与访问键、独立设置开关、macOS 禁用 Alt、Esc 焦点恢复；保留 command enable/visibility 门控。title_bar_test 12/12、workbench menu integration 1/1、cross-window line/menu save 18/18、矩形 Alt+Shift 拖选三平台 3/3；完整 init.sh Flutter 1,037、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0 issues、Harness 100/100 全通过。PR CI 42070134834 四 job 全绿；Platform Availability 42070123908 Linux/Windows/macOS Intel x64 全通过。Package artifacts Linux 13435372705, Windows 13435064315, macOS 13436534087. macOS ZIP SHA-256 a866957c2fc2ddcd10e4896ab9fce5e0257602da1b924a3f9acdb0ddcda8cf03 matched sidecar and passed unzip -t; macOS DnD 13437054363 explicitly records pointer route unavailable/skip; startup diagnostic 13436249236 has no crash report. Apple Silicon/native-device checks remain P15. GitNexus HIGH/UNKNOWN and coverage limits are recorded. Scope and evidence: docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
