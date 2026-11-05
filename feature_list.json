@@ -629,6 +629,18 @@
       "evidence": "P04.122 / EDT-19l product commit d869795ce7d7c070b9c0d3b4ddcef98725a0c79b. Full bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 991); focused merge/keybinding/close regression suites 79/79; flutter analyze 0 issues; cargo fmt and diff check passed. PR CI 41962049048 all four jobs passed. Platform Availability 41962043435 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Package artifacts: Linux 13386405521, Windows 13385988215, macOS Intel x64 13387046549; DnD diagnostics 13385608359 / 13386092048 / 13386123532; macOS startup diagnostics 13386198353. Hosted macOS device interaction and Apple Silicon/native-device verification remain P15; the Linux/Windows/macOS packages are hosted artifacts. GitNexus product scan: 3 indexed source files, 21 symbols, 0 mapped processes, LOW; pre-edit UNKNOWN and skipped Workbench-file coverage remain unresolved. Evidence-only scan: 5 documentation files, 7 section symbols, 1 mismapped process, MEDIUM (InitState→Hunk mapped to progress.md; unresolved). Do not call graph clean. Implementation evidence: docs/diagnostics/2026-11-05-p04/p04.122-merge-editor-accept-merge-implementation.md. P04/feat-026 remains in progress; P05 is not started.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
+    },
+    {
+      "id": "feat-048",
+      "name": "P04.123 / EDT-20a Bulk Edit preview selection model",
+      "description": "Add a bounded pure Dart BulkEditPreviewSession over immutable text-only WorkspaceEdit input, with per-edit and per-document selection plus an immutable selected WorkspaceEdit projection. No UI/Multi Diff/apply route in this child. DoD in docs/03 P04.123.",
+      "dependencies": [
+        "feat-047"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope and pre-edit review registered in docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-scope.md; implementation pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",

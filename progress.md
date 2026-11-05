@@ -5,6 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
+### P04.123 / EDT-20a 范围已登记；P04 / feat-026 仍进行中
+
+- P04.122 / EDT-19l 已完成；当前唯一 active child 为 P04.123 / EDT-20a：纯 Dart 批量文本编辑预览选择模型，范围、2,048 文档/32,768 edits/8 MiB UTF-8 限额和 DoD 登记在 `docs/03` 与 `docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-scope.md`。实现尚未开始。
+- 启动基线 `bash init.sh --fast` 通过：Rust workspace、Flutter 991 项。GitNexus `WorkspaceEdit` impact 仍为 UNKNOWN（0 mapped callers），文本搜索确认工作台实际调用位于 `app/lib/workbench/workbench_page.dart:10806`；本 slice 不改现有 planner、Workbench、Rust 或 FFI。图谱覆盖缺口保留，不称 clean。
+- 当前隔离 worktree 基线为 `79b59a8`（P04.122 evidence）；PR #2 保持 OPEN/draft，P05 不启动。No GUI/Narrator。macOS 设备验证留 P15，500 MiB 数值目标后置。
+
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
 - P04.122 / EDT-19l 已完成，产品/test commit `d869795ce7d7c070b9c0d3b4ddcef98725a0c79b` 已推送。`mergeEditor.acceptMerge` 仅在 Merge Editor 激活；Ctrl/Cmd+Enter 依 context 调用完成合并或保留普通编辑器插入行。未解冲突需要确认；最终 Rust 结果只在通过现有原子保存/外部磁盘冲突路径并验证 clean/current 后关闭。键位重绑/移除与 context alternatives 上限有测试保护。
