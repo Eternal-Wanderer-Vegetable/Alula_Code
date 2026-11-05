@@ -876,12 +876,21 @@ jobs:
             exit 1
           fi
           wait "$app_pid" || true
-      - name: Launch macOS native-titlebar mode
+      - name: Launch macOS native-titlebar mode and verify native Quit menu
         if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
         run: |
           executable="app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
           "$executable" --native-titlebar > "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1 &
           app_pid=$!
+          cleanup() {
+            if kill -0 "$app_pid" 2>/dev/null; then
+              kill -TERM "$app_pid" 2>/dev/null || true
+              sleep 1
+              kill -KILL "$app_pid" 2>/dev/null || true
+              wait "$app_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
           sleep 8
           if ! kill -0 "$app_pid" 2>/dev/null; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
@@ -891,18 +900,32 @@ jobs:
             set -e
             exit "$app_status"
           fi
-          kill -TERM "$app_pid" 2>/dev/null || true
-          for _ in $(seq 1 20); do
+
+          if ! "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu "$app_pid" \
+            >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Could not activate the native macOS Quit menu"
+            exit 1
+          fi
+          for _ in $(seq 1 40); do
             kill -0 "$app_pid" 2>/dev/null || break
             sleep 0.25
           done
           if kill -0 "$app_pid" 2>/dev/null; then
-            kill -KILL "$app_pid" 2>/dev/null || true
-            wait "$app_pid" 2>/dev/null || true
-            echo "Native-titlebar Alula did not stop after the launch smoke"
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Native Quit menu did not close the native-titlebar app"
             exit 1
           fi
-          wait "$app_pid" || true
+          set +e
+          wait "$app_pid"
+          app_status=$?
+          set -e
+          if [[ "$app_status" -ne 0 ]]; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Native-titlebar Alula exited with status $app_status after menu Quit"
+            exit "$app_status"
+          fi
+          echo "Native macOS Quit menu callback closed the native-titlebar app."
       - name: Collect macOS startup diagnostics
         if: always()
         run: |

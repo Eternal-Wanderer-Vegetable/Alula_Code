@@ -213,10 +213,88 @@ func layoutPoint(from layout: [String: Any], key: String) throws -> CGPoint {
   return CGPoint(x: CGFloat(x), y: CGFloat(y))
 }
 
+func quitThroughNativeMenu(processIdentifier: Int32) throws {
+  guard AXIsProcessTrusted() else {
+    throw NSError(domain: "AlulaMacDnd", code: 20, userInfo: [
+      NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
+    ])
+  }
+  guard let app = NSRunningApplication(processIdentifier: processIdentifier) else {
+    throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
+      NSLocalizedDescriptionKey: "Could not find the native-titlebar Alula process"
+    ])
+  }
+
+  _ = app.activate(options: [.activateIgnoringOtherApps])
+  let script = """
+  tell application "System Events"
+    set targetProcess to first application process whose unix id is \(processIdentifier)
+    set frontmost of targetProcess to true
+    click menu bar item "Alula Code" of menu bar 1 of targetProcess
+    delay 0.25
+    click menu item "Quit Alula Code" of menu 1 of menu bar item "Alula Code" of menu bar 1 of targetProcess
+  end tell
+  """
+  let process = Process()
+  process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+  process.arguments = ["-e", script]
+  let output = Pipe()
+  let errors = Pipe()
+  process.standardOutput = output
+  process.standardError = errors
+
+  do {
+    try process.run()
+  } catch {
+    throw NSError(domain: "AlulaMacDnd", code: 22, userInfo: [
+      NSLocalizedDescriptionKey: "Could not start native menu automation: \(error)"
+    ])
+  }
+  let deadline = Date().addingTimeInterval(8)
+  while process.isRunning && Date() < deadline {
+    Thread.sleep(forTimeInterval: 0.05)
+  }
+  if process.isRunning {
+    process.terminate()
+    process.waitUntilExit()
+    throw NSError(domain: "AlulaMacDnd", code: 23, userInfo: [
+      NSLocalizedDescriptionKey: "Native menu automation timed out after 8 seconds"
+    ])
+  }
+  process.waitUntilExit()
+  let standardOutput = String(
+    data: output.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  let standardError = String(
+    data: errors.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  guard process.terminationStatus == 0 else {
+    throw NSError(domain: "AlulaMacDnd", code: 24, userInfo: [
+      NSLocalizedDescriptionKey: "Native menu Quit automation failed (status \(process.terminationStatus)): \(standardError)"
+    ])
+  }
+  print("Selected native menu item Quit Alula Code through System Events.")
+  if !standardOutput.isEmpty { print(standardOutput) }
+}
+
 func run() throws {
+  if CommandLine.arguments.count == 3,
+     CommandLine.arguments[1] == "--quit-native-menu"
+  {
+    guard let processIdentifier = Int32(CommandLine.arguments[2]) else {
+      throw NSError(domain: "AlulaMacDnd", code: 25, userInfo: [
+        NSLocalizedDescriptionKey: "Native menu Quit requires a numeric process id"
+      ])
+    }
+    try quitThroughNativeMenu(processIdentifier: processIdentifier)
+    return
+  }
+
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
-      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir>"
+      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <pid>"
     ])
   }
 
