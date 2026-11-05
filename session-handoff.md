@@ -2,64 +2,37 @@
 
 ## Last Updated
 
-2026-11-06. User asked to create a branch, open a PR, and complete P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3.
+2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. Latest product/evidence HEAD before the pending P05.6 evidence commit is `39585c8`.
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1–P05.5 / feat-053–057 are complete with local and hosted evidence. P05.5 evidence commit `d6d1f29` is pushed; PR CI `42096263789` passed all four jobs. Current child is P05.6 / feat-058 / LAY-01f macOS native menu, scope and pre-edit GitNexus review registered at `docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md`; implement and verify this one feature only. The original `/mnt/e/alula_code` worktree has unrelated user changes; use `/tmp/alula-p04.70-next`. P05, LAY-01 and the full default menu catalog remain open.
+Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.6 / feat-053–058 are complete and recorded. P05 and LAY-01 remain open; the remaining matrix items still need to be decomposed and verified before P05 can close. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
 
-Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. P05.4 product commit `a5c2600` and evidence commit `64b9154` are pushed to draft PR #3. Product CI `42079988344` and Linux/Windows/macOS Intel x64 Platform Availability `42079981274` passed. The macOS test package is artifact `13442660378`; macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events. Evidence commit CI on `64b9154` completed successfully in all four jobs. P05.5 scope is registered in `docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md`.
+Use `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
-## P05.1 Evidence
+## P05.6 / feat-058 Complete
 
-- Local full `init.sh` passed: Rust workspace 71+54, Clippy, `build_core`, Flutter 1,030; `cargo fmt --check`; Flutter analyze (0 issues); focused titlebar/config tests 9/9; Harness 100/100; diff check.
-- PR CI [42032128727](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42032128727) on the P05.1 product commit passed all four jobs. Evidence commit `9573290` triggered CI run `42038213800`; recheck before closing the child.
-- Platform Availability [42032120138](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42032120138) passed Linux x64 (5m46s), Windows x64 (11m48s), and macOS Intel x64 (28m58s). Package artifacts: Linux 13415944530, Windows 13417376645, macOS Intel x64 13417219623.
-- Linux and Windows DnD/titlebar smoke passed. Windows also passed visible client capture, P03.7 interaction, clipboard, accessibility, and graceful close. macOS Release build, clipboard, bundle/sign, regular and native-titlebar launch, and packaging passed. macOS DnD artifact 13418970398 records `CGEventPostToPid pointer route: false` and `All tests skipped`; do not count DnD as passed. Startup diagnostics: 13417639020. macOS ZIP SHA-256 `bb12d417b2bfdd2239cbba57c02467beb1bd137bedc84b01525b88cb5d50ad5e`; sidecar matched and `unzip -t` passed.
-- Hosted macOS is Intel x64 only; Apple Silicon and native-device behavior remain P15. Linux custom mode draws window controls due GTK hidden decorations; Windows custom-control parity and explicit control-style setting remain open. Menu hierarchy, mnemonics, and macOS system menu remain separate work.
-- Full scope and details: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`.
+- Product implementation commit: `5d402a2`; macOS File/Edit/View and Appearance use one native `PlatformMenuBar`; About and Quit reuse existing command and close/cleanup routes. Focused titlebar tests 14/14; cross-window drag/line selection 30/30.
+- Local full `bash init.sh` passed: Rust workspace 71+54, Clippy, `build_core`, Flutter 1,043; `cargo fmt --check`; Flutter analyze 0 issues; Harness 100/100.
+- PR CI [42126750902](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42126750902) passed all four jobs. Platform Availability [42126740014](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42126740014) passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes.
+- Packages: Linux `13460989187`, Windows `13460804491`, macOS `13462422950`. macOS ZIP SHA-256 `57ca89156ca082d0241558e20ad87e86ae8c087b934d9a144ca438540ea28010` matches its sidecar; `unzip -t` passed.
+- Native Quit was selected through System Events and closed the app; startup artifact `13462059875` logs `Selected alula_app > Quit Alula Code`. Linux/Windows DnD passed (`13462875529` / `13460983192`). macOS DnD artifact `13461989896` explicitly skips because the hosted pointer route is unavailable; Apple Silicon/native device and notarization remain P15.
+- Full scope and evidence: `docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md`.
 
-## P05.2 Completed
+## Current Branch State
 
-- Scope/pre-edit review: `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`.
-- Expected files: `app/lib/workbench/title_bar.dart`, `app/lib/workbench/workbench_page.dart` around the `AlulaTitleBar` assembly at line 16656, `app/test/title_bar_test.dart`, plus tracking/evidence files.
-- GitNexus impact for exact `TitleMenuItem` and `AlulaTitleBar` UIDs returned `UNKNOWN` and 0 resolved callers. `context(WorkbenchPage)` failed because the >512 KiB workbench page is not indexed. Text search confirms the only production menu assembly at line 16656 and `TitleMenuItem` construction beginning at line 16661; inspect and test those callers directly.
-- Recursive command/submenu/separator model, `View > Appearance`, action visibility/enabled/arguments, and mouse/keyboard submenu interaction are implemented and tested. Mnemonics, full default menu population, and macOS native menu remain separate.
-- Local gates passed: `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` (Rust, Clippy, core build, Flutter 1,032), `cargo fmt --check`, Flutter analyze (0 issues), titlebar suite 8/8, workbench menu integration 1/1, Harness 100/100, feature JSON and diff check. The previously failing menu-driven save case passes after preserving the File menu tooltip.
-- PR CI [42044717588](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42044717588) passed all four jobs, including Flutter analyze and 1,032 tests. Platform Availability [42044705607](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42044705607) attempt 2 passed Linux x64 (4m30s), Windows x64 (8m56s), and macOS Intel x64 (35m11s). Attempt 1 failed two existing macOS fixed-delay widget assertions, then the exact SHA passed 1,032/1,032 on rerun; no app crash was reported or inferred from those test timing failures.
-- Package artifacts Linux/Windows/macOS Intel x64: `13425020073` / `13423773712` / `13427823993`; Linux/Windows DnD passed, macOS DnD artifact `13427973390` explicitly skips because synthetic pointer delivery to Flutter is unavailable. macOS startup diagnostics `13427414246`. macOS ZIP SHA-256 `5a2d3d9916ec45425d04ebb82d41b16733f8eaef07d1eb721c4d67f7056c64af` matches sidecar; unzip integrity passed. Apple Silicon/native-device verification remains P15.
-- Latest GitNexus precommit scans varied: all-scope 9 files / 8–13 symbols / 4 processes / MEDIUM; compare-to-main 15 files / 56–67 symbols / 9 processes / HIGH. Menu helper flows were falsely mapped to unrelated Build functions; compare also covers existing titlebar-window paths. Five >512 KiB files including workbench_page.dart are skipped, 779 cross-language property sites are unresolved, and process tracing truncates (902 candidates, 321 callees, 13 walks). Retain HIGH/UNKNOWN; do not call the graph clean.
-- Final hosted-evidence docs scan: all-scope touched 5 documentation files with no indexed-symbol overlap (GitNexus explicitly says this is not a clean tree); compare-to-main 15 files / 60 symbols / 9 processes / HIGH. The index was 10,853 nodes / 28,175 edges / 328 clusters / 418 flows; coverage warnings remain.
+- P05.1–P05.5 evidence and hosted results are in `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, and `progress.md`.
+- P05.6 evidence was just added to those tracking files and the scope report. Run JSON/Harness/diff checks, GitNexus `detect-changes --scope all` and compare-to-main before committing this evidence set; then push and verify the evidence commit's PR CI.
+- After that commit passes CI, inspect unresolved rows in `docs/11-VSCode功能对照矩阵.md`, choose one next child, register its scope and DoD in docs/03 and `feature_list.json`, run impact, then implement only that child.
+- PR #3 remains draft. Do not mark P05 complete or close the PR until all P05 matrix DoDs pass.
 
-## Blockers
+## GitNexus Boundaries
 
-- No local GUI/Narrator tests; rely on hosted evidence and record unsupported input routes honestly.
-- macOS Apple Silicon and native-device checks remain P15. macOS hosted DnD is skipped when synthetic pointer routing is unavailable.
-- The 500 MiB goal remains deferred until after architectural replication.
+- Impact for `AlulaTitleBar` remains `UNKNOWN`; text search confirms the production assembly in `app/lib/workbench/workbench_page.dart`, which is over the 512 KiB analyzer cap. Do not interpret missing callers as safe/unused.
+- Helper changes repeatedly produced CRITICAL graph mappings to unrelated editor/build flows. Final code scans were all-scope 1 file / 1 symbol / 415 flows / CRITICAL and compare-to-main 24 files / 19 symbols / 415 flows / CRITICAL. Literal search confirmed the Quit helper is called only by its own CLI dispatch and the platform workflow. The report records skipped large files, unresolved cross-language accesses, and process-trace truncation; no scan is called clean.
 
-## Files
+## Blockers / Limits
 
-- P05 reports: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`, `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`
-- P05 state: `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`
-- P05 titlebar implementation: `app/lib/main.dart`, `app/lib/workbench/title_bar.dart`, `app/lib/workbench/window_chrome_configuration.dart`, `app/lib/workbench/window_chrome_driver.dart`, and focused tests.
-
-## GitNexus and Worktree Rules
-
-- Current P05.3 GitNexus index is about 11.16k nodes / 31k edges / 332 clusters / 419 flows. All-scope scans vary 8–9 files / 28–44 symbols / 5–11 processes (MEDIUM–HIGH); compare-to-main varies 15 files / 74–96 symbols / 10–11 processes (HIGH). Some menu helpers map to unrelated Build flows and a doc section maps to `InitState → Hunk`; `AlulaTitleBar` callers remain UNKNOWN. Analyzer skips 5 large files including `workbench_page.dart`, leaves 779 cross-language property sites unresolved, and truncates process discovery (911 candidates, 322 callees, 13 trace walks); do not read missing graph edges as unaffected.
-- P05.1 evidence scans varied: all-scope 5 files / 1–16 symbols / 0–1 flows / LOW–MEDIUM; compare-to-main 13 files / 50–70 symbols / 5–6 flows / MEDIUM–HIGH. One docs section mapped to unrelated `InitState → Hunk`. Keep these as unresolved graph limitations.
-- P05.2 exact pre-edit impact for `TitleMenuItem` and `AlulaTitleBar` is `UNKNOWN`; literal search confirms production assembly in skipped `workbench_page.dart`. Empty caller sets are not an all-clear.
-- Do not start local GUI/Narrator tests. Use hosted evidence and record unavailable synthetic input honestly. The 500 MiB goal remains deferred until after architectural replication.
-
-## Recommended Next Step
-
-P05.5 is complete and its evidence is ready to commit. Next inspect the remaining P05 matrix in `docs/11-VSCode功能对照矩阵.md`, choose one unresolved LAY/CMD row, register its fixed reference/scope/DoD in docs and feature_list, run GitNexus impact before code edits, and then implement only that child. Keep P05 open and preserve the macOS native-menu follow-up until all matrix DoDs pass.
-
-## Next Session
-
-1. Commit and push P05.5 evidence after the final GitNexus all/compare scan; verify PR CI for the evidence commit.
-2. Read the next unresolved LAY/CMD row from `docs/11-VSCode功能对照矩阵.md` and register that one scope.
-3. Run pre-edit GitNexus impact and start only the newly registered child; do not close P05 early.
-
-## Baseline
-
-P04 merged to `main` by PR #2 at `46084e95ea0bfd72cf86873339db9670d0ba0b67`. P05.1 product commit `d6e297d8bed8e11b36978e5a0ffb0e8fe2384676`; P05.2 product commit `dd8ae8a`.
+- No local macOS hardware or native-device access. Hosted Mac evidence is Intel x64 only; Apple Silicon, native device behavior, and signing/notarization remain P15/release gates.
+- Hosted macOS DnD synthetic pointer input is unavailable and is recorded as skipped; menu Quit was independently exercised through System Events.
+- Do not launch local GUI/Narrator tests. The 500 MiB optimization target remains deferred until architectural replication is complete.
