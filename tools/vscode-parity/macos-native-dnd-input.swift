@@ -232,21 +232,28 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
     set frontmost of targetProcess to true
     set menuBarItems to menu bar items of menu bar 1 of targetProcess
     if (count of menuBarItems) is 0 then error "The app has no accessible native menu bar items"
-    set appMenuItem to item 1 of menuBarItems
-    set appMenuTitle to name of appMenuItem
-    click appMenuItem
-    delay 0.25
-    set appMenuEntries to menu items of menu 1 of appMenuItem
+    set menuBarTitles to name of menuBarItems
+    set appMenuTitle to missing value
     set quitMenuName to missing value
-    repeat with menuEntry in appMenuEntries
-      set entryName to name of menuEntry
-      if entryName starts with "Quit" then
-        set quitMenuName to entryName
-        click menuEntry
-        exit repeat
-      end if
+    repeat with menuBarItem in menuBarItems
+      set candidateTitle to name of menuBarItem
+      try
+        click menuBarItem
+        delay 0.1
+        set menuEntries to menu items of menu 1 of menuBarItem
+        repeat with menuEntry in menuEntries
+          set entryName to name of menuEntry
+          if entryName starts with "Quit" then
+            set appMenuTitle to candidateTitle
+            set quitMenuName to entryName
+            click menuEntry
+            exit repeat
+          end if
+        end repeat
+      end try
+      if quitMenuName is not missing value then exit repeat
     end repeat
-    if quitMenuName is missing value then error "Native app menu '" & appMenuTitle & "' has no Quit item"
+    if quitMenuName is missing value then error "No Quit item in native menus for process. Menu bar items: " & (menuBarTitles as string)
     return "Selected " & appMenuTitle & " > " & quitMenuName
   end tell
   """
