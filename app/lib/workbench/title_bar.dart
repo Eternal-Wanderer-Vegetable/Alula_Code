@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'commands.dart';
+import 'keybindings.dart';
 import 'window_chrome_configuration.dart';
 import 'window_chrome_driver.dart';
 
@@ -401,14 +402,40 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   Widget build(BuildContext context) {
     final chrome = WindowChromeConfigurationScope.maybeOf(context) ??
         WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
-    if (!chrome.isCustom && widget.menus.isEmpty) {
+    if (chrome.targetPlatform == TargetPlatform.macOS) {
+      return ListenableBuilder(
+        listenable: widget.commands,
+        builder: (context, _) => PlatformMenuBar(
+          menus: _buildMacPlatformMenus(),
+          child: _buildTitleBarContents(
+            context,
+            chrome,
+            showFlutterMenuBar: false,
+          ),
+        ),
+      );
+    }
+
+    return _buildTitleBarContents(
+      context,
+      chrome,
+      showFlutterMenuBar: true,
+    );
+  }
+
+  Widget _buildTitleBarContents(
+    BuildContext context,
+    WindowChromeConfiguration chrome, {
+    required bool showFlutterMenuBar,
+  }) {
+    if (!chrome.isCustom && (widget.menus.isEmpty || !showFlutterMenuBar)) {
       return const SizedBox.shrink();
     }
 
     final showCustomControls =
         widget.windowControls && chrome.usesCustomWindowControls;
     return Container(
-      // Native mode keeps the menu row below the OS title bar.
+      // Non-macOS native mode keeps the existing menu row below the OS title bar.
       height: chrome.isCustom
           ? chrome.titleBarHeight
           : WindowChromeConfiguration.customTitleBarHeight,
@@ -423,37 +450,37 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             ),
             const SizedBox(width: 10),
           ],
-          Theme(
-            data: Theme.of(context).copyWith(platform: chrome.targetPlatform),
-            child: Focus(
-              focusNode: _menuBarFocusNode,
-              onKeyEvent: _handleMenuKeyEvent,
-              child: ListenableBuilder(
-                listenable: widget.commands,
-                builder: (context, _) => MenuBar(
-                  style: _menuBarStyle,
-                  children: [
-                    for (var index = 0; index < widget.menus.length; index++)
-                      _MenuButton(
-                        title: widget.menus[index].$1,
-                        items: widget.menus[index].$2,
-                        commands: widget.commands,
-                        controller: _menuControllers[index],
-                        submenuControllerForPath: (path) =>
-                            _submenuControllers.putIfAbsent(
-                          _menuControllerKey(index, path),
-                          MenuController.new,
+          if (showFlutterMenuBar)
+            Theme(
+              data: Theme.of(context).copyWith(platform: chrome.targetPlatform),
+              child: Focus(
+                focusNode: _menuBarFocusNode,
+                onKeyEvent: _handleMenuKeyEvent,
+                child: ListenableBuilder(
+                  listenable: widget.commands,
+                  builder: (context, _) => MenuBar(
+                    style: _menuBarStyle,
+                    children: [
+                      for (var index = 0; index < widget.menus.length; index++)
+                        _MenuButton(
+                          title: widget.menus[index].$1,
+                          items: widget.menus[index].$2,
+                          commands: widget.commands,
+                          controller: _menuControllers[index],
+                          submenuControllerForPath: (path) =>
+                              _submenuControllers.putIfAbsent(
+                            _menuControllerKey(index, path),
+                            MenuController.new,
+                          ),
+                          enableMnemonics: widget.enableMenuBarMnemonics,
+                          persistentMnemonics: _mnemonicsVisible,
+                          onCommandExecuted: _restoreWorkbenchFocus,
                         ),
-                        enableMnemonics: widget.enableMenuBarMnemonics &&
-                            chrome.targetPlatform != TargetPlatform.macOS,
-                        persistentMnemonics: _mnemonicsVisible,
-                        onCommandExecuted: _restoreWorkbenchFocus,
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
           Expanded(
             child: chrome.isCustom
                 ? _dragArea(const SizedBox.expand())
@@ -463,6 +490,134 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         ],
       ),
     );
+  }
+
+  List<PlatformMenuItem> _buildMacPlatformMenus() {
+    final menus = <PlatformMenuItem>[_buildMacApplicationMenu()];
+    for (final (label, source) in widget.menus) {
+      final title = _plainTitleMenuLabel(label);
+      final isHelpMenu = title == '帮助' || title.toLowerCase() == 'help';
+      final items = _buildMacPlatformMenuItems(
+        isHelpMenu
+            ? source.where((item) => item.commandId != 'help.about').toList()
+            : source,
+      );
+      if (items.isNotEmpty) {
+        menus.add(PlatformMenu(label: title, menus: items));
+      }
+    }
+    return menus;
+  }
+
+  PlatformMenu _buildMacApplicationMenu() {
+    final items = <PlatformMenuItem>[];
+    if (widget.commands.isVisible('help.about')) {
+      items.add(
+        PlatformMenuItem(
+          label: '关于 Alula Code',
+          onSelected: widget.commands.isEnabled('help.about')
+              ? () => unawaited(_executeMacCommand('help.about'))
+              : null,
+        ),
+      );
+    }
+
+    void addPlatformGroup(List<PlatformProvidedMenuItemType> types) {
+      items.add(
+        PlatformMenuItemGroup(
+          members: types
+              .map((type) => PlatformProvidedMenuItem(type: type))
+              .toList(),
+        ),
+      );
+    }
+
+    addPlatformGroup([PlatformProvidedMenuItemType.servicesSubmenu]);
+    addPlatformGroup([
+      PlatformProvidedMenuItemType.hide,
+      PlatformProvidedMenuItemType.hideOtherApplications,
+      PlatformProvidedMenuItemType.showAllApplications,
+    ]);
+    items.add(
+      PlatformMenuItemGroup(
+        members: [
+          PlatformMenuItem(
+            label: 'Quit Alula Code',
+            shortcut: const SingleActivator(
+              LogicalKeyboardKey.keyQ,
+              meta: true,
+            ),
+            onSelected: _requestCloseFromMenu,
+          ),
+        ],
+      ),
+    );
+    return PlatformMenu(label: 'Alula Code', menus: items);
+  }
+
+  List<PlatformMenuItem> _buildMacPlatformMenuItems(
+    List<TitleMenuItem> source,
+  ) {
+    final result = <PlatformMenuItem>[];
+    var group = <PlatformMenuItem>[];
+
+    void flushGroup() {
+      if (group.isEmpty) return;
+      if (result.isEmpty) {
+        result.addAll(group);
+      } else {
+        result.add(PlatformMenuItemGroup(members: group));
+      }
+      group = <PlatformMenuItem>[];
+    }
+
+    for (final candidate in _visibleTitleMenuItems(source, widget.commands)) {
+      final item = candidate.item;
+      if (item.isSeparator) {
+        flushGroup();
+        continue;
+      }
+
+      if (item.isSubmenu) {
+        final children = _buildMacPlatformMenuItems(item.children);
+        if (children.isNotEmpty) {
+          group.add(
+            PlatformMenu(
+              label: _plainTitleMenuLabel(item.label),
+              menus: children,
+            ),
+          );
+        }
+        continue;
+      }
+
+      final commandId = item.commandId!;
+      final command = widget.commands.byId(commandId);
+      group.add(
+        PlatformMenuItem(
+          label: _macPlatformMenuLabel(item.label, command?.shortcut),
+          shortcut: _macPlatformMenuShortcut(command?.shortcut),
+          onSelected: widget.commands.isEnabled(commandId)
+              ? () => unawaited(
+                    _executeMacCommand(commandId, item.arguments),
+                  )
+              : null,
+        ),
+      );
+    }
+    flushGroup();
+    return result;
+  }
+
+  Future<void> _executeMacCommand(String commandId, [Object? arguments]) async {
+    await widget.commands.execute(commandId, arguments: arguments);
+    _restoreWorkbenchFocus();
+  }
+
+  void _requestCloseFromMenu() {
+    if (_closeInProgress) return;
+    _closeInProgress = true;
+    unawaited(_closeWindow());
   }
 
   Widget _dragArea(Widget child) {
@@ -776,6 +931,23 @@ String _plainTitleMenuLabel(String label) =>
         label.replaceAll(RegExp(r'\(&&[^&\s]\)'), ''),
       ),
     );
+
+String _macPlatformMenuLabel(String label, String? shortcut) {
+  var plain = label;
+  if (shortcut != null) {
+    plain = plain.replaceFirst(
+      RegExp(r'\s{2,}' + RegExp.escape(shortcut) + r'$'),
+      '',
+    );
+  }
+  return _plainTitleMenuLabel(plain.trimRight());
+}
+
+MenuSerializableShortcut? _macPlatformMenuShortcut(String? shortcut) {
+  if (shortcut == null) return null;
+  final normalized = shortcut.replaceAll('Meta+', 'Cmd+');
+  return parseChord(normalized)?.toActivator();
+}
 
 const MenuStyle _menuBarStyle = MenuStyle(
   backgroundColor: WidgetStatePropertyAll(Colors.transparent),

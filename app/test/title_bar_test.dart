@@ -10,13 +10,19 @@ import 'package:window_manager/window_manager.dart';
 void main() {
   late CommandService commands;
   late _FakeWindowChromeDriver window;
+  late _RecordingPlatformMenuDelegate platformMenus;
+  late PlatformMenuDelegate originalPlatformMenuDelegate;
 
   setUp(() {
     commands = CommandService();
     window = _FakeWindowChromeDriver();
+    platformMenus = _RecordingPlatformMenuDelegate();
+    originalPlatformMenuDelegate = WidgetsBinding.instance.platformMenuDelegate;
+    WidgetsBinding.instance.platformMenuDelegate = platformMenus;
   });
 
   tearDown(() {
+    WidgetsBinding.instance.platformMenuDelegate = originalPlatformMenuDelegate;
     commands.dispose();
   });
 
@@ -64,6 +70,160 @@ void main() {
     expect(find.byTooltip('最小化'), findsNothing);
     expect(find.byTooltip('最大化'), findsNothing);
     expect(find.byTooltip('关闭'), findsNothing);
+    expect(find.byType(PlatformMenuBar), findsOneWidget);
+    expect(find.byType(MenuBar), findsNothing);
+    expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
+  });
+
+  testWidgets('macOS native menu routes visible commands and live state',
+      (tester) async {
+    final executed = <String>[];
+    commands.register(Command(
+      id: 'workbench.action.files.newUntitledFile',
+      title: '新建文本文件',
+      category: '文件',
+      shortcut: 'Meta+N',
+      run: () async => executed.add('new'),
+    ));
+    commands.register(Command(
+      id: 'file.save',
+      title: '保存',
+      category: '文件',
+      shortcut: 'Meta+S',
+      enablement: 'editorActive',
+      run: () async => executed.add('save'),
+    ));
+    commands.register(Command(
+      id: 'file.workspaceOnly',
+      title: '工作区动作',
+      category: '文件',
+      when: 'workspaceOpen',
+      run: () async => executed.add('workspace'),
+    ));
+    commands.register(Command(
+      id: 'view.toggleSidebar',
+      title: '切换侧栏',
+      category: '查看',
+      run: () async => executed.add('sidebar'),
+    ));
+    commands.register(Command(
+      id: 'help.about',
+      title: '关于 Alula Code',
+      category: '帮助',
+      run: () async => executed.add('about'),
+    ));
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      menus: const [
+        (
+          '文件(&&F)',
+          [
+            TitleMenuItem(
+              '新建文本文件(&&N)    Meta+N',
+              commandId: 'workbench.action.files.newUntitledFile',
+            ),
+            TitleMenuItem.separator(),
+            TitleMenuItem('保存(&&S)    Meta+S', commandId: 'file.save'),
+            TitleMenuItem('工作区动作(&&W)', commandId: 'file.workspaceOnly'),
+          ],
+        ),
+        (
+          '查看(&&V)',
+          [
+            TitleMenuItem.submenu('外观(&&A)', children: [
+              TitleMenuItem('切换侧栏(&&S)', commandId: 'view.toggleSidebar'),
+            ]),
+          ],
+        ),
+        (
+          '帮助(&&H)',
+          [TitleMenuItem('关于 Alula Code(&&A)', commandId: 'help.about')],
+        ),
+      ],
+    ));
+    await tester.pump();
+
+    expect(find.byType(PlatformMenuBar), findsOneWidget);
+    expect(find.byType(MenuBar), findsNothing);
+    expect(
+      platformMenus.menus.whereType<PlatformMenu>().map((menu) => menu.label),
+      ['Alula Code', '文件', '查看'],
+    );
+
+    var nativeItems = _allPlatformMenuItems(platformMenus.menus).toList();
+    final newFile = nativeItems.singleWhere(
+      (item) => item.label == '新建文本文件',
+    );
+    expect(newFile.shortcut, isA<SingleActivator>());
+    expect((newFile.shortcut! as SingleActivator).meta, isTrue);
+    expect(nativeItems.where((item) => item.label == '工作区动作'), isEmpty);
+    expect(
+      nativeItems.singleWhere((item) => item.label == '保存').onSelected,
+      isNull,
+    );
+    expect(nativeItems.where((item) => item.label == '关于 Alula Code'),
+        hasLength(1));
+
+    newFile.onSelected!();
+    await tester.pump();
+    expect(executed, ['new']);
+
+    commands.context.setValue('workspaceOpen', true);
+    commands.context.setValue('editorActive', true);
+    await tester.pump();
+    nativeItems = _allPlatformMenuItems(platformMenus.menus).toList();
+    expect(nativeItems.where((item) => item.label == '工作区动作'), hasLength(1));
+    expect(
+      nativeItems.singleWhere((item) => item.label == '保存').onSelected,
+      isNotNull,
+    );
+    expect(
+      nativeItems.where((item) => item.label == '切换侧栏'),
+      hasLength(1),
+    );
+    nativeItems
+        .singleWhere((item) => item.label == '关于 Alula Code')
+        .onSelected!();
+    await tester.pump();
+    expect(executed.last, 'about');
+  });
+
+  testWidgets('macOS native title bar omits client menu row and quits cleanly',
+      (tester) async {
+    var closeRequested = 0;
+    commands.register(Command(
+      id: 'help.about',
+      title: '关于 Alula Code',
+      category: '帮助',
+      run: () async {},
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration: const WindowChromeConfiguration(
+        mode: WorkbenchTitleBarMode.native,
+        targetPlatform: TargetPlatform.macOS,
+      ),
+      onCloseRequested: () => closeRequested++,
+      menus: const [
+        ('文件(&&F)', [TitleMenuItem('保存(&&S)', commandId: 'file.save')]),
+      ],
+    ));
+
+    expect(find.byType(PlatformMenuBar), findsOneWidget);
+    expect(tester.getSize(find.byType(AlulaTitleBar)).height, 0);
+    final quit = _allPlatformMenuItems(platformMenus.menus)
+        .singleWhere((item) => item.label == 'Quit Alula Code');
+    quit.onSelected!();
+    await tester.pumpAndSettle();
+
+    expect(closeRequested, 1);
+    expect(window.preventCloseValues, [false]);
+    expect(window.closeCalls, 1);
   });
 
   testWidgets('native title bar keeps menu row and close handling',
@@ -520,18 +680,22 @@ void main() {
       ],
     ));
 
-    expect(find.text('文件(F)'), findsOneWidget);
-    expect(find.byTooltip('文件'), findsOneWidget);
-    await tester.tap(find.text('文件(F)'));
-    await tester.pumpAndSettle();
-    expect(find.text('另存为 & 退出(X)'), findsOneWidget);
-    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-    await tester.pumpAndSettle();
+    expect(find.byType(PlatformMenuBar), findsOneWidget);
+    expect(find.byType(MenuBar), findsNothing);
+    expect(
+      platformMenus.menus.whereType<PlatformMenu>().map((menu) => menu.label),
+      ['Alula Code', '文件'],
+    );
+    final nativeLabels = _allPlatformMenuItems(platformMenus.menus)
+        .map((item) => item.label)
+        .toList();
+    expect(nativeLabels, contains('打开'));
+    expect(nativeLabels, contains('另存为 & 退出'));
     await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
     await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
     await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
     await tester.pumpAndSettle();
-    expect(find.text('打开(O)'), findsNothing);
+    expect(find.byType(MenuItemButton), findsNothing);
 
     await tester.pumpWidget(_titleBarApp(
       commands: commands,
@@ -593,6 +757,39 @@ Widget _titleBarApp({
       ),
     ),
   );
+}
+
+Iterable<PlatformMenuItem> _allPlatformMenuItems(
+  Iterable<PlatformMenuItem> items,
+) sync* {
+  for (final item in items) {
+    yield item;
+    if (item is PlatformMenu) {
+      yield* _allPlatformMenuItems(item.menus);
+    } else if (item is PlatformMenuItemGroup) {
+      yield* _allPlatformMenuItems(item.members);
+    }
+  }
+}
+
+class _RecordingPlatformMenuDelegate extends PlatformMenuDelegate {
+  List<PlatformMenuItem> menus = const [];
+
+  @override
+  void setMenus(List<PlatformMenuItem> topLevelMenus) {
+    menus = List<PlatformMenuItem>.unmodifiable(topLevelMenus);
+  }
+
+  @override
+  void clearMenus() {
+    menus = const [];
+  }
+
+  @override
+  bool debugLockDelegate(BuildContext context) => true;
+
+  @override
+  bool debugUnlockDelegate(BuildContext context) => true;
 }
 
 class _FakeWindowChromeDriver implements WindowChromeDriver {
