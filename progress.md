@@ -5,14 +5,14 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.126 / EDT-20d 已完成；P04 / feat-026 仍进行中
+### P04.127 / EDT-20e 范围已登记；P04 / feat-026 仍进行中
 
-- 产品/test commit `2bef912` 与证据待提交。本地完整 `init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1018）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、focused review 6/6、Harness 100/100 通过。
+- P04.126 产品/test commit `2bef912` 与证据 commit `2535dd7` 已推送；证据 commit CI `42000295293` 四 job 通过。本地完整 `init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,018）；focused review 6/6、Flutter analyze 0 issues、cargo fmt、Harness 100/100 通过。会话恢复后 `init.sh --fast` 复验 Rust、build_core、Flutter 1,018 全绿。
 - PR CI `41995436771` 四 job 全通过。Platform Availability `41995430298` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Packages Linux/Windows/macOS：`13400476798` / `13399999365` / `13401159500`；macOS ZIP SHA-256 与 sidecar 一致，`unzip -t` 通过。
 - Linux DnD artifact `13400456889`（22 pointer events）与 Windows `13399798782`（12 pointer events）完成 same-doc move、cross-doc copy、external text drop。macOS DnD `13401996084` 因 synthetic pointer route unavailable 明确 skip；P15 原生设备与 Apple Silicon 验收保留。macOS startup `13402141087` 显示成功 launch/Impeller、clamped stale frame timestamp、无 crash report；历史 SIGSEGV 仍未解决。
-- 新增 route 组合 P04.123 selection session、P04.124 projection、P04.125 Multi Diff，提供资源/单项选择、全局/资源操作、选中差异预览、Apply callback 和丢弃路径。未接生产 Code Action/Bulk Edit producer，未改现有 transaction/undo/save/FFI。
-- GitNexus：10,451 nodes / 23,072 edges / 325 clusters / 414 flows。产品 all-scope HIGH（2 files/37 symbols/6 新 UI 流）；compare-main CRITICAL/capped（1702 files/4422 symbols/398 flows）为累计分支未解结果。Workbench 大文件、773 跨语言 fields、891 未排名入口、346 skipped callees、13 trace cuts 不作 clean 结论。完整报告：`docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-implementation.md`。
-- P04/feat-026 仍开放：下一步注册一个独立 P04 子项，将真实 Workbench WorkspaceEdit/事务应用接到新 route 并验证 undo/dirty/rollback；先查准确入口并运行 GitNexus impact。P05 不启动，所有 P04 gates 完成后暂停。P15 与 deferred 500 MiB 目标保持原状；无本地 GUI/Narrator。
+- P04.127 / feat-052 已登记：新增 Workbench review 路径，接入现有 Rust 原子跨文档事务，并验收选择过滤、dirty、逐文档 undo/redo、保存读回、Discard 与过期失败。范围与预编辑证据：`docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md`。Code Action/Bulk Edit 生产 producer 不在本子项；后续继续逐项注册，不把 API 接通误记为生产 producer 已有。
+- GitNexus registration scan: 10,465 nodes / 325 clusters / 414 flows (incremental edge counts varied 23,670–24,482). Repeated all-scope results varied between 4 files / 3 documentation sections / 0 flows / LOW and 4 touched files with no indexed-symbol overlap (explicitly not clean); mapping remains unresolved. Successful compare-main scans are CRITICAL/capped: 1,703 files / 398 processes, with symbol counts varying from 3,959 to 4,334. One concurrent run was partial/UNKNOWN and is not complete evidence. Workbench file is 685,493 bytes and unindexed; `AlulaCore.applyWorkspaceEdit` upstream is UNKNOWN, with exact caller/source review in P04.127 scope. No clean graph claim.
+- P04/feat-026 仍开放；继续一次推进一个已登记子项，完成 P04 全部子项与阶段门后暂停，不启动 P05。P15 与 deferred 500 MiB 目标保持原状；不启动本地 GUI/Narrator。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
