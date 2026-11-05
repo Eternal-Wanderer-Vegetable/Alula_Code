@@ -112,6 +112,70 @@ void main() {
         reason: '活动栏应有资源管理器');
   });
 
+  testWidgets('File 菜单按默认分组排序并服从编辑器上下文（P05.4）', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('打开文件夹(O)'), findsOneWidget);
+      expect(find.textContaining('保存(S)'), findsOneWidget,
+          reason: 'the startup untitled document is an active editor');
+      expect(find.textContaining('另存为…(A)'), findsOneWidget);
+      expect(find.text('从磁盘还原(R)'), findsNothing);
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsOneWidget,
+        reason: 'the startup editor omits the empty Revert group',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 300));
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final openFolder = find.text('打开文件夹(O)');
+      final save = find.textContaining('保存(S)');
+      final saveAs = find.textContaining('另存为…(A)');
+      final revert = find.text('从磁盘还原(R)');
+      expect(openFolder, findsOneWidget);
+      expect(save, findsOneWidget);
+      expect(saveAs, findsOneWidget);
+      expect(revert, findsOneWidget);
+      expect(tester.getTopLeft(openFolder).dy,
+          lessThan(tester.getTopLeft(save).dy));
+      expect(tester.getTopLeft(save).dy,
+          lessThan(tester.getTopLeft(saveAs).dy));
+      expect(tester.getTopLeft(saveAs).dy,
+          lessThan(tester.getTopLeft(revert).dy));
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsNWidgets(2),
+        reason: 'Open, Save, and Revert belong to separate default groups',
+      );
+      expect(find.textContaining('比较活动文件'), findsNothing);
+      expect(find.textContaining('使用编码'), findsNothing);
+      expect(find.textContaining('选择行尾'), findsNothing);
+    });
+  });
+
   testWidgets('窗口控制按钮：windowControls 开启时渲染（W1-3）', (tester) async {
     await tester.pumpWidget(AlulaApp(
       layoutStore: store,

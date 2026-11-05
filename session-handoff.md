@@ -52,12 +52,12 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Recommended Next Step
 
-P05.3 code, evidence, and follow-up PR CI are green. P05.4 / feat-056 / LAY-01d is the sole active child: implement the supported File menu subset and context ordering recorded in `docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md`. The exact menu model impact remains UNKNOWN and the >512 KiB `workbench_page.dart` is unindexed; use the literal callsite review in the scope report. Keep macOS native menu as its own later child.
+P05.3 code, evidence, and follow-up PR CI are green. P05.4 / feat-056 / LAY-01d production code and local DoD are complete; wait for PR CI and hosted Linux/Windows/macOS Intel x64 evidence, then update state and mark feat-056 done. Scope and GitNexus limitations are recorded in `docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md`. Keep macOS native menu as its own later child.
 
 ## Next Session
 
-1. Implement P05.4 production menu ordering, editor/path visibility, and focused widget regression.
-2. Run local DoD, GitNexus change analysis, PR CI, and record evidence before marking feat-056 done.
+1. Commit/push the P05.4 product and local evidence; inspect PR CI and run hosted platform availability on the same SHA.
+2. Record hosted evidence and mark feat-056 done only after the relevant checks pass.
 3. Continue one LAY/CMD child at a time; keep native macOS menu parity separate and do not close P05 until the matrix DoD is complete.
 
 ## Baseline

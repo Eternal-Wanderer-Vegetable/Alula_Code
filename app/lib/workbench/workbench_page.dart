@@ -607,9 +607,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'mergeEditorActive',
     );
     reg('file.save', '文件', '保存', _saveActive,
-        shortcut: 'Ctrl+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+S', when: 'editorActive', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
-        shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+Shift+S', when: 'editorActive', enablement: 'editorActive');
     reg(
       'workbench.files.action.compareWithSaved',
       '文件',
@@ -659,7 +659,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'diffEditorActive',
     );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
-        enablement: 'editorActive');
+        when: 'editorHasPath', enablement: 'editorActive');
     reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
         enablement: 'editorActive');
     reg('file.reopenWithEncoding', '文件', '使用编码重新打开…', _reopenWithEncodingActive,
@@ -2391,6 +2391,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'editorHasPath': active?.path != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
       'editorCanUndo': active?.undoStack.canUndo ?? false,
@@ -16663,23 +16664,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       [
                         const TitleMenuItem('打开文件夹(&&O)',
                             commandId: 'file.openFolder'),
+                        const TitleMenuItem.separator(),
                         TitleMenuItem('保存(&&S)${_sc('file.save')}',
                             commandId: 'file.save'),
                         TitleMenuItem('另存为…(&&A)${_sc('file.saveAs')}',
                             commandId: 'file.saveAs'),
-                        TitleMenuItem(
-                          '比较活动文件与剪贴板(&&C)${_sc('workbench.files.action.compareWithClipboard')}',
-                          commandId:
-                              'workbench.files.action.compareWithClipboard',
-                        ),
+                        const TitleMenuItem.separator(),
                         const TitleMenuItem('从磁盘还原(&&R)',
                             commandId: 'file.revert'),
-                        const TitleMenuItem('使用编码保存…(&&E)',
-                            commandId: 'file.saveWithEncoding'),
-                        const TitleMenuItem('使用编码重新打开…(&&O)',
-                            commandId: 'file.reopenWithEncoding'),
-                        const TitleMenuItem('选择行尾…(&&L)',
-                            commandId: 'file.selectEol'),
                       ],
                     ),
                     (

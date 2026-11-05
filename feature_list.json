@@ -735,7 +735,7 @@
         "feat-055"
       ],
       "status": "in-progress",
-      "evidence": "范围已登记，产品实现与 DoD 待完成。",
+      "evidence": "实现已完成，本地定向 File 菜单 widget 测试 1/1；完整 init.sh 的 Rust workspace、Clippy、build_core 与 Flutter 1,038/1,038 通过；cargo fmt --check、Flutter analyze 0 issues、Harness 100/100、diff check 与 JSON 校验通过。PR CI 与 Linux/Windows/macOS Intel x64 hosted 可用性待运行。范围、GitNexus 编辑前影响和本地验证：docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
