@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/bridge/alula_ffi.dart';
+import 'package:alula_app/bridge/alula_merge.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _MergeBootstrap {
@@ -53,9 +54,9 @@ void _expectConflictSlicesMatchResult(AlulaMergeProjection projection) {
 }
 
 void main() {
-  test('Dart ABI guard accepts v39 and rejects v38', () {
-    AlulaCore.validateAbiVersion(39);
-    expect(() => AlulaCore.validateAbiVersion(38), throwsStateError);
+  test('Dart ABI guard accepts v40 and rejects v39', () {
+    AlulaCore.validateAbiVersion(40);
+    expect(() => AlulaCore.validateAbiVersion(39), throwsStateError);
   });
 
   test('real FFI projection reports unresolved and accepted conflicts', () {
@@ -181,6 +182,90 @@ void main() {
     );
     expect(noFinalNewline.result, 'right');
   }, skip: _skip);
+
+  test('real FFI combination candidate returns a complete non-overlapping edit',
+      () {
+    final candidate = _bootstrap.core!.merge.combinationCandidate(
+      base: 'left=0\nright=0\n',
+      input1: 'left=1\nright=0\n',
+      input2: 'left=0\nright=2\n',
+    );
+    expect(candidate, 'left=1\nright=2\n');
+
+    final overlap = _bootstrap.core!.merge.combinationCandidate(
+      base: 'value=0\n',
+      input1: 'value=1\n',
+      input2: 'value=2\n',
+    );
+    expect(overlap, isNull);
+
+    final unchanged = _bootstrap.core!.merge.combinationCandidate(
+      base: 'base',
+      input1: 'changed',
+      input2: 'base',
+    );
+    expect(unchanged, isNull);
+  }, skip: _skip);
+
+  test('real FFI combination candidate preserves BOM and mixed line endings',
+      () {
+    final candidate = _bootstrap.core!.merge.combinationCandidate(
+      base: '\u{feff}🦊\r\nleft=0\rright=0\nend=0',
+      input1: '\u{feff}🦊\r\nleft=1\rright=0\nend=0',
+      input2: '\u{feff}🦊\r\nleft=0\rright=2\nend=0',
+    );
+    expect(candidate, '\u{feff}🦊\r\nleft=1\rright=2\nend=0');
+  }, skip: _skip);
+
+  test('real FFI combination candidate reports bounded input and parse errors',
+      () {
+    final ffi = _bootstrap.ffi!;
+    final malformed = jsonDecode(ffi.mergeCombinationCandidateJson('{')) as Map;
+    expect(malformed['ok'], false);
+    expect((malformed['error'] as Map)['code'], 'InvalidArgument');
+
+    final unknownField = jsonDecode(ffi.mergeCombinationCandidateJson(
+      '{"base":"a","input1":"b","input2":"c","extra":true}',
+    )) as Map;
+    expect(unknownField['ok'], false);
+    expect((unknownField['error'] as Map)['code'], 'InvalidArgument');
+
+    expect(
+      () => _bootstrap.core!.merge.combinationCandidate(
+        base: 'x'.padRight(2 * 1024 * 1024 + 1, 'x'),
+        input1: '',
+        input2: '',
+      ),
+      throwsA(
+        isA<AlulaMergeException>().having(
+          (error) => error.code,
+          'code',
+          'MergeCombinationLimit',
+        ),
+      ),
+    );
+  }, skip: _skip);
+
+  test('typed combination candidate response rejects malformed envelopes', () {
+    expect(
+      () => AlulaMergeCombinationCandidateResponse.fromJson({'ok': true}),
+      throwsFormatException,
+    );
+    expect(
+      () => AlulaMergeCombinationCandidateResponse.fromJson({
+        'ok': true,
+        'candidateText': 42,
+      }),
+      throwsFormatException,
+    );
+    expect(
+      () => AlulaMergeCombinationCandidateResponse.fromJson({
+        'ok': false,
+        'error': {'code': 'MergeCombinationLimit', 'detail': null},
+      }),
+      throwsA(isA<AlulaMergeException>()),
+    );
+  });
 
   test('real FFI reports malformed and unknown-conflict requests', () {
     final ffi = _bootstrap.ffi!;

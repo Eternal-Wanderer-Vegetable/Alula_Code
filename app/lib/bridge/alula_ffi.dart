@@ -58,6 +58,13 @@ class AlulaFfi {
       lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>('alula_merge_project_json');
 
+  late final Pointer<Utf8> Function(Pointer<Utf8>)
+      _mergeCombinationCandidateJson = lib.lookupFunction<
+          Pointer<Utf8> Function(Pointer<Utf8>),
+          Pointer<Utf8> Function(Pointer<Utf8>)>(
+    'alula_merge_combination_candidate_json',
+  );
+
   late final Pointer<Utf8> Function(Pointer<Utf8>) _textTransformCase =
       lib.lookupFunction<Pointer<Utf8> Function(Pointer<Utf8>),
           Pointer<Utf8> Function(Pointer<Utf8>)>(
@@ -404,6 +411,15 @@ class AlulaFfi {
     final request = requestJson.toNativeUtf8();
     try {
       return _takeJson(_mergeProjectJson(request));
+    } finally {
+      malloc.free(request);
+    }
+  }
+
+  String mergeCombinationCandidateJson(String requestJson) {
+    final request = requestJson.toNativeUtf8();
+    try {
+      return _takeJson(_mergeCombinationCandidateJson(request));
     } finally {
       malloc.free(request);
     }

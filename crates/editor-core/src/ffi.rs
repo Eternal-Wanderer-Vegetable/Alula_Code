@@ -30,7 +30,9 @@ use editor_lsp::{
     decode_semantic_tokens, extract_completion_labels, extract_definition_location,
     DefinitionLocation, LspPendingRequest, LspServer, SemanticToken, SemanticTokenLegend,
 };
-use editor_merge::{InputSide, MergeError, MergeProjection};
+use editor_merge::{
+    combine_conflict, CombinationError, CombinationLimits, InputSide, MergeError, MergeProjection,
+};
 use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, ResourcePressureMonitor};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -38,7 +40,7 @@ use serde_json::json;
 use crate::{ApplyError, DocRegistry, WorkspaceEditError};
 
 /// ABI/协议版本；Dart 侧加载后应校验。
-pub const ALULA_ABI_VERSION: u32 = 39;
+pub const ALULA_ABI_VERSION: u32 = 40;
 
 const MAX_CASE_TRANSFORM_INPUT_BYTES: usize = 8 * 1024 * 1024;
 const MAX_CASE_TRANSFORM_OUTPUT_BYTES: usize = 16 * 1024 * 1024;
@@ -87,6 +89,14 @@ struct MergeProjectionInput {
     resolutions: Vec<MergeResolutionInput>,
 }
 
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct MergeCombinationCandidateInput {
+    base: String,
+    input1: String,
+    input2: String,
+}
+
 #[derive(Deserialize, Clone, Copy)]
 #[serde(rename_all = "camelCase")]
 enum MergeSideInput {
@@ -124,6 +134,13 @@ struct MergeProjectionEnvelope<'a> {
     ok: bool,
     #[serde(flatten)]
     projection: MergeProjectionResponse<'a>,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct MergeCombinationCandidateEnvelope {
+    ok: bool,
+    candidate_text: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -512,6 +529,58 @@ fn merge_error_response(error: MergeError) -> *mut c_char {
     }
 }
 
+fn merge_combination_error_response(error: CombinationError) -> *mut c_char {
+    match error {
+        CombinationError::InputByteLimit => err_json(
+            "MergeCombinationLimit",
+            json!({ "limit": "totalInputBytes" }),
+        ),
+        CombinationError::TraceLimit => {
+            err_json("MergeCombinationLimit", json!({ "limit": "traceCells" }))
+        }
+        CombinationError::WorkLimit => {
+            err_json("MergeCombinationLimit", json!({ "limit": "work" }))
+        }
+        CombinationError::InvalidDiff => {
+            err_json("Internal", json!("invalid merge combination diff ranges"))
+        }
+    }
+}
+
+fn merge_combination_candidate_response_with_limit(
+    candidate_text: Option<String>,
+    max_response_bytes: usize,
+) -> *mut c_char {
+    let response = MergeCombinationCandidateEnvelope {
+        ok: true,
+        candidate_text,
+    };
+    let mut writer = BoundedJsonWriter::new(max_response_bytes);
+    if serde_json::to_writer(&mut writer, &response).is_err() {
+        if writer.exceeded {
+            return err_json(
+                "ResponseTooLarge",
+                json!({ "maxBytes": max_response_bytes }),
+            );
+        }
+        return err_json(
+            "Internal",
+            json!("failed to serialize merge combination candidate"),
+        );
+    }
+    match String::from_utf8(writer.bytes) {
+        Ok(response_json) => to_c_ptr(response_json),
+        Err(_) => err_json(
+            "Internal",
+            json!("merge combination response was not valid UTF-8"),
+        ),
+    }
+}
+
+fn merge_combination_candidate_response(candidate_text: Option<String>) -> *mut c_char {
+    merge_combination_candidate_response_with_limit(candidate_text, MAX_MERGE_RESPONSE_JSON_BYTES)
+}
+
 /// Build a bounded, stateless three-way merge projection.
 ///
 /// # Safety
@@ -612,6 +681,50 @@ pub unsafe extern "C" fn alula_merge_project_json(request_json: *const c_char) -
         }
     }))
     .unwrap_or_else(|_| err_json("Internal", json!("panic in alula_merge_project_json")))
+}
+
+/// Compute a bounded, stateless smart-combination candidate for one conflict.
+///
+/// # Safety
+/// `request_json` must point to a valid NUL-terminated UTF-8 C string.
+#[no_mangle]
+pub unsafe extern "C" fn alula_merge_combination_candidate_json(
+    request_json: *const c_char,
+) -> *mut c_char {
+    catch_unwind(AssertUnwindSafe(|| {
+        let request_text = match unsafe { read_c_str(request_json) } {
+            Ok(request_text) => request_text,
+            Err(error) => return error,
+        };
+        if request_text.len() > MAX_MERGE_REQUEST_JSON_BYTES {
+            return err_json(
+                "RequestTooLarge",
+                json!({ "maxBytes": MAX_MERGE_REQUEST_JSON_BYTES }),
+            );
+        }
+
+        let request: MergeCombinationCandidateInput = match serde_json::from_str(request_text) {
+            Ok(request) => request,
+            Err(error) => return err_json("InvalidArgument", json!(error.to_string())),
+        };
+        let candidate_text = match combine_conflict(
+            &request.base,
+            &request.input1,
+            &request.input2,
+            CombinationLimits::default(),
+        ) {
+            Ok(candidate_text) => candidate_text,
+            Err(error) => return merge_combination_error_response(error),
+        };
+
+        merge_combination_candidate_response(candidate_text)
+    }))
+    .unwrap_or_else(|_| {
+        err_json(
+            "Internal",
+            json!("panic in alula_merge_combination_candidate_json"),
+        )
+    })
 }
 
 /// Apply a full Unicode case mapping to a JSON-encoded text fragment.
@@ -3109,12 +3222,120 @@ mod tests {
     #[test]
     fn abi_version_is_exposed() {
         assert_eq!(alula_abi_version(), ALULA_ABI_VERSION);
-        assert_eq!(alula_abi_version(), 39);
+        assert_eq!(alula_abi_version(), 40);
     }
 
     fn merge_call(request_json: &str) -> serde_json::Value {
         let request = c(request_json);
         take(unsafe { alula_merge_project_json(request.as_ptr()) })
+    }
+
+    fn merge_combination_candidate_call(request_json: &str) -> serde_json::Value {
+        let request = c(request_json);
+        take(unsafe { alula_merge_combination_candidate_json(request.as_ptr()) })
+    }
+
+    #[test]
+    fn merge_combination_candidate_ffi_returns_complete_candidate_or_null() {
+        let candidate = merge_combination_candidate_call(
+            &json!({
+                "base": "left=0\nright=0\n",
+                "input1": "left=1\nright=0\n",
+                "input2": "left=0\nright=2\n"
+            })
+            .to_string(),
+        );
+        assert_eq!(candidate["ok"], true);
+        assert_eq!(candidate["candidateText"], "left=1\nright=2\n");
+        assert!(candidate.get("error").is_none());
+
+        let overlapping = merge_combination_candidate_call(
+            &json!({
+                "base": "value=0\n",
+                "input1": "value=1\n",
+                "input2": "value=2\n"
+            })
+            .to_string(),
+        );
+        assert_eq!(overlapping, json!({ "ok": true, "candidateText": null }));
+
+        let unchanged = merge_combination_candidate_call(
+            &json!({
+                "base": "base",
+                "input1": "changed",
+                "input2": "base"
+            })
+            .to_string(),
+        );
+        assert_eq!(unchanged, json!({ "ok": true, "candidateText": null }));
+    }
+
+    #[test]
+    fn merge_combination_candidate_ffi_preserves_utf8_bom_and_mixed_line_endings() {
+        let response = merge_combination_candidate_call(
+            &json!({
+                "base": "\u{feff}🦊\r\nleft=0\rright=0\nend=0",
+                "input1": "\u{feff}🦊\r\nleft=1\rright=0\nend=0",
+                "input2": "\u{feff}🦊\r\nleft=0\rright=2\nend=0"
+            })
+            .to_string(),
+        );
+        assert_eq!(response["ok"], true);
+        assert_eq!(
+            response["candidateText"],
+            "\u{feff}🦊\r\nleft=1\rright=2\nend=0"
+        );
+    }
+
+    #[test]
+    fn merge_combination_candidate_ffi_rejects_invalid_and_over_limit_requests() {
+        assert_eq!(
+            merge_combination_candidate_call("{")["error"]["code"],
+            "InvalidArgument"
+        );
+        assert_eq!(
+            merge_combination_candidate_call(
+                r#"{"base":"a","input1":"b","input2":"c","unexpected":true}"#
+            )["error"]["code"],
+            "InvalidArgument"
+        );
+
+        let oversized_request = " ".repeat(MAX_MERGE_REQUEST_JSON_BYTES + 1);
+        let request = c(&oversized_request);
+        assert_eq!(
+            take(unsafe { alula_merge_combination_candidate_json(request.as_ptr()) })["error"]
+                ["code"],
+            "RequestTooLarge"
+        );
+
+        let oversized_input = json!({
+            "base": "x".repeat(2 * 1024 * 1024 + 1),
+            "input1": "",
+            "input2": ""
+        })
+        .to_string();
+        let response = merge_combination_candidate_call(&oversized_input);
+        assert_eq!(response["error"]["code"], "MergeCombinationLimit");
+        assert_eq!(response["error"]["detail"]["limit"], "totalInputBytes");
+        assert!(response.get("candidateText").is_none());
+    }
+
+    #[test]
+    fn merge_combination_candidate_ffi_errors_are_bounded_and_never_partial() {
+        let trace_error = take(merge_combination_error_response(
+            CombinationError::TraceLimit,
+        ));
+        assert_eq!(trace_error["error"]["code"], "MergeCombinationLimit");
+        assert_eq!(trace_error["error"]["detail"]["limit"], "traceCells");
+        assert!(trace_error.get("candidateText").is_none());
+
+        let response_too_large = take(merge_combination_candidate_response_with_limit(
+            Some("complete candidate".to_owned()),
+            1,
+        ));
+        assert_eq!(response_too_large["error"]["code"], "ResponseTooLarge");
+        assert_eq!(response_too_large["error"]["detail"]["maxBytes"], 1);
+        assert!(response_too_large.get("candidateText").is_none());
     }
 
     #[test]

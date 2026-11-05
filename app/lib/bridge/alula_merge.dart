@@ -124,6 +124,35 @@ class AlulaMergeException implements Exception {
   String toString() => 'AlulaMergeException($code): ${jsonEncode(detail)}';
 }
 
+class AlulaMergeCombinationCandidateResponse {
+  const AlulaMergeCombinationCandidateResponse(this.candidateText);
+
+  final String? candidateText;
+
+  factory AlulaMergeCombinationCandidateResponse.fromJson(
+    Map<String, Object?> json,
+  ) {
+    if (json['ok'] != true) {
+      final error = json['error'];
+      if (error is! Map<String, Object?>) {
+        throw const FormatException('合并组合候选错误 envelope 无效');
+      }
+      throw AlulaMergeException(
+        error['code'] as String? ?? 'Unknown',
+        error['detail'],
+      );
+    }
+    if (!json.containsKey('candidateText')) {
+      throw const FormatException('合并组合候选 envelope 缺少 candidateText');
+    }
+    final candidateText = json['candidateText'];
+    if (candidateText != null && candidateText is! String) {
+      throw const FormatException('合并组合候选 candidateText 类型无效');
+    }
+    return AlulaMergeCombinationCandidateResponse(candidateText as String?);
+  }
+}
+
 /// Calls the Rust model once per request; the native side retains no session.
 class AlulaMergeApi {
   const AlulaMergeApi(this._ffi);
@@ -159,5 +188,22 @@ class AlulaMergeApi {
       );
     }
     return AlulaMergeProjection.fromJson(response);
+  }
+
+  String? combinationCandidate({
+    required String base,
+    required String input1,
+    required String input2,
+  }) {
+    final request = jsonEncode({
+      'base': base,
+      'input1': input1,
+      'input2': input2,
+    });
+    final response = jsonDecode(
+      _ffi.mergeCombinationCandidateJson(request),
+    ) as Map<String, Object?>;
+    return AlulaMergeCombinationCandidateResponse.fromJson(response)
+        .candidateText;
   }
 }
