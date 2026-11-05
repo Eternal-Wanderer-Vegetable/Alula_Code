@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 resumed on 2026-11-05 from merged P04 baseline (PR #2, merge 46084e9). Startup `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` passed Rust workspace tests, build_core, and Flutter 1,021 tests. P05.1 / LAY-01a is the sole active child; scope: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
+      "evidence": "P05 resumed on 2026-11-05 from merged P04 baseline (PR #2, merge 46084e9); P05 PR #3 is a draft on codex/vscode-parity-p05. P05.1 / LAY-01a is the sole active child. Its implementation and full local gates pass: init.sh (Rust 71+54, Clippy, build_core, Flutter 1,030), cargo fmt, Flutter analyze, focused titlebar/configuration 9/9, Harness 100/100. Linux/Windows/macOS hosted native-titlebar smoke is pending. Scope/evidence: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05 still has 20 LAY + 12 CMD matrix rows open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -699,7 +699,7 @@
         "feat-027"
       ],
       "status": "in-progress",
-      "evidence": "",
+      "evidence": "Local implementation complete, hosted validation pending. `WindowChromeConfiguration` defaults to custom and accepts --native-titlebar/--custom-titlebar; custom row is 35 logical px. Driver-injected tests cover platform-specific controls, drag/double-click, action routing, native menu row and close callback (9/9). Full `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passes (Rust 71+54, Clippy, build_core, Flutter 1,030); cargo fmt, Flutter analyze (0 issues), Harness 100/100, diff check pass. Platform Availability now triggers on codex/vscode-parity-p05 and adds Linux/macOS native launch plus Windows native-mode graceful-close smoke; await run after push. Known difference: Linux draws controls in custom mode for GTK hidden decorations; Windows/macOS retain OS controls. Menu hierarchy/mnemonics/macOS system menu and explicit controls-style setting remain open. See docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

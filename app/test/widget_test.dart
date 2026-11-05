@@ -6,6 +6,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -107,6 +108,8 @@ void main() {
       layoutStore: store,
       sessionStore: session,
       keybindingsStore: keybindings,
+      windowChromeConfiguration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
       windowControls: true,
     ));
     await tester.pump(const Duration(milliseconds: 300));

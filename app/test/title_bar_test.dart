@@ -1,0 +1,256 @@
+import 'package:alula_app/workbench/commands.dart';
+import 'package:alula_app/workbench/title_bar.dart';
+import 'package:alula_app/workbench/window_chrome_configuration.dart';
+import 'package:alula_app/workbench/window_chrome_driver.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:window_manager/window_manager.dart';
+
+void main() {
+  late CommandService commands;
+  late _FakeWindowChromeDriver window;
+
+  setUp(() {
+    commands = CommandService();
+    window = _FakeWindowChromeDriver();
+  });
+
+  tearDown(() {
+    commands.dispose();
+  });
+
+  testWidgets(
+      'Linux custom title bar renders bounded controls and routes actions',
+      (tester) async {
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+    ));
+    await tester.pump();
+
+    expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
+    expect(find.byTooltip('最小化'), findsOneWidget);
+    expect(find.byTooltip('最大化'), findsOneWidget);
+    expect(find.byTooltip('关闭'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('最小化'));
+    await tester.pump();
+    expect(window.minimizeCalls, 1);
+
+    await tester.tap(find.byTooltip('最大化'));
+    await tester.pumpAndSettle();
+    expect(window.maximizeCalls, 1);
+    expect(find.byTooltip('向下还原'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('向下还原'));
+    await tester.pumpAndSettle();
+    expect(window.unmaximizeCalls, 1);
+    expect(find.byTooltip('最大化'), findsOneWidget);
+  });
+
+  testWidgets('macOS custom title bar leaves caption controls to the OS',
+      (tester) async {
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+    ));
+
+    expect(find.text('Alula Code'), findsOneWidget);
+    expect(find.byTooltip('最小化'), findsNothing);
+    expect(find.byTooltip('最大化'), findsNothing);
+    expect(find.byTooltip('关闭'), findsNothing);
+  });
+
+  testWidgets(
+      'native title bar keeps menu row and close handling',
+      (tester) async {
+    var closeRequested = 0;
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration: const WindowChromeConfiguration(
+        mode: WorkbenchTitleBarMode.native,
+        targetPlatform: TargetPlatform.windows,
+      ),
+      menus: const [
+        ('文件', [TitleMenuItem('打开文件夹', commandId: 'file.openFolder')]),
+      ],
+      onCloseRequested: () => closeRequested++,
+    ));
+
+    expect(find.text('Alula Code'), findsNothing);
+    expect(find.text('文件'), findsOneWidget);
+    expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
+    expect(find.byTooltip('最小化'), findsNothing);
+    expect(window.listeners, hasLength(1));
+
+    window.emitClose();
+    await tester.pump();
+    await tester.pump();
+
+    expect(closeRequested, 1);
+    expect(window.preventCloseValues, [false]);
+    expect(window.closeCalls, 1);
+  });
+
+  testWidgets('double-clicking the title text toggles maximize state',
+      (tester) async {
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+    ));
+
+    final title = find.text('Alula Code');
+    await _doubleTap(tester, title);
+    await tester.pumpAndSettle();
+    expect(window.maximizeCalls, 1);
+
+    await _doubleTap(tester, title);
+    await tester.pumpAndSettle();
+    expect(window.unmaximizeCalls, 1);
+  });
+
+  testWidgets('drag region moves the window while menu interaction does not',
+      (tester) async {
+    var commandCalls = 0;
+    commands.register(Command(
+      id: 'test.action',
+      title: 'Run test action',
+      category: 'Test',
+      run: () async {
+        commandCalls++;
+      },
+    ));
+    await tester.pumpWidget(MaterialApp(
+      home: WindowChromeConfigurationScope(
+        configuration:
+            WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+        child: Scaffold(
+          body: AlulaTitleBar(
+            commands: commands,
+            menus: const [
+              ('文件', [TitleMenuItem('运行', commandId: 'test.action')]),
+            ],
+            windowControls: true,
+            windowChromeDriver: window,
+          ),
+        ),
+      ),
+    ));
+
+    await tester.drag(find.text('Alula Code'), const Offset(30, 0));
+    expect(window.dragCalls, 1);
+
+    await tester.tap(find.text('文件'));
+    await tester.pumpAndSettle();
+    expect(window.dragCalls, 1);
+    await tester.tap(find.text('运行'));
+    await tester.pumpAndSettle();
+    expect(commandCalls, 1);
+    expect(window.dragCalls, 1);
+  });
+}
+
+Future<void> _doubleTap(WidgetTester tester, Finder finder) async {
+  final position = tester.getCenter(finder);
+  final gesture = await tester.startGesture(position);
+  await gesture.up();
+  await tester.pump(const Duration(milliseconds: 80));
+  await gesture.down(position);
+  await gesture.up();
+  await tester.pump();
+  await gesture.removePointer();
+}
+
+Widget _titleBarApp({
+  required CommandService commands,
+  required _FakeWindowChromeDriver window,
+  required WindowChromeConfiguration configuration,
+  List<(String, List<TitleMenuItem>)> menus = const [],
+  VoidCallback? onCloseRequested,
+}) {
+  return MaterialApp(
+    home: WindowChromeConfigurationScope(
+      configuration: configuration,
+      child: Scaffold(
+        body: AlulaTitleBar(
+          commands: commands,
+          menus: menus,
+          windowControls: true,
+          windowChromeDriver: window,
+          onCloseRequested: onCloseRequested,
+        ),
+      ),
+    ),
+  );
+}
+
+class _FakeWindowChromeDriver implements WindowChromeDriver {
+  final List<WindowListener> listeners = [];
+  final List<bool> preventCloseValues = [];
+  bool maximized = false;
+  int minimizeCalls = 0;
+  int maximizeCalls = 0;
+  int unmaximizeCalls = 0;
+  int dragCalls = 0;
+  int closeCalls = 0;
+
+  @override
+  void addListener(WindowListener listener) => listeners.add(listener);
+
+  @override
+  void removeListener(WindowListener listener) => listeners.remove(listener);
+
+  @override
+  Future<bool> isMaximized() async => maximized;
+
+  @override
+  Future<void> minimize() async {
+    minimizeCalls++;
+  }
+
+  @override
+  Future<void> maximize() async {
+    maximizeCalls++;
+    maximized = true;
+    for (final listener in List<WindowListener>.of(listeners)) {
+      listener.onWindowMaximize();
+    }
+  }
+
+  @override
+  Future<void> unmaximize() async {
+    unmaximizeCalls++;
+    maximized = false;
+    for (final listener in List<WindowListener>.of(listeners)) {
+      listener.onWindowUnmaximize();
+    }
+  }
+
+  @override
+  Future<void> startDragging() async {
+    dragCalls++;
+  }
+
+  @override
+  Future<void> close() async {
+    closeCalls++;
+  }
+
+  @override
+  Future<void> setPreventClose(bool preventClose) async {
+    preventCloseValues.add(preventClose);
+  }
+
+  void emitClose() {
+    for (final listener in List<WindowListener>.of(listeners)) {
+      listener.onWindowClose();
+    }
+  }
+}

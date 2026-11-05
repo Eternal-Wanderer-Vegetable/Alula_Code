@@ -2,7 +2,7 @@ name: Platform Availability
 
 on:
   push:
-    branches: [codex/vscode-parity-p00]
+    branches: [codex/vscode-parity-p00, codex/vscode-parity-p05]
     paths:
       - 'app/**'
       - 'crates/**'
@@ -66,6 +66,15 @@ jobs:
           set +e
           timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             app/build/linux/x64/release/bundle/alula_app
+          status=$?
+          set -e
+          test "$status" -eq 124
+      - name: Launch Linux native-titlebar mode under Xvfb
+        if: ${{ always() && !cancelled() && steps.linux_bundle.outcome == 'success' }}
+        run: |
+          set +e
+          timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            app/build/linux/x64/release/bundle/alula_app --native-titlebar
           status=$?
           set -e
           test "$status" -eq 124
@@ -646,6 +655,27 @@ jobs:
           if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
           if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
           if (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }
+      - name: Launch Windows native-titlebar mode and close gracefully
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+          $process = Start-Process -FilePath $exe -ArgumentList '--native-titlebar' -PassThru -WindowStyle Normal
+          try {
+            $deadline = (Get-Date).AddSeconds(30)
+            do {
+              $process.Refresh()
+              if ($process.HasExited) { throw "Native-titlebar mode exited during startup (code $($process.ExitCode))" }
+              if ($process.MainWindowHandle -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+            } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+            if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'Native-titlebar mode did not create a top-level window' }
+            if (!$process.CloseMainWindow()) { throw 'CloseMainWindow was not accepted by native-titlebar mode' }
+            if (!$process.WaitForExit(10000)) { throw 'Native-titlebar mode did not exit within 10 seconds after close' }
+            $process.Refresh()
+            if ($process.ExitCode -ne 0) { throw "Native-titlebar mode exited after close with code $($process.ExitCode)" }
+          }
+          finally {
+            if (!$process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -845,12 +875,39 @@ jobs:
             exit 1
           fi
           wait "$app_pid" || true
+      - name: Launch macOS native-titlebar mode
+        if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
+        run: |
+          executable="app/build/macos/Build/Products/Release/alula_app.app/Contents/MacOS/alula_app"
+          "$executable" --native-titlebar > "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1 &
+          app_pid=$!
+          sleep 8
+          if ! kill -0 "$app_pid" 2>/dev/null; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            set +e
+            wait "$app_pid"
+            app_status=$?
+            set -e
+            exit "$app_status"
+          fi
+          kill -TERM "$app_pid" 2>/dev/null || true
+          for _ in $(seq 1 20); do
+            kill -0 "$app_pid" 2>/dev/null || break
+            sleep 0.25
+          done
+          if kill -0 "$app_pid" 2>/dev/null; then
+            kill -KILL "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+            echo "Native-titlebar Alula did not stop after the launch smoke"
+            exit 1
+          fi
+          wait "$app_pid" || true
       - name: Collect macOS startup diagnostics
         if: always()
         run: |
           diagnostics="$RUNNER_TEMP/alula-macos-diagnostics"
           mkdir -p "$diagnostics"
-          for log in alula-macos-smoke.log alula-macos-lldb.log; do
+          for log in alula-macos-smoke.log alula-macos-native-titlebar.log alula-macos-lldb.log; do
             if [[ -f "$RUNNER_TEMP/$log" ]]; then
               cp "$RUNNER_TEMP/$log" "$diagnostics/"
             fi

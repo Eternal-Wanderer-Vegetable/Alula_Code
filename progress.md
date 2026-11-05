@@ -8,10 +8,11 @@
 ### P05 / feat-027 已启动；P05.1 是当前唯一 active 子项
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
-- `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` 基线通过：Rust workspace tests、`build_core`、Flutter 1,021 项测试均成功。
-- 当前仅登记 P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）；范围与预编辑分析在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项 `in-progress`，尚未声称 LAY-01 或阶段完成。
+- 当前仅推进 P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）；实现和本地门禁已通过，等待 P05 分支 Linux/Windows/macOS hosted smoke。范围、编辑前风险和本地证据在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项 `in-progress`，尚未声称 LAY-01 或阶段完成。
+- native/custom 配置由 `--native-titlebar` / `--custom-titlebar` 选择，默认 custom；自定义标题栏为 35px。native 模式保留现有菜单入口行和优雅关闭监听。Linux custom 模式因 GTK hidden decorations 采用自绘控制；Windows/macOS 保留系统按钮，VS Code 的 Windows 自绘按钮模式仍是已记录差异。
+- 最终本地完整门禁：`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust 71+54、Clippy、`build_core`、Flutter 1,030 项）；`cargo fmt --check`、Flutter analyze（0 issues）、titlebar/config 定向测试 9/9、Harness 100/100、workflow YAML、JSON、diff check 均通过。W1-3 既有控件测试固定注入 Linux 配置，避免 Flutter 测试默认 Android 平台造成误报。
 - GitNexus refreshed at `46084e9`（10,489 nodes / 25,289 edges / 325 clusters / 414 flows）。`AlulaTitleBar` upstream impact 为 UNKNOWN，调用点位于未索引的 >512 KiB `workbench_page.dart`；已用文本核对确认生产装配点，风险继续按 unresolved 记录。索引仍跳过 5 个大文件，并报告跨语言属性解析缺口。
-- PR #2 已合并；P05 PR 将以 `main` 为 base。暂不启动本机 GUI 或 Narrator；hosted/native-device 证据按 docs/03 的可用性与限制登记。500 MiB 数值目标仍后置。
+- PR #2 已合并；PR #3 已以 `main` 为 base 创建为 draft，分支 `codex/vscode-parity-p05`。Platform Availability 已加入本分支触发及 native-titlebar smoke；实现提交后的 hosted jobs 尚待运行。暂不启动本机 GUI 或 Narrator；hosted/native-device 证据按 docs/03 的可用性与限制登记。500 MiB 数值目标仍后置。
 
 ### P04 / feat-026 已完成并合并；用户现已恢复 P05
 
