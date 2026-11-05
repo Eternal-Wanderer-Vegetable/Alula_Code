@@ -28,6 +28,7 @@ import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
 import 'package:flutter/services.dart';
 
 import '../bridge/alula_core.dart';
+import '../editor/bulk_edit_preview_surface.dart';
 import '../editor/editor_minimap.dart';
 import '../editor/snapshot_compare_preview.dart';
 import '../editor/diff_view_model.dart';
@@ -10780,6 +10781,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return (window.startUtf16 > 0 && local < margin) ||
         (window.endUtf16 < window.totalUtf16Length &&
             local > window.text.length - margin);
+  }
+
+  /// Opens the bounded review UI and applies only its selected edits.
+  ///
+  /// The source versions are pinned into the callback payload even when the
+  /// producer did not supply versions, so a document changed while the review
+  /// is open fails the existing transaction preflight instead of being rebased.
+  Future<bool> reviewWorkspaceEdit(WorkspaceEdit edit) async {
+    if (_core == null) {
+      setState(() => _statusDetail = '工作区编辑失败：核心尚未就绪');
+      return false;
+    }
+    for (final doc in _allDocViews) {
+      _flushInput(doc, commitComposition: true);
+    }
+    final snapshots = List<WorkspaceDocumentSnapshot>.unmodifiable([
+      for (final doc in _allDocs)
+        if (doc.uri != null)
+          WorkspaceDocumentSnapshot(
+            id: doc.id,
+            uri: doc.uri!,
+            version: doc.doc.version,
+            text: doc.text,
+            writable: doc.path != null &&
+                doc.diskState == DiskDocumentState.current,
+          ),
+    ]);
+    final snapshotsByUri = {
+      for (final snapshot in snapshots) snapshot.uri: snapshot,
+    };
+
+    return showBulkEditPreview(
+      context: context,
+      edit: edit,
+      snapshots: snapshots,
+      onApply: (selectedEdit) async {
+        final versionPinnedEdit = WorkspaceEdit(
+          [
+            for (final document in selectedEdit.documents)
+              WorkspaceDocumentEdit(
+                uri: document.uri,
+                version:
+                    document.version ?? snapshotsByUri[document.uri]!.version,
+                edits: document.edits,
+              ),
+          ],
+          transactionId: selectedEdit.transactionId,
+        );
+        return applyWorkspaceEdit(versionPinnedEdit);
+      },
+      keyPrefix: 'workbench-bulk-edit-preview',
+    );
   }
 
   @visibleForTesting
