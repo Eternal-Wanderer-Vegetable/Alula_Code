@@ -5,13 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.125 / EDT-20c 已完成；P04 / feat-026 仍进行中
+### P04.126 / EDT-20d 已登记；P04 / feat-026 仍进行中
 
-- 产品/test commit `54b9ea65e407bb1a14ba4feb302eaf9abb0e837c` 已推送。只读 Multi Diff route、保序资源 navigator、成对懒构建 diff rows、行号/行类型/word ranges、键盘导航/关闭、URI/document/version metadata 与语义标签已实现；不含生产 Bulk Edit producer、编辑选择控件或 Apply/Discard/rollback。实现报告：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-implementation.md`。
-- 完整本地 DoD 通过：`cargo fmt --all -- --check` 与 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 1012）通过；Flutter analyze 0 issues，focused Multi Diff widget suite 5/5。
-- PR CI `41989168966` 四 job 已通过。Platform Availability `41989162683` 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 均通过。包 artifacts：Linux `13397536411`、Windows `13397990347`、macOS `13398562144`；macOS DnD `13398856037` 因合成指针未路由至 Flutter 明确 skip，P15 设备门保留。macOS startup `13398212910` 成功启动且无 crash report；历史 SIGSEGV 不因此视为修复。此前 `41968463896` / `41971306974` CI 失败均为 Flutter analyze 的 `prefer_const_constructors`，Rust jobs 通过；后续修正后 CI 回绿。这些日志没有证据把 lint 失败关联到历史应用崩溃。
-- 最终 GitNexus index 为 10,395 nodes / 22,348 edges / 325 clusters / 412 flows；5 个大文件（包含 `workbench_page.dart`）跳过，768 跨语言字段、884 未排名入口、369 skipped callees 与 14 trace cuts 保持未解决。此产品变更 all-scope MEDIUM（2 files/35 symbols/5 flows）；全分支 compare-main CRITICAL（1698 files/4210 symbols/396 flows，listing capped），不作 clean graph 结论。
-- P04 / feat-026 与 EDT-20 仍开放：P04 parent DoD 还要求批量预览选择、应用/回滚端到端闭环，当前 P04.123–125 已完成选择模型、投影模型与只读视图，生产 producer/selection/apply 路由尚未落地。下一步从 docs/03 注册一个独立 P04 child，先做范围与 GitNexus 预分析；P05 不启动，完成全部 P04 gates 后暂停。PR #2 保持 OPEN/draft，P15 与 500 MiB 数值目标保持原状态；未启动本地 GUI/Narrator。
+- P04.125 / EDT-20c 产品/test commit `54b9ea65e407bb1a14ba4feb302eaf9abb0e837c` 与证据 commit `642212fe90d50e129704831b62b7a426bb5d52d2` 已推送。产品本地 DoD、focused 5/5、PR CI `41989168966` 与三平台 hosted build/test/launch/package `41989162683` 全通过；macOS hosted DnD 因 pointer route unavailable 明确 skip，P15 原生设备/Apple Silicon 验收保留。完整证据：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-implementation.md`。
+- P04.126 / EDT-20d 是唯一 active child：实现 bounded review route，把现有 per-edit/resource selection 接入所选内容的 Multi Diff；Apply 只调用必需事务回调，成功才关闭，失败保持 UI，Discard/Escape 不写入。范围、Code-OSS 来源、编辑前 impact/UNKNOWN 与图谱覆盖限制：`docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-scope.md`。
+- P04.126 编辑前 GitNexus index：10,403 nodes / 22,649 edges / 325 clusters / 412 flows；all-scope 当前无工作树变化；compare-main CRITICAL/capped（1,699 files / 4,225 symbols / 396 flows）。`BulkEditPreviewSession` impact UNKNOWN（当前仅测试调用，文本已核实）；`BulkEditMultiDiffProjection` LOW（一 import）；Workbench 超过索引文件上限，core transaction caller 的动态属性边未解析。未知与覆盖缺口保留，避免修改既有 Workbench/FFI transaction symbols。
+- PR #2 保持 OPEN/draft，P05 不启动；P04 所有 gates 完成后暂停。P15 和 deferred 500 MiB 优化保持原状态；不启动本地 GUI/Narrator。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 

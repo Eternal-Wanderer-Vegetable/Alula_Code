@@ -666,6 +666,20 @@
       "evidence": "P04.125 / EDT-20c product/test commit 54b9ea65e407bb1a14ba4feb302eaf9abb0e837c. Local full DoD passed: cargo fmt, Rust workspace tests, Clippy, build_core, Flutter analyze 0 issues, Flutter 1,012; focused Multi Diff widget tests 5/5. PR CI 41989168966 passed all four jobs. Platform Availability 41989162683 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages: Linux 13397536411, Windows 13397990347, macOS 13398562144; macOS ZIP SHA-256 matches sidecar and unzip -t passed. macOS DnD was explicitly skipped due synthetic pointer routing unavailability (artifact 13398856037); P15 native device/Apple Silicon checks remain. macOS startup artifact 13398212910 shows successful launch and no crash report; historical macOS SIGSEGV remains unresolved. Implementation: docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-implementation.md; scope/pre-edit review: docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-scope.md. GitNexus all-scope product result MEDIUM and compare-main CRITICAL/capped listing are preserved; no clean graph claim. No local GUI/Narrator.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
+    },
+    {
+      "id": "feat-051",
+      "name": "P04.126 / EDT-20d Bulk Edit preview selection surface",
+      "description": "Build a bounded Flutter review route over BulkEditPreviewSession and BulkEditMultiDiffProjection with resource/edit selection, selected-only Multi Diff, Apply callback, and Discard. No production producer or Workbench transaction changes. DoD in docs/03 P04.126.",
+      "dependencies": [
+        "feat-048",
+        "feat-049",
+        "feat-050"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope and pre-edit GitNexus review registered in docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-scope.md; implementation pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",
