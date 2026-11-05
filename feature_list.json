@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a is complete with local and hosted evidence; 20 LAY + 12 CMD matrix rows remain open. PR CI 42032128727 and three-platform Platform Availability 42032120138 pass; macOS Intel package is hosted evidence only and its DnD input-route limitation is explicitly recorded. Continue by registering and completing one scoped P05 child at a time. Scope/report: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a is complete with local and hosted evidence. P05.2 / feat-054 / LAY-01b is the sole active child: recursive titlebar menus and submenu navigation. 20 LAY + 12 CMD matrix rows remain open. P05.1 hosted results and limitations: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05.2 scope/pre-edit analysis: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -700,6 +700,18 @@
       ],
       "status": "done",
       "evidence": "P05.1 / LAY-01a complete. Local N.2: init.sh passed (Rust workspace 71+54, Clippy, build_core, Flutter 1,030); cargo fmt, Flutter analyze (0 issues), focused titlebar/config tests 9/9, Harness 100/100, diff check passed. PR CI 42032128727 passed all four checks. Platform Availability 42032120138 passed Linux x64 (5m46s), Windows x64 (11m48s), and macOS Intel x64 (28m58s) build/launch/package lanes. Package artifacts Linux 13415944530, Windows 13417376645, macOS Intel x64 13417219623. Linux/Windows clipboard, DnD, and titlebar smokes passed; Windows also captured visible client area and verified P03.7 interaction, accessibility, and graceful close. macOS clipboard, Release build, bundle/sign, normal/native-titlebar launch, and package passed. macOS DnD artifact 13418970398 explicitly reports CGEventPostToPid pointer route false and all tests skipped; do not claim macOS DnD passed. macOS startup diagnostics 13417639020. ZIP SHA-256 bb12d417b2bfdd2239cbba57c02467beb1bd137bedc84b01525b88cb5d50ad5e matches sidecar and unzip integrity passed. Hosted macOS is Intel x64; Apple Silicon/native-device checks remain P15. Known Linux custom-mode drawn controls and Windows custom-control style differences remain open. Full details: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05/feat-027 and LAY-01 remain in progress.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-054",
+      "name": "P05.2 LAY-01b 递归标题栏菜单与子菜单",
+      "description": "为标题栏菜单增加 command/submenu/separator 递归结构与键鼠子菜单导航；将现有 View 外观切换命令放入 View > Appearance。mnemonic/access key、macOS native menu 和默认菜单全集另行排期。",
+      "dependencies": [
+        "feat-053"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope and pre-edit analysis registered in docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md. GitNexus impact for TitleMenuItem and AlulaTitleBar is UNKNOWN; WorkbenchPage is not indexed because workbench_page.dart exceeds 512 KiB. Text search confirms production assembly at line 16656 and item construction from line 16661. Product implementation, tests, and hosted evidence pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

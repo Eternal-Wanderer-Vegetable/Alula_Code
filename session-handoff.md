@@ -6,18 +6,25 @@
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a is complete; P05 and LAY-01 remain open. The current evidence update is not yet committed. After its push and PR CI, register exactly one next P05 child from the LAY/CMD matrix, then continue until all 20 LAY and 12 CMD rows have evidence.
+Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a is complete and its hosted evidence is committed at `9573290`; P05 and LAY-01 remain open. P05.2 / feat-054 / LAY-01b (recursive titlebar menu and submenu navigation) is the sole active child. Scope is recorded, product code is not yet changed. Continue one child at a time until all 20 LAY and 12 CMD rows have evidence.
 
 Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
 ## P05.1 Evidence
 
 - Local full `init.sh` passed: Rust workspace 71+54, Clippy, `build_core`, Flutter 1,030; `cargo fmt --check`; Flutter analyze (0 issues); focused titlebar/config tests 9/9; Harness 100/100; diff check.
-- PR CI [42032128727](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42032128727) passed all four jobs.
+- PR CI [42032128727](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42032128727) on the P05.1 product commit passed all four jobs. Evidence commit `9573290` triggered CI run `42038213800`; recheck before closing the child.
 - Platform Availability [42032120138](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/42032120138) passed Linux x64 (5m46s), Windows x64 (11m48s), and macOS Intel x64 (28m58s). Package artifacts: Linux 13415944530, Windows 13417376645, macOS Intel x64 13417219623.
 - Linux and Windows DnD/titlebar smoke passed. Windows also passed visible client capture, P03.7 interaction, clipboard, accessibility, and graceful close. macOS Release build, clipboard, bundle/sign, regular and native-titlebar launch, and packaging passed. macOS DnD artifact 13418970398 records `CGEventPostToPid pointer route: false` and `All tests skipped`; do not count DnD as passed. Startup diagnostics: 13417639020. macOS ZIP SHA-256 `bb12d417b2bfdd2239cbba57c02467beb1bd137bedc84b01525b88cb5d50ad5e`; sidecar matched and `unzip -t` passed.
 - Hosted macOS is Intel x64 only; Apple Silicon and native-device behavior remain P15. Linux custom mode draws window controls due GTK hidden decorations; Windows custom-control parity and explicit control-style setting remain open. Menu hierarchy, mnemonics, and macOS system menu remain separate work.
 - Full scope and details: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`.
+
+## P05.2 Active Scope
+
+- Scope/pre-edit review: `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`.
+- Expected files: `app/lib/workbench/title_bar.dart`, `app/lib/workbench/workbench_page.dart` around the `AlulaTitleBar` assembly at line 16656, `app/test/title_bar_test.dart`, plus tracking/evidence files.
+- GitNexus impact for exact `TitleMenuItem` and `AlulaTitleBar` UIDs returned `UNKNOWN` and 0 resolved callers. `context(WorkbenchPage)` failed because the >512 KiB workbench page is not indexed. Text search confirms the only production menu assembly at line 16656 and `TitleMenuItem` construction beginning at line 16661; inspect and test those callers directly.
+- Keep this child limited to recursive command/submenu/separator structure, `View > Appearance`, action visibility/enabled/arguments, and mouse/keyboard submenu interaction. Mnemonics, full default menu population, and macOS native menu remain separate.
 
 ## Blockers
 
@@ -27,25 +34,27 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Files
 
-- P05.1 report: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`
+- P05 reports: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`, `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`
 - P05 state: `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`, `session-handoff.md`
 - P05 titlebar implementation: `app/lib/main.dart`, `app/lib/workbench/title_bar.dart`, `app/lib/workbench/window_chrome_configuration.dart`, `app/lib/workbench/window_chrome_driver.dart`, and focused tests.
 
 ## GitNexus and Worktree Rules
 
-- GitNexus index was refreshed against product head `d6e297d`: 10,821 nodes / 26,755 edges / 328 clusters / 418 flows. Repeated evidence scans varied: all-scope 5 files / 1–16 symbols / 0–1 flows / LOW–MEDIUM (recently 5 / 16 / 0 / LOW); compare-to-main 13 files / 50–70 symbols / 5–6 flows / MEDIUM–HIGH (recently 13 / 70 / 5 / MEDIUM). One doc-section mapped to unrelated `InitState → Hunk`; no partial/truncated marker appeared, but the graph is not clean. Retain the analyzer coverage caveats below.
-- Pre-edit `AlulaTitleBar` impact was `UNKNOWN`; literal search confirmed production assembly in `app/lib/workbench/workbench_page.dart`, a >512 KiB file skipped by the index. Empty callers are not an all-clear. Prior post-edit scans varied; graph is not clean.
+- GitNexus index refreshed against commit `9573290`: 10,829 nodes / 27,140 edges / 328 clusters / 418 flows. P05.2 scope scans: all-scope 5 files / 8 symbols / 0 processes / LOW; compare-to-main 14 files / 60 symbols / 6 flows / HIGH. Analyzer skips 5 large files including `workbench_page.dart`, leaves 779 cross-language property sites unresolved, and truncates process discovery (899 candidates, 321 callees, 13 trace walks); do not read missing graph edges as unaffected.
+- P05.1 evidence scans varied: all-scope 5 files / 1–16 symbols / 0–1 flows / LOW–MEDIUM; compare-to-main 13 files / 50–70 symbols / 5–6 flows / MEDIUM–HIGH. One docs section mapped to unrelated `InitState → Hunk`. Keep these as unresolved graph limitations.
+- P05.2 exact pre-edit impact for `TitleMenuItem` and `AlulaTitleBar` is `UNKNOWN`; literal search confirms production assembly in skipped `workbench_page.dart`. Empty caller sets are not an all-clear.
 - Do not start local GUI/Narrator tests. Use hosted evidence and record unavailable synthetic input honestly. The 500 MiB goal remains deferred until after architectural replication.
 
 ## Recommended Next Step
 
-Commit and push the validated P05.1 hosted-evidence update, confirm the PR CI rerun, then register one next P05 child and perform its pre-edit impact analysis.
+Implement the registered P05.2 recursive menu model and submenu keyboard/mouse behavior, test the production `View > Appearance` path, then run the local gates and hosted CI.
 
 ## Next Session
 
-1. Validate the evidence edits (`feature_list.json`, docs/03, progress, handoff, P05.1 report), refresh GitNexus, and run all/compare change detection.
-2. Commit and push the evidence update to PR #3; confirm its PR CI rerun.
-3. Inspect P05 matrix and code, register exactly one next P05 child, perform its pre-edit impact analysis, then implement and validate it.
+1. Check PR CI run `42038213800` for the P05.1 evidence commit.
+2. Implement P05.2 in the recorded scope; add recursive menu and keyboard/mouse tests.
+3. Run local N.2 gates, refresh GitNexus, run all/compare change detection, record outcomes and push the product commit.
+4. Wait for PR CI and Platform Availability, then record hosted evidence before starting another P05 child.
 
 ## Baseline
 

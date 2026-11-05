@@ -5,10 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P05 / feat-027 进行中；P05.1 已完成
+### P05 / feat-027 进行中；P05.1 已完成，P05.2 当前推进
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
 - P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）已通过本地与 hosted 门禁并登记完成；范围、实现和逐项证据在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项仍为 `in-progress`：20 个 LAY 与 12 个 CMD 矩阵行继续逐项验收，尚未声称 LAY-01 或阶段完成。
+- P05.2 / feat-054 / LAY-01b 当前 active：为现有标题栏菜单增加递归子菜单结构，先把 View 外观切换迁入 `View > Appearance`，并测试鼠标/键盘展开和命令路由。范围、上游固定源码与 UNKNOWN 图谱限制见 `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`；mnemonic 与 macOS 原生菜单独立排期。
+- P05.2 编辑前 GitNexus：精确 `TitleMenuItem` / `AlulaTitleBar` impact 均 UNKNOWN，调用需按文本核对；`WorkbenchPage` 因大文件跳过无法获取 context。index at `9573290`: 10,829 nodes / 27,140 edges / 328 clusters / 418 flows。scope staged all-scope 为 5 files / 8 symbols / 0 processes / LOW；compare-to-main 为 14 files / 60 symbols / 6 flows / HIGH，保留 `InitState → Hunk` 文档误映射与 P05.1 受影响窗口流程。
 - native/custom 配置由 `--native-titlebar` / `--custom-titlebar` 选择，默认 custom；自定义标题栏为 35px。native 模式保留现有菜单入口行和优雅关闭监听。Linux custom 模式因 GTK hidden decorations 采用自绘控制；Windows/macOS 保留系统按钮，VS Code 的 Windows 自绘按钮模式仍是已记录差异。
 - 最终本地完整门禁：`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust 71+54、Clippy、`build_core`、Flutter 1,030 项）；`cargo fmt --check`、Flutter analyze（0 issues）、titlebar/config 定向测试 9/9、Harness 100/100、workflow YAML、JSON、diff check 均通过。W1-3 既有控件测试固定注入 Linux 配置，避免 Flutter 测试默认 Android 平台造成误报。
 - GitNexus 在 P05 产品 head `d6e297d` 刷新为 10,821 nodes / 26,755 edges / 328 clusters / 418 flows。`AlulaTitleBar` upstream impact 为 UNKNOWN，生产装配点在未索引的 >512 KiB `workbench_page.dart`；调用风险仍 unresolved。重复证据 all-scope 扫描在 5 files / 1–16 symbols / 0–1 flows / LOW–MEDIUM 间波动，最近为 5 / 16 / 0 / LOW；一次将文档映射到不相关的 `InitState → Hunk`。compare-to-main 在 13 files / 50–70 symbols / 5–6 flows / MEDIUM–HIGH 间波动，最近为 13 / 70 / 5 / MEDIUM。输出无 partial/truncated 标记，但图谱跳过 5 个大文件、779 个跨语言属性点无法关联且 process scan 有预算截断，因此不称 graph clean。
