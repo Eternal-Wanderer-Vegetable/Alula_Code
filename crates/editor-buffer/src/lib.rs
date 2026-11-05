@@ -4,8 +4,1141 @@
 //! UTF-16 code unit；本 crate 负责向 Ropey 的 char 索引换算，并拒绝落在
 //! 代理对中间等非法边界上的操作。
 
-use ropey::Rope;
+use regex::{Captures, Regex};
+use ropey::{Rope, RopeSlice};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::OnceLock;
+
+/// Maximum UTF-16 units requested by one bounded document read.
+pub const MAX_READ_RANGE_UTF16: usize = 64 * 1024;
+/// Maximum number of line windows returned by one editor viewport request.
+pub const MAX_READ_LINES: usize = 256;
+/// Maximum rows returned for one rectangular editor selection.
+pub const MAX_COLUMN_SELECTIONS: usize = 10_000;
+/// Maximum number of caret positions accepted by one word-delete query.
+pub const MAX_WORD_DELETE_CARETS: usize = 10_000;
+/// Maximum number of selections accepted by one line-delete query.
+pub const MAX_LINE_DELETE_RANGES: usize = 10_000;
+/// Maximum number of selections and logical lines changed by one comment command.
+pub const MAX_LINE_COMMENT_SELECTIONS: usize = 10_000;
+pub const MAX_LINE_COMMENT_LINES: usize = 10_000;
+/// Maximum leading whitespace scanned on one line while finding the comment position.
+pub const MAX_LINE_COMMENT_INDENT_UTF16: usize = 16_384;
+/// Maximum UTF-16 width of a configured line-comment token.
+pub const MAX_LINE_COMMENT_TOKEN_UTF16: usize = 16;
+/// Maximum number of selections accepted by one block-comment query.
+pub const MAX_BLOCK_COMMENT_SELECTIONS: usize = 10_000;
+/// Maximum UTF-16 length of one endpoint line inspected by a block-comment query.
+pub const MAX_BLOCK_COMMENT_LINE_UTF16: usize = 64 * 1024;
+/// Maximum cumulative UTF-16 text inspected by one block-comment request.
+pub const MAX_BLOCK_COMMENT_SCAN_UTF16: usize = 2_000_000;
+/// Maximum UTF-16 width of a configured block-comment token.
+pub const MAX_BLOCK_COMMENT_TOKEN_UTF16: usize = 16;
+/// Maximum UTF-16 document length scanned by the explicit trim-whitespace command.
+pub const MAX_TRAILING_WHITESPACE_SCAN_UTF16: usize = 32 * 1024 * 1024;
+/// Maximum number of trailing-whitespace ranges returned by one command.
+pub const MAX_TRAILING_WHITESPACE_EDITS: usize = 10_000;
+/// Maximum UTF-16 text deleted by one trim-whitespace command.
+pub const MAX_TRAILING_WHITESPACE_DELETE_UTF16: usize = 2_000_000;
+/// Maximum UTF-16 document length scanned by indentation conversion.
+pub const MAX_INDENTATION_CONVERSION_SCAN_UTF16: usize = 32 * 1024 * 1024;
+/// Maximum changed indentation prefixes returned by one conversion command.
+pub const MAX_INDENTATION_CONVERSION_EDITS: usize = 10_000;
+/// Maximum removed plus inserted indentation payload retained for undo.
+pub const MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16: usize = 2_000_000;
+/// Maximum tab size accepted by editor indentation commands.
+pub const MAX_INDENTATION_TAB_SIZE: usize = 32;
+/// Maximum number of caret positions accepted by one transpose query.
+pub const MAX_TRANSPOSE_CARETS: usize = 10_000;
+/// Maximum UTF-16 units inspected around a numeric adjustment caret.
+pub const MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16: usize = 1_000;
+/// Maximum number of selections accepted by one overtype-paste query.
+pub const MAX_OVERTYPE_PASTE_RANGES: usize = 10_000;
+/// Maximum number of representative lines returned by one minimap snapshot.
+pub const MAX_MINIMAP_SAMPLE_LINES: usize = 512;
+/// Maximum text kept for each representative minimap line, in UTF-16 units.
+pub const MAX_MINIMAP_LINE_SAMPLE_UTF16: usize = 48;
+
+const WORD_SEPARATORS: &str = "`~!@#$%^&*()-=+[{]}\\|;:'\",.<>/?";
+
+/// Apply Unicode full case mappings to a text fragment.
+pub fn transform_case_text(text: &str, uppercase: bool) -> String {
+    if uppercase {
+        text.to_uppercase()
+    } else {
+        text.to_lowercase()
+    }
+}
+
+/// A bounded Emmet numeric adjustment for one UTF-16 caret in a line window.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextNumberAdjustmentPlan {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NumberAdjustmentError {
+    InvalidUtf16Offset { offset_utf16: usize },
+    InvalidDelta { delta_milli: i32 },
+    WindowTooLarge { requested: usize, max: usize },
+    TruncatedNumber,
+    PrecisionOutOfRange { requested: usize, max: usize },
+}
+
+impl std::fmt::Display for NumberAdjustmentError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidUtf16Offset { offset_utf16 } => {
+                write!(f, "invalid UTF-16 caret offset {offset_utf16}")
+            }
+            Self::InvalidDelta { delta_milli } => {
+                write!(f, "unsupported numeric adjustment delta {delta_milli}")
+            }
+            Self::WindowTooLarge { requested, max } => {
+                write!(f, "numeric window {requested} exceeds maximum {max}")
+            }
+            Self::TruncatedNumber => write!(f, "numeric token crosses the bounded line window"),
+            Self::PrecisionOutOfRange { requested, max } => {
+                write!(f, "decimal precision {requested} exceeds maximum {max}")
+            }
+        }
+    }
+}
+
+/// Locate and update the ASCII decimal number at an Emmet command caret.
+///
+/// `delta_milli` accepts the six built-in Emmet step sizes: ±100 (0.1),
+/// ±1,000 (1), and ±10,000 (10). The caller supplies a bounded slice of the
+/// logical line plus flags indicating whether the slice includes each line
+/// boundary. This lets long lines work near a caret without copying them in
+/// full; a number cut by the window is rejected atomically.
+pub fn adjust_number_under_caret(
+    line_window: &str,
+    caret_utf16: usize,
+    delta_milli: i32,
+    includes_line_start: bool,
+    includes_line_end: bool,
+) -> Result<Option<TextNumberAdjustmentPlan>, NumberAdjustmentError> {
+    const MAX_TO_FIXED_DIGITS: usize = 100;
+    const ALLOWED_DELTAS: [i32; 6] = [-10_000, -1_000, -100, 100, 1_000, 10_000];
+
+    if line_window.encode_utf16().count() > MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 {
+        return Err(NumberAdjustmentError::WindowTooLarge {
+            requested: line_window.encode_utf16().count(),
+            max: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16,
+        });
+    }
+    if !ALLOWED_DELTAS.contains(&delta_milli) {
+        return Err(NumberAdjustmentError::InvalidDelta { delta_milli });
+    }
+    let Some(caret_byte) = byte_index_at_utf16(line_window, caret_utf16) else {
+        return Err(NumberAdjustmentError::InvalidUtf16Offset {
+            offset_utf16: caret_utf16,
+        });
+    };
+
+    let bytes = line_window.as_bytes();
+    let mut start_byte = caret_byte;
+    let mut saw_dot = false;
+    let mut saw_minus = false;
+    while start_byte > 0 {
+        let ch = bytes[start_byte - 1];
+        if ch == b'-' {
+            saw_minus = true;
+            start_byte -= 1;
+            break;
+        } else if ch == b'.' && !saw_dot {
+            saw_dot = true;
+            start_byte -= 1;
+        } else if ch.is_ascii_digit() {
+            start_byte -= 1;
+        } else {
+            break;
+        }
+    }
+
+    let mut end_byte = caret_byte;
+    if bytes.get(end_byte) == Some(&b'-') && !saw_minus {
+        end_byte += 1;
+    }
+    while end_byte < bytes.len() {
+        let ch = bytes[end_byte];
+        if ch == b'.' && !saw_dot && bytes.get(end_byte + 1).is_some_and(u8::is_ascii_digit) {
+            saw_dot = true;
+            end_byte += 1;
+        } else if ch.is_ascii_digit() {
+            end_byte += 1;
+        } else {
+            break;
+        }
+    }
+
+    if start_byte == end_byte {
+        return Ok(None);
+    }
+    if (start_byte == 0 && !includes_line_start) || (end_byte == bytes.len() && !includes_line_end)
+    {
+        return Err(NumberAdjustmentError::TruncatedNumber);
+    }
+
+    let removed_text = &line_window[start_byte..end_byte];
+    let Ok(number) = removed_text.parse::<f64>() else {
+        return Ok(None);
+    };
+    if number.is_nan() {
+        return Ok(None);
+    }
+
+    let decimals = removed_text
+        .rsplit_once('.')
+        .filter(|(_, fraction)| {
+            !fraction.is_empty() && fraction.bytes().all(|b| b.is_ascii_digit())
+        })
+        .map_or(1, |(_, fraction)| fraction.len());
+    if decimals > MAX_TO_FIXED_DIGITS {
+        return Err(NumberAdjustmentError::PrecisionOutOfRange {
+            requested: decimals,
+            max: MAX_TO_FIXED_DIGITS,
+        });
+    }
+
+    let delta = f64::from(delta_milli) / 1000.0;
+    let mut inserted_text = js_to_fixed(number + delta, decimals);
+    strip_zero_fraction(&mut inserted_text);
+    preserve_leading_zero_width(removed_text, &mut inserted_text);
+    if removed_text.starts_with("-.") || removed_text.starts_with('.') {
+        omit_integer_part(&mut inserted_text);
+    }
+
+    let start_utf16 = line_window[..start_byte].encode_utf16().count();
+    let end_utf16 = start_utf16 + removed_text.encode_utf16().count();
+    Ok(Some(TextNumberAdjustmentPlan {
+        start_utf16,
+        end_utf16,
+        removed_text: removed_text.to_owned(),
+        inserted_text,
+    }))
+}
+
+fn byte_index_at_utf16(text: &str, offset_utf16: usize) -> Option<usize> {
+    let mut consumed = 0usize;
+    for (byte, ch) in text.char_indices() {
+        if consumed == offset_utf16 {
+            return Some(byte);
+        }
+        let next = consumed + ch.len_utf16();
+        if offset_utf16 < next {
+            return None;
+        }
+        consumed = next;
+    }
+    (consumed == offset_utf16).then_some(text.len())
+}
+
+fn js_to_fixed(number: f64, decimals: usize) -> String {
+    if number.is_nan() {
+        return "NaN".to_owned();
+    }
+    if number.is_infinite() {
+        return if number.is_sign_negative() {
+            "-Infinity".to_owned()
+        } else {
+            "Infinity".to_owned()
+        };
+    }
+    if number.abs() >= 1e21 {
+        return js_number_to_string(number);
+    }
+
+    let negative = number < 0.0;
+    let bits = number.abs().to_bits();
+    let exponent_bits = ((bits >> 52) & 0x7ff) as i32;
+    let fraction = bits & ((1u64 << 52) - 1);
+    let (mantissa, exponent2) = if exponent_bits == 0 {
+        (fraction, -1074)
+    } else {
+        ((1u64 << 52) | fraction, exponent_bits - 1023 - 52)
+    };
+
+    let mut scaled = BigUint::from_u64(mantissa);
+    for _ in 0..decimals {
+        scaled.mul_small(5);
+    }
+    let shift = exponent2 + decimals as i32;
+    let rounded = if shift >= 0 {
+        scaled.shl_bits(shift as usize)
+    } else {
+        let dropped = (-shift) as usize;
+        let mut integer = scaled.shr_bits(dropped);
+        if dropped > 0 && scaled.bit(dropped - 1) {
+            integer.increment();
+        }
+        integer
+    };
+    let mut digits = rounded.to_decimal();
+    if decimals > 0 {
+        if digits.len() <= decimals {
+            digits.insert_str(0, &"0".repeat(decimals + 1 - digits.len()));
+        }
+        digits.insert(digits.len() - decimals, '.');
+    }
+    if negative {
+        digits.insert(0, '-');
+    }
+    digits
+}
+
+/// JavaScript Number#toString formatting for the ≥1e21 branch of toFixed.
+fn js_number_to_string(number: f64) -> String {
+    if number.is_nan() {
+        return "NaN".to_owned();
+    }
+    if number.is_infinite() {
+        return if number.is_sign_negative() {
+            "-Infinity".to_owned()
+        } else {
+            "Infinity".to_owned()
+        };
+    }
+
+    let negative = number < 0.0;
+    let mut representation = number.abs().to_string();
+    let exponent_from_repr = if let Some(index) = representation.find(['e', 'E']) {
+        let exponent = representation[index + 1..].parse::<i32>().unwrap_or(0);
+        representation.truncate(index);
+        exponent
+    } else {
+        0
+    };
+    let dot_index = representation.find('.').unwrap_or(representation.len());
+    let mut digits: String = representation.chars().filter(|ch| *ch != '.').collect();
+    let leading_zeros = digits.bytes().take_while(|b| *b == b'0').count();
+    if leading_zeros == digits.len() {
+        return "0".to_owned();
+    }
+    let exponent10 = dot_index as i32 - leading_zeros as i32 - 1 + exponent_from_repr;
+    digits.drain(..leading_zeros);
+    while digits.len() > 1 && digits.ends_with('0') {
+        digits.pop();
+    }
+    let mut result = String::new();
+    if negative {
+        result.push('-');
+    }
+    result.push(digits.as_bytes()[0] as char);
+    if digits.len() > 1 {
+        result.push('.');
+        result.push_str(&digits[1..]);
+    }
+    result.push('e');
+    if exponent10 >= 0 {
+        result.push('+');
+    }
+    result.push_str(&exponent10.to_string());
+    result
+}
+
+fn strip_zero_fraction(text: &mut String) {
+    let Some(dot) = text.find('.') else {
+        return;
+    };
+    if text[dot + 1..].bytes().all(|b| b == b'0') {
+        text.truncate(dot);
+    }
+}
+
+fn preserve_leading_zero_width(original: &str, replacement: &mut String) {
+    let bytes = original.as_bytes();
+    let sign_len = usize::from(bytes.first() == Some(&b'-'));
+    if bytes.len() <= sign_len + 1
+        || bytes[sign_len] != b'0'
+        || !bytes[sign_len + 1].is_ascii_digit()
+    {
+        return;
+    }
+    let original_width = bytes[sign_len..]
+        .iter()
+        .take_while(|byte| byte.is_ascii_digit())
+        .count();
+    let replacement_bytes = replacement.as_bytes();
+    let replacement_sign = usize::from(replacement_bytes.first() == Some(&b'-'));
+    let replacement_width = replacement_bytes[replacement_sign..]
+        .iter()
+        .take_while(|byte| byte.is_ascii_digit())
+        .count();
+    if replacement_width > 0 && replacement_width < original_width {
+        replacement.insert_str(
+            replacement_sign,
+            &"0".repeat(original_width - replacement_width),
+        );
+    }
+}
+
+fn omit_integer_part(text: &mut String) {
+    let bytes = text.as_bytes();
+    let sign_len = usize::from(bytes.first() == Some(&b'-'));
+    let zero_count = bytes[sign_len..]
+        .iter()
+        .take_while(|byte| **byte == b'0')
+        .count();
+    if zero_count > 0 {
+        text.drain(sign_len..sign_len + zero_count);
+    }
+}
+
+#[derive(Default)]
+struct BigUint(Vec<u32>);
+
+impl BigUint {
+    fn from_u64(value: u64) -> Self {
+        let low = value as u32;
+        let high = (value >> 32) as u32;
+        let mut limbs = vec![low];
+        if high > 0 {
+            limbs.push(high);
+        }
+        while limbs.last() == Some(&0) {
+            limbs.pop();
+        }
+        Self(limbs)
+    }
+
+    fn mul_small(&mut self, multiplier: u32) {
+        let mut carry = 0u64;
+        for limb in &mut self.0 {
+            let value = u64::from(*limb) * u64::from(multiplier) + carry;
+            *limb = value as u32;
+            carry = value >> 32;
+        }
+        if carry > 0 {
+            self.0.push(carry as u32);
+        }
+    }
+
+    fn shl_bits(&self, bits: usize) -> Self {
+        if self.0.is_empty() {
+            return Self::default();
+        }
+        let words = bits / 32;
+        let residual = bits % 32;
+        let mut result = vec![0; words];
+        let mut carry = 0u64;
+        for limb in &self.0 {
+            let value = (u64::from(*limb) << residual) | carry;
+            result.push(value as u32);
+            carry = value >> 32;
+        }
+        if carry > 0 {
+            result.push(carry as u32);
+        }
+        Self(result)
+    }
+
+    fn shr_bits(&self, bits: usize) -> Self {
+        let words = bits / 32;
+        if words >= self.0.len() {
+            return Self::default();
+        }
+        let residual = bits % 32;
+        let mut result = Vec::with_capacity(self.0.len() - words);
+        for index in words..self.0.len() {
+            let mut limb = self.0[index] >> residual;
+            if residual > 0 && index + 1 < self.0.len() {
+                limb |= self.0[index + 1] << (32 - residual);
+            }
+            result.push(limb);
+        }
+        while result.last() == Some(&0) {
+            result.pop();
+        }
+        Self(result)
+    }
+
+    fn bit(&self, index: usize) -> bool {
+        self.0
+            .get(index / 32)
+            .is_some_and(|limb| limb & (1u32 << (index % 32)) != 0)
+    }
+
+    fn increment(&mut self) {
+        for limb in &mut self.0 {
+            let (next, overflow) = limb.overflowing_add(1);
+            *limb = next;
+            if !overflow {
+                return;
+            }
+        }
+        self.0.push(1);
+    }
+
+    fn div_rem_small(&mut self, divisor: u32) -> u32 {
+        let mut remainder = 0u64;
+        for limb in self.0.iter_mut().rev() {
+            let current = (remainder << 32) | u64::from(*limb);
+            *limb = (current / u64::from(divisor)) as u32;
+            remainder = current % u64::from(divisor);
+        }
+        while self.0.last() == Some(&0) {
+            self.0.pop();
+        }
+        remainder as u32
+    }
+
+    fn to_decimal(&self) -> String {
+        if self.0.is_empty() {
+            return "0".to_owned();
+        }
+        let mut value = Self(self.0.clone());
+        let mut chunks = Vec::new();
+        while !value.0.is_empty() {
+            chunks.push(value.div_rem_small(1_000_000_000));
+        }
+        let mut result = chunks.pop().unwrap_or_default().to_string();
+        for chunk in chunks.iter().rev() {
+            result.push_str(&format!("{chunk:09}"));
+        }
+        result
+    }
+}
+
+static TITLE_CASE_BOUNDARY: OnceLock<Option<Regex>> = OnceLock::new();
+
+fn title_case_boundary() -> Option<&'static Regex> {
+    TITLE_CASE_BOUNDARY
+        .get_or_init(|| Regex::new(r"(?m)(^|[^\p{L}\p{N}']|((^|\P{L})'))\p{L}").ok())
+        .as_ref()
+}
+
+/// Apply the fixed Code-OSS Unicode title-boundary transform to a text fragment.
+pub fn transform_title_case_text(text: &str) -> String {
+    let Some(boundary) = title_case_boundary() else {
+        return text.to_owned();
+    };
+    let lowered = text.to_lowercase();
+    boundary
+        .replace_all(&lowered, |captures: &Captures<'_>| {
+            captures[0].to_uppercase()
+        })
+        .into_owned()
+}
+
+struct CamelCasePatterns {
+    single_line_word_boundary: Regex,
+    multi_line_word_boundary: Regex,
+    valid_word_start: Regex,
+}
+
+static CAMEL_CASE_PATTERNS: OnceLock<Option<CamelCasePatterns>> = OnceLock::new();
+
+fn camel_case_patterns() -> Option<&'static CamelCasePatterns> {
+    CAMEL_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(CamelCasePatterns {
+                single_line_word_boundary: Regex::new(
+                    r"[_\t-\r \u{00A0}\u{1680}\u{2000}-\u{200A}\u{2028}\u{2029}\u{202F}\u{205F}\u{3000}\u{FEFF}-]+",
+                )
+                .ok()?,
+                multi_line_word_boundary: Regex::new(r"[_-]+").ok()?,
+                // Code-OSS uses ^ with the multiline flag and lowercases the
+                // matched uppercase letter plus its following non-uppercase
+                // code point. Include all ECMAScript line terminators because
+                // Rust's multiline anchor only recognizes LF.
+                valid_word_start: Regex::new(r"(^|[\r\n\u{2028}\u{2029}])(\p{Lu}[^\p{Lu}])")
+                    .ok()?,
+            })
+        })
+        .as_ref()
+}
+
+fn uppercase_first_utf16_code_unit(text: &str) -> String {
+    let Some(first) = text.chars().next() else {
+        return String::new();
+    };
+    // The upstream implementation calls substring(0, 1) before uppercasing.
+    // A supplementary scalar is therefore passed as a lone surrogate and is
+    // left unchanged by JavaScript; preserve it rather than casing the scalar.
+    if first.len_utf16() != 1 {
+        return text.to_owned();
+    }
+    let mut result = first.to_uppercase().collect::<String>();
+    result.push_str(&text[first.len_utf8()..]);
+    result
+}
+
+/// Apply the fixed Code-OSS Unicode camel-case transform to a text fragment.
+pub fn transform_camel_case_text(text: &str) -> String {
+    let Some(patterns) = camel_case_patterns() else {
+        return text.to_owned();
+    };
+    let boundary = if text.contains(['\r', '\n']) {
+        &patterns.multi_line_word_boundary
+    } else {
+        &patterns.single_line_word_boundary
+    };
+    let mut words = boundary.split(text);
+    let Some(first_word) = words.next() else {
+        return String::new();
+    };
+    let first_word = patterns
+        .valid_word_start
+        .replace_all(first_word, |captures: &Captures<'_>| {
+            format!("{}{}", &captures[1], captures[2].to_lowercase())
+        });
+    let mut result = first_word.into_owned();
+    for word in words {
+        result.push_str(&uppercase_first_utf16_code_unit(word));
+    }
+    result
+}
+
+struct SnakeCasePatterns {
+    case_boundary: Regex,
+    single_letters: Regex,
+}
+
+static SNAKE_CASE_PATTERNS: OnceLock<Option<SnakeCasePatterns>> = OnceLock::new();
+
+fn snake_case_patterns() -> Option<&'static SnakeCasePatterns> {
+    SNAKE_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(SnakeCasePatterns {
+                case_boundary: Regex::new(r"(\p{Ll})(\p{Lu})").ok()?,
+                single_letters: Regex::new(r"(\p{Lu}|\p{N})(\p{Lu})(\p{Ll})").ok()?,
+            })
+        })
+        .as_ref()
+}
+
+/// Apply the fixed Code-OSS Unicode snake-case transform to a text fragment.
+pub fn transform_snake_case_text(text: &str) -> String {
+    let Some(patterns) = snake_case_patterns() else {
+        return text.to_owned();
+    };
+    let case_boundaries = patterns
+        .case_boundary
+        .replace_all(text, |captures: &Captures<'_>| {
+            format!("{}_{}", &captures[1], &captures[2])
+        });
+    patterns
+        .single_letters
+        .replace_all(case_boundaries.as_ref(), |captures: &Captures<'_>| {
+            format!("{}_{}{}", &captures[1], &captures[2], &captures[3])
+        })
+        .to_lowercase()
+}
+
+struct PascalCasePatterns {
+    word_boundary: Regex,
+    upper_case_word: Regex,
+}
+
+static PASCAL_CASE_PATTERNS: OnceLock<Option<PascalCasePatterns>> = OnceLock::new();
+
+fn pascal_case_patterns() -> Option<&'static PascalCasePatterns> {
+    PASCAL_CASE_PATTERNS
+        .get_or_init(|| {
+            Some(PascalCasePatterns {
+                // Code-OSS keeps dots attached to the preceding segment and
+                // only treats underscore, ASCII space, tab, and hyphen as
+                // word separators.
+                word_boundary: Regex::new(r"[_ \t-]+").ok()?,
+                // JavaScript's multiline anchors also recognize CR, U+2028,
+                // and U+2029. Rust regex's multiline anchors recognize LF only.
+                upper_case_word: Regex::new(
+                    r"(?:^|[\r\n\u{2028}\u{2029}])\p{Lu}+(?:$|[\r\n\u{2028}\u{2029}])",
+                )
+                .ok()?,
+            })
+        })
+        .as_ref()
+}
+
+fn pascal_case_word(word: &str, upper_case_word: &Regex) -> String {
+    let Some(first_char) = word.chars().next() else {
+        return String::new();
+    };
+    let suffix = &word[first_char.len_utf8()..];
+    let first = if first_char.len_utf16() == 1 {
+        first_char.to_uppercase().collect::<String>()
+    } else {
+        // JavaScript charAt(0) returns half of a surrogate pair, which case
+        // mapping leaves untouched. Preserve the scalar as the visible result.
+        first_char.to_string()
+    };
+    let mut result = first;
+    if word.encode_utf16().count() > 1 && upper_case_word.is_match(word) {
+        result.push_str(&suffix.to_lowercase());
+    } else {
+        result.push_str(suffix);
+    }
+    result
+}
+
+/// Apply the fixed Code-OSS Unicode Pascal-case transform to a text fragment.
+pub fn transform_pascal_case_text(text: &str) -> String {
+    let Some(patterns) = pascal_case_patterns() else {
+        return text.to_owned();
+    };
+
+    let mut result = String::with_capacity(text.len());
+    for segment in text.split_inclusive('.') {
+        let mut words = patterns.word_boundary.split(segment);
+        if let Some(first_word) = words.next() {
+            result.push_str(&pascal_case_word(first_word, &patterns.upper_case_word));
+        }
+        for word in words {
+            result.push_str(&pascal_case_word(word, &patterns.upper_case_word));
+        }
+    }
+    result
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WordPartDirection {
+    Left,
+    Right,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WordDeleteDirection {
+    Left,
+    Right,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LineDeleteDirection {
+    Left,
+    Right,
+}
+
+/// A deletion range in absolute UTF-16 document coordinates.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextDeleteRange {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+}
+
+/// One Code-OSS transpose operation resolved against a Rust document snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextTransposePlan {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// One bounded edit produced by the Code-OSS line-comment toggle.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextLineCommentEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// Line-comment edits resolved from one immutable Rust document snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextLineCommentPlan {
+    pub version: u64,
+    pub edits: Vec<TextLineCommentEdit>,
+}
+
+/// One bounded edit produced by the Code-OSS block-comment toggle.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// One selection after Code-OSS block-comment cursor mapping.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentSelection {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+}
+
+/// Block-comment edits and mapped selections from one immutable Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextBlockCommentPlan {
+    pub version: u64,
+    pub edits: Vec<TextBlockCommentEdit>,
+    pub selections: Vec<TextBlockCommentSelection>,
+}
+
+/// All-document trailing-whitespace ranges resolved from one Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextTrimTrailingWhitespacePlan {
+    pub version: u64,
+    pub edits: Vec<TextDeleteRange>,
+}
+
+/// One leading-whitespace replacement produced by indentation conversion.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextIndentationEdit {
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub removed_text: String,
+    pub inserted_text: String,
+}
+
+/// Full-document indentation conversion resolved from one Rope snapshot.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextIndentationPlan {
+    pub version: u64,
+    pub insert_spaces: bool,
+    pub tab_size: usize,
+    pub edits: Vec<TextIndentationEdit>,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TransposeLineBounds {
+    start_char: usize,
+    end_char: usize,
+    previous_line_end_char: Option<usize>,
+    next_line_start_char: Option<usize>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct WordToken {
+    start: usize,
+    end: usize,
+    is_separator: bool,
+}
+
+fn word_char_class(ch: char) -> Option<bool> {
+    if ch == ' ' || ('\t'..='\r').contains(&ch) {
+        return None;
+    }
+    Some(WORD_SEPARATORS.contains(ch))
+}
+
+fn delete_word_char_class(ch: char) -> Option<bool> {
+    if ch == ' ' || ch == '\t' {
+        return None;
+    }
+    Some(WORD_SEPARATORS.contains(ch))
+}
+
+fn delete_previous_word_token(line: RopeSlice<'_>, before: usize) -> Option<WordToken> {
+    let mut index = before.min(line.len_chars());
+    let class = loop {
+        if index == 0 {
+            return None;
+        }
+        index -= 1;
+        if let Some(class) = delete_word_char_class(line.char(index)) {
+            break class;
+        }
+    };
+
+    let mut start = index;
+    while start > 0 && delete_word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && delete_word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn delete_next_word_token(line: RopeSlice<'_>, from: usize) -> Option<WordToken> {
+    let mut index = from.min(line.len_chars());
+    let class = loop {
+        if index == line.len_chars() {
+            return None;
+        }
+        if let Some(class) = delete_word_char_class(line.char(index)) {
+            break class;
+        }
+        index += 1;
+    };
+
+    let mut start = index;
+    while start > 0 && delete_word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && delete_word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn previous_word_token(line: RopeSlice<'_>, before: usize) -> Option<WordToken> {
+    let mut index = before.min(line.len_chars());
+    let class = loop {
+        if index == 0 {
+            return None;
+        }
+        index -= 1;
+        if let Some(class) = word_char_class(line.char(index)) {
+            break class;
+        }
+    };
+
+    let mut start = index;
+    while start > 0 && word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn next_word_token(line: RopeSlice<'_>, from: usize) -> Option<WordToken> {
+    let mut index = from.min(line.len_chars());
+    let class = loop {
+        if index == line.len_chars() {
+            return None;
+        }
+        if let Some(class) = word_char_class(line.char(index)) {
+            break class;
+        }
+        index += 1;
+    };
+
+    let mut start = index;
+    while start > 0 && word_char_class(line.char(start - 1)) == Some(class) {
+        start -= 1;
+    }
+    let mut end = index + 1;
+    while end < line.len_chars() && word_char_class(line.char(end)) == Some(class) {
+        end += 1;
+    }
+    Some(WordToken {
+        start,
+        end,
+        is_separator: class,
+    })
+}
+
+fn string_byte_at_char(text: &str, char_offset: usize) -> usize {
+    text.char_indices()
+        .nth(char_offset)
+        .map_or(text.len(), |(byte_offset, _)| byte_offset)
+}
+
+fn last_token_index(text: &str, token: &str, max_start_char: usize) -> Option<usize> {
+    let max_start_byte = string_byte_at_char(text, max_start_char);
+    for (byte_offset, _) in text.char_indices().rev() {
+        if byte_offset <= max_start_byte && text[byte_offset..].starts_with(token) {
+            return Some(text[..byte_offset].chars().count());
+        }
+    }
+    None
+}
+
+fn first_token_index(text: &str, token: &str, min_start_char: usize) -> Option<usize> {
+    let min_start_byte = string_byte_at_char(text, min_start_char);
+    for (byte_offset, _) in text.char_indices() {
+        if byte_offset >= min_start_byte && text[byte_offset..].starts_with(token) {
+            return Some(text[..byte_offset].chars().count());
+        }
+    }
+    None
+}
+
+fn contains_ascii_case_insensitive(haystack: &str, needle: &str) -> bool {
+    !needle.is_empty()
+        && haystack
+            .as_bytes()
+            .windows(needle.len())
+            .any(|window| window.eq_ignore_ascii_case(needle.as_bytes()))
+}
+
+fn line_content_char_len(line: RopeSlice<'_>) -> usize {
+    let mut len = line.len_chars();
+    if len > 0 && line.char(len - 1) == '\n' {
+        len -= 1;
+        if len > 0 && line.char(len - 1) == '\r' {
+            len -= 1;
+        }
+    }
+    len
+}
+
+fn transpose_line_content_char_len(line: RopeSlice<'_>) -> usize {
+    let mut len = line.len_chars();
+    if len > 0 && line.char(len - 1) == '\n' {
+        len -= 1;
+        if len > 0 && line.char(len - 1) == '\r' {
+            len -= 1;
+        }
+    } else if len > 0 && line.char(len - 1) == '\r' {
+        len -= 1;
+    }
+    len
+}
+
+fn utf16_column_char(line: RopeSlice<'_>, column_utf16: usize, round_up: bool) -> usize {
+    let column_utf16 = column_utf16.min(line.len_utf16_cu());
+    let char_index = line.utf16_cu_to_char(column_utf16);
+    let actual_utf16 = line.char_to_utf16_cu(char_index);
+    if round_up && actual_utf16 < column_utf16 {
+        (char_index + 1).min(line.len_chars())
+    } else {
+        char_index
+    }
+}
+
+fn previous_word_part_boundary(line: RopeSlice<'_>, cursor: usize) -> Option<usize> {
+    for boundary in (1..cursor).rev() {
+        let left = line.char(boundary - 1);
+        let right = line.char(boundary);
+        if (left == '_' && right != '_')
+            || (left == '-' && right != '-')
+            || ((left.is_ascii_lowercase() || left.is_ascii_digit()) && right.is_ascii_uppercase())
+        {
+            return Some(boundary);
+        }
+        if left.is_ascii_uppercase()
+            && right.is_ascii_uppercase()
+            && boundary + 1 < line.len_chars()
+        {
+            let right_right = line.char(boundary + 1);
+            if right_right.is_ascii_lowercase() || right_right.is_ascii_digit() {
+                return Some(boundary);
+            }
+        }
+    }
+    None
+}
+
+fn next_word_part_boundary(line: RopeSlice<'_>, cursor: usize) -> Option<usize> {
+    for boundary in (cursor + 1)..line.len_chars() {
+        let left = line.char(boundary - 1);
+        let right = line.char(boundary);
+        if (left != '_' && right == '_')
+            || (left != '-' && right == '-')
+            || ((left.is_ascii_lowercase() || left.is_ascii_digit()) && right.is_ascii_uppercase())
+        {
+            return Some(boundary);
+        }
+        if left.is_ascii_uppercase()
+            && right.is_ascii_uppercase()
+            && boundary + 1 < line.len_chars()
+        {
+            let right_right = line.char(boundary + 1);
+            if right_right.is_ascii_lowercase() || right_right.is_ascii_digit() {
+                return Some(boundary);
+            }
+        }
+    }
+    None
+}
+
+/// A bounded read from the Rust-authoritative document.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextRangeRead {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub start_line: usize,
+    pub start_character: usize,
+    pub text: String,
+}
+
+/// Absolute UTF-16 start offset for one zero-based document line.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineOffset {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub line: usize,
+    pub offset_utf16: usize,
+}
+
+/// UTF-16 boundaries for the logical line containing one absolute offset.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineBoundary {
+    pub version: u64,
+    pub line: usize,
+    pub start_utf16: usize,
+    pub first_non_whitespace_utf16: usize,
+    pub end_utf16: usize,
+}
+
+/// One row in a rectangular selection. Offsets are absolute UTF-16 document
+/// positions; the active row is returned first for the platform caret.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextColumnSelection {
+    pub line: usize,
+    pub base_offset_utf16: usize,
+    pub extent_offset_utf16: usize,
+}
+
+/// One bounded UTF-16 window from a document line.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLineRead {
+    pub line: usize,
+    pub start_utf16: usize,
+    pub end_utf16: usize,
+    pub text: String,
+}
+
+/// A bounded set of line windows from one immutable buffer snapshot.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextLinesRead {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub first_line: usize,
+    pub lines: Vec<TextLineRead>,
+}
+
+/// A bounded, evenly sampled overview of a Rust-authoritative document.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextMinimapSample {
+    pub version: u64,
+    pub total_utf16_length: usize,
+    pub line_count: usize,
+    pub lines: Vec<TextMinimapLine>,
+}
+
+/// One representative line in a minimap snapshot. `utf16_length` is the full
+/// line length; `text` contains only a scalar-safe prefix for rendering.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TextMinimapLine {
+    pub line: usize,
+    pub start_utf16: usize,
+    pub utf16_length: usize,
+    pub text: String,
+}
 
 /// 单个增量编辑操作。offset/len 均为 UTF-16 code unit 口径。
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -30,6 +1163,69 @@ pub enum BufferError {
         offset_utf16: usize,
         len_utf16: usize,
     },
+    /// A bounded read requested more than the API's per-call limit.
+    ReadRangeTooLarge { requested: usize, max: usize },
+    /// A requested zero-based line is outside the document.
+    InvalidLine { line: usize, line_count: usize },
+    /// A viewport line request has invalid bounds or a budget smaller than its
+    /// per-line worst case.
+    InvalidLineWindow {
+        max_lines: usize,
+        max_line_utf16: usize,
+        max_total_utf16: usize,
+    },
+    /// A viewport request contains too many line windows.
+    ReadLineCountTooLarge { requested: usize, max: usize },
+    /// A word-delete query contains more caret positions than the bounded API accepts.
+    WordDeleteCountTooLarge { requested: usize, max: usize },
+    /// A line-delete query contains more selections than the bounded API accepts.
+    LineDeleteCountTooLarge { requested: usize, max: usize },
+    /// An overtype-paste query contains more selections than the bounded API accepts.
+    OvertypePasteCountTooLarge { requested: usize, max: usize },
+    /// A line-delete selection has its end before its start.
+    InvalidDeleteRange {
+        start_utf16: usize,
+        end_utf16: usize,
+    },
+    /// A line-comment query contains too many selections or affected lines.
+    LineCommentCountTooLarge { requested: usize, max: usize },
+    /// A line-comment token must be a short, non-whitespace ASCII token.
+    InvalidLineCommentToken,
+    /// Two distinct selections would toggle at least one shared logical line.
+    OverlappingLineCommentSelections,
+    /// A line has more leading whitespace than the bounded comment planner accepts.
+    LineCommentIndentTooLarge { requested: usize, max: usize },
+    /// A block-comment query contains more selections than the bounded API accepts.
+    BlockCommentCountTooLarge { requested: usize, max: usize },
+    /// A configured block-comment token must be short, visible ASCII.
+    InvalidBlockCommentToken,
+    /// A block-comment request would inspect too much endpoint-line text.
+    BlockCommentScanTooLarge { requested: usize, max: usize },
+    /// An endpoint line exceeds the bounded block-comment scan length.
+    BlockCommentLineTooLarge { requested: usize, max: usize },
+    /// Distinct selections would produce conflicting block-comment edits.
+    OverlappingBlockCommentSelections,
+    /// The whole-document trim scan exceeds the command's bounded input size.
+    TrailingWhitespaceScanTooLarge { requested: usize, max: usize },
+    /// A trim request contains too many trailing-whitespace ranges.
+    TrailingWhitespaceEditCountTooLarge { requested: usize, max: usize },
+    /// A trim request would exceed the bounded undo payload.
+    TrailingWhitespaceDeleteTooLarge { requested: usize, max: usize },
+    /// The requested indentation tab size is outside the supported range.
+    InvalidIndentationTabSize { requested: usize, max: usize },
+    /// The complete indentation conversion scan exceeds its bounded document size.
+    IndentationConversionScanTooLarge { requested: usize, max: usize },
+    /// An indentation conversion produces too many changed lines.
+    IndentationConversionEditCountTooLarge { requested: usize, max: usize },
+    /// The conversion's removed and inserted text exceeds its bounded undo payload.
+    IndentationConversionPayloadTooLarge { requested: usize, max: usize },
+    /// A transpose query contains more caret positions than the bounded API accepts.
+    TransposeCountTooLarge { requested: usize, max: usize },
+    /// An overtype-paste selection has its end before its start.
+    InvalidOvertypePasteRange {
+        start_utf16: usize,
+        end_utf16: usize,
+    },
 }
 
 impl std::fmt::Display for BufferError {
@@ -47,6 +1243,110 @@ impl std::fmt::Display for BufferError {
             } => {
                 write!(f, "delete range {offset_utf16}+{len_utf16} out of bounds")
             }
+            BufferError::ReadRangeTooLarge { requested, max } => {
+                write!(f, "read range length {requested} exceeds maximum {max}")
+            }
+            BufferError::InvalidLine { line, line_count } => {
+                write!(f, "line {line} is outside document line count {line_count}")
+            }
+            BufferError::InvalidLineWindow {
+                max_lines,
+                max_line_utf16,
+                max_total_utf16,
+            } => write!(
+                f,
+                "invalid line window ({max_lines} lines × {max_line_utf16} UTF-16 units; total budget {max_total_utf16})"
+            ),
+            BufferError::ReadLineCountTooLarge { requested, max } => {
+                write!(f, "line window count {requested} exceeds maximum {max}")
+            }
+            BufferError::WordDeleteCountTooLarge { requested, max } => {
+                write!(f, "word-delete caret count {requested} exceeds maximum {max}")
+            }
+            BufferError::LineDeleteCountTooLarge { requested, max } => {
+                write!(f, "line-delete selection count {requested} exceeds maximum {max}")
+            }
+            BufferError::LineCommentCountTooLarge { requested, max } => write!(
+                f,
+                "line-comment selection or line count {requested} exceeds maximum {max}"
+            ),
+            BufferError::InvalidLineCommentToken => {
+                write!(f, "line-comment token must be a short non-whitespace ASCII token")
+            }
+            BufferError::OverlappingLineCommentSelections => {
+                write!(f, "line-comment selections cover overlapping logical lines")
+            }
+            BufferError::LineCommentIndentTooLarge { requested, max } => write!(
+                f,
+                "line-comment indentation {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::BlockCommentCountTooLarge { requested, max } => write!(
+                f,
+                "block-comment selection count {requested} exceeds maximum {max}"
+            ),
+            BufferError::InvalidBlockCommentToken => {
+                write!(f, "block-comment tokens must be short visible ASCII")
+            }
+            BufferError::BlockCommentScanTooLarge { requested, max } => write!(
+                f,
+                "block-comment endpoint scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::BlockCommentLineTooLarge { requested, max } => write!(
+                f,
+                "block-comment endpoint line {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::OverlappingBlockCommentSelections => {
+                write!(f, "block-comment selections would produce overlapping edits")
+            }
+            BufferError::TrailingWhitespaceScanTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::TrailingWhitespaceEditCountTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace edit count {requested} exceeds maximum {max}"
+            ),
+            BufferError::TrailingWhitespaceDeleteTooLarge { requested, max } => write!(
+                f,
+                "trailing-whitespace delete payload {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::InvalidIndentationTabSize { requested, max } => write!(
+                f,
+                "indentation tab size {requested} is outside the supported range 1..={max}"
+            ),
+            BufferError::IndentationConversionScanTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion scan {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::IndentationConversionEditCountTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion edit count {requested} exceeds maximum {max}"
+            ),
+            BufferError::IndentationConversionPayloadTooLarge { requested, max } => write!(
+                f,
+                "indentation conversion payload {requested} exceeds maximum {max} UTF-16 units"
+            ),
+            BufferError::TransposeCountTooLarge { requested, max } => {
+                write!(f, "transpose caret count {requested} exceeds maximum {max}")
+            }
+            BufferError::OvertypePasteCountTooLarge { requested, max } => write!(
+                f,
+                "overtype-paste selection count {requested} exceeds maximum {max}"
+            ),
+            BufferError::InvalidDeleteRange {
+                start_utf16,
+                end_utf16,
+            } => write!(
+                f,
+                "line-delete range end {end_utf16} precedes start {start_utf16}"
+            ),
+            BufferError::InvalidOvertypePasteRange {
+                start_utf16,
+                end_utf16,
+            } => write!(
+                f,
+                "overtype-paste range end {end_utf16} precedes start {start_utf16}"
+            ),
         }
     }
 }
@@ -55,15 +1355,19 @@ impl std::error::Error for BufferError {}
 
 /// 权威文本状态（V1：作为 Rust 侧同步分析副本；见 docs/02 §5）。
 /// version 从 1 开始，每成功应用一个操作 +1。
+#[derive(Clone)]
 pub struct TextBuffer {
     rope: Rope,
+    savepoint: Rope,
     version: u64,
 }
 
 impl TextBuffer {
     pub fn open(content: &str) -> Self {
+        let rope = Rope::from_str(content);
         TextBuffer {
-            rope: Rope::from_str(content),
+            savepoint: rope.clone(),
+            rope,
             version: 1,
         }
     }
@@ -76,8 +1380,1438 @@ impl TextBuffer {
         self.rope.to_string()
     }
 
+    /// Mark the current Rope snapshot as the document savepoint.
+    pub fn mark_saved(&mut self) {
+        self.savepoint = self.rope.clone();
+    }
+
+    /// Set the savepoint to text loaded from disk or a recovery journal.
+    pub fn set_savepoint_text(&mut self, text: &str) {
+        self.savepoint = Rope::from_str(text);
+    }
+
+    /// Compare exact UTF-8 bytes without materializing either Rope as a String.
+    pub fn is_dirty(&self) -> bool {
+        !self.rope.bytes().eq(self.savepoint.bytes())
+    }
+
+    /// Compare an external snapshot with the current savepoint.
+    pub fn savepoint_matches_text(&self, text: &str) -> bool {
+        self.savepoint.bytes().eq(text.bytes())
+    }
+
     pub fn len_utf16(&self) -> usize {
         self.rope.len_utf16_cu()
+    }
+
+    /// Resolve a zero-based line to its absolute UTF-16 start without reading
+    /// or materialising document text.
+    pub fn line_offset_utf16(&self, line: usize) -> Result<TextLineOffset, BufferError> {
+        let line_count = self.rope.len_lines();
+        if line >= line_count {
+            return Err(BufferError::InvalidLine { line, line_count });
+        }
+        let char_index = self.rope.line_to_char(line);
+        Ok(TextLineOffset {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            line,
+            offset_utf16: self.rope.char_to_utf16_cu(char_index),
+        })
+    }
+
+    /// Resolve Home/End targets for the logical line containing an absolute
+    /// UTF-16 offset. Leading spaces and tabs form the smart-Home indentation
+    /// boundary. Line terminators, including CRLF, are excluded from End.
+    pub fn line_boundary_utf16(
+        &self,
+        offset_utf16: usize,
+    ) -> Result<TextLineBoundary, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let first_non_whitespace_char = line
+            .slice(..content_len)
+            .chars()
+            .position(|ch| ch != ' ' && ch != '\t')
+            .unwrap_or(content_len);
+
+        Ok(TextLineBoundary {
+            version: self.version,
+            line: line_index,
+            start_utf16: self.rope.char_to_utf16_cu(line_start_char),
+            first_non_whitespace_utf16: self
+                .rope
+                .char_to_utf16_cu(line_start_char + first_non_whitespace_char),
+            end_utf16: self.rope.char_to_utf16_cu(line_start_char + content_len),
+        })
+    }
+
+    /// Resolve the rows of a rectangular selection without reading the whole
+    /// document into the UI process. Columns use UTF-16 units; ranges are
+    /// snapped outward at scalar boundaries so a supplementary character is
+    /// never split. `max_selections` bounds the returned allocation.
+    pub fn column_selections_utf16(
+        &self,
+        anchor_line: usize,
+        anchor_column_utf16: usize,
+        active_line: usize,
+        active_column_utf16: usize,
+        max_selections: usize,
+    ) -> Result<Vec<TextColumnSelection>, BufferError> {
+        let line_count = self.rope.len_lines();
+        for line in [anchor_line, active_line] {
+            if line >= line_count {
+                return Err(BufferError::InvalidLine { line, line_count });
+            }
+        }
+        let first_line = anchor_line.min(active_line);
+        let last_line = anchor_line.max(active_line);
+        let selection_count = last_line - first_line + 1;
+        let selection_limit = max_selections.min(MAX_COLUMN_SELECTIONS);
+        if selection_count > selection_limit {
+            return Err(BufferError::ReadLineCountTooLarge {
+                requested: selection_count,
+                max: selection_limit,
+            });
+        }
+
+        let anchor_is_left = anchor_column_utf16 <= active_column_utf16;
+        let low_column = anchor_column_utf16.min(active_column_utf16);
+        let high_column = anchor_column_utf16.max(active_column_utf16);
+        let mut selections = Vec::with_capacity(selection_count);
+        for line_index in first_line..=last_line {
+            let line_start_char = self.rope.line_to_char(line_index);
+            let line = self.rope.line(line_index);
+            let content = line.slice(..line_content_char_len(line));
+            let content_utf16 = content.len_utf16_cu();
+            let low = utf16_column_char(content, low_column.min(content_utf16), false);
+            let high = utf16_column_char(content, high_column.min(content_utf16), true);
+            let (base_char, extent_char) = if anchor_is_left {
+                (low, high)
+            } else {
+                (high, low)
+            };
+            let line_start_utf16 = self.rope.char_to_utf16_cu(line_start_char);
+            selections.push(TextColumnSelection {
+                line: line_index,
+                base_offset_utf16: line_start_utf16 + content.char_to_utf16_cu(base_char),
+                extent_offset_utf16: line_start_utf16 + content.char_to_utf16_cu(extent_char),
+            });
+        }
+        if let Some(active_index) = selections.iter().position(|item| item.line == active_line) {
+            let active = selections.remove(active_index);
+            selections.insert(0, active);
+        }
+        Ok(selections)
+    }
+
+    /// Move by one VS Code word part using absolute UTF-16 document offsets.
+    /// The operation scans only the current Rope line and never materializes
+    /// the full document or line as a `String`.
+    pub fn word_part_offset_utf16(
+        &self,
+        offset_utf16: usize,
+        direction: WordPartDirection,
+    ) -> Result<usize, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let cursor = caret_char.saturating_sub(line_start_char).min(content_len);
+        let content = line.slice(..content_len);
+        let line_start_utf16 = self.rope.char_to_utf16_cu(line_start_char);
+        let cursor_utf16 = line_start_utf16 + content.char_to_utf16_cu(cursor);
+
+        match direction {
+            WordPartDirection::Left if cursor == 0 => {
+                if line_index == 0 {
+                    return Ok(cursor_utf16);
+                }
+                let previous_line_start = self.rope.line_to_char(line_index - 1);
+                let previous_line = self.rope.line(line_index - 1);
+                let previous_content_len = line_content_char_len(previous_line);
+                return Ok(self.rope.char_to_utf16_cu(previous_line_start)
+                    + previous_line.char_to_utf16_cu(previous_content_len));
+            }
+            WordPartDirection::Right if cursor == content_len => {
+                if line_index + 1 == self.rope.len_lines() {
+                    return Ok(cursor_utf16);
+                }
+                return Ok(self
+                    .rope
+                    .char_to_utf16_cu(self.rope.line_to_char(line_index + 1)));
+            }
+            _ => {}
+        }
+
+        let destination = match direction {
+            WordPartDirection::Left => {
+                let previous_token = previous_word_token(content, cursor);
+                let word_start = previous_token.map_or(0, |token| token.start);
+                let word_end = previous_token.map_or(0, |token| {
+                    if cursor <= token.end {
+                        previous_word_token(content, token.start).map_or(0, |previous| previous.end)
+                    } else {
+                        token.end
+                    }
+                });
+                let subword = previous_word_part_boundary(content, cursor).unwrap_or(0);
+                word_start.max(word_end).max(subword)
+            }
+            WordPartDirection::Right => {
+                let next_token = next_word_token(content, cursor);
+                let word_start = next_token.map_or(content_len, |token| {
+                    if cursor >= token.start {
+                        next_word_token(content, token.end).map_or(content_len, |next| next.start)
+                    } else {
+                        token.start
+                    }
+                });
+                let word_end = next_token.map_or(content_len, |token| {
+                    if token.is_separator
+                        && token.end - token.start == 1
+                        && token.end < content_len
+                        && word_char_class(content.char(token.end)) == Some(false)
+                    {
+                        next_word_token(content, token.end).map_or(content_len, |next| next.end)
+                    } else {
+                        token.end
+                    }
+                });
+                let subword = next_word_part_boundary(content, cursor).unwrap_or(content_len);
+                word_start.min(word_end).min(subword)
+            }
+        };
+
+        Ok(line_start_utf16 + content.char_to_utf16_cu(destination))
+    }
+
+    /// Resolve a VS Code style delete-word range without materialising the
+    /// document. The scan is limited to the current logical line and all
+    /// returned offsets use UTF-16 code units.
+    pub fn word_delete_range_utf16(
+        &self,
+        offset_utf16: usize,
+        direction: WordDeleteDirection,
+    ) -> Result<TextDeleteRange, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_index = self.rope.char_to_line(caret_char);
+        let line_start_char = self.rope.line_to_char(line_index);
+        let line = self.rope.line(line_index);
+        let content_len = line_content_char_len(line);
+        let cursor = caret_char.saturating_sub(line_start_char).min(content_len);
+        let content = line.slice(..content_len);
+
+        let (start_char, end_char) = match direction {
+            WordDeleteDirection::Left if cursor == 0 => {
+                if line_index == 0 {
+                    (caret_char, caret_char)
+                } else {
+                    let previous_line_start = self.rope.line_to_char(line_index - 1);
+                    let previous_line = self.rope.line(line_index - 1);
+                    let previous_content_len = line_content_char_len(previous_line);
+                    (previous_line_start + previous_content_len, line_start_char)
+                }
+            }
+            WordDeleteDirection::Left => {
+                let mut whitespace_start = cursor;
+                while whitespace_start > 0
+                    && matches!(content.char(whitespace_start - 1), ' ' | '\t')
+                {
+                    whitespace_start -= 1;
+                }
+                if cursor - whitespace_start > 1 {
+                    (line_start_char + whitespace_start, caret_char)
+                } else {
+                    let start =
+                        delete_previous_word_token(content, cursor).map_or(0, |token| token.start);
+                    (line_start_char + start, caret_char)
+                }
+            }
+            WordDeleteDirection::Right => {
+                let mut whitespace_end = cursor;
+                while whitespace_end < content_len
+                    && matches!(content.char(whitespace_end), ' ' | '\t')
+                {
+                    whitespace_end += 1;
+                }
+                if whitespace_end > cursor {
+                    (caret_char, line_start_char + whitespace_end)
+                } else if let Some(token) = delete_next_word_token(content, cursor) {
+                    (caret_char, line_start_char + token.end)
+                } else if cursor < content_len || line_index + 1 == self.rope.len_lines() {
+                    (caret_char, line_start_char + content_len)
+                } else {
+                    let next_line_start = self.rope.line_to_char(line_index + 1);
+                    let next_line = self.rope.line(line_index + 1);
+                    let next_content_len = line_content_char_len(next_line);
+                    let next_content = next_line.slice(..next_content_len);
+                    let next_end = delete_next_word_token(next_content, 0)
+                        .map_or(next_content_len, |token| token.start);
+                    (caret_char, next_line_start + next_end)
+                }
+            }
+        };
+
+        Ok(TextDeleteRange {
+            start_utf16: self.rope.char_to_utf16_cu(start_char),
+            end_utf16: self.rope.char_to_utf16_cu(end_char),
+        })
+    }
+
+    /// Resolve many word-delete ranges against one immutable buffer version.
+    pub fn word_delete_ranges_utf16(
+        &self,
+        offsets_utf16: &[usize],
+        direction: WordDeleteDirection,
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if offsets_utf16.len() > MAX_WORD_DELETE_CARETS {
+            return Err(BufferError::WordDeleteCountTooLarge {
+                requested: offsets_utf16.len(),
+                max: MAX_WORD_DELETE_CARETS,
+            });
+        }
+        offsets_utf16
+            .iter()
+            .map(|&offset| self.word_delete_range_utf16(offset, direction))
+            .collect()
+    }
+
+    /// Resolve VS Code style delete-to-line-boundary ranges for absolute
+    /// UTF-16 selections from one immutable buffer version. `Left` extends a
+    /// nonempty selection to its line start; `Right` keeps that selection.
+    pub fn line_delete_ranges_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        direction: LineDeleteDirection,
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if selections_utf16.len() > MAX_LINE_DELETE_RANGES {
+            return Err(BufferError::LineDeleteCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_LINE_DELETE_RANGES,
+            });
+        }
+
+        selections_utf16
+            .iter()
+            .map(|&(start_utf16, end_utf16)| {
+                if start_utf16 > end_utf16 {
+                    return Err(BufferError::InvalidDeleteRange {
+                        start_utf16,
+                        end_utf16,
+                    });
+                }
+                self.char_idx_at_utf16(start_utf16)?;
+                self.char_idx_at_utf16(end_utf16)?;
+
+                let boundary = self.line_boundary_utf16(start_utf16)?;
+                if start_utf16 < end_utf16 {
+                    let range_start = match direction {
+                        LineDeleteDirection::Left => boundary.start_utf16,
+                        LineDeleteDirection::Right => start_utf16,
+                    };
+                    return Ok(TextDeleteRange {
+                        start_utf16: range_start,
+                        end_utf16,
+                    });
+                }
+
+                match direction {
+                    LineDeleteDirection::Left if start_utf16 == boundary.start_utf16 => {
+                        if boundary.line == 0 {
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16,
+                            })
+                        } else {
+                            let previous_line_start = self.rope.line_to_char(boundary.line - 1);
+                            let previous_line = self.rope.line(boundary.line - 1);
+                            let previous_content_end =
+                                previous_line_start + line_content_char_len(previous_line);
+                            Ok(TextDeleteRange {
+                                start_utf16: self.rope.char_to_utf16_cu(previous_content_end),
+                                end_utf16: start_utf16,
+                            })
+                        }
+                    }
+                    LineDeleteDirection::Left => Ok(TextDeleteRange {
+                        start_utf16: boundary.start_utf16,
+                        end_utf16: start_utf16,
+                    }),
+                    LineDeleteDirection::Right => {
+                        let next_line = boundary.line + 1;
+                        if start_utf16 >= boundary.end_utf16 && next_line < self.rope.len_lines() {
+                            let next_line_start = self.rope.line_to_char(next_line);
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16: self.rope.char_to_utf16_cu(next_line_start),
+                            })
+                        } else {
+                            Ok(TextDeleteRange {
+                                start_utf16,
+                                end_utf16: boundary.end_utf16.max(start_utf16),
+                            })
+                        }
+                    }
+                }
+            })
+            .collect()
+    }
+
+    /// Resolve the fixed Code-OSS toggle-line-comment command against one
+    /// immutable document snapshot. The caller supplies the language's line
+    /// token; VS Code defaults `insertSpace` and `ignoreEmptyLines` to true.
+    pub fn toggle_line_comment_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        line_comment: &str,
+    ) -> Result<TextLineCommentPlan, BufferError> {
+        if selections_utf16.len() > MAX_LINE_COMMENT_SELECTIONS {
+            return Err(BufferError::LineCommentCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_LINE_COMMENT_SELECTIONS,
+            });
+        }
+        if line_comment.is_empty()
+            || line_comment.encode_utf16().count() > MAX_LINE_COMMENT_TOKEN_UTF16
+            || !line_comment
+                .bytes()
+                .all(|byte| (0x21..=0x7e).contains(&byte))
+        {
+            return Err(BufferError::InvalidLineCommentToken);
+        }
+
+        let line_comment_chars = line_comment.chars().count();
+        let mut line_ranges = Vec::with_capacity(selections_utf16.len());
+        for &(start_utf16, end_utf16) in selections_utf16 {
+            if start_utf16 > end_utf16 {
+                return Err(BufferError::InvalidDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                });
+            }
+            let start_char = self.char_idx_at_utf16(start_utf16)?;
+            let end_char = self.char_idx_at_utf16(end_utf16)?;
+            let start_line = self.rope.char_to_line(start_char);
+            let mut end_line = self.rope.char_to_line(end_char);
+
+            // VS Code does not include a selection's end line when the range
+            // ends at column 1 on that following line.
+            if start_utf16 < end_utf16 && end_line > start_line {
+                let end_boundary = self.line_boundary_utf16(end_utf16)?;
+                if end_utf16 == end_boundary.start_utf16 {
+                    end_line -= 1;
+                }
+            }
+            line_ranges.push((start_line, end_line));
+        }
+
+        line_ranges.sort_unstable();
+        line_ranges.dedup();
+        let mut total_lines = 0usize;
+        let mut previous_end = None;
+        for &(first, last) in &line_ranges {
+            if previous_end.is_some_and(|end| first <= end) {
+                return Err(BufferError::OverlappingLineCommentSelections);
+            }
+            let count = last.saturating_sub(first).saturating_add(1);
+            total_lines = total_lines.saturating_add(count);
+            if total_lines > MAX_LINE_COMMENT_LINES {
+                return Err(BufferError::LineCommentCountTooLarge {
+                    requested: total_lines,
+                    max: MAX_LINE_COMMENT_LINES,
+                });
+            }
+            previous_end = Some(last);
+        }
+
+        #[derive(Clone, Copy)]
+        struct LineInfo {
+            line: usize,
+            comment_offset_char: usize,
+            blank: bool,
+            commented: bool,
+        }
+
+        let mut edits = Vec::new();
+        for (first_line, last_line) in line_ranges {
+            let mut line_info = Vec::with_capacity(last_line - first_line + 1);
+            let mut only_whitespace_lines = true;
+
+            for line_index in first_line..=last_line {
+                let line_start_char = self.rope.line_to_char(line_index);
+                let line = self.rope.line(line_index);
+                let content_len = line_content_char_len(line);
+                let content = line.slice(..content_len);
+                let mut indentation_utf16 = 0usize;
+                let mut comment_offset_char = content_len;
+                let mut blank = true;
+                for (char_offset, ch) in content.chars().enumerate() {
+                    if ch.is_whitespace() {
+                        indentation_utf16 = indentation_utf16.saturating_add(ch.len_utf16());
+                        if indentation_utf16 > MAX_LINE_COMMENT_INDENT_UTF16 {
+                            return Err(BufferError::LineCommentIndentTooLarge {
+                                requested: indentation_utf16,
+                                max: MAX_LINE_COMMENT_INDENT_UTF16,
+                            });
+                        }
+                    } else {
+                        comment_offset_char = char_offset;
+                        blank = false;
+                        break;
+                    }
+                }
+                if !blank {
+                    only_whitespace_lines = false;
+                }
+                let marker_end_char = comment_offset_char + line_comment_chars;
+                let commented = marker_end_char <= content.len_chars()
+                    && content
+                        .slice(comment_offset_char..marker_end_char)
+                        .chars()
+                        .eq(line_comment.chars());
+                line_info.push(LineInfo {
+                    line: line_index,
+                    comment_offset_char,
+                    blank,
+                    commented,
+                });
+                let _ = line_start_char;
+            }
+
+            let should_remove_comments = !only_whitespace_lines
+                && line_info
+                    .iter()
+                    .filter(|line| !line.blank)
+                    .all(|line| line.commented);
+
+            for info in line_info {
+                // Code-OSS ignores blank lines when a selection also contains
+                // source text, but toggles an all-whitespace selection on.
+                if info.blank && !only_whitespace_lines {
+                    continue;
+                }
+
+                let line_start_char = self.rope.line_to_char(info.line);
+                let line = self.rope.line(info.line);
+                let content_len = line_content_char_len(line);
+                let content = line.slice(..content_len);
+                let start_char = line_start_char + info.comment_offset_char;
+                let start_utf16 = self.rope.char_to_utf16_cu(start_char);
+
+                if should_remove_comments {
+                    let marker_end_char = info.comment_offset_char + line_comment_chars;
+                    let remove_space = marker_end_char < content.len_chars()
+                        && content.char(marker_end_char) == ' ';
+                    let end_char = start_char + line_comment_chars + usize::from(remove_space);
+                    let removed_text = self.rope.slice(start_char..end_char).to_string();
+                    edits.push(TextLineCommentEdit {
+                        start_utf16,
+                        end_utf16: self.rope.char_to_utf16_cu(end_char),
+                        removed_text,
+                        inserted_text: String::new(),
+                    });
+                } else {
+                    let mut inserted_text = String::with_capacity(line_comment.len() + 1);
+                    inserted_text.push_str(line_comment);
+                    inserted_text.push(' ');
+                    edits.push(TextLineCommentEdit {
+                        start_utf16,
+                        end_utf16: start_utf16,
+                        removed_text: String::new(),
+                        inserted_text,
+                    });
+                }
+            }
+        }
+
+        edits.sort_by_key(|edit| (edit.start_utf16, edit.end_utf16));
+        Ok(TextLineCommentPlan {
+            version: self.version,
+            edits,
+        })
+    }
+
+    /// Resolve the fixed Code-OSS block-comment toggle against one immutable
+    /// document snapshot. Endpoint-line and total inspection sizes are bounded.
+    pub fn toggle_block_comment_utf16(
+        &self,
+        selections_utf16: &[(usize, usize)],
+        start_token: &str,
+        end_token: &str,
+        insert_space: bool,
+    ) -> Result<TextBlockCommentPlan, BufferError> {
+        if selections_utf16.len() > MAX_BLOCK_COMMENT_SELECTIONS {
+            return Err(BufferError::BlockCommentCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_BLOCK_COMMENT_SELECTIONS,
+            });
+        }
+        let valid_token = |token: &str| {
+            !token.is_empty()
+                && token.encode_utf16().count() <= MAX_BLOCK_COMMENT_TOKEN_UTF16
+                && token.bytes().all(|byte| (0x21..=0x7e).contains(&byte))
+        };
+        if !valid_token(start_token) || !valid_token(end_token) {
+            return Err(BufferError::InvalidBlockCommentToken);
+        }
+
+        let mut unique_selections = selections_utf16.to_vec();
+        for &(start_utf16, end_utf16) in &unique_selections {
+            if start_utf16 > end_utf16 {
+                return Err(BufferError::InvalidDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                });
+            }
+            self.char_idx_at_utf16(start_utf16)?;
+            self.char_idx_at_utf16(end_utf16)?;
+        }
+        unique_selections.sort_unstable();
+        unique_selections.dedup();
+        for pair in unique_selections.windows(2) {
+            let previous = pair[0];
+            let current = pair[1];
+            if previous.1 > current.0 || (previous.0 == previous.1 && previous.0 == current.0) {
+                return Err(BufferError::OverlappingBlockCommentSelections);
+            }
+        }
+
+        let start_token_chars = start_token.chars().count();
+        let end_token_chars = end_token.chars().count();
+        let mut inspected_utf16 = 0usize;
+        let mut edits = Vec::with_capacity(unique_selections.len().saturating_mul(2));
+        let mut mapped_by_selection = HashMap::with_capacity(unique_selections.len());
+
+        for &(start_utf16, end_utf16) in &unique_selections {
+            let start_char = self.char_idx_at_utf16(start_utf16)?;
+            let end_char = self.char_idx_at_utf16(end_utf16)?;
+            let start_line_index = self.rope.char_to_line(start_char);
+            let end_line_index = self.rope.char_to_line(end_char);
+            let start_line = self.rope.line(start_line_index);
+            let end_line = self.rope.line(end_line_index);
+            let start_content_len = line_content_char_len(start_line);
+            let end_content_len = line_content_char_len(end_line);
+            let start_content = start_line.slice(..start_content_len);
+            let end_content = end_line.slice(..end_content_len);
+
+            if start_content.len_utf16_cu() > MAX_BLOCK_COMMENT_LINE_UTF16 {
+                return Err(BufferError::BlockCommentLineTooLarge {
+                    requested: start_content.len_utf16_cu(),
+                    max: MAX_BLOCK_COMMENT_LINE_UTF16,
+                });
+            }
+            inspected_utf16 = inspected_utf16.saturating_add(start_content.len_utf16_cu());
+            if end_line_index != start_line_index {
+                if end_content.len_utf16_cu() > MAX_BLOCK_COMMENT_LINE_UTF16 {
+                    return Err(BufferError::BlockCommentLineTooLarge {
+                        requested: end_content.len_utf16_cu(),
+                        max: MAX_BLOCK_COMMENT_LINE_UTF16,
+                    });
+                }
+                inspected_utf16 = inspected_utf16.saturating_add(end_content.len_utf16_cu());
+            }
+            if inspected_utf16 > MAX_BLOCK_COMMENT_SCAN_UTF16 {
+                return Err(BufferError::BlockCommentScanTooLarge {
+                    requested: inspected_utf16,
+                    max: MAX_BLOCK_COMMENT_SCAN_UTF16,
+                });
+            }
+
+            let start_text = start_content.to_string();
+            let end_text = if start_line_index == end_line_index {
+                start_text.clone()
+            } else {
+                end_content.to_string()
+            };
+            let start_line_char = self.rope.line_to_char(start_line_index);
+            let end_line_char = self.rope.line_to_char(end_line_index);
+            let start_column = start_char
+                .saturating_sub(start_line_char)
+                .min(start_content_len);
+            let end_column = end_char.saturating_sub(end_line_char).min(end_content_len);
+            let start_token_index = last_token_index(
+                &start_text,
+                start_token,
+                start_column.saturating_add(start_token_chars),
+            );
+            let end_token_index = first_token_index(
+                &end_text,
+                end_token,
+                end_column.saturating_sub(end_token_chars),
+            );
+
+            let mut should_remove = start_token_index.is_some() && end_token_index.is_some();
+            if let (Some(start_index), Some(end_index)) = (start_token_index, end_token_index) {
+                if start_line_index == end_line_index {
+                    if end_index < start_index + start_token_chars {
+                        should_remove = false;
+                    } else {
+                        let between_start =
+                            string_byte_at_char(&start_text, start_index + start_token_chars);
+                        let between_end = string_byte_at_char(&start_text, end_index);
+                        if contains_ascii_case_insensitive(
+                            &start_text[between_start..between_end],
+                            end_token,
+                        ) {
+                            should_remove = false;
+                        }
+                    }
+                } else {
+                    let after_start =
+                        string_byte_at_char(&start_text, start_index + start_token_chars);
+                    let before_end = string_byte_at_char(&end_text, end_index);
+                    if contains_ascii_case_insensitive(&start_text[after_start..], end_token)
+                        || contains_ascii_case_insensitive(&end_text[..before_end], end_token)
+                    {
+                        should_remove = false;
+                    }
+                }
+            }
+
+            if !should_remove {
+                if start_utf16 == end_utf16 {
+                    let mut inserted_text =
+                        String::with_capacity(start_token.len() + end_token.len() + 2);
+                    inserted_text.push_str(start_token);
+                    inserted_text.push_str("  ");
+                    inserted_text.push_str(end_token);
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16,
+                        end_utf16,
+                        removed_text: String::new(),
+                        inserted_text,
+                    });
+                    let caret = start_utf16 + start_token.encode_utf16().count() + 1;
+                    mapped_by_selection.insert((start_utf16, end_utf16), (caret, caret));
+                } else {
+                    let mut open_text = String::from(start_token);
+                    if insert_space {
+                        open_text.push(' ');
+                    }
+                    let mut close_text = String::new();
+                    if insert_space {
+                        close_text.push(' ');
+                    }
+                    close_text.push_str(end_token);
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16,
+                        end_utf16: start_utf16,
+                        removed_text: String::new(),
+                        inserted_text: open_text.clone(),
+                    });
+                    edits.push(TextBlockCommentEdit {
+                        start_utf16: end_utf16,
+                        end_utf16,
+                        removed_text: String::new(),
+                        inserted_text: close_text,
+                    });
+                    let opening_units = open_text.encode_utf16().count();
+                    mapped_by_selection.insert(
+                        (start_utf16, end_utf16),
+                        (start_utf16 + opening_units, end_utf16 + opening_units),
+                    );
+                }
+                continue;
+            }
+
+            let start_index = start_token_index.expect("paired token start");
+            let end_index = end_token_index.expect("paired token end");
+            let open_start_char = start_line_char + start_index;
+            let mut open_end_index = start_index + start_token_chars;
+            if insert_space
+                && open_end_index < start_content_len
+                && start_content.char(open_end_index) == ' '
+            {
+                open_end_index += 1;
+            }
+            let mut close_start_index = end_index;
+            if insert_space
+                && close_start_index > 0
+                && end_content.char(close_start_index - 1) == ' '
+            {
+                close_start_index -= 1;
+            }
+            let close_start_char = end_line_char + close_start_index;
+            let close_end_char = end_line_char + end_index + end_token_chars;
+            let open_end_char = start_line_char + open_end_index;
+            let open_start_utf16 = self.rope.char_to_utf16_cu(open_start_char);
+            let open_end_utf16 = self.rope.char_to_utf16_cu(open_end_char);
+            let close_start_utf16 = self.rope.char_to_utf16_cu(close_start_char);
+            let close_end_utf16 = self.rope.char_to_utf16_cu(close_end_char);
+
+            if start_line_index == end_line_index && close_start_index <= open_end_index {
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: open_start_utf16,
+                    end_utf16: close_end_utf16,
+                    removed_text: self.rope.slice(open_start_char..close_end_char).to_string(),
+                    inserted_text: String::new(),
+                });
+                mapped_by_selection.insert(
+                    (start_utf16, end_utf16),
+                    (open_start_utf16, open_start_utf16),
+                );
+            } else {
+                let open_removed = self.rope.slice(open_start_char..open_end_char).to_string();
+                let close_removed = self
+                    .rope
+                    .slice(close_start_char..close_end_char)
+                    .to_string();
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: open_start_utf16,
+                    end_utf16: open_end_utf16,
+                    removed_text: open_removed.clone(),
+                    inserted_text: String::new(),
+                });
+                edits.push(TextBlockCommentEdit {
+                    start_utf16: close_start_utf16,
+                    end_utf16: close_end_utf16,
+                    removed_text: close_removed,
+                    inserted_text: String::new(),
+                });
+                let mapped_end =
+                    close_start_utf16.saturating_sub(open_removed.encode_utf16().count());
+                mapped_by_selection.insert(
+                    (start_utf16, end_utf16),
+                    (open_start_utf16, mapped_end.max(open_start_utf16)),
+                );
+            }
+        }
+
+        edits.sort_by_key(|edit| (edit.start_utf16, edit.end_utf16));
+        for pair in edits.windows(2) {
+            let previous = &pair[0];
+            let current = &pair[1];
+            if previous.end_utf16 > current.start_utf16
+                || (previous.start_utf16 == previous.end_utf16
+                    && current.start_utf16 == current.end_utf16
+                    && previous.start_utf16 == current.start_utf16)
+            {
+                return Err(BufferError::OverlappingBlockCommentSelections);
+            }
+        }
+        let selections = selections_utf16
+            .iter()
+            .map(|selection| {
+                let (start_utf16, end_utf16) = mapped_by_selection[selection];
+                TextBlockCommentSelection {
+                    start_utf16,
+                    end_utf16,
+                }
+            })
+            .collect();
+        Ok(TextBlockCommentPlan {
+            version: self.version,
+            edits,
+            selections,
+        })
+    }
+
+    /// Resolve the fixed Code-OSS explicit trim-trailing-whitespace command.
+    /// Only ASCII space and tab are trimmed; CR, LF, and CRLF line endings are
+    /// preserved. The complete scan and undo payload are bounded atomically.
+    pub fn trim_trailing_whitespace_utf16(
+        &self,
+    ) -> Result<TextTrimTrailingWhitespacePlan, BufferError> {
+        fn push_trim_range(
+            edits: &mut Vec<TextDeleteRange>,
+            deleted_utf16: &mut usize,
+            start_utf16: usize,
+            end_utf16: usize,
+        ) -> Result<(), BufferError> {
+            if start_utf16 >= end_utf16 {
+                return Ok(());
+            }
+            let requested_deleted = deleted_utf16.saturating_add(end_utf16 - start_utf16);
+            if requested_deleted > MAX_TRAILING_WHITESPACE_DELETE_UTF16 {
+                return Err(BufferError::TrailingWhitespaceDeleteTooLarge {
+                    requested: requested_deleted,
+                    max: MAX_TRAILING_WHITESPACE_DELETE_UTF16,
+                });
+            }
+            let requested_edits = edits.len() + 1;
+            if requested_edits > MAX_TRAILING_WHITESPACE_EDITS {
+                return Err(BufferError::TrailingWhitespaceEditCountTooLarge {
+                    requested: requested_edits,
+                    max: MAX_TRAILING_WHITESPACE_EDITS,
+                });
+            }
+            edits.push(TextDeleteRange {
+                start_utf16,
+                end_utf16,
+            });
+            *deleted_utf16 = requested_deleted;
+            Ok(())
+        }
+
+        let scan_utf16 = self.len_utf16();
+        if scan_utf16 > MAX_TRAILING_WHITESPACE_SCAN_UTF16 {
+            return Err(BufferError::TrailingWhitespaceScanTooLarge {
+                requested: scan_utf16,
+                max: MAX_TRAILING_WHITESPACE_SCAN_UTF16,
+            });
+        }
+
+        let mut edits = Vec::new();
+        let mut deleted_utf16 = 0usize;
+        let mut offset_utf16 = 0usize;
+        let mut last_non_whitespace_end_utf16 = 0usize;
+        let mut chars = self.rope.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if ch == '\r' || ch == '\n' {
+                push_trim_range(
+                    &mut edits,
+                    &mut deleted_utf16,
+                    last_non_whitespace_end_utf16,
+                    offset_utf16,
+                )?;
+                offset_utf16 += ch.len_utf16();
+                if ch == '\r' && chars.peek() == Some(&'\n') {
+                    chars.next();
+                    offset_utf16 += 1;
+                }
+                last_non_whitespace_end_utf16 = offset_utf16;
+            } else {
+                offset_utf16 += ch.len_utf16();
+                if ch != ' ' && ch != '\t' {
+                    last_non_whitespace_end_utf16 = offset_utf16;
+                }
+            }
+        }
+        push_trim_range(
+            &mut edits,
+            &mut deleted_utf16,
+            last_non_whitespace_end_utf16,
+            offset_utf16,
+        )?;
+
+        Ok(TextTrimTrailingWhitespacePlan {
+            version: self.version,
+            edits,
+        })
+    }
+
+    /// Convert only the leading spaces/tabs on every line, matching the fixed
+    /// Code-OSS indentation conversion actions. Line endings and all text after
+    /// the first non-indentation character remain unchanged.
+    pub fn convert_indentation_utf16(
+        &self,
+        insert_spaces: bool,
+        tab_size: usize,
+    ) -> Result<TextIndentationPlan, BufferError> {
+        fn convert_prefix(prefix: &str, insert_spaces: bool, tab_size: usize) -> String {
+            let mut converted = String::with_capacity(prefix.len());
+            if insert_spaces {
+                for ch in prefix.chars() {
+                    if ch == '\t' {
+                        converted.push_str(&" ".repeat(tab_size));
+                    } else {
+                        converted.push(ch);
+                    }
+                }
+            } else {
+                let mut chars = prefix.chars().peekable();
+                while let Some(ch) = chars.next() {
+                    if ch != ' ' {
+                        converted.push(ch);
+                        continue;
+                    }
+                    let mut run = 1usize;
+                    while chars.peek() == Some(&' ') {
+                        chars.next();
+                        run += 1;
+                    }
+                    converted.push_str(&"\t".repeat(run / tab_size));
+                    converted.push_str(&" ".repeat(run % tab_size));
+                }
+            }
+            converted
+        }
+
+        fn push_prefix_edit(
+            edits: &mut Vec<TextIndentationEdit>,
+            payload_utf16: &mut usize,
+            prefix: &str,
+            start_utf16: usize,
+            insert_spaces: bool,
+            tab_size: usize,
+        ) -> Result<(), BufferError> {
+            if prefix.is_empty() {
+                return Ok(());
+            }
+            let inserted_text = convert_prefix(prefix, insert_spaces, tab_size);
+            if inserted_text == prefix {
+                return Ok(());
+            }
+            let requested_edits = edits.len() + 1;
+            if requested_edits > MAX_INDENTATION_CONVERSION_EDITS {
+                return Err(BufferError::IndentationConversionEditCountTooLarge {
+                    requested: requested_edits,
+                    max: MAX_INDENTATION_CONVERSION_EDITS,
+                });
+            }
+            // Prefixes contain ASCII spaces/tabs only, so byte and UTF-16
+            // lengths are identical here.
+            let requested_payload = payload_utf16
+                .saturating_add(prefix.len())
+                .saturating_add(inserted_text.len());
+            if requested_payload > MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16 {
+                return Err(BufferError::IndentationConversionPayloadTooLarge {
+                    requested: requested_payload,
+                    max: MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16,
+                });
+            }
+            edits.push(TextIndentationEdit {
+                start_utf16,
+                end_utf16: start_utf16 + prefix.len(),
+                removed_text: prefix.to_owned(),
+                inserted_text,
+            });
+            *payload_utf16 = requested_payload;
+            Ok(())
+        }
+
+        if tab_size == 0 || tab_size > MAX_INDENTATION_TAB_SIZE {
+            return Err(BufferError::InvalidIndentationTabSize {
+                requested: tab_size,
+                max: MAX_INDENTATION_TAB_SIZE,
+            });
+        }
+        let scan_utf16 = self.len_utf16();
+        if scan_utf16 > MAX_INDENTATION_CONVERSION_SCAN_UTF16 {
+            return Err(BufferError::IndentationConversionScanTooLarge {
+                requested: scan_utf16,
+                max: MAX_INDENTATION_CONVERSION_SCAN_UTF16,
+            });
+        }
+
+        let mut edits = Vec::new();
+        let mut payload_utf16 = 0usize;
+        let mut prefix = String::new();
+        let mut prefix_start_utf16 = 0usize;
+        let mut offset_utf16 = 0usize;
+        let mut at_line_start = true;
+        let mut chars = self.rope.chars().peekable();
+        while let Some(ch) = chars.next() {
+            if offset_utf16 == 0 && ch == '\u{feff}' {
+                // The preserved file BOM precedes the first line's editable
+                // indentation but is not itself part of that indentation.
+                offset_utf16 += 1;
+                prefix_start_utf16 = offset_utf16;
+                continue;
+            }
+            if ch == '\r' || ch == '\n' {
+                push_prefix_edit(
+                    &mut edits,
+                    &mut payload_utf16,
+                    &prefix,
+                    prefix_start_utf16,
+                    insert_spaces,
+                    tab_size,
+                )?;
+                prefix.clear();
+                offset_utf16 += 1;
+                if ch == '\r' && chars.peek() == Some(&'\n') {
+                    chars.next();
+                    offset_utf16 += 1;
+                }
+                prefix_start_utf16 = offset_utf16;
+                at_line_start = true;
+            } else if at_line_start && (ch == ' ' || ch == '\t') {
+                prefix.push(ch);
+                offset_utf16 += 1;
+            } else {
+                if at_line_start {
+                    push_prefix_edit(
+                        &mut edits,
+                        &mut payload_utf16,
+                        &prefix,
+                        prefix_start_utf16,
+                        insert_spaces,
+                        tab_size,
+                    )?;
+                    prefix.clear();
+                    at_line_start = false;
+                }
+                offset_utf16 += ch.len_utf16();
+            }
+        }
+        push_prefix_edit(
+            &mut edits,
+            &mut payload_utf16,
+            &prefix,
+            prefix_start_utf16,
+            insert_spaces,
+            tab_size,
+        )?;
+
+        Ok(TextIndentationPlan {
+            version: self.version,
+            insert_spaces,
+            tab_size,
+            edits,
+        })
+    }
+
+    /// Resolve the Code-OSS transpose range for each collapsed UTF-16 caret.
+    /// Each result is `None` when the action has no character pair to swap.
+    pub fn transpose_ranges_utf16(
+        &self,
+        offsets_utf16: &[usize],
+    ) -> Result<Vec<Option<TextTransposePlan>>, BufferError> {
+        if offsets_utf16.len() > MAX_TRANSPOSE_CARETS {
+            return Err(BufferError::TransposeCountTooLarge {
+                requested: offsets_utf16.len(),
+                max: MAX_TRANSPOSE_CARETS,
+            });
+        }
+
+        offsets_utf16
+            .iter()
+            .map(|&offset_utf16| self.transpose_range_utf16(offset_utf16))
+            .collect()
+    }
+
+    fn transpose_range_utf16(
+        &self,
+        offset_utf16: usize,
+    ) -> Result<Option<TextTransposePlan>, BufferError> {
+        let caret_char = self.char_idx_at_utf16(offset_utf16)?;
+        let line_bounds = self.transpose_line_bounds(caret_char);
+        // VS Code positions stop before line terminators. A caret inside CRLF
+        // is normalized to that same logical line end.
+        let caret_char = caret_char.clamp(line_bounds.start_char, line_bounds.end_char);
+
+        if line_bounds.start_char == 0 && caret_char == 0 {
+            return Ok(None);
+        }
+
+        let end_char = if caret_char == line_bounds.end_char {
+            caret_char
+        } else {
+            self.transpose_right_position(caret_char)
+        };
+        let middle_char = self.transpose_left_position(end_char);
+        let begin_char = self.transpose_left_position(middle_char);
+        if begin_char >= middle_char || middle_char >= end_char {
+            return Ok(None);
+        }
+
+        let left_text = self.rope.slice(begin_char..middle_char).to_string();
+        let right_text = self.rope.slice(middle_char..end_char).to_string();
+        let mut inserted_text = String::with_capacity(left_text.len() + right_text.len());
+        inserted_text.push_str(&right_text);
+        inserted_text.push_str(&left_text);
+
+        Ok(Some(TextTransposePlan {
+            start_utf16: self.rope.char_to_utf16_cu(begin_char),
+            end_utf16: self.rope.char_to_utf16_cu(end_char),
+            removed_text: format!("{left_text}{right_text}"),
+            inserted_text,
+        }))
+    }
+
+    fn transpose_line_bounds(&self, position_char: usize) -> TransposeLineBounds {
+        let rope_line = self.rope.char_to_line(position_char);
+        let line_start = self.rope.line_to_char(rope_line);
+        let line = self.rope.line(rope_line);
+        let line_end = line_start + transpose_line_content_char_len(line);
+        let previous_line_end = if rope_line > 0 {
+            let previous_line_start = self.rope.line_to_char(rope_line - 1);
+            let previous_line = self.rope.line(rope_line - 1);
+            Some(previous_line_start + transpose_line_content_char_len(previous_line))
+        } else {
+            None
+        };
+
+        TransposeLineBounds {
+            start_char: line_start,
+            end_char: line_end,
+            previous_line_end_char: previous_line_end,
+            next_line_start_char: (rope_line + 1 < self.rope.len_lines())
+                .then(|| self.rope.line_to_char(rope_line + 1)),
+        }
+    }
+
+    fn transpose_left_position(&self, position_char: usize) -> usize {
+        let bounds = self.transpose_line_bounds(position_char);
+        if position_char > bounds.start_char {
+            return position_char - 1;
+        }
+        bounds.previous_line_end_char.unwrap_or(bounds.start_char)
+    }
+
+    fn transpose_right_position(&self, position_char: usize) -> usize {
+        let bounds = self.transpose_line_bounds(position_char);
+        if position_char < bounds.end_char {
+            return position_char + 1;
+        }
+        bounds.next_line_start_char.unwrap_or(bounds.end_char)
+    }
+
+    /// Resolve the replacement ranges VS Code uses for paste while in
+    /// overtype mode. The inserted UTF-16 length extends the selection on its
+    /// current logical line; line terminators are never consumed. Returned
+    /// endpoints are snapped forward when the requested UTF-16 width would
+    /// split a supplementary scalar.
+    pub fn overtype_paste_ranges_utf16(
+        &self,
+        selections_utf16: &[(usize, usize, usize)],
+    ) -> Result<Vec<TextDeleteRange>, BufferError> {
+        if selections_utf16.len() > MAX_OVERTYPE_PASTE_RANGES {
+            return Err(BufferError::OvertypePasteCountTooLarge {
+                requested: selections_utf16.len(),
+                max: MAX_OVERTYPE_PASTE_RANGES,
+            });
+        }
+
+        selections_utf16
+            .iter()
+            .map(|&(start_utf16, end_utf16, inserted_utf16)| {
+                if start_utf16 > end_utf16 {
+                    return Err(BufferError::InvalidOvertypePasteRange {
+                        start_utf16,
+                        end_utf16,
+                    });
+                }
+                self.char_idx_at_utf16(start_utf16)?;
+                self.char_idx_at_utf16(end_utf16)?;
+
+                let line = self.line_boundary_utf16(end_utf16)?;
+                let additional_utf16 = if start_utf16 == end_utf16 {
+                    inserted_utf16
+                } else {
+                    inserted_utf16.saturating_sub(1)
+                };
+                let requested_end = end_utf16
+                    .saturating_add(additional_utf16)
+                    .min(line.end_utf16);
+                let end_utf16 = if self.char_idx_at_utf16(requested_end).is_ok() {
+                    requested_end
+                } else {
+                    requested_end.saturating_add(1).min(line.end_utf16)
+                };
+                self.char_idx_at_utf16(end_utf16)?;
+
+                Ok(TextDeleteRange {
+                    start_utf16,
+                    end_utf16,
+                })
+            })
+            .collect()
+    }
+
+    /// Read a bounded UTF-16 range without materialising the whole document.
+    ///
+    /// Range starts must be valid UTF-16 boundaries. The end is shortened by
+    /// one unit when the requested boundary would split a surrogate pair. If
+    /// a one-unit request starts at a supplementary scalar, the complete
+    /// scalar is returned so callers can always advance without splitting it.
+    pub fn read_range_utf16(
+        &self,
+        start_utf16: usize,
+        max_len_utf16: usize,
+    ) -> Result<TextRangeRead, BufferError> {
+        if max_len_utf16 > MAX_READ_RANGE_UTF16 {
+            return Err(BufferError::ReadRangeTooLarge {
+                requested: max_len_utf16,
+                max: MAX_READ_RANGE_UTF16,
+            });
+        }
+
+        let start_char = self.char_idx_at_utf16(start_utf16)?;
+        let total_utf16_length = self.len_utf16();
+        let desired_end = start_utf16
+            .saturating_add(max_len_utf16)
+            .min(total_utf16_length);
+        let mut end_utf16 = desired_end;
+        let mut end_char = match self.char_idx_at_utf16(end_utf16) {
+            Ok(char_idx) => char_idx,
+            Err(BufferError::InvalidUtf16Offset { .. }) if end_utf16 > start_utf16 => {
+                end_utf16 -= 1;
+                self.char_idx_at_utf16(end_utf16)?
+            }
+            Err(error) => return Err(error),
+        };
+
+        if max_len_utf16 > 0 && end_utf16 == start_utf16 && start_utf16 < total_utf16_length {
+            end_char = start_char + 1;
+            end_utf16 = self.rope.char_to_utf16_cu(end_char);
+        }
+
+        let start_line = self.rope.char_to_line(start_char);
+        let line_start_char = self.rope.line_to_char(start_line);
+        let start_character = self
+            .rope
+            .line(start_line)
+            .char_to_utf16_cu(start_char - line_start_char);
+
+        Ok(TextRangeRead {
+            version: self.version,
+            total_utf16_length,
+            line_count: self.rope.len_lines(),
+            start_utf16,
+            end_utf16,
+            start_line,
+            start_character,
+            text: self.rope.slice(start_char..end_char).to_string(),
+        })
+    }
+
+    /// Read a bounded page of per-line horizontal windows from one Rust
+    /// snapshot. Line separators are excluded from each returned window.
+    ///
+    /// `max_line_utf16 * max_lines` must fit within `max_total_utf16`, making
+    /// the response size predictable even when every requested line is long.
+    /// Horizontal positions are UTF-16 columns; a position inside a surrogate
+    /// pair is moved back to the scalar start.
+    pub fn read_lines_utf16(
+        &self,
+        first_line: usize,
+        max_lines: usize,
+        horizontal_start_utf16: usize,
+        max_line_utf16: usize,
+        max_total_utf16: usize,
+    ) -> Result<TextLinesRead, BufferError> {
+        let line_count = self.rope.len_lines();
+        if first_line >= line_count {
+            return Err(BufferError::InvalidLine {
+                line: first_line,
+                line_count,
+            });
+        }
+        if max_lines > MAX_READ_LINES {
+            return Err(BufferError::ReadLineCountTooLarge {
+                requested: max_lines,
+                max: MAX_READ_LINES,
+            });
+        }
+        if max_lines == 0
+            || max_line_utf16 < 2
+            || max_total_utf16 == 0
+            || max_line_utf16 > MAX_READ_RANGE_UTF16
+            || max_total_utf16 > MAX_READ_RANGE_UTF16
+            || max_line_utf16.saturating_mul(max_lines) > max_total_utf16
+        {
+            return Err(BufferError::InvalidLineWindow {
+                max_lines,
+                max_line_utf16,
+                max_total_utf16,
+            });
+        }
+
+        let returned_line_count = max_lines.min(line_count - first_line);
+        let mut lines = Vec::with_capacity(returned_line_count);
+        for line_index in first_line..first_line + returned_line_count {
+            let line_slice = self.rope.line(line_index);
+            let mut content_chars = line_slice.len_chars();
+            if content_chars > 0 && line_slice.char(content_chars - 1) == '\n' {
+                content_chars -= 1;
+                if content_chars > 0 && line_slice.char(content_chars - 1) == '\r' {
+                    content_chars -= 1;
+                }
+            }
+
+            let content_start_char = self.rope.line_to_char(line_index);
+            let content_end_char = content_start_char + content_chars;
+            let content_start_utf16 = self.rope.char_to_utf16_cu(content_start_char);
+            let content_end_utf16 = self.rope.char_to_utf16_cu(content_end_char);
+            let content_length = content_end_utf16 - content_start_utf16;
+            let requested_column = horizontal_start_utf16.min(content_length);
+            let requested_start = content_start_utf16 + requested_column;
+            let start_char = match self.char_idx_at_utf16(requested_start) {
+                Ok(char_index) => char_index,
+                Err(BufferError::InvalidUtf16Offset { .. }) if requested_start > 0 => {
+                    self.char_idx_at_utf16(requested_start - 1)?
+                }
+                Err(error) => return Err(error),
+            };
+            let start_utf16 = self.rope.char_to_utf16_cu(start_char);
+            let requested_end = start_utf16
+                .saturating_add(max_line_utf16)
+                .min(content_end_utf16);
+            let end_char = match self.char_idx_at_utf16(requested_end) {
+                Ok(char_index) => char_index,
+                Err(BufferError::InvalidUtf16Offset { .. }) if requested_end > start_utf16 => {
+                    self.char_idx_at_utf16(requested_end - 1)?
+                }
+                Err(error) => return Err(error),
+            };
+            let end_utf16 = self.rope.char_to_utf16_cu(end_char);
+
+            lines.push(TextLineRead {
+                line: line_index,
+                start_utf16,
+                end_utf16,
+                text: self.rope.slice(start_char..end_char).to_string(),
+            });
+        }
+
+        Ok(TextLinesRead {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            first_line,
+            lines,
+        })
+    }
+
+    /// Return an evenly sampled, bounded overview without materializing the
+    /// document. The response contains at most 512 lines × 48 UTF-16 units.
+    pub fn minimap_sample(&self) -> TextMinimapSample {
+        let line_count = self.rope.len_lines();
+        let sample_count = line_count.min(MAX_MINIMAP_SAMPLE_LINES);
+        let mut lines = Vec::with_capacity(sample_count);
+
+        for sample_index in 0..sample_count {
+            let line_index = if sample_count <= 1 {
+                0
+            } else {
+                sample_index.saturating_mul(line_count - 1) / (sample_count - 1)
+            };
+            let start_char = self.rope.line_to_char(line_index);
+            let start_utf16 = self.rope.char_to_utf16_cu(start_char);
+            let line = self.rope.line(line_index);
+            let mut content_chars = line.len_chars();
+            if content_chars > 0 && line.char(content_chars - 1) == '\n' {
+                content_chars -= 1;
+                if content_chars > 0 && line.char(content_chars - 1) == '\r' {
+                    content_chars -= 1;
+                }
+            }
+
+            let utf16_length = line.char_to_utf16_cu(content_chars);
+            let mut text = String::new();
+            let mut sampled_utf16 = 0;
+            for char_index in 0..content_chars {
+                let ch = line.char(char_index);
+                let units = ch.len_utf16();
+                if sampled_utf16 + units > MAX_MINIMAP_LINE_SAMPLE_UTF16 {
+                    break;
+                }
+                text.push(ch);
+                sampled_utf16 += units;
+            }
+
+            lines.push(TextMinimapLine {
+                line: line_index,
+                start_utf16,
+                utf16_length,
+                text,
+            });
+        }
+
+        TextMinimapSample {
+            version: self.version,
+            total_utf16_length: self.len_utf16(),
+            line_count,
+            lines,
+        }
     }
 
     /// 应用一个操作。成功则版本号 +1。
@@ -153,11 +2887,219 @@ impl TextBuffer {
 mod tests {
     use super::*;
 
+    fn adjustment(
+        text: &str,
+        caret_utf16: usize,
+        delta_milli: i32,
+    ) -> Result<Option<TextNumberAdjustmentPlan>, NumberAdjustmentError> {
+        adjust_number_under_caret(text, caret_utf16, delta_milli, true, true)
+    }
+
+    #[test]
+    fn number_adjustment_matches_emmet_steps_and_formatting() {
+        let cases = [
+            ("hello 123.43 there", 12, 100, "123.53"),
+            ("hello 999.9 there", 11, 100, "1000"),
+            ("hello 123.43 there", 12, -100, "123.33"),
+            ("hello 100 there", 9, -100, "99.9"),
+            ("x=007", 5, 1_000, "008"),
+            ("x=-07", 5, -1_000, "-08"),
+            ("x=.1", 4, -100, ""),
+            ("x=-.1", 5, 100, ""),
+        ];
+
+        for (text, caret, delta, expected) in cases {
+            let plan = adjustment(text, caret, delta).unwrap().unwrap();
+            assert_eq!(plan.inserted_text, expected, "{text} += {delta}");
+            assert_eq!(
+                &text[byte_index_at_utf16(text, plan.start_utf16).unwrap()
+                    ..byte_index_at_utf16(text, plan.end_utf16).unwrap()],
+                plan.removed_text
+            );
+        }
+
+        for (text, caret, delta, expected) in [
+            ("x=10", 4, 100, "10.1"),
+            ("x=10", 4, 1_000, "11"),
+            ("x=10", 4, 10_000, "20"),
+            ("x=10", 4, -100, "9.9"),
+            ("x=10", 4, -1_000, "9"),
+            ("x=10", 4, -10_000, "0"),
+        ] {
+            assert_eq!(
+                adjustment(text, caret, delta)
+                    .unwrap()
+                    .unwrap()
+                    .inserted_text,
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn number_adjustment_uses_javascript_tofixed_tie_rounding() {
+        assert_eq!(js_to_fixed(1.15, 1), "1.1");
+        assert_eq!(js_to_fixed(1.25, 1), "1.3");
+        assert_eq!(js_to_fixed(-1.25, 1), "-1.3");
+    }
+
+    #[test]
+    fn number_adjustment_scans_from_selection_right_edge_and_utf16_caret() {
+        let text = "🦊 value=12.3";
+        let number_end = text.encode_utf16().count();
+        let plan = adjustment(text, number_end, 100).unwrap().unwrap();
+        assert_eq!(plan.removed_text, "12.3");
+        assert_eq!(plan.start_utf16, 9);
+        assert_eq!(plan.end_utf16, 13);
+        assert_eq!(plan.inserted_text, "12.4");
+
+        assert_eq!(
+            adjustment("🦊1", 1, 100),
+            Err(NumberAdjustmentError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(adjustment("abc", 3, 100).unwrap(), None);
+    }
+
+    #[test]
+    fn number_adjustment_rejects_truncated_windows_precision_and_invalid_steps() {
+        assert_eq!(
+            adjust_number_under_caret("12", 2, 100, false, false),
+            Err(NumberAdjustmentError::TruncatedNumber)
+        );
+        assert_eq!(
+            adjust_number_under_caret("12", 0, 100, false, true),
+            Err(NumberAdjustmentError::TruncatedNumber)
+        );
+        let too_precise = format!("1.{}", "1".repeat(101));
+        assert_eq!(
+            adjustment(&too_precise, too_precise.encode_utf16().count(), 100),
+            Err(NumberAdjustmentError::PrecisionOutOfRange {
+                requested: 101,
+                max: 100,
+            })
+        );
+        assert_eq!(
+            adjustment("12", 2, 250),
+            Err(NumberAdjustmentError::InvalidDelta { delta_milli: 250 })
+        );
+        assert_eq!(
+            adjustment(&"1".repeat(MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 + 1), 1, 100),
+            Err(NumberAdjustmentError::WindowTooLarge {
+                requested: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16 + 1,
+                max: MAX_NUMBER_ADJUSTMENT_WINDOW_UTF16,
+            })
+        );
+    }
+
+    #[test]
+    fn js_number_to_string_uses_exponential_notation_at_fixed_threshold() {
+        assert_eq!(js_to_fixed(1e20, 1), "100000000000000000000.0");
+        assert_eq!(js_to_fixed(1e21, 1), "1e+21");
+        assert_eq!(js_to_fixed(-1e21, 1), "-1e+21");
+        let large_integer = "1000000000000000000000";
+        assert_eq!(
+            adjustment(large_integer, large_integer.len(), 10_000)
+                .unwrap()
+                .unwrap()
+                .inserted_text,
+            "1e+21"
+        );
+    }
+
     #[test]
     fn open_assigns_version_one_and_keeps_content() {
         let buf = TextBuffer::open("hello\nworld\n");
         assert_eq!(buf.version(), 1);
         assert_eq!(buf.text(), "hello\nworld\n");
+    }
+
+    #[test]
+    fn case_transform_uses_full_unicode_mappings() {
+        assert_eq!(transform_case_text("straße", true), "STRASSE");
+        assert_eq!(transform_case_text("ﬃ", true), "FFI");
+        assert_eq!(transform_case_text("İ", false), "i\u{307}");
+        assert_eq!(transform_case_text("A\0B", true), "A\0B");
+    }
+
+    #[test]
+    fn title_case_uses_code_oss_unicode_letter_boundaries() {
+        assert_eq!(transform_title_case_text("hELLO wORLD"), "Hello World");
+        assert_eq!(
+            transform_title_case_text("DON'T rock'n'roll 'tIS"),
+            "Don't Rock'n'roll 'Tis"
+        );
+        assert_eq!(
+            transform_title_case_text("ßETA O’NEIL 2FAST\nΩMEGA"),
+            "SSeta O’Neil 2fast\nΩmega"
+        );
+        assert_eq!(
+            transform_title_case_text("İSTANBUL\0eCLAIR"),
+            "I\u{307}Stanbul\0Eclair"
+        );
+    }
+
+    #[test]
+    fn camel_case_uses_code_oss_unicode_word_boundaries() {
+        assert_eq!(transform_camel_case_text("linux-save-ok"), "linuxSaveOk");
+        assert_eq!(transform_camel_case_text("Foo-bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("FOO-bar"), "FOOBar");
+        assert_eq!(transform_camel_case_text("my name_here"), "myNameHere");
+        assert_eq!(
+            transform_camel_case_text("foo_bar\nqux-baz"),
+            "fooBar\nquxBaz"
+        );
+        assert_eq!(transform_camel_case_text("Foo\r\nBar"), "foo\r\nbar");
+        assert_eq!(transform_camel_case_text("🌱-seed"), "🌱Seed");
+        assert_eq!(transform_camel_case_text("foo-𐐀bar"), "foo𐐀bar");
+        assert_eq!(
+            transform_camel_case_text("foo\u{0085}bar"),
+            "foo\u{0085}bar"
+        );
+        assert_eq!(transform_camel_case_text("foo\u{FEFF}bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("foo\u{2028}bar"), "fooBar");
+        assert_eq!(transform_camel_case_text("Istanbul-İzmir"), "istanbulİzmir");
+        assert_eq!(transform_camel_case_text("foo\0-bar"), "foo\0Bar");
+    }
+
+    #[test]
+    fn snake_case_uses_code_oss_unicode_case_boundaries() {
+        assert_eq!(transform_snake_case_text("fooBar"), "foo_bar");
+        assert_eq!(
+            transform_snake_case_text("XMLHttpRequest"),
+            "xml_http_request"
+        );
+        assert_eq!(transform_snake_case_text("fooBARBaz"), "foo_bar_baz");
+        assert_eq!(transform_snake_case_text("2FastNumber"), "2_fast_number");
+        assert_eq!(transform_snake_case_text("foo2Bar"), "foo2_bar");
+        assert_eq!(transform_snake_case_text("O’Neil"), "o’neil");
+        assert_eq!(transform_snake_case_text("foo__Bar"), "foo__bar");
+        assert_eq!(transform_snake_case_text("éclairÉté"), "éclair_été");
+        assert_eq!(transform_snake_case_text("A1B2"), "a1b2");
+        assert_eq!(
+            transform_snake_case_text("HTTPServer\nNextLine"),
+            "http_server\nnext_line"
+        );
+    }
+
+    #[test]
+    fn pascal_case_uses_code_oss_word_and_dot_boundaries() {
+        assert_eq!(transform_pascal_case_text("linux-save-ok"), "LinuxSaveOk");
+        assert_eq!(transform_pascal_case_text("foo.bar-baz"), "Foo.BarBaz");
+        assert_eq!(transform_pascal_case_text("FOO_HTTP"), "FooHttp");
+        assert_eq!(transform_pascal_case_text("ßETA"), "SSETA");
+        assert_eq!(transform_pascal_case_text("HTTPServer"), "HTTPServer");
+        assert_eq!(transform_pascal_case_text("foo\nbar"), "Foo\nbar");
+        assert_eq!(transform_pascal_case_text("foo\nBAR"), "Foo\nbar");
+        assert_eq!(transform_pascal_case_text("foo\r\nBAR"), "Foo\r\nbar");
+        assert_eq!(
+            transform_pascal_case_text("foo\u{2028}BAR"),
+            "Foo\u{2028}bar"
+        );
+        assert_eq!(transform_pascal_case_text("éclair-été"), "ÉclairÉté");
+        assert_eq!(transform_pascal_case_text("🌱-seed"), "🌱Seed");
+        assert_eq!(transform_pascal_case_text("𐐀ABC"), "𐐀abc");
+        assert_eq!(transform_pascal_case_text("foo\0-bar"), "Foo\0Bar");
+        assert_eq!(transform_pascal_case_text("  foo--bar_\t"), "FooBar");
     }
 
     #[test]
@@ -270,6 +3212,1301 @@ mod tests {
     }
 
     #[test]
+    fn word_delete_matches_vs_code_space_and_word_rules() {
+        let left = TextBuffer::open("aa bb");
+        assert_eq!(
+            left.word_delete_range_utf16(3, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 3,
+            })
+        );
+
+        let many_spaces = TextBuffer::open("aa   bb");
+        assert_eq!(
+            many_spaces.word_delete_range_utf16(5, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 5,
+            })
+        );
+        assert_eq!(
+            many_spaces.word_delete_range_utf16(2, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 5,
+            })
+        );
+
+        assert_eq!(
+            left.word_delete_range_utf16(3, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 3,
+                end_utf16: 5,
+            })
+        );
+        assert_eq!(
+            left.word_delete_range_utf16(0, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 0,
+            })
+        );
+        assert_eq!(
+            left.word_delete_range_utf16(5, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 5,
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_crosses_crlf_to_next_line_word_start() {
+        let buffer = TextBuffer::open("aa\r\n   bb\ncc");
+        assert_eq!(
+            buffer.word_delete_range_utf16(2, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 7,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(7, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 4,
+                end_utf16: 7,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(10, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 9,
+                end_utf16: 10,
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_uses_utf16_boundaries_and_scans_beyond_editor_window() {
+        let buffer = TextBuffer::open("fn🦊Value");
+        assert_eq!(
+            buffer.word_delete_range_utf16(4, WordDeleteDirection::Left),
+            Ok(TextDeleteRange {
+                start_utf16: 0,
+                end_utf16: 4,
+            })
+        );
+        assert_eq!(
+            buffer.word_delete_range_utf16(3, WordDeleteDirection::Left),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 3 })
+        );
+
+        let long = format!("{} 🦊end", "word".repeat(5000));
+        let long_buffer = TextBuffer::open(&long);
+        let expected_end = "word".repeat(5000).encode_utf16().count() + 1;
+        assert_eq!(
+            long_buffer.word_delete_range_utf16(expected_end, WordDeleteDirection::Right),
+            Ok(TextDeleteRange {
+                start_utf16: expected_end,
+                end_utf16: long_buffer.len_utf16(),
+            })
+        );
+    }
+
+    #[test]
+    fn word_delete_batches_ranges_and_bounds_caret_count() {
+        let buffer = TextBuffer::open("one two");
+        assert_eq!(
+            buffer.word_delete_ranges_utf16(&[3, 7], WordDeleteDirection::Left),
+            Ok(vec![
+                TextDeleteRange {
+                    start_utf16: 0,
+                    end_utf16: 3,
+                },
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 7,
+                },
+            ])
+        );
+        assert_eq!(
+            buffer.word_delete_ranges_utf16(
+                &vec![0; MAX_WORD_DELETE_CARETS + 1],
+                WordDeleteDirection::Right,
+            ),
+            Err(BufferError::WordDeleteCountTooLarge {
+                requested: MAX_WORD_DELETE_CARETS + 1,
+                max: MAX_WORD_DELETE_CARETS,
+            })
+        );
+    }
+
+    #[test]
+    fn word_part_movement_matches_camel_and_acronym_boundaries() {
+        let buffer = TextBuffer::open("thisIsACamelCaseVar");
+        let expected = [0, 4, 6, 7, 12, 16, 19];
+        let mut offset = 0;
+        let mut stops = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Right)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            stops.push(offset);
+        }
+        assert_eq!(stops, expected);
+
+        let mut offset = buffer.len_utf16();
+        let mut reverse = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Left)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            reverse.push(offset);
+        }
+        assert_eq!(reverse, expected.into_iter().rev().collect::<Vec<_>>());
+
+        let acronym = TextBuffer::open("HTTPServer");
+        assert_eq!(
+            acronym.word_part_offset_utf16(0, WordPartDirection::Right),
+            Ok(4)
+        );
+    }
+
+    #[test]
+    fn word_part_movement_splits_underscores_and_skips_default_separators() {
+        let buffer = TextBuffer::open("snake_case;next");
+        let mut offset = 0;
+        let mut right = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Right)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            right.push(offset);
+        }
+        assert_eq!(right, [0, 5, 10, 11, 15]);
+
+        let mut offset = buffer.len_utf16();
+        let mut left = vec![offset];
+        loop {
+            let next = buffer
+                .word_part_offset_utf16(offset, WordPartDirection::Left)
+                .unwrap();
+            if next == offset {
+                break;
+            }
+            offset = next;
+            left.push(offset);
+        }
+        assert_eq!(left, [15, 11, 10, 6, 0]);
+    }
+
+    #[test]
+    fn word_part_movement_keeps_emoji_scalar_safe_and_crosses_crlf_lines() {
+        let unicode = TextBuffer::open("go🦊ToValue");
+        assert_eq!(
+            unicode
+                .word_part_offset_utf16(0, WordPartDirection::Right)
+                .unwrap(),
+            6
+        );
+        assert_eq!(
+            unicode
+                .word_part_offset_utf16(unicode.len_utf16(), WordPartDirection::Left)
+                .unwrap(),
+            6
+        );
+        assert!(unicode
+            .word_part_offset_utf16(3, WordPartDirection::Left)
+            .is_err());
+
+        let crlf = TextBuffer::open("firstPart\r\nnextPart");
+        assert_eq!(
+            crlf.word_part_offset_utf16(9, WordPartDirection::Right)
+                .unwrap(),
+            11
+        );
+        assert_eq!(
+            crlf.word_part_offset_utf16(11, WordPartDirection::Left)
+                .unwrap(),
+            9
+        );
+    }
+
+    #[test]
+    fn word_part_movement_scans_long_rope_lines_without_window_limits() {
+        let prefix = "a".repeat(100_000);
+        let buffer = TextBuffer::open(&format!("{prefix}CamelCase"));
+        let end = buffer.len_utf16();
+        assert_eq!(
+            buffer
+                .word_part_offset_utf16(end, WordPartDirection::Left)
+                .unwrap(),
+            100_005
+        );
+    }
+
+    #[test]
+    fn bounded_read_preserves_bom_crlf_and_utf16_metadata() {
+        let buf = TextBuffer::open("\u{FEFF}甲🦊\r\nsecond");
+        let first = buf.read_range_utf16(0, 3).unwrap();
+        assert_eq!(first.text, "\u{FEFF}甲");
+        assert_eq!(first.end_utf16, 2);
+        assert_eq!(first.total_utf16_length, 12);
+        assert_eq!(first.line_count, 2);
+        assert_eq!((first.start_line, first.start_character), (0, 0));
+
+        let emoji = buf.read_range_utf16(2, 1).unwrap();
+        assert_eq!(emoji.text, "🦊");
+        assert_eq!((emoji.start_line, emoji.start_character), (0, 2));
+        assert_eq!(emoji.end_utf16, 4);
+
+        let second_line = buf.read_range_utf16(6, 6).unwrap();
+        assert_eq!(second_line.text, "second");
+        assert_eq!(
+            (second_line.start_line, second_line.start_character),
+            (1, 0)
+        );
+    }
+
+    #[test]
+    fn bounded_read_rejects_surrogate_start_and_oversized_request() {
+        let buf = TextBuffer::open("a🦊b");
+        assert_eq!(
+            buf.read_range_utf16(2, 2),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 2 })
+        );
+        assert_eq!(
+            buf.read_range_utf16(0, MAX_READ_RANGE_UTF16 + 1),
+            Err(BufferError::ReadRangeTooLarge {
+                requested: MAX_READ_RANGE_UTF16 + 1,
+                max: MAX_READ_RANGE_UTF16,
+            })
+        );
+    }
+
+    #[test]
+    fn bounded_read_pages_a_very_long_single_line() {
+        let text = "x".repeat(100_000);
+        let buf = TextBuffer::open(&text);
+        let page = buf.read_range_utf16(49_000, 4_096).unwrap();
+        assert_eq!(page.text.len(), 4_096);
+        assert_eq!(page.text, "x".repeat(4_096));
+        assert_eq!(page.total_utf16_length, 100_000);
+        assert_eq!(page.line_count, 1);
+        assert_eq!(page.end_utf16, 53_096);
+    }
+
+    #[test]
+    fn line_offsets_are_utf16_absolute_across_bom_emoji_and_crlf() {
+        let buf = TextBuffer::open("\u{FEFF}a🦊\r\nb\n");
+        assert_eq!(buf.line_offset_utf16(0).unwrap().offset_utf16, 0);
+        assert_eq!(buf.line_offset_utf16(1).unwrap().offset_utf16, 6);
+        assert_eq!(buf.line_offset_utf16(2).unwrap().offset_utf16, 8);
+        assert_eq!(buf.line_offset_utf16(2).unwrap().line_count, 3);
+        assert_eq!(
+            buf.line_offset_utf16(3),
+            Err(BufferError::InvalidLine {
+                line: 3,
+                line_count: 3,
+            })
+        );
+    }
+
+    #[test]
+    fn rectangular_selection_offsets_are_bounded_and_scalar_safe() {
+        let buffer = TextBuffer::open("\u{feff}a\n🦊xy\r\nz");
+        let selections = buffer.column_selections_utf16(0, 0, 2, 1, 10).unwrap();
+        assert_eq!(
+            selections,
+            vec![
+                TextColumnSelection {
+                    line: 2,
+                    base_offset_utf16: 9,
+                    extent_offset_utf16: 10,
+                },
+                TextColumnSelection {
+                    line: 0,
+                    base_offset_utf16: 0,
+                    extent_offset_utf16: 1,
+                },
+                TextColumnSelection {
+                    line: 1,
+                    base_offset_utf16: 3,
+                    extent_offset_utf16: 5,
+                },
+            ]
+        );
+
+        let reverse = buffer.column_selections_utf16(1, 2, 0, 0, 10).unwrap();
+        assert_eq!(reverse[0].line, 0);
+        assert!(reverse[1].base_offset_utf16 > reverse[1].extent_offset_utf16);
+        assert_eq!(reverse[1].base_offset_utf16, 5);
+        assert_eq!(reverse[1].extent_offset_utf16, 3);
+    }
+
+    #[test]
+    fn rectangular_selection_rejects_invalid_lines_and_excess_rows() {
+        let buffer = TextBuffer::open("a\nb\nc");
+        assert_eq!(
+            buffer.column_selections_utf16(0, 0, 3, 1, 10),
+            Err(BufferError::InvalidLine {
+                line: 3,
+                line_count: 3,
+            })
+        );
+        assert_eq!(
+            buffer.column_selections_utf16(0, 0, 2, 1, 2),
+            Err(BufferError::ReadLineCountTooLarge {
+                requested: 3,
+                max: 2,
+            })
+        );
+    }
+
+    #[test]
+    fn line_boundaries_are_utf16_absolute_and_exclude_crlf() {
+        let buffer = TextBuffer::open("\t  🦊value \r\n \t\nfinal\n");
+
+        let first = buffer.line_boundary_utf16(5).unwrap();
+        assert_eq!(first.version, 1);
+        assert_eq!(first.line, 0);
+        assert_eq!(first.start_utf16, 0);
+        assert_eq!(first.first_non_whitespace_utf16, 3);
+        assert_eq!(first.end_utf16, 11);
+
+        let blank = buffer.line_boundary_utf16(13).unwrap();
+        assert_eq!(blank.line, 1);
+        assert_eq!(blank.start_utf16, 13);
+        assert_eq!(blank.first_non_whitespace_utf16, 15);
+        assert_eq!(blank.end_utf16, 15);
+
+        let final_empty = buffer.line_boundary_utf16(buffer.len_utf16()).unwrap();
+        assert_eq!(final_empty.line, 3);
+        assert_eq!(final_empty.start_utf16, 22);
+        assert_eq!(final_empty.first_non_whitespace_utf16, 22);
+        assert_eq!(final_empty.end_utf16, 22);
+
+        assert_eq!(
+            buffer.line_boundary_utf16(4),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 4 })
+        );
+    }
+
+    #[test]
+    fn line_delete_ranges_follow_boundary_and_selection_semantics() {
+        let buffer = TextBuffer::open("ab\r\ncd\nxy");
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(4, 4)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 4,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(2, 2)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 2,
+                end_utf16: 4,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(5, 6)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 4,
+                end_utf16: 6,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(5, 6)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 6,
+            }]
+        );
+        assert_eq!(
+            buffer
+                .line_delete_ranges_utf16(&[(4, 4), (5, 5)], LineDeleteDirection::Right,)
+                .unwrap(),
+            vec![
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 6,
+                },
+                TextDeleteRange {
+                    start_utf16: 5,
+                    end_utf16: 6,
+                },
+            ]
+        );
+
+        let unicode = TextBuffer::open("\u{FEFF}a🦊x\r\nb");
+        assert_eq!(
+            unicode
+                .line_delete_ranges_utf16(&[(7, 7)], LineDeleteDirection::Left)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 7,
+            }]
+        );
+        assert_eq!(
+            unicode
+                .line_delete_ranges_utf16(&[(5, 5)], LineDeleteDirection::Right)
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 5,
+                end_utf16: 7,
+            }]
+        );
+    }
+
+    #[test]
+    fn line_delete_ranges_validate_utf16_offsets_ranges_and_count() {
+        let buffer = TextBuffer::open("🦊\r\nx");
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(&[(1, 1)], LineDeleteDirection::Left),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(&[(2, 1)], LineDeleteDirection::Right),
+            Err(BufferError::InvalidDeleteRange {
+                start_utf16: 2,
+                end_utf16: 1,
+            })
+        );
+        assert_eq!(
+            buffer.line_delete_ranges_utf16(
+                &vec![(0, 0); MAX_LINE_DELETE_RANGES + 1],
+                LineDeleteDirection::Left,
+            ),
+            Err(BufferError::LineDeleteCountTooLarge {
+                requested: MAX_LINE_DELETE_RANGES + 1,
+                max: MAX_LINE_DELETE_RANGES,
+            })
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_adds_and_removes_indented_lines() {
+        let buffer = TextBuffer::open("  alpha\n\tbeta\n");
+        let added = buffer.toggle_line_comment_utf16(&[(0, 13)], "//").unwrap();
+        assert_eq!(added.version, buffer.version());
+        assert_eq!(
+            added.edits,
+            vec![
+                TextLineCommentEdit {
+                    start_utf16: 2,
+                    end_utf16: 2,
+                    removed_text: String::new(),
+                    inserted_text: "// ".to_owned(),
+                },
+                TextLineCommentEdit {
+                    start_utf16: 9,
+                    end_utf16: 9,
+                    removed_text: String::new(),
+                    inserted_text: "// ".to_owned(),
+                },
+            ]
+        );
+
+        let commented = TextBuffer::open("  // alpha\n\t// beta\n");
+        let removed = commented
+            .toggle_line_comment_utf16(&[(0, 19)], "//")
+            .unwrap();
+        assert_eq!(
+            removed.edits,
+            vec![
+                TextLineCommentEdit {
+                    start_utf16: 2,
+                    end_utf16: 5,
+                    removed_text: "// ".to_owned(),
+                    inserted_text: String::new(),
+                },
+                TextLineCommentEdit {
+                    start_utf16: 12,
+                    end_utf16: 15,
+                    removed_text: "// ".to_owned(),
+                    inserted_text: String::new(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_ignores_blank_lines_in_mixed_selection() {
+        let buffer = TextBuffer::open("alpha\n  \n beta\n");
+        let plan = buffer
+            .toggle_line_comment_utf16(&[(0, buffer.len_utf16())], "#")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(0, "# "), (10, "# ")]
+        );
+
+        let mixed_comments = TextBuffer::open("// first\nsecond");
+        let plan = mixed_comments
+            .toggle_line_comment_utf16(&[(0, mixed_comments.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(0, "// "), (9, "// ")]
+        );
+
+        let whitespace = TextBuffer::open("  \n\t");
+        let plan = whitespace
+            .toggle_line_comment_utf16(&[(0, whitespace.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.inserted_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(2, "// "), (4, "// ")]
+        );
+        let commented_whitespace = TextBuffer::open("  // \n\t// ");
+        let plan = commented_whitespace
+            .toggle_line_comment_utf16(&[(0, commented_whitespace.len_utf16())], "//")
+            .unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| (edit.start_utf16, edit.removed_text.as_str()))
+                .collect::<Vec<_>>(),
+            vec![(2, "// "), (7, "// ")]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_excludes_selection_end_at_next_line_column_one() {
+        let buffer = TextBuffer::open("one\ntwo\nthree");
+        let plan = buffer.toggle_line_comment_utf16(&[(0, 4)], "//").unwrap();
+        assert_eq!(
+            plan.edits
+                .iter()
+                .map(|edit| edit.start_utf16)
+                .collect::<Vec<_>>(),
+            vec![0]
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_uses_utf16_offsets_with_bom_emoji_and_crlf() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊 x\r\ny");
+        let plan = buffer.toggle_line_comment_utf16(&[(0, 8)], "//").unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].start_utf16, 0);
+        assert_eq!(plan.edits[1].start_utf16, 7);
+    }
+
+    #[test]
+    fn toggle_line_comment_deduplicates_identical_selections_and_rejects_overlap() {
+        let buffer = TextBuffer::open("one\ntwo\nthree");
+        let plan = buffer
+            .toggle_line_comment_utf16(&[(0, 3), (0, 3), (8, 13)], "//")
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(0, 4), (2, 5)], "//"),
+            Err(BufferError::OverlappingLineCommentSelections)
+        );
+    }
+
+    #[test]
+    fn toggle_line_comment_rejects_invalid_offsets_token_and_unbounded_inputs() {
+        let buffer = TextBuffer::open("🦊\nline");
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(1, 1)], "//"),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&[(0, 0)], "// "),
+            Err(BufferError::InvalidLineCommentToken)
+        );
+        assert_eq!(
+            buffer.toggle_line_comment_utf16(&vec![(0, 0); MAX_LINE_COMMENT_SELECTIONS + 1], "//"),
+            Err(BufferError::LineCommentCountTooLarge {
+                requested: MAX_LINE_COMMENT_SELECTIONS + 1,
+                max: MAX_LINE_COMMENT_SELECTIONS,
+            })
+        );
+        let long_indent = TextBuffer::open(&format!(
+            "{}x",
+            " ".repeat(MAX_LINE_COMMENT_INDENT_UTF16 + 1)
+        ));
+        assert!(matches!(
+            long_indent.toggle_line_comment_utf16(&[(0, 0)], "//"),
+            Err(BufferError::LineCommentIndentTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn toggle_block_comment_wraps_selection_and_maps_it_to_inner_text() {
+        let buffer = TextBuffer::open("let value = 42;");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(4, 9)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.version, buffer.version());
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextBlockCommentEdit {
+                    start_utf16: 4,
+                    end_utf16: 4,
+                    removed_text: String::new(),
+                    inserted_text: "/* ".to_owned(),
+                },
+                TextBlockCommentEdit {
+                    start_utf16: 9,
+                    end_utf16: 9,
+                    removed_text: String::new(),
+                    inserted_text: " */".to_owned(),
+                },
+            ]
+        );
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 7,
+                end_utf16: 12,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_inserts_empty_pair_and_maps_caret_inside() {
+        let buffer = TextBuffer::open("alpha");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(2, 2)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(
+            plan.edits,
+            vec![TextBlockCommentEdit {
+                start_utf16: 2,
+                end_utf16: 2,
+                removed_text: String::new(),
+                inserted_text: "/*  */".to_owned(),
+            }]
+        );
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 5,
+                end_utf16: 5,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_removes_tokens_and_selects_inner_text() {
+        let text = "before /* value */ after";
+        let buffer = TextBuffer::open(text);
+        let start = text.find("value").unwrap();
+        let end = start + "value".len();
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(start, end)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].removed_text, "/* ");
+        assert_eq!(plan.edits[1].removed_text, " */");
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: start - 3,
+                end_utf16: end - 3,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_empty_pair_and_nested_end_token_follow_upstream_toggle() {
+        let empty = TextBuffer::open("x /*  */ y");
+        let empty_plan = empty
+            .toggle_block_comment_utf16(&[(5, 5)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(empty_plan.edits.len(), 1);
+        assert_eq!(empty_plan.edits[0].removed_text, "/*  */");
+        assert_eq!(
+            empty_plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 2,
+                end_utf16: 2,
+            }]
+        );
+
+        let nested = TextBuffer::open("/* first */ second */");
+        let plan = nested
+            .toggle_block_comment_utf16(&[(0, nested.len_utf16())], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits.len(), 2);
+        assert_eq!(plan.edits[0].inserted_text, "/* ");
+        assert_eq!(plan.edits[1].inserted_text, " */");
+    }
+
+    #[test]
+    fn toggle_block_comment_uses_utf16_offsets_with_bom_emoji_and_crlf() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊x\r\ny");
+        let plan = buffer
+            .toggle_block_comment_utf16(&[(1, 3)], "/*", "*/", true)
+            .unwrap();
+        assert_eq!(plan.edits[0].start_utf16, 1);
+        assert_eq!(plan.edits[1].start_utf16, 3);
+        assert_eq!(
+            plan.selections,
+            vec![TextBlockCommentSelection {
+                start_utf16: 4,
+                end_utf16: 6,
+            }]
+        );
+    }
+
+    #[test]
+    fn toggle_block_comment_rejects_invalid_tokens_overlaps_and_unbounded_inputs() {
+        let buffer = TextBuffer::open("🦊\nline");
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(1, 1)], "/*", "*/", true),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(0, 0)], "/* ", "*/", true),
+            Err(BufferError::InvalidBlockCommentToken)
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(&[(0, 3), (2, 4)], "/*", "*/", true),
+            Err(BufferError::OverlappingBlockCommentSelections)
+        );
+        assert_eq!(
+            buffer.toggle_block_comment_utf16(
+                &vec![(0, 0); MAX_BLOCK_COMMENT_SELECTIONS + 1],
+                "/*",
+                "*/",
+                true,
+            ),
+            Err(BufferError::BlockCommentCountTooLarge {
+                requested: MAX_BLOCK_COMMENT_SELECTIONS + 1,
+                max: MAX_BLOCK_COMMENT_SELECTIONS,
+            })
+        );
+        let long_line = TextBuffer::open(&format!(
+            "{}x",
+            " ".repeat(MAX_BLOCK_COMMENT_LINE_UTF16 + 1)
+        ));
+        assert!(matches!(
+            long_line.toggle_block_comment_utf16(&[(0, 0)], "/*", "*/", true),
+            Err(BufferError::BlockCommentLineTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_returns_utf16_ranges_and_preserves_line_endings() {
+        let buffer = TextBuffer::open("\u{FEFF}🦊x \t\r\n\t\rz\u{00A0} \t");
+        let plan = buffer.trim_trailing_whitespace_utf16().unwrap();
+        assert_eq!(plan.version, buffer.version());
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 6,
+                },
+                TextDeleteRange {
+                    start_utf16: 8,
+                    end_utf16: 9,
+                },
+                TextDeleteRange {
+                    start_utf16: 12,
+                    end_utf16: 14,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_handles_blank_lines_empty_text_and_noop() {
+        let buffer = TextBuffer::open(" \t\r\nvalue\n\t");
+        assert_eq!(
+            buffer.trim_trailing_whitespace_utf16().unwrap().edits,
+            vec![
+                TextDeleteRange {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                },
+                TextDeleteRange {
+                    start_utf16: 10,
+                    end_utf16: 11,
+                },
+            ]
+        );
+        assert!(TextBuffer::open("")
+            .trim_trailing_whitespace_utf16()
+            .unwrap()
+            .edits
+            .is_empty());
+        assert!(TextBuffer::open("value\n")
+            .trim_trailing_whitespace_utf16()
+            .unwrap()
+            .edits
+            .is_empty());
+    }
+
+    #[test]
+    fn trim_trailing_whitespace_rejects_scan_edit_and_undo_budget_overflow() {
+        let long_document = TextBuffer::open(&"x".repeat(MAX_TRAILING_WHITESPACE_SCAN_UTF16 + 1));
+        assert!(matches!(
+            long_document.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceScanTooLarge { .. })
+        ));
+
+        let too_many_lines = TextBuffer::open(&"x  \n".repeat(MAX_TRAILING_WHITESPACE_EDITS + 1));
+        assert!(matches!(
+            too_many_lines.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceEditCountTooLarge { .. })
+        ));
+
+        let too_much_whitespace =
+            TextBuffer::open(&" ".repeat(MAX_TRAILING_WHITESPACE_DELETE_UTF16 + 1));
+        assert!(matches!(
+            too_much_whitespace.trim_trailing_whitespace_utf16(),
+            Err(BufferError::TrailingWhitespaceDeleteTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn indentation_conversion_changes_only_leading_whitespace_and_keeps_utf16_offsets() {
+        let buffer = TextBuffer::open("\u{feff}     x\r\n😀\n        end");
+        let plan = buffer.convert_indentation_utf16(false, 4).unwrap();
+        assert_eq!(plan.version, 1);
+        assert!(!plan.insert_spaces);
+        assert_eq!(plan.tab_size, 4);
+        assert_eq!(
+            plan.edits,
+            vec![
+                TextIndentationEdit {
+                    start_utf16: 1,
+                    end_utf16: 6,
+                    removed_text: "     ".to_owned(),
+                    inserted_text: "\t ".to_owned(),
+                },
+                TextIndentationEdit {
+                    start_utf16: 12,
+                    end_utf16: 20,
+                    removed_text: "        ".to_owned(),
+                    inserted_text: "\t\t".to_owned(),
+                },
+            ]
+        );
+
+        let tabs = TextBuffer::open("😀\r\n\t\tvalue\n");
+        let plan = tabs.convert_indentation_utf16(true, 2).unwrap();
+        assert_eq!(
+            plan.edits,
+            vec![TextIndentationEdit {
+                start_utf16: 4,
+                end_utf16: 6,
+                removed_text: "\t\t".to_owned(),
+                inserted_text: "    ".to_owned(),
+            }]
+        );
+    }
+
+    #[test]
+    fn indentation_conversion_preserves_remainder_noops_and_validates_bounds() {
+        let buffer = TextBuffer::open("  x\r\n   y\n");
+        assert!(buffer
+            .convert_indentation_utf16(false, 4)
+            .unwrap()
+            .edits
+            .is_empty());
+        let tabs = TextBuffer::open("   x\r\n\t y\n");
+        assert!(tabs
+            .convert_indentation_utf16(false, 4)
+            .unwrap()
+            .edits
+            .is_empty());
+        assert!(matches!(
+            buffer.convert_indentation_utf16(true, 0),
+            Err(BufferError::InvalidIndentationTabSize { .. })
+        ));
+
+        let too_many_lines =
+            TextBuffer::open(&"    x\n".repeat(MAX_INDENTATION_CONVERSION_EDITS + 1));
+        assert!(matches!(
+            too_many_lines.convert_indentation_utf16(false, 4),
+            Err(BufferError::IndentationConversionEditCountTooLarge { .. })
+        ));
+        let too_much_payload =
+            TextBuffer::open(&"\t".repeat(MAX_INDENTATION_CONVERSION_PAYLOAD_UTF16 / 2 + 1));
+        assert!(matches!(
+            too_much_payload.convert_indentation_utf16(true, 2),
+            Err(BufferError::IndentationConversionPayloadTooLarge { .. })
+        ));
+    }
+
+    #[test]
+    fn transpose_ranges_match_code_oss_caret_and_end_of_line_rules() {
+        let buffer = TextBuffer::open("abc\nxy");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[1, 3]).unwrap(),
+            vec![
+                Some(TextTransposePlan {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                    removed_text: "ab".to_owned(),
+                    inserted_text: "ba".to_owned(),
+                }),
+                Some(TextTransposePlan {
+                    start_utf16: 1,
+                    end_utf16: 3,
+                    removed_text: "bc".to_owned(),
+                    inserted_text: "cb".to_owned(),
+                }),
+            ]
+        );
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[3]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 1,
+                end_utf16: 3,
+                removed_text: "bc".to_owned(),
+                inserted_text: "cb".to_owned(),
+            })]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_swap_unicode_scalars_and_crlf_boundary_tokens() {
+        let unicode = TextBuffer::open("🦊a");
+        assert_eq!(
+            unicode.transpose_ranges_utf16(&[2]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 0,
+                end_utf16: 3,
+                removed_text: "🦊a".to_owned(),
+                inserted_text: "a🦊".to_owned(),
+            })]
+        );
+        assert_eq!(
+            unicode.transpose_ranges_utf16(&[1]),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+
+        let crlf = TextBuffer::open("ab\r\ncd");
+        assert_eq!(
+            crlf.transpose_ranges_utf16(&[4]).unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 2,
+                end_utf16: 5,
+                removed_text: "\r\nc".to_owned(),
+                inserted_text: "c\r\n".to_owned(),
+            })]
+        );
+
+        let cr_only = TextBuffer::open("ab\rcd");
+        assert_eq!(cr_only.rope.len_lines(), 2);
+        assert_eq!(
+            cr_only.transpose_ranges_utf16(&[2, 3]).unwrap(),
+            vec![
+                Some(TextTransposePlan {
+                    start_utf16: 0,
+                    end_utf16: 2,
+                    removed_text: "ab".to_owned(),
+                    inserted_text: "ba".to_owned(),
+                }),
+                Some(TextTransposePlan {
+                    start_utf16: 2,
+                    end_utf16: 4,
+                    removed_text: "\rc".to_owned(),
+                    inserted_text: "c\r".to_owned(),
+                }),
+            ]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_keep_file_start_and_single_character_noops() {
+        let buffer = TextBuffer::open("a");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&[0, 1]).unwrap(),
+            vec![None, None]
+        );
+        assert_eq!(
+            TextBuffer::open("a\n")
+                .transpose_ranges_utf16(&[2])
+                .unwrap(),
+            vec![Some(TextTransposePlan {
+                start_utf16: 0,
+                end_utf16: 2,
+                removed_text: "a\n".to_owned(),
+                inserted_text: "\na".to_owned(),
+            })]
+        );
+    }
+
+    #[test]
+    fn transpose_ranges_validate_count_limit() {
+        let buffer = TextBuffer::open("ab");
+        assert_eq!(
+            buffer.transpose_ranges_utf16(&vec![0; MAX_TRANSPOSE_CARETS + 1]),
+            Err(BufferError::TransposeCountTooLarge {
+                requested: MAX_TRANSPOSE_CARETS + 1,
+                max: MAX_TRANSPOSE_CARETS,
+            })
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_use_utf16_and_stop_before_line_terminators() {
+        let buffer = TextBuffer::open("\u{FEFF}a🦊z\r\nnext");
+        assert_eq!(
+            buffer
+                .overtype_paste_ranges_utf16(&[(2, 2, 3), (2, 4, 1), (4, 4, 2), (7, 7, 2)])
+                .unwrap(),
+            vec![
+                TextDeleteRange {
+                    start_utf16: 2,
+                    end_utf16: 5,
+                },
+                TextDeleteRange {
+                    start_utf16: 2,
+                    end_utf16: 4,
+                },
+                TextDeleteRange {
+                    start_utf16: 4,
+                    end_utf16: 5,
+                },
+                TextDeleteRange {
+                    start_utf16: 7,
+                    end_utf16: 9,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_snap_surrogate_and_clamp_multiline_paste_to_active_line() {
+        let emoji = TextBuffer::open("a🦊b");
+        assert_eq!(
+            emoji.overtype_paste_ranges_utf16(&[(1, 1, 1)]).unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 1,
+                end_utf16: 3,
+            }]
+        );
+
+        let multiline = TextBuffer::open("abcdef\nnext");
+        assert_eq!(
+            multiline
+                .overtype_paste_ranges_utf16(&[(1, 1, 32)])
+                .unwrap(),
+            vec![TextDeleteRange {
+                start_utf16: 1,
+                end_utf16: 6,
+            }]
+        );
+    }
+
+    #[test]
+    fn overtype_paste_ranges_validate_offsets_order_and_count() {
+        let buffer = TextBuffer::open("🦊\r\nx");
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&[(1, 1, 1)]),
+            Err(BufferError::InvalidUtf16Offset { offset_utf16: 1 })
+        );
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&[(2, 1, 1)]),
+            Err(BufferError::InvalidOvertypePasteRange {
+                start_utf16: 2,
+                end_utf16: 1,
+            })
+        );
+        assert_eq!(
+            buffer.overtype_paste_ranges_utf16(&vec![(0, 0, 1); MAX_OVERTYPE_PASTE_RANGES + 1]),
+            Err(BufferError::OvertypePasteCountTooLarge {
+                requested: MAX_OVERTYPE_PASTE_RANGES + 1,
+                max: MAX_OVERTYPE_PASTE_RANGES,
+            })
+        );
+    }
+
+    #[test]
+    fn line_boundaries_find_smart_home_on_a_long_rope_line() {
+        let indentation = " ".repeat(100_000);
+        let buffer = TextBuffer::open(&format!("{indentation}🦊tail"));
+        let boundary = buffer.line_boundary_utf16(100_004).unwrap();
+        assert_eq!(boundary.start_utf16, 0);
+        assert_eq!(boundary.first_non_whitespace_utf16, 100_000);
+        assert_eq!(boundary.end_utf16, 100_006);
+    }
+
+    #[test]
+    fn final_empty_line_has_document_end_offset() {
+        let buf = TextBuffer::open("last\n");
+        let last = buf.line_offset_utf16(1).unwrap();
+        assert_eq!(last.offset_utf16, 5);
+        assert_eq!(last.total_utf16_length, 5);
+    }
+
+    #[test]
+    fn bounded_line_windows_trim_bom_crlf_and_keep_utf16_offsets() {
+        let buf = TextBuffer::open("\u{FEFF}a🦊\r\nsecond\n");
+        let page = buf.read_lines_utf16(0, 3, 0, 8, 24).unwrap();
+        assert_eq!(page.version, 1);
+        assert_eq!(page.total_utf16_length, 13);
+        assert_eq!(page.line_count, 3);
+        assert_eq!(page.first_line, 0);
+        assert_eq!(page.lines.len(), 3);
+        assert_eq!(page.lines[0].text, "\u{FEFF}a🦊");
+        assert_eq!((page.lines[0].start_utf16, page.lines[0].end_utf16), (0, 4));
+        assert_eq!(page.lines[1].text, "second");
+        assert_eq!(
+            (page.lines[1].start_utf16, page.lines[1].end_utf16),
+            (6, 12)
+        );
+        assert_eq!(page.lines[2].text, "");
+        assert_eq!(
+            (page.lines[2].start_utf16, page.lines[2].end_utf16),
+            (13, 13)
+        );
+    }
+
+    #[test]
+    fn line_window_horizontal_offset_moves_back_from_surrogate_middle() {
+        let buf = TextBuffer::open("a🦊z\r\nnext");
+        let page = buf.read_lines_utf16(0, 2, 2, 8, 16).unwrap();
+        assert_eq!(page.lines[0].text, "🦊z");
+        assert_eq!((page.lines[0].start_utf16, page.lines[0].end_utf16), (1, 4));
+        assert_eq!(page.lines[1].text, "xt");
+        assert_eq!(
+            (page.lines[1].start_utf16, page.lines[1].end_utf16),
+            (8, 10)
+        );
+    }
+
+    #[test]
+    fn long_line_windows_are_bounded_and_can_jump_horizontally() {
+        let buf = TextBuffer::open(&"x".repeat(100_000));
+        let page = buf.read_lines_utf16(0, 1, 90_000, 2_048, 2_048).unwrap();
+        assert_eq!(page.line_count, 1);
+        assert_eq!(page.lines[0].start_utf16, 90_000);
+        assert_eq!(page.lines[0].end_utf16, 92_048);
+        assert_eq!(page.lines[0].text, "x".repeat(2_048));
+    }
+
+    #[test]
+    fn bounded_line_windows_address_the_end_of_a_10k_line_document() {
+        let text = (0..10_000)
+            .map(|line| format!("line-{line}"))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let buf = TextBuffer::open(&text);
+        let page = buf.read_lines_utf16(9_984, 16, 0, 32, 512).unwrap();
+        assert_eq!(page.line_count, 10_000);
+        assert_eq!(page.first_line, 9_984);
+        assert_eq!(page.lines.len(), 16);
+        assert_eq!(page.lines.last().unwrap().line, 9_999);
+        assert_eq!(page.lines.last().unwrap().text, "line-9999");
+    }
+
+    #[test]
+    fn line_window_rejects_unbounded_or_inconsistent_limits() {
+        let buf = TextBuffer::open("a\nb");
+        assert_eq!(
+            buf.read_lines_utf16(0, 257, 0, 2, 514),
+            Err(BufferError::ReadLineCountTooLarge {
+                requested: 257,
+                max: 256,
+            })
+        );
+        assert_eq!(
+            buf.read_lines_utf16(0, 2, 0, 4, 7),
+            Err(BufferError::InvalidLineWindow {
+                max_lines: 2,
+                max_line_utf16: 4,
+                max_total_utf16: 7,
+            })
+        );
+    }
+
+    #[test]
+    fn minimap_sample_is_evenly_distributed_and_bounded_for_large_documents() {
+        let text = (0..10_000)
+            .map(|line| format!("line-{line}-{}", "x".repeat(100)))
+            .collect::<Vec<_>>()
+            .join("\n");
+        let buffer = TextBuffer::open(&text);
+
+        let sample = buffer.minimap_sample();
+
+        assert_eq!(sample.version, buffer.version());
+        assert_eq!(sample.line_count, 10_000);
+        assert_eq!(sample.lines.len(), MAX_MINIMAP_SAMPLE_LINES);
+        assert_eq!(sample.lines.first().unwrap().line, 0);
+        assert_eq!(sample.lines.last().unwrap().line, 9_999);
+        assert_eq!(sample.lines.first().unwrap().start_utf16, 0);
+        assert!(sample
+            .lines
+            .windows(2)
+            .all(|pair| pair[0].start_utf16 < pair[1].start_utf16));
+        assert!(sample
+            .lines
+            .windows(2)
+            .all(|pair| pair[0].line < pair[1].line));
+        assert!(sample
+            .lines
+            .iter()
+            .all(|line| line.text.encode_utf16().count() <= MAX_MINIMAP_LINE_SAMPLE_UTF16));
+        assert_eq!(
+            sample.lines.last().unwrap().utf16_length,
+            "line-9999-".len() + 100
+        );
+    }
+
+    #[test]
+    fn minimap_sample_trims_crlf_and_keeps_utf16_lengths_and_scalar_boundaries() {
+        let buffer = TextBuffer::open(&format!("a\r\n{}\n", "🦊".repeat(80)));
+
+        let sample = buffer.minimap_sample();
+
+        assert_eq!(sample.line_count, 3);
+        assert_eq!(sample.lines[0].text, "a");
+        assert_eq!(sample.lines[0].start_utf16, 0);
+        assert_eq!(sample.lines[0].utf16_length, 1);
+        assert_eq!(sample.lines[1].utf16_length, 160);
+        assert_eq!(sample.lines[1].start_utf16, 3);
+        assert_eq!(sample.lines[1].text, "🦊".repeat(24));
+        assert_eq!(sample.lines[1].text.encode_utf16().count(), 48);
+        assert_eq!(sample.lines[2].text, "");
+        assert_eq!(sample.lines[2].start_utf16, 164);
+        assert_eq!(sample.lines[2].utf16_length, 0);
+    }
+
+    #[test]
     fn apply_ops_is_sequential() {
         let mut buf = TextBuffer::open("{}");
         buf.apply_ops(&[
@@ -285,6 +4522,39 @@ mod tests {
         .unwrap();
         assert_eq!(buf.text(), "{ab}");
         assert_eq!(buf.version(), 3);
+    }
+
+    #[test]
+    fn savepoint_tracks_exact_utf8_text_and_revert_without_bumping_version() {
+        let mut buf = TextBuffer::open("\u{FEFF}甲🦊\r\n");
+        assert!(!buf.is_dirty());
+        assert!(buf.savepoint_matches_text("\u{FEFF}甲🦊\r\n"));
+
+        buf.apply(&TextOp::Insert {
+            offset_utf16: buf.len_utf16(),
+            text: "x".into(),
+        })
+        .unwrap();
+        assert!(buf.is_dirty());
+        assert!(buf.savepoint_matches_text("\u{FEFF}甲🦊\r\n"));
+
+        buf.apply(&TextOp::Delete {
+            offset_utf16: buf.len_utf16() - 1,
+            len_utf16: 1,
+        })
+        .unwrap();
+        assert!(!buf.is_dirty());
+
+        let version_before_mark = buf.version();
+        buf.mark_saved();
+        assert_eq!(buf.version(), version_before_mark);
+        assert!(!buf.is_dirty());
+
+        buf.set_savepoint_text("disk 🦊\r\n");
+        assert_eq!(buf.version(), version_before_mark);
+        assert!(buf.is_dirty());
+        assert!(buf.savepoint_matches_text("disk 🦊\r\n"));
+        assert!(!buf.savepoint_matches_text("disk 🦊\n"));
     }
 
     #[test]

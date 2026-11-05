@@ -1,0 +1,38 @@
+{
+  "host": {
+    "os": "Microsoft Windows 11 专业工作站版",
+    "version": "10.0.26200",
+    "build": "26200",
+    "architecture": "AMD64",
+    "screen": "2048x1152",
+    "testedClientArea": "1267x712",
+    "dpi": 120,
+    "systemUsesLightTheme": false,
+    "appsUseLightTheme": false,
+    "processorArchitecture": "x64 (WMI Win32_Processor.Architecture=9; PROCESSOR_ARCHITECTURE=AMD64)",
+    "processorName": "AMD Ryzen 7 9700X 8-Core Processor"
+  },
+  "artifacts": [
+    {
+      "role": "historical artifact requested for exact verification",
+      "runId": 41109679662,
+      "headSha": "d5319369c5b5d569954e0d816daf325f3bc12a51",
+      "artifactId": 13003880930,
+      "artifactName": "alula-windows-x64-d5319369c5b5d569954e0d816daf325f3bc12a51",
+      "zipSha256": "e4ff1055b4761306596c013966081c909c09b3d646de5bb23ac9486aa288e1ea",
+      "exeSha256": "caeff20300b7096bdd118bcf47a38f53cf1198fe4b97a9318f956189dcbd2e97",
+      "coreDllSha256": "95ef39f3244edfb5db018092e35d2bc20e2dd19ce3a87a0ec46c235dea30e9f2"
+    },
+    {
+      "role": "current branch artifact tested on the same Windows 11 host",
+      "runId": 41177214462,
+      "headSha": "d3a7a56e8ebe48ae47c384618f3955b0516e3f57",
+      "artifactId": 13033039392,
+      "artifactName": "alula-windows-x64-d3a7a56e8ebe48ae47c384618f3955b0516e3f57",
+      "zipSha256": "a41f0bd3bbb00f0b8f9bc0970f8f18494825b8d1257b5b771a5c1adf1620dde0",
+      "exeSha256": "df5ae84fab957cb9225c300912178d36d4b8e9ad89d897c2237b60407af5dc88",
+      "coreDllSha256": "6ca4c0f23a226d92d8f0f7eb3f1dc51a2cfce0bba02de91f23f143d0b8f2539d"
+    }
+  ],
+  "validatorMetadataNote": "The reused validation script hardcodes artifactSourceCommit=d5319369c5b5d569954e0d816daf325f3bc12a51 for both runs and artifactArchitecture=\"x64 on Windows x64 emulation under Windows 11 ARM\" when interaction mode is enabled. The latter is stale: Windows WMI reports processor architecture 9 (x64), CPU AMD Ryzen 7 9700X, and PROCESSOR_ARCHITECTURE=AMD64. Run IDs, artifact IDs/names, GitHub head SHAs, ZIP digests, and tested executable hashes above identify the respective packages."
+}

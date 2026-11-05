@@ -1,0 +1,11 @@
+{
+  "platform": "Windows 11",
+  "product": "Alula Code Release",
+  "rustAbi": 15,
+  "coreHashMatchesBundle": true,
+  "appPid": 34440,
+  "windowHandle": 2165138,
+  "preflightOnly": true,
+  "keyboardEventsSent": false,
+  "profileRoot": "C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\alula-p03-4-2c-34232"
+}

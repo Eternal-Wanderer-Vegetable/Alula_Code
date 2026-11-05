@@ -1,0 +1,3 @@
+command: /home/vegetable/develop/flutter/bin/flutter build linux --release --no-pub
+exit: 0
+result: Built build/linux/x64/release/bundle/alula_app

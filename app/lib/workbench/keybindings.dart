@@ -7,6 +7,7 @@
 ///   {"key": "ctrl+p", "command": "-view.quickOpen"}
 /// ]
 /// ```
+/// Entries may also provide `args` and a context-expression `when` condition.
 /// - `command` 以 `-` 开头表示移除该命令的这条默认键位；
 /// - 其余为追加；同一键位串后写者胜。
 ///
@@ -16,6 +17,8 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, listEquals;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show SingleActivator;
 
@@ -26,15 +29,17 @@ class KeyChord {
     this.control = false,
     this.shift = false,
     this.alt = false,
+    this.meta = false,
   });
 
   final LogicalKeyboardKey key;
   final bool control;
   final bool shift;
   final bool alt;
+  final bool meta;
 
-  SingleActivator toActivator() =>
-      SingleActivator(key, control: control, shift: shift, alt: alt);
+  SingleActivator toActivator() => SingleActivator(key,
+      control: control, shift: shift, alt: alt, meta: meta);
 
   /// 展示串（'Ctrl+Shift+P' 风格）。
   String get display {
@@ -42,6 +47,7 @@ class KeyChord {
       if (control) 'Ctrl',
       if (shift) 'Shift',
       if (alt) 'Alt',
+      if (meta) 'Meta',
       _displayKey(key),
     ];
     return parts.join('+');
@@ -53,10 +59,45 @@ class KeyChord {
       other.key == key &&
       other.control == control &&
       other.shift == shift &&
-      other.alt == alt;
+      other.alt == alt &&
+      other.meta == meta;
 
   @override
-  int get hashCode => Object.hash(key, control, shift, alt);
+  int get hashCode => Object.hash(key, control, shift, alt, meta);
+}
+
+/// A multi-stroke binding such as `Ctrl+K Ctrl+X`.
+class KeyChordSequence {
+  KeyChordSequence(Iterable<KeyChord> chords)
+      : chords = List<KeyChord>.unmodifiable(chords) {
+    if (this.chords.length < 2) {
+      throw ArgumentError.value(chords, 'chords', 'must contain 2+ strokes');
+    }
+  }
+
+  final List<KeyChord> chords;
+
+  String get display => chords.map((chord) => chord.display).join(' ');
+
+  @override
+  bool operator ==(Object other) =>
+      other is KeyChordSequence && listEquals(other.chords, chords);
+
+  @override
+  int get hashCode => Object.hashAll(chords);
+}
+
+/// A keybinding target with optional command arguments and a context condition.
+class KeybindingBinding {
+  const KeybindingBinding({
+    required this.commandId,
+    this.arguments,
+    this.when,
+  });
+
+  final String commandId;
+  final Object? arguments;
+  final String? when;
 }
 
 String _displayKey(LogicalKeyboardKey key) {
@@ -69,34 +110,64 @@ String _displayKey(LogicalKeyboardKey key) {
 final Map<String, LogicalKeyboardKey> _keyNames = () {
   final m = <String, LogicalKeyboardKey>{};
   const letters = [
-    LogicalKeyboardKey.keyA, LogicalKeyboardKey.keyB, LogicalKeyboardKey.keyC,
-    LogicalKeyboardKey.keyD, LogicalKeyboardKey.keyE, LogicalKeyboardKey.keyF,
-    LogicalKeyboardKey.keyG, LogicalKeyboardKey.keyH, LogicalKeyboardKey.keyI,
-    LogicalKeyboardKey.keyJ, LogicalKeyboardKey.keyK, LogicalKeyboardKey.keyL,
-    LogicalKeyboardKey.keyM, LogicalKeyboardKey.keyN, LogicalKeyboardKey.keyO,
-    LogicalKeyboardKey.keyP, LogicalKeyboardKey.keyQ, LogicalKeyboardKey.keyR,
-    LogicalKeyboardKey.keyS, LogicalKeyboardKey.keyT, LogicalKeyboardKey.keyU,
-    LogicalKeyboardKey.keyV, LogicalKeyboardKey.keyW, LogicalKeyboardKey.keyX,
-    LogicalKeyboardKey.keyY, LogicalKeyboardKey.keyZ,
+    LogicalKeyboardKey.keyA,
+    LogicalKeyboardKey.keyB,
+    LogicalKeyboardKey.keyC,
+    LogicalKeyboardKey.keyD,
+    LogicalKeyboardKey.keyE,
+    LogicalKeyboardKey.keyF,
+    LogicalKeyboardKey.keyG,
+    LogicalKeyboardKey.keyH,
+    LogicalKeyboardKey.keyI,
+    LogicalKeyboardKey.keyJ,
+    LogicalKeyboardKey.keyK,
+    LogicalKeyboardKey.keyL,
+    LogicalKeyboardKey.keyM,
+    LogicalKeyboardKey.keyN,
+    LogicalKeyboardKey.keyO,
+    LogicalKeyboardKey.keyP,
+    LogicalKeyboardKey.keyQ,
+    LogicalKeyboardKey.keyR,
+    LogicalKeyboardKey.keyS,
+    LogicalKeyboardKey.keyT,
+    LogicalKeyboardKey.keyU,
+    LogicalKeyboardKey.keyV,
+    LogicalKeyboardKey.keyW,
+    LogicalKeyboardKey.keyX,
+    LogicalKeyboardKey.keyY,
+    LogicalKeyboardKey.keyZ,
   ];
   for (var i = 0; i < letters.length; i++) {
     m[String.fromCharCode(97 + i)] = letters[i]; // 'a'..'z'
   }
   const digits = [
-    LogicalKeyboardKey.digit0, LogicalKeyboardKey.digit1,
-    LogicalKeyboardKey.digit2, LogicalKeyboardKey.digit3,
-    LogicalKeyboardKey.digit4, LogicalKeyboardKey.digit5,
-    LogicalKeyboardKey.digit6, LogicalKeyboardKey.digit7,
-    LogicalKeyboardKey.digit8, LogicalKeyboardKey.digit9,
+    LogicalKeyboardKey.digit0,
+    LogicalKeyboardKey.digit1,
+    LogicalKeyboardKey.digit2,
+    LogicalKeyboardKey.digit3,
+    LogicalKeyboardKey.digit4,
+    LogicalKeyboardKey.digit5,
+    LogicalKeyboardKey.digit6,
+    LogicalKeyboardKey.digit7,
+    LogicalKeyboardKey.digit8,
+    LogicalKeyboardKey.digit9,
   ];
   for (var i = 0; i < digits.length; i++) {
     m['$i'] = digits[i];
   }
   const fn = [
-    LogicalKeyboardKey.f1, LogicalKeyboardKey.f2, LogicalKeyboardKey.f3,
-    LogicalKeyboardKey.f4, LogicalKeyboardKey.f5, LogicalKeyboardKey.f6,
-    LogicalKeyboardKey.f7, LogicalKeyboardKey.f8, LogicalKeyboardKey.f9,
-    LogicalKeyboardKey.f10, LogicalKeyboardKey.f11, LogicalKeyboardKey.f12,
+    LogicalKeyboardKey.f1,
+    LogicalKeyboardKey.f2,
+    LogicalKeyboardKey.f3,
+    LogicalKeyboardKey.f4,
+    LogicalKeyboardKey.f5,
+    LogicalKeyboardKey.f6,
+    LogicalKeyboardKey.f7,
+    LogicalKeyboardKey.f8,
+    LogicalKeyboardKey.f9,
+    LogicalKeyboardKey.f10,
+    LogicalKeyboardKey.f11,
+    LogicalKeyboardKey.f12,
   ];
   for (var i = 0; i < fn.length; i++) {
     m['f${i + 1}'] = fn[i];
@@ -104,10 +175,20 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['space'] = LogicalKeyboardKey.space;
   m['enter'] = LogicalKeyboardKey.enter;
   m['tab'] = LogicalKeyboardKey.tab;
+  m['home'] = LogicalKeyboardKey.home;
+  m['end'] = LogicalKeyboardKey.end;
+  m['insert'] = LogicalKeyboardKey.insert;
+  m['backspace'] = LogicalKeyboardKey.backspace;
+  m['delete'] = LogicalKeyboardKey.delete;
   m['arrowup'] = LogicalKeyboardKey.arrowUp;
   m['arrowdown'] = LogicalKeyboardKey.arrowDown;
   m['arrowleft'] = LogicalKeyboardKey.arrowLeft;
   m['arrowright'] = LogicalKeyboardKey.arrowRight;
+  m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
+  m['bracketright'] = LogicalKeyboardKey.bracketRight;
+  m['/'] = LogicalKeyboardKey.slash;
+  m['-'] = LogicalKeyboardKey.minus;
+  m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
   return m;
 }();
@@ -122,6 +203,7 @@ KeyChord? parseChord(String spec) {
   var control = false;
   var shift = false;
   var alt = false;
+  var meta = false;
   for (final p in parts) {
     switch (p) {
       case 'ctrl':
@@ -131,16 +213,30 @@ KeyChord? parseChord(String spec) {
         shift = true;
       case 'alt':
         alt = true;
+      case 'cmd':
+        meta = true;
       default:
         return null; // 未知修饰键：整条作废（宁可不下发也不误触发）
     }
   }
-  return KeyChord(key: key, control: control, shift: shift, alt: alt);
+  return KeyChord(
+      key: key, control: control, shift: shift, alt: alt, meta: meta);
+}
+
+/// Parses a whitespace-separated multi-stroke keybinding.
+KeyChordSequence? parseChordSequence(String spec) {
+  final parts = spec.trim().split(RegExp(r'\s+'));
+  if (parts.length != 2) return null;
+  final chords = parts.map(parseChord).toList(growable: false);
+  if (chords.any((chord) => chord == null)) return null;
+  return KeyChordSequence(chords.cast<KeyChord>());
 }
 
 /// 键位集合：默认表 + 用户覆盖 → 可直接喂给 CallbackShortcuts 的映射。
 class KeybindingSet {
-  KeybindingSet._(this._chordToCommand);
+  KeybindingSet._(this._chordToCommands, this._sequenceToCommand);
+
+  static const int _maxChordBindings = 64;
 
   /// 默认键位表（命令 id → 键位串，逗号分隔可给一条命令多个键位）。
   static const Map<String, String> defaults = {
@@ -150,33 +246,227 @@ class KeybindingSet {
     'view.toggleSidebar': 'ctrl+b',
     'view.togglePanel': 'ctrl+j',
     'file.save': 'ctrl+s',
+    'file.saveAs': 'ctrl+shift+s',
+    'workbench.files.action.compareWithClipboard': 'ctrl+k c',
+    'workbench.files.action.compareWithSaved': 'ctrl+k d',
     'editor.completion': 'ctrl+space,f8',
+    'editor.action.pasteAs': 'ctrl+shift+v',
     // 撤销/重做/查找的键位同时硬编码在编辑器 FocusNode 拦截器里
     // （要在焦点链第一站抢占原生 UndoHistory），此处供菜单/面板展示。
     'editor.undo': 'ctrl+z',
     'editor.redo': 'ctrl+shift+z,ctrl+y',
     'editor.find': 'ctrl+f',
+    'editor.action.commentLine': 'ctrl+/',
+    'editor.action.blockComment': 'alt+shift+a',
+    'editor.action.trimTrailingWhitespace': 'ctrl+k ctrl+x',
+    'editor.gotoDef': 'f12',
+    'workbench.action.navigateBack': 'alt+arrowleft',
+    'workbench.action.navigateForward': 'alt+arrowright',
     'editor.replace': 'ctrl+h',
+    'editor.addCursorAbove': 'ctrl+alt+arrowup',
+    'editor.addCursorBelow': 'ctrl+alt+arrowdown',
+    'editor.selectNextOccurrence': 'ctrl+d',
+    'editor.action.moveSelectionToNextFindMatch': 'ctrl+k ctrl+d',
+    'editor.selectAllOccurrences': 'ctrl+shift+l',
+    'editor.columnSelectUp': 'ctrl+alt+shift+arrowup',
+    'editor.columnSelectDown': 'ctrl+alt+shift+arrowdown',
+    'editor.columnSelectLeft': 'ctrl+alt+shift+arrowleft',
+    'editor.columnSelectRight': 'ctrl+alt+shift+arrowright',
+    'editor.cursorUndo': 'ctrl+u',
+    'editor.cursorRedo': 'ctrl+shift+u',
+    'editor.cursorHome': 'home',
+    'editor.cursorHomeSelect': 'shift+home',
+    'editor.cursorEnd': 'end',
+    'editor.cursorEndSelect': 'shift+end',
+    'editor.cursorTop': 'ctrl+home',
+    'editor.cursorTopSelect': 'ctrl+shift+home',
+    'editor.cursorBottom': 'ctrl+end',
+    'editor.cursorBottomSelect': 'ctrl+shift+end',
+    'editor.action.toggleOvertypeInsertMode': 'insert',
+    'editor.action.indentLines': 'ctrl+bracketright',
+    'editor.action.outdentLines': 'ctrl+bracketleft',
+    'editor.action.insertLineBefore': 'ctrl+shift+enter',
+    'editor.action.insertLineAfter': 'ctrl+enter',
+    'editor.action.deleteLines': 'ctrl+shift+k',
+    'editor.action.copyLinesUpAction': 'alt+shift+arrowup',
+    'editor.action.copyLinesDownAction': 'alt+shift+arrowdown',
+    'editor.action.moveLinesUpAction': 'alt+arrowup',
+    'editor.action.moveLinesDownAction': 'alt+arrowdown',
+    'deleteWordLeft': 'ctrl+backspace',
+    'deleteWordRight': 'ctrl+delete',
     'view.panelDiagnostics': 'f1',
     'view.panelCompletions': 'f2',
     'view.panelSyntax': 'f3',
   };
 
-  /// 从默认表出发应用用户覆盖（`-command` 移除；同键位串后写者胜）。
-  /// [userJson] 为 keybindings.json 的原始文本；损坏或非法条目逐条忽略。
-  factory KeybindingSet.load({String? userJson}) {
-    final map = <KeyChord, String>{};
-    for (final e in defaults.entries) {
-      for (final spec in e.value.split(',')) {
-        final chord = parseChord(spec.trim());
-        if (chord != null) map[chord] = e.key;
-      }
+  /// Default context for commands whose chord is shared with a general action.
+  static const Map<String, String> defaultWhen = {
+    'mergeEditor.acceptMerge': 'mergeEditorActive',
+  };
+
+  /// Platform-specific defaults with an explicit Merge Editor context.
+  static Map<String, String> contextualDefaultsFor(TargetPlatform platform) => {
+        'mergeEditor.acceptMerge':
+            platform == TargetPlatform.macOS ? 'cmd+enter' : 'ctrl+enter',
+      };
+
+  /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.
+  /// The word-left/right bindings use Alt on macOS, so history navigation must
+  /// move to the platform-specific minus chords there.
+  static Map<String, String> defaultsFor(TargetPlatform platform) {
+    final result = Map<String, String>.of(defaults);
+    switch (platform) {
+      case TargetPlatform.macOS:
+        result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
+        result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
+        result['editor.action.pasteAs'] = 'cmd+shift+v';
+        result['editor.action.commentLine'] = 'cmd+/';
+        result['view.togglePanel'] = 'cmd+j';
+        result['editor.action.joinLines'] = 'ctrl+j';
+        result['workbench.action.navigateBack'] = 'ctrl+-';
+        result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result['editor.selectNextOccurrence'] = 'cmd+d';
+        result['editor.action.moveSelectionToNextFindMatch'] = 'cmd+k cmd+d';
+        result['editor.selectAllOccurrences'] = 'cmd+shift+l';
+        result['editor.wordPartLeft'] = 'ctrl+alt+arrowleft';
+        result['editor.wordPartLeftSelect'] = 'ctrl+alt+shift+arrowleft';
+        result['editor.wordPartRight'] = 'ctrl+alt+arrowright';
+        result['editor.wordPartRightSelect'] = 'ctrl+alt+shift+arrowright';
+        result['editor.cursorHome'] = 'home,cmd+arrowleft,ctrl+a';
+        result['editor.cursorHomeSelect'] =
+            'shift+home,shift+cmd+arrowleft,ctrl+shift+a';
+        result['editor.cursorEnd'] = 'end,cmd+arrowright,ctrl+e';
+        result['editor.cursorEndSelect'] =
+            'shift+end,shift+cmd+arrowright,ctrl+shift+e';
+        result['editor.cursorTop'] = 'cmd+arrowup';
+        result['editor.cursorTopSelect'] = 'shift+cmd+arrowup';
+        result['editor.cursorBottom'] = 'cmd+arrowdown';
+        result['editor.cursorBottomSelect'] = 'shift+cmd+arrowdown';
+        result['editor.action.toggleOvertypeInsertMode'] = 'cmd+alt+o';
+        result['editor.action.indentLines'] = 'cmd+bracketright';
+        result['editor.action.outdentLines'] = 'cmd+bracketleft';
+        result['editor.action.insertLineBefore'] = 'cmd+shift+enter';
+        result['editor.action.insertLineAfter'] = 'cmd+enter';
+        result['editor.action.deleteLines'] = 'cmd+shift+k';
+        result['deleteWordLeft'] = 'alt+backspace';
+        result['deleteWordRight'] = 'alt+delete';
+        result['deleteAllLeft'] = 'cmd+backspace';
+        result['deleteAllRight'] = 'ctrl+k cmd+delete';
+        result['editor.action.trimTrailingWhitespace'] = 'cmd+k cmd+x';
+        result.remove('editor.columnSelectUp');
+        result.remove('editor.columnSelectDown');
+        result.remove('editor.columnSelectLeft');
+        result.remove('editor.columnSelectRight');
+        break;
+      case TargetPlatform.linux:
+        result['editor.action.blockComment'] = 'ctrl+shift+a';
+        result['workbench.action.navigateBack'] = 'ctrl+alt+-';
+        result['workbench.action.navigateForward'] = 'ctrl+shift+-';
+        result['editor.columnSelectUp'] = 'alt+shift+arrowup';
+        result['editor.columnSelectDown'] = 'alt+shift+arrowdown';
+        result['editor.columnSelectLeft'] = 'alt+shift+arrowleft';
+        result['editor.columnSelectRight'] = 'alt+shift+arrowright';
+        result['editor.action.copyLinesUpAction'] = 'ctrl+alt+shift+arrowup';
+        result['editor.action.copyLinesDownAction'] =
+            'ctrl+alt+shift+arrowdown';
+        break;
+      default:
+        break;
     }
-    _applyUserJson(map, userJson);
-    return KeybindingSet._(map);
+    return result;
   }
 
-  static void _applyUserJson(Map<KeyChord, String> map, String? userJson) {
+  /// 从默认表出发应用用户覆盖（`-command` 移除；同键位串后写者胜）。
+  /// [userJson] 为 keybindings.json 的原始文本；损坏或非法条目逐条忽略。
+  factory KeybindingSet.load({
+    String? userJson,
+    TargetPlatform? platform,
+  }) {
+    final map = <KeyChord, List<KeybindingBinding>>{};
+    final sequences = <KeyChordSequence, KeybindingBinding>{};
+    final targetPlatform = platform ?? defaultTargetPlatform;
+    for (final e in defaultsFor(targetPlatform).entries) {
+      final binding = KeybindingBinding(
+        commandId: e.key,
+        when: defaultWhen[e.key],
+      );
+      for (final spec in e.value.split(',')) {
+        final trimmed = spec.trim();
+        final sequence = parseChordSequence(trimmed);
+        if (sequence != null) {
+          sequences[sequence] = binding;
+          continue;
+        }
+        final chord = parseChord(trimmed);
+        if (chord != null) _appendChordBinding(map, chord, binding);
+      }
+    }
+    for (final e in contextualDefaultsFor(targetPlatform).entries) {
+      final binding = KeybindingBinding(
+        commandId: e.key,
+        when: defaultWhen[e.key],
+      );
+      for (final spec in e.value.split(',')) {
+        final chord = parseChord(spec.trim());
+        if (chord != null) _appendChordBinding(map, chord, binding);
+      }
+    }
+    _applyUserJson(map, sequences, userJson);
+    return KeybindingSet._(map, sequences);
+  }
+
+  static void _appendChordBinding(
+    Map<KeyChord, List<KeybindingBinding>> bindings,
+    KeyChord chord,
+    KeybindingBinding binding,
+  ) {
+    final entries = bindings.putIfAbsent(chord, () => <KeybindingBinding>[]);
+    if (binding.when == null) {
+      entries.clear();
+    } else {
+      entries.removeWhere((existing) => existing.when == binding.when);
+    }
+    entries.add(binding);
+    while (entries.length > _maxChordBindings) {
+      var index = entries.indexWhere((candidate) =>
+          candidate.when != null &&
+          candidate.commandId != 'mergeEditor.acceptMerge');
+      if (index < 0) {
+        index = entries.indexWhere((candidate) => candidate.when != null);
+      }
+      if (index < 0) {
+        entries.removeAt(0);
+      } else {
+        entries.removeAt(index);
+      }
+    }
+  }
+
+  static void _removeCommandFromBinding<K>(
+    Map<K, List<KeybindingBinding>> bindings,
+    K key,
+    String commandId,
+  ) {
+    final entries = bindings[key];
+    if (entries == null) return;
+    entries.removeWhere((binding) => binding.commandId == commandId);
+    if (entries.isEmpty) bindings.remove(key);
+  }
+
+  static void _removeCommandFromAll<K>(
+    Map<K, List<KeybindingBinding>> bindings,
+    String commandId,
+  ) {
+    for (final key in bindings.keys.toList(growable: false)) {
+      _removeCommandFromBinding(bindings, key, commandId);
+    }
+  }
+
+  static void _applyUserJson(
+    Map<KeyChord, List<KeybindingBinding>> map,
+    Map<KeyChordSequence, KeybindingBinding> sequences,
+    String? userJson,
+  ) {
     if (userJson == null) return;
     Object? decoded;
     try {
@@ -190,42 +480,114 @@ class KeybindingSet {
       final keySpec = entry['key'];
       final command = entry['command'];
       if (keySpec is! String || command is! String) continue;
-      final chord = parseChord(keySpec);
-      if (chord == null) continue;
+      final sequence = parseChordSequence(keySpec);
+      final chord = sequence == null ? parseChord(keySpec) : null;
+      if (chord == null && sequence == null) continue;
       if (command.startsWith('-')) {
-        // 移除：键位与命令都匹配才算
-        if (map[chord] == command.substring(1)) {
-          map.remove(chord);
+        // Remove only this command's binding; another context may own the chord.
+        final commandId = command.substring(1);
+        if (chord != null) {
+          _removeCommandFromBinding(map, chord, commandId);
+        } else if (sequences[sequence]?.commandId == commandId) {
+          sequences.remove(sequence);
         }
       } else {
-        // 重绑定语义：同命令旧键位全部让位（含默认），用户键位成为唯一展示
-        map.removeWhere((_, v) => v == command);
-        map[chord] = command;
+        // Rebinding removes the command's defaults and earlier user bindings.
+        _removeCommandFromAll(map, command);
+        sequences.removeWhere((_, binding) => binding.commandId == command);
+        final condition = entry['when'];
+        final binding = KeybindingBinding(
+          commandId: command,
+          arguments: entry['args'],
+          when: condition is String ? condition : null,
+        );
+        if (chord != null) {
+          _appendChordBinding(map, chord, binding);
+        } else {
+          sequences[sequence!] = binding;
+        }
       }
     }
   }
 
-  final Map<KeyChord, String> _chordToCommand;
+  final Map<KeyChord, List<KeybindingBinding>> _chordToCommands;
+  final Map<KeyChordSequence, KeybindingBinding> _sequenceToCommand;
 
-  /// 键位 → 命令 id（供 CallbackShortcuts 合成）。
+  static KeybindingBinding? _bindingFor(
+    Iterable<KeybindingBinding> bindings, {
+    bool Function(String? condition)? matchesWhen,
+  }) {
+    KeybindingBinding? selected;
+    for (final binding in bindings) {
+      if (matchesWhen == null || matchesWhen(binding.when)) {
+        selected = binding;
+      }
+    }
+    return selected;
+  }
+
+  /// 键位 → 命令 id（供无上下文的 CallbackShortcuts 合成）。
+  /// Context-bound collisions keep the unconditional binding as fallback.
   Map<SingleActivator, String> resolve() => {
-        for (final e in _chordToCommand.entries) e.key.toActivator(): e.value,
+        for (final e in _chordToCommands.entries)
+          e.key.toActivator(): (_bindingFor(e.value,
+                      matchesWhen: (condition) => condition == null) ??
+                  e.value.last)
+              .commandId,
       };
 
-  /// 键位 → 命令 id（值查询用 KeyChord：它有正确的相等性；
-  /// SingleActivator 没有重写 ==，不能当查询键用）。
-  String? commandForChord(KeyChord chord) => _chordToCommand[chord];
+  /// Resolve each chord to its last binding matching the active context.
+  Map<SingleActivator, KeybindingBinding> resolveBindings({
+    bool Function(String? condition)? matchesWhen,
+  }) {
+    final result = <SingleActivator, KeybindingBinding>{};
+    for (final e in _chordToCommands.entries) {
+      final binding = _bindingFor(e.value, matchesWhen: matchesWhen);
+      if (binding != null) result[e.key.toActivator()] = binding;
+    }
+    return result;
+  }
+
+  /// 键位 → 命令 id（无上下文时优先保留通用默认键位）。
+  String? commandForChord(KeyChord chord) => bindingForChord(chord)?.commandId;
+
+  KeybindingBinding? bindingForChord(KeyChord chord) {
+    final bindings = _chordToCommands[chord];
+    if (bindings == null || bindings.isEmpty) return null;
+    return _bindingFor(bindings,
+            matchesWhen: (condition) => condition == null) ??
+        bindings.last;
+  }
+
+  KeybindingBinding? bindingForSequence(Iterable<KeyChord> chords) =>
+      _sequenceToCommand[KeyChordSequence(chords)];
+
+  bool hasSequencePrefix(
+    KeyChord chord, {
+    bool Function(String? condition)? matchesWhen,
+    bool Function(String commandId)? isCommandEnabled,
+  }) =>
+      _sequenceToCommand.entries.any((entry) =>
+          entry.key.chords.first == chord &&
+          (matchesWhen == null || matchesWhen(entry.value.when)) &&
+          (isCommandEnabled == null ||
+              isCommandEnabled(entry.value.commandId)));
 
   /// 命令 id → 展示键位串（菜单提示用，如 'Ctrl+Shift+P'）。
-  /// 重绑定语义下同命令只剩用户键位，首匹配即正确展示。
+  /// Rebinding removes the older entry, so the first remaining binding is the
+  /// command's active display chord.
   String? shortcutFor(String commandId) {
-    for (final e in _chordToCommand.entries) {
-      if (e.value == commandId) return e.key.display;
+    for (final e in _chordToCommands.entries) {
+      if (e.value.any((binding) => binding.commandId == commandId)) {
+        return e.key.display;
+      }
+    }
+    for (final e in _sequenceToCommand.entries) {
+      if (e.value.commandId == commandId) return e.key.display;
     }
     return null;
   }
 }
-
 
 /// keybindings.json 存取（原始文本；注入路径供测试隔离）。
 /// V1 只读：键位编辑直接改文件，UI 不提供编辑器。

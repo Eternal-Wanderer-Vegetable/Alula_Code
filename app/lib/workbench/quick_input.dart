@@ -10,11 +10,19 @@ import 'commands.dart';
 
 /// 面板里的一个候选项。
 class QuickItem {
-  const QuickItem({required this.label, this.detail, required this.onRun});
+  const QuickItem({
+    required this.label,
+    this.detail,
+    this.commandId,
+    this.arguments,
+    this.onRun,
+  }) : assert(commandId != null || onRun != null);
 
   final String label;
   final String? detail;
-  final Future<void> Function() onRun;
+  final String? commandId;
+  final Object? arguments;
+  final Future<void> Function()? onRun;
 }
 
 class QuickInput {
@@ -24,6 +32,7 @@ class QuickInput {
     BuildContext context, {
     required String hint,
     required List<QuickItem> items,
+    CommandService? commands,
   }) {
     return showGeneralDialog(
       context: context,
@@ -36,7 +45,8 @@ class QuickInput {
           alignment: Alignment.topCenter,
           child: Material(
             type: MaterialType.transparency,
-            child: _QuickInputPanel(hint: hint, items: items),
+            child:
+                _QuickInputPanel(hint: hint, items: items, commands: commands),
           ),
         );
       },
@@ -45,10 +55,12 @@ class QuickInput {
 }
 
 class _QuickInputPanel extends StatefulWidget {
-  const _QuickInputPanel({required this.hint, required this.items});
+  const _QuickInputPanel(
+      {required this.hint, required this.items, this.commands});
 
   final String hint;
   final List<QuickItem> items;
+  final CommandService? commands;
 
   @override
   State<_QuickInputPanel> createState() => _QuickInputPanelState();
@@ -65,19 +77,37 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     super.initState();
     _refilter('');
     _controller.addListener(() => _refilter(_controller.text));
+    widget.commands?.addListener(_onCommandsChanged);
+  }
+
+  @override
+  void didUpdateWidget(covariant _QuickInputPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.commands != widget.commands) {
+      oldWidget.commands?.removeListener(_onCommandsChanged);
+      widget.commands?.addListener(_onCommandsChanged);
+      _refilter(_controller.text);
+    }
   }
 
   @override
   void dispose() {
+    widget.commands?.removeListener(_onCommandsChanged);
     _controller.dispose();
     _scroll.dispose();
     super.dispose();
   }
 
+  void _onCommandsChanged() => _refilter(_controller.text);
+
   void _refilter(String query) {
     final q = query.trim();
     final scored = <(QuickItem, int)>[];
     for (final item in widget.items) {
+      if (item.commandId case final id?
+          when !(widget.commands?.isVisible(id) ?? false)) {
+        continue;
+      }
       final s = fuzzyScore(q, item.label) ?? fuzzyScore(q, item.detail ?? '');
       if (s != null) scored.add((item, s));
     }
@@ -91,19 +121,28 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   Future<void> _runAt(int index) async {
     if (index < 0 || index >= _filtered.length) return;
     final item = _filtered[index];
+    if (item.commandId case final id?) {
+      if (!(widget.commands?.isEnabled(id) ?? false)) return;
+    }
     Navigator.of(context).pop();
-    await item.onRun();
+    if (item.commandId case final id?) {
+      await widget.commands?.execute(id, arguments: item.arguments);
+    } else {
+      await item.onRun?.call();
+    }
   }
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
     if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      setState(() => _selected = (_selected + 1).clamp(0, _filtered.length - 1));
+      setState(
+          () => _selected = (_selected + 1).clamp(0, _filtered.length - 1));
       _scrollToSelected();
       return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      setState(() => _selected = (_selected - 1).clamp(0, _filtered.length - 1));
+      setState(
+          () => _selected = (_selected - 1).clamp(0, _filtered.length - 1));
       _scrollToSelected();
       return KeyEventResult.handled;
     }
@@ -173,8 +212,11 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                     itemBuilder: (context, i) {
                       final item = _filtered[i];
                       final selected = i == _selected;
+                      final enabled = item.commandId == null ||
+                          (widget.commands?.isEnabled(item.commandId!) ??
+                              false);
                       return InkWell(
-                        onTap: () => _runAt(i),
+                        onTap: enabled ? () => _runAt(i) : null,
                         onHover: (hovering) {
                           if (hovering && !selected) {
                             setState(() => _selected = i);
@@ -191,7 +233,11 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                             children: [
                               Expanded(
                                 child: Text(item.label,
-                                    style: const TextStyle(fontSize: 12),
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: enabled
+                                            ? null
+                                            : Colors.grey.shade600),
                                     overflow: TextOverflow.ellipsis),
                               ),
                               if (item.detail != null) ...[

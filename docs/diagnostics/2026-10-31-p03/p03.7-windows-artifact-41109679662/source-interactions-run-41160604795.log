@@ -1,0 +1,19 @@
+00:00 +0: loading D:/a/Alula_Code/Alula_Code/app/integration_test/windows_p03_7_desktop_test.dart
+Building Windows application...                                    71.0s
+√ Built build\windows\x64\runner\Debug\alula_app.exe
+00:00 +0: the same Rust document opens in two groups with independent view state
+00:04 +1: conflicting duplicate journal entries survive as a recovery draft
+00:05 +2: session restore shares one Rust document across editor groups
+00:06 +3: the tail of a 50000-line document remains editable and saveable
+00:12 +4: multi-selection copy/cut writes clipboard and Rust once
+00:14 +5: Ctrl+V distributes copied lines and saves the Rust document
+00:15 +6: Alt+Click adds a cursor at the hit-tested UTF-16 position
+00:17 +7: Ctrl+D adds an occurrence and typing updates both Rust ranges
+00:18 +8: Ctrl+D finds and reveals an occurrence outside the input window
+00:21 +9: Ctrl+D ignores a selection that splits an emoji surrogate pair
+00:23 +10: Ctrl+Shift+L respects the VS Code multi-cursor limit
+00:24 +11: Alt+Shift+Down edits a CRLF file at each column caret
+00:25 +12: secondary occurrence follows IME preedit and commits to Rust
+00:27 +13: selection sets remain independent when switching document tabs
+00:29 +14: (tearDownAll)
+00:29 +14: All tests passed!

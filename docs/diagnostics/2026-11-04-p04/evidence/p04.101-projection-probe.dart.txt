@@ -1,0 +1,67 @@
+import 'dart:io';
+
+import '../../../../app/lib/git/git_diff_patch.dart';
+import '../../../../app/lib/git/git_diff_whitespace_projection.dart';
+import '../../../../app/lib/git/git_diff_word_highlights.dart';
+
+Future<void> main(List<String> arguments) async {
+  final mode = arguments.isEmpty ? 'candidate' : arguments.single;
+  if (mode != 'baseline' && mode != 'candidate') {
+    stderr.writeln('mode must be baseline or candidate');
+    exitCode = 2;
+    return;
+  }
+
+  final patch = _fixture();
+  var rows = 0;
+  var inlineRows = 0;
+  var changes = 0;
+  Object? retainedModel;
+  for (var iteration = 0; iteration < 1; iteration++) {
+    final parsed = parseGitDiffPatch(patch);
+    if (!parsed.canRender) {
+      stderr.writeln('patch parse fallback: ${parsed.fallbackReason}');
+      exitCode = 1;
+      return;
+    }
+    if (mode == 'baseline') {
+      final words = computeGitDiffPatchWordChanges(parsed);
+      retainedModel = (parsed, words);
+      rows = parsed.lines.length;
+      inlineRows = parsed.lines.length;
+      changes = words.pairedCount;
+    } else {
+      final projected = projectGitDiffPatchIgnoringTrimWhitespace(parsed);
+      if (!projected.canRender) {
+        stderr.writeln('projection fallback: ${projected.fallbackReason}');
+        exitCode = 1;
+        return;
+      }
+      retainedModel = (parsed, projected);
+      rows = projected.rows.length;
+      inlineRows = projected.inlineRows.length;
+      changes = projected.changes.length;
+    }
+  }
+  stdout.writeln(
+    'mode=$mode patchCodeUnits=${patch.length} rows=$rows '
+    'inlineRows=$inlineRows changes=$changes iterations=1',
+  );
+  if (retainedModel == null) throw StateError('model was not retained');
+  await stdout.flush();
+  await Future<void>.delayed(const Duration(seconds: 30));
+}
+
+String _fixture() {
+  final patch = StringBuffer('diff --git a/sample.rs b/sample.rs\n');
+  patch.writeln('@@ -1,8192 +1,8192 @@ large hunk');
+  for (var line = 0; line < 4095; line++) {
+    patch.writeln(' context shared rust source line $line');
+  }
+  patch.writeln('-let before = "old value";');
+  patch.writeln('+let after = "new value";');
+  for (var line = 4096; line < 8192; line++) {
+    patch.writeln(' context shared rust source line $line');
+  }
+  return patch.toString();
+}

@@ -1,0 +1,212 @@
+{
+  "label": "p04.101-baseline",
+  "exe": "/home/vegetable/develop/flutter/bin/cache/dart-sdk/bin/dartvm",
+  "args": [
+    "docs/diagnostics/2026-11-04-p04/evidence/p04.101-projection-probe.dart.txt",
+    "baseline"
+  ],
+  "duration_s": 15.0,
+  "interval_s": 0.5,
+  "root_pid": 855837,
+  "platform": "linux",
+  "captured_at": "2026-11-03 17:44:04 UTC",
+  "samples": [
+    {
+      "t": 4.9e-7,
+      "total_private": 120623104,
+      "total_working_set": 122523648,
+      "n_processes": 1
+    },
+    {
+      "t": 0.501099253,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 1.002094231,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 1.503099926,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 2.004101377,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 2.505097472,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 3.006100733,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 3.507102559,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 4.008098367,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 4.509081886,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 5.010091323,
+      "total_private": 192016384,
+      "total_working_set": 194326528,
+      "n_processes": 1
+    },
+    {
+      "t": 5.511107792,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 6.01210143,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 6.513102156,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 7.014103724,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 7.515102204,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 8.01609575,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 8.517093628,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 9.018097865,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 9.519091394,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 10.020094459,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 10.521090427,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 11.022108467,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 11.523105472,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 12.02409663,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 12.52509898,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 13.026098566,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 13.527097853,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 14.028092663,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    },
+    {
+      "t": 14.529109889,
+      "total_private": 191971328,
+      "total_working_set": 194281472,
+      "n_processes": 1
+    }
+  ],
+  "final_processes": [
+    {
+      "pid": 855837,
+      "ppid": 855831,
+      "name": "dart:p04.101-pr",
+      "working_set": 194281472,
+      "private": 191971328,
+      "peak_private": 0,
+      "pss": 191994880
+    }
+  ],
+  "summary": {
+    "peak_private": 192016384,
+    "stable_private": 191971328,
+    "final_private": 191971328,
+    "final_working_set": 194281472
+  }
+}

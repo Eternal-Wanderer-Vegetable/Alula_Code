@@ -1,0 +1,157 @@
+{
+    "osCaption":  "Microsoft Windows 11 专业工作站版",
+    "osVersion":  "Microsoft Windows NT 10.0.26200.0",
+    "artifactDirectory":  "E:\\alula_code\\.tmp-p037-historical-artifact",
+    "narratorWasRunning":  false,
+    "narratorStartedByRun":  true,
+    "narratorProcessObserved":  true,
+    "narratorSpeechAudioCaptured":  false,
+    "uiaDescendantCount":  2,
+    "uiaSemanticNames":  [
+                             "Alula Code",
+                             "FLUTTERVIEW"
+                         ],
+    "uiaLegacyAccessibleCount":  0,
+    "focusTraversal":  [
+                           {
+                               "index":  1,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  2,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  3,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  4,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  5,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  6,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  7,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  8,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  9,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  10,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  11,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  12,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  13,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           },
+                           {
+                               "index":  14,
+                               "name":  "FLUTTERVIEW",
+                               "controlType":  "ControlType.Pane",
+                               "automationId":  "",
+                               "isKeyboardFocusable":  false,
+                               "legacyName":  null,
+                               "legacyValue":  null
+                           }
+                       ],
+    "expectedSemanticText":  [
+                                 "打开文件夹",
+                                 "UTF-8. UTF-8",
+                                 "LF. 行尾格式",
+                                 "打开一个文件夹开始工作"
+                             ],
+    "missingSemanticText":  [
+                                "打开文件夹",
+                                "UTF-8. UTF-8",
+                                "LF. 行尾格式",
+                                "打开一个文件夹开始工作"
+                            ],
+    "screenshot":  "screenreader-window.png",
+    "error":  null
+}

@@ -16,6 +16,30 @@ void main() {
       expect(hit.path, 'src/a.rs');
       expect(hit.line, 7);
       expect(hit.lineText, 'fn main() {}');
+      expect(hit.matchRanges, isEmpty);
+    });
+
+    test('submatch UTF-8 byte offsets convert to UTF-16 ranges', () {
+      const line = '{"type":"match","data":{"path":{"text":"src/a.rs"},'
+          '"line_number":2,"lines":{"text":"😀 foo foo  \\n"},'
+          '"submatches":[{"match":{"text":"foo"},"start":5,"end":8},'
+          '{"match":{"text":"foo"},"start":9,"end":12}]}}';
+      final hit = parseRgJsonLine(line)!;
+      expect(hit.lineText, '😀 foo foo  ');
+      expect(
+        hit.matchRanges
+            .map((range) => (range.startUtf16, range.endUtf16))
+            .toList(),
+        [(3, 6), (7, 10)],
+      );
+    });
+
+    test('submatch inside a UTF-8 code point is rejected', () {
+      const line = '{"type":"match","data":{"path":{"text":"src/a.rs"},'
+          '"line_number":1,"lines":{"text":"😀x\\n"},'
+          '"submatches":[{"match":{"text":"x"},"start":1,"end":5}]}}';
+      final hit = parseRgJsonLine(line)!;
+      expect(hit.matchRanges, isEmpty);
     });
 
     test('非 match 事件与坏 JSON 返回 null', () {
@@ -73,6 +97,31 @@ void main() {
       final mainHit = hits.firstWhere((h) => h.path.endsWith('main.rs'));
       expect(mainHit.line, 2);
       expect(mainHit.lineText, contains('hello alula'));
+      expect(mainHit.matchRanges, isEmpty,
+          reason: 'git grep does not report per-match offsets');
+    });
+
+    test('搜索子进程登记并在退出后注销', () async {
+      final registered = <(int, String, String, String?)>[];
+      final unregistered = <int>[];
+      final svc = SearchService(
+        root: repo.path,
+        defaultBackend: SearchBackend.gitGrep,
+        starter: Process.start,
+        registerProcess: (pid, kind, label, workspace) =>
+            registered.add((pid, kind, label, workspace)),
+        unregisterProcess: unregistered.add,
+      );
+
+      final hits = await svc.search('hello').toList();
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      expect(hits, hasLength(2));
+      expect(registered, hasLength(1));
+      expect(registered.single.$2, 'search');
+      expect(registered.single.$3, 'git grep');
+      expect(registered.single.$4, repo.path);
+      expect(unregistered, [registered.single.$1]);
     });
 
     test('rg 后端（若本机可用）：结果与 git grep 一致', () async {
@@ -92,6 +141,16 @@ void main() {
       final hits = await svc.search('hello').toList();
       expect(hits.length, 2);
       expect(hits.every((h) => h.lineText.contains('hello')), isTrue);
+      for (final hit in hits) {
+        expect(hit.matchRanges, isNotEmpty);
+        expect(
+          hit.matchRanges
+              .map((range) =>
+                  hit.lineText.substring(range.startUtf16, range.endUtf16))
+              .toList(),
+          everyElement('hello'),
+        );
+      }
     });
 
     test('空查询返回空流', () async {

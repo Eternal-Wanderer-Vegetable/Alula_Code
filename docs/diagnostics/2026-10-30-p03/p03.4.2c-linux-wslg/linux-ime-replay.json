@@ -1,0 +1,47 @@
+{
+  "platform": "WSLg Linux (X11 :10.0; not a native DRM desktop)",
+  "product": "Alula Code Linux Release",
+  "sourceCommit": "f7b6f343ac4f9b32b464bd2f931778f55a39b9c0",
+  "sourceWorktreeWasDirty": true,
+  "flutter": "3.47.8 stable",
+  "inputMethod": "Fcitx5 Pinyin",
+  "display": "2560x1440",
+  "window": {
+    "id": 58720259,
+    "pid": 320515,
+    "x": 80,
+    "y": 70,
+    "width": 1180,
+    "height": 820
+  },
+  "foregroundGuard": "active X11 window ID checked before every keyboard/mouse action and screenshot",
+  "profileIsolated": true,
+  "sequence": [
+    {
+      "action": "type nihao then Space",
+      "result": "Candidate popup is adjacent to the preedit at caret; Space committed 你好."
+    },
+    {
+      "action": "append zhongguo then Escape",
+      "result": "Composition cancelled; prior committed 你好 remained."
+    },
+    {
+      "action": "append beijing then click Explorer Activity Bar",
+      "result": "Editor focus left; literal unconverted Pinyin remained in the document."
+    }
+  ],
+  "persistedJournalText": "你好bei jing",
+  "screenshots": [
+    "linux-before.png",
+    "linux-compose.png",
+    "linux-commit.png",
+    "linux-cancel-before.png",
+    "linux-cancelled.png",
+    "linux-focus-before.png",
+    "linux-focus-after.png"
+  ],
+  "limitations": [
+    "WSLg is not a native DRM/GNOME/KDE Linux host.",
+    "macOS native IME was unavailable."
+  ]
+}

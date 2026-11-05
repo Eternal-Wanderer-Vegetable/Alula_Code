@@ -1,0 +1,22 @@
+**********************
+Windows PowerShell 脚本开始
+开始时间: 20261031145745
+用户名: [host]\[user]
+RunAs 用户: [host]\[user]
+配置名称:
+计算机: [host] (Microsoft Windows NT 10.0.26200.0)
+主机应用程序: powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File E:\alula_code\docs\diagnostics\2026-10-31-p03\p03.7-windows-11-artifact-41109679662\screenreader-windows11-smoke.ps1 -ArtifactDirectory %TEMP%\alula-win-artifact-d3a7a56\Alula_Code\Alula_Code\app\build\windows\x64\runner\Release -OutputDirectory E:\alula_code\docs\diagnostics\2026-10-31-p03\p03.7-windows-11-artifact-41109679662\latest-d3a7-narrator-valid-run
+进程 ID: 58492
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261031145756
+**********************

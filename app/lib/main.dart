@@ -13,6 +13,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'bridge/alula_core.dart';
+import 'editor/find_replace_history.dart';
+import 'editor/paste_as.dart';
+import 'workbench/find_history_store.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
@@ -57,6 +61,12 @@ class AlulaApp extends StatelessWidget {
     this.sessionStore,
     this.keybindingsStore,
     this.windowControls = false,
+    this.definitionRequest,
+    this.savedCompareFileStat,
+    this.pasteAsConfiguration = const PasteAsConfiguration(),
+    this.findReplaceHistoryConfiguration =
+        const FindReplaceHistoryConfiguration(),
+    this.findReplaceHistoryStore,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -79,6 +89,25 @@ class AlulaApp extends StatelessWidget {
   /// 真实入口 main() 显式开启。
   final bool windowControls;
 
+  /// Optional provider override used by deterministic navigation fixtures.
+  final Future<DefinitionResult?> Function(
+    int documentId,
+    int offsetUtf16,
+    int version,
+  )? definitionRequest;
+
+  /// Optional file-stat provider for deterministic saved-compare fixtures.
+  final Future<FileStat> Function(String path)? savedCompareFileStat;
+
+  /// Editor Paste As settings forwarded to the workbench.
+  final PasteAsConfiguration pasteAsConfiguration;
+
+  /// Find/replace history options are hydrated by the settings store in P07.
+  final FindReplaceHistoryConfiguration findReplaceHistoryConfiguration;
+
+  /// Optional per-workspace history store (tests can use a temporary folder).
+  final FindReplaceHistoryStore? findReplaceHistoryStore;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -95,6 +124,11 @@ class AlulaApp extends StatelessWidget {
         sessionStore: sessionStore,
         keybindingsStore: keybindingsStore,
         windowControls: windowControls,
+        definitionRequest: definitionRequest,
+        savedCompareFileStat: savedCompareFileStat,
+        pasteAsConfiguration: pasteAsConfiguration,
+        findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
+        findReplaceHistoryStore: findReplaceHistoryStore,
       ),
     );
   }

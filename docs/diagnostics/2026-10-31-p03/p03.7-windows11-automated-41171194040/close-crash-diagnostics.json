@@ -1,0 +1,33 @@
+{
+    "startedAt":  "2026-10-30T22:07:04.0753710-07:00",
+    "eventQueryError":  null,
+    "applicationFaultEvents":  [
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-30T22:07:49.2967070-07:00",
+                                       "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc000041d\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0x160C\r\nFaulting application start time: 0x1DD68F5C3F86C07\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: 8440db9d-9107-463a-a437-4077d5b6dd6a\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-30T22:07:48.6696397-07:00",
+                                       "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc0000005\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0x160C\r\nFaulting application start time: 0x1DD68F5C3F86C07\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: 526b890a-d67b-4d42-b46d-be22471d6604\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-30T22:07:44.3173602-07:00",
+                                       "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc000041d\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0xA28\r\nFaulting application start time: 0x1DD68F5AB56EB2A\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: b21a0dfd-9b2d-485d-baff-993be24c9bab\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-30T22:07:41.4250326-07:00",
+                                       "message":  "Faulting application name: alula_app.exe, version: 0.1.0.0, time stamp: 0x6ae4e6d6\r\nFaulting module name: flutter_windows.dll, version: 0.0.0.0, time stamp: 0x6adad64d\r\nException code: 0xc0000005\r\nFault offset: 0x000000000001e220\r\nFaulting process id: 0xA28\r\nFaulting application start time: 0x1DD68F5AB56EB2A\r\nFaulting application path: C:\\a\\_temp\\alula-windows-release\\alula_app.exe\r\nFaulting module path: C:\\a\\_temp\\alula-windows-release\\flutter_windows.dll\r\nReport Id: 1345469a-d1e8-4734-9729-d7ceecff7e68\r\nFaulting package full name: \r\nFaulting package-relative application ID: "
+                                   }
+                               ],
+    "crashDumps":  [
+
+                   ]
+}

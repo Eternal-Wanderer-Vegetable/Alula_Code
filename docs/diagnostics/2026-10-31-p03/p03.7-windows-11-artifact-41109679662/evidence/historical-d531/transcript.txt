@@ -1,0 +1,24 @@
+**********************
+Windows PowerShell 脚本开始
+开始时间: 20261031145056
+用户名: [host]\[user]
+RunAs 用户: [host]\[user]
+配置名称:
+计算机: [host] (Microsoft Windows NT 10.0.26200.0)
+主机应用程序: powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File E:\alula_code\docs\diagnostics\2026-10-31-p03\p03.7-windows-11-artifact-41109679662\run-msaa-action-profile.ps1 -RunName ime-save
+进程 ID: 52292
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+PS>TerminatingError():“Close validation failed: Release artifact did not close cleanly (posted=True timeout=False exit=-1073740771)”
+>> TerminatingError(run-msaa-action-profile.ps1):“已停止该运行的命令，因为首选项变量“ErrorActionPreference”或通用参数设置为 Stop: Close validation failed: Release artifact did not close cleanly (posted=True timeout=False exit=-1073740771)”
+**********************
+Windows PowerShell 脚本结束
+结束时间: 20261031145145
+**********************

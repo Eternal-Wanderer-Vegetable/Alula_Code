@@ -1,0 +1,15 @@
+Windows 11 exact artifact rerun after Task Manager was closed
+
+Date: 2026-11-01. GitHub Actions run 41109679662, Windows x64 artifact, source d5319369c5b5d569954e0d816daf325f3bc12a51. Executable SHA-256: caeff20300b7096bdd118bcf47a38f53cf1198fe4b97a9318f956189dcbd2e97.
+
+Host: Windows 11 Pro for Workstations build 26200, AMD64. Display: 120 DPI (125%), dark system and app theme. Task Manager was not running before this rerun. The test used the isolated profile and rust-mini fixture. Fixture SHA-256 after cleanup: 6689b6c06534079c1a006631f54d180f642d169f7a15455c50a2a7eeb2b02684 (baseline).
+
+Results:
+- Visible client: nonuniform 1267x712 window. Screenshot shows the editor compressed against the far right with most of the client blank; visual layout/usability fails.
+- Accessibility semantics: the 44-node MSAA tree includes expected editor/status labels. The separate Windows Narrator/UIA probe exposes only Alula Code and FLUTTERVIEW, no legacy accessibility patterns or expected semantic labels. Fourteen Tab probes do not show useful focus traversal; speech audio was not captured.
+- Two views: their text matched before the second-view edit, matched after it, and the final text was saved and read back.
+- Microsoft Pinyin: ni'hao composition, 你好 commit, cancellation preserving committed text, and save/read-back passed.
+- Close: WM_CLOSE did not time out, but exited with -1073740771 (0xC000041D). Windows reports an access violation in flutter_windows.dll at offset 0x000000000001e220. The failure reproduces after Task Manager is closed.
+- DPI/theme: this run covers dark theme at 125% only. Earlier light-theme values at 125% still rendered dark. 100% and 150% scaling remain untested.
+
+Evidence files: windows-artifact-client.png; windows-ime-composition.png; windows-ime-committed.png; windows-ime-cancel-before.png; metadata.json; no-accessibility-close-control.json; close-crash-diagnostics.json; transcript.txt. The sibling codex-rerun-20261101-user-taskmgr-closed-3-narrator directory contains screenreader-result.json, screenreader-window.png, and transcript.txt.

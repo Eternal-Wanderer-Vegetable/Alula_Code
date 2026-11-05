@@ -4,17 +4,18 @@
 //! - Initialize/initialized 握手 + 退出握手；
 //! - didOpen / didChange（全量同步；增量同步留待 Phase 1）；
 //! - 接收 textDocument/publishDiagnostics（后台读线程，不阻塞 UI）；
-//! - textDocument/completion（同步等待 + 超时；异步化留待 FRB 迁移）；
+//! - textDocument/definition / completion / semanticTokens（可取消异步请求）；
 //! - 其余通知（$/progress、window/logMessage 等）静默忽略。
 
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read, Write};
-use std::process::{Child, ChildStdin, Command, Stdio};
+use std::process::{ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicI64, Ordering};
 use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
+use editor_process::{ProcessKind, ProcessMetadata, ProcessSupervisor, SupervisedChild};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -23,9 +24,67 @@ pub struct Diagnostic {
     pub severity: u32,
     pub line: u64,
     pub character: u64,
+    #[serde(rename = "endLine", skip_serializing_if = "Option::is_none")]
+    pub end_line: Option<u64>,
+    #[serde(rename = "endCharacter", skip_serializing_if = "Option::is_none")]
+    pub end_character: Option<u64>,
+    #[serde(rename = "documentVersion", skip_serializing_if = "Option::is_none")]
+    pub document_version: Option<i64>,
     pub message: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SemanticTokenLegend {
+    pub token_types: Vec<String>,
+    pub token_modifiers: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SemanticToken {
+    pub line: u32,
+    pub start_character: u32,
+    pub length: u32,
+    pub kind: String,
+}
+
+/// First usable LSP definition target. `line` and `character` use LSP's
+/// zero-based UTF-16 coordinates.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DefinitionLocation {
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+}
+
+/// Read the first Location or LocationLink from a definition response.
+/// Invalid entries are ignored so one malformed link does not hide later
+/// usable results.
+pub fn extract_definition_location(value: &serde_json::Value) -> Option<DefinitionLocation> {
+    let entries = match value {
+        serde_json::Value::Array(entries) => entries.iter().collect::<Vec<_>>(),
+        serde_json::Value::Null => return None,
+        value => vec![value],
+    };
+
+    entries.into_iter().find_map(|entry| {
+        let uri = entry
+            .get("targetUri")
+            .or_else(|| entry.get("uri"))?
+            .as_str()?;
+        let start = entry
+            .get("targetSelectionRange")
+            .or_else(|| entry.get("range"))?
+            .get("start")?;
+        let line = start.get("line")?.as_u64()?;
+        let character = start.get("character")?.as_u64()?;
+        (!uri.is_empty()).then(|| DefinitionLocation {
+            uri: uri.to_string(),
+            line,
+            character,
+        })
+    })
 }
 
 struct Shared {
@@ -69,9 +128,76 @@ impl Shared {
 }
 
 pub struct LspServer {
-    child: Mutex<Child>,
+    child: Mutex<SupervisedChild>,
     shared: Arc<Shared>,
     next_id: AtomicI64,
+}
+
+/// 已发送的 JSON-RPC 请求。创建与轮询均不等待服务端响应；调用方应在完成、
+/// 超时或生命周期结束时显式取消，以释放 pending 项并通知语言服务器。
+pub struct LspPendingRequest {
+    id: i64,
+    method: String,
+    receiver: mpsc::Receiver<serde_json::Value>,
+    shared: Arc<Shared>,
+    completed: bool,
+}
+
+impl LspPendingRequest {
+    pub fn id(&self) -> i64 {
+        self.id
+    }
+
+    /// 立即检查响应；None 表示仍在等待。
+    pub fn try_recv(&mut self) -> Result<Option<serde_json::Value>, String> {
+        match self.receiver.try_recv() {
+            Ok(value) => {
+                self.completed = true;
+                Ok(Some(value))
+            }
+            Err(mpsc::TryRecvError::Empty) => Ok(None),
+            Err(mpsc::TryRecvError::Disconnected) => {
+                if let Ok(mut pending) = self.shared.pending.lock() {
+                    pending.remove(&self.id);
+                }
+                self.completed = true;
+                Err(format!("请求 {} 的 LSP 响应通道已关闭", self.method))
+            }
+        }
+    }
+
+    /// 同步兼容入口使用的有界等待。
+    pub fn wait(&mut self, timeout_ms: u64) -> Result<serde_json::Value, String> {
+        match self
+            .receiver
+            .recv_timeout(Duration::from_millis(timeout_ms))
+        {
+            Ok(value) => {
+                self.completed = true;
+                Ok(value)
+            }
+            Err(_) => {
+                let _ = self.cancel();
+                Err(format!("请求 {} 响应超时（{timeout_ms}ms）", self.method))
+            }
+        }
+    }
+
+    /// 删除本地 pending 项并发送标准 LSP $/cancelRequest 通知。
+    pub fn cancel(&mut self) -> Result<(), String> {
+        if self.completed {
+            return Ok(());
+        }
+        if let Ok(mut pending) = self.shared.pending.lock() {
+            pending.remove(&self.id);
+        }
+        self.completed = true;
+        self.shared.send(&serde_json::json!({
+            "jsonrpc": "2.0",
+            "method": "$/cancelRequest",
+            "params": {"id": self.id},
+        }))
+    }
 }
 
 /// 路径 → file URI（ASCII 路径的朴素实现；含非 ASCII/空格时需 percent-encoding，
@@ -104,17 +230,26 @@ impl LspServer {
         if cmd.is_empty() {
             return Err("cmd 为空".into());
         }
-        let mut child = Command::new(&cmd[0])
+        let mut command = Command::new(&cmd[0]);
+        command
             .args(&cmd[1..])
             .current_dir(workspace_root)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
-            .spawn()
+            .stderr(Stdio::inherit());
+        let mut child = ProcessSupervisor::global()
+            .spawn(
+                &mut command,
+                ProcessMetadata::new(
+                    cmd[0].clone(),
+                    ProcessKind::LanguageServer,
+                    Some(workspace_root.to_string()),
+                ),
+            )
             .map_err(|e| format!("启动 {} 失败: {e}", cmd[0]))?;
 
-        let stdin = child.stdin.take().ok_or("无法获取 stdin")?;
-        let stdout = child.stdout.take().ok_or("无法获取 stdout")?;
+        let stdin = child.take_stdin().ok_or("无法获取 stdin")?;
+        let stdout = child.take_stdout().ok_or("无法获取 stdout")?;
 
         let shared = Arc::new(Shared::new(stdin));
         {
@@ -145,7 +280,39 @@ impl LspServer {
             "processId": std::process::id(),
             "rootUri": root_uri,
             "workspaceFolders": [{"uri": root_uri, "name": "workspace"}],
-            "capabilities": {},
+            "capabilities": {
+                "general": {"positionEncodings": ["utf-16"]},
+                "textDocument": {
+                    "semanticTokens": {
+                        "dynamicRegistration": false,
+                        "requests": {"range": false, "full": {"delta": false}},
+                        "tokenTypes": [
+                            "namespace", "type", "class", "enum", "interface", "struct",
+                            "typeParameter", "parameter", "variable", "property", "enumMember",
+                            "event", "function", "method", "macro", "keyword", "modifier",
+                            "comment", "string", "number", "regexp", "operator", "decorator",
+                            "attribute", "builtinAttribute", "builtinType", "derive",
+                            "deriveHelper", "formatSpecifier", "generic", "invalidEscapeSequence",
+                            "selfKeyword", "lifetime", "macroBang", "punctuation",
+                            "unresolvedReference", "angle", "arithmetic", "attributeBracket",
+                            "bitwise", "boolean", "brace", "bracket", "character", "colon",
+                            "comma", "comparison", "const", "constParameter", "dot",
+                            "escapeSequence", "logical", "negation", "parenthesis", "procMacro",
+                            "selfTypeKeyword", "semicolon", "toolModule", "union", "typeAlias"
+                        ],
+                        "tokenModifiers": [
+                            "declaration", "definition", "readonly", "static", "deprecated",
+                            "abstract", "async", "modification", "documentation", "defaultLibrary",
+                            "mutable", "consuming", "unsafe", "attribute", "callable", "constant",
+                            "associated", "controlFlow", "crateRoot", "injected", "intraDocLink",
+                            "library", "macro", "procMacro", "public", "reference", "trait"
+                        ],
+                        "formats": ["relative"],
+                        "overlappingTokenSupport": false,
+                        "multilineTokenSupport": false
+                    }
+                }
+            },
         });
         self.send_message(&serde_json::json!({
             "jsonrpc": "2.0", "id": id, "method": "initialize", "params": params,
@@ -238,13 +405,12 @@ impl LspServer {
         }))
     }
 
-    /// 通用同步请求（pull diagnostics 等使用）。
-    pub fn request(
+    /// 通用异步请求：只注册 pending 并发送 JSON-RPC 消息，不等待响应。
+    pub fn request_async(
         &self,
         method: &str,
         params: serde_json::Value,
-        timeout_ms: u64,
-    ) -> Result<serde_json::Value, String> {
+    ) -> Result<LspPendingRequest, String> {
         let id = self.next_id.fetch_add(1, Ordering::SeqCst);
         let (tx, rx) = mpsc::sync_channel::<serde_json::Value>(1);
         self.shared
@@ -259,15 +425,95 @@ impl LspServer {
             self.shared.pending.lock().ok().map(|mut g| g.remove(&id));
             return Err(e);
         }
-        match rx.recv_timeout(Duration::from_millis(timeout_ms)) {
-            Ok(response) => Ok(response),
-            Err(_) => {
-                if let Ok(mut pending) = self.shared.pending.lock() {
-                    pending.remove(&id);
-                }
-                Err(format!("请求 {method} 响应超时（{timeout_ms}ms）"))
-            }
+        Ok(LspPendingRequest {
+            id,
+            method: method.to_string(),
+            receiver: rx,
+            shared: Arc::clone(&self.shared),
+            completed: false,
+        })
+    }
+
+    /// 通用同步兼容请求（pull diagnostics 等非 UI 调用使用）。
+    pub fn request(
+        &self,
+        method: &str,
+        params: serde_json::Value,
+        timeout_ms: u64,
+    ) -> Result<serde_json::Value, String> {
+        self.request_async(method, params)?.wait(timeout_ms)
+    }
+
+    pub fn semantic_token_legend(&self) -> Option<SemanticTokenLegend> {
+        let capabilities = self.shared.server_capabilities.lock().ok()?;
+        let provider = capabilities
+            .as_ref()?
+            .get("capabilities")?
+            .get("semanticTokensProvider")?;
+        let full = provider.get("full")?;
+        if full != true && !full.is_object() {
+            return None;
         }
+        let legend = provider.get("legend")?;
+        let token_types = legend
+            .get("tokenTypes")?
+            .as_array()?
+            .iter()
+            .map(|value| value.as_str().map(str::to_owned))
+            .collect::<Option<Vec<_>>>()?;
+        let token_modifiers = legend
+            .get("tokenModifiers")?
+            .as_array()?
+            .iter()
+            .map(|value| value.as_str().map(str::to_owned))
+            .collect::<Option<Vec<_>>>()?;
+        Some(SemanticTokenLegend {
+            token_types,
+            token_modifiers,
+        })
+    }
+
+    pub fn semantic_tokens_async(&self, uri: &str) -> Result<Option<LspPendingRequest>, String> {
+        if self.semantic_token_legend().is_none() {
+            return Ok(None);
+        }
+        self.request_async(
+            "textDocument/semanticTokens/full",
+            serde_json::json!({"textDocument": {"uri": normalize_uri(uri)}}),
+        )
+        .map(Some)
+    }
+
+    /// Send an asynchronous textDocument/definition request.
+    pub fn definition_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<LspPendingRequest, String> {
+        self.request_async(
+            "textDocument/definition",
+            serde_json::json!({
+                "textDocument": {"uri": normalize_uri(uri)},
+                "position": {"line": line, "character": character},
+            }),
+        )
+    }
+
+    /// 发送异步补全请求。返回值可立即轮询或取消。
+    pub fn completion_async(
+        &self,
+        uri: &str,
+        line: u64,
+        character: u64,
+    ) -> Result<LspPendingRequest, String> {
+        self.request_async(
+            "textDocument/completion",
+            serde_json::json!({
+                "textDocument": {"uri": uri},
+                "position": {"line": line, "character": character},
+            }),
+        )
     }
 
     /// 同步补全请求（带超时）。返回每项的插入文本（insertText/textEdit.newText/label）。
@@ -292,7 +538,7 @@ impl LspServer {
     /// 服务器进程是否仍在运行。
     pub fn is_alive(&self) -> bool {
         match self.child.lock() {
-            Ok(mut c) => c.try_wait().map(|s| s.is_none()).unwrap_or(false),
+            Ok(mut child) => child.try_wait().map(|s| s.is_none()).unwrap_or(false),
             Err(_) => false,
         }
     }
@@ -321,10 +567,9 @@ impl LspServer {
             }
             if Instant::now() >= deadline {
                 if let Ok(mut child) = self.child.lock() {
-                    let _ = child.kill();
-                    let _ = child.wait();
+                    let _ = child.kill_tree_and_wait();
                 }
-                return Err("LSP 未在 exit 通知后 1 秒内退出，已强制终止".into());
+                return Err("LSP 未在 exit 通知后 1 秒内退出，已强制终止其进程树".into());
             }
             std::thread::sleep(Duration::from_millis(25));
         }
@@ -357,6 +602,75 @@ pub fn extract_completion_labels(result: &serde_json::Value) -> Vec<String> {
                 .map(|s| s.to_string())
         })
         .collect()
+}
+
+pub fn decode_semantic_tokens(
+    result: &serde_json::Value,
+    legend: &SemanticTokenLegend,
+) -> Result<Vec<SemanticToken>, String> {
+    let Some(data) = result.get("data") else {
+        if result.is_null() {
+            return Ok(Vec::new());
+        }
+        return Err("semanticTokens/full 响应缺少 data".into());
+    };
+    let data = data
+        .as_array()
+        .ok_or_else(|| "semanticTokens/full data 不是数组".to_string())?;
+    let (chunks, remainder) = data.as_slice().as_chunks::<5>();
+    if !remainder.is_empty() {
+        return Err("semanticTokens/full data 长度不是 5 的倍数".into());
+    }
+
+    let mut tokens = Vec::with_capacity(chunks.len());
+    let (mut line, mut character) = (0u32, 0u32);
+    for values in chunks {
+        let value = |index: usize| {
+            values[index]
+                .as_u64()
+                .and_then(|number| u32::try_from(number).ok())
+                .ok_or_else(|| "semantic token 字段超出 u32 范围".to_string())
+        };
+        let delta_line = value(0)?;
+        let delta_start = value(1)?;
+        let length = value(2)?;
+        let token_type = value(3)? as usize;
+        let modifiers = value(4)?;
+        if length == 0 {
+            return Err("semantic token 长度为零".into());
+        }
+        if delta_line == 0 {
+            character = character
+                .checked_add(delta_start)
+                .ok_or_else(|| "semantic token character 溢出".to_string())?;
+        } else {
+            line = line
+                .checked_add(delta_line)
+                .ok_or_else(|| "semantic token line 溢出".to_string())?;
+            character = delta_start;
+        }
+        let mut kind = legend
+            .token_types
+            .get(token_type)
+            .ok_or_else(|| "semantic token type 索引超出 legend".to_string())?
+            .clone();
+        for (index, modifier) in legend.token_modifiers.iter().enumerate() {
+            if index < u32::BITS as usize && modifiers & (1 << index) != 0 {
+                kind.push('.');
+                kind.push_str(modifier);
+            }
+        }
+        character
+            .checked_add(length)
+            .ok_or_else(|| "semantic token end character 溢出".to_string())?;
+        tokens.push(SemanticToken {
+            line,
+            start_character: character,
+            length,
+            kind,
+        });
+    }
+    Ok(tokens)
 }
 
 // ---------- 后台读线程 ----------
@@ -442,21 +756,31 @@ fn reader_loop<R: Read + Send + 'static>(stdout: R, shared: Arc<Shared>) {
                 .and_then(|v| v.as_str())
                 .unwrap_or("")
                 .to_string();
+            let document_version = params.get("version").and_then(|v| v.as_i64());
             let diags: Vec<Diagnostic> = params
                 .get("diagnostics")
                 .and_then(|v| v.as_array())
                 .map(|arr| {
                     arr.iter()
                         .filter_map(|d| {
-                            let range = d.get("range")?["start"].clone();
+                            let range = d.get("range")?;
+                            let start = range.get("start")?;
+                            let end = range.get("end");
                             Some(Diagnostic {
                                 severity: d.get("severity").and_then(|v| v.as_u64()).unwrap_or(3)
                                     as u32,
-                                line: range.get("line").and_then(|v| v.as_u64())?,
-                                character: range
+                                line: start.get("line").and_then(|v| v.as_u64())?,
+                                character: start
                                     .get("character")
                                     .and_then(|v| v.as_u64())
                                     .unwrap_or(0),
+                                end_line: end
+                                    .and_then(|position| position.get("line"))
+                                    .and_then(|v| v.as_u64()),
+                                end_character: end
+                                    .and_then(|position| position.get("character"))
+                                    .and_then(|v| v.as_u64()),
+                                document_version,
                                 message: d.get("message").and_then(|v| v.as_str())?.to_string(),
                                 source: d
                                     .get("source")
@@ -515,5 +839,80 @@ mod tests {
         let wrapped = serde_json::json!({"isIncomplete": false, "items": [{"label": "x"}]});
         assert_eq!(extract_completion_labels(&wrapped), vec!["x"]);
         assert!(extract_completion_labels(&serde_json::Value::Null).is_empty());
+    }
+
+    #[test]
+    fn decode_semantic_tokens_uses_relative_utf16_positions_and_legend() {
+        let legend = SemanticTokenLegend {
+            token_types: vec!["function".into(), "variable".into()],
+            token_modifiers: vec!["readonly".into(), "declaration".into()],
+        };
+        let result = serde_json::json!({"data": [0, 3, 4, 0, 1, 1, 2, 3, 1, 2]});
+        assert_eq!(
+            decode_semantic_tokens(&result, &legend).unwrap(),
+            vec![
+                SemanticToken {
+                    line: 0,
+                    start_character: 3,
+                    length: 4,
+                    kind: "function.readonly".into(),
+                },
+                SemanticToken {
+                    line: 1,
+                    start_character: 2,
+                    length: 3,
+                    kind: "variable.declaration".into(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn decode_semantic_tokens_rejects_malformed_data_and_legend_indices() {
+        let legend = SemanticTokenLegend {
+            token_types: vec!["function".into()],
+            token_modifiers: vec![],
+        };
+        assert!(decode_semantic_tokens(&serde_json::json!({"data": [0, 1]}), &legend).is_err());
+        assert!(
+            decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 2, 3, 0]}), &legend).is_err()
+        );
+        assert!(
+            decode_semantic_tokens(&serde_json::json!({"data": [0, 1, 0, 0, 0]}), &legend).is_err()
+        );
+    }
+
+    #[test]
+    fn definition_response_accepts_location_and_location_link_utf16_positions() {
+        let location = serde_json::json!({
+            "uri": "file:///workspace/target.rs",
+            "range": {"start": {"line": 2, "character": 5}}
+        });
+        assert_eq!(
+            extract_definition_location(&location),
+            Some(DefinitionLocation {
+                uri: "file:///workspace/target.rs".into(),
+                line: 2,
+                character: 5,
+            })
+        );
+
+        let links = serde_json::json!([
+            {"not": "a location"},
+            {
+                "targetUri": "file:///workspace/target.rs",
+                "targetRange": {"start": {"line": 8, "character": 0}},
+                "targetSelectionRange": {"start": {"line": 3, "character": 7}}
+            }
+        ]);
+        assert_eq!(
+            extract_definition_location(&links),
+            Some(DefinitionLocation {
+                uri: "file:///workspace/target.rs".into(),
+                line: 3,
+                character: 7,
+            })
+        );
+        assert_eq!(extract_definition_location(&serde_json::Value::Null), None);
     }
 }

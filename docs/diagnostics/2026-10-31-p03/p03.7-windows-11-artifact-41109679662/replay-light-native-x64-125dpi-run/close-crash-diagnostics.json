@@ -1,0 +1,51 @@
+{
+    "startedAt":  "2026-10-31T18:33:47.2327832+08:00",
+    "eventQueryError":  null,
+    "applicationFaultEvents":  [
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-31T18:34:29.7311545+08:00",
+                                       "message":  "出错应用程序名称： alula_app.exe，版本： 0.1.0.0，时间戳： 0x6ae4e6d6\r\n出错模块名称： flutter_windows.dll， 版本： 0.0.0.0，时间戳： 0x6adad64d\r\n异常代码： 0xc000041d\r\n错误偏移： 0x000000000001e220\r\n出错进程 ID： 0x414C\r\n出错应用程序开始时间： 0x1DD692366242F59\r\nFaulting 应用程序路径： E:\\alula_code\\.tmp-p037-historical-artifact\\alula_app.exe\r\nFaulting 模块路径： E:\\alula_code\\.tmp-p037-historical-artifact\\flutter_windows.dll\r\nReport ID： 2a584061-9eee-47fc-9dc1-2524524a5470\r\nFaulting 包全名： \r\nFaulting 程序包相对应用程序 ID：  个"
+                                   },
+                                   {
+                                       "id":  1001,
+                                       "provider":  "Windows Error Reporting",
+                                       "time":  "2026-10-31T18:34:29.4959736+08:00",
+                                       "message":  "故障存储段 1406494787740859430，类型 4\r\n事件名称: APPCRASH\r\n响应: 不可用\r\nCab ID: 0\r\n\r\n问题签名:\r\nP1: alula_app.exe\r\nP2: 0.1.0.0\r\nP3: 6ae4e6d6\r\nP4: flutter_windows.dll\r\nP5: 0.0.0.0\r\nP6: 6adad64d\r\nP7: c0000005\r\nP8: 000000000001e220\r\nP9: \r\nP10: \r\n\r\n附加文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.d6089610-1fbe-4bdd-8a34-d4a7c0dc6746.tmp.dmp\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.2a5632c1-4c70-47ce-ae4e-ed434ff77a52.tmp.WERInternalMetadata.xml\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.2d8c4403-454f-47b7-8763-2083bfb2fabe.tmp.csv\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.987187db-3597-4265-bbad-aaa47f07507b.tmp.txt\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.9f0ddd36-ce97-4172-bf06-b093a4919e6f.tmp.xml\r\n\r\n可在此处获取这些文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\ReportArchive\\AppCrash_alula_app.exe_eb1b6e93eeae5385ee64c5a38328f4da6473_6e619540_a2daa1b6-7aeb-4dd0-b8dd-fd7402d38a62\r\n\r\n分析符号: \r\n重新检查解决方案: 0\r\n报告 ID: 3188d2c4-c3c8-4457-8c03-37bad19c1894\r\n报告状态: 268435456\r\n哈希存储段: e7e36f8033d05df04384df8eb9bb7c26\r\nCab GUID: 0"
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-31T18:34:26.1401648+08:00",
+                                       "message":  "出错应用程序名称： alula_app.exe，版本： 0.1.0.0，时间戳： 0x6ae4e6d6\r\n出错模块名称： flutter_windows.dll， 版本： 0.0.0.0，时间戳： 0x6adad64d\r\n异常代码： 0xc0000005\r\n错误偏移： 0x000000000001e220\r\n出错进程 ID： 0x414C\r\n出错应用程序开始时间： 0x1DD692366242F59\r\nFaulting 应用程序路径： E:\\alula_code\\.tmp-p037-historical-artifact\\alula_app.exe\r\nFaulting 模块路径： E:\\alula_code\\.tmp-p037-historical-artifact\\flutter_windows.dll\r\nReport ID： 3188d2c4-c3c8-4457-8c03-37bad19c1894\r\nFaulting 包全名： \r\nFaulting 程序包相对应用程序 ID：  个"
+                                   },
+                                   {
+                                       "id":  1001,
+                                       "provider":  "Windows Error Reporting",
+                                       "time":  "2026-10-31T18:34:24.6644420+08:00",
+                                       "message":  "故障存储段 1691450465657400901，类型 4\r\n事件名称: APPCRASH\r\n响应: 不可用\r\nCab ID: 0\r\n\r\n问题签名:\r\nP1: alula_app.exe\r\nP2: 0.1.0.0\r\nP3: 6ae4e6d6\r\nP4: flutter_windows.dll\r\nP5: 0.0.0.0\r\nP6: 6adad64d\r\nP7: c000041d\r\nP8: 000000000001e220\r\nP9: \r\nP10: \r\n\r\n附加文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.92c2974e-8d09-4173-b31b-a48f541935b2.tmp.dmp\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.3cbe0b9f-0c3d-4e9a-93ab-502f821b9004.tmp.WERInternalMetadata.xml\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.7dba7b5c-5011-49a1-afc0-f68b00c57dee.tmp.csv\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.9d3888d0-7c88-4017-9bf4-c776319e8476.tmp.txt\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.0a140557-aa79-47ad-9b85-0873ce0d46e5.tmp.xml\r\n\r\n可在此处获取这些文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\ReportArchive\\AppCrash_alula_app.exe_3dd544e3214c91d80cde0db82d5166e19a34485_6e619540_ee18832d-c700-4815-aae0-5ed609d0dc83\r\n\r\n分析符号: \r\n重新检查解决方案: 0\r\n报告 ID: e1ac72fe-8e24-415e-bf26-2837e33c1996\r\n报告状态: 268435456\r\n哈希存储段: 0de68f15452e1087a7793d3ca0adae45\r\nCab GUID: 0"
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-31T18:34:22.5778844+08:00",
+                                       "message":  "出错应用程序名称： alula_app.exe，版本： 0.1.0.0，时间戳： 0x6ae4e6d6\r\n出错模块名称： flutter_windows.dll， 版本： 0.0.0.0，时间戳： 0x6adad64d\r\n异常代码： 0xc000041d\r\n错误偏移： 0x000000000001e220\r\n出错进程 ID： 0x24E4\r\n出错应用程序开始时间： 0x1DD69234FC067B7\r\nFaulting 应用程序路径： E:\\alula_code\\.tmp-p037-historical-artifact\\alula_app.exe\r\nFaulting 模块路径： E:\\alula_code\\.tmp-p037-historical-artifact\\flutter_windows.dll\r\nReport ID： e1ac72fe-8e24-415e-bf26-2837e33c1996\r\nFaulting 包全名： \r\nFaulting 程序包相对应用程序 ID：  个"
+                                   },
+                                   {
+                                       "id":  1001,
+                                       "provider":  "Windows Error Reporting",
+                                       "time":  "2026-10-31T18:34:22.3229764+08:00",
+                                       "message":  "故障存储段 1406494787740859430，类型 4\r\n事件名称: APPCRASH\r\n响应: 不可用\r\nCab ID: 0\r\n\r\n问题签名:\r\nP1: alula_app.exe\r\nP2: 0.1.0.0\r\nP3: 6ae4e6d6\r\nP4: flutter_windows.dll\r\nP5: 0.0.0.0\r\nP6: 6adad64d\r\nP7: c0000005\r\nP8: 000000000001e220\r\nP9: \r\nP10: \r\n\r\n附加文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.c93cce57-56e8-45f9-b81b-b9c3f442aac1.tmp.dmp\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.49699ef3-166a-4833-9c53-44805d69d90d.tmp.WERInternalMetadata.xml\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.6a9e861d-b1db-4728-8da4-8cbd95e40f06.tmp.csv\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.9e00aabd-ab23-42ed-9c15-4a8f7153fd5e.tmp.txt\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\Temp\\WER.f7b40318-fd6d-444a-8585-005f0578fe4c.tmp.xml\r\n\r\n可在此处获取这些文件:\r\n\\\\?\\C:\\ProgramData\\Microsoft\\Windows\\WER\\ReportArchive\\AppCrash_alula_app.exe_eb1b6e93eeae5385ee64c5a38328f4da6473_6e619540_11a2132d-b43b-4795-a7fb-cb6424d78dba\r\n\r\n分析符号: \r\n重新检查解决方案: 0\r\n报告 ID: b181eef0-7c3b-46a4-8f93-6f8c4450111d\r\n报告状态: 268435456\r\n哈希存储段: e7e36f8033d05df04384df8eb9bb7c26\r\nCab GUID: 0"
+                                   },
+                                   {
+                                       "id":  1000,
+                                       "provider":  "Application Error",
+                                       "time":  "2026-10-31T18:34:19.3079699+08:00",
+                                       "message":  "出错应用程序名称： alula_app.exe，版本： 0.1.0.0，时间戳： 0x6ae4e6d6\r\n出错模块名称： flutter_windows.dll， 版本： 0.0.0.0，时间戳： 0x6adad64d\r\n异常代码： 0xc0000005\r\n错误偏移： 0x000000000001e220\r\n出错进程 ID： 0x24E4\r\n出错应用程序开始时间： 0x1DD69234FC067B7\r\nFaulting 应用程序路径： E:\\alula_code\\.tmp-p037-historical-artifact\\alula_app.exe\r\nFaulting 模块路径： E:\\alula_code\\.tmp-p037-historical-artifact\\flutter_windows.dll\r\nReport ID： b181eef0-7c3b-46a4-8f93-6f8c4450111d\r\nFaulting 包全名： \r\nFaulting 程序包相对应用程序 ID：  个"
+                                   }
+                               ],
+    "crashDumps":  [
+
+                   ]
+}

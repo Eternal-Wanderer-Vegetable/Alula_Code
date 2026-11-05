@@ -11,14 +11,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  characters: ^1.4.1
+  path: ^1.9.1
+  super_clipboard: ^0.9.1
   # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
   ffi: ^2.1.0
   window_manager: ^0.5.2
+  super_drag_and_drop: ^0.9.1
+  irondash_engine_context: ^0.5.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_lints: ^4.0.0
+  irondash_message_channel: ^0.7.0
+  super_native_extensions: ^0.9.1
+
+dependency_overrides:
+  # Upstream publishes the macOS engine handle before its FlutterView registry
+  # entry exists. Keep the native fix local until upstream includes the same
+  # readiness handshake.
+  irondash_engine_context:
+    path: packages/irondash_engine_context
 
 flutter:
   uses-material-design: true

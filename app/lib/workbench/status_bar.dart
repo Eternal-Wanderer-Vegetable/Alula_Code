@@ -14,9 +14,20 @@ class AlulaStatusBar extends StatelessWidget {
     required this.diagnosticsCount,
     required this.tabCount,
     required this.abiVersion,
+    this.resourcePressure,
+    this.availableBytes,
+    this.totalBytes,
+    this.resourceSource,
     required this.syncCount,
     required this.panelCollapsed,
     required this.onTogglePanel,
+    this.encodingLabel,
+    this.encodingTooltip,
+    this.lineEndingLabel,
+    this.onEncodingTap,
+    this.onLineEndingTap,
+    this.overtypeMode = false,
+    this.onToggleOvertype,
   });
 
   final WbSyncState state;
@@ -25,9 +36,20 @@ class AlulaStatusBar extends StatelessWidget {
   final int diagnosticsCount;
   final int tabCount;
   final int abiVersion;
+  final String? resourcePressure;
+  final int? availableBytes;
+  final int? totalBytes;
+  final String? resourceSource;
   final int syncCount;
   final bool panelCollapsed;
   final VoidCallback onTogglePanel;
+  final String? encodingLabel;
+  final String? encodingTooltip;
+  final String? lineEndingLabel;
+  final VoidCallback? onEncodingTap;
+  final VoidCallback? onLineEndingTap;
+  final bool overtypeMode;
+  final VoidCallback? onToggleOvertype;
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +62,74 @@ class AlulaStatusBar extends StatelessWidget {
           _stateIcon(),
           const SizedBox(width: 8),
           Expanded(child: Text(detail, style: const TextStyle(fontSize: 11))),
-          Text(
-            '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
-            'ABI v$abiVersion · 同步 $syncCount 次',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+          Flexible(
+            child: Text(
+              '$lspStatus · 诊断 $diagnosticsCount · 标签 $tabCount · '
+              'ABI v$abiVersion · 同步 $syncCount 次',
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+            ),
           ),
+          if (encodingLabel != null && onEncodingTap != null) ...[
+            const SizedBox(width: 10),
+            InkWell(
+              key: const ValueKey('status-encoding'),
+              onTap: onEncodingTap,
+              child: Tooltip(
+                message: encodingTooltip ?? '文件编码',
+                child: Text(
+                  encodingLabel!,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
+          if (lineEndingLabel != null && onLineEndingTap != null) ...[
+            const SizedBox(width: 8),
+            InkWell(
+              key: const ValueKey('status-line-ending'),
+              onTap: onLineEndingTap,
+              child: Tooltip(
+                message: '行尾格式',
+                child: Text(
+                  lineEndingLabel!,
+                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                ),
+              ),
+            ),
+          ],
+          if (overtypeMode && onToggleOvertype != null) ...[
+            const SizedBox(width: 8),
+            InkWell(
+              key: const ValueKey('status-overtype'),
+              onTap: onToggleOvertype,
+              child: const Tooltip(
+                message: '启用插入模式',
+                child: Text(
+                  'OVR',
+                  style: TextStyle(color: Color(0xFFE8E8E8), fontSize: 11),
+                ),
+              ),
+            ),
+          ],
+          if (resourcePressure != null) ...[
+            const SizedBox(width: 10),
+            Tooltip(
+              message: _resourceDetails,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.memory, size: 13, color: _resourceColor),
+                  const SizedBox(width: 4),
+                  Text(_resourceLabel,
+                      style: TextStyle(color: _resourceColor, fontSize: 11)),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(width: 8),
           InkWell(
             onTap: onTogglePanel,
@@ -61,12 +146,44 @@ class AlulaStatusBar extends StatelessWidget {
     );
   }
 
+  String get _resourceLabel => switch (resourcePressure) {
+        'warn' => '资源告警',
+        'critical' => '资源紧张',
+        _ => '资源正常',
+      };
+
+  Color get _resourceColor => switch (resourcePressure) {
+        'warn' => Colors.orangeAccent,
+        'critical' => Colors.redAccent,
+        _ => Colors.greenAccent,
+      };
+
+  String get _resourceDetails {
+    final available = availableBytes;
+    final total = totalBytes;
+    if (available == null || total == null) return _resourceLabel;
+    return '$_resourceLabel · 可用 ${_formatBytes(available)} / '
+        '${_formatBytes(total)} · ${resourceSource ?? 'system'}';
+  }
+
+  static String _formatBytes(int bytes) {
+    const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+    var value = bytes.toDouble();
+    var unit = 0;
+    while (value >= 1024 && unit < units.length - 1) {
+      value /= 1024;
+      unit++;
+    }
+    return '${value.toStringAsFixed(unit == 0 ? 0 : 1)} ${units[unit]}';
+  }
+
   Widget _stateIcon() {
     switch (state) {
       case WbSyncState.idle:
         return const Icon(Icons.circle_outlined, size: 12, color: Colors.grey);
       case WbSyncState.synced:
-        return const Icon(Icons.check_circle, size: 12, color: Colors.greenAccent);
+        return const Icon(Icons.check_circle,
+            size: 12, color: Colors.greenAccent);
       case WbSyncState.mismatch:
         return const Icon(Icons.warning_amber_rounded,
             size: 12, color: Colors.orangeAccent);

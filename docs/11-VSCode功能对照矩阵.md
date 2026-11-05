@@ -108,7 +108,7 @@
 | EDT-13 / parity-edt-13 | 查找基础 | case/whole word/regex/selection scope/多行、上下循环/计数/高亮/历史正确 |
 | EDT-14 / parity-edt-14 | 替换语义 | capture/preserve case/转义/大小写变换/零宽匹配/当前与全部替换可撤销 |
 | EDT-15 / parity-edt-15 | 查找交互和异常 | Esc/Enter/Alt+Enter/焦点/调整大小/非法regex/巨大结果反馈一致 |
-| EDT-16 / parity-edt-16 | 导航历史 | back/forward/last edit与跨文档/组选择位置、最近文件正确 |
+| EDT-16 / parity-edt-16 | 定义导航与导航历史 | F12/鼠标跳转到定义（同文件/跨文件 provider）；back/forward/last edit与跨文档/组选择位置、最近文件正确 |
 | EDT-17 / parity-edt-17 | 文本差异编辑器 | inline/side-by-side/word diff/moved blocks/忽略空白/折叠未变区/下一差异正确 |
 | EDT-18 / parity-edt-18 | 差异操作 | 选中文件比较/与剪贴板/已保存版本、可编辑右侧、apply/revert块对照 |
 | EDT-19 / parity-edt-19 | 三方合并 | base/input1/input2/result、accept/combine/conflict导航、保存与未解状态正确 |

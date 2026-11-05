@@ -28,6 +28,8 @@ pub struct Symbol {
     pub start_utf16: usize,
     /// 1-based 起始行。
     pub line: usize,
+    /// 1-based 结束行（含），用于折叠范围与 sticky scroll。
+    pub end_line: usize,
 }
 
 pub struct SyntaxEngine {
@@ -202,6 +204,7 @@ impl SyntaxEngine {
                         name: name_node,
                         start_utf16: u16_at(node.start_byte(), text),
                         line: node.start_position().row + 1,
+                        end_line: node.end_position().row + 1,
                     });
                 }
             }
@@ -307,6 +310,30 @@ const MAX: i32 = 10;
 
         // helper（mod 内嵌套函数）也被收集
         assert!(symbols.iter().any(|s| s.name == "helper"));
+    }
+
+    #[test]
+    fn symbol_end_lines_cover_nested_scopes_with_bom_emoji_and_crlf() {
+        let mut engine = SyntaxEngine::rust().unwrap();
+        let code = "\u{FEFF}// 🦊\r\nfn outer() {\r\n    fn inner() {}\r\n}\r\n";
+        let symbols = engine.symbols(code).unwrap();
+        let outer = symbols
+            .iter()
+            .find(|symbol| symbol.name == "outer")
+            .unwrap();
+        let inner = symbols
+            .iter()
+            .find(|symbol| symbol.name == "inner")
+            .unwrap();
+
+        assert_eq!(outer.line, 2);
+        assert_eq!(outer.end_line, 4);
+        assert_eq!(
+            outer.start_utf16,
+            "\u{FEFF}// 🦊\r\n".encode_utf16().count()
+        );
+        assert_eq!(inner.line, 3);
+        assert_eq!(inner.end_line, 3);
     }
 
     #[test]

@@ -1,0 +1,15 @@
+{"type":"down","x":640.0,"y":202.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":215.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":228.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":242.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":255.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":202.0,"buttons":1,"kind":"mouse"}
+{"type":"up","x":640.0,"y":202.0,"buttons":0,"kind":"mouse"}
+{"type":"down","x":640.0,"y":202.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":215.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":202.0,"buttons":1,"kind":"mouse"}
+{"type":"up","x":640.0,"y":202.0,"buttons":0,"kind":"mouse"}
+{"type":"down","x":640.0,"y":308.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":317.0,"buttons":1,"kind":"mouse"}
+{"type":"move","x":640.0,"y":308.0,"buttons":1,"kind":"mouse"}
+{"type":"up","x":640.0,"y":308.0,"buttons":0,"kind":"mouse"}

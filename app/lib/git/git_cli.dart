@@ -1,7 +1,7 @@
 /// Git CLI 封装（docs/03 Git 行 / docs/09 W4）。
 ///
-/// 通过 `git` 子进程操作工作区仓库（不引 Rust 侧改动，Dart Process 即可）。
-/// [runner] 可注入：单测用假 runner 验证参数与解析，集成测试/真机走 Process.run。
+/// 通过 `git` 子进程操作工作区仓库，并把默认启动的 PID 登记给 Rust 监督器。
+/// [runner] 可注入：单测用假 runner 验证参数与解析。
 ///
 /// 口径约定：
 /// - status 用 `--porcelain -z`（NUL 分隔、路径不转义，中文/空格路径安全）；
@@ -11,6 +11,8 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
+import '../process/process_lifecycle.dart';
+
 /// 进程执行器签名（与 Process.run 对齐，便于注入假实现）。
 typedef ProcessRunner = Future<ProcessResult> Function(
   String executable,
@@ -18,7 +20,7 @@ typedef ProcessRunner = Future<ProcessResult> Function(
   String? workingDirectory,
 });
 
-/// 默认 runner：显式 UTF-8 解码（Windows 默认系统码表会把 git 的
+/// 显式 UTF-8 解码的独立 runner（Windows 默认系统码表会把 git 的
 /// UTF-8 输出解成乱码，中文提交信息/路径尤其如此）。
 Future<ProcessResult> processRunnerUtf8(
   String executable,
@@ -73,19 +75,55 @@ class GitStatusEntry {
 }
 
 class GitCli {
-  GitCli({required this.root, this.runner = processRunnerUtf8});
+  GitCli({
+    required this.root,
+    this.runner,
+    this.registerProcess,
+    this.unregisterProcess,
+  });
 
   /// 工作区根（git 命令的 cwd）。
   final String root;
-  final ProcessRunner runner;
+  /// Injected runner for tests or callers that provide their own process policy.
+  /// The default path uses Process.start so the Rust supervisor can track its PID.
+  final ProcessRunner? runner;
+  final ProcessRegistrar? registerProcess;
+  final ProcessUnregistrar? unregisterProcess;
 
   Future<ProcessResult> _git(List<String> args) async {
-    final r = await runner('git', args, workingDirectory: root);
+    final customRunner = runner;
+    final r = customRunner != null
+        ? await customRunner('git', args, workingDirectory: root)
+        : await _runTracked(args);
     if (r.exitCode != 0) {
       final err = (r.stderr as String).trim();
       throw GitError(err.isEmpty ? 'git ${args.first} 失败' : err);
     }
     return r;
+  }
+
+  Future<ProcessResult> _runTracked(List<String> args) async {
+    final process = await Process.start(
+      'git',
+      args,
+      workingDirectory: root,
+    );
+    // Git may be mutating the worktree. A supervisor registration error must not
+    // interrupt a command after it has started (for example during `git commit`).
+    try {
+      registerProcess?.call(process.pid, 'git', 'git ${args.first}', root);
+    } catch (_) {}
+    final stdout = process.stdout.transform(utf8.decoder).join();
+    final stderr = process.stderr.transform(utf8.decoder).join();
+    try {
+      final exitCode = await process.exitCode;
+      final output = await Future.wait([stdout, stderr]);
+      return ProcessResult(process.pid, exitCode, output[0], output[1]);
+    } finally {
+      try {
+        unregisterProcess?.call(process.pid);
+      } catch (_) {}
+    }
   }
 
   /// 是否在 Git 工作树内。
