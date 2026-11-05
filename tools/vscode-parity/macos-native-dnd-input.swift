@@ -230,9 +230,24 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
   tell application "System Events"
     set targetProcess to first application process whose unix id is \(processIdentifier)
     set frontmost of targetProcess to true
-    click menu bar item "Alula Code" of menu bar 1 of targetProcess
+    set menuBarItems to menu bar items of menu bar 1 of targetProcess
+    if (count of menuBarItems) is 0 then error "The app has no accessible native menu bar items"
+    set appMenuItem to item 1 of menuBarItems
+    set appMenuTitle to name of appMenuItem
+    click appMenuItem
     delay 0.25
-    click menu item "Quit Alula Code" of menu 1 of menu bar item "Alula Code" of menu bar 1 of targetProcess
+    set appMenuEntries to menu items of menu 1 of appMenuItem
+    set quitMenuName to missing value
+    repeat with menuEntry in appMenuEntries
+      set entryName to name of menuEntry
+      if entryName starts with "Quit" then
+        set quitMenuName to entryName
+        click menuEntry
+        exit repeat
+      end if
+    end repeat
+    if quitMenuName is missing value then error "Native app menu '" & appMenuTitle & "' has no Quit item"
+    return "Selected " & appMenuTitle & " > " & quitMenuName
   end tell
   """
   let process = Process()
