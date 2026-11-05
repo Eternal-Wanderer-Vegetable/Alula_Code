@@ -649,8 +649,8 @@
       "dependencies": [
         "feat-048"
       ],
-      "status": "in-progress",
-      "evidence": "Scope and pre-edit GitNexus review registered in docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-scope.md; scope refinement adds aggregate line/trace-cell ceilings before implementation. Implementation pending.",
+      "status": "done",
+      "evidence": "P04.124 / EDT-20b complete at product SHA 8f0bd3c. Bounded pure Dart Multi Diff projection; focused 8/8, full local init.sh (Flutter 1007), analyze and fmt passed. PR CI 41978244599 and three-platform hosted Platform Availability 41978235663 passed. Package artifact IDs Linux/Windows/macOS Intel x64: 13392069635 / 13393535593 / 13394292929. macOS hosted DnD test explicitly skipped because synthetic pointer routing is unavailable (13394038817); P15 device/Apple Silicon remains. GitNexus UNKNOWN caller and coverage gaps unresolved. Implementation: docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-implementation.md; scope/pre-edit analysis: docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-scope.md. Model only; P04 continues and P05 is not started.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
