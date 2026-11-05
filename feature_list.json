@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 through P05.4 / feat-056 are complete; continue one registered LAY/CMD child at a time until every matrix DoD passes. P05.4 LAY-01d: File default menu shows supported Open Folder, Save, Save As, Revert File in Code-OSS group order with context visibility; missing commands are not placeholders and Compare/Encoding/EOL keep other entries. Local full init.sh passed (Flutter 1,038, Rust workspace, Clippy, build_core); cargo fmt, Flutter analyze, Harness 100/100 and focused widget 1/1 passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Packages Linux/Windows/macOS: 13442405983 / 13441361037 / 13442660378. Linux/Windows DnD passed; macOS DnD 13441829448 was explicitly skipped due unavailable hosted pointer routing. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar and unzip integrity passed. P05.4 scope and evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md. P05/LAY-01 and macOS native menu remain open.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 through P05.4 / feat-056 are complete; continue one registered LAY/CMD child at a time until every matrix DoD passes. P05.4 LAY-01d: File default menu shows supported Open Folder, Save, Save As, Revert File in Code-OSS group order with context visibility; missing commands are not placeholders and Compare/Encoding/EOL keep other entries. Local full init.sh passed (Flutter 1,038, Rust workspace, Clippy, build_core); cargo fmt, Flutter analyze, Harness 100/100 and focused widget 1/1 passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Packages Linux/Windows/macOS: 13442405983 / 13441361037 / 13442660378. Linux/Windows DnD passed; macOS DnD 13441829448 was explicitly skipped due unavailable hosted pointer routing. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar and unzip integrity passed. P05.4 scope and evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md. P05/LAY-01 and macOS native menu remain open. P05.5 / feat-057 / LAY-01e is now the active child: fixed Code-OSS New Text File command/menu/keybinding scope and GitNexus impact are recorded in docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md; implementation has not started.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -736,6 +736,18 @@
       ],
       "status": "done",
       "evidence": "P05.4 / LAY-01d complete. Supported default File menu actions are grouped and filtered by editor/path context; unimplemented actions are omitted, Compare and Encoding/EOL retain other entry points. Focused widget 1/1 and full init.sh (Rust workspace, Clippy, build_core, Flutter 1,038) passed; cargo fmt, Flutter analyze, Harness 100/100 and JSON/diff checks passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Package artifacts: Linux 13442405983, Windows 13441361037, macOS 13442660378. Linux/Windows native DnD artifacts 13441306811 / 13441605922 passed; macOS DnD artifact 13441829448 explicitly skipped because synthetic pointer events did not reach Flutter. macOS startup diagnostics 13442710356. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar; unzip -t passed. Hosted macOS covers Intel x64 only. Scope, reference source, pre-edit GitNexus review, and complete evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-057",
+      "name": "P05.5 LAY-01e File > New Text File",
+      "description": "固定 Code-OSS 1.145.0 File > New Text File：命令 workbench.action.files.newUntitledFile、1_new 菜单组、Ctrl+N/Cmd+N；每次在当前 editor group 新建独立 Rust-backed 未命名文档。范围与编辑前 GitNexus 分析见 docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md。",
+      "dependencies": [
+        "feat-056"
+      ],
+      "status": "in-progress",
+      "evidence": "范围已登记，产品实现未开始。编辑前 GitNexus：CommandService LOW（3 direct import edges）；KeybindingSet LOW（1 import edge）；AlulaCore.openDoc UNKNOWN/lower-bound（49 个 receiver 未解析调用点），AlulaCore HIGH（28 个 caller/import edges，仅调用现有 API，不修改）；WorkbenchPage/OpenDoc/EditorGroup 不入图，已按文本确认工作区调用路径。固定参考与范围：docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

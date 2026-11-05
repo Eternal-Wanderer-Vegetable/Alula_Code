@@ -6,9 +6,9 @@
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a through P05.4 / feat-056 / LAY-01d are complete with local and hosted evidence. Continue by registering one next LAY/CMD matrix child at a time; LAY-01 default File menu coverage and macOS native-menu parity still need follow-up. P05 remains open.
+Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a through P05.4 / feat-056 / LAY-01d are complete with local and hosted evidence. P05.5 / feat-057 / LAY-01e scope for File > New Text File is registered; implement this one action before selecting another LAY/CMD child. LAY-01 default File menu coverage and macOS native-menu parity still need follow-up. P05 remains open.
 
-Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. P05.4 product commit `a5c2600` is pushed to draft PR #3. Its full local DoD, PR CI `42079988344`, and Linux/Windows/macOS Intel x64 Platform Availability `42079981274` passed. The macOS test package is artifact `13442660378`; macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events. P05.4 evidence is recorded in `docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md`; follow-up CI for the evidence commit remains to be checked.
+Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. P05.4 product commit `a5c2600` and evidence commit `64b9154` are pushed to draft PR #3. Product CI `42079988344` and Linux/Windows/macOS Intel x64 Platform Availability `42079981274` passed. The macOS test package is artifact `13442660378`; macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events. Evidence commit CI on `64b9154` completed successfully in all four jobs. P05.5 scope is registered in `docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md`.
 
 ## P05.1 Evidence
 
@@ -52,13 +52,13 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Recommended Next Step
 
-Register the next single LAY/CMD child from docs/03 and docs/11, run GitNexus impact before code edits, and write its scope/evidence file before implementation. Keep macOS native-menu parity as an explicit LAY-01 follow-up. P05.4 macOS package SHA-256 `5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873` matched its sidecar and `unzip -t` passed. Keep P05 open until every matrix DoD is complete.
+Commit the P05.5 scope registration, then re-run GitNexus impact against the registered head before editing code. Implement only New Text File (File `1_new`, Ctrl/Cmd+N) in this slice. Keep macOS native-menu parity as an explicit LAY-01 follow-up. P05.4 macOS package SHA-256 `5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873` matched its sidecar and `unzip -t` passed. Keep P05 open until every matrix DoD is complete.
 
 ## Next Session
 
-1. Commit/push the P05.4 hosted evidence update and check the follow-up PR CI.
-2. Select and register the next single LAY/CMD child from docs/03 and docs/11, with pre-edit GitNexus impact analysis.
-3. Continue one child at a time; keep native macOS menu parity explicit and do not close P05 until all matrix DoDs pass.
+1. Push the P05.5 scope registration and check its docs CI.
+2. Re-run pre-edit impact for Workbench/menu/keybinding symbols and implement New Text File with focused tests.
+3. Continue one LAY/CMD child at a time; keep native macOS menu parity explicit and do not close P05 until all matrix DoDs pass.
 
 ## Baseline
 
