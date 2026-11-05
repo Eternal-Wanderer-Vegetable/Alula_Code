@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 and P05.2 / feat-054 are complete; P05.3 / feat-055 LAY-01c is the sole active child. Continue one registered child at a time until all LAY/CMD DoDs are satisfied. P05.1: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md; P05.2: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md; P05.3 scope/pre-edit graph review: docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 through P05.4 / feat-056 are complete; continue one registered LAY/CMD child at a time until every matrix DoD passes. P05.4 LAY-01d: File default menu shows supported Open Folder, Save, Save As, Revert File in Code-OSS group order with context visibility; missing commands are not placeholders and Compare/Encoding/EOL keep other entries. Local full init.sh passed (Flutter 1,038, Rust workspace, Clippy, build_core); cargo fmt, Flutter analyze, Harness 100/100 and focused widget 1/1 passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Packages Linux/Windows/macOS: 13442405983 / 13441361037 / 13442660378. Linux/Windows DnD passed; macOS DnD 13441829448 was explicitly skipped due unavailable hosted pointer routing. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar and unzip integrity passed. P05.4 scope and evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md. P05/LAY-01 and macOS native menu remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -734,8 +734,8 @@
       "dependencies": [
         "feat-055"
       ],
-      "status": "in-progress",
-      "evidence": "实现已完成，本地定向 File 菜单 widget 测试 1/1；完整 init.sh 的 Rust workspace、Clippy、build_core 与 Flutter 1,038/1,038 通过；cargo fmt --check、Flutter analyze 0 issues、Harness 100/100、diff check 与 JSON 校验通过。PR CI 与 Linux/Windows/macOS Intel x64 hosted 可用性待运行。范围、GitNexus 编辑前影响和本地验证：docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md。",
+      "status": "done",
+      "evidence": "P05.4 / LAY-01d complete. Supported default File menu actions are grouped and filtered by editor/path context; unimplemented actions are omitted, Compare and Encoding/EOL retain other entry points. Focused widget 1/1 and full init.sh (Rust workspace, Clippy, build_core, Flutter 1,038) passed; cargo fmt, Flutter analyze, Harness 100/100 and JSON/diff checks passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Package artifacts: Linux 13442405983, Windows 13441361037, macOS 13442660378. Linux/Windows native DnD artifacts 13441306811 / 13441605922 passed; macOS DnD artifact 13441829448 explicitly skipped because synthetic pointer events did not reach Flutter. macOS startup diagnostics 13442710356. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar; unzip -t passed. Hosted macOS covers Intel x64 only. Scope, reference source, pre-edit GitNexus review, and complete evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
