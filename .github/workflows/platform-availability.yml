@@ -659,7 +659,7 @@ jobs:
     name: macOS build, launch smoke, and app package
     # Use the Intel lane when the ARM64/M1 hosted pool has no available runner.
     runs-on: macos-15-intel
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
