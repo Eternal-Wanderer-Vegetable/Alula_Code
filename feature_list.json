@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a is complete with local and hosted evidence. P05.2 / feat-054 / LAY-01b is the sole active child: recursive titlebar menus and submenu navigation. 20 LAY + 12 CMD matrix rows remain open. P05.1 hosted results and limitations: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05.2 scope/pre-edit analysis: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a and P05.2 / feat-054 / LAY-01b are complete with local and hosted evidence; P05 and LAY-01 remain open. Continue with one registered child at a time until all LAY/CMD DoDs are satisfied. P05.1 evidence: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05.2 implementation, retry details, artifacts, checksum and GitNexus limits: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -710,8 +710,8 @@
       "dependencies": [
         "feat-053"
       ],
-      "status": "in-progress",
-      "evidence": "P05.2 recursive command/submenu/separator model and production View > Appearance path implemented; menu visibility/enabled state, argument routing, separator normalization, mouse expansion and ArrowDown/ArrowRight/Enter activation covered. Local FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,032); cargo fmt --check, Flutter analyze 0 issues, title_bar_test 8/8, workbench menu integration 1/1, Harness 100/100, JSON and diff checks passed. Workbench save regression from missing File tooltip passed 1/1 after tooltip restoration. PR CI and Linux/Windows/macOS Intel x64 hosted validation pending. GitNexus pre-edit impact UNKNOWN; post-edit all-scope MEDIUM and compare-to-main HIGH; skipped workbench_page.dart (>512 KiB), 779 cross-language sites and process-budget truncation remain unresolved. Full evidence and exact scans: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
+      "status": "done",
+      "evidence": "P05.2 LAY-01b complete. Recursive command/submenu/separator model and production View > Appearance path implemented; visibility/enabled state, arguments, separator normalization, mouse expansion, ArrowDown/ArrowRight/Enter navigation and integration covered. Local FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,032); cargo fmt --check, Flutter analyze 0 issues, title_bar_test 8/8, workbench integration 1/1, Harness 100/100, JSON and diff checks passed. PR CI 42044717588 all four jobs passed. Platform Availability 42044705607 attempt 2 passed Linux x64, Windows x64, macOS Intel x64; attempt 1 had two macOS fixed-delay widget test failures and retry passed 1,032/1,032. Package artifacts Linux/Windows/macOS Intel x64 13425020073/13423773712/13427823993. Linux/Windows DnD passed; macOS DnD artifact 13427973390 explicitly skipped because CGEventPostToPid could not route synthetic pointer events. macOS startup 13427414246; ZIP SHA-256 5a2d3d9916ec45425d04ebb82d41b16733f8eaef07d1eb721c4d67f7056c64af matches sidecar and unzip integrity passed. Hosted Mac is Intel x64; Apple Silicon/native device remain P15. GitNexus impact UNKNOWN, compare-to-main HIGH, workbench_page.dart omitted (>512 KiB), 779 cross-language sites and process truncation remain unresolved. Full evidence: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
