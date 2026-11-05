@@ -5,14 +5,14 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.127 / EDT-20e 范围已登记；P04 / feat-026 仍进行中
+### P04 / feat-026 已完成；按请求暂停于 P05 之前
 
-- P04.126 产品/test commit `2bef912` 与证据 commit `2535dd7` 已推送；证据 commit CI `42000295293` 四 job 通过。本地完整 `init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,018）；focused review 6/6、Flutter analyze 0 issues、cargo fmt、Harness 100/100 通过。会话恢复后 `init.sh --fast` 复验 Rust、build_core、Flutter 1,018 全绿。
-- PR CI `41995436771` 四 job 全通过。Platform Availability `41995430298` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Packages Linux/Windows/macOS：`13400476798` / `13399999365` / `13401159500`；macOS ZIP SHA-256 与 sidecar 一致，`unzip -t` 通过。
-- Linux DnD artifact `13400456889`（22 pointer events）与 Windows `13399798782`（12 pointer events）完成 same-doc move、cross-doc copy、external text drop。macOS DnD `13401996084` 因 synthetic pointer route unavailable 明确 skip；P15 原生设备与 Apple Silicon 验收保留。macOS startup `13402141087` 显示成功 launch/Impeller、clamped stale frame timestamp、无 crash report；历史 SIGSEGV 仍未解决。
-- P04.127 / feat-052 已登记：新增 Workbench review 路径，接入现有 Rust 原子跨文档事务，并验收选择过滤、dirty、逐文档 undo/redo、保存读回、Discard 与过期失败。范围与预编辑证据：`docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md`。Code Action/Bulk Edit 生产 producer 不在本子项；后续继续逐项注册，不把 API 接通误记为生产 producer 已有。
-- GitNexus registration scan: 10,465 nodes / 325 clusters / 414 flows (incremental edge counts varied 23,670–24,482). Repeated all-scope results varied between 4 files / 3 documentation sections / 0 flows / LOW and 4 touched files with no indexed-symbol overlap (explicitly not clean); mapping remains unresolved. Successful compare-main scans are CRITICAL/capped: 1,703 files / 398 processes, with symbol counts varying from 3,959 to 4,334. One concurrent run was partial/UNKNOWN and is not complete evidence. Workbench file is 685,493 bytes and unindexed; `AlulaCore.applyWorkspaceEdit` upstream is UNKNOWN, with exact caller/source review in P04.127 scope. No clean graph claim.
-- P04/feat-026 仍开放；继续一次推进一个已登记子项，完成 P04 全部子项与阶段门后暂停，不启动 P05。P15 与 deferred 500 MiB 目标保持原状；不启动本地 GUI/Narrator。
+- P04.127 / EDT-20e 产品/test commit 4790317 已推送。Workbench review 接入现有 Rust 原子跨文档事务，以冻结版本拒绝过期批次；测试覆盖选择过滤、跨文档 dirty/undo/redo/save readback、Discard/Escape 和 stale 原子失败。没有改 Rust、FFI、ABI 或数值内存目标。
+- 本地完整 DoD 通过：Rust workspace、Clippy、build_core、Flutter 1,021；cargo fmt、Flutter analyze 0 issues、Harness 100/100、focused suite 3/3。
+- PR CI 42005290509 四个 job 全绿。Platform Availability 42005281831 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全绿；包 artifacts 13404093792 / 13405495307 / 13405544262。macOS ZIP sidecar SHA-256 与独立重算一致，unzip 完整性通过。
+- Linux DnD artifact 13404253418（19 pointer events）及 Windows 13404234177（13 pointer events）完成同文档 move、跨文档 copy、外部文本 drop。macOS DnD artifact 13405309473 因 hosted synthetic pointer route unavailable 明确 skip；macOS startup artifact 13406436899 无 crash report，仅表示本轮未复现，历史 SIGSEGV 未解决。macOS 包为 Intel x64；Apple Silicon 与原生设备检查仍在 P15。
+- P04 的 EDT-20 预览、Multi Diff、选择、Workbench 事务出口均完成。Code Action provider 属于 LNG-08/P08；本阶段未声称该 provider 已交付。P04 阶段关闭，P05 尚未启动；按用户要求在此暂停。500 MiB 优化目标继续后置；本机 GUI/Narrator 未启动。
+- P04.127 实现与 hosted/GitNexus 证据：docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md。PR #2 仍 OPEN/draft。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
