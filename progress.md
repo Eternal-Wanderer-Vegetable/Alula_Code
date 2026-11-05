@@ -5,12 +5,12 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.124 / EDT-20b 已完成；P04 / feat-026 仍进行中
+### P04.125 / EDT-20c 范围已登记；P04 / feat-026 仍进行中
 
-- 产品/test commit `8f0bd3c53d610dd37f5944cbc1c21f46130bbac0` 已推送。纯 Dart `BulkEditMultiDiffProjection` 以不可变版本快照构造有界多资源 before/after 与 diff projection；全量 fail-closed，限制包含 aggregate UTF-16、行数、diff rows、work 和 trace cells。8 个 focused tests、`cargo fmt --all -- --check`、`flutter analyze --no-pub`（0 issues）和完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh`（Flutter 1007）通过。
-- PR CI [41978244599](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41978244599) 四 job 全绿。Platform Availability [41978235663](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41978235663) 的 Linux x64、Windows x64、macOS hosted Intel x64 build/test/launch/package 全通过；package artifacts `13392069635` / `13393535593` / `13394292929`，macOS startup diagnostics `13394337743`。macOS clipboard 通过，但 hosted DnD fixture 因合成指针未路由到 Flutter 而明确 skip（artifact `13394038817`），不可登记为 DnD 通过；P15 Apple Silicon/原生设备门仍在。未启动本地 GUI/Narrator，历史崩溃签名未结案。
-- 实现和验证细节：`docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-implementation.md`。GitNexus 在产品 SHA 刷新为 10,355 nodes / 21,633 edges / 323 clusters / 413 flows；新模型 impact UNKNOWN/0 callers，精确文本搜索确认由新测试覆盖、尚无生产 UI 路由。planner 名称结果有重复候选；`computeDiffViewModel` 为 LOW。证据 all-scope scan 是 5 docs / 3 section symbols / 0 processes / LOW，映射到旧 P04.124 progress 标题和旧 handoff `Current Objective` sections。五个 >512 KiB 文件（含 Workbench）、763 跨语言字段、未排名 flows、跳过 callees 与预算截断仍未解决；保留映射/覆盖异常，不作 clean graph 结论。登记范围和编辑前分析见 `docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-scope.md`。
-- P04.124 仅完成 projection model，不代表可视 Multi Diff 或 apply/rollback 完成。当前尚无下一 active child；下一步单独注册 P04.125 可视 Multi Diff 表面并先做编辑前影响分析。P05 不启动；完成全部 P04 gates 后暂停。PR #2 保持 OPEN/draft，P15 与 500 MiB 目标状态不变。
+- P04.124 / EDT-20b 已完成。产品/test commit `8f0bd3c53d610dd37f5944cbc1c21f46130bbac0` 与证据 commit `4d72612804f4de15b885cc1afc2005ea3626d76b` 已推送。8 focused tests、完整本地 init.sh（Flutter 1007）、analyze、cargo fmt、PR CI `41978244599` 和 Linux/Windows/macOS Intel x64 Platform Availability `41978235663` 均通过；证据提交 CI `41983195939` 四 job 通过。macOS hosted DnD fixture 因 runner 未路由合成指针输入而明确 skip（artifact `13394038817`）；不能称 macOS DnD 通过，P15 设备/Apple Silicon 门仍在。实现报告：`docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-implementation.md`。
+- P04.125 / EDT-20c 是当前唯一 active child：针对冻结 projection 实现只读 Multi Diff resource navigator 与成对 diff row surface、键盘导航/关闭及可复用 route API。此 child 不含生产 Code Action/Bulk Edit 入口、edit checkbox、Apply/Discard 或事务应用/回滚。范围、Code-OSS 定位与编辑前 GitNexus 审查：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-scope.md`。
+- P04.125 预分析：GitNexus 对 >512 KiB 的 `workbench_page.dart` 返回 UNKNOWN/未索引；精确搜索定位 `_showEditableSnapshotCompare`、`_buildEditorArea` 与仅供测试的 `applyWorkspaceEdit`，仓库无生产 Bulk Edit/Code Action route。`SnapshotComparePreview` LOW (2)，`DiffViewModelResult` LOW (8)，`computeDiffViewModel` LOW (5，包含 Git flows)；selection/projection models UNKNOWN/0 callers，精确搜索确认尚无生产 UI 调用。763 跨语言字段、875/1075 未排名 entrypoints、375 skipped callees 与 14 trace cuts 保持未解决，不作 clean graph 结论。
+- P04 / feat-026 与 EDT-20 仍开放。先完成 P04.125 单项；Apply/Discard/rollback 保持后续独立 child。P05 不启动；完成全部 P04 gates 后暂停。PR #2 保持 OPEN/draft，P15 与 500 MiB 数值目标保持原状态；无本地 GUI/Narrator。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
