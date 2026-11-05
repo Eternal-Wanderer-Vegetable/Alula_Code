@@ -359,6 +359,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Set<int> _appliedLocalEditorTextDragTokens = <int>{};
   final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
   final Set<int> _mergeCloseInProgress = <int>{};
+  final Set<int> _mergeAcceptInProgress = <int>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -594,6 +595,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _acceptAllActiveMergeCombinations(),
       when: 'mergeEditorActive',
       enablement: 'mergeAllConflictsAvailable',
+    );
+    reg(
+      'mergeEditor.acceptMerge',
+      'Merge Editor',
+      'Complete Merge',
+      () async => _acceptActiveMergeResult(),
+      shortcut: _keybindings.shortcutFor('mergeEditor.acceptMerge'),
+      when: 'mergeEditorActive',
+      enablement: 'mergeEditorActive',
     );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
@@ -9968,6 +9978,113 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       return false;
     }
+  }
+
+  Future<void> _acceptActiveMergeResult() async {
+    final doc = _active;
+    if (doc != null) await _acceptMergeResult(doc);
+  }
+
+  Future<void> _acceptMergeResult(OpenDoc doc) async {
+    final session = doc.mergeResultSession;
+    final owner = _ownerOfView(doc);
+    if (_disposing ||
+        !mounted ||
+        session == null ||
+        session.isDisposed ||
+        owner == null ||
+        !_mergeAcceptInProgress.add(doc.id)) {
+      return;
+    }
+
+    try {
+      var confirmedWithConflicts = false;
+      var prompt = session.closePrompt;
+      if (prompt.unresolvedConflictCount > 0) {
+        if (!await _confirmMergeAcceptWithConflicts(doc)) return;
+        confirmedWithConflicts = true;
+      }
+      if (!mounted ||
+          session.isDisposed ||
+          !identical(doc.mergeResultSession, session) ||
+          !owner.docs.any((view) => identical(view, doc))) {
+        return;
+      }
+
+      // Commit any pending IME composition before taking the version checked by
+      // finishAccept. A newly exposed conflict gets its own confirmation.
+      for (final view in _viewsOf(doc).toList(growable: false)) {
+        _flushInput(view, commitComposition: true);
+      }
+      prompt = session.closePrompt;
+      if (prompt.unresolvedConflictCount > 0 && !confirmedWithConflicts) {
+        if (!await _confirmMergeAcceptWithConflicts(doc)) return;
+        confirmedWithConflicts = true;
+      }
+      if (!mounted || session.isDisposed) return;
+
+      final outcome = await session.finishAccept(
+        confirmedWithConflicts: confirmedWithConflicts,
+        save: () async {
+          if (doc.path == null) {
+            await _saveAsDoc(doc);
+          } else {
+            await _saveDocToPath(doc, doc.path!);
+          }
+          return mounted &&
+              !doc.doc.isDirty &&
+              doc.diskState == DiskDocumentState.current;
+        },
+        closeResultDocument: () async {
+          if (mounted) _closeDocNow(owner, doc);
+        },
+      );
+      if (outcome == MergeResultCloseOutcome.closed) {
+        // The accepted session is disposed after the close callback. Refresh
+        // contexts once more so a surviving split view becomes a plain editor.
+        _syncCommandContext();
+        return;
+      }
+      if (outcome == MergeResultCloseOutcome.cancelled || !mounted) return;
+      setState(() {
+        _statusDetail = switch (outcome) {
+          MergeResultCloseOutcome.saveFailed => '合并结果未成功保存，编辑器保持打开',
+          MergeResultCloseOutcome.resultChangedDuringSave =>
+            '保存期间合并结果发生变化，编辑器保持打开',
+          _ => '完成合并未成功，编辑器保持打开',
+        };
+      });
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '完成合并失败，编辑器保持打开：$error');
+      }
+    } finally {
+      _mergeAcceptInProgress.remove(doc.id);
+    }
+  }
+
+  Future<bool> _confirmMergeAcceptWithConflicts(OpenDoc doc) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('merge-editor-accept-merge-dialog'),
+        title: const Text('完成合并？'),
+        content: Text('是否完成“${doc.name}”的合并？文件中仍有未解决的冲突。'),
+        actions: [
+          TextButton(
+            key: const ValueKey('merge-editor-accept-merge-cancel'),
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('继续合并'),
+          ),
+          FilledButton(
+            key: const ValueKey('merge-editor-accept-merge-confirm'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('仍有冲突也完成合并'),
+          ),
+        ],
+      ),
+    );
+    return mounted && confirmed == true;
   }
 
   bool _acceptMergeConflict(OpenDoc doc, AlulaMergeSide side) {

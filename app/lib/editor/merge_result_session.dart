@@ -514,6 +514,34 @@ class MergeResultSession {
     return MergeResultCloseOutcome.closed;
   }
 
+  /// Completes the merge by saving the current Rust result and then closing it.
+  /// Unresolved conflicts must have been explicitly confirmed by the caller.
+  Future<MergeResultCloseOutcome> finishAccept({
+    required bool confirmedWithConflicts,
+    required Future<bool> Function() save,
+    required Future<void> Function() closeResultDocument,
+  }) async {
+    final prompt = closePrompt;
+    if (prompt.unresolvedConflictCount > 0 && !confirmedWithConflicts) {
+      return MergeResultCloseOutcome.cancelled;
+    }
+
+    final document = _requireResultDocument();
+    final beforeVersion = document.resync().version;
+    if (!await save()) return MergeResultCloseOutcome.saveFailed;
+    final afterSave = document.resync();
+    if (afterSave.version != beforeVersion) {
+      return MergeResultCloseOutcome.resultChangedDuringSave;
+    }
+    document.markSaved();
+    if (document.isDirty) return MergeResultCloseOutcome.saveFailed;
+    _rememberSavedResult(afterSave.content);
+
+    await closeResultDocument();
+    dispose();
+    return MergeResultCloseOutcome.closed;
+  }
+
   void dispose() {
     if (_disposed) return;
     _disposed = true;
