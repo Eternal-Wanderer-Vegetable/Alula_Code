@@ -587,6 +587,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'mergeEditorActive',
       enablement: 'mergeAllConflictsAvailable',
     );
+    reg(
+      'mergeEditor.acceptAllCombination',
+      'Merge Editor',
+      'Accept All Combination',
+      () async => _acceptAllActiveMergeCombinations(),
+      when: 'mergeEditorActive',
+      enablement: 'mergeAllConflictsAvailable',
+    );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
@@ -2389,7 +2397,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           !mergeSession.isDisposed &&
           !mergeSession.hasStaleConflictRanges &&
           mergeSession.conflictCount > 0,
-      'mergeCurrentConflictAvailable': currentMergeConflict != null,
+      'mergeCurrentConflictAvailable':
+          currentMergeConflict != null && !currentMergeConflict.isCombination,
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
@@ -9850,7 +9859,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final unresolvedIndices = <int>[];
     for (var index = 0; index < conflicts.length; index++) {
       final conflict = conflicts[index];
-      if (resolutions.containsKey(conflict.id)) continue;
+      if (conflict.isCombination || resolutions.containsKey(conflict.id)) {
+        continue;
+      }
       unresolved.add(conflict);
       unresolvedIndices.add(index);
     }
@@ -9905,6 +9916,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (doc != null) _acceptAllMergeConflicts(doc, side);
   }
 
+  void _acceptAllActiveMergeCombinations() {
+    final doc = _active;
+    if (doc != null) _acceptAllMergeCombinations(doc);
+  }
+
   bool _acceptAllMergeConflicts(OpenDoc doc, AlulaMergeSide side) {
     final session = doc.mergeResultSession;
     if (session == null ||
@@ -9927,10 +9943,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  bool _acceptAllMergeCombinations(OpenDoc doc) {
+    final session = doc.mergeResultSession;
+    if (session == null ||
+        session.isDisposed ||
+        session.hasStaleConflictRanges ||
+        session.unresolvedConflictCount == 0) {
+      return false;
+    }
+
+    try {
+      final plan = session.planAcceptAllCombinations();
+      if (plan == null || !_applyMergeResultPlan(doc, plan)) return false;
+      _syncCommandContext();
+      return true;
+    } on MergeResultSessionException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '合并冲突未应用：${error.detail}');
+      }
+      return false;
+    } on AlulaMergeException catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '智能组合失败：${error.code}');
+      }
+      return false;
+    }
+  }
+
   bool _acceptMergeConflict(OpenDoc doc, AlulaMergeSide side) {
     final session = doc.mergeResultSession;
     final conflict = _mergeConflictAtSelection(doc);
-    if (session == null || conflict == null) return false;
+    if (session == null || conflict == null || conflict.isCombination) {
+      return false;
+    }
     if (session.resolutions[conflict.id] == side) return false;
 
     try {

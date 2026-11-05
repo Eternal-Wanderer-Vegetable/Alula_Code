@@ -84,7 +84,9 @@ class _MergeEditorSurfaceState extends State<MergeEditorSurface> {
             .indexWhere((conflict) => conflict.id == activeConflict.id);
     final canNavigate =
         widget.conflictRangesCurrent && widget.unresolvedConflictCount > 0;
-    final canAccept = widget.conflictRangesCurrent && activeConflict != null;
+    final canAccept = widget.conflictRangesCurrent &&
+        activeConflict != null &&
+        !activeConflict.isCombination;
     final unresolvedSummary = widget.unresolvedConflictCount == 1
         ? '1 unresolved conflict'
         : '${widget.unresolvedConflictCount} unresolved conflicts';

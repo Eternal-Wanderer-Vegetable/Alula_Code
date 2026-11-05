@@ -178,6 +178,100 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  testWidgets('accepts all smart-combinable conflicts through the F1 action',
+      (tester) async {
+    const mergeBase = '😀\nleft=0; right=0\nmiddle\np=0; q=0\nmiddle2\nvalue=0';
+    const mergeInput1 =
+        '😀\nlong-left=1; right=0\nmiddle\np=1; q=0\nmiddle2\nvalue=1';
+    const mergeInput2 =
+        '😀\nleft=0; long-right=2\nmiddle\np=0; q=2\nmiddle2\nvalue=2';
+    baseFile.writeAsStringSync(mergeBase);
+    input1File.writeAsStringSync(mergeInput1);
+    input2File.writeAsStringSync(mergeInput2);
+    final core = AlulaCore.load();
+    final decodedBase = core.workspace.readFileDocument(baseFile.path).content;
+    final decodedInput1 =
+        core.workspace.readFileDocument(input1File.path).content;
+    final decodedInput2 =
+        core.workspace.readFileDocument(input2File.path).content;
+    final projection = core.merge.project(
+      base: decodedBase,
+      input1: decodedInput1,
+      input2: decodedInput2,
+    );
+    expect(projection.conflicts, hasLength(3));
+    initialResult = projection.result;
+    resultFile.writeAsStringSync(initialResult);
+
+    await mount(tester);
+    expect(commands!.isVisible('mergeEditor.acceptAllCombination'), isFalse);
+    await openMergeEditor(request());
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(commands!.isVisible('mergeEditor.acceptAllCombination'), isTrue);
+    expect(commands!.isEnabled('mergeEditor.acceptAllCombination'), isTrue);
+
+    await tester.tap(find.byTooltip('拆分编辑器').first);
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('result.txt').first);
+    await tester.pump(const Duration(milliseconds: 350));
+    final mergeViews = find.byType(RustTextInputField);
+    expect(mergeViews, findsNWidgets(2));
+    final textFields = find.descendant(
+      of: mergeViews,
+      matching: find.byType(TextField),
+    );
+    expect(textFields, findsNWidgets(2));
+    expect(
+      tester
+          .widgetList<RustTextInputField>(mergeViews)
+          .map((view) => view.inputWindow.document.id)
+          .toSet(),
+      hasLength(1),
+    );
+
+    expect(
+      await commands!.execute('mergeEditor.acceptAllCombination'),
+      CommandExecutionStatus.executed,
+    );
+    await tester.pump(const Duration(milliseconds: 150));
+    const combined =
+        '😀\nlong-left=1; long-right=2\nmiddle\np=1; q=2\nmiddle2\nvalue=0';
+    expect(
+      tester
+          .widgetList<TextField>(textFields)
+          .map((field) => field.controller!.text),
+      everyElement(combined),
+    );
+    expect(find.text('1 unresolved conflict'), findsNWidgets(2));
+    expect(commands!.isEnabled('merge.goToNextUnhandledConflict'), isTrue);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput1'), isFalse);
+    expect(commands!.isEnabled('merge.toggleActiveConflictInput2'), isFalse);
+
+    await commands!.execute('editor.undo');
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(
+      tester
+          .widgetList<TextField>(textFields)
+          .map((field) => field.controller!.text),
+      everyElement(initialResult),
+    );
+    expect(commands!.isEnabled('merge.goToNextUnhandledConflict'), isTrue);
+
+    await commands!.execute('editor.redo');
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(
+      tester
+          .widgetList<TextField>(textFields)
+          .map((field) => field.controller!.text),
+      everyElement(combined),
+    );
+    await commands!.execute('file.save');
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(resultFile.readAsStringSync(), combined);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets(
       'bulk side actions override mixed choices in one undoable split edit and save',
       (tester) async {

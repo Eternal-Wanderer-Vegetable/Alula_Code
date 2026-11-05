@@ -613,7 +613,7 @@
         "feat-039"
       ],
       "status": "in-progress",
-      "evidence": "Scope registered in docs/03 P04.121 and docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-scope.md. Pre-edit GitNexus risks: MergeResultSession and planAcceptAll UNKNOWN with 2 dropped typed call sites; AlulaMergeProjection and AlulaMergeConflict LOW; large Workbench file/symbols are unindexed/UNKNOWN. Text search confirms Workbench and test callsites. No implementation yet.",
+      "evidence": "Implementation and local DoD complete; hosted PR CI and Platform Availability pending. Exact F1 action mergeEditor.acceptAllCombination uses ABI v40, plans all eligible candidates atomically through one Rust TextOp/undo route, and preserves combined state through projection, split views, undo/redo/save. Candidate snapshot history is capped at 32 entries and 8 Mi UTF-16 units. Focused merge suites 38/38; full init.sh passed with Flutter 979; cargo fmt, flutter analyze (0 issues), and diff check passed. Mem-probe before/after stress peaks 674.9/812.5 MiB with exited wrapper tail samples at 0; no comparable product baseline, so no memory reduction claim. Implementation report: docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-implementation.md. Pre-edit GitNexus risk/coverage warnings remain unresolved; do not call graph clean. P04/feat-026/EDT-19/P15 remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }

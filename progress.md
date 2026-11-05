@@ -5,9 +5,11 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.120 / EDT-19j 已完成；P04.121 / EDT-19k 进行中
+### P04.120 / EDT-19j 已完成；P04.121 / EDT-19k 本地实现完成，hosted gates 待完成
 
-- P04.120 证据提交 `248294d` 的 PR CI `41947501750` 已成功；P04.121 / EDT-19k 已在 docs/03 与 feat-046 登记。当前只推进 Accept All Combination 命令，尚无产品代码修改；基线根目录 /mnt/e/alula_code 的 `bash init.sh --fast` 通过（Rust workspace、Clippy、build_core、Flutter 658）。编辑前风险与边界见 `docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-scope.md`。
+- P04.121 已完成产品实现与本地 DoD：F1 `mergeEditor.acceptAllCombination` 使用 ABI v40 原子规划/应用所有可组合冲突；组合状态贯穿 UTF-16 projection、单步 Rust undo、双视图、保存/撤销/重做；历史组合候选另受 8 Mi UTF-16 快照预算保护。定向 38/38、完整 `bash init.sh`（Flutter 979）、cargo fmt、Flutter analyze 0 issues、diff check 全通过。实现报告：`docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-implementation.md`。内存压力样本前后峰值 674.9/812.5 MiB，进程尾部 0 且只采到 Flutter wrapper，不可比较也不代表产品稳态；未作内存下降结论。PR CI / Platform Availability 待当前实现 SHA，feat-046 与 P04 保持 in-progress。
+
+- P04.120 证据提交 `248294d` 的 PR CI `41947501750` 已成功；P04.121 / EDT-19k 的实现与本地 DoD 完成，等待当前 SHA 的 PR CI 和 Platform Availability。编辑前风险与边界见 `docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-scope.md`。
 - P04.118 / EDT-19h 已完成并推送产品/test commit 6cfb964 与证据 commit 662b002；当前 SHA 662b002 的 PR CI run 41916596535 四 job 全绿。P04.118 证据见 docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md。
 - P04.119 产品提交 70fdf1c 已推送：新增 editor-merge bounded smart-combination planner 与 9 项定向测试；不动现有 apply_changes、FFI/ABI、Dart/session 或 Workbench action。cargo test -p editor-merge 25/25、cargo fmt、package clippy、bash init.sh（Rust/Clippy/build_core/Flutter 966）及 flutter analyze 全过。实现证据见 docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-implementation.md；权威 DoD 在 docs/03 P04.119。
 - P04.119 源码变更后索引刷新为 10,681 nodes / 29,297 edges / 313 clusters / 409 flows。保留覆盖缺口：5 个 >512 KiB 文件、763 跨语言属性点、842 丢弃 entrypoint candidates、387 skipped callees、13 budget cuts。combine_conflict 同名 impact 有两个 CRITICAL 候选，context/detect-changes 混入无关流程；调用点文本核对为 crate 导出与测试。apply_changes full impact 223/193/35/7 CRITICAL，但 summary-only 重跑 101/71/35/6；变动未触及该共享 helper。详见 P04.119 implementation report；不得将图谱视作 clean。

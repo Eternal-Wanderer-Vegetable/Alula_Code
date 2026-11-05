@@ -208,6 +208,52 @@ void main() {
     );
   });
 
+  testWidgets('disables side acceptance for a smart-combined conflict',
+      (tester) async {
+    const combined = AlulaMergeConflict(
+      id: 31,
+      baseStartLine: 1,
+      baseEndLineExclusive: 2,
+      resultStartUtf16: 0,
+      resultEndUtf16: 10,
+      baseText: 'base line',
+      input1Text: 'left line',
+      input2Text: 'right line',
+      resolution: null,
+      isCombination: true,
+    );
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(
+        body: MergeEditorSurface(
+          base: 'base line',
+          input1: 'left line',
+          input2: 'right line',
+          resultEditor: ColoredBox(color: Colors.blueGrey),
+          conflicts: [combined],
+          activeConflict: combined,
+          unresolvedConflictCount: 0,
+        ),
+      ),
+    ));
+
+    expect(
+      tester
+          .widget<TextButton>(
+            find.byKey(const ValueKey('merge-editor-accept-input1')),
+          )
+          .onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextButton>(
+            find.byKey(const ValueKey('merge-editor-accept-input2')),
+          )
+          .onPressed,
+      isNull,
+    );
+  });
+
   testWidgets('routes bulk side acceptance and disables stale or empty actions',
       (tester) async {
     var acceptAllInput1 = 0;

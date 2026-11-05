@@ -5,6 +5,7 @@ import '../bridge/alula_core.dart';
 const int maxMergeSessionInputUtf8Bytes = 8 * 1024 * 1024;
 const int _maxMergeResolutionSnapshots = 32;
 const int _maxMergeResolutionSnapshotConflicts = 1024;
+const int _maxMergeResolutionSnapshotCombinationCodeUnits = 8 * 1024 * 1024;
 
 enum MergeResultSessionErrorCode {
   disposed,
@@ -73,9 +74,11 @@ class MergeResultEditPlan {
     required List<TextOp> operations,
     required this.projection,
     required Map<int, AlulaMergeSide> resolutions,
+    required Map<int, String> combinationCandidates,
   })  : _sessionToken = sessionToken,
         operations = List.unmodifiable(operations),
-        resolutions = UnmodifiableMapView(resolutions);
+        resolutions = UnmodifiableMapView(resolutions),
+        combinationCandidates = UnmodifiableMapView(combinationCandidates);
 
   final Object _sessionToken;
   final int generation;
@@ -83,6 +86,7 @@ class MergeResultEditPlan {
   final List<TextOp> operations;
   final AlulaMergeProjection projection;
   final Map<int, AlulaMergeSide> resolutions;
+  final Map<int, String> combinationCandidates;
 }
 
 class _MergeReplacement {
@@ -95,6 +99,30 @@ class _MergeReplacement {
   final int start;
   final int end;
   final String text;
+}
+
+class _MergeResolutionSnapshot {
+  _MergeResolutionSnapshot({
+    required Map<int, AlulaMergeSide> resolutions,
+    required Map<int, String> combinationCandidates,
+  })  : resolutions = UnmodifiableMapView(Map.of(resolutions)),
+        combinationCandidates =
+            UnmodifiableMapView(Map.of(combinationCandidates)),
+        combinationCandidateCodeUnits = combinationCandidates.values.fold<int>(
+          0,
+          (total, candidate) {
+            const saturated =
+                _maxMergeResolutionSnapshotCombinationCodeUnits + 1;
+            if (total >= saturated || candidate.length >= saturated - total) {
+              return saturated;
+            }
+            return total + candidate.length;
+          },
+        );
+
+  final Map<int, AlulaMergeSide> resolutions;
+  final Map<int, String> combinationCandidates;
+  final int combinationCandidateCodeUnits;
 }
 
 /// Stateful merge inputs and conflict choices bound to one Rust result document.
@@ -118,7 +146,10 @@ class MergeResultSession {
         _savedProjection = projection,
         _savedResult = projection.result,
         _projectedVersion = projectedVersion {
-    _resolutionHistory.add(const {});
+    _resolutionHistory.add(_MergeResolutionSnapshot(
+      resolutions: const {},
+      combinationCandidates: const {},
+    ));
   }
 
   factory MergeResultSession.open({
@@ -170,8 +201,11 @@ class MergeResultSession {
   AlulaMergeProjection? _savedProjection;
   String? _savedResult;
   Map<int, AlulaMergeSide> _resolutions = const {};
+  Map<int, String> _combinationCandidates = const {};
   Map<int, AlulaMergeSide> _savedResolutions = const {};
-  final List<Map<int, AlulaMergeSide>> _resolutionHistory = [];
+  Map<int, String> _savedCombinationCandidates = const {};
+  final List<_MergeResolutionSnapshot> _resolutionHistory = [];
+  int _resolutionHistoryCombinationCodeUnits = 0;
   int _projectedVersion;
   int _generation = 0;
   bool _disposed = false;
@@ -235,26 +269,83 @@ class MergeResultSession {
 
     final nextResolutions = Map<int, AlulaMergeSide>.of(_resolutions)
       ..[conflictId] = side;
-    final nextProjection = _project(nextResolutions);
+    final nextCombinationCandidates =
+        Map<int, String>.of(_combinationCandidates)..remove(conflictId);
+    final nextProjection = _project(
+      nextResolutions,
+      combinationCandidates: nextCombinationCandidates,
+    );
     return _planProjection(
       nextProjection,
       nextResolutions,
+      nextCombinationCandidates,
       [_replacementFor(conflict, side)],
     );
   }
 
   MergeResultEditPlan planAcceptAll(AlulaMergeSide side) {
     _assertCurrentResult();
-    final nextResolutions = <int, AlulaMergeSide>{
-      for (final conflict in _currentProjection.conflicts) conflict.id: side,
-    };
-    final replacements = [
-      for (final conflict in _currentProjection.conflicts)
-        _replacementFor(conflict, side),
-    ];
+    final nextResolutions = <int, AlulaMergeSide>{};
+    final replacements = <_MergeReplacement>[];
+    for (final conflict in _currentProjection.conflicts) {
+      if (conflict.isCombination) continue;
+      nextResolutions[conflict.id] = side;
+      if (_resolutions[conflict.id] == side) continue;
+      replacements.add(_replacementFor(conflict, side));
+    }
+    final nextCombinationCandidates =
+        Map<int, String>.of(_combinationCandidates);
     return _planProjection(
-      _project(nextResolutions),
+      _project(
+        nextResolutions,
+        combinationCandidates: nextCombinationCandidates,
+      ),
       nextResolutions,
+      nextCombinationCandidates,
+      replacements,
+    );
+  }
+
+  /// Plans the Code-OSS smart-combination action without mutating session or
+  /// Rust document state. A null candidate leaves that conflict untouched.
+  /// If any bounded FFI request fails, no partial plan is returned.
+  MergeResultEditPlan? planAcceptAllCombinations() {
+    _assertCurrentResult();
+    final nextResolutions = Map<int, AlulaMergeSide>.of(_resolutions);
+    final nextCombinationCandidates =
+        Map<int, String>.of(_combinationCandidates);
+    final replacements = <_MergeReplacement>[];
+
+    for (final conflict in _currentProjection.conflicts) {
+      if (conflict.isCombination ||
+          _resolutions[conflict.id] == AlulaMergeSide.input1) {
+        continue;
+      }
+      final candidate = _mergeApi.combinationCandidate(
+        base: conflict.baseText,
+        input1: conflict.input1Text,
+        input2: conflict.input2Text,
+      );
+      if (candidate == null) continue;
+
+      nextResolutions.remove(conflict.id);
+      nextCombinationCandidates[conflict.id] = candidate;
+      replacements.add(_MergeReplacement(
+        start: conflict.resultStartUtf16,
+        end: conflict.resultEndUtf16,
+        text: candidate,
+      ));
+    }
+
+    if (replacements.isEmpty) return null;
+    final nextProjection = _project(
+      nextResolutions,
+      combinationCandidates: nextCombinationCandidates,
+    );
+    return _planProjection(
+      nextProjection,
+      nextResolutions,
+      nextCombinationCandidates,
       replacements,
     );
   }
@@ -274,6 +365,7 @@ class MergeResultSession {
     }
     _projection = plan.projection;
     _resolutions = Map.unmodifiable(plan.resolutions);
+    _combinationCandidates = Map.unmodifiable(plan.combinationCandidates);
     _projectedVersion = current.version;
     _externallyChanged = false;
     _rememberResolutionSnapshot();
@@ -304,11 +396,15 @@ class MergeResultSession {
     }
 
     if (allowKnownProjectionRestore) {
-      for (final resolutions in _resolutionHistory.reversed) {
-        final candidate = _project(resolutions);
+      for (final snapshot in _resolutionHistory.reversed) {
+        final candidate = _project(
+          snapshot.resolutions,
+          combinationCandidates: snapshot.combinationCandidates,
+        );
         if (candidate.result != current.content) continue;
         _projection = candidate;
-        _resolutions = resolutions;
+        _resolutions = snapshot.resolutions;
+        _combinationCandidates = snapshot.combinationCandidates;
         _projectedVersion = current.version;
         _externallyChanged = false;
         _generation++;
@@ -317,6 +413,7 @@ class MergeResultSession {
     }
 
     _resolutions = const {};
+    _combinationCandidates = const {};
     _projectedVersion = current.version;
     _externallyChanged = true;
     _generation++;
@@ -405,6 +502,7 @@ class MergeResultSession {
       if (reverted.content == _savedProjection?.result) {
         _projection = _savedProjection;
         _resolutions = Map.unmodifiable(_savedResolutions);
+        _combinationCandidates = Map.unmodifiable(_savedCombinationCandidates);
         _externallyChanged = false;
       }
       _projectedVersion = reverted.version;
@@ -427,8 +525,11 @@ class MergeResultSession {
     _savedProjection = null;
     _savedResult = null;
     _resolutions = const {};
+    _combinationCandidates = const {};
     _savedResolutions = const {};
+    _savedCombinationCandidates = const {};
     _resolutionHistory.clear();
+    _resolutionHistoryCombinationCodeUnits = 0;
     _externallyChanged = false;
     _generation++;
   }
@@ -438,26 +539,55 @@ class MergeResultSession {
     if (result == _currentProjection.result) {
       _savedProjection = _currentProjection;
       _savedResolutions = Map.unmodifiable(_resolutions);
+      _savedCombinationCandidates = Map.unmodifiable(_combinationCandidates);
     }
   }
 
   void _rememberResolutionSnapshot() {
     if (_resolutionHistory.isNotEmpty &&
-        _sameResolutions(_resolutionHistory.last, _resolutions)) {
+        _sameSnapshot(
+          _resolutionHistory.last,
+          _resolutions,
+          _combinationCandidates,
+        )) {
       return;
     }
     final conflictCount = _currentProjection.conflictCount;
     if (conflictCount > _maxMergeResolutionSnapshotConflicts) {
-      _resolutionHistory
-        ..clear()
-        ..add(const {})
-        ..add(_resolutions);
+      _clearResolutionHistory();
+      _addResolutionSnapshot(_MergeResolutionSnapshot(
+        resolutions: const {},
+        combinationCandidates: const {},
+      ));
+      _addResolutionSnapshot(_MergeResolutionSnapshot(
+        resolutions: _resolutions,
+        combinationCandidates: _combinationCandidates,
+      ));
       return;
     }
-    _resolutionHistory.add(_resolutions);
-    while (_resolutionHistory.length > _maxMergeResolutionSnapshots) {
-      // Preserve the original unresolved projection for a complete undo.
-      _resolutionHistory.removeAt(1);
+    _addResolutionSnapshot(_MergeResolutionSnapshot(
+      resolutions: _resolutions,
+      combinationCandidates: _combinationCandidates,
+    ));
+  }
+
+  void _clearResolutionHistory() {
+    _resolutionHistory.clear();
+    _resolutionHistoryCombinationCodeUnits = 0;
+  }
+
+  void _addResolutionSnapshot(_MergeResolutionSnapshot snapshot) {
+    _resolutionHistory.add(snapshot);
+    _resolutionHistoryCombinationCodeUnits +=
+        snapshot.combinationCandidateCodeUnits;
+    while (_resolutionHistory.length > 2 &&
+        (_resolutionHistory.length > _maxMergeResolutionSnapshots ||
+            _resolutionHistoryCombinationCodeUnits >
+                _maxMergeResolutionSnapshotCombinationCodeUnits)) {
+      // Preserve the original unresolved projection and the current state.
+      final removed = _resolutionHistory.removeAt(1);
+      _resolutionHistoryCombinationCodeUnits -=
+          removed.combinationCandidateCodeUnits;
     }
   }
 
@@ -472,13 +602,112 @@ class MergeResultSession {
     return true;
   }
 
-  AlulaMergeProjection _project(Map<int, AlulaMergeSide> resolutions) =>
-      _mergeApi.project(
-        base: _base!,
-        input1: _input1!,
-        input2: _input2!,
-        resolutions: resolutions,
+  bool _sameSnapshot(
+    _MergeResolutionSnapshot snapshot,
+    Map<int, AlulaMergeSide> resolutions,
+    Map<int, String> combinationCandidates,
+  ) =>
+      _sameResolutions(snapshot.resolutions, resolutions) &&
+      _sameCombinationCandidates(
+        snapshot.combinationCandidates,
+        combinationCandidates,
       );
+
+  bool _sameCombinationCandidates(
+    Map<int, String> left,
+    Map<int, String> right,
+  ) {
+    if (left.length != right.length) return false;
+    for (final entry in left.entries) {
+      if (right[entry.key] != entry.value) return false;
+    }
+    return true;
+  }
+
+  AlulaMergeProjection _project(
+    Map<int, AlulaMergeSide> resolutions, {
+    Map<int, String> combinationCandidates = const {},
+  }) {
+    final projection = _mergeApi.project(
+      base: _base!,
+      input1: _input1!,
+      input2: _input2!,
+      resolutions: resolutions,
+    );
+    if (combinationCandidates.isEmpty) return projection;
+    if (combinationCandidates.length > projection.unresolvedConflictCount) {
+      throw const MergeResultSessionException(
+        MergeResultSessionErrorCode.projectionMismatch,
+        'Combination candidates exceed the unresolved conflict count',
+      );
+    }
+
+    final candidates = Map<int, String>.of(combinationCandidates);
+    final conflicts = <AlulaMergeConflict>[];
+    final replacements = <_MergeReplacement>[];
+    var shift = 0;
+    for (final conflict in projection.conflicts) {
+      final candidate = candidates.remove(conflict.id);
+      final start = conflict.resultStartUtf16 + shift;
+      if (candidate == null) {
+        conflicts.add(AlulaMergeConflict(
+          id: conflict.id,
+          baseStartLine: conflict.baseStartLine,
+          baseEndLineExclusive: conflict.baseEndLineExclusive,
+          resultStartUtf16: start,
+          resultEndUtf16: conflict.resultEndUtf16 + shift,
+          baseText: conflict.baseText,
+          input1Text: conflict.input1Text,
+          input2Text: conflict.input2Text,
+          resolution: conflict.resolution,
+        ));
+        continue;
+      }
+      if (conflict.resolution != null) {
+        throw MergeResultSessionException(
+          MergeResultSessionErrorCode.projectionMismatch,
+          'Conflict ${conflict.id} is both side-resolved and combined',
+        );
+      }
+
+      replacements.add(_MergeReplacement(
+        start: conflict.resultStartUtf16,
+        end: conflict.resultEndUtf16,
+        text: candidate,
+      ));
+      conflicts.add(AlulaMergeConflict(
+        id: conflict.id,
+        baseStartLine: conflict.baseStartLine,
+        baseEndLineExclusive: conflict.baseEndLineExclusive,
+        resultStartUtf16: start,
+        resultEndUtf16: start + candidate.length,
+        baseText: conflict.baseText,
+        input1Text: conflict.input1Text,
+        input2Text: conflict.input2Text,
+        resolution: null,
+        isCombination: true,
+      ));
+      shift += candidate.length -
+          (conflict.resultEndUtf16 - conflict.resultStartUtf16);
+    }
+    if (candidates.isNotEmpty) {
+      throw MergeResultSessionException(
+        MergeResultSessionErrorCode.unknownConflict,
+        'Unknown merge combination conflict ids ${candidates.keys}',
+      );
+    }
+    final normalized = _normalizeReplacements(
+      replacements,
+      projection.result.length,
+    );
+    return AlulaMergeProjection(
+      result: _applyReplacements(projection.result, normalized),
+      conflictCount: projection.conflictCount,
+      unresolvedConflictCount:
+          projection.unresolvedConflictCount - combinationCandidates.length,
+      conflicts: conflicts,
+    );
+  }
 
   void _validatePlanIdentity(MergeResultEditPlan plan) {
     if (!identical(plan._sessionToken, _sessionToken) ||
@@ -494,6 +723,7 @@ class MergeResultSession {
   MergeResultEditPlan _planProjection(
     AlulaMergeProjection nextProjection,
     Map<int, AlulaMergeSide> nextResolutions,
+    Map<int, String> nextCombinationCandidates,
     List<_MergeReplacement> replacements,
   ) {
     final currentText = _currentProjection.result;
@@ -515,6 +745,7 @@ class MergeResultSession {
       operations: _operationsFor(normalized),
       projection: nextProjection,
       resolutions: nextResolutions,
+      combinationCandidates: nextCombinationCandidates,
     );
   }
 

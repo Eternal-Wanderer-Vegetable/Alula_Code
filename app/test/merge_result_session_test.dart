@@ -161,6 +161,8 @@ void main() {
     final doc = opened.document;
     final session = opened.session;
     try {
+      expect(session.planAcceptAllCombinations(), isNull);
+      expect(doc.resync().content, base);
       expect(session.conflictCount, 2);
       _applyPlan(
         doc,
@@ -174,6 +176,270 @@ void main() {
         session.resolutions.values,
         everyElement(AlulaMergeSide.input2),
       );
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('accepts smart combinations and shifts later UTF-16 conflict ranges',
+      () {
+    const base = '\u{feff}😀\r\nleft=0; right=0\r\nmiddle\r\np=0; q=0';
+    const input1 = '\u{feff}😀\r\nlong-left=1; right=0\r\nmiddle\r\np=1; q=0';
+    const input2 = '\u{feff}😀\r\nleft=0; long-right=2\r\nmiddle\r\np=0; q=2';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      expect(session.conflicts, hasLength(2));
+      final originalConflicts = List<AlulaMergeConflict>.of(session.conflicts);
+      final candidates = [
+        for (final conflict in originalConflicts)
+          _bootstrap.core!.merge.combinationCandidate(
+            base: conflict.baseText,
+            input1: conflict.input1Text,
+            input2: conflict.input2Text,
+          )!,
+      ];
+      final plan = session.planAcceptAllCombinations();
+      expect(plan, isNotNull);
+      _applyPlan(doc, session, plan!);
+
+      expect(
+        doc.resync().content,
+        '\u{feff}😀\r\nlong-left=1; long-right=2\r\nmiddle\r\np=1; q=2',
+      );
+      expect(session.unresolvedConflictCount, 0);
+      expect(session.conflicts.map((conflict) => conflict.isCombination),
+          everyElement(isTrue));
+      expect(session.conflicts.map((conflict) => conflict.resolution),
+          everyElement(isNull));
+      expect(session.conflicts.first.resultStartUtf16,
+          originalConflicts.first.resultStartUtf16);
+      expect(
+        session.conflicts[1].resultStartUtf16,
+        originalConflicts[1].resultStartUtf16 +
+            candidates.first.length -
+            (originalConflicts.first.resultEndUtf16 -
+                originalConflicts.first.resultStartUtf16),
+      );
+      for (var index = 0; index < session.conflicts.length; index++) {
+        final conflict = session.conflicts[index];
+        expect(
+          doc
+              .resync()
+              .content
+              .substring(conflict.resultStartUtf16, conflict.resultEndUtf16),
+          candidates[index],
+        );
+      }
+
+      _replaceDocument(doc, base);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.unresolvedConflictCount, 2);
+      expect(session.conflicts.map((conflict) => conflict.isCombination),
+          everyElement(isFalse));
+
+      _replaceDocument(doc, plan.projection.result);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.unresolvedConflictCount, 0);
+      expect(session.conflicts.map((conflict) => conflict.isCombination),
+          everyElement(isTrue));
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('smart combination skips conflicts already accepted from Input 1', () {
+    const base = 'left=0; right=0\nkeep\nother=0; value=0\n';
+    const input1 = 'left=1; right=0\nkeep\nother=1; value=0\n';
+    const input2 = 'left=0; right=2\nkeep\nother=0; value=2\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      expect(session.conflicts, hasLength(2));
+      final firstId = session.conflicts.first.id;
+      _applyPlan(
+        doc,
+        session,
+        session.planResolveConflict(firstId, AlulaMergeSide.input1),
+      );
+      final plan = session.planAcceptAllCombinations();
+      expect(plan, isNotNull);
+      expect(plan!.combinationCandidates.keys, isNot(contains(firstId)));
+      _applyPlan(doc, session, plan);
+
+      expect(session.conflicts.first.resolution, AlulaMergeSide.input1);
+      expect(session.conflicts.first.isCombination, isFalse);
+      expect(session.conflicts.last.isCombination, isTrue);
+      expect(session.unresolvedConflictCount, 0);
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('smart combination upgrades an Input 2 choice when append is disabled',
+      () {
+    const base = 'left=0; right=0\nkeep\nother=0; value=0\n';
+    const input1 = 'left=1; right=0\nkeep\nother=1; value=0\n';
+    const input2 = 'left=0; right=2\nkeep\nother=0; value=2\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      final firstId = session.conflicts.first.id;
+      _applyPlan(
+        doc,
+        session,
+        session.planResolveConflict(firstId, AlulaMergeSide.input2),
+      );
+      final plan = session.planAcceptAllCombinations();
+      expect(plan, isNotNull);
+      expect(plan!.combinationCandidates.keys, contains(firstId));
+      _applyPlan(doc, session, plan);
+
+      expect(session.conflicts.first.isCombination, isTrue);
+      expect(session.conflicts.first.resolution, isNull);
+      expect(
+          doc.resync().content,
+          input1
+              .replaceFirst('left=1; right=0', 'left=1; right=2')
+              .replaceFirst('other=1; value=0', 'other=1; value=2'));
+      expect(session.unresolvedConflictCount, 0);
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('combines eligible conflicts and leaves overlapping edits unresolved',
+      () {
+    const base = 'left=0; right=0\nkeep\nvalue=0\n';
+    const input1 = 'left=1; right=0\nkeep\nvalue=1\n';
+    const input2 = 'left=0; right=2\nkeep\nvalue=2\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      expect(session.conflicts, hasLength(2));
+      final firstId = session.conflicts.first.id;
+      final plan = session.planAcceptAllCombinations();
+      expect(plan, isNotNull);
+      expect(plan!.combinationCandidates.keys, [firstId]);
+      _applyPlan(doc, session, plan);
+
+      expect(doc.resync().content, 'left=1; right=2\nkeep\nvalue=0\n');
+      expect(session.conflicts.first.isCombination, isTrue);
+      expect(session.conflicts.last.isCombination, isFalse);
+      expect(session.conflicts.last.resolution, isNull);
+      expect(session.unresolvedConflictCount, 1);
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('smart combination replaces a zero-width conflict contribution', () {
+    const base = 'head\ntail\n';
+    const input1 = 'head\nours\ntail\n';
+    const input2 = 'head\ntheirs\ntail\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      expect(session.conflicts, hasLength(1));
+      expect(session.conflicts.single.resultStartUtf16,
+          session.conflicts.single.resultEndUtf16);
+      final plan = session.planAcceptAllCombinations();
+      expect(plan, isNotNull);
+      _applyPlan(doc, session, plan!);
+
+      expect(doc.resync().content, 'head\nours\ntheirs\ntail\n');
+      final conflict = session.conflicts.single;
+      expect(conflict.isCombination, isTrue);
+      expect(conflict.resolution, isNull);
+      expect(
+        doc
+            .resync()
+            .content
+            .substring(conflict.resultStartUtf16, conflict.resultEndUtf16),
+        'ours\ntheirs\n',
+      );
+      expect(session.unresolvedConflictCount, 0);
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('fails the complete combination plan when one candidate exceeds limits',
+      () {
+    const smallBase = 'left=0; right=0';
+    const smallInput1 = 'left=1; right=0';
+    const smallInput2 = 'left=0; right=2';
+    final largeBase = '${'a' * 720000}\n';
+    final largeInput1 = 'X${'a' * 719999}\n';
+    final largeInput2 = '${'a' * 719999}Y\n';
+    final base = '$smallBase\nkeep\n$largeBase';
+    final input1 = '$smallInput1\nkeep\n$largeInput1';
+    final input2 = '$smallInput2\nkeep\n$largeInput2';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    final originalVersion = doc.resync().version;
+    try {
+      expect(session.conflicts, hasLength(2));
+      expect(
+        () => session.planAcceptAllCombinations(),
+        throwsA(isA<AlulaMergeException>()),
+      );
+      expect(doc.resync().content, base);
+      expect(doc.resync().version, originalVersion);
+      expect(session.unresolvedConflictCount, 2);
+      expect(session.resolutions, isEmpty);
+      expect(session.conflicts.map((conflict) => conflict.isCombination),
+          everyElement(isFalse));
+    } finally {
+      session.dispose();
+      doc.close();
+    }
+  }, skip: _bootstrap.skip);
+
+  test('keeps large repeated combination history reconcilable', () {
+    final middle = '${'a' * 300000}|MIDDLE|${'b' * 300000}';
+    final base = 'START=$middle|END\n';
+    final input1 = 'BEGIN=$middle|END\n';
+    final input2 = 'START=$middle|FINISH\n';
+    final opened = _openSession(base: base, input1: input1, input2: input2);
+    final doc = opened.document;
+    final session = opened.session;
+    try {
+      expect(session.conflicts, hasLength(1));
+      for (var cycle = 0; cycle < 20; cycle++) {
+        final combination = session.planAcceptAllCombinations();
+        expect(combination, isNotNull);
+        _applyPlan(doc, session, combination!);
+        _applyPlan(
+          doc,
+          session,
+          session.planResolveConflict(
+            session.conflicts.single.id,
+            AlulaMergeSide.input2,
+          ),
+        );
+      }
+
+      expect(doc.resync().content, input2);
+      _replaceDocument(doc, base);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.unresolvedConflictCount, 1);
+      _replaceDocument(doc, input2);
+      expect(session.reconcileCurrentResult(), isTrue);
+      expect(session.resolutions.values, [AlulaMergeSide.input2]);
+      expect(session.unresolvedConflictCount, 0);
     } finally {
       session.dispose();
       doc.close();

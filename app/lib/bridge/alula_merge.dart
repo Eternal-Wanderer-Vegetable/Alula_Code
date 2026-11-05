@@ -31,6 +31,7 @@ class AlulaMergeConflict {
     required this.input1Text,
     required this.input2Text,
     required this.resolution,
+    this.isCombination = false,
   });
 
   final int id;
@@ -42,6 +43,10 @@ class AlulaMergeConflict {
   final String input1Text;
   final String input2Text;
   final AlulaMergeSide? resolution;
+
+  /// True when the session resolved this conflict by smart-combining both
+  /// inputs. The Rust projection ABI still represents only side resolutions.
+  final bool isCombination;
 
   factory AlulaMergeConflict.fromJson(Map<String, Object?> json) {
     final resolution = AlulaMergeSide.fromWireValue(json['resolution']);
