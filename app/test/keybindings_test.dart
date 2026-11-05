@@ -422,9 +422,50 @@ void main() {
               v.split(',').where((spec) => parseChord(spec) != null).length);
       expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
+      expect(ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
+    });
+
+    test('New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N', () {
+      for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+        final keys = KeybindingSet.load(platform: platform);
+        expect(
+          keys.commandForChord(parseChord('ctrl+n')!),
+          'workbench.action.files.newUntitledFile',
+        );
+        expect(keys.shortcutFor('workbench.action.files.newUntitledFile'),
+            'Ctrl+N');
+      }
+
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        mac.commandForChord(parseChord('cmd+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        mac.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Meta+N',
+      );
+    });
+
+    test('New Text File respects a user keybinding override', () {
+      final keys = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson:
+            '[{"key":"ctrl+alt+n","command":"workbench.action.files.newUntitledFile"}]',
+      );
+      expect(
+        keys.commandForChord(parseChord('ctrl+alt+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(keys.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        keys.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Ctrl+Alt+N',
+      );
     });
 
     test('用户追加：新键位生效', () {

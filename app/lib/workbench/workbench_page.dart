@@ -531,6 +531,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ));
     }
 
+    reg(
+      'workbench.action.files.newUntitledFile',
+      '文件',
+      '新建文本文件',
+      _newUntitledFile,
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.files.newUntitledFile',
+      ),
+    );
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
     reg(
       '_open.mergeEditor',
@@ -10945,6 +10954,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 文件夹 / 文件树 ----------
 
+  Future<void> _newUntitledFile() async {
+    final core = _core;
+    if (core == null) return;
+    final previous = _active;
+    if (previous != null) _flushInput(previous, commitComposition: true);
+
+    final id = _nextDocId++;
+    try {
+      final doc = core.openDoc(id, '');
+      final untitled = OpenDoc(
+        id: id,
+        name: '未命名-$id',
+        doc: doc,
+        undoBudget: _undoHistoryBudget,
+      );
+      final target = _focused;
+      setState(() {
+        target.docs.add(untitled);
+        target.activeDocId = id;
+      });
+      _scheduleStateSave();
+      _syncCommandContext();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !identical(target.active, untitled)) return;
+        _focusNodeFor(target, untitled).requestFocus();
+      });
+    } on AlulaException catch (error) {
+      if (mounted) setState(() => _statusDetail = '新建文本文件失败：${error.code}');
+    }
+  }
+
   void _openFolder(String path) {
     final core = _core;
     if (core == null) return;
@@ -16662,6 +16702,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     (
                       '文件(&&F)',
                       [
+                        TitleMenuItem(
+                          '新建文本文件(&&N)'
+                              '${_sc('workbench.action.files.newUntitledFile')}',
+                          commandId: 'workbench.action.files.newUntitledFile',
+                        ),
+                        const TitleMenuItem.separator(),
                         const TitleMenuItem('打开文件夹(&&O)',
                             commandId: 'file.openFolder'),
                         const TitleMenuItem.separator(),

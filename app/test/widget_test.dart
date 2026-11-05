@@ -126,17 +126,23 @@ void main() {
 
       await tester.tap(find.text('文件(F)'));
       await tester.pump(const Duration(milliseconds: 300));
+      final newTextFile = find.textContaining('新建文本文件(N)');
+      expect(newTextFile, findsOneWidget);
       expect(find.text('打开文件夹(O)'), findsOneWidget);
       expect(find.textContaining('保存(S)'), findsOneWidget,
           reason: 'the startup untitled document is an active editor');
       expect(find.textContaining('另存为…(A)'), findsOneWidget);
       expect(find.text('从磁盘还原(R)'), findsNothing);
       expect(
+        tester.getTopLeft(newTextFile).dy,
+        lessThan(tester.getTopLeft(find.text('打开文件夹(O)')).dy),
+      );
+      expect(
         find.byWidgetPredicate(
           (widget) => widget is Padding && widget.child is Divider,
         ),
-        findsOneWidget,
-        reason: 'the startup editor omits the empty Revert group',
+        findsNWidgets(2),
+        reason: 'New, Open, and Save occupy separate visible groups',
       );
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pump(const Duration(milliseconds: 300));
@@ -150,13 +156,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       final openFolder = find.text('打开文件夹(O)');
+      final newTextFile = find.textContaining('新建文本文件(N)');
       final save = find.textContaining('保存(S)');
       final saveAs = find.textContaining('另存为…(A)');
       final revert = find.text('从磁盘还原(R)');
+      expect(newTextFile, findsOneWidget);
       expect(openFolder, findsOneWidget);
       expect(save, findsOneWidget);
       expect(saveAs, findsOneWidget);
       expect(revert, findsOneWidget);
+      expect(tester.getTopLeft(newTextFile).dy,
+          lessThan(tester.getTopLeft(openFolder).dy));
       expect(tester.getTopLeft(openFolder).dy,
           lessThan(tester.getTopLeft(save).dy));
       expect(tester.getTopLeft(save).dy,
@@ -167,12 +177,124 @@ void main() {
         find.byWidgetPredicate(
           (widget) => widget is Padding && widget.child is Divider,
         ),
-        findsNWidgets(2),
-        reason: 'Open, Save, and Revert belong to separate default groups',
+        findsNWidgets(3),
+        reason: 'New, Open, Save, and Revert belong to separate groups',
       );
       expect(find.textContaining('比较活动文件'), findsNothing);
       expect(find.textContaining('使用编码'), findsNothing);
       expect(find.textContaining('选择行尾'), findsNothing);
+    });
+  });
+
+  testWidgets('New Text File creates independent documents in the focused group',
+      (tester) async {
+    tester.view.physicalSize = const Size(1600, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final workspace = createP025Workspace(tmp);
+    final created = File('${workspace.path}/created.txt');
+
+    String activeEditorText() {
+      final editable = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      return tester.widget<EditableText>(editable).controller.text;
+    }
+
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'Ctrl+N creates a separate untitled document');
+      expect(find.text('未命名-3'), findsOneWidget);
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      await tester.enterText(editor, 'first new document');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget);
+      expect(activeEditorText(), isEmpty,
+          reason: 'each New Text File starts with empty content');
+      await tester.enterText(editor, 'second new document');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('新建文本文件(N)'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the File menu invokes the same new-document command');
+
+      await pressChord(tester, LogicalKeyboardKey.keyP,
+          control: true, shift: true);
+      await tester.pump(const Duration(milliseconds: 200));
+      final paletteInput = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(paletteInput, '新建文本文件');
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.byKey(const ValueKey('qi-文件: 新建文本文件')), findsOneWidget);
+      await pressChord(tester, LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette invokes the same new-document command');
+
+      await tester.tap(find.byKey(const ValueKey('tab-3')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'first new document');
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('另存为…(A)'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('save-as-path')),
+        created.path,
+      );
+      await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(created.readAsStringSync(), 'first new document');
+
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'second new document',
+          reason: 'saving another untitled document does not replace this one');
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'the saved document is restored from its path');
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget,
+          reason: 'dirty untitled text is restored from the session journal');
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the second untitled document is restored independently');
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette document is restored independently');
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      final editor = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      expect(tester.widget<EditableText>(editor).controller.text,
+          'second new document');
     });
   });
 
