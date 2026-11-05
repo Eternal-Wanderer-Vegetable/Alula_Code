@@ -6,7 +6,7 @@
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a through P05.4 / feat-056 / LAY-01d are complete with local and hosted evidence. P05.5 / feat-057 / LAY-01e scope for File > New Text File is registered; implement this one action before selecting another LAY/CMD child. LAY-01 default File menu coverage and macOS native-menu parity still need follow-up. P05 remains open.
+Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a through P05.4 / feat-056 / LAY-01d are complete with local and hosted evidence. P05.5 / feat-057 / LAY-01e File > New Text File is complete with local and hosted evidence (product `37d8d1b`, PR CI `42090523256`, Platform Availability `42090510939`). The next P05 child still needs a one-feature scope registration and fresh impact analysis. LAY-01 default File menu coverage and macOS native-menu parity still need follow-up. P05 remains open.
 
 Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it. P05.4 product commit `a5c2600` and evidence commit `64b9154` are pushed to draft PR #3. Product CI `42079988344` and Linux/Windows/macOS Intel x64 Platform Availability `42079981274` passed. The macOS test package is artifact `13442660378`; macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events. Evidence commit CI on `64b9154` completed successfully in all four jobs. P05.5 scope is registered in `docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md`.
 
@@ -52,13 +52,13 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Recommended Next Step
 
-Commit the P05.5 scope registration, then re-run GitNexus impact against the registered head before editing code. Implement only New Text File (File `1_new`, Ctrl/Cmd+N) in this slice. Keep macOS native-menu parity as an explicit LAY-01 follow-up. P05.4 macOS package SHA-256 `5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873` matched its sidecar and `unzip -t` passed. Keep P05 open until every matrix DoD is complete.
+P05.5 is complete and its evidence is ready to commit. Next inspect the remaining P05 matrix in `docs/11-VSCode功能对照矩阵.md`, choose one unresolved LAY/CMD row, register its fixed reference/scope/DoD in docs and feature_list, run GitNexus impact before code edits, and then implement only that child. Keep P05 open and preserve the macOS native-menu follow-up until all matrix DoDs pass.
 
 ## Next Session
 
-1. Push the P05.5 scope registration and check its docs CI.
-2. Re-run pre-edit impact for Workbench/menu/keybinding symbols and implement New Text File with focused tests.
-3. Continue one LAY/CMD child at a time; keep native macOS menu parity explicit and do not close P05 until all matrix DoDs pass.
+1. Commit and push P05.5 evidence after the final GitNexus all/compare scan; verify PR CI for the evidence commit.
+2. Read the next unresolved LAY/CMD row from `docs/11-VSCode功能对照矩阵.md` and register that one scope.
+3. Run pre-edit GitNexus impact and start only the newly registered child; do not close P05 early.
 
 ## Baseline
 
