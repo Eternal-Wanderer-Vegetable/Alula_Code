@@ -13,6 +13,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> _waitForWidget(
+  WidgetTester tester,
+  Finder finder, {
+  required String reason,
+  Duration timeout = const Duration(seconds: 10),
+}) async {
+  final stopwatch = Stopwatch()..start();
+  while (finder.evaluate().isEmpty && stopwatch.elapsed < timeout) {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    await tester.pump();
+  }
+  expect(finder, findsOneWidget, reason: reason);
+}
 
 /// 带修饰键的按键（tester.sendKeyEvent 在本 SDK 版本无修饰键参数）。
 Future<void> pressChord(
@@ -772,9 +785,11 @@ void main() {
           find.byKey(const ValueKey('commit-input')), 'test: widget 提交');
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('commit-button')));
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-      await tester.pump();
-      expect(find.text('工作区干净'), findsOneWidget, reason: '提交后无更改');
+      await _waitForWidget(
+        tester,
+        find.text('工作区干净'),
+        reason: '提交后无更改',
+      );
 
       // 真 git 验证：仓库应有两个提交
       final log = await Process.run('git', ['log', '--oneline'],
@@ -815,11 +830,11 @@ void main() {
           find.byKey(const ValueKey('search-input')), 'needle');
       await tester.pump();
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await Future<void>.delayed(const Duration(milliseconds: 600));
-      await tester.pump();
-
-      expect(find.textContaining('find the needle here'), findsOneWidget,
-          reason: '命中行文本应出现在结果列表');
+      await _waitForWidget(
+        tester,
+        find.textContaining('find the needle here'),
+        reason: '命中行文本应出现在结果列表',
+      );
       expect(find.textContaining('needle.py'), findsOneWidget,
           reason: '文件名展示');
 
