@@ -603,6 +603,19 @@
       ],
       "status": "done",
       "evidence": "Product commit aac584d adds stateless alula_merge_combination_candidate_json, typed AlulaMergeApi.combinationCandidate, and synchronized Rust/Dart ABI v40. Local bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 970); cargo fmt, Flutter analyze, focused Rust FFI (4), and real shared-library Dart tests (10) passed. PR CI 41939954934 and 41944030272 passed all four jobs. The first Platform Availability run 41939946566 reached its 30-minute macOS limit after tests, Release build, and clipboard passed; no app launch/crash occurred. CI-only commit e6a42be raises the macOS lane limit to 45 minutes; Platform Availability 41944020172 then passed Linux, Windows, and macOS Intel x64 build/test/launch/package. Packages: Linux 13378106362, Windows 13377134443, macOS X64 13378323361. The macOS ZIP SHA-256 is 00035167b35bf6475486f4b092047ad8bdc68d95d0bc4a7a7a789dc099a3b85e and archive validation passed. macOS DnD artifact 13378059884 records pointer-route unavailable and a skipped integration test; startup artifact 13379245557 has no .ips/.crash. The latest separate 100-run sample is CI 100/100 and Platform Availability 75/100 (24 failed, 1 cancelled). Repeated assertion and job-timeout failures had no crash signature; historical Windows 0xC000041D and macOS startup SIGSEGV remain unresolved, with no causal link established. GitNexus retains FFI CRITICAL, exact unit-test UNKNOWN, workflow YAML UNKNOWN/not indexed, overconnected flows, and coverage gaps. Evidence: docs/diagnostics/2026-11-05-p04/p04.120-merge-combination-ffi-scope.md and docs/diagnostics/2026-11-05-p04/p04.120-merge-combination-ffi-implementation.md."
+    },
+    {
+      "id": "feat-046",
+      "name": "P04.121 / EDT-19k Merge Editor Accept All Combination action",
+      "description": "Register the fixed Code-OSS mergeEditor.acceptAllCombination F1 command and apply all bounded non-null combination candidates atomically through MergeResultSession and the normal Rust TextOp/undo route. Preserve combined conflict state through undo/redo/save; fail closed when a candidate computation fails. No Rust/ABI, setting, telemetry, or toolbar changes. DoD in docs/03 P04.121.",
+      "dependencies": [
+        "feat-045",
+        "feat-039"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered in docs/03 P04.121 and docs/diagnostics/2026-11-05-p04/p04.121-merge-editor-accept-all-combination-scope.md. Pre-edit GitNexus risks: MergeResultSession and planAcceptAll UNKNOWN with 2 dropped typed call sites; AlulaMergeProjection and AlulaMergeConflict LOW; large Workbench file/symbols are unindexed/UNKNOWN. Text search confirms Workbench and test callsites. No implementation yet.",
+      "track": "vscode-builtin-parity",
+      "phase": "P04"
     }
   ],
   "active_track": "vscode-builtin-parity",
