@@ -238,6 +238,24 @@ void main() {
       1,
     );
     expect(
+      BulkEditPreviewSession(
+        WorkspaceEdit(
+          [WorkspaceDocumentEdit(uri: 'u', edits: const [])],
+          transactionId: exactlyAtLimit,
+        ),
+      ).documents,
+      hasLength(1),
+    );
+    expect(
+      () => BulkEditPreviewSession(
+        WorkspaceEdit(
+          [WorkspaceDocumentEdit(uri: 'u', edits: const [])],
+          transactionId: '${exactlyAtLimit}a',
+        ),
+      ),
+      throwsA(isA<BulkEditPreviewException>()),
+    );
+    expect(
       () => BulkEditPreviewSession(
         WorkspaceEdit([
           WorkspaceDocumentEdit(

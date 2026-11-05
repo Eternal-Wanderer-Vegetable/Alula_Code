@@ -62,7 +62,14 @@ class BulkEditPreviewSession {
     }
 
     var editCount = 0;
-    var byteCount = 0;
+    var byteCount = source.transactionId == null
+        ? 0
+        : _boundedUtf8Length(source.transactionId!, maxInputUtf8Bytes);
+    if (byteCount > maxInputUtf8Bytes) {
+      throw const BulkEditPreviewException(
+        'The preview exceeds the UTF-8 input byte limit.',
+      );
+    }
     final seenUris = <String>{};
     final frozenDocuments = <_PreviewDocument>[];
     final selected = <List<bool>>[];
