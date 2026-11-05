@@ -16704,10 +16704,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         TitleMenuItem('搜索…${_sc('view.search')}',
                             commandId: 'view.search'),
                         const TitleMenuItem('大纲', commandId: 'view.outline'),
-                        const TitleMenuItem('切换侧栏',
-                            commandId: 'view.toggleSidebar'),
-                        const TitleMenuItem('切换面板',
-                            commandId: 'view.togglePanel'),
+                        const TitleMenuItem.submenu('外观', children: [
+                          TitleMenuItem('切换侧栏',
+                              commandId: 'view.toggleSidebar'),
+                          TitleMenuItem.separator(),
+                          TitleMenuItem('切换面板', commandId: 'view.togglePanel'),
+                        ]),
                       ],
                     ),
                     (

@@ -97,6 +97,15 @@ void main() {
 
     expect(find.text('Alula Code'), findsWidgets); // 标题栏 + MaterialApp.title
     expect(find.text('文件'), findsOneWidget); // 标题栏菜单
+    await tester.tap(find.text('查看'));
+    await tester.pumpAndSettle();
+    expect(find.text('外观'), findsOneWidget);
+    await tester.tap(find.text('外观'));
+    await tester.pumpAndSettle();
+    expect(find.text('切换侧栏'), findsOneWidget,
+        reason: '工作台菜单应提供真实的 View > Appearance 子菜单');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
     expect(find.byIcon(Icons.fact_check_outlined), findsOneWidget,
         reason: '编辑器动作区应有「校验一致性」');
     expect(find.byIcon(Icons.explore_outlined), findsOneWidget,

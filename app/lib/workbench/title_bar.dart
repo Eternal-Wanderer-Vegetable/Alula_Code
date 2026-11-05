@@ -1,6 +1,6 @@
 /// 自定义标题栏（docs/09 W1-3）。
 ///
-/// 应用名 + 三组功能菜单 + （windowControls 开启时）拖拽移动区与窗口控制按钮。
+/// 应用名 + 主菜单 + （windowControls 开启时）拖拽移动区与窗口控制按钮。
 /// 无边框窗口由 main() 的 `TitleBarStyle.hidden` 开启；
 /// widget 测试默认 windowControls=false，不触碰 window_manager 插件通道。
 library;
@@ -15,13 +15,36 @@ import 'commands.dart';
 import 'window_chrome_configuration.dart';
 import 'window_chrome_driver.dart';
 
-/// 标题栏菜单项。
+enum TitleMenuItemKind { command, submenu, separator }
+
+/// 标题栏命令、子菜单或分隔线。
 class TitleMenuItem {
-  const TitleMenuItem(this.label, {required this.commandId, this.arguments});
+  const TitleMenuItem(this.label,
+      {required this.commandId, this.arguments})
+      : assert(commandId != null),
+        children = const [],
+        kind = TitleMenuItemKind.command;
+
+  const TitleMenuItem.submenu(this.label, {required this.children})
+      : commandId = null,
+        arguments = null,
+        kind = TitleMenuItemKind.submenu;
+
+  const TitleMenuItem.separator()
+      : label = '',
+        commandId = null,
+        arguments = null,
+        children = const [],
+        kind = TitleMenuItemKind.separator;
 
   final String label;
-  final String commandId;
+  final String? commandId;
   final Object? arguments;
+  final List<TitleMenuItem> children;
+  final TitleMenuItemKind kind;
+
+  bool get isSubmenu => kind == TitleMenuItemKind.submenu;
+  bool get isSeparator => kind == TitleMenuItemKind.separator;
 }
 
 class AlulaTitleBar extends StatefulWidget {
@@ -135,8 +158,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     final showCustomControls =
         widget.windowControls && chrome.usesCustomWindowControls;
     return Container(
-      // Native mode keeps the existing menu entry row below the OS title bar.
-      // The menu hierarchy will be expanded in the separate menu parity slice.
+      // Native mode keeps the menu row below the OS title bar.
       height: chrome.isCustom
           ? chrome.titleBarHeight
           : WindowChromeConfiguration.customTitleBarHeight,
@@ -151,8 +173,20 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             ),
             const SizedBox(width: 10),
           ],
-          for (final (title, items) in widget.menus)
-            _MenuButton(title: title, items: items, commands: widget.commands),
+          ListenableBuilder(
+            listenable: widget.commands,
+            builder: (context, _) => MenuBar(
+              style: _menuBarStyle,
+              children: [
+                for (final (title, items) in widget.menus)
+                  _MenuButton(
+                    title: title,
+                    items: items,
+                    commands: widget.commands,
+                  ),
+              ],
+            ),
+          ),
           Expanded(
             child: chrome.isCustom
                 ? _dragArea(const SizedBox.expand())
@@ -250,34 +284,106 @@ class _MenuButton extends StatelessWidget {
   final List<TitleMenuItem> items;
   final CommandService commands;
 
+  static const ButtonStyle _barButtonStyle = ButtonStyle(
+    foregroundColor: WidgetStatePropertyAll(Color(0xFFE0E0E0)),
+    overlayColor: WidgetStatePropertyAll(Color(0xFF343943)),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 10)),
+    minimumSize: WidgetStatePropertyAll(Size(0, 35)),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
+    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+  );
+
+  static const MenuStyle _popupMenuStyle = MenuStyle(
+    backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
+    surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+    minimumSize: WidgetStatePropertyAll(Size(180, 0)),
+  );
+
+  static const ButtonStyle _popupMenuItemStyle = ButtonStyle(
+    minimumSize: WidgetStatePropertyAll(Size(180, 34)),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+    visualDensity: VisualDensity.compact,
+    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: commands,
-      builder: (context, _) => PopupMenuButton<String>(
-        tooltip: title,
-        position: PopupMenuPosition.under,
-        color: const Color(0xFF252932),
-        onSelected: (commandId) {
-          final item =
-              items.firstWhere((entry) => entry.commandId == commandId);
-          unawaited(commands.execute(commandId, arguments: item.arguments));
-        },
-        itemBuilder: (context) => [
-          for (final item
-              in items.where((entry) => commands.isVisible(entry.commandId)))
-            PopupMenuItem<String>(
-              value: item.commandId,
-              enabled: commands.isEnabled(item.commandId),
-              height: 34,
-              child: Text(item.label, style: const TextStyle(fontSize: 12)),
-            ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Text(title, style: const TextStyle(fontSize: 12)),
-        ),
+    return Tooltip(
+      message: title,
+      child: SubmenuButton(
+        style: _barButtonStyle,
+        menuStyle: _popupMenuStyle,
+        menuChildren: _buildMenuChildren(_visibleItems(items)),
+        child: Text(title),
       ),
     );
   }
+
+  List<TitleMenuItem> _visibleItems(List<TitleMenuItem> source) {
+    final visible = <TitleMenuItem>[];
+    var separatorPending = false;
+    for (final item in source) {
+      if (item.isSeparator) {
+        separatorPending = visible.isNotEmpty;
+        continue;
+      }
+
+      final visibleItem = item.isSubmenu
+          ? _visibleSubmenu(item)
+          : commands.isVisible(item.commandId!)
+              ? item
+              : null;
+      if (visibleItem == null) continue;
+
+      if (separatorPending) {
+        visible.add(const TitleMenuItem.separator());
+      }
+      visible.add(visibleItem);
+      separatorPending = false;
+    }
+    return visible;
+  }
+
+  TitleMenuItem? _visibleSubmenu(TitleMenuItem item) {
+    final children = _visibleItems(item.children);
+    if (children.isEmpty) return null;
+    return TitleMenuItem.submenu(item.label, children: children);
+  }
+
+  List<Widget> _buildMenuChildren(List<TitleMenuItem> menuItems) => [
+        for (final item in menuItems)
+          if (item.isSeparator)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              child: Divider(height: 1, thickness: 1),
+            )
+          else if (item.isSubmenu)
+            SubmenuButton(
+              style: _popupMenuItemStyle,
+              menuStyle: _popupMenuStyle,
+              menuChildren: _buildMenuChildren(item.children),
+              child: Text(item.label),
+            )
+          else
+            MenuItemButton(
+              style: _popupMenuItemStyle,
+              onPressed: commands.isEnabled(item.commandId!)
+                  ? () => unawaited(
+                        commands.execute(
+                          item.commandId!,
+                          arguments: item.arguments,
+                        ),
+                      )
+                  : null,
+              child: Text(item.label),
+            ),
+      ];
 }
+
+const MenuStyle _menuBarStyle = MenuStyle(
+  backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+  padding: WidgetStatePropertyAll(EdgeInsets.zero),
+  minimumSize: WidgetStatePropertyAll(Size(0, 35)),
+);

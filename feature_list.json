@@ -711,7 +711,7 @@
         "feat-053"
       ],
       "status": "in-progress",
-      "evidence": "Scope and pre-edit analysis registered in docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md. GitNexus impact for TitleMenuItem and AlulaTitleBar is UNKNOWN; WorkbenchPage is not indexed because workbench_page.dart exceeds 512 KiB. Text search confirms production assembly at line 16656 and item construction from line 16661. Product implementation, tests, and hosted evidence pending.",
+      "evidence": "P05.2 recursive command/submenu/separator model and production View > Appearance path implemented; menu visibility/enabled state, argument routing, separator normalization, mouse expansion and ArrowDown/ArrowRight/Enter activation covered. Local FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,032); cargo fmt --check, Flutter analyze 0 issues, title_bar_test 8/8, workbench menu integration 1/1, Harness 100/100, JSON and diff checks passed. Workbench save regression from missing File tooltip passed 1/1 after tooltip restoration. PR CI and Linux/Windows/macOS Intel x64 hosted validation pending. GitNexus pre-edit impact UNKNOWN; post-edit all-scope MEDIUM and compare-to-main HIGH; skipped workbench_page.dart (>512 KiB), 779 cross-language sites and process-budget truncation remain unresolved. Full evidence and exact scans: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

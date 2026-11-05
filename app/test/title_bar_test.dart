@@ -3,6 +3,7 @@ import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'package:alula_app/workbench/window_chrome_driver.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -65,8 +66,7 @@ void main() {
     expect(find.byTooltip('关闭'), findsNothing);
   });
 
-  testWidgets(
-      'native title bar keeps menu row and close handling',
+  testWidgets('native title bar keeps menu row and close handling',
       (tester) async {
     var closeRequested = 0;
     await tester.pumpWidget(_titleBarApp(
@@ -154,6 +154,120 @@ void main() {
     await tester.pumpAndSettle();
     expect(commandCalls, 1);
     expect(window.dragCalls, 1);
+  });
+
+  testWidgets('nested menu filters commands and routes action arguments',
+      (tester) async {
+    final executedArguments = <Object?>[];
+    var disabledCalls = 0;
+    commands.register(Command(
+      id: 'view.toggleSidebar',
+      title: 'Toggle sidebar',
+      category: 'View',
+      run: () async {},
+      runWithArguments: (arguments) async {
+        executedArguments.add(arguments);
+      },
+    ));
+    commands.register(Command(
+      id: 'view.hiddenAction',
+      title: 'Hidden action',
+      category: 'View',
+      when: 'menuItemVisible',
+      run: () async {},
+    ));
+    commands.register(Command(
+      id: 'view.disabledAction',
+      title: 'Disabled action',
+      category: 'View',
+      enablement: 'menuActionEnabled',
+      run: () async {
+        disabledCalls++;
+      },
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      menus: const [
+        (
+          '查看',
+          [
+            TitleMenuItem.submenu('外观', children: [
+              TitleMenuItem.separator(),
+              TitleMenuItem('切换侧栏',
+                  commandId: 'view.toggleSidebar', arguments: 'primary'),
+              TitleMenuItem.separator(),
+              TitleMenuItem('隐藏动作', commandId: 'view.hiddenAction'),
+              TitleMenuItem('禁用动作', commandId: 'view.disabledAction'),
+              TitleMenuItem.separator(),
+            ]),
+          ],
+        ),
+      ],
+    ));
+
+    await tester.tap(find.text('查看'));
+    await tester.pumpAndSettle();
+    expect(find.text('外观'), findsOneWidget);
+    await tester.tap(find.text('外观'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('切换侧栏'), findsOneWidget);
+    expect(find.text('隐藏动作'), findsNothing);
+    expect(find.text('禁用动作'), findsOneWidget);
+    expect(find.byType(Divider), findsOneWidget);
+    final disabledButton = tester.widget<MenuItemButton>(find.ancestor(
+      of: find.text('禁用动作'),
+      matching: find.byType(MenuItemButton),
+    ));
+    expect(disabledButton.enabled, isFalse);
+
+    await tester.tap(find.text('切换侧栏'));
+    await tester.pumpAndSettle();
+    expect(executedArguments, ['primary']);
+    expect(disabledCalls, 0);
+  });
+
+  testWidgets('keyboard opens nested menu and activates a leaf command',
+      (tester) async {
+    var commandCalls = 0;
+    commands.register(Command(
+      id: 'view.toggleSidebar',
+      title: 'Toggle sidebar',
+      category: 'View',
+      run: () async {
+        commandCalls++;
+      },
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      menus: const [
+        (
+          '查看',
+          [
+            TitleMenuItem.submenu('外观', children: [
+              TitleMenuItem('切换侧栏', commandId: 'view.toggleSidebar'),
+            ]),
+          ],
+        ),
+      ],
+    ));
+
+    await tester.tap(find.text('查看'));
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pumpAndSettle();
+    expect(find.text('切换侧栏'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(commandCalls, 1);
   });
 }
 

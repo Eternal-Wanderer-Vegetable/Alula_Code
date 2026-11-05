@@ -6,7 +6,7 @@
 
 ## Current Objective
 
-Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a is complete and its hosted evidence is committed at `9573290`; P05 and LAY-01 remain open. P05.2 / feat-054 / LAY-01b (recursive titlebar menu and submenu navigation) is the sole active child. Scope is recorded, product code is not yet changed. Continue one child at a time until all 20 LAY and 12 CMD rows have evidence.
+Complete P05 / feat-027 in sequential, scoped child tasks. P05.1 / feat-053 / LAY-01a is complete and its hosted evidence is committed at `9573290`; P05 and LAY-01 remain open. P05.2 / feat-054 / LAY-01b implementation and local DoD are complete; the product/evidence commit still needs PR CI and Linux/Windows/macOS Intel x64 hosted validation. Continue one child at a time until all 20 LAY and 12 CMD rows have evidence.
 
 Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
@@ -19,12 +19,14 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 - Hosted macOS is Intel x64 only; Apple Silicon and native-device behavior remain P15. Linux custom mode draws window controls due GTK hidden decorations; Windows custom-control parity and explicit control-style setting remain open. Menu hierarchy, mnemonics, and macOS system menu remain separate work.
 - Full scope and details: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`.
 
-## P05.2 Active Scope
+## P05.2 Implementation and Pending Hosted Evidence
 
 - Scope/pre-edit review: `docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md`.
 - Expected files: `app/lib/workbench/title_bar.dart`, `app/lib/workbench/workbench_page.dart` around the `AlulaTitleBar` assembly at line 16656, `app/test/title_bar_test.dart`, plus tracking/evidence files.
 - GitNexus impact for exact `TitleMenuItem` and `AlulaTitleBar` UIDs returned `UNKNOWN` and 0 resolved callers. `context(WorkbenchPage)` failed because the >512 KiB workbench page is not indexed. Text search confirms the only production menu assembly at line 16656 and `TitleMenuItem` construction beginning at line 16661; inspect and test those callers directly.
-- Keep this child limited to recursive command/submenu/separator structure, `View > Appearance`, action visibility/enabled/arguments, and mouse/keyboard submenu interaction. Mnemonics, full default menu population, and macOS native menu remain separate.
+- Recursive command/submenu/separator model, `View > Appearance`, action visibility/enabled/arguments, and mouse/keyboard submenu interaction are implemented and tested. Mnemonics, full default menu population, and macOS native menu remain separate.
+- Local gates passed: `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` (Rust, Clippy, core build, Flutter 1,032), `cargo fmt --check`, Flutter analyze (0 issues), titlebar suite 8/8, workbench menu integration 1/1, Harness 100/100, feature JSON and diff check. The previously failing menu-driven save case passes after preserving the File menu tooltip.
+- Refresh GitNexus before committing current tracker/evidence changes. Latest product scan: 10,841 nodes / 27,278 edges / 328 clusters / 418 flows; all-scope 4 files / 8 symbols / 4 processes / MEDIUM; compare-to-main 15 files / 80 symbols / 10 processes / HIGH. Analyzer skips 5 large files including workbench_page.dart, leaves 779 cross-language property references unresolved, and truncates process discovery (902 candidates, 321 callees, 13 walks). Several mapped processes are false-positive/unrelated; retain HIGH and UNKNOWN without calling the graph clean.
 
 ## Blockers
 
@@ -47,14 +49,14 @@ Use clean worktree `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` wo
 
 ## Recommended Next Step
 
-Implement the registered P05.2 recursive menu model and submenu keyboard/mouse behavior, test the production `View > Appearance` path, then run the local gates and hosted CI.
+Commit and push P05.2 implementation plus evidence, wait for PR CI and Platform Availability, record platform artifacts/explicit skips, then start exactly one next P05 child.
 
 ## Next Session
 
-1. Check PR CI run `42038213800` for the P05.1 evidence commit.
-2. Implement P05.2 in the recorded scope; add recursive menu and keyboard/mouse tests.
-3. Run local N.2 gates, refresh GitNexus, run all/compare change detection, record outcomes and push the product commit.
-4. Wait for PR CI and Platform Availability, then record hosted evidence before starting another P05 child.
+1. Check PR CI run `42038213800` for the P05.1 evidence commit if still needed.
+2. Finish updating P05.2 evidence, refresh GitNexus and run all/compare change detection for the final staged changes.
+3. Commit/push the P05.2 product and evidence; wait for PR CI and Platform Availability.
+4. Record hosted results (including explicit macOS input skips and Intel-only coverage), mark P05.2 done only when gates pass, then register the next single P05 child.
 
 ## Baseline
 
