@@ -240,7 +240,7 @@ void main() {
     expect(
       BulkEditPreviewSession(
         WorkspaceEdit(
-          [WorkspaceDocumentEdit(uri: 'u', edits: const [])],
+          [const WorkspaceDocumentEdit(uri: 'u', edits: [])],
           transactionId: exactlyAtLimit,
         ),
       ).documents,
@@ -249,7 +249,7 @@ void main() {
     expect(
       () => BulkEditPreviewSession(
         WorkspaceEdit(
-          [WorkspaceDocumentEdit(uri: 'u', edits: const [])],
+          [const WorkspaceDocumentEdit(uri: 'u', edits: [])],
           transactionId: '${exactlyAtLimit}a',
         ),
       ),
