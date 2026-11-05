@@ -593,6 +593,16 @@
       "evidence": "Product commit 70fdf1c adds the bounded pure-Rust combination candidate planner. Test-gate stabilization commit 4bca258 replaces the existing Git stage widget's fixed 400 ms delay with bounded state polling; no production Git or Workbench code changed. Focused editor-merge tests 25/25, focused Git widget test (twice), cargo fmt, workspace clippy, bash init.sh (Rust workspace/build_core/Flutter 966), flutter analyze, and Harness validator 100/100 passed. PR CI 41931960773 passed all four jobs. Platform Availability 41931950204 passed Linux x64, Windows x64, and macOS Intel x64. Artifacts: Linux package 13372576214 and DnD 13371388536; Windows package 13373355045 and DnD 13373365021; macOS package 13373561958, startup diagnostics 13373292643, and DnD 13374360139. macOS DnD was explicitly skipped because hosted pointer routing was unavailable; Apple Silicon/native-device gates remain P15. The latest separate 100-run sample is ordinary CI 100/100 successful and Platform Availability 74/100 successful. The two prior macOS failures were identical Flutter assertions (965 passed, 1 failed; exit 1), with no app crash signature; this change stabilizes the CI assertion and does not establish a fix for historical Windows 0xC000041D or macOS startup SIGSEGV. GitNexus scans remain CRITICAL/UNKNOWN and overconnected; preserve those warnings. Full local, hosted, artifact, and coverage evidence: docs/diagnostics/2026-11-05-p04/p04.119-merge-editor-combination-implementation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
+    },
+    {
+      "id": "feat-045",
+      "name": "P04.120 / EDT-19j Rust Merge Editor combination candidate FFI contract",
+      "description": "Expose the bounded editor-merge smart-combination planner through a stateless, versioned C JSON ABI and a typed Dart API. Return a nullable complete candidate and fail-closed bounded errors. No Workbench command or UI in this slice. Scope and DoD in docs/03 P04.120.",
+      "dependencies": [
+        "feat-044"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered in docs/03 P04.120 and docs/diagnostics/2026-11-05-p04/p04.120-merge-combination-ffi-scope.md. Pre-edit GitNexus review records alula_merge_project_json CRITICAL (102 impacted/72 direct/35 process labels/6 modules), ALULA_ABI_VERSION UNKNOWN (0 resolved callers), and combine_conflict CRITICAL (219/188/35/8); cross-language and graph mapping limitations are unresolved. No source files changed yet."
     }
   ],
   "active_track": "vscode-builtin-parity",
