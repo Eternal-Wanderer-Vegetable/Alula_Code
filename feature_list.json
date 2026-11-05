@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 resumed on 2026-11-05 from merged P04 baseline (PR #2, merge 46084e9); P05 PR #3 is a draft on codex/vscode-parity-p05. P05.1 / LAY-01a is the sole active child. Its implementation and full local gates pass: init.sh (Rust 71+54, Clippy, build_core, Flutter 1,030), cargo fmt, Flutter analyze, focused titlebar/configuration 9/9, Harness 100/100. Linux/Windows/macOS hosted native-titlebar smoke is pending. Scope/evidence: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05 still has 20 LAY + 12 CMD matrix rows open.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a is complete with local and hosted evidence; 20 LAY + 12 CMD matrix rows remain open. PR CI 42032128727 and three-platform Platform Availability 42032120138 pass; macOS Intel package is hosted evidence only and its DnD input-route limitation is explicitly recorded. Continue by registering and completing one scoped P05 child at a time. Scope/report: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -698,8 +698,8 @@
       "dependencies": [
         "feat-027"
       ],
-      "status": "in-progress",
-      "evidence": "Local implementation complete, hosted validation pending. `WindowChromeConfiguration` defaults to custom and accepts --native-titlebar/--custom-titlebar; custom row is 35 logical px. Driver-injected tests cover platform-specific controls, drag/double-click, action routing, native menu row and close callback (9/9). Full `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` passes (Rust 71+54, Clippy, build_core, Flutter 1,030); cargo fmt, Flutter analyze (0 issues), Harness 100/100, diff check pass. Platform Availability now triggers on codex/vscode-parity-p05 and adds Linux/macOS native launch plus Windows native-mode graceful-close smoke; await run after push. Known difference: Linux draws controls in custom mode for GTK hidden decorations; Windows/macOS retain OS controls. Menu hierarchy/mnemonics/macOS system menu and explicit controls-style setting remain open. See docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
+      "status": "done",
+      "evidence": "P05.1 / LAY-01a complete. Local N.2: init.sh passed (Rust workspace 71+54, Clippy, build_core, Flutter 1,030); cargo fmt, Flutter analyze (0 issues), focused titlebar/config tests 9/9, Harness 100/100, diff check passed. PR CI 42032128727 passed all four checks. Platform Availability 42032120138 passed Linux x64 (5m46s), Windows x64 (11m48s), and macOS Intel x64 (28m58s) build/launch/package lanes. Package artifacts Linux 13415944530, Windows 13417376645, macOS Intel x64 13417219623. Linux/Windows clipboard, DnD, and titlebar smokes passed; Windows also captured visible client area and verified P03.7 interaction, accessibility, and graceful close. macOS clipboard, Release build, bundle/sign, normal/native-titlebar launch, and package passed. macOS DnD artifact 13418970398 explicitly reports CGEventPostToPid pointer route false and all tests skipped; do not claim macOS DnD passed. macOS startup diagnostics 13417639020. ZIP SHA-256 bb12d417b2bfdd2239cbba57c02467beb1bd137bedc84b01525b88cb5d50ad5e matches sidecar and unzip integrity passed. Hosted macOS is Intel x64; Apple Silicon/native-device checks remain P15. Known Linux custom-mode drawn controls and Windows custom-control style differences remain open. Full details: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05/feat-027 and LAY-01 remain in progress.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
