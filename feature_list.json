@@ -363,8 +363,8 @@
         "feat-023",
         "feat-025"
       ],
-      "status": "not-started",
-      "evidence": "",
+      "status": "in-progress",
+      "evidence": "P05 resumed on 2026-11-05 from merged P04 baseline (PR #2, merge 46084e9). Startup `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` passed Rust workspace tests, build_core, and Flutter 1,021 tests. P05.1 / LAY-01a is the sole active child; scope: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -690,6 +690,18 @@
       ],
       "status": "done",
       "evidence": "P04.127 / EDT-20e complete at product commit 4790317. Workbench review applies only selected edits through the existing Rust atomic transaction; frozen versions reject stale batches. Three integration tests cover selected-only apply, dirty/undo/redo/save readback, stale all-or-nothing failure, and Discard/Escape. Full local init.sh passed (Flutter 1,021), cargo fmt, Flutter analyze 0 issues, Harness 100/100, focused suite 3/3. PR CI 42005290509 and Platform Availability 42005281831 passed. Linux/Windows/macOS Intel x64 package artifacts 13404093792/13405495307/13405544262; macOS checksum sidecar and ZIP integrity verified. Linux/Windows DnD passed; macOS hosted pointer route unavailable and interaction skipped (13405309473); P15 device/Apple Silicon remain. Startup artifact 13406436899 has no crash report; historical SIGSEGV remains unresolved. Implementation: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md; scope/pre-edit review: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md."
+    },
+    {
+      "id": "feat-053",
+      "name": "P05.1 LAY-01a 标题栏模式、拖动与窗口控制",
+      "description": "对齐固定 Code-OSS 1.145.0 的 custom/native 标题栏模式、标题栏高度、平台窗口控制、拖动/双击、最小化/最大化/还原/关闭与优雅退出。菜单层级/mnemonic/macOS 系统菜单单独排期；不据此关闭 LAY-01 或 P05。范围与编辑前 GitNexus 风险见 docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md。",
+      "dependencies": [
+        "feat-027"
+      ],
+      "status": "in-progress",
+      "evidence": "",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

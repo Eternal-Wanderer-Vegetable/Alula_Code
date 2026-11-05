@@ -2,39 +2,37 @@
 
 ## Last Updated
 
-2026-11-05. P04 / feat-026 is complete through P04.127 / EDT-20e. Product commit 4790317 is pushed to codex/vscode-parity-p00. Full implementation and phase evidence: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md.
+2026-11-05. P04 is complete and merged to `main` by PR #2 (merge `46084e9`). User resumed the P00–P15 goal and requested a fresh branch, an open PR, and completion of P05.
 
 ## Current Objective
 
-Pause after P04 at the user's request. P05 / feat-027 is not started.
+Complete P05 / feat-027 (workbench UI and quick-access parity), commit by scoped child, and open a PR from `codex/vscode-parity-p05` to `main`. P05 is `in-progress`; only P05.1 / feat-053 / LAY-01a is currently active. Scope: `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`.
 
-P04.127 passed the local full DoD (Rust workspace, Clippy, build_core, Flutter 1,021), cargo fmt, Flutter analyze (0 issues), Harness (100/100), and focused integration tests (3/3). PR CI 42005290509 passed all four jobs. Platform Availability 42005281831 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Package artifacts: 13404093792 / 13405495307 / 13405544262; macOS ZIP checksum and integrity checks passed.
+The clean worktree is `/tmp/alula-p04.70-next`, based on `origin/main` at `46084e95ea0bfd72cf86873339db9670d0ba0b67`. The original `/mnt/e/alula_code` worktree contains unrelated user changes and must not be modified or cleaned.
 
-Linux/Windows hosted drag/drop passed. macOS hosted drag/drop was explicitly skipped because synthetic pointer input did not reach Flutter. Startup diagnostics contain no crash report; this is non-reproduction evidence only. The macOS artifact is Intel x64; native device and Apple Silicon checks remain P15. Historical macOS SIGSEGV remains unresolved. Code Action provider is mapped to LNG-08/P08 and is not claimed as part of P04.
+## Verified Baseline
 
-## Blockers
+`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` passed Rust workspace tests, `build_core`, and all 1,021 Flutter tests. The P05 task must still run the full N.2 gates when implementation is ready: cargo fmt, core build, Rust tests/clippy, Flutter analyze/test, and `bash init.sh`.
 
-No P04 implementation blocker remains. P15 still requires native-device and Apple Silicon verification, and the historical macOS SIGSEGV remains unresolved; these do not prevent the requested pause. The 500 MiB target remains deferred.
+GitNexus was refreshed at `46084e9`: 10,489 nodes, 25,289 edges, 325 clusters, 414 flows. `AlulaTitleBar` impact is `UNKNOWN` with no indexed callers/processes; text search finds the production assembly at `workbench_page.dart:16656`, a >512 KiB skipped file. Keep this as unresolved graph coverage and inspect actual call paths before edits; never report a clean graph from the empty result. Five large files and cross-language field-resolution gaps remain.
 
-## Files
+## Blockers / Limits
 
-- docs/03-里程碑计划与验收标准.md
-- feature_list.json
-- progress.md
-- session-handoff.md
-- docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md
-- docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md
-- app/lib/workbench/workbench_page.dart
-- app/test/workbench_bulk_edit_review_test.dart
+- No local GUI or Narrator run. Use hosted desktop jobs and record unsupported synthetic input as skipped; do not claim native-device or Apple Silicon verification from another runner.
+- P05 includes 20 LAY and 12 CMD matrix rows. Completion requires per-row evidence and docs/03 N.2; a first titlebar slice does not close the phase.
+- The 500 MiB memory target remains deferred until after architectural replication.
+
+## Files In Scope First
+
+- `docs/03-里程碑计划与验收标准.md`
+- `feature_list.json`
+- `progress.md`
+- `session-handoff.md`
+- `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`
+- `app/lib/main.dart`
+- `app/lib/workbench/title_bar.dart`
+- `app/lib/workbench/workbench_page.dart` (oversized; inspect composition and shutdown path carefully)
 
 ## Next Session First Step
 
-After the user resumes, read AGENTS.md, this handoff, and progress.md; check GitNexus freshness; run bash init.sh --fast; then register and scope P05 before implementation. Keep PR #2 OPEN/draft and push only to codex/vscode-parity-p00 under the existing authorization. Do not start local GUI/Narrator testing.
-
-## Recommended Next Step
-
-Begin P05 / feat-027 only after the user resumes. Register one scoped P05 child and perform GitNexus impact review before code edits.
-
-## GitNexus Limits
-
-AlulaCore.applyWorkspaceEdit upstream impact is UNKNOWN; workbench_page.dart exceeds the index size limit. Product all-scope detection found no indexed-symbol overlap and is not clean; compare-main remains CRITICAL/capped. See the P04.127 scope and implementation reports. Do not claim the graph is clean.
+Finish verifying the registered scope and GitNexus impact against the current worktree, implement only P05.1, add focused tests and hosted validation, record all evidence, run N.2 gates and pre-commit GitNexus all/compare checks, then commit and push. Open the P05 PR to `main` once the scoped registration commit is pushed; continue one child at a time until all P05 rows are closed.

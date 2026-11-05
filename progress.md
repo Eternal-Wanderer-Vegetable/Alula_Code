@@ -5,14 +5,22 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04 / feat-026 已完成；按请求暂停于 P05 之前
+### P05 / feat-027 已启动；P05.1 是当前唯一 active 子项
+
+- 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
+- `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh --fast` 基线通过：Rust workspace tests、`build_core`、Flutter 1,021 项测试均成功。
+- 当前仅登记 P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）；范围与预编辑分析在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项 `in-progress`，尚未声称 LAY-01 或阶段完成。
+- GitNexus refreshed at `46084e9`（10,489 nodes / 25,289 edges / 325 clusters / 414 flows）。`AlulaTitleBar` upstream impact 为 UNKNOWN，调用点位于未索引的 >512 KiB `workbench_page.dart`；已用文本核对确认生产装配点，风险继续按 unresolved 记录。索引仍跳过 5 个大文件，并报告跨语言属性解析缺口。
+- PR #2 已合并；P05 PR 将以 `main` 为 base。暂不启动本机 GUI 或 Narrator；hosted/native-device 证据按 docs/03 的可用性与限制登记。500 MiB 数值目标仍后置。
+
+### P04 / feat-026 已完成并合并；用户现已恢复 P05
 
 - P04.127 / EDT-20e 产品/test commit 4790317 已推送。Workbench review 接入现有 Rust 原子跨文档事务，以冻结版本拒绝过期批次；测试覆盖选择过滤、跨文档 dirty/undo/redo/save readback、Discard/Escape 和 stale 原子失败。没有改 Rust、FFI、ABI 或数值内存目标。
 - 本地完整 DoD 通过：Rust workspace、Clippy、build_core、Flutter 1,021；cargo fmt、Flutter analyze 0 issues、Harness 100/100、focused suite 3/3。
 - PR CI 42005290509 四个 job 全绿。Platform Availability 42005281831 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全绿；包 artifacts 13404093792 / 13405495307 / 13405544262。macOS ZIP sidecar SHA-256 与独立重算一致，unzip 完整性通过。
 - Linux DnD artifact 13404253418（19 pointer events）及 Windows 13404234177（13 pointer events）完成同文档 move、跨文档 copy、外部文本 drop。macOS DnD artifact 13405309473 因 hosted synthetic pointer route unavailable 明确 skip；macOS startup artifact 13406436899 无 crash report，仅表示本轮未复现，历史 SIGSEGV 未解决。macOS 包为 Intel x64；Apple Silicon 与原生设备检查仍在 P15。
-- P04 的 EDT-20 预览、Multi Diff、选择、Workbench 事务出口均完成。Code Action provider 属于 LNG-08/P08；本阶段未声称该 provider 已交付。P04 阶段关闭，P05 尚未启动；按用户要求在此暂停。500 MiB 优化目标继续后置；本机 GUI/Narrator 未启动。
-- P04.127 实现与 hosted/GitNexus 证据：docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md。PR #2 仍 OPEN/draft。
+- P04 的 EDT-20 预览、Multi Diff、选择、Workbench 事务出口均完成。Code Action provider 属于 LNG-08/P08；本阶段未声称该 provider 已交付。P04 于 PR #2 合并，merge commit `46084e9`。
+- P04.127 实现与 hosted/GitNexus 证据：docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
