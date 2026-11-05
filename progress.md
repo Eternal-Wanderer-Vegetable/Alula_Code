@@ -5,12 +5,14 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.126 / EDT-20d 已登记；P04 / feat-026 仍进行中
+### P04.126 / EDT-20d 已完成；P04 / feat-026 仍进行中
 
-- P04.125 / EDT-20c 产品/test commit `54b9ea65e407bb1a14ba4feb302eaf9abb0e837c` 与证据 commit `642212fe90d50e129704831b62b7a426bb5d52d2` 已推送。产品本地 DoD、focused 5/5、PR CI `41989168966` 与三平台 hosted build/test/launch/package `41989162683` 全通过；macOS hosted DnD 因 pointer route unavailable 明确 skip，P15 原生设备/Apple Silicon 验收保留。完整证据：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-implementation.md`。
-- P04.126 / EDT-20d 是唯一 active child：实现 bounded review route，把现有 per-edit/resource selection 接入所选内容的 Multi Diff；Apply 只调用必需事务回调，成功才关闭，失败保持 UI，Discard/Escape 不写入。范围、Code-OSS 来源、编辑前 impact/UNKNOWN 与图谱覆盖限制：`docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-scope.md`。
-- P04.126 编辑前 GitNexus index：10,403 nodes / 22,649 edges / 325 clusters / 412 flows；all-scope 当前无工作树变化；compare-main CRITICAL/capped（1,699 files / 4,225 symbols / 396 flows）。`BulkEditPreviewSession` impact UNKNOWN（当前仅测试调用，文本已核实）；`BulkEditMultiDiffProjection` LOW（一 import）；Workbench 超过索引文件上限，core transaction caller 的动态属性边未解析。未知与覆盖缺口保留，避免修改既有 Workbench/FFI transaction symbols。
-- PR #2 保持 OPEN/draft，P05 不启动；P04 所有 gates 完成后暂停。P15 和 deferred 500 MiB 优化保持原状态；不启动本地 GUI/Narrator。
+- 产品/test commit `2bef912` 与证据待提交。本地完整 `init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1018）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、focused review 6/6、Harness 100/100 通过。
+- PR CI `41995436771` 四 job 全通过。Platform Availability `41995430298` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Packages Linux/Windows/macOS：`13400476798` / `13399999365` / `13401159500`；macOS ZIP SHA-256 与 sidecar 一致，`unzip -t` 通过。
+- Linux DnD artifact `13400456889`（22 pointer events）与 Windows `13399798782`（12 pointer events）完成 same-doc move、cross-doc copy、external text drop。macOS DnD `13401996084` 因 synthetic pointer route unavailable 明确 skip；P15 原生设备与 Apple Silicon 验收保留。macOS startup `13402141087` 显示成功 launch/Impeller、clamped stale frame timestamp、无 crash report；历史 SIGSEGV 仍未解决。
+- 新增 route 组合 P04.123 selection session、P04.124 projection、P04.125 Multi Diff，提供资源/单项选择、全局/资源操作、选中差异预览、Apply callback 和丢弃路径。未接生产 Code Action/Bulk Edit producer，未改现有 transaction/undo/save/FFI。
+- GitNexus：10,451 nodes / 23,072 edges / 325 clusters / 414 flows。产品 all-scope HIGH（2 files/37 symbols/6 新 UI 流）；compare-main CRITICAL/capped（1702 files/4422 symbols/398 flows）为累计分支未解结果。Workbench 大文件、773 跨语言 fields、891 未排名入口、346 skipped callees、13 trace cuts 不作 clean 结论。完整报告：`docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-implementation.md`。
+- P04/feat-026 仍开放：下一步注册一个独立 P04 子项，将真实 Workbench WorkspaceEdit/事务应用接到新 route 并验证 undo/dirty/rollback；先查准确入口并运行 GitNexus impact。P05 不启动，所有 P04 gates 完成后暂停。P15 与 deferred 500 MiB 目标保持原状；无本地 GUI/Narrator。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 

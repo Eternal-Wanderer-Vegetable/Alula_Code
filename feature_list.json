@@ -676,8 +676,8 @@
         "feat-049",
         "feat-050"
       ],
-      "status": "in-progress",
-      "evidence": "Scope and pre-edit GitNexus review registered in docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-scope.md; implementation pending.",
+      "status": "done",
+      "evidence": "P04.126 / EDT-20d product commit 2bef912. Local DoD passed: cargo fmt, Rust workspace tests, Clippy, build_core, Flutter analyze 0 issues, Flutter 1,018; focused review-surface widgets 6/6. PR CI 41995436771 and Platform Availability 41995430298 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Package artifacts Linux/Windows/macOS: 13400476798 / 13399999365 / 13401159500; macOS ZIP SHA-256 ac2f632a4b9be11d49bf1c85d76569b6fa60e642edde14b04ee2be31e304450a matches sidecar and unzip -t passed. Linux/Windows native DnD artifacts 13400456889 / 13399798782 passed; macOS artifact 13401996084 explicitly skips due synthetic pointer-route unavailability, P15 remains. Startup artifact 13402141087 had no crash report; historical macOS SIGSEGV remains unresolved. Implementation: docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-implementation.md; scope/pre-edit review: docs/diagnostics/2026-11-05-p04/p04.126-bulk-edit-preview-selection-surface-scope.md. GitNexus product all-scope HIGH and compare-main CRITICAL/capped are recorded; no clean graph claim.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }
