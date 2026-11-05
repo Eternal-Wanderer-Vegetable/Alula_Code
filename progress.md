@@ -5,12 +5,13 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.125 / EDT-20c 范围已登记；P04 / feat-026 仍进行中
+### P04.125 / EDT-20c 已完成；P04 / feat-026 仍进行中
 
-- P04.124 / EDT-20b 已完成。产品/test commit `8f0bd3c53d610dd37f5944cbc1c21f46130bbac0` 与证据 commit `4d72612804f4de15b885cc1afc2005ea3626d76b` 已推送。8 focused tests、完整本地 init.sh（Flutter 1007）、analyze、cargo fmt、PR CI `41978244599` 和 Linux/Windows/macOS Intel x64 Platform Availability `41978235663` 均通过；证据提交 CI `41983195939` 四 job 通过。macOS hosted DnD fixture 因 runner 未路由合成指针输入而明确 skip（artifact `13394038817`）；不能称 macOS DnD 通过，P15 设备/Apple Silicon 门仍在。实现报告：`docs/diagnostics/2026-11-05-p04/p04.124-bulk-edit-multidiff-projection-implementation.md`。
-- P04.125 / EDT-20c 是当前唯一 active child：针对冻结 projection 实现只读 Multi Diff resource navigator 与成对 diff row surface、键盘导航/关闭及可复用 route API。此 child 不含生产 Code Action/Bulk Edit 入口、edit checkbox、Apply/Discard 或事务应用/回滚。范围、Code-OSS 定位与编辑前 GitNexus 审查：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-scope.md`。
-- P04.125 预分析：GitNexus 对 >512 KiB 的 `workbench_page.dart` 返回 UNKNOWN/未索引；精确搜索定位 `_showEditableSnapshotCompare`、`_buildEditorArea` 与仅供测试的 `applyWorkspaceEdit`，仓库无生产 Bulk Edit/Code Action route。`SnapshotComparePreview` LOW (2)，`DiffViewModelResult` LOW (8)，`computeDiffViewModel` LOW (5，包含 Git flows)；selection/projection models UNKNOWN/0 callers，精确搜索确认尚无生产 UI 调用。763 跨语言字段、875/1075 未排名 entrypoints、375 skipped callees 与 14 trace cuts 保持未解决，不作 clean graph 结论。
-- P04 / feat-026 与 EDT-20 仍开放。先完成 P04.125 单项；Apply/Discard/rollback 保持后续独立 child。P05 不启动；完成全部 P04 gates 后暂停。PR #2 保持 OPEN/draft，P15 与 500 MiB 数值目标保持原状态；无本地 GUI/Narrator。
+- 产品/test commit `54b9ea65e407bb1a14ba4feb302eaf9abb0e837c` 已推送。只读 Multi Diff route、保序资源 navigator、成对懒构建 diff rows、行号/行类型/word ranges、键盘导航/关闭、URI/document/version metadata 与语义标签已实现；不含生产 Bulk Edit producer、编辑选择控件或 Apply/Discard/rollback。实现报告：`docs/diagnostics/2026-11-05-p04/p04.125-bulk-edit-multidiff-surface-implementation.md`。
+- 完整本地 DoD 通过：`cargo fmt --all -- --check` 与 `bash init.sh`（Rust workspace、Clippy、build_core、Flutter 1012）通过；Flutter analyze 0 issues，focused Multi Diff widget suite 5/5。
+- PR CI `41989168966` 四 job 已通过。Platform Availability `41989162683` 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 均通过。包 artifacts：Linux `13397536411`、Windows `13397990347`、macOS `13398562144`；macOS DnD `13398856037` 因合成指针未路由至 Flutter 明确 skip，P15 设备门保留。macOS startup `13398212910` 成功启动且无 crash report；历史 SIGSEGV 不因此视为修复。此前 `41968463896` / `41971306974` CI 失败均为 Flutter analyze 的 `prefer_const_constructors`，Rust jobs 通过；后续修正后 CI 回绿。这些日志没有证据把 lint 失败关联到历史应用崩溃。
+- 最终 GitNexus index 为 10,395 nodes / 22,348 edges / 325 clusters / 412 flows；5 个大文件（包含 `workbench_page.dart`）跳过，768 跨语言字段、884 未排名入口、369 skipped callees 与 14 trace cuts 保持未解决。此产品变更 all-scope MEDIUM（2 files/35 symbols/5 flows）；全分支 compare-main CRITICAL（1698 files/4210 symbols/396 flows，listing capped），不作 clean graph 结论。
+- P04 / feat-026 与 EDT-20 仍开放：P04 parent DoD 还要求批量预览选择、应用/回滚端到端闭环，当前 P04.123–125 已完成选择模型、投影模型与只读视图，生产 producer/selection/apply 路由尚未落地。下一步从 docs/03 注册一个独立 P04 child，先做范围与 GitNexus 预分析；P05 不启动，完成全部 P04 gates 后暂停。PR #2 保持 OPEN/draft，P15 与 500 MiB 数值目标保持原状态；未启动本地 GUI/Narrator。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
