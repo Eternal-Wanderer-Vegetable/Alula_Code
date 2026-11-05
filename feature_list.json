@@ -637,8 +637,8 @@
       "dependencies": [
         "feat-047"
       ],
-      "status": "in-progress",
-      "evidence": "Scope and pre-edit review registered in docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-scope.md; implementation pending.",
+      "status": "done",
+      "evidence": "P04.123 / EDT-20a complete in product commits bf9efbe, 9ea2a2b, 5c07382, 0a8d001. `BulkEditPreviewSession` is pure Dart and bounded; 8 focused tests pass. Full local init.sh passed (Rust workspace, Clippy, build_core, Flutter 999); after final const-only fixture lint fixes, analyze is clean and focused suite is 8/8. PR CI 41971584381 and Platform Availability 41971577712 pass all jobs. Linux/Windows/macOS Intel x64 package artifacts 13389632639 / 13389757586 / 13391801090. macOS hosted DnD artifact 13390744368 explicitly skips because synthetic pointer routing is unavailable; native macOS and Apple Silicon remain P15. GitNexus UNKNOWN caller/coverage gaps remain unresolved; see docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-implementation.md. Model-only scope; P04 continues and P05 is not started.",
       "track": "vscode-builtin-parity",
       "phase": "P04"
     }

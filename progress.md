@@ -5,11 +5,14 @@
 
 ## Current State（当前状态，2026-11-05 更新）
 
-### P04.123 / EDT-20a 范围已登记；P04 / feat-026 仍进行中
+### P04.123 / EDT-20a 已完成；P04 / feat-026 仍进行中
 
-- P04.122 / EDT-19l 已完成；当前唯一 active child 为 P04.123 / EDT-20a：纯 Dart 批量文本编辑预览选择模型，范围、2,048 文档/32,768 edits/8 MiB UTF-8 限额和 DoD 登记在 `docs/03` 与 `docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-scope.md`。实现尚未开始。
-- 启动基线 `bash init.sh --fast` 通过：Rust workspace、Flutter 991 项。GitNexus `WorkspaceEdit` impact 仍为 UNKNOWN（0 mapped callers），文本搜索确认工作台实际调用位于 `app/lib/workbench/workbench_page.dart:10806`；本 slice 不改现有 planner、Workbench、Rust 或 FFI。图谱覆盖缺口保留，不称 clean。
-- 当前隔离 worktree 基线为 `79b59a8`（P04.122 evidence）；PR #2 保持 OPEN/draft，P05 不启动。No GUI/Narrator。macOS 设备验证留 P15，500 MiB 数值目标后置。
+- 新增纯 Dart `BulkEditPreviewSession`，在固定、不可变的文本 `WorkspaceEdit` 输入上支持资源分组、逐编辑选择、资源与全局选择操作、仅变更递增的 revision，以及保留顺序/URI/version/transactionId 的深度不可变筛选输出。上限为 2,048 文档、32,768 edits、transactionId+URI+替换文本合计 UTF-8 8 MiB；超限或畸形输入整次拒绝。未接 UI/Multi Diff、apply/rollback、dirty/undo 或 Rust/FFI/ABI。
+- Focused model 8/8。完整 `RUST_TEST_THREADS=1 FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 999）；最终两个 `const` 测试 fixture lint 修复后 `flutter analyze --no-pub` 0 issues，focused 8/8。PR CI [41971584381](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41971584381) 四 job 全通过。
+- Platform Availability [41971577712](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/41971577712) Linux x64、Windows x64、macOS Intel x64 hosted build/test/launch/package 全通过。包 artifacts：Linux `13389632639`、Windows `13389757586`、macOS `13391801090`。macOS hosted DnD `13390744368` 明确报告合成指针未到达 Flutter、测试跳过；Apple Silicon 与 macOS 原生设备验收保留 P15。平台包是 CI artifacts，不是发布版本。
+- GitNexus 在源码 SHA `0a8d001` 刷新：10,002 nodes / 20,579 edges / 322 clusters / 407 flows；5 个 >512 KiB 文件未索引（含 `workbench_page.dart`），报告 763 个跨语言属性访问未解析。`WorkspaceEdit`/planner 与新模型预编辑 impact 均 UNKNOWN/0 mapped；文本检索定位 production planner 在未索引 Workbench 文件。源码 all-scope 结果 2 files / 56 symbols / 0 mapped processes / LOW，不解除 UNKNOWN 或覆盖缺口。最终证据文档 all-scope scan 输出：“Diff touched 6 file(s) but no indexed symbols overlap those hunks — not a clean tree.” 保留该索引覆盖/映射异常，不称 graph clean。
+- 首两次 CI 报 `prefer_const_constructors`，已修复测试 fixture；这是静态分析失败，不是崩溃证据。上述 headless / hosted 测试没有结案历史 Windows `0xC000041D` 或 macOS startup SIGSEGV。无本机 GUI/Narrator。详细实现和验收边界：`docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-implementation.md`；范围与预编辑分析：`docs/diagnostics/2026-11-05-p04/p04.123-bulk-edit-preview-model-scope.md`。
+- 下一步读取剩余 EDT-20 计划、登记一个有独立 DoD 和依赖审查的 P04.124 子项，再继续 Multi Diff 与 apply/rollback 生命周期。P04 完成后按用户要求暂停；P05 不启动。500 MiB 数值优化仍后置。
 
 ### P04.122 / EDT-19l 已完成；P04 / feat-026 仍进行中
 
