@@ -269,6 +269,292 @@ void main() {
     await tester.pumpAndSettle();
     expect(commandCalls, 1);
   });
+
+  testWidgets('Alt mnemonic opens nested menus and invokes the marked command',
+      (tester) async {
+    var commandCalls = 0;
+    commands.register(Command(
+      id: 'file.save',
+      title: 'Save',
+      category: 'File',
+      run: () async {
+        commandCalls++;
+      },
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.windows),
+      menus: const [
+        (
+          '文件(&&F)',
+          [
+            TitleMenuItem.submenu('外观(&&A)', children: [
+              TitleMenuItem('保存(&&S)', commandId: 'file.save'),
+            ]),
+          ],
+        ),
+      ],
+    ));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuItemButton), findsNothing);
+    expect(
+      tester
+          .widget<SubmenuButton>(find.byType(SubmenuButton).first)
+          .controller!
+          .isOpen,
+      isTrue,
+    );
+    expect(find.byType(SubmenuButton), findsNWidgets(2));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuItemButton), findsOneWidget);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyS);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(commandCalls, 1);
+  });
+
+  testWidgets('bare Alt focuses the menu and bare mnemonic opens it',
+      (tester) async {
+    final editorFocus = FocusNode(debugLabel: 'editor focus');
+    var openCalls = 0;
+    commands.register(Command(
+      id: 'file.open',
+      title: 'Open',
+      category: 'File',
+      run: () async {
+        openCalls++;
+      },
+    ));
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: Column(
+          children: [
+            WindowChromeConfigurationScope(
+              configuration:
+                  WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+              child: AlulaTitleBar(
+                commands: commands,
+                menus: const [
+                  (
+                    '文件(&&F)',
+                    [
+                      TitleMenuItem('打开(&&O)', commandId: 'file.open'),
+                    ]
+                  ),
+                ],
+                windowChromeDriver: window,
+              ),
+            ),
+            Expanded(child: TextField(focusNode: editorFocus)),
+          ],
+        ),
+      ),
+    ));
+    await tester.tap(find.byType(TextField));
+    await tester.pump();
+    expect(editorFocus.hasFocus, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyO);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(openCalls, 1);
+    expect(editorFocus.hasFocus, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      'Alula menu bar focus',
+    );
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<SubmenuButton>(find.byType(SubmenuButton).first)
+          .controller!
+          .isOpen,
+      isTrue,
+    );
+    expect(find.byType(MenuItemButton), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pump();
+    expect(editorFocus.hasFocus, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.tap(find.byType(TextField));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(editorFocus.hasFocus, isTrue);
+    expect(find.byType(MenuItemButton), findsNothing);
+
+    editorFocus.dispose();
+  });
+
+  testWidgets('mnemonics skip disabled and hidden menu commands',
+      (tester) async {
+    var commandCalls = 0;
+    commands.register(Command(
+      id: 'test.disabledMenuCommand',
+      title: 'Disabled',
+      category: 'Test',
+      enablement: 'menuActionEnabled',
+      run: () async {
+        commandCalls++;
+      },
+    ));
+    commands.register(Command(
+      id: 'test.hiddenMenuCommand',
+      title: 'Hidden',
+      category: 'Test',
+      when: 'showHiddenMenuAction',
+      run: () async {
+        commandCalls++;
+      },
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.windows),
+      menus: const [
+        (
+          '测试(&&T)',
+          [
+            TitleMenuItem('禁用(&&D)', commandId: 'test.disabledMenuCommand'),
+            TitleMenuItem('隐藏(&&H)', commandId: 'test.hiddenMenuCommand'),
+          ],
+        ),
+      ],
+    ));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyT);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(find.text('隐藏(H)'), findsNothing);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(commandCalls, 0);
+    expect(find.byType(MenuItemButton), findsOneWidget);
+  });
+
+  testWidgets('Alt mnemonic works when custom bare-Alt focus is disabled',
+      (tester) async {
+    commands.register(Command(
+      id: 'file.open',
+      title: 'Open',
+      category: 'File',
+      run: () async {},
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.windows),
+      customMenuBarAltFocus: false,
+      menus: const [
+        ('文件(&&F)', [TitleMenuItem('打开(&&O)', commandId: 'file.open')]),
+      ],
+    ));
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      isNot('Alula menu bar focus'),
+    );
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuItemButton), findsOneWidget);
+  });
+
+  testWidgets('macOS and disabled settings strip markers without access keys',
+      (tester) async {
+    commands.register(Command(
+      id: 'file.open',
+      title: 'Open',
+      category: 'File',
+      run: () async {},
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      menus: const [
+        (
+          '文件(&&F)',
+          [
+            TitleMenuItem('打开(&&O)', commandId: 'file.open'),
+            TitleMenuItem('另存为 && 退出(&&X)', commandId: 'file.open'),
+          ],
+        ),
+      ],
+    ));
+
+    expect(find.text('文件(F)'), findsOneWidget);
+    expect(find.byTooltip('文件'), findsOneWidget);
+    await tester.tap(find.text('文件(F)'));
+    await tester.pumpAndSettle();
+    expect(find.text('另存为 & 退出(X)'), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pumpAndSettle();
+    expect(find.text('打开(O)'), findsNothing);
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.windows),
+      enableMenuBarMnemonics: false,
+      menus: const [
+        ('文件(&&F)', [TitleMenuItem('打开(&&O)', commandId: 'file.open')]),
+      ],
+    ));
+    expect(find.text('文件(F)'), findsOneWidget);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      'Alula menu bar focus',
+    );
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+    await tester.pumpAndSettle();
+    expect(find.byType(MenuItemButton), findsNothing);
+  });
 }
 
 Future<void> _doubleTap(WidgetTester tester, Finder finder) async {
@@ -288,6 +574,8 @@ Widget _titleBarApp({
   required WindowChromeConfiguration configuration,
   List<(String, List<TitleMenuItem>)> menus = const [],
   VoidCallback? onCloseRequested,
+  bool enableMenuBarMnemonics = true,
+  bool customMenuBarAltFocus = true,
 }) {
   return MaterialApp(
     home: WindowChromeConfigurationScope(
@@ -299,6 +587,8 @@ Widget _titleBarApp({
           windowControls: true,
           windowChromeDriver: window,
           onCloseRequested: onCloseRequested,
+          enableMenuBarMnemonics: enableMenuBarMnemonics,
+          customMenuBarAltFocus: customMenuBarAltFocus,
         ),
       ),
     ),

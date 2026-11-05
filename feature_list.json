@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 / LAY-01a and P05.2 / feat-054 / LAY-01b are complete with local and hosted evidence; P05 and LAY-01 remain open. Continue with one registered child at a time until all LAY/CMD DoDs are satisfied. P05.1 evidence: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05.2 implementation, retry details, artifacts, checksum and GitNexus limits: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
+      "evidence": "P05 remains in-progress on branch codex/vscode-parity-p05, draft PR #3. P05.1 / feat-053 and P05.2 / feat-054 are complete; P05.3 / feat-055 LAY-01c is the sole active child. Continue one registered child at a time until all LAY/CMD DoDs are satisfied. P05.1: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md; P05.2: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md; P05.3 scope/pre-edit graph review: docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -712,6 +712,18 @@
       ],
       "status": "done",
       "evidence": "P05.2 LAY-01b complete. Recursive command/submenu/separator model and production View > Appearance path implemented; visibility/enabled state, arguments, separator normalization, mouse expansion, ArrowDown/ArrowRight/Enter navigation and integration covered. Local FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,032); cargo fmt --check, Flutter analyze 0 issues, title_bar_test 8/8, workbench integration 1/1, Harness 100/100, JSON and diff checks passed. PR CI 42044717588 all four jobs passed. Platform Availability 42044705607 attempt 2 passed Linux x64, Windows x64, macOS Intel x64; attempt 1 had two macOS fixed-delay widget test failures and retry passed 1,032/1,032. Package artifacts Linux/Windows/macOS Intel x64 13425020073/13423773712/13427823993. Linux/Windows DnD passed; macOS DnD artifact 13427973390 explicitly skipped because CGEventPostToPid could not route synthetic pointer events. macOS startup 13427414246; ZIP SHA-256 5a2d3d9916ec45425d04ebb82d41b16733f8eaef07d1eb721c4d67f7056c64af matches sidecar and unzip integrity passed. Hosted Mac is Intel x64; Apple Silicon/native device remain P15. GitNexus impact UNKNOWN, compare-to-main HIGH, workbench_page.dart omitted (>512 KiB), 779 cross-language sites and process truncation remain unresolved. Full evidence: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-055",
+      "name": "P05.3 LAY-01c 标题栏菜单 mnemonic 与访问键",
+      "description": "在递归标题栏菜单上实现 && mnemonic 标签、Windows/Linux Alt 聚焦与标记键打开菜单/调用项、macOS 不启用 Alt 路径、Escape 焦点恢复；设置存储接入留 P07。范围与编辑前影响分析见 docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md。",
+      "dependencies": [
+        "feat-054"
+      ],
+      "status": "in-progress",
+      "evidence": "实现递归菜单 && mnemonic、Windows/Linux Alt 聚焦与访问键、独立设置开关、macOS 禁用 Alt、Esc 焦点恢复；保留 command enable/visibility 门控。title_bar_test 12/12、workbench menu integration 1/1、cross-window line/menu save 18/18、矩形 Alt+Shift 拖选三平台 3/3；完整 init.sh Flutter 1,037、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0 issues、Harness 100/100 全通过。GitNexus all-scope scans vary 8–9 files/28–44 symbols/5–11 processes (MEDIUM–HIGH); compare 15 files/74–96 symbols/10–11 processes HIGH. Menu flow mis-mappings, AlulaTitleBar caller UNKNOWN, and large-file/cross-language coverage limits are recorded. PR CI and hosted platform evidence pending product commit push. See docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

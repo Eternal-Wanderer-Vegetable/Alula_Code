@@ -96,13 +96,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Alula Code'), findsWidgets); // 标题栏 + MaterialApp.title
-    expect(find.text('文件'), findsOneWidget); // 标题栏菜单
-    await tester.tap(find.text('查看'));
+    expect(find.text('文件(F)'), findsOneWidget); // 标题栏菜单与 mnemonic
+    await tester.tap(find.text('查看(V)'));
     await tester.pumpAndSettle();
-    expect(find.text('外观'), findsOneWidget);
-    await tester.tap(find.text('外观'));
+    expect(find.text('外观(A)'), findsOneWidget);
+    await tester.tap(find.text('外观(A)'));
     await tester.pumpAndSettle();
-    expect(find.text('切换侧栏'), findsOneWidget,
+    expect(find.text('切换侧栏(S)'), findsOneWidget,
         reason: '工作台菜单应提供真实的 View > Appearance 子菜单');
     await tester.sendKeyEvent(LogicalKeyboardKey.escape);
     await tester.pumpAndSettle();

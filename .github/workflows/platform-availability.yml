@@ -1,6 +1,7 @@
 name: Platform Availability
 
 on:
+  workflow_dispatch:
   push:
     branches: [codex/vscode-parity-p00, codex/vscode-parity-p05]
     paths:
