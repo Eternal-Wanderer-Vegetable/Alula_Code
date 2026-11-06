@@ -879,7 +879,7 @@ jobs:
       - name: Launch macOS native-titlebar mode and verify native Quit menu
         if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
         run: |
-          app_bundle="app/build/macos/Build/Products/Release/alula_app.app"
+          app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
           bundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' \
             "$app_bundle/Contents/Info.plist")
           open -n -W -a "$app_bundle" --args --native-titlebar \

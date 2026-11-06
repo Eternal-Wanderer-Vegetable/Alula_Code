@@ -2,38 +2,34 @@
 
 ## Last Updated
 
-2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch codex/vscode-parity-p05 is pushed; draft PR #3 targets main: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.14 / feat-053–066 are complete. P05.15 / feat-067 local implementation and full local DoD passed; final product commit and hosted PR/platform evidence are pending. P05 remains open until all LAY and CMD matrix DoDs pass.
+2026-11-07. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.14 / feat-053–066 are complete. P05.15 / feat-067 / LAY-03f is implemented and passed local DoD, but the latest macOS hosted lane exposed two launch-path issues. P05 and all LAY/CMD matrix requirements remain open.
 
 ## Current Objective
 
-Continue the P05 architecture replication. P05.14 / feat-066 is complete. Current item P05.15 / feat-067 / LAY-03f has local implementation and full local DoD complete: root layout pin persistence, migration/normalization, Keep/Hide menus, active-unpinned visibility, last-pin guard, keyboard order, and remount tests. Registration commit b556ad3 is pushed; product changes are currently uncommitted. Scope and evidence are in docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. Next: run final GitNexus change scans, commit the product phase, push, and collect final PR CI and Linux/Windows/macOS hosted validation. Keep PR #3 draft/open until P05 is complete.
+Finish P05 sequentially, following `docs/03-里程碑计划与验收标准.md` as the sole status/DoD authority. Current item is P05.15 Activity Bar Keep/Hide and pin persistence. After its hosted evidence is complete, select exactly one next unfinished P05 matrix item and continue. Keep PR #3 draft/open until all P05 LAY/CMD requirements pass. Do not merge or declare P05 complete early.
 
-## Current Branch State
+## Worktree and Branch
 
-- Worktree: /tmp/alula-p04.70-next. The original /mnt/e/alula_code worktree contains unrelated user changes; do not modify or clean it.
-- Branch codex/vscode-parity-p05, product commit 7def397; current CI fix is uncommitted. P05.15 local full DoD and PR CI 42229440013 passed. Platform Availability 42229430615 Linux/Windows passed; macOS native Quit failed twice. P05.14 prior PR CI 42216043944 and Platform Availability 42216038049 passed.
-- P05.14 local verification: ActivityBar widget 9/9, layout model 21/21, order integration 1/1; full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,076/1,076; cargo fmt, Flutter analyze (0 issues), diff check, and Harness 100/100 passed.
-- Hosted evidence: Linux/Windows/macOS Intel x64 build/test/launch/package passed; Linux/Windows native move/copy/external-text DnD passed. macOS native clipboard and System Events Quit passed. Hosted macOS DnD artifact 13503490499 explicitly records that synthetic pointer events did not reach Flutter and is a skip. macOS app ZIP artifact 13503042243 has SHA-256 f1502651f4c1b17d482a9612b1f2bdb150359367bd4901390adab8479daa956d matching its sidecar digest; unzip integrity passed. Full report: docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md.
-- PR #3 remains draft/open; do not merge or mark P05 complete until all P05 matrix items pass.
-- P05.15 pre-edit GitNexus: ActivityBar UNKNOWN/0 resolved callers, production caller text-confirmed at workbench_page.dart:16884 (large file skipped); WbSplit MEDIUM lower-bound, 14 total/11 direct with dynamic dispatch boundary. No HIGH/CRITICAL warning. Keep these limits in scope and commit records.
-- Do not run local desktop GUI/Narrator tests. The 500 MiB optimization target remains deferred until architectural replication is complete.
+- Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`.
+- The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
+- Product commit `7def397` implements P05.15 and is pushed. CI fix commit `dcf69e0` is pushed. Current uncommitted change is a follow-up macOS validation fix: use an absolute app-bundle path for native Quit and change the invalid macOS bundle ID from `com.alula.alula_app` to `com.alula.alula-app`; related scope/DoD/progress evidence has been updated.
+- PR CI `42239892251` passed. Platform Availability `42239881628`: Linux and Windows x64 passed; macOS analyze/tests, Release build, clipboard, and regular launch passed. The macOS DnD integration test stopped at Flutter `open returned 1` before pointer-route diagnostics. The native Quit step failed because LaunchServices received a relative app bundle path. Scope report has exact evidence and distinguishes unverified paths.
 
-## GitNexus Boundaries
+## Local Validation and Constraints
 
-GitNexus was refreshed after the P05.15 implementation against current source (HEAD b556ad3): 11,209 nodes / 31,449 edges / 341 clusters / 425 flows. It skips workbench_page.dart (>512 KiB), reports 799 cross-language property sites and flow-trace truncation (933 of 1,133 entry candidates dropped, 325 callees skipped, 14 budget-cut walks); missing callers/flows are not proof of no impact. P05.14 pre-edit ActivityBar impact was UNKNOWN because its production workbench assembly is in the skipped file; WbSplit was MEDIUM lower-bound. Product scans were MEDIUM for all-scope and CRITICAL compare-to-main due cumulative P05 history and existing unrelated flow mappings. Preserve these limits; no scan is described as clean. Before the next code edit, refresh status, run impact on its target, inspect relevant execution flows where available, and check for HIGH/CRITICAL/UNKNOWN.
+- `bash init.sh --fast` passed at current P05.15 source: Rust 71+54, Clippy, `build_core`, and Flutter 1,083/1,083.
+- Earlier full P05.15 validation also passed `cargo fmt`, Flutter analyze (0 issues), focused ActivityBar tests, Harness (100/100), JSON and diff checks.
+- Do not run local desktop GUI/Narrator tests. No local macOS/Xcode/Swift environment is available; use hosted runners.
+- User deferred the numeric 500 MiB target until architecture replication is complete.
+- User authorized pushing this branch. Keep the PR draft/open.
 
-## Blockers / Limits
+## GitNexus
 
-- No local macOS hardware or native-device access. The hosted macOS lane is Intel x64; Apple Silicon and device behavior remain unverified.
-- Hosted macOS synthetic pointer events did not reach Flutter, so the native DnD case is explicitly skipped. Linux and Windows native DnD passed.
-- Do not launch local desktop GUI/Narrator tests. The 500 MiB optimization target remains deferred until architecture replication is complete.
+Current index was refreshed at commit `dcf69e0`: 11,252 nodes / 32,506 edges / 341 clusters / 425 flows. Pre-edit impact for `quitThroughNativeMenu` is CRITICAL (58 upstream, 57 direct, 3 processes, 6 modules) with a callable-value boundary; graph entries include unrelated Dart flows. Exact text search confirmed the workflow is the real CLI entry. `PRODUCT_BUNDLE_IDENTIFIER` is not indexed (UNKNOWN); text search confirms `AppInfo.xcconfig` supplies the value referenced by Runner `Info.plist`. Preserve CRITICAL/UNKNOWN and analyzer coverage limits. Before committing, refresh and run GitNexus `detect-changes --scope all` plus `--scope compare --base-ref main`; do not claim a clean graph if it reports broad risks.
 
-## Files
+## Next Steps
 
-- P05.14 implementation and tests: app/lib/workbench/activity_bar.dart, app/lib/workbench/activity_bar_order.dart, app/lib/workbench/layout_model.dart, app/lib/workbench/workbench_page.dart, app/test/activity_bar_test.dart, app/test/activity_bar_order_integration_test.dart, app/test/layout_model_test.dart.
-- P05.14 evidence/state: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md, docs/diagnostics/2026-11-06-p05/p05.14-local-validation.txt, feature_list.json, progress.md, session-handoff.md.
-- P05.15 product: app/lib/workbench/activity_bar.dart, activity_bar_pins.dart, layout_model.dart, workbench_page.dart; app/test/activity_bar_test.dart, layout_model_test.dart, activity_bar_pin_integration_test.dart. CI fix: .github/workflows/platform-availability.yml and tools/vscode-parity/macos-native-dnd-input.swift. Scope/local/hosted evidence and trackers: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md, feature_list.json, progress.md, session-handoff.md.
-
-## Next Step
-
-First complete P05.15 final GitNexus all/compare scans, product commit and push; then verify final PR CI and Linux/Windows/macOS hosted build/test/launch/package (record any hosted macOS DnD pointer-route skip without claiming native P15 validation). After P05.15 evidence is complete, select/register exactly one next unfinished P05 child from docs/03 and continue sequentially. Do not run local desktop GUI/Narrator.
+1. Finish the P05.15 scope report, `docs/03`, `progress.md`, and this handoff for the path/Bundle ID fix.
+2. Validate YAML, bundle-ID character constraints, and `git diff --check`; refresh GitNexus and record all/compare scans.
+3. Commit and push the follow-up fix; wait for PR CI and Platform Availability. Confirm the macOS DnD test either reaches its explicit hosted pointer-route skip or passes, then verify native Quit, package ZIP/hash, and artifact evidence.
+4. Only when P05.15 DoD is met, mark its trackers complete and select the next unfinished LAY/CMD item from `docs/03`. Continue one scoped item at a time.
