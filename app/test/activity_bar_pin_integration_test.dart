@@ -28,6 +28,59 @@ void main() {
     if (temp.existsSync()) await temp.delete(recursive: true);
   });
 
+  testWidgets('P05.16 badge visibility persists through layout reload',
+      (tester) async {
+    Future<void> mountApp() async {
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore: keybindingsStore,
+      ));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    Future<void> selectPosition(String label) async {
+      await tester.tap(find.text('查看(V)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('外观(A)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('活动栏位置(A)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+    }
+
+    await mountApp();
+    await tester.tapAt(
+      tester.getCenter(_activityBarView('搜索')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('activity-bar-item-badge-search')),
+    );
+    await tester.pumpAndSettle();
+
+    var activityBar = tester.widget<ActivityBar>(find.byType(ActivityBar));
+    expect(activityBar.badgeDisabledViews, ['search']);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(layoutStore.tryLoad()!.activityBarBadgesDisabled, ['search']);
+
+    await selectPosition('顶部(T)');
+    await tester.pump(const Duration(milliseconds: 700));
+    await selectPosition('底部(B)');
+    await tester.pump(const Duration(milliseconds: 700));
+    await selectPosition('侧边(D)');
+    await tester.pump(const Duration(milliseconds: 700));
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await mountApp();
+    activityBar = tester.widget<ActivityBar>(find.byType(ActivityBar));
+    expect(activityBar.badgeDisabledViews, ['search']);
+    expect(layoutStore.tryLoad()!.activityBarBadgesDisabled, ['search']);
+  });
+
   testWidgets('P05.15 pin state saves, survives modes and restores on remount',
       (tester) async {
     Future<void> mountApp() async {

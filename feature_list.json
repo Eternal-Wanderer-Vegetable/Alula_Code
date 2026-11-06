@@ -879,7 +879,7 @@
         "feat-067"
       ],
       "status": "in-progress",
-      "evidence": "Registered 2026-11-07. Fixed Code-OSS 1.145.0 source comparison and exact acceptance are recorded in docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md. GitNexus ActivityBar impact is UNKNOWN because production workbench_page.dart is skipped (>512 KiB); text search confirms the production call. _viewItem impact is CRITICAL with misattributed cross-module edges/callable-value boundary; this remains unresolved and is not waived.",
+      "evidence": "Registered 2026-11-07; implementation and local DoD complete, hosted gates pending. ActivityBar supports provider-supplied number/icon/progress badges with accessible descriptions, per-view Hide/Show Badge and normalized root layout JSON persistence. No provider means no fabricated badges. Focused ActivityBar/layout/persistence tests 43/43; flutter analyze 0 issues; full bash init.sh passed Rust workspace tests, Clippy, build_core, and Flutter 1,089/1,089. Final GitNexus workspace scan: all-scope 10 files/13 symbols/417 processes CRITICAL; compare-to-main 92/48/417 CRITICAL, with known unrelated flow mappings, 5 skipped large files, cross-language gaps and omitted process detail. Pre-edit ActivityBar UNKNOWN and _viewItem CRITICAL remain unresolved. Full scope and local evidence: docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md. PR CI and Linux/Windows/macOS Intel x64 hosted validation remain pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

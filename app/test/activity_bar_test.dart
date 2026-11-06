@@ -1,6 +1,7 @@
 import 'dart:ui' show CheckedState, Tristate;
 
 import 'package:alula_app/workbench/activity_bar.dart';
+import 'package:alula_app/workbench/activity_bar_badges.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:flutter/gestures.dart'
     show PointerDeviceKind, kSecondaryMouseButton;
@@ -98,6 +99,138 @@ void main() {
     await tester.tap(find.byTooltip('搜索'));
     await tester.pump();
     expect(selected, ['search']);
+  });
+
+  testWidgets('number, icon and progress badges render in both orientations',
+      (tester) async {
+    final badges = {
+      'explorer': const ActivityBarBadge.number(
+        value: 12,
+        description: '12 file errors',
+      ),
+      'search': const ActivityBarBadge.icon(
+        icon: Icons.warning_amber_outlined,
+        description: 'Search needs attention',
+      ),
+      'git': const ActivityBarBadge.progress(description: 'Sync in progress'),
+      'outline': const ActivityBarBadge.number(
+        value: 0,
+        description: 'No outline notices',
+      ),
+    };
+    final semantics = tester.ensureSemantics();
+
+    for (final axis in [Axis.vertical, Axis.horizontal]) {
+      await tester.pumpWidget(_activityBarApp(
+        activeView: 'explorer',
+        sidebarCollapsed: false,
+        axis: axis,
+        badges: badges,
+      ));
+
+      expect(find.text('12'), findsOneWidget);
+      expect(find.byIcon(Icons.warning_amber_outlined), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.text('No outline notices'), findsNothing);
+      expect(find.byTooltip('资源管理器, 12 file errors'), findsOneWidget);
+      final semanticsNode = tester.getSemantics(
+        find.bySemanticsLabel('资源管理器, 12 file errors'),
+      );
+      expect(semanticsNode.label, '资源管理器, 12 file errors');
+      expect(
+        tester
+            .getSemantics(find.bySemanticsLabel('搜索, Search needs attention'))
+            .label,
+        '搜索, Search needs attention',
+      );
+      expect(
+        tester
+            .getSemantics(find.bySemanticsLabel('源代码管理, Sync in progress'))
+            .label,
+        '源代码管理, Sync in progress',
+      );
+    }
+
+    semantics.dispose();
+  });
+
+  testWidgets('item menu independently hides and restores its provider badge',
+      (tester) async {
+    final badges = {
+      'search': const ActivityBarBadge.number(
+        value: 4,
+        description: '4 search results',
+      ),
+      'git': const ActivityBarBadge.number(
+        value: 2,
+        description: '2 changes',
+      ),
+    };
+    var disabled = <String>[];
+    final updates = <List<String>>[];
+
+    Future<void> mount() => tester.pumpWidget(_activityBarApp(
+          activeView: 'explorer',
+          sidebarCollapsed: false,
+          badges: badges,
+          badgeDisabledViews: disabled,
+          onBadgeDisabledViewsChanged: (value) {
+            disabled = value;
+            updates.add(value);
+          },
+        ));
+
+    await mount();
+    await tester.tapAt(
+      tester.getCenter(find.byTooltip('搜索, 4 search results')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    await tester
+        .tap(find.byKey(const ValueKey('activity-bar-item-badge-search')));
+    await tester.pumpAndSettle();
+
+    expect(updates, [
+      ['search']
+    ]);
+    await mount();
+    expect(find.text('4'), findsNothing);
+    expect(find.text('2'), findsOneWidget,
+        reason: 'another view keeps its badge visible');
+
+    await tester.tapAt(
+      tester.getCenter(find.byTooltip('搜索')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Show Badge'), findsOneWidget);
+    await tester
+        .tap(find.byKey(const ValueKey('activity-bar-item-badge-search')));
+    await tester.pumpAndSettle();
+
+    expect(updates, [
+      ['search'],
+      []
+    ]);
+    await mount();
+    expect(find.text('4'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
+  });
+
+  test('badge number labels suppress zero and compact large counts', () {
+    expect(
+      const ActivityBarBadge.number(value: 0, description: 'none').numberText,
+      isNull,
+    );
+    expect(
+      const ActivityBarBadge.number(value: 9, description: 'nine').numberText,
+      '9',
+    );
+    expect(
+      const ActivityBarBadge.number(value: 1200, description: 'many')
+          .numberText,
+      '1K+',
+    );
   });
 
   testWidgets('side Default and Compact use their fixed item and icon sizes',
@@ -582,10 +715,13 @@ Widget _activityBarApp({
   ActivityBarSize size = ActivityBarSize.defaultSize,
   List<String> order = activityBarViewOrder,
   List<String> pinnedViews = activityBarViewOrder,
+  Map<String, ActivityBarBadge> badges = const {},
+  List<String> badgeDisabledViews = const [],
   ValueChanged<String>? onSelectView,
   ValueChanged<ActivityBarSize>? onSizeChanged,
   ValueChanged<List<String>>? onOrderChanged,
   ValueChanged<List<String>>? onPinnedViewsChanged,
+  ValueChanged<List<String>>? onBadgeDisabledViewsChanged,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -599,10 +735,13 @@ Widget _activityBarApp({
           size: size,
           order: order,
           pinnedViews: pinnedViews,
+          badges: badges,
+          badgeDisabledViews: badgeDisabledViews,
           onSelectView: onSelectView ?? (_) {},
           onSizeChanged: onSizeChanged,
           onOrderChanged: onOrderChanged,
           onPinnedViewsChanged: onPinnedViewsChanged,
+          onBadgeDisabledViewsChanged: onBadgeDisabledViewsChanged,
         ),
       ),
     ),

@@ -72,6 +72,7 @@ import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
+import 'activity_bar_badges.dart';
 import 'activity_bar_order.dart';
 import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
@@ -16892,9 +16893,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             size: _layout.activityBarSize,
                             order: _layout.activityBarOrder,
                             pinnedViews: _layout.activityBarPinnedViews,
+                            badgeDisabledViews:
+                                _layout.activityBarBadgesDisabledViews,
                             onOrderChanged: _layout.setActivityBarOrder,
                             onPinnedViewsChanged:
                                 _layout.setActivityBarPinnedViews,
+                            onBadgeDisabledViewsChanged:
+                                _layout.setActivityBarBadgesDisabledViews,
                             onSizeChanged: _layout.activityBarLocation ==
                                     ActivityBarLocation.side
                                 ? _layout.setActivityBarSize

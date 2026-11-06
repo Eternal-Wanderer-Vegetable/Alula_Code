@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart'
     show PointerDownEvent, kSecondaryMouseButton;
 import 'package:flutter/services.dart';
 
+import 'activity_bar_badges.dart';
 import 'layout_model.dart';
 
 class ActivityBar extends StatefulWidget {
@@ -21,9 +22,12 @@ class ActivityBar extends StatefulWidget {
     this.size = ActivityBarSize.defaultSize,
     this.order = activityBarViewOrder,
     this.pinnedViews = activityBarViewOrder,
+    this.badges = const {},
+    this.badgeDisabledViews = const [],
     this.onSizeChanged,
     this.onOrderChanged,
     this.onPinnedViewsChanged,
+    this.onBadgeDisabledViewsChanged,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
@@ -33,6 +37,8 @@ class ActivityBar extends StatefulWidget {
   final ActivityBarSize size;
   final List<String> order;
   final List<String> pinnedViews;
+  final Map<String, ActivityBarBadge> badges;
+  final List<String> badgeDisabledViews;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
@@ -45,6 +51,9 @@ class ActivityBar extends StatefulWidget {
 
   /// Changes the set of pinned view actions.
   final ValueChanged<List<String>>? onPinnedViewsChanged;
+
+  /// Changes the set of views whose provider badges are hidden.
+  final ValueChanged<List<String>>? onBadgeDisabledViewsChanged;
 
   @override
   State<ActivityBar> createState() => _ActivityBarState();
@@ -110,10 +119,17 @@ class _ActivityBarState extends State<ActivityBar> {
   Widget _viewItem({required String id}) {
     final focusIndex = activityBarViewOrder.indexOf(id);
     final icon = _viewIcons[id]!;
+    final badge =
+        _visibleBadgesDisabled.contains(id) ? null : widget.badges[id];
+    final label = _viewLabels[id]!;
+    final itemLabel = badge == null || !badge.hasVisibleContent
+        ? label
+        : '$label, ${badge.accessibleDescription}';
     final item = _Item(
       icon: icon,
-      tooltip: _viewLabels[id]!,
+      tooltip: itemLabel,
       active: !widget.sidebarCollapsed && widget.activeView == id,
+      badge: badge,
       focusNode: _viewFocusNodes[focusIndex],
       horizontal: widget.axis == Axis.horizontal,
       itemExtent: widget.size.itemExtent,
@@ -127,6 +143,8 @@ class _ActivityBarState extends State<ActivityBar> {
     final isPinned = pinnedViews.contains(id);
     final canTogglePin = widget.onPinnedViewsChanged != null &&
         (!isPinned || pinnedViews.length > 1);
+    final disabledBadges = _visibleBadgesDisabled;
+    final badgeIsHidden = disabledBadges.contains(id);
     final itemMenu = MenuAnchor(
       key: ValueKey('activity-bar-item-menu-anchor-$id'),
       controller: _itemMenuControllers[id],
@@ -137,6 +155,14 @@ class _ActivityBarState extends State<ActivityBar> {
           style: _menuItemStyle,
           onPressed: canTogglePin ? () => _togglePinnedView(id) : null,
           child: Text('${isPinned ? 'Hide' : 'Keep'} ${_viewNames[id]}'),
+        ),
+        MenuItemButton(
+          key: ValueKey('activity-bar-item-badge-$id'),
+          style: _menuItemStyle,
+          onPressed: widget.onBadgeDisabledViewsChanged == null
+              ? null
+              : () => _toggleBadge(id),
+          child: Text('${badgeIsHidden ? 'Show' : 'Hide'} Badge'),
         ),
       ],
       child: item,
@@ -175,6 +201,11 @@ class _ActivityBarState extends State<ActivityBar> {
         order: widget.order,
       );
 
+  List<String> get _visibleBadgesDisabled => normalizeActivityBarBadgesDisabled(
+        widget.badgeDisabledViews,
+        order: widget.order,
+      );
+
   List<String> get _visibleViewOrder {
     final pinned = _pinnedViewOrder.toSet();
     return normalizeActivityBarViewOrder(widget.order)
@@ -193,6 +224,18 @@ class _ActivityBarState extends State<ActivityBar> {
     }
     widget.onPinnedViewsChanged?.call(
       normalizeActivityBarPinnedViews(next, order: widget.order),
+    );
+  }
+
+  void _toggleBadge(String id) {
+    final disabled = _visibleBadgesDisabled;
+    if (disabled.contains(id)) {
+      disabled.remove(id);
+    } else {
+      disabled.add(id);
+    }
+    widget.onBadgeDisabledViewsChanged?.call(
+      normalizeActivityBarBadgesDisabled(disabled, order: widget.order),
     );
   }
 
@@ -416,6 +459,7 @@ class _Item extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.active,
+    this.badge,
     this.focusNode,
     this.horizontal = false,
     this.itemExtent = 48,
@@ -428,6 +472,7 @@ class _Item extends StatelessWidget {
   final IconData icon;
   final String tooltip;
   final bool active;
+  final ActivityBarBadge? badge;
   final FocusNode? focusNode;
   final bool horizontal;
   final double itemExtent;
@@ -438,6 +483,7 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visibleBadge = badge;
     final focused = focusNode?.hasFocus ?? false;
     final color = active || focused ? Colors.white : Colors.grey.shade500;
     return Focus(
@@ -473,23 +519,38 @@ class _Item extends StatelessWidget {
                   height: horizontal ? null : itemExtent,
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: horizontal ? 8 : 0),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(icon, size: iconSize, color: color),
-                          if (active)
-                            Container(
-                              margin: const EdgeInsets.only(top: 3),
-                              width: 14,
-                              height: 2,
-                              decoration: BoxDecoration(
-                                color: Colors.blueAccent,
-                                borderRadius: BorderRadius.circular(1),
-                              ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(icon, size: iconSize, color: color),
+                              if (active)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 3),
+                                  width: 14,
+                                  height: 2,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueAccent,
+                                    borderRadius: BorderRadius.circular(1),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (visibleBadge != null &&
+                            visibleBadge.hasVisibleContent)
+                          Positioned(
+                            top: 1,
+                            right: horizontal ? 6 : 3,
+                            child: ExcludeSemantics(
+                              child: _Badge(badge: visibleBadge),
                             ),
-                        ],
-                      ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -498,6 +559,55 @@ class _Item extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge({required this.badge});
+
+  final ActivityBarBadge badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = switch (badge.type) {
+      ActivityBarBadgeType.number => Text(
+          badge.numberText!,
+          maxLines: 1,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 9,
+            height: 1,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ActivityBarBadgeType.icon => Icon(
+          badge.icon,
+          size: 11,
+          color: Colors.white,
+        ),
+      ActivityBarBadgeType.progress => const SizedBox.square(
+          dimension: 10,
+          child: CircularProgressIndicator(
+            value: 0.25,
+            strokeWidth: 1.7,
+            color: Colors.white,
+            backgroundColor: Color(0x66FFFFFF),
+          ),
+        ),
+    };
+
+    return Container(
+      constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+      padding: badge.type == ActivityBarBadgeType.number
+          ? const EdgeInsets.symmetric(horizontal: 4, vertical: 2)
+          : const EdgeInsets.all(3),
+      decoration: const BoxDecoration(
+        color: Color(0xFFC74E39),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: content,
     );
   }
 }

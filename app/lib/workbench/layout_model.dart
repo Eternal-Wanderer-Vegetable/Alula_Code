@@ -81,6 +81,19 @@ List<String> normalizeActivityBarPinnedViews(
   return orderedViews.where(requested.contains).toList();
 }
 
+/// Canonicalize Activity Bar view IDs whose badges are hidden. Unlike pins,
+/// an empty disabled set is valid and means that badges are enabled everywhere.
+List<String> normalizeActivityBarBadgesDisabled(Object? raw, {Object? order}) {
+  final orderedViews = normalizeActivityBarViewOrder(order);
+  if (raw is! List) return const [];
+
+  final requested = <String>{
+    for (final item in raw)
+      if (item is String && activityBarViewOrder.contains(item)) item,
+  };
+  return orderedViews.where(requested.contains).toList();
+}
+
 /// 布局树节点。
 sealed class WbNode {
   const WbNode();
@@ -134,6 +147,7 @@ class WbSplit extends WbNode {
     this.activityBarSize,
     List<String>? activityBarOrder,
     List<String>? activityBarPinned,
+    List<String>? activityBarBadgesDisabled,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children),
         activityBarOrder = activityBarOrder == null
@@ -143,6 +157,12 @@ class WbSplit extends WbNode {
             ? null
             : normalizeActivityBarPinnedViews(
                 activityBarPinned,
+                order: activityBarOrder,
+              ),
+        activityBarBadgesDisabled = activityBarBadgesDisabled == null
+            ? null
+            : normalizeActivityBarBadgesDisabled(
+                activityBarBadgesDisabled,
                 order: activityBarOrder,
               );
 
@@ -166,6 +186,10 @@ class WbSplit extends WbNode {
   /// to all built-in views pinned.
   List<String>? activityBarPinned;
 
+  /// Root-only IDs whose Activity Bar badges are hidden. Null keeps the
+  /// default where every view is allowed to show badges.
+  List<String>? activityBarBadgesDisabled;
+
   @override
   double weight;
 
@@ -184,6 +208,15 @@ class WbSplit extends WbNode {
         if (activityBarPinned != null)
           'activityBarPinned': normalizeActivityBarPinnedViews(
             activityBarPinned,
+            order: activityBarOrder,
+          ),
+        if (activityBarBadgesDisabled != null &&
+            normalizeActivityBarBadgesDisabled(
+              activityBarBadgesDisabled,
+              order: activityBarOrder,
+            ).isNotEmpty)
+          'activityBarBadgesDisabled': normalizeActivityBarBadgesDisabled(
+            activityBarBadgesDisabled,
             order: activityBarOrder,
           ),
         'children': children.map((c) => c.toJson()).toList(),
@@ -208,6 +241,12 @@ class WbSplit extends WbNode {
       activityBarPinned: json.containsKey('activityBarPinned')
           ? normalizeActivityBarPinnedViews(
               json['activityBarPinned'],
+              order: json['activityBarOrder'],
+            )
+          : null,
+      activityBarBadgesDisabled: json.containsKey('activityBarBadgesDisabled')
+          ? normalizeActivityBarBadgesDisabled(
+              json['activityBarBadgesDisabled'],
               order: json['activityBarOrder'],
             )
           : null,

@@ -8,6 +8,7 @@ import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/activity_bar_size.dart';
 import 'package:alula_app/workbench/activity_bar_order.dart';
 import 'package:alula_app/workbench/activity_bar_pins.dart';
+import 'package:alula_app/workbench/activity_bar_badges.dart';
 
 void main() {
   group('JSON 序列化往返', () {
@@ -133,6 +134,57 @@ void main() {
       expect(layout.setActivityBarPinnedViews([]), isFalse);
       expect(layout.activityBarPinnedViews, ['git']);
       expect(changes, 1);
+      layout.dispose();
+    });
+
+    test('badge disabled IDs round-trip, normalize and default to enabled', () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline']
+        ..activityBarBadgesDisabled = const ['search', 'git', 'git', 'unknown'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(restored.activityBarBadgesDisabled, ['git', 'search']);
+      expect(restored.toJson()['activityBarBadgesDisabled'], ['git', 'search']);
+
+      final legacyJson = root.toJson()..remove('activityBarBadgesDisabled');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarBadgesDisabled, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarBadgesDisabledViews, isEmpty);
+      legacyLayout.dispose();
+
+      final malformedJson = root.toJson()
+        ..['activityBarBadgesDisabled'] = ['unknown', 42, 'search', 'search'];
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarBadgesDisabled, ['search']);
+
+      final emptyJson = root.toJson()..['activityBarBadgesDisabled'] = [];
+      final empty = WbNode.fromJson(emptyJson) as WbSplit;
+      expect(empty.activityBarBadgesDisabled, isEmpty);
+      expect(empty.toJson().containsKey('activityBarBadgesDisabled'), isFalse,
+          reason: 'the default all-enabled state remains compact JSON');
+    });
+
+    test('badge visibility setter persists normalized IDs and notifies once',
+        () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarBadgesDisabledViews, isEmpty);
+      expect(
+          layout.setActivityBarBadgesDisabledViews(['search', 'git']), isTrue);
+      expect(layout.activityBarBadgesDisabledViews, ['search', 'git']);
+      expect(
+        (WbNode.fromJson(layout.root.toJson()) as WbSplit)
+            .activityBarBadgesDisabled,
+        ['search', 'git'],
+      );
+      expect(changes, 1);
+      expect(
+          layout.setActivityBarBadgesDisabledViews(['search', 'git']), isFalse);
+      expect(layout.setActivityBarBadgesDisabledViews([]), isTrue);
+      expect(layout.activityBarBadgesDisabledViews, isEmpty);
+      expect(changes, 2);
       layout.dispose();
     });
 
