@@ -6,7 +6,7 @@
 
 ## Current Objective
 
-Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.11 / feat-053–063 are complete; P05 remains open until all remaining LAY/CMD matrix DoDs pass. P05 and LAY-01/LAY-02/LAY-03 remain open. Next: inspect the fixed Code-OSS matrix and register the next atomic child before editing. P05.11 Activity Bar Side/Hidden behavior, local and hosted evidence, and retained attempt-1 macOS cleanup timeout are recorded in `docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md`. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
+Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.11 / feat-053–063 are complete; P05.12 / feat-064 / LAY-03c is registered and in progress. Implement fixed Code-OSS 1.145.0 Activity Bar Top/Bottom placement in the primary sidebar, four-state View > Appearance commands/checks, orientation-aware navigation and root layout JSON round-trip; scope and pre-edit GitNexus findings are in `docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md`. P05 remains open until all remaining LAY/CMD matrix DoDs pass. P05 and LAY-01/LAY-02/LAY-03 remain open. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
 
 Use `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
