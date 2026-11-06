@@ -790,12 +790,12 @@
     {
       "id": "feat-061",
       "name": "P05.9 LAY-02c 标题栏布局控制入口",
-      "description": "按固定 Code-OSS 1.145.0 对照，提供标题栏 Layout Controls / Toggle Layout 菜单中当前已实现的布局命令；逐项核实状态、可见性、键盘路径与焦点恢复，不添加无实现的占位项。范围和编辑前 GitNexus impact 尚待登记。",
+      "description": "按固定 Code-OSS 1.145.0 对照，在自绘标题栏提供 Alula 已实现的侧栏与面板切换项；按钮和菜单覆盖当前状态、可见性、语义、键盘路径与焦点返回。不创建无实现的占位项，不扩展布局设置/布局模式。",
       "dependencies": [
         "feat-060"
       ],
-      "status": "not-started",
-      "evidence": "待开始。",
+      "status": "in-progress",
+      "evidence": "范围与编辑前分析已登记，产品代码开始前的影响门通过字面调用点核对。固定来源、GitNexus 1.6.12 图谱标识、AlulaTitleBar/_AlulaTitleBarState/TitleMenuItem exact UNKNOWN、_buildTitleBarContents LOW、超大 WorkbenchPage 未索引与 trace 限制见 docs/diagnostics/2026-11-06-p05/p05.9-layout-controls-entry-scope.md。产品实现和测试待完成。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
