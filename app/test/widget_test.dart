@@ -6,6 +6,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
@@ -108,7 +109,11 @@ void main() {
     await tester.pumpWidget(AlulaApp(layoutStore: store));
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Alula Code'), findsWidgets); // 标题栏 + MaterialApp.title
+    expect(
+      tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle,
+      contains('Alula Code'),
+      reason: '默认工作台标题包含应用名',
+    );
     expect(find.text('文件(F)'), findsOneWidget); // 标题栏菜单与 mnemonic
     await tester.tap(find.text('查看(V)'));
     await tester.pumpAndSettle();
@@ -219,14 +224,21 @@ void main() {
     await tester.runAsync(() async {
       await openP025Note(tester, workspace, store, session, keybindings);
 
+      String currentWindowTitle() =>
+          tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle;
+
+      expect(currentWindowTitle(), 'note.txt - p02.5-workspace - Alula Code');
+
       await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
       await tester.pump(const Duration(milliseconds: 150));
       expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
           reason: 'Ctrl+N creates a separate untitled document');
       expect(find.text('未命名-3'), findsOneWidget);
+      expect(currentWindowTitle(), '未命名-3 - p02.5-workspace - Alula Code');
       final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
       await tester.enterText(editor, 'first new document');
       await tester.pump(const Duration(milliseconds: 100));
+      expect(currentWindowTitle(), '● 未命名-3 - p02.5-workspace - Alula Code');
 
       await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
       await tester.pump(const Duration(milliseconds: 150));
@@ -272,11 +284,13 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
       await tester.pump(const Duration(milliseconds: 350));
       expect(created.readAsStringSync(), 'first new document');
+      expect(currentWindowTitle(), 'created.txt - p02.5-workspace - Alula Code');
 
       await tester.tap(find.byKey(const ValueKey('tab-4')));
       await tester.pump(const Duration(milliseconds: 100));
       expect(activeEditorText(), 'second new document',
           reason: 'saving another untitled document does not replace this one');
+      expect(currentWindowTitle(), '● 未命名-4 - p02.5-workspace - Alula Code');
       await Future<void>.delayed(const Duration(milliseconds: 700));
       await tester.pump();
     });

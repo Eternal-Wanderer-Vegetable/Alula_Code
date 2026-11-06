@@ -61,6 +61,7 @@ class AlulaTitleBar extends StatefulWidget {
     this.onCloseRequested,
     this.enableMenuBarMnemonics = true,
     this.customMenuBarAltFocus = true,
+    this.windowTitle = 'Alula Code',
   });
 
   /// 菜单组（标题 → 菜单项列表）。
@@ -82,6 +83,9 @@ class AlulaTitleBar extends StatefulWidget {
 
   /// 与 window.customMenuBarAltFocus 的默认值一致；设置接入留 P07。
   final bool customMenuBarAltFocus;
+
+  /// Current workbench title, including the active editor/workspace context.
+  final String windowTitle;
 
   @override
   State<AlulaTitleBar> createState() => _AlulaTitleBarState();
@@ -113,6 +117,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     GestureBinding.instance.pointerRouter.addGlobalRoute(_handlePointerEvent);
     if (widget.windowControls) {
       unawaited(_refreshMaximized());
+      unawaited(_setWindowTitle(widget.windowTitle));
     }
   }
 
@@ -132,11 +137,18 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     }
     final nextWindowChrome =
         widget.windowChromeDriver ?? const PluginWindowChromeDriver();
-    if (!identical(_windowChrome, nextWindowChrome)) {
+    final windowChromeChanged = !identical(_windowChrome, nextWindowChrome);
+    if (windowChromeChanged) {
       _windowChrome.removeListener(this);
       _windowChrome = nextWindowChrome;
       _windowChrome.addListener(this);
       if (widget.windowControls) unawaited(_refreshMaximized());
+    }
+    if (widget.windowControls &&
+        (windowChromeChanged ||
+            !oldWidget.windowControls ||
+            widget.windowTitle != oldWidget.windowTitle)) {
+      unawaited(_setWindowTitle(widget.windowTitle));
     }
   }
 
@@ -445,8 +457,19 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
           const SizedBox(width: 10),
           if (chrome.isCustom) ...[
             _dragArea(
-              const Text('Alula Code',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Tooltip(
+                message: widget.windowTitle,
+                child: SizedBox(
+                  width: 240,
+                  child: Text(
+                    widget.windowTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(width: 10),
           ],
@@ -639,6 +662,14 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       }
     } catch (error) {
       debugPrint('切换窗口最大化状态失败：$error');
+    }
+  }
+
+  Future<void> _setWindowTitle(String title) async {
+    try {
+      await _windowChrome.setTitle(title);
+    } catch (error) {
+      debugPrint('更新窗口标题失败：$error');
     }
   }
 

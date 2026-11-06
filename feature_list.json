@@ -762,6 +762,18 @@
       "evidence": "产品 commit 5d402a2。macOS Flutter PlatformMenuBar 原生承载当前 File/Edit/View 与 Appearance，CommandService 状态、参数和 shortcut 同步；About/Quit 复用既有路由及受控清理。Focused titlebar 14/14、跨窗拖动/行选择 30/30；本地完整 bash init.sh Flutter 1,043、Rust workspace、Clippy、build_core；cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI 42126750902 与 Platform Availability 42126740014（Linux x64、Windows x64、macOS Intel x64）全绿。Packages 13460989187 / 13460804491 / 13462422950。System Events 实际点选原生 Quit 并关闭 app，startup artifact 13462059875。Linux/Windows DnD 13462875529 / 13460983192 通过；macOS DnD 13461989896 因 hosted pointer route unavailable 明确 skip。macOS ZIP SHA-256 57ca89156ca082d0241558e20ad87e86ae8c087b934d9a144ca438540ea28010 与 sidecar 匹配，unzip -t 通过。GitNexus CRITICAL/误映射、UNKNOWN 与 coverage limitations 已记录；Apple Silicon/native device/notarization 留 P15。完整证据 docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md。P05 与 LAY-01 保持进行中。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-059",
+      "name": "P05.7 LAY-02a 默认窗口标题与 dirty 状态",
+      "description": "按固定 Code-OSS 1.145.0 默认标题组成活动文件名、工作区名和应用名，并随活动文档、dirty、保存和另存路径变化更新自绘标题与系统窗口标题。用户 window.title 模板、Profile、Command Center 与布局控制另列子项。范围和编辑前影响分析见 docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md。",
+      "dependencies": [
+        "feat-058"
+      ],
+      "status": "in-progress",
+      "evidence": "实现与本地 DoD 完成，等待产品提交后的 hosted CI 和平台验证。默认标题组合活动文档名、● dirty 标记、workspace 名与应用名；macOS 用明确 ● 字符替代 Code-OSS 原生 document-edited dot，因为 window_manager 0.5.2 无 setDocumentEdited API（视觉差异已登记）。`workbench_window_title_test.dart` 3/3；`title_bar_test.dart` 15/15；整个 `widget_test.dart` 26/26，含文档切换、dirty、Save As 标题更新。第二次完整 `bash init.sh` 全绿，Flutter 1,047/1,047，Rust workspace、Clippy、build_core 通过；cargo fmt --all -- --check、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。编辑前 GitNexus `WindowChromeDriver` upstream LOW；`AlulaTitleBar`/`_AlulaTitleBarState` UNKNOWN，`workbench_page.dart` >512 KiB 未索引。提交前 all-scope 9 files/7–9 symbols/415 flows CRITICAL；compare-to-main 24 files/20–23 symbols/415 flows CRITICAL，均误映射到 Build/Rust/editor flows 且截断 405 条；详见 docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

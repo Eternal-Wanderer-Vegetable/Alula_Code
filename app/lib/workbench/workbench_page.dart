@@ -26,6 +26,7 @@ import 'package:flutter/gestures.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
 import '../editor/bulk_edit_preview_surface.dart';
@@ -81,6 +82,7 @@ import 'quick_input.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
+import 'workbench_window_title.dart';
 
 /// 语法 token 颜色（VS Code Dark+ 风格）。
 const Map<String, Color> _tokenColors = {
@@ -16668,6 +16670,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+    final activeDocument = _active;
+    final workspaceRoot = _workspaceRoot;
+    final workspaceName = workspaceRoot == null
+        ? null
+        : p.basename(p.normalize(workspaceRoot));
+    final windowTitle = WorkbenchWindowTitle.compose(
+      platform: defaultTargetPlatform,
+      activeEditorName: activeDocument?.name,
+      dirty: activeDocument?.isDirty ?? false,
+      workspaceName: workspaceName == null || workspaceName.isEmpty
+          ? workspaceRoot
+          : workspaceName,
+    );
+
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
@@ -16696,6 +16712,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             children: [
               AlulaTitleBar(
                   commands: _commands,
+                  windowTitle: windowTitle,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
                   menus: [

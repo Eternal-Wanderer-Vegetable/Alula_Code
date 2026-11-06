@@ -75,6 +75,35 @@ void main() {
     expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
   });
 
+  testWidgets('title bar refreshes the visible and native window title',
+      (tester) async {
+    const firstTitle = '● note.txt - sample - Alula Code';
+    const nextTitle = 'saved.txt - sample - Alula Code';
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      windowTitle: firstTitle,
+    ));
+    await tester.pump();
+
+    expect(find.text(firstTitle), findsOneWidget);
+    expect(window.windowTitles, [firstTitle]);
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      windowTitle: nextTitle,
+    ));
+    await tester.pump();
+
+    expect(find.text(nextTitle), findsOneWidget);
+    expect(window.windowTitles, [firstTitle, nextTitle]);
+  });
+
   testWidgets('macOS native menu routes visible commands and live state',
       (tester) async {
     final executed = <String>[];
@@ -740,6 +769,7 @@ Widget _titleBarApp({
   VoidCallback? onCloseRequested,
   bool enableMenuBarMnemonics = true,
   bool customMenuBarAltFocus = true,
+  String windowTitle = 'Alula Code',
 }) {
   return MaterialApp(
     home: WindowChromeConfigurationScope(
@@ -749,6 +779,7 @@ Widget _titleBarApp({
           commands: commands,
           menus: menus,
           windowControls: true,
+          windowTitle: windowTitle,
           windowChromeDriver: window,
           onCloseRequested: onCloseRequested,
           enableMenuBarMnemonics: enableMenuBarMnemonics,
@@ -801,6 +832,7 @@ class _FakeWindowChromeDriver implements WindowChromeDriver {
   int unmaximizeCalls = 0;
   int dragCalls = 0;
   int closeCalls = 0;
+  final List<String> windowTitles = [];
 
   @override
   void addListener(WindowListener listener) => listeners.add(listener);
@@ -847,6 +879,11 @@ class _FakeWindowChromeDriver implements WindowChromeDriver {
   @override
   Future<void> setPreventClose(bool preventClose) async {
     preventCloseValues.add(preventClose);
+  }
+
+  @override
+  Future<void> setTitle(String title) async {
+    windowTitles.add(title);
   }
 
   void emitClose() {

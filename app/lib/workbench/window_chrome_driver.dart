@@ -22,6 +22,8 @@ abstract class WindowChromeDriver {
   Future<void> close();
 
   Future<void> setPreventClose(bool preventClose);
+
+  Future<void> setTitle(String title);
 }
 
 class PluginWindowChromeDriver implements WindowChromeDriver {
@@ -56,4 +58,7 @@ class PluginWindowChromeDriver implements WindowChromeDriver {
   @override
   Future<void> setPreventClose(bool preventClose) =>
       windowManager.setPreventClose(preventClose);
+
+  @override
+  Future<void> setTitle(String title) => windowManager.setTitle(title);
 }
