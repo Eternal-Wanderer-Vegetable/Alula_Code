@@ -134,9 +134,12 @@ bool? _moveActivityLeaf(WbSplit root, ActivityBarLocation target) {
   if (groupIndex < 0) return null;
 
   sidebar.weight = parent.weight;
+  final sideBarNodes = root.sideBarPosition == SideBarPosition.right
+      ? [sidebar, activity]
+      : [activity, sidebar];
   outerParent.children
     ..removeAt(groupIndex)
-    ..insertAll(groupIndex, [activity, sidebar]);
+    ..insertAll(groupIndex, sideBarNodes);
   return true;
 }
 

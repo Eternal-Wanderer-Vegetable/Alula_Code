@@ -88,6 +88,7 @@ import 'layout_store.dart';
 import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
+import 'sidebar_position.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
@@ -694,6 +695,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
+    _registerToggleSideBarPositionCommand();
     reg(
       'workbench.action.toggleAuxiliaryBar',
       '查看',
@@ -1169,6 +1171,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _setActivityBarLocation(ActivityBarLocation location) {
     _layout.setActivityBarLocation(location);
     _syncCommandContext();
+  }
+
+  String get _toggleSideBarPositionTitle =>
+      _layout.sideBarPosition == SideBarPosition.left
+          ? '将主侧栏移到右侧'
+          : '将主侧栏移到左侧';
+
+  void _registerToggleSideBarPositionCommand() {
+    _commands.register(Command(
+      id: 'workbench.action.toggleSidebarPosition',
+      category: '查看',
+      title: _toggleSideBarPositionTitle,
+      run: _toggleSideBarPosition,
+    ));
+  }
+
+  Future<void> _toggleSideBarPosition() async {
+    _layout.toggleSideBarPosition();
+    _registerToggleSideBarPositionCommand();
   }
 
   /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
@@ -16877,6 +16898,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     _layout.activityBarLocation ==
                                         ActivityBarLocation.hidden),
                           ]),
+                          TitleMenuItem(
+                            _toggleSideBarPositionTitle,
+                            commandId: 'workbench.action.toggleSidebarPosition',
+                          ),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换侧栏(&&S)',
                               commandId: 'view.toggleSidebar'),

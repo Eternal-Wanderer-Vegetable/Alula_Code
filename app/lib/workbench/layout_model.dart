@@ -15,6 +15,18 @@ import 'package:flutter/painting.dart' show Axis;
 /// Primary Activity Bar placement, persisted with the layout tree.
 enum ActivityBarLocation { side, top, bottom, hidden }
 
+/// Primary Side Bar placement, persisted with the root layout node.
+enum SideBarPosition {
+  left,
+  right;
+
+  static SideBarPosition? fromJson(Object? raw) => switch (raw) {
+        'left' => SideBarPosition.left,
+        'right' => SideBarPosition.right,
+        _ => null,
+      };
+}
+
 /// Activity Bar density. The horizontal Activity Bar keeps its legacy 44 px
 /// height; these dimensions apply when it is placed on the side.
 enum ActivityBarSize {
@@ -144,6 +156,7 @@ class WbSplit extends WbNode {
     this.weight = 1,
     this.name,
     this.activityBarLocation,
+    this.sideBarPosition,
     this.activityBarSize,
     this.activityBarAccountsVisible,
     List<String>? activityBarOrder,
@@ -176,6 +189,9 @@ class WbSplit extends WbNode {
   /// Root-only Activity Bar placement metadata. Null identifies legacy JSON.
   ActivityBarLocation? activityBarLocation;
 
+  /// Root-only Primary Side Bar placement. Null migrates old layouts to Left.
+  SideBarPosition? sideBarPosition;
+
   /// Root-only Activity Bar size metadata. Null identifies JSON written before
   /// the size setting was introduced.
   ActivityBarSize? activityBarSize;
@@ -206,6 +222,7 @@ class WbSplit extends WbNode {
         if (name != null) 'name': name,
         if (activityBarLocation != null)
           'activityBarLocation': activityBarLocation!.name,
+        if (sideBarPosition != null) 'sideBarPosition': sideBarPosition!.name,
         if (activityBarSize != null)
           'activityBarSize': activityBarSize!.jsonValue,
         if (activityBarAccountsVisible != null)
@@ -241,6 +258,7 @@ class WbSplit extends WbNode {
       name: json['name'] is String ? json['name'] as String : null,
       activityBarLocation:
           _activityBarLocationFromJson(json['activityBarLocation']),
+      sideBarPosition: SideBarPosition.fromJson(json['sideBarPosition']),
       activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
       activityBarAccountsVisible: json['activityBarAccountsVisible'] is bool
           ? json['activityBarAccountsVisible'] as bool

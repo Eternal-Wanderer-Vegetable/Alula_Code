@@ -132,4 +132,54 @@ void main() {
       semantics.dispose();
     },
   );
+
+  testWidgets('P05.19 toggles Side Bar from Appearance and Command Palette',
+      (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: layoutStore,
+      sessionStore: sessionStore,
+      keybindingsStore: keybindingsStore,
+    ));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    Future<void> openAppearance() async {
+      await tester.tap(find.text('查看(V)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('外观(A)'));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> runPaletteCommand(String title) async {
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      final input = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(input, '主侧栏');
+      await tester.pumpAndSettle();
+      final item = find.byKey(ValueKey('qi-查看: $title'));
+      expect(item, findsOneWidget);
+      await tester.tap(item);
+      await tester.pumpAndSettle();
+    }
+
+    await openAppearance();
+    final moveRight = find.text('将主侧栏移到右侧');
+    expect(moveRight, findsOneWidget);
+    await tester.tap(moveRight);
+    await tester.pumpAndSettle();
+    await openAppearance();
+    expect(find.text('将主侧栏移到左侧'), findsOneWidget,
+        reason: 'Appearance title reflects the current side');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+
+    await runPaletteCommand('将主侧栏移到左侧');
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(layoutStore.tryLoad()!.sideBarPosition?.name, 'left');
+    await runPaletteCommand('将主侧栏移到右侧');
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(layoutStore.tryLoad()!.sideBarPosition?.name, 'right');
+  });
 }
