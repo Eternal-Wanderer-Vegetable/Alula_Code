@@ -1,3 +1,5 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
@@ -102,6 +104,57 @@ void main() {
 
     expect(find.text(nextTitle), findsOneWidget);
     expect(window.windowTitles, [firstTitle, nextTitle]);
+  });
+
+  testWidgets('custom window title is a keyboard-accessible Command Center',
+      (tester) async {
+    var paletteCalls = 0;
+    const title = '● notes.md - sample - Alula Code';
+    commands.register(Command(
+      id: 'view.commandPalette',
+      title: '命令面板',
+      category: '查看',
+      shortcut: 'Ctrl+Shift+P',
+      run: () async {
+        paletteCalls++;
+      },
+    ));
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      windowTitle: title,
+    ));
+    await tester.pump();
+
+    final commandCenter = find.byKey(const ValueKey('command-center'));
+    final commandCenterControl =
+        find.byKey(const ValueKey('command-center-control'));
+    expect(find.text(title), findsOneWidget);
+    final semantics = tester.getSemantics(commandCenter).getSemanticsData();
+    expect(semantics.label, contains('命令中心'));
+    expect(semantics.label, contains(title));
+    expect(semantics.flagsCollection.isButton, isTrue);
+    expect(semantics.hasAction(SemanticsAction.tap), isTrue);
+    expect(commands.isEnabled('view.commandPalette'), isTrue);
+
+    await tester.tap(commandCenterControl);
+    await tester.pumpAndSettle();
+    expect(tester.widget<InkWell>(commandCenterControl).onTap, isNotNull);
+    expect(window.dragCalls, 0);
+    expect(paletteCalls, 1);
+
+    final focusNode = tester.widget<InkWell>(commandCenterControl).focusNode!;
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pumpAndSettle();
+    expect(focusNode.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(paletteCalls, 2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pumpAndSettle();
+    expect(paletteCalls, 3);
   });
 
   testWidgets('macOS native menu routes visible commands and live state',
@@ -272,6 +325,7 @@ void main() {
     ));
 
     expect(find.text('Alula Code'), findsNothing);
+    expect(find.byKey(const ValueKey('command-center')), findsNothing);
     expect(find.text('文件'), findsOneWidget);
     expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
     expect(find.byTooltip('最小化'), findsNothing);
@@ -286,7 +340,7 @@ void main() {
     expect(window.closeCalls, 1);
   });
 
-  testWidgets('double-clicking the title text toggles maximize state',
+  testWidgets('double-clicking the free title-bar area toggles maximize state',
       (tester) async {
     await tester.pumpWidget(_titleBarApp(
       commands: commands,
@@ -295,12 +349,12 @@ void main() {
           WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
     ));
 
-    final title = find.text('Alula Code');
-    await _doubleTap(tester, title);
+    final dragRegion = find.byKey(const ValueKey('titlebar-drag-region'));
+    await _doubleTap(tester, dragRegion);
     await tester.pumpAndSettle();
     expect(window.maximizeCalls, 1);
 
-    await _doubleTap(tester, title);
+    await _doubleTap(tester, dragRegion);
     await tester.pumpAndSettle();
     expect(window.unmaximizeCalls, 1);
   });
@@ -333,7 +387,8 @@ void main() {
       ),
     ));
 
-    await tester.drag(find.text('Alula Code'), const Offset(30, 0));
+    await tester.drag(find.byKey(const ValueKey('titlebar-drag-region')),
+        const Offset(30, 0));
     expect(window.dragCalls, 1);
 
     await tester.tap(find.text('文件'));

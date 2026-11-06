@@ -531,6 +531,40 @@ void main() {
     expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
   });
 
+  testWidgets('P05.8 Command Center 标题入口打开现有命令面板并执行动作', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+
+    await tester.enterText(
+        find.descendant(
+            of: find.byKey(const ValueKey('quick-input')),
+            matching: find.byType(TextField)),
+        '拆分');
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('qi-编辑器: 拆分编辑器')), findsOneWidget);
+
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    expect(primaryFocus, isNotNull);
+    expect(
+      primaryFocus!.context!.findAncestorWidgetOfExactType<Scaffold>(),
+      isNotNull,
+      reason: '执行后应把焦点交还给工作台',
+    );
+  });
+
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,

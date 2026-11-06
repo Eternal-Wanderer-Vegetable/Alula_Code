@@ -95,6 +95,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   late WindowChromeDriver _windowChrome;
   late TargetPlatform _menuPlatform;
   late FocusNode _menuBarFocusNode;
+  late FocusNode _commandCenterFocusNode;
   late List<MenuController> _menuControllers;
   final Map<String, MenuController> _submenuControllers = {};
   bool _maximized = false;
@@ -104,6 +105,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   bool _altChordHasKey = false;
   bool _altPointerActivity = false;
   FocusNode? _focusToReturn;
+  FocusNode? _lastPrimaryFocus;
+  FocusNode? _commandCenterFocusToReturn;
 
   @override
   void initState() {
@@ -112,6 +115,9 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         widget.windowChromeDriver ?? const PluginWindowChromeDriver();
     _windowChrome.addListener(this);
     _menuBarFocusNode = FocusNode(debugLabel: 'Alula menu bar focus');
+    _commandCenterFocusNode = FocusNode(debugLabel: 'Alula command center');
+    _lastPrimaryFocus = FocusManager.instance.primaryFocus;
+    FocusManager.instance.addListener(_handlePrimaryFocusChanged);
     _createMenuControls();
     HardwareKeyboard.instance.addHandler(_handleHardwareKey);
     GestureBinding.instance.pointerRouter.addGlobalRoute(_handlePointerEvent);
@@ -167,6 +173,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     GestureBinding.instance.pointerRouter
         .removeGlobalRoute(_handlePointerEvent);
     _menuBarFocusNode.dispose();
+    _commandCenterFocusNode.dispose();
+    FocusManager.instance.removeListener(_handlePrimaryFocusChanged);
     _windowChrome.removeListener(this);
     super.dispose();
   }
@@ -218,6 +226,17 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
 
   void _handlePointerEvent(PointerEvent event) {
     if (_altKeyDown) _altPointerActivity = true;
+  }
+
+  void _handlePrimaryFocusChanged() {
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    if (identical(primaryFocus, _commandCenterFocusNode)) {
+      final previousFocus = _lastPrimaryFocus;
+      if (previousFocus?.context != null) {
+        _commandCenterFocusToReturn = previousFocus;
+      }
+    }
+    _lastPrimaryFocus = primaryFocus;
   }
 
   static bool _isModifierKey(LogicalKeyboardKey key) =>
@@ -456,20 +475,53 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         children: [
           const SizedBox(width: 10),
           if (chrome.isCustom) ...[
-            _dragArea(
-              Tooltip(
-                message: widget.windowTitle,
-                child: SizedBox(
-                  width: 240,
-                  child: Text(
-                    widget.windowTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 13),
+            ListenableBuilder(
+              listenable: widget.commands,
+              builder: (context, _) {
+                final command = widget.commands.byId('view.commandPalette');
+                final enabled = command != null &&
+                    widget.commands.isEnabled('view.commandPalette');
+                final hint = command?.shortcut == null
+                    ? '打开命令面板'
+                    : '打开命令面板，${command!.shortcut}';
+                return Tooltip(
+                  message: widget.windowTitle,
+                  child: Semantics(
+                    key: const ValueKey('command-center'),
+                    button: true,
+                    enabled: enabled,
+                    label: '命令中心，当前窗口：${widget.windowTitle}',
+                    hint: hint,
+                    onTap: enabled ? _openCommandCenter : null,
+                    child: SizedBox(
+                      width: 240,
+                      height: chrome.titleBarHeight,
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          key: const ValueKey('command-center-control'),
+                          focusNode: _commandCenterFocusNode,
+                          canRequestFocus: enabled,
+                          onTap: enabled ? _openCommandCenter : null,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                widget.windowTitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(width: 10),
           ],
@@ -506,7 +558,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             ),
           Expanded(
             child: chrome.isCustom
-                ? _dragArea(const SizedBox.expand())
+                ? _dragArea(
+                    const SizedBox.expand(),
+                    key: const ValueKey('titlebar-drag-region'),
+                  )
                 : const SizedBox.expand(),
           ),
           if (showCustomControls) ..._buildWindowButtons(),
@@ -643,9 +698,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     unawaited(_closeWindow());
   }
 
-  Widget _dragArea(Widget child) {
+  Widget _dragArea(Widget child, {Key? key}) {
     if (!widget.windowControls) return child;
     return GestureDetector(
+      key: key,
       behavior: HitTestBehavior.opaque,
       onPanStart: (_) => unawaited(_windowChrome.startDragging()),
       onDoubleTap: () => unawaited(_toggleMaximize()),
@@ -671,6 +727,22 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
     } catch (error) {
       debugPrint('更新窗口标题失败：$error');
     }
+  }
+
+  void _openCommandCenter() {
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    if (primaryFocus?.context != null &&
+        !identical(primaryFocus, _commandCenterFocusNode) &&
+        !identical(
+          primaryFocus!.context!.findAncestorWidgetOfExactType<AlulaTitleBar>(),
+          widget,
+        )) {
+      _commandCenterFocusToReturn = primaryFocus;
+    }
+    final focusToReturn = _commandCenterFocusToReturn;
+    _commandCenterFocusToReturn = null;
+    if (focusToReturn?.context != null) focusToReturn!.requestFocus();
+    unawaited(widget.commands.execute('view.commandPalette'));
   }
 
   List<Widget> _buildWindowButtons() {
