@@ -217,9 +217,10 @@ void _expectHorizontalLocation(
   expect(activity.collapsed, isFalse);
   expect(layout.root.parentSplitOf('sidebar'), same(parent));
   final mainRow = _mainRow(layout.root);
-  expect(mainRow.children, hasLength(2));
+  expect(mainRow.children, hasLength(3));
   expect(mainRow.children.first, same(parent));
-  expect(mainRow.children.last, same(layout.root.leafOf('editor')));
+  expect(mainRow.children[1], same(layout.root.leafOf('editor')));
+  expect((mainRow.children.last as WbLeaf).region, 'secondarySidebar');
   expect((mainRow.children.first as WbSplit).weight, closeTo(0.24, 1e-9));
   expect(layout.root.leafOf('editor')!.weight, editorWeight);
   expect(layout.root.leafOf('panel')!.weight, panelWeight);

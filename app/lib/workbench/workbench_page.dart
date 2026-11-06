@@ -86,6 +86,8 @@ import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
 import 'quick_input.dart';
+import 'secondary_sidebar_empty_state.dart';
+import 'secondary_sidebar_layout.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
@@ -692,6 +694,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
+    reg(
+      'workbench.action.toggleAuxiliaryBar',
+      '查看',
+      '切换次侧栏',
+      () async => _layout.toggleRegion(secondarySidebarRegion),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleAuxiliaryBar',
+      ),
+    );
     reg('view.togglePanel', '查看', '切换面板',
         () async => _layout.toggleRegion('panel'),
         shortcut:
@@ -16783,6 +16794,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       checked: !_layout.isCollapsed('sidebar'),
                     ),
                     TitleMenuItem(
+                      '次侧栏',
+                      commandId: 'workbench.action.toggleAuxiliaryBar',
+                      checked: !_layout.isCollapsed(secondarySidebarRegion),
+                    ),
+                    TitleMenuItem(
                       '面板',
                       commandId: 'view.togglePanel',
                       checked: !_layout.isCollapsed('panel'),
@@ -16864,6 +16880,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换侧栏(&&S)',
                               commandId: 'view.toggleSidebar'),
+                          TitleMenuItem(
+                            '切换次侧栏(&&B)'
+                                '${_sc('workbench.action.toggleAuxiliaryBar')}',
+                            commandId: 'workbench.action.toggleAuxiliaryBar',
+                            checkedBuilder: () =>
+                                !_layout.isCollapsed(secondarySidebarRegion),
+                          ),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换面板(&&P)',
                               commandId: 'view.togglePanel'),
@@ -16917,6 +16940,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             'outline' => _buildOutlinePanel(),
                             _ => _buildSidebar(),
                           },
+                      secondarySidebarRegion: (_) =>
+                          const SecondarySidebarEmptyState(),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                       for (final g in _groups.values)

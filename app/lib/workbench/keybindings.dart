@@ -244,6 +244,7 @@ class KeybindingSet {
     'view.quickOpen': 'ctrl+p',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
+    'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
     'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
@@ -322,6 +323,7 @@ class KeybindingSet {
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
+        result['workbench.action.toggleAuxiliaryBar'] = 'cmd+alt+b';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
         result['editor.action.joinLines'] = 'ctrl+j';

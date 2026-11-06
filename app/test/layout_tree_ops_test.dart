@@ -15,7 +15,7 @@ void main() {
 
       // 原位置被嵌套 split 顶替
       final row = root.children.first as WbSplit;
-      final editorSlot = row.children.last;
+      final editorSlot = _editorSlot(row);
       expect(editorSlot, isA<WbSplit>());
       final nest = editorSlot as WbSplit;
       expect(nest.axis, Axis.horizontal);
@@ -53,7 +53,7 @@ void main() {
       expect(root.removeLeaf('editor-2'), isTrue);
 
       final row = root.children.first as WbSplit;
-      final editorSlot = row.children.last;
+      final editorSlot = _editorSlot(row);
       expect(editorSlot, isA<WbLeaf>(),
           reason: '折叠后 editor 叶子顶回原位置');
       expect((editorSlot as WbLeaf).region, 'editor');
@@ -68,7 +68,7 @@ void main() {
       expect(root.removeLeaf('editor-3'), isTrue);
       // editor-2 所在 split 还有 editor → 不折叠
       final row = root.children.first as WbSplit;
-      expect(row.children.last, isA<WbSplit>());
+      expect(_editorSlot(row), isA<WbSplit>());
       expect(root.leafOf('editor-2'), isNotNull);
       expect(root.leafOf('editor-3'), isNull);
     });
@@ -95,3 +95,7 @@ void main() {
     });
   });
 }
+
+WbNode _editorSlot(WbSplit row) => row.children.firstWhere(
+      (node) => node.leaves.any((leaf) => leaf.region == 'editor'),
+    );

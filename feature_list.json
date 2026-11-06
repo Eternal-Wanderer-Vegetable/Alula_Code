@@ -903,7 +903,7 @@
         "feat-069"
       ],
       "status": "in-progress",
-      "evidence": "Registered only. No product code changed yet. P05.18 acceptance and pre-edit GitNexus results are recorded in docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
+      "evidence": "P05.18 implementation complete locally; hosted evidence pending. New secondary_sidebar_layout_test.dart 7/7 and secondary_sidebar_integration_test.dart 1/1; Activity Bar position 6/6 and layout tree ops 7/7. Full bash init.sh passed Rust workspace tests 71+54, Clippy, build_core, and Flutter 1,104/1,104. cargo fmt --all -- --check and flutter analyze --no-pub (0 issues) passed; Harness validation 100/100; feature_list JSON and git diff --check passed. Registration PR CI 42277831313 passed. Product CI and Linux/Windows/macOS x64 Platform Availability are pending. Scope, upstream behavior and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -356,7 +356,10 @@ double? _toDouble(Object? v) => v is num ? v.toDouble() : null;
 ///
 /// ```
 /// vertical: [
-///   horizontal: [ activity(48px 固定), sidebar(弹性, 可折叠), editor(弹性) ],
+///   horizontal: [
+///     activity(48px 固定), sidebar(弹性), editor(弹性),
+///     secondarySidebar(弹性, 默认折叠),
+///   ],
 ///   panel(弹性, 默认折叠, 可折叠)
 /// ]
 /// ```
@@ -374,6 +377,13 @@ WbSplit defaultLayout() => WbSplit(
             WbLeaf(region: 'activity', fixedExtent: 48),
             WbLeaf(region: 'sidebar', weight: 0.24, minExtent: 170),
             WbLeaf(region: 'editor', weight: 0.76, minExtent: 320),
+            WbLeaf(
+              region: 'secondarySidebar',
+              weight: 0.26,
+              minExtent: 170,
+              collapsed: true,
+              lastWeight: 0.26,
+            ),
           ],
         ),
         WbLeaf(
