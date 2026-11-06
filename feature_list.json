@@ -794,8 +794,8 @@
       "dependencies": [
         "feat-060"
       ],
-      "status": "in-progress",
-      "evidence": "范围与编辑前分析已登记，产品代码开始前的影响门通过字面调用点核对。固定来源、GitNexus 1.6.12 图谱标识、AlulaTitleBar/_AlulaTitleBarState/TitleMenuItem exact UNKNOWN、_buildTitleBarContents LOW、超大 WorkbenchPage 未索引与 trace 限制见 docs/diagnostics/2026-11-06-p05/p05.9-layout-controls-entry-scope.md。产品实现和测试待完成。",
+      "status": "done",
+      "evidence": "P05.9 / LAY-02c completed. Product commit 04b11b7 adds the custom-titlebar Layout Controls entry for existing sidebar/panel commands, checked current-state labels, semantics and keyboard/focus behavior; CI helper reliability fix 769c759 retries NSRunningApplication registration for up to 5s after the first macOS hosted failure. Focused title_bar_test.dart 18/18 and P05.9 widget integration 1/1 passed; bash init.sh and bash init.sh --fast passed (Flutter 1,052, Rust workspace, Clippy, build_core); cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff checks passed. PR CI 42158822999 four jobs passed; Platform Availability 42158817921 Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes passed. Package artifacts Linux/Windows/macOS 13475473924 / 13475634355 / 13477088081. macOS ZIP SHA-256 c9e9e7f69bd4c11f5576227cf5f58550951d3fbf88f76e7533d80962b0db782c matched the sidecar; unzip -t passed. Linux/Windows DnD artifacts 13475149586 / 13476710126 passed; macOS artifact 13477371261 explicitly skipped because hosted synthetic pointer route was unavailable. System Events selected Quit Alula Code and closed native-titlebar mode; startup diagnostics 13477227425. Earlier run 42155160263 failed only because the native helper queried NSRunningApplication once before the app process was registered; fix validated by the successful retry. Scope, GitNexus impacts/scan warnings, and full evidence: docs/diagnostics/2026-11-06-p05/p05.9-layout-controls-entry-implementation.md. P05, LAY-01 and LAY-02 remain open; this child does not complete P05.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
