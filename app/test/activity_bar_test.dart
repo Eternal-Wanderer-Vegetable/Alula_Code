@@ -58,8 +58,21 @@ void main() {
     expect(focusNodes[3].hasFocus, isTrue);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
+    expect(focusNodes[3].hasFocus, isTrue,
+        reason: 'Down stays at the last view instead of wrapping');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focusNodes[2].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focusNodes[1].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
+    expect(focusNodes[0].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pump();
     expect(focusNodes[0].hasFocus, isTrue,
-        reason: 'Down wraps after Source Control');
+        reason: 'Up stays at the first view instead of wrapping');
     expect(selected, isEmpty);
 
     await tester.sendKeyEvent(LogicalKeyboardKey.enter);

@@ -1,7 +1,6 @@
 /// 活动栏（VS Code 最左列图标条，docs/09 W1）。
 ///
-/// W1 只有资源管理器一个可用视图（点击切换侧栏显隐）；
-/// 搜索/源代码管理/设置是 W4/W6 的占位。
+/// 提供 Explorer、Search、Outline 与 Source Control 视图动作；Manage 仍是占位。
 library;
 
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ class ActivityBar extends StatefulWidget {
     required this.onSelectView,
   });
 
-  /// 当前侧栏视图（'explorer' / 'git'）；侧栏折叠时仍保留上次视图。
+  /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
   final String activeView;
   final bool sidebarCollapsed;
 
@@ -64,13 +63,18 @@ class _ActivityBarState extends State<ActivityBar> {
       return KeyEventResult.ignored;
     }
 
-    final nextIndex = switch (event.logicalKey) {
-      LogicalKeyboardKey.arrowUp =>
-        (index - 1 + _viewFocusNodes.length) % _viewFocusNodes.length,
-      LogicalKeyboardKey.arrowDown => (index + 1) % _viewFocusNodes.length,
-      _ => null,
-    };
-    if (nextIndex == null) return KeyEventResult.ignored;
+    late final int nextIndex;
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      if (index == 0) return KeyEventResult.handled;
+      nextIndex = index - 1;
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      if (index == _viewFocusNodes.length - 1) {
+        return KeyEventResult.handled;
+      }
+      nextIndex = index + 1;
+    } else {
+      return KeyEventResult.ignored;
+    }
 
     _viewFocusNodes[nextIndex].requestFocus();
     return KeyEventResult.handled;
