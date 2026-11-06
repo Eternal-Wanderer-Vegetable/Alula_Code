@@ -55,6 +55,33 @@ enum ActivityBarSize {
 /// Stable IDs for the built-in Activity Bar view actions.
 const activityBarViewOrder = ['explorer', 'search', 'outline', 'git'];
 
+/// Root layout metadata values for built-in view locations.
+const primarySidebarViewLocation = 'primary';
+const secondarySidebarViewLocation = 'secondary';
+
+/// Normalize built-in view location metadata. Layouts predating view movement
+/// omit this field and are handled as all views belonging to the Primary Side
+/// Bar by [WbSplit].
+Map<String, String> normalizeSidebarViewLocations(Object? raw) {
+  final locations = <String, String>{};
+  if (raw is Map) {
+    for (final entry in raw.entries) {
+      final id = entry.key;
+      final location = entry.value;
+      if (id is String &&
+          activityBarViewOrder.contains(id) &&
+          (location == primarySidebarViewLocation ||
+              location == secondarySidebarViewLocation)) {
+        locations[id] = location as String;
+      }
+    }
+  }
+  for (final id in activityBarViewOrder) {
+    locations.putIfAbsent(id, () => primarySidebarViewLocation);
+  }
+  return locations;
+}
+
 /// Canonicalize persisted or caller-supplied Activity Bar order metadata.
 /// Unknown IDs and duplicates are discarded; missing built-in views are
 /// appended in their default order.
@@ -162,6 +189,9 @@ class WbSplit extends WbNode {
     List<String>? activityBarOrder,
     List<String>? activityBarPinned,
     List<String>? activityBarBadgesDisabled,
+    Map<String, String>? sidebarViewLocations,
+    this.primarySidebarView,
+    this.secondarySidebarView,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children),
         activityBarOrder = activityBarOrder == null
@@ -178,7 +208,10 @@ class WbSplit extends WbNode {
             : normalizeActivityBarBadgesDisabled(
                 activityBarBadgesDisabled,
                 order: activityBarOrder,
-              );
+              ),
+        sidebarViewLocations = sidebarViewLocations == null
+            ? null
+            : normalizeSidebarViewLocations(sidebarViewLocations);
 
   final Axis axis;
   final List<WbNode> children;
@@ -210,6 +243,14 @@ class WbSplit extends WbNode {
   /// Root-only IDs whose Activity Bar badges are hidden. Null keeps the
   /// default where every view is allowed to show badges.
   List<String>? activityBarBadgesDisabled;
+
+  /// Root-only mapping from built-in Activity Bar view IDs to a side bar.
+  /// Null identifies a legacy layout where all built-in views are in Primary.
+  Map<String, String>? sidebarViewLocations;
+
+  /// Root-only selected view IDs; null identifies legacy/default selection.
+  String? primarySidebarView;
+  String? secondarySidebarView;
 
   @override
   double weight;
@@ -243,6 +284,12 @@ class WbSplit extends WbNode {
             activityBarBadgesDisabled,
             order: activityBarOrder,
           ),
+        if (sidebarViewLocations != null) ...{
+          'sidebarViewLocations':
+              normalizeSidebarViewLocations(sidebarViewLocations),
+          'primarySidebarView': primarySidebarView,
+          'secondarySidebarView': secondarySidebarView,
+        },
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -277,6 +324,15 @@ class WbSplit extends WbNode {
               json['activityBarBadgesDisabled'],
               order: json['activityBarOrder'],
             )
+          : null,
+      sidebarViewLocations: json.containsKey('sidebarViewLocations')
+          ? normalizeSidebarViewLocations(json['sidebarViewLocations'])
+          : null,
+      primarySidebarView: json['primarySidebarView'] is String
+          ? json['primarySidebarView'] as String
+          : null,
+      secondarySidebarView: json['secondarySidebarView'] is String
+          ? json['secondarySidebarView'] as String
           : null,
       children: raw
           .map((e) => WbNode.fromJson((e as Map).cast<String, Object?>()))

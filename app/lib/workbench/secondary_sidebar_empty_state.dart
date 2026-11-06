@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class SecondarySidebarEmptyState extends StatelessWidget {
-  const SecondarySidebarEmptyState({super.key});
+  const SecondarySidebarEmptyState({super.key, this.title = '次侧栏'});
 
   static const semanticsLabel = '次侧栏为空。当前没有分配的视图。';
+  final String title;
+
+  String get _semanticsLabel =>
+      title == '次侧栏' ? semanticsLabel : '$title为空。当前没有分配的视图。';
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +23,9 @@ class SecondarySidebarEmptyState extends StatelessWidget {
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: Color(0xFF2A2E37))),
             ),
-            child: const Text(
-              '次侧栏',
-              style: TextStyle(
+            child: Text(
+              title,
+              style: const TextStyle(
                 color: Color(0xFFCCCCCC),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -33,7 +37,7 @@ class SecondarySidebarEmptyState extends StatelessWidget {
               child: Semantics(
                 container: true,
                 liveRegion: true,
-                label: semanticsLabel,
+                label: _semanticsLabel,
                 child: const ExcludeSemantics(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

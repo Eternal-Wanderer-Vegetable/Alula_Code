@@ -89,6 +89,7 @@ import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
 import 'sidebar_position.dart';
+import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
@@ -414,7 +415,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _outlineTimer;
 
   // ---------- Git 面板（feat-git，CLI 封装） ----------
-  String _sidebarView = 'explorer';
+  String? _sidebarView = 'explorer';
+  String? _secondarySidebarView;
+  String? _focusedSidebarView = 'explorer';
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -508,6 +511,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
     }
+    _sidebarView = _layout.primarySidebarView;
+    _secondarySidebarView = _layout.secondarySidebarView;
+    _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
     _layout.addListener(_scheduleStateSave);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
@@ -692,6 +698,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
+    reg(
+      'workbench.action.moveView',
+      '查看',
+      '移动视图…',
+      _showMoveSidebarViewPicker,
+    );
+    reg(
+      'workbench.action.moveFocusedView',
+      '查看',
+      '移动聚焦的视图…',
+      _showMoveFocusedSidebarViewPicker,
+    );
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
@@ -16635,16 +16653,98 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
   void _selectSidebarView(String view) {
+    final location = _layout.sidebarViewLocation(view);
+    final region = location == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    final selected = _layout.sidebarSelection(location);
     if (view == 'outline') _refreshOutline();
-    if (_sidebarView == view && !_layout.isCollapsed('sidebar')) {
-      _layout.toggleRegion('sidebar');
+    if (selected == view && !_layout.isCollapsed(region)) {
+      _focusedSidebarView = view;
+      _layout.toggleRegion(region);
       return;
     }
+    _layout.selectSidebarView(view);
     setState(() {
-      _sidebarView = view;
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
       if (view == 'outline') _refreshOutline();
     });
-    _layout.showRegion('sidebar');
+    _layout.showRegion(region);
+  }
+
+  Future<void> _showMoveSidebarViewPicker() async {
+    await QuickInput.show(
+      context,
+      hint: '选择要移动的视图',
+      items: [
+        for (final view in activityBarViewOrder)
+          QuickItem(
+            label: _sidebarViewLabel(view),
+            detail: _sidebarViewLocationLabel(
+              _layout.sidebarViewLocation(view),
+            ),
+            onRun: () => _showMoveSidebarViewDestination(view),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _showMoveFocusedSidebarViewPicker() async {
+    final view = _focusedSidebarView;
+    if (view == null || !activityBarViewOrder.contains(view)) return;
+    await _showMoveSidebarViewDestination(view);
+  }
+
+  Future<void> _showMoveSidebarViewDestination(String view) async {
+    if (!mounted) return;
+    final current = _layout.sidebarViewLocation(view);
+    await QuickInput.show(
+      context,
+      hint: '选择视图的新侧栏位置',
+      items: [
+        for (final destination in const [
+          primarySidebarViewLocation,
+          secondarySidebarViewLocation,
+        ])
+          QuickItem(
+            label: _sidebarViewLocationLabel(destination),
+            detail: destination == current ? '当前位置' : null,
+            onRun: () async => _moveSidebarView(view, destination),
+          ),
+      ],
+    );
+  }
+
+  void _moveSidebarView(String view, String destination) {
+    if (!_layout.moveSidebarView(view, destination)) return;
+    final region = destination == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
+    });
+    _layout.showRegion(region);
+  }
+
+  String _sidebarViewLabel(String view) => switch (view) {
+        'explorer' => '资源管理器',
+        'search' => '搜索',
+        'outline' => '大纲',
+        'git' => '源代码管理',
+        _ => view,
+      };
+
+  String _sidebarViewLocationLabel(String location) =>
+      location == primarySidebarViewLocation ? '主侧栏' : '次侧栏';
+
+  void _focusSidebarRegion(String location) {
+    final view = _layout.sidebarSelection(location);
+    if (view == null || _focusedSidebarView == view) return;
+    setState(() => _focusedSidebarView = view);
   }
 
   void _showAbout() {
@@ -16933,7 +17033,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     layout: _layout,
                     builders: {
                       'activity': (_) => ActivityBar(
-                            activeView: _sidebarView,
+                            activeView: _focusedSidebarView ??
+                                _sidebarView ??
+                                _secondarySidebarView ??
+                                'explorer',
                             sidebarCollapsed: _layout.isCollapsed('sidebar'),
                             axis: _layout.activityBarLocation ==
                                     ActivityBarLocation.side
@@ -16959,14 +17062,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 : null,
                             onSelectView: _selectSidebarView,
                           ),
-                      'sidebar': (_) => switch (_sidebarView) {
-                            'git' => _buildGitPanel(),
-                            'search' => _buildSearchPanel(),
-                            'outline' => _buildOutlinePanel(),
-                            _ => _buildSidebar(),
-                          },
-                      secondarySidebarRegion: (_) =>
-                          const SecondarySidebarEmptyState(),
+                      'sidebar': (_) => _buildSidebarViewRegion(
+                            primarySidebarViewLocation,
+                            _sidebarView,
+                          ),
+                      secondarySidebarRegion: (_) => _buildSidebarViewRegion(
+                            secondarySidebarViewLocation,
+                            _secondarySidebarView,
+                          ),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                       for (final g in _groups.values)
@@ -17355,6 +17458,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   // ---------- 侧栏：资源管理器 ----------
+
+  Widget _buildSidebarViewRegion(String location, String? view) {
+    final title = _sidebarViewLocationLabel(location);
+    return Focus(
+      onFocusChange: (focused) {
+        if (focused) _focusSidebarRegion(location);
+      },
+      child: switch (view) {
+        'git' => _buildGitPanel(),
+        'search' => _buildSearchPanel(),
+        'outline' => _buildOutlinePanel(),
+        'explorer' => _buildSidebar(),
+        _ => SecondarySidebarEmptyState(title: title),
+      },
+    );
+  }
 
   Widget _buildSidebar() {
     return Container(
