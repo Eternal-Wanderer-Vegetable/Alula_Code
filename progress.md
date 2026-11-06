@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-06 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.14 / feat-053–066 已完成；P05.15 / feat-067 正在实现；LAY/CMD 矩阵仍开放
+### P05 / feat-027 进行中；P05.1–P05.15 / feat-053–067 已完成；LAY/CMD 矩阵仍开放
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
 - 2026-11-06：P05.10 / feat-062 / LAY-03a 完成：产品提交 `570bec2` 与边界修正 `df530b2`；Activity Bar 独立测试 3/3、完整 `init.sh` Flutter 1,055/1,055、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI `42166343434` 四 job 全绿；Platform Availability `42166338201` Linux/Windows/macOS Intel x64 全绿。Linux/Windows DnD 通过，macOS hosted pointer route 明确 skip。三个包 artifacts `13480050460` / `13478814930` / `13480535582`，macOS ZIP SHA-256 `c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354` 匹配 sidecar 且 unzip 完整；macOS System Events native Quit 通过。完整实现、图谱风险和 hosted evidence 在 `docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md`。P05/LAY-03 继续进行。
@@ -1997,3 +1997,4 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - 2026-11-06：P05.15 产品 commit 7def397 的 PR CI 42229440013 通过；Platform Availability 42229430615 Linux/Windows 通过，macOS tests/build/clipboard/DnD/普通 launch 通过，native-titlebar Quit 两次失败（menu bar Invalid index；NSRunningApplication 未发现 process）。已修复 hosted macOS 启动方式与 bundle identity 进程发现，等待新的 hosted 验证；详见 docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md。
 - 2026-11-07：PR CI `42239892251` 全绿；Platform Availability `42239881628` Linux/Windows 全绿，macOS build/tests/clipboard/普通 launch 通过。macOS DnD 的 Flutter `open` 返回 1，故尚未执行 pointer-route 可用性判断；native Quit 日志证实相对 `.app` 路径无法定位。已将 Quit bundle 路径改为绝对路径，并把无效的 `com.alula.alula_app` macOS Bundle ID 改为有效稳定值 `com.alula.alula-app`。本机 `bash init.sh --fast` Rust 71+54、Clippy、build_core、Flutter 1,083/1,083 通过；修正仍待 hosted macOS 重验。详见 docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md。
+- 2026-11-07：P05.15 / feat-067 / LAY-03f 完成。最终代码 `105dd0d` 的 PR CI `42247690393` 四 job 全绿；Platform Availability `42247679502` Linux/Windows/macOS Intel x64 全绿。Linux/Windows 原生 move/copy/external-text DnD artifacts `13518828194` / `13517959875` 通过；macOS hosted DnD artifact `13520746528` 明确 skip（`CGEventPostToPid pointer route: false`，不计原生 DnD 通过）。System Events native Quit / startup artifact `13519877671` 成功。平台包 artifacts Linux/Windows/macOS `13518847799` / `13517929845` / `13520786704`；macOS ZIP SHA-256 `a4440c1599025e07537cc98c004ab3e11a0574a11e231b002da71e3b27977301` 匹配 sidecar 且 ZIP 完整。Bundle ID / LaunchServices 路径修正与完整证据见 docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md。P05/LAY-03 仍开放：badge、Accounts/Manage 未包含于此 slice；下一步从 LAY-03 剩余矩阵需求单独登记，不跳过到 LAY-04。

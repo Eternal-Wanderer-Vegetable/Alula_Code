@@ -866,8 +866,8 @@
       "dependencies": [
         "feat-066"
       ],
-      "status": "in-progress",
-      "evidence": "P05.15 product commit 7def397. Local full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,083/1,083; cargo fmt, app Flutter analyze (0), diff check and Harness 100/100 passed. PR CI 42229440013 passed. Platform Availability 42229430615 Linux/Windows x64 passed; macOS attempt 1 and 2 failed only in native-titlebar Quit menu automation after all tests, build, clipboard, DnD and launch succeeded. Scope report records logs, GitNexus critical/lower-bound pre-edit impact and the LaunchServices registration fix now in progress; hosted revalidation is pending.",
+      "status": "done",
+      "evidence": "P05.15 / feat-067 is complete. Product commit 7def397; macOS LaunchServices fix dcf69e0; valid macOS bundle identifier and absolute Quit path 105dd0d. Local full DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,083/1,083, cargo fmt, Flutter analyze 0, and Harness 100/100. PR CI 42247690393 passed. Platform Availability 42247679502 passed Linux x64, Windows x64, and macOS Intel x64. Linux/Windows native move/copy/external-text DnD passed (13518828194 / 13517959875); macOS DnD was explicitly skipped because the hosted pointer route was unavailable (13520746528), not counted as a pass. Native macOS Quit/startup passed (13519877671). Platform package artifacts: Linux 13518847799, Windows 13517929845, macOS 13520786704. macOS ZIP SHA-256 a4440c1599025e07537cc98c004ab3e11a0574a11e231b002da71e3b27977301 matched its sidecar and ZIP integrity passed. Scope and limitations: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. P05 remains open; LAY-03 badge/Accounts/Manage remain.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
