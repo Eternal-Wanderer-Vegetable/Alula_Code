@@ -12,6 +12,9 @@ library;
 
 import 'package:flutter/painting.dart' show Axis;
 
+/// Primary Activity Bar placement, persisted with the layout tree.
+enum ActivityBarLocation { side, top, bottom, hidden }
+
 /// 布局树节点。
 sealed class WbNode {
   const WbNode();
@@ -61,6 +64,7 @@ class WbSplit extends WbNode {
     required List<WbNode> children,
     this.weight = 1,
     this.name,
+    this.activityBarLocation,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children);
 
@@ -69,6 +73,9 @@ class WbSplit extends WbNode {
 
   /// 稳定标识（可选）：调试与测试定位用（分割条 key = wb-div-<左>-<右>）。
   final String? name;
+
+  /// Root-only Activity Bar placement metadata. Null identifies legacy JSON.
+  ActivityBarLocation? activityBarLocation;
 
   @override
   double weight;
@@ -79,6 +86,8 @@ class WbSplit extends WbNode {
         'axis': axis == Axis.horizontal ? 'h' : 'v',
         if (weight != 1) 'weight': weight,
         if (name != null) 'name': name,
+        if (activityBarLocation != null)
+          'activityBarLocation': activityBarLocation!.name,
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -92,12 +101,21 @@ class WbSplit extends WbNode {
       axis: axis,
       weight: json['weight'] is num ? (json['weight'] as num).toDouble() : 1,
       name: json['name'] is String ? json['name'] as String : null,
+      activityBarLocation:
+          _activityBarLocationFromJson(json['activityBarLocation']),
       children: raw
           .map((e) =>
               WbNode.fromJson((e as Map).cast<String, Object?>()))
           .toList(),
     );
   }
+}
+
+ActivityBarLocation? _activityBarLocationFromJson(Object? raw) {
+  for (final location in ActivityBarLocation.values) {
+    if (location.name == raw) return location;
+  }
+  return null;
 }
 
 /// 叶子节点：一个停靠区域。
@@ -175,6 +193,7 @@ double? _toDouble(Object? v) => v is num ? v.toDouble() : null;
 /// 标题栏与状态栏在网格之外（不可拖拽调尺寸）。
 WbSplit defaultLayout() => WbSplit(
       axis: Axis.vertical,
+      activityBarLocation: ActivityBarLocation.side,
       children: [
         WbSplit(
           axis: Axis.horizontal,

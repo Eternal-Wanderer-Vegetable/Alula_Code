@@ -12,6 +12,7 @@ void main() {
       final restored =
           WbNode.fromJson(original.toJson()) as WbSplit;
       expect(restored.axis, original.axis);
+      expect(restored.activityBarLocation, ActivityBarLocation.side);
       expect(restored.children.length, original.children.length);
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);

@@ -12,11 +12,13 @@ class ActivityBar extends StatefulWidget {
     required this.activeView,
     required this.sidebarCollapsed,
     required this.onSelectView,
+    this.axis = Axis.vertical,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
   final String activeView;
   final bool sidebarCollapsed;
+  final Axis axis;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
@@ -52,6 +54,7 @@ class _ActivityBarState extends State<ActivityBar> {
       tooltip: _viewLabels[index],
       active: !widget.sidebarCollapsed && widget.activeView == id,
       focusNode: _viewFocusNodes[index],
+      horizontal: widget.axis == Axis.horizontal,
       onFocusChange: (_) => setState(() {}),
       onKeyEvent: (node, event) => _handleViewKey(index, event),
       onTap: () => widget.onSelectView(id),
@@ -64,10 +67,16 @@ class _ActivityBarState extends State<ActivityBar> {
     }
 
     late final int nextIndex;
-    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+    final previousKey = widget.axis == Axis.vertical
+        ? LogicalKeyboardKey.arrowUp
+        : LogicalKeyboardKey.arrowLeft;
+    final nextKey = widget.axis == Axis.vertical
+        ? LogicalKeyboardKey.arrowDown
+        : LogicalKeyboardKey.arrowRight;
+    if (event.logicalKey == previousKey) {
       if (index == 0) return KeyEventResult.handled;
       nextIndex = index - 1;
-    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+    } else if (event.logicalKey == nextKey) {
       if (index == _viewFocusNodes.length - 1) {
         return KeyEventResult.handled;
       }
@@ -82,35 +91,47 @@ class _ActivityBarState extends State<ActivityBar> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontal = widget.axis == Axis.horizontal;
+    final viewItems = [
+      _viewItem(index: 0, id: 'explorer', icon: Icons.explore_outlined),
+      _viewItem(index: 1, id: 'search', icon: Icons.search),
+      _viewItem(
+        index: 2,
+        id: 'outline',
+        icon: Icons.format_list_bulleted,
+      ),
+      _viewItem(index: 3, id: 'git', icon: Icons.account_tree_outlined),
+    ];
     return FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
       child: Container(
         decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
-        child: Column(
+        child: Flex(
+          direction: widget.axis,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _viewItem(
-              index: 0,
-              id: 'explorer',
-              icon: Icons.explore_outlined,
-            ),
-            _viewItem(index: 1, id: 'search', icon: Icons.search),
-            _viewItem(
-              index: 2,
-              id: 'outline',
-              icon: Icons.format_list_bulleted,
-            ),
-            _viewItem(
-              index: 3,
-              id: 'git',
-              icon: Icons.account_tree_outlined,
-            ),
-            const Spacer(),
-            const _Item(
-              icon: Icons.settings_outlined,
-              tooltip: '管理（W6）',
-              active: false,
-            ),
+            if (horizontal)
+              for (final item in viewItems) Expanded(child: item)
+            else
+              ...viewItems,
+            if (horizontal)
+              const SizedBox(
+                width: 40,
+                child: _Item(
+                  icon: Icons.settings_outlined,
+                  tooltip: '管理（W6）',
+                  active: false,
+                  horizontal: true,
+                ),
+              )
+            else
+              const Spacer(),
+            if (!horizontal)
+              const _Item(
+                icon: Icons.settings_outlined,
+                tooltip: '管理（W6）',
+                active: false,
+              ),
           ],
         ),
       ),
@@ -124,6 +145,7 @@ class _Item extends StatelessWidget {
     required this.tooltip,
     required this.active,
     this.focusNode,
+    this.horizontal = false,
     this.onFocusChange,
     this.onKeyEvent,
     this.onTap,
@@ -133,6 +155,7 @@ class _Item extends StatelessWidget {
   final String tooltip;
   final bool active;
   final FocusNode? focusNode;
+  final bool horizontal;
   final ValueChanged<bool>? onFocusChange;
   final FocusOnKeyEventCallback? onKeyEvent;
   final VoidCallback? onTap;
@@ -170,7 +193,9 @@ class _Item extends StatelessWidget {
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(
+                    vertical: horizontal ? 8 : 10,
+                  ),
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

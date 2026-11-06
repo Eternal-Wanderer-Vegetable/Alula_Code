@@ -96,21 +96,68 @@ void main() {
     await tester.pump();
     expect(selected, ['search']);
   });
+
+  testWidgets('horizontal Activity Bar follows left/right focus order',
+      (tester) async {
+    final selected = <String>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      axis: Axis.horizontal,
+      onSelectView: selected.add,
+    ));
+
+    final centers = ['资源管理器', '搜索', '大纲', '源代码管理']
+        .map((label) => tester.getCenter(find.byTooltip(label)))
+        .toList();
+    expect(centers.map((point) => point.dy).toSet().length, 1);
+    for (var i = 1; i < centers.length; i++) {
+      expect(centers[i].dx, greaterThan(centers[i - 1].dx));
+    }
+
+    final focusNodes = _viewFocusNodes(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(focusNodes.first.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusNodes.first.hasFocus, isTrue,
+        reason: 'perpendicular arrows do not move horizontal focus');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(focusNodes[1].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+    expect(focusNodes.first.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+    expect(focusNodes.first.hasFocus, isTrue,
+        reason: 'Left stays at the first view instead of wrapping');
+    expect(selected, isEmpty);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    expect(selected, ['explorer', 'explorer']);
+  });
 }
 
 Widget _activityBarApp({
   required String activeView,
   required bool sidebarCollapsed,
+  Axis axis = Axis.vertical,
   ValueChanged<String>? onSelectView,
 }) {
   return MaterialApp(
     home: Scaffold(
       body: SizedBox(
-        width: 44,
-        height: 320,
+        width: axis == Axis.horizontal ? 400 : 44,
+        height: axis == Axis.horizontal ? 44 : 320,
         child: ActivityBar(
           activeView: activeView,
           sidebarCollapsed: sidebarCollapsed,
+          axis: axis,
           onSelectView: onSelectView ?? (_) {},
         ),
       ),

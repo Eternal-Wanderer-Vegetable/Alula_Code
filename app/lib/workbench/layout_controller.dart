@@ -14,6 +14,10 @@ class WorkbenchLayout extends ChangeNotifier {
 
   WbSplit root;
 
+  /// Notify grid renderers after a layout-tree operation performed outside
+  /// this controller's built-in split/region methods.
+  void notifyLayoutChanged() => notifyListeners();
+
   WbLeaf? leafOf(String region) => root.leafOf(region);
 
   bool isCollapsed(String region) => leafOf(region)?.collapsed ?? false;

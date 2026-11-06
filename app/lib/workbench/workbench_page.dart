@@ -72,11 +72,13 @@ import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
+import 'activity_bar_position.dart';
 import 'commands.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'keybindings.dart';
+import 'layout_model.dart';
 import 'layout_store.dart';
 import 'quick_input.dart';
 import 'session_store.dart';
@@ -694,7 +696,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '将活动栏移到侧边',
       () async {
-        _layout.setRegionCollapsed('activity', false);
+        _setActivityBarLocation(ActivityBarLocation.side);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.top',
+      '查看',
+      '将活动栏移到顶部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.top);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.bottom',
+      '查看',
+      '将活动栏移到底部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.bottom);
       },
     );
     reg(
@@ -702,7 +720,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '隐藏活动栏',
       () async {
-        _layout.setRegionCollapsed('activity', true);
+        _setActivityBarLocation(ActivityBarLocation.hidden);
       },
     );
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
@@ -1130,6 +1148,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
+  }
+
+  void _setActivityBarLocation(ActivityBarLocation location) {
+    _layout.setActivityBarLocation(location);
+    _syncCommandContext();
   }
 
   /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
@@ -2426,6 +2449,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'activityBarLocation': _layout.activityBarLocation.name,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
       'mergeEditorActive': mergeSession != null && !mergeSession.isDisposed,
@@ -2636,15 +2660,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showCommandPalette() {
+    final currentLocation = _layout.activityBarLocation;
     QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
       items: [
         for (final c in _commands.all)
-          QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
+          if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation))
+            QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
       ],
       commands: _commands,
     );
+  }
+
+  bool _isCurrentActivityBarLocationCommand(
+      String commandId, ActivityBarLocation currentLocation) {
+    final target = switch (commandId) {
+      'workbench.action.activityBarLocation.default' =>
+        ActivityBarLocation.side,
+      'workbench.action.activityBarLocation.top' => ActivityBarLocation.top,
+      'workbench.action.activityBarLocation.bottom' =>
+        ActivityBarLocation.bottom,
+      'workbench.action.activityBarLocation.hide' => ActivityBarLocation.hidden,
+      _ => null,
+    };
+    return target == currentLocation;
   }
 
   void _showQuickOpen() {
@@ -16795,12 +16835,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 commandId:
                                     'workbench.action.activityBarLocation.default',
                                 checkedBuilder: () =>
-                                    !_layout.isCollapsed('activity')),
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.side),
+                            TitleMenuItem('顶部(&&T)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.top',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.bottom',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.bottom),
                             TitleMenuItem('隐藏(&&H)',
                                 commandId:
                                     'workbench.action.activityBarLocation.hide',
                                 checkedBuilder: () =>
-                                    _layout.isCollapsed('activity')),
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.hidden),
                           ]),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换侧栏(&&S)',
@@ -16828,6 +16882,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       'activity': (_) => ActivityBar(
                             activeView: _sidebarView,
                             sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                            axis: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? Axis.vertical
+                                : Axis.horizontal,
                             onSelectView: _selectSidebarView,
                           ),
                       'sidebar': (_) => switch (_sidebarView) {
