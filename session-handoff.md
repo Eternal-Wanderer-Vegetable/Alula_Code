@@ -2,11 +2,11 @@
 
 ## Last Updated
 
-2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.10 / feat-053–062 are complete. P05.10 evidence docs commit `956170e` is pushed and docs-head PR CI `42169323073` passed; Platform Availability `42166338201` passed Linux/Windows/macOS Intel x64. macOS hosted DnD remains explicitly skipped because its pointer route is unavailable.
+2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.12 / feat-053–064 are complete; P05.13 / feat-065 is registered and in progress. P05.12 product `8afd9cc` and CI helper repair `46c9536` are pushed; PR CI `42194094020` and Platform Availability `42194086250` passed. macOS Intel package artifact `13493495104` is verified; hosted DnD remains explicitly skipped because its pointer route is unavailable. P05 remains open.
 
 ## Current Objective
 
-Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.11 / feat-053–063 are complete; P05.12 / feat-064 / LAY-03c is registered and in progress. Implement fixed Code-OSS 1.145.0 Activity Bar Top/Bottom placement in the primary sidebar, four-state View > Appearance commands/checks, orientation-aware navigation and root layout JSON round-trip; scope and pre-edit GitNexus findings are in `docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md`. P05 remains open until all remaining LAY/CMD matrix DoDs pass. P05 and LAY-01/LAY-02/LAY-03 remain open. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
+Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.12 / feat-053–064 are complete; P05.13 / feat-065 / LAY-03d is registered and in progress. Implement fixed Code-OSS 1.145.0 Side Activity Bar Default/Compact dimensions, its right-click Activity Bar Size checked submenu, and root layout JSON round-trip; older JSON defaults to Default and non-Side positions do not expose the size submenu. Scope, fixed-source links, pre-edit GitNexus impacts and DoD are in `docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md`. P05 remains open until all LAY/CMD matrix DoDs pass. P05 and LAY-01/LAY-02/LAY-03 remain open. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
 
 Use `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 

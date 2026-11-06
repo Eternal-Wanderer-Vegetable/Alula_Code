@@ -830,8 +830,20 @@
       "dependencies": [
         "feat-063"
       ],
+      "status": "done",
+      "evidence": "P05.12 完成。产品提交 8afd9cc；macOS CI 时序修复提交 46c9536。聚焦 Flutter 10/10、完整 bash init.sh（Rust 71+54、Clippy、build_core、Flutter 1,064）、cargo fmt、Flutter analyze 0 issues、Harness 100/100 通过。PR CI 42194094020 四 job 全绿；Platform Availability 42194086250 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package lanes 全绿。macOS DnD artifact 13491948546 明确 skip（hosted pointer route unavailable）；System Events Quit/startup artifact 13492900963 验证选择 alula_app > Quit Alula Code 并正常退出。平台包 Linux/Windows/macOS artifacts 13491710949 / 13490743620 / 13493495104；macOS ZIP SHA-256 6f1184e2dae9b9ae47412fcb2118f7eb7c02c09607aca483af6e8ce621724ea0 与 sidecar 匹配，unzip -t 通过。首次 run 42188372805 的 menu bar -1719 错误与修复复测记录在 docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md。P05/LAY-03 继续开放；原生设备/Apple Silicon 验收留 P15。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-065",
+      "name": "P05.13 LAY-03d Activity Bar Default/Compact 大小与持久化",
+      "description": "按固定 Code-OSS 1.145.0，实现 Side Activity Bar 的 Default/Compact 大小、Activity Bar Size 右键子菜单与根布局 JSON round-trip；Default 为 48px 宽 / 48px action / 24px icon，Compact 为 36px / 28px / 16px。Side 以外不显示大小子菜单；范围、上游出处、DoD 与 GitNexus 预检见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md。",
+      "dependencies": [
+        "feat-064"
+      ],
       "status": "in-progress",
-      "evidence": "已登记单项范围与 DoD；实施前 GitNexus impact、上游行为、调用点和图谱限制记录在 docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md。",
+      "evidence": "已登记单项范围与 DoD；固定上游尺寸/菜单行为、ActivityBar UNKNOWN 调用点、WbSplit MEDIUM lower-bound 与 WorkbenchLayout LOW impact 记录于 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

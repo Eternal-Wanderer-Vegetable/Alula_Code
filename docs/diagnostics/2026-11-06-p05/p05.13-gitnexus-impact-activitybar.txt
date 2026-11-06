@@ -1,0 +1,154 @@
+{
+  "target": {
+    "id": "Class:app/lib/workbench/activity_bar.dart:ActivityBar",
+    "name": "ActivityBar",
+    "type": "Class",
+    "filePath": "app/lib/workbench/activity_bar.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 3,
+  "risk": "LOW",
+  "riskSharedAxes": "LOW",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 1,
+    "modules_affected": 1
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+  },
+  "affected_processes": [
+    {
+      "name": "build",
+      "type": "Function",
+      "filePath": "app/lib/git/git_diff_patch_view.dart",
+      "affected_process_count": 7,
+      "total_hits": 12,
+      "earliest_broken_step": 1
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Git",
+      "hits": 3,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Method:app/lib/git/git_diff_patch_view.dart:_GitDiffPatchViewState._buildSideBySideRow#2",
+        "name": "_buildSideBySideRow",
+        "filePath": "app/lib/git/git_diff_patch_view.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": [
+          {
+            "id": "proc_15_build",
+            "label": "Build → _buildSideBySideWordSpans",
+            "processType": "cross_community",
+            "step": 3
+          },
+          {
+            "id": "proc_55_build",
+            "label": "Build → _buildLineNumber",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Method:app/lib/git/git_diff_patch_view.dart:_GitDiffPatchViewState._buildSideBySideList#0",
+        "name": "_buildSideBySideList",
+        "filePath": "app/lib/git/git_diff_patch_view.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_173_build",
+            "label": "Build → _currentSideBySideRowIndex",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_15_build",
+            "label": "Build → _buildSideBySideWordSpans",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_55_build",
+            "label": "Build → _buildLineNumber",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Method:app/lib/git/git_diff_patch_view.dart:_GitDiffPatchViewState.build#1",
+        "name": "build",
+        "filePath": "app/lib/git/git_diff_patch_view.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_173_build",
+            "label": "Build → _currentSideBySideRowIndex",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_54_build",
+            "label": "Build → _inlineRowForChange",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_7_build",
+            "label": "Build → _hasAdjacentChange",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_14_build",
+            "label": "Build → _isCompatibleSourceKind",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_15_build",
+            "label": "Build → _buildSideBySideWordSpans",
+            "processType": "cross_community",
+            "step": 1
+          },
+          {
+            "id": "proc_172_build",
+            "label": "Build → _changeAnnouncement",
+            "processType": "intra_community",
+            "step": 1
+          },
+          {
+            "id": "proc_55_build",
+            "label": "Build → _buildLineNumber",
+            "processType": "cross_community",
+            "step": 1
+          }
+        ]
+      }
+    ]
+  }
+}
