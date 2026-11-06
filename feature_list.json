@@ -914,8 +914,8 @@
       "dependencies": [
         "feat-070"
       ],
-      "status": "in-progress",
-      "evidence": "Scope registered; implementation not started. Fixed upstream: Code-OSS 1.145.0 commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e. Pre-edit GitNexus: WbSplit CRITICAL/lower-bound (62 impacted, 140 process hits, 20 modules); defaultLayout and setActivityBarLocation CRITICAL; ActivityBarLocation, WorkbenchLayout, LayoutStore UNKNOWN/0; workbench_page.dart (>512 KiB) omitted. Preserve all graph risks and see docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md.",
+      "status": "done",
+      "evidence": "Implementation commits d44e36414afdfda876778af8f5cc767a651ddeba and regression commit 077d234398d8178601854a0f4e76a1d7e15b4bf5. Focused sidebar-position/integration suites 6/6; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,109/1,109; cargo fmt --check, Flutter analyze (0 issues), and diff check passed. PR CI 42296299632 passed all four jobs. Platform Availability 42296292652 attempt 2 passed Linux x64, Windows x64, and macOS Intel x64; attempt 1 macOS package artifact finalization hit a transient GitHub ETIMEDOUT and was rerun. Latest package artifacts Linux 13542566431, Windows 13542681784, macOS 13545142985. macOS ZIP SHA-256 7232ef2bb37c42a1cdc08443b4d987cd66fad69811aaccc43d60d06a32393cb1 matches sidecar; unzip -tq passed. Linux/Windows DnD passed; macOS DnD artifact 13546375113 explicitly skips because CGEventPostToPid pointer route is false. System Events native Quit/startup evidence is artifact 13545676609. Hosted Intel x64 does not replace Apple Silicon or physical-device validation. Full scope, graph caveats, and hosted/local evidence: docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md and docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-implementation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

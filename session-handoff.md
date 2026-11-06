@@ -8,17 +8,17 @@ Finish P05 / `feat-027` one registered feature at a time. The user asked for a n
 
 ## Current State
 
-- Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). PR head `f876a5d` has product CI green.
-- P05.1–P05.18 are complete; P05.19 / feat-071 / LAY-04b is registered, with no product edits yet. P05 and remaining LAY/CMD requirements remain open.
-- P05.18 product commit `b3d2a78` and evidence commit `f876a5d` are on the branch. Product CI `42281213183`, docs-head CI `42285762655`, and Platform Availability `42281207384` all passed. Package IDs and caveats are in `docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md`.
-- P05.19 scope: add primary side bar left/right toggle and persisted position; keep Activity Bar at the outer edge of the primary side and secondary side bar opposite. Fixed upstream is Code-OSS 1.145.0 commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`. Scope report: `docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md`.
-- Pre-edit GitNexus ran on repository `Alula_Code` at `/tmp/alula-p04.70-next`, worktree branch `codex/vscode-parity-p05`, index `f876a5d`. `WbSplit` is CRITICAL/lower-bound; `defaultLayout` and `setActivityBarLocation` are CRITICAL; `ActivityBarLocation`, `WorkbenchLayout`, and `LayoutStore` are UNKNOWN. `workbench_page.dart` is over the graph's 512 KiB limit; source search confirmed its layout construction/loading and sidebar region consumers. Do not treat missing graph edges as clean.
+- Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). P05.19 product/test head is `077d234`; its scope and completion evidence are recorded in a separate documentation-only commit.
+- P05.1–P05.19 are complete; P05 and remaining LAY/CMD requirements remain open.
+- P05.19 / feat-071 / LAY-04b product commit `d44e364` and remount regression commit `077d234` passed the complete local DoD. Focused suites 6/6; `bash init.sh` Rust 71+54, Clippy, core build, Flutter 1,109/1,109; cargo fmt and Flutter analyze 0 issues.
+- Latest-head PR CI `42296299632` passed. Platform Availability run `42296292652`, attempt 2, passed all Linux x64, Windows x64, and macOS Intel x64 jobs. Packages: Linux `13542566431`, Windows `13542681784`, macOS `13545142985`. macOS ZIP SHA-256 `7232ef2bb37c42a1cdc08443b4d987cd66fad69811aaccc43d60d06a32393cb1` matches its sidecar and `unzip -tq` passed. Linux/Windows DnD passed; hosted macOS DnD explicitly skipped because `CGEventPostToPid pointer route: false`. System Events native Quit/startup diagnostics: `13545676609`. First attempt's artifact-finalize ETIMEDOUT was resolved by rerunning the failed macOS job.
+- P05.19 scope, implementation, and graph limitations: `docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md` and `p05.19-sidebar-position-implementation.md`. Pre-edit GitNexus risks remain CRITICAL/UNKNOWN with large-file, cross-language, and flow-truncation limits; do not call the graph clean.
 - The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
 ## Next Step
 
-1. Finish the P05.19 scope-only registration commit: refresh GitNexus on the staged docs tree, run all and compare-to-main change scans, commit, push, and verify docs-head CI.
-2. Implement only registered LAY-04b; test tree ordering/weights, Activity Bar modes, visibility/collapse, legacy JSON migration, persistence, command and Appearance-menu direction labels. Then run local DoD, commit/push, and wait for PR CI and Linux/Windows/macOS hosted evidence.
-3. After P05.19 is evidenced, register the next single P05 requirement; keep PR #3 open/draft and do not merge.
+1. Verify the P05.19 documentation-head PR CI while keeping PR #3 draft/open.
+2. Select and register exactly one remaining P05 LAY/CMD feature from `docs/03` and `docs/11`; run pre-edit GitNexus impact before editing any code, and record scope/acceptance first.
+3. Implement only that feature, complete local DoD and hosted Linux/Windows/macOS x64 evidence, update state/evidence, then continue one feature at a time until P05 is complete.
 
 No manual operation is currently required from the user.
