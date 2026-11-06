@@ -44,7 +44,7 @@ void main() {
     expect(loadedPanel.lastWeight, closeTo(0.3, 1e-9));
     // 嵌套 split 结构与固定叶子
     final loadedActivity = loaded.leafOf('activity')!;
-    expect(loadedActivity.fixedExtent, 44);
+    expect(loadedActivity.fixedExtent, 48);
     expect(loadedActivity.collapsed, isTrue);
     expect(loadedActivity.lastWeight, 1);
     layout.dispose();
@@ -56,18 +56,15 @@ void main() {
     File(store.resolvePath()).writeAsStringSync('not json at all');
     expect(store.tryLoad(), isNull);
     // 结构非法（叶子当根）
-    File(store.resolvePath())
-        .writeAsStringSync('{"t":"leaf","region":"solo"}');
+    File(store.resolvePath()).writeAsStringSync('{"t":"leaf","region":"solo"}');
     expect(store.tryLoad(), isNull);
   });
 
   test('保存不留 .tmp 半写文件（原子替换）', () {
     store.save(defaultLayout());
     store.save(defaultLayout()); // 覆盖已存在文件
-    final leftovers = tmp
-        .listSync()
-        .where((e) => e.path.endsWith('.tmp'))
-        .toList();
+    final leftovers =
+        tmp.listSync().where((e) => e.path.endsWith('.tmp')).toList();
     expect(leftovers, isEmpty);
     expect(store.tryLoad(), isNotNull);
   });

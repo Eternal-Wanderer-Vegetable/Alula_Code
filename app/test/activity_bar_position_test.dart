@@ -1,4 +1,5 @@
 import 'package:alula_app/workbench/activity_bar_position.dart';
+import 'package:alula_app/workbench/activity_bar_size.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:flutter/painting.dart' show Axis;
@@ -41,7 +42,7 @@ void main() {
       expect(mainRow.axis, Axis.horizontal);
       expect(mainRow.children[0], same(activity));
       expect((mainRow.children[1] as WbLeaf).region, 'sidebar');
-      expect(activity.fixedExtent, 44);
+      expect(activity.fixedExtent, 48);
       expect(editor.weight, editorWeight);
       expect((mainRow.children[1] as WbLeaf).weight, closeTo(0.24, 1e-9));
       expect(panel.weight, panelWeight);
@@ -72,14 +73,72 @@ void main() {
             hasLength(1));
         if (target == ActivityBarLocation.side) {
           expect(layout.root.parentSplitOf('activity')!.axis, Axis.horizontal);
+          expect(activity.fixedExtent, 48);
         } else {
           final parent = layout.root.parentSplitOf('activity')!;
           expect(parent.axis, Axis.vertical);
+          expect(activity.fixedExtent, 44);
           expect(parent.children[target == ActivityBarLocation.top ? 0 : 1],
               same(activity));
         }
         layout.dispose();
       }
+    });
+
+    test('Compact is persisted while Top/Bottom keep their existing height',
+        () {
+      final layout = WorkbenchLayout();
+      final activity = layout.leafOf('activity')!;
+      final sidebar = layout.leafOf('sidebar')!;
+      final editor = layout.leafOf('editor')!;
+      final panel = layout.leafOf('panel')!;
+      final sidebarWeight = sidebar.weight;
+      final editorWeight = editor.weight;
+      final panelWeight = panel.weight;
+
+      expect(layout.setActivityBarSize(ActivityBarSize.compact), isTrue);
+      expect(activity.fixedExtent, 36);
+      expect(layout.setActivityBarLocation(ActivityBarLocation.top), isTrue);
+      expect(layout.activityBarSize, ActivityBarSize.compact);
+      expect(activity.fixedExtent, 44);
+      expect(layout.setActivityBarLocation(ActivityBarLocation.side), isTrue);
+      expect(activity.fixedExtent, 36);
+      expect(sidebar.weight, sidebarWeight);
+      expect(editor.weight, editorWeight);
+      expect(panel.weight, panelWeight);
+
+      final restored = WorkbenchLayout(
+        root: WbNode.fromJson(layout.root.toJson()) as WbSplit,
+      );
+      expect(restored.activityBarSize, ActivityBarSize.compact);
+      expect(restored.leafOf('activity')!.fixedExtent, 36);
+      restored.dispose();
+      layout.dispose();
+    });
+
+    test('size update preserves an existing Editor split tree', () {
+      final layout = WorkbenchLayout();
+      expect(
+        layout.root.splitLeaf(
+          'editor',
+          'editor-2',
+          Axis.horizontal,
+          splitName: 'editor-group',
+        ),
+        isNotNull,
+      );
+      final editorGroup = layout.root.parentSplitOf('editor')!;
+      final editorWeight = editorGroup.children[0].weight;
+      final secondEditorWeight = editorGroup.children[1].weight;
+      final splitWeight = editorGroup.weight;
+
+      expect(layout.setActivityBarSize(ActivityBarSize.compact), isTrue);
+      expect(layout.root.parentSplitOf('editor'), same(editorGroup));
+      expect(layout.root.leafOf('editor-2'), isNotNull);
+      expect(editorGroup.children[0].weight, editorWeight);
+      expect(editorGroup.children[1].weight, secondEditorWeight);
+      expect(editorGroup.weight, splitWeight);
+      layout.dispose();
     });
 
     test('Hidden keeps its previous branch and repeated locations are stable',

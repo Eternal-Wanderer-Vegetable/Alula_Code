@@ -30,12 +30,11 @@ void main() {
     await tester.pumpWidget(_host(layout));
     await tester.pump();
 
-    // 测试窗口 800×600。activity 固定 44；侧栏 0.24/(0.24+0.76)*(800-44)（activity 与 sidebar 之间无分割条，
-    // sidebar 与 editor 之间有 1 条 4px 分割条 → 弹性池 800-44-4=752）
-    expect(_width(tester, 'activity'), 44);
-    expect(_width(tester, 'sidebar'), closeTo(752 * 0.24, 1.5));
-    expect(_width(tester, 'editor'),
-        closeTo(752 - 752 * 0.24, 1.5));
+    // 测试窗口 800×600。activity 固定 48；侧栏 0.24/(0.24+0.76)*(800-48)（activity 与 sidebar 之间无分割条，
+    // sidebar 与 editor 之间有 1 条 4px 分割条 → 弹性池 800-48-4=748）
+    expect(_width(tester, 'activity'), 48);
+    expect(_width(tester, 'sidebar'), closeTo(748 * 0.24, 1.5));
+    expect(_width(tester, 'editor'), closeTo(748 - 748 * 0.24, 1.5));
   });
 
   testWidgets('拖拽分割条：侧栏变宽、编辑器等量变窄', (tester) async {
@@ -50,8 +49,7 @@ void main() {
 
     final after = _width(tester, 'sidebar');
     expect(after, closeTo(before + 60, 1.5));
-    expect(
-        _width(tester, 'editor'), closeTo(752 - after, 1.5),
+    expect(_width(tester, 'editor'), closeTo(748 - after, 1.5),
         reason: '编辑器应等量收窄（其余兄弟像素不变）');
   });
 
@@ -66,7 +64,7 @@ void main() {
 
     expect(_width(tester, 'sidebar'), closeTo(170, 1.5),
         reason: 'sidebar minExtent=170');
-    expect(_width(tester, 'editor'), closeTo(752 - 170, 1.5));
+    expect(_width(tester, 'editor'), closeTo(748 - 170, 1.5));
   });
 
   testWidgets('面板折叠/恢复：高度出现且可拖拽', (tester) async {
@@ -109,12 +107,12 @@ void main() {
     expect(layout.toggleRegion('sidebar'), isTrue);
     await tester.pump();
     expect(find.byKey(const ValueKey('probe-sidebar')), findsNothing);
-    expect(_width(tester, 'editor'), closeTo(756, 1.5),
-        reason: '侧栏折叠后分割条一并消失，编辑器占满 800-44');
+    expect(_width(tester, 'editor'), closeTo(752, 1.5),
+        reason: '侧栏折叠后分割条一并消失，编辑器占满 800-48');
 
     expect(layout.toggleRegion('sidebar'), isFalse);
     await tester.pump();
-    expect(_width(tester, 'sidebar'), closeTo(752 * 0.24, 1.5),
+    expect(_width(tester, 'sidebar'), closeTo(748 * 0.24, 1.5),
         reason: '恢复时应还原折叠前权重');
   });
 
@@ -125,7 +123,7 @@ void main() {
     await tester.pumpWidget(_host(layout));
     await tester.pump();
 
-    expect(_width(tester, 'activity'), 44);
+    expect(_width(tester, 'activity'), 48);
     expect(layout.setRegionCollapsed('activity', true), isTrue);
     await tester.pump();
     expect(find.byKey(const ValueKey('probe-activity')), findsNothing);
@@ -138,7 +136,7 @@ void main() {
 
     expect(layout.setRegionCollapsed('activity', false), isFalse);
     await tester.pump();
-    expect(_width(tester, 'activity'), 44);
+    expect(_width(tester, 'activity'), 48);
     expect(layout.root.leafOf('activity')!.lastWeight, isNull);
     expect(changes, 2);
   });

@@ -15,6 +15,31 @@ import 'package:flutter/painting.dart' show Axis;
 /// Primary Activity Bar placement, persisted with the layout tree.
 enum ActivityBarLocation { side, top, bottom, hidden }
 
+/// Activity Bar density. The horizontal Activity Bar keeps its legacy 44 px
+/// height; these dimensions apply when it is placed on the side.
+enum ActivityBarSize {
+  defaultSize('default', 48, 48, 24),
+  compact('compact', 36, 28, 16);
+
+  const ActivityBarSize(
+    this.jsonValue,
+    this.sideExtent,
+    this.itemExtent,
+    this.iconSize,
+  );
+
+  final String jsonValue;
+  final double sideExtent;
+  final double itemExtent;
+  final double iconSize;
+
+  static ActivityBarSize? fromJson(Object? raw) => switch (raw) {
+        'default' => ActivityBarSize.defaultSize,
+        'compact' => ActivityBarSize.compact,
+        _ => null,
+      };
+}
+
 /// 布局树节点。
 sealed class WbNode {
   const WbNode();
@@ -65,6 +90,7 @@ class WbSplit extends WbNode {
     this.weight = 1,
     this.name,
     this.activityBarLocation,
+    this.activityBarSize,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children);
 
@@ -77,6 +103,10 @@ class WbSplit extends WbNode {
   /// Root-only Activity Bar placement metadata. Null identifies legacy JSON.
   ActivityBarLocation? activityBarLocation;
 
+  /// Root-only Activity Bar size metadata. Null identifies JSON written before
+  /// the size setting was introduced.
+  ActivityBarSize? activityBarSize;
+
   @override
   double weight;
 
@@ -88,6 +118,8 @@ class WbSplit extends WbNode {
         if (name != null) 'name': name,
         if (activityBarLocation != null)
           'activityBarLocation': activityBarLocation!.name,
+        if (activityBarSize != null)
+          'activityBarSize': activityBarSize!.jsonValue,
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -97,17 +129,31 @@ class WbSplit extends WbNode {
     if (raw is! List || raw.length < 2) {
       throw const FormatException('split 子节点不足');
     }
-    return WbSplit(
+    final split = WbSplit(
       axis: axis,
       weight: json['weight'] is num ? (json['weight'] as num).toDouble() : 1,
       name: json['name'] is String ? json['name'] as String : null,
       activityBarLocation:
           _activityBarLocationFromJson(json['activityBarLocation']),
+      activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
       children: raw
-          .map((e) =>
-              WbNode.fromJson((e as Map).cast<String, Object?>()))
+          .map((e) => WbNode.fromJson((e as Map).cast<String, Object?>()))
           .toList(),
     );
+    // P05.12 layouts persisted Activity Bar placement but had no size field.
+    // Upgrade those root layouts to Default while preserving the existing
+    // horizontal bar height; Side receives the new 48 px default width.
+    if (json.containsKey('activityBarLocation') &&
+        split.activityBarSize == null) {
+      split.activityBarSize = ActivityBarSize.defaultSize;
+      if (split.activityBarLocation == ActivityBarLocation.side) {
+        final activity = split.leafOf('activity');
+        if (activity != null) {
+          activity.fixedExtent = ActivityBarSize.defaultSize.sideExtent;
+        }
+      }
+    }
+    return split;
   }
 }
 
@@ -136,7 +182,7 @@ class WbLeaf extends WbNode {
   final String region;
 
   /// 固定像素宽度（主轴方向）。非 null 时该叶子不参与拖拽与权重分配。
-  final double? fixedExtent;
+  double? fixedExtent;
 
   /// 弹性权重（同轴兄弟间瓜分剩余空间的比例份额）。
   @override
@@ -194,13 +240,14 @@ double? _toDouble(Object? v) => v is num ? v.toDouble() : null;
 WbSplit defaultLayout() => WbSplit(
       axis: Axis.vertical,
       activityBarLocation: ActivityBarLocation.side,
+      activityBarSize: ActivityBarSize.defaultSize,
       children: [
         WbSplit(
           axis: Axis.horizontal,
           weight: 0.7,
           name: 'main-row',
           children: [
-            WbLeaf(region: 'activity', fixedExtent: 44),
+            WbLeaf(region: 'activity', fixedExtent: 48),
             WbLeaf(region: 'sidebar', weight: 0.24, minExtent: 170),
             WbLeaf(region: 'editor', weight: 0.76, minExtent: 320),
           ],
@@ -308,19 +355,20 @@ extension WbSplitLayout on WbSplit {
   }
 
   /// 该 split 的各子节点最小主轴像素。
-  List<double> minsFor() =>
-      children.map(nodeMinExtent).toList(growable: false);
+  List<double> minsFor() => children.map(nodeMinExtent).toList(growable: false);
 
   /// 拖拽第 [index] 个分割条移动 [deltaPx] 像素（该 split 主轴总长 [totalExtent]）。
   /// 就地更新弹性子节点的权重，其余兄弟像素保持不变。
   void applyDrag(int index, double deltaPx, double totalExtent) {
     if (totalExtent <= 0) return;
     final extents = extentsFor(totalExtent);
-    final moved =
-        moveDivider(extents: extents, minExtents: minsFor(), index: index, deltaPx: deltaPx);
+    final moved = moveDivider(
+        extents: extents,
+        minExtents: minsFor(),
+        index: index,
+        deltaPx: deltaPx);
     if (identical(moved, extents)) return;
-    final flexTotal =
-        moved.fold(0.0, (s, e) => s + e); // 含固定像素；固定叶子不写回权重
+    final flexTotal = moved.fold(0.0, (s, e) => s + e); // 含固定像素；固定叶子不写回权重
     if (flexTotal <= 0) return;
     for (var i = 0; i < children.length; i++) {
       final c = children[i];
@@ -399,8 +447,8 @@ extension WbSplitTreeOps on WbSplit {
       final c = node.children[i];
       final split = c;
       if (split is! WbSplit) continue;
-      final idx =
-          split.children.indexWhere((ch) => ch is WbLeaf && ch.region == region);
+      final idx = split.children
+          .indexWhere((ch) => ch is WbLeaf && ch.region == region);
       if (idx >= 0) {
         split.children.removeAt(idx);
         _collapseIfSingleton(node, i, split);

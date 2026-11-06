@@ -146,7 +146,7 @@ void main() {
     await selectActivityBarPosition('侧边(D)');
     expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).axis,
         Axis.vertical);
-    expect(tester.getRect(activityRegion).width, closeTo(44, 1));
+    expect(tester.getRect(activityRegion).width, closeTo(48, 1));
     expect(tester.getRect(activityRegion).right,
         lessThanOrEqualTo(tester.getRect(sidebarRegion).left));
 

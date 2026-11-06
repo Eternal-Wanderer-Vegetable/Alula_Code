@@ -73,6 +73,7 @@ import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
 import 'activity_bar_position.dart';
+import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
@@ -16886,6 +16887,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     ActivityBarLocation.side
                                 ? Axis.vertical
                                 : Axis.horizontal,
+                            size: _layout.activityBarSize,
+                            onSizeChanged: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? _layout.setActivityBarSize
+                                : null,
                             onSelectView: _selectSidebarView,
                           ),
                       'sidebar': (_) => switch (_sidebarView) {

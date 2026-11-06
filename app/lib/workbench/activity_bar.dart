@@ -6,6 +6,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'layout_model.dart';
+
 class ActivityBar extends StatefulWidget {
   const ActivityBar({
     super.key,
@@ -13,15 +15,21 @@ class ActivityBar extends StatefulWidget {
     required this.sidebarCollapsed,
     required this.onSelectView,
     this.axis = Axis.vertical,
+    this.size = ActivityBarSize.defaultSize,
+    this.onSizeChanged,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
   final String activeView;
   final bool sidebarCollapsed;
   final Axis axis;
+  final ActivityBarSize size;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
+
+  /// Changes the selected Activity Bar size from its side-position menu.
+  final ValueChanged<ActivityBarSize>? onSizeChanged;
 
   @override
   State<ActivityBar> createState() => _ActivityBarState();
@@ -30,6 +38,20 @@ class ActivityBar extends StatefulWidget {
 class _ActivityBarState extends State<ActivityBar> {
   static const _viewIds = ['explorer', 'search', 'outline', 'git'];
   static const _viewLabels = ['资源管理器', '搜索', '大纲', '源代码管理'];
+  static const _menuStyle = MenuStyle(
+    backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
+    surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+    minimumSize: WidgetStatePropertyAll(Size(190, 0)),
+  );
+  static const _menuItemStyle = ButtonStyle(
+    minimumSize: WidgetStatePropertyAll(Size(190, 34)),
+    padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+    visualDensity: VisualDensity.compact,
+    textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
+  );
+
+  final MenuController _menuController = MenuController();
 
   late final List<FocusNode> _viewFocusNodes = List.generate(
     _viewIds.length,
@@ -55,6 +77,8 @@ class _ActivityBarState extends State<ActivityBar> {
       active: !widget.sidebarCollapsed && widget.activeView == id,
       focusNode: _viewFocusNodes[index],
       horizontal: widget.axis == Axis.horizontal,
+      itemExtent: widget.size.itemExtent,
+      iconSize: widget.axis == Axis.vertical ? widget.size.iconSize : 20,
       onFocusChange: (_) => setState(() {}),
       onKeyEvent: (node, event) => _handleViewKey(index, event),
       onTap: () => widget.onSelectView(id),
@@ -102,7 +126,7 @@ class _ActivityBarState extends State<ActivityBar> {
       ),
       _viewItem(index: 3, id: 'git', icon: Icons.account_tree_outlined),
     ];
-    return FocusTraversalGroup(
+    final activityBar = FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
       child: Container(
         decoration: const BoxDecoration(color: Color(0xFF1B1E24)),
@@ -127,14 +151,70 @@ class _ActivityBarState extends State<ActivityBar> {
             else
               const Spacer(),
             if (!horizontal)
-              const _Item(
+              _Item(
                 icon: Icons.settings_outlined,
                 tooltip: '管理（W6）',
                 active: false,
+                itemExtent: widget.size.itemExtent,
+                iconSize: widget.size.iconSize,
               ),
           ],
         ),
       ),
+    );
+
+    return MenuAnchor(
+      controller: _menuController,
+      style: _menuStyle,
+      menuChildren: [
+        SubmenuButton(
+          style: _menuItemStyle,
+          menuStyle: _menuStyle,
+          key: const ValueKey('activity-bar-size-submenu'),
+          menuChildren: [
+            for (final size in ActivityBarSize.values)
+              MenuItemButton(
+                key: ValueKey('activity-bar-size-${size.jsonValue}'),
+                style: _menuItemStyle,
+                leadingIcon: widget.size == size
+                    ? const Icon(Icons.check, size: 16)
+                    : const SizedBox(width: 16),
+                onPressed: () {
+                  widget.onSizeChanged?.call(size);
+                  _menuController.close();
+                },
+                child: Semantics(
+                  checked: widget.size == size,
+                  child: Text(switch (size) {
+                    ActivityBarSize.defaultSize => 'Default',
+                    ActivityBarSize.compact => 'Compact',
+                  }),
+                ),
+              ),
+          ],
+          child: const Text('Activity Bar Size'),
+        ),
+      ],
+      builder: (context, controller, child) => Builder(
+        builder: (anchorContext) => GestureDetector(
+          onSecondaryTapDown: horizontal || widget.onSizeChanged == null
+              ? null
+              : (details) {
+                  final renderObject = anchorContext.findRenderObject();
+                  if (renderObject is RenderBox) {
+                    controller.open(
+                      position: renderObject.globalToLocal(
+                        details.globalPosition,
+                      ),
+                    );
+                  } else {
+                    controller.open();
+                  }
+                },
+          child: child,
+        ),
+      ),
+      child: activityBar,
     );
   }
 }
@@ -146,6 +226,8 @@ class _Item extends StatelessWidget {
     required this.active,
     this.focusNode,
     this.horizontal = false,
+    this.itemExtent = 48,
+    this.iconSize = 20,
     this.onFocusChange,
     this.onKeyEvent,
     this.onTap,
@@ -156,6 +238,8 @@ class _Item extends StatelessWidget {
   final bool active;
   final FocusNode? focusNode;
   final bool horizontal;
+  final double itemExtent;
+  final double iconSize;
   final ValueChanged<bool>? onFocusChange;
   final FocusOnKeyEventCallback? onKeyEvent;
   final VoidCallback? onTap;
@@ -192,26 +276,28 @@ class _Item extends StatelessWidget {
                       : null,
                   borderRadius: BorderRadius.circular(3),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: horizontal ? 8 : 10,
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(icon, size: 20, color: color),
-                        if (active)
-                          Container(
-                            margin: const EdgeInsets.only(top: 3),
-                            width: 14,
-                            height: 2,
-                            decoration: BoxDecoration(
-                              color: Colors.blueAccent,
-                              borderRadius: BorderRadius.circular(1),
+                child: SizedBox(
+                  width: horizontal ? null : itemExtent,
+                  height: horizontal ? null : itemExtent,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: horizontal ? 8 : 0),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(icon, size: iconSize, color: color),
+                          if (active)
+                            Container(
+                              margin: const EdgeInsets.only(top: 3),
+                              width: 14,
+                              height: 2,
+                              decoration: BoxDecoration(
+                                color: Colors.blueAccent,
+                                borderRadius: BorderRadius.circular(1),
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),

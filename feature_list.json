@@ -843,7 +843,7 @@
         "feat-064"
       ],
       "status": "in-progress",
-      "evidence": "已登记单项范围与 DoD；固定上游尺寸/菜单行为、ActivityBar UNKNOWN 调用点、WbSplit MEDIUM lower-bound 与 WorkbenchLayout LOW impact 记录于 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md。",
+      "evidence": "实现已完成，本地 DoD 通过，待 hosted PR/平台门禁。bash init.sh：Rust 71+54、Clippy、build_core、Flutter 1,070；cargo fmt --check 与 Flutter analyze（0 issues）通过。P05.12/P05.13 聚焦回归 43/43，最终 ActivityBar widget 6/6 与 size integration 1/1。覆盖 Default/Compact 尺寸与 checked 菜单、Side-only 右键入口、P05.12 JSON 迁移、布局持久化、Sidebar view/collapse、Editor split、Panel/Editor 权重与 Top/Bottom 44 px 保留。完整记录及 GitNexus UNKNOWN/MEDIUM lower-bound 边界见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md 和 docs/diagnostics/2026-11-06-p05/p05.13-local-validation.txt。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

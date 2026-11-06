@@ -4,15 +4,17 @@ import 'package:flutter/painting.dart' show Axis;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alula_app/workbench/layout_model.dart';
+import 'package:alula_app/workbench/layout_controller.dart';
+import 'package:alula_app/workbench/activity_bar_size.dart';
 
 void main() {
   group('JSON 序列化往返', () {
     test('默认布局 round-trip 逐字段相等', () {
       final original = defaultLayout();
-      final restored =
-          WbNode.fromJson(original.toJson()) as WbSplit;
+      final restored = WbNode.fromJson(original.toJson()) as WbSplit;
       expect(restored.axis, original.axis);
       expect(restored.activityBarLocation, ActivityBarLocation.side);
+      expect(restored.activityBarSize, ActivityBarSize.defaultSize);
       expect(restored.children.length, original.children.length);
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);
@@ -23,7 +25,23 @@ void main() {
       final panel = restored.leafOf('panel')!;
       expect(panel.collapsed, isTrue, reason: '面板默认收起');
       expect(panel.lastWeight, closeTo(0.3, 1e-9));
-      expect(inner.leafOf('activity')!.fixedExtent, 44);
+      expect(inner.leafOf('activity')!.fixedExtent, 48);
+    });
+
+    test('P05.12 布局迁移到 Default，Compact 大小可往返', () {
+      final p05_12 = defaultLayout();
+      p05_12.leafOf('activity')!.fixedExtent = 44;
+      final oldLayout = p05_12.toJson()..remove('activityBarSize');
+      final migrated = WbNode.fromJson(oldLayout) as WbSplit;
+      expect(migrated.activityBarSize, ActivityBarSize.defaultSize);
+      expect(migrated.leafOf('activity')!.fixedExtent, 48);
+
+      final layout = WorkbenchLayout(root: defaultLayout());
+      expect(layout.setActivityBarSize(ActivityBarSize.compact), isTrue);
+      final restored = WbNode.fromJson(layout.root.toJson()) as WbSplit;
+      expect(restored.activityBarSize, ActivityBarSize.compact);
+      expect(restored.leafOf('activity')!.fixedExtent, 36);
+      layout.dispose();
     });
 
     test('叶子权重/折叠态 round-trip', () {
@@ -126,10 +144,7 @@ void main() {
       final split = WbSplit(axis: Axis.horizontal, children: [
         WbLeaf(region: 'activity', fixedExtent: 44),
         WbLeaf(
-            region: 'sidebar',
-            weight: 0.25,
-            collapsed: true,
-            lastWeight: 0.25),
+            region: 'sidebar', weight: 0.25, collapsed: true, lastWeight: 0.25),
         WbLeaf(region: 'editor', weight: 0.75),
       ]);
       final px = split.extentsFor(1000);
@@ -187,8 +202,7 @@ void main() {
     });
 
     test('applyDrag：拖嵌套 split 与叶子的分界 → 只改两者权重', () {
-      final inner =
-          WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
+      final inner = WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
         WbLeaf(region: 'a'),
         WbLeaf(region: 'b'),
       ]);

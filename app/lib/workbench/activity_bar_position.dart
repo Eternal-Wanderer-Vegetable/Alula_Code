@@ -45,6 +45,19 @@ extension WorkbenchActivityBarPosition on WorkbenchLayout {
       root.activityBarLocation = target;
       changed = true;
     }
+    if (root.activityBarSize == null) {
+      root.activityBarSize = ActivityBarSize.defaultSize;
+      changed = true;
+    }
+    if (target != ActivityBarLocation.hidden) {
+      final nextExtent = target == ActivityBarLocation.side
+          ? root.activityBarSize!.sideExtent
+          : 44.0;
+      if (activity.fixedExtent != nextExtent) {
+        activity.fixedExtent = nextExtent;
+        changed = true;
+      }
+    }
     if (changed) notifyLayoutChanged();
     return changed;
   }

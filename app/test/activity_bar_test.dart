@@ -1,6 +1,8 @@
 import 'dart:ui' show Tristate;
 
 import 'package:alula_app/workbench/activity_bar.dart';
+import 'package:alula_app/workbench/layout_model.dart';
+import 'package:flutter/gestures.dart' show kSecondaryMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -97,6 +99,128 @@ void main() {
     expect(selected, ['search']);
   });
 
+  testWidgets('side Default and Compact use their fixed item and icon sizes',
+      (tester) async {
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+    ));
+    var item = find.descendant(
+      of: find.byTooltip('资源管理器'),
+      matching: find.byType(InkWell),
+    );
+    expect(tester.getSize(item), const Size(48, 48));
+    expect(
+      tester
+          .widget<Icon>(find.descendant(
+            of: find.byTooltip('资源管理器'),
+            matching: find.byType(Icon),
+          ))
+          .size,
+      24,
+    );
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      size: ActivityBarSize.compact,
+    ));
+    item = find.descendant(
+      of: find.byTooltip('资源管理器'),
+      matching: find.byType(InkWell),
+    );
+    expect(tester.getSize(item), const Size(36, 28));
+    expect(
+      tester
+          .widget<Icon>(find.descendant(
+            of: find.byTooltip('资源管理器'),
+            matching: find.byType(Icon),
+          ))
+          .size,
+      16,
+    );
+  });
+
+  testWidgets('right-click opens a checked size submenu only on Side',
+      (tester) async {
+    final selectedSizes = <ActivityBarSize>[];
+    Future<void> openSizeMenu() async {
+      await tester.tapAt(
+        tester.getCenter(find.byType(ActivityBar)),
+        buttons: kSecondaryMouseButton,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Activity Bar Size'));
+      await tester.pumpAndSettle();
+    }
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      onSizeChanged: selectedSizes.add,
+    ));
+    await openSizeMenu();
+    expect(
+      tester
+          .widget<MenuItemButton>(
+            find.byKey(const ValueKey('activity-bar-size-default')),
+          )
+          .leadingIcon,
+      isA<Icon>(),
+    );
+    expect(
+      tester
+          .widget<MenuItemButton>(
+            find.byKey(const ValueKey('activity-bar-size-compact')),
+          )
+          .leadingIcon,
+      isA<SizedBox>(),
+    );
+    await tester.tap(find.byKey(const ValueKey('activity-bar-size-compact')));
+    await tester.pumpAndSettle();
+    expect(selectedSizes, [ActivityBarSize.compact]);
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      size: ActivityBarSize.compact,
+      onSizeChanged: selectedSizes.add,
+    ));
+    await openSizeMenu();
+    expect(
+      tester
+          .widget<MenuItemButton>(
+            find.byKey(const ValueKey('activity-bar-size-default')),
+          )
+          .leadingIcon,
+      isA<SizedBox>(),
+    );
+    expect(
+      tester
+          .widget<MenuItemButton>(
+            find.byKey(const ValueKey('activity-bar-size-compact')),
+          )
+          .leadingIcon,
+      isA<Icon>(),
+    );
+    await tester.tapAt(const Offset(700, 500));
+    await tester.pumpAndSettle();
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      axis: Axis.horizontal,
+      size: ActivityBarSize.compact,
+      onSizeChanged: selectedSizes.add,
+    ));
+    await tester.tapAt(
+      tester.getCenter(find.byType(ActivityBar)),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Activity Bar Size'), findsNothing);
+  });
+
   testWidgets('horizontal Activity Bar follows left/right focus order',
       (tester) async {
     final selected = <String>[];
@@ -147,18 +271,22 @@ Widget _activityBarApp({
   required String activeView,
   required bool sidebarCollapsed,
   Axis axis = Axis.vertical,
+  ActivityBarSize size = ActivityBarSize.defaultSize,
   ValueChanged<String>? onSelectView,
+  ValueChanged<ActivityBarSize>? onSizeChanged,
 }) {
   return MaterialApp(
     home: Scaffold(
       body: SizedBox(
-        width: axis == Axis.horizontal ? 400 : 44,
+        width: axis == Axis.horizontal ? 400 : size.sideExtent,
         height: axis == Axis.horizontal ? 44 : 320,
         child: ActivityBar(
           activeView: activeView,
           sidebarCollapsed: sidebarCollapsed,
           axis: axis,
+          size: size,
           onSelectView: onSelectView ?? (_) {},
+          onSizeChanged: onSizeChanged,
         ),
       ),
     ),
