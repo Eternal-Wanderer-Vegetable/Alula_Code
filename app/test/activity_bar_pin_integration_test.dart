@@ -166,6 +166,90 @@ void main() {
     expect(layoutStore.tryLoad()!.activityBarPinned,
         ['explorer', 'outline', 'git']);
   });
+
+  testWidgets(
+      'P05.17 Accounts visibility survives position changes and remount',
+      (tester) async {
+    Future<void> mountApp() async {
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore: keybindingsStore,
+      ));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    Future<void> selectPosition(String label) async {
+      await tester.tap(find.text('查看(V)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('外观(A)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('活动栏位置(A)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    Future<void> hideAccountsFromAction() async {
+      await tester.tapAt(
+        tester.getCenter(find.byTooltip('Accounts')),
+        buttons: kSecondaryMouseButton,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey('activity-bar-accounts-hide')),
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    await mountApp();
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isTrue);
+    await hideAccountsFromAction();
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isFalse);
+    expect(layoutStore.tryLoad()!.activityBarAccountsVisible, isFalse);
+
+    await selectPosition('顶部(T)');
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isFalse);
+    await selectPosition('底部(B)');
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isFalse);
+    await selectPosition('侧边(D)');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await mountApp();
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isFalse);
+    expect(layoutStore.tryLoad()!.activityBarAccountsVisible, isFalse);
+
+    final activity = tester.getRect(
+      find.byKey(const ValueKey('wb-region-activity')),
+    );
+    await tester.tapAt(
+      Offset(activity.center.dx, activity.top + 220),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('activity-bar-checklist-accounts')),
+    );
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isTrue);
+    expect(layoutStore.tryLoad()!.activityBarAccountsVisible, isTrue);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await mountApp();
+    expect(tester.widget<ActivityBar>(find.byType(ActivityBar)).accountsVisible,
+        isTrue);
+  });
 }
 
 Finder _activityBarView(String tooltip) => find.descendant(

@@ -73,6 +73,7 @@ import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
 import 'activity_bar_badges.dart';
+import 'activity_bar_global_actions.dart';
 import 'activity_bar_order.dart';
 import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
@@ -16895,11 +16896,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             pinnedViews: _layout.activityBarPinnedViews,
                             badgeDisabledViews:
                                 _layout.activityBarBadgesDisabledViews,
+                            accountsVisible: _layout.activityBarAccountsVisible,
                             onOrderChanged: _layout.setActivityBarOrder,
                             onPinnedViewsChanged:
                                 _layout.setActivityBarPinnedViews,
                             onBadgeDisabledViewsChanged:
                                 _layout.setActivityBarBadgesDisabledViews,
+                            onAccountsVisibilityChanged:
+                                _layout.setActivityBarAccountsVisible,
+                            onManageCommand: (command) => _runCommand(command),
                             onSizeChanged: _layout.activityBarLocation ==
                                     ActivityBarLocation.side
                                 ? _layout.setActivityBarSize

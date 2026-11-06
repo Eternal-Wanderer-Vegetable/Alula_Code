@@ -1,4 +1,4 @@
-import 'dart:ui' show CheckedState, Tristate;
+import 'dart:ui' show CheckedState, SemanticsAction, Tristate;
 
 import 'package:alula_app/workbench/activity_bar.dart';
 import 'package:alula_app/workbench/activity_bar_badges.dart';
@@ -99,6 +99,130 @@ void main() {
     await tester.tap(find.byTooltip('搜索'));
     await tester.pump();
     expect(selected, ['search']);
+  });
+
+  testWidgets('Accounts and Manage are ordered global actions in both axes',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+    for (final axis in [Axis.vertical, Axis.horizontal]) {
+      await tester.pumpWidget(_activityBarApp(
+        activeView: 'explorer',
+        sidebarCollapsed: false,
+        axis: axis,
+        onManageCommand: (_) {},
+      ));
+
+      final accounts = tester.getRect(find.byTooltip('Accounts'));
+      final manage = tester.getRect(find.byTooltip('Manage'));
+      if (axis == Axis.vertical) {
+        expect(accounts.top, lessThan(manage.top));
+      } else {
+        expect(accounts.left, lessThan(manage.left));
+      }
+      _expectButtonSemantics(tester, 'Accounts', selected: false);
+      _expectButtonSemantics(tester, 'Manage', selected: false);
+    }
+    semantics.dispose();
+  });
+
+  testWidgets('Accounts announces the honest empty provider state',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+    ));
+
+    await tester.tap(find.byTooltip('Accounts'));
+    await tester.pumpAndSettle();
+    expect(find.text('暂无可用帐户提供程序'), findsOneWidget);
+    final node = tester.getSemantics(find.bySemanticsLabel('Accounts'));
+    expect(node.getSemanticsData().flagsCollection.isButton, isTrue);
+    expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+    semantics.dispose();
+  });
+
+  testWidgets('Accounts context Hide and bar checklist Show update visibility',
+      (tester) async {
+    var accountsVisible = true;
+    final visibilityChanges = <bool>[];
+    Future<void> mount() => tester.pumpWidget(_activityBarApp(
+          activeView: 'explorer',
+          sidebarCollapsed: false,
+          accountsVisible: accountsVisible,
+          onAccountsVisibilityChanged: (visible) {
+            accountsVisible = visible;
+            visibilityChanges.add(visible);
+          },
+        ));
+
+    await mount();
+    await tester.tapAt(
+      tester.getCenter(find.byTooltip('Accounts')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('activity-bar-accounts-hide')));
+    await tester.pumpAndSettle();
+    expect(visibilityChanges, [false]);
+
+    await mount();
+    expect(find.byTooltip('Accounts'), findsNothing);
+    final bar = tester.getRect(find.byType(ActivityBar));
+    await tester.tapAt(
+      Offset(bar.center.dx, bar.top + 220),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    final checklist =
+        find.byKey(const ValueKey('activity-bar-checklist-accounts'));
+    expect(
+        tester.widget<MenuItemButton>(checklist).leadingIcon, isA<SizedBox>());
+    expect(
+      tester
+          .getSemantics(find.text('Accounts'))
+          .getSemanticsData()
+          .flagsCollection
+          .isChecked,
+      CheckedState.isFalse,
+    );
+    await tester.tap(checklist);
+    await tester.pumpAndSettle();
+    expect(visibilityChanges, [false, true]);
+
+    await mount();
+    expect(find.byTooltip('Accounts'), findsOneWidget);
+  });
+
+  testWidgets('Manage keyboard navigation opens actionable commands',
+      (tester) async {
+    final commands = <String>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      onManageCommand: commands.add,
+    ));
+
+    final accountsFocus = _actionFocusNode(tester, 'Accounts');
+    final manageFocus = _actionFocusNode(tester, 'Manage');
+    accountsFocus.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(manageFocus.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(manageFocus.hasFocus, isTrue,
+        reason: 'global action navigation does not loop');
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('activity-bar-manage-command-palette')),
+        findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('activity-bar-manage-command-palette')),
+    );
+    await tester.pumpAndSettle();
+    expect(commands, ['view.commandPalette']);
   });
 
   testWidgets('number, icon and progress badges render in both orientations',
@@ -400,7 +524,7 @@ void main() {
     ));
     expect(find.byTooltip('搜索'), findsNothing,
         reason: 'switching to another view hides the unpinned view');
-    expect(find.byTooltip('管理（W6）'), findsOneWidget,
+    expect(find.byTooltip('Manage'), findsOneWidget,
         reason: 'Manage remains fixed in the bar');
   });
 
@@ -671,7 +795,7 @@ void main() {
     await tester.dragFrom(
       tester.getCenter(find.byTooltip('大纲')),
       Offset(
-        tester.getCenter(find.byTooltip('管理（W6）')).dx -
+        tester.getCenter(find.byTooltip('Manage')).dx -
             tester.getCenter(find.byTooltip('大纲')).dx,
         0,
       ),
@@ -717,11 +841,14 @@ Widget _activityBarApp({
   List<String> pinnedViews = activityBarViewOrder,
   Map<String, ActivityBarBadge> badges = const {},
   List<String> badgeDisabledViews = const [],
+  bool accountsVisible = true,
   ValueChanged<String>? onSelectView,
   ValueChanged<ActivityBarSize>? onSizeChanged,
   ValueChanged<List<String>>? onOrderChanged,
   ValueChanged<List<String>>? onPinnedViewsChanged,
   ValueChanged<List<String>>? onBadgeDisabledViewsChanged,
+  ValueChanged<bool>? onAccountsVisibilityChanged,
+  ValueChanged<String>? onManageCommand,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -737,15 +864,26 @@ Widget _activityBarApp({
           pinnedViews: pinnedViews,
           badges: badges,
           badgeDisabledViews: badgeDisabledViews,
+          accountsVisible: accountsVisible,
           onSelectView: onSelectView ?? (_) {},
           onSizeChanged: onSizeChanged,
           onOrderChanged: onOrderChanged,
           onPinnedViewsChanged: onPinnedViewsChanged,
           onBadgeDisabledViewsChanged: onBadgeDisabledViewsChanged,
+          onAccountsVisibilityChanged: onAccountsVisibilityChanged,
+          onManageCommand: onManageCommand,
         ),
       ),
     ),
   );
+}
+
+FocusNode _actionFocusNode(WidgetTester tester, String tooltipLabel) {
+  final item = find.descendant(
+    of: find.byTooltip(tooltipLabel),
+    matching: find.byType(InkWell),
+  );
+  return tester.widget<InkWell>(item).focusNode!;
 }
 
 List<FocusNode> _viewFocusNodes(WidgetTester tester) {

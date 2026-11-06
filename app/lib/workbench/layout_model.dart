@@ -145,6 +145,7 @@ class WbSplit extends WbNode {
     this.name,
     this.activityBarLocation,
     this.activityBarSize,
+    this.activityBarAccountsVisible,
     List<String>? activityBarOrder,
     List<String>? activityBarPinned,
     List<String>? activityBarBadgesDisabled,
@@ -179,6 +180,10 @@ class WbSplit extends WbNode {
   /// the size setting was introduced.
   ActivityBarSize? activityBarSize;
 
+  /// Root-only Accounts global action preference. Null keeps the legacy
+  /// default, where Accounts is visible.
+  bool? activityBarAccountsVisible;
+
   /// Root-only Activity Bar view ordering. Null preserves legacy default JSON.
   List<String>? activityBarOrder;
 
@@ -203,6 +208,8 @@ class WbSplit extends WbNode {
           'activityBarLocation': activityBarLocation!.name,
         if (activityBarSize != null)
           'activityBarSize': activityBarSize!.jsonValue,
+        if (activityBarAccountsVisible != null)
+          'activityBarAccountsVisible': activityBarAccountsVisible,
         if (activityBarOrder != null)
           'activityBarOrder': normalizeActivityBarViewOrder(activityBarOrder),
         if (activityBarPinned != null)
@@ -235,6 +242,9 @@ class WbSplit extends WbNode {
       activityBarLocation:
           _activityBarLocationFromJson(json['activityBarLocation']),
       activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
+      activityBarAccountsVisible: json['activityBarAccountsVisible'] is bool
+          ? json['activityBarAccountsVisible'] as bool
+          : null,
       activityBarOrder: json.containsKey('activityBarOrder')
           ? normalizeActivityBarViewOrder(json['activityBarOrder'])
           : null,

@@ -1,6 +1,6 @@
 /// 活动栏（VS Code 最左列图标条，docs/09 W1）。
 ///
-/// 提供 Explorer、Search、Outline 与 Source Control 视图动作；Manage 仍是占位。
+/// 提供内置视图项及 Accounts/Manage 全局动作。
 library;
 
 import 'package:flutter/material.dart';
@@ -24,10 +24,13 @@ class ActivityBar extends StatefulWidget {
     this.pinnedViews = activityBarViewOrder,
     this.badges = const {},
     this.badgeDisabledViews = const [],
+    this.accountsVisible = true,
     this.onSizeChanged,
     this.onOrderChanged,
     this.onPinnedViewsChanged,
     this.onBadgeDisabledViewsChanged,
+    this.onAccountsVisibilityChanged,
+    this.onManageCommand,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
@@ -39,6 +42,7 @@ class ActivityBar extends StatefulWidget {
   final List<String> pinnedViews;
   final Map<String, ActivityBarBadge> badges;
   final List<String> badgeDisabledViews;
+  final bool accountsVisible;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
@@ -54,6 +58,12 @@ class ActivityBar extends StatefulWidget {
 
   /// Changes the set of views whose provider badges are hidden.
   final ValueChanged<List<String>>? onBadgeDisabledViewsChanged;
+
+  /// Changes the Accounts global action visibility preference.
+  final ValueChanged<bool>? onAccountsVisibilityChanged;
+
+  /// Dispatches one currently registered Manage action.
+  final ValueChanged<String>? onManageCommand;
 
   @override
   State<ActivityBar> createState() => _ActivityBarState();
@@ -92,6 +102,11 @@ class _ActivityBarState extends State<ActivityBar> {
   );
 
   final MenuController _menuController = MenuController();
+  final MenuController _accountsMenuController = MenuController();
+  final MenuController _manageMenuController = MenuController();
+  final GlobalKey _accountsItemKey =
+      GlobalKey(debugLabel: 'Activity Bar Accounts action');
+  bool _accountsMenuContextOnly = false;
 
   late final Map<String, GlobalKey> _viewItemKeys = {
     for (final id in activityBarViewOrder)
@@ -107,10 +122,17 @@ class _ActivityBarState extends State<ActivityBar> {
     (index) =>
         FocusNode(debugLabel: 'Activity Bar ${activityBarViewOrder[index]}'),
   );
+  late final Map<String, FocusNode> _globalActionFocusNodes = {
+    'accounts': FocusNode(debugLabel: 'Activity Bar Accounts'),
+    'manage': FocusNode(debugLabel: 'Activity Bar Manage'),
+  };
 
   @override
   void dispose() {
     for (final node in _viewFocusNodes) {
+      node.dispose();
+    }
+    for (final node in _globalActionFocusNodes.values) {
       node.dispose();
     }
     super.dispose();
@@ -269,6 +291,20 @@ class _ActivityBarState extends State<ActivityBar> {
       return;
     }
 
+    if (widget.accountsVisible) {
+      final accountsRenderObject =
+          _accountsItemKey.currentContext?.findRenderObject();
+      if (accountsRenderObject is RenderBox) {
+        final localPosition =
+            accountsRenderObject.globalToLocal(event.position);
+        if ((Offset.zero & accountsRenderObject.size).contains(localPosition)) {
+          _accountsMenuContextOnly = true;
+          _accountsMenuController.open(position: localPosition);
+          return;
+        }
+      }
+    }
+
     final renderObject = barContext.findRenderObject();
     if (renderObject is RenderBox) {
       barController.open(
@@ -337,6 +373,151 @@ class _ActivityBarState extends State<ActivityBar> {
     return KeyEventResult.handled;
   }
 
+  KeyEventResult _handleGlobalActionKey(String id, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+
+    final actionOrder = widget.accountsVisible
+        ? const ['accounts', 'manage']
+        : const ['manage'];
+    final index = actionOrder.indexOf(id);
+    final previousKey = widget.axis == Axis.vertical
+        ? LogicalKeyboardKey.arrowUp
+        : LogicalKeyboardKey.arrowLeft;
+    final nextKey = widget.axis == Axis.vertical
+        ? LogicalKeyboardKey.arrowDown
+        : LogicalKeyboardKey.arrowRight;
+    if (event.logicalKey == previousKey) {
+      if (index > 0) {
+        _globalActionFocusNodes[actionOrder[index - 1]]!.requestFocus();
+      }
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == nextKey) {
+      if (index >= 0 && index < actionOrder.length - 1) {
+        _globalActionFocusNodes[actionOrder[index + 1]]!.requestFocus();
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  Widget _accountsAction({required bool horizontal}) {
+    final focusNode = _globalActionFocusNodes['accounts']!;
+    final menuChildren = _accountsMenuContextOnly
+        ? [
+            MenuItemButton(
+              key: const ValueKey('activity-bar-accounts-hide'),
+              style: _menuItemStyle,
+              onPressed: widget.onAccountsVisibilityChanged == null
+                  ? null
+                  : () {
+                      widget.onAccountsVisibilityChanged!(false);
+                      _accountsMenuController.close();
+                    },
+              child: const Text('Hide Accounts'),
+            ),
+          ]
+        : [
+            const MenuItemButton(
+              key: ValueKey('activity-bar-accounts-no-provider'),
+              style: _menuItemStyle,
+              onPressed: null,
+              leadingIcon: Icon(Icons.info_outline, size: 16),
+              child: Text('暂无可用帐户提供程序'),
+            ),
+          ];
+
+    return MenuAnchor(
+      key: const ValueKey('activity-bar-accounts-menu-anchor'),
+      controller: _accountsMenuController,
+      childFocusNode: focusNode,
+      style: _menuStyle,
+      onOpen: () => setState(() {}),
+      onClose: () => setState(() => _accountsMenuContextOnly = false),
+      menuChildren: menuChildren,
+      child: _Item(
+        key: _accountsItemKey,
+        icon: Icons.account_circle_outlined,
+        tooltip: 'Accounts',
+        active: _accountsMenuController.isOpen,
+        expanded: _accountsMenuController.isOpen,
+        focusNode: focusNode,
+        horizontal: horizontal,
+        itemExtent: widget.size.itemExtent,
+        iconSize: horizontal ? 20 : widget.size.iconSize,
+        onFocusChange: (_) => setState(() {}),
+        onKeyEvent: (node, event) => _handleGlobalActionKey('accounts', event),
+        onTap: () {
+          _accountsMenuContextOnly = false;
+          _accountsMenuController.open();
+        },
+      ),
+    );
+  }
+
+  Widget _manageAction({required bool horizontal}) {
+    final focusNode = _globalActionFocusNodes['manage']!;
+    return MenuAnchor(
+      key: const ValueKey('activity-bar-manage-menu-anchor'),
+      controller: _manageMenuController,
+      childFocusNode: focusNode,
+      style: _menuStyle,
+      onOpen: () => setState(() {}),
+      onClose: () => setState(() {}),
+      menuChildren: [
+        MenuItemButton(
+          key: const ValueKey('activity-bar-manage-command-palette'),
+          style: _menuItemStyle,
+          onPressed: widget.onManageCommand == null
+              ? null
+              : () => widget.onManageCommand!('view.commandPalette'),
+          child: const Text('命令面板'),
+        ),
+        const Divider(height: 8),
+        MenuItemButton(
+          key: const ValueKey('activity-bar-manage-toggle-sidebar'),
+          style: _menuItemStyle,
+          onPressed: widget.onManageCommand == null
+              ? null
+              : () => widget.onManageCommand!('view.toggleSidebar'),
+          child: const Text('切换侧栏'),
+        ),
+        MenuItemButton(
+          key: const ValueKey('activity-bar-manage-toggle-panel'),
+          style: _menuItemStyle,
+          onPressed: widget.onManageCommand == null
+              ? null
+              : () => widget.onManageCommand!('view.togglePanel'),
+          child: const Text('切换面板'),
+        ),
+        const Divider(height: 8),
+        MenuItemButton(
+          key: const ValueKey('activity-bar-manage-about'),
+          style: _menuItemStyle,
+          onPressed: widget.onManageCommand == null
+              ? null
+              : () => widget.onManageCommand!('help.about'),
+          child: const Text('关于 Alula Code'),
+        ),
+      ],
+      child: _Item(
+        icon: Icons.settings_outlined,
+        tooltip: 'Manage',
+        active: _manageMenuController.isOpen,
+        expanded: _manageMenuController.isOpen,
+        focusNode: focusNode,
+        horizontal: horizontal,
+        itemExtent: widget.size.itemExtent,
+        iconSize: horizontal ? 20 : widget.size.iconSize,
+        onFocusChange: (_) => setState(() {}),
+        onKeyEvent: (node, event) => _handleGlobalActionKey('manage', event),
+        onTap: () => _manageMenuController.open(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final horizontal = widget.axis == Axis.horizontal;
@@ -357,26 +538,16 @@ class _ActivityBarState extends State<ActivityBar> {
               for (final item in viewItems) Expanded(child: item)
             else
               ...viewItems,
+            if (!horizontal) const Spacer(),
+            if (widget.accountsVisible)
+              if (horizontal)
+                SizedBox(width: 40, child: _accountsAction(horizontal: true))
+              else
+                _accountsAction(horizontal: false),
             if (horizontal)
-              const SizedBox(
-                width: 40,
-                child: _Item(
-                  icon: Icons.settings_outlined,
-                  tooltip: '管理（W6）',
-                  active: false,
-                  horizontal: true,
-                ),
-              )
+              SizedBox(width: 40, child: _manageAction(horizontal: true))
             else
-              const Spacer(),
-            if (!horizontal)
-              _Item(
-                icon: Icons.settings_outlined,
-                tooltip: '管理（W6）',
-                active: false,
-                itemExtent: widget.size.itemExtent,
-                iconSize: widget.size.iconSize,
-              ),
+              _manageAction(horizontal: false),
           ],
         ),
       ),
@@ -407,6 +578,27 @@ class _ActivityBarState extends State<ActivityBar> {
               child: Text(_viewNames[id]!),
             ),
           ),
+        const Divider(height: 8),
+        MenuItemButton(
+          key: const ValueKey('activity-bar-checklist-accounts'),
+          style: _menuItemStyle,
+          leadingIcon: widget.accountsVisible
+              ? const Icon(Icons.check, size: 16)
+              : const SizedBox(width: 16),
+          onPressed: widget.onAccountsVisibilityChanged == null
+              ? null
+              : () {
+                  widget.onAccountsVisibilityChanged!(
+                    !widget.accountsVisible,
+                  );
+                  _menuController.close();
+                },
+          child: Semantics(
+            label: 'Accounts',
+            checked: widget.accountsVisible,
+            child: const Text('Accounts'),
+          ),
+        ),
         if (!horizontal && widget.onSizeChanged != null) ...[
           const Divider(height: 8),
           SubmenuButton(
@@ -456,10 +648,12 @@ class _ActivityBarState extends State<ActivityBar> {
 
 class _Item extends StatelessWidget {
   const _Item({
+    super.key,
     required this.icon,
     required this.tooltip,
     required this.active,
     this.badge,
+    this.expanded,
     this.focusNode,
     this.horizontal = false,
     this.itemExtent = 48,
@@ -473,6 +667,7 @@ class _Item extends StatelessWidget {
   final String tooltip;
   final bool active;
   final ActivityBarBadge? badge;
+  final bool? expanded;
   final FocusNode? focusNode;
   final bool horizontal;
   final double itemExtent;
@@ -494,6 +689,7 @@ class _Item extends StatelessWidget {
         button: onTap != null,
         enabled: onTap != null,
         selected: active,
+        expanded: expanded,
         focusable: focusNode != null,
         focused: focused,
         onTap: onTap,

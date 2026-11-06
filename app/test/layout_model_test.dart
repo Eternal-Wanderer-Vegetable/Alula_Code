@@ -9,6 +9,7 @@ import 'package:alula_app/workbench/activity_bar_size.dart';
 import 'package:alula_app/workbench/activity_bar_order.dart';
 import 'package:alula_app/workbench/activity_bar_pins.dart';
 import 'package:alula_app/workbench/activity_bar_badges.dart';
+import 'package:alula_app/workbench/activity_bar_global_actions.dart';
 
 void main() {
   group('JSON 序列化往返', () {
@@ -186,6 +187,48 @@ void main() {
       expect(layout.activityBarBadgesDisabledViews, isEmpty);
       expect(changes, 2);
       layout.dispose();
+    });
+
+    test('Accounts visibility defaults on and persists explicit changes', () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarAccountsVisible, isTrue);
+      expect(layout.root.activityBarAccountsVisible, isNull,
+          reason: 'new layouts keep the default visible state compact');
+      expect(layout.setActivityBarAccountsVisible(false), isTrue);
+      expect(layout.activityBarAccountsVisible, isFalse);
+      expect(layout.root.activityBarAccountsVisible, isFalse);
+      final restored = WbNode.fromJson(layout.root.toJson()) as WbSplit;
+      expect(restored.activityBarAccountsVisible, isFalse);
+      final restoredLayout = WorkbenchLayout(root: restored);
+      expect(restoredLayout.activityBarAccountsVisible, isFalse);
+      restoredLayout.dispose();
+      expect(layout.setActivityBarAccountsVisible(false), isFalse);
+      expect(layout.setActivityBarAccountsVisible(true), isTrue);
+      expect(layout.activityBarAccountsVisible, isTrue);
+      expect(layout.root.toJson()['activityBarAccountsVisible'], isTrue);
+      expect(changes, 2);
+      layout.dispose();
+    });
+
+    test('legacy and malformed Accounts preferences default to visible', () {
+      final legacyJson = defaultLayout().toJson()
+        ..remove('activityBarAccountsVisible');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarAccountsVisible, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarAccountsVisible, isTrue);
+      legacyLayout.dispose();
+
+      final malformedJson = defaultLayout().toJson()
+        ..['activityBarAccountsVisible'] = 'hidden';
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarAccountsVisible, isNull);
+      final malformedLayout = WorkbenchLayout(root: malformed);
+      expect(malformedLayout.activityBarAccountsVisible, isTrue);
+      malformedLayout.dispose();
     });
 
     test('叶子权重/折叠态 round-trip', () {
