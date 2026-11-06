@@ -4,6 +4,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/services.dart';
 
 import 'layout_model.dart';
@@ -16,7 +17,9 @@ class ActivityBar extends StatefulWidget {
     required this.onSelectView,
     this.axis = Axis.vertical,
     this.size = ActivityBarSize.defaultSize,
+    this.order = activityBarViewOrder,
     this.onSizeChanged,
+    this.onOrderChanged,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
@@ -24,6 +27,7 @@ class ActivityBar extends StatefulWidget {
   final bool sidebarCollapsed;
   final Axis axis;
   final ActivityBarSize size;
+  final List<String> order;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
@@ -31,13 +35,26 @@ class ActivityBar extends StatefulWidget {
   /// Changes the selected Activity Bar size from its side-position menu.
   final ValueChanged<ActivityBarSize>? onSizeChanged;
 
+  /// Changes the order of two existing view actions by drag-and-drop.
+  final ValueChanged<List<String>>? onOrderChanged;
+
   @override
   State<ActivityBar> createState() => _ActivityBarState();
 }
 
 class _ActivityBarState extends State<ActivityBar> {
-  static const _viewIds = ['explorer', 'search', 'outline', 'git'];
-  static const _viewLabels = ['资源管理器', '搜索', '大纲', '源代码管理'];
+  static const _viewLabels = {
+    'explorer': '资源管理器',
+    'search': '搜索',
+    'outline': '大纲',
+    'git': '源代码管理',
+  };
+  static const _viewIcons = {
+    'explorer': Icons.explore_outlined,
+    'search': Icons.search,
+    'outline': Icons.format_list_bulleted,
+    'git': Icons.account_tree_outlined,
+  };
   static const _menuStyle = MenuStyle(
     backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
     surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
@@ -53,9 +70,15 @@ class _ActivityBarState extends State<ActivityBar> {
 
   final MenuController _menuController = MenuController();
 
+  late final Map<String, GlobalKey> _viewItemKeys = {
+    for (final id in activityBarViewOrder)
+      id: GlobalKey(debugLabel: 'Activity Bar $id drop target'),
+  };
+
   late final List<FocusNode> _viewFocusNodes = List.generate(
-    _viewIds.length,
-    (index) => FocusNode(debugLabel: 'Activity Bar ${_viewIds[index]}'),
+    activityBarViewOrder.length,
+    (index) =>
+        FocusNode(debugLabel: 'Activity Bar ${activityBarViewOrder[index]}'),
   );
 
   @override
@@ -66,31 +89,86 @@ class _ActivityBarState extends State<ActivityBar> {
     super.dispose();
   }
 
-  Widget _viewItem({
-    required int index,
-    required String id,
-    required IconData icon,
-  }) {
-    return _Item(
+  Widget _viewItem({required String id}) {
+    final focusIndex = activityBarViewOrder.indexOf(id);
+    final icon = _viewIcons[id]!;
+    final item = _Item(
       icon: icon,
-      tooltip: _viewLabels[index],
+      tooltip: _viewLabels[id]!,
       active: !widget.sidebarCollapsed && widget.activeView == id,
-      focusNode: _viewFocusNodes[index],
+      focusNode: _viewFocusNodes[focusIndex],
       horizontal: widget.axis == Axis.horizontal,
       itemExtent: widget.size.itemExtent,
       iconSize: widget.axis == Axis.vertical ? widget.size.iconSize : 20,
       onFocusChange: (_) => setState(() {}),
-      onKeyEvent: (node, event) => _handleViewKey(index, event),
+      onKeyEvent: (node, event) => _handleViewKey(id, event),
       onTap: () => widget.onSelectView(id),
+    );
+
+    return DragTarget<String>(
+      onWillAcceptWithDetails: (details) =>
+          widget.onOrderChanged != null &&
+          details.data != id &&
+          normalizeActivityBarViewOrder(widget.order).contains(details.data),
+      onAcceptWithDetails: (details) => _handleViewDrop(
+        draggedId: details.data,
+        targetId: id,
+        globalPosition: details.offset,
+      ),
+      builder: (context, candidates, rejected) => Draggable<String>(
+        data: id,
+        dragAnchorStrategy: pointerDragAnchorStrategy,
+        maxSimultaneousDrags: widget.onOrderChanged == null ? 0 : 1,
+        feedback: Material(
+          color: Colors.transparent,
+          child: Icon(
+            icon,
+            size: widget.axis == Axis.vertical ? widget.size.iconSize : 20,
+            color: Colors.white,
+          ),
+        ),
+        childWhenDragging: Opacity(opacity: 0.35, child: item),
+        child: SizedBox(key: _viewItemKeys[id], child: item),
+      ),
     );
   }
 
-  KeyEventResult _handleViewKey(int index, KeyEvent event) {
+  void _handleViewDrop({
+    required String draggedId,
+    required String targetId,
+    required Offset globalPosition,
+  }) {
+    if (draggedId == targetId || widget.onOrderChanged == null) return;
+
+    final order = normalizeActivityBarViewOrder(widget.order);
+    if (!order.contains(draggedId) || !order.contains(targetId)) return;
+
+    final targetRenderObject =
+        _viewItemKeys[targetId]?.currentContext?.findRenderObject();
+    if (targetRenderObject is! RenderBox) return;
+
+    final localPosition = targetRenderObject.globalToLocal(globalPosition);
+    final after = widget.axis == Axis.vertical
+        ? localPosition.dy >= targetRenderObject.size.height / 2
+        : localPosition.dx >= targetRenderObject.size.width / 2;
+
+    final reordered = List<String>.of(order)..remove(draggedId);
+    final targetIndex = reordered.indexOf(targetId);
+    final insertionIndex = targetIndex + (after ? 1 : 0);
+    reordered.insert(insertionIndex, draggedId);
+    if (!listEquals(order, reordered)) {
+      widget.onOrderChanged!(List.unmodifiable(reordered));
+    }
+  }
+
+  KeyEventResult _handleViewKey(String id, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
 
-    late final int nextIndex;
+    final viewOrder = normalizeActivityBarViewOrder(widget.order);
+    final index = viewOrder.indexOf(id);
+    late final String nextId;
     final previousKey = widget.axis == Axis.vertical
         ? LogicalKeyboardKey.arrowUp
         : LogicalKeyboardKey.arrowLeft;
@@ -99,32 +177,26 @@ class _ActivityBarState extends State<ActivityBar> {
         : LogicalKeyboardKey.arrowRight;
     if (event.logicalKey == previousKey) {
       if (index == 0) return KeyEventResult.handled;
-      nextIndex = index - 1;
+      nextId = viewOrder[index - 1];
     } else if (event.logicalKey == nextKey) {
-      if (index == _viewFocusNodes.length - 1) {
+      if (index == viewOrder.length - 1) {
         return KeyEventResult.handled;
       }
-      nextIndex = index + 1;
+      nextId = viewOrder[index + 1];
     } else {
       return KeyEventResult.ignored;
     }
 
-    _viewFocusNodes[nextIndex].requestFocus();
+    _viewFocusNodes[activityBarViewOrder.indexOf(nextId)].requestFocus();
     return KeyEventResult.handled;
   }
 
   @override
   Widget build(BuildContext context) {
     final horizontal = widget.axis == Axis.horizontal;
+    final viewOrder = normalizeActivityBarViewOrder(widget.order);
     final viewItems = [
-      _viewItem(index: 0, id: 'explorer', icon: Icons.explore_outlined),
-      _viewItem(index: 1, id: 'search', icon: Icons.search),
-      _viewItem(
-        index: 2,
-        id: 'outline',
-        icon: Icons.format_list_bulleted,
-      ),
-      _viewItem(index: 3, id: 'git', icon: Icons.account_tree_outlined),
+      for (final id in viewOrder) _viewItem(id: id),
     ];
     final activityBar = FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),

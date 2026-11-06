@@ -855,7 +855,7 @@
         "feat-065"
       ],
       "status": "in-progress",
-      "evidence": "P05.14 已登记；待实现与本地/hosted DoD。编辑前 GitNexus 预检及限制记录在 docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md。",
+      "evidence": "P05.14 implementation is locally complete. Focused ActivityBar widget 9/9, layout model 21/21, and order integration 1/1 passed. Full FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed Rust 71+54, Clippy, build_core, and Flutter 1,076/1,076; cargo fmt --check, Flutter analyze (0 issues), and git diff --check passed. Hosted PR CI and platform lanes are pending; full evidence: docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md and p05.14-local-validation.txt. Status remains in-progress.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/activity_bar_size.dart';
+import 'package:alula_app/workbench/activity_bar_order.dart';
 
 void main() {
   group('JSON 序列化往返', () {
@@ -15,6 +16,10 @@ void main() {
       expect(restored.axis, original.axis);
       expect(restored.activityBarLocation, ActivityBarLocation.side);
       expect(restored.activityBarSize, ActivityBarSize.defaultSize);
+      expect(restored.activityBarOrder, isNull,
+          reason: 'default layouts omit optional ordering metadata');
+      expect(normalizeActivityBarViewOrder(restored.activityBarOrder),
+          activityBarViewOrder);
       expect(restored.children.length, original.children.length);
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);
@@ -41,6 +46,44 @@ void main() {
       final restored = WbNode.fromJson(layout.root.toJson()) as WbSplit;
       expect(restored.activityBarSize, ActivityBarSize.compact);
       expect(restored.leafOf('activity')!.fixedExtent, 36);
+      layout.dispose();
+    });
+
+    test('Activity Bar order round-trip and malformed value migration', () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(
+          restored.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+
+      final oldLayout = root.toJson()..remove('activityBarOrder');
+      final migrated = WbNode.fromJson(oldLayout) as WbSplit;
+      expect(migrated.activityBarOrder, isNull);
+      expect(normalizeActivityBarViewOrder(migrated.activityBarOrder),
+          activityBarViewOrder);
+
+      final malformed = root.toJson()
+        ..['activityBarOrder'] = ['git', 'git', 'unknown', 42];
+      final canonical = WbNode.fromJson(malformed) as WbSplit;
+      expect(
+          canonical.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+      expect(canonical.toJson()['activityBarOrder'],
+          ['git', 'explorer', 'search', 'outline']);
+    });
+
+    test('layout setter notifies once and preserves canonical default state',
+        () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarOrder, activityBarViewOrder);
+      expect(layout.setActivityBarOrder(activityBarViewOrder), isFalse);
+      expect(layout.setActivityBarOrder(['git', 'explorer']), isTrue);
+      expect(layout.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+      expect(changes, 1);
+      expect(layout.setActivityBarOrder(['git', 'explorer']), isFalse);
+      expect(changes, 1);
       layout.dispose();
     });
 

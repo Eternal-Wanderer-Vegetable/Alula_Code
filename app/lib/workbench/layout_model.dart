@@ -40,6 +40,29 @@ enum ActivityBarSize {
       };
 }
 
+/// Stable IDs for the built-in Activity Bar view actions.
+const activityBarViewOrder = ['explorer', 'search', 'outline', 'git'];
+
+/// Canonicalize persisted or caller-supplied Activity Bar order metadata.
+/// Unknown IDs and duplicates are discarded; missing built-in views are
+/// appended in their default order.
+List<String> normalizeActivityBarViewOrder(Object? raw) {
+  final order = <String>[];
+  if (raw is List) {
+    for (final item in raw) {
+      if (item is String &&
+          activityBarViewOrder.contains(item) &&
+          !order.contains(item)) {
+        order.add(item);
+      }
+    }
+  }
+  for (final id in activityBarViewOrder) {
+    if (!order.contains(id)) order.add(id);
+  }
+  return order;
+}
+
 /// 布局树节点。
 sealed class WbNode {
   const WbNode();
@@ -91,8 +114,12 @@ class WbSplit extends WbNode {
     this.name,
     this.activityBarLocation,
     this.activityBarSize,
+    List<String>? activityBarOrder,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
-        children = List.of(children);
+        children = List.of(children),
+        activityBarOrder = activityBarOrder == null
+            ? null
+            : normalizeActivityBarViewOrder(activityBarOrder);
 
   final Axis axis;
   final List<WbNode> children;
@@ -107,6 +134,9 @@ class WbSplit extends WbNode {
   /// the size setting was introduced.
   ActivityBarSize? activityBarSize;
 
+  /// Root-only Activity Bar view ordering. Null preserves legacy default JSON.
+  List<String>? activityBarOrder;
+
   @override
   double weight;
 
@@ -120,6 +150,8 @@ class WbSplit extends WbNode {
           'activityBarLocation': activityBarLocation!.name,
         if (activityBarSize != null)
           'activityBarSize': activityBarSize!.jsonValue,
+        if (activityBarOrder != null)
+          'activityBarOrder': normalizeActivityBarViewOrder(activityBarOrder),
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -136,6 +168,9 @@ class WbSplit extends WbNode {
       activityBarLocation:
           _activityBarLocationFromJson(json['activityBarLocation']),
       activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
+      activityBarOrder: json.containsKey('activityBarOrder')
+          ? normalizeActivityBarViewOrder(json['activityBarOrder'])
+          : null,
       children: raw
           .map((e) => WbNode.fromJson((e as Map).cast<String, Object?>()))
           .toList(),

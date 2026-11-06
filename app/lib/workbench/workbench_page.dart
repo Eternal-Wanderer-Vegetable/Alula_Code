@@ -72,6 +72,7 @@ import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
+import 'activity_bar_order.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
@@ -16888,6 +16889,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 ? Axis.vertical
                                 : Axis.horizontal,
                             size: _layout.activityBarSize,
+                            order: _layout.activityBarOrder,
+                            onOrderChanged: _layout.setActivityBarOrder,
                             onSizeChanged: _layout.activityBarLocation ==
                                     ActivityBarLocation.side
                                 ? _layout.setActivityBarSize

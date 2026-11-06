@@ -2,7 +2,8 @@ import 'dart:ui' show Tristate;
 
 import 'package:alula_app/workbench/activity_bar.dart';
 import 'package:alula_app/workbench/layout_model.dart';
-import 'package:flutter/gestures.dart' show kSecondaryMouseButton;
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kSecondaryMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -265,6 +266,100 @@ void main() {
     await tester.pump();
     expect(selected, ['explorer', 'explorer']);
   });
+
+  testWidgets('vertical drag moves a view after its target in order',
+      (tester) async {
+    final orders = <List<String>>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      onOrderChanged: orders.add,
+    ));
+
+    final source = tester.getRect(find.byTooltip('资源管理器'));
+    final target = tester.getRect(find.byTooltip('大纲'));
+    await tester.dragFrom(
+      source.center,
+      Offset(0, target.bottom - 3 - source.center.dy),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pumpAndSettle();
+
+    expect(orders, [
+      ['search', 'outline', 'explorer', 'git'],
+    ]);
+
+    final sameItem = tester.getRect(find.byTooltip('大纲'));
+    await tester.dragFrom(
+      sameItem.center,
+      const Offset(0, 20),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pumpAndSettle();
+    expect(orders, hasLength(1),
+        reason: 'dropping on the same view is a no-op');
+  });
+
+  testWidgets('horizontal drag moves a view before target; Manage stays fixed',
+      (tester) async {
+    final orders = <List<String>>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'search',
+      sidebarCollapsed: false,
+      axis: Axis.horizontal,
+      onOrderChanged: orders.add,
+    ));
+
+    final source = tester.getRect(find.byTooltip('源代码管理'));
+    final target = tester.getRect(find.byTooltip('资源管理器'));
+    await tester.dragFrom(
+      source.center,
+      Offset(target.left + 4 - source.center.dx, 0),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pumpAndSettle();
+    expect(orders, [
+      ['git', 'explorer', 'search', 'outline'],
+    ]);
+
+    await tester.dragFrom(
+      tester.getCenter(find.byTooltip('大纲')),
+      Offset(
+        tester.getCenter(find.byTooltip('管理（W6）')).dx -
+            tester.getCenter(find.byTooltip('大纲')).dx,
+        0,
+      ),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pumpAndSettle();
+    expect(orders, hasLength(1), reason: 'Manage is not a drop target');
+  });
+
+  testWidgets('custom order drives horizontal keyboard focus by view ID',
+      (tester) async {
+    final selected = <String>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'search',
+      sidebarCollapsed: false,
+      axis: Axis.horizontal,
+      order: const ['git', 'explorer', 'search', 'outline'],
+      onSelectView: selected.add,
+      onOrderChanged: (_) {},
+    ));
+
+    final focusNodes = _viewFocusNodes(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(focusNodes[3].hasFocus, isTrue,
+        reason: 'Git is the first view in the custom order');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(focusNodes[0].hasFocus, isTrue,
+        reason: 'Explorer follows Git by ID, not its default focus index');
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(selected, ['explorer']);
+  });
 }
 
 Widget _activityBarApp({
@@ -272,8 +367,10 @@ Widget _activityBarApp({
   required bool sidebarCollapsed,
   Axis axis = Axis.vertical,
   ActivityBarSize size = ActivityBarSize.defaultSize,
+  List<String> order = activityBarViewOrder,
   ValueChanged<String>? onSelectView,
   ValueChanged<ActivityBarSize>? onSizeChanged,
+  ValueChanged<List<String>>? onOrderChanged,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -285,8 +382,10 @@ Widget _activityBarApp({
           sidebarCollapsed: sidebarCollapsed,
           axis: axis,
           size: size,
+          order: order,
           onSelectView: onSelectView ?? (_) {},
           onSizeChanged: onSizeChanged,
+          onOrderChanged: onOrderChanged,
         ),
       ),
     ),
