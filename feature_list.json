@@ -906,6 +906,18 @@
       "evidence": "P05.18 / LAY-04a complete; product commit b3d2a782a5f6b78a66eb4c5f561d237d19d8e32f. Focused secondary sidebar suites 8/8; Activity Bar position 6/6; layout tree ops 7/7. Full bash init.sh passed Rust workspace tests 71+54, Clippy, build_core, and Flutter 1,104/1,104; cargo fmt --all -- --check and flutter analyze --no-pub (0 issues) passed; Harness 100/100. Product PR CI run 42281213183 passed all four jobs. Platform Availability run 42281207384 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/package jobs. Artifacts: Linux 13535158520, Windows 13536590321, macOS 13537081275; macOS ZIP SHA-256 a4efe22b255ae5713e4a6bb4249c576244ee1c5677a47ef2be785fa98b206461 matches its sidecar and unzip -tq passed. macOS hosted native DnD explicitly skipped because synthetic pointer events were not routed to Flutter; startup diagnostics preserve a foreground warning. Hosted evidence does not replace local physical-device validation. Full scope, GitNexus caveats and evidence: docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-071",
+      "name": "P05.19 LAY-04b 主次侧栏左右位置与持久化",
+      "description": "固定 Code-OSS 1.145.0：主侧栏 Left/Right 切换，Activity Bar 随主侧栏并位于外缘，次侧栏始终位于相反侧；提供 workbench.action.toggleSidebarPosition 与 View > Appearance 动态方向标签；持久化位置并兼容无字段旧布局。保留 Activity Bar Side/Top/Bottom/Hidden、侧栏尺寸与折叠、编辑器组及 Panel 状态。视图移动、DnD、reset locations 与 secondary default visibility 留后续 LAY-04 子项。范围和 GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md。",
+      "dependencies": [
+        "feat-070"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered; implementation not started. Fixed upstream: Code-OSS 1.145.0 commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e. Pre-edit GitNexus: WbSplit CRITICAL/lower-bound (62 impacted, 140 process hits, 20 modules); defaultLayout and setActivityBarLocation CRITICAL; ActivityBarLocation, WorkbenchLayout, LayoutStore UNKNOWN/0; workbench_page.dart (>512 KiB) omitted. Preserve all graph risks and see docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
