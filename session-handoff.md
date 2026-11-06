@@ -2,17 +2,17 @@
 
 ## Last Updated
 
-2026-11-07. User requested a new branch, open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.16 / feat-053–068 are complete. P05.16 product commit 1e392ec and its PR CI/Platform Availability runs passed; final hosted evidence is being committed now. P05 and the full LAY/CMD matrix remain open.
+2026-11-07. User requested a new branch, open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.1–P05.16 / feat-053–068 are complete; evidence commit d197546 is pushed. P05.17 / feat-069 Accounts/Manage is registered and in progress. Docs-head CI run 42265793301 was still finishing Flutter/Windows jobs at last poll. P05 and the full LAY/CMD matrix remain open.
 
 ## Current Objective
 
-Complete P05 one registered feature at a time. `docs/03-里程碑计划与验收标准.md` is the state/DoD authority; `docs/11-VSCode功能对照矩阵.md` is the requirement matrix. P05.16 / LAY-03g Activity Bar badges is complete and locally/hosted validated. Record the final evidence update, then register Accounts/Manage as a separate child and continue through every remaining P05 LAY/CMD row. Keep PR #3 draft/open and do not mark P05 done until all LAY/CMD requirements pass.
+Complete P05 one registered feature at a time. `docs/03-里程碑计划与验收标准.md` is the state/DoD authority; `docs/11-VSCode功能对照矩阵.md` is the requirement matrix. Implement P05.17 / feat-069 / LAY-03h: Accounts/Manage actions, honest no-provider state, Accounts visibility persistence, Manage command dispatch and focused/integration tests. Then continue through every remaining P05 LAY/CMD row. Keep PR #3 draft/open and do not mark P05 done until all LAY/CMD requirements pass.
 
 ## Worktree and Branch
 
-- Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; current product head: `1e392ec`.
+- Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; current head before P05.17 scope commit: `d197546`.
 - The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
-- P05.15 product/evidence commits and macOS LaunchServices/bundle fixes are pushed. P05.16 registration commit `ec77f5e` and product commit `1e392ec` are pushed. PR CI run `42260398932` passed all four jobs; Platform Availability run `42260392232` passed Linux, Windows, and macOS Intel x64 lanes. Hosted evidence is in the P05.16 report; tracker and handoff completion updates are the only current local changes.
+- P05.15 product/evidence commits and macOS LaunchServices/bundle fixes are pushed. P05.16 registration commit `ec77f5e`, product commit `1e392ec`, and evidence commit `d197546` are pushed. Product PR CI `42260398932` and Platform Availability `42260392232` passed Linux, Windows, and macOS Intel x64 lanes.
 - P05.15 code-head PR CI `42247690393` and Platform Availability `42247679502` passed. Linux/Windows DnD passed; macOS hosted DnD explicitly skipped because pointer events were not routed to Flutter. macOS hosted package SHA/integrity and native Quit evidence are in the P05.15 scope report.
 - PR #3 is OPEN/draft. User authorized pushing this branch; do not merge it.
 
@@ -38,7 +38,7 @@ Complete P05 one registered feature at a time. `docs/03-里程碑计划与验收
 
 ## Next Steps
 
-1. Finish local JSON/diff checks and rerun the fresh-index all/compare GitNexus scans for the evidence diff.
-2. Commit and push P05.16 hosted evidence in `docs/03`, `feature_list.json`, `progress.md`, the scope report, and this handoff.
-3. Register Accounts/Manage as the next P05 feature and complete its scope/impact preflight before code changes.
-4. Continue one feature at a time through all remaining LAY/CMD rows. Do not merge PR #3 or mark P05 done early.
+1. Finish and push the P05.17 scope registration commit, then implement Accounts/Manage.
+2. Run focused widget/model/integration tests plus full `bash init.sh`; do not launch desktop GUI or Narrator.
+3. Run exact target GitNexus impact before edits and all-scope + compare-to-main scans before commits; preserve ActivityBar UNKNOWN and WbSplit CRITICAL findings.
+4. Commit/push product and hosted evidence separately to PR #3, collect CI/platform results, then continue through all P05 LAY/CMD rows. Do not merge PR #3 or mark P05 done early.

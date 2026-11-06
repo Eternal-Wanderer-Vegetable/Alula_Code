@@ -882,6 +882,18 @@
       "evidence": "P05.16 / LAY-03g complete; product commit 1e392ec558d5129b227d9415673de139d9860060. Four view items support provider-supplied number/icon/progress badges, accessible descriptions, per-view Hide/Show Badge, and normalized root layout JSON persistence; no provider means no fake badges. Focused ActivityBar/layout/persistence tests 43/43; full bash init.sh passed Rust workspace tests, Clippy, build_core, Flutter 1,089/1,089; cargo fmt --check and flutter analyze (0 issues) passed. PR CI 42260398932 passed all four jobs. Platform Availability 42260392232 passed Linux x64, Windows x64, macOS Intel x64 build/test/launch/package lanes. Package artifacts Linux/Windows/macOS: 13524223608 / 13525266755 / 13526462716. macOS ZIP SHA-256 3d401295790f8b769b3fe6f4996b647fa9f34ef17fd0b7b2a697414472e54ce6 matched sidecar and unzip integrity passed; startup/native Quit artifact 13526432902. Linux/Windows native DnD artifacts 13525465930 / 13523799856 passed; macOS DnD artifact 13527091011 explicitly skipped because the hosted synthetic pointer route was unavailable. GitNexus CRITICAL/cross-language/large-file mapping risks remain documented; P05 and LAY/CMD rows remain open. Full evidence: docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-069",
+      "name": "P05.17 LAY-03h Activity Bar Accounts / Manage 全局动作",
+      "description": "按固定 Code-OSS 1.145.0 为 Side/Top/Bottom Activity Bar 增加 Accounts 与固定 Manage 全局动作区。Accounts 默认显示、空提供程序状态、Hide/Show、bar context checked 显隐和根布局 JSON 持久化；Manage 只调用已注册的命令。认证与 provider/login/sync 留 P13，Profile 与其动态图标/菜单留 P07，未实现的管理器功能不建空入口。范围/DoD/上游/GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md。",
+      "dependencies": [
+        "feat-068"
+      ],
+      "status": "in-progress",
+      "evidence": "范围及编辑前影响分析已登记，待实现与本地/hosted 验收。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
