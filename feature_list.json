@@ -890,8 +890,8 @@
       "dependencies": [
         "feat-068"
       ],
-      "status": "in-progress",
-      "evidence": "范围及编辑前影响分析已登记，待实现与本地/hosted 验收。",
+      "status": "done",
+      "evidence": "P05.17 / LAY-03h complete; product 247879a0b9fac1b8af8d5900e796859536358ed5. Focused ActivityBar/layout/pin integration tests 50/50; bash init.sh passed Rust workspace tests, Clippy, build_core, Flutter 1,096/1,096; cargo fmt --all -- --check and flutter analyze (0 issues) passed. PR CI 42269272957 passed all four jobs. Platform Availability 42269263469 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes, including clipboard, native drag/drop, Windows accessibility/lifecycle, and macOS native Quit. Package artifacts Linux/Windows/macOS 13529305581 / 13528569171 / 13532686496; macOS ZIP SHA-256 9ed879ec238dfdf75fcbe5798a3babb772951e14464ff495d1225f82a3ec2e4c matched sidecar and unzip validation passed. DnD diagnostics 13528102955 / 13529032663 / 13533171235; macOS startup diagnostics 13531896813; Windows client-area screenshot inspected. Authentication/providers remain P13, profiles P07; hosted x64 checks do not claim local-device or native auth acceptance. Full evidence and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
