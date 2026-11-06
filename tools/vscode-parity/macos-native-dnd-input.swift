@@ -213,24 +213,30 @@ func layoutPoint(from layout: [String: Any], key: String) throws -> CGPoint {
   return CGPoint(x: CGFloat(x), y: CGFloat(y))
 }
 
-func quitThroughNativeMenu(processIdentifier: Int32) throws {
+func quitThroughNativeMenu(bundleIdentifier: String) throws {
   guard AXIsProcessTrusted() else {
     throw NSError(domain: "AlulaMacDnd", code: 20, userInfo: [
       NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
     ])
   }
-  let appDiscoveryDeadline = Date().addingTimeInterval(5)
-  var app = NSRunningApplication(processIdentifier: processIdentifier)
+  let appDiscoveryDeadline = Date().addingTimeInterval(15)
+  var app = NSRunningApplication.runningApplications(
+    withBundleIdentifier: bundleIdentifier
+  ).last(where: { !$0.isTerminated })
   while app == nil && Date() < appDiscoveryDeadline {
     Thread.sleep(forTimeInterval: 0.1)
-    app = NSRunningApplication(processIdentifier: processIdentifier)
+    app = NSRunningApplication.runningApplications(
+      withBundleIdentifier: bundleIdentifier
+    ).last(where: { !$0.isTerminated })
   }
   guard let app else {
     throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
-      NSLocalizedDescriptionKey: "Could not find the native-titlebar Alula process"
+      NSLocalizedDescriptionKey:
+        "Could not find a running app with bundle identifier \(bundleIdentifier)"
     ])
   }
 
+  let processIdentifier = app.processIdentifier
   _ = app.activate(options: [.activateIgnoringOtherApps])
   let script = """
   tell application "System Events"
@@ -324,18 +330,19 @@ func run() throws {
   if CommandLine.arguments.count == 3,
      CommandLine.arguments[1] == "--quit-native-menu"
   {
-    guard let processIdentifier = Int32(CommandLine.arguments[2]) else {
+    let bundleIdentifier = CommandLine.arguments[2]
+    guard !bundleIdentifier.isEmpty else {
       throw NSError(domain: "AlulaMacDnd", code: 25, userInfo: [
-        NSLocalizedDescriptionKey: "Native menu Quit requires a numeric process id"
+        NSLocalizedDescriptionKey: "Native menu Quit requires an app bundle identifier"
       ])
     }
-    try quitThroughNativeMenu(processIdentifier: processIdentifier)
+    try quitThroughNativeMenu(bundleIdentifier: bundleIdentifier)
     return
   }
 
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
-      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <pid>"
+      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id>"
     ])
   }
 

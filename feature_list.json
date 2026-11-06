@@ -867,7 +867,7 @@
         "feat-066"
       ],
       "status": "in-progress",
-      "evidence": "P05.15 implementation complete locally; hosted gates pending. Scope and fixed Code-OSS 1.145.0 source: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. ActivityBar focused tests 13/13; full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,083/1,083; cargo fmt, app/flutter analyze (0), diff check and Harness 100/100 passed. Product GitNexus index refreshed at 11,209 nodes / 31,449 edges / 425 flows with documented large-file and flow-trace coverage limits. Final commit, PR CI and Linux/Windows/macOS hosted validation remain pending.",
+      "evidence": "P05.15 product commit 7def397. Local full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,083/1,083; cargo fmt, app Flutter analyze (0), diff check and Harness 100/100 passed. PR CI 42229440013 passed. Platform Availability 42229430615 Linux/Windows x64 passed; macOS attempt 1 and 2 failed only in native-titlebar Quit menu automation after all tests, build, clipboard, DnD and launch succeeded. Scope report records logs, GitNexus critical/lower-bound pre-edit impact and the LaunchServices registration fix now in progress; hosted revalidation is pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

@@ -11,7 +11,7 @@ Continue the P05 architecture replication. P05.14 / feat-066 is complete. Curren
 ## Current Branch State
 
 - Worktree: /tmp/alula-p04.70-next. The original /mnt/e/alula_code worktree contains unrelated user changes; do not modify or clean it.
-- Branch codex/vscode-parity-p05, last commit b556ad3 (P05.15 registration); P05.15 implementation is uncommitted. Prior PR CI 42216043944 and Platform Availability 42216038049 passed for P05.14.
+- Branch codex/vscode-parity-p05, product commit 7def397; current CI fix is uncommitted. P05.15 local full DoD and PR CI 42229440013 passed. Platform Availability 42229430615 Linux/Windows passed; macOS native Quit failed twice. P05.14 prior PR CI 42216043944 and Platform Availability 42216038049 passed.
 - P05.14 local verification: ActivityBar widget 9/9, layout model 21/21, order integration 1/1; full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,076/1,076; cargo fmt, Flutter analyze (0 issues), diff check, and Harness 100/100 passed.
 - Hosted evidence: Linux/Windows/macOS Intel x64 build/test/launch/package passed; Linux/Windows native move/copy/external-text DnD passed. macOS native clipboard and System Events Quit passed. Hosted macOS DnD artifact 13503490499 explicitly records that synthetic pointer events did not reach Flutter and is a skip. macOS app ZIP artifact 13503042243 has SHA-256 f1502651f4c1b17d482a9612b1f2bdb150359367bd4901390adab8479daa956d matching its sidecar digest; unzip integrity passed. Full report: docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md.
 - PR #3 remains draft/open; do not merge or mark P05 complete until all P05 matrix items pass.
@@ -32,7 +32,7 @@ GitNexus was refreshed after the P05.15 implementation against current source (H
 
 - P05.14 implementation and tests: app/lib/workbench/activity_bar.dart, app/lib/workbench/activity_bar_order.dart, app/lib/workbench/layout_model.dart, app/lib/workbench/workbench_page.dart, app/test/activity_bar_test.dart, app/test/activity_bar_order_integration_test.dart, app/test/layout_model_test.dart.
 - P05.14 evidence/state: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md, docs/diagnostics/2026-11-06-p05/p05.14-local-validation.txt, feature_list.json, progress.md, session-handoff.md.
-- P05.15 implementation: app/lib/workbench/activity_bar.dart, activity_bar_pins.dart, layout_model.dart, workbench_page.dart; app/test/activity_bar_test.dart, layout_model_test.dart, activity_bar_pin_integration_test.dart. Scope/local evidence and trackers: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md, feature_list.json, progress.md, session-handoff.md. Local full init Flutter 1,083/1,083, Rust 71+54, Clippy/build_core passed; cargo fmt, app analyze 0, Harness 100/100 passed.
+- P05.15 product: app/lib/workbench/activity_bar.dart, activity_bar_pins.dart, layout_model.dart, workbench_page.dart; app/test/activity_bar_test.dart, layout_model_test.dart, activity_bar_pin_integration_test.dart. CI fix: .github/workflows/platform-availability.yml and tools/vscode-parity/macos-native-dnd-input.swift. Scope/local/hosted evidence and trackers: docs/03-里程碑计划与验收标准.md, docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md, feature_list.json, progress.md, session-handoff.md.
 
 ## Next Step
 
