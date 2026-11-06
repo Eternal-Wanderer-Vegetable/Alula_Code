@@ -63,6 +63,24 @@ List<String> normalizeActivityBarViewOrder(Object? raw) {
   return order;
 }
 
+/// Canonicalize persisted Activity Bar pin metadata. Missing, empty, or wholly
+/// invalid values fall back to the built-in set so the bar always has an
+/// available view. Returned IDs follow the current view order.
+List<String> normalizeActivityBarPinnedViews(
+  Object? raw, {
+  Object? order,
+}) {
+  final orderedViews = normalizeActivityBarViewOrder(order);
+  if (raw is! List) return orderedViews;
+
+  final requested = <String>{
+    for (final item in raw)
+      if (item is String && activityBarViewOrder.contains(item)) item,
+  };
+  if (requested.isEmpty) return orderedViews;
+  return orderedViews.where(requested.contains).toList();
+}
+
 /// 布局树节点。
 sealed class WbNode {
   const WbNode();
@@ -115,11 +133,18 @@ class WbSplit extends WbNode {
     this.activityBarLocation,
     this.activityBarSize,
     List<String>? activityBarOrder,
+    List<String>? activityBarPinned,
   })  : assert(children.length >= 2, 'split 至少两个子节点'),
         children = List.of(children),
         activityBarOrder = activityBarOrder == null
             ? null
-            : normalizeActivityBarViewOrder(activityBarOrder);
+            : normalizeActivityBarViewOrder(activityBarOrder),
+        activityBarPinned = activityBarPinned == null
+            ? null
+            : normalizeActivityBarPinnedViews(
+                activityBarPinned,
+                order: activityBarOrder,
+              );
 
   final Axis axis;
   final List<WbNode> children;
@@ -137,6 +162,10 @@ class WbSplit extends WbNode {
   /// Root-only Activity Bar view ordering. Null preserves legacy default JSON.
   List<String>? activityBarOrder;
 
+  /// Root-only IDs of pinned Activity Bar views. Null defaults legacy layouts
+  /// to all built-in views pinned.
+  List<String>? activityBarPinned;
+
   @override
   double weight;
 
@@ -152,6 +181,11 @@ class WbSplit extends WbNode {
           'activityBarSize': activityBarSize!.jsonValue,
         if (activityBarOrder != null)
           'activityBarOrder': normalizeActivityBarViewOrder(activityBarOrder),
+        if (activityBarPinned != null)
+          'activityBarPinned': normalizeActivityBarPinnedViews(
+            activityBarPinned,
+            order: activityBarOrder,
+          ),
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -170,6 +204,12 @@ class WbSplit extends WbNode {
       activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
       activityBarOrder: json.containsKey('activityBarOrder')
           ? normalizeActivityBarViewOrder(json['activityBarOrder'])
+          : null,
+      activityBarPinned: json.containsKey('activityBarPinned')
+          ? normalizeActivityBarPinnedViews(
+              json['activityBarPinned'],
+              order: json['activityBarOrder'],
+            )
           : null,
       children: raw
           .map((e) => WbNode.fromJson((e as Map).cast<String, Object?>()))

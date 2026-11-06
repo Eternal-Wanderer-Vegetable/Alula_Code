@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/activity_bar_size.dart';
 import 'package:alula_app/workbench/activity_bar_order.dart';
+import 'package:alula_app/workbench/activity_bar_pins.dart';
 
 void main() {
   group('JSON 序列化往返', () {
@@ -20,6 +21,11 @@ void main() {
           reason: 'default layouts omit optional ordering metadata');
       expect(normalizeActivityBarViewOrder(restored.activityBarOrder),
           activityBarViewOrder);
+      expect(restored.activityBarPinned, isNull,
+          reason: 'default layouts keep legacy all-pinned JSON compact');
+      final restoredLayout = WorkbenchLayout(root: restored);
+      expect(restoredLayout.activityBarPinnedViews, activityBarViewOrder);
+      restoredLayout.dispose();
       expect(restored.children.length, original.children.length);
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);
@@ -71,6 +77,34 @@ void main() {
           ['git', 'explorer', 'search', 'outline']);
     });
 
+    test('Activity Bar pin round-trip, legacy defaults and malformed values',
+        () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline']
+        ..activityBarPinned = const ['search', 'git', 'git', 'unknown'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(restored.activityBarPinned, ['git', 'search']);
+      expect(restored.toJson()['activityBarPinned'], ['git', 'search']);
+
+      final legacyJson = root.toJson()..remove('activityBarPinned');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarPinned, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarPinnedViews,
+          ['git', 'explorer', 'search', 'outline']);
+      legacyLayout.dispose();
+
+      final malformedJson = root.toJson()
+        ..['activityBarPinned'] = ['unknown', 42, 'git', 'git'];
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarPinned, ['git']);
+
+      final emptyJson = root.toJson()..['activityBarPinned'] = [];
+      final empty = WbNode.fromJson(emptyJson) as WbSplit;
+      expect(empty.activityBarPinned, ['git', 'explorer', 'search', 'outline'],
+          reason: 'invalid empty state must leave a usable pinned view set');
+    });
+
     test('layout setter notifies once and preserves canonical default state',
         () {
       final layout = WorkbenchLayout(root: defaultLayout());
@@ -83,6 +117,21 @@ void main() {
       expect(layout.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
       expect(changes, 1);
       expect(layout.setActivityBarOrder(['git', 'explorer']), isFalse);
+      expect(changes, 1);
+      layout.dispose();
+    });
+
+    test('pin setter notifies and rejects attempts to hide the last view', () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarPinnedViews, activityBarViewOrder);
+      expect(layout.setActivityBarPinnedViews(activityBarViewOrder), isFalse);
+      expect(layout.setActivityBarPinnedViews(['git']), isTrue);
+      expect(layout.activityBarPinnedViews, ['git']);
+      expect(layout.setActivityBarPinnedViews([]), isFalse);
+      expect(layout.activityBarPinnedViews, ['git']);
       expect(changes, 1);
       layout.dispose();
     });

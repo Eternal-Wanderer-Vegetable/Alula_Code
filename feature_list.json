@@ -867,7 +867,7 @@
         "feat-066"
       ],
       "status": "in-progress",
-      "evidence": "Scoped and registered only; no P05.15 product code has been edited. Fixed upstream and pre-edit GitNexus evidence: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md and p05.15-pre-edit-*.txt. Final registration scans: all-scope 4 files / 4 symbols / 0 processes, LOW; compare-to-main 83 files / 160 symbols / 18 processes, CRITICAL from cumulative P05 changes. Commands and graph coverage limits are recorded in the scope report.",
+      "evidence": "P05.15 implementation complete locally; hosted gates pending. Scope and fixed Code-OSS 1.145.0 source: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. ActivityBar focused tests 13/13; full init.sh passed Rust 71+54, Clippy, build_core and Flutter 1,083/1,083; cargo fmt, app/flutter analyze (0), diff check and Harness 100/100 passed. Product GitNexus index refreshed at 11,209 nodes / 31,449 edges / 425 flows with documented large-file and flow-trace coverage limits. Final commit, PR CI and Linux/Windows/macOS hosted validation remain pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

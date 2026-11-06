@@ -5,6 +5,8 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/gestures.dart'
+    show PointerDownEvent, kSecondaryMouseButton;
 import 'package:flutter/services.dart';
 
 import 'layout_model.dart';
@@ -18,8 +20,10 @@ class ActivityBar extends StatefulWidget {
     this.axis = Axis.vertical,
     this.size = ActivityBarSize.defaultSize,
     this.order = activityBarViewOrder,
+    this.pinnedViews = activityBarViewOrder,
     this.onSizeChanged,
     this.onOrderChanged,
+    this.onPinnedViewsChanged,
   });
 
   /// 当前侧栏视图；侧栏折叠时仍保留上次视图。
@@ -28,6 +32,7 @@ class ActivityBar extends StatefulWidget {
   final Axis axis;
   final ActivityBarSize size;
   final List<String> order;
+  final List<String> pinnedViews;
 
   /// 点击图标：切换视图；重复点当前视图则折叠/展开侧栏。
   final ValueChanged<String> onSelectView;
@@ -37,6 +42,9 @@ class ActivityBar extends StatefulWidget {
 
   /// Changes the order of two existing view actions by drag-and-drop.
   final ValueChanged<List<String>>? onOrderChanged;
+
+  /// Changes the set of pinned view actions.
+  final ValueChanged<List<String>>? onPinnedViewsChanged;
 
   @override
   State<ActivityBar> createState() => _ActivityBarState();
@@ -48,6 +56,12 @@ class _ActivityBarState extends State<ActivityBar> {
     'search': '搜索',
     'outline': '大纲',
     'git': '源代码管理',
+  };
+  static const _viewNames = {
+    'explorer': 'Explorer',
+    'search': 'Search',
+    'outline': 'Outline',
+    'git': 'Source Control',
   };
   static const _viewIcons = {
     'explorer': Icons.explore_outlined,
@@ -73,6 +87,10 @@ class _ActivityBarState extends State<ActivityBar> {
   late final Map<String, GlobalKey> _viewItemKeys = {
     for (final id in activityBarViewOrder)
       id: GlobalKey(debugLabel: 'Activity Bar $id drop target'),
+  };
+
+  late final Map<String, MenuController> _itemMenuControllers = {
+    for (final id in activityBarViewOrder) id: MenuController(),
   };
 
   late final List<FocusNode> _viewFocusNodes = List.generate(
@@ -105,6 +123,25 @@ class _ActivityBarState extends State<ActivityBar> {
       onTap: () => widget.onSelectView(id),
     );
 
+    final pinnedViews = _pinnedViewOrder;
+    final isPinned = pinnedViews.contains(id);
+    final canTogglePin = widget.onPinnedViewsChanged != null &&
+        (!isPinned || pinnedViews.length > 1);
+    final itemMenu = MenuAnchor(
+      key: ValueKey('activity-bar-item-menu-anchor-$id'),
+      controller: _itemMenuControllers[id],
+      style: _menuStyle,
+      menuChildren: [
+        MenuItemButton(
+          key: ValueKey('activity-bar-item-pin-$id'),
+          style: _menuItemStyle,
+          onPressed: canTogglePin ? () => _togglePinnedView(id) : null,
+          child: Text('${isPinned ? 'Hide' : 'Keep'} ${_viewNames[id]}'),
+        ),
+      ],
+      child: item,
+    );
+
     return DragTarget<String>(
       onWillAcceptWithDetails: (details) =>
           widget.onOrderChanged != null &&
@@ -128,9 +165,75 @@ class _ActivityBarState extends State<ActivityBar> {
           ),
         ),
         childWhenDragging: Opacity(opacity: 0.35, child: item),
-        child: SizedBox(key: _viewItemKeys[id], child: item),
+        child: SizedBox(key: _viewItemKeys[id], child: itemMenu),
       ),
     );
+  }
+
+  List<String> get _pinnedViewOrder => normalizeActivityBarPinnedViews(
+        widget.pinnedViews,
+        order: widget.order,
+      );
+
+  List<String> get _visibleViewOrder {
+    final pinned = _pinnedViewOrder.toSet();
+    return normalizeActivityBarViewOrder(widget.order)
+        .where((id) => pinned.contains(id) || id == widget.activeView)
+        .toList();
+  }
+
+  void _togglePinnedView(String id) {
+    final pinned = _pinnedViewOrder;
+    final next = List<String>.of(pinned);
+    if (pinned.contains(id)) {
+      if (pinned.length <= 1) return;
+      next.remove(id);
+    } else {
+      next.add(id);
+    }
+    widget.onPinnedViewsChanged?.call(
+      normalizeActivityBarPinnedViews(next, order: widget.order),
+    );
+  }
+
+  void _handleContextMenuPointerDown(
+    PointerDownEvent event, {
+    required MenuController barController,
+    required BuildContext barContext,
+  }) {
+    if ((event.buttons & kSecondaryMouseButton) == 0) return;
+
+    final horizontal = widget.axis == Axis.horizontal;
+    for (final id in _visibleViewOrder) {
+      final renderObject =
+          _viewItemKeys[id]?.currentContext?.findRenderObject();
+      if (renderObject is! RenderBox) continue;
+      final localPosition = renderObject.globalToLocal(event.position);
+      if (!(Offset.zero & renderObject.size).contains(localPosition)) continue;
+
+      final itemMenuWidth = horizontal
+          ? (renderObject.size.width < 48 ? renderObject.size.width : 48.0)
+          : renderObject.size.width;
+      final itemMenuRect = Rect.fromLTWH(
+        horizontal ? (renderObject.size.width - itemMenuWidth) / 2 : 0,
+        0,
+        itemMenuWidth,
+        renderObject.size.height,
+      );
+      if (!itemMenuRect.contains(localPosition)) continue;
+
+      _itemMenuControllers[id]!.open(position: localPosition);
+      return;
+    }
+
+    final renderObject = barContext.findRenderObject();
+    if (renderObject is RenderBox) {
+      barController.open(
+        position: renderObject.globalToLocal(event.position),
+      );
+    } else {
+      barController.open();
+    }
   }
 
   void _handleViewDrop({
@@ -166,7 +269,7 @@ class _ActivityBarState extends State<ActivityBar> {
       return KeyEventResult.ignored;
     }
 
-    final viewOrder = normalizeActivityBarViewOrder(widget.order);
+    final viewOrder = _visibleViewOrder;
     final index = viewOrder.indexOf(id);
     late final String nextId;
     final previousKey = widget.axis == Axis.vertical
@@ -194,7 +297,8 @@ class _ActivityBarState extends State<ActivityBar> {
   @override
   Widget build(BuildContext context) {
     final horizontal = widget.axis == Axis.horizontal;
-    final viewOrder = normalizeActivityBarViewOrder(widget.order);
+    final viewOrder = _visibleViewOrder;
+    final pinnedViews = _pinnedViewOrder.toSet();
     final viewItems = [
       for (final id in viewOrder) _viewItem(id: id),
     ];
@@ -236,54 +340,70 @@ class _ActivityBarState extends State<ActivityBar> {
     );
 
     return MenuAnchor(
+      key: const ValueKey('activity-bar-checklist-menu'),
       controller: _menuController,
       style: _menuStyle,
       menuChildren: [
-        SubmenuButton(
-          style: _menuItemStyle,
-          menuStyle: _menuStyle,
-          key: const ValueKey('activity-bar-size-submenu'),
-          menuChildren: [
-            for (final size in ActivityBarSize.values)
-              MenuItemButton(
-                key: ValueKey('activity-bar-size-${size.jsonValue}'),
-                style: _menuItemStyle,
-                leadingIcon: widget.size == size
-                    ? const Icon(Icons.check, size: 16)
-                    : const SizedBox(width: 16),
-                onPressed: () {
-                  widget.onSizeChanged?.call(size);
-                  _menuController.close();
-                },
-                child: Semantics(
-                  checked: widget.size == size,
-                  child: Text(switch (size) {
-                    ActivityBarSize.defaultSize => 'Default',
-                    ActivityBarSize.compact => 'Compact',
-                  }),
+        for (final id in normalizeActivityBarViewOrder(widget.order))
+          MenuItemButton(
+            key: ValueKey('activity-bar-checklist-$id'),
+            style: _menuItemStyle,
+            leadingIcon: pinnedViews.contains(id)
+                ? const Icon(Icons.check, size: 16)
+                : const SizedBox(width: 16),
+            onPressed: widget.onPinnedViewsChanged == null ||
+                    (pinnedViews.contains(id) && pinnedViews.length <= 1)
+                ? null
+                : () {
+                    _togglePinnedView(id);
+                    _menuController.close();
+                  },
+            child: Semantics(
+              label: _viewNames[id],
+              checked: pinnedViews.contains(id),
+              child: Text(_viewNames[id]!),
+            ),
+          ),
+        if (!horizontal && widget.onSizeChanged != null) ...[
+          const Divider(height: 8),
+          SubmenuButton(
+            style: _menuItemStyle,
+            menuStyle: _menuStyle,
+            key: const ValueKey('activity-bar-size-submenu'),
+            menuChildren: [
+              for (final size in ActivityBarSize.values)
+                MenuItemButton(
+                  key: ValueKey('activity-bar-size-${size.jsonValue}'),
+                  style: _menuItemStyle,
+                  leadingIcon: widget.size == size
+                      ? const Icon(Icons.check, size: 16)
+                      : const SizedBox(width: 16),
+                  onPressed: () {
+                    widget.onSizeChanged?.call(size);
+                    _menuController.close();
+                  },
+                  child: Semantics(
+                    checked: widget.size == size,
+                    child: Text(switch (size) {
+                      ActivityBarSize.defaultSize => 'Default',
+                      ActivityBarSize.compact => 'Compact',
+                    }),
+                  ),
                 ),
-              ),
-          ],
-          child: const Text('Activity Bar Size'),
-        ),
+            ],
+            child: const Text('Activity Bar Size'),
+          ),
+        ],
       ],
       builder: (context, controller, child) => Builder(
-        builder: (anchorContext) => GestureDetector(
-          onSecondaryTapDown: horizontal || widget.onSizeChanged == null
-              ? null
-              : (details) {
-                  final renderObject = anchorContext.findRenderObject();
-                  if (renderObject is RenderBox) {
-                    controller.open(
-                      position: renderObject.globalToLocal(
-                        details.globalPosition,
-                      ),
-                    );
-                  } else {
-                    controller.open();
-                  }
-                },
-          child: child,
+        builder: (anchorContext) => Listener(
+          behavior: HitTestBehavior.opaque,
+          onPointerDown: (event) => _handleContextMenuPointerDown(
+            event,
+            barController: controller,
+            barContext: anchorContext,
+          ),
+          child: child!,
         ),
       ),
       child: activityBar,

@@ -1,4 +1,4 @@
-import 'dart:ui' show Tristate;
+import 'dart:ui' show CheckedState, Tristate;
 
 import 'package:alula_app/workbench/activity_bar.dart';
 import 'package:alula_app/workbench/layout_model.dart';
@@ -146,8 +146,9 @@ void main() {
       (tester) async {
     final selectedSizes = <ActivityBarSize>[];
     Future<void> openSizeMenu() async {
+      final bar = tester.getRect(find.byType(ActivityBar));
       await tester.tapAt(
-        tester.getCenter(find.byType(ActivityBar)),
+        Offset(bar.center.dx, bar.top + 220),
         buttons: kSecondaryMouseButton,
       );
       await tester.pumpAndSettle();
@@ -219,6 +220,218 @@ void main() {
       buttons: kSecondaryMouseButton,
     );
     await tester.pumpAndSettle();
+    expect(find.text('Activity Bar Size'), findsNothing);
+  });
+
+  testWidgets(
+      'view item menu hides and keeps; active unpinned view stays until switch',
+      (tester) async {
+    final pinChanges = <List<String>>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'search',
+      sidebarCollapsed: false,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+
+    await tester.tapAt(
+      tester.getCenter(find.byTooltip('搜索')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    final hideSearch =
+        find.byKey(const ValueKey('activity-bar-item-pin-search'));
+    expect(tester.widget<MenuItemButton>(hideSearch).onPressed, isNotNull);
+    expect(find.text('Hide Search'), findsOneWidget);
+    await tester.tap(hideSearch);
+    await tester.pumpAndSettle();
+    expect(find.text('Hide Search'), findsNothing,
+        reason: 'the item context menu closes after its action');
+    expect(pinChanges, [
+      ['explorer', 'outline', 'git'],
+    ]);
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'search',
+      sidebarCollapsed: false,
+      pinnedViews: pinChanges.last,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    expect(find.byTooltip('搜索'), findsOneWidget,
+        reason: 'an active but unpinned view stays visible');
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      pinnedViews: pinChanges.last,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    expect(find.byTooltip('搜索'), findsNothing,
+        reason: 'switching to another view hides the unpinned view');
+    expect(find.byTooltip('管理（W6）'), findsOneWidget,
+        reason: 'Manage remains fixed in the bar');
+  });
+
+  testWidgets('bar checklist syncs pin state and refuses to hide the last view',
+      (tester) async {
+    final pinChanges = <List<String>>[];
+    Future<void> openBarChecklist() async {
+      final bar = tester.getRect(find.byType(ActivityBar));
+      await tester.tapAt(
+        Offset(bar.center.dx, bar.top + 220),
+        buttons: kSecondaryMouseButton,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    await openBarChecklist();
+    final searchChecklist =
+        find.byKey(const ValueKey('activity-bar-checklist-search'));
+    expect(
+      tester.widget<MenuItemButton>(searchChecklist).leadingIcon,
+      isA<Icon>(),
+    );
+    expect(
+      tester
+          .getSemantics(find.text('Search'))
+          .getSemanticsData()
+          .flagsCollection
+          .isChecked,
+      CheckedState.isTrue,
+    );
+    await tester.tap(searchChecklist);
+    await tester.pumpAndSettle();
+    expect(searchChecklist, findsNothing,
+        reason: 'the Activity Bar checklist closes after its action');
+    expect(pinChanges.single, ['explorer', 'outline', 'git']);
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      pinnedViews: pinChanges.single,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    await openBarChecklist();
+    expect(
+      tester.widget<MenuItemButton>(searchChecklist).leadingIcon,
+      isA<SizedBox>(),
+    );
+    expect(
+      tester
+          .getSemantics(find.text('Search'))
+          .getSemanticsData()
+          .flagsCollection
+          .isChecked,
+      CheckedState.isFalse,
+    );
+    await tester.tap(searchChecklist);
+    await tester.pumpAndSettle();
+    expect(pinChanges.last, activityBarViewOrder);
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'git',
+      sidebarCollapsed: false,
+      pinnedViews: const ['git'],
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    await openBarChecklist();
+    final lastPinned = find.byKey(const ValueKey('activity-bar-checklist-git'));
+    expect(tester.widget<MenuItemButton>(lastPinned).onPressed, isNull);
+    expect(find.text('Manage'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('activity-bar-checklist-manage')),
+      findsNothing,
+    );
+    await tester.tapAt(const Offset(700, 500));
+    await tester.pumpAndSettle();
+
+    await tester.tapAt(
+      tester.getCenter(find.byTooltip('源代码管理')),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    final hideLast = find.byKey(const ValueKey('activity-bar-item-pin-git'));
+    expect(tester.widget<MenuItemButton>(hideLast).onPressed, isNull);
+    expect(find.text('Hide Source Control'), findsOneWidget);
+    expect(pinChanges, hasLength(2));
+  });
+
+  testWidgets('keeping a view restores custom-order keyboard traversal',
+      (tester) async {
+    const order = ['git', 'search', 'explorer', 'outline'];
+    final pinChanges = <List<String>>[];
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      order: order,
+      pinnedViews: const ['git', 'explorer'],
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+
+    final bar = tester.getRect(find.byType(ActivityBar));
+    await tester.tapAt(
+      Offset(bar.center.dx, bar.top + 220),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    final keepSearch =
+        find.byKey(const ValueKey('activity-bar-checklist-search'));
+    expect(
+        tester.widget<MenuItemButton>(keepSearch).leadingIcon, isA<SizedBox>());
+    await tester.tap(keepSearch);
+    await tester.pumpAndSettle();
+    expect(pinChanges.single, ['git', 'search', 'explorer']);
+
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      order: order,
+      pinnedViews: pinChanges.single,
+      onPinnedViewsChanged: pinChanges.add,
+    ));
+    expect(find.byTooltip('大纲'), findsNothing);
+
+    final focusNodes = [
+      _viewFocusNode(tester, '源代码管理'),
+      _viewFocusNode(tester, '搜索'),
+      _viewFocusNode(tester, '资源管理器'),
+    ];
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(focusNodes[0].hasFocus, isTrue,
+        reason: 'Source Control remains first in the customized order');
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusNodes[1].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusNodes[2].hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    expect(focusNodes[2].hasFocus, isTrue,
+        reason: 'focus stops at the final pinned view');
+  });
+
+  testWidgets('Top Activity Bar exposes the view checklist without size menu',
+      (tester) async {
+    await tester.pumpWidget(_activityBarApp(
+      activeView: 'explorer',
+      sidebarCollapsed: false,
+      axis: Axis.horizontal,
+      onPinnedViewsChanged: (_) {},
+    ));
+    final bar = tester.getRect(find.byType(ActivityBar));
+    await tester.tapAt(
+      Offset(bar.left + 2, bar.center.dy),
+      buttons: kSecondaryMouseButton,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('activity-bar-checklist-search')),
+        findsOneWidget);
     expect(find.text('Activity Bar Size'), findsNothing);
   });
 
@@ -368,9 +581,11 @@ Widget _activityBarApp({
   Axis axis = Axis.vertical,
   ActivityBarSize size = ActivityBarSize.defaultSize,
   List<String> order = activityBarViewOrder,
+  List<String> pinnedViews = activityBarViewOrder,
   ValueChanged<String>? onSelectView,
   ValueChanged<ActivityBarSize>? onSizeChanged,
   ValueChanged<List<String>>? onOrderChanged,
+  ValueChanged<List<String>>? onPinnedViewsChanged,
 }) {
   return MaterialApp(
     home: Scaffold(
@@ -383,9 +598,11 @@ Widget _activityBarApp({
           axis: axis,
           size: size,
           order: order,
+          pinnedViews: pinnedViews,
           onSelectView: onSelectView ?? (_) {},
           onSizeChanged: onSizeChanged,
           onOrderChanged: onOrderChanged,
+          onPinnedViewsChanged: onPinnedViewsChanged,
         ),
       ),
     ),
@@ -403,6 +620,17 @@ List<FocusNode> _viewFocusNodes(WidgetTester tester) {
     final item = find.descendant(of: tooltip, matching: find.byType(InkWell));
     return tester.widget<InkWell>(item).focusNode!;
   }).toList();
+}
+
+FocusNode _viewFocusNode(WidgetTester tester, String label) {
+  final tooltip = find.descendant(
+    of: find.byType(ActivityBar),
+    matching: find.byWidgetPredicate(
+      (widget) => widget is Tooltip && widget.message == label,
+    ),
+  );
+  final item = find.descendant(of: tooltip, matching: find.byType(InkWell));
+  return tester.widget<InkWell>(item).focusNode!;
 }
 
 void _expectButtonSemantics(

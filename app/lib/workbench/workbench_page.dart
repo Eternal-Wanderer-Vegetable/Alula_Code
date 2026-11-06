@@ -73,6 +73,7 @@ import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
 import 'activity_bar_order.dart';
+import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
@@ -16890,7 +16891,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 : Axis.horizontal,
                             size: _layout.activityBarSize,
                             order: _layout.activityBarOrder,
+                            pinnedViews: _layout.activityBarPinnedViews,
                             onOrderChanged: _layout.setActivityBarOrder,
+                            onPinnedViewsChanged:
+                                _layout.setActivityBarPinnedViews,
                             onSizeChanged: _layout.activityBarLocation ==
                                     ActivityBarLocation.side
                                 ? _layout.setActivityBarSize
