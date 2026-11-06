@@ -181,5 +181,30 @@ void main() {
     await runPaletteCommand('将主侧栏移到右侧');
     await tester.pump(const Duration(milliseconds: 600));
     expect(layoutStore.tryLoad()!.sideBarPosition?.name, 'right');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: layoutStore,
+      sessionStore: sessionStore,
+      keybindingsStore: keybindingsStore,
+    ));
+    await tester.pump(const Duration(milliseconds: 300));
+    final editor = tester.getRect(
+      find.byKey(const ValueKey('wb-region-editor')),
+    );
+    final sidebar = tester.getRect(
+      find.byKey(const ValueKey('wb-region-sidebar')),
+    );
+    final activity = tester.getRect(
+      find.byKey(const ValueKey('wb-region-activity')),
+    );
+    expect(editor.right, lessThanOrEqualTo(sidebar.left));
+    expect(sidebar.right, lessThanOrEqualTo(activity.left));
+    expect(
+      activity.right,
+      closeTo(tester.view.physicalSize.width / tester.view.devicePixelRatio, 1),
+      reason: 'Right position restores with Activity Bar on the outer edge',
+    );
   });
 }
