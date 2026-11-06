@@ -842,8 +842,8 @@
       "dependencies": [
         "feat-064"
       ],
-      "status": "in-progress",
-      "evidence": "实现已完成，本地 DoD 通过，待 hosted PR/平台门禁。bash init.sh：Rust 71+54、Clippy、build_core、Flutter 1,070；cargo fmt --check 与 Flutter analyze（0 issues）通过。P05.12/P05.13 聚焦回归 43/43，最终 ActivityBar widget 6/6 与 size integration 1/1。覆盖 Default/Compact 尺寸与 checked 菜单、Side-only 右键入口、P05.12 JSON 迁移、布局持久化、Sidebar view/collapse、Editor split、Panel/Editor 权重与 Top/Bottom 44 px 保留。完整记录及 GitNexus UNKNOWN/MEDIUM lower-bound 边界见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md 和 docs/diagnostics/2026-11-06-p05/p05.13-local-validation.txt。",
+      "status": "done",
+      "evidence": "P05.13 完成。产品提交 3841f7e；本地 bash init.sh：Rust 71+54、Clippy、build_core、Flutter 1,070；cargo fmt --check、Flutter analyze 0 issues、P05.12/P05.13 聚焦回归 43/43、ActivityBar widget 6/6 与 size integration 1/1 通过。PR CI 42204378410 四 job 全绿；Platform Availability 42204370958 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Linux/Windows DnD artifacts 13496321529 / 13495993506 通过；macOS DnD artifact 13497601428 明确 skip（hosted synthetic pointer route unavailable）；System Events native Quit/startup artifact 13498175441 通过。平台包 artifacts Linux/Windows/macOS 13496391434 / 13496108307 / 13496948638；macOS ZIP SHA-256 288d5282a87834918cb5a2565796834baea132227224c8d2be1d39434bdc99ff 与 sidecar 匹配，unzip -t 通过。默认/紧凑尺寸、checked 菜单、Side-only 入口、旧 JSON 迁移、持久化、Sidebar view/collapse、Editor split、Panel/Editor 权重和 Top/Bottom 44 px 均验证。完整记录及 GitNexus UNKNOWN/MEDIUM lower-bound 限制见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md 与 docs/diagnostics/2026-11-06-p05/p05.13-local-validation.txt。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
