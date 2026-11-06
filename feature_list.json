@@ -810,6 +810,18 @@
       "evidence": "P05.10 / LAY-03a is complete. Product commit 570bec2 adds four Activity Bar view button/selected semantics, widget-owned focus nodes, stable Tab order, vertical arrow navigation, Enter/Space and click activation; follow-up df530b2 matches fixed Code-OSS 1.145.0 preventLoopNavigation=true by keeping focus at both ends, and corrects stale comments. Independent ActivityBar widget tests 3/3 cover semantics, collapsed selected state, Tab sequence, arrows without activation/boundary behavior, keyboard activation, and mouse route. Final-code FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed: Rust workspace 71+54, Clippy, build_core, Flutter 1,055/1,055; cargo fmt --all -- --check, flutter analyze (0 issues), JSON/diff check, Harness 100/100 passed. PR CI 42166343434 four jobs passed. Platform Availability 42166338201 Linux x64, Windows x64, macOS Intel x64 jobs all passed build/test/launch/package. Package artifacts Linux/Windows/macOS 13480050460 / 13478814930 / 13480535582. macOS ZIP SHA-256 c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354 matched the sidecar and unzip -t passed; startup diagnostics 13479434926 and native System Events Quit passed. Linux/Windows DnD artifacts 13478914872 / 13479192554 passed; macOS DnD 13480655013 explicitly skipped because hosted synthetic pointer events did not route to Flutter. GitNexus exact impacts: ActivityBar.build, _Item.build, _ActivityBarState UNKNOWN/0 callers; _handleViewKey LOW/2 impacted symbols/one local Build flow. Final precommit detect-changes: all-scope 7 files/3 symbols/0 processes LOW; compare-to-main 33 files/198 symbols/17 processes CRITICAL with known unrelated mappings. Five >512KiB files including workbench_page.dart skipped; 788 cross-language property sites and process trace budget limits unresolved. Full evidence: docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-063",
+      "name": "P05.11 LAY-03b Activity Bar 隐藏/恢复与布局持久化",
+      "description": "注册固定 Code-OSS 1.145.0 的 Activity Bar Side/Hidden 命令，并在 View > Appearance > Activity Bar Position 提供 checked 子菜单；固定活动栏可隐藏为零宽、恢复原尺寸，保存到现有布局 JSON，保留当前视图。Top/Bottom、尺寸、排序、badge、Accounts/Manage 与右键菜单留后续子项。范围与编辑前 GitNexus 风险见 docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md。",
+      "dependencies": [
+        "feat-062"
+      ],
+      "status": "in-progress",
+      "evidence": "已登记单项 DoD；待实现与验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

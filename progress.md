@@ -5,10 +5,11 @@
 
 ## Current State（当前状态，2026-11-06 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.10 已完成；继续剩余 LAY/CMD 矩阵项
+### P05 / feat-027 进行中；P05.1–P05.10 已完成；P05.11 / feat-063 进行中
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
 - 2026-11-06：P05.10 / feat-062 / LAY-03a 完成：产品提交 `570bec2` 与边界修正 `df530b2`；Activity Bar 独立测试 3/3、完整 `init.sh` Flutter 1,055/1,055、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI `42166343434` 四 job 全绿；Platform Availability `42166338201` Linux/Windows/macOS Intel x64 全绿。Linux/Windows DnD 通过，macOS hosted pointer route 明确 skip。三个包 artifacts `13480050460` / `13478814930` / `13480535582`，macOS ZIP SHA-256 `c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354` 匹配 sidecar 且 unzip 完整；macOS System Events native Quit 通过。完整实现、图谱风险和 hosted evidence 在 `docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md`。P05/LAY-03 继续进行。
+- 2026-11-06：P05.10 evidence docs commit `956170e` 已推送，docs-head PR CI `42169323073` 全绿。新范围 P05.11 / feat-063 / LAY-03b 已登记：Activity Bar Side/Hidden 命令、View > Appearance 状态菜单与现有布局 JSON 持久化；只实现隐藏/恢复，不扩展 top/bottom、size、reorder、badge 或上下文菜单。范围和 GitNexus 预检记录在 `docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md`。
 - P05.5 / feat-057 的证据提交 `d6d1f29` 已推送；PR CI `42096263789` 四 job 全绿，本地 `bash init.sh --fast` 全绿。P05.6 / feat-058 / LAY-01f 已完成并登记：macOS 原生菜单映射当前已实现菜单，About/Quit 接回既有路由和关闭清理。
 - P05.1 / feat-053 / LAY-01a（标题栏模式、拖动与窗口控制）已通过本地与 hosted 门禁并登记完成；范围、实现和逐项证据在 `docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md`。P05 父项仍为 `in-progress`：20 个 LAY 与 12 个 CMD 矩阵行继续逐项验收，尚未声称 LAY-01 或阶段完成。
 - P05.3 / feat-055 / LAY-01c 已完成：本地完整 `init.sh` Flutter 1,037 与 focused suites 全通过；PR CI `42070134834` 四 job 全绿；Platform Availability `42070123908` 的 Linux、Windows、macOS Intel x64 全部构建、测试、启动并打包通过。Linux/Windows 原生 DnD 通过；macOS artifact `13437054363` 记录 pointer route unavailable，按 skip 记载。macOS 包 artifact `13436534087`，SHA-256 `a866957c2fc2ddcd10e4896ab9fce5e0257602da1b924a3f9acdb0ddcda8cf03` 与 sidecar 一致且 zip 完整；启动诊断 `13436249236` 未含 crash report。P05.3 scope/evidence：`docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md`。P05/LAY-01 仍开放；默认菜单全集仍未实现。
