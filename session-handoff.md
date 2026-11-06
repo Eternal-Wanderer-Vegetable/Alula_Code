@@ -2,11 +2,11 @@
 
 ## Last Updated
 
-2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.6 evidence commit `f8284f8` is pushed. P05.7 / feat-059 / LAY-02a is registered and in progress.
+2026-11-06. User requested a new branch, an open PR, and completion of P05. Branch `codex/vscode-parity-p05` is pushed; draft PR #3 targets `main`: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3. P05.7 product commit `cea75a9` and hosted evidence are pushed; P05.1–P05.7 are complete.
 
 ## Current Objective
 
-Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.6 / feat-053–058 are complete and recorded. Current slice P05.7 / feat-059 implements the default title from active document, workspace, app name, and dirty state and synchronizes it to the host window. Custom title templates/Profile await P07; Command Center and layout toolbar need separate later slices. P05 and LAY-01 remain open. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
+Continue P05 / feat-027 one scoped LAY/CMD child at a time. P05.1–P05.7 / feat-053–059 are complete and recorded. P05.7 / LAY-02a adds the default title from active document, workspace, app name, and dirty state and synchronizes it to the host window; local DoD, PR CI, and Linux/Windows/macOS Intel x64 hosted build/launch/package all pass. macOS DnD is explicitly skipped because the hosted pointer route is unavailable; macOS dirty `●` differs visually from VS Code native document-edited dot. Custom title templates/Profile await P07; Command Center and layout controls need separate LAY-02 slices. P05 and LAY-01 remain open. The authoritative status and DoD are in `docs/03-里程碑计划与验收标准.md`.
 
 Use `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
@@ -23,7 +23,7 @@ Use `/tmp/alula-p04.70-next`. The original `/mnt/e/alula_code` worktree contains
 
 - Startup evidence: GitNexus refreshed at 11,758 nodes / 35,533 edges / 333 clusters / 423 flows; `bash init.sh --fast` passed Rust workspace, Clippy, `build_core`, Flutter 1,043.
 - P05.6 scope/evidence, product work, and platform results are committed/pushed; PR CI `42131798643` passed all four jobs. Its detailed evidence and remaining Apple Silicon/native-device constraints are recorded in `docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md`.
-- P05.7 / feat-059 implementation and local DoD are complete. Pure title tests 3/3; `title_bar_test.dart` 15/15; complete `widget_test.dart` 26/26. `bash init.sh` passed with Flutter 1,047, Rust workspace, Clippy, and core build; cargo fmt, analyze, Harness, JSON/diff checks passed. GitNexus all-scope 9 files/7 symbols/415 flows CRITICAL and compare-to-main 24/23/415 CRITICAL, with Build/Rust/editor mis-mappings and 405 omitted flows. Next: commit/push the P05.7 implementation, wait for PR CI and Linux/Windows/macOS Intel x64 Platform Availability, then add hosted evidence and close feat-059 only if all gates pass. See `docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md`.
+- P05.7 / feat-059 implementation and hosted DoD are complete; product commit `cea75a9` is pushed. PR CI `42136137652` passed all four jobs; Platform Availability `42136128518` passed Linux x64, Windows x64, and macOS Intel x64. Linux/Windows DnD passed; macOS DnD explicitly skipped because synthetic pointer events did not route to Flutter. Packages `13465457185` / `13465103365` / `13466946378`; macOS ZIP SHA-256 `99fad9b8ffaa5c34c21f4b6bc629bb0dfff3ffc76081a0315d8457a0f0c9af5a` matches sidecar and `unzip -t` passed; System Events Quit was verified in startup artifact `13467345840`. Scope and limitations: `docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md`.
 - PR #3 remains draft. Do not mark P05 complete or close the PR until all P05 matrix DoDs pass.
 
 ## GitNexus Boundaries
