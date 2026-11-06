@@ -774,6 +774,18 @@
       "evidence": "P05.7 本地与 hosted DoD 完成。默认标题组合活动文档名、● dirty 标记、workspace 名与应用名；macOS 用明确 ● 字符替代 Code-OSS 原生 document-edited dot，因为 window_manager 0.5.2 无 setDocumentEdited API（视觉差异已登记）。`workbench_window_title_test.dart` 3/3；`title_bar_test.dart` 15/15；整个 `widget_test.dart` 26/26，含文档切换、dirty、Save As 标题更新。第二次完整 `bash init.sh` 全绿，Flutter 1,047/1,047，Rust workspace、Clippy、build_core 通过；cargo fmt --all -- --check、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。PR CI `42136137652` 四 job 全绿；Platform Availability `42136128518` 的 Linux/Windows/macOS Intel x64 build/launch/package 全绿。Linux/Windows DnD artifacts `13465647270` / `13465757833` 通过；macOS DnD `13466064689` 因 hosted pointer route unavailable 明确 skip。发行包 Linux/Windows/macOS `13465457185` / `13465103365` / `13466946378`；macOS ZIP SHA-256 `99fad9b8ffaa5c34c21f4b6bc629bb0dfff3ffc76081a0315d8457a0f0c9af5a` 与 sidecar 匹配且 unzip 完整；startup diagnostics `13467345840` 验证 System Events Quit。编辑前 GitNexus `WindowChromeDriver` upstream LOW；`AlulaTitleBar`/`_AlulaTitleBarState` UNKNOWN，`workbench_page.dart` >512 KiB 未索引。提交前 all-scope 9 files/7–9 symbols/415 flows CRITICAL；compare-to-main 24 files/20–23 symbols/415 flows CRITICAL，均误映射到 Build/Rust/editor flows 且截断 405 条；详见 docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md。macOS dirty 字符与原生圆点视觉差异保留.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-060",
+      "name": "P05.8 LAY-02b 标题栏 Command Center 入口",
+      "description": "在自绘标题栏增加可点击、可键盘聚焦的 Command Center 入口，显示当前窗口标题；点击、Enter 或 Space 复用 view.commandPalette 与现有 QuickInput。只在 custom chrome 展示，不覆盖 macOS 原生系统标题栏；验证焦点、语义标签、打开/执行和工作台焦点恢复。范围见 docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md。",
+      "dependencies": [
+        "feat-059"
+      ],
+      "status": "in-progress",
+      "evidence": "产品实现提交 `bdfc0a9` 已推送到 draft PR #3。实现与完整本地 DoD 通过。`title_bar_test.dart` 16/16 覆盖语义按钮、tooltip、命令启用状态、点击、Tab、Enter、Space，native chrome 不创建入口且空白区拖动/双击最大化通过；`widget_test.dart` P05.8 集成 1/1 点击标题入口打开现有 QuickInput、筛选并执行拆分命令、面板关闭、双视图出现且焦点回到工作台 Scaffold。`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,049/1,049）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。编辑前 `AlulaTitleBar`/`_AlulaTitleBarState`/`QuickInput` upstream impact exact UNKNOWN，`_showCommandPalette` not found；文本字面已核对生产装配与调用点。GitNexus 1.6.12: index 10,462 nodes/333 clusters/424 flows；产品 all-scope 为 7–8 files/12–20 symbols/0 processes LOW；文档 all-scope 最新为 4 files/4 symbols/0 processes LOW，曾有一轮 no-symbol-overlap/not-clean。compare-to-main 为 27 files/158–234 symbols/16 processes CRITICAL，最近 27/165/16，含不相关 Build/Run flow 映射。底层图谱跳过 5 个大文件（包括 workbench_page.dart）、788 个跨语言属性点无法关联，process candidates 920/1,120 未入选，325 callees /14 walks 被限流，1 trace 深度截断；UNKNOWN 未解除。标题控件占 240px，拖动和双击最大化只能在右侧自由区域，已记为行为差异。PR CI `42146276524` 四个 job 全部通过；Platform Availability run `42146270634` 仍在运行。完整范围：`docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md`。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
