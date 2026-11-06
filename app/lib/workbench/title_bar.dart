@@ -24,7 +24,8 @@ typedef _IndexedTitleMenuItem = ({int sourceIndex, TitleMenuItem item});
 
 /// 标题栏命令、子菜单或分隔线。
 class TitleMenuItem {
-  const TitleMenuItem(this.label, {required this.commandId, this.arguments})
+  const TitleMenuItem(this.label,
+      {required this.commandId, this.arguments, this.checked})
       : assert(commandId != null),
         children = const [],
         kind = TitleMenuItemKind.command;
@@ -32,18 +33,23 @@ class TitleMenuItem {
   const TitleMenuItem.submenu(this.label, {required this.children})
       : commandId = null,
         arguments = null,
+        checked = null,
         kind = TitleMenuItemKind.submenu;
 
   const TitleMenuItem.separator()
       : label = '',
         commandId = null,
         arguments = null,
+        checked = null,
         children = const [],
         kind = TitleMenuItemKind.separator;
 
   final String label;
   final String? commandId;
   final Object? arguments;
+
+  /// Optional checked state for toggle entries in the title-bar layout menu.
+  final bool? checked;
   final List<TitleMenuItem> children;
   final TitleMenuItemKind kind;
 
@@ -56,6 +62,7 @@ class AlulaTitleBar extends StatefulWidget {
     super.key,
     required this.menus,
     required this.commands,
+    this.layoutControlsBuilder,
     this.windowControls = false,
     this.windowChromeDriver,
     this.onCloseRequested,
@@ -68,6 +75,9 @@ class AlulaTitleBar extends StatefulWidget {
   final List<(String, List<TitleMenuItem>)> menus;
 
   final CommandService commands;
+
+  /// Current layout toggle items, read when the custom title-bar menu opens.
+  final List<TitleMenuItem> Function()? layoutControlsBuilder;
 
   /// 是否渲染窗口控制按钮与拖拽移动区（真实窗口开启；测试关闭）。
   final bool windowControls;
@@ -107,6 +117,13 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   FocusNode? _focusToReturn;
   FocusNode? _lastPrimaryFocus;
   FocusNode? _commandCenterFocusToReturn;
+  final MenuController _layoutControlsMenuController = MenuController();
+  final FocusNode _layoutControlsFocusNode =
+      FocusNode(debugLabel: 'Alula layout controls');
+  final Map<String, FocusNode> _layoutControlFocusNodes = {
+    'view.toggleSidebar': FocusNode(debugLabel: 'Alula toggle sidebar'),
+    'view.togglePanel': FocusNode(debugLabel: 'Alula toggle panel'),
+  };
 
   @override
   void initState() {
@@ -174,6 +191,10 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         .removeGlobalRoute(_handlePointerEvent);
     _menuBarFocusNode.dispose();
     _commandCenterFocusNode.dispose();
+    _layoutControlsFocusNode.dispose();
+    for (final focusNode in _layoutControlFocusNodes.values) {
+      focusNode.dispose();
+    }
     FocusManager.instance.removeListener(_handlePrimaryFocusChanged);
     _windowChrome.removeListener(this);
     super.dispose();
@@ -186,6 +207,14 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
   }
 
   bool _handleHardwareKey(KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.escape &&
+        _layoutControlsMenuController.isOpen) {
+      _layoutControlsMenuController.close();
+      _layoutControlsFocusNode.requestFocus();
+      return true;
+    }
+
     if (_menuPlatform == TargetPlatform.macOS ||
         (!widget.customMenuBarAltFocus && !widget.enableMenuBarMnemonics)) {
       return false;
@@ -556,6 +585,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                 ),
               ),
             ),
+          if (chrome.isCustom && widget.layoutControlsBuilder != null)
+            _buildLayoutControls(context),
           Expanded(
             child: chrome.isCustom
                 ? _dragArea(
@@ -568,6 +599,97 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         ],
       ),
     );
+  }
+
+  Widget _buildLayoutControls(BuildContext context) {
+    final builder = widget.layoutControlsBuilder!;
+    return ListenableBuilder(
+      listenable: widget.commands,
+      builder: (context, _) {
+        final items = _visibleTitleMenuItems(builder(), widget.commands);
+        if (items.isEmpty) return const SizedBox.shrink();
+
+        return MenuAnchor(
+          controller: _layoutControlsMenuController,
+          childFocusNode: _layoutControlsFocusNode,
+          style: _layoutControlsMenuStyle,
+          onOpen: () => _focusFirstLayoutControlItem(items),
+          menuChildren: [
+            for (final entry in items)
+              if (entry.item.isSeparator)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  child: Divider(height: 1, thickness: 1),
+                )
+              else
+                MenuItemButton(
+                  key: ValueKey('layout-control-${entry.item.commandId}'),
+                  focusNode: _layoutControlFocusNodes[entry.item.commandId],
+                  style: _layoutControlsMenuItemStyle,
+                  leadingIcon: entry.item.checked == true
+                      ? const Icon(Icons.check, size: 16)
+                      : const SizedBox(width: 16),
+                  onPressed: widget.commands.isEnabled(entry.item.commandId!)
+                      ? () => unawaited(_executeLayoutControl(entry.item))
+                      : null,
+                  child: Semantics(
+                    checked: entry.item.checked,
+                    child: Text(_plainTitleMenuLabel(entry.item.label)),
+                  ),
+                ),
+          ],
+          builder: (context, controller, child) => Semantics(
+            key: const ValueKey('layout-controls'),
+            button: true,
+            label: '布局控制',
+            hint: '打开侧栏与面板布局菜单',
+            onTap: () => _refreshAndOpenLayoutControls(controller),
+            child: ExcludeSemantics(
+              child: IconButton(
+                key: const ValueKey('layout-controls-control'),
+                focusNode: _layoutControlsFocusNode,
+                tooltip: '布局控制',
+                color: const Color(0xFFE0E0E0),
+                iconSize: 17,
+                visualDensity: VisualDensity.compact,
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    _refreshAndOpenLayoutControls(controller);
+                  }
+                },
+                icon: const Icon(Icons.view_quilt_outlined),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _refreshAndOpenLayoutControls(MenuController controller) {
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) controller.open();
+    });
+  }
+
+  void _focusFirstLayoutControlItem(List<_IndexedTitleMenuItem> items) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_layoutControlsMenuController.isOpen) return;
+      for (final entry in items) {
+        if (!entry.item.isSeparator &&
+            widget.commands.isEnabled(entry.item.commandId!)) {
+          _layoutControlFocusNodes[entry.item.commandId]?.requestFocus();
+          return;
+        }
+      }
+    });
+  }
+
+  Future<void> _executeLayoutControl(TitleMenuItem item) async {
+    await widget.commands.execute(item.commandId!, arguments: item.arguments);
   }
 
   List<PlatformMenuItem> _buildMacPlatformMenus() {
@@ -1056,4 +1178,18 @@ const MenuStyle _menuBarStyle = MenuStyle(
   backgroundColor: WidgetStatePropertyAll(Colors.transparent),
   padding: WidgetStatePropertyAll(EdgeInsets.zero),
   minimumSize: WidgetStatePropertyAll(Size(0, 35)),
+);
+
+const MenuStyle _layoutControlsMenuStyle = MenuStyle(
+  backgroundColor: WidgetStatePropertyAll(Color(0xFF252932)),
+  surfaceTintColor: WidgetStatePropertyAll(Colors.transparent),
+  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+  minimumSize: WidgetStatePropertyAll(Size(180, 0)),
+);
+
+const ButtonStyle _layoutControlsMenuItemStyle = ButtonStyle(
+  minimumSize: WidgetStatePropertyAll(Size(180, 34)),
+  padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+  visualDensity: VisualDensity.compact,
+  textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
 );

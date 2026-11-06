@@ -565,6 +565,66 @@ void main() {
     );
   });
 
+  testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',
+      (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final layoutControl = find.byKey(const ValueKey('layout-controls-control'));
+    final sidebarRegion = find.byKey(const ValueKey('wb-region-sidebar'));
+    final panelRegion = find.byKey(const ValueKey('wb-region-panel'));
+    final sidebarItem =
+        find.byKey(const ValueKey('layout-control-view.toggleSidebar'));
+    final panelItem =
+        find.byKey(const ValueKey('layout-control-view.togglePanel'));
+
+    expect(sidebarRegion, findsOneWidget);
+    expect(panelRegion, findsNothing, reason: '面板默认折叠');
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<Icon>(),
+      reason: '展开的侧栏应显示选中状态',
+    );
+    expect(
+      tester.widget<MenuItemButton>(panelItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '折叠的面板应显示未选中状态',
+    );
+    await tester.tap(sidebarItem);
+    await tester.pumpAndSettle();
+    expect(sidebarRegion, findsNothing);
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '再次打开菜单时读取最新侧栏状态',
+    );
+    await tester.tap(panelItem);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsOneWidget);
+
+    // View > Appearance 和默认快捷键仍执行相同的注册命令。
+    await tester.tap(find.text('查看(V)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('外观(A)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('切换面板(P)'));
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsNothing);
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expect(sidebarRegion, findsOneWidget);
+  });
+
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,

@@ -16715,6 +16715,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   windowTitle: windowTitle,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
+                  layoutControlsBuilder: () => [
+                    TitleMenuItem(
+                      '侧栏',
+                      commandId: 'view.toggleSidebar',
+                      checked: !_layout.isCollapsed('sidebar'),
+                    ),
+                    TitleMenuItem(
+                      '面板',
+                      commandId: 'view.togglePanel',
+                      checked: !_layout.isCollapsed('panel'),
+                    ),
+                  ],
                   menus: [
                     (
                       '文件(&&F)',

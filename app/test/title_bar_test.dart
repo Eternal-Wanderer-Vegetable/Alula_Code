@@ -1,4 +1,4 @@
-import 'dart:ui' show SemanticsAction;
+import 'dart:ui' show CheckedState, SemanticsAction;
 
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/title_bar.dart';
@@ -61,11 +61,26 @@ void main() {
 
   testWidgets('macOS custom title bar leaves caption controls to the OS',
       (tester) async {
+    for (final (id, title) in [
+      ('view.toggleSidebar', '切换侧栏'),
+      ('view.togglePanel', '切换面板'),
+    ]) {
+      commands.register(Command(
+        id: id,
+        title: title,
+        category: '查看',
+        run: () async {},
+      ));
+    }
     await tester.pumpWidget(_titleBarApp(
       commands: commands,
       window: window,
       configuration:
           WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      layoutControlsBuilder: () => const [
+        TitleMenuItem('侧栏', commandId: 'view.toggleSidebar'),
+        TitleMenuItem('面板', commandId: 'view.togglePanel'),
+      ],
     ));
 
     expect(find.text('Alula Code'), findsOneWidget);
@@ -74,6 +89,14 @@ void main() {
     expect(find.byTooltip('关闭'), findsNothing);
     expect(find.byType(PlatformMenuBar), findsOneWidget);
     expect(find.byType(MenuBar), findsNothing);
+    expect(
+        find.byKey(const ValueKey('layout-controls-control')), findsOneWidget);
+    expect(
+      _allPlatformMenuItems(platformMenus.menus)
+          .where((item) => item.label == '布局控制' || item.label == '侧栏'),
+      isEmpty,
+      reason: 'macOS 原生菜单栏不重复绘制标题栏布局控制',
+    );
     expect(tester.getSize(find.byType(AlulaTitleBar)).height, 35);
   });
 
@@ -155,6 +178,164 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.space);
     await tester.pumpAndSettle();
     expect(paletteCalls, 3);
+  });
+
+  testWidgets('custom layout controls reflect command visibility and state',
+      (tester) async {
+    var sidebarCalls = 0;
+    var panelCalls = 0;
+    var sidebarVisible = true;
+    commands.register(Command(
+      id: 'view.toggleSidebar',
+      title: '切换侧栏',
+      category: '查看',
+      run: () async => sidebarCalls++,
+    ));
+    commands.register(Command(
+      id: 'view.togglePanel',
+      title: '切换面板',
+      category: '查看',
+      enablement: 'panelToggleEnabled',
+      run: () async => panelCalls++,
+    ));
+    commands.register(Command(
+      id: 'view.hiddenLayoutAction',
+      title: '隐藏布局动作',
+      category: '查看',
+      when: 'hiddenLayoutActionVisible',
+      run: () async {},
+    ));
+
+    List<TitleMenuItem> layoutControls() => [
+          TitleMenuItem(
+            '侧栏',
+            commandId: 'view.toggleSidebar',
+            checked: sidebarVisible,
+          ),
+          const TitleMenuItem.separator(),
+          const TitleMenuItem('面板', commandId: 'view.togglePanel'),
+          const TitleMenuItem(
+            '隐藏布局动作',
+            commandId: 'view.hiddenLayoutAction',
+          ),
+        ];
+
+    commands.context.setValue('panelToggleEnabled', false);
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      layoutControlsBuilder: layoutControls,
+    ));
+
+    final control = find.byKey(const ValueKey('layout-controls-control'));
+    expect(control, findsOneWidget);
+    expect(find.byTooltip('布局控制'), findsOneWidget);
+    final semantics = tester
+        .getSemantics(find.byKey(const ValueKey('layout-controls')))
+        .getSemanticsData();
+    expect(semantics.label, '布局控制');
+    expect(semantics.hint, '打开侧栏与面板布局菜单');
+    expect(semantics.hasAction(SemanticsAction.tap), isTrue);
+
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    final sidebarItem = tester.widget<MenuItemButton>(
+      find.byKey(const ValueKey('layout-control-view.toggleSidebar')),
+    );
+    expect(sidebarItem.enabled, isTrue);
+    expect(sidebarItem.leadingIcon, isA<Icon>());
+    final sidebarSemantics =
+        tester.getSemantics(find.byKey(sidebarItem.key!)).getSemanticsData();
+    expect(
+      sidebarSemantics.flagsCollection.isChecked,
+      CheckedState.isTrue,
+    );
+    final panelItem = tester.widget<MenuItemButton>(
+      find.byKey(const ValueKey('layout-control-view.togglePanel')),
+    );
+    expect(panelItem.enabled, isFalse);
+    expect(find.text('隐藏布局动作'), findsNothing);
+
+    await tester.tap(find.byKey(
+      const ValueKey('layout-control-view.toggleSidebar'),
+    ));
+    await tester.pumpAndSettle();
+    expect(sidebarCalls, 1);
+    expect(panelCalls, 0);
+
+    sidebarVisible = false;
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    final updatedSidebarItem = tester.widget<MenuItemButton>(
+      find.byKey(const ValueKey('layout-control-view.toggleSidebar')),
+    );
+    expect(updatedSidebarItem.leadingIcon, isA<SizedBox>());
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration: const WindowChromeConfiguration(
+        mode: WorkbenchTitleBarMode.native,
+        targetPlatform: TargetPlatform.linux,
+      ),
+      layoutControlsBuilder: layoutControls,
+    ));
+    expect(find.byKey(const ValueKey('layout-controls-control')), findsNothing);
+  });
+
+  testWidgets('layout controls open and return focus with keyboard input',
+      (tester) async {
+    var selected = '';
+    for (final (id, title) in [
+      ('view.toggleSidebar', '侧栏'),
+      ('view.togglePanel', '面板'),
+    ]) {
+      commands.register(Command(
+        id: id,
+        title: title,
+        category: '查看',
+        run: () async => selected = title,
+      ));
+    }
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      layoutControlsBuilder: () => const [
+        TitleMenuItem('侧栏', commandId: 'view.toggleSidebar'),
+        TitleMenuItem('面板', commandId: 'view.togglePanel'),
+      ],
+    ));
+    final control = tester.widget<IconButton>(
+      find.byKey(const ValueKey('layout-controls-control')),
+    );
+    final focusNode = control.focusNode!;
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(focusNode.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('layout-control-view.toggleSidebar')),
+        findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('layout-control-view.toggleSidebar')),
+        findsNothing);
+    expect(focusNode.hasFocus, isTrue);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(selected, '面板');
+    expect(focusNode.hasFocus, isTrue);
   });
 
   testWidgets('macOS native menu routes visible commands and live state',
@@ -821,6 +1002,7 @@ Widget _titleBarApp({
   required _FakeWindowChromeDriver window,
   required WindowChromeConfiguration configuration,
   List<(String, List<TitleMenuItem>)> menus = const [],
+  List<TitleMenuItem> Function()? layoutControlsBuilder,
   VoidCallback? onCloseRequested,
   bool enableMenuBarMnemonics = true,
   bool customMenuBarAltFocus = true,
@@ -833,6 +1015,7 @@ Widget _titleBarApp({
         body: AlulaTitleBar(
           commands: commands,
           menus: menus,
+          layoutControlsBuilder: layoutControlsBuilder,
           windowControls: true,
           windowTitle: windowTitle,
           windowChromeDriver: window,
