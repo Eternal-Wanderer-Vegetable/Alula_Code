@@ -902,8 +902,8 @@
       "dependencies": [
         "feat-069"
       ],
-      "status": "in-progress",
-      "evidence": "P05.18 implementation complete locally; hosted evidence pending. New secondary_sidebar_layout_test.dart 7/7 and secondary_sidebar_integration_test.dart 1/1; Activity Bar position 6/6 and layout tree ops 7/7. Full bash init.sh passed Rust workspace tests 71+54, Clippy, build_core, and Flutter 1,104/1,104. cargo fmt --all -- --check and flutter analyze --no-pub (0 issues) passed; Harness validation 100/100; feature_list JSON and git diff --check passed. Registration PR CI 42277831313 passed. Product CI and Linux/Windows/macOS x64 Platform Availability are pending. Scope, upstream behavior and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
+      "status": "done",
+      "evidence": "P05.18 / LAY-04a complete; product commit b3d2a782a5f6b78a66eb4c5f561d237d19d8e32f. Focused secondary sidebar suites 8/8; Activity Bar position 6/6; layout tree ops 7/7. Full bash init.sh passed Rust workspace tests 71+54, Clippy, build_core, and Flutter 1,104/1,104; cargo fmt --all -- --check and flutter analyze --no-pub (0 issues) passed; Harness 100/100. Product PR CI run 42281213183 passed all four jobs. Platform Availability run 42281207384 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/package jobs. Artifacts: Linux 13535158520, Windows 13536590321, macOS 13537081275; macOS ZIP SHA-256 a4efe22b255ae5713e4a6bb4249c576244ee1c5677a47ef2be785fa98b206461 matches its sidecar and unzip -tq passed. macOS hosted native DnD explicitly skipped because synthetic pointer events were not routed to Flutter; startup diagnostics preserve a foreground warning. Hosted evidence does not replace local physical-device validation. Full scope, GitNexus caveats and evidence: docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

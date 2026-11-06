@@ -9,20 +9,20 @@ Finish P05 / `feat-027` one registered feature at a time. The user asked for a n
 ## Current State
 
 - Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`).
-- P05.1–P05.17 are complete; P05.18 / feat-070 / LAY-04a implementation and local DoD are complete; product CI/platform evidence is pending. P05 and remaining LAY/CMD rows, including the 12 CMD matrix items, remain open.
-- P05.17 / feat-069 / LAY-03h shipped in product commit `247879a0b9fac1b8af8d5900e796859536358ed5`; scope registration commit `b043c9e` precedes it. Accounts/Manage actions, empty provider state, visibility persistence, and registered Manage commands are covered by 50 focused tests.
-- Local `bash init.sh` passed Rust workspace tests, Clippy, `build_core`, and Flutter 1,096/1,096; `cargo fmt --all -- --check` and Flutter analyze (0 issues) passed. PR CI `42269272957` and Platform Availability `42269263469` both passed. Linux/Windows/macOS x64 artifacts, DnD diagnostics, Windows client screenshot, macOS startup diagnostics, and ZIP digest/integrity are recorded in `docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md`.
-- Hosted validation is CI x64 build/launch/package evidence, not physical-device testing. Authentication providers/login/sync remain P13; profiles remain P07. No local GUI/Narrator test was run. macOS device validation remains pending when a device is available.
+- P05.1–P05.18 are complete; P05 and remaining LAY/CMD requirements remain open. P05.18 / feat-070 / LAY-04a product commit is `b3d2a78`.
+- P05.18 local `bash init.sh` passed Rust workspace tests 71+54, Clippy, `build_core`, and Flutter 1,104/1,104; cargo fmt, Flutter analyze (0 issues), Harness validation, and focused tests passed. Product PR CI `42281213183` passed all four jobs. Platform Availability `42281207384` passed Linux x64, Windows x64, and macOS Intel x64 jobs.
+- P05.18 packages: Linux `13535158520`, Windows `13536590321`, macOS `13537081275`. The macOS ZIP SHA-256 is `a4efe22b255ae5713e4a6bb4249c576244ee1c5677a47ef2be785fa98b206461`; its sidecar matched and `unzip -tq` passed. macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events; startup diagnostics contain `Failed to foreground app; open returned 1` while process and native Quit smoke jobs passed. Keep both limitations explicit. Hosted x64 does not replace physical-device GUI/accessibility testing.
+- P05.18 implementation and hosted evidence are synchronized in `docs/03`, `feature_list.json`, `progress.md`, and `docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md`. The evidence-doc commit is the immediate next step; PR #3 remains open/draft.
 - The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 
 ## GitNexus Notes
 
-The implementation index reports 11,631 nodes / 35,678 edges / 345 clusters / 426 flows. It skips five >512 KiB files including `workbench_page.dart`, 801 cross-language property sites, 939/1,139 candidate entry points, and 328 callees at branching limits. `WbSplit` remains CRITICAL/lower-bound; `ActivityBar` is UNKNOWN because the production caller is in the skipped large file. All/staged P05.17 detection is 7 files / 7 symbols / 418 affected processes / CRITICAL, with property-name mapping noise; compare-to-main includes cumulative PR changes. Treat UNKNOWN/CRITICAL and incomplete graph coverage as unresolved, not as clean.
+At product head `b3d2a78`, the index reported 11,614 nodes / 37,214 edges / 343 clusters / 426 flows. It skips five >512 KiB files including `workbench_page.dart`, 810 cross-language property sites, 941/1,141 candidate entry points, and 318 callees at branching limits. `WbSplit` remains CRITICAL/lower-bound; `WorkbenchLayout` remains UNKNOWN. The evidence-doc scans also remain CRITICAL because property/name mapping noise associates unrelated flows; no clean impact is claimed. Treat UNKNOWN/CRITICAL and incomplete graph coverage as unresolved.
 
 ## Next Step
 
-1. Run final GitNexus `detect-changes` on all scope and compare-to-main; keep the `WbSplit` CRITICAL/lower-bound, `WorkbenchLayout` UNKNOWN, and skipped-WorkbenchPage caveats.
-2. Commit/push the P05.18 product implementation, wait for product-head PR CI and Linux/Windows/macOS x64 availability evidence, then record the hosted results in the scope report, `docs/03`, `feature_list.json`, `progress.md`, and handoff.
-3. Keep PR #3 draft/open; do not merge or close LAY-04/P05. Continue with the next registered P05 slice only after evidence is recorded.
+1. Ensure the P05.18 evidence-doc commit is pushed to PR #3 and docs-head CI is green; if the commit has not been pushed, commit/push it and then verify the new checks.
+2. After docs-head CI passes, consult `docs/03` and `docs/11` to choose the next open P05 LAY/CMD requirement; register its narrow scope and evidence plan before editing, then continue one feature at a time.
+3. Keep PR #3 draft/open; do not merge or close LAY-04/P05 until the remaining P05 rows pass.
 
 No manual operation is currently required from the user.
