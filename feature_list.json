@@ -918,6 +918,18 @@
       "evidence": "Implementation commits d44e36414afdfda876778af8f5cc767a651ddeba and regression commit 077d234398d8178601854a0f4e76a1d7e15b4bf5. Focused sidebar-position/integration suites 6/6; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,109/1,109; cargo fmt --check, Flutter analyze (0 issues), and diff check passed. PR CI 42296299632 passed all four jobs. Platform Availability 42296292652 attempt 2 passed Linux x64, Windows x64, and macOS Intel x64; attempt 1 macOS package artifact finalization hit a transient GitHub ETIMEDOUT and was rerun. Latest package artifacts Linux 13542566431, Windows 13542681784, macOS 13545142985. macOS ZIP SHA-256 7232ef2bb37c42a1cdc08443b4d987cd66fad69811aaccc43d60d06a32393cb1 matches sidecar; unzip -tq passed. Linux/Windows DnD passed; macOS DnD artifact 13546375113 explicitly skips because CGEventPostToPid pointer route is false. System Events native Quit/startup evidence is artifact 13545676609. Hosted Intel x64 does not replace Apple Silicon or physical-device validation. Full scope, graph caveats, and hosted/local evidence: docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md and docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-implementation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-072",
+      "name": "P05.20 LAY-04c 主/次侧栏内置视图命令移动",
+      "description": "固定 Code-OSS 1.145.0：注册 workbench.action.moveView 与 workbench.action.moveFocusedView，在 Primary/Secondary Side Bar 间移动当前内置视图 explorer/search/outline/git。Quick Input 选择视图与目的地，支持 focused view、取消不变更；持久化 assignment 与每侧 selection，旧布局默认全在 Primary，保留其他 Activity Bar、Panel 与编辑器树状态。Panel movement/grouping、DnD、Reset View Locations 与 extension views 另行拆分。范围/预编辑 GitNexus 见 docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md。",
+      "dependencies": [
+        "feat-071"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered; product implementation not started. Fixed upstream Code-OSS 1.145.0 commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e. Pre-edit GitNexus at b1e5c88: WbSplit CRITICAL/lower-bound (379 impacted, 145 process hits, 20 modules); WorkbenchLayout.splitRegion/removeRegion CRITICAL (230 impacted, 134 process hits, 20 modules); _selectSidebarView LOW/exact (2 nodes, 1 process); CommandService LOW/exact (1 node, no resolved process; verify dynamic dispatch textually). Index has cross-language and flow truncation limits; one query worker was interrupted. Details: docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
