@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-06 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.14 / feat-053–066 已完成；P05 与 LAY/CMD 矩阵仍开放
+### P05 / feat-027 进行中；P05.1–P05.14 / feat-053–066 已完成；P05.15 / feat-067 正在实现；LAY/CMD 矩阵仍开放
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
 - 2026-11-06：P05.10 / feat-062 / LAY-03a 完成：产品提交 `570bec2` 与边界修正 `df530b2`；Activity Bar 独立测试 3/3、完整 `init.sh` Flutter 1,055/1,055、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI `42166343434` 四 job 全绿；Platform Availability `42166338201` Linux/Windows/macOS Intel x64 全绿。Linux/Windows DnD 通过，macOS hosted pointer route 明确 skip。三个包 artifacts `13480050460` / `13478814930` / `13480535582`，macOS ZIP SHA-256 `c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354` 匹配 sidecar 且 unzip 完整；macOS System Events native Quit 通过。完整实现、图谱风险和 hosted evidence 在 `docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md`。P05/LAY-03 继续进行。
@@ -1990,3 +1990,5 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 注册固定 Code-OSS `editor.action.transformToPascalcase`（无默认快捷键），接入已有版本校验的 Rust UTF-16 selection/caret 规划、多光标事务、selection 映射、undo/redo、dirty、Find、双视图与保存路径。Rust 保留点号并在点后分段，仅拆 `_`、ASCII 空格、tab、连字符；处理全大写词尾、Unicode 和 supplementary UTF-16 starter。NUL-safe JSON FFI ABI v31，输入/输出限 8/16 MiB。
 - 三平台 TargetPlatform fixture 验证 `linux-save-ok→LinuxSaveOk`、caret `HTTP→Http`、`foo.bar-baz→Foo.BarBaz`、分屏同步、BOM+CRLF 保存回读、undo/redo；Rust buffer/FFI 和 Dart bridge 覆盖 Unicode、emoji、CRLF、Unicode 行分隔符与 NUL。完整 `bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 514），cargo fmt 和 Flutter analyze 通过。报告：`docs/diagnostics/2026-11-01-p04/p04.45-pascal-case.md`。
 - GitNexus 编辑前 `WorkbenchPage`/`TextBuffer` 保持 CRITICAL，`AlulaCore` HIGH；全局图索引截断未降级。staged/all/compare-main 最终扫描结果登记在报告。P15 原生平台验收继续 pending。
+
+- 2026-11-06：P05.15 / feat-067 / LAY-03f 已登记：Activity Bar 四个既有 view actions 的 Keep/Hide pin 切换、item/bar context menu 同步和 layout JSON 持久化；不含 badge、Accounts/Manage、Move To 或 Profile 隔离。Code-OSS 固定源、DoD、UNKNOWN/MEDIUM lower-bound 影响与图谱限制见 docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md。尚未修改产品代码。登记阶段 GitNexus 全量扫描 4 files / 4 symbols / 0 processes、LOW；compare-to-main 为 83 files / 160 symbols / 18 processes、CRITICAL（P05 累积变更）。
