@@ -3,11 +3,12 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-06 更新）
+## Current State（当前状态，2026-11-07 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.15 / feat-053–067 已完成；LAY/CMD 矩阵仍开放
+### P05 / feat-027 进行中；P05.1–P05.15 / feat-053–067 已完成，P05.16 / feat-068 进行中；LAY/CMD 矩阵仍开放
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
+- 2026-11-07：P05.15 证据提交 `813c2f8` 已推送，PR CI `42253151367` 四项全绿。P05.16 / feat-068 / LAY-03g 已登记：为现有视图项实现 number/icon/progress badge、逐视图 Show/Hide Badge 和根布局 JSON 持久化，不伪造缺失的 provider 数据；Accounts/Manage 全局动作栏另立下一子项。登记 docs-only GitNexus 重复扫描的 all-scope 在 5 files / 无重叠符号与 5 files / 1 symbol / 410 processes CRITICAL 间波动；compare-to-main 在累计 92 files / 39–42 symbols / 410–417 processes CRITICAL 间波动。图谱噪声说明见 `docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md`。
 - 2026-11-06：P05.10 / feat-062 / LAY-03a 完成：产品提交 `570bec2` 与边界修正 `df530b2`；Activity Bar 独立测试 3/3、完整 `init.sh` Flutter 1,055/1,055、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI `42166343434` 四 job 全绿；Platform Availability `42166338201` Linux/Windows/macOS Intel x64 全绿。Linux/Windows DnD 通过，macOS hosted pointer route 明确 skip。三个包 artifacts `13480050460` / `13478814930` / `13480535582`，macOS ZIP SHA-256 `c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354` 匹配 sidecar 且 unzip 完整；macOS System Events native Quit 通过。完整实现、图谱风险和 hosted evidence 在 `docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md`。P05/LAY-03 继续进行。
 - 2026-11-06：P05.10 evidence docs commit `956170e` 已推送，docs-head PR CI `42169323073` 全绿。新范围 P05.11 / feat-063 / LAY-03b 已登记：Activity Bar Side/Hidden 命令、View > Appearance 状态菜单与现有布局 JSON 持久化；只实现隐藏/恢复，不扩展 top/bottom、size、reorder、badge 或上下文菜单。范围和 GitNexus 预检记录在 `docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md`。
 - 2026-11-06：P05.11 / feat-063 完成。产品提交 `2e8813c`，本地完整 DoD、PR CI `42173966605` 通过；证据提交 `e61127b` 已推送，docs-head PR CI `42180805639` 通过。Platform Availability `42173957807` attempt 2 的 Linux x64、Windows x64、macOS Intel x64 均通过；attempt 1 macOS 启动清理与 native Quit 超时保留记录，不推断根因。平台包 artifacts `13481689556` / `13482881497` / `13484129888`；macOS ZIP SHA-256 `b5805f43e485214265a45541223872f0d84de7fd6547fd20f1f837ab1d5028bf` 匹配 sidecar 且 unzip 检查通过。startup/System Events Quit artifact `13484214739`；Linux/Windows DnD 通过，macOS hosted pointer route unavailable 明确 skip。完整本地与图谱风险证据见 `docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md`。

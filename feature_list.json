@@ -870,6 +870,18 @@
       "evidence": "P05.15 / feat-067 is complete. Product commit 7def397; macOS LaunchServices fix dcf69e0; valid macOS bundle identifier and absolute Quit path 105dd0d. Local full DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,083/1,083, cargo fmt, Flutter analyze 0, and Harness 100/100. PR CI 42247690393 passed. Platform Availability 42247679502 passed Linux x64, Windows x64, and macOS Intel x64. Linux/Windows native move/copy/external-text DnD passed (13518828194 / 13517959875); macOS DnD was explicitly skipped because the hosted pointer route was unavailable (13520746528), not counted as a pass. Native macOS Quit/startup passed (13519877671). Platform package artifacts: Linux 13518847799, Windows 13517929845, macOS 13520786704. macOS ZIP SHA-256 a4440c1599025e07537cc98c004ab3e11a0574a11e231b002da71e3b27977301 matched its sidecar and ZIP integrity passed. Scope and limitations: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. P05 remains open; LAY-03 badge/Accounts/Manage remain.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-068",
+      "name": "P05.16 LAY-03g Activity Bar 徽章显示、逐视图显隐与持久化",
+      "description": "按固定 Code-OSS 1.145.0，为四个现有 Activity Bar 视图项实现 number/icon/progress badge 呈现、可访问说明、逐项 Show/Hide Badge 右键动作，并将禁用状态保存到根 layout JSON。没有真实 provider 时不显示假数据；Accounts/Manage 全局动作栏、认证和 Profile 隔离留独立子项。范围和编辑前 GitNexus 结果见 docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md。",
+      "dependencies": [
+        "feat-067"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered 2026-11-07. Fixed Code-OSS 1.145.0 source comparison and exact acceptance are recorded in docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md. GitNexus ActivityBar impact is UNKNOWN because production workbench_page.dart is skipped (>512 KiB); text search confirms the production call. _viewItem impact is CRITICAL with misattributed cross-module edges/callable-value boundary; this remains unresolved and is not waived.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
