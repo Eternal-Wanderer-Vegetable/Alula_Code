@@ -782,8 +782,20 @@
       "dependencies": [
         "feat-059"
       ],
-      "status": "in-progress",
-      "evidence": "产品实现提交 `bdfc0a9` 已推送到 draft PR #3。实现与完整本地 DoD 通过。`title_bar_test.dart` 16/16 覆盖语义按钮、tooltip、命令启用状态、点击、Tab、Enter、Space，native chrome 不创建入口且空白区拖动/双击最大化通过；`widget_test.dart` P05.8 集成 1/1 点击标题入口打开现有 QuickInput、筛选并执行拆分命令、面板关闭、双视图出现且焦点回到工作台 Scaffold。`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,049/1,049）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。编辑前 `AlulaTitleBar`/`_AlulaTitleBarState`/`QuickInput` upstream impact exact UNKNOWN，`_showCommandPalette` not found；文本字面已核对生产装配与调用点。GitNexus 1.6.12: index 10,462 nodes/333 clusters/424 flows；产品 all-scope 为 7–8 files/12–20 symbols/0 processes LOW；文档 all-scope 最新为 4 files/4 symbols/0 processes LOW，曾有一轮 no-symbol-overlap/not-clean。compare-to-main 为 27 files/158–234 symbols/16 processes CRITICAL，最近 27/165/16，含不相关 Build/Run flow 映射。底层图谱跳过 5 个大文件（包括 workbench_page.dart）、788 个跨语言属性点无法关联，process candidates 920/1,120 未入选，325 callees /14 walks 被限流，1 trace 深度截断；UNKNOWN 未解除。标题控件占 240px，拖动和双击最大化只能在右侧自由区域，已记为行为差异。PR CI `42146276524` 四个 job 全部通过；Platform Availability run `42146270634` 仍在运行。完整范围：`docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md`。",
+      "status": "done",
+      "evidence": "P05.8 产品实现 `bdfc0a9` 已推送到 draft PR #3。实现与完整本地 DoD 通过。`title_bar_test.dart` 16/16 覆盖语义按钮、tooltip、命令启用状态、点击、Tab、Enter、Space，native chrome 不创建入口且空白区拖动/双击最大化通过；`widget_test.dart` P05.8 集成 1/1 点击标题入口打开现有 QuickInput、筛选并执行拆分命令、面板关闭、双视图出现且焦点回到工作台 Scaffold。`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,049/1,049）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。编辑前 `AlulaTitleBar`/`_AlulaTitleBarState`/`QuickInput` upstream impact exact UNKNOWN，`_showCommandPalette` not found；文本字面已核对生产装配与调用点。GitNexus 1.6.12: index 10,462 nodes/333 clusters/424 flows；产品 all-scope 为 7–8 files/12–20 symbols/0 processes LOW；文档 all-scope 最新为 4 files/4 symbols/0 processes LOW，曾有一轮 no-symbol-overlap/not-clean。compare-to-main 为 27 files/158–234 symbols/16 processes CRITICAL，最近 27/165/16，含不相关 Build/Run flow 映射。底层图谱跳过 5 个大文件（包括 workbench_page.dart）、788 个跨语言属性点无法关联，process candidates 920/1,120 未入选，325 callees /14 walks 被限流，1 trace 深度截断；UNKNOWN 未解除。标题控件占 240px，拖动和双击最大化只能在右侧自由区域，已记为行为差异。PR CI `42146276524` 与 Platform Availability `42146270634` 的 Linux x64、Windows x64、macOS Intel x64 job 全部通过；文档 CI `42147697880` 四个 job 通过。平台 package artifacts `13470536916` / `13470871404` / `13471148329`，macOS ZIP SHA-256 `4867c01d38aa99fd8a96e60164bea523e79206aecb4fbeca6b62f98ce6e0bf19` 与 sidecar 一致且 unzip 通过。Linux/Windows DnD `13470377116` / `13470362721` 通过；macOS DnD `13470849355` 因 hosted pointer route unavailable 明确 skip。System Events Quit/startup diagnostics artifact `13471826760` 成功。Apple Silicon 与本机原生设备验收仍留 P15。完整范围：`docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md`。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-061",
+      "name": "P05.9 LAY-02c 标题栏布局控制入口",
+      "description": "按固定 Code-OSS 1.145.0 对照，提供标题栏 Layout Controls / Toggle Layout 菜单中当前已实现的布局命令；逐项核实状态、可见性、键盘路径与焦点恢复，不添加无实现的占位项。范围和编辑前 GitNexus impact 尚待登记。",
+      "dependencies": [
+        "feat-060"
+      ],
+      "status": "not-started",
+      "evidence": "待开始。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
