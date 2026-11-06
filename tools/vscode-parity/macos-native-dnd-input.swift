@@ -219,7 +219,13 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
       NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
     ])
   }
-  guard let app = NSRunningApplication(processIdentifier: processIdentifier) else {
+  let appDiscoveryDeadline = Date().addingTimeInterval(5)
+  var app = NSRunningApplication(processIdentifier: processIdentifier)
+  while app == nil && Date() < appDiscoveryDeadline {
+    Thread.sleep(forTimeInterval: 0.1)
+    app = NSRunningApplication(processIdentifier: processIdentifier)
+  }
+  guard let app else {
     throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
       NSLocalizedDescriptionKey: "Could not find the native-titlebar Alula process"
     ])
