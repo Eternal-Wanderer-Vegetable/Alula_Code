@@ -818,8 +818,8 @@
       "dependencies": [
         "feat-062"
       ],
-      "status": "in-progress",
-      "evidence": "已登记单项 DoD；待实现与验证。",
+      "status": "done",
+      "evidence": "P05.11 / LAY-03b completed. Product commit 2e8813c adds the fixed Code-OSS 1.145.0 Activity Bar hide/default commands, View > Appearance > Activity Bar Position Side/Hidden checked submenu, fixed-region zero-width collapse/restore and existing layout JSON persistence. Focused Flutter tests 30/30; complete FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,058/1,058; cargo fmt, app Flutter analyze (0 issues), Harness 100/100, JSON/diff checks passed. PR CI 42173966605 passed. Platform Availability 42173957807 attempt 2 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package; attempt 1 macOS launch and native-titlebar cleanup timed out, retained in scope report without inferring root cause. Package artifacts Linux/Windows/macOS 13481689556 / 13482881497 / 13484129888. macOS ZIP SHA-256 b5805f43e485214265a45541223872f0d84de7fd6547fd20f1f837ab1d5028bf matched its sidecar and unzip -t passed. Startup/System Events Quit diagnostics 13484214739; Linux/Windows DnD artifacts 13483115428 / 13483150903 passed; macOS DnD artifact 13484862587 explicitly skipped because the hosted synthetic pointer route was unavailable. GitNexus scan limits, UNKNOWN and cumulative compare-to-main CRITICAL mappings remain recorded; no graph scan is called clean. Full scope/evidence: docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md. P05 and LAY-03 remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
