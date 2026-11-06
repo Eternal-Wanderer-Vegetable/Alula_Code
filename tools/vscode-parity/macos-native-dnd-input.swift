@@ -236,8 +236,21 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
   tell application "System Events"
     set targetProcess to first application process whose unix id is \(processIdentifier)
     set frontmost of targetProcess to true
-    set menuBarItems to menu bar items of menu bar 1 of targetProcess
-    if (count of menuBarItems) is 0 then error "The app has no accessible native menu bar items"
+    set menuBarItems to {}
+    set menuBarError to ""
+    repeat 40 times
+      try
+        set menuBarItems to menu bar items of menu bar 1 of targetProcess
+      on error errorMessage
+        set menuBarItems to {}
+        set menuBarError to errorMessage
+      end try
+      if (count of menuBarItems) > 0 then exit repeat
+      delay 0.25
+    end repeat
+    if (count of menuBarItems) is 0 then
+      error "Timed out waiting for native menu bar items. Last accessibility error: " & menuBarError
+    end if
     set menuBarTitles to name of every menu bar item of menu bar 1 of targetProcess
     set appMenuTitle to missing value
     set quitMenuName to missing value
@@ -278,7 +291,7 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
       NSLocalizedDescriptionKey: "Could not start native menu automation: \(error)"
     ])
   }
-  let deadline = Date().addingTimeInterval(8)
+  let deadline = Date().addingTimeInterval(20)
   while process.isRunning && Date() < deadline {
     Thread.sleep(forTimeInterval: 0.05)
   }
@@ -286,7 +299,7 @@ func quitThroughNativeMenu(processIdentifier: Int32) throws {
     process.terminate()
     process.waitUntilExit()
     throw NSError(domain: "AlulaMacDnd", code: 23, userInfo: [
-      NSLocalizedDescriptionKey: "Native menu automation timed out after 8 seconds"
+      NSLocalizedDescriptionKey: "Native menu automation timed out after 20 seconds"
     ])
   }
   process.waitUntilExit()
