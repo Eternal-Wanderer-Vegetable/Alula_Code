@@ -34,6 +34,27 @@ class WorkbenchLayout extends ChangeNotifier {
     return leaf.collapsed;
   }
 
+  /// 设置区域折叠目标态；fixed leaf 可折叠为零尺寸且恢复原固定尺寸。
+  bool setRegionCollapsed(String region, bool collapsed) {
+    final leaf = leafOf(region);
+    if (leaf == null) return false;
+    if (leaf.collapsed == collapsed) return leaf.collapsed;
+
+    if (leaf.isFixed) {
+      // fixed extent 不参与权重恢复；lastWeight 仅保留 collapsed leaf 的
+      // 序列化不变量，恢复时不改固定宽度。
+      leaf.lastWeight = collapsed ? leaf.weight : null;
+    } else if (collapsed) {
+      leaf.lastWeight = leaf.weight;
+    } else {
+      leaf.weight = leaf.lastWeight ?? leaf.weight;
+      leaf.lastWeight = null;
+    }
+    leaf.collapsed = collapsed;
+    notifyListeners();
+    return leaf.collapsed;
+  }
+
   /// 展开区域（已展开则不动）。打开文件夹时唤起侧栏用。
   void showRegion(String region) {
     final leaf = leafOf(region);

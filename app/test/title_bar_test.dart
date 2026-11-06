@@ -984,6 +984,110 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(MenuItemButton), findsNothing);
   });
+
+  testWidgets('checked nested menu state refreshes and reaches macOS labels',
+      (tester) async {
+    var hidden = false;
+    commands.register(Command(
+      id: 'test.activityBarSide',
+      title: 'Move Activity Bar to Side',
+      category: 'View',
+      run: () async {
+        hidden = false;
+      },
+    ));
+    commands.register(Command(
+      id: 'test.activityBarHidden',
+      title: 'Hide Activity Bar',
+      category: 'View',
+      run: () async {
+        hidden = true;
+      },
+    ));
+
+    final menus = [
+      (
+        'View',
+        [
+          TitleMenuItem.submenu('Appearance', children: [
+            TitleMenuItem.submenu('Activity Bar Position', children: [
+              TitleMenuItem('Side',
+                  commandId: 'test.activityBarSide',
+                  checkedBuilder: () => !hidden),
+              TitleMenuItem('Hidden',
+                  commandId: 'test.activityBarHidden',
+                  checkedBuilder: () => hidden),
+            ]),
+          ]),
+        ],
+      ),
+    ];
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
+      menus: menus,
+    ));
+    await tester.pump();
+
+    Future<void> openActivityPositionMenu() async {
+      await tester.tap(find.text('View'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Appearance'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Activity Bar Position'));
+      await tester.pumpAndSettle();
+    }
+
+    Finder itemButton(String label) => find
+        .ancestor(
+          of: find.text(label),
+          matching: find.byType(MenuItemButton),
+        )
+        .first;
+
+    await openActivityPositionMenu();
+    expect(
+      tester.widget<MenuItemButton>(itemButton('Side')).leadingIcon,
+      isA<Icon>(),
+    );
+    expect(
+      tester
+          .getSemantics(find.text('Side'))
+          .getSemanticsData()
+          .flagsCollection
+          .isChecked,
+      CheckedState.isTrue,
+    );
+    await tester.tap(find.text('Hidden'));
+    await tester.pumpAndSettle();
+    expect(hidden, isTrue);
+
+    await openActivityPositionMenu();
+    expect(
+      tester.widget<MenuItemButton>(itemButton('Side')).leadingIcon,
+      isA<SizedBox>(),
+    );
+    expect(
+      tester.widget<MenuItemButton>(itemButton('Hidden')).leadingIcon,
+      isA<Icon>(),
+    );
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      menus: menus,
+    ));
+    await tester.pump();
+    final nativeLabels = _allPlatformMenuItems(platformMenus.menus)
+        .map((item) => item.label)
+        .toList();
+    expect(nativeLabels, contains('✓ Hidden'));
+    expect(nativeLabels, contains('Side'));
+  });
 }
 
 Future<void> _doubleTap(WidgetTester tester, Finder finder) async {

@@ -2,6 +2,7 @@
 // 纯 Dart IO（注入临时路径），无 FFI/无 widget。对应 docs/09 W1-4。
 import 'dart:io';
 
+import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,12 +25,14 @@ void main() {
   });
 
   test('save → tryLoad 往返：权重/折叠/嵌套结构一致', () {
-    final root = defaultLayout();
+    final layout = WorkbenchLayout(root: defaultLayout());
+    final root = layout.root;
     final sidebar = root.leafOf('sidebar')!;
     sidebar.weight = 0.31;
     final panel = root.leafOf('panel')!;
     panel.lastWeight = panel.weight;
     panel.collapsed = true;
+    layout.setRegionCollapsed('activity', true);
 
     store.save(root);
     final loaded = store.tryLoad();
@@ -40,7 +43,11 @@ void main() {
     expect(loadedPanel.collapsed, isTrue);
     expect(loadedPanel.lastWeight, closeTo(0.3, 1e-9));
     // 嵌套 split 结构与固定叶子
-    expect(loaded.leafOf('activity')!.fixedExtent, 44);
+    final loadedActivity = loaded.leafOf('activity')!;
+    expect(loadedActivity.fixedExtent, 44);
+    expect(loadedActivity.collapsed, isTrue);
+    expect(loadedActivity.lastWeight, 1);
+    layout.dispose();
   });
 
   test('损坏文件 → tryLoad 返回 null 不抛异常', () {

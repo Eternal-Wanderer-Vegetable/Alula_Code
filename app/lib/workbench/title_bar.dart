@@ -25,7 +25,10 @@ typedef _IndexedTitleMenuItem = ({int sourceIndex, TitleMenuItem item});
 /// 标题栏命令、子菜单或分隔线。
 class TitleMenuItem {
   const TitleMenuItem(this.label,
-      {required this.commandId, this.arguments, this.checked})
+      {required this.commandId,
+      this.arguments,
+      this.checked,
+      this.checkedBuilder})
       : assert(commandId != null),
         children = const [],
         kind = TitleMenuItemKind.command;
@@ -34,6 +37,7 @@ class TitleMenuItem {
       : commandId = null,
         arguments = null,
         checked = null,
+        checkedBuilder = null,
         kind = TitleMenuItemKind.submenu;
 
   const TitleMenuItem.separator()
@@ -41,6 +45,7 @@ class TitleMenuItem {
         commandId = null,
         arguments = null,
         checked = null,
+        checkedBuilder = null,
         children = const [],
         kind = TitleMenuItemKind.separator;
 
@@ -48,8 +53,15 @@ class TitleMenuItem {
   final String? commandId;
   final Object? arguments;
 
-  /// Optional checked state for toggle entries in the title-bar layout menu.
+  /// Optional fixed checked state for a toggle entry.
   final bool? checked;
+
+  /// Optional live state used when the workbench changes while this menu item
+  /// remains mounted.
+  final bool? Function()? checkedBuilder;
+
+  bool? get currentChecked => checkedBuilder?.call() ?? checked;
+
   final List<TitleMenuItem> children;
   final TitleMenuItemKind kind;
 
@@ -626,14 +638,14 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                   key: ValueKey('layout-control-${entry.item.commandId}'),
                   focusNode: _layoutControlFocusNodes[entry.item.commandId],
                   style: _layoutControlsMenuItemStyle,
-                  leadingIcon: entry.item.checked == true
+                  leadingIcon: entry.item.currentChecked == true
                       ? const Icon(Icons.check, size: 16)
                       : const SizedBox(width: 16),
                   onPressed: widget.commands.isEnabled(entry.item.commandId!)
                       ? () => unawaited(_executeLayoutControl(entry.item))
                       : null,
                   child: Semantics(
-                    checked: entry.item.checked,
+                    checked: entry.item.currentChecked,
                     child: Text(_plainTitleMenuLabel(entry.item.label)),
                   ),
                 ),
@@ -795,7 +807,11 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       final command = widget.commands.byId(commandId);
       group.add(
         PlatformMenuItem(
-          label: _macPlatformMenuLabel(item.label, command?.shortcut),
+          label: _macPlatformMenuLabel(
+            item.label,
+            command?.shortcut,
+            checked: item.currentChecked == true,
+          ),
           shortcut: _macPlatformMenuShortcut(command?.shortcut),
           onSelected: widget.commands.isEnabled(commandId)
               ? () => unawaited(
@@ -1023,7 +1039,13 @@ class _MenuButton extends StatelessWidget {
               onPressed: commands.isEnabled(entry.item.commandId!)
                   ? () => unawaited(_execute(entry.item))
                   : null,
-              child: _titleMenuLabel(context, entry.item.label),
+              leadingIcon: entry.item.currentChecked == true
+                  ? const Icon(Icons.check, size: 16)
+                  : const SizedBox(width: 16),
+              child: Semantics(
+                checked: entry.item.currentChecked,
+                child: _titleMenuLabel(context, entry.item.label),
+              ),
             ),
       ];
 
@@ -1157,7 +1179,8 @@ String _plainTitleMenuLabel(String label) =>
       ),
     );
 
-String _macPlatformMenuLabel(String label, String? shortcut) {
+String _macPlatformMenuLabel(String label, String? shortcut,
+    {bool checked = false}) {
   var plain = label;
   if (shortcut != null) {
     plain = plain.replaceFirst(
@@ -1165,7 +1188,10 @@ String _macPlatformMenuLabel(String label, String? shortcut) {
       '',
     );
   }
-  return _plainTitleMenuLabel(plain.trimRight());
+  final menuLabel = _plainTitleMenuLabel(plain.trimRight());
+  // Flutter's PlatformMenuItem has no checked property; expose the state in
+  // the native label until the framework provides a checkmark API.
+  return checked ? '✓ $menuLabel' : menuLabel;
 }
 
 MenuSerializableShortcut? _macPlatformMenuShortcut(String? shortcut) {

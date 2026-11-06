@@ -2,6 +2,7 @@
 // 不依赖 FFI（builders 注入占位内容），对应 docs/09 W1-2。
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
+import 'package:alula_app/workbench/layout_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -115,5 +116,30 @@ void main() {
     await tester.pump();
     expect(_width(tester, 'sidebar'), closeTo(752 * 0.24, 1.5),
         reason: '恢复时应还原折叠前权重');
+  });
+
+  testWidgets('固定活动栏可隐藏为零宽并恢复原固定尺寸', (tester) async {
+    final layout = WorkbenchLayout();
+    var changes = 0;
+    layout.addListener(() => changes++);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(_width(tester, 'activity'), 44);
+    expect(layout.setRegionCollapsed('activity', true), isTrue);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('probe-activity')), findsNothing);
+    expect((layout.root.children.first as WbSplit).extentsFor(800).first, 0);
+    expect(changes, 1);
+
+    // 目标态命令可重放，不应产生额外布局通知。
+    expect(layout.setRegionCollapsed('activity', true), isTrue);
+    expect(changes, 1);
+
+    expect(layout.setRegionCollapsed('activity', false), isFalse);
+    await tester.pump();
+    expect(_width(tester, 'activity'), 44);
+    expect(layout.root.leafOf('activity')!.lastWeight, isNull);
+    expect(changes, 2);
   });
 }

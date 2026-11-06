@@ -689,6 +689,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.action.activityBarLocation.default',
+      '查看',
+      '将活动栏移到侧边',
+      () async {
+        _layout.setRegionCollapsed('activity', false);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.hide',
+      '查看',
+      '隐藏活动栏',
+      () async {
+        _layout.setRegionCollapsed('activity', true);
+      },
+    );
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
@@ -16773,11 +16789,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             commandId: 'view.search'),
                         const TitleMenuItem('大纲(&&L)',
                             commandId: 'view.outline'),
-                        const TitleMenuItem.submenu('外观(&&A)', children: [
-                          TitleMenuItem('切换侧栏(&&S)',
+                        TitleMenuItem.submenu('外观(&&A)', children: [
+                          TitleMenuItem.submenu('活动栏位置(&&A)', children: [
+                            TitleMenuItem('侧边(&&D)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.default',
+                                checkedBuilder: () =>
+                                    !_layout.isCollapsed('activity')),
+                            TitleMenuItem('隐藏(&&H)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.hide',
+                                checkedBuilder: () =>
+                                    _layout.isCollapsed('activity')),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换侧栏(&&S)',
                               commandId: 'view.toggleSidebar'),
-                          TitleMenuItem.separator(),
-                          TitleMenuItem('切换面板(&&P)',
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换面板(&&P)',
                               commandId: 'view.togglePanel'),
                         ]),
                       ],
