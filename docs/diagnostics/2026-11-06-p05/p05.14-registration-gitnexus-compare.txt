@@ -1,0 +1,36 @@
+
+  GitNexus Detect Changes (1.6.12)
+Changes: 78 files, 221 symbols
+Affected processes: 18
+Risk level: critical
+
+Changed symbols:
+  Class AlulaApp → app/lib/main.dart
+  Property windowChromeConfiguration → app/lib/main.dart
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Property axis → app/lib/workbench/activity_bar.dart
+  Property size → app/lib/workbench/activity_bar.dart
+  Property onSizeChanged → app/lib/workbench/activity_bar.dart
+  Method createState → app/lib/workbench/activity_bar.dart
+  Class _ActivityBarState → app/lib/workbench/activity_bar.dart
+  Property _viewIds → app/lib/workbench/activity_bar.dart
+  Property _viewLabels → app/lib/workbench/activity_bar.dart
+  Property _menuStyle → app/lib/workbench/activity_bar.dart
+  Property _menuItemStyle → app/lib/workbench/activity_bar.dart
+  Property _menuController → app/lib/workbench/activity_bar.dart
+  Property _viewFocusNodes → app/lib/workbench/activity_bar.dart
+  Method dispose → app/lib/workbench/activity_bar.dart
+... and 206 more
+
+Affected execution flows:
+  • Build → _match (10 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _visibleTitleMenuItems
+  • Build → _parseUnary (10 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _visibleTitleMenuItems
+  • Build → _truthy (10 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _visibleTitleMenuItems
+  • Build → _tokenize (8 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _visibleTitleMenuItems
+  • Build → _codeOssMenuLabelToFlutter (6 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _macPlatformMenuLabel, _plainTitleMenuLabel, _codeOssMenuLabelToFlutter
+  • Build → ById (6 steps) — changed: _buildMacPlatformMenuItems, _buildMacPlatformMenus, _visibleTitleMenuItems
+  • Run → Attribute (5 steps) — changed: run
+  • InitState → Hunk (5 steps) — changed: windowChromeConfiguration
+  • Build → _restoreWorkbenchFocus (5 steps) — changed: _executeMacCommand, _buildMacApplicationMenu, _buildMacPlatformMenus, _restoreWorkbenchFocus
+  • Build → _handleViewKey (3 steps) — changed: _handleViewKey, _viewItem
+... and 8 more

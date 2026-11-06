@@ -846,6 +846,18 @@
       "evidence": "P05.13 完成。产品提交 3841f7e；本地 bash init.sh：Rust 71+54、Clippy、build_core、Flutter 1,070；cargo fmt --check、Flutter analyze 0 issues、P05.12/P05.13 聚焦回归 43/43、ActivityBar widget 6/6 与 size integration 1/1 通过。PR CI 42204378410 四 job 全绿；Platform Availability 42204370958 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Linux/Windows DnD artifacts 13496321529 / 13495993506 通过；macOS DnD artifact 13497601428 明确 skip（hosted synthetic pointer route unavailable）；System Events native Quit/startup artifact 13498175441 通过。平台包 artifacts Linux/Windows/macOS 13496391434 / 13496108307 / 13496948638；macOS ZIP SHA-256 288d5282a87834918cb5a2565796834baea132227224c8d2be1d39434bdc99ff 与 sidecar 匹配，unzip -t 通过。默认/紧凑尺寸、checked 菜单、Side-only 入口、旧 JSON 迁移、持久化、Sidebar view/collapse、Editor split、Panel/Editor 权重和 Top/Bottom 44 px 均验证。完整记录及 GitNexus UNKNOWN/MEDIUM lower-bound 限制见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md 与 docs/diagnostics/2026-11-06-p05/p05.13-local-validation.txt。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-066",
+      "name": "P05.14 LAY-03e Activity Bar 视图排序与持久化",
+      "description": "按固定 Code-OSS 1.145.0，实现 Side 垂直、Top/Bottom 水平 Activity Bar 四个既有视图项的拖放排序；Manage 固定，当前选中 view ID 与键盘导航语义保持。activityBarOrder 复用现有根 layout JSON 持久化并规范化旧/畸形值。Profile 隔离、显隐/pin、badge 与 Manage 留后续项。范围、DoD、上游出处与 GitNexus 预检见 docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md。",
+      "dependencies": [
+        "feat-065"
+      ],
+      "status": "in-progress",
+      "evidence": "P05.14 已登记；待实现与本地/hosted DoD。编辑前 GitNexus 预检及限制记录在 docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
