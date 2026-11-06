@@ -894,6 +894,18 @@
       "evidence": "P05.17 / LAY-03h complete; product 247879a0b9fac1b8af8d5900e796859536358ed5. Focused ActivityBar/layout/pin integration tests 50/50; bash init.sh passed Rust workspace tests, Clippy, build_core, Flutter 1,096/1,096; cargo fmt --all -- --check and flutter analyze (0 issues) passed. PR CI 42269272957 passed all four jobs. Platform Availability 42269263469 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes, including clipboard, native drag/drop, Windows accessibility/lifecycle, and macOS native Quit. Package artifacts Linux/Windows/macOS 13529305581 / 13528569171 / 13532686496; macOS ZIP SHA-256 9ed879ec238dfdf75fcbe5798a3babb772951e14464ff495d1225f82a3ec2e4c matched sidecar and unzip validation passed. DnD diagnostics 13528102955 / 13529032663 / 13533171235; macOS startup diagnostics 13531896813; Windows client-area screenshot inspected. Authentication/providers remain P13, profiles P07; hosted x64 checks do not claim local-device or native auth acceptance. Full evidence and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-070",
+      "name": "P05.18 LAY-04a 次侧栏区域、显隐、空态与布局迁移",
+      "description": "按固定 Code-OSS 1.145.0 增加默认隐藏、位于编辑器右侧的 Auxiliary/Secondary Side Bar 区域；支持 workbench.action.toggleAuxiliaryBar 与 Ctrl/Cmd+Alt+B，在标题栏布局菜单中显隐；无视图时显示明确空态。根布局 JSON 保存显隐/尺寸，旧布局加载时安全补入隐藏叶子且保留其他区域树结构。视图分配、移动/拆分、左右互换和高级默认策略留后续 LAY-04 子项。范围与 GitNexus 编辑前风险见 docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md。",
+      "dependencies": [
+        "feat-069"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered only. No product code changed yet. P05.18 acceptance and pre-edit GitNexus results are recorded in docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

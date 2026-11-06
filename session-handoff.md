@@ -9,7 +9,7 @@ Finish P05 / `feat-027` one registered feature at a time. The user asked for a n
 ## Current State
 
 - Worktree: `/tmp/alula-p04.70-next`; branch: `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`).
-- P05.1–P05.17 are complete; P05 and remaining LAY/CMD rows, including the 12 CMD matrix items, remain open.
+- P05.1–P05.17 are complete; P05.18 / feat-070 / LAY-04a is registered and in progress. P05 and remaining LAY/CMD rows, including the 12 CMD matrix items, remain open.
 - P05.17 / feat-069 / LAY-03h shipped in product commit `247879a0b9fac1b8af8d5900e796859536358ed5`; scope registration commit `b043c9e` precedes it. Accounts/Manage actions, empty provider state, visibility persistence, and registered Manage commands are covered by 50 focused tests.
 - Local `bash init.sh` passed Rust workspace tests, Clippy, `build_core`, and Flutter 1,096/1,096; `cargo fmt --all -- --check` and Flutter analyze (0 issues) passed. PR CI `42269272957` and Platform Availability `42269263469` both passed. Linux/Windows/macOS x64 artifacts, DnD diagnostics, Windows client screenshot, macOS startup diagnostics, and ZIP digest/integrity are recorded in `docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md`.
 - Hosted validation is CI x64 build/launch/package evidence, not physical-device testing. Authentication providers/login/sync remain P13; profiles remain P07. No local GUI/Narrator test was run. macOS device validation remains pending when a device is available.
@@ -21,8 +21,8 @@ The implementation index reports 11,631 nodes / 35,678 edges / 345 clusters / 42
 
 ## Next Step
 
-1. Check the evidence-doc commit’s PR CI status and confirm PR #3 remains open/draft.
-2. Select the next unfinished P05 LAY/CMD requirement from `docs/11-VSCode功能对照矩阵.md` and `docs/03`; register exactly one slice in `docs/03`, `feature_list.json`, `progress.md`, and a scope report before implementation.
-3. Run GitNexus impact before editing; keep the existing CRITICAL/UNKNOWN caveats. Implement, validate the local DoD, commit/push product changes, wait for hosted CI/platform evidence, then commit/push evidence before starting another slice.
+1. Implement only P05.18 from its registered scope report; do not expand into view movement/splitting or sidebar position exchange.
+2. Run focused model/store/widget/command tests, then the full local DoD; keep the GitNexus `WbSplit` CRITICAL/lower-bound and `WorkbenchLayout` UNKNOWN caveats.
+3. Commit/push product changes, wait for PR CI and Linux/Windows/macOS x64 availability evidence, then record evidence in the scope report, `docs/03`, `feature_list.json`, `progress.md`, and handoff. PR #3 remains draft/open; do not merge.
 
 No manual operation is currently required from the user.
