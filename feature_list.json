@@ -1078,8 +1078,8 @@
       "dependencies": [
         "feat-085"
       ],
-      "status": "in-progress",
-      "evidence": "Scope registered before implementation at docs/diagnostics/2026-11-08-p05/p05.34-editor-tab-close-action-visibility-scope.md. Fixed upstream Code-OSS 1.145.0 defaults tabActionCloseVisibility=true; close action availability is gated separately from tabActionReserveSpace and tabActionUnpinVisibility. Worktree baseline bash init.sh --fast passed Rust 71+54 and Flutter 1,166/1,166; prior evidence commit CI 42420164937 passed all four jobs. Implementation and hosted evidence pending.",
+      "status": "complete",
+      "evidence": "Complete. Product commit 6f56ef3. Local full DoD passed: focused/action-location/mode/sizing/wrap 13/13; init.sh Rust 71+54, Clippy, build_core, Flutter 1,167/1,167; cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff. PR CI 42425373336 passed all four jobs. Platform Availability 42425368677 passed Linux/Windows/macOS Intel x64 build/test/launch/package (3.5/9.6/19.6 min). Package artifacts Linux/Windows/macOS 13594648388 / 13595119663 / 13595558898. macOS ZIP SHA-256 490560d410e5e4ea8e73641ab71bc84bc6469263a3ac0c94b834281582b20273 matched sidecar; unzip -tq passed with 76 entries. Linux/Windows DnD artifacts 13595162235 / 13595184226 passed same-document move, cross-document copy and external-text drop (19/14 Flutter pointer events). macOS DnD artifact 13595384708 explicitly skipped because CGEventPostToPid pointer route was unavailable. macOS native Quit/startup artifact 13595354985 confirmed the Release bundle and successful Accessibility Quit. P05 remains in-progress; continue with one registered child at a time. Retained GitNexus CRITICAL/UNKNOWN warnings and full evidence: docs/diagnostics/2026-11-08-p05/p05.34-editor-tab-close-action-visibility-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
