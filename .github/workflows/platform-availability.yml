@@ -690,7 +690,7 @@ jobs:
     name: macOS build, launch smoke, and app package
     # Use the Intel lane when the ARM64/M1 hosted pool has no available runner.
     runs-on: macos-15-intel
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -877,6 +877,7 @@ jobs:
           fi
           wait "$app_pid" || true
       - name: Launch macOS native-titlebar mode and verify native Quit menu
+        timeout-minutes: 5
         if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
         run: |
           app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
