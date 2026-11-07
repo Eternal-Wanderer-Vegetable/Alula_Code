@@ -1008,8 +1008,8 @@
       "dependencies": [
         "feat-078"
       ],
-      "status": "in-progress",
-      "evidence": "Registered 2026-11-07 before product edits. Fixed upstream behavior and scoped acceptance are recorded in docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md. GitNexus WbSplit CRITICAL/lower-bound (92 nodes, 71 flows, 20 modules), _Divider CRITICAL/exact (50 nodes, 25 flows), WorkbenchLayout MEDIUM/exact (13 nodes); dragDivider/applyDrag UNKNOWN, with concrete paths confirmed by source search. Implementation and verification pending."
+      "status": "done",
+      "evidence": "Completed 2026-11-07 at product commit 880ebecf455a7079677897be24bb9f5ead005fb4. Focused model/grid/alignment tests 49/49; full bash init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,150/1,150); cargo fmt --check, flutter analyze (0), Harness 100/100, JSON/diff passed. PR CI 42362871885 passed all jobs. Platform Availability 42362866427 passed Linux/Windows/macOS Intel x64. Packages Linux/Windows/macOS 13571020067 / 13571275187 / 13570959133; macOS ZIP SHA-256 6d302c880d24a69b2842fa7a6b62e4764fd82449c16c224027a6e2d3c024e29c matched sidecar and unzip integrity passed. Linux/Windows native move/copy/external-text DnD passed; macOS DnD 13571038989 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13571213638. Full implementation, upstream semantics, GitNexus CRITICAL/coverage warnings, and hosted evidence: docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md. P05/feat-027 remains in-progress."
     }
   ],
   "active_track": "vscode-builtin-parity",
