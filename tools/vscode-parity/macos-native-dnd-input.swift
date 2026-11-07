@@ -237,7 +237,7 @@ func quitThroughNativeMenu(bundleIdentifier: String) throws {
   }
 
   let processIdentifier = app.processIdentifier
-  _ = app.activate(options: [.activateIgnoringOtherApps])
+  _ = app.activate(options: [])
   let applicationElement = AXUIElementCreateApplication(processIdentifier)
   _ = AXUIElementSetMessagingTimeout(applicationElement, 2.0)
   var menuBarElement: AXUIElement?
@@ -250,8 +250,11 @@ func quitThroughNativeMenu(bundleIdentifier: String) throws {
       kAXMenuBarAttribute as CFString,
       &rawMenuBar
     )
-    if lastMenuBarError == .success, let rawMenuBar {
-      menuBarElement = rawMenuBar as? AXUIElement
+    if lastMenuBarError == .success,
+       let rawMenuBar,
+       CFGetTypeID(rawMenuBar) == AXUIElementGetTypeID()
+    {
+      menuBarElement = unsafeBitCast(rawMenuBar, to: AXUIElement.self)
       if menuBarElement != nil { break }
     }
     Thread.sleep(forTimeInterval: 0.25)
