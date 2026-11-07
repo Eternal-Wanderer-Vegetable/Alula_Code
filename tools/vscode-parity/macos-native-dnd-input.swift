@@ -238,93 +238,73 @@ func quitThroughNativeMenu(bundleIdentifier: String) throws {
 
   let processIdentifier = app.processIdentifier
   _ = app.activate(options: [.activateIgnoringOtherApps])
-  let script = """
-  tell application "System Events"
-    set targetProcess to first application process whose unix id is \(processIdentifier)
-    set frontmost of targetProcess to true
-    set menuBarItems to {}
-    set menuBarError to ""
-    repeat 40 times
-      try
-        set menuBarItems to menu bar items of menu bar 1 of targetProcess
-      on error errorMessage
-        set menuBarItems to {}
-        set menuBarError to errorMessage
-      end try
-      if (count of menuBarItems) > 0 then exit repeat
-      delay 0.25
-    end repeat
-    if (count of menuBarItems) is 0 then
-      error "Timed out waiting for native menu bar items. Last accessibility error: " & menuBarError
-    end if
-    set menuBarTitles to {}
-    set appMenuTitle to missing value
-    set quitMenuName to missing value
-    repeat with menuBarItem in menuBarItems
-      try
-        set candidateTitle to name of menuBarItem
-        set end of menuBarTitles to candidateTitle
-        click menuBarItem
-        delay 0.1
-        set menuEntries to menu items of menu 1 of menuBarItem
-        repeat with menuEntry in menuEntries
-          set entryName to name of menuEntry
-          if entryName starts with "Quit" then
-            set appMenuTitle to candidateTitle
-            set quitMenuName to entryName
-            click menuEntry
-            exit repeat
-          end if
-        end repeat
-      end try
-      if quitMenuName is not missing value then exit repeat
-    end repeat
-    if quitMenuName is missing value then error "No Quit item in native menus for process. Menu bar items: " & (menuBarTitles as string)
-    return "Selected " & appMenuTitle & " > " & quitMenuName
-  end tell
-  """
-  let process = Process()
-  process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-  process.arguments = ["-e", script]
-  let output = Pipe()
-  let errors = Pipe()
-  process.standardOutput = output
-  process.standardError = errors
-
-  do {
-    try process.run()
-  } catch {
+  let applicationElement = AXUIElementCreateApplication(processIdentifier)
+  _ = AXUIElementSetMessagingTimeout(applicationElement, 2.0)
+  var menuBarElement: AXUIElement?
+  var lastMenuBarError: AXError = .noValue
+  let menuBarDeadline = Date().addingTimeInterval(15)
+  while Date() < menuBarDeadline {
+    var rawMenuBar: CFTypeRef?
+    lastMenuBarError = AXUIElementCopyAttributeValue(
+      applicationElement,
+      kAXMenuBarAttribute as CFString,
+      &rawMenuBar
+    )
+    if lastMenuBarError == .success, let rawMenuBar {
+      menuBarElement = rawMenuBar as? AXUIElement
+      if menuBarElement != nil { break }
+    }
+    Thread.sleep(forTimeInterval: 0.25)
+  }
+  guard let menuBarElement else {
     throw NSError(domain: "AlulaMacDnd", code: 22, userInfo: [
-      NSLocalizedDescriptionKey: "Could not start native menu automation: \(error)"
+      NSLocalizedDescriptionKey:
+        "Could not read the native menu bar through Accessibility (AXError \(lastMenuBarError.rawValue))"
     ])
   }
-  let deadline = Date().addingTimeInterval(20)
-  while process.isRunning && Date() < deadline {
-    Thread.sleep(forTimeInterval: 0.05)
+
+  func descendants(of element: AXUIElement, depth: Int = 0) -> [AXUIElement] {
+    guard depth < 5 else { return [] }
+    _ = AXUIElementSetMessagingTimeout(element, 2.0)
+    let directChildren = children(of: element)
+    return directChildren + directChildren.flatMap {
+      descendants(of: $0, depth: depth + 1)
+    }
   }
-  if process.isRunning {
-    process.terminate()
-    process.waitUntilExit()
-    throw NSError(domain: "AlulaMacDnd", code: 23, userInfo: [
-      NSLocalizedDescriptionKey: "Native menu automation timed out after 20 seconds"
-    ])
+
+  _ = AXUIElementSetMessagingTimeout(menuBarElement, 2.0)
+  let menuBarItems = children(of: menuBarElement)
+  var menuBarTitles: [String] = []
+  for menuBarItem in menuBarItems {
+    _ = AXUIElementSetMessagingTimeout(menuBarItem, 2.0)
+    let candidateTitle = labels(of: menuBarItem).first ?? "<unnamed>"
+    menuBarTitles.append(candidateTitle)
+    let pressResult = AXUIElementPerformAction(menuBarItem, "AXPress" as CFString)
+    guard pressResult == .success else { continue }
+
+    var menuEntries: [AXUIElement] = []
+    for _ in 0..<10 {
+      menuEntries = descendants(of: menuBarItem)
+      if !menuEntries.isEmpty { break }
+      Thread.sleep(forTimeInterval: 0.1)
+    }
+    for menuEntry in menuEntries {
+      _ = AXUIElementSetMessagingTimeout(menuEntry, 2.0)
+      let entryName = labels(of: menuEntry).first {
+        $0.lowercased().hasPrefix("quit")
+      }
+      guard let entryName else { continue }
+      let quitResult = AXUIElementPerformAction(menuEntry, "AXPress" as CFString)
+      guard quitResult == .success else { continue }
+      print("Selected native menu item \(candidateTitle) > \(entryName) through Accessibility API.")
+      return
+    }
   }
-  process.waitUntilExit()
-  let standardOutput = String(
-    data: output.fileHandleForReading.readDataToEndOfFile(),
-    encoding: .utf8
-  ) ?? ""
-  let standardError = String(
-    data: errors.fileHandleForReading.readDataToEndOfFile(),
-    encoding: .utf8
-  ) ?? ""
-  guard process.terminationStatus == 0 else {
-    throw NSError(domain: "AlulaMacDnd", code: 24, userInfo: [
-      NSLocalizedDescriptionKey: "Native menu Quit automation failed (status \(process.terminationStatus)): \(standardError)"
-    ])
-  }
-  print("Selected native menu item Quit Alula Code through System Events.")
-  if !standardOutput.isEmpty { print(standardOutput) }
+
+  throw NSError(domain: "AlulaMacDnd", code: 23, userInfo: [
+    NSLocalizedDescriptionKey:
+      "No accessible Quit item in native menus. Menu bar items: \(menuBarTitles.joined(separator: ", "))"
+  ])
 }
 
 func run() throws {
