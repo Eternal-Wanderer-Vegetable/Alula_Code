@@ -1054,12 +1054,12 @@
     {
       "id": "feat-084",
       "name": "P05.32 LAY-08c 编辑器标签 fit/shrink/fixed 尺寸策略",
-      "description": "固定 Code-OSS 1.145.0 的 workbench.editor.tabSizing：fit 默认保留内容宽度并允许滚动；shrink 在空间不足时收缩至有界最小宽度；fixed 使用 50–160 px 默认界限，并在悬停关闭时稳定其余标签宽度。View > Appearance 选择立即应用并写入 session journal；设置 UI、自定义宽度值与 workspace/global 优先级留 P07。范围、上游来源、GitNexus UNKNOWN 限制和 DoD：docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md。",
+      "description": "固定 Code-OSS 1.145.0 的 workbench.editor.tabSizing：fit 默认保留内容宽度并允许滚动；shrink 在空间不足时均分收缩至 80 px 最小宽度；fixed 使用 50–160 px 默认界限，并在悬停关闭时稳定其余标签宽度。View > Appearance 选择立即应用并写入 session journal；设置 UI、自定义宽度值与 workspace/global 优先级留 P07。范围、上游来源、GitNexus UNKNOWN 限制和 DoD：docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md。",
       "dependencies": [
         "feat-083"
       ],
       "status": "in-progress",
-      "evidence": "Registered before product edits. GitNexus refreshed at 0f346889. Pre-edit impacts for _buildTabStrip, _buildTab and _encodeSession were UNKNOWN/not indexed; EditorTabMode had zero resolved callers with UNKNOWN risk. The >512 KiB workbench_page.dart is skipped by the index, and follow-up text search confirmed these methods/state participate in tab layout and session persistence. Keep UNKNOWN/lower-bound risks active. Fixed reference: Code-OSS 1.145.0 editor.ts defines fit/shrink/fixed, default fit, fixed min/max 50/160; multiEditorTabsControl updates the fixed CSS variables and preserves widths during hovered close. Scope and acceptance criteria: docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md."
+      "evidence": "Implemented locally: fit preserves intrinsic width and scrolls; shrink gives tabs equal widths down to the 80 px floor; fixed shares width clamped to 50–160 px and holds widths while the pointer stays over the strip during close. Accessible View > Appearance submenu updates all groups and persists in the session journal. Widget/pure tests cover geometry, resize and editor/input/focus/selection/scroll identity, held close widths, wrap/visibility interactions and session restore. Focused sizing/mode/wrap tests 9/9; full init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,163/1,163); cargo fmt --all -- --check, flutter analyze --no-pub (0 issues), Harness 100/100, JSON and diff checks passed. PR CI and Linux/Windows/macOS x64 hosted evidence pending. GitNexus UNKNOWN/lower-bound limits remain due to workbench_page.dart exceeding 512 KiB. Full scope/source/risk record: docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md."
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -8,7 +8,7 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 
 ## Current State
 
-- P05.32 / feat-084 / LAY-08c is registered and is the only active child: implement Code-OSS 1.145.0 fit/shrink/fixed tab sizing, default fixed bounds 50–160 px, and stable hovered close widths. Registration/scope: `docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md`. Pre-edit GitNexus impacts for large-file methods are UNKNOWN; retain the 512 KiB index coverage limit and validate via focused tests and text-confirmed call sites.
+- P05.32 / feat-084 / LAY-08c is implemented locally and remains the only active child pending hosted PR CI and Linux/Windows/macOS x64 evidence. Fit/shrink/fixed sizing, 80 px shrink floor, 50–160 px fixed range, accessible menu, session persistence, stable hovered close widths and editor state preservation are covered. Local focused tests 9/9 and full DoD pass (Flutter 1,163, Rust 71+54, Clippy, build_core, cargo fmt, Flutter analyze, Harness 100/100). GitNexus UNKNOWN remains because `workbench_page.dart` exceeds the 512 KiB index cap. Scope/evidence: `docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md`.
 
 - Worktree: `/tmp/alula-p04.70-next`; branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 - P05.1–P05.31 are complete; P05 / feat-027 remains in progress because LAY-08c–20 and CMD-01–12 matrix requirements still need child slices and DoD evidence. P05.30 / feat-082 / LAY-08a passed local DoD, PR CI `42386329936`, and Linux/Windows/macOS Intel x64 Platform Availability `42386324811`. Packages Linux/Windows/macOS `13580315004` / `13579907735` / `13580179917`; macOS ZIP SHA-256 `e778097b939908ff4b8a99d42aa79be7e53a54b96d8749787b95b9208de0067e` matched sidecar and unzip integrity passed. Linux/Windows native DnD passed; hosted macOS DnD remains explicitly skipped because pointer routing is unavailable. Scope and fixed sources: `docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md`.
@@ -30,5 +30,5 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 
 ## Next Step
 
-1. Implement the registered P05.32 tab-sizing child in the isolated worktree; first recheck the relevant GitNexus/text-search boundary, then add focused geometry/state tests and run the full DoD.
+1. Finish reviewing/staging the P05.32 implementation, run the refreshed GitNexus staged/all/compare scans, commit and push to PR #3. Wait for PR CI and Linux/Windows/macOS x64 Platform Availability; record artifact evidence and only then close feat-084.
 2. Continue one LAY/CMD child at a time; keep PR #3 draft/open and P05 / feat-027 in progress until all 20 LAY and 12 CMD matrix requirements pass or have an explicit accepted boundary disposition.

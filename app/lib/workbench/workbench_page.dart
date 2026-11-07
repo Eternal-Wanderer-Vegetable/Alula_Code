@@ -80,6 +80,7 @@ import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'editor_tab_mode.dart';
+import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
@@ -386,6 +387,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final CommandService _commands = CommandService();
   final ValueNotifier<EditorTabMode> _editorTabMode =
       ValueNotifier(EditorTabMode.multiple);
+  final ValueNotifier<EditorTabSizing> _editorTabSizing =
+      ValueNotifier(EditorTabSizing.fit);
+  final Set<String> _editorTabPointerInside = <String>{};
+  final Map<String, Map<int, double>> _editorTabLastWidths = {};
+  final Map<String, Map<int, double>> _editorTabHeldWidths = {};
   final ValueNotifier<bool> _editorTabWrap = ValueNotifier(false);
   final GitDiffPatchNavigationController _gitDiffNavigation =
       GitDiffPatchNavigationController();
@@ -1048,6 +1054,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '切换编辑器标签换行',
       () async => _setEditorTabWrap(!_editorTabWrap.value),
     );
+    for (final sizing in EditorTabSizing.values) {
+      reg(
+        'workbench.action.editorTabs.sizing.${sizing.name}',
+        '查看',
+        switch (sizing) {
+          EditorTabSizing.fit => '按内容适配编辑器标签宽度',
+          EditorTabSizing.shrink => '收缩编辑器标签宽度',
+          EditorTabSizing.fixed => '固定编辑器标签宽度',
+        },
+        () async => _setEditorTabSizing(sizing),
+      );
+    }
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
@@ -2993,6 +3011,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorTabSizing(EditorTabSizing sizing) {
+    if (_editorTabSizing.value == sizing) return;
+    setState(() {
+      _editorTabSizing.value = sizing;
+      _editorTabHeldWidths.clear();
+    });
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -3015,6 +3042,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Map<String, Object?> _encodeSession() => {
         'v': 1,
         'editorTabMode': _editorTabMode.value.name,
+        'editorTabSizing': _editorTabSizing.value.name,
         'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
@@ -3113,6 +3141,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (data == null) return;
     _editorTabMode.value =
         EditorTabMode.fromSessionValue(data['editorTabMode']);
+    _editorTabSizing.value =
+        EditorTabSizing.fromSessionValue(data['editorTabSizing']);
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -12088,6 +12118,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (owner == null) return;
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
+    if (_editorTabSizing.value == EditorTabSizing.fixed &&
+        _editorTabPointerInside.contains(owner.region)) {
+      final widths = _editorTabLastWidths[owner.region];
+      if (widths != null) {
+        _editorTabHeldWidths[owner.region] = Map<int, double>.of(widths);
+      }
+    }
     for (final view in _viewsOf(doc).toList(growable: false)) {
       _flushInput(view, commitComposition: true);
     }
@@ -12276,6 +12313,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       nextSemanticTokensVersion.remove(id);
     }
     owner.docs.remove(doc);
+    if (owner.docs.isEmpty) {
+      _editorTabLastWidths.remove(owner.region);
+      _editorTabHeldWidths.remove(owner.region);
+    }
     doc.disposeView();
     if (isLastView) _navigationHistory.closeDocument(id);
     setState(() {
@@ -17266,6 +17307,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _editorTabMode.dispose();
+    _editorTabSizing.dispose();
     _editorTabWrap.dispose();
     _commitMessage.dispose();
     _layout.dispose();
@@ -17479,6 +17521,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               checkedListenable: _editorTabWrap,
                               checkedBuilder: () => _editorTabWrap.value,
                             ),
+                            TitleMenuItem.submenu('标签尺寸', children: [
+                              TitleMenuItem(
+                                '按内容适配',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.fit',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.fit,
+                              ),
+                              TitleMenuItem(
+                                '收缩',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.shrink',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.shrink,
+                              ),
+                              TitleMenuItem(
+                                '固定宽度',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.fixed',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.fixed,
+                              ),
+                            ]),
                           ]),
                           TitleMenuItem(
                             _toggleSideBarPositionTitle,
@@ -18295,6 +18366,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
+  double _tabContentWidth(BuildContext context, OpenDoc doc) {
+    final label = TextPainter(
+      text: TextSpan(
+        text: '${doc.name}${doc.isDirty ? " •" : ""}',
+        style: const TextStyle(fontSize: 12),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout();
+    // Horizontal padding, close action, and the optional disk-state marker.
+    return label.width +
+        24 +
+        18 +
+        14 +
+        (doc.diskState == DiskDocumentState.current ? 0 : 17);
+  }
+
   Widget _buildTabStrip(EditorGroup g) {
     final visibleDocs = switch (_editorTabMode.value) {
       EditorTabMode.multiple => g.docs,
@@ -18310,23 +18398,56 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: _editorTabWrap.value
-                ? Wrap(
-                    spacing: 0,
-                    runSpacing: 0,
-                    children: [
-                      for (final d in visibleDocs) _buildTab(g, d),
-                    ],
-                  )
-                : SingleChildScrollView(
-                    // W2-1：默认维持单行横向滚动标签条。
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (final d in visibleDocs) _buildTab(g, d),
-                      ],
-                    ),
-                  ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final sizing = _editorTabSizing.value;
+                final widths = EditorTabWidthPolicy.layout(
+                  contentWidths: [
+                    for (final doc in visibleDocs)
+                      _tabContentWidth(context, doc),
+                  ],
+                  availableWidth: constraints.maxWidth,
+                  sizing: sizing,
+                  wrapping: _editorTabWrap.value,
+                );
+                final heldWidths = sizing == EditorTabSizing.fixed
+                    ? _editorTabHeldWidths[g.region]
+                    : null;
+                final currentWidths = <int, double>{};
+                final tabs = <Widget>[];
+                for (var i = 0; i < visibleDocs.length; i++) {
+                  final doc = visibleDocs[i];
+                  final width = heldWidths?[doc.id] ?? widths[i];
+                  currentWidths[doc.id] = width;
+                  tabs.add(SizedBox(
+                    width: width,
+                    child: _buildTab(g, doc),
+                  ));
+                }
+                _editorTabLastWidths[g.region] = currentWidths;
+
+                final tabLayout = _editorTabWrap.value
+                    ? Wrap(
+                        spacing: 0,
+                        runSpacing: 0,
+                        children: tabs,
+                      )
+                    : SingleChildScrollView(
+                        // W2-1：默认维持单行横向滚动标签条。
+                        scrollDirection: Axis.horizontal,
+                        child: Row(children: tabs),
+                      );
+                return MouseRegion(
+                  onEnter: (_) => _editorTabPointerInside.add(g.region),
+                  onExit: (_) {
+                    _editorTabPointerInside.remove(g.region);
+                    final held = _editorTabHeldWidths.remove(g.region);
+                    if (held != null && mounted) setState(() {});
+                  },
+                  child: tabLayout,
+                );
+              },
+            ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
           IconButton(
@@ -18390,7 +18511,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: Container(
         key: ValueKey('tab-${d.id}'),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
+        ),
         decoration: BoxDecoration(
           color: d.id == g.activeDocId
               ? const Color(0xFF14161A)
@@ -18404,7 +18527,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (_editorTabWrap.value) Flexible(child: label) else label,
+            if (_editorTabWrap.value ||
+                _editorTabSizing.value != EditorTabSizing.fit)
+              Flexible(child: label)
+            else
+              label,
             if (d.diskState != DiskDocumentState.current) ...[
               const SizedBox(width: 4),
               Icon(
