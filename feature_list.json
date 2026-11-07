@@ -926,8 +926,8 @@
       "dependencies": [
         "feat-071"
       ],
-      "status": "in-progress",
-      "evidence": "Product commit 7576e3c passed local DoD and focused suites 6/6. PR CI 42322268712 passed all jobs. Platform Availability 42322262823 passed Linux/Windows, macOS build/tests/clipboard/ordinary launch/package. Swift helper compilation failed because Swift rejects `CFTypeRef as? AXUIElement` as an always-successful downcast; Accessibility setup and DnD were skipped, and native Quit failed because the helper binary was absent. Package artifact 13554262499 SHA-256 09ea73b58448d8ff67bdba3c10aafb79fd021db68fde2445260e88f2ef1c166d matched its sidecar and unzip -tq passed. The current working change checks AXUIElementGetTypeID before explicit bridging; hosted compile and behavior revalidation is pending. Earlier System Events timeout and GitNexus CRITICAL exact impact with caller review are documented in docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md and p05.20-sidebar-view-move-implementation.md.",
+      "status": "done",
+      "evidence": "Product commit 7576e3c passed full local DoD (Rust 71+54, Clippy, build_core, Flutter 1,113/1,113, analyze, fmt) and focused suites 6/6. PR CI 42309345888 (product head) and 42325095582 (latest) passed all jobs. Platform Availability run 42325090905 passed Linux x64, Windows x64, and macOS Intel x64 jobs. Linux/Windows native DnD probes passed. macOS full Flutter tests, clipboard, ordinary launch, direct AX native Quit, and package creation passed; the macOS DnD interaction was explicitly skipped because the hosted pointer route was unavailable and is outside this command-movement slice. macOS package artifact 13555536496 SHA-256 c8c66a5473cfacb966dd43f5845460e73c7c2e92673535a4765c9b08b52b0e5b matched its sidecar and unzip -tq passed. Native Quit startup diagnostics artifact 13555029159; DnD skip evidence artifact 13555004218. GitNexus impact and CI helper history are in docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md and p05.20-sidebar-view-move-implementation.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
