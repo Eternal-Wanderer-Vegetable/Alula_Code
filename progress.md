@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-07 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.27 已完成，P05.28 本地实现与 DoD 通过，待 hosted 验收
+### P05 / feat-027 进行中；P05.1–P05.28 已完成，下一项待从 LAY/CMD 矩阵登记
+
+- 2026-11-07：P05.28 / feat-080 / LAY-07a 完成，产品提交 `1dd2997`。四向编辑器组拆分命令、`editor.split` Right alias、活动文档复制到独立视图、嵌套布局与 root JSON round-trip/remount 已实现；focused suites 15/15，完整本地 `init.sh` Rust 71+54、Clippy、build_core、Flutter 1,152/1,152，cargo fmt、app Flutter analyze 0、Harness 100/100、JSON/diff 全过。PR CI `42369664624` 四个 job 全绿；Platform Availability `42369661019` Linux/Windows/macOS Intel x64 build/test/launch/package 全绿。Packages `13572744842` / `13572917765` / `13574570286`；macOS ZIP SHA-256 `cd46ee2d2dc8e54c37c2b38bbbfe02f9a627a6683b51f4952899b3458691e6b7` 与 sidecar 一致，`unzip -tq` 通过。Linux/Windows 原生 move/copy/external-text DnD artifacts `13573063176` / `13572454644` 通过；macOS DnD `13574610174` 明确 skip（hosted pointer route unavailable），native Quit/startup `13573857175`。实现和 GitNexus CRITICAL/UNKNOWN 限制：`docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md`。P05 保持 in-progress。
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
 - 2026-11-07：已登记 P05.25 / feat-077 / LAY-05d Panel maximize/restore。固定上游命令为 `workbench.action.toggleMaximizedPanel`；最大化按 VS Code 作为内存态，不改布局 JSON/split 树；面板隐藏时命令先显示再最大化。预检记录：`WorkbenchLayout` MEDIUM/exact 12，`WorkbenchGrid` UNKNOWN（`rg` 确认一个生产构造点），`workbench_page.dart` 页面/Panel builder 未索引，`WbSplit` HIGH/lower-bound 23 与 build flow/dispatch 边界。保留 HIGH/UNKNOWN 风险，避免修改 split 拓扑。范围、边界、固定上游及验收计划：`docs/diagnostics/2026-11-07-p05/p05.25-panel-maximize-restore-scope.md`。该记录保留范围登记阶段的预检；当前实现与验收状态见下一条完成记录。P05/feat-027 仍保持 in-progress。
