@@ -684,6 +684,44 @@ extension WbSplitLayout on WbSplit {
       c.weight = moved[i] / flexTotal;
     }
   }
+
+  /// Reset the sash at [index] by balancing its adjacent flexible children.
+  /// Other siblings keep their current pixel extents. Returns whether the
+  /// persisted weights changed.
+  bool resetDivider(int index, double totalExtent) {
+    if (totalExtent <= 0 || index < 0 || index + 1 >= children.length) {
+      return false;
+    }
+    if (!isFlexibleNode(children[index]) ||
+        !isFlexibleNode(children[index + 1])) {
+      return false;
+    }
+
+    final current = extentsFor(totalExtent);
+    final pairExtent = current[index] + current[index + 1];
+    final minFirst = nodeMinExtent(children[index], axis);
+    final minSecond = nodeMinExtent(children[index + 1], axis);
+    if (pairExtent < minFirst + minSecond) return false;
+
+    final firstExtent =
+        (pairExtent / 2).clamp(minFirst, pairExtent - minSecond).toDouble();
+    final secondExtent = pairExtent - firstExtent;
+    if (firstExtent == current[index] && secondExtent == current[index + 1]) {
+      return false;
+    }
+
+    final reset = List<double>.of(current)
+      ..[index] = firstExtent
+      ..[index + 1] = secondExtent;
+    final flexTotal = reset.fold<double>(0, (sum, extent) => sum + extent);
+    if (flexTotal <= 0) return false;
+    for (var i = 0; i < children.length; i++) {
+      final child = children[i];
+      if (child is WbLeaf && (child.isFixed || child.collapsed)) continue;
+      child.weight = reset[i] / flexTotal;
+    }
+    return true;
+  }
 }
 
 List<double> _allocateWeightedWithMinimums({

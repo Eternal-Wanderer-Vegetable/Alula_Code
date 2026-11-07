@@ -465,6 +465,77 @@ void main() {
       expect(px[1], 830);
     });
 
+    test('resetDivider：平分相邻弹性节点并保留其它兄弟像素', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'a', weight: 0.1),
+        WbLeaf(region: 'b', weight: 0.2),
+        WbLeaf(region: 'c', weight: 0.3),
+        WbLeaf(region: 'd', weight: 0.4),
+      ]);
+
+      expect(split.extentsFor(1000), [100, 200, 300, 400]);
+      expect(split.resetDivider(1, 1000), isTrue);
+      expect(split.extentsFor(1000), [100, 250, 250, 400]);
+      expect(split.children[1].weight, closeTo(split.children[2].weight, 1e-9));
+    });
+
+    test('resetDivider：两侧最小值约束平分目标', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left', weight: 0.8, minExtent: 260),
+        WbLeaf(region: 'right', weight: 0.2, minExtent: 100),
+      ]);
+
+      expect(split.extentsFor(400), [300, 100]);
+      expect(split.resetDivider(0, 400), isTrue);
+      expect(split.extentsFor(400), [260, 140]);
+    });
+
+    test('resetDivider：固定、折叠、越界和空间不足时不改权重', () {
+      final fixed = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'activity', fixedExtent: 48),
+        WbLeaf(region: 'editor'),
+      ]);
+      final collapsed = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left'),
+        WbLeaf(region: 'hidden', collapsed: true, lastWeight: 0.2),
+        WbLeaf(region: 'right'),
+      ]);
+      final constrained = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left', weight: 0.5, minExtent: 200),
+        WbLeaf(region: 'right', weight: 0.5, minExtent: 200),
+      ]);
+      final originalFixed = fixed.children.map((node) => node.weight).toList();
+      final originalCollapsed =
+          collapsed.children.map((node) => node.weight).toList();
+      final originalConstrained =
+          constrained.children.map((node) => node.weight).toList();
+
+      expect(fixed.resetDivider(0, 1000), isFalse);
+      expect(collapsed.resetDivider(0, 1000), isFalse);
+      expect(collapsed.resetDivider(1, 1000), isFalse);
+      expect(collapsed.resetDivider(4, 1000), isFalse);
+      expect(constrained.resetDivider(0, 100), isFalse);
+      expect(fixed.children.map((node) => node.weight), originalFixed);
+      expect(collapsed.children.map((node) => node.weight), originalCollapsed);
+      expect(
+        constrained.children.map((node) => node.weight),
+        originalConstrained,
+      );
+    });
+
+    test('resetDivider：垂直轴比例通过 JSON 回读并随窗口缩放保留', () {
+      final split = WbSplit(axis: Axis.vertical, children: [
+        WbLeaf(region: 'editor', weight: 0.75),
+        WbLeaf(region: 'panel', weight: 0.25, minExtent: panelMinimumHeight),
+      ]);
+
+      expect(split.resetDivider(0, 1000), isTrue);
+      final restored = WbNode.fromJson(split.toJson()) as WbSplit;
+      expect(restored.extentsFor(800), [400, 400]);
+      expect(restored.children[0].weight, closeTo(0.5, 1e-9));
+      expect(restored.children[1].weight, closeTo(0.5, 1e-9));
+    });
+
     test('applyDrag：拖嵌套 split 与叶子的分界 → 只改两者权重', () {
       final inner = WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
         WbLeaf(region: 'a'),

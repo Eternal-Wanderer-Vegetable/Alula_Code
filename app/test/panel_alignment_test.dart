@@ -58,6 +58,14 @@ class _MountProbeState extends State<_MountProbe> {
 Rect _rect(WidgetTester tester, String region) =>
     tester.getRect(find.byKey(ValueKey('wb-region-$region')));
 
+Future<void> _doubleTap(WidgetTester tester, Finder target) async {
+  final position = tester.getCenter(target);
+  await tester.tapAt(position);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tapAt(position);
+  await tester.pump();
+}
+
 void main() {
   test('alignment defaults to Center and round-trips in the root JSON', () {
     final layout = WorkbenchLayout();
@@ -201,7 +209,8 @@ void main() {
     layout.dispose();
   });
 
-  testWidgets('projected sidebar and Panel dividers save their weights',
+  testWidgets(
+      'projected sidebar and Panel dividers save drag and reset weights',
       (tester) async {
     tester.view.physicalSize = const Size(1400, 1000);
     tester.view.devicePixelRatio = 1;
@@ -234,21 +243,39 @@ void main() {
       _rect(tester, 'panel').height,
       closeTo(panelHeightBefore + 40, 2),
     );
-    await tester.drag(
-      find.byKey(
-        const ValueKey('wb-div-panel-alignment-editor-row-panel'),
-      ),
-      const Offset(0, -2000),
+    final panelDivider = find.byKey(
+      const ValueKey('wb-div-panel-alignment-editor-row-panel'),
     );
+    await tester.drag(panelDivider, const Offset(0, -2000));
     await tester.pump();
     expect(_rect(tester, 'panel').height, closeTo(panelMinimumHeight, 1.5),
         reason: 'center-alignment projection must keep the Panel height floor');
+
+    final sidebarWidthBeforeReset = _rect(tester, 'sidebar').width;
+    final secondaryWidthBeforeReset = _rect(tester, 'secondarySidebar').width;
+    await _doubleTap(tester, panelDivider);
+    expect(_rect(tester, 'panel').height,
+        closeTo(_rect(tester, 'editor').height, 2));
+    expect(_rect(tester, 'sidebar').width, closeTo(sidebarWidthBeforeReset, 2));
+    expect(_rect(tester, 'secondarySidebar').width,
+        closeTo(secondaryWidthBeforeReset, 2));
+
+    tester.view.physicalSize = const Size(1400, 1100);
+    await tester.pump();
+    expect(_rect(tester, 'panel').height,
+        closeTo(_rect(tester, 'editor').height, 2),
+        reason: 'the projected reset ratio survives a viewport resize');
 
     final restored = WorkbenchLayout(
       root: WbNode.fromJson(layout.root.toJson()) as WbSplit,
     );
     expect(restored.root.toJson(), layout.root.toJson());
     expect(restored.panelAlignment, PanelAlignment.center);
+    final restoredMainRow = restored.root.children
+        .singleWhere((node) => node is WbSplit) as WbSplit;
+    final restoredPanel = restored.root.leafOf('panel')!;
+    expect(restoredMainRow.weight, closeTo(restoredPanel.weight, 1e-9));
+    expect(restored.root.extentsFor(1096), [548, 548]);
     restored.dispose();
     layout.dispose();
   });

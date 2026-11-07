@@ -86,6 +86,14 @@ class WorkbenchLayout extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Double-click reset for a rendered sash; successful resets notify the
+  /// grid so persisted layout and dependent projections can be synchronized.
+  bool resetDivider(WbSplit split, int index, double totalExtent) {
+    if (!split.resetDivider(index, totalExtent)) return false;
+    notifyListeners();
+    return true;
+  }
+
   /// 把 [region] 叶子沿 [axis] 分裂出 [newRegion]（W2-2 编辑器组）。
   bool splitRegion(String region, String newRegion, Axis axis,
       {String? splitName}) {

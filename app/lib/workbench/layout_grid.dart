@@ -9,6 +9,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kDoubleTapSlop, kDoubleTapTimeout, kTouchSlop;
 import 'package:flutter/material.dart';
 
 import 'layout_controller.dart';
@@ -218,7 +220,7 @@ class _NodeView extends StatelessWidget {
   }
 }
 
-class _Divider extends StatelessWidget {
+class _Divider extends StatefulWidget {
   const _Divider({
     super.key,
     required this.axis,
@@ -238,33 +240,139 @@ class _Divider extends StatelessWidget {
   final WorkbenchLayout layout;
   final PanelAlignmentProjection? projection;
 
+  @override
+  State<_Divider> createState() => _DividerState();
+}
+
+class _DividerState extends State<_Divider> {
+  int? _activePointer;
+  Offset? _pointerDownPosition;
+  bool _pointerMoved = false;
+  Duration? _lastTapTime;
+  Offset? _lastTapPosition;
+  PointerDeviceKind? _lastTapKind;
+
+  void _clearTapState() {
+    _lastTapTime = null;
+    _lastTapPosition = null;
+    _lastTapKind = null;
+  }
+
+  void _onPointerDown(PointerDownEvent event) {
+    if (_activePointer != null) return;
+    _activePointer = event.pointer;
+    _pointerDownPosition = event.position;
+    _pointerMoved = false;
+  }
+
+  void _onPointerMove(PointerMoveEvent event) {
+    if (event.pointer != _activePointer || _pointerDownPosition == null) {
+      return;
+    }
+    if ((event.position - _pointerDownPosition!).distance > kTouchSlop) {
+      _pointerMoved = true;
+    }
+  }
+
+  void _onPointerCancel(PointerCancelEvent event) {
+    if (event.pointer != _activePointer) return;
+    _activePointer = null;
+    _pointerDownPosition = null;
+    _pointerMoved = false;
+    _clearTapState();
+  }
+
+  void _onPointerUp(PointerUpEvent event) {
+    if (event.pointer != _activePointer || _pointerDownPosition == null) {
+      return;
+    }
+    final isTap = !_pointerMoved &&
+        (event.position - _pointerDownPosition!).distance <= kTouchSlop;
+    _activePointer = null;
+    _pointerDownPosition = null;
+    _pointerMoved = false;
+    if (!isTap) {
+      _clearTapState();
+      return;
+    }
+
+    final previousTime = _lastTapTime;
+    final previousPosition = _lastTapPosition;
+    final isSecondTap = previousTime != null &&
+        previousPosition != null &&
+        event.timeStamp >= previousTime &&
+        event.timeStamp - previousTime <= kDoubleTapTimeout &&
+        (event.position - previousPosition).distance <= kDoubleTapSlop &&
+        event.kind == _lastTapKind;
+    if (isSecondTap) {
+      _clearTapState();
+      _reset();
+    } else {
+      _lastTapTime = event.timeStamp;
+      _lastTapPosition = event.position;
+      _lastTapKind = event.kind;
+    }
+  }
+
   void _drag(double deltaPx) {
-    layout.dragDivider(split, index, deltaPx, innerExtent);
-    projection?.syncAfterDividerDrag(split);
+    widget.layout.dragDivider(
+      widget.split,
+      widget.index,
+      deltaPx,
+      widget.innerExtent,
+    );
+    widget.projection?.syncAfterDividerDrag(widget.split);
+  }
+
+  void _reset() {
+    if (!widget.layout.resetDivider(
+      widget.split,
+      widget.index,
+      widget.innerExtent,
+    )) {
+      return;
+    }
+    widget.projection?.syncAfterDividerDrag(widget.split);
+  }
+
+  @override
+  void didUpdateWidget(covariant _Divider oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.split, widget.split) ||
+        oldWidget.index != widget.index) {
+      _clearTapState();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final line = axis == Axis.horizontal
+    final line = widget.axis == Axis.horizontal
         ? const SizedBox(width: 1, child: ColoredBox(color: _kDividerColor))
         : const SizedBox(height: 1, child: ColoredBox(color: _kDividerColor));
     return SizedBox(
-      width: axis == Axis.horizontal ? thickness : double.infinity,
-      height: axis == Axis.vertical ? thickness : double.infinity,
+      width:
+          widget.axis == Axis.horizontal ? widget.thickness : double.infinity,
+      height: widget.axis == Axis.vertical ? widget.thickness : double.infinity,
       child: MouseRegion(
-        cursor: axis == Axis.horizontal
+        cursor: widget.axis == Axis.horizontal
             ? SystemMouseCursors.resizeLeftRight
             : SystemMouseCursors.resizeUpDown,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onHorizontalDragUpdate: axis == Axis.horizontal
-              ? (d) => _drag(d.primaryDelta ?? 0)
-              : null,
-          onVerticalDragUpdate: axis == Axis.vertical
-              // 垂直下拖（+dy）→ 下格 b 增大 → 模型侧 a += delta 取负号
-              ? (d) => _drag(-(d.primaryDelta ?? 0))
-              : null,
-          child: Center(child: line),
+        child: Listener(
+          onPointerDown: _onPointerDown,
+          onPointerMove: _onPointerMove,
+          onPointerUp: _onPointerUp,
+          onPointerCancel: _onPointerCancel,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onHorizontalDragUpdate: widget.axis == Axis.horizontal
+                ? (d) => _drag(d.primaryDelta ?? 0)
+                : null,
+            onVerticalDragUpdate: widget.axis == Axis.vertical
+                // 垂直下拖（+dy）→ 下格 b 增大 → 模型侧 a += delta 取负号
+                ? (d) => _drag(-(d.primaryDelta ?? 0))
+                : null,
+            child: Center(child: line),
+          ),
         ),
       ),
     );

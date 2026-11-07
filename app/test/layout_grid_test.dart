@@ -26,6 +26,14 @@ double _width(WidgetTester tester, String region) =>
 double _height(WidgetTester tester, String region) =>
     tester.getSize(find.byKey(ValueKey('probe-$region'))).height;
 
+Future<void> _doubleTap(WidgetTester tester, Finder target) async {
+  final position = tester.getCenter(target);
+  await tester.tapAt(position);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tapAt(position);
+  await tester.pump();
+}
+
 class _MountProbe extends StatefulWidget {
   const _MountProbe({required this.mounts});
 
@@ -77,6 +85,48 @@ void main() {
     expect(after, closeTo(before + 60, 1.5));
     expect(_width(tester, 'editor'), closeTo(748 - after, 1.5),
         reason: '编辑器应等量收窄（其余兄弟像素不变）');
+  });
+
+  testWidgets('双击分割条：平分两侧区域，保留固定/折叠兄弟和缩放比例', (tester) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1;
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    final divider = find.byKey(
+      const ValueKey('wb-div-sidebar-panel-alignment-column'),
+    );
+    final beforeSecondary = layout.root.leafOf('secondarySidebar')!.weight;
+    expect(
+        _width(tester, 'sidebar'), isNot(closeTo(_width(tester, 'editor'), 1)));
+    expect(layout.resetDivider(layout.root, 0, 1000), isFalse,
+        reason: 'an invalid direct model index is a safe no-op');
+
+    await _doubleTap(tester, divider);
+
+    expect(_width(tester, 'sidebar'), closeTo(_width(tester, 'editor'), 1.5));
+    expect(_width(tester, 'activity'), 48,
+        reason: 'the fixed Activity Bar stays unchanged');
+    expect(layout.root.leafOf('secondarySidebar')!.collapsed, isTrue);
+    expect(layout.root.leafOf('secondarySidebar')!.weight, beforeSecondary,
+        reason: 'a collapsed sibling keeps its remembered proportion');
+
+    final restored = WorkbenchLayout(
+      root: WbNode.fromJson(layout.root.toJson()) as WbSplit,
+    );
+    final mainRow = restored.root.children
+        .singleWhere((node) => node is WbSplit) as WbSplit;
+    expect(
+        mainRow.children[1].weight, closeTo(mainRow.children[2].weight, 1e-9));
+
+    tester.view.physicalSize = const Size(1000, 600);
+    await tester.pump();
+    expect(_width(tester, 'sidebar'), closeTo(_width(tester, 'editor'), 1.5),
+        reason: 'the reset ratio survives a viewport resize');
+    expect(_width(tester, 'activity'), 48);
+    restored.dispose();
   });
 
   testWidgets('min 钳制：侧栏不会被拖到低于最小宽度', (tester) async {
