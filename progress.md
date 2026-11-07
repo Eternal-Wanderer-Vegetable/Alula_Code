@@ -5,8 +5,9 @@
 
 ## Current State（当前状态，2026-11-07 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.28 已完成，下一项待从 LAY/CMD 矩阵登记
+### P05 / feat-027 进行中；P05.1–P05.28 已完成，P05.29 / LAY-07b 已登记
 
+- 2026-11-07：登记 P05.29 / feat-081 / LAY-07b：将活动编辑器视图按 Left/Right/Up/Down 移到相邻组；无目标时按方向创建组，目标获焦；保留原 view identity、输入/选择/滚动和共享 Rust 文档状态，处理空源组与已有同文档目标。仅覆盖活动编辑器；复制、组内 tab 重排、多选和拖放另列。固定 Code-OSS 1.145.0 源码确认方向目标缺失时 `addGroup`、之后 `moveEditors` 并聚焦目标；GitNexus `WorkbenchLayout` MEDIUM/exact，`WbSplit`/`WbLeaf` CRITICAL/lower-bound，`splitRegion`/`removeRegion` CRITICAL/exact，`OpenDoc` UNKNOWN（大文件未入图，源检索核实视图生命周期）。query 的流程结果与编辑器组移动无关。范围与验收：`docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md`。登记提交前不改产品代码。
 - 2026-11-07：P05.28 / feat-080 / LAY-07a 完成，产品提交 `1dd2997`。四向编辑器组拆分命令、`editor.split` Right alias、活动文档复制到独立视图、嵌套布局与 root JSON round-trip/remount 已实现；focused suites 15/15，完整本地 `init.sh` Rust 71+54、Clippy、build_core、Flutter 1,152/1,152，cargo fmt、app Flutter analyze 0、Harness 100/100、JSON/diff 全过。PR CI `42369664624` 四个 job 全绿；Platform Availability `42369661019` Linux/Windows/macOS Intel x64 build/test/launch/package 全绿。Packages `13572744842` / `13572917765` / `13574570286`；macOS ZIP SHA-256 `cd46ee2d2dc8e54c37c2b38bbbfe02f9a627a6683b51f4952899b3458691e6b7` 与 sidecar 一致，`unzip -tq` 通过。Linux/Windows 原生 move/copy/external-text DnD artifacts `13573063176` / `13572454644` 通过；macOS DnD `13574610174` 明确 skip（hosted pointer route unavailable），native Quit/startup `13573857175`。实现和 GitNexus CRITICAL/UNKNOWN 限制：`docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md`。P05 保持 in-progress。
 
 - 用户恢复总计划并要求新建分支、开 PR、完成 P05。P04 已通过 PR #2 合并到 `main`，merge commit `46084e9`；新分支 `codex/vscode-parity-p05` 从该基线创建。
