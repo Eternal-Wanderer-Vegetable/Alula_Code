@@ -80,6 +80,7 @@ import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'editor_tab_action_location.dart';
+import 'editor_tab_close_action.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
@@ -392,6 +393,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(EditorTabSizing.fit);
   final ValueNotifier<EditorTabActionLocation> _editorTabActionLocation =
       ValueNotifier(EditorTabActionLocation.right);
+  final ValueNotifier<bool> _editorTabCloseActionVisibility =
+      ValueNotifier(true);
+  final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
+      ValueNotifier(null);
   final Set<String> _editorTabPointerInside = <String>{};
   final Map<String, Map<int, double>> _editorTabLastWidths = {};
   final Map<String, Map<int, double>> _editorTabHeldWidths = {};
@@ -1056,6 +1061,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '切换编辑器标签换行',
       () async => _setEditorTabWrap(!_editorTabWrap.value),
+    );
+    reg(
+      'workbench.action.toggleEditorTabCloseActionVisibility',
+      '查看',
+      '显示关闭操作',
+      () async => _setEditorTabCloseActionVisibility(
+        !_editorTabCloseActionVisibility.value,
+      ),
     );
     for (final sizing in EditorTabSizing.values) {
       reg(
@@ -3040,6 +3053,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorTabCloseActionVisibility(bool visible) {
+    if (_editorTabCloseActionVisibility.value == visible) return;
+    setState(() => _editorTabCloseActionVisibility.value = visible);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -3064,6 +3083,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorTabMode': _editorTabMode.value.name,
         'editorTabSizing': _editorTabSizing.value.name,
         'editorTabActionLocation': _editorTabActionLocation.value.name,
+        'editorTabCloseActionVisibility': _editorTabCloseActionVisibility.value,
         'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
@@ -3166,6 +3186,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         EditorTabSizing.fromSessionValue(data['editorTabSizing']);
     _editorTabActionLocation.value = EditorTabActionLocation.fromSessionValue(
         data['editorTabActionLocation']);
+    _editorTabCloseActionVisibility.value =
+        data['editorTabCloseActionVisibility'] is bool
+            ? data['editorTabCloseActionVisibility'] as bool
+            : true;
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -17332,6 +17356,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
     _editorTabActionLocation.dispose();
+    _editorTabCloseActionVisibility.dispose();
+    _editorTabHoveredTarget.dispose();
     _editorTabWrap.dispose();
     _commitMessage.dispose();
     _layout.dispose();
@@ -17544,6 +17570,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   'workbench.action.toggleEditorTabWrapping',
                               checkedListenable: _editorTabWrap,
                               checkedBuilder: () => _editorTabWrap.value,
+                            ),
+                            TitleMenuItem(
+                              '显示关闭操作',
+                              commandId:
+                                  'workbench.action.toggleEditorTabCloseActionVisibility',
+                              checkedListenable:
+                                  _editorTabCloseActionVisibility,
+                              checkedBuilder: () =>
+                                  _editorTabCloseActionVisibility.value,
                             ),
                             TitleMenuItem.submenu('标签尺寸', children: [
                               TitleMenuItem(
@@ -18549,10 +18584,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(fontSize: 12),
     );
-    final closeAction = InkWell(
-      key: ValueKey('close-tab-${g.region}-${d.id}'),
-      onTap: () => _closeDoc(d.id, group: g),
-      child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+    final closeAction = ValueListenableBuilder<({String region, int docId})?>(
+      valueListenable: _editorTabHoveredTarget,
+      builder: (context, hoveredTarget, _) => EditorTabCloseAction(
+        key: ValueKey('editor-tab-close-action-${g.region}-${d.id}'),
+        actionKey: ValueKey('close-tab-${g.region}-${d.id}'),
+        enabled: _editorTabCloseActionVisibility.value,
+        emphasized: d.id == g.activeDocId ||
+            d.isDirty ||
+            hoveredTarget == (region: g.region, docId: d.id),
+        onPressed: () => _closeDoc(d.id, group: g),
+      ),
     );
     final tab = InkWell(
       onTap: () {
@@ -18623,30 +18665,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       ),
     );
-    return DragTarget<int>(
-      onWillAcceptWithDetails: (details) => details.data != d.id,
-      onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
-      builder: (context, _, __) => Draggable<int>(
-        data: d.id,
-        dragAnchorStrategy: pointerDragAnchorStrategy,
-        feedback: Material(
-          type: MaterialType.transparency,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF252932),
-              borderRadius: BorderRadius.circular(3),
+    return MouseRegion(
+      onEnter: (_) =>
+          _editorTabHoveredTarget.value = (region: g.region, docId: d.id),
+      onExit: (_) {
+        if (_editorTabHoveredTarget.value == (region: g.region, docId: d.id)) {
+          _editorTabHoveredTarget.value = null;
+        }
+      },
+      child: DragTarget<int>(
+        onWillAcceptWithDetails: (details) => details.data != d.id,
+        onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
+        builder: (context, _, __) => Draggable<int>(
+          data: d.id,
+          dragAnchorStrategy: pointerDragAnchorStrategy,
+          feedback: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFF252932),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text(d.name, style: const TextStyle(fontSize: 12)),
             ),
-            child: Text(d.name, style: const TextStyle(fontSize: 12)),
           ),
-        ),
-        childWhenDragging: Opacity(opacity: 0.4, child: tab),
-        child: Listener(
-          // 中键关闭（kMiddleMouseButton），不影响左键激活
-          onPointerDown: (e) {
-            if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
-          },
-          child: tab,
+          childWhenDragging: Opacity(opacity: 0.4, child: tab),
+          child: Listener(
+            // 中键关闭（kMiddleMouseButton），不影响左键激活
+            onPointerDown: (e) {
+              if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
+            },
+            child: tab,
+          ),
         ),
       ),
     );
