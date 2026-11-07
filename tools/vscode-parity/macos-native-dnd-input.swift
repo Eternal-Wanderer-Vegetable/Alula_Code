@@ -375,30 +375,49 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
   return standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
 }
 
-func quitThroughNativeMenu(bundleIdentifier: String) throws {
+func quitThroughNativeMenu(
+  bundleIdentifier: String,
+  expectedBundlePath: String
+) throws {
   guard AXIsProcessTrusted() else {
     throw NSError(domain: "AlulaMacDnd", code: 20, userInfo: [
       NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
     ])
   }
+  let expectedBundleURL = URL(fileURLWithPath: expectedBundlePath)
+    .standardizedFileURL.resolvingSymlinksInPath()
+  func isExpectedApplication(_ candidate: NSRunningApplication) -> Bool {
+    guard !candidate.isTerminated,
+          candidate.bundleIdentifier == bundleIdentifier,
+          let bundleURL = candidate.bundleURL else {
+      return false
+    }
+    return bundleURL.standardizedFileURL.resolvingSymlinksInPath().path ==
+      expectedBundleURL.path
+  }
+
   let appDiscoveryDeadline = Date().addingTimeInterval(15)
   var app = NSRunningApplication.runningApplications(
     withBundleIdentifier: bundleIdentifier
-  ).last(where: { !$0.isTerminated })
+  ).last(where: isExpectedApplication)
   while app == nil && Date() < appDiscoveryDeadline {
     Thread.sleep(forTimeInterval: 0.1)
     app = NSRunningApplication.runningApplications(
       withBundleIdentifier: bundleIdentifier
-    ).last(where: { !$0.isTerminated })
+    ).last(where: isExpectedApplication)
   }
   guard let app else {
     throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
       NSLocalizedDescriptionKey:
-        "Could not find a running app with bundle identifier \(bundleIdentifier)"
+        "Could not find a running app with bundle identifier \(bundleIdentifier) at \(expectedBundleURL.path)"
     ])
   }
 
   let processIdentifier = app.processIdentifier
+  print(
+    "Targeting native Quit menu in \(app.localizedName ?? bundleIdentifier) " +
+      "at \(expectedBundleURL.path) (pid \(processIdentifier), active=\(app.isActive))."
+  )
   _ = app.activate(options: [])
   do {
     try quitThroughAccessibilityMenu(processIdentifier: processIdentifier)
@@ -419,22 +438,27 @@ func quitThroughNativeMenu(bundleIdentifier: String) throws {
 }
 
 func run() throws {
-  if CommandLine.arguments.count == 3,
+  if CommandLine.arguments.count == 4,
      CommandLine.arguments[1] == "--quit-native-menu"
   {
     let bundleIdentifier = CommandLine.arguments[2]
-    guard !bundleIdentifier.isEmpty else {
+    let bundlePath = CommandLine.arguments[3]
+    guard !bundleIdentifier.isEmpty, !bundlePath.isEmpty else {
       throw NSError(domain: "AlulaMacDnd", code: 25, userInfo: [
-        NSLocalizedDescriptionKey: "Native menu Quit requires an app bundle identifier"
+        NSLocalizedDescriptionKey: "Native menu Quit requires an app bundle identifier and bundle path"
       ])
     }
-    try quitThroughNativeMenu(bundleIdentifier: bundleIdentifier)
+    try quitThroughNativeMenu(
+      bundleIdentifier: bundleIdentifier,
+      expectedBundlePath: bundlePath
+    )
     return
   }
 
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
-      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id>"
+      NSLocalizedDescriptionKey:
+        "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id> <app-bundle-path>"
     ])
   }
 

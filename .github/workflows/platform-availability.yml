@@ -907,7 +907,8 @@ jobs:
 
           quit_menu_selected=false
           for attempt in 1 2; do
-            if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu "$bundle_identifier" \
+            if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \
+              "$bundle_identifier" "$app_bundle" \
               >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
               quit_menu_selected=true
               break
