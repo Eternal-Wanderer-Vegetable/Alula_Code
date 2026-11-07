@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'layout_controller.dart';
 import 'layout_model.dart';
 import 'panel_alignment.dart';
+import 'panel_maximize.dart';
 
 /// 分割条主轴占位（含命中区）；视觉线居中 1px。
 const double kDividerThickness = 4.0;
@@ -56,8 +57,42 @@ class _WorkbenchGridState extends State<WorkbenchGrid> {
       builder: (context, _) {
         _syncRegionKeys();
         final projection = projectPanelAlignment(widget.layout);
+        final node = projection?.tree ?? widget.layout.root;
+        final panelBuilder = widget.builders['panel'];
+        final panelKey = _regionKeys['panel'];
+        if (widget.layout.panelMaximized &&
+            !widget.layout.isCollapsed('panel') &&
+            widget.layout.canMaximizePanel &&
+            panelBuilder != null &&
+            panelKey != null) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              Offstage(
+                offstage: true,
+                child: _NodeView(
+                  node: node,
+                  layout: widget.layout,
+                  builders: widget.builders,
+                  regionKeys: _regionKeys,
+                  projection: projection,
+                  omitRegion: 'panel',
+                ),
+              ),
+              Positioned.fill(
+                child: KeyedSubtree(
+                  key: panelKey,
+                  child: KeyedSubtree(
+                    key: const ValueKey('wb-region-panel'),
+                    child: panelBuilder(context),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
         return _NodeView(
-          node: projection?.tree ?? widget.layout.root,
+          node: node,
           layout: widget.layout,
           builders: widget.builders,
           regionKeys: _regionKeys,
@@ -83,6 +118,7 @@ class _NodeView extends StatelessWidget {
     required this.builders,
     required this.regionKeys,
     required this.projection,
+    this.omitRegion,
   });
 
   final WbNode node;
@@ -90,11 +126,13 @@ class _NodeView extends StatelessWidget {
   final Map<String, WidgetBuilder> builders;
   final Map<String, GlobalKey> regionKeys;
   final PanelAlignmentProjection? projection;
+  final String? omitRegion;
 
   @override
   Widget build(BuildContext context) {
     final leaf = node;
     if (leaf is WbLeaf) {
+      if (leaf.region == omitRegion) return const SizedBox.shrink();
       if (leaf.collapsed) return const SizedBox.shrink();
       final build = builders[leaf.region];
       return KeyedSubtree(
@@ -151,6 +189,7 @@ class _NodeView extends StatelessWidget {
               builders: builders,
               regionKeys: regionKeys,
               projection: projection,
+              omitRegion: omitRegion,
             ),
           ),
         );

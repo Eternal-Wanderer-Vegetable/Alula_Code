@@ -18,10 +18,22 @@ extension WorkbenchPanelAlignment on WorkbenchLayout {
     var changed = false;
     final position = panelPosition;
     if (position == PanelPosition.left || position == PanelPosition.right) {
-      changed = setPanelPosition(PanelPosition.bottom);
-    }
-    if (panelAlignment != target) {
+      if (panelAlignment != target) {
+        root.panelAlignment = target;
+        changed = true;
+      }
+      changed =
+          setPanelPosition(PanelPosition.bottom, notify: false) || changed;
+    } else if (panelAlignment != target) {
       root.panelAlignment = target;
+      changed = true;
+    }
+    final resultingPosition = panelPosition;
+    if (panelMaximized &&
+        panelAlignment != PanelAlignment.center &&
+        (resultingPosition == PanelPosition.top ||
+            resultingPosition == PanelPosition.bottom)) {
+      setPanelMaximized(false, notify: false);
       changed = true;
     }
     if (changed) notifyLayoutChanged();

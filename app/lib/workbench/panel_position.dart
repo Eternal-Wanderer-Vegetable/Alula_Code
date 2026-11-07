@@ -40,7 +40,7 @@ extension WorkbenchPanelPosition on WorkbenchLayout {
   /// Move the Panel leaf to a root edge while keeping the existing root,
   /// Panel leaf, siblings, and workspace subtrees intact. Returns false when
   /// the requested position is already active or the root shape is unsupported.
-  bool setPanelPosition(PanelPosition target) {
+  bool setPanelPosition(PanelPosition target, {bool notify = true}) {
     final index = _panelRootIndex(root);
     if (root.children.length < 2 || index < 0 || panelPosition == null) {
       return false;
@@ -54,7 +54,14 @@ extension WorkbenchPanelPosition on WorkbenchLayout {
     } else {
       root.children.add(panel);
     }
-    notifyLayoutChanged();
+    final centerAligned =
+        (root.panelAlignment ?? PanelAlignment.center) == PanelAlignment.center;
+    if (panelMaximized &&
+        !centerAligned &&
+        (target == PanelPosition.top || target == PanelPosition.bottom)) {
+      setPanelMaximized(false, notify: false);
+    }
+    if (notify) notifyLayoutChanged();
     return true;
   }
 }

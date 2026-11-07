@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/panel_position.dart';
@@ -222,5 +223,113 @@ void main() {
     final restoredPanel = restored.children.last as WbLeaf;
     expect(restoredPanel.region, 'panel');
     expect(restoredPanel.collapsed, isTrue);
+  });
+
+  testWidgets('Panel maximize command reveals, restores, and stays transient',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    layoutStore.save(defaultLayout());
+
+    Future<void> mountApp() async {
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+      ));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    Future<void> invokeCommandFromPalette(
+        String query, String commandKey) async {
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      final input = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(input, query);
+      await tester.pumpAndSettle();
+      final command = ValueKey(commandKey);
+      expect(find.byKey(command), findsOneWidget);
+      await tester.tap(find.byKey(command));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 600));
+    }
+
+    Future<void> invokeMaximizeFromPalette() => invokeCommandFromPalette(
+          '切换面板最大化',
+          'qi-查看: 切换面板最大化',
+        );
+
+    Rect panelRect() =>
+        tester.getRect(find.byKey(const ValueKey('wb-region-panel')));
+    Rect gridRect() => tester.getRect(find.byType(WorkbenchGrid));
+    String panelActionTooltip() => tester
+        .widget<IconButton>(
+          find.byKey(const ValueKey('panel-maximize-toggle')),
+        )
+        .tooltip!;
+
+    await mountApp();
+    await invokeMaximizeFromPalette();
+    expect(panelRect(), gridRect(),
+        reason: 'Command Palette reveals and maximizes the collapsed Panel');
+    expect(panelActionTooltip(), '还原面板');
+
+    final persistedWhileMaximized = layoutStore.tryLoad()!;
+    expect(persistedWhileMaximized.leafOf('panel')!.collapsed, isFalse);
+    expect(
+      persistedWhileMaximized.toJson().containsKey('panelMaximized'),
+      isFalse,
+      reason: 'maximization is runtime-only',
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await mountApp();
+    expect(panelActionTooltip(), '最大化面板',
+        reason:
+            'a new workbench restores the visible Panel but not maximization');
+    expect(panelRect().height, lessThan(gridRect().height));
+
+    await tester.tap(find.byKey(const ValueKey('panel-maximize-toggle')));
+    await tester.pumpAndSettle();
+    expect(panelRect(), gridRect());
+    expect(panelActionTooltip(), '还原面板');
+
+    await tester.tap(find.byKey(const ValueKey('panel-maximize-toggle')));
+    await tester.pumpAndSettle();
+    expect(panelRect().height, lessThan(gridRect().height));
+    expect(panelActionTooltip(), '最大化面板');
+
+    await invokeCommandFromPalette(
+      '将面板对齐到左侧',
+      'qi-查看: 将面板对齐到左侧',
+    );
+    await invokeCommandFromPalette(
+      '将面板移到顶部',
+      'qi-查看: 将面板移到顶部',
+    );
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byKey(const ValueKey('panel-maximize-toggle')),
+          )
+          .onPressed,
+      isNull,
+      reason: 'non-center Top Panel does not expose an enabled maximize action',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pumpAndSettle();
+    final input = find.descendant(
+      of: find.byKey(const ValueKey('quick-input')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(input, '切换面板最大化');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('qi-查看: 切换面板最大化')), findsNothing);
   });
 }

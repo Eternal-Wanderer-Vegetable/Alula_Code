@@ -14,6 +14,19 @@ class WorkbenchLayout extends ChangeNotifier {
 
   WbSplit root;
 
+  // Runtime-only presentation state. The layout store serializes [root] only.
+  bool _panelMaximized = false;
+
+  bool get panelMaximized => _panelMaximized;
+
+  /// Updates the transient Panel presentation state without changing the
+  /// persisted split tree. [notify] lets a layout transaction emit one update.
+  void setPanelMaximized(bool maximized, {bool notify = true}) {
+    if (_panelMaximized == maximized) return;
+    _panelMaximized = maximized;
+    if (notify) notifyListeners();
+  }
+
   /// Notify grid renderers after a layout-tree operation performed outside
   /// this controller's built-in split/region methods.
   void notifyLayoutChanged() => notifyListeners();

@@ -3,6 +3,7 @@
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_model.dart';
+import 'package:alula_app/workbench/panel_maximize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +24,26 @@ double _width(WidgetTester tester, String region) =>
 
 double _height(WidgetTester tester, String region) =>
     tester.getSize(find.byKey(ValueKey('probe-$region'))).height;
+
+class _MountProbe extends StatefulWidget {
+  const _MountProbe({required this.mounts});
+
+  final List<int> mounts;
+
+  @override
+  State<_MountProbe> createState() => _MountProbeState();
+}
+
+class _MountProbeState extends State<_MountProbe> {
+  @override
+  void initState() {
+    super.initState();
+    widget.mounts.add(1);
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.expand();
+}
 
 void main() {
   testWidgets('默认布局：活动栏固定宽，侧栏/编辑器按权重分配', (tester) async {
@@ -149,5 +170,61 @@ void main() {
     expect(_width(tester, 'activity'), 48);
     expect(layout.root.leafOf('activity')!.lastWeight, isNull);
     expect(changes, 2);
+  });
+
+  testWidgets('最大化面板占满工作区且编辑器和面板状态保持挂载', (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    final editorMounts = <int>[];
+    final panelMounts = <int>[];
+    Widget host() => MaterialApp(
+          home: Scaffold(
+            body: WorkbenchGrid(
+              layout: layout,
+              builders: {
+                'activity': (_) => const SizedBox.expand(),
+                'sidebar': (_) => const SizedBox.expand(),
+                'editor': (_) => _MountProbe(mounts: editorMounts),
+                'panel': (_) => _MountProbe(mounts: panelMounts),
+              },
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(host());
+    await tester.pump();
+    expect(editorMounts, [1]);
+    expect(panelMounts, isEmpty, reason: 'Panel begins collapsed');
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    final gridRect = tester.getRect(find.byType(WorkbenchGrid));
+    expect(
+        tester.getRect(find.byKey(const ValueKey('wb-region-panel'))), gridRect,
+        reason: 'maximized Panel fills the workbench content area');
+    expect(editorMounts, [1], reason: 'editor subtree stays mounted offstage');
+    expect(panelMounts, [1]);
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(
+      tester.getRect(find.byKey(const ValueKey('wb-region-panel'))).height,
+      lessThan(gridRect.height),
+    );
+    expect(editorMounts, [1]);
+    expect(panelMounts, [1],
+        reason: 'Panel subtree is reparented, not recreated');
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(panelMounts, [1],
+        reason: 'Panel state also survives moving from the normal layout');
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(panelMounts, [1]);
   });
 }
