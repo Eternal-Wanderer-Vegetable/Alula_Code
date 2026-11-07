@@ -970,12 +970,12 @@
     {
       "id": "feat-076",
       "name": "P05.24 LAY-05c Panel 对齐命令与布局持久化",
-      "description": "按固定 Code-OSS 1.145.0 实现 Panel Left/Right/Center/Justify 四态对齐命令、View > Appearance > Align Panel 当前态，以及现有布局 JSON 保存/重挂；对齐切换保留 Panel 位置、可见/折叠状态、root/工作台子树及其它区域状态，并与 Top/Bottom/Left/Right 位置组合验证。不含最大化/还原、Panel view 移动/拖放、sash/minimum-size 或浮动布局。范围见 docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md。",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel Left/Right/Center/Justify 四态对齐命令、View > Appearance > Align Panel 当前态，以及现有布局 JSON 保存/重挂。对齐只作用于 Top/Bottom；在 Left/Right 执行对齐命令时先移至 Bottom，随后侧边停靠保留 alignment 值。对齐布局重排 Panel、侧栏、编辑器和 Activity Bar 且保持四向 position 命令可用。保留区域状态/focus/尺寸。不含最大化/还原功能、Panel view 移动/拖放、sash/minimum-size 或浮动布局。范围见 docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md。",
       "dependencies": [
         "feat-075"
       ],
       "status": "in-progress",
-      "evidence": "P05.24 scope registered before implementation; no product code edits yet. Fixed upstream Code-OSS alignment IDs, labels, checked submenu, and layout state routing are recorded in docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md. Pre-edit GitNexus impacts completed: WorkbenchLayout MEDIUM (11 nodes), WbSplit HIGH/lower-bound (21), WbNode HIGH (25), LayoutStore LOW (1 direct importer). PanelAlignment/setPanelAlignment are UNKNOWN/not indexed and were text-checked; WorkbenchPage is over the analyzer size cap. Cross-language and incomplete-flow limitations are retained, not treated as an all-clear.",
+      "evidence": "P05.24 scope registered before implementation; no product code edits yet. Fixed upstream Code-OSS alignment IDs/titles, checked submenu, and the rule that alignment applies only at Top/Bottom (an alignment command from Left/Right first moves Panel to Bottom) are recorded in docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md. Pre-edit GitNexus impacts completed: WorkbenchLayout MEDIUM (11 nodes), WbSplit HIGH/lower-bound (21), WbNode HIGH (25), LayoutStore LOW (1 direct importer). PanelAlignment/setPanelAlignment are UNKNOWN/not indexed and text-checked; WorkbenchPage is over the analyzer size cap. Cross-language and incomplete-flow limitations are retained, not treated as an all-clear.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
