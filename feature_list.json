@@ -962,8 +962,20 @@
       "dependencies": [
         "feat-074"
       ],
+      "status": "done",
+      "evidence": "P05.23 / feat-075 complete at product commit b9a1b4b. Panel Left/Right commands, four-way position transitions, root JSON persistence/remount, live menu state, and preservation of root/Panel/workbench subtree/state are implemented. Focused Flutter suites 27/27; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,126/1,126; cargo fmt --check, Flutter analyze (0 issues), Harness 100/100, JSON and diff checks passed. PR CI 42340702008 passed all four jobs. Platform Availability 42340697752 passed Linux x64, Windows x64, and macOS Intel x64 lanes. Package artifacts Linux/Windows/macOS: 13561543111 / 13561309118 / 13562435512. macOS ZIP SHA-256 e73c36ff01ecae7f551866a5906c12fa0eca2423448a44222ab11a32e39422c1 matched its sidecar and all 76 ZIP entries passed integrity validation. Linux/Windows DnD artifacts 13561715983 / 13561433885 passed move/copy/external-text probes; macOS DnD artifact 13562470304 explicitly skipped because the hosted pointer route was unavailable. Native macOS Quit/startup artifact 13561608842 confirms the Quit callback and exit status 0. Full scope, graph limitations, and evidence: docs/diagnostics/2026-11-07-p05/p05.23-panel-position-left-right-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-076",
+      "name": "P05.24 LAY-05c Panel 对齐命令与布局持久化",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel Left/Right/Center/Justify 四态对齐命令、View > Appearance > Align Panel 当前态，以及现有布局 JSON 保存/重挂；对齐切换保留 Panel 位置、可见/折叠状态、root/工作台子树及其它区域状态，并与 Top/Bottom/Left/Right 位置组合验证。不含最大化/还原、Panel view 移动/拖放、sash/minimum-size 或浮动布局。范围见 docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md。",
+      "dependencies": [
+        "feat-075"
+      ],
       "status": "in-progress",
-      "evidence": "P05.23 implementation is complete locally; product code is not yet committed. Added workbench.action.positionPanelLeft/Right, four-position root axis/order persistence, cross-axis transitions, live Flutter/macOS menu checks, and preservation of root, Panel, workspace subtree, metadata, weights, min extents and collapse state. Focused model/integration/title-bar tests 27/27. Full bash init.sh passed: Rust 71+54, Clippy, build_core, Flutter 1,126/1,126; cargo fmt --check, flutter analyze (0 issues), Harness (100/100), feature_list JSON validation, and git diff --check passed. GitNexus all-scope 12 files (6–18 symbols, 0–1 flows, LOW–MEDIUM across re-index runs; latest 14 symbols/1 flow/MEDIUM); compare-to-main 117 files/22 flows/CRITICAL (293–319 symbols across re-index runs), with no partial/backend-truncated warning. Hosted PR CI and Linux/Windows/macOS Intel x64 build/test/launch/package remain before marking done. Scope: docs/diagnostics/2026-11-07-p05/p05.23-panel-position-left-right-scope.md.",
+      "evidence": "P05.24 scope registered before implementation; no product code edits yet. Fixed upstream Code-OSS alignment IDs, labels, checked submenu, and layout state routing are recorded in docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md. Pre-edit GitNexus impacts completed: WorkbenchLayout MEDIUM (11 nodes), WbSplit HIGH/lower-bound (21), WbNode HIGH (25), LayoutStore LOW (1 direct importer). PanelAlignment/setPanelAlignment are UNKNOWN/not indexed and were text-checked; WorkbenchPage is over the analyzer size cap. Cross-language and incomplete-flow limitations are retained, not treated as an all-clear.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
