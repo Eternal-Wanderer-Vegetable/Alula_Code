@@ -1010,6 +1010,16 @@
       ],
       "status": "done",
       "evidence": "Completed 2026-11-07 at product commit 880ebecf455a7079677897be24bb9f5ead005fb4. Focused model/grid/alignment tests 49/49; full bash init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,150/1,150); cargo fmt --check, flutter analyze (0), Harness 100/100, JSON/diff passed. PR CI 42362871885 passed all jobs. Platform Availability 42362866427 passed Linux/Windows/macOS Intel x64. Packages Linux/Windows/macOS 13571020067 / 13571275187 / 13570959133; macOS ZIP SHA-256 6d302c880d24a69b2842fa7a6b62e4764fd82449c16c224027a6e2d3c024e29c matched sidecar and unzip integrity passed. Linux/Windows native move/copy/external-text DnD passed; macOS DnD 13571038989 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13571213638. Full implementation, upstream semantics, GitNexus CRITICAL/coverage warnings, and hosted evidence: docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md. P05/feat-027 remains in-progress."
+    },
+    {
+      "id": "feat-080",
+      "name": "P05.28 LAY-07a 编辑器组方向拆分与活动文档复制",
+      "description": "按固定 Code-OSS 1.145.0 提供 Right/Left/Down/Up 编辑器组拆分命令，保留默认 editor.split 为 Right；新组复制当前活动文档、共享权威文本/保存但保持独立视图，并取得焦点。覆盖嵌套布局方向和 root layout JSON 往返/重挂，不处理组 move/copy/reorder、同组 split、均分/最大化/锁组或拖放。范围见 docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md。",
+      "dependencies": [
+        "feat-079"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered 2026-11-07 before product edits. Fixed upstream directional commands and split/copy/focus semantics, current product gap, acceptance boundaries, and pre-edit GitNexus HIGH/CRITICAL/UNKNOWN risks are recorded in docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md. Product implementation and verification pending."
     }
   ],
   "active_track": "vscode-builtin-parity",
