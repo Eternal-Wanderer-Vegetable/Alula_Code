@@ -4,14 +4,30 @@ import 'package:flutter/painting.dart' show Axis;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:alula_app/workbench/layout_model.dart';
+import 'package:alula_app/workbench/layout_controller.dart';
+import 'package:alula_app/workbench/activity_bar_size.dart';
+import 'package:alula_app/workbench/activity_bar_order.dart';
+import 'package:alula_app/workbench/activity_bar_pins.dart';
+import 'package:alula_app/workbench/activity_bar_badges.dart';
+import 'package:alula_app/workbench/activity_bar_global_actions.dart';
 
 void main() {
   group('JSON 序列化往返', () {
     test('默认布局 round-trip 逐字段相等', () {
       final original = defaultLayout();
-      final restored =
-          WbNode.fromJson(original.toJson()) as WbSplit;
+      final restored = WbNode.fromJson(original.toJson()) as WbSplit;
       expect(restored.axis, original.axis);
+      expect(restored.activityBarLocation, ActivityBarLocation.side);
+      expect(restored.activityBarSize, ActivityBarSize.defaultSize);
+      expect(restored.activityBarOrder, isNull,
+          reason: 'default layouts omit optional ordering metadata');
+      expect(normalizeActivityBarViewOrder(restored.activityBarOrder),
+          activityBarViewOrder);
+      expect(restored.activityBarPinned, isNull,
+          reason: 'default layouts keep legacy all-pinned JSON compact');
+      final restoredLayout = WorkbenchLayout(root: restored);
+      expect(restoredLayout.activityBarPinnedViews, activityBarViewOrder);
+      restoredLayout.dispose();
       expect(restored.children.length, original.children.length);
       final inner = restored.children.first as WbSplit;
       expect(inner.axis, Axis.horizontal);
@@ -22,22 +38,219 @@ void main() {
       final panel = restored.leafOf('panel')!;
       expect(panel.collapsed, isTrue, reason: '面板默认收起');
       expect(panel.lastWeight, closeTo(0.3, 1e-9));
-      expect(inner.leafOf('activity')!.fixedExtent, 44);
+      expect(panel.minExtent, panelMinimumHeight);
+      expect(inner.leafOf('activity')!.fixedExtent, 48);
     });
 
-    test('叶子权重/折叠态 round-trip', () {
+    test('P05.12 布局迁移到 Default，Compact 大小可往返', () {
+      final p05_12 = defaultLayout();
+      p05_12.leafOf('activity')!.fixedExtent = 44;
+      final oldLayout = p05_12.toJson()..remove('activityBarSize');
+      final migrated = WbNode.fromJson(oldLayout) as WbSplit;
+      expect(migrated.activityBarSize, ActivityBarSize.defaultSize);
+      expect(migrated.leafOf('activity')!.fixedExtent, 48);
+
+      final layout = WorkbenchLayout(root: defaultLayout());
+      expect(layout.setActivityBarSize(ActivityBarSize.compact), isTrue);
+      final restored = WbNode.fromJson(layout.root.toJson()) as WbSplit;
+      expect(restored.activityBarSize, ActivityBarSize.compact);
+      expect(restored.leafOf('activity')!.fixedExtent, 36);
+      layout.dispose();
+    });
+
+    test('Activity Bar order round-trip and malformed value migration', () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(
+          restored.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+
+      final oldLayout = root.toJson()..remove('activityBarOrder');
+      final migrated = WbNode.fromJson(oldLayout) as WbSplit;
+      expect(migrated.activityBarOrder, isNull);
+      expect(normalizeActivityBarViewOrder(migrated.activityBarOrder),
+          activityBarViewOrder);
+
+      final malformed = root.toJson()
+        ..['activityBarOrder'] = ['git', 'git', 'unknown', 42];
+      final canonical = WbNode.fromJson(malformed) as WbSplit;
+      expect(
+          canonical.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+      expect(canonical.toJson()['activityBarOrder'],
+          ['git', 'explorer', 'search', 'outline']);
+    });
+
+    test('Activity Bar pin round-trip, legacy defaults and malformed values',
+        () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline']
+        ..activityBarPinned = const ['search', 'git', 'git', 'unknown'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(restored.activityBarPinned, ['git', 'search']);
+      expect(restored.toJson()['activityBarPinned'], ['git', 'search']);
+
+      final legacyJson = root.toJson()..remove('activityBarPinned');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarPinned, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarPinnedViews,
+          ['git', 'explorer', 'search', 'outline']);
+      legacyLayout.dispose();
+
+      final malformedJson = root.toJson()
+        ..['activityBarPinned'] = ['unknown', 42, 'git', 'git'];
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarPinned, ['git']);
+
+      final emptyJson = root.toJson()..['activityBarPinned'] = [];
+      final empty = WbNode.fromJson(emptyJson) as WbSplit;
+      expect(empty.activityBarPinned, ['git', 'explorer', 'search', 'outline'],
+          reason: 'invalid empty state must leave a usable pinned view set');
+    });
+
+    test('layout setter notifies once and preserves canonical default state',
+        () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarOrder, activityBarViewOrder);
+      expect(layout.setActivityBarOrder(activityBarViewOrder), isFalse);
+      expect(layout.setActivityBarOrder(['git', 'explorer']), isTrue);
+      expect(layout.activityBarOrder, ['git', 'explorer', 'search', 'outline']);
+      expect(changes, 1);
+      expect(layout.setActivityBarOrder(['git', 'explorer']), isFalse);
+      expect(changes, 1);
+      layout.dispose();
+    });
+
+    test('pin setter notifies and rejects attempts to hide the last view', () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarPinnedViews, activityBarViewOrder);
+      expect(layout.setActivityBarPinnedViews(activityBarViewOrder), isFalse);
+      expect(layout.setActivityBarPinnedViews(['git']), isTrue);
+      expect(layout.activityBarPinnedViews, ['git']);
+      expect(layout.setActivityBarPinnedViews([]), isFalse);
+      expect(layout.activityBarPinnedViews, ['git']);
+      expect(changes, 1);
+      layout.dispose();
+    });
+
+    test('badge disabled IDs round-trip, normalize and default to enabled', () {
+      final root = defaultLayout()
+        ..activityBarOrder = const ['git', 'explorer', 'search', 'outline']
+        ..activityBarBadgesDisabled = const ['search', 'git', 'git', 'unknown'];
+      final restored = WbNode.fromJson(root.toJson()) as WbSplit;
+      expect(restored.activityBarBadgesDisabled, ['git', 'search']);
+      expect(restored.toJson()['activityBarBadgesDisabled'], ['git', 'search']);
+
+      final legacyJson = root.toJson()..remove('activityBarBadgesDisabled');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarBadgesDisabled, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarBadgesDisabledViews, isEmpty);
+      legacyLayout.dispose();
+
+      final malformedJson = root.toJson()
+        ..['activityBarBadgesDisabled'] = ['unknown', 42, 'search', 'search'];
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarBadgesDisabled, ['search']);
+
+      final emptyJson = root.toJson()..['activityBarBadgesDisabled'] = [];
+      final empty = WbNode.fromJson(emptyJson) as WbSplit;
+      expect(empty.activityBarBadgesDisabled, isEmpty);
+      expect(empty.toJson().containsKey('activityBarBadgesDisabled'), isFalse,
+          reason: 'the default all-enabled state remains compact JSON');
+    });
+
+    test('badge visibility setter persists normalized IDs and notifies once',
+        () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarBadgesDisabledViews, isEmpty);
+      expect(
+          layout.setActivityBarBadgesDisabledViews(['search', 'git']), isTrue);
+      expect(layout.activityBarBadgesDisabledViews, ['search', 'git']);
+      expect(
+        (WbNode.fromJson(layout.root.toJson()) as WbSplit)
+            .activityBarBadgesDisabled,
+        ['search', 'git'],
+      );
+      expect(changes, 1);
+      expect(
+          layout.setActivityBarBadgesDisabledViews(['search', 'git']), isFalse);
+      expect(layout.setActivityBarBadgesDisabledViews([]), isTrue);
+      expect(layout.activityBarBadgesDisabledViews, isEmpty);
+      expect(changes, 2);
+      layout.dispose();
+    });
+
+    test('Accounts visibility defaults on and persists explicit changes', () {
+      final layout = WorkbenchLayout(root: defaultLayout());
+      var changes = 0;
+      layout.addListener(() => changes++);
+
+      expect(layout.activityBarAccountsVisible, isTrue);
+      expect(layout.root.activityBarAccountsVisible, isNull,
+          reason: 'new layouts keep the default visible state compact');
+      expect(layout.setActivityBarAccountsVisible(false), isTrue);
+      expect(layout.activityBarAccountsVisible, isFalse);
+      expect(layout.root.activityBarAccountsVisible, isFalse);
+      final restored = WbNode.fromJson(layout.root.toJson()) as WbSplit;
+      expect(restored.activityBarAccountsVisible, isFalse);
+      final restoredLayout = WorkbenchLayout(root: restored);
+      expect(restoredLayout.activityBarAccountsVisible, isFalse);
+      restoredLayout.dispose();
+      expect(layout.setActivityBarAccountsVisible(false), isFalse);
+      expect(layout.setActivityBarAccountsVisible(true), isTrue);
+      expect(layout.activityBarAccountsVisible, isTrue);
+      expect(layout.root.toJson()['activityBarAccountsVisible'], isTrue);
+      expect(changes, 2);
+      layout.dispose();
+    });
+
+    test('legacy and malformed Accounts preferences default to visible', () {
+      final legacyJson = defaultLayout().toJson()
+        ..remove('activityBarAccountsVisible');
+      final legacy = WbNode.fromJson(legacyJson) as WbSplit;
+      expect(legacy.activityBarAccountsVisible, isNull);
+      final legacyLayout = WorkbenchLayout(root: legacy);
+      expect(legacyLayout.activityBarAccountsVisible, isTrue);
+      legacyLayout.dispose();
+
+      final malformedJson = defaultLayout().toJson()
+        ..['activityBarAccountsVisible'] = 'hidden';
+      final malformed = WbNode.fromJson(malformedJson) as WbSplit;
+      expect(malformed.activityBarAccountsVisible, isNull);
+      final malformedLayout = WorkbenchLayout(root: malformed);
+      expect(malformedLayout.activityBarAccountsVisible, isTrue);
+      malformedLayout.dispose();
+    });
+
+    test('旧 Panel 默认最小值迁移，其他叶子权重/折叠态 round-trip', () {
       final leaf = WbLeaf(
           region: 'panel',
           weight: 0.3,
-          minExtent: 120,
+          minExtent: 120, // pre-P05.26 built-in default
           collapsed: true,
           lastWeight: 0.3);
       final back = WbLeaf.fromJson(leaf.toJson());
       expect(back.region, 'panel');
       expect(back.weight, closeTo(0.3, 1e-9));
-      expect(back.minExtent, 120);
+      expect(back.minExtent, panelMinimumHeight);
+      expect(back.toJson()['min'], panelMinimumHeight);
       expect(back.collapsed, isTrue);
       expect(back.lastWeight, closeTo(0.3, 1e-9));
+
+      final customized = WbLeaf.fromJson(
+        WbLeaf(region: 'panel', minExtent: 144).toJson(),
+      );
+      expect(customized.minExtent, 144);
     });
 
     test('损坏输入抛 FormatException（store 层负责回退默认布局）', () {
@@ -125,10 +338,7 @@ void main() {
       final split = WbSplit(axis: Axis.horizontal, children: [
         WbLeaf(region: 'activity', fixedExtent: 44),
         WbLeaf(
-            region: 'sidebar',
-            weight: 0.25,
-            collapsed: true,
-            lastWeight: 0.25),
+            region: 'sidebar', weight: 0.25, collapsed: true, lastWeight: 0.25),
         WbLeaf(region: 'editor', weight: 0.75),
       ]);
       final px = split.extentsFor(1000);
@@ -150,7 +360,68 @@ void main() {
       expect(px[1], closeTo(300, 1e-9));
     });
 
-    test('minsFor：嵌套 split 取子节点最小值之和', () {
+    test('Panel 最小值随停靠轴变化，resize 不写回权重', () {
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.2,
+        minExtent: panelMinimumHeight,
+      );
+      final editor = WbLeaf(region: 'editor', weight: 0.8);
+      final horizontal = WbSplit(
+        axis: Axis.horizontal,
+        children: [panel, editor],
+      );
+      final vertical = WbSplit(
+        axis: Axis.vertical,
+        children: [panel, editor],
+      );
+
+      expect(horizontal.minsFor().first, panelMinimumWidth);
+      expect(vertical.minsFor().first, panelMinimumHeight);
+      expect(horizontal.extentsFor(500), [panelMinimumWidth, 200]);
+      expect(panel.weight, 0.2);
+      expect(editor.weight, 0.8);
+      expect(horizontal.extentsFor(2000), [400, 1600],
+          reason: 'larger viewport restores the saved weighted geometry');
+
+      panel.minExtent = 144;
+      expect(vertical.minsFor().first, 144,
+          reason: 'custom minimum above the upstream floor is retained');
+      expect(horizontal.minsFor().first, panelMinimumWidth);
+    });
+
+    test('空间不足时按最小值比例压缩并保持总尺寸和权重', () {
+      final editor = WbLeaf(region: 'editor', weight: 0.25, minExtent: 200);
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.75,
+        minExtent: panelMinimumHeight,
+      );
+      final split = WbSplit(axis: Axis.horizontal, children: [editor, panel]);
+
+      final extents = split.extentsFor(100);
+      expect(extents, [40, 60]);
+      expect(extents.fold(0.0, (sum, extent) => sum + extent), 100);
+      expect(extents.every((extent) => extent >= 0), isTrue);
+      expect(editor.weight, 0.25);
+      expect(panel.weight, 0.75);
+    });
+
+    test('空间不足时 sash 无可行位移，不把压缩比例写回权重', () {
+      final editor = WbLeaf(region: 'editor', weight: 0.25, minExtent: 200);
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.75,
+        minExtent: panelMinimumHeight,
+      );
+      final split = WbSplit(axis: Axis.horizontal, children: [editor, panel]);
+
+      split.applyDrag(0, 30, 100);
+      expect(editor.weight, 0.25);
+      expect(panel.weight, 0.75);
+    });
+
+    test('minsFor：正交 split 取最大值，同轴 split 累加并计入分割条', () {
       final root = WbSplit(axis: Axis.vertical, children: [
         WbSplit(axis: Axis.horizontal, children: [
           WbLeaf(region: 'a', minExtent: 100),
@@ -158,7 +429,16 @@ void main() {
         ]),
         WbLeaf(region: 'panel', minExtent: 120),
       ]);
-      expect(root.minsFor(), [150, 120]);
+      expect(root.minsFor(), [100, 120], reason: '正交 split 取最大子项高度，不把宽度最小值相加');
+
+      final sameAxis = WbSplit(axis: Axis.vertical, children: [
+        WbSplit(axis: Axis.vertical, children: [
+          WbLeaf(region: 'a', minExtent: 100),
+          WbLeaf(region: 'b', minExtent: 50),
+        ]),
+        WbLeaf(region: 'panel'),
+      ]);
+      expect(sameAxis.minsFor().first, 100 + 50 + workbenchDividerThickness);
     });
 
     test('applyDrag：其余兄弟像素严格不动（docs/09 验收点）', () {
@@ -185,9 +465,79 @@ void main() {
       expect(px[1], 830);
     });
 
+    test('resetDivider：平分相邻弹性节点并保留其它兄弟像素', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'a', weight: 0.1),
+        WbLeaf(region: 'b', weight: 0.2),
+        WbLeaf(region: 'c', weight: 0.3),
+        WbLeaf(region: 'd', weight: 0.4),
+      ]);
+
+      expect(split.extentsFor(1000), [100, 200, 300, 400]);
+      expect(split.resetDivider(1, 1000), isTrue);
+      expect(split.extentsFor(1000), [100, 250, 250, 400]);
+      expect(split.children[1].weight, closeTo(split.children[2].weight, 1e-9));
+    });
+
+    test('resetDivider：两侧最小值约束平分目标', () {
+      final split = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left', weight: 0.8, minExtent: 260),
+        WbLeaf(region: 'right', weight: 0.2, minExtent: 100),
+      ]);
+
+      expect(split.extentsFor(400), [300, 100]);
+      expect(split.resetDivider(0, 400), isTrue);
+      expect(split.extentsFor(400), [260, 140]);
+    });
+
+    test('resetDivider：固定、折叠、越界和空间不足时不改权重', () {
+      final fixed = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'activity', fixedExtent: 48),
+        WbLeaf(region: 'editor'),
+      ]);
+      final collapsed = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left'),
+        WbLeaf(region: 'hidden', collapsed: true, lastWeight: 0.2),
+        WbLeaf(region: 'right'),
+      ]);
+      final constrained = WbSplit(axis: Axis.horizontal, children: [
+        WbLeaf(region: 'left', weight: 0.5, minExtent: 200),
+        WbLeaf(region: 'right', weight: 0.5, minExtent: 200),
+      ]);
+      final originalFixed = fixed.children.map((node) => node.weight).toList();
+      final originalCollapsed =
+          collapsed.children.map((node) => node.weight).toList();
+      final originalConstrained =
+          constrained.children.map((node) => node.weight).toList();
+
+      expect(fixed.resetDivider(0, 1000), isFalse);
+      expect(collapsed.resetDivider(0, 1000), isFalse);
+      expect(collapsed.resetDivider(1, 1000), isFalse);
+      expect(collapsed.resetDivider(4, 1000), isFalse);
+      expect(constrained.resetDivider(0, 100), isFalse);
+      expect(fixed.children.map((node) => node.weight), originalFixed);
+      expect(collapsed.children.map((node) => node.weight), originalCollapsed);
+      expect(
+        constrained.children.map((node) => node.weight),
+        originalConstrained,
+      );
+    });
+
+    test('resetDivider：垂直轴比例通过 JSON 回读并随窗口缩放保留', () {
+      final split = WbSplit(axis: Axis.vertical, children: [
+        WbLeaf(region: 'editor', weight: 0.75),
+        WbLeaf(region: 'panel', weight: 0.25, minExtent: panelMinimumHeight),
+      ]);
+
+      expect(split.resetDivider(0, 1000), isTrue);
+      final restored = WbNode.fromJson(split.toJson()) as WbSplit;
+      expect(restored.extentsFor(800), [400, 400]);
+      expect(restored.children[0].weight, closeTo(0.5, 1e-9));
+      expect(restored.children[1].weight, closeTo(0.5, 1e-9));
+    });
+
     test('applyDrag：拖嵌套 split 与叶子的分界 → 只改两者权重', () {
-      final inner =
-          WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
+      final inner = WbSplit(axis: Axis.horizontal, weight: 0.7, children: [
         WbLeaf(region: 'a'),
         WbLeaf(region: 'b'),
       ]);
@@ -240,5 +590,28 @@ void main() {
       expect(sidebar.weight, closeTo(0.24, 1e-9));
       expect(sidebar.collapsed, isFalse);
     });
+  });
+
+  test(
+      'layout controller removes a direct root editor while shell regions remain',
+      () {
+    final layout = WorkbenchLayout(
+      root: WbSplit(
+        axis: Axis.horizontal,
+        children: [
+          WbLeaf(region: 'activity'),
+          WbLeaf(region: 'editor'),
+          WbLeaf(region: 'panel'),
+        ],
+      ),
+    );
+
+    expect(layout.removeRegion('editor'), isTrue);
+    expect(layout.root.children.map((node) => (node as WbLeaf).region), [
+      'activity',
+      'panel',
+    ]);
+    expect(layout.leafOf('editor'), isNull);
+    layout.dispose();
   });
 }

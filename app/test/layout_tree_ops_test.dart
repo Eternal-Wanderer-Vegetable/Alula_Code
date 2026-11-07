@@ -15,7 +15,7 @@ void main() {
 
       // 原位置被嵌套 split 顶替
       final row = root.children.first as WbSplit;
-      final editorSlot = row.children.last;
+      final editorSlot = _editorSlot(row);
       expect(editorSlot, isA<WbSplit>());
       final nest = editorSlot as WbSplit;
       expect(nest.axis, Axis.horizontal);
@@ -33,6 +33,68 @@ void main() {
       expect(fresh, isNotNull);
       expect(root.leafOf('editor-3'), isNotNull);
       expect(root.leaves.where((l) => l.region.startsWith('editor')).length, 3);
+    });
+
+    test('方向插入覆盖 Left/Right/Up/Down 并保留嵌套 JSON 顺序', () {
+      final root = defaultLayout();
+      root.splitLeaf('editor', 'editor-2', Axis.horizontal);
+      final right = root.parentSplitOf('editor-2')!;
+      expect(right.axis, Axis.horizontal);
+      expect(right.children.map((node) => (node as WbLeaf).region),
+          ['editor', 'editor-2']);
+      root.splitLeaf(
+        'editor-2',
+        'editor-3',
+        Axis.horizontal,
+        insertBefore: true,
+      );
+      final left = root.parentSplitOf('editor-3')!;
+      expect(left.axis, Axis.horizontal);
+      expect(left.children.map((node) => (node as WbLeaf).region),
+          ['editor-3', 'editor-2']);
+      root.splitLeaf(
+        'editor-3',
+        'editor-4',
+        Axis.vertical,
+        insertBefore: true,
+      );
+      final up = root.parentSplitOf('editor-4')!;
+      expect(up.axis, Axis.vertical);
+      expect(up.children.map((node) => (node as WbLeaf).region),
+          ['editor-4', 'editor-3']);
+      root.splitLeaf('editor-4', 'editor-5', Axis.vertical);
+
+      final down = root.parentSplitOf('editor-4')!;
+      expect(down.axis, Axis.vertical);
+      expect(down.children.map((node) => (node as WbLeaf).region),
+          ['editor-4', 'editor-5']);
+      expect(
+          root.leaves.map((leaf) => leaf.region),
+          containsAll([
+            'activity',
+            'sidebar',
+            'secondarySidebar',
+            'editor',
+            'editor-2',
+            'editor-3',
+            'editor-4',
+            'editor-5',
+            'panel',
+          ]));
+
+      final json = root.toJson();
+      final restored = WbNode.fromJson(json) as WbSplit;
+      expect(restored.toJson(), json);
+      final restoredUp = restored.parentSplitOf('editor-3')!;
+      expect(restoredUp.axis, Axis.vertical);
+      expect((restoredUp.children[0] as WbSplit).axis, Axis.vertical);
+      expect((restoredUp.children[1] as WbLeaf).region, 'editor-3');
+      expect(
+          restored
+              .parentSplitOf('editor-4')!
+              .children
+              .map((node) => (node as WbLeaf).region),
+          ['editor-4', 'editor-5']);
     });
 
     test('重复 region / 不存在 region → null', () {
@@ -53,12 +115,10 @@ void main() {
       expect(root.removeLeaf('editor-2'), isTrue);
 
       final row = root.children.first as WbSplit;
-      final editorSlot = row.children.last;
-      expect(editorSlot, isA<WbLeaf>(),
-          reason: '折叠后 editor 叶子顶回原位置');
+      final editorSlot = _editorSlot(row);
+      expect(editorSlot, isA<WbLeaf>(), reason: '折叠后 editor 叶子顶回原位置');
       expect((editorSlot as WbLeaf).region, 'editor');
-      expect(editorSlot.weight, closeTo(0.76, 1e-9),
-          reason: '折叠沿用外层权重');
+      expect(editorSlot.weight, closeTo(0.76, 1e-9), reason: '折叠沿用外层权重');
     });
 
     test('摘除兄弟尚存的叶子：不折叠', () {
@@ -68,7 +128,7 @@ void main() {
       expect(root.removeLeaf('editor-3'), isTrue);
       // editor-2 所在 split 还有 editor → 不折叠
       final row = root.children.first as WbSplit;
-      expect(row.children.last, isA<WbSplit>());
+      expect(_editorSlot(row), isA<WbSplit>());
       expect(root.leafOf('editor-2'), isNotNull);
       expect(root.leafOf('editor-3'), isNull);
     });
@@ -95,3 +155,7 @@ void main() {
     });
   });
 }
+
+WbNode _editorSlot(WbSplit row) => row.children.firstWhere(
+      (node) => node.leaves.any((leaf) => leaf.region == 'editor'),
+    );

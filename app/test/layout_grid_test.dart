@@ -2,6 +2,9 @@
 // 不依赖 FFI（builders 注入占位内容），对应 docs/09 W1-2。
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
+import 'package:alula_app/workbench/layout_model.dart';
+import 'package:alula_app/workbench/panel_maximize.dart';
+import 'package:alula_app/workbench/panel_position.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,18 +26,45 @@ double _width(WidgetTester tester, String region) =>
 double _height(WidgetTester tester, String region) =>
     tester.getSize(find.byKey(ValueKey('probe-$region'))).height;
 
+Future<void> _doubleTap(WidgetTester tester, Finder target) async {
+  final position = tester.getCenter(target);
+  await tester.tapAt(position);
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.tapAt(position);
+  await tester.pump();
+}
+
+class _MountProbe extends StatefulWidget {
+  const _MountProbe({required this.mounts});
+
+  final List<int> mounts;
+
+  @override
+  State<_MountProbe> createState() => _MountProbeState();
+}
+
+class _MountProbeState extends State<_MountProbe> {
+  @override
+  void initState() {
+    super.initState();
+    widget.mounts.add(1);
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.expand();
+}
+
 void main() {
   testWidgets('默认布局：活动栏固定宽，侧栏/编辑器按权重分配', (tester) async {
     final layout = WorkbenchLayout();
     await tester.pumpWidget(_host(layout));
     await tester.pump();
 
-    // 测试窗口 800×600。activity 固定 44；侧栏 0.24/(0.24+0.76)*(800-44)（activity 与 sidebar 之间无分割条，
-    // sidebar 与 editor 之间有 1 条 4px 分割条 → 弹性池 800-44-4=752）
-    expect(_width(tester, 'activity'), 44);
-    expect(_width(tester, 'sidebar'), closeTo(752 * 0.24, 1.5));
-    expect(_width(tester, 'editor'),
-        closeTo(752 - 752 * 0.24, 1.5));
+    // 测试窗口 800×600。activity 固定 48；侧栏 0.24/(0.24+0.76)*(800-48)（activity 与 sidebar 之间无分割条，
+    // sidebar 与 editor 之间有 1 条 4px 分割条 → 弹性池 800-48-4=748）
+    expect(_width(tester, 'activity'), 48);
+    expect(_width(tester, 'sidebar'), closeTo(748 * 0.24, 1.5));
+    expect(_width(tester, 'editor'), closeTo(748 - 748 * 0.24, 1.5));
   });
 
   testWidgets('拖拽分割条：侧栏变宽、编辑器等量变窄', (tester) async {
@@ -43,15 +73,60 @@ void main() {
     await tester.pump();
 
     final before = _width(tester, 'sidebar');
-    await tester.drag(find.byKey(const ValueKey('wb-div-sidebar-editor')),
-        const Offset(60, 0));
+    await tester.drag(
+      find.byKey(
+        const ValueKey('wb-div-sidebar-panel-alignment-column'),
+      ),
+      const Offset(60, 0),
+    );
     await tester.pump();
 
     final after = _width(tester, 'sidebar');
     expect(after, closeTo(before + 60, 1.5));
-    expect(
-        _width(tester, 'editor'), closeTo(752 - after, 1.5),
+    expect(_width(tester, 'editor'), closeTo(748 - after, 1.5),
         reason: '编辑器应等量收窄（其余兄弟像素不变）');
+  });
+
+  testWidgets('双击分割条：平分两侧区域，保留固定/折叠兄弟和缩放比例', (tester) async {
+    addTearDown(tester.view.reset);
+    tester.view.devicePixelRatio = 1;
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    final divider = find.byKey(
+      const ValueKey('wb-div-sidebar-panel-alignment-column'),
+    );
+    final beforeSecondary = layout.root.leafOf('secondarySidebar')!.weight;
+    expect(
+        _width(tester, 'sidebar'), isNot(closeTo(_width(tester, 'editor'), 1)));
+    expect(layout.resetDivider(layout.root, 0, 1000), isFalse,
+        reason: 'an invalid direct model index is a safe no-op');
+
+    await _doubleTap(tester, divider);
+
+    expect(_width(tester, 'sidebar'), closeTo(_width(tester, 'editor'), 1.5));
+    expect(_width(tester, 'activity'), 48,
+        reason: 'the fixed Activity Bar stays unchanged');
+    expect(layout.root.leafOf('secondarySidebar')!.collapsed, isTrue);
+    expect(layout.root.leafOf('secondarySidebar')!.weight, beforeSecondary,
+        reason: 'a collapsed sibling keeps its remembered proportion');
+
+    final restored = WorkbenchLayout(
+      root: WbNode.fromJson(layout.root.toJson()) as WbSplit,
+    );
+    final mainRow = restored.root.children
+        .singleWhere((node) => node is WbSplit) as WbSplit;
+    expect(
+        mainRow.children[1].weight, closeTo(mainRow.children[2].weight, 1e-9));
+
+    tester.view.physicalSize = const Size(1000, 600);
+    await tester.pump();
+    expect(_width(tester, 'sidebar'), closeTo(_width(tester, 'editor'), 1.5),
+        reason: 'the reset ratio survives a viewport resize');
+    expect(_width(tester, 'activity'), 48);
+    restored.dispose();
   });
 
   testWidgets('min 钳制：侧栏不会被拖到低于最小宽度', (tester) async {
@@ -59,13 +134,17 @@ void main() {
     await tester.pumpWidget(_host(layout));
     await tester.pump();
 
-    await tester.drag(find.byKey(const ValueKey('wb-div-sidebar-editor')),
-        const Offset(-2000, 0));
+    await tester.drag(
+      find.byKey(
+        const ValueKey('wb-div-sidebar-panel-alignment-column'),
+      ),
+      const Offset(-2000, 0),
+    );
     await tester.pump();
 
     expect(_width(tester, 'sidebar'), closeTo(170, 1.5),
         reason: 'sidebar minExtent=170');
-    expect(_width(tester, 'editor'), closeTo(752 - 170, 1.5));
+    expect(_width(tester, 'editor'), closeTo(748 - 170, 1.5));
   });
 
   testWidgets('面板折叠/恢复：高度出现且可拖拽', (tester) async {
@@ -86,18 +165,68 @@ void main() {
     expect(find.byKey(const ValueKey('probe-panel')), findsOneWidget);
     // 主列弹性池 = 900 - 4（panel 上方分割条）
     expect(_height(tester, 'panel'), closeTo((900 - 4) * 0.3, 1.5));
-    expect(_height(tester, 'activity'), closeTo((900 - 4) * 0.7, 1.5),
-        reason: '上半区（main-row 权重 0.7）');
+    expect(_height(tester, 'activity'), 900,
+        reason: 'Center alignment keeps Activity Bar full height');
 
     // 拖面板分割条：向下 60px → 面板变高
-    final divFinder = find.byKey(const ValueKey('wb-div-main-row-panel'));
+    final divFinder = find.byKey(
+      const ValueKey('wb-div-panel-alignment-editor-row-panel'),
+    );
     await tester.drag(divFinder, const Offset(0, 60));
     await tester.pump();
     expect(_height(tester, 'panel'), closeTo((900 - 4) * 0.3 + 60, 2.0));
 
+    await tester.drag(divFinder, const Offset(0, -2000));
+    await tester.pump();
+    expect(_height(tester, 'panel'), closeTo(panelMinimumHeight, 1.5),
+        reason: 'Top/Bottom sash drag must respect the Panel minimum height');
+
     expect(layout.toggleRegion('panel'), isTrue);
     await tester.pump();
     expect(find.byKey(const ValueKey('probe-panel')), findsNothing);
+  });
+
+  testWidgets('侧停 Panel resize 时保持 300px 最小宽度并恢复原权重', (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    expect(layout.setPanelPosition(PanelPosition.left), isTrue);
+    expect(layout.toggleRegion('panel'), isFalse);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(_width(tester, 'panel'), closeTo((1200 - 4) * 0.3, 1.5));
+    final panel = layout.root.leafOf('panel')!;
+    expect(panel.weight, 0.3);
+
+    tester.view.physicalSize = const Size(900, 900);
+    await tester.pump();
+    expect(_width(tester, 'panel'), closeTo(300, 1.5));
+    expect(panel.weight, 0.3,
+        reason: 'viewport clamping must not persist as a sash drag');
+
+    tester.view.physicalSize = const Size(1200, 900);
+    await tester.pump();
+    expect(_width(tester, 'panel'), closeTo((1200 - 4) * 0.3, 1.5));
+  });
+
+  testWidgets('极窄视口下 sash 占位缩到可用空间且没有负尺寸或溢出', (tester) async {
+    tester.view.physicalSize = const Size(2, 2);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(_width(tester, 'activity'), greaterThanOrEqualTo(0));
+    expect(_width(tester, 'sidebar'), greaterThanOrEqualTo(0));
+    expect(_width(tester, 'editor'), greaterThanOrEqualTo(0));
   });
 
   testWidgets('侧栏折叠/恢复（活动栏按钮路径）', (tester) async {
@@ -108,12 +237,93 @@ void main() {
     expect(layout.toggleRegion('sidebar'), isTrue);
     await tester.pump();
     expect(find.byKey(const ValueKey('probe-sidebar')), findsNothing);
-    expect(_width(tester, 'editor'), closeTo(756, 1.5),
-        reason: '侧栏折叠后分割条一并消失，编辑器占满 800-44');
+    expect(_width(tester, 'editor'), closeTo(752, 1.5),
+        reason: '侧栏折叠后分割条一并消失，编辑器占满 800-48');
 
     expect(layout.toggleRegion('sidebar'), isFalse);
     await tester.pump();
-    expect(_width(tester, 'sidebar'), closeTo(752 * 0.24, 1.5),
+    expect(_width(tester, 'sidebar'), closeTo(748 * 0.24, 1.5),
         reason: '恢复时应还原折叠前权重');
+  });
+
+  testWidgets('固定活动栏可隐藏为零宽并恢复原固定尺寸', (tester) async {
+    final layout = WorkbenchLayout();
+    var changes = 0;
+    layout.addListener(() => changes++);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(_width(tester, 'activity'), 48);
+    expect(layout.setRegionCollapsed('activity', true), isTrue);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('probe-activity')), findsNothing);
+    expect((layout.root.children.first as WbSplit).extentsFor(800).first, 0);
+    expect(changes, 1);
+
+    // 目标态命令可重放，不应产生额外布局通知。
+    expect(layout.setRegionCollapsed('activity', true), isTrue);
+    expect(changes, 1);
+
+    expect(layout.setRegionCollapsed('activity', false), isFalse);
+    await tester.pump();
+    expect(_width(tester, 'activity'), 48);
+    expect(layout.root.leafOf('activity')!.lastWeight, isNull);
+    expect(changes, 2);
+  });
+
+  testWidgets('最大化面板占满工作区且编辑器和面板状态保持挂载', (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    final editorMounts = <int>[];
+    final panelMounts = <int>[];
+    Widget host() => MaterialApp(
+          home: Scaffold(
+            body: WorkbenchGrid(
+              layout: layout,
+              builders: {
+                'activity': (_) => const SizedBox.expand(),
+                'sidebar': (_) => const SizedBox.expand(),
+                'editor': (_) => _MountProbe(mounts: editorMounts),
+                'panel': (_) => _MountProbe(mounts: panelMounts),
+              },
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(host());
+    await tester.pump();
+    expect(editorMounts, [1]);
+    expect(panelMounts, isEmpty, reason: 'Panel begins collapsed');
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    final gridRect = tester.getRect(find.byType(WorkbenchGrid));
+    expect(
+        tester.getRect(find.byKey(const ValueKey('wb-region-panel'))), gridRect,
+        reason: 'maximized Panel fills the workbench content area');
+    expect(editorMounts, [1], reason: 'editor subtree stays mounted offstage');
+    expect(panelMounts, [1]);
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(
+      tester.getRect(find.byKey(const ValueKey('wb-region-panel'))).height,
+      lessThan(gridRect.height),
+    );
+    expect(editorMounts, [1]);
+    expect(panelMounts, [1],
+        reason: 'Panel subtree is reparented, not recreated');
+
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(panelMounts, [1],
+        reason: 'Panel state also survives moving from the normal layout');
+    expect(layout.togglePanelMaximization(), isTrue);
+    await tester.pump();
+    expect(panelMounts, [1]);
   });
 }

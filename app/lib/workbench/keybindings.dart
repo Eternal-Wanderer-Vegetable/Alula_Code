@@ -244,7 +244,9 @@ class KeybindingSet {
     'view.quickOpen': 'ctrl+p',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
+    'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
+    'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
@@ -317,9 +319,11 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result['workbench.action.files.newUntitledFile'] = 'cmd+n';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
+        result['workbench.action.toggleAuxiliaryBar'] = 'cmd+alt+b';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
         result['editor.action.joinLines'] = 'ctrl+j';

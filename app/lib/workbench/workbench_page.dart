@@ -26,6 +26,7 @@ import 'package:flutter/gestures.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
 import '../editor/bulk_edit_preview_surface.dart';
@@ -71,16 +72,32 @@ import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
+import 'activity_bar_badges.dart';
+import 'activity_bar_global_actions.dart';
+import 'activity_bar_order.dart';
+import 'activity_bar_pins.dart';
+import 'activity_bar_position.dart';
+import 'activity_bar_size.dart';
 import 'commands.dart';
+import 'editor_tab_mode.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'keybindings.dart';
+import 'layout_model.dart';
 import 'layout_store.dart';
+import 'panel_alignment.dart';
+import 'panel_maximize.dart';
+import 'panel_position.dart';
 import 'quick_input.dart';
+import 'secondary_sidebar_empty_state.dart';
+import 'secondary_sidebar_layout.dart';
+import 'sidebar_position.dart';
+import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
+import 'workbench_window_title.dart';
 
 /// 语法 token 颜色（VS Code Dark+ 风格）。
 const Map<String, Color> _tokenColors = {
@@ -326,6 +343,30 @@ final RegExp _rustIdentifierPattern = RegExp(
   unicode: true,
 );
 
+enum _EditorGroupMoveDirection {
+  left(Axis.horizontal, true),
+  right(Axis.horizontal, false),
+  up(Axis.vertical, true),
+  down(Axis.vertical, false);
+
+  const _EditorGroupMoveDirection(this.axis, this.insertBefore);
+
+  final Axis axis;
+  final bool insertBefore;
+}
+
+class _EditorGroupBounds {
+  const _EditorGroupBounds(this.left, this.top, this.right, this.bottom);
+
+  final double left;
+  final double top;
+  final double right;
+  final double bottom;
+
+  double get centerX => (left + right) / 2;
+  double get centerY => (top + bottom) / 2;
+}
+
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
@@ -343,6 +384,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   final CommandService _commands = CommandService();
+  final ValueNotifier<EditorTabMode> _editorTabMode =
+      ValueNotifier(EditorTabMode.multiple);
+  final ValueNotifier<bool> _editorTabWrap = ValueNotifier(false);
   final GitDiffPatchNavigationController _gitDiffNavigation =
       GitDiffPatchNavigationController();
 
@@ -402,7 +446,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _outlineTimer;
 
   // ---------- Git 面板（feat-git，CLI 封装） ----------
-  String _sidebarView = 'explorer';
+  String? _sidebarView = 'explorer';
+  String? _secondarySidebarView;
+  String? _focusedSidebarView = 'explorer';
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -496,7 +542,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
     }
+    _sidebarView = _layout.primarySidebarView;
+    _secondarySidebarView = _layout.secondarySidebarView;
+    _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
     _layout.addListener(_scheduleStateSave);
+    _layout.addListener(_syncPanelMaximizationCommandContext);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _registerCommands();
@@ -531,6 +581,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ));
     }
 
+    reg(
+      'workbench.action.files.newUntitledFile',
+      '文件',
+      '新建文本文件',
+      _newUntitledFile,
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.files.newUntitledFile',
+      ),
+    );
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
     reg(
       '_open.mergeEditor',
@@ -607,9 +666,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'mergeEditorActive',
     );
     reg('file.save', '文件', '保存', _saveActive,
-        shortcut: 'Ctrl+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+S', when: 'editorActive', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
-        shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+Shift+S', when: 'editorActive', enablement: 'editorActive');
     reg(
       'workbench.files.action.compareWithSaved',
       '文件',
@@ -659,7 +718,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'diffEditorActive',
     );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
-        enablement: 'editorActive');
+        when: 'editorHasPath', enablement: 'editorActive');
     reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
         enablement: 'editorActive');
     reg('file.reopenWithEncoding', '文件', '使用编码重新打开…', _reopenWithEncodingActive,
@@ -671,13 +730,138 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
+    reg(
+      'workbench.action.moveView',
+      '查看',
+      '移动视图…',
+      _showMoveSidebarViewPicker,
+    );
+    reg(
+      'workbench.action.moveFocusedView',
+      '查看',
+      '移动聚焦的视图…',
+      _showMoveFocusedSidebarViewPicker,
+    );
+    reg(
+      'workbench.action.resetViewLocations',
+      '查看',
+      '重置视图位置',
+      _resetSidebarViewLocations,
+    );
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
+    _registerToggleSideBarPositionCommand();
+    reg(
+      'workbench.action.toggleAuxiliaryBar',
+      '查看',
+      '切换次侧栏',
+      () async => _layout.toggleRegion(secondarySidebarRegion),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleAuxiliaryBar',
+      ),
+    );
     reg('view.togglePanel', '查看', '切换面板',
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.action.toggleMaximizedPanel',
+      '查看',
+      '切换面板最大化',
+      () async {
+        _layout.togglePanelMaximization();
+      },
+      when: 'panelMaximizationSupported',
+    );
+    reg(
+      'workbench.action.positionPanelTop',
+      '查看',
+      '将面板移到顶部',
+      () async {
+        _layout.setPanelPosition(PanelPosition.top);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelBottom',
+      '查看',
+      '将面板移到底部',
+      () async {
+        _layout.setPanelPosition(PanelPosition.bottom);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelLeft',
+      '查看',
+      '将面板移到左侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.left);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelRight',
+      '查看',
+      '将面板移到右侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.right);
+      },
+    );
+    reg(
+      'workbench.action.alignPanelLeft',
+      '查看',
+      '将面板对齐到左侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.left),
+    );
+    reg(
+      'workbench.action.alignPanelRight',
+      '查看',
+      '将面板对齐到右侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.right),
+    );
+    reg(
+      'workbench.action.alignPanelCenter',
+      '查看',
+      '将面板对齐到居中',
+      () async => _layout.setPanelAlignment(PanelAlignment.center),
+    );
+    reg(
+      'workbench.action.alignPanelJustify',
+      '查看',
+      '将面板对齐到两端',
+      () async => _layout.setPanelAlignment(PanelAlignment.justify),
+    );
+    reg(
+      'workbench.action.activityBarLocation.default',
+      '查看',
+      '将活动栏移到侧边',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.side);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.top',
+      '查看',
+      '将活动栏移到顶部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.top);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.bottom',
+      '查看',
+      '将活动栏移到底部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.bottom);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.hide',
+      '查看',
+      '隐藏活动栏',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.hidden);
+      },
+    );
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
@@ -751,7 +935,61 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : 'Ctrl+Delete',
       enablement: 'editorTextFocus',
     );
-    reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg(
+      'workbench.action.splitEditorLeft',
+      '编辑器',
+      '向左拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorRight',
+      '编辑器',
+      '向右拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
+    reg(
+      'workbench.action.splitEditorUp',
+      '编辑器',
+      '向上拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorDown',
+      '编辑器',
+      '向下拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical),
+    );
+    reg(
+      'workbench.action.moveEditorToLeftGroup',
+      '编辑器',
+      '将活动编辑器移至左侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.left),
+    );
+    reg(
+      'workbench.action.moveEditorToRightGroup',
+      '编辑器',
+      '将活动编辑器移至右侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.right),
+    );
+    reg(
+      'workbench.action.moveEditorToAboveGroup',
+      '编辑器',
+      '将活动编辑器移至上方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.up),
+    );
+    reg(
+      'workbench.action.moveEditorToBelowGroup',
+      '编辑器',
+      '将活动编辑器移至下方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.down),
+    );
+    // Existing toolbar command remains the default right-split action.
+    reg(
+      'editor.split',
+      '编辑器',
+      '拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
     reg(
       'deleteAllLeft',
       '编辑器',
@@ -786,6 +1024,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
         _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
+    reg(
+      'workbench.action.editorTabs.multiple',
+      '查看',
+      '显示多个编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.multiple),
+    );
+    reg(
+      'workbench.action.editorTabs.single',
+      '查看',
+      '仅显示活动编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.single),
+    );
+    reg(
+      'workbench.action.editorTabs.none',
+      '查看',
+      '隐藏编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.none),
+    );
+    reg(
+      'workbench.action.toggleEditorTabWrapping',
+      '查看',
+      '切换编辑器标签换行',
+      () async => _setEditorTabWrap(!_editorTabWrap.value),
+    );
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
@@ -1103,6 +1365,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
+  }
+
+  void _setActivityBarLocation(ActivityBarLocation location) {
+    _layout.setActivityBarLocation(location);
+    _syncCommandContext();
+  }
+
+  String get _toggleSideBarPositionTitle =>
+      _layout.sideBarPosition == SideBarPosition.left
+          ? '将主侧栏移到右侧'
+          : '将主侧栏移到左侧';
+
+  void _registerToggleSideBarPositionCommand() {
+    _commands.register(Command(
+      id: 'workbench.action.toggleSidebarPosition',
+      category: '查看',
+      title: _toggleSideBarPositionTitle,
+      run: _toggleSideBarPosition,
+    ));
+  }
+
+  Future<void> _toggleSideBarPosition() async {
+    _layout.toggleSideBarPosition();
+    _registerToggleSideBarPositionCommand();
   }
 
   /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
@@ -2391,6 +2677,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'editorHasPath': active?.path != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
       'editorCanUndo': active?.undoStack.canUndo ?? false,
@@ -2398,6 +2685,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'activityBarLocation': _layout.activityBarLocation.name,
+      'panelMaximizationSupported': _layout.canMaximizePanel,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
       'mergeEditorActive': mergeSession != null && !mergeSession.isDisposed,
@@ -2413,6 +2702,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
+  }
+
+  void _syncPanelMaximizationCommandContext() {
+    _commands.context.setValue(
+      'panelMaximizationSupported',
+      _layout.canMaximizePanel,
+    );
   }
 
   void _onGitDiffNavigationAvailabilityChanged(bool _) {
@@ -2608,15 +2904,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showCommandPalette() {
+    final currentLocation = _layout.activityBarLocation;
     QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
       items: [
         for (final c in _commands.all)
-          QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
+          if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation))
+            QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
       ],
       commands: _commands,
     );
+  }
+
+  bool _isCurrentActivityBarLocationCommand(
+      String commandId, ActivityBarLocation currentLocation) {
+    final target = switch (commandId) {
+      'workbench.action.activityBarLocation.default' =>
+        ActivityBarLocation.side,
+      'workbench.action.activityBarLocation.top' => ActivityBarLocation.top,
+      'workbench.action.activityBarLocation.bottom' =>
+        ActivityBarLocation.bottom,
+      'workbench.action.activityBarLocation.hide' => ActivityBarLocation.hidden,
+      _ => null,
+    };
+    return target == currentLocation;
   }
 
   void _showQuickOpen() {
@@ -2669,6 +2981,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
+  void _setEditorTabMode(EditorTabMode mode) {
+    if (_editorTabMode.value == mode) return;
+    setState(() => _editorTabMode.value = mode);
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabWrap(bool enabled) {
+    if (_editorTabWrap.value == enabled) return;
+    setState(() => _editorTabWrap.value = enabled);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -2690,6 +3014,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 干净文件恢复时从磁盘重读（journal 保持小）。
   Map<String, Object?> _encodeSession() => {
         'v': 1,
+        'editorTabMode': _editorTabMode.value.name,
+        'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -2785,6 +3111,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         null,
     };
     if (data == null) return;
+    _editorTabMode.value =
+        EditorTabMode.fromSessionValue(data['editorTabMode']);
+    _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -10944,6 +11273,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 文件夹 / 文件树 ----------
 
+  Future<void> _newUntitledFile() async {
+    final core = _core;
+    if (core == null) return;
+    final previous = _active;
+    if (previous != null) _flushInput(previous, commitComposition: true);
+
+    final id = _nextDocId++;
+    try {
+      final doc = core.openDoc(id, '');
+      final untitled = OpenDoc(
+        id: id,
+        name: '未命名-$id',
+        doc: doc,
+        undoBudget: _undoHistoryBudget,
+      );
+      final target = _focused;
+      setState(() {
+        target.docs.add(untitled);
+        target.activeDocId = id;
+      });
+      _scheduleStateSave();
+      _syncCommandContext();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !identical(target.active, untitled)) return;
+        _focusNodeFor(target, untitled).requestFocus();
+      });
+    } on AlulaException catch (error) {
+      if (mounted) setState(() => _statusDetail = '新建文本文件失败：${error.code}');
+    }
+  }
+
   void _openFolder(String path) {
     final core = _core;
     if (core == null) return;
@@ -11964,27 +12324,260 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
-  /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
-  void _splitFocusedGroup() {
+  Map<String, _EditorGroupBounds> _layoutRegionBounds() {
+    final bounds = <String, _EditorGroupBounds>{};
+
+    void visit(
+      WbNode node,
+      double left,
+      double top,
+      double right,
+      double bottom,
+    ) {
+      if (node is WbLeaf) {
+        bounds[node.region] = _EditorGroupBounds(left, top, right, bottom);
+        return;
+      }
+      if (node is! WbSplit) return;
+
+      final weights = node.children.map((child) {
+        if (child is WbLeaf && child.collapsed) return 0.0;
+        final weight = child is WbLeaf && child.fixedExtent != null
+            ? child.fixedExtent!
+            : child.weight;
+        return weight < 0 ? 0.0 : weight;
+      }).toList();
+      final totalWeight =
+          weights.fold<double>(0, (sum, weight) => sum + weight);
+      var cursor = node.axis == Axis.horizontal ? left : top;
+      for (var index = 0; index < node.children.length; index++) {
+        final fraction = totalWeight <= 0
+            ? 1 / node.children.length
+            : weights[index] / totalWeight;
+        final extent =
+            (node.axis == Axis.horizontal ? right - left : bottom - top) *
+                fraction;
+        final child = node.children[index];
+        if (node.axis == Axis.horizontal) {
+          visit(child, cursor, top, cursor + extent, bottom);
+        } else {
+          visit(child, left, cursor, right, cursor + extent);
+        }
+        cursor += extent;
+      }
+    }
+
+    visit(_layout.root, 0, 0, 1, 1);
+    return bounds;
+  }
+
+  double _intervalGap(
+    double firstStart,
+    double firstEnd,
+    double secondStart,
+    double secondEnd,
+  ) {
+    if (firstEnd < secondStart) return secondStart - firstEnd;
+    if (secondEnd < firstStart) return firstStart - secondEnd;
+    return 0;
+  }
+
+  String? _adjacentEditorRegion(
+    String sourceRegion,
+    _EditorGroupMoveDirection direction,
+  ) {
+    final bounds = _layoutRegionBounds();
+    final source = bounds[sourceRegion];
+    if (source == null) return null;
+
+    String? bestRegion;
+    var bestAlongGap = double.infinity;
+    var bestAcrossGap = double.infinity;
+    var bestAcrossCenter = double.infinity;
+    for (final region in _groups.keys) {
+      if (region == sourceRegion || !_isEditorRegion(region)) continue;
+      final candidate = bounds[region];
+      if (candidate == null ||
+          candidate.right - candidate.left <= 1e-9 ||
+          candidate.bottom - candidate.top <= 1e-9) {
+        continue;
+      }
+
+      final sourceCenter =
+          direction.axis == Axis.horizontal ? source.centerX : source.centerY;
+      final candidateCenter = direction.axis == Axis.horizontal
+          ? candidate.centerX
+          : candidate.centerY;
+      final pointsInDirection = direction.insertBefore
+          ? candidateCenter < sourceCenter
+          : candidateCenter > sourceCenter;
+      if (!pointsInDirection) continue;
+
+      final alongGap = switch (direction) {
+        _EditorGroupMoveDirection.left =>
+          (source.left - candidate.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.right =>
+          (candidate.left - source.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.up =>
+          (source.top - candidate.bottom).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.down =>
+          (candidate.top - source.bottom).clamp(0.0, double.infinity),
+      };
+      final acrossGap = direction.axis == Axis.horizontal
+          ? _intervalGap(
+              source.top, source.bottom, candidate.top, candidate.bottom)
+          : _intervalGap(
+              source.left, source.right, candidate.left, candidate.right);
+      final acrossCenter = direction.axis == Axis.horizontal
+          ? (source.centerY - candidate.centerY).abs()
+          : (source.centerX - candidate.centerX).abs();
+
+      final closer = alongGap < bestAlongGap - 1e-9 ||
+          (alongGap - bestAlongGap).abs() <= 1e-9 &&
+              (acrossGap < bestAcrossGap - 1e-9 ||
+                  (acrossGap - bestAcrossGap).abs() <= 1e-9 &&
+                      acrossCenter < bestAcrossCenter - 1e-9);
+      if (!closer) continue;
+      bestRegion = region;
+      bestAlongGap = alongGap;
+      bestAcrossGap = acrossGap;
+      bestAcrossCenter = acrossCenter;
+    }
+    return bestRegion;
+  }
+
+  void _focusEditorAfterLayout(EditorGroup group, OpenDoc view) {
+    final focusNode = _focusNodeFor(group, view);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _focusedRegion != group.region ||
+          !identical(group.active, view)) {
+        return;
+      }
+      focusNode.requestFocus();
+    });
+  }
+
+  void _moveFocusedEditorToGroup(_EditorGroupMoveDirection direction) {
+    final source = _focused;
+    final active = source.active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+
+    var targetRegion = _adjacentEditorRegion(source.region, direction);
+    if (targetRegion == null) {
+      var index = 2;
+      while (_groups.containsKey('editor-$index')) {
+        index++;
+      }
+      targetRegion = 'editor-$index';
+      if (!_layout.splitRegion(
+        source.region,
+        targetRegion,
+        direction.axis,
+        insertBefore: direction.insertBefore,
+      )) {
+        setState(() => _statusDetail = '移动失败：区域 ${source.region} 不可拆分');
+        return;
+      }
+      _ensureGroupsFromLayout();
+    }
+
+    final target = _groups[targetRegion];
+    if (target == null || identical(target, source)) return;
+    OpenDoc? existingView;
+    for (final view in target.docs) {
+      if (view.sameDocumentAs(active)) {
+        existingView = view;
+        break;
+      }
+    }
+    if (existingView != null) {
+      _closeDocNow(source, active);
+      if (!mounted) return;
+      setState(() {
+        target.activeDocId = existingView!.id;
+        _focusedRegion = target.region;
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existingView);
+      return;
+    }
+
+    final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+
+    setState(() {
+      source.docs.removeWhere((view) => identical(view, active));
+      if (source.docs.isNotEmpty && source.activeDocId == active.id) {
+        source.activeDocId = source.docs.last.id;
+      }
+      target.docs.add(active);
+      target.activeDocId = active.id;
+
+      final sourceFocusKey = _focusKeyFor(source, active);
+      final targetFocusKey = _focusKeyFor(target, active);
+      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
+      if (movedFocusNode != null) {
+        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
+        if (oldTargetFocusNode != null &&
+            oldTargetFocusNode != movedFocusNode) {
+          oldTargetFocusNode.dispose();
+        }
+        _editorFocusNodes[targetFocusKey] = movedFocusNode;
+      }
+
+      if (source.docs.isEmpty && removeSourceRegion) {
+        _groups.remove(source.region);
+      }
+      _focusedRegion = target.region;
+      _statusDetail = '已移动编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, active);
+  }
+
+  /// Split the focused editor leaf and copy its active document into the new
+  /// group. The document remains shared while its editor view state is fresh.
+  void _splitFocusedGroup({
+    Axis axis = Axis.horizontal,
+    bool insertBefore = false,
+  }) {
     final active = _active;
-    if (active != null) _flushInput(active, commitComposition: true);
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
     final region = _focusedRegion;
     var i = 2;
     while (_groups.containsKey('editor-$i')) {
       i++;
     }
     final fresh = 'editor-$i';
-    if (!_layout.splitRegion(region, fresh, Axis.horizontal)) {
+    if (!_layout.splitRegion(
+      region,
+      fresh,
+      axis,
+      insertBefore: insertBefore,
+    )) {
       setState(() => _statusDetail = '拆分失败：区域 $region 不可拆分');
       return;
     }
+    final freshView = OpenDoc.viewOf(active);
     setState(() {
       _ensureGroupsFromLayout();
+      final group = _groups[fresh]!;
+      group.docs.add(freshView);
+      group.activeDocId = freshView.id;
       _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
     });
     _syncCommandContext();
+    _scheduleSyntaxRefresh(freshView.id);
   }
 
   // ---------- LSP ----------
@@ -16499,16 +17092,107 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
   void _selectSidebarView(String view) {
+    final location = _layout.sidebarViewLocation(view);
+    final region = location == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    final selected = _layout.sidebarSelection(location);
     if (view == 'outline') _refreshOutline();
-    if (_sidebarView == view && !_layout.isCollapsed('sidebar')) {
-      _layout.toggleRegion('sidebar');
+    if (selected == view && !_layout.isCollapsed(region)) {
+      _focusedSidebarView = view;
+      _layout.toggleRegion(region);
       return;
     }
+    _layout.selectSidebarView(view);
     setState(() {
-      _sidebarView = view;
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
       if (view == 'outline') _refreshOutline();
     });
-    _layout.showRegion('sidebar');
+    _layout.showRegion(region);
+  }
+
+  Future<void> _showMoveSidebarViewPicker() async {
+    await QuickInput.show(
+      context,
+      hint: '选择要移动的视图',
+      items: [
+        for (final view in activityBarViewOrder)
+          QuickItem(
+            label: _sidebarViewLabel(view),
+            detail: _sidebarViewLocationLabel(
+              _layout.sidebarViewLocation(view),
+            ),
+            onRun: () => _showMoveSidebarViewDestination(view),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _showMoveFocusedSidebarViewPicker() async {
+    final view = _focusedSidebarView;
+    if (view == null || !activityBarViewOrder.contains(view)) return;
+    await _showMoveSidebarViewDestination(view);
+  }
+
+  Future<void> _showMoveSidebarViewDestination(String view) async {
+    if (!mounted) return;
+    final current = _layout.sidebarViewLocation(view);
+    await QuickInput.show(
+      context,
+      hint: '选择视图的新侧栏位置',
+      items: [
+        for (final destination in const [
+          primarySidebarViewLocation,
+          secondarySidebarViewLocation,
+        ])
+          QuickItem(
+            label: _sidebarViewLocationLabel(destination),
+            detail: destination == current ? '当前位置' : null,
+            onRun: () async => _moveSidebarView(view, destination),
+          ),
+      ],
+    );
+  }
+
+  void _moveSidebarView(String view, String destination) {
+    if (!_layout.moveSidebarView(view, destination)) return;
+    final region = destination == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
+    });
+    _layout.showRegion(region);
+  }
+
+  Future<void> _resetSidebarViewLocations() async {
+    if (!_layout.resetSidebarViewLocations()) return;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+    });
+  }
+
+  String _sidebarViewLabel(String view) => switch (view) {
+        'explorer' => '资源管理器',
+        'search' => '搜索',
+        'outline' => '大纲',
+        'git' => '源代码管理',
+        _ => view,
+      };
+
+  String _sidebarViewLocationLabel(String location) =>
+      location == primarySidebarViewLocation ? '主侧栏' : '次侧栏';
+
+  void _focusSidebarRegion(String location) {
+    final view = _layout.sidebarSelection(location);
+    if (view == null || _focusedSidebarView == view) return;
+    setState(() => _focusedSidebarView = view);
   }
 
   void _showAbout() {
@@ -16570,6 +17254,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..removeListener(_onCommandServiceChanged)
       ..dispose();
     _panelTab.removeListener(_syncCommandContext);
+    _layout.removeListener(_syncPanelMaximizationCommandContext);
     _searchQuery.dispose();
     _findQuery.dispose();
     _replaceInput.dispose();
@@ -16580,6 +17265,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
+    _editorTabMode.dispose();
+    _editorTabWrap.dispose();
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
@@ -16627,6 +17314,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+    final activeDocument = _active;
+    final workspaceRoot = _workspaceRoot;
+    final workspaceName = workspaceRoot == null
+        ? null
+        : p.basename(p.normalize(workspaceRoot));
+    final windowTitle = WorkbenchWindowTitle.compose(
+      platform: defaultTargetPlatform,
+      activeEditorName: activeDocument?.name,
+      dirty: activeDocument?.isDirty ?? false,
+      workspaceName: workspaceName == null || workspaceName.isEmpty
+          ? workspaceRoot
+          : workspaceName,
+    );
+
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
@@ -16655,65 +17356,211 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             children: [
               AlulaTitleBar(
                   commands: _commands,
+                  windowTitle: windowTitle,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
+                  layoutControlsBuilder: () => [
+                    TitleMenuItem(
+                      '侧栏',
+                      commandId: 'view.toggleSidebar',
+                      checked: !_layout.isCollapsed('sidebar'),
+                    ),
+                    TitleMenuItem(
+                      '次侧栏',
+                      commandId: 'workbench.action.toggleAuxiliaryBar',
+                      checked: !_layout.isCollapsed(secondarySidebarRegion),
+                    ),
+                    TitleMenuItem(
+                      '面板',
+                      commandId: 'view.togglePanel',
+                      checked: !_layout.isCollapsed('panel'),
+                    ),
+                  ],
                   menus: [
                     (
-                      '文件',
+                      '文件(&&F)',
                       [
-                        const TitleMenuItem('打开文件夹',
-                            commandId: 'file.openFolder'),
-                        TitleMenuItem('保存${_sc('file.save')}',
-                            commandId: 'file.save'),
-                        TitleMenuItem('另存为…${_sc('file.saveAs')}',
-                            commandId: 'file.saveAs'),
                         TitleMenuItem(
-                          '比较活动文件与剪贴板${_sc('workbench.files.action.compareWithClipboard')}',
-                          commandId:
-                              'workbench.files.action.compareWithClipboard',
+                          '新建文本文件(&&N)'
+                              '${_sc('workbench.action.files.newUntitledFile')}',
+                          commandId: 'workbench.action.files.newUntitledFile',
                         ),
-                        const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
-                        const TitleMenuItem('使用编码保存…',
-                            commandId: 'file.saveWithEncoding'),
-                        const TitleMenuItem('使用编码重新打开…',
-                            commandId: 'file.reopenWithEncoding'),
-                        const TitleMenuItem('选择行尾…',
-                            commandId: 'file.selectEol'),
+                        const TitleMenuItem.separator(),
+                        const TitleMenuItem('打开文件夹(&&O)',
+                            commandId: 'file.openFolder'),
+                        const TitleMenuItem.separator(),
+                        TitleMenuItem('保存(&&S)${_sc('file.save')}',
+                            commandId: 'file.save'),
+                        TitleMenuItem('另存为…(&&A)${_sc('file.saveAs')}',
+                            commandId: 'file.saveAs'),
+                        const TitleMenuItem.separator(),
+                        const TitleMenuItem('从磁盘还原(&&R)',
+                            commandId: 'file.revert'),
                       ],
                     ),
                     (
-                      '编辑',
+                      '编辑(&&E)',
                       [
-                        TitleMenuItem('撤销${_sc('editor.undo')}',
+                        TitleMenuItem('撤销(&&U)${_sc('editor.undo')}',
                             commandId: 'editor.undo'),
-                        TitleMenuItem('重做${_sc('editor.redo')}',
+                        TitleMenuItem('重做(&&R)${_sc('editor.redo')}',
                             commandId: 'editor.redo'),
-                        TitleMenuItem('查找…${_sc('editor.find')}',
+                        TitleMenuItem('查找…(&&F)${_sc('editor.find')}',
                             commandId: 'editor.find'),
-                        TitleMenuItem('替换…${_sc('editor.replace')}',
+                        TitleMenuItem('替换…(&&H)${_sc('editor.replace')}',
                             commandId: 'editor.replace'),
                       ],
                     ),
                     (
-                      '查看',
+                      '查看(&&V)',
                       [
-                        TitleMenuItem('命令面板${_sc('view.commandPalette')}',
+                        TitleMenuItem('命令面板(&&C)${_sc('view.commandPalette')}',
                             commandId: 'view.commandPalette'),
-                        TitleMenuItem('快速打开文件…${_sc('view.quickOpen')}',
+                        TitleMenuItem('快速打开文件…(&&O)${_sc('view.quickOpen')}',
                             commandId: 'view.quickOpen'),
-                        TitleMenuItem('搜索…${_sc('view.search')}',
+                        TitleMenuItem('搜索…(&&S)${_sc('view.search')}',
                             commandId: 'view.search'),
-                        const TitleMenuItem('大纲', commandId: 'view.outline'),
-                        const TitleMenuItem('切换侧栏',
-                            commandId: 'view.toggleSidebar'),
-                        const TitleMenuItem('切换面板',
-                            commandId: 'view.togglePanel'),
+                        const TitleMenuItem('大纲(&&L)',
+                            commandId: 'view.outline'),
+                        TitleMenuItem.submenu('外观(&&A)', children: [
+                          TitleMenuItem.submenu('活动栏位置(&&A)', children: [
+                            TitleMenuItem('侧边(&&D)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.default',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.side),
+                            TitleMenuItem('顶部(&&T)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.top',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.bottom',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.bottom),
+                            TitleMenuItem('隐藏(&&H)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.hide',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.hidden),
+                          ]),
+                          TitleMenuItem.submenu('编辑器标签', children: [
+                            TitleMenuItem(
+                              '多标签',
+                              commandId: 'workbench.action.editorTabs.multiple',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value ==
+                                  EditorTabMode.multiple,
+                            ),
+                            TitleMenuItem(
+                              '单标签',
+                              commandId: 'workbench.action.editorTabs.single',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.single,
+                            ),
+                            TitleMenuItem(
+                              '不显示标签',
+                              commandId: 'workbench.action.editorTabs.none',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.none,
+                            ),
+                            TitleMenuItem(
+                              '标签自动换行',
+                              commandId:
+                                  'workbench.action.toggleEditorTabWrapping',
+                              checkedListenable: _editorTabWrap,
+                              checkedBuilder: () => _editorTabWrap.value,
+                            ),
+                          ]),
+                          TitleMenuItem(
+                            _toggleSideBarPositionTitle,
+                            commandId: 'workbench.action.toggleSidebarPosition',
+                          ),
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换侧栏(&&S)',
+                              commandId: 'view.toggleSidebar'),
+                          TitleMenuItem(
+                            '切换次侧栏(&&B)'
+                                '${_sc('workbench.action.toggleAuxiliaryBar')}',
+                            commandId: 'workbench.action.toggleAuxiliaryBar',
+                            checkedBuilder: () =>
+                                !_layout.isCollapsed(secondarySidebarRegion),
+                          ),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板位置(&&M)', children: [
+                            TitleMenuItem('左侧(&&L)',
+                                commandId:
+                                    'workbench.action.positionPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.left),
+                            TitleMenuItem('右侧(&&R)',
+                                commandId:
+                                    'workbench.action.positionPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.right),
+                            TitleMenuItem('顶部(&&T)',
+                                commandId: 'workbench.action.positionPanelTop',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.positionPanelBottom',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.bottom),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板对齐方式', children: [
+                            TitleMenuItem('左侧',
+                                commandId: 'workbench.action.alignPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.left),
+                            TitleMenuItem('右侧',
+                                commandId: 'workbench.action.alignPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.right),
+                            TitleMenuItem('居中',
+                                commandId: 'workbench.action.alignPanelCenter',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.center),
+                            TitleMenuItem('两端对齐',
+                                commandId: 'workbench.action.alignPanelJustify',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.justify),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换面板(&&P)',
+                              commandId: 'view.togglePanel'),
+                        ]),
                       ],
                     ),
                     (
-                      '帮助',
+                      '帮助(&&H)',
                       [
-                        const TitleMenuItem('关于 Alula Code',
+                        const TitleMenuItem('关于 Alula Code(&&A)',
                             commandId: 'help.about'),
                       ],
                     ),
@@ -16725,16 +17572,43 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     layout: _layout,
                     builders: {
                       'activity': (_) => ActivityBar(
-                            activeView: _sidebarView,
+                            activeView: _focusedSidebarView ??
+                                _sidebarView ??
+                                _secondarySidebarView ??
+                                'explorer',
                             sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                            axis: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? Axis.vertical
+                                : Axis.horizontal,
+                            size: _layout.activityBarSize,
+                            order: _layout.activityBarOrder,
+                            pinnedViews: _layout.activityBarPinnedViews,
+                            badgeDisabledViews:
+                                _layout.activityBarBadgesDisabledViews,
+                            accountsVisible: _layout.activityBarAccountsVisible,
+                            onOrderChanged: _layout.setActivityBarOrder,
+                            onPinnedViewsChanged:
+                                _layout.setActivityBarPinnedViews,
+                            onBadgeDisabledViewsChanged:
+                                _layout.setActivityBarBadgesDisabledViews,
+                            onAccountsVisibilityChanged:
+                                _layout.setActivityBarAccountsVisible,
+                            onManageCommand: (command) => _runCommand(command),
+                            onSizeChanged: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? _layout.setActivityBarSize
+                                : null,
                             onSelectView: _selectSidebarView,
                           ),
-                      'sidebar': (_) => switch (_sidebarView) {
-                            'git' => _buildGitPanel(),
-                            'search' => _buildSearchPanel(),
-                            'outline' => _buildOutlinePanel(),
-                            _ => _buildSidebar(),
-                          },
+                      'sidebar': (_) => _buildSidebarViewRegion(
+                            primarySidebarViewLocation,
+                            _sidebarView,
+                          ),
+                      secondarySidebarRegion: (_) => _buildSidebarViewRegion(
+                            secondarySidebarViewLocation,
+                            _secondarySidebarView,
+                          ),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                       for (final g in _groups.values)
@@ -17124,6 +17998,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：资源管理器 ----------
 
+  Widget _buildSidebarViewRegion(String location, String? view) {
+    final title = _sidebarViewLocationLabel(location);
+    return Focus(
+      onFocusChange: (focused) {
+        if (focused) _focusSidebarRegion(location);
+      },
+      child: switch (view) {
+        'git' => _buildGitPanel(),
+        'search' => _buildSearchPanel(),
+        'outline' => _buildOutlinePanel(),
+        'explorer' => _buildSidebar(),
+        _ => SecondarySidebarEmptyState(title: title),
+      },
+    );
+  }
+
   Widget _buildSidebar() {
     return Container(
       color: const Color(0xFF181B20),
@@ -17406,21 +18296,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildTabStrip(EditorGroup g) {
+    final visibleDocs = switch (_editorTabMode.value) {
+      EditorTabMode.multiple => g.docs,
+      EditorTabMode.single =>
+        g.active == null ? const <OpenDoc>[] : [g.active!],
+      EditorTabMode.none => const <OpenDoc>[],
+    };
     return Container(
-      height: 36,
+      key: ValueKey('editor-tab-strip-${g.region}'),
+      constraints: const BoxConstraints(minHeight: 36),
       color: const Color(0xFF181B20),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            // W2-1：标签溢出横向滚动（对标 VS Code 滚动标签条）
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final d in g.docs) _buildTab(g, d),
-                ],
-              ),
-            ),
+            child: _editorTabWrap.value
+                ? Wrap(
+                    spacing: 0,
+                    runSpacing: 0,
+                    children: [
+                      for (final d in visibleDocs) _buildTab(g, d),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    // W2-1：默认维持单行横向滚动标签条。
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final d in visibleDocs) _buildTab(g, d),
+                      ],
+                    ),
+                  ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
           IconButton(
@@ -17464,6 +18370,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(EditorGroup g, OpenDoc d) {
+    final label = Text(
+      '${d.name}${d.isDirty ? " •" : ""}',
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(fontSize: 12),
+    );
     final tab = InkWell(
       onTap: () {
         final current = _active;
@@ -17490,9 +18402,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   top: BorderSide(color: Colors.transparent, width: 2)),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${d.name}${d.isDirty ? " •" : ""}',
-                style: const TextStyle(fontSize: 12)),
+            if (_editorTabWrap.value) Flexible(child: label) else label,
             if (d.diskState != DiskDocumentState.current) ...[
               const SizedBox(width: 4),
               Icon(
@@ -18523,24 +19435,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       color: const Color(0xFF181B20),
       child: Column(
         children: [
-          TabBar(
-            controller: _panelTab,
-            onTap: (index) {
-              const commandIds = [
-                'view.panelDiagnostics',
-                'view.panelCompletions',
-                'view.panelSyntax',
-              ];
-              if (index < commandIds.length) _runCommand(commandIds[index]);
-            },
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: const [
-              Tab(text: '诊断'),
-              Tab(text: '补全'),
-              Tab(text: '语法 (Tree-sitter)'),
-              Tab(text: 'Git Diff'),
-            ],
+          SizedBox(
+            height: 48,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    controller: _panelTab,
+                    onTap: (index) {
+                      const commandIds = [
+                        'view.panelDiagnostics',
+                        'view.panelCompletions',
+                        'view.panelSyntax',
+                      ];
+                      if (index < commandIds.length) {
+                        _runCommand(commandIds[index]);
+                      }
+                    },
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    tabs: const [
+                      Tab(text: '诊断'),
+                      Tab(text: '补全'),
+                      Tab(text: '语法 (Tree-sitter)'),
+                      Tab(text: 'Git Diff'),
+                    ],
+                  ),
+                ),
+                ListenableBuilder(
+                  listenable: _layout,
+                  builder: (context, _) {
+                    final maximized = _layout.panelMaximized;
+                    return IconButton(
+                      key: const ValueKey('panel-maximize-toggle'),
+                      tooltip: maximized ? '还原面板' : '最大化面板',
+                      onPressed: _layout.canMaximizePanel
+                          ? () => _runCommand(
+                                'workbench.action.toggleMaximizedPanel',
+                              )
+                          : null,
+                      icon: Icon(
+                        maximized
+                            ? Icons.close_fullscreen
+                            : Icons.open_in_full,
+                        size: 16,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(

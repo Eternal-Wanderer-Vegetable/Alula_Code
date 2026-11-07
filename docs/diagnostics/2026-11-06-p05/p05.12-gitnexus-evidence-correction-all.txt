@@ -1,0 +1,7 @@
+Changes: 1 files, 2 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section P05.12 / feat-064 — Activity Bar Top/Bottom 位置 → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md
+  Section 代码编辑前重新核对（HEAD `59794f7`） → docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md

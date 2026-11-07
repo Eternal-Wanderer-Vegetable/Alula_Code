@@ -1,0 +1,29 @@
+P05.13 / feat-065 local validation (2026-11-06)
+
+Full repository DoD:
+- `bash init.sh` — PASS: Rust workspace tests (71 + 54), Clippy, build_core, Flutter tests (1,070).
+- `cargo fmt --check` — PASS.
+- `/home/vegetable/develop/flutter/bin/flutter analyze` from `app/` — PASS, 0 issues.
+- `git diff --check` — PASS.
+
+Focused P05.12/P05.13 regression suite — PASS, 43 tests:
+- `activity_bar_test.dart`
+- `activity_bar_position_test.dart`
+- `activity_bar_position_integration_test.dart`
+- `activity_bar_size_integration_test.dart`
+- `layout_model_test.dart`
+- `layout_grid_test.dart`
+- `layout_store_test.dart`
+
+Final targeted reruns after adding size reversal and compact checked-state assertions:
+- `activity_bar_test.dart` — PASS, 6 tests.
+- `activity_bar_size_integration_test.dart` — PASS, 1 test.
+
+Coverage includes Default/Compact dimensions and checked submenu state, right-click
+availability only on Side, P05.12 JSON migration, layout JSON persistence and fresh
+Workbench restoration, Compact → Default → Compact changes, hidden/sidebar state,
+Top/Bottom 44 px behavior, editor/panel weights, and an existing Editor split tree.
+No local desktop GUI or Narrator interaction was used.
+
+Hosted PR CI and Linux/Windows/macOS Intel x64 Platform Availability remain pending
+for the product commit.

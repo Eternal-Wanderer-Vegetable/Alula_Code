@@ -1,40 +1,34 @@
 # Session Handoff
 
-## Last Updated
-
-2026-11-05. P04 / feat-026 is complete through P04.127 / EDT-20e. Product commit 4790317 is pushed to codex/vscode-parity-p00. Full implementation and phase evidence: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md.
+Last Updated: 2026-11-08
 
 ## Current Objective
 
-Pause after P04 at the user's request. P05 / feat-027 is not started.
+Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #3 draft/open; do not merge or mark P05 complete until the remaining matrix requirements pass. `docs/03-里程碑计划与验收标准.md` is the task-state/DoD authority, `docs/11-VSCode功能对照矩阵.md` is the requirement matrix, and `feature_list.json` is the feature state machine.
 
-P04.127 passed the local full DoD (Rust workspace, Clippy, build_core, Flutter 1,021), cargo fmt, Flutter analyze (0 issues), Harness (100/100), and focused integration tests (3/3). PR CI 42005290509 passed all four jobs. Platform Availability 42005281831 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Package artifacts: 13404093792 / 13405495307 / 13405544262; macOS ZIP checksum and integrity checks passed.
+## Current State
 
-Linux/Windows hosted drag/drop passed. macOS hosted drag/drop was explicitly skipped because synthetic pointer input did not reach Flutter. Startup diagnostics contain no crash report; this is non-reproduction evidence only. The macOS artifact is Intel x64; native device and Apple Silicon checks remain P15. Historical macOS SIGSEGV remains unresolved. Code Action provider is mapped to LNG-08/P08 and is not claimed as part of P04.
+- P05.32 / feat-084 / LAY-08c is registered and is the only active child: implement Code-OSS 1.145.0 fit/shrink/fixed tab sizing, default fixed bounds 50–160 px, and stable hovered close widths. Registration/scope: `docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md`. Pre-edit GitNexus impacts for large-file methods are UNKNOWN; retain the 512 KiB index coverage limit and validate via focused tests and text-confirmed call sites.
+
+- Worktree: `/tmp/alula-p04.70-next`; branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
+- P05.1–P05.31 are complete; P05 / feat-027 remains in progress because LAY-08c–20 and CMD-01–12 matrix requirements still need child slices and DoD evidence. P05.30 / feat-082 / LAY-08a passed local DoD, PR CI `42386329936`, and Linux/Windows/macOS Intel x64 Platform Availability `42386324811`. Packages Linux/Windows/macOS `13580315004` / `13579907735` / `13580179917`; macOS ZIP SHA-256 `e778097b939908ff4b8a99d42aa79be7e53a54b96d8749787b95b9208de0067e` matched sidecar and unzip integrity passed. Linux/Windows native DnD passed; hosted macOS DnD remains explicitly skipped because pointer routing is unavailable. Scope and fixed sources: `docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md`.
+- P05.31 / feat-083 / LAY-08b `workbench.editor.wrapTabs` is complete at product commit `80aab55`; macOS native Quit CI helper/timeout fix `6b3bc98` is also pushed. The wrap toggle persists in the session journal and row height relayouts the editor group. Local focused and full DoD passed (Rust 71+54, Clippy, build_core, Flutter 1,157/1,157, cargo fmt, Flutter analyze 0, Harness 100/100). PR CI `42403241718` passed all four jobs; Platform Availability `42403234488` passed Linux/Windows/macOS Intel x64 build/test/launch/native-titlebar Quit/package. Packages Linux/Windows/macOS `13586810711` / `13586816217` / `13587572211`; macOS ZIP digest `e46f2d0a47910ca32c95c262641c0de644bdd3de1035ba707c8a037e11e825da` matched sidecar and 76 entries passed integrity. Linux/Windows DnD passed; macOS DnD is an explicit pointer-route skip. Startup/Quit artifact `13587646786`. Scope and retained GitNexus CRITICAL/UNKNOWN coverage limits: `docs/diagnostics/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md`.
+- P05.29 / feat-081 / LAY-07b product commit `6516479` moves the same active editor view directionally, creates an adjacent group when needed, preserves input/focus/selection/scroll state and other source tabs, deduplicates a shared document in the target, and removes empty groups. Full local DoD, PR CI `42378205009`, and Linux/Windows/macOS Intel x64 Platform Availability `42378201537` passed. A scoped CI fix commit `2549e9b` stabilized the macOS native Quit check without changing product code; macOS DnD remains explicitly skipped because hosted pointer routing is unavailable. Full evidence and retained GitNexus CRITICAL/UNKNOWN limits: `docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md`.
+- P05.28 / feat-080 / LAY-07a product commit `1dd2997` implements four directional editor-group split commands, `editor.split` mapped to Right, active-document copy into the new group, independent view state over shared document state, and nested layout/root JSON persistence. Local full DoD passed (Rust 71+54, Clippy, build_core, Flutter 1,152/1,152, cargo fmt, app Flutter analyze 0, Harness 100/100); focused suites 15/15. PR CI `42369664624` and Linux/Windows/macOS Intel x64 Platform Availability `42369661019` passed. Packages Linux/Windows/macOS `13572744842` / `13572917765` / `13574570286`; macOS ZIP SHA-256 `cd46ee2d2dc8e54c37c2b38bbbfe02f9a627a6683b51f4952899b3458691e6b7` matched sidecar and `unzip -tq` passed. Linux/Windows native DnD passed; macOS DnD `13574610174` explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact `13573857175`. Scope, upstream semantics, GitNexus limits, and evidence: `docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md`.
+- Prior slice P05.27 product commit `880ebecf455a7079677897be24bb9f5ead005fb4` plus evidence commit `c495c581fc6626a8abebd3b64867e4cebc19a28e` remains on draft PR #3. Its local focused tests 49/49 and full DoD (Flutter 1,150/1,150), fmt/analyze, Harness 100/100 passed. PR CI `42362871885` and Linux/Windows/macOS Intel x64 Platform Availability `42362866427` passed. Linux/Windows native DnD passed; macOS DnD explicitly skipped because hosted pointer routing was unavailable. Packages Linux/Windows/macOS `13571020067` / `13571275187` / `13570959133`; macOS ZIP SHA-256 `6d302c880d24a69b2842fa7a6b62e4764fd82449c16c224027a6e2d3c024e29c` matched sidecar and ZIP integrity passed. Scope and GitNexus coverage limitations: `docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md`.
+- P05.23 / feat-075 / LAY-05b is complete at product commit `b9a1b4b`. Focused tests 27/27 and full local DoD passed; PR CI `42340702008` and Linux/Windows/macOS Intel x64 Platform Availability `42340697752` passed. Linux/Windows native DnD passed; hosted macOS DnD explicitly skipped for unavailable pointer routing. Package artifacts: Linux `13561543111`, Windows `13561309118`, macOS `13562435512`; macOS ZIP SHA-256 `e73c36ff01ecae7f551866a5906c12fa0eca2423448a44222ab11a32e39422c1` matched its sidecar and ZIP integrity passed. Native Quit/startup artifact `13561608842`. Full evidence and graph limitations: `docs/diagnostics/2026-11-07-p05/p05.23-panel-position-left-right-scope.md`.
+- P05.24 / feat-076 / LAY-05c is complete at product commit `66d2867`. Local full DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,133, cargo fmt, Flutter analyze (0), Harness 100/100, JSON/diff. PR CI `42346270441` and Platform Availability `42346265567` passed; Linux/Windows/macOS Intel x64 lanes and all three packages succeeded. macOS ZIP SHA-256 `08d70b5f79b0ba19845180781c452ffface11f370a1a8b57ce25b5172f262c4b` matched sidecar and 76 entries passed integrity; macOS DnD remains explicitly skipped for unavailable hosted pointer routing. Full evidence and GitNexus limits are in `docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md`.
+- P05.25 / feat-077 / LAY-05d Panel maximize/restore is complete at `c456374` plus format-noise cleanup `1188cdf`. Local full DoD, PR CI `42351275970`, and Linux/Windows/macOS Intel x64 Platform Availability `42351272135` passed. Full implementation and graph-coverage limitations are recorded in `docs/diagnostics/2026-11-07-p05/p05.25-panel-maximize-restore-scope.md`. `WorkbenchGrid`/`workbench_page.dart` remain UNKNOWN because of the file-size cap; `WbSplit` remains HIGH/lower-bound. Keep those risks active.
+- P05.26 / feat-078 / LAY-05e is complete at product commit `71b2a03`. Focused tests 44/44 and full local DoD passed (Rust 71+54, Clippy, build_core, Flutter 1,145, cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff). PR CI `42356533251` and Platform Availability `42356528682` attempt 2 passed; Linux/Windows native DnD passed, hosted macOS DnD explicitly skipped for unavailable pointer routing. macOS artifact `13569481669`; ZIP SHA-256 `982a268a7f81c209686751b4829c76509d5d25670654763b7bcfbc62dc9cee12` matched sidecar and all 76 entries passed integrity. Full evidence and graph limitations: `docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md`. P05 remains in progress.
+- P05.27 / LAY-06b is closed with local and hosted evidence. `WbSplit.resetDivider` preserves non-adjacent sibling extents and fixed/collapsed weights, meets recursive minima, and writes equalized proportions. `_Divider` uses raw pointer tap tracking around the existing drag recognizer to preserve drag behavior. Panel alignment projection and root JSON persistence are covered by tests.
+- GitNexus was refreshed at P05.26 product head `71b2a03` (11,523 nodes, 28,160 edges, 347 clusters, 430 reported flows). P05.26 `WbSplit`/`WbLeaf` HIGH/lower-bound and helper/renderer UNKNOWN results remain active. The analyzer skips >512 KiB `workbench_page.dart`, reports 847 cross-language property sites and incomplete flow discovery; do not treat empty/UNKNOWN or missing flows as safe. P05.26 pre-commit all-scope mapping and compare-to-main CRITICAL results are documented in its scope report; all-scope hits are documentation mapping noise, not product source changes.
+- Prior P05 platform evidence is for Linux/Windows/macOS Intel x64 hosted runners. Hosted macOS DnD pointer injection is unavailable and remains an explicit skip; Apple Silicon and physical-device checks are not implied.
 
 ## Blockers
 
-No P04 implementation blocker remains. P15 still requires native-device and Apple Silicon verification, and the historical macOS SIGSEGV remains unresolved; these do not prevent the requested pause. The 500 MiB target remains deferred.
+- None currently require user action.
 
-## Files
+## Next Step
 
-- docs/03-里程碑计划与验收标准.md
-- feature_list.json
-- progress.md
-- session-handoff.md
-- docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md
-- docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md
-- app/lib/workbench/workbench_page.dart
-- app/test/workbench_bulk_edit_review_test.dart
-
-## Next Session First Step
-
-After the user resumes, read AGENTS.md, this handoff, and progress.md; check GitNexus freshness; run bash init.sh --fast; then register and scope P05 before implementation. Keep PR #2 OPEN/draft and push only to codex/vscode-parity-p00 under the existing authorization. Do not start local GUI/Narrator testing.
-
-## Recommended Next Step
-
-Begin P05 / feat-027 only after the user resumes. Register one scoped P05 child and perform GitNexus impact review before code edits.
-
-## GitNexus Limits
-
-AlulaCore.applyWorkspaceEdit upstream impact is UNKNOWN; workbench_page.dart exceeds the index size limit. Product all-scope detection found no indexed-symbol overlap and is not clean; compare-main remains CRITICAL/capped. See the P04.127 scope and implementation reports. Do not claim the graph is clean.
+1. Implement the registered P05.32 tab-sizing child in the isolated worktree; first recheck the relevant GitNexus/text-search boundary, then add focused geometry/state tests and run the full DoD.
+2. Continue one LAY/CMD child at a time; keep PR #3 draft/open and P05 / feat-027 in progress until all 20 LAY and 12 CMD matrix requirements pass or have an explicit accepted boundary disposition.
