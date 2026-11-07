@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-07 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.29 已完成，后续 LAY/CMD 矩阵项待逐项登记与验收
+### P05 / feat-027 进行中；P05.1–P05.29 已完成，P05.30 / LAY-08a 已登记待实现
+
+- 2026-11-07：登记 P05.30 / feat-082 / LAY-08a：复刻 `workbench.editor.showTabs` 的 multiple/single/none 三态与默认 multiple，在 View > Appearance 提供互斥可访问选项、所有编辑器组即时更新和会话恢复；布局树、文档/view/focus/selection/scroll/Rust 状态保持。wrap/multirow、大小、关闭按钮、图标和路径消歧仍拆为后续项。固定上游 `editor.ts`、`editorTitleControl.ts`、`noEditorTabsControl.ts` 核对及编辑前 GitNexus UNKNOWN（`workbench_page.dart` 超 512 KiB 未入索引）见 `docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md`；登记提交前 all-scope/compare 扫描与 PR CI 待补。
 
 - 2026-11-07：登记 P05.29 / feat-081 / LAY-07b：将活动编辑器视图按 Left/Right/Up/Down 移到相邻组；无目标时按方向创建组，目标获焦；保留原 view identity、输入/选择/滚动和共享 Rust 文档状态，处理空源组与已有同文档目标。仅覆盖活动编辑器；复制、组内 tab 重排、多选和拖放另列。固定 Code-OSS 1.145.0 源码确认方向目标缺失时 `addGroup`、之后 `moveEditors` 并聚焦目标；GitNexus `WorkbenchLayout` MEDIUM/exact，`WbSplit`/`WbLeaf` CRITICAL/lower-bound，`splitRegion`/`removeRegion` 方法限定结果 UNKNOWN（源检索确认生产调用），`OpenDoc` UNKNOWN（大文件未入图，源检索核实视图生命周期）。query 的流程结果与编辑器组移动无关。范围与验收：`docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md`。
 - 2026-11-07：P05.29 本地实现完成：注册四方向 moveEditorTo*Group，按布局方向最近邻选组，无邻组时新建；迁移同一 OpenDoc、GlobalKey 输入控件、FocusNode 和滚动控制器，保留源组其他 tab；目标有同文档时聚焦已有 view 并释放源 view；空源组清理并折叠。覆盖 no-active、四方向新建/已有、三组嵌套邻接、同文档去重、root 直接子删除、JSON round-trip 以及 view/input/focus/scroll/State identity。完整 `bash init.sh` Rust 71+54、Clippy、build_core、Flutter 1,154/1,154 通过；`cargo fmt --check`、`flutter analyze` 0 issues、Harness 100/100、JSON/diff 检查均通过。GitNexus 刷新至 `c03452a`：WorkbenchLayout MEDIUM exact 13/12；WbSplit CRITICAL lower-bound 224/17；WbLeaf CRITICAL lower-bound 251/18（两者各 149 process hits、20 modules）；限定 Method 的 splitRegion/removeRegion 为 UNKNOWN，源代码已核实；产品提交前重复 all-scope 扫描为 9 files/3–8 symbols/227–311 process hits CRITICAL；compare-to-main 为 132 files/251–273 symbols/395 process hits CRITICAL。两者映射噪声与 workbench_page.dart 索引缺口已写入范围报告；产品 PR CI 与平台 hosted 验收待提交后补录。详情：`docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md`。

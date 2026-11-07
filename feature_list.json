@@ -1030,6 +1030,16 @@
       ],
       "status": "done",
       "evidence": "P05.29 / LAY-07b complete. Product commit 6516479 registers four directional moveEditorTo*Group commands; moves the same OpenDoc/input/focus/scroll state; preserves other source tabs; safely deduplicates a shared document in the target; and removes empty groups. Local DoD passed: cargo fmt, bash init.sh (Rust 71+54, Clippy, build_core, Flutter 1,154/1,154), flutter analyze 0, Harness 100/100, JSON/diff. PR CI 42378205009 passed all four jobs. Platform Availability 42378201537 passed Linux/Windows/macOS Intel x64 build/test/launch/package; package artifacts 13576811004 / 13576508596 / 13577516376. macOS ZIP SHA-256 7dee735a024f605c9b2e506eb15b53d06ded935630b1219b7e78a2353965ed43 matches sidecar and unzip integrity passed. Linux/Windows DnD artifacts 13576712242 / 13576383677 passed; macOS DnD 13577775515 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13576849734 shows the menu closed the app. CI commit 2549e9b adds one retry for transient macOS Accessibility menu-bar read errors and extends the bounded close wait; final three-platform verification passed. Earlier failures were hosted timing/accessibility failures without crash evidence. Scope and GitNexus limits: docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md."
+    },
+    {
+      "id": "feat-082",
+      "name": "P05.30 LAY-08a 编辑器标签 multiple/single/none 显示模式",
+      "description": "固定 Code-OSS workbench.editor.showTabs 三态和默认 multiple；提供 View > Appearance 的互斥可访问模式选择，实时应用到全部 editor groups，保留文档/view/focus/selection/scroll/Rust 状态，并在会话重启后恢复。wrap/multirow、大小、关闭按钮、图标和路径消歧另行分片。范围见 docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md。",
+      "dependencies": [
+        "feat-081"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered 2026-11-07 before product edits. Fixed Code-OSS 1.145.0 sources, current gap, three-state acceptance, exclusions, and pre-edit GitNexus UNKNOWN results are recorded in docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md. Final registration all-scope scan: 5 files/3 symbols/0 process hits, LOW; repeated cumulative compare-to-main scans remained CRITICAL and varied from 133 files/261 symbols/368 process hits to 133 files/270 symbols/395 process hits. PR CI and hosted validation pending."
     }
   ],
   "active_track": "vscode-builtin-parity",
