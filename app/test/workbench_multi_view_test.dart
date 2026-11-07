@@ -65,7 +65,6 @@ void main() {
       await tester.tap(find.byTooltip('拆分编辑器').first);
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
-      await tester.tap(find.text('main.rs').first);
       await tester.pump(const Duration(milliseconds: 300));
 
       final semantics = tester.ensureSemantics();

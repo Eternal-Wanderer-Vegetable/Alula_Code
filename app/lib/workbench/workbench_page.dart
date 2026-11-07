@@ -907,7 +907,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : 'Ctrl+Delete',
       enablement: 'editorTextFocus',
     );
-    reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg(
+      'workbench.action.splitEditorLeft',
+      '编辑器',
+      '向左拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorRight',
+      '编辑器',
+      '向右拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
+    reg(
+      'workbench.action.splitEditorUp',
+      '编辑器',
+      '向上拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorDown',
+      '编辑器',
+      '向下拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical),
+    );
+    // Existing toolbar command remains the default right-split action.
+    reg(
+      'editor.split',
+      '编辑器',
+      '拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
     reg(
       'deleteAllLeft',
       '编辑器',
@@ -12201,27 +12231,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
-  /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
-  void _splitFocusedGroup() {
+  /// Split the focused editor leaf and copy its active document into the new
+  /// group. The document remains shared while its editor view state is fresh.
+  void _splitFocusedGroup({
+    Axis axis = Axis.horizontal,
+    bool insertBefore = false,
+  }) {
     final active = _active;
-    if (active != null) _flushInput(active, commitComposition: true);
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
     final region = _focusedRegion;
     var i = 2;
     while (_groups.containsKey('editor-$i')) {
       i++;
     }
     final fresh = 'editor-$i';
-    if (!_layout.splitRegion(region, fresh, Axis.horizontal)) {
+    if (!_layout.splitRegion(
+      region,
+      fresh,
+      axis,
+      insertBefore: insertBefore,
+    )) {
       setState(() => _statusDetail = '拆分失败：区域 $region 不可拆分');
       return;
     }
+    final freshView = OpenDoc.viewOf(active);
     setState(() {
       _ensureGroupsFromLayout();
+      final group = _groups[fresh]!;
+      group.docs.add(freshView);
+      group.activeDocId = freshView.id;
       _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
     });
     _syncCommandContext();
+    _scheduleSyntaxRefresh(freshView.id);
   }
 
   // ---------- LSP ----------

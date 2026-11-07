@@ -788,13 +788,14 @@ extension WbSplitTreeOps on WbSplit {
     return walk(this);
   }
 
-  /// 把 [region] 叶子替换为 [axis] 方向的嵌套分割：原叶子 + 新叶子（权重
-  /// [newWeight]）。返回新叶子；region 不存在 / newRegion 已占用时返回 null。
+  /// 把 [region] 叶子替换为 [axis] 方向的嵌套分割，并按需将新叶子放在
+  /// 原叶子之前。权重由 [newWeight] 与剩余部分组成；返回新叶子，非法区域返回 null。
   WbLeaf? splitLeaf(
     String region,
     String newRegion,
     Axis axis, {
     double newWeight = 0.5,
+    bool insertBefore = false,
     String? splitName,
   }) {
     if (region == newRegion) return null;
@@ -816,7 +817,7 @@ extension WbSplitTreeOps on WbSplit {
       axis: axis,
       weight: outerWeight,
       name: splitName,
-      children: [original, fresh],
+      children: insertBefore ? [fresh, original] : [original, fresh],
     );
     return fresh;
   }

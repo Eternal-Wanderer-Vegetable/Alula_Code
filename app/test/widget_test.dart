@@ -2,6 +2,7 @@
 // 核心加载成功时状态栏就绪；autoFolder 打开 fixture 工程后文件树自动装载根目录条目。
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -385,7 +386,7 @@ void main() {
     expect(find.byKey(const ValueKey('tab-3')), findsOneWidget);
   });
 
-  testWidgets('W2-2 编辑器组：拆分获焦/文档入新组/清空自动并组', (tester) async {
+  testWidgets('W2-2 编辑器组：拆分复制活动文档/打开文件/清空自动并组', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -399,12 +400,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 拆分 → 新组 editor-2 获焦（空占位出现），两组各有一个拆分按钮
+    // 拆分 → 新组 editor-2 获焦并复制 Cargo.toml 活动视图。
     await tester.tap(find.byTooltip('拆分编辑器'));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.text('打开文件夹后，从文件树选择文件'), findsOneWidget,
-        reason: '新组应为空占位');
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
+        reason: '新组应复制活动文档');
     expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
 
     // 文件打开进「焦点组」（新组）
     await tester.tap(find.text('src'));
@@ -415,14 +417,21 @@ void main() {
         reason: '树 + 新组标签 + 面包屑各一处');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 中键关闭新组唯一文档 → 组清空 → 自动摘除并组
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.byKey(const ValueKey('tab-3'))),
-      buttons: kMiddleMouseButton,
-    );
-    await gesture.up();
+    // 关闭新组新开的 main.rs 后，复制的 Cargo.toml 仍留在新组。
+    final closeMainTab = find.byKey(const ValueKey('close-tab-editor-2-3'));
+    await tester.ensureVisible(closeMainTab);
+    await tester.pump();
+    await tester.tap(closeMainTab);
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('tab-3')), findsNothing);
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+
+    // 关闭复制的 Cargo.toml → 组清空 → 自动摘除并组。
+    final closeCopiedTab = find.byKey(const ValueKey('close-tab-editor-2-2'));
+    await tester.ensureVisible(closeCopiedTab);
+    await tester.pump();
+    await tester.tap(closeCopiedTab);
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.byTooltip('拆分编辑器'), findsOneWidget,
         reason: '空组应自动摘除');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,

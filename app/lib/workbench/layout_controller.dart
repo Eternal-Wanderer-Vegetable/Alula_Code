@@ -96,8 +96,14 @@ class WorkbenchLayout extends ChangeNotifier {
 
   /// 把 [region] 叶子沿 [axis] 分裂出 [newRegion]（W2-2 编辑器组）。
   bool splitRegion(String region, String newRegion, Axis axis,
-      {String? splitName}) {
-    final fresh = root.splitLeaf(region, newRegion, axis, splitName: splitName);
+      {bool insertBefore = false, String? splitName}) {
+    final fresh = root.splitLeaf(
+      region,
+      newRegion,
+      axis,
+      insertBefore: insertBefore,
+      splitName: splitName,
+    );
     if (fresh != null) notifyListeners();
     return fresh != null;
   }
