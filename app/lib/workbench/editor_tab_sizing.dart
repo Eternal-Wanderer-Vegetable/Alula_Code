@@ -25,6 +25,7 @@ class EditorTabWidthPolicy {
     required double availableWidth,
     required EditorTabSizing sizing,
     bool wrapping = false,
+    double fixedMinWidthOverride = fixedMinWidth,
   }) {
     if (contentWidths.isEmpty) return const [];
 
@@ -49,7 +50,7 @@ class EditorTabWidthPolicy {
             widths.length,
             _clamp(
               available,
-              fixedMinWidth,
+              fixedMinWidthOverride,
               fixedMaxWidth,
             ),
             growable: false),
@@ -58,13 +59,18 @@ class EditorTabWidthPolicy {
 
     return switch (sizing) {
       EditorTabSizing.fit => widths,
-      EditorTabSizing.fixed => _fixed(widths.length, available),
+      EditorTabSizing.fixed =>
+        _fixed(widths.length, available, fixedMinWidthOverride),
       EditorTabSizing.shrink => _shrink(widths, available),
     };
   }
 
-  static List<double> _fixed(int count, double available) {
-    final width = _clamp(available / count, fixedMinWidth, fixedMaxWidth);
+  static List<double> _fixed(
+    int count,
+    double available,
+    double minimumWidth,
+  ) {
+    final width = _clamp(available / count, minimumWidth, fixedMaxWidth);
     return List<double>.filled(count, width, growable: false);
   }
 

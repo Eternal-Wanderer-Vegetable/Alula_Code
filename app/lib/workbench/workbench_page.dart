@@ -79,6 +79,7 @@ import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
+import 'editor_tab_action_location.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
@@ -389,6 +390,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(EditorTabMode.multiple);
   final ValueNotifier<EditorTabSizing> _editorTabSizing =
       ValueNotifier(EditorTabSizing.fit);
+  final ValueNotifier<EditorTabActionLocation> _editorTabActionLocation =
+      ValueNotifier(EditorTabActionLocation.right);
   final Set<String> _editorTabPointerInside = <String>{};
   final Map<String, Map<int, double>> _editorTabLastWidths = {};
   final Map<String, Map<int, double>> _editorTabHeldWidths = {};
@@ -1064,6 +1067,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           EditorTabSizing.fixed => '固定编辑器标签宽度',
         },
         () async => _setEditorTabSizing(sizing),
+      );
+    }
+    for (final location in EditorTabActionLocation.values) {
+      reg(
+        'workbench.action.editorTabs.actionLocation.${location.name}',
+        '查看',
+        switch (location) {
+          EditorTabActionLocation.left => '将关闭操作移到编辑器标签左侧',
+          EditorTabActionLocation.right => '将关闭操作移到编辑器标签右侧',
+        },
+        () async => _setEditorTabActionLocation(location),
       );
     }
     reg('view.panelDiagnostics', '查看', '诊断面板',
@@ -3020,6 +3034,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorTabActionLocation(EditorTabActionLocation location) {
+    if (_editorTabActionLocation.value == location) return;
+    setState(() => _editorTabActionLocation.value = location);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -3043,6 +3063,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'v': 1,
         'editorTabMode': _editorTabMode.value.name,
         'editorTabSizing': _editorTabSizing.value.name,
+        'editorTabActionLocation': _editorTabActionLocation.value.name,
         'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
@@ -3143,6 +3164,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         EditorTabMode.fromSessionValue(data['editorTabMode']);
     _editorTabSizing.value =
         EditorTabSizing.fromSessionValue(data['editorTabSizing']);
+    _editorTabActionLocation.value = EditorTabActionLocation.fromSessionValue(
+        data['editorTabActionLocation']);
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -17308,6 +17331,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _panelTab.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
+    _editorTabActionLocation.dispose();
     _editorTabWrap.dispose();
     _commitMessage.dispose();
     _layout.dispose();
@@ -17548,6 +17572,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 checkedBuilder: () =>
                                     _editorTabSizing.value ==
                                     EditorTabSizing.fixed,
+                              ),
+                            ]),
+                            TitleMenuItem.submenu('关闭操作位置', children: [
+                              TitleMenuItem(
+                                '左侧',
+                                commandId:
+                                    'workbench.action.editorTabs.actionLocation.left',
+                                checkedListenable: _editorTabActionLocation,
+                                checkedBuilder: () =>
+                                    _editorTabActionLocation.value ==
+                                    EditorTabActionLocation.left,
+                              ),
+                              TitleMenuItem(
+                                '右侧',
+                                commandId:
+                                    'workbench.action.editorTabs.actionLocation.right',
+                                checkedListenable: _editorTabActionLocation,
+                                checkedBuilder: () =>
+                                    _editorTabActionLocation.value ==
+                                    EditorTabActionLocation.right,
                               ),
                             ]),
                           ]),
@@ -18375,9 +18419,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
     )..layout();
-    // Horizontal padding, close action, and the optional disk-state marker.
+    final leftAction =
+        _editorTabActionLocation.value == EditorTabActionLocation.left;
+    // Keep the close action and the optional disk-state marker in the measured
+    // width; Code-OSS reserves a narrower leading edge for left-side actions.
     return label.width +
-        24 +
+        (leftAction ? 10 : 24) +
         18 +
         14 +
         (doc.diskState == DiskDocumentState.current ? 0 : 17);
@@ -18409,6 +18456,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   availableWidth: constraints.maxWidth,
                   sizing: sizing,
                   wrapping: _editorTabWrap.value,
+                  fixedMinWidthOverride:
+                      _editorTabActionLocation.value ==
+                              EditorTabActionLocation.left
+                          ? 80
+                          : EditorTabWidthPolicy.fixedMinWidth,
                 );
                 final heldWidths = sizing == EditorTabSizing.fixed
                     ? _editorTabHeldWidths[g.region]
@@ -18497,6 +18549,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(fontSize: 12),
     );
+    final closeAction = InkWell(
+      key: ValueKey('close-tab-${g.region}-${d.id}'),
+      onTap: () => _closeDoc(d.id, group: g),
+      child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+    );
     final tab = InkWell(
       onTap: () {
         final current = _active;
@@ -18511,9 +18568,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: Container(
         key: ValueKey('tab-${d.id}'),
-        padding: EdgeInsets.symmetric(
-          horizontal: _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
-        ),
+        padding: _editorTabActionLocation.value == EditorTabActionLocation.left
+            ? const EdgeInsets.only(right: 10)
+            : EdgeInsets.symmetric(
+                horizontal:
+                    _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
+              ),
         decoration: BoxDecoration(
           color: d.id == g.activeDocId
               ? const Color(0xFF14161A)
@@ -18527,6 +18587,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (_editorTabActionLocation.value ==
+                EditorTabActionLocation.left) ...[
+              closeAction,
+              const SizedBox(width: 6),
+            ],
             if (_editorTabWrap.value ||
                 _editorTabSizing.value != EditorTabSizing.fit)
               Flexible(child: label)
@@ -18549,12 +18614,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     : Colors.blueGrey.shade300,
               ),
             ],
-            const SizedBox(width: 6),
-            InkWell(
-              key: ValueKey('close-tab-${g.region}-${d.id}'),
-              onTap: () => _closeDoc(d.id, group: g),
-              child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
-            ),
+            if (_editorTabActionLocation.value ==
+                EditorTabActionLocation.right) ...[
+              const SizedBox(width: 6),
+              closeAction,
+            ],
           ],
         ),
       ),
