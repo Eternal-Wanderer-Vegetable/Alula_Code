@@ -386,9 +386,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _findQueryWidthUpdateScheduled = false;
   late final FindReplaceHistoryStore _findHistoryStore =
       widget.findReplaceHistoryStore ??
-          FindReplaceHistoryStore(
-            directory: '${widget.sessionStore.resolvePath()}.find-history',
-          );
+      FindReplaceHistoryStore(
+        directory: '${widget.sessionStore.resolvePath()}.find-history',
+      );
   final FindReplaceHistoryNavigator _findHistory =
       FindReplaceHistoryNavigator();
   final FindReplaceHistoryNavigator _replaceHistory =
@@ -463,7 +463,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, EditorGroup> _groups = {};
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
   final Map<int,
-          ({EditorGroup group, OpenDoc view, int offset, Offset position})>
+      ({EditorGroup group, OpenDoc view, int offset, Offset position})>
       _pendingDefinitionPointers = {};
   final Map<int, ({OpenDoc view, List<TextSelection> selections})>
       _pendingColumnSelectionStarts = {};
@@ -640,9 +640,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', when: 'editorActive', enablement: 'editorActive');
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
-        shortcut: 'Ctrl+Shift+S',
-        when: 'editorActive',
-        enablement: 'editorActive');
+        shortcut: 'Ctrl+Shift+S', when: 'editorActive', enablement: 'editorActive');
     reg(
       'workbench.files.action.compareWithSaved',
       '文件',
@@ -1269,7 +1267,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   String get _toggleSideBarPositionTitle =>
-      _layout.sideBarPosition == SideBarPosition.left ? '将主侧栏移到右侧' : '将主侧栏移到左侧';
+      _layout.sideBarPosition == SideBarPosition.left
+          ? '将主侧栏移到右侧'
+          : '将主侧栏移到左侧';
 
   void _registerToggleSideBarPositionCommand() {
     _commands.register(Command(
@@ -2079,7 +2079,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       reject('文档版本已变化或超过差异预算，回退已取消');
       return;
     }
-    final modifiedText = _readDocumentRange(view, 0, probe.totalUtf16Length);
+    final modifiedText =
+        _readDocumentRange(view, 0, probe.totalUtf16Length);
     if (view.doc.version != expectedVersion ||
         !identical(binding.presentation.value, presentation) ||
         modifiedText != diff.modifiedText) {
@@ -2565,8 +2566,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _syncCommandContext() {
     final active = _active;
     final mergeSession = active?.mergeResultSession;
-    final currentMergeConflict =
-        active == null ? null : _mergeConflictAtSelection(active);
+    final currentMergeConflict = active == null
+        ? null
+        : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
       'editorHasPath': active?.path != null,
@@ -7142,9 +7144,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : snakeCase
                   ? core.transformSnakeCaseText(removed)
                   : camelCase
-                      ? core.transformCamelCaseText(removed)
-                      : titleCase
-                          ? core.transformTitleCaseText(removed)
+                  ? core.transformCamelCaseText(removed)
+                  : titleCase
+                      ? core.transformTitleCaseText(removed)
                           : core.transformCaseText(removed,
                               uppercase: uppercase);
           final editPayloadChars = removed.length + inserted.length;
@@ -7193,11 +7195,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     final mappedRanges = <({
-      int start,
-      int end,
-      String removed,
-      String inserted,
-      int mappedStart,
+            int start,
+            int end,
+            String removed,
+            String inserted,
+            int mappedStart,
     })>[];
     var cumulativeDelta = 0;
     for (final range in orderedRanges) {
@@ -7310,10 +7312,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : snakeCase
                 ? '已转换为蛇形命名'
                 : titleCase
-                    ? '已转换为标题大小写'
-                    : uppercase
-                        ? '已转换为大写'
-                        : '已转换为小写',
+                ? '已转换为标题大小写'
+                : uppercase
+                    ? '已转换为大写'
+                    : '已转换为小写',
       );
     }
   }
@@ -11008,8 +11010,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             uri: doc.uri!,
             version: doc.doc.version,
             text: doc.text,
-            writable:
-                doc.path != null && doc.diskState == DiskDocumentState.current,
+            writable: doc.path != null &&
+                doc.diskState == DiskDocumentState.current,
           ),
     ]);
     final snapshotsByUri = {
@@ -11495,7 +11497,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final previous = _explorerCompareSelection;
     await _selectExplorerFileForCompare(targets.first);
     final original = _explorerCompareSelection;
-    if (!mounted || _workspaceRoot != root || !identical(_core, core)) {
+    if (!mounted ||
+        _workspaceRoot != root ||
+        !identical(_core, core)) {
       return;
     }
     if (!_sameExplorerSelection(selectedPaths)) {
@@ -11878,8 +11882,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         try {
           file = core.workspace.readFileDocument(path, encoding: encoding);
         } on AlulaException catch (decodeError) {
-          setState(() =>
-              _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
+          setState(
+              () => _statusDetail = '按 ${encoding.id} 打开失败：${decodeError.code}');
           return;
         }
       }
@@ -15131,9 +15135,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final configuration = widget.findReplaceHistoryConfiguration;
     final saved =
         configuration.findScope == FindReplaceHistoryScope.workspace ||
-                configuration.replaceScope == FindReplaceHistoryScope.workspace
-            ? _findHistoryStore.load(workspaceRoot)
-            : const FindReplaceHistorySnapshot();
+            configuration.replaceScope == FindReplaceHistoryScope.workspace
+        ? _findHistoryStore.load(workspaceRoot)
+        : const FindReplaceHistorySnapshot();
     _findHistory.replaceEntries(
       configuration.findScope == FindReplaceHistoryScope.workspace
           ? saved.find
@@ -16954,8 +16958,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final activeDocument = _active;
     final workspaceRoot = _workspaceRoot;
-    final workspaceName =
-        workspaceRoot == null ? null : p.basename(p.normalize(workspaceRoot));
+    final workspaceName = workspaceRoot == null
+        ? null
+        : p.basename(p.normalize(workspaceRoot));
     final windowTitle = WorkbenchWindowTitle.compose(
       platform: defaultTargetPlatform,
       activeEditorName: activeDocument?.name,
@@ -16997,29 +17002,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
                   layoutControlsBuilder: () => [
-                        TitleMenuItem(
-                          '侧栏',
-                          commandId: 'view.toggleSidebar',
-                          checked: !_layout.isCollapsed('sidebar'),
-                        ),
-                        TitleMenuItem(
-                          '次侧栏',
-                          commandId: 'workbench.action.toggleAuxiliaryBar',
-                          checked: !_layout.isCollapsed(secondarySidebarRegion),
-                        ),
-                        TitleMenuItem(
-                          '面板',
-                          commandId: 'view.togglePanel',
-                          checked: !_layout.isCollapsed('panel'),
-                        ),
-                      ],
+                    TitleMenuItem(
+                      '侧栏',
+                      commandId: 'view.toggleSidebar',
+                      checked: !_layout.isCollapsed('sidebar'),
+                    ),
+                    TitleMenuItem(
+                      '次侧栏',
+                      commandId: 'workbench.action.toggleAuxiliaryBar',
+                      checked: !_layout.isCollapsed(secondarySidebarRegion),
+                    ),
+                    TitleMenuItem(
+                      '面板',
+                      commandId: 'view.togglePanel',
+                      checked: !_layout.isCollapsed('panel'),
+                    ),
+                  ],
                   menus: [
                     (
                       '文件(&&F)',
                       [
                         TitleMenuItem(
                           '新建文本文件(&&N)'
-                          '${_sc('workbench.action.files.newUntitledFile')}',
+                              '${_sc('workbench.action.files.newUntitledFile')}',
                           commandId: 'workbench.action.files.newUntitledFile',
                         ),
                         const TitleMenuItem.separator(),
@@ -17066,25 +17071,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                     'workbench.action.activityBarLocation.default',
                                 checkedBuilder: () =>
                                     _layout.activityBarLocation ==
-                                    ActivityBarLocation.side),
+                                        ActivityBarLocation.side),
                             TitleMenuItem('顶部(&&T)',
                                 commandId:
                                     'workbench.action.activityBarLocation.top',
                                 checkedBuilder: () =>
                                     _layout.activityBarLocation ==
-                                    ActivityBarLocation.top),
+                                        ActivityBarLocation.top),
                             TitleMenuItem('底部(&&B)',
                                 commandId:
                                     'workbench.action.activityBarLocation.bottom',
                                 checkedBuilder: () =>
                                     _layout.activityBarLocation ==
-                                    ActivityBarLocation.bottom),
+                                        ActivityBarLocation.bottom),
                             TitleMenuItem('隐藏(&&H)',
                                 commandId:
                                     'workbench.action.activityBarLocation.hide',
                                 checkedBuilder: () =>
                                     _layout.activityBarLocation ==
-                                    ActivityBarLocation.hidden),
+                                        ActivityBarLocation.hidden),
                           ]),
                           TitleMenuItem(
                             _toggleSideBarPositionTitle,
@@ -17095,7 +17100,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               commandId: 'view.toggleSidebar'),
                           TitleMenuItem(
                             '切换次侧栏(&&B)'
-                            '${_sc('workbench.action.toggleAuxiliaryBar')}',
+                                '${_sc('workbench.action.toggleAuxiliaryBar')}',
                             commandId: 'workbench.action.toggleAuxiliaryBar',
                             checkedBuilder: () =>
                                 !_layout.isCollapsed(secondarySidebarRegion),
@@ -17103,7 +17108,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           const TitleMenuItem.separator(),
                           TitleMenuItem.submenu('面板位置(&&M)', children: [
                             TitleMenuItem('左侧(&&L)',
-                                commandId: 'workbench.action.positionPanelLeft',
+                                commandId:
+                                    'workbench.action.positionPanelLeft',
                                 checkedListenable: _layout,
                                 checkedBuilder: () =>
                                     _layout.panelPosition ==
@@ -17119,7 +17125,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 commandId: 'workbench.action.positionPanelTop',
                                 checkedListenable: _layout,
                                 checkedBuilder: () =>
-                                    _layout.panelPosition == PanelPosition.top),
+                                    _layout.panelPosition ==
+                                    PanelPosition.top),
                             TitleMenuItem('底部(&&B)',
                                 commandId:
                                     'workbench.action.positionPanelBottom',
@@ -17567,35 +17574,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Material(
       type: MaterialType.transparency,
       child: ListTile(
-        key: ValueKey('git-${stagedEntry ? 's' : 'w'}-${e.path}'),
-        dense: true,
-        leading: Text(e.code,
-            style: TextStyle(
-                fontSize: 11,
-                color: e.isUntracked
-                    ? Colors.greenAccent
+      key: ValueKey('git-${stagedEntry ? 's' : 'w'}-${e.path}'),
+      dense: true,
+      leading: Text(e.code,
+          style: TextStyle(
+              fontSize: 11,
+              color: e.isUntracked
+                  ? Colors.greenAccent
                     : (stagedEntry
                         ? Colors.lightGreenAccent
                         : Colors.orangeAccent))),
-        title: Text(name,
-            style: const TextStyle(fontSize: 12),
-            overflow: TextOverflow.ellipsis),
-        subtitle: e.origPath != null
-            ? Text('${_nameOf(e.origPath!)} → $name',
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
-                overflow: TextOverflow.ellipsis)
-            : null,
-        onTap: () => _showGitDiff(e),
-        trailing: IconButton(
-          tooltip: stagedEntry ? '取消暂存' : '暂存',
-          onPressed: () =>
-              stagedEntry ? _gitUnstage(e.path) : _gitStage(e.path),
-          icon: Icon(
-            stagedEntry ? Icons.remove : Icons.add,
-            size: 15,
-            color: Colors.grey.shade400,
-          ),
+      title: Text(name,
+          style: const TextStyle(fontSize: 12),
+          overflow: TextOverflow.ellipsis),
+      subtitle: e.origPath != null
+          ? Text('${_nameOf(e.origPath!)} → $name',
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+              overflow: TextOverflow.ellipsis)
+          : null,
+      onTap: () => _showGitDiff(e),
+      trailing: IconButton(
+        tooltip: stagedEntry ? '取消暂存' : '暂存',
+        onPressed: () =>
+            stagedEntry ? _gitUnstage(e.path) : _gitStage(e.path),
+        icon: Icon(
+          stagedEntry ? Icons.remove : Icons.add,
+          size: 15,
+          color: Colors.grey.shade400,
         ),
+      ),
       ),
     );
   }
@@ -17734,8 +17741,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Widget _buildEditorArea(EditorGroup g) {
     final activeDoc = g.active;
     final mergeSession = activeDoc?.mergeResultSession;
-    final activeMergeConflict =
-        activeDoc == null ? null : _mergeConflictAtSelection(activeDoc);
+    final activeMergeConflict = activeDoc == null
+        ? null
+        : _mergeConflictAtSelection(activeDoc);
     return CallbackShortcuts(
       bindings: {
         const SingleActivator(LogicalKeyboardKey.escape): () =>
@@ -18373,10 +18381,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       final absoluteSelection = TextSelection(
                                         baseOffset:
                                             newValue.selection.baseOffset +
-                                                inputWindowShift,
+                                            inputWindowShift,
                                         extentOffset:
                                             newValue.selection.extentOffset +
-                                                inputWindowShift,
+                                            inputWindowShift,
                                         affinity: newValue.selection.affinity,
                                         isDirectional:
                                             newValue.selection.isDirectional,
@@ -18629,8 +18637,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             : 0.0;
                         final maxAvailableWidth =
                             (constraints.maxWidth - 24 - minimapInset)
-                                .clamp(0.0, double.infinity)
-                                .toDouble();
+                            .clamp(0.0, double.infinity)
+                            .toDouble();
                         return Align(
                           alignment: Alignment.topRight,
                           child: Padding(
@@ -19056,7 +19064,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               )
                           : null,
                       icon: Icon(
-                        maximized ? Icons.close_fullscreen : Icons.open_in_full,
+                        maximized
+                            ? Icons.close_fullscreen
+                            : Icons.open_in_full,
                         size: 16,
                       ),
                       visualDensity: VisualDensity.compact,
