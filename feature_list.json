@@ -1060,6 +1060,16 @@
       ],
       "status": "done",
       "evidence": "Implemented locally: fit preserves intrinsic width and scrolls; shrink gives tabs equal widths down to the 80 px floor; fixed shares width clamped to 50–160 px and holds widths while the pointer stays over the strip during close. Accessible View > Appearance submenu updates all groups and persists in the session journal. Widget/pure tests cover geometry, resize and editor/input/focus/selection/scroll identity, held close widths, wrap/visibility interactions and session restore. Focused sizing/mode/wrap tests 9/9; full init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,163/1,163); cargo fmt --all -- --check, flutter analyze --no-pub (0 issues), Harness 100/100, JSON and diff checks passed. PR CI and Linux/Windows/macOS x64 hosted evidence pending. GitNexus UNKNOWN/lower-bound limits remain due to workbench_page.dart exceeding 512 KiB. Full scope/source/risk record: docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md. Hosted evidence at product head 59f1880: PR CI 42410236245 all jobs passed; Platform Availability 42410233784 Linux/Windows/macOS Intel x64 all passed. Packages 13589046891 / 13589517096 / 13589962995; macOS ZIP SHA-256 1cf34824329863e3976bbf920198c2059f0e0650eee844188b3c99e5b68eb447 matched sidecar and 76-entry integrity passed. Linux/Windows DnD 13589606117 / 13589606754 passed move/copy/external text (18/13 pointer events); macOS DnD 13589839009 explicitly skipped because hosted pointer routing was unavailable. Native Quit/startup 13590311119 confirmed normal Quit callback; non-fatal frame-time clamp warning retained."
+    },
+    {
+      "id": "feat-085",
+      "name": "P05.33 LAY-08d 普通编辑器标签关闭操作位置",
+      "description": "固定 Code-OSS 1.145.0 workbench.editor.tabActionLocation：默认 right，支持 left/right；View > Appearance 提供可访问互斥菜单，立即应用到所有组并写入 session journal。关闭操作显式移动到标签左/右端，resize、fit/shrink/fixed、wrap 与编辑器输入状态须保持可用。关闭操作显隐/hover、reserved-space、pinned/sticky、图标、路径消歧和 Settings UI 留后续。范围、固定来源、GitNexus UNKNOWN 限制与 DoD：docs/diagnostics/2026-11-08-p05/p05.33-editor-tab-action-location-scope.md。",
+      "dependencies": [
+        "feat-084"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered before product edits. Fixed source: Code-OSS 1.145.0 editor.ts defaults tabActionLocation=right and validates left/right; multiEditorTabsControl redraws tab actions on setting changes; CSS row-reverses left actions. See docs/diagnostics/2026-11-08-p05/p05.33-editor-tab-action-location-scope.md. GitNexus refreshed at 12,225 nodes/35,532 edges/429 flows; impact _buildTab remains UNKNOWN/not indexed because workbench_page.dart exceeds 512 KiB. Text search confirms _buildTab is called from _buildTabStrip in that file; keep UNKNOWN active."
     }
   ],
   "active_track": "vscode-builtin-parity",
