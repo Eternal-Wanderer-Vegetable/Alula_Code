@@ -1,4 +1,4 @@
-/// Top/bottom placement of the shared Panel region.
+/// Root edge and orientation used to place the shared Panel region.
 library;
 
 import 'package:flutter/painting.dart' show Axis;
@@ -6,35 +6,50 @@ import 'package:flutter/painting.dart' show Axis;
 import 'layout_controller.dart';
 import 'layout_model.dart';
 
-enum PanelVerticalPosition { top, bottom }
+enum PanelPosition { top, bottom, left, right }
+
+extension on PanelPosition {
+  Axis get axis => switch (this) {
+        PanelPosition.top || PanelPosition.bottom => Axis.vertical,
+        PanelPosition.left || PanelPosition.right => Axis.horizontal,
+      };
+
+  bool get isLeadingEdge =>
+      this == PanelPosition.top || this == PanelPosition.left;
+}
 
 extension WorkbenchPanelPosition on WorkbenchLayout {
-  /// The root split order is the persisted Panel position. A layout with a
-  /// non-vertical root or a nested Panel is not a supported position shape.
-  PanelVerticalPosition? get panelVerticalPosition {
-    if (root.axis != Axis.vertical) return null;
+  /// The root split orientation and child order are the persisted position.
+  /// A nested, duplicated, or non-edge Panel is not a supported shape.
+  PanelPosition? get panelPosition {
+    if (root.children.length < 2) return null;
     final index = _panelRootIndex(root);
-    if (index == 0) return PanelVerticalPosition.top;
+    if (index == 0) {
+      return root.axis == Axis.vertical
+          ? PanelPosition.top
+          : PanelPosition.left;
+    }
     if (index == root.children.length - 1) {
-      return PanelVerticalPosition.bottom;
+      return root.axis == Axis.vertical
+          ? PanelPosition.bottom
+          : PanelPosition.right;
     }
     return null;
   }
 
-  /// Move the Panel leaf to the first or last root child while keeping the
-  /// existing node and all workspace subtrees intact. Returns false when the
-  /// requested position is already active or the root shape is unsupported.
-  bool setPanelVerticalPosition(PanelVerticalPosition target) {
-    if (root.axis != Axis.vertical) return false;
+  /// Move the Panel leaf to a root edge while keeping the existing root,
+  /// Panel leaf, siblings, and workspace subtrees intact. Returns false when
+  /// the requested position is already active or the root shape is unsupported.
+  bool setPanelPosition(PanelPosition target) {
     final index = _panelRootIndex(root);
-    if (index < 0) return false;
-
-    final targetIndex =
-        target == PanelVerticalPosition.top ? 0 : root.children.length - 1;
-    if (index == targetIndex) return false;
+    if (root.children.length < 2 || index < 0 || panelPosition == null) {
+      return false;
+    }
+    if (panelPosition == target) return false;
 
     final panel = root.children.removeAt(index);
-    if (target == PanelVerticalPosition.top) {
+    root.axis = target.axis;
+    if (target.isLeadingEdge) {
       root.children.insert(0, panel);
     } else {
       root.children.add(panel);
@@ -44,6 +59,17 @@ extension WorkbenchPanelPosition on WorkbenchLayout {
   }
 }
 
-int _panelRootIndex(WbSplit root) => root.children.indexWhere(
-      (node) => node is WbLeaf && node.region == 'panel',
-    );
+int _panelRootIndex(WbSplit root) {
+  if (root.leaves.where((leaf) => leaf.region == 'panel').length != 1) {
+    return -1;
+  }
+  var panelIndex = -1;
+  for (var i = 0; i < root.children.length; i++) {
+    final node = root.children[i];
+    if (node is WbLeaf && node.region == 'panel') {
+      if (panelIndex != -1) return -1;
+      panelIndex = i;
+    }
+  }
+  return panelIndex;
+}

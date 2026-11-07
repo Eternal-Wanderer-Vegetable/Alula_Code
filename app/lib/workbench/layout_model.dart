@@ -213,7 +213,10 @@ class WbSplit extends WbNode {
             ? null
             : normalizeSidebarViewLocations(sidebarViewLocations);
 
-  final Axis axis;
+  /// Split direction. The root can change orientation when the Panel moves
+  /// between horizontal and vertical positions; child identity and weights
+  /// remain stable across that transition.
+  Axis axis;
   final List<WbNode> children;
 
   /// 稳定标识（可选）：调试与测试定位用（分割条 key = wb-div-<左>-<右>）。

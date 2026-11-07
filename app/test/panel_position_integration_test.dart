@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/panel_position.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +24,7 @@ void main() {
     if (temp.existsSync()) await temp.delete(recursive: true);
   });
 
-  testWidgets('Top/Bottom commands, Appearance menu, persistence and remount',
+  testWidgets('all Panel positions, menus, persistence and remount',
       (tester) async {
     final seeded = defaultLayout();
     final panel = seeded.leafOf('panel')!..collapsed = false;
@@ -77,19 +78,33 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
     }
 
-    void expectPanelAt(bool top) {
+    void expectPanelAt(PanelPosition position) {
       final saved = layoutStore.tryLoad()!;
       final panelIndex = saved.children.indexWhere(
         (node) => node is WbLeaf && node.region == 'panel',
       );
-      expect(panelIndex, top ? 0 : saved.children.length - 1);
+      final leading =
+          position == PanelPosition.top || position == PanelPosition.left;
+      expect(panelIndex, leading ? 0 : saved.children.length - 1);
+      expect(
+        saved.axis,
+        position == PanelPosition.top || position == PanelPosition.bottom
+            ? Axis.vertical
+            : Axis.horizontal,
+      );
       final panelRect =
           tester.getRect(find.byKey(const ValueKey('wb-region-panel')));
       final editorRect =
           tester.getRect(find.byKey(const ValueKey('wb-region-editor')));
       expect(
-        panelRect.top,
-        top ? lessThan(editorRect.top) : greaterThan(editorRect.top),
+        switch (position) {
+          PanelPosition.top => panelRect.top < editorRect.top,
+          PanelPosition.bottom => panelRect.top > editorRect.top,
+          PanelPosition.left => panelRect.right < editorRect.left,
+          PanelPosition.right => panelRect.left > editorRect.right,
+        },
+        isTrue,
+        reason: 'Panel should be at $position',
       );
     }
 
@@ -97,28 +112,50 @@ void main() {
     await expectPositionChecked('底部(B)', true);
 
     await openCommand(
+      '将面板移到左侧',
+      'qi-查看: 将面板移到左侧',
+    );
+    expectPanelAt(PanelPosition.left);
+    await expectPositionChecked('左侧(L)', true);
+
+    await openCommand(
+      '将面板移到右侧',
+      'qi-查看: 将面板移到右侧',
+    );
+    expectPanelAt(PanelPosition.right);
+    await expectPositionChecked('右侧(R)', true);
+
+    await openCommand(
       '将面板移到顶部',
       'qi-查看: 将面板移到顶部',
     );
-    expectPanelAt(true);
+    expectPanelAt(PanelPosition.top);
     await expectPositionChecked('顶部(T)', true);
 
-    // The menu routes the second command through the same registry and saves
-    // the tree order used by a fresh workbench.
+    // The Appearance submenu routes the registered command and persists the
+    // horizontal/vertical root orientation for a fresh workbench.
     await openPanelPositionMenu();
     await tester.tap(find.text('底部(B)'));
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 600));
-    expectPanelAt(false);
+    expectPanelAt(PanelPosition.bottom);
+    await expectPositionChecked('底部(B)', true);
+
+    await openPanelPositionMenu();
+    await tester.tap(find.text('左侧(L)'));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 600));
+    expectPanelAt(PanelPosition.left);
+    await expectPositionChecked('左侧(L)', true);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
     await mountApp();
-    expectPanelAt(false);
-    await expectPositionChecked('底部(B)', true);
+    expectPanelAt(PanelPosition.left);
+    await expectPositionChecked('左侧(L)', true);
   });
 
-  testWidgets('collapsed Panel can move and retains its hidden state',
+  testWidgets('collapsed Panel can move horizontally and retains its state',
       (tester) async {
     final seeded = defaultLayout();
     expect(seeded.leafOf('panel')!.collapsed, isTrue);
@@ -132,16 +169,16 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
 
-    Future<void> movePanelToTop() async {
+    Future<void> movePanelToLeft() async {
       await tester.tap(find.byKey(const ValueKey('command-center-control')));
       await tester.pumpAndSettle();
       final input = find.descendant(
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField),
       );
-      await tester.enterText(input, '将面板移到顶部');
+      await tester.enterText(input, '将面板移到左侧');
       await tester.pumpAndSettle();
-      final command = find.byKey(const ValueKey('qi-查看: 将面板移到顶部'));
+      final command = find.byKey(const ValueKey('qi-查看: 将面板移到左侧'));
       expect(command, findsOneWidget);
       await tester.tap(command);
       await tester.pumpAndSettle();
@@ -149,10 +186,11 @@ void main() {
     }
 
     await mountApp();
-    await movePanelToTop();
+    await movePanelToLeft();
 
     WbLeaf savedPanel() {
       final saved = layoutStore.tryLoad()!;
+      expect(saved.axis, Axis.horizontal);
       expect(saved.children.first, isA<WbLeaf>());
       final panel = saved.children.first as WbLeaf;
       expect(panel.region, 'panel');
@@ -165,5 +203,24 @@ void main() {
     await tester.pump();
     await mountApp();
     savedPanel();
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pumpAndSettle();
+    final input = find.descendant(
+      of: find.byKey(const ValueKey('quick-input')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(input, '将面板移到底部');
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('qi-查看: 将面板移到底部')),
+    );
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 600));
+    final restored = layoutStore.tryLoad()!;
+    expect(restored.axis, Axis.vertical);
+    final restoredPanel = restored.children.last as WbLeaf;
+    expect(restoredPanel.region, 'panel');
+    expect(restoredPanel.collapsed, isTrue);
   });
 }

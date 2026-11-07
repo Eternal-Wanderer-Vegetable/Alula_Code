@@ -1,6 +1,7 @@
 import 'dart:ui' show CheckedState, SemanticsAction;
 
 import 'package:alula_app/workbench/commands.dart';
+import 'package:alula_app/workbench/panel_position.dart';
 import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'package:alula_app/workbench/window_chrome_driver.dart';
@@ -455,15 +456,37 @@ void main() {
     expect(executed.last, 'about');
   });
 
-  testWidgets('macOS native menu refreshes checked state from its listenable',
+  testWidgets('macOS native menu refreshes all Panel position checks',
       (tester) async {
-    commands.register(Command(
-      id: 'workbench.action.positionPanelTop',
-      title: '将面板移到顶部',
-      category: '查看',
-      run: () async {},
-    ));
-    final isTop = ValueNotifier(false);
+    for (final position in PanelPosition.values) {
+      commands.register(Command(
+        id: 'workbench.action.positionPanel${switch (position) {
+          PanelPosition.left => 'Left',
+          PanelPosition.right => 'Right',
+          PanelPosition.top => 'Top',
+          PanelPosition.bottom => 'Bottom',
+        }}',
+        title: '将面板移到$position',
+        category: '查看',
+        run: () async {},
+      ));
+    }
+    final position = ValueNotifier(PanelPosition.bottom);
+
+    String label(PanelPosition position) => switch (position) {
+          PanelPosition.left => '左侧',
+          PanelPosition.right => '右侧',
+          PanelPosition.top => '顶部',
+          PanelPosition.bottom => '底部',
+        };
+
+    String command(PanelPosition position) =>
+        'workbench.action.positionPanel${switch (position) {
+          PanelPosition.left => 'Left',
+          PanelPosition.right => 'Right',
+          PanelPosition.top => 'Top',
+          PanelPosition.bottom => 'Bottom',
+        }}';
 
     await tester.pumpWidget(_titleBarApp(
       commands: commands,
@@ -474,27 +497,38 @@ void main() {
         (
           '查看(&&V)',
           [
-            TitleMenuItem(
-              '顶部(&&T)',
-              commandId: 'workbench.action.positionPanelTop',
-              checkedBuilder: () => isTop.value,
-              checkedListenable: isTop,
-            ),
+            for (final value in PanelPosition.values)
+              TitleMenuItem(
+                '${label(value)}(&&${switch (value) {
+                  PanelPosition.left => 'L',
+                  PanelPosition.right => 'R',
+                  PanelPosition.top => 'T',
+                  PanelPosition.bottom => 'B',
+                }})',
+                commandId: command(value),
+                checkedBuilder: () => position.value == value,
+                checkedListenable: position,
+              ),
           ],
         ),
       ],
     ));
     await tester.pump();
 
-    PlatformMenuItem topItem() => _allPlatformMenuItems(platformMenus.menus)
-        .singleWhere((item) => item.label.endsWith('顶部'));
+    PlatformMenuItem menuItem(PanelPosition value) =>
+        _allPlatformMenuItems(platformMenus.menus)
+            .singleWhere((item) => item.label.endsWith(label(value)));
 
-    expect(topItem().label, '顶部');
-    isTop.value = true;
+    expect(menuItem(PanelPosition.bottom).label, '✓ 底部');
+    position.value = PanelPosition.left;
     await tester.pump();
-    expect(topItem().label, '✓ 顶部');
+    expect(menuItem(PanelPosition.left).label, '✓ 左侧');
+    expect(menuItem(PanelPosition.bottom).label, '底部');
+    position.value = PanelPosition.right;
+    await tester.pump();
+    expect(menuItem(PanelPosition.right).label, '✓ 右侧');
 
-    isTop.dispose();
+    position.dispose();
   });
 
   testWidgets('macOS native title bar omits client menu row and quits cleanly',

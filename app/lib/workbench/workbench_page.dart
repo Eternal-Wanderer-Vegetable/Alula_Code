@@ -739,7 +739,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '将面板移到顶部',
       () async {
-        _layout.setPanelVerticalPosition(PanelVerticalPosition.top);
+        _layout.setPanelPosition(PanelPosition.top);
       },
     );
     reg(
@@ -747,7 +747,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '将面板移到底部',
       () async {
-        _layout.setPanelVerticalPosition(PanelVerticalPosition.bottom);
+        _layout.setPanelPosition(PanelPosition.bottom);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelLeft',
+      '查看',
+      '将面板移到左侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.left);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelRight',
+      '查看',
+      '将面板移到右侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.right);
       },
     );
     reg(
@@ -17046,19 +17062,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           ),
                           const TitleMenuItem.separator(),
                           TitleMenuItem.submenu('面板位置(&&M)', children: [
+                            TitleMenuItem('左侧(&&L)',
+                                commandId:
+                                    'workbench.action.positionPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.left),
+                            TitleMenuItem('右侧(&&R)',
+                                commandId:
+                                    'workbench.action.positionPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.right),
                             TitleMenuItem('顶部(&&T)',
                                 commandId: 'workbench.action.positionPanelTop',
                                 checkedListenable: _layout,
                                 checkedBuilder: () =>
-                                    _layout.panelVerticalPosition ==
-                                    PanelVerticalPosition.top),
+                                    _layout.panelPosition ==
+                                    PanelPosition.top),
                             TitleMenuItem('底部(&&B)',
                                 commandId:
                                     'workbench.action.positionPanelBottom',
                                 checkedListenable: _layout,
                                 checkedBuilder: () =>
-                                    _layout.panelVerticalPosition ==
-                                    PanelVerticalPosition.bottom),
+                                    _layout.panelPosition ==
+                                    PanelPosition.bottom),
                           ]),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换面板(&&P)',
