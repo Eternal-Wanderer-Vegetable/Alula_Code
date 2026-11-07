@@ -110,10 +110,25 @@ class WorkbenchLayout extends ChangeNotifier {
 
   /// 摘除 [region] 叶子（树会自动折叠单子节点 split）。
   bool removeRegion(String region) {
+    final rootIndex = _rootChildIndex(region);
+    if (rootIndex >= 0) {
+      // A workbench root usually has several fixed shell regions in addition
+      // to editor groups. Removing one of those direct children is safe while
+      // at least two root children remain; WbSplit.removeLeaf keeps the more
+      // conservative rule because it has no access to controller metadata.
+      if (root.children.length <= 2) return false;
+      root.children.removeAt(rootIndex);
+      notifyListeners();
+      return true;
+    }
     if (root.removeLeaf(region)) {
       notifyListeners();
       return true;
     }
     return false;
   }
+
+  int _rootChildIndex(String region) => root.children.indexWhere(
+        (child) => child is WbLeaf && child.region == region,
+      );
 }

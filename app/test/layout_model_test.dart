@@ -591,4 +591,27 @@ void main() {
       expect(sidebar.collapsed, isFalse);
     });
   });
+
+  test(
+      'layout controller removes a direct root editor while shell regions remain',
+      () {
+    final layout = WorkbenchLayout(
+      root: WbSplit(
+        axis: Axis.horizontal,
+        children: [
+          WbLeaf(region: 'activity'),
+          WbLeaf(region: 'editor'),
+          WbLeaf(region: 'panel'),
+        ],
+      ),
+    );
+
+    expect(layout.removeRegion('editor'), isTrue);
+    expect(layout.root.children.map((node) => (node as WbLeaf).region), [
+      'activity',
+      'panel',
+    ]);
+    expect(layout.leafOf('editor'), isNull);
+    layout.dispose();
+  });
 }

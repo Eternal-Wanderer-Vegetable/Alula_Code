@@ -342,6 +342,30 @@ final RegExp _rustIdentifierPattern = RegExp(
   unicode: true,
 );
 
+enum _EditorGroupMoveDirection {
+  left(Axis.horizontal, true),
+  right(Axis.horizontal, false),
+  up(Axis.vertical, true),
+  down(Axis.vertical, false);
+
+  const _EditorGroupMoveDirection(this.axis, this.insertBefore);
+
+  final Axis axis;
+  final bool insertBefore;
+}
+
+class _EditorGroupBounds {
+  const _EditorGroupBounds(this.left, this.top, this.right, this.bottom);
+
+  final double left;
+  final double top;
+  final double right;
+  final double bottom;
+
+  double get centerX => (left + right) / 2;
+  double get centerY => (top + bottom) / 2;
+}
+
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
@@ -930,6 +954,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '编辑器',
       '向下拆分编辑器',
       () async => _splitFocusedGroup(axis: Axis.vertical),
+    );
+    reg(
+      'workbench.action.moveEditorToLeftGroup',
+      '编辑器',
+      '将活动编辑器移至左侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.left),
+    );
+    reg(
+      'workbench.action.moveEditorToRightGroup',
+      '编辑器',
+      '将活动编辑器移至右侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.right),
+    );
+    reg(
+      'workbench.action.moveEditorToAboveGroup',
+      '编辑器',
+      '将活动编辑器移至上方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.up),
+    );
+    reg(
+      'workbench.action.moveEditorToBelowGroup',
+      '编辑器',
+      '将活动编辑器移至下方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.down),
     );
     // Existing toolbar command remains the default right-split action.
     reg(
@@ -12229,6 +12277,224 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (listEquals(active.foldedLineRanges, ranges)) return;
     active.foldedLineRanges = List.unmodifiable(ranges);
     setState(() {});
+  }
+
+  Map<String, _EditorGroupBounds> _layoutRegionBounds() {
+    final bounds = <String, _EditorGroupBounds>{};
+
+    void visit(
+      WbNode node,
+      double left,
+      double top,
+      double right,
+      double bottom,
+    ) {
+      if (node is WbLeaf) {
+        bounds[node.region] = _EditorGroupBounds(left, top, right, bottom);
+        return;
+      }
+      if (node is! WbSplit) return;
+
+      final weights = node.children.map((child) {
+        if (child is WbLeaf && child.collapsed) return 0.0;
+        final weight = child is WbLeaf && child.fixedExtent != null
+            ? child.fixedExtent!
+            : child.weight;
+        return weight < 0 ? 0.0 : weight;
+      }).toList();
+      final totalWeight =
+          weights.fold<double>(0, (sum, weight) => sum + weight);
+      var cursor = node.axis == Axis.horizontal ? left : top;
+      for (var index = 0; index < node.children.length; index++) {
+        final fraction = totalWeight <= 0
+            ? 1 / node.children.length
+            : weights[index] / totalWeight;
+        final extent =
+            (node.axis == Axis.horizontal ? right - left : bottom - top) *
+                fraction;
+        final child = node.children[index];
+        if (node.axis == Axis.horizontal) {
+          visit(child, cursor, top, cursor + extent, bottom);
+        } else {
+          visit(child, left, cursor, right, cursor + extent);
+        }
+        cursor += extent;
+      }
+    }
+
+    visit(_layout.root, 0, 0, 1, 1);
+    return bounds;
+  }
+
+  double _intervalGap(
+    double firstStart,
+    double firstEnd,
+    double secondStart,
+    double secondEnd,
+  ) {
+    if (firstEnd < secondStart) return secondStart - firstEnd;
+    if (secondEnd < firstStart) return firstStart - secondEnd;
+    return 0;
+  }
+
+  String? _adjacentEditorRegion(
+    String sourceRegion,
+    _EditorGroupMoveDirection direction,
+  ) {
+    final bounds = _layoutRegionBounds();
+    final source = bounds[sourceRegion];
+    if (source == null) return null;
+
+    String? bestRegion;
+    var bestAlongGap = double.infinity;
+    var bestAcrossGap = double.infinity;
+    var bestAcrossCenter = double.infinity;
+    for (final region in _groups.keys) {
+      if (region == sourceRegion || !_isEditorRegion(region)) continue;
+      final candidate = bounds[region];
+      if (candidate == null ||
+          candidate.right - candidate.left <= 1e-9 ||
+          candidate.bottom - candidate.top <= 1e-9) {
+        continue;
+      }
+
+      final sourceCenter =
+          direction.axis == Axis.horizontal ? source.centerX : source.centerY;
+      final candidateCenter = direction.axis == Axis.horizontal
+          ? candidate.centerX
+          : candidate.centerY;
+      final pointsInDirection = direction.insertBefore
+          ? candidateCenter < sourceCenter
+          : candidateCenter > sourceCenter;
+      if (!pointsInDirection) continue;
+
+      final alongGap = switch (direction) {
+        _EditorGroupMoveDirection.left =>
+          (source.left - candidate.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.right =>
+          (candidate.left - source.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.up =>
+          (source.top - candidate.bottom).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.down =>
+          (candidate.top - source.bottom).clamp(0.0, double.infinity),
+      };
+      final acrossGap = direction.axis == Axis.horizontal
+          ? _intervalGap(
+              source.top, source.bottom, candidate.top, candidate.bottom)
+          : _intervalGap(
+              source.left, source.right, candidate.left, candidate.right);
+      final acrossCenter = direction.axis == Axis.horizontal
+          ? (source.centerY - candidate.centerY).abs()
+          : (source.centerX - candidate.centerX).abs();
+
+      final closer = alongGap < bestAlongGap - 1e-9 ||
+          (alongGap - bestAlongGap).abs() <= 1e-9 &&
+              (acrossGap < bestAcrossGap - 1e-9 ||
+                  (acrossGap - bestAcrossGap).abs() <= 1e-9 &&
+                      acrossCenter < bestAcrossCenter - 1e-9);
+      if (!closer) continue;
+      bestRegion = region;
+      bestAlongGap = alongGap;
+      bestAcrossGap = acrossGap;
+      bestAcrossCenter = acrossCenter;
+    }
+    return bestRegion;
+  }
+
+  void _focusEditorAfterLayout(EditorGroup group, OpenDoc view) {
+    final focusNode = _focusNodeFor(group, view);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _focusedRegion != group.region ||
+          !identical(group.active, view)) {
+        return;
+      }
+      focusNode.requestFocus();
+    });
+  }
+
+  void _moveFocusedEditorToGroup(_EditorGroupMoveDirection direction) {
+    final source = _focused;
+    final active = source.active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+
+    var targetRegion = _adjacentEditorRegion(source.region, direction);
+    if (targetRegion == null) {
+      var index = 2;
+      while (_groups.containsKey('editor-$index')) {
+        index++;
+      }
+      targetRegion = 'editor-$index';
+      if (!_layout.splitRegion(
+        source.region,
+        targetRegion,
+        direction.axis,
+        insertBefore: direction.insertBefore,
+      )) {
+        setState(() => _statusDetail = '移动失败：区域 ${source.region} 不可拆分');
+        return;
+      }
+      _ensureGroupsFromLayout();
+    }
+
+    final target = _groups[targetRegion];
+    if (target == null || identical(target, source)) return;
+    OpenDoc? existingView;
+    for (final view in target.docs) {
+      if (view.sameDocumentAs(active)) {
+        existingView = view;
+        break;
+      }
+    }
+    if (existingView != null) {
+      _closeDocNow(source, active);
+      if (!mounted) return;
+      setState(() {
+        target.activeDocId = existingView!.id;
+        _focusedRegion = target.region;
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existingView);
+      return;
+    }
+
+    final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+
+    setState(() {
+      source.docs.removeWhere((view) => identical(view, active));
+      if (source.docs.isNotEmpty && source.activeDocId == active.id) {
+        source.activeDocId = source.docs.last.id;
+      }
+      target.docs.add(active);
+      target.activeDocId = active.id;
+
+      final sourceFocusKey = _focusKeyFor(source, active);
+      final targetFocusKey = _focusKeyFor(target, active);
+      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
+      if (movedFocusNode != null) {
+        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
+        if (oldTargetFocusNode != null &&
+            oldTargetFocusNode != movedFocusNode) {
+          oldTargetFocusNode.dispose();
+        }
+        _editorFocusNodes[targetFocusKey] = movedFocusNode;
+      }
+
+      if (source.docs.isEmpty && removeSourceRegion) {
+        _groups.remove(source.region);
+      }
+      _focusedRegion = target.region;
+      _statusDetail = '已移动编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, active);
   }
 
   /// Split the focused editor leaf and copy its active document into the new
