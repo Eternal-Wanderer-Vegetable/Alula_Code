@@ -1000,6 +1000,16 @@
       ],
       "status": "done",
       "evidence": "Completed 2026-11-07; product commit 71b2a03eaf2bc39e8a254435bfc7c25c5772d0e3. Focused model/grid/alignment tests 44/44; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,145/1,145, cargo fmt, flutter analyze (0), Harness 100/100, JSON/diff. PR CI 42356533251 passed all four jobs. Platform Availability 42356528682 attempt 2 passed Linux/Windows/macOS Intel x64 build/test/launch/package. Artifacts Linux/Windows/macOS 13567643420 / 13567409444 / 13569481669. macOS ZIP SHA-256 982a268a7f81c209686751b4829c76509d5d25670654763b7bcfbc62dc9cee12 matched sidecar; 76 entries passed unzip integrity. Linux/Windows native DnD passed; hosted macOS DnD 13569167779 explicitly skipped because CGEventPostToPid pointer routing was unavailable; native Quit/startup artifact 13568644648. Platform attempt 1 had one unrelated existing regex preserve-case interaction test failure (1,144/1,145); focused local rerun and full attempt 2 passed, with root cause not established. Full scope, GitNexus limitations, and evidence: docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md."
+    },
+    {
+      "id": "feat-079",
+      "name": "P05.27 LAY-06b sash 双击复位与布局比例持久化",
+      "description": "按固定 Code-OSS 1.145.0 为 WorkbenchGrid 当前渲染的 sash 增加双击复位：将直接相邻的两个弹性节点在各自最小尺寸内尽可能均分其合计当前尺寸，不改变其它兄弟节点。权重写回沿用现有 alignment projection 与 root layout JSON 持久化；覆盖横纵轴、布局回读与 resize。snap、折叠策略重做、未渲染 sash、DnD 与其他 LAY-06 项另行登记。范围和 GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md。",
+      "dependencies": [
+        "feat-078"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered 2026-11-07 before product edits. Fixed upstream behavior and scoped acceptance are recorded in docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md. GitNexus WbSplit CRITICAL/lower-bound (92 nodes, 71 flows, 20 modules), _Divider CRITICAL/exact (50 nodes, 25 flows), WorkbenchLayout MEDIUM/exact (13 nodes); dragDivider/applyDrag UNKNOWN, with concrete paths confirmed by source search. Implementation and verification pending."
     }
   ],
   "active_track": "vscode-builtin-parity",
