@@ -4,6 +4,7 @@ import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_grid.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/panel_maximize.dart';
+import 'package:alula_app/workbench/panel_position.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -125,9 +126,57 @@ void main() {
     await tester.pump();
     expect(_height(tester, 'panel'), closeTo((900 - 4) * 0.3 + 60, 2.0));
 
+    await tester.drag(divFinder, const Offset(0, -2000));
+    await tester.pump();
+    expect(_height(tester, 'panel'), closeTo(panelMinimumHeight, 1.5),
+        reason: 'Top/Bottom sash drag must respect the Panel minimum height');
+
     expect(layout.toggleRegion('panel'), isTrue);
     await tester.pump();
     expect(find.byKey(const ValueKey('probe-panel')), findsNothing);
+  });
+
+  testWidgets('侧停 Panel resize 时保持 300px 最小宽度并恢复原权重', (tester) async {
+    tester.view.physicalSize = const Size(1200, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    expect(layout.setPanelPosition(PanelPosition.left), isTrue);
+    expect(layout.toggleRegion('panel'), isFalse);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(_width(tester, 'panel'), closeTo((1200 - 4) * 0.3, 1.5));
+    final panel = layout.root.leafOf('panel')!;
+    expect(panel.weight, 0.3);
+
+    tester.view.physicalSize = const Size(900, 900);
+    await tester.pump();
+    expect(_width(tester, 'panel'), closeTo(300, 1.5));
+    expect(panel.weight, 0.3,
+        reason: 'viewport clamping must not persist as a sash drag');
+
+    tester.view.physicalSize = const Size(1200, 900);
+    await tester.pump();
+    expect(_width(tester, 'panel'), closeTo((1200 - 4) * 0.3, 1.5));
+  });
+
+  testWidgets('极窄视口下 sash 占位缩到可用空间且没有负尺寸或溢出', (tester) async {
+    tester.view.physicalSize = const Size(2, 2);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    await tester.pumpWidget(_host(layout));
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(_width(tester, 'activity'), greaterThanOrEqualTo(0));
+    expect(_width(tester, 'sidebar'), greaterThanOrEqualTo(0));
+    expect(_width(tester, 'editor'), greaterThanOrEqualTo(0));
   });
 
   testWidgets('侧栏折叠/恢复（活动栏按钮路径）', (tester) async {

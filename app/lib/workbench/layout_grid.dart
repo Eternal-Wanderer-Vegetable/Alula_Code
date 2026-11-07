@@ -7,6 +7,8 @@
 /// 折叠叶子边缘没有分割条）；拖拽回调走 WorkbenchLayout.dragDivider。
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'layout_controller.dart';
@@ -15,7 +17,7 @@ import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 
 /// 分割条主轴占位（含命中区）；视觉线居中 1px。
-const double kDividerThickness = 4.0;
+const double kDividerThickness = workbenchDividerThickness;
 
 const Color _kDividerColor = Color(0xFF2A2E37);
 
@@ -160,7 +162,18 @@ class _NodeView extends StatelessWidget {
       final total = axis == Axis.horizontal
           ? constraints.maxWidth
           : constraints.maxHeight;
-      final inner = total - dividerSlots.length * kDividerThickness;
+      final nonNegativeTotal = math.max(0.0, total).toDouble();
+      final dividerThickness = dividerSlots.isEmpty
+          ? 0.0
+          : math
+              .min(kDividerThickness, nonNegativeTotal / dividerSlots.length)
+              .toDouble();
+      final inner = math
+          .max(
+            0.0,
+            nonNegativeTotal - dividerSlots.length * dividerThickness,
+          )
+          .toDouble();
       final extents = split.extentsFor(inner);
 
       final items = <Widget>[];
@@ -172,6 +185,7 @@ class _NodeView extends StatelessWidget {
             axis: axis,
             index: i - 1,
             split: split,
+            thickness: dividerThickness,
             innerExtent: inner,
             layout: layout,
             projection: projection,
@@ -210,6 +224,7 @@ class _Divider extends StatelessWidget {
     required this.axis,
     required this.index,
     required this.split,
+    required this.thickness,
     required this.innerExtent,
     required this.layout,
     required this.projection,
@@ -218,6 +233,7 @@ class _Divider extends StatelessWidget {
   final Axis axis;
   final int index;
   final WbSplit split;
+  final double thickness;
   final double innerExtent;
   final WorkbenchLayout layout;
   final PanelAlignmentProjection? projection;
@@ -233,8 +249,8 @@ class _Divider extends StatelessWidget {
         ? const SizedBox(width: 1, child: ColoredBox(color: _kDividerColor))
         : const SizedBox(height: 1, child: ColoredBox(color: _kDividerColor));
     return SizedBox(
-      width: axis == Axis.horizontal ? kDividerThickness : double.infinity,
-      height: axis == Axis.vertical ? kDividerThickness : double.infinity,
+      width: axis == Axis.horizontal ? thickness : double.infinity,
+      height: axis == Axis.vertical ? thickness : double.infinity,
       child: MouseRegion(
         cursor: axis == Axis.horizontal
             ? SystemMouseCursors.resizeLeftRight

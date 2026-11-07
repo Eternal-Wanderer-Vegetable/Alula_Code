@@ -234,6 +234,15 @@ void main() {
       _rect(tester, 'panel').height,
       closeTo(panelHeightBefore + 40, 2),
     );
+    await tester.drag(
+      find.byKey(
+        const ValueKey('wb-div-panel-alignment-editor-row-panel'),
+      ),
+      const Offset(0, -2000),
+    );
+    await tester.pump();
+    expect(_rect(tester, 'panel').height, closeTo(panelMinimumHeight, 1.5),
+        reason: 'center-alignment projection must keep the Panel height floor');
 
     final restored = WorkbenchLayout(
       root: WbNode.fromJson(layout.root.toJson()) as WbSplit,

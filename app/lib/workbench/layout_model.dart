@@ -10,7 +10,18 @@
 /// 渲染见 layout_grid.dart，状态与持久化见 layout_controller.dart。
 library;
 
+import 'dart:math' as math;
+
 import 'package:flutter/painting.dart' show Axis;
+
+/// Divider space shared by split layout calculation and grid rendering.
+const double workbenchDividerThickness = 4.0;
+
+/// Code-OSS Panel view minimums in logical pixels.
+const double panelMinimumWidth = 300.0;
+const double panelMinimumHeight = 77.0;
+
+const double _legacyDefaultPanelMinimumExtent = 120.0;
 
 /// Primary Activity Bar placement, persisted with the layout tree.
 enum ActivityBarLocation { side, top, bottom, hidden }
@@ -439,11 +450,15 @@ class WbLeaf extends WbNode {
     if (region is! String || region.isEmpty) {
       throw const FormatException('leaf 缺少 region');
     }
+    final serializedMinimum = _toDouble(json['min']) ?? 0;
     return WbLeaf(
       region: region,
       fixedExtent: _toDouble(json['fixed']),
       weight: _toDouble(json['weight']) ?? 1,
-      minExtent: _toDouble(json['min']) ?? 0,
+      minExtent: region == 'panel' &&
+              serializedMinimum == _legacyDefaultPanelMinimumExtent
+          ? panelMinimumHeight
+          : serializedMinimum,
       collapsed: json['collapsed'] == true,
       lastWeight: _toDouble(json['last']),
     );
@@ -489,7 +504,7 @@ WbSplit defaultLayout() => WbSplit(
         WbLeaf(
           region: 'panel',
           weight: 0.3,
-          minExtent: 120,
+          minExtent: panelMinimumHeight,
           collapsed: true,
           lastWeight: 0.3,
         ),
@@ -547,49 +562,103 @@ bool isFlexibleNode(WbNode node) {
   return true;
 }
 
-/// 节点主轴最小像素：叶子取 minExtent（折叠为 0，固定取固定值）；
-/// split 取各子节点最小值之和。
-double nodeMinExtent(WbNode node) {
+/// 节点沿 [axis] 的最小像素尺寸。
+///
+/// 叶子沿当前方向使用自身下限；Panel 另有 Code-OSS 的宽/高下限。
+/// 同轴 split 的下限为子项之和及其分割条占位，正交 split 取子项最大值。
+double nodeMinExtent(WbNode node, Axis axis) {
   final self = node;
   if (self is WbLeaf) {
-    if (self.isFixed) return self.fixedExtent!;
-    return self.collapsed ? 0 : self.minExtent;
+    if (self.collapsed) return 0;
+    final minimum = self.isFixed ? self.fixedExtent! : self.minExtent;
+    final nonNegativeMinimum = math.max(0.0, minimum).toDouble();
+    if (self.region == 'panel') {
+      final panelMinimum =
+          axis == Axis.horizontal ? panelMinimumWidth : panelMinimumHeight;
+      return math.max(nonNegativeMinimum, panelMinimum).toDouble();
+    }
+    return nonNegativeMinimum;
   }
   final split = self as WbSplit; // sealed 层级：非叶必为 split
-  var sum = 0.0;
-  for (final c in split.children) {
-    sum += nodeMinExtent(c);
+  final childMinimums = [
+    for (final child in split.children) nodeMinExtent(child, axis),
+  ];
+  if (split.axis != axis) {
+    var maximum = 0.0;
+    for (final minimum in childMinimums) {
+      if (minimum > maximum) maximum = minimum;
+    }
+    return maximum;
+  }
+
+  var sum = childMinimums.fold(0.0, (total, minimum) => total + minimum);
+  for (var i = 1; i < split.children.length; i++) {
+    if (isFlexibleNode(split.children[i - 1]) &&
+        isFlexibleNode(split.children[i])) {
+      sum += workbenchDividerThickness;
+    }
   }
   return sum;
 }
 
 extension WbSplitLayout on WbSplit {
   /// 按当前模型把 [totalExtent] 主轴像素分配给各子节点。
-  /// 固定叶子取 fixedExtent，折叠叶子取 0，弹性节点按权重瓜分剩余。
+  /// 最小值可满足时先保障下限，再按权重分配剩余；空间不足时按下限比例压缩。
+  /// 该计算只影响当前几何，不会改写保存的权重。
   List<double> extentsFor(double totalExtent) {
-    var flexWeight = 0.0;
+    final extents = List<double>.filled(children.length, 0);
+    if (totalExtent <= 0) return extents;
+
+    final visibleIndices = <int>[];
+    final minima = List<double>.filled(children.length, 0);
+    var minimumTotal = 0.0;
+    for (var i = 0; i < children.length; i++) {
+      final child = children[i];
+      if (child case WbLeaf(collapsed: true)) continue;
+      visibleIndices.add(i);
+      final minimum = nodeMinExtent(child, axis);
+      minima[i] = minimum;
+      minimumTotal += minimum;
+    }
+
+    if (minimumTotal > totalExtent) {
+      // No layout can satisfy every minimum in this viewport. Compress the
+      // minima proportionally, without changing the user's stored weights.
+      for (final i in visibleIndices) {
+        extents[i] = totalExtent * minima[i] / minimumTotal;
+      }
+      return extents;
+    }
+
+    final flexibleIndices = <int>[];
     var fixedUsed = 0.0;
-    for (final c in children) {
-      final leaf = c;
-      if (leaf is WbLeaf && leaf.collapsed) continue;
-      if (leaf is WbLeaf && leaf.isFixed) {
-        fixedUsed += leaf.fixedExtent!;
+    for (final i in visibleIndices) {
+      final child = children[i];
+      if (child case WbLeaf(isFixed: true)) {
+        extents[i] = child.fixedExtent!;
+        fixedUsed += child.fixedExtent!;
       } else {
-        flexWeight += leaf.weight;
+        flexibleIndices.add(i);
       }
     }
-    final flexPx = (totalExtent - fixedUsed).clamp(0.0, totalExtent);
-    final unit = flexWeight > 0 && flexPx > 0 ? flexPx / flexWeight : 0.0;
-    return children.map((c) {
-      final leaf = c;
-      if (leaf is WbLeaf && leaf.collapsed) return 0.0;
-      if (leaf is WbLeaf && leaf.isFixed) return leaf.fixedExtent!;
-      return leaf.weight * unit;
-    }).toList();
+
+    final flexibleNodes = [for (final i in flexibleIndices) children[i]];
+    final flexibleMinimums = [for (final i in flexibleIndices) minima[i]];
+    final flexibleExtents = _allocateWeightedWithMinimums(
+      nodes: flexibleNodes,
+      minimums: flexibleMinimums,
+      available: math.max(0.0, totalExtent - fixedUsed).toDouble(),
+    );
+    for (var i = 0; i < flexibleIndices.length; i++) {
+      extents[flexibleIndices[i]] = flexibleExtents[i];
+    }
+    return extents;
   }
 
   /// 该 split 的各子节点最小主轴像素。
-  List<double> minsFor() => children.map(nodeMinExtent).toList(growable: false);
+  List<double> minsFor() => children
+      .map((child) => nodeMinExtent(child, axis))
+      .toList(growable: false);
 
   /// 拖拽第 [index] 个分割条移动 [deltaPx] 像素（该 split 主轴总长 [totalExtent]）。
   /// 就地更新弹性子节点的权重，其余兄弟像素保持不变。
@@ -601,7 +670,11 @@ extension WbSplitLayout on WbSplit {
         minExtents: minsFor(),
         index: index,
         deltaPx: deltaPx);
-    if (identical(moved, extents)) return;
+    if (moved.length != extents.length) return;
+    if (List.generate(extents.length, (i) => moved[i] == extents[i])
+        .every((unchanged) => unchanged)) {
+      return;
+    }
     final flexTotal = moved.fold(0.0, (s, e) => s + e); // 含固定像素；固定叶子不写回权重
     if (flexTotal <= 0) return;
     for (var i = 0; i < children.length; i++) {
@@ -611,6 +684,50 @@ extension WbSplitLayout on WbSplit {
       c.weight = moved[i] / flexTotal;
     }
   }
+}
+
+List<double> _allocateWeightedWithMinimums({
+  required List<WbNode> nodes,
+  required List<double> minimums,
+  required double available,
+}) {
+  final extents = List<double>.filled(nodes.length, 0);
+  var active = List<int>.generate(nodes.length, (index) => index);
+  var remaining = available;
+
+  while (active.isNotEmpty) {
+    var weightTotal = 0.0;
+    for (final i in active) {
+      weightTotal += math.max(0.0, nodes[i].weight).toDouble();
+    }
+    final equalWeights = weightTotal <= 0;
+    final proposed = <int, double>{};
+    final belowMinimum = <int>[];
+    for (final i in active) {
+      final weight =
+          equalWeights ? 1.0 : math.max(0.0, nodes[i].weight).toDouble();
+      final proposal =
+          remaining * weight / (equalWeights ? active.length : weightTotal);
+      proposed[i] = proposal;
+      if (proposal + 1e-9 < minimums[i]) belowMinimum.add(i);
+    }
+
+    if (belowMinimum.isEmpty) {
+      for (final i in active) {
+        extents[i] = proposed[i]!;
+      }
+      break;
+    }
+
+    for (final i in belowMinimum) {
+      extents[i] = minimums[i];
+      remaining -= minimums[i];
+    }
+    remaining = math.max(0.0, remaining).toDouble();
+    active = active.where((i) => !belowMinimum.contains(i)).toList();
+  }
+
+  return extents;
 }
 
 /// 树结构变更原语（W2-2 编辑器组拆分）：叶子分裂与摘除。

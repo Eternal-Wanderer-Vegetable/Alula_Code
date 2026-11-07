@@ -38,6 +38,7 @@ void main() {
       final panel = restored.leafOf('panel')!;
       expect(panel.collapsed, isTrue, reason: '面板默认收起');
       expect(panel.lastWeight, closeTo(0.3, 1e-9));
+      expect(panel.minExtent, panelMinimumHeight);
       expect(inner.leafOf('activity')!.fixedExtent, 48);
     });
 
@@ -231,19 +232,25 @@ void main() {
       malformedLayout.dispose();
     });
 
-    test('叶子权重/折叠态 round-trip', () {
+    test('旧 Panel 默认最小值迁移，其他叶子权重/折叠态 round-trip', () {
       final leaf = WbLeaf(
           region: 'panel',
           weight: 0.3,
-          minExtent: 120,
+          minExtent: 120, // pre-P05.26 built-in default
           collapsed: true,
           lastWeight: 0.3);
       final back = WbLeaf.fromJson(leaf.toJson());
       expect(back.region, 'panel');
       expect(back.weight, closeTo(0.3, 1e-9));
-      expect(back.minExtent, 120);
+      expect(back.minExtent, panelMinimumHeight);
+      expect(back.toJson()['min'], panelMinimumHeight);
       expect(back.collapsed, isTrue);
       expect(back.lastWeight, closeTo(0.3, 1e-9));
+
+      final customized = WbLeaf.fromJson(
+        WbLeaf(region: 'panel', minExtent: 144).toJson(),
+      );
+      expect(customized.minExtent, 144);
     });
 
     test('损坏输入抛 FormatException（store 层负责回退默认布局）', () {
@@ -353,7 +360,68 @@ void main() {
       expect(px[1], closeTo(300, 1e-9));
     });
 
-    test('minsFor：嵌套 split 取子节点最小值之和', () {
+    test('Panel 最小值随停靠轴变化，resize 不写回权重', () {
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.2,
+        minExtent: panelMinimumHeight,
+      );
+      final editor = WbLeaf(region: 'editor', weight: 0.8);
+      final horizontal = WbSplit(
+        axis: Axis.horizontal,
+        children: [panel, editor],
+      );
+      final vertical = WbSplit(
+        axis: Axis.vertical,
+        children: [panel, editor],
+      );
+
+      expect(horizontal.minsFor().first, panelMinimumWidth);
+      expect(vertical.minsFor().first, panelMinimumHeight);
+      expect(horizontal.extentsFor(500), [panelMinimumWidth, 200]);
+      expect(panel.weight, 0.2);
+      expect(editor.weight, 0.8);
+      expect(horizontal.extentsFor(2000), [400, 1600],
+          reason: 'larger viewport restores the saved weighted geometry');
+
+      panel.minExtent = 144;
+      expect(vertical.minsFor().first, 144,
+          reason: 'custom minimum above the upstream floor is retained');
+      expect(horizontal.minsFor().first, panelMinimumWidth);
+    });
+
+    test('空间不足时按最小值比例压缩并保持总尺寸和权重', () {
+      final editor = WbLeaf(region: 'editor', weight: 0.25, minExtent: 200);
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.75,
+        minExtent: panelMinimumHeight,
+      );
+      final split = WbSplit(axis: Axis.horizontal, children: [editor, panel]);
+
+      final extents = split.extentsFor(100);
+      expect(extents, [40, 60]);
+      expect(extents.fold(0.0, (sum, extent) => sum + extent), 100);
+      expect(extents.every((extent) => extent >= 0), isTrue);
+      expect(editor.weight, 0.25);
+      expect(panel.weight, 0.75);
+    });
+
+    test('空间不足时 sash 无可行位移，不把压缩比例写回权重', () {
+      final editor = WbLeaf(region: 'editor', weight: 0.25, minExtent: 200);
+      final panel = WbLeaf(
+        region: 'panel',
+        weight: 0.75,
+        minExtent: panelMinimumHeight,
+      );
+      final split = WbSplit(axis: Axis.horizontal, children: [editor, panel]);
+
+      split.applyDrag(0, 30, 100);
+      expect(editor.weight, 0.25);
+      expect(panel.weight, 0.75);
+    });
+
+    test('minsFor：正交 split 取最大值，同轴 split 累加并计入分割条', () {
       final root = WbSplit(axis: Axis.vertical, children: [
         WbSplit(axis: Axis.horizontal, children: [
           WbLeaf(region: 'a', minExtent: 100),
@@ -361,7 +429,16 @@ void main() {
         ]),
         WbLeaf(region: 'panel', minExtent: 120),
       ]);
-      expect(root.minsFor(), [150, 120]);
+      expect(root.minsFor(), [100, 120], reason: '正交 split 取最大子项高度，不把宽度最小值相加');
+
+      final sameAxis = WbSplit(axis: Axis.vertical, children: [
+        WbSplit(axis: Axis.vertical, children: [
+          WbLeaf(region: 'a', minExtent: 100),
+          WbLeaf(region: 'b', minExtent: 50),
+        ]),
+        WbLeaf(region: 'panel'),
+      ]);
+      expect(sameAxis.minsFor().first, 100 + 50 + workbenchDividerThickness);
     });
 
     test('applyDrag：其余兄弟像素严格不动（docs/09 验收点）', () {
