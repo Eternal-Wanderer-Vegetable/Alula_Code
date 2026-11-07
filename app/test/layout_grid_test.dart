@@ -43,8 +43,12 @@ void main() {
     await tester.pump();
 
     final before = _width(tester, 'sidebar');
-    await tester.drag(find.byKey(const ValueKey('wb-div-sidebar-editor')),
-        const Offset(60, 0));
+    await tester.drag(
+      find.byKey(
+        const ValueKey('wb-div-sidebar-panel-alignment-column'),
+      ),
+      const Offset(60, 0),
+    );
     await tester.pump();
 
     final after = _width(tester, 'sidebar');
@@ -58,8 +62,12 @@ void main() {
     await tester.pumpWidget(_host(layout));
     await tester.pump();
 
-    await tester.drag(find.byKey(const ValueKey('wb-div-sidebar-editor')),
-        const Offset(-2000, 0));
+    await tester.drag(
+      find.byKey(
+        const ValueKey('wb-div-sidebar-panel-alignment-column'),
+      ),
+      const Offset(-2000, 0),
+    );
     await tester.pump();
 
     expect(_width(tester, 'sidebar'), closeTo(170, 1.5),
@@ -85,11 +93,13 @@ void main() {
     expect(find.byKey(const ValueKey('probe-panel')), findsOneWidget);
     // 主列弹性池 = 900 - 4（panel 上方分割条）
     expect(_height(tester, 'panel'), closeTo((900 - 4) * 0.3, 1.5));
-    expect(_height(tester, 'activity'), closeTo((900 - 4) * 0.7, 1.5),
-        reason: '上半区（main-row 权重 0.7）');
+    expect(_height(tester, 'activity'), 900,
+        reason: 'Center alignment keeps Activity Bar full height');
 
     // 拖面板分割条：向下 60px → 面板变高
-    final divFinder = find.byKey(const ValueKey('wb-div-main-row-panel'));
+    final divFinder = find.byKey(
+      const ValueKey('wb-div-panel-alignment-editor-row-panel'),
+    );
     await tester.drag(divFinder, const Offset(0, 60));
     await tester.pump();
     expect(_height(tester, 'panel'), closeTo((900 - 4) * 0.3 + 60, 2.0));

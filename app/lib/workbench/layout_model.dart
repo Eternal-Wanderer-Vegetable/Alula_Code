@@ -27,6 +27,23 @@ enum SideBarPosition {
       };
 }
 
+/// Horizontal alignment for a top/bottom Panel. Missing legacy JSON defaults
+/// to Center, matching the fixed Code-OSS workbench default.
+enum PanelAlignment {
+  left,
+  right,
+  center,
+  justify;
+
+  static PanelAlignment? fromJson(Object? raw) => switch (raw) {
+        'left' => PanelAlignment.left,
+        'right' => PanelAlignment.right,
+        'center' => PanelAlignment.center,
+        'justify' => PanelAlignment.justify,
+        _ => null,
+      };
+}
+
 /// Activity Bar density. The horizontal Activity Bar keeps its legacy 44 px
 /// height; these dimensions apply when it is placed on the side.
 enum ActivityBarSize {
@@ -184,6 +201,7 @@ class WbSplit extends WbNode {
     this.name,
     this.activityBarLocation,
     this.sideBarPosition,
+    this.panelAlignment,
     this.activityBarSize,
     this.activityBarAccountsVisible,
     List<String>? activityBarOrder,
@@ -228,6 +246,9 @@ class WbSplit extends WbNode {
   /// Root-only Primary Side Bar placement. Null migrates old layouts to Left.
   SideBarPosition? sideBarPosition;
 
+  /// Root-only Panel alignment. Null migrates legacy layouts to Center.
+  PanelAlignment? panelAlignment;
+
   /// Root-only Activity Bar size metadata. Null identifies JSON written before
   /// the size setting was introduced.
   ActivityBarSize? activityBarSize;
@@ -267,6 +288,7 @@ class WbSplit extends WbNode {
         if (activityBarLocation != null)
           'activityBarLocation': activityBarLocation!.name,
         if (sideBarPosition != null) 'sideBarPosition': sideBarPosition!.name,
+        if (panelAlignment != null) 'panelAlignment': panelAlignment!.name,
         if (activityBarSize != null)
           'activityBarSize': activityBarSize!.jsonValue,
         if (activityBarAccountsVisible != null)
@@ -309,6 +331,7 @@ class WbSplit extends WbNode {
       activityBarLocation:
           _activityBarLocationFromJson(json['activityBarLocation']),
       sideBarPosition: SideBarPosition.fromJson(json['sideBarPosition']),
+      panelAlignment: PanelAlignment.fromJson(json['panelAlignment']),
       activityBarSize: ActivityBarSize.fromJson(json['activityBarSize']),
       activityBarAccountsVisible: json['activityBarAccountsVisible'] is bool
           ? json['activityBarAccountsVisible'] as bool

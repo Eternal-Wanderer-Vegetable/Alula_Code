@@ -11,13 +11,14 @@ import 'package:flutter/material.dart';
 
 import 'layout_controller.dart';
 import 'layout_model.dart';
+import 'panel_alignment.dart';
 
 /// 分割条主轴占位（含命中区）；视觉线居中 1px。
 const double kDividerThickness = 4.0;
 
 const Color _kDividerColor = Color(0xFF2A2E37);
 
-class WorkbenchGrid extends StatelessWidget {
+class WorkbenchGrid extends StatefulWidget {
   const WorkbenchGrid({
     super.key,
     required this.layout,
@@ -28,15 +29,41 @@ class WorkbenchGrid extends StatelessWidget {
   final Map<String, WidgetBuilder> builders;
 
   @override
+  State<WorkbenchGrid> createState() => _WorkbenchGridState();
+}
+
+class _WorkbenchGridState extends State<WorkbenchGrid> {
+  final Map<String, GlobalKey> _regionKeys = {};
+
+  void _syncRegionKeys() {
+    final regions =
+        widget.layout.root.leaves.map((leaf) => leaf.region).toSet();
+    _regionKeys.removeWhere((region, _) => !regions.contains(region));
+    for (final region in regions) {
+      _regionKeys.putIfAbsent(
+        region,
+        () => GlobalKey(debugLabel: 'wb-region-$region'),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // grid 自行监听布局变更：任何拖拽/折叠后整体重排
+    // The projection is rebuilt with the layout notification so the transient
+    // tree always reflects saved Panel/Activity Bar/Side Bar state.
     return ListenableBuilder(
-      listenable: layout,
-      builder: (context, _) => _NodeView(
-        node: layout.root,
-        layout: layout,
-        builders: builders,
-      ),
+      listenable: widget.layout,
+      builder: (context, _) {
+        _syncRegionKeys();
+        final projection = projectPanelAlignment(widget.layout);
+        return _NodeView(
+          node: projection?.tree ?? widget.layout.root,
+          layout: widget.layout,
+          builders: widget.builders,
+          regionKeys: _regionKeys,
+          projection: projection,
+        );
+      },
     );
   }
 }
@@ -54,11 +81,15 @@ class _NodeView extends StatelessWidget {
     required this.node,
     required this.layout,
     required this.builders,
+    required this.regionKeys,
+    required this.projection,
   });
 
   final WbNode node;
   final WorkbenchLayout layout;
   final Map<String, WidgetBuilder> builders;
+  final Map<String, GlobalKey> regionKeys;
+  final PanelAlignmentProjection? projection;
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +98,11 @@ class _NodeView extends StatelessWidget {
       if (leaf.collapsed) return const SizedBox.shrink();
       final build = builders[leaf.region];
       return KeyedSubtree(
-        key: ValueKey('wb-region-${leaf.region}'),
-        child: build?.call(context) ?? const SizedBox.shrink(),
+        key: regionKeys[leaf.region],
+        child: KeyedSubtree(
+          key: ValueKey('wb-region-${leaf.region}'),
+          child: build?.call(context) ?? const SizedBox.shrink(),
+        ),
       );
     }
 
@@ -102,6 +136,7 @@ class _NodeView extends StatelessWidget {
             split: split,
             innerExtent: inner,
             layout: layout,
+            projection: projection,
           ));
         }
         final child = split.children[i];
@@ -110,7 +145,13 @@ class _NodeView extends StatelessWidget {
           SizedBox(
             width: axis == Axis.horizontal ? ext : double.infinity,
             height: axis == Axis.vertical ? ext : double.infinity,
-            child: _NodeView(node: child, layout: layout, builders: builders),
+            child: _NodeView(
+              node: child,
+              layout: layout,
+              builders: builders,
+              regionKeys: regionKeys,
+              projection: projection,
+            ),
           ),
         );
       }
@@ -132,6 +173,7 @@ class _Divider extends StatelessWidget {
     required this.split,
     required this.innerExtent,
     required this.layout,
+    required this.projection,
   });
 
   final Axis axis;
@@ -139,6 +181,12 @@ class _Divider extends StatelessWidget {
   final WbSplit split;
   final double innerExtent;
   final WorkbenchLayout layout;
+  final PanelAlignmentProjection? projection;
+
+  void _drag(double deltaPx) {
+    layout.dragDivider(split, index, deltaPx, innerExtent);
+    projection?.syncAfterDividerDrag(split);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,13 +203,11 @@ class _Divider extends StatelessWidget {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onHorizontalDragUpdate: axis == Axis.horizontal
-              ? (d) => layout.dragDivider(
-                  split, index, d.primaryDelta ?? 0, innerExtent)
+              ? (d) => _drag(d.primaryDelta ?? 0)
               : null,
           onVerticalDragUpdate: axis == Axis.vertical
               // 垂直下拖（+dy）→ 下格 b 增大 → 模型侧 a += delta 取负号
-              ? (d) => layout.dragDivider(
-                  split, index, -(d.primaryDelta ?? 0), innerExtent)
+              ? (d) => _drag(-(d.primaryDelta ?? 0))
               : null,
           child: Center(child: line),
         ),

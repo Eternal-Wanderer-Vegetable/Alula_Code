@@ -85,6 +85,7 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'panel_alignment.dart';
 import 'panel_position.dart';
 import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
@@ -765,6 +766,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async {
         _layout.setPanelPosition(PanelPosition.right);
       },
+    );
+    reg(
+      'workbench.action.alignPanelLeft',
+      '查看',
+      '将面板对齐到左侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.left),
+    );
+    reg(
+      'workbench.action.alignPanelRight',
+      '查看',
+      '将面板对齐到右侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.right),
+    );
+    reg(
+      'workbench.action.alignPanelCenter',
+      '查看',
+      '将面板对齐到居中',
+      () async => _layout.setPanelAlignment(PanelAlignment.center),
+    );
+    reg(
+      'workbench.action.alignPanelJustify',
+      '查看',
+      '将面板对齐到两端',
+      () async => _layout.setPanelAlignment(PanelAlignment.justify),
     );
     reg(
       'workbench.action.activityBarLocation.default',
@@ -17089,6 +17114,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 checkedBuilder: () =>
                                     _layout.panelPosition ==
                                     PanelPosition.bottom),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板对齐方式', children: [
+                            TitleMenuItem('左侧',
+                                commandId: 'workbench.action.alignPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.left),
+                            TitleMenuItem('右侧',
+                                commandId: 'workbench.action.alignPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.right),
+                            TitleMenuItem('居中',
+                                commandId: 'workbench.action.alignPanelCenter',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.center),
+                            TitleMenuItem('两端对齐',
+                                commandId: 'workbench.action.alignPanelJustify',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.justify),
                           ]),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换面板(&&P)',

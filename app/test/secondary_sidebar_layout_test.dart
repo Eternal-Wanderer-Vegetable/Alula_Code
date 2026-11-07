@@ -105,7 +105,9 @@ void main() {
     expect(secondaryRect.left, greaterThanOrEqualTo(editorRect.right));
     expect(secondaryRect.width, greaterThanOrEqualTo(170));
     await tester.drag(
-      find.byKey(const ValueKey('wb-div-editor-secondarySidebar')),
+      find.byKey(
+        const ValueKey('wb-div-panel-alignment-column-secondarySidebar'),
+      ),
       const Offset(40, 0),
     );
     await tester.pump();

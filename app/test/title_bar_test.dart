@@ -1,6 +1,7 @@
 import 'dart:ui' show CheckedState, SemanticsAction;
 
 import 'package:alula_app/workbench/commands.dart';
+import 'package:alula_app/workbench/layout_model.dart' show PanelAlignment;
 import 'package:alula_app/workbench/panel_position.dart';
 import 'package:alula_app/workbench/title_bar.dart';
 import 'package:alula_app/workbench/window_chrome_configuration.dart';
@@ -529,6 +530,79 @@ void main() {
     expect(menuItem(PanelPosition.right).label, '✓ 右侧');
 
     position.dispose();
+  });
+
+  testWidgets('macOS native menu refreshes all Panel alignment checks',
+      (tester) async {
+    final alignment = ValueNotifier(PanelAlignment.center);
+    final executed = <PanelAlignment>[];
+    String commandId(PanelAlignment value) =>
+        'workbench.action.alignPanel${switch (value) {
+          PanelAlignment.left => 'Left',
+          PanelAlignment.right => 'Right',
+          PanelAlignment.center => 'Center',
+          PanelAlignment.justify => 'Justify',
+        }}';
+    String label(PanelAlignment value) => switch (value) {
+          PanelAlignment.left => '左侧',
+          PanelAlignment.right => '右侧',
+          PanelAlignment.center => '居中',
+          PanelAlignment.justify => '两端对齐',
+        };
+
+    for (final value in PanelAlignment.values) {
+      commands.register(Command(
+        id: commandId(value),
+        title: 'Set Panel Alignment to ${label(value)}',
+        category: '查看',
+        run: () async {
+          executed.add(value);
+          alignment.value = value;
+        },
+      ));
+    }
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      menus: [
+        (
+          '查看(&&V)',
+          [
+            TitleMenuItem.submenu('外观(&&A)', children: [
+              TitleMenuItem.submenu('面板对齐方式', children: [
+                for (final value in PanelAlignment.values)
+                  TitleMenuItem(
+                    label(value),
+                    commandId: commandId(value),
+                    checkedBuilder: () => alignment.value == value,
+                    checkedListenable: alignment,
+                  ),
+              ]),
+            ]),
+          ],
+        ),
+      ],
+    ));
+    await tester.pump();
+
+    PlatformMenuItem menuItem(PanelAlignment value) =>
+        _allPlatformMenuItems(platformMenus.menus)
+            .singleWhere((item) => item.label.endsWith(label(value)));
+
+    expect(menuItem(PanelAlignment.center).label, '✓ 居中');
+    alignment.value = PanelAlignment.left;
+    await tester.pump();
+    expect(menuItem(PanelAlignment.left).label, '✓ 左侧');
+    expect(menuItem(PanelAlignment.center).label, '居中');
+
+    menuItem(PanelAlignment.right).onSelected!();
+    await tester.pump();
+    expect(executed, [PanelAlignment.right]);
+    expect(menuItem(PanelAlignment.right).label, '✓ 右侧');
+    alignment.dispose();
   });
 
   testWidgets('macOS native title bar omits client menu row and quits cleanly',
