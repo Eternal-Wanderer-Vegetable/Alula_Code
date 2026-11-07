@@ -7,6 +7,7 @@ import 'package:alula_app/workbench/activity_bar_size.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/sidebar_position.dart';
+import 'package:alula_app/workbench/secondary_sidebar_layout.dart';
 import 'package:alula_app/workbench/sidebar_view_locations.dart';
 import 'package:flutter/painting.dart' show Axis;
 import 'package:flutter_test/flutter_test.dart';
@@ -149,6 +150,77 @@ void main() {
     expect(_withoutViewMetadata(layout.root.toJson()), unrelatedBefore,
         reason:
             'Activity Bar, positioning, editor split, dimensions, and Panel state survive');
+    layout.dispose();
+  });
+
+  test('reset restores implicit defaults and preserves unrelated layout state',
+      () {
+    final layout = WorkbenchLayout();
+    layout.splitRegion('editor', 'editor-2', Axis.vertical);
+    layout.setActivityBarOrder(['git', 'explorer', 'search', 'outline']);
+    layout.setActivityBarPinnedViews(['git', 'explorer']);
+    layout.setActivityBarBadgesDisabledViews(['outline']);
+    layout.setActivityBarAccountsVisible(false);
+    layout.setActivityBarSize(ActivityBarSize.compact);
+    layout.setActivityBarLocation(ActivityBarLocation.top);
+    layout.setSideBarPosition(SideBarPosition.right);
+    layout.setRegionCollapsed('sidebar', false);
+    layout.setRegionCollapsed(secondarySidebarRegion, false);
+    layout.setRegionCollapsed('panel', true);
+    layout.leafOf('sidebar')!.weight = 0.42;
+    layout.leafOf(secondarySidebarRegion)!.weight = 0.31;
+    expect(
+        layout.moveSidebarView('search', secondarySidebarViewLocation), isTrue);
+    expect(layout.moveSidebarView('outline', secondarySidebarViewLocation),
+        isTrue);
+    expect(
+        layout.moveSidebarView('outline', primarySidebarViewLocation), isTrue);
+    expect(layout.selectSidebarView('git'), isTrue);
+
+    final unrelatedBefore = _withoutViewMetadata(layout.root.toJson());
+    var changes = 0;
+    layout.addListener(() => changes++);
+
+    expect(layout.resetSidebarViewLocations(), isTrue);
+    expect(
+        layout.sidebarViews(primarySidebarViewLocation), activityBarViewOrder);
+    expect(layout.sidebarViews(secondarySidebarViewLocation), isEmpty);
+    expect(layout.primarySidebarView, 'explorer');
+    expect(layout.secondarySidebarView, isNull);
+    expect(layout.root.sidebarViewLocations, isNull,
+        reason: 'default assignments are represented implicitly');
+    expect(layout.root.primarySidebarView, isNull);
+    expect(layout.root.secondarySidebarView, isNull);
+    expect(layout.root.toJson().containsKey('sidebarViewLocations'), isFalse);
+    expect(_withoutViewMetadata(layout.root.toJson()), unrelatedBefore);
+    expect(changes, 1);
+
+    final restored = WorkbenchLayout(
+      root: WbNode.fromJson(layout.root.toJson()) as WbSplit,
+    );
+    expect(restored.sidebarViews(primarySidebarViewLocation),
+        activityBarViewOrder);
+    expect(restored.primarySidebarView, 'explorer');
+    expect(restored.secondarySidebarView, isNull);
+    expect(_withoutViewMetadata(restored.root.toJson()), unrelatedBefore);
+    expect(layout.resetSidebarViewLocations(), isFalse,
+        reason: 'reset is idempotent at the implicit defaults');
+    expect(changes, 1);
+
+    restored.dispose();
+    layout.dispose();
+  });
+
+  test('reset clears a stale selection in a layout without location metadata',
+      () {
+    final root = defaultLayout()..primarySidebarView = 'search';
+    final layout = WorkbenchLayout(root: root);
+
+    expect(layout.primarySidebarView, 'search');
+    expect(layout.resetSidebarViewLocations(), isTrue);
+    expect(layout.primarySidebarView, 'explorer');
+    expect(layout.secondarySidebarView, isNull);
+    expect(layout.root.toJson().containsKey('sidebarViewLocations'), isFalse);
     layout.dispose();
   });
 }

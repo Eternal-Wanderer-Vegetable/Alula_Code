@@ -710,6 +710,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '移动聚焦的视图…',
       _showMoveFocusedSidebarViewPicker,
     );
+    reg(
+      'workbench.action.resetViewLocations',
+      '查看',
+      '重置视图位置',
+      _resetSidebarViewLocations,
+    );
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
@@ -16728,6 +16734,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _focusedSidebarView = view;
     });
     _layout.showRegion(region);
+  }
+
+  Future<void> _resetSidebarViewLocations() async {
+    if (!_layout.resetSidebarViewLocations()) return;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+    });
   }
 
   String _sidebarViewLabel(String view) => switch (view) {

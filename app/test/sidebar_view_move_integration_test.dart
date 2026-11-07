@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/secondary_sidebar_layout.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/sidebar_view_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -153,4 +156,97 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
+
+  testWidgets(
+      'Reset View Locations command restores defaults and persists through remount',
+      (tester) async {
+    final seeded = WorkbenchLayout();
+    expect(
+        seeded.moveSidebarView('search', secondarySidebarViewLocation), isTrue);
+    expect(seeded.moveSidebarView('git', secondarySidebarViewLocation), isTrue);
+    expect(seeded.selectSidebarView('search'), isTrue);
+    seeded.setRegionCollapsed(secondarySidebarRegion, false);
+    final unrelatedBefore = _withoutViewMetadata(seeded.root.toJson());
+    layoutStore.save(seeded.root);
+    seeded.dispose();
+
+    Future<void> mountApp() async {
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+      ));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    await mountApp();
+    final primary = find.byKey(const ValueKey('wb-region-sidebar'));
+    final secondary = find.byKey(const ValueKey('wb-region-secondarySidebar'));
+    expect(
+      find.descendant(
+          of: secondary, matching: find.byKey(const ValueKey('search-input'))),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pumpAndSettle();
+    final input = find.descendant(
+      of: find.byKey(const ValueKey('quick-input')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(input, '重置视图位置');
+    await tester.pumpAndSettle();
+    final command = find.byKey(const ValueKey('qi-查看: 重置视图位置'));
+    expect(command, findsOneWidget,
+        reason: 'the fixed command is available directly from Command Palette');
+    await tester.tap(command);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    final saved = layoutStore.tryLoad()!;
+    expect(saved.sidebarViewLocations, isNull);
+    final restoredLayout = WorkbenchLayout(root: saved);
+    expect(restoredLayout.sidebarViews(primarySidebarViewLocation),
+        activityBarViewOrder);
+    expect(restoredLayout.sidebarViews(secondarySidebarViewLocation), isEmpty);
+    expect(restoredLayout.primarySidebarView, 'explorer');
+    expect(restoredLayout.secondarySidebarView, isNull);
+    expect(saved.leafOf(secondarySidebarRegion)!.collapsed, isFalse,
+        reason: 'resetting views preserves Secondary visibility');
+    expect(_withoutViewMetadata(saved.toJson()), unrelatedBefore);
+    expect(
+      find.descendant(of: primary, matching: find.text('资源管理器')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: secondary, matching: find.text('此侧栏暂时没有视图')),
+      findsOneWidget,
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await mountApp();
+    final remountedPrimary = find.byKey(const ValueKey('wb-region-sidebar'));
+    final remountedSecondary =
+        find.byKey(const ValueKey('wb-region-secondarySidebar'));
+    expect(
+      find.descendant(of: remountedPrimary, matching: find.text('资源管理器')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: remountedSecondary, matching: find.text('此侧栏暂时没有视图')),
+      findsOneWidget,
+    );
+    expect(layoutStore.tryLoad()!.sidebarViewLocations, isNull);
+
+    restoredLayout.dispose();
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+  });
+}
+
+Map<String, Object?> _withoutViewMetadata(Map<String, Object?> json) {
+  return Map<String, Object?>.of(json)
+    ..remove('sidebarViewLocations')
+    ..remove('primarySidebarView')
+    ..remove('secondarySidebarView');
 }

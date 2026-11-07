@@ -94,6 +94,22 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     return true;
   }
 
+  /// Restore the built-in views to their implicit default assignment.
+  /// A null location map keeps legacy/default layouts compact in JSON.
+  bool resetSidebarViewLocations() {
+    if (root.sidebarViewLocations == null &&
+        root.primarySidebarView == null &&
+        root.secondarySidebarView == null) {
+      return false;
+    }
+
+    root.sidebarViewLocations = null;
+    root.primarySidebarView = null;
+    root.secondarySidebarView = null;
+    notifyLayoutChanged();
+    return true;
+  }
+
   String? _selectedView(String? raw, String location) {
     final available = sidebarViews(location);
     if (available.isEmpty) return null;
