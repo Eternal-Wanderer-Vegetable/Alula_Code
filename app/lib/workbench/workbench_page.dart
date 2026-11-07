@@ -79,6 +79,7 @@ import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
+import 'editor_tab_mode.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
@@ -383,6 +384,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   final CommandService _commands = CommandService();
+  final ValueNotifier<EditorTabMode> _editorTabMode =
+      ValueNotifier(EditorTabMode.multiple);
   final GitDiffPatchNavigationController _gitDiffNavigation =
       GitDiffPatchNavigationController();
 
@@ -1020,6 +1023,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
         _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
+    reg(
+      'workbench.action.editorTabs.multiple',
+      '查看',
+      '显示多个编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.multiple),
+    );
+    reg(
+      'workbench.action.editorTabs.single',
+      '查看',
+      '仅显示活动编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.single),
+    );
+    reg(
+      'workbench.action.editorTabs.none',
+      '查看',
+      '隐藏编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.none),
+    );
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
@@ -2953,6 +2974,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
+  void _setEditorTabMode(EditorTabMode mode) {
+    if (_editorTabMode.value == mode) return;
+    setState(() => _editorTabMode.value = mode);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -2974,6 +3001,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 干净文件恢复时从磁盘重读（journal 保持小）。
   Map<String, Object?> _encodeSession() => {
         'v': 1,
+        'editorTabMode': _editorTabMode.value.name,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -3069,6 +3097,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         null,
     };
     if (data == null) return;
+    _editorTabMode.value =
+        EditorTabMode.fromSessionValue(data['editorTabMode']);
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -17220,6 +17250,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
+    _editorTabMode.dispose();
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
@@ -17401,6 +17432,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 checkedBuilder: () =>
                                     _layout.activityBarLocation ==
                                         ActivityBarLocation.hidden),
+                          ]),
+                          TitleMenuItem.submenu('编辑器标签', children: [
+                            TitleMenuItem(
+                              '多标签',
+                              commandId: 'workbench.action.editorTabs.multiple',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value ==
+                                  EditorTabMode.multiple,
+                            ),
+                            TitleMenuItem(
+                              '单标签',
+                              commandId: 'workbench.action.editorTabs.single',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.single,
+                            ),
+                            TitleMenuItem(
+                              '不显示标签',
+                              commandId: 'workbench.action.editorTabs.none',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.none,
+                            ),
                           ]),
                           TitleMenuItem(
                             _toggleSideBarPositionTitle,
@@ -18218,6 +18273,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildTabStrip(EditorGroup g) {
+    final visibleDocs = switch (_editorTabMode.value) {
+      EditorTabMode.multiple => g.docs,
+      EditorTabMode.single =>
+        g.active == null ? const <OpenDoc>[] : [g.active!],
+      EditorTabMode.none => const <OpenDoc>[],
+    };
     return Container(
       height: 36,
       color: const Color(0xFF181B20),
@@ -18229,7 +18290,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  for (final d in g.docs) _buildTab(g, d),
+                  for (final d in visibleDocs) _buildTab(g, d),
                 ],
               ),
             ),

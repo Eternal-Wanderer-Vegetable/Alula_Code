@@ -1039,7 +1039,7 @@
         "feat-081"
       ],
       "status": "in-progress",
-      "evidence": "Registered 2026-11-07 before product edits. Fixed Code-OSS 1.145.0 sources, current gap, three-state acceptance, exclusions, and pre-edit GitNexus UNKNOWN results are recorded in docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md. Final registration all-scope scan: 5 files/3 symbols/0 process hits, LOW; repeated cumulative compare-to-main scans remained CRITICAL and varied from 133 files/261 symbols/368 process hits to 133 files/270 symbols/395 process hits. PR CI and hosted validation pending."
+      "evidence": "Registered before product edits; product implementation and local DoD now pass. workbench.editor.showTabs supports multiple/single/none with a multiple default, accessible checked View > Appearance commands, immediate all-group rendering, and session journal persistence outside layout JSON. Focused editor_tab_mode_test.dart: 2/2, covering invalid/default parsing, no-document and multi-document states, split groups, checked semantics, preservation of RustTextInputField State/input window/focus/selection/scroll controller, session restore, and layout JSON isolation. Full local bash init.sh: Rust workspace 71+54, Clippy, build_core, Flutter 1,156/1,156; cargo fmt --check, flutter analyze (0 issues), feature_list JSON and git diff --check pass. Registration PR CI 42382820769 passed all four jobs; product PR CI pending. Fixed sources, scope, and GitNexus UNKNOWN limits: docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md."
     }
   ],
   "active_track": "vscode-builtin-parity",
