@@ -85,6 +85,7 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'panel_position.dart';
 import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
@@ -733,6 +734,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.action.positionPanelTop',
+      '查看',
+      '将面板移到顶部',
+      () async {
+        _layout.setPanelVerticalPosition(PanelVerticalPosition.top);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelBottom',
+      '查看',
+      '将面板移到底部',
+      () async {
+        _layout.setPanelVerticalPosition(PanelVerticalPosition.bottom);
+      },
+    );
     reg(
       'workbench.action.activityBarLocation.default',
       '查看',
@@ -17027,6 +17044,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             checkedBuilder: () =>
                                 !_layout.isCollapsed(secondarySidebarRegion),
                           ),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板位置(&&M)', children: [
+                            TitleMenuItem('顶部(&&T)',
+                                commandId: 'workbench.action.positionPanelTop',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelVerticalPosition ==
+                                    PanelVerticalPosition.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.positionPanelBottom',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelVerticalPosition ==
+                                    PanelVerticalPosition.bottom),
+                          ]),
                           const TitleMenuItem.separator(),
                           const TitleMenuItem('切换面板(&&P)',
                               commandId: 'view.togglePanel'),

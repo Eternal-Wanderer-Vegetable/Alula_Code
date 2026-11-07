@@ -28,7 +28,8 @@ class TitleMenuItem {
       {required this.commandId,
       this.arguments,
       this.checked,
-      this.checkedBuilder})
+      this.checkedBuilder,
+      this.checkedListenable})
       : assert(commandId != null),
         children = const [],
         kind = TitleMenuItemKind.command;
@@ -38,6 +39,7 @@ class TitleMenuItem {
         arguments = null,
         checked = null,
         checkedBuilder = null,
+        checkedListenable = null,
         kind = TitleMenuItemKind.submenu;
 
   const TitleMenuItem.separator()
@@ -46,6 +48,7 @@ class TitleMenuItem {
         arguments = null,
         checked = null,
         checkedBuilder = null,
+        checkedListenable = null,
         children = const [],
         kind = TitleMenuItemKind.separator;
 
@@ -59,6 +62,9 @@ class TitleMenuItem {
   /// Optional live state used when the workbench changes while this menu item
   /// remains mounted.
   final bool? Function()? checkedBuilder;
+
+  /// Rebuilds the checkmark and semantics when the checked state changes.
+  final Listenable? checkedListenable;
 
   bool? get currentChecked => checkedBuilder?.call() ?? checked;
 
@@ -476,7 +482,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
         WindowChromeConfiguration.forPlatform(defaultTargetPlatform);
     if (chrome.targetPlatform == TargetPlatform.macOS) {
       return ListenableBuilder(
-        listenable: widget.commands,
+        listenable: _macMenuListenable(),
         builder: (context, _) => PlatformMenuBar(
           menus: _buildMacPlatformMenus(),
           child: _buildTitleBarContents(
@@ -493,6 +499,23 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       chrome,
       showFlutterMenuBar: true,
     );
+  }
+
+  Listenable _macMenuListenable() {
+    final listenables = <Listenable>{widget.commands};
+
+    void collect(List<TitleMenuItem> items) {
+      for (final item in items) {
+        final checkedListenable = item.checkedListenable;
+        if (checkedListenable != null) listenables.add(checkedListenable);
+        if (item.isSubmenu) collect(item.children);
+      }
+    }
+
+    for (final (_, items) in widget.menus) {
+      collect(items);
+    }
+    return Listenable.merge(listenables);
   }
 
   Widget _buildTitleBarContents(
@@ -1034,20 +1057,31 @@ class _MenuButton extends StatelessWidget {
               child: _titleMenuLabel(context, entry.item.label),
             )
           else
-            MenuItemButton(
-              style: _popupMenuItemStyle,
-              onPressed: commands.isEnabled(entry.item.commandId!)
-                  ? () => unawaited(_execute(entry.item))
-                  : null,
-              leadingIcon: entry.item.currentChecked == true
-                  ? const Icon(Icons.check, size: 16)
-                  : const SizedBox(width: 16),
-              child: Semantics(
-                checked: entry.item.currentChecked,
-                child: _titleMenuLabel(context, entry.item.label),
-              ),
-            ),
+            _buildCommandMenuItem(context, entry.item),
       ];
+
+  Widget _buildCommandMenuItem(BuildContext context, TitleMenuItem item) {
+    Widget buildButton() => MenuItemButton(
+          style: _popupMenuItemStyle,
+          onPressed: commands.isEnabled(item.commandId!)
+              ? () => unawaited(_execute(item))
+              : null,
+          leadingIcon: item.currentChecked == true
+              ? const Icon(Icons.check, size: 16)
+              : const SizedBox(width: 16),
+          child: Semantics(
+            checked: item.currentChecked,
+            child: _titleMenuLabel(context, item.label),
+          ),
+        );
+
+    final listenable = item.checkedListenable;
+    if (listenable == null) return buildButton();
+    return ListenableBuilder(
+      listenable: listenable,
+      builder: (context, _) => buildButton(),
+    );
+  }
 
   Future<void> _execute(TitleMenuItem item) async {
     await commands.execute(

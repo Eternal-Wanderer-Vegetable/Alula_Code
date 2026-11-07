@@ -455,6 +455,48 @@ void main() {
     expect(executed.last, 'about');
   });
 
+  testWidgets('macOS native menu refreshes checked state from its listenable',
+      (tester) async {
+    commands.register(Command(
+      id: 'workbench.action.positionPanelTop',
+      title: '将面板移到顶部',
+      category: '查看',
+      run: () async {},
+    ));
+    final isTop = ValueNotifier(false);
+
+    await tester.pumpWidget(_titleBarApp(
+      commands: commands,
+      window: window,
+      configuration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.macOS),
+      menus: [
+        (
+          '查看(&&V)',
+          [
+            TitleMenuItem(
+              '顶部(&&T)',
+              commandId: 'workbench.action.positionPanelTop',
+              checkedBuilder: () => isTop.value,
+              checkedListenable: isTop,
+            ),
+          ],
+        ),
+      ],
+    ));
+    await tester.pump();
+
+    PlatformMenuItem topItem() => _allPlatformMenuItems(platformMenus.menus)
+        .singleWhere((item) => item.label.endsWith('顶部'));
+
+    expect(topItem().label, '顶部');
+    isTop.value = true;
+    await tester.pump();
+    expect(topItem().label, '✓ 顶部');
+
+    isTop.dispose();
+  });
+
   testWidgets('macOS native title bar omits client menu row and quits cleanly',
       (tester) async {
     var closeRequested = 0;
