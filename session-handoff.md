@@ -18,7 +18,7 @@ Finish P05 / `feat-027` one registered feature at a time. The user asked for a n
 ## Next Step
 
 1. Complete P05.21 / feat-073 / LAY-06a `Reset View Locations` from the registered boundary in `docs/diagnostics/2026-11-07-p05/p05.21-reset-view-locations-scope.md`.
-2. Refresh GitNexus and run pre-edit impacts on the view-location model and command route after the scope-only commit; record exact risks, including CRITICAL/UNKNOWN and graph-coverage limitations, before editing product code.
-3. Run the full local DoD, update feature/status/evidence files, run all-scope and compare-to-main change scans before every commit, then push and wait for PR/platform checks. Keep PR #3 draft/open.
+2. P05.21 scope commit `254c4b2` has fresh pre-edit impacts recorded. The extension impact is UNKNOWN, `normalizeSidebarViewLocations` and `WorkbenchLayout` are MEDIUM, and `CommandService` is LOW; `workbench_page.dart` is above the graph's 512 KiB cap. Preserve these boundaries and verify the dynamic command route textually and through integration tests.
+3. Implement P05.21, run the full local DoD, update feature/status/evidence files, run all-scope and compare-to-main change scans before every commit, then push and wait for PR/platform checks. Keep PR #3 draft/open.
 
 No manual operation is currently required from the user.

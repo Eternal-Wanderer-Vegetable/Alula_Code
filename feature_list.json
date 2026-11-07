@@ -939,7 +939,7 @@
         "feat-072"
       ],
       "status": "in-progress",
-      "evidence": "Scope-only registration is in progress. Fixed upstream Code-OSS source and acceptance boundary: docs/diagnostics/2026-11-07-p05/p05.21-reset-view-locations-scope.md. After the registration commit, refresh GitNexus and record model/command impacts before editing product code.",
+      "evidence": "Scope registration commit 254c4b2 is pushed. Pre-edit GitNexus index refreshed to that commit (10,885 nodes / 22,284 edges / 345 clusters / 425 flows). Impacts: normalizeSidebarViewLocations MEDIUM (9 nodes, 2 flows); WorkbenchLayout MEDIUM (10 nodes); CommandService LOW (4 nodes); WorkbenchSidebarViewLocations UNKNOWN (zero graph callers, confirmed by text search in workbench_page.dart and model/integration tests). workbench_page.dart is >512 KiB and skipped; analyzer cross-language/flow truncation limits are recorded. No product code has been edited. Full analysis: docs/diagnostics/2026-11-07-p05/p05.21-reset-view-locations-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
