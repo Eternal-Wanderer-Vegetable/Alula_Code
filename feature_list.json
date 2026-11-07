@@ -990,6 +990,16 @@
       "evidence": "Completed 2026-11-07. Product commit c456374; formatter-noise cleanup 1188cdf. Focused tests 15/15; full local DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,140/1,140, cargo fmt, flutter analyze 0 issues, Harness 100/100, JSON/diff checks. PR CI 42351275970 and Platform Availability 42351272135 passed. Linux/Windows/macOS x64 package artifacts: 13565473635 / 13565957319 / 13566890763. macOS ZIP SHA-256 478112e02c66f2295c5b00bdb0fd1beda567728342fa1c8bdc4e3270f1213ba7 matched sidecar; 76 entries passed integrity. Linux/Windows DnD passed; macOS hosted DnD 13566920565 was explicitly skipped because pointer events did not reach Flutter. Scope, graph limitations, and full acceptance evidence: docs/diagnostics/2026-11-07-p05/p05.25-panel-maximize-restore-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-078",
+      "name": "P05.26 LAY-05e Panel 方向感知的最小尺寸与分割器约束",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel Top/Bottom 最小高度 77px、Left/Right 最小宽度 300px，并让递归分割树尺寸分配和 sash 拖动尊重节点最小值。可满足约束时分配完整、保存权重不随窗口 resize 改变；视口不足时确定性压缩到可用空间。旧 Panel 默认 min=120 迁移到 77，自定义 minimum 保留。覆盖 Panel alignment 投影/位置变化、折叠、嵌套 split 和 JSON 往返。不含拖放、双击复位、窗口级最小尺寸、其他 LAY-06 完整功能。范围见 docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md。",
+      "dependencies": [
+        "feat-077"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered 2026-11-07 before implementation. Fixed upstream PanelPart minimumWidth=300/minimumHeight=77 at Code-OSS commit 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e. GitNexus pre-edit: WbSplit HIGH/lower-bound 24 affected nodes and one build process; WbLeaf HIGH/lower-bound 23 nodes and one build process; extentsFor LOW/exact one caller; nodeMinExtent UNKNOWN/zero resolved callers confirmed by exact source search; WorkbenchGrid UNKNOWN/zero resolved callers confirmed by exact source search showing the production construction in >512 KiB workbench_page.dart. Full record: docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md."
     }
   ],
   "active_track": "vscode-builtin-parity",
