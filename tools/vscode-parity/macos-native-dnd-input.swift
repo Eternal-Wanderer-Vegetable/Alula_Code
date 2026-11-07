@@ -257,12 +257,13 @@ func quitThroughNativeMenu(bundleIdentifier: String) throws {
     if (count of menuBarItems) is 0 then
       error "Timed out waiting for native menu bar items. Last accessibility error: " & menuBarError
     end if
-    set menuBarTitles to name of every menu bar item of menu bar 1 of targetProcess
+    set menuBarTitles to {}
     set appMenuTitle to missing value
     set quitMenuName to missing value
     repeat with menuBarItem in menuBarItems
-      set candidateTitle to name of menuBarItem
       try
+        set candidateTitle to name of menuBarItem
+        set end of menuBarTitles to candidateTitle
         click menuBarItem
         delay 0.1
         set menuEntries to menu items of menu 1 of menuBarItem
