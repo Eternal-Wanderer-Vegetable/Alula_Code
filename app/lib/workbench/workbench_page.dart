@@ -386,6 +386,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final CommandService _commands = CommandService();
   final ValueNotifier<EditorTabMode> _editorTabMode =
       ValueNotifier(EditorTabMode.multiple);
+  final ValueNotifier<bool> _editorTabWrap = ValueNotifier(false);
   final GitDiffPatchNavigationController _gitDiffNavigation =
       GitDiffPatchNavigationController();
 
@@ -1040,6 +1041,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '隐藏编辑器标签',
       () async => _setEditorTabMode(EditorTabMode.none),
+    );
+    reg(
+      'workbench.action.toggleEditorTabWrapping',
+      '查看',
+      '切换编辑器标签换行',
+      () async => _setEditorTabWrap(!_editorTabWrap.value),
     );
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
@@ -2980,6 +2987,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorTabWrap(bool enabled) {
+    if (_editorTabWrap.value == enabled) return;
+    setState(() => _editorTabWrap.value = enabled);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -3002,6 +3015,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Map<String, Object?> _encodeSession() => {
         'v': 1,
         'editorTabMode': _editorTabMode.value.name,
+        'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -3099,6 +3113,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (data == null) return;
     _editorTabMode.value =
         EditorTabMode.fromSessionValue(data['editorTabMode']);
+    _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -17251,6 +17266,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
     _editorTabMode.dispose();
+    _editorTabWrap.dispose();
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
@@ -17455,6 +17471,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               checkedListenable: _editorTabMode,
                               checkedBuilder: () =>
                                   _editorTabMode.value == EditorTabMode.none,
+                            ),
+                            TitleMenuItem(
+                              '标签自动换行',
+                              commandId:
+                                  'workbench.action.toggleEditorTabWrapping',
+                              checkedListenable: _editorTabWrap,
+                              checkedBuilder: () => _editorTabWrap.value,
                             ),
                           ]),
                           TitleMenuItem(
@@ -18280,20 +18303,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       EditorTabMode.none => const <OpenDoc>[],
     };
     return Container(
-      height: 36,
+      key: ValueKey('editor-tab-strip-${g.region}'),
+      constraints: const BoxConstraints(minHeight: 36),
       color: const Color(0xFF181B20),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            // W2-1：标签溢出横向滚动（对标 VS Code 滚动标签条）
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final d in visibleDocs) _buildTab(g, d),
-                ],
-              ),
-            ),
+            child: _editorTabWrap.value
+                ? Wrap(
+                    spacing: 0,
+                    runSpacing: 0,
+                    children: [
+                      for (final d in visibleDocs) _buildTab(g, d),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    // W2-1：默认维持单行横向滚动标签条。
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final d in visibleDocs) _buildTab(g, d),
+                      ],
+                    ),
+                  ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
           IconButton(
@@ -18337,6 +18370,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(EditorGroup g, OpenDoc d) {
+    final label = Text(
+      '${d.name}${d.isDirty ? " •" : ""}',
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(fontSize: 12),
+    );
     final tab = InkWell(
       onTap: () {
         final current = _active;
@@ -18363,9 +18402,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   top: BorderSide(color: Colors.transparent, width: 2)),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${d.name}${d.isDirty ? " •" : ""}',
-                style: const TextStyle(fontSize: 12)),
+            if (_editorTabWrap.value) Flexible(child: label) else label,
             if (d.diskState != DiskDocumentState.current) ...[
               const SizedBox(width: 4),
               Icon(
