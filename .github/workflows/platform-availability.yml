@@ -894,7 +894,7 @@ jobs:
             fi
           }
           trap cleanup EXIT
-          sleep 8
+          sleep 12
           if ! kill -0 "$open_pid" 2>/dev/null; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
             set +e
@@ -904,19 +904,42 @@ jobs:
             exit "$app_status"
           fi
 
-          if ! "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu "$bundle_identifier" \
-            >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
+          quit_menu_selected=false
+          for attempt in 1 2; do
+            if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu "$bundle_identifier" \
+              >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
+              quit_menu_selected=true
+              break
+            fi
+
+            if ! grep -Fq \
+              "Could not read the native menu bar through Accessibility (AXError " \
+              "$RUNNER_TEMP/alula-macos-native-titlebar.log"; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "Could not activate the native macOS Quit menu"
+              exit 1
+            fi
+            if [[ "$attempt" -eq 2 ]]; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "The native macOS menu bar remained inaccessible after one retry"
+              exit 1
+            fi
+            echo "The native macOS menu bar is temporarily inaccessible; retrying once."
+            sleep 2
+          done
+
+          if [[ "$quit_menu_selected" != true ]]; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
             echo "Could not activate the native macOS Quit menu"
             exit 1
           fi
-          for _ in $(seq 1 40); do
+          for _ in $(seq 1 80); do
             kill -0 "$open_pid" 2>/dev/null || break
             sleep 0.25
           done
           if kill -0 "$open_pid" 2>/dev/null; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-            echo "Native Quit menu did not close the native-titlebar app"
+            echo "Native Quit menu did not close the native-titlebar app within 20 seconds"
             exit 1
           fi
           set +e
