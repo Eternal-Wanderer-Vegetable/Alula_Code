@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-08 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.38 已完成；P05.39 本地完成并等待 hosted 验证；其余 LAY/CMD 矩阵仍逐项推进
+### P05 / feat-027 进行中；P05.1–P05.40 已完成；P05.41 / feat-093 已登记并开始推进；其余 LAY/CMD 矩阵继续逐项验收
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
@@ -2052,3 +2052,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - 按 Code-OSS 1.145.0 固定源登记 `workbench.editor.pinnedTabsOnSeparateRow` 双行视图。此开关默认 false；multiple mode 下上行 sticky、下行 ordinary，类别为空时只显示一行；关闭时保留 P05.39 单行表现。固定版使用两个过滤后的编辑器 tab 控件，只有 sticky/ordinary 同时存在才形成双行；选项变化会重建控件。
 - P05.40 产品已在 84515da 推送，交互覆盖在 0667652 推送。固定标签 multiple 模式按组分成 sticky/ordinary 两行，缺少一类时合并；session 开关默认 false，single/none 保留值但不拆行。测试覆盖 legacy journal、宽度/换行、独立滚动与活动标签露出、跨分区拖放限制、双编辑器组、Pin/Unpin 保留编辑视图/文本/selection/focus/dirty。完整本地 bash init.sh Rust 71+54、Clippy、build_core、Flutter 1,189/1,189 全绿；cargo fmt、Flutter analyze 0、Harness 100/100、JSON/diff 通过。PR CI 42465276090 四项全绿；Platform Availability 42465270934 Linux/Windows/macOS Intel x64 全部通过。包 artifacts Linux/Windows/macOS 13611278492 / 13611363930 / 13612200992；macOS ZIP SHA-256 24cee731e5f7f7e6b12606ecaffe9f8067452ccd78ca2b84931a2fc1bd2c87cb 匹配 sidecar 且完整性通过。Linux/Windows DnD artifacts 13611079025 / 13611712088 通过；macOS DnD artifact 13611762859 因 hosted pointer route unavailable 明确跳过；native Quit/startup artifact 13611484845。feat-092 / P05.40 标记 done，P05/feat-027 仍 in-progress。GitNexus CRITICAL/coverage 限制和完整证据：范围报告。
+
+## P05.41 / feat-093 / LAY-10a 登记（2026-11-08）
+
+- P05.40 / feat-092 已完成并推送证据提交 33ec3bd；其 docs-head PR CI 42467085704 的 Harness、Flutter analyze/test、Rust Ubuntu、Rust Windows 四项全绿。
+- 按固定 Code-OSS 1.145.0 登记 group-local Close、Close Others、Close to Left/Right、Close Saved 与 dirty-safe close。标签按钮、中键、Ctrl/Cmd+W、Close All Editors/Groups 共用 Save/Don’t Save/Cancel；关闭需先完成 dirty/savepoint 检查。Close Saved 只关闭 clean 非 sticky；方向/others 按目标标签和组计算；显式 Close 可关闭 sticky。
+- 范围、上游 source anchors、N.2 DoD、预编辑影响和 GitNexus HIGH/CRITICAL/UNKNOWN 限制：docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md。产品代码尚未修改。
