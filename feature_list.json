@@ -1150,8 +1150,8 @@
       "dependencies": [
         "feat-091"
       ],
-      "status": "in-progress",
-      "evidence": "Registered on codex/vscode-parity-p05 after P05.39 completed. Fixed source: Code-OSS 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e, default false; MultiRowEditorControl routes sticky and ordinary tabs to separate controls only in multiple mode. N.2 scope, tests, boundaries and pre-edit GitNexus impacts are in docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md. Implementation not started.",
+      "status": "done",
+      "evidence": "Code-OSS 1.145.0 source 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e; default false. Product commit 84515da and coverage commit 0667652 implement and test session-backed sticky/ordinary rows, empty-category collapse, single/none behavior, independent sizing/wrap/scroll/reveal, row-boundary drag, per-group rows, legacy restore, and Pin/Unpin identity preservation. Local full DoD passed: bash init.sh (Rust 71+54, Clippy, build_core, Flutter 1,189/1,189), cargo fmt, Flutter analyze 0, Harness 100/100, JSON and diff checks. PR CI 42465276090 passed all four jobs. Platform Availability 42465270934 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages: Linux 13611278492, Windows 13611363930, macOS 13612200992. Linux/Windows native DnD artifacts 13611079025 and 13611712088 pass move/copy/external text. macOS DnD artifact 13611762859 explicitly records pointer route unavailable and skip; native Quit/startup artifact 13611484845. macOS ZIP SHA-256 24cee731e5f7f7e6b12606ecaffe9f8067452ccd78ca2b84931a2fc1bd2c87cb matches sidecar and unzip integrity. Apple Silicon/native-device validation remains pending under P15. Full scope and GitNexus uncertainty: docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
