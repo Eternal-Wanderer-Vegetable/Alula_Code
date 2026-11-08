@@ -14,6 +14,7 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 - Current GitNexus index includes the 739 KB workbench source. Post-edit all-scope and compare-to-main scans remain CRITICAL and their returned symbol/process counts vary; `_openTreeFile` impact is UNKNOWN, with the real `_buildNode` call confirmed by text search. Cross-language property links, candidate ranking, and callee/trace caps remain unresolved coverage limits. Full observed outputs are recorded in the P05.38 scope report; do not treat empty/partial output as an all-clear.
 - Worktree: `/tmp/alula-p04.70-next`; branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 - P05.39 / feat-091 / LAY-09b is complete on product commit `54b090285482cc6951c391cec17934a203529163`. Local `bash init.sh` passed Rust 71+54, Clippy, build_core, Flutter 1,188/1,188, cargo fmt, and Flutter analyze 0. PR CI `42459619842` passed all four jobs. Platform Availability `42459616642` passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS `13609033353` / `13608548961` / `13610340345`; macOS ZIP hash/sidecar and integrity passed. Linux/Windows native DnD passed; macOS DnD artifact `13610070935` explicitly records pointer route unavailable and skip. macOS startup/native Quit artifact `13609966099`. Full product, graph limitations, and test evidence: `docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`.
+- P05.40 / feat-092 / LAY-09c is registered and is the sole active slice: `pinnedTabsOnSeparateRow` dual-row layout. Scope/DoD and impact are in `docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md`. Index refreshed at `ea01871`; `_buildTabStrip` LOW, `EditorGroup` CRITICAL, `_scheduleStateSave` CRITICAL, `_encodeSession` CRITICAL, `_restoreSession` LOW. No product edits yet.
 - P05 / feat-027 remains in progress. Hosted macOS synthetic pointer routing is unavailable; report native macOS DnD as skipped when it recurs.
 
 ## Blockers
@@ -22,5 +23,5 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 
 ## Next Step
 
-1. Select and register the next atomic P05 LAY/CMD matrix slice through N.2, using the pinned Code-OSS source and completing pre-edit GitNexus impact analysis before code edits.
-2. Keep PR #3 draft/open; do not mark P05 complete until all remaining matrix DoDs pass.
+1. Implement the P05.40 registered scope in `workbench_page.dart`, with focused tests for split-row layout, state restore, tab-mode changes and identity-preserving Pin/Unpin.
+2. Run the complete local DoD, update evidence, scan GitNexus all/compare and commit the finished slice. Keep PR #3 draft/open; do not mark P05 complete until all remaining matrix DoDs pass.

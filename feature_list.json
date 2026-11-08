@@ -1142,6 +1142,18 @@
       "evidence": "Completed on PR #3 product commit 54b090285482cc6951c391cec17934a203529163; PR remains draft/open. Sticky editors are a per-group contiguous prefix with Pin/Unpin accessible from the tab context menu and Semantics action; pin clears preview, unpin moves to the first ordinary tab, and the session journal restores sticky IDs. Split/move carry sticky state. Ctrl/Cmd+W skips sticky and selects the most recently active ordinary editor; explicit tab close closes sticky; Close All Editors preserves sticky; Close All Groups closes them. Widget tests cover prefix order, preview-to-sticky, unpin, restore, MRU close, explicit close, batch close, split and move. Keybinding tests cover Linux/Windows/macOS defaults. Full local bash init.sh passed Rust 71+54, Clippy, build_core, and Flutter 1,188/1,188; cargo fmt and Flutter analyze (0 issues) passed. PR CI 42459619842 passed Rust Ubuntu/Windows, Flutter analyze + 1,188 tests, and Harness. Platform Availability 42459616642 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS 13609033353 / 13608548961 / 13610340345; macOS ZIP SHA-256 bdd85848c6133a0e7fdc1455cd8db61f71cf9003f56f4c7597d44ccbcdfee15f matches sidecar and ZIP integrity passes. Linux/Windows native DnD artifacts 13608863795 / 13609382640 passed move/copy/external text; macOS artifact 13610070935 explicitly skips because CGEventPostToPid pointer route is false. macOS startup/native Quit artifact 13609966099 shows active app and native Quit selection. Pre-edit GitNexus: EditorGroup HIGH (76 symbols, 7 direct dependants, 4 processes); _closeDocNow MEDIUM (19 symbols, 5 direct, 1 process); _scheduleStateSave CRITICAL (120 symbols, 27 direct, 5 processes); _encodeSession HIGH (91 symbols, 2 direct, 4 processes); _syncCommandContext CRITICAL (168 symbols, 65 direct, 6 flows; not edited). Risk and graph coverage limits, upstream, and test scope: docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md. Registration-stage compare-to-main remains noisy CRITICAL; repeat full GitNexus scans before commit.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-092",
+      "name": "P05.40 LAY-09c pinnedTabsOnSeparateRow 固定标签双行布局",
+      "description": "实现 Code-OSS workbench.editor.pinnedTabsOnSeparateRow 默认 false；multiple 模式下 sticky 与 ordinary 标签分行，缺少一类时折叠为单行；提供 View > Appearance toggle 并经会话恢复。范围和 DoD：docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md。",
+      "dependencies": [
+        "feat-091"
+      ],
+      "status": "in-progress",
+      "evidence": "Registered on codex/vscode-parity-p05 after P05.39 completed. Fixed source: Code-OSS 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e, default false; MultiRowEditorControl routes sticky and ordinary tabs to separate controls only in multiple mode. N.2 scope, tests, boundaries and pre-edit GitNexus impacts are in docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md. Implementation not started.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

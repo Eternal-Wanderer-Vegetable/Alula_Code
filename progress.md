@@ -2047,3 +2047,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - PR CI `42459619842` 全绿：Rust Ubuntu/Windows、Flutter analyze 0 issues、1,188 tests、Harness。Platform Availability `42459616642` Linux x64、Windows x64、macOS Intel x64 build/test/launch/package job 全绿。Packages Linux/Windows/macOS `13609033353` / `13608548961` / `13610340345`；macOS ZIP SHA-256 `bdd85848c6133a0e7fdc1455cd8db61f71cf9003f56f4c7597d44ccbcdfee15f` 与 sidecar 匹配，`unzip -t` 通过。
 - Linux/Windows native DnD artifacts `13608863795` / `13609382640` 的 same-document move、cross-document copy、external text 均通过；macOS DnD artifact `13610070935` 因 `CGEventPostToPid pointer route: false` 明确 skip。macOS startup/native Quit artifact `13609966099` 显示 Release app 激活且通过 Accessibility 选择原生 Quit。完整差异与 GitNexus 风险见 `docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 - P05/feat-027 不关闭；之后按 N.2 登记下一项剩余 LAY/CMD 矩阵子任务。500 MiB 数值目标仍按用户指令移至架构复刻后优化阶段。
+
+## P05.40 / feat-092 / LAY-09c 登记（2026-11-08）
+
+- 按 Code-OSS 1.145.0 固定源登记 `workbench.editor.pinnedTabsOnSeparateRow` 双行视图。此开关默认 false；multiple mode 下上行 sticky、下行 ordinary，类别为空时只显示一行；关闭时保留 P05.39 单行表现。固定版使用两个过滤后的编辑器 tab 控件，只有 sticky/ordinary 同时存在才形成双行；选项变化会重建控件。
+- 范围、N.2 DoD、P07 Settings 边界、预编辑影响和 GitNexus 覆盖限制：`docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md`。GitNexus 命中 `_buildTabStrip` LOW、`EditorGroup` CRITICAL (76/7/5)、`_scheduleStateSave` CRITICAL (128/30/6)、`_encodeSession` CRITICAL (97/2/5)、`_restoreSession` LOW (2/1/1)；CRITICAL 风险未豁免。产品编辑尚未开始。
