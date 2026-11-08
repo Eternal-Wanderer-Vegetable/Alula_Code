@@ -2065,3 +2065,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter analyze 与 Flutter 1,198 项全绿；`git diff --check` 通过。未启动本机 GUI。
 - GitNexus 把 739 KB workbench 源纳入索引后，all-scope 为 7 个 tracked files / 5 symbols / 184 affected processes / CRITICAL；compare-main 为 170 files / 416 symbols / 199 processes / CRITICAL。保留风险，不将历史分支差异或图谱覆盖缺口当作通过；具体 581 cross-language sites、1,277 unranked entry candidates、639 dropped callees、17 budget cuts 和 depth cap 见范围报告。
 - 当前仍为 in-progress；推送后须等待最新 PR CI 与 Linux、Windows、macOS Intel x64 Availability。macOS hosted DnD 若 pointer route 不可用继续明确记作 skip。
+
+## P05.41 hosted 首轮 macOS native Quit 失败与修正（2026-11-08）
+
+- PR CI `42471060818` 全绿。Platform Availability `42471055955` 的 Linux x64、Windows x64 全绿；macOS Flutter tests、Release bundle、clipboard、launch、package 均完成，但 native-titlebar Quit helper 找到正确 Release PID 后，`NSRunningApplication.activate` 8 秒仍 `active=false`，最终检查失败。该日志是前台激活失败，不是崩溃证据。
+- macOS artifacts：package `13614655168`、DnD diagnostics `13614310823`、startup diagnostics `13613698624`。DnD probe 明确 `CGEventPostToPid pointer route: false` 且 `All tests skipped`，不计作 native DnD 通过。helper 日志显示 DnD 使用的 Debug app PID 29649 曾 active；Quit helper 后来指向 Release PID 30676。遗留 Debug 实例可能竞争前台是推断，scope 报告保留证据边界。
+- 修正 workflow：DnD integration test 结束后有界清理遗留 `alula_app`；Quit helper 记录 NSRunningApplication 激活结果和 frontmost PID，并在仍 inactive 时继续尝试 PID 定向 Accessibility/System Events 菜单操作。YAML parse、该 bash step `bash -n`、`git diff --check` 均通过；本机无 Swift/macOS SDK，编译与前台验证等 hosted rerun。
+- 修正的 GitNexus 编辑前影响：`quitThroughNativeMenu` exact LOW 10 symbols/1 process/1 module；`quitThroughAccessibilityMenu` LOW 3 symbols。workflow YAML target 返回 UNKNOWN/not found，文本搜索确认唯一 helper 调用。修正后 staged 前 all-scope 2 files/2 symbols/186 processes/CRITICAL；compare-main 172 files/404 symbols/199 processes/CRITICAL。覆盖限制详见范围报告。P05.41 仍 in-progress，等待新提交的 Linux/Windows/macOS Availability 和 PR CI。
+- 含状态文档的 repeated staged scans：all-scope 7 files / 2–3 symbols / 61–179 affected processes / CRITICAL；一个 Markdown Section 符号显示为损坏文本/`?`，保持 unresolved。compare-main 172 files / 403–416 symbols / 199 processes / CRITICAL。完整信息见范围报告。

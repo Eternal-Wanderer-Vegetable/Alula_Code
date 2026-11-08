@@ -734,11 +734,34 @@ jobs:
           mkdir -p "$ALULA_MACOS_DND_DIR"
           flutter test --no-pub -d macos --reporter expanded integration_test/editor_native_text_drag_drop_macos_test.dart > "$ALULA_MACOS_DND_DIR/flutter-test.log" 2>&1 &
           flutter_pid=$!
+          stop_integration_app() {
+            if ! pgrep -x alula_app >/dev/null 2>&1; then
+              return 0
+            fi
+            echo "Stopping leftover macOS Flutter integration app before Release smoke."
+            pkill -TERM -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 20); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            pkill -KILL -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 8); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            echo "A macOS Flutter integration app remained after cleanup."
+            return 1
+          }
           cleanup() {
             if kill -0 "$flutter_pid" 2>/dev/null; then
               kill -TERM "$flutter_pid" 2>/dev/null || true
               wait "$flutter_pid" 2>/dev/null || true
             fi
+            stop_integration_app || true
           }
           trap cleanup EXIT
 
@@ -778,6 +801,7 @@ jobs:
               cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
               exit 1
             fi
+            stop_integration_app
             trap - EXIT
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 0
@@ -786,6 +810,7 @@ jobs:
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 1
           fi
+          stop_integration_app
           trap - EXIT
           cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
         working-directory: app
