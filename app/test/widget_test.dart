@@ -15,6 +15,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
 Future<void> _waitForWidget(
   WidgetTester tester,
   Finder finder, {
@@ -352,11 +354,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 打开两个文件（+ 未命名）→ 3 个标签；docId：未命名=1、Cargo.toml=2、main.rs=3
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('src'));
     await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.text('main.rs'));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
     await tester.pump(const Duration(milliseconds: 300));
 
     double leftOf(String key) =>
@@ -402,7 +404,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 组 1 打开 Cargo.toml
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 

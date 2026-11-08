@@ -10,6 +10,8 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
 Future<void> _deleteDirectoryWithRetry(Directory directory) async {
   for (var attempt = 0; attempt < 50; attempt++) {
     if (!directory.existsSync()) return;
@@ -115,7 +117,7 @@ void main() {
       expect(layoutStore.tryLoad()!.toJson(), noActiveLayout);
       expect(find.byType(RustTextInputField), findsNothing);
 
-      await tester.tap(find.text('main.rs').first);
+      await openPinnedExplorerFile(tester, find.text('main.rs').first);
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text('other.rs').first);
       await tester.pump(const Duration(milliseconds: 300));
@@ -134,6 +136,24 @@ void main() {
         otherId,
       );
       expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+      expect(
+        tester
+            .widget<Text>(
+              find.byKey(ValueKey('editor-tab-label-editor-2-$otherId')),
+            )
+            .style
+            ?.fontStyle,
+        FontStyle.italic,
+        reason: 'moving a clean preview preserves its preview label state',
+      );
+      final movedGroups = (sessionStore.tryLoad()!['groups'] as List)
+          .cast<Map<String, Object?>>();
+      expect(
+        movedGroups
+            .singleWhere((group) => group['region'] == 'editor-2')['preview'],
+        otherId,
+        reason: 'the destination group persists the moved preview identity',
+      );
       var savedRoot = layoutStore.tryLoad()!;
       expect(savedRoot.parentSplitOf('editor-2')!.axis, Axis.horizontal);
       expect(

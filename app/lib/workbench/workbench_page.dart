@@ -381,6 +381,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   static const _selectForCompareCommandId = 'selectForCompare';
   static const _compareFilesCommandId = 'compareFiles';
   static const _compareSelectedExplorerFilesAction = 'explorer.compareSelected';
+  static const _explorerDoubleClickTimeout = Duration(milliseconds: 500);
 
   AlulaCore? _core;
   String _loadError = '';
@@ -413,6 +414,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _stateSaveTimer;
   Timer? _findHistoryTimer;
   Timer? _resourceTimer;
+  String? _lastExplorerClickPath;
+  Stopwatch? _lastExplorerClickClock;
+  String? _pendingExplorerPreviewPinPath;
+  final Map<String, int> _explorerPreviewOpenCounts = <String, int>{};
   AlulaResourceStatus? _resourceStatus;
 
   // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
@@ -3110,6 +3115,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             {
               'region': g.region,
               'active': g.activeDocId,
+              if (g.previewDocId != null &&
+                  g.docs.any((d) => d.id == g.previewDocId && !d.isDirty))
+                'preview': g.previewDocId,
               'docs': [
                 for (final d in g.docs)
                   {
@@ -3374,6 +3382,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ? active
               : target.docs.last.id;
         }
+        final previewId = (gr['preview'] as num?)?.toInt();
+        final restoredPreview = target.docs
+            .where((doc) => doc.id == previewId)
+            .firstOrNull;
+        if (restoredPreview != null && !restoredPreview.isDirty) {
+          target.previewDocId = restoredPreview.id;
+        }
       }
       final focused = data['focused'];
       if (focused is String && _groups.containsKey(focused)) {
@@ -3533,6 +3548,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc.path != null &&
             (doc.diskState == DiskDocumentState.missing ||
                 doc.diskState == DiskDocumentState.unavailable);
+    if (!doc.isDirty) return;
+    var pinnedPreview = false;
+    for (final group in _groups.values) {
+      final preview = group.docs
+          .where((view) => view.id == group.previewDocId)
+          .firstOrNull;
+      if (preview != null && preview.sameDocumentAs(doc)) {
+        group.previewDocId = null;
+        pinnedPreview = true;
+      }
+    }
+    if (pinnedPreview && !_disposing) _scheduleStateSave();
   }
 
   void _flushInput(OpenDoc doc, {bool commitComposition = false}) {
@@ -11574,7 +11601,82 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
-  void _openTreeFile(TreeNode node) => _openFileByPath(node.path);
+  void _openTreeFile(TreeNode node) {
+    final previousClickClock = _lastExplorerClickClock;
+    final isDoubleClick =
+        _lastExplorerClickPath == node.path &&
+            previousClickClock != null &&
+            previousClickClock.elapsed <= _explorerDoubleClickTimeout;
+    if (isDoubleClick) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+      if (_pinOpenExplorerPreview(node.path)) return;
+      final alreadyOpen = _groups.values
+          .any((group) => group.docs.any((doc) => doc.path == node.path));
+      if (alreadyOpen) return;
+      if ((_explorerPreviewOpenCounts[node.path] ?? 0) > 0) {
+        _pendingExplorerPreviewPinPath = node.path;
+      } else {
+        unawaited(_openFileByPath(node.path, pinPreview: true));
+      }
+      return;
+    }
+
+    _lastExplorerClickPath = node.path;
+    _lastExplorerClickClock = Stopwatch()..start();
+    unawaited(_openExplorerPreview(node.path));
+  }
+
+  Future<void> _openExplorerPreview(String path) async {
+    _explorerPreviewOpenCounts.update(path, (count) => count + 1,
+        ifAbsent: () => 1);
+    try {
+      await _openFileByPath(path, asPreview: true);
+    } finally {
+      final remaining = (_explorerPreviewOpenCounts[path] ?? 1) - 1;
+      if (remaining == 0) {
+        _explorerPreviewOpenCounts.remove(path);
+        if (_pendingExplorerPreviewPinPath == path) {
+          _pendingExplorerPreviewPinPath = null;
+          _pinOpenExplorerPreview(path);
+        }
+      } else {
+        _explorerPreviewOpenCounts[path] = remaining;
+      }
+    }
+  }
+
+  bool _pinOpenExplorerPreview(String path) {
+    var pinned = false;
+    for (final group in _groups.values) {
+      final preview = group.docs
+          .where((doc) => doc.id == group.previewDocId && doc.path == path)
+          .firstOrNull;
+      if (preview == null) continue;
+      group.previewDocId = null;
+      pinned = true;
+    }
+    if (pinned && mounted) {
+      setState(() {});
+      _scheduleStateSave();
+    }
+    return pinned;
+  }
+
+  void _replaceCleanPreviewBeforeOpen(EditorGroup group) {
+    final previewId = group.previewDocId;
+    if (previewId == null) return;
+    final preview = group.docs.where((doc) => doc.id == previewId).firstOrNull;
+    if (preview == null) {
+      group.previewDocId = null;
+      return;
+    }
+    if (preview.isDirty) {
+      group.previewDocId = null;
+      return;
+    }
+    _closeDocNow(group, preview, keepEmptyGroup: true);
+  }
 
   List<TreeNode> _visibleExplorerFiles() {
     final result = <TreeNode>[];
@@ -12026,7 +12128,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openFileByPath(
     String path, {
     String? expectedContent,
+    bool asPreview = false,
+    bool pinPreview = false,
   }) async {
+    if (!asPreview && !pinPreview) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+    }
     final core = _core;
     if (core == null) return;
     DecodedTextFile? prevalidatedFile;
@@ -12070,15 +12178,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return;
         }
         final target = _focused;
+        final existingInTarget = target.docs
+            .where((candidate) => candidate.sameDocumentAs(existing))
+            .firstOrNull;
         final view = identical(g, target)
             ? existing
-            : target.docs
-                    .where((candidate) => candidate.sameDocumentAs(existing))
-                    .firstOrNull ??
-                OpenDoc.viewOf(existing);
+            : existingInTarget ?? OpenDoc.viewOf(existing);
+        if (asPreview && existingInTarget == null) {
+          _replaceCleanPreviewBeforeOpen(target);
+        }
         setState(() {
           if (!target.docs.contains(view)) target.docs.add(view);
           target.activeDocId = view.id;
+          if (target.previewDocId == view.id &&
+              (pinPreview || !asPreview)) {
+            target.previewDocId = null;
+          } else if (asPreview && existingInTarget == null && !view.isDirty) {
+            target.previewDocId = view.id;
+          }
           _focusedRegion = target.region;
         });
         _scheduleStateSave();
@@ -12143,10 +12260,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       _updateDirty(open);
+      final target = _focused;
+      if (asPreview) _replaceCleanPreviewBeforeOpen(target);
       setState(() {
-        final g = _focused;
-        g.docs.add(open);
-        g.activeDocId = id;
+        target.docs.add(open);
+        target.activeDocId = id;
+        target.previewDocId = asPreview && !open.isDirty ? id : null;
       });
       _scheduleSyntaxRefresh(id);
       _syncCommandContext();
@@ -12354,8 +12473,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  void _closeDocNow(EditorGroup owner, OpenDoc doc) {
+  void _closeDocNow(EditorGroup owner, OpenDoc doc,
+      {bool keepEmptyGroup = false}) {
     if (!owner.docs.any((view) => identical(view, doc))) return;
+    if (_lastExplorerClickPath == doc.path) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+    }
     final id = doc.id;
     final wasActive = owner.activeDocId == id;
     final focusKey = _focusKeyFor(owner, doc);
@@ -12381,6 +12505,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       nextSemanticTokens.remove(id);
       nextSemanticTokensVersion.remove(id);
     }
+    if (owner.previewDocId == id) owner.previewDocId = null;
     owner.docs.remove(doc);
     if (owner.docs.isEmpty) {
       _editorTabLastWidths.remove(owner.region);
@@ -12397,7 +12522,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
       }
       // 组空且不是唯一的组 → 摘除该组（布局树自动折叠）
-      if (owner.docs.isEmpty && _groups.length > 1) {
+      if (owner.docs.isEmpty && _groups.length > 1 && !keepEmptyGroup) {
         _layout.removeRegion(owner.region);
         _groups.remove(owner.region);
         if (_focusedRegion == owner.region) {
@@ -12595,6 +12720,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final target = _groups[targetRegion];
     if (target == null || identical(target, source)) return;
+    final movingPreview =
+        source.previewDocId == active.id && !active.isDirty;
     OpenDoc? existingView;
     for (final view in target.docs) {
       if (view.sameDocumentAs(active)) {
@@ -12620,14 +12747,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
       return;
     }
+    if (movingPreview) _replaceCleanPreviewBeforeOpen(target);
 
     setState(() {
       source.docs.removeWhere((view) => identical(view, active));
+      if (source.previewDocId == active.id) source.previewDocId = null;
       if (source.docs.isNotEmpty && source.activeDocId == active.id) {
         source.activeDocId = source.docs.last.id;
       }
       target.docs.add(active);
       target.activeDocId = active.id;
+      if (movingPreview) target.previewDocId = active.id;
 
       final sourceFocusKey = _focusKeyFor(source, active);
       final targetFocusKey = _focusKeyFor(target, active);
@@ -12682,6 +12812,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final group = _groups[fresh]!;
       group.docs.add(freshView);
       group.activeDocId = freshView.id;
+      if (_groups[region]?.previewDocId == active.id && !active.isDirty) {
+        group.previewDocId = freshView.id;
+      }
       _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
@@ -18694,7 +18827,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           '$displayLabel${d.isDirty ? " •" : ""}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle:
+                g.previewDocId == d.id ? FontStyle.italic : FontStyle.normal,
+          ),
         ),
       ),
     );
@@ -20539,6 +20676,7 @@ class EditorGroup {
   int? lastAutoRevealedTabId;
   final List<OpenDoc> docs = [];
   int? activeDocId;
+  int? previewDocId;
 
   OpenDoc? get active {
     for (final d in docs) {

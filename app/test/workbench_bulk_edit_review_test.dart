@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
 const _cargoBefore = 'alpha\nbeta\n';
 const _rustBefore = 'gamma\ndelta\n';
 
@@ -55,11 +57,11 @@ Future<_WorkbenchFixture> _startWorkbench(WidgetTester tester) async {
     keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
   ));
   await tester.pump(const Duration(milliseconds: 600));
-  await tester.tap(find.text('Cargo.toml').first);
+  await openPinnedExplorerFile(tester, find.text('Cargo.toml').first);
   await tester.pump(const Duration(milliseconds: 200));
   await tester.tap(find.text('src').first);
   await tester.pump(const Duration(milliseconds: 100));
-  await tester.tap(find.text('main.rs').first);
+  await openPinnedExplorerFile(tester, find.text('main.rs').first);
   await tester.pump(const Duration(milliseconds: 200));
 
   return _WorkbenchFixture(
