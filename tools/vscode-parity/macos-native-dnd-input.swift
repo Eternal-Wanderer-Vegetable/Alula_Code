@@ -18,6 +18,32 @@ func labels(of element: AXUIElement) -> [String] {
     .compactMap { attribute(element, $0) as? String }
 }
 
+func isNativeQuitMenuItem(_ element: AXUIElement) -> Bool {
+  if labels(of: element).contains(where: { $0.lowercased().hasPrefix("quit") }) {
+    return true
+  }
+
+  // macOS localizes the visible Quit title. Command-Q is the stable menu
+  // identity across locales; AX reports the primary key and modifier mask.
+  guard
+    let commandCharacter = attribute(
+      element,
+      kAXMenuItemCmdCharAttribute as String
+    ) as? String,
+    commandCharacter.lowercased() == "q",
+    let rawModifiers = attribute(
+      element,
+      kAXMenuItemCmdModifiersAttribute as String
+    ) as? NSNumber
+  else {
+    return false
+  }
+
+  // AXMenuItemCmdModifiers represents modifiers other than Command. A zero
+  // mask therefore identifies the standard Command-Q application menu item.
+  return rawModifiers.uint32Value == 0
+}
+
 func frame(of element: AXUIElement) -> CGRect? {
   if let frameRaw = attribute(element, "AXFrame"),
      CFGetTypeID(frameRaw) == AXValueGetTypeID()
@@ -269,12 +295,10 @@ func quitThroughAccessibilityMenu(processIdentifier: pid_t) throws {
     }
     for menuEntry in menuEntries {
       _ = AXUIElementSetMessagingTimeout(menuEntry, 2.0)
-      let entryName = labels(of: menuEntry).first {
-        $0.lowercased().hasPrefix("quit")
-      }
-      guard let entryName else { continue }
+      guard isNativeQuitMenuItem(menuEntry) else { continue }
       let quitResult = AXUIElementPerformAction(menuEntry, "AXPress" as CFString)
       guard quitResult == .success else { continue }
+      let entryName = labels(of: menuEntry).first ?? "Command-Q menu item"
       print("Selected native menu item \(candidateTitle) > \(entryName) through Accessibility API.")
       return
     }
@@ -305,7 +329,15 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
         repeat with menuEntry in menuEntries
           try
             set entryName to name of menuEntry
-            if entryName starts with "Quit" then
+            set isQuitMenuItem to entryName starts with "Quit"
+            try
+              set shortcutCharacter to value of attribute "AXMenuItemCmdChar" of menuEntry
+              set shortcutModifiers to value of attribute "AXMenuItemCmdModifiers" of menuEntry
+              if (shortcutCharacter is "q" or shortcutCharacter is "Q") and shortcutModifiers is 0 then
+                set isQuitMenuItem to true
+              end if
+            end try
+            if isQuitMenuItem then
               set appMenuTitle to candidateTitle
               set quitMenuName to entryName
               click menuEntry
