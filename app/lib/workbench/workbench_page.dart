@@ -81,6 +81,7 @@ import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'editor_tab_action_location.dart';
 import 'editor_tab_close_action.dart';
+import 'editor_tab_label.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
@@ -18482,11 +18483,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   double _tabContentWidth(
     BuildContext context,
     OpenDoc doc, {
+    required String displayLabel,
     required bool reserveActionSpace,
   }) {
     final label = TextPainter(
       text: TextSpan(
-        text: '${doc.name}${doc.isDirty ? " •" : ""}',
+        text: '$displayLabel${doc.isDirty ? " •" : ""}',
         style: const TextStyle(fontSize: 12),
       ),
       textDirection: Directionality.of(context),
@@ -18504,6 +18506,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildTabStrip(EditorGroup g) {
+    final groupLabels = EditorTabLabelPolicy.labelsFor([
+      for (final doc in g.docs)
+        EditorTabLabelInput(name: doc.name, path: doc.path),
+    ]);
+    final labelsById = <int, String>{
+      for (var index = 0; index < g.docs.length; index++)
+        g.docs[index].id: groupLabels[index],
+    };
     final visibleDocs = switch (_editorTabMode.value) {
       EditorTabMode.multiple => g.docs,
       EditorTabMode.single =>
@@ -18527,6 +18537,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       _tabContentWidth(
                         context,
                         doc,
+                        displayLabel: labelsById[doc.id] ?? doc.name,
                         reserveActionSpace:
                             _tabCloseActionReservesSpace(g, doc),
                       ),
@@ -18551,7 +18562,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   currentWidths[doc.id] = width;
                   tabs.add(SizedBox(
                     width: width,
-                    child: _buildTab(g, doc),
+                    child: _buildTab(
+                      g,
+                      doc,
+                      displayLabel: labelsById[doc.id] ?? doc.name,
+                    ),
                   ));
                 }
                 _editorTabLastWidths[g.region] = currentWidths;
@@ -18620,14 +18635,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
-  Widget _buildTab(EditorGroup g, OpenDoc d) {
+  Widget _buildTab(
+    EditorGroup g,
+    OpenDoc d, {
+    required String displayLabel,
+  }) {
     final actionLocation = _editorTabActionLocation.value;
     final reserveActionSpace = _tabCloseActionReservesSpace(g, d);
-    final label = Text(
-      '${d.name}${d.isDirty ? " •" : ""}',
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: const TextStyle(fontSize: 12),
+    final label = Tooltip(
+      message: displayLabel,
+      child: Semantics(
+        label: displayLabel,
+        excludeSemantics: true,
+        child: Text(
+          key: ValueKey('editor-tab-label-${g.region}-${d.id}'),
+          '$displayLabel${d.isDirty ? " •" : ""}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
     );
     final closeAction = ValueListenableBuilder<({String region, int docId})?>(
       valueListenable: _editorTabHoveredTarget,
@@ -18753,7 +18780,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 color: const Color(0xFF252932),
                 borderRadius: BorderRadius.circular(3),
               ),
-              child: Text(d.name, style: const TextStyle(fontSize: 12)),
+              child: Text(displayLabel, style: const TextStyle(fontSize: 12)),
             ),
           ),
           childWhenDragging: Opacity(opacity: 0.4, child: tab),
