@@ -5,9 +5,11 @@
 
 ## Current State（当前状态，2026-11-08 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.36 已完成；下一项待登记；LAY-08–20 与 CMD-01–12 仍逐项推进
+### P05 / feat-027 进行中；P05.1–P05.36 已完成；P05.37 正在推进；LAY-08–20 与 CMD-01–12 仍逐项推进
 
 - 2026-11-08：P05.35 / feat-087 / LAY-08f 完成，产品提交 `812a755`。默认保留 18 px close-action slot；accessible session toggle 关闭后 clean inactive tabs 紧凑显示，active/dirty 与焦点/悬停 action 行为、左右 action、所有尺寸/换行/关闭显隐、文档状态和 session 恢复均覆盖。Focused tab suites 14/14；完整 `bash init.sh` Rust 71+54、Clippy、build_core、Flutter 1,168/1,168；fmt、analyze 0、Harness 100/100、JSON/diff 全通过。PR CI `42430812448` 全四 job 成功；Platform Availability `42430806927` Linux/Windows/macOS Intel x64 全成功。Packages `13597413199` / `13598080336` / `13598288795`; macOS SHA-256 `47e02be1221bf2ff0046ed840d02e1d8dbcbf97e9df0e136efd5e718c69aa757` 匹配 sidecar、76 项 ZIP 完整；Linux/Windows native DnD artifacts `13597711414` / `13597239700` 验证 move/copy/external text（23/13 pointer events），macOS artifact `13598009484` 因 hosted pointer route unavailable 明确 skip；native Quit/startup artifact `13598109269`。GitNexus CRITICAL/UNKNOWN 限制与完整证据：`docs/diagnostics/2026-11-08-p05/p05.35-editor-tab-action-reserve-space-scope.md`。
+
+- 2026-11-08：登记 P05.37 / feat-089 / LAY-08h：默认编辑器标签文件图标。固定 Code-OSS `showIcons=true` 与 `vs-seti` 默认映射；只覆盖 editor tabs 的文件名/扩展名/language-id/generic 图标、宽度/换行和语义保持；主题选择、配置 UI、Explorer/product icons 分开处理。预编辑 impact `_buildTab` LOW (3/1)、`_buildTabStrip` LOW (2/1)、`_tabContentWidth` LOW (3/1)；概念查询未定位到真实 tab-icon flow，源码与图谱限制详见 `docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md`。产品代码尚未开始。
 
 - 2026-11-08：P05.36 / feat-088 / LAY-08g 完成，产品提交 `3cb8381`。同组 basename 冲突会显示最短唯一路径后缀，且 tooltip、语义、宽度和拖动预览使用同一标签；唯一名、其它组及 pathless/untitled 不误改。Focused tab suites 23/23；完整 `bash init.sh` Rust 71+54、Clippy、build_core、Flutter 1,177/1,177；fmt、analyze 0、Harness 100/100、JSON/diff 全通过。PR CI `42436462682` 与 Platform Availability `42436457807` 的 Linux/Windows/macOS Intel x64 jobs 均通过。Packages `13600355207` / `13599483291` / `13600113065`；macOS ZIP SHA-256 `01ec5ac37cb26d168cb3648e9066d824af612a23a97732823dea3f6e8ac286d2` 匹配 sidecar 且 ZIP 完整。Linux/Windows DnD artifacts `13599424662` / `13599816834` 通过 move/copy/external text；macOS artifact `13600073105` 明确记录 pointer route unavailable 并跳过实际交互。macOS native Quit/startup artifact `13600172773`。GitNexus 更新和全部证据见 `docs/diagnostics/2026-11-08-p05/p05.36-editor-tab-path-disambiguation-scope.md`。
 
