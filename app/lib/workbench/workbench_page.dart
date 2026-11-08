@@ -81,6 +81,7 @@ import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'editor_tab_action_location.dart';
 import 'editor_tab_close_action.dart';
+import 'editor_tab_file_icon.dart';
 import 'editor_tab_label.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_sizing.dart';
@@ -18480,6 +18481,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       (_editorTabCloseActionVisibility.value &&
           (doc.id == group.activeDocId || doc.isDirty));
 
+  double _tabFixedMinimumWidth(EditorGroup group, List<OpenDoc> docs) {
+    final leftAction =
+        _editorTabActionLocation.value == EditorTabActionLocation.left;
+    var minimum = leftAction ? 80.0 : EditorTabWidthPolicy.fixedMinWidth;
+    for (final doc in docs) {
+      final padding = leftAction ? 10.0 : 16.0;
+      final action = _tabCloseActionReservesSpace(group, doc) ? 24.0 : 0.0;
+      final diskState =
+          doc.diskState == DiskDocumentState.current ? 0.0 : 17.0;
+      final occupied =
+          padding + EditorTabFileIcon.slotWidth + action + diskState;
+      if (occupied > minimum) minimum = occupied;
+    }
+    return minimum;
+  }
+
   double _tabContentWidth(
     BuildContext context,
     OpenDoc doc, {
@@ -18499,6 +18516,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     // Keep the action and its gap in the measured width only when this tab
     // allocates it; the optional disk-state marker always retains its width.
     return label.width +
+        EditorTabFileIcon.slotWidth +
         (leftAction ? 10 : 24) +
         (reserveActionSpace ? 18 : 0) +
         14 +
@@ -18545,11 +18563,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   availableWidth: constraints.maxWidth,
                   sizing: sizing,
                   wrapping: _editorTabWrap.value,
-                  fixedMinWidthOverride:
-                      _editorTabActionLocation.value ==
-                              EditorTabActionLocation.left
-                          ? 80
-                          : EditorTabWidthPolicy.fixedMinWidth,
+                  fixedMinWidthOverride: _tabFixedMinimumWidth(g, visibleDocs),
                 );
                 final heldWidths = sizing == EditorTabSizing.fixed
                     ? _editorTabHeldWidths[g.region]
@@ -18561,6 +18575,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   final width = heldWidths?[doc.id] ?? widths[i];
                   currentWidths[doc.id] = width;
                   tabs.add(SizedBox(
+                    key: doc.id == g.activeDocId
+                        ? g.activeTabVisibilityKey
+                        : null,
                     width: width,
                     child: _buildTab(
                       g,
@@ -18570,6 +18587,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ));
                 }
                 _editorTabLastWidths[g.region] = currentWidths;
+
+                if (_editorTabWrap.value || visibleDocs.isEmpty) {
+                  g.lastAutoRevealedTabId = null;
+                } else if (g.active != null &&
+                    g.lastAutoRevealedTabId != g.activeDocId) {
+                  g.lastAutoRevealedTabId = g.activeDocId;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted || _editorTabWrap.value) return;
+                    final activeTabContext =
+                        g.activeTabVisibilityKey.currentContext;
+                    if (activeTabContext != null) {
+                      unawaited(Scrollable.ensureVisible(
+                        activeTabContext,
+                        duration: Duration.zero,
+                        alignmentPolicy:
+                            ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+                      ));
+                    }
+                  });
+                }
 
                 final tabLayout = _editorTabWrap.value
                     ? Wrap(
@@ -18642,6 +18679,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }) {
     final actionLocation = _editorTabActionLocation.value;
     final reserveActionSpace = _tabCloseActionReservesSpace(g, d);
+    final fileIcon = EditorTabFileIcon(
+      key: ValueKey('editor-tab-file-icon-${g.region}-${d.id}'),
+      fileName: d.name,
+      languageId: d.path == null ? null : _languageIdOf(d.path!),
+    );
     final label = Tooltip(
       message: displayLabel,
       child: Semantics(
@@ -18709,9 +18751,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   closeAction,
                   const SizedBox(width: 6),
                 ],
+                fileIcon,
                 if (_editorTabWrap.value ||
                     _editorTabSizing.value != EditorTabSizing.fit)
-                  Flexible(child: label)
+                  Flexible(fit: FlexFit.tight, child: label)
                 else
                   label,
                 if (d.diskState != DiskDocumentState.current) ...[
@@ -20492,6 +20535,8 @@ class EditorGroup {
 
   /// 对应布局树里的叶子 region（'editor'、'editor-2'…）。
   final String region;
+  final GlobalKey activeTabVisibilityKey = GlobalKey();
+  int? lastAutoRevealedTabId;
   final List<OpenDoc> docs = [];
   int? activeDocId;
 

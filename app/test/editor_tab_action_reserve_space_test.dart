@@ -175,6 +175,8 @@ void main() {
       expect(idleTabRect.contains(idleActionRect.center), isTrue,
           reason: 'the unreserved action remains inside the tab hit area');
 
+      await tester.ensureVisible(tab('editor', 12));
+      await settle('reveal idle tab before hover');
       final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await mouse.addPointer();
       addTearDown(mouse.removePointer);
@@ -233,6 +235,8 @@ void main() {
       await chooseTabSizing('按内容适配');
       await togglePreference('标签自动换行', true);
 
+      await tester.ensureVisible(tab('editor', 12));
+      await settle('reveal idle tab before the final hover');
       await mouse.moveTo(tester.getCenter(tab('editor', 12)));
       await tester.pump();
       await tester.tap(idleAction);

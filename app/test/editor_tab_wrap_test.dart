@@ -236,7 +236,7 @@ void main() {
       expect(visibleTabs('editor-2'), findsNWidgets(7));
 
       // Widening and narrowing the window recomputes wrapping without duplicates.
-      tester.view.physicalSize = const Size(3000, 900);
+      tester.view.physicalSize = const Size(4000, 900);
       await tester.pump();
       await settle('widen workbench');
       expect(tabRows('editor', List.generate(8, (i) => i + 1)), hasLength(1));

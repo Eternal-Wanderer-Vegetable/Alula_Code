@@ -101,10 +101,13 @@ void main() {
     }
 
     Finder tab(int id) => find.byKey(ValueKey('tab-$id'));
+    Finder tabIcon(String region, int id) =>
+        find.byKey(ValueKey('editor-tab-file-icon-$region-$id'));
 
     await mountApp();
     expect(tab(1), findsOneWidget,
         reason: 'legacy/new sessions default to multiple');
+    expect(tabIcon('editor', 1), findsOneWidget);
     await chooseTabMode('多标签', currentMode: '多标签');
     await chooseTabMode('单标签', currentMode: '多标签');
     expect(tab(1), findsOneWidget,
@@ -118,19 +121,26 @@ void main() {
 
     await openCommand('新建文本文件', 'qi-文件: 新建文本文件');
     expect(tab(2), findsOneWidget);
+    expect(tabIcon('editor', 2), findsOneWidget);
     await openCommand('新建文本文件', 'qi-文件: 新建文本文件');
     expect(tab(2), findsNothing,
         reason: 'single mode hides inactive documents');
+    expect(tabIcon('editor', 2), findsNothing);
     expect(tab(3), findsOneWidget);
+    expect(tabIcon('editor', 3), findsOneWidget);
 
     await chooseTabMode('多标签', currentMode: '单标签');
     expect(tab(2), findsOneWidget);
     expect(tab(3), findsOneWidget);
+    expect(tabIcon('editor', 2), findsOneWidget);
+    expect(tabIcon('editor', 3), findsOneWidget);
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await settle('split editor');
     await tester.pump(const Duration(milliseconds: 300));
     expect(tab(3), findsNWidgets(2), reason: 'both groups show the active tab');
+    expect(tabIcon('editor', 3), findsOneWidget);
+    expect(tabIcon('editor-2', 3), findsOneWidget);
 
     final editorFinder = find.byType(RustTextInputField).first;
     final editorState = tester.state<RustTextInputFieldState>(editorFinder);
@@ -172,6 +182,11 @@ void main() {
       final key = widget.key;
       return key is ValueKey<String> && key.value.startsWith('tab-');
     }), findsNothing);
+    expect(find.byWidgetPredicate((widget) {
+      final key = widget.key;
+      return key is ValueKey<String> &&
+          key.value.startsWith('editor-tab-file-icon-');
+    }), findsNothing);
     expect(find.byTooltip('拆分编辑器'), findsNWidgets(2),
         reason: 'editor group actions remain available without tabs');
     expect(
@@ -200,13 +215,19 @@ void main() {
     await chooseTabMode('多标签', currentMode: '不显示标签');
     expect(tab(2), findsOneWidget);
     expect(tab(3), findsNWidgets(2));
+    expect(tabIcon('editor', 2), findsOneWidget);
+    expect(tabIcon('editor', 3), findsOneWidget);
+    expect(tabIcon('editor-2', 3), findsOneWidget);
 
     final closeButtons = find.byWidgetPredicate((widget) {
       final key = widget.key;
       return key is ValueKey<String> && key.value.startsWith('close-tab-');
     });
     while (closeButtons.evaluate().isNotEmpty) {
-      await tester.tap(closeButtons.first);
+      final closeButton = closeButtons.first;
+      await tester.ensureVisible(closeButton);
+      await settle('reveal next tab close action');
+      await tester.tap(closeButton);
       await tester.pump();
     }
     expect(

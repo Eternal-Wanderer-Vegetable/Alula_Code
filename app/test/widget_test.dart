@@ -365,8 +365,14 @@ void main() {
         reason: '初始顺序：未命名 在 Cargo.toml 前');
 
     // 鼠标拖 tab-3（main.rs）到 tab-1（未命名）上 → 变为第一个
-    await tester.drag(find.byKey(const ValueKey('tab-3')), const Offset(-260, 0),
-        kind: PointerDeviceKind.mouse);
+    final iconDrag = await tester.startGesture(
+      tester.getCenter(
+        find.byKey(const ValueKey('editor-tab-file-icon-editor-3')),
+      ),
+      kind: PointerDeviceKind.mouse,
+    );
+    await iconDrag.moveBy(const Offset(-260, 0));
+    await iconDrag.up();
     await tester.pump();
     expect(leftOf('tab-3'), lessThan(leftOf('tab-1')),
         reason: '拖动排序后 main.rs 应在 未命名 前');

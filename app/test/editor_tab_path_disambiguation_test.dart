@@ -144,6 +144,11 @@ edition = "2021"
 
       expect(tester.widget<Text>(label('editor', 10)).data, 'main.rs — alpha');
       expect(tester.widget<Text>(label('editor', 11)).data, 'main.rs — beta');
+      expect(
+        find.byKey(const ValueKey('editor-tab-file-icon-editor-10')),
+        findsOneWidget,
+        reason: 'file-backed tabs have a decorative icon in the measured row',
+      );
       expect(tester.widget<Text>(label('editor-2', 10)).data, 'main.rs',
           reason:
               'the second group does not inherit another group’s collision');
