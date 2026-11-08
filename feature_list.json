@@ -364,7 +364,7 @@
         "feat-025"
       ],
       "status": "in-progress",
-      "evidence": "P05.1–P05.40 complete. P05.41 / feat-093 / LAY-10a active on codex/vscode-parity-p05, draft PR #3. Local full DoD passed. Latest PR CI 42479933824 passed all jobs. Platform Availability 42479929149 passed Linux/Windows; macOS tests, Release bundle, clipboard, and app launch passed, but helper compilation failed because CGEventPostToPid is unavailable in the current Swift SDK. Quit behavior was not tested on that run. The helper now uses CGEvent.postToPid(_:) and needs hosted compilation plus a three-platform rerun. Full scope, artifacts, inference limits, and GitNexus warnings: docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md. Do not close P05 until all LAY/CMD matrix requirements pass.",
+      "evidence": "P05.1–P05.41 complete. P05.42 / feat-094 / LAY-10b is active on codex/vscode-parity-p05, draft PR #3. P05.41 local full DoD passed. PR CI 42482838361 and Platform Availability 42482833049 passed all jobs on Linux x64, Windows x64, and macOS Intel x64. Packages: Linux 13617904838, Windows 13618452059, macOS 13618994341. Linux/Windows native DnD passed (13618361760 / 13619005354); macOS DnD 13619342292 explicitly records pointer route unavailable and all tests skipped. macOS native Quit/startup artifact 13619009173 confirms the Release app exited after Command-Q. macOS package SHA-256 8cb04e8107953c4a454eb45c40619f6fedd548bedb12f3051960795ab325434a matched its sidecar and unzip integrity passed. P05 remains open until all LAY/CMD matrix requirements pass.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1162,8 +1162,20 @@
       "dependencies": [
         "feat-092"
       ],
+      "status": "done",
+      "evidence": "Implemented group-local Close, Close Others, Close to Left/Right, and Close Saved with clicked-tab/group targeting; tab button, middle-click, Ctrl/Cmd+W, Close All Editors/Groups share dirty-safe close decisions. Policy and real-FFI widget coverage includes target/sticky candidate sets, inactive groups, Save/Don’t Save/Cancel, failed save, Save-As cancellation, batch cancellation, state preservation, shared views, Merge, and Compare. Full bash init.sh EXIT=0: Rust workspace tests, Clippy, build_core, Flutter analyze, Flutter 1,198/1,198. Final PR CI 42482838361 passed all jobs. Platform Availability 42482833049 passed Linux x64, Windows x64, and macOS Intel x64. Packages Linux/Windows/macOS 13617904838/13618452059/13618994341; Linux/Windows DnD 13618361760/13619005354 passed; macOS DnD 13619342292 explicitly records pointer route unavailable and all tests skipped. macOS startup/native Quit artifact 13619009173 confirms the Release app exited after Command-Q. macOS ZIP SHA-256 8cb04e8107953c4a454eb45c40619f6fedd548bedb12f3051960795ab325434a matches the sidecar and unzip integrity passed. Full scope and GitNexus warnings: docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-094",
+      "name": "P05.42 LAY-10b 跨编辑器组标签拖放移动",
+      "description": "支持将单个编辑器标签拖到另一非空编辑器组的标签上并按目标位置插入；移动同一文档视图，更新源/目标组活动态并保留 sticky、preview、保存与会话状态。不含复制拖放；完整范围与 N.2 DoD：docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md",
+      "dependencies": [
+        "feat-093"
+      ],
       "status": "in-progress",
-      "evidence": "Implemented group-local Close, Close Others, Close to Left/Right, and Close Saved with clicked-tab/group targeting; tab button, middle-click, Ctrl/Cmd+W, Close All Editors/Groups share dirty-safe close decisions. Policy and real-FFI widget coverage includes target/sticky candidate sets, inactive groups, Save/Don’t Save/Cancel, failed save, Save-As cancellation, batch cancellation, state preservation, shared views, Merge, and Compare. Full bash init.sh EXIT=0: Rust workspace tests, Clippy, build_core, Flutter analyze, Flutter 1,198/1,198. Latest PR CI 42479933824 passed all jobs. Platform Availability 42479929149 passed Linux x64/Windows x64; macOS tests, Release bundle, clipboard, and app launch passed, but the native helper failed to compile because the current SDK requires CGEvent.postToPid(_:) instead of CGEventPostToPid. Native Quit and macOS DnD behavior were not tested on that run. Package artifacts Linux/Windows/macOS 13616789520/13617381762/13617418096; startup diagnostics 13617717626. The helper API correction awaits hosted compile and three-platform verification. Full details and GitNexus warnings: docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md.",
+      "evidence": "Registered after P05.41 completion. Editing has not started. Existing same-group Draggable<int>/DragTarget<int> calls _moveDoc on the same EditorGroup; no cross-group tab target exists. Focused scope, pinned Code-OSS sources, and pre-edit GitNexus CRITICAL findings are recorded in docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

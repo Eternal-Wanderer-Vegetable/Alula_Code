@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-08 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.40 已完成；P05.41 / feat-093 已登记并开始推进；其余 LAY/CMD 矩阵继续逐项验收
+### P05 / feat-027 进行中；P05.1–P05.41 已完成；当前 active：P05.42 / feat-094 / LAY-10b 跨组标签拖放移动
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
@@ -2096,3 +2096,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 提交 `8c6eece` 的 PR CI `42479933824` 全绿；Platform Availability `42479929149` Linux/Windows 全绿。macOS Flutter tests、Release bundle、clipboard、应用普通启动均通过，但 helper 编译失败：当前 Swift SDK 要求 `CGEvent.postToPid(_:)`，不接受全局 `CGEventPostToPid`。因此 Quit helper 与 DnD 交互都未运行，本轮不能作为 Quit 行为结果。Startup artifact `13617717626` 只含 helper 缺失错误与 Impeller 日志，无崩溃证据。Packages Linux/Windows/macOS `13616789520` / `13617381762` / `13617418096`；Linux/Windows DnD `13617256701` / `13617103270`。
 - 已将 Command、Q keydown/keyup 四个事件的投递改为实例方法 `postToPid`。编辑前 GitNexus 在 `8c6eece` 刷新：`postCommandQ` exact LOW/3 symbols，`quitThroughNativeMenu` exact LOW/10；索引覆盖限制详见范围报告。
 - WSL 无 Swift/macOS SDK；本地 Harness/YAML/JSON/shell/diff 静态检查将针对该修正复跑。P05.41 继续 in-progress，等待 hosted helper 编译、真正的 Quit 退出、最新 PR CI 与三平台 Availability。
+
+
+## P05.41 hosted final verification and P05.42 registration（2026-11-08）
+
+- P05.41 product commit `50ace27` and helper fix `b57a168` are fully verified. PR CI `42482838361` and Platform Availability `42482833049` passed every job. Linux/Windows/macOS x64 packages: `13617904838` / `13618452059` / `13618994341`. Linux/Windows DnD artifacts `13618361760` / `13619005354` passed; macOS DnD `13619342292` explicitly reports pointer route unavailable and all tests skipped. macOS native Quit/startup artifact `13619009173`; hosted log confirms the Release app closed after Command-Q. ZIP SHA-256 `8cb04e8107953c4a454eb45c40619f6fedd548bedb12f3051960795ab325434a` matches the sidecar and `unzip -tq` passes. P05.41 / feat-093 is done; P05 remains in progress. Full record: `docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md`.
+- Registered P05.42 / feat-094 / LAY-10b: move one tab by dragging it onto a tab in another non-empty editor group, preserving document/editor state, sticky order, destination insertion, and session persistence. Same-group reorder and directional commands remain regression paths. Copy/duplicate, empty-group drop, new-window drag, and overflow/MRU remain separate. Scope and fixed upstream semantics: `docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md`.
+- GitNexus refreshed at `b57a168`: 12,250 nodes / 31,295 edges / 375 clusters / 458 flows. Pre-edit impacts are CRITICAL for `_buildTab` (413 symbols/52 processes/9 modules), `_moveDoc` (102/9/3), and `_moveFocusedEditorToGroup` (108/10/4). Graph cross-language and process-truncation warnings are recorded and not waived.
+- Next: implement and test P05.42 only; first inspect whether moving arbitrary source tabs can share the existing group move state-transition safely. Then rerun required local DoD and hosted PR/platform gates.
