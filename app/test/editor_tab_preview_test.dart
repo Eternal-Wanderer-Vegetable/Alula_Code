@@ -521,4 +521,222 @@ void main() {
       findsNothing,
     );
   });
+
+  testWidgets('dirty tab close supports cancel and confirmed save',
+      (tester) async {
+    final (temp, workspace) = await _createWorkspace(tester);
+    final root = temp.path.replaceAll(r'\', '/');
+    final file = File('${workspace.path}/dirty.rs')
+      ..writeAsStringSync('fn original() {}\n');
+    final sessionStore = SessionStore(path: '$root/session.json');
+
+    await _mountWorkspace(tester, temp, workspace, sessionStore);
+    await _tapExplorerFile(tester, file.path);
+    const edited = 'fn edited() { println!("saved"); }\n';
+    await _replaceText(tester, edited);
+    final documentId = _savedDocumentId(
+      _savedEditorGroup(sessionStore),
+      file.path,
+    );
+
+    Future<void> requestClose() async {
+      await tester.tap(
+        find.byKey(ValueKey('close-tab-editor-$documentId')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget,
+      );
+    }
+
+    await requestClose();
+    await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+    await tester.pumpAndSettle();
+    await _finishAsyncIo(tester);
+    expect(_tabLabel('dirty.rs •'), findsOneWidget);
+    expect(find.byType(RustTextInputField), findsOneWidget);
+    final savedGroup = _savedEditorGroup(sessionStore);
+    expect(savedGroup['active'], documentId);
+    expect(
+      (savedGroup['docs'] as List)
+          .cast<Map>()
+          .firstWhere((doc) => doc['id'] == documentId)['text'],
+      edited,
+    );
+    final fieldState = tester.state<RustTextInputFieldState>(
+      find.byType(RustTextInputField).first,
+    );
+    expect(fieldState.editingValue.selection.extentOffset, edited.length);
+    expect(file.readAsStringSync(), 'fn original() {}\n');
+
+    await requestClose();
+    await tester.tap(find.byKey(const ValueKey('editor-close-save')));
+    await _finishAsyncIo(tester);
+    expect(file.readAsStringSync(), edited);
+    expect(_tabLabel('dirty.rs'), findsNothing);
+    expect(find.byType(RustTextInputField), findsOneWidget);
+  });
+
+  testWidgets('batch close cancel is atomic and discard is explicit',
+      (tester) async {
+    final (temp, workspace) = await _createWorkspace(tester);
+    final root = temp.path.replaceAll(r'\', '/');
+    final files = [
+      for (final name in ['alpha.rs', 'beta.rs', 'gamma.rs'])
+        File('${workspace.path}/$name')
+          ..writeAsStringSync('fn original() {}\n'),
+    ];
+    final sessionStore = SessionStore(path: '$root/session.json');
+
+    await _mountWorkspace(tester, temp, workspace, sessionStore);
+    for (final file in files) {
+      await _doubleTapExplorerFile(tester, file.path);
+    }
+    for (final file in files.take(2)) {
+      final id = _savedDocumentId(_savedEditorGroup(sessionStore), file.path);
+      await tester.tap(find.byKey(ValueKey('tab-$id')));
+      await tester.pumpAndSettle();
+      final beforeEdit = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField).first,
+      );
+      expect(beforeEdit.inputWindow.document.resync().content,
+          'fn original() {}\n');
+      await _replaceText(
+          tester, 'fn edited_${file.uri.pathSegments.last}() {}\n');
+      final editor = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField).first,
+      );
+      expect(
+        editor.inputWindow.document.resync().content,
+        'fn edited_${file.uri.pathSegments.last}() {}\n',
+      );
+    }
+    await _finishAsyncIo(tester);
+    expect(_tabLabel('alpha.rs •'), findsOneWidget);
+    expect(_tabLabel('beta.rs •'), findsOneWidget);
+
+    Future<void> requestCloseAll() async {
+      await _pressCtrlKSequence(
+        tester,
+        LogicalKeyboardKey.keyW,
+        secondControl: true,
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget,
+      );
+    }
+
+    await requestCloseAll();
+    await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+    await _finishAsyncIo(tester);
+    expect(_tabLabel('alpha.rs •'), findsOneWidget);
+    expect(_tabLabel('beta.rs •'), findsOneWidget);
+    expect(_tabLabel('gamma.rs'), findsOneWidget);
+
+    await requestCloseAll();
+    await tester.tap(find.byKey(const ValueKey('editor-close-discard')));
+    await _finishAsyncIo(tester);
+    for (final file in files) {
+      expect(_tabLabel(file.uri.pathSegments.last), findsNothing);
+      expect(file.readAsStringSync(), 'fn original() {}\n');
+    }
+  });
+
+  testWidgets('close others uses the clicked tab in an inactive group',
+      (tester) async {
+    final (temp, workspace) = await _createWorkspace(tester);
+    final root = temp.path.replaceAll(r'\', '/');
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final beta = File('${workspace.path}/beta.rs')
+      ..writeAsStringSync('fn beta() {}\n');
+    final sessionStore = SessionStore(path: '$root/session.json');
+
+    await _mountWorkspace(tester, temp, workspace, sessionStore);
+    await _doubleTapExplorerFile(tester, alpha.path);
+    await _tapExplorerFile(tester, beta.path);
+    await tester.tap(find.byTooltip('拆分编辑器').first);
+    await tester.pump(const Duration(milliseconds: 350));
+    await _finishAsyncIo(tester);
+
+    final alphaId =
+        _savedDocumentId(_savedEditorGroup(sessionStore), alpha.path);
+    await tester.tapAt(
+      tester.getCenter(_tabLabel('alpha.rs')),
+      buttons: kSecondaryButton,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('关闭其他编辑器'));
+    await _finishAsyncIo(tester);
+
+    final groups = (sessionStore.tryLoad()?['groups'] as List).cast<Map>();
+    final mainGroup = groups.firstWhere((group) => group['region'] == 'editor');
+    expect((mainGroup['docs'] as List).cast<Map>().map((doc) => doc['id']),
+        [alphaId]);
+    expect(_tabLabel('alpha.rs'), findsOneWidget);
+    expect(_tabLabel('beta.rs', region: 'editor-2'), findsOneWidget,
+        reason: 'the clicked group action does not close another group view');
+  });
+
+  testWidgets('save-as cancellation keeps an untitled dirty editor open',
+      (tester) async {
+    final (temp, workspace) = await _createWorkspace(tester);
+    final root = temp.path.replaceAll(r'\', '/');
+    final sessionStore = SessionStore(path: '$root/session.json');
+    await _mountWorkspace(tester, temp, workspace, sessionStore);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyN);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pumpAndSettle();
+    await _replaceText(tester, 'untitled draft');
+    await _finishAsyncIo(tester);
+    final untitledField = tester.widget<RustTextInputField>(
+      find.byType(RustTextInputField).first,
+    );
+    expect(
+        untitledField.inputWindow.document.resync().content, 'untitled draft');
+    expect(untitledField.inputWindow.document.isDirty, isTrue);
+    final docs = (_savedEditorGroup(sessionStore)['docs'] as List).cast<Map>();
+    final untitled = docs.firstWhere(
+      (doc) => doc['path'] == null && doc['text'] == 'untitled draft',
+    );
+    final id = (untitled['id'] as num).toInt();
+
+    await tester.tap(find.byKey(ValueKey('close-tab-editor-$id')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('editor-close-dirty-dialog')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('editor-close-save')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('save-as-path')), findsOneWidget);
+    await tester.tap(find.text('取消').last);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(ValueKey('tab-$id')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')), findsNothing);
+    expect(find.byType(RustTextInputField), findsOneWidget);
+
+    await tester.tap(find.byKey(ValueKey('close-tab-editor-$id')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('editor-close-save')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('save-as-path')), findsOneWidget);
+    final impossiblePath = '${temp.path}/missing-parent/unsaved.rs';
+    await tester.enterText(
+      find.byKey(const ValueKey('save-as-path')),
+      impossiblePath,
+    );
+    await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+    await _finishAsyncIo(tester);
+    expect(find.byKey(ValueKey('tab-$id')), findsOneWidget);
+    expect(find.byType(RustTextInputField), findsOneWidget);
+    expect(File(impossiblePath).existsSync(), isFalse);
+  });
 }

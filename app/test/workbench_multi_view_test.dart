@@ -130,20 +130,54 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       expect(file.readAsStringSync(), 'X$source');
 
+      final unsavedValue = firstController.value;
+      firstController.value = TextEditingValue(
+        text: 'Y${unsavedValue.text}',
+        selection: TextSelection.collapsed(
+          offset: unsavedValue.text.length + 1,
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(views.first.inputWindow.document.isDirty, isTrue);
+
       final sharedDocumentId = views.first.inputWindow.document.id;
       await tester.tap(
         find.byKey(ValueKey('close-tab-editor-2-$sharedDocumentId')),
       );
       await tester.pump(const Duration(milliseconds: 100));
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsNothing,
+        reason: 'closing one of two views must not prompt or discard the doc',
+      );
       expect(fieldsFinder, findsOneWidget);
       var remainingView = tester.widget<RustTextInputField>(fieldsFinder);
       expect(remainingView.inputWindow.document.id, sharedDocumentId);
-      expect(remainingView.inputWindow.document.resync().content, 'X$source');
+      expect(remainingView.inputWindow.document.resync().content, 'YX$source');
 
       await tester.tap(
         find.byKey(ValueKey('close-tab-editor-$sharedDocumentId')),
       );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget,
+        reason: 'the final view owns the dirty close confirmation',
+      );
+      await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+      await tester.pumpAndSettle();
+      expect(fieldsFinder, findsOneWidget);
+      remainingView = tester.widget<RustTextInputField>(fieldsFinder);
+      expect(remainingView.inputWindow.document.resync().content, 'YX$source');
+
+      await tester.tap(
+        find.byKey(ValueKey('close-tab-editor-$sharedDocumentId')),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('editor-close-discard')));
       await tester.pump(const Duration(milliseconds: 100));
+      expect(file.readAsStringSync(), 'X$source');
       await tester.tap(find.text('main.rs').first);
       await tester.pump(const Duration(milliseconds: 300));
       remainingView = tester.widget<RustTextInputField>(fieldsFinder);

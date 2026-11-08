@@ -81,6 +81,7 @@ import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'commands.dart';
 import 'editor_tab_action_location.dart';
+import 'editor_tab_close_policy.dart';
 import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
 import 'editor_tab_label.dart';
@@ -429,6 +430,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
   final Set<int> _mergeCloseInProgress = <int>{};
   final Set<int> _mergeAcceptInProgress = <int>{};
+  final Set<Object> _editorCloseInProgress = <Object>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -726,6 +728,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _closeActiveEditorFromKeyboard(),
       shortcut: _keybindings.shortcutFor(
         'workbench.action.closeActiveEditor',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeOtherEditors',
+      '编辑器',
+      '关闭其他编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeOthers),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeOtherEditors',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeEditorsToTheLeft',
+      '编辑器',
+      '关闭左侧编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeToLeft),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeEditorsToTheLeft',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeEditorsToTheRight',
+      '编辑器',
+      '关闭右侧编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeToRight),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeEditorsToTheRight',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeUnmodifiedEditors',
+      '编辑器',
+      '关闭已保存的编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeSaved),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeUnmodifiedEditors',
       ),
       when: 'editorActive',
       enablement: 'editorActive',
@@ -12521,21 +12567,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
-  void _closeAllEditorsInFocusedGroup() {
+  Future<void> _closeFromActiveEditor(EditorTabCloseOperation action) async {
     final group = _focused;
-    for (final doc in group.docs
-        .where((candidate) => !group.stickyDocIds.contains(candidate.id))
-        .toList(growable: false)) {
-      _closeDoc(doc.id, group: group);
-    }
+    final target = group.active;
+    if (target == null) return;
+    await _closeTabsForAction(group, target, action);
   }
 
-  void _closeAllEditorGroups() {
-    for (final group in _groups.values.toList(growable: false)) {
-      for (final doc in group.docs.toList(growable: false)) {
-        _closeDoc(doc.id, group: group);
+  Future<void> _closeTabsForAction(
+    EditorGroup group,
+    OpenDoc target,
+    EditorTabCloseOperation action,
+  ) async {
+    if (!group.docs.any((doc) => identical(doc, target))) return;
+    for (final doc in group.docs.toList(growable: false)) {
+      for (final view in _viewsOf(doc).toList(growable: false)) {
+        _flushInput(view, commitComposition: true);
       }
+      _updateDirty(doc);
     }
+    final candidateIds = EditorTabClosePolicy.candidates(
+      documentIds: group.docs.map((doc) => doc.id).toList(growable: false),
+      targetId: target.id,
+      stickyDocumentIds: group.stickyDocIds,
+      cleanDocumentIds: {
+        for (final doc in group.docs)
+          if (!doc.isDirty) doc.id,
+      },
+      action: action,
+    );
+    final targets = <_EditorCloseTarget>[
+      for (final id in candidateIds)
+        for (final doc in group.docs)
+          if (doc.id == id) (group: group, doc: doc),
+    ];
+    await _requestCloseEditorViews(targets);
+  }
+
+  Future<void> _closeAllEditorsInFocusedGroup() async {
+    final group = _focused;
+    await _requestCloseEditorViews([
+      for (final doc in group.docs)
+        if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
+    ]);
+  }
+
+  Future<void> _closeAllEditorGroups() async {
+    await _requestCloseEditorViews([
+      for (final group in _groups.values.toList(growable: false))
+        for (final doc in group.docs.toList(growable: false))
+          (group: group, doc: doc),
+    ]);
   }
 
   void _closeDoc(int id, {EditorGroup? group}) {
@@ -12544,47 +12626,192 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (owner == null) return;
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
-    if (_editorTabSizing.value == EditorTabSizing.fixed &&
-        _editorTabPointerInside.contains(owner.region)) {
-      final widths = _editorTabLastWidths[owner.region];
-      if (widths != null) {
-        _editorTabHeldWidths[owner.region] = Map<int, double>.of(widths);
+    unawaited(_requestCloseEditorViews([(group: owner, doc: doc)]));
+  }
+
+  Future<void> _requestCloseEditorViews(
+    Iterable<_EditorCloseTarget> requestedTargets,
+  ) async {
+    final targets = <_EditorCloseTarget>[];
+    final seenViews = <OpenDoc>{};
+    for (final target in requestedTargets) {
+      if (!target.group.docs.any((doc) => identical(doc, target.doc)) ||
+          !seenViews.add(target.doc) ||
+          _editorCloseInProgress.contains(target.doc._shared)) {
+        continue;
       }
+      targets.add(target);
     }
-    for (final view in _viewsOf(doc).toList(growable: false)) {
-      _flushInput(view, commitComposition: true);
-    }
-    final compareBindings = _snapshotCompareViews.values
-        .where((binding) => binding.view.sameDocumentAs(doc))
-        .toList(growable: false);
-    if (compareBindings.isNotEmpty) {
+    if (targets.isEmpty) return;
+
+    final lockedDocuments = targets.map((target) => target.doc._shared).toSet();
+    _editorCloseInProgress.addAll(lockedDocuments);
+    try {
+      final compareBindings = _snapshotCompareViews.values
+          .where((binding) =>
+              targets.any((target) => target.doc.sameDocumentAs(binding.view)))
+          .toSet()
+          .toList(growable: false);
       for (final binding in compareBindings) {
         binding.closeRoute?.call();
       }
-      unawaited(
-          Future.wait(compareBindings.map((binding) => binding.closed.future))
-              .then((_) {
-        if (mounted) _closeDoc(id, group: owner);
-      }));
-      return;
-    }
-    final mergeSession = doc.mergeResultSession;
-    if (doc.sharedViewCount == 1 &&
-        mergeSession != null &&
-        !mergeSession.isDisposed) {
-      if (_mergeCloseInProgress.add(id)) {
-        unawaited(_closeMergeResultDocument(owner, doc, mergeSession));
+      if (compareBindings.isNotEmpty) {
+        await Future.wait(
+          compareBindings.map((binding) => binding.closed.future),
+        );
       }
-      return;
+      if (!mounted) return;
+
+      final currentTargets = targets
+          .where((target) => target.group.docs.any(
+                (doc) => identical(doc, target.doc),
+              ))
+          .toList(growable: false);
+      if (currentTargets.isEmpty) return;
+
+      final affectedDocuments = <OpenDoc>[];
+      for (final target in currentTargets) {
+        if (affectedDocuments.every((doc) => !doc.sameDocumentAs(target.doc))) {
+          affectedDocuments.add(target.doc);
+        }
+      }
+      for (final doc in affectedDocuments) {
+        for (final view in _viewsOf(doc).toList(growable: false)) {
+          _flushInput(view, commitComposition: true);
+        }
+        _updateDirty(doc);
+      }
+
+      final finalDocuments = <OpenDoc>[];
+      for (final target in currentTargets) {
+        final closingViews = currentTargets
+            .where((candidate) => candidate.doc.sameDocumentAs(target.doc))
+            .length;
+        if (closingViews < target.doc.sharedViewCount ||
+            finalDocuments.any((doc) => doc.sameDocumentAs(target.doc))) {
+          continue;
+        }
+        finalDocuments.add(target.doc);
+      }
+
+      final standardDirtyDocuments = finalDocuments
+          .where((doc) =>
+              doc.isDirty && !(doc.mergeResultSession?.isDisposed == false))
+          .toList(growable: false);
+      if (standardDirtyDocuments.isNotEmpty) {
+        final decision = await _confirmDirtyEditorClose(
+          standardDirtyDocuments,
+        );
+        if (!mounted ||
+            decision == null ||
+            decision == _DirtyEditorCloseDecision.cancel) {
+          return;
+        }
+        if (decision == _DirtyEditorCloseDecision.save) {
+          for (final doc in standardDirtyDocuments) {
+            try {
+              if (doc.path == null) {
+                await _saveAsDoc(doc);
+              } else {
+                await _saveDocToPath(doc, doc.path!);
+              }
+            } on Object catch (error) {
+              if (mounted) {
+                setState(() => _statusDetail = '保存 ${doc.name} 失败：$error');
+              }
+              return;
+            }
+            if (!mounted) return;
+            if (doc.isDirty || doc.diskState != DiskDocumentState.current) {
+              setState(() => _statusDetail = '保存未完成；编辑器仍保持打开');
+              return;
+            }
+          }
+        }
+      }
+
+      for (final doc in finalDocuments) {
+        final mergeSession = doc.mergeResultSession;
+        if (mergeSession == null || mergeSession.isDisposed) continue;
+        final ownerTarget = currentTargets.firstWhere(
+          (target) => target.doc.sameDocumentAs(doc),
+        );
+        final closed = await _closeMergeResultDocument(
+          ownerTarget.group,
+          doc,
+          mergeSession,
+          closeTargets: currentTargets
+              .where((target) => target.doc.sameDocumentAs(doc))
+              .toList(growable: false),
+        );
+        if (!mounted || !closed) return;
+      }
+
+      for (final target in currentTargets) {
+        if (target.group.docs.any((doc) => identical(doc, target.doc))) {
+          if (_editorTabSizing.value == EditorTabSizing.fixed &&
+              _editorTabPointerInside.contains(target.group.region)) {
+            final widths = _editorTabLastWidths[target.group.region];
+            if (widths != null) {
+              _editorTabHeldWidths[target.group.region] =
+                  Map<int, double>.of(widths);
+            }
+          }
+          _closeDocNow(target.group, target.doc);
+        }
+      }
+    } finally {
+      _editorCloseInProgress.removeAll(lockedDocuments);
     }
-    _closeDocNow(owner, doc);
   }
 
-  Future<void> _closeMergeResultDocument(
+  Future<_DirtyEditorCloseDecision?> _confirmDirtyEditorClose(
+    List<OpenDoc> documents,
+  ) {
+    final names = documents.map((doc) => '“${doc.name}”').join('、');
+    return showDialog<_DirtyEditorCloseDecision>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('editor-close-dirty-dialog'),
+        title: const Text('保存更改？'),
+        content: Text('$names 有未保存的更改。关闭前要保存吗？'),
+        actions: [
+          TextButton(
+            key: const ValueKey('editor-close-cancel'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.cancel,
+            ),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            key: const ValueKey('editor-close-discard'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.discard,
+            ),
+            child: const Text('不保存'),
+          ),
+          FilledButton(
+            key: const ValueKey('editor-close-save'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.save,
+            ),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _closeMergeResultDocument(
     EditorGroup owner,
     OpenDoc doc,
-    MergeResultSession session,
-  ) async {
+    MergeResultSession session, {
+    List<_EditorCloseTarget>? closeTargets,
+  }) async {
+    if (!_mergeCloseInProgress.add(doc.id)) return false;
     try {
       final prompt = session.closePrompt;
       final action = prompt.actions.length == 1 &&
@@ -12647,7 +12874,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ],
               ),
             );
-      if (!mounted || action == null) return;
+      if (!mounted || action == null) return false;
 
       final outcome = await session.finishClose(
         action,
@@ -12685,8 +12912,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
         },
         closeResultDocument: () async {
-          if (mounted && owner.docs.any((view) => identical(view, doc))) {
-            _closeDocNow(owner, doc);
+          if (!mounted) return;
+          final targets = closeTargets ?? [(group: owner, doc: doc)];
+          for (final target in targets) {
+            if (target.group.docs.any((view) => identical(view, target.doc))) {
+              _closeDocNow(target.group, target.doc);
+            }
           }
         },
       );
@@ -12702,10 +12933,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         };
         if (detail != null) setState(() => _statusDetail = detail);
       }
+      return outcome == MergeResultCloseOutcome.closed;
     } on MergeResultSessionException {
       if (mounted) {
         setState(() => _statusDetail = '合并结果已在会话外变化，请先同步会话状态');
       }
+      return false;
     } finally {
       _mergeCloseInProgress.remove(doc.id);
     }
@@ -18956,6 +19189,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
         const PopupMenuDivider(),
         const PopupMenuItem(value: 'close', child: Text('关闭')),
+        const PopupMenuItem(value: 'close-others', child: Text('关闭其他编辑器')),
+        const PopupMenuItem(value: 'close-left', child: Text('关闭左侧编辑器')),
+        const PopupMenuItem(value: 'close-right', child: Text('关闭右侧编辑器')),
+        const PopupMenuItem(value: 'close-saved', child: Text('关闭已保存的编辑器')),
       ],
     );
     if (!mounted) return;
@@ -18967,7 +19204,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _setEditorSticky(group, doc, false);
         break;
       case 'close':
-        _closeDoc(doc.id, group: group);
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.close,
+        );
+        break;
+      case 'close-others':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeOthers,
+        );
+        break;
+      case 'close-left':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeToLeft,
+        );
+        break;
+      case 'close-right':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeToRight,
+        );
+        break;
+      case 'close-saved':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeSaved,
+        );
         break;
       default:
         break;
@@ -21057,6 +21326,10 @@ class OpenDoc {
 enum DiskDocumentState { current, conflict, missing, readOnly, unavailable }
 
 enum _ConflictSaveAction { cancel, saveAs, overwrite }
+
+enum _DirtyEditorCloseDecision { save, discard, cancel }
+
+typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {

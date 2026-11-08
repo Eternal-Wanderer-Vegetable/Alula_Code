@@ -2057,4 +2057,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - P05.40 / feat-092 已完成并推送证据提交 33ec3bd；其 docs-head PR CI 42467085704 的 Harness、Flutter analyze/test、Rust Ubuntu、Rust Windows 四项全绿。
 - 按固定 Code-OSS 1.145.0 登记 group-local Close、Close Others、Close to Left/Right、Close Saved 与 dirty-safe close。标签按钮、中键、Ctrl/Cmd+W、Close All Editors/Groups 共用 Save/Don’t Save/Cancel；关闭需先完成 dirty/savepoint 检查。Close Saved 只关闭 clean 非 sticky；方向/others 按目标标签和组计算；显式 Close 可关闭 sticky。
-- 范围、上游 source anchors、N.2 DoD、预编辑影响和 GitNexus HIGH/CRITICAL/UNKNOWN 限制：docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md。产品代码尚未修改。
+- 范围、上游 source anchors、N.2 DoD、预编辑影响和 GitNexus HIGH/CRITICAL/UNKNOWN 限制：docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md。该段记录功能登记时的状态；实现证据见下节。
+
+## P05.41 / feat-093 / LAY-10a 本地实现（2026-11-08）
+
+- 已实现组内 Close、Close Others、Close to Left/Right、Close Saved，并将标签按钮、中键、Ctrl/Cmd+W、Close All Editors/Groups 汇入 dirty-safe 流程。保存/放弃/取消、失败与另存为取消均按范围报告保护候选标签；sticky、共享视图、Merge、Compare 有专项回归覆盖。
+- `bash init.sh` EXIT=0：Rust workspace、Clippy、build_core、Flutter analyze 与 Flutter 1,198 项全绿；`git diff --check` 通过。未启动本机 GUI。
+- GitNexus 把 739 KB workbench 源纳入索引后，all-scope 为 7 个 tracked files / 5 symbols / 184 affected processes / CRITICAL；compare-main 为 170 files / 416 symbols / 199 processes / CRITICAL。保留风险，不将历史分支差异或图谱覆盖缺口当作通过；具体 581 cross-language sites、1,277 unranked entry candidates、639 dropped callees、17 budget cuts 和 depth cap 见范围报告。
+- 当前仍为 in-progress；推送后须等待最新 PR CI 与 Linux、Windows、macOS Intel x64 Availability。macOS hosted DnD 若 pointer route 不可用继续明确记作 skip。

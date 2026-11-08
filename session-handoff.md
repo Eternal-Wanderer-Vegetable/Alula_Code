@@ -15,7 +15,7 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 - Worktree: `/tmp/alula-p04.70-next`; branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
 - P05.39 / feat-091 / LAY-09b is complete on product commit `54b090285482cc6951c391cec17934a203529163`. Local `bash init.sh` passed Rust 71+54, Clippy, build_core, Flutter 1,188/1,188, cargo fmt, and Flutter analyze 0. PR CI `42459619842` passed all four jobs. Platform Availability `42459616642` passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS `13609033353` / `13608548961` / `13610340345`; macOS ZIP hash/sidecar and integrity passed. Linux/Windows native DnD passed; macOS DnD artifact `13610070935` explicitly records pointer route unavailable and skip. macOS startup/native Quit artifact `13609966099`. Full product, graph limitations, and test evidence: `docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`.
 - P05.40 / feat-092 / LAY-09c is done on product commit 84515da and test commit 0667652. Local full DoD and PR CI 42465276090 passed; Platform Availability 42465270934 passed Linux x64, Windows x64, and macOS Intel x64. Package artifacts Linux/Windows/macOS 13611278492 / 13611363930 / 13612200992. macOS ZIP SHA-256 24cee731e5f7f7e6b12606ecaffe9f8067452ccd78ca2b84931a2fc1bd2c87cb matches sidecar and integrity passes. Linux/Windows DnD artifacts 13611079025 / 13611712088 pass; macOS DnD 13611762859 explicitly skips because pointer routing is unavailable. Native Quit/startup artifact 13611484845. Full evidence and GitNexus uncertainty: docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md.
-- P05 / feat-027 remains in progress. P05.41 / feat-093 / LAY-10a is the sole active slice; do not start another feature before its implementation and evidence are complete.
+- P05 / feat-027 remains in progress. P05.41 / feat-093 / LAY-10a is the sole active slice. Implementation and local DoD are complete: full `bash init.sh` EXIT=0 (Rust workspace, Clippy, build_core, Flutter analyze, 1,198 Flutter tests); `git diff --check` passed. The worktree is `/tmp/alula-p04.70-next` on `codex/vscode-parity-p05`; product and evidence changes are not yet committed/pushed. Full implementation, test details, and GitNexus CRITICAL/coverage warnings are in `docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md`.
 
 ## Blockers
 
@@ -23,5 +23,6 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 
 ## Next Step
 
-1. Implement the registered P05.41 scope in the editor tab context menu and shared close path; run targeted dirty/close tests before the full N.2 local DoD.
-2. Keep PR #3 draft/open. Complete P05.41 evidence, refresh GitNexus, update all state files, and commit/push; then register the next LAY-10 slice.
+1. Stage the P05.41 implementation, tests, and state/evidence updates; run staged diff checks and GitNexus all-scope detect-changes (the index now includes `workbench_page.dart` with `GITNEXUS_MAX_FILE_SIZE=2048`).
+2. Commit and push to PR #3. Wait for the latest PR CI and Linux/Windows/macOS Intel x64 Platform Availability; update evidence and finish P05.41 only after they pass. Keep PR #3 draft/open.
+3. Then register and implement the next P05 matrix slice; P05 remains in progress.

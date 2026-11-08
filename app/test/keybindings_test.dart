@@ -245,6 +245,16 @@ void main() {
           )?.commandId,
           'workbench.action.toggleEditorSticky',
         );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('u')!],
+          )?.commandId,
+          'workbench.action.closeUnmodifiedEditors',
+        );
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+alt+t')!),
+          'workbench.action.closeOtherEditors',
+        );
       }
       expect(mac.commandForChord(parseChord('cmd+w')!),
           'workbench.action.closeActiveEditor');
@@ -265,6 +275,16 @@ void main() {
           [parseChord('cmd+k')!, parseChord('cmd+shift+enter')!],
         )?.commandId,
         'workbench.action.toggleEditorSticky',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('u')!],
+        )?.commandId,
+        'workbench.action.closeUnmodifiedEditors',
+      );
+      expect(
+        mac.commandForChord(parseChord('cmd+alt+t')!),
+        'workbench.action.closeOtherEditors',
       );
     });
 

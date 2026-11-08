@@ -250,6 +250,8 @@ class KeybindingSet {
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
     'workbench.action.closeActiveEditor': 'ctrl+w',
+    'workbench.action.closeOtherEditors': 'ctrl+alt+t',
+    'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
     'workbench.action.closeAllEditors': 'ctrl+k w',
     'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
     'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
@@ -325,6 +327,8 @@ class KeybindingSet {
       case TargetPlatform.macOS:
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
         result['workbench.action.closeActiveEditor'] = 'cmd+w';
+        result['workbench.action.closeOtherEditors'] = 'cmd+alt+t';
+        result['workbench.action.closeUnmodifiedEditors'] = 'cmd+k u';
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';

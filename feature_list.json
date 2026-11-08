@@ -1163,7 +1163,7 @@
         "feat-092"
       ],
       "status": "in-progress",
-      "evidence": "Registered against fixed Code-OSS 1.145.0. P05.40 evidence commit 33ec3bd passed docs-head PR CI 42467085704. Scope, upstream mapping and pre-edit GitNexus risks: docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md",
+      "evidence": "Implemented group-local Close, Close Others, Close to Left/Right, and Close Saved with clicked-tab/group targeting; tab button, middle-click, Ctrl/Cmd+W, Close All Editors/Groups share dirty-safe close decisions. Policy and real-FFI widget coverage includes target/sticky candidate sets, inactive groups, Save/Don’t Save/Cancel, failed save, Save-As cancellation, batch cancellation, state preservation, shared views, Merge, and Compare. Full bash init.sh EXIT=0: Rust workspace tests, Clippy, build_core, Flutter analyze, Flutter 1,198/1,198; git diff --check passed. GitNexus refreshed with GITNEXUS_MAX_FILE_SIZE=2048 including workbench_page.dart: all-scope 7 tracked files/5 symbols/184 affected processes/CRITICAL; compare-main 170 files/416 symbols/199 processes/CRITICAL. Preserve coverage warnings (581 cross-language property sites, 1,277/1,477 unranked entry candidates, 639 dropped callees, 17 budget cuts, one depth cap); full details in docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md. Still in-progress pending latest PR CI and Linux/Windows/macOS Intel x64 Platform Availability; macOS hosted DnD skip remains explicit if pointer routing is unavailable.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
