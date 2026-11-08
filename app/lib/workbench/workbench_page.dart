@@ -400,6 +400,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final ValueNotifier<bool> _editorTabCloseActionVisibility =
       ValueNotifier(true);
   final ValueNotifier<bool> _editorTabActionReserveSpace = ValueNotifier(true);
+  final ValueNotifier<bool> _pinnedTabsOnSeparateRow = ValueNotifier(false);
   final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
       ValueNotifier(null);
   final Set<String> _editorTabPointerInside = <String>{};
@@ -1131,6 +1132,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '切换编辑器标签换行',
       () async => _setEditorTabWrap(!_editorTabWrap.value),
+    );
+    reg(
+      'workbench.action.toggleEditorPinnedTabsSeparateRow',
+      '查看',
+      '切换固定编辑器标签单独成行',
+      () async => _setPinnedTabsOnSeparateRow(!_pinnedTabsOnSeparateRow.value),
     );
     reg(
       'workbench.action.toggleEditorTabCloseActionVisibility',
@@ -3106,13 +3113,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
   void _setEditorTabMode(EditorTabMode mode) {
     if (_editorTabMode.value == mode) return;
-    setState(() => _editorTabMode.value = mode);
+    setState(() {
+      _editorTabMode.value = mode;
+      for (final group in _groups.values) {
+        group.lastAutoRevealedTabId = null;
+      }
+    });
     _scheduleStateSave();
   }
 
   void _setEditorTabWrap(bool enabled) {
     if (_editorTabWrap.value == enabled) return;
     setState(() => _editorTabWrap.value = enabled);
+    _scheduleStateSave();
+  }
+
+  void _setPinnedTabsOnSeparateRow(bool enabled) {
+    if (_pinnedTabsOnSeparateRow.value == enabled) return;
+    setState(() {
+      _pinnedTabsOnSeparateRow.value = enabled;
+      for (final group in _groups.values) {
+        group.lastAutoRevealedTabId = null;
+      }
+    });
     _scheduleStateSave();
   }
 
@@ -3170,6 +3193,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorTabCloseActionVisibility': _editorTabCloseActionVisibility.value,
         'editorTabActionReserveSpace': _editorTabActionReserveSpace.value,
         'editorWrapTabs': _editorTabWrap.value,
+        'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -3288,6 +3312,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ? data['editorTabActionReserveSpace'] as bool
             : true;
     _editorTabWrap.value = data['editorWrapTabs'] == true;
+    _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -12430,6 +12455,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final wasSticky = group.stickyDocIds.contains(doc.id);
     if (wasSticky == sticky) return;
     setState(() {
+      group.lastAutoRevealedTabId = null;
       if (sticky) {
         group.stickyDocIds.add(doc.id);
         if (group.previewDocId == doc.id) group.previewDocId = null;
@@ -17750,6 +17776,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabActionReserveSpace.dispose();
     _editorTabHoveredTarget.dispose();
     _editorTabWrap.dispose();
+    _pinnedTabsOnSeparateRow.dispose();
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
@@ -17961,6 +17988,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   'workbench.action.toggleEditorTabWrapping',
                               checkedListenable: _editorTabWrap,
                               checkedBuilder: () => _editorTabWrap.value,
+                            ),
+                            TitleMenuItem(
+                              '固定标签单独成行',
+                              commandId:
+                                  'workbench.action.toggleEditorPinnedTabsSeparateRow',
+                              checkedListenable: _pinnedTabsOnSeparateRow,
+                              checkedBuilder: () =>
+                                  _pinnedTabsOnSeparateRow.value,
                             ),
                             TitleMenuItem(
                               '显示关闭操作',
@@ -18954,6 +18989,107 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         g.active == null ? const <OpenDoc>[] : [g.active!],
       EditorTabMode.none => const <OpenDoc>[],
     };
+    final hasStickyTabs =
+        visibleDocs.any((doc) => g.stickyDocIds.contains(doc.id));
+    final hasOrdinaryTabs =
+        visibleDocs.any((doc) => !g.stickyDocIds.contains(doc.id));
+    final separatePinnedRows = _editorTabMode.value == EditorTabMode.multiple &&
+        _pinnedTabsOnSeparateRow.value &&
+        hasStickyTabs &&
+        hasOrdinaryTabs;
+    final stickyDocs = separatePinnedRows
+        ? visibleDocs.where((doc) => g.stickyDocIds.contains(doc.id)).toList()
+        : visibleDocs;
+    final ordinaryDocs = separatePinnedRows
+        ? visibleDocs.where((doc) => !g.stickyDocIds.contains(doc.id)).toList()
+        : const <OpenDoc>[];
+
+    Widget buildTabRow(
+      List<OpenDoc> rowDocs, {
+      required String rowName,
+      required double availableWidth,
+    }) {
+      final sizing = _editorTabSizing.value;
+      final widths = EditorTabWidthPolicy.layout(
+        contentWidths: [
+          for (final doc in rowDocs)
+            _tabContentWidth(
+              context,
+              g,
+              doc,
+              displayLabel: labelsById[doc.id] ?? doc.name,
+              reserveActionSpace: _tabCloseActionReservesSpace(g, doc),
+            ),
+        ],
+        availableWidth: availableWidth,
+        sizing: sizing,
+        wrapping: _editorTabWrap.value,
+        fixedMinWidthOverride: _tabFixedMinimumWidth(g, rowDocs),
+      );
+      final heldWidths = sizing == EditorTabSizing.fixed
+          ? _editorTabHeldWidths[g.region]
+          : null;
+      final currentWidths = _editorTabLastWidths[g.region] ?? <int, double>{};
+      final tabs = <Widget>[];
+      for (var i = 0; i < rowDocs.length; i++) {
+        final doc = rowDocs[i];
+        final width = heldWidths?[doc.id] ?? widths[i];
+        currentWidths[doc.id] = width;
+        tabs.add(SizedBox(
+          key: doc.id == g.activeDocId ? g.activeTabVisibilityKey : null,
+          width: width,
+          child: _buildTab(
+            g,
+            doc,
+            displayLabel: labelsById[doc.id] ?? doc.name,
+          ),
+        ));
+      }
+      _editorTabLastWidths[g.region] = currentWidths;
+
+      if (_editorTabWrap.value || visibleDocs.isEmpty) {
+        g.lastAutoRevealedTabId = null;
+      } else if (g.active != null && g.lastAutoRevealedTabId != g.activeDocId) {
+        g.lastAutoRevealedTabId = g.activeDocId;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || _editorTabWrap.value) return;
+          final activeTabContext = g.activeTabVisibilityKey.currentContext;
+          if (activeTabContext != null) {
+            unawaited(Scrollable.ensureVisible(
+              activeTabContext,
+              duration: Duration.zero,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+            ));
+          }
+        });
+      }
+
+      final tabLayout = _editorTabWrap.value
+          ? Wrap(
+              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
+              spacing: 0,
+              runSpacing: 0,
+              children: tabs,
+            )
+          : SingleChildScrollView(
+              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
+              scrollDirection: Axis.horizontal,
+              child: Row(children: tabs),
+            );
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 36),
+        child: MouseRegion(
+          onEnter: (_) => _editorTabPointerInside.add(g.region),
+          onExit: (_) {
+            _editorTabPointerInside.remove(g.region);
+            final held = _editorTabHeldWidths.remove(g.region);
+            if (held != null && mounted) setState(() {});
+          },
+          child: tabLayout,
+        ),
+      );
+    }
+
     return Container(
       key: ValueKey('editor-tab-strip-${g.region}'),
       constraints: const BoxConstraints(minHeight: 36),
@@ -18964,86 +19100,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final sizing = _editorTabSizing.value;
-                final widths = EditorTabWidthPolicy.layout(
-                  contentWidths: [
-                    for (final doc in visibleDocs)
-                      _tabContentWidth(
-                        context,
-                        g,
-                        doc,
-                        displayLabel: labelsById[doc.id] ?? doc.name,
-                        reserveActionSpace:
-                            _tabCloseActionReservesSpace(g, doc),
-                      ),
-                  ],
-                  availableWidth: constraints.maxWidth,
-                  sizing: sizing,
-                  wrapping: _editorTabWrap.value,
-                  fixedMinWidthOverride: _tabFixedMinimumWidth(g, visibleDocs),
-                );
-                final heldWidths = sizing == EditorTabSizing.fixed
-                    ? _editorTabHeldWidths[g.region]
-                    : null;
-                final currentWidths = <int, double>{};
-                final tabs = <Widget>[];
-                for (var i = 0; i < visibleDocs.length; i++) {
-                  final doc = visibleDocs[i];
-                  final width = heldWidths?[doc.id] ?? widths[i];
-                  currentWidths[doc.id] = width;
-                  tabs.add(SizedBox(
-                    key: doc.id == g.activeDocId
-                        ? g.activeTabVisibilityKey
-                        : null,
-                    width: width,
-                    child: _buildTab(
-                      g,
-                      doc,
-                      displayLabel: labelsById[doc.id] ?? doc.name,
+                _editorTabLastWidths[g.region] = <int, double>{};
+                if (!separatePinnedRows) {
+                  return buildTabRow(
+                    visibleDocs,
+                    rowName: 'shared',
+                    availableWidth: constraints.maxWidth,
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildTabRow(
+                      stickyDocs,
+                      rowName: 'pinned',
+                      availableWidth: constraints.maxWidth,
                     ),
-                  ));
-                }
-                _editorTabLastWidths[g.region] = currentWidths;
-
-                if (_editorTabWrap.value || visibleDocs.isEmpty) {
-                  g.lastAutoRevealedTabId = null;
-                } else if (g.active != null &&
-                    g.lastAutoRevealedTabId != g.activeDocId) {
-                  g.lastAutoRevealedTabId = g.activeDocId;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (!mounted || _editorTabWrap.value) return;
-                    final activeTabContext =
-                        g.activeTabVisibilityKey.currentContext;
-                    if (activeTabContext != null) {
-                      unawaited(Scrollable.ensureVisible(
-                        activeTabContext,
-                        duration: Duration.zero,
-                        alignmentPolicy:
-                            ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-                      ));
-                    }
-                  });
-                }
-
-                final tabLayout = _editorTabWrap.value
-                    ? Wrap(
-                        spacing: 0,
-                        runSpacing: 0,
-                        children: tabs,
-                      )
-                    : SingleChildScrollView(
-                        // W2-1：默认维持单行横向滚动标签条。
-                        scrollDirection: Axis.horizontal,
-                        child: Row(children: tabs),
-                      );
-                return MouseRegion(
-                  onEnter: (_) => _editorTabPointerInside.add(g.region),
-                  onExit: (_) {
-                    _editorTabPointerInside.remove(g.region);
-                    final held = _editorTabHeldWidths.remove(g.region);
-                    if (held != null && mounted) setState(() {});
-                  },
-                  child: tabLayout,
+                    buildTabRow(
+                      ordinaryDocs,
+                      rowName: 'ordinary',
+                      availableWidth: constraints.maxWidth,
+                    ),
+                  ],
                 );
               },
             ),
