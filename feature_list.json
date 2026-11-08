@@ -1115,7 +1115,7 @@
         "feat-088"
       ],
       "status": "in-progress",
-      "evidence": "Product implementation and local full DoD passed on 2026-11-08. Bundled pinned default vs-seti associations, desktop-compatible TTF and MIT notice; covered filename/compound-extension/language-id/generic fallback, decorative 22 px tab slot, sizing/wrapping, accessibility and pointer routing. Focused policy tests 5/5 and impacted tab/multi-view/navigation/transaction/drag suites passed. bash init.sh: Rust 71+54, Clippy, build_core, Flutter 1,182/1,182; cargo fmt, Flutter analyze 0, Harness 100/100, JSON and diff checks passed. Hosted PR CI and Linux/Windows/macOS Intel x64 package checks are pending final push. Full implementation, local verification and GitNexus limitations: docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md.",
+      "evidence": "Product implementation and final local full DoD passed on 2026-11-08. Bundled pinned default vs-seti associations, desktop-compatible TTF and MIT notice; covered filename/compound-extension/language-id/generic fallback, decorative 22 px tab slot, sizing/wrapping, accessibility and pointer routing. Focused policy/asset tests 6/6 and impacted tab/multi-view/navigation/transaction/drag suites passed. bash init.sh: Rust 71+54, Clippy, build_core, Flutter 1,183/1,183; cargo fmt, Flutter analyze 0, Harness 100/100, JSON and diff checks passed. Earlier head 477dbe2 passed PR CI and Linux/Windows checks, but package inspection found its notice absent; final hosted checks are pending the license-fix head. Full implementation, local verification and GitNexus limitations: docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

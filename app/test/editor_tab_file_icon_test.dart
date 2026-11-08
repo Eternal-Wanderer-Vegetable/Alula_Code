@@ -22,6 +22,14 @@ void main() {
     expect(icon.color, const Color(0xff519aba));
   });
 
+  test('Seti font license notice is included in the app asset bundle',
+      () async {
+    final license = await rootBundle.loadString('assets/seti/LICENSE-SETI.md');
+
+    expect(license, contains('Copyright (c) 2014 Jesse Weed'));
+    expect(license, contains('Permission is hereby granted'));
+  });
+
   test('compound extensions use the longest matching Seti association', () {
     final icon = theme.lookup(fileName: 'app.spec.tsx');
 
