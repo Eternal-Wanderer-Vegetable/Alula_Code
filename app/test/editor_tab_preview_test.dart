@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/workbench/keybindings.dart';
+import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart' show kSecondaryButton;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:irondash_message_channel/irondash_message_channel.dart';
@@ -114,6 +117,57 @@ Future<void> _pressCtrlZ(WidgetTester tester) async {
   await tester.pump();
   await tester.pump();
 }
+
+Future<void> _openTabMenu(WidgetTester tester, String name) async {
+  await tester.tapAt(
+    tester.getCenter(_tabLabel(name)),
+    buttons: kSecondaryButton,
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> _pressCtrlW(WidgetTester tester) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyW);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pump();
+}
+
+Future<void> _pressCtrlKSequence(
+  WidgetTester tester,
+  LogicalKeyboardKey second, {
+  bool secondControl = false,
+  bool secondShift = false,
+}) async {
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  if (secondControl) {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  }
+  if (secondShift) {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  }
+  await tester.sendKeyEvent(second);
+  if (secondShift) {
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  }
+  if (secondControl) {
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  }
+  await tester.pump();
+}
+
+Map _savedEditorGroup(SessionStore store, {String region = 'editor'}) =>
+    (store.tryLoad()?['groups'] as List)
+        .cast<Map>()
+        .firstWhere((group) => group['region'] == region);
+
+int _savedDocumentId(Map group, String path) =>
+    ((group['docs'] as List).cast<Map>().firstWhere(
+              (doc) => doc['path'] == path,
+            )['id'] as num)
+        .toInt();
 
 void main() {
   setUpAll(() {
@@ -292,5 +346,179 @@ void main() {
     expect(_tabLabel('preview.rs', region: 'editor-2'), findsNothing);
     expect(_labelWidget(tester, 'next.rs', region: 'editor-2').style?.fontStyle,
         FontStyle.italic);
+  });
+
+  testWidgets(
+    'sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules',
+    (tester) async {
+      final (temp, workspace) = await _createWorkspace(tester);
+      final root = temp.path.replaceAll(r'\', '/');
+      final alpha = File('${workspace.path}/alpha.rs')
+        ..writeAsStringSync('fn alpha() {}\n');
+      final beta = File('${workspace.path}/beta.rs')
+        ..writeAsStringSync('fn beta() {}\n');
+      final gamma = File('${workspace.path}/gamma.rs')
+        ..writeAsStringSync('fn gamma() {}\n');
+      final sessionStore = SessionStore(path: '$root/session.json');
+
+      await _mountWorkspace(tester, temp, workspace, sessionStore);
+      await _tapExplorerFile(tester, alpha.path);
+      await _openTabMenu(tester, 'alpha.rs');
+      await tester.tap(find.text('固定编辑器'));
+      await tester.pumpAndSettle();
+      expect(
+          _labelWidget(tester, 'alpha.rs').style?.fontStyle, FontStyle.normal,
+          reason: 'pinning a preview clears its preview state');
+
+      await _doubleTapExplorerFile(tester, beta.path);
+      await _tapExplorerFile(tester, gamma.path);
+      await _openTabMenu(tester, 'gamma.rs');
+      await tester.tap(find.text('固定编辑器'));
+      await tester.pumpAndSettle();
+
+      await tester.pump(const Duration(milliseconds: 600));
+      final savedBeforeRestore = _savedEditorGroup(sessionStore);
+      final alphaId = _savedDocumentId(savedBeforeRestore, alpha.path);
+      final betaId = _savedDocumentId(savedBeforeRestore, beta.path);
+      final gammaId = _savedDocumentId(savedBeforeRestore, gamma.path);
+      expect(savedBeforeRestore['sticky'], [alphaId, gammaId]);
+      double tabLeft(int id) =>
+          tester.getTopLeft(find.byKey(ValueKey('tab-$id'))).dx;
+      expect(tabLeft(alphaId), lessThan(tabLeft(gammaId)));
+      expect(tabLeft(gammaId), lessThan(tabLeft(betaId)),
+          reason: 'sticky tabs form the ordered prefix before ordinary tabs');
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _mountWorkspace(tester, temp, workspace, sessionStore);
+      expect(
+        find.byKey(ValueKey('sticky-tab-indicator-editor-$alphaId')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(ValueKey('sticky-tab-indicator-editor-$gammaId')),
+        findsOneWidget,
+      );
+
+      await _openTabMenu(tester, 'alpha.rs');
+      await tester.tap(find.text('取消固定编辑器'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(ValueKey('sticky-tab-indicator-editor-$alphaId')),
+        findsNothing,
+      );
+      expect(tabLeft(gammaId), lessThan(tabLeft(alphaId)),
+          reason: 'unpin moves the editor to the first ordinary position');
+      await _openTabMenu(tester, 'alpha.rs');
+      await tester.tap(find.text('固定编辑器'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(ValueKey('sticky-tab-indicator-editor-$alphaId')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(ValueKey('tab-$alphaId')));
+      await _pressCtrlW(tester);
+      expect(_tabLabel('alpha.rs'), findsOneWidget,
+          reason: 'keyboard close protects the active sticky editor');
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(_savedEditorGroup(sessionStore)['active'], betaId,
+          reason:
+              'keyboard close selects the most recently active ordinary tab');
+
+      await _openTabMenu(tester, 'gamma.rs');
+      await tester.tap(find.text('关闭'));
+      await _finishAsyncIo(tester);
+      expect(_tabLabel('gamma.rs'), findsNothing,
+          reason: 'an explicit tab close closes its sticky target');
+
+      await _pressCtrlKSequence(tester, LogicalKeyboardKey.keyW);
+      await _finishAsyncIo(tester);
+      expect(_tabLabel('alpha.rs'), findsOneWidget,
+          reason: 'Close All Editors leaves sticky editors open');
+      expect(_tabLabel('beta.rs'), findsNothing);
+
+      await tester.tap(find.byType(RustTextInputField).first);
+      await _pressCtrlKSequence(
+        tester,
+        LogicalKeyboardKey.keyW,
+        secondControl: true,
+      );
+      await _finishAsyncIo(tester);
+      expect(_tabLabel('alpha.rs'), findsNothing,
+          reason: 'Close All Groups closes sticky editors too');
+    },
+  );
+
+  testWidgets('sticky state follows editor split and move commands',
+      (tester) async {
+    final (temp, workspace) = await _createWorkspace(tester);
+    final root = temp.path.replaceAll(r'\', '/');
+    final file = File('${workspace.path}/shared.rs')
+      ..writeAsStringSync('fn shared() {}\n');
+    final layoutStore = LayoutStore(path: '$root/layout.json');
+    final sessionStore = SessionStore(path: '$root/session.json');
+    CommandService? commands;
+
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: workspace.path,
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore: KeybindingsStore(path: '$root/keybindings.json'),
+        onCommandServiceReady: (service) => commands = service,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 600));
+    await _tapExplorerFile(tester, file.path);
+    await _openTabMenu(tester, 'shared.rs');
+    await tester.tap(find.text('固定编辑器'));
+    await tester.pumpAndSettle();
+    final documentId =
+        _savedDocumentId(_savedEditorGroup(sessionStore), file.path);
+
+    Future<void> execute(String command) async {
+      expect(
+        await commands!.execute(command),
+        CommandExecutionStatus.executed,
+        reason: '$command should be registered',
+      );
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+    }
+
+    await execute('editor.split');
+    final splitGroups = (sessionStore.tryLoad()?['groups'] as List)
+        .cast<Map>()
+        .where((group) => (group['docs'] as List)
+            .cast<Map>()
+            .any((doc) => doc['id'] == documentId))
+        .toList();
+    expect(splitGroups, hasLength(2));
+    expect(splitGroups.map((group) => group['sticky']), [
+      [documentId],
+      [documentId],
+    ]);
+    expect(
+      find.byKey(ValueKey('sticky-tab-indicator-editor-$documentId')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(ValueKey('sticky-tab-indicator-editor-2-$documentId')),
+      findsOneWidget,
+    );
+
+    await execute('workbench.action.moveEditorToLeftGroup');
+    final movedGroups = (sessionStore.tryLoad()?['groups'] as List).cast<Map>();
+    expect(movedGroups, hasLength(1));
+    expect(movedGroups.single['region'], 'editor');
+    expect(movedGroups.single['sticky'], [documentId]);
+    expect(
+      find.byKey(ValueKey('sticky-tab-indicator-editor-$documentId')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(ValueKey('sticky-tab-indicator-editor-2-$documentId')),
+      findsNothing,
+    );
   });
 }

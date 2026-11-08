@@ -25,6 +25,7 @@ import 'package:flutter/gestures.dart'
         PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
@@ -511,6 +512,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
+  int _editorActivationClock = 0;
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
@@ -689,6 +691,66 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
     reg('file.save', '文件', '保存', _saveActive,
         shortcut: 'Ctrl+S', when: 'editorActive', enablement: 'editorActive');
+    reg(
+      'workbench.action.pinEditor',
+      '编辑器',
+      '固定编辑器',
+      () async => _setActiveEditorSticky(true),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.unpinEditor',
+      '编辑器',
+      '取消固定编辑器',
+      () async => _setActiveEditorSticky(false),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.toggleEditorSticky',
+      '编辑器',
+      '切换编辑器固定状态',
+      () async => _toggleActiveEditorSticky(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleEditorSticky',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeActiveEditor',
+      '编辑器',
+      '关闭活动编辑器',
+      () async => _closeActiveEditorFromKeyboard(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeActiveEditor',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeAllEditors',
+      '编辑器',
+      '关闭所有编辑器（保留固定项）',
+      () async => _closeAllEditorsInFocusedGroup(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeAllEditors',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeAllGroups',
+      '编辑器',
+      '关闭所有编辑器组',
+      () async => _closeAllEditorGroups(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeAllGroups',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
         shortcut: 'Ctrl+Shift+S', when: 'editorActive', enablement: 'editorActive');
     reg(
@@ -3115,6 +3177,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             {
               'region': g.region,
               'active': g.activeDocId,
+              'sticky': [
+                for (final doc in g.docs)
+                  if (g.stickyDocIds.contains(doc.id)) doc.id,
+              ],
               if (g.previewDocId != null &&
                   g.docs.any((d) => d.id == g.previewDocId && !d.isDirty))
                 'preview': g.previewDocId,
@@ -3156,6 +3222,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (g.activeDocId == null && g.docs.isNotEmpty) {
         g.activeDocId = g.docs.last.id;
+        _noteActiveDocument(g, g.activeDocId);
       }
       for (final doc in _allDocs) {
         if (doc.path?.toLowerCase().endsWith('.rs') == true) {
@@ -3376,17 +3443,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           restoredDocuments[id] = open;
           if (id > maxId) maxId = id;
         }
+        final stickyRaw = gr['sticky'];
+        if (stickyRaw is List) {
+          for (final value in stickyRaw) {
+            if (value is num) {
+              final id = value.toInt();
+              if (target.docs.any((doc) => doc.id == id)) {
+                target.stickyDocIds.add(id);
+              }
+            }
+          }
+          _normalizeStickyOrder(target);
+        }
         final active = (gr['active'] as num?)?.toInt();
         if (target.docs.isNotEmpty) {
           target.activeDocId = target.docs.any((d) => d.id == active)
               ? active
               : target.docs.last.id;
+          _noteActiveDocument(target, target.activeDocId);
         }
         final previewId = (gr['preview'] as num?)?.toInt();
         final restoredPreview = target.docs
             .where((doc) => doc.id == previewId)
             .firstOrNull;
-        if (restoredPreview != null && !restoredPreview.isDirty) {
+        if (restoredPreview != null &&
+            !restoredPreview.isDirty &&
+            !target.stickyDocIds.contains(restoredPreview.id)) {
           target.previewDocId = restoredPreview.id;
         }
       }
@@ -11418,6 +11500,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         target.docs.add(untitled);
         target.activeDocId = id;
+        _noteActiveDocument(target, id);
       });
       _scheduleStateSave();
       _syncCommandContext();
@@ -12190,6 +12273,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         setState(() {
           if (!target.docs.contains(view)) target.docs.add(view);
           target.activeDocId = view.id;
+          _noteActiveDocument(target, view.id);
           if (target.previewDocId == view.id &&
               (pinPreview || !asPreview)) {
             target.previewDocId = null;
@@ -12265,6 +12349,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         target.docs.add(open);
         target.activeDocId = id;
+        _noteActiveDocument(target, id);
         target.previewDocId = asPreview && !open.isDirty ? id : null;
       });
       _scheduleSyntaxRefresh(id);
@@ -12298,6 +12383,133 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return p.startsWith(RegExp(r'[A-Za-z]:/'))
         ? 'file:///${p[0].toLowerCase()}${p.substring(1)}'
         : 'file:///$p';
+  }
+
+  void _noteActiveDocument(EditorGroup group, int? documentId) {
+    if (documentId == null) return;
+    group.recentDocIds.remove(documentId);
+    group.recentDocIds.insert(0, documentId);
+    group.lastActivationOrder = ++_editorActivationClock;
+  }
+
+  OpenDoc? _mostRecentDocument(EditorGroup group,
+      {bool nonStickyOnly = false}) {
+    for (final id in group.recentDocIds) {
+      final doc =
+          group.docs.where((candidate) => candidate.id == id).firstOrNull;
+      if (doc != null && (!nonStickyOnly || !group.stickyDocIds.contains(id))) {
+        return doc;
+      }
+    }
+    for (final doc in group.docs.reversed) {
+      if (!nonStickyOnly || !group.stickyDocIds.contains(doc.id)) return doc;
+    }
+    return null;
+  }
+
+  OpenDoc? _mostRecentNonStickyDocument(EditorGroup group) =>
+      _mostRecentDocument(group, nonStickyOnly: true);
+
+  void _normalizeStickyOrder(EditorGroup group) {
+    final presentIds = group.docs.map((doc) => doc.id).toSet();
+    group.stickyDocIds.removeWhere((id) => !presentIds.contains(id));
+    final sticky = group.docs
+        .where((doc) => group.stickyDocIds.contains(doc.id))
+        .toList(growable: false);
+    final ordinary = group.docs
+        .where((doc) => !group.stickyDocIds.contains(doc.id))
+        .toList(growable: false);
+    group.docs
+      ..clear()
+      ..addAll(sticky)
+      ..addAll(ordinary);
+  }
+
+  void _setEditorSticky(EditorGroup group, OpenDoc doc, bool sticky) {
+    if (!group.docs.any((candidate) => identical(candidate, doc))) return;
+    final wasSticky = group.stickyDocIds.contains(doc.id);
+    if (wasSticky == sticky) return;
+    setState(() {
+      if (sticky) {
+        group.stickyDocIds.add(doc.id);
+        if (group.previewDocId == doc.id) group.previewDocId = null;
+      } else {
+        group.stickyDocIds.remove(doc.id);
+      }
+      _normalizeStickyOrder(group);
+    });
+    _scheduleStateSave();
+  }
+
+  void _setActiveEditorSticky(bool sticky) {
+    final group = _focused;
+    final active = group.active;
+    if (active != null) _setEditorSticky(group, active, sticky);
+  }
+
+  void _toggleActiveEditorSticky() {
+    final group = _focused;
+    final active = group.active;
+    if (active != null) {
+      _setEditorSticky(group, active, !group.stickyDocIds.contains(active.id));
+    }
+  }
+
+  void _closeActiveEditorFromKeyboard() {
+    final group = _focused;
+    final active = group.active;
+    if (active == null) return;
+    if (!group.stickyDocIds.contains(active.id)) {
+      _closeDoc(active.id, group: group);
+      return;
+    }
+
+    EditorGroup? targetGroup = group;
+    OpenDoc? target = _mostRecentNonStickyDocument(group);
+    if (target == null) {
+      final otherGroups = _groups.values
+          .where((candidate) => !identical(candidate, group))
+          .toList()
+        ..sort((left, right) =>
+            right.lastActivationOrder.compareTo(left.lastActivationOrder));
+      for (final candidateGroup in otherGroups) {
+        target = _mostRecentNonStickyDocument(candidateGroup);
+        if (target != null) {
+          targetGroup = candidateGroup;
+          break;
+        }
+      }
+    }
+    if (target == null || targetGroup == null) return;
+    final selectedGroup = targetGroup;
+    final selectedDocument = target;
+
+    _flushInput(active, commitComposition: true);
+    setState(() {
+      selectedGroup.activeDocId = selectedDocument.id;
+      _focusedRegion = selectedGroup.region;
+      _noteActiveDocument(selectedGroup, selectedDocument.id);
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(selectedGroup, selectedDocument);
+    _scheduleStateSave();
+  }
+
+  void _closeAllEditorsInFocusedGroup() {
+    final group = _focused;
+    for (final doc in group.docs
+        .where((candidate) => !group.stickyDocIds.contains(candidate.id))
+        .toList(growable: false)) {
+      _closeDoc(doc.id, group: group);
+    }
+  }
+
+  void _closeAllEditorGroups() {
+    for (final group in _groups.values.toList(growable: false)) {
+      for (final doc in group.docs.toList(growable: false)) {
+        _closeDoc(doc.id, group: group);
+      }
+    }
   }
 
   void _closeDoc(int id, {EditorGroup? group}) {
@@ -12506,7 +12718,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       nextSemanticTokensVersion.remove(id);
     }
     if (owner.previewDocId == id) owner.previewDocId = null;
+    owner.stickyDocIds.remove(id);
+    owner.recentDocIds.remove(id);
     owner.docs.remove(doc);
+    final nextActiveId = wasActive ? _mostRecentDocument(owner)?.id : null;
     if (owner.docs.isEmpty) {
       _editorTabLastWidths.remove(owner.region);
       _editorTabHeldWidths.remove(owner.region);
@@ -12519,7 +12734,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _semanticTokensByDoc = nextSemanticTokens;
       _semanticTokensVersionByDoc = nextSemanticTokensVersion;
       if (wasActive) {
-        owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
+        owner.activeDocId = nextActiveId;
+        _noteActiveDocument(owner, nextActiveId);
       }
       // 组空且不是唯一的组 → 摘除该组（布局树自动折叠）
       if (owner.docs.isEmpty && _groups.length > 1 && !keepEmptyGroup) {
@@ -12722,6 +12938,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (target == null || identical(target, source)) return;
     final movingPreview =
         source.previewDocId == active.id && !active.isDirty;
+    final movingSticky = source.stickyDocIds.contains(active.id);
     OpenDoc? existingView;
     for (final view in target.docs) {
       if (view.sameDocumentAs(active)) {
@@ -12730,10 +12947,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     if (existingView != null) {
+      if (movingSticky && !target.stickyDocIds.contains(existingView.id)) {
+        target.stickyDocIds.add(existingView.id);
+        _normalizeStickyOrder(target);
+      }
       _closeDocNow(source, active);
       if (!mounted) return;
       setState(() {
         target.activeDocId = existingView!.id;
+        _noteActiveDocument(target, existingView.id);
         _focusedRegion = target.region;
         _scheduleStateSave();
       });
@@ -12751,12 +12973,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     setState(() {
       source.docs.removeWhere((view) => identical(view, active));
+      source.stickyDocIds.remove(active.id);
+      source.recentDocIds.remove(active.id);
       if (source.previewDocId == active.id) source.previewDocId = null;
       if (source.docs.isNotEmpty && source.activeDocId == active.id) {
-        source.activeDocId = source.docs.last.id;
+        source.activeDocId = _mostRecentDocument(source)?.id;
+        _noteActiveDocument(source, source.activeDocId);
       }
       target.docs.add(active);
+      if (movingSticky) target.stickyDocIds.add(active.id);
+      _normalizeStickyOrder(source);
+      _normalizeStickyOrder(target);
       target.activeDocId = active.id;
+      _noteActiveDocument(target, active.id);
       if (movingPreview) target.previewDocId = active.id;
 
       final sourceFocusKey = _focusKeyFor(source, active);
@@ -12811,7 +13040,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _ensureGroupsFromLayout();
       final group = _groups[fresh]!;
       group.docs.add(freshView);
+      if (_groups[region]?.stickyDocIds.contains(active.id) == true) {
+        group.stickyDocIds.add(freshView.id);
+        _normalizeStickyOrder(group);
+      }
       group.activeDocId = freshView.id;
+      _noteActiveDocument(group, freshView.id);
       if (_groups[region]?.previewDocId == active.id && !active.isDirty) {
         group.previewDocId = freshView.id;
       }
@@ -16739,6 +16973,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         if (!targetGroup.docs.contains(view)) targetGroup.docs.add(view);
         targetGroup.activeDocId = view.id;
+        _noteActiveDocument(targetGroup, view.id);
       });
     }
 
@@ -18621,10 +18856,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final doc in docs) {
       final padding = leftAction ? 10.0 : 16.0;
       final action = _tabCloseActionReservesSpace(group, doc) ? 24.0 : 0.0;
-      final diskState =
-          doc.diskState == DiskDocumentState.current ? 0.0 : 17.0;
-      final occupied =
-          padding + EditorTabFileIcon.slotWidth + action + diskState;
+      final diskState = doc.diskState == DiskDocumentState.current ? 0.0 : 17.0;
+      final stickyMark = group.stickyDocIds.contains(doc.id) ? 15.0 : 0.0;
+      final occupied = padding +
+          EditorTabFileIcon.slotWidth +
+          action +
+          diskState +
+          stickyMark;
       if (occupied > minimum) minimum = occupied;
     }
     return minimum;
@@ -18632,6 +18870,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   double _tabContentWidth(
     BuildContext context,
+    EditorGroup group,
     OpenDoc doc, {
     required String displayLabel,
     required bool reserveActionSpace,
@@ -18653,7 +18892,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (leftAction ? 10 : 24) +
         (reserveActionSpace ? 18 : 0) +
         14 +
+        (group.stickyDocIds.contains(doc.id) ? 15 : 0) +
         (doc.diskState == DiskDocumentState.current ? 0 : 17);
+  }
+
+  Future<void> _showEditorTabContextMenu(
+    TapUpDetails details,
+    EditorGroup group,
+    OpenDoc doc,
+  ) async {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) return;
+    final localPosition = overlay.globalToLocal(details.globalPosition);
+    final position = RelativeRect.fromLTRB(
+      localPosition.dx,
+      localPosition.dy,
+      overlay.size.width - localPosition.dx,
+      overlay.size.height - localPosition.dy,
+    );
+    final isSticky = group.stickyDocIds.contains(doc.id);
+    final action = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          value: isSticky ? 'unpin' : 'pin',
+          child: Text(isSticky ? '取消固定编辑器' : '固定编辑器'),
+        ),
+        const PopupMenuDivider(),
+        const PopupMenuItem(value: 'close', child: Text('关闭')),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'pin':
+        _setEditorSticky(group, doc, true);
+        break;
+      case 'unpin':
+        _setEditorSticky(group, doc, false);
+        break;
+      case 'close':
+        _closeDoc(doc.id, group: group);
+        break;
+      default:
+        break;
+    }
   }
 
   Widget _buildTabStrip(EditorGroup g) {
@@ -18687,6 +18970,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     for (final doc in visibleDocs)
                       _tabContentWidth(
                         context,
+                        g,
                         doc,
                         displayLabel: labelsById[doc.id] ?? doc.name,
                         reserveActionSpace:
@@ -18817,8 +19101,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       fileName: d.name,
       languageId: d.path == null ? null : _languageIdOf(d.path!),
     );
+    final isSticky = g.stickyDocIds.contains(d.id);
     final label = Tooltip(
-      message: displayLabel,
+      message: isSticky ? '$displayLabel（已固定）' : displayLabel,
       child: Semantics(
         label: displayLabel,
         excludeSemantics: true,
@@ -18848,6 +19133,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     final tab = InkWell(
+      onSecondaryTapUp: (details) => _showEditorTabContextMenu(details, g, d),
       onTap: () {
         final current = _active;
         if (current != null && !identical(current, d)) {
@@ -18855,9 +19141,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         setState(() {
           g.activeDocId = d.id;
+          _noteActiveDocument(g, d.id);
           _focusedRegion = g.region;
         });
         _syncCommandContext();
+        _scheduleStateSave();
       },
       child: Container(
         key: ValueKey('tab-${d.id}'),
@@ -18889,6 +19177,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   const SizedBox(width: 6),
                 ],
                 fileIcon,
+                if (isSticky) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.push_pin,
+                    key: ValueKey('sticky-tab-indicator-${g.region}-${d.id}'),
+                    size: 12,
+                    color: Colors.blueGrey.shade200,
+                  ),
+                ],
                 if (_editorTabWrap.value ||
                     _editorTabSizing.value != EditorTabSizing.fit)
                   Flexible(fit: FlexFit.tight, child: label)
@@ -18946,30 +19243,37 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _editorTabHoveredTarget.value = null;
         }
       },
-      child: DragTarget<int>(
-        onWillAcceptWithDetails: (details) => details.data != d.id,
-        onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
-        builder: (context, _, __) => Draggable<int>(
-          data: d.id,
-          dragAnchorStrategy: pointerDragAnchorStrategy,
-          feedback: Material(
-            type: MaterialType.transparency,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFF252932),
-                borderRadius: BorderRadius.circular(3),
+      child: Semantics(
+        customSemanticsActions: {
+          CustomSemanticsAction(label: isSticky ? '取消固定编辑器' : '固定编辑器'): () =>
+              _setEditorSticky(g, d, !isSticky),
+        },
+        child: DragTarget<int>(
+          onWillAcceptWithDetails: (details) => details.data != d.id,
+          onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
+          builder: (context, _, __) => Draggable<int>(
+            data: d.id,
+            dragAnchorStrategy: pointerDragAnchorStrategy,
+            feedback: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF252932),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                child: Text(displayLabel, style: const TextStyle(fontSize: 12)),
               ),
-              child: Text(displayLabel, style: const TextStyle(fontSize: 12)),
             ),
-          ),
-          childWhenDragging: Opacity(opacity: 0.4, child: tab),
-          child: Listener(
-            // 中键关闭（kMiddleMouseButton），不影响左键激活
-            onPointerDown: (e) {
-              if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
-            },
-            child: tab,
+            childWhenDragging: Opacity(opacity: 0.4, child: tab),
+            child: Listener(
+              // 中键关闭（kMiddleMouseButton），不影响左键激活
+              onPointerDown: (e) {
+                if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
+              },
+              child: tab,
+            ),
           ),
         ),
       ),
@@ -18982,10 +19286,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final to = g.docs.indexWhere((d) => d.id == targetId);
     if (from < 0 || to < 0 || from == to) return;
     final moved = g.docs[from];
+    final wasSticky = g.stickyDocIds.contains(draggedId);
     _editorFocusNodes.remove(_focusKeyFor(g, moved))?.dispose();
     setState(() {
-      final doc = g.docs.removeAt(from);
-      g.docs.insert(to, doc);
+      g.docs.removeAt(from);
+      final targetIndex = g.docs.indexWhere((doc) => doc.id == targetId);
+      final stickyCount =
+          g.docs.where((doc) => g.stickyDocIds.contains(doc.id)).length;
+      final desiredIndex = from < to ? targetIndex + 1 : targetIndex;
+      final lowerBound = wasSticky ? 0 : stickyCount;
+      final upperBound = wasSticky ? stickyCount : g.docs.length;
+      final insertionIndex = desiredIndex.clamp(lowerBound, upperBound).toInt();
+      g.docs.insert(insertionIndex, moved);
+      _normalizeStickyOrder(g);
     });
     _scheduleStateSave();
   }
@@ -20675,6 +20988,9 @@ class EditorGroup {
   final GlobalKey activeTabVisibilityKey = GlobalKey();
   int? lastAutoRevealedTabId;
   final List<OpenDoc> docs = [];
+  final Set<int> stickyDocIds = <int>{};
+  final List<int> recentDocIds = <int>[];
+  int lastActivationOrder = 0;
   int? activeDocId;
   int? previewDocId;
 

@@ -218,6 +218,56 @@ void main() {
       );
     });
 
+    test('sticky and editor close commands use the platform defaults', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+w')!),
+          'workbench.action.closeActiveEditor',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('w')!],
+          )?.commandId,
+          'workbench.action.closeAllEditors',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+w')!],
+          )?.commandId,
+          'workbench.action.closeAllGroups',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+shift+enter')!],
+          )?.commandId,
+          'workbench.action.toggleEditorSticky',
+        );
+      }
+      expect(mac.commandForChord(parseChord('cmd+w')!),
+          'workbench.action.closeActiveEditor');
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('w')!],
+        )?.commandId,
+        'workbench.action.closeAllEditors',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+w')!],
+        )?.commandId,
+        'workbench.action.closeAllGroups',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+shift+enter')!],
+        )?.commandId,
+        'workbench.action.toggleEditorSticky',
+      );
+    });
+
     test(
         'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
         () {

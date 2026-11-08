@@ -13,7 +13,7 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 - P05.37 includes Seti JSON/TTF/MIT notice in all platform packages; macOS ZIP digest and integrity pass. Linux/Windows native DnD passed; macOS pointer routing was unavailable and is explicitly skipped. P05/feat-027 remains in progress until all matrix items pass.
 - Current GitNexus index includes the 739 KB workbench source. Post-edit all-scope and compare-to-main scans remain CRITICAL and their returned symbol/process counts vary; `_openTreeFile` impact is UNKNOWN, with the real `_buildNode` call confirmed by text search. Cross-language property links, candidate ranking, and callee/trace caps remain unresolved coverage limits. Full observed outputs are recorded in the P05.38 scope report; do not treat empty/partial output as an all-clear.
 - Worktree: `/tmp/alula-p04.70-next`; branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3 (draft, targets `main`). The original `/mnt/e/alula_code` worktree contains unrelated user changes; do not modify or clean it.
-- P05.39 / feat-091 / LAY-09b is now registered and is the sole in-progress feature: sticky editor prefix, Pin/Unpin actions, session/split/move persistence, and fixed default keyboard/explicit close behavior. Scope/DoD and pre-edit GitNexus HIGH/MEDIUM/LOW impact evidence are in `docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`. No product edits for P05.39 have started yet.
+- P05.39 / feat-091 / LAY-09b is implemented locally. Sticky prefix, Pin/Unpin context and Semantics actions, session/split/move persistence, default keyboard close protection/MRU, explicit close, Close All exclusion, and Close All Groups inclusion pass focused widget/keybinding tests. Full local `bash init.sh` passed Rust 71+54, Clippy, build_core, Flutter 1,188/1,188, cargo fmt, and Flutter analyze 0. Docs mark P05.39 in progress while hosted PR CI and Linux/Windows/macOS Intel x64 Platform Availability evidence is pending. Product and impact details: `docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`.
 - P05 / feat-027 remains in progress. Hosted macOS synthetic pointer routing is unavailable; report native macOS DnD as skipped when it recurs.
 
 ## Blockers
@@ -22,5 +22,5 @@ Finish P05 / `feat-027` one registered LAY/CMD matrix slice at a time. Keep PR #
 
 ## Next Step
 
-1. Implement only registered P05.39 / feat-091 using its documented fixed Code-OSS behavior; preserve the HIGH `EditorGroup` and MEDIUM `_closeDocNow` warnings and coverage limits.
-2. Run focused and full local DoD, complete GitNexus all/compare analysis, then PR CI and Linux/Windows/macOS Intel x64 Platform Availability. Keep PR #3 draft/open; do not mark P05 complete until all remaining matrix DoDs pass.
+1. Refresh GitNexus and complete all/compare graph scans for P05.39; run Harness and JSON/diff validation, then make the product commit.
+2. Push to PR #3, inspect PR CI and Linux/Windows/macOS Intel x64 Platform Availability, and add hosted evidence. Keep PR #3 draft/open; do not mark P05 complete until all remaining matrix DoDs pass.

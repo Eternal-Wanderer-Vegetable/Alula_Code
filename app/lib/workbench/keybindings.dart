@@ -249,6 +249,10 @@ class KeybindingSet {
     'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
+    'workbench.action.closeActiveEditor': 'ctrl+w',
+    'workbench.action.closeAllEditors': 'ctrl+k w',
+    'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
+    'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
     'editor.completion': 'ctrl+space,f8',
@@ -320,6 +324,10 @@ class KeybindingSet {
     switch (platform) {
       case TargetPlatform.macOS:
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
+        result['workbench.action.closeActiveEditor'] = 'cmd+w';
+        result['workbench.action.closeAllEditors'] = 'cmd+k w';
+        result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
+        result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
