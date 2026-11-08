@@ -1114,8 +1114,8 @@
       "dependencies": [
         "feat-088"
       ],
-      "status": "in-progress",
-      "evidence": "Product implementation and final local full DoD passed on 2026-11-08. Bundled pinned default vs-seti associations, desktop-compatible TTF and MIT notice; covered filename/compound-extension/language-id/generic fallback, decorative 22 px tab slot, sizing/wrapping, accessibility and pointer routing. Focused policy/asset tests 6/6 and impacted tab/multi-view/navigation/transaction/drag suites passed. bash init.sh: Rust 71+54, Clippy, build_core, Flutter 1,183/1,183; cargo fmt, Flutter analyze 0, Harness 100/100, JSON and diff checks passed. Earlier head 477dbe2 passed PR CI and Linux/Windows checks, but package inspection found its notice absent; final hosted checks are pending the license-fix head. Full implementation, local verification and GitNexus limitations: docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md.",
+      "status": "complete",
+      "evidence": "Completed on final head c5da368879e32fa11cbeed35be3b2a3d61623071 (feature 477dbe2 plus license asset fix c5da368). Local DoD: bash init.sh, Rust 71+54, Clippy, build_core, Flutter 1,183/1,183; cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff; focused policy/asset 6/6. PR CI 42444192270 passed. Platform Availability 42444188669 passed Linux/Windows/macOS Intel x64 build/test/launch/package. Artifacts packages 13602544652 / 13603216469 / 13604350150; DnD 13602748806 / 13603570073 / 13603288418; macOS startup/Quit 13603662609. Linux/Windows DnD passed move/copy/external text (21/12 pointer events); macOS DnD explicitly skipped because its input route was unavailable. macOS ZIP SHA-256 43271ac8e4564ffad3fbb8db1a0c2bc545d0e50b6e8ada93e7230bc268cc4476 matched sidecar and ZIP integrity passed; all platform packages contain the Seti MIT notice, TTF, and mapping JSON. Full hosted/local evidence and unresolved GitNexus graph instability: docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
