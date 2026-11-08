@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-08 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.37 已完成；其余 LAY/CMD 矩阵仍逐项推进
+### P05 / feat-027 进行中；P05.1–P05.38 已完成；P05.39 开始；其余 LAY/CMD 矩阵仍逐项推进
+
+- 2026-11-08：P05.39 / feat-091 / LAY-09b 已登记，范围为 sticky tab 前缀、Pin/Unpin、session/split/move 状态携带及 Code-OSS 默认键盘/显式关闭规则。编辑前 GitNexus：`EditorGroup` HIGH（76 symbols、7 direct、4 processes）、`_closeDocNow` MEDIUM（19 symbols、5 direct、1 process）、`_buildTabStrip` / `_buildTab` LOW；HIGH 风险保留，不用 shared axes 降级。当前 `workbench_page.dart` 743,629 bytes 已通过 1,024 KiB 强制重建索引。代码尚未开始；完整 upstream、scope、DoD 和 coverage 限制：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
 - 2026-11-08：P05.38 / feat-090 / LAY-09a 完成。产品提交 `03cbd9e` 与 macOS Quit 验证修复 `60c7078` 已推 PR #3。Explorer 预览替换/固定、斜体、dirty 保护、组隔离、session 恢复及 split/move 携带通过本地 DoD。完整 `bash init.sh` Rust 71+54、Clippy、build_core、Flutter 1,185/1,185，以及 cargo fmt、analyze 0、Harness 100/100 全通过。最终 PR CI `42453315726` 全绿；Platform Availability `42453311903` Linux、Windows、macOS Intel x64 build/launch/clipboard/native Quit/package 全通过。macOS ZIP `13607606033` SHA-256 `3b071a67e6a0fd305041d31f63b7cba69e81121c8c40d916cdd4ff20f9e1152a` 匹配 sidecar 且 unzip 完整；macOS DnD 因 hosted pointer route unavailable 明确 skip；原生 Quit 日志显示激活后菜单退出成功，无 crash report。Linux/Windows DnD move/copy/external text 通过。GitNexus 保留 `_updateDirty` CRITICAL 与图谱覆盖限制。详情见 `docs/diagnostics/2026-11-08-p05/p05.38-explorer-preview-editor-scope.md`。P05/feat-027 继续 in-progress。
 
