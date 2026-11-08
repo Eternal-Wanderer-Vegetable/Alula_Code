@@ -418,7 +418,18 @@ func quitThroughNativeMenu(
     "Targeting native Quit menu in \(app.localizedName ?? bundleIdentifier) " +
       "at \(expectedBundleURL.path) (pid \(processIdentifier), active=\(app.isActive))."
   )
-  _ = app.activate(options: [])
+  _ = app.activate(options: [.activateIgnoringOtherApps])
+  let activationDeadline = Date().addingTimeInterval(8)
+  while !app.isActive && Date() < activationDeadline {
+    Thread.sleep(forTimeInterval: 0.1)
+  }
+  guard app.isActive else {
+    throw NSError(domain: "AlulaMacDnd", code: 30, userInfo: [
+      NSLocalizedDescriptionKey:
+        "Could not activate the expected app before selecting its native Quit menu"
+    ])
+  }
+  print("Target app is active; selecting its native Quit menu.")
   do {
     try quitThroughAccessibilityMenu(processIdentifier: processIdentifier)
   } catch let accessibilityError {
