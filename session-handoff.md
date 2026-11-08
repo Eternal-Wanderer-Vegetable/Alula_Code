@@ -9,18 +9,18 @@ Last Updated: 2026-11-08
 ## Current State
 
 - Worktree `/tmp/alula-p04.70-next`, branch `codex/vscode-parity-p05`; PR #3: https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/pull/3。原始 `/mnt/e/alula_code` 有无关用户改动，保持不动。
-- P05.1–P05.40 complete。唯一 active slice 是 P05.41 / `feat-093` / LAY-10a：标签组 Close、Close Others、左右关闭、Close Saved 和 dirty-safe close。产品实现和完整本地 DoD 已完成；`bash init.sh`、focused/full tests 通过。本机没有启动 GUI。
-- 已推送 commit `871abc7`; PR CI `42477499695` 四项全绿。Platform Availability `42477495964` Linux/Windows 通过；macOS Release、Flutter tests、clipboard、helper compile、launch、package 通过，但 Quit probe 仍失败。Release app PID 50490 active；AX menu titles 多为 unnamed，Command-Q AX 元数据不见，System Events 返回 Apple 后报 -2700。日志无 crash 证据；macOS DnD artifact `13616707362` 明确 skip（pointer route unavailable / all tests skipped）。
-- 当前未提交修正：`tools/vscode-parity/macos-native-dnd-input.swift` 在 Accessibility 与 System Events 都无法定位菜单时，向准确 Release PID 投递 Command-Q；workflow 仍要求 `open -W` 进程成功退出，并用通用 Quit action 日志。WSL 无 `swiftc`/macOS SDK，需 hosted 编译验证。范围报告：`docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md`。
-- Run `42477495964` artifacts: packages Linux/Windows/macOS `13616036845` / `13616151620` / `13616338692`; DnD Linux/Windows/macOS `13616645438` / `13615809664` / `13616707362`; startup `13616249036`.
-- GitNexus indexed at `871abc7`; `quitThroughNativeMenu` exact LOW/10, while the broader `AlulaTitleBar` remains exact CRITICAL/592 symbols/92 processes/20 modules and was not edited. Workflow YAML target remains UNKNOWN/not indexed; text search verifies its call. Current staged all-scope scans are MEDIUM (7 files/12–15 symbols/2 processes); compare-main is CRITICAL (172 files/454–460 symbols/191–199 processes). Analyzer coverage truncation is documented and not waived.
+- P05.1–P05.40 complete。唯一 active slice 是 P05.41 / `feat-093` / LAY-10a：标签组 Close、Close Others、左右关闭、Close Saved 和 dirty-safe close。产品实现与完整本地 `bash init.sh` DoD 已完成；focused/full tests 通过。本机没有启动 GUI。
+- 当前推送 head `8c6eece`。PR CI `42479933824` 四项全绿。Platform Availability `42479929149` Linux x64、Windows x64 通过；macOS Flutter tests、Release bundle、clipboard、普通 app launch 通过，但 Swift helper 编译失败：SDK 要求 `CGEvent.postToPid(_:)`，旧的 `CGEventPostToPid` 不可用，因此 Quit 行为未执行。Startup artifact `13617717626` 只有 helper 缺失和正常 Impeller 日志，无 crash 证据。Linux/Windows/macOS 包 `13616789520` / `13617381762` / `13617418096`；Linux/Windows DnD `13617256701` / `13617103270`。macOS DnD 未运行。
+- 当前未提交修正：`tools/vscode-parity/macos-native-dnd-input.swift` 将 Command、Q keydown/keyup 四个事件的投递改用 `CGEvent.postToPid(_:)`。WSL 无 `swiftc`/macOS SDK；必须 hosted 编译，并验证原生 Command-Q action 后 Release app 正常退出。范围报告：`docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md`。
+- GitNexus indexed at `8c6eece`; `postCommandQ` exact LOW/3 and `quitThroughNativeMenu` exact LOW/10. Broader `AlulaTitleBar` remains exact CRITICAL/592 symbols/92 processes/20 modules and was not edited. Workflow YAML impact is UNKNOWN/not indexed; text search confirms helper call. Analyzer coverage limitations remain documented.
 
 ## Blockers
 
-No user action needed. Hosted macOS compile and Quit behavior remain unverified.
+No user action needed. Hosted macOS helper compilation and native Quit behavior remain unverified.
 
 ## Next Step
 
-1. Run JSON/harness/YAML/diff checks, stage the helper/workflow/docs, and run GitNexus all-scope plus compare-to-main change detection; preserve CRITICAL/coverage warnings.
-2. Commit and push the Command-Q fallback. Wait for new PR CI and Linux/Windows/macOS Intel x64 Platform Availability. Verify the app exits from the native Quit action and keep DnD marked skip if pointer routing remains unavailable.
-3. Update P05.41 evidence only after all required hosted gates pass. Then register the next P05 matrix slice; P05 stays in progress.
+1. Run Harness, JSON/YAML, extracted Bash syntax, and staged diff checks. Stage the Swift API correction plus state/evidence updates.
+2. Run GitNexus all-scope and compare-to-main change detection; preserve CRITICAL/UNKNOWN and coverage warnings. Commit and push the correction.
+3. Wait for latest PR CI and Linux/Windows/macOS Intel x64 Platform Availability. Confirm helper compilation and successful `open -W` exit after Command-Q. Keep macOS DnD marked unverified if pointer routing remains unavailable.
+4. Update P05.41 only after all hosted gates pass, then register the next P05 matrix slice. P05 stays in progress.

@@ -441,13 +441,13 @@ func postCommandQ(to processIdentifier: pid_t) throws {
   keyDown.flags = .maskCommand
   keyUp.flags = .maskCommand
   commandUp.flags = []
-  CGEventPostToPid(processIdentifier, commandDown)
+  commandDown.postToPid(processIdentifier)
   Thread.sleep(forTimeInterval: 0.02)
-  CGEventPostToPid(processIdentifier, keyDown)
+  keyDown.postToPid(processIdentifier)
   Thread.sleep(forTimeInterval: 0.05)
-  CGEventPostToPid(processIdentifier, keyUp)
+  keyUp.postToPid(processIdentifier)
   Thread.sleep(forTimeInterval: 0.02)
-  CGEventPostToPid(processIdentifier, commandUp)
+  commandUp.postToPid(processIdentifier)
   print(
     "Posted the native Command-Q menu shortcut to pid \(processIdentifier); " +
       "the Availability step will verify app termination."

@@ -2089,3 +2089,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - artifacts packages Linux/Windows/macOS `13616036845` / `13616151620` / `13616338692`；DnD `13616645438` / `13615809664` / `13616707362`；startup `13616249036`。macOS DnD 明确 pointer route false / all tests skipped，不计通过。
 - 新修正仅在 AX 与 System Events 无法定位菜单后，向已校验的 Release PID 投递原生 Command-Q keyboard event；Availability workflow 仍等待 `open -W` 成功退出，避免把未退出误报为通过。该步骤改为描述 Quit action，不声称 AX 点击成功。Apple API 依据、GitNexus exact LOW/UNKNOWN 与覆盖限制在范围报告。
 - 本地 Harness 100/100，YAML 与 helper workflow `bash -n`、JSON、`git diff --cached --check` 均通过；WSL 无 swiftc/macOS SDK。GitNexus staged all-scope scans 为 7 files/12–15 symbols/2 processes/MEDIUM；compare-main 为 172 files/454–460 symbols/191–199 processes/CRITICAL，图谱覆盖限制详见范围报告。此修正尚未提交；只有 PR CI、Linux/Windows/macOS Intel x64 全绿才可结束 P05.41。
+
+
+## P05.41 hosted helper 编译错误与 Swift API 修正（2026-11-08）
+
+- 提交 `8c6eece` 的 PR CI `42479933824` 全绿；Platform Availability `42479929149` Linux/Windows 全绿。macOS Flutter tests、Release bundle、clipboard、应用普通启动均通过，但 helper 编译失败：当前 Swift SDK 要求 `CGEvent.postToPid(_:)`，不接受全局 `CGEventPostToPid`。因此 Quit helper 与 DnD 交互都未运行，本轮不能作为 Quit 行为结果。Startup artifact `13617717626` 只含 helper 缺失错误与 Impeller 日志，无崩溃证据。Packages Linux/Windows/macOS `13616789520` / `13617381762` / `13617418096`；Linux/Windows DnD `13617256701` / `13617103270`。
+- 已将 Command、Q keydown/keyup 四个事件的投递改为实例方法 `postToPid`。编辑前 GitNexus 在 `8c6eece` 刷新：`postCommandQ` exact LOW/3 symbols，`quitThroughNativeMenu` exact LOW/10；索引覆盖限制详见范围报告。
+- WSL 无 Swift/macOS SDK；本地 Harness/YAML/JSON/shell/diff 静态检查将针对该修正复跑。P05.41 继续 in-progress，等待 hosted helper 编译、真正的 Quit 退出、最新 PR CI 与三平台 Availability。
