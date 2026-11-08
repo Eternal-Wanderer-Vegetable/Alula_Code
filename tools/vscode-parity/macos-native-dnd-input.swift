@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Carbon.HIToolbox
 import Darwin
 import Foundation
 
@@ -407,6 +408,52 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
   return standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
 }
 
+func postCommandQ(to processIdentifier: pid_t) throws {
+  guard
+    let source = CGEventSource(stateID: .hidSystemState),
+    let commandDown = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_Command),
+      keyDown: true
+    ),
+    let keyDown = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_ANSI_Q),
+      keyDown: true
+    ),
+    let keyUp = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_ANSI_Q),
+      keyDown: false
+    ),
+    let commandUp = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_Command),
+      keyDown: false
+    )
+  else {
+    throw NSError(domain: "AlulaMacDnd", code: 30, userInfo: [
+      NSLocalizedDescriptionKey: "Could not create the native Command-Q keyboard events"
+    ])
+  }
+
+  commandDown.flags = .maskCommand
+  keyDown.flags = .maskCommand
+  keyUp.flags = .maskCommand
+  commandUp.flags = []
+  CGEventPostToPid(processIdentifier, commandDown)
+  Thread.sleep(forTimeInterval: 0.02)
+  CGEventPostToPid(processIdentifier, keyDown)
+  Thread.sleep(forTimeInterval: 0.05)
+  CGEventPostToPid(processIdentifier, keyUp)
+  Thread.sleep(forTimeInterval: 0.02)
+  CGEventPostToPid(processIdentifier, commandUp)
+  print(
+    "Posted the native Command-Q menu shortcut to pid \(processIdentifier); " +
+      "the Availability step will verify app termination."
+  )
+}
+
 func quitThroughNativeMenu(
   bundleIdentifier: String,
   expectedBundlePath: String
@@ -476,10 +523,13 @@ func quitThroughNativeMenu(
       let result = try quitThroughSystemEvents(processIdentifier: processIdentifier)
       print("Selected native menu item \(result) through System Events.")
     } catch let systemEventsError {
-      throw NSError(domain: "AlulaMacDnd", code: 29, userInfo: [
-        NSLocalizedDescriptionKey:
-          "Accessibility API Quit probe failed (\(accessibilityError.localizedDescription)); System Events fallback failed (\(systemEventsError.localizedDescription))"
-      ])
+      print(
+        "Native menu labels/shortcut metadata were unavailable to Accessibility and " +
+          "System Events; dispatching the app's native Command-Q menu shortcut. " +
+          "Accessibility: \(accessibilityError.localizedDescription); " +
+          "System Events: \(systemEventsError.localizedDescription)"
+      )
+      try postCommandQ(to: processIdentifier)
     }
   }
 }

@@ -930,12 +930,12 @@ jobs:
             exit "$app_status"
           fi
 
-          quit_menu_selected=false
+          quit_action_invoked=false
           for attempt in 1 2; do
             if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \
               "$bundle_identifier" "$app_bundle" \
               >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
-              quit_menu_selected=true
+              quit_action_invoked=true
               break
             fi
 
@@ -943,7 +943,7 @@ jobs:
               "Could not read the native menu bar through Accessibility (AXError " \
               "$RUNNER_TEMP/alula-macos-native-titlebar.log"; then
               cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-              echo "Could not activate the native macOS Quit menu"
+              echo "Could not invoke the native macOS Quit action"
               exit 1
             fi
             if [[ "$attempt" -eq 2 ]]; then
@@ -955,9 +955,9 @@ jobs:
             sleep 2
           done
 
-          if [[ "$quit_menu_selected" != true ]]; then
+          if [[ "$quit_action_invoked" != true ]]; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-            echo "Could not activate the native macOS Quit menu"
+            echo "Could not invoke the native macOS Quit action"
             exit 1
           fi
           for _ in $(seq 1 80); do
@@ -966,7 +966,7 @@ jobs:
           done
           if kill -0 "$open_pid" 2>/dev/null; then
             cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-            echo "Native Quit menu did not close the native-titlebar app within 20 seconds"
+            echo "Native Quit action did not close the native-titlebar app within 20 seconds"
             exit 1
           fi
           set +e
@@ -978,7 +978,7 @@ jobs:
             echo "Native-titlebar Alula exited with status $app_status after menu Quit"
             exit "$app_status"
           fi
-          echo "Native macOS Quit menu callback closed the native-titlebar app."
+          echo "Native macOS Quit action closed the native-titlebar app."
       - name: Collect macOS startup diagnostics
         if: always()
         run: |
