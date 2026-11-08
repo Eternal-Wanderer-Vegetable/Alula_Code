@@ -395,6 +395,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(EditorTabActionLocation.right);
   final ValueNotifier<bool> _editorTabCloseActionVisibility =
       ValueNotifier(true);
+  final ValueNotifier<bool> _editorTabActionReserveSpace = ValueNotifier(true);
   final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
       ValueNotifier(null);
   final Set<String> _editorTabPointerInside = <String>{};
@@ -1068,6 +1069,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '显示关闭操作',
       () async => _setEditorTabCloseActionVisibility(
         !_editorTabCloseActionVisibility.value,
+      ),
+    );
+    reg(
+      'workbench.action.toggleEditorTabActionReserveSpace',
+      '查看',
+      '为关闭操作保留空间',
+      () async => _setEditorTabActionReserveSpace(
+        !_editorTabActionReserveSpace.value,
       ),
     );
     for (final sizing in EditorTabSizing.values) {
@@ -3059,6 +3068,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _setEditorTabActionReserveSpace(bool reserveSpace) {
+    if (_editorTabActionReserveSpace.value == reserveSpace) return;
+    setState(() => _editorTabActionReserveSpace.value = reserveSpace);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -3084,6 +3099,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorTabSizing': _editorTabSizing.value.name,
         'editorTabActionLocation': _editorTabActionLocation.value.name,
         'editorTabCloseActionVisibility': _editorTabCloseActionVisibility.value,
+        'editorTabActionReserveSpace': _editorTabActionReserveSpace.value,
         'editorWrapTabs': _editorTabWrap.value,
         'focused': _focusedRegion,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
@@ -3189,6 +3205,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabCloseActionVisibility.value =
         data['editorTabCloseActionVisibility'] is bool
             ? data['editorTabCloseActionVisibility'] as bool
+            : true;
+    _editorTabActionReserveSpace.value =
+        data['editorTabActionReserveSpace'] is bool
+            ? data['editorTabActionReserveSpace'] as bool
             : true;
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     try {
@@ -17357,6 +17377,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabSizing.dispose();
     _editorTabActionLocation.dispose();
     _editorTabCloseActionVisibility.dispose();
+    _editorTabActionReserveSpace.dispose();
     _editorTabHoveredTarget.dispose();
     _editorTabWrap.dispose();
     _commitMessage.dispose();
@@ -17579,6 +17600,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   _editorTabCloseActionVisibility,
                               checkedBuilder: () =>
                                   _editorTabCloseActionVisibility.value,
+                            ),
+                            TitleMenuItem(
+                              '为关闭操作保留空间',
+                              commandId:
+                                  'workbench.action.toggleEditorTabActionReserveSpace',
+                              checkedListenable: _editorTabActionReserveSpace,
+                              checkedBuilder: () =>
+                                  _editorTabActionReserveSpace.value,
                             ),
                             TitleMenuItem.submenu('标签尺寸', children: [
                               TitleMenuItem(
@@ -18445,7 +18474,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
-  double _tabContentWidth(BuildContext context, OpenDoc doc) {
+  bool _tabCloseActionReservesSpace(EditorGroup group, OpenDoc doc) =>
+      _editorTabActionReserveSpace.value ||
+      (_editorTabCloseActionVisibility.value &&
+          (doc.id == group.activeDocId || doc.isDirty));
+
+  double _tabContentWidth(
+    BuildContext context,
+    OpenDoc doc, {
+    required bool reserveActionSpace,
+  }) {
     final label = TextPainter(
       text: TextSpan(
         text: '${doc.name}${doc.isDirty ? " •" : ""}',
@@ -18456,11 +18494,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     )..layout();
     final leftAction =
         _editorTabActionLocation.value == EditorTabActionLocation.left;
-    // Keep the close action and the optional disk-state marker in the measured
-    // width; Code-OSS reserves a narrower leading edge for left-side actions.
+    // Keep the action and its gap in the measured width only when this tab
+    // allocates it; the optional disk-state marker always retains its width.
     return label.width +
         (leftAction ? 10 : 24) +
-        18 +
+        (reserveActionSpace ? 18 : 0) +
         14 +
         (doc.diskState == DiskDocumentState.current ? 0 : 17);
   }
@@ -18486,7 +18524,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 final widths = EditorTabWidthPolicy.layout(
                   contentWidths: [
                     for (final doc in visibleDocs)
-                      _tabContentWidth(context, doc),
+                      _tabContentWidth(
+                        context,
+                        doc,
+                        reserveActionSpace:
+                            _tabCloseActionReservesSpace(g, doc),
+                      ),
                   ],
                   availableWidth: constraints.maxWidth,
                   sizing: sizing,
@@ -18578,6 +18621,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(EditorGroup g, OpenDoc d) {
+    final actionLocation = _editorTabActionLocation.value;
+    final reserveActionSpace = _tabCloseActionReservesSpace(g, d);
     final label = Text(
       '${d.name}${d.isDirty ? " •" : ""}',
       maxLines: 1,
@@ -18610,7 +18655,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       child: Container(
         key: ValueKey('tab-${d.id}'),
-        padding: _editorTabActionLocation.value == EditorTabActionLocation.left
+        padding: actionLocation == EditorTabActionLocation.left
             ? const EdgeInsets.only(right: 10)
             : EdgeInsets.symmetric(
                 horizontal:
@@ -18626,41 +18671,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : const Border(
                   top: BorderSide(color: Colors.transparent, width: 2)),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            if (_editorTabActionLocation.value ==
-                EditorTabActionLocation.left) ...[
-              closeAction,
-              const SizedBox(width: 6),
-            ],
-            if (_editorTabWrap.value ||
-                _editorTabSizing.value != EditorTabSizing.fit)
-              Flexible(child: label)
-            else
-              label,
-            if (d.diskState != DiskDocumentState.current) ...[
-              const SizedBox(width: 4),
-              Icon(
-                switch (d.diskState) {
-                  DiskDocumentState.current => Icons.check,
-                  DiskDocumentState.conflict => Icons.sync_problem_outlined,
-                  DiskDocumentState.missing => Icons.file_present_outlined,
-                  DiskDocumentState.readOnly => Icons.lock_outline,
-                  DiskDocumentState.unavailable => Icons.warning_amber_outlined,
-                },
-                key: ValueKey('tab-disk-state-${d.id}'),
-                size: 13,
-                color: d.diskState == DiskDocumentState.conflict
-                    ? Colors.orangeAccent
-                    : Colors.blueGrey.shade300,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (reserveActionSpace &&
+                    actionLocation == EditorTabActionLocation.left) ...[
+                  closeAction,
+                  const SizedBox(width: 6),
+                ],
+                if (_editorTabWrap.value ||
+                    _editorTabSizing.value != EditorTabSizing.fit)
+                  Flexible(child: label)
+                else
+                  label,
+                if (d.diskState != DiskDocumentState.current) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    switch (d.diskState) {
+                      DiskDocumentState.current => Icons.check,
+                      DiskDocumentState.conflict => Icons.sync_problem_outlined,
+                      DiskDocumentState.missing => Icons.file_present_outlined,
+                      DiskDocumentState.readOnly => Icons.lock_outline,
+                      DiskDocumentState.unavailable =>
+                        Icons.warning_amber_outlined,
+                    },
+                    key: ValueKey('tab-disk-state-${d.id}'),
+                    size: 13,
+                    color: d.diskState == DiskDocumentState.conflict
+                        ? Colors.orangeAccent
+                        : Colors.blueGrey.shade300,
+                  ),
+                ],
+                if (reserveActionSpace &&
+                    actionLocation == EditorTabActionLocation.right) ...[
+                  const SizedBox(width: 6),
+                  closeAction,
+                ],
+              ],
+            ),
+            if (!reserveActionSpace)
+              Positioned(
+                left: actionLocation == EditorTabActionLocation.left
+                    ? 0
+                    : null,
+                right: actionLocation == EditorTabActionLocation.right
+                    ? (d.diskState == DiskDocumentState.current ? 0 : 17)
+                    : null,
+                top: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: closeAction,
+                ),
               ),
-            ],
-            if (_editorTabActionLocation.value ==
-                EditorTabActionLocation.right) ...[
-              const SizedBox(width: 6),
-              closeAction,
-            ],
           ],
         ),
       ),
