@@ -469,6 +469,22 @@ void main() {
         reason: 'the separate rows share the existing editor toolbar',
       );
 
+      await tester.drag(
+        tab(2),
+        tester.getCenter(tab(4)) - tester.getCenter(tab(2)),
+      );
+      await settle('drag a pinned tab over the ordinary row');
+      expect(tabY(2), lessThan(tabY(4)));
+      expect(
+          tester.getTopLeft(tab(3)).dx, lessThan(tester.getTopLeft(tab(2)).dx),
+          reason: 'pinned reorder remains inside the pinned partition');
+      await tester.drag(
+        tab(4),
+        tester.getCenter(tab(2)) - tester.getCenter(tab(4)),
+      );
+      await settle('drag an ordinary tab over the pinned row');
+      expect(tabY(4), greaterThan(tabY(2)));
+
       // A narrow wrapped layout computes each row independently.
       tester.view.physicalSize = const Size(700, 900);
       await tester.pump();
@@ -599,6 +615,40 @@ void main() {
       expect(find.byKey(const ValueKey('editor-tab-row-editor-ordinary')),
           findsNothing);
       expect(tabRows([1, 2, 3, 4, 5, 6]), hasLength(1));
+
+      await tester.tap(find.byTooltip('拆分编辑器').first);
+      await settle('split editor group for pinned-row isolation');
+      final secondStrip =
+          find.byKey(const ValueKey('editor-tab-strip-editor-2'));
+      expect(secondStrip, findsOneWidget);
+      await openCommand('新建文本文件');
+      final secondTabs = find.descendant(
+        of: secondStrip,
+        matching: find.byWidgetPredicate((widget) {
+          final key = widget.key;
+          return key is ValueKey<String> && key.value.startsWith('tab-');
+        }),
+      );
+      final secondTabIds = secondTabs.evaluate().map((element) {
+        final key = element.widget.key! as ValueKey<String>;
+        return int.parse(key.value.substring('tab-'.length));
+      }).toList();
+      expect(secondTabIds, hasLength(2));
+      await setSticky(secondTabIds.last, true);
+      expect(
+        find.byKey(const ValueKey('editor-tab-row-editor-2-pinned')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('editor-tab-row-editor-2-ordinary')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('editor-tab-row-editor-shared')),
+          findsOneWidget,
+          reason: 'each editor group computes its own sticky rows');
+      await setSticky(secondTabIds.last, false);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
     },
   );
 }
