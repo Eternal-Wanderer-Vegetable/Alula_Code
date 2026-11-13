@@ -19618,8 +19618,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 insertAfter = box.globalToLocal(details.offset).dx >=
                     box.size.width / 2;
               }
-              _moveDocAcrossGroups(source, g, draggedId, d.id,
-                  insertAfter: insertAfter);
+              // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；
+              // 未命名文档（上游 Singleton）不可复制，回退为移动。
+              final movingIndex =
+                  source.docs.indexWhere((doc) => doc.id == draggedId);
+              final copyModifier =
+                  defaultTargetPlatform == TargetPlatform.macOS
+                      ? HardwareKeyboard.instance.isAltPressed
+                      : HardwareKeyboard.instance.isControlPressed;
+              if (copyModifier &&
+                  movingIndex >= 0 &&
+                  source.docs[movingIndex].path != null) {
+                _copyDocAcrossGroups(source, g, draggedId, d.id,
+                    insertAfter: insertAfter);
+              } else {
+                _moveDocAcrossGroups(source, g, draggedId, d.id,
+                    insertAfter: insertAfter);
+              }
             },
             builder: (context, _, __) => Draggable<int>(
               data: d.id,
@@ -19782,6 +19797,63 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _focusEditorAfterLayout(target, moving);
+  }
+
+  /// 跨组标签复制拖放（上游 editorDropTarget.isCopyOperation 与
+  /// editorGroupView.doMoveOrCopyEditorAcrossGroups keepCopy 语义）：
+  /// 把源组的文件文档复制为同文档新视图（`OpenDoc.viewOf`）插入目标组，
+  /// 指针位置决定前/后；复制视图落在普通分区（不是 sticky、不是 preview），
+  /// 源组完全不变；目标组已显示同一文档时仅激活既有视图。
+  void _copyDocAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    int draggedId,
+    int targetTabId, {
+    required bool insertAfter,
+  }) {
+    if (identical(source, target)) return;
+    final from = source.docs.indexWhere((d) => d.id == draggedId);
+    if (from < 0) return;
+    final moving = source.docs[from];
+    if (moving.path == null) return;
+    final targetIndex = target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetIndex < 0) return;
+    _flushInput(moving, commitComposition: true);
+
+    final existing = target.docs
+        .where((view) => view.sameDocumentAs(moving))
+        .firstOrNull;
+    if (existing != null) {
+      setState(() {
+        target.activeDocId = existing.id;
+        _noteActiveDocument(target, existing.id);
+        _focusedRegion = target.region;
+        _statusDetail = '已切换到编辑器：${target.region}';
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existing);
+      return;
+    }
+
+    final copy = OpenDoc.viewOf(moving);
+    setState(() {
+      final stickyCount = target.docs
+          .where((doc) => target.stickyDocIds.contains(doc.id))
+          .length;
+      final desiredIndex = insertAfter ? targetIndex + 1 : targetIndex;
+      final insertionIndex =
+          desiredIndex.clamp(stickyCount, target.docs.length).toInt();
+      target.docs.insert(insertionIndex, copy);
+      _normalizeStickyOrder(target);
+      target.activeDocId = copy.id;
+      _noteActiveDocument(target, copy.id);
+      _focusedRegion = target.region;
+      _statusDetail = '已复制编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, copy);
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {
