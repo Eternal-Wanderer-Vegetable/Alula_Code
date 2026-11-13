@@ -2114,3 +2114,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 测试基建发现：三组布局 1600px 窗口下，各组『拆分编辑器』按钮固定位于组右缘内侧 ~130px，窄组标签延伸至按钮下方时 drop 被工具栏 IconButton 截获（命中路径实证）；跨组测试窗口放宽至 2400px。该命中布局为既有行为，未在本切片改动。
 - GitNexus：worktree 索引刷新至 `5558e5e`；`impact _moveDoc` 为 UNKNOWN（索引跳过 >512KiB 的 workbench_page.dart），已按规则以文本搜索核实唯一调用点；编辑前登记的 CRITICAL 影响全部保留未豁免；`detect-changes --scope all` 判 not clean（覆盖限制）。
 - hosted PR CI 与 Linux/Windows/macOS Intel x64 Platform Availability 在推送后运行，结果与包 artifacts 回填 `feature_list.json` 与 docs/03。登记范围/上游语义：`docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md`；实现与验收：`docs/diagnostics/2026-11-14-p05/p05.42-cross-group-tab-drag-move.md`。P05.42 done；P05 仍 in-progress。
+
+## Flutter 3.50 material 弃用与 CI 版本固定（2026-11-14）
+
+- P05.42 实现提交 `ea46295` 的 PR CI `43461120019` 在 Analyze 步骤失败：未固定版本的 `subosito/flutter-action` 拉到 20261111.196.1（Flutter 3.50 线），`package:flutter/material.dart` 触发 136 条 `deprecated_member_use`（上游已声明弃用，迁移目标是独立包 `material_ui`，见 flutter.dev 3.50 发布说明与 issue #181433）。本地 3.47.8 与其他已固定 `flutter-version: 3.47.8` 的 workflow（platform-availability.yml）不受影响。
+- 修复：ci.yml 的 flutter-action 固定 `flutter-version: 3.47.8`，与本地 SDK 及其他 workflow 一致；原 Platform Availability run `43461111416`（该 workflow 本已固定 3.47.8，运行正常）随新推送作废重跑。
+- 后续登记：全仓 `package:flutter/material.dart` → `material_ui` 迁移（136 处导入）+ release.yml / windows-artifact-validation.yml / p00-web-engine-*.yml 同步固定版本，属独立工作项，不在 P05.42 切片内。
