@@ -2120,3 +2120,9 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - P05.42 实现提交 `ea46295` 的 PR CI `43461120019` 在 Analyze 步骤失败：未固定版本的 `subosito/flutter-action` 拉到 20261111.196.1（Flutter 3.50 线），`package:flutter/material.dart` 触发 136 条 `deprecated_member_use`（上游已声明弃用，迁移目标是独立包 `material_ui`，见 flutter.dev 3.50 发布说明与 issue #181433）。本地 3.47.8 与其他已固定 `flutter-version: 3.47.8` 的 workflow（platform-availability.yml）不受影响。
 - 修复：ci.yml 的 flutter-action 固定 `flutter-version: 3.47.8`，与本地 SDK 及其他 workflow 一致；原 Platform Availability run `43461111416`（该 workflow 本已固定 3.47.8，运行正常）随新推送作废重跑。
 - 后续登记：全仓 `package:flutter/material.dart` → `material_ui` 迁移（136 处导入）+ release.yml / windows-artifact-validation.yml / p00-web-engine-*.yml 同步固定版本，属独立工作项，不在 P05.42 切片内。
+
+## P05.42 hosted 门禁全绿与证据回填（2026-11-14）
+
+- PR CI `43462799690` 四项全绿（ci.yml 固定 flutter 3.47.8 后；失败尝试 `43461120019` 与修复过程见上一节）。Platform Availability `43464279815`（workflow_dispatch @ `3b99d9d`）Linux 3m50s / Windows 10m38s / macOS attempt 2 38m40s 全绿；attempt 1 macOS 两个与本切片无关的时序敏感测试失败（watcher 订阅数、git 面板文本），按先例重跑通过并作为时序波动记录。
+- 包 artifacts Linux/Windows/macOS `14058675797` / `14059195873` / `14063417573`；Linux/Windows DnD `14058480492` / `14058507242` 通过；macOS DnD `14062792311` pointer route false / all tests skipped（输入路由限制）；macOS startup `14063123037`；macOS ZIP SHA-256 `ae9844907a8693323c5a95c5859dd1e28b23f2776f0d54297dd2ee5633d99cc2` 与 sidecar 一致、`unzip -tq` 通过。
+- P05.42 / feat-094 / LAY-10b done；P05 / feat-027 仍 in-progress（LAY-10 余项、LAY-11–20、CMD-01–12 按 N.2 逐条推进）。已登记后续项：Flutter 3.50 `material_ui` 导入迁移（136 处）与 release.yml / windows-artifact-validation.yml / p00-web-engine-*.yml 的版本固定。
