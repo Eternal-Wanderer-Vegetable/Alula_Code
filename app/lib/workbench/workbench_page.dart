@@ -404,6 +404,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final ValueNotifier<bool> _pinnedTabsOnSeparateRow = ValueNotifier(false);
   final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
       ValueNotifier(null);
+  // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
+  String? _tabDragSourceRegion;
   final Set<String> _editorTabPointerInside = <String>{};
   final Map<String, Map<int, double>> _editorTabLastWidths = {};
   final Map<String, Map<int, double>> _editorTabHeldWidths = {};
@@ -19596,31 +19598,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           CustomSemanticsAction(label: isSticky ? '取消固定编辑器' : '固定编辑器'): () =>
               _setEditorSticky(g, d, !isSticky),
         },
-        child: DragTarget<int>(
-          onWillAcceptWithDetails: (details) => details.data != d.id,
-          onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
-          builder: (context, _, __) => Draggable<int>(
-            data: d.id,
-            dragAnchorStrategy: pointerDragAnchorStrategy,
-            feedback: Material(
-              type: MaterialType.transparency,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF252932),
-                  borderRadius: BorderRadius.circular(3),
+        child: Builder(
+          builder: (tabContext) => DragTarget<int>(
+            // 同组禁止落到自身；跨组放行同文档 id（激活目标既有视图）。
+            onWillAcceptWithDetails: (details) =>
+                details.data != d.id || _tabDragSourceRegion != g.region,
+            onAcceptWithDetails: (details) {
+              final draggedId = details.data;
+              final sourceRegion = _tabDragSourceRegion;
+              final source =
+                  sourceRegion == null ? null : _groups[sourceRegion];
+              if (source == null || identical(source, g)) {
+                _moveDoc(g, draggedId, d.id);
+                return;
+              }
+              var insertAfter = true;
+              final box = tabContext.findRenderObject();
+              if (box is RenderBox && box.hasSize) {
+                insertAfter = box.globalToLocal(details.offset).dx >=
+                    box.size.width / 2;
+              }
+              _moveDocAcrossGroups(source, g, draggedId, d.id,
+                  insertAfter: insertAfter);
+            },
+            builder: (context, _, __) => Draggable<int>(
+              data: d.id,
+              dragAnchorStrategy: pointerDragAnchorStrategy,
+              onDragStarted: () => _tabDragSourceRegion = g.region,
+              onDragEnd: (_) => _tabDragSourceRegion = null,
+              onDraggableCanceled: (_, __) => _tabDragSourceRegion = null,
+              feedback: Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF252932),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child:
+                      Text(displayLabel, style: const TextStyle(fontSize: 12)),
                 ),
-                child: Text(displayLabel, style: const TextStyle(fontSize: 12)),
               ),
-            ),
-            childWhenDragging: Opacity(opacity: 0.4, child: tab),
-            child: Listener(
-              // 中键关闭（kMiddleMouseButton），不影响左键激活
-              onPointerDown: (e) {
-                if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
-              },
-              child: tab,
+              childWhenDragging: Opacity(opacity: 0.4, child: tab),
+              child: Listener(
+                // 中键关闭（kMiddleMouseButton），不影响左键激活
+                onPointerDown: (e) {
+                  if (e.buttons == kMiddleMouseButton) {
+                    _closeDoc(d.id, group: g);
+                  }
+                },
+                child: tab,
+              ),
             ),
           ),
         ),
@@ -19649,6 +19678,110 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _normalizeStickyOrder(g);
     });
     _scheduleStateSave();
+  }
+
+  /// 跨组标签拖放移动：把源组的文档视图移到目标组 [target] 的 [targetTabId]
+  /// 标签之前/之后（[insertAfter] 由指针相对目标标签中点的位置决定）。
+  /// 移动同一个 OpenDoc 视图，保留 Rust 后端文本、脏标/存档点、撤销历史、
+  /// 选区/光标、滚动与编辑器焦点；sticky 随动，干净的预览标签转为普通标签。
+  /// 目标组已显示同一文档时激活既有视图并移除源组重复视图。
+  void _moveDocAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    int draggedId,
+    int targetTabId, {
+    required bool insertAfter,
+  }) {
+    if (identical(source, target)) return;
+    final from = source.docs.indexWhere((d) => d.id == draggedId);
+    if (from < 0) return;
+    final moving = source.docs[from];
+    final targetIndex = target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetIndex < 0) return;
+    if (target.docs.any((view) => identical(view, moving))) return;
+    _flushInput(moving, commitComposition: true);
+
+    final movingSticky = source.stickyDocIds.contains(moving.id);
+    // 目标组已打开同一文档：激活既有视图并移除源组重复视图。
+    OpenDoc? existingView;
+    for (final view in target.docs) {
+      if (!identical(view, moving) && view.sameDocumentAs(moving)) {
+        existingView = view;
+        break;
+      }
+    }
+    if (existingView != null) {
+      if (movingSticky && !target.stickyDocIds.contains(existingView.id)) {
+        target.stickyDocIds.add(existingView.id);
+        _normalizeStickyOrder(target);
+      }
+      _closeDocNow(source, moving);
+      if (!mounted) return;
+      setState(() {
+        target.activeDocId = existingView!.id;
+        _noteActiveDocument(target, existingView.id);
+        _focusedRegion = target.region;
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existingView);
+      return;
+    }
+
+    final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(
+          () => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+
+    setState(() {
+      source.docs.removeWhere((view) => identical(view, moving));
+      source.stickyDocIds.remove(moving.id);
+      source.recentDocIds.remove(moving.id);
+      if (source.previewDocId == moving.id) source.previewDocId = null;
+      if (source.docs.isNotEmpty && source.activeDocId == moving.id) {
+        source.activeDocId = _mostRecentDocument(source)?.id;
+        _noteActiveDocument(source, source.activeDocId);
+      }
+
+      // 干净的预览标签跨组移动后转为普通标签（不再作为目标组的预览）。
+      final stickyCount = target.docs
+          .where((doc) => target.stickyDocIds.contains(doc.id))
+          .length;
+      final desiredIndex = insertAfter ? targetIndex + 1 : targetIndex;
+      final lowerBound = movingSticky ? 0 : stickyCount;
+      final upperBound = movingSticky ? stickyCount : target.docs.length;
+      final insertionIndex =
+          desiredIndex.clamp(lowerBound, upperBound).toInt();
+      target.docs.insert(insertionIndex, moving);
+      if (movingSticky) target.stickyDocIds.add(moving.id);
+      _normalizeStickyOrder(source);
+      _normalizeStickyOrder(target);
+      target.activeDocId = moving.id;
+      _noteActiveDocument(target, moving.id);
+
+      final sourceFocusKey = _focusKeyFor(source, moving);
+      final targetFocusKey = _focusKeyFor(target, moving);
+      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
+      if (movedFocusNode != null) {
+        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
+        if (oldTargetFocusNode != null &&
+            oldTargetFocusNode != movedFocusNode) {
+          oldTargetFocusNode.dispose();
+        }
+        _editorFocusNodes[targetFocusKey] = movedFocusNode;
+      }
+
+      if (source.docs.isEmpty && removeSourceRegion) {
+        _groups.remove(source.region);
+      }
+      _focusedRegion = target.region;
+      _statusDetail = '已移动编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, moving);
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {
