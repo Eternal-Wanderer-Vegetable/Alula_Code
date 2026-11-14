@@ -2162,3 +2162,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - hosted：P05.46 PA `43546188540` 全绿并回填；P05.47 PA `43548021157` 与 P05.48 CI/PA 运行中，完成后回填证据。
 - LAY-12 按基础设施体量拆分：P05.49 / feat-101 / LAY-12a（desktop_multi_window 依赖、辅助入口分流、移入新窗、关闭恢复入口）已登记 in-progress，基础设施评估见 `docs/diagnostics/2026-11-14-p05/p05.49-auxiliary-window-scope.md`；LAY-12b（组/焦点同步、compact/pin-top、移回、跨窗拖拽）另列。Rust FFI core 每进程一份 → 文档按 path 重开 + journal 文本传递（savepoint/撤销不跨进程，差异登记）。
 - 后续：实现 P05.49（先验证 desktop_multi_window 三平台编译），然后 LAY-13–20、CMD-01–12 逐片推进。
+
+## P05.47 LAY-11a Open Editors 侧栏视图完成（2026-11-14）
+
+- 实现 `a546401`：`_buildOpenEditorsSection` 按组分组树、活动行高亮、脏计数徽章、每行脏安全关闭（复用 `_closeDoc`）、点击/Enter/Space 激活（`_activateOpenEditorsRow` 镜像标签 tap 语义）、右键复制路径（Clipboard.setData + 状态栏提示）、`openEditorsCollapsed` 会话持久化。行标签 RichText 渲染以不改变既有 `find.text` 计数断言持有语义（widget_test/bracket_pair/auto_indent/close_action_visibility 套件原样通过）。
+- 新增 `app/test/open_editors_view_test.dart` 四个 focused tests（分组渲染+脏徽章、点击激活+剪贴板复制、键盘 Enter 激活+脏安全关闭、折叠持久化），先红后绿全绿。
+- 本地 DoD：analyze 0 issues；全量 `+1195 -30` 集合与基线一致；回归集 27/27。
+- hosted：PR CI `43548589301` 全绿；Platform Availability `43548021157` 三平台首跑全绿；包 artifacts `14094652383`/`14095287068`/`14096606182`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `0c25389b8e87f1ca0fc21a6cc296fdcc7b87b2d91c24a44eb174f61325a4ee8a` 与 sidecar 一致。P05.47 done。
