@@ -2202,3 +2202,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/zen_mode_test.dart` 三个 focused tests（toggle 隐藏 chrome+居中限宽+Esc 退出、zen 会话恢复+Esc 退出、命令往返），先红后绿全绿；回归集 46/46。
 - 本地 DoD：analyze 0 issues；全量 `+1214 -30` 集合与基线一致。
 - hosted：PR CI `43571911894` 全绿；Platform Availability `43571908099` 三平台首跑全绿；包 artifacts `14104737408`/`14105176539`/`14106110290`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `d1151eb1a18d9eb8b1bde02ba3c3e07aeaf5db45c1a4eba766a8af6530a6490e` 与 sidecar 一致。P05.51 done。
+
+## P05.52 LAY-15 跨编辑器锁定滚动完成（2026-11-14）
+
+- 实现 `8f8e00b`：`workbench.action.toggleLockedScrolling` + 状态栏锁定图标；锁定时任一编辑器纵向滚动按 offset/maxScrollExtent 比例同步其他组活动文档（`_onLockedScroll` + `_scrollSyncInProgress` 防反馈环）；Hold 模式 Alt 按住临时同步（`HardwareKeyboard.isAltPressed`）；同步监听 build 时幂等挂载（`_ensureScrollSyncListeners`/`_attachScrollSyncListener`）、回调内判断开关；会话 journal `lockedScrolling` 持久化。横向/跨窗口同步延后。
+- 新增 `app/test/locked_scrolling_test.dart` 三个 focused tests（两文档长度不同的比例同步+关闭不同步、Alt-held 无 toggle 同步、状态栏指示+会话持久化），先红后绿全绿；回归集 49/49。
+- 本地 DoD：analyze 0 issues；全量 `+1217 -30` 集合与基线一致。
+- hosted：PR CI `43576370660` / `43576346720` 全绿；Platform Availability `43576366280` 三平台首跑全绿；包 artifacts `14106279486`/`14106965584`/`14106534084`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `eab93b3b8f924177ae73de676691ef5602bc88183c6be007ace83b9f8a34e3ae` 与 sidecar 一致。P05.52 done。
