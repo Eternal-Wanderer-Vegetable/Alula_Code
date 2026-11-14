@@ -2148,3 +2148,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/editor_split_drop_test.dart` 五个 focused tests（右缘水平拆分布局/会话断言、左/上/下方向含父分裂层级与折叠后断言、中心带回归、toggle 修饰键禁用、复制与未命名回退、拆分布局会话恢复），先红后绿全绿。测试基建记录：窄组最后一个标签中心被组工具栏覆盖（P05.42 发现）导致拖动无法启动，改用首个标签；下缘落点需留在可见工作台内（dyFraction 0.95）。
 - 本地 DoD：analyze 0 issues；全量 `+1189 -30` 失败集合与基线一致；cargo 无 Rust 改动。
 - hosted：PR CI `43540285378` 全绿；Platform Availability `43540279332` Linux 4m13s / Windows 6m44s / macOS 40m47s 首跑全绿；包 artifacts `14092160846`/`14091917079`/`14093007643`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `0ada53614f25e2e7b357bef0d830ee2cd0abf6ac61448a93bfd0daac7ede2c32` 与 sidecar 一致。P05.45 done。
+
+## P05.46 LAY-10f 关闭组 MRU 激活完成（2026-11-14）
+
+- 实现 `fb11af1`：`_mostRecentlyActiveRegion({excluding})` 按 `lastActivationOrder` 取最近活动剩余组；`_closeDocNow` 摘除焦点组后落焦 MRU 组（上游 doRemoveEmptyGroup）；`_adjacentEditorRegion` 完全等距时 MRU 最终决胜（保留跨轴中心偏好，上游纯 MRU 排序差异登记）。
+- 新增 `app/test/editor_group_mru_close_test.dart` 两个 focused tests（关闭焦点组落焦 MRU、连续关闭走 MRU 链），先红后绿全绿。
+- 本地 DoD：analyze 0 issues；全量 `+1191 -30` 集合与基线一致；回归集 29/29。
+- hosted：PR CI `43546577773` / `43546193275` 全绿；Platform Availability `43546188540` 三平台首跑全绿；包 artifacts `14093728801`/`14094213629`/`14095217944`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `d92ab967026b03d91e1fccd38ad70cff1f0feac0b1219c0bad33c2bae9677e21` 与 sidecar 一致。P05.46 done。
