@@ -2188,3 +2188,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/auxiliary_window_test.dart` 四个 focused tests（载荷往返、主窗参数非辅助判定、命令驱动创建载荷+源视图移除+会话更新），先红后绿全绿。
 - 本地 DoD：analyze 0 issues；Windows debug 构建通过；全量 `+1201 -31` 唯一基线增量为单跑通过的 merge-editor 时序 flake。
 - hosted：PR CI `43550219144` / `43563107338` 全绿；Platform Availability `43553752557`（依赖）与 `43563101735`（step 2）Linux/Windows/macOS 全绿（依赖首跑 macOS CocoaPods CDN 瞬态故障重跑通过）；包 artifacts `14101012506`/`14101446957`/`14102121611`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `4a0b6faa6e4ce4244d29266e74761714d62668817641a1fb66c15bfe28dcbd35` 与 sidecar 一致。P05.49 done。
+
+## P05.50 LAY-13a Modal 编辑器基础设施完成（2026-11-14）
+
+- 实现 `37d9b0a`：`workbench.editor.useModal`（off/some/all，默认 some）经会话 journal 承载（文件存储类保留为工具类，偏差登记）；`isConfigurationEditorPath` 判定 settings.json/keybindings.json；`ModalEditorDialog`（移回标签/最大化/关闭标题行、Esc、FocusTraversalGroup 焦点陷阱、barrier 外点关闭）；`_openFileByPath` 将配置路径打开路由为脱离 OpenDoc 的模态渲染（正向增量应用、Ctrl+S 经 `_saveDocToPath` 落盘、移回标签同视图入组、关闭即丢弃、同路径模态激活时阻断重路由防预览/固定交互泄漏标签）。
+- 新增 `app/test/modal_editor_test.dart` 七个 focused tests，先红后绿全绿；回归集 43/43。
+- 本地 DoD：analyze 0 issues；全量 `+1211 -30` 集合与基线一致。
+- hosted：PR CI `43565763446` / `43565508836` / `43567482106` 全绿；Platform Availability `43567477181` 三平台首跑全绿；包 artifacts `14102293709`/`14102668093`/`14103767897`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `fd1c96657bd19f4ea2090d3c9bbe0b32c5b14833f04af706a6939af16cbcbdef` 与 sidecar 一致。P05.50 done。LAY-13 剩余 13b（Settings/Keys/Profiles/Trust/Extensions 内容接入）。
