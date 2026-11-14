@@ -2176,3 +2176,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/breadcrumb_picker_test.dart` 三个 focused tests（目录 picker 列子项+选文件打开、符号 picker 键盘选择跳转非零偏移、目录 reveal 展开+分隔符无关节点断言），先红后绿全绿。
 - 本地 DoD：analyze 0 issues；全量 `+1198 -30` 集合与基线一致。
 - hosted：PR CI `43549908069` 全绿；Platform Availability `43549903926` 三平台首跑全绿；包 artifacts `14096110427`/`14096016357`/`14096153694`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `50ad8b313d521b28b0b6727f025c4ebe59a7861071b580a3c2d7c8daff475ef3` 与 sidecar 一致。P05.48 done。LAY-11 整行完成（11a Open Editors + 11b picker）。
+
+## P05.49 step 1 desktop_multi_window 依赖三平台验证（2026-11-14）
+
+- 提交 `ee21419`：新增 `desktop_multi_window ^0.3.1`（LAY-12a 基础设施第一步）；Windows debug 构建本地通过。
+- hosted：PR CI `43553756719` 全绿；Platform Availability `43553752557` Linux 4m28s / Windows 9m15s / macOS 35m18s 全绿（attempt 1 macOS CocoaPods CDN clone 瞬态故障——新依赖首次触发 pod install，按先例重跑通过）。三平台编译前提成立，P05.49 入口分流与「在新窗口打开」实现可继续。
