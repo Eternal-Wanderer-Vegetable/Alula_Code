@@ -18971,7 +18971,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             const Divider(height: 1),
             _buildBreadcrumb(g),
             Expanded(
-              child: Stack(
+              child: Builder(
+                builder: (bodyContext) => DragTarget<int>(
+                  key: ValueKey('editor-body-drop-${g.region}'),
+                  onWillAcceptWithDetails: (_) => true,
+                  onAcceptWithDetails: (details) {
+                    final box =
+                        bodyContext.findRenderObject() as RenderBox?;
+                    _handleBodyAreaDrop(
+                      g,
+                      details.data,
+                      box,
+                      details.offset,
+                    );
+                  },
+                  builder: (context, _, __) => Stack(
                 fit: StackFit.expand,
                 children: [
                   if (mergeSession == null)
@@ -19045,6 +19059,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ),
                 ],
               ),
+              ),
+            ),
             ),
           ],
         ),
@@ -19906,6 +19922,90 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
     } else {
       _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+    }
+  }
+
+  /// 拆分落点区域判定（上游 positionOverlay 编辑器拖动分支）：中心带
+  /// （边缘 10% 以内）返回 null；其余按默认水平偏好：x < 宽/3 → 左、
+  /// x > 2·宽/3 → 右、y < 高/2 → 上、否则下。
+  _EditorGroupMoveDirection? _bodyDropZone(
+    RenderBox? box,
+    Offset globalOffset,
+  ) {
+    if (box == null || !box.hasSize) return null;
+    final local = box.globalToLocal(globalOffset);
+    final width = box.size.width;
+    final height = box.size.height;
+    const edgeFactor = 0.10;
+    if (local.dx > width * edgeFactor &&
+        local.dx < width * (1 - edgeFactor) &&
+        local.dy > height * edgeFactor &&
+        local.dy < height * (1 - edgeFactor)) {
+      return null;
+    }
+    if (local.dx < width / 3) return _EditorGroupMoveDirection.left;
+    if (local.dx > width * 2 / 3) return _EditorGroupMoveDirection.right;
+    if (local.dy < height / 2) return _EditorGroupMoveDirection.up;
+    return _EditorGroupMoveDirection.down;
+  }
+
+  /// 组编辑器正文区域拖放（上游 handleDrop + positionOverlay）：中心带按
+  /// 追加/合并处理（同组无操作）；边缘带按方向建相邻新组并移入/复制入被
+  /// 拖文档（同组边缘落点同样建组）；Windows/Linux Alt、macOS Shift 在
+  /// 拖动期间禁用拆分区域（整组按中心处理）。
+  void _handleBodyAreaDrop(
+    EditorGroup g,
+    int draggedId,
+    RenderBox? bodyBox,
+    Offset globalOffset,
+  ) {
+    final sourceRegion = _tabDragSourceRegion;
+    final source = sourceRegion == null ? null : _groups[sourceRegion];
+    if (source == null) return;
+    final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
+    if (movingIndex < 0) return;
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final copyModifier = isMac
+        ? HardwareKeyboard.instance.isAltPressed
+        : HardwareKeyboard.instance.isControlPressed;
+    final splitToggled = isMac
+        ? HardwareKeyboard.instance.isShiftPressed
+        : HardwareKeyboard.instance.isAltPressed;
+    final copyRequested =
+        copyModifier && source.docs[movingIndex].path != null;
+
+    final zone = splitToggled ? null : _bodyDropZone(bodyBox, globalOffset);
+    if (zone == null) {
+      // 拆分关闭或中心带：追加/合并（同组无操作）。
+      if (identical(source, g)) return;
+      if (copyRequested) {
+        _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+      } else {
+        _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+      }
+      return;
+    }
+
+    // 边缘带：以目标组为基准按方向建相邻新组（上游 addGroup(groupView, direction)）。
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final freshRegion = 'editor-$index';
+    if (!_layout.splitRegion(g.region, freshRegion, zone.axis,
+        insertBefore: zone.insertBefore)) {
+      setState(() => _statusDetail = '拆分失败：区域 ${g.region} 不可拆分');
+      return;
+    }
+    _ensureGroupsFromLayout();
+    final target = _groups[freshRegion];
+    if (target == null) return;
+    if (copyRequested) {
+      _copyDocAcrossGroups(source, target, draggedId, null,
+          insertAfter: false);
+    } else {
+      _moveDocAcrossGroups(source, target, draggedId, null,
+          insertAfter: false);
     }
   }
 
