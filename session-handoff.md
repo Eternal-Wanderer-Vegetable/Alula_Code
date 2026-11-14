@@ -15,13 +15,20 @@ Last Updated: 2026-11-14
 - P05.1–P05.55 已登记完成。最新完成：
   - P05.54 / feat-106 / LAY-17a QuickInput 步骤/返回、item 按钮与焦点恢复（产品提交
     `4c76f44`；本地 + hosted 全绿；报告 `docs/diagnostics/2026-11-14-p05/p05.54-quick-input-steps.md`）。
-  - P05.55 / feat-107 / LAY-17b QuickInput 分组分隔符、多选与描述/校验消息（本地 DoD
-    全绿、6 个 focused tests 先红后绿、全量 `+1233 -30` 与基线逐条一致；hosted 待补；
-    报告 `docs/diagnostics/2026-11-14-p05/p05.55-quick-input-groups-multi-select.md`）。
+  - P05.55 / feat-107 / LAY-17b QuickInput 分组分隔符、多选与描述/校验消息（产品提交
+    `eb2d8c0`；本地 DoD 全绿、6 个 focused tests 先红后绿、全量 `+1233 -30` 与基线逐条
+    一致；hosted 见下；报告
+    `docs/diagnostics/2026-11-14-p05/p05.55-quick-input-groups-multi-select.md`）。
 - P05.54 hosted：PR CI `43597695692`（Rust windows 首跑 `p01_async_completion` LSP exit
   1s 超时 flake，`--failed` 重跑通过）；Platform Availability `43597691956` 三平台首跑
   全绿；包 artifacts Linux `14114643330` / Windows `14115124198` / macOS `14115743698`，
   macOS ZIP SHA-256 `b4843258…a007a6` 与 sidecar 一致。
+- P05.55 hosted：PR CI `43602681711` 四项首跑全绿；Platform Availability `43602675844`
+  Linux/Windows 首跑通过，macOS attempt 1 仅 native-titlebar Quit 探针失败（有 Accessibility
+  菜单无 Quit 项的日志），`--failed` 重跑 attempt 2 全绿；包 artifacts `14117216955` /
+  `14116799270` / `14119581440`，macOS ZIP SHA-256
+  `df061a6d348b4cecc461dcd1bc69626c99b397c44a547155e904ec4d538127ac` 与 sidecar 一致、
+  `tar -tf` 81 项。
 - 门禁（Windows 原生执行；WSL `bash init.sh` 在本机不可用：脚本 CRLF + wrapper）：
   `cargo fmt --check`、`cargo test --workspace`、Clippy `-D warnings`、build_core 等价
   步骤、`flutter analyze`（0 issues）、focused tests 全绿。全量 `flutter test` 的 30 项
@@ -29,8 +36,7 @@ Last Updated: 2026-11-14
 
 ## Blockers
 
-- 无用户手动操作需求。P05.55 的 hosted 证据（PR CI + Platform Availability）待采录后
-  按 P05.54 的做法补登记。
+- 无用户手动操作需求。
 - 工作树里 `app/{linux,macos,windows}/**/generated_plugin_registrant*` 等 7 个文件是
   P05.49 `desktop_multi_window` 依赖后本地构建生成的既有脏改动，不属任何切片，未提交、
   未回滚。
@@ -41,14 +47,12 @@ Last Updated: 2026-11-14
 
 ## Next Session First Step
 
-1. `node .gitnexus/run.cjs status`（当前索引基于本 worktree 的 `3ad2834`；stale 则
-   `analyze --index-only`，必要时 `GITNEXUS_LBUG_MAX_DB_SIZE=34359738368`）。
-2. 采录 P05.55 hosted：查看 PR #3 最新 PR CI 与 Platform Availability 运行，把 run id、
-  artifacts、macOS ZIP SHA-256 与 DnD/startup 结果补进 `docs/03`、`feature_list.json`、
-  `progress.md`、报告与 PR body。
-3. 登记并实现 LAY-17c：item 按钮 hover/focus 显示与键盘可达、输入历史回填、多选产品
-  接线（找到与上游 `canPickMany` 对应的命令后再接）；随后 LAY-18–20、CMD-01–12。
-4. 收尾：更新 `feature_list.json`（status + evidence）、`docs/03`、`progress.md`、本
+1. `node .gitnexus/run.cjs status`：本轮索引基于 `3ad2834` + P05.55 工作树改动重建，
+   提交后已与 HEAD（`eb2d8c0`/后续 docs 提交）不同，开工前先刷新；stale 则
+   `analyze --index-only`，必要时 `GITNEXUS_LBUG_MAX_DB_SIZE=34359738368`。
+2. 登记并实现 LAY-17c：item 按钮 hover/focus 显示与键盘可达、输入历史回填、多选产品
+   接线（找到与上游 `canPickMany` 对应的命令后再接）；随后 LAY-18–20、CMD-01–12。
+3. 收尾：更新 `feature_list.json`（status + evidence）、`docs/03`、`progress.md`、本
    handoff；提交前完整 `detect-changes`，保留既有本地脏改动不混入。
 
 ## Evidence and Files
