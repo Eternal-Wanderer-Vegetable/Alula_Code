@@ -2169,3 +2169,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/open_editors_view_test.dart` 四个 focused tests（分组渲染+脏徽章、点击激活+剪贴板复制、键盘 Enter 激活+脏安全关闭、折叠持久化），先红后绿全绿。
 - 本地 DoD：analyze 0 issues；全量 `+1195 -30` 集合与基线一致；回归集 27/27。
 - hosted：PR CI `43548589301` 全绿；Platform Availability `43548021157` 三平台首跑全绿；包 artifacts `14094652383`/`14095287068`/`14096606182`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `0c25389b8e87f1ca0fc21a6cc296fdcc7b87b2d91c24a44eb174f61325a4ee8a` 与 sidecar 一致。P05.47 done。
+
+## P05.48 LAY-11b 面包屑 picker 完成（2026-11-14）
+
+- 实现 `d6ef4e2`：`_onBreadcrumbSegmentTap` 路由；文件夹段 → 目录 picker（未展开目录现场 `core.workspace.listDir`，选文件 `_openTreeFile` 打开、选文件夹 `_revealInExplorer` 空尾段展开到所选子目录）；文件段 → 符号 picker（点击时直查 `core.lsp.symbols`，选中激活文档并按 startUtf16 `_setDocSelection` 跳转，空态显式「未发现符号」）；picker 打开激活所属组；showMenu 自带方向/Enter/Esc 键盘。
+- 新增 `app/test/breadcrumb_picker_test.dart` 三个 focused tests（目录 picker 列子项+选文件打开、符号 picker 键盘选择跳转非零偏移、目录 reveal 展开+分隔符无关节点断言），先红后绿全绿。
+- 本地 DoD：analyze 0 issues；全量 `+1198 -30` 集合与基线一致。
+- hosted：PR CI `43549908069` 全绿；Platform Availability `43549903926` 三平台首跑全绿；包 artifacts `14096110427`/`14096016357`/`14096153694`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `50ad8b313d521b28b0b6727f025c4ebe59a7861071b580a3c2d7c8daff475ef3` 与 sidecar 一致。P05.48 done。LAY-11 整行完成（11a Open Editors + 11b picker）。
