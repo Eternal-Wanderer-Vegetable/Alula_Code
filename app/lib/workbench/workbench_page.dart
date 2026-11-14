@@ -485,6 +485,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
+  // LAY-15：跨编辑器锁定滚动（比例同步 + Alt 按住临时同步）。
+  bool _lockedScrolling = false;
+  bool _scrollSyncInProgress = false;
+  final Set<int> _scrollSyncListeners = <int>{};
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _zenMode = false;
   bool _zenPreZenSidebarCollapsed = false;
@@ -1144,6 +1148,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '切换禅模式',
       () async => _toggleZenMode(),
+    );
+    reg(
+      'workbench.action.toggleLockedScrolling',
+      '查看',
+      '切换锁定滚动',
+      () async => _toggleLockedScrolling(),
     );
     // Existing toolbar command remains the default right-split action.
     reg(
@@ -3275,6 +3285,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'openEditorsCollapsed': _openEditorsCollapsed,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
+        'lockedScrolling': _lockedScrolling,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
@@ -3397,6 +3408,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
+    _lockedScrolling = data['lockedScrolling'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -12668,6 +12680,69 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  // ---------- 跨编辑器锁定滚动（LAY-15） ----------
+
+  void _toggleLockedScrolling() {
+    setState(() => _lockedScrolling = !_lockedScrolling);
+    if (_lockedScrolling) {
+      _ensureScrollSyncListeners();
+    }
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  /// 为所有已打开文档的滚动控制器挂同步监听（幂等）。编辑器随打开动态创建，
+  /// _buildEditor 渲染时补挂。
+  void _ensureScrollSyncListeners() {
+    for (final doc in _allDocs) {
+      _attachScrollSyncListener(doc);
+    }
+  }
+
+  void _attachScrollSyncListener(OpenDoc doc) {
+    if (_scrollSyncListeners.contains(doc.id)) return;
+    final controller = doc.editorScrollController;
+    if (!controller.hasClients) {
+      // 未布局：延迟到首帧后再挂。
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollSyncListeners.contains(doc.id)) return;
+        _attachScrollSyncListener(doc);
+      });
+      return;
+    }
+    _scrollSyncListeners.add(doc.id);
+    controller.addListener(() => _onLockedScroll(doc, controller));
+  }
+
+  void _onLockedScroll(OpenDoc source, ScrollController controller) {
+    final holdSync = HardwareKeyboard.instance.isAltPressed;
+    if (!_lockedScrolling && !holdSync) return;
+    if (_scrollSyncInProgress) return;
+    if (!controller.hasClients) return;
+    final position = controller.position;
+    if (position.maxScrollExtent <= 0) return;
+    final ratio = position.pixels / position.maxScrollExtent;
+    final sourceGroup = _ownerOfView(source);
+    _scrollSyncInProgress = true;
+    try {
+      for (final group in _groups.values) {
+        if (sourceGroup != null && identical(group, sourceGroup)) continue;
+        final target = group.active;
+        if (target == null || target.id == source.id) continue;
+        final targetController = target.editorScrollController;
+        if (!targetController.hasClients) continue;
+        final targetPosition = targetController.position;
+        if (targetPosition.maxScrollExtent <= 0) continue;
+        targetController.jumpTo(
+          (ratio * targetPosition.maxScrollExtent)
+              .clamp(0.0, targetPosition.maxScrollExtent),
+        );
+      }
+    } finally {
+      _scrollSyncInProgress = false;
+    }
+  }
+
   // ---------- 浮动辅助窗口（LAY-12a） ----------
 
   /// 主窗自身窗口通道：接收辅助窗口的关闭恢复通知。
@@ -18761,6 +18836,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 syncCount: _syncCount,
                 panelCollapsed: _layout.isCollapsed('panel'),
                 onTogglePanel: () => _layout.toggleRegion('panel'),
+                lockedScrolling: _lockedScrolling,
+                onToggleLockedScrolling: _toggleLockedScrolling,
                 encodingLabel: _active?.fileOptions.statusLabel,
                 encodingTooltip: _active?.fileOptions.label,
                 lineEndingLabel: _active?.fileOptions.lineEnding.label,
@@ -20834,6 +20911,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildEditor(EditorGroup g) {
+    // 同步监听常挂（Hold 模式在 toggle 关闭时也需要监听），回调内判断开关。
+    _ensureScrollSyncListeners();
     final active = g.active;
     if (active == null) {
       return Center(
