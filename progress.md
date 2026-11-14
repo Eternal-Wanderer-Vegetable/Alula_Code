@@ -2126,3 +2126,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - PR CI `43462799690` 四项全绿（ci.yml 固定 flutter 3.47.8 后；失败尝试 `43461120019` 与修复过程见上一节）。Platform Availability `43464279815`（workflow_dispatch @ `3b99d9d`）Linux 3m50s / Windows 10m38s / macOS attempt 2 38m40s 全绿；attempt 1 macOS 两个与本切片无关的时序敏感测试失败（watcher 订阅数、git 面板文本），按先例重跑通过并作为时序波动记录。
 - 包 artifacts Linux/Windows/macOS `14058675797` / `14059195873` / `14063417573`；Linux/Windows DnD `14058480492` / `14058507242` 通过；macOS DnD `14062792311` pointer route false / all tests skipped（输入路由限制）；macOS startup `14063123037`；macOS ZIP SHA-256 `ae9844907a8693323c5a95c5859dd1e28b23f2776f0d54297dd2ee5633d99cc2` 与 sidecar 一致、`unzip -tq` 通过。
 - P05.42 / feat-094 / LAY-10b done；P05 / feat-027 仍 in-progress（LAY-10 余项、LAY-11–20、CMD-01–12 按 N.2 逐条推进）。已登记后续项：Flutter 3.50 `material_ui` 导入迁移（136 处）与 release.yml / windows-artifact-validation.yml / p00-web-engine-*.yml 的版本固定。
+
+## P05.43 LAY-10c 跨编辑器组标签复制拖放完成（2026-11-14）
+
+- 实现 `e7a4c71`：drag accept 时按平台读取复制修饰键（Windows/Linux Ctrl、macOS Alt），文件文档（path != null）路由 `_copyDocAcrossGroups`——`OpenDoc.viewOf` 新视图按指针侧插入并 clamp 到普通分区、非 sticky/非 preview、激活复制视图并聚焦目标组、目标已有同文档时去重激活、源组完全不变、未命名文档回退移动（上游 Singleton 语义）；选区经 `viewOf` 随行；垂直滚动携带因新视图激活期既有视口同步重置（逐帧探针登记）而延后为后续项。
+- 新增 `app/test/editor_tab_cross_group_copy_test.dart` 六个 focused tests（session/layout JSON 种子化两组文件文档，不依赖 Explorer 渲染）：双向+指针侧插入+源组不变、同文档去重激活、未命名回退移动+空源组摘除、脏文档共享文本复制+经复制视图撤销、sticky/preview 规则、平台修饰键映射（Windows Alt 移动；macOS Alt 复制/Ctrl 移动）+ 两组同 id 视图会话恢复；先红后绿全绿。
+- 本地 DoD：cargo fmt/clippy/test 绿；analyze 0 issues；全量 `+1180 -30`，失败集合与 P05.42 基线逐条一致；回归集 25/25。日志 `docs/diagnostics/2026-11-14-p05/p05.43-full-flutter.log`。
+- hosted：PR CI `43526231853` 四项全绿；Platform Availability `43526222287` Linux 3m52s / Windows 10m1s / macOS attempt 2 31m13s 全绿（attempt 1 一个 regex replace 时序敏感测试失败，按先例重跑）；包 artifacts `14085701199`/`14085113311`/`14088930789`；Linux/Windows DnD `14085666158`/`14085322762` 通过；macOS DnD `14087679848` pointer route false skip；macOS ZIP SHA-256 `e98450d7664a64aa03a7d2c767266156ae536934086b28932bcf73e2ef98684c` 与 sidecar 一致。
+- P05.43 done；P05 仍 in-progress：LAY-10 余项（拖入空组、拖出建组/窗口、overflow/MRU）、LAY-11–20、CMD-01–12 按 N.2 逐条推进。
