@@ -107,6 +107,7 @@ import 'status_bar.dart';
 import 'title_bar.dart';
 import 'workbench_window_title.dart';
 import 'auxiliary_window.dart';
+import 'modal_editor.dart';
 
 /// 语法 token 颜色（VS Code Dark+ 风格）。
 const Map<String, Color> _tokenColors = {
@@ -484,6 +485,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
+  // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
+  OpenDoc? _modalEditorDoc;
+  ModalEditorUseMode _modalEditorUseMode = ModalEditorUseMode.some;
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -3259,6 +3263,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
+        'workbench.editor.useModal': _modalEditorUseMode.value,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
@@ -3378,6 +3383,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
+    _modalEditorUseMode =
+        ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -12310,6 +12317,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final core = _core;
     if (core == null) return;
+    // LAY-13a：配置编辑器路径按 useModal 偏好以模态对话框打开（不进标签）。
+    if (expectedContent == null &&
+        _findOpenDocumentByPath(path) == null &&
+        !(_modalEditorDoc?.path == path) &&
+        _modalEditorUseMode.opensAutomatically(path)) {
+      await _openModalEditor(core, path);
+      return;
+    }
     DecodedTextFile? prevalidatedFile;
     if (expectedContent != null) {
       final existing = _findOpenDocumentByPath(path);
@@ -12511,6 +12526,108 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
     return best?.region;
+  }
+
+  // ---------- Modal 编辑器（LAY-13a） ----------
+
+  /// 以模态对话框打开配置编辑器路径（脱离视图，不入组；上游 useModal）。
+  Future<void> _openModalEditor(AlulaCore core, String path) async {
+    final doc = await _createDetachedModalDoc(core, path);
+    if (doc == null || !mounted) return;
+    var moveBack = false;
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '模态编辑器屏障',
+      barrierColor: Colors.black54,
+      pageBuilder: (dialogContext, _, __) => ModalEditorDialog(
+        title: doc.name,
+        onMoveBackToTab: () {
+          moveBack = true;
+          Navigator.of(dialogContext).pop();
+        },
+        onClose: () => Navigator.of(dialogContext).pop(),
+        child: CallbackShortcuts(
+          bindings: {
+            SingleActivator(
+              LogicalKeyboardKey.keyS,
+              control: defaultTargetPlatform != TargetPlatform.macOS,
+              meta: defaultTargetPlatform == TargetPlatform.macOS,
+            ): () {
+              final currentPath = doc.path;
+              if (currentPath != null) {
+                unawaited(_saveDocToPath(doc, currentPath));
+              }
+            },
+          },
+          child: RustTextInputField(
+            inputWindow: doc.inputWindow,
+            scrollController: doc.editorScrollController,
+            tabSize: doc.tabSize,
+            semanticsLabel: '${doc.name} 模态编辑器',
+            style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            onDelta: (delta) {
+              try {
+                doc.doc.applyWith(delta.version, delta.operations);
+                if (mounted) setState(() {});
+              } on Object {
+                // 陈旧脱离视图：忽略增量。
+              }
+            },
+            onError: (error) {
+              if (mounted) {
+                setState(() => _statusDetail = '模态编辑错误：$error');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (moveBack) {
+      // 移回标签：同一 OpenDoc 视图入焦点组（状态/选区随行）。
+      setState(() {
+        _modalEditorDoc = null;
+        final group = _focused;
+        group.docs.add(doc);
+        group.activeDocId = doc.id;
+        _noteActiveDocument(group, doc.id);
+      });
+      _syncCommandContext();
+      _scheduleStateSave();
+      return;
+    }
+    _disposeModalEditorDoc(doc);
+  }
+
+  Future<OpenDoc?> _createDetachedModalDoc(AlulaCore core, String path) async {
+    try {
+      final decoded = _readDiskDocument(core, path);
+      final id = _nextDocId++;
+      final coreDoc = core.openDoc(id, decoded.content);
+      coreDoc.setSavepoint(decoded.content);
+      return OpenDoc(
+        id: id,
+        name: _nameOf(path),
+        path: path,
+        doc: coreDoc,
+        fileOptions: decoded.options,
+        savedFileOptions: decoded.options,
+        undoBudget: _undoHistoryBudget,
+      );
+    } on Object catch (error) {
+      setState(() => _statusDetail = '打开配置编辑器失败：$error');
+      return null;
+    }
+  }
+
+  void _disposeModalEditorDoc(OpenDoc doc) {
+    for (final view in _viewsOf(doc).toList(growable: false)) {
+      _flushInput(view, commitComposition: true);
+    }
+    _editorFocusNodes.remove(_focusKeyFor(_focused, doc))?.dispose();
+    doc.disposeView();
+    setState(() => _modalEditorDoc = null);
   }
 
   // ---------- 浮动辅助窗口（LAY-12a） ----------
