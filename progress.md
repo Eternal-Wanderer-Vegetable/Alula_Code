@@ -2195,3 +2195,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/modal_editor_test.dart` 七个 focused tests，先红后绿全绿；回归集 43/43。
 - 本地 DoD：analyze 0 issues；全量 `+1211 -30` 集合与基线一致。
 - hosted：PR CI `43565763446` / `43565508836` / `43567482106` 全绿；Platform Availability `43567477181` 三平台首跑全绿；包 artifacts `14102293709`/`14102668093`/`14103767897`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `fd1c96657bd19f4ea2090d3c9bbe0b32c5b14833f04af706a6939af16cbcbdef` 与 sidecar 一致。P05.50 done。LAY-13 剩余 13b（Settings/Keys/Profiles/Trust/Extensions 内容接入）。
+
+## P05.51 LAY-14 Zen 模式完成（2026-11-14）
+
+- 实现 `93004be`：`workbench.action.toggleZenMode` 命令 + View>外观菜单项（checked 联动）；进入 zen 保存侧栏/面板折叠态后 `setRegionCollapsed` 折叠 activity/sidebar/secondarySidebar/panel，标题栏与状态栏 build 条件隐藏，WorkbenchGrid 包 Center/ConstrainedBox(maxWidth 1100) 仅渲染编辑器组（`_buildZenGrid`）；Scaffold 级 CallbackShortcuts 在 zen 下绑定 Esc 退出并恢复折叠态与标题栏；会话 journal `zenMode` 字段持久化。window zoom（P15）、zenMode.compact 与细粒度 zen 设置（P07）为差异登记。
+- 新增 `app/test/zen_mode_test.dart` 三个 focused tests（toggle 隐藏 chrome+居中限宽+Esc 退出、zen 会话恢复+Esc 退出、命令往返），先红后绿全绿；回归集 46/46。
+- 本地 DoD：analyze 0 issues；全量 `+1214 -30` 集合与基线一致。
+- hosted：PR CI `43571911894` 全绿；Platform Availability `43571908099` 三平台首跑全绿；包 artifacts `14104737408`/`14105176539`/`14106110290`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `d1151eb1a18d9eb8b1bde02ba3c3e07aeaf5db45c1a4eba766a8af6530a6490e` 与 sidecar 一致。P05.51 done。
