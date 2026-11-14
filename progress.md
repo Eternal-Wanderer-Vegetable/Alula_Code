@@ -2134,3 +2134,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 本地 DoD：cargo fmt/clippy/test 绿；analyze 0 issues；全量 `+1180 -30`，失败集合与 P05.42 基线逐条一致；回归集 25/25。日志 `docs/diagnostics/2026-11-14-p05/p05.43-full-flutter.log`。
 - hosted：PR CI `43526231853` 四项全绿；Platform Availability `43526222287` Linux 3m52s / Windows 10m1s / macOS attempt 2 31m13s 全绿（attempt 1 一个 regex replace 时序敏感测试失败，按先例重跑）；包 artifacts `14085701199`/`14085113311`/`14088930789`；Linux/Windows DnD `14085666158`/`14085322762` 通过；macOS DnD `14087679848` pointer route false skip；macOS ZIP SHA-256 `e98450d7664a64aa03a7d2c767266156ae536934086b28932bcf73e2ef98684c` 与 sidecar 一致。
 - P05.43 done；P05 仍 in-progress：LAY-10 余项（拖入空组、拖出建组/窗口、overflow/MRU）、LAY-11–20、CMD-01–12 按 N.2 逐条推进。
+
+## P05.44 LAY-10d 拖入组区域完成（2026-11-14）
+
+- 实现 `0e0c245`：组级 DragTarget 包裹编辑器组面板，拖到非标签区域（标签条空白/面包屑/编辑器正文）经 `_handleGroupAreaDrop` 移入该组末尾并激活/聚焦；复制修饰键复制追加、未命名回退移动、同组区域落点无操作；`_moveDocAcrossGroups`/`_copyDocAcrossGroups` 支持可空 targetTabId 的追加语义。
+- 新增 `app/test/editor_group_area_drop_test.dart` 四个 focused tests（追加+激活+聚焦+会话恢复、同组 no-op+复制追加、未命名回退+空源组摘除、移动/复制去重），先红后绿全绿。
+- 本地 DoD 全绿；全量 `+1183 -31`（唯一增量为本机 widget_test.dart 临时目录清理 flake，单跑通过，errno 145 环境时序问题）。
+- hosted：PR CI `43537435255` 全绿；Platform Availability `43537430640` Linux 3m58s / Windows 9m16s / macOS 40m32s 首跑全绿；包 artifacts `14091010614`/`14090717792`/`14091498775`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `fd66c46ec60d68c562b787049e34f7fa5b9840a3c3394d00c134277237aca265` 与 sidecar 一致。P05.44 done。
