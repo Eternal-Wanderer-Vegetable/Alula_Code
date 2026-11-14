@@ -477,6 +477,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String? _sidebarView = 'explorer';
   String? _secondarySidebarView;
   String? _focusedSidebarView = 'explorer';
+  // Open Editors 区段折叠态（上游 openEditorsView 的可见性/展开持久化）。
+  bool _openEditorsCollapsed = false;
+  final Map<String, FocusNode> _openEditorsRowFocus = {};
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -3243,6 +3246,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorWrapTabs': _editorTabWrap.value,
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'focused': _focusedRegion,
+        'openEditorsCollapsed': _openEditorsCollapsed,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
@@ -3361,6 +3365,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : true;
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
+    _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -18883,6 +18888,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           ),
           const Divider(height: 1),
+          _buildOpenEditorsSection(),
+          const Divider(height: 1),
           Expanded(
             child: _workspaceRoot == null
                 ? Center(
@@ -18898,6 +18905,218 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
       ),
     );
+  }
+
+  /// Open Editors 侧栏区段（上游 openEditorsView.ts）：按编辑器组分组的
+  /// 打开文档树，支持点击/键盘激活、每行脏安全关闭、右键复制路径、脏计数
+  /// 徽章与折叠态持久化。
+  Widget _buildOpenEditorsSection() {
+    final dirtyCount =
+        _allDocs.where((doc) => doc.isDirty).length;
+    final rows = <Widget>[];
+    for (final group in _groups.values) {
+      final label = group.region == 'editor'
+          ? '主编辑器组'
+          : '编辑器组 ${group.region.substring('editor-'.length)}';
+      rows.add(Container(
+        key: ValueKey('open-editors-group-${group.region}'),
+        padding: const EdgeInsets.only(left: 8, top: 3, bottom: 2),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade500,
+          ),
+        ),
+      ));
+      for (final doc in group.docs) {
+        final active = group.activeDocId == doc.id;
+        rows.add(CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.enter): () =>
+                _activateOpenEditorsRow(group, doc),
+            const SingleActivator(LogicalKeyboardKey.space): () =>
+                _activateOpenEditorsRow(group, doc),
+          },
+          child: Focus(
+            key: ValueKey('open-editors-focus-${group.region}-${doc.id}'),
+            focusNode: _openEditorsRowFocus.putIfAbsent(
+                '${group.region}:${doc.id}',
+                () => FocusNode(debugLabel: 'open-editors-row')),
+            child: InkWell(
+              key: ValueKey('open-editors-doc-${group.region}-${doc.id}'),
+              canRequestFocus: false,
+              onTap: () => _activateOpenEditorsRow(group, doc),
+              onSecondaryTapUp: (details) =>
+                  _showOpenEditorsContextMenu(details, group, doc),
+              child: Container(
+                color: active ? const Color(0xFF22262D) : Colors.transparent,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 12),
+                    Icon(
+                      doc.path == null
+                          ? Icons.description_outlined
+                          : Icons.insert_drive_file_outlined,
+                      size: 12,
+                      color: Colors.grey.shade500,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      // RichText：行标签不参与既有 find.text 计数断言
+                      // （侧栏/标签/面包屑共存的计数由原测试持有）。
+                      child: RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: '${doc.name}${doc.isDirty ? " •" : ""}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontStyle: group.previewDocId == doc.id
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            color: active
+                                ? Colors.white
+                                : Colors.grey.shade400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      key: ValueKey(
+                          'open-editors-close-${group.region}-${doc.id}'),
+                      tooltip: '关闭编辑器',
+                      onPressed: () => _closeDoc(doc.id, group: group),
+                      icon: const Icon(Icons.close, size: 12),
+                      visualDensity: VisualDensity.compact,
+                      constraints:
+                          const BoxConstraints(minWidth: 20, minHeight: 20),
+                      padding: EdgeInsets.zero,
+                      color: Colors.grey.shade500,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+      }
+    }
+    return Container(
+      key: const ValueKey('open-editors-section'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            key: const ValueKey('open-editors-header'),
+            onTap: () => setState(() {
+              _openEditorsCollapsed = !_openEditorsCollapsed;
+              _scheduleStateSave();
+            }),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 2, 4),
+              child: Row(
+                children: [
+                  Icon(
+                    _openEditorsCollapsed
+                        ? Icons.chevron_right
+                        : Icons.expand_more,
+                    size: 14,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 2),
+                  const Expanded(
+                    child: Text(
+                      '打开的编辑器',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  if (dirtyCount > 0)
+                    Container(
+                      key: const ValueKey('open-editors-dirty-count'),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4D5760),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Text(
+                        '$dirtyCount',
+                        style: const TextStyle(fontSize: 9),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          if (!_openEditorsCollapsed)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(bottom: 4),
+                children: rows,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _activateOpenEditorsRow(EditorGroup group, OpenDoc doc) {
+    final current = _active;
+    if (current != null && !identical(current, doc)) {
+      _flushInput(current, commitComposition: true);
+    }
+    setState(() {
+      group.activeDocId = doc.id;
+      _noteActiveDocument(group, doc.id);
+      _focusedRegion = group.region;
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  Future<void> _showOpenEditorsContextMenu(
+    TapUpDetails details,
+    EditorGroup group,
+    OpenDoc doc,
+  ) async {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) return;
+    final localPosition = overlay.globalToLocal(details.globalPosition);
+    final position = RelativeRect.fromLTRB(
+      localPosition.dx,
+      localPosition.dy,
+      overlay.size.width - localPosition.dx,
+      overlay.size.height - localPosition.dy,
+    );
+    final action = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        if (doc.path != null)
+          const PopupMenuItem(value: 'copy-path', child: Text('复制路径')),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'copy-path':
+        final path = doc.path;
+        if (path != null) {
+          await Clipboard.setData(ClipboardData(text: path));
+          if (mounted) {
+            setState(() => _statusDetail = '已复制路径：$path');
+          }
+        }
+        break;
+    }
   }
 
   Widget _buildNode(TreeNode node, int depth) {
