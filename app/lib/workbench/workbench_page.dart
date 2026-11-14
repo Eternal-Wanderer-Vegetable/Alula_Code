@@ -26,6 +26,7 @@ import 'package:flutter/gestures.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
 import 'package:flutter/semantics.dart' show CustomSemanticsAction;
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
@@ -105,6 +106,7 @@ import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
 import 'workbench_window_title.dart';
+import 'auxiliary_window.dart';
 
 /// 语法 token 颜色（VS Code Dark+ 风格）。
 const Map<String, Color> _tokenColors = {
@@ -480,6 +482,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // Open Editors 区段折叠态（上游 openEditorsView 的可见性/展开持久化）。
   bool _openEditorsCollapsed = false;
   final Map<String, FocusNode> _openEditorsRowFocus = {};
+  // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
+  final Set<String> _auxiliaryWindowIds = {};
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -570,6 +574,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void initState() {
     super.initState();
+    // LAY-12a：辅助窗口关闭恢复入口（主窗自身窗口通道）。
+    unawaited(_setupAuxiliaryWindowHandlers());
     final saved = widget.layoutStore.tryLoad();
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
@@ -1118,6 +1124,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '编辑器',
       '将活动编辑器移至下方组',
       () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.down),
+    );
+    reg(
+      'workbench.action.moveEditorToNewWindow',
+      '编辑器',
+      '在新窗口打开活动编辑器',
+      () async => _moveFocusedEditorToNewWindow(),
     );
     // Existing toolbar command remains the default right-split action.
     reg(
@@ -12501,6 +12513,101 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return best?.region;
   }
 
+  // ---------- 浮动辅助窗口（LAY-12a） ----------
+
+  /// 主窗自身窗口通道：接收辅助窗口的关闭恢复通知。
+  Future<void> _setupAuxiliaryWindowHandlers() async {
+    try {
+      final self = await WindowController.fromCurrentEngine();
+      self.setWindowMethodHandler((call) async {
+        if (call.method == 'alula_auxiliary_closed') {
+          final args = call.arguments is Map
+              ? Map<String, Object?>.from(call.arguments as Map)
+              : <String, Object?>{};
+          _reopenAuxiliaryDocument(args);
+        }
+        return null;
+      });
+    } on Object {
+      // 平台/测试环境无窗口定义：跳过辅助窗口同步。
+    }
+  }
+
+  /// 将编辑器移入新的辅助窗口：文本随启动载荷传递，源组移除该视图
+  /// （上游移动保留状态，不做脏确认——无数据丢失）。
+  Future<void> _moveEditorToNewWindow(EditorGroup group, OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final payload = AuxiliaryWindowPayload.forDocument(
+      path: doc.path,
+      name: doc.name,
+      text: doc.text,
+      dirty: doc.isDirty,
+    );
+    try {
+      final controller = await WindowController.create(
+        WindowConfiguration(arguments: payload.toArguments()),
+      );
+      _auxiliaryWindowIds.add(controller.windowId);
+      await controller.show();
+    } on Object catch (error) {
+      setState(() => _statusDetail = '辅助窗口创建失败：$error');
+      return;
+    }
+    _closeDocNow(group, doc);
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  Future<void> _moveFocusedEditorToNewWindow() async {
+    final group = _focused;
+    final active = group.active;
+    if (active == null) return;
+    await _moveEditorToNewWindow(group, active);
+  }
+
+  /// 辅助窗口关闭恢复：按 path 重开（干净文件），未命名/脏文本以传递文本
+  /// 恢复为对应脏态文档。
+  void _reopenAuxiliaryDocument(Map<String, Object?> args) {
+    final pathValue = args['path'] as String?;
+    final path = pathValue == null || pathValue.isEmpty ? null : pathValue;
+    final name = args['name'] as String? ?? '未命名';
+    final text = args['text'] as String? ?? '';
+    final dirty = args['dirty'] == true;
+    if (!mounted) return;
+    if (path != null && !dirty) {
+      unawaited(_openFileByPath(path, pinPreview: false));
+      return;
+    }
+    final core = _core;
+    if (core == null) return;
+    try {
+      final decoded = path != null ? _readDiskDocument(core, path) : null;
+      final id = _nextDocId++;
+      final coreDoc = core.openDoc(id, text);
+      coreDoc.setSavepoint(decoded?.content ?? '');
+      final doc = OpenDoc(
+        id: id,
+        name: name,
+        path: path,
+        doc: coreDoc,
+        fileOptions: decoded?.options ?? TextFileOptions.defaults,
+        savedFileOptions: decoded?.options ?? TextFileOptions.defaults,
+        dirtyDisk: dirty && decoded != null && text != decoded.content,
+        undoBudget: _undoHistoryBudget,
+      );
+      setState(() {
+        final group = _focused;
+        group.docs.add(doc);
+        group.activeDocId = id;
+        _noteActiveDocument(group, id);
+      });
+      _syncCommandContext();
+      _scheduleStateSave();
+    } on Object catch (error) {
+      setState(() => _statusDetail = '辅助窗口文档恢复失败：$error');
+    }
+  }
+
   void _normalizeStickyOrder(EditorGroup group) {
     final presentIds = group.docs.map((doc) => doc.id).toSet();
     group.stickyDocIds.removeWhere((id) => !presentIds.contains(id));
@@ -19615,6 +19722,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           child: Text(isSticky ? '取消固定编辑器' : '固定编辑器'),
         ),
         const PopupMenuDivider(),
+        const PopupMenuItem(value: 'new-window', child: Text('在新窗口打开')),
         const PopupMenuItem(value: 'close', child: Text('关闭')),
         const PopupMenuItem(value: 'close-others', child: Text('关闭其他编辑器')),
         const PopupMenuItem(value: 'close-left', child: Text('关闭左侧编辑器')),
@@ -19629,6 +19737,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         break;
       case 'unpin':
         _setEditorSticky(group, doc, false);
+        break;
+      case 'new-window':
+        await _moveEditorToNewWindow(group, doc);
         break;
       case 'close':
         await _closeTabsForAction(

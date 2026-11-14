@@ -10,11 +10,13 @@ library;
 
 import 'dart:io';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'bridge/alula_core.dart';
+import 'workbench/auxiliary_window.dart';
 import 'editor/find_replace_history.dart';
 import 'editor/paste_as.dart';
 import 'workbench/find_history_store.dart';
@@ -26,6 +28,19 @@ import 'workbench/workbench_page.dart';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  // desktop_multi_window 新引擎重跑 main：按载荷分流到辅助编辑器窗口
+  // （LAY-12a）。主引擎定义不可用时按主窗继续。
+  try {
+    final controller = await WindowController.fromCurrentEngine();
+    final payload =
+        AuxiliaryWindowPayload.fromArguments(controller.arguments);
+    if (payload.isAuxiliary) {
+      await runAlulaAuxiliaryEngine(payload.toArguments());
+      return;
+    }
+  } on Object {
+    // 主窗/测试环境：继续常规入口。
+  }
   // 真实入口读取 native/custom chrome，再初始化原生窗口样式。
   // widget 测试直接 pump AlulaApp，不触碰窗口插件通道。
   await windowManager.ensureInitialized();
