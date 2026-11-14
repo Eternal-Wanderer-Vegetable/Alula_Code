@@ -2209,3 +2209,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/locked_scrolling_test.dart` 三个 focused tests（两文档长度不同的比例同步+关闭不同步、Alt-held 无 toggle 同步、状态栏指示+会话持久化），先红后绿全绿；回归集 49/49。
 - 本地 DoD：analyze 0 issues；全量 `+1217 -30` 集合与基线一致。
 - hosted：PR CI `43576370660` / `43576346720` 全绿；Platform Availability `43576366280` 三平台首跑全绿；包 artifacts `14106279486`/`14106965584`/`14106534084`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `eab93b3b8f924177ae73de676691ef5602bc88183c6be007ace83b9f8a34e3ae` 与 sidecar 一致。P05.52 done。
+
+## P05.53 LAY-16a Explorer 树 type navigation 完成（2026-11-14）
+
+- 实现 `84a4ebb`（const 修正 `f4c9e3b`）：文件树 ListView 包 Focus（`explorer-tree-focus` + 显式 `_treeFocusNode`）；树获焦后字母 KeyDown/KeyRepeat 追加 500ms 空闲缓冲，`_visibleExplorerFiles` 前缀命中项经 `_selectExplorerFile` 选中（多选高亮）；修饰键组合忽略交还系统；缓冲 Timer 随 workbench dispose 取消（避免测试 pending-timer 不变量失败）。
+- 新增 `app/test/explorer_type_ahead_test.dart` 三个 focused tests（键入选中首匹配项、缓冲超时重置、修饰键组合忽略），先红后绿全绿；节点键分隔符归一化后缀匹配（P05.48 已知）。测试基建记录：树获焦采用显式 FocusNode 直驱（单击会打开预览并把焦点移给编辑器，不能依赖 InkWell 焦点）。
+- 本地 DoD：analyze 0 issues；全量 `+1220 -30` 集合与基线一致。
+- hosted：PR CI `43581278183` 全绿（早期 `43580532650` 因 CI analyze 缺 const 失败已修）；Platform Availability `43581273926` 三平台首跑全绿；包 artifacts `14108028949`/`14108169539`/`14109472798`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `34036b54cf81bd4e845286de2839072f3ef07c2c51f7ecf3e5547ace3a0e6a3a` 与 sidecar 一致。P05.53 done。
