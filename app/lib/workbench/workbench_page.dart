@@ -18957,7 +18957,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         const SingleActivator(LogicalKeyboardKey.escape): () =>
             unawaited(_hidePasteWidget()),
       },
-      child: Container(
+      child: Builder(
+        builder: (paneContext) => DragTarget<int>(
+          key: ValueKey('editor-drop-area-${g.region}'),
+          onWillAcceptWithDetails: (_) => true,
+          onAcceptWithDetails: (details) =>
+              _handleGroupAreaDrop(g, details.data),
+          builder: (context, _, __) => Container(
         color: const Color(0xFF14161A),
         child: Column(
           children: [
@@ -19042,7 +19048,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           ],
         ),
-      ),
+        ),
+          ),
+        ),
     );
   }
 
@@ -19704,15 +19712,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     EditorGroup source,
     EditorGroup target,
     int draggedId,
-    int targetTabId, {
+    int? targetTabId, {
     required bool insertAfter,
   }) {
     if (identical(source, target)) return;
     final from = source.docs.indexWhere((d) => d.id == draggedId);
     if (from < 0) return;
     final moving = source.docs[from];
-    final targetIndex = target.docs.indexWhere((d) => d.id == targetTabId);
-    if (targetIndex < 0) return;
+    // targetTabId 为空表示落点在组区域：追加到组末尾。
+    final targetIndex = targetTabId == null
+        ? null
+        : target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetTabId != null && (targetIndex == null || targetIndex < 0)) {
+      return;
+    }
     if (target.docs.any((view) => identical(view, moving))) return;
     _flushInput(moving, commitComposition: true);
 
@@ -19764,7 +19777,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final stickyCount = target.docs
           .where((doc) => target.stickyDocIds.contains(doc.id))
           .length;
-      final desiredIndex = insertAfter ? targetIndex + 1 : targetIndex;
+      final int desiredIndex;
+      if (targetTabId == null) {
+        desiredIndex = target.docs.length;
+      } else {
+        final resolved = targetIndex!;
+        desiredIndex = insertAfter ? resolved + 1 : resolved;
+      }
       final lowerBound = movingSticky ? 0 : stickyCount;
       final upperBound = movingSticky ? stickyCount : target.docs.length;
       final insertionIndex =
@@ -19808,7 +19827,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     EditorGroup source,
     EditorGroup target,
     int draggedId,
-    int targetTabId, {
+    int? targetTabId, {
     required bool insertAfter,
   }) {
     if (identical(source, target)) return;
@@ -19816,8 +19835,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (from < 0) return;
     final moving = source.docs[from];
     if (moving.path == null) return;
-    final targetIndex = target.docs.indexWhere((d) => d.id == targetTabId);
-    if (targetIndex < 0) return;
+    final targetIndex = targetTabId == null
+        ? null
+        : target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetTabId != null && (targetIndex == null || targetIndex < 0)) {
+      return;
+    }
     _flushInput(moving, commitComposition: true);
 
     final existing = target.docs
@@ -19841,7 +19864,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final stickyCount = target.docs
           .where((doc) => target.stickyDocIds.contains(doc.id))
           .length;
-      final desiredIndex = insertAfter ? targetIndex + 1 : targetIndex;
+      final int desiredIndex;
+      if (targetTabId == null) {
+        desiredIndex = target.docs.length;
+      } else {
+        final resolved = targetIndex!;
+        desiredIndex = insertAfter ? resolved + 1 : resolved;
+      }
       final insertionIndex =
           desiredIndex.clamp(stickyCount, target.docs.length).toInt();
       target.docs.insert(insertionIndex, copy);
@@ -19854,6 +19883,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _focusEditorAfterLayout(target, copy);
+  }
+
+  /// 组区域拖放落点（上游 editorDropTarget.handleDrop 无 splitDirection 的
+  /// 中心区语义）：把被拖文档移入/复制入目标组末尾并激活目标组；同组区域
+  /// 落点无操作。拆分落点建组属 LAY-10 独立子项。
+  void _handleGroupAreaDrop(EditorGroup g, int draggedId) {
+    final sourceRegion = _tabDragSourceRegion;
+    final source = sourceRegion == null ? null : _groups[sourceRegion];
+    if (source == null || identical(source, g)) return;
+    final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
+    if (movingIndex < 0) return;
+    // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；未命名文档
+    // （上游 Singleton）不可复制，回退为移动。
+    final copyModifier =
+        defaultTargetPlatform == TargetPlatform.macOS
+            ? HardwareKeyboard.instance.isAltPressed
+            : HardwareKeyboard.instance.isControlPressed;
+    final copyRequested =
+        copyModifier && source.docs[movingIndex].path != null;
+    if (copyRequested) {
+      _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+    } else {
+      _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+    }
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {
