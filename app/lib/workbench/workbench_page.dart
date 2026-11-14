@@ -489,6 +489,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _lockedScrolling = false;
   bool _scrollSyncInProgress = false;
   final Set<int> _scrollSyncListeners = <int>{};
+  // LAY-16：Explorer 树 type navigation（键入字符跳转到匹配的可见项）。
+  String _treeTypeAheadBuffer = '';
+  Timer? _treeTypeAheadTimer;
+  final FocusNode _treeFocusNode = FocusNode(debugLabel: 'explorer-tree');
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _zenMode = false;
   bool _zenPreZenSidebarCollapsed = false;
@@ -11882,6 +11886,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _closeDocNow(group, preview, keepEmptyGroup: true);
   }
 
+  // ---------- Explorer 树 type navigation（LAY-16） ----------
+
+  KeyEventResult _onTreeTypeAheadKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final character = event.character;
+    if (character == null || character.isEmpty) {
+      return KeyEventResult.ignored;
+    }
+    if (HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isMetaPressed ||
+        HardwareKeyboard.instance.isAltPressed) {
+      return KeyEventResult.ignored;
+    }
+    final lower = character.toLowerCase();
+    if (lower.codeUnitAt(0) < 0x61 || lower.codeUnitAt(0) > 0x7A) {
+      // 仅字母参与 type navigation（数字/符号交还系统快捷键）。
+      return KeyEventResult.ignored;
+    }
+    _treeTypeAheadBuffer += lower;
+    _treeTypeAheadTimer?.cancel();
+    _treeTypeAheadTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _treeTypeAheadBuffer = '');
+    });
+    final matches = _visibleExplorerFiles()
+        .where((node) =>
+            node.name.toLowerCase().startsWith(_treeTypeAheadBuffer))
+        .toList();
+    if (matches.isEmpty) {
+      // 无匹配：保留缓冲等待后续按键，不移动选择。
+      return KeyEventResult.handled;
+    }
+    final target = matches.first;
+    _selectExplorerFile(target);
+    setState(() {});
+    return KeyEventResult.handled;
+  }
+
   List<TreeNode> _visibleExplorerFiles() {
     final result = <TreeNode>[];
     void visit(List<TreeNode> nodes) {
@@ -18321,6 +18364,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _disposing = true;
     _findGeneration++;
+    _treeTypeAheadTimer?.cancel();
     _cancelRegexFind();
     _cancelRegexReplace();
     _pendingDefinitionPointers.clear();
@@ -19258,9 +19302,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 12)))
-                : ListView.builder(
-                    itemCount: _treeRoots.length,
-                    itemBuilder: (context, i) => _buildNode(_treeRoots[i], 0),
+                : Focus(
+                    key: ValueKey('explorer-tree-focus'),
+                    focusNode: _treeFocusNode,
+                    onKeyEvent: _onTreeTypeAheadKeyEvent,
+                    child: ListView.builder(
+                      itemCount: _treeRoots.length,
+                      itemBuilder: (context, i) =>
+                          _buildNode(_treeRoots[i], 0),
+                    ),
                   ),
           ),
         ],
