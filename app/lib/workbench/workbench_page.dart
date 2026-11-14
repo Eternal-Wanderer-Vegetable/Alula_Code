@@ -3132,7 +3132,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       items: [
         for (final c in _commands.all)
           if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation))
-            QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
+            QuickItem(
+                label: c.label, description: c.shortcut, commandId: c.id),
       ],
       commands: _commands,
     );
@@ -3160,7 +3161,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         for (final path in _workspaceFileIndex())
           QuickItem(
               label: _nameOf(path),
-              detail: path,
+              description: path,
               onRun: () => _openFileByPath(path)),
       ],
     );
@@ -9413,7 +9414,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           for (final option in options)
             QuickItem(
               label: option.label,
-              detail: option.id,
+              description: option.id,
               onRun: () async {
                 if (onSelect != null) {
                   await onSelect(option);
@@ -18271,15 +18272,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       hint: '选择要移动的视图',
       restoreFocus: restore,
       items: [
-        for (final view in activityBarViewOrder)
-          QuickItem(
-            label: _sidebarViewLabel(view),
-            detail: _sidebarViewLocationLabel(
-              _layout.sidebarViewLocation(view),
-            ),
-            onRun: () =>
-                _showMoveSidebarViewDestination(view, restoreFocus: restore),
-          ),
+        // 上游 quick pick 分组：按视图当前所在侧栏分节，空分组不渲染标题。
+        for (final destination in const [
+          primarySidebarViewLocation,
+          secondarySidebarViewLocation,
+        ])
+          if (activityBarViewOrder
+              .any((view) => _layout.sidebarViewLocation(view) == destination))
+            ...[
+              QuickItem(
+                label: _sidebarViewLocationLabel(destination),
+                kind: QuickItemKind.separator,
+              ),
+              for (final view in activityBarViewOrder)
+                if (_layout.sidebarViewLocation(view) == destination)
+                  QuickItem(
+                    label: _sidebarViewLabel(view),
+                    onRun: () => _showMoveSidebarViewDestination(view,
+                        restoreFocus: restore),
+                  ),
+            ],
       ],
     );
   }
@@ -18307,7 +18319,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ])
           QuickItem(
             label: _sidebarViewLocationLabel(destination),
-            detail: destination == current ? '当前位置' : null,
+            description: destination == current ? '当前位置' : null,
             onRun: () async => _moveSidebarView(view, destination),
           ),
       ],

@@ -2226,3 +2226,12 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - `scripts/build_core.ps1` 在 Windows PowerShell 5.1 下因 UTF-8 无 BOM + 中文串解析失败；按脚本内容逐条执行 `cargo build -p editor-core --release` + 拷贝 `app/native/alula_core.dll`，日志 `p05.54-build-core.log`。
 - hosted：PR CI `43597695692` 全绿（Rust windows 首跑 `p01_async_completion` 的 LSP exit 1s 超时 flake，`--failed` 重跑通过并作为结果；Rust ubuntu / Flutter analyze+test / Harness 首跑即绿）；Platform Availability `43597691956` Linux/Windows/macOS Intel x64 build/test/launch/package 首跑全绿；包 artifacts `14114643330`/`14115124198`/`14115743698`；Linux/Windows DnD `14115410019`/`14115233619` 通过 move/copy/external text（21/12 pointer events）；macOS DnD `14116476425` pointer route false + `input-route-unavailable` 明确 skip；macOS startup/native Quit `14115968285` 通过；macOS ZIP SHA-256 `b48432585544126105659193d7ce279213e0fb9c529359fdb8afe5e596a007a6` 与 sidecar 一致且 `tar -tf` 81 项。P05.54 done。
 - 已登记 P05.55 / feat-107 / LAY-17b（QuickInput 分组分隔符、多选、`description`/`detail` 分工与 `validationMessage`；输入历史与 item 按钮 hover/键盘可达为 LAY-17c），范围：`docs/diagnostics/2026-11-14-p05/p05.55-quick-input-groups-multi-select.md`；实现未开始。P05/feat-027 继续 in-progress。
+
+## P05.55 LAY-17b QuickInput 分组分隔符、多选与描述/校验消息完成（2026-11-14）
+
+- 实现：`QuickItemKind {defaultItem, separator}` + `QuickItem.kind/picked/description`；分隔行渲染为分组标题（`qi-separator-<label>`），不进可选列表、方向键与 Enter 跳过、查询时隐藏；构造函数去掉「必须有动作」断言，让分隔行与多选条目成为纯数据行；过滤打分覆盖 label/description/detail，同分按原始索引稳定排序（空查询保持声明顺序，分组不被打散）；`show(canSelectMany: true, onAccept:)` 行首勾选（`qi-check-<label>`）、`picked` 初始态、Space/点击切换、Enter 按视觉顺序回传已选集合（不触发 item 动作）、多选输入框拒绝空格；`description` 同行右侧（命令面板快捷键/快速打开路径/粘贴格式 id 迁入）、`detail` 第二行；`validationMessage` 过滤行下（`quick-input-validation`）；选中行改用 `Scrollable.ensureVisible`（GlobalKey）替代固定行高滚动；「移动视图」第一步按当前侧栏分组且空组不渲染。
+- 新增 `app/test/quick_input_groups_test.dart` 6 个 focused tests，先红后绿全绿（红：`p05.55-focused-red.log` 编译期缺 API；绿：`p05.55-focused-green.log` 6/6）。
+- 回归定向：quick_input_steps + 移动视图 + widget_test + panel/activity/secondary + editor tab + 键位 + 导航 + paste-as 共 96 项，唯一失败为基线既有 `workbench_paste_as_test` 环境用例。
+- 本地 DoD：analyze 0 issues；`dart format` 对 quick_input.dart 与新测试 0 changes；Rust fmt/test/Clippy 全绿（`p05.55-rust-gates.log`）；全量 Flutter `+1233 -30`，失败集合与 `p05.53` 基线逐条一致（Compare-Object 空差集），新增 13 项全部通过。
+- GitNexus：`QuickItem` 与 `_showMoveSidebarViewPickerStep` 均 UNKNOWN（0 resolved callers / 大文件不入图），已用源码检索核对 5 处构造点；detect-changes 7 files/17 symbols/0 processes，risk low。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；LAY-17c（输入历史、item 按钮 hover/键盘可达、多选产品接线）为下一步。
