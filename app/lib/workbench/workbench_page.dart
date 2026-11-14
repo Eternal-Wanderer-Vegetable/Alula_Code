@@ -19303,7 +19303,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 12)))
                 : Focus(
-                    key: ValueKey('explorer-tree-focus'),
+                    key: const ValueKey('explorer-tree-focus'),
                     focusNode: _treeFocusNode,
                     onKeyEvent: _onTreeTypeAheadKeyEvent,
                     child: ListView.builder(
