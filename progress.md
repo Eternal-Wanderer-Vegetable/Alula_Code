@@ -2141,3 +2141,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/editor_group_area_drop_test.dart` 四个 focused tests（追加+激活+聚焦+会话恢复、同组 no-op+复制追加、未命名回退+空源组摘除、移动/复制去重），先红后绿全绿。
 - 本地 DoD 全绿；全量 `+1183 -31`（唯一增量为本机 widget_test.dart 临时目录清理 flake，单跑通过，errno 145 环境时序问题）。
 - hosted：PR CI `43537435255` 全绿；Platform Availability `43537430640` Linux 3m58s / Windows 9m16s / macOS 40m32s 首跑全绿；包 artifacts `14091010614`/`14090717792`/`14091498775`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `fd66c46ec60d68c562b787049e34f7fa5b9840a3c3394d00c134277237aca265` 与 sidecar 一致。P05.44 done。
+
+## P05.45 LAY-10e 拆分落点建组完成（2026-11-14）
+
+- 实现 `b5cb7ab`：body 级 DragTarget 按上游 10% 边缘带与三分/半分判定方向；边缘落点经 `splitRegion` 建相邻新组并把被拖文档移入/复制入（可空 targetTabId 索引 0）；Windows/Linux Alt、macOS Shift 拖动期间禁用拆分区域；空源组摘除、激活、持久化复用既有路径；中心带维持 P05.44 追加。
+- 新增 `app/test/editor_split_drop_test.dart` 五个 focused tests（右缘水平拆分布局/会话断言、左/上/下方向含父分裂层级与折叠后断言、中心带回归、toggle 修饰键禁用、复制与未命名回退、拆分布局会话恢复），先红后绿全绿。测试基建记录：窄组最后一个标签中心被组工具栏覆盖（P05.42 发现）导致拖动无法启动，改用首个标签；下缘落点需留在可见工作台内（dyFraction 0.95）。
+- 本地 DoD：analyze 0 issues；全量 `+1189 -30` 失败集合与基线一致；cargo 无 Rust 改动。
+- hosted：PR CI `43540285378` 全绿；Platform Availability `43540279332` Linux 4m13s / Windows 6m44s / macOS 40m47s 首跑全绿；包 artifacts `14092160846`/`14091917079`/`14093007643`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `0ada53614f25e2e7b357bef0d830ee2cd0abf6ac61448a93bfd0daac7ede2c32` 与 sidecar 一致。P05.45 done。
