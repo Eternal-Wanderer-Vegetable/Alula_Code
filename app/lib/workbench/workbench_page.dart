@@ -19336,7 +19336,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Text(' › ',
                   style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
             GestureDetector(
-              onTap: () => _revealInExplorer(segments, i),
+              onTap: () => _onBreadcrumbSegmentTap(g, segments, i),
               child: Text(
                 segments[i],
                 style: const TextStyle(fontSize: 11),
@@ -19357,6 +19357,166 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
+  void _onBreadcrumbSegmentTap(
+    EditorGroup group,
+    List<String> segments,
+    int index,
+  ) {
+    final node = _findTreeNodeByRelPrefix(segments, index);
+    debugPrint(
+        'BCDBG seg=$segments idx=$index node=${node?.path} children=${node?.children?.length} roots=${_treeRoots.map((n) => n.path).take(6)}');
+    final isLastSegment = index == segments.length - 1;
+    if (isLastSegment) {
+      // 上游 OutlineItem → BreadcrumbsOutlinePicker：文件段列出文档符号。
+      _showBreadcrumbSymbolPicker(group);
+      return;
+    }
+    if (node == null) {
+      _revealInExplorer(segments, index);
+      return;
+    }
+    // 上游 FileItem → BreadcrumbsFilePicker：目录段列出子项（懒加载目录
+    // 由 picker 现场读取磁盘）。
+    _showBreadcrumbFolderPicker(group, segments, index, node);
+  }
+
+  TreeNode? _findTreeNodeByRelPrefix(List<String> segments, int index) {
+    final root = _workspaceRoot;
+    if (root == null) return null;
+    final prefix = segments.sublist(0, index + 1).join('/');
+    final wanted = _normPath('$root/$prefix');
+    TreeNode? find(List<TreeNode> nodes) {
+      for (final node in nodes) {
+        if (_normPath(node.path) == wanted) return node;
+        if (node.children != null) {
+          final hit = find(node.children!);
+          if (hit != null) return hit;
+        }
+      }
+      return null;
+    }
+
+    return find(_treeRoots);
+  }
+
+  Future<void> _showBreadcrumbFolderPicker(
+    EditorGroup group,
+    List<String> segments,
+    int index,
+    TreeNode node,
+  ) async {
+    // 文件树懒加载：未展开的目录现场读取磁盘子项（上游 FileItem picker 同样
+    // 从文件服务读取）。
+    List<TreeNode> children = node.children ?? const <TreeNode>[];
+    if (node.children == null) {
+      try {
+        final entries = _core!.workspace.listDir(node.path);
+        children = [
+          for (final e in entries)
+            TreeNode(
+              name: e['name'] as String,
+              path: e['path'] as String,
+              isDir: (e['is_dir'] as bool?) ?? false,
+            ),
+        ];
+      } on AlulaException {
+        children = const <TreeNode>[];
+      }
+    }
+    final action = await showMenu<String>(
+      context: context,
+      position: _breadcrumbPickerPosition(),
+      items: [
+        if (children.isEmpty)
+          const PopupMenuItem(enabled: false, child: Text('空文件夹')),
+        for (final child in children)
+          PopupMenuItem(
+            value: '${child.isDir ? 'reveal' : 'open'}:${child.path}',
+            child: Text(child.isDir ? '${child.name}/' : child.name),
+          ),
+      ],
+    );
+    if (!mounted || action == null) return;
+    final childPath = action.split(':').sublist(1).join(':');
+    final child = children.where((c) => c.path == childPath).firstOrNull;
+    if (child == null) return;
+    // 上游 _onSelectEvent：picker 交互先激活所属组。
+    setState(() => _focusedRegion = group.region);
+    if (child.isDir) {
+      // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
+      // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
+      _revealInExplorer([...segments, child.name, ''], index + 1);
+    } else {
+      _openTreeFile(child);
+    }
+  }
+
+  Future<void> _showBreadcrumbSymbolPicker(EditorGroup group) async {
+    final doc = group.active;
+    if (doc == null) return;
+    // 点击时直查 LSP（不依赖大纲缓存，任意组即时可用）。
+    final r = doc.doc.core.lsp.symbols(doc.id);
+    final symbols = [
+      for (final s in r?.symbols ?? const <Map<String, Object?>>[])
+        (
+          kind: s['kind'] as String? ?? '',
+          name: s['name'] as String? ?? '',
+          startUtf16: (s['start_utf16'] as num?)?.toInt() ?? 0,
+          line: (s['line'] as num?)?.toInt() ?? 0,
+        )
+    ];
+    final action = await showMenu<String>(
+      context: context,
+      position: _breadcrumbPickerPosition(),
+      items: [
+        if (symbols.isEmpty)
+          const PopupMenuItem(enabled: false, child: Text('未发现符号')),
+        for (final sym in symbols)
+          PopupMenuItem(
+            value: 'symbol:${sym.startUtf16}:${sym.name}',
+            child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
+          ),
+      ],
+    );
+    if (!mounted || action == null) return;
+    // 上游 _onSelectEvent：picker 交互先激活所属组，再 reveal。
+    setState(() {
+      group.activeDocId = doc.id;
+      _noteActiveDocument(group, doc.id);
+      _focusedRegion = group.region;
+    });
+    final parts = action.split(':');
+    final offset = int.tryParse(parts[1]) ?? 0;
+    final activeDoc = group.active;
+    if (activeDoc != null) {
+      _setDocSelection(
+        activeDoc,
+        TextSelection.collapsed(offset: offset),
+      );
+      setState(() {});
+    }
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  RelativeRect _breadcrumbPickerPosition() {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) {
+      return const RelativeRect.fromLTRB(0, 0, 0, 0);
+    }
+    final box = context.findRenderObject();
+    final local = box is RenderBox && box.hasSize
+        ? box.localToGlobal(const Offset(8, 60))
+        : const Offset(8, 60);
+    final position = overlay.globalToLocal(local);
+    return RelativeRect.fromLTRB(
+      position.dx,
+      position.dy,
+      overlay.size.width - position.dx,
+      overlay.size.height - position.dy,
+    );
+  }
+
   void _revealInExplorer(List<String> segments, int index) {
     if (_workspaceRoot == null || index >= segments.length - 1) {
       return; // 最后一段是文件名，无目录可展开
