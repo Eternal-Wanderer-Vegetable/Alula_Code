@@ -18259,10 +18259,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.showRegion(region);
   }
 
-  Future<void> _showMoveSidebarViewPicker() async {
+  Future<void> _showMoveSidebarViewPicker() => _showMoveSidebarViewPickerStep();
+
+  /// 多步 picker 的第一步；[restoreFocus] 是流程外焦点，供第二步返回时沿用，
+  /// 使取消（Esc/屏障）回到打开 flow 前的节点而不是即将销毁的面板输入框。
+  Future<void> _showMoveSidebarViewPickerStep(
+      {FocusNode? restoreFocus}) async {
+    final restore = restoreFocus ?? QuickInput.externalFocus();
     await QuickInput.show(
       context,
       hint: '选择要移动的视图',
+      restoreFocus: restore,
       items: [
         for (final view in activityBarViewOrder)
           QuickItem(
@@ -18270,7 +18277,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             detail: _sidebarViewLocationLabel(
               _layout.sidebarViewLocation(view),
             ),
-            onRun: () => _showMoveSidebarViewDestination(view),
+            onRun: () =>
+                _showMoveSidebarViewDestination(view, restoreFocus: restore),
           ),
       ],
     );
@@ -18282,12 +18290,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await _showMoveSidebarViewDestination(view);
   }
 
-  Future<void> _showMoveSidebarViewDestination(String view) async {
+  Future<void> _showMoveSidebarViewDestination(String view,
+      {FocusNode? restoreFocus}) async {
     if (!mounted) return;
     final current = _layout.sidebarViewLocation(view);
+    final restore = restoreFocus ?? QuickInput.externalFocus();
     await QuickInput.show(
       context,
       hint: '选择视图的新侧栏位置',
+      restoreFocus: restore,
+      onBack: () => _showMoveSidebarViewPickerStep(restoreFocus: restore),
       items: [
         for (final destination in const [
           primarySidebarViewLocation,

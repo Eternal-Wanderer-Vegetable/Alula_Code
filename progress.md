@@ -2216,3 +2216,12 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/explorer_type_ahead_test.dart` 三个 focused tests（键入选中首匹配项、缓冲超时重置、修饰键组合忽略），先红后绿全绿；节点键分隔符归一化后缀匹配（P05.48 已知）。测试基建记录：树获焦采用显式 FocusNode 直驱（单击会打开预览并把焦点移给编辑器，不能依赖 InkWell 焦点）。
 - 本地 DoD：analyze 0 issues；全量 `+1220 -30` 集合与基线一致。
 - hosted：PR CI `43581278183` 全绿（早期 `43580532650` 因 CI analyze 缺 const 失败已修）；Platform Availability `43581273926` 三平台首跑全绿；包 artifacts `14108028949`/`14108169539`/`14109472798`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `34036b54cf81bd4e845286de2839072f3ef07c2c51f7ecf3e5547ace3a0e6a3a` 与 sidecar 一致。P05.53 done。
+
+## P05.54 LAY-17a QuickInput 步骤/返回、item 按钮与焦点恢复完成（2026-11-14）
+
+- 实现：`QuickItemButton`（icon/tooltip/onRun）经 `QuickItem.buttons` 渲染为行尾 14 px `IconButton`（`qi-button-<label>-<index>`），点击标记 handled → pop → 执行按钮动作，不触发候选项 `onRun`；`QuickInput.show` 增加 `onBack`，过滤行头部（输入框左侧同一行）返回箭头 `quick-input-back` pop 后由调用方重显上一步；取消焦点恢复 = `restoreFocus` 显式锚点 / `QuickInput.externalFocus()`（静态 `_panelFocusNodes` 跳过面板输入框）+ `handled` 标记（执行/按钮/返回不恢复）+ `context != null` 挂载校验；`_showMoveSidebarViewPickerStep`/`_showMoveSidebarViewDestination` 接线真实两步 flow 并透传流程外锚点，`workbench.action.moveView` 保持无参注册。
+- 新增 `app/test/quick_input_steps_test.dart` 7 个 focused tests（返回箭头回上一步+输入框保焦+取消回流程前节点、行尾按钮不触发 item、Esc/屏障取消恢复焦点、执行后焦点由候选项决定、工作台两步 flow 仅第二步有箭头/返回后 hint 复原/返回后仍可移动搜索视图并落盘），先红后绿全绿；`p05.54-focused-red.log`（实现前编译期缺 API）与 `p05.54-focused-green.log` 留存。
+- 测试基建：`testWidgets` 内直接 `await Directory.systemTemp.createTemp` 会在 fake-async zone 静默挂起，临时目录/store 必须放 `setUp`/`tearDown`（已记录）。
+- 本地 DoD：analyze 0 issues；`cargo fmt --check`/`cargo test --workspace`/Clippy `-D warnings`/build_core 步骤 exit 0；`dart format` 对 quick_input.dart 与新测试 0 changes，`workbench_page.dart` 与 HEAD 一样非 formatter-clean（未做整文件重排）；全量 Flutter `+1225 -32`（第一轮并发 cargo 时 `+1224 -33`），30 项与基线一致 + 2 项 `workbench_merge_editor_open_test.dart` 轮换时序 flake（单跑通过），无 quick_input/sidebar-view 失败。
+- `scripts/build_core.ps1` 在 Windows PowerShell 5.1 下因 UTF-8 无 BOM + 中文串解析失败；按脚本内容逐条执行 `cargo build -p editor-core --release` + 拷贝 `app/native/alula_core.dll`，日志 `p05.54-build-core.log`。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；LAY-17b（分组/多选/校验/历史、按钮 hover/键盘可达）仍开放。
