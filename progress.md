@@ -2155,3 +2155,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/editor_group_mru_close_test.dart` 两个 focused tests（关闭焦点组落焦 MRU、连续关闭走 MRU 链），先红后绿全绿。
 - 本地 DoD：analyze 0 issues；全量 `+1191 -30` 集合与基线一致；回归集 29/29。
 - hosted：PR CI `43546577773` / `43546193275` 全绿；Platform Availability `43546188540` 三平台首跑全绿；包 artifacts `14093728801`/`14094213629`/`14095217944`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `d92ab967026b03d91e1fccd38ad70cff1f0feac0b1219c0bad33c2bae9677e21` 与 sidecar 一致。P05.46 done。
+
+## P05.47/48 实现推送与 LAY-12 拆分登记（2026-11-14）
+
+- P05.47 Open Editors（`a546401`）与 P05.48 面包屑 picker（`d6ef4e2`）实现并推送；各自全量失败集合与基线一致。P05.48 实现：面包屑文件夹段 → 目录 picker（未展开目录现场 listDir）、选文件打开/选文件夹 reveal 展开；文件段 → 符号 picker（点击时直查 LSP symbols，选中激活并跳转偏移，空态显式）。测试基建记录：窄组最后标签中心被组工具栏覆盖（拖动源改用首个标签）；`_revealInExplorer` 末段守卫假定文件名，picker 传空尾段绕过；explorer 节点键含原生分隔符，测试用后缀匹配。
+- hosted：P05.46 PA `43546188540` 全绿并回填；P05.47 PA `43548021157` 与 P05.48 CI/PA 运行中，完成后回填证据。
+- LAY-12 按基础设施体量拆分：P05.49 / feat-101 / LAY-12a（desktop_multi_window 依赖、辅助入口分流、移入新窗、关闭恢复入口）已登记 in-progress，基础设施评估见 `docs/diagnostics/2026-11-14-p05/p05.49-auxiliary-window-scope.md`；LAY-12b（组/焦点同步、compact/pin-top、移回、跨窗拖拽）另列。Rust FFI core 每进程一份 → 文档按 path 重开 + journal 文本传递（savepoint/撤销不跨进程，差异登记）。
+- 后续：实现 P05.49（先验证 desktop_multi_window 三平台编译），然后 LAY-13–20、CMD-01–12 逐片推进。
