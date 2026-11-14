@@ -12483,6 +12483,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   OpenDoc? _mostRecentNonStickyDocument(EditorGroup group) =>
       _mostRecentDocument(group, nonStickyOnly: true);
 
+  /// 剩余组中最近活动的组（上游 editorPart.mostRecentlyActiveGroups）。
+  String? _mostRecentlyActiveRegion({String? excluding}) {
+    EditorGroup? best;
+    for (final group in _groups.values) {
+      if (group.region == excluding) continue;
+      if (best == null ||
+          group.lastActivationOrder > best.lastActivationOrder) {
+        best = group;
+      }
+    }
+    return best?.region;
+  }
+
   void _normalizeStickyOrder(EditorGroup group) {
     final presentIds = group.docs.map((doc) => doc.id).toSet();
     group.stickyDocIds.removeWhere((id) => !presentIds.contains(id));
@@ -13003,7 +13016,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.removeRegion(owner.region);
         _groups.remove(owner.region);
         if (_focusedRegion == owner.region) {
-          _focusedRegion = _groups.keys.first;
+          // 上游 doRemoveEmptyGroup：激活剩余组中最近活动的组。
+          _focusedRegion = _mostRecentlyActiveRegion(excluding: owner.region) ??
+              _groups.keys.first;
         }
       }
       _scheduleStateSave();
@@ -13144,11 +13159,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ? (source.centerY - candidate.centerY).abs()
           : (source.centerX - candidate.centerX).abs();
 
+      final candidateActivationOrder =
+          _groups[region]?.lastActivationOrder ?? -1;
+      final bestActivationOrder =
+          _groups[bestRegion]?.lastActivationOrder ?? -1;
       final closer = alongGap < bestAlongGap - 1e-9 ||
           (alongGap - bestAlongGap).abs() <= 1e-9 &&
               (acrossGap < bestAcrossGap - 1e-9 ||
                   (acrossGap - bestAcrossGap).abs() <= 1e-9 &&
-                      acrossCenter < bestAcrossCenter - 1e-9);
+                      (acrossCenter < bestAcrossCenter - 1e-9 ||
+                          (acrossCenter - bestAcrossCenter).abs() <= 1e-9 &&
+                              candidateActivationOrder >
+                                  bestActivationOrder));
       if (!closer) continue;
       bestRegion = region;
       bestAlongGap = alongGap;
