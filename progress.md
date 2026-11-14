@@ -2181,3 +2181,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 
 - 提交 `ee21419`：新增 `desktop_multi_window ^0.3.1`（LAY-12a 基础设施第一步）；Windows debug 构建本地通过。
 - hosted：PR CI `43553756719` 全绿；Platform Availability `43553752557` Linux 4m28s / Windows 9m15s / macOS 35m18s 全绿（attempt 1 macOS CocoaPods CDN clone 瞬态故障——新依赖首次触发 pod install，按先例重跑通过）。三平台编译前提成立，P05.49 入口分流与「在新窗口打开」实现可继续。
+
+## P05.49 LAY-12a 浮动辅助窗口完成（2026-11-14）
+
+- 实现 `f29c3bc`（依赖 `ee21419`、三平台验证 `2cf23d9`）：main() 按 `fromCurrentEngine` 载荷分流辅助引擎 → `AuxiliaryEditorApp`（自有 AlulaCore；按 path 从磁盘重开或以 journal 文本呈现脏文档；savepoint 脏语义；RustTextInputField 正向应用增量；标题行脏标 + 关闭按钮经窗口通道通知主窗并销毁自身）。主窗：命令 `workbench.action.moveEditorToNewWindow` + 右键「在新窗口打开」菜单项 + `_moveEditorToNewWindow`（载荷捕获 → 创建 → `_closeDocNow` 源视图移除，状态随窗口迁移无脏确认丢失）；`_setupAuxiliaryWindowHandlers` + `_reopenAuxiliaryDocument` 关闭恢复（干净文件按 path 重开、脏/未命名以传递文本对照磁盘基线恢复脏态）。
+- 新增 `app/test/auxiliary_window_test.dart` 四个 focused tests（载荷往返、主窗参数非辅助判定、命令驱动创建载荷+源视图移除+会话更新），先红后绿全绿。
+- 本地 DoD：analyze 0 issues；Windows debug 构建通过；全量 `+1201 -31` 唯一基线增量为单跑通过的 merge-editor 时序 flake。
+- hosted：PR CI `43550219144` / `43563107338` 全绿；Platform Availability `43553752557`（依赖）与 `43563101735`（step 2）Linux/Windows/macOS 全绿（依赖首跑 macOS CocoaPods CDN 瞬态故障重跑通过）；包 artifacts `14101012506`/`14101446957`/`14102121611`；Linux/Windows DnD 通过；macOS DnD pointer route skip；macOS ZIP SHA-256 `4a0b6faa6e4ce4244d29266e74761714d62668817641a1fb66c15bfe28dcbd35` 与 sidecar 一致。P05.49 done。
