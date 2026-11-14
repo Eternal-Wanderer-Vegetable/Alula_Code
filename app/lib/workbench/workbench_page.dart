@@ -485,6 +485,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
+  // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
+  bool _zenMode = false;
+  bool _zenPreZenSidebarCollapsed = false;
+  bool _zenPreZenPanelCollapsed = false;
   // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
   OpenDoc? _modalEditorDoc;
   ModalEditorUseMode _modalEditorUseMode = ModalEditorUseMode.some;
@@ -1134,6 +1138,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '编辑器',
       '在新窗口打开活动编辑器',
       () async => _moveFocusedEditorToNewWindow(),
+    );
+    reg(
+      'workbench.action.toggleZenMode',
+      '查看',
+      '切换禅模式',
+      () async => _toggleZenMode(),
     );
     // Existing toolbar command remains the default right-split action.
     reg(
@@ -3264,6 +3274,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
         'workbench.editor.useModal': _modalEditorUseMode.value,
+        'zenMode': _zenMode,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
@@ -3385,6 +3396,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
+    _zenMode = data['zenMode'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -12630,6 +12642,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() => _modalEditorDoc = null);
   }
 
+  // ---------- Zen 模式（LAY-14） ----------
+
+  /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
+  /// 再次切换恢复进入前的侧栏/面板折叠态。会话 journal 持久化。
+  void _toggleZenMode() {
+    setState(() {
+      _zenMode = !_zenMode;
+      if (_zenMode) {
+        _zenPreZenSidebarCollapsed = _layout.isCollapsed('sidebar');
+        _zenPreZenPanelCollapsed = _layout.isCollapsed('panel');
+        _layout.setRegionCollapsed('activity', true);
+        _layout.setRegionCollapsed('sidebar', true);
+        _layout.setRegionCollapsed('secondarySidebar', true);
+        _layout.setRegionCollapsed('panel', true);
+      } else {
+        _layout.setRegionCollapsed('activity', false);
+        _layout.setRegionCollapsed('sidebar', _zenPreZenSidebarCollapsed);
+        _layout.setRegionCollapsed(
+            'secondarySidebar', _zenPreZenPanelCollapsed);
+        _layout.setRegionCollapsed('panel', _zenPreZenPanelCollapsed);
+      }
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
   // ---------- 浮动辅助窗口（LAY-12a） ----------
 
   /// 主窗自身窗口通道：接收辅助窗口的关闭恢复通知。
@@ -18327,6 +18365,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
+          // LAY-14：Zen 模式下 Escape 退出（优先于编辑器局部 Esc 绑定）。
+          if (_zenMode)
+            const SingleActivator(LogicalKeyboardKey.escape):
+                _toggleZenMode,
           if (_commands.isEnabled('editor.cursorPageUp'))
             const SingleActivator(LogicalKeyboardKey.pageUp): () =>
                 _runCommand('editor.cursorPageUp'),
@@ -18350,6 +18392,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
           child: Column(
             children: [
+              if (!_zenMode)
               AlulaTitleBar(
                   commands: _commands,
                   windowTitle: windowTitle,
@@ -18419,6 +18462,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         const TitleMenuItem('大纲(&&L)',
                             commandId: 'view.outline'),
                         TitleMenuItem.submenu('外观(&&A)', children: [
+                          TitleMenuItem(
+                            '切换禅模式(&&Z)',
+                            commandId: 'workbench.action.toggleZenMode',
+                            checkedListenable: _layout,
+                            checkedBuilder: () => _zenMode,
+                          ),
                           TitleMenuItem.submenu('活动栏位置(&&A)', children: [
                             TitleMenuItem('侧边(&&D)',
                                 commandId:
@@ -18636,7 +18685,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ),
                   ]),
               Expanded(
-                child: ListenableBuilder(
+                child: _zenMode
+                    ? Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1100),
+                          child: ListenableBuilder(
+                            listenable: _layout,
+                            builder: (context, _) => _buildZenGrid(),
+                          ),
+                        ),
+                      )
+                    : ListenableBuilder(
                   listenable: _layout,
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
@@ -18687,6 +18746,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ),
                 ),
               ),
+              if (!_zenMode)
               AlulaStatusBar(
                 state: _state,
                 detail: _statusDetail,
@@ -19128,6 +19188,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildZenGrid() {
+    return WorkbenchGrid(
+      layout: _layout,
+      builders: {
+        for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
+      },
     );
   }
 
