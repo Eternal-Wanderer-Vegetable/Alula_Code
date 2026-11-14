@@ -218,6 +218,76 @@ void main() {
       );
     });
 
+    test('sticky and editor close commands use the platform defaults', () {
+      final windows = KeybindingSet.load(platform: TargetPlatform.windows);
+      final linux = KeybindingSet.load(platform: TargetPlatform.linux);
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      for (final keybindings in [windows, linux]) {
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+w')!),
+          'workbench.action.closeActiveEditor',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('w')!],
+          )?.commandId,
+          'workbench.action.closeAllEditors',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+w')!],
+          )?.commandId,
+          'workbench.action.closeAllGroups',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('ctrl+shift+enter')!],
+          )?.commandId,
+          'workbench.action.toggleEditorSticky',
+        );
+        expect(
+          keybindings.bindingForSequence(
+            [parseChord('ctrl+k')!, parseChord('u')!],
+          )?.commandId,
+          'workbench.action.closeUnmodifiedEditors',
+        );
+        expect(
+          keybindings.commandForChord(parseChord('ctrl+alt+t')!),
+          'workbench.action.closeOtherEditors',
+        );
+      }
+      expect(mac.commandForChord(parseChord('cmd+w')!),
+          'workbench.action.closeActiveEditor');
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('w')!],
+        )?.commandId,
+        'workbench.action.closeAllEditors',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+w')!],
+        )?.commandId,
+        'workbench.action.closeAllGroups',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('cmd+shift+enter')!],
+        )?.commandId,
+        'workbench.action.toggleEditorSticky',
+      );
+      expect(
+        mac.bindingForSequence(
+          [parseChord('cmd+k')!, parseChord('u')!],
+        )?.commandId,
+        'workbench.action.closeUnmodifiedEditors',
+      );
+      expect(
+        mac.commandForChord(parseChord('cmd+alt+t')!),
+        'workbench.action.closeOtherEditors',
+      );
+    });
+
     test(
         'line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS',
         () {
@@ -422,9 +492,50 @@ void main() {
               v.split(',').where((spec) => parseChord(spec) != null).length);
       expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
+      expect(ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
+    });
+
+    test('New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N', () {
+      for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+        final keys = KeybindingSet.load(platform: platform);
+        expect(
+          keys.commandForChord(parseChord('ctrl+n')!),
+          'workbench.action.files.newUntitledFile',
+        );
+        expect(keys.shortcutFor('workbench.action.files.newUntitledFile'),
+            'Ctrl+N');
+      }
+
+      final mac = KeybindingSet.load(platform: TargetPlatform.macOS);
+      expect(
+        mac.commandForChord(parseChord('cmd+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(mac.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        mac.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Meta+N',
+      );
+    });
+
+    test('New Text File respects a user keybinding override', () {
+      final keys = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson:
+            '[{"key":"ctrl+alt+n","command":"workbench.action.files.newUntitledFile"}]',
+      );
+      expect(
+        keys.commandForChord(parseChord('ctrl+alt+n')!),
+        'workbench.action.files.newUntitledFile',
+      );
+      expect(keys.commandForChord(parseChord('ctrl+n')!), isNull);
+      expect(
+        keys.shortcutFor('workbench.action.files.newUntitledFile'),
+        'Ctrl+Alt+N',
+      );
     });
 
     test('用户追加：新键位生效', () {

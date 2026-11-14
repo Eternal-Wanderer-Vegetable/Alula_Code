@@ -14,6 +14,23 @@ class WorkbenchLayout extends ChangeNotifier {
 
   WbSplit root;
 
+  // Runtime-only presentation state. The layout store serializes [root] only.
+  bool _panelMaximized = false;
+
+  bool get panelMaximized => _panelMaximized;
+
+  /// Updates the transient Panel presentation state without changing the
+  /// persisted split tree. [notify] lets a layout transaction emit one update.
+  void setPanelMaximized(bool maximized, {bool notify = true}) {
+    if (_panelMaximized == maximized) return;
+    _panelMaximized = maximized;
+    if (notify) notifyListeners();
+  }
+
+  /// Notify grid renderers after a layout-tree operation performed outside
+  /// this controller's built-in split/region methods.
+  void notifyLayoutChanged() => notifyListeners();
+
   WbLeaf? leafOf(String region) => root.leafOf(region);
 
   bool isCollapsed(String region) => leafOf(region)?.collapsed ?? false;
@@ -34,6 +51,27 @@ class WorkbenchLayout extends ChangeNotifier {
     return leaf.collapsed;
   }
 
+  /// 设置区域折叠目标态；fixed leaf 可折叠为零尺寸且恢复原固定尺寸。
+  bool setRegionCollapsed(String region, bool collapsed) {
+    final leaf = leafOf(region);
+    if (leaf == null) return false;
+    if (leaf.collapsed == collapsed) return leaf.collapsed;
+
+    if (leaf.isFixed) {
+      // fixed extent 不参与权重恢复；lastWeight 仅保留 collapsed leaf 的
+      // 序列化不变量，恢复时不改固定宽度。
+      leaf.lastWeight = collapsed ? leaf.weight : null;
+    } else if (collapsed) {
+      leaf.lastWeight = leaf.weight;
+    } else {
+      leaf.weight = leaf.lastWeight ?? leaf.weight;
+      leaf.lastWeight = null;
+    }
+    leaf.collapsed = collapsed;
+    notifyListeners();
+    return leaf.collapsed;
+  }
+
   /// 展开区域（已展开则不动）。打开文件夹时唤起侧栏用。
   void showRegion(String region) {
     final leaf = leafOf(region);
@@ -48,20 +86,49 @@ class WorkbenchLayout extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Double-click reset for a rendered sash; successful resets notify the
+  /// grid so persisted layout and dependent projections can be synchronized.
+  bool resetDivider(WbSplit split, int index, double totalExtent) {
+    if (!split.resetDivider(index, totalExtent)) return false;
+    notifyListeners();
+    return true;
+  }
+
   /// 把 [region] 叶子沿 [axis] 分裂出 [newRegion]（W2-2 编辑器组）。
   bool splitRegion(String region, String newRegion, Axis axis,
-      {String? splitName}) {
-    final fresh = root.splitLeaf(region, newRegion, axis, splitName: splitName);
+      {bool insertBefore = false, String? splitName}) {
+    final fresh = root.splitLeaf(
+      region,
+      newRegion,
+      axis,
+      insertBefore: insertBefore,
+      splitName: splitName,
+    );
     if (fresh != null) notifyListeners();
     return fresh != null;
   }
 
   /// 摘除 [region] 叶子（树会自动折叠单子节点 split）。
   bool removeRegion(String region) {
+    final rootIndex = _rootChildIndex(region);
+    if (rootIndex >= 0) {
+      // A workbench root usually has several fixed shell regions in addition
+      // to editor groups. Removing one of those direct children is safe while
+      // at least two root children remain; WbSplit.removeLeaf keeps the more
+      // conservative rule because it has no access to controller metadata.
+      if (root.children.length <= 2) return false;
+      root.children.removeAt(rootIndex);
+      notifyListeners();
+      return true;
+    }
     if (root.removeLeaf(region)) {
       notifyListeners();
       return true;
     }
     return false;
   }
+
+  int _rootChildIndex(String region) => root.children.indexWhere(
+        (child) => child is WbLeaf && child.region == region,
+      );
 }

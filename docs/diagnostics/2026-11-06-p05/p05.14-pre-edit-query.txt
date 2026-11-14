@@ -1,0 +1,200 @@
+
+  GitNexus Query (1.6.12)
+{
+  "processes": [
+    {
+      "id": "proc_133_combine_conflict",
+      "summary": "Combine_conflict → Change",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_134_combine_conflict",
+      "summary": "Combine_conflict → Changes_overlap",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "intra_community",
+      "step_count": 3
+    },
+    {
+      "id": "proc_30_combine_conflict",
+      "summary": "Combine_conflict → Frontier_at",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 5
+    },
+    {
+      "id": "proc_78_combine_conflict",
+      "summary": "Combine_conflict → Charge_work",
+      "priority": 0.102,
+      "symbol_count": 1,
+      "process_type": "cross_community",
+      "step_count": 4
+    }
+  ],
+  "process_symbols": [
+    {
+      "id": "Function:crates/editor-merge/src/combination.rs:combine_conflict",
+      "name": "combine_conflict",
+      "filePath": "crates/editor-merge/src/combination.rs",
+      "startLine": 77,
+      "endLine": 182,
+      "module": "Cluster_234",
+      "process_id": "proc_133_combine_conflict",
+      "step_index": 1
+    }
+  ],
+  "definitions": [
+    {
+      "id": "Function:app/lib/workbench/layout_model.dart:defaultLayout",
+      "name": "defaultLayout",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 240,
+      "endLine": 240,
+      "module": "Workbench"
+    },
+    {
+      "id": "Property:app/lib/workbench/activity_bar.dart:_ActivityBarState._viewFocusNodes",
+      "name": "_viewFocusNodes",
+      "filePath": "app/lib/workbench/activity_bar.dart",
+      "startLine": 56,
+      "endLine": 59
+    },
+    {
+      "id": "Property:app/lib/workbench/activity_bar.dart:_Item.active",
+      "name": "active",
+      "filePath": "app/lib/workbench/activity_bar.dart",
+      "startLine": 238,
+      "endLine": 238
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar.dart",
+      "name": "activity_bar.dart",
+      "filePath": "app/lib/workbench/activity_bar.dart"
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar_size.dart:WorkbenchActivityBarSize.setActivityBarSize#1",
+      "name": "setActivityBarSize",
+      "filePath": "app/lib/workbench/activity_bar_size.dart",
+      "startLine": 14,
+      "endLine": 14,
+      "module": "Workbench"
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar_size.dart",
+      "name": "activity_bar_size.dart",
+      "filePath": "app/lib/workbench/activity_bar_size.dart"
+    },
+    {
+      "id": "Enum:app/lib/workbench/layout_model.dart:ActivityBarLocation",
+      "name": "ActivityBarLocation",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 16,
+      "endLine": 16
+    },
+    {
+      "id": "Enum:app/lib/workbench/layout_model.dart:ActivityBarSize",
+      "name": "ActivityBarSize",
+      "filePath": "app/lib/workbench/layout_model.dart",
+      "startLine": 20,
+      "endLine": 41
+    },
+    {
+      "id": "Function:app/lib/editor/text_drag_drop.dart:planEditorExternalPlainTextDrop",
+      "name": "planEditorExternalPlainTextDrop",
+      "filePath": "app/lib/editor/text_drag_drop.dart",
+      "startLine": 179,
+      "endLine": 187,
+      "module": "Editor"
+    },
+    {
+      "id": "Function:app/lib/editor/text_drag_drop.dart:planSameDocumentTextDrag",
+      "name": "planSameDocumentTextDrag",
+      "filePath": "app/lib/editor/text_drag_drop.dart",
+      "startLine": 249,
+      "endLine": 257,
+      "module": "Editor"
+    },
+    {
+      "id": "File:app/lib/editor/text_drag_drop.dart",
+      "name": "text_drag_drop.dart",
+      "filePath": "app/lib/editor/text_drag_drop.dart"
+    },
+    {
+      "id": "Method:app/lib/workbench/activity_bar_position.dart:WorkbenchActivityBarPosition.setActivityBarLocation#1",
+      "name": "setActivityBarLocation",
+      "filePath": "app/lib/workbench/activity_bar_position.dart",
+      "startLine": 21,
+      "endLine": 21,
+      "module": "Workbench"
+    },
+    {
+      "id": "File:app/lib/workbench/activity_bar_position.dart",
+      "name": "activity_bar_position.dart",
+      "filePath": "app/lib/workbench/activity_bar_position.dart"
+    },
+    {
+      "id": "Function:crates/editor-process/src/lib.rs:SupervisedChild.drop#0",
+      "name": "drop",
+      "filePath": "crates/editor-process/src/lib.rs",
+      "startLine": 354,
+      "endLine": 360,
+      "module": "Cluster_245"
+    },
+    {
+      "id": "Function:crates/editor-process/src/lib.rs:tests.process_tree_orders_descendants_before_parents",
+      "name": "process_tree_orders_descendants_before_parents",
+      "filePath": "crates/editor-process/src/lib.rs",
+      "startLine": 515,
+      "endLine": 520,
+      "module": "Cluster_242"
+    },
+    {
+      "id": "Function:app/test/activity_bar_position_test.dart:_expectHorizontalLocation",
+      "name": "_expectHorizontalLocation",
+      "filePath": "app/test/activity_bar_position_test.dart",
+      "startLine": 200,
+      "endLine": 206,
+      "module": "Test"
+    },
+    {
+      "id": "File:app/test/activity_bar_position_test.dart",
+      "name": "activity_bar_position_test.dart",
+      "filePath": "app/test/activity_bar_position_test.dart"
+    },
+    {
+      "id": "Function:crates/editor-merge/src/combination.rs:change_order",
+      "name": "change_order",
+      "filePath": "crates/editor-merge/src/combination.rs",
+      "startLine": 184,
+      "endLine": 190,
+      "module": "Cluster_234"
+    },
+    {
+      "id": "Function:crates/editor-merge/src/combination.rs:tests.same_position_insertions_follow_input_order",
+      "name": "same_position_insertions_follow_input_order",
+      "filePath": "crates/editor-merge/src/combination.rs",
+      "startLine": 501,
+      "endLine": 514
+    },
+    {
+      "id": "Enum:app/lib/workbench/window_chrome_configuration.dart:WorkbenchTitleBarMode",
+      "name": "WorkbenchTitleBarMode",
+      "filePath": "app/lib/workbench/window_chrome_configuration.dart",
+      "startLine": 4,
+      "endLine": 4
+    }
+  ],
+  "timing": {
+    "vector": 4.5,
+    "bm25": 287.3,
+    "merge": 0.1,
+    "symbol_lookup": 17,
+    "ranking": 0.1,
+    "formatting": 0.1,
+    "wall": 305.5
+  }
+}

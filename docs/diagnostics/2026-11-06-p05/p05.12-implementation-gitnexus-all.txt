@@ -1,0 +1,21 @@
+Changes: 12 files, 23 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Property axis → app/lib/workbench/activity_bar.dart
+  Class _ActivityBarState → app/lib/workbench/activity_bar.dart
+  Class _Item → app/lib/workbench/activity_bar.dart
+  Class WorkbenchActivityBarPosition → app/lib/workbench/activity_bar_position.dart
+  Method setActivityBarLocation → app/lib/workbench/activity_bar_position.dart
+  Function _moveActivityLeaf → app/lib/workbench/activity_bar_position.dart
+  Function _parentOfSplit → app/lib/workbench/activity_bar_position.dart
+  Class WorkbenchLayout → app/lib/workbench/layout_controller.dart
+  Method notifyLayoutChanged → app/lib/workbench/layout_controller.dart
+  Enum ActivityBarLocation → app/lib/workbench/layout_model.dart
+  Class WbSplit → app/lib/workbench/layout_model.dart
+  Constructor WbSplit → app/lib/workbench/layout_model.dart
+  Function _activityBarLocationFromJson → app/lib/workbench/layout_model.dart
+  Function main → app/test/activity_bar_position_integration_test.dart
+... and 8 more

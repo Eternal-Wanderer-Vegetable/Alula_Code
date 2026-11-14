@@ -1,0 +1,82 @@
+
+  GitNexus Context (1.6.12)
+{
+  "status": "found",
+  "symbol": {
+    "uid": "Class:app/lib/workbench/activity_bar.dart:ActivityBar",
+    "name": "ActivityBar",
+    "kind": "Class",
+    "filePath": "app/lib/workbench/activity_bar.dart",
+    "startLine": 11,
+    "endLine": 36
+  },
+  "epistemic": "exact",
+  "incoming": {
+    "calls": [
+      {
+        "uid": "Function:app/test/activity_bar_test.dart:_activityBarApp",
+        "name": "_activityBarApp",
+        "filePath": "app/test/activity_bar_test.dart"
+      }
+    ],
+    "imports": [
+      {
+        "uid": "File:app/test/activity_bar_position_integration_test.dart",
+        "name": "activity_bar_position_integration_test.dart",
+        "filePath": "app/test/activity_bar_position_integration_test.dart"
+      },
+      {
+        "uid": "File:app/test/activity_bar_size_integration_test.dart",
+        "name": "activity_bar_size_integration_test.dart",
+        "filePath": "app/test/activity_bar_size_integration_test.dart"
+      },
+      {
+        "uid": "File:app/test/activity_bar_test.dart",
+        "name": "activity_bar_test.dart",
+        "filePath": "app/test/activity_bar_test.dart"
+      }
+    ]
+  },
+  "outgoing": {
+    "has_method": [
+      {
+        "uid": "Method:app/lib/workbench/activity_bar.dart:ActivityBar.createState#0",
+        "name": "createState",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      }
+    ],
+    "has_property": [
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.activeView",
+        "name": "activeView",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.axis",
+        "name": "axis",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.onSelectView",
+        "name": "onSelectView",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.onSizeChanged",
+        "name": "onSizeChanged",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.sidebarCollapsed",
+        "name": "sidebarCollapsed",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      },
+      {
+        "uid": "Property:app/lib/workbench/activity_bar.dart:ActivityBar.size",
+        "name": "size",
+        "filePath": "app/lib/workbench/activity_bar.dart"
+      }
+    ]
+  },
+  "processes": []
+}

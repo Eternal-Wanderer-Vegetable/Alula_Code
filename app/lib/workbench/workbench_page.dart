@@ -25,7 +25,10 @@ import 'package:flutter/gestures.dart'
         PointerUpEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderBox, RenderEditable;
+import 'package:flutter/semantics.dart' show CustomSemanticsAction;
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as p;
 
 import '../bridge/alula_core.dart';
 import '../editor/bulk_edit_preview_surface.dart';
@@ -71,16 +74,40 @@ import '../git/git_diff_patch_view.dart';
 import '../search/search_service.dart';
 import '../workspace/workspace_watcher.dart';
 import 'activity_bar.dart';
+import 'activity_bar_badges.dart';
+import 'activity_bar_global_actions.dart';
+import 'activity_bar_order.dart';
+import 'activity_bar_pins.dart';
+import 'activity_bar_position.dart';
+import 'activity_bar_size.dart';
 import 'commands.dart';
+import 'editor_tab_action_location.dart';
+import 'editor_tab_close_policy.dart';
+import 'editor_tab_close_action.dart';
+import 'editor_tab_file_icon.dart';
+import 'editor_tab_label.dart';
+import 'editor_tab_mode.dart';
+import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'keybindings.dart';
+import 'layout_model.dart';
 import 'layout_store.dart';
+import 'panel_alignment.dart';
+import 'panel_maximize.dart';
+import 'panel_position.dart';
 import 'quick_input.dart';
+import 'secondary_sidebar_empty_state.dart';
+import 'secondary_sidebar_layout.dart';
+import 'sidebar_position.dart';
+import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
 import 'title_bar.dart';
+import 'workbench_window_title.dart';
+import 'auxiliary_window.dart';
+import 'modal_editor.dart';
 
 /// 语法 token 颜色（VS Code Dark+ 风格）。
 const Map<String, Color> _tokenColors = {
@@ -326,6 +353,30 @@ final RegExp _rustIdentifierPattern = RegExp(
   unicode: true,
 );
 
+enum _EditorGroupMoveDirection {
+  left(Axis.horizontal, true),
+  right(Axis.horizontal, false),
+  up(Axis.vertical, true),
+  down(Axis.vertical, false);
+
+  const _EditorGroupMoveDirection(this.axis, this.insertBefore);
+
+  final Axis axis;
+  final bool insertBefore;
+}
+
+class _EditorGroupBounds {
+  const _EditorGroupBounds(this.left, this.top, this.right, this.bottom);
+
+  final double left;
+  final double top;
+  final double right;
+  final double bottom;
+
+  double get centerX => (left + right) / 2;
+  double get centerY => (top + bottom) / 2;
+}
+
 class _WorkbenchPageState extends State<WorkbenchPage>
     with SingleTickerProviderStateMixin {
   static const _untitledId = 1;
@@ -335,6 +386,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   static const _selectForCompareCommandId = 'selectForCompare';
   static const _compareFilesCommandId = 'compareFiles';
   static const _compareSelectedExplorerFilesAction = 'explorer.compareSelected';
+  static const _explorerDoubleClickTimeout = Duration(milliseconds: 500);
 
   AlulaCore? _core;
   String _loadError = '';
@@ -343,6 +395,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 工作台布局（分割树）。启动时尝试从磁盘恢复（W1-4）。
   WorkbenchLayout _layout = WorkbenchLayout();
   final CommandService _commands = CommandService();
+  final ValueNotifier<EditorTabMode> _editorTabMode =
+      ValueNotifier(EditorTabMode.multiple);
+  final ValueNotifier<EditorTabSizing> _editorTabSizing =
+      ValueNotifier(EditorTabSizing.fit);
+  final ValueNotifier<EditorTabActionLocation> _editorTabActionLocation =
+      ValueNotifier(EditorTabActionLocation.right);
+  final ValueNotifier<bool> _editorTabCloseActionVisibility =
+      ValueNotifier(true);
+  final ValueNotifier<bool> _editorTabActionReserveSpace = ValueNotifier(true);
+  final ValueNotifier<bool> _pinnedTabsOnSeparateRow = ValueNotifier(false);
+  final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
+      ValueNotifier(null);
+  // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
+  String? _tabDragSourceRegion;
+  final Set<String> _editorTabPointerInside = <String>{};
+  final Map<String, Map<int, double>> _editorTabLastWidths = {};
+  final Map<String, Map<int, double>> _editorTabHeldWidths = {};
+  final ValueNotifier<bool> _editorTabWrap = ValueNotifier(false);
   final GitDiffPatchNavigationController _gitDiffNavigation =
       GitDiffPatchNavigationController();
 
@@ -352,6 +422,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _stateSaveTimer;
   Timer? _findHistoryTimer;
   Timer? _resourceTimer;
+  String? _lastExplorerClickPath;
+  Stopwatch? _lastExplorerClickClock;
+  String? _pendingExplorerPreviewPinPath;
+  final Map<String, int> _explorerPreviewOpenCounts = <String, int>{};
   AlulaResourceStatus? _resourceStatus;
 
   // ---------- 撤销/重做（每文档独立，共享有界历史预算） ----------
@@ -361,6 +435,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Set<int> _rejectedCrossDocumentMoveTokens = <int>{};
   final Set<int> _mergeCloseInProgress = <int>{};
   final Set<int> _mergeAcceptInProgress = <int>{};
+  final Set<Object> _editorCloseInProgress = <Object>{};
 
   // ---------- 查找/替换 ----------
   bool _findVisible = false;
@@ -402,7 +477,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Timer? _outlineTimer;
 
   // ---------- Git 面板（feat-git，CLI 封装） ----------
-  String _sidebarView = 'explorer';
+  String? _sidebarView = 'explorer';
+  String? _secondarySidebarView;
+  String? _focusedSidebarView = 'explorer';
+  // Open Editors 区段折叠态（上游 openEditorsView 的可见性/展开持久化）。
+  bool _openEditorsCollapsed = false;
+  final Map<String, FocusNode> _openEditorsRowFocus = {};
+  // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
+  final Set<String> _auxiliaryWindowIds = {};
+  // LAY-15：跨编辑器锁定滚动（比例同步 + Alt 按住临时同步）。
+  bool _lockedScrolling = false;
+  bool _scrollSyncInProgress = false;
+  final Set<int> _scrollSyncListeners = <int>{};
+  // LAY-16：Explorer 树 type navigation（键入字符跳转到匹配的可见项）。
+  String _treeTypeAheadBuffer = '';
+  Timer? _treeTypeAheadTimer;
+  final FocusNode _treeFocusNode = FocusNode(debugLabel: 'explorer-tree');
+  // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
+  bool _zenMode = false;
+  bool _zenPreZenSidebarCollapsed = false;
+  bool _zenPreZenPanelCollapsed = false;
+  // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
+  OpenDoc? _modalEditorDoc;
+  ModalEditorUseMode _modalEditorUseMode = ModalEditorUseMode.some;
   GitCli? _git;
   bool _gitReady = false;
   String _gitBranch = '';
@@ -443,6 +540,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
+  int _editorActivationClock = 0;
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
@@ -492,11 +590,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void initState() {
     super.initState();
+    // LAY-12a：辅助窗口关闭恢复入口（主窗自身窗口通道）。
+    unawaited(_setupAuxiliaryWindowHandlers());
     final saved = widget.layoutStore.tryLoad();
     if (saved != null) {
       _layout = WorkbenchLayout(root: saved);
     }
+    _sidebarView = _layout.primarySidebarView;
+    _secondarySidebarView = _layout.secondarySidebarView;
+    _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
     _layout.addListener(_scheduleStateSave);
+    _layout.addListener(_syncPanelMaximizationCommandContext);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _registerCommands();
@@ -531,6 +635,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ));
     }
 
+    reg(
+      'workbench.action.files.newUntitledFile',
+      '文件',
+      '新建文本文件',
+      _newUntitledFile,
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.files.newUntitledFile',
+      ),
+    );
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
     reg(
       '_open.mergeEditor',
@@ -607,9 +720,113 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'mergeEditorActive',
     );
     reg('file.save', '文件', '保存', _saveActive,
-        shortcut: 'Ctrl+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+S', when: 'editorActive', enablement: 'editorActive');
+    reg(
+      'workbench.action.pinEditor',
+      '编辑器',
+      '固定编辑器',
+      () async => _setActiveEditorSticky(true),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.unpinEditor',
+      '编辑器',
+      '取消固定编辑器',
+      () async => _setActiveEditorSticky(false),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.toggleEditorSticky',
+      '编辑器',
+      '切换编辑器固定状态',
+      () async => _toggleActiveEditorSticky(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleEditorSticky',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeActiveEditor',
+      '编辑器',
+      '关闭活动编辑器',
+      () async => _closeActiveEditorFromKeyboard(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeActiveEditor',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeOtherEditors',
+      '编辑器',
+      '关闭其他编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeOthers),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeOtherEditors',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeEditorsToTheLeft',
+      '编辑器',
+      '关闭左侧编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeToLeft),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeEditorsToTheLeft',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeEditorsToTheRight',
+      '编辑器',
+      '关闭右侧编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeToRight),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeEditorsToTheRight',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeUnmodifiedEditors',
+      '编辑器',
+      '关闭已保存的编辑器',
+      () => _closeFromActiveEditor(EditorTabCloseOperation.closeSaved),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeUnmodifiedEditors',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeAllEditors',
+      '编辑器',
+      '关闭所有编辑器（保留固定项）',
+      () async => _closeAllEditorsInFocusedGroup(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeAllEditors',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeAllGroups',
+      '编辑器',
+      '关闭所有编辑器组',
+      () async => _closeAllEditorGroups(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.closeAllGroups',
+      ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
     reg('file.saveAs', '文件', '另存为…', _saveAsActive,
-        shortcut: 'Ctrl+Shift+S', enablement: 'editorActive');
+        shortcut: 'Ctrl+Shift+S', when: 'editorActive', enablement: 'editorActive');
     reg(
       'workbench.files.action.compareWithSaved',
       '文件',
@@ -659,7 +876,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       enablement: 'diffEditorActive',
     );
     reg('file.revert', '文件', '从磁盘还原', _revertActive,
-        enablement: 'editorActive');
+        when: 'editorHasPath', enablement: 'editorActive');
     reg('file.saveWithEncoding', '文件', '使用编码保存…', _saveWithEncodingActive,
         enablement: 'editorActive');
     reg('file.reopenWithEncoding', '文件', '使用编码重新打开…', _reopenWithEncodingActive,
@@ -671,13 +888,138 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('view.quickOpen', '查看', '快速打开文件…', () async => _showQuickOpen(),
         shortcut: 'Ctrl+P');
     reg('view.search', '查看', '全局搜索…', () async => _selectSidebarView('search'));
+    reg(
+      'workbench.action.moveView',
+      '查看',
+      '移动视图…',
+      _showMoveSidebarViewPicker,
+    );
+    reg(
+      'workbench.action.moveFocusedView',
+      '查看',
+      '移动聚焦的视图…',
+      _showMoveFocusedSidebarViewPicker,
+    );
+    reg(
+      'workbench.action.resetViewLocations',
+      '查看',
+      '重置视图位置',
+      _resetSidebarViewLocations,
+    );
     reg('view.toggleSidebar', '查看', '切换侧栏',
         () async => _layout.toggleRegion('sidebar'),
         shortcut: 'Ctrl+B');
+    _registerToggleSideBarPositionCommand();
+    reg(
+      'workbench.action.toggleAuxiliaryBar',
+      '查看',
+      '切换次侧栏',
+      () async => _layout.toggleRegion(secondarySidebarRegion),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleAuxiliaryBar',
+      ),
+    );
     reg('view.togglePanel', '查看', '切换面板',
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.action.toggleMaximizedPanel',
+      '查看',
+      '切换面板最大化',
+      () async {
+        _layout.togglePanelMaximization();
+      },
+      when: 'panelMaximizationSupported',
+    );
+    reg(
+      'workbench.action.positionPanelTop',
+      '查看',
+      '将面板移到顶部',
+      () async {
+        _layout.setPanelPosition(PanelPosition.top);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelBottom',
+      '查看',
+      '将面板移到底部',
+      () async {
+        _layout.setPanelPosition(PanelPosition.bottom);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelLeft',
+      '查看',
+      '将面板移到左侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.left);
+      },
+    );
+    reg(
+      'workbench.action.positionPanelRight',
+      '查看',
+      '将面板移到右侧',
+      () async {
+        _layout.setPanelPosition(PanelPosition.right);
+      },
+    );
+    reg(
+      'workbench.action.alignPanelLeft',
+      '查看',
+      '将面板对齐到左侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.left),
+    );
+    reg(
+      'workbench.action.alignPanelRight',
+      '查看',
+      '将面板对齐到右侧',
+      () async => _layout.setPanelAlignment(PanelAlignment.right),
+    );
+    reg(
+      'workbench.action.alignPanelCenter',
+      '查看',
+      '将面板对齐到居中',
+      () async => _layout.setPanelAlignment(PanelAlignment.center),
+    );
+    reg(
+      'workbench.action.alignPanelJustify',
+      '查看',
+      '将面板对齐到两端',
+      () async => _layout.setPanelAlignment(PanelAlignment.justify),
+    );
+    reg(
+      'workbench.action.activityBarLocation.default',
+      '查看',
+      '将活动栏移到侧边',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.side);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.top',
+      '查看',
+      '将活动栏移到顶部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.top);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.bottom',
+      '查看',
+      '将活动栏移到底部',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.bottom);
+      },
+    );
+    reg(
+      'workbench.action.activityBarLocation.hide',
+      '查看',
+      '隐藏活动栏',
+      () async {
+        _setActivityBarLocation(ActivityBarLocation.hidden);
+      },
+    );
     reg('view.quickInput', '查看', '命令面板', () async => _showCommandPalette());
     reg(
       'editor.action.toggleOvertypeInsertMode',
@@ -751,7 +1093,79 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : 'Ctrl+Delete',
       enablement: 'editorTextFocus',
     );
-    reg('editor.split', '编辑器', '拆分编辑器', () async => _splitFocusedGroup());
+    reg(
+      'workbench.action.splitEditorLeft',
+      '编辑器',
+      '向左拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorRight',
+      '编辑器',
+      '向右拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
+    reg(
+      'workbench.action.splitEditorUp',
+      '编辑器',
+      '向上拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical, insertBefore: true),
+    );
+    reg(
+      'workbench.action.splitEditorDown',
+      '编辑器',
+      '向下拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.vertical),
+    );
+    reg(
+      'workbench.action.moveEditorToLeftGroup',
+      '编辑器',
+      '将活动编辑器移至左侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.left),
+    );
+    reg(
+      'workbench.action.moveEditorToRightGroup',
+      '编辑器',
+      '将活动编辑器移至右侧组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.right),
+    );
+    reg(
+      'workbench.action.moveEditorToAboveGroup',
+      '编辑器',
+      '将活动编辑器移至上方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.up),
+    );
+    reg(
+      'workbench.action.moveEditorToBelowGroup',
+      '编辑器',
+      '将活动编辑器移至下方组',
+      () async => _moveFocusedEditorToGroup(_EditorGroupMoveDirection.down),
+    );
+    reg(
+      'workbench.action.moveEditorToNewWindow',
+      '编辑器',
+      '在新窗口打开活动编辑器',
+      () async => _moveFocusedEditorToNewWindow(),
+    );
+    reg(
+      'workbench.action.toggleZenMode',
+      '查看',
+      '切换禅模式',
+      () async => _toggleZenMode(),
+    );
+    reg(
+      'workbench.action.toggleLockedScrolling',
+      '查看',
+      '切换锁定滚动',
+      () async => _toggleLockedScrolling(),
+    );
+    // Existing toolbar command remains the default right-split action.
+    reg(
+      'editor.split',
+      '编辑器',
+      '拆分编辑器',
+      () async => _splitFocusedGroup(axis: Axis.horizontal),
+    );
     reg(
       'deleteAllLeft',
       '编辑器',
@@ -786,6 +1200,75 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('workbench.action.navigateToLastEditLocation', '导航', '转到上次编辑位置',
         _navigateToLastEdit);
     reg('view.outline', '查看', '大纲', () async => _selectSidebarView('outline'));
+    reg(
+      'workbench.action.editorTabs.multiple',
+      '查看',
+      '显示多个编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.multiple),
+    );
+    reg(
+      'workbench.action.editorTabs.single',
+      '查看',
+      '仅显示活动编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.single),
+    );
+    reg(
+      'workbench.action.editorTabs.none',
+      '查看',
+      '隐藏编辑器标签',
+      () async => _setEditorTabMode(EditorTabMode.none),
+    );
+    reg(
+      'workbench.action.toggleEditorTabWrapping',
+      '查看',
+      '切换编辑器标签换行',
+      () async => _setEditorTabWrap(!_editorTabWrap.value),
+    );
+    reg(
+      'workbench.action.toggleEditorPinnedTabsSeparateRow',
+      '查看',
+      '切换固定编辑器标签单独成行',
+      () async => _setPinnedTabsOnSeparateRow(!_pinnedTabsOnSeparateRow.value),
+    );
+    reg(
+      'workbench.action.toggleEditorTabCloseActionVisibility',
+      '查看',
+      '显示关闭操作',
+      () async => _setEditorTabCloseActionVisibility(
+        !_editorTabCloseActionVisibility.value,
+      ),
+    );
+    reg(
+      'workbench.action.toggleEditorTabActionReserveSpace',
+      '查看',
+      '为关闭操作保留空间',
+      () async => _setEditorTabActionReserveSpace(
+        !_editorTabActionReserveSpace.value,
+      ),
+    );
+    for (final sizing in EditorTabSizing.values) {
+      reg(
+        'workbench.action.editorTabs.sizing.${sizing.name}',
+        '查看',
+        switch (sizing) {
+          EditorTabSizing.fit => '按内容适配编辑器标签宽度',
+          EditorTabSizing.shrink => '收缩编辑器标签宽度',
+          EditorTabSizing.fixed => '固定编辑器标签宽度',
+        },
+        () async => _setEditorTabSizing(sizing),
+      );
+    }
+    for (final location in EditorTabActionLocation.values) {
+      reg(
+        'workbench.action.editorTabs.actionLocation.${location.name}',
+        '查看',
+        switch (location) {
+          EditorTabActionLocation.left => '将关闭操作移到编辑器标签左侧',
+          EditorTabActionLocation.right => '将关闭操作移到编辑器标签右侧',
+        },
+        () async => _setEditorTabActionLocation(location),
+      );
+    }
     reg('view.panelDiagnostics', '查看', '诊断面板',
         () async => _panelTab.animateTo(0));
     reg('view.panelCompletions', '查看', '补全面板',
@@ -1103,6 +1586,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
+  }
+
+  void _setActivityBarLocation(ActivityBarLocation location) {
+    _layout.setActivityBarLocation(location);
+    _syncCommandContext();
+  }
+
+  String get _toggleSideBarPositionTitle =>
+      _layout.sideBarPosition == SideBarPosition.left
+          ? '将主侧栏移到右侧'
+          : '将主侧栏移到左侧';
+
+  void _registerToggleSideBarPositionCommand() {
+    _commands.register(Command(
+      id: 'workbench.action.toggleSidebarPosition',
+      category: '查看',
+      title: _toggleSideBarPositionTitle,
+      run: _toggleSideBarPosition,
+    ));
+  }
+
+  Future<void> _toggleSideBarPosition() async {
+    _layout.toggleSideBarPosition();
+    _registerToggleSideBarPositionCommand();
   }
 
   /// 菜单项的键位提示后缀（用户 keybindings.json 重绑定后自动跟随）。
@@ -2391,6 +2898,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'editorHasPath': active?.path != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
       'editorCanUndo': active?.undoStack.canUndo ?? false,
@@ -2398,6 +2906,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'activityBarLocation': _layout.activityBarLocation.name,
+      'panelMaximizationSupported': _layout.canMaximizePanel,
       'lspStarting': _lspStarting,
       'lspReady': _lspReady,
       'mergeEditorActive': mergeSession != null && !mergeSession.isDisposed,
@@ -2413,6 +2923,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
+  }
+
+  void _syncPanelMaximizationCommandContext() {
+    _commands.context.setValue(
+      'panelMaximizationSupported',
+      _layout.canMaximizePanel,
+    );
   }
 
   void _onGitDiffNavigationAvailabilityChanged(bool _) {
@@ -2608,15 +3125,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showCommandPalette() {
+    final currentLocation = _layout.activityBarLocation;
     QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
       items: [
         for (final c in _commands.all)
-          QuickItem(label: c.label, detail: c.shortcut, commandId: c.id),
+          if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation))
+            QuickItem(
+                label: c.label, description: c.shortcut, commandId: c.id),
       ],
       commands: _commands,
     );
+  }
+
+  bool _isCurrentActivityBarLocationCommand(
+      String commandId, ActivityBarLocation currentLocation) {
+    final target = switch (commandId) {
+      'workbench.action.activityBarLocation.default' =>
+        ActivityBarLocation.side,
+      'workbench.action.activityBarLocation.top' => ActivityBarLocation.top,
+      'workbench.action.activityBarLocation.bottom' =>
+        ActivityBarLocation.bottom,
+      'workbench.action.activityBarLocation.hide' => ActivityBarLocation.hidden,
+      _ => null,
+    };
+    return target == currentLocation;
   }
 
   void _showQuickOpen() {
@@ -2627,7 +3161,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         for (final path in _workspaceFileIndex())
           QuickItem(
               label: _nameOf(path),
-              detail: path,
+              description: path,
               onRun: () => _openFileByPath(path)),
       ],
     );
@@ -2669,6 +3203,61 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
+  void _setEditorTabMode(EditorTabMode mode) {
+    if (_editorTabMode.value == mode) return;
+    setState(() {
+      _editorTabMode.value = mode;
+      for (final group in _groups.values) {
+        group.lastAutoRevealedTabId = null;
+      }
+    });
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabWrap(bool enabled) {
+    if (_editorTabWrap.value == enabled) return;
+    setState(() => _editorTabWrap.value = enabled);
+    _scheduleStateSave();
+  }
+
+  void _setPinnedTabsOnSeparateRow(bool enabled) {
+    if (_pinnedTabsOnSeparateRow.value == enabled) return;
+    setState(() {
+      _pinnedTabsOnSeparateRow.value = enabled;
+      for (final group in _groups.values) {
+        group.lastAutoRevealedTabId = null;
+      }
+    });
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabSizing(EditorTabSizing sizing) {
+    if (_editorTabSizing.value == sizing) return;
+    setState(() {
+      _editorTabSizing.value = sizing;
+      _editorTabHeldWidths.clear();
+    });
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabActionLocation(EditorTabActionLocation location) {
+    if (_editorTabActionLocation.value == location) return;
+    setState(() => _editorTabActionLocation.value = location);
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabCloseActionVisibility(bool visible) {
+    if (_editorTabCloseActionVisibility.value == visible) return;
+    setState(() => _editorTabCloseActionVisibility.value = visible);
+    _scheduleStateSave();
+  }
+
+  void _setEditorTabActionReserveSpace(bool reserveSpace) {
+    if (_editorTabActionReserveSpace.value == reserveSpace) return;
+    setState(() => _editorTabActionReserveSpace.value = reserveSpace);
+    _scheduleStateSave();
+  }
+
   void _scheduleStateSave() {
     _stateSaveTimer?.cancel();
     _stateSaveTimer = Timer(const Duration(milliseconds: 500), () {
@@ -2690,13 +3279,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 干净文件恢复时从磁盘重读（journal 保持小）。
   Map<String, Object?> _encodeSession() => {
         'v': 1,
+        'editorTabMode': _editorTabMode.value.name,
+        'editorTabSizing': _editorTabSizing.value.name,
+        'editorTabActionLocation': _editorTabActionLocation.value.name,
+        'editorTabCloseActionVisibility': _editorTabCloseActionVisibility.value,
+        'editorTabActionReserveSpace': _editorTabActionReserveSpace.value,
+        'editorWrapTabs': _editorTabWrap.value,
+        'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'focused': _focusedRegion,
+        'openEditorsCollapsed': _openEditorsCollapsed,
+        'workbench.editor.useModal': _modalEditorUseMode.value,
+        'zenMode': _zenMode,
+        'lockedScrolling': _lockedScrolling,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
             {
               'region': g.region,
               'active': g.activeDocId,
+              'sticky': [
+                for (final doc in g.docs)
+                  if (g.stickyDocIds.contains(doc.id)) doc.id,
+              ],
+              if (g.previewDocId != null &&
+                  g.docs.any((d) => d.id == g.previewDocId && !d.isDirty))
+                'preview': g.previewDocId,
               'docs': [
                 for (final d in g.docs)
                   {
@@ -2735,6 +3342,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       if (g.activeDocId == null && g.docs.isNotEmpty) {
         g.activeDocId = g.docs.last.id;
+        _noteActiveDocument(g, g.activeDocId);
       }
       for (final doc in _allDocs) {
         if (doc.path?.toLowerCase().endsWith('.rs') == true) {
@@ -2785,6 +3393,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         null,
     };
     if (data == null) return;
+    _editorTabMode.value =
+        EditorTabMode.fromSessionValue(data['editorTabMode']);
+    _editorTabSizing.value =
+        EditorTabSizing.fromSessionValue(data['editorTabSizing']);
+    _editorTabActionLocation.value = EditorTabActionLocation.fromSessionValue(
+        data['editorTabActionLocation']);
+    _editorTabCloseActionVisibility.value =
+        data['editorTabCloseActionVisibility'] is bool
+            ? data['editorTabCloseActionVisibility'] as bool
+            : true;
+    _editorTabActionReserveSpace.value =
+        data['editorTabActionReserveSpace'] is bool
+            ? data['editorTabActionReserveSpace'] as bool
+            : true;
+    _editorTabWrap.value = data['editorWrapTabs'] == true;
+    _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
+    _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
+    _modalEditorUseMode =
+        ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
+    _zenMode = data['zenMode'] == true;
+    _lockedScrolling = data['lockedScrolling'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;
@@ -2940,11 +3569,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           restoredDocuments[id] = open;
           if (id > maxId) maxId = id;
         }
+        final stickyRaw = gr['sticky'];
+        if (stickyRaw is List) {
+          for (final value in stickyRaw) {
+            if (value is num) {
+              final id = value.toInt();
+              if (target.docs.any((doc) => doc.id == id)) {
+                target.stickyDocIds.add(id);
+              }
+            }
+          }
+          _normalizeStickyOrder(target);
+        }
         final active = (gr['active'] as num?)?.toInt();
         if (target.docs.isNotEmpty) {
           target.activeDocId = target.docs.any((d) => d.id == active)
               ? active
               : target.docs.last.id;
+          _noteActiveDocument(target, target.activeDocId);
+        }
+        final previewId = (gr['preview'] as num?)?.toInt();
+        final restoredPreview = target.docs
+            .where((doc) => doc.id == previewId)
+            .firstOrNull;
+        if (restoredPreview != null &&
+            !restoredPreview.isDirty &&
+            !target.stickyDocIds.contains(restoredPreview.id)) {
+          target.previewDocId = restoredPreview.id;
         }
       }
       final focused = data['focused'];
@@ -3105,6 +3756,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc.path != null &&
             (doc.diskState == DiskDocumentState.missing ||
                 doc.diskState == DiskDocumentState.unavailable);
+    if (!doc.isDirty) return;
+    var pinnedPreview = false;
+    for (final group in _groups.values) {
+      final preview = group.docs
+          .where((view) => view.id == group.previewDocId)
+          .firstOrNull;
+      if (preview != null && preview.sameDocumentAs(doc)) {
+        group.previewDocId = null;
+        pinnedPreview = true;
+      }
+    }
+    if (pinnedPreview && !_disposing) _scheduleStateSave();
   }
 
   void _flushInput(OpenDoc doc, {bool commitComposition = false}) {
@@ -8751,7 +9414,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           for (final option in options)
             QuickItem(
               label: option.label,
-              detail: option.id,
+              description: option.id,
               onRun: () async {
                 if (onSelect != null) {
                   await onSelect(option);
@@ -10944,6 +11607,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 文件夹 / 文件树 ----------
 
+  Future<void> _newUntitledFile() async {
+    final core = _core;
+    if (core == null) return;
+    final previous = _active;
+    if (previous != null) _flushInput(previous, commitComposition: true);
+
+    final id = _nextDocId++;
+    try {
+      final doc = core.openDoc(id, '');
+      final untitled = OpenDoc(
+        id: id,
+        name: '未命名-$id',
+        doc: doc,
+        undoBudget: _undoHistoryBudget,
+      );
+      final target = _focused;
+      setState(() {
+        target.docs.add(untitled);
+        target.activeDocId = id;
+        _noteActiveDocument(target, id);
+      });
+      _scheduleStateSave();
+      _syncCommandContext();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !identical(target.active, untitled)) return;
+        _focusNodeFor(target, untitled).requestFocus();
+      });
+    } on AlulaException catch (error) {
+      if (mounted) setState(() => _statusDetail = '新建文本文件失败：${error.code}');
+    }
+  }
+
   void _openFolder(String path) {
     final core = _core;
     if (core == null) return;
@@ -11115,7 +11810,121 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
-  void _openTreeFile(TreeNode node) => _openFileByPath(node.path);
+  void _openTreeFile(TreeNode node) {
+    final previousClickClock = _lastExplorerClickClock;
+    final isDoubleClick =
+        _lastExplorerClickPath == node.path &&
+            previousClickClock != null &&
+            previousClickClock.elapsed <= _explorerDoubleClickTimeout;
+    if (isDoubleClick) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+      if (_pinOpenExplorerPreview(node.path)) return;
+      final alreadyOpen = _groups.values
+          .any((group) => group.docs.any((doc) => doc.path == node.path));
+      if (alreadyOpen) return;
+      if ((_explorerPreviewOpenCounts[node.path] ?? 0) > 0) {
+        _pendingExplorerPreviewPinPath = node.path;
+      } else {
+        unawaited(_openFileByPath(node.path, pinPreview: true));
+      }
+      return;
+    }
+
+    _lastExplorerClickPath = node.path;
+    _lastExplorerClickClock = Stopwatch()..start();
+    unawaited(_openExplorerPreview(node.path));
+  }
+
+  Future<void> _openExplorerPreview(String path) async {
+    _explorerPreviewOpenCounts.update(path, (count) => count + 1,
+        ifAbsent: () => 1);
+    try {
+      await _openFileByPath(path, asPreview: true);
+    } finally {
+      final remaining = (_explorerPreviewOpenCounts[path] ?? 1) - 1;
+      if (remaining == 0) {
+        _explorerPreviewOpenCounts.remove(path);
+        if (_pendingExplorerPreviewPinPath == path) {
+          _pendingExplorerPreviewPinPath = null;
+          _pinOpenExplorerPreview(path);
+        }
+      } else {
+        _explorerPreviewOpenCounts[path] = remaining;
+      }
+    }
+  }
+
+  bool _pinOpenExplorerPreview(String path) {
+    var pinned = false;
+    for (final group in _groups.values) {
+      final preview = group.docs
+          .where((doc) => doc.id == group.previewDocId && doc.path == path)
+          .firstOrNull;
+      if (preview == null) continue;
+      group.previewDocId = null;
+      pinned = true;
+    }
+    if (pinned && mounted) {
+      setState(() {});
+      _scheduleStateSave();
+    }
+    return pinned;
+  }
+
+  void _replaceCleanPreviewBeforeOpen(EditorGroup group) {
+    final previewId = group.previewDocId;
+    if (previewId == null) return;
+    final preview = group.docs.where((doc) => doc.id == previewId).firstOrNull;
+    if (preview == null) {
+      group.previewDocId = null;
+      return;
+    }
+    if (preview.isDirty) {
+      group.previewDocId = null;
+      return;
+    }
+    _closeDocNow(group, preview, keepEmptyGroup: true);
+  }
+
+  // ---------- Explorer 树 type navigation（LAY-16） ----------
+
+  KeyEventResult _onTreeTypeAheadKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final character = event.character;
+    if (character == null || character.isEmpty) {
+      return KeyEventResult.ignored;
+    }
+    if (HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isMetaPressed ||
+        HardwareKeyboard.instance.isAltPressed) {
+      return KeyEventResult.ignored;
+    }
+    final lower = character.toLowerCase();
+    if (lower.codeUnitAt(0) < 0x61 || lower.codeUnitAt(0) > 0x7A) {
+      // 仅字母参与 type navigation（数字/符号交还系统快捷键）。
+      return KeyEventResult.ignored;
+    }
+    _treeTypeAheadBuffer += lower;
+    _treeTypeAheadTimer?.cancel();
+    _treeTypeAheadTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _treeTypeAheadBuffer = '');
+    });
+    final matches = _visibleExplorerFiles()
+        .where((node) =>
+            node.name.toLowerCase().startsWith(_treeTypeAheadBuffer))
+        .toList();
+    if (matches.isEmpty) {
+      // 无匹配：保留缓冲等待后续按键，不移动选择。
+      return KeyEventResult.handled;
+    }
+    final target = matches.first;
+    _selectExplorerFile(target);
+    setState(() {});
+    return KeyEventResult.handled;
+  }
 
   List<TreeNode> _visibleExplorerFiles() {
     final result = <TreeNode>[];
@@ -11567,9 +12376,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openFileByPath(
     String path, {
     String? expectedContent,
+    bool asPreview = false,
+    bool pinPreview = false,
   }) async {
+    if (!asPreview && !pinPreview) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+    }
     final core = _core;
     if (core == null) return;
+    // LAY-13a：配置编辑器路径按 useModal 偏好以模态对话框打开（不进标签）。
+    if (expectedContent == null &&
+        _findOpenDocumentByPath(path) == null &&
+        !(_modalEditorDoc?.path == path) &&
+        _modalEditorUseMode.opensAutomatically(path)) {
+      await _openModalEditor(core, path);
+      return;
+    }
     DecodedTextFile? prevalidatedFile;
     if (expectedContent != null) {
       final existing = _findOpenDocumentByPath(path);
@@ -11611,15 +12434,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           return;
         }
         final target = _focused;
+        final existingInTarget = target.docs
+            .where((candidate) => candidate.sameDocumentAs(existing))
+            .firstOrNull;
         final view = identical(g, target)
             ? existing
-            : target.docs
-                    .where((candidate) => candidate.sameDocumentAs(existing))
-                    .firstOrNull ??
-                OpenDoc.viewOf(existing);
+            : existingInTarget ?? OpenDoc.viewOf(existing);
+        if (asPreview && existingInTarget == null) {
+          _replaceCleanPreviewBeforeOpen(target);
+        }
         setState(() {
           if (!target.docs.contains(view)) target.docs.add(view);
           target.activeDocId = view.id;
+          _noteActiveDocument(target, view.id);
+          if (target.previewDocId == view.id &&
+              (pinPreview || !asPreview)) {
+            target.previewDocId = null;
+          } else if (asPreview && existingInTarget == null && !view.isDirty) {
+            target.previewDocId = view.id;
+          }
           _focusedRegion = target.region;
         });
         _scheduleStateSave();
@@ -11684,10 +12517,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       _updateDirty(open);
+      final target = _focused;
+      if (asPreview) _replaceCleanPreviewBeforeOpen(target);
       setState(() {
-        final g = _focused;
-        g.docs.add(open);
-        g.activeDocId = id;
+        target.docs.add(open);
+        target.activeDocId = id;
+        _noteActiveDocument(target, id);
+        target.previewDocId = asPreview && !open.isDirty ? id : null;
       });
       _scheduleSyntaxRefresh(id);
       _syncCommandContext();
@@ -11722,46 +12558,661 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : 'file:///$p';
   }
 
+  void _noteActiveDocument(EditorGroup group, int? documentId) {
+    if (documentId == null) return;
+    group.recentDocIds.remove(documentId);
+    group.recentDocIds.insert(0, documentId);
+    group.lastActivationOrder = ++_editorActivationClock;
+  }
+
+  OpenDoc? _mostRecentDocument(EditorGroup group,
+      {bool nonStickyOnly = false}) {
+    for (final id in group.recentDocIds) {
+      final doc =
+          group.docs.where((candidate) => candidate.id == id).firstOrNull;
+      if (doc != null && (!nonStickyOnly || !group.stickyDocIds.contains(id))) {
+        return doc;
+      }
+    }
+    for (final doc in group.docs.reversed) {
+      if (!nonStickyOnly || !group.stickyDocIds.contains(doc.id)) return doc;
+    }
+    return null;
+  }
+
+  OpenDoc? _mostRecentNonStickyDocument(EditorGroup group) =>
+      _mostRecentDocument(group, nonStickyOnly: true);
+
+  /// 剩余组中最近活动的组（上游 editorPart.mostRecentlyActiveGroups）。
+  String? _mostRecentlyActiveRegion({String? excluding}) {
+    EditorGroup? best;
+    for (final group in _groups.values) {
+      if (group.region == excluding) continue;
+      if (best == null ||
+          group.lastActivationOrder > best.lastActivationOrder) {
+        best = group;
+      }
+    }
+    return best?.region;
+  }
+
+  // ---------- Modal 编辑器（LAY-13a） ----------
+
+  /// 以模态对话框打开配置编辑器路径（脱离视图，不入组；上游 useModal）。
+  Future<void> _openModalEditor(AlulaCore core, String path) async {
+    final doc = await _createDetachedModalDoc(core, path);
+    if (doc == null || !mounted) return;
+    var moveBack = false;
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '模态编辑器屏障',
+      barrierColor: Colors.black54,
+      pageBuilder: (dialogContext, _, __) => ModalEditorDialog(
+        title: doc.name,
+        onMoveBackToTab: () {
+          moveBack = true;
+          Navigator.of(dialogContext).pop();
+        },
+        onClose: () => Navigator.of(dialogContext).pop(),
+        child: CallbackShortcuts(
+          bindings: {
+            SingleActivator(
+              LogicalKeyboardKey.keyS,
+              control: defaultTargetPlatform != TargetPlatform.macOS,
+              meta: defaultTargetPlatform == TargetPlatform.macOS,
+            ): () {
+              final currentPath = doc.path;
+              if (currentPath != null) {
+                unawaited(_saveDocToPath(doc, currentPath));
+              }
+            },
+          },
+          child: RustTextInputField(
+            inputWindow: doc.inputWindow,
+            scrollController: doc.editorScrollController,
+            tabSize: doc.tabSize,
+            semanticsLabel: '${doc.name} 模态编辑器',
+            style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            onDelta: (delta) {
+              try {
+                doc.doc.applyWith(delta.version, delta.operations);
+                if (mounted) setState(() {});
+              } on Object {
+                // 陈旧脱离视图：忽略增量。
+              }
+            },
+            onError: (error) {
+              if (mounted) {
+                setState(() => _statusDetail = '模态编辑错误：$error');
+              }
+            },
+          ),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (moveBack) {
+      // 移回标签：同一 OpenDoc 视图入焦点组（状态/选区随行）。
+      setState(() {
+        _modalEditorDoc = null;
+        final group = _focused;
+        group.docs.add(doc);
+        group.activeDocId = doc.id;
+        _noteActiveDocument(group, doc.id);
+      });
+      _syncCommandContext();
+      _scheduleStateSave();
+      return;
+    }
+    _disposeModalEditorDoc(doc);
+  }
+
+  Future<OpenDoc?> _createDetachedModalDoc(AlulaCore core, String path) async {
+    try {
+      final decoded = _readDiskDocument(core, path);
+      final id = _nextDocId++;
+      final coreDoc = core.openDoc(id, decoded.content);
+      coreDoc.setSavepoint(decoded.content);
+      return OpenDoc(
+        id: id,
+        name: _nameOf(path),
+        path: path,
+        doc: coreDoc,
+        fileOptions: decoded.options,
+        savedFileOptions: decoded.options,
+        undoBudget: _undoHistoryBudget,
+      );
+    } on Object catch (error) {
+      setState(() => _statusDetail = '打开配置编辑器失败：$error');
+      return null;
+    }
+  }
+
+  void _disposeModalEditorDoc(OpenDoc doc) {
+    for (final view in _viewsOf(doc).toList(growable: false)) {
+      _flushInput(view, commitComposition: true);
+    }
+    _editorFocusNodes.remove(_focusKeyFor(_focused, doc))?.dispose();
+    doc.disposeView();
+    setState(() => _modalEditorDoc = null);
+  }
+
+  // ---------- Zen 模式（LAY-14） ----------
+
+  /// 切换 Zen 模式：隐藏活动栏/主次侧栏/面板/状态栏/标题栏，编辑器居中限宽；
+  /// 再次切换恢复进入前的侧栏/面板折叠态。会话 journal 持久化。
+  void _toggleZenMode() {
+    setState(() {
+      _zenMode = !_zenMode;
+      if (_zenMode) {
+        _zenPreZenSidebarCollapsed = _layout.isCollapsed('sidebar');
+        _zenPreZenPanelCollapsed = _layout.isCollapsed('panel');
+        _layout.setRegionCollapsed('activity', true);
+        _layout.setRegionCollapsed('sidebar', true);
+        _layout.setRegionCollapsed('secondarySidebar', true);
+        _layout.setRegionCollapsed('panel', true);
+      } else {
+        _layout.setRegionCollapsed('activity', false);
+        _layout.setRegionCollapsed('sidebar', _zenPreZenSidebarCollapsed);
+        _layout.setRegionCollapsed(
+            'secondarySidebar', _zenPreZenPanelCollapsed);
+        _layout.setRegionCollapsed('panel', _zenPreZenPanelCollapsed);
+      }
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  // ---------- 跨编辑器锁定滚动（LAY-15） ----------
+
+  void _toggleLockedScrolling() {
+    setState(() => _lockedScrolling = !_lockedScrolling);
+    if (_lockedScrolling) {
+      _ensureScrollSyncListeners();
+    }
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  /// 为所有已打开文档的滚动控制器挂同步监听（幂等）。编辑器随打开动态创建，
+  /// _buildEditor 渲染时补挂。
+  void _ensureScrollSyncListeners() {
+    for (final doc in _allDocs) {
+      _attachScrollSyncListener(doc);
+    }
+  }
+
+  void _attachScrollSyncListener(OpenDoc doc) {
+    if (_scrollSyncListeners.contains(doc.id)) return;
+    final controller = doc.editorScrollController;
+    if (!controller.hasClients) {
+      // 未布局：延迟到首帧后再挂。
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollSyncListeners.contains(doc.id)) return;
+        _attachScrollSyncListener(doc);
+      });
+      return;
+    }
+    _scrollSyncListeners.add(doc.id);
+    controller.addListener(() => _onLockedScroll(doc, controller));
+  }
+
+  void _onLockedScroll(OpenDoc source, ScrollController controller) {
+    final holdSync = HardwareKeyboard.instance.isAltPressed;
+    if (!_lockedScrolling && !holdSync) return;
+    if (_scrollSyncInProgress) return;
+    if (!controller.hasClients) return;
+    final position = controller.position;
+    if (position.maxScrollExtent <= 0) return;
+    final ratio = position.pixels / position.maxScrollExtent;
+    final sourceGroup = _ownerOfView(source);
+    _scrollSyncInProgress = true;
+    try {
+      for (final group in _groups.values) {
+        if (sourceGroup != null && identical(group, sourceGroup)) continue;
+        final target = group.active;
+        if (target == null || target.id == source.id) continue;
+        final targetController = target.editorScrollController;
+        if (!targetController.hasClients) continue;
+        final targetPosition = targetController.position;
+        if (targetPosition.maxScrollExtent <= 0) continue;
+        targetController.jumpTo(
+          (ratio * targetPosition.maxScrollExtent)
+              .clamp(0.0, targetPosition.maxScrollExtent),
+        );
+      }
+    } finally {
+      _scrollSyncInProgress = false;
+    }
+  }
+
+  // ---------- 浮动辅助窗口（LAY-12a） ----------
+
+  /// 主窗自身窗口通道：接收辅助窗口的关闭恢复通知。
+  Future<void> _setupAuxiliaryWindowHandlers() async {
+    try {
+      final self = await WindowController.fromCurrentEngine();
+      self.setWindowMethodHandler((call) async {
+        if (call.method == 'alula_auxiliary_closed') {
+          final args = call.arguments is Map
+              ? Map<String, Object?>.from(call.arguments as Map)
+              : <String, Object?>{};
+          _reopenAuxiliaryDocument(args);
+        }
+        return null;
+      });
+    } on Object {
+      // 平台/测试环境无窗口定义：跳过辅助窗口同步。
+    }
+  }
+
+  /// 将编辑器移入新的辅助窗口：文本随启动载荷传递，源组移除该视图
+  /// （上游移动保留状态，不做脏确认——无数据丢失）。
+  Future<void> _moveEditorToNewWindow(EditorGroup group, OpenDoc doc) async {
+    _flushInput(doc, commitComposition: true);
+    final payload = AuxiliaryWindowPayload.forDocument(
+      path: doc.path,
+      name: doc.name,
+      text: doc.text,
+      dirty: doc.isDirty,
+    );
+    try {
+      final controller = await WindowController.create(
+        WindowConfiguration(arguments: payload.toArguments()),
+      );
+      _auxiliaryWindowIds.add(controller.windowId);
+      await controller.show();
+    } on Object catch (error) {
+      setState(() => _statusDetail = '辅助窗口创建失败：$error');
+      return;
+    }
+    _closeDocNow(group, doc);
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  Future<void> _moveFocusedEditorToNewWindow() async {
+    final group = _focused;
+    final active = group.active;
+    if (active == null) return;
+    await _moveEditorToNewWindow(group, active);
+  }
+
+  /// 辅助窗口关闭恢复：按 path 重开（干净文件），未命名/脏文本以传递文本
+  /// 恢复为对应脏态文档。
+  void _reopenAuxiliaryDocument(Map<String, Object?> args) {
+    final pathValue = args['path'] as String?;
+    final path = pathValue == null || pathValue.isEmpty ? null : pathValue;
+    final name = args['name'] as String? ?? '未命名';
+    final text = args['text'] as String? ?? '';
+    final dirty = args['dirty'] == true;
+    if (!mounted) return;
+    if (path != null && !dirty) {
+      unawaited(_openFileByPath(path, pinPreview: false));
+      return;
+    }
+    final core = _core;
+    if (core == null) return;
+    try {
+      final decoded = path != null ? _readDiskDocument(core, path) : null;
+      final id = _nextDocId++;
+      final coreDoc = core.openDoc(id, text);
+      coreDoc.setSavepoint(decoded?.content ?? '');
+      final doc = OpenDoc(
+        id: id,
+        name: name,
+        path: path,
+        doc: coreDoc,
+        fileOptions: decoded?.options ?? TextFileOptions.defaults,
+        savedFileOptions: decoded?.options ?? TextFileOptions.defaults,
+        dirtyDisk: dirty && decoded != null && text != decoded.content,
+        undoBudget: _undoHistoryBudget,
+      );
+      setState(() {
+        final group = _focused;
+        group.docs.add(doc);
+        group.activeDocId = id;
+        _noteActiveDocument(group, id);
+      });
+      _syncCommandContext();
+      _scheduleStateSave();
+    } on Object catch (error) {
+      setState(() => _statusDetail = '辅助窗口文档恢复失败：$error');
+    }
+  }
+
+  void _normalizeStickyOrder(EditorGroup group) {
+    final presentIds = group.docs.map((doc) => doc.id).toSet();
+    group.stickyDocIds.removeWhere((id) => !presentIds.contains(id));
+    final sticky = group.docs
+        .where((doc) => group.stickyDocIds.contains(doc.id))
+        .toList(growable: false);
+    final ordinary = group.docs
+        .where((doc) => !group.stickyDocIds.contains(doc.id))
+        .toList(growable: false);
+    group.docs
+      ..clear()
+      ..addAll(sticky)
+      ..addAll(ordinary);
+  }
+
+  void _setEditorSticky(EditorGroup group, OpenDoc doc, bool sticky) {
+    if (!group.docs.any((candidate) => identical(candidate, doc))) return;
+    final wasSticky = group.stickyDocIds.contains(doc.id);
+    if (wasSticky == sticky) return;
+    setState(() {
+      group.lastAutoRevealedTabId = null;
+      if (sticky) {
+        group.stickyDocIds.add(doc.id);
+        if (group.previewDocId == doc.id) group.previewDocId = null;
+      } else {
+        group.stickyDocIds.remove(doc.id);
+      }
+      _normalizeStickyOrder(group);
+    });
+    _scheduleStateSave();
+  }
+
+  void _setActiveEditorSticky(bool sticky) {
+    final group = _focused;
+    final active = group.active;
+    if (active != null) _setEditorSticky(group, active, sticky);
+  }
+
+  void _toggleActiveEditorSticky() {
+    final group = _focused;
+    final active = group.active;
+    if (active != null) {
+      _setEditorSticky(group, active, !group.stickyDocIds.contains(active.id));
+    }
+  }
+
+  void _closeActiveEditorFromKeyboard() {
+    final group = _focused;
+    final active = group.active;
+    if (active == null) return;
+    if (!group.stickyDocIds.contains(active.id)) {
+      _closeDoc(active.id, group: group);
+      return;
+    }
+
+    EditorGroup? targetGroup = group;
+    OpenDoc? target = _mostRecentNonStickyDocument(group);
+    if (target == null) {
+      final otherGroups = _groups.values
+          .where((candidate) => !identical(candidate, group))
+          .toList()
+        ..sort((left, right) =>
+            right.lastActivationOrder.compareTo(left.lastActivationOrder));
+      for (final candidateGroup in otherGroups) {
+        target = _mostRecentNonStickyDocument(candidateGroup);
+        if (target != null) {
+          targetGroup = candidateGroup;
+          break;
+        }
+      }
+    }
+    if (target == null || targetGroup == null) return;
+    final selectedGroup = targetGroup;
+    final selectedDocument = target;
+
+    _flushInput(active, commitComposition: true);
+    setState(() {
+      selectedGroup.activeDocId = selectedDocument.id;
+      _focusedRegion = selectedGroup.region;
+      _noteActiveDocument(selectedGroup, selectedDocument.id);
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(selectedGroup, selectedDocument);
+    _scheduleStateSave();
+  }
+
+  Future<void> _closeFromActiveEditor(EditorTabCloseOperation action) async {
+    final group = _focused;
+    final target = group.active;
+    if (target == null) return;
+    await _closeTabsForAction(group, target, action);
+  }
+
+  Future<void> _closeTabsForAction(
+    EditorGroup group,
+    OpenDoc target,
+    EditorTabCloseOperation action,
+  ) async {
+    if (!group.docs.any((doc) => identical(doc, target))) return;
+    for (final doc in group.docs.toList(growable: false)) {
+      for (final view in _viewsOf(doc).toList(growable: false)) {
+        _flushInput(view, commitComposition: true);
+      }
+      _updateDirty(doc);
+    }
+    final candidateIds = EditorTabClosePolicy.candidates(
+      documentIds: group.docs.map((doc) => doc.id).toList(growable: false),
+      targetId: target.id,
+      stickyDocumentIds: group.stickyDocIds,
+      cleanDocumentIds: {
+        for (final doc in group.docs)
+          if (!doc.isDirty) doc.id,
+      },
+      action: action,
+    );
+    final targets = <_EditorCloseTarget>[
+      for (final id in candidateIds)
+        for (final doc in group.docs)
+          if (doc.id == id) (group: group, doc: doc),
+    ];
+    await _requestCloseEditorViews(targets);
+  }
+
+  Future<void> _closeAllEditorsInFocusedGroup() async {
+    final group = _focused;
+    await _requestCloseEditorViews([
+      for (final doc in group.docs)
+        if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
+    ]);
+  }
+
+  Future<void> _closeAllEditorGroups() async {
+    await _requestCloseEditorViews([
+      for (final group in _groups.values.toList(growable: false))
+        for (final doc in group.docs.toList(growable: false))
+          (group: group, doc: doc),
+    ]);
+  }
+
   void _closeDoc(int id, {EditorGroup? group}) {
     final owner = group ??
         (_focused.docs.any((doc) => doc.id == id) ? _focused : _ownerOf(id));
     if (owner == null) return;
     final doc = owner.docs.where((d) => d.id == id).firstOrNull;
     if (doc == null) return;
-    for (final view in _viewsOf(doc).toList(growable: false)) {
-      _flushInput(view, commitComposition: true);
+    unawaited(_requestCloseEditorViews([(group: owner, doc: doc)]));
+  }
+
+  Future<void> _requestCloseEditorViews(
+    Iterable<_EditorCloseTarget> requestedTargets,
+  ) async {
+    final targets = <_EditorCloseTarget>[];
+    final seenViews = <OpenDoc>{};
+    for (final target in requestedTargets) {
+      if (!target.group.docs.any((doc) => identical(doc, target.doc)) ||
+          !seenViews.add(target.doc) ||
+          _editorCloseInProgress.contains(target.doc._shared)) {
+        continue;
+      }
+      targets.add(target);
     }
-    final compareBindings = _snapshotCompareViews.values
-        .where((binding) => binding.view.sameDocumentAs(doc))
-        .toList(growable: false);
-    if (compareBindings.isNotEmpty) {
+    if (targets.isEmpty) return;
+
+    final lockedDocuments = targets.map((target) => target.doc._shared).toSet();
+    _editorCloseInProgress.addAll(lockedDocuments);
+    try {
+      final compareBindings = _snapshotCompareViews.values
+          .where((binding) =>
+              targets.any((target) => target.doc.sameDocumentAs(binding.view)))
+          .toSet()
+          .toList(growable: false);
       for (final binding in compareBindings) {
         binding.closeRoute?.call();
       }
-      unawaited(
-          Future.wait(compareBindings.map((binding) => binding.closed.future))
-              .then((_) {
-        if (mounted) _closeDoc(id, group: owner);
-      }));
-      return;
-    }
-    final mergeSession = doc.mergeResultSession;
-    if (doc.sharedViewCount == 1 &&
-        mergeSession != null &&
-        !mergeSession.isDisposed) {
-      if (_mergeCloseInProgress.add(id)) {
-        unawaited(_closeMergeResultDocument(owner, doc, mergeSession));
+      if (compareBindings.isNotEmpty) {
+        await Future.wait(
+          compareBindings.map((binding) => binding.closed.future),
+        );
       }
-      return;
+      if (!mounted) return;
+
+      final currentTargets = targets
+          .where((target) => target.group.docs.any(
+                (doc) => identical(doc, target.doc),
+              ))
+          .toList(growable: false);
+      if (currentTargets.isEmpty) return;
+
+      final affectedDocuments = <OpenDoc>[];
+      for (final target in currentTargets) {
+        if (affectedDocuments.every((doc) => !doc.sameDocumentAs(target.doc))) {
+          affectedDocuments.add(target.doc);
+        }
+      }
+      for (final doc in affectedDocuments) {
+        for (final view in _viewsOf(doc).toList(growable: false)) {
+          _flushInput(view, commitComposition: true);
+        }
+        _updateDirty(doc);
+      }
+
+      final finalDocuments = <OpenDoc>[];
+      for (final target in currentTargets) {
+        final closingViews = currentTargets
+            .where((candidate) => candidate.doc.sameDocumentAs(target.doc))
+            .length;
+        if (closingViews < target.doc.sharedViewCount ||
+            finalDocuments.any((doc) => doc.sameDocumentAs(target.doc))) {
+          continue;
+        }
+        finalDocuments.add(target.doc);
+      }
+
+      final standardDirtyDocuments = finalDocuments
+          .where((doc) =>
+              doc.isDirty && !(doc.mergeResultSession?.isDisposed == false))
+          .toList(growable: false);
+      if (standardDirtyDocuments.isNotEmpty) {
+        final decision = await _confirmDirtyEditorClose(
+          standardDirtyDocuments,
+        );
+        if (!mounted ||
+            decision == null ||
+            decision == _DirtyEditorCloseDecision.cancel) {
+          return;
+        }
+        if (decision == _DirtyEditorCloseDecision.save) {
+          for (final doc in standardDirtyDocuments) {
+            try {
+              if (doc.path == null) {
+                await _saveAsDoc(doc);
+              } else {
+                await _saveDocToPath(doc, doc.path!);
+              }
+            } on Object catch (error) {
+              if (mounted) {
+                setState(() => _statusDetail = '保存 ${doc.name} 失败：$error');
+              }
+              return;
+            }
+            if (!mounted) return;
+            if (doc.isDirty || doc.diskState != DiskDocumentState.current) {
+              setState(() => _statusDetail = '保存未完成；编辑器仍保持打开');
+              return;
+            }
+          }
+        }
+      }
+
+      for (final doc in finalDocuments) {
+        final mergeSession = doc.mergeResultSession;
+        if (mergeSession == null || mergeSession.isDisposed) continue;
+        final ownerTarget = currentTargets.firstWhere(
+          (target) => target.doc.sameDocumentAs(doc),
+        );
+        final closed = await _closeMergeResultDocument(
+          ownerTarget.group,
+          doc,
+          mergeSession,
+          closeTargets: currentTargets
+              .where((target) => target.doc.sameDocumentAs(doc))
+              .toList(growable: false),
+        );
+        if (!mounted || !closed) return;
+      }
+
+      for (final target in currentTargets) {
+        if (target.group.docs.any((doc) => identical(doc, target.doc))) {
+          if (_editorTabSizing.value == EditorTabSizing.fixed &&
+              _editorTabPointerInside.contains(target.group.region)) {
+            final widths = _editorTabLastWidths[target.group.region];
+            if (widths != null) {
+              _editorTabHeldWidths[target.group.region] =
+                  Map<int, double>.of(widths);
+            }
+          }
+          _closeDocNow(target.group, target.doc);
+        }
+      }
+    } finally {
+      _editorCloseInProgress.removeAll(lockedDocuments);
     }
-    _closeDocNow(owner, doc);
   }
 
-  Future<void> _closeMergeResultDocument(
+  Future<_DirtyEditorCloseDecision?> _confirmDirtyEditorClose(
+    List<OpenDoc> documents,
+  ) {
+    final names = documents.map((doc) => '“${doc.name}”').join('、');
+    return showDialog<_DirtyEditorCloseDecision>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const ValueKey('editor-close-dirty-dialog'),
+        title: const Text('保存更改？'),
+        content: Text('$names 有未保存的更改。关闭前要保存吗？'),
+        actions: [
+          TextButton(
+            key: const ValueKey('editor-close-cancel'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.cancel,
+            ),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            key: const ValueKey('editor-close-discard'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.discard,
+            ),
+            child: const Text('不保存'),
+          ),
+          FilledButton(
+            key: const ValueKey('editor-close-save'),
+            onPressed: () => Navigator.pop(
+              dialogContext,
+              _DirtyEditorCloseDecision.save,
+            ),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _closeMergeResultDocument(
     EditorGroup owner,
     OpenDoc doc,
-    MergeResultSession session,
-  ) async {
+    MergeResultSession session, {
+    List<_EditorCloseTarget>? closeTargets,
+  }) async {
+    if (!_mergeCloseInProgress.add(doc.id)) return false;
     try {
       final prompt = session.closePrompt;
       final action = prompt.actions.length == 1 &&
@@ -11824,7 +13275,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ],
               ),
             );
-      if (!mounted || action == null) return;
+      if (!mounted || action == null) return false;
 
       final outcome = await session.finishClose(
         action,
@@ -11862,8 +13313,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
         },
         closeResultDocument: () async {
-          if (mounted && owner.docs.any((view) => identical(view, doc))) {
-            _closeDocNow(owner, doc);
+          if (!mounted) return;
+          final targets = closeTargets ?? [(group: owner, doc: doc)];
+          for (final target in targets) {
+            if (target.group.docs.any((view) => identical(view, target.doc))) {
+              _closeDocNow(target.group, target.doc);
+            }
           }
         },
       );
@@ -11879,17 +13334,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         };
         if (detail != null) setState(() => _statusDetail = detail);
       }
+      return outcome == MergeResultCloseOutcome.closed;
     } on MergeResultSessionException {
       if (mounted) {
         setState(() => _statusDetail = '合并结果已在会话外变化，请先同步会话状态');
       }
+      return false;
     } finally {
       _mergeCloseInProgress.remove(doc.id);
     }
   }
 
-  void _closeDocNow(EditorGroup owner, OpenDoc doc) {
+  void _closeDocNow(EditorGroup owner, OpenDoc doc,
+      {bool keepEmptyGroup = false}) {
     if (!owner.docs.any((view) => identical(view, doc))) return;
+    if (_lastExplorerClickPath == doc.path) {
+      _lastExplorerClickPath = null;
+      _lastExplorerClickClock = null;
+    }
     final id = doc.id;
     final wasActive = owner.activeDocId == id;
     final focusKey = _focusKeyFor(owner, doc);
@@ -11915,7 +13377,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       nextSemanticTokens.remove(id);
       nextSemanticTokensVersion.remove(id);
     }
+    if (owner.previewDocId == id) owner.previewDocId = null;
+    owner.stickyDocIds.remove(id);
+    owner.recentDocIds.remove(id);
     owner.docs.remove(doc);
+    final nextActiveId = wasActive ? _mostRecentDocument(owner)?.id : null;
+    if (owner.docs.isEmpty) {
+      _editorTabLastWidths.remove(owner.region);
+      _editorTabHeldWidths.remove(owner.region);
+    }
     doc.disposeView();
     if (isLastView) _navigationHistory.closeDocument(id);
     setState(() {
@@ -11924,14 +13394,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _semanticTokensByDoc = nextSemanticTokens;
       _semanticTokensVersionByDoc = nextSemanticTokensVersion;
       if (wasActive) {
-        owner.activeDocId = owner.docs.isEmpty ? null : owner.docs.last.id;
+        owner.activeDocId = nextActiveId;
+        _noteActiveDocument(owner, nextActiveId);
       }
       // 组空且不是唯一的组 → 摘除该组（布局树自动折叠）
-      if (owner.docs.isEmpty && _groups.length > 1) {
+      if (owner.docs.isEmpty && _groups.length > 1 && !keepEmptyGroup) {
         _layout.removeRegion(owner.region);
         _groups.remove(owner.region);
         if (_focusedRegion == owner.region) {
-          _focusedRegion = _groups.keys.first;
+          // 上游 doRemoveEmptyGroup：激活剩余组中最近活动的组。
+          _focusedRegion = _mostRecentlyActiveRegion(excluding: owner.region) ??
+              _groups.keys.first;
         }
       }
       _scheduleStateSave();
@@ -11964,27 +13437,293 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
-  /// 拆分焦点组（W2-2）：沿水平方向分出新组，新组获得焦点。
-  void _splitFocusedGroup() {
+  Map<String, _EditorGroupBounds> _layoutRegionBounds() {
+    final bounds = <String, _EditorGroupBounds>{};
+
+    void visit(
+      WbNode node,
+      double left,
+      double top,
+      double right,
+      double bottom,
+    ) {
+      if (node is WbLeaf) {
+        bounds[node.region] = _EditorGroupBounds(left, top, right, bottom);
+        return;
+      }
+      if (node is! WbSplit) return;
+
+      final weights = node.children.map((child) {
+        if (child is WbLeaf && child.collapsed) return 0.0;
+        final weight = child is WbLeaf && child.fixedExtent != null
+            ? child.fixedExtent!
+            : child.weight;
+        return weight < 0 ? 0.0 : weight;
+      }).toList();
+      final totalWeight =
+          weights.fold<double>(0, (sum, weight) => sum + weight);
+      var cursor = node.axis == Axis.horizontal ? left : top;
+      for (var index = 0; index < node.children.length; index++) {
+        final fraction = totalWeight <= 0
+            ? 1 / node.children.length
+            : weights[index] / totalWeight;
+        final extent =
+            (node.axis == Axis.horizontal ? right - left : bottom - top) *
+                fraction;
+        final child = node.children[index];
+        if (node.axis == Axis.horizontal) {
+          visit(child, cursor, top, cursor + extent, bottom);
+        } else {
+          visit(child, left, cursor, right, cursor + extent);
+        }
+        cursor += extent;
+      }
+    }
+
+    visit(_layout.root, 0, 0, 1, 1);
+    return bounds;
+  }
+
+  double _intervalGap(
+    double firstStart,
+    double firstEnd,
+    double secondStart,
+    double secondEnd,
+  ) {
+    if (firstEnd < secondStart) return secondStart - firstEnd;
+    if (secondEnd < firstStart) return firstStart - secondEnd;
+    return 0;
+  }
+
+  String? _adjacentEditorRegion(
+    String sourceRegion,
+    _EditorGroupMoveDirection direction,
+  ) {
+    final bounds = _layoutRegionBounds();
+    final source = bounds[sourceRegion];
+    if (source == null) return null;
+
+    String? bestRegion;
+    var bestAlongGap = double.infinity;
+    var bestAcrossGap = double.infinity;
+    var bestAcrossCenter = double.infinity;
+    for (final region in _groups.keys) {
+      if (region == sourceRegion || !_isEditorRegion(region)) continue;
+      final candidate = bounds[region];
+      if (candidate == null ||
+          candidate.right - candidate.left <= 1e-9 ||
+          candidate.bottom - candidate.top <= 1e-9) {
+        continue;
+      }
+
+      final sourceCenter =
+          direction.axis == Axis.horizontal ? source.centerX : source.centerY;
+      final candidateCenter = direction.axis == Axis.horizontal
+          ? candidate.centerX
+          : candidate.centerY;
+      final pointsInDirection = direction.insertBefore
+          ? candidateCenter < sourceCenter
+          : candidateCenter > sourceCenter;
+      if (!pointsInDirection) continue;
+
+      final alongGap = switch (direction) {
+        _EditorGroupMoveDirection.left =>
+          (source.left - candidate.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.right =>
+          (candidate.left - source.right).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.up =>
+          (source.top - candidate.bottom).clamp(0.0, double.infinity),
+        _EditorGroupMoveDirection.down =>
+          (candidate.top - source.bottom).clamp(0.0, double.infinity),
+      };
+      final acrossGap = direction.axis == Axis.horizontal
+          ? _intervalGap(
+              source.top, source.bottom, candidate.top, candidate.bottom)
+          : _intervalGap(
+              source.left, source.right, candidate.left, candidate.right);
+      final acrossCenter = direction.axis == Axis.horizontal
+          ? (source.centerY - candidate.centerY).abs()
+          : (source.centerX - candidate.centerX).abs();
+
+      final candidateActivationOrder =
+          _groups[region]?.lastActivationOrder ?? -1;
+      final bestActivationOrder =
+          _groups[bestRegion]?.lastActivationOrder ?? -1;
+      final closer = alongGap < bestAlongGap - 1e-9 ||
+          (alongGap - bestAlongGap).abs() <= 1e-9 &&
+              (acrossGap < bestAcrossGap - 1e-9 ||
+                  (acrossGap - bestAcrossGap).abs() <= 1e-9 &&
+                      (acrossCenter < bestAcrossCenter - 1e-9 ||
+                          (acrossCenter - bestAcrossCenter).abs() <= 1e-9 &&
+                              candidateActivationOrder >
+                                  bestActivationOrder));
+      if (!closer) continue;
+      bestRegion = region;
+      bestAlongGap = alongGap;
+      bestAcrossGap = acrossGap;
+      bestAcrossCenter = acrossCenter;
+    }
+    return bestRegion;
+  }
+
+  void _focusEditorAfterLayout(EditorGroup group, OpenDoc view) {
+    final focusNode = _focusNodeFor(group, view);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _focusedRegion != group.region ||
+          !identical(group.active, view)) {
+        return;
+      }
+      focusNode.requestFocus();
+    });
+  }
+
+  void _moveFocusedEditorToGroup(_EditorGroupMoveDirection direction) {
+    final source = _focused;
+    final active = source.active;
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
+
+    var targetRegion = _adjacentEditorRegion(source.region, direction);
+    if (targetRegion == null) {
+      var index = 2;
+      while (_groups.containsKey('editor-$index')) {
+        index++;
+      }
+      targetRegion = 'editor-$index';
+      if (!_layout.splitRegion(
+        source.region,
+        targetRegion,
+        direction.axis,
+        insertBefore: direction.insertBefore,
+      )) {
+        setState(() => _statusDetail = '移动失败：区域 ${source.region} 不可拆分');
+        return;
+      }
+      _ensureGroupsFromLayout();
+    }
+
+    final target = _groups[targetRegion];
+    if (target == null || identical(target, source)) return;
+    final movingPreview =
+        source.previewDocId == active.id && !active.isDirty;
+    final movingSticky = source.stickyDocIds.contains(active.id);
+    OpenDoc? existingView;
+    for (final view in target.docs) {
+      if (view.sameDocumentAs(active)) {
+        existingView = view;
+        break;
+      }
+    }
+    if (existingView != null) {
+      if (movingSticky && !target.stickyDocIds.contains(existingView.id)) {
+        target.stickyDocIds.add(existingView.id);
+        _normalizeStickyOrder(target);
+      }
+      _closeDocNow(source, active);
+      if (!mounted) return;
+      setState(() {
+        target.activeDocId = existingView!.id;
+        _noteActiveDocument(target, existingView.id);
+        _focusedRegion = target.region;
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existingView);
+      return;
+    }
+
+    final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+    if (movingPreview) _replaceCleanPreviewBeforeOpen(target);
+
+    setState(() {
+      source.docs.removeWhere((view) => identical(view, active));
+      source.stickyDocIds.remove(active.id);
+      source.recentDocIds.remove(active.id);
+      if (source.previewDocId == active.id) source.previewDocId = null;
+      if (source.docs.isNotEmpty && source.activeDocId == active.id) {
+        source.activeDocId = _mostRecentDocument(source)?.id;
+        _noteActiveDocument(source, source.activeDocId);
+      }
+      target.docs.add(active);
+      if (movingSticky) target.stickyDocIds.add(active.id);
+      _normalizeStickyOrder(source);
+      _normalizeStickyOrder(target);
+      target.activeDocId = active.id;
+      _noteActiveDocument(target, active.id);
+      if (movingPreview) target.previewDocId = active.id;
+
+      final sourceFocusKey = _focusKeyFor(source, active);
+      final targetFocusKey = _focusKeyFor(target, active);
+      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
+      if (movedFocusNode != null) {
+        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
+        if (oldTargetFocusNode != null &&
+            oldTargetFocusNode != movedFocusNode) {
+          oldTargetFocusNode.dispose();
+        }
+        _editorFocusNodes[targetFocusKey] = movedFocusNode;
+      }
+
+      if (source.docs.isEmpty && removeSourceRegion) {
+        _groups.remove(source.region);
+      }
+      _focusedRegion = target.region;
+      _statusDetail = '已移动编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, active);
+  }
+
+  /// Split the focused editor leaf and copy its active document into the new
+  /// group. The document remains shared while its editor view state is fresh.
+  void _splitFocusedGroup({
+    Axis axis = Axis.horizontal,
+    bool insertBefore = false,
+  }) {
     final active = _active;
-    if (active != null) _flushInput(active, commitComposition: true);
+    if (active == null) return;
+    _flushInput(active, commitComposition: true);
     final region = _focusedRegion;
     var i = 2;
     while (_groups.containsKey('editor-$i')) {
       i++;
     }
     final fresh = 'editor-$i';
-    if (!_layout.splitRegion(region, fresh, Axis.horizontal)) {
+    if (!_layout.splitRegion(
+      region,
+      fresh,
+      axis,
+      insertBefore: insertBefore,
+    )) {
       setState(() => _statusDetail = '拆分失败：区域 $region 不可拆分');
       return;
     }
+    final freshView = OpenDoc.viewOf(active);
     setState(() {
       _ensureGroupsFromLayout();
+      final group = _groups[fresh]!;
+      group.docs.add(freshView);
+      if (_groups[region]?.stickyDocIds.contains(active.id) == true) {
+        group.stickyDocIds.add(freshView.id);
+        _normalizeStickyOrder(group);
+      }
+      group.activeDocId = freshView.id;
+      _noteActiveDocument(group, freshView.id);
+      if (_groups[region]?.previewDocId == active.id && !active.isDirty) {
+        group.previewDocId = freshView.id;
+      }
       _focusedRegion = fresh; // 新组获焦（对标 VS Code 拆分行为）
       _statusDetail = '已拆分编辑器：$region → $fresh';
       _scheduleStateSave();
     });
     _syncCommandContext();
+    _scheduleSyntaxRefresh(freshView.id);
   }
 
   // ---------- LSP ----------
@@ -15903,6 +17642,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() {
         if (!targetGroup.docs.contains(view)) targetGroup.docs.add(view);
         targetGroup.activeDocId = view.id;
+        _noteActiveDocument(targetGroup, view.id);
       });
     }
 
@@ -16499,16 +18239,130 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
   void _selectSidebarView(String view) {
+    final location = _layout.sidebarViewLocation(view);
+    final region = location == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    final selected = _layout.sidebarSelection(location);
     if (view == 'outline') _refreshOutline();
-    if (_sidebarView == view && !_layout.isCollapsed('sidebar')) {
-      _layout.toggleRegion('sidebar');
+    if (selected == view && !_layout.isCollapsed(region)) {
+      _focusedSidebarView = view;
+      _layout.toggleRegion(region);
       return;
     }
+    _layout.selectSidebarView(view);
     setState(() {
-      _sidebarView = view;
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
       if (view == 'outline') _refreshOutline();
     });
-    _layout.showRegion('sidebar');
+    _layout.showRegion(region);
+  }
+
+  Future<void> _showMoveSidebarViewPicker() => _showMoveSidebarViewPickerStep();
+
+  /// 多步 picker 的第一步；[restoreFocus] 是流程外焦点，供第二步返回时沿用，
+  /// 使取消（Esc/屏障）回到打开 flow 前的节点而不是即将销毁的面板输入框。
+  Future<void> _showMoveSidebarViewPickerStep(
+      {FocusNode? restoreFocus}) async {
+    final restore = restoreFocus ?? QuickInput.externalFocus();
+    await QuickInput.show(
+      context,
+      hint: '选择要移动的视图',
+      restoreFocus: restore,
+      items: [
+        // 上游 quick pick 分组：按视图当前所在侧栏分节，空分组不渲染标题。
+        for (final destination in const [
+          primarySidebarViewLocation,
+          secondarySidebarViewLocation,
+        ])
+          if (activityBarViewOrder
+              .any((view) => _layout.sidebarViewLocation(view) == destination))
+            ...[
+              QuickItem(
+                label: _sidebarViewLocationLabel(destination),
+                kind: QuickItemKind.separator,
+              ),
+              for (final view in activityBarViewOrder)
+                if (_layout.sidebarViewLocation(view) == destination)
+                  QuickItem(
+                    label: _sidebarViewLabel(view),
+                    onRun: () => _showMoveSidebarViewDestination(view,
+                        restoreFocus: restore),
+                  ),
+            ],
+      ],
+    );
+  }
+
+  Future<void> _showMoveFocusedSidebarViewPicker() async {
+    final view = _focusedSidebarView;
+    if (view == null || !activityBarViewOrder.contains(view)) return;
+    await _showMoveSidebarViewDestination(view);
+  }
+
+  Future<void> _showMoveSidebarViewDestination(String view,
+      {FocusNode? restoreFocus}) async {
+    if (!mounted) return;
+    final current = _layout.sidebarViewLocation(view);
+    final restore = restoreFocus ?? QuickInput.externalFocus();
+    await QuickInput.show(
+      context,
+      hint: '选择视图的新侧栏位置',
+      restoreFocus: restore,
+      onBack: () => _showMoveSidebarViewPickerStep(restoreFocus: restore),
+      items: [
+        for (final destination in const [
+          primarySidebarViewLocation,
+          secondarySidebarViewLocation,
+        ])
+          QuickItem(
+            label: _sidebarViewLocationLabel(destination),
+            description: destination == current ? '当前位置' : null,
+            onRun: () async => _moveSidebarView(view, destination),
+          ),
+      ],
+    );
+  }
+
+  void _moveSidebarView(String view, String destination) {
+    if (!_layout.moveSidebarView(view, destination)) return;
+    final region = destination == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = view;
+    });
+    _layout.showRegion(region);
+  }
+
+  Future<void> _resetSidebarViewLocations() async {
+    if (!_layout.resetSidebarViewLocations()) return;
+    setState(() {
+      _sidebarView = _layout.primarySidebarView;
+      _secondarySidebarView = _layout.secondarySidebarView;
+      _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+    });
+  }
+
+  String _sidebarViewLabel(String view) => switch (view) {
+        'explorer' => '资源管理器',
+        'search' => '搜索',
+        'outline' => '大纲',
+        'git' => '源代码管理',
+        _ => view,
+      };
+
+  String _sidebarViewLocationLabel(String location) =>
+      location == primarySidebarViewLocation ? '主侧栏' : '次侧栏';
+
+  void _focusSidebarRegion(String location) {
+    final view = _layout.sidebarSelection(location);
+    if (view == null || _focusedSidebarView == view) return;
+    setState(() => _focusedSidebarView = view);
   }
 
   void _showAbout() {
@@ -16534,6 +18388,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void dispose() {
     _disposing = true;
     _findGeneration++;
+    _treeTypeAheadTimer?.cancel();
     _cancelRegexFind();
     _cancelRegexReplace();
     _pendingDefinitionPointers.clear();
@@ -16570,6 +18425,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..removeListener(_onCommandServiceChanged)
       ..dispose();
     _panelTab.removeListener(_syncCommandContext);
+    _layout.removeListener(_syncPanelMaximizationCommandContext);
     _searchQuery.dispose();
     _findQuery.dispose();
     _replaceInput.dispose();
@@ -16580,6 +18436,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
+    _editorTabMode.dispose();
+    _editorTabSizing.dispose();
+    _editorTabActionLocation.dispose();
+    _editorTabCloseActionVisibility.dispose();
+    _editorTabActionReserveSpace.dispose();
+    _editorTabHoveredTarget.dispose();
+    _editorTabWrap.dispose();
+    _pinnedTabsOnSeparateRow.dispose();
     _commitMessage.dispose();
     _layout.dispose();
     super.dispose();
@@ -16627,9 +18491,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+    final activeDocument = _active;
+    final workspaceRoot = _workspaceRoot;
+    final workspaceName = workspaceRoot == null
+        ? null
+        : p.basename(p.normalize(workspaceRoot));
+    final windowTitle = WorkbenchWindowTitle.compose(
+      platform: defaultTargetPlatform,
+      activeEditorName: activeDocument?.name,
+      dirty: activeDocument?.isDirty ?? false,
+      workspaceName: workspaceName == null || workspaceName.isEmpty
+          ? workspaceRoot
+          : workspaceName,
+    );
+
     return Scaffold(
       body: CallbackShortcuts(
         bindings: {
+          // LAY-14：Zen 模式下 Escape 退出（优先于编辑器局部 Esc 绑定）。
+          if (_zenMode)
+            const SingleActivator(LogicalKeyboardKey.escape):
+                _toggleZenMode,
           if (_commands.isEnabled('editor.cursorPageUp'))
             const SingleActivator(LogicalKeyboardKey.pageUp): () =>
                 _runCommand('editor.cursorPageUp'),
@@ -16653,88 +18535,352 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
           child: Column(
             children: [
+              if (!_zenMode)
               AlulaTitleBar(
                   commands: _commands,
+                  windowTitle: windowTitle,
                   windowControls: widget.windowControls,
                   onCloseRequested: _shutdownLspWorkspace,
+                  layoutControlsBuilder: () => [
+                    TitleMenuItem(
+                      '侧栏',
+                      commandId: 'view.toggleSidebar',
+                      checked: !_layout.isCollapsed('sidebar'),
+                    ),
+                    TitleMenuItem(
+                      '次侧栏',
+                      commandId: 'workbench.action.toggleAuxiliaryBar',
+                      checked: !_layout.isCollapsed(secondarySidebarRegion),
+                    ),
+                    TitleMenuItem(
+                      '面板',
+                      commandId: 'view.togglePanel',
+                      checked: !_layout.isCollapsed('panel'),
+                    ),
+                  ],
                   menus: [
                     (
-                      '文件',
+                      '文件(&&F)',
                       [
-                        const TitleMenuItem('打开文件夹',
-                            commandId: 'file.openFolder'),
-                        TitleMenuItem('保存${_sc('file.save')}',
-                            commandId: 'file.save'),
-                        TitleMenuItem('另存为…${_sc('file.saveAs')}',
-                            commandId: 'file.saveAs'),
                         TitleMenuItem(
-                          '比较活动文件与剪贴板${_sc('workbench.files.action.compareWithClipboard')}',
-                          commandId:
-                              'workbench.files.action.compareWithClipboard',
+                          '新建文本文件(&&N)'
+                              '${_sc('workbench.action.files.newUntitledFile')}',
+                          commandId: 'workbench.action.files.newUntitledFile',
                         ),
-                        const TitleMenuItem('从磁盘还原', commandId: 'file.revert'),
-                        const TitleMenuItem('使用编码保存…',
-                            commandId: 'file.saveWithEncoding'),
-                        const TitleMenuItem('使用编码重新打开…',
-                            commandId: 'file.reopenWithEncoding'),
-                        const TitleMenuItem('选择行尾…',
-                            commandId: 'file.selectEol'),
+                        const TitleMenuItem.separator(),
+                        const TitleMenuItem('打开文件夹(&&O)',
+                            commandId: 'file.openFolder'),
+                        const TitleMenuItem.separator(),
+                        TitleMenuItem('保存(&&S)${_sc('file.save')}',
+                            commandId: 'file.save'),
+                        TitleMenuItem('另存为…(&&A)${_sc('file.saveAs')}',
+                            commandId: 'file.saveAs'),
+                        const TitleMenuItem.separator(),
+                        const TitleMenuItem('从磁盘还原(&&R)',
+                            commandId: 'file.revert'),
                       ],
                     ),
                     (
-                      '编辑',
+                      '编辑(&&E)',
                       [
-                        TitleMenuItem('撤销${_sc('editor.undo')}',
+                        TitleMenuItem('撤销(&&U)${_sc('editor.undo')}',
                             commandId: 'editor.undo'),
-                        TitleMenuItem('重做${_sc('editor.redo')}',
+                        TitleMenuItem('重做(&&R)${_sc('editor.redo')}',
                             commandId: 'editor.redo'),
-                        TitleMenuItem('查找…${_sc('editor.find')}',
+                        TitleMenuItem('查找…(&&F)${_sc('editor.find')}',
                             commandId: 'editor.find'),
-                        TitleMenuItem('替换…${_sc('editor.replace')}',
+                        TitleMenuItem('替换…(&&H)${_sc('editor.replace')}',
                             commandId: 'editor.replace'),
                       ],
                     ),
                     (
-                      '查看',
+                      '查看(&&V)',
                       [
-                        TitleMenuItem('命令面板${_sc('view.commandPalette')}',
+                        TitleMenuItem('命令面板(&&C)${_sc('view.commandPalette')}',
                             commandId: 'view.commandPalette'),
-                        TitleMenuItem('快速打开文件…${_sc('view.quickOpen')}',
+                        TitleMenuItem('快速打开文件…(&&O)${_sc('view.quickOpen')}',
                             commandId: 'view.quickOpen'),
-                        TitleMenuItem('搜索…${_sc('view.search')}',
+                        TitleMenuItem('搜索…(&&S)${_sc('view.search')}',
                             commandId: 'view.search'),
-                        const TitleMenuItem('大纲', commandId: 'view.outline'),
-                        const TitleMenuItem('切换侧栏',
-                            commandId: 'view.toggleSidebar'),
-                        const TitleMenuItem('切换面板',
-                            commandId: 'view.togglePanel'),
+                        const TitleMenuItem('大纲(&&L)',
+                            commandId: 'view.outline'),
+                        TitleMenuItem.submenu('外观(&&A)', children: [
+                          TitleMenuItem(
+                            '切换禅模式(&&Z)',
+                            commandId: 'workbench.action.toggleZenMode',
+                            checkedListenable: _layout,
+                            checkedBuilder: () => _zenMode,
+                          ),
+                          TitleMenuItem.submenu('活动栏位置(&&A)', children: [
+                            TitleMenuItem('侧边(&&D)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.default',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.side),
+                            TitleMenuItem('顶部(&&T)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.top',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.bottom',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.bottom),
+                            TitleMenuItem('隐藏(&&H)',
+                                commandId:
+                                    'workbench.action.activityBarLocation.hide',
+                                checkedBuilder: () =>
+                                    _layout.activityBarLocation ==
+                                        ActivityBarLocation.hidden),
+                          ]),
+                          TitleMenuItem.submenu('编辑器标签', children: [
+                            TitleMenuItem(
+                              '多标签',
+                              commandId: 'workbench.action.editorTabs.multiple',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value ==
+                                  EditorTabMode.multiple,
+                            ),
+                            TitleMenuItem(
+                              '单标签',
+                              commandId: 'workbench.action.editorTabs.single',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.single,
+                            ),
+                            TitleMenuItem(
+                              '不显示标签',
+                              commandId: 'workbench.action.editorTabs.none',
+                              checkedListenable: _editorTabMode,
+                              checkedBuilder: () =>
+                                  _editorTabMode.value == EditorTabMode.none,
+                            ),
+                            TitleMenuItem(
+                              '标签自动换行',
+                              commandId:
+                                  'workbench.action.toggleEditorTabWrapping',
+                              checkedListenable: _editorTabWrap,
+                              checkedBuilder: () => _editorTabWrap.value,
+                            ),
+                            TitleMenuItem(
+                              '固定标签单独成行',
+                              commandId:
+                                  'workbench.action.toggleEditorPinnedTabsSeparateRow',
+                              checkedListenable: _pinnedTabsOnSeparateRow,
+                              checkedBuilder: () =>
+                                  _pinnedTabsOnSeparateRow.value,
+                            ),
+                            TitleMenuItem(
+                              '显示关闭操作',
+                              commandId:
+                                  'workbench.action.toggleEditorTabCloseActionVisibility',
+                              checkedListenable:
+                                  _editorTabCloseActionVisibility,
+                              checkedBuilder: () =>
+                                  _editorTabCloseActionVisibility.value,
+                            ),
+                            TitleMenuItem(
+                              '为关闭操作保留空间',
+                              commandId:
+                                  'workbench.action.toggleEditorTabActionReserveSpace',
+                              checkedListenable: _editorTabActionReserveSpace,
+                              checkedBuilder: () =>
+                                  _editorTabActionReserveSpace.value,
+                            ),
+                            TitleMenuItem.submenu('标签尺寸', children: [
+                              TitleMenuItem(
+                                '按内容适配',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.fit',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.fit,
+                              ),
+                              TitleMenuItem(
+                                '收缩',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.shrink',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.shrink,
+                              ),
+                              TitleMenuItem(
+                                '固定宽度',
+                                commandId:
+                                    'workbench.action.editorTabs.sizing.fixed',
+                                checkedListenable: _editorTabSizing,
+                                checkedBuilder: () =>
+                                    _editorTabSizing.value ==
+                                    EditorTabSizing.fixed,
+                              ),
+                            ]),
+                            TitleMenuItem.submenu('关闭操作位置', children: [
+                              TitleMenuItem(
+                                '左侧',
+                                commandId:
+                                    'workbench.action.editorTabs.actionLocation.left',
+                                checkedListenable: _editorTabActionLocation,
+                                checkedBuilder: () =>
+                                    _editorTabActionLocation.value ==
+                                    EditorTabActionLocation.left,
+                              ),
+                              TitleMenuItem(
+                                '右侧',
+                                commandId:
+                                    'workbench.action.editorTabs.actionLocation.right',
+                                checkedListenable: _editorTabActionLocation,
+                                checkedBuilder: () =>
+                                    _editorTabActionLocation.value ==
+                                    EditorTabActionLocation.right,
+                              ),
+                            ]),
+                          ]),
+                          TitleMenuItem(
+                            _toggleSideBarPositionTitle,
+                            commandId: 'workbench.action.toggleSidebarPosition',
+                          ),
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换侧栏(&&S)',
+                              commandId: 'view.toggleSidebar'),
+                          TitleMenuItem(
+                            '切换次侧栏(&&B)'
+                                '${_sc('workbench.action.toggleAuxiliaryBar')}',
+                            commandId: 'workbench.action.toggleAuxiliaryBar',
+                            checkedBuilder: () =>
+                                !_layout.isCollapsed(secondarySidebarRegion),
+                          ),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板位置(&&M)', children: [
+                            TitleMenuItem('左侧(&&L)',
+                                commandId:
+                                    'workbench.action.positionPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.left),
+                            TitleMenuItem('右侧(&&R)',
+                                commandId:
+                                    'workbench.action.positionPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.right),
+                            TitleMenuItem('顶部(&&T)',
+                                commandId: 'workbench.action.positionPanelTop',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.top),
+                            TitleMenuItem('底部(&&B)',
+                                commandId:
+                                    'workbench.action.positionPanelBottom',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelPosition ==
+                                    PanelPosition.bottom),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          TitleMenuItem.submenu('面板对齐方式', children: [
+                            TitleMenuItem('左侧',
+                                commandId: 'workbench.action.alignPanelLeft',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.left),
+                            TitleMenuItem('右侧',
+                                commandId: 'workbench.action.alignPanelRight',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.right),
+                            TitleMenuItem('居中',
+                                commandId: 'workbench.action.alignPanelCenter',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.center),
+                            TitleMenuItem('两端对齐',
+                                commandId: 'workbench.action.alignPanelJustify',
+                                checkedListenable: _layout,
+                                checkedBuilder: () =>
+                                    _layout.panelAlignment ==
+                                    PanelAlignment.justify),
+                          ]),
+                          const TitleMenuItem.separator(),
+                          const TitleMenuItem('切换面板(&&P)',
+                              commandId: 'view.togglePanel'),
+                        ]),
                       ],
                     ),
                     (
-                      '帮助',
+                      '帮助(&&H)',
                       [
-                        const TitleMenuItem('关于 Alula Code',
+                        const TitleMenuItem('关于 Alula Code(&&A)',
                             commandId: 'help.about'),
                       ],
                     ),
                   ]),
               Expanded(
-                child: ListenableBuilder(
+                child: _zenMode
+                    ? Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 1100),
+                          child: ListenableBuilder(
+                            listenable: _layout,
+                            builder: (context, _) => _buildZenGrid(),
+                          ),
+                        ),
+                      )
+                    : ListenableBuilder(
                   listenable: _layout,
                   builder: (context, _) => WorkbenchGrid(
                     layout: _layout,
                     builders: {
                       'activity': (_) => ActivityBar(
-                            activeView: _sidebarView,
+                            activeView: _focusedSidebarView ??
+                                _sidebarView ??
+                                _secondarySidebarView ??
+                                'explorer',
                             sidebarCollapsed: _layout.isCollapsed('sidebar'),
+                            axis: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? Axis.vertical
+                                : Axis.horizontal,
+                            size: _layout.activityBarSize,
+                            order: _layout.activityBarOrder,
+                            pinnedViews: _layout.activityBarPinnedViews,
+                            badgeDisabledViews:
+                                _layout.activityBarBadgesDisabledViews,
+                            accountsVisible: _layout.activityBarAccountsVisible,
+                            onOrderChanged: _layout.setActivityBarOrder,
+                            onPinnedViewsChanged:
+                                _layout.setActivityBarPinnedViews,
+                            onBadgeDisabledViewsChanged:
+                                _layout.setActivityBarBadgesDisabledViews,
+                            onAccountsVisibilityChanged:
+                                _layout.setActivityBarAccountsVisible,
+                            onManageCommand: (command) => _runCommand(command),
+                            onSizeChanged: _layout.activityBarLocation ==
+                                    ActivityBarLocation.side
+                                ? _layout.setActivityBarSize
+                                : null,
                             onSelectView: _selectSidebarView,
                           ),
-                      'sidebar': (_) => switch (_sidebarView) {
-                            'git' => _buildGitPanel(),
-                            'search' => _buildSearchPanel(),
-                            'outline' => _buildOutlinePanel(),
-                            _ => _buildSidebar(),
-                          },
+                      'sidebar': (_) => _buildSidebarViewRegion(
+                            primarySidebarViewLocation,
+                            _sidebarView,
+                          ),
+                      secondarySidebarRegion: (_) => _buildSidebarViewRegion(
+                            secondarySidebarViewLocation,
+                            _secondarySidebarView,
+                          ),
                       'panel': (_) => _buildPanel(),
                       // 编辑器组通配（W2-2）：'editor'、'editor-2'…各对应一个组
                       for (final g in _groups.values)
@@ -16743,6 +18889,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   ),
                 ),
               ),
+              if (!_zenMode)
               AlulaStatusBar(
                 state: _state,
                 detail: _statusDetail,
@@ -16757,6 +18904,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 syncCount: _syncCount,
                 panelCollapsed: _layout.isCollapsed('panel'),
                 onTogglePanel: () => _layout.toggleRegion('panel'),
+                lockedScrolling: _lockedScrolling,
+                onToggleLockedScrolling: _toggleLockedScrolling,
                 encodingLabel: _active?.fileOptions.statusLabel,
                 encodingTooltip: _active?.fileOptions.label,
                 lineEndingLabel: _active?.fileOptions.lineEnding.label,
@@ -17124,6 +19273,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：资源管理器 ----------
 
+  Widget _buildSidebarViewRegion(String location, String? view) {
+    final title = _sidebarViewLocationLabel(location);
+    return Focus(
+      onFocusChange: (focused) {
+        if (focused) _focusSidebarRegion(location);
+      },
+      child: switch (view) {
+        'git' => _buildGitPanel(),
+        'search' => _buildSearchPanel(),
+        'outline' => _buildOutlinePanel(),
+        'explorer' => _buildSidebar(),
+        _ => SecondarySidebarEmptyState(title: title),
+      },
+    );
+  }
+
   Widget _buildSidebar() {
     return Container(
       color: const Color(0xFF181B20),
@@ -17152,6 +19317,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           ),
           const Divider(height: 1),
+          _buildOpenEditorsSection(),
+          const Divider(height: 1),
           Expanded(
             child: _workspaceRoot == null
                 ? Center(
@@ -17159,14 +19326,241 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 12)))
-                : ListView.builder(
-                    itemCount: _treeRoots.length,
-                    itemBuilder: (context, i) => _buildNode(_treeRoots[i], 0),
+                : Focus(
+                    key: const ValueKey('explorer-tree-focus'),
+                    focusNode: _treeFocusNode,
+                    onKeyEvent: _onTreeTypeAheadKeyEvent,
+                    child: ListView.builder(
+                      itemCount: _treeRoots.length,
+                      itemBuilder: (context, i) =>
+                          _buildNode(_treeRoots[i], 0),
+                    ),
                   ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildZenGrid() {
+    return WorkbenchGrid(
+      layout: _layout,
+      builders: {
+        for (final g in _groups.values) g.region: (_) => _buildEditorArea(g),
+      },
+    );
+  }
+
+  /// Open Editors 侧栏区段（上游 openEditorsView.ts）：按编辑器组分组的
+  /// 打开文档树，支持点击/键盘激活、每行脏安全关闭、右键复制路径、脏计数
+  /// 徽章与折叠态持久化。
+  Widget _buildOpenEditorsSection() {
+    final dirtyCount =
+        _allDocs.where((doc) => doc.isDirty).length;
+    final rows = <Widget>[];
+    for (final group in _groups.values) {
+      final label = group.region == 'editor'
+          ? '主编辑器组'
+          : '编辑器组 ${group.region.substring('editor-'.length)}';
+      rows.add(Container(
+        key: ValueKey('open-editors-group-${group.region}'),
+        padding: const EdgeInsets.only(left: 8, top: 3, bottom: 2),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade500,
+          ),
+        ),
+      ));
+      for (final doc in group.docs) {
+        final active = group.activeDocId == doc.id;
+        rows.add(CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.enter): () =>
+                _activateOpenEditorsRow(group, doc),
+            const SingleActivator(LogicalKeyboardKey.space): () =>
+                _activateOpenEditorsRow(group, doc),
+          },
+          child: Focus(
+            key: ValueKey('open-editors-focus-${group.region}-${doc.id}'),
+            focusNode: _openEditorsRowFocus.putIfAbsent(
+                '${group.region}:${doc.id}',
+                () => FocusNode(debugLabel: 'open-editors-row')),
+            child: InkWell(
+              key: ValueKey('open-editors-doc-${group.region}-${doc.id}'),
+              canRequestFocus: false,
+              onTap: () => _activateOpenEditorsRow(group, doc),
+              onSecondaryTapUp: (details) =>
+                  _showOpenEditorsContextMenu(details, group, doc),
+              child: Container(
+                color: active ? const Color(0xFF22262D) : Colors.transparent,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 12),
+                    Icon(
+                      doc.path == null
+                          ? Icons.description_outlined
+                          : Icons.insert_drive_file_outlined,
+                      size: 12,
+                      color: Colors.grey.shade500,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      // RichText：行标签不参与既有 find.text 计数断言
+                      // （侧栏/标签/面包屑共存的计数由原测试持有）。
+                      child: RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: '${doc.name}${doc.isDirty ? " •" : ""}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontStyle: group.previewDocId == doc.id
+                                ? FontStyle.italic
+                                : FontStyle.normal,
+                            color: active
+                                ? Colors.white
+                                : Colors.grey.shade400,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      key: ValueKey(
+                          'open-editors-close-${group.region}-${doc.id}'),
+                      tooltip: '关闭编辑器',
+                      onPressed: () => _closeDoc(doc.id, group: group),
+                      icon: const Icon(Icons.close, size: 12),
+                      visualDensity: VisualDensity.compact,
+                      constraints:
+                          const BoxConstraints(minWidth: 20, minHeight: 20),
+                      padding: EdgeInsets.zero,
+                      color: Colors.grey.shade500,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+      }
+    }
+    return Container(
+      key: const ValueKey('open-editors-section'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            key: const ValueKey('open-editors-header'),
+            onTap: () => setState(() {
+              _openEditorsCollapsed = !_openEditorsCollapsed;
+              _scheduleStateSave();
+            }),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 2, 4),
+              child: Row(
+                children: [
+                  Icon(
+                    _openEditorsCollapsed
+                        ? Icons.chevron_right
+                        : Icons.expand_more,
+                    size: 14,
+                    color: Colors.grey.shade500,
+                  ),
+                  const SizedBox(width: 2),
+                  const Expanded(
+                    child: Text(
+                      '打开的编辑器',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  if (dirtyCount > 0)
+                    Container(
+                      key: const ValueKey('open-editors-dirty-count'),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 1),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4D5760),
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Text(
+                        '$dirtyCount',
+                        style: const TextStyle(fontSize: 9),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          if (!_openEditorsCollapsed)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.only(bottom: 4),
+                children: rows,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _activateOpenEditorsRow(EditorGroup group, OpenDoc doc) {
+    final current = _active;
+    if (current != null && !identical(current, doc)) {
+      _flushInput(current, commitComposition: true);
+    }
+    setState(() {
+      group.activeDocId = doc.id;
+      _noteActiveDocument(group, doc.id);
+      _focusedRegion = group.region;
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  Future<void> _showOpenEditorsContextMenu(
+    TapUpDetails details,
+    EditorGroup group,
+    OpenDoc doc,
+  ) async {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) return;
+    final localPosition = overlay.globalToLocal(details.globalPosition);
+    final position = RelativeRect.fromLTRB(
+      localPosition.dx,
+      localPosition.dy,
+      overlay.size.width - localPosition.dx,
+      overlay.size.height - localPosition.dy,
+    );
+    final action = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        if (doc.path != null)
+          const PopupMenuItem(value: 'copy-path', child: Text('复制路径')),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'copy-path':
+        final path = doc.path;
+        if (path != null) {
+          await Clipboard.setData(ClipboardData(text: path));
+          if (mounted) {
+            setState(() => _statusDetail = '已复制路径：$path');
+          }
+        }
+        break;
+    }
   }
 
   Widget _buildNode(TreeNode node, int depth) {
@@ -17248,7 +19642,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         const SingleActivator(LogicalKeyboardKey.escape): () =>
             unawaited(_hidePasteWidget()),
       },
-      child: Container(
+      child: Builder(
+        builder: (paneContext) => DragTarget<int>(
+          key: ValueKey('editor-drop-area-${g.region}'),
+          onWillAcceptWithDetails: (_) => true,
+          onAcceptWithDetails: (details) =>
+              _handleGroupAreaDrop(g, details.data),
+          builder: (context, _, __) => Container(
         color: const Color(0xFF14161A),
         child: Column(
           children: [
@@ -17256,7 +19656,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             const Divider(height: 1),
             _buildBreadcrumb(g),
             Expanded(
-              child: Stack(
+              child: Builder(
+                builder: (bodyContext) => DragTarget<int>(
+                  key: ValueKey('editor-body-drop-${g.region}'),
+                  onWillAcceptWithDetails: (_) => true,
+                  onAcceptWithDetails: (details) {
+                    final box =
+                        bodyContext.findRenderObject() as RenderBox?;
+                    _handleBodyAreaDrop(
+                      g,
+                      details.data,
+                      box,
+                      details.offset,
+                    );
+                  },
+                  builder: (context, _, __) => Stack(
                 fit: StackFit.expand,
                 children: [
                   if (mergeSession == null)
@@ -17330,10 +19744,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ),
                 ],
               ),
+              ),
+            ),
             ),
           ],
         ),
-      ),
+        ),
+          ),
+        ),
     );
   }
 
@@ -17362,7 +19780,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               Text(' › ',
                   style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
             GestureDetector(
-              onTap: () => _revealInExplorer(segments, i),
+              onTap: () => _onBreadcrumbSegmentTap(g, segments, i),
               child: Text(
                 segments[i],
                 style: const TextStyle(fontSize: 11),
@@ -17383,6 +19801,166 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
+  void _onBreadcrumbSegmentTap(
+    EditorGroup group,
+    List<String> segments,
+    int index,
+  ) {
+    final node = _findTreeNodeByRelPrefix(segments, index);
+    debugPrint(
+        'BCDBG seg=$segments idx=$index node=${node?.path} children=${node?.children?.length} roots=${_treeRoots.map((n) => n.path).take(6)}');
+    final isLastSegment = index == segments.length - 1;
+    if (isLastSegment) {
+      // 上游 OutlineItem → BreadcrumbsOutlinePicker：文件段列出文档符号。
+      _showBreadcrumbSymbolPicker(group);
+      return;
+    }
+    if (node == null) {
+      _revealInExplorer(segments, index);
+      return;
+    }
+    // 上游 FileItem → BreadcrumbsFilePicker：目录段列出子项（懒加载目录
+    // 由 picker 现场读取磁盘）。
+    _showBreadcrumbFolderPicker(group, segments, index, node);
+  }
+
+  TreeNode? _findTreeNodeByRelPrefix(List<String> segments, int index) {
+    final root = _workspaceRoot;
+    if (root == null) return null;
+    final prefix = segments.sublist(0, index + 1).join('/');
+    final wanted = _normPath('$root/$prefix');
+    TreeNode? find(List<TreeNode> nodes) {
+      for (final node in nodes) {
+        if (_normPath(node.path) == wanted) return node;
+        if (node.children != null) {
+          final hit = find(node.children!);
+          if (hit != null) return hit;
+        }
+      }
+      return null;
+    }
+
+    return find(_treeRoots);
+  }
+
+  Future<void> _showBreadcrumbFolderPicker(
+    EditorGroup group,
+    List<String> segments,
+    int index,
+    TreeNode node,
+  ) async {
+    // 文件树懒加载：未展开的目录现场读取磁盘子项（上游 FileItem picker 同样
+    // 从文件服务读取）。
+    List<TreeNode> children = node.children ?? const <TreeNode>[];
+    if (node.children == null) {
+      try {
+        final entries = _core!.workspace.listDir(node.path);
+        children = [
+          for (final e in entries)
+            TreeNode(
+              name: e['name'] as String,
+              path: e['path'] as String,
+              isDir: (e['is_dir'] as bool?) ?? false,
+            ),
+        ];
+      } on AlulaException {
+        children = const <TreeNode>[];
+      }
+    }
+    final action = await showMenu<String>(
+      context: context,
+      position: _breadcrumbPickerPosition(),
+      items: [
+        if (children.isEmpty)
+          const PopupMenuItem(enabled: false, child: Text('空文件夹')),
+        for (final child in children)
+          PopupMenuItem(
+            value: '${child.isDir ? 'reveal' : 'open'}:${child.path}',
+            child: Text(child.isDir ? '${child.name}/' : child.name),
+          ),
+      ],
+    );
+    if (!mounted || action == null) return;
+    final childPath = action.split(':').sublist(1).join(':');
+    final child = children.where((c) => c.path == childPath).firstOrNull;
+    if (child == null) return;
+    // 上游 _onSelectEvent：picker 交互先激活所属组。
+    setState(() => _focusedRegion = group.region);
+    if (child.isDir) {
+      // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
+      // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
+      _revealInExplorer([...segments, child.name, ''], index + 1);
+    } else {
+      _openTreeFile(child);
+    }
+  }
+
+  Future<void> _showBreadcrumbSymbolPicker(EditorGroup group) async {
+    final doc = group.active;
+    if (doc == null) return;
+    // 点击时直查 LSP（不依赖大纲缓存，任意组即时可用）。
+    final r = doc.doc.core.lsp.symbols(doc.id);
+    final symbols = [
+      for (final s in r?.symbols ?? const <Map<String, Object?>>[])
+        (
+          kind: s['kind'] as String? ?? '',
+          name: s['name'] as String? ?? '',
+          startUtf16: (s['start_utf16'] as num?)?.toInt() ?? 0,
+          line: (s['line'] as num?)?.toInt() ?? 0,
+        )
+    ];
+    final action = await showMenu<String>(
+      context: context,
+      position: _breadcrumbPickerPosition(),
+      items: [
+        if (symbols.isEmpty)
+          const PopupMenuItem(enabled: false, child: Text('未发现符号')),
+        for (final sym in symbols)
+          PopupMenuItem(
+            value: 'symbol:${sym.startUtf16}:${sym.name}',
+            child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
+          ),
+      ],
+    );
+    if (!mounted || action == null) return;
+    // 上游 _onSelectEvent：picker 交互先激活所属组，再 reveal。
+    setState(() {
+      group.activeDocId = doc.id;
+      _noteActiveDocument(group, doc.id);
+      _focusedRegion = group.region;
+    });
+    final parts = action.split(':');
+    final offset = int.tryParse(parts[1]) ?? 0;
+    final activeDoc = group.active;
+    if (activeDoc != null) {
+      _setDocSelection(
+        activeDoc,
+        TextSelection.collapsed(offset: offset),
+      );
+      setState(() {});
+    }
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  RelativeRect _breadcrumbPickerPosition() {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) {
+      return const RelativeRect.fromLTRB(0, 0, 0, 0);
+    }
+    final box = context.findRenderObject();
+    final local = box is RenderBox && box.hasSize
+        ? box.localToGlobal(const Offset(8, 60))
+        : const Offset(8, 60);
+    final position = overlay.globalToLocal(local);
+    return RelativeRect.fromLTRB(
+      position.dx,
+      position.dy,
+      overlay.size.width - position.dx,
+      overlay.size.height - position.dy,
+    );
+  }
+
   void _revealInExplorer(List<String> segments, int index) {
     if (_workspaceRoot == null || index >= segments.length - 1) {
       return; // 最后一段是文件名，无目录可展开
@@ -17405,21 +19983,292 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     setState(() {});
   }
 
+  bool _tabCloseActionReservesSpace(EditorGroup group, OpenDoc doc) =>
+      _editorTabActionReserveSpace.value ||
+      (_editorTabCloseActionVisibility.value &&
+          (doc.id == group.activeDocId || doc.isDirty));
+
+  double _tabFixedMinimumWidth(EditorGroup group, List<OpenDoc> docs) {
+    final leftAction =
+        _editorTabActionLocation.value == EditorTabActionLocation.left;
+    var minimum = leftAction ? 80.0 : EditorTabWidthPolicy.fixedMinWidth;
+    for (final doc in docs) {
+      final padding = leftAction ? 10.0 : 16.0;
+      final action = _tabCloseActionReservesSpace(group, doc) ? 24.0 : 0.0;
+      final diskState = doc.diskState == DiskDocumentState.current ? 0.0 : 17.0;
+      final stickyMark = group.stickyDocIds.contains(doc.id) ? 15.0 : 0.0;
+      final occupied = padding +
+          EditorTabFileIcon.slotWidth +
+          action +
+          diskState +
+          stickyMark;
+      if (occupied > minimum) minimum = occupied;
+    }
+    return minimum;
+  }
+
+  double _tabContentWidth(
+    BuildContext context,
+    EditorGroup group,
+    OpenDoc doc, {
+    required String displayLabel,
+    required bool reserveActionSpace,
+  }) {
+    final label = TextPainter(
+      text: TextSpan(
+        text: '$displayLabel${doc.isDirty ? " •" : ""}',
+        style: const TextStyle(fontSize: 12),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout();
+    final leftAction =
+        _editorTabActionLocation.value == EditorTabActionLocation.left;
+    // Keep the action and its gap in the measured width only when this tab
+    // allocates it; the optional disk-state marker always retains its width.
+    return label.width +
+        EditorTabFileIcon.slotWidth +
+        (leftAction ? 10 : 24) +
+        (reserveActionSpace ? 18 : 0) +
+        14 +
+        (group.stickyDocIds.contains(doc.id) ? 15 : 0) +
+        (doc.diskState == DiskDocumentState.current ? 0 : 17);
+  }
+
+  Future<void> _showEditorTabContextMenu(
+    TapUpDetails details,
+    EditorGroup group,
+    OpenDoc doc,
+  ) async {
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) return;
+    final localPosition = overlay.globalToLocal(details.globalPosition);
+    final position = RelativeRect.fromLTRB(
+      localPosition.dx,
+      localPosition.dy,
+      overlay.size.width - localPosition.dx,
+      overlay.size.height - localPosition.dy,
+    );
+    final isSticky = group.stickyDocIds.contains(doc.id);
+    final action = await showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        PopupMenuItem(
+          value: isSticky ? 'unpin' : 'pin',
+          child: Text(isSticky ? '取消固定编辑器' : '固定编辑器'),
+        ),
+        const PopupMenuDivider(),
+        const PopupMenuItem(value: 'new-window', child: Text('在新窗口打开')),
+        const PopupMenuItem(value: 'close', child: Text('关闭')),
+        const PopupMenuItem(value: 'close-others', child: Text('关闭其他编辑器')),
+        const PopupMenuItem(value: 'close-left', child: Text('关闭左侧编辑器')),
+        const PopupMenuItem(value: 'close-right', child: Text('关闭右侧编辑器')),
+        const PopupMenuItem(value: 'close-saved', child: Text('关闭已保存的编辑器')),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'pin':
+        _setEditorSticky(group, doc, true);
+        break;
+      case 'unpin':
+        _setEditorSticky(group, doc, false);
+        break;
+      case 'new-window':
+        await _moveEditorToNewWindow(group, doc);
+        break;
+      case 'close':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.close,
+        );
+        break;
+      case 'close-others':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeOthers,
+        );
+        break;
+      case 'close-left':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeToLeft,
+        );
+        break;
+      case 'close-right':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeToRight,
+        );
+        break;
+      case 'close-saved':
+        await _closeTabsForAction(
+          group,
+          doc,
+          EditorTabCloseOperation.closeSaved,
+        );
+        break;
+      default:
+        break;
+    }
+  }
+
   Widget _buildTabStrip(EditorGroup g) {
+    final groupLabels = EditorTabLabelPolicy.labelsFor([
+      for (final doc in g.docs)
+        EditorTabLabelInput(name: doc.name, path: doc.path),
+    ]);
+    final labelsById = <int, String>{
+      for (var index = 0; index < g.docs.length; index++)
+        g.docs[index].id: groupLabels[index],
+    };
+    final visibleDocs = switch (_editorTabMode.value) {
+      EditorTabMode.multiple => g.docs,
+      EditorTabMode.single =>
+        g.active == null ? const <OpenDoc>[] : [g.active!],
+      EditorTabMode.none => const <OpenDoc>[],
+    };
+    final hasStickyTabs =
+        visibleDocs.any((doc) => g.stickyDocIds.contains(doc.id));
+    final hasOrdinaryTabs =
+        visibleDocs.any((doc) => !g.stickyDocIds.contains(doc.id));
+    final separatePinnedRows = _editorTabMode.value == EditorTabMode.multiple &&
+        _pinnedTabsOnSeparateRow.value &&
+        hasStickyTabs &&
+        hasOrdinaryTabs;
+    final stickyDocs = separatePinnedRows
+        ? visibleDocs.where((doc) => g.stickyDocIds.contains(doc.id)).toList()
+        : visibleDocs;
+    final ordinaryDocs = separatePinnedRows
+        ? visibleDocs.where((doc) => !g.stickyDocIds.contains(doc.id)).toList()
+        : const <OpenDoc>[];
+
+    Widget buildTabRow(
+      List<OpenDoc> rowDocs, {
+      required String rowName,
+      required double availableWidth,
+    }) {
+      final sizing = _editorTabSizing.value;
+      final widths = EditorTabWidthPolicy.layout(
+        contentWidths: [
+          for (final doc in rowDocs)
+            _tabContentWidth(
+              context,
+              g,
+              doc,
+              displayLabel: labelsById[doc.id] ?? doc.name,
+              reserveActionSpace: _tabCloseActionReservesSpace(g, doc),
+            ),
+        ],
+        availableWidth: availableWidth,
+        sizing: sizing,
+        wrapping: _editorTabWrap.value,
+        fixedMinWidthOverride: _tabFixedMinimumWidth(g, rowDocs),
+      );
+      final heldWidths = sizing == EditorTabSizing.fixed
+          ? _editorTabHeldWidths[g.region]
+          : null;
+      final currentWidths = _editorTabLastWidths[g.region] ?? <int, double>{};
+      final tabs = <Widget>[];
+      for (var i = 0; i < rowDocs.length; i++) {
+        final doc = rowDocs[i];
+        final width = heldWidths?[doc.id] ?? widths[i];
+        currentWidths[doc.id] = width;
+        tabs.add(SizedBox(
+          key: doc.id == g.activeDocId ? g.activeTabVisibilityKey : null,
+          width: width,
+          child: _buildTab(
+            g,
+            doc,
+            displayLabel: labelsById[doc.id] ?? doc.name,
+          ),
+        ));
+      }
+      _editorTabLastWidths[g.region] = currentWidths;
+
+      if (_editorTabWrap.value || visibleDocs.isEmpty) {
+        g.lastAutoRevealedTabId = null;
+      } else if (g.active != null && g.lastAutoRevealedTabId != g.activeDocId) {
+        g.lastAutoRevealedTabId = g.activeDocId;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || _editorTabWrap.value) return;
+          final activeTabContext = g.activeTabVisibilityKey.currentContext;
+          if (activeTabContext != null) {
+            unawaited(Scrollable.ensureVisible(
+              activeTabContext,
+              duration: Duration.zero,
+              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+            ));
+          }
+        });
+      }
+
+      final tabLayout = _editorTabWrap.value
+          ? Wrap(
+              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
+              spacing: 0,
+              runSpacing: 0,
+              children: tabs,
+            )
+          : SingleChildScrollView(
+              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
+              scrollDirection: Axis.horizontal,
+              child: Row(children: tabs),
+            );
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 36),
+        child: MouseRegion(
+          onEnter: (_) => _editorTabPointerInside.add(g.region),
+          onExit: (_) {
+            _editorTabPointerInside.remove(g.region);
+            final held = _editorTabHeldWidths.remove(g.region);
+            if (held != null && mounted) setState(() {});
+          },
+          child: tabLayout,
+        ),
+      );
+    }
+
     return Container(
-      height: 36,
+      key: ValueKey('editor-tab-strip-${g.region}'),
+      constraints: const BoxConstraints(minHeight: 36),
       color: const Color(0xFF181B20),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            // W2-1：标签溢出横向滚动（对标 VS Code 滚动标签条）
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final d in g.docs) _buildTab(g, d),
-                ],
-              ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                _editorTabLastWidths[g.region] = <int, double>{};
+                if (!separatePinnedRows) {
+                  return buildTabRow(
+                    visibleDocs,
+                    rowName: 'shared',
+                    availableWidth: constraints.maxWidth,
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    buildTabRow(
+                      stickyDocs,
+                      rowName: 'pinned',
+                      availableWidth: constraints.maxWidth,
+                    ),
+                    buildTabRow(
+                      ordinaryDocs,
+                      rowName: 'ordinary',
+                      availableWidth: constraints.maxWidth,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
@@ -17463,8 +20312,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
-  Widget _buildTab(EditorGroup g, OpenDoc d) {
+  Widget _buildTab(
+    EditorGroup g,
+    OpenDoc d, {
+    required String displayLabel,
+  }) {
+    final actionLocation = _editorTabActionLocation.value;
+    final reserveActionSpace = _tabCloseActionReservesSpace(g, d);
+    final fileIcon = EditorTabFileIcon(
+      key: ValueKey('editor-tab-file-icon-${g.region}-${d.id}'),
+      fileName: d.name,
+      languageId: d.path == null ? null : _languageIdOf(d.path!),
+    );
+    final isSticky = g.stickyDocIds.contains(d.id);
+    final label = Tooltip(
+      message: isSticky ? '$displayLabel（已固定）' : displayLabel,
+      child: Semantics(
+        label: displayLabel,
+        excludeSemantics: true,
+        child: Text(
+          key: ValueKey('editor-tab-label-${g.region}-${d.id}'),
+          '$displayLabel${d.isDirty ? " •" : ""}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle:
+                g.previewDocId == d.id ? FontStyle.italic : FontStyle.normal,
+          ),
+        ),
+      ),
+    );
+    final closeAction = ValueListenableBuilder<({String region, int docId})?>(
+      valueListenable: _editorTabHoveredTarget,
+      builder: (context, hoveredTarget, _) => EditorTabCloseAction(
+        key: ValueKey('editor-tab-close-action-${g.region}-${d.id}'),
+        actionKey: ValueKey('close-tab-${g.region}-${d.id}'),
+        enabled: _editorTabCloseActionVisibility.value,
+        emphasized: d.id == g.activeDocId ||
+            d.isDirty ||
+            hoveredTarget == (region: g.region, docId: d.id),
+        onPressed: () => _closeDoc(d.id, group: g),
+      ),
+    );
     final tab = InkWell(
+      onSecondaryTapUp: (details) => _showEditorTabContextMenu(details, g, d),
       onTap: () {
         final current = _active;
         if (current != null && !identical(current, d)) {
@@ -17472,13 +20364,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
         setState(() {
           g.activeDocId = d.id;
+          _noteActiveDocument(g, d.id);
           _focusedRegion = g.region;
         });
         _syncCommandContext();
+        _scheduleStateSave();
       },
       child: Container(
         key: ValueKey('tab-${d.id}'),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: actionLocation == EditorTabActionLocation.left
+            ? const EdgeInsets.only(right: 10)
+            : EdgeInsets.symmetric(
+                horizontal:
+                    _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
+              ),
         decoration: BoxDecoration(
           color: d.id == g.activeDocId
               ? const Color(0xFF14161A)
@@ -17489,61 +20388,158 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               : const Border(
                   top: BorderSide(color: Colors.transparent, width: 2)),
         ),
-        child: Row(
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Text('${d.name}${d.isDirty ? " •" : ""}',
-                style: const TextStyle(fontSize: 12)),
-            if (d.diskState != DiskDocumentState.current) ...[
-              const SizedBox(width: 4),
-              Icon(
-                switch (d.diskState) {
-                  DiskDocumentState.current => Icons.check,
-                  DiskDocumentState.conflict => Icons.sync_problem_outlined,
-                  DiskDocumentState.missing => Icons.file_present_outlined,
-                  DiskDocumentState.readOnly => Icons.lock_outline,
-                  DiskDocumentState.unavailable => Icons.warning_amber_outlined,
-                },
-                key: ValueKey('tab-disk-state-${d.id}'),
-                size: 13,
-                color: d.diskState == DiskDocumentState.conflict
-                    ? Colors.orangeAccent
-                    : Colors.blueGrey.shade300,
-              ),
-            ],
-            const SizedBox(width: 6),
-            InkWell(
-              key: ValueKey('close-tab-${g.region}-${d.id}'),
-              onTap: () => _closeDoc(d.id, group: g),
-              child: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (reserveActionSpace &&
+                    actionLocation == EditorTabActionLocation.left) ...[
+                  closeAction,
+                  const SizedBox(width: 6),
+                ],
+                fileIcon,
+                if (isSticky) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.push_pin,
+                    key: ValueKey('sticky-tab-indicator-${g.region}-${d.id}'),
+                    size: 12,
+                    color: Colors.blueGrey.shade200,
+                  ),
+                ],
+                if (_editorTabWrap.value ||
+                    _editorTabSizing.value != EditorTabSizing.fit)
+                  Flexible(fit: FlexFit.tight, child: label)
+                else
+                  label,
+                if (d.diskState != DiskDocumentState.current) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    switch (d.diskState) {
+                      DiskDocumentState.current => Icons.check,
+                      DiskDocumentState.conflict => Icons.sync_problem_outlined,
+                      DiskDocumentState.missing => Icons.file_present_outlined,
+                      DiskDocumentState.readOnly => Icons.lock_outline,
+                      DiskDocumentState.unavailable =>
+                        Icons.warning_amber_outlined,
+                    },
+                    key: ValueKey('tab-disk-state-${d.id}'),
+                    size: 13,
+                    color: d.diskState == DiskDocumentState.conflict
+                        ? Colors.orangeAccent
+                        : Colors.blueGrey.shade300,
+                  ),
+                ],
+                if (reserveActionSpace &&
+                    actionLocation == EditorTabActionLocation.right) ...[
+                  const SizedBox(width: 6),
+                  closeAction,
+                ],
+              ],
             ),
+            if (!reserveActionSpace)
+              Positioned(
+                left: actionLocation == EditorTabActionLocation.left
+                    ? 0
+                    : null,
+                right: actionLocation == EditorTabActionLocation.right
+                    ? (d.diskState == DiskDocumentState.current ? 0 : 17)
+                    : null,
+                top: 0,
+                bottom: 0,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: closeAction,
+                ),
+              ),
           ],
         ),
       ),
     );
-    return DragTarget<int>(
-      onWillAcceptWithDetails: (details) => details.data != d.id,
-      onAcceptWithDetails: (details) => _moveDoc(g, details.data, d.id),
-      builder: (context, _, __) => Draggable<int>(
-        data: d.id,
-        dragAnchorStrategy: pointerDragAnchorStrategy,
-        feedback: Material(
-          type: MaterialType.transparency,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF252932),
-              borderRadius: BorderRadius.circular(3),
+    return MouseRegion(
+      onEnter: (_) =>
+          _editorTabHoveredTarget.value = (region: g.region, docId: d.id),
+      onExit: (_) {
+        if (_editorTabHoveredTarget.value == (region: g.region, docId: d.id)) {
+          _editorTabHoveredTarget.value = null;
+        }
+      },
+      child: Semantics(
+        customSemanticsActions: {
+          CustomSemanticsAction(label: isSticky ? '取消固定编辑器' : '固定编辑器'): () =>
+              _setEditorSticky(g, d, !isSticky),
+        },
+        child: Builder(
+          builder: (tabContext) => DragTarget<int>(
+            // 同组禁止落到自身；跨组放行同文档 id（激活目标既有视图）。
+            onWillAcceptWithDetails: (details) =>
+                details.data != d.id || _tabDragSourceRegion != g.region,
+            onAcceptWithDetails: (details) {
+              final draggedId = details.data;
+              final sourceRegion = _tabDragSourceRegion;
+              final source =
+                  sourceRegion == null ? null : _groups[sourceRegion];
+              if (source == null || identical(source, g)) {
+                _moveDoc(g, draggedId, d.id);
+                return;
+              }
+              var insertAfter = true;
+              final box = tabContext.findRenderObject();
+              if (box is RenderBox && box.hasSize) {
+                insertAfter = box.globalToLocal(details.offset).dx >=
+                    box.size.width / 2;
+              }
+              // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；
+              // 未命名文档（上游 Singleton）不可复制，回退为移动。
+              final movingIndex =
+                  source.docs.indexWhere((doc) => doc.id == draggedId);
+              final copyModifier =
+                  defaultTargetPlatform == TargetPlatform.macOS
+                      ? HardwareKeyboard.instance.isAltPressed
+                      : HardwareKeyboard.instance.isControlPressed;
+              if (copyModifier &&
+                  movingIndex >= 0 &&
+                  source.docs[movingIndex].path != null) {
+                _copyDocAcrossGroups(source, g, draggedId, d.id,
+                    insertAfter: insertAfter);
+              } else {
+                _moveDocAcrossGroups(source, g, draggedId, d.id,
+                    insertAfter: insertAfter);
+              }
+            },
+            builder: (context, _, __) => Draggable<int>(
+              data: d.id,
+              dragAnchorStrategy: pointerDragAnchorStrategy,
+              onDragStarted: () => _tabDragSourceRegion = g.region,
+              onDragEnd: (_) => _tabDragSourceRegion = null,
+              onDraggableCanceled: (_, __) => _tabDragSourceRegion = null,
+              feedback: Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF252932),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child:
+                      Text(displayLabel, style: const TextStyle(fontSize: 12)),
+                ),
+              ),
+              childWhenDragging: Opacity(opacity: 0.4, child: tab),
+              child: Listener(
+                // 中键关闭（kMiddleMouseButton），不影响左键激活
+                onPointerDown: (e) {
+                  if (e.buttons == kMiddleMouseButton) {
+                    _closeDoc(d.id, group: g);
+                  }
+                },
+                child: tab,
+              ),
             ),
-            child: Text(d.name, style: const TextStyle(fontSize: 12)),
           ),
-        ),
-        childWhenDragging: Opacity(opacity: 0.4, child: tab),
-        child: Listener(
-          // 中键关闭（kMiddleMouseButton），不影响左键激活
-          onPointerDown: (e) {
-            if (e.buttons == kMiddleMouseButton) _closeDoc(d.id, group: g);
-          },
-          child: tab,
         ),
       ),
     );
@@ -17555,12 +20551,311 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final to = g.docs.indexWhere((d) => d.id == targetId);
     if (from < 0 || to < 0 || from == to) return;
     final moved = g.docs[from];
+    final wasSticky = g.stickyDocIds.contains(draggedId);
     _editorFocusNodes.remove(_focusKeyFor(g, moved))?.dispose();
     setState(() {
-      final doc = g.docs.removeAt(from);
-      g.docs.insert(to, doc);
+      g.docs.removeAt(from);
+      final targetIndex = g.docs.indexWhere((doc) => doc.id == targetId);
+      final stickyCount =
+          g.docs.where((doc) => g.stickyDocIds.contains(doc.id)).length;
+      final desiredIndex = from < to ? targetIndex + 1 : targetIndex;
+      final lowerBound = wasSticky ? 0 : stickyCount;
+      final upperBound = wasSticky ? stickyCount : g.docs.length;
+      final insertionIndex = desiredIndex.clamp(lowerBound, upperBound).toInt();
+      g.docs.insert(insertionIndex, moved);
+      _normalizeStickyOrder(g);
     });
     _scheduleStateSave();
+  }
+
+  /// 跨组标签拖放移动：把源组的文档视图移到目标组 [target] 的 [targetTabId]
+  /// 标签之前/之后（[insertAfter] 由指针相对目标标签中点的位置决定）。
+  /// 移动同一个 OpenDoc 视图，保留 Rust 后端文本、脏标/存档点、撤销历史、
+  /// 选区/光标、滚动与编辑器焦点；sticky 随动，干净的预览标签转为普通标签。
+  /// 目标组已显示同一文档时激活既有视图并移除源组重复视图。
+  void _moveDocAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    int draggedId,
+    int? targetTabId, {
+    required bool insertAfter,
+  }) {
+    if (identical(source, target)) return;
+    final from = source.docs.indexWhere((d) => d.id == draggedId);
+    if (from < 0) return;
+    final moving = source.docs[from];
+    // targetTabId 为空表示落点在组区域：追加到组末尾。
+    final targetIndex = targetTabId == null
+        ? null
+        : target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetTabId != null && (targetIndex == null || targetIndex < 0)) {
+      return;
+    }
+    if (target.docs.any((view) => identical(view, moving))) return;
+    _flushInput(moving, commitComposition: true);
+
+    final movingSticky = source.stickyDocIds.contains(moving.id);
+    // 目标组已打开同一文档：激活既有视图并移除源组重复视图。
+    OpenDoc? existingView;
+    for (final view in target.docs) {
+      if (!identical(view, moving) && view.sameDocumentAs(moving)) {
+        existingView = view;
+        break;
+      }
+    }
+    if (existingView != null) {
+      if (movingSticky && !target.stickyDocIds.contains(existingView.id)) {
+        target.stickyDocIds.add(existingView.id);
+        _normalizeStickyOrder(target);
+      }
+      _closeDocNow(source, moving);
+      if (!mounted) return;
+      setState(() {
+        target.activeDocId = existingView!.id;
+        _noteActiveDocument(target, existingView.id);
+        _focusedRegion = target.region;
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existingView);
+      return;
+    }
+
+    final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(
+          () => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+
+    setState(() {
+      source.docs.removeWhere((view) => identical(view, moving));
+      source.stickyDocIds.remove(moving.id);
+      source.recentDocIds.remove(moving.id);
+      if (source.previewDocId == moving.id) source.previewDocId = null;
+      if (source.docs.isNotEmpty && source.activeDocId == moving.id) {
+        source.activeDocId = _mostRecentDocument(source)?.id;
+        _noteActiveDocument(source, source.activeDocId);
+      }
+
+      // 干净的预览标签跨组移动后转为普通标签（不再作为目标组的预览）。
+      final stickyCount = target.docs
+          .where((doc) => target.stickyDocIds.contains(doc.id))
+          .length;
+      final int desiredIndex;
+      if (targetTabId == null) {
+        desiredIndex = target.docs.length;
+      } else {
+        final resolved = targetIndex!;
+        desiredIndex = insertAfter ? resolved + 1 : resolved;
+      }
+      final lowerBound = movingSticky ? 0 : stickyCount;
+      final upperBound = movingSticky ? stickyCount : target.docs.length;
+      final insertionIndex =
+          desiredIndex.clamp(lowerBound, upperBound).toInt();
+      target.docs.insert(insertionIndex, moving);
+      if (movingSticky) target.stickyDocIds.add(moving.id);
+      _normalizeStickyOrder(source);
+      _normalizeStickyOrder(target);
+      target.activeDocId = moving.id;
+      _noteActiveDocument(target, moving.id);
+
+      final sourceFocusKey = _focusKeyFor(source, moving);
+      final targetFocusKey = _focusKeyFor(target, moving);
+      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
+      if (movedFocusNode != null) {
+        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
+        if (oldTargetFocusNode != null &&
+            oldTargetFocusNode != movedFocusNode) {
+          oldTargetFocusNode.dispose();
+        }
+        _editorFocusNodes[targetFocusKey] = movedFocusNode;
+      }
+
+      if (source.docs.isEmpty && removeSourceRegion) {
+        _groups.remove(source.region);
+      }
+      _focusedRegion = target.region;
+      _statusDetail = '已移动编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, moving);
+  }
+
+  /// 跨组标签复制拖放（上游 editorDropTarget.isCopyOperation 与
+  /// editorGroupView.doMoveOrCopyEditorAcrossGroups keepCopy 语义）：
+  /// 把源组的文件文档复制为同文档新视图（`OpenDoc.viewOf`）插入目标组，
+  /// 指针位置决定前/后；复制视图落在普通分区（不是 sticky、不是 preview），
+  /// 源组完全不变；目标组已显示同一文档时仅激活既有视图。
+  void _copyDocAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    int draggedId,
+    int? targetTabId, {
+    required bool insertAfter,
+  }) {
+    if (identical(source, target)) return;
+    final from = source.docs.indexWhere((d) => d.id == draggedId);
+    if (from < 0) return;
+    final moving = source.docs[from];
+    if (moving.path == null) return;
+    final targetIndex = targetTabId == null
+        ? null
+        : target.docs.indexWhere((d) => d.id == targetTabId);
+    if (targetTabId != null && (targetIndex == null || targetIndex < 0)) {
+      return;
+    }
+    _flushInput(moving, commitComposition: true);
+
+    final existing = target.docs
+        .where((view) => view.sameDocumentAs(moving))
+        .firstOrNull;
+    if (existing != null) {
+      setState(() {
+        target.activeDocId = existing.id;
+        _noteActiveDocument(target, existing.id);
+        _focusedRegion = target.region;
+        _statusDetail = '已切换到编辑器：${target.region}';
+        _scheduleStateSave();
+      });
+      _syncCommandContext();
+      _focusEditorAfterLayout(target, existing);
+      return;
+    }
+
+    final copy = OpenDoc.viewOf(moving);
+    setState(() {
+      final stickyCount = target.docs
+          .where((doc) => target.stickyDocIds.contains(doc.id))
+          .length;
+      final int desiredIndex;
+      if (targetTabId == null) {
+        desiredIndex = target.docs.length;
+      } else {
+        final resolved = targetIndex!;
+        desiredIndex = insertAfter ? resolved + 1 : resolved;
+      }
+      final insertionIndex =
+          desiredIndex.clamp(stickyCount, target.docs.length).toInt();
+      target.docs.insert(insertionIndex, copy);
+      _normalizeStickyOrder(target);
+      target.activeDocId = copy.id;
+      _noteActiveDocument(target, copy.id);
+      _focusedRegion = target.region;
+      _statusDetail = '已复制编辑器：${source.region} → ${target.region}';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(target, copy);
+  }
+
+  /// 组区域拖放落点（上游 editorDropTarget.handleDrop 无 splitDirection 的
+  /// 中心区语义）：把被拖文档移入/复制入目标组末尾并激活目标组；同组区域
+  /// 落点无操作。拆分落点建组属 LAY-10 独立子项。
+  void _handleGroupAreaDrop(EditorGroup g, int draggedId) {
+    final sourceRegion = _tabDragSourceRegion;
+    final source = sourceRegion == null ? null : _groups[sourceRegion];
+    if (source == null || identical(source, g)) return;
+    final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
+    if (movingIndex < 0) return;
+    // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；未命名文档
+    // （上游 Singleton）不可复制，回退为移动。
+    final copyModifier =
+        defaultTargetPlatform == TargetPlatform.macOS
+            ? HardwareKeyboard.instance.isAltPressed
+            : HardwareKeyboard.instance.isControlPressed;
+    final copyRequested =
+        copyModifier && source.docs[movingIndex].path != null;
+    if (copyRequested) {
+      _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+    } else {
+      _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+    }
+  }
+
+  /// 拆分落点区域判定（上游 positionOverlay 编辑器拖动分支）：中心带
+  /// （边缘 10% 以内）返回 null；其余按默认水平偏好：x < 宽/3 → 左、
+  /// x > 2·宽/3 → 右、y < 高/2 → 上、否则下。
+  _EditorGroupMoveDirection? _bodyDropZone(
+    RenderBox? box,
+    Offset globalOffset,
+  ) {
+    if (box == null || !box.hasSize) return null;
+    final local = box.globalToLocal(globalOffset);
+    final width = box.size.width;
+    final height = box.size.height;
+    const edgeFactor = 0.10;
+    if (local.dx > width * edgeFactor &&
+        local.dx < width * (1 - edgeFactor) &&
+        local.dy > height * edgeFactor &&
+        local.dy < height * (1 - edgeFactor)) {
+      return null;
+    }
+    if (local.dx < width / 3) return _EditorGroupMoveDirection.left;
+    if (local.dx > width * 2 / 3) return _EditorGroupMoveDirection.right;
+    if (local.dy < height / 2) return _EditorGroupMoveDirection.up;
+    return _EditorGroupMoveDirection.down;
+  }
+
+  /// 组编辑器正文区域拖放（上游 handleDrop + positionOverlay）：中心带按
+  /// 追加/合并处理（同组无操作）；边缘带按方向建相邻新组并移入/复制入被
+  /// 拖文档（同组边缘落点同样建组）；Windows/Linux Alt、macOS Shift 在
+  /// 拖动期间禁用拆分区域（整组按中心处理）。
+  void _handleBodyAreaDrop(
+    EditorGroup g,
+    int draggedId,
+    RenderBox? bodyBox,
+    Offset globalOffset,
+  ) {
+    final sourceRegion = _tabDragSourceRegion;
+    final source = sourceRegion == null ? null : _groups[sourceRegion];
+    if (source == null) return;
+    final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
+    if (movingIndex < 0) return;
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final copyModifier = isMac
+        ? HardwareKeyboard.instance.isAltPressed
+        : HardwareKeyboard.instance.isControlPressed;
+    final splitToggled = isMac
+        ? HardwareKeyboard.instance.isShiftPressed
+        : HardwareKeyboard.instance.isAltPressed;
+    final copyRequested =
+        copyModifier && source.docs[movingIndex].path != null;
+
+    final zone = splitToggled ? null : _bodyDropZone(bodyBox, globalOffset);
+    if (zone == null) {
+      // 拆分关闭或中心带：追加/合并（同组无操作）。
+      if (identical(source, g)) return;
+      if (copyRequested) {
+        _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+      } else {
+        _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+      }
+      return;
+    }
+
+    // 边缘带：以目标组为基准按方向建相邻新组（上游 addGroup(groupView, direction)）。
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final freshRegion = 'editor-$index';
+    if (!_layout.splitRegion(g.region, freshRegion, zone.axis,
+        insertBefore: zone.insertBefore)) {
+      setState(() => _statusDetail = '拆分失败：区域 ${g.region} 不可拆分');
+      return;
+    }
+    _ensureGroupsFromLayout();
+    final target = _groups[freshRegion];
+    if (target == null) return;
+    if (copyRequested) {
+      _copyDocAcrossGroups(source, target, draggedId, null,
+          insertAfter: false);
+    } else {
+      _moveDocAcrossGroups(source, target, draggedId, null,
+          insertAfter: false);
+    }
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {
@@ -17690,6 +20985,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildEditor(EditorGroup g) {
+    // 同步监听常挂（Hold 模式在 toggle 关闭时也需要监听），回调内判断开关。
+    _ensureScrollSyncListeners();
     final active = g.active;
     if (active == null) {
       return Center(
@@ -18523,24 +21820,57 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       color: const Color(0xFF181B20),
       child: Column(
         children: [
-          TabBar(
-            controller: _panelTab,
-            onTap: (index) {
-              const commandIds = [
-                'view.panelDiagnostics',
-                'view.panelCompletions',
-                'view.panelSyntax',
-              ];
-              if (index < commandIds.length) _runCommand(commandIds[index]);
-            },
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: const [
-              Tab(text: '诊断'),
-              Tab(text: '补全'),
-              Tab(text: '语法 (Tree-sitter)'),
-              Tab(text: 'Git Diff'),
-            ],
+          SizedBox(
+            height: 48,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    controller: _panelTab,
+                    onTap: (index) {
+                      const commandIds = [
+                        'view.panelDiagnostics',
+                        'view.panelCompletions',
+                        'view.panelSyntax',
+                      ];
+                      if (index < commandIds.length) {
+                        _runCommand(commandIds[index]);
+                      }
+                    },
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    tabs: const [
+                      Tab(text: '诊断'),
+                      Tab(text: '补全'),
+                      Tab(text: '语法 (Tree-sitter)'),
+                      Tab(text: 'Git Diff'),
+                    ],
+                  ),
+                ),
+                ListenableBuilder(
+                  listenable: _layout,
+                  builder: (context, _) {
+                    final maximized = _layout.panelMaximized;
+                    return IconButton(
+                      key: const ValueKey('panel-maximize-toggle'),
+                      tooltip: maximized ? '还原面板' : '最大化面板',
+                      onPressed: _layout.canMaximizePanel
+                          ? () => _runCommand(
+                                'workbench.action.toggleMaximizedPanel',
+                              )
+                          : null,
+                      icon: Icon(
+                        maximized
+                            ? Icons.close_fullscreen
+                            : Icons.open_in_full,
+                        size: 16,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(
@@ -19206,14 +22536,24 @@ enum DiskDocumentState { current, conflict, missing, readOnly, unavailable }
 
 enum _ConflictSaveAction { cancel, saveAs, overwrite }
 
+enum _DirtyEditorCloseDecision { save, discard, cancel }
+
+typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
+
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {
   EditorGroup(this.region);
 
   /// 对应布局树里的叶子 region（'editor'、'editor-2'…）。
   final String region;
+  final GlobalKey activeTabVisibilityKey = GlobalKey();
+  int? lastAutoRevealedTabId;
   final List<OpenDoc> docs = [];
+  final Set<int> stickyDocIds = <int>{};
+  final List<int> recentDocIds = <int>[];
+  int lastActivationOrder = 0;
   int? activeDocId;
+  int? previewDocId;
 
   OpenDoc? get active {
     for (final d in docs) {

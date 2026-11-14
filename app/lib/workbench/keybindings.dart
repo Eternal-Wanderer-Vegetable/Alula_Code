@@ -244,9 +244,17 @@ class KeybindingSet {
     'view.quickOpen': 'ctrl+p',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
+    'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
     'view.togglePanel': 'ctrl+j',
+    'workbench.action.files.newUntitledFile': 'ctrl+n',
     'file.save': 'ctrl+s',
     'file.saveAs': 'ctrl+shift+s',
+    'workbench.action.closeActiveEditor': 'ctrl+w',
+    'workbench.action.closeOtherEditors': 'ctrl+alt+t',
+    'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
+    'workbench.action.closeAllEditors': 'ctrl+k w',
+    'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
+    'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
     'editor.completion': 'ctrl+space,f8',
@@ -317,9 +325,17 @@ class KeybindingSet {
     final result = Map<String, String>.of(defaults);
     switch (platform) {
       case TargetPlatform.macOS:
+        result['workbench.action.files.newUntitledFile'] = 'cmd+n';
+        result['workbench.action.closeActiveEditor'] = 'cmd+w';
+        result['workbench.action.closeOtherEditors'] = 'cmd+alt+t';
+        result['workbench.action.closeUnmodifiedEditors'] = 'cmd+k u';
+        result['workbench.action.closeAllEditors'] = 'cmd+k w';
+        result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
+        result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
         result['editor.action.pasteAs'] = 'cmd+shift+v';
+        result['workbench.action.toggleAuxiliaryBar'] = 'cmd+alt+b';
         result['editor.action.commentLine'] = 'cmd+/';
         result['view.togglePanel'] = 'cmd+j';
         result['editor.action.joinLines'] = 'ctrl+j';

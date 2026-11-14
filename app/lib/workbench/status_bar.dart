@@ -21,6 +21,8 @@ class AlulaStatusBar extends StatelessWidget {
     required this.syncCount,
     required this.panelCollapsed,
     required this.onTogglePanel,
+    this.lockedScrolling = false,
+    this.onToggleLockedScrolling,
     this.encodingLabel,
     this.encodingTooltip,
     this.lineEndingLabel,
@@ -43,6 +45,8 @@ class AlulaStatusBar extends StatelessWidget {
   final int syncCount;
   final bool panelCollapsed;
   final VoidCallback onTogglePanel;
+  final bool lockedScrolling;
+  final VoidCallback? onToggleLockedScrolling;
   final String? encodingLabel;
   final String? encodingTooltip;
   final String? lineEndingLabel;
@@ -130,6 +134,22 @@ class AlulaStatusBar extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(width: 8),
+          if (onToggleLockedScrolling != null)
+            InkWell(
+              key: const ValueKey('status-bar-locked-scrolling'),
+              onTap: onToggleLockedScrolling,
+              child: Tooltip(
+                message: lockedScrolling ? '锁定滚动：开（点击关闭）' : '锁定滚动：关（点击开启）',
+                child: Icon(
+                  lockedScrolling ? Icons.lock : Icons.lock_open,
+                  size: 14,
+                  color: lockedScrolling
+                      ? Colors.lightBlueAccent
+                      : Colors.grey.shade400,
+                ),
+              ),
+            ),
           const SizedBox(width: 8),
           InkWell(
             onTap: onTogglePanel,

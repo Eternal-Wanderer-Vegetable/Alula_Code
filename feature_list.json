@@ -363,8 +363,8 @@
         "feat-023",
         "feat-025"
       ],
-      "status": "not-started",
-      "evidence": "",
+      "status": "in-progress",
+      "evidence": "P05.1–P05.43 complete and fully gated (P05.43 / feat-095 / LAY-10c cross-group tab copy drag: PR CI 43526231853 and Platform Availability 43526222287 green, macOS package SHA-256 e98450d7664a64aa03a7d2c767266156ae536934086b28932bcf73e2ef98684c matched its sidecar). P05.44 / feat-096 / LAY-10d (group-area drop append/merge) fully gated (PR CI 43537435255, Platform Availability 43537430640, macOS package SHA-256 fd66c46ec60d68c562b787049e34f7fa5b9840a3c3394d00c134277237aca265 matched its sidecar); P05.45 / feat-097 / LAY-10e (split-drop group creation) fully gated (PR CI 43540285378, Platform Availability 43540279332, macOS package SHA-256 0ada53614f25e2e7b357bef0d830ee2cd0abf6ac61448a93bfd0daac7ede2c32 matched its sidecar). P05.46 / feat-098 / LAY-10f (MRU group activation on close) implemented on PR #3 (hosted gates pending); P05.47 / feat-099 / LAY-11a (Open Editors sidebar view) implemented on commit a546401 (hosted gates pending); P05.48 / feat-100 / LAY-11b (breadcrumb pickers) implemented on commit d6ef4e2 (hosted gates pending); P05.49 / feat-101 / LAY-12a (auxiliary window infrastructure) fully gated (PR CI 43550219144/43563107338, Platform Availability 43553752557/43563101735, macOS package SHA-256 4a0b6faa6e4ce4244d29266e74761714d62668817641a1fb66c15bfe28dcbd35 matched its sidecar); P05.50 / feat-102 / LAY-13a (modal editor infrastructure) fully gated (PR CI 43565763446/43565508836/43567482106, Platform Availability 43567477181, macOS package SHA-256 fd1c96657bd19f4ea2090d3c9bbe0b32c5b14833f04af706a6939af16cbcbdef matched its sidecar); P05.51 / feat-103 / LAY-14 (zen mode) fully gated (PR CI 43571911894, Platform Availability 43571908099, macOS package SHA-256 d1151eb1a18d9eb8b1bde02ba3c3e07aeaf5db45c1a4eba766a8af6530a6490e matched its sidecar); P05.52 / feat-104 / LAY-15 (locked scrolling) fully gated (PR CI 43576370660/43576346720, Platform Availability 43576366280, macOS package SHA-256 eab93b3b8f924177ae73de676691ef5602bc88183c6be007ace83b9f8a34e3ae matched its sidecar); P05.53 / feat-105 / LAY-16a (explorer tree type navigation) fully gated (PR CI 43581278183, Platform Availability 43581273926, macOS package SHA-256 34036b54cf81bd4e845286de2839072f3ef07c2c51f7ecf3e5547ace3a0e6a3a matched its sidecar); P05.54 / feat-106 / LAY-17a (QuickInput steps/buttons/focus-restore) is active. Next per docs/03 N.2: LAY-17b, LAY-18-20, and CMD-01-12. Next per docs/03 N.2: drag out to create a window (LAY-12), overflow/MRU, LAY-11-20, and CMD-01-12. P05.42 evidence: PR CI 43462799690 (after pinning ci.yml to flutter 3.47.8) and Platform Availability 43464279815 passed; packages Linux/Windows/macOS 14058675797/14059195873/14063417573; Linux/Windows DnD 14058480492/14058507242 passed; macOS DnD 14062792311 records pointer route false / all tests skipped as an input-route limitation; macOS startup diagnostics 14063123037; macOS ZIP SHA-256 ae9844907a8693323c5a95c5859dd1e28b23f2776f0d54297dd2ee5633d99cc2 matched its sidecar with unzip -tq clean. P05.41 hosted evidence stands: PR CI 42482838361 and Platform Availability 42482833049 passed all jobs on Linux x64, Windows x64, and macOS Intel x64 with packages 13617904838/13618452059/13618994341. P05 remains open until all LAY/CMD matrix requirements pass; the Flutter 3.50 material_ui import migration and version pins for the remaining workflows are registered follow-up work.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -690,6 +690,650 @@
       ],
       "status": "done",
       "evidence": "P04.127 / EDT-20e complete at product commit 4790317. Workbench review applies only selected edits through the existing Rust atomic transaction; frozen versions reject stale batches. Three integration tests cover selected-only apply, dirty/undo/redo/save readback, stale all-or-nothing failure, and Discard/Escape. Full local init.sh passed (Flutter 1,021), cargo fmt, Flutter analyze 0 issues, Harness 100/100, focused suite 3/3. PR CI 42005290509 and Platform Availability 42005281831 passed. Linux/Windows/macOS Intel x64 package artifacts 13404093792/13405495307/13405544262; macOS checksum sidecar and ZIP integrity verified. Linux/Windows DnD passed; macOS hosted pointer route unavailable and interaction skipped (13405309473); P15 device/Apple Silicon remain. Startup artifact 13406436899 has no crash report; historical SIGSEGV remains unresolved. Implementation: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-implementation.md; scope/pre-edit review: docs/diagnostics/2026-11-05-p04/p04.127-workbench-bulk-edit-review-transaction-scope.md."
+    },
+    {
+      "id": "feat-053",
+      "name": "P05.1 LAY-01a 标题栏模式、拖动与窗口控制",
+      "description": "对齐固定 Code-OSS 1.145.0 的 custom/native 标题栏模式、标题栏高度、平台窗口控制、拖动/双击、最小化/最大化/还原/关闭与优雅退出。菜单层级/mnemonic/macOS 系统菜单单独排期；不据此关闭 LAY-01 或 P05。范围与编辑前 GitNexus 风险见 docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md。",
+      "dependencies": [
+        "feat-027"
+      ],
+      "status": "done",
+      "evidence": "P05.1 / LAY-01a complete. Local N.2: init.sh passed (Rust workspace 71+54, Clippy, build_core, Flutter 1,030); cargo fmt, Flutter analyze (0 issues), focused titlebar/config tests 9/9, Harness 100/100, diff check passed. PR CI 42032128727 passed all four checks. Platform Availability 42032120138 passed Linux x64 (5m46s), Windows x64 (11m48s), and macOS Intel x64 (28m58s) build/launch/package lanes. Package artifacts Linux 13415944530, Windows 13417376645, macOS Intel x64 13417219623. Linux/Windows clipboard, DnD, and titlebar smokes passed; Windows also captured visible client area and verified P03.7 interaction, accessibility, and graceful close. macOS clipboard, Release build, bundle/sign, normal/native-titlebar launch, and package passed. macOS DnD artifact 13418970398 explicitly reports CGEventPostToPid pointer route false and all tests skipped; do not claim macOS DnD passed. macOS startup diagnostics 13417639020. ZIP SHA-256 bb12d417b2bfdd2239cbba57c02467beb1bd137bedc84b01525b88cb5d50ad5e matches sidecar and unzip integrity passed. Hosted macOS is Intel x64; Apple Silicon/native-device checks remain P15. Known Linux custom-mode drawn controls and Windows custom-control style differences remain open. Full details: docs/diagnostics/2026-11-05-p05/p05.1-titlebar-mode-scope.md. P05/feat-027 and LAY-01 remain in progress.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-054",
+      "name": "P05.2 LAY-01b 递归标题栏菜单与子菜单",
+      "description": "为标题栏菜单增加 command/submenu/separator 递归结构与键鼠子菜单导航；将现有 View 外观切换命令放入 View > Appearance。mnemonic/access key、macOS native menu 和默认菜单全集另行排期。",
+      "dependencies": [
+        "feat-053"
+      ],
+      "status": "done",
+      "evidence": "P05.2 LAY-01b complete. Recursive command/submenu/separator model and production View > Appearance path implemented; visibility/enabled state, arguments, separator normalization, mouse expansion, ArrowDown/ArrowRight/Enter navigation and integration covered. Local FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,032); cargo fmt --check, Flutter analyze 0 issues, title_bar_test 8/8, workbench integration 1/1, Harness 100/100, JSON and diff checks passed. PR CI 42044717588 all four jobs passed. Platform Availability 42044705607 attempt 2 passed Linux x64, Windows x64, macOS Intel x64; attempt 1 had two macOS fixed-delay widget test failures and retry passed 1,032/1,032. Package artifacts Linux/Windows/macOS Intel x64 13425020073/13423773712/13427823993. Linux/Windows DnD passed; macOS DnD artifact 13427973390 explicitly skipped because CGEventPostToPid could not route synthetic pointer events. macOS startup 13427414246; ZIP SHA-256 5a2d3d9916ec45425d04ebb82d41b16733f8eaef07d1eb721c4d67f7056c64af matches sidecar and unzip integrity passed. Hosted Mac is Intel x64; Apple Silicon/native device remain P15. GitNexus impact UNKNOWN, compare-to-main HIGH, workbench_page.dart omitted (>512 KiB), 779 cross-language sites and process truncation remain unresolved. Full evidence: docs/diagnostics/2026-11-05-p05/p05.2-menu-hierarchy-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-055",
+      "name": "P05.3 LAY-01c 标题栏菜单 mnemonic 与访问键",
+      "description": "在递归标题栏菜单上实现 && mnemonic 标签、Windows/Linux Alt 聚焦与标记键打开菜单/调用项、macOS 不启用 Alt 路径、Escape 焦点恢复；设置存储接入留 P07。范围与编辑前影响分析见 docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md。",
+      "dependencies": [
+        "feat-054"
+      ],
+      "status": "done",
+      "evidence": "实现递归菜单 && mnemonic、Windows/Linux Alt 聚焦与访问键、独立设置开关、macOS 禁用 Alt、Esc 焦点恢复；保留 command enable/visibility 门控。title_bar_test 12/12、workbench menu integration 1/1、cross-window line/menu save 18/18、矩形 Alt+Shift 拖选三平台 3/3；完整 init.sh Flutter 1,037、Rust/Clippy/build_core、cargo fmt、Flutter analyze 0 issues、Harness 100/100 全通过。PR CI 42070134834 四 job 全绿；Platform Availability 42070123908 Linux/Windows/macOS Intel x64 全通过。Package artifacts Linux 13435372705, Windows 13435064315, macOS 13436534087. macOS ZIP SHA-256 a866957c2fc2ddcd10e4896ab9fce5e0257602da1b924a3f9acdb0ddcda8cf03 matched sidecar and passed unzip -t; macOS DnD 13437054363 explicitly records pointer route unavailable/skip; startup diagnostic 13436249236 has no crash report. Apple Silicon/native-device checks remain P15. GitNexus HIGH/UNKNOWN and coverage limits are recorded. Scope and evidence: docs/diagnostics/2026-11-05-p05/p05.3-menu-mnemonics-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-056",
+      "name": "P05.4 LAY-01d File 默认菜单已支持项与顺序",
+      "description": "将 File 菜单收敛到固定 Code-OSS 1.145.0 默认菜单中当前已实现的 Open Folder、Save、Save As、Revert File，按菜单组排序/分隔并随活动文档上下文显隐。缺失命令不作空占位；Compare 与 Encoding/EOL 保留其他入口。范围和编辑前 GitNexus 分析见 docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md。",
+      "dependencies": [
+        "feat-055"
+      ],
+      "status": "done",
+      "evidence": "P05.4 / LAY-01d complete. Supported default File menu actions are grouped and filtered by editor/path context; unimplemented actions are omitted, Compare and Encoding/EOL retain other entry points. Focused widget 1/1 and full init.sh (Rust workspace, Clippy, build_core, Flutter 1,038) passed; cargo fmt, Flutter analyze, Harness 100/100 and JSON/diff checks passed. PR CI 42079988344 and Linux/Windows/macOS Intel x64 Platform Availability 42079981274 passed. Package artifacts: Linux 13442405983, Windows 13441361037, macOS 13442660378. Linux/Windows native DnD artifacts 13441306811 / 13441605922 passed; macOS DnD artifact 13441829448 explicitly skipped because synthetic pointer events did not reach Flutter. macOS startup diagnostics 13442710356. macOS ZIP SHA-256 5be93632fdc224b98a60dbbc477dcd80e9bbe25c648f5f08c67476b6a924e873 matched sidecar; unzip -t passed. Hosted macOS covers Intel x64 only. Scope, reference source, pre-edit GitNexus review, and complete evidence: docs/diagnostics/2026-11-06-p05/p05.4-file-menu-catalog-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-057",
+      "name": "P05.5 LAY-01e File > New Text File",
+      "description": "固定 Code-OSS 1.145.0 File > New Text File：命令 workbench.action.files.newUntitledFile、1_new 菜单组、Ctrl+N/Cmd+N；每次在当前 editor group 新建独立 Rust-backed 未命名文档。范围与编辑前 GitNexus 分析见 docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md。",
+      "dependencies": [
+        "feat-056"
+      ],
+      "status": "done",
+      "evidence": "产品 commit 37d8d1b；本地 KeybindingSet 28/28、File 菜单 1/1、新建回归 1/1（快捷键、File 菜单、Command Palette、独立文档、另存读回、session journal 恢复）；完整 init.sh Flutter 1,041/1,041、Rust workspace、Clippy、build_core；cargo fmt、Flutter analyze 0、Harness 100/100、JSON/diff check 通过。PR CI 42090523256 四 job 全绿。Platform Availability 42090510939 Linux/Windows/macOS Intel x64 全绿，packages 13444882188 / 13444329627 / 13447725989；Linux/Windows DnD 13443849286 / 13444559360 通过；macOS DnD 13446402871 明确 skip（host pointer route unavailable）；macOS ZIP SHA-256 5512edb3bc5d6b55f2df81e1b3242e3774ab018aa80ed17c461479516f0590b0 与 sidecar 匹配、unzip -t 通过；startup diagnostics 13448185247。完整边界、GitNexus 扫描和证据见 docs/diagnostics/2026-11-06-p05/p05.5-new-text-file-scope.md。P05 父项及 LAY-01/macOS native menu 仍开放。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-058",
+      "name": "P05.6 LAY-01f macOS 系统原生菜单",
+      "description": "仅 macOS 使用 Flutter PlatformMenuBar 承载当前已实现的 File/Edit/View 菜单、递归子菜单、命令状态/快捷键及 About/Quit 生命周期；不补齐未实现默认菜单项。范围和编辑前 GitNexus 分析见 docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md。",
+      "dependencies": [
+        "feat-057"
+      ],
+      "status": "done",
+      "evidence": "产品 commit 5d402a2。macOS Flutter PlatformMenuBar 原生承载当前 File/Edit/View 与 Appearance，CommandService 状态、参数和 shortcut 同步；About/Quit 复用既有路由及受控清理。Focused titlebar 14/14、跨窗拖动/行选择 30/30；本地完整 bash init.sh Flutter 1,043、Rust workspace、Clippy、build_core；cargo fmt、Flutter analyze 0、Harness 100/100 通过。PR CI 42126750902 与 Platform Availability 42126740014（Linux x64、Windows x64、macOS Intel x64）全绿。Packages 13460989187 / 13460804491 / 13462422950。System Events 实际点选原生 Quit 并关闭 app，startup artifact 13462059875。Linux/Windows DnD 13462875529 / 13460983192 通过；macOS DnD 13461989896 因 hosted pointer route unavailable 明确 skip。macOS ZIP SHA-256 57ca89156ca082d0241558e20ad87e86ae8c087b934d9a144ca438540ea28010 与 sidecar 匹配，unzip -t 通过。GitNexus CRITICAL/误映射、UNKNOWN 与 coverage limitations 已记录；Apple Silicon/native device/notarization 留 P15。完整证据 docs/diagnostics/2026-11-06-p05/p05.6-macos-native-menu-scope.md。P05 与 LAY-01 保持进行中。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-059",
+      "name": "P05.7 LAY-02a 默认窗口标题与 dirty 状态",
+      "description": "按固定 Code-OSS 1.145.0 默认标题组成活动文件名、工作区名和应用名，并随活动文档、dirty、保存和另存路径变化更新自绘标题与系统窗口标题。用户 window.title 模板、Profile、Command Center 与布局控制另列子项。范围和编辑前影响分析见 docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md。",
+      "dependencies": [
+        "feat-058"
+      ],
+      "status": "done",
+      "evidence": "P05.7 本地与 hosted DoD 完成。默认标题组合活动文档名、● dirty 标记、workspace 名与应用名；macOS 用明确 ● 字符替代 Code-OSS 原生 document-edited dot，因为 window_manager 0.5.2 无 setDocumentEdited API（视觉差异已登记）。`workbench_window_title_test.dart` 3/3；`title_bar_test.dart` 15/15；整个 `widget_test.dart` 26/26，含文档切换、dirty、Save As 标题更新。第二次完整 `bash init.sh` 全绿，Flutter 1,047/1,047，Rust workspace、Clippy、build_core 通过；cargo fmt --all -- --check、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。PR CI `42136137652` 四 job 全绿；Platform Availability `42136128518` 的 Linux/Windows/macOS Intel x64 build/launch/package 全绿。Linux/Windows DnD artifacts `13465647270` / `13465757833` 通过；macOS DnD `13466064689` 因 hosted pointer route unavailable 明确 skip。发行包 Linux/Windows/macOS `13465457185` / `13465103365` / `13466946378`；macOS ZIP SHA-256 `99fad9b8ffaa5c34c21f4b6bc629bb0dfff3ffc76081a0315d8457a0f0c9af5a` 与 sidecar 匹配且 unzip 完整；startup diagnostics `13467345840` 验证 System Events Quit。编辑前 GitNexus `WindowChromeDriver` upstream LOW；`AlulaTitleBar`/`_AlulaTitleBarState` UNKNOWN，`workbench_page.dart` >512 KiB 未索引。提交前 all-scope 9 files/7–9 symbols/415 flows CRITICAL；compare-to-main 24 files/20–23 symbols/415 flows CRITICAL，均误映射到 Build/Rust/editor flows 且截断 405 条；详见 docs/diagnostics/2026-11-06-p05/p05.7-window-title-scope.md。macOS dirty 字符与原生圆点视觉差异保留.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-060",
+      "name": "P05.8 LAY-02b 标题栏 Command Center 入口",
+      "description": "在自绘标题栏增加可点击、可键盘聚焦的 Command Center 入口，显示当前窗口标题；点击、Enter 或 Space 复用 view.commandPalette 与现有 QuickInput。只在 custom chrome 展示，不覆盖 macOS 原生系统标题栏；验证焦点、语义标签、打开/执行和工作台焦点恢复。范围见 docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md。",
+      "dependencies": [
+        "feat-059"
+      ],
+      "status": "done",
+      "evidence": "P05.8 产品实现 `bdfc0a9` 已推送到 draft PR #3。实现与完整本地 DoD 通过。`title_bar_test.dart` 16/16 覆盖语义按钮、tooltip、命令启用状态、点击、Tab、Enter、Space，native chrome 不创建入口且空白区拖动/双击最大化通过；`widget_test.dart` P05.8 集成 1/1 点击标题入口打开现有 QuickInput、筛选并执行拆分命令、面板关闭、双视图出现且焦点回到工作台 Scaffold。`FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` 通过（Rust workspace、Clippy、build_core、Flutter 1,049/1,049）；`cargo fmt --all -- --check`、Flutter analyze 0 issues、Harness 100/100、JSON 与 diff check 通过。编辑前 `AlulaTitleBar`/`_AlulaTitleBarState`/`QuickInput` upstream impact exact UNKNOWN，`_showCommandPalette` not found；文本字面已核对生产装配与调用点。GitNexus 1.6.12: index 10,462 nodes/333 clusters/424 flows；产品 all-scope 为 7–8 files/12–20 symbols/0 processes LOW；文档 all-scope 最新为 4 files/4 symbols/0 processes LOW，曾有一轮 no-symbol-overlap/not-clean。compare-to-main 为 27 files/158–234 symbols/16 processes CRITICAL，最近 27/165/16，含不相关 Build/Run flow 映射。底层图谱跳过 5 个大文件（包括 workbench_page.dart）、788 个跨语言属性点无法关联，process candidates 920/1,120 未入选，325 callees /14 walks 被限流，1 trace 深度截断；UNKNOWN 未解除。标题控件占 240px，拖动和双击最大化只能在右侧自由区域，已记为行为差异。PR CI `42146276524` 与 Platform Availability `42146270634` 的 Linux x64、Windows x64、macOS Intel x64 job 全部通过；文档 CI `42147697880` 四个 job 通过。平台 package artifacts `13470536916` / `13470871404` / `13471148329`，macOS ZIP SHA-256 `4867c01d38aa99fd8a96e60164bea523e79206aecb4fbeca6b62f98ce6e0bf19` 与 sidecar 一致且 unzip 通过。Linux/Windows DnD `13470377116` / `13470362721` 通过；macOS DnD `13470849355` 因 hosted pointer route unavailable 明确 skip。System Events Quit/startup diagnostics artifact `13471826760` 成功。Apple Silicon 与本机原生设备验收仍留 P15。完整范围：`docs/diagnostics/2026-11-06-p05/p05.8-command-center-entry-scope.md`。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-061",
+      "name": "P05.9 LAY-02c 标题栏布局控制入口",
+      "description": "按固定 Code-OSS 1.145.0 对照，在自绘标题栏提供 Alula 已实现的侧栏与面板切换项；按钮和菜单覆盖当前状态、可见性、语义、键盘路径与焦点返回。不创建无实现的占位项，不扩展布局设置/布局模式。",
+      "dependencies": [
+        "feat-060"
+      ],
+      "status": "done",
+      "evidence": "P05.9 / LAY-02c completed. Product commit 04b11b7 adds the custom-titlebar Layout Controls entry for existing sidebar/panel commands, checked current-state labels, semantics and keyboard/focus behavior; CI helper reliability fix 769c759 retries NSRunningApplication registration for up to 5s after the first macOS hosted failure. Focused title_bar_test.dart 18/18 and P05.9 widget integration 1/1 passed; bash init.sh and bash init.sh --fast passed (Flutter 1,052, Rust workspace, Clippy, build_core); cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff checks passed. PR CI 42158822999 four jobs passed; Platform Availability 42158817921 Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes passed. Package artifacts Linux/Windows/macOS 13475473924 / 13475634355 / 13477088081. macOS ZIP SHA-256 c9e9e7f69bd4c11f5576227cf5f58550951d3fbf88f76e7533d80962b0db782c matched the sidecar; unzip -t passed. Linux/Windows DnD artifacts 13475149586 / 13476710126 passed; macOS artifact 13477371261 explicitly skipped because hosted synthetic pointer route was unavailable. System Events selected Quit Alula Code and closed native-titlebar mode; startup diagnostics 13477227425. Earlier run 42155160263 failed only because the native helper queried NSRunningApplication once before the app process was registered; fix validated by the successful retry. Scope, GitNexus impacts/scan warnings, and full evidence: docs/diagnostics/2026-11-06-p05/p05.9-layout-controls-entry-implementation.md. P05, LAY-01 and LAY-02 remain open; this child does not complete P05.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-062",
+      "name": "P05.10 LAY-03a Activity Bar 视图项语义与键盘导航",
+      "description": "为现有 Explorer/Search/Outline/Source Control 四个 Activity Bar 动作补按钮与选中语义、Tab 顺序、上下方向键按顺序移动焦点且边界不循环及 Enter/Space 激活；禁用 Manage 占位不进入焦点顺序。只改 ActivityBar widget 与独立测试。范围、DoD 和编辑前 GitNexus UNKNOWN 记录见 docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md。",
+      "dependencies": [
+        "feat-061"
+      ],
+      "status": "done",
+      "evidence": "P05.10 / LAY-03a is complete. Product commit 570bec2 adds four Activity Bar view button/selected semantics, widget-owned focus nodes, stable Tab order, vertical arrow navigation, Enter/Space and click activation; follow-up df530b2 matches fixed Code-OSS 1.145.0 preventLoopNavigation=true by keeping focus at both ends, and corrects stale comments. Independent ActivityBar widget tests 3/3 cover semantics, collapsed selected state, Tab sequence, arrows without activation/boundary behavior, keyboard activation, and mouse route. Final-code FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed: Rust workspace 71+54, Clippy, build_core, Flutter 1,055/1,055; cargo fmt --all -- --check, flutter analyze (0 issues), JSON/diff check, Harness 100/100 passed. PR CI 42166343434 four jobs passed. Platform Availability 42166338201 Linux x64, Windows x64, macOS Intel x64 jobs all passed build/test/launch/package. Package artifacts Linux/Windows/macOS 13480050460 / 13478814930 / 13480535582. macOS ZIP SHA-256 c3ccee5020e51410b3c32a74782f41eb2be408b16dd05239fde1d26bec0f5354 matched the sidecar and unzip -t passed; startup diagnostics 13479434926 and native System Events Quit passed. Linux/Windows DnD artifacts 13478914872 / 13479192554 passed; macOS DnD 13480655013 explicitly skipped because hosted synthetic pointer events did not route to Flutter. GitNexus exact impacts: ActivityBar.build, _Item.build, _ActivityBarState UNKNOWN/0 callers; _handleViewKey LOW/2 impacted symbols/one local Build flow. Final precommit detect-changes: all-scope 7 files/3 symbols/0 processes LOW; compare-to-main 33 files/198 symbols/17 processes CRITICAL with known unrelated mappings. Five >512KiB files including workbench_page.dart skipped; 788 cross-language property sites and process trace budget limits unresolved. Full evidence: docs/diagnostics/2026-11-06-p05/p05.10-activity-bar-keyboard-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-063",
+      "name": "P05.11 LAY-03b Activity Bar 隐藏/恢复与布局持久化",
+      "description": "注册固定 Code-OSS 1.145.0 的 Activity Bar Side/Hidden 命令，并在 View > Appearance > Activity Bar Position 提供 checked 子菜单；固定活动栏可隐藏为零宽、恢复原尺寸，保存到现有布局 JSON，保留当前视图。Top/Bottom、尺寸、排序、badge、Accounts/Manage 与右键菜单留后续子项。范围与编辑前 GitNexus 风险见 docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md。",
+      "dependencies": [
+        "feat-062"
+      ],
+      "status": "done",
+      "evidence": "P05.11 / LAY-03b completed. Product commit 2e8813c adds the fixed Code-OSS 1.145.0 Activity Bar hide/default commands, View > Appearance > Activity Bar Position Side/Hidden checked submenu, fixed-region zero-width collapse/restore and existing layout JSON persistence. Focused Flutter tests 30/30; complete FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,058/1,058; cargo fmt, app Flutter analyze (0 issues), Harness 100/100, JSON/diff checks passed. PR CI 42173966605 passed. Platform Availability 42173957807 attempt 2 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package; attempt 1 macOS launch and native-titlebar cleanup timed out, retained in scope report without inferring root cause. Package artifacts Linux/Windows/macOS 13481689556 / 13482881497 / 13484129888. macOS ZIP SHA-256 b5805f43e485214265a45541223872f0d84de7fd6547fd20f1f837ab1d5028bf matched its sidecar and unzip -t passed. Startup/System Events Quit diagnostics 13484214739; Linux/Windows DnD artifacts 13483115428 / 13483150903 passed; macOS DnD artifact 13484862587 explicitly skipped because the hosted synthetic pointer route was unavailable. GitNexus scan limits, UNKNOWN and cumulative compare-to-main CRITICAL mappings remain recorded; no graph scan is called clean. Full scope/evidence: docs/diagnostics/2026-11-06-p05/p05.11-activity-bar-visibility-scope.md. P05 and LAY-03 remain open.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-064",
+      "name": "P05.12 LAY-03c Activity Bar Top/Bottom 位置与布局持久化",
+      "description": "扩展 P05.11 Activity Bar Side/Hidden 为固定 Code-OSS 1.145.0 的 Side/Top/Bottom/Hidden 四态；Top/Bottom 在 primary sidebar 内以横向 ActivityBar 呈现，提供 .top/.bottom 命令及 checked 菜单状态、方向键导航与根布局 JSON 持久化。切换位置保留当前 Sidebar view、Editor split 与 Panel。size/reorder/badge/Accounts/Manage/context menu 留后续子项。范围、DoD、GitNexus 风险和边界见 docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md。",
+      "dependencies": [
+        "feat-063"
+      ],
+      "status": "done",
+      "evidence": "P05.12 完成。产品提交 8afd9cc；macOS CI 时序修复提交 46c9536。聚焦 Flutter 10/10、完整 bash init.sh（Rust 71+54、Clippy、build_core、Flutter 1,064）、cargo fmt、Flutter analyze 0 issues、Harness 100/100 通过。PR CI 42194094020 四 job 全绿；Platform Availability 42194086250 的 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package lanes 全绿。macOS DnD artifact 13491948546 明确 skip（hosted pointer route unavailable）；System Events Quit/startup artifact 13492900963 验证选择 alula_app > Quit Alula Code 并正常退出。平台包 Linux/Windows/macOS artifacts 13491710949 / 13490743620 / 13493495104；macOS ZIP SHA-256 6f1184e2dae9b9ae47412fcb2118f7eb7c02c09607aca483af6e8ce621724ea0 与 sidecar 匹配，unzip -t 通过。首次 run 42188372805 的 menu bar -1719 错误与修复复测记录在 docs/diagnostics/2026-11-06-p05/p05.12-activity-bar-top-bottom-scope.md。P05/LAY-03 继续开放；原生设备/Apple Silicon 验收留 P15。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-065",
+      "name": "P05.13 LAY-03d Activity Bar Default/Compact 大小与持久化",
+      "description": "按固定 Code-OSS 1.145.0，实现 Side Activity Bar 的 Default/Compact 大小、Activity Bar Size 右键子菜单与根布局 JSON round-trip；Default 为 48px 宽 / 48px action / 24px icon，Compact 为 36px / 28px / 16px。Side 以外不显示大小子菜单；范围、上游出处、DoD 与 GitNexus 预检见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md。",
+      "dependencies": [
+        "feat-064"
+      ],
+      "status": "done",
+      "evidence": "P05.13 完成。产品提交 3841f7e；本地 bash init.sh：Rust 71+54、Clippy、build_core、Flutter 1,070；cargo fmt --check、Flutter analyze 0 issues、P05.12/P05.13 聚焦回归 43/43、ActivityBar widget 6/6 与 size integration 1/1 通过。PR CI 42204378410 四 job 全绿；Platform Availability 42204370958 Linux x64、Windows x64、macOS Intel x64 build/test/launch/package 全通过。Linux/Windows DnD artifacts 13496321529 / 13495993506 通过；macOS DnD artifact 13497601428 明确 skip（hosted synthetic pointer route unavailable）；System Events native Quit/startup artifact 13498175441 通过。平台包 artifacts Linux/Windows/macOS 13496391434 / 13496108307 / 13496948638；macOS ZIP SHA-256 288d5282a87834918cb5a2565796834baea132227224c8d2be1d39434bdc99ff 与 sidecar 匹配，unzip -t 通过。默认/紧凑尺寸、checked 菜单、Side-only 入口、旧 JSON 迁移、持久化、Sidebar view/collapse、Editor split、Panel/Editor 权重和 Top/Bottom 44 px 均验证。完整记录及 GitNexus UNKNOWN/MEDIUM lower-bound 限制见 docs/diagnostics/2026-11-06-p05/p05.13-activity-bar-size-scope.md 与 docs/diagnostics/2026-11-06-p05/p05.13-local-validation.txt。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-066",
+      "name": "P05.14 LAY-03e Activity Bar 视图排序与持久化",
+      "description": "按固定 Code-OSS 1.145.0，实现 Side 垂直、Top/Bottom 水平 Activity Bar 四个既有视图项的拖放排序；Manage 固定，当前选中 view ID 与键盘导航语义保持。activityBarOrder 复用现有根 layout JSON 持久化并规范化旧/畸形值。Profile 隔离、显隐/pin、badge 与 Manage 留后续项。范围、DoD、上游出处与 GitNexus 预检见 docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md。",
+      "dependencies": [
+        "feat-065"
+      ],
+      "status": "done",
+      "evidence": "P05.14 / LAY-03e is complete. Activity Bar view order supports vertical Side and horizontal Top/Bottom drag/drop; Manage stays fixed, selected view ID and keyboard order persist, and normalized order saves to root layout JSON. Focused widget 9/9, layout model 21/21, integration 1/1; full FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,076; cargo fmt, Flutter analyze (0 issues), Harness 100/100. PR CI 42216043944 and Platform Availability 42216038049 passed all jobs. Linux/Windows native move/copy/external-text DnD passed (13501522144 / 13501257868); macOS DnD artifact 13503490499 explicitly skipped because hosted pointer events did not reach Flutter. Platform artifacts Linux/Windows/macOS Intel x64 13501112903 / 13501357974 / 13503042243. macOS ZIP SHA-256 f1502651f4c1b17d482a9612b1f2bdb150359367bd4901390adab8479daa956d matched sidecar and unzip passed; native Quit/startup 13502643476 passed. Full evidence and graph limitations: docs/diagnostics/2026-11-06-p05/p05.14-activity-bar-reorder-scope.md and p05.14-local-validation.txt.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-067",
+      "name": "P05.15 LAY-03f Activity Bar 视图固定/隐藏与右键恢复",
+      "description": "按固定 Code-OSS 1.145.0，为 Explorer/Search/Outline/Source Control 实现 Keep/Hide pin/unpin 右键交互与 Activity Bar view checklist；保留 active-but-unpinned 显示语义、最后一个 pin 禁止隐藏，并将规范化状态持久化到现有根 layout JSON。排除 badge、Accounts/Manage、Move To、Profile 隔离。范围和 GitNexus 预检见 docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md。",
+      "dependencies": [
+        "feat-066"
+      ],
+      "status": "done",
+      "evidence": "P05.15 / feat-067 is complete. Product commit 7def397; macOS LaunchServices fix dcf69e0; valid macOS bundle identifier and absolute Quit path 105dd0d. Local full DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,083/1,083, cargo fmt, Flutter analyze 0, and Harness 100/100. PR CI 42247690393 passed. Platform Availability 42247679502 passed Linux x64, Windows x64, and macOS Intel x64. Linux/Windows native move/copy/external-text DnD passed (13518828194 / 13517959875); macOS DnD was explicitly skipped because the hosted pointer route was unavailable (13520746528), not counted as a pass. Native macOS Quit/startup passed (13519877671). Platform package artifacts: Linux 13518847799, Windows 13517929845, macOS 13520786704. macOS ZIP SHA-256 a4440c1599025e07537cc98c004ab3e11a0574a11e231b002da71e3b27977301 matched its sidecar and ZIP integrity passed. Scope and limitations: docs/diagnostics/2026-11-06-p05/p05.15-activity-bar-pin-context-scope.md. P05 remains open; LAY-03 badge/Accounts/Manage remain.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-068",
+      "name": "P05.16 LAY-03g Activity Bar 徽章显示、逐视图显隐与持久化",
+      "description": "按固定 Code-OSS 1.145.0，为四个现有 Activity Bar 视图项实现 number/icon/progress badge 呈现、可访问说明、逐项 Show/Hide Badge 右键动作，并将禁用状态保存到根 layout JSON。没有真实 provider 时不显示假数据；Accounts/Manage 全局动作栏、认证和 Profile 隔离留独立子项。范围和编辑前 GitNexus 结果见 docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md。",
+      "dependencies": [
+        "feat-067"
+      ],
+      "status": "done",
+      "evidence": "P05.16 / LAY-03g complete; product commit 1e392ec558d5129b227d9415673de139d9860060. Four view items support provider-supplied number/icon/progress badges, accessible descriptions, per-view Hide/Show Badge, and normalized root layout JSON persistence; no provider means no fake badges. Focused ActivityBar/layout/persistence tests 43/43; full bash init.sh passed Rust workspace tests, Clippy, build_core, Flutter 1,089/1,089; cargo fmt --check and flutter analyze (0 issues) passed. PR CI 42260398932 passed all four jobs. Platform Availability 42260392232 passed Linux x64, Windows x64, macOS Intel x64 build/test/launch/package lanes. Package artifacts Linux/Windows/macOS: 13524223608 / 13525266755 / 13526462716. macOS ZIP SHA-256 3d401295790f8b769b3fe6f4996b647fa9f34ef17fd0b7b2a697414472e54ce6 matched sidecar and unzip integrity passed; startup/native Quit artifact 13526432902. Linux/Windows native DnD artifacts 13525465930 / 13523799856 passed; macOS DnD artifact 13527091011 explicitly skipped because the hosted synthetic pointer route was unavailable. GitNexus CRITICAL/cross-language/large-file mapping risks remain documented; P05 and LAY/CMD rows remain open. Full evidence: docs/diagnostics/2026-11-07-p05/p05.16-activity-bar-badge-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-069",
+      "name": "P05.17 LAY-03h Activity Bar Accounts / Manage 全局动作",
+      "description": "按固定 Code-OSS 1.145.0 为 Side/Top/Bottom Activity Bar 增加 Accounts 与固定 Manage 全局动作区。Accounts 默认显示、空提供程序状态、Hide/Show、bar context checked 显隐和根布局 JSON 持久化；Manage 只调用已注册的命令。认证与 provider/login/sync 留 P13，Profile 与其动态图标/菜单留 P07，未实现的管理器功能不建空入口。范围/DoD/上游/GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md。",
+      "dependencies": [
+        "feat-068"
+      ],
+      "status": "done",
+      "evidence": "P05.17 / LAY-03h complete; product 247879a0b9fac1b8af8d5900e796859536358ed5. Focused ActivityBar/layout/pin integration tests 50/50; bash init.sh passed Rust workspace tests, Clippy, build_core, Flutter 1,096/1,096; cargo fmt --all -- --check and flutter analyze (0 issues) passed. PR CI 42269272957 passed all four jobs. Platform Availability 42269263469 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package lanes, including clipboard, native drag/drop, Windows accessibility/lifecycle, and macOS native Quit. Package artifacts Linux/Windows/macOS 13529305581 / 13528569171 / 13532686496; macOS ZIP SHA-256 9ed879ec238dfdf75fcbe5798a3babb772951e14464ff495d1225f82a3ec2e4c matched sidecar and unzip validation passed. DnD diagnostics 13528102955 / 13529032663 / 13533171235; macOS startup diagnostics 13531896813; Windows client-area screenshot inspected. Authentication/providers remain P13, profiles P07; hosted x64 checks do not claim local-device or native auth acceptance. Full evidence and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.17-accounts-manage-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-070",
+      "name": "P05.18 LAY-04a 次侧栏区域、显隐、空态与布局迁移",
+      "description": "按固定 Code-OSS 1.145.0 增加默认隐藏、位于编辑器右侧的 Auxiliary/Secondary Side Bar 区域；支持 workbench.action.toggleAuxiliaryBar 与 Ctrl/Cmd+Alt+B，在标题栏布局菜单中显隐；无视图时显示明确空态。根布局 JSON 保存显隐/尺寸，旧布局加载时安全补入隐藏叶子且保留其他区域树结构。视图分配、移动/拆分、左右互换和高级默认策略留后续 LAY-04 子项。范围与 GitNexus 编辑前风险见 docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md。",
+      "dependencies": [
+        "feat-069"
+      ],
+      "status": "done",
+      "evidence": "P05.18 / LAY-04a complete; product commit b3d2a782a5f6b78a66eb4c5f561d237d19d8e32f. Focused secondary sidebar suites 8/8; Activity Bar position 6/6; layout tree ops 7/7. Full bash init.sh passed Rust workspace tests 71+54, Clippy, build_core, and Flutter 1,104/1,104; cargo fmt --all -- --check and flutter analyze --no-pub (0 issues) passed; Harness 100/100. Product PR CI run 42281213183 passed all four jobs. Platform Availability run 42281207384 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/package jobs. Artifacts: Linux 13535158520, Windows 13536590321, macOS 13537081275; macOS ZIP SHA-256 a4efe22b255ae5713e4a6bb4249c576244ee1c5677a47ef2be785fa98b206461 matches its sidecar and unzip -tq passed. macOS hosted native DnD explicitly skipped because synthetic pointer events were not routed to Flutter; startup diagnostics preserve a foreground warning. Hosted evidence does not replace local physical-device validation. Full scope, GitNexus caveats and evidence: docs/diagnostics/2026-11-07-p05/p05.18-secondary-sidebar-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-071",
+      "name": "P05.19 LAY-04b 主次侧栏左右位置与持久化",
+      "description": "固定 Code-OSS 1.145.0：主侧栏 Left/Right 切换，Activity Bar 随主侧栏并位于外缘，次侧栏始终位于相反侧；提供 workbench.action.toggleSidebarPosition 与 View > Appearance 动态方向标签；持久化位置并兼容无字段旧布局。保留 Activity Bar Side/Top/Bottom/Hidden、侧栏尺寸与折叠、编辑器组及 Panel 状态。视图移动、DnD、reset locations 与 secondary default visibility 留后续 LAY-04 子项。范围和 GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md。",
+      "dependencies": [
+        "feat-070"
+      ],
+      "status": "done",
+      "evidence": "Implementation commits d44e36414afdfda876778af8f5cc767a651ddeba and regression commit 077d234398d8178601854a0f4e76a1d7e15b4bf5. Focused sidebar-position/integration suites 6/6; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,109/1,109; cargo fmt --check, Flutter analyze (0 issues), and diff check passed. PR CI 42296299632 passed all four jobs. Platform Availability 42296292652 attempt 2 passed Linux x64, Windows x64, and macOS Intel x64; attempt 1 macOS package artifact finalization hit a transient GitHub ETIMEDOUT and was rerun. Latest package artifacts Linux 13542566431, Windows 13542681784, macOS 13545142985. macOS ZIP SHA-256 7232ef2bb37c42a1cdc08443b4d987cd66fad69811aaccc43d60d06a32393cb1 matches sidecar; unzip -tq passed. Linux/Windows DnD passed; macOS DnD artifact 13546375113 explicitly skips because CGEventPostToPid pointer route is false. System Events native Quit/startup evidence is artifact 13545676609. Hosted Intel x64 does not replace Apple Silicon or physical-device validation. Full scope, graph caveats, and hosted/local evidence: docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-scope.md and docs/diagnostics/2026-11-07-p05/p05.19-sidebar-position-implementation.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-072",
+      "name": "P05.20 LAY-04c 主/次侧栏内置视图命令移动",
+      "description": "固定 Code-OSS 1.145.0：注册 workbench.action.moveView 与 workbench.action.moveFocusedView，在 Primary/Secondary Side Bar 间移动当前内置视图 explorer/search/outline/git。Quick Input 选择视图与目的地，支持 focused view、取消不变更；持久化 assignment 与每侧 selection，旧布局默认全在 Primary，保留其他 Activity Bar、Panel 与编辑器树状态。Panel movement/grouping、DnD、Reset View Locations 与 extension views 另行拆分。范围/预编辑 GitNexus 见 docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md。",
+      "dependencies": [
+        "feat-071"
+      ],
+      "status": "done",
+      "evidence": "Product commit 7576e3c passed full local DoD (Rust 71+54, Clippy, build_core, Flutter 1,113/1,113, analyze, fmt) and focused suites 6/6. PR CI 42309345888 (product head) and 42325095582 (latest) passed all jobs. Platform Availability run 42325090905 passed Linux x64, Windows x64, and macOS Intel x64 jobs. Linux/Windows native DnD probes passed. macOS full Flutter tests, clipboard, ordinary launch, direct AX native Quit, and package creation passed; the macOS DnD interaction was explicitly skipped because the hosted pointer route was unavailable and is outside this command-movement slice. macOS package artifact 13555536496 SHA-256 c8c66a5473cfacb966dd43f5845460e73c7c2e92673535a4765c9b08b52b0e5b matched its sidecar and unzip -tq passed. Native Quit startup diagnostics artifact 13555029159; DnD skip evidence artifact 13555004218. GitNexus impact and CI helper history are in docs/diagnostics/2026-11-07-p05/p05.20-sidebar-view-move-scope.md and p05.20-sidebar-view-move-implementation.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-073",
+      "name": "P05.21 LAY-06a Reset View Locations 命令与视图位置恢复",
+      "description": "固定 Code-OSS 1.145.0 注册 workbench.action.resetViewLocations。将 Alula 四个内置视图的位置恢复到 Primary Side Bar，默认选中 Explorer 并清空 Secondary selection；通过现有 root layout 持久化，重复调用幂等，不修改 Activity Bar pins/order/badges/accounts、Side Bar/Panel/编辑器树等无关状态。范围与预编辑 GitNexus 登记见 docs/diagnostics/2026-11-07-p05/p05.21-reset-view-locations-scope.md。",
+      "dependencies": [
+        "feat-072"
+      ],
+      "status": "done",
+      "evidence": "P05.21 / LAY-06a complete; product commit 2eb5353. Local focused suites passed 9/9; full bash init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,118/1,118), cargo fmt --check passed, Flutter analyze 0 issues. PR CI 42330219602 passed all four jobs. Platform Availability 42330215622 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package jobs. Package artifacts Linux/Windows/macOS: 13557157023 / 13557556347 / 13557268378. Linux/Windows DnD artifacts 13557416569 / 13557561343 passed; macOS DnD artifact 13558300884 explicitly skipped because hosted pointer routing is unavailable. macOS startup/native Quit artifact 13557636534. macOS ZIP SHA-256 3e746294c363800077e670ed8ff8d35beebb9f29995a7f50742a0c9fe0b70ca9 matches sidecar and unzip -tq passed. Full evidence and GitNexus limitations: docs/diagnostics/2026-11-07-p05/p05.21-reset-view-locations-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-074",
+      "name": "P05.22 LAY-05a Panel Top/Bottom 位置命令与布局持久化",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel 位于编辑器工作区顶部/底部的命令、View > Appearance > Panel Position 当前态与 root layout JSON 保存/重挂。保留 Panel 权重/折叠态和其他区域树；不含 Left/Right、alignment、maximize/restore、context menu、DnD、minimum size。范围与 GitNexus 风险见 docs/diagnostics/2026-11-07-p05/p05.22-panel-position-top-bottom-scope.md。",
+      "dependencies": [
+        "feat-073"
+      ],
+      "status": "done",
+      "evidence": "P05.22 / LAY-05a complete; product commit 78ebda0. Focused title-bar/model/workbench tests 26/26; full bash init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,125/1,125), cargo fmt --check passed, Flutter analyze 0 issues. PR CI 42336252273 passed all four jobs. Platform Availability 42336247962 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package jobs. Package artifacts Linux/Windows/macOS: 13560255249 / 13559801677 / 13560237125. Linux/Windows DnD artifacts 13559439280 / 13560205685 passed; macOS DnD artifact 13559888607 explicitly skipped because hosted pointer routing was unavailable. macOS startup/native-titlebar/Quit artifact 13560625719. macOS ZIP SHA-256 4fb4157a9035c23ac83c1c8f7776846600e659464e7500ee5a0f87d08571cfb6 matched sidecar and ZIP integrity passed. Full scope, graph limits, and evidence: docs/diagnostics/2026-11-07-p05/p05.22-panel-position-top-bottom-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-075",
+      "name": "P05.23 LAY-05b Panel Left/Right 位置命令与布局持久化",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel 左/右停靠命令、View > Appearance > Panel Position 当前态以及 horizontal root layout 保存/重挂；支持与 Top/Bottom 之间切换并保留 Panel、main-row、root metadata、双侧栏、Activity Bar 和编辑器组状态。不含 alignment、maximize/restore、context menu、DnD、sash 与 minimum-size 功能。范围见 docs/diagnostics/2026-11-07-p05/p05.23-panel-position-left-right-scope.md。",
+      "dependencies": [
+        "feat-074"
+      ],
+      "status": "done",
+      "evidence": "P05.23 / feat-075 complete at product commit b9a1b4b. Panel Left/Right commands, four-way position transitions, root JSON persistence/remount, live menu state, and preservation of root/Panel/workbench subtree/state are implemented. Focused Flutter suites 27/27; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,126/1,126; cargo fmt --check, Flutter analyze (0 issues), Harness 100/100, JSON and diff checks passed. PR CI 42340702008 passed all four jobs. Platform Availability 42340697752 passed Linux x64, Windows x64, and macOS Intel x64 lanes. Package artifacts Linux/Windows/macOS: 13561543111 / 13561309118 / 13562435512. macOS ZIP SHA-256 e73c36ff01ecae7f551866a5906c12fa0eca2423448a44222ab11a32e39422c1 matched its sidecar and all 76 ZIP entries passed integrity validation. Linux/Windows DnD artifacts 13561715983 / 13561433885 passed move/copy/external-text probes; macOS DnD artifact 13562470304 explicitly skipped because the hosted pointer route was unavailable. Native macOS Quit/startup artifact 13561608842 confirms the Quit callback and exit status 0. Full scope, graph limitations, and evidence: docs/diagnostics/2026-11-07-p05/p05.23-panel-position-left-right-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-076",
+      "name": "P05.24 LAY-05c Panel 对齐命令与布局持久化",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel Left/Right/Center/Justify 四态对齐命令、View > Appearance > Align Panel 当前态，以及现有布局 JSON 保存/重挂。对齐只作用于 Top/Bottom；在 Left/Right 执行对齐命令时先移至 Bottom，随后侧边停靠保留 alignment 值。对齐布局重排 Panel、侧栏、编辑器和 Activity Bar 且保持四向 position 命令可用。保留区域状态/focus/尺寸。不含最大化/还原功能、Panel view 移动/拖放、sash/minimum-size 或浮动布局。范围见 docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md。",
+      "dependencies": [
+        "feat-075"
+      ],
+      "status": "done",
+      "evidence": "P05.24 complete at product commit 66d2867. Four fixed alignment commands, checked Appearance submenu, root JSON legacy default/round-trip, Top/Bottom projection, side-to-Bottom behavior, layout reflow across both Side Bar positions, State/focus retention, and persisted sash changes are implemented. Focused suites 60/60; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,133/1,133; cargo fmt --check, Flutter analyze (0), Harness 100/100, JSON/diff checks passed. PR CI 42346270441 passed all four jobs. Platform Availability 42346265567 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages 13563747335 / 13563878275 / 13564202569; macOS SHA-256 08d70b5f79b0ba19845180781c452ffface11f370a1a8b57ce25b5172f262c4b matched its sidecar and all 76 ZIP entries passed integrity validation. Linux/Windows DnD 13563713521 / 13564265224 passed; macOS DnD 13564985209 explicitly skipped due unavailable hosted pointer routing. Native macOS Quit/startup diagnostics 13564990249. Full scope and graph coverage limits: docs/diagnostics/2026-11-07-p05/p05.24-panel-alignment-scope.md. P05/feat-027 remains in progress.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-077",
+      "name": "P05.25 LAY-05d Panel 最大化/还原与瞬时布局状态",
+      "description": "按固定 Code-OSS 1.145.0 实现 workbench.action.toggleMaximizedPanel、Panel 隐藏时显示并最大化、可访问且按状态变化的标题区 action。最大化仅为运行时状态；不写 root JSON、不改 WbSplit 拓扑/权重/折叠态，最大化/还原保留编辑器、侧栏、Panel 子树状态/focus。居中 alignment 支持所有位置；非居中 alignment 仅允许 Left/Right。范围、固定上游、排除项和 GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.25-panel-maximize-restore-scope.md。",
+      "dependencies": [
+        "feat-076"
+      ],
+      "status": "done",
+      "evidence": "Completed 2026-11-07. Product commit c456374; formatter-noise cleanup 1188cdf. Focused tests 15/15; full local DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,140/1,140, cargo fmt, flutter analyze 0 issues, Harness 100/100, JSON/diff checks. PR CI 42351275970 and Platform Availability 42351272135 passed. Linux/Windows/macOS x64 package artifacts: 13565473635 / 13565957319 / 13566890763. macOS ZIP SHA-256 478112e02c66f2295c5b00bdb0fd1beda567728342fa1c8bdc4e3270f1213ba7 matched sidecar; 76 entries passed integrity. Linux/Windows DnD passed; macOS hosted DnD 13566920565 was explicitly skipped because pointer events did not reach Flutter. Scope, graph limitations, and full acceptance evidence: docs/diagnostics/2026-11-07-p05/p05.25-panel-maximize-restore-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-078",
+      "name": "P05.26 LAY-05e Panel 方向感知的最小尺寸与分割器约束",
+      "description": "按固定 Code-OSS 1.145.0 实现 Panel Top/Bottom 最小高度 77px、Left/Right 最小宽度 300px，并让递归分割树尺寸分配和 sash 拖动尊重节点最小值。可满足约束时分配完整、保存权重不随窗口 resize 改变；视口不足时确定性压缩到可用空间。旧 Panel 默认 min=120 迁移到 77，自定义 minimum 保留。覆盖 Panel alignment 投影/位置变化、折叠、嵌套 split 和 JSON 往返。不含拖放、双击复位、窗口级最小尺寸、其他 LAY-06 完整功能。范围见 docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md。",
+      "dependencies": [
+        "feat-077"
+      ],
+      "status": "done",
+      "evidence": "Completed 2026-11-07; product commit 71b2a03eaf2bc39e8a254435bfc7c25c5772d0e3. Focused model/grid/alignment tests 44/44; full bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,145/1,145, cargo fmt, flutter analyze (0), Harness 100/100, JSON/diff. PR CI 42356533251 passed all four jobs. Platform Availability 42356528682 attempt 2 passed Linux/Windows/macOS Intel x64 build/test/launch/package. Artifacts Linux/Windows/macOS 13567643420 / 13567409444 / 13569481669. macOS ZIP SHA-256 982a268a7f81c209686751b4829c76509d5d25670654763b7bcfbc62dc9cee12 matched sidecar; 76 entries passed unzip integrity. Linux/Windows native DnD passed; hosted macOS DnD 13569167779 explicitly skipped because CGEventPostToPid pointer routing was unavailable; native Quit/startup artifact 13568644648. Platform attempt 1 had one unrelated existing regex preserve-case interaction test failure (1,144/1,145); focused local rerun and full attempt 2 passed, with root cause not established. Full scope, GitNexus limitations, and evidence: docs/diagnostics/2026-11-07-p05/p05.26-panel-minimum-size-scope.md."
+    },
+    {
+      "id": "feat-079",
+      "name": "P05.27 LAY-06b sash 双击复位与布局比例持久化",
+      "description": "按固定 Code-OSS 1.145.0 为 WorkbenchGrid 当前渲染的 sash 增加双击复位：将直接相邻的两个弹性节点在各自最小尺寸内尽可能均分其合计当前尺寸，不改变其它兄弟节点。权重写回沿用现有 alignment projection 与 root layout JSON 持久化；覆盖横纵轴、布局回读与 resize。snap、折叠策略重做、未渲染 sash、DnD 与其他 LAY-06 项另行登记。范围和 GitNexus 预检见 docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md。",
+      "dependencies": [
+        "feat-078"
+      ],
+      "status": "done",
+      "evidence": "Completed 2026-11-07 at product commit 880ebecf455a7079677897be24bb9f5ead005fb4. Focused model/grid/alignment tests 49/49; full bash init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,150/1,150); cargo fmt --check, flutter analyze (0), Harness 100/100, JSON/diff passed. PR CI 42362871885 passed all jobs. Platform Availability 42362866427 passed Linux/Windows/macOS Intel x64. Packages Linux/Windows/macOS 13571020067 / 13571275187 / 13570959133; macOS ZIP SHA-256 6d302c880d24a69b2842fa7a6b62e4764fd82449c16c224027a6e2d3c024e29c matched sidecar and unzip integrity passed. Linux/Windows native move/copy/external-text DnD passed; macOS DnD 13571038989 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13571213638. Full implementation, upstream semantics, GitNexus CRITICAL/coverage warnings, and hosted evidence: docs/diagnostics/2026-11-07-p05/p05.27-sash-double-click-reset-scope.md. P05/feat-027 remains in-progress."
+    },
+    {
+      "id": "feat-080",
+      "name": "P05.28 LAY-07a 编辑器组方向拆分与活动文档复制",
+      "description": "按固定 Code-OSS 1.145.0 提供 Right/Left/Down/Up 编辑器组拆分命令，保留默认 editor.split 为 Right；新组复制当前活动文档、共享权威文本/保存但保持独立视图，并取得焦点。覆盖嵌套布局方向和 root layout JSON 往返/重挂，不处理组 move/copy/reorder、同组 split、均分/最大化/锁组或拖放。范围见 docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md。",
+      "dependencies": [
+        "feat-079"
+      ],
+      "status": "done",
+      "evidence": "Completed 2026-11-07 at product commit 1dd2997. Four directional editor-group split commands, editor.split Right alias, active-document copied into an independent view, nested layout order and root JSON persistence/remount. Focused suites 15/15; bash init.sh Rust 71+54, Clippy, build_core, Flutter 1,152/1,152; cargo fmt, app Flutter analyze 0, Harness 100/100, JSON/diff passed. PR CI 42369664624 passed all four jobs. Platform Availability 42369661019 passed Linux/Windows/macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS 13572744842 / 13572917765 / 13574570286; macOS ZIP SHA-256 cd46ee2d2dc8e54c37c2b38bbbfe02f9a627a6683b51f4952899b3458691e6b7 matched sidecar and unzip integrity passed. Linux/Windows native move/copy/external-text DnD passed; macOS DnD 13574610174 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13573857175. Full scope, upstream semantics, GitNexus CRITICAL/UNKNOWN warnings, and hosted evidence: docs/diagnostics/2026-11-07-p05/p05.28-editor-group-directional-split-scope.md. P05/feat-027 remains in-progress."
+    },
+    {
+      "id": "feat-081",
+      "name": "P05.29 LAY-07b 活动编辑器方向移动到相邻组",
+      "description": "注册 Code-OSS 四方向 moveEditorTo*Group 命令；移动焦点组的活动编辑器视图到相邻组，目标不存在时按方向新建，目标获得焦点。保留现有视图身份、选择/滚动/输入状态及共享权威文档；处理源组空态和已有同文档目标。范围见 docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md。",
+      "dependencies": [
+        "feat-080"
+      ],
+      "status": "done",
+      "evidence": "P05.29 / LAY-07b complete. Product commit 6516479 registers four directional moveEditorTo*Group commands; moves the same OpenDoc/input/focus/scroll state; preserves other source tabs; safely deduplicates a shared document in the target; and removes empty groups. Local DoD passed: cargo fmt, bash init.sh (Rust 71+54, Clippy, build_core, Flutter 1,154/1,154), flutter analyze 0, Harness 100/100, JSON/diff. PR CI 42378205009 passed all four jobs. Platform Availability 42378201537 passed Linux/Windows/macOS Intel x64 build/test/launch/package; package artifacts 13576811004 / 13576508596 / 13577516376. macOS ZIP SHA-256 7dee735a024f605c9b2e506eb15b53d06ded935630b1219b7e78a2353965ed43 matches sidecar and unzip integrity passed. Linux/Windows DnD artifacts 13576712242 / 13576383677 passed; macOS DnD 13577775515 explicitly skipped because hosted pointer routing was unavailable; native Quit/startup artifact 13576849734 shows the menu closed the app. CI commit 2549e9b adds one retry for transient macOS Accessibility menu-bar read errors and extends the bounded close wait; final three-platform verification passed. Earlier failures were hosted timing/accessibility failures without crash evidence. Scope and GitNexus limits: docs/diagnostics/2026-11-07-p05/p05.29-editor-group-directional-move-scope.md."
+    },
+    {
+      "id": "feat-082",
+      "name": "P05.30 LAY-08a 编辑器标签 multiple/single/none 显示模式",
+      "description": "固定 Code-OSS workbench.editor.showTabs 三态和默认 multiple；提供 View > Appearance 的互斥可访问模式选择，实时应用到全部 editor groups，保留文档/view/focus/selection/scroll/Rust 状态，并在会话重启后恢复。wrap/multirow、大小、关闭按钮、图标和路径消歧另行分片。范围见 docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md。",
+      "dependencies": [
+        "feat-081"
+      ],
+      "status": "done",
+      "evidence": "Registered before product edits; product implementation and local DoD now pass. workbench.editor.showTabs supports multiple/single/none with a multiple default, accessible checked View > Appearance commands, immediate all-group rendering, and session journal persistence outside layout JSON. Focused editor_tab_mode_test.dart: 2/2, covering invalid/default parsing, no-document and multi-document states, split groups, checked semantics, preservation of RustTextInputField State/input window/focus/selection/scroll controller, session restore, and layout JSON isolation. Full local bash init.sh: Rust workspace 71+54, Clippy, build_core, Flutter 1,156/1,156; cargo fmt --check, flutter analyze (0 issues), feature_list JSON and git diff --check pass. Registration PR CI 42382820769, product PR CI 42386329936, and evidence-closure PR CI 42389616967 passed all four jobs (evidence commit c8c8d61). Platform Availability 42386324811 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS 13580315004 / 13579907735 / 13580179917. macOS ZIP SHA-256 e778097b939908ff4b8a99d42aa79be7e53a54b96d8749787b95b9208de0067e matched sidecar; unzip integrity passed. Linux/Windows native DnD artifacts 13579353302 / 13580156506 passed; macOS DnD 13580337352 explicitly skipped because hosted pointer route was unavailable; macOS native Quit/startup artifact 13580209690 passed. P05 remains in-progress. Fixed sources, scope, and GitNexus UNKNOWN limits: docs/diagnostics/2026-11-07-p05/p05.30-editor-tab-visibility-modes-scope.md."
+    },
+    {
+      "id": "feat-083",
+      "name": "P05.31 LAY-08b 普通编辑器标签受限宽度自动换行",
+      "description": "固定 Code-OSS 1.145.0 workbench.editor.wrapTabs（默认 false）。multiple 模式下受限组宽触发标签换行，标签栏高度和编辑器内容区 relayout 同步更新；宽度恢复后回到单行。通过 View > Appearance 可访问 toggle 控制并保存到 session journal，不写 layout JSON；测试多组、三 showTabs 模式、动作栏、防遮挡与 Rust 编辑器状态保留。明确排除 pinnedTabsOnSeparateRow、tabSizing/固定宽度/close 样式/图标/路径消歧、设置窗口及 workspace/global 优先级。固定源码、GitNexus UNKNOWN 限制和 DoD：docs/diagnostics/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md。",
+      "dependencies": [
+        "feat-082"
+      ],
+      "status": "done",
+      "evidence": "P05.31 / LAY-08b complete. Fixed Code-OSS 1.145.0 wrapTabs default false; ordinary tabs wrap in multiple mode, group height relayouts, View > Appearance toggle persists in session journal outside layout JSON. Focused editor_tab_wrap_test.dart 1/1 and full local DoD passed: Rust 71+54, Clippy, build_core, Flutter 1,157/1,157, cargo fmt, analyze 0, Harness 100/100, JSON/diff. Product commit 80aab55. First Platform Availability attempts exposed an intermittent hosted macOS native Quit menu probe failure; CI helper fix 6b3bc98 added a bounded System Events fallback and reserved job/step time. PR CI 42403241718 passed all four jobs. Platform Availability 42403234488 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/native-titlebar Quit/package. Packages 13586810711 / 13586816217 / 13587572211. macOS SHA-256 e46f2d0a47910ca32c95c262641c0de644bdd3de1035ba707c8a037e11e825da matched sidecar; all 76 entries passed ZIP integrity. Linux/Windows DnD 13586153587 / 13586054554 passed; macOS DnD 13587696038 explicitly skipped because hosted pointer routing was unavailable. Startup/Quit artifact 13587646786 records selecting the accessible Quit Alula Code item and successful process exit. Initial failure, GitNexus CRITICAL/UNKNOWN mapping limits, upstream sources, and exact slice boundaries: docs/diagnostics/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md. P05/feat-027 remains in-progress."
+    },
+    {
+      "id": "feat-084",
+      "name": "P05.32 LAY-08c 编辑器标签 fit/shrink/fixed 尺寸策略",
+      "description": "固定 Code-OSS 1.145.0 的 workbench.editor.tabSizing：fit 默认保留内容宽度并允许滚动；shrink 在空间不足时均分收缩至 80 px 最小宽度；fixed 使用 50–160 px 默认界限，并在悬停关闭时稳定其余标签宽度。View > Appearance 选择立即应用并写入 session journal；设置 UI、自定义宽度值与 workspace/global 优先级留 P07。范围、上游来源、GitNexus UNKNOWN 限制和 DoD：docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md。",
+      "dependencies": [
+        "feat-083"
+      ],
+      "status": "done",
+      "evidence": "Implemented locally: fit preserves intrinsic width and scrolls; shrink gives tabs equal widths down to the 80 px floor; fixed shares width clamped to 50–160 px and holds widths while the pointer stays over the strip during close. Accessible View > Appearance submenu updates all groups and persists in the session journal. Widget/pure tests cover geometry, resize and editor/input/focus/selection/scroll identity, held close widths, wrap/visibility interactions and session restore. Focused sizing/mode/wrap tests 9/9; full init.sh passed (Rust 71+54, Clippy, build_core, Flutter 1,163/1,163); cargo fmt --all -- --check, flutter analyze --no-pub (0 issues), Harness 100/100, JSON and diff checks passed. PR CI and Linux/Windows/macOS x64 hosted evidence pending. GitNexus UNKNOWN/lower-bound limits remain due to workbench_page.dart exceeding 512 KiB. Full scope/source/risk record: docs/diagnostics/2026-11-08-p05/p05.32-editor-tab-sizing-scope.md. Hosted evidence at product head 59f1880: PR CI 42410236245 all jobs passed; Platform Availability 42410233784 Linux/Windows/macOS Intel x64 all passed. Packages 13589046891 / 13589517096 / 13589962995; macOS ZIP SHA-256 1cf34824329863e3976bbf920198c2059f0e0650eee844188b3c99e5b68eb447 matched sidecar and 76-entry integrity passed. Linux/Windows DnD 13589606117 / 13589606754 passed move/copy/external text (18/13 pointer events); macOS DnD 13589839009 explicitly skipped because hosted pointer routing was unavailable. Native Quit/startup 13590311119 confirmed normal Quit callback; non-fatal frame-time clamp warning retained."
+    },
+    {
+      "id": "feat-085",
+      "name": "P05.33 LAY-08d 普通编辑器标签关闭操作位置",
+      "description": "固定 Code-OSS 1.145.0 workbench.editor.tabActionLocation：默认 right，支持 left/right；View > Appearance 提供可访问互斥菜单，立即应用到所有组并写入 session journal。关闭操作显式移动到标签左/右端，resize、fit/shrink/fixed、wrap 与编辑器输入状态须保持可用。关闭操作显隐/hover、reserved-space、pinned/sticky、图标、路径消歧和 Settings UI 留后续。范围、固定来源、GitNexus UNKNOWN 限制与 DoD：docs/diagnostics/2026-11-08-p05/p05.33-editor-tab-action-location-scope.md。",
+      "dependencies": [
+        "feat-084"
+      ],
+      "status": "done",
+      "evidence": "Complete. Product commit cd2f99c; macOS CI helper fix a7e584f. Local full DoD passed: focused action-location 3/3, sizing/mode/wrap regression 9/9, init.sh Rust 71+54, Clippy, build_core, Flutter 1,166/1,166, fmt, analyze 0, Harness 100/100, JSON/diff. PR CI 42417701437 all four jobs passed. Platform Availability 42417696120 passed Linux/Windows/macOS Intel x64 build/test/launch/native-titlebar Quit/package. Package artifacts 13592855047 / 13592696440 / 13592543731; macOS ZIP SHA-256 4a1325b9a8f8e9726ca1d5d823dda0b4170be18c8c5de037f16df829b5cbc49e matched its sidecar and all 76 entries passed integrity. Native Quit diagnostics 13592658465 confirmed Release bundle path/PID and successful Accessibility Quit. Linux/Windows DnD artifacts 13592650634 / 13592900633 passed same-document move, cross-document copy, and external text (23/13 pointer events); macOS DnD 13592952216 explicitly skipped because hosted pointer routing was unavailable. First Platform Availability run 42415046957 failed only the macOS Quit probe; fix a7e584f scopes the helper to the expected bundle path. Full scope, failure/fix detail, and retained GitNexus warnings: docs/diagnostics/2026-11-08-p05/p05.33-editor-tab-action-location-scope.md."
+    },
+    {
+      "id": "feat-086",
+      "name": "P05.34 LAY-08e 普通编辑器标签关闭操作显隐与悬停行为",
+      "description": "固定 Code-OSS 1.145.0 workbench.editor.tabActionCloseVisibility，默认 true；在 View > Appearance > Editor Tabs 提供可访问 toggle，所有 editor groups 即时更新并写入 session journal。可见时关闭操作遵循 active/hover/focus 状态；关闭可见性后不显示/不触发关闭 action，保留 dirty 标记与编辑/保存语义。tabActionReserveSpace、tabActionUnpinVisibility、sticky/pinned action、Settings UI 与 user/workspace 优先级留独立切片。范围、固定上游、GitNexus 影响与 DoD：docs/diagnostics/2026-11-08-p05/p05.34-editor-tab-close-action-visibility-scope.md。",
+      "dependencies": [
+        "feat-085"
+      ],
+      "status": "complete",
+      "evidence": "Complete. Product commit 6f56ef3. Local full DoD passed: focused/action-location/mode/sizing/wrap 13/13; init.sh Rust 71+54, Clippy, build_core, Flutter 1,167/1,167; cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff. PR CI 42425373336 passed all four jobs. Platform Availability 42425368677 passed Linux/Windows/macOS Intel x64 build/test/launch/package (3.5/9.6/19.6 min). Package artifacts Linux/Windows/macOS 13594648388 / 13595119663 / 13595558898. macOS ZIP SHA-256 490560d410e5e4ea8e73641ab71bc84bc6469263a3ac0c94b834281582b20273 matched sidecar; unzip -tq passed with 76 entries. Linux/Windows DnD artifacts 13595162235 / 13595184226 passed same-document move, cross-document copy and external-text drop (19/14 Flutter pointer events). macOS DnD artifact 13595384708 explicitly skipped because CGEventPostToPid pointer route was unavailable. macOS native Quit/startup artifact 13595354985 confirmed the Release bundle and successful Accessibility Quit. P05 remains in-progress; continue with one registered child at a time. Retained GitNexus CRITICAL/UNKNOWN warnings and full evidence: docs/diagnostics/2026-11-08-p05/p05.34-editor-tab-close-action-visibility-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-087",
+      "name": "P05.35 LAY-08f 普通编辑器标签关闭操作空间保留",
+      "description": "固定 Code-OSS 1.145.0 workbench.editor.tabActionReserveSpace，默认 true；View > Appearance > Editor Tabs 提供可访问开关，所有组即时更新并写入 session journal。关闭保留时 clean inactive tab 去掉 18 px action+gap 并将仍可用的 close control 叠放在标签边缘；active/dirty 且关闭操作可见时仍保留动作空间。测试 action location、fit/shrink/fixed、wrap、关闭显隐、焦点/语义/命中与文档状态。范围与预编辑 GitNexus 分析：docs/diagnostics/2026-11-08-p05/p05.35-editor-tab-action-reserve-space-scope.md。",
+      "dependencies": [
+        "feat-086"
+      ],
+      "status": "complete",
+      "evidence": "Product commit `812a755` on draft PR #3. Focused tab mode/sizing/action-location/action-visibility/wrap suites 14/14; full `bash init.sh` passed (Rust 71+54, Clippy, core build, Flutter 1,168/1,168), `cargo fmt --all -- --check`, Flutter analyze 0, Harness 100/100, JSON validation, and `git diff --check` passed. PR CI `42430812448` all four jobs passed; Platform Availability `42430806927` Linux x64, Windows x64, and macOS Intel x64 passed. Packages Linux/Windows/macOS `13597413199` / `13598080336` / `13598288795`; Linux/Windows native DnD `13597711414` / `13597239700` verified move/copy/external text with 23/13 pointer events. Windows native-titlebar close exited 0; macOS native Quit via Accessibility closed the Release app (`13598109269`). macOS DnD `13598009484` is an explicit skip because synthetic pointer input did not reach Flutter. macOS ZIP SHA-256 `47e02be1221bf2ff0046ed840d02e1d8dbcbf97e9df0e136efd5e718c69aa757` matched sidecar; 76 entries passed `unzip -tq`. Retain unresolved GitNexus CRITICAL/UNKNOWN risks; full scope and evidence: `docs/diagnostics/2026-11-08-p05/p05.35-editor-tab-action-reserve-space-scope.md`.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-088",
+      "name": "P05.36 LAY-08g 普通编辑器标签同组重名路径消歧",
+      "description": "固定 Code-OSS 1.145.0 默认 workbench.editor.labelFormat=default：同一编辑器组内 basename 冲突时添加最短唯一路径后缀；唯一名、其他组与 untitled/no-path 不误改。显示文本、宽度、tooltip/semantics 一致并保留所有文档状态。仅 default 格式；不含其它 labelFormat、custom labels、图标主题或 Settings UI。范围与预编辑 GitNexus 证据：docs/diagnostics/2026-11-08-p05/p05.36-editor-tab-path-disambiguation-scope.md。",
+      "dependencies": [
+        "feat-087"
+      ],
+      "status": "complete",
+      "evidence": "Product commit 3cb8381. Focused editor-tab tests 23/23; full bash init.sh passed (Rust workspace, Clippy, build_core, Flutter 1,177/1,177); cargo fmt, Flutter analyze, Harness 100/100, JSON and diff checks passed. PR CI 42436462682 and Linux/Windows/macOS Intel x64 Platform Availability 42436457807 passed. Linux/Windows native DnD artifacts 13599424662 / 13599816834 verified move, cross-document copy and external text; macOS DnD artifact 13600073105 explicitly skipped interaction because hosted synthetic pointer events did not reach Flutter. Packages 13600355207 / 13599483291 / 13600113065; macOS ZIP SHA-256 01ec5ac37cb26d168cb3648e9066d824af612a23a97732823dea3f6e8ac286d2 matched sidecar and unzip integrity passed. macOS startup/native Quit artifact 13600172773. Full scope and GitNexus limits: docs/diagnostics/2026-11-08-p05/p05.36-editor-tab-path-disambiguation-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-089",
+      "name": "P05.37 LAY-08h 默认编辑器标签文件图标",
+      "description": "固定 Code-OSS 1.145.0 默认 showIcons=true 和 vs-seti 文件图标关联，仅渲染于 editor tabs；覆盖 filename/extension/language-id fallback、generic icon、尺寸/换行与辅助语义。主题选择、showIcons 配置 UI、Explorer icons 与 product icons 不在本切片。范围与预编辑 GitNexus 证据：docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md。",
+      "dependencies": [
+        "feat-088"
+      ],
+      "status": "complete",
+      "evidence": "Completed on final head c5da368879e32fa11cbeed35be3b2a3d61623071 (feature 477dbe2 plus license asset fix c5da368). Local DoD: bash init.sh, Rust 71+54, Clippy, build_core, Flutter 1,183/1,183; cargo fmt, Flutter analyze 0, Harness 100/100, JSON/diff; focused policy/asset 6/6. PR CI 42444192270 passed. Platform Availability 42444188669 passed Linux/Windows/macOS Intel x64 build/test/launch/package. Artifacts packages 13602544652 / 13603216469 / 13604350150; DnD 13602748806 / 13603570073 / 13603288418; macOS startup/Quit 13603662609. Linux/Windows DnD passed move/copy/external text (21/12 pointer events); macOS DnD explicitly skipped because its input route was unavailable. macOS ZIP SHA-256 43271ac8e4564ffad3fbb8db1a0c2bc545d0e50b6e8ada93e7230bc268cc4476 matched sidecar and ZIP integrity passed; all platform packages contain the Seti MIT notice, TTF, and mapping JSON. Full hosted/local evidence and unresolved GitNexus graph instability: docs/diagnostics/2026-11-08-p05/p05.37-editor-tab-file-icons-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-090",
+      "name": "P05.38 LAY-09a Explorer 预览标签替换与首次编辑固定",
+      "description": "固定 Code-OSS 1.145.0 默认 preview 行为：Explorer 单击打开同组唯一干净预览，后续单击替换它；再次单击同一预览或首次编辑将其固定。预览以斜体显示；dirty/已有永久文档不被降级或替换；状态按组隔离并经 session journal 恢复。Quick Open preview 配置、显式 Pin/Unpin UI 与 sticky tabs 留后续切片。范围和 DoD：docs/diagnostics/2026-11-08-p05/p05.38-explorer-preview-editor-scope.md。",
+      "dependencies": [
+        "feat-089"
+      ],
+      "status": "done",
+      "evidence": "Completed on PR #3 with product commit 03cbd9ee5ac4869ec04a3b8cfcff24e420856e0e and macOS CI helper fix 60c707834f9a372e82e4832b431d8548cee334be. Final PR CI 42453315726 passed Rust Ubuntu/Windows, Flutter analyze + 1,185 tests, and Harness. Final Platform Availability 42453311903 passed Linux x64, Windows x64, and macOS Intel x64 build/launch/clipboard/native-titlebar Quit/package. Packages Linux/Windows/macOS 13607130483 / 13607125861 / 13607606033. macOS ZIP SHA-256 3b071a67e6a0fd305041d31f63b7cba69e81121c8c40d916cdd4ff20f9e1152a matched sidecar; unzip integrity passed. Linux/Windows native DnD artifacts 13606981034 / 13606637227 passed same-document move, cross-document copy, and external text (21/11 pointer events). macOS DnD artifact 13607730878 explicitly skipped because hosted pointer routing was unavailable. macOS Quit/startup artifact 13606614159 confirmed the app was activated, native Quit selected, exit succeeded, and no crash report was collected. The initial inactive-target Quit failure on run 42451233185 and helper fix/rerun are documented in the scope report. Windows client capture: Windows Server 2025, visible 1028x711 at 96 DPI, graceful close, exit 0; Narrator was not invoked. Code-OSS baseline 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e. Preview replacement/pinning, dirty protection, italic labels, per-group session state, and split/move persistence are covered. Full local bash init.sh passed Rust 71+54, Clippy, build_core, Flutter 1,185/1,185, cargo fmt, Flutter analyze (0), Harness (100/100), focused preview/group/merge/cursor tests, JSON, and diff checks. Pre-edit impacts: _openFileByPath MEDIUM (19 / 7 direct), _updateDirty CRITICAL (135 / 14 direct / 5 flows), _closeDocNow LOW (9 / 4 direct), EditorGroup LOW (6 / 3 direct). Full scope, post-edit scans, and graph coverage limitations: docs/diagnostics/2026-11-08-p05/p05.38-explorer-preview-editor-scope.md. Evidence-only docs/head PR CI run 42456296673 passed Rust Ubuntu/Windows, Flutter analyze + 1,185 tests, and Harness.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-091",
+      "name": "P05.39 LAY-09b Sticky 编辑器、Pin/Unpin 与关闭规则",
+      "description": "按固定 Code-OSS 1.145.0 实现每组 sticky tab 连续前缀、可访问 Pin/Unpin、默认单行、session/split/move 状态携带，以及键盘 Close 保护、显式关闭与 Close All 规则。范围和 DoD：docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md。",
+      "dependencies": [
+        "feat-090"
+      ],
+      "status": "done",
+      "evidence": "Completed on PR #3 product commit 54b090285482cc6951c391cec17934a203529163; PR remains draft/open. Sticky editors are a per-group contiguous prefix with Pin/Unpin accessible from the tab context menu and Semantics action; pin clears preview, unpin moves to the first ordinary tab, and the session journal restores sticky IDs. Split/move carry sticky state. Ctrl/Cmd+W skips sticky and selects the most recently active ordinary editor; explicit tab close closes sticky; Close All Editors preserves sticky; Close All Groups closes them. Widget tests cover prefix order, preview-to-sticky, unpin, restore, MRU close, explicit close, batch close, split and move. Keybinding tests cover Linux/Windows/macOS defaults. Full local bash init.sh passed Rust 71+54, Clippy, build_core, and Flutter 1,188/1,188; cargo fmt and Flutter analyze (0 issues) passed. PR CI 42459619842 passed Rust Ubuntu/Windows, Flutter analyze + 1,188 tests, and Harness. Platform Availability 42459616642 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages Linux/Windows/macOS 13609033353 / 13608548961 / 13610340345; macOS ZIP SHA-256 bdd85848c6133a0e7fdc1455cd8db61f71cf9003f56f4c7597d44ccbcdfee15f matches sidecar and ZIP integrity passes. Linux/Windows native DnD artifacts 13608863795 / 13609382640 passed move/copy/external text; macOS artifact 13610070935 explicitly skips because CGEventPostToPid pointer route is false. macOS startup/native Quit artifact 13609966099 shows active app and native Quit selection. Pre-edit GitNexus: EditorGroup HIGH (76 symbols, 7 direct dependants, 4 processes); _closeDocNow MEDIUM (19 symbols, 5 direct, 1 process); _scheduleStateSave CRITICAL (120 symbols, 27 direct, 5 processes); _encodeSession HIGH (91 symbols, 2 direct, 4 processes); _syncCommandContext CRITICAL (168 symbols, 65 direct, 6 flows; not edited). Risk and graph coverage limits, upstream, and test scope: docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md. Registration-stage compare-to-main remains noisy CRITICAL; repeat full GitNexus scans before commit.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-092",
+      "name": "P05.40 LAY-09c pinnedTabsOnSeparateRow 固定标签双行布局",
+      "description": "实现 Code-OSS workbench.editor.pinnedTabsOnSeparateRow 默认 false；multiple 模式下 sticky 与 ordinary 标签分行，缺少一类时折叠为单行；提供 View > Appearance toggle 并经会话恢复。范围和 DoD：docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md。",
+      "dependencies": [
+        "feat-091"
+      ],
+      "status": "done",
+      "evidence": "Code-OSS 1.145.0 source 4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e; default false. Product commit 84515da and coverage commit 0667652 implement and test session-backed sticky/ordinary rows, empty-category collapse, single/none behavior, independent sizing/wrap/scroll/reveal, row-boundary drag, per-group rows, legacy restore, and Pin/Unpin identity preservation. Local full DoD passed: bash init.sh (Rust 71+54, Clippy, build_core, Flutter 1,189/1,189), cargo fmt, Flutter analyze 0, Harness 100/100, JSON and diff checks. PR CI 42465276090 passed all four jobs. Platform Availability 42465270934 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package. Packages: Linux 13611278492, Windows 13611363930, macOS 13612200992. Linux/Windows native DnD artifacts 13611079025 and 13611712088 pass move/copy/external text. macOS DnD artifact 13611762859 explicitly records pointer route unavailable and skip; native Quit/startup artifact 13611484845. macOS ZIP SHA-256 24cee731e5f7f7e6b12606ecaffe9f8067452ccd78ca2b84931a2fc1bd2c87cb matches sidecar and unzip integrity. Apple Silicon/native-device validation remains pending under P15. Full scope and GitNexus uncertainty: docs/diagnostics/2026-11-08-p05/p05.40-pinned-tabs-separate-row-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-093",
+      "name": "P05.41 LAY-10a 标签组关闭菜单与未保存保护",
+      "description": "实现按标签目标组运行 Close/Close Others/Close to Left/Right/Close Saved；关闭按钮、中键、快捷键和批量关闭统一遵守 dirty Save/Discard/Cancel，保留 sticky、共享视图及已有 Merge/Compare 关闭路由。完整范围与 N.2 DoD：docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md",
+      "dependencies": [
+        "feat-092"
+      ],
+      "status": "done",
+      "evidence": "Implemented group-local Close, Close Others, Close to Left/Right, and Close Saved with clicked-tab/group targeting; tab button, middle-click, Ctrl/Cmd+W, Close All Editors/Groups share dirty-safe close decisions. Policy and real-FFI widget coverage includes target/sticky candidate sets, inactive groups, Save/Don’t Save/Cancel, failed save, Save-As cancellation, batch cancellation, state preservation, shared views, Merge, and Compare. Full bash init.sh EXIT=0: Rust workspace tests, Clippy, build_core, Flutter analyze, Flutter 1,198/1,198. Final PR CI 42482838361 passed all jobs. Platform Availability 42482833049 passed Linux x64, Windows x64, and macOS Intel x64. Packages Linux/Windows/macOS 13617904838/13618452059/13618994341; Linux/Windows DnD 13618361760/13619005354 passed; macOS DnD 13619342292 explicitly records pointer route unavailable and all tests skipped. macOS startup/native Quit artifact 13619009173 confirms the Release app exited after Command-Q. macOS ZIP SHA-256 8cb04e8107953c4a454eb45c40619f6fedd548bedb12f3051960795ab325434a matches the sidecar and unzip integrity passed. Full scope and GitNexus warnings: docs/diagnostics/2026-11-08-p05/p05.41-editor-tab-close-menu-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-094",
+      "name": "P05.42 LAY-10b 跨编辑器组标签拖放移动",
+      "description": "支持将单个编辑器标签拖到另一非空编辑器组的标签上并按目标位置插入；移动同一文档视图，更新源/目标组活动态并保留 sticky、preview、保存与会话状态。不含复制拖放；完整范围与 N.2 DoD：docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md",
+      "dependencies": [
+        "feat-093"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commits ea46295 (implementation) and 3b99d9d (CI pin). _tabDragSourceRegion captures the source group at drag start (OpenDoc ids are shared-document identities and cannot disambiguate the source at drop time); onWillAccept now admits cross-group same-document drops; the tab DragTarget is wrapped in a Builder that reads the destination tab RenderBox and compares details.offset with the tab midpoint for before/after insertion; _moveDocAcrossGroups moves the same OpenDoc view (Rust text, dirty/savepoint, undo, selection, scroll, focus node preserved via _focusKeyFor transfer), clamps insertion into the destination sticky partition, activates the moved document and destination group, demotes a clean preview to a regular tab, deduplicates by activating the existing view and closing the source duplicate via _closeDocNow, removes the emptied source region through _layout.removeRegion, and persists through the existing _scheduleStateSave path. New app/test/editor_tab_cross_group_move_test.dart covers 6 focused scenarios (both directions with pointer-side insertion, same-document activation including emptied duplicate groups, last-tab source removal, dirty/selection/scroll/focus/undo preservation, sticky partition rules, clean preview becoming a regular tab); all six were red before implementation and green after. Local DoD: cargo fmt --check, cargo clippy --workspace --all-targets -D warnings, cargo test --workspace pass; flutter analyze 0 issues; full flutter test +1174 -30 with the 30 failures byte-identical to a clean-HEAD baseline rerun of the same files (pre-existing local Explorer-rendering environment issue; those suites pass hosted); focused regression set editor_tab_wrap/directional_move/close_policy/sizing/multi_view/cross_group_move 25/25; git diff --check clean; feature JSON valid. Test-infra finding: with three groups at 1600px the split-editor toolbar button sits ~130px inside each group's right edge and intercepts drops onto tabs that extend beneath it; the cross-group tests run at 2400px. Hosted gates: PR CI 43462799690 passed all four jobs after pinning ci.yml to flutter 3.47.8 (the unpinned action had pulled the 3.50 line where package:flutter/material.dart emits 136 deprecated_member_use infos; run 43461120019 failed and the pin is the recorded fix). Platform Availability 43464279815 passed Linux x64 (3m50s), Windows x64 (10m38s), and macOS Intel x64 (attempt 1 failed two timing-sensitive tests unrelated to this slice: workspace_watcher subscription count and the git-panel source-control label; attempt 2 passed all macOS lanes in 38m40s and is the recorded result). Packages Linux/Windows/macOS artifacts 14058675797/14059195873/14063417573; Linux/Windows DnD 14058480492/14058507242 passed; macOS DnD 14062792311 explicitly records CGEventPostToPid pointer route false and all tests skipped (input-route limitation, does not verify native DnD). macOS startup diagnostics 14063123037 show a normal Impeller launch. macOS ZIP SHA-256 ae9844907a8693323c5a95c5859dd1e28b23f2776f0d54297dd2ee5633d99cc2 matched its sidecar and unzip -tq passed. GitNexus: worktree index refreshed at 5558e5e; impact _moveDoc returns UNKNOWN because the index skips workbench_page.dart (>512 KiB); text search confirms the single pre-existing caller remains the same-group path and retains every CRITICAL warning from the pre-edit analysis. Scope and acceptance: docs/diagnostics/2026-11-08-p05/p05.42-cross-group-tab-drag-move.md; implementation/acceptance detail and full logs: docs/diagnostics/2026-11-14-p05/p05.42-cross-group-tab-drag-move.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-095",
+      "name": "P05.43 LAY-10c 跨编辑器组标签复制拖放",
+      "description": "按平台复制修饰键（Windows/Linux Ctrl、macOS Alt）把文件文档标签拖到另一非空组的标签上时复制为同文档新视图并按指针位置插入；未命名文档回退为移动；目标已有同文档时去重激活；源组不变；复制视图非 sticky/非 preview。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.43-cross-group-tab-copy-drag.md",
+      "dependencies": [
+        "feat-094"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit e7a4c71 (registration dedea5e). The tab DragTarget onAccept reads the platform copy modifier (Ctrl on Windows/Linux, Alt on macOS, matching the editor_native_text_drag_drop idiom) at accept time and routes file-backed documents (path != null) to _copyDocAcrossGroups; untitled documents fall back to _moveDocAcrossGroups like upstream Singleton editors. _copyDocAcrossGroups creates OpenDoc.viewOf(moving) (selection and fold state carried by the existing viewOf semantics; vertical scroll carry is deferred with the observed fresh-view alignment reset documented in the scope report), inserts it before/after the destination tab by pointer side clamped into the ordinary partition, never marks the copy sticky or preview, activates the copy and focuses the destination group, activates the existing view when the destination already shows the document, and leaves the source group untouched; persistence goes through the existing _scheduleStateSave/_normalizeStickyOrder/_syncCommandContext paths. New app/test/editor_tab_cross_group_copy_test.dart seeds a two-group layout and session with file documents restored from disk (no Explorer dependency) and covers six red-first scenarios: both directions with pointer-side insertion and untouched source invariants, same-document dedup activation, untitled fallback to move with emptied-source removal, dirty shared-text copy with undo through the copy, sticky/preview rules, and platform modifier mapping (Windows Alt moves, macOS Alt copies / Ctrl moves via debugDefaultTargetPlatformOverride) plus session restore of same-id views in both groups; all six were red before implementation and green after. Local DoD: cargo fmt --check, cargo clippy --workspace --all-targets -D warnings, cargo test --workspace pass; flutter analyze 0 issues; full flutter test +1180 -30 with the 30 failures identical to the P05.42 clean-HEAD baseline (pre-existing local Explorer-rendering environment issue); focused regression set cross_group_move/wrap/directional_move/close_policy/sizing/multi_view 25/25; git diff --check clean on code and docs. Hosted gates: PR CI 43526231853 passed all four jobs (registration-commit CI 43523663261 also green). Platform Availability 43526222287 passed Linux x64 (3m52s), Windows x64 (10m1s), and macOS Intel x64 (attempt 1 failed one timing-sensitive regex-replace preserve-case test unrelated to this slice; attempt 2 passed all macOS lanes in 31m13s and is the recorded result). Packages Linux/Windows/macOS artifacts 14085701199/14085113311/14088930789; Linux/Windows DnD 14085666158/14085322762 passed; macOS DnD 14087679848 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14089130338. macOS ZIP SHA-256 e98450d7664a64aa03a7d2c767266156ae536934086b28932bcf73e2ef98684c matched its sidecar with unzip -tq clean. Scope, pinned upstream sources, and the deferred scroll-carry note: docs/diagnostics/2026-11-14-p05/p05.43-cross-group-tab-copy-drag.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-096",
+      "name": "P05.44 LAY-10d 拖入组区域（追加/合并）",
+      "description": "组级 DragTarget 包裹编辑器组面板：标签拖到组内非标签区域（标签条空白/面包屑/编辑器正文）时移入该组末尾并激活；复制修饰键复制追加；未命名回退移动；同组区域落点无操作。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.44-group-area-drop.md",
+      "dependencies": [
+        "feat-095"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit 0e0c245. The editor group pane (_buildEditorArea) is wrapped in a group-level DragTarget<int> (key editor-drop-area-<region>) so a tab dropped on non-tab group area (strip gap, breadcrumb, editor body) is handled by _handleGroupAreaDrop: stale source identities are ignored, same-group drops stay no-ops, and the copy modifier (Ctrl Windows/Linux, Alt macOS) with a file-backed document routes to _copyDocAcrossGroups while everything else moves. _moveDocAcrossGroups/_copyDocAcrossGroups gained a nullable target tab id for append-at-end semantics (desiredIndex falls inside the sticky partition bounds). The moved/appended document is activated with destination focus per the upstream targetGroup.focus() semantics; a destination that already shows the document deduplicates as in P05.42/P05.43. New app/test/editor_group_area_drop_test.dart covers four red-first scenarios over session-seeded file documents: append+activate+focus with session restore, same-group no-op plus copy append, untitled fallback with emptied-source removal, and dedup for move and copy. Local DoD: cargo fmt --check, cargo clippy -D warnings, cargo test --workspace pass; flutter analyze 0 issues; full flutter test +1183 -31 where the only delta to the clean-HEAD baseline was a Windows temp-dir cleanup flake in widget_test.dart (errno 145, directory not empty) that passes standalone; focused regression set 25/25; git diff --check clean on code and docs. Hosted gates: PR CI 43537435255 passed all four jobs. Platform Availability 43537430640 passed Linux x64 (3m58s), Windows x64 (9m16s), and macOS Intel x64 (40m32s) on the first attempt. Packages Linux/Windows/macOS artifacts 14091010614/14090717792/14091498775; Linux/Windows DnD 14090956302/14090538105 passed; macOS DnD 14091264167 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14091348959. macOS ZIP SHA-256 fd66c46ec60d68c562b787049e34f7fa5b9840a3c3394d00c134277237aca265 matched its sidecar with unzip -tq clean. Scope and pinned upstream sources: docs/diagnostics/2026-11-14-p05/p05.44-group-area-drop.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-097",
+      "name": "P05.45 LAY-10e 拆分落点建组",
+      "description": "组级落点按上游 10% 边缘带与三分/半分方向判定拆分落点：边缘落点经 splitRegion 建相邻新组并移入/复制入被拖文档；Windows/Linux Alt、macOS Shift 在拖动期间禁用拆分区域。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.45-split-drop.md",
+      "dependencies": [
+        "feat-096"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit b5cb7ab. The editor body DragTarget (key editor-body-drop-<region>, nested inside the P05.44 pane target so tab-level and strip-gap drops keep their semantics) computes the upstream edge zones for editor drags: 10% margins on both axes, then x < width/3 -> left, x > 2*width/3 -> right, y < height/2 -> up, else down, with the center band returning no split. The toggle modifier (Alt on Windows/Linux, Shift on macOS) disables the zones for the whole drag so every drop appends per P05.44. An edge drop splits the drop target group via _layout.splitRegion(region, fresh, zone.axis, insertBefore) with a fresh editor-N region name, syncs groups via _ensureGroupsFromLayout, and routes the dragged document into the new group through _moveDocAcrossGroups/_copyDocAcrossGroups with a null target tab id (index 0 in the fresh group); the copy modifier copies a file-backed document into the new group, the untitled Singleton fallback moves, same-group edge drops are allowed (identical(target) does not hold for the fresh group), emptied source groups are removed by the existing path, and activation/focus/persistence reuse the P05.42-P05.44 semantics. New app/test/editor_split_drop_test.dart covers five red-first scenarios over session-seeded file documents: right-edge horizontal split with layout and session assertions, left/up/down directions (parent-split level assertions accounting for emptied-source collapse; the down drop uses dyFraction 0.95 and the first tab because the last tab's center sits under the group toolbar in a narrow pane and the point must stay inside the visible workbench), center-band append regression, toggle-modifier zone disabling, copy and untitled fallbacks, and session restore of the split layout; all five were red before implementation and green after. Local DoD: flutter analyze 0 issues; full flutter test +1189 -30 with the failure set identical to the clean-HEAD baseline (cargo gates unchanged, no Rust edits); git diff --check clean. Hosted gates: PR CI 43540285378 passed all four jobs. Platform Availability 43540279332 passed Linux x64 (4m13s), Windows x64 (6m44s), and macOS Intel x64 (40m47s) on the first attempt. Packages Linux/Windows/macOS artifacts 14092160846/14091917079/14093007643; Linux/Windows DnD 14091357403/14092061883 passed; macOS DnD 14092653452 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14093022685. macOS ZIP SHA-256 0ada53614f25e2e7b357bef0d830ee2cd0abf6ac61448a93bfd0daac7ede2c32 matched its sidecar with unzip -tq clean. Scope, pinned upstream sources, and exclusions: docs/diagnostics/2026-11-14-p05/p05.45-split-drop.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-098",
+      "name": "P05.46 LAY-10f 关闭组的 MRU 组激活",
+      "description": "关闭摘除组后焦点落到最近活动的剩余组（上游 doRemoveEmptyGroup mostRecentlyActiveGroups[1]）；方向邻居等距时按最近活动决胜（doFindGroupByDirection）。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.46-mru-group-activation.md",
+      "dependencies": [
+        "feat-097"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit fb11af1. _mostRecentlyActiveRegion({excluding}) picks the remaining group with the highest lastActivationOrder (the activation clock _noteActiveDocument already maintained), and _closeDocNow focuses it when a removed emptied group was focused (upstream doRemoveEmptyGroup mostRecentlyActiveGroups[1]) with a keys.first fallback when no group remains; _adjacentEditorRegion gained a final MRU tie-break for exactly equidistant candidates while keeping the existing across-center preference (the upstream pure-MRU ordering for stacked neighbours is recorded as a known difference in the scope report, since equal centers cannot coexist geometrically in the dominant layouts). New app/test/editor_group_mru_close_test.dart seeds a three-group layout and covers two red-first scenarios: closing the focused group focuses the most recently active remaining group (not the insertion-first group), and consecutive closes keep walking the MRU chain while closing a non-focused group keeps focus. Local DoD: flutter analyze 0 issues; full flutter test +1191 -30 with the failure set identical to the clean-HEAD baseline; focused regression set (MRU/split/area/copy/move/directional/close-policy) 29/29. Hosted gates: PR CI 43546577773 and 43546193275 passed all four jobs. Platform Availability 43546188540 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14093728801/14094213629/14095217944; Linux/Windows DnD 14093673934/14094143615 passed; macOS DnD 14095232774 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14094704275. macOS ZIP SHA-256 d92ab967026b03d91e1fccd38ad70cff1f0feac0b1219c0bad33c2bae9677e21 matched its sidecar with unzip -tq clean. Scope: docs/diagnostics/2026-11-14-p05/p05.46-mru-group-activation.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-099",
+      "name": "P05.47 LAY-11a Open Editors 侧栏视图",
+      "description": "Explorer 侧栏顶部可折叠的打开编辑器区段：按组分组树、活动行高亮、每行关闭（脏安全路由）、点击激活、Enter/Space 键盘激活、右键复制路径、脏计数徽章、折叠态会话持久化。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.47-open-editors-view.md",
+      "dependencies": [
+        "feat-098"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit a546401. The Explorer sidebar (_buildSidebar) gains a collapsible Open Editors section (key open-editors-section) built by _buildOpenEditorsSection: a header (open-editors-header) with the collapse chevron, title, and a global dirty count badge (open-editors-dirty-count); per-group group rows (open-editors-group-<region>) and document rows (open-editors-doc-<region>-<id>) with file name, dirty marker, preview italic, active-row highlight, and a per-row close button (open-editors-close-<region>-<id>) running the P05.41 dirty-safe close route via _closeDoc. Row click activates the document and focuses its group through _activateOpenEditorsRow (mirroring the tab tap flush/note/sync/save semantics); each row wraps CallbackShortcuts so Enter/Space activates the focused row (per-row Focus nodes keyed open-editors-focus-<region>-<id>); the row context menu (Material showMenu) offers copy-path for file documents via Clipboard.setData with a status detail; the collapse state persists through the session journal field openEditorsCollapsed. Row labels render as RichText so the new view does not shift the bare find.text counts that existing widget_test assertions hold over the tree/tab/breadcrumb surfaces (verified: widget_test, bracket_pair, auto_indent, and close_action_visibility suites pass unchanged). New app/test/open_editors_view_test.dart covers four red-first scenarios: grouped rendering with the dirty badge, click activation plus clipboard copy-path capture, keyboard focus with Enter activation and the dirty-safe close route (with the welcome untitled re-attach behavior accounted), and collapse persistence across a session restore. Local DoD: flutter analyze 0 issues; full flutter test +1195 -30 with the failure set identical to the clean-HEAD baseline; focused regression set (open-editors/MRU/split/area/copy/move) 27/27. Hosted gates: PR CI 43548589301 passed all four jobs. Platform Availability 43548021157 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14094652383/14095287068/14096606182; Linux/Windows DnD 14095565686/14095032995 passed; macOS DnD 14096565189 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14096546280. macOS ZIP SHA-256 0c25389b8e87f1ca0fc21a6cc296fdcc7b87b2d91c24a44eb174f61325a4ee8a matched its sidecar with unzip -tq clean. Scope: docs/diagnostics/2026-11-14-p05/p05.47-open-editors-view.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-100",
+      "name": "P05.48 LAY-11b 面包屑 picker（路径与符号）",
+      "description": "面包屑文件夹段点击打开目录 picker（列出子项，选文件打开/选文件夹展开）；文件段点击打开符号 picker（LSP 符号，选中跳转选区，无符号空态）；picker 打开时激活所属组；键盘方向/Enter/Esc。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.48-breadcrumb-pickers.md",
+      "dependencies": [
+        "feat-099"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit d6ef4e2. Breadcrumb segment taps route through _onBreadcrumbSegmentTap: the file segment (upstream OutlineItem) opens a symbol picker built from a fresh core.lsp.symbols call for the group's active document (no outline-cache dependency, any group works immediately), with an explicit '未发现符号' empty state; a folder segment (upstream FileItem) opens a directory picker listing the tree children, reading unexpanded directories from core.workspace.listDir on demand. Selecting a file opens it via _openTreeFile; selecting a folder reveals and expands it in the file tree through _revealInExplorer with a trailing empty segment to bypass the filename guard (the picked folder's node key keeps the native separator, covered by a suffix-matching assertion); selecting a symbol activates the document and jumps the caret to its startUtf16 via _setDocSelection. Picking activates the owning group per the upstream _onSelectEvent flow; showMenu provides arrow/Enter/Escape keyboard support. New app/test/breadcrumb_picker_test.dart covers three red-first scenarios over a seeded src workspace: the folder picker listing children and opening a picked file, the symbol picker with keyboard selection jumping to a non-zero offset (helper_fn after main's offset 0), and the folder-reveal expansion with a separator-agnostic node assertion. Local DoD: flutter analyze 0 issues; full flutter test +1198 -30 with the failure set identical to the clean-HEAD baseline. Hosted gates: PR CI 43549908069 passed all four jobs. Platform Availability 43549903926 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14096110427/14096016357/14096153694; Linux/Windows DnD 14096025545/14095764629 passed; macOS DnD 14096313198 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14096937481. macOS ZIP SHA-256 50ad8b313d521b28b0b6727f025c4ebe59a7861071b580a3c2d7c8daff475ef3 matched its sidecar with unzip -tq clean. Scope: docs/diagnostics/2026-11-14-p05/p05.48-breadcrumb-pickers.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-101",
+      "name": "P05.49 LAY-12a 浮动辅助窗口：基础设施与移入新窗",
+      "description": "desktop_multi_window 依赖与辅助窗口分流入口；「在新窗口打开」上下文/命令；文档在新窗口按 path 重开（未命名/脏文本经启动参数传递）；源组移除联动与关闭恢复入口。组/焦点同步与 compact/pin-top/移回为 LAY-12b。范围与基础设施评估：docs/diagnostics/2026-11-14-p05/p05.49-auxiliary-window-scope.md",
+      "dependencies": [
+        "feat-100"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commits ee21419 (dependency), 2cf23d9 (tri-platform verification) and f29c3bc (step 2). main(List args) branches on WindowController.fromCurrentEngine(): auxiliary engines run runAlulaAuxiliaryEngine -> AuxiliaryEditorApp, a minimal editor page with its own AlulaCore where the document reopens from disk by path (or carried journal text for dirty/untitled transfer, savepoint-based dirty semantics; savepoint/undo history not cross-process, difference registered), a monospace RustTextInputField applying deltas forward to the core document, and a title row with the dirty marker and a close button that notifies the main window (alula_auxiliary_closed over the per-window channel) and destroys itself. The main window registers workbench.action.moveEditorToNewWindow plus a 'move to new window' tab context-menu item: _moveEditorToNewWindow captures the payload (path/name/current text/dirty), creates the auxiliary window, and removes the source view via _closeDocNow with no dirty confirmation (the state travels with the window, so no data loss); the main window hosts the close-restore entry (_setupAuxiliaryWindowHandlers on its own window channel -> _reopenAuxiliaryDocument: clean files reopen by path, dirty/untitled documents restore the carried text as a dirty document against the disk baseline). New app/test/auxiliary_window_test.dart covers payload round-trips (document/untitled/main-window arguments) and a command-driven flow over a session-seeded workbench with the desktop_multi_window channels mocked, asserting the createWindow payload (name/text/dirty) and the source-view removal with the session updated. Local DoD: flutter analyze 0 issues; Windows debug build compiles; full flutter test +1201 -31 where the only baseline delta is a standalone-passing merge-editor timing flake. Hosted gates: PR CI 43550219144 and 43563107338 passed all four jobs. Platform Availability 43553752557 (dependency) and 43563101735 (step 2) passed Linux x64, Windows x64, and macOS Intel x64 (the dependency run's first macOS attempt hit a transient CocoaPods CDN clone failure from the first pod install and was rerun per the infrastructure-flake precedent). Packages Linux/Windows/macOS artifacts 14101012506/14101446957/14102121611; Linux/Windows DnD 14100423155/14101620622 passed; macOS DnD 14101398627 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14101728031. macOS ZIP SHA-256 4a0b6faa6e4ce4244d29266e74761714d62668817641a1fb66c15bfe28dcbd35 matched its sidecar with unzip -tq clean. Scope, infrastructure assessment, and exclusions: docs/diagnostics/2026-11-14-p05/p05.49-auxiliary-window-scope.md; group/focus sync, compact/pin-top, move-back, and cross-window drag are LAY-12b.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-102",
+      "name": "P05.50 LAY-13a Modal 编辑器基础设施",
+      "description": "workbench.editor.useModal 偏好（off/some/all）与 ~/.alula/modal_editor.json 持久化；配置编辑器路径判定；ModalEditorDialog（移回标签/最大化/关闭/Esc/焦点陷阱/外点关闭）；_openFileByPath 模态路由。Settings 等编辑器内容与偏好 UI 为 LAY-13b。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.50-modal-editor.md",
+      "dependencies": [
+        "feat-101"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit 37d9b0a (registration 91e8810). modal_editor.dart ships ModalEditorUseMode (off/some/all, default some), ModalEditorPreferences with JSON round-trip, ModalEditorStore (~/.alula/modal_editor.json atomic tmp+rename; kept as a utility while the workbench carries the preference through the session journal field workbench.editor.useModal — deviation from the file store registered in the scope doc so tests and profiles stay deterministic), isConfigurationEditorPath (settings.json/keybindings.json case-insensitive), and ModalEditorDialog (title row with move-back-to-tab/maximize/close, Escape close, FocusTraversalGroup focus trap, barrier-dismissing outside tap). _openFileByPath routes opens of configuration paths (when no document is already open and no modal is active) to a detached OpenDoc rendered inside ModalEditorDialog: the field applies deltas forward to the core document, move-back re-homes the same OpenDoc into the focused group (state and selection travel), close disposes the detached view, and a modal already open for the same path blocks re-routing so the explorer preview/pin interplay cannot dismiss the dialog and leak a tab. Ctrl+S inside the dialog saves through _saveDocToPath. New app/test/modal_editor_test.dart covers seven red-first scenarios: preferences JSON/store round trips and case-insensitive config-path detection, some-mode modal rendering without a tab, move-back opening a tab, Escape discarding the detached document, the maximize toggle expanding the content width, off-mode opening a regular tab, and the focus trap keeping Tab traversal inside the dialog. Local DoD: flutter analyze 0 issues; full flutter test +1211 -30 with the failure set identical to the clean-HEAD baseline; focused regression set (modal/aux/open-editors/breadcrumb/MRU/split/area/copy/move) 43/43. Hosted gates: PR CI 43565763446, 43565508836, and 43567482106 passed all four jobs. Platform Availability 43567477181 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14102293709/14102668093/14103767897; Linux/Windows DnD 14102224021/14102199225 passed; macOS DnD 14103583190 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14104277122. macOS ZIP SHA-256 fd1c96657bd19f4ea2090d3c9bbe0b32c5b14833f04af706a6939af16cbcbdef matched its sidecar with unzip -tq clean. Scope, the session-store deviation, and the sibling-design reference: docs/diagnostics/2026-11-14-p05/p05.50-modal-editor.md; Settings/Keys/Profiles/Trust/Extensions editor content is LAY-13b.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-103",
+      "name": "P05.51 LAY-14 Zen 模式（居中编辑器 + shell 隐藏）",
+      "description": "workbench.action.toggleZenMode 命令 + View>外观菜单项；进入 zen 折叠 activity/sidebar/secondarySidebar/panel 并隐藏标题栏与状态栏，编辑器居中限宽（maxWidth 1100）；Scaffold 级 Esc 退出；进入前折叠态保存恢复；会话 journal 字段 zenMode 持久化。window zoom/compact 与细粒度设置为差异登记。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.51-zen-mode.md",
+      "dependencies": [
+        "feat-102"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit 93004be (registration adb20af). workbench.action.toggleZenMode is registered with a View > Appearance menu item carrying a checked marker bound to the zen state. Entering zen saves the pre-zen collapse states of the sidebar and panel, then setRegionCollapsed collapses the activity bar, primary sidebar, secondary sidebar, and panel; the title bar and status bar hide via build-time conditionals (if !_zenMode). The WorkbenchGrid is wrapped in a Center/ConstrainedBox(maxWidth 1100) rendering only the editor groups through _buildZenGrid so the editor centers with side margins. The Scaffold-level CallbackShortcuts binds Escape to exit zen ahead of the editor-local Escape binding; exiting restores the saved collapse states and the title bar. The zen flag persists through the session journal field zenMode. Window zoom and zenMode.compact are registered differences (P15 native/device and P07 settings respectively); granular zen hide settings are P07. New app/test/zen_mode_test.dart covers three red-first scenarios over session-seeded workbenches: the toggle hides the title bar while keeping the editor visible with centered-grid width assertions and Esc exit, a zen-mode session restores centered without the title bar and Esc exits, and the command round-trips through execute(). Local DoD: flutter analyze 0 issues; full flutter test +1214 -30 with the failure set identical to the clean-HEAD baseline; focused regression set (zen/modal/aux/open-editors/breadcrumb/MRU/split/area/copy/move) 46/46. Hosted gates: PR CI 43571911894 passed all four jobs. Platform Availability 43571908099 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14104737408/14105176539/14106110290; Linux/Windows DnD 14104697991/14105146012 passed; macOS DnD 14105189623 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14106220099. macOS ZIP SHA-256 d1151eb1a18d9eb8b1bde02ba3c3e07aeaf5db45c1a4eba766a8af6530a6490e matched its sidecar with unzip -tq clean. Scope, upstream pinning, and registered differences: docs/diagnostics/2026-11-14-p05/p05.51-zen-mode.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-104",
+      "name": "P05.52 LAY-15 跨编辑器锁定滚动（Toggle/Hold + 状态栏）",
+      "description": "workbench.action.toggleLockedScrolling 命令 + 状态栏锁定图标；开启时任一编辑器纵向滚动按比例同步其他组活动文档（适配不同文档长度，防反馈环）；Hold 模式 Alt 按住临时同步；会话 journal 持久化。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.52-locked-scrolling.md",
+      "dependencies": [
+        "feat-103"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit 8f8e00b (registration 03aded1). workbench.action.toggleLockedScrolling plus a status bar lock indicator (key status-bar-locked-scrolling, lock/lock_open icon) toggle a session-journal-persisted locked scrolling state (field lockedScrolling). When locked, a vertical scroll in any editor group proportionally syncs the active documents of the other groups (offset/maxScrollExtent ratio adapts to different document lengths) with a re-entrancy flag guarding the feedback loop; Hold mode syncs one gesture while holding Alt with the toggle off (HardwareKeyboard.isAltPressed); scroll sync listeners attach idempotently at editor build time and gate inside the callback so Hold works without the toggle. Horizontal and cross-window sync are deferred. New app/test/locked_scrolling_test.dart seeds a two-group layout with documents of different lengths and covers three red-first scenarios: proportional sync with the toggle on and unsynced when off, Alt-held sync without the toggle, and the status bar indicator reflecting/toggling the state with journal persistence. Local DoD: flutter analyze 0 issues; full flutter test +1217 -30 with the failure set identical to the clean-HEAD baseline; focused regression set (locked/zen/modal/aux/open-editors/breadcrumb/MRU/split/area/copy/move) 49/49. Hosted gates: PR CI 43576370660 and 43576346720 passed all four jobs. Platform Availability 43576366280 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14106279486/14106965584/14106534084; Linux/Windows DnD 14106029992/14106895704 passed; macOS DnD 14106573820 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14107077917. macOS ZIP SHA-256 eab93b3b8f924177ae73de676691ef5602bc88183c6be007ace83b9f8a34e3ae matched its sidecar with unzip -tq clean. Scope: docs/diagnostics/2026-11-14-p05/p05.52-locked-scrolling.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-105",
+      "name": "P05.53 LAY-16a Explorer 树 type navigation",
+      "description": "Explorer 树获得键盘焦点后键入字母序列（500ms 空闲缓冲）跳转并选中首个名称前缀命中的可见项；修饰键组合忽略交还系统；缓冲 Timer 随 workbench dispose 取消。筛选 filter 为 LAY-16b。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.53-tree-type-navigation.md",
+      "dependencies": [
+        "feat-104"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3) as commit 84a4ebb (registration 7bf6b4d) plus the const fix f4c9e3b. The explorer file tree ListView is wrapped in Focus(key explorer-tree-focus, focusNode _treeFocusNode, onKeyEvent _onTreeTypeAheadKeyEvent): with keyboard focus inside the tree, letter KeyDown/KeyRepeat events accumulate a lowercase buffer with a 500ms idle timer, and the first visible node (via _visibleExplorerFiles) whose name starts with the buffer is selected through the existing _selectExplorerFile multi-select highlight. No-match keeps the buffer waiting; modifier chords (Ctrl/Cmd/Alt+letter) are ignored and handed back. The buffer timer cancels on workbench dispose. Node keys keep native separators, so the test finder normalizes separators before suffix matching. New app/test/explorer_type_ahead_test.dart covers three red-first scenarios: typing selects the first matching visible item, the buffer resets after the idle timeout (z then matches zebra.md), and modifier chords do not drive type navigation. Local DoD: flutter analyze 0 issues; full flutter test +1220 -30 with the failure set identical to the clean-HEAD baseline. Hosted gates: PR CI 43581278183 passed all four jobs (an earlier run 43580532650 failed on a missing const flagged by CI analyze; fixed in f4c9e3b). Platform Availability 43581273926 passed Linux x64, Windows x64, and macOS Intel x64 on the first attempt. Packages Linux/Windows/macOS artifacts 14108028949/14108169539/14109472798; Linux/Windows DnD 14108960880/14108184428 passed; macOS DnD 14109248062 records CGEventPostToPid pointer route false with all tests skipped (input-route limitation); macOS startup diagnostics 14109547622. macOS ZIP SHA-256 34036b54cf81bd4e845286de2839072f3ef07c2c51f7ecf3e5547ace3a0e6a3a matched its sidecar with unzip -tq clean. Scope: docs/diagnostics/2026-11-14-p05/p05.53-tree-type-navigation.md; tree filter UI is LAY-16b.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-106",
+      "name": "P05.54 LAY-17a QuickInput 步骤/返回、item 按钮与焦点恢复",
+      "description": "QuickInput 增加 onBack 返回箭头（多步 picker 逐级返回）、QuickItemButton 行尾动作按钮（点击执行按钮动作不触发 item）、取消后焦点恢复（didRun 标记）；接线 _showMoveSidebarViewDestination 返回视图选择步骤。分组/多选/校验/历史为 LAY-17b。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.54-quick-input-steps.md",
+      "dependencies": [
+        "feat-105"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3). QuickItemButton (icon/tooltip/onRun) is attached through QuickItem.buttons and rendered as a 14 px trailing IconButton (key qi-button-<label>-<index>); pressing it marks the panel handled, pops the picker, then runs the button action without touching the item onRun/commandId, and buttons on disabled items stay disabled. QuickInput.show gained an optional onBack: when provided the filter row renders a leading back arrow (key quick-input-back, tooltip 返回上一步) that marks handled, pops, then invokes onBack so the caller re-shows the previous step. Cancel focus restore captures an anchor before showing (explicit restoreFocus or QuickInput.externalFocus(), which skips the panel's own input nodes through the static _panelFocusNodes registry): the dialog future only requests focus when nothing was executed, the back arrow was not used, and the target node is still attached (context != null). The move-view flow is wired as a real two-step picker: _showMoveSidebarViewPickerStep({restoreFocus}) captures and passes the outside anchor to _showMoveSidebarViewDestination(view, {restoreFocus}), whose onBack returns to the view step; workbench.action.moveView keeps its no-argument registration. New app/test/quick_input_steps_test.dart holds 7 red-first focused tests (back arrow returns to the previous step and keeps the new input focused plus cancel returns to the pre-flow node, item buttons run their own action, Escape/barrier cancel restores focus, item execution keeps the item's focus target, and a workbench flow test that only the destination step shows the arrow, back restores the hint and input focus, and the flow still moves another view afterwards). Red log p05.54-focused-red.log recorded the missing API before implementation; green log p05.54-focused-green.log is 7/7. Test-infra note: real file IO inside testWidgets deadlocks under fake async, so temp dirs/stores live in setUp/tearDown. Local DoD: flutter analyze 0 issues; dart format clean for quick_input.dart and the new test (workbench_page.dart is not formatter-clean at HEAD under Dart 3.13.7, like untouched files, and was not reformatted wholesale); cargo fmt --check, cargo test --workspace, cargo clippy --workspace --all-targets -D warnings, and the build_core steps exited 0 (p05.54-rust-gates.log, p05.54-build-core.log); full flutter test p05.54-full-flutter.log +1224 -33 (concurrent cargo load) and p05.54-full-flutter-rerun.log +1225 -32, where all 30 baseline failures plus 2 rotating workbench_merge_editor_open_test.dart timing flakes (passing standalone) remain and none are in quick_input/sidebar-view paths. GitNexus pre-edit impact: QuickInput class and show are UNKNOWN with 0 resolved callers, confirmed by source search at five workbench_page.dart call sites plus one test; post-edit detect-changes --scope all: 7 files / 16 symbols / 0 processes, risk low, no partial/truncated markers. Scope, differences, and evidence: docs/diagnostics/2026-11-14-p05/p05.54-quick-input-steps.md. Hosted gates: PR CI 43597695692 passed Rust ubuntu, Flutter analyze+test, and Harness; Rust windows failed its first attempt on a p01_async_completion LSP exit-within-1s timing flake unrelated to this slice and passed on gh run rerun --failed (the recorded result). Platform Availability 43597691956 passed Linux x64, Windows x64, and macOS Intel x64 build/test/launch/package on the first attempt. Packages Linux 14114643330 / Windows 14115124198 / macOS 14115743698; macOS ZIP SHA-256 b48432585544126105659193d7ce279213e0fb9c529359fdb8afe5e596a007a6 matched its sidecar and tar -tf listed 81 entries (exit 0). Linux/Windows native DnD 14115410019 / 14115233619 passed move, cross-document copy, and external text; macOS DnD 14116476425 records CGEventPostToPid pointer route false and the input-route-unavailable marker, an explicit skip (input-route limitation). macOS startup/native Quit 14115968285 selected the native Quit menu item after activating the app.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-107",
+      "name": "P05.55 LAY-17b QuickInput 分组分隔符、多选与描述/校验消息",
+      "description": "QuickItem.kind（default/separator）渲染分组标题行且不可选；canSelectMany + picked + Space 切换 + Enter 回传 onAccept 已选集合；description 同行右列与 detail 第二行分工；validationMessage 过滤行下提示；「移动视图」第一步按主/次侧栏分组。输入历史与 item 按钮 hover/键盘可达为 LAY-17c。范围与 N.2 DoD：docs/diagnostics/2026-11-14-p05/p05.55-quick-input-groups-multi-select.md",
+      "dependencies": [
+        "feat-106"
+      ],
+      "status": "done",
+      "evidence": "Implemented on codex/vscode-parity-p05 (PR #3). QuickItemKind {defaultItem, separator} plus QuickItem.kind/picked/description: separator rows render as 10.5 px group headings (key qi-separator-<label>) that never enter the selectable list, are skipped by ArrowUp/Down and Enter, and disappear while a query filters the list; the constructor's action assertion was dropped so data-only rows (separators and multi-select entries) are legal. Filtering scores label/description/detail and ties break on the original index, so an empty query keeps the caller's declared order and groups stay intact. show(canSelectMany: true, onAccept: ...) renders a leading check icon (qi-check-<label>), seeds picked state from QuickItem.picked, toggles on Space or row tap, accepts on Enter returning the picked items in visual order (empty set accepted), never runs item onRun/commandId on accept, keeps item buttons working, and denies spaces in the multi-select input so Space only toggles. description now renders inline right of the label (command palette shortcut, quick-open path and paste-as id migrated from detail) while detail renders as the second line under the label. validationMessage renders below the filter row (key quick-input-validation) without blocking navigation/Enter/cancel. The selected row is revealed with Scrollable.ensureVisible (GlobalKey) replacing the fixed 34 px heuristic since detail makes row heights variable. The move-view first step now groups views by their current side bar with separators, skipping empty groups, and the destination step moves its current-location marker to description. New app/test/quick_input_groups_test.dart holds 6 red-first focused tests: separators render/navigation skips them, separators hide while filtering and return when cleared, multi-select Space toggling plus picked initial state and Enter accept order, description inline vs detail second line (vertical centers), validation message below the filter row with Escape still cancelling, and multi-select item buttons running their own action without accepting. Red log p05.55-focused-red.log shows the missing API before implementation; green log p05.55-focused-green.log is 6/6. Focused regression set (quick_input_steps plus move-view/widget_test/panel/activity/secondary/editor-tab/keybinding/navigation/paste-as, 96 tests) had only the pre-existing workbench_paste_as baseline failure. Local DoD: flutter analyze 0 issues; dart format clean for quick_input.dart and the new test (workbench_page.dart is not formatter-clean at HEAD under Dart 3.13.7 and was not reformatted wholesale); cargo fmt --check, cargo test --workspace and Clippy -D warnings exited 0 (p05.55-rust-gates.log); full flutter test p05.55-full-flutter.log +1233 -30 with the failure set byte-identical to the p05.53 baseline (Compare-Object empty) and all 13 new tests (P05.54 7 + P05.55 6) passing. GitNexus pre/post impact: QuickItem UNKNOWN with 0 resolved callers and _showMoveSidebarViewPickerStep UNKNOWN (workbench_page.dart > 512 KiB), both confirmed by source search over the five QuickItem construction sites; post-edit detect-changes --scope all is 7 files / 17 symbols / 0 processes, risk low, no partial/truncated markers. Differences left for LAY-17c: item buttons stay always visible (upstream shows them on hover/focus), no keyboard reach for buttons, no input history, no product wiring for multi-select, and no space characters in multi-select queries. Scope, DoD and evidence: docs/diagnostics/2026-11-14-p05/p05.55-quick-input-groups-multi-select.md. Hosted gates: PR CI 43602681711 passed Rust ubuntu, Rust windows, Flutter analyze+test and Harness on the first attempt. Platform Availability 43602675844 passed Linux x64 and Windows x64 on the first attempt; the macOS attempt 1 failed only the native-titlebar Quit probe (Accessibility exposed Apple, flutterMenuItemSelected: and unnamed items with no Quit entry, and the Command-Q fallback did not close the app within 20s) while its tests, DnD, package and upload steps passed; gh run rerun --failed made attempt 2 fully green for the same commit. Packages Linux 14117216955 / Windows 14116799270 / macOS 14119581440; macOS ZIP SHA-256 df061a6d348b4cecc461dcd1bc69626c99b397c44a547155e904ec4d538127ac matched its sidecar and tar -tf listed 81 entries (exit 0). Linux/Windows native DnD 14116967906 / 14117306446 passed move, cross-document copy and external text (22/13 pointer events); macOS DnD 14118892556 carries the input-route-unavailable marker with CGEventPostToPid pointer route false, an explicit skip. macOS startup/native Quit 14118678139 selected the native Quit menu item through Accessibility.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -2,16 +2,34 @@
 // 核心加载成功时状态栏就绪；autoFolder 打开 fixture 工程后文件树自动装载根目录条目。
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:alula_app/workbench/title_bar.dart';
+import 'package:alula_app/workbench/window_chrome_configuration.dart';
 import 'helpers/temp_repo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
+Future<void> _waitForWidget(
+  WidgetTester tester,
+  Finder finder, {
+  required String reason,
+  Duration timeout = const Duration(seconds: 10),
+}) async {
+  final stopwatch = Stopwatch()..start();
+  while (finder.evaluate().isEmpty && stopwatch.elapsed < timeout) {
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    await tester.pump();
+  }
+  expect(finder, findsOneWidget, reason: reason);
+}
 
 /// 带修饰键的按键（tester.sendKeyEvent 在本 SDK 版本无修饰键参数）。
 Future<void> pressChord(
@@ -94,12 +112,220 @@ void main() {
     await tester.pumpWidget(AlulaApp(layoutStore: store));
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Alula Code'), findsWidgets); // 标题栏 + MaterialApp.title
-    expect(find.text('文件'), findsOneWidget); // 标题栏菜单
+    expect(
+      tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle,
+      contains('Alula Code'),
+      reason: '默认工作台标题包含应用名',
+    );
+    expect(find.text('文件(F)'), findsOneWidget); // 标题栏菜单与 mnemonic
+    await tester.tap(find.text('查看(V)'));
+    await tester.pumpAndSettle();
+    expect(find.text('外观(A)'), findsOneWidget);
+    await tester.tap(find.text('外观(A)'));
+    await tester.pumpAndSettle();
+    expect(find.text('切换侧栏(S)'), findsOneWidget,
+        reason: '工作台菜单应提供真实的 View > Appearance 子菜单');
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
     expect(find.byIcon(Icons.fact_check_outlined), findsOneWidget,
         reason: '编辑器动作区应有「校验一致性」');
     expect(find.byIcon(Icons.explore_outlined), findsOneWidget,
         reason: '活动栏应有资源管理器');
+  });
+
+  testWidgets('File 菜单按默认分组排序并服从编辑器上下文（P05.4）', (tester) async {
+    final workspace = createP025Workspace(tmp);
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+      final newTextFile = find.textContaining('新建文本文件(N)');
+      expect(newTextFile, findsOneWidget);
+      expect(find.text('打开文件夹(O)'), findsOneWidget);
+      expect(find.textContaining('保存(S)'), findsOneWidget,
+          reason: 'the startup untitled document is an active editor');
+      expect(find.textContaining('另存为…(A)'), findsOneWidget);
+      expect(find.text('从磁盘还原(R)'), findsNothing);
+      expect(
+        tester.getTopLeft(newTextFile).dy,
+        lessThan(tester.getTopLeft(find.text('打开文件夹(O)')).dy),
+      );
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsNWidgets(2),
+        reason: 'New, Open, and Save occupy separate visible groups',
+      );
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 300));
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final openFolder = find.text('打开文件夹(O)');
+      final newTextFile = find.textContaining('新建文本文件(N)');
+      final save = find.textContaining('保存(S)');
+      final saveAs = find.textContaining('另存为…(A)');
+      final revert = find.text('从磁盘还原(R)');
+      expect(newTextFile, findsOneWidget);
+      expect(openFolder, findsOneWidget);
+      expect(save, findsOneWidget);
+      expect(saveAs, findsOneWidget);
+      expect(revert, findsOneWidget);
+      expect(tester.getTopLeft(newTextFile).dy,
+          lessThan(tester.getTopLeft(openFolder).dy));
+      expect(tester.getTopLeft(openFolder).dy,
+          lessThan(tester.getTopLeft(save).dy));
+      expect(tester.getTopLeft(save).dy,
+          lessThan(tester.getTopLeft(saveAs).dy));
+      expect(tester.getTopLeft(saveAs).dy,
+          lessThan(tester.getTopLeft(revert).dy));
+      expect(
+        find.byWidgetPredicate(
+          (widget) => widget is Padding && widget.child is Divider,
+        ),
+        findsNWidgets(3),
+        reason: 'New, Open, Save, and Revert belong to separate groups',
+      );
+      expect(find.textContaining('比较活动文件'), findsNothing);
+      expect(find.textContaining('使用编码'), findsNothing);
+      expect(find.textContaining('选择行尾'), findsNothing);
+    });
+  });
+
+  testWidgets('New Text File creates independent documents in the focused group',
+      (tester) async {
+    tester.view.physicalSize = const Size(1600, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final workspace = createP025Workspace(tmp);
+    final created = File('${workspace.path}/created.txt');
+
+    String activeEditorText() {
+      final editable = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      return tester.widget<EditableText>(editable).controller.text;
+    }
+
+    await tester.runAsync(() async {
+      await openP025Note(tester, workspace, store, session, keybindings);
+
+      String currentWindowTitle() =>
+          tester.widget<AlulaTitleBar>(find.byType(AlulaTitleBar)).windowTitle;
+
+      expect(currentWindowTitle(), 'note.txt - p02.5-workspace - Alula Code');
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'Ctrl+N creates a separate untitled document');
+      expect(find.text('未命名-3'), findsOneWidget);
+      expect(currentWindowTitle(), '未命名-3 - p02.5-workspace - Alula Code');
+      final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
+      await tester.enterText(editor, 'first new document');
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(currentWindowTitle(), '● 未命名-3 - p02.5-workspace - Alula Code');
+
+      await pressChord(tester, LogicalKeyboardKey.keyN, control: true);
+      await tester.pump(const Duration(milliseconds: 150));
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget);
+      expect(activeEditorText(), isEmpty,
+          reason: 'each New Text File starts with empty content');
+      await tester.enterText(editor, 'second new document');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('新建文本文件(N)'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the File menu invokes the same new-document command');
+
+      await pressChord(tester, LogicalKeyboardKey.keyP,
+          control: true, shift: true);
+      await tester.pump(const Duration(milliseconds: 200));
+      final paletteInput = find.descendant(
+        of: find.byKey(const ValueKey('quick-input')),
+        matching: find.byType(TextField),
+      );
+      await tester.enterText(paletteInput, '新建文本文件');
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.byKey(const ValueKey('qi-文件: 新建文本文件')), findsOneWidget);
+      await pressChord(tester, LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette invokes the same new-document command');
+
+      await tester.tap(find.byKey(const ValueKey('tab-3')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'first new document');
+      await tester.tap(find.text('文件(F)'));
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.tap(find.textContaining('另存为…(A)'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('save-as-path')),
+        created.path,
+      );
+      await tester.tap(find.byKey(const ValueKey('save-as-confirm')));
+      await tester.pump(const Duration(milliseconds: 350));
+      expect(created.readAsStringSync(), 'first new document');
+      expect(currentWindowTitle(), 'created.txt - p02.5-workspace - Alula Code');
+
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(activeEditorText(), 'second new document',
+          reason: 'saving another untitled document does not replace this one');
+      expect(currentWindowTitle(), '● 未命名-4 - p02.5-workspace - Alula Code');
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+    });
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    await tester.runAsync(() async {
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: workspace.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 700));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('tab-3')), findsOneWidget,
+          reason: 'the saved document is restored from its path');
+      expect(find.byKey(const ValueKey('tab-4')), findsOneWidget,
+          reason: 'dirty untitled text is restored from the session journal');
+      expect(find.byKey(const ValueKey('tab-5')), findsOneWidget,
+          reason: 'the second untitled document is restored independently');
+      expect(find.byKey(const ValueKey('tab-6')), findsOneWidget,
+          reason: 'the Command Palette document is restored independently');
+      await tester.tap(find.byKey(const ValueKey('tab-4')));
+      await tester.pump(const Duration(milliseconds: 100));
+      final editor = find.descendant(
+        of: find.byKey(const ValueKey('rust-bounded-text-input')),
+        matching: find.byType(EditableText),
+      );
+      expect(tester.widget<EditableText>(editor).controller.text,
+          'second new document');
+    });
   });
 
   testWidgets('窗口控制按钮：windowControls 开启时渲染（W1-3）', (tester) async {
@@ -107,6 +333,8 @@ void main() {
       layoutStore: store,
       sessionStore: session,
       keybindingsStore: keybindings,
+      windowChromeConfiguration:
+          WindowChromeConfiguration.forPlatform(TargetPlatform.linux),
       windowControls: true,
     ));
     await tester.pump(const Duration(milliseconds: 300));
@@ -126,11 +354,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 打开两个文件（+ 未命名）→ 3 个标签；docId：未命名=1、Cargo.toml=2、main.rs=3
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('src'));
     await tester.pump(const Duration(milliseconds: 300));
-    await tester.tap(find.text('main.rs'));
+    await openPinnedExplorerFile(tester, find.text('main.rs'));
     await tester.pump(const Duration(milliseconds: 300));
 
     double leftOf(String key) =>
@@ -139,8 +367,14 @@ void main() {
         reason: '初始顺序：未命名 在 Cargo.toml 前');
 
     // 鼠标拖 tab-3（main.rs）到 tab-1（未命名）上 → 变为第一个
-    await tester.drag(find.byKey(const ValueKey('tab-3')), const Offset(-260, 0),
-        kind: PointerDeviceKind.mouse);
+    final iconDrag = await tester.startGesture(
+      tester.getCenter(
+        find.byKey(const ValueKey('editor-tab-file-icon-editor-3')),
+      ),
+      kind: PointerDeviceKind.mouse,
+    );
+    await iconDrag.moveBy(const Offset(-260, 0));
+    await iconDrag.up();
     await tester.pump();
     expect(leftOf('tab-3'), lessThan(leftOf('tab-1')),
         reason: '拖动排序后 main.rs 应在 未命名 前');
@@ -160,7 +394,7 @@ void main() {
     expect(find.byKey(const ValueKey('tab-3')), findsOneWidget);
   });
 
-  testWidgets('W2-2 编辑器组：拆分获焦/文档入新组/清空自动并组', (tester) async {
+  testWidgets('W2-2 编辑器组：拆分复制活动文档/打开文件/清空自动并组', (tester) async {
     await tester.pumpWidget(AlulaApp(
       autoFolder: fixtureRoot,
       layoutStore: store,
@@ -170,16 +404,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     // 组 1 打开 Cargo.toml
-    await tester.tap(find.text('Cargo.toml'));
+    await openPinnedExplorerFile(tester, find.text('Cargo.toml'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 拆分 → 新组 editor-2 获焦（空占位出现），两组各有一个拆分按钮
+    // 拆分 → 新组 editor-2 获焦并复制 Cargo.toml 活动视图。
     await tester.tap(find.byTooltip('拆分编辑器'));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.text('打开文件夹后，从文件树选择文件'), findsOneWidget,
-        reason: '新组应为空占位');
+    expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
+        reason: '新组应复制活动文档');
     expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    expect(find.byType(RustTextInputField), findsNWidgets(2));
 
     // 文件打开进「焦点组」（新组）
     await tester.tap(find.text('src'));
@@ -190,14 +425,21 @@ void main() {
         reason: '树 + 新组标签 + 面包屑各一处');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing);
 
-    // 中键关闭新组唯一文档 → 组清空 → 自动摘除并组
-    final gesture = await tester.startGesture(
-      tester.getCenter(find.byKey(const ValueKey('tab-3'))),
-      buttons: kMiddleMouseButton,
-    );
-    await gesture.up();
+    // 关闭新组新开的 main.rs 后，复制的 Cargo.toml 仍留在新组。
+    final closeMainTab = find.byKey(const ValueKey('close-tab-editor-2-3'));
+    await tester.ensureVisible(closeMainTab);
+    await tester.pump();
+    await tester.tap(closeMainTab);
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.byKey(const ValueKey('tab-3')), findsNothing);
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+
+    // 关闭复制的 Cargo.toml → 组清空 → 自动摘除并组。
+    final closeCopiedTab = find.byKey(const ValueKey('close-tab-editor-2-2'));
+    await tester.ensureVisible(closeCopiedTab);
+    await tester.pump();
+    await tester.tap(closeCopiedTab);
+    await tester.pump(const Duration(milliseconds: 200));
     expect(find.byTooltip('拆分编辑器'), findsOneWidget,
         reason: '空组应自动摘除');
     expect(find.text('打开文件夹后，从文件树选择文件'), findsNothing,
@@ -304,6 +546,100 @@ void main() {
     expect(find.byKey(const ValueKey('quick-input')), findsNothing,
         reason: '执行后面板关闭');
     expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+  });
+
+  testWidgets('P05.8 Command Center 标题入口打开现有命令面板并执行动作', (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byKey(const ValueKey('command-center-control')));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+
+    await tester.enterText(
+        find.descendant(
+            of: find.byKey(const ValueKey('quick-input')),
+            matching: find.byType(TextField)),
+        '拆分');
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('qi-编辑器: 拆分编辑器')), findsOneWidget);
+
+    await pressChord(tester, LogicalKeyboardKey.enter);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(find.byTooltip('拆分编辑器'), findsNWidgets(2));
+    final primaryFocus = FocusManager.instance.primaryFocus;
+    expect(primaryFocus, isNotNull);
+    expect(
+      primaryFocus!.context!.findAncestorWidgetOfExactType<Scaffold>(),
+      isNotNull,
+      reason: '执行后应把焦点交还给工作台',
+    );
+  });
+
+  testWidgets('P05.9 标题栏布局控制切换侧栏与面板并同步现有入口',
+      (tester) async {
+    await tester.pumpWidget(AlulaApp(
+      autoFolder: fixtureRoot,
+      layoutStore: store,
+      sessionStore: session,
+      keybindingsStore: keybindings,
+    ));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final layoutControl = find.byKey(const ValueKey('layout-controls-control'));
+    final sidebarRegion = find.byKey(const ValueKey('wb-region-sidebar'));
+    final panelRegion = find.byKey(const ValueKey('wb-region-panel'));
+    final sidebarItem =
+        find.byKey(const ValueKey('layout-control-view.toggleSidebar'));
+    final panelItem =
+        find.byKey(const ValueKey('layout-control-view.togglePanel'));
+
+    expect(sidebarRegion, findsOneWidget);
+    expect(panelRegion, findsNothing, reason: '面板默认折叠');
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<Icon>(),
+      reason: '展开的侧栏应显示选中状态',
+    );
+    expect(
+      tester.widget<MenuItemButton>(panelItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '折叠的面板应显示未选中状态',
+    );
+    await tester.tap(sidebarItem);
+    await tester.pumpAndSettle();
+    expect(sidebarRegion, findsNothing);
+
+    await tester.tap(layoutControl);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<MenuItemButton>(sidebarItem).leadingIcon,
+      isA<SizedBox>(),
+      reason: '再次打开菜单时读取最新侧栏状态',
+    );
+    await tester.tap(panelItem);
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsOneWidget);
+
+    // View > Appearance 和默认快捷键仍执行相同的注册命令。
+    await tester.tap(find.text('查看(V)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('外观(A)'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('切换面板(P)'));
+    await tester.pumpAndSettle();
+    expect(panelRegion, findsNothing);
+    await pressChord(tester, LogicalKeyboardKey.keyB, control: true);
+    expect(sidebarRegion, findsOneWidget);
   });
 
   testWidgets('W3-1 快速打开：Ctrl+P → 筛选文件 → 回车打开', (tester) async {
@@ -574,9 +910,11 @@ void main() {
           find.byKey(const ValueKey('commit-input')), 'test: widget 提交');
       await tester.pump();
       await tester.tap(find.byKey(const ValueKey('commit-button')));
-      await Future<void>.delayed(const Duration(milliseconds: 500));
-      await tester.pump();
-      expect(find.text('工作区干净'), findsOneWidget, reason: '提交后无更改');
+      await _waitForWidget(
+        tester,
+        find.text('工作区干净'),
+        reason: '提交后无更改',
+      );
 
       // 真 git 验证：仓库应有两个提交
       final log = await Process.run('git', ['log', '--oneline'],
@@ -617,11 +955,11 @@ void main() {
           find.byKey(const ValueKey('search-input')), 'needle');
       await tester.pump();
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await Future<void>.delayed(const Duration(milliseconds: 600));
-      await tester.pump();
-
-      expect(find.textContaining('find the needle here'), findsOneWidget,
-          reason: '命中行文本应出现在结果列表');
+      await _waitForWidget(
+        tester,
+        find.textContaining('find the needle here'),
+        reason: '命中行文本应出现在结果列表',
+      );
       expect(find.textContaining('needle.py'), findsOneWidget,
           reason: '文件名展示');
 

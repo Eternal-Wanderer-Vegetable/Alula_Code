@@ -1,0 +1,21 @@
+Changes: 15 files, 38 symbols
+Affected processes: 0
+Risk level: low
+
+Changed symbols:
+  Section �完成定义）� → app/lib/workbench/activity_bar.dart
+  Class ActivityBar → app/lib/workbench/activity_bar.dart
+  Section _Item → app/lib/workbench/activity_bar.dart
+  Property size → app/lib/workbench/activity_bar.dart
+  Property onSizeChanged → app/lib/workbench/activity_bar.dart
+  Class _ActivityBarState → app/lib/workbench/activity_bar.dart
+  Property _menuStyle → app/lib/workbench/activity_bar.dart
+  Property _menuItemStyle → app/lib/workbench/activity_bar.dart
+  Property _menuController → app/lib/workbench/activity_bar.dart
+  Class _Item → app/lib/workbench/activity_bar.dart
+  Property itemExtent → app/lib/workbench/activity_bar.dart
+  Property iconSize → app/lib/workbench/activity_bar.dart
+  Class WorkbenchActivityBarPosition → app/lib/workbench/activity_bar_position.dart
+  Enum ActivityBarSize → app/lib/workbench/layout_model.dart
+  Property jsonValue → app/lib/workbench/layout_model.dart
+... and 23 more

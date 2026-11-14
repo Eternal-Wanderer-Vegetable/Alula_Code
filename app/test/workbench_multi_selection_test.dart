@@ -16,6 +16,8 @@ import 'package:flutter/rendering.dart' show RenderEditable, RenderObject;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
 Future<void> _pressAddCursorVertical(
   WidgetTester tester, {
   required bool above,
@@ -1203,7 +1205,7 @@ void main() {
       keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
     ));
     await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.text('first.txt').first);
+    await openPinnedExplorerFile(tester, find.text('first.txt').first);
     await tester.pump(const Duration(milliseconds: 300));
     final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
     await tester.showKeyboard(editor);
@@ -1217,7 +1219,7 @@ void main() {
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await tester.pump();
 
-    await tester.tap(find.text('second.txt').first);
+    await openPinnedExplorerFile(tester, find.text('second.txt').first);
     await tester.pump(const Duration(milliseconds: 300));
     final secondField = tester.widget<RustTextInputField>(
       find.byType(RustTextInputField),

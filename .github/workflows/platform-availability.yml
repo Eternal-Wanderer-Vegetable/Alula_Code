@@ -1,8 +1,9 @@
 name: Platform Availability
 
 on:
+  workflow_dispatch:
   push:
-    branches: [codex/vscode-parity-p00]
+    branches: [codex/vscode-parity-p00, codex/vscode-parity-p05]
     paths:
       - 'app/**'
       - 'crates/**'
@@ -66,6 +67,15 @@ jobs:
           set +e
           timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             app/build/linux/x64/release/bundle/alula_app
+          status=$?
+          set -e
+          test "$status" -eq 124
+      - name: Launch Linux native-titlebar mode under Xvfb
+        if: ${{ always() && !cancelled() && steps.linux_bundle.outcome == 'success' }}
+        run: |
+          set +e
+          timeout --signal=TERM 12s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            app/build/linux/x64/release/bundle/alula_app --native-titlebar
           status=$?
           set -e
           test "$status" -eq 124
@@ -646,6 +656,27 @@ jobs:
           if ($metadata.closeTimedOut) { throw "Alula did not exit within 10 seconds after WM_CLOSE" }
           if ($metadata.exitCode -ne 0) { throw "Alula exited after WM_CLOSE with code $($metadata.exitCode)" }
           if (!$metadata.gracefulClose) { throw "Alula did not complete a graceful WM_CLOSE exit" }
+      - name: Launch Windows native-titlebar mode and close gracefully
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path app/build/windows/x64/runner/Release/alula_app.exe).Path
+          $process = Start-Process -FilePath $exe -ArgumentList '--native-titlebar' -PassThru -WindowStyle Normal
+          try {
+            $deadline = (Get-Date).AddSeconds(30)
+            do {
+              $process.Refresh()
+              if ($process.HasExited) { throw "Native-titlebar mode exited during startup (code $($process.ExitCode))" }
+              if ($process.MainWindowHandle -eq [IntPtr]::Zero) { Start-Sleep -Milliseconds 250 }
+            } while ($process.MainWindowHandle -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+            if ($process.MainWindowHandle -eq [IntPtr]::Zero) { throw 'Native-titlebar mode did not create a top-level window' }
+            if (!$process.CloseMainWindow()) { throw 'CloseMainWindow was not accepted by native-titlebar mode' }
+            if (!$process.WaitForExit(10000)) { throw 'Native-titlebar mode did not exit within 10 seconds after close' }
+            $process.Refresh()
+            if ($process.ExitCode -ne 0) { throw "Native-titlebar mode exited after close with code $($process.ExitCode)" }
+          }
+          finally {
+            if (!$process.HasExited) { $process.Kill(); $process.WaitForExit(10000) | Out-Null }
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -659,7 +690,7 @@ jobs:
     name: macOS build, launch smoke, and app package
     # Use the Intel lane when the ARM64/M1 hosted pool has no available runner.
     runs-on: macos-15-intel
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -703,11 +734,34 @@ jobs:
           mkdir -p "$ALULA_MACOS_DND_DIR"
           flutter test --no-pub -d macos --reporter expanded integration_test/editor_native_text_drag_drop_macos_test.dart > "$ALULA_MACOS_DND_DIR/flutter-test.log" 2>&1 &
           flutter_pid=$!
+          stop_integration_app() {
+            if ! pgrep -x alula_app >/dev/null 2>&1; then
+              return 0
+            fi
+            echo "Stopping leftover macOS Flutter integration app before Release smoke."
+            pkill -TERM -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 20); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            pkill -KILL -x alula_app 2>/dev/null || true
+            for _ in $(seq 1 8); do
+              if ! pgrep -x alula_app >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 0.25
+            done
+            echo "A macOS Flutter integration app remained after cleanup."
+            return 1
+          }
           cleanup() {
             if kill -0 "$flutter_pid" 2>/dev/null; then
               kill -TERM "$flutter_pid" 2>/dev/null || true
               wait "$flutter_pid" 2>/dev/null || true
             fi
+            stop_integration_app || true
           }
           trap cleanup EXIT
 
@@ -747,6 +801,7 @@ jobs:
               cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
               exit 1
             fi
+            stop_integration_app
             trap - EXIT
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 0
@@ -755,6 +810,7 @@ jobs:
             cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
             exit 1
           fi
+          stop_integration_app
           trap - EXIT
           cat "$ALULA_MACOS_DND_DIR/flutter-test.log"
         working-directory: app
@@ -845,12 +901,90 @@ jobs:
             exit 1
           fi
           wait "$app_pid" || true
+      - name: Launch macOS native-titlebar mode and verify native Quit menu
+        timeout-minutes: 5
+        if: ${{ always() && !cancelled() && steps.bundle_core.outcome == 'success' }}
+        run: |
+          app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
+          bundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' \
+            "$app_bundle/Contents/Info.plist")
+          open -n -W -a "$app_bundle" --args --native-titlebar \
+            > "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1 &
+          open_pid=$!
+          cleanup() {
+            if kill -0 "$open_pid" 2>/dev/null; then
+              pkill -TERM -x alula_app 2>/dev/null || true
+              sleep 1
+              kill -TERM "$open_pid" 2>/dev/null || true
+              wait "$open_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+          sleep 12
+          if ! kill -0 "$open_pid" 2>/dev/null; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            set +e
+            wait "$open_pid"
+            app_status=$?
+            set -e
+            exit "$app_status"
+          fi
+
+          quit_action_invoked=false
+          for attempt in 1 2; do
+            if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \
+              "$bundle_identifier" "$app_bundle" \
+              >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
+              quit_action_invoked=true
+              break
+            fi
+
+            if ! grep -Fq \
+              "Could not read the native menu bar through Accessibility (AXError " \
+              "$RUNNER_TEMP/alula-macos-native-titlebar.log"; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "Could not invoke the native macOS Quit action"
+              exit 1
+            fi
+            if [[ "$attempt" -eq 2 ]]; then
+              cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+              echo "The native macOS menu bar remained inaccessible after one retry"
+              exit 1
+            fi
+            echo "The native macOS menu bar is temporarily inaccessible; retrying once."
+            sleep 2
+          done
+
+          if [[ "$quit_action_invoked" != true ]]; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Could not invoke the native macOS Quit action"
+            exit 1
+          fi
+          for _ in $(seq 1 80); do
+            kill -0 "$open_pid" 2>/dev/null || break
+            sleep 0.25
+          done
+          if kill -0 "$open_pid" 2>/dev/null; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Native Quit action did not close the native-titlebar app within 20 seconds"
+            exit 1
+          fi
+          set +e
+          wait "$open_pid"
+          app_status=$?
+          set -e
+          if [[ "$app_status" -ne 0 ]]; then
+            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
+            echo "Native-titlebar Alula exited with status $app_status after menu Quit"
+            exit "$app_status"
+          fi
+          echo "Native macOS Quit action closed the native-titlebar app."
       - name: Collect macOS startup diagnostics
         if: always()
         run: |
           diagnostics="$RUNNER_TEMP/alula-macos-diagnostics"
           mkdir -p "$diagnostics"
-          for log in alula-macos-smoke.log alula-macos-lldb.log; do
+          for log in alula-macos-smoke.log alula-macos-native-titlebar.log alula-macos-lldb.log; do
             if [[ -f "$RUNNER_TEMP/$log" ]]; then
               cp "$RUNNER_TEMP/$log" "$diagnostics/"
             fi

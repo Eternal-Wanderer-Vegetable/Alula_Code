@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/explorer_preview.dart';
+
 Future<void> _pressChord(
   WidgetTester tester,
   LogicalKeyboardKey key, {
@@ -26,7 +28,7 @@ Future<void> _pressChord(
 }
 
 Future<void> _openFile(WidgetTester tester, String name) async {
-  await tester.tap(find.text(name).first);
+  await openPinnedExplorerFile(tester, find.text(name).first);
   await tester.pump(const Duration(milliseconds: 300));
   final editor = find.byKey(const ValueKey('rust-bounded-text-input'));
   await tester.showKeyboard(editor);

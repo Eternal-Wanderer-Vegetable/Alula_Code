@@ -1,5 +1,6 @@
 import AppKit
 import ApplicationServices
+import Carbon.HIToolbox
 import Darwin
 import Foundation
 
@@ -16,6 +17,32 @@ func children(of element: AXUIElement) -> [AXUIElement] {
 func labels(of element: AXUIElement) -> [String] {
   ["AXIdentifier", "AXLabel", "AXDescription", "AXTitle", "AXValue"]
     .compactMap { attribute(element, $0) as? String }
+}
+
+func isNativeQuitMenuItem(_ element: AXUIElement) -> Bool {
+  if labels(of: element).contains(where: { $0.lowercased().hasPrefix("quit") }) {
+    return true
+  }
+
+  // macOS localizes the visible Quit title. Command-Q is the stable menu
+  // identity across locales; AX reports the primary key and modifier mask.
+  guard
+    let commandCharacter = attribute(
+      element,
+      kAXMenuItemCmdCharAttribute as String
+    ) as? String,
+    commandCharacter.lowercased() == "q",
+    let rawModifiers = attribute(
+      element,
+      kAXMenuItemCmdModifiersAttribute as String
+    ) as? NSNumber
+  else {
+    return false
+  }
+
+  // AXMenuItemCmdModifiers represents modifiers other than Command. A zero
+  // mask therefore identifies the standard Command-Q application menu item.
+  return rawModifiers.uint32Value == 0
 }
 
 func frame(of element: AXUIElement) -> CGRect? {
@@ -213,10 +240,322 @@ func layoutPoint(from layout: [String: Any], key: String) throws -> CGPoint {
   return CGPoint(x: CGFloat(x), y: CGFloat(y))
 }
 
+func quitThroughAccessibilityMenu(processIdentifier: pid_t) throws {
+  let applicationElement = AXUIElementCreateApplication(processIdentifier)
+  _ = AXUIElementSetMessagingTimeout(applicationElement, 2.0)
+  var menuBarElement: AXUIElement?
+  var lastMenuBarError: AXError = .noValue
+  let menuBarDeadline = Date().addingTimeInterval(15)
+  while Date() < menuBarDeadline {
+    var rawMenuBar: CFTypeRef?
+    lastMenuBarError = AXUIElementCopyAttributeValue(
+      applicationElement,
+      kAXMenuBarAttribute as CFString,
+      &rawMenuBar
+    )
+    if lastMenuBarError == .success,
+       let rawMenuBar,
+       CFGetTypeID(rawMenuBar) == AXUIElementGetTypeID()
+    {
+      menuBarElement = unsafeBitCast(rawMenuBar, to: AXUIElement.self)
+      if menuBarElement != nil { break }
+    }
+    Thread.sleep(forTimeInterval: 0.25)
+  }
+  guard let menuBarElement else {
+    throw NSError(domain: "AlulaMacDnd", code: 22, userInfo: [
+      NSLocalizedDescriptionKey:
+        "Could not read the native menu bar through Accessibility (AXError \(lastMenuBarError.rawValue))"
+    ])
+  }
+
+  func descendants(of element: AXUIElement, depth: Int = 0) -> [AXUIElement] {
+    guard depth < 5 else { return [] }
+    _ = AXUIElementSetMessagingTimeout(element, 2.0)
+    let directChildren = children(of: element)
+    return directChildren + directChildren.flatMap {
+      descendants(of: $0, depth: depth + 1)
+    }
+  }
+
+  _ = AXUIElementSetMessagingTimeout(menuBarElement, 2.0)
+  let menuBarItems = children(of: menuBarElement)
+  var menuBarTitles: [String] = []
+  for menuBarItem in menuBarItems {
+    _ = AXUIElementSetMessagingTimeout(menuBarItem, 2.0)
+    let candidateTitle = labels(of: menuBarItem).first ?? "<unnamed>"
+    menuBarTitles.append(candidateTitle)
+    let pressResult = AXUIElementPerformAction(menuBarItem, "AXPress" as CFString)
+    guard pressResult == .success else { continue }
+
+    var menuEntries: [AXUIElement] = []
+    for _ in 0..<10 {
+      menuEntries = descendants(of: menuBarItem)
+      if !menuEntries.isEmpty { break }
+      Thread.sleep(forTimeInterval: 0.1)
+    }
+    for menuEntry in menuEntries {
+      _ = AXUIElementSetMessagingTimeout(menuEntry, 2.0)
+      guard isNativeQuitMenuItem(menuEntry) else { continue }
+      let quitResult = AXUIElementPerformAction(menuEntry, "AXPress" as CFString)
+      guard quitResult == .success else { continue }
+      let entryName = labels(of: menuEntry).first ?? "Command-Q menu item"
+      print("Selected native menu item \(candidateTitle) > \(entryName) through Accessibility API.")
+      return
+    }
+  }
+
+  throw NSError(domain: "AlulaMacDnd", code: 23, userInfo: [
+    NSLocalizedDescriptionKey:
+      "No accessible Quit item in native menus. Menu bar items: \(menuBarTitles.joined(separator: ", "))"
+  ])
+}
+
+func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
+  let script = """
+  tell application "System Events"
+    set targetProcess to first application process whose unix id is \(processIdentifier)
+    set frontmost of targetProcess to true
+    set menuBarItems to menu bar items of menu bar 1 of targetProcess
+    set menuBarTitles to {}
+    set appMenuTitle to missing value
+    set quitMenuName to missing value
+    repeat with menuBarItem in menuBarItems
+      try
+        set candidateTitle to name of menuBarItem
+        set end of menuBarTitles to candidateTitle
+        click menuBarItem
+        delay 0.1
+        set menuEntries to menu items of menu 1 of menuBarItem
+        repeat with menuEntry in menuEntries
+          try
+            set entryName to name of menuEntry
+            set isQuitMenuItem to entryName starts with "Quit"
+            try
+              set shortcutCharacter to value of attribute "AXMenuItemCmdChar" of menuEntry
+              set shortcutModifiers to value of attribute "AXMenuItemCmdModifiers" of menuEntry
+              if (shortcutCharacter is "q" or shortcutCharacter is "Q") and shortcutModifiers is 0 then
+                set isQuitMenuItem to true
+              end if
+            end try
+            if isQuitMenuItem then
+              set appMenuTitle to candidateTitle
+              set quitMenuName to entryName
+              click menuEntry
+              exit repeat
+            end if
+          end try
+        end repeat
+      end try
+      if quitMenuName is not missing value then exit repeat
+    end repeat
+    if quitMenuName is missing value then
+      error "No Quit item in native menus. Menu bar items: " & (menuBarTitles as string)
+    end if
+    return "Selected " & appMenuTitle & " > " & quitMenuName
+  end tell
+  """
+  let process = Process()
+  process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+  process.arguments = ["-e", script]
+  let output = Pipe()
+  let errors = Pipe()
+  process.standardOutput = output
+  process.standardError = errors
+
+  do {
+    try process.run()
+  } catch {
+    throw NSError(domain: "AlulaMacDnd", code: 26, userInfo: [
+      NSLocalizedDescriptionKey: "Could not start the System Events Quit fallback: \(error)"
+    ])
+  }
+
+  let deadline = Date().addingTimeInterval(20)
+  while process.isRunning && Date() < deadline {
+    Thread.sleep(forTimeInterval: 0.05)
+  }
+  if process.isRunning {
+    process.terminate()
+    let terminateDeadline = Date().addingTimeInterval(2)
+    while process.isRunning && Date() < terminateDeadline {
+      Thread.sleep(forTimeInterval: 0.05)
+    }
+    if process.isRunning {
+      _ = kill(process.processIdentifier, SIGKILL)
+    }
+    process.waitUntilExit()
+    throw NSError(domain: "AlulaMacDnd", code: 27, userInfo: [
+      NSLocalizedDescriptionKey: "System Events Quit fallback timed out after 20 seconds"
+    ])
+  }
+
+  process.waitUntilExit()
+  let standardOutput = String(
+    data: output.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  let standardError = String(
+    data: errors.fileHandleForReading.readDataToEndOfFile(),
+    encoding: .utf8
+  ) ?? ""
+  guard process.terminationStatus == 0 else {
+    throw NSError(domain: "AlulaMacDnd", code: 28, userInfo: [
+      NSLocalizedDescriptionKey:
+        "System Events Quit fallback failed (status \(process.terminationStatus)): \(standardError)"
+    ])
+  }
+  return standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+func postCommandQ(to processIdentifier: pid_t) throws {
+  guard
+    let source = CGEventSource(stateID: .hidSystemState),
+    let commandDown = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_Command),
+      keyDown: true
+    ),
+    let keyDown = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_ANSI_Q),
+      keyDown: true
+    ),
+    let keyUp = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_ANSI_Q),
+      keyDown: false
+    ),
+    let commandUp = CGEvent(
+      keyboardEventSource: source,
+      virtualKey: CGKeyCode(kVK_Command),
+      keyDown: false
+    )
+  else {
+    throw NSError(domain: "AlulaMacDnd", code: 30, userInfo: [
+      NSLocalizedDescriptionKey: "Could not create the native Command-Q keyboard events"
+    ])
+  }
+
+  commandDown.flags = .maskCommand
+  keyDown.flags = .maskCommand
+  keyUp.flags = .maskCommand
+  commandUp.flags = []
+  commandDown.postToPid(processIdentifier)
+  Thread.sleep(forTimeInterval: 0.02)
+  keyDown.postToPid(processIdentifier)
+  Thread.sleep(forTimeInterval: 0.05)
+  keyUp.postToPid(processIdentifier)
+  Thread.sleep(forTimeInterval: 0.02)
+  commandUp.postToPid(processIdentifier)
+  print(
+    "Posted the native Command-Q menu shortcut to pid \(processIdentifier); " +
+      "the Availability step will verify app termination."
+  )
+}
+
+func quitThroughNativeMenu(
+  bundleIdentifier: String,
+  expectedBundlePath: String
+) throws {
+  guard AXIsProcessTrusted() else {
+    throw NSError(domain: "AlulaMacDnd", code: 20, userInfo: [
+      NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
+    ])
+  }
+  let expectedBundleURL = URL(fileURLWithPath: expectedBundlePath)
+    .standardizedFileURL.resolvingSymlinksInPath()
+  func isExpectedApplication(_ candidate: NSRunningApplication) -> Bool {
+    guard !candidate.isTerminated,
+          candidate.bundleIdentifier == bundleIdentifier,
+          let bundleURL = candidate.bundleURL else {
+      return false
+    }
+    return bundleURL.standardizedFileURL.resolvingSymlinksInPath().path ==
+      expectedBundleURL.path
+  }
+
+  let appDiscoveryDeadline = Date().addingTimeInterval(15)
+  var app = NSRunningApplication.runningApplications(
+    withBundleIdentifier: bundleIdentifier
+  ).last(where: isExpectedApplication)
+  while app == nil && Date() < appDiscoveryDeadline {
+    Thread.sleep(forTimeInterval: 0.1)
+    app = NSRunningApplication.runningApplications(
+      withBundleIdentifier: bundleIdentifier
+    ).last(where: isExpectedApplication)
+  }
+  guard let app else {
+    throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
+      NSLocalizedDescriptionKey:
+        "Could not find a running app with bundle identifier \(bundleIdentifier) at \(expectedBundleURL.path)"
+    ])
+  }
+
+  let processIdentifier = app.processIdentifier
+  print(
+    "Targeting native Quit menu in \(app.localizedName ?? bundleIdentifier) " +
+      "at \(expectedBundleURL.path) (pid \(processIdentifier), active=\(app.isActive))."
+  )
+  let activationAccepted = app.activate(options: [.activateIgnoringOtherApps])
+  let activationDeadline = Date().addingTimeInterval(8)
+  while !app.isActive && Date() < activationDeadline {
+    Thread.sleep(forTimeInterval: 0.1)
+  }
+  if app.isActive {
+    print("Target app is active; selecting its native Quit menu.")
+  } else {
+    let frontmost = NSWorkspace.shared.frontmostApplication
+    print(
+      "NSRunningApplication activation did not foreground the target " +
+        "(accepted=\(activationAccepted), frontmost=\(frontmost?.localizedName ?? "<none>"), " +
+        "frontmostPID=\(frontmost?.processIdentifier ?? 0)); " +
+        "continuing with PID-targeted native menu access."
+    )
+  }
+  do {
+    try quitThroughAccessibilityMenu(processIdentifier: processIdentifier)
+  } catch let accessibilityError {
+    print(
+      "Accessibility API could not select Quit; trying System Events: \(accessibilityError.localizedDescription)"
+    )
+    do {
+      let result = try quitThroughSystemEvents(processIdentifier: processIdentifier)
+      print("Selected native menu item \(result) through System Events.")
+    } catch let systemEventsError {
+      print(
+        "Native menu labels/shortcut metadata were unavailable to Accessibility and " +
+          "System Events; dispatching the app's native Command-Q menu shortcut. " +
+          "Accessibility: \(accessibilityError.localizedDescription); " +
+          "System Events: \(systemEventsError.localizedDescription)"
+      )
+      try postCommandQ(to: processIdentifier)
+    }
+  }
+}
+
 func run() throws {
+  if CommandLine.arguments.count == 4,
+     CommandLine.arguments[1] == "--quit-native-menu"
+  {
+    let bundleIdentifier = CommandLine.arguments[2]
+    let bundlePath = CommandLine.arguments[3]
+    guard !bundleIdentifier.isEmpty, !bundlePath.isEmpty else {
+      throw NSError(domain: "AlulaMacDnd", code: 25, userInfo: [
+        NSLocalizedDescriptionKey: "Native menu Quit requires an app bundle identifier and bundle path"
+      ])
+    }
+    try quitThroughNativeMenu(
+      bundleIdentifier: bundleIdentifier,
+      expectedBundlePath: bundlePath
+    )
+    return
+  }
+
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
-      NSLocalizedDescriptionKey: "Usage: macos-native-dnd-input <smoke-dir>"
+      NSLocalizedDescriptionKey:
+        "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id> <app-bundle-path>"
     ])
   }
 

@@ -51,6 +51,10 @@ jobs:
         run: bash scripts/build_core.sh
       - uses: subosito/flutter-action@v2
         with:
+          # 固定到与其他 workflow 一致的 3.47.8：Flutter 3.50 起
+          # package:flutter/material.dart 触发 deprecated_member_use，
+          # 迁移 material_ui 属独立工作项，未完成前不跟随最新 stable。
+          flutter-version: 3.47.8
           channel: stable
           cache: true
       - run: flutter pub get
