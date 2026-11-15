@@ -33,6 +33,8 @@ class WorkbenchNotification {
     required this.source,
     required this.createdAt,
     this.actions = const <WorkbenchNotificationAction>[],
+    this.progress,
+    this.banner = false,
   });
 
   final int id;
@@ -44,7 +46,67 @@ class WorkbenchNotification {
   final DateTime createdAt;
   final List<WorkbenchNotificationAction> actions;
 
+  /// 进度通知的进度对象（null 表示普通通知）。
+  final NotificationProgress? progress;
+
+  /// 以编辑器区上方的内嵌 banner 呈现（不产生 toast）。
+  final bool banner;
+
   bool get hasActions => actions.isNotEmpty;
+  bool get hasProgress => progress != null;
+}
+
+/// 通知进度（上游 `IProgressOptions`/`IProgressStep`）：有 `total` 时为确定进度，
+/// 否则为不确定（转圈）；提供 `onCancel` 时允许取消。`report` 更新后通知监听者，
+/// UI 用 `ListenableBuilder` 直接重建进度条。
+class NotificationProgress extends ChangeNotifier {
+  NotificationProgress({
+    int? total,
+    int worked = 0,
+    bool infinite = false,
+    this.onCancel,
+  })  : _total = total,
+        _worked = worked,
+        _infinite = infinite;
+
+  final Future<void> Function()? onCancel;
+  int? _total;
+  int _worked;
+  bool _infinite;
+
+  int? get total => _total;
+  int get worked => _worked;
+  bool get infinite => _infinite;
+  bool get cancellable => onCancel != null;
+
+  bool get isDeterminate => !_infinite && _total != null && _total! > 0;
+
+  /// 确定进度 0..1；不确定进度返回 null。
+  double? get fraction =>
+      isDeterminate ? (_worked / _total!).clamp(0.0, 1.0) : null;
+
+  int? get percent => fraction == null ? null : (fraction! * 100).round();
+
+  void report({int? worked, int? total, bool? infinite}) {
+    var changed = false;
+    if (worked != null && worked != _worked) {
+      _worked = worked;
+      changed = true;
+    }
+    if (total != null && total != _total) {
+      _total = total;
+      changed = true;
+    }
+    if (infinite != null && infinite != _infinite) {
+      _infinite = infinite;
+      changed = true;
+    }
+    if (changed) notifyListeners();
+  }
+
+  Future<void> cancel() async {
+    await onCancel?.call();
+  }
 }
 
 /// 有界、按新到旧排列的通知存储。
@@ -56,10 +118,14 @@ class NotificationCenter extends ChangeNotifier {
   /// 右下角同时可见的 toast 上限（上游同样限制堆叠数量）。
   static const int maxVisibleToasts = 3;
 
+  /// 编辑器区上方同时可见的 banner 上限。
+  static const int maxVisibleBanners = 3;
+
   final int maxNotifications;
   final List<WorkbenchNotification> _items = <WorkbenchNotification>[];
   final Set<int> _unread = <int>{};
   final List<int> _toasts = <int>[]; // 旧 → 新
+  final List<int> _banners = <int>[]; // 旧 → 新
   var _doNotDisturb = false;
   var _nextId = 1;
 
@@ -68,6 +134,12 @@ class NotificationCenter extends ChangeNotifier {
 
   /// 当前可见 toast 的 id，旧 → 新。
   List<int> get toastIds => List.unmodifiable(_toasts);
+
+  /// 当前可见 banner 的通知，旧 → 新。
+  List<WorkbenchNotification> get banners => <WorkbenchNotification>[
+        for (final id in _banners)
+          if (byId(id) case final notification?) notification,
+      ];
 
   bool get doNotDisturb => _doNotDisturb;
   int get unreadCount => _unread.length;
@@ -95,6 +167,8 @@ class NotificationCenter extends ChangeNotifier {
     List<WorkbenchNotificationAction> actions =
         const <WorkbenchNotificationAction>[],
     DateTime? createdAt,
+    NotificationProgress? progress,
+    bool banner = false,
   }) {
     final notification = WorkbenchNotification(
       id: _nextId++,
@@ -103,10 +177,17 @@ class NotificationCenter extends ChangeNotifier {
       source: source,
       createdAt: createdAt ?? DateTime.now(),
       actions: actions,
+      progress: progress,
+      banner: banner,
     );
     _items.insert(0, notification);
     _unread.add(notification.id);
-    if (!_doNotDisturb) {
+    if (banner) {
+      _banners.add(notification.id);
+      while (_banners.length > maxVisibleBanners) {
+        _banners.removeAt(0);
+      }
+    } else if (!_doNotDisturb) {
       _toasts.add(notification.id);
       while (_toasts.length > maxVisibleToasts) {
         _toasts.removeAt(0);
@@ -116,6 +197,7 @@ class NotificationCenter extends ChangeNotifier {
       final removed = _items.removeLast();
       _unread.remove(removed.id);
       _toasts.remove(removed.id);
+      _banners.remove(removed.id);
     }
     notifyListeners();
     return notification;
@@ -126,20 +208,27 @@ class NotificationCenter extends ChangeNotifier {
     if (_toasts.remove(id)) notifyListeners();
   }
 
-  /// 关闭通知：同时移出列表、未读与 toast。
+  /// 关闭通知：同时移出列表、未读、toast 与 banner。
   void dismiss(int id) {
     final before = _items.length;
     _items.removeWhere((item) => item.id == id);
     _unread.remove(id);
     _toasts.remove(id);
+    _banners.remove(id);
     if (_items.length != before) notifyListeners();
   }
 
   void clearAll() {
-    if (_items.isEmpty && _toasts.isEmpty && _unread.isEmpty) return;
+    if (_items.isEmpty &&
+        _toasts.isEmpty &&
+        _banners.isEmpty &&
+        _unread.isEmpty) {
+      return;
+    }
     _items.clear();
     _unread.clear();
     _toasts.clear();
+    _banners.clear();
     notifyListeners();
   }
 

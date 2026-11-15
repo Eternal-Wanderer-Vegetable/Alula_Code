@@ -107,6 +107,11 @@ class _NotificationToast extends StatelessWidget {
                     style:
                         TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
                   ),
+                  if (notification.hasProgress)
+                    _NotificationProgressLine(
+                      notification: notification,
+                      cancelKeyPrefix: 'notification-toast-cancel',
+                    ),
                   if (notification.hasActions)
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
@@ -343,6 +348,11 @@ class _NotificationCenterRow extends StatelessWidget {
                 Text(notification.source,
                     style:
                         TextStyle(fontSize: 10, color: Colors.grey.shade500)),
+                if (notification.hasProgress)
+                  _NotificationProgressLine(
+                    notification: notification,
+                    cancelKeyPrefix: 'notification-cancel',
+                  ),
                 if (notification.hasActions)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
@@ -380,6 +390,191 @@ class _NotificationCenterRow extends StatelessWidget {
             icon: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 进度条 + 百分比 + 取消按钮（toast / 中心 / banner 共用）。
+class _NotificationProgressLine extends StatelessWidget {
+  const _NotificationProgressLine({
+    required this.notification,
+    required this.cancelKeyPrefix,
+  });
+
+  final WorkbenchNotification notification;
+  final String cancelKeyPrefix;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = notification.progress!;
+    return ListenableBuilder(
+      listenable: progress,
+      builder: (context, _) {
+        final fraction = progress.fraction;
+        return Semantics(
+          label: '进度',
+          value: progress.percent == null ? '进行中' : '${progress.percent}%',
+          child: Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    key: ValueKey('notification-progress-${notification.id}'),
+                    value: fraction,
+                    minHeight: 4,
+                    backgroundColor: const Color(0xFF3A4150),
+                    valueColor: const AlwaysStoppedAnimation(Color(0xFF0E639C)),
+                  ),
+                ),
+              ),
+              if (progress.percent case final percent?) ...[
+                const SizedBox(width: 8),
+                Text(
+                  '$percent%',
+                  key: ValueKey(
+                      'notification-progress-percent-${notification.id}'),
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
+                ),
+              ],
+              if (progress.cancellable) ...[
+                const SizedBox(width: 4),
+                TextButton(
+                  key: ValueKey('$cancelKeyPrefix-${notification.id}'),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(0, 22),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    textStyle: const TextStyle(fontSize: 10.5),
+                  ),
+                  onPressed: () => progress.cancel(),
+                  child: const Text('取消'),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// 编辑器区上方的内嵌 banner 层（上游 view banner）：空时零高度，zen 模式由工作台
+/// 隐藏整个层。
+class WorkbenchNotificationBanners extends StatelessWidget {
+  const WorkbenchNotificationBanners({
+    super.key,
+    required this.center,
+    required this.onDismiss,
+  });
+
+  final NotificationCenter center;
+  final void Function(int id) onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final banners = center.banners;
+    if (banners.isEmpty) return const SizedBox.shrink();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final notification in banners)
+          _NotificationBanner(
+            key: ValueKey('notification-banner-${notification.id}'),
+            notification: notification,
+            onDismiss: () => onDismiss(notification.id),
+          ),
+      ],
+    );
+  }
+}
+
+class _NotificationBanner extends StatelessWidget {
+  const _NotificationBanner({
+    super.key,
+    required this.notification,
+    required this.onDismiss,
+  });
+
+  final WorkbenchNotification notification;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = _NotificationStyle.of(notification.severity);
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      label: '${notification.source} 通知：${notification.message}',
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(10, 6, 6, 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF20242C),
+          border: Border(left: BorderSide(color: style.color, width: 3)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: Icon(style.icon, size: 14, color: style.color),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(notification.message,
+                      style: const TextStyle(fontSize: 11.5, height: 1.3)),
+                  const SizedBox(height: 2),
+                  Text(notification.source,
+                      style:
+                          TextStyle(fontSize: 10, color: Colors.grey.shade500)),
+                  if (notification.hasProgress)
+                    _NotificationProgressLine(
+                      notification: notification,
+                      cancelKeyPrefix: 'notification-banner-cancel',
+                    ),
+                  if (notification.hasActions)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Wrap(
+                        spacing: 8,
+                        children: [
+                          for (final (index, action)
+                              in notification.actions.indexed)
+                            TextButton(
+                              key: ValueKey(
+                                  'notification-banner-action-${notification.id}-$index'),
+                              style: TextButton.styleFrom(
+                                minimumSize: const Size(0, 24),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                textStyle: const TextStyle(fontSize: 11),
+                              ),
+                              onPressed: () => action.run(),
+                              child: Text(action.label),
+                            ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            IconButton(
+              key: ValueKey('notification-banner-close-${notification.id}'),
+              tooltip: '关闭横幅',
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
+              onPressed: onDismiss,
+              icon: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
       ),
     );
   }

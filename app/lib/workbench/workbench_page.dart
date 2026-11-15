@@ -18896,6 +18896,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       ],
                     ),
                   ]),
+              if (!_zenMode)
+                WorkbenchNotificationBanners(
+                  center: _notifications,
+                  onDismiss: _notifications.dismiss,
+                ),
               Expanded(
                 child: _zenMode
                     ? Center(

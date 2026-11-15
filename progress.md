@@ -2255,3 +2255,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 本地 DoD：analyze 0 issues；新增 4 文件 `dart format` 0 changes（status_bar/workbench_page/main 保持既有风格）；Rust fmt/test/Clippy 全绿（`p05.57-rust-gates.log`）；全量 Flutter `+1253 -34`（30 项与基线一致 + 4 项轮换 flake：merge-editor 3 + smart_enter 1，后者单跑两次 18/18），新增 13 项全部通过。
 - hosted：PR CI `43713492886` 四项首跑全绿；Platform Availability `43713488195` Linux/Windows/macOS Intel x64 首跑全绿；包 artifacts `14161079618`/`14161188536`/`14162062521`；Linux/Windows DnD `14161239272`/`14161329548` 通过 move/copy/external text（17/13 pointer events）；macOS DnD `14162336688` pointer route skip；macOS startup/native Quit `14162775877` 通过；macOS ZIP SHA-256 `de16627258b11729ddf6c0e6e66f6dfcbdbd33746f284fc8bb44ef5fdc3f51f0` 与 sidecar 一致且 `tar -tf` 81 项。P05.57 done。
 - P05/feat-027 继续 in-progress；下一步 LAY-18b（进度通知/banner）与 LAY-18c（产品接线）。
+
+## P05.58 LAY-18b 进度通知与 banner 完成（2026-11-15）
+
+- 实现：`NotificationProgress`（total/worked/infinite、fraction 钳制、percent、report 变更才通知、cancel）+ `WorkbenchNotification.progress/banner`；`notify(progress:, banner:)`：banner 进 banner 集合（上限 3）且不产生 toast、进度通知在列表/toast 保留、列表上限裁剪与 dismiss/clearAll 同时清理 banner、DND 只抑制 toast 不影响 banner；`_NotificationProgressLine`（ListenableBuilder 直连进度、`notification-progress-<id>`、百分比、三段独立取消 key）复用于 toast/中心/banner；`WorkbenchNotificationBanners` 横幅层位于标题栏与编辑器网格之间（动作、关闭、live region），空态零高度、zen 隐藏。
+- 新增 `app/test/notification_progress_test.dart` 7 个 test 与 `app/test/notification_progress_ui_test.dart` 3 个 widget test，先红后绿 10/10（`p05.58-focused-red.log`/`p05.58-focused-green.log`）。
+- 回归定向：通知四套 + QuickInput 三步/分组/历史 + 命令历史 + 移动视图 + widget_test + 键位 + zen + 锁定滚动共 112 项全绿。
+- 本地 DoD：analyze 0 issues；新增 4 文件 `dart format` 0 changes（workbench_page 仅新增 5 行横幅层）；Rust fmt/test/Clippy 全绿（`p05.58-rust-gates.log`）；全量 Flutter `+1266 -31`（30 项与基线一致 + 1 项 widget_test git 面板轮换 flake，单跑两次 1/1），新增 10 项全部通过。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；下一步 LAY-18c（保存失败、LSP/工作区错误、工作区信任 banner 等产品来源接线）。
