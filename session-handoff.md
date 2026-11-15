@@ -61,8 +61,8 @@ Last Updated: 2026-11-16
 2. P05.62 代码 commit `4d2daa6` 的 PR CI `43745604458` 四项全绿；Platform Availability
    `43745600249` attempt 2 三平台全绿。attempt 1 native Quit runner failure 与 macOS DnD skip 均已在
    `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md` 记录。
-3. 完成当前 docs-only closeout commit 并推送；确认该 commit 的 PR CI 后，PR #3 保持 draft/open。
-4. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择一个依赖满足的 not-started 子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
+3. P05.62 代码与 closeout evidence 均已推送；确认 PR #3 仍是 OPEN/DRAFT，当前 worktree clean。
+4. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择并登记一个依赖满足的子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
    保持 draft/open，不合并。
 
 ## Evidence and Files
