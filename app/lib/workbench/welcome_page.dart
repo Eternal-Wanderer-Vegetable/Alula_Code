@@ -18,6 +18,9 @@ class WelcomePage extends StatelessWidget {
     required this.recentFiles,
     required this.recentWorkspaces,
     required this.onOpenRecent,
+    required this.walkthroughCompletedSteps,
+    required this.walkthroughStepCount,
+    required this.onOpenWalkthrough,
     required this.onClose,
   });
 
@@ -27,6 +30,9 @@ class WelcomePage extends StatelessWidget {
   final List<RecentHistoryEntry> recentFiles;
   final List<RecentHistoryEntry> recentWorkspaces;
   final void Function(RecentHistoryEntry entry) onOpenRecent;
+  final int walkthroughCompletedSteps;
+  final int walkthroughStepCount;
+  final VoidCallback onOpenWalkthrough;
   final VoidCallback onClose;
 
   static const List<({String id, IconData icon, String label})> startActions = [
@@ -113,6 +119,12 @@ class WelcomePage extends StatelessWidget {
                       onOpenRecent: onOpenRecent,
                     ),
                     const SizedBox(height: 18),
+                    _WelcomeWalkthroughSection(
+                      completedSteps: walkthroughCompletedSteps,
+                      stepCount: walkthroughStepCount,
+                      onOpen: onOpenWalkthrough,
+                    ),
+                    const SizedBox(height: 18),
                     if (start.isNotEmpty)
                       _WelcomeSection(
                         title: '开始',
@@ -140,6 +152,63 @@ class WelcomePage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _WelcomeWalkthroughSection extends StatelessWidget {
+  const _WelcomeWalkthroughSection({
+    required this.completedSteps,
+    required this.stepCount,
+    required this.onOpen,
+  });
+
+  final int completedSteps;
+  final int stepCount;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Walkthroughs',
+          key: const ValueKey('welcome-section-Walkthroughs'),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade300,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextButton(
+          key: const ValueKey('welcome-walkthrough-open'),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.lightBlueAccent,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            minimumSize: const Size(0, 48),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          onPressed: onOpen,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '开始使用 Alula Code',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                '$completedSteps / $stepCount 个步骤已完成',
+                key: const ValueKey('welcome-walkthrough-progress'),
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

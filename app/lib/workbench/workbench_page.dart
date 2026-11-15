@@ -107,6 +107,7 @@ import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
 import 'sidebar_position.dart';
 import 'welcome_page.dart';
+import 'walkthrough.dart';
 import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
@@ -482,6 +483,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   );
   RecentHistorySnapshot _recentHistory = const RecentHistorySnapshot();
   bool _recentHistoryFailureNotified = false;
+  // P05.62: the built-in walkthrough progress has its own bounded journal.
+  late final WalkthroughProgressStore _walkthroughProgressStore =
+      WalkthroughProgressStore(
+    path: '${widget.sessionStore.resolvePath()}.walkthrough-progress',
+  );
+  Set<String> _completedWalkthroughSteps = <String>{};
 
   // ---------- 通知中心（LAY-18a） ----------
   late final NotificationCenter _notifications =
@@ -537,6 +544,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // LAY-19a：欢迎页（编辑器区整页视图；上游为编辑器标签页，差异登记）。
   bool _welcomeVisible = false;
+  String? _activeWalkthroughId;
+  String _activeWalkthroughStepId =
+      alulaGettingStartedWalkthrough.steps.first.id;
   ModalEditorUseMode _modalEditorUseMode = ModalEditorUseMode.some;
   GitCli? _git;
   bool _gitReady = false;
@@ -647,6 +657,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _commandHistory = _commandHistoryStore.load();
     _recentHistory = _recentHistoryStore.load();
+    _completedWalkthroughSteps = _walkthroughProgressStore.load();
     unawaited(_refreshRecentHistory());
     _registerCommands();
     _panelTab.addListener(_syncCommandContext);
@@ -1659,6 +1670,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
     reg('workbench.action.welcome', '帮助', '欢迎',
         () async => _setWelcomeVisible(!_welcomeVisible));
+    reg(
+      'workbench.action.openWalkthrough',
+      '帮助',
+      '打开引导',
+      _openDefaultWalkthrough,
+      runWithArguments: _openWalkthroughFromArguments,
+    );
+    reg(
+      'welcome.showAllWalkthroughs',
+      '帮助',
+      'Open Walkthrough...',
+      _showWalkthroughPicker,
+    );
+    reg(
+      'welcome.markStepComplete',
+      '帮助',
+      'Mark Walkthrough Step Complete',
+      () => _setCurrentWalkthroughStepCompleted(true),
+      runWithArguments: (arguments) =>
+          _setWalkthroughStepFromArguments(arguments, true),
+    );
+    reg(
+      'welcome.markStepIncomplete',
+      '帮助',
+      'Mark Walkthrough Step Incomplete',
+      () => _setCurrentWalkthroughStepCompleted(false),
+      runWithArguments: (arguments) =>
+          _setWalkthroughStepFromArguments(arguments, false),
+    );
+    reg(
+      'resetGettingStartedProgress',
+      '帮助',
+      'Reset Walkthrough Progress',
+      _resetWalkthroughProgress,
+    );
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
   }
 
@@ -12830,6 +12876,134 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 欢迎页（LAY-19a） ----------
 
+  Future<void> _openDefaultWalkthrough() async {
+    _showWalkthrough(alulaGettingStartedWalkthrough);
+  }
+
+  Future<void> _openWalkthroughFromArguments(Object? arguments) async {
+    var walkthroughId = alulaGettingStartedWalkthroughId;
+    String? stepId;
+    if (arguments is String) {
+      walkthroughId = arguments;
+    } else if (arguments is Map) {
+      final category = arguments['category'] ?? arguments['id'];
+      if (category is String) walkthroughId = category;
+      final requestedStep = arguments['step'];
+      if (requestedStep is String) stepId = requestedStep;
+    }
+    if (walkthroughId != alulaGettingStartedWalkthroughId &&
+        walkthroughId != alulaGettingStartedWalkthrough.title) {
+      return;
+    }
+    final validStep = alulaGettingStartedWalkthrough.steps.any(
+      (step) => step.id == stepId,
+    );
+    _showWalkthrough(
+      alulaGettingStartedWalkthrough,
+      stepId: validStep ? stepId : null,
+    );
+  }
+
+  void _showWalkthrough(
+    WalkthroughDefinition walkthrough, {
+    String? stepId,
+  }) {
+    _setWelcomeVisible(false);
+    final selectedStep = walkthrough.steps.any((step) => step.id == stepId)
+        ? stepId!
+        : walkthrough.steps.first.id;
+    setState(() {
+      _activeWalkthroughId = walkthrough.id;
+      _activeWalkthroughStepId = selectedStep;
+    });
+  }
+
+  Future<void> _showWalkthroughPicker() async {
+    await QuickInput.show(
+      context,
+      hint: '选择 Walkthrough',
+      items: <QuickItem>[
+        QuickItem(
+          label: alulaGettingStartedWalkthrough.title,
+          description: '内置引导',
+          detail: alulaGettingStartedWalkthrough.description,
+          onRun: _openDefaultWalkthrough,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _setWalkthroughStepFromArguments(
+    Object? arguments,
+    bool completed,
+  ) async {
+    String? stepId;
+    if (arguments is String) {
+      stepId = arguments;
+    } else if (arguments is Map) {
+      final value = arguments['step'] ?? arguments['id'];
+      if (value is String) stepId = value;
+    }
+    stepId ??= _activeWalkthroughStepId;
+    await _setWalkthroughStepCompleted(completed, stepId: stepId);
+  }
+
+  Future<void> _setCurrentWalkthroughStepCompleted(bool completed) =>
+      _setWalkthroughStepCompleted(completed);
+
+  Future<void> _setWalkthroughStepCompleted(
+    bool completed, {
+    String? stepId,
+  }) async {
+    final target = stepId ?? _activeWalkthroughStepId;
+    if (!_walkthroughProgressStore.setCompleted(target, completed)) {
+      _notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Walkthrough 进度写入失败。',
+        source: '工作台',
+      );
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      _completedWalkthroughSteps = _walkthroughProgressStore.load();
+    });
+  }
+
+  Future<void> _resetWalkthroughProgress() async {
+    if (!_walkthroughProgressStore.reset()) {
+      _notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Walkthrough 进度清除失败。',
+        source: '工作台',
+      );
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _completedWalkthroughSteps = <String>{});
+  }
+
+  void _selectWalkthroughStep(String stepId) {
+    if (!alulaGettingStartedWalkthrough.steps.any((step) => step.id == stepId)) {
+      return;
+    }
+    setState(() => _activeWalkthroughStepId = stepId);
+  }
+
+  void _backToWelcomeFromWalkthrough() {
+    setState(() => _activeWalkthroughId = null);
+    _setWelcomeVisible(true);
+  }
+
+  void _closeWalkthrough() {
+    setState(() => _activeWalkthroughId = null);
+  }
+
+  void _runWalkthroughCommand(String commandId) {
+    _dismissWelcomeForOpen();
+    _runCommand(commandId);
+  }
+
   void _setWelcomeVisible(bool visible) {
     if (_welcomeVisible == visible) return;
     setState(() => _welcomeVisible = visible);
@@ -12844,8 +13018,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 其它入口（文件树、快速打开、新建、打开文件夹）拿到文档后收起欢迎页。
   void _dismissWelcomeForOpen() {
-    if (!_welcomeVisible) return;
-    setState(() => _welcomeVisible = false);
+    if (!_welcomeVisible && _activeWalkthroughId == null) return;
+    final wasWelcomeVisible = _welcomeVisible;
+    setState(() {
+      _welcomeVisible = false;
+      _activeWalkthroughId = null;
+    });
+    if (wasWelcomeVisible) _scheduleStateSave();
   }
 
   Future<void> _refreshRecentHistory() async {
@@ -19166,6 +19345,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       [
                         const TitleMenuItem('欢迎(&&W)',
                             commandId: 'workbench.action.welcome'),
+                        const TitleMenuItem('Open Walkthrough...',
+                            commandId: 'welcome.showAllWalkthroughs'),
+                        const TitleMenuItem('重置引导进度',
+                            commandId: 'resetGettingStartedProgress'),
                         const TitleMenuItem.separator(),
                         const TitleMenuItem('关于 Alula Code(&&A)',
                             commandId: 'help.about'),
@@ -19186,8 +19369,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         recentWorkspaces: _recentHistory.workspaces,
                         onOpenRecent: (entry) =>
                             unawaited(_openRecentEntry(entry)),
+                        walkthroughCompletedSteps:
+                            alulaGettingStartedWalkthrough
+                                .completedCount(_completedWalkthroughSteps),
+                        walkthroughStepCount:
+                            alulaGettingStartedWalkthrough.steps.length,
+                        onOpenWalkthrough: _openDefaultWalkthrough,
                         onClose: () => _setWelcomeVisible(false),
                       )
+                    : _activeWalkthroughId ==
+                            alulaGettingStartedWalkthroughId
+                        ? WalkthroughPage(
+                            walkthrough: alulaGettingStartedWalkthrough,
+                            completedStepIds: _completedWalkthroughSteps,
+                            selectedStepId: _activeWalkthroughStepId,
+                            isCommandVisible: _commands.isVisible,
+                            onSelectStep: _selectWalkthroughStep,
+                            onToggleStep: (stepId, completed) =>
+                                unawaited(_setWalkthroughStepCompleted(
+                                  completed,
+                                  stepId: stepId,
+                                )),
+                            onRunCommand: _runWalkthroughCommand,
+                            onBackToWelcome: _backToWelcomeFromWalkthrough,
+                            onClose: _closeWalkthrough,
+                          )
                     : _zenMode
                     ? Center(
                         child: ConstrainedBox(
