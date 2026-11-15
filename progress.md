@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.61 hosted 完成；当前 active：P05.62 / feat-114 / LAY-19c Walkthrough（实现与本地完整 DoD 通过，待 hosted checks）
+### P05 / feat-027 进行中；P05.1–P05.62 hosted 完成；下一子项待按 N.2 选择
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
@@ -2294,7 +2294,7 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - hosted：PR CI [43737761143](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43737761143) 四项全绿；Platform Availability [43737756490](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43737756490) Linux/Windows/macOS 全绿。包 artifacts Linux/Windows/macOS `14170923319` / `14170799214` / `14172426384`；macOS ZIP SHA-256 `f16a0f38c6bf111ecc54181ac46c563a0a3996129b3f41257da9409ac09112d4` 匹配 sidecar、`unzip -tq` 通过（81 项）。Linux/Windows DnD `14170684184` / `14171327685` 通过；macOS DnD `14172052518` 明确因 pointer route unavailable 跳过；macOS startup/native Quit `14172282072` 通过。
 - 状态：P05.61 / feat-113 已完成；下一项按 N.2 登记 LAY-19c Walkthrough。详情见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 
-## P05.62 LAY-19c Walkthrough 本地完成（2026-11-16）
+## P05.62 LAY-19c Walkthrough 完成（2026-11-16）
 
 - P05.61 / feat-113 hosted closeout 已完成并登记。下一项按 `docs/03` N.2 启动 P05.62 / feat-114 / LAY-19c。
 - 固定 Code-OSS 1.145.0 源码确认 Walkthrough 列表、QuickPick 打开命令、步骤 checkbox 完成/撤销与用户级持久化/reset；Alula 无扩展宿主，当前 slice 只交付内置 Alula 向导，不实现扩展贡献点和扩展 completionEvents。
@@ -2303,4 +2303,5 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 store/widget focused tests 4/4，通过打开/返回、checkbox 完成/撤销、重启恢复、reset、指定步骤路由、QuickInput 和 checked 语义。
 - 本地 DoD：`cargo fmt --check` 通过；`flutter analyze` 0 issues；`bash init.sh` 四阶段全绿，Flutter 1315/1315。日志：`p05.62-cargo-fmt.log`、`p05.62-init.log`。
 - `workbench_page.dart` 因新版 Dart formatter 会重排超大历史文件，保持局部 diff（208 行）并未运行写入式 formatter；其余 5 个触及 Dart 文件 `dart format --set-exit-if-changed` 通过。
-- 状态：实现与本地 DoD 完成，待提交后检查 hosted PR CI 和 Platform Availability，再登记最终 artifact 证据。详见 `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
+- hosted：PR CI [43745604458](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43745604458) 四项全绿；Platform Availability [43745600249](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43745600249) attempt 2 Linux/Windows/macOS 全绿。attempt 1 macOS native Quit 因 Accessibility `AXError -25204`、System Events 超时而失败；attempt 2 Accessibility 菜单选择与 app 退出通过。Linux/Windows 原生 DnD 通过，macOS DnD artifact `14176931762` 因 hosted pointer route unavailable 明确跳过。Artifacts Linux/Windows/macOS `14174097410` / `14174168620` / `14177250117`；macOS ZIP SHA-256 `f77f8da1c65e5d36b9e9595d590572bb3efafc15c460e68fb1af070092b02f50` 匹配 sidecar，`unzip -tq` 通过（81 项）；macOS startup diagnostics `14176658932`。PR #3 保持 OPEN/DRAFT。详见 `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
+- 状态：P05.62 / feat-114 已完成；下一子项按 N.2 在后续 slice 选择，P05 总阶段保持 in-progress。PR #3 保持 OPEN/DRAFT。

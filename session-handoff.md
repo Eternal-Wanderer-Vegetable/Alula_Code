@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.61 已登记完成，P05.61 本地与 hosted 证据均已补齐；P05.62 / feat-114 / LAY-19c Walkthrough 已完成实现与本地完整 DoD，当前待提交并验证 hosted checks。
+- P05.1–P05.62 已登记完成，P05.62 / feat-114 / LAY-19c Walkthrough 的实现、本地 DoD 与 hosted closeout 均已完成；下一子项待按 N.2 启动。P05 总阶段仍为 in-progress。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -35,8 +35,8 @@ Last Updated: 2026-11-16
   - P05.60 / LAY-19a：Welcome 页与空编辑器组 watermark —— 本地 DoD 通过；PR CI `43726743775` 四项全绿；Platform Availability `43726740538` attempt 2 三平台通过。attempt 1 普通 macOS Release smoke 的 SIGTERM 收尾失败未复现；native-titlebar Quit、bundle 与 ZIP 校验通过。
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
   - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；本地 DoD、PR CI `43737761143` 与 Platform Availability `43737756490` 三平台全绿；Linux/Windows DnD 通过，macOS DnD 明确因 pointer route unavailable 跳过；macOS ZIP SHA-256 `f16a0f38…09112d4` 与 sidecar 一致。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
-- P05.62 / LAY-19c：已实现内置向导、步骤 checkbox、独立进度 journal、Welcome/QuickInput/Help/命令路由；focused tests 4/4。本地 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 全绿（Flutter 1315/1315）；hosted PR CI 与 Platform Availability 待提交后运行。报告：`docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`，全量输出 `p05.62-init.log`。
-- LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 已交付 a（Welcome/watermark）与 b（最近项目），当前推进 c（Walkthrough）。
+- P05.62 / LAY-19c：内置向导、步骤 checkbox、独立进度 journal、Welcome/QuickInput/Help/命令路由已完成；focused tests 4/4。本地 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 全绿（Flutter 1315/1315）。PR CI `43745604458` 四项全绿；Platform Availability `43745600249` attempt 2 三平台全绿。attempt 1 macOS Quit 探针因 hosted Accessibility 错误失败，attempt 2 通过；macOS DnD 因 pointer route unavailable 明确跳过。macOS ZIP SHA-256 `f77f8da1…92f50` 与 sidecar 一致、`unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
+- LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 的 Welcome/watermark、最近项目与 Walkthrough（a/b/c）均已完成。
 - 当前 managed worktree 上 P05.62 的完整 `bash init.sh` 已通过：Rust tests、Clippy `-D warnings`、
   core build、完整 Flutter 全集均通过；P05.62 全集 1315/1315。`cargo fmt --check` 和 `flutter analyze` 0 issues。
 - Flutter `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`；保持既有风格，
@@ -44,7 +44,7 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.61 hosted 证据均已登记。macOS DnD 当前 runner 仍报告 `CGEventPostToPid pointer route: false`，workflow 明确跳过该探针；Linux/Windows DnD 通过。
+- 无用户手动操作需求。P05.56–P05.62 hosted 证据均已登记。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
 - `bash init.sh --fast` 生成的 Linux/macOS/Windows plugin registrant 修改已恢复；PR 专用工作树当前干净。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
@@ -58,10 +58,11 @@ Last Updated: 2026-11-16
 1. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
    GitNexus 警告仍存在：`workbench_page.dart` (>512 KiB) 未入图、981 个跨语言属性点未链接、
    flow tracing 有 truncation；UNKNOWN 仍须源码确认。
-2. P05.60 hosted closeout 已登记：PR CI `43726743775`；Platform Availability
-   `43726740538` attempt 2 全绿。详情在 `docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
-3. 查看 P05.62 最终 diff 与 report；跑 `node .gitnexus/run.cjs detect-changes --scope all --repo .`，确认完整结果后提交并推送 PR #3。等待 PR CI / Platform Availability，补 artifact 与状态 evidence；PR 保持 draft/open。
-4. 每 slice 做完即更新 evidence/状态；提交前完整 `detect-changes --scope all`。PR #3
+2. P05.62 代码 commit `4d2daa6` 的 PR CI `43745604458` 四项全绿；Platform Availability
+   `43745600249` attempt 2 三平台全绿。attempt 1 native Quit runner failure 与 macOS DnD skip 均已在
+   `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md` 记录。
+3. 完成当前 docs-only closeout commit 并推送；确认该 commit 的 PR CI 后，PR #3 保持 draft/open。
+4. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择一个依赖满足的 not-started 子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
    保持 draft/open，不合并。
 
 ## Evidence and Files
