@@ -25,8 +25,11 @@ Last Updated: 2026-11-15
   - P05.58 / LAY-18b：进度通知（loading/percentage/cancel）与 banner 层 —— 本地 DoD
     完成、hosted 待补。报告：
     `docs/diagnostics/2026-11-15-p05/p05.58-notification-progress-banner.md`。
-- LAY-17 验收面已全部交付；LAY-18 已交付 a（基础设施）与 b（进度/banner），c（产品接线）
-  开放。
+  - P05.59 / LAY-18c：通知产品接线（journal 写入失败、文档保存失败）—— 本地 DoD 完成、
+    hosted 待补。报告：
+    `docs/diagnostics/2026-11-15-p05/p05.59-notification-product-wiring.md`。
+- LAY-17 与 LAY-18 验收面均已全部交付；下一步 LAY-19（Welcome/Walkthrough）、
+  LAY-20（焦点与 DnD 全链路）、CMD-01–12。
 - 门禁（Windows 原生执行；WSL `bash init.sh` 在本机不可用：脚本 CRLF + wrapper）：
   `cargo fmt --check`、`cargo test --workspace`、Clippy `-D warnings`、`flutter analyze`
   （0 issues）、focused tests 全绿。全量 `flutter test` 的 30 项失败是与切片无关的既有
@@ -35,8 +38,8 @@ Last Updated: 2026-11-15
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56 / P05.57 的 hosted 证据均已登记；P05.58 的 hosted
-  证据待采录。
+- 无用户手动操作需求。P05.56 / P05.57 的 hosted 证据已登记；P05.58 / P05.59 的
+  hosted 证据待采录（P05.58 的 Platform Availability 运行中）。
 - 工作树里 `app/{linux,macos,windows}/**/generated_plugin_registrant*` 等 7 个文件是
   P05.49 `desktop_multi_window` 依赖后本地构建生成的既有脏改动，不属任何切片，未提交、
   未回滚。
@@ -54,8 +57,9 @@ Last Updated: 2026-11-15
 2. 采录 P05.56 / P05.57 hosted（PR CI + Platform Availability 的 run id、artifacts、
    macOS ZIP SHA-256、DnD/startup 结果），补进 `docs/03`、`feature_list.json`、
    `progress.md`、对应报告与 PR body。
-3. 登记并实现 LAY-18c：把通知接到真实产品来源（保存失败、LSP/工作区错误、工作区信任
-   banner），随后 LAY-19（Welcome/Walkthrough）、LAY-20（焦点与 DnD 全链路）、CMD-01–12。
+3. 登记并实现 LAY-19：Welcome/Walkthrough/空组 watermark/最近项目/帮助路径及持久化，
+   随后 LAY-20（菜单/树/编辑器/面板/浮窗焦点、跨应用 DnD、drop overlay、快捷键路由）、
+   CMD-01–12。
 4. 收尾：更新 `feature_list.json`（status + evidence）、`docs/03`、`progress.md`、本
    handoff；提交前完整 `detect-changes`，保留既有本地脏改动不混入。
 
@@ -70,6 +74,9 @@ Last Updated: 2026-11-15
 - P05.58：`docs/diagnostics/2026-11-15-p05/p05.58-notification-progress-banner.md`，
   `p05.58-focused-red.log`、`p05.58-focused-green.log`、`p05.58-rust-gates.log`、
   `p05.58-full-flutter.log`
+- P05.59：`docs/diagnostics/2026-11-15-p05/p05.59-notification-product-wiring.md`，
+  `p05.59-focused-red.log`、`p05.59-focused-green.log`、`p05.59-rust-gates.log`、
+  `p05.59-full-flutter.log`
 - 产品文件：`app/lib/workbench/notifications.dart`、`notification_widgets.dart`、
   `status_bar.dart`、`workbench_page.dart`、`app/lib/main.dart`、
   `app/test/notification_center_test.dart`、`app/test/notification_ui_test.dart`

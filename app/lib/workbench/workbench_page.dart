@@ -596,6 +596,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String? _journalRecoveryNotice;
   String? _journalSaveError;
 
+  // LAY-18c：产品失败通知的跃迁去重（journal 失败 streak、按文档+错误码的保存失败）。
+  bool _journalFailureNotified = false;
+  final Set<String> _saveFailureNotified = <String>{};
+
   // LSP / 语法
   bool _lspStarting = false;
   bool _lspReady = false;
@@ -3332,8 +3336,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _journalSaveError = '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。'
               '${widget.sessionStore.lastSaveError ?? ''}';
         });
-      } else if (_journalSaveError != null) {
-        setState(() => _journalSaveError = null);
+        _notifyJournalSaveFailure();
+      } else {
+        if (_journalSaveError != null) {
+          setState(() => _journalSaveError = null);
+        }
+        _journalFailureNotified = false;
       }
     });
   }
@@ -15468,6 +15476,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             mergeSessionOutOfSync ? '$savedStatus（合并会话需要同步）' : savedStatus;
       });
       _scheduleStateSave(); // 保存后 journal 里的 text 分支消失（转干净）
+      _clearSaveFailureNotification(doc);
       if (doc.lspAttached && _lspReady) {
         try {
           doc.doc.core.lsp.didSave(doc.id);
@@ -15481,7 +15490,51 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           doc.diskState = DiskDocumentState.readOnly;
         }
       });
+      _notifySaveFailure(doc, e);
     }
+  }
+
+  /// LAY-18c：保存失败按（文档 id + 错误码）跃迁通知一次；成功保存后清除记录，
+  /// 同一文档再次失败仍会重新提示。既有状态栏/另存为横幅保持原样。
+  void _notifySaveFailure(OpenDoc doc, AlulaException error) {
+    final key = '${doc.id}:${error.code}';
+    if (!_saveFailureNotified.add(key)) return;
+    _notifications.notify(
+      severity: WorkbenchNotificationSeverity.error,
+      message: '保存 ${doc.name} 失败：${error.code} ${error.detail}',
+      source: '文件',
+      actions: [
+        WorkbenchNotificationAction(
+          label: '另存为…',
+          key: 'save-as',
+          run: () async => _saveAsDoc(doc),
+        ),
+      ],
+    );
+  }
+
+  void _clearSaveFailureNotification(OpenDoc doc) {
+    final prefix = '${doc.id}:';
+    _saveFailureNotified.removeWhere((key) => key.startsWith(prefix));
+  }
+
+  /// LAY-18c：会话 journal 写入失败只在「正常 → 失败」跃迁时提示一次，避免每次
+  /// 自动保存失败都刷屏；重试动作重新触发一次保存。
+  void _notifyJournalSaveFailure() {
+    if (_journalFailureNotified) return;
+    _journalFailureNotified = true;
+    _notifications.notify(
+      severity: WorkbenchNotificationSeverity.warning,
+      message: '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。',
+      source: '工作台',
+      actions: [
+        WorkbenchNotificationAction(
+          label: '重试保存会话',
+          key: 'retry-session-save',
+          run: () async => _scheduleStateSave(),
+        ),
+      ],
+    );
   }
 
   Future<void> _revertActive() async {
