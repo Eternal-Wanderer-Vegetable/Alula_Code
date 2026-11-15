@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.60 已登记完成，P05.60 本地与 hosted 证据均已补齐；P05.61 实现与本地 DoD 已通过，hosted 证据待本次提交后补齐。
+- P05.1–P05.61 已登记完成，P05.61 本地与 hosted 证据均已补齐；下一项按 N.2 登记 LAY-19c Walkthrough。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -34,17 +34,16 @@ Last Updated: 2026-11-16
     `docs/diagnostics/2026-11-15-p05/p05.59-notification-product-wiring.md`。
   - P05.60 / LAY-19a：Welcome 页与空编辑器组 watermark —— 本地 DoD 通过；PR CI `43726743775` 四项全绿；Platform Availability `43726740538` attempt 2 三平台通过。attempt 1 普通 macOS Release smoke 的 SIGTERM 收尾失败未复现；native-titlebar Quit、bundle 与 ZIP 校验通过。
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
-  - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；`cargo fmt --check`、`bash init.sh`（Flutter 全集 1311 项）与 `flutter analyze` 通过；待 PR hosted closeout。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
-- LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 已交付 a（Welcome/watermark），
-  b（最近项目）与 c（Walkthrough）开放；下一步 LAY-19b。
-- 当前 managed worktree 已能直接执行 `bash init.sh`：Rust tests、Clippy `-D warnings`、
+  - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；本地 DoD、PR CI `43737761143` 与 Platform Availability `43737756490` 三平台全绿；Linux/Windows DnD 通过，macOS DnD 明确因 pointer route unavailable 跳过；macOS ZIP SHA-256 `f16a0f38…09112d4` 与 sidecar 一致。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
+- LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 已交付 a（Welcome/watermark）与 b（最近项目），下一项 c（Walkthrough）。
+- 当前 managed worktree 上 P05.61 的完整 `bash init.sh` 已通过：Rust tests、Clippy `-D warnings`、
   core build、完整 Flutter 全集均通过；P05.61 全集 1311/1311。`flutter analyze` 0 issues。
 - Flutter `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`；保持既有风格，
   本 slice 手工保留 191 行局部 diff，仅格式化其他新增/小型改动文件。
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.60 hosted 证据均已登记。macOS DnD 当前 runner 仍报告 `CGEventPostToPid pointer route: false`，workflow 明确跳过该探针；Linux/Windows DnD 通过。
+- 无用户手动操作需求。P05.56–P05.61 hosted 证据均已登记。macOS DnD 当前 runner 仍报告 `CGEventPostToPid pointer route: false`，workflow 明确跳过该探针；Linux/Windows DnD 通过。
 - `bash init.sh --fast` 生成的 Linux/macOS/Windows plugin registrant 修改已恢复；PR 专用工作树当前干净。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
@@ -60,7 +59,7 @@ Last Updated: 2026-11-16
    flow tracing 有 truncation；UNKNOWN 仍须源码确认。
 2. P05.60 hosted closeout 已登记：PR CI `43726743775`；Platform Availability
    `43726740538` attempt 2 全绿。详情在 `docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
-3. 完成 P05.61 hosted closeout，更新 `docs/03`、`feature_list.json`、`progress.md` 与 PR 证据；随后登记并实现 P05.62 / LAY-19c Walkthrough。
+3. 按 `docs/03` N.2 与 Code-OSS 1.145.0 源码登记 P05.62 / feat-114 / LAY-19c Walkthrough，再做 GitNexus impact 后实现、验证与登记证据。
 4. 每 slice 做完即更新 evidence/状态；提交前完整 `detect-changes --scope all`。PR #3
    保持 draft/open，不合并。
 

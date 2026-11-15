@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.60 hosted 完成；当前 active：P05.61 / feat-113 / LAY-19b 最近项目（本地 DoD 全绿，hosted closeout 待提交后完成）
+### P05 / feat-027 进行中；P05.1–P05.61 hosted 完成；下一项：按 N.2 登记并实现 LAY-19c Walkthrough
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
@@ -2291,4 +2291,5 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 上游固定源：Code-OSS 1.145.0 `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`。MenubarControl 最多列 10 个工作区和 10 个文件；WorkspacesHistoryMainService 的总上限为 500。
 - 实现前 GitNexus：CommandHistoryStore/FindReplaceHistoryStore LOW；SessionStore MEDIUM；WelcomePage/TitleMenuItem UNKNOWN，WorkbenchPage 私有打开入口未入图。已对 UNKNOWN 做源码搜索确认；`workbench_page.dart` 超 512 KiB，另有跨语言属性与 flow truncation 警告。详见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 - 本地 DoD：`cargo fmt --check` 通过，`bash init.sh` 四阶段通过（Rust tests、Clippy、core build、Flutter 全集 1311/1311），`flutter analyze` 为 0 issues。最终 `workbench_page.dart` 仅新增 191 行，无全文件 formatter diff。
-- 状态：实现与本地验收完成；本次提交后等待 hosted CI / Platform Availability，再补证据并登记 done；之后继续 LAY-19c Walkthrough。详情见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
+- hosted：PR CI [43737761143](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43737761143) 四项全绿；Platform Availability [43737756490](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43737756490) Linux/Windows/macOS 全绿。包 artifacts Linux/Windows/macOS `14170923319` / `14170799214` / `14172426384`；macOS ZIP SHA-256 `f16a0f38c6bf111ecc54181ac46c563a0a3996129b3f41257da9409ac09112d4` 匹配 sidecar、`unzip -tq` 通过（81 项）。Linux/Windows DnD `14170684184` / `14171327685` 通过；macOS DnD `14172052518` 明确因 pointer route unavailable 跳过；macOS startup/native Quit `14172282072` 通过。
+- 状态：P05.61 / feat-113 已完成；下一项按 N.2 登记 LAY-19c Walkthrough。详情见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
