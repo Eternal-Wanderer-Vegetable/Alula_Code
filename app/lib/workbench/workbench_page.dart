@@ -105,6 +105,7 @@ import 'quick_input.dart';
 import 'secondary_sidebar_empty_state.dart';
 import 'secondary_sidebar_layout.dart';
 import 'sidebar_position.dart';
+import 'welcome_page.dart';
 import 'sidebar_view_locations.dart';
 import 'session_store.dart';
 import 'status_bar.dart';
@@ -525,6 +526,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _zenPreZenPanelCollapsed = false;
   // LAY-13a：当前模态编辑器的脱离视图（不在任何组内）。
   OpenDoc? _modalEditorDoc;
+
+  // LAY-19a：欢迎页（编辑器区整页视图；上游为编辑器标签页，差异登记）。
+  bool _welcomeVisible = false;
   ModalEditorUseMode _modalEditorUseMode = ModalEditorUseMode.some;
   GitCli? _git;
   bool _gitReady = false;
@@ -1636,6 +1640,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('lsp.start', '语言服务', '启动 rust-analyzer', _startLsp,
         enablement: 'workspaceOpen && !lspStarting && !lspReady');
     reg('help.about', '帮助', '关于 Alula Code', () async => _showAbout());
+    reg('workbench.action.welcome', '帮助', '欢迎',
+        () async => _setWelcomeVisible(!_welcomeVisible));
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
   }
 
@@ -3361,6 +3367,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'openEditorsCollapsed': _openEditorsCollapsed,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
+        'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -3484,6 +3491,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
+    _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -11681,6 +11689,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _newUntitledFile() async {
     final core = _core;
     if (core == null) return;
+    _dismissWelcomeForOpen();
     final previous = _active;
     if (previous != null) _flushInput(previous, commitComposition: true);
 
@@ -11844,6 +11853,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     if (result != null && result.isNotEmpty) {
+      _dismissWelcomeForOpen();
       _openFolder(result);
       if (widget.autoLsp || _lspReady) _startLsp();
     }
@@ -11882,6 +11892,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _openTreeFile(TreeNode node) {
+    _dismissWelcomeForOpen();
     final previousClickClock = _lastExplorerClickClock;
     final isDoubleClick =
         _lastExplorerClickPath == node.path &&
@@ -12450,6 +12461,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool asPreview = false,
     bool pinPreview = false,
   }) async {
+    _dismissWelcomeForOpen();
     if (!asPreview && !pinPreview) {
       _lastExplorerClickPath = null;
       _lastExplorerClickClock = null;
@@ -12793,6 +12805,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _scheduleStateSave();
+  }
+
+  // ---------- 欢迎页（LAY-19a） ----------
+
+  void _setWelcomeVisible(bool visible) {
+    if (_welcomeVisible == visible) return;
+    setState(() => _welcomeVisible = visible);
+    _scheduleStateSave();
+  }
+
+  /// 欢迎页条目：先隐藏欢迎页再执行命令（打开文件/文件夹等不应停在欢迎页）。
+  void _runWelcomeCommand(String commandId) {
+    _setWelcomeVisible(false);
+    _runCommand(commandId);
+  }
+
+  /// 其它入口（文件树、快速打开、新建、打开文件夹）拿到文档后收起欢迎页。
+  void _dismissWelcomeForOpen() {
+    if (!_welcomeVisible) return;
+    setState(() => _welcomeVisible = false);
   }
 
   // ---------- 跨编辑器锁定滚动（LAY-15） ----------
@@ -18944,6 +18976,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     (
                       '帮助(&&H)',
                       [
+                        const TitleMenuItem('欢迎(&&W)',
+                            commandId: 'workbench.action.welcome'),
+                        const TitleMenuItem.separator(),
                         const TitleMenuItem('关于 Alula Code(&&A)',
                             commandId: 'help.about'),
                       ],
@@ -18955,7 +18990,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   onDismiss: _notifications.dismiss,
                 ),
               Expanded(
-                child: _zenMode
+                child: _welcomeVisible
+                    ? WelcomePage(
+                        isCommandVisible: _commands.isVisible,
+                        onRunCommand: _runWelcomeCommand,
+                        onClose: () => _setWelcomeVisible(false),
+                      )
+                    : _zenMode
                     ? Center(
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 1100),
@@ -21174,9 +21215,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _ensureScrollSyncListeners();
     final active = g.active;
     if (active == null) {
-      return Center(
-        child: Text('打开文件夹后，从文件树选择文件',
-            style: TextStyle(color: Colors.grey.shade500)),
+      return EmptyEditorGroupWatermark(
+        isCommandVisible: _commands.isVisible,
+        onRunCommand: _runWelcomeCommand,
+        onShowWelcome: () => _setWelcomeVisible(true),
       );
     }
     final usesRustSyntax = active.path?.toLowerCase().endsWith('.rs') == true;

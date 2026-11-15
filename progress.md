@@ -2273,3 +2273,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 本地 DoD：analyze 0 issues；新测试 `dart format` 0 changes；Rust fmt/test/Clippy 全绿（`p05.59-rust-gates.log`）；全量 Flutter `+1269 -30`，失败集合与基线逐条一致（Compare-Object 空差集），新增 2 项全部通过。
 - hosted：PR CI `43717815102` 四项首跑全绿；Platform Availability `43717810444` Linux/Windows 首跑通过，macOS attempt 1 仅 native-titlebar Quit 探针 flake（其余步骤通过）、`--failed` 重跑 attempt 2 全绿；包 artifacts `14163775562`/`14162919367`/`14165977230`；Linux/Windows DnD `14163356720`/`14162674565` 通过 move/copy/external text（19/13 pointer events）；macOS DnD `14165123118` pointer route skip；macOS startup/native Quit `14165643113` 通过；macOS ZIP SHA-256 `52d83c0684eb217dbd1c0e32cbfd659f6afa7f0e3274c2a9be3ae09440d45d2c` 与 sidecar 一致且 `tar -tf` 81 项。P05.59 done。
 - LAY-18 验收面（toast/center/banner/DND/来源过滤/actions/取消/loading/error/可访问提示）已全部交付；P05/feat-027 继续 in-progress，下一步 LAY-19（Welcome/Walkthrough）。
+
+## P05.60 LAY-19a Welcome 页与空编辑器组 watermark 完成（2026-11-15）
+
+- 实现：`WelcomePage`（开始：新建文本文件/打开文件夹…/快速打开文件…/命令面板；帮助：关于 Alula Code；`welcome-action-<commandId>`、`welcome-section-<名称>`、`welcome-close`、`welcome-page`，不可见命令不渲染）+ `workbench.action.welcome`（帮助类别、无默认键位）+ 帮助菜单「欢迎」项；`_welcomeVisible` 为真时编辑器区整页替代 `WorkbenchGrid`（zen 同样），`_runWelcomeCommand` 先收起再执行真实命令，`_dismissWelcomeForOpen` 在新建/打开文件夹/文件树/`_openFileByPath` 时收起；会话 journal `welcomeVisible` 持久化恢复；`EmptyEditorGroupWatermark`（`empty-group-watermark`、`watermark-action-<id>`、`watermark-show-welcome`）替换原单行提示。
+- 新增 `app/test/welcome_page_test.dart` 4 个 widget test（命令打开/关闭恢复网格、条目执行真实命令并收起、会话恢复、空组 watermark 三入口），语义红→绿 4/4（`p05.60-focused-red.log`/`p05.60-focused-green.log`）。
+- 回归定向：欢迎页 + 通知四套 + widget_test + zen + 锁定滚动 + 模态编辑器 + Open Editors + 组 MRU + 移动视图 + 键位共 93 项全绿。
+- 本地 DoD：analyze 0 issues；新文件 `dart format` 0 changes（workbench_page 新增 46 行）；Rust fmt/test/Clippy 全绿（`p05.60-rust-gates.log`）；全量 Flutter `+1271 -32`（30 项与基线一致 + 2 项 merge-editor 轮换 flake，单跑验证），新增 4 项全部通过。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；下一步 LAY-19b（最近项目）与 LAY-19c（Walkthrough）。
