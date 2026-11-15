@@ -2244,7 +2244,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 回归定向：命令面板历史/QuickInput 三步/移动视图/widget_test/panel/editor tab/键位/导航共 94 项全绿。
 - 本地 DoD：analyze 0 issues；新增/重写 5 文件 `dart format` 0 changes（workbench_page/main 保持既有风格）；Rust fmt/test/Clippy 全绿（`p05.56-rust-gates.log`）；全量 Flutter `+1242 -32`（30 项与基线一致 + 2 项 merge-editor 轮换 flake；单跑该文件仍只失败基线那两项），新增 11 项全部通过。
 - GitNexus：`AlulaApp` LOW（1 direct）、`QuickInput.show` UNKNOWN（0 resolved callers，源码核对）、detect-changes 8 files/7 symbols/0 processes，risk low。
-- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；LAY-17 验收面（分组/多选/描述/detail/buttons/back/校验/历史/取消与焦点恢复）已全部登记，下一步 LAY-18 通知与进度。
+- hosted：PR CI `43710612479` 四项首跑全绿（Rust ubuntu/windows、Flutter analyze+test、Harness）；Platform Availability `43710607607` Linux/Windows/macOS Intel x64 首跑全绿（macOS lane 构建约 43 分钟但无失败/重跑）；包 artifacts `14159813908`/`14160870158`/`14160939110`；Linux/Windows DnD `14159908129`/`14160680775` 通过 move/copy/external text（19/12 pointer events）；macOS DnD `14161812286` pointer route skip；macOS startup/native Quit `14161487803` 通过；macOS ZIP SHA-256 `1ebf59543fa766fd34d8e2f0ef0d4ce98a0190108fe8300f1fb016a4c1035263` 与 sidecar 一致且 `tar -tf` 81 项。P05.56 done。
+- P05/feat-027 继续 in-progress；LAY-17 验收面已全部交付，下一步 LAY-18 通知与进度。
 
 ## P05.57 LAY-18a 通知中心与 toast 基础设施完成（2026-11-15）
 
