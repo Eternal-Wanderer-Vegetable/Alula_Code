@@ -2262,7 +2262,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/notification_progress_test.dart` 7 个 test 与 `app/test/notification_progress_ui_test.dart` 3 个 widget test，先红后绿 10/10（`p05.58-focused-red.log`/`p05.58-focused-green.log`）。
 - 回归定向：通知四套 + QuickInput 三步/分组/历史 + 命令历史 + 移动视图 + widget_test + 键位 + zen + 锁定滚动共 112 项全绿。
 - 本地 DoD：analyze 0 issues；新增 4 文件 `dart format` 0 changes（workbench_page 仅新增 5 行横幅层）；Rust fmt/test/Clippy 全绿（`p05.58-rust-gates.log`）；全量 Flutter `+1266 -31`（30 项与基线一致 + 1 项 widget_test git 面板轮换 flake，单跑两次 1/1），新增 10 项全部通过。
-- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；下一步 LAY-18c（保存失败、LSP/工作区错误、工作区信任 banner 等产品来源接线）。
+- hosted：PR CI `43717289132` 四项首跑全绿；Platform Availability `43717284222` Linux/Windows/macOS Intel x64 首跑全绿；包 artifacts `14163420702`/`14163321820`/`14164380775`；Linux/Windows DnD `14163425642`/`14163685672` 通过 move/copy/external text（23/13 pointer events）；macOS DnD `14163434604` pointer route skip；macOS startup/native Quit `14164485222` 通过；macOS ZIP SHA-256 `1423aafa0d9d31a951c890fe82a0660c0b3cf3bb7c19f3023b46bf1e6e9eb345` 与 sidecar 一致且 `tar -tf` 81 项。P05.58 done。
+- P05/feat-027 继续 in-progress；下一步 LAY-18c（保存失败、LSP/工作区错误、工作区信任 banner 等产品来源接线）。
 
 ## P05.59 LAY-18c 通知产品接线完成（2026-11-15）
 
@@ -2270,5 +2271,5 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/notification_wiring_test.dart` 2 个 widget test（journal 失败去重+重试动作；只读保存失败通知+动作打开另存为+再次失败不重复），语义红→绿（`p05.59-focused-red.log` 两条均为 `Expected: <1>` 失败；绿：`p05.59-focused-green.log` 2/2）。
 - 回归定向：通知五套 + QuickInput 三步/分组/历史 + 命令历史 + widget_test + 移动视图 + 键位共 108 项全绿（含 P02.5/P02.6）。
 - 本地 DoD：analyze 0 issues；新测试 `dart format` 0 changes；Rust fmt/test/Clippy 全绿（`p05.59-rust-gates.log`）；全量 Flutter `+1269 -30`，失败集合与基线逐条一致（Compare-Object 空差集），新增 2 项全部通过。
-- hosted：PR CI `43717289132` 四项首跑全绿；Platform Availability `43717284222` Linux/Windows/macOS Intel x64 首跑全绿；包 artifacts `14163420702`/`14163321820`/`14164380775`；Linux/Windows DnD `14163425642`/`14163685672` 通过 move/copy/external text（23/13 pointer events）；macOS DnD `14163434604` pointer route skip；macOS startup/native Quit `14164485222` 通过；macOS ZIP SHA-256 `1423aafa0d9d31a951c890fe82a0660c0b3cf3bb7c19f3023b46bf1e6e9eb345` 与 sidecar 一致且 `tar -tf` 81 项。P05.58 done。
+- hosted：PR CI `43717815102` 四项首跑全绿；Platform Availability `43717810444` Linux/Windows 首跑通过，macOS attempt 1 仅 native-titlebar Quit 探针 flake（其余步骤通过）、`--failed` 重跑 attempt 2 全绿；包 artifacts `14163775562`/`14162919367`/`14165977230`；Linux/Windows DnD `14163356720`/`14162674565` 通过 move/copy/external text（19/13 pointer events）；macOS DnD `14165123118` pointer route skip；macOS startup/native Quit `14165643113` 通过；macOS ZIP SHA-256 `52d83c0684eb217dbd1c0e32cbfd659f6afa7f0e3274c2a9be3ae09440d45d2c` 与 sidecar 一致且 `tar -tf` 81 项。P05.59 done。
 - LAY-18 验收面（toast/center/banner/DND/来源过滤/actions/取消/loading/error/可访问提示）已全部交付；P05/feat-027 继续 in-progress，下一步 LAY-19（Welcome/Walkthrough）。
