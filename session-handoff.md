@@ -22,8 +22,9 @@ Last Updated: 2026-11-15
     （`72edbe0`；hosted 已登记：PR CI `43713492886`、Platform Availability `43713488195`
     三平台首跑全绿，macOS ZIP SHA-256 `de166272…51f0` 与 sidecar 一致）。报告：
     `docs/diagnostics/2026-11-15-p05/p05.57-notification-center.md`。
-  - P05.58 / LAY-18b：进度通知（loading/percentage/cancel）与 banner 层 —— 本地 DoD
-    完成、hosted 待补。报告：
+  - P05.58 / LAY-18b：进度通知（loading/percentage/cancel）与 banner 层（`9f184ca`；
+    hosted 已登记：PR CI `43717289132`、Platform Availability `43717284222` 三平台首跑
+    全绿，macOS ZIP SHA-256 `1423aafa…b345` 与 sidecar 一致）。报告：
     `docs/diagnostics/2026-11-15-p05/p05.58-notification-progress-banner.md`。
   - P05.59 / LAY-18c：通知产品接线（journal 写入失败、文档保存失败）—— 本地 DoD 完成、
     hosted 待补。报告：
@@ -38,8 +39,9 @@ Last Updated: 2026-11-15
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56 / P05.57 的 hosted 证据已登记；P05.58 / P05.59 的
-  hosted 证据待采录（P05.58 的 Platform Availability 运行中）。
+- 无用户手动操作需求。P05.58 的 hosted 证据已登记；P05.59 的 Platform Availability
+  `43717810444` 首次仅 macOS native-titlebar Quit 探针失败（其余步骤与另两平台通过），
+  `--failed` 重跑中，待 attempt 2 结果登记。
 - 工作树里 `app/{linux,macos,windows}/**/generated_plugin_registrant*` 等 7 个文件是
   P05.49 `desktop_multi_window` 依赖后本地构建生成的既有脏改动，不属任何切片，未提交、
   未回滚。

@@ -2270,4 +2270,5 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 新增 `app/test/notification_wiring_test.dart` 2 个 widget test（journal 失败去重+重试动作；只读保存失败通知+动作打开另存为+再次失败不重复），语义红→绿（`p05.59-focused-red.log` 两条均为 `Expected: <1>` 失败；绿：`p05.59-focused-green.log` 2/2）。
 - 回归定向：通知五套 + QuickInput 三步/分组/历史 + 命令历史 + widget_test + 移动视图 + 键位共 108 项全绿（含 P02.5/P02.6）。
 - 本地 DoD：analyze 0 issues；新测试 `dart format` 0 changes；Rust fmt/test/Clippy 全绿（`p05.59-rust-gates.log`）；全量 Flutter `+1269 -30`，失败集合与基线逐条一致（Compare-Object 空差集），新增 2 项全部通过。
-- hosted：待 PR CI / Platform Availability 运行后登记。LAY-18 验收面（toast/center/banner/DND/来源过滤/actions/取消/loading/error/可访问提示）已全部交付；P05/feat-027 继续 in-progress，下一步 LAY-19（Welcome/Walkthrough）。
+- hosted：PR CI `43717289132` 四项首跑全绿；Platform Availability `43717284222` Linux/Windows/macOS Intel x64 首跑全绿；包 artifacts `14163420702`/`14163321820`/`14164380775`；Linux/Windows DnD `14163425642`/`14163685672` 通过 move/copy/external text（23/13 pointer events）；macOS DnD `14163434604` pointer route skip；macOS startup/native Quit `14164485222` 通过；macOS ZIP SHA-256 `1423aafa0d9d31a951c890fe82a0660c0b3cf3bb7c19f3023b46bf1e6e9eb345` 与 sidecar 一致且 `tar -tf` 81 项。P05.58 done。
+- LAY-18 验收面（toast/center/banner/DND/来源过滤/actions/取消/loading/error/可访问提示）已全部交付；P05/feat-027 继续 in-progress，下一步 LAY-19（Welcome/Walkthrough）。
