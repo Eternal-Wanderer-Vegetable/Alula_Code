@@ -18,8 +18,9 @@ Last Updated: 2026-11-15
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
     hosted 已登记：PR CI `43710612479`、Platform Availability `43710607607` 三平台首跑
     全绿，macOS ZIP SHA-256 `1ebf5954…5263` 与 sidecar 一致）。
-  - P05.57 / LAY-18a：通知中心与 toast 基础设施（DND、来源过滤、可访问提示）——
-    本地 DoD 完成，hosted 待补。报告：
+  - P05.57 / LAY-18a：通知中心与 toast 基础设施（DND、来源过滤、可访问提示）
+    （`72edbe0`；hosted 已登记：PR CI `43713492886`、Platform Availability `43713488195`
+    三平台首跑全绿，macOS ZIP SHA-256 `de166272…51f0` 与 sidecar 一致）。报告：
     `docs/diagnostics/2026-11-15-p05/p05.57-notification-center.md`。
 - LAY-17 验收面（分组/多选/描述/detail/buttons/back/校验/历史/取消与焦点恢复）已全部
   交付；LAY-18 已交付 a（通知基础设施），b（进度通知/banner）与 c（产品接线）开放。
@@ -31,8 +32,7 @@ Last Updated: 2026-11-15
 
 ## Blockers
 
-- 无用户手动操作需求。P05.57 的 hosted 证据（PR CI `43713492886` 已绿；Platform
-  Availability `43713488195` 运行中）待采录后登记。
+- 无用户手动操作需求。P05.56 / P05.57 的 hosted 证据均已登记（见上）。
 - 工作树里 `app/{linux,macos,windows}/**/generated_plugin_registrant*` 等 7 个文件是
   P05.49 `desktop_multi_window` 依赖后本地构建生成的既有脏改动，不属任何切片，未提交、
   未回滚。
