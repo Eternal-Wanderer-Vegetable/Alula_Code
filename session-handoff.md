@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last Updated: 2026-11-15
+Last Updated: 2026-11-16
 
 ## Current Objective
 
@@ -10,9 +10,10 @@ Last Updated: 2026-11-15
 
 ## Current State
 
-- 工作树：`E:/temp/alula-pr3-p05`（该分支专用 worktree），分支
-  `codex/vscode-parity-p05`。`E:/Alula_Code` 是另一条 p00 线，未改动。
-- P05.1–P05.60 已登记完成（仅 P05.60 的 hosted 证据待补）。
+- 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
+  checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
+  更改；从此 managed worktree 将提交推送到 PR 远端分支。
+- P05.1–P05.60 已登记完成，P05.60 本地与 hosted 证据均已补齐。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -31,7 +32,7 @@ Last Updated: 2026-11-15
     首跑通过 + macOS attempt 1 Quit 探针 flake、attempt 2 全绿，macOS ZIP SHA-256
     `52d83c06…5d2c` 与 sidecar 一致）。报告：
     `docs/diagnostics/2026-11-15-p05/p05.59-notification-product-wiring.md`。
-  - P05.60 / LAY-19a：Welcome 页与空编辑器组 watermark —— 本地 DoD 完成、hosted 待补。
+  - P05.60 / LAY-19a：Welcome 页与空编辑器组 watermark —— 本地 DoD 通过；PR CI `43726743775` 四项全绿；Platform Availability `43726740538` attempt 2 三平台通过。attempt 1 普通 macOS Release smoke 的 SIGTERM 收尾失败未复现；native-titlebar Quit、bundle 与 ZIP 校验通过。
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
 - LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 已交付 a（Welcome/watermark），
   b（最近项目）与 c（Walkthrough）开放；下一步 LAY-19b。
@@ -43,10 +44,8 @@ Last Updated: 2026-11-15
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.59 的 hosted 证据均已登记；P05.60 待采录。
-- 工作树里 `app/{linux,macos,windows}/**/generated_plugin_registrant*` 等 7 个文件是
-  P05.49 `desktop_multi_window` 依赖后本地构建生成的既有脏改动，不属任何切片，未提交、
-  未回滚。
+- 无用户手动操作需求。P05.56–P05.60 hosted 证据均已登记。macOS DnD 当前 runner 仍报告 `CGEventPostToPid pointer route: false`，workflow 明确跳过该探针；Linux/Windows DnD 通过。
+- `bash init.sh --fast` 生成的 Linux/macOS/Windows plugin registrant 修改已恢复；PR 专用工作树当前干净。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
 - GitNexus 图覆盖：`workbench_page.dart` > 512 KiB 不入图（私有方法 UNKNOWN）、跨语言
@@ -56,17 +55,16 @@ Last Updated: 2026-11-15
 
 ## Next Session First Step
 
-1. `node .gitnexus/run.cjs status`：索引基于 P05.60 工作树改动重建，提交后需刷新；
-   stale 则 `analyze --index-only`，必要时 `GITNEXUS_LBUG_MAX_DB_SIZE=34359738368`。
-2. 采录 P05.60 hosted（PR CI + Platform Availability 的 run id、artifacts、macOS ZIP
-   SHA-256、DnD/startup 结果），补进 `docs/03`、`feature_list.json`、`progress.md`、
-   报告与 PR body。
-3. 登记并实现 LAY-19b：最近项目（文件/工作区 MRU 有界持久化、Welcome「最近」分区、
-   File > Open Recent 子菜单、缺失路径处理），随后 LAY-19c（Walkthrough：列表/步骤/
-   完成状态持久化）、LAY-20（菜单/树/编辑器/面板/浮窗焦点、跨应用 DnD、drop overlay、
-   快捷键路由）、CMD-01–12。
-4. 收尾：更新 `feature_list.json`（status + evidence）、`docs/03`、`progress.md`、本
-   handoff；提交前完整 `detect-changes`，保留既有本地脏改动不混入。
+1. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
+   GitNexus 警告仍存在：`workbench_page.dart` (>512 KiB) 未入图、981 个跨语言属性点未链接、
+   flow tracing 有 truncation；UNKNOWN 仍须源码确认。
+2. P05.60 hosted closeout 已登记：PR CI `43726743775`；Platform Availability
+   `43726740538` attempt 2 全绿。详情在 `docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
+3. 下一项 LAY-19b：先注册 feature，再实现最近项目（文件/工作区有界 MRU 持久化、Welcome
+   「最近」分区、File > Open Recent 子菜单、缺失路径处理），随后按 `docs/03` 逐 slice 完成
+   LAY-19c、LAY-20、LAY-12b、LAY-13b、LAY-16b 与 CMD-01–12。
+4. 每 slice 做完即更新 evidence/状态；提交前完整 `detect-changes --scope all`。PR #3
+   保持 draft/open，不合并。
 
 ## Evidence and Files
 
