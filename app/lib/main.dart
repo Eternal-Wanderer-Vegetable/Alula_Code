@@ -19,6 +19,7 @@ import 'bridge/alula_core.dart';
 import 'workbench/auxiliary_window.dart';
 import 'editor/find_replace_history.dart';
 import 'editor/paste_as.dart';
+import 'workbench/command_history_store.dart';
 import 'workbench/find_history_store.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
@@ -93,6 +94,7 @@ class AlulaApp extends StatelessWidget {
     this.findReplaceHistoryConfiguration =
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
+    this.commandHistoryStore,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -136,6 +138,9 @@ class AlulaApp extends StatelessWidget {
   /// Optional per-workspace history store (tests can use a temporary folder).
   final FindReplaceHistoryStore? findReplaceHistoryStore;
 
+  /// Optional command-palette MRU journal (tests can use a temporary path).
+  final CommandHistoryStore? commandHistoryStore;
+
   @override
   Widget build(BuildContext context) {
     final windowChrome = windowChromeConfiguration ??
@@ -161,6 +166,7 @@ class AlulaApp extends StatelessWidget {
           pasteAsConfiguration: pasteAsConfiguration,
           findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
           findReplaceHistoryStore: findReplaceHistoryStore,
+          commandHistoryStore: commandHistoryStore,
         ),
       ),
     );

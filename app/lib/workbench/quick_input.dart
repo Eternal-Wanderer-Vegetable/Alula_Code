@@ -91,6 +91,7 @@ class QuickInput {
     bool canSelectMany = false,
     String? validationMessage,
     void Function(List<QuickItem> picked)? onAccept,
+    void Function(String commandId)? onCommandExecuted,
   }) {
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
     // 焦点（上游 quickInput 取消恢复语义）；执行/返回都会接管后续焦点。
@@ -115,6 +116,7 @@ class QuickInput {
               canSelectMany: canSelectMany,
               validationMessage: validationMessage,
               onAccept: onAccept,
+              onCommandExecuted: onCommandExecuted,
               onHandled: () => handled = true,
             ),
           ),
@@ -137,6 +139,7 @@ class _QuickInputPanel extends StatefulWidget {
     required this.canSelectMany,
     this.validationMessage,
     this.onAccept,
+    this.onCommandExecuted,
     required this.onHandled,
   });
 
@@ -147,6 +150,7 @@ class _QuickInputPanel extends StatefulWidget {
   final bool canSelectMany;
   final String? validationMessage;
   final void Function(List<QuickItem> picked)? onAccept;
+  final void Function(String commandId)? onCommandExecuted;
   final VoidCallback onHandled;
 
   @override
@@ -160,6 +164,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   final _scroll = ScrollController();
   final _focusNode = FocusNode(debugLabel: 'quick-input-field');
   final _rowKeys = <QuickItem, GlobalKey>{};
+  final _buttonFocusNodes = <QuickItem, List<FocusNode>>{};
   final _picked = <QuickItem>{};
   var _filtered = const <QuickItem>[];
   var _selected = 0;
@@ -190,6 +195,11 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   void dispose() {
     widget.commands?.removeListener(_onCommandsChanged);
     QuickInput._panelFocusNodes.remove(_focusNode);
+    for (final nodes in _buttonFocusNodes.values) {
+      for (final node in nodes) {
+        node.dispose();
+      }
+    }
     _focusNode.dispose();
     _controller.dispose();
     _scroll.dispose();
@@ -240,6 +250,25 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       item.commandId == null ||
       (widget.commands?.isEnabled(item.commandId!) ?? false);
 
+  /// 活动行 item 按钮的焦点节点：Tab 从输入框进入按钮、按钮间用默认遍历移动。
+  List<FocusNode> _buttonNodesFor(QuickItem item) =>
+      _buttonFocusNodes.putIfAbsent(
+        item,
+        () => [
+          for (var i = 0; i < item.buttons.length; i++)
+            FocusNode(debugLabel: 'quick-input-item-button-$i'),
+        ],
+      );
+
+  /// 上游：Tab 把焦点交给活动条目的行尾按钮（没有按钮时不拦截）。
+  bool _focusActiveItemButton() {
+    if (_selected < 0 || _selected >= _filtered.length) return false;
+    final item = _filtered[_selected];
+    if (item.buttons.isEmpty || !_isSelectable(item)) return false;
+    _buttonNodesFor(item).first.requestFocus();
+    return true;
+  }
+
   void _moveSelection(int delta) {
     if (_filtered.isEmpty) return;
     var index = _selected;
@@ -276,6 +305,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     widget.onHandled();
     Navigator.of(context).pop();
     if (item.commandId case final id?) {
+      widget.onCommandExecuted?.call(id);
       await widget.commands?.execute(id, arguments: item.arguments);
     } else {
       await item.onRun?.call();
@@ -315,6 +345,12 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    if (event.logicalKey == LogicalKeyboardKey.tab &&
+        !HardwareKeyboard.instance.isShiftPressed) {
+      // 上游：Tab 进入活动条目的行尾按钮；没有按钮时交回默认焦点遍历。
+      if (_focusActiveItemButton()) return KeyEventResult.handled;
+      return KeyEventResult.ignored;
+    }
     if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
       _moveSelection(1);
       return KeyEventResult.handled;
@@ -503,19 +539,23 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                         overflow: TextOverflow.ellipsis),
                   ),
                 ],
-                for (final (buttonIndex, button) in item.buttons.indexed)
-                  IconButton(
-                    key: ValueKey('qi-button-${item.label}-$buttonIndex'),
-                    tooltip: button.tooltip,
-                    visualDensity: VisualDensity.compact,
-                    constraints:
-                        const BoxConstraints(minWidth: 24, minHeight: 24),
-                    padding: EdgeInsets.zero,
-                    iconSize: 14,
-                    onPressed: enabled ? () => _runItemButton(button) : null,
-                    icon: Icon(button.icon,
-                        size: 14, color: Colors.grey.shade400),
-                  ),
+                // 上游：item 按钮只在 hover/活动行显示（hover 会选中该行），
+                // 键盘用户 Tab 进入当前行的按钮、Enter 触发。
+                if (selected)
+                  for (final (buttonIndex, button) in item.buttons.indexed)
+                    IconButton(
+                      key: ValueKey('qi-button-${item.label}-$buttonIndex'),
+                      focusNode: _buttonNodesFor(item)[buttonIndex],
+                      tooltip: button.tooltip,
+                      visualDensity: VisualDensity.compact,
+                      constraints:
+                          const BoxConstraints(minWidth: 24, minHeight: 24),
+                      padding: EdgeInsets.zero,
+                      iconSize: 14,
+                      onPressed: enabled ? () => _runItemButton(button) : null,
+                      icon: Icon(button.icon,
+                          size: 14, color: Colors.grey.shade400),
+                    ),
               ],
             ),
             if (item.detail case final detail? when detail.isNotEmpty)

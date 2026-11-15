@@ -80,6 +80,8 @@ import 'activity_bar_order.dart';
 import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
+import 'command_history.dart';
+import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_tab_action_location.dart';
 import 'editor_tab_close_policy.dart';
@@ -278,6 +280,7 @@ class WorkbenchPage extends StatefulWidget {
     this.findReplaceHistoryConfiguration =
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
+    this.commandHistoryStore,
     this.mergeResultSessionFactory,
     this.onCommandServiceReady,
   })  : layoutStore = layoutStore ?? _defaultStore,
@@ -326,6 +329,9 @@ class WorkbenchPage extends StatefulWidget {
 
   /// Optional per-workspace history store (tests can use a temporary folder).
   final FindReplaceHistoryStore? findReplaceHistoryStore;
+
+  /// Optional command-palette MRU journal (tests can use a temporary path).
+  final CommandHistoryStore? commandHistoryStore;
 
   /// Optional integration point for a merge-result owner. The workbench keeps
   /// the returned session with the shared Rust document and consumes its save
@@ -453,6 +459,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final FindReplaceHistoryNavigator _replaceHistory =
       FindReplaceHistoryNavigator();
   String? _findHistoryWorkspaceIdentity;
+
+  // ---------- 命令面板 MRU 历史（LAY-17c） ----------
+  late final CommandHistoryStore _commandHistoryStore =
+      widget.commandHistoryStore ??
+      CommandHistoryStore(
+        path: '${widget.sessionStore.resolvePath()}.command-history',
+      );
+  CommandHistory _commandHistory = CommandHistory();
 
   // ---------- 搜索视图（feat-search） ----------
   final _searchQuery = TextEditingController();
@@ -603,6 +617,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.addListener(_syncPanelMaximizationCommandContext);
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
+    _commandHistory = _commandHistoryStore.load();
     _registerCommands();
     _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
@@ -3126,17 +3141,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _showCommandPalette() {
     final currentLocation = _layout.activityBarLocation;
+    final available = [
+      for (final c in _commands.all)
+        if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation)) c,
+    ];
+    final byId = {for (final c in available) c.id: c};
+    // LAY-17c：空查询时最近使用的命令排在前面（其余保持注册顺序）；输入查询后
+    // 由 QuickInput 的相关度排序接管，历史只在同分时作为稳定次级顺序。
+    final orderedIds = _commandHistory.order(byId.keys.toList());
     QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
+      onCommandExecuted: _recordCommandPaletteAccept,
       items: [
-        for (final c in _commands.all)
-          if (!_isCurrentActivityBarLocationCommand(c.id, currentLocation))
-            QuickItem(
-                label: c.label, description: c.shortcut, commandId: c.id),
+        for (final id in orderedIds)
+          QuickItem(
+              label: byId[id]!.label,
+              description: byId[id]!.shortcut,
+              commandId: id),
       ],
       commands: _commands,
     );
+  }
+
+  /// 只有经命令面板接受的命令进入 MRU 历史（菜单/键位执行不计，与上游一致）。
+  void _recordCommandPaletteAccept(String commandId) {
+    _commandHistory.record(commandId);
+    _commandHistoryStore.save(_commandHistory);
   }
 
   bool _isCurrentActivityBarLocationCommand(

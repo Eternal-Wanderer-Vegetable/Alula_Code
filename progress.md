@@ -2236,3 +2236,12 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - GitNexus：`QuickItem` 与 `_showMoveSidebarViewPickerStep` 均 UNKNOWN（0 resolved callers / 大文件不入图），已用源码检索核对 5 处构造点；detect-changes 7 files/17 symbols/0 processes，risk low。
 - hosted：PR CI `43602681711` 四项首跑全绿（Rust ubuntu/windows、Flutter analyze+test、Harness）；Platform Availability `43602675844` Linux/Windows 首跑通过，macOS attempt 1 仅 native-titlebar Quit 探针失败（Accessibility 菜单栏无 Quit 项、Command-Q 兜底 20 秒未退出；测试/DnD/打包步骤均通过），`gh run rerun --failed` 后 attempt 2 全绿；包 artifacts `14117216955`/`14116799270`/`14119581440`；Linux/Windows DnD `14116967906`/`14117306446` 通过 move/copy/external text（22/13 pointer events）；macOS DnD `14118892556` pointer route false 明确 skip；macOS startup/native Quit `14118678139` 通过；macOS ZIP SHA-256 `df061a6d348b4cecc461dcd1bc69626c99b397c44a547155e904ec4d538127ac` 与 sidecar 一致且 `tar -tf` 81 项。P05.55 done。
 - P05/feat-027 继续 in-progress；LAY-17c（输入历史、item 按钮 hover/键盘可达、多选产品接线）为下一步。
+
+## P05.56 LAY-17c QuickInput 历史（命令面板 MRU）与 item 按钮显隐/键盘可达完成（2026-11-15）
+
+- 实现：`CommandHistory`（最近在前、`record` 去重前移、上限 50、空/超长 id 忽略、`order` 历史优先→其余原顺序、JSON 过滤非法项）+ `CommandHistoryStore`（`SessionStore` 原子 journal、`format/version` 校验、主/`.bak`/`.tmp` 超 64 KiB 视为损坏回退空历史）；`QuickInput.show` 新增 `onCommandExecuted(commandId)`，只有命令面板接受会写历史（菜单/键位不记），面板空查询按历史排序、输入查询仍由相关度接管、跨重启恢复；`AlulaApp`/`WorkbenchPage` 增加 `commandHistoryStore` 注入点（默认 `<session.json>.command-history`）；item 按钮只在选中/悬停行渲染，每个按钮持显式 `FocusNode`，`Tab` 从输入框进入活动行第一个按钮、`Enter`/`Space` 触发，隐藏行按钮不在树中不可误点。
+- 新增 `app/test/command_history_test.dart`（8 个 test：模型去重/前移/上限、非法 id、`order`、JSON 过滤、store 往返/缺文件/损坏与异格式/未知版本/超大 journal）与 `app/test/quick_input_history_test.dart`（3 个 widget test：面板接受写历史+重开重排+重挂载恢复、`Ctrl+B` 键位不写历史、按钮仅活动行显示且 Tab+Enter 触发不跑 item onRun）；先红后绿 11/11（`p05.56-focused-red.log`/`p05.56-focused-green.log`）。
+- 回归定向：命令面板历史/QuickInput 三步/移动视图/widget_test/panel/editor tab/键位/导航共 94 项全绿。
+- 本地 DoD：analyze 0 issues；新增/重写 5 文件 `dart format` 0 changes（workbench_page/main 保持既有风格）；Rust fmt/test/Clippy 全绿（`p05.56-rust-gates.log`）；全量 Flutter `+1242 -32`（30 项与基线一致 + 2 项 merge-editor 轮换 flake；单跑该文件仍只失败基线那两项），新增 11 项全部通过。
+- GitNexus：`AlulaApp` LOW（1 direct）、`QuickInput.show` UNKNOWN（0 resolved callers，源码核对）、detect-changes 8 files/7 symbols/0 processes，risk low。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；LAY-17 验收面（分组/多选/描述/detail/buttons/back/校验/历史/取消与焦点恢复）已全部登记，下一步 LAY-18 通知与进度。
