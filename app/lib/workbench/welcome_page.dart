@@ -8,17 +8,25 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'recent_history_store.dart';
+
 class WelcomePage extends StatelessWidget {
   const WelcomePage({
     super.key,
     required this.isCommandVisible,
     required this.onRunCommand,
+    required this.recentFiles,
+    required this.recentWorkspaces,
+    required this.onOpenRecent,
     required this.onClose,
   });
 
   /// 命令存在且可见（`when` 通过）时才渲染对应条目。
   final bool Function(String commandId) isCommandVisible;
   final void Function(String commandId) onRunCommand;
+  final List<RecentHistoryEntry> recentFiles;
+  final List<RecentHistoryEntry> recentWorkspaces;
+  final void Function(RecentHistoryEntry entry) onOpenRecent;
   final VoidCallback onClose;
 
   static const List<({String id, IconData icon, String label})> startActions = [
@@ -99,6 +107,12 @@ class WelcomePage extends StatelessWidget {
                           TextStyle(fontSize: 12, color: Colors.grey.shade400),
                     ),
                     const SizedBox(height: 20),
+                    _WelcomeRecentSection(
+                      files: recentFiles,
+                      workspaces: recentWorkspaces,
+                      onOpenRecent: onOpenRecent,
+                    ),
+                    const SizedBox(height: 18),
                     if (start.isNotEmpty)
                       _WelcomeSection(
                         title: '开始',
@@ -125,6 +139,103 @@ class WelcomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WelcomeRecentSection extends StatelessWidget {
+  const _WelcomeRecentSection({
+    required this.files,
+    required this.workspaces,
+    required this.onOpenRecent,
+  });
+
+  final List<RecentHistoryEntry> files;
+  final List<RecentHistoryEntry> workspaces;
+  final void Function(RecentHistoryEntry entry) onOpenRecent;
+
+  @override
+  Widget build(BuildContext context) {
+    final entries = <RecentHistoryEntry>[...workspaces, ...files];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '最近',
+          key: const ValueKey('welcome-section-最近'),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade300,
+          ),
+        ),
+        const SizedBox(height: 6),
+        if (entries.isEmpty)
+          Text(
+            '暂无最近项目',
+            key: const ValueKey('welcome-recent-empty'),
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+          )
+        else
+          for (var index = 0; index < entries.length; index++)
+            _WelcomeRecentButton(
+              entry: entries[index],
+              index:
+                  index < workspaces.length ? index : index - workspaces.length,
+              onOpen: () => onOpenRecent(entries[index]),
+            ),
+      ],
+    );
+  }
+}
+
+class _WelcomeRecentButton extends StatelessWidget {
+  const _WelcomeRecentButton({
+    required this.entry,
+    required this.index,
+    required this.onOpen,
+  });
+
+  final RecentHistoryEntry entry;
+  final int index;
+  final VoidCallback onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final isWorkspace = entry.kind == RecentHistoryKind.workspace;
+    final basename = entry.label.isEmpty ? entry.path : entry.label;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: TextButton.icon(
+        key: ValueKey(
+          'welcome-recent-${isWorkspace ? 'workspace' : 'file'}-$index',
+        ),
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.lightBlueAccent,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          minimumSize: const Size(0, 34),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          textStyle: const TextStyle(fontSize: 12),
+        ),
+        onPressed: onOpen,
+        icon: Icon(
+          isWorkspace ? Icons.folder_outlined : Icons.description_outlined,
+          size: 15,
+        ),
+        label: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(basename, maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              entry.path,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+            ),
+          ],
+        ),
       ),
     );
   }

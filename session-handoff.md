@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.60 已登记完成，P05.60 本地与 hosted 证据均已补齐。
+- P05.1–P05.60 已登记完成，P05.60 本地与 hosted 证据均已补齐；P05.61 实现与本地 DoD 已通过，hosted 证据待本次提交后补齐。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -34,13 +34,13 @@ Last Updated: 2026-11-16
     `docs/diagnostics/2026-11-15-p05/p05.59-notification-product-wiring.md`。
   - P05.60 / LAY-19a：Welcome 页与空编辑器组 watermark —— 本地 DoD 通过；PR CI `43726743775` 四项全绿；Platform Availability `43726740538` attempt 2 三平台通过。attempt 1 普通 macOS Release smoke 的 SIGTERM 收尾失败未复现；native-titlebar Quit、bundle 与 ZIP 校验通过。
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
+  - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；`cargo fmt --check`、`bash init.sh`（Flutter 全集 1311 项）与 `flutter analyze` 通过；待 PR hosted closeout。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 - LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 已交付 a（Welcome/watermark），
   b（最近项目）与 c（Walkthrough）开放；下一步 LAY-19b。
-- 门禁（Windows 原生执行；WSL `bash init.sh` 在本机不可用：脚本 CRLF + wrapper）：
-  `cargo fmt --check`、`cargo test --workspace`、Clippy `-D warnings`、`flutter analyze`
-  （0 issues）、focused tests 全绿。全量 `flutter test` 的 30 项失败是与切片无关的既有
-  环境/时序基线，另有 `workbench_merge_editor_open_test.dart` 与偶发 `workbench_smart_enter_test.dart`
-  的轮换 flake（单跑稳定的是基线子集）；P05.60 轮为 `+1271 -32`。
+- 当前 managed worktree 已能直接执行 `bash init.sh`：Rust tests、Clippy `-D warnings`、
+  core build、完整 Flutter 全集均通过；P05.61 全集 1311/1311。`flutter analyze` 0 issues。
+- Flutter `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`；保持既有风格，
+  本 slice 手工保留 191 行局部 diff，仅格式化其他新增/小型改动文件。
 
 ## Blockers
 
@@ -60,9 +60,7 @@ Last Updated: 2026-11-16
    flow tracing 有 truncation；UNKNOWN 仍须源码确认。
 2. P05.60 hosted closeout 已登记：PR CI `43726743775`；Platform Availability
    `43726740538` attempt 2 全绿。详情在 `docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
-3. 下一项 LAY-19b：先注册 feature，再实现最近项目（文件/工作区有界 MRU 持久化、Welcome
-   「最近」分区、File > Open Recent 子菜单、缺失路径处理），随后按 `docs/03` 逐 slice 完成
-   LAY-19c、LAY-20、LAY-12b、LAY-13b、LAY-16b 与 CMD-01–12。
+3. 完成 P05.61 hosted closeout，更新 `docs/03`、`feature_list.json`、`progress.md` 与 PR 证据；随后登记并实现 P05.62 / LAY-19c Walkthrough。
 4. 每 slice 做完即更新 evidence/状态；提交前完整 `detect-changes --scope all`。PR #3
    保持 draft/open，不合并。
 

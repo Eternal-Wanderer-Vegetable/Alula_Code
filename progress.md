@@ -3,9 +3,9 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-08 更新）
+## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.41 已完成；当前 active：P05.42 / feat-094 / LAY-10b 跨组标签拖放移动
+### P05 / feat-027 进行中；P05.1–P05.60 hosted 完成；当前 active：P05.61 / feat-113 / LAY-19b 最近项目（本地 DoD 全绿，hosted closeout 待提交后完成）
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
@@ -2281,3 +2281,14 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 回归定向：欢迎页 + 通知四套 + widget_test + zen + 锁定滚动 + 模态编辑器 + Open Editors + 组 MRU + 移动视图 + 键位共 93 项全绿。
 - 本地 DoD：analyze 0 issues；新文件 `dart format` 0 changes（workbench_page 新增 46 行）；Rust fmt/test/Clippy 全绿（`p05.60-rust-gates.log`）；全量 Flutter `+1271 -32`（30 项与基线一致 + 2 项 merge-editor 轮换 flake，单跑验证），新增 4 项全部通过。
 - hosted：PR CI [43726743775](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43726743775) 四项全绿；Platform Availability [43726740538](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43726740538) attempt 2 三平台全绿（attempt 1 的 macOS SIGTERM cleanup failure 未复现）。Artifacts：Linux 14166513148、Windows 14167316082、macOS 14169372166；macOS ZIP SHA-256 `21df2666c015af270c80b2691b53dac131abc9bbed3ba8e7b961a7ed81a93962` 与 sidecar 一致，`unzip -t` 通过，81 files。Linux/Windows DnD 通过；macOS DnD artifact 14168769933 标记 pointer route unavailable 并跳过；macOS startup/native Quit artifact 14169173665 通过。启动日志中的 `FlutterEngineSendPlatformMessage ... Invalid engine handle` 未阻断 app 启动/退出，后续如复现再诊断。P05/feat-027 继续 in-progress；下一步 LAY-19b（最近项目）。
+
+
+## P05.61 LAY-19b 最近项目 MRU 本地完成（2026-11-16）
+
+- 实现 `RecentHistoryStore`：文件/文件夹分开的版本化 checksummed journal（每类 50、路径 2048 字符、记录 512 KiB）；同路径去重并移到 MRU 头部；成功打开文件/文件夹/modal 文档即记录；跨重启恢复；腐损/超限安全回退；失效路径清理与通知。
+- Welcome「最近」分区支持打开文件或工作区；File >「打开最近」始终存在，工作区在文件之前，各组最多 10 项；空历史显示禁用占位；命令面板也可打开最近历史。
+- 新增 `recent_history_store_test.dart` 3 项、扩展 `welcome_page_test.dart` 5 项；与 `title_bar_test.dart` 回归合计 33/33 通过。覆盖 MRU/上限/重启/损坏与超限/路径清理/Welcome 和菜单打开/菜单封顶/失效通知。
+- 上游固定源：Code-OSS 1.145.0 `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`。MenubarControl 最多列 10 个工作区和 10 个文件；WorkspacesHistoryMainService 的总上限为 500。
+- 实现前 GitNexus：CommandHistoryStore/FindReplaceHistoryStore LOW；SessionStore MEDIUM；WelcomePage/TitleMenuItem UNKNOWN，WorkbenchPage 私有打开入口未入图。已对 UNKNOWN 做源码搜索确认；`workbench_page.dart` 超 512 KiB，另有跨语言属性与 flow truncation 警告。详见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
+- 本地 DoD：`cargo fmt --check` 通过，`bash init.sh` 四阶段通过（Rust tests、Clippy、core build、Flutter 全集 1311/1311），`flutter analyze` 为 0 issues。最终 `workbench_page.dart` 仅新增 191 行，无全文件 formatter diff。
+- 状态：实现与本地验收完成；本次提交后等待 hosted CI / Platform Availability，再补证据并登记 done；之后继续 LAY-19c Walkthrough。详情见 `docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。

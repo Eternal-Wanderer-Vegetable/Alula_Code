@@ -27,6 +27,7 @@ class TitleMenuItem {
   const TitleMenuItem(this.label,
       {required this.commandId,
       this.arguments,
+      this.enabled = true,
       this.checked,
       this.checkedBuilder,
       this.checkedListenable})
@@ -37,6 +38,7 @@ class TitleMenuItem {
   const TitleMenuItem.submenu(this.label, {required this.children})
       : commandId = null,
         arguments = null,
+        enabled = true,
         checked = null,
         checkedBuilder = null,
         checkedListenable = null,
@@ -46,6 +48,7 @@ class TitleMenuItem {
       : label = '',
         commandId = null,
         arguments = null,
+        enabled = true,
         checked = null,
         checkedBuilder = null,
         checkedListenable = null,
@@ -55,6 +58,9 @@ class TitleMenuItem {
   final String label;
   final String? commandId;
   final Object? arguments;
+
+  /// Keeps an informational menu entry visible while preventing invocation.
+  final bool enabled;
 
   /// Optional fixed checked state for a toggle entry.
   final bool? checked;
@@ -366,7 +372,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       final item = candidate.item;
       if (!item.isSeparator &&
           _codeOssMnemonicKey(item.label) == pressedKey &&
-          (item.isSubmenu || widget.commands.isEnabled(item.commandId!))) {
+          (item.isSubmenu ||
+              (item.enabled && widget.commands.isEnabled(item.commandId!)))) {
         matchingItem = candidate;
       }
     }
@@ -664,7 +671,8 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
                   leadingIcon: entry.item.currentChecked == true
                       ? const Icon(Icons.check, size: 16)
                       : const SizedBox(width: 16),
-                  onPressed: widget.commands.isEnabled(entry.item.commandId!)
+                  onPressed: entry.item.enabled &&
+                          widget.commands.isEnabled(entry.item.commandId!)
                       ? () => unawaited(_executeLayoutControl(entry.item))
                       : null,
                   child: Semantics(
@@ -715,6 +723,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
       if (!mounted || !_layoutControlsMenuController.isOpen) return;
       for (final entry in items) {
         if (!entry.item.isSeparator &&
+            entry.item.enabled &&
             widget.commands.isEnabled(entry.item.commandId!)) {
           _layoutControlFocusNodes[entry.item.commandId]?.requestFocus();
           return;
@@ -836,7 +845,7 @@ class _AlulaTitleBarState extends State<AlulaTitleBar> with WindowListener {
             checked: item.currentChecked == true,
           ),
           shortcut: _macPlatformMenuShortcut(command?.shortcut),
-          onSelected: widget.commands.isEnabled(commandId)
+          onSelected: item.enabled && widget.commands.isEnabled(commandId)
               ? () => unawaited(
                     _executeMacCommand(commandId, item.arguments),
                   )
@@ -1063,7 +1072,7 @@ class _MenuButton extends StatelessWidget {
   Widget _buildCommandMenuItem(BuildContext context, TitleMenuItem item) {
     Widget buildButton() => MenuItemButton(
           style: _popupMenuItemStyle,
-          onPressed: commands.isEnabled(item.commandId!)
+          onPressed: item.enabled && commands.isEnabled(item.commandId!)
               ? () => unawaited(_execute(item))
               : null,
           leadingIcon: item.currentChecked == true

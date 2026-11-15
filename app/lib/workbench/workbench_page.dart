@@ -91,6 +91,7 @@ import 'editor_tab_label.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
+import 'recent_history_store.dart';
 import 'layout_controller.dart';
 import 'layout_grid.dart';
 import 'keybindings.dart';
@@ -475,6 +476,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
   CommandHistory _commandHistory = CommandHistory();
 
+  // ---------- 最近项目 MRU（LAY-19b） ----------
+  late final RecentHistoryStore _recentHistoryStore = RecentHistoryStore(
+    path: '${widget.sessionStore.resolvePath()}.recent-history',
+  );
+  RecentHistorySnapshot _recentHistory = const RecentHistorySnapshot();
+  bool _recentHistoryFailureNotified = false;
+
   // ---------- 通知中心（LAY-18a） ----------
   late final NotificationCenter _notifications =
       widget.notifications ?? NotificationCenter();
@@ -638,6 +646,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _keybindings =
         KeybindingSet.load(userJson: widget.keybindingsStore.tryLoadText());
     _commandHistory = _commandHistoryStore.load();
+    _recentHistory = _recentHistoryStore.load();
+    unawaited(_refreshRecentHistory());
     _registerCommands();
     _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
@@ -681,6 +691,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
     );
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
+    reg(
+      'file.openRecent',
+      '文件',
+      '打开最近项目',
+      _showOpenRecentPicker,
+      runWithArguments: _openRecentFromArguments,
+    );
     reg(
       '_open.mergeEditor',
       'Merge Editor',
@@ -11782,6 +11799,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _layout.showRegion('sidebar');
         _scheduleStateSave();
       });
+      _recordRecentWorkspace(path);
       _loadFindHistoryForWorkspace(path);
       _attachWorkspaceWatcher();
       _updateLanguageServicePolling();
@@ -12541,6 +12559,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _scheduleStateSave();
         _syncCommandContext();
         _scheduleSyntaxRefresh(view.id);
+        _recordRecentFile(path);
         return;
       }
     }
@@ -12619,6 +12638,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         } catch (_) {}
       }
       _updateLanguageServicePolling();
+      _recordRecentFile(path);
     } on AlulaException catch (e) {
       setState(() {
         _statusDetail =
@@ -12685,6 +12705,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _openModalEditor(AlulaCore core, String path) async {
     final doc = await _createDetachedModalDoc(core, path);
     if (doc == null || !mounted) return;
+    _recordRecentFile(path);
     var moveBack = false;
     await showGeneralDialog(
       context: context,
@@ -12825,6 +12846,169 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _dismissWelcomeForOpen() {
     if (!_welcomeVisible) return;
     setState(() => _welcomeVisible = false);
+  }
+
+  Future<void> _refreshRecentHistory() async {
+    final previous = _recentHistory;
+    final snapshot = await _recentHistoryStore.pruneMissingPaths();
+    if (!mounted) return;
+    setState(() => _recentHistory = snapshot);
+    final removedCount = <RecentHistoryEntry>[
+      ...previous.files.where((entry) => !snapshot.files.contains(entry)),
+      ...previous.workspaces
+          .where((entry) => !snapshot.workspaces.contains(entry)),
+    ].length;
+    if (removedCount > 0) {
+      _notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: '已从最近项目移除 $removedCount 个不存在的路径。',
+        source: '工作台',
+      );
+    }
+  }
+
+  List<TitleMenuItem> _recentMenuItems() {
+    if (_recentHistory.isEmpty) {
+      return const [
+        TitleMenuItem(
+          '暂无最近项目',
+          commandId: 'file.openRecent',
+          enabled: false,
+        ),
+      ];
+    }
+    return [
+      for (final entry in _recentHistory.workspaces.take(10))
+        _recentMenuItem(entry),
+      if (_recentHistory.workspaces.isNotEmpty &&
+          _recentHistory.files.isNotEmpty)
+        const TitleMenuItem.separator(),
+      for (final entry in _recentHistory.files.take(10)) _recentMenuItem(entry),
+    ];
+  }
+
+  TitleMenuItem _recentMenuItem(RecentHistoryEntry entry) => TitleMenuItem(
+        _recentEntryMenuLabel(entry),
+        commandId: 'file.openRecent',
+        arguments: <String, Object?>{
+          'kind': entry.kind.name,
+          'path': entry.path,
+        },
+      );
+
+  String _recentEntryMenuLabel(RecentHistoryEntry entry) {
+    final name = p.basename(entry.path);
+    final parent = p.dirname(entry.path);
+    return '${name.isEmpty ? entry.path : name} — $parent';
+  }
+
+  Future<void> _showOpenRecentPicker() async {
+    final entries = <RecentHistoryEntry>[
+      ..._recentHistory.workspaces,
+      ..._recentHistory.files,
+    ];
+    if (entries.isEmpty) return;
+    await QuickInput.show(
+      context,
+      hint: '打开最近项目',
+      items: [
+        for (final entry in entries)
+          QuickItem(
+            label: _recentEntryMenuLabel(entry),
+            description: entry.kind == RecentHistoryKind.workspace
+                ? '工作区'
+                : '文件',
+            onRun: () => _openRecentEntry(entry),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _openRecentFromArguments(Object? arguments) async {
+    if (arguments is! Map) return;
+    final path = arguments['path'];
+    final kindName = arguments['kind'];
+    if (path is! String || kindName is! String) return;
+    final kind = switch (kindName) {
+      'file' => RecentHistoryKind.file,
+      'workspace' => RecentHistoryKind.workspace,
+      _ => null,
+    };
+    if (kind == null) return;
+    await _openRecentEntry(RecentHistoryEntry(path: path, kind: kind));
+  }
+
+  Future<void> _openRecentEntry(RecentHistoryEntry entry) async {
+    FileSystemEntityType? actualType;
+    try {
+      actualType = FileSystemEntity.typeSync(entry.path, followLinks: true);
+    } on Object {
+      // Let the normal open path surface access and I/O errors.
+    }
+    if (!mounted) return;
+    final expectedType = entry.kind == RecentHistoryKind.file
+        ? FileSystemEntityType.file
+        : FileSystemEntityType.directory;
+    if (actualType != null && actualType != expectedType) {
+      _removeRecentEntry(entry);
+      _notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: '最近项目路径已不存在或类型已变化，已从历史记录移除：${entry.path}',
+        source: '工作台',
+      );
+      return;
+    }
+    if (entry.kind == RecentHistoryKind.workspace) {
+      _dismissWelcomeForOpen();
+      _openFolder(entry.path);
+    } else {
+      await _openFileByPath(entry.path);
+    }
+  }
+
+  void _recordRecentFile(String path) {
+    _finishRecentHistoryWrite(_recentHistoryStore.recordFile(path));
+  }
+
+  void _recordRecentWorkspace(String path) {
+    _finishRecentHistoryWrite(_recentHistoryStore.recordWorkspace(path));
+  }
+
+  void _finishRecentHistoryWrite(bool saved) {
+    if (!saved) {
+      if (!_recentHistoryFailureNotified) {
+        _recentHistoryFailureNotified = true;
+        _notifications.notify(
+          severity: WorkbenchNotificationSeverity.warning,
+          message: '最近项目历史写入失败。',
+          source: '工作台',
+        );
+      }
+      return;
+    }
+    _recentHistoryFailureNotified = false;
+    final snapshot = _recentHistoryStore.load();
+    if (mounted) setState(() => _recentHistory = snapshot);
+  }
+
+  void _removeRecentEntry(RecentHistoryEntry entry) {
+    final saved = _recentHistoryStore.remove(entry);
+    final files = _recentHistory.files.where((item) => item != entry).toList();
+    final workspaces =
+        _recentHistory.workspaces.where((item) => item != entry).toList();
+    setState(() {
+      _recentHistory = saved
+          ? _recentHistoryStore.load()
+          : RecentHistorySnapshot(files: files, workspaces: workspaces);
+    });
+    if (!saved && !_recentHistoryFailureNotified) {
+      _recentHistoryFailureNotified = true;
+      _notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: '最近项目历史写入失败。',
+        source: '工作台',
+      );
+    }
   }
 
   // ---------- 跨编辑器锁定滚动（LAY-15） ----------
@@ -18724,6 +18908,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                         const TitleMenuItem.separator(),
                         const TitleMenuItem('打开文件夹(&&O)',
                             commandId: 'file.openFolder'),
+                        TitleMenuItem.submenu(
+                          '打开最近',
+                          children: _recentMenuItems(),
+                        ),
                         const TitleMenuItem.separator(),
                         TitleMenuItem('保存(&&S)${_sc('file.save')}',
                             commandId: 'file.save'),
@@ -18994,6 +19182,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ? WelcomePage(
                         isCommandVisible: _commands.isVisible,
                         onRunCommand: _runWelcomeCommand,
+                        recentFiles: _recentHistory.files,
+                        recentWorkspaces: _recentHistory.workspaces,
+                        onOpenRecent: (entry) =>
+                            unawaited(_openRecentEntry(entry)),
                         onClose: () => _setWelcomeVisible(false),
                       )
                     : _zenMode

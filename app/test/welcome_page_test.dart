@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -117,6 +118,146 @@ void main() {
       expect(find.byKey(const ValueKey('empty-group-watermark')), findsNothing,
           reason: 'watermark 的“新建文件”打开文档');
       expect(find.byKey(const ValueKey('wb-region-editor')), findsOneWidget);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('welcome recent section opens a persisted recent file',
+      (tester) async {
+    final file = File('${temp.path}/recent-note.txt')
+      ..writeAsStringSync('recent');
+    final store = RecentHistoryStore(
+      path: '${sessionStore.resolvePath()}.recent-history',
+    );
+    expect(store.recordFile(file.path), isTrue);
+
+    await _mountApp(tester);
+    try {
+      await _runPaletteCommand(tester, '欢迎', '帮助: 欢迎');
+      expect(find.byKey(const ValueKey('welcome-section-最近')), findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('welcome-recent-file-0')), findsOneWidget);
+      expect(find.text('recent-note.txt'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('welcome-recent-file-0')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('welcome-page')), findsNothing);
+      expect(find.byKey(const ValueKey('tab-2')), findsOneWidget,
+          reason: 'Welcome 最近项打开磁盘文件');
+      expect(store.load().files.first.path, file.absolute.path);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('File > Open Recent lists workspaces before files and opens one',
+      (tester) async {
+    final workspace = Directory('${temp.path}/recent-project')..createSync();
+    final olderWorkspace = Directory('${temp.path}/older-project')
+      ..createSync();
+    final file = File('${temp.path}/recent-file.txt')
+      ..writeAsStringSync('recent');
+    final store = RecentHistoryStore(
+      path: '${sessionStore.resolvePath()}.recent-history',
+    );
+    store.recordFile(file.path);
+    store.recordWorkspace(olderWorkspace.path);
+    store.recordWorkspace(workspace.path);
+
+    await _mountApp(tester);
+    try {
+      await tester.tap(find.text('文件(F)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('打开最近'));
+      await tester.pumpAndSettle();
+
+      final workspaceItem = find.textContaining('recent-project');
+      final olderWorkspaceItem = find.textContaining('older-project');
+      final fileItem = find.textContaining('recent-file.txt');
+      expect(workspaceItem, findsOneWidget);
+      expect(olderWorkspaceItem, findsOneWidget);
+      expect(fileItem, findsOneWidget);
+      expect(tester.getTopLeft(workspaceItem).dy,
+          lessThan(tester.getTopLeft(fileItem).dy),
+          reason: 'File 菜单工作区排在文件之前');
+
+      await tester.tap(olderWorkspaceItem);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(store.load().workspaces.first.path, olderWorkspace.absolute.path,
+          reason: '成功打开工作区后更新文件夹 MRU');
+      expect(sessionStore.tryLoad()?['workspace'], olderWorkspace.absolute.path,
+          reason: 'File > Open Recent 打开所选工作区');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('empty Open Recent menu stays visible and disabled',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      await tester.tap(find.text('文件(F)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('打开最近'));
+      await tester.pumpAndSettle();
+
+      final placeholder = find.text('暂无最近项目');
+      expect(placeholder, findsOneWidget);
+      final menuItem = find.ancestor(
+        of: placeholder,
+        matching: find.byType(MenuItemButton),
+      );
+      expect(menuItem, findsOneWidget);
+      expect(tester.widget<MenuItemButton>(menuItem).onPressed, isNull);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('Open Recent menu is capped at ten entries for each kind',
+      (tester) async {
+    final store = RecentHistoryStore(
+      path: '${sessionStore.resolvePath()}.recent-history',
+    );
+    for (var index = 0; index < 12; index++) {
+      final workspace = Directory('${temp.path}/project-$index')..createSync();
+      final file = File('${temp.path}/recent-file-$index.txt')
+        ..writeAsStringSync('recent');
+      store.recordWorkspace(workspace.path);
+      store.recordFile(file.path);
+    }
+
+    await _mountApp(tester);
+    try {
+      await tester.tap(find.text('文件(F)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('打开最近'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('project-').evaluate(), hasLength(10));
+      expect(find.textContaining('recent-file-').evaluate(), hasLength(10));
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('startup prunes stale recent paths and explains the cleanup',
+      (tester) async {
+    final store = RecentHistoryStore(
+      path: '${sessionStore.resolvePath()}.recent-history',
+    );
+    expect(store.recordFile('${temp.path}/gone.txt'), isTrue);
+
+    await _mountApp(tester);
+    try {
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      });
+      await tester.pumpAndSettle();
+      expect(store.load().isEmpty, isTrue);
+      expect(find.text('已从最近项目移除 1 个不存在的路径。'), findsOneWidget);
     } finally {
       await _unmountApp(tester);
     }
