@@ -21,6 +21,7 @@ import 'editor/find_replace_history.dart';
 import 'editor/paste_as.dart';
 import 'workbench/command_history_store.dart';
 import 'workbench/find_history_store.dart';
+import 'workbench/notifications.dart';
 import 'workbench/layout_store.dart';
 import 'workbench/keybindings.dart';
 import 'workbench/session_store.dart';
@@ -95,6 +96,7 @@ class AlulaApp extends StatelessWidget {
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
     this.commandHistoryStore,
+    this.notificationCenter,
   });
 
   /// 启动即自动拉起 rust-analyzer（演示/自动化验证用）。
@@ -141,6 +143,9 @@ class AlulaApp extends StatelessWidget {
   /// Optional command-palette MRU journal (tests can use a temporary path).
   final CommandHistoryStore? commandHistoryStore;
 
+  /// Optional notification center injection (tests seed notifications).
+  final NotificationCenter? notificationCenter;
+
   @override
   Widget build(BuildContext context) {
     final windowChrome = windowChromeConfiguration ??
@@ -167,6 +172,7 @@ class AlulaApp extends StatelessWidget {
           findReplaceHistoryConfiguration: findReplaceHistoryConfiguration,
           findReplaceHistoryStore: findReplaceHistoryStore,
           commandHistoryStore: commandHistoryStore,
+          notifications: notificationCenter,
         ),
       ),
     );

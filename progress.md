@@ -2245,3 +2245,11 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 本地 DoD：analyze 0 issues；新增/重写 5 文件 `dart format` 0 changes（workbench_page/main 保持既有风格）；Rust fmt/test/Clippy 全绿（`p05.56-rust-gates.log`）；全量 Flutter `+1242 -32`（30 项与基线一致 + 2 项 merge-editor 轮换 flake；单跑该文件仍只失败基线那两项），新增 11 项全部通过。
 - GitNexus：`AlulaApp` LOW（1 direct）、`QuickInput.show` UNKNOWN（0 resolved callers，源码核对）、detect-changes 8 files/7 symbols/0 processes，risk low。
 - hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；LAY-17 验收面（分组/多选/描述/detail/buttons/back/校验/历史/取消与焦点恢复）已全部登记，下一步 LAY-18 通知与进度。
+
+## P05.57 LAY-18a 通知中心与 toast 基础设施完成（2026-11-15）
+
+- 实现：`NotificationCenter`（新到旧、列表上限 100、toast 上限 3、未读、`dismissToast` 只移 toast、`dismiss`/`clearAll`、`markRead`/`markAllRead`、DND 抑制 toast 但保留列表、`sources`/`filtered` 来源过滤）+ `WorkbenchNotification`/动作模型；`notification_widgets.dart` 右下角 toast（severity 图标、来源、动作、关闭、live region）与通知中心面板（未读数、DND、全部清除、关闭、来源下拉、空态、逐条清除/动作）；`AlulaStatusBar` 增加铃铛入口 `status-notifications` 与未读 badge；`WorkbenchPage` 持有可注入中心、body 包 `Stack` 叠加通知层（中心展开时隐藏 toast、zen 隐藏）、打开中心标记已读/关闭清空过滤；命令 `showNotifications`/`clearNotifications`/`toggleNotificationsDoNotDisturb`。
+- 新增 `app/test/notification_center_test.dart` 9 个 test 与 `app/test/notification_ui_test.dart` 4 个 widget test（注入中心），先红后绿 13/13（`p05.57-focused-red.log`/`p05.57-focused-green.log`）。
+- 回归定向：通知 + QuickInput 三步/分组/历史 + 命令历史 + 移动视图 + widget_test + 键位共 96 项全绿。
+- 本地 DoD：analyze 0 issues；新增 4 文件 `dart format` 0 changes（status_bar/workbench_page/main 保持既有风格）；Rust fmt/test/Clippy 全绿（`p05.57-rust-gates.log`）；全量 Flutter `+1253 -34`（30 项与基线一致 + 4 项轮换 flake：merge-editor 3 + smart_enter 1，后者单跑两次 18/18），新增 13 项全部通过。
+- hosted：待 PR CI / Platform Availability 运行后登记。P05/feat-027 继续 in-progress；下一步 LAY-18b（进度通知/banner）与 LAY-18c（产品接线）。

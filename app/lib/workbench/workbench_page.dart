@@ -96,6 +96,8 @@ import 'layout_grid.dart';
 import 'keybindings.dart';
 import 'layout_model.dart';
 import 'layout_store.dart';
+import 'notification_widgets.dart';
+import 'notifications.dart';
 import 'panel_alignment.dart';
 import 'panel_maximize.dart';
 import 'panel_position.dart';
@@ -281,6 +283,7 @@ class WorkbenchPage extends StatefulWidget {
         const FindReplaceHistoryConfiguration(),
     this.findReplaceHistoryStore,
     this.commandHistoryStore,
+    this.notifications,
     this.mergeResultSessionFactory,
     this.onCommandServiceReady,
   })  : layoutStore = layoutStore ?? _defaultStore,
@@ -332,6 +335,9 @@ class WorkbenchPage extends StatefulWidget {
 
   /// Optional command-palette MRU journal (tests can use a temporary path).
   final CommandHistoryStore? commandHistoryStore;
+
+  /// Optional notification center used by tests to seed notifications.
+  final NotificationCenter? notifications;
 
   /// Optional integration point for a merge-result owner. The workbench keeps
   /// the returned session with the shared Rust document and consumes its save
@@ -467,6 +473,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         path: '${widget.sessionStore.resolvePath()}.command-history',
       );
   CommandHistory _commandHistory = CommandHistory();
+
+  // ---------- 通知中心（LAY-18a） ----------
+  late final NotificationCenter _notifications =
+      widget.notifications ?? NotificationCenter();
+  bool _notificationsVisible = false;
+  String? _notificationSourceFilter;
 
   // ---------- 搜索视图（feat-search） ----------
   final _searchQuery = TextEditingController();
@@ -627,6 +639,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _initCore();
     _syncCommandContext();
     _commands.addListener(_onCommandServiceChanged);
+    _notifications.addListener(_onNotificationsChanged);
     widget.onCommandServiceReady?.call(_commands);
   }
 
@@ -938,6 +951,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         () async => _layout.toggleRegion('panel'),
         shortcut:
             defaultTargetPlatform == TargetPlatform.macOS ? 'Cmd+J' : 'Ctrl+J');
+    reg(
+      'workbench.action.showNotifications',
+      '查看',
+      '通知',
+      () async => _toggleNotificationCenter(),
+    );
+    reg(
+      'workbench.action.clearNotifications',
+      '查看',
+      '清除所有通知',
+      () async => _notifications.clearAll(),
+    );
+    reg(
+      'workbench.action.toggleNotificationsDoNotDisturb',
+      '查看',
+      '切换请勿打扰',
+      () async => _notifications
+          .setDoNotDisturb(!_notifications.doNotDisturb),
+    );
     reg(
       'workbench.action.toggleMaximizedPanel',
       '查看',
@@ -18476,6 +18508,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabWrap.dispose();
     _pinnedTabsOnSeparateRow.dispose();
     _commitMessage.dispose();
+    _notifications
+      ..removeListener(_onNotificationsChanged)
+      ..dispose();
     _layout.dispose();
     super.dispose();
   }
@@ -18564,8 +18599,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
         child: Focus(
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
-          child: Column(
+          child: Stack(
+            fit: StackFit.expand,
             children: [
+              Column(
+                children: [
               if (!_zenMode)
               AlulaTitleBar(
                   commands: _commands,
@@ -18947,11 +18985,69 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     : () => _showEncodingActions(_active!),
                 onLineEndingTap:
                     _active == null ? null : _selectLineEndingActive,
+                notificationUnreadCount: _notifications.unreadCount,
+                notificationsVisible: _notificationsVisible,
+                notificationDoNotDisturb: _notifications.doNotDisturb,
+                onToggleNotifications: _toggleNotificationCenter,
               ),
+                ],
+              ),
+              _buildNotificationLayer(),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // ---------- 通知中心（LAY-18a） ----------
+
+  void _onNotificationsChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  void _toggleNotificationCenter() {
+    setState(() {
+      _notificationsVisible = !_notificationsVisible;
+      if (_notificationsVisible) {
+        _notifications.markAllRead();
+      } else {
+        _notificationSourceFilter = null;
+      }
+    });
+  }
+
+  Widget _buildNotificationLayer() {
+    if (_zenMode) return const SizedBox.shrink();
+    return Stack(
+      children: [
+        if (_notificationsVisible)
+          Positioned(
+            right: 10,
+            bottom: 30,
+            child: WorkbenchNotificationCenter(
+              center: _notifications,
+              sourceFilter: _notificationSourceFilter,
+              onSourceFilterChanged: (value) =>
+                  setState(() => _notificationSourceFilter = value),
+              onDismiss: _notifications.dismiss,
+              onClearAll: _notifications.clearAll,
+              onToggleDoNotDisturb: () => _notifications
+                  .setDoNotDisturb(!_notifications.doNotDisturb),
+              onClose: () => setState(() => _notificationsVisible = false),
+            ),
+          )
+        else
+          Positioned(
+            right: 12,
+            bottom: 30,
+            child: WorkbenchNotificationToasts(
+              center: _notifications,
+              onDismissToast: _notifications.dismissToast,
+            ),
+          ),
+      ],
     );
   }
 
