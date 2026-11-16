@@ -17,6 +17,7 @@ dependencies:
   # dart:ffi 的 CString/Utf8 辅助；Flutter 生态事实标准，无传递依赖
   ffi: ^2.1.0
   window_manager: ^0.5.2
+  screen_retriever: ^0.2.2
   super_drag_and_drop: ^0.9.1
   irondash_engine_context: ^0.5.5
   desktop_multi_window: ^0.3.1

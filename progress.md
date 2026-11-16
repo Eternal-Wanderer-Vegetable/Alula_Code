@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.64 hosted 完成；继续按 N.2 推进剩余 LAY/CMD
+### P05 / feat-027 进行中；P05.1–P05.64 hosted 完成；P05.65 / feat-117 / LAY-10h 本地 DoD 完成，等待最终 GitNexus 复验及 hosted 验证
 
 - 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 
@@ -21,6 +21,15 @@
 - Hosted closeout：PR CI `43794320814` 四项全绿；Platform Availability `43794316315` Linux/Windows/macOS 三平台全绿。包 artifacts Linux/Windows/macOS `14193972371` / `14193678983` / `14194524746`；Linux/Windows native DnD 通过；macOS DnD artifact `14195185944` 因 pointer route false 明确 skip。macOS ZIP SHA-256 `8ae0e37c3f149af3de11f8aaf83db702be2bf2bc2b21f792c471872374f0a4ff` 与 sidecar 一致，81 项 ZIP 完整；native-titlebar Quit Accessibility 探针成功。
 - GitNexus 1024 KiB 索引让 852 KB WorkbenchPage 可分析：`_buildTabStrip` LOW/3 upstream、overflow activation LOW/4；`_noteActiveDocument` 仍 UNKNOWN，调用点源码已核对。`_WorkbenchPageState` class-level impact CRITICAL（206 symbols/79 processes/20 modules），all-scope CRITICAL（9 files/10–17 symbols；进程计数重跑为 61–305）；该单体 class 扩展是保留的结构性风险。Compare main CRITICAL（286 files/586–1170 symbols/169–309 processes）是 PR 累积 diff；跨语言链接与 flow truncation 限制已记入报告。
 - 完整范围、证据与限制：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。feat-116 已 done；P05 与 PR #3 仍保持 in-progress / OPEN-DRAFT。
+
+
+## P05.65 / feat-117 / LAY-10h 标签拖出主窗口创建辅助窗口（2026-11-16）
+
+- 依 docs/03 继续 LAY-10 尚余的 tab tear-out；复用已完成的 P05.49 / LAY-12a 辅助窗口基础设施与 payload 路径。范围限于拖动标签并在主窗口边界外释放时创建一个新辅助窗并移动源视图；创建失败保留源文档，组内有效 drop 或窗口内未命中 drop 不创建。已有辅助窗间转移、copy、compact/pin-top、焦点/组同步及完整 LAY-12b 排除。
+- 固定 Code-OSS 1.145.0 commit `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e`，上游拖出行为及已有 Alula 近似实现/偏差见 `docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`。
+- 实现：`EditorTabTearOutPolicy` 比较 `window_manager.getBounds()` 与 `screen_retriever.getCursorScreenPoint()`；只对 `details.wasAccepted == false` 且指针确在原生窗口矩形外的释放调用既有 `_moveEditorToNewWindow(group, doc)`。插件查询失败/几何无效和新窗创建失败均保留源视图；成功路径沿用 payload、flush 和 session 保存。`screen_retriever` macOS 副屏纵向排列的 Y 原点与 window_manager 不同，加入 `getAllDisplays` 几何校正。Wayland 不提供全局窗口坐标，检测到 Wayland 时禁用自动 tear-out，避免错判；生成的多平台 registrant 同步包含依赖插件。
+- 新增 `editor_tab_tear_out_test.dart` 12 项（Linux X11/Wayland 能力、几何/DPR/负坐标/macOS 下方副屏 + widget：dirty payload、只建一次、窗口内已接收/未接收、create 失败、pointer 未知），focused 12/12 通过。`cargo fmt --check`、`bash init.sh`（Rust workspace tests、Clippy `-D warnings`、core build、Flutter 1336/1336）、`flutter analyze` 0 issues、Harness validator 100/100、`git diff --check` 全通过。大文件 `workbench_page.dart` 保持 43 行局部 diff，未用写入式 formatter 重排。
+- P05.64 closeout CI run `43798796857` 已结束为 failure：Rust Windows job 失败，但 `Tests` step 仍为 `in_progress` 且无结论，读取日志返回 404；不能记作测试断言失败，也不能写成通过。该 run 的 Harness、Flutter、Rust Ubuntu 成功；产品 commit `21e59f8` 的 PR CI 四项与 Platform Availability `43794316315` 三平台通过。GitNexus exact helper impact LOW/3；all-scope 观测在 12 files / 5–19 symbols / 0–146 processes 与 LOW/CRITICAL 间波动（包括 12/11/32/CRITICAL）；compare-main 持续 CRITICAL、listing capped。`Section 03` UNKNOWN 与 class-level CRITICAL 风险保留，详情见 scope 报告。当前 PR #3 仍 OPEN/DRAFT，待本轮提交后检查 PR CI 和三平台 build/launch/package。
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 

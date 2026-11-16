@@ -1442,6 +1442,19 @@
       "evidence": "Implemented per-group editor overflow/MRU picker with dirty/sticky/current indicators, inactive-group selection, focus/session update, and tab reveal; single/none tab modes remain usable. Policy tests 3/3, Workbench overflow tests 2/2, affected regression suite 57/57. cargo fmt --check, bash init.sh (Rust tests, Clippy -D warnings, core build, Flutter 1324/1324), flutter analyze 0 issues, Harness 100/100 passed. PR CI 43794320814 passed all four jobs (Harness, Flutter analyze+test, Rust Ubuntu, Rust Windows). Platform Availability 43794316315 passed Linux/Windows/macOS build, tests, launch, and package jobs. Artifacts Linux/Windows/macOS 14193972371/14193678983/14194524746; Linux/Windows DnD artifacts 14193817600/14193614204 passed, while macOS DnD artifact 14195185944 explicitly skipped because CGEventPostToPid pointer route was false; startup artifact 14195176940 records successful native-titlebar Quit. macOS ZIP SHA-256 8ae0e37c3f149af3de11f8aaf83db702be2bf2bc2b21f792c471872374f0a4ff matches sidecar and unzip -tq verified 81 entries. GitNexus _buildTabStrip LOW/3 upstream, _activateEditorFromOverflow LOW/4, _noteActiveDocument UNKNOWN (source references confirmed); enclosing class and all-scope CRITICAL remain an explicit structural warning, and compare-main CRITICAL is cumulative PR scope. No Rust/FFI files changed. Final docs-only GitNexus detect-changes: all-scope on 5 files/1 symbol varied from HIGH/13 to CRITICAL/138 affected processes (counts fluctuate across repeated calls; conservatively retained); compare-main CRITICAL/286 files/586+ symbols/284–309 affected processes across observed runs (cumulative PR scope). CLI list abbreviation and analyzer flow limitations are retained, not treated as clean. See docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-117",
+      "name": "P05.65 LAY-10h 标签拖出主窗口创建辅助窗口",
+      "description": "拖动 editor tab 并释放到当前主窗口边界外时，复用既有辅助窗口 payload 创建新窗并只移动源视图一次；创建失败保留源文档，窗口内 drop 与已有组 drop 不创建新窗。排除跨窗已有窗口传输、copy、新窗 compact/pin-top/同步和完整 LAY-12b。范围与 N.2 DoD：docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md",
+      "dependencies": [
+        "feat-116",
+        "feat-101"
+      ],
+      "status": "in-progress",
+      "evidence": "Implemented tear-out only for unaccepted releases outside the native main-window bounds; accepted targets and in-window misses do not create windows. Unknown/invalid coordinates and window creation errors retain the source view. Linux Wayland disables automatic tear-out because GTK cannot provide global window coordinates; the existing manual move command remains available. Existing AuxiliaryWindowPayload/move path carries dirty text and schedules session save. EditorTabTearOutPolicy and Workbench widget tests: 12/12; cargo fmt --check; bash init.sh EXIT=0 (Rust workspace tests, Clippy -D warnings, core build, Flutter 1336/1336); flutter analyze 0 issues; Harness validator 100/100; git diff --check passed. Platform Availability proves plugin registration/build/launch/close, not the native tab gesture. GitNexus exact helper impact LOW/3; all-scope outputs vary across 12 files/5-19 symbols/0-146 processes between LOW and CRITICAL (including 12/11/32/CRITICAL); compare-main remains CRITICAL over 291 files with capped/variable listing. Section 03 UNKNOWN and earlier class-level CRITICAL are preserved in the scope report. P05.64 docs-only CI run 43798796857 ended failure with Rust Windows Tests step still in_progress/no conclusion and logs unavailable (404), not a test assertion result. P05.65 hosted checks remain pending. Scope and details: docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

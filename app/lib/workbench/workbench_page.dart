@@ -29,6 +29,8 @@ import 'package:flutter/semantics.dart' show CustomSemanticsAction;
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+import 'package:screen_retriever/screen_retriever.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/bulk_edit_preview_surface.dart';
@@ -92,6 +94,7 @@ import 'editor_tab_label.dart';
 import 'editor_tab_mode.dart';
 import 'editor_tab_mru_policy.dart';
 import 'editor_tab_sizing.dart';
+import 'editor_tab_tear_out_policy.dart';
 import 'find_history_store.dart';
 import 'recent_history_store.dart';
 import 'layout_controller.dart';
@@ -21359,7 +21362,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               data: d.id,
               dragAnchorStrategy: pointerDragAnchorStrategy,
               onDragStarted: () => _startEditorTabDrag(g.region),
-              onDragEnd: (_) => _endEditorTabDrag(),
+              onDragEnd: (details) {
+                _endEditorTabDrag();
+                if (!details.wasAccepted) {
+                  unawaited(_tearOutEditorTabIfOutside(g, d));
+                }
+              },
               onDraggableCanceled: (_, __) => _endEditorTabDrag(),
               feedback: Material(
                 type: MaterialType.transparency,
@@ -21805,6 +21813,47 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _editorGroupDropHover = null;
       _editorTabDropHover = null;
     });
+  }
+
+  Future<void> _tearOutEditorTabIfOutside(
+    EditorGroup group,
+    OpenDoc doc,
+  ) async {
+    if (!EditorTabTearOutPolicy.supportsGlobalScreenCoordinates(
+      isLinux: defaultTargetPlatform == TargetPlatform.linux,
+      waylandDisplay: Platform.environment['WAYLAND_DISPLAY'],
+      gdkBackend: Platform.environment['GDK_BACKEND'],
+    )) {
+      return;
+    }
+    try {
+      // Read the native frame and then the cursor position. Flutter's drag
+      // offset is view-local, while these APIs return matching desktop
+      // logical screen coordinates, including native title-bar space.
+      final bounds = await windowManager.getBounds();
+      final screenPointer = await screenRetriever.getCursorScreenPoint();
+      final pointer = defaultTargetPlatform == TargetPlatform.macOS
+          ? EditorTabTearOutPolicy.alignMacOSCursorWithWindowBounds(
+              pointerPosition: screenPointer,
+              displays: await screenRetriever.getAllDisplays(),
+            )
+          : screenPointer;
+      if (!EditorTabTearOutPolicy.shouldTearOut(
+        windowBounds: bounds,
+        pointerPosition: pointer,
+      )) {
+        return;
+      }
+      if (!mounted ||
+          !group.docs.any((candidate) => identical(candidate, doc))) {
+        return;
+      }
+      await _moveEditorToNewWindow(group, doc);
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() => _statusDetail = '无法确认标签释放位置，文档已保留：$error');
+      }
+    }
   }
 
   bool _onEditorDragModifierKeyEvent(KeyEvent event) {
