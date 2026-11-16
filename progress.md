@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.68 已完成
+### P05 / feat-027 进行中；P05.1–P05.68 已完成；P05.69 / feat-121 进行中
+
+- 2026-11-17：登记 P05.69 / feat-121 / LAY-12b4 主窗 editor tab 拖入已存在辅助窗。目标 aux 单文档，采用交换语义：源文档进入目标窗，目标原文档返回主窗。bounds 经独立、事件驱动的有界上报，不扩展 window/group focus protocol；事务失败需保留两边文档。Code-OSS 1.145 固定源码与编辑前 GitNexus impact/UNKNOWN、CRITICAL 观察已记入 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。产品代码尚未编辑，当前只有此 feature in-progress。
 
 - 2026-11-17：P05.68 / feat-120 / LAY-12b3 Compact 模式 hosted closeout 完成。PR CI `43900198139` 四 job 全绿；Platform Availability `43900182449` Linux/Windows/macOS 全绿。Linux/Windows DnD diagnostics `14240123820` / `14240964046` 通过 move/cross-document copy/external text（19/11 pointer events）；macOS DnD `14256920434` 因 hosted runner 未路由合成 pointer 事件明确 skip。macOS native Quit 通过 Accessibility；startup artifact `14255711563`，启动 `Invalid engine handle` 为非阻塞观察。App artifacts Linux/Windows/macOS `14241267651` / `14241891156` / `14255681783`；macOS ZIP SHA-256 `a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3` 与 sidecar 匹配且 ZIP 81 项完整。原生 OS Compact pixel/reference diff 未验证。P05.68 标记 done；完整 N.2、实现与本地证据见 `docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md`，完整本地日志 `p05.68-init.log`。PR #3 保持 OPEN/DRAFT。
 
@@ -2344,3 +2346,10 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - `workbench_page.dart` 因新版 Dart formatter 会重排超大历史文件，保持局部 diff（208 行）并未运行写入式 formatter；其余 5 个触及 Dart 文件 `dart format --set-exit-if-changed` 通过。
 - hosted：PR CI [43745604458](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43745604458) 四项全绿；Platform Availability [43745600249](https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/43745600249) attempt 2 Linux/Windows/macOS 全绿。attempt 1 macOS native Quit 因 Accessibility `AXError -25204`、System Events 超时而失败；attempt 2 Accessibility 菜单选择与 app 退出通过。Linux/Windows 原生 DnD 通过，macOS DnD artifact `14176931762` 因 hosted pointer route unavailable 明确跳过。Artifacts Linux/Windows/macOS `14174097410` / `14174168620` / `14177250117`；macOS ZIP SHA-256 `f77f8da1c65e5d36b9e9595d590572bb3efafc15c460e68fb1af070092b02f50` 匹配 sidecar，`unzip -tq` 通过（81 项）；macOS startup diagnostics `14176658932`。PR #3 保持 OPEN/DRAFT。详见 `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
 - 状态：P05.62 / feat-114 已完成；下一子项按 N.2 在后续 slice 选择，P05 总阶段保持 in-progress。PR #3 保持 OPEN/DRAFT。
+
+
+## P05.69 LAY-12b4 主窗拖入已存在辅助窗（本地实现完成，2026-11-17）
+
+- 实现 bounds event registry 与主窗→既有辅助窗的 prepare/commit/abort/status 交换；辅助旧文档返回主窗，只有确认 commit 后才移除源 view。失败/不确定结果保留源文档与可恢复目标快照。焦点协议仍只同步活动 window/group 标识。
+- 定向测试 32/32；覆盖边界/重叠/容量/序号、移动/缩放事件、脏文档 CRLF 与 emoji、事务失败恢复、closed-bounds 清理和迟到旧输入回调。`bash init.sh` 全四阶段通过（Rust 125、Flutter 1,360）；`cargo fmt --check`、`flutter analyze` 0、Harness 100/100、JSON/diff checks 通过；完整日志：`docs/diagnostics/2026-11-17-p05/p05.69-init.log`。
+- 尚待：提交后补 PR CI、三平台 Platform Availability、各平台 DnD/artifact 结果与 GitNexus 最终 all/compare 分析；原生 OS 跨窗 DnD 没有证据前不得标通过。P05.69 暂保持 in-progress，PR #3 保持 OPEN/DRAFT。范围与完整结果见 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。

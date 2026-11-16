@@ -83,6 +83,7 @@ import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
 import 'auxiliary_focus_context.dart';
+import 'auxiliary_window_transfer.dart';
 import 'command_history.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
@@ -549,6 +550,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
+  final AuxiliaryWindowBoundsRegistry _auxiliaryWindowBounds =
+      AuxiliaryWindowBoundsRegistry();
+  final Map<int, ({FocusNode node, bool canRequestFocus})>
+      _auxiliaryTransferSourceLocks = {};
+  int _auxiliaryTransferSequence = 0;
   StreamSubscription<void>? _auxiliaryWindowsSubscription;
   final AuxiliaryFocusContextRegistry _auxiliaryFocusRegistry =
       AuxiliaryFocusContextRegistry();
@@ -13343,6 +13349,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
       );
       await self.setWindowMethodHandler((call) async {
+        if (call.method == auxiliaryWindowBoundsMethod) {
+          final bounds = AuxiliaryWindowBounds.tryParse(call.arguments);
+          if (bounds != null &&
+              _auxiliaryWindowIds.contains(bounds.windowId)) {
+            _auxiliaryWindowBounds.update(bounds);
+          }
+          return null;
+        }
         if (call.method == 'alula_auxiliary_closed') {
           final args = call.arguments is Map
               ? Map<String, Object?>.from(call.arguments as Map)
@@ -13350,6 +13364,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           final windowId = args['windowId'];
           if (windowId is String && windowId.isNotEmpty) {
             _auxiliaryWindowIds.remove(windowId);
+            _auxiliaryWindowBounds.remove(windowId);
             final result =
                 _auxiliaryFocusRegistry.removeAuxiliaryWindow(windowId);
             if (result.snapshotChanged) {
@@ -13427,6 +13442,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final windowId in _auxiliaryWindowIds.toList(growable: false)) {
         if (liveIds.contains(windowId)) continue;
         _auxiliaryWindowIds.remove(windowId);
+        _auxiliaryWindowBounds.remove(windowId);
         snapshotChanged = _auxiliaryFocusRegistry
                 .removeAuxiliaryWindow(windowId)
                 .snapshotChanged ||
@@ -13473,6 +13489,269 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _closeDocNow(group, doc);
     _syncCommandContext();
     _scheduleStateSave();
+  }
+
+  OpenDoc? _createAuxiliaryTransferReturnDocument(Object? value) {
+    if (value is! Map) return null;
+    final args = Map<String, Object?>.from(value);
+    final pathValue = args['path'] as String?;
+    final path = pathValue == null || pathValue.isEmpty ? null : pathValue;
+    final name = args['name'] as String? ?? '未命名';
+    final text = args['text'] as String? ?? '';
+    final dirty = args['dirty'] == true;
+    final core = _core;
+    if (core == null) return null;
+    final decoded = path == null ? null : _readDiskDocument(core, path);
+    final id = _nextDocId++;
+    final coreDoc = core.openDoc(id, text);
+    try {
+      coreDoc.setSavepoint(decoded?.content ?? (dirty ? '' : text));
+      return OpenDoc(
+        id: id,
+        name: name,
+        path: path,
+        doc: coreDoc,
+        fileOptions: decoded?.options ?? TextFileOptions.defaults,
+        savedFileOptions: decoded?.options ?? TextFileOptions.defaults,
+        dirtyDisk: dirty || (decoded != null && text != decoded.content),
+        undoBudget: _undoHistoryBudget,
+      );
+    } on Object {
+      coreDoc.close();
+      rethrow;
+    }
+  }
+
+  void _addAuxiliaryTransferReturnDocument(
+    EditorGroup sourceGroup,
+    OpenDoc document,
+  ) {
+    final currentGroup = _groups[sourceGroup.region];
+    final destinationGroup = identical(currentGroup, sourceGroup)
+        ? sourceGroup
+        : _focused;
+    setState(() {
+      destinationGroup.docs.add(document);
+      destinationGroup.activeDocId = document.id;
+      _noteActiveDocument(destinationGroup, document.id);
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  void _disposeAuxiliaryTransferReturnDocument(OpenDoc? document) {
+    document?.disposeView();
+  }
+
+  bool _lockAuxiliaryTransferSource(EditorGroup group, OpenDoc doc) {
+    if (_auxiliaryTransferSourceLocks.containsKey(doc.id)) return false;
+    final focusNode = _focusNodeFor(group, doc);
+    _auxiliaryTransferSourceLocks[doc.id] = (
+      node: focusNode,
+      canRequestFocus: focusNode.canRequestFocus,
+    );
+    focusNode.canRequestFocus = false;
+    focusNode.unfocus();
+    if (mounted) setState(() {});
+    return true;
+  }
+
+  void _unlockAuxiliaryTransferSource(OpenDoc doc) {
+    final lock = _auxiliaryTransferSourceLocks.remove(doc.id);
+    if (lock == null) return;
+    lock.node.canRequestFocus = lock.canRequestFocus;
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _moveEditorToExistingAuxiliaryWindow(
+    EditorGroup group,
+    OpenDoc doc,
+    String targetWindowId,
+  ) async {
+    await _auxiliaryWindowHandlersReady.future;
+    if (!mounted ||
+        !_auxiliaryWindowIds.contains(targetWindowId) ||
+        !group.docs.any((candidate) => identical(candidate, doc))) {
+      return;
+    }
+    if (!_lockAuxiliaryTransferSource(group, doc)) return;
+
+    try {
+      _flushInput(doc, commitComposition: true);
+      final mainWindowId = _mainWindowController?.windowId;
+      final sourcePayload = AuxiliaryWindowPayload.forDocument(
+        path: doc.path,
+        mainWindowId: mainWindowId,
+        name: doc.name,
+        text: doc.text,
+        dirty: doc.isDirty,
+      );
+      final requestId =
+          '${mainWindowId ?? 'main'}:${++_auxiliaryTransferSequence}';
+      final target = WindowController.fromWindowId(targetWindowId);
+
+      Map<String, Object?>? preparedResponse;
+      try {
+        final response = await target.invokeMethod<Object?>(
+          auxiliaryDocumentTransferPrepareMethod,
+          {
+            'requestId': requestId,
+            'document': sourcePayload.toMap(),
+          },
+        );
+        if (response is Map) {
+          preparedResponse = Map<String, Object?>.from(response);
+        }
+      } on Object catch (error) {
+        if (mounted) {
+          setState(() => _statusDetail =
+              '辅助窗口未接受文档；源文档已保留：$error');
+        }
+        return;
+      }
+
+      if (preparedResponse?['status'] != 'prepared') {
+        if (mounted) {
+          setState(() => _statusDetail = '辅助窗口未接受文档；源文档已保留');
+        }
+        return;
+      }
+
+      OpenDoc? returnedDocument;
+      try {
+        returnedDocument = _createAuxiliaryTransferReturnDocument(
+          preparedResponse?['previousDocument'],
+        );
+      } on Object catch (error) {
+        try {
+          await target.invokeMethod<Object?>(
+            auxiliaryDocumentTransferAbortMethod,
+            {'requestId': requestId},
+          );
+        } on Object {
+          // A failed target leaves the source document in the main group.
+        }
+        if (mounted) {
+          setState(() => _statusDetail =
+              '无法恢复辅助窗口原文档；源文档已保留：$error');
+        }
+        return;
+      }
+      if (returnedDocument == null) {
+        try {
+          await target.invokeMethod<Object?>(
+            auxiliaryDocumentTransferAbortMethod,
+            {'requestId': requestId},
+          );
+        } on Object {
+          // A failed target leaves the source document in the main group.
+        }
+        if (mounted) {
+          setState(() => _statusDetail =
+              '无法恢复辅助窗口原文档；源文档已保留');
+        }
+        return;
+      }
+
+      final sourceStillMatches = mounted &&
+          group.docs.any((candidate) => identical(candidate, doc)) &&
+          doc.text == sourcePayload.text &&
+          doc.isDirty == sourcePayload.dirty;
+      if (!sourceStillMatches) {
+        String? abortStatus;
+        try {
+          final result = await target.invokeMethod<Object?>(
+            auxiliaryDocumentTransferAbortMethod,
+            {'requestId': requestId},
+          );
+          if (result is Map) abortStatus = result['status'] as String?;
+        } on Object {
+          // Keep the returned snapshot if the target outcome is uncertain.
+        }
+        if (abortStatus == 'aborted') {
+          _disposeAuxiliaryTransferReturnDocument(returnedDocument);
+        } else if (mounted) {
+          _addAuxiliaryTransferReturnDocument(group, returnedDocument);
+        } else {
+          _disposeAuxiliaryTransferReturnDocument(returnedDocument);
+        }
+        if (mounted) {
+          setState(() => _statusDetail =
+              '源文档状态已变化；交换已取消并保留现有文档');
+        }
+        return;
+      }
+
+      String? transactionStatus;
+      try {
+        final result = await target.invokeMethod<Object?>(
+          auxiliaryDocumentTransferCommitMethod,
+          {'requestId': requestId},
+        );
+        if (result is Map) {
+          transactionStatus = result['status'] as String?;
+        }
+      } on Object {
+        // The status query below distinguishes a lost response from a commit.
+      }
+
+      if (transactionStatus != 'committed' &&
+          transactionStatus != 'aborted') {
+        try {
+          final result = await target.invokeMethod<Object?>(
+            auxiliaryDocumentTransferStatusMethod,
+            {'requestId': requestId},
+          );
+          if (result is Map) {
+            transactionStatus = result['status'] as String?;
+          }
+        } on Object {
+          transactionStatus = null;
+        }
+      }
+
+      if (transactionStatus != 'committed' &&
+          transactionStatus != 'aborted') {
+        try {
+          final result = await target.invokeMethod<Object?>(
+            auxiliaryDocumentTransferAbortMethod,
+            {'requestId': requestId},
+          );
+          if (result is Map) {
+            transactionStatus = result['status'] as String?;
+          }
+        } on Object {
+          // Keep both local snapshots if the target outcome is uncertain.
+        }
+      }
+
+      if (transactionStatus == 'committed') {
+        _unlockAuxiliaryTransferSource(doc);
+        _closeDocNow(group, doc);
+        _addAuxiliaryTransferReturnDocument(group, returnedDocument);
+        return;
+      }
+
+      if (transactionStatus == 'aborted') {
+        _disposeAuxiliaryTransferReturnDocument(returnedDocument);
+        if (mounted) {
+          setState(() => _statusDetail =
+              '辅助窗口交换未提交；源文档与目标文档均已保留');
+        }
+        return;
+      }
+
+      // Keep both local snapshots if the target outcome cannot be confirmed.
+      if (mounted) {
+        _addAuxiliaryTransferReturnDocument(group, returnedDocument);
+        setState(() => _statusDetail =
+            '辅助窗口交换结果未确认；源文档仍保留在主窗口，请检查两侧标签');
+      } else {
+        _disposeAuxiliaryTransferReturnDocument(returnedDocument);
+      }
+    } finally {
+      _unlockAuxiliaryTransferSource(doc);
+    }
   }
 
   Future<void> _moveFocusedEditorToNewWindow() async {
@@ -13990,6 +14269,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _closeDocNow(EditorGroup owner, OpenDoc doc,
       {bool keepEmptyGroup = false}) {
+    if (_auxiliaryTransferSourceLocks.containsKey(doc.id)) return;
     if (!owner.docs.any((view) => identical(view, doc))) return;
     if (_lastExplorerClickPath == doc.path) {
       _lastExplorerClickPath = null;
@@ -19121,6 +19401,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     for (final d in _allDocViews.toList()) {
       d.disposeView();
     }
+    _auxiliaryTransferSourceLocks.clear();
     for (final n in _editorFocusNodes.values) {
       n.dispose();
     }
@@ -22013,8 +22294,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       )) {
         return;
       }
+      if (pointer == null) return;
       if (!mounted ||
           !group.docs.any((candidate) => identical(candidate, doc))) {
+        return;
+      }
+      final targetAuxiliaryWindowId =
+          _auxiliaryWindowBounds.uniqueWindowAt(pointer);
+      if (targetAuxiliaryWindowId != null) {
+        await _moveEditorToExistingAuxiliaryWindow(
+          group,
+          doc,
+          targetAuxiliaryWindowId,
+        );
+        return;
+      }
+      if (_auxiliaryWindowBounds.windowCountAt(pointer) > 1) {
+        if (mounted) {
+          setState(() => _statusDetail =
+              '多个辅助窗口重叠，无法确定目标；源文档已保留');
+        }
         return;
       }
       await _moveEditorToNewWindow(group, doc);

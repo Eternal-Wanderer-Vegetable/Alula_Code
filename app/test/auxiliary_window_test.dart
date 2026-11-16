@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:alula_app/workbench/auxiliary_focus_context.dart';
 import 'package:alula_app/workbench/auxiliary_window.dart';
+import 'package:alula_app/workbench/auxiliary_window_transfer.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -487,6 +490,270 @@ void main() {
         expect(payload.toArguments(), originalArguments);
       },
     );
+  });
+
+  group('auxiliary document transfer protocol', () {
+    const windowManagerChannel = MethodChannel('window_manager');
+    const windowsChannel = MethodChannel('mixin.one/desktop_multi_window');
+    const crossWindowChannel =
+        MethodChannel('mixin.one/desktop_multi_window/channels');
+
+    testWidgets('prepares, aborts, and commits without losing either document',
+        (tester) async {
+      const previousText = 'target dirty\r\n😀\n';
+      const incomingText = 'source dirty\r\n🪺\n';
+      final initialPayload = AuxiliaryWindowPayload.forDocument(
+        mainWindowId: 'main',
+        name: 'target.txt',
+        text: previousText,
+        dirty: true,
+      );
+      final incomingPayload = AuxiliaryWindowPayload.forDocument(
+        mainWindowId: 'main',
+        name: 'source.txt',
+        text: incomingText,
+        dirty: true,
+      );
+      final outboundBounds = <Map<String, Object?>>[];
+      final nativeTitles = <String>[];
+      var reportedBounds = const Rect.fromLTWH(500, 100, 640, 480);
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        windowsChannel,
+        (call) async {
+          if (call.method == 'getWindowDefinition') {
+            return {
+              'windowId': 'aux-1',
+              'windowArgument': initialPayload.toArguments(),
+            };
+          }
+          if (call.method == 'getAllWindows') {
+            return [
+              {'windowId': 'main', 'windowArgument': ''},
+              {
+                'windowId': 'aux-1',
+                'windowArgument': initialPayload.toArguments(),
+              },
+            ];
+          }
+          return null;
+        },
+      );
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        crossWindowChannel,
+        (call) async {
+          if (call.method == 'invokeMethod') {
+            final request = Map<String, Object?>.from(call.arguments as Map);
+            if (request['method'] == auxiliaryFocusContextMethod) {
+              final event = Map<String, Object?>.from(
+                request['arguments'] as Map,
+              );
+              return {
+                'windowId': 'main',
+                'groupId': 'main:editor',
+                'revision': event['sequence'],
+              };
+            }
+            if (request['method'] == auxiliaryWindowBoundsMethod) {
+              outboundBounds.add(
+                Map<String, Object?>.from(request['arguments'] as Map),
+              );
+            }
+          }
+          return null;
+        },
+      );
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        windowManagerChannel,
+        (call) async {
+          if (call.method == 'isAlwaysOnTop') return false;
+          if (call.method == 'isFocused') return false;
+          if (call.method == 'setPreventClose') return null;
+          if (call.method == 'getBounds') {
+            return {
+              'x': reportedBounds.left,
+              'y': reportedBounds.top,
+              'width': reportedBounds.width,
+              'height': reportedBounds.height,
+            };
+          }
+          if (call.method == 'setTitle') {
+            nativeTitles.add(
+              (call.arguments as Map)['title'] as String,
+            );
+          }
+          return null;
+        },
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          windowsChannel,
+          null,
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          crossWindowChannel,
+          null,
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          windowManagerChannel,
+          null,
+        );
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(home: AuxiliaryEditorApp(payload: initialPayload)),
+      );
+      await tester.pumpAndSettle();
+      expect(outboundBounds, hasLength(1));
+      expect(outboundBounds.single['windowId'], 'aux-1');
+      expect(outboundBounds.single['left'], 500.0);
+
+      reportedBounds = const Rect.fromLTWH(720, 180, 680, 500);
+      await dispatchPlatformMethod(
+        tester,
+        windowManagerChannel.name,
+        const MethodCall('onEvent', {'eventName': 'moved'}),
+      );
+      await tester.pumpAndSettle();
+      expect(outboundBounds, hasLength(2));
+      expect(outboundBounds.last['sequence'], 2);
+      expect(outboundBounds.last['left'], 720.0);
+
+      reportedBounds = const Rect.fromLTWH(720, 180, 900, 620);
+      await dispatchPlatformMethod(
+        tester,
+        windowManagerChannel.name,
+        const MethodCall('onEvent', {'eventName': 'resized'}),
+      );
+      await tester.pumpAndSettle();
+      expect(outboundBounds, hasLength(3));
+      expect(outboundBounds.last['sequence'], 3);
+      expect(outboundBounds.last['width'], 900.0);
+
+      final prepareMethod = MethodCall('methodCall', {
+        'channel': 'mixin.one/window_controller/aux-1',
+        'method': auxiliaryDocumentTransferPrepareMethod,
+        'arguments': {
+          'requestId': 'main:1',
+          'document': incomingPayload.toMap(),
+        },
+      });
+      final prepared = await dispatchPlatformMethod(
+        tester,
+        crossWindowChannel.name,
+        prepareMethod,
+      ) as Map;
+      expect(prepared['status'], 'prepared');
+      final returned = AuxiliaryWindowPayload.fromArguments(
+        jsonEncode(prepared['previousDocument']),
+      );
+      expect(returned.name, 'target.txt');
+      expect(returned.text, previousText);
+      expect(returned.dirty, isTrue);
+      expect(
+        tester
+            .widget<RustTextInputField>(find.byType(RustTextInputField))
+            .inputWindow
+            .document
+            .resync()
+            .content,
+        previousText,
+        reason: 'prepare must leave the target document visible and intact',
+      );
+
+      final targetEditorBeforeTransfer =
+          tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+      final targetDocumentBeforeTransfer =
+          targetEditorBeforeTransfer.inputWindow.document;
+      final delayedInputDelta = RustTextInputDelta(
+        operations: const [TextOp.insert(0, 'late ')],
+        version: targetEditorBeforeTransfer.inputWindow.version,
+        documentLengthUtf16: previousText.length + 'late '.length,
+        selection: const TextSelection.collapsed(offset: 5),
+        selectionWindow: const TextSelection.collapsed(offset: 5),
+        composingWindow: null,
+        replacedDocumentRange: null,
+      );
+      targetEditorBeforeTransfer.onDelta!(delayedInputDelta);
+      expect(
+        targetDocumentBeforeTransfer.resync().content,
+        previousText,
+        reason: 'late input must not mutate a document while prepared',
+      );
+
+      final aborted = await dispatchPlatformMethod(
+        tester,
+        crossWindowChannel.name,
+        const MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/aux-1',
+          'method': auxiliaryDocumentTransferAbortMethod,
+          'arguments': {'requestId': 'main:1'},
+        }),
+      ) as Map;
+      expect(aborted['status'], 'aborted');
+      expect(
+        tester
+            .widget<RustTextInputField>(find.byType(RustTextInputField))
+            .inputWindow
+            .document
+            .resync()
+            .content,
+        previousText,
+      );
+
+      final preparedAgain = await dispatchPlatformMethod(
+        tester,
+        crossWindowChannel.name,
+        MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/aux-1',
+          'method': auxiliaryDocumentTransferPrepareMethod,
+          'arguments': {
+            'requestId': 'main:2',
+            'document': incomingPayload.toMap(),
+          },
+        }),
+      ) as Map;
+      expect(preparedAgain['status'], 'prepared');
+      final committed = await dispatchPlatformMethod(
+        tester,
+        crossWindowChannel.name,
+        const MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/aux-1',
+          'method': auxiliaryDocumentTransferCommitMethod,
+          'arguments': {'requestId': 'main:2'},
+        }),
+      ) as Map;
+      expect(committed['status'], 'committed');
+      await tester.pumpAndSettle();
+
+      final input = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      expect(input.inputWindow.document.resync().content, incomingText);
+      expect(input.inputWindow.document.isDirty, isTrue);
+      expect(find.text('source.txt •'), findsOneWidget);
+      await tester.pumpAndSettle();
+      expect(nativeTitles, contains('source.txt'));
+      targetEditorBeforeTransfer.onDelta!(delayedInputDelta);
+      expect(
+        input.inputWindow.document.resync().content,
+        incomingText,
+        reason: 'a stale editor callback must not mutate the incoming document',
+      );
+
+      final repeatedCommit = await dispatchPlatformMethod(
+        tester,
+        crossWindowChannel.name,
+        const MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/aux-1',
+          'method': auxiliaryDocumentTransferCommitMethod,
+          'arguments': {'requestId': 'main:2'},
+        }),
+      ) as Map;
+      expect(repeatedCommit['status'], 'committed',
+          reason:
+              'the commit response is idempotent after an acknowledgement loss');
+    });
   });
 
   group('main-window move flow', () {

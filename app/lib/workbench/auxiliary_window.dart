@@ -17,6 +17,7 @@ import '../bridge/alula_core.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
 import 'auxiliary_focus_context.dart';
+import 'auxiliary_window_transfer.dart';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
@@ -121,10 +122,27 @@ class AuxiliaryEditorApp extends StatefulWidget {
   State<AuxiliaryEditorApp> createState() => _AuxiliaryEditorAppState();
 }
 
+class _PreparedAuxiliaryDocumentTransfer {
+  const _PreparedAuxiliaryDocumentTransfer({
+    required this.requestId,
+    required this.payload,
+    required this.document,
+    required this.inputWindow,
+    required this.previousDocument,
+  });
+
+  final String requestId;
+  final AuxiliaryWindowPayload payload;
+  final AlulaDoc document;
+  final RustTextInputWindow inputWindow;
+  final Map<String, Object?> previousDocument;
+}
+
 class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     with WindowListener {
   AlulaDoc? _doc;
   RustTextInputWindow? _inputWindow;
+  String? _path;
   String _name = '未命名';
   bool _dirty = false;
   bool _closing = false;
@@ -138,9 +156,15 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   Future<void> _focusEventQueue = Future<void>.value();
   int _focusEventSequence = 0;
   int _nativeFocusGeneration = 0;
+  int _nextDocumentId = 2;
   int _latestGlobalFocusRevision = -1;
+  int _boundsReportSequence = 0;
   bool? _nativeWindowFocused;
   bool _focusContextConnected = false;
+  bool _boundsReportRunning = false;
+  bool _boundsReportRequested = false;
+  String? _lastCommittedTransferId;
+  _PreparedAuxiliaryDocumentTransfer? _pendingTransfer;
 
   @override
   void initState() {
@@ -156,6 +180,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   @override
   void dispose() {
     windowManager.removeListener(this);
+    _pendingTransfer?.document.close();
+    _pendingTransfer = null;
     final windowController = _windowController;
     if (windowController != null) {
       unawaited(windowController
@@ -192,8 +218,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       await controller.setWindowMethodHandler((call) async {
         if (call.method == auxiliaryFocusContextMethod) {
           _acceptGlobalFocusSnapshot(call.arguments);
+          return null;
         }
-        return null;
+        return _handleDocumentTransferMethod(call.method, call.arguments);
       });
 
       WindowController? mainController;
@@ -227,6 +254,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       _acceptGlobalFocusSnapshot(initialSnapshot);
       if (!mounted) return;
       _focusContextConnected = true;
+      _requestBoundsReport();
       final observedFocus = _nativeWindowFocused;
       if (observedFocus != null) {
         _publishAuxiliaryFocusContext(focused: observedFocus);
@@ -244,6 +272,242 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       }
     } on Object {
       // Main-window focus context is optional on platforms without the channel.
+    }
+  }
+
+  void _requestBoundsReport() {
+    if (!_focusContextConnected || _mainWindowController == null || !mounted) {
+      return;
+    }
+    _boundsReportRequested = true;
+    if (_boundsReportRunning) return;
+    _boundsReportRunning = true;
+    unawaited(_drainBoundsReports());
+  }
+
+  Future<void> _drainBoundsReports() async {
+    try {
+      while (_boundsReportRequested && mounted) {
+        _boundsReportRequested = false;
+        final mainController = _mainWindowController;
+        final windowController = _windowController;
+        if (!_focusContextConnected ||
+            mainController == null ||
+            windowController == null) {
+          return;
+        }
+        try {
+          final bounds = await windowManager.getBounds();
+          if (!mounted) return;
+          final snapshot = AuxiliaryWindowBounds(
+            windowId: windowController.windowId,
+            sequence: ++_boundsReportSequence,
+            bounds: bounds,
+          );
+          await mainController.invokeMethod<void>(
+            auxiliaryWindowBoundsMethod,
+            snapshot.toMap(),
+          );
+        } on Object {
+          // Bounds are optional when the native window API is unavailable.
+        }
+      }
+    } finally {
+      _boundsReportRunning = false;
+      if (_boundsReportRequested && mounted) _requestBoundsReport();
+    }
+  }
+
+  Map<String, Object?> _transferResponse(String requestId, String status) =>
+      {'requestId': requestId, 'status': status};
+
+  Future<Map<String, Object?>> _prepareDocumentTransfer(
+    Object? arguments,
+  ) async {
+    if (arguments is! Map) return _transferResponse('', 'rejected');
+    final requestId = arguments['requestId'];
+    if (requestId is! String || requestId.isEmpty) {
+      return _transferResponse('', 'rejected');
+    }
+    if (_lastCommittedTransferId == requestId) {
+      return _transferResponse(requestId, 'committed');
+    }
+    final pending = _pendingTransfer;
+    if (pending != null) {
+      if (pending.requestId == requestId) {
+        return {
+          ..._transferResponse(requestId, 'prepared'),
+          'previousDocument': pending.previousDocument,
+        };
+      }
+      return _transferResponse(requestId, 'busy');
+    }
+    final currentDocument = _doc;
+    final currentInputWindow = _inputWindow;
+    if (_closing ||
+        currentDocument == null ||
+        currentInputWindow == null ||
+        currentInputWindow.hasComposition ||
+        currentInputWindow.pendingCount != 0 ||
+        currentInputWindow.version != currentDocument.version) {
+      return _transferResponse(requestId, 'rejected');
+    }
+    final sourceMap = arguments['document'];
+    final incomingPayload = sourceMap is Map
+        ? AuxiliaryWindowPayload.fromArguments(jsonEncode(sourceMap))
+        : AuxiliaryWindowPayload.mainWindow();
+    if (!incomingPayload.isAuxiliary) {
+      return _transferResponse(requestId, 'rejected');
+    }
+
+    AlulaDoc? preparedDocument;
+    try {
+      final previousPayload = AuxiliaryWindowPayload.forDocument(
+        path: _path,
+        mainWindowId: widget.payload.mainWindowId,
+        name: _name,
+        text: currentDocument.resync().content,
+        dirty: _dirty || currentDocument.isDirty,
+      ).toMap();
+      final core = currentDocument.core;
+      preparedDocument = core.openDoc(_nextDocumentId++, incomingPayload.text);
+      final decoded = incomingPayload.path == null
+          ? null
+          : core.workspace.readFileDocument(incomingPayload.path!);
+      preparedDocument.setSavepoint(
+        decoded?.content ?? (incomingPayload.dirty ? '' : incomingPayload.text),
+      );
+      final preparedInputWindow = RustTextInputWindow.openAround(
+        preparedDocument,
+        selectionUtf16: 0,
+        maxWindowUtf16: 16384,
+        compositionReserveUtf16: 256,
+      );
+      final nextTransfer = _PreparedAuxiliaryDocumentTransfer(
+        requestId: requestId,
+        payload: incomingPayload,
+        document: preparedDocument,
+        inputWindow: preparedInputWindow,
+        previousDocument: previousPayload,
+      );
+      if (!mounted || _closing) {
+        preparedDocument.close();
+        return _transferResponse(requestId, 'rejected');
+      }
+      setState(() {
+        _pendingTransfer = nextTransfer;
+        _statusMessage = '正在交换文档…';
+      });
+      FocusManager.instance.primaryFocus?.unfocus();
+      return {
+        ..._transferResponse(requestId, 'prepared'),
+        'previousDocument': previousPayload,
+      };
+    } on Object {
+      preparedDocument?.close();
+      return _transferResponse(requestId, 'rejected');
+    }
+  }
+
+  Future<Map<String, Object?>> _commitDocumentTransfer(
+    Object? arguments,
+  ) async {
+    final requestId = arguments is Map ? arguments['requestId'] : null;
+    if (requestId is! String || requestId.isEmpty) {
+      return _transferResponse('', 'rejected');
+    }
+    if (_lastCommittedTransferId == requestId) {
+      return _transferResponse(requestId, 'committed');
+    }
+    final pending = _pendingTransfer;
+    if (pending == null || pending.requestId != requestId || _closing) {
+      return _transferResponse(requestId, 'rejected');
+    }
+    final previousDocument = _doc;
+    setState(() {
+      _doc = pending.document;
+      _inputWindow = pending.inputWindow;
+      _path = pending.payload.path;
+      _name = pending.payload.name;
+      _dirty = pending.payload.dirty || pending.document.isDirty;
+      _pendingTransfer = null;
+      _lastCommittedTransferId = requestId;
+      _statusMessage = '';
+    });
+    unawaited(_updateNativeWindowTitle(pending.payload.name));
+    if (previousDocument != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!identical(previousDocument, _doc)) previousDocument.close();
+      });
+    }
+    return _transferResponse(requestId, 'committed');
+  }
+
+  Future<void> _updateNativeWindowTitle(String title) async {
+    try {
+      await windowManager.setTitle(title);
+    } on Object {
+      // The in-window document title remains available without native chrome.
+    }
+  }
+
+  Future<Map<String, Object?>> _abortDocumentTransfer(
+    Object? arguments,
+  ) async {
+    final requestId = arguments is Map ? arguments['requestId'] : null;
+    if (requestId is! String || requestId.isEmpty) {
+      return _transferResponse('', 'rejected');
+    }
+    if (_lastCommittedTransferId == requestId) {
+      return _transferResponse(requestId, 'committed');
+    }
+    final pending = _pendingTransfer;
+    if (pending == null || pending.requestId != requestId) {
+      return _transferResponse(requestId, 'unknown');
+    }
+    pending.document.close();
+    if (mounted) {
+      setState(() {
+        _pendingTransfer = null;
+        _statusMessage = '';
+      });
+    } else {
+      _pendingTransfer = null;
+    }
+    return _transferResponse(requestId, 'aborted');
+  }
+
+  Future<Map<String, Object?>> _documentTransferStatus(
+    Object? arguments,
+  ) async {
+    final requestId = arguments is Map ? arguments['requestId'] : null;
+    if (requestId is! String || requestId.isEmpty) {
+      return _transferResponse('', 'unknown');
+    }
+    if (_lastCommittedTransferId == requestId) {
+      return _transferResponse(requestId, 'committed');
+    }
+    if (_pendingTransfer?.requestId == requestId) {
+      return _transferResponse(requestId, 'prepared');
+    }
+    return _transferResponse(requestId, 'unknown');
+  }
+
+  Future<Object?> _handleDocumentTransferMethod(
+    String method,
+    Object? arguments,
+  ) async {
+    switch (method) {
+      case auxiliaryDocumentTransferPrepareMethod:
+        return _prepareDocumentTransfer(arguments);
+      case auxiliaryDocumentTransferCommitMethod:
+        return _commitDocumentTransfer(arguments);
+      case auxiliaryDocumentTransferAbortMethod:
+        return _abortDocumentTransfer(arguments);
+      case auxiliaryDocumentTransferStatusMethod:
+        return _documentTransferStatus(arguments);
+      default:
+        return null;
     }
   }
 
@@ -289,6 +553,27 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     _nativeWindowFocused = false;
     _publishAuxiliaryFocusContext(focused: false);
   }
+
+  @override
+  void onWindowMove() => _requestBoundsReport();
+
+  @override
+  void onWindowMoved() => _requestBoundsReport();
+
+  @override
+  void onWindowResize() => _requestBoundsReport();
+
+  @override
+  void onWindowResized() => _requestBoundsReport();
+
+  @override
+  void onWindowMaximize() => _requestBoundsReport();
+
+  @override
+  void onWindowUnmaximize() => _requestBoundsReport();
+
+  @override
+  void onWindowRestore() => _requestBoundsReport();
 
   @override
   void onWindowClose() {
@@ -346,8 +631,9 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       final decoded = payload.path != null
           ? core.workspace.readFileDocument(payload.path!)
           : null;
-      final content =
-          payload.text.isNotEmpty ? payload.text : decoded?.content ?? '';
+      final content = payload.path != null && !payload.dirty
+          ? decoded?.content ?? payload.text
+          : payload.text;
       final doc = core.openDoc(1, content);
       final inputWindow = RustTextInputWindow.openAround(
         doc,
@@ -356,13 +642,16 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         compositionReserveUtf16: 256,
       );
       // 干净磁盘文件以磁盘内容为 savepoint；未命名/脏文本以空 savepoint 呈现脏标。
-      doc.setSavepoint(decoded?.content ?? '');
+      doc.setSavepoint(
+        decoded?.content ?? (payload.dirty ? '' : content),
+      );
       if (!mounted) return;
       setState(() {
         _doc = doc;
         _inputWindow = inputWindow;
+        _path = payload.path;
         _name = payload.name;
-        _dirty = doc.isDirty;
+        _dirty = payload.dirty || doc.isDirty;
       });
     } on Object catch (error) {
       if (!mounted) return;
@@ -387,7 +676,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         final doc = _doc;
         final text = doc?.resync().content ?? widget.payload.text;
         final closePayload = AuxiliaryWindowPayload.forDocument(
-          path: widget.payload.path,
+          path: _path,
           name: _name,
           text: text,
           dirty: _dirty || doc?.isDirty == true,
@@ -504,7 +793,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                   IconButton(
                     key: const ValueKey('auxiliary-close-button'),
                     tooltip: '移回主窗口并关闭',
-                    onPressed: doc == null
+                    onPressed: doc == null || _pendingTransfer != null
                         ? null
                         : () {
                             _sendClosedAndDestroy();
@@ -548,29 +837,40 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                       padding: _compactMode
                           ? EdgeInsets.zero
                           : const EdgeInsets.all(4),
-                      child: RustTextInputField(
-                        key: const ValueKey('auxiliary-editor-input'),
-                        inputWindow: inputWindow,
-                        scrollController: _scrollController,
-                        tabSize: 4,
-                        semanticsLabel: '$_name 辅助窗口编辑器',
-                        style: const TextStyle(
-                            fontFamily: 'monospace', fontSize: 12),
-                        onDelta: (delta) {
-                          try {
-                            _doc?.applyWith(delta.version, delta.operations);
-                            if (mounted && !_dirty) {
-                              setState(() => _dirty = true);
-                            }
-                          } on Object {
-                            // 陈旧窗口引擎：忽略增量。
-                          }
-                        },
-                        onError: (error) {
-                          if (mounted) {
-                            setState(() => _statusMessage = '编辑错误：$error');
-                          }
-                        },
+                      child: Focus(
+                        canRequestFocus: _pendingTransfer == null,
+                        descendantsAreFocusable: _pendingTransfer == null,
+                        child: AbsorbPointer(
+                          absorbing: _pendingTransfer != null,
+                          child: RustTextInputField(
+                            key: const ValueKey('auxiliary-editor-input'),
+                            inputWindow: inputWindow,
+                            scrollController: _scrollController,
+                            tabSize: 4,
+                            semanticsLabel: '$_name 辅助窗口编辑器',
+                            style: const TextStyle(
+                                fontFamily: 'monospace', fontSize: 12),
+                            onDelta: (delta) {
+                              if (_pendingTransfer != null ||
+                                  !identical(_doc, doc)) {
+                                return;
+                              }
+                              try {
+                                doc.applyWith(delta.version, delta.operations);
+                                if (mounted && !_dirty) {
+                                  setState(() => _dirty = true);
+                                }
+                              } on Object {
+                                // 陈旧窗口引擎：忽略增量。
+                              }
+                            },
+                            onError: (error) {
+                              if (mounted) {
+                                setState(() => _statusMessage = '编辑错误：$error');
+                              }
+                            },
+                          ),
+                        ),
                       ),
                     ),
             ),

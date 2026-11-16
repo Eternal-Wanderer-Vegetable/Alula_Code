@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/workbench/auxiliary_focus_context.dart';
 import 'package:alula_app/workbench/auxiliary_window.dart';
+import 'package:alula_app/workbench/auxiliary_window_transfer.dart';
 import 'package:alula_app/workbench/editor_tab_tear_out_policy.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -11,6 +14,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:screen_retriever/screen_retriever.dart' show Display;
+
+Future<Object?> dispatchPlatformMethod(
+  WidgetTester tester,
+  String channel,
+  MethodCall call,
+) async {
+  const codec = StandardMethodCodec();
+  final response =
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    channel,
+    codec.encodeMethodCall(call),
+    null,
+  );
+  return response == null ? null : codec.decodeEnvelope(response);
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -195,10 +213,17 @@ void main() {
     late SessionStore sessionStore;
     late String documentPath;
     final createdPayloads = <String>[];
+    final auxiliaryTransferCalls = <String>[];
+    final transferredSourceDocuments = <Map<String, Object?>>[];
     Offset cursorPosition = const Offset(2600, 700);
     Rect windowBounds = const Rect.fromLTWH(100, 200, 2400, 1000);
     bool failCreate = false;
     bool failCursorPosition = false;
+    String transferPrepareStatus = 'prepared';
+    String transferCommitStatus = 'committed';
+    String transferStatusResponse = 'prepared';
+    String transferAbortStatus = 'aborted';
+    late Map<String, Object?> auxiliaryPreviousDocument;
 
     setUp(() {
       temp = Directory.systemTemp.createTempSync('alula-tab-tear-out');
@@ -209,10 +234,21 @@ void main() {
       layoutStore = LayoutStore(path: '$base/layout.json');
       sessionStore = SessionStore(path: '$base/session.json');
       createdPayloads.clear();
+      auxiliaryTransferCalls.clear();
+      transferredSourceDocuments.clear();
       cursorPosition = const Offset(2600, 700);
       windowBounds = const Rect.fromLTWH(100, 200, 2400, 1000);
       failCreate = false;
       failCursorPosition = false;
+      transferPrepareStatus = 'prepared';
+      transferCommitStatus = 'committed';
+      transferStatusResponse = 'prepared';
+      transferAbortStatus = 'aborted';
+      auxiliaryPreviousDocument = AuxiliaryWindowPayload.forDocument(
+        name: 'aux-original.rs',
+        text: 'aux original\r\n🪺\n',
+        dirty: true,
+      ).toMap();
     });
 
     Future<void> mountWorkbench(WidgetTester tester) async {
@@ -264,7 +300,52 @@ void main() {
       );
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         const MethodChannel('mixin.one/desktop_multi_window/channels'),
-        (call) async => null,
+        (call) async {
+          if (call.method != 'invokeMethod' || call.arguments is! Map) {
+            return null;
+          }
+          final envelope = Map<String, Object?>.from(call.arguments as Map);
+          if (envelope['channel'] != 'mixin.one/window_controller/aux-1') {
+            return null;
+          }
+          final method = envelope['method'] as String?;
+          if (method == null) return null;
+          auxiliaryTransferCalls.add(method);
+          final arguments = envelope['arguments'] is Map
+              ? Map<String, Object?>.from(envelope['arguments'] as Map)
+              : <String, Object?>{};
+          switch (method) {
+            case auxiliaryDocumentTransferPrepareMethod:
+              final document = arguments['document'];
+              if (document is Map) {
+                transferredSourceDocuments.add(
+                  Map<String, Object?>.from(document),
+                );
+              }
+              return {
+                'requestId': arguments['requestId'],
+                'status': transferPrepareStatus,
+                if (transferPrepareStatus == 'prepared')
+                  'previousDocument': auxiliaryPreviousDocument,
+              };
+            case auxiliaryDocumentTransferCommitMethod:
+              return {
+                'requestId': arguments['requestId'],
+                'status': transferCommitStatus,
+              };
+            case auxiliaryDocumentTransferStatusMethod:
+              return {
+                'requestId': arguments['requestId'],
+                'status': transferStatusResponse,
+              };
+            case auxiliaryDocumentTransferAbortMethod:
+              return {
+                'requestId': arguments['requestId'],
+                'status': transferAbortStatus,
+              };
+          }
+          return null;
+        },
       );
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         const MethodChannel('window_manager'),
@@ -349,6 +430,65 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    Future<void> registerAuxiliaryWindow(
+      WidgetTester tester, {
+      String windowId = 'aux-1',
+      Rect bounds = const Rect.fromLTWH(2550, 300, 900, 800),
+    }) async {
+      final event = AuxiliaryFocusContextEvent(
+        kind: AuxiliaryFocusEventKind.register,
+        windowId: windowId,
+        sequence: 1,
+        groupId: '$windowId:editor',
+        focused: false,
+      );
+      final registered = await dispatchPlatformMethod(
+        tester,
+        'mixin.one/desktop_multi_window/channels',
+        // The register event's map is built at runtime.
+        // ignore: prefer_const_constructors
+        MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/main',
+          'method': auxiliaryFocusContextMethod,
+          'arguments': event.toMap(),
+        }),
+      );
+      expect(registered, isA<Map>());
+      final focused = await dispatchPlatformMethod(
+        tester,
+        'mixin.one/desktop_multi_window/channels',
+        // Event maps are encoded from their typed snapshot.
+        // ignore: prefer_const_constructors
+        MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/main',
+          'method': auxiliaryFocusContextMethod,
+          'arguments': AuxiliaryFocusContextEvent(
+            kind: AuxiliaryFocusEventKind.update,
+            windowId: windowId,
+            sequence: 2,
+            groupId: '$windowId:editor',
+            focused: true,
+          ).toMap(),
+        }),
+      );
+      expect((focused as Map)['windowId'], windowId);
+      await dispatchPlatformMethod(
+        tester,
+        'mixin.one/desktop_multi_window/channels',
+        // Bounds are serialized at runtime.
+        // ignore: prefer_const_constructors
+        MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/main',
+          'method': auxiliaryWindowBoundsMethod,
+          'arguments': AuxiliaryWindowBounds(
+            windowId: windowId,
+            sequence: 1,
+            bounds: bounds,
+          ).toMap(),
+        }),
+      );
+    }
+
     testWidgets(
       'outside release creates one auxiliary window with the dirty document',
       (tester) async {
@@ -371,6 +511,169 @@ void main() {
             reason: 'the successfully moved source view is removed');
       },
     );
+
+    testWidgets(
+      'drop on a registered auxiliary window swaps documents after commit',
+      (tester) async {
+        await mountWorkbench(tester);
+        await registerAuxiliaryWindow(tester);
+        await dragTab(tester, const Offset(2600, 700));
+
+        expect(createdPayloads, isEmpty);
+        expect(
+          auxiliaryTransferCalls,
+          containsAll([
+            auxiliaryDocumentTransferPrepareMethod,
+            auxiliaryDocumentTransferCommitMethod,
+          ]),
+        );
+        expect(transferredSourceDocuments, hasLength(1));
+        expect(transferredSourceDocuments.single['path'], documentPath);
+        expect(transferredSourceDocuments.single['text'], 'unsaved body');
+        expect(transferredSourceDocuments.single['dirty'], isTrue);
+        expect(find.byKey(const ValueKey('tab-10')), findsNothing);
+        expect(find.text('aux-original.rs •'), findsOneWidget);
+        final input = tester.widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        );
+        expect(
+          input.inputWindow.document.resync().content,
+          'aux original\r\n🪺\n',
+        );
+        expect(input.inputWindow.document.isDirty, isTrue);
+
+        final groups = sessionStore.tryLoad()?['groups'] as List;
+        final docs = [
+          for (final group in groups) ...((group as Map)['docs'] as List),
+        ];
+        expect(
+          docs.where((doc) => (doc as Map)['path'] == documentPath),
+          isEmpty,
+        );
+        expect(
+          docs.where(
+            (doc) => (doc as Map)['text'] == 'aux original\r\n🪺\n',
+          ),
+          hasLength(1),
+        );
+      },
+    );
+
+    testWidgets('rejected auxiliary transfer keeps the source tab open',
+        (tester) async {
+      transferPrepareStatus = 'rejected';
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(auxiliaryTransferCalls,
+          contains(auxiliaryDocumentTransferPrepareMethod));
+      expect(
+        auxiliaryTransferCalls,
+        isNot(contains(auxiliaryDocumentTransferCommitMethod)),
+      );
+      expect(createdPayloads, isEmpty);
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
+    });
+
+    testWidgets('aborted auxiliary commit keeps both original documents',
+        (tester) async {
+      transferCommitStatus = 'rejected';
+      transferStatusResponse = 'prepared';
+      transferAbortStatus = 'aborted';
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(
+        auxiliaryTransferCalls,
+        containsAll([
+          auxiliaryDocumentTransferPrepareMethod,
+          auxiliaryDocumentTransferCommitMethod,
+          auxiliaryDocumentTransferStatusMethod,
+          auxiliaryDocumentTransferAbortMethod,
+        ]),
+      );
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
+      expect(find.text('aux-original.rs •'), findsNothing);
+      expect(createdPayloads, isEmpty);
+    });
+
+    testWidgets('unconfirmed auxiliary commit preserves both local snapshots',
+        (tester) async {
+      transferCommitStatus = 'rejected';
+      transferStatusResponse = 'unknown';
+      transferAbortStatus = 'unknown';
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(
+        auxiliaryTransferCalls,
+        containsAll([
+          auxiliaryDocumentTransferPrepareMethod,
+          auxiliaryDocumentTransferCommitMethod,
+          auxiliaryDocumentTransferStatusMethod,
+          auxiliaryDocumentTransferAbortMethod,
+        ]),
+      );
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget,
+          reason: 'an unconfirmed target commit cannot remove the source');
+      expect(find.text('aux-original.rs •'), findsOneWidget,
+          reason: 'the returned target snapshot remains recoverable');
+      expect(createdPayloads, isEmpty);
+    });
+
+    testWidgets('closed auxiliary bounds are removed before the next drop',
+        (tester) async {
+      await mountWorkbench(tester);
+      await registerAuxiliaryWindow(tester);
+      await dispatchPlatformMethod(
+        tester,
+        'mixin.one/desktop_multi_window/channels',
+        const MethodCall('methodCall', {
+          'channel': 'mixin.one/window_controller/main',
+          'method': 'alula_auxiliary_closed',
+          'arguments': {
+            'windowId': 'aux-1',
+            'name': 'closed-aux.rs',
+            'text': 'recovered aux text',
+            'dirty': true,
+          },
+        }),
+      );
+      await tester.pumpAndSettle();
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(createdPayloads, hasLength(1),
+          reason: 'a closed window cannot remain a drop target');
+      expect(
+        auxiliaryTransferCalls,
+        isNot(contains(auxiliaryDocumentTransferPrepareMethod)),
+      );
+      expect(find.byKey(const ValueKey('tab-10')), findsNothing);
+    });
+
+    testWidgets(
+        'overlapping auxiliary bounds keep the source without a new window',
+        (tester) async {
+      await mountWorkbench(tester);
+      const overlap = Rect.fromLTWH(2550, 300, 900, 800);
+      await registerAuxiliaryWindow(tester, bounds: overlap);
+      await registerAuxiliaryWindow(
+        tester,
+        windowId: 'aux-2',
+        bounds: overlap,
+      );
+      await dragTab(tester, const Offset(2600, 700));
+
+      expect(createdPayloads, isEmpty);
+      expect(
+        auxiliaryTransferCalls,
+        isNot(contains(auxiliaryDocumentTransferPrepareMethod)),
+      );
+      expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
+    });
 
     testWidgets('accepted in-window editor drop never creates a window',
         (tester) async {

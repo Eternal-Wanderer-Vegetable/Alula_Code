@@ -1494,6 +1494,20 @@
       "evidence": "Local N.2 complete: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. PR CI 43900198139 all four jobs passed; Platform Availability 43900182449 Linux/Windows/macOS passed. App artifacts Linux/Windows/macOS 14241267651 / 14241891156 / 14255681783. Linux/Windows DnD diagnostics 14240123820 / 14240964046 passed move/cross-document copy/external text (19/11 pointer events); macOS DnD artifact 14256920434 explicitly skipped because the hosted pointer route was unavailable. macOS native Quit passed through Accessibility; startup artifact 14255711563; app ZIP SHA-256 a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3 matched sidecar and the 81-entry archive passed integrity checks. Native OS compact pixel/reference diff remains unverified. Scope, N.2 and closeout: docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md; local full log: docs/diagnostics/2026-11-16-p05/p05.68-init.log.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-121",
+      "name": "P05.69 LAY-12b4 主窗 tab 拖入已存在辅助编辑器窗",
+      "description": "主窗拖动 editor tab 并释放到已打开的辅助窗时，按窗口 bounds 命中目标并移动文档；Alula aux 目前是单文档视图，因此将目标原文档返回主窗，实现两窗文档交换。使用独立的有界 bounds 上报，不改变 P05.67 window/group focus protocol；失败时保留源与目标文档。排除 aux->main/aux->aux 拖放、copy、aux 多文档/tab UI、跨窗 selection/undo/focus 同步。范围与 N.2：docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md",
+      "dependencies": [
+        "feat-115",
+        "feat-119",
+        "feat-101"
+      ],
+      "status": "in-progress",
+      "evidence": "Implementation and local N.2 complete; hosted validation pending. Added bounded event-driven auxiliary bounds registry and prepare/commit/abort/status document swap; main source closes only after confirmed commit, and uncertain outcomes retain both local snapshots. Old auxiliary input callbacks are rejected while prepared and after document replacement. P05.67 focus channel remains window/group-only; no Rust/FFI changes. Focused tests 32/32; cargo fmt --check; flutter analyze 0 issues; bash init.sh passed (Rust 125 tests, Clippy, core build, Flutter 1360/1360); harness 100/100; JSON/diff checks passed. Native OS cross-window DnD is unverified; existing hosted DnD artifacts cover general native drag/drop, not this Alula swap route. Full init log: docs/diagnostics/2026-11-17-p05/p05.69-init.log. Scope and N.2: docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
