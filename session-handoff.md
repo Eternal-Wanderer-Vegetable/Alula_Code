@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.65 已完成各自 N.2 与 hosted closeout；当前下一项待按 docs/03 独立拆分 LAY-12b（组/焦点同步、compact/pin-top、移回主窗、跨窗口拖拽）。P05.65 产品提交 `f4f95d799a13f991da46bb8620c267103d6d87f4` 与测试选择器修复 `831c5c54933f15817917e5806b05725954a5277c` 已推送；PR CI `43814360627` 四项全绿。Platform Availability `43814354795` attempt 2 三平台 build/test/launch/package 全绿；attempt 1 的 macOS ordinary launch-stop 与 native Quit smoke 失败，attempt 2 均通过。macOS ZIP artifact `14205627497` 的 SHA-256 `cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e` 与 sidecar 一致，81 项完整；native DnD artifact `14205611876` 明确记录 pointer route unavailable/skip。完整范围：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`。P05 / feat-027 仍 in-progress，PR #3 保持 OPEN/DRAFT，不合并。
+- P05.1–P05.65 已完成各自 N.2 与 hosted closeout；当前执行 P05.66 / feat-118 / LAY-12b1：仅 auxiliary editor 标题行 always-on-top 开关，范围/N.2 已登记；后续 LAY-12b 子项继续独立拆分。P05.65 产品提交 `f4f95d799a13f991da46bb8620c267103d6d87f4` 与测试选择器修复 `831c5c54933f15817917e5806b05725954a5277c` 已推送；PR CI `43814360627` 四项全绿。Platform Availability `43814354795` attempt 2 三平台 build/test/launch/package 全绿；attempt 1 的 macOS ordinary launch-stop 与 native Quit smoke 失败，attempt 2 均通过。macOS ZIP artifact `14205627497` 的 SHA-256 `cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e` 与 sidecar 一致，81 项完整；native DnD artifact `14205611876` 明确记录 pointer route unavailable/skip。完整范围：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`。P05 / feat-027 仍 in-progress，PR #3 保持 OPEN/DRAFT，不合并。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -45,6 +45,7 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
+- P05.66 / feat-118 当前 in-progress，产品和本地/hosted N.2 证据待完成；OS 原生置顶状态是否能由现有 hosted lane 实测仍待确认。
 - P05.65 已完成且无已知产品阻塞：本地 DoD、PR CI `43814360627` 与 Platform Availability `43814354795` attempt 2 全绿。Hosted macOS text DnD 探针因 runner 不路由合成指针而 skip；标签拖出手势由 policy/Workbench widget tests 验证，未声称原生手势 hosted 通过。Linux Wayland 无全局坐标时禁用自动 tear-out，手动 Move to New Window 可用。
 - Historical, non-blocking CI anomaly: P05.64 docs closeout commit `f65043e2ebed82224159bc8b4351f2b78ecaae74` 的 PR CI run `43798796857` 已结束为 failure。Rust Windows job failure，但 `Tests` step 状态仍是 `in_progress` 且没有结论；日志读取返回 404。不得将它写成测试断言失败或成功。同 SHA 的 Harness、Flutter、Rust Ubuntu 成功；前一产品 commit 的 Windows CI 和 Platform Availability 三平台均通过。
 - GitNexus 图覆盖：`workbench_page.dart` 私有方法/跨语言字段与 flows 有 UNKNOWN、截断限制；不把 0 caller/0 flow 当作无影响。P05.65 helper exact impact LOW/3；all-scope 多次结果跨 12 files/5–19 symbols/0–146 processes，在 LOW 与 CRITICAL 间波动；compare-main 291 files/CRITICAL、符号和 process 计数有波动、listing capped；Section 03 impact UNKNOWN；旧 class-level CRITICAL 保留。完整输出与影响范围见 P05.65 报告。
@@ -53,8 +54,8 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. 按 docs/03 将 LAY-12b 拆分为单一、可验收的 P05 slice；完成上游核对、编辑前 GitNexus impact 与 scope/N.2 DoD 登记后再改实现。
-2. 保持 one-feature-at-a-time；完成该 slice 后运行其完整 N.2 本地与 hosted 门禁，更新 feature_list/progress/session-handoff 并在 commit 前执行 GitNexus detect-changes。
+1. 继续 P05.66：在 `AuxiliaryEditorApp` 标题行实现原生 always-on-top toggle，覆盖加载、切换成功/失败与文档状态稳定性测试。
+2. 完成 P05.66 的完整 N.2 本地/hosted 门禁，登记 PR CI 与三平台可验证范围；commit 前执行完整 GitNexus detect-changes。之后再独立拆分下一个 LAY-12b slice。
 3. P05 / feat-027 继续 in-progress；PR #3 保持 OPEN/DRAFT，不合并。
 
 ## Evidence and Files
@@ -76,6 +77,7 @@ Last Updated: 2026-11-16
   `p05.60-full-flutter.log`
 - P05.63：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`（本地与 hosted closeout 完成）
 - P05.64：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`（本地与 hosted closeout 完成）
+- P05.66（in-progress）：`docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md`。
 - P05.65（done）：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`；本地 focused 12/12、完整 init.sh Flutter 1336/1336、Rust/Clippy/core、fmt/analyze/Harness 通过。PR CI `43814360627` 四项全绿；Platform Availability `43814354795` attempt 2 三平台通过。Artifacts Linux/Windows/macOS `14202041981` / `14202401615` / `14205627497`；macOS ZIP SHA `cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e`，sidecar 一致、81 项完整。macOS native DnD artifact `14205611876` 明确 skip；不计为手势验收。
 - 产品文件：`app/lib/workbench/notifications.dart`、`notification_widgets.dart`、
   `status_bar.dart`、`workbench_page.dart`、`app/lib/main.dart`、

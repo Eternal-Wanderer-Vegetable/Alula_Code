@@ -1455,6 +1455,19 @@
       "evidence": "Implemented tear-out only for unaccepted releases outside native main-window bounds; accepted targets and in-window misses do not create windows. Unknown/invalid coordinates and window creation errors retain the source view. Linux Wayland disables automatic tear-out because GTK lacks global window coordinates; the existing manual move command remains available. Existing AuxiliaryWindowPayload/move path carries dirty text and saves session state. EditorTabTearOutPolicy and Workbench focused tests: 12/12; cargo fmt --check; bash init.sh EXIT=0 (Rust workspace tests, Clippy -D warnings, core build, Flutter 1336/1336); flutter analyze 0 issues; Harness validator 100/100; git diff --check passed. The first Platform Availability run 43808260927 exposed a pre-existing workspace_edit_transaction_test.dart selector using an absent tab-2 ID; selectors were changed to visible Cargo.toml/main.rs labels. Corrected head 831c5c54933f15817917e5806b05725954a5277c passed PR CI 43814360627 (all four jobs). Platform Availability 43814354795 attempt 1 passed macOS Flutter 1336/1336 and Release build but failed the ordinary launch-stop smoke and native-titlebar Quit; attempt 2 passed all three platform jobs, including both macOS close smokes and package. macOS Quit was selected through Accessibility (diagnostic artifact 14205681919). Packages Linux/Windows/macOS: 14202041981 / 14202401615 / 14205627497. macOS ZIP SHA-256 cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e matched its sidecar and all 81 entries passed integrity checking. macOS native DnD artifact 14205611876 explicitly records CGEventPostToPid pointer route false and skipped test; this is not native drag/tear-out evidence. Platform Availability validates plugin registration/build/package/startup/close; tear-out behavior is covered by policy and Workbench widget tests. GitNexus exact helper impact LOW/3; all-scope varies across 12 files/5-19 symbols/0-146 processes between LOW and CRITICAL; compare-main remains CRITICAL over 291 files with capped/variable listing. P05 section impact UNKNOWN, earlier class-level CRITICAL and coverage limits stay preserved in the scope report.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-118",
+      "name": "P05.66 LAY-12b1 辅助编辑器窗口置顶开关",
+      "description": "仅辅助编辑器窗口标题行提供 accessible always-on-top 开关；初始化读取原生状态，成功调用原生 API 后更新状态，失败保留旧状态并通知。文本、dirty/savepoint、session 和主窗口不变。排除 compact、组/焦点同步、移回主窗、跨窗拖拽、持久化与 palette 命令。范围/N.2：docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md",
+      "dependencies": [
+        "feat-117",
+        "feat-101"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope and N.2 acceptance registered before product edits. Implementation and local/hosted evidence pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
