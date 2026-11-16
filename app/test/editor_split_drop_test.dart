@@ -7,6 +7,8 @@ import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,20 +37,24 @@ Finder _strip(String region) =>
 Finder _bodyDrop(String region) =>
     find.byKey(ValueKey('editor-body-drop-$region'));
 
+Finder _groupDrop(String region) =>
+    find.byKey(ValueKey('editor-drop-area-$region'));
+
+Finder _breadcrumb(String region) => find.byKey(ValueKey('breadcrumb-$region'));
+
 List<int> _tabIdsIn(WidgetTester tester, String region) => find
-    .descendant(
-      of: _strip(region),
-      matching: find.byWidgetPredicate((widget) {
-        final key = widget.key;
-        return key is ValueKey<String> && key.value.startsWith('tab-');
-      }),
-    )
-    .evaluate()
-    .map((element) {
+        .descendant(
+          of: _strip(region),
+          matching: find.byWidgetPredicate((widget) {
+            final key = widget.key;
+            return key is ValueKey<String> && key.value.startsWith('tab-');
+          }),
+        )
+        .evaluate()
+        .map((element) {
       final key = element.widget.key! as ValueKey<String>;
       return int.parse(key.value.substring('tab-'.length));
-    })
-    .toList();
+    }).toList();
 
 int _tabCountAcrossStrips(WidgetTester tester, int id) =>
     _tabIn('editor', id).evaluate().length +
@@ -80,7 +86,8 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
         onCommandServiceReady: (service) => commands = service,
       ),
     ));
@@ -167,8 +174,266 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  List<Map<String, Object?>> fileDoc(String path, int id) =>
-      [{'id': id, 'path': path}];
+  Future<TestGesture> hoverTabOnBody(
+    WidgetTester tester,
+    String sourceRegion,
+    int sourceId,
+    String targetRegion, {
+    required double dxFraction,
+    required double dyFraction,
+  }) async {
+    final source = tester.getCenter(_tabIn(sourceRegion, sourceId));
+    final bodyRect = tester.getRect(_bodyDrop(targetRegion));
+    final dropPoint = Offset(
+      bodyRect.left + bodyRect.width * dxFraction,
+      bodyRect.top + bodyRect.height * dyFraction,
+    );
+    final gesture = await tester.startGesture(source);
+    await tester.pump();
+    await gesture.moveBy(const Offset(14, 0));
+    await tester.pump();
+    await gesture.moveTo(dropPoint);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    return gesture;
+  }
+
+  List<Map<String, Object?>> fileDoc(String path, int id) => [
+        {'id': id, 'path': path}
+      ];
+
+  testWidgets('tab drag previews the body center and directional half areas',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final beta = File('${workspace.path}/beta.rs')
+      ..writeAsStringSync('fn beta() {}\n');
+    final gamma = File('${workspace.path}/gamma.rs')
+      ..writeAsStringSync('fn gamma() {}\n');
+    await seedTwoGroups(
+      editorDocs: [...fileDoc(alpha.path, 10), ...fileDoc(beta.path, 11)],
+      editor2Docs: [...fileDoc(gamma.path, 12)],
+    );
+    await mountPage(tester);
+
+    final bodyRect = tester.getRect(_bodyDrop('editor-2'));
+    final gesture = await hoverTabOnBody(
+      tester,
+      'editor',
+      10,
+      'editor-2',
+      dxFraction: 0.95,
+      dyFraction: 0.5,
+    );
+
+    final previews = <({String mode, double x, double y})>[
+      (mode: 'splitRight', x: 0.95, y: 0.5),
+      (mode: 'splitLeft', x: 0.05, y: 0.5),
+      (mode: 'splitUp', x: 0.5, y: 0.05),
+      (mode: 'splitDown', x: 0.5, y: 0.95),
+      (mode: 'center', x: 0.5, y: 0.5),
+    ];
+    for (final preview in previews) {
+      await gesture.moveTo(Offset(
+        bodyRect.left + bodyRect.width * preview.x,
+        bodyRect.top + bodyRect.height * preview.y,
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final overlay =
+          find.byKey(ValueKey('editor-body-editor-2-overlay-${preview.mode}'));
+      expect(overlay, findsOneWidget,
+          reason: '${preview.mode} should match the active drop zone');
+      final rect = tester.getRect(overlay);
+      if (preview.mode == 'splitRight') {
+        expect(rect.left, closeTo(bodyRect.left + bodyRect.width / 2, 1));
+        expect(rect.width, closeTo(bodyRect.width / 2, 1));
+        expect(rect.height, closeTo(bodyRect.height, 1));
+      } else if (preview.mode == 'splitLeft') {
+        expect(rect.left, closeTo(bodyRect.left, 1));
+        expect(rect.width, closeTo(bodyRect.width / 2, 1));
+        expect(rect.height, closeTo(bodyRect.height, 1));
+      } else if (preview.mode == 'splitUp') {
+        expect(rect.top, closeTo(bodyRect.top, 1));
+        expect(rect.width, closeTo(bodyRect.width, 1));
+        expect(rect.height, closeTo(bodyRect.height / 2, 1));
+      } else if (preview.mode == 'splitDown') {
+        expect(rect.top, closeTo(bodyRect.top + bodyRect.height / 2, 1));
+        expect(rect.width, closeTo(bodyRect.width, 1));
+        expect(rect.height, closeTo(bodyRect.height / 2, 1));
+      } else {
+        expect(rect, bodyRect);
+      }
+    }
+
+    await gesture.moveTo(Offset(
+      bodyRect.left + bodyRect.width * 0.95,
+      bodyRect.top + bodyRect.height * 0.5,
+    ));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(
+      find.byKey(const ValueKey('editor-body-editor-2-overlay-center')),
+      findsOneWidget,
+      reason: 'the split-toggle modifier updates preview without pointer move',
+    );
+    expect(
+      find.byKey(const ValueKey('editor-body-editor-2-overlay-splitRight')),
+      findsNothing,
+    );
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('editor-body-editor-2-overlay-center')),
+        findsNothing);
+  });
+
+  testWidgets('group and tab overlays track copy modifiers and clear on cancel',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final gamma = File('${workspace.path}/gamma.rs')
+      ..writeAsStringSync('fn gamma() {}\n');
+    await seedTwoGroups(
+      editorDocs: fileDoc(alpha.path, 10),
+      editor2Docs: fileDoc(gamma.path, 12),
+    );
+    await mountPage(tester);
+
+    final source = tester.getCenter(_tabIn('editor-2', 12));
+    final breadcrumbRect = tester.getRect(_breadcrumb('editor'));
+    final groupRect = tester.getRect(_groupDrop('editor'));
+    final gesture = await tester.startGesture(source);
+    await tester.pump();
+    await gesture.moveBy(const Offset(14, 0));
+    await tester.pump();
+    await gesture.moveTo(breadcrumbRect.center);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final groupOverlay =
+        find.byKey(const ValueKey('editor-group-editor-overlay-group'));
+    expect(groupOverlay, findsOneWidget);
+    expect(tester.getRect(groupOverlay), groupRect);
+    final groupCopyBadge =
+        find.byKey(const ValueKey('editor-group-editor-copy-badge'));
+    expect(groupCopyBadge, findsNothing);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(groupCopyBadge, findsOneWidget,
+        reason: 'copy feedback updates even if the pointer stays still');
+
+    await gesture.moveTo(tester.getCenter(_tabIn('editor', 10)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(groupOverlay, findsNothing,
+        reason: 'the nested tab target replaces the group overlay');
+    final tabOverlay =
+        find.byKey(const ValueKey('editor-tab-editor-10-overlay-tab'));
+    expect(tabOverlay, findsOneWidget);
+    final tabCopyBadge =
+        find.byKey(const ValueKey('editor-tab-editor-10-copy-badge'));
+    expect(tabCopyBadge, findsOneWidget);
+
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(tabCopyBadge, findsNothing);
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+    expect(tabOverlay, findsNothing);
+    expect(groupOverlay, findsNothing);
+  });
+
+  testWidgets('untitled tab drag never advertises copy', (tester) async {
+    await prepareWorkspace(tester);
+    final gamma = File('${workspace.path}/gamma.rs')
+      ..writeAsStringSync('fn gamma() {}\n');
+    await seedTwoGroups(
+      editorDocs: [
+        {'id': 5, 'text': 'untitled'}
+      ],
+      editor2Docs: fileDoc(gamma.path, 12),
+    );
+    await mountPage(tester);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+
+    final source = tester.getCenter(_tabIn('editor', 5));
+    final gesture = await tester.startGesture(source);
+    await tester.pump();
+    await gesture.moveBy(const Offset(14, 0));
+    await tester.pump();
+    await gesture.moveTo(tester.getCenter(_tabIn('editor-2', 12)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(
+      find.byKey(const ValueKey('editor-tab-editor-2-12-copy-badge')),
+      findsNothing,
+      reason: 'untitled singleton editors fall back to move',
+    );
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('macOS drag overlays use Alt for copy and Shift for split toggle',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+    await prepareWorkspace(tester);
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final gamma = File('${workspace.path}/gamma.rs')
+      ..writeAsStringSync('fn gamma() {}\n');
+    await seedTwoGroups(
+      editorDocs: fileDoc(alpha.path, 10),
+      editor2Docs: fileDoc(gamma.path, 12),
+    );
+    await mountPage(tester);
+
+    final gesture = await hoverTabOnBody(
+      tester,
+      'editor',
+      10,
+      'editor-2',
+      dxFraction: 0.95,
+      dyFraction: 0.5,
+    );
+    final splitRight =
+        find.byKey(const ValueKey('editor-body-editor-2-overlay-splitRight'));
+    final center =
+        find.byKey(const ValueKey('editor-body-editor-2-overlay-center'));
+    final copyBadge =
+        find.byKey(const ValueKey('editor-body-editor-2-copy-badge'));
+    expect(splitRight, findsOneWidget);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(center, findsOneWidget,
+        reason: 'Shift disables split zones on macOS');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(splitRight, findsOneWidget);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(copyBadge, findsOneWidget, reason: 'Alt requests a copy on macOS');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.altLeft);
+    await tester.pump();
+    expect(copyBadge, findsNothing);
+
+    await gesture.cancel();
+    await tester.pumpAndSettle();
+    debugDefaultTargetPlatformOverride = null;
+  });
 
   testWidgets(
     'a right-edge drop creates a horizontal group to the right',

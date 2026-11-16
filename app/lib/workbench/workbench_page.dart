@@ -83,6 +83,7 @@ import 'activity_bar_size.dart';
 import 'command_history.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
+import 'editor_drop_overlay.dart';
 import 'editor_tab_action_location.dart';
 import 'editor_tab_close_policy.dart';
 import 'editor_tab_close_action.dart';
@@ -424,6 +425,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ValueNotifier(null);
   // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
   String? _tabDragSourceRegion;
+  ({
+    String region,
+    int draggedId,
+    RenderBox? box,
+    Offset offset,
+    EditorDropOverlayMode? mode,
+    bool copyRequested,
+  })? _editorBodyDropHover;
+  ({String region, int draggedId, bool copyRequested})? _editorGroupDropHover;
+  ({
+    String region,
+    int docId,
+    int draggedId,
+    bool copyRequested
+  })? _editorTabDropHover;
+  bool _editorDragModifierHandlerRegistered = false;
   final Set<String> _editorTabPointerInside = <String>{};
   final Map<String, Map<int, double>> _editorTabLastWidths = {};
   final Map<String, Map<int, double>> _editorTabHeldWidths = {};
@@ -18898,6 +18915,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    if (_editorDragModifierHandlerRegistered) {
+      HardwareKeyboard.instance.removeHandler(_onEditorDragModifierKeyEvent);
+      _editorDragModifierHandlerRegistered = false;
+    }
     _findGeneration++;
     _treeTypeAheadTimer?.cancel();
     _cancelRegexFind();
@@ -20270,9 +20291,32 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         builder: (paneContext) => DragTarget<int>(
           key: ValueKey('editor-drop-area-${g.region}'),
           onWillAcceptWithDetails: (_) => true,
+          onMove: (details) => _setEditorGroupDropHover(
+            g.region,
+            details.data,
+            _isCopyRequestedFor(details.data, targetRegion: g.region),
+          ),
+          onLeave: (_) => _clearEditorGroupDropHover(g.region),
           onAcceptWithDetails: (details) =>
-              _handleGroupAreaDrop(g, details.data),
-          builder: (context, _, __) => Container(
+              _handleGroupAreaDropAndClearHover(g, details.data),
+          builder: (context, candidateData, __) {
+            final draggedId =
+                candidateData.isEmpty ? null : candidateData.first;
+            final isNestedTargetHovered =
+                _editorBodyDropHover?.region == g.region ||
+                    _editorTabDropHover?.region == g.region;
+            final showGroupOverlay = draggedId != null &&
+                _tabDragSourceRegion != null &&
+                _tabDragSourceRegion != g.region &&
+                !isNestedTargetHovered;
+            return EditorDropOverlay(
+              keyPrefix: 'editor-group-${g.region}',
+              mode: showGroupOverlay ? EditorDropOverlayMode.group : null,
+              copyRequested: showGroupOverlay &&
+                  _editorGroupDropHover?.region == g.region &&
+                  _editorGroupDropHover?.draggedId == draggedId &&
+                  (_editorGroupDropHover?.copyRequested ?? false),
+              child: Container(
         color: const Color(0xFF14161A),
         child: Column(
           children: [
@@ -20287,6 +20331,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   onAcceptWithDetails: (details) {
                     final box =
                         bodyContext.findRenderObject() as RenderBox?;
+                    _clearEditorBodyDropHover(g.region);
                     _handleBodyAreaDrop(
                       g,
                       details.data,
@@ -20294,7 +20339,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       details.offset,
                     );
                   },
-                  builder: (context, _, __) => Stack(
+                  onMove: (details) {
+                    final box =
+                        bodyContext.findRenderObject() as RenderBox?;
+                    final mode = _bodyDropOverlayMode(
+                      g,
+                      details.data,
+                      box,
+                      details.offset,
+                    );
+                    _setEditorBodyDropHover(
+                      g.region,
+                      details.data,
+                      box,
+                      details.offset,
+                      mode,
+                      mode != null &&
+                          _isCopyRequestedFor(
+                            details.data,
+                            targetRegion: g.region,
+                            allowSameGroupTarget: true,
+                          ),
+                    );
+                  },
+                  onLeave: (_) => _clearEditorBodyDropHover(g.region),
+                  builder: (context, candidateData, __) {
+                    final isHoveringBody = candidateData.isNotEmpty &&
+                        _editorBodyDropHover?.region == g.region;
+                    return EditorDropOverlay(
+                      keyPrefix: 'editor-body-${g.region}',
+                      mode: isHoveringBody
+                          ? _editorBodyDropHover?.mode
+                          : null,
+                      copyRequested: isHoveringBody &&
+                          (_editorBodyDropHover?.copyRequested ?? false),
+                      child: Stack(
                 fit: StackFit.expand,
                 children: [
                   if (mergeSession == null)
@@ -20368,14 +20447,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ),
                 ],
               ),
+                    );
+                  },
               ),
             ),
             ),
           ],
         ),
         ),
-          ),
+              );
+          },
         ),
+      ),
     );
   }
 
@@ -21100,7 +21183,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             // 同组禁止落到自身；跨组放行同文档 id（激活目标既有视图）。
             onWillAcceptWithDetails: (details) =>
                 details.data != d.id || _tabDragSourceRegion != g.region,
+            onMove: (details) => _setEditorTabDropHover(
+              g.region,
+              d.id,
+              details.data,
+              _isCopyRequestedFor(details.data, targetRegion: g.region),
+            ),
+            onLeave: (_) => _clearEditorTabDropHover(g.region, d.id),
             onAcceptWithDetails: (details) {
+              _clearEditorTabDropHover(g.region, d.id);
               final draggedId = details.data;
               final sourceRegion = _tabDragSourceRegion;
               final source =
@@ -21133,12 +21224,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     insertAfter: insertAfter);
               }
             },
-            builder: (context, _, __) => Draggable<int>(
+            builder: (context, candidateData, __) => Draggable<int>(
               data: d.id,
               dragAnchorStrategy: pointerDragAnchorStrategy,
-              onDragStarted: () => _tabDragSourceRegion = g.region,
-              onDragEnd: (_) => _tabDragSourceRegion = null,
-              onDraggableCanceled: (_, __) => _tabDragSourceRegion = null,
+              onDragStarted: () => _startEditorTabDrag(g.region),
+              onDragEnd: (_) => _endEditorTabDrag(),
+              onDraggableCanceled: (_, __) => _endEditorTabDrag(),
               feedback: Material(
                 type: MaterialType.transparency,
                 child: Container(
@@ -21148,19 +21239,29 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     color: const Color(0xFF252932),
                     borderRadius: BorderRadius.circular(3),
                   ),
-                  child:
-                      Text(displayLabel, style: const TextStyle(fontSize: 12)),
+                  child: Text(displayLabel,
+                      style: const TextStyle(fontSize: 12)),
                 ),
               ),
               childWhenDragging: Opacity(opacity: 0.4, child: tab),
-              child: Listener(
-                // 中键关闭（kMiddleMouseButton），不影响左键激活
-                onPointerDown: (e) {
-                  if (e.buttons == kMiddleMouseButton) {
-                    _closeDoc(d.id, group: g);
-                  }
-                },
-                child: tab,
+              child: EditorDropOverlay(
+                keyPrefix: 'editor-tab-${g.region}-${d.id}',
+                mode: candidateData.isEmpty || candidateData.first == null
+                    ? null
+                    : EditorDropOverlayMode.tab,
+                copyRequested: candidateData.isNotEmpty &&
+                    candidateData.first != null &&
+                    _isCopyRequestedFor(candidateData.first!,
+                        targetRegion: g.region),
+                child: Listener(
+                  // 中键关闭（kMiddleMouseButton），不影响左键激活
+                  onPointerDown: (e) {
+                    if (e.buttons == kMiddleMouseButton) {
+                      _closeDoc(d.id, group: g);
+                    }
+                  },
+                  child: tab,
+                ),
               ),
             ),
           ),
@@ -21398,9 +21499,255 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  /// 拆分落点区域判定（上游 positionOverlay 编辑器拖动分支）：中心带
-  /// （边缘 10% 以内）返回 null；其余按默认水平偏好：x < 宽/3 → 左、
-  /// x > 2·宽/3 → 右、y < 高/2 → 上、否则下。
+  /// 当前拖动是否会被既有 drop handler 当作复制请求处理。
+  bool _isCopyRequestedFor(
+    int draggedId, {
+    String? targetRegion,
+    bool allowSameGroupTarget = false,
+  }) {
+    final sourceRegion = _tabDragSourceRegion;
+    if (sourceRegion == null ||
+        (!allowSameGroupTarget && sourceRegion == targetRegion)) {
+      return false;
+    }
+    final source = _groups[sourceRegion];
+    final draggedIndex =
+        source?.docs.indexWhere((doc) => doc.id == draggedId) ?? -1;
+    if (draggedIndex < 0 || source!.docs[draggedIndex].path == null) {
+      return false;
+    }
+    return defaultTargetPlatform == TargetPlatform.macOS
+        ? HardwareKeyboard.instance.isAltPressed
+        : HardwareKeyboard.instance.isControlPressed;
+  }
+
+  EditorDropOverlayMode? _bodyDropOverlayMode(
+    EditorGroup target,
+    int draggedId,
+    RenderBox? box,
+    Offset globalOffset,
+  ) {
+    final sourceRegion = _tabDragSourceRegion;
+    if (sourceRegion == null) return null;
+    final source = _groups[sourceRegion];
+    if (source == null || !source.docs.any((doc) => doc.id == draggedId)) {
+      return null;
+    }
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final splitToggled = isMac
+        ? HardwareKeyboard.instance.isShiftPressed
+        : HardwareKeyboard.instance.isAltPressed;
+    final zone = splitToggled ? null : _bodyDropZone(box, globalOffset);
+    if (identical(source, target) && zone == null) return null;
+    return switch (zone) {
+      _EditorGroupMoveDirection.left => EditorDropOverlayMode.splitLeft,
+      _EditorGroupMoveDirection.right => EditorDropOverlayMode.splitRight,
+      _EditorGroupMoveDirection.up => EditorDropOverlayMode.splitUp,
+      _EditorGroupMoveDirection.down => EditorDropOverlayMode.splitDown,
+      null => EditorDropOverlayMode.center,
+    };
+  }
+
+  void _setEditorBodyDropHover(
+    String region,
+    int draggedId,
+    RenderBox? box,
+    Offset offset,
+    EditorDropOverlayMode? mode,
+    bool copyRequested,
+  ) {
+    final current = _editorBodyDropHover;
+    if (current?.region == region &&
+        current?.draggedId == draggedId &&
+        current?.mode == mode &&
+        current?.copyRequested == copyRequested) {
+      // Keep the latest position without rebuilding the whole workbench for
+      // every pointer sample. Keyboard modifier changes use this snapshot.
+      _editorBodyDropHover = (
+        region: region,
+        draggedId: draggedId,
+        box: box,
+        offset: offset,
+        mode: mode,
+        copyRequested: copyRequested,
+      );
+      return;
+    }
+    setState(() {
+      _editorBodyDropHover = (
+        region: region,
+        draggedId: draggedId,
+        box: box,
+        offset: offset,
+        mode: mode,
+        copyRequested: copyRequested,
+      );
+    });
+  }
+
+  void _clearEditorBodyDropHover(String region) {
+    if (_editorBodyDropHover?.region != region) return;
+    setState(() => _editorBodyDropHover = null);
+  }
+
+  void _setEditorGroupDropHover(
+    String region,
+    int draggedId,
+    bool copyRequested,
+  ) {
+    final current = _editorGroupDropHover;
+    if (current?.region == region &&
+        current?.draggedId == draggedId &&
+        current?.copyRequested == copyRequested) {
+      return;
+    }
+    setState(() {
+      _editorGroupDropHover = (
+        region: region,
+        draggedId: draggedId,
+        copyRequested: copyRequested,
+      );
+    });
+  }
+
+  void _clearEditorGroupDropHover(String region) {
+    if (_editorGroupDropHover?.region != region) return;
+    setState(() => _editorGroupDropHover = null);
+  }
+
+  void _handleGroupAreaDropAndClearHover(EditorGroup group, int draggedId) {
+    _clearEditorGroupDropHover(group.region);
+    _handleGroupAreaDrop(group, draggedId);
+  }
+
+  void _setEditorTabDropHover(
+    String region,
+    int docId,
+    int draggedId,
+    bool copyRequested,
+  ) {
+    final current = _editorTabDropHover;
+    if (current?.region == region &&
+        current?.docId == docId &&
+        current?.draggedId == draggedId &&
+        current?.copyRequested == copyRequested) {
+      return;
+    }
+    setState(() {
+      _editorTabDropHover = (
+        region: region,
+        docId: docId,
+        draggedId: draggedId,
+        copyRequested: copyRequested,
+      );
+    });
+  }
+
+  void _clearEditorTabDropHover(String region, int docId) {
+    if (_editorTabDropHover?.region != region ||
+        _editorTabDropHover?.docId != docId) {
+      return;
+    }
+    setState(() => _editorTabDropHover = null);
+  }
+
+  void _startEditorTabDrag(String region) {
+    _tabDragSourceRegion = region;
+    if (_editorDragModifierHandlerRegistered) return;
+    HardwareKeyboard.instance.addHandler(_onEditorDragModifierKeyEvent);
+    _editorDragModifierHandlerRegistered = true;
+  }
+
+  void _endEditorTabDrag() {
+    _tabDragSourceRegion = null;
+    if (_editorDragModifierHandlerRegistered) {
+      HardwareKeyboard.instance.removeHandler(_onEditorDragModifierKeyEvent);
+      _editorDragModifierHandlerRegistered = false;
+    }
+    if (!mounted || (_editorBodyDropHover == null &&
+        _editorGroupDropHover == null &&
+        _editorTabDropHover == null)) {
+      return;
+    }
+    setState(() {
+      _editorBodyDropHover = null;
+      _editorGroupDropHover = null;
+      _editorTabDropHover = null;
+    });
+  }
+
+  bool _onEditorDragModifierKeyEvent(KeyEvent event) {
+    if (_tabDragSourceRegion == null ||
+        (event is! KeyDownEvent && event is! KeyUpEvent)) {
+      return false;
+    }
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final key = event.logicalKey;
+    final affectsCopy = isMac
+        ? key == LogicalKeyboardKey.altLeft ||
+            key == LogicalKeyboardKey.altRight
+        : key == LogicalKeyboardKey.controlLeft ||
+            key == LogicalKeyboardKey.controlRight;
+    final affectsSplit = isMac
+        ? key == LogicalKeyboardKey.shiftLeft ||
+            key == LogicalKeyboardKey.shiftRight
+        : key == LogicalKeyboardKey.altLeft ||
+            key == LogicalKeyboardKey.altRight;
+    if (!affectsCopy && !affectsSplit) return false;
+
+    final bodyHover = _editorBodyDropHover;
+    if (bodyHover != null) {
+      final target = _groups[bodyHover.region];
+      if (target != null) {
+        final mode = _bodyDropOverlayMode(
+          target,
+          bodyHover.draggedId,
+          bodyHover.box,
+          bodyHover.offset,
+        );
+        _setEditorBodyDropHover(
+          bodyHover.region,
+          bodyHover.draggedId,
+          bodyHover.box,
+          bodyHover.offset,
+          mode,
+          mode != null &&
+              _isCopyRequestedFor(
+                bodyHover.draggedId,
+                targetRegion: bodyHover.region,
+                allowSameGroupTarget: true,
+              ),
+        );
+      }
+    }
+    final tabHover = _editorTabDropHover;
+    if (tabHover != null) {
+      _setEditorTabDropHover(
+        tabHover.region,
+        tabHover.docId,
+        tabHover.draggedId,
+        _isCopyRequestedFor(
+          tabHover.draggedId,
+          targetRegion: tabHover.region,
+        ),
+      );
+    }
+    final groupHover = _editorGroupDropHover;
+    if (groupHover != null) {
+      _setEditorGroupDropHover(
+        groupHover.region,
+        groupHover.draggedId,
+        _isCopyRequestedFor(
+          groupHover.draggedId,
+          targetRegion: groupHover.region,
+        ),
+      );
+    }
+    return false;
+  }
+
+  /// 按当前正文矩形判定落点：边缘 10% 之外为中心；其余按默认水平
+  /// 偏好选择左右三分区，中央列按高度一分为二选择上下。
   _EditorGroupMoveDirection? _bodyDropZone(
     RenderBox? box,
     Offset globalOffset,

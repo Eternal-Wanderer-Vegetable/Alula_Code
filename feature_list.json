@@ -1418,6 +1418,18 @@
       "evidence": "Implemented the built-in Alula Getting Started walkthrough, Welcome progress card, step page, accessible manual completion, independent bounded checksummed progress journal, ID/step command routing, QuickInput picker, and Help menu reset/open entries. Focused store/widget tests 4/4; cargo fmt --check and flutter analyze 0 issues; bash init.sh passed Rust workspace tests, Clippy -D warnings, core build, and Flutter 1315/1315. Full output: docs/diagnostics/2026-11-16-p05/p05.62-init.log. Post-edit GitNexus all-scope outputs vary with flow tracing: code-only checks reported MEDIUM/1 affected flow twice and LOW/0 once; final full-scope check reported 6 files/11 symbols/0 flows/LOW. Retain MEDIUM due the 1,020 dropped flow entry candidates, 14 budget-truncated traces and the unindexed WorkbenchPage. Details/logs: docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md. Hosted PR CI run 43745604458 passed all four jobs. Platform Availability run 43745600249 attempt 2 passed Linux/Windows/macOS build, test, launch and package jobs. Attempt 1 macOS native-titlebar Quit failed after hosted Accessibility AXError -25204; attempt 2 successfully selected native Quit through Accessibility and exited. Linux/Windows native DnD passed; macOS native DnD was explicitly skipped because the hosted runner did not route synthetic pointer events to Flutter. Artifacts: Linux 14174097410, Windows 14174168620, macOS 14177250117; Linux/Windows/macOS DnD 14174760716/14174990137/14176931762; macOS startup diagnostics 14176658932. macOS ZIP SHA-256 f77f8da1c65e5d36b9e9595d590572bb3efafc15c460e68fb1af070092b02f50 matches sidecar and unzip -tq passed (81 entries). PR #3 remains OPEN/DRAFT. Full hosted closeout and GitNexus evidence: docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-115",
+      "name": "P05.63 LAY-20a 编辑器拖放 hover overlay",
+      "description": "为现有编辑器标签 DnD 补组区域整区高亮、正文中心/边缘拆分方向半区预览及有效复制修饰键提示；覆盖组区域、正文和标签落点。保持 P05.43–P05.45 已有 move/copy/split 语义和持久化不变。排除跨应用 DnD、浮窗、焦点/快捷键路由、Explorer 文件拖入和 overflow 装饰。固定来源、GitNexus UNKNOWN 影响与 N.2 验收：docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md",
+      "dependencies": [
+        "feat-114"
+      ],
+      "status": "in-progress",
+      "evidence": "已实现组区整区、标签目标、正文中心/四方向半区 hover 预览与有效复制提示；拖动 modifier 变化即时刷新，结束/取消/销毁清理。新增 4 个 focused tests；editor_split_drop_test.dart + editor_group_area_drop_test.dart 合计 13/13。cargo fmt --check && bash init.sh 通过 Rust tests、Clippy -D warnings、core build、flutter analyze 0 issues、Flutter 1319/1319；Harness validator 100/100；diff --check 与 JSON 校验通过。GitNexus all-scope 完整重跑在 LOW/0 flows 与 MEDIUM/1–5 affected processes 间波动，因输出变化且 WorkbenchPage 未入图，保守按 MEDIUM 记录；compare main 为 PR 累计 280 files/46 flows/critical，不隔离本 slice；WorkbenchPage >512 KiB 未入图，UNKNOWN 仍保留。PR CI 与 Platform Availability 待推送后验证。详见 docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

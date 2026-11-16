@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.62 已登记完成，P05.62 / feat-114 / LAY-19c Walkthrough 的实现、本地 DoD 与 hosted closeout 均已完成；下一子项待按 N.2 启动。P05 总阶段仍为 in-progress。
+- P05.1–P05.62 hosted 已完成；P05.63 / feat-115 / LAY-20a 实现与本地完整 DoD 已通过，等待提交后的 hosted PR CI 和 Platform Availability。P05 总阶段仍为 in-progress。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -36,16 +36,17 @@ Last Updated: 2026-11-16
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
   - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；本地 DoD、PR CI `43737761143` 与 Platform Availability `43737756490` 三平台全绿；Linux/Windows DnD 通过，macOS DnD 明确因 pointer route unavailable 跳过；macOS ZIP SHA-256 `f16a0f38…09112d4` 与 sidecar 一致。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 - P05.62 / LAY-19c：内置向导、步骤 checkbox、独立进度 journal、Welcome/QuickInput/Help/命令路由已完成；focused tests 4/4。本地 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 全绿（Flutter 1315/1315）。PR CI `43745604458` 四项全绿；Platform Availability `43745600249` attempt 2 三平台全绿。attempt 1 macOS Quit 探针因 hosted Accessibility 错误失败，attempt 2 通过；macOS DnD 因 pointer route unavailable 明确跳过。macOS ZIP SHA-256 `f77f8da1…92f50` 与 sidecar 一致、`unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
+- P05.63 / LAY-20a：组区、正文中心/四方向拆分、标签目标 hover overlay 与有效复制提示已实现；modifier 键变化即时刷新，拖动结束/取消/销毁清理。新增 4 个 widget tests，拆分与组区 focused 合计 13/13。`cargo fmt --check && bash init.sh` 全绿，Flutter 1319/1319、analyze 0 issues；registrant 生成文件已恢复。等待提交后 PR CI 与 Platform Availability。报告：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。
 - LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 的 Welcome/watermark、最近项目与 Walkthrough（a/b/c）均已完成。
-- 当前 managed worktree 上 P05.62 的完整 `bash init.sh` 已通过：Rust tests、Clippy `-D warnings`、
-  core build、完整 Flutter 全集均通过；P05.62 全集 1315/1315。`cargo fmt --check` 和 `flutter analyze` 0 issues。
+- 当前 managed worktree 上 P05.63 的完整 `cargo fmt --check && bash init.sh` 已通过：Rust tests、Clippy `-D warnings`、
+  core build、完整 Flutter 全集均通过；P05.63 全集 1319/1319。`flutter analyze` 0 issues。
 - Flutter `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`；保持既有风格，
   本 slice 手工保留 208 行局部 diff，仅格式化其他新增/小型改动文件。
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.62 hosted 证据均已登记。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
-- `bash init.sh --fast` 生成的 Linux/macOS/Windows plugin registrant 修改已恢复；PR 专用工作树当前干净。
+- 无用户手动操作需求。P05.56–P05.62 hosted 证据均已登记；P05.63 hosted 检查待代码推送触发。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
+- P05.63 本地完整 DoD 已通过；`bash init.sh` 生成的五个 Linux/macOS/Windows plugin registrant 修改已恢复。当前工作树有待提交的 P05.63 代码与证据更新。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
 - GitNexus 图覆盖：`workbench_page.dart` > 512 KiB 不入图（私有方法 UNKNOWN）、跨语言
@@ -55,14 +56,16 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
+1. 提交并推送 P05.63 代码与本地证据到 PR #3；跟踪 CI 和 Platform Availability 工作流，补齐三平台结果与 artifacts。
+2. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
    GitNexus 警告仍存在：`workbench_page.dart` (>512 KiB) 未入图、981 个跨语言属性点未链接、
    flow tracing 有 truncation；UNKNOWN 仍须源码确认。
-2. P05.62 代码 commit `4d2daa6` 的 PR CI `43745604458` 四项全绿；Platform Availability
+3. P05.62 代码 commit `4d2daa6` 的 PR CI `43745604458` 四项全绿；Platform Availability
    `43745600249` attempt 2 三平台全绿。attempt 1 native Quit runner failure 与 macOS DnD skip 均已在
    `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md` 记录。
-3. P05.62 代码与 closeout evidence 均已推送；确认 PR #3 仍是 OPEN/DRAFT，当前 worktree clean。
-4. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择并登记一个依赖满足的子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
+4. P05.62 代码与 closeout evidence 均已推送；确认 PR #3 仍是 OPEN/DRAFT。
+5. 本地与 hosted 证据登记后，将 P05.63 标为 done 并确认 PR #3 仍为 OPEN/DRAFT，不合并。
+6. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择并登记一个依赖满足的子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
    保持 draft/open，不合并。
 
 ## Evidence and Files
@@ -82,6 +85,7 @@ Last Updated: 2026-11-16
 - P05.60：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`，
   `p05.60-focused-red.log`、`p05.60-focused-green.log`、`p05.60-rust-gates.log`、
   `p05.60-full-flutter.log`
+- P05.63：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`（本地完整 DoD 通过，待 hosted closeout）
 - 产品文件：`app/lib/workbench/notifications.dart`、`notification_widgets.dart`、
   `status_bar.dart`、`workbench_page.dart`、`app/lib/main.dart`、
   `app/test/notification_center_test.dart`、`app/test/notification_ui_test.dart`

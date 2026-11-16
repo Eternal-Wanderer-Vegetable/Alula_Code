@@ -5,7 +5,11 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.62 hosted 完成；下一子项待按 N.2 选择
+### P05 / feat-027 进行中；P05.1–P05.62 hosted 完成；P05.63 / feat-115 / LAY-20a 本地完成，等待 hosted 验证
+
+- 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
+
+- 2026-11-16：P05.63 / feat-115 编辑完成：三个既有 DragTarget 接入组区/标签/正文 hover overlay，显示中心/四方向拆分半区与有效复制 badge；键盘 modifier 变化即时刷新，drag end/cancel/dispose 清理。新增 4 个 widget tests，拆分与组区 focused 合计 13/13；`cargo fmt --check && bash init.sh` 全通过（Rust tests、Clippy、core build、Flutter analyze 0 issues、Flutter 1319/1319），Harness validator 100/100，`git diff --check` 与 JSON 校验通过。测试生成的五个 plugin registrant 文件已恢复。GitNexus all-scope 完整重跑在 LOW/0 flows 与 MEDIUM/1–5 affected processes 间波动，因输出变化且 `workbench_page.dart` 未入图，保守按 MEDIUM 记录；与 main 的 compare 为 PR 累计 280 files/46 flows/critical，不能隔离本 slice；UNKNOWN 按源码复核且仍作为限制。等待提交后 PR CI 与 Platform Availability。详见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
