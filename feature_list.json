@@ -1481,6 +1481,19 @@
       "evidence": "User-selected scope is active window/group identifiers only. The initial bb0aa87 implementation and hosted results carried document identity and are retained as superseded historical evidence. Current protocol keeps the main-window owner/MRU registry, per-window sequence rejection, revision snapshots, a bounded 32-window registry, close cleanup, and ready/mainWindowId handshake; focus events/snapshots contain no document identity, text, selection, dirty/savepoint, or session. Existing document path/name/text/dirty payload remains for document move/restore. Focused context + auxiliary-window + tear-out tests 27/27; cargo fmt --check; bash init.sh (Rust tests, Clippy, core build, Flutter 1347/1347); flutter analyze (0 issues). PR CI 43856316621 all four jobs passed; Platform Availability 43856306528 Linux/Windows/macOS Intel x64 jobs passed. App artifacts Linux/Windows/macOS: 14221408002 / 14222615131 / 14224230533. Linux/Windows native DnD passed move/cross-document copy/external text; macOS DnD artifact 14224125174 explicitly skipped because synthetic pointer routing was unavailable. macOS startup/native Quit passed; startup log contained a non-blocking Invalid engine handle warning. macOS ZIP SHA-256 72a7077bf28703f5179dbb7343f3716b2e31525da780e632b0ab91b9760bb43b matched its sidecar and unzip -tq passed (81 entries). GitNexus staged all-scope varied from MEDIUM to CRITICAL across repeated code scans (13 files, 11–13 symbols, 2–354 processes; latest code scan CRITICAL). Documentation closeout staged all-scope scan: repeated documentation closeout scans varied from LOW (5 files, 7–8 symbols, 0 affected processes) to CRITICAL (5 files, 1 symbol, 336–352 processes; latest scan was 336; trace mapped the report section to generic Build/LSP flows); compare-main cumulative CRITICAL (303 files, 538–574 symbols, 377–381 processes; latest scan 538 symbols / 381 processes with 523 additional symbols and 371 flows omitted). Exact Event and private workbench initState remain UNKNOWN. Logs: docs/diagnostics/2026-11-16-p05/p05.67-focused-tests.log, p05.67-init.log, p05.67-analyze.log. Native OS dual-window focus/blur remains unverified. Full scope: docs/diagnostics/2026-11-16-p05/p05.67-auxiliary-window-focus-context.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-120",
+      "name": "P05.68 LAY-12b3 辅助窗口 Compact 模式",
+      "description": "辅助编辑器窗口提供可访问 Compact/expanded 标题行切换，缩减编辑区留白并保留置顶与移回/关闭操作。只作用于当前辅助窗口 widget；不改文档、selection、dirty/savepoint、session/payload、window/group focus channel 或持久化。Compact command IDs、跨重启状态、tabs/breadcrumb/status bar/multi-group 行为登记为差异。范围与 N.2：docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md",
+      "dependencies": [
+        "feat-119",
+        "feat-101"
+      ],
+      "status": "in-progress",
+      "evidence": "Implemented locally: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh EXIT 0 (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. Full log and scope: docs/diagnostics/2026-11-16-p05/p05.68-init.log and p05.68-auxiliary-window-compact-mode.md. Hosted PR CI and Platform Availability pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

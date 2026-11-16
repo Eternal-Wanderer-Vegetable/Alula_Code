@@ -124,11 +124,13 @@ class AuxiliaryEditorApp extends StatefulWidget {
 class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     with WindowListener {
   AlulaDoc? _doc;
+  RustTextInputWindow? _inputWindow;
   String _name = '未命名';
   bool _dirty = false;
   bool _closing = false;
   bool? _alwaysOnTop;
   bool _changingAlwaysOnTop = false;
+  bool _compactMode = false;
   String? _windowStateError;
   late final ScrollController _scrollController;
   WindowController? _windowController;
@@ -333,6 +335,10 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
   }
 
+  void _toggleCompactMode() {
+    setState(() => _compactMode = !_compactMode);
+  }
+
   Future<void> _openDocument() async {
     final payload = widget.payload;
     try {
@@ -343,11 +349,18 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       final content =
           payload.text.isNotEmpty ? payload.text : decoded?.content ?? '';
       final doc = core.openDoc(1, content);
+      final inputWindow = RustTextInputWindow.openAround(
+        doc,
+        selectionUtf16: 0,
+        maxWindowUtf16: 16384,
+        compositionReserveUtf16: 256,
+      );
       // 干净磁盘文件以磁盘内容为 savepoint；未命名/脏文本以空 savepoint 呈现脏标。
       doc.setSavepoint(decoded?.content ?? '');
       if (!mounted) return;
       setState(() {
         _doc = doc;
+        _inputWindow = inputWindow;
         _name = payload.name;
         _dirty = doc.isDirty;
       });
@@ -411,6 +424,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
   @override
   Widget build(BuildContext context) {
     final doc = _doc;
+    final inputWindow = _inputWindow;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: false),
@@ -422,16 +436,40 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
             Container(
               key: const ValueKey('auxiliary-title-row'),
               color: const Color(0xFF181B20),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: _compactMode ? 0 : 4,
+              ),
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      '$_name${_dirty ? " •" : ""}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.bold),
+                    child: _compactMode
+                        ? const SizedBox.shrink()
+                        : Text(
+                            '$_name${_dirty ? " •" : ""}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                  ),
+                  Semantics(
+                    key: const ValueKey('auxiliary-compact-mode-semantics'),
+                    container: true,
+                    excludeSemantics: true,
+                    label: '紧凑模式',
+                    button: true,
+                    toggled: _compactMode,
+                    onTap: _toggleCompactMode,
+                    child: IconButton(
+                      key: const ValueKey('auxiliary-compact-mode-button'),
+                      tooltip: _compactMode ? '退出紧凑模式' : '启用紧凑模式',
+                      onPressed: _toggleCompactMode,
+                      icon: Icon(
+                        _compactMode ? Icons.fullscreen_exit : Icons.fullscreen,
+                        size: 14,
+                      ),
+                      visualDensity: VisualDensity.compact,
                     ),
                   ),
                   Semantics(
@@ -504,17 +542,15 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
                 ),
               ),
             Expanded(
-              child: doc == null
+              child: doc == null || inputWindow == null
                   ? const SizedBox.shrink()
                   : Padding(
-                      padding: const EdgeInsets.all(4),
+                      padding: _compactMode
+                          ? EdgeInsets.zero
+                          : const EdgeInsets.all(4),
                       child: RustTextInputField(
-                        inputWindow: RustTextInputWindow.openAround(
-                          doc,
-                          selectionUtf16: 0,
-                          maxWindowUtf16: 16384,
-                          compositionReserveUtf16: 256,
-                        ),
+                        key: const ValueKey('auxiliary-editor-input'),
+                        inputWindow: inputWindow,
                         scrollController: _scrollController,
                         tabSize: 4,
                         semanticsLabel: '$_name 辅助窗口编辑器',
