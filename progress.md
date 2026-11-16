@@ -3,11 +3,11 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-16 更新）
+## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.68 已完成；P05.69 / feat-121 进行中
+### P05 / feat-027 进行中；P05.1–P05.69 子项已完成
 
-- 2026-11-17：登记 P05.69 / feat-121 / LAY-12b4 主窗 editor tab 拖入已存在辅助窗。目标 aux 单文档，采用交换语义：源文档进入目标窗，目标原文档返回主窗。bounds 经独立、事件驱动的有界上报，不扩展 window/group focus protocol；事务失败需保留两边文档。Code-OSS 1.145 固定源码与编辑前 GitNexus impact/UNKNOWN、CRITICAL 观察已记入 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。产品代码尚未编辑，当前只有此 feature in-progress。
+- 2026-11-17：P05.69 / feat-121 / LAY-12b4 本地与 hosted N.2 closeout 完成。主窗 tab 拖入已存在 auxiliary 后交换单文档，目标旧文档回主窗；focus channel 保持 window/group-only。PR CI `43941953054` 四 job 全绿，Platform Availability `43941942416` Linux/Windows/macOS Intel x64 全绿。Linux/Windows 通用原生 DnD 通过，macOS 因 pointer route unavailable 明确 skip；现有 DnD fixture 未覆盖 Alula auxiliary 交换，专属原生跨窗路径仍未验证。应用 artifacts `14264550521` / `14264616080` / `14265886712`；DnD diagnostics `14265025133` / `14263916308` / `14266081126`；macOS startup/native Quit artifact `14266101279`。GitNexus 产品提交 all-scope 为 11 files/41 symbols/418 processes/CRITICAL 且截断；本次 evidence 文档 all-scope 为 5 files/5 symbols/0 processes/LOW；compare-main 为 309 files/450 symbols/421 processes/CRITICAL 且输出截断，均非 clean。详见 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。PR #3 保持 OPEN/DRAFT。
 
 - 2026-11-17：P05.68 / feat-120 / LAY-12b3 Compact 模式 hosted closeout 完成。PR CI `43900198139` 四 job 全绿；Platform Availability `43900182449` Linux/Windows/macOS 全绿。Linux/Windows DnD diagnostics `14240123820` / `14240964046` 通过 move/cross-document copy/external text（19/11 pointer events）；macOS DnD `14256920434` 因 hosted runner 未路由合成 pointer 事件明确 skip。macOS native Quit 通过 Accessibility；startup artifact `14255711563`，启动 `Invalid engine handle` 为非阻塞观察。App artifacts Linux/Windows/macOS `14241267651` / `14241891156` / `14255681783`；macOS ZIP SHA-256 `a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3` 与 sidecar 匹配且 ZIP 81 项完整。原生 OS Compact pixel/reference diff 未验证。P05.68 标记 done；完整 N.2、实现与本地证据见 `docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md`，完整本地日志 `p05.68-init.log`。PR #3 保持 OPEN/DRAFT。
 
@@ -2348,8 +2348,8 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - 状态：P05.62 / feat-114 已完成；下一子项按 N.2 在后续 slice 选择，P05 总阶段保持 in-progress。PR #3 保持 OPEN/DRAFT。
 
 
-## P05.69 LAY-12b4 主窗拖入已存在辅助窗（本地实现完成，2026-11-17）
+## P05.69 LAY-12b4 主窗拖入已存在辅助窗（本地与 hosted N.2 完成，2026-11-17）
 
 - 实现 bounds event registry 与主窗→既有辅助窗的 prepare/commit/abort/status 交换；辅助旧文档返回主窗，只有确认 commit 后才移除源 view。失败/不确定结果保留源文档与可恢复目标快照。焦点协议仍只同步活动 window/group 标识。
 - 定向测试 32/32；覆盖边界/重叠/容量/序号、移动/缩放事件、脏文档 CRLF 与 emoji、事务失败恢复、closed-bounds 清理和迟到旧输入回调。`bash init.sh` 全四阶段通过（Rust 125、Flutter 1,360）；`cargo fmt --check`、`flutter analyze` 0、Harness 100/100、JSON/diff checks 通过；完整日志：`docs/diagnostics/2026-11-17-p05/p05.69-init.log`。
-- 尚待：提交后补 PR CI、三平台 Platform Availability、各平台 DnD/artifact 结果与 GitNexus 最终 all/compare 分析；原生 OS 跨窗 DnD 没有证据前不得标通过。P05.69 暂保持 in-progress，PR #3 保持 OPEN/DRAFT。范围与完整结果见 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。
+- Hosted closeout：PR CI `43941953054` 四 job 全绿；Platform Availability `43941942416` Linux/Windows/macOS Intel x64 全绿。App artifacts Linux/Windows/macOS `14264550521` / `14264616080` / `14265886712`；Linux/Windows 通用原生 DnD diagnostics `14265025133` / `14263916308` 通过，macOS `14266081126` 因 `CGEventPostToPid pointer route: false` 明确 skip；macOS native Quit 通过，startup diagnostics `14266101279`。通用 fixture 不启动 auxiliary，P05.69 专属 OS 跨窗交换仍未验证。GitNexus final all-scope 11 files/41 symbols/418 processes/CRITICAL；compare-main 309 files/448 symbols/421 processes/CRITICAL，均截断且保留图谱缺口。P05.69 标记 done；PR #3 保持 OPEN/DRAFT。范围与证据见 `docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`。
