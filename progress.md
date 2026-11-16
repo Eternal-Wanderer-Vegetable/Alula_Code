@@ -5,11 +5,21 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.63 hosted 完成；LAY-20a 完成，P05 后续子项待按 N.2 选取
+### P05 / feat-027 进行中；P05.1–P05.63 hosted 完成；P05.64 / feat-116 / LAY-10g 进行中
 
 - 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 
 - 2026-11-16：P05.63 / feat-115 / LAY-20a 本地与 hosted closeout 完成。组区/标签/正文 hover overlay、中心和四方向拆分预览、有效复制 badge、modifier 实时刷新与拖动清理均已接入；新增 focused 4 个，拆分/组区合计 13/13。`cargo fmt --check && bash init.sh` 全绿（Rust、Clippy、core build、Flutter analyze 0、1319/1319）；Harness 100/100。PR CI `43782830766` 四项全绿；Platform Availability `43782824700` 三平台 build/test/launch/package 全绿。Linux/Windows native DnD 通过；macOS DnD 因 `CGEventPostToPid pointer route: false` 明确 skip。app artifacts Linux `14189760470`、Windows `14188839971`、macOS `14190945481`；DnD artifacts `14189002576` / `14189098230` / `14190342194`；macOS startup `14190427237`。macOS 包 sidecar SHA-256 `65dad7f75346230423d3f6702f19f7fe456a50ecb48fdb598cebac86b7251b7d` 一致，ZIP 完整 81 项。GitNexus all-scope LOW/MEDIUM 输出有波动，保守记录 MEDIUM；compare-main 的 CRITICAL 是 PR 累计历史范围，WorkBenchPage >512 KiB 未入图，UNKNOWN 仍保留。报告：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
+
+- 2026-11-16：按 docs/03 N.2 登记 P05.64 / feat-116 / LAY-10g 编辑器组标签溢出与 MRU 选择。固定 Code-OSS 1.145.0 `showEditorsInGroup` 行为为按目标组 MRU 列表切换已有编辑器；范围明确排除全局 Quick Access/fuzzy/Ctrl+Tab 和拖出窗口。GitNexus 对 `workbench_page.dart` 私有方法为 UNKNOWN（文件超 512 KiB），源码检索确认标签栏构造、MRU/focus/session 更新与 overflow 选择调用边。范围/验收：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。
+
+## P05.64 LAY-10g 编辑器组标签溢出与 MRU 选择（2026-11-16）
+
+- 实现每个多文档编辑器组自己的 overflow 列表，按组内 MRU 排序，展示路径消歧标签和 dirty/sticky/current 状态；single/none 标签显示模式仍可选择已有文档。选择从未聚焦的组时提交当前输入组合、激活目标组/文档、更新 MRU/命令上下文/session、恢复焦点并揭示活动标签；取消不更改组内活动文档。
+- 保留 `editor.verifyIntegrity`，多文档组通过同一紧凑 overflow 菜单访问，以维持既有工具栏宽度。首次回归发现 PopupMenuButton 普通密度导致工具栏溢出、菜单落在屏幕外；使用 compact density 并移除误施加到菜单本身的按钮宽度约束后恢复 tab geometry。定向回归 57/57 通过。
+- policy/widget 新测共 5 项；完整 `bash init.sh` 全绿：Rust workspace tests、Clippy、core build、Flutter 1324/1324。独立 `cargo fmt --check`、`flutter analyze` 0 issues、Harness validator 100/100 全绿；JSON/diff 检查通过。Hosted PR CI 和 Platform Availability 待提交后运行。
+- GitNexus 1024 KiB 索引让 852 KB WorkbenchPage 可分析：`_buildTabStrip` LOW/3 upstream、overflow activation LOW/4；`_noteActiveDocument` 仍 UNKNOWN，调用点源码已核对。`_WorkbenchPageState` class-level impact CRITICAL（206 symbols/79 processes/20 modules），all-scope CRITICAL（9 files/10–17 symbols；进程计数重跑为 61–305）；图谱将单体 class 改动展开到其成员，并混入 Git/diff、bridge、Rust-buffer 等未改文件路径，作为未消除的结构性风险保留。Compare main CRITICAL（286 files/586–1170 symbols/169–309 processes）是 PR 累积 diff；symbol listing cap、跨语言链接与 flow truncation 已记入报告。
+- 详细验收与 GitNexus 限制：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。状态仍 in-progress，等 hosted 结果再完成该条目；PR #3 保持 OPEN/DRAFT。
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 

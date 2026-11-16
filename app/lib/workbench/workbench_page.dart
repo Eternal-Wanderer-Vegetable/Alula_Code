@@ -90,6 +90,7 @@ import 'editor_tab_close_action.dart';
 import 'editor_tab_file_icon.dart';
 import 'editor_tab_label.dart';
 import 'editor_tab_mode.dart';
+import 'editor_tab_mru_policy.dart';
 import 'editor_tab_sizing.dart';
 import 'find_history_store.dart';
 import 'recent_history_store.dart';
@@ -20825,6 +20826,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  void _activateEditorFromOverflow(EditorGroup group, int documentId) {
+    final target = group.docs
+        .where((document) => document.id == documentId)
+        .firstOrNull;
+    if (target == null) return;
+
+    final current = _active;
+    if (current != null && !identical(current, target)) {
+      _flushInput(current, commitComposition: true);
+    }
+    setState(() {
+      group.activeDocId = target.id;
+      _noteActiveDocument(group, target.id);
+      _focusedRegion = group.region;
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !identical(group.active, target)) return;
+      _focusNodeFor(group, target).requestFocus();
+      final tabContext = group.activeTabVisibilityKey.currentContext;
+      if (tabContext != null && !_editorTabWrap.value) {
+        unawaited(
+          Scrollable.ensureVisible(
+            tabContext,
+            duration: Duration.zero,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+          ),
+        );
+      }
+    });
+  }
+
   Widget _buildTabStrip(EditorGroup g) {
     final groupLabels = EditorTabLabelPolicy.labelsFor([
       for (final doc in g.docs)
@@ -21004,14 +21038,111 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             icon: const Icon(Icons.autorenew, size: 16),
             visualDensity: VisualDensity.compact,
           ),
-          IconButton(
-            tooltip: '校验一致性',
-            onPressed: _commands.isEnabled('editor.verifyIntegrity')
-                ? () => _runCommand('editor.verifyIntegrity')
-                : null,
-            icon: const Icon(Icons.fact_check_outlined, size: 16),
-            visualDensity: VisualDensity.compact,
-          ),
+          if (g.docs.length > 1)
+            PopupMenuButton<int>(
+              key: ValueKey('editor-tab-overflow-${g.region}'),
+              tooltip: '显示编辑器（最近使用）与校验一致性',
+              icon: const Icon(Icons.fact_check_outlined, size: 16),
+              style: IconButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+              ),
+              onSelected: (documentId) {
+                if (documentId == -1) {
+                  _runCommand('editor.verifyIntegrity');
+                } else {
+                  _activateEditorFromOverflow(g, documentId);
+                }
+              },
+              itemBuilder: (context) {
+                final orderedDocs = EditorTabMruPolicy.order<OpenDoc>(
+                  tabs: g.docs,
+                  recentDocumentIds: g.recentDocIds,
+                  documentId: (document) => document.id,
+                );
+                return [
+                  for (final doc in orderedDocs)
+                    PopupMenuItem<int>(
+                      key: ValueKey(
+                        'editor-tab-overflow-item-${g.region}-${doc.id}',
+                      ),
+                      value: doc.id,
+                      child: Semantics(
+                        label:
+                            '${labelsById[doc.id] ?? doc.name}'
+                            '${doc.isDirty ? ', 未保存更改' : ''}'
+                            '${g.stickyDocIds.contains(doc.id) ? ', 已固定' : ''}'
+                            '${doc.id == g.activeDocId ? ', 当前编辑器' : ''}',
+                        selected: doc.id == g.activeDocId,
+                        child: SizedBox(
+                          width: 240,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 18,
+                                child: doc.id == g.activeDocId
+                                    ? Icon(
+                                        Icons.check,
+                                        key: ValueKey(
+                                          'editor-tab-overflow-active-${g.region}-${doc.id}',
+                                        ),
+                                        size: 14,
+                                      )
+                                    : null,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  labelsById[doc.id] ?? doc.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (g.stickyDocIds.contains(doc.id))
+                                Icon(
+                                  Icons.push_pin,
+                                  key: ValueKey(
+                                    'editor-tab-overflow-sticky-${g.region}-${doc.id}',
+                                  ),
+                                  size: 12,
+                                ),
+                              if (doc.isDirty)
+                                Icon(
+                                  Icons.circle,
+                                  key: ValueKey(
+                                    'editor-tab-overflow-dirty-${g.region}-${doc.id}',
+                                  ),
+                                  color: Colors.orangeAccent,
+                                  size: 7,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<int>(
+                    key: ValueKey('editor-tab-overflow-verify-${g.region}'),
+                    value: -1,
+                    enabled: _commands.isEnabled('editor.verifyIntegrity'),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.fact_check_outlined, size: 16),
+                        SizedBox(width: 12),
+                        Text('校验一致性'),
+                      ],
+                    ),
+                  ),
+                ];
+              },
+            )
+          else
+            IconButton(
+              tooltip: '校验一致性',
+              onPressed: _commands.isEnabled('editor.verifyIntegrity')
+                  ? () => _runCommand('editor.verifyIntegrity')
+                  : null,
+              icon: const Icon(Icons.fact_check_outlined, size: 16),
+              visualDensity: VisualDensity.compact,
+            ),
           const SizedBox(width: 6),
         ],
       ),

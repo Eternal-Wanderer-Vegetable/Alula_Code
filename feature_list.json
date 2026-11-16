@@ -1430,6 +1430,18 @@
       "evidence": "Implemented group/body/tab editor drag hover overlays: full group feedback, center/full and four-direction half-area previews, platform-valid named-document copy badge, live modifier refresh, and clear on drag end/cancel/dispose. Four new focused tests; editor_split_drop_test.dart plus editor_group_area_drop_test.dart 13/13. Local cargo fmt --check && bash init.sh passed Rust tests, Clippy -D warnings, core build, Flutter analyze 0 issues, and Flutter 1319/1319; Harness validator 100/100; diff and JSON checks pass. GitNexus all-scope varied between LOW/0 flows and MEDIUM/1-5 affected processes; conservatively retained MEDIUM because the >512 KiB WorkbenchPage remains unindexed and handler impacts are UNKNOWN. Compare main is cumulative PR scope (280+ files, 46 flows, CRITICAL), not an isolated slice result. PR CI 43782830766 passed all four jobs (Flutter 1319/1319). Platform Availability 43782824700 passed Linux/Windows/macOS build, test, launch, and package jobs. Linux/Windows native DnD passed; macOS native DnD explicitly skipped because CGEventPostToPid pointer route was false. App artifacts Linux 14189760470, Windows 14188839971, macOS 14190945481; DnD artifacts Linux 14189002576, Windows 14189098230, macOS 14190342194; macOS startup diagnostics 14190427237. Downloaded macOS package SHA-256 65dad7f75346230423d3f6702f19f7fe456a50ecb48fdb598cebac86b7251b7d matches the sidecar; unzip -tq passed with 81 entries. PR #3 remains OPEN/DRAFT. Full evidence and the UNKNOWN/host limitations: docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-116",
+      "name": "P05.64 LAY-10g 编辑器组标签溢出与 MRU 选择",
+      "description": "为每个有多个文档的编辑器组提供按组内最近使用顺序排列的编辑器列表；选择已有文档后激活目标组/标签并保留文本、undo、selection 与 view state。范围与 N.2 DoD：docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md",
+      "dependencies": [
+        "feat-115"
+      ],
+      "status": "in-progress",
+      "evidence": "Implemented per-group editor overflow/MRU picker with dirty/sticky/current indicators, selection into inactive groups, focus/session update, and tab reveal; supports single/none tab modes. Original editor.verifyIntegrity action remains available in the multi-document group's menu. Policy tests 3/3, Workbench overflow tests 2/2, affected regression suite 57/57. cargo fmt --check, bash init.sh (Rust tests, Clippy -D warnings, core build, Flutter 1324/1324), flutter analyze 0 issues, and harness validation 100/100 passed. The first regression exposed PopupMenuButton's regular density and an incorrect popup-menu constraint; compact visual density and removing the menu constraint restored toolbar geometry, anchor hit-testing, and tab/group regressions. GitNexus indexed WorkbenchPage at 1024 KiB: _buildTabStrip LOW/3 upstream, _activateEditorFromOverflow LOW/4, _noteActiveDocument UNKNOWN (source references confirmed); enclosing _WorkbenchPageState class impact CRITICAL/206 symbols/79 processes/20 modules. All-scope remains CRITICAL/9 files/10–17 symbols (process counts vary 61–305); compare main is cumulative PR scope CRITICAL/286 files (586–1170 symbols/169–309 processes); a higher-count output capped the listing while retaining complete aggregate risk. The class-level structural warning is retained; no Rust/FFI files changed and the full Flutter suite passed. Analyzer warns cross-language links and flow truncation. Hosted PR CI and Platform Availability pending; see docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
