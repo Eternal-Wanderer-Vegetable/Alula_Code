@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.62 hosted 已完成；P05.63 / feat-115 / LAY-20a 实现与本地完整 DoD 已通过，等待提交后的 hosted PR CI 和 Platform Availability。P05 总阶段仍为 in-progress。
+- P05.1–P05.63 hosted 已完成；P05.63 / feat-115 / LAY-20a 本地 DoD、PR CI 与 Platform Availability 均已完成。P05 总阶段仍为 in-progress，后续按 N.2 选择 LAY-20/CMD 子项。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -36,7 +36,7 @@ Last Updated: 2026-11-16
     报告：`docs/diagnostics/2026-11-15-p05/p05.60-welcome-and-watermark.md`。
   - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；本地 DoD、PR CI `43737761143` 与 Platform Availability `43737756490` 三平台全绿；Linux/Windows DnD 通过，macOS DnD 明确因 pointer route unavailable 跳过；macOS ZIP SHA-256 `f16a0f38…09112d4` 与 sidecar 一致。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 - P05.62 / LAY-19c：内置向导、步骤 checkbox、独立进度 journal、Welcome/QuickInput/Help/命令路由已完成；focused tests 4/4。本地 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 全绿（Flutter 1315/1315）。PR CI `43745604458` 四项全绿；Platform Availability `43745600249` attempt 2 三平台全绿。attempt 1 macOS Quit 探针因 hosted Accessibility 错误失败，attempt 2 通过；macOS DnD 因 pointer route unavailable 明确跳过。macOS ZIP SHA-256 `f77f8da1…92f50` 与 sidecar 一致、`unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
-- P05.63 / LAY-20a：组区、正文中心/四方向拆分、标签目标 hover overlay 与有效复制提示已实现；modifier 键变化即时刷新，拖动结束/取消/销毁清理。新增 4 个 widget tests，拆分与组区 focused 合计 13/13。`cargo fmt --check && bash init.sh` 全绿，Flutter 1319/1319、analyze 0 issues；registrant 生成文件已恢复。等待提交后 PR CI 与 Platform Availability。报告：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。
+- P05.63 / LAY-20a：组区、正文中心/四方向拆分、标签目标 hover overlay 与有效复制提示已实现；modifier 键变化即时刷新，拖动结束/取消/销毁清理。新增 4 个 widget tests，拆分与组区 focused 合计 13/13。`cargo fmt --check && bash init.sh` 全绿，Flutter 1319/1319、analyze 0 issues；Harness 100/100。PR CI `43782830766` 全绿；Platform Availability `43782824700` 三平台全绿，Linux/Windows native DnD 通过，macOS 因 pointer route unavailable 明确 skip。app artifacts Linux `14189760470`、Windows `14188839971`、macOS `14190945481`；macOS ZIP SHA `65dad7f75346230423d3f6702f19f7fe456a50ecb48fdb598cebac86b7251b7d` 与 sidecar 匹配且 `unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。
 - LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 的 Welcome/watermark、最近项目与 Walkthrough（a/b/c）均已完成。
 - 当前 managed worktree 上 P05.63 的完整 `cargo fmt --check && bash init.sh` 已通过：Rust tests、Clippy `-D warnings`、
   core build、完整 Flutter 全集均通过；P05.63 全集 1319/1319。`flutter analyze` 0 issues。
@@ -45,8 +45,8 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.62 hosted 证据均已登记；P05.63 hosted 检查待代码推送触发。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
-- P05.63 本地完整 DoD 已通过；`bash init.sh` 生成的五个 Linux/macOS/Windows plugin registrant 修改已恢复。当前工作树有待提交的 P05.63 代码与证据更新。
+- 无用户手动操作需求。P05.56–P05.63 hosted 证据均已登记。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
+- P05.63 代码与本地/hosted 证据已提交推送，PR 专用 worktree 应保持 clean；`bash init.sh` 生成的五个 plugin registrant 文件已恢复。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
 - GitNexus 图覆盖：`workbench_page.dart` > 512 KiB 不入图（私有方法 UNKNOWN）、跨语言
@@ -56,7 +56,7 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. 提交并推送 P05.63 代码与本地证据到 PR #3；跟踪 CI 和 Platform Availability 工作流，补齐三平台结果与 artifacts。
+1. 检查 `git status --short`、PR #3 的 draft/open 状态与 P05.63 closeout evidence commit 是否已推送。
 2. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
    GitNexus 警告仍存在：`workbench_page.dart` (>512 KiB) 未入图、981 个跨语言属性点未链接、
    flow tracing 有 truncation；UNKNOWN 仍须源码确认。
@@ -64,8 +64,7 @@ Last Updated: 2026-11-16
    `43745600249` attempt 2 三平台全绿。attempt 1 native Quit runner failure 与 macOS DnD skip 均已在
    `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md` 记录。
 4. P05.62 代码与 closeout evidence 均已推送；确认 PR #3 仍是 OPEN/DRAFT。
-5. 本地与 hosted 证据登记后，将 P05.63 标为 done 并确认 PR #3 仍为 OPEN/DRAFT，不合并。
-6. 下一次开工先按 `feature_list.json` 与 `docs/03` N.2 选择并登记一个依赖满足的子项；每 slice 做完即更新 evidence/状态，提交前完整 `detect-changes --scope all`。PR #3
+5. P05.63 已登记 done。按 `feature_list.json` 与 `docs/03` N.2 从仍未完成的 LAY-20 或 CMD-01–12 选择/拆分一个依赖满足的子项；只推进一个 feature，提交前完整 GitNexus detect-changes。PR #3
    保持 draft/open，不合并。
 
 ## Evidence and Files
