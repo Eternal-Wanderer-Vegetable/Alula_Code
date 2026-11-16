@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.64 hosted 已完成；当前 slice P05.65 / feat-117 / LAY-10h。产品实现 commit `f4f95d799a13f991da46bb8620c267103d6d87f4` 已推送；PR CI `43808267287` 四项全绿。Platform Availability `43808260927` Linux/Windows build/launch/交互成功；macOS Flutter suite 1335/1336，唯一失败是既有 workspace edit 测试引用不存在的 `tab-2`，其余 macOS 构建/打包被跳过。测试已改为用可见文件名选择标签，focused 和完整本地 `init.sh` 通过，当前代码与证据文档待提交，下一步推送后重跑 hosted checks。完整范围：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`。P05 / feat-027 仍 in-progress，PR #3 保持 OPEN/DRAFT，不合并。
+- P05.1–P05.65 已完成各自 N.2 与 hosted closeout；当前下一项待按 docs/03 独立拆分 LAY-12b（组/焦点同步、compact/pin-top、移回主窗、跨窗口拖拽）。P05.65 产品提交 `f4f95d799a13f991da46bb8620c267103d6d87f4` 与测试选择器修复 `831c5c54933f15817917e5806b05725954a5277c` 已推送；PR CI `43814360627` 四项全绿。Platform Availability `43814354795` attempt 2 三平台 build/test/launch/package 全绿；attempt 1 的 macOS ordinary launch-stop 与 native Quit smoke 失败，attempt 2 均通过。macOS ZIP artifact `14205627497` 的 SHA-256 `cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e` 与 sidecar 一致，81 项完整；native DnD artifact `14205611876` 明确记录 pointer route unavailable/skip。完整范围：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`。P05 / feat-027 仍 in-progress，PR #3 保持 OPEN/DRAFT，不合并。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -45,17 +45,17 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
-- 本地 DoD 已通过：tear-out focused 12/12；修复 macOS hosted 测试选择器后的跨文档测试与完整 Flutter 1336/1336 通过；`bash init.sh` Rust tests、Clippy、core build 通过；`cargo fmt --check`、`flutter analyze` 0 issues、Harness 100/100、diff check 通过。P05.65 Platform Availability 首轮在 macOS `workspace_edit_transaction_test.dart` 因 `tab-2` key 不存在而失败，后续 package/launch 被跳过；已改按 `Cargo.toml` / `main.rs` 可见标签选择，等待推送和 hosted rerun。Linux Wayland 无全局坐标时禁用自动 tear-out，手动 Move to New Window 仍可用。
-- P05.64 docs closeout commit `f65043e2ebed82224159bc8b4351f2b78ecaae74` 的 PR CI run `43798796857` 已结束为 failure。Rust Windows job failure，但 `Tests` step 状态仍是 `in_progress` 且没有结论；日志读取返回 404。不得将它写成测试断言失败或成功。同 SHA 的 Harness、Flutter、Rust Ubuntu 成功；前一产品 commit 的 Windows CI 和 Platform Availability 三平台均通过。
+- P05.65 已完成且无已知产品阻塞：本地 DoD、PR CI `43814360627` 与 Platform Availability `43814354795` attempt 2 全绿。Hosted macOS text DnD 探针因 runner 不路由合成指针而 skip；标签拖出手势由 policy/Workbench widget tests 验证，未声称原生手势 hosted 通过。Linux Wayland 无全局坐标时禁用自动 tear-out，手动 Move to New Window 可用。
+- Historical, non-blocking CI anomaly: P05.64 docs closeout commit `f65043e2ebed82224159bc8b4351f2b78ecaae74` 的 PR CI run `43798796857` 已结束为 failure。Rust Windows job failure，但 `Tests` step 状态仍是 `in_progress` 且没有结论；日志读取返回 404。不得将它写成测试断言失败或成功。同 SHA 的 Harness、Flutter、Rust Ubuntu 成功；前一产品 commit 的 Windows CI 和 Platform Availability 三平台均通过。
 - GitNexus 图覆盖：`workbench_page.dart` 私有方法/跨语言字段与 flows 有 UNKNOWN、截断限制；不把 0 caller/0 flow 当作无影响。P05.65 helper exact impact LOW/3；all-scope 多次结果跨 12 files/5–19 symbols/0–146 processes，在 LOW 与 CRITICAL 间波动；compare-main 291 files/CRITICAL、符号和 process 计数有波动、listing capped；Section 03 impact UNKNOWN；旧 class-level CRITICAL 保留。完整输出与影响范围见 P05.65 报告。
 - Platform Availability 验证插件注册、三平台 build/package/启动/关闭，但其 DnD probe 不驱动标签 tear-out；报告中不可写成真实原生标签拖出已通过。该功能行为由 policy/Workbench widget tests 验证。
 - `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`（1,000+ 行无关 diff）；保持局部代码风格，只格式化新增/小文件。
 
 ## Next Session First Step
 
-1. 先提交并推送当前测试选择器修复与 hosted 证据更新；检查新 commit 的 PR CI 和 Platform Availability Linux/Windows/macOS 状态。
-2. 记录 Rust Windows、Flutter、Harness 四个 PR CI job 与三平台 package/launch/close 证据；保留 Platform Availability 不覆盖标签 tear-out 原生手势的限制。若 Windows Rust job 再次出现 job 已结束但 Tests step 未完成的异常，按 job 级失败如实登记。
-3. hosted 证据齐备后才把 feat-117 标成 done；之后再从 docs/03 的 P05 LAY/CMD 待办选择一个新 slice，保持 one-feature-at-a-time。PR #3 继续 OPEN/DRAFT，不合并。
+1. 按 docs/03 将 LAY-12b 拆分为单一、可验收的 P05 slice；完成上游核对、编辑前 GitNexus impact 与 scope/N.2 DoD 登记后再改实现。
+2. 保持 one-feature-at-a-time；完成该 slice 后运行其完整 N.2 本地与 hosted 门禁，更新 feature_list/progress/session-handoff 并在 commit 前执行 GitNexus detect-changes。
+3. P05 / feat-027 继续 in-progress；PR #3 保持 OPEN/DRAFT，不合并。
 
 ## Evidence and Files
 
@@ -76,7 +76,7 @@ Last Updated: 2026-11-16
   `p05.60-full-flutter.log`
 - P05.63：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`（本地与 hosted closeout 完成）
 - P05.64：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`（本地与 hosted closeout 完成）
-- P05.65：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`；产品文件 `app/lib/workbench/editor_tab_tear_out_policy.dart`、`app/test/editor_tab_tear_out_test.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/workspace_edit_transaction_test.dart` 与 Flutter generated plugin registrants。tear-out focused 12/12；完整本地 `bash init.sh` EXIT=0（Flutter 1336），analyze/cargo fmt/Harness/diff 全绿。首轮产品 SHA `f4f95d7` 的 PR CI `43808267287` 四项通过；Platform Availability `43808260927` Linux/Windows 成功、macOS 被既有测试 `tab-2` 硬编码失败阻断；改为文件标签选择器后本地 focused/full tests 通过，待 hosted rerun。GitNexus exact helper LOW/3、all-scope/compare 波动与 CRITICAL、Section 03 UNKNOWN 已记录；Platform Availability 不覆盖真实标签 tear-out 手势。
+- P05.65（done）：`docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md`；本地 focused 12/12、完整 init.sh Flutter 1336/1336、Rust/Clippy/core、fmt/analyze/Harness 通过。PR CI `43814360627` 四项全绿；Platform Availability `43814354795` attempt 2 三平台通过。Artifacts Linux/Windows/macOS `14202041981` / `14202401615` / `14205627497`；macOS ZIP SHA `cfd8fc3976f8aacea8435a4c76658ee49f5191929a78c243470c09d7d5733f3e`，sidecar 一致、81 项完整。macOS native DnD artifact `14205611876` 明确 skip；不计为手势验收。
 - 产品文件：`app/lib/workbench/notifications.dart`、`notification_widgets.dart`、
   `status_bar.dart`、`workbench_page.dart`、`app/lib/main.dart`、
   `app/test/notification_center_test.dart`、`app/test/notification_ui_test.dart`
