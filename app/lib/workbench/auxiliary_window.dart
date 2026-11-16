@@ -11,7 +11,6 @@ import 'dart:convert';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
 import 'package:window_manager/window_manager.dart';
 
 import '../bridge/alula_core.dart';
@@ -173,12 +172,6 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
     }
   }
 
-  String? _focusDocumentIdentity(String windowId) {
-    final path = widget.payload.path;
-    if (path == null) return 'untitled:$windowId';
-    return 'file:${p.normalize(path)}';
-  }
-
   String _focusGroupIdentity(String windowId) => '$windowId:editor';
 
   void _acceptGlobalFocusSnapshot(Object? value) {
@@ -223,7 +216,6 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
         windowId: controller.windowId,
         sequence: ++_focusEventSequence,
         groupId: _focusGroupIdentity(controller.windowId),
-        documentId: _focusDocumentIdentity(controller.windowId),
         focused: false,
       );
       final initialSnapshot = await mainController.invokeMethod<Object?>(
@@ -267,7 +259,6 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
       windowId: controller.windowId,
       sequence: ++_focusEventSequence,
       groupId: _focusGroupIdentity(controller.windowId),
-      documentId: _focusDocumentIdentity(controller.windowId),
       focused: focused ?? _nativeWindowFocused == true,
     );
     _focusEventQueue = _focusEventQueue.then((_) async {

@@ -554,7 +554,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       AuxiliaryFocusContextRegistry();
   final Completer<void> _auxiliaryWindowHandlersReady = Completer<void>();
   WindowController? _mainWindowController;
-  String? _lastPublishedMainFocusIdentity;
+  String? _lastPublishedMainFocusGroup;
   int _mainFocusEventSequence = 0;
   int _mainNativeFocusGeneration = 0;
   int _auxiliaryWindowCreationsInProgress = 0;
@@ -3080,13 +3080,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _publishMainFocusContext();
   }
 
-  String? _mainDocumentIdentity(OpenDoc? document, String windowId) {
-    if (document == null) return null;
-    final path = document.path;
-    if (path == null) return 'untitled:$windowId:${document.id}';
-    return 'file:${p.normalize(path)}';
-  }
-
   EditorGroup? get _mainCurrentGroup => _groups.isEmpty
       ? null
       : _groups[_focusedRegion] ?? _groups.values.first;
@@ -3102,18 +3095,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (controller == null || !_auxiliaryFocusRegistry.isInitialized) return;
     final groupId = _mainGroupIdentity(controller.windowId);
     if (groupId == null) return;
-    final documentId =
-        _mainDocumentIdentity(_mainCurrentGroup?.active, controller.windowId);
-    final identity = '$groupId\u0000${documentId ?? ''}';
-    if (!force && identity == _lastPublishedMainFocusIdentity) return;
-    _lastPublishedMainFocusIdentity = identity;
+    if (!force && groupId == _lastPublishedMainFocusGroup) return;
+    _lastPublishedMainFocusGroup = groupId;
     final result = _auxiliaryFocusRegistry.apply(
       AuxiliaryFocusContextEvent(
         kind: AuxiliaryFocusEventKind.update,
         windowId: controller.windowId,
         sequence: ++_mainFocusEventSequence,
         groupId: groupId,
-        documentId: documentId,
         focused: _mainWindowFocused == true,
       ),
     );
@@ -13352,7 +13341,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _auxiliaryFocusRegistry.initializeMain(
         windowId: self.windowId,
         groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
-        documentId: _mainDocumentIdentity(_mainCurrentGroup?.active, self.windowId),
       );
       await self.setWindowMethodHandler((call) async {
         if (call.method == 'alula_auxiliary_closed') {

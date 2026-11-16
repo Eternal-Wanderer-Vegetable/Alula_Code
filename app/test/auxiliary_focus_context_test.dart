@@ -6,7 +6,6 @@ AuxiliaryFocusContextEvent event({
   required String windowId,
   required int sequence,
   required String groupId,
-  String? documentId,
   bool focused = false,
   AuxiliaryFocusEventKind kind = AuxiliaryFocusEventKind.update,
 }) =>
@@ -15,18 +14,16 @@ AuxiliaryFocusContextEvent event({
       windowId: windowId,
       sequence: sequence,
       groupId: groupId,
-      documentId: documentId,
       focused: focused,
     );
 
 void main() {
   group('AuxiliaryFocusContextEvent', () {
-    test('wire data contains identity and ordering metadata only', () {
+    test('wire data contains only active window/group focus metadata', () {
       final wire = event(
         windowId: 'aux-2',
         sequence: 3,
         groupId: 'aux-2:editor',
-        documentId: 'file:/workspace/app.dart',
         focused: true,
       ).toMap();
 
@@ -36,14 +33,22 @@ void main() {
         'windowId',
         'sequence',
         'groupId',
-        'documentId',
         'focused',
       });
+      expect(wire, isNot(contains('documentId')));
       expect(wire, isNot(contains('text')));
       expect(wire, isNot(contains('dirty')));
       expect(wire, isNot(contains('selection')));
       expect(wire, isNot(contains('session')));
       expect(AuxiliaryFocusContextEvent.tryParse(wire)?.windowId, 'aux-2');
+      final olderPeerWire = {
+        ...wire,
+        'documentId': 'file:/workspace/ignored.dart'
+      };
+      final parsedFromOlderPeer =
+          AuxiliaryFocusContextEvent.tryParse(olderPeerWire);
+      expect(parsedFromOlderPeer?.toMap(), wire,
+          reason: 'legacy document identity is ignored and never re-emitted');
     });
 
     test('rejects malformed and oversized identity payloads', () {
@@ -78,7 +83,6 @@ void main() {
       ..initializeMain(
         windowId: 'main',
         groupId: 'main:editor',
-        documentId: 'file:/workspace/main.dart',
       );
 
     test('focus changes select the latest part and reject stale events', () {
@@ -88,7 +92,6 @@ void main() {
         windowId: 'aux-1',
         sequence: 1,
         groupId: 'aux-1:editor',
-        documentId: 'file:/workspace/one.dart',
         kind: AuxiliaryFocusEventKind.register,
       ));
       expect(hello.accepted, isTrue);
@@ -99,22 +102,33 @@ void main() {
         windowId: 'aux-1',
         sequence: 2,
         groupId: 'aux-1:editor',
-        documentId: 'file:/workspace/one.dart',
         focused: true,
       ));
       expect(focused.snapshotChanged, isTrue);
       expect(owners.snapshot!.windowId, 'aux-1');
       expect(owners.snapshot!.revision, greaterThan(initialRevision));
+      expect(owners.snapshot!.toMap().keys.toSet(), {
+        'windowId',
+        'groupId',
+        'revision',
+      });
+
+      final groupChanged = owners.apply(event(
+        windowId: 'aux-1',
+        sequence: 3,
+        groupId: 'aux-1:second-group',
+        focused: true,
+      ));
+      expect(groupChanged.snapshotChanged, isTrue);
+      expect(owners.snapshot!.groupId, 'aux-1:second-group');
 
       final stale = owners.apply(event(
         windowId: 'aux-1',
-        sequence: 1,
+        sequence: 2,
         groupId: 'aux-1:old-group',
-        documentId: 'file:/workspace/stale.dart',
       ));
       expect(stale.accepted, isFalse);
-      expect(owners.snapshot!.groupId, 'aux-1:editor');
-      expect(owners.snapshot!.documentId, 'file:/workspace/one.dart');
+      expect(owners.snapshot!.groupId, 'aux-1:second-group');
     });
 
     test('blur and close fall back to the most recently active survivor', () {
@@ -123,28 +137,24 @@ void main() {
         windowId: 'aux-1',
         sequence: 1,
         groupId: 'aux-1:editor',
-        documentId: 'doc-1',
         kind: AuxiliaryFocusEventKind.register,
       ));
       owners.apply(event(
         windowId: 'aux-1',
         sequence: 2,
         groupId: 'aux-1:editor',
-        documentId: 'doc-1',
         focused: true,
       ));
       owners.apply(event(
         windowId: 'aux-2',
         sequence: 1,
         groupId: 'aux-2:editor',
-        documentId: 'doc-2',
         kind: AuxiliaryFocusEventKind.register,
       ));
       owners.apply(event(
         windowId: 'aux-2',
         sequence: 2,
         groupId: 'aux-2:editor',
-        documentId: 'doc-2',
         focused: true,
       ));
 
@@ -152,7 +162,6 @@ void main() {
         windowId: 'main',
         sequence: 0,
         groupId: 'main:editor',
-        documentId: 'file:/workspace/main.dart',
       ));
       expect(mainBlur.snapshotChanged, isFalse,
           reason: 'a delayed blur from another part cannot steal ownership');
@@ -166,7 +175,6 @@ void main() {
         windowId: 'aux-1',
         sequence: 3,
         groupId: 'aux-1:editor',
-        documentId: 'doc-1',
       ));
       expect(owners.snapshot!.windowId, 'main');
     });
@@ -178,7 +186,6 @@ void main() {
         windowId: 'aux-1',
         sequence: 1,
         groupId: 'aux-1:editor',
-        documentId: 'doc-1',
         kind: AuxiliaryFocusEventKind.register,
       ));
 
@@ -186,7 +193,6 @@ void main() {
         windowId: 'main',
         sequence: 0,
         groupId: 'main:editor',
-        documentId: 'file:/workspace/main.dart',
       ));
 
       expect(mainBlur.snapshotChanged, isFalse);
@@ -229,7 +235,7 @@ void main() {
       );
     });
 
-    test('focus metadata never changes the transferred editor payload', () {
+    test('focus events never change the transferred editor payload', () {
       const text = 'dirty\r\nemoji 😀\n';
       final payload = AuxiliaryWindowPayload.forDocument(
         path: '/workspace/notes.txt',
@@ -243,14 +249,12 @@ void main() {
         windowId: 'aux-1',
         sequence: 1,
         groupId: 'aux-1:editor',
-        documentId: 'file:/workspace/notes.txt',
         kind: AuxiliaryFocusEventKind.register,
       ));
       owners.apply(event(
         windowId: 'aux-1',
         sequence: 2,
         groupId: 'aux-1:editor',
-        documentId: 'file:/workspace/notes.txt',
         focused: true,
       ));
       expect(payload.text, text);

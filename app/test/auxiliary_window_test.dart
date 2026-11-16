@@ -405,7 +405,6 @@ void main() {
                   'windowId': event['focused'] == true ? 'aux-1' : 'main',
                   'groupId':
                       event['focused'] == true ? 'aux-1:editor' : 'main:editor',
-                  'documentId': null,
                   'revision': focusEvents.length,
                 };
               }
@@ -450,9 +449,9 @@ void main() {
               'windowId',
               'sequence',
               'groupId',
-              'documentId',
               'focused',
             ]));
+        expect(focusEvents.first, isNot(contains('documentId')));
         expect(focusEvents.first, isNot(contains('text')));
         expect(focusEvents.first, isNot(contains('dirty')));
 
@@ -653,7 +652,6 @@ void main() {
             windowId: 'aux-1',
             sequence: 1,
             groupId: 'aux-1:editor',
-            documentId: 'file:/workspace/aux.dart',
             focused: false,
           )),
         );
@@ -665,7 +663,6 @@ void main() {
             windowId: 'aux-1',
             sequence: 2,
             groupId: 'aux-1:editor',
-            documentId: 'file:/workspace/aux.dart',
             focused: true,
           )),
         );
@@ -674,9 +671,9 @@ void main() {
         expect(auxiliarySnapshotMessages.single.keys.toSet(), {
           'windowId',
           'groupId',
-          'documentId',
           'revision',
         });
+        expect(auxiliarySnapshotMessages.single, isNot(contains('documentId')));
         expect(auxiliarySnapshotMessages.single['windowId'], 'aux-1');
 
         final staleSnapshot = AuxiliaryFocusContextSnapshot.tryParse(
@@ -685,7 +682,6 @@ void main() {
             windowId: 'aux-1',
             sequence: 1,
             groupId: 'aux-1:stale',
-            documentId: 'file:/workspace/stale.dart',
             focused: false,
           )),
         );

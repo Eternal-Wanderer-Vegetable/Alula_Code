@@ -1,7 +1,8 @@
 /// Cross-window active editor metadata for auxiliary workbench parts.
 ///
-/// The channel deliberately carries identity and ordering metadata only. It
-/// never carries editor text, selection, dirty state, or session state.
+/// The channel carries active window/group and ordering metadata only. It never
+/// carries document identity, editor text, selection, dirty state, or session
+/// state.
 library;
 
 const String auxiliaryFocusContextMethod = 'alula_focus_context_v1';
@@ -16,7 +17,6 @@ class AuxiliaryFocusContextEvent {
     required this.windowId,
     required this.sequence,
     required this.groupId,
-    required this.documentId,
     required this.focused,
   });
 
@@ -26,7 +26,6 @@ class AuxiliaryFocusContextEvent {
   final String windowId;
   final int sequence;
   final String groupId;
-  final String? documentId;
   final bool focused;
 
   Map<String, Object?> toMap() => {
@@ -35,7 +34,6 @@ class AuxiliaryFocusContextEvent {
         'windowId': windowId,
         'sequence': sequence,
         'groupId': groupId,
-        'documentId': documentId,
         'focused': focused,
       };
 
@@ -46,7 +44,6 @@ class AuxiliaryFocusContextEvent {
     final windowId = map['windowId'];
     final sequence = map['sequence'];
     final groupId = map['groupId'];
-    final documentId = map['documentId'];
     final focused = map['focused'];
     if (map['protocol'] != protocol ||
         (type != AuxiliaryFocusEventKind.register.name &&
@@ -59,8 +56,6 @@ class AuxiliaryFocusContextEvent {
         groupId is! String ||
         groupId.isEmpty ||
         groupId.length > 256 ||
-        (documentId != null &&
-            (documentId is! String || documentId.length > 4096)) ||
         focused is! bool) {
       return null;
     }
@@ -71,7 +66,6 @@ class AuxiliaryFocusContextEvent {
       windowId: windowId,
       sequence: sequence,
       groupId: groupId,
-      documentId: documentId as String?,
       focused: focused,
     );
   }
@@ -81,19 +75,16 @@ class AuxiliaryFocusContextSnapshot {
   const AuxiliaryFocusContextSnapshot({
     required this.windowId,
     required this.groupId,
-    required this.documentId,
     required this.revision,
   });
 
   final String windowId;
   final String groupId;
-  final String? documentId;
   final int revision;
 
   Map<String, Object?> toMap() => {
         'windowId': windowId,
         'groupId': groupId,
-        'documentId': documentId,
         'revision': revision,
       };
 
@@ -102,13 +93,11 @@ class AuxiliaryFocusContextSnapshot {
     final map = Map<Object?, Object?>.from(value);
     final windowId = map['windowId'];
     final groupId = map['groupId'];
-    final documentId = map['documentId'];
     final revision = map['revision'];
     if (windowId is! String ||
         windowId.isEmpty ||
         groupId is! String ||
         groupId.isEmpty ||
-        (documentId != null && documentId is! String) ||
         revision is! int ||
         revision < 0) {
       return null;
@@ -116,7 +105,6 @@ class AuxiliaryFocusContextSnapshot {
     return AuxiliaryFocusContextSnapshot(
       windowId: windowId,
       groupId: groupId,
-      documentId: documentId as String?,
       revision: revision,
     );
   }
@@ -150,7 +138,6 @@ class AuxiliaryFocusContextRegistry {
     return AuxiliaryFocusContextSnapshot(
       windowId: id,
       groupId: owner.groupId,
-      documentId: owner.documentId,
       revision: _revision,
     );
   }
@@ -160,7 +147,6 @@ class AuxiliaryFocusContextRegistry {
   void initializeMain({
     required String windowId,
     required String groupId,
-    required String? documentId,
   }) {
     if (windowId.isEmpty || groupId.isEmpty) {
       throw ArgumentError(
@@ -175,7 +161,6 @@ class AuxiliaryFocusContextRegistry {
     _owners[windowId] = _Owner(
       windowId: windowId,
       groupId: groupId,
-      documentId: documentId,
       lastSequence: -1,
       lastActivationOrder: ++_activationOrder,
     );
@@ -204,7 +189,6 @@ class AuxiliaryFocusContextRegistry {
       owner = _Owner(
         windowId: event.windowId,
         groupId: event.groupId,
-        documentId: event.documentId,
         lastSequence: -1,
         lastActivationOrder: 0,
       );
@@ -222,7 +206,6 @@ class AuxiliaryFocusContextRegistry {
     owner
       ..lastSequence = event.sequence
       ..groupId = event.groupId
-      ..documentId = event.documentId
       ..isFocused = event.focused;
 
     if (event.focused) {
@@ -281,11 +264,11 @@ class AuxiliaryFocusContextRegistry {
     return _activeWindowId!;
   }
 
-  (String, String, String?)? get _currentIdentity {
+  (String, String)? get _currentIdentity {
     final id = _activeWindowId;
     final owner = id == null ? null : _owners[id];
     if (id == null || owner == null) return null;
-    return (id, owner.groupId, owner.documentId);
+    return (id, owner.groupId);
   }
 }
 
@@ -293,14 +276,12 @@ class _Owner {
   _Owner({
     required this.windowId,
     required this.groupId,
-    required this.documentId,
     required this.lastSequence,
     required this.lastActivationOrder,
   });
 
   final String windowId;
   String groupId;
-  String? documentId;
   int lastSequence;
   int lastActivationOrder;
   bool isFocused = false;
