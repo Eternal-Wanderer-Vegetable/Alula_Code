@@ -5,9 +5,10 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.66 已完成各自 N.2 与 hosted closeout；下一项从 LAY-12b 组/焦点同步拆分新 slice
+### P05 / feat-027 进行中；P05.1–P05.66 已完成各自 N.2 与 hosted closeout；P05.67 / feat-119 / LAY-12b2 已登记，产品实现未开始
 
 - 2026-11-16：P05.66 / feat-118 / LAY-12b1 hosted closeout 完成。PR CI `43830753979` 四 job 全绿；Platform Availability `43830744187` Linux/Windows/macOS build/test/launch/package 全绿。Artifacts Linux/Windows/macOS `14208363679` / `14208024361` / `14209833192`；macOS ZIP SHA-256 `3dfb70eccf9fd3e3f5d0028f5d7e03fc454ba32998b8a543dcea47efbc4b4e6d` 与 sidecar 一致、`unzip -tq` 81 项通过。macOS native DnD 因 pointer route unavailable 明确 skip；native Quit 成功。startup diagnostics 中 `desktop_multi_window` invalid-engine warning 与 P05.65 上次成功 run 相同，作为重复非阻塞观察登记；OS always-on-top 原生层级仍未实测。产品/本地证据见 `p05.66-auxiliary-window-always-on-top-scope.md` 与相邻日志，PR #3 保持 OPEN/DRAFT。下一项先按 docs/03 独立登记 LAY-12b 组/焦点同步 slice。
+- 2026-11-16：登记 P05.67 / feat-119 / LAY-12b2 辅助窗口活动组与焦点上下文同步。固定 Code-OSS 1.145.0 `EditorParts.mostRecentActiveParts` 与 `registerEditorPartListeners` 全局 MRU/focus 语义；scope 限 window/group/document identity + revision，不传全文、selection、dirty/savepoint、session，不改命令路由。现状：workbench `_focusedRegion`/`_active` 是 engine-local；auxiliary 有独立 `AlulaDoc`，当前 channel 只有 close/reopen。GitNexus 对 payload exact LOW，但 workbench 私有 state/handler 为 UNKNOWN（>512 KiB 未入图），历史 AuxiliaryEditorApp CRITICAL 保留。范围/N.2：`docs/diagnostics/2026-11-16-p05/p05.67-auxiliary-window-focus-context.md`；产品实现尚未开始。PR #3 保持 OPEN/DRAFT。
 
 - 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 

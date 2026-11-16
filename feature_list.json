@@ -1468,6 +1468,19 @@
       "evidence": "Implemented on codex/vscode-parity-p05. AuxiliaryEditorApp reads window_manager.isAlwaysOnTop at startup and exposes a Semantics-labeled/toggled title-row pin control. It waits for setAlwaysOnTop before changing checked/tooltip state, disables while pending/unknown, and announces read/set failures through a live region. No timers, polling, persistence, payload/session, document/dirty, close/move or main-window changes. New always-on-top tests 3/3 and complete auxiliary_window_test.dart 7/7; verifies async success, both directions, failure rollback/error announcement, read failure and unchanged Rust text/input mirror/dirty/payload with CRLF and emoji. cargo fmt --check passed; bash init.sh EXIT 0 (Rust workspace tests, Clippy -D warnings, build_core, Flutter 1339/1339); flutter analyze 0 issues; Harness 100/100; git diff --check passed. Logs: docs/diagnostics/2026-11-16-p05/p05.66-init.log and p05.66-auxiliary-window-tests.log. PR CI 43830753979 four jobs passed; Platform Availability 43830744187 Linux/Windows/macOS build, test, launch, and package jobs passed. App artifacts Linux/Windows/macOS 14208363679 / 14208024361 / 14209833192; Linux and Windows native DnD passed; macOS DnD artifact 14210336955 records synthetic pointer route unavailable and explicitly skips the interaction; macOS native Quit passed (startup diagnostics 14209304237). macOS ZIP SHA-256 3dfb70eccf9fd3e3f5d0028f5d7e03fc454ba32998b8a543dcea47efbc4b4e6d matches its sidecar and unzip -tq passed (81 entries). A desktop_multi_window invalid-engine warning in startup diagnostics also appeared in the previous successful P05.65 run; smoke and Quit still passed, so it is recorded as a repeated non-blocking observation. Widget channel mocks and the Platform Availability lane do not verify actual OS-level always-on-top; keep that behavior explicitly unverified. Preserve GitNexus UNKNOWN/new method mappings and observed AuxiliaryEditorApp CRITICAL (repeated exact queries varied LOW–CRITICAL); all-scope and compare-main detect-changes are recorded in the scope report.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-119",
+      "name": "P05.67 LAY-12b2 辅助窗口活动组与焦点上下文同步",
+      "description": "主窗口与辅助编辑器窗口同步活动 editor part/group/document identity 与 focus owner；窗口/组/文档身份和 revision 经窗口 channel 传递，不同步全文、selection、dirty/savepoint、session 或命令路由。辅助 owner 关闭时从 MRU 中清理并回退到存活 owner。范围/N.2：docs/diagnostics/2026-11-16-p05/p05.67-auxiliary-window-focus-context.md",
+      "dependencies": [
+        "feat-118",
+        "feat-101"
+      ],
+      "status": "in-progress",
+      "evidence": "Scope registered against fixed Code-OSS 1.145.0 editorParts global active-part/MRU behavior. Product implementation has not started. Preserve independent window AlulaDoc state and transfer only focus/group/document identity metadata. GitNexus exact payload impact LOW, workbench private handlers UNKNOWN due >512 KiB file exclusion; observed AuxiliaryEditorApp CRITICAL from prior slice remains preserved. N.2 acceptance and source/impact evidence: docs/diagnostics/2026-11-16-p05/p05.67-auxiliary-window-focus-context.md.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
