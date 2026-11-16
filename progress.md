@@ -5,9 +5,9 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.65 已完成各自 N.2 与 hosted closeout；当前执行 P05.66 / feat-118 / LAY-12b1
+### P05 / feat-027 进行中；P05.1–P05.65 已完成各自 N.2 与 hosted closeout；P05.66 / feat-118 / LAY-12b1 本地 N.2 全绿，等待 hosted closeout
 
-- 2026-11-16：P05.66 / feat-118 / LAY-12b1 已依 docs/03 单独登记，目标为 auxiliary editor title-row always-on-top 开关；固定 Code-OSS 1.145.0 与 window_manager 0.5.2 API，明确排除 compact、焦点/组同步、移回、跨窗拖拽、持久化及 palette command IDs。编辑前 GitNexus 保留 AuxiliaryEditorApp CRITICAL、状态类 HIGH 与 build UNKNOWN；widget mock 不作为原生窗口层级证明。范围/N.2：`docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md`。本地实现与 hosted closeout 待完成；PR #3 保持 OPEN/DRAFT。
+- 2026-11-16：P05.66 / feat-118 / LAY-12b1 已依 docs/03 单独登记，目标为 auxiliary editor title-row always-on-top 开关；固定 Code-OSS 1.145.0 与 window_manager 0.5.2 API，明确排除 compact、焦点/组同步、移回、跨窗拖拽、持久化及 palette command IDs。编辑前 GitNexus 保留 AuxiliaryEditorApp CRITICAL、状态类 HIGH 与 build UNKNOWN；widget mock 不作为原生窗口层级证明。范围/N.2：`docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md`。产品实现与本地 N.2 已通过；hosted PR CI/Platform Availability 待完成，PR #3 保持 OPEN/DRAFT。
 
 - 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 
@@ -27,10 +27,10 @@
 
 ## P05.66 / feat-118 / LAY-12b1 辅助编辑器窗口置顶开关（2026-11-16）
 
-- 本 slice 范围已登记，先完成 auxiliary editor title-row always-on-top UI；状态从原生窗口插件读取，切换成功后再更新，失败保留旧状态并通知。文本、dirty/savepoint、session 与主窗口必须保持不变。
+- 本 slice 已完成 auxiliary editor title-row always-on-top UI；状态经原生 API 读取，切换成功后更新，失败保留旧状态并用 live region 播报。新测覆盖状态异步更新、开/关/失败、读取失败，以及含 CRLF/emoji 的 Rust 全文、输入镜像、dirty 与 payload 不变。
 - 固定 Code-OSS 1.145.0 `4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e` 与 window_manager 0.5.2；明确排除 compact、组/焦点同步、移回主窗、跨窗拖拽、层级持久化和 palette command IDs。
-- 编辑前 GitNexus：`AuxiliaryEditorApp` CRITICAL（宽泛/含大量无关 flows）、状态类 HIGH、build UNKNOWN、close helper LOW；保留索引的跨语言属性、entrypoint、walk budget 与 callee 截断限制。Widget mock 不证明 OS 层级变化。
-- N.2、影响分析、固定参考与验收范围：`docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md`。实现与完整本地/hosted evidence 待追加；feat-118 保持 in-progress，PR #3 保持 OPEN/DRAFT。
+- 本地：focused always-on-top 3/3，辅助窗口测试 7/7，`bash init.sh` Flutter 1339/1339 且 Rust tests/Clippy/core build 全绿，`cargo fmt --check`、`flutter analyze` 0、Harness 100/100、diff check 通过。日志：`docs/diagnostics/2026-11-16-p05/p05.66-init.log` 与 `p05.66-auxiliary-window-tests.log`。
+- GitNexus 保留 AuxiliaryEditorApp 曾报告的 CRITICAL，重复查询从 CRITICAL 到 LOW 波动；新方法与 initState/build 为 UNKNOWN，源码调用已核对。Platform Availability 不执行原生层级探针，因此 OS always-on-top 行为未验证。完整范围/影响/本地证据：`docs/diagnostics/2026-11-16-p05/p05.66-auxiliary-window-always-on-top-scope.md`。PR CI 与 Platform Availability 待完成，feat-118 保持 in-progress，PR #3 保持 OPEN/DRAFT。
 
 ## P05.65 / feat-117 / LAY-10h 标签拖出主窗口创建辅助窗口（2026-11-16）
 

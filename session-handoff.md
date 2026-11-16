@@ -45,7 +45,7 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
-- P05.66 / feat-118 当前 in-progress，产品和本地/hosted N.2 证据待完成；OS 原生置顶状态是否能由现有 hosted lane 实测仍待确认。
+- P05.66 / feat-118 产品与本地 N.2 已通过；PR CI/Platform Availability 待完成。现有 Platform Availability lane 不实测 OS always-on-top 层级，widget mock 不是原生证据。
 - P05.65 已完成且无已知产品阻塞：本地 DoD、PR CI `43814360627` 与 Platform Availability `43814354795` attempt 2 全绿。Hosted macOS text DnD 探针因 runner 不路由合成指针而 skip；标签拖出手势由 policy/Workbench widget tests 验证，未声称原生手势 hosted 通过。Linux Wayland 无全局坐标时禁用自动 tear-out，手动 Move to New Window 可用。
 - Historical, non-blocking CI anomaly: P05.64 docs closeout commit `f65043e2ebed82224159bc8b4351f2b78ecaae74` 的 PR CI run `43798796857` 已结束为 failure。Rust Windows job failure，但 `Tests` step 状态仍是 `in_progress` 且没有结论；日志读取返回 404。不得将它写成测试断言失败或成功。同 SHA 的 Harness、Flutter、Rust Ubuntu 成功；前一产品 commit 的 Windows CI 和 Platform Availability 三平台均通过。
 - GitNexus 图覆盖：`workbench_page.dart` 私有方法/跨语言字段与 flows 有 UNKNOWN、截断限制；不把 0 caller/0 flow 当作无影响。P05.65 helper exact impact LOW/3；all-scope 多次结果跨 12 files/5–19 symbols/0–146 processes，在 LOW 与 CRITICAL 间波动；compare-main 291 files/CRITICAL、符号和 process 计数有波动、listing capped；Section 03 impact UNKNOWN；旧 class-level CRITICAL 保留。完整输出与影响范围见 P05.65 报告。
@@ -54,8 +54,8 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. 继续 P05.66：在 `AuxiliaryEditorApp` 标题行实现原生 always-on-top toggle，覆盖加载、切换成功/失败与文档状态稳定性测试。
-2. 完成 P05.66 的完整 N.2 本地/hosted 门禁，登记 PR CI 与三平台可验证范围；commit 前执行完整 GitNexus detect-changes。之后再独立拆分下一个 LAY-12b slice。
+1. 推送 P05.66 产品与本地证据提交，跟踪自动 PR CI 和 Platform Availability 三平台 build/test/launch/package；PR #3 保持 OPEN/DRAFT。
+2. 完成 hosted closeout 证据和最终 GitNexus detect-changes 记录；原生 OS topmost 因现有 lane 不覆盖而保持未验证。之后再独立拆分下一个 LAY-12b slice。
 3. P05 / feat-027 继续 in-progress；PR #3 保持 OPEN/DRAFT，不合并。
 
 ## Evidence and Files

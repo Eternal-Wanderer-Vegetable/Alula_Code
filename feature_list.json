@@ -1465,7 +1465,7 @@
         "feat-101"
       ],
       "status": "in-progress",
-      "evidence": "Scope and N.2 acceptance registered before product edits. Implementation and local/hosted evidence pending.",
+      "evidence": "Implemented on codex/vscode-parity-p05; hosted closeout pending. AuxiliaryEditorApp reads window_manager.isAlwaysOnTop at startup and exposes a Semantics-labeled/toggled title-row pin control. It waits for setAlwaysOnTop before changing checked/tooltip state, disables while pending/unknown, and announces read/set failures through a live region. No timers, polling, persistence, payload/session, document/dirty, close/move or main-window changes. New always-on-top tests 3/3 and complete auxiliary_window_test.dart 7/7; verifies async success, both directions, failure rollback/error announcement, read failure and unchanged Rust text/input mirror/dirty/payload with CRLF and emoji. cargo fmt --check passed; bash init.sh EXIT 0 (Rust workspace tests, Clippy -D warnings, build_core, Flutter 1339/1339); flutter analyze 0 issues; Harness 100/100; git diff --check passed. Logs: docs/diagnostics/2026-11-16-p05/p05.66-init.log and p05.66-auxiliary-window-tests.log. Widget channel mocks do not verify actual OS-level topmost; current Platform Availability tests build/package/launch/close only. Preserve GitNexus UNKNOWN override/new method mappings and observed AuxiliaryEditorApp CRITICAL (repeated exact queries varied LOW–CRITICAL); final detect-changes and hosted evidence pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

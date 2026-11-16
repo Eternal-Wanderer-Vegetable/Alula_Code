@@ -116,12 +116,16 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
   String _name = '未命名';
   bool _dirty = false;
   bool _closing = false;
+  bool? _alwaysOnTop;
+  bool _changingAlwaysOnTop = false;
+  String? _windowStateError;
   late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    _loadAlwaysOnTop();
     _openDocument();
   }
 
@@ -131,13 +135,55 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
     super.dispose();
   }
 
+  Future<void> _loadAlwaysOnTop() async {
+    try {
+      final alwaysOnTop = await windowManager.isAlwaysOnTop();
+      if (!mounted) return;
+      setState(() {
+        _alwaysOnTop = alwaysOnTop;
+        _windowStateError = null;
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _alwaysOnTop = null;
+        _windowStateError = '读取置顶状态失败：$error';
+      });
+    }
+  }
+
+  Future<void> _toggleAlwaysOnTop() async {
+    final current = _alwaysOnTop;
+    if (current == null || _changingAlwaysOnTop) return;
+
+    final requested = !current;
+    setState(() => _changingAlwaysOnTop = true);
+    try {
+      await windowManager.setAlwaysOnTop(requested);
+      if (!mounted) return;
+      setState(() {
+        _alwaysOnTop = requested;
+        _changingAlwaysOnTop = false;
+        _windowStateError = null;
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _changingAlwaysOnTop = false;
+        _windowStateError = '置顶切换失败：$error';
+      });
+    }
+  }
+
   Future<void> _openDocument() async {
     final payload = widget.payload;
     try {
       final core = AlulaCore.load();
-      final decoded =
-          payload.path != null ? core.workspace.readFileDocument(payload.path!) : null;
-      final content = payload.text.isNotEmpty ? payload.text : decoded?.content ?? '';
+      final decoded = payload.path != null
+          ? core.workspace.readFileDocument(payload.path!)
+          : null;
+      final content =
+          payload.text.isNotEmpty ? payload.text : decoded?.content ?? '';
       final doc = core.openDoc(1, content);
       // 干净磁盘文件以磁盘内容为 savepoint；未命名/脏文本以空 savepoint 呈现脏标。
       doc.setSavepoint(decoded?.content ?? '');
@@ -188,8 +234,8 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
   Future<WindowController?> _findMainWindowController() async {
     final controllers = await WindowController.getAll();
     for (final controller in controllers) {
-      final payload = AuxiliaryWindowPayload.fromArguments(
-          controller.arguments);
+      final payload =
+          AuxiliaryWindowPayload.fromArguments(controller.arguments);
       if (!payload.isAuxiliary) return controller;
     }
     return null;
@@ -209,8 +255,7 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
             Container(
               key: const ValueKey('auxiliary-title-row'),
               color: const Color(0xFF181B20),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: [
                   Expanded(
@@ -222,11 +267,43 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
                           fontSize: 11, fontWeight: FontWeight.bold),
                     ),
                   ),
+                  Semantics(
+                    key: const ValueKey('auxiliary-always-on-top-semantics'),
+                    container: true,
+                    excludeSemantics: true,
+                    label: '始终置顶',
+                    button: true,
+                    toggled: _alwaysOnTop,
+                    enabled: _alwaysOnTop != null && !_changingAlwaysOnTop,
+                    onTap: _alwaysOnTop != null && !_changingAlwaysOnTop
+                        ? _toggleAlwaysOnTop
+                        : null,
+                    child: IconButton(
+                      key: const ValueKey('auxiliary-always-on-top-button'),
+                      tooltip: _changingAlwaysOnTop
+                          ? '正在切换置顶状态'
+                          : _alwaysOnTop == null
+                              ? '置顶状态不可用'
+                              : _alwaysOnTop!
+                                  ? '取消始终置顶'
+                                  : '始终置顶',
+                      onPressed: _alwaysOnTop != null && !_changingAlwaysOnTop
+                          ? _toggleAlwaysOnTop
+                          : null,
+                      icon: const Icon(Icons.push_pin_outlined, size: 14),
+                      selectedIcon: const Icon(Icons.push_pin, size: 14),
+                      isSelected: _alwaysOnTop ?? false,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
                   IconButton(
                     key: const ValueKey('auxiliary-close-button'),
                     tooltip: '移回主窗口并关闭',
-                    onPressed:
-                        doc == null ? null : () { _sendClosedAndDestroy(); },
+                    onPressed: doc == null
+                        ? null
+                        : () {
+                            _sendClosedAndDestroy();
+                          },
                     icon: const Icon(Icons.close, size: 14),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -237,8 +314,27 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Text(_statusMessage,
-                    style: TextStyle(
-                        fontSize: 11, color: Colors.orange.shade300)),
+                    style:
+                        TextStyle(fontSize: 11, color: Colors.orange.shade300)),
+              ),
+            if (_windowStateError != null)
+              Semantics(
+                key: const ValueKey('auxiliary-window-state-error'),
+                container: true,
+                liveRegion: true,
+                label: _windowStateError!,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: ExcludeSemantics(
+                    child: Text(
+                      _windowStateError!,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.orange.shade300,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             Expanded(
               child: doc == null

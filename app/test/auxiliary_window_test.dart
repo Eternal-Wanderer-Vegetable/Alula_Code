@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/auxiliary_window.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
@@ -52,6 +54,277 @@ void main() {
         isFalse,
       );
       expect(AuxiliaryWindowPayload.fromArguments('').isAuxiliary, isFalse);
+    });
+  });
+
+  group('auxiliary always-on-top control', () {
+    const windowManagerChannel = MethodChannel('window_manager');
+
+    Future<void> mountAuxiliary(
+      WidgetTester tester,
+      AuxiliaryWindowPayload payload,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(home: AuxiliaryEditorApp(payload: payload)),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Finder auxiliaryPinSemantics() =>
+        find.byKey(const ValueKey('auxiliary-always-on-top-semantics'));
+
+    void expectWindowStateErrorAnnounced(
+      WidgetTester tester,
+      String messageFragment,
+    ) {
+      final error = tester.getSemantics(
+        find.byKey(const ValueKey('auxiliary-window-state-error')),
+      );
+      final message = error.getSemanticsData().label;
+      expect(message, contains(messageFragment));
+      expect(
+        error,
+        matchesSemantics(label: message, isLiveRegion: true),
+      );
+    }
+
+    void expectAuxiliaryDocumentUnchanged(
+      WidgetTester tester,
+      AuxiliaryWindowPayload payload,
+      String originalArguments,
+    ) {
+      final editor = tester.widget<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      expect(editor.inputWindow.text, payload.text);
+      expect(editor.inputWindow.document.resync().content, payload.text);
+      expect(editor.inputWindow.document.isDirty, payload.dirty);
+      expect(payload.toArguments(), originalArguments,
+          reason: 'pinning must not rewrite the transferred session payload');
+    }
+
+    testWidgets(
+      'reads native state and waits for successful on/off changes without touching the document',
+      (tester) async {
+        const body = 'first line\r\nsecond 😀 line\n';
+        final payload = AuxiliaryWindowPayload.forDocument(
+          name: 'notes.txt',
+          text: body,
+          dirty: true,
+        );
+        final originalArguments = payload.toArguments();
+        final calls = <MethodCall>[];
+        final setValues = <bool>[];
+        var nativeAlwaysOnTop = false;
+        var blockNextSet = false;
+        final nativeSetGate = Completer<void>();
+
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          windowManagerChannel,
+          (call) async {
+            calls.add(call);
+            if (call.method == 'isAlwaysOnTop') return nativeAlwaysOnTop;
+            if (call.method == 'setAlwaysOnTop') {
+              final desired = (call.arguments as Map)['isAlwaysOnTop'] as bool;
+              setValues.add(desired);
+              if (blockNextSet) {
+                blockNextSet = false;
+                await nativeSetGate.future;
+              }
+              nativeAlwaysOnTop = desired;
+              return null;
+            }
+            fail('Unexpected window_manager method: ${call.method}');
+          },
+        );
+        addTearDown(() {
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            windowManagerChannel,
+            null,
+          );
+        });
+
+        await mountAuxiliary(tester, payload);
+        expect(calls.map((call) => call.method), contains('isAlwaysOnTop'));
+        expect(
+          tester.getSemantics(auxiliaryPinSemantics()),
+          matchesSemantics(
+            label: '始终置顶',
+            isButton: true,
+            hasEnabledState: true,
+            hasTapAction: true,
+            hasToggledState: true,
+            isToggled: false,
+            isEnabled: true,
+          ),
+        );
+        expect(find.byTooltip('始终置顶'), findsOneWidget);
+        expectAuxiliaryDocumentUnchanged(tester, payload, originalArguments);
+
+        blockNextSet = true;
+        await tester.tap(
+          find.byKey(const ValueKey('auxiliary-always-on-top-button')),
+        );
+        await tester.pump();
+        expect(setValues, [true]);
+        expect(
+          tester.getSemantics(auxiliaryPinSemantics()),
+          matchesSemantics(
+            label: '始终置顶',
+            isButton: true,
+            hasEnabledState: true,
+            hasTapAction: false,
+            hasToggledState: true,
+            isToggled: false,
+            isEnabled: false,
+          ),
+          reason: 'the visible check state waits for the platform call',
+        );
+
+        nativeSetGate.complete();
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSemantics(auxiliaryPinSemantics()),
+          matchesSemantics(
+            label: '始终置顶',
+            isButton: true,
+            hasEnabledState: true,
+            hasTapAction: true,
+            hasToggledState: true,
+            isToggled: true,
+            isEnabled: true,
+          ),
+        );
+        expect(find.byTooltip('取消始终置顶'), findsOneWidget);
+        await tester.tap(
+          find.byKey(const ValueKey('auxiliary-always-on-top-button')),
+        );
+        await tester.pumpAndSettle();
+        expect(setValues, [true, false]);
+        expect(
+          tester.getSemantics(auxiliaryPinSemantics()),
+          matchesSemantics(
+            label: '始终置顶',
+            isButton: true,
+            hasEnabledState: true,
+            hasTapAction: true,
+            hasToggledState: true,
+            isToggled: false,
+            isEnabled: true,
+          ),
+        );
+        expectAuxiliaryDocumentUnchanged(tester, payload, originalArguments);
+      },
+    );
+
+    testWidgets(
+        'a failed native change keeps the prior state and shows an error',
+        (tester) async {
+      const body = 'unsaved text';
+      final payload = AuxiliaryWindowPayload.forDocument(
+        name: 'draft.txt',
+        text: body,
+        dirty: true,
+      );
+      final originalArguments = payload.toArguments();
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        windowManagerChannel,
+        (call) async {
+          if (call.method == 'isAlwaysOnTop') return true;
+          if (call.method == 'setAlwaysOnTop') {
+            throw PlatformException(code: 'test-failure');
+          }
+          fail('Unexpected window_manager method: ${call.method}');
+        },
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          windowManagerChannel,
+          null,
+        );
+      });
+
+      await mountAuxiliary(tester, payload);
+      expect(
+        tester.getSemantics(auxiliaryPinSemantics()),
+        matchesSemantics(
+          label: '始终置顶',
+          isButton: true,
+          hasEnabledState: true,
+          hasTapAction: true,
+          hasToggledState: true,
+          isToggled: true,
+          isEnabled: true,
+        ),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey('auxiliary-always-on-top-button')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.getSemantics(auxiliaryPinSemantics()),
+        matchesSemantics(
+          label: '始终置顶',
+          isButton: true,
+          hasEnabledState: true,
+          hasTapAction: true,
+          hasToggledState: true,
+          isToggled: true,
+          isEnabled: true,
+        ),
+      );
+      expect(find.textContaining('置顶切换失败'), findsOneWidget);
+      expectWindowStateErrorAnnounced(tester, '置顶切换失败');
+      expect(find.byTooltip('取消始终置顶'), findsOneWidget);
+      expectAuxiliaryDocumentUnchanged(tester, payload, originalArguments);
+    });
+
+    testWidgets(
+        'an unreadable initial state disables the toggle and reports why',
+        (tester) async {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        windowManagerChannel,
+        (call) async => throw PlatformException(code: 'state-unavailable'),
+      );
+      addTearDown(() {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          windowManagerChannel,
+          null,
+        );
+      });
+
+      await mountAuxiliary(
+        tester,
+        AuxiliaryWindowPayload.forDocument(
+          name: 'unavailable.txt',
+          text: 'content',
+          dirty: false,
+        ),
+      );
+
+      expect(
+        tester.getSemantics(auxiliaryPinSemantics()),
+        matchesSemantics(
+          label: '始终置顶',
+          isButton: true,
+          hasEnabledState: true,
+          hasTapAction: false,
+          hasToggledState: false,
+          isEnabled: false,
+        ),
+      );
+      expect(
+        tester
+            .widget<IconButton>(
+              find.byKey(const ValueKey('auxiliary-always-on-top-button')),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(find.textContaining('读取置顶状态失败'), findsOneWidget);
+      expectWindowStateErrorAnnounced(tester, '读取置顶状态失败');
     });
   });
 
@@ -156,8 +429,7 @@ void main() {
             reason: 'the document text travels with the window');
         expect(find.byKey(const ValueKey('tab-10')), findsNothing,
             reason: 'the source group loses the moved view');
-        final groups =
-            (sessionStore.tryLoad()?['groups'] as List).cast<Map>();
+        final groups = (sessionStore.tryLoad()?['groups'] as List).cast<Map>();
         expect(groups, hasLength(1),
             reason: 'the focused group remains (welcome untitled)');
         final docs = (groups.single['docs'] as List).cast<Map>();
