@@ -1,6 +1,6 @@
 # Session Handoff
 
-Last Updated: 2026-11-16
+Last Updated: 2026-11-17
 
 ## Current Objective
 
@@ -9,7 +9,7 @@ Last Updated: 2026-11-16
 ## Current State
 
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR 专用 detached checkout；原工作区 `/mnt/e/Alula_Code` 未改动。本 worktree 的 commit 推送到 `codex/vscode-parity-p05`。
-- P05.1–P05.67 已完成各自 N.2 与 hosted closeout；P05.68 / feat-120 / LAY-12b3 Compact 模式已登记并 in-progress。P05.67 / feat-119 / LAY-12b2 按用户选择只同步活动 window/group 标识，本地与 hosted closeout 均完成：PR CI 43856316621、Platform Availability 43856306528 三平台通过；Linux/Windows DnD 通过，macOS pointer route 明确 skip；macOS ZIP sidecar 哈希匹配且 81 项完整，native Quit 成功。P05 / feat-027 继续 in-progress。
+- P05.1–P05.68 已完成各自 N.2 与 hosted closeout。P05.67 / feat-119 / LAY-12b2 按用户选择只同步活动 window/group 标识；其 focus channel 不含 document identity 或文档内容。P05.68 / feat-120 / LAY-12b3 Compact 的本地 N.2、PR CI `43900198139` 与 Platform Availability `43900182449` 三平台均通过；Linux/Windows DnD 通过，macOS synthetic pointer route 明确 skip；macOS ZIP sidecar 哈希匹配且 81 项完整，native Quit 成功。P05 / feat-027 继续 in-progress；下一项候选为将主窗 editor tab 拖入已存在的辅助窗。
 - P05.67 保留主窗 owner/MRU registry、活动 window/group + revision 快照、每窗口 sequence 去重、ready/mainWindowId handshake、focus/blur 元数据上报、最大 32 个辅助 owner 与 close cleanup/fallback。focus channel 不含 document identity、全文/selection/dirty/savepoint/session；既有文档移交/关闭恢复 payload 不变，命令路由仍保持 engine-local。
 - bb0aa87 的 focused/full local gates、PR CI 与 Platform Availability 属于旧 document-identity 协议历史，不能作为新范围 closeout。当前 window/group-only 定向测试 27/27、完整 `bash init.sh`（Flutter 1347/1347）、`cargo fmt --check`、`flutter analyze`（0 issues）、diff check 与 JSON parse 全通过；日志：`p05.67-focused-tests.log`、`p05.67-init.log`、`p05.67-analyze.log`。
 - GitNexus 当前 index 为 repeated incremental indexes: 12,735–12,738 nodes / 395 clusters / 434 flows（incremental edge count varied as diagnostics changed）。staged all-scope 多次扫描在 MEDIUM/CRITICAL 间波动（13 files/11–13 symbols/2–354 processes，最近 CRITICAL）；compare-main 累积 CRITICAL（303 files/538–574 symbols/377–381 processes），重复扫描显示 523–526 symbols 与 367–371 flows 未列出；本次 closeout compare-main 重复 max-limit 扫描为 303 files/538–574 symbols/377–381 processes（CRITICAL，输出仍截断），文档 staged all-scope 在 5 files/7–8 symbols/0 processes（LOW）与 5 files/1 symbol/336–352 processes（CRITICAL，最近 336）间波动；最近 changed symbol 是报告 section，flows 扩展到通用 Build/LSP traces，保留 CRITICAL 和截断，不判 clean。Snapshot/registry/app 精确 impact LOW；Event duplicate candidates UNKNOWN（max MEDIUM），workbench private initState 未找到且 >512 KiB file skipped。保留 UNKNOWN/CRITICAL 和列表/flow 截断，不称 graph clean；完整数字见 scope report。
@@ -24,8 +24,8 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. 按 `docs/03` N.2 选择并登记下一个独立 P05 slice；遵循 startup workflow、一次只推进一个 feature，并保持 PR #3 OPEN/DRAFT。
-2. 后续 slice 完成后再更新状态证据与 handoff；本次 P05.67 的原生 OS 双窗口 focus/blur 仍标记未验证；P05.68 产品实现与完整本地 N.2 已通过（Flutter 1348、Clippy、Rust tests、core build、fmt/analyze、Harness）；严格几何 widget test 通过，原生 pixel screenshot/ref diff 未验证。下一步等待并记录 PR CI/三平台 Platform Availability，再做 GitNexus closeout。
+1. 依 `docs/03` 为主窗 tab 拖入已存在辅助窗登记下一个独立 P05 slice；遵循 startup workflow、一次只推进一个 feature，并保持 PR #3 OPEN/DRAFT。
+2. P05.67 的原生 OS 双窗口 focus/blur 与 P05.68 的原生 Compact pixel/reference diff 仍标记未验证。P05.68 本地完整 N.2、PR CI 与三平台 Availability 已通过；具体 hosted artifact、DnD skip 与 ZIP 哈希见 scope report。完成下一 slice 后更新状态证据与 handoff。
 
 ## Evidence and Files
 
@@ -35,3 +35,4 @@ Last Updated: 2026-11-16
 - P05.65 / P05.66 的实现、hosted artifact 与未验证行为证据分别见 `docs/diagnostics/2026-11-16-p05/p05.65-editor-tab-tear-out-scope.md` 和 `p05.66-auxiliary-window-always-on-top-scope.md`。
 
 - P05.68 / feat-120 当前范围与 N.2：docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md。
+- P05.68 hosted closeout：PR CI `43900198139`、Platform Availability `43900182449`；PR #3 仍为 OPEN/DRAFT。

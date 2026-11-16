@@ -1490,8 +1490,8 @@
         "feat-119",
         "feat-101"
       ],
-      "status": "in-progress",
-      "evidence": "Implemented locally: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh EXIT 0 (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. Full log and scope: docs/diagnostics/2026-11-16-p05/p05.68-init.log and p05.68-auxiliary-window-compact-mode.md. Hosted PR CI and Platform Availability pending.",
+      "status": "done",
+      "evidence": "Local N.2 complete: app/lib/workbench/auxiliary_window.dart; app/test/auxiliary_compact_mode_test.dart 1/1, auxiliary_window_test.dart combined 9/9, cargo fmt --check, flutter analyze 0 issues, bash init.sh (Rust tests/Clippy/build_core, Flutter 1348/1348), Harness 100/100. PR CI 43900198139 all four jobs passed; Platform Availability 43900182449 Linux/Windows/macOS passed. App artifacts Linux/Windows/macOS 14241267651 / 14241891156 / 14255681783. Linux/Windows DnD diagnostics 14240123820 / 14240964046 passed move/cross-document copy/external text (19/11 pointer events); macOS DnD artifact 14256920434 explicitly skipped because the hosted pointer route was unavailable. macOS native Quit passed through Accessibility; startup artifact 14255711563; app ZIP SHA-256 a33e3747f6991095085276c58674830fbbec8f47fb537ded522c337bdf3907f3 matched sidecar and the 81-entry archive passed integrity checks. Native OS compact pixel/reference diff remains unverified. Scope, N.2 and closeout: docs/diagnostics/2026-11-16-p05/p05.68-auxiliary-window-compact-mode.md; local full log: docs/diagnostics/2026-11-16-p05/p05.68-init.log.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
