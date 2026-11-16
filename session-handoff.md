@@ -13,7 +13,7 @@ Last Updated: 2026-11-16
 - 工作树：`/home/vegetable/.codex/worktrees/pr3-continuation/alula_code`，PR #3 专用 detached
   checkout（远端分支 `codex/vscode-parity-p05`）。`/mnt/e/Alula_Code` 是原 p00 工作区，未动本轮
   更改；从此 managed worktree 将提交推送到 PR 远端分支。
-- P05.1–P05.63 hosted 已完成；P05.63 / feat-115 / LAY-20a 本地 DoD、PR CI 与 Platform Availability 均已完成。当前唯一切片为 P05.64 / feat-116 / LAY-10g 编辑器组标签溢出与 MRU 选择（范围：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`）；P05 总阶段仍为 in-progress。
+- P05.1–P05.64 hosted 已完成；P05 / feat-027 仍 in-progress，待按 docs/03 N.2 逐条完成剩余 LAY/CMD 矩阵。PR #3 继续 OPEN/DRAFT，不合并。
   - P05.54 / LAY-17a：步骤/返回、item 按钮、取消焦点恢复（`4c76f44`）。
   - P05.55 / LAY-17b：分组分隔符、多选、`description`/`detail`、校验消息（`eb2d8c0`）。
   - P05.56 / LAY-17c：命令面板 MRU 历史与 item 按钮显隐/键盘可达（`f9172da`；
@@ -37,7 +37,7 @@ Last Updated: 2026-11-16
   - P05.61 / LAY-19b：最近项目 MRU —— `RecentHistoryStore`、Welcome「最近」、File >「打开最近」和失效项通知已实现；本地 DoD、PR CI `43737761143` 与 Platform Availability `43737756490` 三平台全绿；Linux/Windows DnD 通过，macOS DnD 明确因 pointer route unavailable 跳过；macOS ZIP SHA-256 `f16a0f38…09112d4` 与 sidecar 一致。报告：`docs/diagnostics/2026-11-16-p05/p05.61-recent-history.md`。
 - P05.62 / LAY-19c：内置向导、步骤 checkbox、独立进度 journal、Welcome/QuickInput/Help/命令路由已完成；focused tests 4/4。本地 `bash init.sh`、`cargo fmt --check`、`flutter analyze` 全绿（Flutter 1315/1315）。PR CI `43745604458` 四项全绿；Platform Availability `43745600249` attempt 2 三平台全绿。attempt 1 macOS Quit 探针因 hosted Accessibility 错误失败，attempt 2 通过；macOS DnD 因 pointer route unavailable 明确跳过。macOS ZIP SHA-256 `f77f8da1…92f50` 与 sidecar 一致、`unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md`。
 - P05.63 / LAY-20a：组区、正文中心/四方向拆分、标签目标 hover overlay 与有效复制提示已实现；modifier 键变化即时刷新，拖动结束/取消/销毁清理。新增 4 个 widget tests，拆分与组区 focused 合计 13/13。`cargo fmt --check && bash init.sh` 全绿，Flutter 1319/1319、analyze 0 issues；Harness 100/100。PR CI `43782830766` 全绿；Platform Availability `43782824700` 三平台全绿，Linux/Windows native DnD 通过，macOS 因 pointer route unavailable 明确 skip。app artifacts Linux `14189760470`、Windows `14188839971`、macOS `14190945481`；macOS ZIP SHA `65dad7f75346230423d3f6702f19f7fe456a50ecb48fdb598cebac86b7251b7d` 与 sidecar 匹配且 `unzip -tq` 81 项。报告：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。
-- P05.64 / LAY-10g：组内 MRU overflow 列表已实现；3 policy + 2 widget 新测通过，受影响定向回归 57/57；`bash init.sh` 通过（Rust tests/Clippy/core build/Flutter 1324/1324），独立 `cargo fmt --check`、`flutter analyze` 0 issues 与 Harness 100/100 通过。PopupMenu compact density 修复窄组工具栏回归；多文档组的 `editor.verifyIntegrity` 现在在同一菜单内，保留命令能力并维持工具栏宽度。GitNexus 使用 1024 KiB cap 纳入 WorkbenchPage：`_buildTabStrip` LOW/3 upstream、overflow activation LOW/4；`_noteActiveDocument` 仍 UNKNOWN；`_WorkbenchPageState` class impact 与 all-scope 为 CRITICAL（类级成员展开，all-scope 进程数多次运行 61–305，详见报告），compare-main CRITICAL/286 files/586–1170 symbols/169–309 processes 为 PR 累积差异。当前待提交并验证 hosted PR CI/Platform Availability；范围：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。
+- P05.64 / LAY-10g：组内 MRU overflow 列表完成；3 policy + 2 widget 新测通过，受影响定向回归 57/57；`bash init.sh`、`cargo fmt --check`、`flutter analyze` 0 issues、Harness 100/100 通过。PR CI `43794320814` 四项全绿；Platform Availability `43794316315` 三平台全绿。包 artifacts Linux/Windows/macOS `14193972371` / `14193678983` / `14194524746`；Linux/Windows DnD 通过，macOS DnD 因 pointer route false 明确 skip；macOS ZIP SHA `8ae0e37c…f0a4ff` 与 sidecar 一致、81 项完整。GitNexus class/all-scope CRITICAL 与 compare-main 累积风险按报告保留。范围：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。
 - LAY-17 与 LAY-18 验收面均已全部交付；LAY-19 的 Welcome/watermark、最近项目与 Walkthrough（a/b/c）均已完成。
 - 当前 managed worktree 上 P05.64 的 `cargo fmt --check`、`bash init.sh`、`flutter analyze` 均已通过：Rust tests、Clippy `-D warnings`、core build、Flutter 1324/1324，analyze 0 issues。
 - Flutter `dart format` 会用新版 formatter 重排超大 `workbench_page.dart`；保持既有风格，
@@ -45,8 +45,8 @@ Last Updated: 2026-11-16
 
 ## Blockers
 
-- 无用户手动操作需求。P05.56–P05.63 hosted 证据均已登记。macOS DnD runner 仍不路由合成 pointer events，workflow 明确跳过该探针；Linux/Windows DnD 通过。
-- P05.63 代码与本地/hosted 证据已提交推送，PR 专用 worktree 应保持 clean；`bash init.sh` 生成的五个 plugin registrant 文件已恢复。
+- 无用户手动操作需求。P05.64 hosted 证据已登记；Linux/Windows 原生 DnD 通过，macOS runner 未路由合成 pointer events，按 workflow 规则明确 skip。
+- P05.64 产品提交 `21e59f8485a4f7551d39b36e872e92aba4b924e7` 已推送；本地 closeout 文档待提交。`bash init.sh` 生成的五个 plugin registrant 文件已恢复。
 - Windows PowerShell 5.1 无法解析 `scripts/build_core.ps1`（UTF-8 无 BOM + 中文串）；
   WSL 侧 `scripts/*.sh` 因 CRLF 不可直接执行。按脚本内容逐条执行并记录。
 - GitNexus 图覆盖：`workbench_page.dart` > 512 KiB 不入图（私有方法 UNKNOWN）、跨语言
@@ -56,15 +56,10 @@ Last Updated: 2026-11-16
 
 ## Next Session First Step
 
-1. 检查 `git status --short`、PR #3 的 draft/open 状态与 P05.63 closeout evidence commit 是否已推送。
-2. `git status --short` 与 `node .gitnexus/run.cjs status`；stale 时先 `analyze --index-only`。
-   GitNexus 警告仍存在：`workbench_page.dart` (>512 KiB) 未入图、981 个跨语言属性点未链接、
-   flow tracing 有 truncation；UNKNOWN 仍须源码确认。
-3. P05.62 代码 commit `4d2daa6` 的 PR CI `43745604458` 四项全绿；Platform Availability
-   `43745600249` attempt 2 三平台全绿。attempt 1 native Quit runner failure 与 macOS DnD skip 均已在
-   `docs/diagnostics/2026-11-16-p05/p05.62-walkthrough.md` 记录。
-4. P05.62 代码与 closeout evidence 均已推送；确认 PR #3 仍是 OPEN/DRAFT。
-5. P05.64 代码与本地证据已就绪；提交前刷新 GitNexus 并完整运行 all/compare detect-changes，提交推送到 `codex/vscode-parity-p05`；随后等待 PR CI 与三平台 Platform Availability 完成，更新 feat-116/`docs/03`/progress/handoff 的 hosted evidence。PR #3 保持 draft/open，不合并。
+1. 检查 PR 专用 worktree 的 `git status --short`、PR #3 OPEN/DRAFT 状态和远端 HEAD；本轮 closeout evidence commit 的 Harness/PR CI 需通过。
+2. 运行 `node .gitnexus/run.cjs status`；若 stale，按仓库说明重建索引。`workbench_page.dart` 巨型类风险、UNKNOWN 和跨语言/flow 覆盖限制仍须按证据处理。
+3. 按 `docs/03-里程碑计划与验收标准.md` 的 N.2 选择下一项未完成 P05 LAY/CMD 子任务，维持 one-feature-at-a-time；编辑前先做 GitNexus impact 和调用确认，提交前跑 all/compare detect-changes。
+4. PR #3 保持 OPEN/DRAFT，不合并；P05 阶段在 LAY/CMD 验收矩阵完整前继续 in-progress。
 
 ## Evidence and Files
 
@@ -84,7 +79,7 @@ Last Updated: 2026-11-16
   `p05.60-focused-red.log`、`p05.60-focused-green.log`、`p05.60-rust-gates.log`、
   `p05.60-full-flutter.log`
 - P05.63：`docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`（本地与 hosted closeout 完成）
-- P05.64：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`（本地实现与门禁完成，hosted closeout 待推送）
+- P05.64：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`（本地与 hosted closeout 完成）
 - 产品文件：`app/lib/workbench/notifications.dart`、`notification_widgets.dart`、
   `status_bar.dart`、`workbench_page.dart`、`app/lib/main.dart`、
   `app/test/notification_center_test.dart`、`app/test/notification_ui_test.dart`

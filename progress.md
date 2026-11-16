@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-16 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.63 hosted 完成；P05.64 / feat-116 / LAY-10g 进行中
+### P05 / feat-027 进行中；P05.1–P05.64 hosted 完成；继续按 N.2 推进剩余 LAY/CMD
 
 - 2026-11-16：完成 P05.62 / feat-114 / LAY-19c hosted closeout 登记；PR CI `43745604458` 四项全绿，Platform Availability `43745600249` attempt 2 三平台全绿，PR #3 保持 OPEN/DRAFT。开始 P05.63 / feat-115 / LAY-20a：仅处理编辑器标签拖放 hover overlay（组区域整区、正文中心/拆分方向预览、有效复制提示）。基线 `bash init.sh --fast` Rust/core/Flutter 全通过（Flutter 1315/1315）；生成的五个 Flutter registrant 文件已恢复。GitNexus index 与 `aa16d67` 一致；对 `_handleGroupAreaDrop`、`_handleBodyAreaDrop`、`_buildEditorArea` 的 impact/context 为 UNKNOWN/未索引（`workbench_page.dart` 超 512KiB）。文本检索确认 drag target 构建点和两个 drop handler 的调用边，不能把 UNKNOWN 视作低风险。固定 Code-OSS 1.145.0 来源、N.2 测试要求和 scope 见 `docs/diagnostics/2026-11-16-p05/p05.63-drop-target-feedback.md`。 |
 
@@ -16,10 +16,11 @@
 ## P05.64 LAY-10g 编辑器组标签溢出与 MRU 选择（2026-11-16）
 
 - 实现每个多文档编辑器组自己的 overflow 列表，按组内 MRU 排序，展示路径消歧标签和 dirty/sticky/current 状态；single/none 标签显示模式仍可选择已有文档。选择从未聚焦的组时提交当前输入组合、激活目标组/文档、更新 MRU/命令上下文/session、恢复焦点并揭示活动标签；取消不更改组内活动文档。
-- 保留 `editor.verifyIntegrity`，多文档组通过同一紧凑 overflow 菜单访问，以维持既有工具栏宽度。首次回归发现 PopupMenuButton 普通密度导致工具栏溢出、菜单落在屏幕外；使用 compact density 并移除误施加到菜单本身的按钮宽度约束后恢复 tab geometry。定向回归 57/57 通过。
-- policy/widget 新测共 5 项；完整 `bash init.sh` 全绿：Rust workspace tests、Clippy、core build、Flutter 1324/1324。独立 `cargo fmt --check`、`flutter analyze` 0 issues、Harness validator 100/100 全绿；JSON/diff 检查通过。Hosted PR CI 和 Platform Availability 待提交后运行。
-- GitNexus 1024 KiB 索引让 852 KB WorkbenchPage 可分析：`_buildTabStrip` LOW/3 upstream、overflow activation LOW/4；`_noteActiveDocument` 仍 UNKNOWN，调用点源码已核对。`_WorkbenchPageState` class-level impact CRITICAL（206 symbols/79 processes/20 modules），all-scope CRITICAL（9 files/10–17 symbols；进程计数重跑为 61–305）；图谱将单体 class 改动展开到其成员，并混入 Git/diff、bridge、Rust-buffer 等未改文件路径，作为未消除的结构性风险保留。Compare main CRITICAL（286 files/586–1170 symbols/169–309 processes）是 PR 累积 diff；symbol listing cap、跨语言链接与 flow truncation 已记入报告。
-- 详细验收与 GitNexus 限制：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。状态仍 in-progress，等 hosted 结果再完成该条目；PR #3 保持 OPEN/DRAFT。
+- 保留 `editor.verifyIntegrity`，多文档组通过同一紧凑 overflow 菜单访问，以维持既有工具栏宽度。PopupMenuButton 使用 compact density 并移除误施加到菜单本身的按钮宽度约束，保持 tab geometry 与菜单锚点命中。定向回归 57/57 通过。
+- policy/widget 新测共 5 项；完整 `bash init.sh` 全绿：Rust workspace tests、Clippy、core build、Flutter 1324/1324。独立 `cargo fmt --check`、`flutter analyze` 0 issues、Harness validator 100/100 全绿。
+- Hosted closeout：PR CI `43794320814` 四项全绿；Platform Availability `43794316315` Linux/Windows/macOS 三平台全绿。包 artifacts Linux/Windows/macOS `14193972371` / `14193678983` / `14194524746`；Linux/Windows native DnD 通过；macOS DnD artifact `14195185944` 因 pointer route false 明确 skip。macOS ZIP SHA-256 `8ae0e37c3f149af3de11f8aaf83db702be2bf2bc2b21f792c471872374f0a4ff` 与 sidecar 一致，81 项 ZIP 完整；native-titlebar Quit Accessibility 探针成功。
+- GitNexus 1024 KiB 索引让 852 KB WorkbenchPage 可分析：`_buildTabStrip` LOW/3 upstream、overflow activation LOW/4；`_noteActiveDocument` 仍 UNKNOWN，调用点源码已核对。`_WorkbenchPageState` class-level impact CRITICAL（206 symbols/79 processes/20 modules），all-scope CRITICAL（9 files/10–17 symbols；进程计数重跑为 61–305）；该单体 class 扩展是保留的结构性风险。Compare main CRITICAL（286 files/586–1170 symbols/169–309 processes）是 PR 累积 diff；跨语言链接与 flow truncation 限制已记入报告。
+- 完整范围、证据与限制：`docs/diagnostics/2026-11-16-p05/p05.64-group-editor-overflow-mru.md`。feat-116 已 done；P05 与 PR #3 仍保持 in-progress / OPEN-DRAFT。
 
 - 2026-11-08：P05.39 / feat-091 / LAY-09b 本地实现完成：sticky 标签按组形成连续前缀，Pin 清除 preview、Unpin 移到首个普通标签；状态经 session journal 恢复并随 split/move 携带。右键菜单和 Semantics custom action 提供 Pin/Unpin，加入 Pin/Unpin、Ctrl/Cmd+W、Close All 与 Close All Groups 命令。新增 widget 测试覆盖预览转固定、排序、恢复、MRU 键盘关闭、显式关闭、批量关闭、split/move；键位测试覆盖 Linux/Windows/macOS。完整 `bash init.sh` 全绿：Rust 71+54、Clippy、build_core、Flutter 1,188/1,188；`cargo fmt --all -- --check`、`flutter analyze` 0 issues 已通过。当前等提交后的 PR CI 与 Linux/Windows/macOS Intel x64 平台证据；P05.39 保持 in-progress 直至 hosted checks 完成。编辑前风险和全范围：`docs/diagnostics/2026-11-08-p05/p05.39-sticky-editors-scope.md`。
 
