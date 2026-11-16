@@ -11,17 +11,20 @@ import 'dart:convert';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 import 'package:window_manager/window_manager.dart';
 
 import '../bridge/alula_core.dart';
 import '../editor/rust_text_input_field.dart';
 import '../editor/rust_text_input_window.dart';
+import 'auxiliary_focus_context.dart';
 
 /// 辅助窗口启动载荷。businessId 标记区分辅助引擎与主引擎。
 class AuxiliaryWindowPayload {
   const AuxiliaryWindowPayload({
     required this.isAuxiliary,
     this.path,
+    this.mainWindowId,
     this.name = '未命名',
     this.text = '',
     this.dirty = false,
@@ -31,6 +34,7 @@ class AuxiliaryWindowPayload {
 
   final bool isAuxiliary;
   final String? path;
+  final String? mainWindowId;
   final String name;
   final String text;
   final bool dirty;
@@ -40,6 +44,7 @@ class AuxiliaryWindowPayload {
 
   factory AuxiliaryWindowPayload.forDocument({
     String? path,
+    String? mainWindowId,
     required String name,
     required String text,
     required bool dirty,
@@ -47,6 +52,7 @@ class AuxiliaryWindowPayload {
     return AuxiliaryWindowPayload(
       isAuxiliary: true,
       path: path,
+      mainWindowId: mainWindowId,
       name: name,
       text: text,
       dirty: dirty,
@@ -63,9 +69,13 @@ class AuxiliaryWindowPayload {
         return AuxiliaryWindowPayload.mainWindow();
       }
       final pathValue = map['path'] as String?;
+      final mainWindowIdValue = map['mainWindowId'] as String?;
       return AuxiliaryWindowPayload(
         isAuxiliary: true,
         path: pathValue == null || pathValue.isEmpty ? null : pathValue,
+        mainWindowId: mainWindowIdValue == null || mainWindowIdValue.isEmpty
+            ? null
+            : mainWindowIdValue,
         name: map['name'] as String? ?? '未命名',
         text: map['text'] as String? ?? '',
         dirty: map['dirty'] == true,
@@ -78,6 +88,7 @@ class AuxiliaryWindowPayload {
   Map<String, Object?> toMap() => {
         'businessId': businessId,
         'path': path ?? '',
+        'mainWindowId': mainWindowId ?? '',
         'name': name,
         'text': text,
         'dirty': dirty,
@@ -111,7 +122,8 @@ class AuxiliaryEditorApp extends StatefulWidget {
   State<AuxiliaryEditorApp> createState() => _AuxiliaryEditorAppState();
 }
 
-class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
+class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp>
+    with WindowListener {
   AlulaDoc? _doc;
   String _name = '未命名';
   bool _dirty = false;
@@ -120,19 +132,174 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
   bool _changingAlwaysOnTop = false;
   String? _windowStateError;
   late final ScrollController _scrollController;
+  WindowController? _windowController;
+  WindowController? _mainWindowController;
+  Future<void> _focusEventQueue = Future<void>.value();
+  int _focusEventSequence = 0;
+  int _nativeFocusGeneration = 0;
+  int _latestGlobalFocusRevision = -1;
+  bool? _nativeWindowFocused;
+  bool _focusContextConnected = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+    windowManager.addListener(this);
+    unawaited(_preventNativeClose());
+    unawaited(_connectFocusContext());
     _loadAlwaysOnTop();
     _openDocument();
   }
 
   @override
   void dispose() {
+    windowManager.removeListener(this);
+    final windowController = _windowController;
+    if (windowController != null) {
+      unawaited(windowController
+          .setWindowMethodHandler(null)
+          .catchError((Object _) {}));
+    }
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _preventNativeClose() async {
+    try {
+      await windowManager.setPreventClose(true);
+    } on Object {
+      // The widget can be mounted without a native desktop window.
+    }
+  }
+
+  String? _focusDocumentIdentity(String windowId) {
+    final path = widget.payload.path;
+    if (path == null) return 'untitled:$windowId';
+    return 'file:${p.normalize(path)}';
+  }
+
+  String _focusGroupIdentity(String windowId) => '$windowId:editor';
+
+  void _acceptGlobalFocusSnapshot(Object? value) {
+    final snapshot = AuxiliaryFocusContextSnapshot.tryParse(value);
+    if (snapshot == null || snapshot.revision <= _latestGlobalFocusRevision) {
+      return;
+    }
+    _latestGlobalFocusRevision = snapshot.revision;
+  }
+
+  Future<void> _connectFocusContext() async {
+    try {
+      final controller = await WindowController.fromCurrentEngine();
+      if (!mounted) return;
+      _windowController = controller;
+      await controller.setWindowMethodHandler((call) async {
+        if (call.method == auxiliaryFocusContextMethod) {
+          _acceptGlobalFocusSnapshot(call.arguments);
+        }
+        return null;
+      });
+
+      WindowController? mainController;
+      final mainWindowId = widget.payload.mainWindowId;
+      if (mainWindowId != null && mainWindowId != controller.windowId) {
+        mainController = WindowController.fromWindowId(mainWindowId);
+      } else {
+        final controllers = await WindowController.getAll();
+        for (final candidate in controllers) {
+          if (candidate.windowId == controller.windowId) continue;
+          if (!AuxiliaryWindowPayload.fromArguments(candidate.arguments)
+              .isAuxiliary) {
+            mainController = candidate;
+            break;
+          }
+        }
+      }
+      if (!mounted || mainController == null) return;
+      _mainWindowController = mainController;
+      final registration = AuxiliaryFocusContextEvent(
+        kind: AuxiliaryFocusEventKind.register,
+        windowId: controller.windowId,
+        sequence: ++_focusEventSequence,
+        groupId: _focusGroupIdentity(controller.windowId),
+        documentId: _focusDocumentIdentity(controller.windowId),
+        focused: false,
+      );
+      final initialSnapshot = await mainController.invokeMethod<Object?>(
+        auxiliaryFocusContextMethod,
+        registration.toMap(),
+      );
+      _acceptGlobalFocusSnapshot(initialSnapshot);
+      if (!mounted) return;
+      _focusContextConnected = true;
+      final observedFocus = _nativeWindowFocused;
+      if (observedFocus != null) {
+        _publishAuxiliaryFocusContext(focused: observedFocus);
+      }
+
+      final focusGeneration = _nativeFocusGeneration;
+      try {
+        final focused = await windowManager.isFocused();
+        if (mounted && focusGeneration == _nativeFocusGeneration) {
+          _nativeWindowFocused = focused;
+          _publishAuxiliaryFocusContext(focused: focused);
+        }
+      } on Object {
+        // A failed platform focus query does not block metadata registration.
+      }
+    } on Object {
+      // Main-window focus context is optional on platforms without the channel.
+    }
+  }
+
+  void _publishAuxiliaryFocusContext({bool? focused}) {
+    final controller = _windowController;
+    final mainController = _mainWindowController;
+    if (!_focusContextConnected ||
+        controller == null ||
+        mainController == null ||
+        _closing) {
+      return;
+    }
+    final event = AuxiliaryFocusContextEvent(
+      kind: AuxiliaryFocusEventKind.update,
+      windowId: controller.windowId,
+      sequence: ++_focusEventSequence,
+      groupId: _focusGroupIdentity(controller.windowId),
+      documentId: _focusDocumentIdentity(controller.windowId),
+      focused: focused ?? _nativeWindowFocused == true,
+    );
+    _focusEventQueue = _focusEventQueue.then((_) async {
+      try {
+        final snapshot = await mainController.invokeMethod<Object?>(
+          auxiliaryFocusContextMethod,
+          event.toMap(),
+        );
+        _acceptGlobalFocusSnapshot(snapshot);
+      } on Object {
+        // A closed main window no longer owns auxiliary focus context.
+      }
+    });
+  }
+
+  @override
+  void onWindowFocus() {
+    _nativeFocusGeneration++;
+    _nativeWindowFocused = true;
+    _publishAuxiliaryFocusContext(focused: true);
+  }
+
+  @override
+  void onWindowBlur() {
+    _nativeFocusGeneration++;
+    _nativeWindowFocused = false;
+    _publishAuxiliaryFocusContext(focused: false);
+  }
+
+  @override
+  void onWindowClose() {
+    unawaited(_sendClosedAndDestroy());
   }
 
   Future<void> _loadAlwaysOnTop() async {
@@ -210,18 +377,21 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
     if (_closing) return;
     _closing = true;
     try {
+      await _focusEventQueue;
       final mainController = await _findMainWindowController();
       if (mainController != null) {
         final doc = _doc;
         final text = doc?.resync().content ?? widget.payload.text;
-        await mainController.invokeMethod(
+        final closePayload = AuxiliaryWindowPayload.forDocument(
+          path: widget.payload.path,
+          name: _name,
+          text: text,
+          dirty: _dirty || doc?.isDirty == true,
+        ).toMap()
+          ..['windowId'] = _windowController?.windowId ?? '';
+        await mainController.invokeMethod<void>(
           'alula_auxiliary_closed',
-          AuxiliaryWindowPayload.forDocument(
-            path: widget.payload.path,
-            name: _name,
-            text: text,
-            dirty: _dirty || doc?.isDirty == true,
-          ).toMap(),
+          closePayload,
         );
       }
     } on Object {
@@ -232,6 +402,12 @@ class _AuxiliaryEditorAppState extends State<AuxiliaryEditorApp> {
   }
 
   Future<WindowController?> _findMainWindowController() async {
+    final knownMainController = _mainWindowController;
+    if (knownMainController != null) return knownMainController;
+    final mainWindowId = widget.payload.mainWindowId;
+    if (mainWindowId != null) {
+      return WindowController.fromWindowId(mainWindowId);
+    }
     final controllers = await WindowController.getAll();
     for (final controller in controllers) {
       final payload =

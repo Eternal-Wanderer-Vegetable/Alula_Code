@@ -263,6 +263,10 @@ void main() {
         },
       );
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('mixin.one/desktop_multi_window/channels'),
+        (call) async => null,
+      );
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         const MethodChannel('window_manager'),
         (call) async {
           if (call.method == 'getBounds') {
@@ -301,6 +305,10 @@ void main() {
       addTearDown(() {
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
           const MethodChannel('mixin.one/desktop_multi_window'),
+          null,
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('mixin.one/desktop_multi_window/channels'),
           null,
         );
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(

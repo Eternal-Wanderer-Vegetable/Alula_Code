@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/workbench/auxiliary_focus_context.dart';
 import 'package:alula_app/workbench/auxiliary_window.dart';
 import 'package:alula_app/workbench/commands.dart';
 import 'package:alula_app/workbench/keybindings.dart';
@@ -12,6 +13,22 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:window_manager/window_manager.dart';
+
+Future<Object?> dispatchPlatformMethod(
+  WidgetTester tester,
+  String channel,
+  MethodCall call,
+) async {
+  const codec = StandardMethodCodec();
+  final response =
+      await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+    channel,
+    codec.encodeMethodCall(call),
+    null,
+  );
+  return response == null ? null : codec.decodeEnvelope(response);
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +37,7 @@ void main() {
     test('document payload round-trips through arguments', () {
       final payload = AuxiliaryWindowPayload.forDocument(
         path: 'C:/ws/src/main.rs',
+        mainWindowId: 'main-0',
         name: 'main.rs',
         text: 'fn main() {}',
         dirty: true,
@@ -29,6 +47,7 @@ void main() {
       );
       expect(parsed.isAuxiliary, isTrue);
       expect(parsed.path, 'C:/ws/src/main.rs');
+      expect(parsed.mainWindowId, 'main-0');
       expect(parsed.name, 'main.rs');
       expect(parsed.text, 'fn main() {}');
       expect(parsed.dirty, isTrue);
@@ -109,6 +128,7 @@ void main() {
         const body = 'first line\r\nsecond 😀 line\n';
         final payload = AuxiliaryWindowPayload.forDocument(
           name: 'notes.txt',
+          mainWindowId: 'main',
           text: body,
           dirty: true,
         );
@@ -124,6 +144,8 @@ void main() {
           (call) async {
             calls.add(call);
             if (call.method == 'isAlwaysOnTop') return nativeAlwaysOnTop;
+            if (call.method == 'isFocused') return false;
+            if (call.method == 'setPreventClose') return null;
             if (call.method == 'setAlwaysOnTop') {
               final desired = (call.arguments as Map)['isAlwaysOnTop'] as bool;
               setValues.add(desired);
@@ -231,6 +253,8 @@ void main() {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         windowManagerChannel,
         (call) async {
+          if (call.method == 'isFocused') return false;
+          if (call.method == 'setPreventClose') return null;
           if (call.method == 'isAlwaysOnTop') return true;
           if (call.method == 'setAlwaysOnTop') {
             throw PlatformException(code: 'test-failure');
@@ -328,11 +352,150 @@ void main() {
     });
   });
 
+  group('auxiliary active focus context', () {
+    testWidgets(
+      'sends focus metadata without changing text, selection, savepoint, or payload',
+      (tester) async {
+        const body = 'dirty\r\nemoji 😀\n';
+        const selection = TextSelection(baseOffset: 1, extentOffset: 4);
+        final payload = AuxiliaryWindowPayload.forDocument(
+          name: 'notes.txt',
+          mainWindowId: 'main',
+          text: body,
+          dirty: true,
+        );
+        final originalArguments = payload.toArguments();
+        final focusEvents = <Map<String, Object?>>[];
+        var nativeFocused = false;
+
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('mixin.one/desktop_multi_window'),
+          (call) async {
+            if (call.method == 'getWindowDefinition') {
+              return {
+                'windowId': 'aux-1',
+                'windowArgument': originalArguments,
+              };
+            }
+            if (call.method == 'getAllWindows') {
+              return [
+                {'windowId': 'main', 'windowArgument': ''},
+                {
+                  'windowId': 'aux-1',
+                  'windowArgument': originalArguments,
+                },
+              ];
+            }
+            return null;
+          },
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('mixin.one/desktop_multi_window/channels'),
+          (call) async {
+            if (call.method == 'invokeMethod') {
+              final request = Map<String, Object?>.from(
+                call.arguments as Map,
+              );
+              if (request['method'] == auxiliaryFocusContextMethod) {
+                final event = Map<String, Object?>.from(
+                  request['arguments'] as Map,
+                );
+                focusEvents.add(event);
+                return {
+                  'windowId': event['focused'] == true ? 'aux-1' : 'main',
+                  'groupId':
+                      event['focused'] == true ? 'aux-1:editor' : 'main:editor',
+                  'documentId': null,
+                  'revision': focusEvents.length,
+                };
+              }
+            }
+            return null;
+          },
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('window_manager'),
+          (call) async {
+            if (call.method == 'isAlwaysOnTop') return false;
+            if (call.method == 'isFocused') return nativeFocused;
+            if (call.method == 'setPreventClose') return null;
+            return null;
+          },
+        );
+        addTearDown(() {
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('mixin.one/desktop_multi_window'),
+            null,
+          );
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('mixin.one/desktop_multi_window/channels'),
+            null,
+          );
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('window_manager'),
+            null,
+          );
+        });
+
+        await tester.pumpWidget(
+          MaterialApp(home: AuxiliaryEditorApp(payload: payload)),
+        );
+        await tester.pumpAndSettle();
+        expect(focusEvents.first['type'], 'register');
+        expect(
+            focusEvents.first.keys,
+            containsAll([
+              'protocol',
+              'type',
+              'windowId',
+              'sequence',
+              'groupId',
+              'documentId',
+              'focused',
+            ]));
+        expect(focusEvents.first, isNot(contains('text')));
+        expect(focusEvents.first, isNot(contains('dirty')));
+
+        final field = tester.state<RustTextInputFieldState>(
+          find.byType(RustTextInputField),
+        );
+        field.setSelection(selection);
+        await tester.pump();
+        final document = field.widget.inputWindow.document;
+        final savepointState = document.isDirty;
+
+        nativeFocused = true;
+        await dispatchPlatformMethod(
+          tester,
+          'window_manager',
+          const MethodCall('onEvent', {'eventName': 'focus'}),
+        );
+        await tester.pumpAndSettle();
+        await dispatchPlatformMethod(
+          tester,
+          'window_manager',
+          const MethodCall('onEvent', {'eventName': 'blur'}),
+        );
+        await tester.pumpAndSettle();
+
+        final updates =
+            focusEvents.where((event) => event['type'] == 'update').toList();
+        expect(updates.map((event) => event['focused']), [false, true, false]);
+        expect(field.widget.inputWindow.text, body);
+        expect(document.resync().content, body);
+        expect(field.editingValue.selection, selection);
+        expect(document.isDirty, savepointState);
+        expect(payload.toArguments(), originalArguments);
+      },
+    );
+  });
+
   group('main-window move flow', () {
     late Directory temp;
     late LayoutStore layoutStore;
     late SessionStore sessionStore;
     final createdPayloads = <String>[];
+    final auxiliarySnapshotMessages = <Map<String, Object?>>[];
     CommandService? commands;
 
     String baseOf() => temp.path.replaceAll(r'\', '/');
@@ -343,6 +506,7 @@ void main() {
       layoutStore = LayoutStore(path: '${baseOf()}/layout.json');
       sessionStore = SessionStore(path: '${baseOf()}/session.json');
       createdPayloads.clear();
+      auxiliarySnapshotMessages.clear();
     });
 
     Future<void> mountWorkbench(WidgetTester tester) async {
@@ -402,14 +566,48 @@ void main() {
             return null;
           },
         );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('mixin.one/desktop_multi_window/channels'),
+          (call) async {
+            if (call.method == 'invokeMethod') {
+              final request = Map<String, Object?>.from(
+                call.arguments as Map,
+              );
+              if (request['method'] == auxiliaryFocusContextMethod) {
+                auxiliarySnapshotMessages.add(
+                  Map<String, Object?>.from(request['arguments'] as Map),
+                );
+              }
+            }
+            return null;
+          },
+        );
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('window_manager'),
+          (call) async => throw PlatformException(code: 'focus-unavailable'),
+        );
         addTearDown(() {
           tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
             const MethodChannel('mixin.one/desktop_multi_window'),
             null,
           );
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('mixin.one/desktop_multi_window/channels'),
+            null,
+          );
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('window_manager'),
+            null,
+          );
         });
 
         await mountWorkbench(tester);
+        final mainWindowState = tester.state(find.byType(WorkbenchPage));
+        expect(
+          windowManager.listeners,
+          contains(mainWindowState),
+          reason: 'the main workbench must observe native focus changes',
+        );
         expect(find.byKey(const ValueKey('tab-10')), findsOneWidget);
 
         await commands!.execute('workbench.action.moveEditorToNewWindow');
@@ -424,6 +622,7 @@ void main() {
           createdPayloads.single,
         );
         expect(parsed.isAuxiliary, isTrue);
+        expect(parsed.mainWindowId, 'main');
         expect(parsed.name, 'journal-copy.txt');
         expect(parsed.text, 'moved body',
             reason: 'the document text travels with the window');
@@ -435,6 +634,80 @@ void main() {
         final docs = (groups.single['docs'] as List).cast<Map>();
         expect(docs.where((doc) => doc['id'] == 10), isEmpty,
             reason: 'the moved document no longer belongs to any group');
+        auxiliarySnapshotMessages.clear();
+
+        Future<Object?> sendFocusEvent(AuxiliaryFocusContextEvent event) =>
+            dispatchPlatformMethod(
+              tester,
+              'mixin.one/desktop_multi_window/channels',
+              MethodCall('methodCall', {
+                'channel': 'mixin.one/window_controller/main',
+                'method': auxiliaryFocusContextMethod,
+                'arguments': event.toMap(),
+              }),
+            );
+
+        final registeredSnapshot = AuxiliaryFocusContextSnapshot.tryParse(
+          await sendFocusEvent(const AuxiliaryFocusContextEvent(
+            kind: AuxiliaryFocusEventKind.register,
+            windowId: 'aux-1',
+            sequence: 1,
+            groupId: 'aux-1:editor',
+            documentId: 'file:/workspace/aux.dart',
+            focused: false,
+          )),
+        );
+        expect(registeredSnapshot?.windowId, 'main');
+
+        final activeSnapshot = AuxiliaryFocusContextSnapshot.tryParse(
+          await sendFocusEvent(const AuxiliaryFocusContextEvent(
+            kind: AuxiliaryFocusEventKind.update,
+            windowId: 'aux-1',
+            sequence: 2,
+            groupId: 'aux-1:editor',
+            documentId: 'file:/workspace/aux.dart',
+            focused: true,
+          )),
+        );
+        expect(activeSnapshot?.windowId, 'aux-1');
+        expect(auxiliarySnapshotMessages, hasLength(1));
+        expect(auxiliarySnapshotMessages.single.keys.toSet(), {
+          'windowId',
+          'groupId',
+          'documentId',
+          'revision',
+        });
+        expect(auxiliarySnapshotMessages.single['windowId'], 'aux-1');
+
+        final staleSnapshot = AuxiliaryFocusContextSnapshot.tryParse(
+          await sendFocusEvent(const AuxiliaryFocusContextEvent(
+            kind: AuxiliaryFocusEventKind.update,
+            windowId: 'aux-1',
+            sequence: 1,
+            groupId: 'aux-1:stale',
+            documentId: 'file:/workspace/stale.dart',
+            focused: false,
+          )),
+        );
+        expect(staleSnapshot?.windowId, 'aux-1');
+        expect(staleSnapshot?.groupId, 'aux-1:editor');
+        expect(auxiliarySnapshotMessages, hasLength(1),
+            reason: 'stale events do not rebroadcast');
+        expect(createdPayloads.single, parsed.toArguments());
+
+        await dispatchPlatformMethod(
+          tester,
+          'window_manager',
+          const MethodCall('onEvent', {'eventName': 'focus'}),
+        );
+        await tester.pumpAndSettle();
+        expect(auxiliarySnapshotMessages, hasLength(2));
+        expect(auxiliarySnapshotMessages.last['windowId'], 'main',
+            reason: 'main native focus must reclaim the active owner');
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        expect(windowManager.listeners, isNot(contains(mainWindowState)),
+            reason: 'the main focus listener must be removed on dispose');
       },
     );
   });

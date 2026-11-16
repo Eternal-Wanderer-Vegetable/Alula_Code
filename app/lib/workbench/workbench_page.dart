@@ -82,6 +82,7 @@ import 'activity_bar_order.dart';
 import 'activity_bar_pins.dart';
 import 'activity_bar_position.dart';
 import 'activity_bar_size.dart';
+import 'auxiliary_focus_context.dart';
 import 'command_history.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
@@ -398,7 +399,7 @@ class _EditorGroupBounds {
 }
 
 class _WorkbenchPageState extends State<WorkbenchPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WindowListener {
   static const _untitledId = 1;
   static const _findBarInitialWidth = 419.0;
   static const _maxExplorerCompareUtf16 = 2000000;
@@ -548,6 +549,17 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
+  StreamSubscription<void>? _auxiliaryWindowsSubscription;
+  final AuxiliaryFocusContextRegistry _auxiliaryFocusRegistry =
+      AuxiliaryFocusContextRegistry();
+  final Completer<void> _auxiliaryWindowHandlersReady = Completer<void>();
+  WindowController? _mainWindowController;
+  String? _lastPublishedMainFocusIdentity;
+  int _mainFocusEventSequence = 0;
+  int _mainNativeFocusGeneration = 0;
+  int _auxiliaryWindowCreationsInProgress = 0;
+  bool? _mainWindowFocused;
+  bool _auxiliaryFocusHandlerReady = false;
   // LAY-15：跨编辑器锁定滚动（比例同步 + Alt 按住临时同步）。
   bool _lockedScrolling = false;
   bool _scrollSyncInProgress = false;
@@ -663,6 +675,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void initState() {
     super.initState();
+    windowManager.addListener(this);
     // LAY-12a：辅助窗口关闭恢复入口（主窗自身窗口通道）。
     unawaited(_setupAuxiliaryWindowHandlers());
     final saved = widget.layoutStore.tryLoad();
@@ -3064,7 +3077,61 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       gitDiffViewActiveContextKey: _panelTab.index == 3,
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
+    _publishMainFocusContext();
   }
+
+  String? _mainDocumentIdentity(OpenDoc? document, String windowId) {
+    if (document == null) return null;
+    final path = document.path;
+    if (path == null) return 'untitled:$windowId:${document.id}';
+    return 'file:${p.normalize(path)}';
+  }
+
+  EditorGroup? get _mainCurrentGroup => _groups.isEmpty
+      ? null
+      : _groups[_focusedRegion] ?? _groups.values.first;
+
+  String? _mainGroupIdentity(String windowId) {
+    final group = _mainCurrentGroup;
+    if (group == null) return null;
+    return '$windowId:${group.region}';
+  }
+
+  void _publishMainFocusContext({bool force = false}) {
+    final controller = _mainWindowController;
+    if (controller == null || !_auxiliaryFocusRegistry.isInitialized) return;
+    final groupId = _mainGroupIdentity(controller.windowId);
+    if (groupId == null) return;
+    final documentId =
+        _mainDocumentIdentity(_mainCurrentGroup?.active, controller.windowId);
+    final identity = '$groupId\u0000${documentId ?? ''}';
+    if (!force && identity == _lastPublishedMainFocusIdentity) return;
+    _lastPublishedMainFocusIdentity = identity;
+    final result = _auxiliaryFocusRegistry.apply(
+      AuxiliaryFocusContextEvent(
+        kind: AuxiliaryFocusEventKind.update,
+        windowId: controller.windowId,
+        sequence: ++_mainFocusEventSequence,
+        groupId: groupId,
+        documentId: documentId,
+        focused: _mainWindowFocused == true,
+      ),
+    );
+    if (result.snapshotChanged) unawaited(_broadcastAuxiliaryFocusSnapshot());
+  }
+
+  void _onMainWindowFocusChanged(bool focused) {
+    if (_disposing) return;
+    _mainNativeFocusGeneration++;
+    _mainWindowFocused = focused;
+    _publishMainFocusContext(force: true);
+  }
+
+  @override
+  void onWindowFocus() => _onMainWindowFocusChanged(true);
+
+  @override
+  void onWindowBlur() => _onMainWindowFocusChanged(false);
 
   void _syncPanelMaximizationCommandContext() {
     _commands.context.setValue(
@@ -13276,30 +13343,129 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 浮动辅助窗口（LAY-12a） ----------
 
-  /// 主窗自身窗口通道：接收辅助窗口的关闭恢复通知。
+  /// 主窗自身窗口通道：注册焦点协调器并接收辅助窗口消息。
   Future<void> _setupAuxiliaryWindowHandlers() async {
     try {
       final self = await WindowController.fromCurrentEngine();
-      self.setWindowMethodHandler((call) async {
+      if (_disposing) return;
+      _mainWindowController = self;
+      _auxiliaryFocusRegistry.initializeMain(
+        windowId: self.windowId,
+        groupId: _mainGroupIdentity(self.windowId) ?? '${self.windowId}:editor',
+        documentId: _mainDocumentIdentity(_mainCurrentGroup?.active, self.windowId),
+      );
+      await self.setWindowMethodHandler((call) async {
         if (call.method == 'alula_auxiliary_closed') {
           final args = call.arguments is Map
               ? Map<String, Object?>.from(call.arguments as Map)
               : <String, Object?>{};
+          final windowId = args['windowId'];
+          if (windowId is String && windowId.isNotEmpty) {
+            _auxiliaryWindowIds.remove(windowId);
+            final result =
+                _auxiliaryFocusRegistry.removeAuxiliaryWindow(windowId);
+            if (result.snapshotChanged) {
+              await _broadcastAuxiliaryFocusSnapshot();
+            }
+          }
           _reopenAuxiliaryDocument(args);
+          return null;
+        }
+        if (call.method == auxiliaryFocusContextMethod) {
+          final event = AuxiliaryFocusContextEvent.tryParse(call.arguments);
+          if (event == null || event.windowId == self.windowId) {
+            return _auxiliaryFocusRegistry.snapshot?.toMap();
+          }
+          final result = _auxiliaryFocusRegistry.apply(event);
+          if (event.kind == AuxiliaryFocusEventKind.register &&
+              result.accepted) {
+            _auxiliaryWindowIds.add(event.windowId);
+          }
+          if (result.snapshotChanged) {
+            await _broadcastAuxiliaryFocusSnapshot();
+          }
+          return _auxiliaryFocusRegistry.snapshot?.toMap();
         }
         return null;
       });
+      _auxiliaryFocusHandlerReady = true;
+      _auxiliaryWindowsSubscription ??= onWindowsChanged.listen((_) {
+        unawaited(_removeClosedAuxiliaryWindows());
+      });
+      if (!_auxiliaryWindowHandlersReady.isCompleted) {
+        _auxiliaryWindowHandlersReady.complete();
+      }
+      _publishMainFocusContext(force: true);
+      final focusGeneration = _mainNativeFocusGeneration;
+      try {
+        final focused = await windowManager.isFocused();
+        if (mounted && focusGeneration == _mainNativeFocusGeneration) {
+          _mainWindowFocused = focused;
+          _publishMainFocusContext(force: true);
+        }
+      } on Object {
+        // Focus state is optional in widget/platform environments.
+      }
     } on Object {
       // 平台/测试环境无窗口定义：跳过辅助窗口同步。
+    } finally {
+      if (!_auxiliaryWindowHandlersReady.isCompleted) {
+        _auxiliaryWindowHandlersReady.complete();
+      }
+    }
+  }
+
+  Future<void> _broadcastAuxiliaryFocusSnapshot() async {
+    final snapshot = _auxiliaryFocusRegistry.snapshot;
+    if (snapshot == null || !_auxiliaryFocusHandlerReady) return;
+    final arguments = snapshot.toMap();
+    for (final windowId in _auxiliaryWindowIds.toList(growable: false)) {
+      try {
+        await WindowController.fromWindowId(windowId)
+            .invokeMethod(auxiliaryFocusContextMethod, arguments);
+      } on Object {
+        // A launched or closed auxiliary may not have a receiver right now.
+      }
+    }
+  }
+
+  Future<void> _removeClosedAuxiliaryWindows() async {
+    if (_auxiliaryWindowIds.isEmpty) return;
+    try {
+      final liveIds = (await WindowController.getAll())
+          .map((controller) => controller.windowId)
+          .toSet();
+      var snapshotChanged = false;
+      for (final windowId in _auxiliaryWindowIds.toList(growable: false)) {
+        if (liveIds.contains(windowId)) continue;
+        _auxiliaryWindowIds.remove(windowId);
+        snapshotChanged = _auxiliaryFocusRegistry
+                .removeAuxiliaryWindow(windowId)
+                .snapshotChanged ||
+            snapshotChanged;
+      }
+      if (snapshotChanged) await _broadcastAuxiliaryFocusSnapshot();
+    } on Object {
+      // Window list notifications are best-effort on unsupported platforms.
     }
   }
 
   /// 将编辑器移入新的辅助窗口：文本随启动载荷传递，源组移除该视图
   /// （上游移动保留状态，不做脏确认——无数据丢失）。
   Future<void> _moveEditorToNewWindow(EditorGroup group, OpenDoc doc) async {
+    await _auxiliaryWindowHandlersReady.future;
+    if (!mounted) return;
+    if (_auxiliaryWindowIds.length + _auxiliaryWindowCreationsInProgress >=
+        maxAuxiliaryFocusWindows) {
+      setState(() => _statusDetail =
+          '辅助窗口数量已达到上限（$maxAuxiliaryFocusWindows）');
+      return;
+    }
     _flushInput(doc, commitComposition: true);
+    _auxiliaryWindowCreationsInProgress++;
     final payload = AuxiliaryWindowPayload.forDocument(
       path: doc.path,
+      mainWindowId: _mainWindowController?.windowId,
       name: doc.name,
       text: doc.text,
       dirty: doc.isDirty,
@@ -13313,6 +13479,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     } on Object catch (error) {
       setState(() => _statusDetail = '辅助窗口创建失败：$error');
       return;
+    } finally {
+      _auxiliaryWindowCreationsInProgress--;
     }
     _closeDocNow(group, doc);
     _syncCommandContext();
@@ -18044,6 +18212,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final sourceGroup = _ownerOfView(source);
     if (sourceGroup == null) return false;
     setState(() => _focusedRegion = sourceGroup.region);
+    _syncCommandContext();
 
     final sameFile = source.path != null && _pathsEqual(source.path!, path);
     if (!sameFile) await _openFileByPath(path);
@@ -18153,6 +18322,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<bool> _restoreNavigationLocation(NavigationLocation location) async {
     final targetGroup = _groups[location.groupRegion] ?? _focused;
     setState(() => _focusedRegion = targetGroup.region);
+    _syncCommandContext();
     if (location.path != null) {
       await _openFileByPath(location.path!);
       if (!mounted) return false;
@@ -18192,6 +18362,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       active,
       TextSelection.collapsed(offset: position.offsetUtf16),
     );
+    _syncCommandContext();
     return true;
   }
 
@@ -18919,6 +19090,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    windowManager.removeListener(this);
+    unawaited(_auxiliaryWindowsSubscription?.cancel());
+    _auxiliaryWindowsSubscription = null;
+    final mainWindowController = _mainWindowController;
+    if (mainWindowController != null) {
+      unawaited(mainWindowController
+          .setWindowMethodHandler(null)
+          .catchError((Object _) {}));
+    }
     if (_editorDragModifierHandlerRegistered) {
       HardwareKeyboard.instance.removeHandler(_onEditorDragModifierKeyEvent);
       _editorDragModifierHandlerRegistered = false;
@@ -20597,6 +20777,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (child == null) return;
     // 上游 _onSelectEvent：picker 交互先激活所属组。
     setState(() => _focusedRegion = group.region);
+    _syncCommandContext();
     if (child.isDir) {
       // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
       // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
