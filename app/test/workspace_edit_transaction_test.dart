@@ -103,7 +103,7 @@ void main() {
     expect(rejected, isFalse);
     await tester.pump();
     expect(editorText(tester), rustBefore);
-    await tester.tap(find.byKey(const ValueKey('tab-2')));
+    await tester.tap(find.text('Cargo.toml').last);
     await tester.pump(const Duration(milliseconds: 100));
     expect(editorText(tester), cargoBefore);
 
@@ -140,7 +140,7 @@ void main() {
     await undo(tester);
     expect(editorText(tester), cargoBefore);
 
-    await tester.tap(find.byKey(const ValueKey('tab-3')));
+    await tester.tap(find.text('main.rs').last);
     await tester.pump(const Duration(milliseconds: 100));
     expect(editorText(tester), '// workspace B\n$rustBefore');
     await undo(tester);
