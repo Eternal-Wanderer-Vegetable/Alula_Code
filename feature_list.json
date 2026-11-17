@@ -1556,6 +1556,18 @@
       "evidence": "Real FFI parser+workbench+QuickInput8/8; line delimiter/negative/UTF16 emojiCRLFBOMtab/longline, zero-based toggle persistence and preview/cancel passed; analyze0. Full gates running.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-126",
+      "name": "P05.74 CMD-02 异步 Quick Open 查询与位置",
+      "description": "按查询异步文件搜索、200分页、MRU/direct路径、path:line:column、取消和旧回包隔离；替换同步2000文件索引。docs/diagnostics/2026-11-17-p05/p05.74-quick-open-query.md",
+      "dependencies": [
+        "feat-125"
+      ],
+      "status": "in-progress",
+      "evidence": "Focused38/38, analyze0. Query paging431 files, exact200 boundary, stale/close completion, absolute path outside workspace plus UTF16 emoji navigation and disk unchanged. Full gates/review running. Final bash init.sh all gates green Flutter1407/1407, Rust tests/Clippy/core build/fmt, analyze0. Review lifecycle/page guards repaired; watcher teardown test now unmounts before deletion. Hosted pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

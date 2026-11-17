@@ -87,6 +87,7 @@ import 'auxiliary_window_transfer.dart';
 import 'command_history.dart';
 import 'tree_find.dart';
 import 'goto_position.dart';
+import 'quick_open_query.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -458,7 +459,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 键位集合（默认表 + 用户 keybindings.json 覆盖，docs/09 W3-2）。
   late final KeybindingSet _keybindings;
-  List<String>? _fileIndexCache; // 快速打开的文件索引（打开文件夹时失效）
+  final Set<VoidCallback> _quickOpenCancellations = {};
+  int _quickOpenWorkspaceGeneration = 0;
   Timer? _stateSaveTimer;
   Timer? _findHistoryTimer;
   Timer? _resourceTimer;
@@ -3479,52 +3481,76 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showQuickOpen() {
+    final root = _workspaceRoot ?? Directory.current.path;
+    final search = QuickOpenSearch();
+    var page = 0;
+    var lastQuery = '';
+    var hasNext = false;
+    var closed = false;
+    var loading = false;
+    final workspace = _workspaceRoot;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    bool currentWorkspace() => mounted && _workspaceRoot == workspace &&
+        _quickOpenWorkspaceGeneration == workspaceGeneration;
+    void cancelSearch() { closed = true; search.cancel(); }
+    _quickOpenCancellations.add(cancelSearch);
     QuickInput.show(
       context,
-      hint: '按文件名筛选（工作区内，最多索引 2000 个文件）',
-      items: [
-        for (final path in _workspaceFileIndex())
-          QuickItem(
-              label: _nameOf(path),
-              description: path,
-              onRun: () => _openFileByPath(path)),
-      ],
-    );
-  }
-
-  /// 工作区文件索引（快速打开用）：有界递归遍历，跳过常见重目录；
-  /// 打开新文件夹时失效。同步 FFI 遍历在大仓库会卡 UI，Phase 1 后续改异步。
-  List<String> _workspaceFileIndex() {
-    final core = _core;
-    final root = _workspaceRoot;
-    if (core == null || root == null) return const [];
-    final cached = _fileIndexCache;
-    if (cached != null) return cached;
-    const skipDirs = {'.git', 'target', 'node_modules', 'build', '.dart_tool'};
-    const maxFiles = 2000;
-    final out = <String>[];
-    void walk(String dir) {
-      if (out.length >= maxFiles) return;
-      try {
-        final entries = core.workspace.listDir(dir);
-        for (final e in entries) {
-          if (out.length >= maxFiles) return;
-          final path = e['path'] as String;
-          final name = e['name'] as String;
-          if ((e['is_dir'] as bool?) ?? false) {
-            if (!skipDirs.contains(name)) walk(path);
-          } else {
-            out.add(path);
-          }
+      hint: '文件名、路径或 path:行:列',
+      items: const [],
+      onClose: () {
+        cancelSearch();
+        _quickOpenCancellations.remove(cancelSearch);
+      },
+      inputActionBuilder: (context, query, refresh) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (page > 0) IconButton(
+            key: const ValueKey('quick-open-previous-page'),
+            tooltip: '上一页文件',
+            icon: const Icon(Icons.chevron_left, size: 16),
+            onPressed: loading ? null : () { page--; refresh(); },
+          ),
+          if (hasNext) IconButton(
+            key: const ValueKey('quick-open-next-page'),
+            tooltip: '下一页文件',
+            icon: const Icon(Icons.chevron_right, size: 16),
+            onPressed: loading ? null : () { page++; refresh(); },
+          ),
+        ],
+      ),
+      itemsProvider: (query) async {
+        if (query != lastQuery) { page = 0; lastQuery = query; }
+        final requestedPage = page;
+        loading = true;
+        List<String> paths;
+        try {
+          paths = await search.search(root, query,
+              recentPaths: _recentHistory.files.map((entry) => entry.path).toList(), page: requestedPage);
+        } finally {
+          if (query == lastQuery && requestedPage == page) loading = false;
         }
-      } on AlulaException {
-        // 不可读目录：跳过
-      }
-    }
-
-    walk(root);
-    _fileIndexCache = out;
-    return out;
+        if (closed || !currentWorkspace() || query != lastQuery || requestedPage != page) return const [];
+        hasNext = search.hasMore;
+        final position = parseQuickOpenQuery(query);
+        return [for (final path in paths) QuickItem(
+          label: _nameOf(path),
+          description: path,
+          onRun: () async {
+            if (!currentWorkspace()) return;
+            await _openFileByPath(path);
+            if (!currentWorkspace() || position.line == null) return;
+            final doc = _active;
+            if (doc == null || doc.path == null || !_pathsEqual(doc.path!, path)) return;
+            final target = resolveGotoPosition(doc.doc,
+                ':${position.line}:${position.column ?? 1}', tabSize: doc.tabSize);
+            if (target == null) return;
+            _setDocSelection(doc, TextSelection.collapsed(offset: target.offsetUtf16));
+            _focusEditorAfterLayout(_focused, doc);
+          },
+        )];
+      },
+    );
   }
 
   /// 布局/会话变更防抖落盘（拖拽每帧都通知、编辑每键都触发，不能每帧写盘）。
@@ -12006,6 +12032,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       setState(() {
         if (_workspaceRoot != path) {
+          _quickOpenWorkspaceGeneration++;
+          for (final cancel in _quickOpenCancellations.toList()) { cancel(); }
+          _quickOpenCancellations.clear();
           _explorerCompareSelection = null;
           _explorerMultiSelection.clear();
           _explorerSelectionAnchor = null;
@@ -12022,7 +12051,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .toList());
         _pruneExplorerMultiSelection();
         _statusDetail = '工作区：$path（${entries.length} 项）';
-        _fileIndexCache = null;
         _git = GitCli(
           root: path,
           registerProcess: core.runtime.registerProcess,
@@ -19604,6 +19632,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    for (final cancel in _quickOpenCancellations.toList()) { cancel(); }
+    _quickOpenCancellations.clear();
     windowManager.removeListener(this);
     unawaited(_auxiliaryWindowsSubscription?.cancel());
     _auxiliaryWindowsSubscription = null;

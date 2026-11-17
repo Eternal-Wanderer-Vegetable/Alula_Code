@@ -660,7 +660,13 @@ void main() {
             of: find.byKey(const ValueKey('quick-input')),
             matching: find.byType(TextField)),
         'main');
-    await tester.pump(const Duration(milliseconds: 200));
+    for (var attempt = 0; attempt < 100; attempt++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 10)));
+      await tester.pump();
+      if (find.byKey(const ValueKey('qi-main.rs')).evaluate().isNotEmpty) break;
+    }
+    expect(find.byKey(const ValueKey('qi-main.rs')), findsOneWidget);
     await pressChord(tester, LogicalKeyboardKey.enter);
     await tester.pump(const Duration(milliseconds: 300));
 
@@ -980,10 +986,22 @@ void main() {
   testWidgets('feat-filewatch 外部修改：干净文档自动重载', (tester) async {
     await tester.runAsync(() async {
       final repo = await createTempRepo(
-          prefix: 'alula_fw_widget',
-          extraFiles: {'watch.txt': 'v1$kNL'});
+          prefix: 'alula_fw_widget', extraFiles: {'watch.txt': 'v1$kNL'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -1006,8 +1024,7 @@ void main() {
           'v1$kNL');
 
       // 外部修改磁盘文件
-      File('${repo.path}/watch.txt')
-          .writeAsStringSync('v2 external$kNL');
+      File('${repo.path}/watch.txt').writeAsStringSync('v2 external$kNL');
       // 防抖 600ms + 事件延迟 + 重载
       await Future<void>.delayed(const Duration(milliseconds: 1800));
       await tester.pump();

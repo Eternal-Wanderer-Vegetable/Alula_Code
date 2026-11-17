@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；当前 P05.73 行列偏移跳转；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.74 异步 Quick Open；目标整体完成 P05
+
+- 2026-11-17：中断恢复后继续P05.74，异步itemsProvider/取消/分页200+lookahead/MRU/绝对路径:行:列已接入，旧同步2000文件索引删除。专项38/38、pageguard/销毁取消专项24/24、旧Ctrl+P工作台回归通过，analyze0。全量两次仅既有filewatch teardown未卸载导致Windows errno32；已补先卸载+有界等待，最终全量运行，证据保留。P05.73 8a4ef28的CI44016110199和Platform44016101825均success。
 
 - 2026-11-17：P05.73本地完成，行列/::offset/零基切换、预览/取消多选恢复、有界长行尾部定位；FFI+widget8/8，analyze0，全量Flutter1386/1386及Rust/Clippy/core/fmt全绿。完整graph10/31/450 CRITICAL、main累计366/468/453 CRITICAL，无partial/truncated。P05.72 f92257e产品CI44010850566与Platform44010843172三平台全绿；P05.71补全d3e537b全部hosted全绿，macOS包77864ecd...272baad匹配且81项完整。下一Quick Open路径/MRU/全文件可达。
 

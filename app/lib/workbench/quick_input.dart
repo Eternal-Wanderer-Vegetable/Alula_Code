@@ -131,11 +131,20 @@ class QuickInput {
     Widget Function(BuildContext context, String value, VoidCallback refresh)?
         inputActionBuilder,
     String? queryPrefix,
+    Future<List<QuickItem>> Function(String query)? itemsProvider,
+    VoidCallback? onClose,
   }) {
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
     // 焦点（上游 quickInput 取消恢复语义）；执行/返回都会接管后续焦点。
     final restoreTarget = restoreFocus ?? externalFocus();
     var handled = false;
+    var closeNotified = false;
+    void notifyClosed() {
+      if (closeNotified) return;
+      closeNotified = true;
+      onClose?.call();
+    }
+
     return showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -164,12 +173,15 @@ class QuickInput {
               onValueChanged: onValueChanged,
               inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
+              itemsProvider: itemsProvider,
+              onDispose: notifyClosed,
               onHandled: () => handled = true,
             ),
           ),
         );
       },
     ).then((_) {
+      notifyClosed();
       if (handled) return;
       final target = restoreTarget;
       if (target != null && target.context != null) target.requestFocus();
@@ -195,6 +207,8 @@ class _QuickInputPanel extends StatefulWidget {
     this.onValueChanged,
     this.inputActionBuilder,
     this.queryPrefix,
+    this.itemsProvider,
+    required this.onDispose,
     required this.onHandled,
   });
 
@@ -207,6 +221,7 @@ class _QuickInputPanel extends StatefulWidget {
   final void Function(List<QuickItem> picked)? onAccept;
   final void Function(String commandId)? onCommandExecuted;
   final VoidCallback onHandled;
+  final VoidCallback onDispose;
   final bool inputMode;
   final String initialValue;
   final FutureOr<String?> Function(String value)? validateInput;
@@ -217,6 +232,7 @@ class _QuickInputPanel extends StatefulWidget {
           BuildContext context, String value, VoidCallback refresh)?
       inputActionBuilder;
   final String? queryPrefix;
+  final Future<List<QuickItem>> Function(String query)? itemsProvider;
 
   @override
   State<_QuickInputPanel> createState() => _QuickInputPanelState();
@@ -242,6 +258,10 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   String _lastInputText = '';
   bool _accepting = false;
   bool _accepted = false;
+  int _itemsGeneration = 0;
+  bool _itemsLoading = false;
+  String? _itemsError;
+  List<QuickItem> _providedItems = const [];
 
   @override
   void initState() {
@@ -255,6 +275,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     _refilter(_controller.text);
     _controller.addListener(_onInputChanged);
     if (widget.validateInput != null) unawaited(_validate());
+    if (widget.itemsProvider != null) unawaited(_loadItems());
     widget.commands?.addListener(_onCommandsChanged);
   }
 
@@ -270,7 +291,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   void dispose() {
+    widget.onDispose();
     _validationGeneration++;
+    _itemsGeneration++;
     widget.commands?.removeListener(_onCommandsChanged);
     QuickInput._panelFocusNodes.remove(_focusNode);
     for (final nodes in _buttonFocusNodes.values) {
@@ -292,6 +315,46 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     _refilter(_controller.text);
     widget.onValueChanged?.call(_controller.text);
     if (widget.validateInput != null) unawaited(_validate());
+    if (widget.itemsProvider != null) unawaited(_loadItems());
+  }
+
+  Future<void> _loadItems() async {
+    final provider = widget.itemsProvider;
+    if (provider == null) return;
+    final generation = ++_itemsGeneration;
+    final query = _controller.text;
+    setState(() {
+      _itemsLoading = true;
+      _itemsError = null;
+      _providedItems = const [];
+      _filtered = const [];
+    });
+    try {
+      final items = await provider(query);
+      if (!mounted ||
+          generation != _itemsGeneration ||
+          query != _controller.text) {
+        return;
+      }
+      _rowKeys.clear();
+      final oldButtonNodes =
+          _buttonFocusNodes.values.expand((nodes) => nodes).toList();
+      _buttonFocusNodes.clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (final node in oldButtonNodes) {
+          node.dispose();
+        }
+      });
+      _providedItems = items;
+      _refilter(query);
+    } catch (error) {
+      if (!mounted || generation != _itemsGeneration) return;
+      setState(() => _itemsError = '搜索失败：$error');
+    } finally {
+      if (mounted && generation == _itemsGeneration) {
+        setState(() => _itemsLoading = false);
+      }
+    }
   }
 
   Future<bool> _validate() {
@@ -346,6 +409,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   void _refreshInputAction() {
+    if (widget.itemsProvider != null) unawaited(_loadItems());
     widget.onValueChanged?.call(_controller.text);
     if (widget.validateInput != null) unawaited(_validate());
     setState(() {});
@@ -371,7 +435,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       q = q.substring(prefix.length).trimLeft();
     }
     final scored = <(QuickItem, int, int)>[];
-    for (final (index, item) in widget.items.indexed) {
+    final sourceItems =
+        widget.itemsProvider == null ? widget.items : _providedItems;
+    for (final (index, item) in sourceItems.indexed) {
       if (item.kind == QuickItemKind.separator) {
         // 上游：分组标题不参与匹配，有查询时与不匹配条目一起消失。
         if (q.isEmpty) scored.add((item, 0, index));
@@ -381,9 +447,11 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
           when !(widget.commands?.isVisible(id) ?? false)) {
         continue;
       }
-      final s = fuzzyScore(q, item.label) ??
-          fuzzyScore(q, item.description ?? '') ??
-          fuzzyScore(q, item.detail ?? '');
+      final s = widget.itemsProvider != null
+          ? 0
+          : fuzzyScore(q, item.label) ??
+              fuzzyScore(q, item.description ?? '') ??
+              fuzzyScore(q, item.detail ?? '');
       if (s != null) scored.add((item, s, index));
     }
     scored.sort((a, b) {
@@ -617,6 +685,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                 ),
               ),
             ),
+          if (_itemsLoading)
+            const LinearProgressIndicator(
+                key: ValueKey('quick-input-loading'), minHeight: 2),
           if (_validating)
             const LinearProgressIndicator(
                 key: ValueKey('quick-input-validating'), minHeight: 2),
@@ -627,7 +698,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
               child: _filtered.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(14),
-                      child: Text('无匹配项',
+                      child: Text(
+                          _itemsError ?? (_itemsLoading ? '正在搜索…' : '无匹配项'),
                           style: TextStyle(
                               color: Colors.grey.shade500, fontSize: 12)),
                     )

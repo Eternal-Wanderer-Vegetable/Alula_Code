@@ -7,6 +7,67 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets(
+      'async picker ignores stale results and late completion after close',
+      (tester) async {
+    final pending = <String, Completer<List<QuickItem>>>{};
+    var closed = 0;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => TextButton(
+                  onPressed: () => QuickInput.show(context,
+                      hint: 'query',
+                      items: const [],
+                      itemsProvider: (query) => (pending[query] =
+                              Completer<List<QuickItem>>())
+                          .future,
+                      onClose: () => closed++),
+                  child: const Text('open'),
+                ))));
+    await tester.tap(find.text('open'));
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.enterText(find.byType(TextField), 'old');
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'new');
+    await tester.pump();
+    pending['old']!.complete([const QuickItem(label: 'obsolete')]);
+    pending['new']!.complete([const QuickItem(label: 'current')]);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('qi-current')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-obsolete')), findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    pending['']!.complete([const QuickItem(label: 'late')]);
+    await tester.pump();
+    expect(closed, 1);
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('disposing the Navigator cancels a pending picker once',
+      (tester) async {
+    final pending = Completer<List<QuickItem>>();
+    var closed = 0;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => TextButton(
+                  child: const Text('open'),
+                  onPressed: () => QuickInput.show(context,
+                      hint: 'pending',
+                      items: const [],
+                      itemsProvider: (_) => pending.future,
+                      onClose: () => closed++),
+                ))));
+    await tester.tap(find.text('open'));
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pumpWidget(const SizedBox.shrink());
+    expect(closed, 1);
+    pending.complete([const QuickItem(label: 'late')]);
+    await tester.pump();
+    expect(closed, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
       'input validates asynchronously, rejects stale results and accepts current text',
       (tester) async {
     final pending = <String, Completer<String?>>{};
