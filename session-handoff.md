@@ -8,10 +8,12 @@ Last Updated: 2026-11-17
 
 ## Current State
 
-- 当前工作树 `E:/Temp/alula-pr3-20261117`，本地分支 `codex/pr3-p05-continuation-20261117`，PR head `5683e77`。`E:/Alula_Code`（p00）与 `E:/temp/alula-pr3-p05` 的既存脏工作未改动。
-- P05.77 workspace symbols ABI41 本地完整 `bash init.sh` 通过：Rust tests/Clippy/core build/fmt、Flutter1431/1431、analyze0；真实 FFI test 与 workspace picker 3/3 通过。
-- Hosted CI `44064904867` / `44069169937` 单一失败是 Flutter FFI 测试期待 standalone fake-LSP binary；已在 `.github/workflows/ci.yml` 与 macOS Platform workflow 加显式 cargo build，hosted rerun待收。首次 init.sh 因 Git Bash PATH 缺 Dart SDK导致 session_store crash-writer 无法启动；加 `/e/flutter/bin/cache/dart-sdk/bin` 后完整重跑成功，不改产品测试。
-- 工作树仅本次工作流和状态文档有内容改动，另有 generated registrants 与 `workbench_page.dart` 状态但内容diff为空；生成文件不纳入产品提交。GitNexus all-scope detector 对 workflow diff 报2 files/no indexed symbols overlap，非 clean verdict。
+- 当前工作树 `E:/Temp/alula-pr3-20261117`，本地分支 `codex/pr3-p05-continuation-20261117`，PR head `0995dc859f5a1ed8f1e4c936d3cae78a743cc5df`。`E:/Alula_Code`（p00）与 `E:/temp/alula-pr3-p05` 的既存脏工作未改动。
+- P05.77 workspace symbols ABI41 hosted closeout完成；本地完整 `bash init.sh` 通过：Rust tests/Clippy/core build/fmt、Flutter1431/1431、analyze0；真实 FFI test 与 workspace picker 3/3通过。PR CI `44077819111` 四job全绿；Platform `44077810454` Linux/Windows/macOS全绿，macOS Quit成功，DnD因synthetic pointer route unavailable明确skip。Artifacts Linux `14324484867`、Windows `14326840370`、macOS `14327488151`、macOS DnD `14327948384`。产品提交 `5683e77`，CI fixture build与证据提交 `0995dc8`。
+- 首次本机 init.sh 因 Git Bash PATH 缺 Dart SDK导致 session_store crash-writer 无法启动；加入 `/e/flutter/bin/cache/dart-sdk/bin` 后全量成功。PR #3保持OPEN/DRAFT，P05整体仍进行中。
+- 当前新增 P05.78 / feat-130：Explorer Shift+Arrow range selection，keyboard/typeahead4/4、Explorer compare13/13、完整init.sh Flutter1432/1432通过；尚待提交/hosted。私有 workbench methods GitNexus UNKNOWN，已核对实际 handler/callers，提交前补 staged graph scan。
+- 下一项继续 LAY-16 通用列表/表格差异（重点列 resize、hover）或按路线推进QuickInput/通知；tree find与键盘子切片不代表 LAY-16 行完成。工作树中 generated registrants不纳入提交；前述 `workbench_page.dart` no-content 状态须提交前再次核对。
+- P05.77 GitNexus暂存扫描为LOW/7 files/5 doc symbols/0 processes，all-scope仅因工作流改动/no indexed symbols overlap；不称全树clean。
 - P05.1–P05.69 历史 closeout 已完成登记。P05.70 / feat-122 产品提交 `231e853` 已推 PR #3，本地门禁/本机 Windows Release/PR CI 全通过；hosted Linux/Windows 成功，macOS 待结果。
 - 完整结构化 graph export 保留所有 product 11 symbols/103 processes（26 files）和累计 main 888/304（325 files），无 partial/truncated，均 CRITICAL。CLI 自身固定裁剪展示，不能仅提高 --limit 解决；JSON 已归档。
 - 新独立 Windows 启动基线最初 Flutter 1323 passed / 37 failed；路径节点/历史期望/URI 盘符/文本 LF 和 tab 定位修正后暴露产品 `_openFileByPath` 的 raw path equality 重复打开问题。现使用已有 `_canonicalPath` 复用同一文档，保留已有预览/跨组视图流程。

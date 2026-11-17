@@ -12531,7 +12531,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final step = key == LogicalKeyboardKey.arrowDown ? 1 : -1;
         final next = (selectedIndex < 0 ? (step > 0 ? 0 : nodes.length - 1) : selectedIndex + step)
             .clamp(0, nodes.length - 1);
-        _focusExplorerNode(nodes[next]);
+        final target = nodes[next];
+        if (HardwareKeyboard.instance.isShiftPressed) {
+          _extendExplorerSelection(target, selected);
+        } else {
+          _explorerSelectionAnchor = target.isDir ? null : target.path;
+          _focusExplorerNode(target);
+        }
         return KeyEventResult.handled;
       }
       if (key == LogicalKeyboardKey.arrowRight && selected != null) {
@@ -12603,8 +12609,45 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return KeyEventResult.handled;
   }
 
-  void _focusExplorerNode(TreeNode node) {
-    _treeKeyboardPath = node.path;
+  void _extendExplorerSelection(TreeNode target, TreeNode? previousFocus) {
+    if (target.isDir) {
+      _treeKeyboardPath = target.path;
+      setState(() {});
+      return;
+    }
+    if (_explorerSelectionAnchor == null &&
+        previousFocus != null &&
+        !previousFocus.isDir) {
+      _explorerSelectionAnchor = previousFocus.path;
+    }
+    _treeKeyboardPath = target.path;
+    final visibleFiles = _visibleExplorerFiles();
+    final targetIndex = visibleFiles.indexWhere((file) =>
+        _canonicalPath(file.path) == _canonicalPath(target.path));
+    var anchorIndex = _explorerSelectionAnchor == null
+        ? -1
+        : visibleFiles.indexWhere((file) =>
+            _canonicalPath(file.path) ==
+            _canonicalPath(_explorerSelectionAnchor!));
+    if (targetIndex < 0) return;
+    if (anchorIndex < 0) {
+      anchorIndex = targetIndex;
+      _explorerSelectionAnchor = target.path;
+    }
+    final first = anchorIndex < targetIndex ? anchorIndex : targetIndex;
+    final last = anchorIndex > targetIndex ? anchorIndex : targetIndex;
+    setState(() {
+      _explorerMultiSelection
+        ..clear()
+        ..addAll(visibleFiles
+            .skip(first)
+            .take(last - first + 1)
+            .map((file) => file.path));
+    });
+    _revealExplorerNode(target);
+  }
+
+  void _revealExplorerNode(TreeNode node) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_treeScroll.hasClients) return;
       final nodes = _visibleExplorerNodes();
@@ -12619,6 +12662,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             .clamp(0, position.maxScrollExtent));
       }
     });
+  }
+
+  void _focusExplorerNode(TreeNode node) {
+    _treeKeyboardPath = node.path;
+    _revealExplorerNode(node);
     if (node.isDir) {
       setState(() {});
     } else {

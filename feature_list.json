@@ -1600,8 +1600,20 @@
       "dependencies": [
         "feat-128"
       ],
+      "status": "done",
+      "evidence": "Rust parser/real core FFI lifecycle, Dart FFI/core/merge41, workspace picker3 incl unsupported/cancel/cross-file and full init.sh passed (Flutter1431/1431, Rust tests/Clippy/core/fmt, analyze0). Commit 0995dc8 fixes hosted-only fake-LSP executable setup. PR CI 44077819111 all 4 jobs success; Platform Availability 44077810454 Linux/Windows/macOS all success, including macOS Quit. macOS DnD pointer-route unavailable was explicitly skipped; not claimed verified. Hosted artifacts: Linux 14324484867, Windows 14326840370, macOS 14327488151, macOS DnD diagnostics 14327948384.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-130",
+      "name": "P05.78 LAY-16c Explorer 键盘范围选择",
+      "description": "对齐 list.expandSelectionUp/Down：Explorer Shift+Arrow 从稳定焦点 anchor 扩展/收缩文件选择，目录仅移动焦点；保留鼠标/修饰键和比较选择。docs/03 P05.78",
+      "dependencies": [
+        "feat-123"
+      ],
       "status": "in-progress",
-      "evidence": "Rust parser and real core FFI lifecycle passed; Dart FFI/core/merge41 passed, workspace widget3 passed incl unsupported/cancel/crossfile. Full init.sh passed: Flutter1431/1431, Rust tests/Clippy/core build/fmt, analyze0. Reviewer fixes coordinate uinteger bound, stale target handling, poll/cancel synchronization. Hosted failure isolated to missing standalone fake LSP executable; CI and macOS platform workflows now explicitly cargo-build the fixture before Flutter tests; rerun pending.",
+      "evidence": "Explorer type navigation/keyboard4/4, compare regression13/13; full init.sh passed Flutter1432/1432, Rust tests/Clippy/core/fmt, analyze0. Workbench private symbols are UNKNOWN in graph; source call sites inspected. Hosted pending. LAY-16 remains open for generic list/table coverage, column resize and native visual diff.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

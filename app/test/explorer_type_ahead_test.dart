@@ -126,6 +126,30 @@ void main() {
     },
   );
 
+  testWidgets('Shift+Arrow extends the Explorer file selection range',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await focusTree(tester);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pump();
+    expect(_isSelected(tester, 'main.rs'), isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(_isSelected(tester, 'main.rs'), isTrue);
+    expect(_isSelected(tester, 'zebra.md'), isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(_isSelected(tester, 'main.rs'), isTrue);
+    expect(_isSelected(tester, 'zebra.md'), isFalse);
+  });
+
   testWidgets(
     'modifier chords are ignored by type navigation',
     (tester) async {

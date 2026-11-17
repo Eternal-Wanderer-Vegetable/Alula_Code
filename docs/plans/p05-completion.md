@@ -9,7 +9,7 @@
 ## 剩余交付顺序
 
 1. P05.70 hosted closeout（当前产品 231e853、证据 76113f6）：PR CI 全绿、Linux/Windows 全绿；等待 macOS package/launch/native Quit。随后恢复唯一 active feature。
-2. LAY-16：Explorer tree find/filter，固定 Ctrl/Cmd+Alt+F/F3，Highlight/Fuzzy 默认、Filter/Contiguous 切换、Escape/tree focus、查询记忆、祖先可见与 unloaded descendants、取消/错误/无结果；补通用列表 keyboard/range/context 与实际表格列 resize。
+2. LAY-16：Explorer tree find/filter，固定 Ctrl/Cmd+Alt+F/F3，Highlight/Fuzzy 默认、Filter/Contiguous 切换、Escape/tree focus、查询记忆、祖先可见与 unloaded descendants、取消/错误/无结果；已补 Explorer Shift+Arrow 键盘范围扩选（P05.78），仍需通用列表 keyboard/range/context 与实际表格列 resize、hover/visual 对照。
 3. LAY-17/18：QuickInput 真正输入历史/异步 validation/MRU 分节/按钮与选择状态，通知 timeout/progress 完成/取消和产品错误接线。
 4. LAY-11 与 CMD-06/07：Open Editors 排序/重排/批量动作、Breadcrumb 路径/符号完整导航和 cursor-follow、Outline 层级/过滤/排序/折叠。
 5. LAY-07–10：组移动/复制/顺序/均分/最大化/锁定、same-group split、批量标签与跨组 MRU、复制视图 scroll 状态、pinned/sticky 的剩余 presentation/关闭规则。
