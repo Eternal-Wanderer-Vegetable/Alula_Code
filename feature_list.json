@@ -1532,6 +1532,18 @@
       "evidence": "Focused model/workbench/type-ahead/keybindings 41/41 green after lifecycle review fixes. Final full gates passed: bash init.sh Flutter 1369/1369, Rust workspace tests/Clippy/core build, fmt, analyze 0, Harness 100/100. Complete graph all 13/9/440 and main 336/583/444 CRITICAL without partial/truncated. Hosted pending. No Rust/FFI change; one cancellable iterator, page 200 + one lookahead, query max 256 UTF-16 with surrogate safety, recursion depth 128 explicit error. P05 remains in-progress.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-124",
+      "name": "P05.72 QuickInput 输入校验与命令面板分节",
+      "description": "QuickInput.input 异步版本化校验、初值/历史/取消；multi-select 保留隐藏已选；palette > 前缀与MRU分节。docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
+      "dependencies": [
+        "feat-123"
+      ],
+      "status": "in-progress",
+      "evidence": "Focused QuickInput async/steps/groups/history/commands 28/28 and analyze 0; full init.sh Flutter1381/1381 plus Rust tests/Clippy/core build. Review fixed accept reentrancy/route ownership and selection-only revalidation, regression green; final full guards gates passed Flutter1381/1381, analyze0; complete graph all9/3/448 and main356/382/451 CRITICAL no partial/truncated. Hosted pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

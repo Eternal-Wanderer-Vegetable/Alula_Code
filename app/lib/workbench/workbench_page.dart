@@ -3355,16 +3355,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     // LAY-17c：空查询时最近使用的命令排在前面（其余保持注册顺序）；输入查询后
     // 由 QuickInput 的相关度排序接管，历史只在同分时作为稳定次级顺序。
     final orderedIds = _commandHistory.order(byId.keys.toList());
+    final recentIds = _commandHistory.commandIds.where(byId.containsKey).toSet();
+    QuickItem itemFor(String id) => QuickItem(
+      label: byId[id]!.label,
+      description: _keybindings.shortcutFor(id) ?? byId[id]!.shortcut,
+      commandId: id,
+    );
     QuickInput.show(
       context,
       hint: '输入命令名（> 前缀可省）',
+      queryPrefix: '>',
       onCommandExecuted: _recordCommandPaletteAccept,
       items: [
-        for (final id in orderedIds)
-          QuickItem(
-              label: byId[id]!.label,
-              description: byId[id]!.shortcut,
-              commandId: id),
+        if (recentIds.isNotEmpty)
+          const QuickItem(label: '最近使用', kind: QuickItemKind.separator),
+        for (final id in orderedIds.where(recentIds.contains)) itemFor(id),
+        if (recentIds.isNotEmpty)
+          const QuickItem(label: '其他命令', kind: QuickItemKind.separator),
+        for (final id in orderedIds.where((id) => !recentIds.contains(id))) itemFor(id),
       ],
       commands: _commands,
     );

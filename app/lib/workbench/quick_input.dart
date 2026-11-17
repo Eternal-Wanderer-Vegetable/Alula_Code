@@ -3,6 +3,8 @@
 /// fuzzyScore（label、description 与 detail 三个字段）。
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -81,6 +83,29 @@ class QuickInput {
     return node;
   }
 
+  static Future<String?> input(
+    BuildContext context, {
+    required String prompt,
+    String value = '',
+    FutureOr<String?> Function(String value)? validateInput,
+    List<String> history = const [],
+    FocusNode? restoreFocus,
+  }) async {
+    String? accepted;
+    await show(
+      context,
+      hint: prompt,
+      items: const [],
+      inputMode: true,
+      initialValue: value,
+      validateInput: validateInput,
+      inputHistory: history,
+      restoreFocus: restoreFocus,
+      onInputAccepted: (value) => accepted = value,
+    );
+    return accepted;
+  }
+
   static Future<void> show(
     BuildContext context, {
     required String hint,
@@ -92,6 +117,12 @@ class QuickInput {
     String? validationMessage,
     void Function(List<QuickItem> picked)? onAccept,
     void Function(String commandId)? onCommandExecuted,
+    bool inputMode = false,
+    String initialValue = '',
+    FutureOr<String?> Function(String value)? validateInput,
+    List<String> inputHistory = const [],
+    ValueChanged<String>? onInputAccepted,
+    String? queryPrefix,
   }) {
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
     // 焦点（上游 quickInput 取消恢复语义）；执行/返回都会接管后续焦点。
@@ -117,6 +148,12 @@ class QuickInput {
               validationMessage: validationMessage,
               onAccept: onAccept,
               onCommandExecuted: onCommandExecuted,
+              inputMode: inputMode,
+              initialValue: initialValue,
+              validateInput: validateInput,
+              inputHistory: inputHistory,
+              onInputAccepted: onInputAccepted,
+              queryPrefix: queryPrefix,
               onHandled: () => handled = true,
             ),
           ),
@@ -140,6 +177,12 @@ class _QuickInputPanel extends StatefulWidget {
     this.validationMessage,
     this.onAccept,
     this.onCommandExecuted,
+    required this.inputMode,
+    required this.initialValue,
+    this.validateInput,
+    required this.inputHistory,
+    this.onInputAccepted,
+    this.queryPrefix,
     required this.onHandled,
   });
 
@@ -152,6 +195,12 @@ class _QuickInputPanel extends StatefulWidget {
   final void Function(List<QuickItem> picked)? onAccept;
   final void Function(String commandId)? onCommandExecuted;
   final VoidCallback onHandled;
+  final bool inputMode;
+  final String initialValue;
+  final FutureOr<String?> Function(String value)? validateInput;
+  final List<String> inputHistory;
+  final ValueChanged<String>? onInputAccepted;
+  final String? queryPrefix;
 
   @override
   State<_QuickInputPanel> createState() => _QuickInputPanelState();
@@ -168,6 +217,15 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   final _picked = <QuickItem>{};
   var _filtered = const <QuickItem>[];
   var _selected = 0;
+  int _validationGeneration = 0;
+  bool _validating = false;
+  Future<bool>? _validationTask;
+  String? _validationError;
+  int _historyIndex = -1;
+  String _historyDraft = '';
+  String _lastInputText = '';
+  bool _accepting = false;
+  bool _accepted = false;
 
   @override
   void initState() {
@@ -176,8 +234,11 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     for (final item in widget.items) {
       if (widget.canSelectMany && item.picked) _picked.add(item);
     }
-    _refilter('');
-    _controller.addListener(() => _refilter(_controller.text));
+    _controller.text = widget.initialValue;
+    _lastInputText = _controller.text;
+    _refilter(_controller.text);
+    _controller.addListener(_onInputChanged);
+    if (widget.validateInput != null) unawaited(_validate());
     widget.commands?.addListener(_onCommandsChanged);
   }
 
@@ -193,6 +254,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   void dispose() {
+    _validationGeneration++;
     widget.commands?.removeListener(_onCommandsChanged);
     QuickInput._panelFocusNodes.remove(_focusNode);
     for (final nodes in _buttonFocusNodes.values) {
@@ -208,8 +270,82 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   void _onCommandsChanged() => _refilter(_controller.text);
 
+  void _onInputChanged() {
+    if (_lastInputText == _controller.text) return;
+    _lastInputText = _controller.text;
+    _refilter(_controller.text);
+    if (widget.validateInput != null) unawaited(_validate());
+  }
+
+  Future<bool> _validate() {
+    final task = _runValidation();
+    _validationTask = task;
+    return task;
+  }
+
+  Future<bool> _runValidation() async {
+    final validate = widget.validateInput;
+    if (validate == null) return true;
+    final generation = ++_validationGeneration;
+    final value = _controller.text;
+    setState(() => _validating = true);
+    String? error;
+    try {
+      error = await validate(value);
+    } catch (failure) {
+      error = '校验失败：$failure';
+    }
+    if (!mounted ||
+        generation != _validationGeneration ||
+        value != _controller.text) {
+      return false;
+    }
+    setState(() {
+      _validating = false;
+      _validationError = error;
+    });
+    return error == null || error.isEmpty;
+  }
+
+  Future<void> _acceptInput() async {
+    if (_validating || _accepting || _accepted) return;
+    _accepting = true;
+    final route = ModalRoute.of(context);
+    final value = _controller.text;
+    try {
+      if (!await (_validationTask ?? _validate()) ||
+          !mounted ||
+          route?.isCurrent != true ||
+          value != _controller.text) {
+        return;
+      }
+      _accepted = true;
+      widget.onHandled();
+      Navigator.of(context).pop();
+      widget.onInputAccepted?.call(value);
+    } finally {
+      _accepting = false;
+    }
+  }
+
+  void _navigateHistory(int delta) {
+    final history = widget.inputHistory.take(50).toList();
+    if (history.isEmpty) return;
+    if (_historyIndex < 0) _historyDraft = _controller.text;
+    final next = (_historyIndex + delta).clamp(-1, history.length - 1);
+    if (next == _historyIndex) return;
+    _historyIndex = next;
+    _controller.text = next < 0 ? _historyDraft : history[next];
+    _controller.selection =
+        TextSelection(baseOffset: 0, extentOffset: _controller.text.length);
+  }
+
   void _refilter(String query) {
-    final q = query.trim();
+    var q = query.trim();
+    final prefix = widget.queryPrefix;
+    if (prefix != null && q.startsWith(prefix)) {
+      q = q.substring(prefix.length).trimLeft();
+    }
     final scored = <(QuickItem, int, int)>[];
     for (final (index, item) in widget.items.indexed) {
       if (item.kind == QuickItemKind.separator) {
@@ -321,7 +457,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   void _accept() {
     final picked = [
-      for (final item in _filtered)
+      for (final item in widget.items)
         if (_isSelectable(item) && _picked.contains(item)) item,
     ];
     widget.onHandled();
@@ -350,6 +486,20 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       // 上游：Tab 进入活动条目的行尾按钮；没有按钮时交回默认焦点遍历。
       if (_focusActiveItemButton()) return KeyEventResult.handled;
       return KeyEventResult.ignored;
+    }
+    if (widget.inputMode && event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      _navigateHistory(-1);
+      return KeyEventResult.handled;
+    }
+    if (widget.inputMode && event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      _navigateHistory(1);
+      return KeyEventResult.handled;
+    }
+    if (widget.inputMode &&
+        (event.logicalKey == LogicalKeyboardKey.enter ||
+            event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
+      unawaited(_acceptInput());
+      return KeyEventResult.handled;
     }
     if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
       _moveSelection(1);
@@ -428,7 +578,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
               ],
             ),
           ),
-          if (widget.validationMessage case final message?
+          if ((_validationError ?? widget.validationMessage) case final message?
               when message.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 14, right: 14, bottom: 6),
@@ -441,24 +591,29 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                 ),
               ),
             ),
-          const Divider(height: 1),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 340),
-            child: _filtered.isEmpty
-                ? Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Text('无匹配项',
-                        style: TextStyle(
-                            color: Colors.grey.shade500, fontSize: 12)),
-                  )
-                : ListView.builder(
-                    controller: _scroll,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    itemCount: _filtered.length,
-                    itemBuilder: (context, i) => _buildRow(_filtered[i], i),
-                  ),
-          ),
+          if (_validating)
+            const LinearProgressIndicator(
+                key: ValueKey('quick-input-validating'), minHeight: 2),
+          if (!widget.inputMode) ...[
+            const Divider(height: 1),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 340),
+              child: _filtered.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Text('无匹配项',
+                          style: TextStyle(
+                              color: Colors.grey.shade500, fontSize: 12)),
+                    )
+                  : ListView.builder(
+                      controller: _scroll,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      itemCount: _filtered.length,
+                      itemBuilder: (context, i) => _buildRow(_filtered[i], i),
+                    ),
+            ),
+          ],
         ],
       ),
     );

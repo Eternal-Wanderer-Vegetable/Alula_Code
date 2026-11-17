@@ -34,7 +34,7 @@ void main() {
     await _mountApp(tester);
     try {
       await _openPalette(tester);
-      await tester.enterText(_inputFinder(), '移动视图');
+      await tester.enterText(_inputFinder(), '> 移动视图');
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('qi-查看: 移动视图…')));
       await tester.pumpAndSettle();
@@ -44,6 +44,8 @@ void main() {
           commandHistoryStore.load().commandIds, ['workbench.action.moveView']);
 
       await _openPalette(tester);
+      expect(find.byKey(const ValueKey('qi-separator-最近使用')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qi-separator-其他命令')), findsOneWidget);
       expect(
           _rowTop(tester, '查看: 移动视图…'), lessThan(_rowTop(tester, '文件: 新建文本文件')),
           reason: '最近使用的命令在空查询里排到最前');
@@ -54,6 +56,8 @@ void main() {
       await _unmountApp(tester);
       await _mountApp(tester);
       await _openPalette(tester);
+      expect(find.byKey(const ValueKey('qi-separator-最近使用')), findsOneWidget);
+      expect(find.byKey(const ValueKey('qi-separator-其他命令')), findsOneWidget);
       expect(
           _rowTop(tester, '查看: 移动视图…'), lessThan(_rowTop(tester, '文件: 新建文本文件')),
           reason: '历史跨重启恢复并继续参与排序');

@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；P05.1–P05.70 子项已完成；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.72 QuickInput 输入校验；目标整体完成 P05
+
+- 2026-11-17：P05.71 初版29924ce与固定评分/导航d3e537b已推。1378/1378全量、3482实际upstream score/range对拍、50专项与35 Explorer交互专项、analyze0；初版hosted全绿，d3e537b CI44007182727通过、Platform44007176331 Linux/Windows通过macOS运行。当前P05.72异步QuickInput.input/历史/校验/取消与MRU分节、>前缀、多选隐藏picked保留，28专项与1381全量通过；评审修复接受重入与selection-only revalidation，最终guards门禁运行。
 
 - 2026-11-17：用户授权连续完成整个 P05，中间不停止等待普通进度批准。P05.70 hosted closeout 完成：产品 CI 43992774712、证据 CI 43996231773、Platform 43992763968 三平台全绿；macOS package 14290614081 SHA-256 4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497 与 sidecar 一致，81 项 ZIP 完整；native Quit 14290374408 成功，DnD 14291206588 pointer route unavailable 明确 skip。连续实施启动基线 Flutter 1360/1360 全绿。当前 P05.71 / feat-123 LAY-16b tree find/filter 本地完成：定向 41/41、全量 Flutter 1369/1369、Rust/Clippy/core build、fmt/analyze、Harness 全绿。异步目录搜索、祖先投影、200+1 分页、UTF16 query/close/cancel/focus、F3 context、Unicode type navigation；评审边界已修。图谱完整 all 13/9/440 CRITICAL、main 累计 336/583/444 CRITICAL。hosted 等提交后补录。
 
