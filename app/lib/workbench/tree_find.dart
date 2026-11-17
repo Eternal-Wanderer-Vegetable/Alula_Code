@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 
+import 'tree_fuzzy_score.dart';
+
 class TreeFindEntry {
   const TreeFindEntry(this.path, {required this.isDirectory});
   final String path;
@@ -31,6 +33,9 @@ class TreeFindController extends ChangeNotifier {
   List<String> get paths => entries.map((entry) => entry.path).toList();
   String? _root;
   String _previousQuery = '';
+  final List<String> _history = [];
+  int _historyIndex = -1;
+  String _historyDraft = '';
   StreamIterator<TreeFindEntry>? _iterator;
   TreeFindEntry? _lookahead;
   int _generation = 0;
@@ -51,6 +56,7 @@ class TreeFindController extends ChangeNotifier {
   }
 
   void close() {
+    rememberQuery();
     _previousQuery = query;
     isOpen = false;
     query = '';
@@ -65,6 +71,35 @@ class TreeFindController extends ChangeNotifier {
     _root = root;
     close();
     _previousQuery = '';
+    _history.clear();
+    _historyIndex = -1;
+    _historyDraft = '';
+  }
+
+  void rememberQuery() {
+    if (query.isEmpty) return;
+    _history.remove(query);
+    _history.insert(0, query);
+    if (_history.length > 20) _history.removeLast();
+    _historyIndex = -1;
+  }
+
+  bool navigateHistory({required bool previous}) {
+    if (previous) {
+      if (_history.isEmpty || _historyIndex + 1 >= _history.length) {
+        return false;
+      }
+      if (_historyIndex < 0) _historyDraft = query;
+      _historyIndex++;
+      setQuery(_history[_historyIndex]);
+    } else {
+      if (_historyIndex < 0) return false;
+      _historyIndex--;
+      setQuery(_historyIndex < 0 ? _historyDraft : _history[_historyIndex]);
+    }
+    input.selection =
+        TextSelection(baseOffset: 0, extentOffset: input.text.length);
+    return true;
   }
 
   void setQuery(String value) {
@@ -221,18 +256,59 @@ class TreeFindController extends ChangeNotifier {
   }
 }
 
-bool matchesTreeFind(String query, String name, {required bool fuzzy}) {
+bool matchesTreeFind(String query, String name, {required bool fuzzy}) =>
+    treeFindMatchRanges(query, name, fuzzy: fuzzy) != null;
+
+/// Ranges refer to the original label in UTF-16, including case-fold expansions.
+List<TextRange>? treeFindMatchRanges(String query, String name,
+    {required bool fuzzy}) {
   final pattern = query.toLowerCase();
-  final text = name.toLowerCase();
-  if (!fuzzy) return text.contains(pattern);
-  var offset = 0;
-  for (final rune in pattern.runes) {
-    final character = String.fromCharCode(rune);
-    final found = text.indexOf(character, offset);
-    if (found < 0) return false;
-    offset = found + character.length;
+  if (pattern.isEmpty) return const [];
+  if (fuzzy) {
+    return treeFuzzyScore(query, name)
+        ?.matches
+        .map((match) => TextRange(start: match.start, end: match.end))
+        .toList();
   }
-  return true;
+  final folded = StringBuffer();
+  final starts = <int>[];
+  final ends = <int>[];
+  var sourceOffset = 0;
+  for (final rune in name.runes) {
+    final character = String.fromCharCode(rune);
+    final lower = character.toLowerCase();
+    folded.write(lower);
+    for (var i = 0; i < lower.length; i++) {
+      starts.add(sourceOffset);
+      ends.add(sourceOffset + character.length);
+    }
+    sourceOffset += character.length;
+  }
+  final text = folded.toString();
+  final start = text.indexOf(pattern);
+  if (start < 0) return null;
+  return [
+    TextRange(start: starts[start], end: ends[start + pattern.length - 1])
+  ];
+}
+
+TextSpan treeFindLabel(String query, String name, {required bool fuzzy}) {
+  final matches = treeFindMatchRanges(query, name, fuzzy: fuzzy);
+  if (matches == null || matches.isEmpty) return TextSpan(text: name);
+  final spans = <TextSpan>[];
+  var offset = 0;
+  for (final match in matches) {
+    if (match.start > offset) {
+      spans.add(TextSpan(text: name.substring(offset, match.start)));
+    }
+    spans.add(TextSpan(
+        text: name.substring(match.start, match.end),
+        style: const TextStyle(
+            color: Color(0xFF2AAFFF), fontWeight: FontWeight.bold)));
+    offset = match.end;
+  }
+  if (offset < name.length) spans.add(TextSpan(text: name.substring(offset)));
+  return TextSpan(children: spans);
 }
 
 class TreeFindBar extends StatelessWidget {
@@ -253,8 +329,17 @@ class TreeFindBar extends StatelessWidget {
             onClose();
             return KeyEventResult.handled;
           }
+          if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+            controller.navigateHistory(previous: true);
+            return KeyEventResult.handled;
+          }
+          if (event.logicalKey == LogicalKeyboardKey.arrowDown &&
+              controller.navigateHistory(previous: false)) {
+            return KeyEventResult.handled;
+          }
           if (event.logicalKey == LogicalKeyboardKey.enter ||
               event.logicalKey == LogicalKeyboardKey.arrowDown) {
+            controller.rememberQuery();
             onReturnToTree();
             return KeyEventResult.handled;
           }
@@ -262,39 +347,54 @@ class TreeFindBar extends StatelessWidget {
         },
         child:
             Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Container(
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
               key: const ValueKey('tree-find-bar'),
-              color: const Color(0xFF252526),
-              padding: const EdgeInsets.all(4),
-              child: Row(children: [
-                Expanded(
-                    child: TextField(
-                  key: const ValueKey('tree-find-input'),
-                  controller: controller.input,
-                  focusNode: controller.inputFocus,
-                  style: const TextStyle(fontSize: 12),
-                  decoration: const InputDecoration(
-                      isDense: true,
-                      hintText: '查找',
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 6, vertical: 6)),
-                  onChanged: controller.setQuery,
-                )),
-                _toggle('tree-find-filter', '筛选', Icons.filter_alt_outlined,
-                    controller.filter, controller.toggleFilter),
-                _toggle('tree-find-fuzzy', '模糊匹配', Icons.text_fields,
-                    controller.fuzzy, controller.toggleFuzzy),
-                SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: IconButton(
-                        key: const ValueKey('tree-find-close'),
-                        padding: EdgeInsets.zero,
-                        tooltip: '关闭查找',
-                        iconSize: 16,
-                        onPressed: onClose,
-                        icon: const Icon(Icons.close))),
-              ])),
+              constraints: const BoxConstraints(maxWidth: 208),
+              margin: const EdgeInsets.only(left: 6, right: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF252526),
+                border: Border.all(color: const Color(0xFF454545)),
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Radius.circular(4)),
+              ),
+              padding: const EdgeInsets.all(3),
+              child: SizedBox(
+                  height: 23,
+                  child: Row(children: [
+                    Expanded(
+                        child: TextField(
+                      key: const ValueKey('tree-find-input'),
+                      controller: controller.input,
+                      focusNode: controller.inputFocus,
+                      style: const TextStyle(fontSize: 13),
+                      decoration: const InputDecoration(
+                          isDense: true,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.zero),
+                          hintText: '查找',
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 4, vertical: 2)),
+                      onChanged: controller.setQuery,
+                    )),
+                    _toggle('tree-find-filter', '筛选', Icons.filter_alt_outlined,
+                        controller.filter, controller.toggleFilter),
+                    _toggle('tree-find-fuzzy', '模糊匹配', Icons.text_fields,
+                        controller.fuzzy, controller.toggleFuzzy),
+                    SizedBox(
+                        width: 24,
+                        height: 20,
+                        child: IconButton(
+                            key: const ValueKey('tree-find-close'),
+                            padding: EdgeInsets.zero,
+                            tooltip: '关闭查找',
+                            iconSize: 16,
+                            onPressed: onClose,
+                            icon: const Icon(Icons.close))),
+                  ])),
+            ),
+          ),
           if (controller.filter && controller.query.isNotEmpty)
             Semantics(
                 liveRegion: true,
@@ -325,8 +425,8 @@ class TreeFindBar extends StatelessWidget {
           label: label,
           toggled: selected,
           child: SizedBox(
-              width: 24,
-              height: 24,
+              width: 22,
+              height: 20,
               child: IconButton(
                   key: ValueKey(key),
                   tooltip: label,

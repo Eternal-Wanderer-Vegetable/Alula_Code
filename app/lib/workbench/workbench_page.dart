@@ -578,6 +578,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final TreeFindController _treeFind = TreeFindController();
   List<TreeNode> _treeFindRoots = [];
   String _treeFindPathsKey = '';
+  String? _treeKeyboardPath;
+  final ScrollController _treeScroll = ScrollController();
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _zenMode = false;
   bool _zenPreZenSidebarCollapsed = false;
@@ -12197,24 +12199,52 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _closeTreeFind();
       return KeyEventResult.handled;
     }
-    if (!_treeFind.inputFocus.hasFocus &&
-        (event.logicalKey == LogicalKeyboardKey.arrowDown ||
-            event.logicalKey == LogicalKeyboardKey.arrowUp)) {
-      final files = _visibleExplorerFiles();
-      if (files.isEmpty) return KeyEventResult.handled;
-      final selected = files.indexWhere((file) => _isExplorerFileSelected(file.path));
-      final step = event.logicalKey == LogicalKeyboardKey.arrowDown ? 1 : -1;
-      final next = (selected < 0 ? (step > 0 ? 0 : files.length - 1) : selected + step)
-          .clamp(0, files.length - 1);
-      _selectExplorerFile(files[next]);
-      return KeyEventResult.handled;
-    }
-    if (!_treeFind.inputFocus.hasFocus &&
-        event.logicalKey == LogicalKeyboardKey.enter) {
-      final selected = _visibleExplorerFiles()
-          .where((file) => _isExplorerFileSelected(file.path)).firstOrNull;
-      if (selected != null) _openTreeFile(selected);
-      return KeyEventResult.handled;
+    if (!_treeFind.inputFocus.hasFocus) {
+      final nodes = _visibleExplorerNodes();
+      final selectedIndex = nodes.indexWhere((item) => item.path == _treeKeyboardPath);
+      final selected = selectedIndex < 0 ? null : nodes[selectedIndex];
+      final key = event.logicalKey;
+      if (key == LogicalKeyboardKey.arrowDown || key == LogicalKeyboardKey.arrowUp) {
+        if (nodes.isEmpty) return KeyEventResult.handled;
+        final step = key == LogicalKeyboardKey.arrowDown ? 1 : -1;
+        final next = (selectedIndex < 0 ? (step > 0 ? 0 : nodes.length - 1) : selectedIndex + step)
+            .clamp(0, nodes.length - 1);
+        _focusExplorerNode(nodes[next]);
+        return KeyEventResult.handled;
+      }
+      if (key == LogicalKeyboardKey.arrowRight && selected != null) {
+        if (selected.isDir && !selected.expanded) {
+          unawaited(_toggleDir(selected));
+        } else if (selected.isDir && selected.children?.isNotEmpty == true) {
+          _focusExplorerNode(selected.children!.first);
+        }
+        return KeyEventResult.handled;
+      }
+      if (key == LogicalKeyboardKey.arrowLeft && selected != null) {
+        if (selected.isDir && selected.expanded) {
+          unawaited(_toggleDir(selected));
+        } else {
+          final parent = nodes.where((item) => item.isDir &&
+              _canonicalPath(item.path) == _canonicalPath(p.dirname(selected.path))).firstOrNull;
+          if (parent != null) _focusExplorerNode(parent);
+        }
+        return KeyEventResult.handled;
+      }
+      if (key == LogicalKeyboardKey.space && selected?.isDir == true) {
+        unawaited(_toggleDir(selected!));
+        return KeyEventResult.handled;
+      }
+      if ((key == LogicalKeyboardKey.enter ||
+              (defaultTargetPlatform == TargetPlatform.macOS &&
+                  HardwareKeyboard.instance.isMetaPressed &&
+                  key == LogicalKeyboardKey.arrowDown)) && selected != null) {
+        if (selected.isDir) {
+          unawaited(_toggleDir(selected));
+        } else {
+          _openTreeFile(selected);
+        }
+        return KeyEventResult.handled;
+      }
     }
     final character = event.character;
     if (character == null || character.isEmpty) {
@@ -12229,12 +12259,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (lower.runes.any((rune) => rune < 0x20 || rune == 0x7F)) {
       return KeyEventResult.ignored;
     }
+    if ((_treeTypeAheadBuffer.length + lower.length) > TreeFindController.maxQueryLength) {
+      _treeTypeAheadBuffer = '';
+    }
     _treeTypeAheadBuffer += lower;
     _treeTypeAheadTimer?.cancel();
     _treeTypeAheadTimer = Timer(const Duration(milliseconds: 500), () {
       if (mounted) setState(() => _treeTypeAheadBuffer = '');
     });
-    final matches = _visibleExplorerFiles()
+    final matches = _visibleExplorerNodes()
         .where((node) =>
             node.name.toLowerCase().startsWith(_treeTypeAheadBuffer))
         .toList();
@@ -12243,16 +12276,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return KeyEventResult.handled;
     }
     final target = matches.first;
-    _selectExplorerFile(target);
+    _focusExplorerNode(target);
     setState(() {});
     return KeyEventResult.handled;
   }
 
-  List<TreeNode> _visibleExplorerFiles() {
+  void _focusExplorerNode(TreeNode node) {
+    _treeKeyboardPath = node.path;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_treeScroll.hasClients) return;
+      final nodes = _visibleExplorerNodes();
+      final index = nodes.indexWhere((item) => item.path == node.path);
+      if (index < 0) return;
+      final top = index * 22.0;
+      final position = _treeScroll.position;
+      if (top < position.pixels) {
+        position.jumpTo(top.clamp(0, position.maxScrollExtent));
+      } else if (top + 22 > position.pixels + position.viewportDimension) {
+        position.jumpTo((top + 22 - position.viewportDimension)
+            .clamp(0, position.maxScrollExtent));
+      }
+    });
+    if (node.isDir) {
+      setState(() {});
+    } else {
+      _selectExplorerFile(node);
+    }
+  }
+
+  List<TreeNode> _visibleExplorerNodes() {
     final result = <TreeNode>[];
     void visit(List<TreeNode> nodes) {
       for (final node in nodes) {
-        if (node.path.isNotEmpty && !node.isDir) result.add(node);
+        if (node.path.isNotEmpty) result.add(node);
         if (node.isDir && node.expanded && node.children != null) {
           visit(node.children!);
         }
@@ -12262,6 +12318,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     visit(_displayedTreeRoots);
     return result;
   }
+
+  List<TreeNode> _visibleExplorerFiles() =>
+      _visibleExplorerNodes().where((node) => !node.isDir).toList();
 
   bool _isExplorerFileSelected(String path) => _explorerMultiSelection
       .any((selected) => _canonicalPath(selected) == _canonicalPath(path));
@@ -12281,6 +12340,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _selectExplorerFile(TreeNode node) {
     if (node.isDir || node.path.isEmpty) return;
+    _treeKeyboardPath = node.path;
     final visibleFiles = _visibleExplorerFiles();
     final clickedPath = _canonicalPath(node.path);
     final clickedIndex = visibleFiles.indexWhere(
@@ -19472,6 +19532,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _treeFind.removeListener(_onTreeFindChanged);
     _treeFind.dispose();
     _treeFocusNode.dispose();
+    _treeScroll.dispose();
     _cancelRegexFind();
     _cancelRegexReplace();
     _pendingDefinitionPointers.clear();
@@ -20487,6 +20548,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Widget _buildSidebar() {
+    final visibleTreeNodes = _visibleExplorerNodes();
+    final treeRoot = _workspaceRoot;
     return Container(
       color: const Color(0xFF181B20),
       child: Column(
@@ -20536,9 +20599,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           onReturnToTree: _treeFocusNode.requestFocus,
                         ),
                       Expanded(child: ListView.builder(
-                        itemCount: _displayedTreeRoots.length,
-                        itemBuilder: (context, i) =>
-                            _buildNode(_displayedTreeRoots[i], 0),
+                        controller: _treeScroll,
+                        itemExtent: 22,
+                        itemCount: visibleTreeNodes.length,
+                        itemBuilder: (context, i) {
+                          final node = visibleTreeNodes[i];
+                          final depth = treeRoot == null ? 0 :
+                              (p.split(p.relative(node.path, from: treeRoot)).length - 1)
+                                  .clamp(0, TreeFindController.maxDirectoryDepth);
+                          return _buildNode(node, depth, includeChildren: false);
+                        },
                       )),
                     ]),
                   ),
@@ -20769,7 +20839,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  Widget _buildNode(TreeNode node, int depth) {
+  Widget _buildNode(TreeNode node, int depth, {bool includeChildren = true}) {
     final activePaths = _allDocs.map((d) => d.path).toSet();
     final compareSelection = _explorerCompareSelection;
     final isSelectedForCompare = compareSelection != null &&
@@ -20778,6 +20848,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _canonicalPath(node.path);
     final isExplorerMultiSelected =
         !node.isDir && _isExplorerFileSelected(node.path);
+    final isKeyboardFocused = _treeFocusNode.hasFocus && _treeKeyboardPath == node.path;
     return Column(children: [
       InkWell(
         key: ValueKey('explorer-node:${node.path}'),
@@ -20786,6 +20857,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             : (details) => unawaited(
                 _showExplorerCompareContextMenu(node, details.globalPosition)),
         onTap: () {
+          _treeKeyboardPath = node.path;
           if (node.isDir) {
             setState(() {
               _explorerMultiSelection.clear();
@@ -20803,8 +20875,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
         },
         child: Container(
-          padding: EdgeInsets.only(left: 8.0 + depth * 14, top: 3, bottom: 3),
-          color: isExplorerMultiSelected
+          height: 22,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(left: 8.0 + depth * 14),
+          color: isExplorerMultiSelected || isKeyboardFocused
               ? const Color(0xFF24476D)
               : activePaths.contains(node.path)
                   ? const Color(0xFF20252E)
@@ -20822,22 +20896,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ),
               const SizedBox(width: 6),
               Expanded(
-                child: Text(node.name,
-                    style: TextStyle(
-                      fontSize: 12,
-                      backgroundColor: _treeFind.isOpen &&
-                              _treeFind.query.isNotEmpty &&
-                              _treeFind.matches(node.name)
-                          ? const Color(0xFF5E4A16)
-                          : null,
-                    ),
-                    overflow: TextOverflow.ellipsis),
+                child: !_treeFind.isOpen || _treeFind.query.isEmpty
+                    ? Text(node.name,
+                        style: const TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis)
+                    : Text.rich(
+                        treeFindLabel(_treeFind.query, node.name, fuzzy: _treeFind.fuzzy),
+                        style: const TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis),
               ),
             ],
           ),
         ),
       ),
-      if (node.isDir && node.expanded && node.children != null)
+      if (includeChildren && node.isDir && node.expanded && node.children != null)
         ...node.children!.map((c) => _buildNode(c, depth + 1)),
     ]);
   }

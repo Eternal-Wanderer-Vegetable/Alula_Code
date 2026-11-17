@@ -14,6 +14,36 @@ void main() {
     expect(matchesTreeFind('42', 'file-42.rs', fuzzy: false), isTrue);
   });
 
+  test('highlight ranges are UTF-16 offsets of the matched characters', () {
+    final fuzzy = treeFindMatchRanges('mrs', 'main.rs', fuzzy: true)!;
+    expect(fuzzy.map((range) => (range.start, range.end)), [(0, 1), (5, 7)]);
+    final unicode = treeFindMatchRanges('😀文', '😀中文.txt', fuzzy: true)!;
+    expect(unicode.map((range) => (range.start, range.end)), [(0, 2), (3, 4)]);
+    expect(
+        treeFindLabel('mrs', 'main.rs', fuzzy: true).toPlainText(), 'main.rs');
+  });
+
+  test('query history restores drafts and clears across workspaces', () {
+    final controller = TreeFindController();
+    controller.setQuery('first');
+    controller.rememberQuery();
+    controller.setQuery('second');
+    controller.rememberQuery();
+    controller.setQuery('draft');
+    expect(controller.navigateHistory(previous: true), isTrue);
+    expect(controller.query, 'second');
+    expect(controller.navigateHistory(previous: true), isTrue);
+    expect(controller.query, 'first');
+    expect(controller.navigateHistory(previous: false), isTrue);
+    expect(controller.query, 'second');
+    expect(controller.navigateHistory(previous: false), isTrue);
+    expect(controller.query, 'draft');
+    expect(controller.navigateHistory(previous: false), isFalse);
+    controller.workspaceChanged(null);
+    expect(controller.navigateHistory(previous: true), isFalse);
+    controller.dispose();
+  });
+
   test('filter finds unloaded descendants and close remembers only the query',
       () async {
     final temp = await Directory.systemTemp.createTemp('tree-find');

@@ -1,0 +1,63 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: find matches fuzzy or contiguous labels including Unicode
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: highlight ranges are UTF-16 offsets of the matched characters
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: query history restores drafts and clears across workspaces
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: filter finds unloaded descendants and close remembers only the query
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: closing an in-flight search rejects stale results
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: unreadable root reports an error instead of keeping pending state
+00:00 +6: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: folder matches exclude git internals before traversal
+00:00 +7: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: UTF-16 query limit never splits a surrogate pair or hides truncation
+00:00 +8: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: exactly one page does not offer a destructive empty next page
+00:00 +9: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: paging bounds retained paths and keeps later matches reachable
+00:00 +10: loading E:/temp/alula-pr3-20261117/app/test/workbench_tree_find_test.dart
+00:00 +10: E:/temp/alula-pr3-20261117/app/test/workbench_tree_find_test.dart: tree find filters unloaded files, restores the tree and focus
+00:02 +11: loading E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart
+00:02 +11: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: typing characters jumps to the first matching visible item
+00:03 +12: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: the buffer resets after the idle timeout
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: modifier chords are ignored by type navigation
+00:04 +14: loading E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart
+00:04 +14: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (setUpAll)
+00:04 +14: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo
+00:13 +15: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group
+00:16 +16: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+00:25 +17: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands
+00:27 +18: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save
+00:31 +19: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit
+00:39 +20: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group
+00:45 +21: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open
+00:48 +22: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (tearDownAll)
+00:48 +22: loading E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart
+00:48 +22: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: (setUpAll)
+00:48 +22: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: disk original is frozen with decoded text and modified side saves the Rust document
+00:53 +23: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Ctrl multi-selection compares in click order and saves the editable side
+00:58 +24: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: macOS Command toggles files and Shift selects visible Explorer ranges
+00:58 +25: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Revert Block restores one hunk and stays undoable
+01:03 +26: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Revert Selection and command palette Revert target exact hunks
+01:06 +27: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: block revert handles inserted and deleted empty lines
+01:10 +28: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: block revert preserves BOM, CRLF and non-BMP text on save
+01:15 +29: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: revert waits for a current diff after IME preedit commits on blur
+01:18 +30: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: an open dirty original is captured once and stays frozen
+01:21 +31: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: selection cancels if an open source document changes in flight
+01:22 +32: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: files only get compare actions; deleted originals and workspace switches are rejected
+01:26 +33: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: oversized original is rejected before a compare preview opens
+01:28 +34: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: diff row budget rejects the complete Explorer comparison
+01:31 +35: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: (tearDownAll)
+01:32 +35: All tests passed!

@@ -84,6 +84,14 @@ void main() {
     expect(explorerFileNode(alpha.path), findsOneWidget);
     expect(explorerFileNode(file.path), findsNothing);
     expect(focus.hasFocus, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyN, character: 'n');
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.pump();
+    expect(explorerFileNode(file.path), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump();
+    expect(explorerFileNode(file.path), findsNothing);
     await tester.sendKeyEvent(LogicalKeyboardKey.f3);
     await tester.pump();
     await tester.pump();
