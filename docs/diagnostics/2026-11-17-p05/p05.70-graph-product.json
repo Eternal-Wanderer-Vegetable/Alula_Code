@@ -1,0 +1,1957 @@
+{
+  "summary": {
+    "changed_count": 11,
+    "affected_count": 103,
+    "changed_files": 26,
+    "risk_level": "critical"
+  },
+  "changed_symbols": [
+    {
+      "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+      "name": "_WorkbenchPageState",
+      "type": "Class",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/helpers/file_paths.dart:nativeTestPath",
+      "name": "nativeTestPath",
+      "type": "Function",
+      "filePath": "app/test/helpers/file_paths.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/helpers/file_paths.dart:workbenchFileUri",
+      "name": "workbenchFileUri",
+      "type": "Function",
+      "filePath": "app/test/helpers/file_paths.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/helpers/file_paths.dart:explorerFileNode",
+      "name": "explorerFileNode",
+      "type": "Function",
+      "filePath": "app/test/helpers/file_paths.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Class:app/test/workbench_bulk_edit_review_test.dart:_WorkbenchFixture",
+      "name": "_WorkbenchFixture",
+      "type": "Class",
+      "filePath": "app/test/workbench_bulk_edit_review_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Function:app/test/workspace_edit_transaction_test.dart:_uriFor",
+      "name": "_uriFor",
+      "type": "Function",
+      "filePath": "app/test/workspace_edit_transaction_test.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L1:03 · 里程碑计划与验收标准",
+      "name": "03 · 里程碑计划与验收标准",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L3:当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+      "name": "当前主线：VS Code 无插件全功能 1:1（2026-10-27 重规划）",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L12:N.1 当前状态与依赖",
+      "name": "N.1 当前状态与依赖",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/03-里程碑计划与验收标准.md:L25:P01 受控切片（当前调度依据）",
+      "name": "P01 受控切片（当前调度依据）",
+      "type": "Section",
+      "filePath": "docs/03-里程碑计划与验收标准.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "",
+      "name": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.70-windows-path-identity.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": [
+    {
+      "id": "proc_0_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 10
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 9
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_1_build",
+      "name": "Build → _parseUnary",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 10
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 9
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_2_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 10
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 9
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_4_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_6_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_15_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_16_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_27_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_44_build",
+      "name": "Build → _wordSpans",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_59_initstate",
+      "name": "InitState → Hunk",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_60_build",
+      "name": "Build → NormalizeActivityBarViewOrder",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_61_initstate",
+      "name": "InitState → AuxiliaryFocusContextSnapshot",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_62_initstate",
+      "name": "InitState → _transferResponse",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_63_initstate",
+      "name": "InitState → _updateNativeWindowTitle",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_65__buildeditor",
+      "name": "_buildEditor → _ownerOfView",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_88_build",
+      "name": "Build → _selectResource",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_89_build",
+      "name": "Build → _headerCell",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_90_build",
+      "name": "Build → _rowKindLabel",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_96_build",
+      "name": "Build → _bulkAcceptButton",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_97_planacceptall",
+      "name": "PlanAcceptAll → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_98_planacceptall",
+      "name": "PlanAcceptAll → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_99_planacceptall",
+      "name": "PlanAcceptAll → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_121_initstate",
+      "name": "InitState → _Owner",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_122_run",
+      "name": "Run → CargokitUserOptions",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_128_create",
+      "name": "Create → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_167_build",
+      "name": "Build → _resourceName",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_171_paint",
+      "name": "Paint → EditorPrimaryScrollPosition",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_172_build",
+      "name": "Build → _buildResultPane",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_173_planacceptall",
+      "name": "PlanAcceptAll → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_174_planacceptall",
+      "name": "PlanAcceptAll → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_175_planacceptall",
+      "name": "PlanAcceptAll → _operationsFor",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_176_planacceptall",
+      "name": "PlanAcceptAll → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_184_push",
+      "name": "Push → _enforce",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_188_build",
+      "name": "Build → _handleGlobalActionKey",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_189_build",
+      "name": "Build → _handleViewKey",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_190_build",
+      "name": "Build → _findMainWindowController",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_191_initstate",
+      "name": "InitState → AuxiliaryFocusContextEvent",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_192_initstate",
+      "name": "InitState → ToMap",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_216_create",
+      "name": "Create → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_217_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 10
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 9
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_218_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 10,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 10
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 9
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_220_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_222_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_228_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_229_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_234_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_253_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_254_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_255_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_262_messagehandler",
+      "name": "MessageHandler → WindowClassRegistrar",
+      "process_type": "intra_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_265_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_266_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_267_planresolveconflict",
+      "name": "PlanResolveConflict → _operationsFor",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_268_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_274_messagehandler",
+      "name": "MessageHandler → OnDestroy",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_275_build",
+      "name": "Build → _match",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_276_build",
+      "name": "Build → _truthy",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 8
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 7
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_278_build",
+      "name": "Build → _tokenize",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_280_runbuildcommand",
+      "name": "RunBuildCommand → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 8,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_286_runbuildcommand",
+      "name": "RunBuildCommand → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_287_runbuildcommand",
+      "name": "RunBuildCommand → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 6
+        }
+      ]
+    },
+    {
+      "id": "proc_291_runbuildcommand",
+      "name": "RunBuildCommand → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_292_run",
+      "name": "Run → ExecutablePath",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_300_paint",
+      "name": "Paint → EditorLogicalLine",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_304_planresolveconflict",
+      "name": "PlanResolveConflict → ResyncResult",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_305_planresolveconflict",
+      "name": "PlanResolveConflict → _ensureActive",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_306_planresolveconflict",
+      "name": "PlanResolveConflict → AlulaMergeException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_310_planresolveconflict",
+      "name": "PlanResolveConflict → _applyReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_311_planresolveconflict",
+      "name": "PlanResolveConflict → _normalizeReplacements",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_312_planresolveconflict",
+      "name": "PlanResolveConflict → MergeResultSessionException",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_315_run",
+      "name": "Run → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 7,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_321_run",
+      "name": "Run → CargoBuildOptions",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_322_run",
+      "name": "Run → PrecompiledBinaries",
+      "process_type": "cross_community",
+      "step_count": 6,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 5
+        }
+      ]
+    },
+    {
+      "id": "proc_325_run",
+      "name": "Run → CargokitCrateOptions",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 4
+        }
+      ]
+    },
+    {
+      "id": "proc_330_finishaccept",
+      "name": "FinishAccept → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_331_finishaccept",
+      "name": "FinishAccept → _ensureActive",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_336_run",
+      "name": "Run → SourceSpanException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        }
+      ]
+    },
+    {
+      "id": "proc_346_finishclose",
+      "name": "FinishClose → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_347_recordsavepoint",
+      "name": "RecordSavepoint → _ensureActive",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 3
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_357_recordsavepoint",
+      "name": "RecordSavepoint → ResyncResult",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_369_planacceptall",
+      "name": "PlanAcceptAll → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_371_finishaccept",
+      "name": "FinishAccept → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_373_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_375_finishclose",
+      "name": "FinishClose → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_377_planresolveconflict",
+      "name": "PlanResolveConflict → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 5,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_379_planacceptall",
+      "name": "PlanAcceptAll → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_383_planacceptallcombina",
+      "name": "PlanAcceptAllCombinations → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_387_planresolveconflict",
+      "name": "PlanResolveConflict → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_389_finishaccept",
+      "name": "FinishAccept → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_393_finishclose",
+      "name": "FinishClose → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_397_recordsavepoint",
+      "name": "RecordSavepoint → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 4,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_405_columnselectionsutf1",
+      "name": "ColumnSelectionsUtf16 → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_408_lineboundary",
+      "name": "LineBoundary → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_410_start",
+      "name": "Start → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_413_processsnapshot",
+      "name": "ProcessSnapshot → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_416_sampleresourcestatus",
+      "name": "SampleResourceStatus → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_419_recordsavepoint",
+      "name": "RecordSavepoint → AlulaException",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_420_positionoffset",
+      "name": "PositionOffset → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_422_readlines",
+      "name": "ReadLines → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_424_readminimapsample",
+      "name": "ReadMinimapSample → _takeJson",
+      "process_type": "cross_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_444_start",
+      "name": "Start → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        },
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 2
+        }
+      ]
+    },
+    {
+      "id": "proc_446_processsnapshot",
+      "name": "ProcessSnapshot → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    },
+    {
+      "id": "proc_448_sampleresourcestatus",
+      "name": "SampleResourceStatus → _takeJson",
+      "process_type": "intra_community",
+      "step_count": 3,
+      "changed_steps": [
+        {
+          "symbol": "P05.70 / feat-122 — Windows 文件身份与验证基线",
+          "step": 1
+        }
+      ]
+    }
+  ]
+}
