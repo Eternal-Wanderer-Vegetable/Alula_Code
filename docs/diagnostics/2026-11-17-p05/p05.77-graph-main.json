@@ -1,8 +1,8 @@
 {
   "summary": {
-    "changed_count": 271,
+    "changed_count": 277,
     "affected_count": 446,
-    "changed_files": 411,
+    "changed_files": 419,
     "risk_level": "critical"
   },
   "changed_symbols": [
@@ -49,6 +49,13 @@
       "change_type": "touched"
     },
     {
+      "id": "y.evidence@114:30Property:tools/vscode-parity/export-atomic-contribu",
+      "name": "\u0000\u0000\u0000\u0000\u0000\u0000�\u0001\u0000\u0000\u0000\u0000\u0000\u0000�\u0001\u0000\u0000\u0000\u0000",
+      "type": "Property",
+      "filePath": "app/lib/workbench/activity_bar_badges.dart",
+      "change_type": "touched"
+    },
+    {
       "id": "Enum:app/lib/workbench/auxiliary_focus_context.dart:AuxiliaryFocusEventKind",
       "name": "AuxiliaryFocusEventKind",
       "type": "Enum",
@@ -66,6 +73,13 @@
       "id": "Function:app/lib/workbench/document_symbols.dart:buildDocumentSymbolTree",
       "name": "buildDocumentSymbolTree",
       "type": "Function",
+      "filePath": "app/lib/workbench/document_symbols.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "-parity/export-atomic-contributions.mjs:runtimeReachability.sta",
+      "name": "_NAKE_CASE_PATTERN",
+      "type": "Property",
       "filePath": "app/lib/workbench/document_symbols.dart",
       "change_type": "touched"
     },
@@ -105,6 +119,13 @@
       "change_type": "touched"
     },
     {
+      "id": "rity/export-atomic-contributions.mjs:runtimeReachability.evidence@127",
+      "name": "ioncontinuedWithoutSi",
+      "type": "Property",
+      "filePath": "app/lib/workbench/editor_drop_overlay.dart",
+      "change_type": "touched"
+    },
+    {
       "id": "Enum:app/lib/workbench/editor_tab_action_location.dart:EditorTabActionLocation",
       "name": "EditorTabActionLocation",
       "type": "Enum",
@@ -115,6 +136,13 @@
       "id": "Enum:app/lib/workbench/editor_tab_close_policy.dart:EditorTabCloseOperation",
       "name": "EditorTabCloseOperation",
       "type": "Enum",
+      "filePath": "app/lib/workbench/editor_tab_close_policy.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "ence@123:131Property:tools/vscode-parity/export-atomic-contributions.mjs:ru",
+      "name": "_implementationschema_v",
+      "type": "Property",
       "filePath": "app/lib/workbench/editor_tab_close_policy.dart",
       "change_type": "touched"
     },
@@ -157,6 +185,13 @@
       "id": "Enum:app/lib/workbench/editor_tab_sizing.dart:EditorTabSizing",
       "name": "EditorTabSizing",
       "type": "Enum",
+      "filePath": "app/lib/workbench/editor_tab_sizing.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "ity/export-atomic-contributions.mjs:runtimeReachability.statu",
+      "name": "tesconfiguratio",
+      "type": "Property",
       "filePath": "app/lib/workbench/editor_tab_sizing.dart",
       "change_type": "touched"
     },
@@ -231,6 +266,13 @@
       "change_type": "touched"
     },
     {
+      "id": ".discoveryIds@141:2Property:tools/vscode-parity/expor",
+      "name": "QuickItemKind",
+      "type": "Property",
+      "filePath": "app/lib/workbench/quick_input.dart",
+      "change_type": "touched"
+    },
+    {
       "id": "Function:app/lib/workbench/quick_open_query.dart:parseQuickOpenQuery",
       "name": "parseQuickOpenQuery",
       "type": "Function",
@@ -241,6 +283,13 @@
       "id": "Enum:app/lib/workbench/recent_history_store.dart:RecentHistoryKind",
       "name": "RecentHistoryKind",
       "type": "Enum",
+      "filePath": "app/lib/workbench/recent_history_store.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": ":64Property:tools/vscode-parity/export-atomic-contributions.mjs:ru",
+      "name": "gnIninstrumentati",
+      "type": "Property",
       "filePath": "app/lib/workbench/recent_history_store.dart",
       "change_type": "touched"
     },
@@ -259,35 +308,42 @@
       "change_type": "touched"
     },
     {
-      "id": "proc_336_run",
+      "id": "ntimeReachability.status@123:11Property:tools/vscode-pa",
+      "name": "ersionreconciliat",
+      "type": "Property",
+      "filePath": "app/lib/workbench/title_bar.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "comm_447",
       "name": "_maxLen",
       "type": "Variable",
       "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
       "change_type": "touched"
     },
     {
-      "id": "proc_337_run",
+      "id": "comm_450",
       "name": "_diagArrow",
       "type": "Variable",
       "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
       "change_type": "touched"
     },
     {
-      "id": "7-p00/p00.4-linux-wpe-2.52.6-",
+      "id": "comm_451",
       "name": "_leftArrow",
       "type": "Variable",
       "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
       "change_type": "touched"
     },
     {
-      "id": "inspector-protocol-run/inspec",
+      "id": "comm_453",
       "name": "_leftLeftArrow",
       "type": "Variable",
       "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
       "change_type": "touched"
     },
     {
-      "id": "tor-protocol-client.pydocs/di",
+      "id": "comm_460",
       "name": "_noScore",
       "type": "Variable",
       "filePath": "app/lib/workbench/tree_fuzzy_score.dart",
@@ -340,6 +396,20 @@
       "name": "WorkbenchTitleBarMode",
       "type": "Enum",
       "filePath": "app/lib/workbench/window_chrome_configuration.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "ity/export-atomic-contributions.mjs:runtimeReachability.evid",
+      "name": "\u0000�\u0001\u0000\u0000\u0000\u0000\u0000\u0000�\u0001\u0000\u0000\u0000\u0000\u0000\u0000",
+      "type": "Property",
+      "filePath": "app/lib/workbench/workbench_page.dart",
+      "change_type": "touched"
+    },
+    {
+      "id": "ence@117:74Property:tools/vscode-parity/export-atomic-contribu",
+      "name": "�\u0001\u0000\u0000\u0000\u0000\u0000\u0000\r\u0002\u0000\u0000\u0000\u0000\u0000\u0000\u0015\u0002\u0000",
+      "type": "Property",
+      "filePath": "app/lib/workbench/workbench_page.dart",
       "change_type": "touched"
     },
     {
@@ -1383,34 +1453,6 @@
       "name": "验证",
       "type": "Section",
       "filePath": "docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
-      "change_type": "touched"
-    },
-    {
-      "id": "cs/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md:L35:登记 CISection:doc",
-      "name": "P05.73 / feat-125 / CMD-03 — 行列与偏移跳转",
-      "type": "Section",
-      "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
-      "change_type": "touched"
-    },
-    {
-      "id": "s/diagnostics/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md:L39:DoDSection",
-      "name": "实现与边界",
-      "type": "Section",
-      "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
-      "change_type": "touched"
-    },
-    {
-      "id": ":docs/diagnostics/2026-11-08-p05/p05.31-editor-tab-wrap-scope.md:L46:�",
-      "name": "图谱与基线",
-      "type": "Section",
-      "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
-      "change_type": "touched"
-    },
-    {
-      "id": "��品实现与本地 DoDSection:docs/diagnostics/2026-11-08-p05/p05.31-editor-",
-      "name": "验证",
-      "type": "Section",
-      "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
       "change_type": "touched"
     },
     {

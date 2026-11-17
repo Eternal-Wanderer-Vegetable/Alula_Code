@@ -2,7 +2,7 @@
   "summary": {
     "changed_count": 15,
     "affected_count": 443,
-    "changed_files": 15,
+    "changed_files": 23,
     "risk_level": "critical"
   },
   "changed_symbols": [
@@ -747,10 +747,6 @@
       "process_type": "cross_community",
       "step_count": 7,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 7
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 5
@@ -2049,10 +2045,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 5
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 4
         },
         {
@@ -2113,15 +2105,15 @@
         },
         {
           "symbol": "expectedAbiVersion",
+          "step": 5
+        },
+        {
+          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
           "symbol": "expectedAbiVersion",
           "step": 1
-        },
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 5
         }
       ]
     },
@@ -5837,10 +5829,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 7
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 5
         },
         {
@@ -7421,10 +7409,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 7
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 5
         },
         {
@@ -8325,10 +8309,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 5
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 3
         },
         {
@@ -8821,10 +8801,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 5
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 3
         },
         {
@@ -9149,10 +9125,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 5
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 3
         },
         {
@@ -9329,10 +9301,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 5
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 3
         },
         {
@@ -9417,10 +9385,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 4
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 1
         },
         {
@@ -9501,10 +9465,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 4
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 1
         },
         {
@@ -9579,10 +9539,6 @@
       "process_type": "cross_community",
       "step_count": 4,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 4
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 2
@@ -9661,10 +9617,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 4
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -9741,10 +9693,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 4
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -9815,10 +9763,6 @@
       "process_type": "cross_community",
       "step_count": 4,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 4
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 2
@@ -9893,10 +9837,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 4
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -9969,10 +9909,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 3
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -10035,10 +9971,6 @@
       "process_type": "cross_community",
       "step_count": 3,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 3
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 2
@@ -10105,10 +10037,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 3
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -10171,10 +10099,6 @@
       "process_type": "cross_community",
       "step_count": 3,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 3
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 2
@@ -10241,10 +10165,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 3
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -10309,10 +10229,6 @@
       "changed_steps": [
         {
           "symbol": "expectedAbiVersion",
-          "step": 3
-        },
-        {
-          "symbol": "expectedAbiVersion",
           "step": 2
         },
         {
@@ -10375,10 +10291,6 @@
       "process_type": "cross_community",
       "step_count": 3,
       "changed_steps": [
-        {
-          "symbol": "expectedAbiVersion",
-          "step": 3
-        },
         {
           "symbol": "expectedAbiVersion",
           "step": 1

@@ -1,0 +1,78 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol picker reports unavailable provider without fake results
+10:00 +0 -1: E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol picker reports unavailable provider without fake results [E]
+  TimeoutException after 0:10:00.000000: Test timed out after 10 minutes.
+  dart:isolate  _RawReceivePort._handleMessage
+
+10:00 +0 -1: E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol query cancellation discards late results
+20:00 +0 -2: E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol query cancellation discards late results [E]
+  TimeoutException after 0:10:00.000000: Test timed out after 10 minutes.
+  dart:isolate  _RawReceivePort._handleMessage
+
+20:00 +0 -2: E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol provider fixture navigates cross-file UTF-16 ranges
+20:00 +1 -2: loading E:/temp/alula-pr3-20261117/app/test/workspace_symbols_ffi_test.dart
+20:00 +1 -2: E:/temp/alula-pr3-20261117/app/test/workspace_symbols_ffi_test.dart: ABI41 workspace symbols preserve ranges and cancel through real FFI
+20:01 +2 -2: loading E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart
+20:02 +2 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: Dart ABI guard accepts v41 and rejects v40
+20:02 +3 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI projection reports unresolved and accepted conflicts
+20:02 +4 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI result ranges shift with Unicode choices and allow deletion
+20:02 +5 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI projection preserves BOM, emoji, CRLF, CR and final newline
+20:02 +6 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate returns a complete non-overlapping edit
+20:02 +7 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate preserves BOM and mixed line endings
+20:02 +8 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI combination candidate reports bounded input and parse errors
+20:02 +9 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: typed combination candidate response rejects malformed envelopes
+20:02 +10 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: real FFI reports malformed and unknown-conflict requests
+20:02 +11 -2: E:/temp/alula-pr3-20261117/app/test/merge_ffi_test.dart: typed projection rejects conflict ranges that do not match result
+20:02 +12 -2: loading E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart
+20:02 +12 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 修饰键组合与裸键
+20:02 +13 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 非法输入返回 null
+20:02 +14 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChordSequence parses two strokes and displays each chord
+20:02 +15 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet occurrence selection defaults use platform commands
+20:02 +16 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet overtype toggle follows the pinned platform keybindings
+20:02 +17 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet word delete follows the pinned platform keybindings
+20:02 +18 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+20:02 +19 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+20:02 +20 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+20:02 +21 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+20:02 +22 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet sticky and editor close commands use the platform defaults
+20:02 +23 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+20:02 +24 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+20:02 +25 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+20:02 +26 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+20:02 +27 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet copy-line defaults coexist with platform column-selection chords
+20:02 +28 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+20:02 +29 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet navigation defaults leave platform word-movement chords available
+20:02 +30 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位
+20:02 +31 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+20:02 +32 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File respects a user keybinding override
+20:02 +33 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户追加：新键位生效
+20:02 +34 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户键位可覆盖与移除双段默认键位
+20:02 +35 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+20:02 +36 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+20:02 +37 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 移除不匹配的键位串：无操作
+20:02 +38 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+20:02 +39 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+20:02 +40 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+20:02 +41 -2: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol picker reports unavailable provider without fake results
+  E:/temp/alula-pr3-20261117/app/test/workbench_workspace_symbols_test.dart: workspace symbol query cancellation discards late results
