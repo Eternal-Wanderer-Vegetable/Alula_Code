@@ -31,4 +31,4 @@ Last Updated: 2026-11-17
 
 ## Next Session First Step
 
-当前 P05.70 已 hosted closeout；P05.71 / feat-123 初版29924ce与固定评分/导航补全d3e537b已推，最终全量1378/1378、3482 scorer对拍、analyze0；初版平台全绿，d3e537b CI44007182727全绿、Platform44007176331 Linux/Windows绿macOS待补。当前 active P05.72 / feat-124 QuickInput.input异步校验/历史/多选隐藏picked/命令面板>与MRU分节，专项28/28、analyze0、首轮全量1381，最终门禁/评审进行中。完成本片后按 docs/plans/p05-completion.md 连续推进，先继续 LAY-16 匹配/其他控件或 LAY-17 的历史/validation，不要停下等待普通批准。保持原工作树不动；commit 前完整 GitNexus detect-changes，UNKNOWN/截断如实登记。更新 docs/03、feature_list.json、progress、handoff 同步。
+当前 P05.70 已 hosted closeout；P05.71 / feat-123 初版29924ce与固定评分/导航补全d3e537b已推，最终全量1378/1378、3482 scorer对拍、analyze0；初版平台全绿，d3e537b CI44007182727全绿、Platform44007176331 Linux/Windows绿macOS待补。P05.72 f92257e最终1381全绿、CI44010850566与Platform44010843172三平台全绿。当前P05.73/feat125行列偏移定位本地完成，全量1386/1386、FFI/widget8/8、analyze0，提交hosted待补；下一Quick Open路径/MRU/可达性，不结束连续P05目标。完成本片后按 docs/plans/p05-completion.md 连续推进，先继续 LAY-16 匹配/其他控件或 LAY-17 的历史/validation，不要停下等待普通批准。保持原工作树不动；commit 前完整 GitNexus detect-changes，UNKNOWN/截断如实登记。更新 docs/03、feature_list.json、progress、handoff 同步。

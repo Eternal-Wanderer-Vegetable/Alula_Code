@@ -242,6 +242,7 @@ class KeybindingSet {
   static const Map<String, String> defaults = {
     'view.commandPalette': 'ctrl+shift+p',
     'view.quickOpen': 'ctrl+p',
+    'workbench.action.gotoLine': 'ctrl+g',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
     'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',

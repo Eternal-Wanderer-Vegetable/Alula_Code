@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；当前 P05.72 QuickInput 输入校验；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.73 行列偏移跳转；目标整体完成 P05
+
+- 2026-11-17：P05.73本地完成，行列/::offset/零基切换、预览/取消多选恢复、有界长行尾部定位；FFI+widget8/8，analyze0，全量Flutter1386/1386及Rust/Clippy/core/fmt全绿。完整graph10/31/450 CRITICAL、main累计366/468/453 CRITICAL，无partial/truncated。P05.72 f92257e产品CI44010850566与Platform44010843172三平台全绿；P05.71补全d3e537b全部hosted全绿，macOS包77864ecd...272baad匹配且81项完整。下一Quick Open路径/MRU/全文件可达。
 
 - 2026-11-17：P05.71 初版29924ce与固定评分/导航d3e537b已推。1378/1378全量、3482实际upstream score/range对拍、50专项与35 Explorer交互专项、analyze0；初版hosted全绿，d3e537b CI44007182727通过、Platform44007176331 Linux/Windows通过macOS运行。当前P05.72异步QuickInput.input/历史/校验/取消与MRU分节、>前缀、多选隐藏picked保留，28专项与1381全量通过；评审修复接受重入与selection-only revalidation，最终guards门禁运行。
 

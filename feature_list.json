@@ -1544,6 +1544,18 @@
       "evidence": "Focused QuickInput async/steps/groups/history/commands 28/28 and analyze 0; full init.sh Flutter1381/1381 plus Rust tests/Clippy/core build. Review fixed accept reentrancy/route ownership and selection-only revalidation, regression green; final full guards gates passed Flutter1381/1381, analyze0; complete graph all9/3/448 and main356/382/451 CRITICAL no partial/truncated. Hosted pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-125",
+      "name": "P05.73 CMD-03 行列与偏移跳转",
+      "description": "workbench.action.gotoLine Ctrl+G，固定版:行/列分隔符、负数、可视列、::字符偏移与零基切换；Rust有界读取，预览/取消恢复，长行分块。docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
+      "dependencies": [
+        "feat-124"
+      ],
+      "status": "in-progress",
+      "evidence": "Real FFI parser+workbench+QuickInput8/8; line delimiter/negative/UTF16 emojiCRLFBOMtab/longline, zero-based toggle persistence and preview/cancel passed; analyze0. Full gates running.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

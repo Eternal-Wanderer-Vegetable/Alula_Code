@@ -86,6 +86,7 @@ import 'auxiliary_focus_context.dart';
 import 'auxiliary_window_transfer.dart';
 import 'command_history.dart';
 import 'tree_find.dart';
+import 'goto_position.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -647,6 +648,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   WbSyncState _state = WbSyncState.idle;
   bool _overtypeMode = false;
   bool _pasteSelectorOpen = false;
+  bool _gotoZeroBasedOffset = false;
   _PasteAsSession? _lastPasteAsSession;
   SnippetSession? _snippetSession;
   int? _snippetSessionDocId;
@@ -1752,6 +1754,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'Reset Walkthrough Progress',
       _resetWalkthroughProgress,
     );
+    reg('workbench.action.gotoLine', '转到', '转到行/列…', _showGotoPosition,
+        enablement: 'editorActive',
+        shortcut: _keybindings.shortcutFor('workbench.action.gotoLine'));
     reg('list.find', '列表', '查找', () async => _openTreeFind(),
         when: 'listFocus', enablement: 'workspaceOpen');
     reg('list.closeFind', '列表', '关闭查找', () async => _closeTreeFind(),
@@ -3398,6 +3403,81 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return target == currentLocation;
   }
 
+  Future<void> _showGotoPosition() async {
+    final group = _focused;
+    final doc = group.active;
+    if (doc == null) return;
+    _flushInput(doc, commitComposition: true);
+    final version = doc.doc.version;
+    final originalSelections = doc.selectionSet.toList();
+    final scrollOffset = doc.editorScrollController.hasClients ? doc.editorScrollController.offset : null;
+    final result = await QuickInput.input(context,
+      prompt: '转到行/列（:行:列，::字符偏移）',
+      value: ':',
+      inputActionBuilder: (context, value, refresh) => value.trim().startsWith('::')
+          ? Semantics(toggled: _gotoZeroBasedOffset, child: IconButton(
+              key: const ValueKey('goto-zero-based-offset'),
+              tooltip: '切换零基字符偏移',
+              visualDensity: VisualDensity.compact,
+              color: _gotoZeroBasedOffset ? Colors.lightBlueAccent : null,
+              icon: const Icon(Icons.exposure_zero, size: 16),
+              onPressed: () {
+                _gotoZeroBasedOffset = !_gotoZeroBasedOffset;
+                _scheduleStateSave();
+                refresh();
+              },
+            ))
+          : const SizedBox.shrink(),
+      restoreFocus: _focusNodeFor(group, doc),
+      onValueChanged: (value) {
+        if (!mounted || !identical(_active, doc) || doc.doc.version != version) return;
+        try {
+          final target = resolveGotoPosition(doc.doc, value, tabSize: doc.tabSize,
+              zeroBasedOffset: _gotoZeroBasedOffset);
+          if (target != null) {
+            _setDocSelections(doc, [TextSelection.collapsed(offset: target.offsetUtf16)],
+                recordHistory: false);
+          }
+        } on Object catch (_) {}
+      },
+      validateInput: (value) {
+        if (!identical(_active, doc) || doc.doc.version != version) return '文档已变化，请重新打开定位';
+        try {
+          resolveGotoPosition(doc.doc, value, tabSize: doc.tabSize,
+              zeroBasedOffset: _gotoZeroBasedOffset);
+          return null;
+        } on Object catch (error) {
+          return error is FormatException ? error.message : '位置无效：$error';
+        }
+      },
+    );
+    if (!mounted || !identical(_active, doc)) return;
+    if (result == null) {
+      if (doc.doc.version == version) {
+        _setDocSelections(doc, originalSelections, recordHistory: false);
+        if (scrollOffset != null && doc.editorScrollController.hasClients) {
+          doc.editorScrollController.jumpTo(scrollOffset.clamp(0, doc.editorScrollController.position.maxScrollExtent));
+        }
+      }
+      _focusEditorAfterLayout(group, doc);
+      return;
+    }
+    if (doc.doc.version != version) return;
+    try {
+      final target = resolveGotoPosition(doc.doc, result, tabSize: doc.tabSize,
+          zeroBasedOffset: _gotoZeroBasedOffset);
+      if (target == null) return;
+      doc.selectionHistory.record(originalSelections);
+      _setDocSelections(doc, [TextSelection.collapsed(offset: target.offsetUtf16)],
+          recordHistory: false);
+      setState(() => _statusDetail = '行 ${target.line + 1}，列 ${target.column + 1}');
+      _syncCommandContext();
+      _focusEditorAfterLayout(group, doc);
+    } on Object catch (error) {
+      setState(() => _statusDetail = '无法定位：$error');
+    }
+  }
+
   void _showQuickOpen() {
     QuickInput.show(
       context,
@@ -3541,6 +3621,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'zenMode': _zenMode,
         'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
+        'gotoLine.useZeroBasedOffset': _gotoZeroBasedOffset,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
           for (final g in _groups.values)
@@ -3665,6 +3746,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _zenMode = data['zenMode'] == true;
     _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
+    _gotoZeroBasedOffset = data['gotoLine.useZeroBasedOffset'] == true;
     try {
       final groupsRaw = data['groups'];
       if (groupsRaw is! List) return;

@@ -88,6 +88,9 @@ class QuickInput {
     required String prompt,
     String value = '',
     FutureOr<String?> Function(String value)? validateInput,
+    ValueChanged<String>? onValueChanged,
+    Widget Function(BuildContext context, String value, VoidCallback refresh)?
+        inputActionBuilder,
     List<String> history = const [],
     FocusNode? restoreFocus,
   }) async {
@@ -99,6 +102,8 @@ class QuickInput {
       inputMode: true,
       initialValue: value,
       validateInput: validateInput,
+      onValueChanged: onValueChanged,
+      inputActionBuilder: inputActionBuilder,
       inputHistory: history,
       restoreFocus: restoreFocus,
       onInputAccepted: (value) => accepted = value,
@@ -122,6 +127,9 @@ class QuickInput {
     FutureOr<String?> Function(String value)? validateInput,
     List<String> inputHistory = const [],
     ValueChanged<String>? onInputAccepted,
+    ValueChanged<String>? onValueChanged,
+    Widget Function(BuildContext context, String value, VoidCallback refresh)?
+        inputActionBuilder,
     String? queryPrefix,
   }) {
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
@@ -153,6 +161,8 @@ class QuickInput {
               validateInput: validateInput,
               inputHistory: inputHistory,
               onInputAccepted: onInputAccepted,
+              onValueChanged: onValueChanged,
+              inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
               onHandled: () => handled = true,
             ),
@@ -182,6 +192,8 @@ class _QuickInputPanel extends StatefulWidget {
     this.validateInput,
     required this.inputHistory,
     this.onInputAccepted,
+    this.onValueChanged,
+    this.inputActionBuilder,
     this.queryPrefix,
     required this.onHandled,
   });
@@ -200,6 +212,10 @@ class _QuickInputPanel extends StatefulWidget {
   final FutureOr<String?> Function(String value)? validateInput;
   final List<String> inputHistory;
   final ValueChanged<String>? onInputAccepted;
+  final ValueChanged<String>? onValueChanged;
+  final Widget Function(
+          BuildContext context, String value, VoidCallback refresh)?
+      inputActionBuilder;
   final String? queryPrefix;
 
   @override
@@ -274,6 +290,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (_lastInputText == _controller.text) return;
     _lastInputText = _controller.text;
     _refilter(_controller.text);
+    widget.onValueChanged?.call(_controller.text);
     if (widget.validateInput != null) unawaited(_validate());
   }
 
@@ -326,6 +343,13 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     } finally {
       _accepting = false;
     }
+  }
+
+  void _refreshInputAction() {
+    widget.onValueChanged?.call(_controller.text);
+    if (widget.validateInput != null) unawaited(_validate());
+    setState(() {});
+    _focusNode.requestFocus();
   }
 
   void _navigateHistory(int delta) {
@@ -575,6 +599,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                     ),
                   ),
                 ),
+                if (widget.inputActionBuilder case final builder?)
+                  builder(context, _controller.text, _refreshInputAction),
               ],
             ),
           ),
