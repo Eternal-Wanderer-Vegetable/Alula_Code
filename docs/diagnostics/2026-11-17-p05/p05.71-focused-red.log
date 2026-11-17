@@ -1,0 +1,92 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: find matches fuzzy or contiguous labels including Unicode
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: filter finds unloaded descendants and close remembers only the query
+00:00 +1 -1: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: filter finds unloaded descendants and close remembers only the query [E]
+  Expected: [
+              'C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\tree-finddf3a2902/nested/deep/main.rs'
+            ]
+    Actual: [
+              'C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\tree-finddf3a2902\\nested\\deep\\main.rs'
+            ]
+     Which: at location [0] is 'C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\tree-finddf3a2902\\nested\\deep\\main.rs' instead of 'C:\\Users\\VEGETA~1\\AppData\\Local\\Temp\\tree-finddf3a2902/nested/deep/main.rs'
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\tree_find_test.dart 34:5                       main.<fn>
+
+00:00 +1 -1: E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: paging bounds retained paths and keeps later matches reachable
+00:00 +2 -1: loading E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart
+00:00 +2 -1: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: typing characters jumps to the first matching visible item
+00:01 +3 -1: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: the buffer resets after the idle timeout
+00:02 +4 -1: E:/temp/alula-pr3-20261117/app/test/explorer_type_ahead_test.dart: modifier chords are ignored by type navigation
+00:02 +5 -1: loading E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart
+00:02 +5 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 修饰键组合与裸键
+00:02 +6 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 非法输入返回 null
+00:02 +7 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChordSequence parses two strokes and displays each chord
+00:02 +8 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet occurrence selection defaults use platform commands
+00:02 +9 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet overtype toggle follows the pinned platform keybindings
+00:02 +10 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet word delete follows the pinned platform keybindings
+00:02 +11 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+00:02 +12 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+00:02 +13 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+00:02 +14 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+00:02 +15 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet sticky and editor close commands use the platform defaults
+00:02 +16 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+00:02 +17 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+00:02 +18 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+00:02 +19 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+00:02 +20 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet copy-line defaults coexist with platform column-selection chords
+00:02 +21 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+00:02 +22 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet navigation defaults leave platform word-movement chords available
+00:02 +23 -1: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位
+00:02 +23 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位 [E]
+  Expected: <57>
+    Actual: <59>
+  逗号分隔的多键位各占一条
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 493:7                    main.<fn>.<fn>
+
+00:02 +23 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+00:02 +24 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File respects a user keybinding override
+00:02 +25 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户追加：新键位生效
+00:02 +26 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户键位可覆盖与移除双段默认键位
+00:02 +27 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+00:02 +28 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+00:02 +29 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 移除不匹配的键位串：无操作
+00:02 +30 -2: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+00:02 +30 -3: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位 [E]
+  Expected: <57>
+    Actual: <59>
+
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\keybindings_test.dart 634:7                    main.<fn>.<fn>
+
+00:02 +30 -3: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+00:02 +31 -3: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+00:02 +32 -3: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+  E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位
+  E:/temp/alula-pr3-20261117/app/test/tree_find_test.dart: filter finds unloaded descendants and close remembers only the query

@@ -1516,8 +1516,20 @@
       "dependencies": [
         "feat-121"
       ],
+      "status": "done",
+      "evidence": "Local gates passed: cargo fmt --check, bash init.sh (Rust workspace tests, Clippy -D warnings, core build, Flutter 1360/1360), flutter analyze --no-pub (0 issues). Startup pristine HEAD had 37 failures; test portability fixes exposed real duplicate-open bug. Existing preview-restoration test red before canonical-path reuse, green after. Product commit 231e853 pushed to PR #3. PR CI 43992774712 all four jobs green, including Flutter 1360 tests. Platform Availability 43992763968 Linux/Windows passed; macOS still running. Linux/Windows app artifacts 14287584621 / 14288304605; native DnD artifacts 14288801926 / 14288224591 confirm move/copy/external text, 20/12 pointer events. Local Windows Release build passed. Full structured graph export has no partial/truncated flags and lists all product 11 symbols/103 processes (26 files) and cumulative main 888 symbols/304 processes (325 files), both CRITICAL. Hosted closeout complete: Platform 43992763968 all three platforms passed, docs CI 43996231773 passed. macOS package 14290614081 SHA-256 4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497 matches sidecar, 81 archive entries passed integrity; native Quit 14290374408 passed. macOS DnD 14291206588 pointer unavailable explicit skip. GitNexus _openFileByPath HIGH: 28 affected symbols, 10 direct callers, 3 process families, 2 modules; expanded 1024 KiB index includes workbench page. Full scope and logs in diagnostic report. PR #3 remains OPEN/DRAFT.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-123",
+      "name": "P05.71 LAY-16b Explorer 树查找与筛选",
+      "description": "树焦点 list.find/closeFind/toggleFindMode/toggleFindMatchType，Highlight/Fuzzy 默认、可取消异步目录筛选、祖先投影、200 项分页、关闭恢复与焦点/查询记忆；其他树表格和精确评分/视觉保留。范围：docs/diagnostics/2026-11-17-p05/p05.71-tree-find.md",
+      "dependencies": [
+        "feat-122"
+      ],
       "status": "in-progress",
-      "evidence": "Local gates passed: cargo fmt --check, bash init.sh (Rust workspace tests, Clippy -D warnings, core build, Flutter 1360/1360), flutter analyze --no-pub (0 issues). Startup pristine HEAD had 37 failures; test portability fixes exposed real duplicate-open bug. Existing preview-restoration test red before canonical-path reuse, green after. Product commit 231e853 pushed to PR #3. PR CI 43992774712 all four jobs green, including Flutter 1360 tests. Platform Availability 43992763968 Linux/Windows passed; macOS still running. Linux/Windows app artifacts 14287584621 / 14288304605; native DnD artifacts 14288801926 / 14288224591 confirm move/copy/external text, 20/12 pointer events. Local Windows Release build passed. Full structured graph export has no partial/truncated flags and lists all product 11 symbols/103 processes (26 files) and cumulative main 888 symbols/304 processes (325 files), both CRITICAL. Hosted closeout pending macOS. GitNexus _openFileByPath HIGH: 28 affected symbols, 10 direct callers, 3 process families, 2 modules; expanded 1024 KiB index includes workbench page. Full scope and logs in diagnostic report. PR #3 remains OPEN/DRAFT.",
+      "evidence": "Focused model/workbench/type-ahead/keybindings 41/41 green after lifecycle review fixes. Final full gates passed: bash init.sh Flutter 1369/1369, Rust workspace tests/Clippy/core build, fmt, analyze 0, Harness 100/100. Complete graph all 13/9/440 and main 336/583/444 CRITICAL without partial/truncated. Hosted pending. No Rust/FFI change; one cancellable iterator, page 200 + one lookahead, query max 256 UTF-16 with surrogate safety, recursion depth 128 explicit error. P05 remains in-progress.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

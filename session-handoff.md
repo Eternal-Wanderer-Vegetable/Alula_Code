@@ -4,7 +4,7 @@ Last Updated: 2026-11-17
 
 ## Current Objective
 
-继续 PR #3 / `codex/vscode-parity-p05`，按 docs/03 N.2 一次一个切片。PR 保持 OPEN/DRAFT，不合并；数值内存优化后置。
+2026-11-17 用户明确要求连续整体完成 P05，中间不停止等待普通进度确认。按 docs/03 N.2、LAY-01–20 与 CMD-01–12 一次一个切片持续推进 PR #3 / `codex/vscode-parity-p05`。PR 保持 OPEN/DRAFT，不合并；数值内存优化后置。执行清单 docs/plans/p05-completion.md。
 
 ## Current State
 
@@ -18,7 +18,7 @@ Last Updated: 2026-11-17
 
 ## Blockers / Limits
 
-- P05.70 产品提交 `231e853` 已推 PR #3；PR CI `43992774712` 四 job 全绿。Platform Availability `43992763968` Linux/Windows 全绿，macOS 仍在运行；重复手动 run `43992764009` 已取消。Linux/Windows app artifacts `14287584621` / `14288304605`，native DnD `14288801926` / `14288224591` 已核实 move/copy/external text。须等待 macOS 后补齐 closeout。
+- P05.70 产品提交 `231e853` 已推 PR #3；PR CI `43992774712` 四 job 全绿。Platform Availability `43992763968` Linux/Windows 全绿，macOS 仍在运行；重复手动 run `43992764009` 已取消。Linux/Windows app artifacts `14287584621` / `14288304605`，native DnD `14288801926` / `14288224591` 已核实 move/copy/external text。现已补齐 closeout：Platform 三平台全绿，docs CI 43996231773 全绿；macOS artifact 14290614081 SHA-256 4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497 与 sidecar 一致、81 项完整；native Quit 14290374408 成功，DnD 14291206588 明确 skip。P05.70 done；继续 LAY16。
 - P05.67 原生双窗 focus/blur、P05.68 Compact pixel/reference diff、P05.69 auxiliary 原生跨窗交换仍未验证；generic DnD 不能代替专属 auxiliary 路径。macOS hosted pointer route 不可用保持 skip。
 - LAY-16b 树筛选未实现。已核实固定版 `list.find` 为 Ctrl/Cmd+Alt+F 或 F3，默认 Highlight/Fuzzy；Escape 清除 active query 并 focus tree；完整 Explorer provider 还搜索未加载节点与祖先。下一切片要明确 loaded-tree 与 full-provider 的范围差异。
 - 禁止整文件写入式 dart format WorkbenchPage，避免无关重排。
@@ -31,4 +31,4 @@ Last Updated: 2026-11-17
 
 ## Next Session First Step
 
-先完成 P05.70 提交后的 hosted closeout，再从 docs/03 登记下一独立 slice；推荐 LAY-16b 树查找/筛选。保持原工作树不动；commit 前完整 GitNexus detect-changes，UNKNOWN/截断如实登记。更新 docs/03、feature_list.json、progress、handoff 同步。
+当前 P05.70 已 hosted closeout；P05.71 / feat-123 LAY-16b 树查找筛选已实现，定向 41/41、analyze 0，全量/hosted 待最终登记。完成本片后按 docs/plans/p05-completion.md 连续推进，先继续 LAY-16 匹配/其他控件或 LAY-17 的历史/validation，不要停下等待普通批准。保持原工作树不动；commit 前完整 GitNexus detect-changes，UNKNOWN/截断如实登记。更新 docs/03、feature_list.json、progress、handoff 同步。

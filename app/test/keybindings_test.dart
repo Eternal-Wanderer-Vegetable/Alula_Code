@@ -490,9 +490,11 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords, reason: '逗号分隔的多键位各占一条');
+      expect(resolved.keys.length, expectedChords + 2,
+          reason: 'tree find adds Ctrl+Alt+F and Escape; F3 shares a context');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
-      expect(ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
+      expect(
+          ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
       expect(ks.shortcutFor('file.save'), 'Ctrl+S');
       expect(ks.shortcutFor('file.saveAs'), 'Ctrl+Shift+S');
       expect(ks.shortcutFor('view.panelSyntax'), 'F3');
@@ -631,9 +633,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(ks.resolve().length, expectedChords);
+      expect(ks.resolve().length, expectedChords + 2);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
-      expect(ks2.resolve().length, expectedChords);
+      expect(ks2.resolve().length, expectedChords + 2);
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {
@@ -645,7 +647,9 @@ void main() {
       expect(ks.commandForChord(parseChord('ctrl+x')!), isNull,
           reason: 'meta 修饰键非法被忽略');
     });
-    test('Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS', () {
+    test(
+        'Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS',
+        () {
       final windows = KeybindingSet.load(platform: TargetPlatform.windows);
       final linux = KeybindingSet.load(platform: TargetPlatform.linux);
       final mac = KeybindingSet.load(platform: TargetPlatform.macOS);

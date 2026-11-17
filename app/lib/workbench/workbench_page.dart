@@ -85,6 +85,7 @@ import 'activity_bar_size.dart';
 import 'auxiliary_focus_context.dart';
 import 'auxiliary_window_transfer.dart';
 import 'command_history.dart';
+import 'tree_find.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -574,6 +575,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _treeTypeAheadBuffer = '';
   Timer? _treeTypeAheadTimer;
   final FocusNode _treeFocusNode = FocusNode(debugLabel: 'explorer-tree');
+  final TreeFindController _treeFind = TreeFindController();
+  List<TreeNode> _treeFindRoots = [];
+  String _treeFindPathsKey = '';
   // LAY-14：Zen 模式（隐藏活动栏/侧栏/面板/状态栏 + 编辑器居中限宽）。
   bool _zenMode = false;
   bool _zenPreZenSidebarCollapsed = false;
@@ -700,6 +704,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _completedWalkthroughSteps = _walkthroughProgressStore.load();
     unawaited(_refreshRecentHistory());
     _registerCommands();
+    _treeFind.addListener(_onTreeFindChanged);
     _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
@@ -1745,6 +1750,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'Reset Walkthrough Progress',
       _resetWalkthroughProgress,
     );
+    reg('list.find', '列表', '查找', () async => _openTreeFind(),
+        when: 'listFocus', enablement: 'workspaceOpen');
+    reg('list.closeFind', '列表', '关闭查找', () async => _closeTreeFind(),
+        when: 'listFocus && treeFindOpen');
+    reg('list.toggleFindMode', '列表', '切换树筛选', () async => _treeFind.toggleFilter(),
+        when: 'listFocus && treeFindOpen');
+    reg('list.toggleFindMatchType', '列表', '切换树模糊匹配', () async => _treeFind.toggleFuzzy(),
+        when: 'listFocus && treeFindOpen');
     registerGitDiffNavigationCommands(_commands, _gitDiffNavigation);
   }
 
@@ -3066,6 +3079,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'listFocus': _treeFocusNode.hasFocus || _treeFind.inputFocus.hasFocus,
+      'listSupportsFind': _workspaceRoot != null,
+      'treeFindOpen': _treeFind.isOpen,
       'activityBarLocation': _layout.activityBarLocation.name,
       'panelMaximizationSupported': _layout.canMaximizePanel,
       'lspStarting': _lspStarting,
@@ -11902,6 +11918,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           _explorerMultiSelection.clear();
           _explorerSelectionAnchor = null;
         }
+        _treeFind.workspaceChanged(path);
         _workspaceRoot = path;
         _treeRoots.clear();
         _treeRoots.addAll(entries
@@ -12118,9 +12135,86 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- Explorer 树 type navigation（LAY-16） ----------
 
+  void _openTreeFind() {
+    _treeFind.open(_workspaceRoot);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _treeFind.isOpen) _treeFind.inputFocus.requestFocus();
+    });
+  }
+
+  void _closeTreeFind() {
+    _treeFind.close();
+    _treeFocusNode.requestFocus();
+  }
+
+  List<TreeNode> get _displayedTreeRoots =>
+      _treeFind.isOpen && _treeFind.filter && _treeFind.query.isNotEmpty
+          ? _treeFindRoots
+          : _treeRoots;
+
+  void _onTreeFindChanged() {
+    if (!mounted || _disposing) return;
+    final pathsKey = _treeFind.paths.join('\u0000');
+    if (_treeFindPathsKey != pathsKey) {
+      _treeFindPathsKey = pathsKey;
+      final roots = <TreeNode>[];
+      final folders = <String, TreeNode>{};
+      final root = _workspaceRoot;
+      if (root != null) {
+        for (final entry in _treeFind.entries) {
+          final path = entry.path;
+          final parts = p.split(p.relative(path, from: root));
+          var children = roots;
+          var parent = root;
+          for (var i = 0; i < parts.length; i++) {
+            parent = p.join(parent, parts[i]);
+            if (i == parts.length - 1 && !entry.isDirectory) {
+              children.add(TreeNode(name: parts[i], path: path, isDir: false));
+            } else {
+              final folder = folders.putIfAbsent(parent, () {
+                final node = TreeNode(name: parts[i], path: parent, isDir: true)
+                  ..expanded = true
+                  ..children = [];
+                children.add(node);
+                return node;
+              });
+              children = folder.children!;
+            }
+          }
+        }
+      }
+      _treeFindRoots = roots;
+    }
+    setState(() {});
+    _syncCommandContext();
+  }
+
   KeyEventResult _onTreeTypeAheadKeyEvent(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.escape && _treeFind.isOpen) {
+      _closeTreeFind();
+      return KeyEventResult.handled;
+    }
+    if (!_treeFind.inputFocus.hasFocus &&
+        (event.logicalKey == LogicalKeyboardKey.arrowDown ||
+            event.logicalKey == LogicalKeyboardKey.arrowUp)) {
+      final files = _visibleExplorerFiles();
+      if (files.isEmpty) return KeyEventResult.handled;
+      final selected = files.indexWhere((file) => _isExplorerFileSelected(file.path));
+      final step = event.logicalKey == LogicalKeyboardKey.arrowDown ? 1 : -1;
+      final next = (selected < 0 ? (step > 0 ? 0 : files.length - 1) : selected + step)
+          .clamp(0, files.length - 1);
+      _selectExplorerFile(files[next]);
+      return KeyEventResult.handled;
+    }
+    if (!_treeFind.inputFocus.hasFocus &&
+        event.logicalKey == LogicalKeyboardKey.enter) {
+      final selected = _visibleExplorerFiles()
+          .where((file) => _isExplorerFileSelected(file.path)).firstOrNull;
+      if (selected != null) _openTreeFile(selected);
+      return KeyEventResult.handled;
     }
     final character = event.character;
     if (character == null || character.isEmpty) {
@@ -12132,8 +12226,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return KeyEventResult.ignored;
     }
     final lower = character.toLowerCase();
-    if (lower.codeUnitAt(0) < 0x61 || lower.codeUnitAt(0) > 0x7A) {
-      // 仅字母参与 type navigation（数字/符号交还系统快捷键）。
+    if (lower.runes.any((rune) => rune < 0x20 || rune == 0x7F)) {
       return KeyEventResult.ignored;
     }
     _treeTypeAheadBuffer += lower;
@@ -12166,7 +12259,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     }
 
-    visit(_treeRoots);
+    visit(_displayedTreeRoots);
     return result;
   }
 
@@ -19376,6 +19469,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _findGeneration++;
     _treeTypeAheadTimer?.cancel();
+    _treeFind.removeListener(_onTreeFindChanged);
+    _treeFind.dispose();
+    _treeFocusNode.dispose();
     _cancelRegexFind();
     _cancelRegexReplace();
     _pendingDefinitionPointers.clear();
@@ -20430,12 +20526,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 : Focus(
                     key: const ValueKey('explorer-tree-focus'),
                     focusNode: _treeFocusNode,
+                    onFocusChange: (_) => _syncCommandContext(),
                     onKeyEvent: _onTreeTypeAheadKeyEvent,
-                    child: ListView.builder(
-                      itemCount: _treeRoots.length,
-                      itemBuilder: (context, i) =>
-                          _buildNode(_treeRoots[i], 0),
-                    ),
+                    child: Column(children: [
+                      if (_treeFind.isOpen)
+                        TreeFindBar(
+                          controller: _treeFind,
+                          onClose: _closeTreeFind,
+                          onReturnToTree: _treeFocusNode.requestFocus,
+                        ),
+                      Expanded(child: ListView.builder(
+                        itemCount: _displayedTreeRoots.length,
+                        itemBuilder: (context, i) =>
+                            _buildNode(_displayedTreeRoots[i], 0),
+                      )),
+                    ]),
                   ),
           ),
         ],
@@ -20718,7 +20823,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               const SizedBox(width: 6),
               Expanded(
                 child: Text(node.name,
-                    style: const TextStyle(fontSize: 12),
+                    style: TextStyle(
+                      fontSize: 12,
+                      backgroundColor: _treeFind.isOpen &&
+                              _treeFind.query.isNotEmpty &&
+                              _treeFind.matches(node.name)
+                          ? const Color(0xFF5E4A16)
+                          : null,
+                    ),
                     overflow: TextOverflow.ellipsis),
               ),
             ],

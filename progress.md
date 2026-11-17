@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 进行中；P05.1–P05.69 子项已完成；P05.70 本地完成、hosted 待补
+### P05 / feat-027 持续推进；P05.1–P05.70 子项已完成；目标整体完成 P05
+
+- 2026-11-17：用户授权连续完成整个 P05，中间不停止等待普通进度批准。P05.70 hosted closeout 完成：产品 CI 43992774712、证据 CI 43996231773、Platform 43992763968 三平台全绿；macOS package 14290614081 SHA-256 4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497 与 sidecar 一致，81 项 ZIP 完整；native Quit 14290374408 成功，DnD 14291206588 pointer route unavailable 明确 skip。连续实施启动基线 Flutter 1360/1360 全绿。当前 P05.71 / feat-123 LAY-16b tree find/filter 本地完成：定向 41/41、全量 Flutter 1369/1369、Rust/Clippy/core build、fmt/analyze、Harness 全绿。异步目录搜索、祖先投影、200+1 分页、UTF16 query/close/cancel/focus、F3 context、Unicode type navigation；评审边界已修。图谱完整 all 13/9/440 CRITICAL、main 累计 336/583/444 CRITICAL。hosted 等提交后补录。
 
 - 2026-11-17：P05.70 / feat-122 Windows 文件身份与验证基线。干净 PR head `4839090` 启动 Flutter 1323 passed / 37 failed；修复路径/URI/行尾与已有标签定位假设后，暴露同文件混合分隔符重复创建 Rust 文档的产品缺陷。`_openFileByPath` 现使用已有 `_canonicalPath` 比较；现有跨组预览恢复测试先红后绿。最终完整 `bash init.sh` 全绿（Flutter 1360/1360、Rust tests、Clippy、core build）、cargo fmt、flutter analyze 0 issues。图谱扩展至 1024 KiB 纳入 WorkbenchPage；共享入口 HIGH（28 affected、10 direct、3 process families、2 modules），已报告并保留。工作树 E:/Temp/alula-pr3-20261117，原两个脏工作树未触碰。报告：`docs/diagnostics/2026-11-17-p05/p05.70-windows-path-identity.md`。产品 `231e853` 已推 PR #3，PR CI `43992774712` 四项全绿；Platform `43992763968` Linux/Windows 全绿、macOS 仍运行。结构化 GitNexus export 解决 CLI 列表裁剪，product 26 files/11 symbols/103 processes，main 累计 325/888/304，无 partial/truncated、均 CRITICAL；原始 JSON 已归档。本机 Windows Release build 成功。LAY-16b 树筛选仍为下一独立项，PR #3 保持 OPEN/DRAFT。
 
