@@ -5,9 +5,10 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；当前 P05.76 文档符号选择器；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.77 工作区符号；目标整体完成 P05
 
-- 2026-11-17：P05.75已提交d791b45，本地1425全绿、CI44037192587成功；Platform44037183025首轮macOS regex replace单项时序失败（1424/1425），native Quit skipped，已保存失败并同SHA --failed复验。P05.74 Platform44031913266首轮macOS native Quit AX菜单不可见/fallback超时，普通启动通过且无crash artifact，按已验证同SHA先例复验。当前P05.76文档symbol picker/预览取消/类别/侧开已实现，综合58/58、首轮全量1426/1426；评审修复accept重入与side source restoration，专项22/22，最终门禁运行。
+- 2026-11-17：P05.77 工作区符号 ABI41/LSP start-poll-cancel 与 `#` picker 完成，本地 `bash init.sh` 全绿（Rust tests/Clippy/core build/fmt、Flutter 1431/1431、analyze0），真实 FFI 和 3 个 picker tests 通过。首次完整门禁仅因 Git Bash PATH 未包含 Dart SDK 导致 session_store 子进程无法启动；将 Flutter bundled Dart SDK 加入 PATH 后重跑通过。Hosted CI `44064904867`、`44069169937` 的唯一失败已定位为 Flutter 测试前未生成 `target/debug/async_completion_fake_lsp`；已在 `.github/workflows/ci.yml` 与 macOS Platform workflow 显式 `cargo build -p editor-core --bin async_completion_fake_lsp`，hosted rerun待收。GitNexus all-scope detector 仅识别工作流改动且报告“no indexed symbols overlap”，不视为 clean；PR #3 保持 OPEN/DRAFT。
+- P05.75已提交d791b45，本地1425全绿、CI44037192587成功；Platform44037183025首轮macOS regex replace单项时序失败（1424/1425），native Quit skipped，已保存失败并同SHA --failed复验。P05.74 Platform44031913266首轮macOS native Quit AX菜单不可见/fallback超时，普通启动通过且无crash artifact，按已验证同SHA先例复验。P05.76文档symbol picker/预览取消/类别/侧开已实现，综合58/58、首轮全量1426/1426；评审修复accept重入与side source restoration，专项22/22。
 
 - 2026-11-17：P05.74已提交3aa5b97，最终Flutter1407/1407、analyze0，Quick Open异步/MRU/路径位置/分页取消已接通，CI44031921916成功。P05.75版本化层级Outline本地全量1425/1425、模型17/17、workbench+breadcrumb21/21、analyze0；修复同名文档id/version缓存、null旧符号，新增filter/sort/collapse/follow cursor与预算错误。下一文档符号picker预览/取消/侧开。
 

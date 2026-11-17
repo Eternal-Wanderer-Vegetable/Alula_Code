@@ -703,6 +703,8 @@ jobs:
       - name: Build Rust core
         id: build_rust_core
         run: bash scripts/build_core.sh
+      - name: Build fake LSP fixture for real-FFI tests
+        run: cargo build -p editor-core --bin async_completion_fake_lsp
       - name: Flutter analyze and tests
         id: flutter_tests
         run: |

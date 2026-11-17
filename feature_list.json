@@ -1601,7 +1601,7 @@
         "feat-128"
       ],
       "status": "in-progress",
-      "evidence": "Rust parser and real core FFI lifecycle passed; Dart FFI/core/merge41 passed, workspace widget3 passed incl unsupported/cancel/crossfile. Final init.sh Flutter1431/1431 plus Rust/Clippy/core build/fmt passed; analyze0 after Clippy unsafe entry fixes. Reviewer fixes coordinate uinteger bound, stale target handling, poll/cancel synchronization. Hosted pending.",
+      "evidence": "Rust parser and real core FFI lifecycle passed; Dart FFI/core/merge41 passed, workspace widget3 passed incl unsupported/cancel/crossfile. Full init.sh passed: Flutter1431/1431, Rust tests/Clippy/core build/fmt, analyze0. Reviewer fixes coordinate uinteger bound, stale target handling, poll/cancel synchronization. Hosted failure isolated to missing standalone fake LSP executable; CI and macOS platform workflows now explicitly cargo-build the fixture before Flutter tests; rerun pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

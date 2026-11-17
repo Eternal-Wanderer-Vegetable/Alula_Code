@@ -46,6 +46,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: .
+      - name: Build fake LSP fixture for real-FFI tests
+        run: cargo build -p editor-core --bin async_completion_fake_lsp
       # core_sync_test 走真实 FFI：先构建核心动态库到 app/native/
       - name: Build Rust core (libalula_core.so)
         run: bash scripts/build_core.sh

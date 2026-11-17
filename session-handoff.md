@@ -8,7 +8,10 @@ Last Updated: 2026-11-17
 
 ## Current State
 
-- 当前工作树 `E:/Temp/alula-pr3-20261117`，本地分支 `codex/pr3-p05-continuation-20261117`，基于 PR head `4839090`。`E:/Alula_Code`（p00）与 `E:/temp/alula-pr3-p05` 的既存脏工作未改动。
+- 当前工作树 `E:/Temp/alula-pr3-20261117`，本地分支 `codex/pr3-p05-continuation-20261117`，PR head `5683e77`。`E:/Alula_Code`（p00）与 `E:/temp/alula-pr3-p05` 的既存脏工作未改动。
+- P05.77 workspace symbols ABI41 本地完整 `bash init.sh` 通过：Rust tests/Clippy/core build/fmt、Flutter1431/1431、analyze0；真实 FFI test 与 workspace picker 3/3 通过。
+- Hosted CI `44064904867` / `44069169937` 单一失败是 Flutter FFI 测试期待 standalone fake-LSP binary；已在 `.github/workflows/ci.yml` 与 macOS Platform workflow 加显式 cargo build，hosted rerun待收。首次 init.sh 因 Git Bash PATH 缺 Dart SDK导致 session_store crash-writer 无法启动；加 `/e/flutter/bin/cache/dart-sdk/bin` 后完整重跑成功，不改产品测试。
+- 工作树仅本次工作流和状态文档有内容改动，另有 generated registrants 与 `workbench_page.dart` 状态但内容diff为空；生成文件不纳入产品提交。GitNexus all-scope detector 对 workflow diff 报2 files/no indexed symbols overlap，非 clean verdict。
 - P05.1–P05.69 历史 closeout 已完成登记。P05.70 / feat-122 产品提交 `231e853` 已推 PR #3，本地门禁/本机 Windows Release/PR CI 全通过；hosted Linux/Windows 成功，macOS 待结果。
 - 完整结构化 graph export 保留所有 product 11 symbols/103 processes（26 files）和累计 main 888/304（325 files），无 partial/truncated，均 CRITICAL。CLI 自身固定裁剪展示，不能仅提高 --limit 解决；JSON 已归档。
 - 新独立 Windows 启动基线最初 Flutter 1323 passed / 37 failed；路径节点/历史期望/URI 盘符/文本 LF 和 tab 定位修正后暴露产品 `_openFileByPath` 的 raw path equality 重复打开问题。现使用已有 `_canonicalPath` 复用同一文档，保留已有预览/跨组视图流程。
@@ -31,4 +34,4 @@ Last Updated: 2026-11-17
 
 ## Next Session First Step
 
-当前 P05.70 已 hosted closeout；P05.71 / feat-123 初版29924ce与固定评分/导航补全d3e537b已推，最终全量1378/1378、3482 scorer对拍、analyze0；初版平台全绿，d3e537b CI44007182727全绿、Platform44007176331 Linux/Windows绿macOS待补。P05.72 f92257e最终1381全绿、CI44010850566与Platform44010843172三平台全绿。P05.73/feat125已提交8a4ef28，全量1386/1386、FFI/widget8/8、analyze0，CI44016110199与Platform44016101825均success。P05.74已提交3aa5b97，最终全量1407/1407、analyze0、异步pageguard/dispose/close/workspace代次修复，CI44031921916成功，Platform44031913266待最终核对。P05.75已提交d791b45，本地1425全绿，CI44037192587成功，Platform44037183025首轮macOS regex replace1424/1425失败、native Quit skipped，同SHA attempt2复验。P05.74 macOS native Quit首轮AX菜单探针失败，同SHA44031913266 attempt2复验。当前P05.76文档symbol picker @/@:类别/预览取消/side共享doc已实现，首轮及评审修正后全量1426/1426，专项58与评审22及repeataccept7通过、analyze0，提交准备；下一workspace symbol/provider contract。继续连续P05目标。完成本片后按 docs/plans/p05-completion.md 连续推进，先继续 LAY-16 匹配/其他控件或 LAY-17 的历史/validation，不要停下等待普通批准。保持原工作树不动；commit 前完整 GitNexus detect-changes，UNKNOWN/截断如实登记。更新 docs/03、feature_list.json、progress、handoff 同步。
+P05.70–76历史实现、门禁与hosted状态见以上progress和diagnostics。P05.77 workspace symbols ABI41 已本地完成，完整门禁Flutter1431/1431、Rust/Clippy/core/fmt、analyze0；hosted唯一测试失败因fake LSP standalone binary未build，CI与macOS Platform workflow已补显式build，需先收集新CI/Platform run并更新证据后再关闭本片。GitNexus detector对此工作流diff报告“2 files touched/no indexed symbols overlap”，保留为非clean限制。不要把macOS DnD pointer-route skip当pass；P05.74/75同SHA复验详情仍按相应hosted记录核对。P05.77关闭后按 docs/plans/p05-completion.md 继续一次一片推进下一行，用户已授权连续实施，不需要普通进度批准；提交前完整detect-changes并如实保留UNKNOWN/CRITICAL/truncation。更新 docs/03、feature_list.json、progress、handoff。
