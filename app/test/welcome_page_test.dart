@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/file_paths.dart';
+
 late Directory temp;
 late LayoutStore layoutStore;
 late SessionStore sessionStore;
@@ -145,7 +147,7 @@ void main() {
       expect(find.byKey(const ValueKey('welcome-page')), findsNothing);
       expect(find.byKey(const ValueKey('tab-2')), findsOneWidget,
           reason: 'Welcome 最近项打开磁盘文件');
-      expect(store.load().files.first.path, file.absolute.path);
+      expect(store.load().files.first.path, nativeTestPath(file.path));
     } finally {
       await _unmountApp(tester);
     }
@@ -185,9 +187,11 @@ void main() {
       await tester.tap(olderWorkspaceItem);
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 700));
-      expect(store.load().workspaces.first.path, olderWorkspace.absolute.path,
+      expect(store.load().workspaces.first.path,
+          nativeTestPath(olderWorkspace.path),
           reason: '成功打开工作区后更新文件夹 MRU');
-      expect(sessionStore.tryLoad()?['workspace'], olderWorkspace.absolute.path,
+      expect(sessionStore.tryLoad()?['workspace'],
+          nativeTestPath(olderWorkspace.path),
           reason: 'File > Open Recent 打开所选工作区');
     } finally {
       await _unmountApp(tester);

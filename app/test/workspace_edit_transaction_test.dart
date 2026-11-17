@@ -15,7 +15,13 @@ import 'helpers/explorer_preview.dart';
 final String _fixtureRoot =
     '${Directory.current.parent.path}/tests/fixtures/rust-mini';
 
-String _uriFor(String path) => 'file:///${path.replaceAll(r'\', '/')}';
+String _uriFor(String path) {
+  final normalized = path.replaceAll(r'\', '/');
+  final uriPath = normalized.startsWith(RegExp(r'[A-Za-z]:/'))
+      ? '${normalized[0].toLowerCase()}${normalized.substring(1)}'
+      : normalized;
+  return 'file:///$uriPath';
+}
 
 String _uri(String fileName) => _uriFor('$_fixtureRoot/$fileName');
 
@@ -68,8 +74,12 @@ void main() {
       'cross-document edit validates, commits, and keeps per-document undo',
       (tester) async {
     await startWorkbench(tester);
-    final cargoBefore = File('$_fixtureRoot/Cargo.toml').readAsStringSync();
-    final rustBefore = File('$_fixtureRoot/src/main.rs').readAsStringSync();
+    final cargoBefore = File('$_fixtureRoot/Cargo.toml')
+        .readAsStringSync()
+        .replaceAll('\r\n', '\n');
+    final rustBefore = File('$_fixtureRoot/src/main.rs')
+        .readAsStringSync()
+        .replaceAll('\r\n', '\n');
     expect(editorText(tester), rustBefore);
 
     final dynamic state = tester.state(find.byType(WorkbenchPage));

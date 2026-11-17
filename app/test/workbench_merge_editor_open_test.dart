@@ -212,7 +212,10 @@ void main() {
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('result.txt').first);
+    await tester.tap(find.descendant(
+      of: find.byKey(const ValueKey('tab-2')).first,
+      matching: find.text('result.txt'),
+    ));
     await tester.pump(const Duration(milliseconds: 350));
     final mergeViews = find.byType(RustTextInputField);
     expect(mergeViews, findsNWidgets(2));
@@ -322,7 +325,10 @@ void main() {
 
     await tester.tap(find.byTooltip('拆分编辑器').first);
     await tester.pump(const Duration(milliseconds: 200));
-    await tester.tap(find.text('result.txt').first);
+    await tester.tap(find.descendant(
+      of: find.byKey(const ValueKey('tab-2')).first,
+      matching: find.text('result.txt'),
+    ));
     await tester.pump(const Duration(milliseconds: 350));
     final mergeViews = find.byType(RustTextInputField);
     expect(mergeViews, findsNWidgets(2));

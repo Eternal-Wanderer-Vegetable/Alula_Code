@@ -1,0 +1,312 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (setUpAll)
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo
+00:08 +1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.0 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-20261117/app/lib/workbench/workbench_page.dart:21685:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#8ac09 relayoutBoundary=up30 OVERFLOWING:
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-10'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1062.0, 0.0<=h<=Infinity)
+  size: Size(1062.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 7.0 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///E:/temp/alula-pr3-20261117/app/lib/workbench/workbench_page.dart:21685:13
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#d45da relayoutBoundary=up30 OVERFLOWING:
+  needs compositing
+  creator: Row ← Stack ← Padding ← DecoratedBox ← Container-[<'tab-12'>] ← Listener ←
+    RawGestureDetector ← GestureDetector ← Semantics ← DefaultSelectionStyle ← Builder ← MouseRegion ←
+    ⋯
+  parentData: not positioned; offset=Offset(0.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=1062.0, 0.0<=h<=Infinity)
+  size: Size(1062.0, 20.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: min
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: Too many elements
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:696:24)
+#1      WidgetController.widget (package:flutter_test/src/controller.dart:828:30)
+#2      _labelWidget (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:79:12)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:338:7)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  preview state is isolated and restored per editor group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:10 +1 -1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group [E]
+  Test failed. See exception logs above.
+  The test description was: preview state is isolated and restored per editor group
+
+00:10 +1 -1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      ListBase.firstWhere (dart:collection/list.dart:132:5)
+#1      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:383:23)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:14 +1 -2: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules [E]
+  Test failed. See exception logs above.
+  The test description was: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+
+00:14 +1 -2: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      ListBase.firstWhere (dart:collection/list.dart:132:5)
+#1      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:479:9)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  sticky state follows editor split and move commands
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:16 +1 -3: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands [E]
+  Test failed. See exception logs above.
+  The test description was: sticky state follows editor split and move commands
+
+00:16 +1 -3: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      ListBase.firstWhere (dart:collection/list.dart:132:5)
+#1      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:539:24)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  dirty tab close supports cancel and confirmed save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:17 +1 -4: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save [E]
+  Test failed. See exception logs above.
+  The test description was: dirty tab close supports cancel and confirmed save
+
+00:17 +1 -4: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      ListBase.firstWhere (dart:collection/list.dart:132:5)
+#1      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:599:18)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  batch close cancel is atomic and discard is explicit
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:21 +1 -5: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit [E]
+  Test failed. See exception logs above.
+  The test description was: batch close cancel is atomic and discard is explicit
+
+00:21 +1 -5: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      ListBase.firstWhere (dart:collection/list.dart:132:5)
+#1      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#2      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:668:9)
+<asynchronous suspension>
+#3      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#4      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  close others uses the clicked tab in an inactive group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:25 +1 -6: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group [E]
+  Test failed. See exception logs above.
+  The test description was: close others uses the clicked tab in an inactive group
+
+00:25 +1 -6: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open
+00:28 +2 -6: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (tearDownAll)
+00:28 +2 -6: loading E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart
+00:28 +2 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: (setUpAll)
+00:28 +2 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: disk original is frozen with decoded text and modified side saves the Rust document
+00:33 +3 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Ctrl multi-selection compares in click order and saves the editable side
+00:37 +4 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: macOS Command toggles files and Shift selects visible Explorer ranges
+00:38 +5 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Revert Block restores one hunk and stays undoable
+00:42 +6 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: Revert Selection and command palette Revert target exact hunks
+00:45 +7 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: block revert handles inserted and deleted empty lines
+00:49 +8 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: block revert preserves BOM, CRLF and non-BMP text on save
+00:52 +9 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: revert waits for a current diff after IME preedit commits on blur
+00:55 +10 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: an open dirty original is captured once and stays frozen
+00:58 +11 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: selection cancels if an open source document changes in flight
+00:59 +12 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: files only get compare actions; deleted originals and workspace switches are rejected
+01:03 +13 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: oversized original is rejected before a compare preview opens
+01:04 +14 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: diff row budget rejects the complete Explorer comparison
+01:07 +15 -6: E:/temp/alula-pr3-20261117/app/test/workbench_explorer_compare_test.dart: (tearDownAll)
+01:07 +15 -6: loading E:/temp/alula-pr3-20261117/app/test/recent_history_store_test.dart
+01:08 +15 -6: E:/temp/alula-pr3-20261117/app/test/recent_history_store_test.dart: keeps a bounded MRU list per kind and restores it after restart
+01:09 +16 -6: E:/temp/alula-pr3-20261117/app/test/recent_history_store_test.dart: corrupt and oversized journals safely load as empty
+01:09 +17 -6: E:/temp/alula-pr3-20261117/app/test/recent_history_store_test.dart: prunes missing paths and paths whose filesystem kind changed
+01:09 +18 -6: loading E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart
+01:09 +18 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: palette command opens the welcome page and close restores the editor
+01:11 +19 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: welcome actions run their command and hide the page
+01:11 +20 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: welcome visibility survives a session restore
+01:12 +21 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: empty editor group watermark offers its entries
+01:12 +22 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: welcome recent section opens a persisted recent file
+01:13 +23 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: File > Open Recent lists workspaces before files and opens one
+01:13 +24 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: empty Open Recent menu stays visible and disabled
+01:13 +25 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: Open Recent menu is capped at ten entries for each kind
+01:13 +26 -6: E:/temp/alula-pr3-20261117/app/test/welcome_page_test.dart: startup prunes stale recent paths and explains the cleanup
+01:14 +27 -6: loading E:/temp/alula-pr3-20261117/app/test/workbench_bulk_edit_review_test.dart
+01:14 +27 -6: E:/temp/alula-pr3-20261117/app/test/workbench_bulk_edit_review_test.dart: Workbench review applies selected edits atomically with per-document undo and save
+01:16 +28 -6: E:/temp/alula-pr3-20261117/app/test/workbench_bulk_edit_review_test.dart: Workbench review pins source versions and rejects stale batches
+01:17 +29 -6: E:/temp/alula-pr3-20261117/app/test/workbench_bulk_edit_review_test.dart: Workbench review Escape and Discard leave documents unchanged
+01:17 +30 -6: loading E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart
+01:18 +30 -6: E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document copy updates target, preserves source, and saves undoably
+01:19 +31 -6: E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document move edits and undoes both documents atomically
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+The finder "Found 0 widgets with text "source.rs" descending from widgets with key
+[<'editor-tab-strip-editor'>]: []" (used in a call to "tap()") could not find any matching widgets.
+
+When the exception was thrown, this was the stack:
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2095:7)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart:285:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  cross-document move edits and undoes both documents atomically
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:20 +31 -7: E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document move edits and undoes both documents atomically [E]
+  Test failed. See exception logs above.
+  The test description was: cross-document move edits and undoes both documents atomically
+
+01:20 +31 -7: loading E:/temp/alula-pr3-20261117/app/test/workbench_paste_as_test.dart
+01:20 +31 -7: E:/temp/alula-pr3-20261117/app/test/workbench_paste_as_test.dart: Paste As applies one Rust edit that undo and redo restore
+01:22 +32 -7: E:/temp/alula-pr3-20261117/app/test/workbench_paste_as_test.dart: disabling Paste As preserves ordinary plain-text paste
+01:22 +33 -7: E:/temp/alula-pr3-20261117/app/test/workbench_paste_as_test.dart: post-paste provider switch remains one undoable edit
+01:23 +34 -7: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group
+  ... and 3 more

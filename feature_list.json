@@ -1508,6 +1508,18 @@
       "evidence": "Local and hosted N.2 complete. Commit f0c67bd8c3bb1b65964e7dcce784664e38522440. Bounded event-driven auxiliary bounds and prepare/commit/abort/status swap; target prior doc returns to main, source closes only after confirmed commit; uncertain outcomes retain both local snapshots. P05.67 focus channel remains window/group-only; no Rust/FFI changes. Focused tests 32/32; cargo fmt --check; flutter analyze 0; bash init.sh passed (Rust 125, Clippy, core build, Flutter 1360/1360); Harness 100/100. PR CI 43941953054 all four jobs passed. Platform Availability 43941942416 Linux/Windows/macOS Intel x64 all passed. App artifacts Linux/Windows/macOS 14264550521 / 14264616080 / 14265886712; generic Linux/Windows native DnD artifacts 14265025133 / 14263916308 passed move/cross-document copy/external text; macOS DnD artifact 14266081126 explicitly skipped because the hosted pointer route was unavailable. macOS startup/native Quit artifact 14266101279; native Quit passed. Existing hosted DnD probes do not launch Alula auxiliary; feature-specific native cross-window swap remains unverified. Final scope/evidence: docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md. PR #3 remains OPEN/DRAFT.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-122",
+      "name": "P05.70 Windows 文件身份与验证基线",
+      "description": "统一打开文件的规范路径身份，避免 Windows 分隔符/大小写导致同文件重复 Rust 文档；修复测试的路径、URI、LF 和标签定位假设。范围与证据：docs/diagnostics/2026-11-17-p05/p05.70-windows-path-identity.md",
+      "dependencies": [
+        "feat-121"
+      ],
+      "status": "in-progress",
+      "evidence": "Local gates passed: cargo fmt --check, bash init.sh (Rust workspace tests, Clippy -D warnings, core build, Flutter 1360/1360), flutter analyze --no-pub (0 issues). Startup pristine HEAD had 37 failures; test portability fixes exposed real duplicate-open bug. Existing preview-restoration test red before canonical-path reuse, green after. Hosted closeout pending. GitNexus _openFileByPath HIGH: 28 affected symbols, 10 direct callers, 3 process families, 2 modules; expanded 1024 KiB index includes workbench page. Full scope and logs in diagnostic report. PR #3 remains OPEN/DRAFT.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

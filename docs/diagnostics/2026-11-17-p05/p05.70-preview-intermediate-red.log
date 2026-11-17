@@ -1,0 +1,135 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (setUpAll)
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: Explorer previews replace clean tabs; dirty edits pin, save, and survive undo
+00:08 +1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: preview state is isolated and restored per editor group
+00:11 +2: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'Null' is not a subtype of type 'String' in type cast
+
+When the exception was thrown, this was the stack:
+#0      _savedDocumentId.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:171:46)
+#1      ListBase.firstWhere (dart:collection/list.dart:126:15)
+#2      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:385:22)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:15 +2 -1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules [E]
+  Test failed. See exception logs above.
+  The test description was: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules
+
+00:15 +2 -1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky state follows editor split and move commands
+00:17 +3 -1: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'Null' is not a subtype of type 'String' in type cast
+
+When the exception was thrown, this was the stack:
+#0      _savedDocumentId.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:171:46)
+#1      ListBase.firstWhere (dart:collection/list.dart:126:15)
+#2      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:540:24)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  dirty tab close supports cancel and confirmed save
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:18 +3 -2: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save [E]
+  Test failed. See exception logs above.
+  The test description was: dirty tab close supports cancel and confirmed save
+
+00:18 +3 -2: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'Null' is not a subtype of type 'String' in type cast
+
+When the exception was thrown, this was the stack:
+#0      _savedDocumentId.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:171:46)
+#1      ListBase.firstWhere (dart:collection/list.dart:126:15)
+#2      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:600:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  batch close cancel is atomic and discard is explicit
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:22 +3 -3: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit [E]
+  Test failed. See exception logs above.
+  The test description was: batch close cancel is atomic and discard is explicit
+
+00:22 +3 -3: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following _TypeError was thrown running a test:
+type 'Null' is not a subtype of type 'String' in type cast
+
+When the exception was thrown, this was the stack:
+#0      _savedDocumentId.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:171:46)
+#1      ListBase.firstWhere (dart:collection/list.dart:126:15)
+#2      _savedDocumentId (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:169:42)
+#3      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart:669:9)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  close others uses the clicked tab in an inactive group
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:26 +3 -4: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group [E]
+  Test failed. See exception logs above.
+  The test description was: close others uses the clicked tab in an inactive group
+
+00:26 +3 -4: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: save-as cancellation keeps an untitled dirty editor open
+00:28 +4 -4: E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: (tearDownAll)
+00:28 +4 -4: loading E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart
+00:29 +4 -4: E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document copy updates target, preserves source, and saves undoably
+00:30 +5 -4: E:/temp/alula-pr3-20261117/app/test/workbench_cross_document_text_drag_drop_test.dart: cross-document move edits and undoes both documents atomically
+00:31 +6 -4: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: batch close cancel is atomic and discard is explicit
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: close others uses the clicked tab in an inactive group
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: dirty tab close supports cancel and confirmed save
+  E:/temp/alula-pr3-20261117/app/test/editor_tab_preview_test.dart: sticky tabs stay in a prefix, restore, and follow keyboard and explicit close rules

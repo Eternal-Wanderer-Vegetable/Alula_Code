@@ -12653,7 +12653,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (previous != null) _flushInput(previous, commitComposition: true);
     // 同一文件在不同组打开时共享 Rust 文档，但为组创建独立视图状态。
     for (final g in _groups.values) {
-      final existing = g.docs.where((d) => d.path == path).firstOrNull;
+      final existing = g.docs
+          .where((d) => d.path != null &&
+              _canonicalPath(d.path!) == _canonicalPath(path))
+          .firstOrNull;
       if (existing != null) {
         if (expectedContent != null &&
             (existing.isDirty ||

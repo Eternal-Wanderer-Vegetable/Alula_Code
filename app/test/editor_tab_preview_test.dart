@@ -19,6 +19,8 @@ import 'package:irondash_message_channel/irondash_message_channel.dart';
 import 'package:super_native_extensions/src/native/context.dart'
     show setContextOverride;
 
+import 'helpers/file_paths.dart';
+
 Future<(Directory, Directory)> _createWorkspace(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1100, 800);
   tester.view.devicePixelRatio = 1;
@@ -77,12 +79,12 @@ Text _labelWidget(WidgetTester tester, String name,
     tester.widget<Text>(_tabLabel(name, region: region));
 
 Future<void> _tapExplorerFile(WidgetTester tester, String path) async {
-  await tester.tap(find.byKey(ValueKey('explorer-node:$path')));
+  await tester.tap(explorerFileNode(path));
   await _finishAsyncIo(tester);
 }
 
 Future<void> _doubleTapExplorerFile(WidgetTester tester, String path) async {
-  final target = find.byKey(ValueKey('explorer-node:$path'));
+  final target = explorerFileNode(path);
   final position = tester.getCenter(target);
   final firstTap = await tester.startGesture(position);
   await firstTap.up();
@@ -165,7 +167,9 @@ Map _savedEditorGroup(SessionStore store, {String region = 'editor'}) =>
 
 int _savedDocumentId(Map group, String path) =>
     ((group['docs'] as List).cast<Map>().firstWhere(
-              (doc) => doc['path'] == path,
+              (doc) =>
+                  doc['path'] is String &&
+                  nativeTestPath(doc['path'] as String) == nativeTestPath(path),
             )['id'] as num)
         .toInt();
 

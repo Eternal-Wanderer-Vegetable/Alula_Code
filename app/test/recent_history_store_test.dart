@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:alula_app/workbench/recent_history_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/file_paths.dart';
+
 void main() {
   late Directory temp;
   late String journalPath;
@@ -27,12 +29,16 @@ void main() {
     final restored = RecentHistoryStore(path: journalPath).load();
     expect(restored.files, hasLength(maxRecentHistoryEntriesPerKind));
     expect(restored.workspaces, hasLength(maxRecentHistoryEntriesPerKind));
-    expect(restored.files.first.path, '${temp.path}/file-10.dart');
+    expect(
+        restored.files.first.path, nativeTestPath('${temp.path}/file-10.dart'));
     expect(restored.files.where((entry) => entry.path.endsWith('file-10.dart')),
         hasLength(1));
-    expect(restored.files.last.path, '${temp.path}/file-1.dart');
-    expect(restored.workspaces.first.path,
-        '${temp.path}/workspace-$maxRecentHistoryEntriesPerKind');
+    expect(
+        restored.files.last.path, nativeTestPath('${temp.path}/file-1.dart'));
+    expect(
+        restored.workspaces.first.path,
+        nativeTestPath(
+            '${temp.path}/workspace-$maxRecentHistoryEntriesPerKind'));
   });
 
   test('corrupt and oversized journals safely load as empty', () async {
@@ -56,9 +62,10 @@ void main() {
     store.recordWorkspace(file.path);
 
     final pruned = await store.pruneMissingPaths();
-    expect(pruned.files.map((entry) => entry.path), [file.absolute.path]);
+    expect(
+        pruned.files.map((entry) => entry.path), [nativeTestPath(file.path)]);
     expect(pruned.workspaces.map((entry) => entry.path),
-        [directory.absolute.path]);
+        [nativeTestPath(directory.path)]);
 
     final restored = RecentHistoryStore(path: journalPath).load();
     expect(restored.files, pruned.files);
