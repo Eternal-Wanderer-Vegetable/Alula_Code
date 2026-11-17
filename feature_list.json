@@ -1613,7 +1613,7 @@
         "feat-123"
       ],
       "status": "in-progress",
-      "evidence": "Explorer type navigation/keyboard4/4, compare regression13/13; full init.sh passed Flutter1432/1432, Rust tests/Clippy/core/fmt, analyze0. Workbench private symbols are UNKNOWN in graph; source call sites inspected. Hosted pending. LAY-16 remains open for generic list/table coverage, column resize and native visual diff.",
+      "evidence": "Explorer type navigation/keyboard4/4, compare regression13/13; full init.sh passed Flutter1432/1432, Rust tests/Clippy/core/fmt, analyze0. Workbench private symbols are UNKNOWN in graph; source call sites inspected. PR CI 44094751711 retry attempt2 all jobs green after attempt1 had one transient existing editor-selection-tab test failure (isolated rerun green). Platform 44094742100 Linux/Windows green; macOS Flutter tests/release/clipboard passed, native DnD explicitly skipped for unavailable synthetic pointer route. macOS native Quit probe hung until 60m job timeout; package/Quit not verified. LAY-16 remains open for generic list/table coverage, column resize and native visual diff.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
