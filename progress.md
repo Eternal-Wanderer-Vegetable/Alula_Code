@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；当前 P05.74 异步 Quick Open；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.75 层级 Outline；目标整体完成 P05
+
+- 2026-11-17：P05.74已提交3aa5b97，最终Flutter1407/1407、analyze0，Quick Open异步/MRU/路径位置/分页取消已接通，CI44031921916成功。P05.75版本化层级Outline本地全量1425/1425、模型17/17、workbench+breadcrumb21/21、analyze0；修复同名文档id/version缓存、null旧符号，新增filter/sort/collapse/follow cursor与预算错误。下一文档符号picker预览/取消/侧开。
 
 - 2026-11-17：中断恢复后继续P05.74，异步itemsProvider/取消/分页200+lookahead/MRU/绝对路径:行:列已接入，旧同步2000文件索引删除。专项38/38、pageguard/销毁取消专项24/24、旧Ctrl+P工作台回归通过，analyze0。全量两次仅既有filewatch teardown未卸载导致Windows errno32；已补先卸载+有界等待，最终全量运行，证据保留。P05.73 8a4ef28的CI44016110199和Platform44016101825均success。
 

@@ -88,6 +88,7 @@ import 'command_history.dart';
 import 'tree_find.dart';
 import 'goto_position.dart';
 import 'quick_open_query.dart';
+import 'document_symbols.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -540,8 +541,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Future<void> _watcherTransition = Future<void>.value();
 
   // ---------- 大纲视图（feat-outline） ----------
-  final List<({String kind, String name, int startUtf16, int line})>
-      _outlineSymbols = [];
+  List<DocumentSymbolNode> _outlineSymbols = [];
+  final TextEditingController _outlineFilter = TextEditingController();
+  DocumentSymbolSort _outlineSort = DocumentSymbolSort.position;
+  final Set<String> _outlineCollapsed = {};
+  bool _outlineFollowCursor = true;
+  String? _outlineActiveSymbol;
+  String? _outlineError;
   String _outlineDocKey = '';
   Timer? _outlineTimer;
 
@@ -3073,6 +3079,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _syncCommandContext() {
+    if ((_sidebarView == 'outline' || _secondarySidebarView == 'outline') &&
+        _active != null && !_outlineDocKey.startsWith('${_active!.id}#')) {
+      _refreshOutline();
+    }
+    _updateOutlineCursor();
     final active = _active;
     final mergeSession = active?.mergeResultSession;
     final currentMergeConflict = active == null
@@ -18594,21 +18605,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     final r = active.doc.core.lsp.symbols(active.id);
-    if (r == null) return;
-    final key = '${active.name}#${r.version}';
+    if (r == null || r.version != active.doc.version) {
+      _outlineSymbols = [];
+      _outlineDocKey = '';
+      _outlineActiveSymbol = null;
+      return;
+    }
+    final key = '${active.id}#${r.version}';
     if (key == _outlineDocKey) return;
     _outlineDocKey = key;
-    _outlineSymbols
-      ..clear()
-      ..addAll([
-        for (final s in r.symbols)
-          (
-            kind: s['kind'] as String? ?? '',
-            name: s['name'] as String? ?? '',
-            startUtf16: (s['start_utf16'] as num?)?.toInt() ?? 0,
-            line: (s['line'] as num?)?.toInt() ?? 0,
-          )
-      ]);
+    _outlineCollapsed.clear();
+    _outlineError = null;
+    try {
+      _outlineSymbols = buildDocumentSymbolTree(r.symbols);
+    } on ArgumentError catch (error) {
+      _outlineSymbols = [];
+      _outlineError = '符号结果超出预算：${error.message}';
+    }
+    _updateOutlineCursor();
+  }
+
+  void _updateOutlineCursor() {
+    final active = _active;
+    if (!_outlineFollowCursor || active == null || _outlineSymbols.isEmpty ||
+        _outlineDocKey != '${active.id}#${active.doc.version}') {
+      return;
+    }
+    try {
+      final line = active.doc.lineBoundary(active.selection.extentOffset).line + 1;
+      _outlineActiveSymbol = documentSymbolAtLine(_outlineSymbols, line)?.id;
+    } on AlulaException catch (_) {
+      _outlineActiveSymbol = null;
+    }
   }
 
   /// 编辑后防抖刷新大纲。
@@ -19695,6 +19723,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _findQuery.dispose();
     _replaceInput.dispose();
     _outlineTimer?.cancel();
+    _outlineFilter.dispose();
     _stopWorkspaceWatcher();
     for (final timer in _syntaxRefreshTimers.values) {
       timer.cancel();
@@ -20306,6 +20335,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildOutlinePanel() {
     final active = _active;
+    final rows = projectDocumentSymbols(_outlineSymbols,
+        query: _outlineFilter.text, sort: _outlineSort, collapsed: _outlineCollapsed);
     return Container(
       color: const Color(0xFF181B20),
       child: Column(
@@ -20313,34 +20344,65 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-            child: Text(
-              active == null ? '大纲' : '大纲 · ${active.name}',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Row(children: [
+              Expanded(child: Text(active == null ? '大纲' : '大纲 · ${active.name}',
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis)),
+              IconButton(key: const ValueKey('outline-follow-cursor'),
+                tooltip: '跟随光标', iconSize: 16,
+                color: _outlineFollowCursor ? Colors.lightBlueAccent : null,
+                onPressed: () => setState(() { _outlineFollowCursor = !_outlineFollowCursor; _updateOutlineCursor(); }),
+                icon: const Icon(Icons.my_location)),
+              PopupMenuButton<DocumentSymbolSort>(
+                key: const ValueKey('outline-sort'), tooltip: '大纲排序',
+                icon: const Icon(Icons.sort, size: 16),
+                onSelected: (sort) => setState(() => _outlineSort = sort),
+                itemBuilder: (_) => [
+                  for (final sort in DocumentSymbolSort.values) CheckedPopupMenuItem(
+                    value: sort, checked: _outlineSort == sort,
+                    child: Text(switch (sort) { DocumentSymbolSort.position => '按位置排序', DocumentSymbolSort.name => '按名称排序', DocumentSymbolSort.kind => '按类别排序' })),
+                ],
+              ),
+            ]),
           ),
           const Divider(height: 1),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: TextField(key: const ValueKey('outline-filter'), controller: _outlineFilter,
+              style: const TextStyle(fontSize: 12),
+              decoration: const InputDecoration(isDense: true, hintText: '筛选符号'),
+              onChanged: (_) => setState(() {}))),
           Expanded(
-            child: active == null || _outlineSymbols.isEmpty
+            child: active == null || rows.isEmpty
                 ? Center(
                     child: Text(
                       active == null
                           ? '无打开文档'
-                          : (_outlineSymbols.isEmpty ? '未发现符号（仅支持 Rust）' : ''),
+                          : (_outlineError ?? (_outlineSymbols.isEmpty ? '未发现符号（仅支持 Rust）' : '无匹配符号')),
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(color: Colors.grey.shade500, fontSize: 12),
                     ),
                   )
                 : ListView.builder(
-                    itemCount: _outlineSymbols.length,
+                    itemCount: rows.length,
                     itemBuilder: (context, i) {
-                      final sym = _outlineSymbols[i];
+                      final sym = rows[i].symbol;
                       return Material(
                         type: MaterialType.transparency,
                         child: ListTile(
                           key: ValueKey('outline-$i'),
                           dense: true,
+                          selected: _outlineActiveSymbol == sym.id,
+                          selectedTileColor: const Color(0xFF24476D),
+                          contentPadding: EdgeInsets.only(left: 8 + rows[i].depth * 12.0, right: 8),
+                          trailing: sym.children.isEmpty ? null : IconButton(
+                            key: ValueKey('outline-toggle-${sym.id}'),
+                            iconSize: 14,
+                            tooltip: _outlineCollapsed.contains(sym.id) ? '展开符号' : '折叠符号',
+                            onPressed: () => setState(() {
+                              if (!_outlineCollapsed.remove(sym.id)) _outlineCollapsed.add(sym.id);
+                            }),
+                            icon: Icon(_outlineCollapsed.contains(sym.id) ? Icons.chevron_right : Icons.expand_more)),
                           leading: Container(
                             width: 30,
                             alignment: Alignment.center,
@@ -20363,7 +20425,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           subtitle: Text('行 ${sym.line}',
                               style: TextStyle(
                                   fontSize: 10, color: Colors.grey.shade500)),
-                          onTap: () => _jumpToSymbol(sym.startUtf16),
+                          onTap: () {
+                            if (_outlineDocKey == '${active.id}#${active.doc.version}') {
+                              _jumpToSymbol(sym.startUtf16);
+                              _focusEditorAfterLayout(_focused, active);
+                            }
+                          },
                         ),
                       );
                     },

@@ -1568,6 +1568,18 @@
       "evidence": "Focused38/38, analyze0. Query paging431 files, exact200 boundary, stale/close completion, absolute path outside workspace plus UTF16 emoji navigation and disk unchanged. Full gates/review running. Final bash init.sh all gates green Flutter1407/1407, Rust tests/Clippy/core build/fmt, analyze0. Review lifecycle/page guards repaired; watcher teardown test now unmounts before deletion. Hosted pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-127",
+      "name": "P05.75 CMD-07 版本化层级Outline",
+      "description": "Rust符号快照id/version、层级/过滤/排序/折叠/follow cursor；修复同名doc缓存与null旧结果。docs/diagnostics/2026-11-17-p05/p05.75-document-outline.md",
+      "dependencies": [
+        "feat-126"
+      ],
+      "status": "in-progress",
+      "evidence": "Model17/17, workbench+breadcrumb21/21, existingoutline1/1, analyze0. Full gates running. Rustprovider breadth remains P08. Final full init.sh Flutter1425/1425, Rust tests/Clippy/core build/fmt passed; final graph/hosted pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
