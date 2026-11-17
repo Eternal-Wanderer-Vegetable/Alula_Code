@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-17 更新）
 
-### P05 / feat-027 持续推进；当前 P05.75 层级 Outline；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.76 文档符号选择器；目标整体完成 P05
+
+- 2026-11-17：P05.75已提交d791b45，本地1425全绿、CI44037192587成功；Platform44037183025首轮macOS regex replace单项时序失败（1424/1425），native Quit skipped，已保存失败并同SHA --failed复验。P05.74 Platform44031913266首轮macOS native Quit AX菜单不可见/fallback超时，普通启动通过且无crash artifact，按已验证同SHA先例复验。当前P05.76文档symbol picker/预览取消/类别/侧开已实现，综合58/58、首轮全量1426/1426；评审修复accept重入与side source restoration，专项22/22，最终门禁运行。
 
 - 2026-11-17：P05.74已提交3aa5b97，最终Flutter1407/1407、analyze0，Quick Open异步/MRU/路径位置/分页取消已接通，CI44031921916成功。P05.75版本化层级Outline本地全量1425/1425、模型17/17、workbench+breadcrumb21/21、analyze0；修复同名文档id/version缓存、null旧符号，新增filter/sort/collapse/follow cursor与预算错误。下一文档符号picker预览/取消/侧开。
 

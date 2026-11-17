@@ -1762,6 +1762,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'Reset Walkthrough Progress',
       _resetWalkthroughProgress,
     );
+    reg('workbench.action.gotoSymbol', '转到', '转到编辑器中的符号…', _showDocumentSymbols,
+        enablement: 'editorActive',
+        shortcut: _keybindings.shortcutFor('workbench.action.gotoSymbol'));
     reg('workbench.action.gotoLine', '转到', '转到行/列…', _showGotoPosition,
         enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoLine'));
@@ -3414,6 +3417,80 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _ => null,
     };
     return target == currentLocation;
+  }
+
+  Future<void> _showDocumentSymbols() async {
+    final group = _focused;
+    final doc = group.active;
+    if (doc == null) return;
+    _flushInput(doc, commitComposition: true);
+    final snapshot = doc.doc.core.lsp.symbols(doc.id);
+    if (snapshot == null || snapshot.version != doc.doc.version) {
+      setState(() => _statusDetail = '当前文档没有可用符号');
+      return;
+    }
+    final roots = buildDocumentSymbolTree(snapshot.symbols);
+    final original = doc.selectionSet.toList();
+    final scroll = editorPrimaryScrollPosition(doc.editorScrollController)?.pixels;
+    var accepted = false;
+    bool valid() => mounted && identical(_active, doc) && doc.doc.version == snapshot.version;
+    void preview(DocumentSymbolNode symbol) {
+      if (!valid()) return;
+      _setDocSelections(doc, [TextSelection.collapsed(offset: symbol.startUtf16)], recordHistory: false);
+    }
+    Future<void> accept(DocumentSymbolNode symbol, {bool side = false}) async {
+      if (accepted || !valid()) return;
+      accepted = true;
+      if (side) {
+        _setDocSelections(doc, original, recordHistory: false);
+        final sourcePosition = editorPrimaryScrollPosition(doc.editorScrollController);
+        if (scroll != null && sourcePosition != null) {
+          sourcePosition.jumpTo(scroll.clamp(0, sourcePosition.maxScrollExtent));
+        }
+        _splitFocusedGroup();
+      }
+      final target = _active;
+      if (target == null || !target.sameDocumentAs(doc)) return;
+      target.selectionHistory.record(original);
+      _setDocSelections(target, [TextSelection.collapsed(offset: symbol.startUtf16)], recordHistory: false);
+      _focusEditorAfterLayout(_focused, target);
+    }
+    await QuickInput.show(context,
+      hint: '转到符号（@名称，@: 按类别）', initialValue: '@', items: const [],
+      restoreFocus: _focusNodeFor(group, doc),
+      itemsProvider: (query) async {
+        if (!valid()) return const [];
+        var value = query.trim();
+        if (value.startsWith('@')) value = value.substring(1);
+        final grouped = value.startsWith(':');
+        if (grouped) value = value.substring(1);
+        final rows = projectDocumentSymbols(roots, query: value,
+            sort: grouped ? DocumentSymbolSort.kind : DocumentSymbolSort.position);
+        String? lastKind;
+        final items = <QuickItem>[];
+        for (final row in rows) {
+          final symbol = row.symbol;
+          if (grouped && symbol.kind != lastKind) {
+            items.add(QuickItem(label: symbol.kind, kind: QuickItemKind.separator));
+            lastKind = symbol.kind;
+          }
+          items.add(QuickItem(label: symbol.name,
+            description: '${symbol.kind} · 行 ${symbol.line}',
+            detail: row.depth == 0 ? null : '  ' * row.depth + symbol.name,
+            onPreview: () => preview(symbol),
+            onRun: () => accept(symbol),
+            buttons: [QuickItemButton(icon: Icons.vertical_split, tooltip: '在侧边打开符号',
+                onRun: () => accept(symbol, side: true))],
+          ));
+        }
+        return items;
+      },
+    );
+    if (!accepted && valid()) {
+      _setDocSelections(doc, original, recordHistory: false);
+      final position = editorPrimaryScrollPosition(doc.editorScrollController);
+      if (scroll != null && position != null) position.jumpTo(scroll.clamp(0, position.maxScrollExtent));
+    }
   }
 
   Future<void> _showGotoPosition() async {

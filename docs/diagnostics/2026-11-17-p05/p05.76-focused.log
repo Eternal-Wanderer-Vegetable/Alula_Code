@@ -1,0 +1,82 @@
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/workbench_document_symbols_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/workbench_document_symbols_test.dart: symbol picker previews, cancels, groups and accepts Rust symbols
+00:03 +1: loading E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart
+00:04 +1: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: builds ordered nested ranges from unsorted input without mutation
+00:04 +2: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: same-line and equal-range declarations remain siblings
+00:04 +3: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: same starts cannot imply parentage even for narrower ranges
+00:04 +4: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: crossing intervals are siblings and containing earlier parent survives
+00:04 +5: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: containment includes first and last lines but requires ordered starts
+00:04 +6: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: stable IDs depend only on UTF-16 start, kind and full name
+00:04 +7: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: name and kind sorting operate per sibling group, retaining hierarchy
+00:04 +8: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: sort ties use position and same-kind ties use name
+00:04 +9: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: query preserves ancestors and matches case-insensitive substrings
+00:04 +10: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: matching a folder does not include unrelated descendants
+00:04 +11: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: collapse hides descendants only without an active query
+00:04 +12: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: line lookup selects deepest inclusive range and excludes gaps
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: line lookup breaks same-depth ambiguity with later start
+00:04 +14: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: rejects invalid rows without coercing wire types
+00:04 +15: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: empty input supports building, querying and line lookup
+00:04 +16: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: 10000 deep ancestors build, filter and look up without recursion
+00:04 +17: E:/temp/alula-pr3-20261117/app/test/document_symbols_test.dart: input cap counts invalid rows and fails explicitly above 10000
+00:04 +18: loading E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart
+00:04 +18: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: async picker ignores stale results and late completion after close
+00:05 +19: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: disposing the Navigator cancels a pending picker once
+00:05 +20: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input validates asynchronously, rejects stale results and accepts current text
+00:06 +21: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: input history retains draft and Escape returns null
+00:06 +22: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: multi selection accepts picked items hidden by query
+00:06 +23: loading E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart
+00:07 +23: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: separators render as headings and navigation skips them
+00:08 +24: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: separators disappear while a query filters the list
+00:08 +25: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: multi-select toggles with Space and accepts the picked items
+00:08 +26: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: description renders inline and detail renders as a second line
+00:08 +27: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: validation message renders below the filter row
+00:08 +28: E:/temp/alula-pr3-20261117/app/test/quick_input_groups_test.dart: multi-select item buttons still run their own action
+00:08 +29: loading E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart
+00:09 +29: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 修饰键组合与裸键
+00:09 +30: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChord 非法输入返回 null
+00:09 +31: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: parseChordSequence parses two strokes and displays each chord
+00:09 +32: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet occurrence selection defaults use platform commands
+00:09 +33: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet overtype toggle follows the pinned platform keybindings
+00:09 +34: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet word delete follows the pinned platform keybindings
+00:09 +35: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+00:09 +36: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+00:09 +37: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+00:09 +38: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+00:09 +39: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet sticky and editor close commands use the platform defaults
+00:09 +40: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+00:09 +41: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+00:09 +42: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+00:09 +43: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+00:09 +44: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet copy-line defaults coexist with platform column-selection chords
+00:09 +45: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+00:09 +46: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet navigation defaults leave platform word-movement chords available
+00:09 +47: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 默认表可解析且包含核心键位
+00:09 +48: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+00:09 +49: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet New Text File respects a user keybinding override
+00:09 +50: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户追加：新键位生效
+00:09 +51: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户键位可覆盖与移除双段默认键位
+00:09 +52: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+00:09 +53: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+00:09 +54: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 移除不匹配的键位串：无操作
+00:09 +55: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 损坏 JSON：只用默认键位
+00:09 +56: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+00:09 +57: E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+00:09 +58: All tests passed!

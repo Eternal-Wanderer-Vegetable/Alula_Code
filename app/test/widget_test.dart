@@ -879,7 +879,20 @@ void main() {
       final repo = await createTempRepo(
           prefix: 'alula_git_widget', extraFiles: {'hello.py': 'print(1)\n'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -939,7 +952,20 @@ void main() {
           prefix: 'alula_search_widget',
           extraFiles: {'src/needle.py': 'find the needle here\n'});
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,
@@ -1252,7 +1278,20 @@ void main() {
                 '}$kNL'
           });
       addTearDown(() async {
-        if (repo.existsSync()) await repo.delete(recursive: true);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
       });
       await tester.pumpWidget(AlulaApp(
         autoFolder: repo.path,

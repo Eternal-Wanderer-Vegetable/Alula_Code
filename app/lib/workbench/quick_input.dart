@@ -31,6 +31,7 @@ class QuickItem {
     this.commandId,
     this.arguments,
     this.onRun,
+    this.onPreview,
     this.buttons = const <QuickItemButton>[],
     this.kind = QuickItemKind.defaultItem,
     this.picked = false,
@@ -47,6 +48,7 @@ class QuickItem {
   final String? commandId;
   final Object? arguments;
   final Future<void> Function()? onRun;
+  final VoidCallback? onPreview;
   final List<QuickItemButton> buttons;
   final QuickItemKind kind;
 
@@ -440,7 +442,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     for (final (index, item) in sourceItems.indexed) {
       if (item.kind == QuickItemKind.separator) {
         // 上游：分组标题不参与匹配，有查询时与不匹配条目一起消失。
-        if (q.isEmpty) scored.add((item, 0, index));
+        if (q.isEmpty || widget.itemsProvider != null) {
+          scored.add((item, 0, index));
+        }
         continue;
       }
       if (item.commandId case final id?
@@ -462,6 +466,21 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     setState(() {
       _filtered = filtered;
       _selected = _firstSelectable();
+    });
+    _previewSelected();
+  }
+
+  void _previewSelected() {
+    if (_selected < 0 || _selected >= _filtered.length) return;
+    final item = _filtered[_selected];
+    if (item.onPreview == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          ModalRoute.of(context)?.isCurrent == true &&
+          _selected < _filtered.length &&
+          identical(_filtered[_selected], item)) {
+        item.onPreview?.call();
+      }
     });
   }
 
@@ -509,6 +528,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (index != _selected) {
       setState(() => _selected = index);
       _revealSelected();
+      _previewSelected();
     }
   }
 
@@ -525,11 +545,19 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     });
   }
 
+  bool _claimPickerAcceptance() {
+    if (_accepted || !mounted || ModalRoute.of(context)?.isCurrent != true) {
+      return false;
+    }
+    _accepted = true;
+    return true;
+  }
+
   Future<void> _runAt(int index) async {
     if (index < 0 || index >= _filtered.length) return;
     final item = _filtered[index];
     if (!_isSelectable(item)) return;
-    if (!_enabled(item)) return;
+    if (!_enabled(item) || !_claimPickerAcceptance()) return;
     widget.onHandled();
     Navigator.of(context).pop();
     if (item.commandId case final id?) {
@@ -548,6 +576,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   void _accept() {
+    if (!_claimPickerAcceptance()) return;
     final picked = [
       for (final item in widget.items)
         if (_isSelectable(item) && _picked.contains(item)) item,
@@ -558,6 +587,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   Future<void> _runItemButton(QuickItemButton button) async {
+    if (!_claimPickerAcceptance()) return;
     widget.onHandled();
     Navigator.of(context).pop();
     await button.onRun();
@@ -566,6 +596,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   /// 返回上一步：pop 当前层后由调用方重新显示上一步（上游 quick pick back）。
   /// 这是步骤导航而非取消，因此不恢复流程外焦点——焦点留给新面板的输入框。
   void _goBack() {
+    if (!_claimPickerAcceptance()) return;
     widget.onHandled();
     Navigator.of(context).pop();
     widget.onBack?.call();
@@ -753,6 +784,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       onHover: (hovering) {
         if (hovering && !selected) {
           setState(() => _selected = index);
+          _previewSelected();
         }
       },
       child: Container(

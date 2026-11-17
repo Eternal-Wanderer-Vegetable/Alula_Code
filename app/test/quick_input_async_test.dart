@@ -6,6 +6,35 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('picker accepts a candidate only once during route dismissal',
+      (tester) async {
+    var runs = 0;
+    final action = Completer<void>();
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => TextButton(
+                  child: const Text('open'),
+                  onPressed: () =>
+                      QuickInput.show(context, hint: 'pick', items: [
+                    QuickItem(
+                        label: 'target',
+                        onRun: () async {
+                          runs++;
+                          await action.future;
+                        }),
+                  ]),
+                ))));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(runs, 1);
+    expect(find.text('open'), findsOneWidget);
+    action.complete();
+    await tester.pump();
+  });
+
   testWidgets(
       'async picker ignores stale results and late completion after close',
       (tester) async {

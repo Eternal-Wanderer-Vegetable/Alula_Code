@@ -1580,6 +1580,18 @@
       "evidence": "Model17/17, workbench+breadcrumb21/21, existingoutline1/1, analyze0. Full gates running. Rustprovider breadth remains P08. Final full init.sh Flutter1425/1425, Rust tests/Clippy/core build/fmt passed; final graph/hosted pending.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-128",
+      "name": "P05.76 CMD-04 文档符号选择器",
+      "description": "gotoSymbol Ctrl/CmdShiftO、@和@:类别、候选预览/取消原多选scroll、版本校验、侧开共享doc。docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md",
+      "dependencies": [
+        "feat-127"
+      ],
+      "status": "in-progress",
+      "evidence": "Focused58/58 including real Rust preview/cancel/category/keyboard side-open; final full gates/review running. Symbolprovider breadth remains P08. Final full gates Flutter1426/1426, Rust tests/Clippy/core/fmt and analyze0; review source-restoration and acceptlatch repaired, guards22 and repeataccept7 green. Hosted pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
