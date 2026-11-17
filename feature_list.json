@@ -1612,8 +1612,20 @@
       "dependencies": [
         "feat-123"
       ],
+      "status": "done",
+      "evidence": "Explorer type navigation/keyboard4/4, compare regression13/13; full init.sh passed Flutter1432/1432, Rust tests/Clippy/core/fmt, analyze0. Workbench private symbols are UNKNOWN in graph; source call sites inspected. Commit 76d70d5. PR CI 44094751711 retry attempt2 all jobs green after attempt1 had one transient existing editor-selection-tab test failure (isolated rerun green). Platform 44094742100 Linux/Windows green; macOS Flutter tests/release/clipboard passed, native DnD explicitly skipped for unavailable synthetic pointer route. macOS native Quit probe hung until 60m job timeout; package/Quit not verified. LAY-16 remains open for generic list/table coverage, column resize and native visual diff.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-131",
+      "name": "P05.79 LAY-18b 通知进度完成与取消状态",
+      "description": "progress done hides its progress affordance while retaining the notification; cancellation is single-flight, pending UI is disabled, callback failures can retry. docs/diagnostics/2026-11-17-p05/p05.79-notification-progress-lifecycle.md",
+      "dependencies": [
+        "feat-130"
+      ],
       "status": "in-progress",
-      "evidence": "Explorer type navigation/keyboard4/4, compare regression13/13; full init.sh passed Flutter1432/1432, Rust tests/Clippy/core/fmt, analyze0. Workbench private symbols are UNKNOWN in graph; source call sites inspected. PR CI 44094751711 retry attempt2 all jobs green after attempt1 had one transient existing editor-selection-tab test failure (isolated rerun green). Platform 44094742100 Linux/Windows green; macOS Flutter tests/release/clipboard passed, native DnD explicitly skipped for unavailable synthetic pointer route. macOS native Quit probe hung until 60m job timeout; package/Quit not verified. LAY-16 remains open for generic list/table coverage, column resize and native visual diff.",
+      "evidence": "Focused notification progress model/UI 12/12, flutter analyze0; full init.sh passed Flutter1434/1434 plus Rust workspace/Clippy/core/fmt. GitNexus NotificationProgress impact was HIGH with 96 lower-bound affected nodes and 29 direct; kept API additive and source call sites reviewed. Hosted pending; broader LAY-18 provider/action/error coverage remains open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

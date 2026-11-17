@@ -411,6 +411,7 @@ class _NotificationProgressLine extends StatelessWidget {
     return ListenableBuilder(
       listenable: progress,
       builder: (context, _) {
+        if (progress.isDone) return const SizedBox.shrink();
         final fraction = progress.fraction;
         return Semantics(
           label: '进度',
@@ -438,7 +439,7 @@ class _NotificationProgressLine extends StatelessWidget {
                   style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
                 ),
               ],
-              if (progress.cancellable) ...[
+              if (progress.onCancel != null && !progress.isDone) ...[
                 const SizedBox(width: 4),
                 TextButton(
                   key: ValueKey('$cancelKeyPrefix-${notification.id}'),
@@ -448,8 +449,9 @@ class _NotificationProgressLine extends StatelessWidget {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     textStyle: const TextStyle(fontSize: 10.5),
                   ),
-                  onPressed: () => progress.cancel(),
-                  child: const Text('取消'),
+                  onPressed:
+                      progress.cancellable ? () => progress.cancel() : null,
+                  child: Text(progress.cancellationPending ? '正在取消…' : '取消'),
                 ),
               ],
             ],

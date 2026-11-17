@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
@@ -25,7 +26,7 @@ void main() {
     if (temp.existsSync()) await temp.delete(recursive: true);
   });
 
-  testWidgets('toast shows determinate progress, updates and cancels',
+  testWidgets('toast progress completes and removes its progress controls',
       (tester) async {
     await _mountApp(tester);
     try {
@@ -54,13 +55,50 @@ void main() {
       await tester.pump();
       expect(find.text('75%'), findsOneWidget, reason: '进度条监听器直接重建 toast');
 
-      await tester
-          .tap(find.byKey(const ValueKey('notification-toast-cancel-1')));
+      progress.done();
       await tester.pump();
-      expect(cancels, 1);
+      expect(
+          find.byKey(const ValueKey('notification-toast-1')), findsOneWidget,
+          reason: 'completion hides progress but retains the notification');
+      expect(find.byKey(const ValueKey('notification-progress-1')), findsNothing);
+      expect(find.byKey(const ValueKey('notification-toast-cancel-1')),
+          findsNothing);
+      expect(cancels, 0);
     } finally {
       await _unmountApp(tester);
     }
+  });
+
+  testWidgets('cancel action disables while cancellation is pending',
+      (tester) async {
+    await _mountApp(tester);
+    final finishCancellation = Completer<void>();
+    var cancels = 0;
+    final progress = NotificationProgress(
+      total: 5,
+      onCancel: () {
+        cancels++;
+        return finishCancellation.future;
+      },
+    );
+    notifications.notify(
+      severity: WorkbenchNotificationSeverity.info,
+      message: '正在同步',
+      progress: progress,
+    );
+    await tester.pump();
+
+    final cancel = find.byKey(const ValueKey('notification-toast-cancel-1'));
+    await tester.tap(cancel);
+    await tester.pump();
+    expect(cancels, 1);
+    expect(find.text('正在取消…'), findsOneWidget);
+    expect(tester.widget<TextButton>(cancel).onPressed, isNull);
+
+    finishCancellation.complete();
+    await tester.pump();
+    expect(tester.widget<TextButton>(cancel).onPressed, isNotNull);
+    await _unmountApp(tester);
   });
 
   testWidgets('center row shows progress and banner renders above the grid',

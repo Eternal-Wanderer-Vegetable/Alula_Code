@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,17 +29,53 @@ void main() {
       expect(progress.fraction, closeTo(0.5, 1e-9));
     });
 
-    test('cancel only exists with a callback', () async {
+    test('cancel only exists with a callback and is single-flight', () async {
       final plain = NotificationProgress(total: 1);
       expect(plain.cancellable, isFalse);
       await plain.cancel();
 
       var cancels = 0;
-      final cancellable =
-          NotificationProgress(total: 5, onCancel: () async => cancels += 1);
-      expect(cancellable.cancellable, isTrue);
+      final finishCancellation = Completer<void>();
+      final cancellable = NotificationProgress(
+        total: 5,
+        onCancel: () {
+          cancels += 1;
+          return finishCancellation.future;
+        },
+      );
+      final firstCancel = cancellable.cancel();
+      expect(cancellable.cancellationPending, isTrue);
+      expect(cancellable.cancellable, isFalse);
       await cancellable.cancel();
       expect(cancels, 1);
+      finishCancellation.complete();
+      await firstCancel;
+      expect(cancellable.cancellable, isTrue);
+    });
+
+    test('failed cancellation can be retried and done is terminal', () async {
+      var cancels = 0;
+      final progress = NotificationProgress(
+        total: 2,
+        onCancel: () async {
+          cancels++;
+          if (cancels == 1) throw StateError('cancel failed');
+        },
+      );
+      await expectLater(progress.cancel(), throwsStateError);
+      expect(progress.cancellable, isTrue);
+      await progress.cancel();
+      expect(cancels, 2);
+
+      var changes = 0;
+      progress.addListener(() => changes++);
+      progress.done();
+      expect(progress.isDone, isTrue);
+      expect(progress.cancellable, isFalse);
+      progress.report(worked: 2);
+      progress.done();
+      expect(progress.worked, 0, reason: 'done rejects late progress reports');
+      expect(changes, 1);
     });
   });
 

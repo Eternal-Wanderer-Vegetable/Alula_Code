@@ -53,7 +53,7 @@ class WorkbenchNotification {
   final bool banner;
 
   bool get hasActions => actions.isNotEmpty;
-  bool get hasProgress => progress != null;
+  bool get hasProgress => progress != null && !progress!.isDone;
 }
 
 /// 通知进度（上游 `IProgressOptions`/`IProgressStep`）：有 `total` 时为确定进度，
@@ -73,11 +73,15 @@ class NotificationProgress extends ChangeNotifier {
   int? _total;
   int _worked;
   bool _infinite;
+  bool _done = false;
+  bool _cancellationPending = false;
 
   int? get total => _total;
   int get worked => _worked;
   bool get infinite => _infinite;
-  bool get cancellable => onCancel != null;
+  bool get isDone => _done;
+  bool get cancellationPending => _cancellationPending;
+  bool get cancellable => onCancel != null && !_done && !_cancellationPending;
 
   bool get isDeterminate => !_infinite && _total != null && _total! > 0;
 
@@ -88,6 +92,7 @@ class NotificationProgress extends ChangeNotifier {
   int? get percent => fraction == null ? null : (fraction! * 100).round();
 
   void report({int? worked, int? total, bool? infinite}) {
+    if (_done) return;
     var changed = false;
     if (worked != null && worked != _worked) {
       _worked = worked;
@@ -104,8 +109,31 @@ class NotificationProgress extends ChangeNotifier {
     if (changed) notifyListeners();
   }
 
+  void done() {
+    if (_done) return;
+    _done = true;
+    _cancellationPending = false;
+    notifyListeners();
+  }
+
   Future<void> cancel() async {
-    await onCancel?.call();
+    final callback = onCancel;
+    if (callback == null || _done || _cancellationPending) return;
+    _cancellationPending = true;
+    notifyListeners();
+    try {
+      await callback();
+    } catch (_) {
+      if (!_done) {
+        _cancellationPending = false;
+        notifyListeners();
+      }
+      rethrow;
+    }
+    if (!_done) {
+      _cancellationPending = false;
+      notifyListeners();
+    }
   }
 }
 
