@@ -244,6 +244,7 @@ class KeybindingSet {
     'view.quickOpen': 'ctrl+p',
     'workbench.action.gotoLine': 'ctrl+g',
     'workbench.action.gotoSymbol': 'ctrl+shift+o',
+    'workbench.action.showAllSymbols': 'ctrl+t',
     'view.search': 'ctrl+shift+f',
     'view.toggleSidebar': 'ctrl+b',
     'workbench.action.toggleAuxiliaryBar': 'ctrl+alt+b',
@@ -333,6 +334,7 @@ class KeybindingSet {
     switch (platform) {
       case TargetPlatform.macOS:
         result['workbench.action.gotoSymbol'] = 'cmd+shift+o';
+        result['workbench.action.showAllSymbols'] = 'cmd+t';
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
         result['workbench.action.closeActiveEditor'] = 'cmd+w';
         result['workbench.action.closeOtherEditors'] = 'cmd+alt+t';

@@ -66,7 +66,7 @@ fn main() {
             "initialize" => send(json!({
                 "jsonrpc": "2.0",
                 "id": message["id"],
-                "result": {"capabilities": {"textDocumentSync": 1}},
+                "result": {"capabilities": {"textDocumentSync": 1, "workspaceSymbolProvider": true}},
             })),
             "textDocument/didOpen" | "textDocument/didChange" | "textDocument/didClose" => {
                 trace(&trace_path, method)
@@ -110,6 +110,24 @@ fn main() {
                             "result": [{"label": "async_completion"}],
                         }));
                     }
+                });
+            }
+            "workspace/symbol" => {
+                trace(&trace_path, method);
+                let id = message["id"].clone();
+                let delayed =
+                    message.pointer("/params/query").and_then(Value::as_str) == Some("slow");
+                thread::spawn(move || {
+                    if delayed {
+                        thread::sleep(Duration::from_millis(delay_ms));
+                    }
+                    send(json!({"jsonrpc": "2.0", "id": id, "result": [{
+                        "name": "😀workspace_target", "kind": 12, "containerName": "fixture",
+                        "location": {"uri": "file:///workspace/target.rs", "range": {
+                            "start": {"line": 1, "character": 3},
+                            "end": {"line": 1, "character": 9}
+                        }}
+                    }]}));
                 });
             }
             "textDocument/definition" => {

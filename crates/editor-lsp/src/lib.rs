@@ -58,6 +58,98 @@ pub struct DefinitionLocation {
     pub character: u64,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct WorkspaceSymbolLocation {
+    pub name: String,
+    pub kind: u64,
+    pub uri: String,
+    pub line: u64,
+    pub character: u64,
+    pub end_line: u64,
+    pub end_character: u64,
+    pub container_name: Option<String>,
+}
+
+/// Decode resolved SymbolInformation/WorkspaceSymbol entries. URI-only entries
+/// need workspaceSymbol/resolve and are deliberately not assigned a fake range.
+pub fn extract_workspace_symbols(
+    value: &serde_json::Value,
+) -> Result<Vec<WorkspaceSymbolLocation>, String> {
+    if value.is_null() {
+        return Ok(Vec::new());
+    }
+    let entries = value
+        .as_array()
+        .ok_or("workspace symbols must be an array")?;
+    if entries.len() > 2000 {
+        return Err("workspace symbol result exceeds 2000 entries".into());
+    }
+    let mut symbols = Vec::with_capacity(entries.len());
+    for entry in entries {
+        let Some(name) = entry
+            .get("name")
+            .and_then(|value| value.as_str())
+            .filter(|name| !name.is_empty() && name.len() <= 4096)
+        else {
+            continue;
+        };
+        let Some(kind) = entry
+            .get("kind")
+            .and_then(|value| value.as_u64())
+            .filter(|kind| (1..=26).contains(kind))
+        else {
+            continue;
+        };
+        let Some(location) = entry.get("location") else {
+            continue;
+        };
+        let Some(uri) = location
+            .get("uri")
+            .and_then(|value| value.as_str())
+            .filter(|uri| !uri.is_empty() && uri.len() <= 8192)
+        else {
+            continue;
+        };
+        let Some(range) = location.get("range") else {
+            continue;
+        };
+        let coordinates = [
+            range.pointer("/start/line"),
+            range.pointer("/start/character"),
+            range.pointer("/end/line"),
+            range.pointer("/end/character"),
+        ]
+        .into_iter()
+        .map(|value| {
+            value
+                .and_then(|value| value.as_u64())
+                .filter(|value| *value <= i32::MAX as u64)
+        })
+        .collect::<Option<Vec<_>>>();
+        let Some(coordinates) = coordinates else {
+            continue;
+        };
+        if (coordinates[2], coordinates[3]) < (coordinates[0], coordinates[1]) {
+            continue;
+        }
+        symbols.push(WorkspaceSymbolLocation {
+            name: name.to_owned(),
+            kind,
+            uri: normalize_uri(uri),
+            line: coordinates[0],
+            character: coordinates[1],
+            end_line: coordinates[2],
+            end_character: coordinates[3],
+            container_name: entry
+                .get("containerName")
+                .and_then(|value| value.as_str())
+                .filter(|name| name.len() <= 4096)
+                .map(str::to_owned),
+        });
+    }
+    Ok(symbols)
+}
+
 /// Read the first Location or LocationLink from a definition response.
 /// Invalid entries are ignored so one malformed link does not hide later
 /// usable results.
@@ -482,6 +574,29 @@ impl LspServer {
             serde_json::json!({"textDocument": {"uri": normalize_uri(uri)}}),
         )
         .map(Some)
+    }
+
+    /// Query the workspace symbol provider only when advertised by the server.
+    pub fn workspace_symbols_async(
+        &self,
+        query: &str,
+    ) -> Result<Option<LspPendingRequest>, String> {
+        if query.len() > 1024 {
+            return Err("workspace symbol query exceeds 1024 bytes".into());
+        }
+        let supported = self
+            .shared
+            .server_capabilities
+            .lock()
+            .map_err(|_| "capabilities lock poisoned")?
+            .as_ref()
+            .and_then(|result| result.pointer("/capabilities/workspaceSymbolProvider"))
+            .is_some_and(|provider| provider == true || provider.is_object());
+        if !supported {
+            return Ok(None);
+        }
+        self.request_async("workspace/symbol", serde_json::json!({"query": query}))
+            .map(Some)
     }
 
     /// Send an asynchronous textDocument/definition request.

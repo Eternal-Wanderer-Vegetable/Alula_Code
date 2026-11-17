@@ -290,6 +290,7 @@ class WorkbenchPage extends StatefulWidget {
     KeybindingsStore? keybindingsStore,
     this.windowControls = false,
     this.definitionRequest,
+    this.workspaceSymbolRequest,
     this.savedCompareFileStat,
     this.overtypeOnPaste = true,
     this.pasteAsConfiguration = const PasteAsConfiguration(),
@@ -328,6 +329,11 @@ class WorkbenchPage extends StatefulWidget {
     int offsetUtf16,
     int version,
   )? definitionRequest;
+
+  /// Deterministic workspace-symbol provider fixture; production uses attached LSP.
+  final Future<List<Map<String, Object?>>?> Function(
+          int documentId, String query, Future<void> cancelSignal)?
+      workspaceSymbolRequest;
 
   /// Optional file-stat provider for deterministic saved-compare fixtures.
   final Future<FileStat> Function(String path)? savedCompareFileStat;
@@ -1762,6 +1768,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'Reset Walkthrough Progress',
       _resetWalkthroughProgress,
     );
+    reg('workbench.action.showAllSymbols', '转到', '转到工作区中的符号…',
+        _showWorkspaceSymbols,
+        shortcut: _keybindings.shortcutFor('workbench.action.showAllSymbols'));
     reg('workbench.action.gotoSymbol', '转到', '转到编辑器中的符号…', _showDocumentSymbols,
         enablement: 'editorActive',
         shortcut: _keybindings.shortcutFor('workbench.action.gotoSymbol'));
@@ -3417,6 +3426,113 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _ => null,
     };
     return target == currentLocation;
+  }
+
+  Future<void> _showWorkspaceSymbols() async {
+    final source = _active;
+    final root = _workspaceRoot;
+    final core = _core;
+    Completer<void>? cancellation;
+    var generation = 0;
+    var closed = false;
+    void cancel() {
+      final pending = cancellation;
+      if (pending != null && !pending.isCompleted) pending.complete();
+    }
+
+    await QuickInput.show(
+      context,
+      hint: '工作区符号（#名称）',
+      initialValue: '#',
+      items: const [],
+      onClose: () {
+        closed = true;
+        generation++;
+        cancel();
+      },
+      itemsProvider: (value) async {
+        cancel();
+        final requestGeneration = ++generation;
+        if (source == null ||
+            core == null ||
+            (widget.workspaceSymbolRequest == null &&
+                (!source.lspAttached || !_lspReady))) {
+          return const [QuickItem(label: '当前工作区没有可用符号提供程序')];
+        }
+        final query =
+            value.startsWith('#') ? value.substring(1).trim() : value.trim();
+        if (query.isEmpty) return const [QuickItem(label: '输入符号名称以搜索工作区')];
+        cancellation = Completer<void>();
+        final symbols = await (widget.workspaceSymbolRequest
+                ?.call(source.id, query, cancellation!.future) ??
+            core.lsp.workspaceSymbols(source.id, query,
+                cancelSignal: cancellation!.future));
+        if (!mounted ||
+            closed ||
+            requestGeneration != generation ||
+            _workspaceRoot != root) {
+          return const [];
+        }
+        if (symbols == null) {
+          return const [QuickItem(label: '当前提供程序不支持工作区符号或请求已取消')];
+        }
+        symbols.sort((left, right) =>
+            (fuzzyScore(query, right['name'] as String) ?? -1)
+                .compareTo(fuzzyScore(query, left['name'] as String) ?? -1));
+        Future<void> open(Map<String, Object?> symbol,
+            {bool side = false}) async {
+          if (!mounted || _workspaceRoot != root) return;
+          final path = _pathFromFileUri(symbol['uri'] as String);
+          if (path == null) return;
+          if (side && _active != null) _splitFocusedGroup();
+          await _openFileByPath(path);
+          final target = _active;
+          if (!mounted ||
+              target?.path == null ||
+              !_pathsEqual(target!.path!, path)) {
+            return;
+          }
+          try {
+            final targetVersion = target.doc.version;
+            final start = target.doc.positionOffset(
+                symbol['line'] as int, symbol['character'] as int);
+            final end = target.doc.positionOffset(
+                symbol['endLine'] as int, symbol['endCharacter'] as int);
+            if (target.doc.version != targetVersion) return;
+            _setDocSelection(
+                target,
+                TextSelection(
+                    baseOffset: start.offsetUtf16,
+                    extentOffset: end.offsetUtf16));
+            _focusEditorAfterLayout(_focused, target);
+          } on AlulaException catch (error) {
+            if (error.code == 'InvalidLine' ||
+                error.code == 'InvalidUtf16Offset') {
+              setState(() => _statusDetail = '符号位置已过期，未执行跳转');
+            } else {
+              rethrow;
+            }
+          }
+        }
+
+        return [
+          for (final symbol in symbols)
+            QuickItem(
+              label: symbol['name'] as String,
+              description:
+                  symbol['containerName'] as String? ?? symbol['uri'] as String,
+              detail: '${symbol['uri']}:${(symbol['line'] as int) + 1}',
+              onRun: () => open(symbol),
+              buttons: [
+                QuickItemButton(
+                    icon: Icons.vertical_split,
+                    tooltip: '在侧边打开工作区符号',
+                    onRun: () => open(symbol, side: true))
+              ],
+            )
+        ];
+      },
+    );
   }
 
   Future<void> _showDocumentSymbols() async {
