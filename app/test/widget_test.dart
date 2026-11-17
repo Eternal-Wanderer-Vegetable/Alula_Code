@@ -946,6 +946,99 @@ void main() {
     });
   });
 
+  testWidgets('Git changes list opens resources without staging on Space',
+      (tester) async {
+    await tester.runAsync(() async {
+      final repo = await createTempRepo(
+        prefix: 'alula_git_keyboard',
+        extraFiles: {
+          'alpha.txt': 'alpha\n',
+          'beta.txt': 'beta\n',
+        },
+      );
+      final seed = await Process.run('git', ['add', 'alpha.txt', 'beta.txt'],
+          workingDirectory: repo.path);
+      expect(seed.exitCode, 0);
+      final commit = await Process.run('git', ['commit', '-m', 'seed changes'],
+          workingDirectory: repo.path);
+      expect(commit.exitCode, 0);
+      File('${repo.path}/alpha.txt').writeAsStringSync('alpha changed\n');
+      File('${repo.path}/beta.txt').writeAsStringSync('beta changed\n');
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() async {
+          for (var attempt = 0; attempt < 50; attempt++) {
+            if (!repo.existsSync()) return;
+            try {
+              await repo.delete(recursive: true);
+              return;
+            } on FileSystemException {
+              if (attempt == 49) rethrow;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+            }
+          }
+        });
+      });
+      await tester.pumpWidget(AlulaApp(
+        autoFolder: repo.path,
+        layoutStore: store,
+        sessionStore: session,
+        keybindingsStore: keybindings,
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await tester.pump();
+      await tester.tap(find.byTooltip('源代码管理'));
+      await Future<void>.delayed(const Duration(milliseconds: 400));
+      await tester.pump();
+
+      final listFocus = tester
+          .widget<Focus>(find.byKey(const ValueKey('git-changes-list-focus')))
+          .focusNode!;
+      listFocus.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      final alphaRow = find.byKey(const ValueKey('git-w-alpha.txt'));
+      expect(tester.widget<ListTile>(alphaRow).selected, isFalse);
+      expect(tester.widget<Semantics>(find.byKey(
+          const ValueKey('git-focus-w-alpha.txt'))).properties.focused, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await _waitForWidget(tester, find.text('beta.txt（工作区）'),
+          reason: 'Space opens the focused Git change diff');
+      await tester.pump();
+      expect(listFocus.hasFocus, isTrue,
+          reason: 'first Space open must not autofocus the diff');
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await tester.pump();
+      await tester.pump();
+      expect(tester.widget<Focus>(find.byKey(
+          const ValueKey('git-diff-panel-focus'))).focusNode!.hasFocus, isTrue);
+      listFocus.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await _waitForWidget(tester, find.text('alpha.txt（工作区）'),
+          reason: 'Space opens the focused resource and retains list focus');
+      await tester.pump();
+      expect(listFocus.hasFocus, isTrue);
+      final before = await Process.run('git', ['diff', '--cached', '--name-only'],
+          workingDirectory: repo.path);
+      expect(before.exitCode, 0);
+      expect((before.stdout as String).trim(), isEmpty,
+          reason: 'Space never modifies the Git index');
+      await tester.tap(find.byKey(const ValueKey('git-action-w-alpha.txt')));
+      await _waitForWidget(tester, find.text('暂存的更改（1）'),
+          reason: 'Explicit stage action still stages the file');
+      expect(find.byKey(const ValueKey('git-s-alpha.txt')), findsOneWidget);
+    });
+  });
+
   testWidgets('feat-search 搜索视图：Ctrl+Shift+F/流式结果/点击跳行', (tester) async {
     await tester.runAsync(() async {
       final repo = await createTempRepo(

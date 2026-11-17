@@ -1624,8 +1624,18 @@
       "dependencies": [
         "feat-130"
       ],
-      "status": "in-progress",
+      "status": "done",
       "evidence": "Focused notification progress model/UI 12/12, flutter analyze0; full init.sh passed Flutter1434/1434 plus Rust workspace/Clippy/core/fmt. GitNexus NotificationProgress impact HIGH (96 lower-bound affected nodes, 29 direct); additive API and actual callers reviewed. PR CI 44110829105 all jobs green. Platform 44110812720 Linux/Windows green; macOS Flutter tests, Release, clipboard, Quit and packaging passed. macOS native DnD integration app did not reach ready marker within 90s (log stuck at Building macOS application...), so the probe failed and DnD remains unverified; artifact 14343719095. Broader LAY-18 provider/action/error coverage remains open.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-132",
+      "name": "P05.80 LAY-16d SCM 资源列表键盘导航",
+      "description": "SCM lazy resource list focus/selection separation, bare navigation/reveal, Enter opens diff, Space preserves list focus without staging, independent hover/action buttons and workspace/async cleanup. docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md",
+      "dependencies": ["feat-131"],
+      "status": "in-progress",
+      "evidence": "Component9/9; component+Git CLI+real repo20/20; Workbench real repository keyboard/index preservation fixture passed. Final full init.sh Flutter1444/1444, Rust workspace tests/Clippy/core build; independent fmt/analyze0. Pre-edit _gitTile CRITICAL and private callbacks UNKNOWN; actual callers reviewed, graph rebuild extraction limits retained. Hosted pending; LAY-16 and P05 parent remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

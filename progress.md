@@ -3,9 +3,11 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-17 更新）
+## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；当前 P05.79 LAY-18 通知进度生命周期；目标整体完成 P05
+### P05 / feat-027 持续推进；当前 P05.80 SCM 资源列表导航；目标整体完成 P05
+
+- 2026-11-18：P05.80 / feat-132：抽取懒构建 GitChangesList，焦点与选择分开、裸方向键/Home/End reveal、Enter交焦点、Space保留焦点且不修改index；hover不更改键盘目标，行内stage/unstage按钮独立激活。首次WIP误设Space暂存/hover选择已按固定源码评审修正。父工作台补显示diff面板、未跟踪文件缓存标记、Git/workspace/request代次拒绝迟到结果。组件9/9、Git专项20/20、真实工作台临时仓库fixture通过；最终完整init.sh Flutter1444/1444、Rust/Clippy/core、fmt/analyze0。_gitTile图谱CRITICAL、private方法UNKNOWN及重建budget/cross-language限制保留；完整export和hosted待补。混合双侧资源/多选/分组菜单/原生视觉仍未完成。
 
 - 2026-11-17：P05.77 工作区符号 ABI41/LSP start-poll-cancel 与 `#` picker hosted closeout 完成。产品 `5683e77`，CI fixture修复与证据 `0995dc8`；本地 `bash init.sh` 全绿（Rust tests/Clippy/core build/fmt、Flutter 1431/1431、analyze0），真实 FFI 和3个picker tests通过。首次门禁曾因Git Bash PATH未含Dart SDK导致session_store子进程无法启动；加入Flutter bundled Dart后重跑全绿。此前hosted CI `44064904867`/`44069169937` 唯一失败因Flutter测试前未生成standalone fake LSP；已于CI和macOS workflow显式构建。修复后 PR CI `44077819111` 四job全绿，Platform `44077810454` Linux/Windows/macOS全绿；macOS Quit通过，DnD pointer-route不可用明确skip。artifacts Linux `14324484867`、Windows `14326840370`、macOS `14327488151`、macOS DnD诊断 `14327948384`。GitNexus unstaged all-scope只看到工作流文件/no indexed symbol overlap，暂存扫描 LOW、7 files/5 doc symbols/0 processes；不称全树clean。PR #3保持OPEN/DRAFT，P05整体仍进行中。
 - 2026-11-17：P05.79 / feat-131 LAY-18b 进度通知完成/取消生命周期。Commit `0683785`；本地 focused model/UI12/12、analyze0，完整 `bash init.sh` Flutter1434/1434、Rust/Clippy/core/fmt全绿。PR CI `44110829105`全绿。Platform `44110812720` Linux/Windows全绿；macOS Flutter/Release/clipboard/Quit/package通过，但native DnD integration app在90秒内未ready、日志停留于“Building macOS application...”，probe step失败；这不是progress产品失败，也不是DnD验证通过；artifact `14343719095`。app artifacts Linux `14339774563`、Windows `14340438602`、macOS `14344941314`。GitNexus NotificationProgress HIGH（96 lower-bound/29 direct），保留风险。父行LAY-18其余provider/actions/error/native a11y仍未完成。

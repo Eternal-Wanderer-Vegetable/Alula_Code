@@ -70,6 +70,7 @@ import '../editor/undo_stack.dart';
 import '../editor/workspace_edit.dart';
 import '../editor/workspace_search_decorations.dart';
 import '../git/git_cli.dart';
+import '../git/git_changes_list.dart';
 import '../git/git_diff_commands.dart';
 import '../git/git_diff_navigation.dart';
 import '../git/git_diff_patch_view.dart';
@@ -617,6 +618,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String _gitDiff = '';
   String _gitDiffPath = '';
   bool _gitDiffStaged = false;
+  int _gitDiffGeneration = 0;
+  final FocusNode _gitDiffFocus = FocusNode(debugLabel: 'git-diff-panel');
   final _findQuery = TextEditingController();
   final _replaceInput = TextEditingController();
   List<TextMatch> _matches = const [];
@@ -19734,20 +19737,42 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
-  Future<void> _showGitDiff(GitStatusEntry e) async {
-    final staged = !e.hasUnstagedChanges; // 纯暂存变更看 cached，否则看工作区
+  Future<void> _showGitDiff(GitStatusEntry e,
+      {required bool preserveFocus}) async {
+    final git = _git;
+    if (git == null) return;
+    final root = _workspaceRoot;
+    final generation = ++_gitDiffGeneration;
+    final sourceFocus = FocusManager.instance.primaryFocus;
+    final staged = e.hasStagedChanges && !e.hasUnstagedChanges;
     try {
-      final d = await _git?.diff(path: e.path, staged: staged) ?? '';
-      if (!mounted) return;
+      final d = await git.diff(path: e.path, staged: staged);
+      if (!mounted || generation != _gitDiffGeneration ||
+          !identical(git, _git) || root != _workspaceRoot) {
+        return;
+      }
       setState(() {
         _gitDiff = d.isEmpty ? '（无文本差异：可能是二进制文件或全新文件）' : d;
         _gitDiffPath =
             e.origPath == null ? e.path : '${e.origPath} → ${e.path}';
         _gitDiffStaged = staged;
       });
-      _panelTab.animateTo(3);
+      _layout.showRegion('panel');
+      _panelTab.index = 3;
+      if (!preserveFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && generation == _gitDiffGeneration &&
+              identical(git, _git) && root == _workspaceRoot &&
+              FocusManager.instance.primaryFocus == sourceFocus) {
+            _gitDiffFocus.requestFocus();
+          }
+        });
+      }
     } catch (err) {
-      if (mounted) setState(() => _gitError = '$err');
+      if (mounted && generation == _gitDiffGeneration &&
+          identical(git, _git) && root == _workspaceRoot) {
+        setState(() => _gitError = '$err');
+      }
     }
   }
 
@@ -19971,6 +19996,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _syntaxRefreshTimers.clear();
     _panelTab.dispose();
+    _gitDiffFocus.dispose();
     _editorTabMode.dispose();
     _editorTabSizing.dispose();
     _editorTabActionLocation.dispose();
@@ -20809,7 +20835,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
     final staged = _gitEntries.where((e) => e.hasStagedChanges).toList();
-    final changes = _gitEntries.where((e) => !e.hasStagedChanges).toList();
     return Container(
       color: const Color(0xFF181B20),
       child: Column(
@@ -20890,69 +20915,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     child: Text('工作区干净',
                         style: TextStyle(
                             color: Colors.grey.shade500, fontSize: 12)))
-                : ListView(
-                    children: [
-                      if (staged.isNotEmpty) ...[
-                        _gitSectionHeader('暂存的更改（${staged.length}）'),
-                        for (final e in staged) _gitTile(e, stagedEntry: true),
-                      ],
-                      if (changes.isNotEmpty) ...[
-                        _gitSectionHeader('更改（${changes.length}）'),
-                        for (final e in changes)
-                          _gitTile(e, stagedEntry: false),
-                      ],
-                    ],
+                : GitChangesList(
+                    key: ValueKey('git-changes-$_workspaceRoot'),
+                    entries: _gitEntries,
+                    onOpen: _showGitDiff,
+                    onStage: _gitStage,
+                    onUnstage: _gitUnstage,
                   ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _gitSectionHeader(String text) => Padding(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
-        child: Text(text,
-            style: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 11,
-                fontWeight: FontWeight.bold)),
-      );
-
-  Widget _gitTile(GitStatusEntry e, {required bool stagedEntry}) {
-    final name = _nameOf(e.path);
-    // 面板容器有背景色，ListTile 需自备 Material 才能正常绘制 ink
-    return Material(
-      type: MaterialType.transparency,
-      child: ListTile(
-      key: ValueKey('git-${stagedEntry ? 's' : 'w'}-${e.path}'),
-      dense: true,
-      leading: Text(e.code,
-          style: TextStyle(
-              fontSize: 11,
-              color: e.isUntracked
-                  ? Colors.greenAccent
-                    : (stagedEntry
-                        ? Colors.lightGreenAccent
-                        : Colors.orangeAccent))),
-      title: Text(name,
-          style: const TextStyle(fontSize: 12),
-          overflow: TextOverflow.ellipsis),
-      subtitle: e.origPath != null
-          ? Text('${_nameOf(e.origPath!)} → $name',
-              style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
-              overflow: TextOverflow.ellipsis)
-          : null,
-      onTap: () => _showGitDiff(e),
-      trailing: IconButton(
-        tooltip: stagedEntry ? '取消暂存' : '暂存',
-        onPressed: () =>
-            stagedEntry ? _gitUnstage(e.path) : _gitStage(e.path),
-        icon: Icon(
-          stagedEntry ? Icons.remove : Icons.add,
-          size: 15,
-          color: Colors.grey.shade400,
-        ),
-      ),
       ),
     );
   }
@@ -24131,7 +24102,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
       );
     }
-    return Column(
+    return Focus(
+      key: const ValueKey('git-diff-panel-focus'),
+      focusNode: _gitDiffFocus,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
@@ -24167,6 +24141,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ),
       ],
+      ),
     );
   }
 

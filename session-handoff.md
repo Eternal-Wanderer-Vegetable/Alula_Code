@@ -1,40 +1,33 @@
 # Session Handoff
 
-Last Updated: 2026-11-17
+Last Updated: 2026-11-18
 
 ## Current Objective
 
-2026-11-17 用户明确要求连续整体完成 P05，中间不停止等待普通进度确认。按 docs/03 N.2、LAY-01–20 与 CMD-01–12 一次一个切片持续推进 PR #3 / `codex/vscode-parity-p05`。PR 保持 OPEN/DRAFT，不合并；数值内存优化后置。执行清单 docs/plans/p05-completion.md。
+用户已授权连续整体完成 P05，不因普通进度等待批准。按 docs/03 N.2、LAY-01–20 与 CMD-01–12 一次一片推进 PR #3；保持 OPEN/DRAFT，不合并。路线 `docs/plans/p05-completion.md`；父阶段和矩阵行不能因子切片完成而关闭。
 
 ## Current State
 
-- 当前工作树 `E:/Temp/alula-pr3-20261117`，本地分支 `codex/pr3-p05-continuation-20261117`，PR head `06837852a35efe34370c10a5fd222e9e93d5bc73`。`E:/Alula_Code`（p00）与 `E:/temp/alula-pr3-p05` 的既存脏工作未改动。
-- P05.77 workspace symbols ABI41 hosted closeout完成；本地完整 `bash init.sh` 通过：Rust tests/Clippy/core build/fmt、Flutter1431/1431、analyze0；真实 FFI test 与 workspace picker 3/3通过。PR CI `44077819111` 四job全绿；Platform `44077810454` Linux/Windows/macOS全绿，macOS Quit成功，DnD因synthetic pointer route unavailable明确skip。Artifacts Linux `14324484867`、Windows `14326840370`、macOS `14327488151`、macOS DnD `14327948384`。产品提交 `5683e77`，CI fixture build与证据提交 `0995dc8`。
-- 首次本机 init.sh 因 Git Bash PATH 缺 Dart SDK导致 session_store crash-writer 无法启动；加入 `/e/flutter/bin/cache/dart-sdk/bin` 后全量成功。PR #3保持OPEN/DRAFT，P05整体仍进行中。
-- P05.78 / feat-130 `76d70d5` 已提交并推送。完整 init.sh Flutter1432/1432与 Rust/Clippy/core/fmt/analyze全绿；CI `44094751711` retry attempt2全绿，attempt1 editor selection tab test一次性失败，隔离及 retry通过。Platform `44094742100` Linux/Windows成功；macOS Flutter/Release/clipboard通过，native DnD pointer route不可用skip；native Quit卡住后60分钟job timeout，macOS package/Quit保持未验证。
-- P05.79 / feat-131 `0683785` 已提交并推送。PR CI `44110829105`全绿；Platform `44110812720` Linux/Windows全绿。macOS Flutter/Release/clipboard/Quit/package通过；native DnD integration app未在90秒到ready marker，log停在“Building macOS application...”，该probe启动失败，DnD未验证，artifact `14343719095`。app artifacts Linux `14339774563`、Windows `14340438602`、macOS `14344941314`。Progress本地full init1434、focused12、analyze0；GitNexus impact HIGH 96 lower-bound/29 direct。父行LAY-18仍未关闭。
-- 下一项继续 LAY-16 通用列表/表格差异（重点列 resize、hover）或按路线推进QuickInput/通知；tree find与键盘子切片不代表 LAY-16 行完成。工作树中 generated registrants不纳入提交；前述 `workbench_page.dart` no-content 状态须提交前再次核对。
-- P05.77 GitNexus暂存扫描为LOW/7 files/5 doc symbols/0 processes，all-scope仅因工作流改动/no indexed symbols overlap；不称全树clean。
-- P05.1–P05.69 历史 closeout 已完成登记。P05.70 / feat-122 产品提交 `231e853` 已推 PR #3，本地门禁/本机 Windows Release/PR CI 全通过；hosted Linux/Windows 成功，macOS 待结果。
-- 完整结构化 graph export 保留所有 product 11 symbols/103 processes（26 files）和累计 main 888/304（325 files），无 partial/truncated，均 CRITICAL。CLI 自身固定裁剪展示，不能仅提高 --limit 解决；JSON 已归档。
-- 新独立 Windows 启动基线最初 Flutter 1323 passed / 37 failed；路径节点/历史期望/URI 盘符/文本 LF 和 tab 定位修正后暴露产品 `_openFileByPath` 的 raw path equality 重复打开问题。现使用已有 `_canonicalPath` 复用同一文档，保留已有预览/跨组视图流程。
-- 完整 `bash init.sh` EXIT 0：Rust workspace tests、Clippy、core build、Flutter 1360/1360；独立 cargo fmt、flutter analyze 0 issues、diff check 通过。
-- 使用 Git Bash，脚本以 index LF 内容检出，`FLUTTER_BIN=/e/flutter/bin/flutter.bat`，PATH 加 Flutter bundled Dart SDK。本轮证明旧记忆中的 30 项 Explorer 环境失败不能作为未修复基线直接跳过。
-- GitNexus 1.6.12 用 `GITNEXUS_MAX_FILE_SIZE=1024` 纳入 WorkbenchPage；编辑前 `_openFileByPath` HIGH（28 affected、10 direct、3 process families、2 modules）。事件回调/测试 file nodes UNKNOWN 保留；不能把无 caller 当低风险。
+- 唯一工作树 `E:/Temp/alula-pr3-20261117`，分支 `codex/pr3-p05-continuation-20261117`，上游 PR 分支 `codex/vscode-parity-p05`。已推 head `4f2b9bb`；原 `E:/Alula_Code` p00 与 `E:/temp/alula-pr3-p05` 脏工作区不覆盖。
+- 当前 P05.80 / feat-132 / LAY-16d：SCM 基本资源列表键盘导航。新 `app/lib/git/git_changes_list.dart` 管理单个 focus/scroll、lazy rows、focus/selection分离、arrows/Home/End reveal、Enter open、Space open preserve focus不暂存、hover独立、action button键盘激活。工作台按workspace key重建列表、Git diff显示panel并拒绝迟到Git/workspace/request结果，Enter按源焦点未变时交焦点。
+- P05.80 组件9/9、组件+Git CLI/真实repo20/20、WorkBench真实临时仓库fixture通过；首次Space文本diff保持焦点且git index不变，显式stage仍有效。最终完整 `bash init.sh` Flutter1444/1444、Rust tests/Clippy/core build、独立cargo fmt与Flutter analyze0通过。提交/hosted尚待；范围报告 `docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md`。
+- P05.79 `0683785`，证据 `4f20623`/`4f2b9bb`；PR CI44110829105全绿，Platform44110812720 Linux/Windows全绿，macOS tests/Release/clipboard/Quit/package通过；DnD integration app90秒未ready（Building macOS application...），probe失败，DnD未验证。app artifacts14339774563/14340438602/14344941314，DnD14343719095。
+- P05.78 `76d70d5`，证据80277e4；CI44094751711 attempt2全绿，attempt1既有editor多选tab测试一次空selection，根因未修；隔离重跑通过。Platform44094742100 Linux/Windows通过，macOS tests/Release/clipboard通过，Quit卡住60分钟timeout，package未执行；不可由别的SHA成功覆盖。
+- P05.77 ABI41 `5683e77`、CI fixture build0995dc8；CI44077819111全绿，Platform44077810454三平台全绿，macOS native DnD pointer route不可用skip。P05.71–76实现/历史门禁见progress/各diagnostics；部分tracker仍需按exact run补齐收尾状态，不能伪报。
 
 ## Blockers / Limits
 
-- P05.70 产品提交 `231e853` 已推 PR #3；PR CI `43992774712` 四 job 全绿。Platform Availability `43992763968` Linux/Windows 全绿，macOS 仍在运行；重复手动 run `43992764009` 已取消。Linux/Windows app artifacts `14287584621` / `14288304605`，native DnD `14288801926` / `14288224591` 已核实 move/copy/external text。现已补齐 closeout：Platform 三平台全绿，docs CI 43996231773 全绿；macOS artifact 14290614081 SHA-256 4ca6a5b3a868e205b9e1404ba40651cd765536f4d4e86021874b9040deded497 与 sidecar 一致、81 项完整；native Quit 14290374408 成功，DnD 14291206588 明确 skip。P05.70 done；继续 LAY16。
-- P05.67 原生双窗 focus/blur、P05.68 Compact pixel/reference diff、P05.69 auxiliary 原生跨窗交换仍未验证；generic DnD 不能代替专属 auxiliary 路径。macOS hosted pointer route 不可用保持 skip。
-- LAY-16b 树筛选未实现。已核实固定版 `list.find` 为 Ctrl/Cmd+Alt+F 或 F3，默认 Highlight/Fuzzy；Escape 清除 active query 并 focus tree；完整 Explorer provider 还搜索未加载节点与祖先。下一切片要明确 loaded-tree 与 full-provider 的范围差异。
-- 禁止整文件写入式 dart format WorkbenchPage，避免无关重排。
+- P05.80只补基本SCM列表宿主；混合index/worktree双侧资源、完整树分组/多选/范围/type/find/context menu仍未覆盖（LAY-16/P09）。当前diff目的地仍既有bottom panel，不声称完整SCM editor复刻。表格尚未有实际surface，勿加未使用generic widget凑验收。
+- GitNexus重建使用 `GITNEXUS_MAX_FILE_SIZE=1024`；_gitTile pre-edit CRITICAL、_showGitDiff/_buildGitPanel/_buildGitDiffPanel UNKNOWN。源码caller核验是UNKNOWN补充，不是low证明。index有entry/callee/trace/cross-language覆盖限制；完整JSON export的无partial/truncated不抹除index限制。
+- P05.67原生双窗focus、P05.68Compact像素、P05.69aux交换、固定主题/字体/DPI/reference视觉等仍未验证。generic DnD不替代aux专属链路；skip不作pass。
+- generated registrants（7文件）仅构建状态，未纳入产品提交。禁止全文件写入式format WorkbenchPage。
 
 ## Evidence and Files
 
-- P05.70: `docs/diagnostics/2026-11-17-p05/p05.70-windows-path-identity.md` 与 `p05.70-init.log`、`p05.70-startup-red.log`、`p05.70-analyze.log`。
-- 产品只改 `app/lib/workbench/workbench_page.dart` 文件身份比较；测试 helper `app/test/helpers/file_paths.dart` 与九个测试文件。
-- 既有 P05.69 证据：`docs/diagnostics/2026-11-17-p05/p05.69-auxiliary-window-cross-window-drop.md`；PR CI 43941953054、Platform Availability 43941942416。
+- P05.80报告与新控件/测试；`app/test/widget_test.dart`真实仓库fixture；工作台最小接线。
+- 当前完整门禁日志 `E:/Temp/alula-p0580-final-init.log`，专项 `E:/Temp/alula-p0580-final-focused.log`、analyze `E:/Temp/alula-p0580-final-analyze.log`。需归档到diagnostics并登记。
+- 完整图谱导出脚本 `E:/Temp/alula-p0580-graph-export.mjs`；参数：repo、output prefix、main。暂存新文件后再rebuild/export，保留all和compare-main原始JSON。
 
 ## Next Session First Step
 
-P05.70–76历史实现、门禁与hosted状态见以上progress和diagnostics。P05.77 workspace symbols ABI41 已本地完成，完整门禁Flutter1431/1431、Rust/Clippy/core/fmt、analyze0；hosted唯一测试失败因fake LSP standalone binary未build，CI与macOS Platform workflow已补显式build，需先收集新CI/Platform run并更新证据后再关闭本片。GitNexus detector对此工作流diff报告“2 files touched/no indexed symbols overlap”，保留为非clean限制。不要把macOS DnD pointer-route skip当pass；P05.74/75同SHA复验详情仍按相应hosted记录核对。P05.77关闭后按 docs/plans/p05-completion.md 继续一次一片推进下一行，用户已授权连续实施，不需要普通进度批准；提交前完整detect-changes并如实保留UNKNOWN/CRITICAL/truncation。更新 docs/03、feature_list.json、progress、handoff。
+先完成P05.80精确暂存、刷新图谱、完整all/compare-main export、harness与diff检查；commit/push到PR3后收齐CI/Platform exact head结果，再登记证据。继续剩余P05路线，不停在普通进度确认。所有Git Bash测试需PATH含 `/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin`，否则session_store crash-writer找不到dart.exe。PR保持OPEN/DRAFT。
