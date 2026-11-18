@@ -5,7 +5,11 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.84已收尾，当前P05.85 toast生命周期
+### P05 / feat-027 持续推进；P05.85已收尾，当前P05.86 OpenEditors路径排序
+
+- 2026-11-18 P05.86/feat138实现editorOrder/fullPath显示投影与header/session偏好，不改tabs/MRU/view。policy13+真实OpenEditors5=18/18，独立实际固定源码核对26goldenkeys/676pairs一致。审查P1发现共享URI生成器POSIX/特殊文件名不兼容，真实z%done#.rs先红后局部Uri.file修正绿，未扩大LSP修正。最终init1509/1509、Rust/Clippy/core/fmt/analyze0及复审通过；graph含新增文件all10/13/438、main581/320/441 CRITICAL完整稳定。精确CI/WinLinux待补，mac暂留。alphabetical/locale/nullresource名称排序与P07正式配置后续，minimapUnknownDoc非失败输出根因未定。
+- 下一步相邻问题：共享_pathToUri对POSIX多斜杠、百分号/井号与UNC的协议编码需在独立任务核对LSP/文档调用和回归；本片只修显示投影，不宣称该全局问题解决。
+
 
 - 2026-11-18 登记P05.85/feat137，补通知toast10/12/15秒自动隐藏、deadline hover/focus/sticky完整周期延期、失焦到期后等聚焦重起，center/unread保留。现有WindowListener焦点接线，无polling，最多3toast计时器；已推产品7fe2a11；component16+UI5=21、full1495/1495、Rust/Clippy/core/fmt/analyze0通过。父侧review完成，graph完整CRITICAL。准确CI44282450910与Win/Linux平台成功、实际1495tests，证据p05.85-hosted-verification.json。首轮Gitwrite-tree128失败根因未定，改只读index快照+stderr后真实repo和全量通过，失败保留。feat137窄子项done，mac设备缺口继续暂留。P05.84收尾7ffc101与交接37db43c已推、PR已同步。
 

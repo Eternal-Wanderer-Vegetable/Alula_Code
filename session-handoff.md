@@ -4,30 +4,31 @@ Last Updated: 2026-11-18
 
 ## Current Objective
 
-连续完成PR #3的P05，按docs03 N.2和LAY/CMD矩阵一次一片。PR保持OPEN/DRAFT、不合并；普通进度不需批准。用户已明确无macOS设备，原生/视觉/实测和历史缺口暂留未验证，继续P05，不以macOS实机或探针排障为前置。hosted不替代设备。
+持续完成PR #3的P05，docs03是唯一任务/DoD权威，一次一片。PR保持OPEN/DRAFT不合并，用户已授权连续推进。macOS无设备，原生/视觉/实测及历史问题暂留，不等待macOS或追加probe排障。
 
 ## Current State
 
-- 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。最新产品7fe2a11d2ec2fc724ae03ad625bc0fdb94aceadf已推，当前待最后137hosted收尾文档提交。原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区保留。
-- P05.85/feat137通知toast期限窄子项done：Info10/Warning12/Error15s，在deadline重评hover/descendantfocus/activeprogress/Erroractions并整周期延期；窗口失焦到期后等聚焦重新给完整周期。到期前恢复/离开不重置，重建不重置。每keyed可见toast1Timer，最多现有3条，无polling；remove/clear/DND/evict/unmount取消。只dismissToast，center/unread保留。Workbench既有WindowListener传windowFocused，不改auxchannel/progress业务。
-- 组件16+真实WorkbenchUI5=21通过，完整顺序init1495/1495、Rusttests/Clippy/core、独立fmt/analyze0、Harness100/100。审查代理认证失败，父侧定向review完成，不能记代理pass。首轮full1494/1495仅SCMfixture write-tree128、无stderr根因未定；改只读gitls-files--stage-z比较path/OID/mode/stage并打印stderr，真实repo1与最终全量通过，失败日志保留。
-- 准确7fe CI44282450910四项成功，actual1495tests/analyze clean；Platform44282442631 Linux10:11:58Z/Windows10:17:50Z成功。Win desktop25/clipboard1/DnD12pointercallbacks，App14418790274/DnD14417887324；Linuxclipboard1/两launch/DnD20pointercallbacks，App14418625084/DnD14417832413。探针只证明原生路由回调，不扩展buffer/undo。mac未等待/下载/probe。
-- 完整graphall19files/7symbols/439flows及main570/311/441 CRITICAL，无partial/truncated、snapshot稳定；toast/私有focusimpactUNKNOWN、空name异常，actualcaller核对，历史共享WorkbenchCRITICAL保留。
-- P05.84/feat136完成，产品697ab24、收尾7ffc101、交接37db43c已推；typedvalidationInfoWarning接受/Error空也阻止，旧API兼容，GotoLine集成；专项13/full1478/review与CI44272272721/WinLinux成功。P05.83/feat135菜单产品f4b1faf、收尾14b9420已推，component37/repo1/full1472与CI/WinLinux成功。
-- P05父阶段及LAY/CMD父行仍开放；前80–82/mac历史证据保留，不以新SHA覆盖。
+- 独立worktree E:/temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，push origin HEAD:codex/vscode-parity-p05。原E:/Alula_Code与E:/temp/alula-pr3-p05脏树均保留。上一已推收尾a648fb8。
+- 当前唯一feature P05.86/feat138 Open Editors editorOrder/fullPath显示排序。header菜单/session偏好，按layout叶子视觉顺序分组，组内排序副本，stable tie保留tab次序；不改tabs/MRU/active/preview/sticky/document-view。alphabetical Intl/locale/numeric名称规则、nullresource名称排序与P07正式配置明确留后续。
+- policy13+真实OpenEditors5=18/18，包含26goldenkeys/676orderedpairs。独立review实际编译固定uri.ts/charCode.ts验证key与排序一致；checked-in测试本身只做golden相对排序。workbench切换/恢复、tab几何/Rust视图身份/content及排序后activate/close/disk不变通过。
+- 审查P1：现有共享_pathToUri产生POSIX多斜杠且不转义%/#/UNC，严格排序消费错误。真实z%done#.rs回归先红；仅显示投影Uri.file(doc.path!,windows:Platform.isWindows)后绿，pathless仍doc.uri。修正复审无剩余实质finding。共享LSP/文档URI问题仅登记progress下一步，未修。
+- 最终完整init.sh1509/1509、Rusttests/Clippy/core、独立cargo fmt/analyze0通过；原首轮1508全绿与初版policy失败分别保留。非失败minimapUnknownDoc id1输出根因未定。
+- 完整graph含新增文件all10files/13symbols/438flows、main581/320/441 CRITICAL，数组完整、无partial/truncated、snapshot稳定。私有builderUNKNOWN、空name/跨语言/trace预算限制保留，共享Workbench历史CRITICAL不降级。
+- 正在提交P05.86产品和本地证据；准确产品SHA CI/Windows/Linux仍待收尾，feature138 in-progress，P05/LAY11父行开放。P05.85产品7fe2a11/收尾a648fb8及CI44282450910/PA44282442631 WinLinux已完整，不重复实现/全量。
 
 ## Blockers / Limits
 
-- macOS无设备，原生/视觉/实机以及历史Quit/AX/DnD问题暂留，不阻塞继续功能实现，不追加mac排障。
-- GitNexus空name/privateUNKNOWN/跨语言/trace预算限制保留；完整JSON无partial/truncated不代表全覆盖。不要全文件formatWorkbenchPage。
-- 通知ClearAll的activeprogress例外、完整provider/actions/errorwiring仍未完成；本片只验证被移除toast清理和deadline，不改中心清除语义。
-- 七个generatedregistrants为既有构建产物未提交，两原脏树未动。Flutter前build_core，避免同时加载DLL的专项与initbuild并行。
+- macOS设备缺口暂留未验证；hosted不代替实机，不再为macQuit/DnD排障阻塞实现。
+- 七个generatedregistrant构建差异保留不提交，不全文件formatWorkbenchPage。
+- Flutter前必须build_core，专项加载DLL不可与initbuild复制并行。FlutterSDK E:/flutter3.47.8，GitBash PATH含dart-sdk/bin及flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。
+- 图谱未解析不代表安全，先graph再源码补查。新文件需stage后detect-changes才进入diff。
 
 ## Evidence and Files
 
-- docs/diagnostics/2026-11-18-p05/p05.85-notification-toast-lifetime.md、acceptance-map、hosted.md、hosted-verification.json及red/green/full/graph；原始hosted E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71。
-- P05.83/84同目录完整证据；graph导出脚本E:/Temp/alula-p0580-graph-export.mjs。
+- app/lib/workbench/open_editors_sort_order.dart、workbench_page.dart局部接线；app/test/open_editors_sort_order_test.dart、open_editors_view_test.dart。
+- docs/diagnostics/2026-11-18-p05/p05.86-open-editors-path-sort.md、review.md、acceptance-map.json与red/green/init/fmt/analyze/graph日志。
+- 完整图谱导出脚本E:/Temp/alula-p0580-graph-export.mjs，prefix输出必须在repo外，刷新index与导出不并发。
 
 ## Next Session First Step
 
-先提交137最后准确hosted/状态证据（Harness/JSON/diff+graphall/main），更新PR。下一推荐P05.86/feat138 OpenEditors排序：editorOrder/alphabetical/fullPath，按组排序副本不改tabs/MRU/active/view，稳定tie保留原tab顺序；固定版numeric/locale比较需认真对拍并明确locale边界，不能直接lowercasecompareTo。尚未登记/实施；先impact并核对现有OpenEditorsView及pinnedopenEditorsView.ts，headerselector/session偏好属P05适配，正式配置优先级P07。代码1495已绿、无变化不重复全量，mac缺口暂留。
+核对P05.86已提交/推送的实际状态及exact SHA CI和Windows/Linux平台结果，归档准确日志/summary并同步docs03/feature138/progress/PR。不用重跑已绿1509或重复独立参考review，除非代码变化/失败。138证据收尾前不启动下一feature；随后从docs03连续P05路线选择下一片。mac不等待，PR继续draft。

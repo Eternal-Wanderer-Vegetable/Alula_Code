@@ -41,7 +41,8 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
       ),
     ));
     await tester.pump(const Duration(milliseconds: 600));
@@ -109,12 +110,97 @@ void main() {
   }
 
   testWidgets(
+      'path sorting changes sidebar projection only and restores preference',
+      (tester) async {
+    await prepareWorkspace(tester);
+    final zeta = File('${workspace.path}/z%done#.rs')
+      ..writeAsStringSync('fn zeta() {}\n');
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    sessionStore.save({
+      'v': 1,
+      'focused': 'editor',
+      'groups': [
+        {
+          'region': 'editor',
+          'active': 10,
+          'docs': [
+            {'id': 10, 'path': zeta.path},
+            {'id': 11, 'path': alpha.path},
+          ],
+        },
+      ],
+    });
+    await mountPage(tester);
+    final field = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .firstWhere((field) => field.inputWindow.document.id == 10);
+    final inputWindow = field.inputWindow;
+    final document = inputWindow.document;
+    final text = document.resync().content;
+    final tabZeta = tester.getTopLeft(_tabIn('editor', 10));
+    final tabAlpha = tester.getTopLeft(_tabIn('editor', 11));
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy));
+
+    Future<void> choose(String mode) async {
+      await tester.tap(find.byKey(const ValueKey('open-editors-sort')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(ValueKey('open-editors-sort-$mode')));
+      await tester.pumpAndSettle();
+    }
+
+    await choose('fullPath');
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy));
+    expect(tester.getTopLeft(_tabIn('editor', 10)), tabZeta);
+    expect(tester.getTopLeft(_tabIn('editor', 11)), tabAlpha);
+    final after = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .firstWhere((field) => field.inputWindow.document.id == 10);
+    expect(after.inputWindow, same(inputWindow));
+    expect(after.inputWindow.document, same(document));
+    expect(document.resync().content, text);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(sessionStore.tryLoad()?['openEditorsSortOrder'], 'fullPath');
+    final saved = sessionStore.tryLoad()!;
+    final groups = saved['groups'] as List;
+    expect((groups.first as Map)['active'], 10);
+    expect(
+        ((groups.first as Map)['docs'] as List)
+            .map((doc) => (doc as Map)['id'])
+            .take(2),
+        [10, 11]);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
+    await mountPage(tester);
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy));
+    await choose('editorOrder');
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy));
+    await choose('fullPath');
+    await tester.tap(_openEditorsDoc('editor', 11));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(((sessionStore.tryLoad()!['groups'] as List).first as Map)['active'],
+        11);
+    await tester.tap(_openEditorsClose('editor', 10));
+    await tester.pumpAndSettle();
+    expect(_openEditorsDoc('editor', 10), findsNothing);
+    expect(_openEditorsDoc('editor', 11), findsOneWidget);
+    expect(alpha.readAsStringSync(), 'fn alpha() {}\n');
+    expect(zeta.readAsStringSync(), 'fn zeta() {}\n');
+  });
+
+  testWidgets(
     'the section renders grouped rows, the active highlight, and the dirty count',
     (tester) async {
       await prepareWorkspace(tester);
       await seedTwoGroups(tester);
       await mountPage(tester);
-      expect(find.byKey(const ValueKey('open-editors-section')), findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('open-editors-section')), findsOneWidget);
       expect(find.byKey(const ValueKey('open-editors-header')), findsOneWidget);
       expect(find.byKey(const ValueKey('open-editors-group-editor')),
           findsOneWidget);
@@ -122,8 +208,8 @@ void main() {
           findsOneWidget);
       expect(_openEditorsDoc('editor', 10), findsOneWidget);
       expect(_openEditorsDoc('editor-2', 11), findsOneWidget);
-      expect(find.byKey(const ValueKey('open-editors-dirty-count')),
-          findsNothing,
+      expect(
+          find.byKey(const ValueKey('open-editors-dirty-count')), findsNothing,
           reason: 'no dirty documents yet');
 
       // Make beta dirty: the label gains the marker and the badge shows 1.
@@ -209,8 +295,8 @@ void main() {
       expect(sessionStore.tryLoad()?['focused'], 'editor-2');
 
       // Focus the alpha row and press Enter: the row activates.
-      final focus = tester.widget<Focus>(find.byKey(
-          const ValueKey('open-editors-focus-editor-10')));
+      final focus = tester.widget<Focus>(
+          find.byKey(const ValueKey('open-editors-focus-editor-10')));
       focus.focusNode!.requestFocus();
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
@@ -230,7 +316,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 700));
       await tester.pumpAndSettle();
       expect(_openEditorsDoc('editor-2', 11), findsNothing);
-      expect(find.byKey(const ValueKey('editor-tab-strip-editor-2')), findsNothing,
+      expect(
+          find.byKey(const ValueKey('editor-tab-strip-editor-2')), findsNothing,
           reason: 'the emptied group is removed');
     },
   );

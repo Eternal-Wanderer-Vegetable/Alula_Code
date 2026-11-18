@@ -1688,6 +1688,16 @@
       "evidence": "Registered fixed4bda deadline-based contract, currenttoastmodel has no expiry. ExistingWindowListenerfocus reused, no polling; visible3 bounds timerowners. Component16/16+WorkbenchUI5/5green, oldstateless3severityred captured. Parentreviewtimer lifecycle completed; agentreviewauthfailed notcountedpass. Firstfull1494/1495 failedGitwrite-tree128unknowncause, fixturechangedreadonlyls-files--stage-z+stderr andrealrepo1pass. Finalsequentialinit1495/1495 Rusttests/Clippy/core/fmt/analyze0passed. Graphall19/7/439 andmain570/311/441 CRITICAL completeexports. Exactproduct7fe2a11 CI44282450910 all4success with1495actualtests; PA44282442631 Win/Linuxsuccess, macOSdeferrednotawaited. Win desktop25/clipboard1/DnD12pointercallbacks app14418790274/DnD14417887324; Linuxclipboard1/launches/DnD20callbacks app14418625084/DnD14417832413. Accuracyboundaries/rawlogs in p05.85-hosted-verification.json. Narrowchilddone, macOSdevicegapsdeferred andparentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-138",
+      "name": "P05.86 Open Editors完整路径显示排序",
+      "description": "editorOrder/fullPath copied stable display projection per visual group, session preference and header selector; alphabetical/locale name ordering and P07 configuration remain explicit gaps. docs/diagnostics/2026-11-18-p05/p05.86-open-editors-path-sort.md",
+      "dependencies": ["feat-137"],
+      "status": "in-progress",
+      "evidence": "Policy13+Workbench5=18/18 passed; specialnativefilename oldprojection red then localUri.file fixgreen. Independent actualpinnedsource verified26goldenkeys/676orderedpairs, checkedintest usesrelativegoldenorder. ReviewP1resolved. Finalinit1509/1509 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall10/13/438 andmain581/320/441 CRITICAL countscomplete/snapshotstable; privatebuilderUNKNOWN/sourcecallchecked andsharedriskretained. ExactCIWinLinux pending, macOSdevicegapsdeferred; alphabetical/nullresourcenameorder/P07config remain gaps.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -90,6 +90,7 @@ import 'tree_find.dart';
 import 'goto_position.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
+import 'open_editors_sort_order.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -564,6 +565,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String? _focusedSidebarView = 'explorer';
   // Open Editors 区段折叠态（上游 openEditorsView 的可见性/展开持久化）。
   bool _openEditorsCollapsed = false;
+  OpenEditorsSortOrder _openEditorsSortOrder = OpenEditorsSortOrder.editorOrder;
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
@@ -3856,6 +3858,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
+        'openEditorsSortOrder': _openEditorsSortOrder.name,
         'workbench.editor.useModal': _modalEditorUseMode.value,
         'zenMode': _zenMode,
         'welcomeVisible': _welcomeVisible,
@@ -3980,6 +3983,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabWrap.value = data['editorWrapTabs'] == true;
     _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
+    _openEditorsSortOrder = OpenEditorsSortOrder.parse(data['openEditorsSortOrder']);
     _modalEditorUseMode =
         ModalEditorUseModeJson.parse(data['workbench.editor.useModal']);
     _zenMode = data['zenMode'] == true;
@@ -21041,7 +21045,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final dirtyCount =
         _allDocs.where((doc) => doc.isDirty).length;
     final rows = <Widget>[];
-    for (final group in _groups.values) {
+    for (final leaf in _layout.root.leaves.where((leaf) => _isEditorRegion(leaf.region))) {
+      final group = _groups[leaf.region];
+      if (group == null) continue;
       final label = group.region == 'editor'
           ? '主编辑器组'
           : '编辑器组 ${group.region.substring('editor-'.length)}';
@@ -21057,7 +21063,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ),
         ),
       ));
-      for (final doc in group.docs) {
+      for (final doc in sortOpenEditors(group.docs, _openEditorsSortOrder,
+          uriOf: (doc) => doc.path == null
+              ? doc.uri
+              : Uri.file(doc.path!, windows: Platform.isWindows).toString())) {
         final active = group.activeDocId == doc.id;
         rows.add(CallbackShortcuts(
           bindings: {
@@ -21163,6 +21172,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       style: TextStyle(
                           fontSize: 11, fontWeight: FontWeight.bold),
                     ),
+                  ),
+                  PopupMenuButton<OpenEditorsSortOrder>(
+                    key: const ValueKey('open-editors-sort'),
+                    tooltip: '打开的编辑器排序',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                    icon: Icon(Icons.sort, size: 14, color: Colors.grey.shade400),
+                    onSelected: (order) {
+                      setState(() => _openEditorsSortOrder = order);
+                      _scheduleStateSave();
+                    },
+                    itemBuilder: (_) => [
+                      for (final order in OpenEditorsSortOrder.values)
+                        CheckedPopupMenuItem(
+                          key: ValueKey('open-editors-sort-${order.name}'),
+                          value: order,
+                          checked: _openEditorsSortOrder == order,
+                          child: Text(order == OpenEditorsSortOrder.editorOrder
+                              ? '标签顺序' : '完整路径'),
+                        ),
+                    ],
                   ),
                   if (dirtyCount > 0)
                     Container(

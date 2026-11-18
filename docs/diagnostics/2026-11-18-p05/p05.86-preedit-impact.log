@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "error": "Target '_buildOpenEditorsSection' not found",
+  "target": {
+    "name": "_buildOpenEditorsSection"
+  },
+  "direction": "upstream",
+  "impactedCount": null,
+  "risk": "UNKNOWN"
+}
