@@ -3170,6 +3170,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (_disposing) return;
     _mainNativeFocusGeneration++;
     _mainWindowFocused = focused;
+    if (mounted) setState(() {});
     _publishMainFocusContext(force: true);
   }
 
@@ -13937,8 +13938,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       try {
         final focused = await windowManager.isFocused();
         if (mounted && focusGeneration == _mainNativeFocusGeneration) {
-          _mainWindowFocused = focused;
-          _publishMainFocusContext(force: true);
+            _mainWindowFocused = focused;
+            setState(() {});
+            _publishMainFocusContext(force: true);
         }
       } on Object {
         // Focus state is optional in widget/platform environments.
@@ -20596,6 +20598,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             bottom: 30,
             child: WorkbenchNotificationToasts(
               center: _notifications,
+              windowFocused: _mainWindowFocused ?? true,
               onDismissToast: _notifications.dismissToast,
             ),
           ),

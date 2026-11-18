@@ -1045,9 +1045,10 @@ void main() {
           File('${repo.path}/alpha.txt').readAsBytesSync();
       final betaBeforeSelection =
           File('${repo.path}/beta.txt').readAsBytesSync();
-      final treeBeforeSelection = await Process.run('git', ['write-tree'],
+      final treeBeforeSelection = await Process.run('git', ['ls-files', '--stage', '-z'],
           workingDirectory: repo.path);
-      expect(treeBeforeSelection.exitCode, 0);
+      expect(treeBeforeSelection.exitCode, 0,
+          reason: '${treeBeforeSelection.stderr}');
       final toggleModifier = Theme.of(tester.element(alphaRow)).platform ==
               TargetPlatform.macOS
           ? LogicalKeyboardKey.metaLeft
@@ -1072,9 +1073,10 @@ void main() {
               .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
               .selected,
           isTrue);
-      final treeAfterSelection = await Process.run('git', ['write-tree'],
+      final treeAfterSelection = await Process.run('git', ['ls-files', '--stage', '-z'],
           workingDirectory: repo.path);
-      expect(treeAfterSelection.exitCode, 0);
+      expect(treeAfterSelection.exitCode, 0,
+          reason: '${treeAfterSelection.stderr}');
       expect(treeAfterSelection.stdout, treeBeforeSelection.stdout,
           reason: 'SCM modifier selection preserves the exact Git index tree');
       expect(File('${repo.path}/alpha.txt').readAsBytesSync(),
@@ -1106,7 +1108,7 @@ void main() {
       expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pump(const Duration(milliseconds: 300));
-      final treeAfterMenu = await Process.run('git', ['write-tree'],
+      final treeAfterMenu = await Process.run('git', ['ls-files', '--stage', '-z'],
           workingDirectory: repo.path);
       expect(treeAfterMenu.exitCode, 0);
       expect(treeAfterMenu.stdout, treeBeforeSelection.stdout,

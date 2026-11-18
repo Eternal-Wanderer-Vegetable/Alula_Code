@@ -1,0 +1,63 @@
+{
+  "feature": "feat-137",
+  "slice": "P05.85 toast lifetime",
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "cases": [
+    {
+      "contract": "Info10s/Warning12s/Error15s expiry dismisses only toast, retaining center entry and unread",
+      "test": "info/warning/error toast expires after 10/12/15s, keeping unread",
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Hover or descendant action focus at deadline postpones a complete severity interval; leaving does not restart it",
+      "tests": ["hover at deadline postpones; mouse leave does not reset interval", "descendant action focus postpones the deadline"],
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Interaction ending before deadline does not restart; inactive-at-deadline waits until focus then a complete interval",
+      "tests": ["focus restored before deadline does not restart the interval", "hover ending before deadline does not restart the interval", "inactive deadline waits for window focus then a full interval"],
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Active progress and Error+actions remain sticky at deadlines; progress done removes progress-derived protection without restarting the current interval",
+      "test": "active progress and errors with actions remain sticky at deadlines",
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Equivalent rebuild and new keyed sibling do not restart existing toast lifetime",
+      "test": "unchanged rebuilds and a new keyed sibling do not restart lifetime",
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Removed toasts cancel timers, with no delayed dismissal after clear/DND/dismiss/evict/unmount or removal while waiting for focus",
+      "test": "clear/dnd/dismiss/evict/unmount cancels lifetime without a late dismissal callback; unmount while waiting for window focus has no late callback",
+      "file": "app/test/notification_toast_lifetime_test.dart",
+      "status": "automated-pass",
+      "boundary": "Clear behavior itself is unchanged; this test covers entries actually removed, not upstream progress-clear eligibility"
+    },
+    {
+      "contract": "Real workbench expiry retains center/unread badge, then opening center reveals retained notification",
+      "test": "automatic toast expiry retains unread center notification",
+      "file": "app/test/notification_ui_test.dart",
+      "status": "automated-pass"
+    }
+  ],
+  "sourceReviewOnly": [
+    "Existing WindowListener focus events update windowFocused without polling",
+    "One Timer per keyed visible toast, bounded by existing3-toast limit",
+    "Existing progress completion/cancellation and notification storage semantics unchanged"
+  ],
+  "validation": {
+    "lifetimeTests": 16,
+    "workbenchUiTests": 5,
+    "fullGate": "init.sh Rusttests/Clippy/core and Flutter1495/1495 passed, independentfmt/analyze0",
+    "review": "parent focused source review; subagent review unavailable, not counted as pass",
+    "macos": "device/native/visual gaps deferred unverified per user instruction",
+    "parentP05Complete": false
+  }
+}

@@ -4,6 +4,8 @@
 /// 条目仍在；Do Not Disturb 只抑制 toast。两者都带 live region 与可读名称。
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'notifications.dart';
@@ -31,10 +33,14 @@ class WorkbenchNotificationToasts extends StatelessWidget {
     super.key,
     required this.center,
     required this.onDismissToast,
+    this.windowFocused = true,
   });
 
   final NotificationCenter center;
   final void Function(int id) onDismissToast;
+
+  /// 由宿主窗口的焦点事件更新；到期后失焦的 toast 等恢复焦点再计时。
+  final bool windowFocused;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +57,7 @@ class WorkbenchNotificationToasts extends StatelessWidget {
           _NotificationToast(
             key: ValueKey('notification-toast-${notification.id}'),
             notification: notification,
+            windowFocused: windowFocused,
             onDismiss: () => onDismissToast(notification.id),
           ),
       ],
@@ -58,97 +65,175 @@ class WorkbenchNotificationToasts extends StatelessWidget {
   }
 }
 
-class _NotificationToast extends StatelessWidget {
+class _NotificationToast extends StatefulWidget {
   const _NotificationToast({
     super.key,
     required this.notification,
+    required this.windowFocused,
     required this.onDismiss,
   });
 
   final WorkbenchNotification notification;
+  final bool windowFocused;
   final VoidCallback onDismiss;
 
   @override
+  State<_NotificationToast> createState() => _NotificationToastState();
+}
+
+class _NotificationToastState extends State<_NotificationToast> {
+  Timer? _timer;
+  bool _hovered = false;
+  bool _descendantFocused = false;
+  bool _waitingForWindowFocus = false;
+
+  Duration get _interval => switch (widget.notification.severity) {
+        WorkbenchNotificationSeverity.info => const Duration(seconds: 10),
+        WorkbenchNotificationSeverity.warning => const Duration(seconds: 12),
+        WorkbenchNotificationSeverity.error => const Duration(seconds: 15),
+      };
+
+  @override
+  void initState() {
+    super.initState();
+    _schedule();
+  }
+
+  @override
+  void didUpdateWidget(covariant _NotificationToast oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_waitingForWindowFocus && widget.windowFocused) {
+      _waitingForWindowFocus = false;
+      _schedule();
+    }
+  }
+
+  void _schedule() {
+    _timer = Timer(_interval, _onDeadline);
+  }
+
+  // 对齐固定版本 notificationsToasts.ts：只在截止时重评 sticky/交互状态。
+  // hover 离开、进度完成和普通 rebuild 都不重置当前完整间隔。
+  void _onDeadline() {
+    _timer = null;
+    if (!mounted) return;
+    if (!widget.windowFocused) {
+      _waitingForWindowFocus = true;
+      return;
+    }
+    final notification = widget.notification;
+    final sticky = notification.hasProgress ||
+        (notification.severity == WorkbenchNotificationSeverity.error &&
+            notification.hasActions);
+    if (sticky || _hovered || _descendantFocused) {
+      _schedule();
+    } else {
+      widget.onDismiss();
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final notification = widget.notification;
+    final onDismiss = widget.onDismiss;
     final style = _NotificationStyle.of(notification.severity);
-    return Semantics(
-      liveRegion: true,
-      container: true,
-      label: '${notification.source} 通知：${notification.message}',
-      child: Container(
-        width: 340,
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
-        decoration: BoxDecoration(
-          color: const Color(0xFF252932),
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: const Color(0xFF3A4150)),
-          boxShadow: const [BoxShadow(blurRadius: 12, color: Colors.black54)],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Icon(style.icon, size: 15, color: style.color),
+    return MouseRegion(
+      onEnter: (_) => _hovered = true,
+      onExit: (_) => _hovered = false,
+      child: Focus(
+        canRequestFocus: false,
+        onFocusChange: (focused) => _descendantFocused = focused,
+        child: Semantics(
+          liveRegion: true,
+          container: true,
+          label: '${notification.source} 通知：${notification.message}',
+          child: Container(
+            width: 340,
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF252932),
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: const Color(0xFF3A4150)),
+              boxShadow: const [
+                BoxShadow(blurRadius: 12, color: Colors.black54)
+              ],
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.message,
-                    style: const TextStyle(fontSize: 12, height: 1.3),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    notification.source,
-                    style:
-                        TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
-                  ),
-                  if (notification.hasProgress)
-                    _NotificationProgressLine(
-                      notification: notification,
-                      cancelKeyPrefix: 'notification-toast-cancel',
-                    ),
-                  if (notification.hasActions)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Wrap(
-                        spacing: 8,
-                        children: [
-                          for (final (index, action)
-                              in notification.actions.indexed)
-                            TextButton(
-                              key: ValueKey(
-                                  'notification-toast-action-${notification.id}-$index'),
-                              style: TextButton.styleFrom(
-                                minimumSize: const Size(0, 26),
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                textStyle: const TextStyle(fontSize: 11.5),
-                              ),
-                              onPressed: () => action.run(),
-                              child: Text(action.label),
-                            ),
-                        ],
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Icon(style.icon, size: 15, color: style.color),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        notification.message,
+                        style: const TextStyle(fontSize: 12, height: 1.3),
                       ),
-                    ),
-                ],
-              ),
+                      const SizedBox(height: 4),
+                      Text(
+                        notification.source,
+                        style: TextStyle(
+                            fontSize: 10.5, color: Colors.grey.shade500),
+                      ),
+                      if (notification.hasProgress)
+                        _NotificationProgressLine(
+                          notification: notification,
+                          cancelKeyPrefix: 'notification-toast-cancel',
+                        ),
+                      if (notification.hasActions)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final (index, action)
+                                  in notification.actions.indexed)
+                                TextButton(
+                                  key: ValueKey(
+                                      'notification-toast-action-${notification.id}-$index'),
+                                  style: TextButton.styleFrom(
+                                    minimumSize: const Size(0, 26),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    textStyle: const TextStyle(fontSize: 11.5),
+                                  ),
+                                  onPressed: () => action.run(),
+                                  child: Text(action.label),
+                                ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  key: ValueKey('notification-toast-close-${notification.id}'),
+                  tooltip: '关闭通知',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints:
+                      const BoxConstraints(minWidth: 22, minHeight: 22),
+                  onPressed: onDismiss,
+                  icon:
+                      Icon(Icons.close, size: 13, color: Colors.grey.shade400),
+                ),
+              ],
             ),
-            IconButton(
-              key: ValueKey('notification-toast-close-${notification.id}'),
-              tooltip: '关闭通知',
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
-              onPressed: onDismiss,
-              icon: Icon(Icons.close, size: 13, color: Colors.grey.shade400),
-            ),
-          ],
+          ),
         ),
       ),
     );

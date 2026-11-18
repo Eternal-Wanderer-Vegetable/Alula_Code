@@ -70,6 +70,30 @@ void main() {
     }
   });
 
+  testWidgets('automatic toast expiry retains unread center notification',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: '自动隐藏但保留记录',
+      );
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-toast-1')), findsOneWidget);
+      await tester.pump(const Duration(seconds: 10));
+      expect(find.byKey(const ValueKey('notification-toast-1')), findsNothing);
+      expect(notifications.items, hasLength(1));
+      expect(notifications.unreadCount, 1);
+      expect(find.byKey(const ValueKey('status-notifications-badge')),
+          findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('status-notifications')));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-item-1')), findsOneWidget);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('do not disturb suppresses toasts but keeps entries',
       (tester) async {
     await _mountApp(tester);

@@ -1678,6 +1678,16 @@
       "evidence": "Registered fixedreference severity contract; QuickInput impact CRITICAL104/31direct/3modules. TypedError blocks evenempty; Info/Warningaccept; bothcallbacks runtimeconflict. Focusedasync+realGoto13/13green, productseverityredcaptured. Info/Warningaccept, Error/emptyErrorblock, validclearsdecoration, pendingretainsmessage, staleexceptionignored andruntimecallbackconflict covered. Reviewpass; fullinit.sh Flutter1478/1478 Rusttests/Clippy/core andindependentfmt/analyze0passed. Completegraphall14/2/1 MEDIUM andmain551/286/441 CRITICAL no partial/truncated. Exactproduct697ab24 CI44272272721 all4success with1478actualtests; Platform44272261767 Win/Linuxsuccess, macOSdeferred notawaited. Win desktop25/clipboard1/DnD14callbacks app14414110726/DnD14414125474; Linuxclipboard1/launch/DnD23callbacks app14413316861/DnD14413686040. Accurateevidencep05.84-hosted-verification.json. Narrowchilddone; macOSdevicegapsdeferred, no P08business rule invention.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-137",
+      "name": "P05.85 通知toast到期生命周期",
+      "description": "Severity deadlines10/12/15s with hover/descendantfocus/sticky deferral, inactive-window restoration and timer cleanup; dismiss toast only preserving center/unread. docs/diagnostics/2026-11-18-p05/p05.85-notification-toast-lifetime.md",
+      "dependencies": ["feat-136"],
+      "status": "in-progress",
+      "evidence": "Registered fixed4bda deadline-based contract, currenttoastmodel has no expiry. ExistingWindowListenerfocus reused, no polling; visible3 bounds timerowners. Component16/16+WorkbenchUI5/5green, oldstateless3severityred captured. Parentreviewtimer lifecycle completed; agentreviewauthfailed notcountedpass. Firstfull1494/1495 failedGitwrite-tree128unknowncause, fixturechangedreadonlyls-files--stage-z+stderr andrealrepo1pass. Finalsequentialinit1495/1495 Rusttests/Clippy/core/fmt/analyze0passed. Graph/exactCIWinLinux pending, macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",
