@@ -1,0 +1,51 @@
+{
+  "run_id": 44247773016,
+  "attempt": 1,
+  "sha": "d5c11f2637135425c0e30178ad4ce268e7554f74",
+  "workflow": "CI",
+  "status": "completed",
+  "conclusion": "success",
+  "observed_at": "20261118T060918Z",
+  "jobs": [
+    {
+      "id": 134610786002,
+      "name": "Harness 文档结构校验",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:05Z",
+      "completed_at": "2026-11-18T05:57:11Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134610786194,
+      "name": "Rust (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:05Z",
+      "completed_at": "2026-11-18T05:57:40Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134610786223,
+      "name": "Flutter (analyze + test)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:06Z",
+      "completed_at": "2026-11-18T06:07:55Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134610786230,
+      "name": "Rust (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T05:57:08Z",
+      "completed_at": "2026-11-18T05:58:40Z",
+      "active_steps": [],
+      "failed_steps": []
+    }
+  ]
+}

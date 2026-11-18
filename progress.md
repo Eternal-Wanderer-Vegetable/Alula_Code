@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；当前P05.82 macOS Quit诊断；目标整体完成P05
+### P05 / feat-027 持续推进；P05.82诊断收尾完成，阶段仍开放
+
+- 2026-11-18 P05.82最终d5c11f2 CI44247773016和Platform44247766537全部成功。macSwift原生编译、1462tests、Release/clipboard/launch/Quit/package通过，DnD明确skip。实际prelaunch空、唯一app36952/wrapper36949、AXTitleQuitAlulaCode matchAXTitleprefix、alive/alive->gone/gone open_status0，步骤18秒；watchdog本次未触发。App14403778075 ZIP81项完整，SHA13f1b8dacd21588cd9e9ce71572529c6148ca02cee6304c3a8d29e86552f6939匹配sidecar。初版2c超步骤/job预算仍卡住且无终端日志，历史根因不作已修复声明。feat134诊断子项done，P05父阶段开放。准确JSON/log/report p05.82-hosted.md，下一按docs03继续LAY16context/后续路线。
 
 - 2026-11-18 P05.81证据4e769d7已推。登记P05.82/feat134，独立helper/workflow诊断绑定新actualPID/launch/path并双观察app和wrapper，记录AX属性/匹配依据，不先改产品关闭路径或放宽退出验收。helper/workflow实现完，YAML/21Bash语法/Swift结构和10mockworkflow夹具通过，脚本/JSON/log归档；定向review修复observer失败丢失wrapperstatus后通过。本地完整init.sh Flutter1462/1462、Rust/Clippy/core/fmt/analyze0全绿。nativeSwift编译未验证，准确hosted与graph待补。方案docs/plans/macos-native-quit-diagnostics.md。
 
