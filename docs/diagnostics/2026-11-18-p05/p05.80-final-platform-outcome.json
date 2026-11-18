@@ -1,0 +1,37 @@
+{
+  "run_id": 44222968734,
+  "sha": "6e529d438b8de722fb93b0d56aab77909e3aa567",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "observed_at": "20261118T030108Z",
+  "jobs": [
+    {
+      "id": 134529125411,
+      "name": "macOS build, launch smoke, and app package",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-18T02:59:31Z",
+      "active": [],
+      "failed": []
+    },
+    {
+      "id": 134529125714,
+      "name": "Windows x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-18T02:33:44Z",
+      "active": [],
+      "failed": []
+    },
+    {
+      "id": 134529125752,
+      "name": "Linux x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "completed_at": "2026-11-18T02:27:59Z",
+      "active": [],
+      "failed": []
+    }
+  ]
+}

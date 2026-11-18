@@ -4,31 +4,31 @@ Last Updated: 2026-11-18
 
 ## Current Objective
 
-用户已授权连续整体完成 P05，不因普通进度等待批准。按 docs/03 N.2、LAY-01–20 与 CMD-01–12 一次一片推进 PR #3；保持 OPEN/DRAFT，不合并。路线 `docs/plans/p05-completion.md`；父阶段和矩阵行不能因子切片完成而关闭。
+继续整体完成PR #3的P05，按docs/03 N.2与LAY-01–20/CMD-01–12一次一片，不因普通进度等待批准。PR保持OPEN/DRAFT，不合并。父行不能因子项done而关闭。路线docs/plans/p05-completion.md。
 
 ## Current State
 
-- 唯一工作树 `E:/Temp/alula-pr3-20261117`，分支 `codex/pr3-p05-continuation-20261117`，上游 PR 分支 `codex/vscode-parity-p05`。已推产品 head `9117a06ef5130c3513648b514a164af481082c64`；原 `E:/Alula_Code` p00 与 `E:/temp/alula-pr3-p05` 脏工作区不覆盖。
-- 当前 P05.80 review修复尚未提交：行FocusNode按Enter内部转容器焦点导致async guard拒绝；同entries父刷新无条件reveal导致手动scroll回跳。新测均先红后绿，组件11/11、真实仓库1/1、analyze0；首轮1445/1446仅merge cleanup errno32，补fixture卸载/settle/runAsync后专项15/15、最终init.sh Flutter1446/1446、Rust/Clippy/core/fmt全绿。实现仅GitChangesList：保留已有descendant焦点，update仅focused pixel offset变化时reveal；无新常驻state。报告`docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md`。P05.81未开工。
-- 当前 P05.80 / feat-132 / LAY-16d：SCM 基本资源列表键盘导航。新 `app/lib/git/git_changes_list.dart` 管理单个 focus/scroll、lazy rows、focus/selection分离、arrows/Home/End reveal、Enter open、Space open preserve focus不暂存、hover独立、action button键盘激活。工作台按workspace key重建列表、Git diff显示panel并拒绝迟到Git/workspace/request结果，Enter按源焦点未变时交焦点。
-- P05.80 组件9/9、组件+Git CLI/真实repo20/20、WorkBench真实临时仓库fixture及原最终 `bash init.sh` Flutter1444/1444通过；产品9117a06、PR CI44141662139四job成功。Platform44141648010 attempt1 Linux成功、Windows native DnD drop超时、macOS native Quit调用后20秒未退出；attempt2 Windows全绿（native DnD13 pointerevents），macOS1443/1444仅SCM焦点固定100ms断言失败，后续Release/Quit/package skipped；修正提交e865b11的CI/Platform与日志b162222 CI运行中。2026-11-18启动基线Flutter1442/1444：SCM焦点断言固定100ms不足，改10秒上限等待实际焦点；Smart Enter teardown errno32，改显式卸载/settle/runAsync删除。专项1/1及27/27通过；修正后完整init.sh Flutter1444/1444、Rust tests/Clippy/core、fmt/analyze0通过，首次失败与最终绿日志均归档。范围报告 `docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md`；新诊断 `docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md`。
-- P05.79 `0683785`，证据 `4f20623`/`4f2b9bb`；PR CI44110829105全绿，Platform44110812720 Linux/Windows全绿，macOS tests/Release/clipboard/Quit/package通过；DnD integration app90秒未ready（Building macOS application...），probe失败，DnD未验证。app artifacts14339774563/14340438602/14344941314，DnD14343719095。
-- P05.78 `76d70d5`，证据80277e4；CI44094751711 attempt2全绿，attempt1既有editor多选tab测试一次空selection，根因未修；隔离重跑通过。Platform44094742100 Linux/Windows通过，macOS tests/Release/clipboard通过，Quit卡住60分钟timeout，package未执行；不可由别的SHA成功覆盖。
-- P05.77 ABI41 `5683e77`、CI fixture build0995dc8；CI44077819111全绿，Platform44077810454三平台全绿，macOS native DnD pointer route不可用skip。P05.71–76已核对exact SHA与hosted/ZIP证据并补记窄子项done；P05.75 Platform44037183025 attempt2整体失败（native DnD skip notice后40秒超时），但macOS tests/Release/launch/Quit/package通过。其余五项准确PA成功，macOS DnD因pointer route不可用明确skip。六份macOS ZIP均81项完整且SHA256匹配sidecar；父LAY/CMD/P05不关闭。
+- 独立工作树E:/Temp/alula-pr3-20261117，分支codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。已推产品6e529d438b8de722fb93b0d56aab77909e3aa567；原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区保留。
+- P05.80/feat-132已完成窄SCM列表导航合同：focus/selection分离、裸方向键/Home/End reveal、Enter交diff焦点、Space保留列表焦点且不暂存、hover独立、显式行action与生命周期。Review修复Tab行Enter内部focusowner竞态和相同entries父刷新scroll回跳；两项先红后绿。组件11/11、真实仓库行Enter/index1/1；mergecleanup15/15；最终完整init.sh Flutter1446/1446、Rust tests/Clippy/core、独立fmt/analyze0通过。首轮全量1445/1446的mergefixture errno32及更早启动1442/1444的焦点/SmartEnter cleanup失败均保留日志。
+- 最终准确产品6e529d4 CI44222976491四job全绿，Platform44222968734三平台全绿；macOS1446tests、Release、clipboard、launch、nativeQuit、package通过。macOS DnD pointerroutefalse/noFlutterevents明确skip，不能声称手势通过。Artifacts app Linux14392430112/Windows14391638012/mac14393775629，DnD14391084310/14392016899/14392932802，macstartup/Quit14393471969。macZIP SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6匹配sidecar、81项完整。
+- P05.71–76历史exactSHA/CI/PA/六份ZIP已补账，均窄子项done。P05.75 PA整体失败因macnativeDnD，tests/Release/launch/Quit/package通过；其他五项macDnD明确skip。详见p05.71-76-hosted-ledger.md。
+- 历史P05.80原9117a06 PA44141648010 attempt1 Windowsdrop超时/macQuit失败；attempt2Windows通过、mac1443/1444唯一固定100ms焦点fixture失败。e865b11 CI44219803751与b162222 CI44220241478全绿；e865b11 PA44219797014 macQuit失败，其他tests/Release/launch/package通过。旧探针只观察open -W wrapper，实际appPID状态未定；未修复其根因，最终6e本次通过不抹除历史失败。不要第三轮重试原提交。
+- 下一SCM多选/范围尚未登记/实施。已核对固定参考Shift-click保留disjoint、ShiftArrow采用tree扩选、Enter/Space只打开focused。草案E:/Temp/alula-p0581-selection-contract.md。
 
 ## Blockers / Limits
 
-- P05.80只补基本SCM列表宿主；混合index/worktree双侧资源、完整树分组/多选/范围/type/find/context menu仍未覆盖（LAY-16/P09）。当前diff目的地仍既有bottom panel，不声称完整SCM editor复刻。表格尚未有实际surface，勿加未使用generic widget凑验收。
-- GitNexus重建使用 `GITNEXUS_MAX_FILE_SIZE=1024`；_gitTile pre-edit CRITICAL、_showGitDiff/_buildGitPanel/_buildGitDiffPanel UNKNOWN。源码caller核验是UNKNOWN补充，不是low证明。index有entry/callee/trace/cross-language覆盖限制；完整JSON export的无partial/truncated不抹除index限制。
-- P05.67原生双窗focus、P05.68Compact像素、P05.69aux交换、固定主题/字体/DPI/reference视觉等仍未验证。generic DnD不替代aux专属链路；skip不作pass。
-- generated registrants（7文件）仅构建状态，未纳入产品提交。禁止全文件写入式format WorkbenchPage。
+- 混合index/worktree双侧资源、完整tree分组/collapse/type/find/context、表格实际列resize与原生主题/font/DPI视觉仍未完成。当前diff目的地仍既有bottompanel，不声称SCMeditor全复刻。P05/父LAY/CMD开放。
+- GitNexus1024KiB纳入WorkbenchPage；GitChangesList类/方法name空导致class查询失败，FileimpactMEDIUM69/direct1，私有callbackUNKNOWN，先前workbenchCRITICAL保留。最终产品扫描all25files/2symbols/443flows和main462/265/446均CRITICAL，完整数组匹配summary无partial/truncated不抹除index覆盖限制。
+- 七个generatedregistrants仅构建状态未纳入提交。禁止写入式format整个WorkbenchPage。
+- P05.67原生双窗focus、P05.68Compact像素、P05.69aux交换、固定参考原生视觉仍未验证；genericDnD不能替代专属链路。
 
 ## Evidence and Files
 
-- P05.80报告与新控件/测试；`app/test/widget_test.dart`真实仓库fixture；工作台最小接线。
-- 新会话基线修正已推e865b11，原始日志已推b162222；`docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md`与同目录完整failed/green/analyze/graph日志。历史六项hosted账本`p05.71-76-hosted-ledger.md`和`p05.72-76-package-verification.json`已提交。
-- 完整图谱导出脚本 `E:/Temp/alula-p0580-graph-export.mjs`；参数：repo、output prefix、main。暂存新文件后再rebuild/export，保留all和compare-main原始JSON。
+- docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md、p05.80-acceptance-map.json、finalCI/platform/packageJSON；P05.80收尾文档待证据提交。
+- 同目录p05.80-focus-scroll-review-fixes.md及完整red/green/full/graph日志；基线报告p05.80-startup-focus-regression.md。
+- p05.80-macos-quit-observation-limits.md与e865b11/originalZIP校验记录，历史失败不豁免。
+- 完整graph导出脚本E:/Temp/alula-p0580-graph-export.mjs；原始平台证据E:/Temp/alula-pr3-p0580-hosted-20261118。
 
 ## Next Session First Step
 
-先收齐P05.80原产品9117a06的Platform44141648010 attempt2 macOS结果与ZIP；Windows attempt2已全绿，勿做第三轮无诊断重试。基线修正e865b11的CI44219803751、Platform44219797014及日志头b162222的CI44220241478待结果；不以其他SHA成功替代原提交验收。原产品收尾/只读review后按docs/03单独登记SCM多选范围slice，再实施；参考已核实Shift-click保留disjoint、Shift+Arrow采用tree扩选而非通用range算法、Enter/Space仅focused资源。继续剩余P05路线，不停在普通进度确认。所有Git Bash测试需PATH含 `/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin`。PR保持OPEN/DRAFT。
+先完成当前P05.80证据精确暂存、GitNexus完整all/compare-main分析、Harness/diff/JSON检查并推送；再按docs/03登记P05.81/feat-133 LAY-16e SCM多选/范围，带fixedreference和原子case后实施。保留选择/焦点/hover区分及当前rowaction单资源语义，不扩展P09批量business。所有GitBash测试PATH需含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。Flutter前build_core。持续推进P05，不因普通进度终止。

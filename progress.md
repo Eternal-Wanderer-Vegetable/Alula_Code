@@ -5,9 +5,11 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；当前 P05.80 SCM 资源列表导航；目标整体完成 P05
+### P05 / feat-027 持续推进；P05.80 SCM导航收尾完成，下一SCM多选/范围；目标整体完成P05
 
-- 2026-11-18 P05.80只读review补出两项产品缺陷：Tab进入资源行后Enter的内部焦点转移使异步focus guard拒绝交焦点；相同entries的父刷新无条件reveal导致手动滚动回跳。两项回归先红后绿；现保留已有SCM descendant焦点，仅焦点行pixel offset变化时update reveal。组件11/11、真实仓库1/1、analyze0；首轮全量1445/1446仅merge fixture teardown errno32，补显式卸载/settle/runAsync后merge15/15、最终完整init.sh Flutter1446/1446与Rust/Clippy/core/fmt全绿。修复待提交。e865b11 CI44219803751、b162222 CI44220241478均四job全绿，修正前Platform44219797014 Linux/Windows通过、macOS仍运行。报告`docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md`。
+- 2026-11-18 P05.80 / feat-132最终收尾：6e529d4 CI44222976491四job通过，Platform44222968734 Linux/Windows/macOS全部通过；macOS1446tests/Release/clipboard/nativeQuit/package通过，DnD syntheticpointerroute不可用明确skip。App artifacts L14392430112/W14391638012/M14393775629；macZIP SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6与sidecar匹配，81项完整。7项验收映射区分测试/源码审查/未验证，不关闭LAY-16/P05。证据docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md。下一SCM多选/范围需单独登记。
+
+- 2026-11-18 P05.80只读review补出两项产品缺陷：Tab进入资源行后Enter的内部焦点转移使异步focus guard拒绝交焦点；相同entries的父刷新无条件reveal导致手动滚动回跳。两项回归先红后绿；现保留已有SCM descendant焦点，仅焦点行pixel offset变化时update reveal。组件11/11、真实仓库1/1、analyze0；首轮全量1445/1446仅merge fixture teardown errno32，补显式卸载/settle/runAsync后merge15/15、最终完整init.sh Flutter1446/1446与Rust/Clippy/core/fmt全绿。修复6e529d4已推，CI44222976491四job全绿；Platform44222968734 Linux/Windows通过，macOS仍运行。e865b11 CI44219803751、b162222 CI44220241478均四job全绿；e865b11 Platform44219797014 Linux/Windows成功，macOS1444测试/Release/launch/package成功但Quit失败、DnD明确skip。包14392000849已核对81项/sidecar；Quit仅观察open -W wrapper，应用实际PID退出状态未定，诊断p05.80-macos-quit-observation-limits.md。报告`docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md`。
 
 - 2026-11-18 会话恢复：独立工作树 HEAD9117a06。首次启动 `bash init.sh --fast` Rust/core通过、Flutter1442/1444：SCM异步diff焦点断言固定100ms失败，改10秒上限等待真实FocusNode；Smart Enter临时工作区teardown errno32，改显式卸载/settle/runAsync删除。专项焦点1/1、Smart Enter+SCM27/27；修正后完整 `bash init.sh` Flutter1444/1444、Rust tests/Clippy/core全绿，独立fmt/analyze0通过。首次失败日志和最终绿日志已归档 `docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md`。Platform44141648010 attempt1 Windows native DnD drop超时、macOS Quit未退出；同SHA attempt2 Windows全绿（native DnD13 pointerevents），macOS1443/1444仅SCM焦点固定100ms断言失败，后续Release/Quit/package skipped。修正e865b11与日志b162222已推，CI44219803751/44220241478、Platform44219797014运行中。历史P05.71–76准确提交/hosted/六份macOS ZIP校验已核对补账，P05.75保留macOS native DnD失败，其余mac DnD明确skip；父LAY/CMD/P05保持开放。
 

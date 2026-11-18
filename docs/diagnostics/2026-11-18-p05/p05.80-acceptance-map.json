@@ -1,0 +1,89 @@
+{
+  "feature": "feat-132",
+  "slice": "P05.80 / LAY-16d",
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "productCommit": "6e529d438b8de722fb93b0d56aab77909e3aa567",
+  "scope": "Existing flat SCM resource list keyboard focus, activation, hover, refresh and lifecycle",
+  "cases": [
+    {
+      "upstream": ["list.focusDown", "list.focusUp", "list.focusFirst", "list.focusLast"],
+      "input": "Unmodified arrows/Home/End in the SCM resource list",
+      "result": "Focus and reveal without replacing selection; initial Up chooses first resource",
+      "tests": ["app/test/git_changes_list_test.dart::Enter and Space select focused row and pass preserveFocus", "app/test/git_changes_list_test.dart::arrows, Home and End reveal focus across section headers"],
+      "evidence": "p05.80-list-review-green.log",
+      "status": "automated-pass"
+    },
+    {
+      "upstream": ["list.select"],
+      "input": "Enter from list or traversed resource-row focus",
+      "result": "Enter opens the focused resource with preserveFocus=false; the mocked pending row-open reaches destination focus through its captured-owner guard, and normal real-repository Enter reaches diff focus",
+      "boundary": "The named tests do not directly assert original descendant focus ownership throughout the pending request",
+      "tests": ["app/test/git_changes_list_test.dart::Enter from a focused row preserves its async focus owner", "app/test/widget_test.dart::Git changes list opens resources without staging on Space"],
+      "evidence": "p05.80-row-workbench-green.log",
+      "status": "automated-pass"
+    },
+    {
+      "upstream": ["list.toggleExpand", "list.selectAndPreserveFocus"],
+      "input": "Space on a resource leaf",
+      "result": "Open the focused resource with list focus preserved and no Git index mutation",
+      "tests": ["app/test/git_changes_list_test.dart::Enter and Space select focused row and pass preserveFocus", "app/test/widget_test.dart::Git changes list opens resources without staging on Space"],
+      "evidence": "p05.80-row-workbench-green.log",
+      "status": "automated-pass",
+      "boundary": "Collapsible tree/group Space behavior is outside the current flat resource surface"
+    },
+    {
+      "upstream": ["SCM resource row hover/focus/selection state"],
+      "input": "Hover another row while a resource is selected/focused",
+      "result": "Hover does not replace keyboard focus or selection",
+      "tests": ["app/test/git_changes_list_test.dart::hover leaves focus, selection and keyboard target unchanged"],
+      "evidence": "p05.80-list-review-green.log",
+      "status": "automated-pass"
+    },
+    {
+      "upstream": ["SCM row action keyboard activation"],
+      "input": "Enter and Space on stage, including Space key repeat; Space on unstage; ArrowDown from the stage action",
+      "result": "Each tested activation invokes its callback once; ArrowDown transfers focus to the list and focuses the next unselected resource without opening it",
+      "tests": ["app/test/git_changes_list_test.dart::focused action activates once; navigation transfers focus to list", "app/test/widget_test.dart::Git changes list opens resources without staging on Space"],
+      "evidence": "p05.80-list-review-green.log",
+      "status": "automated-pass"
+    },
+    {
+      "upstream": ["SCM list identity retention and reveal"],
+      "input": "Entries reorder, change staged side or are removed; unrelated rebuild after manual scroll",
+      "result": "Retain focus and selection independently by resource path; clear removed identities; preserve manual scroll on an unchanged parent rebuild",
+      "tests": ["app/test/git_changes_list_test.dart::focus and selection independently survive updates and clear on removal", "app/test/git_changes_list_test.dart::unchanged parent rebuild preserves manual list scrolling"],
+      "evidence": "p05.80-list-review-green.log",
+      "status": "automated-pass",
+      "boundary": "Mixed index/worktree resources still use one existing row; dual-side SCM resources belong to later scope"
+    },
+    {
+      "upstream": ["SCM focus cancellation/lifecycle"],
+      "input": "External focus or widget disposal while an open is pending",
+      "result": "Completing a mocked pending Space open leaves deliberate external focus unchanged; completion after widget removal reports no Flutter exception",
+      "tests": ["app/test/git_changes_list_test.dart::pending Space never reclaims deliberate external focus", "app/test/git_changes_list_test.dart::pending Space completion after disposal does not restore focus"],
+      "evidence": "p05.80-list-review-green.log",
+      "status": "automated-pass",
+      "boundary": "Owned FocusNode/ScrollController disposal is not asserted by these tests. Workbench Git generation/client/workspace guards are source-review-only evidence, not exercised by the named tests; no delayed real-process integration fixture is claimed"
+    }
+  ],
+  "remaining": [
+    "Modifier multiselect and range selection are the next separately registered slice",
+    "Complete SCM grouping/collapse/type/find/context and mixed index/worktree business parity",
+    "Shared command/keybinding registry coverage beyond this existing local list surface",
+    "Fixed theme/font/DPI/size native visual and geometry comparison",
+    "Feature-specific native SCM interaction and accessibility-device acceptance"
+  ],
+  "validation": {
+    "componentTestsPassed": 11,
+    "realRepositoryTestsPassed": 1,
+    "fullFlutterTestsPassed": 1446,
+    "analyzeIssues": 0,
+    "ciRun": 44222976491,
+    "ciConclusion": "success",
+    "platformRun": 44222968734,
+    "linux": "success",
+    "windows": "success",
+    "macos": "success; native DnD explicitly skipped/unverified",
+    "parentPhaseComplete": false
+  }
+}
