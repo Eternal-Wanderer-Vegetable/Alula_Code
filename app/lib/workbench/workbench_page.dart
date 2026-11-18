@@ -21051,15 +21051,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       final label = group.region == 'editor'
           ? '主编辑器组'
           : '编辑器组 ${group.region.substring('editor-'.length)}';
-      rows.add(Container(
+      rows.add(GestureDetector(
         key: ValueKey('open-editors-group-${group.region}'),
-        padding: const EdgeInsets.only(left: 8, top: 3, bottom: 2),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade500,
+        behavior: HitTestBehavior.opaque,
+        onSecondaryTapUp: (details) => unawaited(
+            _showOpenEditorsGroupContextMenu(details, group)),
+        child: Container(
+          padding: const EdgeInsets.only(left: 8, top: 3, bottom: 2),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade500,
+            ),
           ),
         ),
       ));
@@ -21238,6 +21243,55 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _scheduleStateSave();
+  }
+
+  Future<void> _showOpenEditorsGroupContextMenu(
+    TapUpDetails details,
+    EditorGroup group,
+  ) async {
+    final workspaceRoot = _workspaceRoot;
+    final overlay = Overlay.of(context).context.findRenderObject();
+    if (overlay is! RenderBox) return;
+    final localPosition = overlay.globalToLocal(details.globalPosition);
+    final action = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromRect(
+        localPosition & Size.zero,
+        Offset.zero & overlay.size,
+      ),
+      items: const [
+        PopupMenuItem(
+          key: ValueKey('open-editors-group-close-saved'),
+          value: 'close-saved',
+          child: Text('关闭已保存'),
+        ),
+        PopupMenuItem(
+          key: ValueKey('open-editors-group-close-all'),
+          value: 'close-all',
+          child: Text('全部关闭'),
+        ),
+      ],
+    );
+    if (!mounted ||
+        workspaceRoot != _workspaceRoot ||
+        !identical(_groups[group.region], group)) {
+      return;
+    }
+    switch (action) {
+      case 'close-saved':
+        final anchor = group.docs.firstOrNull;
+        if (anchor != null) {
+          await _closeTabsForAction(
+              group, anchor, EditorTabCloseOperation.closeSaved);
+        }
+        break;
+      case 'close-all':
+        await _requestCloseEditorViews([
+          for (final doc in group.docs)
+            if (!group.stickyDocIds.contains(doc.id)) (group: group, doc: doc),
+        ]);
+        break;
+    }
   }
 
   Future<void> _showOpenEditorsContextMenu(

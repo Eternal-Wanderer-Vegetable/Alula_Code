@@ -1698,6 +1698,16 @@
       "evidence": "Policy13+Workbench5=18/18 passed; specialnativefilename oldprojection red then localUri.file fixgreen. Independent actualpinnedsource verified26goldenkeys/676orderedpairs, checkedintest usesrelativegoldenorder. ReviewP1resolved. Finalinit1509/1509 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall10/13/438 andmain581/320/441 CRITICAL countscomplete/snapshotstable; privatebuilderUNKNOWN/sourcecallchecked andsharedriskretained. Exactproduct3c1efd9726ebbda06f1866579cb88f939ec92d84 CI44290357627 all4success/1509actualtests; PA44290348170 Windows134753661195/Linux134753661301success. Win desktop25/clipboard1/DnD13callbacks app14421711895/DnD14421163996; Linuxclipboard1/launch/DnD19callbacks app14422016881/DnD14421243697. Summary p05.86-hosted-verification.json. macOSnotawaited, alphabetical/nullresourcenameorder/P07config remain gaps; parentLAY11/P05open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-139",
+      "name": "P05.87 Open Editors组菜单批量关闭",
+      "description": "Group-header Close Saved/Close All menu with explicit group scope, sticky exclusion and existing dirty-safe shared-view close route. docs/diagnostics/2026-11-18-p05/p05.87-open-editors-group-close.md",
+      "dependencies": ["feat-138"],
+      "status": "in-progress",
+      "evidence": "Group-header targetscope/stickyexcluded menus reuse existing close routes unchanged. NewrealWorkbench7/7, existingregressions12/12 andscopedproductreview passed. First2/7 fixturelazytitle lookupfailure fixed, preservednotproductred. Finalinit1516/1516 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/12/0LOW andmain604/332/441CRITICAL complete/snapshotstable; preeditWorkbenchPageCRITICAL49direct/4modules andprivateUNKNOWN sourceconfirmed retained. ExactCIWinLinux pending. Emptygroup/isSaving/single-groupheader/fullmenus/longIOfixture andstaleUI directcoverage remain gaps; macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

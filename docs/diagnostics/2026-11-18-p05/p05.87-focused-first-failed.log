@@ -1,0 +1,165 @@
+/c/Users/Vegetable/.bashrc: line 1: $'\377\376export': command not found
+Resolving dependencies...
+Downloading packages...
+  device_info_plus 11.5.0 (13.3.0 available)
+  device_info_plus_platform_interface 7.0.3 (8.1.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+! irondash_engine_context 0.5.5 from path packages\irondash_engine_context (overridden)
+  lints 4.0.0 (6.1.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  screen_retriever 0.2.2 (0.4.0 available)
+  test_api 0.7.12 (0.7.15 available)
+  vector_math 2.4.0 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  win32_registry 2.1.0 (3.0.3 available)
+  window_manager 0.5.2 (0.7.0 available)
+Got dependencies!
+12 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart
+00:00 +0: fullPath group close targets the nonfocused group, not its sorted first row
+00:01 +1: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.openMenu (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:144:18)
+#4      main.close (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:159:11)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:221:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  close saved keeps dirty and sticky editors but closes ordinary pinned editors
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +1 -1: close saved keeps dirty and sticky editors but closes ordinary pinned editors [E]
+  Test failed. See exception logs above.
+  The test description was: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+  
+00:02 +1 -1: cancel close all atomically preserves clean, dirty, and sticky targets
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.openMenu (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:144:18)
+#4      main.close (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:159:11)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:251:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  cancel close all atomically preserves clean, dirty, and sticky targets
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +1 -2: cancel close all atomically preserves clean, dirty, and sticky targets [E]
+  Test failed. See exception logs above.
+  The test description was: cancel close all atomically preserves clean, dirty, and sticky targets
+  
+00:03 +1 -2: discard close all affects only the requested group and leaves disk unchanged
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.openMenu (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:144:18)
+#4      main.close (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:159:11)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:279:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  discard close all affects only the requested group and leaves disk unchanged
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +1 -3: discard close all affects only the requested group and leaves disk unchanged [E]
+  Test failed. See exception logs above.
+  The test description was: discard close all affects only the requested group and leaves disk unchanged
+  
+00:04 +1 -3: save close all writes the target dirty file before closing and preserves other edits
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.openMenu (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:144:18)
+#4      main.close (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:159:11)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:310:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  save close all writes the target dirty file before closing and preserves other edits
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +1 -4: save close all writes the target dirty file before closing and preserves other edits [E]
+  Test failed. See exception logs above.
+  The test description was: save close all writes the target dirty file before closing and preserves other edits
+  
+00:05 +1 -4: closing one group preserves a shared dirty document and its remaining view
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.openMenu (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:144:18)
+#4      main.close (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:159:11)
+#5      main.<anonymous closure> (file:///E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart:345:11)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  closing one group preserves a shared dirty document and its remaining view
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +1 -5: closing one group preserves a shared dirty document and its remaining view [E]
+  Test failed. See exception logs above.
+  The test description was: closing one group preserves a shared dirty document and its remaining view
+  
+00:06 +1 -5: only group rows offer group actions and dismissing the menu changes nothing
+00:07 +2 -5: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: cancel close all atomically preserves clean, dirty, and sticky targets
+  E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: close saved keeps dirty and sticky editors but closes ordinary pinned editors
+  E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: closing one group preserves a shared dirty document and its remaining view
+  E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: discard close all affects only the requested group and leaves disk unchanged
+  E:/temp/alula-pr3-20261117/app/test/open_editors_group_close_test.dart: save close all writes the target dirty file before closing and preserves other edits

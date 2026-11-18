@@ -1,0 +1,1092 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "target": {
+    "name": "WorkbenchPage",
+    "type": "",
+    "filePath": "app/lib/workbench/workbench_page.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 124,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "CRITICAL",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 49,
+    "processes_affected": 0,
+    "modules_affected": 4
+  },
+  "byDepthCounts": {
+    "1": 49,
+    "2": 25,
+    "3": 50
+  },
+  "affected_processes": [],
+  "affected_modules": [
+    {
+      "name": "Test",
+      "hits": 13,
+      "impact": "direct"
+    },
+    {
+      "name": "Workbench",
+      "hits": 11,
+      "impact": "direct"
+    },
+    {
+      "name": "Runner",
+      "hits": 2,
+      "impact": "direct"
+    },
+    {
+      "name": "Editor",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "Class:app/lib/workbench/activity_bar.dart:_ActivityBarState",
+        "name": "_ActivityBarState",
+        "filePath": "app/lib/workbench/activity_bar.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Constructor:app/packages/irondash_engine_context/cargokit/build_tool/lib/src/options.dart:CargokitUserOptions.CargokitUserOptions#2",
+        "name": "CargokitUserOptions",
+        "filePath": "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/options.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Constructor:app/packages/irondash_engine_context/cargokit/build_tool/lib/src/target.dart:Target.Target#6",
+        "name": "Target",
+        "filePath": "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/target.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/editor/editor_native_text_drag_drop.dart",
+        "name": "editor_native_text_drag_drop.dart",
+        "filePath": "app/lib/editor/editor_native_text_drag_drop.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/git/git_cli.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/git/git_diff_moved_blocks.dart",
+        "name": "git_diff_moved_blocks.dart",
+        "filePath": "app/lib/git/git_diff_moved_blocks.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/git/git_diff_moved_blocks_projection.dart",
+        "name": "git_diff_moved_blocks_projection.dart",
+        "filePath": "app/lib/git/git_diff_moved_blocks_projection.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/git/git_diff_navigation.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/git/git_diff_patch_view.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/search/search_service.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/quick_open_query.dart",
+        "filePath": "app/lib/workbench/quick_open_query.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/title_bar.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/tree_find.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/walkthrough.dart",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/windows/runner/utils.cpp",
+        "name": "utils.cpp",
+        "filePath": "app/windows/runner/utils.cpp",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/windows/runner/win32_window.cpp",
+        "name": "win32_window.cpp",
+        "filePath": "app/windows/runner/win32_window.cpp",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md",
+        "filePath": "docs/diagnostics/2026-11-03-p04/ci-failures-and-crash-correlation.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md",
+        "filePath": "docs/diagnostics/2026-11-03-p04/p04.98-git-diff-side-by-side.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:docs/diagnostics/2026-11-04-p04/p04.101-git-diff-trim-whitespace.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md",
+        "filePath": "docs/diagnostics/2026-11-04-p04/p04.102-moved-block-model.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+        "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:tools/editor-ime-probe/windows/runner/utils.cpp",
+        "name": "utils.cpp",
+        "filePath": "tools/editor-ime-probe/windows/runner/utils.cpp",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:tools/editor-ime-probe/windows/runner/win32_window.cpp",
+        "name": "win32_window.cpp",
+        "filePath": "tools/editor-ime-probe/windows/runner/win32_window.cpp",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:tools/web-engine-probe/windows/runner/utils.cpp",
+        "name": "utils.cpp",
+        "filePath": "tools/web-engine-probe/windows/runner/utils.cpp",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:tools/web-engine-probe/windows/runner/win32_window.cpp",
+        "name": "win32_window.cpp",
+        "filePath": "tools/web-engine-probe/windows/runner/win32_window.cpp",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/lib/editor/lsp_diagnostic_decorations.dart:buildLspDiagnosticDecorations",
+        "name": "buildLspDiagnosticDecorations",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/lib/workbench/open_editors_sort_order.dart:_decode",
+        "name": "_decode",
+        "filePath": "app/lib/workbench/open_editors_sort_order.dart",
+        "relationType": "CALLS",
+        "confidence": 0.5,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/lib/workbench/open_editors_sort_order.dart:_resourceKey",
+        "name": "_resourceKey",
+        "filePath": "app/lib/workbench/open_editors_sort_order.dart",
+        "relationType": "CALLS",
+        "confidence": 0.5,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/lib/workbench/quick_open_query.dart:parseQuickOpenQuery",
+        "name": "parseQuickOpenQuery",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/linux/runner/main.cc:main",
+        "name": "main",
+        "filePath": "app/linux/runner/main.cc",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/editor_tab_preview_test.dart:_openTabMenu",
+        "name": "_openTabMenu",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/editor_tab_preview_test.dart:_pressCtrlS",
+        "name": "_pressCtrlS",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/editor_tab_preview_test.dart:_savedDocumentId",
+        "name": "_savedDocumentId",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/editor_tab_preview_test.dart:_savedEditorGroup",
+        "name": "_savedEditorGroup",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/editor_tab_preview_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/locked_scrolling_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/notification_toast_lifetime_test.dart:_mount",
+        "name": "_mount",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/notification_toast_lifetime_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/quick_input_history_test.dart:_mountApp",
+        "name": "_mountApp",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/quick_input_history_test.dart:_pumpPickerHarness",
+        "name": "_pumpPickerHarness",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_directional_split_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_document_symbols_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_merge_accept_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_outline_tree_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_tree_find_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:app/test/workbench_workspace_symbols_test.dart:main",
+        "name": "main",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Function:tools/web-engine-probe/linux/runner/main.cc:main",
+        "name": "main",
+        "filePath": "tools/web-engine-probe/linux/runner/main.cc",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/notification_widgets.dart:_NotificationToastState.build#1",
+        "name": "build",
+        "filePath": "app/lib/workbench/notification_widgets.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "Method:app/lib/workbench/quick_input.dart:QuickInput.show#21",
+        "name": "show",
+        "filePath": "app/lib/workbench/quick_input.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:app/integration_test/editor_native_text_drag_drop_macos_test.dart",
+        "name": "editor_native_text_drag_drop_macos_test.dart",
+        "filePath": "app/integration_test/editor_native_text_drag_drop_macos_test.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/editor/editor_minimap_markers.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/editor/rust_text_input_field.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/editor/workspace_search_decorations.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/git/git_changes_list.dart",
+        "filePath": "app/lib/git/git_changes_list.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/git/git_diff_commands.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/workbench/workbench_page.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/git_cli_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/git_diff_command_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/walkthrough_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/widget_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/03-里程碑计划与验收标准.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-03-p04/p04.89-caret-word-find-seed.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-03-p04/p04.95-diff-view-row-model.md",
+        "filePath": "docs/diagnostics/2026-11-03-p04/p04.95-diff-view-row-model.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-04-p04/p04.100-diff-palette-actions.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-04-p04/p04.105-clipboard-compare-preview.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-05-p04/p04.118-merge-editor-bulk-acceptance.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
+        "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-17-p05/p05.74-quick-open-query.md",
+        "filePath": "docs/diagnostics/2026-11-17-p05/p05.74-quick-open-query.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-17-p05/p05.75-document-outline.md",
+        "filePath": "docs/diagnostics/2026-11-17-p05/p05.75-document-outline.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md",
+        "filePath": "docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:progress.md",
+        "filePath": "progress.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Function:app/lib/workbench/open_editors_sort_order.dart:sortOpenEditors",
+        "name": "sortOpenEditors",
+        "filePath": "app/lib/workbench/open_editors_sort_order.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/quick_input.dart:QuickInput.input#9",
+        "name": "input",
+        "filePath": "app/lib/workbench/quick_input.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "File:README.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/lib/editor/editor_minimap.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/lib/main.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/lib/workbench/auxiliary_window.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/auxiliary_window_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/breadcrumb_picker_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_group_area_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_group_mru_close_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_split_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_action_location_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_close_action_visibility_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_cross_group_copy_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_cross_group_move_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_mode_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_overflow_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_preview_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_sizing_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_tear_out_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_wrap_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/explorer_type_ahead_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/locked_scrolling_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/modal_editor_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/open_editors_view_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_auto_indent_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_block_comment_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bounded_input_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bracket_delete_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bracket_pair_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bulk_edit_review_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_camel_case_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_case_conversion_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_clipboard_compare_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_document_text_drag_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_window_drag_selection_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_window_line_selection_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cursor_movement_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cursor_undo_redo_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_definition_navigation_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_directional_move_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_directional_split_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_document_boundary_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_emmet_number_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_empty_selection_cut_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_explorer_compare_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_find_close_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_find_resize_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_indentation_conversion_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_indentation_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:docs/10-VSCode无插件全功能复刻总计划.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:docs/11-VSCode功能对照矩阵.md",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      }
+    ]
+  }
+}
+(node:40108) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

@@ -1,0 +1,29 @@
+{
+  "feature": "feat-139",
+  "scope": "Open Editors group-header context Close Saved/Close All",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "integration_test": "app/test/open_editors_group_close_test.dart",
+  "focused_passed": 7,
+  "existing_regressions_passed": 12,
+  "checks": [
+    "FullPath displayed order does not change nonfocused group close target",
+    "Close Saved keeps dirty/sticky and closes ordinary permanent clean tabs",
+    "Menu shows Close Saved above Close All",
+    "Ordinary dirty Cancel preserves all ordinary targets and disk",
+    "Discard closes only target group's nonsticky views without writing disk",
+    "Save writes target dirty file with emoji before closing, preserving other-group edits",
+    "Closing one shared dirty view preserves surviving Rust inputWindow/document and text",
+    "Menu dismissal preserves documents/tab geometry/focused group; group actions remain confined to group header"
+  ],
+  "first_run": {"passed": 2, "failed": 5, "cause": "Fixture scrolled lazy sidebar title out of mounted children before ensureVisible; scroll-to-top correction passes", "product_failure_claimed": false},
+  "review": "Scoped product source review passed; no tests run by reviewer",
+  "limits": [
+    "Stale group/workspace guard reviewed in source, not directly exercised in new UI fixture",
+    "Existing empty-group removal behavior and single-group header visibility differ from upstream",
+    "isSaving state is not represented; Close Saved uses flushed clean state",
+    "Save As failure/cancel remains covered by existing shared-route tests, not a new group-menu fixture",
+    "No new keyboard/root/editor-row/multiselection complete menu support",
+    "macOS native/visual/device validation deferred"
+  ],
+  "parents_remain_open": true
+}

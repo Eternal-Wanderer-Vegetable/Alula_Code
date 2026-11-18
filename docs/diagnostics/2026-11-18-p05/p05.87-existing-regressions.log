@@ -1,0 +1,15 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: path sorting changes sidebar projection only and restores preference
+00:01 +6: E:/temp/alula-pr3-20261117/app/test/editor_group_mru_close_test.dart: closing the focused group focuses the most recently active group
+00:01 +7: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: the section renders grouped rows, the active highlight, and the dirty count
+00:02 +8: E:/temp/alula-pr3-20261117/app/test/editor_group_mru_close_test.dart: closing a non-focused middle group keeps focus and MRU continues
+00:02 +9: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: clicking a row activates the document and the copy path lands in the clipboard
+00:02 +10: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: keyboard focus with Enter activates the row and closing uses the dirty-safe route
+读取 Rust minimap 概览失败：AlulaException(UnknownDoc): {"code":"UnknownDoc","detail":{"id":1}}
+00:03 +11: E:/temp/alula-pr3-20261117/app/test/open_editors_view_test.dart: the collapse toggle persists across a session restore
+00:03 +12: All tests passed!

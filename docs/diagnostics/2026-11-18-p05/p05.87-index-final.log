@@ -1,0 +1,30 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+  GITNEXUS_MAX_FILE_SIZE: effective threshold 1024KB (default 512KB)
+
+[2K  Skipped 3 large files (>1024KB)
+[2K  - app/windows/flutter/ephemeral/flutter_windows.dll.pdb
+[2K  - docs/diagnostics/2026-10-27-p00/atomic-contributions.json
+[2K  - docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-edit-30m-20261029-181513092.json
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:11116:24:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/find_replace_history.dart:58:13:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:14846:15:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:14846:15:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4859:26:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/bridge/alula_core.dart:1673:27:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526463,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/multi_selection.dart:688:14:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795001526716,"name":"gitnexus","msg":"[scope-resolution] 748 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: method (rust), arguments (dart), bottom (dart), end (dart/rust), find (dart), index (dart), left (dart), right (dart), size (dart/rust/swift), style (dart), …"}
+{"level":40,"time":1795001527680,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1581,"entryPointsUnexplored":0,"walksCutByBudget":18,"tracesDepthCapped":3,"calleesDropped":628,"processesDropped":0},"msg":"[processes] 447 flows reported, but whole flows are MISSING: 1581 of 1781 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 3 trace(s) cut at maxTraceDepth, 628 callee(s) skipped at maxBranching, 18 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KIncremental: changed=5, added=4, deleted=0 (skipping wipe + 1763 unchanged file rows preserved)
+{"level":30,"time":1795001555144,"name":"gitnexus","msg":"name-fallback resolution: 239 call sites (101 distinct caller-file/name pairs), 27 refused as impossible (guessed/refused by language: dart 150/0, rust 65/27, cpp 24/0)"}
+[2KParse cache: pruned 2 stale chunk entries
+
+  Repository indexed successfully (56.2s)
+
+  15,591 nodes | 351,406 edges | 471 clusters | 447 flows
+  E:\temp\alula-pr3-20261117
+
+(node:13816) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
