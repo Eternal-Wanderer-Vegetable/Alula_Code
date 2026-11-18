@@ -1734,8 +1734,8 @@
       "name": "P05.90 Breadcrumb路径段直接reveal",
       "description": "Space/CtrlCmdEnter revealFocused: terminal file focuses owner editor, directory advances visual segment with original directory file picker. docs/diagnostics/2026-11-18-p05/p05.90-breadcrumb-reveal.md",
       "dependencies": ["feat-141"],
-      "status": "in-progress",
-      "evidence": "ImplementedSpace/CtrlCmdEnter reveal command, terminalownerfocuspreviewpreserved, directorynextvisualsegment/originaldirectorychildren. Reviewfixedlazytree dependency andpickedfilefocus; newreal5/5 andcombined49/49passed. First4/5+boundedwaitred preserved. Finalinit1537/1537 Rusttests/Clippy/core/fmt/analyze0passed; reviewpass. Fullgraphall12/19/321CRITICAL, main681/1368/334CRITICAL actualprecapcapturecomplete/snapshotstable andoriginalnativecapretained. ExactCIWinLinux pending, macOSdevicegapsdeferred; parentsopen.",
+      "status": "done",
+      "evidence": "ImplementedSpace/CtrlCmdEnter reveal command, terminalownerfocuspreviewpreserved, directorynextvisualsegment/originaldirectorychildren. Reviewfixedlazytree dependency andpickedfilefocus; newreal5/5 andcombined49/49passed. First4/5+boundedwaitred preserved. Finalinit1537/1537 Rusttests/Clippy/core/fmt/analyze0passed; reviewpass. Fullgraphall12/19/321CRITICAL, main681/1368/334CRITICAL actualprecapcapturecomplete/snapshotstable andoriginalnativecapretained. Exact22612d33f8d268651effd2a76c5c1d226a5b233d CI44320717951 all4success/1537actualtests; PA44320705616 Win134858558235/Linux134858557531success. Win desktop25/clipboard1/DnD12callbacks app14435397530/DnD14434214336; Linuxclipboard1/launch/DnD21callbacks app14433809479/DnD14433989064. Summary p05.90-hosted-verification.json. macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
