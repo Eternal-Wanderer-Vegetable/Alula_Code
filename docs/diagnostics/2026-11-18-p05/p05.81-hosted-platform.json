@@ -1,0 +1,43 @@
+{
+  "run_id": 44233632031,
+  "attempt": 1,
+  "sha": "4c6f6deafd5defd76560b81f606a57c4f08cb41f",
+  "workflow": "Platform Availability",
+  "status": "completed",
+  "conclusion": "failure",
+  "observed_at": "20261118T041935Z",
+  "jobs": [
+    {
+      "id": 134564401396,
+      "name": "macOS build, launch smoke, and app package",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-11-18T03:54:27Z",
+      "completed_at": "2026-11-18T04:17:46Z",
+      "active_steps": [],
+      "failed_steps": [
+        "Launch macOS native-titlebar mode and verify native Quit menu"
+      ]
+    },
+    {
+      "id": 134564401674,
+      "name": "Windows x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:54:27Z",
+      "completed_at": "2026-11-18T04:05:41Z",
+      "active_steps": [],
+      "failed_steps": []
+    },
+    {
+      "id": 134564401767,
+      "name": "Linux x64 build and launch smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-18T03:54:26Z",
+      "completed_at": "2026-11-18T03:58:33Z",
+      "active_steps": [],
+      "failed_steps": []
+    }
+  ]
+}

@@ -5,9 +5,11 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；当前P05.81 SCM多选/范围；目标整体完成P05
+### P05 / feat-027 持续推进；P05.81窄子项已收尾，macOS Quit诊断开放；目标整体完成P05
 
-- 2026-11-18 P05.81/feat-133按固定reference登记，依赖已完成feat-132。现有flatSCM资源多选/范围，明确排除完整树/group/header/mixed双侧和P09批量action；S有界当前资源数、刷新清理/键盘singletonpreview复用onOpen。产品仅GitChangesList及对应测试，真实repo fixture补index/disk不变。组件27/27、真实repo1/1通过，gitwrite-tree和磁盘bytes不变；首轮full1458/1458全绿。审查补foreignmodifier/externalfocus/Shift O(N²)并红绿修正，targetedreviewpass、analyze0，最终完整init.sh Flutter1462/1462、Rust/Clippy/core、fmt/analyze0全绿；graph/准确hosted待补。范围p05.81-scm-multiselection.md。
+- 2026-11-18 P05.81准确hosted收尾：产品4c6f6de CI44233637698四job全绿，Platform44233632031整体失败仅macnativeQuit；Win/Linux全绿，nativeDnD13/21pointerevents实测通过。mac1462tests/Release/clipboard/launch/package通过，DnD syntheticroute不可用明确skip；AX通用菜单选择后open-W20秒仍活，实际PID/匹配原因待诊断，没有重试。App L14395749487/W14396372829/M14397173049，macZIP SHA65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1匹配sidecar、81项完整。feat133窄多选done，父P05/LAY16/nativeQuit开放。证据p05.81-hosted.md；诊断方案docs/plans/macos-native-quit-diagnostics.md。
+
+- 2026-11-18 P05.81/feat-133按固定reference登记，依赖已完成feat-132。现有flatSCM资源多选/范围，明确排除完整树/group/header/mixed双侧和P09批量action；S有界当前资源数、刷新清理/键盘singletonpreview复用onOpen。产品仅GitChangesList及对应测试，真实repo fixture补index/disk不变。组件27/27、真实repo1/1通过，gitwrite-tree和磁盘bytes不变；首轮full1458/1458全绿。审查补foreignmodifier/externalfocus/Shift O(N²)并红绿修正，targetedreviewpass、analyze0，最终完整init.sh Flutter1462/1462、Rust/Clippy/core、fmt/analyze0全绿；graph完整CRITICAL结果已归档；产品4c6f6de已推，CI44233637698/Platform44233632031运行中，Linux已通过，Win/mac余下门禁待结果。范围p05.81-scm-multiselection.md。
 
 - 2026-11-18 P05.80 / feat-132最终收尾：6e529d4 CI44222976491四job通过，Platform44222968734 Linux/Windows/macOS全部通过；macOS1446tests/Release/clipboard/nativeQuit/package通过，DnD syntheticpointerroute不可用明确skip。App artifacts L14392430112/W14391638012/M14393775629；macZIP SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6与sidecar匹配，81项完整。7项验收映射区分测试/源码审查/未验证，不关闭LAY-16/P05。证据docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md。下一SCM多选/范围需单独登记。
 
