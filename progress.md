@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.81窄子项已收尾，macOS Quit诊断开放；目标整体完成P05
+### P05 / feat-027 持续推进；当前P05.82 macOS Quit诊断；目标整体完成P05
+
+- 2026-11-18 P05.81证据4e769d7已推。登记P05.82/feat134，独立helper/workflow诊断绑定新actualPID/launch/path并双观察app和wrapper，记录AX属性/匹配依据，不先改产品关闭路径或放宽退出验收。helper/workflow实现完，YAML/21Bash语法/Swift结构和10mockworkflow夹具通过，脚本/JSON/log归档；定向review修复observer失败丢失wrapperstatus后通过。本地完整init.sh Flutter1462/1462、Rust/Clippy/core/fmt/analyze0全绿。nativeSwift编译未验证，准确hosted与graph待补。方案docs/plans/macos-native-quit-diagnostics.md。
 
 - 2026-11-18 P05.81准确hosted收尾：产品4c6f6de CI44233637698四job全绿，Platform44233632031整体失败仅macnativeQuit；Win/Linux全绿，nativeDnD13/21pointerevents实测通过。mac1462tests/Release/clipboard/launch/package通过，DnD syntheticroute不可用明确skip；AX通用菜单选择后open-W20秒仍活，实际PID/匹配原因待诊断，没有重试。App L14395749487/W14396372829/M14397173049，macZIP SHA65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1匹配sidecar、81项完整。feat133窄多选done，父P05/LAY16/nativeQuit开放。证据p05.81-hosted.md；诊断方案docs/plans/macos-native-quit-diagnostics.md。
 

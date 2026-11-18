@@ -1648,6 +1648,16 @@
       "evidence": "Pinnedreference contract registered after feat132 exactcloseout. Component27/27 and realrepo1/1 passed; repo uses gitwrite-tree plus diskbytes to prove selection invariant, pointermodifiers noopen, Spacecollapse. Firstfullinit1458/1458 Rust/Clippy/core/fmt passed. Review fixedforeignplatformmodifier fallthrough, externalkeyboardfocus onmodifiedtap andquadraticShiftremoval; newguardsredbeforefix, targetedrereviewpass, analyze0. Finalpostreview init.sh passed Flutter1462/1462, Rustworkspace/Clippy/core; independentfmt/analyze0. Completegraphall20/18/442 andmain489/250/445 CRITICAL no partial/truncated; product4c6f6de pushed. CI44233637698 all4success; Platform44233632031 OVERALLFAILURE solelymacnativeQuit. Linux/Windowspassed; mac1462tests/Release/clipboard/launch/packagepassed, AXgenericmenu selected butopen-W alive20s soQuitfailed; nativeDnD explicitskip pointerroutefalse. No rerun. Artifacts L14395749487/W14396372829/M14397173049; macZIP81entries SHA25665dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1 matches sidecar. NarrowchilddonewithexplicitnativeQuitunverified, parentopen; exactreport docs/diagnostics/2026-11-18-p05/p05.81-hosted.md. Followup plans/macos-native-quit-diagnostics.md. Selectionboundedcurrentresources, no batchGitactions/polling; LAY16/P05 remainopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-134",
+      "name": "P05.82 macOS native Quit 目标身份与退出诊断",
+      "description": "Bind a unique newly launched bundle/PID identity; target Quit on that instance, log AX match attributes/reason, observe actual app and open-W wrapper independently without relaxing failure criteria. docs/plans/macos-native-quit-diagnostics.md",
+      "dependencies": ["feat-133"],
+      "status": "in-progress",
+      "evidence": "Registered after exact P05.81 nativeQuit failure and evidence closeout4e769d7. Helper/workflow-only diagnostics; product shutdown logic unchanged. Unknown/appalive/wrapperalive are failures, existing20second exit budget retained. Implemented helper/workflowonly snapshot/uniquePID/launch/pathbinding, fixedtargetQuit, AXattributes/matchreason andstrictdualPID20s observer. YAML+21Bashsyntax+Swiftstructure+10mockworkflowfixtures pass, reproduciblescript/results archived. Targetedreviewpass afterloggingfinishedwrapperstatusonfailure; nativeSwiftcompile unverifiedWindows. Completeinit.sh Flutter1462/1462 Rusttests/Clippy/core/fmt/analyze0passed. Finalgraph/exacthosted pending.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

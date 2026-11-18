@@ -1,0 +1,283 @@
+{
+  "timestamp": "2026-11-18T04:51:50.407Z",
+  "repo": "E:\\temp\\alula-pr3-20261117",
+  "script": "E:\\Temp\\alula-p0582-validate.cjs",
+  "outputPrefix": "E:\\Temp\\alula-p0582-parent-validation",
+  "limitations": [
+    "Swift tree-sitter validates syntax structure only; no Swift compilation or native execution.",
+    "Workflow fixtures mock helper/process APIs; they do not test AppKit identity, AX, System Events, actual OS PID lifecycle or macOS Bash 3.2.",
+    "No native runtime evidence or product acceptance is established by these checks."
+  ],
+  "files": {
+    "E:\\temp\\alula-pr3-20261117\\.github\\workflows\\platform-availability.yml": {
+      "sha256": "5f14f1ef16226c8480161fe44a47cd5d2ca90e372a3a98a99fa1870edfd9db15"
+    },
+    "E:\\temp\\alula-pr3-20261117\\tools\\vscode-parity\\macos-native-dnd-input.swift": {
+      "sha256": "5b4c6e4e2c8f3e723aa9eb56b5fe0fb7d84fd3d24b9c08bd66efa654356400bd"
+    }
+  },
+  "checks": [
+    {
+      "name": "workflow-yaml",
+      "passed": true,
+      "details": {
+        "parsed": true
+      }
+    },
+    {
+      "name": "all-bash-run-blocks-syntax",
+      "passed": true,
+      "details": {
+        "count": 21,
+        "blocks": [
+          {
+            "job": "linux",
+            "name": "Install Linux desktop build dependencies",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Build Rust core",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Build Linux Release bundle",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Verify native Linux clipboard formats",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Verify native Linux move, copy, and external text drag/drop",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Add Rust core and verify Linux bundle",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Launch Linux app under Xvfb",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "linux",
+            "name": "Launch Linux native-titlebar mode under Xvfb",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "windows",
+            "name": "Build Rust core",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Build Rust core",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Build fake LSP fixture for real-FFI tests",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Flutter analyze and tests",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Build macOS Release bundle",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Verify native macOS clipboard formats",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Compile native macOS drag/drop input helper",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Verify native macOS text drag/drop interaction",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Bundle and sign Rust core",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Launch macOS app",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Launch macOS native-titlebar mode and verify native Quit menu",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Collect macOS startup diagnostics",
+            "status": 0,
+            "stderr": ""
+          },
+          {
+            "job": "macos",
+            "name": "Package macOS app",
+            "status": 0,
+            "stderr": ""
+          }
+        ]
+      }
+    },
+    {
+      "name": "swift-tree-sitter-structure",
+      "passed": true,
+      "details": {
+        "errors": 0,
+        "nativeCompilation": "not run"
+      }
+    },
+    {
+      "name": "scoped-git-diff-check",
+      "passed": true,
+      "details": {
+        "status": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "both-gone-wrapper-zero",
+      "expectedStatus": 0,
+      "actualStatus": 0,
+      "signal": null,
+      "stdout": "2026-11-18T04:51:52Z open_status=0\nNative macOS Quit observed app gone and open-W gone with open_status=0.\n2026-11-18T04:51:52Z pre-cleanup result=0 appPID=424242 openPID=380160\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "bind-zero",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "Could not bind exactly one new native app instance\n2026-11-18T04:51:52Z pre-cleanup result=1 appPID=unknown openPID=380171\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "bind-multiple",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "Could not bind exactly one new native app instance\n2026-11-18T04:51:52Z pre-cleanup result=1 appPID=unknown openPID=380180\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "invalid-pid",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "Invalid actual app PID; native Quit remains unverified\n2026-11-18T04:51:52Z pre-cleanup result=1 appPID=unknown openPID=380189\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "identity-unknown",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "2026-11-18T04:51:53Z failed-observation open_status=0\nNative Quit did not establish app-gone and wrapper-gone within 20 seconds\n2026-11-18T04:51:53Z pre-cleanup result=1 appPID=424242 openPID=380198\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "app-alive-wrapper-gone",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "2026-11-18T04:51:53Z failed-observation open_status=0\nNative Quit did not establish app-gone and wrapper-gone within 20 seconds\n2026-11-18T04:51:53Z pre-cleanup result=1 appPID=424242 openPID=380209\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "app-gone-wrapper-alive",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "Native Quit did not establish app-gone and wrapper-gone within 20 seconds\n2026-11-18T04:51:53Z pre-cleanup result=1 appPID=424242 openPID=380220\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "both-alive",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "Native Quit did not establish app-gone and wrapper-gone within 20 seconds\n2026-11-18T04:51:54Z pre-cleanup result=1 appPID=424242 openPID=380230\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "wrapper-nonzero",
+      "expectedStatus": 7,
+      "actualStatus": 7,
+      "signal": null,
+      "stdout": "2026-11-18T04:51:54Z open_status=7\nopen-W exited with status 7 after menu Quit\n2026-11-18T04:51:54Z pre-cleanup result=7 appPID=424242 openPID=380240\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    },
+    {
+      "name": "wrapper-exit-before-quit",
+      "expectedStatus": 1,
+      "actualStatus": 1,
+      "signal": null,
+      "stdout": "open-W exited before Quit: open_status=0\n2026-11-18T04:51:54Z pre-cleanup result=1 appPID=424242 openPID=380251\nNo bound app identity; application cleanup cannot be safely targeted.\n",
+      "stderr": "",
+      "error": null,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

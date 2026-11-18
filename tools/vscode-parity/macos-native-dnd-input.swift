@@ -19,9 +19,13 @@ func labels(of element: AXUIElement) -> [String] {
     .compactMap { attribute(element, $0) as? String }
 }
 
-func isNativeQuitMenuItem(_ element: AXUIElement) -> Bool {
-  if labels(of: element).contains(where: { $0.lowercased().hasPrefix("quit") }) {
-    return true
+func nativeQuitMatchReason(_ element: AXUIElement) -> String? {
+  // Preserve the original attribute order and prefix/shortcut matching rules.
+  for name in ["AXIdentifier", "AXLabel", "AXDescription", "AXTitle", "AXValue"] {
+    if let value = attribute(element, name) as? String,
+       value.lowercased().hasPrefix("quit") {
+      return "\(name).lowercased.hasPrefix(quit)"
+    }
   }
 
   // macOS localizes the visible Quit title. Command-Q is the stable menu
@@ -37,12 +41,185 @@ func isNativeQuitMenuItem(_ element: AXUIElement) -> Bool {
       kAXMenuItemCmdModifiersAttribute as String
     ) as? NSNumber
   else {
-    return false
+    return nil
   }
 
   // AXMenuItemCmdModifiers represents modifiers other than Command. A zero
   // mask therefore identifies the standard Command-Q application menu item.
-  return rawModifiers.uint32Value == 0
+  return rawModifiers.uint32Value == 0 ? "AXMenuItemCmdChar=q and AXMenuItemCmdModifiers=0" : nil
+}
+
+func isNativeQuitMenuItem(_ element: AXUIElement) -> Bool {
+  nativeQuitMatchReason(element) != nil
+}
+
+func nativeDiagnostic(_ stage: String, _ fields: [String: Any] = [:]) {
+  var record = fields
+  record["stage"] = stage
+  record["timestamp"] = ISO8601DateFormatter().string(from: Date())
+  if let data = try? JSONSerialization.data(withJSONObject: record, options: [.sortedKeys]) {
+    FileHandle.standardError.write(data)
+    FileHandle.standardError.write(Data([10]))
+  }
+}
+
+func nativeError(_ message: String) -> NSError {
+  NSError(domain: "AlulaMacDnd", code: 31, userInfo: [NSLocalizedDescriptionKey: message])
+}
+
+func canonicalPath(_ path: String) -> String {
+  URL(fileURLWithPath: path).standardizedFileURL.resolvingSymlinksInPath().path
+}
+
+struct NativeAppIdentity: Codable, Equatable {
+  let pid: pid_t
+  let launchDate: Date
+  let bundleIdentifier: String
+  let bundlePath: String
+  let executablePath: String
+
+  init(_ app: NSRunningApplication) throws {
+    guard app.processIdentifier > 0, !app.isTerminated,
+          let launchDate = app.launchDate,
+          let bundleIdentifier = app.bundleIdentifier,
+          let bundleURL = app.bundleURL, let executableURL = app.executableURL else {
+      throw nativeError("Unknown native application identity")
+    }
+    self.pid = app.processIdentifier
+    self.launchDate = launchDate
+    self.bundleIdentifier = bundleIdentifier
+    self.bundlePath = canonicalPath(bundleURL.path)
+    self.executablePath = canonicalPath(executableURL.path)
+  }
+
+  func validate() throws {
+    guard pid > 0, launchDate.timeIntervalSinceReferenceDate.isFinite,
+          !bundleIdentifier.isEmpty, bundlePath.hasPrefix("/"),
+          bundlePath == canonicalPath(bundlePath), executablePath == canonicalPath(executablePath),
+          executablePath.hasPrefix(bundlePath + "/Contents/MacOS/") else {
+      throw nativeError("Invalid bound native application identity")
+    }
+  }
+
+  func liveApplication() throws -> NSRunningApplication {
+    try validate()
+    guard let app = NSRunningApplication(processIdentifier: pid),
+          try NativeAppIdentity(app) == self else {
+      throw nativeError("Bound native application identity changed or is unavailable (pid \(pid))")
+    }
+    return app
+  }
+
+  func state() -> String {
+    guard (try? validate()) != nil else { return "unknown" }
+    if kill(pid, 0) != 0 { return errno == ESRCH ? "gone" : "unknown" }
+    return (try? liveApplication()) != nil ? "alive" : "unknown"
+  }
+}
+
+struct NativeAppSnapshot: Codable {
+  let capturedAt: Date
+  let bundleIdentifier: String
+  let bundlePath: String
+  let applications: [NativeAppIdentity]
+}
+
+func matchingNativeApps(_ bundleIdentifier: String, _ bundlePath: String) throws -> [NativeAppIdentity] {
+  try NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+    .filter { !$0.isTerminated && $0.bundleURL.map { canonicalPath($0.path) } == bundlePath }
+    .map { try NativeAppIdentity($0) }
+}
+
+func readNativeJSON<T: Decodable>(_ path: String, as type: T.Type) throws -> T {
+  try JSONDecoder().decode(type, from: Data(contentsOf: URL(fileURLWithPath: path)))
+}
+
+func writeNativeJSON<T: Encodable>(_ value: T, to path: String) throws {
+  let encoder = JSONEncoder()
+  encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+  try encoder.encode(value).write(to: URL(fileURLWithPath: path), options: .atomic)
+}
+
+func bindNativeApp(_ bundleIdentifier: String, _ bundlePath: String, beforePath: String) throws -> NativeAppIdentity {
+  let before = try readNativeJSON(beforePath, as: NativeAppSnapshot.self)
+  guard before.bundleIdentifier == bundleIdentifier, before.bundlePath == bundlePath,
+        before.capturedAt <= Date() else { throw nativeError("Native snapshot target mismatch") }
+  for identity in before.applications {
+    try identity.validate()
+    guard identity.bundleIdentifier == bundleIdentifier, identity.bundlePath == bundlePath else {
+      throw nativeError("Native snapshot contains an unexpected application")
+    }
+  }
+  let deadline = ProcessInfo.processInfo.systemUptime + 15
+  repeat {
+    let candidates = try matchingNativeApps(bundleIdentifier, bundlePath)
+      .filter { !before.applications.contains($0) }
+    nativeDiagnostic("binding", ["newCandidates": candidates.map { $0.pid }])
+    guard candidates.count <= 1 else { throw nativeError("Multiple new native application instances") }
+    if let target = candidates.first {
+      try target.validate()
+      guard target.launchDate >= before.capturedAt else {
+        throw nativeError("Native candidate predates the prelaunch snapshot")
+      }
+      _ = try target.liveApplication()
+      return target
+    }
+    Thread.sleep(forTimeInterval: min(0.1, max(0, deadline - ProcessInfo.processInfo.systemUptime)))
+  } while ProcessInfo.processInfo.systemUptime < deadline
+  throw nativeError("No new native application instance within the existing 15-second discovery budget")
+}
+
+func observeNativeApp(_ target: NativeAppIdentity, openPID: pid_t? = nil, windows: Bool = false) throws {
+  try target.validate()
+  let deadline = ProcessInfo.processInfo.systemUptime + (openPID == nil ? 0 : 20)
+  var previous = ""
+  repeat {
+    let appState = target.state()
+    let openState: String
+    if let openPID {
+      openState = kill(openPID, 0) == 0 ? "alive" : (errno == ESRCH ? "gone" : "unknown")
+    } else { openState = "unobserved" }
+    let state = "\(appState)/\(openState)"
+    if state != previous {
+      nativeDiagnostic("state-transition", ["appPID": target.pid, "appState": appState,
+        "openPID": openPID ?? 0, "openState": openState])
+      previous = state
+    }
+    if windows, appState == "alive" {
+      // CGWindow summaries avoid a recursive/possibly blocked AX walk during failure cleanup.
+      _ = try target.liveApplication()
+      let infos = CGWindowListCopyWindowInfo([.optionAll, .excludeDesktopElements], kCGNullWindowID)
+        as? [[String: Any]] ?? []
+      let owned = infos.filter { ($0[kCGWindowOwnerPID as String] as? pid_t) == target.pid }
+      nativeDiagnostic("pre-cleanup-windows", ["pid": target.pid, "count": owned.count,
+        "windows": Array(owned.prefix(20))])
+    }
+    let now = ProcessInfo.processInfo.systemUptime
+    if openPID == nil || appState == "unknown" || openState == "unknown" ||
+       (appState == "gone" && openState == "gone") || now >= deadline {
+      nativeDiagnostic("final-state", ["appPID": target.pid, "appState": appState,
+        "openPID": openPID ?? 0, "openState": openState])
+      print(appState)
+      if appState == "unknown" || (openPID != nil &&
+          (appState != "gone" || openState != "gone" || now > deadline)) {
+        throw nativeError("Native Quit observation failed: app=\(appState), open=\(openState) (20-second limit)")
+      }
+      return
+    }
+    Thread.sleep(forTimeInterval: min(0.25, max(0, deadline - now)))
+  } while true
+}
+
+func logNativeAX(_ stage: String, _ element: AXUIElement, indices: [String: Any]) {
+  var fields = indices
+  for name in ["AXIdentifier", "AXTitle", "AXDescription", "AXLabel", "AXValue",
+               "AXRole", "AXSubrole", "AXEnabled", "AXMenuItemCmdChar", "AXMenuItemCmdModifiers"] {
+    var value: CFTypeRef?
+    let result = AXUIElementCopyAttributeValue(element, name as CFString, &value)
+    fields[name] = ["status": result.rawValue,
+      "value": value.map { String(describing: $0) } ?? "<unavailable>"] as [String: Any]
+  }
+  nativeDiagnostic(stage, fields)
 }
 
 func frame(of element: AXUIElement) -> CGRect? {
@@ -240,7 +417,8 @@ func layoutPoint(from layout: [String: Any], key: String) throws -> CGPoint {
   return CGPoint(x: CGFloat(x), y: CGFloat(y))
 }
 
-func quitThroughAccessibilityMenu(processIdentifier: pid_t) throws {
+func quitThroughAccessibilityMenu(processIdentifier: pid_t, validateTarget: () throws -> Void) throws {
+  nativeDiagnostic("ax-menu-start", ["pid": processIdentifier])
   let applicationElement = AXUIElementCreateApplication(processIdentifier)
   _ = AXUIElementSetMessagingTimeout(applicationElement, 2.0)
   var menuBarElement: AXUIElement?
@@ -281,11 +459,14 @@ func quitThroughAccessibilityMenu(processIdentifier: pid_t) throws {
   _ = AXUIElementSetMessagingTimeout(menuBarElement, 2.0)
   let menuBarItems = children(of: menuBarElement)
   var menuBarTitles: [String] = []
-  for menuBarItem in menuBarItems {
+  for (parentIndex, menuBarItem) in menuBarItems.enumerated() {
     _ = AXUIElementSetMessagingTimeout(menuBarItem, 2.0)
     let candidateTitle = labels(of: menuBarItem).first ?? "<unnamed>"
     menuBarTitles.append(candidateTitle)
+    logNativeAX("ax-parent-before-press", menuBarItem, indices: ["parentIndex": parentIndex])
+    try validateTarget()
     let pressResult = AXUIElementPerformAction(menuBarItem, "AXPress" as CFString)
+    nativeDiagnostic("ax-parent-press-result", ["parentIndex": parentIndex, "result": pressResult.rawValue])
     guard pressResult == .success else { continue }
 
     var menuEntries: [AXUIElement] = []
@@ -294,10 +475,16 @@ func quitThroughAccessibilityMenu(processIdentifier: pid_t) throws {
       if !menuEntries.isEmpty { break }
       Thread.sleep(forTimeInterval: 0.1)
     }
-    for menuEntry in menuEntries {
+    for (entryIndex, menuEntry) in menuEntries.enumerated() {
       _ = AXUIElementSetMessagingTimeout(menuEntry, 2.0)
-      guard isNativeQuitMenuItem(menuEntry) else { continue }
+      guard let matchReason = nativeQuitMatchReason(menuEntry) else { continue }
+      logNativeAX("ax-quit-before-press", menuEntry, indices: [
+        "parentIndex": parentIndex, "entryIndex": entryIndex, "matchReason": matchReason,
+      ])
+      try validateTarget()
       let quitResult = AXUIElementPerformAction(menuEntry, "AXPress" as CFString)
+      nativeDiagnostic("ax-quit-press-result", ["parentIndex": parentIndex,
+        "entryIndex": entryIndex, "result": quitResult.rawValue])
       guard quitResult == .success else { continue }
       let entryName = labels(of: menuEntry).first ?? "Command-Q menu item"
       print("Selected native menu item \(candidateTitle) > \(entryName) through Accessibility API.")
@@ -320,28 +507,44 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
     set menuBarTitles to {}
     set appMenuTitle to missing value
     set quitMenuName to missing value
+    set parentIndex to 0
     repeat with menuBarItem in menuBarItems
+      set parentIndex to parentIndex + 1
       try
         set candidateTitle to name of menuBarItem
         set end of menuBarTitles to candidateTitle
         click menuBarItem
         delay 0.1
         set menuEntries to menu items of menu 1 of menuBarItem
+        set entryIndex to 0
         repeat with menuEntry in menuEntries
+          set entryIndex to entryIndex + 1
           try
             set entryName to name of menuEntry
             set isQuitMenuItem to entryName starts with "Quit"
+            set matchReason to "name starts with Quit"
             try
               set shortcutCharacter to value of attribute "AXMenuItemCmdChar" of menuEntry
               set shortcutModifiers to value of attribute "AXMenuItemCmdModifiers" of menuEntry
               if (shortcutCharacter is "q" or shortcutCharacter is "Q") and shortcutModifiers is 0 then
+                if not isQuitMenuItem then set matchReason to "AXMenuItemCmdChar=q and AXMenuItemCmdModifiers=0"
                 set isQuitMenuItem to true
               end if
             end try
             if isQuitMenuItem then
               set appMenuTitle to candidateTitle
               set quitMenuName to entryName
+              log ((current date) as string) & " SystemEvents before-click parentIndex=" & parentIndex & " entryIndex=" & entryIndex & " matchReason=" & matchReason
+              repeat with attributeName in {"AXIdentifier", "AXTitle", "AXDescription", "AXLabel", "AXValue", "AXRole", "AXSubrole", "AXEnabled", "AXMenuItemCmdChar", "AXMenuItemCmdModifiers"}
+                try
+                  set attributeValue to value of attribute (contents of attributeName) of menuEntry
+                  log (contents of attributeName) & "=" & (attributeValue as string)
+                on error attributeError
+                  log (contents of attributeName) & "=<unavailable: " & attributeError & ">"
+                end try
+              end repeat
               click menuEntry
+              log ((current date) as string) & " SystemEvents click-result=success"
               exit repeat
             end if
           end try
@@ -359,9 +562,9 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
   process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
   process.arguments = ["-e", script]
   let output = Pipe()
-  let errors = Pipe()
   process.standardOutput = output
-  process.standardError = errors
+  // Stream timestamped pre-click evidence even if osascript later times out.
+  process.standardError = FileHandle.standardError
 
   do {
     try process.run()
@@ -395,14 +598,11 @@ func quitThroughSystemEvents(processIdentifier: pid_t) throws -> String {
     data: output.fileHandleForReading.readDataToEndOfFile(),
     encoding: .utf8
   ) ?? ""
-  let standardError = String(
-    data: errors.fileHandleForReading.readDataToEndOfFile(),
-    encoding: .utf8
-  ) ?? ""
+  nativeDiagnostic("system-events-result", ["status": process.terminationStatus])
   guard process.terminationStatus == 0 else {
     throw NSError(domain: "AlulaMacDnd", code: 28, userInfo: [
       NSLocalizedDescriptionKey:
-        "System Events Quit fallback failed (status \(process.terminationStatus)): \(standardError)"
+        "System Events Quit fallback failed (status \(process.terminationStatus)); see streamed stderr"
     ])
   }
   return standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -456,47 +656,43 @@ func postCommandQ(to processIdentifier: pid_t) throws {
 
 func quitThroughNativeMenu(
   bundleIdentifier: String,
-  expectedBundlePath: String
+  expectedBundlePath: String,
+  targetPath: String? = nil
 ) throws {
   guard AXIsProcessTrusted() else {
     throw NSError(domain: "AlulaMacDnd", code: 20, userInfo: [
       NSLocalizedDescriptionKey: "Accessibility permission was not granted to this input helper"
     ])
   }
-  let expectedBundleURL = URL(fileURLWithPath: expectedBundlePath)
-    .standardizedFileURL.resolvingSymlinksInPath()
-  func isExpectedApplication(_ candidate: NSRunningApplication) -> Bool {
-    guard !candidate.isTerminated,
-          candidate.bundleIdentifier == bundleIdentifier,
-          let bundleURL = candidate.bundleURL else {
-      return false
+  let expectedBundleURL = URL(fileURLWithPath: canonicalPath(expectedBundlePath))
+  let target: NativeAppIdentity
+  if let targetPath {
+    target = try readNativeJSON(targetPath, as: NativeAppIdentity.self)
+  } else {
+    // Legacy manual invocation remains supported, but ambiguity must fail.
+    let deadline = ProcessInfo.processInfo.systemUptime + 15
+    var candidates = try matchingNativeApps(bundleIdentifier, expectedBundleURL.path)
+    while candidates.isEmpty && ProcessInfo.processInfo.systemUptime < deadline {
+      Thread.sleep(forTimeInterval: 0.1)
+      candidates = try matchingNativeApps(bundleIdentifier, expectedBundleURL.path)
     }
-    return bundleURL.standardizedFileURL.resolvingSymlinksInPath().path ==
-      expectedBundleURL.path
+    guard candidates.count == 1 else { throw nativeError("Native Quit needs exactly one target instance") }
+    target = candidates[0]
   }
-
-  let appDiscoveryDeadline = Date().addingTimeInterval(15)
-  var app = NSRunningApplication.runningApplications(
-    withBundleIdentifier: bundleIdentifier
-  ).last(where: isExpectedApplication)
-  while app == nil && Date() < appDiscoveryDeadline {
-    Thread.sleep(forTimeInterval: 0.1)
-    app = NSRunningApplication.runningApplications(
-      withBundleIdentifier: bundleIdentifier
-    ).last(where: isExpectedApplication)
+  try target.validate()
+  guard target.bundleIdentifier == bundleIdentifier, target.bundlePath == expectedBundleURL.path else {
+    throw nativeError("Native Quit bound target does not match requested bundle identifier/path")
   }
-  guard let app else {
-    throw NSError(domain: "AlulaMacDnd", code: 21, userInfo: [
-      NSLocalizedDescriptionKey:
-        "Could not find a running app with bundle identifier \(bundleIdentifier) at \(expectedBundleURL.path)"
-    ])
-  }
-
-  let processIdentifier = app.processIdentifier
+  let app = try target.liveApplication()
+  let validateTarget = { _ = try target.liveApplication() }
+  nativeDiagnostic("quit-target-validated", ["pid": target.pid, "bundlePath": target.bundlePath,
+    "launchDate": target.launchDate.timeIntervalSince1970, "executablePath": target.executablePath])
+  let processIdentifier = target.pid
   print(
     "Targeting native Quit menu in \(app.localizedName ?? bundleIdentifier) " +
       "at \(expectedBundleURL.path) (pid \(processIdentifier), active=\(app.isActive))."
   )
+  nativeDiagnostic("activation-start", ["pid": processIdentifier])
   let activationAccepted = app.activate(options: [.activateIgnoringOtherApps])
   let activationDeadline = Date().addingTimeInterval(8)
   while !app.isActive && Date() < activationDeadline {
@@ -514,28 +710,73 @@ func quitThroughNativeMenu(
     )
   }
   do {
-    try quitThroughAccessibilityMenu(processIdentifier: processIdentifier)
+    try validateTarget()
+    try quitThroughAccessibilityMenu(processIdentifier: processIdentifier, validateTarget: validateTarget)
+    nativeDiagnostic("ax-selection-completed", ["pid": processIdentifier])
   } catch let accessibilityError {
+    nativeDiagnostic("ax-fallback", ["error": accessibilityError.localizedDescription])
     print(
       "Accessibility API could not select Quit; trying System Events: \(accessibilityError.localizedDescription)"
     )
     do {
+      try validateTarget()
+      nativeDiagnostic("system-events-start", ["pid": processIdentifier])
       let result = try quitThroughSystemEvents(processIdentifier: processIdentifier)
       print("Selected native menu item \(result) through System Events.")
     } catch let systemEventsError {
+      nativeDiagnostic("command-q-fallback", ["error": systemEventsError.localizedDescription])
       print(
         "Native menu labels/shortcut metadata were unavailable to Accessibility and " +
           "System Events; dispatching the app's native Command-Q menu shortcut. " +
           "Accessibility: \(accessibilityError.localizedDescription); " +
           "System Events: \(systemEventsError.localizedDescription)"
       )
+      try validateTarget()
+      nativeDiagnostic("command-q-before-post", ["pid": processIdentifier])
       try postCommandQ(to: processIdentifier)
+      nativeDiagnostic("command-q-posted", ["pid": processIdentifier, "deliveryAcknowledged": false])
     }
   }
 }
 
 func run() throws {
-  if CommandLine.arguments.count == 4,
+  let args = CommandLine.arguments
+  if args.count == 5, args[1] == "--snapshot-native-apps" {
+    let path = canonicalPath(args[3])
+    guard !args[2].isEmpty else { throw nativeError("Snapshot requires a bundle identifier") }
+    let snapshot = NativeAppSnapshot(capturedAt: Date(), bundleIdentifier: args[2],
+      bundlePath: path, applications: try matchingNativeApps(args[2], path))
+    try writeNativeJSON(snapshot, to: args[4])
+    nativeDiagnostic("prelaunch-snapshot", ["pids": snapshot.applications.map { $0.pid }, "path": path])
+    return
+  }
+  if args.count == 6, args[1] == "--bind-native-app" {
+    let target = try bindNativeApp(args[2], canonicalPath(args[3]), beforePath: args[4])
+    try writeNativeJSON(target, to: args[5])
+    nativeDiagnostic("bound-target", ["pid": target.pid, "bundlePath": target.bundlePath,
+      "launchDate": target.launchDate.timeIntervalSince1970, "executablePath": target.executablePath])
+    print(target.pid) // stdout is only the numeric PID, never diagnostic text.
+    return
+  }
+  if (args.count == 3 || args.count == 4), args[1] == "--observe-native-app" {
+    let target = try readNativeJSON(args[2], as: NativeAppIdentity.self)
+    if args.count == 4, args[3] != "--windows" {
+      guard let openPID = pid_t(args[3]), openPID > 0, openPID != target.pid else {
+        throw nativeError("Observation requires a distinct positive open-W wrapper PID")
+      }
+      try observeNativeApp(target, openPID: openPID)
+    } else {
+      try observeNativeApp(target, windows: args.count == 4)
+    }
+    return
+  }
+  if args.count == 3, args[1] == "--validate-native-app" {
+    let target = try readNativeJSON(args[2], as: NativeAppIdentity.self)
+    _ = try target.liveApplication()
+    print(target.pid)
+    return
+  }
+  if (CommandLine.arguments.count == 4 || CommandLine.arguments.count == 5),
      CommandLine.arguments[1] == "--quit-native-menu"
   {
     let bundleIdentifier = CommandLine.arguments[2]
@@ -547,7 +788,8 @@ func run() throws {
     }
     try quitThroughNativeMenu(
       bundleIdentifier: bundleIdentifier,
-      expectedBundlePath: bundlePath
+      expectedBundlePath: bundlePath,
+      targetPath: args.count == 5 ? args[4] : nil
     )
     return
   }
@@ -555,7 +797,10 @@ func run() throws {
   guard CommandLine.arguments.count == 2 else {
     throw NSError(domain: "AlulaMacDnd", code: 1, userInfo: [
       NSLocalizedDescriptionKey:
-        "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id> <app-bundle-path>"
+        "Usage: macos-native-dnd-input <smoke-dir> | --quit-native-menu <bundle-id> <app-bundle-path> [target.json] | " +
+          "--snapshot-native-apps <bundle-id> <app-bundle-path> <before.json> | " +
+          "--bind-native-app <bundle-id> <app-bundle-path> <before.json> <target.json> | " +
+          "--observe-native-app <target.json> [open-pid|--windows] | --validate-native-app <target.json>"
     ])
   }
 

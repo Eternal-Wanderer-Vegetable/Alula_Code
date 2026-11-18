@@ -8,6 +8,7 @@ Last Updated: 2026-11-18
 
 ## Current State
 
+- 当前活动P05.82/feat134已登记in-progress，正在实现helper/workflow诊断（尚未提交）。编辑前Quit/run/AX/SystemEvents/CommandQ impact CRITICAL，文件UNKNOWN/实际caller源码确认。Windows无Swift编译器，结构/shell检查后仍需准确macOS hosted编译和native证据。产品关闭逻辑与20秒退出标准不变。
 - 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。已推产品4c6f6deafd5defd76560b81f606a57c4f08cb41f。
 - P05.81/feat133 SCM多选/范围窄子项已实现并登记done，证据收尾待提交。Ctrl/Cmdtoggle、Shift-click连续段替换保留disjoint、tree式ShiftArrow、flatselectall、keyboardsingletonpreview、focused-only Enter/Space、单行action不批量。Review修正foreignmodifierfallthrough、modifiedtap外部focus未移交、Shift范围O(N²)；均带红绿/定向复核。component27/27、realrepo1/1比较Gitwrite-tree和diskbytes不变；完整init.sh Flutter1462/1462、Rusttests/Clippy/core、fmt/analyze0、Harness100/100通过。完整graphall20files/18symbols/442flows及main489/250/445 CRITICAL，无partial/truncated，限制保留。
 - 准确CI44233637698四jobsuccess；Platform44233632031整体FAILURE，仅macnativeQuit。Win/Linux全部成功，DnD13/21pointerevents实际move/copy/externaltext通过。mac1462tests/Release/clipboard/launch/package通过；nativeDnD pointerroutefalse无Flutter事件明确skip。Quit targetingPID31313，AX报告选中通用flutterMenuItemSelected:，open-W20秒仍活；实际appPID状态和匹配原因未确定，未重试。App L14395749487/W14396372829/M14397173049；macDnD14397601103、startup14397696025。macZIP SHA65dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1匹配sidecar、81项完整。
@@ -30,4 +31,4 @@ Last Updated: 2026-11-18
 
 ## Next Session First Step
 
-先精确暂存P05.81收尾证据，完整GitNexus all/compare-main、Harness/JSON/diff后提交推送并更新PR正文。随后按docs03单独登记macnativeQuit诊断slice，先impact再编辑helper/workflow，保持当前产品行为；精确macOSrun收集appPID/AX匹配/双PID状态后再决定产品修复。完成该诊断后继续LAY16上下文宿主，固定SCM菜单与Explorer选中语义不同须记录，勿误称完整batchparity。所有Flutter测试前build_core，PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。当前代码已完整测试，无新产品变化不要重复全量。
+P05.81收尾证据4e769d7已推，当前继续P05.82/feat134 helper/workflow实现。只运行对应结构/shell/身份与lifecyclefixtures、review、完整graph和必要门禁，提交准确诊断head后收取macOS编译/native证据；不要因本机没有AppKit而伪报编译通过。收集appPID/AX匹配/双PID状态后再决定产品修复，当前保持产品关闭逻辑和严格20秒退出标准。完成该诊断后继续LAY16上下文宿主，固定SCM菜单与Explorer选中语义不同须记录，勿误称完整batchparity。所有Flutter测试前build_core，PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。当前代码已完整测试，无新产品变化不要重复全量。

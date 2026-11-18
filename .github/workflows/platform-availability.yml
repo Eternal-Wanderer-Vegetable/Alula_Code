@@ -910,32 +910,66 @@ jobs:
           app_bundle="$(pwd)/app/build/macos/Build/Products/Release/alula_app.app"
           bundle_identifier=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' \
             "$app_bundle/Contents/Info.plist")
-          open -n -W -a "$app_bundle" --args --native-titlebar \
-            > "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1 &
+          helper="$RUNNER_TEMP/alula-native-dnd-input"
+          log="$RUNNER_TEMP/alula-macos-native-titlebar.log"
+          before="$RUNNER_TEMP/alula-macos-native-before.json"
+          target="$RUNNER_TEMP/alula-macos-native-target.json"
+          rm -f "$target"
+          "$helper" --snapshot-native-apps "$bundle_identifier" "$app_bundle" "$before" > "$log" 2>&1
+          open -n -W -a "$app_bundle" --args --native-titlebar >> "$log" 2>&1 &
           open_pid=$!
+          app_pid=""
           cleanup() {
-            if kill -0 "$open_pid" 2>/dev/null; then
-              pkill -TERM -x alula_app 2>/dev/null || true
-              sleep 1
-              kill -TERM "$open_pid" 2>/dev/null || true
-              wait "$open_pid" 2>/dev/null || true
-            fi
+            result=$?
+            trap - EXIT
+            set +e
+            {
+              printf '%s pre-cleanup result=%s appPID=%s openPID=%s\n' \
+                "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$result" "${app_pid:-unknown}" "$open_pid"
+              ps -p "$open_pid${app_pid:+,$app_pid}" -o pid=,ppid=,lstart=,stat=,command=
+              if [[ -f "$target" ]]; then
+                "$helper" --observe-native-app "$target" --windows
+                # Revalidate launch date and paths immediately before a PID-specific signal.
+                if validated_pid=$("$helper" --validate-native-app "$target"); then
+                  if [[ "$validated_pid" == "$app_pid" ]]; then
+                    kill -TERM "$app_pid" 2>/dev/null || true
+                  fi
+                fi
+              else
+                echo 'No bound app identity; application cleanup cannot be safely targeted.'
+              fi
+              if kill -0 "$open_pid" 2>/dev/null; then
+                kill -TERM "$open_pid" 2>/dev/null || true
+              fi
+              # Do not block waiting for cleanup; this must not affect acceptance.
+            } >> "$log" 2>&1
+            cat "$log"
+            exit "$result"
           }
           trap cleanup EXIT
+          if ! app_pid=$("$helper" --bind-native-app "$bundle_identifier" "$app_bundle" \
+            "$before" "$target" 2>> "$log"); then
+            echo 'Could not bind exactly one new native app instance' >> "$log"
+            exit 1
+          fi
+          if [[ ! "$app_pid" =~ ^[1-9][0-9]*$ || "$app_pid" == "$open_pid" ]]; then
+            echo 'Invalid actual app PID; native Quit remains unverified' >> "$log"
+            exit 1
+          fi
           sleep 12
           if ! kill -0 "$open_pid" 2>/dev/null; then
-            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
             set +e
             wait "$open_pid"
-            app_status=$?
+            open_status=$?
             set -e
-            exit "$app_status"
+            echo "open-W exited before Quit: open_status=$open_status" >> "$log"
+            exit 1
           fi
 
           quit_action_invoked=false
           for attempt in 1 2; do
             if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \
-              "$bundle_identifier" "$app_bundle" \
+              "$bundle_identifier" "$app_bundle" "$target" \
               >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
               quit_action_invoked=true
               break
@@ -962,31 +996,44 @@ jobs:
             echo "Could not invoke the native macOS Quit action"
             exit 1
           fi
-          for _ in $(seq 1 80); do
-            kill -0 "$open_pid" 2>/dev/null || break
-            sleep 0.25
-          done
-          if kill -0 "$open_pid" 2>/dev/null; then
-            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-            echo "Native Quit action did not close the native-titlebar app within 20 seconds"
+          # One monotonic 20-second observation budget, shared by actual app and open-W.
+          "$helper" --observe-native-app "$target" "$open_pid" >> "$log" 2>&1 &
+          observer_pid=$!
+          # Bash's wait builtin reaps exited children while waiting for the observer,
+          # so a completed open-W cannot remain a zombie visible to the helper.
+          set +e
+          wait "$observer_pid"
+          observer_status=$?
+          set -e
+          if [[ "$observer_status" -ne 0 ]]; then
+            if ! kill -0 "$open_pid" 2>/dev/null; then
+              set +e
+              wait "$open_pid"
+              open_status=$?
+              set -e
+              printf '%s failed-observation open_status=%s\n' \
+                "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$open_status" >> "$log"
+            fi
+            echo 'Native Quit did not establish app-gone and wrapper-gone within 20 seconds' >> "$log"
             exit 1
           fi
           set +e
           wait "$open_pid"
-          app_status=$?
+          open_status=$?
           set -e
-          if [[ "$app_status" -ne 0 ]]; then
-            cat "$RUNNER_TEMP/alula-macos-native-titlebar.log"
-            echo "Native-titlebar Alula exited with status $app_status after menu Quit"
-            exit "$app_status"
+          printf '%s open_status=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$open_status" >> "$log"
+          if [[ "$open_status" -ne 0 ]]; then
+            echo "open-W exited with status $open_status after menu Quit" >> "$log"
+            exit "$open_status"
           fi
-          echo "Native macOS Quit action closed the native-titlebar app."
+          echo 'Native macOS Quit observed app gone and open-W gone with open_status=0.' >> "$log"
       - name: Collect macOS startup diagnostics
         if: always()
         run: |
           diagnostics="$RUNNER_TEMP/alula-macos-diagnostics"
           mkdir -p "$diagnostics"
-          for log in alula-macos-smoke.log alula-macos-native-titlebar.log alula-macos-lldb.log; do
+          for log in alula-macos-smoke.log alula-macos-native-titlebar.log alula-macos-lldb.log \
+            alula-macos-native-before.json alula-macos-native-target.json; do
             if [[ -f "$RUNNER_TEMP/$log" ]]; then
               cp "$RUNNER_TEMP/$log" "$diagnostics/"
             fi
