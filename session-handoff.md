@@ -9,7 +9,7 @@ Last Updated: 2026-11-18
 ## Current State
 
 - 独立worktree E:/temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，push origin HEAD:codex/vscode-parity-p05。原E:/Alula_Code与E:/temp/alula-pr3-p05脏树均保留。上一已推收尾a648fb8。
-- 当前唯一feature P05.88/feat140 Breadcrumb键盘焦点与选择宿主：六命令/上下文/平台键位与.;解析已实现，keybindings32/32、新键盘7+旧picker3组合42/42。审查修复Escape被编辑区遮挡、准确路由单owner/idempotence、path/workspace资源身份/索引边界、卸载postframe清理以及Tab焦点层级；复审pass，新增TabEscape/覆盖弹窗失效通过后keyboard9/9；最终init1528/1528、Rust/Clippy/core/fmt/analyze0全绿，完整graphall12/47/444及main624/386/421CRITICAL稳定。实现agentprovider两次失败，父侧实现，当前待提交140产品与准确CIWinLinux。
+- 当前唯一feature P05.88/feat140 Breadcrumb键盘焦点与选择宿主：六命令/上下文/平台键位与.;解析已实现，keybindings32/32、新键盘7+旧picker3组合42/42。审查修复Escape被编辑区遮挡、准确路由单owner/idempotence、path/workspace资源身份/索引边界、卸载postframe清理以及Tab焦点层级；复审pass，新增TabEscape/覆盖弹窗失效通过后keyboard9/9；最终init1528/1528、Rust/Clippy/core/fmt/analyze0全绿，完整graphall12/47/444及main624/386/421CRITICAL稳定。实现agentprovider两次失败，父侧实现，产品16a22f3a5c32a143b308c7593b486f5ceacb5cb4已推，准确CI44304287547四项/1528tests与PA44304274319 Windows134801656070/Linux134801656488成功，Win desktop25/clipboard1/DnD12callbacks app14427772167/DnD14427931973；Linuxclipboard1/launch/DnD23callbacks app14427746148/DnD14428275597。collector完成，raw E:/Temp/alula-p0588-hosted-20261118/20261118T123007Z-5563e644，summary已归档，feat140限定子项done，待最后收尾提交。不等mac。
 - P05.87/feat139已完成 Open Editors组标题右键CloseSaved/CloseAll。已登记docs03/feature/progress/report，目标组身份/工作区guard、excludeSticky并复用现有_tabsClose/requestClose，不改共享关闭逻辑。新真实菜单7/7、既有回归12/12、产品review通过；首轮lazy标题夹具失败保留，修定位后绿。完整init1516/1516、Rust/Clippy/core/fmt/analyze0通过，graphall9/12/0LOW/main604/332/441CRITICAL完整稳定，历史CRITICAL/UNKNOWN保留。产品36e4db28dcf916cf89a5e56a6982a99ea7140838已推，准确CI44295956176四项/1516tests与PA44295946254 Windows134772874495/Linux134772875103成功。Win desktop25/clipboard1/DnD12callbacks app14424631148/DnD14423464321；Linuxclipboard1/launch/DnD23callbacks app14422908443/DnD14424216265。collector已完成，raw E:/Temp/alula-p0587-hosted-20261118/20261118T113555Z-039ecfe0；summary已归档，feat139限定子项done，待最后收尾提交。不等mac，父P05/LAY11开放。
 - 已完成P05.86/feat138 Open Editors editorOrder/fullPath显示排序：header/session偏好、按visualgroups排序副本，保持tabs/MRU/active/view。alphabetical/Intl与nullresource名称/P07配置留后续。
 - policy13+真实OpenEditors5=18/18，包含26goldenkeys/676orderedpairs。独立review实际编译固定uri.ts/charCode.ts验证key与排序一致；checked-in测试本身只做golden相对排序。workbench切换/恢复、tab几何/Rust视图身份/content及排序后activate/close/disk不变通过。
@@ -33,4 +33,4 @@ Last Updated: 2026-11-18
 
 ## Next Session First Step
 
-继续P05.88，收取testagent37追加TabEscape/coveredpickerinvalidity；产品复审agent2aa已pass。组合42green，待最终定向full/fmt/analyze/graph、提交及准确CIWinLinux。首轮closeAllGroups触发disposedScrollController相邻问题未定位，保留失败，不因改pathlessfixture宣称修复。不要重复139/138已收尾；mac不等待，PR继续draft。
+核对P05.88最后收尾提交/PR同步，随后独立登记并复现closeAllGroups disposedScrollController（p05.88键盘first-failed.log首test）生命周期问题。不要重复已完成140准确CI/WinLinux/full1528。先graphimpact再fix，正常组关闭和dirty取消回归，完整门禁/准确证据。若无法复现或确定非产品，保留精确边界再按路线继续。mac不等待，PR继续draft。
