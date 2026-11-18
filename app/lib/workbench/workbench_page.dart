@@ -787,6 +787,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     reg('breadcrumbs.selectFocused', '面包屑', '选择面包屑',
         () async => _breadcrumbs.selectFocused(),
         enablement: 'breadcrumbsVisible && breadcrumbsActive');
+    reg('breadcrumbs.revealFocused', '面包屑', '打开面包屑位置',
+        () async => _breadcrumbs.revealFocused(),
+        enablement: 'breadcrumbsVisible && breadcrumbsActive');
     reg('breadcrumbs.selectEditor', '面包屑', '返回编辑器',
         () async => _breadcrumbs.selectEditor(),
         enablement: 'breadcrumbsVisible && breadcrumbsActive');
@@ -21648,6 +21651,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         segments: segments,
         controller: _breadcrumbs,
         onSelect: (index) => _onBreadcrumbSegmentTap(g, segments, index),
+        onRevealDirectory: (index) async {
+          var directory = File(active.path!).parent;
+          for (var depth = segments.length - 2; depth > index; depth--) {
+            directory = directory.parent;
+          }
+          final node = TreeNode(
+            name: segments[index], path: directory.path, isDir: true);
+          await _showBreadcrumbFolderPicker(g, segments, index, node,
+              focusPickedFile: true);
+        },
         onSelectEditor: () {
           if (!identical(_groups[g.region], g) || !identical(g.active, active)) return;
           setState(() => _focusedRegion = g.region);
@@ -21777,8 +21790,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     EditorGroup group,
     List<String> segments,
     int index,
-    TreeNode node,
-  ) async {
+    TreeNode node, {
+    bool focusPickedFile = false,
+  }) async {
     // 文件树懒加载：未展开的目录现场读取磁盘子项（上游 FileItem picker 同样
     // 从文件服务读取）。
     List<TreeNode> children = node.children ?? const <TreeNode>[];
@@ -21819,6 +21833,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
       // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
       _revealInExplorer([...segments, child.name, ''], index + 1);
+    } else if (focusPickedFile) {
+      final root = _workspaceRoot;
+      await _openFileByPath(child.path, asPreview: true);
+      if (!mounted || root != _workspaceRoot ||
+          !identical(_groups[group.region], group) ||
+          _focusedRegion != group.region) {
+        return;
+      }
+      final opened = group.active;
+      if (opened?.path == null ||
+          _canonicalPath(opened!.path!) != _canonicalPath(child.path)) {
+        return;
+      }
+      _breadcrumbs.selectEditor();
+      _focusEditorAfterLayout(group, opened);
+      WidgetsBinding.instance.scheduleFrame();
     } else {
       _openTreeFile(child);
     }

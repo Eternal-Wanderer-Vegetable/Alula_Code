@@ -325,6 +325,7 @@ class KeybindingSet {
     'breadcrumbs.focusPrevious': 'breadcrumbsVisible && breadcrumbsActive',
     'breadcrumbs.selectFocused': 'breadcrumbsVisible && breadcrumbsActive',
     'breadcrumbs.selectEditor': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.revealFocused': 'breadcrumbsVisible && breadcrumbsActive',
   };
 
   /// Platform-specific defaults with an explicit Merge Editor context.
@@ -346,6 +347,9 @@ class KeybindingSet {
             : 'arrowleft,ctrl+arrowleft',
         'breadcrumbs.selectFocused': 'enter,arrowdown',
         'breadcrumbs.selectEditor': 'escape',
+        'breadcrumbs.revealFocused': platform == TargetPlatform.macOS
+            ? 'space,cmd+enter'
+            : 'space,ctrl+enter',
       };
 
   /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.

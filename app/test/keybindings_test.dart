@@ -32,6 +32,7 @@ void main() {
           'enter': 'breadcrumbs.selectFocused',
           'arrowdown': 'breadcrumbs.selectFocused',
           'escape': 'breadcrumbs.selectEditor',
+          'space': 'breadcrumbs.revealFocused',
         }.entries) {
           final binding = keys.bindingForChord(parseChord(entry.key)!)!;
           expect(binding.commandId, entry.value,
@@ -43,6 +44,18 @@ void main() {
                   ? 'breadcrumbsPossible'
                   : 'breadcrumbsVisible && breadcrumbsActive');
         }
+        final activeReveal = keys.resolveBindings(
+            matchesWhen: (condition) =>
+                condition == null ||
+                condition == 'breadcrumbsVisible && breadcrumbsActive');
+        final reveal = activeReveal.entries.singleWhere((entry) =>
+            entry.key.trigger == LogicalKeyboardKey.enter &&
+            !entry.key.shift &&
+            !entry.key.alt &&
+            (platform == TargetPlatform.macOS
+                ? entry.key.meta
+                : entry.key.control));
+        expect(reveal.value.commandId, 'breadcrumbs.revealFocused');
         final inactive =
             keys.resolveBindings(matchesWhen: (condition) => condition == null);
         expect(
@@ -55,7 +68,7 @@ void main() {
         expect(
             active.values.where(
                 (binding) => binding.commandId.startsWith('breadcrumbs.')),
-            hasLength(9));
+            hasLength(11));
       }
     });
 
@@ -569,8 +582,8 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords + 10,
-          reason: 'tree find adds two keys and breadcrumbs adds eight; '
+      expect(resolved.keys.length, expectedChords + 11,
+          reason: 'tree find adds two keys and breadcrumbs adds nine; '
               'F3 and Escape share contexts');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
@@ -713,9 +726,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(ks.resolve().length, expectedChords + 10);
+      expect(ks.resolve().length, expectedChords + 11);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
-      expect(ks2.resolve().length, expectedChords + 10);
+      expect(ks2.resolve().length, expectedChords + 11);
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {

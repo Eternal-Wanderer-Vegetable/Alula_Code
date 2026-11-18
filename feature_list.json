@@ -1728,6 +1728,16 @@
       "evidence": "RealcloseAllGroups red at76c2cf8 withoutbreadcrumbcommands; minimaldeferredcontrolleronlyfix preserves synchronoussharedrelease. Newlifetime4/4 andfocusedcombination28/28, full1532/1532 Rusttests/Clippy/core/fmt/analyze0passed. IsolatedCancelgreen; finaldocUnknownDoc synchronous, controllersalivebeforeframe/disposedafter includingWorkbenchteardown. Parentfocusedreviewcompleted; agentreviewproviderfailedtwice notpass. disposeViewHIGH54/5direct/3flows retained. Graphnative mainhardcap1000truncated; fullactualhandlercapture2765/74 critical verifiedsameinvocation/provenance/snapshotstable; all15/0LOW. Exact6dd3048763d64bf718fabfa257f98f00486c5728 CI44311176344 all4success/1532actualtests; PA44311162250 Win134825360100/Linux134825360240success. Win desktop25/clipboard1/DnD13callbacks app14430453408/DnD14430563041; Linuxclipboard1/launch/DnD23callbacks app14430188261/DnD14429977596. Summary p05.89-hosted-verification.json. macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-142",
+      "name": "P05.90 Breadcrumb路径段直接reveal",
+      "description": "Space/CtrlCmdEnter revealFocused: terminal file focuses owner editor, directory advances visual segment with original directory file picker. docs/diagnostics/2026-11-18-p05/p05.90-breadcrumb-reveal.md",
+      "dependencies": ["feat-141"],
+      "status": "in-progress",
+      "evidence": "ImplementedSpace/CtrlCmdEnter reveal command, terminalownerfocuspreviewpreserved, directorynextvisualsegment/originaldirectorychildren. Reviewfixedlazytree dependency andpickedfilefocus; newreal5/5 andcombined49/49passed. First4/5+boundedwaitred preserved. Finalinit1537/1537 Rusttests/Clippy/core/fmt/analyze0passed; reviewpass. Fullgraphall12/19/321CRITICAL, main681/1368/334CRITICAL actualprecapcapturecomplete/snapshotstable andoriginalnativecapretained. ExactCIWinLinux pending, macOSdevicegapsdeferred; parentsopen.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

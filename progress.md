@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.88已收尾，当前P05.89关闭视图生命周期
+### P05 / feat-027 持续推进；P05.89已收尾，当前P05.90 Breadcrumb reveal
+
+- 2026-11-18 登记P05.90/feat142 breadcrumbs.revealFocused路径段Space/CtrlCmdEnter：文件直接返回owner、不改pin/preview，目录移下一视觉段并列原目录children（避免误进末段symbolpicker）。独立reveal callback，复用picker准确route/ownerguard；narrowimpactLOW3/4/3但历史广域CRITICAL保留。新真实5/5与组合49/49，lazy目录读取/选filefocus问题修正并redgreen复核，复审通过；最终init1537/1537、Rust/Clippy/core/fmt/analyze0全绿，graphall12/19/321与main681/1368/334CRITICAL完整precapcapture、稳定快照，原生cap保留。准确CIWinLinux待补，mac暂留。141收尾4241eb2已推、PR同步。
 
 - 2026-11-18 登记P05.89/feat141，独立真实两组closeAllGroups在HEAD76c2cf8无Breadcrumb命令也确认disposedScrollController重挂异常；_closeDocNowMEDIUM8direct/2flows、disposeViewHIGH5direct/3flows风险保留。修正限定逻辑关闭共享引用立即释放、ScrollController延至明确调度帧结束；孤立dirtyCancel通过；四项生命周期+MRU/OpenEditors/Breadcrumb/copy组合28/28、完整init1532/1532与Rust/Clippy/core/fmt/analyze0通过，testlint修正后4/4复验。父侧源码review完成，代理两次服务错误未计pass。Graphindex默认256MiB耗尽，1GiB重建过；comparemain1000symbol硬截断已用samehandler只读捕获补齐2765symbols/74flows CRITICAL，原生capped响应完整保留，receipt计数与repo/index/graph/tool快照稳定；all15/0LOW不降级HIGH。产品6dd3048准确CI44311176344四项/1532tests与PA44311162250 Win/Linux成功，Win desktop25/clipboard1/DnD13callbacks、Linuxclipboard1/launch/DnD23callbacks，summary p05.89-hosted-verification.json归档，feat141限定修复done，mac未等待/父行开放。P05.88收尾76c2cf8已推PR同步。
 

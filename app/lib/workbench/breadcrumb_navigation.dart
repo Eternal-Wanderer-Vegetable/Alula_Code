@@ -36,6 +36,7 @@ class BreadcrumbNavigationController extends ChangeNotifier {
 
   void move(int delta) => _active?.move(delta);
   void selectFocused() => _active?.selectFocused();
+  void revealFocused() => _active?.revealFocused();
 
   void selectEditor() {
     final active = _active;
@@ -110,6 +111,7 @@ class BreadcrumbNavigation extends StatefulWidget {
     required this.segments,
     required this.controller,
     required this.onSelect,
+    required this.onRevealDirectory,
     required this.onSelectEditor,
   });
 
@@ -118,6 +120,7 @@ class BreadcrumbNavigation extends StatefulWidget {
   final List<String> segments;
   final BreadcrumbNavigationController controller;
   final Future<void> Function(int index) onSelect;
+  final Future<void> Function(int index) onRevealDirectory;
   final VoidCallback onSelectEditor;
 
   @override
@@ -176,6 +179,34 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
     controller.setPickerShowing(true);
     try {
       await select(index);
+    } finally {
+      _opening = false;
+      controller.setPickerShowing(false);
+    }
+  }
+
+  Future<void> revealFocused() async {
+    final index = _index;
+    if (index == null ||
+        index < 0 ||
+        index >= widget.segments.length ||
+        _opening ||
+        widget.controller._pickerShowing) {
+      return;
+    }
+    if (index == widget.segments.length - 1) {
+      clearFocus();
+      widget.onSelectEditor();
+      return;
+    }
+    final controller = widget.controller;
+    final reveal = widget.onRevealDirectory;
+    setState(() => _index = index + 1);
+    _opening = true;
+    controller._active = this;
+    controller.setPickerShowing(true);
+    try {
+      await reveal(index);
     } finally {
       _opening = false;
       controller.setPickerShowing(false);
