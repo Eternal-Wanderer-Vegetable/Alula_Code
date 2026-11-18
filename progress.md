@@ -5,7 +5,11 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；当前P05.83 SCM上下文菜单
+### P05 / feat-027 持续推进；P05.83已收尾，当前P05.84分级校验
+
+- 2026-11-18 P05.84/feat136已推产品697ab24：兼容legacy validator、独立typed severity回调、Info/Warning可接受、Error即使空消息阻止、pending保持旧消息及stale异常隔离。真实GotoLinetypedError集成，专项13/13、review通过，完整init1478/1478、Rust/Clippy/core/fmt/analyze0全绿。图谱all14/2/1 MEDIUM、main551/286/441 CRITICAL完整导出；编辑前QuickInput CRITICAL104/31direct/3modules风险保留。CI44272272721四项/1478tests与Platform44272261767 Win/Linux全部成功，准确摘要p05.84-hosted-verification.json归档，feat136窄子项done；mac设备缺口暂留未等待，父P05仍开放。
+- 2026-11-18 P05.83产品f4b1faf的CI44264627191、Win/Linux均通过，1472tests与desktop/clipboard/DnDcallback证据已归档，收尾14b9420已推。菜单组件37/realrepo1/full1472全绿；macOS未等待且保留未验证。
+
 
 - 2026-11-18 用户明确要求：当前无macOS设备，保留原生/视觉/实测与既有缺口未验证，继续P05，不再以macOS实机/探针排障为推进前置。已同步docs03 N.2与连续路线，hosted不能代替实机。
 - 当前P05.83/feat135已登记：固定SCM右键改变focus但保留S/anchor，ContextMenu/ShiftF10 keyup打开，已有OpenDiff/单项Stage/Unstage宿主与旧目标动作保护；完整贡献/batch归P09。本机启动1462/1462全绿，图谱File空name异常+symbolUNKNOWN，实际唯一产品构造点源码补查、历史MEDIUM/CRITICAL保留。组件37/37、实际repo1/1及审查修正通过；最终顺序完整init1472/1472、Rust/Clippy/core、fmt/analyze0全绿。并行测试曾占用DLL导致core复制失败，已保留失败并顺序复验。graph/提交/可用平台证据待补。

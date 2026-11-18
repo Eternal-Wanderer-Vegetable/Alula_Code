@@ -1674,8 +1674,8 @@
       "name": "P05.84 QuickInput分级输入校验",
       "description": "Typed info/warning/error validation while preserving legacy string callbacks, async stale guards/history/accept latch; integrate existing GoToLine typed errors. docs/diagnostics/2026-11-18-p05/p05.84-quick-input-validation-severity.md",
       "dependencies": ["feat-135"],
-      "status": "in-progress",
-      "evidence": "Registered fixedreference severity contract; QuickInput impact CRITICAL104/31direct/3modules. TypedError blocks evenempty; Info/Warningaccept; bothcallbacks runtimeconflict. Focusedasync+realGoto13/13green, productseverityredcaptured. Info/Warningaccept, Error/emptyErrorblock, validclearsdecoration, pendingretainsmessage, staleexceptionignored andruntimecallbackconflict covered. Reviewpass; fullinit.sh Flutter1478/1478 Rusttests/Clippy/core andindependentfmt/analyze0passed. Completegraph/exactCIWinLinux pending, macOSdevicegapsdeferred; no P08business rule invention.",
+      "status": "done",
+      "evidence": "Registered fixedreference severity contract; QuickInput impact CRITICAL104/31direct/3modules. TypedError blocks evenempty; Info/Warningaccept; bothcallbacks runtimeconflict. Focusedasync+realGoto13/13green, productseverityredcaptured. Info/Warningaccept, Error/emptyErrorblock, validclearsdecoration, pendingretainsmessage, staleexceptionignored andruntimecallbackconflict covered. Reviewpass; fullinit.sh Flutter1478/1478 Rusttests/Clippy/core andindependentfmt/analyze0passed. Completegraphall14/2/1 MEDIUM andmain551/286/441 CRITICAL no partial/truncated. Exactproduct697ab24 CI44272272721 all4success with1478actualtests; Platform44272261767 Win/Linuxsuccess, macOSdeferred notawaited. Win desktop25/clipboard1/DnD14callbacks app14414110726/DnD14414125474; Linuxclipboard1/launch/DnD23callbacks app14413316861/DnD14413686040. Accurateevidencep05.84-hosted-verification.json. Narrowchilddone; macOSdevicegapsdeferred, no P08business rule invention.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

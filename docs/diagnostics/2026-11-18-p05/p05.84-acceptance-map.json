@@ -1,0 +1,61 @@
+{
+  "feature": "feat-136",
+  "slice": "P05.84 QuickInput validation severity",
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "productCommit": "697ab24840ba67f5c38023a75d3b349ceb0efc3a",
+  "cases": [
+    {
+      "contract": "Typed Info and Warning accept current text; typed Error keeps the input open",
+      "test": "typed QuickInputValidationSeverity.info/warning/error controls input acceptance",
+      "file": "app/test/quick_input_async_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Explicit typed Error blocks even with empty content; valid result clears validation widget and input border",
+      "test": "empty typed error blocks and current valid clears decoration",
+      "file": "app/test/quick_input_async_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Pending changed input retains the previous message; current Warning replaces Error; late obsolete exception is ignored and current text can be accepted",
+      "test": "typed validation retains pending message and ignores stale errors",
+      "file": "app/test/quick_input_async_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Both public entry points reject simultaneous legacy and typed callbacks before showing a route",
+      "test": "legacy and typed validators are mutually exclusive at runtime",
+      "file": "app/test/quick_input_async_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Legacy async validator ignores stale results, blocks pending Enter, does not revalidate selection-only movement and accepts once",
+      "test": "input validates asynchronously, rejects stale results and accepts current text",
+      "file": "app/test/quick_input_async_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Real Go to Line exposes error severity, blocks invalid input without changing selection/disk, previews corrected UTF16 target, restores on cancel and accepts valid input",
+      "test": "Go to Line accepts UTF-16 positions and cancel leaves document state intact",
+      "file": "app/test/workbench_goto_position_test.dart",
+      "status": "automated-pass"
+    }
+  ],
+  "sourceReviewOnly": [
+    "Legacy nonempty strings and current exceptions normalize to typed Error",
+    "Severity-specific colors, border and accessible severity label",
+    "Static picker validationMessage acceptance behavior unchanged",
+    "No new persistent cache or polling; current generation/text guards reused"
+  ],
+  "validation": {
+    "focusedTests": 13,
+    "fullFlutterTests": 1478,
+    "analyzeIssues": 0,
+    "review": "pass",
+    "ciRun": 44272272721,
+    "platformRun": 44272261767,
+    "hosted": "CI all4 success with1478tests; Windows/Linux platform success; macOS deferred without waiting",
+    "macos": "device/native/visual gaps deferred unverified per user; no waiting or new probe",
+    "parentP05Complete": false
+  }
+}
