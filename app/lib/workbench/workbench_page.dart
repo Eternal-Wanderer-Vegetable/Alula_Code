@@ -91,6 +91,7 @@ import 'goto_position.dart';
 import 'quick_open_query.dart';
 import 'document_symbols.dart';
 import 'open_editors_sort_order.dart';
+import 'breadcrumb_navigation.dart';
 import 'command_history_store.dart';
 import 'commands.dart';
 import 'editor_drop_overlay.dart';
@@ -567,6 +568,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _openEditorsCollapsed = false;
   OpenEditorsSortOrder _openEditorsSortOrder = OpenEditorsSortOrder.editorOrder;
   final Map<String, FocusNode> _openEditorsRowFocus = {};
+  final BreadcrumbNavigationController _breadcrumbs = BreadcrumbNavigationController();
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
   final AuxiliaryWindowBoundsRegistry _auxiliaryWindowBounds =
@@ -728,6 +730,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     unawaited(_refreshRecentHistory());
     _registerCommands();
     _treeFind.addListener(_onTreeFindChanged);
+    _breadcrumbs.addListener(_onBreadcrumbFocusChanged);
     _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
@@ -769,6 +772,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'workbench.action.files.newUntitledFile',
       ),
     );
+    reg('breadcrumbs.focus', '面包屑', '聚焦面包屑',
+        () async => _breadcrumbs.focusLast(_focused.region),
+        when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
+    reg('breadcrumbs.focusAndSelect', '面包屑', '聚焦并选择面包屑',
+        () async => _breadcrumbs.focusLast(_focused.region, select: true),
+        when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
+    reg('breadcrumbs.focusNext', '面包屑', '聚焦下一段',
+        () async => _breadcrumbs.move(1),
+        enablement: 'breadcrumbsVisible && breadcrumbsActive');
+    reg('breadcrumbs.focusPrevious', '面包屑', '聚焦上一段',
+        () async => _breadcrumbs.move(-1),
+        enablement: 'breadcrumbsVisible && breadcrumbsActive');
+    reg('breadcrumbs.selectFocused', '面包屑', '选择面包屑',
+        () async => _breadcrumbs.selectFocused(),
+        enablement: 'breadcrumbsVisible && breadcrumbsActive');
+    reg('breadcrumbs.selectEditor', '面包屑', '返回编辑器',
+        () async => _breadcrumbs.selectEditor(),
+        enablement: 'breadcrumbsVisible && breadcrumbsActive');
     reg('file.openFolder', '文件', '打开文件夹…', _showOpenFolderDialog);
     reg(
       'file.openRecent',
@@ -3116,6 +3137,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'cursorCanUndo': active?.selectionHistory.canUndo ?? false,
       'cursorCanRedo': active?.selectionHistory.canRedo ?? false,
       'workspaceOpen': _workspaceRoot != null,
+      'breadcrumbsPossible': active?.path != null && _workspaceRoot != null,
+      'breadcrumbsVisible': active?.path != null && _workspaceRoot != null,
+      'breadcrumbsActive': _breadcrumbs.isActive,
       'listFocus': _treeFocusNode.hasFocus || _treeFind.inputFocus.hasFocus,
       'listSupportsFind': _workspaceRoot != null,
       'treeFindOpen': _treeFind.isOpen,
@@ -3137,6 +3161,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       gitDiffNavigationAvailableContextKey: _gitDiffNavigation.canNavigate,
     });
     _publishMainFocusContext();
+  }
+
+  void _onBreadcrumbFocusChanged() {
+    if (mounted && !_disposing) _syncCommandContext();
   }
 
   EditorGroup? get _mainCurrentGroup => _groups.isEmpty
@@ -19954,6 +19982,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _findGeneration++;
     _treeTypeAheadTimer?.cancel();
+    _breadcrumbs.removeListener(_onBreadcrumbFocusChanged);
+    _breadcrumbs.dispose();
     _treeFind.removeListener(_onTreeFindChanged);
     _treeFind.dispose();
     _treeFocusNode.dispose();
@@ -21415,8 +21445,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(activeDoc);
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.escape): () =>
-            unawaited(_hidePasteWidget()),
+        if (!_breadcrumbs.isActive)
+          const SingleActivator(LogicalKeyboardKey.escape): () =>
+              unawaited(_hidePasteWidget()),
       },
       child: Builder(
         builder: (paneContext) => DragTarget<int>(
@@ -21610,23 +21641,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       height: 22,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       alignment: Alignment.centerLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (var i = 0; i < segments.length; i++) ...[
-            if (i > 0)
-              Text(' › ',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
-            GestureDetector(
-              onTap: () => _onBreadcrumbSegmentTap(g, segments, i),
-              child: Text(
-                segments[i],
-                style: const TextStyle(fontSize: 11),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ],
+      child: BreadcrumbNavigation(
+        key: ValueKey('breadcrumb-navigation-${g.region}'),
+        region: g.region,
+        resource: (active, active.path, _workspaceRoot),
+        segments: segments,
+        controller: _breadcrumbs,
+        onSelect: (index) => _onBreadcrumbSegmentTap(g, segments, index),
+        onSelectEditor: () {
+          if (!identical(_groups[g.region], g) || !identical(g.active, active)) return;
+          setState(() => _focusedRegion = g.region);
+          _focusNodeFor(g, active).requestFocus();
+          _syncCommandContext();
+        },
       ),
     );
   }
@@ -21639,18 +21666,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   /// 点面包屑文件夹段 → 侧栏唤起 + 文件树逐级展开到该目录。
-  void _onBreadcrumbSegmentTap(
+  Future<void> _onBreadcrumbSegmentTap(
     EditorGroup group,
     List<String> segments,
     int index,
-  ) {
+  ) async {
     final node = _findTreeNodeByRelPrefix(segments, index);
     debugPrint(
         'BCDBG seg=$segments idx=$index node=${node?.path} children=${node?.children?.length} roots=${_treeRoots.map((n) => n.path).take(6)}');
     final isLastSegment = index == segments.length - 1;
     if (isLastSegment) {
       // 上游 OutlineItem → BreadcrumbsOutlinePicker：文件段列出文档符号。
-      _showBreadcrumbSymbolPicker(group);
+      await _showBreadcrumbSymbolPicker(group);
       return;
     }
     if (node == null) {
@@ -21659,7 +21686,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     // 上游 FileItem → BreadcrumbsFilePicker：目录段列出子项（懒加载目录
     // 由 picker 现场读取磁盘）。
-    _showBreadcrumbFolderPicker(group, segments, index, node);
+    await _showBreadcrumbFolderPicker(group, segments, index, node);
   }
 
   TreeNode? _findTreeNodeByRelPrefix(List<String> segments, int index) {
@@ -21679,6 +21706,71 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
 
     return find(_treeRoots);
+  }
+
+  Future<String?> _showBreadcrumbMenu(
+    EditorGroup group,
+    OpenDoc doc,
+    List<PopupMenuEntry<String>> items,
+  ) async {
+    if (!identical(_groups[group.region], group) || !identical(group.active, doc)) return null;
+    final root = _workspaceRoot;
+    final path = doc.path;
+    final version = doc.doc.version;
+    setState(() => _focusedRegion = group.region);
+    _syncCommandContext();
+    _scheduleStateSave();
+    var escaped = false;
+    var visible = true;
+    final navigator = Navigator.of(context);
+    ModalRoute<dynamic>? pickerRoute;
+    void escape() {
+      final route = pickerRoute;
+      if (!visible || route == null || !route.isCurrent) return;
+      visible = false;
+      escaped = true;
+      navigator.pop();
+    }
+    void cancel() {
+      final route = pickerRoute;
+      if (!visible || route == null || !route.isActive) return;
+      visible = false;
+      route.navigator?.removeRoute(route);
+    }
+    _breadcrumbs.closePicker = escape;
+    _breadcrumbs.cancelPicker = cancel;
+    try {
+      final action = await showMenu<String>(
+        context: context,
+        position: _breadcrumbPickerPosition(),
+        items: [
+          for (var i = 0; i < items.length; i++)
+            if (items[i] case final PopupMenuItem<String> item)
+              BreadcrumbMenuEntry(
+                item: item,
+                first: i == 0,
+                onEscape: escape,
+                onRoute: (route) => pickerRoute ??= route,
+              ),
+        ],
+      );
+      visible = false;
+      if (!mounted || root != _workspaceRoot || path != doc.path ||
+          !identical(_groups[group.region], group) ||
+          !identical(group.active, doc)) {
+        return null;
+      }
+      if (escaped) {
+        _breadcrumbs.selectEditor();
+        _focusEditorAfterLayout(group, doc);
+        WidgetsBinding.instance.scheduleFrame();
+      }
+      return doc.doc.version == version ? action : null;
+    } finally {
+      visible = false;
+      _breadcrumbs.closePicker = null;
+      _breadcrumbs.cancelPicker = null;
+    }
   }
 
   Future<void> _showBreadcrumbFolderPicker(
@@ -21705,10 +21797,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         children = const <TreeNode>[];
       }
     }
-    final action = await showMenu<String>(
-      context: context,
-      position: _breadcrumbPickerPosition(),
-      items: [
+    final doc = group.active;
+    if (doc == null) return;
+    final action = await _showBreadcrumbMenu(group, doc, [
         if (children.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('空文件夹')),
         for (final child in children)
@@ -21716,8 +21807,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             value: '${child.isDir ? 'reveal' : 'open'}:${child.path}',
             child: Text(child.isDir ? '${child.name}/' : child.name),
           ),
-      ],
-    );
+    ]);
     if (!mounted || action == null) return;
     final childPath = action.split(':').sublist(1).join(':');
     final child = children.where((c) => c.path == childPath).firstOrNull;
@@ -21748,10 +21838,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           line: (s['line'] as num?)?.toInt() ?? 0,
         )
     ];
-    final action = await showMenu<String>(
-      context: context,
-      position: _breadcrumbPickerPosition(),
-      items: [
+    final action = await _showBreadcrumbMenu(group, doc, [
         if (symbols.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('未发现符号')),
         for (final sym in symbols)
@@ -21759,8 +21846,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             value: 'symbol:${sym.startUtf16}:${sym.name}',
             child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
           ),
-      ],
-    );
+    ]);
     if (!mounted || action == null) return;
     // 上游 _onSelectEvent：picker 交互先激活所属组，再 reveal。
     setState(() {

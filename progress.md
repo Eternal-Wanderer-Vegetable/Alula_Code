@@ -5,7 +5,10 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.86已收尾，当前P05.87 OpenEditors组菜单关闭
+### P05 / feat-027 持续推进；P05.87已收尾，当前P05.88 Breadcrumb键盘
+
+- 2026-11-18 登记P05.88/feat140六个Breadcrumb键盘focus/select命令与平台键位，补.;解析、左右不循环、picker Escape返回owner编辑器及打开前激活所属组；Active含picker。Workbench/KeybindingSet CRITICAL121/47direct/4modules、私有UNKNOWN源码补查。withPicker/reveal/fullsymbolpath/provider留后续。父侧实现有界widget focusowner（产品代理服务失败未交付），keybindings32/32、真实键盘9/9与旧picker3/3，早期组合42/42；review修复Escape遮挡、精确route/idempotence、覆盖dialog失效、path/workspace资源/索引与菜单focus层级，复审通过。最终init1528/1528、Rust/Clippy/core/fmt/analyze0全绿，graphall12/47/444与main624/386/421 CRITICAL完整稳定。准确CIWinLinux待补。前139收尾b99e60d已推、CI44297873742全绿，PR同步。
+- 相邻问题：P05.88首轮测试closeAllGroups准备阶段触发layout disposedScrollController，后续树连带失败；根因未定且未修。当前pathless上下文测试避开该路径，不作为已修复证据，后续独立任务复现。
 
 - 2026-11-18 登记P05.87/feat139组标题右键Close Saved/Close All，固定目标组、排除sticky、复用dirty-safe共享关闭；普通Cancel/Save/Discard及共享view/非focused/排序隔离验收，完整菜单/isSaving/已有空组语义保留。WorkbenchPage impactCRITICAL49direct/4modules，私有方法UNKNOWN已核对实际调用；不修改共享关闭内部。新真实菜单7/7、既有OpenEditors/closepolicy/组MRU12/12与产品只读review通过；first2/7是lazy标题定位夹具问题，日志保留，非产品red。最终init1516/1516、Rust/Clippy/core/fmt/analyze0全绿。graphall9/12/0LOW、main604/332/441CRITICAL完整稳定，UNKNOWN和历史共享CRITICAL保留。产品36e4db2准确CI44295956176四项/1516actualtests与PA44295946254 WinLinux成功，Win desktop25/clipboard1/DnD12callbacks、Linuxclipboard1/launch/DnD23callbacks，摘要p05.87-hosted-verification.json已归档，feat139限定子项done；mac未等待，父行开放。
 

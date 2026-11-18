@@ -1,0 +1,38 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart
+00:00 +0: registers six breadcrumb commands with live context guards
+00:01 +1: focus shortcut selects last segment and arrows stop at both ends
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+A SemanticsHandle was active at the end of the test.
+All SemanticsHandle instances must be disposed by calling dispose() on the SemanticsHandle.
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester._verifySemanticsHandlesWereDisposed (package:flutter_test/src/widget_tester.dart:1074:7)
+#1      WidgetTester._endOfTestVerifications (package:flutter_test/src/widget_tester.dart:1063:5)
+#2      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1969:22)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  focus shortcut selects last segment and arrows stop at both ends
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +1 -1: focus shortcut selects last segment and arrows stop at both ends [E]
+  Test failed. See exception logs above.
+  The test description was: focus shortcut selects last segment and arrows stop at both ends
+  
+00:01 +1 -1: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3bdc86d2/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3bdc86d2/workspace\other.rs)
+00:02 +2 -1: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardc69b3b51/workspace\other.rs)
+00:02 +3 -1: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard1560cb54/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard1560cb54/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard1560cb54/workspace\other.rs)
+00:03 +4 -1: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard6c4d679/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard6c4d679/workspace\other.rs)
+00:03 +5 -1: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardd04ac0ed/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardd04ac0ed/workspace\other.rs)
+00:04 +6 -1: Some tests failed.
+
+Failing tests:
+  E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends

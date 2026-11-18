@@ -187,6 +187,10 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
   m['bracketright'] = LogicalKeyboardKey.bracketRight;
   m['/'] = LogicalKeyboardKey.slash;
+  m['.'] = LogicalKeyboardKey.period;
+  m['period'] = LogicalKeyboardKey.period;
+  m[';'] = LogicalKeyboardKey.semicolon;
+  m['semicolon'] = LogicalKeyboardKey.semicolon;
   m['-'] = LogicalKeyboardKey.minus;
   m['minus'] = LogicalKeyboardKey.minus;
   m['escape'] = LogicalKeyboardKey.escape;
@@ -315,6 +319,12 @@ class KeybindingSet {
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
+    'breadcrumbs.focus': 'breadcrumbsPossible',
+    'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
+    'breadcrumbs.focusNext': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.focusPrevious': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.selectFocused': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.selectEditor': 'breadcrumbsVisible && breadcrumbsActive',
   };
 
   /// Platform-specific defaults with an explicit Merge Editor context.
@@ -324,6 +334,18 @@ class KeybindingSet {
         'list.find':
             platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
         'list.closeFind': 'escape',
+        'breadcrumbs.focus':
+            platform == TargetPlatform.macOS ? 'cmd+shift+;' : 'ctrl+shift+;',
+        'breadcrumbs.focusAndSelect':
+            platform == TargetPlatform.macOS ? 'cmd+shift+.' : 'ctrl+shift+.',
+        'breadcrumbs.focusNext': platform == TargetPlatform.macOS
+            ? 'arrowright,alt+arrowright'
+            : 'arrowright,ctrl+arrowright',
+        'breadcrumbs.focusPrevious': platform == TargetPlatform.macOS
+            ? 'arrowleft,alt+arrowleft'
+            : 'arrowleft,ctrl+arrowleft',
+        'breadcrumbs.selectFocused': 'enter,arrowdown',
+        'breadcrumbs.selectEditor': 'escape',
       };
 
   /// Platform defaults from the pinned Code-OSS editor/workbench keybindings.

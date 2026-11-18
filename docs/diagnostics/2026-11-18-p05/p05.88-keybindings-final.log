@@ -1,0 +1,34 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/keybindings_test.dart
+00:00 +0: Breadcrumb keybindings punctuation names resolve to the same logical keys
+00:00 +1: Breadcrumb keybindings platform defaults retain context and navigation alternatives
+00:00 +2: Breadcrumb keybindings user removal and replacement apply to breadcrumb defaults
+00:00 +3: parseChord 修饰键组合与裸键
+00:00 +4: parseChord 非法输入返回 null
+00:00 +5: parseChordSequence parses two strokes and displays each chord
+00:00 +6: KeybindingSet occurrence selection defaults use platform commands
+00:00 +7: KeybindingSet overtype toggle follows the pinned platform keybindings
+00:00 +8: KeybindingSet word delete follows the pinned platform keybindings
+00:00 +9: KeybindingSet line-boundary deletion follows the pinned platform keybindings
+00:00 +10: KeybindingSet trailing-whitespace and move-selection chords are platform sequences
+00:00 +11: KeybindingSet compare with clipboard uses Ctrl/Cmd+K then C
+00:00 +12: KeybindingSet compare with saved uses Ctrl/Cmd+K then D
+00:00 +13: KeybindingSet sticky and editor close commands use the platform defaults
+00:00 +14: KeybindingSet line insertion uses Ctrl+Enter on Windows/Linux and Cmd+Enter on macOS
+00:00 +15: KeybindingSet line deletion uses Ctrl/Cmd+Shift+K on each platform
+00:00 +16: KeybindingSet line comment toggle uses Ctrl+/ or Cmd+/ by platform
+00:00 +17: KeybindingSet block comment uses Alt+Shift+A or Linux Ctrl+Shift+A
+00:00 +18: KeybindingSet copy-line defaults coexist with platform column-selection chords
+00:00 +19: KeybindingSet move-line defaults use Alt+Up and Alt+Down on every platform
+00:00 +20: KeybindingSet navigation defaults leave platform word-movement chords available
+00:00 +21: KeybindingSet 默认表可解析且包含核心键位
+00:00 +22: KeybindingSet New Text File follows Windows/Linux Ctrl+N and macOS Cmd+N
+00:00 +23: KeybindingSet New Text File respects a user keybinding override
+00:00 +24: KeybindingSet 用户追加：新键位生效
+00:00 +25: KeybindingSet 用户键位可覆盖与移除双段默认键位
+00:00 +26: KeybindingSet 键位携带参数和 when 条件并参与上下文过滤
+00:00 +27: KeybindingSet 用户移除：-command 删掉匹配的默认键位
+00:00 +28: KeybindingSet 移除不匹配的键位串：无操作
+00:00 +29: KeybindingSet 损坏 JSON：只用默认键位
+00:00 +30: KeybindingSet 非法条目逐条忽略，合法条目仍生效
+00:00 +31: KeybindingSet Join Lines is command-palette-only on Windows/Linux and Ctrl+J on macOS
+00:00 +32: All tests passed!

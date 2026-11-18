@@ -5,6 +5,82 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('Breadcrumb keybindings', () {
+    test('punctuation names resolve to the same logical keys', () {
+      expect(parseChord('ctrl+shift+period'), parseChord('ctrl+shift+.'));
+      expect(parseChord('cmd+shift+semicolon'), parseChord('cmd+shift+;'));
+      expect(parseChord('.')!.key, LogicalKeyboardKey.period);
+      expect(parseChord(';')!.key, LogicalKeyboardKey.semicolon);
+    });
+
+    test('platform defaults retain context and navigation alternatives', () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final modifier = platform == TargetPlatform.macOS ? 'cmd' : 'ctrl';
+        final word = platform == TargetPlatform.macOS ? 'alt' : 'ctrl';
+        for (final entry in {
+          '$modifier+shift+;': 'breadcrumbs.focus',
+          '$modifier+shift+.': 'breadcrumbs.focusAndSelect',
+          'arrowright': 'breadcrumbs.focusNext',
+          '$word+arrowright': 'breadcrumbs.focusNext',
+          'arrowleft': 'breadcrumbs.focusPrevious',
+          '$word+arrowleft': 'breadcrumbs.focusPrevious',
+          'enter': 'breadcrumbs.selectFocused',
+          'arrowdown': 'breadcrumbs.selectFocused',
+          'escape': 'breadcrumbs.selectEditor',
+        }.entries) {
+          final binding = keys.bindingForChord(parseChord(entry.key)!)!;
+          expect(binding.commandId, entry.value,
+              reason: '$platform/${entry.key}');
+          expect(
+              binding.when,
+              entry.value == 'breadcrumbs.focus' ||
+                      entry.value == 'breadcrumbs.focusAndSelect'
+                  ? 'breadcrumbsPossible'
+                  : 'breadcrumbsVisible && breadcrumbsActive');
+        }
+        final inactive =
+            keys.resolveBindings(matchesWhen: (condition) => condition == null);
+        expect(
+            inactive.values.where(
+                (binding) => binding.commandId.startsWith('breadcrumbs.')),
+            isEmpty);
+        final active = keys.resolveBindings(
+            matchesWhen: (condition) =>
+                condition == null || condition.startsWith('breadcrumbs'));
+        expect(
+            active.values.where(
+                (binding) => binding.commandId.startsWith('breadcrumbs.')),
+            hasLength(9));
+      }
+    });
+
+    test('user removal and replacement apply to breadcrumb defaults', () {
+      final keys = KeybindingSet.load(
+        platform: TargetPlatform.windows,
+        userJson: '[{"key":"ctrl+shift+;","command":"-breadcrumbs.focus"},'
+            '{"key":"ctrl+alt+b","command":"breadcrumbs.focus",'
+            '"when":"breadcrumbsPossible"}]',
+      );
+      expect(keys.bindingForChord(parseChord('ctrl+shift+;')!), isNull);
+      final resolved = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null || condition == 'breadcrumbsPossible');
+      final binding = resolved.entries
+          .singleWhere((entry) =>
+              entry.key.trigger == LogicalKeyboardKey.keyB &&
+              entry.key.control &&
+              entry.key.alt)
+          .value;
+      expect(binding.commandId, 'breadcrumbs.focus');
+      expect(binding.when, 'breadcrumbsPossible');
+    });
+  });
+
   group('parseChord', () {
     test('修饰键组合与裸键', () {
       final c = parseChord('ctrl+shift+p')!;
@@ -447,7 +523,10 @@ void main() {
         mac.commandForChord(parseChord('ctrl+shift+-')!),
         'workbench.action.navigateForward',
       );
-      expect(mac.commandForChord(parseChord('alt+arrowleft')!), isNull);
+      expect(
+          mac.resolveBindings(matchesWhen: (condition) => condition == null)[
+              parseChord('alt+arrowleft')!.toActivator()],
+          isNull);
       expect(mac.commandForChord(parseChord('alt+shift+arrowleft')!), isNull);
       expect(
         mac.commandForChord(parseChord('ctrl+alt+arrowleft')!),
@@ -490,8 +569,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords + 2,
-          reason: 'tree find adds Ctrl+Alt+F and Escape; F3 shares a context');
+      expect(resolved.keys.length, expectedChords + 10,
+          reason: 'tree find adds two keys and breadcrumbs adds eight; '
+              'F3 and Escape share contexts');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
           ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
@@ -633,9 +713,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(ks.resolve().length, expectedChords + 2);
+      expect(ks.resolve().length, expectedChords + 10);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
-      expect(ks2.resolve().length, expectedChords + 2);
+      expect(ks2.resolve().length, expectedChords + 10);
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {

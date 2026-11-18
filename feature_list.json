@@ -1708,6 +1708,16 @@
       "evidence": "Group-header targetscope/stickyexcluded menus reuse existing close routes unchanged. NewrealWorkbench7/7, existingregressions12/12 andscopedproductreview passed. First2/7 fixturelazytitle lookupfailure fixed, preservednotproductred. Finalinit1516/1516 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/12/0LOW andmain604/332/441CRITICAL complete/snapshotstable; preeditWorkbenchPageCRITICAL49direct/4modules andprivateUNKNOWN sourceconfirmed retained. Exact36e4db28dcf916cf89a5e56a6982a99ea7140838 CI44295956176 all4success/1516actualtests; PA44295946254 Win134772874495/Linux134772875103success. Win desktop25/clipboard1/DnD12callbacks app14424631148/DnD14423464321; Linuxclipboard1/launch/DnD23callbacks app14422908443/DnD14424216265. Summary p05.87-hosted-verification.json. Emptygroup/isSaving/single-groupheader/fullmenus/longIOfixture andstaleUI directcoverage remain gaps; macOSnotawaited/devicegapsdeferred, parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-140",
+      "name": "P05.88 Breadcrumb键盘焦点与选择宿主",
+      "description": "Six pinned breadcrumbs focus/select/navigation commands with platform shortcuts, bounded focus owner and existing picker Escape/owner handling. docs/diagnostics/2026-11-18-p05/p05.88-breadcrumb-keyboard.md",
+      "dependencies": ["feat-139"],
+      "status": "in-progress",
+      "evidence": "Implemented6IDs/platform.; parsing and breadcrumbsPossible/Visible/Active contexts; mountedgroupfocusowner/singlepicker/exactroutecleanup/pathworkspaceidentity. Keybindings32/32, realkeyboard9/9, oldpicker3/3passed; earliercombined42/42. ReviewfixedEscapeshadow/staleroute/focustraversal andpassed; TabInkWellEscape/covereddialoginvalidationgreen. Finalinit1528/1528 Rusttests/Clippy/core/fmt/analyze0passed. Graphall12/47/444 andmain624/386/421 CRITICAL complete/snapshotstable; privateUNKNOWN sourcechecked. FirstcloseAllGroups disposedScrollControlleradjacentunresolved, logsretained. ExactCIWinLinux pending; WithPicker/revealFocused/fullsymbolpath/provider/macOSdevice remain gaps.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

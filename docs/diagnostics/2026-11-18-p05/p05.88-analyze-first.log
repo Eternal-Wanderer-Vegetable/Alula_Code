@@ -1,0 +1,7 @@
+Analyzing app...                                                
+
+warning - The member 'notifyListeners' can only be used within 'package:flutter/src/foundation/change_notifier.dart' or a test - lib\workbench\breadcrumb_navigation.dart:125:29 - invalid_use_of_visible_for_testing_member
+warning - The member 'notifyListeners' can only be used within instance members of subclasses of 'ChangeNotifier' - lib\workbench\breadcrumb_navigation.dart:125:29 - invalid_use_of_protected_member
+   info - Statements in an if should be enclosed in a block. Try wrapping the statement in a block - lib\workbench\workbench_page.dart:21757:42 - curly_braces_in_flow_control_structures
+
+3 issues found. (ran in 11.5s)

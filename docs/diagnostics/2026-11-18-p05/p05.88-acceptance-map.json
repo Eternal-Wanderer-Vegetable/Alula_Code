@@ -1,0 +1,21 @@
+{
+  "feature": "feat-140",
+  "reference": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "commands": ["breadcrumbs.focus", "breadcrumbs.focusAndSelect", "breadcrumbs.focusNext", "breadcrumbs.focusPrevious", "breadcrumbs.selectFocused", "breadcrumbs.selectEditor"],
+  "contexts": ["breadcrumbsPossible", "breadcrumbsVisible", "breadcrumbsActive"],
+  "checks": [
+    {"case": "Punctuation aliases, platform CtrlCmd shortcuts, secondary word modifiers, active/possible guards and user replacement/removal", "test": "keybindings_test.dart", "suite_passed": 32},
+    {"case": "Command registry and pathless unavailable context", "test": "breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards"},
+    {"case": "Focus last; nonwrapping arrows; Escape editor; text/version/selection/dirty plus actual undo/redo and disk unchanged", "test": "breadcrumb_keyboard_test.dart: focus shortcut selects last segment and arrows stop at both ends"},
+    {"case": "FocusAndSelect symbols, Enter/Down folder selection, mouse nonfocused owner activation before await", "test": "breadcrumb_keyboard_test.dart"},
+    {"case": "Outside dismissal preserves external focus; pathless switch invalidates stale owner", "test": "breadcrumb_keyboard_test.dart"},
+    {"case": "Tab focuses actual InkWell then Escape returns editor", "test": "breadcrumb_keyboard_test.dart: review regression"},
+    {"case": "Exact covered picker route removed on owner invalidation while unrelated dialog remains", "test": "breadcrumb_keyboard_test.dart: review regression"},
+    {"case": "Existing file/symbol picker keyboard and selection remain functional", "test": "breadcrumb_picker_test.dart", "suite_passed": 3}
+  ],
+  "keyboard_suite_passed": 9,
+  "earlier_combination_passed": 42,
+  "earlier_combination_keyboard_count": 7,
+  "limits": ["WithPicker/revealFocused/Space/aside", "Full symbol hierarchy/provider and preview rollback", "No new native keyboard/visual device acceptance", "Shared closeAllGroups disposed ScrollController failure unresolved", "macOS device validation deferred"],
+  "parents_remain_open": true
+}
