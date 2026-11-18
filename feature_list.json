@@ -1744,8 +1744,8 @@
       "name": "P05.91 Open Editors组标题关闭组",
       "description": "Multi-group inline Close Group action closes clicked group's all views including sticky through existing dirty-safe route and removes only empty nonlast group. docs/diagnostics/2026-11-18-p05/p05.91-open-editors-close-group.md",
       "dependencies": ["feat-142"],
-      "status": "in-progress",
-      "evidence": "Implementedmulti-groupinlineCloseGroup inclsticky withguardedemptyremoval. New7/7, ordinaryA-B-AstaleDiscard andmergestaleDiscard/Save/nestedoverwritepreservelivesession/diskpassed. Reviewfixedearlyautoremove, currentguardthroughsavedialogs/diskwrite, typedmergeveto andworkspacegeneration; finalpass. Firstfull1542/1543lazyrowfailed dueM3buttonheight, explicit18pxshrinkwrapfix+22relatedgreen. Finalinit1545/1545 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/3/426 andmain704/705/408CRITICAL complete/snapshotstable. ExactCIWinLinux pending; siblingrootabsoluteBreadcrumb overflowdeferred, macOSdevicegapsdeferred.",
+      "status": "done",
+      "evidence": "Implementedmulti-groupinlineCloseGroup inclsticky withguardedemptyremoval. New7/7, ordinaryA-B-AstaleDiscard andmergestaleDiscard/Save/nestedoverwritepreservelivesession/diskpassed. Reviewfixedearlyautoremove, currentguardthroughsavedialogs/diskwrite, typedmergeveto andworkspacegeneration; finalpass. Firstfull1542/1543lazyrowfailed dueM3buttonheight, explicit18pxshrinkwrapfix+22relatedgreen. Finalinit1545/1545 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/3/426 andmain704/705/408CRITICAL complete/snapshotstable. Exactadffce093e1ecdb281d3e1c3ef7c57a9ca87559a CI44350097917 all4success/1545actualtests; PA44350075665 Win134962980805/Linux134962979397success. Win desktop25/clipboard1/DnD12callbacks app14447688893/DnD14448258131; Linuxclipboard1/launch/DnD19callbacks app14449570384/DnD14446599804. Summary p05.91-hosted-verification.json. siblingrootabsoluteBreadcrumb overflowdeferred, macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

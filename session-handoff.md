@@ -12,7 +12,7 @@ Last Updated: 2026-11-19
 - 当前唯一P05.91/feat143 Open Editors多组标题inline关闭组：显式owner全部view含sticky，dirty-safe关闭后仅guardedhelper移空组、保留最后组。按钮显式18px/shrinkWrap维持列表几何。
 - review发现原postawaitguard太晚，现_requestCloseEditorViews可选keepEmptyGroups/isCurrent默认不变，inlineonly传root/generation/group身份；dirty确认/每次保存/关闭前检查，SaveAs/外部overwrite到实际写盘都传guard。合并确认前与save/revert检查，最终closecallbackveto抛现有typed异常使finishClose不dispose活session。A->B->A旧请求不复活。最终独立source reviewpass。
 - 新组按钮7/7，包括ordinaryworkspaceA-B-A staleDiscard；新增一个真实merge回归涵盖旧Discard/Save与nestedexternaloverwrite，session/文本/磁盘保留。首次full1542/1543因M3按钮撑高导致既有Cancel测试lazy行离屏失败，原日志保留；显式尺寸后related22green，最终完整init1545/1545、Rusttests/Clippy/core、独立fmt/analyze0通过。
-- 完整graph all9files/3symbols/426flows、main704/705/408 CRITICAL，计数/原prefix/uniqueID/noquerydegradation/snapshot稳定。共享close/removeRegion CRITICAL及图谱覆盖缺口保留。最终待产品提交/准确CIWinLinux，尚未提交143。
+- 完整graph all9files/3symbols/426flows、main704/705/408 CRITICAL，计数/原prefix/uniqueID/noquerydegradation/snapshot稳定。共享close/removeRegion CRITICAL及图谱覆盖缺口保留。产品adffce093e1ecdb281d3e1c3ef7c57a9ca87559a已推；准确CI44350097917四项/1545tests与PA44350075665 Windows134962980805/Linux134962979397成功。Win desktop25/clipboard1/DnD12callbacks app14447688893/DnD14448258131；Linuxclipboard1/launch/DnD19callbacks app14449570384/DnD14446599804。collector完成，raw E:/Temp/alula-p0591-hosted-20261119/20261118T164356Z-6a924d46；summary已归档，feat143限定子项done，待最后证据提交。
 - 相邻问题：旧文档在切换到同级工作区时Breadcrumb绝对路径溢出；测试改父root隔离关闭race，不声称修复，失败日志p0591-workspace-guard-first保留。143收尾后优先独立修复。
 - P05.90/feat142已收尾：产品22612d3、证据f5ca288已推，full1537/组合49/review/analyze0、准确CI44320717951/PA44320705616 WinLinux通过，summary已归档。Space/CtrlCmdEnter路径reveal，目录原列表/nextvisual，file返回owner，lazy读取与选filefocus已修。
 - P05.89/feat141已收尾：产品6dd3048/证据4241eb2，full1532、准确CI44311176344/PA44311162250 WinLinux通过。closeAllGroups ScrollController立即dispose重挂缺陷修复，仅controller帧末释放/shared同步，4timing/28relatedgreen。不再列未定位。
@@ -33,4 +33,4 @@ Last Updated: 2026-11-19
 
 ## Next Session First Step
 
-归档143最终full1545与完整graph，更新docs03/feature/progress，提交前对最终staged再完整graph导出；提交push后收准确SHA CI/WinLinux，不等待mac，归档并收尾PR。143收尾后独立登记修复绝对路径Breadcrumb溢出，保持一次一片。
+核对143最后证据提交/PR同步后，独立登记修复绝对路径Breadcrumb溢出（p05.91-workspace-overflow-failed.log）；先固定合同/impact+真实red，保持一次一片。adffce0 full1545/review/analyze/准确CIWinLinux已完整，不重复。mac不等，PR草稿。
