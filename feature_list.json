@@ -1635,7 +1635,7 @@
       "description": "SCM lazy resource list focus/selection separation, bare navigation/reveal, Enter opens diff, Space preserves list focus without staging, independent hover/action buttons and workspace/async cleanup. docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md",
       "dependencies": ["feat-131"],
       "status": "in-progress",
-      "evidence": "Component9/9; component+Git CLI+real repo20/20; Workbench real repository keyboard/index preservation fixture passed. Final full init.sh Flutter1444/1444, Rust workspace tests/Clippy/core build; independent fmt/analyze0. Pre-edit _gitTile CRITICAL and private callbacks UNKNOWN; actual callers reviewed, graph rebuild extraction limits retained. Hosted pending; LAY-16 and P05 parent remain open.",
+      "evidence": "Initial component9/9, combined Git20/20; original9117a06 CI44141662139 green. OriginalPlatform44141648010 attempt1 WindowsDnD/macQuit failed; attempt2 Windowsgreen, mac1443/1444 sole100ms focusfixture failure; no third retry. Fixturecorrectione865b11 CI44219803751 and logheadb162222 CI44220241478 green, PA44219797014 Win/Linuxgreen/macReleasebuilding. Review found rowEnter focusowner race and unchangedrefresh scrollsnap; both red-first regressions repaired within GitChangesList. Component11/11, realrepo rowEnter1/1, mergecleanup15/15; final completeinit.sh Flutter1446/1446 Rusttests/Clippy/core passed, fmt/analyze0. Productfix hosted pending. Fileimpact MEDIUM69/direct1, class namesblank unresolved, prior CRITICAL/UNKNOWN and extraction limits retained. Reports docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md and originalscope; LAY-16/P05 remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

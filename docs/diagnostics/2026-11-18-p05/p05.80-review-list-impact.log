@@ -1,0 +1,676 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "target": {
+    "id": "File:app/lib/git/git_changes_list.dart",
+    "name": "git_changes_list.dart",
+    "type": "File",
+    "filePath": "app/lib/git/git_changes_list.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 69,
+  "risk": "MEDIUM",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": false,
+    "unusedAxes": [
+      {
+        "axis": "processes",
+        "reason": "file-nodes-have-no-process-or-community-membership"
+      },
+      {
+        "axis": "modules",
+        "reason": "file-nodes-have-no-process-or-community-membership"
+      }
+    ]
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 1,
+    "processes_affected": 0,
+    "modules_affected": 0
+  },
+  "byDepthCounts": {
+    "1": 1,
+    "2": 19,
+    "3": 49
+  },
+  "affected_processes": [],
+  "affected_modules": [],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/workbench_page.dart",
+        "name": "workbench_page.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "File:app/lib/main.dart",
+        "name": "main.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/auxiliary_window_test.dart",
+        "name": "auxiliary_window_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/breadcrumb_picker_test.dart",
+        "name": "breadcrumb_picker_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_group_area_drop_test.dart",
+        "name": "editor_group_area_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_group_mru_close_test.dart",
+        "name": "editor_group_mru_close_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_split_drop_test.dart",
+        "name": "editor_split_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_tab_cross_group_copy_test.dart",
+        "name": "editor_tab_cross_group_copy_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_tab_cross_group_move_test.dart",
+        "name": "editor_tab_cross_group_move_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_tab_overflow_test.dart",
+        "name": "editor_tab_overflow_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_tab_preview_test.dart",
+        "name": "editor_tab_preview_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/editor_tab_tear_out_test.dart",
+        "name": "editor_tab_tear_out_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/explorer_type_ahead_test.dart",
+        "name": "explorer_type_ahead_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/locked_scrolling_test.dart",
+        "name": "locked_scrolling_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/modal_editor_test.dart",
+        "name": "modal_editor_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/open_editors_view_test.dart",
+        "name": "open_editors_view_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/walkthrough_test.dart",
+        "name": "walkthrough_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/workbench_bulk_edit_review_test.dart",
+        "name": "workbench_bulk_edit_review_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/workbench_directional_move_test.dart",
+        "name": "workbench_directional_move_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/test/workbench_directional_split_test.dart",
+        "name": "workbench_directional_split_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "File:app/test/activity_bar_order_integration_test.dart",
+        "name": "activity_bar_order_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/activity_bar_pin_integration_test.dart",
+        "name": "activity_bar_pin_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/activity_bar_position_integration_test.dart",
+        "name": "activity_bar_position_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/activity_bar_size_integration_test.dart",
+        "name": "activity_bar_size_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/activity_bar_visibility_test.dart",
+        "name": "activity_bar_visibility_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_action_location_test.dart",
+        "name": "editor_tab_action_location_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_action_reserve_space_test.dart",
+        "name": "editor_tab_action_reserve_space_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_close_action_visibility_test.dart",
+        "name": "editor_tab_close_action_visibility_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_mode_test.dart",
+        "name": "editor_tab_mode_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_path_disambiguation_test.dart",
+        "name": "editor_tab_path_disambiguation_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_sizing_test.dart",
+        "name": "editor_tab_sizing_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/editor_tab_wrap_test.dart",
+        "name": "editor_tab_wrap_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/find_history_widget_test.dart",
+        "name": "find_history_widget_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/notification_progress_ui_test.dart",
+        "name": "notification_progress_ui_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/notification_ui_test.dart",
+        "name": "notification_ui_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/notification_wiring_test.dart",
+        "name": "notification_wiring_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/p00_risk_fixtures_test.dart",
+        "name": "p00_risk_fixtures_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/p02_savepoint_test.dart",
+        "name": "p02_savepoint_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/panel_alignment_integration_test.dart",
+        "name": "panel_alignment_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/panel_position_integration_test.dart",
+        "name": "panel_position_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/quick_input_history_test.dart",
+        "name": "quick_input_history_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/quick_input_steps_test.dart",
+        "name": "quick_input_steps_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/secondary_sidebar_integration_test.dart",
+        "name": "secondary_sidebar_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/sidebar_view_move_integration_test.dart",
+        "name": "sidebar_view_move_integration_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/welcome_page_test.dart",
+        "name": "welcome_page_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/widget_test.dart",
+        "name": "widget_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_auto_indent_test.dart",
+        "name": "workbench_auto_indent_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_block_comment_test.dart",
+        "name": "workbench_block_comment_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bounded_input_test.dart",
+        "name": "workbench_bounded_input_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bracket_delete_test.dart",
+        "name": "workbench_bracket_delete_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_bracket_pair_test.dart",
+        "name": "workbench_bracket_pair_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_camel_case_test.dart",
+        "name": "workbench_camel_case_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_case_conversion_test.dart",
+        "name": "workbench_case_conversion_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_clipboard_compare_test.dart",
+        "name": "workbench_clipboard_compare_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_document_text_drag_drop_test.dart",
+        "name": "workbench_cross_document_text_drag_drop_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_window_drag_selection_test.dart",
+        "name": "workbench_cross_window_drag_selection_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cross_window_line_selection_test.dart",
+        "name": "workbench_cross_window_line_selection_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cursor_movement_test.dart",
+        "name": "workbench_cursor_movement_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_cursor_undo_redo_test.dart",
+        "name": "workbench_cursor_undo_redo_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_definition_navigation_test.dart",
+        "name": "workbench_definition_navigation_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_document_boundary_test.dart",
+        "name": "workbench_document_boundary_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_emmet_number_test.dart",
+        "name": "workbench_emmet_number_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_empty_selection_copy_test.dart",
+        "name": "workbench_empty_selection_copy_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_empty_selection_cut_test.dart",
+        "name": "workbench_empty_selection_cut_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_explorer_compare_test.dart",
+        "name": "workbench_explorer_compare_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_find_close_test.dart",
+        "name": "workbench_find_close_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_find_resize_test.dart",
+        "name": "workbench_find_resize_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_indentation_conversion_test.dart",
+        "name": "workbench_indentation_conversion_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/test/workbench_indentation_test.dart",
+        "name": "workbench_indentation_test.dart",
+        "filePath": "",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ]
+  },
+  "staleness": {
+    "status": "behind",
+    "commitsBehind": 1,
+    "hint": "⚠️ Index is 1 commit behind HEAD. Run analyze tool to update."
+  }
+}
+(node:40420) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

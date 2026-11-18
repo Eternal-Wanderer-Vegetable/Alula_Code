@@ -8,8 +8,8 @@
 
 ## 剩余交付顺序
 
-1. P05.70 hosted closeout（当前产品 231e853、证据 76113f6）：PR CI 全绿、Linux/Windows 全绿；等待 macOS package/launch/native Quit。随后恢复唯一 active feature。
-2. LAY-16：Explorer tree find/filter，固定 Ctrl/Cmd+Alt+F/F3，Highlight/Fuzzy 默认、Filter/Contiguous 切换、Escape/tree focus、查询记忆、祖先可见与 unloaded descendants、取消/错误/无结果；已补 Explorer Shift+Arrow 键盘范围扩选（P05.78），仍需通用列表 keyboard/range/context 与实际表格列 resize、hover/visual 对照。
+1. 当前 P05.80 hosted closeout：产品9117a06的CI全绿，Platform44141648010 attempt1 Linux通过、Windows drop超时/macOS Quit未退出；attempt2 Windows全绿、macOS仍运行。基线修正e865b11本地完整门禁Flutter1444/1444全绿，原始日志b162222；新hosted运行中。P05.70–76已按exact SHA补齐证据，P05.75保留macOS native DnD失败，不将该run报全绿。
+2. LAY-16：Explorer tree find/filter、固定评分/字符范围、查询历史与键盘导航已在P05.71登记；Explorer Shift+Arrow扩选P05.78、SCM基本键盘焦点/hover P05.80已实现。当前片收尾后继续SCM多选/范围与通用列表context；实际表格列resize、完整树分组及原生hover/visual仍待验收。
 3. LAY-17/18：QuickInput 真正输入历史/异步 validation/MRU 分节/按钮与选择状态，通知 timeout/progress 完成/取消和产品错误接线。
 4. LAY-11 与 CMD-06/07：Open Editors 排序/重排/批量动作、Breadcrumb 路径/符号完整导航和 cursor-follow、Outline 层级/过滤/排序/折叠。
 5. LAY-07–10：组移动/复制/顺序/均分/最大化/锁定、same-group split、批量标签与跨组 MRU、复制视图 scroll 状态、pinned/sticky 的剩余 presentation/关闭规则。

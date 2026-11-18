@@ -1012,6 +1012,14 @@ void main() {
       await tester.pump();
       expect(listFocus.hasFocus, isTrue,
           reason: 'first Space open must not autofocus the diff');
+      final rowFocus = Focus.of(tester.element(find.descendant(
+        of: find.byKey(const ValueKey('git-w-beta.txt')),
+        matching: find.text('beta.txt'),
+      )));
+      rowFocus.requestFocus();
+      await tester.pump();
+      expect(rowFocus.hasPrimaryFocus, isTrue,
+          reason: 'Exercise Enter from a row reached through focus traversal');
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
       final diffFocus = tester
           .widget<Focus>(find.byKey(const ValueKey('git-diff-panel-focus')))

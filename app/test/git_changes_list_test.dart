@@ -94,6 +94,39 @@ void main() {
     expect(actions, isEmpty);
   });
 
+  testWidgets('Enter from a focused row preserves its async focus owner',
+      (tester) async {
+    final pending = Completer<void>();
+    final destination = FocusNode();
+    addTearDown(destination.dispose);
+    FocusNode? source;
+    await tester.pumpWidget(surface(
+      entries: [entry('alpha.txt')],
+      sibling: TextButton(
+          focusNode: destination, onPressed: () {}, child: const Text('Diff')),
+      onOpen: (_, {required preserveFocus}) async {
+        expect(preserveFocus, isFalse);
+        source = FocusManager.instance.primaryFocus;
+        await pending.future;
+        if (FocusManager.instance.primaryFocus == source) {
+          destination.requestFocus();
+        }
+      },
+    ));
+    final rowFocus = Focus.of(tester.element(find.text('alpha.txt')));
+    rowFocus.requestFocus();
+    await tester.pump();
+    expect(rowFocus.hasPrimaryFocus, isTrue);
+    expect(listFocus(tester).hasPrimaryFocus, isFalse);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    pending.complete();
+    await tester.pump();
+    await tester.pump();
+    expect(destination.hasPrimaryFocus, isTrue,
+        reason: 'Internal focus normalization must not defeat the open guard');
+  });
+
   testWidgets('pending Space never reclaims deliberate external focus',
       (tester) async {
     final pending = Completer<void>();
@@ -265,6 +298,26 @@ void main() {
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
     await expectVisible('file-11.txt');
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('unchanged parent rebuild preserves manual list scrolling',
+      (tester) async {
+    final entries = List.generate(40, (i) => entry('file-$i.txt'));
+    await tester.pumpWidget(surface(entries: entries));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    final list = find.byKey(const ValueKey('git-changes-list'));
+    await tester.drag(list, const Offset(0, -500));
+    await tester.pumpAndSettle();
+    final scroll = tester.widget<ListView>(list).controller!;
+    final before = scroll.offset;
+    expect(before, greaterThan(0));
+    await tester.pumpWidget(surface(entries: entries));
+    await tester.pump();
+    expect(scroll.offset, before,
+        reason: 'Unrelated rebuilds must not reveal an offscreen focused row');
+    expect(listFocus(tester).hasFocus, isTrue);
   });
 
   testWidgets(

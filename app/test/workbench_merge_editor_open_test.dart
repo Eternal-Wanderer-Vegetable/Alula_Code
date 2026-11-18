@@ -52,11 +52,14 @@ void main() {
     commands = null;
   });
 
-  tearDown(() async {
-    if (temp.existsSync()) await temp.delete(recursive: true);
-  });
-
   Future<void> mount(WidgetTester tester) async {
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.runAsync(() async {
+        if (temp.existsSync()) await temp.delete(recursive: true);
+      });
+    });
     await tester.pumpWidget(MaterialApp(
       home: WorkbenchPage(
         autoFolder: workspace.path,

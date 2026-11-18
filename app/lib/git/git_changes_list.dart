@@ -39,12 +39,23 @@ class _GitChangesListState extends State<GitChangesList> {
 
   // Preserve the existing panel's single-row treatment of mixed index/worktree
   // changes. Separate rows for both sides are outside basic list navigation.
-  List<_GitRow> get _rows => [
-        for (final entry in widget.entries.where((e) => e.hasStagedChanges))
+  List<_GitRow> get _rows => _rowsFor(widget.entries);
+
+  List<_GitRow> _rowsFor(List<GitStatusEntry> entries) => [
+        for (final entry in entries.where((e) => e.hasStagedChanges))
           (entry: entry, staged: true),
-        for (final entry in widget.entries.where((e) => !e.hasStagedChanges))
+        for (final entry in entries.where((e) => !e.hasStagedChanges))
           (entry: entry, staged: false),
       ];
+
+  double? _focusOffset(List<_GitRow> rows, _GitIdentity? focus) {
+    final index = rows.indexWhere((row) => _identity(row) == focus);
+    if (index < 0) return null;
+    final stagedCount = rows.where((row) => row.staged).length;
+    return index * _rowHeight +
+        _headerHeight +
+        (stagedCount > 0 && index >= stagedCount ? _headerHeight : 0);
+  }
 
   _GitIdentity _identity(_GitRow row) =>
       (path: row.entry.path, staged: row.staged);
@@ -52,6 +63,7 @@ class _GitChangesListState extends State<GitChangesList> {
   @override
   void didUpdateWidget(covariant GitChangesList oldWidget) {
     super.didUpdateWidget(oldWidget);
+    final previousOffset = _focusOffset(_rowsFor(oldWidget.entries), _focused);
     final rows = _rows;
     _GitIdentity? retained(_GitIdentity? identity) {
       if (identity == null) return null;
@@ -61,7 +73,9 @@ class _GitChangesListState extends State<GitChangesList> {
 
     _focused = retained(_focused);
     _selected = retained(_selected);
-    if (_focused != null && _focus.hasFocus) {
+    if (_focused != null &&
+        _focus.hasFocus &&
+        previousOffset != _focusOffset(rows, _focused)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _revealSelection();
       });
@@ -95,13 +109,8 @@ class _GitChangesListState extends State<GitChangesList> {
 
   void _revealSelection() {
     if (!_scroll.hasClients || !_scroll.position.hasContentDimensions) return;
-    final rows = _rows;
-    final index = rows.indexWhere((row) => _identity(row) == _focused);
-    if (index < 0) return;
-    final stagedCount = rows.where((row) => row.staged).length;
-    final top = index * _rowHeight +
-        _headerHeight +
-        (stagedCount > 0 && index >= stagedCount ? _headerHeight : 0);
+    final top = _focusOffset(_rows, _focused);
+    if (top == null) return;
     final position = _scroll.position;
     final bottom = top + _rowHeight;
     final target = top < position.pixels
@@ -113,7 +122,7 @@ class _GitChangesListState extends State<GitChangesList> {
   }
 
   Future<void> _open(_GitRow row, {required bool preserveFocus}) {
-    _select(row, focusList: true, select: true);
+    _select(row, focusList: !_focus.hasFocus, select: true);
     return widget.onOpen(row.entry, preserveFocus: preserveFocus);
   }
 
