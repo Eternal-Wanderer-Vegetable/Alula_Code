@@ -1013,11 +1013,17 @@ void main() {
       expect(listFocus.hasFocus, isTrue,
           reason: 'first Space open must not autofocus the diff');
       await tester.sendKeyEvent(LogicalKeyboardKey.enter);
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      await tester.pump();
-      await tester.pump();
-      expect(tester.widget<Focus>(find.byKey(
-          const ValueKey('git-diff-panel-focus'))).focusNode!.hasFocus, isTrue);
+      final diffFocus = tester
+          .widget<Focus>(find.byKey(const ValueKey('git-diff-panel-focus')))
+          .focusNode!;
+      final focusWait = Stopwatch()..start();
+      while (!diffFocus.hasFocus &&
+          focusWait.elapsed < const Duration(seconds: 10)) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await tester.pump();
+      }
+      expect(diffFocus.hasFocus, isTrue,
+          reason: 'Enter transfers focus after the asynchronous Git diff opens');
       listFocus.requestFocus();
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);

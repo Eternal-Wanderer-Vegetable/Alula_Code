@@ -17,7 +17,11 @@ Future<(Directory, File)> _openFixture(
   debugDefaultTargetPlatformOverride = platform;
   final temp = Directory.systemTemp.createTempSync('alula-smart-enter');
   addTearDown(() async {
-    if (temp.existsSync()) await temp.delete(recursive: true);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.runAsync(() async {
+      if (temp.existsSync()) await temp.delete(recursive: true);
+    });
   });
   final workspace = Directory('${temp.path}/workspace')..createSync();
   final file = File('${workspace.path}/sample.rs')..writeAsStringSync(text);

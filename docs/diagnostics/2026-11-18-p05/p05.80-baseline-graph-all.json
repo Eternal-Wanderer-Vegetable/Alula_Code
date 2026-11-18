@@ -1,0 +1,116 @@
+{
+  "summary": {
+    "changed_count": 15,
+    "affected_count": 0,
+    "changed_files": 16,
+    "risk_level": "low"
+  },
+  "changed_symbols": [
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.71-tree-find.md:L33:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.71-tree-find.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md:L1:P05.72 / feat-124 — QuickInput 输入、异步校验与命令面板分节",
+      "name": "P05.72 / feat-124 — QuickInput 输入、异步校验与命令面板分节",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md:L17:验证",
+      "name": "验证",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md:L21:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.72-quick-input-validation.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md:L17:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.73-goto-position.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.74-quick-open-query.md:L19:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.74-quick-open-query.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.75-document-outline.md:L17:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.75-document-outline.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md:L13:Hosted 核对补录（2026-11-18）",
+      "name": "Hosted 核对补录（2026-11-18）",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-17-p05/p05.76-document-symbol-picker.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L1:P05.71–P05.76 / feat-123–128 — Hosted 证据与台账核对",
+      "name": "P05.71–P05.76 / feat-123–128 — Hosted 证据与台账核对",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L5:提交与 hosted 结果",
+      "name": "提交与 hosted 结果",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L18:Artifact 对应关系",
+      "name": "Artifact 对应关系",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L31:macOS app ZIP 完整性",
+      "name": "macOS app ZIP 完整性",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L46:native DnD 运行时证据",
+      "name": "native DnD 运行时证据",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md:L63:本地与未完成范围",
+      "name": "本地与未完成范围",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md",
+      "change_type": "touched"
+    },
+    {
+      "id": "Section:docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md:L1:P05.80 startup focus regression — 2026-11-18",
+      "name": "P05.80 startup focus regression — 2026-11-18",
+      "type": "Section",
+      "filePath": "docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md",
+      "change_type": "touched"
+    }
+  ],
+  "affected_processes": []
+}

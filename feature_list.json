@@ -1524,12 +1524,12 @@
     {
       "id": "feat-123",
       "name": "P05.71 LAY-16b Explorer 树查找与筛选",
-      "description": "树焦点 list.find/closeFind/toggleFindMode/toggleFindMatchType，Highlight/Fuzzy 默认、可取消异步目录筛选、祖先投影、200 项分页、关闭恢复与焦点/查询记忆；其他树表格和精确评分/视觉保留。范围：docs/diagnostics/2026-11-17-p05/p05.71-tree-find.md",
+      "description": "树焦点 list.find/closeFind/toggleFindMode/toggleFindMatchType，Highlight/Fuzzy 默认、可取消异步目录筛选、祖先投影、200 项分页、关闭恢复与焦点/查询记忆；固定版评分与match ranges 3482例对拍通过，其他树表格和精确主题/像素保留。范围：docs/diagnostics/2026-11-17-p05/p05.71-tree-find.md",
       "dependencies": [
         "feat-122"
       ],
-      "status": "in-progress",
-      "evidence": "Focused model/workbench/type-ahead/keybindings 41/41 green after lifecycle review fixes. Final full gates passed: bash init.sh Flutter 1369/1369, Rust workspace tests/Clippy/core build, fmt, analyze 0, Harness 100/100. Complete graph all 13/9/440 and main 336/583/444 CRITICAL without partial/truncated. Hosted pending. No Rust/FFI change; one cancellable iterator, page 200 + one lookahead, query max 256 UTF-16 with surrogate safety, recursion depth 128 explicit error. P05 remains in-progress.",
+      "status": "done",
+      "evidence": "Focused model/workbench/type-ahead/keybindings 41/41 green after lifecycle review fixes; fixed fuzzyScore/match ranges 3482 reference cases passed, scoring7/7, combined50/50, Explorer35/35. Final reference completion bash init.sh Flutter1378/1378, Rust workspace tests/Clippy/core build/fmt and analyze0 passed (earlier lifecycle gates Flutter1369/1369). Graph all13/9/440 and main336/583/444 CRITICAL, reference all8/9/0 LOW and main348/430/450 CRITICAL, no partial/truncated; earlier risks retained. Commit d3e537b6445d03509fb358b190bca177f1d67e5c; PR CI44007182727 all4 success; Platform44007176331 attempt1 all3 success including macOS Quit/package. App artifacts Linux14294783684/Windows14294658665/macOS14297420144; startup14296517760; macOS DnD14295844413 explicitly skipped at runtime for unavailable pointer route, native DnD remains unverified despite step success (attempt1 job133785211594, runtime notice line2364). macOS inner ZIP SHA-256 77864ecd06fefe987390aefe137e75f403db926ce4ce2c331cd532cc7272baad matches sidecar; 81 entries, zipfile.testzip null verified read-only. No Rust/FFI change; cancellable iterator, page200+lookahead1, query256 UTF16 surrogate safe, depth128 explicit error. Narrow child done; P05/LAY-16 remain in-progress with native visual/general tree-table coverage unverified. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1540,8 +1540,8 @@
       "dependencies": [
         "feat-123"
       ],
-      "status": "in-progress",
-      "evidence": "Focused QuickInput async/steps/groups/history/commands 28/28 and analyze 0; full init.sh Flutter1381/1381 plus Rust tests/Clippy/core build. Review fixed accept reentrancy/route ownership and selection-only revalidation, regression green; final full guards gates passed Flutter1381/1381, analyze0; complete graph all9/3/448 and main356/382/451 CRITICAL no partial/truncated. Hosted pending.",
+      "status": "done",
+      "evidence": "Focused QuickInput async/steps/groups/history/commands28/28 and analyze0; final full init.sh Flutter1381/1381 plus Rust tests/Clippy/core build/fmt passed. Review fixed accept reentrancy/route ownership and selection-only revalidation, regression green; complete graph all9/3/448 and main356/382/451 CRITICAL no partial/truncated. Commit f92257e111580df06d46af0b7321d02cb473c0dc; PR CI44010850566 all4 success; Platform44010843172 attempt1 all3 success including macOS Quit/package. App artifacts Linux14296851953/Windows14296972553/macOS14298462977; startup14298064446; macOS DnD14298870969 explicitly skipped at runtime for unavailable pointer route, native DnD remains unverified despite step success. macOS inner ZIP SHA-256 76ee5c98103c38ee2518a5ca6efbadfb7eb70164983419d58ae744c36799af46 matches sidecar; 81 entries, zipfile.testzip null, outer API digest/size match. Narrow child done; P05/LAY-17/CMD-01 remain in-progress for broader provider/validation and native visual parity. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1552,8 +1552,8 @@
       "dependencies": [
         "feat-124"
       ],
-      "status": "in-progress",
-      "evidence": "Real FFI parser+workbench+QuickInput8/8; line delimiter/negative/UTF16 emojiCRLFBOMtab/longline, zero-based toggle persistence and preview/cancel passed; analyze0. Full gates running.",
+      "status": "done",
+      "evidence": "Real FFI parser+workbench+QuickInput8/8; line delimiter/negative/UTF16 emojiCRLFBOMtab/longline, zero-based toggle persistence and preview/cancel passed. Final full bash init.sh Flutter1386/1386, Rust tests/Clippy/core build/fmt and analyze0 passed; complete graph all10/31/450 and main366/468/453 CRITICAL no partial/truncated, UNKNOWN retained. Commit 8a4ef28b8f726d9f590f755d00e26f9595230e22; PR CI44016110199 all4 success; Platform44016101825 attempt1 all3 success including macOS Quit/package. App artifacts Linux14299081771/Windows14298788543/macOS14301000303; startup14300048343; macOS DnD14299864011 explicitly skipped at runtime for unavailable pointer route, native DnD remains unverified despite step success. macOS inner ZIP SHA-256 896f698dd7aa9c730d2523e83bc8bc1b21e3e333a89c99ec8d503357441b5858 matches sidecar; 81 entries, zipfile.testzip null, outer API digest/size match. Narrow child done; P05/CMD-03 remain in-progress for native visual/provider modifiers and resource latency validation. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1564,8 +1564,8 @@
       "dependencies": [
         "feat-125"
       ],
-      "status": "in-progress",
-      "evidence": "Focused38/38, analyze0. Query paging431 files, exact200 boundary, stale/close completion, absolute path outside workspace plus UTF16 emoji navigation and disk unchanged. Full gates/review running. Final bash init.sh all gates green Flutter1407/1407, Rust tests/Clippy/core build/fmt, analyze0. Review lifecycle/page guards repaired; watcher teardown test now unmounts before deletion. Hosted pending.",
+      "status": "done",
+      "evidence": "Focused38/38; query paging431 files, exact200 boundary, stale/close completion, absolute path outside workspace plus UTF16 emoji navigation and disk unchanged. Final bash init.sh Flutter1407/1407, Rust tests/Clippy/core build/fmt and analyze0 passed. Review lifecycle/page guards repaired; watcher teardown test unmounts before deletion. Graph all13/5/446 and main375/284/449 CRITICAL no partial/truncated; UNKNOWN retained. Commit 3aa5b975fb4a651a89d89868660ae6159795619b; PR CI44031921916 all4 success; Platform44031913266 attempt2 all3 success (Linux/Windows retained from attempt1). Attempt1 macOS Quit failed but package succeeded; attempt2 Quit/package succeeded. App artifacts Linux14305832499/Windows14305258601/macOS14312076718 (macOS attempt2); startup14312241146; macOS DnD14312400661 explicitly skipped at runtime for unavailable pointer route, native DnD remains unverified despite step success. macOS inner ZIP SHA-256 7744a1fac18e021d40cc9e70dfd5ece6aa4fa831e5c4f0f87b0089687efc43b8 matches sidecar; 81 entries, zipfile.testzip null, outer API digest/size match. Narrow child done; P05/CMD-02 remain in-progress for side-open/copy, provider snapshots and native visual parity. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1576,8 +1576,8 @@
       "dependencies": [
         "feat-126"
       ],
-      "status": "in-progress",
-      "evidence": "Model17/17, workbench+breadcrumb21/21, existingoutline1/1, analyze0. Full gates running. Rustprovider breadth remains P08. Final full init.sh Flutter1425/1425, Rust tests/Clippy/core build/fmt passed; final graph/hosted pending.",
+      "status": "done",
+      "evidence": "Model17/17, workbench+breadcrumb21/21, existing outline1/1; final full init.sh Flutter1425/1425, Rust tests/Clippy/core build/fmt and analyze0 passed. Complete graph all9/13/446 and main386/316/449 CRITICAL no partial/truncated; UNKNOWN retained. Commit d791b452a2dacaafee46e069814d6374a159cdb0; PR CI44037192587 all4 success. Platform44037183025 attempt2 OVERALL FAILURE: Linux/Windows success; macOS tests/Release/clipboard/launch/Quit/package succeeded but native DnD failed (pointer route false/no Flutter events, then foreground/40s drop timeout), so native DnD remains unverified and this is not an all-platform-green run. Attempt1 macOS tests failed; Quit/package skipped. App artifacts Linux14307702499/Windows14308127135/macOS14312600711 (macOS attempt2); startup14311967075; failed macOS DnD14311996326. macOS inner ZIP SHA-256 9dc2626d253c253b2202e4da17b14882e9af0a089a9f7d67206a2c67670bd21d matches sidecar; 81 entries, zipfile.testzip null, outer API digest/size match; package integrity success does not change the DnD failure. Narrow Outline child done under the same caveated completion scope as P05.79; P05/CMD-07 remain in-progress, precise native visuals and Rust provider language breadth (P08) unverified. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -1588,8 +1588,8 @@
       "dependencies": [
         "feat-127"
       ],
-      "status": "in-progress",
-      "evidence": "Focused58/58 including real Rust preview/cancel/category/keyboard side-open; final full gates/review running. Symbolprovider breadth remains P08. Final full gates Flutter1426/1426, Rust tests/Clippy/core/fmt and analyze0; review source-restoration and acceptlatch repaired, guards22 and repeataccept7 green. Hosted pending.",
+      "status": "done",
+      "evidence": "Focused58/58 including real Rust preview/cancel/category/keyboard side-open; review source-restoration and accept latch repaired, guards22/22 and repeat accept7/7 green. Final full init.sh Flutter1426/1426, Rust tests/Clippy/core/fmt and analyze0 passed. Complete graph all11/4/0 mapped processes LOW and main393/283/451 CRITICAL no partial/truncated, UNKNOWN/mapping limits retained. Commit 81da71d988fc72507a354708e0125cfcfae1d3d2; PR CI44044936172 all4 success; Platform44044927371 attempt1 all3 success including macOS Quit/package. App artifacts Linux14310648607/Windows14311960899/macOS14314251587; startup14314505771; macOS DnD14314226342 explicitly skipped at runtime for unavailable pointer route, native DnD remains unverified despite step success. macOS inner ZIP SHA-256 a6a59d4f691580633f5983449ebba8286ea8831357617f0a3d2eaf476165d944 matches sidecar; 81 entries, zipfile.testzip null, outer API digest/size match. Narrow child done; P05/CMD-04 remain in-progress for full group/score and native visual parity, language provider breadth remains P08. Full hosted ledger: docs/diagnostics/2026-11-18-p05/p05.71-76-hosted-ledger.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },

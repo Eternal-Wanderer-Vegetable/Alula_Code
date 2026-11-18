@@ -8,12 +8,12 @@ Last Updated: 2026-11-18
 
 ## Current State
 
-- 唯一工作树 `E:/Temp/alula-pr3-20261117`，分支 `codex/pr3-p05-continuation-20261117`，上游 PR 分支 `codex/vscode-parity-p05`。已推 head `4f2b9bb`；原 `E:/Alula_Code` p00 与 `E:/temp/alula-pr3-p05` 脏工作区不覆盖。
+- 唯一工作树 `E:/Temp/alula-pr3-20261117`，分支 `codex/pr3-p05-continuation-20261117`，上游 PR 分支 `codex/vscode-parity-p05`。已推产品 head `9117a06ef5130c3513648b514a164af481082c64`；原 `E:/Alula_Code` p00 与 `E:/temp/alula-pr3-p05` 脏工作区不覆盖。
 - 当前 P05.80 / feat-132 / LAY-16d：SCM 基本资源列表键盘导航。新 `app/lib/git/git_changes_list.dart` 管理单个 focus/scroll、lazy rows、focus/selection分离、arrows/Home/End reveal、Enter open、Space open preserve focus不暂存、hover独立、action button键盘激活。工作台按workspace key重建列表、Git diff显示panel并拒绝迟到Git/workspace/request结果，Enter按源焦点未变时交焦点。
-- P05.80 组件9/9、组件+Git CLI/真实repo20/20、WorkBench真实临时仓库fixture通过；首次Space文本diff保持焦点且git index不变，显式stage仍有效。最终完整 `bash init.sh` Flutter1444/1444、Rust tests/Clippy/core build、独立cargo fmt与Flutter analyze0通过。提交/hosted尚待；范围报告 `docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md`。
+- P05.80 组件9/9、组件+Git CLI/真实repo20/20、WorkBench真实临时仓库fixture及原最终 `bash init.sh` Flutter1444/1444通过；产品9117a06、PR CI44141662139四job成功。Platform44141648010 attempt1 Linux成功、Windows native DnD drop超时、macOS native Quit调用后20秒未退出；attempt2 Windows全绿（native DnD13 pointerevents），macOS仍运行。2026-11-18启动基线Flutter1442/1444：SCM焦点断言固定100ms不足，改10秒上限等待实际焦点；Smart Enter teardown errno32，改显式卸载/settle/runAsync删除。专项1/1及27/27通过；修正后完整init.sh Flutter1444/1444、Rust tests/Clippy/core、fmt/analyze0通过，首次失败与最终绿日志均归档。范围报告 `docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md`；新诊断 `docs/diagnostics/2026-11-18-p05/p05.80-startup-focus-regression.md`。
 - P05.79 `0683785`，证据 `4f20623`/`4f2b9bb`；PR CI44110829105全绿，Platform44110812720 Linux/Windows全绿，macOS tests/Release/clipboard/Quit/package通过；DnD integration app90秒未ready（Building macOS application...），probe失败，DnD未验证。app artifacts14339774563/14340438602/14344941314，DnD14343719095。
 - P05.78 `76d70d5`，证据80277e4；CI44094751711 attempt2全绿，attempt1既有editor多选tab测试一次空selection，根因未修；隔离重跑通过。Platform44094742100 Linux/Windows通过，macOS tests/Release/clipboard通过，Quit卡住60分钟timeout，package未执行；不可由别的SHA成功覆盖。
-- P05.77 ABI41 `5683e77`、CI fixture build0995dc8；CI44077819111全绿，Platform44077810454三平台全绿，macOS native DnD pointer route不可用skip。P05.71–76实现/历史门禁见progress/各diagnostics；部分tracker仍需按exact run补齐收尾状态，不能伪报。
+- P05.77 ABI41 `5683e77`、CI fixture build0995dc8；CI44077819111全绿，Platform44077810454三平台全绿，macOS native DnD pointer route不可用skip。P05.71–76已核对exact SHA与hosted/ZIP证据并补记窄子项done；P05.75 Platform44037183025 attempt2整体失败（native DnD skip notice后40秒超时），但macOS tests/Release/launch/Quit/package通过。其余五项准确PA成功，macOS DnD因pointer route不可用明确skip。六份macOS ZIP均81项完整且SHA256匹配sidecar；父LAY/CMD/P05不关闭。
 
 ## Blockers / Limits
 
