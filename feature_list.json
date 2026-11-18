@@ -1718,6 +1718,16 @@
       "evidence": "Implemented6IDs/platform.; parsing and breadcrumbsPossible/Visible/Active contexts; mountedgroupfocusowner/singlepicker/exactroutecleanup/pathworkspaceidentity. Keybindings32/32, realkeyboard9/9, oldpicker3/3passed; earliercombined42/42. ReviewfixedEscapeshadow/staleroute/focustraversal andpassed; TabInkWellEscape/covereddialoginvalidationgreen. Finalinit1528/1528 Rusttests/Clippy/core/fmt/analyze0passed. Graphall12/47/444 andmain624/386/421 CRITICAL complete/snapshotstable; privateUNKNOWN sourcechecked. FirstcloseAllGroups disposedScrollControlleradjacentunresolved, logsretained. Exact16a22f3a5c32a143b308c7593b486f5ceacb5cb4 CI44304287547 all4success/1528actualtests; PA44304274319 Win134801656070/Linux134801656488success. Win desktop25/clipboard1/DnD12callbacks app14427772167/DnD14427931973; Linuxclipboard1/launch/DnD23callbacks app14427746148/DnD14428275597. Summary p05.88-hosted-verification.json. macOSnotawaited, WithPicker/revealFocused/fullsymbolpath/provider/device remain gaps, parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-141",
+      "name": "P05.89 编辑器关闭滚动控制器生命周期",
+      "description": "Fix disposed ScrollController reattachment during split-group close with scoped end-of-frame UI cleanup and immediate shared-document release. docs/diagnostics/2026-11-18-p05/p05.89-editor-close-lifetime.md",
+      "dependencies": ["feat-140"],
+      "status": "in-progress",
+      "evidence": "RealcloseAllGroups red at76c2cf8 withoutbreadcrumbcommands; minimaldeferredcontrolleronlyfix preserves synchronoussharedrelease. Newlifetime4/4 andfocusedcombination28/28, full1532/1532 Rusttests/Clippy/core/fmt/analyze0passed. IsolatedCancelgreen; finaldocUnknownDoc synchronous, controllersalivebeforeframe/disposedafter includingWorkbenchteardown. Parentfocusedreviewcompleted; agentreviewproviderfailedtwice notpass. disposeViewHIGH54/5direct/3flows retained. Graphnative mainhardcap1000truncated; fullactualhandlercapture2765/74 critical verifiedsameinvocation/provenance/snapshotstable; all15/0LOW. ExactCIWinLinux pending; macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

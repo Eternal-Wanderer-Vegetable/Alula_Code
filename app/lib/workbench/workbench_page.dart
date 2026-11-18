@@ -14877,7 +14877,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _editorTabLastWidths.remove(owner.region);
       _editorTabHeldWidths.remove(owner.region);
     }
-    doc.disposeView();
+    doc.disposeView(deferScrollControllerDisposal: true);
     if (isLastView) _navigationHistory.closeDocument(id);
     setState(() {
       _syntaxByDoc = nextSyntax;
@@ -24912,10 +24912,20 @@ class OpenDoc {
 
   bool sameDocumentAs(OpenDoc other) => identical(_shared, other._shared);
 
-  void disposeView() {
+  void disposeView({bool deferScrollControllerDisposal = false}) {
     if (_viewDisposed) return;
     _viewDisposed = true;
-    editorScrollController.dispose();
+    if (deferScrollControllerDisposal) {
+      // A collapsing layout can reattach a retained region before removing its
+      // old editor subtree. Keep its painter's repaint source alive until then.
+      final controller = editorScrollController;
+      WidgetsBinding.instance.addPostFrameCallback((_) => controller.dispose());
+      WidgetsBinding.instance.ensureVisualUpdate();
+    } else {
+      editorScrollController.dispose();
+    }
+    // Shared view counts and final document cleanup must stay synchronous when
+    // several views of the same document close in one batch.
     _shared.releaseView();
   }
 }

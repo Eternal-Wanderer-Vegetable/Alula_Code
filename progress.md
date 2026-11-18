@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.87已收尾，当前P05.88 Breadcrumb键盘
+### P05 / feat-027 持续推进；P05.88已收尾，当前P05.89关闭视图生命周期
+
+- 2026-11-18 登记P05.89/feat141，独立真实两组closeAllGroups在HEAD76c2cf8无Breadcrumb命令也确认disposedScrollController重挂异常；_closeDocNowMEDIUM8direct/2flows、disposeViewHIGH5direct/3flows风险保留。修正限定逻辑关闭共享引用立即释放、ScrollController延至明确调度帧结束；孤立dirtyCancel通过；四项生命周期+MRU/OpenEditors/Breadcrumb/copy组合28/28、完整init1532/1532与Rust/Clippy/core/fmt/analyze0通过，testlint修正后4/4复验。父侧源码review完成，代理两次服务错误未计pass。Graphindex默认256MiB耗尽，1GiB重建过；comparemain1000symbol硬截断已用samehandler只读捕获补齐2765symbols/74flows CRITICAL，原生capped响应完整保留，receipt计数与repo/index/graph/tool快照稳定；all15/0LOW不降级HIGH。准确CIWinLinux待补。P05.88收尾76c2cf8已推PR同步。
 
 - 2026-11-18 登记P05.88/feat140六个Breadcrumb键盘focus/select命令与平台键位，补.;解析、左右不循环、picker Escape返回owner编辑器及打开前激活所属组；Active含picker。Workbench/KeybindingSet CRITICAL121/47direct/4modules、私有UNKNOWN源码补查。withPicker/reveal/fullsymbolpath/provider留后续。父侧实现有界widget focusowner（产品代理服务失败未交付），keybindings32/32、真实键盘9/9与旧picker3/3，早期组合42/42；review修复Escape遮挡、精确route/idempotence、覆盖dialog失效、path/workspace资源/索引与菜单focus层级，复审通过。最终init1528/1528、Rust/Clippy/core/fmt/analyze0全绿，graphall12/47/444与main624/386/421 CRITICAL完整稳定。产品16a22f3准确CI44304287547四项/1528tests与PA44304274319 Win/Linux成功，Win desktop25/clipboard1/DnD12callbacks、Linuxclipboard1/launch/DnD23callbacks；summary p05.88-hosted-verification.json归档，feat140限定子项done，mac未等待，父行开放。前139收尾b99e60d已推、CI44297873742全绿，PR同步。
 - 相邻问题：P05.88首轮测试closeAllGroups准备阶段触发layout disposedScrollController，后续树连带失败；根因未定且未修。当前pathless上下文测试避开该路径，不作为已修复证据，后续独立任务复现。

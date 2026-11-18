@@ -1,0 +1,40 @@
+
+  GitNexus Analyzer (1.6.12)
+
+  GitNexus Analyzer (1.6.12)
+  GITNEXUS_MAX_FILE_SIZE: effective threshold 1024KB (default 512KB)
+
+[2K  Skipped 3 large files (>1024KB)
+[2K  - app/windows/flutter/ephemeral/flutter_windows.dll.pdb
+[2K  - docs/diagnostics/2026-10-27-p00/atomic-contributions.json
+[2K  - docs/diagnostics/2026-10-28-p00/p00.4-windows-code-oss-rust-lsp-edit-30m-20261029-181513092.json
+{"level":40,"time":1795006620295,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:7275:27:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"actual-formal:app/test/title_bar_test.dart:1333:60:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"actual-formal:app/test/title_bar_test.dart:1333:60:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/find_replace_history.dart:58:13:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4906:26:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/bridge/alula_core.dart:1673:27:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620296,"name":"gitnexus","language":"dart","context":"copy:app/lib/workbench/workbench_page.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620297,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/editor/multi_selection.dart:688:14:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620297,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4923:19:0","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620297,"name":"gitnexus","language":"dart","context":"actual-formal:app/lib/workbench/workbench_page.dart:4923:19:1","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620297,"name":"gitnexus","language":"dart","context":"copy:app/lib/editor/text_diff.dart","candidateCount":33,"cap":32,"msg":"callable-value-flow: candidate set exceeded the cap; no partial CALLS emitted"}
+{"level":40,"time":1795006620474,"name":"gitnexus","msg":"[scope-resolution] 670 property read/write site(s) name a field that IS defined in this workspace, but only in another language, so per-language inference declined to link them. Queries for these fields return an empty result that does NOT mean \"unused\" — it means the definition anchor is in a different language. Affected: method (rust), arguments (dart), bottom (dart), end (dart/rust), find (dart), first (dart), index (dart), left (dart), right (dart), size (dart/rust/swift), …"}
+{"level":40,"time":1795006621029,"name":"gitnexus","truncation":{"truncated":true,"entryPointCandidatesDropped":1587,"entryPointsUnexplored":0,"walksCutByBudget":18,"tracesDepthCapped":3,"calleesDropped":640,"processesDropped":0},"msg":"[processes] 444 flows reported, but whole flows are MISSING: 1587 of 1787 candidate entry point(s) never ranked in, 0 ranked entry point(s) never traced, 0 deduplicated flow(s) dropped at maxProcesses, 3 trace(s) cut at maxTraceDepth, 640 callee(s) skipped at maxBranching, 18 walk(s) cut by the per-entry trace budget. An absent flow does NOT mean the code path does not exist."}
+[2KIncremental: changed=5, added=2, deleted=0 (skipping wipe + 1780 unchanged file rows preserved)
+[2KIncremental: +120 importer(s) added to writable set (BFS depth ≤ 4)
+
+  Analysis failed: COPY failed for File: Buffer manager exception: Unable to allocate memory! The buffer pool is full and no memory could be freed! The LadybugDB buffer pool (256 MiB) was exhausted during the bulk COPY. Set GITNEXUS_LBUG_BUFFER_POOL_SIZE=<bytes> to raise it (e.g. 4294967296 for 4 GiB); 0 restores LadybugDB's native 80%-of-RAM default.
+Error: COPY failed for File: Buffer manager exception: Unable to allocate memory! The buffer pool is full and no memory could be freed! The LadybugDB buffer pool (256 MiB) was exhausted during the bulk COPY. Set GITNEXUS_LBUG_BUFFER_POOL_SIZE=<bytes> to raise it (e.g. 4294967296 for 4 GiB); 0 restores LadybugDB's native 80%-of-RAM default.
+    at file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/lbug/lbug-adapter.js:927:19
+    at copyCsvWithRetry (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/lbug/lbug-adapter.js:860:13)
+    at async copyNodeCSVs (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/lbug/lbug-adapter.js:920:9)
+    at async loadGraphToLbug (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/lbug/lbug-adapter.js:1073:9)
+    at async runFullAnalysisInner (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/run-analyze.js:2493:17)
+    at async runFullAnalysis (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/core/run-analyze.js:654:16)
+    at async analyzeCommandImpl (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/cli/analyze.js:1155:24)
+    at async analyzeCommand (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/cli/analyze.js:585:9)
+    at async analyzeOrWatchCommandWithRunnerIdentity (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/cli/analyze.js:610:5)
+    at async Command.<anonymous> (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/cli/lazy-action.js:60:9)
