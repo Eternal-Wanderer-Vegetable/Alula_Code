@@ -58,6 +58,9 @@
     "fullGate": "init.sh Rusttests/Clippy/core and Flutter1495/1495 passed, independentfmt/analyze0",
     "review": "parent focused source review; subagent review unavailable, not counted as pass",
     "macos": "device/native/visual gaps deferred unverified per user instruction",
+    "ciRun": 44282450910,
+    "platformRun": 44282442631,
+    "hosted": "CI all4 success; Windows/Linux success; macOS pending/deferred not awaited",
     "parentP05Complete": false
   }
 }

@@ -1684,8 +1684,8 @@
       "name": "P05.85 通知toast到期生命周期",
       "description": "Severity deadlines10/12/15s with hover/descendantfocus/sticky deferral, inactive-window restoration and timer cleanup; dismiss toast only preserving center/unread. docs/diagnostics/2026-11-18-p05/p05.85-notification-toast-lifetime.md",
       "dependencies": ["feat-136"],
-      "status": "in-progress",
-      "evidence": "Registered fixed4bda deadline-based contract, currenttoastmodel has no expiry. ExistingWindowListenerfocus reused, no polling; visible3 bounds timerowners. Component16/16+WorkbenchUI5/5green, oldstateless3severityred captured. Parentreviewtimer lifecycle completed; agentreviewauthfailed notcountedpass. Firstfull1494/1495 failedGitwrite-tree128unknowncause, fixturechangedreadonlyls-files--stage-z+stderr andrealrepo1pass. Finalsequentialinit1495/1495 Rusttests/Clippy/core/fmt/analyze0passed. Graph/exactCIWinLinux pending, macOSdevicegapsdeferred.",
+      "status": "done",
+      "evidence": "Registered fixed4bda deadline-based contract, currenttoastmodel has no expiry. ExistingWindowListenerfocus reused, no polling; visible3 bounds timerowners. Component16/16+WorkbenchUI5/5green, oldstateless3severityred captured. Parentreviewtimer lifecycle completed; agentreviewauthfailed notcountedpass. Firstfull1494/1495 failedGitwrite-tree128unknowncause, fixturechangedreadonlyls-files--stage-z+stderr andrealrepo1pass. Finalsequentialinit1495/1495 Rusttests/Clippy/core/fmt/analyze0passed. Graphall19/7/439 andmain570/311/441 CRITICAL completeexports. Exactproduct7fe2a11 CI44282450910 all4success with1495actualtests; PA44282442631 Win/Linuxsuccess, macOSdeferrednotawaited. Win desktop25/clipboard1/DnD12pointercallbacks app14418790274/DnD14417887324; Linuxclipboard1/launches/DnD20callbacks app14418625084/DnD14417832413. Accuracyboundaries/rawlogs in p05.85-hosted-verification.json. Narrowchilddone, macOSdevicegapsdeferred andparentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

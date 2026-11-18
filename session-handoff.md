@@ -4,30 +4,30 @@ Last Updated: 2026-11-18
 
 ## Current Objective
 
-连续完成PR #3的P05，按docs03 N.2和LAY/CMD矩阵一次一片。PR保持OPEN/DRAFT，不合并；普通进度不需再次批准。用户最新指示：无macOS设备，保留原生/视觉/实测与历史缺口未验证，继续P05；不再以macOS实机或新增native探针排障为前置。已有hosted不替代实机。
+连续完成PR #3的P05，按docs03 N.2和LAY/CMD矩阵一次一片。PR保持OPEN/DRAFT、不合并；普通进度不需批准。用户已明确无macOS设备，原生/视觉/实测和历史缺口暂留未验证，继续P05，不以macOS实机或探针排障为前置。hosted不替代设备。
 
 ## Current State
 
-- 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。已推产品697ab24840ba67f5c38023a75d3b349ceb0efc3a，准确hosted收尾7ffc101已推且PR正文已同步。原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区不覆盖。
-- P05.84/feat136分级校验已完成：兼容legacy string validator，独立typed Info/Warning/Error callback，双callback运行时拒绝。Info/Warning接受，Error即使空消息阻止；当前valid清除消息/border，pending保留旧消息，stale结果/异常忽略，接受去重/历史不变。真实GotoLine只将既有错误转typedError，预览/取消/UTF16/零基偏好保留。
-- P05.84本地专项async+Goto13/13、review通过，顺序完整init.sh Flutter1478/1478、Rusttests/Clippy/core、fmt/analyze0、Harness100/100通过。编辑前QuickInput CRITICAL104/31direct/3modules；最终all14files/2symbols/1flow MEDIUM、main551/286/441 CRITICAL，无partial/truncated，编辑前风险/图谱限制保留。
-- 准确697 CI44272272721四项成功，1478tests/analyze clean；Platform44272261767 Win/Linux全部成功（Win09:12:22、Linux09:07:18Z）。Win desktop25/clipboard1/DnD14pointer回调，app14414110726/DnD14414125474；Linuxclipboard1/两launch/DnD23pointer回调，app14413316861/DnD14413686040。探针只证明原生路由回调，非全部buffer/undo。macOS未等待/未追加probe/download，保留缺口。
-- P05.83/feat135菜单宿主已完成，产品f4b1faf、收尾14b9420。固定SCM右键focus改变但S/anchor不变，ContextMenu/ShiftF10keyup，资源失效guard，明确单文件OpenDiff/Stage/Unstage。Review修复staleShift、延迟焦点目标、慢Git菜单锁和刷新位置；component37/repo1/full1472通过。CI44264627191、Win/Linux平台成功，mac暂留。首轮parallelDLLcopybusy整轮失败保留，顺序重跑绿。
-- P05.80–82及71–76历史证据已登记，mac历史Quit卡住/skip保留，不以新SHA成功抹除。P05/父LAY/CMD仍开放。
+- 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。最新产品7fe2a11d2ec2fc724ae03ad625bc0fdb94aceadf已推，当前待最后137hosted收尾文档提交。原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区保留。
+- P05.85/feat137通知toast期限窄子项done：Info10/Warning12/Error15s，在deadline重评hover/descendantfocus/activeprogress/Erroractions并整周期延期；窗口失焦到期后等聚焦重新给完整周期。到期前恢复/离开不重置，重建不重置。每keyed可见toast1Timer，最多现有3条，无polling；remove/clear/DND/evict/unmount取消。只dismissToast，center/unread保留。Workbench既有WindowListener传windowFocused，不改auxchannel/progress业务。
+- 组件16+真实WorkbenchUI5=21通过，完整顺序init1495/1495、Rusttests/Clippy/core、独立fmt/analyze0、Harness100/100。审查代理认证失败，父侧定向review完成，不能记代理pass。首轮full1494/1495仅SCMfixture write-tree128、无stderr根因未定；改只读gitls-files--stage-z比较path/OID/mode/stage并打印stderr，真实repo1与最终全量通过，失败日志保留。
+- 准确7fe CI44282450910四项成功，actual1495tests/analyze clean；Platform44282442631 Linux10:11:58Z/Windows10:17:50Z成功。Win desktop25/clipboard1/DnD12pointercallbacks，App14418790274/DnD14417887324；Linuxclipboard1/两launch/DnD20pointercallbacks，App14418625084/DnD14417832413。探针只证明原生路由回调，不扩展buffer/undo。mac未等待/下载/probe。
+- 完整graphall19files/7symbols/439flows及main570/311/441 CRITICAL，无partial/truncated、snapshot稳定；toast/私有focusimpactUNKNOWN、空name异常，actualcaller核对，历史共享WorkbenchCRITICAL保留。
+- P05.84/feat136完成，产品697ab24、收尾7ffc101、交接37db43c已推；typedvalidationInfoWarning接受/Error空也阻止，旧API兼容，GotoLine集成；专项13/full1478/review与CI44272272721/WinLinux成功。P05.83/feat135菜单产品f4b1faf、收尾14b9420已推，component37/repo1/full1472与CI/WinLinux成功。
+- P05父阶段及LAY/CMD父行仍开放；前80–82/mac历史证据保留，不以新SHA覆盖。
 
 ## Blockers / Limits
 
-- macOS无设备，原生交互、视觉、实测和既有Quit/AX/DnD等缺口暂留；不为了它阻塞当前P05或新增排障。
-- GitNexus类/方法空name使部分impact异常/UNKNOWN，actualcaller源码补查；共享Workbench/QuickInput CRITICAL风险保留。完整JSON无partial/truncated不消除跨语言/trace预算缺口。
-- SCM完整tree/group/header/mixedindex-worktree、所选batchbusiness P09、实际表格resize、原生font/theme/DPI geometry仍开放；菜单单资源动作范围已明确，销毁源widget后独立PopupMenuRoute可留至取消但迟到action拒绝。
-- 七个generatedregistrants只构建产物未提交。不要全文件format WorkbenchPage（当前GotoLine只有8add/3delete局部diff）。
+- macOS无设备，原生/视觉/实机以及历史Quit/AX/DnD问题暂留，不阻塞继续功能实现，不追加mac排障。
+- GitNexus空name/privateUNKNOWN/跨语言/trace预算限制保留；完整JSON无partial/truncated不代表全覆盖。不要全文件formatWorkbenchPage。
+- 通知ClearAll的activeprogress例外、完整provider/actions/errorwiring仍未完成；本片只验证被移除toast清理和deadline，不改中心清除语义。
+- 七个generatedregistrants为既有构建产物未提交，两原脏树未动。Flutter前build_core，避免同时加载DLL的专项与initbuild并行。
 
 ## Evidence and Files
 
-- docs/diagnostics/2026-11-18-p05/p05.84-quick-input-validation-severity.md、acceptance-map、hosted.md、hosted-verification.json及red/green/full/graphlogs。原始hosted E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85。
-- p05.83-scm-context-menu.md、p05.83-hosted.md/verification及全部menu红绿/full/graph。
-- 完整graph导出脚本E:/Temp/alula-p0580-graph-export.mjs。136准确hosted/状态/交接已随7ffc101推送；代码1478全绿，无新变化不重跑全量。
+- docs/diagnostics/2026-11-18-p05/p05.85-notification-toast-lifetime.md、acceptance-map、hosted.md、hosted-verification.json及red/green/full/graph；原始hosted E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71。
+- P05.83/84同目录完整证据；graph导出脚本E:/Temp/alula-p0580-graph-export.mjs。
 
 ## Next Session First Step
 
-P05.84收尾7ffc101及PR正文已完成，不重复收集。按P05路线继续LAY17/18剩余宿主行为：优先核对通知toast timeout/hover-focus暂停/恢复等当前已实现与差异，避免重复P05.79的progressdone/cancel；完成一个可验证子片再下一项。macOS缺口暂留不等待。Flutter前build_core；PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。当前1478全绿，无新产品变化不要重复测试。
+先提交137最后准确hosted/状态证据（Harness/JSON/diff+graphall/main），更新PR。下一推荐P05.86/feat138 OpenEditors排序：editorOrder/alphabetical/fullPath，按组排序副本不改tabs/MRU/active/view，稳定tie保留原tab顺序；固定版numeric/locale比较需认真对拍并明确locale边界，不能直接lowercasecompareTo。尚未登记/实施；先impact并核对现有OpenEditorsView及pinnedopenEditorsView.ts，headerselector/session偏好属P05适配，正式配置优先级P07。代码1495已绿、无变化不重复全量，mac缺口暂留。

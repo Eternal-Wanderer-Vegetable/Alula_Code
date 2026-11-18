@@ -1,0 +1,326 @@
+{
+  "task": "P05.85 exact hosted verification",
+  "repository": "github.com/Eternal-Wanderer-Vegetable/Alula_Code",
+  "head_sha": "7fe2a11d2ec2fc724ae03ad625bc0fdb94aceadf",
+  "captured_at_utc": "20261118T101806Z",
+  "expected_flutter_tests": 1495,
+  "runs": {
+    "ci": {
+      "id": 44282450910,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44282450910",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 134726394037,
+          "name": "Flutter (analyze + test)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:16:24Z"
+        },
+        {
+          "id": 134726394342,
+          "name": "Rust (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:08:37Z"
+        },
+        {
+          "id": 134726394483,
+          "name": "Harness 文档结构校验",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:08:05Z"
+        },
+        {
+          "id": 134726394593,
+          "name": "Rust (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:09:54Z"
+        }
+      ]
+    },
+    "platform": {
+      "id": 44282442631,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44282442631",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 134726361812,
+          "name": "macOS build, launch smoke, and app package",
+          "status": "in_progress",
+          "conclusion": null,
+          "completed_at": null
+        },
+        {
+          "id": 134726362385,
+          "name": "Linux x64 build and launch smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:11:58Z"
+        },
+        {
+          "id": 134726362412,
+          "name": "Windows x64 build and launch smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "completed_at": "2026-11-18T10:17:11Z"
+        }
+      ]
+    }
+  },
+  "test_evidence": [
+    {
+      "job": "Flutter (analyze + test)",
+      "job_id": 134726394037,
+      "reported_test_footer_counts": [
+        1495
+      ],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": true,
+      "footers_file": "ci-job-134726394037-footers.json"
+    },
+    {
+      "job": "Rust (ubuntu-latest)",
+      "job_id": 134726394342,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 191,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134726394342-footers.json"
+    },
+    {
+      "job": "Harness 文档结构校验",
+      "job_id": 134726394483,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134726394483-footers.json"
+    },
+    {
+      "job": "Rust (windows-latest)",
+      "job_id": 134726394593,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [],
+      "rust_passed_test_executions": 201,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "ci-job-134726394593-footers.json"
+    },
+    {
+      "job": "Linux x64 build and launch smoke",
+      "job_id": 134726362385,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [
+        1
+      ],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "platform-job-134726362385-footers.json"
+    },
+    {
+      "job": "Windows x64 build and launch smoke",
+      "job_id": 134726362412,
+      "reported_test_footer_counts": [],
+      "expanded_footer_counts": [
+        25,
+        1
+      ],
+      "rust_passed_test_executions": 0,
+      "rust_failed": 0,
+      "rust_ignored": 0,
+      "analyze_clean": false,
+      "footers_file": "platform-job-134726362412-footers.json"
+    }
+  ],
+  "native_dnd": {
+    "linux": {
+      "result_file": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/linux-native-dnd-result.json",
+      "pointer_event_count": 20,
+      "pointer_event_types": [
+        "down",
+        "move",
+        "up"
+      ],
+      "callback_payloads": {
+        "drop": {
+          "selectedText": "alpha",
+          "operation": "move",
+          "targetOffsetUtf16": 11
+        },
+        "dragCompleted": {
+          "selectedText": "alpha",
+          "operation": "move"
+        },
+        "crossDocumentDrop": {
+          "selectedText": "alpha",
+          "operation": "copy",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "crossDocumentDragCompleted": {
+          "selectedText": "alpha",
+          "operation": "copy"
+        },
+        "externalDrop": {
+          "text": "external text",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "flutterPointerEventCount": 20,
+        "flutterPointerEventTypes": [
+          "down",
+          "move",
+          "up"
+        ]
+      },
+      "drop_over_operation_counts": {
+        "copy": 19,
+        "move": 11
+      }
+    },
+    "windows": {
+      "result_file": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/windows-native-dnd-result.json",
+      "pointer_event_count": 12,
+      "pointer_event_types": [
+        "cancel",
+        "down",
+        "move"
+      ],
+      "callback_payloads": {
+        "drop": {
+          "selectedText": "alpha",
+          "operation": "move",
+          "targetOffsetUtf16": 11
+        },
+        "dragCompleted": {
+          "selectedText": "alpha",
+          "operation": "move"
+        },
+        "crossDocumentDrop": {
+          "selectedText": "alpha",
+          "operation": "copy",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "crossDocumentDragCompleted": {
+          "selectedText": "alpha",
+          "operation": "copy"
+        },
+        "externalDrop": {
+          "text": "external text",
+          "targetDocumentId": 7002,
+          "targetDocumentVersion": 4,
+          "targetOffsetUtf16": 6
+        },
+        "flutterPointerEventCount": 12,
+        "flutterPointerEventTypes": [
+          "cancel",
+          "down",
+          "move"
+        ]
+      },
+      "drop_over_operation_counts": {
+        "copy": 46,
+        "move": 43
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "workflow": "platform",
+      "id": 14418790274,
+      "name": "alula-windows-x64-7fe2a11d2ec2fc724ae03ad625bc0fdb94aceadf",
+      "size_in_bytes": 15676867,
+      "expired": false,
+      "digest": "sha256:e60660196005d0b5a798b5047e5606eddd67c0943f3f4f7d1409ff4c35958b98"
+    },
+    {
+      "workflow": "platform",
+      "id": 14418625084,
+      "name": "alula-linux-x64-7fe2a11d2ec2fc724ae03ad625bc0fdb94aceadf",
+      "size_in_bytes": 14069134,
+      "expired": false,
+      "digest": "sha256:7668a87641f0d3d732cc4777e830e2eea34433f04a2a5cb93b803448fec91225"
+    },
+    {
+      "workflow": "platform",
+      "id": 14417887324,
+      "name": "alula-windows-native-dnd-44282442631-1",
+      "size_in_bytes": 3851,
+      "expired": false,
+      "digest": "sha256:2ed5081db10e5e132ff76487781ca370609df5b64de2a73c4edaaa4c1746e7d1"
+    },
+    {
+      "workflow": "platform",
+      "id": 14417832413,
+      "name": "alula-linux-native-dnd-44282442631-1",
+      "size_in_bytes": 3293,
+      "expired": false,
+      "digest": "sha256:8d6cdabf0f6ebe3fb77985d84bbefc612077d37ea5f29954dff6f6733c491672"
+    }
+  ],
+  "raw_logs": [
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/ci-job-134726394037.log",
+      "bytes": 339727,
+      "sha256": "815243fb88755893a3207e9b589187154a71f87e08d2b88dfcade1db575ba591"
+    },
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/ci-job-134726394342.log",
+      "bytes": 67650,
+      "sha256": "833a42ecb37c39d146fc34e30a0f35659713e0ed78b964044f640cc7aaee9f62"
+    },
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/ci-job-134726394483.log",
+      "bytes": 13572,
+      "sha256": "e7617e42c9fb04598d9e3037be0f04aba6e93cc3fe899fc234ad8651a17ccb46"
+    },
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/ci-job-134726394593.log",
+      "bytes": 77685,
+      "sha256": "37162de49469dfac9fa83503cea5f7b77c02af048baa9b2927163f0889408c0e"
+    },
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/platform-job-134726362385.log",
+      "bytes": 122061,
+      "sha256": "42285119dda30c5577b28b51ffb8b81d5798545b0d18ad3d6535400aa5ad4530"
+    },
+    {
+      "path": "E:/Temp/alula-p0585-hosted-20261118/20261118T100943Z-4bdecf71/platform-job-134726362412.log",
+      "bytes": 116693,
+      "sha256": "dcc4863c782be74db7d4148d4bc2fbdcf9957199b6cd84a642dab339c82a7382"
+    }
+  ],
+  "macOS_deferred": true,
+  "macOS_in_acceptance": false,
+  "repository_edits": false,
+  "workflow_mutations": false,
+  "workflow_reruns": false,
+  "app_zip_downloads": false,
+  "native_Quit_investigation": false,
+  "actual_flutter_test_footer": 1495,
+  "expected_flutter_count_matches": true,
+  "collection_error_logs": [
+    "fetch-error-20261118T101220Z.log",
+    "fetch-error-20261118T101311Z.log"
+  ]
+}

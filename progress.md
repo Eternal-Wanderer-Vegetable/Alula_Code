@@ -7,7 +7,7 @@
 
 ### P05 / feat-027 持续推进；P05.84已收尾，当前P05.85 toast生命周期
 
-- 2026-11-18 登记P05.85/feat137，补通知toast10/12/15秒自动隐藏、deadline hover/focus/sticky完整周期延期、失焦到期后等聚焦重起，center/unread保留。现有WindowListener焦点接线，无polling，最多3toast计时器；组件/真实工作台红绿/full/review/graph待补。mac设备缺口继续暂留。P05.84收尾7ffc101与交接37db43c已推、PR已同步。
+- 2026-11-18 登记P05.85/feat137，补通知toast10/12/15秒自动隐藏、deadline hover/focus/sticky完整周期延期、失焦到期后等聚焦重起，center/unread保留。现有WindowListener焦点接线，无polling，最多3toast计时器；已推产品7fe2a11；component16+UI5=21、full1495/1495、Rust/Clippy/core/fmt/analyze0通过。父侧review完成，graph完整CRITICAL。准确CI44282450910与Win/Linux平台成功、实际1495tests，证据p05.85-hosted-verification.json。首轮Gitwrite-tree128失败根因未定，改只读index快照+stderr后真实repo和全量通过，失败保留。feat137窄子项done，mac设备缺口继续暂留。P05.84收尾7ffc101与交接37db43c已推、PR已同步。
 
 
 - 2026-11-18 P05.84/feat136已推产品697ab24：兼容legacy validator、独立typed severity回调、Info/Warning可接受、Error即使空消息阻止、pending保持旧消息及stale异常隔离。真实GotoLinetypedError集成，专项13/13、review通过，完整init1478/1478、Rust/Clippy/core/fmt/analyze0全绿。图谱all14/2/1 MEDIUM、main551/286/441 CRITICAL完整导出；编辑前QuickInput CRITICAL104/31direct/3modules风险保留。CI44272272721四项/1478tests与Platform44272261767 Win/Linux全部成功，准确摘要p05.84-hosted-verification.json归档，feat136窄子项done；mac设备缺口暂留未等待，父P05仍开放。
