@@ -1668,6 +1668,16 @@
       "evidence": "Registered fixedreference listWidget/scmViewPane contract. Baseline1462/1462green; freshgraphimpact empty-name exception/UNKNOWN retained with actualcallercheck, priorMEDIUM/CRITICAL risk. macOS device/native gaps explicitlydeferred peruser2026-11-18; no macOS realdevice gate forimplementation. Component37/37+realrepo1/1 pass, redfirst missingmenu and reviewraces captured. Fixed keyupframe scheduling, staleShift, queuedtarget validation, popup/action lock separation andrefreshposition. Finalsequentialinit.sh Flutter1472/1472 Rusttests/Clippy/core passed; independentfmt/analyze0. PriorparallelDLLcopybusyfailedrunretained, notcountedgreen. Fullgraphall21/2/438 andmain537/269/445 CRITICAL completeexports; productf4b1faf. ExactCI44264627191 all4green with1472tests; Platform44264618665 Linux/Windowssuccess, macOSpendingdeferred notclaimed. Win25desktop/clipboard1/DnD13pointercallbacks passed app14409574819/DnD14410820162; Linuxclipboard1/launches/DnD20callbacks app14410022314/DnD14409134624. Narrowchilddonebyavailableplatformrule; fullSCMbatch P09 excluded, macOSdevicegapsdeferred.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-136",
+      "name": "P05.84 QuickInput分级输入校验",
+      "description": "Typed info/warning/error validation while preserving legacy string callbacks, async stale guards/history/accept latch; integrate existing GoToLine typed errors. docs/diagnostics/2026-11-18-p05/p05.84-quick-input-validation-severity.md",
+      "dependencies": ["feat-135"],
+      "status": "in-progress",
+      "evidence": "Registered fixedreference severity contract; QuickInput impact CRITICAL104/31direct/3modules. TypedError blocks evenempty; Info/Warningaccept; bothcallbacks runtimeconflict. Focusedasync+realGoto13/13green, productseverityredcaptured. Info/Warningaccept, Error/emptyErrorblock, validclearsdecoration, pendingretainsmessage, staleexceptionignored andruntimecallbackconflict covered. Reviewpass; fullinit.sh Flutter1478/1478 Rusttests/Clippy/core andindependentfmt/analyze0passed. Completegraph/exactCIWinLinux pending, macOSdevicegapsdeferred; no P08business rule invention.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

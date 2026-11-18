@@ -145,6 +145,129 @@ void main() {
     expect(find.byKey(const ValueKey('quick-input')), findsNothing);
   });
 
+  for (final severity in QuickInputValidationSeverity.values) {
+    testWidgets('typed $severity controls input acceptance', (tester) async {
+      String? accepted;
+      await tester.pumpWidget(MaterialApp(
+          home: Builder(
+        builder: (context) => TextButton(
+          onPressed: () async => accepted = await QuickInput.input(context,
+              prompt: 'typed',
+              value: 'current',
+              validateInputMessage: (_) =>
+                  QuickInputValidationMessage('message', severity)),
+          child: const Text('open'),
+        ),
+      )));
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.text('message'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      if (severity == QuickInputValidationSeverity.error) {
+        expect(accepted, isNull);
+        expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+      } else {
+        expect(accepted, 'current');
+        expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+      }
+    });
+  }
+
+  testWidgets('empty typed error blocks and current valid clears decoration',
+      (tester) async {
+    String? accepted;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+      builder: (context) => TextButton(
+        onPressed: () async => accepted = await QuickInput.input(context,
+            prompt: 'typed',
+            validateInputMessage: (value) => value.isEmpty
+                ? const QuickInputValidationMessage(
+                    '', QuickInputValidationSeverity.error)
+                : null),
+        child: const Text('open'),
+      ),
+    )));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+    expect(find.bySemanticsLabel('错误'), findsWidgets);
+    await tester.enterText(find.byType(TextField), 'valid');
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-input-validation')), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).decoration!.border,
+        InputBorder.none);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(accepted, 'valid');
+  });
+
+  testWidgets(
+      'typed validation retains pending message and ignores stale errors',
+      (tester) async {
+    final pending = <String, Completer<QuickInputValidationMessage?>>{};
+    String? accepted;
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+      builder: (context) => TextButton(
+        onPressed: () async => accepted = await QuickInput.input(context,
+            prompt: 'typed',
+            validateInputMessage: (value) => (pending[value] =
+                    Completer<QuickInputValidationMessage?>())
+                .future),
+        child: const Text('open'),
+      ),
+    )));
+    await tester.tap(find.text('open'));
+    await tester.pump(const Duration(milliseconds: 120));
+    pending['']!.complete(const QuickInputValidationMessage(
+        'previous error', QuickInputValidationSeverity.error));
+    await tester.pump();
+    await tester.enterText(find.byType(TextField), 'old');
+    await tester.pump();
+    expect(find.text('previous error'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'current');
+    await tester.pump();
+    pending['current']!.complete(const QuickInputValidationMessage(
+        'warning', QuickInputValidationSeverity.warning));
+    await tester.pump();
+    pending['old']!.completeError(StateError('obsolete'));
+    await tester.pump();
+    expect(find.text('warning'), findsOneWidget);
+    expect(find.textContaining('obsolete'), findsNothing);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(accepted, 'current');
+  });
+
+  testWidgets('legacy and typed validators are mutually exclusive at runtime',
+      (tester) async {
+    late BuildContext host;
+    await tester.pumpWidget(MaterialApp(home: Builder(builder: (context) {
+      host = context;
+      return const SizedBox.shrink();
+    })));
+    expect(
+        () => QuickInput.show(host,
+            hint: 'both',
+            items: const [],
+            validateInput: (_) => null,
+            validateInputMessage: (_) => null),
+        throwsArgumentError);
+    await expectLater(
+        QuickInput.input(host,
+            prompt: 'both',
+            validateInput: (_) => null,
+            validateInputMessage: (_) => null),
+        throwsArgumentError);
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+  });
+
   testWidgets('input history retains draft and Escape returns null',
       (tester) async {
     String? accepted = 'not closed';

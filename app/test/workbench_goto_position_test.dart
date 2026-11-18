@@ -58,6 +58,15 @@ void main() {
         of: find.byKey(const ValueKey('quick-input')),
         matching: find.byType(TextField));
     expect(input, findsOneWidget);
+    await tester.enterText(input, ':bad');
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel(RegExp(r'^错误')), findsWidgets,
+        reason: 'Product validator exposes a typed error severity');
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('quick-input')), findsOneWidget);
+    expect(controller.selection, original);
+    expect(file.readAsStringSync(), 'alpha\r\n😀beta\r\nlast');
     await tester.enterText(input, ':2:3');
     await tester.pumpAndSettle();
     expect(controller.selection.extentOffset, 8,

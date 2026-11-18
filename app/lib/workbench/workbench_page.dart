@@ -3649,14 +3649,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
         } on Object catch (_) {}
       },
-      validateInput: (value) {
-        if (!identical(_active, doc) || doc.doc.version != version) return '文档已变化，请重新打开定位';
+      validateInputMessage: (value) {
+        if (!identical(_active, doc) || doc.doc.version != version) {
+          return const QuickInputValidationMessage('文档已变化，请重新打开定位',
+              QuickInputValidationSeverity.error);
+        }
         try {
           resolveGotoPosition(doc.doc, value, tabSize: doc.tabSize,
               zeroBasedOffset: _gotoZeroBasedOffset);
           return null;
         } on Object catch (error) {
-          return error is FormatException ? error.message : '位置无效：$error';
+          return QuickInputValidationMessage(
+              error is FormatException ? error.message : '位置无效：$error',
+              QuickInputValidationSeverity.error);
         }
       },
     );

@@ -1,0 +1,15 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/quick_input_async_test.dart: picker accepts a candidate only once during route dismissal
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +2: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +3: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +4: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +5: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +6: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:00 +7: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +8: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +9: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +10: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +11: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +12: E:/temp/alula-pr3-20261117/app/test/workbench_goto_position_test.dart: Go to Line accepts UTF-16 positions and cancel leaves document state intact
+00:01 +13: All tests passed!

@@ -70,6 +70,15 @@ class QuickItemButton {
   final Future<void> Function() onRun;
 }
 
+enum QuickInputValidationSeverity { info, warning, error }
+
+class QuickInputValidationMessage {
+  const QuickInputValidationMessage(this.message, this.severity);
+
+  final String message;
+  final QuickInputValidationSeverity severity;
+}
+
 class QuickInput {
   QuickInput._();
 
@@ -90,6 +99,8 @@ class QuickInput {
     required String prompt,
     String value = '',
     FutureOr<String?> Function(String value)? validateInput,
+    FutureOr<QuickInputValidationMessage?> Function(String value)?
+        validateInputMessage,
     ValueChanged<String>? onValueChanged,
     Widget Function(BuildContext context, String value, VoidCallback refresh)?
         inputActionBuilder,
@@ -104,6 +115,7 @@ class QuickInput {
       inputMode: true,
       initialValue: value,
       validateInput: validateInput,
+      validateInputMessage: validateInputMessage,
       onValueChanged: onValueChanged,
       inputActionBuilder: inputActionBuilder,
       inputHistory: history,
@@ -127,6 +139,8 @@ class QuickInput {
     bool inputMode = false,
     String initialValue = '',
     FutureOr<String?> Function(String value)? validateInput,
+    FutureOr<QuickInputValidationMessage?> Function(String value)?
+        validateInputMessage,
     List<String> inputHistory = const [],
     ValueChanged<String>? onInputAccepted,
     ValueChanged<String>? onValueChanged,
@@ -136,6 +150,9 @@ class QuickInput {
     Future<List<QuickItem>> Function(String query)? itemsProvider,
     VoidCallback? onClose,
   }) {
+    if (validateInput != null && validateInputMessage != null) {
+      throw ArgumentError('Only one QuickInput validator may be provided');
+    }
     // 取消（Esc/屏障点击）且没有执行候选项/按钮、也没有返回上一步时恢复先前
     // 焦点（上游 quickInput 取消恢复语义）；执行/返回都会接管后续焦点。
     final restoreTarget = restoreFocus ?? externalFocus();
@@ -170,6 +187,7 @@ class QuickInput {
               inputMode: inputMode,
               initialValue: initialValue,
               validateInput: validateInput,
+              validateInputMessage: validateInputMessage,
               inputHistory: inputHistory,
               onInputAccepted: onInputAccepted,
               onValueChanged: onValueChanged,
@@ -204,6 +222,7 @@ class _QuickInputPanel extends StatefulWidget {
     required this.inputMode,
     required this.initialValue,
     this.validateInput,
+    this.validateInputMessage,
     required this.inputHistory,
     this.onInputAccepted,
     this.onValueChanged,
@@ -227,6 +246,8 @@ class _QuickInputPanel extends StatefulWidget {
   final bool inputMode;
   final String initialValue;
   final FutureOr<String?> Function(String value)? validateInput;
+  final FutureOr<QuickInputValidationMessage?> Function(String value)?
+      validateInputMessage;
   final List<String> inputHistory;
   final ValueChanged<String>? onInputAccepted;
   final ValueChanged<String>? onValueChanged;
@@ -254,7 +275,10 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   int _validationGeneration = 0;
   bool _validating = false;
   Future<bool>? _validationTask;
-  String? _validationError;
+  QuickInputValidationMessage? _validation;
+
+  bool get _hasValidator =>
+      widget.validateInput != null || widget.validateInputMessage != null;
   int _historyIndex = -1;
   String _historyDraft = '';
   String _lastInputText = '';
@@ -276,7 +300,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     _lastInputText = _controller.text;
     _refilter(_controller.text);
     _controller.addListener(_onInputChanged);
-    if (widget.validateInput != null) unawaited(_validate());
+    if (_hasValidator) unawaited(_validate());
     if (widget.itemsProvider != null) unawaited(_loadItems());
     widget.commands?.addListener(_onCommandsChanged);
   }
@@ -316,7 +340,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     _lastInputText = _controller.text;
     _refilter(_controller.text);
     widget.onValueChanged?.call(_controller.text);
-    if (widget.validateInput != null) unawaited(_validate());
+    if (_hasValidator) unawaited(_validate());
     if (widget.itemsProvider != null) unawaited(_loadItems());
   }
 
@@ -366,16 +390,25 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   Future<bool> _runValidation() async {
-    final validate = widget.validateInput;
-    if (validate == null) return true;
+    if (!_hasValidator) return true;
     final generation = ++_validationGeneration;
     final value = _controller.text;
     setState(() => _validating = true);
-    String? error;
+    QuickInputValidationMessage? validation;
     try {
-      error = await validate(value);
+      final typed = widget.validateInputMessage;
+      if (typed != null) {
+        validation = await typed(value);
+      } else {
+        final message = await widget.validateInput!(value);
+        if (message != null && message.isNotEmpty) {
+          validation = QuickInputValidationMessage(
+              message, QuickInputValidationSeverity.error);
+        }
+      }
     } catch (failure) {
-      error = '校验失败：$failure';
+      validation = QuickInputValidationMessage(
+          '校验失败：$failure', QuickInputValidationSeverity.error);
     }
     if (!mounted ||
         generation != _validationGeneration ||
@@ -384,9 +417,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
     setState(() {
       _validating = false;
-      _validationError = error;
+      _validation = validation;
     });
-    return error == null || error.isEmpty;
+    return validation?.severity != QuickInputValidationSeverity.error;
   }
 
   Future<void> _acceptInput() async {
@@ -413,7 +446,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   void _refreshInputAction() {
     if (widget.itemsProvider != null) unawaited(_loadItems());
     widget.onValueChanged?.call(_controller.text);
-    if (widget.validateInput != null) unawaited(_validate());
+    if (_hasValidator) unawaited(_validate());
     setState(() {});
     _focusNode.requestFocus();
   }
@@ -652,6 +685,19 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final severity = _validation?.severity;
+    final validationColor = switch (severity) {
+      QuickInputValidationSeverity.info => Colors.lightBlue.shade300,
+      QuickInputValidationSeverity.error => Colors.red.shade300,
+      _ => Colors.orange.shade300,
+    };
+    final severityLabel = switch (severity) {
+      QuickInputValidationSeverity.info => '信息',
+      QuickInputValidationSeverity.warning => '警告',
+      QuickInputValidationSeverity.error => '错误',
+      null => '',
+    };
+    final validationText = _validation?.message ?? widget.validationMessage;
     return Container(
       key: const ValueKey('quick-input'),
       margin: const EdgeInsets.only(top: 56),
@@ -693,7 +739,18 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                       decoration: InputDecoration(
                         hintText: widget.hint,
                         isDense: true,
-                        border: InputBorder.none,
+                        border: severity == null
+                            ? InputBorder.none
+                            : UnderlineInputBorder(
+                                borderSide: BorderSide(color: validationColor)),
+                        enabledBorder: severity == null
+                            ? InputBorder.none
+                            : UnderlineInputBorder(
+                                borderSide: BorderSide(color: validationColor)),
+                        focusedBorder: severity == null
+                            ? InputBorder.none
+                            : UnderlineInputBorder(
+                                borderSide: BorderSide(color: validationColor)),
                       ),
                     ),
                   ),
@@ -703,16 +760,19 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
               ],
             ),
           ),
-          if ((_validationError ?? widget.validationMessage) case final message?
-              when message.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: 14, right: 14, bottom: 6),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  message,
-                  key: const ValueKey('quick-input-validation'),
-                  style: TextStyle(fontSize: 11, color: Colors.orange.shade300),
+          if (severity != null || (validationText?.isNotEmpty ?? false))
+            Semantics(
+              label: severityLabel,
+              liveRegion: true,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 14, right: 14, bottom: 6),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    validationText ?? '',
+                    key: const ValueKey('quick-input-validation'),
+                    style: TextStyle(fontSize: 11, color: validationColor),
+                  ),
                 ),
               ),
             ),
