@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.89已收尾，当前P05.90 Breadcrumb reveal
+### P05 / feat-027 持续推进；P05.90已收尾，当前P05.91 OpenEditors关闭组
+
+- 2026-11-18 登记P05.91/feat143组标题多组inline关闭按钮：显式owner全部view含sticky、既有dirty-safe共享关闭、成功空组移除/最后组保留，取消不变。共享close/removeRegionCRITICAL、builderUNKNOWN源码确认，审查后共享close/save仅新增默认不变可选keepEmpty/currentguard，贯穿ordinary/merge确认、SaveAs/overwrite到write，并rootgeneration防A-B-A复活；typedmergeveto保持livesession。新7/7/真实merge嵌套race通过，reviewpass；首full1542/1543lazy行失败经18px按钮几何修正，related22/22、最终init1545/1545与Rust/Clippy/core/fmt/analyze0全绿；graphall9/3/426、main704/705/408CRITICAL完整稳定。准确CIWinLinux待补；相邻siblingroot绝对Breadcrumb overflow保留，后续独立修复。P05.90收尾f5ca288已推PR同步；Breadcrumb侧开真实ID及listFocus/SIDE_GROUP/目录错误合同已核对留后续。
 
 - 2026-11-18 登记P05.90/feat142 breadcrumbs.revealFocused路径段Space/CtrlCmdEnter：文件直接返回owner、不改pin/preview，目录移下一视觉段并列原目录children（避免误进末段symbolpicker）。独立reveal callback，复用picker准确route/ownerguard；narrowimpactLOW3/4/3但历史广域CRITICAL保留。新真实5/5与组合49/49，lazy目录读取/选filefocus问题修正并redgreen复核，复审通过；最终init1537/1537、Rust/Clippy/core/fmt/analyze0全绿，graphall12/19/321与main681/1368/334CRITICAL完整precapcapture、稳定快照，原生cap保留。产品22612d3准确CI44320717951四项/1537tests与PA44320705616 Win/Linux成功，Win desktop25/clipboard1/DnD12callbacks、Linuxclipboard1/launch/DnD21callbacks，summary p05.90-hosted-verification.json已归档，feat142限定子项done；mac未等待/父行开放。141收尾4241eb2已推、PR同步。
 

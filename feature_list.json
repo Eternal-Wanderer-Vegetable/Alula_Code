@@ -1738,6 +1738,16 @@
       "evidence": "ImplementedSpace/CtrlCmdEnter reveal command, terminalownerfocuspreviewpreserved, directorynextvisualsegment/originaldirectorychildren. Reviewfixedlazytree dependency andpickedfilefocus; newreal5/5 andcombined49/49passed. First4/5+boundedwaitred preserved. Finalinit1537/1537 Rusttests/Clippy/core/fmt/analyze0passed; reviewpass. Fullgraphall12/19/321CRITICAL, main681/1368/334CRITICAL actualprecapcapturecomplete/snapshotstable andoriginalnativecapretained. Exact22612d33f8d268651effd2a76c5c1d226a5b233d CI44320717951 all4success/1537actualtests; PA44320705616 Win134858558235/Linux134858557531success. Win desktop25/clipboard1/DnD12callbacks app14435397530/DnD14434214336; Linuxclipboard1/launch/DnD21callbacks app14433809479/DnD14433989064. Summary p05.90-hosted-verification.json. macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-143",
+      "name": "P05.91 Open Editors组标题关闭组",
+      "description": "Multi-group inline Close Group action closes clicked group's all views including sticky through existing dirty-safe route and removes only empty nonlast group. docs/diagnostics/2026-11-18-p05/p05.91-open-editors-close-group.md",
+      "dependencies": ["feat-142"],
+      "status": "in-progress",
+      "evidence": "Implementedmulti-groupinlineCloseGroup inclsticky withguardedemptyremoval. New7/7, ordinaryA-B-AstaleDiscard andmergestaleDiscard/Save/nestedoverwritepreservelivesession/diskpassed. Reviewfixedearlyautoremove, currentguardthroughsavedialogs/diskwrite, typedmergeveto andworkspacegeneration; finalpass. Firstfull1542/1543lazyrowfailed dueM3buttonheight, explicit18pxshrinkwrapfix+22relatedgreen. Finalinit1545/1545 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/3/426 andmain704/705/408CRITICAL complete/snapshotstable. ExactCIWinLinux pending; siblingrootabsoluteBreadcrumb overflowdeferred, macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

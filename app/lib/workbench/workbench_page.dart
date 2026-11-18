@@ -14524,8 +14524,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Future<void> _requestCloseEditorViews(
-    Iterable<_EditorCloseTarget> requestedTargets,
-  ) async {
+    Iterable<_EditorCloseTarget> requestedTargets, {
+    bool keepEmptyGroups = false,
+    bool Function()? isCurrent,
+  }) async {
     final targets = <_EditorCloseTarget>[];
     final seenViews = <OpenDoc>{};
     for (final target in requestedTargets) {
@@ -14596,18 +14598,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         final decision = await _confirmDirtyEditorClose(
           standardDirtyDocuments,
         );
-        if (!mounted ||
+        if (!mounted || isCurrent?.call() == false ||
             decision == null ||
             decision == _DirtyEditorCloseDecision.cancel) {
           return;
         }
         if (decision == _DirtyEditorCloseDecision.save) {
           for (final doc in standardDirtyDocuments) {
+            if (isCurrent?.call() == false) return;
             try {
               if (doc.path == null) {
-                await _saveAsDoc(doc);
+                await _saveAsDoc(doc, isCurrent: isCurrent);
               } else {
-                await _saveDocToPath(doc, doc.path!);
+                await _saveDocToPath(doc, doc.path!, isCurrent: isCurrent);
               }
             } on Object catch (error) {
               if (mounted) {
@@ -14624,6 +14627,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
 
+      if (isCurrent?.call() == false) return;
       for (final doc in finalDocuments) {
         final mergeSession = doc.mergeResultSession;
         if (mergeSession == null || mergeSession.isDisposed) continue;
@@ -14634,6 +14638,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ownerTarget.group,
           doc,
           mergeSession,
+          keepEmptyGroups: keepEmptyGroups,
+          isCurrent: isCurrent,
           closeTargets: currentTargets
               .where((target) => target.doc.sameDocumentAs(doc))
               .toList(growable: false),
@@ -14651,7 +14657,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   Map<int, double>.of(widths);
             }
           }
-          _closeDocNow(target.group, target.doc);
+          if (isCurrent?.call() == false) return;
+          _closeDocNow(target.group, target.doc, keepEmptyGroup: keepEmptyGroups);
         }
       }
     } finally {
@@ -14704,6 +14711,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     OpenDoc doc,
     MergeResultSession session, {
     List<_EditorCloseTarget>? closeTargets,
+    bool keepEmptyGroups = false,
+    bool Function()? isCurrent,
   }) async {
     if (!_mergeCloseInProgress.add(doc.id)) return false;
     try {
@@ -14768,21 +14777,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 ],
               ),
             );
-      if (!mounted || action == null) return false;
+      if (!mounted || action == null || isCurrent?.call() == false) return false;
 
       final outcome = await session.finishClose(
         action,
         save: () async {
+          if (isCurrent?.call() == false) return false;
           if (doc.path == null) {
-            await _saveAsDoc(doc);
+            await _saveAsDoc(doc, isCurrent: isCurrent);
           } else {
-            await _saveDocToPath(doc, doc.path!);
+            await _saveDocToPath(doc, doc.path!, isCurrent: isCurrent);
           }
-          return mounted &&
+          return mounted && isCurrent?.call() != false &&
               !doc.doc.isDirty &&
               doc.diskState == DiskDocumentState.current;
         },
         revert: () async {
+          if (isCurrent?.call() == false) return false;
           try {
             final current = doc.doc.resync();
             final savedText = session.latestSavedResult;
@@ -14806,11 +14817,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           }
         },
         closeResultDocument: () async {
-          if (!mounted) return;
+          if (!mounted || isCurrent?.call() == false) {
+            throw const MergeResultSessionException(
+                MergeResultSessionErrorCode.staleResult,
+                'Close request no longer owns the workspace');
+          }
           final targets = closeTargets ?? [(group: owner, doc: doc)];
           for (final target in targets) {
             if (target.group.docs.any((view) => identical(view, target.doc))) {
-              _closeDocNow(target.group, target.doc);
+              _closeDocNow(target.group, target.doc, keepEmptyGroup: keepEmptyGroups);
             }
           }
         },
@@ -16752,17 +16767,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     await _saveAsDoc(active);
   }
 
-  Future<void> _saveAsDoc(OpenDoc doc) async {
+  Future<void> _saveAsDoc(OpenDoc doc, {bool Function()? isCurrent}) async {
     final path = await _showSaveAsDialog(doc);
-    if (path == null) return;
-    await _saveDocToPath(doc, path);
+    if (path == null || isCurrent?.call() == false) return;
+    await _saveDocToPath(doc, path, isCurrent: isCurrent);
   }
 
   Future<void> _saveDocToPath(
     OpenDoc doc,
     String requestedPath, {
     TextFileOptions? options,
+    bool Function()? isCurrent,
   }) async {
+    if (isCurrent?.call() == false) return;
     for (final view in _viewsOf(doc).toList(growable: false)) {
       _flushInput(view, commitComposition: true);
     }
@@ -16811,9 +16828,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           ],
         ),
       );
-      if (!mounted) return;
+      if (!mounted || isCurrent?.call() == false) return;
       if (action == _ConflictSaveAction.saveAs) {
-        await _saveAsDoc(doc);
+        await _saveAsDoc(doc, isCurrent: isCurrent);
         return;
       }
       if (action != _ConflictSaveAction.overwrite) return;
@@ -16853,6 +16870,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     try {
       var mergeSessionOutOfSync = false;
+      if (isCurrent?.call() == false) return;
       doc.doc.saveFile(targetPath, options: targetOptions);
       doc.doc.markSaved();
       try {
@@ -21091,13 +21109,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _showOpenEditorsGroupContextMenu(details, group)),
         child: Container(
           padding: const EdgeInsets.only(left: 8, top: 3, bottom: 2),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade500,
-            ),
+          child: Row(
+            children: [
+              Expanded(child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade500,
+                ),
+              )),
+              if (_groups.length > 1)
+                IconButton(
+                  key: ValueKey('open-editors-close-group-${group.region}'),
+                  tooltip: '关闭编辑器组',
+                  style: IconButton.styleFrom(
+                    minimumSize: const Size(18, 18),
+                    maximumSize: const Size(18, 18),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                  icon: Icon(Icons.close, size: 13, color: Colors.grey.shade400),
+                  onPressed: () => unawaited(_closeOpenEditorsGroup(group)),
+                ),
+            ],
           ),
         ),
       ));
@@ -21262,6 +21298,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ],
       ),
     );
+  }
+
+  Future<void> _closeOpenEditorsGroup(EditorGroup group) async {
+    final root = _workspaceRoot;
+    final workspaceGeneration = _quickOpenWorkspaceGeneration;
+    if (!identical(_groups[group.region], group)) return;
+    await _requestCloseEditorViews([
+      for (final doc in group.docs.toList(growable: false)) (group: group, doc: doc),
+    ], keepEmptyGroups: true,
+        isCurrent: () => mounted && root == _workspaceRoot &&
+            workspaceGeneration == _quickOpenWorkspaceGeneration &&
+            identical(_groups[group.region], group));
+    if (!mounted || root != _workspaceRoot ||
+        workspaceGeneration != _quickOpenWorkspaceGeneration ||
+        !identical(_groups[group.region], group) ||
+        group.docs.isNotEmpty || _groups.length <= 1) {
+      return;
+    }
+    setState(() {
+      if (!_layout.removeRegion(group.region)) return;
+      _groups.remove(group.region);
+      if (_focusedRegion == group.region) {
+        _focusedRegion = _mostRecentlyActiveRegion(excluding: group.region) ??
+            _groups.keys.first;
+      }
+    });
+    _scheduleStateSave();
+    _syncCommandContext();
   }
 
   void _activateOpenEditorsRow(EditorGroup group, OpenDoc doc) {
