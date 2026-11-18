@@ -8,7 +8,7 @@ Last Updated: 2026-11-18
 
 ## Current State
 
-- 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。已推产品697ab24840ba67f5c38023a75d3b349ceb0efc3a，当前最后hosted收尾文档待提交。原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区不覆盖。
+- 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。已推产品697ab24840ba67f5c38023a75d3b349ceb0efc3a，准确hosted收尾7ffc101已推且PR正文已同步。原E:/Alula_Code和E:/temp/alula-pr3-p05脏工作区不覆盖。
 - P05.84/feat136分级校验已完成：兼容legacy string validator，独立typed Info/Warning/Error callback，双callback运行时拒绝。Info/Warning接受，Error即使空消息阻止；当前valid清除消息/border，pending保留旧消息，stale结果/异常忽略，接受去重/历史不变。真实GotoLine只将既有错误转typedError，预览/取消/UTF16/零基偏好保留。
 - P05.84本地专项async+Goto13/13、review通过，顺序完整init.sh Flutter1478/1478、Rusttests/Clippy/core、fmt/analyze0、Harness100/100通过。编辑前QuickInput CRITICAL104/31direct/3modules；最终all14files/2symbols/1flow MEDIUM、main551/286/441 CRITICAL，无partial/truncated，编辑前风险/图谱限制保留。
 - 准确697 CI44272272721四项成功，1478tests/analyze clean；Platform44272261767 Win/Linux全部成功（Win09:12:22、Linux09:07:18Z）。Win desktop25/clipboard1/DnD14pointer回调，app14414110726/DnD14414125474；Linuxclipboard1/两launch/DnD23pointer回调，app14413316861/DnD14413686040。探针只证明原生路由回调，非全部buffer/undo。macOS未等待/未追加probe/download，保留缺口。
@@ -26,8 +26,8 @@ Last Updated: 2026-11-18
 
 - docs/diagnostics/2026-11-18-p05/p05.84-quick-input-validation-severity.md、acceptance-map、hosted.md、hosted-verification.json及red/green/full/graphlogs。原始hosted E:/Temp/alula-p0584-hosted-20261118/20261118T090442Z-e5150f85。
 - p05.83-scm-context-menu.md、p05.83-hosted.md/verification及全部menu红绿/full/graph。
-- 完整graph导出脚本E:/Temp/alula-p0580-graph-export.mjs。当前待提交仅136准确hosted/状态/交接，不重跑已通过全量。
+- 完整graph导出脚本E:/Temp/alula-p0580-graph-export.mjs。136准确hosted/状态/交接已随7ffc101推送；代码1478全绿，无新变化不重跑全量。
 
 ## Next Session First Step
 
-精确暂存136收尾证据，Harness/JSON/diff与完整GitNexusall/compare-main后提交推送并更新PR正文。随后按P05路线继续LAY17/18剩余宿主行为：优先核对通知toast timeout/hover-focus暂停/恢复等当前已实现与差异，避免重复P05.79的progressdone/cancel；完成一个可验证子片再下一项。macOS缺口暂留不等待。Flutter前build_core；PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。当前1478全绿，无新产品变化不要重复测试。
+P05.84收尾7ffc101及PR正文已完成，不重复收集。按P05路线继续LAY17/18剩余宿主行为：优先核对通知toast timeout/hover-focus暂停/恢复等当前已实现与差异，避免重复P05.79的progressdone/cancel；完成一个可验证子片再下一项。macOS缺口暂留不等待。Flutter前build_core；PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。当前1478全绿，无新产品变化不要重复测试。
