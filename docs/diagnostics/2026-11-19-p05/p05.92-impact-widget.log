@@ -1,0 +1,2150 @@
+
+  GitNexus Impact (1.6.12)
+{
+  "target": {
+    "id": "Class:app/lib/workbench/breadcrumb_navigation.dart:BreadcrumbNavigation",
+    "name": "BreadcrumbNavigation",
+    "type": "Class",
+    "filePath": "app/lib/workbench/breadcrumb_navigation.dart"
+  },
+  "direction": "upstream",
+  "impactedCount": 78,
+  "risk": "CRITICAL",
+  "riskSharedAxes": "MEDIUM",
+  "riskScale": {
+    "comparableAcrossKinds": true,
+    "unusedAxes": []
+  },
+  "epistemic": "exact",
+  "summary": {
+    "direct": 2,
+    "processes_affected": 152,
+    "modules_affected": 20
+  },
+  "byDepthCounts": {
+    "1": 2,
+    "2": 63,
+    "3": 13
+  },
+  "affected_processes": [
+    {
+      "name": "RunBuildCommand → ForDarwin",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 14,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → SanitizeCommandHistoryEntries",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 9,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → _divideBudget",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 11,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → GitDiffSideBySideRow",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 11,
+      "total_hits": 11,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → DocumentLineOffset",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 9,
+      "total_hits": 9,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → ForRustTriple",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 9,
+      "total_hits": 9,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 8,
+      "total_hits": 8,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "EmitCall → LineOf",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 8,
+      "total_hits": 8,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyWorkspaceEdit → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → EditorFoldSymbol",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _hasAdjacentChange",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → EditorLogicalLine",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReviewWorkspaceEdit → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → Compute",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunBuildCommand → SourceSpanException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunBuildCommand → SourceSpanException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_applyIndentation → _hasComposition",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 7,
+      "total_hits": 7,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyOversized → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → TreeFindEntry",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "CancelComposition → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RecoverPending → _splitsSurrogatePair",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 6,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ShowBulkEditPreview → BulkEditPreviewDocumentState",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 6,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → EditorDocumentLineProjection",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _flexibleWeight",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _resourceName",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → AuxiliaryFocusContextEvent",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → EditorClipboardMetadata",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "RunMain → _log",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Spawn → Send_message",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 5,
+      "total_hits": 5,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Adjust_number_under_caret → Bit",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _claimPickerAcceptance",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _hasProbeHeadingPixel",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _match",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _sourceCell",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Combine_conflict → Change",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → _previewSelected",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → Event_file",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → GitDiffPatchOptions",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Paint → VisibleLineToDocumentBoundary",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Push → _removeLinkedTransaction",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → Flag",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_buildEditor → SnippetPlaceholderRange",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "planAcceptAll",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "planAcceptAllCombinations",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "planResolveConflict",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 4,
+      "total_hits": 4,
+      "earliest_broken_step": 3
+    },
+    {
+      "name": "Alula_lsp_shutdown_workspace → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _changeSelection",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _handleGlobalActionKey",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "DidUpdateWidget → ColumnSelectionState",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Line_delete_ranges_utf16 → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Overtype_paste_ranges_utf16 → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "QuitThroughNativeMenu → NativeAppIdentity",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → CargokitUserOptions",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Toggle_line_comment_ignores_blank_lines_in_mixed_selection → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "With_limits → Change",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "finishAccept",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "finishClose",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "recordSavepoint",
+      "type": "Function",
+      "filePath": "app/lib/editor/merge_result_session.dart",
+      "affected_process_count": 3,
+      "total_hits": 3,
+      "earliest_broken_step": 2
+    },
+    {
+      "name": "Alula_lsp_start → DocRegistry",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_stop → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_resource_status → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_symbols → DocRegistry",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_edit_transaction → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyDrag → IsFlexibleNode",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _buildWordSpans",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _bulkAcceptButton",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Completion → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Create → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Create → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Create → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Definition → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → IsMaximized",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Line_offset_over_ffi_uses_utf16_and_reports_invalid_line → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Lsp_gated_ffi_returns_no_lsp_without_start → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MessageHandler → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MessageHandler → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MessageHandler → WindowClassRegistrar",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Paint → EditorPrimaryScrollPosition",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ProcessSnapshot → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "QuitThroughAccessibilityMenu → Attribute",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ResetDivider → IsFlexibleNode",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Run → CanonicalPath",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SampleResourceStatus → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SemanticTokens → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Snapshot → Proc_dir",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Start → AlulaException",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Summarize_reports_peak_and_stable → Summary",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Transpose_ranges_over_ffi_are_versioned_and_utf16_safe → Alula_string_free",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 2,
+      "total_hits": 2,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_completion_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_definition_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_is_dirty → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_mark_saved → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_save_file → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_save_file_with_options → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_savepoint_matches → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_doc_set_savepoint → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_did_open → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_lsp_did_save → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_merge_project_json → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_process_register → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_semantic_tokens_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_camel_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_pascal_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_snake_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_text_transform_title_case → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_cancel → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_poll → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_workspace_symbols_start → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_list_dir → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_read_file → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Alula_ws_read_file_document → New",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ApplyWorkspaceEdit → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "AwakeFromNib → FindWebView",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _findMainWindowController",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Build → _identity",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ColumnSelectionsUtf16 → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Dispose → _cancel",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Extract_workspace_symbols → Shared",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → EditorFoldSymbol",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "InitState → _writeAutoPhase",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "LineDeleteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → AuxiliaryEditorApp",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Main → Find_app_window",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "MoveSidebarView → NormalizeActivityBarViewOrder",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "OnAttachedToEngine → GetPlugin",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "OvertypePasteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "PositionAt → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReadLines → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReadMinimapSample → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ReadValueOfType → ReadBytes",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Save → _stableHash",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SaveFile → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "Savepoint_tracks_exact_utf8_text_and_revert_without_bumping_version → Char_idx_at_utf16",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "SelectSidebarView → NormalizeSidebarViewLocations",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ToggleBlockComment → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "ToggleLineComment → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TogglePanelMaximization → LeafOf",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TransposeRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "TrimTrailingWhitespace → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WordDeleteRanges → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WorkspaceSymbols → _takeJson",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "WriteValue → WriteBytes",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "_registerCommands → Register",
+      "type": "Function",
+      "filePath": "",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 1
+    },
+    {
+      "name": "stream",
+      "type": "Function",
+      "filePath": "app/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc",
+      "affected_process_count": 1,
+      "total_hits": 1,
+      "earliest_broken_step": 2
+    }
+  ],
+  "affected_modules": [
+    {
+      "name": "Editor",
+      "hits": 14,
+      "impact": "direct"
+    },
+    {
+      "name": "Workbench",
+      "hits": 12,
+      "impact": "direct"
+    },
+    {
+      "name": "Test",
+      "hits": 7,
+      "impact": "direct"
+    },
+    {
+      "name": "Flutter",
+      "hits": 3,
+      "impact": "direct"
+    },
+    {
+      "name": "Runner",
+      "hits": 2,
+      "impact": "direct"
+    },
+    {
+      "name": "2026-10-29-p00",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "2026-11-18-p05",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Bench",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Bridge",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_128",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_129",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_133",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_135",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_138",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_139",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_157",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_158",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_202",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_262",
+      "hits": 1,
+      "impact": "direct"
+    },
+    {
+      "name": "Cluster_263",
+      "hits": 1,
+      "impact": "direct"
+    }
+  ],
+  "byDepth": {
+    "1": [
+      {
+        "depth": 1,
+        "name": "_buildBreadcrumb",
+        "filePath": "",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 1,
+        "id": "File:app/lib/workbench/workbench_page.dart",
+        "name": "workbench_page.dart",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      }
+    ],
+    "2": [
+      {
+        "depth": 2,
+        "id": "Class:app/lib/bridge/alula_core.dart:TextFileOptions",
+        "name": "TextFileOptions",
+        "filePath": "app/lib/bridge/alula_core.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/editor/bulk_edit_multidiff_projection.dart:BulkEditMultiDiffProjection",
+        "name": "BulkEditMultiDiffProjection",
+        "filePath": "app/lib/editor/bulk_edit_multidiff_projection.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/editor/bulk_edit_preview.dart:BulkEditPreviewSession",
+        "name": "BulkEditPreviewSession",
+        "filePath": "app/lib/editor/bulk_edit_preview.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_83_showbulkeditpreview",
+            "label": "ShowBulkEditPreview → _selectionState",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_82_showbulkeditpreview",
+            "label": "ShowBulkEditPreview → BulkEditPreviewEditState",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_81_showbulkeditpreview",
+            "label": "ShowBulkEditPreview → BulkEditPreviewDocumentState",
+            "processType": "intra_community",
+            "step": 2
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/editor/merge_result_session.dart:MergeResultSession",
+        "name": "MergeResultSession",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/activity_bar.dart:_ActivityBarState",
+        "name": "_ActivityBarState",
+        "filePath": "app/lib/workbench/activity_bar.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/activity_bar_badges.dart:WorkbenchActivityBarBadges",
+        "name": "WorkbenchActivityBarBadges",
+        "filePath": "app/lib/workbench/activity_bar_badges.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/activity_bar_order.dart:WorkbenchActivityBarOrder",
+        "name": "WorkbenchActivityBarOrder",
+        "filePath": "app/lib/workbench/activity_bar_order.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/activity_bar_pins.dart:WorkbenchActivityBarPins",
+        "name": "WorkbenchActivityBarPins",
+        "filePath": "app/lib/workbench/activity_bar_pins.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/command_history.dart:CommandHistory",
+        "name": "CommandHistory",
+        "filePath": "app/lib/workbench/command_history.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_125_initstate",
+            "label": "InitState → SanitizeCommandHistoryEntries",
+            "processType": "cross_community",
+            "step": 3
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/commands.dart:CommandService",
+        "name": "CommandService",
+        "filePath": "app/lib/workbench/commands.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/keybindings.dart:KeyChord",
+        "name": "KeyChord",
+        "filePath": "app/lib/workbench/keybindings.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/layout_model.dart:WbLeaf",
+        "name": "WbLeaf",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "METHOD_OVERRIDES",
+        "confidence": 0.9,
+        "processes": [
+          {
+            "id": "proc_202_build",
+            "label": "Build → WbLeaf",
+            "processType": "intra_community",
+            "step": 3
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/layout_model.dart:WbSplit",
+        "name": "WbSplit",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "METHOD_OVERRIDES",
+        "confidence": 0.9,
+        "processes": [
+          {
+            "id": "proc_203_build",
+            "label": "Build → WbSplit",
+            "processType": "intra_community",
+            "step": 3
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/panel_position.dart:WorkbenchPanelPosition",
+        "name": "WorkbenchPanelPosition",
+        "filePath": "app/lib/workbench/panel_position.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/recent_history_store.dart:RecentHistoryEntry",
+        "name": "RecentHistoryEntry",
+        "filePath": "app/lib/workbench/recent_history_store.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": [
+          {
+            "id": "proc_74_initstate",
+            "label": "InitState → _pathKey",
+            "processType": "intra_community",
+            "step": 4
+          }
+        ]
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/lib/workbench/workbench_page.dart:OpenDoc",
+        "name": "OpenDoc",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/flutter_engine.h:flutter.FlutterEngine",
+        "name": "FlutterEngine",
+        "filePath": "app/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/flutter_engine.h",
+        "relationType": "METHOD_OVERRIDES",
+        "confidence": 0.9,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:app/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/standard_method_codec.h:flutter.StandardMethodCodec",
+        "name": "StandardMethodCodec",
+        "filePath": "app/windows/flutter/ephemeral/cpp_client_wrapper/include/flutter/standard_method_codec.h",
+        "relationType": "METHOD_OVERRIDES",
+        "confidence": 0.9,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:tools/editor-ime-probe/lib/main.dart:_EditorImeProbePageState",
+        "name": "_EditorImeProbePageState",
+        "filePath": "tools/editor-ime-probe/lib/main.dart",
+        "relationType": "CALLS",
+        "confidence": 0.5,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Class:tools/web-engine-probe/windows/runner/flutter_window.h:FlutterWindow",
+        "name": "FlutterWindow",
+        "filePath": "tools/web-engine-probe/windows/runner/flutter_window.h",
+        "relationType": "METHOD_OVERRIDES",
+        "confidence": 0.9,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/bridge/alula_core.dart:AlulaCore.AlulaCore#1",
+        "name": "AlulaCore",
+        "filePath": "app/lib/bridge/alula_core.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/bulk_edit_preview.dart:BulkEditPreviewSession.BulkEditPreviewSession#1",
+        "name": "BulkEditPreviewSession",
+        "filePath": "app/lib/editor/bulk_edit_preview.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/editor_folding.dart:EditorDocumentLineProjection.EditorDocumentLineProjection#2",
+        "name": "EditorDocumentLineProjection",
+        "filePath": "app/lib/editor/editor_folding.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/rust_text_input_field.dart:_SyntaxTextEditingController._SyntaxTextEditingController#1",
+        "name": "_SyntaxTextEditingController",
+        "filePath": "app/lib/editor/rust_text_input_field.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/rust_text_input_window.dart:RustTextInputWindow.RustTextInputWindow#5",
+        "name": "RustTextInputWindow",
+        "filePath": "app/lib/editor/rust_text_input_window.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/undo_stack.dart:UndoEntry.UndoEntry#12",
+        "name": "UndoEntry",
+        "filePath": "app/lib/editor/undo_stack.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/editor/undo_stack.dart:UndoEntry.UndoEntry#8",
+        "name": "UndoEntry",
+        "filePath": "app/lib/editor/undo_stack.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/command_history.dart:CommandHistory.CommandHistory#1",
+        "name": "CommandHistory",
+        "filePath": "app/lib/workbench/command_history.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/keybindings.dart:KeybindingSet.KeybindingSet#2",
+        "name": "KeybindingSet",
+        "filePath": "app/lib/workbench/keybindings.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/layout_controller.dart:WorkbenchLayout.WorkbenchLayout#1",
+        "name": "WorkbenchLayout",
+        "filePath": "app/lib/workbench/layout_controller.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/layout_model.dart:WbLeaf.WbLeaf#6",
+        "name": "WbLeaf",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/layout_model.dart:WbSplit.WbSplit#15",
+        "name": "WbSplit",
+        "filePath": "app/lib/workbench/layout_model.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/workbench_page.dart:OpenDoc.OpenDoc#1",
+        "name": "OpenDoc",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/lib/workbench/workbench_page.dart:OpenDoc.OpenDoc#11",
+        "name": "OpenDoc",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:app/packages/irondash_engine_context/cargokit/build_tool/lib/src/builder.dart:RustBuilder.RustBuilder#2",
+        "name": "RustBuilder",
+        "filePath": "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/builder.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Constructor:tools/vscode-parity/macos-native-dnd-input.swift:NativeAppIdentity.init",
+        "name": "init",
+        "filePath": "tools/vscode-parity/macos-native-dnd-input.swift",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:app/lib/main.dart",
+        "name": "main.dart",
+        "filePath": "app/lib/main.dart",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:crates/editor-core/src/ffi.rs",
+        "name": "ffi.rs",
+        "filePath": "crates/editor-core/src/ffi.rs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:crates/editor-core/src/lib.rs",
+        "name": "lib.rs",
+        "filePath": "crates/editor-core/src/lib.rs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-10-27-p00/capture-reference.mjs",
+        "name": "capture-reference.mjs",
+        "filePath": "docs/diagnostics/2026-10-27-p00/capture-reference.mjs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-inspector-protocol-run/inspector-protocol-client.py",
+        "name": "inspector-protocol-client.py",
+        "filePath": "docs/diagnostics/2026-10-27-p00/p00.4-linux-wpe-2.52.6-inspector-protocol-run/inspector-protocol-client.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py",
+        "name": "p00.4-wsl-rust-ra-idle-repeat.py",
+        "filePath": "docs/diagnostics/2026-10-29-p00/p00.4-wsl-rust-ra-idle-repeat.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-18-p05/p05.82-validate.cjs",
+        "name": "p05.82-validate.cjs",
+        "filePath": "docs/diagnostics/2026-11-18-p05/p05.82-validate.cjs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-18-p05/p05.82-watchdog-validate.cjs",
+        "name": "p05.82-watchdog-validate.cjs",
+        "filePath": "docs/diagnostics/2026-11-18-p05/p05.82-watchdog-validate.cjs",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:docs/diagnostics/2026-11-18-p05/p05.89-graph-full-export.mjs",
+        "name": "p05.89-graph-full-export.mjs",
+        "filePath": "docs/diagnostics/2026-11-18-p05/p05.89-graph-full-export.mjs",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/bench/bench.py",
+        "name": "bench.py",
+        "filePath": "tools/bench/bench.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/vscode-parity/export-atomic-contributions.mjs",
+        "name": "export-atomic-contributions.mjs",
+        "filePath": "tools/vscode-parity/export-atomic-contributions.mjs",
+        "relationType": "ACCESSES",
+        "confidence": 0.55,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/vscode-parity/linux-native-dnd-input.py",
+        "name": "linux-native-dnd-input.py",
+        "filePath": "tools/vscode-parity/linux-native-dnd-input.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/vscode-parity/macos-native-dnd-input.swift",
+        "name": "macos-native-dnd-input.swift",
+        "filePath": "tools/vscode-parity/macos-native-dnd-input.swift",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/vscode-parity/runtime-probe/extension.js",
+        "name": "extension.js",
+        "filePath": "tools/vscode-parity/runtime-probe/extension.js",
+        "relationType": "USES",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/vscode-parity/windows-native-dnd-input.py",
+        "name": "windows-native-dnd-input.py",
+        "filePath": "tools/vscode-parity/windows-native-dnd-input.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "File:tools/web-engine-probe/linux/webkitgtk_probe.py",
+        "name": "webkitgtk_probe.py",
+        "filePath": "tools/web-engine-probe/linux/webkitgtk_probe.py",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession._addResolutionSnapshot#1",
+        "name": "_addResolutionSnapshot",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession._sameSnapshot#3",
+        "name": "_sameSnapshot",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession._validatePlanIdentity#1",
+        "name": "_validatePlanIdentity",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession.applyPlan#2",
+        "name": "applyPlan",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/workspace_edit.dart:WorkspaceEditPlanner._applyResolved#2",
+        "name": "_applyResolved",
+        "filePath": "app/lib/editor/workspace_edit.dart",
+        "relationType": "CALLS",
+        "confidence": 0.5,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/workspace_edit.dart:WorkspaceEditPlanner._resolve#2",
+        "name": "_resolve",
+        "filePath": "app/lib/editor/workspace_edit.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/workspace_edit.dart:WorkspaceEditPlanner.plan#2",
+        "name": "plan",
+        "filePath": "app/lib/editor/workspace_edit.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/editor/workspace_edit.dart:_TextIndex.offset#1",
+        "name": "offset",
+        "filePath": "app/lib/editor/workspace_edit.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/layout_store.dart:LayoutStore.save#1",
+        "name": "save",
+        "filePath": "app/lib/workbench/layout_store.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/lib/workbench/layout_store.dart:LayoutStore.tryLoad#0",
+        "name": "tryLoad",
+        "filePath": "app/lib/workbench/layout_store.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 2,
+        "id": "Method:app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_pod.dart:BuildPod.build#0",
+        "name": "build",
+        "filePath": "app/packages/irondash_engine_context/cargokit/build_tool/lib/src/build_pod.dart",
+        "relationType": "ACCESSES",
+        "confidence": 1,
+        "processes": [
+          {
+            "id": "proc_304_runbuildcommand",
+            "label": "RunBuildCommand → CrateInfo",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_295_runbuildcommand",
+            "label": "RunBuildCommand → SourceSpanException",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_301_runbuildcommand",
+            "label": "RunBuildCommand → CargoBuildOptions",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_216_runbuildcommand",
+            "label": "RunBuildCommand → ForDarwin",
+            "processType": "intra_community",
+            "step": 2
+          },
+          {
+            "id": "proc_306_runbuildcommand",
+            "label": "RunBuildCommand → CargokitCrateOptions",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_305_runbuildcommand",
+            "label": "RunBuildCommand → ManifestException",
+            "processType": "cross_community",
+            "step": 2
+          },
+          {
+            "id": "proc_302_runbuildcommand",
+            "label": "RunBuildCommand → PrecompiledBinaries",
+            "processType": "cross_community",
+            "step": 2
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "depth": 3,
+        "id": "Class:app/lib/workbench/workbench_page.dart:_WorkbenchPageState",
+        "name": "_WorkbenchPageState",
+        "filePath": "app/lib/workbench/workbench_page.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/macos/Flutter/GeneratedPluginRegistrant.swift",
+        "name": "GeneratedPluginRegistrant.swift",
+        "filePath": "app/macos/Flutter/GeneratedPluginRegistrant.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift",
+        "name": "Package.swift",
+        "filePath": "app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Sources/FlutterGeneratedPluginSwiftPackage/FlutterGeneratedPluginSwiftPackage.swift",
+        "name": "FlutterGeneratedPluginSwiftPackage.swift",
+        "filePath": "app/macos/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Sources/FlutterGeneratedPluginSwiftPackage/FlutterGeneratedPluginSwiftPackage.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/macos/Runner/AppDelegate.swift",
+        "name": "AppDelegate.swift",
+        "filePath": "app/macos/Runner/AppDelegate.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/macos/Runner/MainFlutterWindow.swift",
+        "name": "MainFlutterWindow.swift",
+        "filePath": "app/macos/Runner/MainFlutterWindow.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:app/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc",
+        "name": "standard_codec.cc",
+        "filePath": "app/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:docs/diagnostics/2026-10-27-p00/atomic-contributions.md",
+        "name": "atomic-contributions.md",
+        "filePath": "docs/diagnostics/2026-10-27-p00/atomic-contributions.md",
+        "relationType": "IMPORTS",
+        "confidence": 0.8,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:tools/web-engine-probe/macos/Flutter/GeneratedPluginRegistrant.swift",
+        "name": "GeneratedPluginRegistrant.swift",
+        "filePath": "tools/web-engine-probe/macos/Flutter/GeneratedPluginRegistrant.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:tools/web-engine-probe/macos/Runner/AppDelegate.swift",
+        "name": "AppDelegate.swift",
+        "filePath": "tools/web-engine-probe/macos/Runner/AppDelegate.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "File:tools/web-engine-probe/macos/Runner/MainFlutterWindow.swift",
+        "name": "MainFlutterWindow.swift",
+        "filePath": "tools/web-engine-probe/macos/Runner/MainFlutterWindow.swift",
+        "relationType": "IMPORTS",
+        "confidence": 1,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession._rememberResolutionSnapshot#0",
+        "name": "_rememberResolutionSnapshot",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      },
+      {
+        "depth": 3,
+        "id": "Method:app/lib/editor/merge_result_session.dart:MergeResultSession.validatePlan#1",
+        "name": "validatePlan",
+        "filePath": "app/lib/editor/merge_result_session.dart",
+        "relationType": "CALLS",
+        "confidence": 0.85,
+        "processes": []
+      }
+    ]
+  }
+}
+(node:53824) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)

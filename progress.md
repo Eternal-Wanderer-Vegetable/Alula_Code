@@ -5,7 +5,9 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.90已收尾，当前P05.91 OpenEditors关闭组
+### P05 / feat-027 持续推进；P05.91已收尾，当前P05.92 Breadcrumb水平视口
+
+- 2026-11-19 登记P05.92/feat144，独立修复切换同级workspace后旧文件absolute路径Row overflow，水平有界视口/键盘揭示/挂载资源释放，不删路径段或常驻polling。代理631仅helper+新overflowtest；真实red两组Row溢出738/749px已捕获，freshimpact控件CRITICAL78/2direct/152flows、privateCRITICAL3/1direct/140flows，文件LOW不降级。最小SingleChildScrollView+ownedcontroller/单currentsegmentkey/coalescedpostframe完成，新2+旧17组合19/19、父侧review（代理服务失败未计pass）通过；最终init1547/1547、Rust/Clippy/core/fmt/analyze0全绿，graphall9/12/434、main724/675/419CRITICAL完整稳定。准确CIWinLinux待补。143收尾4e7a622已推PR同步。
 
 - 2026-11-18 登记P05.91/feat143组标题多组inline关闭按钮：显式owner全部view含sticky、既有dirty-safe共享关闭、成功空组移除/最后组保留，取消不变。共享close/removeRegionCRITICAL、builderUNKNOWN源码确认，审查后共享close/save仅新增默认不变可选keepEmpty/currentguard，贯穿ordinary/merge确认、SaveAs/overwrite到write，并rootgeneration防A-B-A复活；typedmergeveto保持livesession。新7/7/真实merge嵌套race通过，reviewpass；首full1542/1543lazy行失败经18px按钮几何修正，related22/22、最终init1545/1545与Rust/Clippy/core/fmt/analyze0全绿；graphall9/3/426、main704/705/408CRITICAL完整稳定。产品adffce0准确CI44350097917四项/1545tests与PA44350075665 Win/Linux成功，Win desktop25/clipboard1/DnD12callbacks、Linuxclipboard1/launch/DnD19callbacks，summary p05.91-hosted-verification.json归档，feat143限定子项done；相邻siblingroot绝对Breadcrumb overflow保留，后续独立修复。P05.90收尾f5ca288已推PR同步；Breadcrumb侧开真实ID及listFocus/SIDE_GROUP/目录错误合同已核对留后续。
 

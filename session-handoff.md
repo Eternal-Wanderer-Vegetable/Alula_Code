@@ -9,7 +9,8 @@ Last Updated: 2026-11-19
 ## Current State
 
 - 工作树E:/temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，push origin HEAD:codex/vscode-parity-p05。原E:/Alula_Code和E:/temp/alula-pr3-p05脏树保留；仅7个generatedregistrant既有构建差异不提交。
-- 当前唯一P05.91/feat143 Open Editors多组标题inline关闭组：显式owner全部view含sticky，dirty-safe关闭后仅guardedhelper移空组、保留最后组。按钮显式18px/shrinkWrap维持列表几何。
+- 当前唯一P05.92/feat144 Breadcrumb长路径水平视口：已登记docs03/feature/progress与docs/diagnostics/2026-11-19-p05/p05.92-breadcrumb-overflow.md。helperbreadcrumb_navigation.dart和新overflowtest实现完毕；真实red738/749px，新2+相关17=19/19green，父侧review（代理两次provider失败未记pass）。最终full1547/1547、Rust/Clippy/core/fmt/analyze0全绿，graphall9/12/434与main724/675/419CRITICAL完整稳定。待提交产品与准确CIWindowsLinux；代理均结束勿重复委派。
+- P05.91/feat143已完成 Open Editors多组标题inline关闭组：显式owner全部view含sticky，dirty-safe关闭后仅guardedhelper移空组、保留最后组。按钮显式18px/shrinkWrap维持列表几何。
 - review发现原postawaitguard太晚，现_requestCloseEditorViews可选keepEmptyGroups/isCurrent默认不变，inlineonly传root/generation/group身份；dirty确认/每次保存/关闭前检查，SaveAs/外部overwrite到实际写盘都传guard。合并确认前与save/revert检查，最终closecallbackveto抛现有typed异常使finishClose不dispose活session。A->B->A旧请求不复活。最终独立source reviewpass。
 - 新组按钮7/7，包括ordinaryworkspaceA-B-A staleDiscard；新增一个真实merge回归涵盖旧Discard/Save与nestedexternaloverwrite，session/文本/磁盘保留。首次full1542/1543因M3按钮撑高导致既有Cancel测试lazy行离屏失败，原日志保留；显式尺寸后related22green，最终完整init1545/1545、Rusttests/Clippy/core、独立fmt/analyze0通过。
 - 完整graph all9files/3symbols/426flows、main704/705/408 CRITICAL，计数/原prefix/uniqueID/noquerydegradation/snapshot稳定。共享close/removeRegion CRITICAL及图谱覆盖缺口保留。产品adffce093e1ecdb281d3e1c3ef7c57a9ca87559a已推；准确CI44350097917四项/1545tests与PA44350075665 Windows134962980805/Linux134962979397成功。Win desktop25/clipboard1/DnD12callbacks app14447688893/DnD14448258131；Linuxclipboard1/launch/DnD19callbacks app14449570384/DnD14446599804。collector完成，raw E:/Temp/alula-p0591-hosted-20261119/20261118T164356Z-6a924d46；summary已归档，feat143限定子项done，待最后证据提交。

@@ -1748,6 +1748,16 @@
       "evidence": "Implementedmulti-groupinlineCloseGroup inclsticky withguardedemptyremoval. New7/7, ordinaryA-B-AstaleDiscard andmergestaleDiscard/Save/nestedoverwritepreservelivesession/diskpassed. Reviewfixedearlyautoremove, currentguardthroughsavedialogs/diskwrite, typedmergeveto andworkspacegeneration; finalpass. Firstfull1542/1543lazyrowfailed dueM3buttonheight, explicit18pxshrinkwrapfix+22relatedgreen. Finalinit1545/1545 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/3/426 andmain704/705/408CRITICAL complete/snapshotstable. Exactadffce093e1ecdb281d3e1c3ef7c57a9ca87559a CI44350097917 all4success/1545actualtests; PA44350075665 Win134962980805/Linux134962979397success. Win desktop25/clipboard1/DnD12callbacks app14447688893/DnD14448258131; Linuxclipboard1/launch/DnD19callbacks app14449570384/DnD14446599804. Summary p05.91-hosted-verification.json. siblingrootabsoluteBreadcrumb overflowdeferred, macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-144",
+      "name": "P05.92 Breadcrumb长路径水平视口",
+      "description": "Fix absolute/long path breadcrumb overflow with bounded horizontal scrolling, event-driven focused-segment reveal and mounted controller disposal. docs/diagnostics/2026-11-19-p05/p05.92-breadcrumb-overflow.md",
+      "dependencies": ["feat-143"],
+      "status": "in-progress",
+      "evidence": "TrueWorkbench red738/749px overflow fixedbyboundedhorizontalviewport, ownedScrollController/FocusNode/singlecurrentkey/coalescedeventreveal. New2+existing17=19/19passed inclresize/manualscroll/resourcechange/disposal andtext/version/selection/dirty/actualundo-redo/diskinvariants. Parentreviewcompleted afteragentproviderfailure notpass. Finalinit1547/1547 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/12/434 andmain724/675/419CRITICAL complete/snapshotstable; preeditCRITICALretained. ExactCIWindowsLinux pending; macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

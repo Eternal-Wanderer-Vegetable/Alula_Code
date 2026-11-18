@@ -1,0 +1,38 @@
+00:00 +0: loading E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart
+00:00 +0: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: horizontal scrolling retains every segment and reveals last and previous focus
+00:00 +1: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: registers six breadcrumb commands with live context guards
+00:01 +2: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the folder breadcrumb segment opens a picker of tree children
+00:02 +3: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the folder breadcrumb segment opens a picker of tree children
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-pickerdba37fd8/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-pickerdba37fd8/workspace\src)
+PICKERDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), 查看(V), ..., lib.rs, main.rs)
+00:02 +4: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:02 +4: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: the file breadcrumb segment opens the symbol picker with keyboard support
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-pickerd07e939/workspace\src)
+SYMDBG texts=(main.rs - workspace - Alula Code, 文件(F), 编辑(E), ..., fn main, fn helper_fn)
+00:02 +5: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +6: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +7: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +7: E:/temp/alula-pr3-20261117/app/test/breadcrumb_picker_test.dart: a folder without children shows an empty state and reveal still works
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker8fa3f7f7/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-picker8fa3f7f7/workspace\src)
+00:03 +8: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +9: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +9: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: focus and select shortcut opens symbols and Escape restores owner
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardfd983bc5/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardfd983bc5/workspace\other.rs)
+00:03 +10: E:/temp/alula-pr3-20261117/app/test/breadcrumb_overflow_test.dart: two groups retain old absolute paths after sibling workspace switch without breadcrumb overflow
+00:03 +11: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: Space on a folder selects the next segment and lists siblings
+00:04 +11: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\other.rs)
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarda5649511/workspace\other.rs)
+00:04 +12: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Enter and Down open folder picker and picked file keeps its group
+00:04 +13: E:/temp/alula-pr3-20261117/app/test/breadcrumb_reveal_test.dart: folder reveal cancels back to its owner or preserves other focus
+00:04 +14: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: mouse activates a nonfocused owner before awaiting its picker
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde4f56b82/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde4f56b82/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboarde4f56b82/workspace\other.rs)
+00:04 +15: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: outside dismissal preserves another editor focus and clears state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3910d80/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3910d80/workspace\other.rs)
+00:05 +16: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: Tab focuses a picker item and Escape still returns to its owner
+BCDBG seg=[src, main.rs] idx=0 node=C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard7f96368d/workspace\src children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard7f96368d/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard7f96368d/workspace\other.rs)
+00:05 +17: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: resource invalidation removes a covered picker but keeps its dialog
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardae8b869e/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboardae8b869e/workspace\other.rs)
+00:06 +18: E:/temp/alula-pr3-20261117/app/test/breadcrumb_keyboard_test.dart: changing the picker resource clears stale breadcrumb state
+BCDBG seg=[src, main.rs] idx=1 node=null children=null roots=(C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3ea7332d/workspace\src, C:\Users\VEGETA~1\AppData\Local\Temp\alula-breadcrumb-keyboard3ea7332d/workspace\other.rs)
+00:06 +19: All tests passed!
