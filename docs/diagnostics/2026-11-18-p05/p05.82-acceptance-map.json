@@ -1,0 +1,62 @@
+{
+  "feature": "feat-134",
+  "slice": "P05.82 macOS native Quit identity/exit diagnostics",
+  "productCommit": "2c04a888207fe35e1454983ac129ba5c5fe9f27b",
+  "scope": "Diagnostic helper/workflow; product shutdown route, menu matching predicate and fallback order unchanged",
+  "localEvidence": {
+    "script": "p05.82-validate.cjs (copy outside repository before running)",
+    "result": "p05.82-local-validation.json",
+    "yaml": "parsed",
+    "bashRunBlocks": 21,
+    "swiftTreeSitter": "zero syntax ERROR/missing nodes; not Swift type checking",
+    "workflowFixtures": 10,
+    "fullFlutterTests": 1462,
+    "analyzeIssues": 0,
+    "nativeCompileExecutedLocally": false
+  },
+  "contracts": [
+    {
+      "contract": "Bind exactly one newly launched canonical bundle identity, excluding prelaunch instances",
+      "localEvidence": "Static helper review; mocked workflow bind-zero/bind-multiple/invalid-pid branches fail",
+      "boundary": "Mocks do not execute Swift candidate lookup, launch-date precision or actual PID reuse checks",
+      "nativeStatus": "pending"
+    },
+    {
+      "contract": "Quit targets the bound PID/launch date/bundle/executable identity",
+      "localEvidence": "Static helper review and mock --quit-native-menu receives the target JSON path",
+      "boundary": "NSRunningApplication freshness and native action identity need macOS observation",
+      "nativeStatus": "pending"
+    },
+    {
+      "contract": "Log timestamped AX attributes, match reason and press result without changing match predicate",
+      "localEvidence": "Targeted source review confirms identical five-attribute order and prefix/Command-Q predicate",
+      "boundary": "Actual AX attributes, localized menu behavior and action delivery not locally exercised",
+      "nativeStatus": "pending"
+    },
+    {
+      "contract": "Only app gone + wrapper gone + open_status=0 satisfies exit observation within existing20s",
+      "localEvidence": "Extracted workflow success fixture plus identity-unknown/app-alive/wrapper-alive/both-alive/premature-wrapper/nonzero-status fixtures",
+      "boundary": "Mock helper returns observation classifications; Swift monotonic timer and OS liveness require native run",
+      "nativeStatus": "pending"
+    },
+    {
+      "contract": "Preserve failure while recording available completed-wrapper status; do not block on a live wrapper",
+      "localEvidence": "Current extracted workflow fixtures and targeted failure-branch review",
+      "boundary": "Native macOS Bash3.2 child reaping and cached wait status remain pending",
+      "nativeStatus": "pending"
+    },
+    {
+      "contract": "Capture process/window evidence before identity-specific cleanup; never kill all app processes by name",
+      "localEvidence": "Static workflow review; mocked process/helper APIs in shell fixtures",
+      "boundary": "Actual CGWindow/ps output and validated process cleanup not locally exercised",
+      "nativeStatus": "pending"
+    }
+  ],
+  "hosted": {
+    "ciRun": 44240605866,
+    "platformRun": 44240598443,
+    "status": "CI success; Windows/Linux platform success; macOS tests/compile/native outcome pending",
+    "quitRootCauseFixed": false,
+    "parentP05Complete": false
+  }
+}

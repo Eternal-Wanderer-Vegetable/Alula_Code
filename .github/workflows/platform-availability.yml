@@ -914,8 +914,88 @@ jobs:
           log="$RUNNER_TEMP/alula-macos-native-titlebar.log"
           before="$RUNNER_TEMP/alula-macos-native-before.json"
           target="$RUNNER_TEMP/alula-macos-native-target.json"
+          # Absolute monotonic deadlines are shared across retries/cleanup calls.
+          native_watchdog() {
+            python3 -I -u - "$log" "$@" <<'PY'
+          import datetime
+          import math
+          import os
+          import signal
+          import subprocess
+          import sys
+          import tempfile
+          import time
+
+          log_path, mode, *args = sys.argv[1:]
+          if mode == "deadline":
+              seconds = float(args[0])
+              if not math.isfinite(seconds) or not 0 < seconds <= 120:
+                  sys.exit("Invalid native helper budget")
+              print(time.monotonic() + seconds, flush=True)
+              sys.exit(0)
+          deadline, stage, capture, *command = args
+          deadline = float(deadline)
+          if mode != "run" or not math.isfinite(deadline) or deadline > time.monotonic() + 121:
+              sys.exit("Invalid native helper deadline")
+          with open(log_path, "a", encoding="utf-8", buffering=1) as output, tempfile.TemporaryFile() as captured:
+              def mark(event, **fields):
+                  stamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                  text = f"{stamp} watchdog stage={stage} event={event} {fields}"
+                  print(text, file=sys.stderr, flush=True)
+                  print(text, file=output, flush=True)
+
+              process = None
+              def interrupted(signum, frame):
+                  raise subprocess.TimeoutExpired(command, 0)
+
+              signal.signal(signal.SIGTERM, interrupted)
+              signal.signal(signal.SIGINT, interrupted)
+              mark("start")
+              try:
+                  # Reserve termination grace inside the external deadline.
+                  remaining = deadline - time.monotonic() - 0.5
+                  if remaining <= 0:
+                      raise subprocess.TimeoutExpired(command, 0)
+                  process = subprocess.Popen(command, start_new_session=True,
+                      stdout=captured if capture == "pid" else output, stderr=output)
+                  mark("spawn", helperPID=process.pid)
+                  status = process.wait(timeout=max(0, deadline - time.monotonic() - 0.5))
+                  if capture == "pid" and status == 0:
+                      captured.seek(0)
+                      value = captured.read(64).decode("ascii").strip()
+                      if not value.isdecimal() or int(value) <= 0:
+                          raise OSError("Helper did not return a positive numeric PID")
+                      print(value, flush=True)
+                  mark("end", status=status)
+                  sys.exit(status if status >= 0 else 128 - status)
+              except subprocess.TimeoutExpired:
+                  # Only this helper session, including its osascript descendants.
+                  signal.signal(signal.SIGTERM, signal.SIG_IGN)
+                  signal.signal(signal.SIGINT, signal.SIG_IGN)
+                  mark("timeout", helperPID=process.pid if process else None)
+                  if process is not None:
+                      for sig in (signal.SIGTERM, signal.SIGKILL):
+                          try:
+                              os.killpg(process.pid, sig)
+                          except ProcessLookupError:
+                              pass
+                          if sig == signal.SIGTERM:
+                              time.sleep(min(0.2, max(0, deadline - time.monotonic())))
+                      try:
+                          process.wait(timeout=max(0, deadline - time.monotonic()))
+                      except subprocess.TimeoutExpired:
+                          mark("reap-timeout")
+                  sys.exit(124)
+              except OSError as error:
+                  mark("launch-error", error=str(error))
+                  sys.exit(125)
+          PY
+          }
           rm -f "$target"
-          "$helper" --snapshot-native-apps "$bundle_identifier" "$app_bundle" "$before" > "$log" 2>&1
+          : > "$log"
+          snapshot_deadline=$(native_watchdog deadline 5)
+          native_watchdog run "$snapshot_deadline" snapshot log \
+            "$helper" --snapshot-native-apps "$bundle_identifier" "$app_bundle" "$before"
           open -n -W -a "$app_bundle" --args --native-titlebar >> "$log" 2>&1 &
           open_pid=$!
           app_pid=""
@@ -923,32 +1003,35 @@ jobs:
             result=$?
             trap - EXIT
             set +e
-            {
-              printf '%s pre-cleanup result=%s appPID=%s openPID=%s\n' \
-                "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$result" "${app_pid:-unknown}" "$open_pid"
+            printf '%s pre-cleanup result=%s appPID=%s openPID=%s\n' \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$result" "${app_pid:-unknown}" "$open_pid" >&2
+            cleanup_deadline=$(native_watchdog deadline 5)
+            native_watchdog run "$cleanup_deadline" cleanup-ps log \
               ps -p "$open_pid${app_pid:+,$app_pid}" -o pid=,ppid=,lstart=,stat=,command=
-              if [[ -f "$target" ]]; then
+            if [[ -f "$target" ]]; then
+              native_watchdog run "$cleanup_deadline" cleanup-windows log \
                 "$helper" --observe-native-app "$target" --windows
-                # Revalidate launch date and paths immediately before a PID-specific signal.
-                if validated_pid=$("$helper" --validate-native-app "$target"); then
-                  if [[ "$validated_pid" == "$app_pid" ]]; then
-                    kill -TERM "$app_pid" 2>/dev/null || true
-                  fi
+              # Revalidate launch date and paths within the same cleanup budget.
+              if validated_pid=$(native_watchdog run "$cleanup_deadline" cleanup-identity pid \
+                "$helper" --validate-native-app "$target"); then
+                if [[ "$validated_pid" == "$app_pid" ]]; then
+                  kill -TERM "$app_pid" 2>/dev/null || true
                 fi
-              else
-                echo 'No bound app identity; application cleanup cannot be safely targeted.'
               fi
-              if kill -0 "$open_pid" 2>/dev/null; then
-                kill -TERM "$open_pid" 2>/dev/null || true
-              fi
-              # Do not block waiting for cleanup; this must not affect acceptance.
-            } >> "$log" 2>&1
+            else
+              echo 'No bound app identity; application cleanup cannot be safely targeted.' >> "$log"
+            fi
+            # Wrapper cleanup is independent of helper timeout/identity failure.
+            if kill -0 "$open_pid" 2>/dev/null; then
+              kill -TERM "$open_pid" 2>/dev/null || true
+            fi
             cat "$log"
             exit "$result"
           }
           trap cleanup EXIT
-          if ! app_pid=$("$helper" --bind-native-app "$bundle_identifier" "$app_bundle" \
-            "$before" "$target" 2>> "$log"); then
+          binding_deadline=$(native_watchdog deadline 20)
+          if ! app_pid=$(native_watchdog run "$binding_deadline" binding pid \
+            "$helper" --bind-native-app "$bundle_identifier" "$app_bundle" "$before" "$target"); then
             echo 'Could not bind exactly one new native app instance' >> "$log"
             exit 1
           fi
@@ -967,12 +1050,18 @@ jobs:
           fi
 
           quit_action_invoked=false
+          quit_deadline=$(native_watchdog deadline 120)
           for attempt in 1 2; do
-            if "$RUNNER_TEMP/alula-native-dnd-input" --quit-native-menu \
-              "$bundle_identifier" "$app_bundle" "$target" \
-              >> "$RUNNER_TEMP/alula-macos-native-titlebar.log" 2>&1; then
+            if native_watchdog run "$quit_deadline" "quit-$attempt" log \
+              "$helper" --quit-native-menu "$bundle_identifier" "$app_bundle" "$target"; then
               quit_action_invoked=true
               break
+            else
+              quit_status=$?
+            fi
+            if [[ "$quit_status" -eq 124 || "$quit_status" -eq 125 ]]; then
+              echo "Native Quit helper watchdog failed: status=$quit_status" >&2
+              exit "$quit_status"
             fi
 
             if ! grep -Fq \
@@ -988,7 +1077,7 @@ jobs:
               exit 1
             fi
             echo "The native macOS menu bar is temporarily inaccessible; retrying once."
-            sleep 2
+            native_watchdog run "$quit_deadline" quit-retry-delay log /bin/sleep 2
           done
 
           if [[ "$quit_action_invoked" != true ]]; then
@@ -997,7 +1086,9 @@ jobs:
             exit 1
           fi
           # One monotonic 20-second observation budget, shared by actual app and open-W.
-          "$helper" --observe-native-app "$target" "$open_pid" >> "$log" 2>&1 &
+          observer_deadline=$(native_watchdog deadline 25)
+          native_watchdog run "$observer_deadline" observer log \
+            "$helper" --observe-native-app "$target" "$open_pid" &
           observer_pid=$!
           # Bash's wait builtin reaps exited children while waiting for the observer,
           # so a completed open-W cannot remain a zombie visible to the helper.
