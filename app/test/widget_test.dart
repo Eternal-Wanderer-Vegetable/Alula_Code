@@ -1041,6 +1041,56 @@ void main() {
           reason: 'Space opens the focused resource and retains list focus');
       await tester.pump();
       expect(listFocus.hasFocus, isTrue);
+      final alphaBeforeSelection =
+          File('${repo.path}/alpha.txt').readAsBytesSync();
+      final betaBeforeSelection =
+          File('${repo.path}/beta.txt').readAsBytesSync();
+      final treeBeforeSelection = await Process.run('git', ['write-tree'],
+          workingDirectory: repo.path);
+      expect(treeBeforeSelection.exitCode, 0);
+      final toggleModifier = Theme.of(tester.element(alphaRow)).platform ==
+              TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.sendKeyDownEvent(toggleModifier);
+      await tester.tap(find.byKey(const ValueKey('git-w-beta.txt')));
+      await tester.sendKeyUpEvent(toggleModifier);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isTrue);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.tap(alphaRow);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isTrue);
+      final treeAfterSelection = await Process.run('git', ['write-tree'],
+          workingDirectory: repo.path);
+      expect(treeAfterSelection.exitCode, 0);
+      expect(treeAfterSelection.stdout, treeBeforeSelection.stdout,
+          reason: 'SCM modifier selection preserves the exact Git index tree');
+      expect(File('${repo.path}/alpha.txt').readAsBytesSync(),
+          alphaBeforeSelection);
+      expect(File('${repo.path}/beta.txt').readAsBytesSync(),
+          betaBeforeSelection);
+      expect(find.text('alpha.txt（工作区）'), findsOneWidget,
+          reason: 'Modifier selection must not open another resource');
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      expect(tester.widget<ListTile>(alphaRow).selected, isTrue);
+      expect(
+          tester
+              .widget<ListTile>(find.byKey(const ValueKey('git-w-beta.txt')))
+              .selected,
+          isFalse);
       final before = await Process.run('git', ['diff', '--cached', '--name-only'],
           workingDirectory: repo.path);
       expect(before.exitCode, 0);

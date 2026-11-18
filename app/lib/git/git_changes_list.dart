@@ -35,7 +35,8 @@ class _GitChangesListState extends State<GitChangesList> {
   final _focus = FocusNode(debugLabel: 'git-changes-list');
   final _scroll = ScrollController();
   _GitIdentity? _focused;
-  _GitIdentity? _selected;
+  final Set<_GitIdentity> _selected = {};
+  _GitIdentity? _anchor;
 
   // Preserve the existing panel's single-row treatment of mixed index/worktree
   // changes. Separate rows for both sides are outside basic list navigation.
@@ -72,7 +73,13 @@ class _GitChangesListState extends State<GitChangesList> {
     }
 
     _focused = retained(_focused);
-    _selected = retained(_selected);
+    _anchor = retained(_anchor);
+    final selectedPaths = _selected.map((identity) => identity.path).toSet();
+    _selected
+      ..clear()
+      ..addAll(rows
+          .where((row) => selectedPaths.contains(row.entry.path))
+          .map(_identity));
     if (_focused != null &&
         _focus.hasFocus &&
         previousOffset != _focusOffset(rows, _focused)) {
@@ -82,26 +89,112 @@ class _GitChangesListState extends State<GitChangesList> {
     }
   }
 
-  bool get _hasModifiers {
-    final keyboard = HardwareKeyboard.instance;
-    return keyboard.isAltPressed ||
-        keyboard.isControlPressed ||
-        keyboard.isMetaPressed ||
-        keyboard.isShiftPressed;
-  }
+  bool get _hasAlt => HardwareKeyboard.instance.isAltPressed;
 
-  void _select(_GitRow row, {bool focusList = false, bool select = false}) {
+  bool get _hasToggleModifier => switch (Theme.of(context).platform) {
+        TargetPlatform.macOS => HardwareKeyboard.instance.isMetaPressed,
+        _ => HardwareKeyboard.instance.isControlPressed,
+      };
+
+  bool get _hasUnsupportedModifiers =>
+      _hasAlt ||
+      (Theme.of(context).platform == TargetPlatform.macOS
+          ? HardwareKeyboard.instance.isControlPressed
+          : HardwareKeyboard.instance.isMetaPressed);
+
+  bool get _hasModifiers =>
+      _hasAlt ||
+      HardwareKeyboard.instance.isControlPressed ||
+      HardwareKeyboard.instance.isMetaPressed ||
+      HardwareKeyboard.instance.isShiftPressed;
+
+  void _select(
+    _GitRow row, {
+    bool focusList = false,
+    bool select = false,
+    bool preserveSelection = false,
+    bool updateAnchor = true,
+  }) {
     final identity = _identity(row);
-    if (_focused != identity || (select && _selected != identity)) {
+    final selectedChanged = select &&
+        (!_selected.contains(identity) ||
+            (!preserveSelection && _selected.length != 1));
+    if (_focused != identity ||
+        selectedChanged ||
+        (updateAnchor && _anchor != identity)) {
       setState(() {
         _focused = identity;
-        if (select) _selected = identity;
+        if (select) {
+          if (!preserveSelection) {
+            _selected
+              ..clear()
+              ..add(identity);
+          } else {
+            _selected.add(identity);
+          }
+        }
+        if (updateAnchor) _anchor = identity;
       });
     }
     if (focusList) _focus.requestFocus();
     _revealSelection();
-    // Varied-extent slivers refine maxScrollExtent after laying out a distant
-    // section. Correct the initial estimated clamp once that layout completes.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _revealSelection();
+    });
+  }
+
+  void _onModifiedTap(_GitRow row) {
+    final rows = _rows;
+    final identity = _identity(row);
+    final index =
+        rows.indexWhere((candidate) => _identity(candidate) == identity);
+    final currentFocus = _focused;
+    if (index < 0) return;
+    if (HardwareKeyboard.instance.isShiftPressed) {
+      final anchor = _anchor ?? currentFocus ?? identity;
+      final anchorIndex =
+          rows.indexWhere((candidate) => _identity(candidate) == anchor);
+      final low = anchorIndex < 0
+          ? index
+          : anchorIndex < index
+              ? anchorIndex
+              : index;
+      final high = anchorIndex < 0
+          ? index
+          : anchorIndex > index
+              ? anchorIndex
+              : index;
+      final next = rows.skip(low).take(high - low + 1).map(_identity).toSet();
+      final runStart = anchorIndex < 0 ? index : anchorIndex;
+      var runLow = runStart;
+      var runHigh = runStart;
+      while (runLow > 0 && _selected.contains(_identity(rows[runLow - 1]))) {
+        runLow--;
+      }
+      while (runHigh + 1 < rows.length &&
+          _selected.contains(_identity(rows[runHigh + 1]))) {
+        runHigh++;
+      }
+      setState(() {
+        for (var i = runLow; i <= runHigh; i++) {
+          _selected.remove(_identity(rows[i]));
+        }
+        _selected.addAll(next);
+        _focused = identity;
+        _anchor = anchor;
+      });
+    } else if (_hasToggleModifier) {
+      setState(() {
+        _focused = identity;
+        _anchor = identity;
+        if (!_selected.add(identity)) _selected.remove(identity);
+      });
+    } else {
+      _select(row, select: true);
+      return;
+    }
+    if (!_focus.hasFocus) _focus.requestFocus();
+    _revealSelection();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _revealSelection();
     });
@@ -126,25 +219,68 @@ class _GitChangesListState extends State<GitChangesList> {
     return widget.onOpen(row.entry, preserveFocus: preserveFocus);
   }
 
+  bool _isListNavigationKey(LogicalKeyboardKey key) =>
+      key == LogicalKeyboardKey.arrowUp ||
+      key == LogicalKeyboardKey.arrowDown ||
+      key == LogicalKeyboardKey.home ||
+      key == LogicalKeyboardKey.end ||
+      key == LogicalKeyboardKey.enter ||
+      key == LogicalKeyboardKey.space;
+
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
-    if (_hasModifiers || (event is! KeyDownEvent && event is! KeyRepeatEvent)) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
+    }
+    final key = event.logicalKey;
+    final toggleModifier = _hasToggleModifier;
+    if (_hasAlt || _hasUnsupportedModifiers) {
+      return _isListNavigationKey(key) ||
+              (toggleModifier && key == LogicalKeyboardKey.keyA)
+          ? KeyEventResult.handled
+          : KeyEventResult.ignored;
     }
     final rows = _rows;
     if (rows.isEmpty) return KeyEventResult.ignored;
     final index = rows.indexWhere((row) => _identity(row) == _focused);
-    final key = event.logicalKey;
+    if ((HardwareKeyboard.instance.isControlPressed ||
+            HardwareKeyboard.instance.isMetaPressed) &&
+        key != LogicalKeyboardKey.keyA) {
+      return _isListNavigationKey(key)
+          ? KeyEventResult.handled
+          : KeyEventResult.ignored;
+    }
+    if (HardwareKeyboard.instance.isShiftPressed &&
+        key != LogicalKeyboardKey.arrowUp &&
+        key != LogicalKeyboardKey.arrowDown) {
+      return _isListNavigationKey(key)
+          ? KeyEventResult.handled
+          : KeyEventResult.ignored;
+    }
+    if (toggleModifier && key == LogicalKeyboardKey.keyA) {
+      if (event is KeyDownEvent) {
+        setState(() {
+          _selected
+            ..clear()
+            ..addAll(rows.map(_identity));
+        });
+        if (rows.length == 1) {
+          unawaited(widget.onOpen(rows.single.entry, preserveFocus: true));
+        }
+      }
+      return KeyEventResult.handled;
+    }
+    final shift = HardwareKeyboard.instance.isShiftPressed;
     int next;
     if (key == LogicalKeyboardKey.arrowDown) {
       next = index < 0 ? 0 : (index + 1).clamp(0, rows.length - 1);
     } else if (key == LogicalKeyboardKey.arrowUp) {
       next = index < 0 ? 0 : (index - 1).clamp(0, rows.length - 1);
-    } else if (key == LogicalKeyboardKey.home) {
+    } else if (!shift && key == LogicalKeyboardKey.home) {
       next = 0;
-    } else if (key == LogicalKeyboardKey.end) {
+    } else if (!shift && key == LogicalKeyboardKey.end) {
       next = rows.length - 1;
-    } else if (key == LogicalKeyboardKey.enter ||
-        key == LogicalKeyboardKey.space) {
+    } else if (!shift &&
+        (key == LogicalKeyboardKey.enter || key == LogicalKeyboardKey.space)) {
       if (index < 0) return KeyEventResult.ignored;
       if (event is KeyDownEvent) {
         unawaited(
@@ -154,7 +290,33 @@ class _GitChangesListState extends State<GitChangesList> {
     } else {
       return KeyEventResult.ignored;
     }
-    _select(rows[next], focusList: true);
+    if (shift &&
+        (key == LogicalKeyboardKey.arrowUp ||
+            key == LogicalKeyboardKey.arrowDown)) {
+      if (next == index) return KeyEventResult.handled;
+      final destination = _identity(rows[next]);
+      final previous = index < 0 ? null : _identity(rows[index]);
+      var preview = false;
+      setState(() {
+        _focused = destination;
+        if (_selected.contains(destination)) {
+          if (previous != null) _selected.remove(previous);
+        } else {
+          _selected.add(destination);
+        }
+        preview = _selected.length == 1;
+      });
+      if (preview) {
+        unawaited(widget.onOpen(rows[next].entry, preserveFocus: true));
+      }
+      _focus.requestFocus();
+      _revealSelection();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _revealSelection();
+      });
+    } else {
+      _select(rows[next], focusList: true);
+    }
     return KeyEventResult.handled;
   }
 
@@ -170,7 +332,7 @@ class _GitChangesListState extends State<GitChangesList> {
       child: ListTile(
         key: ValueKey('git-${row.staged ? 's' : 'w'}-${entry.path}'),
         dense: true,
-        selected: _identity(row) == _selected,
+        selected: _selected.contains(_identity(row)),
         selectedTileColor: const Color(0xFF29343F),
         hoverColor: const Color(0xFF222A33),
         leading: Text(entry.code,
@@ -192,9 +354,16 @@ class _GitChangesListState extends State<GitChangesList> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
         onFocusChange: (focused) {
-          if (focused) _select(row);
+          if (focused) _select(row, updateAnchor: false);
         },
-        onTap: () => unawaited(_open(row, preserveFocus: true)),
+        onTap: () {
+          if (_hasUnsupportedModifiers) return;
+          if (_hasToggleModifier || HardwareKeyboard.instance.isShiftPressed) {
+            _onModifiedTap(row);
+          } else {
+            unawaited(_open(row, preserveFocus: true));
+          }
+        },
         trailing: Focus(
           canRequestFocus: false,
           onFocusChange: (focused) {

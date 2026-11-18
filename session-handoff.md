@@ -13,7 +13,7 @@ Last Updated: 2026-11-18
 - 最终准确产品6e529d4 CI44222976491四job全绿，Platform44222968734三平台全绿；macOS1446tests、Release、clipboard、launch、nativeQuit、package通过。macOS DnD pointerroutefalse/noFlutterevents明确skip，不能声称手势通过。Artifacts app Linux14392430112/Windows14391638012/mac14393775629，DnD14391084310/14392016899/14392932802，macstartup/Quit14393471969。macZIP SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6匹配sidecar、81项完整。
 - P05.71–76历史exactSHA/CI/PA/六份ZIP已补账，均窄子项done。P05.75 PA整体失败因macnativeDnD，tests/Release/launch/Quit/package通过；其他五项macDnD明确skip。详见p05.71-76-hosted-ledger.md。
 - 历史P05.80原9117a06 PA44141648010 attempt1 Windowsdrop超时/macQuit失败；attempt2Windows通过、mac1443/1444唯一固定100ms焦点fixture失败。e865b11 CI44219803751与b162222 CI44220241478全绿；e865b11 PA44219797014 macQuit失败，其他tests/Release/launch/package通过。旧探针只观察open -W wrapper，实际appPID状态未定；未修复其根因，最终6e本次通过不抹除历史失败。不要第三轮重试原提交。
-- 下一SCM多选/范围尚未登记/实施。已核对固定参考Shift-click保留disjoint、ShiftArrow采用tree扩选、Enter/Space只打开focused。草案E:/Temp/alula-p0581-selection-contract.md。
+- 当前P05.81/feat-133已在docs03/feature_list登记in-progress。SCM多选/范围仅现有flatresources，固定参考Shift-click保留disjoint、ShiftArrow采用tree扩选、Enter/Space只打开focused，keyboardsingletonpreview。组件27/27、真实repo1/1已green，redlog保留；index/write-tree和diskbytes不变。审查修正foreignmodifier/externalfocus/线性Shift移除，targetedreviewpass。最终完整init.sh Flutter1462/1462、Rust/Clippy/core/fmt、analyze0全绿；graphall20/18/442及main489/250/445均CRITICAL无partial/truncated，待提交/hosted。范围docs/diagnostics/2026-11-18-p05/p05.81-scm-multiselection.md。
 
 ## Blockers / Limits
 
@@ -24,11 +24,11 @@ Last Updated: 2026-11-18
 
 ## Evidence and Files
 
-- docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md、p05.80-acceptance-map.json、finalCI/platform/packageJSON；P05.80收尾文档待证据提交。
+- docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md、p05.80-acceptance-map.json、finalCI/platform/packageJSON；P05.80收尾证据083a0c4已提交推送。
 - 同目录p05.80-focus-scroll-review-fixes.md及完整red/green/full/graph日志；基线报告p05.80-startup-focus-regression.md。
 - p05.80-macos-quit-observation-limits.md与e865b11/originalZIP校验记录，历史失败不豁免。
 - 完整graph导出脚本E:/Temp/alula-p0580-graph-export.mjs；原始平台证据E:/Temp/alula-pr3-p0580-hosted-20261118。
 
 ## Next Session First Step
 
-先完成当前P05.80证据精确暂存、GitNexus完整all/compare-main分析、Harness/diff/JSON检查并推送；再按docs/03登记P05.81/feat-133 LAY-16e SCM多选/范围，带fixedreference和原子case后实施。保留选择/焦点/hover区分及当前rowaction单资源语义，不扩展P09批量business。所有GitBash测试PATH需含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。Flutter前build_core。持续推进P05，不因普通进度终止。
+继续当前P05.81/feat-133实现与green验证；P05.80准确验收083a0c4已推。组件实现agent仅改GitChangesList及componenttests，父侧widget_test真实repo多选红2正确失败。须核对Ctrl/CmdShift优先range、多S刷新prune和多选下rowaction单项，keyboardsingletonpreview保留focus。之后realrepo/fullinit/analyze/graph/review/hosted，逐证据收尾。保留选择/焦点/hover区分及当前rowaction单资源语义，不扩展P09批量business。所有GitBash测试PATH需含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。Flutter前build_core。持续推进P05，不因普通进度终止。

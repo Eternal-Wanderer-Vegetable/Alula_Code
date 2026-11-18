@@ -1638,6 +1638,16 @@
       "evidence": "Initial component9/9, combined Git20/20; original9117a06 CI44141662139 green. OriginalPlatform44141648010 attempt1 WindowsDnD/macQuit failed; attempt2 Windowsgreen, mac1443/1444 sole100ms focusfixture failure; no third retry. Fixturecorrectione865b11 CI44219803751 and logheadb162222 CI44220241478 green, PA44219797014 Win/Linuxgreen/macQuitfailure despite tests/Release/launch/package success. Review found rowEnter focusowner race and unchangedrefresh scrollsnap; both red-first regressions repaired within GitChangesList. Component11/11, realrepo rowEnter1/1, mergecleanup15/15; final completeinit.sh Flutter1446/1446 Rusttests/Clippy/core passed, fmt/analyze0. Final productfix6e529d4 CI44222976491 all4green and Platform44222968734 all3green. mac1446tests/nativeQuit/package passed; macDnD syntheticroute unavailable explicitskip. Artifacts L14392430112/W14391638012/M14393775629; macZIP81entries integrity passed SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6 matches sidecar. Exact evidence docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md; seven scoped acceptance mappings distinguish tested/source-only/nativeunverified. Fileimpact MEDIUM69/direct1, class namesblank unresolved, prior CRITICAL/UNKNOWN and extraction limits retained. Reports docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md and originalscope; LAY-16/P05 remain open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-133",
+      "name": "P05.81 LAY-16e SCM 多选与范围选择",
+      "description": "Existing flat SCM resource list Ctrl/Cmd toggle, disjoint-preserving Shift range, tree-style ShiftArrow selection, local select-all, focused-only activation and refresh cleanup. docs/diagnostics/2026-11-18-p05/p05.81-scm-multiselection.md",
+      "dependencies": ["feat-132"],
+      "status": "in-progress",
+      "evidence": "Pinnedreference contract registered after feat132 exactcloseout. Component27/27 and realrepo1/1 passed; repo uses gitwrite-tree plus diskbytes to prove selection invariant, pointermodifiers noopen, Spacecollapse. Firstfullinit1458/1458 Rust/Clippy/core/fmt passed. Review fixedforeignplatformmodifier fallthrough, externalkeyboardfocus onmodifiedtap andquadraticShiftremoval; newguardsredbeforefix, targetedrereviewpass, analyze0. Finalpostreview init.sh passed Flutter1462/1462, Rustworkspace/Clippy/core; independentfmt/analyze0. Completegraph/hosted pending. Selectionboundedcurrentresources, no batchGitactions/polling; LAY16/P05 remainopen.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

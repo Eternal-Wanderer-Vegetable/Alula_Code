@@ -39,9 +39,10 @@ Widget surface({
   Future<void> Function(String)? onUnstage,
   Widget? sibling,
   double height = 180,
+  TargetPlatform? platform,
 }) =>
     MaterialApp(
-      theme: ThemeData.dark(useMaterial3: true),
+      theme: ThemeData.dark(useMaterial3: true).copyWith(platform: platform),
       home: Scaffold(
         body: Column(children: [
           SizedBox(
@@ -179,19 +180,30 @@ void main() {
     await mouse.removePointer();
   });
 
-  testWidgets('modified navigation and activation are ignored', (tester) async {
-    final opened = <String>[];
+  testWidgets('Shift navigation previews a singleton without taking focus',
+      (tester) async {
+    final opened = <(String, bool)>[];
     final actions = <String>[];
     await tester.pumpWidget(surface(
       entries: [entry('alpha.txt'), entry('beta.txt')],
-      onOpen: (entry, {required preserveFocus}) async => opened.add(entry.path),
+      onOpen: (entry, {required preserveFocus}) async =>
+          opened.add((entry.path, preserveFocus)),
       onStage: (path) async => actions.add(path),
     ));
     await focusList(tester);
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, 'beta.txt'), isTrue);
+    expect(tester.widget<ListTile>(row('beta.txt')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('alpha.txt')).selected, isFalse);
+    expect(opened, [('beta.txt', true)]);
+    expect(actions, isEmpty);
+
     for (final modifier in [
-      LogicalKeyboardKey.shiftLeft,
       LogicalKeyboardKey.controlLeft,
       LogicalKeyboardKey.altLeft,
       LogicalKeyboardKey.metaLeft,
@@ -209,11 +221,355 @@ void main() {
       }
       await tester.sendKeyUpEvent(modifier);
       await tester.pump();
-      expect(focused(tester, 'alpha.txt'), isTrue);
-      expect(tester.widget<ListTile>(row('alpha.txt')).selected, isFalse);
+      expect(focused(tester, 'beta.txt'), isTrue);
+      expect(tester.widget<ListTile>(row('beta.txt')).selected, isTrue);
     }
-    expect(opened, isEmpty);
+    expect(opened, [('beta.txt', true)]);
     expect(actions, isEmpty);
+  });
+
+  for (final platform in [TargetPlatform.windows, TargetPlatform.linux]) {
+    testWidgets('Control-click toggles resources on $platform', (tester) async {
+      final opened = <String>[];
+      await tester.pumpWidget(surface(
+        platform: platform,
+        entries: [entry('a'), entry('b'), entry('c')],
+        onOpen: (entry, {required preserveFocus}) async =>
+            opened.add(entry.path),
+      ));
+      await tester.tap(row('a'));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.tap(row('b'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+      expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+      expect(focused(tester, 'b'), isTrue);
+      expect(opened, ['a']);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.tap(row('a'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      expect(tester.widget<ListTile>(row('a')).selected, isFalse);
+      expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+      expect(focused(tester, 'a'), isTrue);
+      expect(opened, ['a']);
+    });
+  }
+
+  testWidgets('Command-click toggles resources on macOS', (tester) async {
+    final opened = <String>[];
+    await tester.pumpWidget(surface(
+      platform: TargetPlatform.macOS,
+      entries: [entry('a'), entry('b')],
+      onOpen: (entry, {required preserveFocus}) async => opened.add(entry.path),
+    ));
+    await tester.tap(row('a'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+    await tester.tap(row('b'));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+    await tester.pump();
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+    expect(focused(tester, 'b'), isTrue);
+    expect(opened, ['a']);
+  });
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('foreign modifier click does not open or select on $platform',
+        (tester) async {
+      final opened = <String>[];
+      await tester.pumpWidget(surface(
+        platform: platform,
+        height: 300,
+        entries: [entry('a'), entry('b')],
+        onOpen: (entry, {required preserveFocus}) async =>
+            opened.add(entry.path),
+      ));
+      await tester.tap(row('a'));
+      final foreign = platform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.controlLeft
+          : LogicalKeyboardKey.metaLeft;
+      await tester.sendKeyDownEvent(foreign);
+      await tester.tap(row('b'));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.tap(row('b'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(foreign);
+      await tester.pump();
+      expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+      expect(tester.widget<ListTile>(row('b')).selected, isFalse);
+      expect(opened, ['a']);
+    });
+  }
+
+  testWidgets('Shift-click replaces only the anchor run and preserves islands',
+      (tester) async {
+    await tester.pumpWidget(surface(
+      height: 600,
+      entries: List.generate(9, (i) => entry('$i')),
+    ));
+    Future<void> click(String path, LogicalKeyboardKey? modifier) async {
+      await tester.ensureVisible(row(path));
+      if (modifier != null) await tester.sendKeyDownEvent(modifier);
+      await tester.tap(row(path));
+      if (modifier != null) await tester.sendKeyUpEvent(modifier);
+    }
+
+    await click('1', null);
+    await click('4', LogicalKeyboardKey.controlLeft);
+    await click('5', LogicalKeyboardKey.controlLeft);
+    await click('8', LogicalKeyboardKey.controlLeft);
+    await click('4', LogicalKeyboardKey.controlLeft);
+    await click('4', LogicalKeyboardKey.controlLeft);
+    await click('3', LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    for (final index in [1, 3, 4, 8]) {
+      expect(tester.widget<ListTile>(row('$index')).selected, isTrue,
+          reason: 'resource $index remains selected');
+    }
+    for (final index in [0, 2, 5, 6, 7]) {
+      expect(tester.widget<ListTile>(row('$index')).selected, isFalse,
+          reason: 'resource $index is outside the resulting selection');
+    }
+    expect(focused(tester, '3'), isTrue);
+  });
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets('toggle plus Shift uses range selection on $platform',
+        (tester) async {
+      final opened = <String>[];
+      await tester.pumpWidget(surface(
+        platform: platform,
+        height: 300,
+        entries: List.generate(5, (i) => entry('$i')),
+        onOpen: (entry, {required preserveFocus}) async =>
+            opened.add(entry.path),
+      ));
+      final modifier = platform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      await tester.tap(row('1'));
+      await tester.sendKeyDownEvent(modifier);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.tap(row('3'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(modifier);
+      await tester.pump();
+      for (var i = 0; i < 5; i++) {
+        expect(tester.widget<ListTile>(row('$i')).selected, i >= 1 && i <= 3);
+      }
+      expect(opened, ['1']);
+    });
+  }
+
+  testWidgets('modifier selection moves keyboard focus from an outside control',
+      (tester) async {
+    final outside = FocusNode();
+    addTearDown(outside.dispose);
+    final opened = <(String, bool)>[];
+    await tester.pumpWidget(surface(
+      platform: TargetPlatform.windows,
+      entries: [entry('a'), entry('b')],
+      sibling: TextButton(
+          focusNode: outside, onPressed: () {}, child: const Text('Outside')),
+      onOpen: (entry, {required preserveFocus}) async =>
+          opened.add((entry.path, preserveFocus)),
+    ));
+    outside.requestFocus();
+    await tester.pump();
+    expect(outside.hasPrimaryFocus, isTrue);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row('b'));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(listFocus(tester).hasFocus, isTrue);
+    expect(opened, isEmpty);
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    expect(opened, [('b', true)]);
+  });
+
+  testWidgets('refresh prunes multiselection and remaps staged resources',
+      (tester) async {
+    var entries = [entry('a'), entry('b'), entry('c')];
+    Future<void> rebuild() => tester.pumpWidget(surface(
+          entries: entries,
+          height: 300,
+          platform: TargetPlatform.windows,
+        ));
+    await rebuild();
+    await tester.tap(row('a'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row('b'));
+    await tester.tap(row('c'));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    entries = [entry('c', staged: true), entry('a')];
+    await rebuild();
+    expect(row('b'), findsNothing);
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('c', staged: true)).selected, isTrue);
+    expect(focused(tester, 'c', staged: true), isTrue);
+    entries = [];
+    await rebuild();
+    expect(find.byType(ListTile), findsNothing);
+    entries = [entry('b')];
+    await rebuild();
+    expect(tester.widget<ListTile>(row('b')).selected, isFalse);
+    expect(focused(tester, 'b'), isFalse);
+  });
+
+  testWidgets('multiselection never batches an explicit row action',
+      (tester) async {
+    final staged = <String>[];
+    final unstaged = <String>[];
+    await tester.pumpWidget(surface(
+      platform: TargetPlatform.windows,
+      height: 300,
+      entries: [entry('indexed', staged: true), entry('a'), entry('b')],
+      onStage: (path) async => staged.add(path),
+      onUnstage: (path) async => unstaged.add(path),
+    ));
+    await tester.tap(row('a'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row('b'));
+    await tester.tap(row('indexed', staged: true));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('git-action-w-b')));
+    await tester.pump();
+    expect(staged, ['b']);
+    expect(unstaged, isEmpty);
+    await tester.tap(find.byKey(const ValueKey('git-action-s-indexed')));
+    await tester.pump();
+    expect(staged, ['b']);
+    expect(unstaged, ['indexed']);
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+  });
+
+  testWidgets('Shift arrows grow, shrink, remove, and stop at boundaries',
+      (tester) async {
+    await tester.pumpWidget(surface(
+      entries: List.generate(4, (i) => entry('$i')),
+    ));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, '1'), isTrue);
+    expect(tester.widget<ListTile>(row('1')).selected, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, '2'), isTrue);
+    expect(tester.widget<ListTile>(row('1')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('2')).selected, isTrue);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, '1'), isTrue);
+    expect(tester.widget<ListTile>(row('1')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('2')).selected, isFalse);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, '0'), isTrue);
+    expect(tester.widget<ListTile>(row('0')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('2')).selected, isFalse);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    expect(focused(tester, '0'), isTrue);
+    expect(tester.widget<ListTile>(row('0')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('2')).selected, isFalse);
+  });
+
+  testWidgets('select all previews a singleton and keeps focus and anchor',
+      (tester) async {
+    final opened = <(String, bool)>[];
+    await tester.pumpWidget(surface(
+      platform: TargetPlatform.windows,
+      entries: [entry('only')],
+      onOpen: (entry, {required preserveFocus}) async =>
+          opened.add((entry.path, preserveFocus)),
+    ));
+    await focusList(tester);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(opened, [('only', true)]);
+    expect(listFocus(tester).hasPrimaryFocus, isTrue);
+    expect(focused(tester, 'only'), isFalse);
+    expect(tester.widget<ListTile>(row('only')).selected, isTrue);
+  });
+
+  testWidgets(
+      'select all is scoped to list focus and Enter collapses selection',
+      (tester) async {
+    final opened = <(String, bool)>[];
+    await tester.pumpWidget(surface(
+      entries: List.generate(30, (i) => entry('$i')),
+      onOpen: (entry, {required preserveFocus}) async =>
+          opened.add((entry.path, preserveFocus)),
+      sibling: TextButton(onPressed: () {}, child: const Text('Outside')),
+    ));
+    await tester.tap(find.text('Outside'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(tester.widget<ListTile>(row('0')).selected, isFalse,
+        reason: 'select all is ignored outside list focus');
+
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    expect(tester.widget<ListTile>(row('0')).selected, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.end);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('git-focus-w-29')), findsOneWidget);
+    expect(focused(tester, '29'), isTrue);
+    final scroll = tester
+        .widget<ListView>(find.byKey(const ValueKey('git-changes-list')))
+        .controller!;
+    expect(tester.widget<ListTile>(row('29')).selected, isTrue,
+        reason: 'select-all includes offscreen resources');
+    scroll.jumpTo(0);
+    await tester.pumpAndSettle();
+    expect(tester.widget<ListTile>(row('0')).selected, isTrue);
+    await tester.sendKeyEvent(LogicalKeyboardKey.end);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(tester.widget<ListTile>(row('29')).selected, isTrue);
+    scroll.jumpTo(0);
+    await tester.pumpAndSettle();
+    expect(tester.widget<ListTile>(row('0')).selected, isFalse);
+    expect(opened, [('29', false)]);
   });
 
   testWidgets(

@@ -1,0 +1,6 @@
+Analyzing app...                                                
+
+warning - Unused import: 'package:flutter/foundation.dart'. Try removing the import directive - lib\git\git_changes_list.dart:3:8 - unused_import
+warning - Unused import: 'package:flutter/foundation.dart'. Try removing the import directive - test\git_changes_list_test.dart:5:8 - unused_import
+
+2 issues found. (ran in 3.3s)
