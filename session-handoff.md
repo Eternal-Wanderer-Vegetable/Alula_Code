@@ -9,7 +9,7 @@ Last Updated: 2026-11-18
 ## Current State
 
 - 2026-11-18用户最新指示：没有macOS设备，保留原生/视觉/实测缺口未验证，继续P05，不以macOS实机或新增探针排障阻塞实施。docs03 N.2/路线已同步。
-- 当前P05.83/feat135已登记in-progress：SCM上下文菜单宿主，右键与ContextMenu/ShiftF10keyup保留选择/anchor只更新focus，单项OpenDiff/Stage/Unstage与旧动作guard。组件实现中，真实repo菜单取消index/disk不变+菜单stage红测在scm-context-open缺失处正确失败。本地启动1462全绿，mac缺口暂留。范围p05.83-scm-context-menu.md。
+- 当前P05.83/feat135已登记in-progress：SCM上下文菜单宿主，右键与ContextMenu/ShiftF10keyup保留选择/anchor只更新focus，单项OpenDiff/Stage/Unstage与旧动作guard。产品f4b1faf已推，组件37/37、真实repo1/1（取消index/disk不变+菜单stage）、顺序full1472/1472和Rust/Clippy/core/fmt/analyze0全绿，review修正完。CI44264627191/Platform44264618665运行，当前只收CI及Win/Linux，不等待mac设备验证。mac缺口暂留。范围p05.83-scm-context-menu.md。
 - 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。最新产品d5c11f2637135425c0e30178ad4ce268e7554f74已推，当前待提交最后hosted证据。
 - P05.82/feat134诊断子项done：目标实例snapshot/唯一新PID-launch-path绑定、AX属性/匹配原因/press日志、app/open-W分别观察和严格20秒退出判定。Workflow外部watchdog绑定20秒、snapshot5秒、Quit共享120秒、observer25秒、cleanup共享5秒；超时只终止自有helper session并保留失败，不改产品关闭行为。
 - 本地完整init.sh Flutter1462/1462、Rusttests/Clippy/core、fmt/analyze0，10mockworkflow+7WSLPOSIXhang夹具/review通过。准确d5 CI44247773016四job和Platform44247766537三平台全绿；mac原生Swift编译、1462tests、Release/clipboard/launch/nativeQuit/package通过，DnD syntheticpointerroutefalse明确skip。
@@ -35,4 +35,4 @@ Last Updated: 2026-11-18
 
 ## Next Session First Step
 
-先完成P05.82准确hosted证据暂存、Harness/JSON/diff与完整graphall/comparemain后提交推送并更新PR说明。代码已完整测试且d5hosted全绿，无新产品变化不要重复全量。随后按docs03单独登记下一LAY16context slice，固定源码映射先核对；普通进度不停止等待批准，P05整体验收保持开放。Flutter前build_core；PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。
+当前P05.83产品f4b1faf已推，本地37组件/1真实repo/full1472与fmt/analyze/review通过，完整graphCRITICAL已归档。收取CI44264627191和Platform44264618665的Windows/Linux结果后登记135证据，macOS缺口按用户授权保留，不等待/新增mac探针。下一P05.84/feat136已只读核对QuickInput分级校验合同（E:/Temp/alula-p0584-contract.md）：旧stringAPI保留，Info/Warning可接受，Error即使空消息阻止接受；独立typedcallback互斥，真实GotoLine集成。当前135完成前不改新功能。普通进度不停止等待批准，P05整体验收保持开放。Flutter前build_core；PATH含/e/flutter/bin/cache/dart-sdk/bin:/e/flutter/bin，FLUTTER_BIN=/e/flutter/bin/flutter.bat。
