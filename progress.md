@@ -5,7 +5,11 @@
 
 ## Current State（当前状态，2026-11-18 更新）
 
-### P05 / feat-027 持续推进；P05.82诊断收尾完成，阶段仍开放
+### P05 / feat-027 持续推进；当前P05.83 SCM上下文菜单
+
+- 2026-11-18 用户明确要求：当前无macOS设备，保留原生/视觉/实测与既有缺口未验证，继续P05，不再以macOS实机/探针排障为推进前置。已同步docs03 N.2与连续路线，hosted不能代替实机。
+- 当前P05.83/feat135已登记：固定SCM右键改变focus但保留S/anchor，ContextMenu/ShiftF10 keyup打开，已有OpenDiff/单项Stage/Unstage宿主与旧目标动作保护；完整贡献/batch归P09。本机启动1462/1462全绿，图谱File空name异常+symbolUNKNOWN，实际唯一产品构造点源码补查、历史MEDIUM/CRITICAL保留。组件37/37、实际repo1/1及审查修正通过；最终顺序完整init1472/1472、Rust/Clippy/core、fmt/analyze0全绿。并行测试曾占用DLL导致core复制失败，已保留失败并顺序复验。graph/提交/可用平台证据待补。
+
 
 - 2026-11-18 P05.82最终d5c11f2 CI44247773016和Platform44247766537全部成功。macSwift原生编译、1462tests、Release/clipboard/launch/Quit/package通过，DnD明确skip。实际prelaunch空、唯一app36952/wrapper36949、AXTitleQuitAlulaCode matchAXTitleprefix、alive/alive->gone/gone open_status0，步骤18秒；watchdog本次未触发。App14403778075 ZIP81项完整，SHA13f1b8dacd21588cd9e9ce71572529c6148ca02cee6304c3a8d29e86552f6939匹配sidecar。初版2c超步骤/job预算仍卡住且无终端日志，历史根因不作已修复声明。feat134诊断子项done，P05父阶段开放。准确JSON/log/report p05.82-hosted.md，下一按docs03继续LAY16context/后续路线。
 

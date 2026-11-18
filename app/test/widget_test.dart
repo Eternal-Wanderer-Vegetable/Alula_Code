@@ -1096,7 +1096,35 @@ void main() {
       expect(before.exitCode, 0);
       expect((before.stdout as String).trim(), isEmpty,
           reason: 'Space never modifies the Git index');
-      await tester.tap(find.byKey(const ValueKey('git-action-w-alpha.txt')));
+      final menuPointer = await tester.startGesture(
+        tester.getCenter(alphaRow),
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      await menuPointer.up();
+      await tester.pump();
+      expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump(const Duration(milliseconds: 300));
+      final treeAfterMenu = await Process.run('git', ['write-tree'],
+          workingDirectory: repo.path);
+      expect(treeAfterMenu.exitCode, 0);
+      expect(treeAfterMenu.stdout, treeBeforeSelection.stdout,
+          reason: 'Context menu cancellation never mutates the Git index');
+      expect(File('${repo.path}/alpha.txt').readAsBytesSync(),
+          alphaBeforeSelection);
+      expect(File('${repo.path}/beta.txt').readAsBytesSync(),
+          betaBeforeSelection);
+      expect(listFocus.hasFocus, isTrue);
+      final stageMenuPointer = await tester.startGesture(
+        tester.getCenter(alphaRow),
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      await stageMenuPointer.up();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
       await _waitForWidget(tester, find.text('暂存的更改（1）'),
           reason: 'Explicit stage action still stages the file');
       expect(find.byKey(const ValueKey('git-s-alpha.txt')), findsOneWidget);

@@ -8,6 +8,8 @@ Last Updated: 2026-11-18
 
 ## Current State
 
+- 2026-11-18用户最新指示：没有macOS设备，保留原生/视觉/实测缺口未验证，继续P05，不以macOS实机或新增探针排障阻塞实施。docs03 N.2/路线已同步。
+- 当前P05.83/feat135已登记in-progress：SCM上下文菜单宿主，右键与ContextMenu/ShiftF10keyup保留选择/anchor只更新focus，单项OpenDiff/Stage/Unstage与旧动作guard。组件实现中，真实repo菜单取消index/disk不变+菜单stage红测在scm-context-open缺失处正确失败。本地启动1462全绿，mac缺口暂留。范围p05.83-scm-context-menu.md。
 - 独立worktree E:/Temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，上游codex/vscode-parity-p05。最新产品d5c11f2637135425c0e30178ad4ce268e7554f74已推，当前待提交最后hosted证据。
 - P05.82/feat134诊断子项done：目标实例snapshot/唯一新PID-launch-path绑定、AX属性/匹配原因/press日志、app/open-W分别观察和严格20秒退出判定。Workflow外部watchdog绑定20秒、snapshot5秒、Quit共享120秒、observer25秒、cleanup共享5秒；超时只终止自有helper session并保留失败，不改产品关闭行为。
 - 本地完整init.sh Flutter1462/1462、Rusttests/Clippy/core、fmt/analyze0，10mockworkflow+7WSLPOSIXhang夹具/review通过。准确d5 CI44247773016四job和Platform44247766537三平台全绿；mac原生Swift编译、1462tests、Release/clipboard/launch/nativeQuit/package通过，DnD syntheticpointerroutefalse明确skip。

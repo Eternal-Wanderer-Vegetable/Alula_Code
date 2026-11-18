@@ -1658,6 +1658,16 @@
       "evidence": "Registered after exact P05.81 nativeQuit failure and evidence closeout4e769d7. Helper/workflow-only diagnostics; product shutdown logic unchanged. Unknown/appalive/wrapperalive are failures, existing20second exit budget retained. Implemented helper/workflowonly snapshot/uniquePID/launch/pathbinding, fixedtargetQuit, AXattributes/matchreason andstrictdualPID20s observer. YAML+21Bashsyntax+Swiftstructure+10mockworkflowfixtures pass, reproduciblescript/results archived. Targetedreviewpass afterloggingfinishedwrapperstatusonfailure; nativeSwiftcompile unverifiedWindows. Completeinit.sh Flutter1462/1462 Rusttests/Clippy/core/fmt/analyze0passed. FinalgraphCRITICAL completeexports archived. Initial2c CIpassed/Swiftcompiled butQuitstalled beyondstep/job budgets, originalcauseunresolved. Workflowwatchdogfixd5c11f2 passes7POSIXhangfixtures/review, no acceptancewaiver. ExactCI44247773016+Platform44247766537 alljobs success; mac1462tests/Swiftcompile/nativeQuit/packagepassed, DnDexplicitskip. Boundapp36952 wrapper36949, AXTitleQuitAlulaCode matchAXTitleprefix, alive/alive->gone/gone open_status0 within18sstep. Macapp14403778075 ZIP81entries SHA25613f1b8dacd21588cd9e9ce71572529c6148ca02cee6304c3a8d29e86552f6939 matchessidecar. Diagnosticchilddone, historicalrootcause/P05parentopen; exactreport p05.82-hosted.md.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-135",
+      "name": "P05.83 LAY-16f SCM上下文菜单宿主",
+      "description": "SCM pointer/keyboard context menu targeting, preserve multiselection/anchor, cancel/focus lifecycle and stale identity guards; existing singleton OpenDiff/Stage/Unstage only. docs/diagnostics/2026-11-18-p05/p05.83-scm-context-menu.md",
+      "dependencies": ["feat-133"],
+      "status": "in-progress",
+      "evidence": "Registered fixedreference listWidget/scmViewPane contract. Baseline1462/1462green; freshgraphimpact empty-name exception/UNKNOWN retained with actualcallercheck, priorMEDIUM/CRITICAL risk. macOS device/native gaps explicitlydeferred peruser2026-11-18; no macOS realdevice gate forimplementation. Component37/37+realrepo1/1 pass, redfirst missingmenu and reviewraces captured. Fixed keyupframe scheduling, staleShift, queuedtarget validation, popup/action lock separation andrefreshposition. Finalsequentialinit.sh Flutter1472/1472 Rusttests/Clippy/core passed; independentfmt/analyze0. PriorparallelDLLcopybusyfailedrunretained, notcountedgreen. Completegraph/exacthosted pending; fullSCMbatch P09 excluded, macOSdevicegapsdeferred.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

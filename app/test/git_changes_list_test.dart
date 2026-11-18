@@ -739,6 +739,256 @@ void main() {
     expect(staged, isEmpty);
   });
 
+  testWidgets(
+      'secondary click targets row without changing selection or anchor',
+      (tester) async {
+    final opened = <String>[];
+    final staged = <String>[];
+    final unstaged = <String>[];
+    await tester.pumpWidget(surface(
+      platform: TargetPlatform.windows,
+      height: 300,
+      entries: [entry('a'), entry('b'), entry('c')],
+      onOpen: (entry, {required preserveFocus}) async => opened.add(entry.path),
+      onStage: (path) async => staged.add(path),
+      onUnstage: (path) async => unstaged.add(path),
+    ));
+    await tester.tap(row('a'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row('b'));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+
+    await tester.tap(row('c'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    expect(focused(tester, 'c'), isTrue);
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('c')).selected, isFalse);
+    expect(opened, ['a']);
+    expect(staged, isEmpty);
+    expect(unstaged, isEmpty);
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('scm-context-open')));
+    await tester.pumpAndSettle();
+    expect(opened, ['a', 'c']);
+    expect(staged, isEmpty);
+    expect(unstaged, isEmpty);
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('c')).selected, isFalse);
+  });
+
+  testWidgets('context key opens only on keyup and cancellation is inert',
+      (tester) async {
+    final opened = <String>[];
+    final staged = <String>[];
+    await tester.pumpWidget(surface(
+      entries: [entry('a'), entry('b')],
+      onOpen: (entry, {required preserveFocus}) async => opened.add(entry.path),
+      onStage: (path) async => staged.add(path),
+    ));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f10);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsNothing,
+        reason: 'the keydown must not open the popup');
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f10);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.escape);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    expect(opened, isEmpty);
+    expect(staged, isEmpty);
+    expect(focused(tester, 'a'), isTrue);
+    expect(tester.widget<ListTile>(row('a')).selected, isFalse);
+  });
+
+  testWidgets('releasing Shift inside the popup cannot arm a later bare F10',
+      (tester) async {
+    await tester.pumpWidget(surface(entries: [entry('a')]));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.f10);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.f10);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.f10);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsNothing);
+  });
+
+  testWidgets('queued keyboard menu cannot outlive its focused target',
+      (tester) async {
+    await tester.pumpWidget(surface(entries: [entry('a'), entry('b')]));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsNothing);
+    expect(focused(tester, 'b'), isTrue);
+  });
+
+  testWidgets('pending menu action does not lock or close a newer menu',
+      (tester) async {
+    final pending = Completer<void>();
+    final staged = <String>[];
+    await tester.pumpWidget(surface(
+      entries: [entry('a'), entry('b')],
+      onStage: (path) {
+        staged.add(path);
+        return pending.future;
+      },
+    ));
+    await tester.tap(row('a'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, ['a']);
+    await tester.tap(row('b'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+    pending.complete();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('context menu target cannot revive after removal and readd',
+      (tester) async {
+    var entries = [entry('a'), entry('b')];
+    final staged = <String>[];
+    Future<void> rebuild() => tester.pumpWidget(surface(
+          entries: entries,
+          onStage: (path) async => staged.add(path),
+        ));
+    await rebuild();
+    await tester.tap(row('a'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    entries = [entry('b')];
+    await rebuild();
+    entries = [entry('a'), entry('b')];
+    await rebuild();
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, isEmpty);
+    await tester.tap(row('a'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, ['a']);
+  });
+
+  testWidgets('unchanged refresh keeps context action valid and row scoped',
+      (tester) async {
+    var entries = [entry('a'), entry('b')];
+    final staged = <String>[];
+    Future<void> rebuild() => tester.pumpWidget(surface(
+          platform: TargetPlatform.windows,
+          entries: entries,
+          onStage: (path) async => staged.add(path),
+        ));
+    await rebuild();
+    await tester.tap(row('a'));
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.tap(row('b'));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+    await tester.tap(row('b'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    entries = [entry('a'), entry('b')];
+    await rebuild();
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, ['b']);
+    expect(tester.widget<ListTile>(row('a')).selected, isTrue);
+    expect(tester.widget<ListTile>(row('b')).selected, isTrue);
+  });
+
+  testWidgets('context key reveals offscreen focus and opens once',
+      (tester) async {
+    final staged = <String>[];
+    await tester.pumpWidget(surface(
+      entries: List.generate(40, (i) => entry('$i')),
+      onStage: (path) async => staged.add(path),
+    ));
+    await focusList(tester);
+    await tester.sendKeyEvent(LogicalKeyboardKey.end);
+    await tester.pumpAndSettle();
+    final scroll = tester
+        .widget<ListView>(find.byKey(const ValueKey('git-changes-list')))
+        .controller!;
+    scroll.jumpTo(0);
+    await tester.pumpAndSettle();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.contextMenu);
+    await tester.sendKeyRepeatEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsNothing);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.contextMenu);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-open')), findsOneWidget);
+    expect(scroll.offset, greaterThan(0));
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, ['39']);
+  });
+
+  testWidgets('cancel preserves an explicitly acquired outside focus',
+      (tester) async {
+    final outside = FocusNode();
+    addTearDown(outside.dispose);
+    await tester.pumpWidget(surface(
+      entries: [entry('a')],
+      sibling: TextButton(
+          focusNode: outside, onPressed: () {}, child: const Text('Outside')),
+    ));
+    await tester.tap(row('a'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    outside.requestFocus();
+    await tester.pump();
+    Navigator.of(tester.element(find.byKey(const ValueKey('scm-context-open'))))
+        .pop();
+    await tester.pumpAndSettle();
+    expect(outside.hasPrimaryFocus, isTrue);
+    expect(tester.widget<ListTile>(row('a')).selected, isFalse);
+  });
+
+  testWidgets('context menu action rejects an entry changed while open',
+      (tester) async {
+    var entries = [entry('a'), entry('b')];
+    final opened = <String>[];
+    final staged = <String>[];
+    Future<void> rebuild() => tester.pumpWidget(surface(
+          entries: entries,
+          onOpen: (entry, {required preserveFocus}) async =>
+              opened.add(entry.path),
+          onStage: (path) async => staged.add(path),
+        ));
+    await rebuild();
+    await tester.tap(row('a'), buttons: kSecondaryMouseButton);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('scm-context-stage')), findsOneWidget);
+    entries = [entry('a', staged: true), entry('b')];
+    await rebuild();
+    await tester.tap(find.byKey(const ValueKey('scm-context-stage')));
+    await tester.pumpAndSettle();
+    expect(staged, isEmpty);
+    expect(opened, isEmpty);
+  });
+
   testWidgets('pending Space completion after disposal does not restore focus',
       (tester) async {
     final pending = Completer<void>();

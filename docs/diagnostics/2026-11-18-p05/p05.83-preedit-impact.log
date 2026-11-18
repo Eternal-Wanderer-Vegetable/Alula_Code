@@ -1,0 +1,11 @@
+
+  GitNexus Impact (1.6.12)
+file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/mcp/local/local-backend.js:549
+    if (symName.length === 0)
+                ^
+
+TypeError: Cannot read properties of undefined (reading 'length')
+    at unresolvedReceiverBoundaries (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/mcp/local/local-backend.js:549:17)
+    at LocalBackend.computeEpistemicBoundary (file:///C:/Users/Vegetable/AppData/Roaming/npm/node_modules/gitnexus/dist/mcp/local/local-backend.js:5903:31)
+
+Node.js v24.22.1

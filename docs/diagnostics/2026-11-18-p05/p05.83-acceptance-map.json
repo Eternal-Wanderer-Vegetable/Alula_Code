@@ -1,0 +1,95 @@
+{
+  "feature": "feat-135",
+  "slice": "P05.83 / LAY-16f",
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "scope": "Current flat SCM resource context-menu host, with explicit single-resource action adaptation; complete upstream batches remain P09",
+  "cases": [
+    {
+      "contract": "Secondary click on an unselected row updates focus while preserving multiselection; Open Changes targets the context row without collapsing that selection",
+      "test": "secondary click targets row without changing selection or anchor",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass",
+      "boundary": "Range anchor is source-reviewed; the named case does not extend a range after menu dismissal"
+    },
+    {
+      "contract": "Shift+F10 opens on keyup only; Escape runs no callback and leaves the focused row unselected",
+      "test": "context key opens only on keyup and cancellation is inert",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Releasing Shift while popup owns focus does not make a later bare F10 open a menu",
+      "test": "releasing Shift inside the popup cannot arm a later bare F10",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "A queued keyboard popup is rejected if logical focus moves before its frame",
+      "test": "queued keyboard menu cannot outlive its focused target",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "A slow menu action does not suppress another visible popup; completion of the earlier action does not close the new popup",
+      "test": "pending menu action does not lock or close a newer menu",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Removal/readd cannot revive a stale menu; a fresh menu can stage the new current row",
+      "test": "context menu target cannot revive after removal and readd",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Equivalent newly allocated entries keep an open action valid and stage only the context resource despite multiselection",
+      "test": "unchanged refresh keeps context action valid and row scoped",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "ContextMenu key repeat does not open on keydown; keyup reveals offscreen focus and stages that resource once",
+      "test": "context key reveals offscreen focus and opens once",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Cancelling after an outside control explicitly acquires focus preserves that focus",
+      "test": "cancel preserves an explicitly acquired outside focus",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Staged-side migration invalidates an old Stage action",
+      "test": "context menu action rejects an entry changed while open",
+      "file": "app/test/git_changes_list_test.dart",
+      "status": "automated-pass"
+    },
+    {
+      "contract": "Real-workbench menu cancellation leaves Git index tree and file bytes unchanged; menu Stage operates the current file",
+      "test": "Git changes list opens resources without staging on Space",
+      "file": "app/test/widget_test.dart",
+      "status": "automated-pass"
+    }
+  ],
+  "sourceReviewOnly": [
+    "Status and original-path changes reject stale actions",
+    "Queued menu placement recomputes current row offset after refresh",
+    "Component disposal rejects late action by mounted; independent PopupMenuRoute may remain visible until dismissal",
+    "Only one visible popup lock; action invalidator removed before awaiting Git I/O",
+    "No focused resource means no keyboard menu; root/group menu remains outside scope"
+  ],
+  "platformLimits": {
+    "macos": "device/native/visual gaps deferred unverified by user instruction 2026-11-18; does not block P05 implementation",
+    "nativeVisual": "not verified",
+    "upstreamBatchActions": "deferred P09; local menu labels explicitly single resource"
+  },
+  "validation": {
+    "componentTests": 37,
+    "realRepositoryTests": 1,
+    "fullGate": "bash init.sh passed Rust tests/Clippy/core build and Flutter1472/1472; independent fmt/analyze0",
+    "review": "targeted review findings fixed and rechecked",
+    "macosDeviceGate": "deferred unverified by user authorization",
+    "parentP05Complete": false
+  }
+}
