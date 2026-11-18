@@ -7,7 +7,7 @@
 
 ### P05 / feat-027 持续推进；P05.85已收尾，当前P05.86 OpenEditors路径排序
 
-- 2026-11-18 P05.86/feat138实现editorOrder/fullPath显示投影与header/session偏好，不改tabs/MRU/view。policy13+真实OpenEditors5=18/18，独立实际固定源码核对26goldenkeys/676pairs一致。审查P1发现共享URI生成器POSIX/特殊文件名不兼容，真实z%done#.rs先红后局部Uri.file修正绿，未扩大LSP修正。最终init1509/1509、Rust/Clippy/core/fmt/analyze0及复审通过；graph含新增文件all10/13/438、main581/320/441 CRITICAL完整稳定。精确CI/WinLinux待补，mac暂留。alphabetical/locale/nullresource名称排序与P07正式配置后续，minimapUnknownDoc非失败输出根因未定。
+- 2026-11-18 P05.86/feat138实现editorOrder/fullPath显示投影与header/session偏好，不改tabs/MRU/view。policy13+真实OpenEditors5=18/18，独立实际固定源码核对26goldenkeys/676pairs一致。审查P1发现共享URI生成器POSIX/特殊文件名不兼容，真实z%done#.rs先红后局部Uri.file修正绿，未扩大LSP修正。最终init1509/1509、Rust/Clippy/core/fmt/analyze0及复审通过；graph含新增文件all10/13/438、main581/320/441 CRITICAL完整稳定。产品3c1efd9准确CI44290357627四项/1509tests与PA44290348170 Win/Linux成功，Win desktop25/clipboard1/DnD13callbacks、Linuxclipboard1/launch/DnD19callbacks；准确摘要p05.86-hosted-verification.json已归档，feat138限定子项done。mac未等待暂留。alphabetical/locale/nullresource名称排序与P07正式配置后续，minimapUnknownDoc非失败输出根因未定，父LAY11/P05开放。
 - 下一步相邻问题：共享_pathToUri对POSIX多斜杠、百分号/井号与UNC的协议编码需在独立任务核对LSP/文档调用和回归；本片只修显示投影，不宣称该全局问题解决。
 
 

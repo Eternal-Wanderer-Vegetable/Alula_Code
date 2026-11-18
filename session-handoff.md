@@ -14,7 +14,7 @@ Last Updated: 2026-11-18
 - 审查P1：现有共享_pathToUri产生POSIX多斜杠且不转义%/#/UNC，严格排序消费错误。真实z%done#.rs回归先红；仅显示投影Uri.file(doc.path!,windows:Platform.isWindows)后绿，pathless仍doc.uri。修正复审无剩余实质finding。共享LSP/文档URI问题仅登记progress下一步，未修。
 - 最终完整init.sh1509/1509、Rusttests/Clippy/core、独立cargo fmt/analyze0通过；原首轮1508全绿与初版policy失败分别保留。非失败minimapUnknownDoc id1输出根因未定。
 - 完整graph含新增文件all10files/13symbols/438flows、main581/320/441 CRITICAL，数组完整、无partial/truncated、snapshot稳定。私有builderUNKNOWN、空name/跨语言/trace预算限制保留，共享Workbench历史CRITICAL不降级。
-- 正在提交P05.86产品和本地证据；准确产品SHA CI/Windows/Linux仍待收尾，feature138 in-progress，P05/LAY11父行开放。P05.85产品7fe2a11/收尾a648fb8及CI44282450910/PA44282442631 WinLinux已完整，不重复实现/全量。
+- P05.86产品3c1efd9726ebbda06f1866579cb88f939ec92d84已推，准确CI44290357627四项/1509tests与PA44290348170 Windows134753661195/Linux134753661301均success。Win desktop25/clipboard1/DnD13callbacks，Linuxclipboard1/launch/DnD19callbacks；app14421711895/14422016881、DnD14421163996/14421243697。summary已归档，feature138限定子项done，当前正在提交最后收尾证据。P05/LAY11父行开放，P05.85产品7fe2a11/收尾a648fb8已完整，不重复实现/全量。
 
 ## Blockers / Limits
 
@@ -31,4 +31,4 @@ Last Updated: 2026-11-18
 
 ## Next Session First Step
 
-核对P05.86已提交/推送的实际状态及exact SHA CI和Windows/Linux平台结果，归档准确日志/summary并同步docs03/feature138/progress/PR。不用重跑已绿1509或重复独立参考review，除非代码变化/失败。138证据收尾前不启动下一feature；随后从docs03连续P05路线选择下一片。mac不等待，PR继续draft。
+核对P05.86最后收尾提交/PR同步状态，然后从docs03连续P05路线选择下一片（Open Editors重排/批量动作或Breadcrumb导航宿主）。不要重复已完整归档的3c1efd9 exactCI/WinLinux、1509全量或独立参考review。新片先登记feature、固定合同与impact，一次一片；alphabetical需要准确Intl locale规则，不做近似冒充。mac不等待，PR继续draft。

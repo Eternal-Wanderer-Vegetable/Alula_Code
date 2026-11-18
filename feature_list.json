@@ -1694,8 +1694,8 @@
       "name": "P05.86 Open Editors完整路径显示排序",
       "description": "editorOrder/fullPath copied stable display projection per visual group, session preference and header selector; alphabetical/locale name ordering and P07 configuration remain explicit gaps. docs/diagnostics/2026-11-18-p05/p05.86-open-editors-path-sort.md",
       "dependencies": ["feat-137"],
-      "status": "in-progress",
-      "evidence": "Policy13+Workbench5=18/18 passed; specialnativefilename oldprojection red then localUri.file fixgreen. Independent actualpinnedsource verified26goldenkeys/676orderedpairs, checkedintest usesrelativegoldenorder. ReviewP1resolved. Finalinit1509/1509 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall10/13/438 andmain581/320/441 CRITICAL countscomplete/snapshotstable; privatebuilderUNKNOWN/sourcecallchecked andsharedriskretained. ExactCIWinLinux pending, macOSdevicegapsdeferred; alphabetical/nullresourcenameorder/P07config remain gaps.",
+      "status": "done",
+      "evidence": "Policy13+Workbench5=18/18 passed; specialnativefilename oldprojection red then localUri.file fixgreen. Independent actualpinnedsource verified26goldenkeys/676orderedpairs, checkedintest usesrelativegoldenorder. ReviewP1resolved. Finalinit1509/1509 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall10/13/438 andmain581/320/441 CRITICAL countscomplete/snapshotstable; privatebuilderUNKNOWN/sourcecallchecked andsharedriskretained. Exactproduct3c1efd9726ebbda06f1866579cb88f939ec92d84 CI44290357627 all4success/1509actualtests; PA44290348170 Windows134753661195/Linux134753661301success. Win desktop25/clipboard1/DnD13callbacks app14421711895/DnD14421163996; Linuxclipboard1/launch/DnD19callbacks app14422016881/DnD14421243697. Summary p05.86-hosted-verification.json. macOSnotawaited, alphabetical/nullresourcenameorder/P07config remain gaps; parentLAY11/P05open.",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
