@@ -9,7 +9,7 @@ Last Updated: 2026-11-18
 ## Current State
 
 - 独立worktree E:/temp/alula-pr3-20261117，branch codex/pr3-p05-continuation-20261117，push origin HEAD:codex/vscode-parity-p05。原E:/Alula_Code与E:/temp/alula-pr3-p05脏树均保留。上一已推收尾a648fb8。
-- 当前唯一feature P05.87/feat139 Open Editors组标题右键CloseSaved/CloseAll。已登记docs03/feature/progress/report，目标组身份/工作区guard、excludeSticky并复用现有_tabsClose/requestClose，不改共享关闭逻辑。新真实菜单7/7、既有回归12/12、产品review通过；首轮lazy标题夹具失败保留，修定位后绿。完整init1516/1516、Rust/Clippy/core/fmt/analyze0通过，graphall9/12/0LOW/main604/332/441CRITICAL完整稳定，历史CRITICAL/UNKNOWN保留。当前待提交139产品/证据与准确CIWinLinux。
+- 当前唯一feature P05.87/feat139 Open Editors组标题右键CloseSaved/CloseAll。已登记docs03/feature/progress/report，目标组身份/工作区guard、excludeSticky并复用现有_tabsClose/requestClose，不改共享关闭逻辑。新真实菜单7/7、既有回归12/12、产品review通过；首轮lazy标题夹具失败保留，修定位后绿。完整init1516/1516、Rust/Clippy/core/fmt/analyze0通过，graphall9/12/0LOW/main604/332/441CRITICAL完整稳定，历史CRITICAL/UNKNOWN保留。产品36e4db28dcf916cf89a5e56a6982a99ea7140838已推，准确CI44295956176四项/1516tests与PA44295946254 Windows134772874495/Linux134772875103成功。Win desktop25/clipboard1/DnD12callbacks app14424631148/DnD14423464321；Linuxclipboard1/launch/DnD23callbacks app14422908443/DnD14424216265。collector已完成，raw E:/Temp/alula-p0587-hosted-20261118/20261118T113555Z-039ecfe0；summary已归档，feat139限定子项done，待最后收尾提交。不等mac，父P05/LAY11开放。
 - 已完成P05.86/feat138 Open Editors editorOrder/fullPath显示排序：header/session偏好、按visualgroups排序副本，保持tabs/MRU/active/view。alphabetical/Intl与nullresource名称/P07配置留后续。
 - policy13+真实OpenEditors5=18/18，包含26goldenkeys/676orderedpairs。独立review实际编译固定uri.ts/charCode.ts验证key与排序一致；checked-in测试本身只做golden相对排序。workbench切换/恢复、tab几何/Rust视图身份/content及排序后activate/close/disk不变通过。
 - 审查P1：现有共享_pathToUri产生POSIX多斜杠且不转义%/#/UNC，严格排序消费错误。真实z%done#.rs回归先红；仅显示投影Uri.file(doc.path!,windows:Platform.isWindows)后绿，pathless仍doc.uri。修正复审无剩余实质finding。共享LSP/文档URI问题仅登记progress下一步，未修。
@@ -32,4 +32,4 @@ Last Updated: 2026-11-18
 
 ## Next Session First Step
 
-继续当前P05.87/feat139，先收取agent9631e827测试与agent7adc450b只读审查结果，不重复代理任务。父侧已实现菜单且analyze0，待focused后再init/fmt/analyze/graph与commitpush/exactCIWinLinux收尾。不要与加载DLL的专项并行build_core。P05.86已完整，无须重复。alphabetical仍需准确Intl规则不做近似。mac不等待，PR继续draft。
+核对139最后收尾提交与PR同步，随后按docs03连续路线选下一片OpenEditors剩余动作或Breadcrumb宿主。36e4db2准确CI/WinLinux与full1516已完整，不重复。新片先固定合同/impact登记，一次一feature；mac不等待，PR继续draft。
