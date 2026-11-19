@@ -1820,6 +1820,16 @@
       "evidence": "P05.95/feat-147 完成，产品 SHA 8a995b08a8ec908575d53af1215b6b64536e012f 已推 PR #3，PR 保持 OPEN/DRAFT。KeybindingSet 增加两个 WithPicker commands，Windows/Linux 为 Ctrl+Right/Left、macOS 为 Alt+Right/Left；picker 外 ordinary 命令仍启用。WorkbenchPage 使用独立 route-open/list-focus context；临时 FocusManager listener 比较主焦点 ModalRoute 与 picker route，dialog 覆盖时禁用；首帧同步合并到 post-frame，finally/dispose 清理。Popup Focus handler 仅派发 WithPicker bindings，裸箭头继续由菜单处理。专项 keyboard10/10、keybindings32/32、picker8/8、reveal6/6、overflow2/2、keybinding-context-collision5/5；完整 bash init.sh 通过（Rust workspace、Clippy -D warnings、build_core、Flutter1556/1556），cargo fmt --all -- --check 与 app flutter analyze（0 issues）通过。PR CI 44481175224 四 job 全绿；Platform Availability 44481166897 Linux/Windows 全部成功，同 SHA Windows 桌面/原生拖放/剪贴板/无障碍/关闭流程及 Linux 构建/剪贴板/拖放/启动通过。包及诊断 artifact IDs/digests、macOS 未等待状态记录于 docs/diagnostics/2026-11-19-p05/p05.95-hosted-verification.json。Post-change GitNexus all-scope 为10 files/5 symbols/0 mapped processes/LOW；WorkbenchPage 大文件跳过、流程候选未全覆盖、FTS 因2GiB buffer pool OOM 无法构建；UNKNOWN 的 class call edge 已通过源检索确认，不宣称图谱 clean。累积 compare-main 742 files/75 processes/CRITICAL（LISTING CAPPED；重复 scan 2195–2369 symbols，最近2226），不归因于本片。报告：docs/diagnostics/2026-11-19-p05/p05.95-breadcrumb-picker-focus-navigation-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-148",
+      "name": "P05.96 Open Editors 中键关闭",
+      "description": "Open Editors 树中的编辑器行支持鼠标中键关闭，沿用当前所属组和既有脏安全关闭/取消流程；不改变单击激活、右键复制路径、标签组或其他窗口行为。固定参考：Code-OSS 1.145.0 `openEditorsView.ts` 中的 list.onMouseMiddleClick。范围见 docs/diagnostics/2026-11-19-p05/p05.96-open-editors-middle-click-close-scope.md。",
+      "dependencies": [
+        "feat-147"
+      ],
+      "status": "done",
+      "evidence": "P05.96/feat-148 完成，产品 commit e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38 已推 PR #3，PR 保持 OPEN/DRAFT。Open Editors 行中键 pointer-down 调用所属组 _closeDoc，沿用 dirty-safe close 且不先激活行；聚焦回归7/7覆盖另一组焦点保持和脏 Cancel 保留 row/text/dirty/disk/session。精确本地 bash init.sh 通过（Rust workspace、Clippy -D warnings、build_core、Flutter1558/1558）；cargo fmt --all -- --check、flutter analyze 0 issues、最终聚焦7/7通过。准确 SHA PR CI 44488427815 四项全绿（Flutter分析无问题、1558 tests）；Platform Availability 44488418388 Linux/Windows jobs全绿，含 Windows桌面交互/拖放/剪贴板/无障碍/关闭及 Linux构建/剪贴板/拖放/启动。应用和诊断 artifacts/digests及macOS未等待状态见 docs/diagnostics/2026-11-19-p05/p05.96-hosted-verification.json。post-change GitNexus detect-changes明确not clean、无索引符号重叠；WorkbenchPage >512KiB被跳过、432/1338流程候选、FTS缺失，不能视为all-clear；源代码差异已直接复核，预编辑 UNKNOWN 保留。macOS无设备且本次hosted job未等待，未声称通过。详细范围与图谱覆盖限制：docs/diagnostics/2026-11-19-p05/p05.96-open-editors-middle-click-close-scope.md。"
     }
   ],
   "active_track": "vscode-builtin-parity",
