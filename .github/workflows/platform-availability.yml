@@ -10,6 +10,7 @@ on:
       - 'tools/vscode-parity/macos-native-dnd-input.swift'
       - 'tools/vscode-parity/linux-native-dnd-input.py'
       - 'tools/vscode-parity/windows-native-dnd-input.py'
+      - 'tools/vscode-parity/auxiliary-focus-native-smoke.py'
       - 'scripts/build_core.*'
       - '.github/workflows/platform-availability.yml'
 
@@ -41,6 +42,24 @@ jobs:
         id: linux_release
         run: flutter build linux --release
         working-directory: app
+      - name: Build Linux auxiliary focus smoke app
+        run: flutter build linux --debug --target tool/auxiliary_focus_native_smoke.dart
+        working-directory: app
+      - name: Verify native Linux auxiliary-window focus handoff
+        run: |
+          cp app/native/libalula_core.so app/build/linux/x64/debug/bundle/
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            python3 tools/vscode-parity/auxiliary-focus-native-smoke.py \
+              app/build/linux/x64/debug/bundle/alula_app \
+              "$RUNNER_TEMP/alula-linux-auxiliary-focus"
+      - name: Upload Linux auxiliary focus diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-linux-auxiliary-focus-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-linux-auxiliary-focus
+          if-no-files-found: warn
+          retention-days: 7
       - name: Verify native Linux Open Editors collation
         run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
         working-directory: app
@@ -112,6 +131,24 @@ jobs:
         id: windows_release
         run: flutter build windows --release
         working-directory: app
+      - name: Build Windows auxiliary focus smoke app
+        run: flutter build windows --debug --target tool/auxiliary_focus_native_smoke.dart
+        working-directory: app
+      - name: Verify native Windows auxiliary-window focus handoff
+        shell: pwsh
+        run: |
+          Copy-Item app/native/alula_core.dll app/build/windows/x64/runner/Debug/ -Force
+          python tools/vscode-parity/auxiliary-focus-native-smoke.py `
+            app/build/windows/x64/runner/Debug/alula_app.exe `
+            "$env:RUNNER_TEMP/alula-windows-auxiliary-focus"
+      - name: Upload Windows auxiliary focus diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alula-windows-auxiliary-focus-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/alula-windows-auxiliary-focus
+          if-no-files-found: warn
+          retention-days: 7
       - name: Verify native Windows Open Editors collation
         run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
         working-directory: app

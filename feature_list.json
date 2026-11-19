@@ -1850,6 +1850,18 @@
       ],
       "status": "done",
       "evidence": "P05.98/feat-150 已在 worktree 实现：非零脏计数以 Tooltip、Semantics button 和 owned FocusNode 暴露；pointer/touch、Enter、Space 复用首个布局组/组内文档顺序扫描及 _activateOpenEditorsRow。零计数隐藏。app/test/open_editors_view_test.dart 专项 10/10 通过，覆盖语义、三脏项顺序、跨组 clean 跳过、折叠态、键盘激活，以及普通输入 flush 后文本/选区/version/dirty/pending count/磁盘字节不变。完整本地 N.2 通过：精确工作树 bash init.sh 为 Flutter 1563 passed/2 skipped、Rust workspace/Clippy/core 全绿，cargo fmt --all -- --check 通过，flutter analyze --no-pub 0 issues；专项10/10。post-change fresh GitNexus index 13,318 nodes/29,851 edges/432 clusters/flows；final staged all-scope 8 files/12 symbols/0 processes/LOW，但产品文件 workbench_page.dart >512KiB 未入图，不称 runtime clean。早期 all-scope 将计划标题映射为1 MEDIUM flow。compare-main 752–753 files/76–81 processes/CRITICAL；默认及 --limit 2000 重跑均 capped，计数在1249–1399 symbols间波动，保持 unresolved。精确 SHA 970ea5c6ee7ed7dbf8f99eb569265fcfd62df848 的 PR CI 44512676524 四项全绿（Flutter 1563 passed/2 skipped、analyze 0 issues、强制 ICU4X 17/17）；Platform Availability 44512666184 的 Linux/Windows jobs 全绿。应用与原生 DnD artifacts 及 digest 见 docs/diagnostics/2026-11-19-p05/p05.98-hosted-verification.json。macOS hosted job 在采集时仍运行且未等待；无 macOS 设备，不声称其验证。因此 P05.98 限定子项完成，PR #3 保持 OPEN/DRAFT。预编辑 GitNexus impact 对 _buildOpenEditorsSection、_activateOpenEditorsRow、WorkbenchPage 为 UNKNOWN/target-not-found；FTS/跨语言属性/流程覆盖限制见 docs/diagnostics/2026-11-19-p05/p05.98-open-editors-dirty-counter-scope.md，不视作 all-clear。docs-only closeout GitNexus all-scope at product HEAD 970ea5c6ee7ed7dbf8f99eb569265fcfd62df848: 7 changed files, 5 mapped Section ? symbols, 0 affected processes, LOW. The listed mappings are documentation sections; WorkbenchPage remains outside the graph file-size limit, so this does not upgrade the bounded product scan to a clean runtime guarantee."
+    },
+    {
+      "id": "feat-151",
+      "name": "P05.99 辅助窗口原生焦点切换回归",
+      "description": "通过真实 Linux/Windows 双窗 smoke 验证辅助窗激活、主窗重新获焦时的活动 window/group snapshot；焦点协议只含 window/group 标识和序号/状态。范围见 docs/diagnostics/2026-11-19-p05/p05.99-auxiliary-focus-native-smoke-scope.md。",
+      "dependencies": [
+        "feat-119"
+      ],
+      "status": "in-progress",
+      "evidence": "P05.99/feat-151 已实现并保持 in-progress。完整本地 N.2 通过：FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh EXIT=0（Rust workspace、Clippy -D warnings、build_core、Flutter 1563 passed/2 skipped），cargo fmt --all -- --check 通过，完整 flutter analyze --no-pub 0 issues；focus-context/auxiliary-window 定向测试16/16。Linux debug fixture 构建成功，Xvfb/xdotool 实际双窗焦点 auxiliary→main→auxiliary→main 通过，revision 2–5 严格递增，snapshot allowlist 仅 groupId/revision/windowId，document sentinel absent；原始证据 docs/diagnostics/2026-11-19-p05/p05.99-linux-native-focus/focus-snapshots.jsonl 与 native-focus-result.json。修复 desktop_multi_window child engine 未注册 generated plugins 的根因，在Linux/Windows/macOS runner加入文档要求的 window-created callback；macOS native focus 未验证。Windows native hosted smoke 与 exact-SHA PR/Platform Availability jobs 待运行，成功前不标 done。GitNexus post-change index 13,367 nodes/30,800 edges/435 clusters/431 flows；workbench_page.dart >512KiB 未入图，FTS build failed，跨语言/流程候选覆盖受限，非 graph all-clear。范围、impact/source 审核与局限见 docs/diagnostics/2026-11-19-p05/p05.99-auxiliary-focus-native-smoke-scope.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

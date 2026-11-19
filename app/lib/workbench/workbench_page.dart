@@ -304,6 +304,7 @@ class WorkbenchPage extends StatefulWidget {
     this.notifications,
     this.mergeResultSessionFactory,
     this.onCommandServiceReady,
+    this.onAuxiliaryFocusContextChanged,
   })  : layoutStore = layoutStore ?? _defaultStore,
         sessionStore = sessionStore ?? _defaultSessionStore,
         keybindingsStore = keybindingsStore ?? _defaultKeybindingsStore;
@@ -370,6 +371,11 @@ class WorkbenchPage extends StatefulWidget {
     OpenDoc resultDocument,
     bool Function(MergeResultEditPlan plan) applyPlan,
   )? mergeResultSessionFactory;
+
+  /// Optional observer for native focus smoke tests. Snapshots contain only
+  /// the active window/group identifiers and revision.
+  final ValueChanged<AuxiliaryFocusContextSnapshot>?
+      onAuxiliaryFocusContextChanged;
 
   /// Host integration hook invoked after Workbench commands are registered.
   /// The service remains owned and disposed by this Workbench.
@@ -3208,6 +3214,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return '$windowId:${group.region}';
   }
 
+  void _notifyAuxiliaryFocusContextChanged() {
+    final snapshot = _auxiliaryFocusRegistry.snapshot;
+    if (snapshot != null) {
+      widget.onAuxiliaryFocusContextChanged?.call(snapshot);
+    }
+  }
+
   void _publishMainFocusContext({bool force = false}) {
     final controller = _mainWindowController;
     if (controller == null || !_auxiliaryFocusRegistry.isInitialized) return;
@@ -3224,7 +3237,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         focused: _mainWindowFocused == true,
       ),
     );
-    if (result.snapshotChanged) unawaited(_broadcastAuxiliaryFocusSnapshot());
+    if (result.snapshotChanged) {
+      _notifyAuxiliaryFocusContextChanged();
+      unawaited(_broadcastAuxiliaryFocusSnapshot());
+    }
   }
 
   void _onMainWindowFocusChanged(bool focused) {
@@ -13967,6 +13983,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             final result =
                 _auxiliaryFocusRegistry.removeAuxiliaryWindow(windowId);
             if (result.snapshotChanged) {
+              _notifyAuxiliaryFocusContextChanged();
               await _broadcastAuxiliaryFocusSnapshot();
             }
           }
@@ -13984,6 +14001,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _auxiliaryWindowIds.add(event.windowId);
           }
           if (result.snapshotChanged) {
+            _notifyAuxiliaryFocusContextChanged();
             await _broadcastAuxiliaryFocusSnapshot();
           }
           return _auxiliaryFocusRegistry.snapshot?.toMap();
@@ -13991,6 +14009,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         return null;
       });
       _auxiliaryFocusHandlerReady = true;
+      _notifyAuxiliaryFocusContextChanged();
       _auxiliaryWindowsSubscription ??= onWindowsChanged.listen((_) {
         unawaited(_removeClosedAuxiliaryWindows());
       });
@@ -14048,7 +14067,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 .snapshotChanged ||
             snapshotChanged;
       }
-      if (snapshotChanged) await _broadcastAuxiliaryFocusSnapshot();
+      if (snapshotChanged) {
+        _notifyAuxiliaryFocusContextChanged();
+        await _broadcastAuxiliaryFocusSnapshot();
+      }
     } on Object {
       // Window list notifications are best-effort on unsupported platforms.
     }
