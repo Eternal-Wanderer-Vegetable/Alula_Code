@@ -1871,8 +1871,8 @@
         "feat-131",
         "feat-137"
       ],
-      "status": "in-progress",
-      "evidence": "docs/diagnostics/2026-11-19-p05/p05.100-notification-clear-all.md",
+      "status": "done",
+      "evidence": "产品 3ae14156c16ae2bd436acc78bb4207eadf7c85b0 已推 PR #3。活动进度和对应未读、toast、banner 保留，普通及已完成条目成批清除。仅活动进度时按钮禁用，完成后恢复，命令面板与按钮共用收起面板和清除入口。通知专项 47/47，完整本地 Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、build_core、fmt 和 Dart analyze 通过。精确 SHA PR CI 44560999812 四项全绿，Platform Availability 44560982836 Linux/Windows jobs 通过。采集时 macOS 托管 job 仍在 Flutter 测试，实机验收按现有约定暂缓。 staged all-scope GitNexus 10 files / 8 symbols / 0 mapped flows / LOW，工作台大文件和累计 compare-main CRITICAL 截断限制保留。证据：docs/diagnostics/2026-11-19-p05/p05.100-notification-clear-all.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
