@@ -7,21 +7,24 @@ List<_Doc> _sort(Iterable<_Doc> docs) => sortOpenEditors(
       docs,
       OpenEditorsSortOrder.fullPath,
       uriOf: (doc) => doc.uri,
+      nameOf: (doc) => 'doc${doc.id}',
     );
 
 void main() {
-  test('parse accepts only the two persisted choices and defaults safely', () {
+  test('parse accepts the three persisted choices and defaults safely', () {
     expect(OpenEditorsSortOrder.values, [
       OpenEditorsSortOrder.editorOrder,
+      OpenEditorsSortOrder.alphabetical,
       OpenEditorsSortOrder.fullPath,
     ]);
+    expect(OpenEditorsSortOrder.parse('alphabetical'),
+        OpenEditorsSortOrder.alphabetical);
     expect(
         OpenEditorsSortOrder.parse('fullPath'), OpenEditorsSortOrder.fullPath);
     for (final value in <Object?>[
       'editorOrder',
       null,
       '',
-      'alphabetical',
       'FullPath',
       true,
       1,
@@ -31,6 +34,105 @@ void main() {
       expect(
           OpenEditorsSortOrder.parse(value), OpenEditorsSortOrder.editorOrder);
     }
+  });
+
+  test('alphabetical order sorts names stably without mutating documents', () {
+    final docs = <({int id, String name, String? uri})>[
+      (id: 0, name: 'Zulu', uri: 'file:///zulu'),
+      (id: 1, name: 'Alpha', uri: 'file:///alpha'),
+      (id: 2, name: 'Alpha', uri: 'file:///alpha-copy'),
+      (id: 3, name: 'Mike', uri: 'untitled:mike'),
+    ];
+    final original = docs.toList();
+    final sorted = sortOpenEditors(
+      docs,
+      OpenEditorsSortOrder.alphabetical,
+      uriOf: (_) => throw StateError('alphabetical order does not need URIs'),
+      nameOf: (doc) => doc.name,
+      compareNames: (a, b) => a.compareTo(b),
+    );
+
+    expect(sorted.map((doc) => doc.id), [1, 2, 3, 0]);
+    expect(docs, original);
+    expect(sorted, isNot(same(docs)));
+  });
+
+  test('runtime collator sorts numeric names and disambiguates zero padding',
+      () {
+    final names = ['file10', 'file02', 'file2', 'file01', 'file1'];
+    names.sort(compareOpenEditorsNames);
+    expect(names, ['file1', 'file01', 'file2', 'file02', 'file10']);
+  }, skip: !const bool.fromEnvironment('intl4x.brittle_i18n_testing'));
+
+  test('runtime collator matches the host Intl filename-order vectors', () {
+    final names = [
+      'file10',
+      'file2',
+      'file02',
+      'file1',
+      'file01',
+      'File2',
+      'FILE10',
+      'café',
+      'cafe',
+      'cafe\u0301',
+      'Å',
+      'A',
+      'a',
+      'ä',
+      'Ö',
+      'z',
+      'Z',
+      'a-b',
+      'a_b',
+      'a.b',
+      '2',
+      '10',
+    ];
+    names.sort(compareOpenEditorsNames);
+    expect(names, [
+      '2',
+      '10',
+      'a',
+      'A',
+      'Å',
+      'ä',
+      'a_b',
+      'a-b',
+      'a.b',
+      'cafe',
+      'café',
+      'cafe\u0301',
+      'file1',
+      'file01',
+      'file2',
+      'file02',
+      'File2',
+      'file10',
+      'FILE10',
+      'Ö',
+      'z',
+      'Z',
+    ]);
+  }, skip: !const bool.fromEnvironment('intl4x.brittle_i18n_testing'));
+
+  test('fullPath sorts only missing-resource names and keeps resource buckets',
+      () {
+    final docs = <({int id, String name, String? uri})>[
+      (id: 0, name: 'z-file', uri: 'file:///a/z-file'),
+      (id: 1, name: 'Zulu', uri: null),
+      (id: 2, name: 'broken-z', uri: 'file:///%GG'),
+      (id: 3, name: 'Alpha', uri: null),
+      (id: 4, name: 'git-file', uri: 'git:/x'),
+    ];
+    final sorted = sortOpenEditors(
+      docs,
+      OpenEditorsSortOrder.fullPath,
+      uriOf: (doc) => doc.uri,
+      nameOf: (doc) => doc.name,
+      compareNames: (a, b) => a.compareTo(b),
+    );
+    expect(sorted.map((doc) => doc.id), [3, 1, 2, 4, 0]);
   });
 
   test('editorOrder copies a lazy iterable without evaluating resource keys',

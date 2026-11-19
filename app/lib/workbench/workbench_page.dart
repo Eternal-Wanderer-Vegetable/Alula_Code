@@ -21259,7 +21259,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final doc in sortOpenEditors(group.docs, _openEditorsSortOrder,
           uriOf: (doc) => doc.path == null
               ? doc.uri
-              : Uri.file(doc.path!, windows: Platform.isWindows).toString())) {
+              : Uri.file(doc.path!, windows: Platform.isWindows).toString(),
+          nameOf: (doc) => doc.name,
+          compareNames: compareOpenEditorsNames)) {
         final active = group.activeDocId == doc.id;
         rows.add(Listener(
           onPointerDown: (event) {
@@ -21389,8 +21391,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                           key: ValueKey('open-editors-sort-${order.name}'),
                           value: order,
                           checked: _openEditorsSortOrder == order,
-                          child: Text(order == OpenEditorsSortOrder.editorOrder
-                              ? '标签顺序' : '完整路径'),
+                          child: Text(switch (order) {
+                            OpenEditorsSortOrder.editorOrder => '标签顺序',
+                            OpenEditorsSortOrder.alphabetical => '按名称排序',
+                            OpenEditorsSortOrder.fullPath => '完整路径',
+                          }),
                         ),
                     ],
                   ),

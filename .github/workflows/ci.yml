@@ -67,6 +67,9 @@ jobs:
       - name: Tests
         run: flutter test
         working-directory: app
+      - name: Verify native locale-aware Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
+        working-directory: app
 
   harness:
     name: Harness 文档结构校验

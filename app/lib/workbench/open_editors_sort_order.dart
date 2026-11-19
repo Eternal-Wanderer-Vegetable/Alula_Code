@@ -1,47 +1,112 @@
-/// The two Open Editors policies supported by the P05 workbench adapter.
+import 'package:intl4x/collation.dart';
+
+/// The Open Editors policies supported by the P05 workbench adapter.
 enum OpenEditorsSortOrder {
   editorOrder,
+  alphabetical,
   fullPath;
 
   /// Unknown persisted values use the original editor order.
-  static OpenEditorsSortOrder parse(Object? value) =>
-      value == 'fullPath' ? fullPath : editorOrder;
+  static OpenEditorsSortOrder parse(Object? value) => switch (value) {
+        'alphabetical' => alphabetical,
+        'fullPath' => fullPath,
+        _ => editorOrder,
+      };
+}
+
+typedef OpenEditorsNameComparator = int Function(String, String);
+
+// The Open Editors view creates this only when a name comparison is needed.
+// It is one bounded, process-wide collator rather than an unbounded cache.
+final Collation _openEditorsNameCollation = Collation(numeric: true);
+
+/// Mirrors Code-OSS `compareFileNamesDefault`: system-locale collation with
+/// numeric comparison, then shorter UTF-16 strings first for collator ties.
+int compareOpenEditorsNames(String first, String second) {
+  final result = _openEditorsNameCollation.compare(first, second);
+  if (result != 0) return result;
+  if (first.length != second.length) {
+    return first.length.compareTo(second.length);
+  }
+  return 0;
 }
 
 /// Returns a new list; document identities and the input order are untouched.
 ///
 /// Full-path ordering follows Code-OSS 4bda's extUriIgnorePathCase comparison:
 /// lowercase the decoded path, serialize the URI, then compare UTF-16 units.
-/// Resource-less and malformed entries retain their original relative order
-/// before non-file resources, then file resources. Sorting those first entries
-/// by name needs the upstream Intl collator and is deliberately deferred.
+/// Alphabetical ordering compares names within one editor group. Full-path
+/// ordering keeps resource-less editors first and orders those by name;
+/// malformed resource strings remain stable before valid non-file and file
+/// resources.
 ///
 /// [uriOf] supplies URI strings, not native filesystem paths. Unlike VS Code's
 /// permissive URI.parse, missing schemes, invalid percent escapes/UTF-8 and raw
 /// control characters are treated as malformed. Userinfo follows the reference's
 /// first decoded `@` / first `:` splitting, not browser credential parsing; host
 /// and port syntax is not validated. Ill-formed UTF-16 is outside this contract.
-/// No locale/natural sort is used.
 List<T> sortOpenEditors<T>(
   Iterable<T> docs,
   OpenEditorsSortOrder order, {
   required String? Function(T) uriOf,
+  String Function(T)? nameOf,
+  OpenEditorsNameComparator? compareNames,
 }) {
   if (order == OpenEditorsSortOrder.editorOrder) return docs.toList();
 
-  final entries = <({T doc, int index, int bucket, String key})>[];
+  if (order == OpenEditorsSortOrder.alphabetical) {
+    if (nameOf == null) {
+      throw ArgumentError('nameOf is required for alphabetical sorting');
+    }
+    final compare = compareNames ?? compareOpenEditorsNames;
+    final names = <({T doc, int index, String name})>[];
+    for (final doc in docs) {
+      names.add((doc: doc, index: names.length, name: nameOf(doc)));
+    }
+    names.sort((a, b) {
+      final name = compare(a.name, b.name);
+      return name != 0 ? name : a.index.compareTo(b.index);
+    });
+    return [for (final entry in names) entry.doc];
+  }
+
+  final entries =
+      <({T doc, int index, int bucket, String key, bool resourceMissing})>[];
   for (final doc in docs) {
-    final resource = _resourceKey(uriOf(doc));
+    final uri = uriOf(doc);
+    final resource = _resourceKey(uri);
     entries.add((
       doc: doc,
       index: entries.length,
       bucket: resource?.bucket ?? 0,
       key: resource?.key ?? '',
+      resourceMissing: uri == null,
     ));
   }
+
+  int compareNamesFor(T first, T second) {
+    if (nameOf == null) {
+      throw ArgumentError('nameOf is required for name-based sorting');
+    }
+    return (compareNames ?? compareOpenEditorsNames)(
+      nameOf(first),
+      nameOf(second),
+    );
+  }
+
   entries.sort((a, b) {
     final bucket = a.bucket.compareTo(b.bucket);
     if (bucket != 0) return bucket;
+    if (a.bucket == 0) {
+      if (a.resourceMissing && b.resourceMissing) {
+        final name = compareNamesFor(a.doc, b.doc);
+        return name != 0 ? name : a.index.compareTo(b.index);
+      }
+      if (a.resourceMissing != b.resourceMissing) {
+        return a.resourceMissing ? -1 : 1;
+      }
+      return a.index.compareTo(b.index);
+    }
     final key = a.key.compareTo(b.key);
     return key != 0 ? key : a.index.compareTo(b.index);
   });

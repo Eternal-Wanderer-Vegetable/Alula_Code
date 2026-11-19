@@ -114,9 +114,11 @@ void main() {
       'path sorting changes sidebar projection only and restores preference',
       (tester) async {
     await prepareWorkspace(tester);
-    final zeta = File('${workspace.path}/z%done#.rs')
+    final zeta = File('${workspace.path}/a/z%done#.rs')
+      ..parent.createSync(recursive: true)
       ..writeAsStringSync('fn zeta() {}\n');
-    final alpha = File('${workspace.path}/alpha.rs')
+    final alpha = File('${workspace.path}/z/alpha.rs')
+      ..parent.createSync(recursive: true)
       ..writeAsStringSync('fn alpha() {}\n');
     sessionStore.save({
       'v': 1,
@@ -152,6 +154,9 @@ void main() {
     }
 
     await choose('fullPath');
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy));
+    await choose('alphabetical');
     expect(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy,
         lessThan(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy));
     expect(tester.getTopLeft(_tabIn('editor', 10)), tabZeta);
@@ -163,7 +168,7 @@ void main() {
     expect(after.inputWindow.document, same(document));
     expect(document.resync().content, text);
     await tester.pump(const Duration(milliseconds: 700));
-    expect(sessionStore.tryLoad()?['openEditorsSortOrder'], 'fullPath');
+    expect(sessionStore.tryLoad()?['openEditorsSortOrder'], 'alphabetical');
     final saved = sessionStore.tryLoad()!;
     final groups = saved['groups'] as List;
     expect((groups.first as Map)['active'], 10);
@@ -181,6 +186,8 @@ void main() {
     expect(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy,
         lessThan(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy));
     await choose('fullPath');
+    expect(tester.getTopLeft(_openEditorsDoc('editor', 10)).dy,
+        lessThan(tester.getTopLeft(_openEditorsDoc('editor', 11)).dy));
     await tester.tap(_openEditorsDoc('editor', 11));
     await tester.pumpAndSettle();
     await tester.pump(const Duration(milliseconds: 700));

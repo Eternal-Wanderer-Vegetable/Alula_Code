@@ -41,6 +41,9 @@ jobs:
         id: linux_release
         run: flutter build linux --release
         working-directory: app
+      - name: Verify native Linux Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
+        working-directory: app
       - name: Verify native Linux clipboard formats
         id: linux_clipboard
         run: xvfb-run -a flutter test --no-pub -d linux --reporter expanded integration_test/editor_clipboard_desktop_test.dart
@@ -108,6 +111,9 @@ jobs:
       - name: Build Windows Release bundle
         id: windows_release
         run: flutter build windows --release
+        working-directory: app
+      - name: Verify native Windows Open Editors collation
+        run: flutter test --no-pub --dart-define=intl4x.brittle_i18n_testing=true test/open_editors_sort_order_test.dart
         working-directory: app
       - name: Add Rust core DLL
         id: windows_core_bundle

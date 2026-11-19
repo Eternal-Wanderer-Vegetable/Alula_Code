@@ -1830,6 +1830,16 @@
       ],
       "status": "done",
       "evidence": "P05.96/feat-148 完成，产品 commit e9ab5a05eb7d7551afc7a40d7d27d38c9f602d38 已推 PR #3，PR 保持 OPEN/DRAFT。Open Editors 行中键 pointer-down 调用所属组 _closeDoc，沿用 dirty-safe close 且不先激活行；聚焦回归7/7覆盖另一组焦点保持和脏 Cancel 保留 row/text/dirty/disk/session。精确本地 bash init.sh 通过（Rust workspace、Clippy -D warnings、build_core、Flutter1558/1558）；cargo fmt --all -- --check、flutter analyze 0 issues、最终聚焦7/7通过。准确 SHA PR CI 44488427815 四项全绿（Flutter分析无问题、1558 tests）；Platform Availability 44488418388 Linux/Windows jobs全绿，含 Windows桌面交互/拖放/剪贴板/无障碍/关闭及 Linux构建/剪贴板/拖放/启动。应用和诊断 artifacts/digests及macOS未等待状态见 docs/diagnostics/2026-11-19-p05/p05.96-hosted-verification.json。post-change GitNexus detect-changes明确not clean、无索引符号重叠；WorkbenchPage >512KiB被跳过、432/1338流程候选、FTS缺失，不能视为all-clear；源代码差异已直接复核，预编辑 UNKNOWN 保留。macOS无设备且本次hosted job未等待，未声称通过。详细范围与图谱覆盖限制：docs/diagnostics/2026-11-19-p05/p05.96-open-editors-middle-click-close-scope.md。"
+    },
+    {
+      "id": "feat-149",
+      "name": "P05.97 Open Editors alphabetical排序",
+      "description": "为 Open Editors 增加 alphabetical 模式，按每组 editor name 使用系统 locale、numeric=true 的 locale collation；fullPath 模式下 resource-less editor 按名称排序。固定参考 Code-OSS 1.145.0 comparers.ts / openEditorsView.ts；使用单个延迟创建的 ICU4X collator，不改文档状态或 group 顺序。范围见 docs/diagnostics/2026-11-19-p05/p05.97-open-editors-alphabetical-sort-scope.md。",
+      "dependencies": [
+        "feat-148"
+      ],
+      "status": "in-progress",
+      "evidence": "实现已完成，本地 bash init.sh 全绿（Flutter 1560 tests passed、2 skipped；Rust workspace/Clippy/core/fmt/analyze 通过），强制 ICU4X runtime 比较对拍17/17通过，Linux release build 成功。Linux三文档串行内存：PR基线214.92 MiB Private/233.19 MiB PSS，候选editorOrder 212.11/230.31 MiB，alphabetical 212.16/230.43 MiB；原始采样与口径见 docs/diagnostics/2026-11-19-p05/p05.97-memory-comparison.md。GitNexus重复 staged all-scope均返回7个符号/15文件，但流程映射在0个LOW与1个 InitState→Hunk（5步）MEDIUM之间变化；WorkbenchPage >512KiB 未索引且全局流程候选有截断，按未解决记录，详见范围报告。Linux/Windows exact-SHA hosted验证待本次产品提交后完成；PR #3 保持 OPEN/DRAFT。"
     }
   ],
   "active_track": "vscode-builtin-parity",

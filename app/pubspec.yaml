@@ -21,6 +21,7 @@ dependencies:
   super_drag_and_drop: ^0.9.1
   irondash_engine_context: ^0.5.5
   desktop_multi_window: ^0.3.1
+  intl4x: 1.0.1
 
 dev_dependencies:
   flutter_test:
