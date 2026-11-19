@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alula_app/bridge/alula_core.dart';
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -94,6 +96,53 @@ void main() {
           'region': 'editor',
           'docs': [
             {'id': 10, 'path': main.path},
+          ],
+          'active': 10,
+        },
+      ],
+    }));
+    return 10;
+  }
+
+  Future<int> seedSiblingFilesAndOpen() async {
+    final side = Directory('${workspace.path}/src/side')
+      ..createSync(recursive: true);
+    File('${side.path}/a_target.rs').writeAsStringSync('fn target() {}\n');
+    final source = File('${side.path}/z_source.rs')
+      ..writeAsStringSync('fn source() {}\n');
+    layoutStore.save(defaultLayout());
+    File('${baseOf()}/session.json').writeAsStringSync(jsonEncode({
+      'v': 1,
+      'editorTabMode': 'multiple',
+      'focused': 'editor',
+      'groups': [
+        {
+          'region': 'editor',
+          'docs': [
+            {'id': 10, 'path': source.path},
+          ],
+          'active': 10,
+        },
+      ],
+    }));
+    return 10;
+  }
+
+  Future<int> seedNestedOnlyAndOpen() async {
+    final nested = Directory('${workspace.path}/src/nested')
+      ..createSync(recursive: true);
+    final source = File('${nested.path}/main.rs')
+      ..writeAsStringSync('fn main() {}\n');
+    layoutStore.save(defaultLayout());
+    File('${baseOf()}/session.json').writeAsStringSync(jsonEncode({
+      'v': 1,
+      'editorTabMode': 'multiple',
+      'focused': 'editor',
+      'groups': [
+        {
+          'region': 'editor',
+          'docs': [
+            {'id': 10, 'path': source.path},
           ],
           'active': 10,
         },
@@ -303,6 +352,200 @@ void main() {
         }),
         findsOneWidget,
         reason: 'the picked folder expands in the file tree',
+      );
+    },
+  );
+
+  testWidgets(
+    'Cmd+Enter opens the focused breadcrumb file in a side group',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedSiblingFilesAndOpen();
+      await mountPage(tester);
+
+      final source = _fieldForDocument(tester, 10);
+      final sourceDocument = source.inputWindow.document;
+      final originalText = sourceDocument.resync().content;
+      final originalVersion = sourceDocument.version;
+      final originalSelection = tester
+          .widget<EditableText>(find.descendant(
+            of: find.byKey(source.key!),
+            matching: find.byType(EditableText),
+          ))
+          .controller
+          .selection;
+      final sourcePath = File('${workspace.path}/src/side/z_source.rs');
+      final originalBytes = sourcePath.readAsBytesSync();
+
+      await tester.tap(_breadcrumbSegment('editor', 'side'));
+      await tester.pumpAndSettle();
+      expect(find.text('a_target.rs'), findsOneWidget);
+      expect(find.text('z_source.rs'), findsWidgets);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      try {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+        expect(HardwareKeyboard.instance.isMetaPressed, isTrue);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+      await tester.pumpAndSettle();
+
+      final fields = tester.widgetList<RustTextInputField>(
+        find.byType(RustTextInputField),
+      );
+      expect(fields, hasLength(2));
+      final sideField = fields.singleWhere(
+        (field) => field.semanticsLabel?.startsWith('a_target.rs') == true,
+      );
+      expect(sideField.focusNode!.hasFocus, isTrue);
+      final sourceEditable = tester.widget<EditableText>(find.descendant(
+        of: find.byKey(source.key!),
+        matching: find.byType(EditableText),
+      ));
+      expect(sourceEditable.controller.selection, originalSelection);
+      expect(sourceDocument.resync().content, originalText);
+      expect(sourceDocument.version, originalVersion);
+      expect(sourceDocument.isDirty, isFalse);
+      expect(sourcePath.readAsBytesSync(), originalBytes);
+    },
+  );
+
+  testWidgets(
+    'Windows Ctrl+Enter opens the focused breadcrumb symbol in a side view',
+    (tester) async {
+      await prepareWorkspace(tester);
+      const docId = 10;
+      await seedWorkspaceAndOpen(tester);
+      await mountPage(tester);
+      await tester.pump(const Duration(milliseconds: 400));
+
+      final source = _fieldForDocument(tester, docId);
+      final document = source.inputWindow.document;
+      final originalText = document.resync().content;
+      final originalVersion = document.version;
+      final helperStart = originalText
+          .substring(0, originalText.indexOf('fn helper_fn'))
+          .codeUnits
+          .length;
+      final sourceFile = File('${workspace.path}/src/main.rs');
+      final originalBytes = sourceFile.readAsBytesSync();
+      final sourceEditableFinder = find.descendant(
+        of: find.byKey(source.key!),
+        matching: find.byType(EditableText),
+      );
+      final sourceEditable = tester.widget<EditableText>(sourceEditableFinder);
+      final originalSelection = sourceEditable.controller.selection;
+
+      await tester.tap(_breadcrumbSegment('editor', 'main.rs'));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('breadcrumb-editor-2')), findsOneWidget);
+      final fields = tester
+          .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+          .where((field) => field.inputWindow.document.id == docId)
+          .toList();
+      expect(fields, hasLength(2), reason: 'the symbol has a side view');
+      final sideField =
+          fields.singleWhere((field) => field.focusNode!.hasFocus);
+      final sideEditable = tester.widget<EditableText>(find.descendant(
+        of: find.byKey(sideField.key!),
+        matching: find.byType(EditableText),
+      ));
+      expect(sideEditable.controller.selection.extentOffset, helperStart);
+      expect(sourceEditable.controller.selection, originalSelection);
+      expect(document.resync().content, originalText);
+      expect(document.version, originalVersion);
+      expect(document.isDirty, isFalse);
+      expect(sourceFile.readAsBytesSync(), originalBytes);
+    },
+  );
+
+  testWidgets(
+    'Ctrl+Enter on a breadcrumb directory keeps the normal reveal route',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedNestedOnlyAndOpen();
+      await mountPage(tester);
+
+      await tester.tap(_breadcrumbSegment('editor', 'src'));
+      await tester.pumpAndSettle();
+      expect(find.text('nested/'), findsOneWidget);
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      try {
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('breadcrumb-editor-2')), findsNothing);
+      expect(
+        find.byWidgetPredicate((widget) {
+          final key = widget.key;
+          return key is ValueKey<String> &&
+              key.value.startsWith('explorer-node:') &&
+              key.value.endsWith('nested');
+        }),
+        findsOneWidget,
+        reason: 'the focused directory remains an Explorer reveal action',
+      );
+    },
+  );
+
+  testWidgets(
+    'Ctrl+Enter ignores a breadcrumb file picker after its document changes',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedSiblingFilesAndOpen();
+      await mountPage(tester);
+
+      final source = _fieldForDocument(tester, 10);
+      final document = source.inputWindow.document;
+      final originalText = document.resync().content;
+      final originalVersion = document.version;
+
+      await tester.tap(_breadcrumbSegment('editor', 'side'));
+      await tester.pumpAndSettle();
+      expect(find.text('a_target.rs'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+
+      document.apply([TextOp.insert(originalText.codeUnits.length, '!')]);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widgetList<RustTextInputField>(find.byType(RustTextInputField)),
+        hasLength(1),
+        reason: 'a stale picker selection must not create a side group',
+      );
+      expect(document.resync().content, '$originalText!');
+      expect(document.version, greaterThan(originalVersion));
+      expect(
+        _fieldForDocument(tester, 10).semanticsLabel,
+        startsWith('z_source.rs'),
       );
     },
   );

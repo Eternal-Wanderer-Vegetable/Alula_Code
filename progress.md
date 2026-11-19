@@ -3,9 +3,11 @@
 > agent 会话状态文件：每完成一项工作就追加记录。任务权威分解在 `docs/03`，
 > 功能状态机在 `feature_list.json`，本文件记录「何时、做了什么、证据是什么」。
 
-## Current State（当前状态，2026-11-18 更新）
+## Current State（当前状态，2026-11-19 更新）
 
-### P05 / feat-027 持续推进；P05.91已收尾，当前P05.92 Breadcrumb水平视口
+### P05 / feat-027 持续推进；P05.93已收尾，当前P05.94 Breadcrumb picker侧边打开
+
+- 2026-11-19 完成P05.94/feat146实现与本地验收：Breadcrumb文件/符号picker支持Ctrl+Enter、macOS Cmd+Enter侧开；目录继续reveal，符号用Rust UTF-16 start且新view获焦。聚焦回归8/8，分别覆盖macOS Cmd、Windows符号Ctrl、Linux目录Ctrl；全量`bash init.sh` Flutter 1555/1555、Rust workspace/Clippy/build_core通过；`cargo fmt --check`、`flutter analyze` 0问题。补测picker期间版本变化时不拆组；源组文件内容/version/selection/dirty/disk保持测试覆盖。新鲜GitNexus all-scope 7 indexed files/3 symbols/0 flows LOW（含两个breadcrumb组件符号与handoff section）；WorkbenchPage >512KiB被跳过、private helper UNKNOWN、FTS missing，LOW仅代表索引子集。AlulaDoc upstream HIGH 21 direct/30 total 仅测试调用既有apply、Rust核心未变。PR head eb76fa83 remains open/draft；旧精确docs CI 44460921545 green，产品提交CI与Linux/Windows可用性待推送。范围/实现/证据：`docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md`。
 
 - 2026-11-19 登记P05.92/feat144，独立修复切换同级workspace后旧文件absolute路径Row overflow，水平有界视口/键盘揭示/挂载资源释放，不删路径段或常驻polling。代理631仅helper+新overflowtest；真实red两组Row溢出738/749px已捕获，freshimpact控件CRITICAL78/2direct/152flows、privateCRITICAL3/1direct/140flows，文件LOW不降级。最小SingleChildScrollView+ownedcontroller/单currentsegmentkey/coalescedpostframe完成，新2+旧17组合19/19、父侧review（代理服务失败未计pass）通过；最终init1547/1547、Rust/Clippy/core/fmt/analyze0全绿，graphall9/12/434、main724/675/419CRITICAL完整稳定。准确CIWinLinux待补。143收尾4e7a622已推PR同步。
 

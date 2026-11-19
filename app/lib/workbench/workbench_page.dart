@@ -21938,7 +21938,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return find(_treeRoots);
   }
 
-  Future<String?> _showBreadcrumbMenu(
+  Future<({String value, bool openAside})?> _showBreadcrumbMenu(
     EditorGroup group,
     OpenDoc doc,
     List<PopupMenuEntry<String>> items,
@@ -21952,6 +21952,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
     var escaped = false;
     var visible = true;
+    var openAside = false;
     final navigator = Navigator.of(context);
     ModalRoute<dynamic>? pickerRoute;
     void escape() {
@@ -21967,6 +21968,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       visible = false;
       route.navigator?.removeRoute(route);
     }
+    void revealAside(String value) {
+      final route = pickerRoute;
+      if (!visible || route == null || !route.isCurrent) return;
+      openAside = true;
+      visible = false;
+      navigator.pop(value);
+    }
     _breadcrumbs.closePicker = escape;
     _breadcrumbs.cancelPicker = cancel;
     try {
@@ -21980,6 +21988,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 item: item,
                 first: i == 0,
                 onEscape: escape,
+                onRevealAside: revealAside,
                 onRoute: (route) => pickerRoute ??= route,
               ),
         ],
@@ -21995,7 +22004,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _focusEditorAfterLayout(group, doc);
         WidgetsBinding.instance.scheduleFrame();
       }
-      return doc.doc.version == version ? action : null;
+      return doc.doc.version == version && action != null
+          ? (value: action, openAside: openAside)
+          : null;
     } finally {
       visible = false;
       _breadcrumbs.closePicker = null;
@@ -22030,7 +22041,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final doc = group.active;
     if (doc == null) return;
-    final action = await _showBreadcrumbMenu(group, doc, [
+    final selection = await _showBreadcrumbMenu(group, doc, [
         if (children.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('空文件夹')),
         for (final child in children)
@@ -22039,8 +22050,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: Text(child.isDir ? '${child.name}/' : child.name),
           ),
     ]);
-    if (!mounted || action == null) return;
-    final childPath = action.split(':').sublist(1).join(':');
+    if (!mounted || selection == null) return;
+    final childPath = selection.value.split(':').sublist(1).join(':');
     final child = children.where((c) => c.path == childPath).firstOrNull;
     if (child == null) return;
     // 上游 _onSelectEvent：picker 交互先激活所属组。
@@ -22050,6 +22061,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       // 展开到所选子目录（逐级唤起文件树并展开）。_revealInExplorer 的
       // 末段守卫假定最后一段是文件名，追加空段使目录段参与展开。
       _revealInExplorer([...segments, child.name, ''], index + 1);
+    } else if (selection.openAside) {
+      final sourceRegion = group.region;
+      _splitFocusedGroup();
+      if (!mounted || _focusedRegion == sourceRegion) return;
+      await _openFileByPath(child.path);
+      final targetGroup = _focused;
+      final targetDoc = targetGroup.active;
+      if (targetDoc?.path == null ||
+          _canonicalPath(targetDoc!.path!) != _canonicalPath(child.path)) {
+        return;
+      }
+      _focusEditorAfterLayout(targetGroup, targetDoc);
     } else if (focusPickedFile) {
       final root = _workspaceRoot;
       await _openFileByPath(child.path, asPreview: true);
@@ -22085,7 +22108,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           line: (s['line'] as num?)?.toInt() ?? 0,
         )
     ];
-    final action = await _showBreadcrumbMenu(group, doc, [
+    final selection = await _showBreadcrumbMenu(group, doc, [
         if (symbols.isEmpty)
           const PopupMenuItem(enabled: false, child: Text('未发现符号')),
         for (final sym in symbols)
@@ -22094,24 +22117,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: Text('${_outlineKindBadge(sym.kind)} ${sym.name}'),
           ),
     ]);
-    if (!mounted || action == null) return;
+    if (!mounted || selection == null) return;
+    final sourceVersion = doc.doc.version;
+    final sourceRegion = group.region;
+    if (selection.openAside) {
+      _splitFocusedGroup();
+      if (!mounted || _focusedRegion == sourceRegion) return;
+    }
+    final targetGroup = selection.openAside ? _focused : group;
+    final targetDoc = targetGroup.active;
+    if (targetDoc == null ||
+        !targetDoc.sameDocumentAs(doc) ||
+        targetDoc.doc.version != sourceVersion) {
+      return;
+    }
     // 上游 _onSelectEvent：picker 交互先激活所属组，再 reveal。
     setState(() {
-      group.activeDocId = doc.id;
-      _noteActiveDocument(group, doc.id);
-      _focusedRegion = group.region;
+      targetGroup.activeDocId = targetDoc.id;
+      _noteActiveDocument(targetGroup, targetDoc.id);
+      _focusedRegion = targetGroup.region;
     });
-    final parts = action.split(':');
+    final parts = selection.value.split(':');
     final offset = int.tryParse(parts[1]) ?? 0;
-    final activeDoc = group.active;
-    if (activeDoc != null) {
-      _setDocSelection(
-        activeDoc,
-        TextSelection.collapsed(offset: offset),
-      );
-      _focusNodeFor(group, activeDoc).requestFocus();
-      setState(() {});
-    }
+    _setDocSelection(
+      targetDoc,
+      TextSelection.collapsed(offset: offset),
+    );
+    _focusNodeFor(targetGroup, targetDoc).requestFocus();
+    setState(() {});
     _syncCommandContext();
     _scheduleStateSave();
   }

@@ -1796,6 +1796,18 @@
       "evidence": "P05.93/feat-145 完成。产品 commit 88319f98c84f2ae604203cef15a8c8dd42a2686a 已推送 PR #3，PR 保持 OPEN/DRAFT。专项 Flutter 40/40，完整 bash init.sh：Rust workspace、Clippy -D warnings、release core build、Flutter 1551/1551 全绿；cargo fmt --check、app/ 下 flutter analyze 0 issues。精确 SHA hosted PR CI 44458105550 四 job 全部成功（Rust Ubuntu、Rust Windows、Flutter analyze+test、Harness）。Platform Availability 44458098337 的 Linux/Windows jobs 均成功，原生剪贴板、DnD、启动/生命周期检查通过；Linux app artifact 14499066375（SHA-256 893f9b7d000733433954e5b4809a19fd8cad0c00e22d0d7e41611f901333fa58），Windows app artifact 14499032569（SHA-256 ea02e2b3108eeaf4c75997a8d60178bb606c2b66283aa2563e2678405f207f9d），Linux/Windows DnD diagnostics 14498902887/14498649717。macOS job 在记录时仍运行且未等待；无设备策略下 macOS 原生验收保持未验证，不声称三平台全绿。最终 GitNexus all-scope 为 18 files/18 symbols、MEDIUM、1 个映射流程，符号列表省略 3 项，context 对 editorSegmentIndex 错配；closeout 文档 latest scan 为6 files/1 symbol、MEDIUM/1 flow，重复增量重建曾报LOW/0。累积 compare-main 最后 fresh-index 为 CRITICAL（740 files/1755 symbols/76 flows，listing capped），重复 fresh reindex 符号数1465–1755。详细 hosted 记录 docs/diagnostics/2026-11-19-p05/p05.93-hosted-verification.json；实现与限制 docs/diagnostics/2026-11-19-p05/p05.93-breadcrumb-symbol-path.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-146",
+      "name": "P05.94 Breadcrumb picker侧边打开",
+      "description": "在 Breadcrumb 文件/文档符号 picker 中将当前焦点条目打开到侧边编辑组，保留普通选择与目录 reveal。docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md",
+      "dependencies": [
+        "feat-145"
+      ],
+      "status": "in-progress",
+      "evidence": "实现完成；focused breadcrumb picker 8/8 通过（macOS Cmd+Enter文件侧开/获焦，Windows Ctrl+Enter符号同文档视图与UTF-16起点，Linux Ctrl+Enter目录仍reveal，picker期间文档版本变化拒绝侧开）；完整 `bash init.sh` 通过：Rust workspace tests、Clippy `-D warnings`、build_core、Flutter 1555/1555；`cargo fmt --check` 通过，`cd app && flutter analyze` 无问题。未改Rust/FFI。PR head仍为eb76fa83且open/draft；前序精确docs CI 44460921545已success。当前产品提交的exact-SHA PR CI与Linux/Windows Platform Availability待push；macOS设备验证依既有无设备政策未声明。Fresh GitNexus all-scope `detect-changes`：7 indexed files/3 symbols/0 mapped flows，LOW（含 `BreadcrumbMenuEntry`、`_BreadcrumbMenuEntryState` 与handoff section）；`workbench_page.dart` (>512 KiB)跳过，FTS缺索引，私有helper UNKNOWN，LOW仅针对indexed subset。`AlulaDoc` upstream impact HIGH (21 direct/30 total) 仅新增测试调用既有API，未改核心符号。范围与限制见docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

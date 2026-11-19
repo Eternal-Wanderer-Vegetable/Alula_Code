@@ -59,6 +59,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     required this.item,
     required this.onEscape,
     required this.onRoute,
+    required this.onRevealAside,
     required this.first,
   });
 
@@ -66,6 +67,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   final bool first;
   final VoidCallback onEscape;
   final ValueChanged<ModalRoute<dynamic>?> onRoute;
+  final ValueChanged<String> onRevealAside;
 
   @override
   double get height => item.height;
@@ -89,6 +91,22 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
             event.logicalKey == LogicalKeyboardKey.escape) {
           widget.onEscape();
           return KeyEventResult.handled;
+        }
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.enter &&
+            widget.item.enabled &&
+            widget.item.value != null) {
+          final keyboard = HardwareKeyboard.instance;
+          final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+          final primaryModifier =
+              isMac ? keyboard.isMetaPressed : keyboard.isControlPressed;
+          final otherModifier = isMac
+              ? keyboard.isControlPressed || keyboard.isAltPressed
+              : keyboard.isMetaPressed || keyboard.isAltPressed;
+          if (primaryModifier && !otherModifier && !keyboard.isShiftPressed) {
+            widget.onRevealAside(widget.item.value!);
+            return KeyEventResult.handled;
+          }
         }
         return KeyEventResult.ignored;
       },
