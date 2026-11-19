@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
+import 'package:alula_app/editor/rust_text_input_window.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -10,6 +11,7 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/gestures.dart'
     show kMiddleMouseButton, kSecondaryMouseButton;
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show SemanticsAction;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,6 +20,14 @@ Finder _openEditorsDoc(String region, int id) =>
 
 Finder _openEditorsClose(String region, int id) =>
     find.byKey(ValueKey('open-editors-close-$region-$id'));
+
+Finder _openEditorsDirtyAction() =>
+    find.byKey(const ValueKey('open-editors-dirty-count-action'));
+
+Finder _openEditorsDirtyCountText() => find.descendant(
+      of: find.byKey(const ValueKey('open-editors-dirty-count')),
+      matching: find.byType(Text),
+    );
 
 Finder _tabIn(String region, int id) => find.descendant(
       of: find.byKey(ValueKey('editor-tab-strip-$region')),
@@ -90,6 +100,66 @@ void main() {
         },
       ],
     }));
+  }
+
+  Future<void> seedDirtyCounterOrder(WidgetTester tester) async {
+    final alpha = File('${workspace.path}/alpha.rs')
+      ..writeAsStringSync('fn alpha() {}\n');
+    final gamma = File('${workspace.path}/gamma.rs')
+      ..writeAsStringSync('fn gamma() {}\n');
+    final beta = File('${workspace.path}/beta.rs')
+      ..writeAsStringSync('fn beta() {}\n');
+    final layout = defaultLayout();
+    layout.splitLeaf('editor', 'editor-2', Axis.horizontal);
+    layoutStore.save(layout);
+    sessionStore.save({
+      'v': 1,
+      'editorTabMode': 'multiple',
+      'focused': 'editor-2',
+      'groups': [
+        {
+          'region': 'editor',
+          'docs': [
+            {'id': 10, 'path': alpha.path},
+            {'id': 12, 'path': gamma.path},
+          ],
+          'active': 12,
+        },
+        {
+          'region': 'editor-2',
+          'docs': [
+            {'id': 11, 'path': beta.path},
+          ],
+          'active': 11,
+        },
+      ],
+    });
+  }
+
+  Future<RustTextInputWindow> editDocument(
+      WidgetTester tester, int documentId) async {
+    final region = documentId == 11 ? 'editor-2' : 'editor';
+    bool hasInputField() => tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .any((field) => field.inputWindow.document.id == documentId);
+    if (!hasInputField()) {
+      await tester.tap(_openEditorsDoc(region, documentId));
+      await tester.pumpAndSettle();
+    }
+    final field = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .firstWhere((field) => field.inputWindow.document.id == documentId);
+    final text = 'dirty-$documentId\n';
+    field.focusNode!.requestFocus();
+    await tester.pump();
+    tester.testTextInput.updateEditingValue(TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    ));
+    await tester.pump();
+    await tester.pump();
+    expect(field.inputWindow.document.isDirty, isTrue);
+    return field.inputWindow;
   }
 
   setUpClipboardCapture(WidgetTester tester, List<String> captured) {
@@ -219,6 +289,8 @@ void main() {
       expect(
           find.byKey(const ValueKey('open-editors-dirty-count')), findsNothing,
           reason: 'no dirty documents yet');
+      expect(_openEditorsDirtyAction(), findsNothing,
+          reason: 'no action is exposed when the dirty count is zero');
 
       // Make beta dirty: the label gains the marker and the badge shows 1.
       final field = tester
@@ -250,6 +322,152 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+      'dirty counter opens the first dirty editor by layout and document order while collapsed',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await seedDirtyCounterOrder(tester);
+    await mountPage(tester);
+
+    final windows = <int, RustTextInputWindow>{};
+    for (final id in [10, 12, 11]) {
+      windows[id] = await editDocument(tester, id);
+    }
+    expect(windows.values.every((window) => window.document.isDirty), isTrue);
+
+    final paths = {
+      10: File('${workspace.path}/alpha.rs'),
+      12: File('${workspace.path}/gamma.rs'),
+      11: File('${workspace.path}/beta.rs'),
+    };
+    final snapshots = {
+      for (final entry in windows.entries)
+        entry.key: (
+          text: entry.value.text,
+          documentText: entry.value.document.resync().content,
+          version: entry.value.version,
+          documentVersion: entry.value.document.version,
+          selection: entry.value.initialValue.selection,
+          dirty: entry.value.document.isDirty,
+          bytes: paths[entry.key]!.readAsBytesSync(),
+        ),
+    };
+    for (final window in windows.values) {
+      expect(window.pendingCount, 0,
+          reason: 'snapshot after the normal input flush');
+    }
+
+    await tester.tap(find.byKey(const ValueKey('open-editors-header')));
+    await tester.pumpAndSettle();
+    expect(_openEditorsDoc('editor', 10), findsNothing,
+        reason: 'the list is collapsed before activating its header badge');
+    expect(_openEditorsDirtyCountText(), findsOneWidget);
+    expect(tester.widget<Text>(_openEditorsDirtyCountText()).data, '3');
+
+    await tester.tap(_openEditorsDirtyAction());
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(_openEditorsDoc('editor', 10), findsNothing,
+        reason: 'the action does not expand the Open Editors section');
+    expect(
+      sessionStore.tryLoad()?['focused'],
+      'editor',
+      reason: 'the first visual group owns the first dirty document',
+    );
+    final savedGroups = sessionStore.tryLoad()!['groups'] as List;
+    expect((savedGroups[0] as Map)['active'], 10,
+        reason: 'document order wins within the first layout group');
+    expect((savedGroups[1] as Map)['active'], 11,
+        reason: 'the other group remains on its prior active document');
+    expect(sessionStore.tryLoad()?['openEditorsCollapsed'], isTrue);
+    expect(_openEditorsDirtyCountText(), findsOneWidget);
+    expect(tester.widget<Text>(_openEditorsDirtyCountText()).data, '3');
+
+    for (final entry in windows.entries) {
+      final window = entry.value;
+      final before = snapshots[entry.key]!;
+      expect(window.text, before.text);
+      expect(window.document.resync().content, before.documentText);
+      expect(window.version, before.version);
+      expect(window.document.version, before.documentVersion);
+      expect(window.initialValue.selection, before.selection);
+      expect(window.document.isDirty, before.dirty);
+      expect(window.pendingCount, 0);
+      expect(paths[entry.key]!.readAsBytesSync(), before.bytes,
+          reason: 'activation must not write ${paths[entry.key]!.path}');
+    }
+  });
+
+  testWidgets('dirty counter is a labeled button and Enter skips clean editors',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await seedTwoGroups(tester);
+    await mountPage(tester);
+    final betaWindow = await editDocument(tester, 11);
+
+    // Move focus to the clean first group so activation must cross groups.
+    await tester.tap(_openEditorsDoc('editor', 10));
+    await tester.pumpAndSettle();
+
+    final semanticsHandle = tester.ensureSemantics();
+    try {
+      final semantics =
+          tester.getSemantics(_openEditorsDirtyAction()).getSemanticsData();
+      expect(semantics.label, startsWith('打开未保存的编辑器，1 个未保存文档'));
+      expect(semantics.flagsCollection.isButton, isTrue);
+      expect(semantics.hasAction(SemanticsAction.tap), isTrue);
+    } finally {
+      semanticsHandle.dispose();
+    }
+
+    tester.widget<InkWell>(_openEditorsDirtyAction()).focusNode!.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+    final groups = sessionStore.tryLoad()!['groups'] as List;
+    expect((groups[0] as Map)['active'], 10,
+        reason: 'the clean editor in the first group is skipped');
+    expect((groups[1] as Map)['active'], 11);
+    expect(betaWindow.document.isDirty, isTrue);
+    expect(betaWindow.document.resync().content, betaWindow.text);
+    expect(
+        File('${workspace.path}/beta.rs').readAsStringSync(), 'fn beta() {}\n',
+        reason: 'activation does not save the dirty document');
+  });
+
+  testWidgets('dirty counter Space activation opens the first dirty group',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await seedDirtyCounterOrder(tester);
+    await mountPage(tester);
+    final alphaWindow = await editDocument(tester, 10);
+
+    // Ensure the action moves focus from the second group to the first.
+    await tester.tap(_openEditorsDoc('editor-2', 11));
+    await tester.pumpAndSettle();
+    tester.widget<InkWell>(_openEditorsDirtyAction()).focusNode!.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(sessionStore.tryLoad()?['focused'], 'editor');
+    final groups = sessionStore.tryLoad()!['groups'] as List;
+    expect((groups[0] as Map)['active'], 10);
+    expect(alphaWindow.document.isDirty, isTrue);
+    expect(alphaWindow.document.resync().content, alphaWindow.text);
+    expect(File('${workspace.path}/alpha.rs').readAsStringSync(),
+        'fn alpha() {}\n',
+        reason: 'keyboard activation leaves the file on disk untouched');
+  });
 
   testWidgets(
     'clicking a row activates the document and the copy path lands in the clipboard',

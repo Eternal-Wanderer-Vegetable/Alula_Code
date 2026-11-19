@@ -570,6 +570,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _openEditorsCollapsed = false;
   OpenEditorsSortOrder _openEditorsSortOrder = OpenEditorsSortOrder.editorOrder;
   final Map<String, FocusNode> _openEditorsRowFocus = {};
+  final FocusNode _openEditorsDirtyCountFocus =
+      FocusNode(debugLabel: 'open-editors-dirty-count');
   final BreadcrumbNavigationController _breadcrumbs = BreadcrumbNavigationController();
   bool _breadcrumbPickerOpen = false;
   bool _breadcrumbPickerFocused = false;
@@ -20191,6 +20193,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ..removeListener(_onNotificationsChanged)
       ..dispose();
     _layout.dispose();
+    _openEditorsDirtyCountFocus.dispose();
     super.dispose();
   }
 
@@ -21400,17 +21403,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     ],
                   ),
                   if (dirtyCount > 0)
-                    Container(
-                      key: const ValueKey('open-editors-dirty-count'),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 1),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4D5760),
-                        borderRadius: BorderRadius.circular(9),
-                      ),
-                      child: Text(
-                        '$dirtyCount',
-                        style: const TextStyle(fontSize: 9),
+                    Tooltip(
+                      message: '打开未保存的编辑器',
+                      child: Semantics(
+                        button: true,
+                        label: '打开未保存的编辑器，$dirtyCount 个未保存文档',
+                        child: InkWell(
+                          key: const ValueKey(
+                              'open-editors-dirty-count-action'),
+                          focusNode: _openEditorsDirtyCountFocus,
+                          onTap: _openFirstDirtyOpenEditorsEditor,
+                          child: Container(
+                            key: const ValueKey('open-editors-dirty-count'),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4D5760),
+                              borderRadius: BorderRadius.circular(9),
+                            ),
+                            child: Text(
+                              '$dirtyCount',
+                              style: const TextStyle(fontSize: 9),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -21471,6 +21487,19 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
     _syncCommandContext();
     _scheduleStateSave();
+  }
+
+  void _openFirstDirtyOpenEditorsEditor() {
+    for (final leaf
+        in _layout.root.leaves.where((leaf) => _isEditorRegion(leaf.region))) {
+      final group = _groups[leaf.region];
+      if (group == null) continue;
+      for (final doc in group.docs) {
+        if (!doc.isDirty) continue;
+        _activateOpenEditorsRow(group, doc);
+        return;
+      }
+    }
   }
 
   Future<void> _showOpenEditorsGroupContextMenu(
