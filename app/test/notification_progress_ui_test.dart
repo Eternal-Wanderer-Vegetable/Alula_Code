@@ -26,7 +26,7 @@ void main() {
     if (temp.existsSync()) await temp.delete(recursive: true);
   });
 
-  testWidgets('toast progress completes and removes its progress controls',
+  testWidgets('toast close is available only after progress completes',
       (tester) async {
     await _mountApp(tester);
     try {
@@ -36,7 +36,8 @@ void main() {
         worked: 1,
         onCancel: () async => cancels += 1,
       );
-      notifications.notify(
+      addTearDown(progress.dispose);
+      final notification = notifications.notify(
         severity: WorkbenchNotificationSeverity.info,
         message: '正在索引工作区',
         source: 'Search',
@@ -50,19 +51,31 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('25%'), findsOneWidget);
+      final close = find.byKey(const ValueKey('notification-toast-close-1'));
+      expect(close, findsNothing);
+      expect(find.byKey(const ValueKey('notification-toast-cancel-1')),
+          findsOneWidget);
 
       progress.report(worked: 3);
       await tester.pump();
       expect(find.text('75%'), findsOneWidget, reason: '进度条监听器直接重建 toast');
+      expect(close, findsNothing);
 
       progress.done();
       await tester.pump();
-      expect(
-          find.byKey(const ValueKey('notification-toast-1')), findsOneWidget,
+      expect(find.byKey(const ValueKey('notification-toast-1')), findsOneWidget,
           reason: 'completion hides progress but retains the notification');
-      expect(find.byKey(const ValueKey('notification-progress-1')), findsNothing);
+      expect(
+          find.byKey(const ValueKey('notification-progress-1')), findsNothing);
       expect(find.byKey(const ValueKey('notification-toast-cancel-1')),
           findsNothing);
+      expect(close, findsOneWidget);
+
+      await tester.tap(close);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-toast-1')), findsNothing);
+      expect(notifications.items, [notification]);
+      expect(notifications.unreadCount, 1);
       expect(cancels, 0);
     } finally {
       await _unmountApp(tester);
@@ -101,12 +114,13 @@ void main() {
     await _unmountApp(tester);
   });
 
-  testWidgets('center row shows progress and banner renders above the grid',
+  testWidgets('center close appears after progress without affecting banners',
       (tester) async {
     await _mountApp(tester);
     try {
       final progress = NotificationProgress(total: 10, worked: 2);
-      notifications.notify(
+      addTearDown(progress.dispose);
+      final notification = notifications.notify(
         severity: WorkbenchNotificationSeverity.info,
         message: '正在下载语言服务',
         progress: progress,
@@ -142,6 +156,23 @@ void main() {
         reason: '中心条目同样展示进度条',
       );
       expect(find.text('20%'), findsOneWidget);
+      final close = find.byKey(const ValueKey('notification-dismiss-1'));
+      expect(close, findsNothing);
+      expect(
+          find.byKey(const ValueKey('notification-dismiss-2')), findsOneWidget);
+
+      progress.done();
+      await tester.pump();
+      expect(
+          find.byKey(const ValueKey('notification-progress-1')), findsNothing);
+      expect(notifications.byId(notification.id), same(notification));
+      expect(close, findsOneWidget);
+
+      await tester.tap(close);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-item-1')), findsNothing);
+      expect(notifications.byId(notification.id), isNull);
+      expect(banner, findsOneWidget);
     } finally {
       await _unmountApp(tester);
     }

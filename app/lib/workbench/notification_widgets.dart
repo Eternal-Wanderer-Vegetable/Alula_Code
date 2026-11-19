@@ -220,16 +220,20 @@ class _NotificationToastState extends State<_NotificationToast> {
                     ],
                   ),
                 ),
-                IconButton(
-                  key: ValueKey('notification-toast-close-${notification.id}'),
-                  tooltip: '关闭通知',
-                  visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints(minWidth: 22, minHeight: 22),
-                  onPressed: onDismiss,
-                  icon:
-                      Icon(Icons.close, size: 13, color: Colors.grey.shade400),
+                _dismissButtonAfterProgress(
+                  notification.progress,
+                  IconButton(
+                    key:
+                        ValueKey('notification-toast-close-${notification.id}'),
+                    tooltip: '关闭通知',
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 22, minHeight: 22),
+                    onPressed: onDismiss,
+                    icon: Icon(Icons.close,
+                        size: 13, color: Colors.grey.shade400),
+                  ),
                 ),
               ],
             ),
@@ -472,19 +476,34 @@ class _NotificationCenterRow extends StatelessWidget {
               ],
             ),
           ),
-          IconButton(
-            key: ValueKey('notification-dismiss-${notification.id}'),
-            tooltip: '清除通知',
-            visualDensity: VisualDensity.compact,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
-            onPressed: onDismiss,
-            icon: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+          _dismissButtonAfterProgress(
+            notification.progress,
+            IconButton(
+              key: ValueKey('notification-dismiss-${notification.id}'),
+              tooltip: '清除通知',
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
+              onPressed: onDismiss,
+              icon: Icon(Icons.close, size: 12, color: Colors.grey.shade500),
+            ),
           ),
         ],
       ),
     );
   }
+}
+
+Widget _dismissButtonAfterProgress(
+  NotificationProgress? progress,
+  Widget button,
+) {
+  if (progress == null) return button;
+  return ListenableBuilder(
+    listenable: Listenable.merge([if (!progress.isDone) progress]),
+    builder: (context, child) =>
+        progress.isDone ? button : const SizedBox.shrink(),
+  );
 }
 
 /// 进度条 + 百分比 + 取消按钮（toast / 中心 / banner 共用）。
