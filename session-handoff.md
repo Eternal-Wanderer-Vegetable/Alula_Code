@@ -4,30 +4,23 @@ Last Updated: 2026-11-19
 
 ## Current Objective
 
-Finish P05.93 / feat-145, Breadcrumb symbol ancestry, on PR #3. `docs/03-里程碑计划与验收标准.md` and `feature_list.json` remain the task/state authorities. Keep the PR OPEN/DRAFT; do not merge. Advance one feature at a time.
+Continue the P05 work on PR #3 one feature at a time. docs/03-里程碑计划与验收标准.md and feature_list.json are authoritative. Keep the PR OPEN/DRAFT; do not merge.
 
 ## Current State
 
-- Work is isolated in `/home/vegetable/.codex/worktrees/pr3-20261119`, detached at PR base `0175c36d1e64c62c9f25ae3a080cf1b8d5d7878f`. Before edits, PR #3 was OPEN/DRAFT and remote branch `codex/vscode-parity-p05` pointed to that SHA. Recheck before pushing. The dirty original `/mnt/e/alula_code` worktree was preserved.
-- P05.93 code and local evidence are complete. `cargo fmt --check`, `flutter analyze` (0 issues), targeted Breadcrumb/Outline tests (40/40), the 50k-line edit/save regression, and final `bash init.sh` all pass; Flutter full suite is 1551/1551. Exact details are in the P05.93 diagnostic.
-- Product changes: current-version Breadcrumb symbol ancestry, small per-group `{id,name,startUtf16}` paths, stale-version fallback, editor focus after symbol-picker selection, nested symbol Space reveal. No FFI/Rust ABI changes.
-- GitNexus final `detect-changes --scope all --limit 100`: 18 files / 18 symbols, MEDIUM, one mapped `InitState → Hunk` flow via `editorSegmentIndex`; three changed symbols remain omitted from the CLI listing. `context` mis-resolves that property to an auxiliary-window transfer method, while `rg` confirms its Breadcrumb navigation and Workbench construction references. Keep the mapped flow and MEDIUM risk unresolved. `workbench_page.dart` exceeded 512KB, the flow index covered 432/1338 candidate entries, and FTS failed. Compare against main is CRITICAL for the cumulative PR (737 files / 1623 symbols / 76 flows), with its symbol listing capped; this remains documented.
-- P05.92 hosted closeout is also present in the local changes and should be preserved with its exact run evidence.
+- P05.93 / feat-145 is complete on commit 88319f98c84f2ae604203cef15a8c8dd42a2686a. Local full gates and focused suite passed; PR CI 44458105550 passed all four jobs; Platform Availability 44458098337 Linux/Windows jobs passed. The macOS hosted job was still running when recorded and was not awaited. Native macOS validation remains deferred.
+- Exact CI, platform jobs and artifact IDs/digests are in docs/diagnostics/2026-11-19-p05/p05.93-hosted-verification.json. P05.92 closeout is in p05.92-hosted-verification.json.
+- GitNexus product all-scope is MEDIUM, 18 files/18 symbols and one mapped flow; the CLI omits three symbols and context mis-resolves editorSegmentIndex. Closeout-doc latest fresh-index scan is MEDIUM, 6 files/1 symbol/one section-mapped flow; another incremental reindex returned LOW/0. Compare-main for the cumulative PR is 740 files/1755 symbols/76 flows, CRITICAL and LISTING CAPPED; repeated reindex scans varied from 1465–1755 symbols. Large-file/flow/FTS limits remain.
+- The original /mnt/e/alula_code worktree has many unrelated dirty changes and was left untouched. Work is in /home/vegetable/.codex/worktrees/pr3-20261119.
+- P05.93 is done. feature_list has no next P05 child; P06 depends on P05. Review the remaining P05 gaps in docs/03 and define the next bounded P05 child before editing.
 
 ## Blockers / Limits
 
-- P05.93 hosted CI and Windows/Linux platform status are pending the new product SHA. macOS device validation remains deferred and must not be claimed as passed.
-- The complete compare-main graph remains CRITICAL and capped; the process graph/large-file coverage limits above remain unresolved.
-
-## Files In Scope
-
-- `app/lib/workbench/{breadcrumb_navigation.dart,document_symbols.dart,workbench_page.dart}`
-- Breadcrumb/Outline and long-document regression tests under `app/test/`
-- `docs/03-里程碑计划与验收标准.md`, `feature_list.json`, `progress.md`
-- `docs/diagnostics/2026-11-19-p05/` P05.92 and P05.93 evidence
+- No macOS device is available; do not claim native visual or interaction validation.
+- Keep cumulative compare-main CRITICAL and GitNexus coverage limits visible.
 
 ## Next Session First Step
 
-1. Confirm remote `codex/vscode-parity-p05` still descends from `0175c36d`; fast-forward only if unchanged.
-2. Record the resulting SHA and wait for its PR CI plus Windows/Linux availability checks; keep macOS marked deferred.
-3. If hosted checks pass, close P05.93 in the task files and then choose the next dependency-ready feature from `docs/03` / `feature_list.json`.
+1. Check the PR head and worktree status.
+2. From docs/03 residual P05 gaps, register one dependency-ready child and its DoD in docs/03, feature_list, and progress.
+3. Run GitNexus impact before editing and continue with local gates plus Windows/Linux hosted verification.

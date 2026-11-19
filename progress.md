@@ -2420,11 +2420,12 @@ flutter test (app/)      → 15 tests passed（含随机对拍 100 组与真实 
 - Exact head `0175c36d1e64c62c9f25ae3a080cf1b8d5d7878f` 的 PR CI `44358043167` 四 job 全绿；Platform Availability `44358027833` 的 Windows/Linux job 全绿。macOS job cancelled，按无设备政策暂留，不计通过。
 - Windows/Linux app artifacts `14453373952` / `14452813329`，native DnD diagnostics `14452269138` / `14453103148`。完整摘要：`docs/diagnostics/2026-11-19-p05/p05.92-hosted-verification.json`。P05.92 / feat-144 已 done；LAY-11/CMD-06 与 P05 父阶段仍 open。
 
-## P05.93 / feat-145 Breadcrumb当前符号祖先路径（本地完成，hosted待核，2026-11-19）
 
-- PR #3 最新头在开工前为 `0175c36d1e64c62c9f25ae3a080cf1b8d5d7878f`，OPEN/DRAFT；开工前确认远端无更新。隔离 worktree 使用该准确头，原 `/mnt/e/alula_code` 脏工作树未改动。
-- 本片实现：文件路径后追加当前 AlulaDoc version 的 Rust 符号祖先路径；光标移动时查有界缓存树，版本切换立即隐藏旧路径；每编辑组仅缓存 `{id,name,startUtf16}` 轻量记录，不持有符号树。路径符号 picker 返回编辑器焦点，键盘 Space 从父符号 reveal 到子符号保留 Breadcrumb 焦点。原目录/文件 picker、长路径水平视口继续工作；无 ABI/Rust crate 改动。
-- 影响分析（修改前）：`DocumentSymbolNode` LOW（一条直接图边）；`documentSymbolAtLine`、`buildDocumentSymbolTree`、`BreadcrumbNavigation`、`_syncCommandContext`、`EditorGroup` 等为 UNKNOWN/未收录。已用 `rg` 确认 WorkbenchPage 实际调用点与专项测试；UNKNOWN 不按无调用处理。
-- 专项 `flutter test test/document_symbols_test.dart test/breadcrumb_picker_test.dart test/breadcrumb_reveal_test.dart test/breadcrumb_overflow_test.dart test/breadcrumb_keyboard_test.dart`：40/40；5万行尾部编辑保存、Outline picker/tree 同名切换用例各自通过。覆盖嵌套/并列/空隙/tie、10,000深度、BOM/Emoji/CRLF UTF-16、Caret跨符号、版本失效、磁盘字节/全文/版本/dirty不变与焦点路由。
-- 本地最终门禁：`cargo fmt --check` 通过；`flutter analyze` 0 issues；最终 `bash init.sh` 中 Rust workspace tests、Clippy `-D warnings`、release core build、Flutter `1551/1551` 全绿。第一轮全量发现三项回归断言/查找器问题并修复，完整门禁复跑全绿。
-- GitNexus 最终 `detect-changes --scope all --limit 100` 映射18文件/18符号、MEDIUM、1条 InitState→Hunk（5步）流程（editorSegmentIndex）；CLI仍省略3个符号，context 对属性 UID/调用方错配，rg确认源码只在 Breadcrumb 导航与 Workbench 构造处引用；保留 MEDIUM/流程映射为未解决图谱风险。workbench_page.dart 被 >512KB 文件预算跳过，流程索引仅覆盖432/1338候选入口，FTS构建失败。`compare main` 是整个累积 PR：737文件/1623符号/76流程、CRITICAL，symbol listing capped（含 `--limit 2500`）；此风险未被本片 all-scope 结果覆盖。产品 SHA 与该 SHA 的 hosted CI/Win-Linux 状态待补。macOS 实机缺口按政策暂留，不计通过；父 P05/LAY-11/CMD-06 仍 open。
+## P05.93 / feat-145 Breadcrumb当前符号祖先路径完成（2026-11-19）
+
+- 产品 commit 88319f98c84f2ae604203cef15a8c8dd42a2686a 已推送，PR #3 仍 OPEN/DRAFT；提交前确认目标分支父 SHA 未变化。主工作区另有大量未提交变更，保持原样。
+- Breadcrumb 在文件路径后显示光标所在的当前版本符号祖先链；符号 picker 选择后回编辑器焦点，Space reveal 子符号保留 Breadcrumb 焦点；缓存按组仅保存轻量身份/名称/UTF-16 起点记录，版本失效时先回退文件路径。没有 ABI/Rust crate 变更。
+- 专项 Flutter 40/40，5万行尾部编辑保存和 Outline 同名用例通过。完整 bash init.sh：Rust workspace、Clippy -D warnings、release core build、Flutter 1551/1551 全绿；cargo fmt --check、app/ 下 flutter analyze 0 issues。
+- 精确 SHA hosted PR CI 44458105550 四 job 全成功。Platform Availability 44458098337 的 Linux/Windows 全部通过 clipboard、DnD、启动/生命周期；app artifacts Linux 14499066375、Windows 14499032569，DnD diagnostics Linux 14498902887、Windows 14498649717。macOS hosted job 记录时仍运行且未等待；macOS 实机验证按政策暂留，不计通过。
+- GitNexus 产品扫描为 18 files/18 symbols、MEDIUM、1 条映射流程；CLI 省略 3 项，editorSegmentIndex 的 context 有错配。Closeout 文档 latest fresh-index 扫描为 6 files/1 symbol、MEDIUM/1 flow；重复增量重建曾为 LOW/0。累积 compare-main 最后 fresh-index 是 740 files/1755 symbols/76 flows、CRITICAL 且 LISTING CAPPED；重复 fresh reindex 的符号数在 1465–1755 间变化。风险保留，详见 p05.93-breadcrumb-symbol-path.md 与 p05.93-hosted-verification.json。
+- P05.93 / feat-145 已 done；LAY-11/CMD-06 与 P05 父阶段仍 open。feature_list 当前没有其他 P05 子项，P06 依赖 P05；下一步先从 docs/03 的剩余差异定义一个有验收标准的 P05 子切片，再开工。
