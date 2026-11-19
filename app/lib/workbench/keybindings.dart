@@ -321,8 +321,14 @@ class KeybindingSet {
     'list.closeFind': 'listFocus && treeFindOpen',
     'breadcrumbs.focus': 'breadcrumbsPossible',
     'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
-    'breadcrumbs.focusNext': 'breadcrumbsVisible && breadcrumbsActive',
-    'breadcrumbs.focusPrevious': 'breadcrumbsVisible && breadcrumbsActive',
+    'breadcrumbs.focusNext':
+        'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+    'breadcrumbs.focusPrevious':
+        'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+    'breadcrumbs.focusNextWithPicker':
+        'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+    'breadcrumbs.focusPreviousWithPicker':
+        'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
     'breadcrumbs.selectFocused': 'breadcrumbsVisible && breadcrumbsActive',
     'breadcrumbs.selectEditor': 'breadcrumbsVisible && breadcrumbsActive',
     'breadcrumbs.revealFocused': 'breadcrumbsVisible && breadcrumbsActive',
@@ -345,6 +351,12 @@ class KeybindingSet {
         'breadcrumbs.focusPrevious': platform == TargetPlatform.macOS
             ? 'arrowleft,alt+arrowleft'
             : 'arrowleft,ctrl+arrowleft',
+        'breadcrumbs.focusNextWithPicker': platform == TargetPlatform.macOS
+            ? 'alt+arrowright'
+            : 'ctrl+arrowright',
+        'breadcrumbs.focusPreviousWithPicker': platform == TargetPlatform.macOS
+            ? 'alt+arrowleft'
+            : 'ctrl+arrowleft',
         'breadcrumbs.selectFocused': 'enter,arrowdown',
         'breadcrumbs.selectEditor': 'escape',
         'breadcrumbs.revealFocused': platform == TargetPlatform.macOS

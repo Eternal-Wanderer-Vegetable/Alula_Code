@@ -571,6 +571,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   OpenEditorsSortOrder _openEditorsSortOrder = OpenEditorsSortOrder.editorOrder;
   final Map<String, FocusNode> _openEditorsRowFocus = {};
   final BreadcrumbNavigationController _breadcrumbs = BreadcrumbNavigationController();
+  bool _breadcrumbPickerOpen = false;
+  bool _breadcrumbPickerFocused = false;
+  ModalRoute<dynamic>? _breadcrumbPickerRoute;
   // LAY-12a：本进程创建的辅助窗口 id（关闭恢复入口用）。
   final Set<String> _auxiliaryWindowIds = {};
   final AuxiliaryWindowBoundsRegistry _auxiliaryWindowBounds =
@@ -782,10 +785,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         when: 'breadcrumbsVisible', enablement: 'breadcrumbsVisible');
     reg('breadcrumbs.focusNext', '面包屑', '聚焦下一段',
         () async => _breadcrumbs.move(1),
-        enablement: 'breadcrumbsVisible && breadcrumbsActive');
+        enablement:
+            'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen');
     reg('breadcrumbs.focusPrevious', '面包屑', '聚焦上一段',
         () async => _breadcrumbs.move(-1),
-        enablement: 'breadcrumbsVisible && breadcrumbsActive');
+        enablement:
+            'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen');
+    reg('breadcrumbs.focusNextWithPicker', '面包屑', '聚焦下一段并保持选择器',
+        () async => _breadcrumbs.move(1),
+        shortcut: _keybindings.shortcutFor('breadcrumbs.focusNextWithPicker'),
+        enablement:
+            'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused');
+    reg('breadcrumbs.focusPreviousWithPicker', '面包屑', '聚焦上一段并保持选择器',
+        () async => _breadcrumbs.move(-1),
+        shortcut:
+            _keybindings.shortcutFor('breadcrumbs.focusPreviousWithPicker'),
+        enablement:
+            'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused');
     reg('breadcrumbs.selectFocused', '面包屑', '选择面包屑',
         () async => _breadcrumbs.selectFocused(),
         enablement: 'breadcrumbsVisible && breadcrumbsActive');
@@ -3151,6 +3167,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'breadcrumbsPossible': active?.path != null && _workspaceRoot != null,
       'breadcrumbsVisible': active?.path != null && _workspaceRoot != null,
       'breadcrumbsActive': _breadcrumbs.isActive,
+      'breadcrumbsPickerOpen': _breadcrumbPickerOpen,
+      'breadcrumbsPickerFocused': _breadcrumbPickerFocused,
       'listFocus': _treeFocusNode.hasFocus || _treeFind.inputFocus.hasFocus,
       'listSupportsFind': _workspaceRoot != null,
       'treeFindOpen': _treeFind.isOpen,
@@ -20086,6 +20104,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
     for (final cancel in _quickOpenCancellations.toList()) { cancel(); }
     _quickOpenCancellations.clear();
     windowManager.removeListener(this);
@@ -21955,6 +21974,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     var openAside = false;
     final navigator = Navigator.of(context);
     ModalRoute<dynamic>? pickerRoute;
+    var pickerFocusSyncScheduled = false;
     void escape() {
       final route = pickerRoute;
       if (!visible || route == null || !route.isCurrent) return;
@@ -21975,9 +21995,63 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       visible = false;
       navigator.pop(value);
     }
+    KeyEventResult handlePickerKeyEvent(KeyEvent event) {
+      if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+        return KeyEventResult.ignored;
+      }
+      final key = event.logicalKey;
+      if (key == LogicalKeyboardKey.control ||
+          key == LogicalKeyboardKey.controlLeft ||
+          key == LogicalKeyboardKey.controlRight ||
+          key == LogicalKeyboardKey.shift ||
+          key == LogicalKeyboardKey.shiftLeft ||
+          key == LogicalKeyboardKey.shiftRight ||
+          key == LogicalKeyboardKey.alt ||
+          key == LogicalKeyboardKey.altLeft ||
+          key == LogicalKeyboardKey.altRight ||
+          key == LogicalKeyboardKey.meta ||
+          key == LogicalKeyboardKey.metaLeft ||
+          key == LogicalKeyboardKey.metaRight) {
+        return KeyEventResult.ignored;
+      }
+      final keyboard = HardwareKeyboard.instance;
+      final chord = KeyChord(
+        key: event.logicalKey,
+        control: keyboard.isControlPressed,
+        shift: keyboard.isShiftPressed,
+        alt: keyboard.isAltPressed,
+        meta: keyboard.isMetaPressed,
+      );
+      KeybindingBinding? binding;
+      for (final entry in _keybindings
+          .resolveBindings(matchesWhen: _commands.context.matches)
+          .entries) {
+        final activator = entry.key;
+        if (activator.trigger == chord.key &&
+            activator.control == chord.control &&
+            activator.shift == chord.shift &&
+            activator.alt == chord.alt &&
+            activator.meta == chord.meta) {
+          binding = entry.value;
+          break;
+        }
+      }
+      if (binding == null ||
+          (binding.commandId != 'breadcrumbs.focusNextWithPicker' &&
+              binding.commandId != 'breadcrumbs.focusPreviousWithPicker') ||
+          !_commands.isEnabled(binding.commandId)) {
+        return KeyEventResult.ignored;
+      }
+      _runCommand(binding.commandId, arguments: binding.arguments);
+      return KeyEventResult.handled;
+    }
+
     _breadcrumbs.closePicker = escape;
     _breadcrumbs.cancelPicker = cancel;
     try {
+      _setBreadcrumbPickerOpen(true);
+      _setBreadcrumbPickerFocused(false);
+      FocusManager.instance.addListener(_syncBreadcrumbPickerFocus);
       final action = await showMenu<String>(
         context: context,
         position: _breadcrumbPickerPosition(),
@@ -21988,8 +22062,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 item: item,
                 first: i == 0,
                 onEscape: escape,
+                onKeyEvent: handlePickerKeyEvent,
                 onRevealAside: revealAside,
-                onRoute: (route) => pickerRoute ??= route,
+                onRoute: (route) {
+                  pickerRoute ??= route;
+                  if (route == null) return;
+                  _breadcrumbPickerRoute = route;
+                  if (pickerFocusSyncScheduled) return;
+                  pickerFocusSyncScheduled = true;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    pickerFocusSyncScheduled = false;
+                    if (mounted && identical(_breadcrumbPickerRoute, route)) {
+                      _syncBreadcrumbPickerFocus();
+                    }
+                  });
+                },
               ),
         ],
       );
@@ -22011,7 +22098,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       visible = false;
       _breadcrumbs.closePicker = null;
       _breadcrumbs.cancelPicker = null;
+      FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
+      if (identical(_breadcrumbPickerRoute, pickerRoute)) {
+        _breadcrumbPickerRoute = null;
+      }
+      _setBreadcrumbPickerFocused(false);
+      _setBreadcrumbPickerOpen(false);
     }
+  }
+
+  void _setBreadcrumbPickerOpen(bool open) {
+    if (_breadcrumbPickerOpen == open) return;
+    _breadcrumbPickerOpen = open;
+    if (mounted && !_disposing) {
+      _commands.context.setValue('breadcrumbsPickerOpen', open);
+    }
+  }
+
+  void _setBreadcrumbPickerFocused(bool focused) {
+    if (_breadcrumbPickerFocused == focused) return;
+    _breadcrumbPickerFocused = focused;
+    if (mounted && !_disposing) {
+      _commands.context.setValue('breadcrumbsPickerFocused', focused);
+    }
+  }
+
+  void _syncBreadcrumbPickerFocus() {
+    final route = _breadcrumbPickerRoute;
+    final focusContext = FocusManager.instance.primaryFocus?.context;
+    final focused = route != null &&
+        route.isCurrent &&
+        focusContext != null &&
+        identical(ModalRoute.of(focusContext), route);
+    _setBreadcrumbPickerFocused(focused);
   }
 
   Future<void> _showBreadcrumbFolderPicker(

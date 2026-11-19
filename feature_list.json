@@ -1808,6 +1808,18 @@
       "evidence": "P05.94/feat-146 完成，产品 SHA c46b56548bc7e04aa6656a55f9a99278c0f1200d 已推 PR #3，PR 保持 OPEN/DRAFT。聚焦 breadcrumb suite 8/8；完整 bash init.sh 的 Rust workspace/Clippy/build_core 与 Flutter 1555/1555 通过，cargo fmt --check、flutter analyze 通过。精确 SHA PR CI 44467133921 四 job 全绿；Platform Availability 初次 44467127746 的 Linux 通过、Windows native DnD probe timeout（pointer cancel/no drop），同 SHA 重跑 44468690336 的 Linux/Windows jobs 均成功，原始失败未隐藏。包与 DnD artifact IDs/digests、macOS未等待状态见 docs/diagnostics/2026-11-19-p05/p05.94-hosted-verification.json。macOS device validation 未声称；未改 Rust/FFI。实现、GitNexus 限制与验收见 docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-147",
+      "name": "P05.95 Breadcrumb picker打开期间焦点导航",
+      "description": "注册 breadcrumbs.focusNextWithPicker / focusPreviousWithPicker，在 picker route 活跃时使用平台快捷键移动 Breadcrumb 段焦点并保持 route；picker 外维持原命令与菜单方向键语义。范围与固定上游键位见 docs/diagnostics/2026-11-19-p05/p05.95-breadcrumb-picker-focus-navigation-scope.md。",
+      "dependencies": [
+        "feat-146"
+      ],
+      "status": "in-progress",
+      "evidence": "P05.95/feat-147 产品实现与本地 DoD 已通过，exact-SHA hosted 门禁待推送后核验。KeybindingSet 增加两个 WithPicker commands，Windows/Linux 为 Ctrl+Right/Left、macOS 为 Alt+Right/Left；picker 外 ordinary 命令仍启用。WorkbenchPage 使用独立 route-open/list-focus context；临时 FocusManager listener 比较主焦点 ModalRoute 与 picker route，dialog 覆盖时禁用；首帧同步合并到 post-frame，finally/dispose 清理。Popup Focus handler 仅派发 WithPicker bindings，裸箭头继续由菜单处理。专项 keyboard10/10、keybindings32/32、picker8/8、reveal6/6、overflow2/2、keybinding-context-collision5/5；完整 bash init.sh 通过（Rust workspace、Clippy -D warnings、build_core、Flutter1556/1556），cargo fmt --all -- --check 与 app flutter analyze（0 issues）通过。Post-change GitNexus all-scope 为10 files/5 symbols/0 mapped processes/LOW；WorkBenchPage 大文件跳过、流程候选未全覆盖、FTS 因2GiB buffer pool OOM 无法构建；UNKNOWN 的 class call edge 已通过源检索确认，不宣称图谱 clean。累积 compare-main 742 files/75 processes/CRITICAL（LISTING CAPPED；重复 scan 2195–2369 symbols，最近2226），不归因于本片。报告：docs/diagnostics/2026-11-19-p05/p05.95-breadcrumb-picker-focus-navigation-scope.md。待PR CI、Linux/Windows Platform Availability 的 exact product SHA 验证。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

@@ -115,6 +115,17 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> pickerNavigationShortcut(
+      WidgetTester tester, LogicalKeyboardKey key) async {
+    final isMac = defaultTargetPlatform == TargetPlatform.macOS;
+    final modifier =
+        isMac ? LogicalKeyboardKey.altLeft : LogicalKeyboardKey.controlLeft;
+    await tester.sendKeyDownEvent(modifier);
+    await tester.sendKeyEvent(key);
+    await tester.sendKeyUpEvent(modifier);
+    await tester.pumpAndSettle();
+  }
+
   void expectSelected(WidgetTester tester, int index) {
     final selected = find.descendant(
       of: _segment('editor', index),
@@ -140,7 +151,7 @@ void main() {
     expect(commands.context['editorDirty'], isTrue);
   }
 
-  testWidgets('registers six breadcrumb commands with live context guards',
+  testWidgets('registers eight breadcrumb commands with live context guards',
       (tester) async {
     await mount(tester);
     const ids = [
@@ -148,6 +159,8 @@ void main() {
       'breadcrumbs.focusAndSelect',
       'breadcrumbs.focusNext',
       'breadcrumbs.focusPrevious',
+      'breadcrumbs.focusNextWithPicker',
+      'breadcrumbs.focusPreviousWithPicker',
       'breadcrumbs.selectFocused',
       'breadcrumbs.selectEditor',
     ];
@@ -161,10 +174,14 @@ void main() {
     expect(commands.context['breadcrumbsActive'], isFalse);
     expect(await commands.execute('breadcrumbs.focusNext'),
         CommandExecutionStatus.disabled);
+    expect(await commands.execute('breadcrumbs.focusNextWithPicker'),
+        CommandExecutionStatus.disabled);
     expect(await commands.execute('breadcrumbs.focus'),
         CommandExecutionStatus.executed);
     await tester.pumpAndSettle();
     expect(commands.context['breadcrumbsActive'], isTrue);
+    expect(commands.isEnabled('breadcrumbs.focusNext'), isTrue);
+    expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isFalse);
     expect(commands.isEnabled('breadcrumbs.selectFocused'), isTrue);
     expect(await commands.execute('breadcrumbs.selectEditor'),
         CommandExecutionStatus.executed);
@@ -177,6 +194,36 @@ void main() {
     expect(commands.context['breadcrumbsVisible'], isFalse);
     expect(await commands.execute('breadcrumbs.focus'),
         CommandExecutionStatus.hidden);
+  });
+
+  testWidgets(
+      'WithPicker shortcuts move breadcrumb focus and keep the picker route open',
+      (tester) async {
+    await mount(tester);
+    await tester.tap(_segment('editor', 0));
+    await tester.pumpAndSettle();
+    expectSelected(tester, 0);
+    expect(find.text('lib.rs'), findsOneWidget);
+    expect(commands.context['breadcrumbsPickerOpen'], isTrue);
+    expect(commands.context['breadcrumbsPickerFocused'], isTrue);
+    expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isTrue);
+    expect(commands.isEnabled('breadcrumbs.focusPreviousWithPicker'), isTrue);
+    expect(commands.isEnabled('breadcrumbs.focusNext'), isFalse);
+
+    await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowRight);
+    expectSelected(tester, 1);
+    expect(find.text('lib.rs'), findsOneWidget,
+        reason: 'the focused menu remains mounted after segment navigation');
+    expect(commands.context['breadcrumbsPickerOpen'], isTrue);
+
+    await pickerNavigationShortcut(tester, LogicalKeyboardKey.arrowLeft);
+    expectSelected(tester, 0);
+    expect(find.text('lib.rs'), findsOneWidget);
+    await key(tester, LogicalKeyboardKey.escape);
+    expect(find.byType(PopupMenuItem<String>), findsNothing);
+    expect(commands.context['breadcrumbsPickerOpen'], isFalse);
+    expect(commands.context['breadcrumbsPickerFocused'], isFalse);
+    expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isFalse);
   });
 
   testWidgets(
@@ -263,6 +310,7 @@ void main() {
       if (openKey == LogicalKeyboardKey.enter) {
         await key(tester, LogicalKeyboardKey.escape);
         expect(_field(tester, 10).focusNode!.hasFocus, isTrue);
+        expect(commands.context['breadcrumbsPickerOpen'], isFalse);
       }
     }
     await tester.tap(find.text('lib.rs'));
@@ -290,6 +338,8 @@ void main() {
         findsOneWidget);
     expect(_field(tester, 20).inputWindow.document.resync().content,
         'fn other() {}\n');
+    expect(commands.context['breadcrumbsPickerOpen'], isFalse);
+    expect(commands.context['breadcrumbsPickerFocused'], isFalse);
     expect(File('${workspace.path}/src/lib.rs').readAsStringSync(),
         'fn library() {}\n');
     expect(mainFile.readAsStringSync(), 'fn main() {\r\n    // 😀\r\n}\r\n');
@@ -331,6 +381,8 @@ void main() {
     expect(other.focusNode!.hasFocus, isTrue);
     expect(_field(tester, 10).focusNode!.hasFocus, isFalse);
     expect(commands.context['breadcrumbsActive'], isFalse);
+    expect(commands.context['breadcrumbsPickerOpen'], isFalse);
+    expect(commands.context['breadcrumbsPickerFocused'], isFalse);
     expect(commands.isEnabled('breadcrumbs.focusNext'), isFalse);
     expect(other.inputWindow.document.isDirty, isFalse);
     expect(otherFile.readAsStringSync(), 'fn other() {}\n');
@@ -388,6 +440,9 @@ void main() {
     final dialogRoute = ModalRoute.of(tester.element(dialog))!;
     expect(dialogRoute.isCurrent, isTrue);
     expect(pickerRoute.isActive, isTrue);
+    expect(commands.context['breadcrumbsPickerOpen'], isTrue);
+    expect(commands.context['breadcrumbsPickerFocused'], isFalse);
+    expect(commands.isEnabled('breadcrumbs.focusNextWithPicker'), isFalse);
     await commands.execute('workbench.action.files.newUntitledFile');
     await tester.pumpAndSettle();
     expect(dialog, findsOneWidget);
@@ -404,6 +459,7 @@ void main() {
         find.byType(PopupMenuItem<String>, skipOffstage: false), findsNothing);
     expect(oldFocus.hasFocus, isFalse);
     expect(commands.context['breadcrumbsActive'], isFalse);
+    expect(commands.context['breadcrumbsPickerOpen'], isFalse);
     expect(commands.context['breadcrumbsPossible'], isFalse);
     expect(tester.takeException(), isNull);
   });

@@ -21,6 +21,8 @@
 9. CMD-01–12：P05.72–77已分别登记命令面板分节、行列/偏移预览与取消、分页异步Quick Open、版本化Outline、文档符号preview/取消/侧开及异步工作区符号。继续补Quick Access registry与默认命令原子映射、评分/参数/条件、Quick Open侧开/复制/provider快照、位置修饰与符号分组/评分，以及Peek/各类语义导航/层级/Problems/links宿主；多根归P06、真实语言provider归P08、系统URI/可信域安全整合归P14。保持实际provider与mock验证区分，子项done不关闭父行。
 10. 阶段验收：全部产品门禁、原子贡献映射覆盖、固定版本同环境视觉/交互/文件结果和资源生命周期证据。原生设备能力不足明确未验证；不能据此标 P05 整体 done。
 
+P05.94/feat-146 已收尾：Breadcrumb 文件/符号 picker 侧开实现及准确本地/CI/WinLinux 证据见 `docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md` 与 hosted JSON。P05.95/feat-147 实现与本地完整 DoD 已通过：固定 Code-OSS `focusNextWithPicker` / `focusPreviousWithPicker`，只在 picker route 拥有主焦点时按平台键位移动段焦点并保持 picker；范围、route-focus 核验和图谱覆盖限制见 `docs/diagnostics/2026-11-19-p05/p05.95-breadcrumb-picker-focus-navigation-scope.md`。本片 exact-SHA hosted gates 完成后，按 N.2 矩阵选择下一个依赖已满足的独立切片；P05 父阶段保持 in-progress。
+
 ## 验收账本
 
 每项以 docs/03 status + feature_list evidence + diagnostic report 为准。每个矩阵行最终需列：实现、测试、正常/边界/失败/取消/恢复、各平台结果、截图/diff、剩余差异；普通进度不请求批准，遇到只能由用户决策的外部阻塞再说明。

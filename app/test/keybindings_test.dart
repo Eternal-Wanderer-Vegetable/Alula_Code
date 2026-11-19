@@ -26,9 +26,9 @@ void main() {
           '$modifier+shift+;': 'breadcrumbs.focus',
           '$modifier+shift+.': 'breadcrumbs.focusAndSelect',
           'arrowright': 'breadcrumbs.focusNext',
-          '$word+arrowright': 'breadcrumbs.focusNext',
+          '$word+arrowright': 'breadcrumbs.focusNextWithPicker',
           'arrowleft': 'breadcrumbs.focusPrevious',
-          '$word+arrowleft': 'breadcrumbs.focusPrevious',
+          '$word+arrowleft': 'breadcrumbs.focusPreviousWithPicker',
           'enter': 'breadcrumbs.selectFocused',
           'arrowdown': 'breadcrumbs.selectFocused',
           'escape': 'breadcrumbs.selectEditor',
@@ -39,11 +39,68 @@ void main() {
               reason: '$platform/${entry.key}');
           expect(
               binding.when,
-              entry.value == 'breadcrumbs.focus' ||
-                      entry.value == 'breadcrumbs.focusAndSelect'
-                  ? 'breadcrumbsPossible'
-                  : 'breadcrumbsVisible && breadcrumbsActive');
+              switch (entry.value) {
+                'breadcrumbs.focus' ||
+                'breadcrumbs.focusAndSelect' =>
+                  'breadcrumbsPossible',
+                'breadcrumbs.focusNext' ||
+                'breadcrumbs.focusPrevious' =>
+                  'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+                'breadcrumbs.focusNextWithPicker' ||
+                'breadcrumbs.focusPreviousWithPicker' =>
+                  'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+                _ => 'breadcrumbsVisible && breadcrumbsActive',
+              });
         }
+        final outsidePicker = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition ==
+                  'breadcrumbsVisible && breadcrumbsActive && !breadcrumbsPickerOpen',
+        );
+        final outsidePickerNext = outsidePicker.entries.singleWhere(
+          (entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              (platform == TargetPlatform.macOS
+                  ? entry.key.alt
+                  : entry.key.control) &&
+              !entry.key.shift &&
+              (platform == TargetPlatform.macOS
+                  ? !entry.key.control && !entry.key.meta
+                  : !entry.key.alt && !entry.key.meta),
+        );
+        expect(outsidePickerNext.value.commandId, 'breadcrumbs.focusNext',
+            reason: '$platform keeps ordinary navigation outside picker');
+        final insidePicker = keys.resolveBindings(
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition ==
+                  'breadcrumbsVisible && breadcrumbsActive && breadcrumbsPickerOpen && breadcrumbsPickerFocused',
+        );
+        final insidePickerNext = insidePicker.entries.singleWhere(
+          (entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              (platform == TargetPlatform.macOS
+                  ? entry.key.alt
+                  : entry.key.control) &&
+              !entry.key.shift &&
+              (platform == TargetPlatform.macOS
+                  ? !entry.key.control && !entry.key.meta
+                  : !entry.key.alt && !entry.key.meta),
+        );
+        expect(
+            insidePickerNext.value.commandId, 'breadcrumbs.focusNextWithPicker',
+            reason: '$platform gives picker navigation precedence while open');
+        expect(
+          insidePicker.entries.any((entry) =>
+              entry.key.trigger == LogicalKeyboardKey.arrowRight &&
+              !entry.key.control &&
+              !entry.key.alt &&
+              !entry.key.shift &&
+              !entry.key.meta),
+          isFalse,
+          reason: 'bare arrows remain available to the popup menu',
+        );
         final activeReveal = keys.resolveBindings(
             matchesWhen: (condition) =>
                 condition == null ||

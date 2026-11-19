@@ -58,6 +58,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
     super.key,
     required this.item,
     required this.onEscape,
+    required this.onKeyEvent,
     required this.onRoute,
     required this.onRevealAside,
     required this.first,
@@ -66,6 +67,7 @@ class BreadcrumbMenuEntry extends PopupMenuEntry<String> {
   final PopupMenuItem<String> item;
   final bool first;
   final VoidCallback onEscape;
+  final KeyEventResult Function(KeyEvent event) onKeyEvent;
   final ValueChanged<ModalRoute<dynamic>?> onRoute;
   final ValueChanged<String> onRevealAside;
 
@@ -92,6 +94,8 @@ class _BreadcrumbMenuEntryState extends State<BreadcrumbMenuEntry> {
           widget.onEscape();
           return KeyEventResult.handled;
         }
+        final pickerKeyResult = widget.onKeyEvent(event);
+        if (pickerKeyResult != KeyEventResult.ignored) return pickerKeyResult;
         if (event is KeyDownEvent &&
             event.logicalKey == LogicalKeyboardKey.enter &&
             widget.item.enabled &&
