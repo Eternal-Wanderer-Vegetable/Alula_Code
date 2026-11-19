@@ -1838,8 +1838,8 @@
       "dependencies": [
         "feat-148"
       ],
-      "status": "in-progress",
-      "evidence": "实现已完成，本地 bash init.sh 全绿（Flutter 1560 tests passed、2 skipped；Rust workspace/Clippy/core/fmt/analyze 通过），强制 ICU4X runtime 比较对拍17/17通过，Linux release build 成功。Linux三文档串行内存：PR基线214.92 MiB Private/233.19 MiB PSS，候选editorOrder 212.11/230.31 MiB，alphabetical 212.16/230.43 MiB；原始采样与口径见 docs/diagnostics/2026-11-19-p05/p05.97-memory-comparison.md。GitNexus重复 staged all-scope均返回7个符号/15文件，但流程映射在0个LOW与1个 InitState→Hunk（5步）MEDIUM之间变化；WorkbenchPage >512KiB 未索引且全局流程候选有截断，按未解决记录，详见范围报告。Linux/Windows exact-SHA hosted验证待本次产品提交后完成；PR #3 保持 OPEN/DRAFT。"
+      "status": "done",
+      "evidence": "P05.97/feat-149完成，产品 commit 960da3163d068ff85255a066c7717d7346de632d 已推 PR #3。完整 bash init.sh 通过（Flutter 1560 passed/2 skipped、Rust workspace/Clippy/core/fmt/analyze），强制 native ICU4X 对拍17/17、Linux release build通过。Linux三文档串行内存：PR基线214.92 MiB Private/233.19 MiB PSS，候选editorOrder 212.11/230.31 MiB，alphabetical 212.16/230.43 MiB；采样见 docs/diagnostics/2026-11-19-p05/p05.97-memory-comparison.md。精确 SHA PR CI 44501865076 四 job 全绿（Flutter 1560 tests、native collation smoke）；Platform Availability 44501856661 Linux/Windows jobs全绿，含native ICU4X、剪贴板、DnD、构建/启动。应用/诊断 artifact IDs、sizes、digests见 docs/diagnostics/2026-11-19-p05/p05.97-hosted-verification.json。macOS job在采集时仍运行 Flutter tests且未等待；无设备，未声称 macOS 验证。GitNexus产品差异 all-scope 为7 symbols/15 files，流程映射在0/LOW与1个 InitState→Hunk/MEDIUM间变化；最新 docs-only staged scan 为7 files/1 section symbol/1 MEDIUM flow，将 session-handoff 的 Blockers / Limits 错映射到 InitState→Hunk，该映射不是runtime影响。覆盖限制和未解决状态见范围报告，不当作 graph all-clear。PR #3保持 OPEN/DRAFT；LAY-12b仍只同步活动窗口/组标识。范围：docs/diagnostics/2026-11-19-p05/p05.97-open-editors-alphabetical-sort-scope.md。"
     }
   ],
   "active_track": "vscode-builtin-parity",
