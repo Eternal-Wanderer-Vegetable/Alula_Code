@@ -1508,7 +1508,14 @@ void main() {
 
       expect(find.text('make_point'), findsOneWidget,
           reason: '大纲应列出函数符号');
-      expect(find.text('Point'), findsOneWidget, reason: '大纲应列出结构体符号');
+      expect(
+        find.descendant(
+          of: find.byType(ListTile),
+          matching: find.text('Point'),
+        ),
+        findsOneWidget,
+        reason: '大纲应列出结构体符号',
+      );
 
       // 点击 make_point → 编辑器光标跳到该符号起始处
       await tester.tap(find.text('make_point'));

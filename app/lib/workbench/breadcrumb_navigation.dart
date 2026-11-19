@@ -111,6 +111,7 @@ class BreadcrumbNavigation extends StatefulWidget {
     required this.region,
     required this.resource,
     required this.segments,
+    this.editorSegmentIndex,
     required this.controller,
     required this.onSelect,
     required this.onRevealDirectory,
@@ -120,6 +121,10 @@ class BreadcrumbNavigation extends StatefulWidget {
   final String region;
   final Object resource;
   final List<String> segments;
+
+  /// A terminal path segment that returns focus to its owning editor even
+  /// when symbol ancestry segments follow it.
+  final int? editorSegmentIndex;
   final BreadcrumbNavigationController controller;
   final Future<void> Function(int index) onSelect;
   final Future<void> Function(int index) onRevealDirectory;
@@ -237,7 +242,8 @@ class _BreadcrumbNavigationState extends State<BreadcrumbNavigation> {
         widget.controller._pickerShowing) {
       return;
     }
-    if (index == widget.segments.length - 1) {
+    if (index == widget.editorSegmentIndex ||
+        index == widget.segments.length - 1) {
       clearFocus();
       widget.onSelectEditor();
       return;

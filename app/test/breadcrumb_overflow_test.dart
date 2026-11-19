@@ -282,10 +282,15 @@ void main() {
       breadcrumbs.controller.focusLast(region);
       await tester.pumpAndSettle();
       _expectVisible(tester, region, breadcrumbs.segments.length - 1);
-      breadcrumbs.controller.move(-1);
-      await tester.pumpAndSettle();
-      _expectVisible(tester, region, breadcrumbs.segments.length - 2,
-          oversized: true);
+      final longIndex = breadcrumbs.segments.indexOf(longComponent);
+      expect(longIndex, greaterThanOrEqualTo(0));
+      for (var index = breadcrumbs.segments.length - 1;
+          index > longIndex;
+          index--) {
+        breadcrumbs.controller.move(-1);
+        await tester.pumpAndSettle();
+      }
+      _expectVisible(tester, region, longIndex, oversized: true);
       breadcrumbs.controller.selectEditor();
       await tester.pumpAndSettle();
     }

@@ -9,6 +9,11 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Finder outlineText(String value) => find.descendant(
+      of: find.byType(ListTile),
+      matching: find.text(value),
+    );
+
 void main() {
   testWidgets(
       'Outline filters descendants, sorts, collapses and clears across same-name documents',
@@ -57,8 +62,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     await commands!.execute('view.outline');
     await tester.pump();
-    expect(find.text('outer'), findsOneWidget);
-    expect(find.text('zebra'), findsOneWidget);
+    expect(outlineText('outer'), findsOneWidget);
+    expect(outlineText('zebra'), findsOneWidget);
     expect(
         find.descendant(
             of: find.byType(ListTile), matching: find.text('alpha')),
@@ -69,7 +74,7 @@ void main() {
     await tester.enterText(
         find.byKey(const ValueKey('outline-filter')), 'alpha');
     await tester.pump();
-    expect(find.text('outer'), findsOneWidget);
+    expect(outlineText('outer'), findsOneWidget);
     expect(
         find.descendant(
             of: find.byType(ListTile), matching: find.text('alpha')),
@@ -92,7 +97,7 @@ void main() {
     await commands!.execute('view.outline');
     await commands!.execute('view.outline');
     await tester.pump(const Duration(milliseconds: 600));
-    expect(find.text('different'), findsOneWidget);
-    expect(find.text('zebra'), findsNothing);
+    expect(outlineText('different'), findsOneWidget);
+    expect(outlineText('zebra'), findsNothing);
   });
 }

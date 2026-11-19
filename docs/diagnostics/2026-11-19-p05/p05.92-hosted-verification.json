@@ -1,0 +1,32 @@
+{
+  "task": "P05.92 exact hosted verification",
+  "repository": "github.com/Eternal-Wanderer-Vegetable/Alula_Code",
+  "head_sha": "0175c36d1e64c62c9f25ae3a080cf1b8d5d7878f",
+  "captured_at_utc": "2026-11-19T02:41:52Z",
+  "runs": {
+    "ci": {
+      "id": 44358043167,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44358043167",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {"id": 134991393280, "name": "Harness 文档结构校验", "conclusion": "success"},
+        {"id": 134991393687, "name": "Flutter (analyze + test)", "conclusion": "success"},
+        {"id": 134991393807, "name": "Rust (ubuntu-latest)", "conclusion": "success"},
+        {"id": 134991394090, "name": "Rust (windows-latest)", "conclusion": "success"}
+      ]
+    },
+    "platform": {
+      "id": 44358027833,
+      "url": "https://github.com/Eternal-Wanderer-Vegetable/Alula_Code/actions/runs/44358027833",
+      "jobs": [
+        {"id": 134991338647, "name": "Windows x64 build and launch smoke", "conclusion": "success", "app_artifact_id": 14453373952, "app_artifact_sha256": "6a3746bdab5d9b927df506e4224f6fffa03a9372f36f8170a26612d698f68778", "native_dnd_artifact_id": 14452269138},
+        {"id": 134991339285, "name": "Linux x64 build and launch smoke", "conclusion": "success", "app_artifact_id": 14452813329, "app_artifact_sha256": "c37da5fdb1df438a1d40504db46249cf903769a56e1256f915b353ab39c0b9b3", "native_dnd_artifact_id": 14453103148},
+        {"id": 134991339351, "name": "macOS build, launch smoke, and app package", "conclusion": "cancelled", "deferred": true}
+      ]
+    }
+  },
+  "macOS_deferred": true,
+  "macOS_in_acceptance": false,
+  "overall_three_platform_success_claimed": false
+}

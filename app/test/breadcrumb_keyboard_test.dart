@@ -257,6 +257,7 @@ void main() {
     ]) {
       await shortcut(tester, LogicalKeyboardKey.semicolon);
       await key(tester, LogicalKeyboardKey.arrowLeft);
+      await key(tester, LogicalKeyboardKey.arrowLeft);
       await key(tester, openKey);
       expect(find.text('lib.rs'), findsOneWidget);
       if (openKey == LogicalKeyboardKey.enter) {
@@ -340,6 +341,7 @@ void main() {
     await mount(tester);
     final owner = _field(tester, 10);
     await shortcut(tester, LogicalKeyboardKey.semicolon);
+    await key(tester, LogicalKeyboardKey.arrowLeft);
     await key(tester, LogicalKeyboardKey.arrowLeft);
     await key(tester, LogicalKeyboardKey.enter);
     expect(find.text('lib.rs'), findsOneWidget);

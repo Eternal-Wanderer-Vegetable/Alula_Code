@@ -190,6 +190,54 @@ DocumentSymbolNode? documentSymbolAtLine(
   return found;
 }
 
+/// Returns the inclusive ancestor chain containing [line], from root to the
+/// deepest symbol. Ties match [documentSymbolAtLine]: deeper nodes win, then
+/// the later UTF-16 start at the same depth.
+List<DocumentSymbolNode> documentSymbolPathAtLine(
+  List<DocumentSymbolNode> roots,
+  int line,
+) {
+  if (line < 1) return const [];
+  final pending = <_SymbolPathEntry>[];
+  for (final root in roots) {
+    if (line >= root.line && line <= root.endLine) {
+      pending.add(_SymbolPathEntry(root, 0, null));
+    }
+  }
+  _SymbolPathEntry? found;
+  while (pending.isNotEmpty) {
+    final entry = pending.removeLast();
+    final symbol = entry.symbol;
+    if (found == null ||
+        entry.depth > found.depth ||
+        (entry.depth == found.depth &&
+            symbol.startUtf16 > found.symbol.startUtf16)) {
+      found = entry;
+    }
+    for (final child in symbol.children) {
+      if (line >= child.line && line <= child.endLine) {
+        pending.add(_SymbolPathEntry(child, entry.depth + 1, entry));
+      }
+    }
+  }
+  if (found == null) return const [];
+  final path = <DocumentSymbolNode>[];
+  _SymbolPathEntry? entry = found;
+  while (entry != null) {
+    path.add(entry.symbol);
+    entry = entry.parent;
+  }
+  return path.reversed.toList(growable: false);
+}
+
+class _SymbolPathEntry {
+  const _SymbolPathEntry(this.symbol, this.depth, this.parent);
+
+  final DocumentSymbolNode symbol;
+  final int depth;
+  final _SymbolPathEntry? parent;
+}
+
 int _comparePosition(DocumentSymbolNode a, DocumentSymbolNode b) {
   var result = a.startUtf16.compareTo(b.startUtf16);
   if (result != 0) return result;

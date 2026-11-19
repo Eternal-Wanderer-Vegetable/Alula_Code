@@ -54,7 +54,8 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
       ),
     ));
     await tester.pump(const Duration(milliseconds: 800));
@@ -171,6 +172,110 @@ void main() {
       expect(controller.selection.isValid, isTrue);
       expect(controller.selection.baseOffset, greaterThan(0),
           reason: 'the caret jumped to the selected symbol offset');
+    },
+  );
+
+  testWidgets(
+    'workspace breadcrumbs follow current-version Rust symbol ancestry',
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedWorkspaceAndOpen(tester);
+      const source =
+          '\u{FEFF}// 🦊\r\nmod outer {\r\n    fn inner() {}\r\n}\r\nfn sibling() {}\r\n';
+      final file = File('${workspace.path}/src/main.rs')
+        ..writeAsStringSync(source);
+      await mountPage(tester);
+
+      final field = _fieldForDocument(tester, 10);
+      final document = field.inputWindow.document;
+      final bufferText = document.resync().content;
+      final version = document.version;
+      final symbols = document.core.lsp.symbols(document.id)!.symbols;
+      final inner = symbols.singleWhere((symbol) => symbol['name'] == 'inner');
+      int utf16Offset(String needle) =>
+          bufferText.substring(0, bufferText.indexOf(needle)).codeUnits.length;
+      expect(inner['start_utf16'], utf16Offset('fn inner'));
+      final siblingStart = utf16Offset('fn sibling');
+
+      // The initial caret is on the comment line, outside all symbols.
+      expect(_breadcrumbSegment('editor', 'outer'), findsNothing);
+      final editor = find.descendant(
+        of: find.byKey(field.key!),
+        matching: find.byType(TextField),
+      );
+      final controller = tester.widget<TextField>(editor).controller!;
+      field.focusNode!.requestFocus();
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget);
+      expect(_breadcrumbSegment('editor', 'inner'), findsOneWidget);
+
+      // Symbol segments keep their symbol picker instead of being routed as
+      // file-system paths; selecting the entry jumps to its UTF-16 start.
+      await tester.tap(_breadcrumbSegment('editor', 'inner'));
+      await tester.pumpAndSettle();
+      final innerEntry = find.descendant(
+        of: find.byType(PopupMenuItem<String>),
+        matching: find.textContaining('inner'),
+      );
+      expect(innerEntry, findsOneWidget);
+      await tester.tap(innerEntry);
+      await tester.pumpAndSettle();
+      expect(controller.selection.extentOffset, inner['start_utf16']);
+      expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget);
+      expect(_breadcrumbSegment('editor', 'inner'), findsOneWidget);
+      expect(field.focusNode!.hasFocus, isTrue,
+          reason: 'choosing a symbol returns keyboard focus to the editor');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+      await tester.pumpAndSettle();
+      expect(_breadcrumbSegment('editor', 'outer'), findsNothing);
+      expect(_breadcrumbSegment('editor', 'inner'), findsNothing);
+      expect(_breadcrumbSegment('editor', 'sibling'), findsOneWidget);
+
+      expect(controller.text, bufferText);
+      expect(document.version, version,
+          reason: 'following symbol ancestry must not edit the document');
+      expect(file.readAsBytesSync(), utf8.encode(source));
+      expect(
+        document.lineBoundary(controller.selection.extentOffset).line,
+        document.lineBoundary(siblingStart).line,
+        reason: 'the caret moved to the sibling declaration line',
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.pumpAndSettle();
+      expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget);
+      expect(_breadcrumbSegment('editor', 'inner'), findsOneWidget);
+
+      // A document version change invalidates the cached symbol path before
+      // the debounced outline refresh can return a new snapshot.
+      field.focusNode!.requestFocus();
+      await tester.pump();
+      final editedText = '$bufferText// changed after snapshot';
+      tester.testTextInput.updateEditingValue(TextEditingValue(
+        text: editedText,
+        selection: TextSelection.collapsed(offset: inner['start_utf16'] as int),
+      ));
+      await tester.pump();
+      await tester.pump();
+      expect(document.resync().content, editedText);
+      expect(document.version, greaterThan(version));
+      expect(_breadcrumbSegment('editor', 'outer'), findsNothing);
+      expect(_breadcrumbSegment('editor', 'sibling'), findsNothing);
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pumpAndSettle();
+      expect(_breadcrumbSegment('editor', 'outer'), findsOneWidget,
+          reason: 'the fresh versioned symbol snapshot restores the path');
+      expect(_breadcrumbSegment('editor', 'inner'), findsOneWidget);
+      expect(file.readAsBytesSync(), utf8.encode(source));
     },
   );
 

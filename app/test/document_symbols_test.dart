@@ -225,6 +225,40 @@ void main() {
     expect(documentSymbolAtLine(roots.reversed.toList(), 1)?.name, 'second');
   });
 
+  test('line path returns nested ancestors and excludes gaps', () {
+    final roots = buildDocumentSymbolTree([
+      row('outer', 0, 1, 12, kind: 'mod'),
+      row('left', 10, 2, 5),
+      row('inner', 20, 3, 4),
+      row('right', 40, 7, 9),
+      row('after', 100, 14, 14),
+    ]);
+    expect(
+      documentSymbolPathAtLine(roots, 3).map((symbol) => symbol.name),
+      ['outer', 'left', 'inner'],
+    );
+    expect(
+      documentSymbolPathAtLine(roots, 7).map((symbol) => symbol.name),
+      ['outer', 'right'],
+    );
+    expect(
+      documentSymbolPathAtLine(roots, 6).map((symbol) => symbol.name),
+      ['outer'],
+    );
+    expect(documentSymbolPathAtLine(roots, 0), isEmpty);
+    expect(documentSymbolPathAtLine(roots, 10000), isEmpty);
+  });
+
+  test('same-depth line path uses the same later-start tie break', () {
+    final roots = buildDocumentSymbolTree([
+      row('first', 0, 1, 1),
+      row('second', 10, 1, 1),
+    ]);
+    final path = documentSymbolPathAtLine(roots, 1);
+    expect(path.map((symbol) => symbol.name), ['second']);
+    expect(path.last, documentSymbolAtLine(roots, 1));
+  });
+
   test('rejects invalid rows without coercing wire types', () {
     final valid = row('valid', 0, 1, 1);
     final invalid = <Map<String, Object?>>[

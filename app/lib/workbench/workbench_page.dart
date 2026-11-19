@@ -558,7 +558,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   String? _outlineActiveSymbol;
   String? _outlineError;
   String _outlineDocKey = '';
+  String _outlineRequestKey = '';
   Timer? _outlineTimer;
+  bool _breadcrumbRebuildPending = false;
 
   // ---------- Git 面板（feat-git，CLI 封装） ----------
   String? _sidebarView = 'explorer';
@@ -3120,12 +3122,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _syncCommandContext() {
-    if ((_sidebarView == 'outline' || _secondarySidebarView == 'outline') &&
-        _active != null && !_outlineDocKey.startsWith('${_active!.id}#')) {
-      _refreshOutline();
+    final active = _active;
+    if (active != null) {
+      final key = '${active.id}#${active.doc.version}';
+      if ((_sidebarView == 'outline' || _secondarySidebarView == 'outline') &&
+          !_outlineDocKey.startsWith('${active.id}#')) {
+        _refreshOutline();
+      } else if (_outlineRequestKey != key) {
+        _scheduleOutlineRefresh();
+      }
     }
     _updateOutlineCursor();
-    final active = _active;
+    _updateBreadcrumbSymbolPathsForCurrentDocument();
     final mergeSession = active?.mergeResultSession;
     final currentMergeConflict = active == null
         ? null
@@ -11095,6 +11103,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void _scheduleSelectionRefresh(OpenDoc doc) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _active?.id != doc.id || _disposing) return;
+      _updateBreadcrumbSymbolPathsForCurrentDocument();
       setState(() {});
     });
   }
@@ -18906,17 +18915,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active == null) {
       _outlineSymbols.clear();
       _outlineDocKey = '';
+      _outlineRequestKey = '';
       return;
     }
+    final currentKey = '${active.id}#${active.doc.version}';
+    _outlineRequestKey = currentKey;
     final r = active.doc.core.lsp.symbols(active.id);
     if (r == null || r.version != active.doc.version) {
       _outlineSymbols = [];
       _outlineDocKey = '';
       _outlineActiveSymbol = null;
+      _clearBreadcrumbSymbolPaths(active.id);
       return;
     }
     final key = '${active.id}#${r.version}';
-    if (key == _outlineDocKey) return;
+    if (key == _outlineDocKey) {
+      _updateBreadcrumbSymbolPathsForDocument(active.id, key);
+      return;
+    }
     _outlineDocKey = key;
     _outlineCollapsed.clear();
     _outlineError = null;
@@ -18927,6 +18943,82 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _outlineError = '符号结果超出预算：${error.message}';
     }
     _updateOutlineCursor();
+    _updateBreadcrumbSymbolPathsForDocument(active.id, key);
+  }
+
+  void _updateBreadcrumbSymbolPathsForCurrentDocument() {
+    final active = _active;
+    if (active == null) return;
+    final key = '${active.id}#${active.doc.version}';
+    if (_outlineDocKey != key) return;
+    _updateBreadcrumbSymbolPathsForDocument(active.id, key);
+  }
+
+  void _updateBreadcrumbSymbolPathsForDocument(int documentId, String key) {
+    final active = _active;
+    if (active == null ||
+        active.id != documentId ||
+        key != '${active.id}#${active.doc.version}' ||
+        key != _outlineDocKey) {
+      return;
+    }
+    final version = active.doc.version;
+    for (final group in _groups.values) {
+      final view = group.active;
+      if (view == null || view.id != documentId) continue;
+      if (view.doc.version != version) {
+        _storeBreadcrumbSymbolPath(group, '', const []);
+        continue;
+      }
+      try {
+        final line = view.doc.lineBoundary(view.selection.extentOffset).line + 1;
+        _storeBreadcrumbSymbolPath(
+          group,
+          key,
+          documentSymbolPathAtLine(_outlineSymbols, line)
+              .map((symbol) => (
+                    id: symbol.id,
+                    name: symbol.name,
+                    startUtf16: symbol.startUtf16,
+                  ))
+              .toList(growable: false),
+        );
+      } on AlulaException catch (_) {
+        _storeBreadcrumbSymbolPath(group, key, const []);
+      }
+    }
+  }
+
+  void _storeBreadcrumbSymbolPath(
+    EditorGroup group,
+    String documentKey,
+    List<BreadcrumbSymbolPathEntry> path,
+  ) {
+    final pathChanged = !listEquals(group.breadcrumbSymbolPath, path);
+    final documentKeyChanged =
+        group.breadcrumbSymbolDocumentKey != documentKey &&
+            (group.breadcrumbSymbolPath.isNotEmpty || path.isNotEmpty);
+    group.breadcrumbSymbolPath = path;
+    group.breadcrumbSymbolDocumentKey = documentKey;
+    if (pathChanged || documentKeyChanged) _scheduleBreadcrumbRebuild();
+  }
+
+  void _scheduleBreadcrumbRebuild() {
+    if (_breadcrumbRebuildPending || !mounted || _disposing) return;
+    _breadcrumbRebuildPending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _breadcrumbRebuildPending = false;
+      if (!mounted || _disposing) return;
+      setState(() {});
+    });
+    WidgetsBinding.instance.scheduleFrame();
+  }
+
+  void _clearBreadcrumbSymbolPaths(int documentId) {
+    for (final group in _groups.values) {
+      if (group.active?.id != documentId) continue;
+      _storeBreadcrumbSymbolPath(group, '', const []);
+    }
   }
 
   void _updateOutlineCursor() {
@@ -18945,10 +19037,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   /// 编辑后防抖刷新大纲。
   void _scheduleOutlineRefresh() {
+    final active = _active;
+    _outlineRequestKey =
+        active == null ? '' : '${active.id}#${active.doc.version}';
     _outlineTimer?.cancel();
     _outlineTimer = Timer(const Duration(milliseconds: 500), () {
+      _outlineTimer = null;
       if (!mounted) return;
-      setState(_refreshOutline);
+      if (_sidebarView == 'outline' || _secondarySidebarView == 'outline') {
+        setState(_refreshOutline);
+      } else {
+        _refreshOutline();
+      }
     });
   }
 
@@ -21702,7 +21802,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     var rel = normPath.startsWith('$normRoot/')
         ? normPath.substring(normRoot.length + 1)
         : normPath;
-    final segments = rel.split('/');
+    final pathSegments = rel.split('/');
+    final symbolDocumentKey = '${active.id}#${active.doc.version}';
+    final symbolPath = g.breadcrumbSymbolDocumentKey == symbolDocumentKey
+        ? g.breadcrumbSymbolPath
+        : const <BreadcrumbSymbolPathEntry>[];
+    final segments = [
+      ...pathSegments,
+      for (final symbol in symbolPath) symbol.name,
+    ];
     return Container(
       key: ValueKey('breadcrumb-${g.region}'),
       height: 22,
@@ -21713,16 +21821,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         region: g.region,
         resource: (active, active.path, _workspaceRoot),
         segments: segments,
+        editorSegmentIndex: pathSegments.length - 1,
         controller: _breadcrumbs,
-        onSelect: (index) => _onBreadcrumbSegmentTap(g, segments, index),
+        onSelect: (index) {
+          if (index < pathSegments.length) {
+            return _onBreadcrumbSegmentTap(g, pathSegments, index);
+          }
+          return _showBreadcrumbSymbolPicker(g);
+        },
         onRevealDirectory: (index) async {
+          if (index >= pathSegments.length) {
+            final childIndex = index - pathSegments.length + 1;
+            if (childIndex < symbolPath.length) {
+              await _selectBreadcrumbSymbol(
+                g,
+                active,
+                symbolPath[childIndex],
+                symbolDocumentKey,
+              );
+            }
+            return;
+          }
           var directory = File(active.path!).parent;
-          for (var depth = segments.length - 2; depth > index; depth--) {
+          for (var depth = pathSegments.length - 2; depth > index; depth--) {
             directory = directory.parent;
           }
           final node = TreeNode(
-            name: segments[index], path: directory.path, isDir: true);
-          await _showBreadcrumbFolderPicker(g, segments, index, node,
+              name: pathSegments[index], path: directory.path, isDir: true);
+          await _showBreadcrumbFolderPicker(g, pathSegments, index, node,
               focusPickedFile: true);
         },
         onSelectEditor: () {
@@ -21733,6 +21859,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
       ),
     );
+  }
+
+  Future<void> _selectBreadcrumbSymbol(
+    EditorGroup group,
+    OpenDoc doc,
+    BreadcrumbSymbolPathEntry symbol,
+    String documentKey,
+  ) {
+    if (!mounted ||
+        !identical(_groups[group.region], group) ||
+        !identical(group.active, doc) ||
+        documentKey != '${doc.id}#${doc.doc.version}') {
+      return Future<void>.value();
+    }
+    setState(() {
+      group.activeDocId = doc.id;
+      _noteActiveDocument(group, doc.id);
+      _focusedRegion = group.region;
+    });
+    _setDocSelection(
+      doc,
+      TextSelection.collapsed(offset: symbol.startUtf16),
+    );
+    setState(() {});
+    _syncCommandContext();
+    _scheduleStateSave();
+    return Future<void>.value();
   }
 
   String _normPath(String p) => p.replaceAll('\\', '/');
@@ -21956,6 +22109,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         activeDoc,
         TextSelection.collapsed(offset: offset),
       );
+      _focusNodeFor(group, activeDoc).requestFocus();
       setState(() {});
     }
     _syncCommandContext();
@@ -25032,6 +25186,9 @@ enum _DirtyEditorCloseDecision { save, discard, cancel }
 
 typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 
+/// Small breadcrumb copy of a symbol's identity, label, and UTF-16 start.
+typedef BreadcrumbSymbolPathEntry = ({String id, String name, int startUtf16});
+
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {
   EditorGroup(this.region);
@@ -25046,6 +25203,8 @@ class EditorGroup {
   int lastActivationOrder = 0;
   int? activeDocId;
   int? previewDocId;
+  List<BreadcrumbSymbolPathEntry> breadcrumbSymbolPath = const [];
+  String breadcrumbSymbolDocumentKey = '';
 
   OpenDoc? get active {
     for (final d in docs) {

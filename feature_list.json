@@ -1633,7 +1633,9 @@
       "id": "feat-132",
       "name": "P05.80 LAY-16d SCM 资源列表键盘导航",
       "description": "SCM lazy resource list focus/selection separation, bare navigation/reveal, Enter opens diff, Space preserves list focus without staging, independent hover/action buttons and workspace/async cleanup. docs/diagnostics/2026-11-17-p05/p05.80-scm-list-navigation.md",
-      "dependencies": ["feat-131"],
+      "dependencies": [
+        "feat-131"
+      ],
       "status": "done",
       "evidence": "Initial component9/9, combined Git20/20; original9117a06 CI44141662139 green. OriginalPlatform44141648010 attempt1 WindowsDnD/macQuit failed; attempt2 Windowsgreen, mac1443/1444 sole100ms focusfixture failure; no third retry. Fixturecorrectione865b11 CI44219803751 and logheadb162222 CI44220241478 green, PA44219797014 Win/Linuxgreen/macQuitfailure despite tests/Release/launch/package success. Review found rowEnter focusowner race and unchangedrefresh scrollsnap; both red-first regressions repaired within GitChangesList. Component11/11, realrepo rowEnter1/1, mergecleanup15/15; final completeinit.sh Flutter1446/1446 Rusttests/Clippy/core passed, fmt/analyze0. Final productfix6e529d4 CI44222976491 all4green and Platform44222968734 all3green. mac1446tests/nativeQuit/package passed; macDnD syntheticroute unavailable explicitskip. Artifacts L14392430112/W14391638012/M14393775629; macZIP81entries integrity passed SHA2563f57c6bf8e7485bca9fc0ba6ce7776a8a920113bef34496c49fc00f22ef592e6 matches sidecar. Exact evidence docs/diagnostics/2026-11-18-p05/p05.80-final-hosted.md; seven scoped acceptance mappings distinguish tested/source-only/nativeunverified. Fileimpact MEDIUM69/direct1, class namesblank unresolved, prior CRITICAL/UNKNOWN and extraction limits retained. Reports docs/diagnostics/2026-11-18-p05/p05.80-focus-scroll-review-fixes.md and originalscope; LAY-16/P05 remain open.",
       "track": "vscode-builtin-parity",
@@ -1643,7 +1645,9 @@
       "id": "feat-133",
       "name": "P05.81 LAY-16e SCM 多选与范围选择",
       "description": "Existing flat SCM resource list Ctrl/Cmd toggle, disjoint-preserving Shift range, tree-style ShiftArrow selection, local select-all, focused-only activation and refresh cleanup. docs/diagnostics/2026-11-18-p05/p05.81-scm-multiselection.md",
-      "dependencies": ["feat-132"],
+      "dependencies": [
+        "feat-132"
+      ],
       "status": "done",
       "evidence": "Pinnedreference contract registered after feat132 exactcloseout. Component27/27 and realrepo1/1 passed; repo uses gitwrite-tree plus diskbytes to prove selection invariant, pointermodifiers noopen, Spacecollapse. Firstfullinit1458/1458 Rust/Clippy/core/fmt passed. Review fixedforeignplatformmodifier fallthrough, externalkeyboardfocus onmodifiedtap andquadraticShiftremoval; newguardsredbeforefix, targetedrereviewpass, analyze0. Finalpostreview init.sh passed Flutter1462/1462, Rustworkspace/Clippy/core; independentfmt/analyze0. Completegraphall20/18/442 andmain489/250/445 CRITICAL no partial/truncated; product4c6f6de pushed. CI44233637698 all4success; Platform44233632031 OVERALLFAILURE solelymacnativeQuit. Linux/Windowspassed; mac1462tests/Release/clipboard/launch/packagepassed, AXgenericmenu selected butopen-W alive20s soQuitfailed; nativeDnD explicitskip pointerroutefalse. No rerun. Artifacts L14395749487/W14396372829/M14397173049; macZIP81entries SHA25665dfb58877a805e20b8766924777bf83ec4a32b59bdb23e2e9c6970556c321b1 matches sidecar. NarrowchilddonewithexplicitnativeQuitunverified, parentopen; exactreport docs/diagnostics/2026-11-18-p05/p05.81-hosted.md. Followup plans/macos-native-quit-diagnostics.md. Selectionboundedcurrentresources, no batchGitactions/polling; LAY16/P05 remainopen.",
       "track": "vscode-builtin-parity",
@@ -1653,7 +1657,9 @@
       "id": "feat-134",
       "name": "P05.82 macOS native Quit 目标身份与退出诊断",
       "description": "Bind a unique newly launched bundle/PID identity; target Quit on that instance, log AX match attributes/reason, observe actual app and open-W wrapper independently without relaxing failure criteria. docs/plans/macos-native-quit-diagnostics.md",
-      "dependencies": ["feat-133"],
+      "dependencies": [
+        "feat-133"
+      ],
       "status": "done",
       "evidence": "Registered after exact P05.81 nativeQuit failure and evidence closeout4e769d7. Helper/workflow-only diagnostics; product shutdown logic unchanged. Unknown/appalive/wrapperalive are failures, existing20second exit budget retained. Implemented helper/workflowonly snapshot/uniquePID/launch/pathbinding, fixedtargetQuit, AXattributes/matchreason andstrictdualPID20s observer. YAML+21Bashsyntax+Swiftstructure+10mockworkflowfixtures pass, reproduciblescript/results archived. Targetedreviewpass afterloggingfinishedwrapperstatusonfailure; nativeSwiftcompile unverifiedWindows. Completeinit.sh Flutter1462/1462 Rusttests/Clippy/core/fmt/analyze0passed. FinalgraphCRITICAL completeexports archived. Initial2c CIpassed/Swiftcompiled butQuitstalled beyondstep/job budgets, originalcauseunresolved. Workflowwatchdogfixd5c11f2 passes7POSIXhangfixtures/review, no acceptancewaiver. ExactCI44247773016+Platform44247766537 alljobs success; mac1462tests/Swiftcompile/nativeQuit/packagepassed, DnDexplicitskip. Boundapp36952 wrapper36949, AXTitleQuitAlulaCode matchAXTitleprefix, alive/alive->gone/gone open_status0 within18sstep. Macapp14403778075 ZIP81entries SHA25613f1b8dacd21588cd9e9ce71572529c6148ca02cee6304c3a8d29e86552f6939 matchessidecar. Diagnosticchilddone, historicalrootcause/P05parentopen; exactreport p05.82-hosted.md.",
       "track": "vscode-builtin-parity",
@@ -1663,7 +1669,9 @@
       "id": "feat-135",
       "name": "P05.83 LAY-16f SCM上下文菜单宿主",
       "description": "SCM pointer/keyboard context menu targeting, preserve multiselection/anchor, cancel/focus lifecycle and stale identity guards; existing singleton OpenDiff/Stage/Unstage only. docs/diagnostics/2026-11-18-p05/p05.83-scm-context-menu.md",
-      "dependencies": ["feat-133"],
+      "dependencies": [
+        "feat-133"
+      ],
       "status": "done",
       "evidence": "Registered fixedreference listWidget/scmViewPane contract. Baseline1462/1462green; freshgraphimpact empty-name exception/UNKNOWN retained with actualcallercheck, priorMEDIUM/CRITICAL risk. macOS device/native gaps explicitlydeferred peruser2026-11-18; no macOS realdevice gate forimplementation. Component37/37+realrepo1/1 pass, redfirst missingmenu and reviewraces captured. Fixed keyupframe scheduling, staleShift, queuedtarget validation, popup/action lock separation andrefreshposition. Finalsequentialinit.sh Flutter1472/1472 Rusttests/Clippy/core passed; independentfmt/analyze0. PriorparallelDLLcopybusyfailedrunretained, notcountedgreen. Fullgraphall21/2/438 andmain537/269/445 CRITICAL completeexports; productf4b1faf. ExactCI44264627191 all4green with1472tests; Platform44264618665 Linux/Windowssuccess, macOSpendingdeferred notclaimed. Win25desktop/clipboard1/DnD13pointercallbacks passed app14409574819/DnD14410820162; Linuxclipboard1/launches/DnD20callbacks app14410022314/DnD14409134624. Narrowchilddonebyavailableplatformrule; fullSCMbatch P09 excluded, macOSdevicegapsdeferred.",
       "track": "vscode-builtin-parity",
@@ -1673,7 +1681,9 @@
       "id": "feat-136",
       "name": "P05.84 QuickInput分级输入校验",
       "description": "Typed info/warning/error validation while preserving legacy string callbacks, async stale guards/history/accept latch; integrate existing GoToLine typed errors. docs/diagnostics/2026-11-18-p05/p05.84-quick-input-validation-severity.md",
-      "dependencies": ["feat-135"],
+      "dependencies": [
+        "feat-135"
+      ],
       "status": "done",
       "evidence": "Registered fixedreference severity contract; QuickInput impact CRITICAL104/31direct/3modules. TypedError blocks evenempty; Info/Warningaccept; bothcallbacks runtimeconflict. Focusedasync+realGoto13/13green, productseverityredcaptured. Info/Warningaccept, Error/emptyErrorblock, validclearsdecoration, pendingretainsmessage, staleexceptionignored andruntimecallbackconflict covered. Reviewpass; fullinit.sh Flutter1478/1478 Rusttests/Clippy/core andindependentfmt/analyze0passed. Completegraphall14/2/1 MEDIUM andmain551/286/441 CRITICAL no partial/truncated. Exactproduct697ab24 CI44272272721 all4success with1478actualtests; Platform44272261767 Win/Linuxsuccess, macOSdeferred notawaited. Win desktop25/clipboard1/DnD14callbacks app14414110726/DnD14414125474; Linuxclipboard1/launch/DnD23callbacks app14413316861/DnD14413686040. Accurateevidencep05.84-hosted-verification.json. Narrowchilddone; macOSdevicegapsdeferred, no P08business rule invention.",
       "track": "vscode-builtin-parity",
@@ -1683,7 +1693,9 @@
       "id": "feat-137",
       "name": "P05.85 通知toast到期生命周期",
       "description": "Severity deadlines10/12/15s with hover/descendantfocus/sticky deferral, inactive-window restoration and timer cleanup; dismiss toast only preserving center/unread. docs/diagnostics/2026-11-18-p05/p05.85-notification-toast-lifetime.md",
-      "dependencies": ["feat-136"],
+      "dependencies": [
+        "feat-136"
+      ],
       "status": "done",
       "evidence": "Registered fixed4bda deadline-based contract, currenttoastmodel has no expiry. ExistingWindowListenerfocus reused, no polling; visible3 bounds timerowners. Component16/16+WorkbenchUI5/5green, oldstateless3severityred captured. Parentreviewtimer lifecycle completed; agentreviewauthfailed notcountedpass. Firstfull1494/1495 failedGitwrite-tree128unknowncause, fixturechangedreadonlyls-files--stage-z+stderr andrealrepo1pass. Finalsequentialinit1495/1495 Rusttests/Clippy/core/fmt/analyze0passed. Graphall19/7/439 andmain570/311/441 CRITICAL completeexports. Exactproduct7fe2a11 CI44282450910 all4success with1495actualtests; PA44282442631 Win/Linuxsuccess, macOSdeferrednotawaited. Win desktop25/clipboard1/DnD12pointercallbacks app14418790274/DnD14417887324; Linuxclipboard1/launches/DnD20callbacks app14418625084/DnD14417832413. Accuracyboundaries/rawlogs in p05.85-hosted-verification.json. Narrowchilddone, macOSdevicegapsdeferred andparentsopen.",
       "track": "vscode-builtin-parity",
@@ -1693,7 +1705,9 @@
       "id": "feat-138",
       "name": "P05.86 Open Editors完整路径显示排序",
       "description": "editorOrder/fullPath copied stable display projection per visual group, session preference and header selector; alphabetical/locale name ordering and P07 configuration remain explicit gaps. docs/diagnostics/2026-11-18-p05/p05.86-open-editors-path-sort.md",
-      "dependencies": ["feat-137"],
+      "dependencies": [
+        "feat-137"
+      ],
       "status": "done",
       "evidence": "Policy13+Workbench5=18/18 passed; specialnativefilename oldprojection red then localUri.file fixgreen. Independent actualpinnedsource verified26goldenkeys/676orderedpairs, checkedintest usesrelativegoldenorder. ReviewP1resolved. Finalinit1509/1509 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall10/13/438 andmain581/320/441 CRITICAL countscomplete/snapshotstable; privatebuilderUNKNOWN/sourcecallchecked andsharedriskretained. Exactproduct3c1efd9726ebbda06f1866579cb88f939ec92d84 CI44290357627 all4success/1509actualtests; PA44290348170 Windows134753661195/Linux134753661301success. Win desktop25/clipboard1/DnD13callbacks app14421711895/DnD14421163996; Linuxclipboard1/launch/DnD19callbacks app14422016881/DnD14421243697. Summary p05.86-hosted-verification.json. macOSnotawaited, alphabetical/nullresourcenameorder/P07config remain gaps; parentLAY11/P05open.",
       "track": "vscode-builtin-parity",
@@ -1703,7 +1717,9 @@
       "id": "feat-139",
       "name": "P05.87 Open Editors组菜单批量关闭",
       "description": "Group-header Close Saved/Close All menu with explicit group scope, sticky exclusion and existing dirty-safe shared-view close route. docs/diagnostics/2026-11-18-p05/p05.87-open-editors-group-close.md",
-      "dependencies": ["feat-138"],
+      "dependencies": [
+        "feat-138"
+      ],
       "status": "done",
       "evidence": "Group-header targetscope/stickyexcluded menus reuse existing close routes unchanged. NewrealWorkbench7/7, existingregressions12/12 andscopedproductreview passed. First2/7 fixturelazytitle lookupfailure fixed, preservednotproductred. Finalinit1516/1516 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/12/0LOW andmain604/332/441CRITICAL complete/snapshotstable; preeditWorkbenchPageCRITICAL49direct/4modules andprivateUNKNOWN sourceconfirmed retained. Exact36e4db28dcf916cf89a5e56a6982a99ea7140838 CI44295956176 all4success/1516actualtests; PA44295946254 Win134772874495/Linux134772875103success. Win desktop25/clipboard1/DnD12callbacks app14424631148/DnD14423464321; Linuxclipboard1/launch/DnD23callbacks app14422908443/DnD14424216265. Summary p05.87-hosted-verification.json. Emptygroup/isSaving/single-groupheader/fullmenus/longIOfixture andstaleUI directcoverage remain gaps; macOSnotawaited/devicegapsdeferred, parentsopen.",
       "track": "vscode-builtin-parity",
@@ -1713,7 +1729,9 @@
       "id": "feat-140",
       "name": "P05.88 Breadcrumb键盘焦点与选择宿主",
       "description": "Six pinned breadcrumbs focus/select/navigation commands with platform shortcuts, bounded focus owner and existing picker Escape/owner handling. docs/diagnostics/2026-11-18-p05/p05.88-breadcrumb-keyboard.md",
-      "dependencies": ["feat-139"],
+      "dependencies": [
+        "feat-139"
+      ],
       "status": "done",
       "evidence": "Implemented6IDs/platform.; parsing and breadcrumbsPossible/Visible/Active contexts; mountedgroupfocusowner/singlepicker/exactroutecleanup/pathworkspaceidentity. Keybindings32/32, realkeyboard9/9, oldpicker3/3passed; earliercombined42/42. ReviewfixedEscapeshadow/staleroute/focustraversal andpassed; TabInkWellEscape/covereddialoginvalidationgreen. Finalinit1528/1528 Rusttests/Clippy/core/fmt/analyze0passed. Graphall12/47/444 andmain624/386/421 CRITICAL complete/snapshotstable; privateUNKNOWN sourcechecked. FirstcloseAllGroups disposedScrollControlleradjacentunresolved, logsretained. Exact16a22f3a5c32a143b308c7593b486f5ceacb5cb4 CI44304287547 all4success/1528actualtests; PA44304274319 Win134801656070/Linux134801656488success. Win desktop25/clipboard1/DnD12callbacks app14427772167/DnD14427931973; Linuxclipboard1/launch/DnD23callbacks app14427746148/DnD14428275597. Summary p05.88-hosted-verification.json. macOSnotawaited, WithPicker/revealFocused/fullsymbolpath/provider/device remain gaps, parentsopen.",
       "track": "vscode-builtin-parity",
@@ -1723,7 +1741,9 @@
       "id": "feat-141",
       "name": "P05.89 编辑器关闭滚动控制器生命周期",
       "description": "Fix disposed ScrollController reattachment during split-group close with scoped end-of-frame UI cleanup and immediate shared-document release. docs/diagnostics/2026-11-18-p05/p05.89-editor-close-lifetime.md",
-      "dependencies": ["feat-140"],
+      "dependencies": [
+        "feat-140"
+      ],
       "status": "done",
       "evidence": "RealcloseAllGroups red at76c2cf8 withoutbreadcrumbcommands; minimaldeferredcontrolleronlyfix preserves synchronoussharedrelease. Newlifetime4/4 andfocusedcombination28/28, full1532/1532 Rusttests/Clippy/core/fmt/analyze0passed. IsolatedCancelgreen; finaldocUnknownDoc synchronous, controllersalivebeforeframe/disposedafter includingWorkbenchteardown. Parentfocusedreviewcompleted; agentreviewproviderfailedtwice notpass. disposeViewHIGH54/5direct/3flows retained. Graphnative mainhardcap1000truncated; fullactualhandlercapture2765/74 critical verifiedsameinvocation/provenance/snapshotstable; all15/0LOW. Exact6dd3048763d64bf718fabfa257f98f00486c5728 CI44311176344 all4success/1532actualtests; PA44311162250 Win134825360100/Linux134825360240success. Win desktop25/clipboard1/DnD13callbacks app14430453408/DnD14430563041; Linuxclipboard1/launch/DnD23callbacks app14430188261/DnD14429977596. Summary p05.89-hosted-verification.json. macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
@@ -1733,7 +1753,9 @@
       "id": "feat-142",
       "name": "P05.90 Breadcrumb路径段直接reveal",
       "description": "Space/CtrlCmdEnter revealFocused: terminal file focuses owner editor, directory advances visual segment with original directory file picker. docs/diagnostics/2026-11-18-p05/p05.90-breadcrumb-reveal.md",
-      "dependencies": ["feat-141"],
+      "dependencies": [
+        "feat-141"
+      ],
       "status": "done",
       "evidence": "ImplementedSpace/CtrlCmdEnter reveal command, terminalownerfocuspreviewpreserved, directorynextvisualsegment/originaldirectorychildren. Reviewfixedlazytree dependency andpickedfilefocus; newreal5/5 andcombined49/49passed. First4/5+boundedwaitred preserved. Finalinit1537/1537 Rusttests/Clippy/core/fmt/analyze0passed; reviewpass. Fullgraphall12/19/321CRITICAL, main681/1368/334CRITICAL actualprecapcapturecomplete/snapshotstable andoriginalnativecapretained. Exact22612d33f8d268651effd2a76c5c1d226a5b233d CI44320717951 all4success/1537actualtests; PA44320705616 Win134858558235/Linux134858557531success. Win desktop25/clipboard1/DnD12callbacks app14435397530/DnD14434214336; Linuxclipboard1/launch/DnD21callbacks app14433809479/DnD14433989064. Summary p05.90-hosted-verification.json. macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
@@ -1743,7 +1765,9 @@
       "id": "feat-143",
       "name": "P05.91 Open Editors组标题关闭组",
       "description": "Multi-group inline Close Group action closes clicked group's all views including sticky through existing dirty-safe route and removes only empty nonlast group. docs/diagnostics/2026-11-18-p05/p05.91-open-editors-close-group.md",
-      "dependencies": ["feat-142"],
+      "dependencies": [
+        "feat-142"
+      ],
       "status": "done",
       "evidence": "Implementedmulti-groupinlineCloseGroup inclsticky withguardedemptyremoval. New7/7, ordinaryA-B-AstaleDiscard andmergestaleDiscard/Save/nestedoverwritepreservelivesession/diskpassed. Reviewfixedearlyautoremove, currentguardthroughsavedialogs/diskwrite, typedmergeveto andworkspacegeneration; finalpass. Firstfull1542/1543lazyrowfailed dueM3buttonheight, explicit18pxshrinkwrapfix+22relatedgreen. Finalinit1545/1545 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/3/426 andmain704/705/408CRITICAL complete/snapshotstable. Exactadffce093e1ecdb281d3e1c3ef7c57a9ca87559a CI44350097917 all4success/1545actualtests; PA44350075665 Win134962980805/Linux134962979397success. Win desktop25/clipboard1/DnD12callbacks app14447688893/DnD14448258131; Linuxclipboard1/launch/DnD19callbacks app14449570384/DnD14446599804. Summary p05.91-hosted-verification.json. siblingrootabsoluteBreadcrumb overflowdeferred, macOSnotawaited/devicegapsdeferred; parentsopen.",
       "track": "vscode-builtin-parity",
@@ -1753,9 +1777,23 @@
       "id": "feat-144",
       "name": "P05.92 Breadcrumb长路径水平视口",
       "description": "Fix absolute/long path breadcrumb overflow with bounded horizontal scrolling, event-driven focused-segment reveal and mounted controller disposal. docs/diagnostics/2026-11-19-p05/p05.92-breadcrumb-overflow.md",
-      "dependencies": ["feat-143"],
+      "dependencies": [
+        "feat-143"
+      ],
+      "status": "done",
+      "evidence": "P05.92 TrueWorkbench row overflow 738/749px fixed; new 2 + existing 17 focused tests 19/19; full init.sh 1547/1547, Rust/Clippy/core/fmt/analyze clean; full graph all 9/12/434 and main 724/675/419 CRITICAL recorded. Exact head 0175c36d1e64c62c9f25ae3a080cf1b8d5d7878f: PR CI 44358043167 all four jobs succeeded; Platform Availability 44358027833 Windows/Linux jobs succeeded. App artifact IDs/digests and native DnD evidence: docs/diagnostics/2026-11-19-p05/p05.92-hosted-verification.json. macOS job cancelled/deferred; no three-platform success claimed.",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-145",
+      "name": "P05.93 Breadcrumb当前符号祖先路径跟随光标",
+      "description": "在工作区相对文件路径后显示当前版本符号树中光标所在的祖先链；各编辑组只保留其短祖先链，无当前快照时退回文件路径。docs/diagnostics/2026-11-19-p05/p05.93-breadcrumb-symbol-path.md",
+      "dependencies": [
+        "feat-144"
+      ],
       "status": "in-progress",
-      "evidence": "TrueWorkbench red738/749px overflow fixedbyboundedhorizontalviewport, ownedScrollController/FocusNode/singlecurrentkey/coalescedeventreveal. New2+existing17=19/19passed inclresize/manualscroll/resourcechange/disposal andtext/version/selection/dirty/actualundo-redo/diskinvariants. Parentreviewcompleted afteragentproviderfailure notpass. Finalinit1547/1547 Rusttests/Clippy/core/fmt/analyze0passed. Fullgraphall9/12/434 andmain724/675/419CRITICAL complete/snapshotstable; preeditCRITICALretained. ExactCIWindowsLinux pending; macOSdevicegapsdeferred.",
+      "evidence": "实现已完成，待准确提交 SHA 的 hosted 验证。专项 Flutter 40/40；5万行尾部编辑保存及两个 Outline 同名标签用例通过；BOM/Emoji/CRLF UTF-16、版本失效、焦点路由/Space reveal、长路径、磁盘/全文/版本/dirty不变均覆盖。完整 bash init.sh：Rust workspace tests、Clippy -D warnings、release core build、Flutter 1551/1551 全绿；cargo fmt --check 通过，app/ 下 flutter analyze 0 issues。修改前 GitNexus：DocumentSymbolNode LOW；documentSymbolAtLine/buildDocumentSymbolTree/BreadcrumbNavigation/_syncCommandContext/EditorGroup UNKNOWN/未收录，源码调用点已确认；祖先查询分配收敛修改前 impact documentSymbolPathAtLine 仍 UNKNOWN/0 图边，rg确认 WorkbenchPage 与单测调用。最终 detect-changes all --limit 100：18文件/18符号、MEDIUM、映射1条 InitState→Hunk（5步）流程，关联 editorSegmentIndex；CLI仍省略3个符号。context 对该属性发生 UID/调用方错配，rg确认其源码调用点仅在 Breadcrumb 导航与 Workbench 构造；保留 MEDIUM 与流程映射为未解决风险。WorkbenchPage>512KB跳过、流程索引432/1338、FTS失败。compare main 是累积PR 737文件/1623符号/76流程、CRITICAL，changed-symbol listing capped（--limit 2500仍 capped），不被本片扫描覆盖。产品 SHA 与 hosted CI/Win-Linux 结果待登记；macOS 实机缺口暂留。范围 docs/diagnostics/2026-11-19-p05/p05.93-breadcrumb-symbol-path.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

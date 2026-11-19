@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/workbench/commands.dart';
+import 'package:alula_app/workbench/breadcrumb_navigation.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -66,6 +67,7 @@ void main() {
     WidgetTester tester, {
     bool preview = false,
     bool nestedMain = false,
+    String? mainSource,
   }) async {
     final temp = Directory.systemTemp.createTempSync('alula-breadcrumb-reveal');
     final workspace = Directory('${temp.path}/workspace')..createSync();
@@ -73,7 +75,7 @@ void main() {
     final nested = Directory('${src.path}/nested')..createSync();
     File('${nested.path}/util.rs').writeAsStringSync('fn util() {}\n');
     mainFile = File('${nestedMain ? nested.path : src.path}/main.rs')
-      ..writeAsStringSync(_original);
+      ..writeAsStringSync(mainSource ?? _original);
     libFile = File('${src.path}/lib.rs')..writeAsStringSync(_library);
     otherFile = File('${workspace.path}/other.rs')..writeAsStringSync(_other);
 
@@ -129,10 +131,19 @@ void main() {
   }
 
   Future<void> focusBreadcrumbs(WidgetTester tester, int index) async {
+    final navigation = tester.widget<BreadcrumbNavigation>(
+      find.byWidgetPredicate((widget) =>
+          widget is BreadcrumbNavigation && widget.region == 'editor'),
+    );
     expect(await commands.execute('breadcrumbs.focus'),
         CommandExecutionStatus.executed);
     await tester.pumpAndSettle();
     expect(commands.context['breadcrumbsActive'], isTrue);
+    for (var focused = navigation.segments.length - 1;
+        focused > index;
+        focused--) {
+      await _key(tester, LogicalKeyboardKey.arrowLeft);
+    }
     expect(_selectedSegment(index), findsOneWidget);
   }
 
@@ -279,6 +290,40 @@ void main() {
     expect(mainFile.readAsStringSync(), _original);
     expect(libFile.readAsStringSync(), _library);
     expect(otherFile.readAsStringSync(), _other);
+  });
+
+  testWidgets('Space on a symbol ancestor advances to its nested symbol',
+      (tester) async {
+    const source = 'mod outer {\n    fn inner() {}\n}\n';
+    await mount(tester, mainSource: source);
+    final owner = _field(tester, 10);
+    final document = owner.inputWindow.document;
+    final version = document.version;
+    final innerStart = source.substring(0, source.indexOf('fn inner')).length;
+    owner.focusNode!.requestFocus();
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.pump();
+    final navigation = tester.widget<BreadcrumbNavigation>(
+      find.byWidgetPredicate((widget) =>
+          widget is BreadcrumbNavigation && widget.region == 'editor'),
+    );
+    expect(navigation.segments, ['src', 'main.rs', 'outer', 'inner']);
+
+    await focusBreadcrumbs(tester, navigation.segments.length - 1);
+    await _key(tester, LogicalKeyboardKey.arrowLeft);
+    expect(_selectedSegment(2), findsOneWidget,
+        reason: 'the symbol parent is the active breadcrumb segment');
+    await _key(tester, LogicalKeyboardKey.space);
+
+    expect(_selectedSegment(3), findsOneWidget,
+        reason: 'reveal advances to the nested symbol');
+    expect(owner.inputWindow.initialValue.selection.extentOffset, innerStart);
+    expect(document.resync().content, source);
+    expect(document.version, version);
+    expect(document.isDirty, isFalse);
+    expect(mainFile.readAsStringSync(), source);
   });
 
   testWidgets(

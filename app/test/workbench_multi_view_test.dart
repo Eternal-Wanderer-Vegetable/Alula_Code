@@ -369,7 +369,7 @@ void main() {
     expect(tailView.inputWindow.text, contains(tailMarker));
 
     final editor = find.descendant(
-      of: find.byWidget(tailView),
+      of: find.byKey(tailView.key!),
       matching: find.byType(TextField),
     );
     await tester.showKeyboard(editor);
