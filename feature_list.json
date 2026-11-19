@@ -1804,8 +1804,8 @@
       "dependencies": [
         "feat-145"
       ],
-      "status": "in-progress",
-      "evidence": "实现完成；focused breadcrumb picker 8/8 通过（macOS Cmd+Enter文件侧开/获焦，Windows Ctrl+Enter符号同文档视图与UTF-16起点，Linux Ctrl+Enter目录仍reveal，picker期间文档版本变化拒绝侧开）；完整 `bash init.sh` 通过：Rust workspace tests、Clippy `-D warnings`、build_core、Flutter 1555/1555；`cargo fmt --check` 通过，`cd app && flutter analyze` 无问题。未改Rust/FFI。PR head仍为eb76fa83且open/draft；前序精确docs CI 44460921545已success。当前产品提交的exact-SHA PR CI与Linux/Windows Platform Availability待push；macOS设备验证依既有无设备政策未声明。Fresh GitNexus all-scope `detect-changes`：7 indexed files/3 symbols/0 mapped flows，LOW（含 `BreadcrumbMenuEntry`、`_BreadcrumbMenuEntryState` 与handoff section）；`workbench_page.dart` (>512 KiB)跳过，FTS缺索引，私有helper UNKNOWN，LOW仅针对indexed subset。`AlulaDoc` upstream impact HIGH (21 direct/30 total) 仅新增测试调用既有API，未改核心符号。范围与限制见docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md。",
+      "status": "done",
+      "evidence": "P05.94/feat-146 完成，产品 SHA c46b56548bc7e04aa6656a55f9a99278c0f1200d 已推 PR #3，PR 保持 OPEN/DRAFT。聚焦 breadcrumb suite 8/8；完整 bash init.sh 的 Rust workspace/Clippy/build_core 与 Flutter 1555/1555 通过，cargo fmt --check、flutter analyze 通过。精确 SHA PR CI 44467133921 四 job 全绿；Platform Availability 初次 44467127746 的 Linux 通过、Windows native DnD probe timeout（pointer cancel/no drop），同 SHA 重跑 44468690336 的 Linux/Windows jobs 均成功，原始失败未隐藏。包与 DnD artifact IDs/digests、macOS未等待状态见 docs/diagnostics/2026-11-19-p05/p05.94-hosted-verification.json。macOS device validation 未声称；未改 Rust/FFI。实现、GitNexus 限制与验收见 docs/diagnostics/2026-11-19-p05/p05.94-breadcrumb-picker-aside-scope.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
