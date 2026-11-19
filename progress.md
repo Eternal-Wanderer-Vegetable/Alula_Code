@@ -5,7 +5,7 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
-- P05.101 / feat-153 已通过本地验证，待托管结果。toast 和通知中心行在活动进度期间隐藏单条关闭按钮，进度结束后恢复。通知专项 47/47，Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、核心库构建、fmt 和 Dart analyze 通过。见 `docs/diagnostics/2026-11-20-p05/p05.101-notification-dismiss-progress.md`。
+- 2026-11-20 完成 P05.101 / feat-153。产品 `f9c5874572315e9403808bc140a60aee757a1eca` 已推 PR #3。toast 与通知中心条目的关闭按钮在活动进度期间隐藏，完成后恢复。关闭 toast 保留中心条目与未读状态，关闭中心条目移除该通知。专项 47/47，完整本地 Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44635509218 四项和 Platform Availability 44635498901 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。 macOS 实机验收暂缓。最终 staged all-scope 为 7 个文件、10 个映射符号、0 个流程、LOW，无 partial/truncated。累计 compare-main 为 CRITICAL，764 个文件、78 个流程，重跑的 1,286–1,313 个映射符号列表仍截断。 证据：docs/diagnostics/2026-11-20-p05/p05.101-notification-dismiss-progress.md。
 
 - 2026-11-20 完成 P05.100 / feat-152。产品 3ae14156c16ae2bd436acc78bb4207eadf7c85b0 已推 PR #3。活动进度和对应未读、toast、banner 保留，普通及已完成条目成批清除。仅活动进度时按钮禁用，完成后恢复，命令面板与按钮共用收起面板和清除入口。通知专项 47/47，完整本地 Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、build_core、fmt 和 Dart analyze 通过。精确 SHA PR CI 44560999812 四项全绿，Platform Availability 44560982836 Linux/Windows jobs 通过。采集时 macOS 托管 job 仍在 Flutter 测试，实机验收按现有约定暂缓。 staged all-scope GitNexus 10 files / 8 symbols / 0 mapped flows / LOW，工作台大文件和累计 compare-main CRITICAL 截断限制保留。证据：docs/diagnostics/2026-11-19-p05/p05.100-notification-clear-all.md。
 
