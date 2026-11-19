@@ -79,7 +79,8 @@ void main() {
         message: '自动隐藏但保留记录',
       );
       await tester.pump();
-      expect(find.byKey(const ValueKey('notification-toast-1')), findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('notification-toast-1')), findsOneWidget);
       await tester.pump(const Duration(seconds: 10));
       expect(find.byKey(const ValueKey('notification-toast-1')), findsNothing);
       expect(notifications.items, hasLength(1));
@@ -170,8 +171,81 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('notification-clear-all')));
       await tester.pump();
-      expect(find.byKey(const ValueKey('notification-empty')), findsOneWidget);
+      expect(find.byKey(const ValueKey('notification-center')), findsNothing);
       expect(notifications.isEmpty, isTrue);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('clear all becomes available when progress finishes',
+      (tester) async {
+    final progress = NotificationProgress(total: 10, worked: 4);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      final running = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Indexing files',
+        progress: progress,
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('status-notifications')));
+      await tester.pump();
+
+      final clearAll = find.byKey(const ValueKey('notification-clear-all'));
+      expect(tester.widget<IconButton>(clearAll).onPressed, isNull);
+      progress.report(worked: 8);
+      await tester.pump();
+      expect(tester.widget<IconButton>(clearAll).onPressed, isNull);
+      expect(notifications.items, [running]);
+
+      progress.done();
+      await tester.pump();
+      expect(tester.widget<IconButton>(clearAll).onPressed, isNotNull);
+      await tester.tap(clearAll);
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-center')), findsNothing);
+      expect(notifications.items, isEmpty);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('clear notifications command preserves an active progress entry',
+      (tester) async {
+    final progress = NotificationProgress(total: 10, worked: 4);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Ordinary notification',
+      );
+      final running = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Indexing files',
+        progress: progress,
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('status-notifications')));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), '清除所有通知');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 清除所有通知')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('notification-center')), findsNothing);
+      expect(notifications.items, [running]);
+      expect(progress.isDone, isFalse);
+      await tester.tap(find.byKey(const ValueKey('status-notifications')));
+      await tester.pump();
+      expect(find.text('Indexing files'), findsOneWidget);
+      expect(find.text('Ordinary notification'), findsNothing);
     } finally {
       await _unmountApp(tester);
     }

@@ -246,17 +246,20 @@ class NotificationCenter extends ChangeNotifier {
     if (_items.length != before) notifyListeners();
   }
 
+  bool get canClearAll => _items.any((item) => !item.hasProgress);
+
+  /// Clear completed and ordinary notifications, retaining active progress.
   void clearAll() {
-    if (_items.isEmpty &&
-        _toasts.isEmpty &&
-        _banners.isEmpty &&
-        _unread.isEmpty) {
-      return;
-    }
-    _items.clear();
-    _unread.clear();
-    _toasts.clear();
-    _banners.clear();
+    final clearedIds = <int>{
+      for (final item in _items)
+        if (!item.hasProgress) item.id,
+    };
+    if (clearedIds.isEmpty) return;
+
+    _items.removeWhere((item) => clearedIds.contains(item.id));
+    _unread.removeAll(clearedIds);
+    _toasts.removeWhere(clearedIds.contains);
+    _banners.removeWhere(clearedIds.contains);
     notifyListeners();
   }
 

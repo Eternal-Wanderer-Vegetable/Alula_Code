@@ -315,16 +315,23 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                           : Colors.grey.shade400,
                     ),
                   ),
-                  IconButton(
-                    key: const ValueKey('notification-clear-all'),
-                    tooltip: '全部清除',
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 24, minHeight: 24),
-                    onPressed: center.isEmpty ? null : onClearAll,
-                    icon: Icon(Icons.clear_all,
-                        size: 16, color: Colors.grey.shade400),
+                  ListenableBuilder(
+                    listenable: Listenable.merge([
+                      if (!center.canClearAll)
+                        for (final notification in center.items)
+                          notification.progress,
+                    ]),
+                    builder: (context, _) => IconButton(
+                      key: const ValueKey('notification-clear-all'),
+                      tooltip: '全部清除',
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints:
+                          const BoxConstraints(minWidth: 24, minHeight: 24),
+                      color: Colors.grey.shade400,
+                      onPressed: center.canClearAll ? onClearAll : null,
+                      icon: const Icon(Icons.clear_all, size: 16),
+                    ),
                   ),
                   IconButton(
                     key: const ValueKey('notification-center-close'),

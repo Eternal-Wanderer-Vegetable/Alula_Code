@@ -134,6 +134,62 @@ void main() {
       expect(center.toastIds, isEmpty);
     });
 
+    test('clearAll preserves active progress and clears completed progress',
+        () {
+      final center = NotificationCenter();
+      final active = NotificationProgress(total: 4, worked: 1);
+      final activeBannerProgress = NotificationProgress(infinite: true);
+      addTearDown(center.dispose);
+      addTearDown(active.dispose);
+      addTearDown(activeBannerProgress.dispose);
+
+      final ordinary = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Ordinary notification',
+        banner: true,
+      );
+      final inProgress = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Indexing files',
+        progress: active,
+      );
+      final activeBanner = center.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Loading workspace',
+        progress: activeBannerProgress,
+        banner: true,
+      );
+      final completedProgress = NotificationProgress(infinite: true)..done();
+      addTearDown(completedProgress.dispose);
+      final completed = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Sync completed',
+        progress: completedProgress,
+      );
+      center.markRead(inProgress.id);
+
+      var changes = 0;
+      center.addListener(() => changes++);
+      center.clearAll();
+      expect(center.items, [activeBanner, inProgress]);
+      expect(center.byId(ordinary.id), isNull);
+      expect(center.byId(completed.id), isNull);
+      expect(center.toastIds, [inProgress.id]);
+      expect(center.banners, [activeBanner]);
+      expect(center.unreadCount, 1);
+      expect(changes, 1);
+
+      center.clearAll();
+      expect(changes, 1);
+
+      active.done();
+      center.clearAll();
+      expect(center.items, [activeBanner]);
+      expect(center.toastIds, isEmpty);
+      expect(center.unreadCount, 1);
+      expect(changes, 2);
+    });
+
     test('dismiss and clearAll remove banners with the notifications', () {
       final center = NotificationCenter();
       final banner = center.notify(

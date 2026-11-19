@@ -1115,7 +1115,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'workbench.action.clearNotifications',
       '查看',
       '清除所有通知',
-      () async => _notifications.clearAll(),
+      () async => _clearNotifications(),
     );
     reg(
       'workbench.action.toggleNotificationsDoNotDisturb',
@@ -20771,6 +20771,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _clearNotifications() {
+    if (_notificationsVisible) _toggleNotificationCenter();
+    _notifications.clearAll();
+  }
+
   Widget _buildNotificationLayer() {
     if (_zenMode) return const SizedBox.shrink();
     return Stack(
@@ -20785,7 +20790,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               onSourceFilterChanged: (value) =>
                   setState(() => _notificationSourceFilter = value),
               onDismiss: _notifications.dismiss,
-              onClearAll: _notifications.clearAll,
+              onClearAll: _clearNotifications,
               onToggleDoNotDisturb: () => _notifications
                   .setDoNotDisturb(!_notifications.doNotDisturb),
               onClose: () => setState(() => _notificationsVisible = false),

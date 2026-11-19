@@ -4,21 +4,14 @@ Last Updated: 2026-11-19
 
 ## Current Objective
 
-Continue PR #3, one P05 feature at a time. P05.99 / feat-151 is complete; select the next dependency-satisfied P05 slice from `docs/03-里程碑计划与验收标准.md` and `feature_list.json`. Keep PR #3 OPEN/DRAFT; do not merge.
+在 PR #3 一次推进一个 P05 子项。当前 P05.100 / feat-152 实现及本地验证完成，待准确产品 SHA 的 CI 与 Linux/Windows 托管结果。P05 父项仍为 in-progress，PR #3 为 OPEN/DRAFT。
 
 ## Current State
 
-- Dedicated worktree: `/home/vegetable/.codex/worktrees/pr3-20261119`, branch `codex/p05-95-breadcrumb-with-picker`. The fetched PR branch `origin/codex/vscode-parity-p05` matched HEAD `9426cca2eec9048ef29caec2a0501dbe74a2eaf` before the current P05.99 changes. Re-fetch and compare before pushing because other contributors may update the PR. Do not modify `/mnt/e/alula_code`, which has unrelated dirty/untracked work.
-- User explicitly chose a window/group-only focus channel. Focus messages/snapshots must not include document identity, body, selection, dirty/savepoint, or session. Document move/restore payloads are outside P05.99.
-- Root cause: `desktop_multi_window` 0.3.1 requires a child-window-created callback to register generated plugins in each engine. Linux native smoke first reproduced the missing `window_manager.ensureInitialized` implementation. Runner callbacks are now added for Linux, Windows and macOS.
-- Linux native smoke passes with the real `WorkbenchPage` and `AuxiliaryEditorApp`: auxiliary → main → auxiliary → main, revisions 2–5; snapshot keys only `groupId`, `revision`, `windowId`; document sentinel absent. Evidence: `docs/diagnostics/2026-11-19-p05/p05.99-linux-native-focus/`.
-- Full local N.2 passed after the implementation: `FLUTTER_BIN=/home/vegetable/develop/flutter/bin/flutter bash init.sh` (Rust workspace, Clippy `-D warnings`, core build, Flutter 1,563 passed / 2 skipped), `cargo fmt --all -- --check`, full `flutter analyze --no-pub`, and focused auxiliary focus/window tests 16/16.
-- Exact-SHA PR CI `44524110062` passed all four jobs (Flutter 1,563 passed / 2 skipped, analyze clean). Platform Availability `44524100180` Linux/Windows jobs passed, including both native focus smokes; macOS Release build compiled the callback, but the overall macOS job failed in existing native DnD pointer-route and native Quit checks. Do not claim native macOS focus. Linux/Windows focus artifacts and macOS diagnostics/build artifact IDs/digests are in the P05.99 scope report.
-- GitNexus product scan: 10 files / 7 symbols / 0 flows / LOW. Final docs-closeout scan maps 6 files / 1 section symbol / 1 MEDIUM `InitState → Hunk` documentation mapping, not runtime. Compare-main is cumulative PR scope (762 files / 79 flows / CRITICAL; repeated symbol counts 1,274–1,355; listing capped), not attributable to this slice. Latest index snapshot before handoff edits: 13,368 nodes / 31,094 edges / 435 clusters / 431 flows. `workbench_page.dart` (>512 KiB) omitted, FTS build failed, and cross-language/process-candidate coverage incomplete. Do not call the graph clean.
-- P05.99 product commit `6b4e6dd7c934f1e5c7d35a05fbf8abda75d74554` is pushed. Docs-only hosted closeout remains to commit/push. PR #3 was verified OPEN/unmerged/draft and its description now includes P05.99 hosted status.
+- 专用 WSL 工作树 `/home/vegetable/.codex/worktrees/pr3-20261119`，基线 `02470c3`。推送前 fetch 并核对 PR 分支 `codex/vscode-parity-p05` 可快进。原 Windows 工作区包含已有改动。
+- P05.100 覆盖通知中心按钮及命令面板的 Clear All，保留活动进度，完成后允许清除，并收起通知中心。通知专项 47/47，完整本地 Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 与 Dart analyze 全绿。[范围与验证](docs/diagnostics/2026-11-19-p05/p05.100-notification-clear-all.md)
+- P05.99 已收尾，Linux/Windows 原生焦点切换通过。按用户约定，跨窗焦点通道只传窗口和组标识以及修订序号。macOS 实机验证暂缓。[P05.99 证据](docs/diagnostics/2026-11-19-p05/p05.99-auxiliary-focus-native-smoke-scope.md)
 
 ## Next Session First Step
 
-1. Commit and push the current P05.99 hosted-evidence closeout after final diff/graph checks; re-fetch first to avoid overwriting contributor updates.
-2. Review remaining P05 scope and select exactly one dependency-satisfied child feature. Keep the P05 parent in progress and PR #3 OPEN/DRAFT.
-3. Do not modify the original `/mnt/e/alula_code` dirty checkout.
+核对 feat-152 产品提交的准确 SHA 与 GitHub Actions 结果，登记证据后从 `docs/03` 与 `feature_list.json` 选择下一项。
