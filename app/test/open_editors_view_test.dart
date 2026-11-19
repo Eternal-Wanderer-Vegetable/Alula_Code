@@ -7,7 +7,8 @@ import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
-import 'package:flutter/gestures.dart' show kSecondaryMouseButton;
+import 'package:flutter/gestures.dart'
+    show kMiddleMouseButton, kSecondaryMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -321,6 +322,77 @@ void main() {
           reason: 'the emptied group is removed');
     },
   );
+
+  testWidgets(
+      'middle-click closes the row in its owner group without activating it',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await seedTwoGroups(tester);
+    await mountPage(tester);
+    expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+
+    await tester.tap(
+      _openEditorsDoc('editor', 10),
+      buttons: kMiddleMouseButton,
+    );
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(_openEditorsDoc('editor', 10), findsNothing);
+    expect(_openEditorsDoc('editor-2', 11), findsOneWidget);
+    expect(
+      sessionStore.tryLoad()?['focused'],
+      'editor-2',
+      reason: 'middle-clicking another group does not activate its row',
+    );
+    expect(File('${workspace.path}/alpha.rs').readAsStringSync(),
+        'fn alpha() {}\n');
+  });
+
+  testWidgets('middle-click dirty close can cancel without losing edits',
+      (tester) async {
+    await prepareWorkspace(tester);
+    await seedTwoGroups(tester);
+    await mountPage(tester);
+    final field = tester
+        .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+        .firstWhere((field) => field.inputWindow.document.id == 10);
+    const edited = 'fn alpha() {}\n// keep this edit\n';
+    field.focusNode!.requestFocus();
+    await tester.pump();
+    tester.testTextInput.updateEditingValue(const TextEditingValue(
+      text: edited,
+      selection: TextSelection.collapsed(offset: edited.length),
+    ));
+    await tester.pump();
+    await tester.pump();
+    expect(field.inputWindow.document.isDirty, isTrue);
+
+    await tester.tap(_openEditorsDoc('editor-2', 11));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+
+    await tester.tap(
+      _openEditorsDoc('editor', 10),
+      buttons: kMiddleMouseButton,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('editor-close-dirty-dialog')),
+        findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('editor-close-cancel')));
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pumpAndSettle();
+
+    expect(_openEditorsDoc('editor', 10), findsOneWidget);
+    expect(field.inputWindow.document.resync().content, edited);
+    expect(field.inputWindow.document.isDirty, isTrue);
+    expect(File('${workspace.path}/alpha.rs').readAsStringSync(),
+        'fn alpha() {}\n');
+    expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+  });
 
   testWidgets(
     'the collapse toggle persists across a session restore',

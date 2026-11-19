@@ -21261,72 +21261,79 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               ? doc.uri
               : Uri.file(doc.path!, windows: Platform.isWindows).toString())) {
         final active = group.activeDocId == doc.id;
-        rows.add(CallbackShortcuts(
-          bindings: {
-            const SingleActivator(LogicalKeyboardKey.enter): () =>
-                _activateOpenEditorsRow(group, doc),
-            const SingleActivator(LogicalKeyboardKey.space): () =>
-                _activateOpenEditorsRow(group, doc),
+        rows.add(Listener(
+          onPointerDown: (event) {
+            if (event.buttons == kMiddleMouseButton) {
+              _closeDoc(doc.id, group: group);
+            }
           },
-          child: Focus(
-            key: ValueKey('open-editors-focus-${group.region}-${doc.id}'),
-            focusNode: _openEditorsRowFocus.putIfAbsent(
-                '${group.region}:${doc.id}',
-                () => FocusNode(debugLabel: 'open-editors-row')),
-            child: InkWell(
-              key: ValueKey('open-editors-doc-${group.region}-${doc.id}'),
-              canRequestFocus: false,
-              onTap: () => _activateOpenEditorsRow(group, doc),
-              onSecondaryTapUp: (details) =>
-                  _showOpenEditorsContextMenu(details, group, doc),
-              child: Container(
-                color: active ? const Color(0xFF22262D) : Colors.transparent,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 12),
-                    Icon(
-                      doc.path == null
-                          ? Icons.description_outlined
-                          : Icons.insert_drive_file_outlined,
-                      size: 12,
-                      color: Colors.grey.shade500,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      // RichText：行标签不参与既有 find.text 计数断言
-                      // （侧栏/标签/面包屑共存的计数由原测试持有）。
-                      child: RichText(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          text: '${doc.name}${doc.isDirty ? " •" : ""}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontStyle: group.previewDocId == doc.id
-                                ? FontStyle.italic
-                                : FontStyle.normal,
-                            color: active
-                                ? Colors.white
-                                : Colors.grey.shade400,
+          child: CallbackShortcuts(
+            bindings: {
+              const SingleActivator(LogicalKeyboardKey.enter): () =>
+                  _activateOpenEditorsRow(group, doc),
+              const SingleActivator(LogicalKeyboardKey.space): () =>
+                  _activateOpenEditorsRow(group, doc),
+            },
+            child: Focus(
+              key: ValueKey('open-editors-focus-${group.region}-${doc.id}'),
+              focusNode: _openEditorsRowFocus.putIfAbsent(
+                  '${group.region}:${doc.id}',
+                  () => FocusNode(debugLabel: 'open-editors-row')),
+              child: InkWell(
+                key: ValueKey('open-editors-doc-${group.region}-${doc.id}'),
+                canRequestFocus: false,
+                onTap: () => _activateOpenEditorsRow(group, doc),
+                onSecondaryTapUp: (details) =>
+                    _showOpenEditorsContextMenu(details, group, doc),
+                child: Container(
+                  color: active ? const Color(0xFF22262D) : Colors.transparent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      Icon(
+                        doc.path == null
+                            ? Icons.description_outlined
+                            : Icons.insert_drive_file_outlined,
+                        size: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        // RichText：行标签不参与既有 find.text 计数断言
+                        // （侧栏/标签/面包屑共存的计数由原测试持有）。
+                        child: RichText(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            text: '${doc.name}${doc.isDirty ? " •" : ""}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontStyle: group.previewDocId == doc.id
+                                  ? FontStyle.italic
+                                  : FontStyle.normal,
+                              color: active
+                                  ? Colors.white
+                                  : Colors.grey.shade400,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      key: ValueKey(
-                          'open-editors-close-${group.region}-${doc.id}'),
-                      tooltip: '关闭编辑器',
-                      onPressed: () => _closeDoc(doc.id, group: group),
-                      icon: const Icon(Icons.close, size: 12),
-                      visualDensity: VisualDensity.compact,
-                      constraints:
-                          const BoxConstraints(minWidth: 20, minHeight: 20),
-                      padding: EdgeInsets.zero,
-                      color: Colors.grey.shade500,
-                    ),
-                  ],
+                      IconButton(
+                        key: ValueKey(
+                            'open-editors-close-${group.region}-${doc.id}'),
+                        tooltip: '关闭编辑器',
+                        onPressed: () => _closeDoc(doc.id, group: group),
+                        icon: const Icon(Icons.close, size: 12),
+                        visualDensity: VisualDensity.compact,
+                        constraints:
+                            const BoxConstraints(minWidth: 20, minHeight: 20),
+                        padding: EdgeInsets.zero,
+                        color: Colors.grey.shade500,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
