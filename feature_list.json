@@ -1988,8 +1988,20 @@
       "dependencies": [
         "feat-160"
       ],
+      "status": "done",
+      "evidence": "产品 `630f42bbd16e6749e24bd96ce8e019a7f6bdb046` 已推草稿 PR #3。toast 和通知中心共用绑定当前条目的次级操作菜单。Windows 11 125% DPI 实机记录两次选择各一次回调，Escape 取消无回调，Enter 能重开。菜单到期、撤出、错误和进度保护经专项 60/60 验证。完整 Flutter 1,598 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44688759654 四项及 Platform Availability 44688750790 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.109-notification-secondary-actions.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-162",
+      "name": "P05.110 LAY-18 通知上下文菜单复制文本",
+      "description": "在 toast 和通知中心的通知行提供固定版本的复制文本操作，精确复制选中条目的原始消息并验证焦点恢复。",
+      "dependencies": [
+        "feat-161"
+      ],
       "status": "not-started",
-      "evidence": "待对照固定版 notificationsViewer.ts 的单条通知动作与选择行为。",
+      "evidence": "固定版 notificationsList.ts 的 Copy Text 行上下文菜单与原始消息剪贴板行为待验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

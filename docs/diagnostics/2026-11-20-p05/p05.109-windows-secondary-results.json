@@ -1,0 +1,275 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "ec6081e32acf36abf53645b42e5c2fc378ed866dcebd3936a7880729ebe1e677",
+  "fixtureSha256": "5c68a631ca8ed3809efbd8ab0b51dbacc4f46208a45053e35c4b4f680692b37f",
+  "observations": {
+    "toast": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        519.8,
+        979.2,
+        555.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        559.8,
+        979.2,
+        628.8
+      ],
+      "notification-toast-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ]
+    },
+    "toast-menu": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        519.8,
+        979.2,
+        555.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        559.8,
+        979.2,
+        628.8
+      ],
+      "notification-toast-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ],
+      "notification-toast-secondary-1-0": [
+        859.842189025879,
+        472.79999999999995,
+        987.2,
+        512.8
+      ],
+      "notification-toast-secondary-1-1": [
+        859.842189025879,
+        512.8,
+        987.2,
+        552.8
+      ]
+    },
+    "toast-selected": {
+      "status-notifications": [
+        760.860009765625,
+        645.8,
+        791.961572265625,
+        659.8
+      ],
+      "notification-toast-2": [
+        527.2,
+        519.8,
+        979.2,
+        555.8
+      ],
+      "notification-toast-1": [
+        527.2,
+        559.8,
+        979.2,
+        628.8
+      ],
+      "notification-toast-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ]
+    },
+    "center": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        455.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        464.79999999999995,
+        955.2,
+        488.79999999999995
+      ],
+      "notification-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ]
+    },
+    "center-menu": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        455.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        464.79999999999995,
+        955.2,
+        488.79999999999995
+      ],
+      "notification-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ],
+      "notification-secondary-1-0": [
+        859.842189025879,
+        472.79999999999995,
+        987.2,
+        512.8
+      ],
+      "notification-secondary-1-1": [
+        859.842189025879,
+        512.8,
+        987.2,
+        552.8
+      ]
+    },
+    "center-dismissed": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        455.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        464.79999999999995,
+        955.2,
+        488.79999999999995
+      ],
+      "notification-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ]
+    },
+    "center-keyboard-menu": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        455.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        464.79999999999995,
+        955.2,
+        488.79999999999995
+      ],
+      "notification-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ],
+      "notification-secondary-1-0": [
+        859.842189025879,
+        472.79999999999995,
+        987.2,
+        512.8
+      ],
+      "notification-secondary-1-1": [
+        859.842189025879,
+        512.8,
+        987.2,
+        552.8
+      ]
+    },
+    "center-selected": {
+      "status-notifications": [
+        769.410791015625,
+        645.8,
+        783.410791015625,
+        659.8
+      ],
+      "notification-center": [
+        527.2,
+        455.79999999999995,
+        979.2,
+        628.8
+      ],
+      "notification-position": [
+        931.2,
+        464.79999999999995,
+        955.2,
+        488.79999999999995
+      ],
+      "notification-more-1": [
+        922.2,
+        560.8,
+        946.2,
+        592.8
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "selectedActions": [
+    "secondary",
+    "secondary"
+  ],
+  "exitCode": 0,
+  "sourceSha": "630f42bbd16e6749e24bd96ce8e019a7f6bdb046",
+  "mirroredChangedSourcesSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/notification_widgets.dart": "73c189ae66375c450c1aebf827a344e0b062f849db86c6db4a8684eb2fd31b2f",
+    "app/lib/workbench/notifications.dart": "0600cd9fb3ad41d7b839a66fdb1044c308eb3f5ed701f011f8cb29bf746f750c",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "a060107fe56b6cc66cb08fe023c7ef77d5d717c88bd3b0d2f756da0e7075b56a",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}
