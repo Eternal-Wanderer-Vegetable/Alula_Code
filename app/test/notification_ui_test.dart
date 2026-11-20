@@ -396,6 +396,7 @@ void main() {
         onDismiss: notifications.dismiss,
         onClearAll: notifications.clearAll,
         onToggleDoNotDisturb: () {},
+        onConfigureDoNotDisturbSources: () {},
         onClose: () {},
       ));
       final panel = find.byKey(const ValueKey('notification-center'));
@@ -1210,7 +1211,7 @@ void main() {
       expect(find.byKey(const ValueKey('notification-item-1')), findsOneWidget);
       expect(notifications.doNotDisturb, isTrue);
 
-      await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+      await _chooseGlobalDoNotDisturb(tester);
       await tester.pump();
       expect(notifications.doNotDisturb, isFalse);
       await tester.tap(find.byKey(const ValueKey('notification-center-close')));
@@ -1243,7 +1244,7 @@ void main() {
       await tester.pump();
       expect(notifications.toastIds, [oldInfo.id, oldError.id]);
       await _showNotificationCenter(tester);
-      await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+      await _chooseGlobalDoNotDisturb(tester);
       await tester.pumpAndSettle();
       expect(notifications.doNotDisturb, isTrue);
       expect(find.byKey(const ValueKey('notification-center')), findsNothing);
@@ -1273,11 +1274,84 @@ void main() {
         expect(find.byKey(ValueKey('notification-item-${entry.id}')),
             findsOneWidget);
       }
-      await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+      await _chooseGlobalDoNotDisturb(tester);
       await tester.pumpAndSettle();
       expect(notifications.doNotDisturb, isFalse);
       expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
       expect(notifications.toastIds, isEmpty);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('center DND menu shows ten sources and links to the full picker',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      for (var index = 12; index >= 1; index--) {
+        final suffix = index.toString().padLeft(2, '0');
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: 'Notification from source $suffix',
+          source: 'Fixture Source $suffix',
+          sourceId: 'fixture.source.$suffix',
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      final button = find.byKey(const ValueKey('notification-dnd-toggle'));
+      final global = find.byKey(const ValueKey('notification-dnd-global'));
+      final more = find.byKey(const ValueKey('notification-dnd-more'));
+      final panel = find.byKey(const ValueKey('notification-center'));
+      final first = find.byKey(
+        const ValueKey('notification-dnd-source-fixture.source.01'),
+      );
+
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(panel, findsOneWidget);
+      expect(notifications.doNotDisturb, isFalse);
+      expect(global, findsOneWidget);
+      for (var index = 1; index <= 12; index++) {
+        final suffix = index.toString().padLeft(2, '0');
+        expect(
+          find.byKey(
+              ValueKey('notification-dnd-source-fixture.source.$suffix')),
+          index <= 10 ? findsOneWidget : findsNothing,
+        );
+      }
+      expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(first).checked,
+          isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(panel, findsOneWidget);
+      expect(first, findsNothing);
+
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      await tester.tap(first);
+      await tester.pumpAndSettle();
+      expect(notifications.sourceFilters['fixture.source.01']?.muted, isTrue);
+      expect(notifications.sourceFilters['fixture.source.02']?.muted, isFalse);
+      expect(panel, findsOneWidget);
+
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(first).checked,
+          isFalse);
+      await tester.ensureVisible(more);
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), 'Fixture Source 12');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-Fixture Source 12')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(notifications.sourceFilters['fixture.source.12']?.muted, isTrue);
+      expect(notifications.sourceFilters['fixture.source.11']?.muted, isFalse);
+      expect(notifications.sourceFilters['fixture.source.01']?.muted, isTrue);
+      expect(panel, findsOneWidget);
     } finally {
       await _unmountApp(tester);
     }
@@ -1795,6 +1869,13 @@ Future<void> _showNotificationCenter(WidgetTester tester) async {
   await tester.tap(find.byKey(const ValueKey('status-notifications')));
   await tester.pump();
   await tester.pump();
+}
+
+Future<void> _chooseGlobalDoNotDisturb(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('notification-dnd-global')));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _middleClick(WidgetTester tester, Finder target) async {

@@ -21119,11 +21119,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   Future<void> _pickNotificationSourceFilters() async {
-    final sources = _notifications.sourceFilters.entries.toList()
-      ..sort((a, b) {
-        final byLabel = a.value.label.compareTo(b.value.label);
-        return byLabel == 0 ? a.key.compareTo(b.key) : byLabel;
-      });
+    final sources = _notifications.orderedSourceFilters;
     final counts = <String, int>{};
     for (final source in sources) {
       counts.update(source.value.label, (count) => count + 1, ifAbsent: () => 1);
@@ -21269,6 +21265,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   onClearAll: () => _runCommand('notifications.clearAll'),
                   onToggleDoNotDisturb: () =>
                       _runCommand('notifications.toggleDoNotDisturbMode'),
+                  onConfigureDoNotDisturbSources: () => _runCommand(
+                      'notifications.toggleDoNotDisturbModeBySource'),
                   onClose: () => _runCommand('notifications.hideList'),
                 )
               : WorkbenchNotificationToasts(

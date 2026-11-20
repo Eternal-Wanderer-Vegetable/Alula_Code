@@ -567,6 +567,7 @@ class WorkbenchNotificationCenter extends StatefulWidget {
     required this.onDismiss,
     required this.onClearAll,
     required this.onToggleDoNotDisturb,
+    required this.onConfigureDoNotDisturbSources,
     this.position = WorkbenchNotificationPosition.bottomRight,
     this.onPositionChanged,
     required this.onClose,
@@ -578,6 +579,7 @@ class WorkbenchNotificationCenter extends StatefulWidget {
   final void Function(int id) onDismiss;
   final VoidCallback onClearAll;
   final VoidCallback onToggleDoNotDisturb;
+  final VoidCallback onConfigureDoNotDisturbSources;
   final WorkbenchNotificationPosition position;
   final ValueChanged<WorkbenchNotificationPosition>? onPositionChanged;
   final VoidCallback onClose;
@@ -589,6 +591,7 @@ class WorkbenchNotificationCenter extends StatefulWidget {
 
 class _WorkbenchNotificationCenterState
     extends State<WorkbenchNotificationCenter> {
+  static const _maxSourcesInMenu = 10;
   static const _headerHeight = 35.0;
   // The list viewport is 400 px with a 1 px frame on each edge.
   static const _maxPanelHeight = _headerHeight + 400 + 2;
@@ -651,24 +654,7 @@ class _WorkbenchNotificationCenterState
                       icon: const Icon(Icons.clear_all, size: 16),
                     ),
                   ),
-                  IconButton(
-                    key: const ValueKey('notification-dnd-toggle'),
-                    tooltip: center.doNotDisturb ? '请勿打扰：开' : '请勿打扰：关',
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 24, minHeight: 24),
-                    onPressed: widget.onToggleDoNotDisturb,
-                    icon: Icon(
-                      center.doNotDisturb
-                          ? Icons.notifications_off
-                          : Icons.notifications_active_outlined,
-                      size: 15,
-                      color: center.doNotDisturb
-                          ? Colors.orangeAccent
-                          : Colors.grey.shade400,
-                    ),
-                  ),
+                  _buildDoNotDisturbMenu(),
                   if (widget.onPositionChanged != null)
                     SizedBox.square(
                       dimension: 24,
@@ -793,6 +779,67 @@ class _WorkbenchNotificationCenterState
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDoNotDisturbMenu() {
+    final center = widget.center;
+    return SizedBox.square(
+      dimension: 24,
+      child: PopupMenuButton<VoidCallback>(
+        key: const ValueKey('notification-dnd-toggle'),
+        tooltip: '配置请勿打扰',
+        padding: EdgeInsets.zero,
+        style: IconButton.styleFrom(
+          minimumSize: const Size(24, 24),
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        icon: Icon(
+          center.doNotDisturb
+              ? Icons.notifications_off
+              : Icons.notifications_active_outlined,
+          size: 15,
+          color:
+              center.doNotDisturb ? Colors.orangeAccent : Colors.grey.shade400,
+        ),
+        onSelected: (action) => action(),
+        itemBuilder: (_) {
+          final sources = center.orderedSourceFilters;
+          return [
+            PopupMenuItem<VoidCallback>(
+              key: const ValueKey('notification-dnd-global'),
+              value: widget.onToggleDoNotDisturb,
+              child: Text(center.doNotDisturb ? '关闭请勿打扰' : '开启请勿打扰'),
+            ),
+            if (sources.isNotEmpty) const PopupMenuDivider(),
+            for (final source in sources.take(_maxSourcesInMenu))
+              CheckedPopupMenuItem<VoidCallback>(
+                key: ValueKey('notification-dnd-source-${source.key}'),
+                checked: !source.value.muted,
+                value: () {
+                  final current = center.sourceFilters[source.key];
+                  if (current != null) {
+                    center.setSourceDoNotDisturb({source.key: !current.muted});
+                  }
+                },
+                child: Tooltip(
+                  message: source.key,
+                  child:
+                      Text(source.value.label, overflow: TextOverflow.ellipsis),
+                ),
+              ),
+            if (sources.length > _maxSourcesInMenu) ...[
+              const PopupMenuDivider(),
+              PopupMenuItem<VoidCallback>(
+                key: const ValueKey('notification-dnd-more'),
+                value: widget.onConfigureDoNotDisturbSources,
+                child: const Text('更多来源…'),
+              ),
+            ],
+          ];
+        },
       ),
     );
   }

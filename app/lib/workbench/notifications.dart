@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:intl4x/collation.dart';
 
 enum WorkbenchNotificationSeverity { info, warning, error }
 
@@ -180,6 +181,17 @@ class NotificationCenter extends ChangeNotifier {
 
   Map<String, WorkbenchNotificationSourceFilter> get sourceFilters =>
       _sourceFilters;
+
+  // One lazy collator serves the source menu and full picker.
+  static final _sourceCollation = Collation();
+
+  List<MapEntry<String, WorkbenchNotificationSourceFilter>>
+      get orderedSourceFilters => _sourceFilters.entries.toList()
+        ..sort((a, b) {
+          final byLabel =
+              _sourceCollation.compare(a.value.label, b.value.label);
+          return byLabel == 0 ? a.key.compareTo(b.key) : byLabel;
+        });
 
   /// The host can defer optional toasts while an editable control has focus.
   bool Function()? allowOptionalToast;
