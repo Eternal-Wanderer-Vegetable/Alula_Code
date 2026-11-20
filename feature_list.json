@@ -2221,8 +2221,21 @@
       "dependencies": [
         "feat-179"
       ],
+      "status": "done",
+      "evidence": "产品 `8b016160e8125931456dae77999ca94bc72a1da8` 已推草稿 PR #3。固定版、Windows 11 125% DPI 和 Linux Xvfb 对照响应式宽高、普通行 22 与 detail 行 44。小窗视口 560×340 调整为 493.52×233，高窗为 551.55×321。专项 124/124，Flutter 1,644 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44746980907 四项及 Platform Availability 44746970668 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.128-quick-input-density.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-181",
+      "name": "P05.129 LAY-17 QuickInput 分组键盘跳转",
+      "description": "固定版分组导航及无分组时首尾回退，保留原生条件、条目预览和输入焦点，跨惰性视口滚入目标。",
+      "dependencies": [
+        "feat-107",
+        "feat-180"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 125% DPI 和 Alula Linux Xvfb 基线已记录小窗及高窗的视口与行高。待产品修复和验收。",
+      "evidence": "在固定版 Windows 渲染器核对两组、当前组起点、环回、过滤后无分组、输入焦点。待产品实现与验证。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

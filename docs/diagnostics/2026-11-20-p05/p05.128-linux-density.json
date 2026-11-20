@@ -1,0 +1,145 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "8b016160e8125931456dae77999ca94bc72a1da8",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "0162d4dd5774d5a712a98de8b5a17677197a55dd301f1692fef75b2eded8b285",
+  "observations": {
+    "initial": {
+      "request": "initial",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        200.0,
+        93.0,
+        800.0,
+        370.0
+      ],
+      "row": [
+        200.0,
+        123.0,
+        800.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "small-detail": {
+      "request": "small-detail",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        151.24,
+        93.0,
+        644.76,
+        326.0
+      ],
+      "row": [
+        151.24,
+        123.0,
+        644.76,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "small-plain": {
+      "request": "small-plain",
+      "active": 2,
+      "revision": 2,
+      "viewport": [
+        151.24,
+        93.0,
+        644.76,
+        326.0
+      ],
+      "row": [
+        151.24,
+        167.0,
+        644.76,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "tall-detail": {
+      "request": "tall-detail",
+      "active": 1,
+      "revision": 3,
+      "viewport": [
+        169.10000000000002,
+        93.0,
+        720.9,
+        414.0
+      ],
+      "row": [
+        169.10000000000002,
+        123.0,
+        720.9,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "tall-plain": {
+      "request": "tall-plain",
+      "active": 2,
+      "revision": 4,
+      "viewport": [
+        169.10000000000002,
+        93.0,
+        720.9,
+        414.0
+      ],
+      "row": [
+        169.10000000000002,
+        167.0,
+        720.9,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wide-detail": {
+      "request": "wide-detail",
+      "active": 1,
+      "revision": 6,
+      "viewport": [
+        280.0,
+        93.0,
+        880.0,
+        458.0
+      ],
+      "row": [
+        280.0,
+        123.0,
+        880.0,
+        167.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "wide-plain": {
+      "request": "wide-plain",
+      "active": 2,
+      "revision": 7,
+      "viewport": [
+        280.0,
+        93.0,
+        880.0,
+        458.0
+      ],
+      "row": [
+        280.0,
+        167.0,
+        880.0,
+        189.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    }
+  },
+  "fixtureSha256": "28836bdea6f445162c2d0d20e79df43a9efb4ca22f3ef0393278a8956c046140",
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

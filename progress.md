@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.128 / feat-180。产品 `8b016160e8125931456dae77999ca94bc72a1da8` 已推草稿 PR #3。固定版、Windows 11 125% DPI 和 Linux Xvfb 对照响应式宽高、普通行 22 与 detail 行 44。小窗视口 560×340 调整为 493.52×233，高窗为 551.55×321。专项 124/124，Flutter 1,644 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44746980907 四项及 Platform Availability 44746970668 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.128-quick-input-density.md。
+
 - 2026-11-20 完成 P05.124 / feat-176。Windows 11 build 26200、125% DPI 的真实桌面键位已验证。P05.123 Release 的 Ctrl+Shift+F8 与 P05.125 Release 的 Ctrl+Shift+A 均验证最新回退、旧行聚焦优先和仅执行首个主操作。默认键在同一进程内由真实 Narrator 状态门控，未启动与正常退出后均保留通知。两个进程均退出码 0。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.124-windows-notification-keys.md。
 
 - 2026-11-20 完成 P05.127 / feat-179。产品 `3e79a3bce0f1abe1e2d4243ff8dc217c7be63b7f` 已推草稿 PR #3。固定版与 Linux Xvfb 验证分页、首尾、输入焦点和接受。专项 123/123，Flutter 1,643 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44741974110 四项及 Platform Availability 44741963739 Windows/Linux 通过。Windows 11 125% DPI 的原生键位亦通过，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.127-quick-input-page.md。

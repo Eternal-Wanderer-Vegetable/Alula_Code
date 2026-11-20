@@ -1,0 +1,232 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 1444,
+    "height": 907
+  },
+  "driver": "Owned Code-OSS CDP renderer keyboard input",
+  "trace": [],
+  "samples": {
+    "default": {
+      "window": {
+        "width": 1444,
+        "height": 907,
+        "dpr": 1.25
+      },
+      "panel": {
+        "x": 422,
+        "y": 6,
+        "width": 601.6000366210938,
+        "height": 405.8000183105469,
+        "top": 6,
+        "right": 1023.6000366210938,
+        "bottom": 411.8000183105469,
+        "left": 422
+      },
+      "viewport": {
+        "x": 422.8000183105469,
+        "y": 46,
+        "width": 600,
+        "height": 365,
+        "top": 46,
+        "right": 1022.8000183105469,
+        "bottom": 411,
+        "left": 422.8000183105469
+      },
+      "inlineMaxHeight": "358px",
+      "computedMaxHeight": "358px",
+      "rowTemplate": [
+        {
+          "text": "Picker item 01\nAdditional detail\nSection one",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": "Section one"
+        },
+        {
+          "text": "Picker item 02",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 03",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 04\nAdditional detail",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 05",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 06",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        }
+      ]
+    },
+    "small": {
+      "window": {
+        "width": 796,
+        "height": 587,
+        "dpr": 1.25
+      },
+      "panel": {
+        "x": 151,
+        "y": 6,
+        "width": 495.1125183105469,
+        "height": 273.8000183105469,
+        "top": 6,
+        "right": 646.1125183105469,
+        "bottom": 279.8000183105469,
+        "left": 151
+      },
+      "viewport": {
+        "x": 151.8000030517578,
+        "y": 46,
+        "width": 493.51251220703125,
+        "height": 233,
+        "top": 46,
+        "right": 645.3125152587891,
+        "bottom": 279,
+        "left": 151.8000030517578
+      },
+      "inlineMaxHeight": "226px",
+      "computedMaxHeight": "226px",
+      "rowTemplate": [
+        {
+          "text": "Picker item 01\nAdditional detail\nSection one",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": "Section one"
+        },
+        {
+          "text": "Picker item 02",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 03",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 04\nAdditional detail",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 05",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 06",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        }
+      ]
+    },
+    "tall": {
+      "window": {
+        "width": 890,
+        "height": 834,
+        "dpr": 1.25
+      },
+      "panel": {
+        "x": 169,
+        "y": 6,
+        "width": 553.4000244140625,
+        "height": 361.8000183105469,
+        "top": 6,
+        "right": 722.4000244140625,
+        "bottom": 367.8000183105469,
+        "left": 169
+      },
+      "viewport": {
+        "x": 169.8000030517578,
+        "y": 46,
+        "width": 551.7999877929688,
+        "height": 321,
+        "top": 46,
+        "right": 721.5999908447266,
+        "bottom": 367,
+        "left": 169.8000030517578
+      },
+      "inlineMaxHeight": "314px",
+      "computedMaxHeight": "314px",
+      "rowTemplate": [
+        {
+          "text": "Picker item 01\nAdditional detail\nSection one",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": "Section one"
+        },
+        {
+          "text": "Picker item 02",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 03",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 04\nAdditional detail",
+          "height": 44,
+          "detail": false,
+          "styleHeight": "44px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 05",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        },
+        {
+          "text": "Picker item 06",
+          "height": 22,
+          "detail": false,
+          "styleHeight": "22px",
+          "groupLabel": ""
+        }
+      ]
+    }
+  },
+  "exitCode": 0
+}
