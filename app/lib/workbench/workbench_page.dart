@@ -1118,8 +1118,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '清除通知',
       () async {
         final notification = _focusedNotification;
-        if (notification != null && !notification.hasProgress) {
-          _notifications.dismiss(notification.id);
+        if (notification != null) {
+          _notifications.clearNotification(notification);
         }
       },
       when: 'notificationFocus',

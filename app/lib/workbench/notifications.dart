@@ -246,6 +246,15 @@ class NotificationCenter extends ChangeNotifier {
     if (_items.length != before) notifyListeners();
   }
 
+  /// 用户清除单条通知时保留活动进度，并校验条目仍属于当前中心。
+  void clearNotification(WorkbenchNotification notification) {
+    if (notification.hasProgress ||
+        !identical(byId(notification.id), notification)) {
+      return;
+    }
+    dismiss(notification.id);
+  }
+
   bool get canClearAll => _items.any((item) => !item.hasProgress);
 
   /// Clear completed and ordinary notifications, retaining active progress.

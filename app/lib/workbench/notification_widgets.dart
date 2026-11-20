@@ -6,6 +6,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 
 import 'notifications.dart';
@@ -45,17 +46,48 @@ class _NotificationStyle {
 }
 
 class _NotificationItemFocus extends Focus {
-  const _NotificationItemFocus({
+  _NotificationItemFocus({
     super.key,
     required this.notification,
     this.isToast = false,
     super.autofocus,
     super.onFocusChange,
-    required super.child,
-  });
+    required VoidCallback onMiddleClick,
+    required Widget child,
+  }) : super(
+          child: _NotificationMiddleClick(
+            onClear: onMiddleClick,
+            child: child,
+          ),
+        );
 
   final WorkbenchNotification notification;
   final bool isToast;
+}
+
+class _NotificationMiddleClick extends StatelessWidget {
+  const _NotificationMiddleClick({required this.onClear, required this.child});
+
+  final VoidCallback onClear;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      excludeFromSemantics: true,
+      supportedDevices: const {PointerDeviceKind.mouse},
+      onTertiaryTapUp: (details) {
+        final box = context.findRenderObject();
+        if (box is RenderBox &&
+            (Offset.zero & box.size)
+                .contains(box.globalToLocal(details.globalPosition))) {
+          onClear();
+        }
+      },
+      child: child,
+    );
+  }
 }
 
 /// 右下角 toast 堆叠（旧在上、新在下；数量由中心限制）。
@@ -85,11 +117,19 @@ class WorkbenchNotificationToasts extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         for (final notification in visible)
-          _NotificationToast(
+          Padding(
             key: ValueKey('notification-toast-${notification.id}'),
-            notification: notification,
-            windowFocused: windowFocused,
-            onDismiss: () => onDismissToast(notification.id),
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _NotificationToast(
+              notification: notification,
+              windowFocused: windowFocused,
+              onDismiss: () => onDismissToast(notification.id),
+              onMiddleClick: () {
+                if (center.toastIds.contains(notification.id)) {
+                  center.clearNotification(notification);
+                }
+              },
+            ),
           ),
       ],
     );
@@ -98,15 +138,16 @@ class WorkbenchNotificationToasts extends StatelessWidget {
 
 class _NotificationToast extends StatefulWidget {
   const _NotificationToast({
-    super.key,
     required this.notification,
     required this.windowFocused,
     required this.onDismiss,
+    required this.onMiddleClick,
   });
 
   final WorkbenchNotification notification;
   final bool windowFocused;
   final VoidCallback onDismiss;
+  final VoidCallback onMiddleClick;
 
   @override
   State<_NotificationToast> createState() => _NotificationToastState();
@@ -180,6 +221,7 @@ class _NotificationToastState extends State<_NotificationToast> {
       child: _NotificationItemFocus(
         notification: notification,
         isToast: true,
+        onMiddleClick: widget.onMiddleClick,
         onFocusChange: (focused) => _descendantFocused = focused,
         child: Semantics(
           liveRegion: true,
@@ -187,7 +229,6 @@ class _NotificationToastState extends State<_NotificationToast> {
           label: '${notification.source} 通知：${notification.message}',
           child: Container(
             width: 340,
-            margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
             decoration: BoxDecoration(
               color: const Color(0xFF252932),
@@ -454,6 +495,8 @@ class _WorkbenchNotificationCenterState
                         key: ValueKey(notification.id),
                         notification: notification,
                         autofocus: autofocus,
+                        onMiddleClick: () =>
+                            center.clearNotification(notification),
                         child: _NotificationCenterRow(
                           notification: notification,
                           onDismiss: () => widget.onDismiss(notification.id),

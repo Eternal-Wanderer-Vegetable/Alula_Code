@@ -4,6 +4,7 @@ import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -65,6 +66,172 @@ void main() {
       expect(find.byKey(const ValueKey('status-notifications-badge')),
           findsNothing,
           reason: '打开中心即标记已读');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('middle click clears only the toast hit on release',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final clicked = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Middle-click toast',
+      );
+      final other = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Other toast',
+      );
+      await tester.pump();
+
+      final press = await tester.startGesture(
+        tester.getCenter(find.text(clicked.message)),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton,
+      );
+      await tester.pump();
+      expect(notifications.items, [other, clicked]);
+      await press.up();
+      await tester.pump();
+
+      expect(notifications.items, [other]);
+      expect(notifications.toastIds, [other.id]);
+      expect(notifications.unreadCount, 1);
+      expect(find.text(clicked.message), findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('middle click clears the clicked row and preserves other focus',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final clicked = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Clicked notification row',
+      );
+      final focused = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Focused notification row',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      final focus = Focus.of(tester.element(find.text(focused.message)));
+      expect(focus.hasPrimaryFocus, isTrue);
+
+      await _middleClick(tester, find.text(clicked.message));
+
+      expect(notifications.items, [focused]);
+      expect(find.text(clicked.message), findsNothing);
+      expect(focus.hasPrimaryFocus, isTrue);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  for (final inCenter in [false, true]) {
+    testWidgets(
+        'middle click protects progress in the ${inCenter ? 'center' : 'toast'}',
+        (tester) async {
+      final progress = NotificationProgress(total: 10, worked: 2);
+      addTearDown(progress.dispose);
+      await _mountApp(tester);
+      try {
+        final entry = notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: 'Active progress',
+          progress: progress,
+        );
+        await tester.pump();
+        if (inCenter) await _showNotificationCenter(tester);
+
+        await _middleClick(tester, find.text(entry.message));
+        expect(notifications.items, [entry]);
+
+        progress.done();
+        await tester.pump();
+        await _middleClick(tester, find.text(entry.message));
+        expect(notifications.items, isEmpty);
+      } finally {
+        await _unmountApp(tester);
+      }
+    });
+  }
+
+  testWidgets('other buttons, cancellation and release outside keep the row',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final entry = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Notification row with gestures',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      final row = tester.getRect(
+        find.byKey(ValueKey('notification-item-${entry.id}')),
+      );
+
+      for (final buttons in [
+        kPrimaryMouseButton,
+        kSecondaryMouseButton,
+        kPrimaryMouseButton | kMiddleMouseButton,
+      ]) {
+        await tester.tapAt(
+          row.center,
+          kind: PointerDeviceKind.mouse,
+          buttons: buttons,
+        );
+        await tester.pump();
+        expect(notifications.items, [entry]);
+      }
+
+      final canceled = await tester.startGesture(
+        row.center,
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton,
+      );
+      await canceled.cancel();
+      await tester.pump();
+      expect(notifications.items, [entry]);
+
+      final slidesOutside = await tester.startGesture(
+        Offset(row.center.dx, row.top + 1),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton,
+      );
+      await slidesOutside.moveBy(const Offset(0, -3));
+      await slidesOutside.up();
+      await tester.pump();
+      expect(notifications.items, [entry]);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('releasing a withdrawn toast keeps its retained notification',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final entry = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Retained after hiding toast',
+      );
+      await tester.pump();
+      final press = await tester.startGesture(
+        tester.getCenter(find.text(entry.message)),
+        kind: PointerDeviceKind.mouse,
+        buttons: kMiddleMouseButton,
+      );
+
+      notifications.dismissToast(entry.id);
+      await press.up();
+      await tester.pump();
+      expect(notifications.items, [entry]);
+      expect(notifications.toastIds, isEmpty);
+      expect(notifications.unreadCount, 1);
     } finally {
       await _unmountApp(tester);
     }
@@ -273,6 +440,21 @@ Finder _paletteInput() => find.descendant(
       of: find.byKey(const ValueKey('quick-input')),
       matching: find.byType(TextField),
     );
+
+Future<void> _showNotificationCenter(WidgetTester tester) async {
+  await tester.tap(find.byKey(const ValueKey('status-notifications')));
+  await tester.pump();
+  await tester.pump();
+}
+
+Future<void> _middleClick(WidgetTester tester, Finder target) async {
+  await tester.tapAt(
+    tester.getCenter(target),
+    kind: PointerDeviceKind.mouse,
+    buttons: kMiddleMouseButton,
+  );
+  await tester.pump();
+}
 
 Future<void> _mountApp(WidgetTester tester) async {
   await tester.pumpWidget(AlulaApp(
