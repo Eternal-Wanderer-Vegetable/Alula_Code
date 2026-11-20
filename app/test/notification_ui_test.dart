@@ -488,6 +488,115 @@ void main() {
     }
   });
 
+  testWidgets('copies the raw message of the context menu owner',
+      (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+    final clipboardWrites = <String>[];
+    final messenger =
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+      if (call.method == 'Clipboard.setData') {
+        clipboardWrites.add((call.arguments as Map)['text'] as String);
+      }
+      return null;
+    });
+    addTearDown(() =>
+        messenger.setMockMethodCallHandler(SystemChannels.platform, null));
+
+    await _mountApp(tester);
+    try {
+      const first = '保存出错 🧪\r\n详情：文件已改动';
+      const second = 'Another notification';
+      final older = notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: first,
+        source: '文件',
+      );
+      final newer = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: second,
+      );
+      await tester.pump();
+
+      final toast = find.byKey(const ValueKey('notification-toast-1'));
+      final toastCopy =
+          find.byKey(const ValueKey('notification-toast-copy-1'));
+      Future<void> openToastMenu() async {
+        await tester.tapAt(
+          tester.getCenter(toast),
+          kind: PointerDeviceKind.mouse,
+          buttons: kSecondaryMouseButton,
+        );
+        await tester.pumpAndSettle();
+        expect(toastCopy, findsOneWidget);
+      }
+
+      await openToastMenu();
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(toastCopy, findsNothing);
+      expect(clipboardWrites, isEmpty);
+      await openToastMenu();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(clipboardWrites, [first]);
+      expect(notifications.toastIds, contains(older.id));
+
+      await _showNotificationCenter(tester);
+      expect(focusedWorkbenchNotification()?.notification, same(newer));
+      await tester.sendKeyEvent(LogicalKeyboardKey.contextMenu);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('notification-copy-2')));
+      await tester.pumpAndSettle();
+      expect(clipboardWrites, [first, second]);
+      expect(focusedWorkbenchNotification()?.notification, same(newer));
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f10);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('notification-copy-2')), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(clipboardWrites, [first, second]);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      expect(notifications.items, [older]);
+    } finally {
+      await _unmountApp(tester);
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('toast context menu leaves with its owner', (tester) async {
+    await _mountApp(tester);
+    try {
+      final notice = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Context menu lifecycle',
+      );
+      await tester.pump();
+      await tester.tapAt(
+        tester.getCenter(find.byKey(const ValueKey('notification-toast-1'))),
+        kind: PointerDeviceKind.mouse,
+        buttons: kSecondaryMouseButton,
+      );
+      await tester.pumpAndSettle();
+      final copy = find.byKey(const ValueKey('notification-toast-copy-1'));
+      expect(copy, findsOneWidget);
+      await tester.pump(const Duration(seconds: 10));
+      expect(notifications.toastIds, [notice.id]);
+      expect(copy, findsOneWidget);
+      notifications.dismissToast(notice.id);
+      await tester.pumpAndSettle();
+      expect(copy, findsNothing);
+      expect(notifications.items, [notice]);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('secondary notification actions target the menu owner',
       (tester) async {
     await _mountApp(tester);
@@ -890,6 +999,10 @@ void main() {
         );
         await tester.pump();
         expect(notifications.items, [entry]);
+        if (buttons == kSecondaryMouseButton) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+          await tester.pumpAndSettle();
+        }
       }
 
       final canceled = await tester.startGesture(

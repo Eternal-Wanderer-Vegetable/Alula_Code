@@ -8,6 +8,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'notifications.dart';
 
@@ -123,18 +124,117 @@ class _NotificationStyle {
   return null;
 }
 
+class _NotificationItemActions extends StatefulWidget {
+  const _NotificationItemActions({
+    super.key,
+    required this.center,
+    required this.notification,
+    required this.onMiddleClick,
+    required this.child,
+    this.isToast = false,
+    this.autofocus = false,
+    this.onFocusChange,
+    this.onContextMenuVisibilityChanged,
+  });
+
+  final NotificationCenter center;
+  final WorkbenchNotification notification;
+  final VoidCallback onMiddleClick;
+  final Widget child;
+  final bool isToast;
+  final bool autofocus;
+  final ValueChanged<bool>? onFocusChange;
+  final ValueChanged<bool>? onContextMenuVisibilityChanged;
+
+  @override
+  State<_NotificationItemActions> createState() =>
+      _NotificationItemActionsState();
+}
+
+class _NotificationItemActionsState extends State<_NotificationItemActions> {
+  final _rowFocus = FocusNode();
+  final _menu = MenuController();
+
+  @override
+  void dispose() {
+    _rowFocus.dispose();
+    super.dispose();
+  }
+
+  void _openContextMenu([Offset? position]) {
+    _rowFocus.requestFocus();
+    _menu.open(position: position);
+  }
+
+  Future<void> _copyMessage() async {
+    final notification = widget.notification;
+    if (!identical(widget.center.byId(notification.id), notification) ||
+        (widget.isToast && !widget.center.toastIds.contains(notification.id))) {
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: notification.message));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefix = widget.isToast ? 'notification-toast' : 'notification';
+    return Stack(
+      children: [
+        // A sibling anchor keeps the action toolbar's own menu independent.
+        Positioned.fill(
+          child: MenuAnchor(
+            controller: _menu,
+            childFocusNode: _rowFocus,
+            onOpen: () => widget.onContextMenuVisibilityChanged?.call(true),
+            onClose: () => widget.onContextMenuVisibilityChanged?.call(false),
+            menuChildren: [
+              MenuItemButton(
+                key: ValueKey('$prefix-copy-${widget.notification.id}'),
+                autofocus: true,
+                onPressed: _copyMessage,
+                child: const Text('复制文本'),
+              ),
+            ],
+            child: const SizedBox.expand(),
+          ),
+        ),
+        CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.contextMenu):
+                _openContextMenu,
+            const SingleActivator(LogicalKeyboardKey.f10, shift: true):
+                _openContextMenu,
+          },
+          child: _NotificationItemFocus(
+            notification: widget.notification,
+            isToast: widget.isToast,
+            autofocus: widget.autofocus,
+            focusNode: _rowFocus,
+            onFocusChange: widget.onFocusChange,
+            onContextMenu: _openContextMenu,
+            onMiddleClick: widget.onMiddleClick,
+            child: widget.child,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _NotificationItemFocus extends Focus {
   _NotificationItemFocus({
-    super.key,
     required this.notification,
     this.isToast = false,
     super.autofocus,
     super.onFocusChange,
+    super.focusNode,
+    required ValueChanged<Offset> onContextMenu,
     required VoidCallback onMiddleClick,
     required Widget child,
   }) : super(
           child: _NotificationMiddleClick(
             onClear: onMiddleClick,
+            onContextMenu: onContextMenu,
             child: child,
           ),
         );
@@ -144,23 +244,34 @@ class _NotificationItemFocus extends Focus {
 }
 
 class _NotificationMiddleClick extends StatelessWidget {
-  const _NotificationMiddleClick({required this.onClear, required this.child});
+  const _NotificationMiddleClick({
+    required this.onClear,
+    required this.onContextMenu,
+    required this.child,
+  });
 
   final VoidCallback onClear;
+  final ValueChanged<Offset> onContextMenu;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    bool isInRow(Offset globalPosition) {
+      final box = context.findRenderObject();
+      return box is RenderBox &&
+          (Offset.zero & box.size).contains(box.globalToLocal(globalPosition));
+    }
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       excludeFromSemantics: true,
       supportedDevices: const {PointerDeviceKind.mouse},
       onTertiaryTapUp: (details) {
-        final box = context.findRenderObject();
-        if (box is RenderBox &&
-            (Offset.zero & box.size)
-                .contains(box.globalToLocal(details.globalPosition))) {
-          onClear();
+        if (isInRow(details.globalPosition)) onClear();
+      },
+      onSecondaryTapUp: (details) {
+        if (isInRow(details.globalPosition)) {
+          onContextMenu(details.localPosition);
         }
       },
       child: child,
@@ -247,6 +358,7 @@ class _NotificationToastState extends State<_NotificationToast> {
   bool _hovered = false;
   bool _descendantFocused = false;
   bool _secondaryMenuOpen = false;
+  bool _contextMenuOpen = false;
   bool _waitingForWindowFocus = false;
 
   Duration get _interval => switch (widget.notification.severity) {
@@ -287,7 +399,11 @@ class _NotificationToastState extends State<_NotificationToast> {
     final sticky = notification.hasProgress ||
         (notification.severity == WorkbenchNotificationSeverity.error &&
             notification.hasActions);
-    if (sticky || _hovered || _descendantFocused || _secondaryMenuOpen) {
+    if (sticky ||
+        _hovered ||
+        _descendantFocused ||
+        _secondaryMenuOpen ||
+        _contextMenuOpen) {
       _schedule();
     } else {
       widget.onDismiss();
@@ -306,9 +422,11 @@ class _NotificationToastState extends State<_NotificationToast> {
     return MouseRegion(
       onEnter: (_) => _hovered = true,
       onExit: (_) => _hovered = false,
-      child: _NotificationItemFocus(
+      child: _NotificationItemActions(
+        center: widget.center,
         notification: notification,
         isToast: true,
+        onContextMenuVisibilityChanged: (visible) => _contextMenuOpen = visible,
         onMiddleClick: widget.onMiddleClick,
         onFocusChange: (focused) => _descendantFocused = focused,
         child: Semantics(
@@ -553,8 +671,9 @@ class _WorkbenchNotificationCenterState
                       final notification = notifications[index];
                       final autofocus = _focusOnOpen && index == 0;
                       if (autofocus) _focusOnOpen = false;
-                      return _NotificationItemFocus(
+                      return _NotificationItemActions(
                         key: ValueKey(notification.id),
+                        center: center,
                         notification: notification,
                         autofocus: autofocus,
                         onMiddleClick: () =>
