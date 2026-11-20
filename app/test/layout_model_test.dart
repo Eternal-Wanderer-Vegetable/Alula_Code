@@ -12,6 +12,37 @@ import 'package:alula_app/workbench/activity_bar_badges.dart';
 import 'package:alula_app/workbench/activity_bar_global_actions.dart';
 
 void main() {
+  test('expanding a legacy group leaves an unconstrained sibling visible', () {
+    final root = WbSplit(
+      axis: Axis.horizontal,
+      children: [WbLeaf(region: 'editor'), WbLeaf(region: 'editor-2')],
+    );
+    final layout = WorkbenchLayout(root: root);
+    addTearDown(layout.dispose);
+    expect(root.extentsFor(700), [350, 350]);
+    layout.expandEditorGroup('editor');
+    expect(root.extentsFor(700), [480, 220]);
+    layout.toggleEditorGroupSizes('editor');
+    expect(root.extentsFor(700), [350, 350]);
+  });
+
+  test('editor groups use independent width and height minima', () {
+    final fresh = defaultLayout().leafOf('editor')!;
+    final restored = WbLeaf.fromJson({
+      't': 'leaf',
+      'region': 'editor-2',
+      'min': 320,
+    });
+    final custom = WbLeaf(region: 'editor-3', minExtent: 200);
+    expect(nodeMinExtent(fresh, Axis.horizontal), 220);
+    expect(nodeMinExtent(restored, Axis.horizontal), 220);
+    expect(nodeMinExtent(custom, Axis.horizontal), 200);
+    for (final group in [fresh, restored, custom]) {
+      expect(nodeMinExtent(group, Axis.vertical), 70);
+    }
+    expect(restored.toJson()['min'], 220);
+  });
+
   group('JSON 序列化往返', () {
     test('默认布局 round-trip 逐字段相等', () {
       final original = defaultLayout();

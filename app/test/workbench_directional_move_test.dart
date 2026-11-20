@@ -47,6 +47,100 @@ RustTextInputField _fieldWithLabel(WidgetTester tester, String label) => tester
     .firstWhere((field) => field.semanticsLabel == label);
 
 void main() {
+  testWidgets('group expansion keeps peers visible and can hide both side bars',
+      (tester) async {
+    final temp =
+        Directory.systemTemp.createTempSync('alula-expand-editor-group');
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+    tester.view.physicalSize = const Size(1700, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final base = temp.path.replaceAll(r'\', '/');
+    final layoutStore = LayoutStore(path: '$base/layout.json')
+      ..save(defaultLayout());
+    CommandService? commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: layoutStore,
+        sessionStore: SessionStore(path: '$base/session.json'),
+        keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        onCommandServiceReady: (service) => commands = service,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    const toggle = 'workbench.action.toggleEditorWidths';
+    const hide = 'workbench.action.minimizeOtherEditorsHideSidebar';
+    Future<void> execute(String id) async {
+      expect(await commands!.execute(id), CommandExecutionStatus.executed);
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    Finder pane(String name) => find.byKey(ValueKey('wb-region-$name'));
+    Finder field(String name) => find.descendant(
+          of: pane(name),
+          matching: find.byType(RustTextInputField),
+        );
+    Rect area(String name) => tester.getRect(pane(name));
+
+    expect(commands!.isEnabled(hide), isTrue);
+    await execute(hide);
+    expect(pane('sidebar'), findsNothing);
+    expect(commands!.isEnabled(hide), isFalse);
+    await execute('view.toggleSidebar');
+    await execute('workbench.action.toggleAuxiliaryBar');
+    await execute('workbench.action.splitEditorRight');
+    await execute('workbench.action.splitEditorDown');
+    final primary = area('sidebar');
+    final secondary = area('secondarySidebar');
+    final regions = ['editor', 'editor-2', 'editor-3'];
+    final views = {
+      for (final region in regions)
+        region: tester.state<RustTextInputFieldState>(field(region))
+    };
+
+    final divider = Offset(
+      area('editor-2').center.dx,
+      (area('editor-2').bottom + area('editor-3').top) / 2,
+    );
+    await tester.dragFrom(divider, const Offset(0, -100));
+    await tester.pump(const Duration(milliseconds: 700));
+    final rightHeight = area('editor-2').height;
+
+    await tester.tap(field('editor'));
+    await tester.pump();
+    await execute(toggle);
+    expect(area('editor-2').width, closeTo(220, 1));
+    expect(area('editor-2').height, closeTo(rightHeight, 1));
+    expect(area('sidebar'), primary);
+    expect(area('secondarySidebar'), secondary);
+    expect(pane('editor-3'), findsOneWidget);
+
+    await execute(toggle);
+    expect(area('editor').width, closeTo(area('editor-2').width, 1));
+    expect(area('editor-2').height, closeTo(area('editor-3').height, 1));
+
+    await tester.tap(field('editor-2'));
+    await tester.pump();
+    await execute(toggle);
+    expect(area('editor').width, closeTo(220, 1));
+    expect(area('editor-3').height, closeTo(70, 1));
+    final expandedWidth = area('editor-2').width;
+    await execute(hide);
+    expect(pane('sidebar'), findsNothing);
+    expect(pane('secondarySidebar'), findsNothing);
+    expect(area('editor-2').width, greaterThan(expandedWidth + 200));
+    expect(area('editor-3').height, closeTo(70, 1));
+    for (final region in regions) {
+      expect(tester.state<RustTextInputFieldState>(field(region)),
+          same(views[region]));
+    }
+    final saved = layoutStore.tryLoad()!;
+    expect(saved.leafOf('sidebar')!.collapsed, isTrue);
+    expect(saved.leafOf('secondarySidebar')!.collapsed, isTrue);
+  });
+
   testWidgets('locked groups route implicit opens and restore session state',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-locked-group');

@@ -786,6 +786,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     _initCore();
     _syncCommandContext();
+    _syncPanelMaximizationCommandContext();
     _commands.addListener(_onCommandServiceChanged);
     FocusManager.instance.addListener(_syncNotificationFocusContext);
     _sourceFilterSnapshot = _notifications.sourceFilters;
@@ -1458,6 +1459,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '编辑器',
       '向下拆分编辑器',
       () async => _splitFocusedGroup(axis: Axis.vertical),
+    );
+    reg(
+      'workbench.action.toggleEditorWidths',
+      '视图',
+      '切换编辑器组尺寸',
+      () async => _resizeActiveEditorGroup(),
+    );
+    reg(
+      'workbench.action.minimizeOtherEditorsHideSidebar',
+      '视图',
+      '扩展编辑器组并隐藏侧栏',
+      () async => _resizeActiveEditorGroup(hideSideBars: true),
+      enablement:
+          'editorPartMultipleEditorGroups || sideBarVisible || auxiliaryBarVisible',
     );
     reg(
       'workbench.action.evenEditorWidths',
@@ -3464,10 +3479,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   void onWindowBlur() => _onMainWindowFocusChanged(false);
 
   void _syncPanelMaximizationCommandContext() {
-    _commands.context.setValue(
-      'panelMaximizationSupported',
-      _layout.canMaximizePanel,
-    );
+    _commands.context.setValues({
+      'panelMaximizationSupported': _layout.canMaximizePanel,
+      'sideBarVisible': _layout.leafOf('sidebar')?.collapsed == false,
+      'auxiliaryBarVisible':
+          _layout.leafOf(secondarySidebarRegion)?.collapsed == false,
+    });
   }
 
   void _onGitDiffNavigationAvailabilityChanged(bool _) {
@@ -15450,6 +15467,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (active != null) _focusEditorAfterLayout(group, active);
   }
 
+  void _resizeActiveEditorGroup({bool hideSideBars = false}) {
+    final group = _focused;
+    final wasMaximized = _layout.maximizedEditorRegion != null;
+    if (hideSideBars) {
+      _layout.setRegionCollapsed('sidebar', true);
+      _layout.setRegionCollapsed(secondarySidebarRegion, true);
+      _layout.expandEditorGroup(group.region);
+    } else {
+      _layout.toggleEditorGroupSizes(group.region);
+    }
+    final active = group.active;
+    if (wasMaximized && active != null) _focusEditorAfterLayout(group, active);
+  }
+
   void _resetEditorGroupSizes() {
     final wasMaximized = _layout.maximizedEditorRegion != null;
     _layout.resetEditorGroupSizes();
@@ -23468,193 +23499,211 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
     }
 
+    final actions = <Widget>[
+      // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
+      if (g.locked)
+        IconButton(
+          key: ValueKey('unlock-editor-group-${g.region}'),
+          tooltip: '解锁编辑器组',
+          onPressed: () => _setEditorGroupLocked(g, false),
+          icon: const Icon(Icons.lock_outline, size: 16),
+          visualDensity: VisualDensity.compact,
+        ),
+      if (_layout.maximizedEditorRegion == g.region)
+        IconButton(
+          key: ValueKey('restore-editor-group-${g.region}'),
+          tooltip: '还原编辑器组',
+          onPressed: () =>
+              _runCommand('workbench.action.toggleMaximizeEditorGroup'),
+          icon: const Icon(Icons.close_fullscreen, size: 16),
+          visualDensity: VisualDensity.compact,
+        ),
+      IconButton(
+        tooltip: '拆分编辑器',
+        onPressed: () => _runCommand('editor.split'),
+        icon: const Icon(Icons.splitscreen, size: 16),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: _lspReady
+            ? 'LSP 运行中'
+            : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP'),
+        onPressed: _commands.isEnabled('lsp.start')
+            ? () => _runCommand('lsp.start')
+            : null,
+        icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow, size: 16),
+        visualDensity: VisualDensity.compact,
+      ),
+      IconButton(
+        tooltip: '补全    Ctrl+Space',
+        onPressed: _commands.isEnabled('editor.completion')
+            ? () => _runCommand('editor.completion')
+            : null,
+        icon: const Icon(Icons.autorenew, size: 16),
+        visualDensity: VisualDensity.compact,
+      ),
+      if (g.docs.length > 1)
+        PopupMenuButton<int>(
+          key: ValueKey('editor-tab-overflow-${g.region}'),
+          tooltip: '显示编辑器（最近使用）与校验一致性',
+          icon: const Icon(Icons.fact_check_outlined, size: 16),
+          style: IconButton.styleFrom(
+            visualDensity: VisualDensity.compact,
+          ),
+          onSelected: (documentId) {
+            if (documentId == -1) {
+              _runCommand('editor.verifyIntegrity');
+            } else {
+              _activateEditorFromOverflow(g, documentId);
+            }
+          },
+          itemBuilder: (context) {
+            final orderedDocs = EditorTabMruPolicy.order<OpenDoc>(
+              tabs: g.docs,
+              recentDocumentIds: g.recentDocIds,
+              documentId: (document) => document.id,
+            );
+            return [
+              for (final doc in orderedDocs)
+                PopupMenuItem<int>(
+                  key: ValueKey(
+                    'editor-tab-overflow-item-${g.region}-${doc.id}',
+                  ),
+                  value: doc.id,
+                  child: Semantics(
+                    label: '${labelsById[doc.id] ?? doc.name}'
+                        '${doc.isDirty ? ', 未保存更改' : ''}'
+                        '${g.stickyDocIds.contains(doc.id) ? ', 已固定' : ''}'
+                        '${doc.id == g.activeDocId ? ', 当前编辑器' : ''}',
+                    selected: doc.id == g.activeDocId,
+                    child: SizedBox(
+                      width: 240,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 18,
+                            child: doc.id == g.activeDocId
+                                ? Icon(
+                                    Icons.check,
+                                    key: ValueKey(
+                                      'editor-tab-overflow-active-${g.region}-${doc.id}',
+                                    ),
+                                    size: 14,
+                                  )
+                                : null,
+                          ),
+                          Expanded(
+                            child: Text(
+                              labelsById[doc.id] ?? doc.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (g.stickyDocIds.contains(doc.id))
+                            Icon(
+                              Icons.push_pin,
+                              key: ValueKey(
+                                'editor-tab-overflow-sticky-${g.region}-${doc.id}',
+                              ),
+                              size: 12,
+                            ),
+                          if (doc.isDirty)
+                            Icon(
+                              Icons.circle,
+                              key: ValueKey(
+                                'editor-tab-overflow-dirty-${g.region}-${doc.id}',
+                              ),
+                              color: Colors.orangeAccent,
+                              size: 7,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              const PopupMenuDivider(),
+              PopupMenuItem<int>(
+                key: ValueKey('editor-tab-overflow-verify-${g.region}'),
+                value: -1,
+                enabled: _commands.isEnabled('editor.verifyIntegrity'),
+                child: const Row(
+                  children: [
+                    Icon(Icons.fact_check_outlined, size: 16),
+                    SizedBox(width: 12),
+                    Text('校验一致性'),
+                  ],
+                ),
+              ),
+            ];
+          },
+        )
+      else
+        IconButton(
+          tooltip: '校验一致性',
+          onPressed: _commands.isEnabled('editor.verifyIntegrity')
+              ? () => _runCommand('editor.verifyIntegrity')
+              : null,
+          icon: const Icon(Icons.fact_check_outlined, size: 16),
+          visualDensity: VisualDensity.compact,
+        ),
+      const SizedBox(width: 6),
+    ];
     return Container(
       key: ValueKey('editor-tab-strip-${g.region}'),
       constraints: const BoxConstraints(minHeight: 36),
       color: const Color(0xFF181B20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                _editorTabLastWidths[g.region] = <int, double>{};
-                if (!separatePinnedRows) {
-                  return buildTabRow(
-                    visibleDocs,
-                    rowName: 'shared',
-                    availableWidth: constraints.maxWidth,
-                  );
-                }
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    buildTabRow(
-                      stickyDocs,
-                      rowName: 'pinned',
-                      availableWidth: constraints.maxWidth,
-                    ),
-                    buildTabRow(
-                      ordinaryDocs,
-                      rowName: 'ordinary',
-                      availableWidth: constraints.maxWidth,
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
-          if (g.locked)
-            IconButton(
-              key: ValueKey('unlock-editor-group-${g.region}'),
-              tooltip: '解锁编辑器组',
-              onPressed: () => _setEditorGroupLocked(g, false),
-              icon: const Icon(Icons.lock_outline, size: 16),
-              visualDensity: VisualDensity.compact,
-            ),
-          if (_layout.maximizedEditorRegion == g.region)
-            IconButton(
-              key: ValueKey('restore-editor-group-${g.region}'),
-              tooltip: '还原编辑器组',
-              onPressed: () =>
-                  _runCommand('workbench.action.toggleMaximizeEditorGroup'),
-              icon: const Icon(Icons.close_fullscreen, size: 16),
-              visualDensity: VisualDensity.compact,
-            ),
-          IconButton(
-            tooltip: '拆分编辑器',
-            onPressed: () => _runCommand('editor.split'),
-            icon: const Icon(Icons.splitscreen, size: 16),
-            visualDensity: VisualDensity.compact,
-          ),
-          IconButton(
-            tooltip: _lspReady
-                ? 'LSP 运行中'
-                : (_workspaceRoot == null ? '启动 LSP（需先打开文件夹）' : '启动 LSP'),
-            onPressed: _commands.isEnabled('lsp.start')
-                ? () => _runCommand('lsp.start')
-                : null,
-            icon: Icon(_lspReady ? Icons.check_circle : Icons.play_arrow,
-                size: 16),
-            visualDensity: VisualDensity.compact,
-          ),
-          IconButton(
-            tooltip: '补全    Ctrl+Space',
-            onPressed: _commands.isEnabled('editor.completion')
-                ? () => _runCommand('editor.completion')
-                : null,
-            icon: const Icon(Icons.autorenew, size: 16),
-            visualDensity: VisualDensity.compact,
-          ),
-          if (g.docs.length > 1)
-            PopupMenuButton<int>(
-              key: ValueKey('editor-tab-overflow-${g.region}'),
-              tooltip: '显示编辑器（最近使用）与校验一致性',
-              icon: const Icon(Icons.fact_check_outlined, size: 16),
-              style: IconButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-              ),
-              onSelected: (documentId) {
-                if (documentId == -1) {
-                  _runCommand('editor.verifyIntegrity');
-                } else {
-                  _activateEditorFromOverflow(g, documentId);
-                }
-              },
-              itemBuilder: (context) {
-                final orderedDocs = EditorTabMruPolicy.order<OpenDoc>(
-                  tabs: g.docs,
-                  recentDocumentIds: g.recentDocIds,
-                  documentId: (document) => document.id,
-                );
-                return [
-                  for (final doc in orderedDocs)
-                    PopupMenuItem<int>(
-                      key: ValueKey(
-                        'editor-tab-overflow-item-${g.region}-${doc.id}',
-                      ),
-                      value: doc.id,
-                      child: Semantics(
-                        label:
-                            '${labelsById[doc.id] ?? doc.name}'
-                            '${doc.isDirty ? ', 未保存更改' : ''}'
-                            '${g.stickyDocIds.contains(doc.id) ? ', 已固定' : ''}'
-                            '${doc.id == g.activeDocId ? ', 当前编辑器' : ''}',
-                        selected: doc.id == g.activeDocId,
-                        child: SizedBox(
-                          width: 240,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 18,
-                                child: doc.id == g.activeDocId
-                                    ? Icon(
-                                        Icons.check,
-                                        key: ValueKey(
-                                          'editor-tab-overflow-active-${g.region}-${doc.id}',
-                                        ),
-                                        size: 14,
-                                      )
-                                    : null,
-                              ),
-                              Expanded(
-                                child: Text(
-                                  labelsById[doc.id] ?? doc.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              if (g.stickyDocIds.contains(doc.id))
-                                Icon(
-                                  Icons.push_pin,
-                                  key: ValueKey(
-                                    'editor-tab-overflow-sticky-${g.region}-${doc.id}',
-                                  ),
-                                  size: 12,
-                                ),
-                              if (doc.isDirty)
-                                Icon(
-                                  Icons.circle,
-                                  key: ValueKey(
-                                    'editor-tab-overflow-dirty-${g.region}-${doc.id}',
-                                  ),
-                                  color: Colors.orangeAccent,
-                                  size: 7,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem<int>(
-                    key: ValueKey('editor-tab-overflow-verify-${g.region}'),
-                    value: -1,
-                    enabled: _commands.isEnabled('editor.verifyIntegrity'),
-                    child: const Row(
+      child: LayoutBuilder(
+        builder: (context, bounds) {
+          final tabReserve = visibleDocs.isEmpty ? 0.0 : 22.0;
+          final actionWidth = (bounds.maxWidth - tabReserve)
+              .clamp(0.0, bounds.maxWidth)
+              .toDouble();
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    _editorTabLastWidths[g.region] = <int, double>{};
+                    if (!separatePinnedRows) {
+                      return buildTabRow(
+                        visibleDocs,
+                        rowName: 'shared',
+                        availableWidth: constraints.maxWidth,
+                      );
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.fact_check_outlined, size: 16),
-                        SizedBox(width: 12),
-                        Text('校验一致性'),
+                        buildTabRow(
+                          stickyDocs,
+                          rowName: 'pinned',
+                          availableWidth: constraints.maxWidth,
+                        ),
+                        buildTabRow(
+                          ordinaryDocs,
+                          rowName: 'ordinary',
+                          availableWidth: constraints.maxWidth,
+                        ),
                       ],
-                    ),
+                    );
+                  },
+                ),
+              ),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: actionWidth),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: actions,
                   ),
-                ];
-              },
-            )
-          else
-            IconButton(
-              tooltip: '校验一致性',
-              onPressed: _commands.isEnabled('editor.verifyIntegrity')
-                  ? () => _runCommand('editor.verifyIntegrity')
-                  : null,
-              icon: const Icon(Icons.fact_check_outlined, size: 16),
-              visualDensity: VisualDensity.compact,
-            ),
-          const SizedBox(width: 6),
-        ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

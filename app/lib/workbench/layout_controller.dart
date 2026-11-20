@@ -59,6 +59,78 @@ class WorkbenchLayout extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<({WbNode active, List<WbNode> siblings})> _editorGroupBranches(
+    String region,
+  ) {
+    final branches = <({WbNode active, List<WbNode> siblings})>[];
+    WbSplit? split = root;
+    while (split != null) {
+      final children = split.children;
+      final index =
+          children.indexWhere((child) => child.leafOf(region) != null);
+      if (index < 0) break;
+      final active = children[index];
+      final span = split.editorGroupSpan;
+      if (span != null && index >= span.first && index <= span.last) {
+        branches.add((
+          active: active,
+          siblings: [
+            for (var i = span.first; i <= span.last; i++)
+              if (i != index) children[i],
+          ],
+        ));
+      }
+      split = active is WbSplit ? active : null;
+    }
+    return branches;
+  }
+
+  void toggleEditorGroupSizes(String region) {
+    final branches = _editorGroupBranches(region);
+    final expanded = branches.isNotEmpty &&
+        _maximizedEditorRegion == null &&
+        branches.every((branch) =>
+            branch.active.weight > 0 &&
+            branch.siblings.every((sibling) => sibling.weight == 0));
+    if (expanded) {
+      resetEditorGroupSizes();
+    } else {
+      _expandEditorGroupBranches(branches);
+    }
+  }
+
+  void expandEditorGroup(String region) =>
+      _expandEditorGroupBranches(_editorGroupBranches(region));
+
+  void _expandEditorGroupBranches(
+    List<({WbNode active, List<WbNode> siblings})> branches,
+  ) {
+    if (branches.isEmpty) return;
+    var changed = _maximizedEditorRegion != null;
+    _maximizedEditorRegion = null;
+    for (final branch in branches) {
+      // The allocator gives zero-weight peers their minimum extent. Keep
+      // their share inside this editor branch so the shell stays put.
+      final active = branch.active;
+      var availableWeight = active.weight;
+      for (final sibling in branch.siblings) {
+        for (final leaf in sibling.leaves) {
+          if (leaf.minExtent <= 0) {
+            leaf.minExtent = editorGroupMinimumWidth;
+            changed = true;
+          }
+        }
+        availableWeight += sibling.weight;
+        if (sibling.weight != 0) changed = true;
+        sibling.weight = 0;
+      }
+      final targetWeight = availableWeight > 0 ? availableWeight : 1.0;
+      if (active.weight != targetWeight) changed = true;
+      active.weight = targetWeight;
+    }
+    if (changed) notifyListeners();
+  }
+
   void resetEditorGroupSizes() {
     var changed = _maximizedEditorRegion != null;
     _maximizedEditorRegion = null;

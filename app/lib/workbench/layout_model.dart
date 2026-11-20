@@ -21,7 +21,14 @@ const double workbenchDividerThickness = 4.0;
 const double panelMinimumWidth = 300.0;
 const double panelMinimumHeight = 77.0;
 
+const double editorGroupMinimumWidth = 220.0;
+const double editorGroupMinimumHeight = 70.0;
+
 const double _legacyDefaultPanelMinimumExtent = 120.0;
+const double _legacyDefaultEditorMinimumExtent = 320.0;
+
+bool _isEditorGroupRegion(String region) =>
+    region == 'editor' || region.startsWith('editor-');
 
 /// Primary Activity Bar placement, persisted with the layout tree.
 enum ActivityBarLocation { side, top, bottom, hidden }
@@ -404,9 +411,7 @@ extension EditorGroupSpan on WbSplit {
   /// shell. The editor-only children may themselves contain nested splits.
   ({int first, int last})? get editorGroupSpan {
     bool isEditorBranch(WbNode node) => node.leaves.every((leaf) =>
-        !leaf.collapsed &&
-        !leaf.isFixed &&
-        (leaf.region == 'editor' || leaf.region.startsWith('editor-')));
+        !leaf.collapsed && !leaf.isFixed && _isEditorGroupRegion(leaf.region));
 
     final first = children.indexWhere(isEditorBranch);
     final last = children.lastIndexWhere(isEditorBranch);
@@ -467,15 +472,18 @@ class WbLeaf extends WbNode {
     if (region is! String || region.isEmpty) {
       throw const FormatException('leaf 缺少 region');
     }
-    final serializedMinimum = _toDouble(json['min']) ?? 0;
+    var minimum = _toDouble(json['min']) ?? 0;
+    if (region == 'panel' && minimum == _legacyDefaultPanelMinimumExtent) {
+      minimum = panelMinimumHeight;
+    } else if (_isEditorGroupRegion(region) &&
+        minimum == _legacyDefaultEditorMinimumExtent) {
+      minimum = editorGroupMinimumWidth;
+    }
     return WbLeaf(
       region: region,
       fixedExtent: _toDouble(json['fixed']),
       weight: _toDouble(json['weight']) ?? 1,
-      minExtent: region == 'panel' &&
-              serializedMinimum == _legacyDefaultPanelMinimumExtent
-          ? panelMinimumHeight
-          : serializedMinimum,
+      minExtent: minimum,
       collapsed: json['collapsed'] == true,
       lastWeight: _toDouble(json['last']),
     );
@@ -508,7 +516,11 @@ WbSplit defaultLayout() => WbSplit(
           children: [
             WbLeaf(region: 'activity', fixedExtent: 48),
             WbLeaf(region: 'sidebar', weight: 0.24, minExtent: 170),
-            WbLeaf(region: 'editor', weight: 0.76, minExtent: 320),
+            WbLeaf(
+              region: 'editor',
+              weight: 0.76,
+              minExtent: editorGroupMinimumWidth,
+            ),
             WbLeaf(
               region: 'secondarySidebar',
               weight: 0.26,
@@ -589,6 +601,12 @@ double nodeMinExtent(WbNode node, Axis axis) {
     if (self.collapsed) return 0;
     final minimum = self.isFixed ? self.fixedExtent! : self.minExtent;
     final nonNegativeMinimum = math.max(0.0, minimum).toDouble();
+    if (!self.isFixed &&
+        nonNegativeMinimum > 0 &&
+        _isEditorGroupRegion(self.region) &&
+        axis == Axis.vertical) {
+      return editorGroupMinimumHeight;
+    }
     if (self.region == 'panel') {
       final panelMinimum =
           axis == Axis.horizontal ? panelMinimumWidth : panelMinimumHeight;
