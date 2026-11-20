@@ -426,8 +426,15 @@ void main() {
 
       await tester.tap(titleBell);
       await tester.pump();
-      expect(tester.getRect(toast).top, top.top);
-      expect(tester.getRect(toast).right, top.right);
+      expect(toast, findsNothing);
+      final fresh = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'New notice at the updated position',
+      );
+      await tester.pump();
+      final freshToast = find.byKey(ValueKey('notification-toast-${fresh.id}'));
+      expect(tester.getRect(freshToast).top, top.top);
+      expect(tester.getRect(freshToast).right, top.right);
 
       await tester.tap(titleBell);
       await tester.pump();
@@ -435,6 +442,65 @@ void main() {
       expect(tester.getRect(panel).bottomRight, originalToast.bottomRight);
       expect(statusBell, findsOneWidget);
       expect(titleBell, findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('closing the notification center does not replay toasts',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final old = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Arrived before opening the center',
+      );
+      final panel = find.byKey(const ValueKey('notification-center'));
+      final oldToast = find.byKey(ValueKey('notification-toast-${old.id}'));
+      const badgeKey = ValueKey('status-notifications-badge');
+      await tester.pump();
+      expect(oldToast, findsOneWidget);
+      expect(find.byKey(badgeKey), findsOneWidget);
+
+      await _showNotificationCenter(tester);
+      final urgent = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        priority: WorkbenchNotificationPriority.urgent,
+        message: 'Urgent error in the open center',
+      );
+      await tester.pump();
+      expect(panel, findsOneWidget);
+      expect(find.text(old.message), findsOneWidget);
+      expect(find.text(urgent.message), findsOneWidget);
+      expect(find.byKey(badgeKey), findsNothing);
+      expect(notifications.toastIds, isEmpty);
+
+      await tester.tap(find.byKey(const ValueKey('notification-center-close')));
+      await tester.pump();
+      expect(panel, findsNothing);
+      expect(oldToast, findsNothing);
+      expect(find.text(urgent.message), findsNothing);
+      expect(find.byKey(badgeKey), findsNothing);
+
+      final fresh = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Arrived after closing the center',
+      );
+      await tester.pump();
+      expect(find.byKey(ValueKey('notification-toast-${fresh.id}')),
+          findsOneWidget);
+      expect(find.byKey(badgeKey), findsOneWidget);
+      expect(notifications.items, [fresh, urgent, old]);
+
+      await _showNotificationCenter(tester);
+      for (final entry in [fresh, urgent, old]) {
+        await tester
+            .tap(find.byKey(ValueKey('notification-dismiss-${entry.id}')));
+        await tester.pump();
+      }
+      expect(panel, findsNothing);
+      expect(notifications.toastIds, isEmpty);
+      expect(notifications.items, isEmpty);
     } finally {
       await _unmountApp(tester);
     }
@@ -1163,7 +1229,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(notifications.doNotDisturb, isFalse);
       expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
-      expect(notifications.toastIds, [error.id]);
+      expect(notifications.toastIds, isEmpty);
     } finally {
       await _unmountApp(tester);
     }
@@ -1350,14 +1416,16 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('notification-source-dnd-1')));
       await tester.pumpAndSettle();
-      expect(notifications.toastIds, [oldError.id]);
+      expect(notifications.toastIds, isEmpty);
+      await tester.tap(find.byKey(const ValueKey('notification-center-close')));
+      await tester.pump();
       final enabled = notifications.notify(
         severity: WorkbenchNotificationSeverity.warning,
         message: 'Warnings show again',
         source: 'Fixture',
         sourceId: 'fixture.named',
       );
-      expect(notifications.toastIds, [oldError.id, enabled.id]);
+      expect(notifications.toastIds, [enabled.id]);
     } finally {
       await _unmountApp(tester);
     }

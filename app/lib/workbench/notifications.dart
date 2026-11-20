@@ -164,6 +164,7 @@ class NotificationCenter extends ChangeNotifier {
   final Set<int> _unread = <int>{};
   final List<int> _toasts = <int>[]; // 旧 → 新
   final List<int> _banners = <int>[]; // 旧 → 新
+  var _centerVisible = false;
   var _doNotDisturb = false;
   Map<String, WorkbenchNotificationSourceFilter> _sourceFilters = const {};
 
@@ -186,6 +187,7 @@ class NotificationCenter extends ChangeNotifier {
           if (byId(id) case final notification?) notification,
       ];
 
+  bool get centerVisible => _centerVisible;
   bool get doNotDisturb => _doNotDisturb;
   int get unreadCount => _unread.length;
   bool get hasUnread => _unread.isNotEmpty;
@@ -235,7 +237,7 @@ class NotificationCenter extends ChangeNotifier {
       banner: banner,
     );
     _items.insert(0, notification);
-    _unread.add(notification.id);
+    if (!_centerVisible) _unread.add(notification.id);
     if (banner) {
       _banners.add(notification.id);
       while (_banners.length > maxVisibleBanners) {
@@ -258,6 +260,7 @@ class NotificationCenter extends ChangeNotifier {
   }
 
   bool _canShowToast(WorkbenchNotification notification) {
+    if (_centerVisible) return false;
     final priority = notification.priority;
     if (priority == WorkbenchNotificationPriority.silent) return false;
     if (priority == WorkbenchNotificationPriority.urgent) return true;
@@ -302,7 +305,9 @@ class NotificationCenter extends ChangeNotifier {
     _unread.remove(id);
     _toasts.remove(id);
     _banners.remove(id);
-    if (_items.length != before) notifyListeners();
+    if (_items.length == before) return;
+    if (_items.isEmpty) _centerVisible = false;
+    notifyListeners();
   }
 
   /// Returns whether the notification belonged to this center and was cleared.
@@ -329,6 +334,7 @@ class NotificationCenter extends ChangeNotifier {
     _unread.removeAll(clearedIds);
     _toasts.removeWhere(clearedIds.contains);
     _banners.removeWhere(clearedIds.contains);
+    if (_items.isEmpty) _centerVisible = false;
     notifyListeners();
     return clearedIds.length;
   }
@@ -340,6 +346,17 @@ class NotificationCenter extends ChangeNotifier {
   void markAllRead() {
     if (_unread.isEmpty) return;
     _unread.clear();
+    notifyListeners();
+  }
+
+  /// Opening the center consumes the current toast and unread state.
+  void setCenterVisible(bool visible) {
+    if (_centerVisible == visible) return;
+    _centerVisible = visible;
+    if (visible) {
+      _toasts.clear();
+      _unread.clear();
+    }
     notifyListeners();
   }
 

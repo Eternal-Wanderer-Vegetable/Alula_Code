@@ -542,7 +542,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   static const _sourceDndPreference = 'notifications.perSourceDoNotDisturbMode';
   late Map<String, WorkbenchNotificationSourceFilter> _sourceFilterSnapshot;
   late final _optionalToastAdmission = _allowOptionalNotificationToast;
-  bool _notificationsVisible = false;
+  bool get _notificationsVisible => _notifications.centerVisible;
   WorkbenchNotificationPosition _notificationPosition =
       WorkbenchNotificationPosition.bottomRight;
   String? _notificationSourceFilter;
@@ -20890,6 +20890,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _onNotificationsChanged() {
     if (!mounted || _disposing) return;
+    if (!_notificationsVisible) _notificationSourceFilter = null;
     final sourceFilters = _notifications.sourceFilters;
     if (!identical(sourceFilters, _sourceFilterSnapshot)) {
       _sourceFilterSnapshot = sourceFilters;
@@ -20947,14 +20948,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _toggleNotificationCenter() {
-    setState(() {
-      _notificationsVisible = !_notificationsVisible;
-      if (_notificationsVisible) {
-        _notifications.markAllRead();
-      } else {
-        _notificationSourceFilter = null;
-      }
-    });
+    _notifications.setCenterVisible(!_notificationsVisible);
   }
 
   void _clearNotification(WorkbenchNotification notification) {
@@ -21038,7 +21032,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 },
                 onClearAll: _clearNotifications,
                 onToggleDoNotDisturb: _toggleNotificationDoNotDisturb,
-                onClose: () => setState(() => _notificationsVisible = false),
+                onClose: () => _notifications.setCenterVisible(false),
               )
             : WorkbenchNotificationToasts(
                 center: _notifications,

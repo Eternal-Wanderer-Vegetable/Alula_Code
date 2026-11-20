@@ -140,6 +140,69 @@ void main() {
       expect(center.items, [error, optional, urgent, silent, firstUrgent]);
     });
 
+    test('visible center consumes toasts and new unread state without replay',
+        () {
+      final center = NotificationCenter();
+      final old = notify(center);
+      final states = <(bool, int, List<int>)>[];
+      center.addListener(() {
+        states.add((center.centerVisible, center.unreadCount, center.toastIds));
+      });
+
+      center.setCenterVisible(true);
+      center.setCenterVisible(true);
+      final error = center.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        priority: WorkbenchNotificationPriority.urgent,
+        message: 'Error while center is open',
+      );
+      final banner = center.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Banner uses its own surface',
+        banner: true,
+      );
+      expect(center.items, [banner, error, old]);
+      expect(center.banners, [banner]);
+
+      center.setCenterVisible(false);
+      final fresh = notify(center);
+      expect(states.map((state) => (state.$1, state.$2)), [
+        (true, 0),
+        (true, 0),
+        (true, 0),
+        (false, 0),
+        (false, 1),
+      ]);
+      expect(states.map((state) => state.$3), [
+        [],
+        [],
+        [],
+        [],
+        [fresh.id],
+      ]);
+    });
+
+    test('deleting the last entry closes the center without replay', () {
+      final center = NotificationCenter();
+      final notice = notify(center);
+      center.setCenterVisible(true);
+
+      center.dismiss(-1);
+      expect(center.centerVisible, isTrue);
+      expect(center.clearNotification(notice), isTrue);
+      expect(center.centerVisible, isFalse);
+
+      final next = notify(center);
+      expect(center.toastIds, [next.id]);
+      center.setCenterVisible(true);
+      expect(center.clearAll(), 1);
+      expect(center.centerVisible, isFalse);
+
+      center.setCenterVisible(true);
+      expect(center.clearAll(), 0);
+      expect(center.centerVisible, isTrue);
+    });
+
     test('markRead and markAllRead clear unread state', () {
       final center = NotificationCenter();
       final first = notify(center);
