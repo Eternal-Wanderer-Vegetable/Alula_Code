@@ -1114,6 +1114,98 @@ void main() {
     }
   });
 
+  testWidgets('global do not disturb dismisses current surfaces and admits new errors',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final oldInfo = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Initially visible info',
+      );
+      final oldError = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Initially visible error',
+      );
+      await tester.pump();
+      expect(notifications.toastIds, [oldInfo.id, oldError.id]);
+      await _showNotificationCenter(tester);
+      await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+      await tester.pumpAndSettle();
+      expect(notifications.doNotDisturb, isTrue);
+      expect(find.byKey(const ValueKey('notification-center')), findsNothing);
+      expect(notifications.toastIds, isEmpty);
+      expect(notifications.items, [oldError, oldInfo]);
+
+      final warning = notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Quiet warning',
+      );
+      final info = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Quiet info',
+      );
+      final error = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'New error during quiet mode',
+      );
+      await tester.pump();
+      expect(notifications.toastIds, [error.id]);
+      expect(find.text(error.message), findsOneWidget);
+      expect(find.text(warning.message), findsNothing);
+      expect(find.text(info.message), findsNothing);
+
+      await _showNotificationCenter(tester);
+      for (final entry in [oldInfo, oldError, warning, info, error]) {
+        expect(find.byKey(ValueKey('notification-item-${entry.id}')),
+            findsOneWidget);
+      }
+      await tester.tap(find.byKey(const ValueKey('notification-dnd-toggle')));
+      await tester.pumpAndSettle();
+      expect(notifications.doNotDisturb, isFalse);
+      expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
+      expect(notifications.toastIds, [error.id]);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('global do not disturb command survives session restore',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), '切换请勿打扰');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 切换请勿打扰')));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 550));
+      expect(notifications.doNotDisturb, isTrue);
+      expect(sessionStore.tryLoad()?['notifications.doNotDisturbMode'], isTrue);
+    } finally {
+      await _unmountApp(tester);
+    }
+
+    notifications = NotificationCenter();
+    await _mountApp(tester);
+    try {
+      expect(notifications.doNotDisturb, isTrue);
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Quiet after restart',
+      );
+      final error = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Visible error after restart',
+      );
+      await tester.pump();
+      expect(notifications.toastIds, [error.id]);
+      expect(find.text(error.message), findsOneWidget);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('actions run, source filter narrows and clear all empties',
       (tester) async {
     await _mountApp(tester);

@@ -538,6 +538,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   // ---------- 通知中心（LAY-18a） ----------
   late final NotificationCenter _notifications =
       widget.notifications ?? NotificationCenter();
+  static const _notificationDndPreference = 'notifications.doNotDisturbMode';
   bool _notificationsVisible = false;
   WorkbenchNotificationPosition _notificationPosition =
       WorkbenchNotificationPosition.bottomRight;
@@ -1138,8 +1139,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'workbench.action.toggleNotificationsDoNotDisturb',
       '查看',
       '切换请勿打扰',
-      () async => _notifications
-          .setDoNotDisturb(!_notifications.doNotDisturb),
+      () async => _toggleNotificationDoNotDisturb(),
     );
     for (final position in WorkbenchNotificationPosition.values) {
       reg(
@@ -3950,6 +3950,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Map<String, Object?> _encodeSession() => {
         'v': 1,
         'workbench.notifications.position': _notificationPosition.value,
+        _notificationDndPreference: _notifications.doNotDisturb,
         'editorTabMode': _editorTabMode.value.name,
         'editorTabSizing': _editorTabSizing.value.name,
         'editorTabActionLocation': _editorTabActionLocation.value.name,
@@ -4070,6 +4071,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _notificationPosition = WorkbenchNotificationPosition.parse(
       data['workbench.notifications.position'],
     );
+    if (data[_notificationDndPreference] case final bool doNotDisturb) {
+      _notifications.setDoNotDisturb(doNotDisturb);
+    }
     _editorTabMode.value =
         EditorTabMode.fromSessionValue(data['editorTabMode']);
     _editorTabSizing.value =
@@ -20843,6 +20847,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  void _toggleNotificationDoNotDisturb() {
+    final enabled = !_notifications.doNotDisturb;
+    if (enabled && _notificationsVisible) _toggleNotificationCenter();
+    _notifications.setDoNotDisturb(enabled);
+    _scheduleStateSave();
+  }
+
   void _toggleNotificationCenter() {
     setState(() {
       _notificationsVisible = !_notificationsVisible;
@@ -20934,8 +20945,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   }
                 },
                 onClearAll: _clearNotifications,
-                onToggleDoNotDisturb: () => _notifications
-                    .setDoNotDisturb(!_notifications.doNotDisturb),
+                onToggleDoNotDisturb: _toggleNotificationDoNotDisturb,
                 onClose: () => setState(() => _notificationsVisible = false),
               )
             : WorkbenchNotificationToasts(

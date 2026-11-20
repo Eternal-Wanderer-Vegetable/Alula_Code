@@ -1,8 +1,8 @@
 /// 工作台通知中心（docs/11 LAY-18「通知与进度」）。
 ///
 /// 上游 `INotificationService.notify({severity, message, actions, source})`：通知进入
-/// 通知中心列表并在右下角以 toast 呈现；severity 为 info/warning/error；Do Not
-/// Disturb 抑制 toast 但通知仍进入中心；按来源过滤。本文件是纯模型（无 UI），
+/// 通知中心列表并按位置设置呈现 toast。请勿打扰时普通通知仍进入中心，
+/// 新错误照常弹出。本文件是纯模型（无 UI），
 /// 有界列表 + 未读计数 + toast 生命周期，UI 见 notification_widgets.dart。
 library;
 
@@ -220,7 +220,8 @@ class NotificationCenter extends ChangeNotifier {
       while (_banners.length > maxVisibleBanners) {
         _banners.removeAt(0);
       }
-    } else if (!_doNotDisturb) {
+    } else if (!_doNotDisturb ||
+        severity == WorkbenchNotificationSeverity.error) {
       _toasts.add(notification.id);
       while (_toasts.length > maxVisibleToasts) {
         _toasts.removeAt(0);
