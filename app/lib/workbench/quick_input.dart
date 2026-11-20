@@ -4,6 +4,7 @@
 library;
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -263,6 +264,9 @@ class _QuickInputPanel extends StatefulWidget {
 
 class _QuickInputPanelState extends State<_QuickInputPanel> {
   static final _noSpaces = FilteringTextInputFormatter.deny(RegExp(' '));
+  static const _rowHeight = 22.0;
+  static const _detailRowHeight = _rowHeight * 2;
+  static const _listPadding = EdgeInsets.only(top: 4, bottom: 3);
 
   final _controller = TextEditingController();
   final _scroll = ScrollController();
@@ -841,10 +845,15 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       null => '',
     };
     final validationText = _validation?.message ?? widget.validationMessage;
+    final window = MediaQuery.sizeOf(context);
+    final listHeight =
+        (window.height * 0.4 / _detailRowHeight).floor() * _detailRowHeight;
+    // Leave a small part of the next row visible when the list overflows.
+    final maxListHeight = listHeight + 6 + _listPadding.vertical;
     return Container(
       key: const ValueKey('quick-input'),
       margin: const EdgeInsets.only(top: 56),
-      width: 560,
+      width: math.min(600.0, window.width * 0.62),
       decoration: BoxDecoration(
         color: const Color(0xFF252932),
         borderRadius: BorderRadius.circular(6),
@@ -928,7 +937,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
           if (!widget.inputMode) ...[
             const Divider(height: 1),
             ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 340),
+              constraints: BoxConstraints(maxHeight: maxListHeight),
               child: _filtered.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(14),
@@ -941,7 +950,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                       key: _viewportKey,
                       controller: _scroll,
                       shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      padding: _listPadding,
                       itemCount: _filtered.length,
                       itemBuilder: (context, i) => _buildRow(_filtered[i], i),
                     ),
@@ -973,6 +982,8 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final selected = index == _selected;
     final enabled = _enabled(item);
     final picked = _picked.contains(item);
+    final detail = item.detail;
+    final hasDetail = detail != null && detail.isNotEmpty;
     final rowKey = _rowKeys.putIfAbsent(item, GlobalKey.new);
     return InkWell(
       key: rowKey,
@@ -993,10 +1004,13 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       },
       child: Container(
         key: ValueKey('qi-${item.label}'),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        constraints: BoxConstraints(
+            minHeight: hasDetail ? _detailRowHeight : _rowHeight),
         color: selected ? const Color(0xFF2F3542) : Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               children: [
@@ -1032,22 +1046,23 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                 // 键盘用户 Tab 进入当前行的按钮、Enter 触发。
                 if (selected)
                   for (final (buttonIndex, button) in item.buttons.indexed)
-                    IconButton(
-                      key: ValueKey('qi-button-${item.label}-$buttonIndex'),
-                      focusNode: _buttonNodesFor(item)[buttonIndex],
-                      tooltip: button.tooltip,
-                      visualDensity: VisualDensity.compact,
-                      constraints:
-                          const BoxConstraints(minWidth: 24, minHeight: 24),
-                      padding: EdgeInsets.zero,
-                      iconSize: 14,
-                      onPressed: enabled ? () => _runItemButton(button) : null,
-                      icon: Icon(button.icon,
-                          size: 14, color: Colors.grey.shade400),
+                    SizedBox.square(
+                      dimension: _rowHeight,
+                      child: IconButton(
+                        key: ValueKey('qi-button-${item.label}-$buttonIndex'),
+                        focusNode: _buttonNodesFor(item)[buttonIndex],
+                        tooltip: button.tooltip,
+                        padding: EdgeInsets.zero,
+                        iconSize: 14,
+                        onPressed:
+                            enabled ? () => _runItemButton(button) : null,
+                        icon: Icon(button.icon,
+                            size: 14, color: Colors.grey.shade400),
+                      ),
                     ),
               ],
             ),
-            if (item.detail case final detail? when detail.isNotEmpty)
+            if (detail != null && detail.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(
                   top: 2,

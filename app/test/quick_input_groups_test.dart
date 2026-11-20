@@ -257,6 +257,80 @@ void main() {
     expect(accepted.last, ['alpha']);
   });
 
+  testWidgets('picker viewport resizes and item buttons keep compact rows',
+      (tester) async {
+    tester.view.devicePixelRatio = 1.25;
+    tester.view.physicalSize = const Size(995, 734);
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final harness = await _pumpHarness(tester);
+    var buttonCalls = 0;
+    unawaited(QuickInput.show(
+      harness.pickerContext,
+      hint: 'Layered picker',
+      canSelectMany: true,
+      items: [
+        QuickItem(
+          label: 'Plain row',
+          picked: true,
+          buttons: [
+            QuickItemButton(
+              icon: Icons.push_pin,
+              tooltip: 'Pin item',
+              onRun: () async => buttonCalls++,
+            ),
+          ],
+        ),
+        const QuickItem(label: 'Detail row', detail: 'Additional detail'),
+        for (var i = 0; i < 35; i++) QuickItem(label: 'Item $i'),
+      ],
+    ));
+    await tester.pumpAndSettle();
+
+    final panel = find.byKey(const ValueKey('quick-input'));
+    final viewport =
+        find.descendant(of: panel, matching: find.byType(ListView));
+    final plain = find.byKey(const ValueKey('qi-Plain row'));
+    final detail = find.byKey(const ValueKey('qi-Detail row'));
+    expect(tester.getSize(viewport).width, closeTo(493.52, 0.5));
+    expect(tester.getSize(viewport).height, 233);
+    expect(tester.getSize(plain).height, 22);
+    expect(tester.getSize(detail).height, 44);
+    expect(find.byKey(const ValueKey('qi-check-Plain row')), findsOneWidget);
+    expect(find.byKey(const ValueKey('qi-button-Plain row-0')), findsOneWidget);
+
+    tester.view.physicalSize = const Size(1112, 1042);
+    await tester.pumpAndSettle();
+    expect(tester.getSize(viewport).width, closeTo(551.55, 0.5));
+    expect(tester.getSize(viewport).height, 321);
+    expect(tester.getSize(plain).height, 22);
+    expect(tester.getSize(detail).height, 44);
+    final input = find.descendant(
+        of: _inputFinder(), matching: find.byType(EditableText));
+    expect(
+        tester.widget<EditableText>(input).focusNode.hasPrimaryFocus, isTrue);
+
+    final dispatcher = tester.platformDispatcher;
+    addTearDown(dispatcher.clearTextScaleFactorTestValue);
+    dispatcher.textScaleFactorTestValue = 2;
+    await tester.pumpAndSettle();
+    expect(tester.getSize(plain).height, greaterThan(22));
+    expect(tester.getSize(detail).height, greaterThan(44));
+    expect(
+        tester.widget<EditableText>(input).focusNode.hasPrimaryFocus, isTrue);
+    dispatcher.clearTextScaleFactorTestValue();
+    await tester.pumpAndSettle();
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(tester.getSize(plain).height, 22);
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(buttonCalls, 1);
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('description renders inline and detail renders as a second line',
       (tester) async {
     final harness = await _pumpHarness(tester);
