@@ -4,10 +4,11 @@ Last Updated: 2026-11-21
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并已完成，P05.136 / feat-188 同组标签多选与批量关闭的前置依赖已满足。
 
 ## Current State
 
+- 产品 `ecbc5fd0b2a3a1d87055ddce04c57801d937d45f` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证单标签双视图、两侧文本一致、独立焦点和滚动、方向与分隔条、保留活动视图的合并及文件保存。专项 53/53，Flutter 1,656 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44781172968 四项及 Platform Availability 44781156916 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.135-split-in-group.md。
 - 产品 `50caa0718335eeffd9a99875c9527064aec27f9a` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 验证嵌套单轴及两轴扩展、220×70 最小尺寸、均分、同时隐藏两侧栏和视图身份。专项 71/71，Flutter 1,655 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44774272272 四项及 Platform Availability 44774255986 Windows 和同 SHA 44775806212 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.134-editor-group-expansion.md。
 - 产品 `99c8c0cd71d8c37cc5e09937554f9dc5d7c8d821` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 检验锁定后的原文档复用、最近可用组回退、新建邻组和解锁路由。Windows 两次 Release 退出码 0，重启后活动锁组与文档列表一致。专项 38/38，Flutter 1,652 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44769214633 四项及 Platform Availability 44769197746 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.133-editor-group-lock.md。
 - 产品 `cbc142c93f119f6ac4ccfb2df0f1cc97267a18b7` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 已验证整组移动与复制、活动文档和视图身份、滚动恢复与实际保存。专项 61/61，Flutter 1,651 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44764891062 四项及 Platform Availability 44764880915 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.132-editor-group-transfer.md。
@@ -51,4 +52,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.134 文档收尾 CI。按 docs/03 推进 P05.135 同组文本编辑器拆分与合并。
+确认 P05.135 文档收尾 CI。按 docs/03 推进 P05.136 同组标签多选与批量关闭。

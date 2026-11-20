@@ -1,0 +1,141 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "before": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [],
+      "firstLine": "line-001\u00a0original\u00a0fixture"
+    },
+    "horizontal-split": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [
+        {
+          "x": 52.79999923706055,
+          "y": 89.80000305175781,
+          "width": 372,
+          "height": 655.4000244140625,
+          "focused": false,
+          "firstLine": "line-001\u00a0original\u00a0fixture"
+        },
+        {
+          "x": 424.8000183105469,
+          "y": 89.80000305175781,
+          "width": 373.20001220703125,
+          "height": 655.4000244140625,
+          "focused": true,
+          "firstLine": "line-001\u00a0original\u00a0fixture"
+        }
+      ],
+      "firstLine": "line-001\u00a0original\u00a0fixture"
+    },
+    "first-side-focused": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [
+        {
+          "x": 52.79999923706055,
+          "y": 89.80000305175781,
+          "width": 372,
+          "height": 655.4000244140625,
+          "focused": true,
+          "firstLine": "line-001\u00a0original\u00a0fixture"
+        },
+        {
+          "x": 424.8000183105469,
+          "y": 89.80000305175781,
+          "width": 373.20001220703125,
+          "height": 655.4000244140625,
+          "focused": false,
+          "firstLine": "line-001\u00a0original\u00a0fixture"
+        }
+      ],
+      "firstLine": "line-001\u00a0original\u00a0fixture"
+    },
+    "single-edit-shared": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [
+        {
+          "x": 52.79999923706055,
+          "y": 89.80000305175781,
+          "width": 372,
+          "height": 655.4000244140625,
+          "focused": true,
+          "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+        },
+        {
+          "x": 424.8000183105469,
+          "y": 89.80000305175781,
+          "width": 373.20001220703125,
+          "height": 655.4000244140625,
+          "focused": false,
+          "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+        }
+      ],
+      "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+    },
+    "second-side-scroll-independent": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [
+        {
+          "x": 52.79999923706055,
+          "y": 89.80000305175781,
+          "width": 372,
+          "height": 655.4000244140625,
+          "focused": false,
+          "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+        },
+        {
+          "x": 424.8000183105469,
+          "y": 89.80000305175781,
+          "width": 373.20001220703125,
+          "height": 655.4000244140625,
+          "focused": true,
+          "firstLine": "line-222\u00a0original\u00a0fixture"
+        }
+      ],
+      "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+    },
+    "vertical-split": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [
+        {
+          "x": 52.79999923706055,
+          "y": 89.80000305175781,
+          "width": 744.4000244140625,
+          "height": 328,
+          "focused": false,
+          "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+        },
+        {
+          "x": 52.79999923706055,
+          "y": 417.8000183105469,
+          "width": 744.4000244140625,
+          "height": 328.20001220703125,
+          "focused": false,
+          "firstLine": "line-222\u00a0original\u00a0fixture"
+        }
+      ],
+      "firstLine": "edited-line-001\u00a0original\u00a0fixture"
+    },
+    "joined": {
+      "tabs": [
+        "split-sample.txt"
+      ],
+      "panes": [],
+      "firstLine": "line-222\u00a0original\u00a0fixture"
+    }
+  },
+  "exitCode": 0
+}

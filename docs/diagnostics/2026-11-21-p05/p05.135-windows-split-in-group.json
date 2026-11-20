@@ -1,0 +1,1102 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "input": "Native Windows mouse and keyboard control of the WorkbenchPage fixture",
+  "sourceProvenance": {
+    "base": "24e265b725bf6f3db152a746f8ccb5b8b511d925",
+    "sourceTree": "482bc59d2121c144bb1f1d0c07a75fd7cb90058b",
+    "source": {
+      "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+      "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+      "app/lib/workbench/keybindings.dart": "4679181785fd573ffc68b596abfa7fe87fb25a894727b1fe381aee6f813b388f",
+      "app/lib/workbench/layout_controller.dart": "bed6fa11a60272f8b97350a677832349a2845af6e5a6afe16fda60fa8da7ee9f",
+      "app/lib/workbench/layout_grid.dart": "db2db15a65c11ba24abfad7285ad6fa38479570888c071f6879f7b463dbd169a",
+      "app/lib/workbench/layout_model.dart": "5236d6268c12b361e0b963258bf7808fe49bbb7871ebcabe1622e6cff363a62f",
+      "app/lib/workbench/notification_widgets.dart": "e3795d1600f2a38ea5780e4bc9b6d5c4d132c953c02b0a740a088212569bcf5c",
+      "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+      "app/lib/workbench/quick_input.dart": "38a393c8c6ac96b8bdf1217e7d96ae95f91e97422dcf03c79f0f930f59543f58",
+      "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+      "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+      "app/lib/workbench/workbench_page.dart": "dae25ce5040ee789668f119de9ccae90b17b81a89106cd66ba3261872d71e364",
+      "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+      "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+      "app/windows/runner/notification_accessibility.cpp": "71b7419ff692448c1d17d6a4c7d5864c95f2a39ef1470d556f29ab8a73c98524",
+      "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+    },
+    "fixtureSha256": "ec6819b4a22e92457c16fe8ff58186a5f3879feda33d4887846de79d8a564b7b"
+  },
+  "runnerSha256": "c5dc2001e9076d6056d51908db7d31d4468c0185b80efa40c85e2b0bedfbed10",
+  "aotSha256": "6dcf0777105bce9d8c8adaad59e4a0e561a4149c3454f1fbab446d922b3e627e",
+  "fixtureSha256": "ec6819b4a22e92457c16fe8ff58186a5f3879feda33d4887846de79d8a564b7b",
+  "trace": {
+    "ready": {
+      "request": "ready",
+      "boxes": {
+        "single": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 157914520,
+          "focusNode": 90279390,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "split-horizontal": {
+      "request": "split-horizontal",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 157914520,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "first-focused": {
+      "request": "first-focused",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 157914520,
+          "focusNode": 90279390,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 55,
+          "prefix": "Xline-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "edited-both": {
+      "request": "edited-both",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "second-focused": {
+      "request": "second-focused",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "first-pointer-focused": {
+      "request": "first-pointer-focused",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 40,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "other-focused": {
+      "request": "other-focused",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 40,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 0.0,
+          "selection": 54,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "second-at-end": {
+      "request": "second-at-end",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          621.8240000000001,
+          632.8
+        ],
+        "second": [
+          641.8240000000001,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 40,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": false
+    },
+    "split-vertical": {
+      "request": "split-vertical",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          346.4
+        ],
+        "second": [
+          284.448,
+          366.4,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 40,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "vertical-sash-resized": {
+      "request": "vertical-sash-resized",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          405.6000000000002
+        ],
+        "second": [
+          284.448,
+          425.6000000000002,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 503388254,
+          "focusNode": 274451622,
+          "focused": false,
+          "scroll": 0.0,
+          "selection": 40,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.6048158640226633
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "joined": {
+      "request": "joined",
+      "boxes": {
+        "single": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "saved": {
+      "request": "saved",
+      "boxes": {
+        "single": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "resplit-persisted-vertical": {
+      "request": "resplit-persisted-vertical",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          346.4
+        ],
+        "second": [
+          284.448,
+          366.4,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 185178562,
+          "focusNode": 1069839101,
+          "focused": false,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "d fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": false,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "first-side-at-home": {
+      "request": "first-side-at-home",
+      "boxes": {
+        "first": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          346.4
+        ],
+        "second": [
+          284.448,
+          366.4,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "first": {
+          "document": 3,
+          "inputWindow": 678970274,
+          "focusNode": 1069839101,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        },
+        "second": {
+          "document": 3,
+          "inputWindow": 537428929,
+          "focusNode": 90279390,
+          "focused": false,
+          "scroll": 2240.0,
+          "selection": 8288,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": {
+                "firstActive": true,
+                "ratio": 0.5
+              }
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    },
+    "joined-from-first": {
+      "request": "joined-from-first",
+      "boxes": {
+        "single": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ]
+      },
+      "views": {
+        "single": {
+          "document": 3,
+          "inputWindow": 678970274,
+          "focusNode": 1069839101,
+          "focused": true,
+          "scroll": 2240.0,
+          "selection": 0,
+          "prefix": "line-0 shared fixture text"
+        }
+      },
+      "groups": [
+        {
+          "region": "editor",
+          "active": 3,
+          "docs": [
+            {
+              "id": 3,
+              "splitInGroup": null
+            }
+          ]
+        }
+      ],
+      "vertical": true
+    }
+  },
+  "screenshots": {
+    "horizontal": {
+      "name": "windows-split-in-group-horizontal.png",
+      "sha256": "410a6fc46e9942e242b5a3783e4bee0eafb9e97b5106fa6276b84d1212e88692"
+    },
+    "vertical": {
+      "name": "windows-split-in-group-vertical.png",
+      "sha256": "4f186ef7ee813a29ed109c273babfdc8287b0b67d5c226cdc10ec65b6c2d9e2a"
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 296390656,
+          "pid": 47304,
+          "ppid": 56864,
+          "private": 284463104,
+          "pss": 284463104,
+          "working_set": 162852864
+        }
+      ],
+      "root_pid": 47304,
+      "total_private_bytes": 284463104,
+      "total_private_mib": 271.3,
+      "total_working_set_bytes": 162852864
+    },
+    "split": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 298266624,
+          "pid": 47304,
+          "ppid": 56864,
+          "private": 283049984,
+          "pss": 283049984,
+          "working_set": 162357248
+        }
+      ],
+      "root_pid": 47304,
+      "total_private_bytes": 283049984,
+      "total_private_mib": 269.9,
+      "total_working_set_bytes": 162357248
+    },
+    "joined": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app.exe",
+          "peak_private": 298266624,
+          "pid": 47304,
+          "ppid": 56864,
+          "private": 220368896,
+          "pss": 220368896,
+          "working_set": 169623552
+        }
+      ],
+      "root_pid": 47304,
+      "total_private_bytes": 220368896,
+      "total_private_mib": 210.2,
+      "total_working_set_bytes": 169623552
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "results": {
+    "sharedDocument": 3,
+    "secondSelectionOnJoin": 8288,
+    "secondScrollOnJoin": 2240.0,
+    "firstSelectionOnJoin": 0,
+    "firstFocusRetainedOnJoin": true,
+    "savedSha256": "258d1cc19c2c361dc99c61d97f623c568644d651ce2c50a9954f50671ab33e32"
+  },
+  "checksPassed": true,
+  "exitCode": 0,
+  "keyEvents": [
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "\\",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F7",
+      "physical": 458816,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 94489280512,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Home",
+      "physical": 458826,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Delete",
+      "physical": 458828,
+      "control": false,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F8",
+      "physical": 458817,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F9",
+      "physical": 458818,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 94489280512,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "End",
+      "physical": 458829,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F10",
+      "physical": 458819,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "\\",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "S",
+      "physical": 458774,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "\\",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "F7",
+      "physical": 458816,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "Control Left",
+      "physical": 94489280512,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Home",
+      "physical": 458826,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "K",
+      "physical": 458766,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Control Left",
+      "physical": 458976,
+      "control": true,
+      "shift": false
+    },
+    {
+      "logical": "Shift Left",
+      "physical": 458977,
+      "control": true,
+      "shift": true
+    },
+    {
+      "logical": "\\",
+      "physical": 458801,
+      "control": true,
+      "shift": true
+    }
+  ]
+}

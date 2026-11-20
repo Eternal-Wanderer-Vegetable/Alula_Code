@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.135 / feat-187。产品 `ecbc5fd0b2a3a1d87055ddce04c57801d937d45f` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证单标签双视图、两侧文本一致、独立焦点和滚动、方向与分隔条、保留活动视图的合并及文件保存。专项 53/53，Flutter 1,656 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44781172968 四项及 Platform Availability 44781156916 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.135-split-in-group.md。
+
 - 2026-11-21 完成 P05.134 / feat-186。产品 `50caa0718335eeffd9a99875c9527064aec27f9a` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 验证嵌套单轴及两轴扩展、220×70 最小尺寸、均分、同时隐藏两侧栏和视图身份。专项 71/71，Flutter 1,655 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44774272272 四项及 Platform Availability 44774255986 Windows 和同 SHA 44775806212 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.134-editor-group-expansion.md。
 
 - 2026-11-21 完成 P05.133 / feat-185。产品 `99c8c0cd71d8c37cc5e09937554f9dc5d7c8d821` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 检验锁定后的原文档复用、最近可用组回退、新建邻组和解锁路由。Windows 两次 Release 退出码 0，重启后活动锁组与文档列表一致。专项 38/38，Flutter 1,652 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44769214633 四项及 Platform Availability 44769197746 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.133-editor-group-lock.md。

@@ -2319,8 +2319,22 @@
         "feat-184",
         "feat-186"
       ],
+      "status": "done",
+      "evidence": "产品 `ecbc5fd0b2a3a1d87055ddce04c57801d937d45f` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证单标签双视图、两侧文本一致、独立焦点和滚动、方向与分隔条、保留活动视图的合并及文件保存。专项 53/53，Flutter 1,656 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44781172968 四项及 Platform Availability 44781156916 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.135-split-in-group.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-188",
+      "name": "P05.136 LAY-10 同组标签多选与批量关闭",
+      "description": "复刻同组标签增减选中、范围选中、普通单击恢复单选及已选标签批量关闭。覆盖未保存事务与同文档去重。",
+      "dependencies": [
+        "feat-093",
+        "feat-095",
+        "feat-187"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 隔离渲染器已验证单标签双视图、共享编辑、焦点切换、独立滚动、垂直排列和合并后保存。待产品实现和验收。",
+      "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
