@@ -2419,6 +2419,21 @@
         "feat-190",
         "feat-193"
       ],
+      "status": "done",
+      "evidence": "产品 `d5b629ea426395bf45942379b8eb4a3660027060` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签停靠、窄宽滚动、范围恢复、换行和焦点。专项 35/35，Flutter 1,668 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44814735539 四项及 Platform Availability 44814716139 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.142-pinned-tab-scroll.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-195",
+      "name": "P05.143 LAY-09 固定标签关闭保护",
+      "description": "对照固定版 preventPinnedEditorClose，核对键盘、中键、明确关闭操作和混合选择的脏保护。",
+      "dependencies": [
+        "feat-091",
+        "feat-093",
+        "feat-188",
+        "feat-194"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
