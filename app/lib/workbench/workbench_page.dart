@@ -23836,8 +23836,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           : rowDocs
               .where((doc) => !g.stickyDocIds.contains(doc.id))
               .toList(growable: false);
-      final reservedWidth =
-          (rowDocs.length - ordinaryDocs.length) * (pinnedWidth ?? 0.0);
+      final pinnedCount = rowDocs.length - ordinaryDocs.length;
+      final reservedWidth = pinnedCount * (pinnedWidth ?? 0.0);
+      final docked = rowName == 'shared' &&
+          !_editorTabWrap.value &&
+          pinnedCount > 0 &&
+          ordinaryDocs.isNotEmpty &&
+          availableWidth - reservedWidth >= 120;
+      final dockingChanged = rowName != 'ordinary' && g._tabRowDocked != docked;
+      if (dockingChanged) {
+        g._tabRowDocked = docked;
+        g.lastAutoRevealedTabId = null;
+      }
       final widths = EditorTabWidthPolicy.layout(
         contentWidths: [
           for (final doc in ordinaryDocs)
@@ -23885,32 +23895,50 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
       if (_editorTabWrap.value || visibleDocs.isEmpty) {
         g.lastAutoRevealedTabId = null;
-      } else if (g.active != null && g.lastAutoRevealedTabId != g.activeDocId) {
+      } else if (rowDocs.any((doc) => doc.id == g.activeDocId) &&
+          g.lastAutoRevealedTabId != g.activeDocId) {
         g.lastAutoRevealedTabId = g.activeDocId;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted || _editorTabWrap.value) return;
-          final activeTabContext = g.activeTabVisibilityKey.currentContext;
-          if (activeTabContext != null) {
-            unawaited(Scrollable.ensureVisible(
-              activeTabContext,
-              duration: Duration.zero,
-              alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
-            ));
-          }
-        });
+        if (!docked || !g.stickyDocIds.contains(g.activeDocId)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted || _editorTabWrap.value) return;
+            final activeTabContext = g.activeTabVisibilityKey.currentContext;
+            if (activeTabContext != null) {
+              unawaited(Scrollable.ensureVisible(
+                activeTabContext,
+                duration: Duration.zero,
+                alignment: dockingChanged ? 0.5 : 0,
+                alignmentPolicy: dockingChanged
+                    ? ScrollPositionAlignmentPolicy.explicit
+                    : ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              ));
+            }
+          });
+        }
       }
 
+      final rowKey = ValueKey('editor-tab-row-${g.region}-$rowName');
       final tabLayout = _editorTabWrap.value
-          ? Wrap(
-              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
-              spacing: 0,
-              runSpacing: 0,
-              children: tabs,
-            )
-          : SingleChildScrollView(
-              key: ValueKey('editor-tab-row-${g.region}-$rowName'),
-              scrollDirection: Axis.horizontal,
-              child: Row(children: tabs),
+          ? Wrap(key: rowKey, spacing: 0, runSpacing: 0, children: tabs)
+          : Row(
+              children: [
+                if (docked)
+                  Row(
+                    key: ValueKey('editor-tab-dock-${g.region}'),
+                    children: tabs.take(pinnedCount).toList(growable: false),
+                  ),
+                Expanded(
+                  key: ValueKey('editor-tab-scroll-slot-${g.region}-$rowName'),
+                  child: SingleChildScrollView(
+                    key: rowKey,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: docked
+                          ? tabs.skip(pinnedCount).toList(growable: false)
+                          : tabs,
+                    ),
+                  ),
+                ),
+              ],
             );
       return ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 36),
@@ -27226,6 +27254,7 @@ class EditorGroup {
   /// 对应布局树里的叶子 region（'editor'、'editor-2'…）。
   final String region;
   final GlobalKey activeTabVisibilityKey = GlobalKey();
+  bool _tabRowDocked = false;
   int? lastAutoRevealedTabId;
   final List<OpenDoc> docs = [];
   final Set<int> stickyDocIds = <int>{};

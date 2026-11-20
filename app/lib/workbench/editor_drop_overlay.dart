@@ -35,6 +35,7 @@ class EditorDropOverlay extends StatelessWidget {
     final currentMode = mode;
     if (currentMode == null) return child;
 
+    final isTabTarget = currentMode == EditorDropOverlayMode.tab;
     final isHorizontalSplit = currentMode == EditorDropOverlayMode.splitLeft ||
         currentMode == EditorDropOverlayMode.splitRight;
     final isVerticalSplit = currentMode == EditorDropOverlayMode.splitUp ||
@@ -90,42 +91,46 @@ class EditorDropOverlay extends StatelessWidget {
                             width: 2,
                           ),
                         ),
-                        child: Center(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: const Color.fromRGBO(20, 22, 26, 0.82),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(icon,
-                                      size: 18, color: const Color(0xFF9DD6FF)),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    label,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
+                        child: isTabTarget
+                            ? null
+                            : Center(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromRGBO(20, 22, 26, 0.82),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(icon,
+                                            size: 18,
+                                            color: const Color(0xFF9DD6FF)),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          label,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
                       ),
                     ),
                   ),
                   if (copyRequested)
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: isTabTarget ? 2 : 8,
+                      right: isTabTarget ? 2 : 8,
                       child: DecoratedBox(
                         key: ValueKey('$keyPrefix-copy-badge'),
                         decoration: BoxDecoration(
@@ -135,21 +140,26 @@ class EditorDropOverlay extends StatelessWidget {
                             color: const Color(0xFF72D59A),
                           ),
                         ),
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Padding(
+                          padding: isTabTarget
+                              ? const EdgeInsets.all(2)
+                              : const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.copy, size: 13, color: Colors.white),
-                              SizedBox(width: 4),
-                              Text(
-                                '复制',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
+                              const Icon(Icons.copy,
+                                  size: 13, color: Colors.white),
+                              if (!isTabTarget) ...[
+                                const SizedBox(width: 4),
+                                const Text(
+                                  '复制',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ),

@@ -241,6 +241,118 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('pinned tabs dock only when a scrollable ordinary area fits',
+      (tester) async {
+    tester.view.physicalSize = const Size(1480, 900);
+    addTearDown(tester.view.resetPhysicalSize);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final temp = Directory.systemTemp.createTempSync('alula_pinned_tab_scroll');
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await temp.delete(recursive: true);
+    });
+    final root = temp.path.replaceAll(r'\', '/');
+    final layout = LayoutStore(path: '$root/layout.json');
+    final session = SessionStore(path: '$root/session.json');
+    final files = [
+      for (var i = 0; i < 12; i++)
+        File('$root/wide_tab_scroll_fixture_$i.txt')
+          ..writeAsStringSync('sample $i\n'),
+    ];
+    session.save({
+      'v': 1,
+      'focused': 'editor',
+      'pinnedTabSizing': 'shrink',
+      'groups': [
+        {
+          'region': 'editor',
+          'active': 10,
+          'sticky': [for (var i = 10; i < 16; i++) i],
+          'locked': true,
+          'docs': [
+            for (var i = 0; i < files.length; i++)
+              {'id': i + 10, 'path': files[i].path},
+          ],
+        },
+      ],
+    });
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: layout,
+      sessionStore: session,
+    ));
+    await tester.pumpAndSettle();
+
+    const rowKey = ValueKey('editor-tab-row-editor-shared');
+    final dock = find.byKey(const ValueKey('editor-tab-dock-editor'));
+    Finder tab(int id) => find.byKey(ValueKey('tab-$id'));
+    double x(int id) => tester.getTopLeft(tab(id)).dx;
+    ScrollPosition position() => tester
+        .state<ScrollableState>(find.descendant(
+          of: find.byKey(rowKey),
+          matching: find.byType(Scrollable),
+        ))
+        .position;
+    int active() => tester
+        .widget<RustTextInputField>(
+          find.byType(RustTextInputField),
+        )
+        .inputWindow
+        .document
+        .id;
+
+    expect(dock, findsOneWidget);
+    final firstPinned = x(10);
+    final lastPinned = x(15);
+    final firstOrdinary = x(16);
+    position().jumpTo(180);
+    await tester.pumpAndSettle();
+    expect(x(10), firstPinned);
+    expect(x(15), lastPinned);
+    expect(x(16), closeTo(firstOrdinary - 180, .01));
+    await tester.tapAt(tester.getRect(tab(11)).centerLeft + const Offset(4, 0));
+    await tester.pumpAndSettle();
+    expect(active(), 11);
+    expect(position().pixels, 180);
+
+    final drag = await tester.startGesture(tester.getCenter(tab(11)));
+    await tester.pump();
+    await drag.moveBy(const Offset(-18, 0));
+    await tester.pump();
+    await drag.moveTo(tester.getRect(tab(10)).centerLeft + const Offset(5, 0));
+    await tester.pump();
+    await drag.up();
+    await tester.pumpAndSettle();
+    expect(x(11), firstPinned);
+    expect(x(10), firstPinned + 80);
+    expect(active(), 11);
+
+
+    tester.view.physicalSize = const Size(780, 900);
+    await tester.pumpAndSettle();
+    expect(dock, findsNothing);
+    expect(tester.getSize(tab(10)).width, 80);
+    position().jumpTo(0);
+    await tester.pumpAndSettle();
+    final firstUnpinnedFromViewport = x(10);
+    position().jumpTo(140);
+    await tester.pumpAndSettle();
+    expect(x(10), closeTo(firstUnpinnedFromViewport - 140, .01));
+
+    tester.view.physicalSize = const Size(1480, 900);
+    await tester.pumpAndSettle();
+    expect(dock, findsOneWidget);
+    expect(active(), 11);
+    for (final item in ['查看(V)', '外观(A)', '编辑器标签', '标签自动换行']) {
+      await tester.tap(find.text(item));
+      await tester.pumpAndSettle();
+    }
+    expect(dock, findsNothing);
+    expect(tester.widget(find.byKey(rowKey)), isA<Wrap>());
+    expect(tester.getSize(tab(10)).width, 80);
+  });
+
   testWidgets('tab sizing changes geometry, persists, and holds close widths',
       (tester) async {
     tester.view.physicalSize = const Size(650, 900);
