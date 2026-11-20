@@ -7,6 +7,8 @@
 
 - 2026-11-20 完成 P05.124 / feat-176。Windows 11 build 26200、125% DPI 的真实桌面键位已验证。P05.123 Release 的 Ctrl+Shift+F8 与 P05.125 Release 的 Ctrl+Shift+A 均验证最新回退、旧行聚焦优先和仅执行首个主操作。默认键在同一进程内由真实 Narrator 状态门控，未启动与正常退出后均保留通知。两个进程均退出码 0。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.124-windows-notification-keys.md。
 
+- 2026-11-20 完成 P05.127 / feat-179。产品 `3e79a3bce0f1abe1e2d4243ff8dc217c7be63b7f` 已推草稿 PR #3。固定版与 Linux Xvfb 验证分页、首尾、输入焦点和接受。专项 123/123，Flutter 1,643 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44741974110 四项及 Platform Availability 44741963739 Windows/Linux 通过。Windows 11 125% DPI 的原生键位亦通过，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.127-quick-input-page.md。
+
 - 2026-11-20 完成 P05.126 / feat-178。产品 `d84894e03d512b53e302510a3fd6d81ea7fdd37e` 已推草稿 PR #3。固定版与 Linux Xvfb 验证长列表滚动条显隐、8 像素宽度、按住越界拖动、滚轮和短列表。基线与修复版空闲帧相同。专项 151/151，Flutter 1,641 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44738453249 四项及 Platform Availability 44738442824 Windows/Linux 通过。Windows 11 125% DPI 的实际拖动、滚轮和短列表实机复验通过，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.126-notification-scrollbar.md。
 
 - 2026-11-20 完成 P05.125 / feat-177。产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关留在 P05.124，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。

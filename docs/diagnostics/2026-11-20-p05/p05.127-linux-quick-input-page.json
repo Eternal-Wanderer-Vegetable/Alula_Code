@@ -1,0 +1,165 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "3e79a3bce0f1abe1e2d4243ff8dc217c7be63b7f",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "4eaaa5809db988697ca3c0603cf2c0eccac96084f604748f000920c4cd7ab7d3",
+  "observations": {
+    "initial": {
+      "request": "initial",
+      "active": 1,
+      "revision": 1,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        123.0,
+        780.0,
+        171.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "page-down": {
+      "request": "page-down",
+      "active": 8,
+      "revision": 2,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        391.0,
+        780.0,
+        422.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "next-page": {
+      "request": "next-page",
+      "active": 16,
+      "revision": 3,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        333.0,
+        780.0,
+        381.0
+      ],
+      "scroll": 340.0,
+      "inputFocused": true
+    },
+    "previous-edge": {
+      "request": "previous-edge",
+      "active": 10,
+      "revision": 4,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        113.0,
+        780.0,
+        161.0
+      ],
+      "scroll": 340.0,
+      "inputFocused": true
+    },
+    "last": {
+      "request": "last",
+      "active": 40,
+      "revision": 5,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        398.0,
+        780.0,
+        429.0
+      ],
+      "scroll": 1266.0,
+      "inputFocused": true
+    },
+    "past-last": {
+      "request": "past-last",
+      "active": 40,
+      "revision": 5,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        398.0,
+        780.0,
+        429.0
+      ],
+      "scroll": 1266.0,
+      "inputFocused": true
+    },
+    "first": {
+      "request": "first",
+      "active": 1,
+      "revision": 6,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        123.0,
+        780.0,
+        171.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    },
+    "past-first": {
+      "request": "past-first",
+      "active": 1,
+      "revision": 6,
+      "viewport": [
+        220.0,
+        93.0,
+        780.0,
+        433.0
+      ],
+      "row": [
+        220.0,
+        123.0,
+        780.0,
+        171.0
+      ],
+      "scroll": 0.0,
+      "inputFocused": true
+    }
+  },
+  "fixtureSha256": "28836bdea6f445162c2d0d20e79df43a9efb4ca22f3ef0393278a8956c046140",
+  "accepted": 40,
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

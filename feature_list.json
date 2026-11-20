@@ -2209,8 +2209,20 @@
         "feat-124",
         "feat-136"
       ],
+      "status": "done",
+      "evidence": "产品 `3e79a3bce0f1abe1e2d4243ff8dc217c7be63b7f` 已推草稿 PR #3。固定版与 Linux Xvfb 验证分页、首尾、输入焦点和接受。专项 123/123，Flutter 1,643 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44741974110 四项及 Platform Availability 44741963739 Windows/Linux 通过。Windows 11 125% DPI 的原生键位亦通过，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.127-quick-input-page.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-180",
+      "name": "P05.128 LAY-17 QuickInput 默认视口与行密度",
+      "description": "对照固定版普通行与 detail 行、响应式视口，保留小窗、文本缩放、多选和行尾按钮的布局与导航。",
+      "dependencies": [
+        "feat-179"
+      ],
       "status": "not-started",
-      "evidence": "已在固定版 Windows 隔离渲染器核对 40 条混合行高分组条目首尾、翻页、边界与输入焦点。待产品修复与验收。",
+      "evidence": "固定版 Windows 125% DPI 和 Alula Linux Xvfb 基线已记录小窗及高窗的视口与行高。待产品修复和验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
