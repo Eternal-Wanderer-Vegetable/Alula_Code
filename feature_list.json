@@ -2157,8 +2157,8 @@
       "dependencies": [
         "feat-174"
       ],
-      "status": "not-started",
-      "evidence": "待固定版、命令面板、自定义键位、保留规则及托管验证。",
+      "status": "in-progress",
+      "evidence": "产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，实机键鼠输入待恢复。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

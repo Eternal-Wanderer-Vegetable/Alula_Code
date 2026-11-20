@@ -1,0 +1,35 @@
+{
+  "productCommit": "9318a5fb7f433a368d678f40854c87f022f6510d",
+  "platform": "Windows 11 x64 local Release",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "56353516c1d680e6f698f064d8f1940ed28e20be64cb87d16519815a0d01056a",
+  "fixtureSha256": "05c6e339c4ca9aa5b73a39272d54da10b549d03cef34b08ca07a425ca9b35081",
+  "sourceMethod": "Prior release scratch with all changed tracked product source files mirrored byte-for-byte after 24e265b.",
+  "observedInitialFrame": true,
+  "observedFallbackToastsInCapture": [
+    "Newest fallback sample",
+    "Older fallback sample"
+  ],
+  "interactionVerified": false,
+  "observations": [
+    "Input desktop Default; thread desktop Default; window station WinSta0.",
+    "Win32 SetForegroundWindow and SetCursorPos returned failure with error 0.",
+    "Computer-use tool located the owned window and captured its client area; activation returned failed to activate captured window twice.",
+    "An isolated Windows Sandbox refused to start the guest probe under App Control with 0x800711C7. The owned sandbox and local fixture were stopped.",
+    "WTSQuerySessionInformationW reported Active after the tests; pointer remained unwritable."
+  ],
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+    "app/lib/workbench/keybindings.dart": "90e83371624d4a5130e823cf66621626d8c5921f9ee50a77768e1b6f3a12858d",
+    "app/lib/workbench/notification_widgets.dart": "070b0c9dfebcffa84afe19c9a5bf9a12f83763ab2ef65ef944346b54838cd8f6",
+    "app/lib/workbench/notifications.dart": "ff858110c770ed198276556dad93ea5d560dd4fd08a579a2d6a3bf5e040ca34c",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "6e82b2f7ab8581e0f721e819afee36f19ee19124dfbe9d7f6d94b8b5eb9e4cf6",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}

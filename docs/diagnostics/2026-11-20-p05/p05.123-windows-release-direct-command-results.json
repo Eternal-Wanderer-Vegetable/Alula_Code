@@ -1,0 +1,20 @@
+{
+  "os": "\"Windows 10 Pro for Workstations\" 10.0 (Build 26200)",
+  "interaction": "CommandService execution in Windows Release",
+  "keyboardInput": false,
+  "firstActions": [
+    "fallback-newest-first",
+    "focus-older-first"
+  ],
+  "remainingIds": [
+    4,
+    1
+  ],
+  "focusedIdBeforeAccept": 3,
+  "passed": true,
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "76a53ae19b4e15084c64728d626aec5983fcfde69ac7d9c882bf13258a04498c",
+  "fixtureSha256": "598959588426b856ebad5e54fd6d65ba6a8beace6ba26012de22d2767c435746",
+  "exitCode": 0,
+  "productCommit": "9318a5fb7f433a368d678f40854c87f022f6510d"
+}

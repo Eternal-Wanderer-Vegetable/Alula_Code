@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.122 / feat-174 已完成。P05.123 / feat-175 的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 已通过本地、Linux Xvfb、Windows Release 命令服务及准确 SHA 托管检查。Windows 实机键鼠验证待完成。
 
 ## Current State
 
+- 产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，实机键鼠输入待恢复。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。
 - 产品 `e5f720cfd978e346f8bff22c5443cf6a73147136` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 用 12 个来源复验配置菜单仅显示前十个、按稳定 ID 更新、更多进入完整选择器与全局勿扰。专项 114/114，Flutter 1,636 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44726959456 四项与 Platform Availability 44726947590 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.122-notification-filter-menu.md。
 - 产品 `96a2ac6c34b1223454dad9137b0911a08e4f46f8` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Release 对照。三条通知中心总高 180→172，固定版 172.6。头部恢复 35，18 条通知列表视口恢复 400，工具栏顺序相符且滚轮可到达最旧条目。专项 113/113，Flutter 1,635 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44724309808 四项与 Platform Availability 44724302967 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.121-notification-density.md。
 - 产品 `88911fc074decf58535ad35778d3987c06e3f1a3` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验两个规范命令、旧自定义键和旧历史迁移。清除时保留活动进度，勿扰时错误继续弹出。专项 155/155，Flutter 1,633 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44721822544 四项与 Platform Availability 44721816048 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.120-notification-commands.md。
@@ -31,7 +32,7 @@ Last Updated: 2026-11-20
 
 ## Blockers / Limits
 
-macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。可访问命令及其余 LAY-18 行为继续按矩阵追踪。
+macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。P05.123 已通过固定版对照和 Linux Xvfb，Windows Release 已启动，窗口激活和输入待恢复。屏幕阅读器默认组合键及其余 LAY-18 行为继续按矩阵追踪。
 
 ## Files
 
@@ -39,4 +40,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-核对 P05.122 文档收尾 CI，然后按 docs/03 推进 P05.123 执行首个通知主操作命令。
+恢复 Windows 桌面输入后实机复验 P05.123 的两条自定义键位路径并登记证据。
