@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.141 / feat-193。产品 `de33306a06c5cec10ee815a508863dad5cea7ccd` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签紧凑 28、收缩 80、两侧命中、普通标签和独立固定行。普通按内容计宽的绝对差异见证据。专项 25/25，Flutter 1,667 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44810999031 四项及 Platform Availability 44810984769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.141-pinned-tab-sizing.md。
+
 - 2026-11-21 完成 P05.140 / feat-192。产品 `19f79cf421c5a42e077e98c5a6485269059e9761` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选复制、重复视图、共享文件及未命名文本、源组和目标活动项。专项 28/28，Flutter 1,665 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44806052076 四项及 Platform Availability 44806033831 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.140-tab-batch-copy.md。
 
 - 2026-11-21 完成 P05.139 / feat-191。产品 `b2e544b5dacbda5cb31e337ce39a64ecb626fe08` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选的前后落点、重复文档、未保存内容、源组移空与焦点。专项 8/8，Flutter 1,664 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44801767785 四项及 Platform Availability 44801751972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.139-tab-batch-cross-group.md。

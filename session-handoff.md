@@ -4,10 +4,11 @@ Last Updated: 2026-11-21
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并已完成，P05.136 / feat-188 同组标签多选与批量关闭已完成，P05.137 / feat-189 最近使用编辑器快速切换已完成，P05.138 / feat-190 同组多选标签批量排序已完成，P05.139 / feat-191 跨组已选标签批量移动已完成，P05.140 / feat-192 跨组已选标签批量复制已完成，P05.141 / feat-193 固定标签尺寸的依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并已完成，P05.136 / feat-188 同组标签多选与批量关闭已完成，P05.137 / feat-189 最近使用编辑器快速切换已完成，P05.138 / feat-190 同组多选标签批量排序已完成，P05.139 / feat-191 跨组已选标签批量移动已完成，P05.140 / feat-192 跨组已选标签批量复制已完成，P05.141 / feat-193 固定标签尺寸已完成，P05.142 / feat-194 固定标签水平停靠的依赖已满足。
 
 ## Current State
 
+- 产品 `de33306a06c5cec10ee815a508863dad5cea7ccd` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签紧凑 28、收缩 80、两侧命中、普通标签和独立固定行。普通按内容计宽的绝对差异见证据。专项 25/25，Flutter 1,667 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44810999031 四项及 Platform Availability 44810984769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.141-pinned-tab-sizing.md。
 - 产品 `19f79cf421c5a42e077e98c5a6485269059e9761` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选复制、重复视图、共享文件及未命名文本、源组和目标活动项。专项 28/28，Flutter 1,665 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44806052076 四项及 Platform Availability 44806033831 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.140-tab-batch-copy.md。
 - 产品 `b2e544b5dacbda5cb31e337ce39a64ecb626fe08` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选的前后落点、重复文档、未保存内容、源组移空与焦点。专项 8/8，Flutter 1,664 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44801767785 四项及 Platform Availability 44801751972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.139-tab-batch-cross-group.md。
 - 产品 `8160d300a3099c5d80b4425bdbc125ed2d580c83` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证同组多选相对顺序、前后落点、固定区与活动视图。专项 34/34，Flutter 1,662 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44796951850 四项及 Platform Availability 44796940311 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.138-tab-batch-reorder.md。
@@ -57,4 +58,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.140 文档收尾 CI。按 docs/03 推进 P05.141 固定标签尺寸。
+确认 P05.141 文档收尾 CI。按 docs/03 推进 P05.142 固定标签水平停靠。

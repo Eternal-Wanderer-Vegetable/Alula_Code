@@ -2405,6 +2405,20 @@
         "feat-092",
         "feat-190"
       ],
+      "status": "done",
+      "evidence": "产品 `de33306a06c5cec10ee815a508863dad5cea7ccd` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签紧凑 28、收缩 80、两侧命中、普通标签和独立固定行。普通按内容计宽的绝对差异见证据。专项 25/25，Flutter 1,667 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44810999031 四项及 Platform Availability 44810984769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.141-pinned-tab-sizing.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-194",
+      "name": "P05.142 LAY-09 固定标签水平停靠",
+      "description": "对照固定版让紧凑及收缩固定标签在同行水平溢出时保持在前端，覆盖普通标签滚动、窄宽降级、换行和拖放命中。",
+      "dependencies": [
+        "feat-092",
+        "feat-190",
+        "feat-193"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
