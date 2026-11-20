@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
@@ -156,6 +157,129 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
+
+  testWidgets(
+    'moved built-in views have independent panel tabs, preserve input, '
+    'and restore their layout',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final bindings = File('${temp.path}/keybindings.json')
+        ..writeAsStringSync(
+          '[{"key":"f8","command":"workbench.action.moveFocusedView"}]',
+        );
+
+      Future<void> mountApp() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: bindings.path),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> run(String label) async {
+        await tester.tap(find.byKey(const ValueKey('command-center-control')));
+        await tester.pumpAndSettle();
+        final input = find.descendant(
+          of: find.byKey(const ValueKey('quick-input')),
+          matching: find.byType(TextField),
+        );
+        await tester.enterText(input, label);
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(ValueKey('qi-查看: $label')));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> choose(String label) async {
+        await tester.tap(find.byKey(ValueKey('qi-$label')));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> moveToPanel(String label) async {
+        await run('移动视图…');
+        await choose(label);
+        await choose('新建面板入口');
+      }
+
+      final panel = find.byKey(const ValueKey('wb-region-panel'));
+      final primary = find.byKey(const ValueKey('wb-region-sidebar'));
+      final secondary =
+          find.byKey(const ValueKey('wb-region-secondarySidebar'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final searchPanelTab =
+          find.byKey(const ValueKey('panel-builtin-view-search'));
+      final outlinePanelTab =
+          find.byKey(const ValueKey('panel-builtin-view-outline'));
+      Finder owner(Finder region) =>
+          find.descendant(of: region, matching: search);
+
+      await mountApp();
+      await tester.tap(find.byTooltip('搜索'));
+      await tester.pumpAndSettle();
+      expect(owner(primary), findsOneWidget);
+      await tester.enterText(search, 'survives the move 😀');
+      await moveToPanel('搜索');
+      expect(owner(panel), findsOneWidget);
+      expect(owner(primary), findsNothing);
+      expect(tester.widget<TextField>(search).controller!.text,
+          'survives the move 😀');
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      expect(searchPanelTab, findsOneWidget);
+      expect(find.descendant(of: panel, matching: find.text('Git Diff')),
+          findsOneWidget);
+
+      await moveToPanel('大纲');
+      expect(searchPanelTab, findsOneWidget);
+      expect(outlinePanelTab, findsOneWidget);
+      await tester.tap(searchPanelTab);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(search).controller!.text,
+          'survives the move 😀');
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pumpAndSettle();
+      final saved = layoutStore.tryLoad()!;
+      expect(saved.sidebarViewLocations?['search'], panelSidebarViewLocation);
+      expect(saved.sidebarViewLocations?['outline'], panelSidebarViewLocation);
+      expect(sessionStore.tryLoad()?['activePanelHostedView'], 'search');
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mountApp();
+      expect(owner(panel), findsOneWidget);
+      expect(searchPanelTab, findsOneWidget);
+      expect(outlinePanelTab, findsOneWidget);
+      await tester.enterText(search, 'moving back');
+      await tester.sendKeyEvent(LogicalKeyboardKey.f8);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('qi-新建面板入口')), findsNothing);
+      await choose('次侧栏');
+      expect(owner(panel), findsNothing);
+      expect(owner(secondary), findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text, 'moving back');
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      expect(searchPanelTab, findsNothing);
+      expect(outlinePanelTab, findsOneWidget);
+
+      await run('重置视图位置');
+      expect(outlinePanelTab, findsNothing);
+      expect(owner(secondary), findsNothing);
+      expect(find.descendant(of: panel, matching: find.text('Git Diff')),
+          findsOneWidget);
+      await tester.tap(find.byTooltip('搜索'));
+      await tester.pumpAndSettle();
+      expect(owner(primary), findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text, 'moving back');
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarViewLocations?['search'],
+          primarySidebarViewLocation);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    },
+  );
 
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',

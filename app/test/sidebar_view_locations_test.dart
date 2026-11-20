@@ -31,7 +31,7 @@ void main() {
     final json = defaultLayout().toJson()
       ..['sidebarViewLocations'] = {
         'explorer': secondarySidebarViewLocation,
-        'search': 'panel',
+        'search': 'unsupported',
         'unknown-view': secondarySidebarViewLocation,
       };
     final layout = WorkbenchLayout(root: WbNode.fromJson(json) as WbSplit);
@@ -46,6 +46,33 @@ void main() {
       'git': primarySidebarViewLocation,
     });
     layout.dispose();
+  });
+
+  test('panel assignments round-trip and reset with side-bar selections', () {
+    final layout = WorkbenchLayout();
+    expect(layout.selectSidebarView('search'), isTrue);
+    expect(layout.moveSidebarView('outline', panelSidebarViewLocation), isTrue);
+    expect(layout.moveSidebarView('search', panelSidebarViewLocation), isTrue);
+    expect(layout.primarySidebarView, 'explorer');
+    expect(layout.sidebarViews(panelSidebarViewLocation), ['outline', 'search']);
+    expect(layout.selectSidebarView('search'), isFalse);
+    final saved = WbNode.fromJson(layout.root.toJson()) as WbSplit;
+    final restored = WorkbenchLayout(root: saved);
+    expect(
+        restored.sidebarViews(panelSidebarViewLocation), ['outline', 'search']);
+    expect(
+        restored.sidebarViews(primarySidebarViewLocation), ['explorer', 'git']);
+    expect(restored.moveSidebarView('search', secondarySidebarViewLocation),
+        isTrue);
+    expect(restored.secondarySidebarView, 'search');
+    expect(restored.sidebarViews(panelSidebarViewLocation), ['outline']);
+    expect(restored.resetSidebarViewLocations(), isTrue);
+    expect(restored.sidebarViews(panelSidebarViewLocation), isEmpty);
+    expect(restored.sidebarViews(primarySidebarViewLocation),
+        activityBarViewOrder);
+    expect(restored.secondarySidebarView, isNull);
+    layout.dispose();
+    restored.dispose();
   });
 
   test('moves one view, selects destination, and preserves Activity Bar state',

@@ -1,4 +1,4 @@
-/// Built-in Activity Bar view assignments and selection for both side bars.
+/// Built-in Activity Bar assignments to the side bars or panel.
 library;
 
 import 'layout_controller.dart';
@@ -11,6 +11,12 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     final normalized = normalizeSidebarViewLocations(
       root.sidebarViewLocations,
     );
+    if (location == panelSidebarViewLocation) {
+      return [
+        for (final entry in normalized.entries)
+          if (entry.value == location) entry.key,
+      ];
+    }
     return [
       for (final id in activityBarViewOrder)
         if (normalized[id] == location) id,
@@ -47,6 +53,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   bool selectSidebarView(String view) {
     if (!activityBarViewOrder.contains(view)) return false;
     final location = sidebarViewLocation(view);
+    if (location == panelSidebarViewLocation) return false;
     final selected = sidebarSelection(location);
     if (selected == view && root.sidebarViewLocations != null) return false;
 
@@ -67,7 +74,8 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
   bool moveSidebarView(String view, String destination) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
-        destination != secondarySidebarViewLocation) {
+        destination != secondarySidebarViewLocation &&
+        destination != panelSidebarViewLocation) {
       return false;
     }
 
@@ -77,17 +85,26 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     final source = locations[view]!;
     if (source == destination) return false;
 
-    final sourceSelection = sidebarSelection(source);
+    final sourceSelection =
+        source == panelSidebarViewLocation ? null : sidebarSelection(source);
+    if (destination == panelSidebarViewLocation) {
+      locations.remove(view);
+    }
     locations[view] = destination;
     root.sidebarViewLocations = locations;
 
-    final sourceFallback = _firstViewAt(source, locations);
-    if (source == primarySidebarViewLocation) {
-      if (sourceSelection == view) root.primarySidebarView = sourceFallback;
-      root.secondarySidebarView = view;
-    } else {
-      if (sourceSelection == view) root.secondarySidebarView = sourceFallback;
+    if (sourceSelection == view) {
+      final sourceFallback = _firstViewAt(source, locations);
+      if (source == primarySidebarViewLocation) {
+        root.primarySidebarView = sourceFallback;
+      } else {
+        root.secondarySidebarView = sourceFallback;
+      }
+    }
+    if (destination == primarySidebarViewLocation) {
       root.primarySidebarView = view;
+    } else if (destination == secondarySidebarViewLocation) {
+      root.secondarySidebarView = view;
     }
 
     notifyLayoutChanged();

@@ -433,7 +433,7 @@ class _EditorGroupBounds {
 }
 
 class _WorkbenchPageState extends State<WorkbenchPage>
-    with SingleTickerProviderStateMixin, WindowListener {
+    with TickerProviderStateMixin, WindowListener {
   static const _untitledId = 1;
   static const _findBarInitialWidth = 419.0;
   static const _maxExplorerCompareUtf16 = 2000000;
@@ -756,8 +756,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _polling = false;
   List<String> _completionItems = const [];
 
-  late final TabController _panelTab =
-      TabController(length: 4, vsync: this, initialIndex: 0);
+  static const _standardPanelTabCount = 4;
+  late TabController _panelTab;
+  List<String> _panelHostedViews = const [];
+  final _searchViewFocus = FocusNode(debugLabel: 'workbench search view');
+
+  String? get _activePanelHostedView => _panelTab.index < _standardPanelTabCount
+      ? null
+      : _panelHostedViews[_panelTab.index - _standardPanelTabCount];
+
+  void _replacePanelTabController(int index) {
+    _panelTab = TabController(
+      length: _standardPanelTabCount + _panelHostedViews.length,
+      initialIndex: index,
+      vsync: this,
+    )..addListener(_onPanelTabChanged);
+  }
+
+  void _onPanelTabChanged() {
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  void _syncPanelHostedViews() {
+    final views = _layout.sidebarViews(panelSidebarViewLocation);
+    if (listEquals(views, _panelHostedViews)) return;
+    final oldController = _panelTab;
+    final selected = _activePanelHostedView;
+    final index = selected == null
+        ? oldController.index
+        : views.contains(selected)
+            ? _standardPanelTabCount + views.indexOf(selected)
+            : 0;
+    setState(() {
+      _panelHostedViews = views;
+      _replacePanelTabController(index);
+    });
+    oldController.removeListener(_onPanelTabChanged);
+    oldController.dispose();
+    _syncCommandContext();
+  }
 
   @override
   void initState() {
@@ -772,6 +810,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _sidebarView = _layout.primarySidebarView;
     _secondarySidebarView = _layout.secondarySidebarView;
     _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+    _panelHostedViews = _layout.sidebarViews(panelSidebarViewLocation);
+    _replacePanelTabController(0);
+    _layout.addListener(_syncPanelHostedViews);
     _layout.addListener(_scheduleStateSave);
     _layout.addListener(_syncPanelMaximizationCommandContext);
     _keybindings =
@@ -786,7 +827,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _registerCommands();
     _treeFind.addListener(_onTreeFindChanged);
     _breadcrumbs.addListener(_onBreadcrumbFocusChanged);
-    _panelTab.addListener(_syncCommandContext);
     _ensureGroupsFromLayout(); // 保存的布局可能含多个编辑器组
     if (!_groups.containsKey('editor')) {
       _groups['editor'] = EditorGroup('editor');
@@ -4350,6 +4390,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'pinnedTabSizing': _editorPinnedTabSizing.value.name,
         'preventPinnedEditorClose': _pinnedEditorCloseProtection.value.name,
+        if (_activePanelHostedView case final view?)
+          'activePanelHostedView': view,
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
         'openEditorsSortOrder': _openEditorsSortOrder.name,
@@ -4712,6 +4754,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _attachWorkspaceWatcher();
       }
       _nextDocId = maxId + 1;
+      final savedPanelView = data['activePanelHostedView'];
+      final panelIndex = savedPanelView is String
+          ? _panelHostedViews.indexOf(savedPanelView)
+          : -1;
+      if (panelIndex >= 0) {
+        _panelTab.index = _standardPanelTabCount + panelIndex;
+      }
     } catch (_) {
       // journal 损坏：忽略（组状态保持空，按全新会话继续）
     }
@@ -20795,6 +20844,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 侧栏视图切换（W4）：重复点当前视图 = 折叠/展开侧栏。
   void _selectSidebarView(String view) {
     final location = _layout.sidebarViewLocation(view);
+    if (location == panelSidebarViewLocation) {
+      _showPanelHostedView(view);
+      return;
+    }
     final region = location == primarySidebarViewLocation
         ? 'sidebar'
         : secondarySidebarRegion;
@@ -20815,12 +20868,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _layout.showRegion(region);
   }
 
+  void _showPanelHostedView(String view) {
+    final index = _panelHostedViews.indexOf(view);
+    if (index < 0) return;
+    if (view == 'outline') _refreshOutline();
+    _panelTab.index = _standardPanelTabCount + index;
+    setState(() => _focusedSidebarView = view);
+    _layout.showRegion('panel');
+    _focusMovedSearchView(view, panelSidebarViewLocation);
+  }
+
+  void _focusMovedSearchView(String view, String location) {
+    if (view != 'search') return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _layout.sidebarViewLocation(view) == location) {
+        _searchViewFocus.requestFocus();
+      }
+    });
+  }
+
   Future<void> _showMoveSidebarViewPicker() => _showMoveSidebarViewPickerStep();
 
   /// 多步 picker 的第一步；[restoreFocus] 是流程外焦点，供第二步返回时沿用，
   /// 使取消（Esc/屏障）回到打开 flow 前的节点而不是即将销毁的面板输入框。
-  Future<void> _showMoveSidebarViewPickerStep(
-      {FocusNode? restoreFocus}) async {
+  Future<void> _showMoveSidebarViewPickerStep({FocusNode? restoreFocus}) async {
     final restore = restoreFocus ?? QuickInput.externalFocus();
     await QuickInput.show(
       context,
@@ -20831,30 +20902,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         for (final destination in const [
           primarySidebarViewLocation,
           secondarySidebarViewLocation,
+          panelSidebarViewLocation,
         ])
-          if (activityBarViewOrder
-              .any((view) => _layout.sidebarViewLocation(view) == destination))
-            ...[
-              QuickItem(
-                label: _sidebarViewLocationLabel(destination),
-                kind: QuickItemKind.separator,
-              ),
-              for (final view in activityBarViewOrder)
-                if (_layout.sidebarViewLocation(view) == destination)
-                  QuickItem(
-                    label: _sidebarViewLabel(view),
-                    onRun: () => _showMoveSidebarViewDestination(view,
-                        restoreFocus: restore),
-                  ),
-            ],
+          if (activityBarViewOrder.any(
+              (view) => _layout.sidebarViewLocation(view) == destination)) ...[
+            QuickItem(
+              label: _sidebarViewLocationLabel(destination),
+              kind: QuickItemKind.separator,
+            ),
+            for (final view in activityBarViewOrder)
+              if (_layout.sidebarViewLocation(view) == destination)
+                QuickItem(
+                  label: _sidebarViewLabel(view),
+                  onRun: () => _showMoveSidebarViewDestination(view,
+                      restoreFocus: restore),
+                ),
+          ],
       ],
     );
   }
 
   Future<void> _showMoveFocusedSidebarViewPicker() async {
-    final view = _focusedSidebarView;
+    final restore = QuickInput.externalFocus();
+    String? focusedView;
+    final focusContext = restore?.context;
+    if (focusContext != null && focusContext.mounted) {
+      focusContext.visitAncestorElements((element) {
+        final key = element.widget.key;
+        const prefix = 'builtin-view-focus-';
+        if (key is ValueKey<String> && key.value.startsWith(prefix)) {
+          focusedView = key.value.substring(prefix.length);
+          return false;
+        }
+        return true;
+      });
+    }
+    final view = focusedView ?? _focusedSidebarView;
     if (view == null || !activityBarViewOrder.contains(view)) return;
-    await _showMoveSidebarViewDestination(view);
+    await _showMoveSidebarViewDestination(view, restoreFocus: restore);
   }
 
   Future<void> _showMoveSidebarViewDestination(String view,
@@ -20864,7 +20949,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final restore = restoreFocus ?? QuickInput.externalFocus();
     await QuickInput.show(
       context,
-      hint: '选择视图的新侧栏位置',
+      hint: '选择视图的新位置',
       restoreFocus: restore,
       onBack: () => _showMoveSidebarViewPickerStep(restoreFocus: restore),
       items: [
@@ -20877,21 +20962,31 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             description: destination == current ? '当前位置' : null,
             onRun: () async => _moveSidebarView(view, destination),
           ),
+        if (current != panelSidebarViewLocation)
+          QuickItem(
+            label: '新建面板入口',
+            onRun: () async => _moveSidebarView(view, panelSidebarViewLocation),
+          ),
       ],
     );
   }
 
   void _moveSidebarView(String view, String destination) {
     if (!_layout.moveSidebarView(view, destination)) return;
-    final region = destination == primarySidebarViewLocation
-        ? 'sidebar'
-        : secondarySidebarRegion;
     setState(() {
       _sidebarView = _layout.primarySidebarView;
       _secondarySidebarView = _layout.secondarySidebarView;
       _focusedSidebarView = view;
     });
+    if (destination == panelSidebarViewLocation) {
+      _showPanelHostedView(view);
+      return;
+    }
+    final region = destination == primarySidebarViewLocation
+        ? 'sidebar'
+        : secondarySidebarRegion;
     _layout.showRegion(region);
+    _focusMovedSearchView(view, destination);
   }
 
   Future<void> _resetSidebarViewLocations() async {
@@ -20911,11 +21006,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _ => view,
       };
 
-  String _sidebarViewLocationLabel(String location) =>
-      location == primarySidebarViewLocation ? '主侧栏' : '次侧栏';
+  String _sidebarViewLocationLabel(String location) => switch (location) {
+        primarySidebarViewLocation => '主侧栏',
+        panelSidebarViewLocation => '面板',
+        _ => '次侧栏',
+      };
 
   void _focusSidebarRegion(String location) {
-    final view = _layout.sidebarSelection(location);
+    final view = location == panelSidebarViewLocation
+        ? _activePanelHostedView
+        : _layout.sidebarSelection(location);
     if (view == null || _focusedSidebarView == view) return;
     setState(() => _focusedSidebarView = view);
   }
@@ -21003,7 +21103,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands
       ..removeListener(_onCommandServiceChanged)
       ..dispose();
-    _panelTab.removeListener(_syncCommandContext);
+    _panelTab.removeListener(_onPanelTabChanged);
+    _layout.removeListener(_syncPanelHostedViews);
+    _searchViewFocus.dispose();
     _layout.removeListener(_syncPanelMaximizationCommandContext);
     _searchQuery.dispose();
     _findQuery.dispose();
@@ -22177,6 +22279,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   child: TextField(
                     key: const ValueKey('search-input'),
                     controller: _searchQuery,
+                    focusNode: _searchViewFocus,
                     autofocus: true,
                     style: const TextStyle(fontSize: 12),
                     decoration: const InputDecoration(
@@ -22372,6 +22475,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   Widget _buildSidebarViewRegion(String location, String? view) {
     final title = _sidebarViewLocationLabel(location);
     return Focus(
+      key: view == null ? null : ValueKey('builtin-view-focus-$view'),
       onFocusChange: (focused) {
         if (focused) _focusSidebarRegion(location);
       },
@@ -26538,11 +26642,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     },
                     isScrollable: true,
                     tabAlignment: TabAlignment.start,
-                    tabs: const [
-                      Tab(text: '诊断'),
-                      Tab(text: '补全'),
-                      Tab(text: '语法 (Tree-sitter)'),
-                      Tab(text: 'Git Diff'),
+                    tabs: [
+                      const Tab(text: '诊断'),
+                      const Tab(text: '补全'),
+                      const Tab(text: '语法 (Tree-sitter)'),
+                      const Tab(text: 'Git Diff'),
+                      for (final view in _panelHostedViews)
+                        Tab(
+                          key: ValueKey('panel-builtin-view-$view'),
+                          text: _sidebarViewLabel(view),
+                        ),
                     ],
                   ),
                 ),
@@ -26559,9 +26668,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                               )
                           : null,
                       icon: Icon(
-                        maximized
-                            ? Icons.close_fullscreen
-                            : Icons.open_in_full,
+                        maximized ? Icons.close_fullscreen : Icons.open_in_full,
                         size: 16,
                       ),
                       visualDensity: VisualDensity.compact,
@@ -26579,6 +26686,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 _buildCompletionPanel(),
                 _buildSyntaxPanel(),
                 _buildGitDiffPanel(),
+                for (final view in _panelHostedViews)
+                  KeyedSubtree(
+                    key: ValueKey('panel-builtin-content-$view'),
+                    child:
+                        _buildSidebarViewRegion(panelSidebarViewLocation, view),
+                  ),
               ],
             ),
           ),
@@ -26599,41 +26712,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       key: const ValueKey('git-diff-panel-focus'),
       focusNode: _gitDiffFocus,
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '$_gitDiffPath（${_gitDiffStaged ? '暂存区' : '工作区'}）',
-                  style: const TextStyle(fontSize: 11),
-                  overflow: TextOverflow.ellipsis,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '$_gitDiffPath（${_gitDiffStaged ? '暂存区' : '工作区'}）',
+                    style: const TextStyle(fontSize: 11),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              IconButton(
-                tooltip: '清除',
-                onPressed: () {
-                  setState(() => _gitDiff = '');
-                  _onGitDiffNavigationAvailabilityChanged(false);
-                },
-                icon: const Icon(Icons.close, size: 14),
-                visualDensity: VisualDensity.compact,
-              ),
-            ],
+                IconButton(
+                  tooltip: '清除',
+                  onPressed: () {
+                    setState(() => _gitDiff = '');
+                    _onGitDiffNavigationAvailabilityChanged(false);
+                  },
+                  icon: const Icon(Icons.close, size: 14),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
           ),
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: GitDiffPatchView(
-            patch: _gitDiff,
-            navigationController: _gitDiffNavigation,
-            onNavigationAvailabilityChanged:
-                _onGitDiffNavigationAvailabilityChanged,
+          const Divider(height: 1),
+          Expanded(
+            child: GitDiffPatchView(
+              patch: _gitDiff,
+              navigationController: _gitDiffNavigation,
+              onNavigationAvailabilityChanged:
+                  _onGitDiffNavigationAvailabilityChanged,
+            ),
           ),
-        ),
-      ],
+        ],
       ),
     );
   }

@@ -93,6 +93,7 @@ const activityBarViewOrder = ['explorer', 'search', 'outline', 'git'];
 /// Root layout metadata values for built-in view locations.
 const primarySidebarViewLocation = 'primary';
 const secondarySidebarViewLocation = 'secondary';
+const panelSidebarViewLocation = 'panel';
 
 /// Normalize built-in view location metadata. Layouts predating view movement
 /// omit this field and are handled as all views belonging to the Primary Side
@@ -106,7 +107,8 @@ Map<String, String> normalizeSidebarViewLocations(Object? raw) {
       if (id is String &&
           activityBarViewOrder.contains(id) &&
           (location == primarySidebarViewLocation ||
-              location == secondarySidebarViewLocation)) {
+              location == secondarySidebarViewLocation ||
+              location == panelSidebarViewLocation)) {
         locations[id] = location as String;
       }
     }

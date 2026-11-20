@@ -53,7 +53,7 @@ void main() {
 
       unawaited(QuickInput.show(
         harness.pickerContext,
-        hint: '选择视图的新侧栏位置',
+        hint: '选择视图的新位置',
         restoreFocus: restore,
         onBack: () {
           backCount += 1;
@@ -64,7 +64,7 @@ void main() {
         ],
       ));
       await tester.pumpAndSettle();
-      expect(_hintOf(tester), '选择视图的新侧栏位置');
+      expect(_hintOf(tester), '选择视图的新位置');
       expect(find.byKey(const ValueKey('quick-input-back')), findsOneWidget,
           reason: '提供 onBack 时过滤行头部渲染返回箭头');
 
@@ -185,7 +185,7 @@ void main() {
 
       await tester.tap(find.byKey(const ValueKey('qi-资源管理器')));
       await tester.pumpAndSettle();
-      expect(_hintOf(tester), '选择视图的新侧栏位置');
+      expect(_hintOf(tester), '选择视图的新位置');
       expect(find.byKey(const ValueKey('quick-input-back')), findsOneWidget);
     } finally {
       await _unmountWorkbench(tester);
@@ -225,7 +225,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('qi-搜索')));
       await tester.pumpAndSettle();
-      expect(_hintOf(tester), '选择视图的新侧栏位置');
+      expect(_hintOf(tester), '选择视图的新位置');
       await tester.tap(find.byKey(const ValueKey('qi-次侧栏')));
       await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 600));
