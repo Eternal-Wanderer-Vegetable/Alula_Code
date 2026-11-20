@@ -317,8 +317,12 @@ class KeybindingSet {
     'view.panelSyntax': 'f3',
   };
 
+  static const notificationPrimaryActionWhen =
+      'accessibilityModeEnabled && (notificationFocus || notificationToastsVisible)';
+
   /// Default context for commands whose chord is shared with a general action.
   static const Map<String, String> defaultWhen = {
+    'notification.acceptPrimaryAction': notificationPrimaryActionWhen,
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
@@ -366,6 +370,8 @@ class KeybindingSet {
         'notifications.focusLastToast': 'pagedown,end',
         'notification.clear':
             platform == TargetPlatform.macOS ? 'cmd+backspace' : 'delete',
+        'notification.acceptPrimaryAction':
+            platform == TargetPlatform.macOS ? 'cmd+shift+a' : 'ctrl+shift+a',
         'breadcrumbs.focus':
             platform == TargetPlatform.macOS ? 'cmd+shift+;' : 'ctrl+shift+;',
         'breadcrumbs.focusAndSelect':

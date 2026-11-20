@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:alula_app/editor/rust_text_input_field.dart';
@@ -502,6 +503,68 @@ void main() {
     },
         keybindings:
             '[{"key":"alt+f10","command":"notification.acceptPrimaryAction"}]');
+  });
+  testWidgets('default primary action key checks the reader and current focus',
+      (tester) async {
+    const channel = MethodChannel('alula/accessibility');
+    final messenger = tester.binding.defaultBinaryMessenger;
+    var enabled = false;
+    var queries = 0;
+    Completer<bool>? pending;
+    messenger.setMockMethodCallHandler(channel, (call) async {
+      expect(call.method, 'screenReaderEnabled');
+      queries++;
+      return pending == null ? enabled : await pending!.future;
+    });
+    addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+
+    Future<void> press() async {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+    }
+
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      var actions = 0;
+      final notice = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Primary shortcut action',
+        actions: [
+          WorkbenchNotificationAction(
+            label: 'First action',
+            run: () async => actions++,
+          ),
+        ],
+      );
+      _editorFocus(tester).requestFocus();
+      await tester.pump();
+      await press();
+      expect(queries, 1);
+      expect(actions, 0);
+      expect(center.items, [notice]);
+
+      final answer = pending = Completer<bool>();
+      await press();
+      expect(queries, 2);
+      await _showCenter(tester);
+      expect(focusedWorkbenchNotification()?.notification, same(notice));
+      pending = null;
+      enabled = true;
+      answer.complete(true);
+      await tester.pump();
+      expect(actions, 0);
+      expect(center.items, [notice]);
+
+      await press();
+      expect(queries, 3);
+      expect(actions, 1);
+      expect(center.items, isEmpty);
+      await press();
+      expect(queries, 3);
+    });
   });
 }
 

@@ -62,6 +62,12 @@ bool IsNarratorRunning() {
   return running;
 }
 
+bool IsRegisteredScreenReaderEnabled() {
+  BOOL screen_reader = FALSE;
+  return SystemParametersInfoW(SPI_GETSCREENREADER, 0, &screen_reader, 0) &&
+         screen_reader;
+}
+
 void AnnounceNotificationClear(HWND alert, const std::string& message) {
   if (!alert) {
     return;
@@ -95,6 +101,11 @@ void RegisterNotificationAccessibilityChannel(
       controller.view()->GetNativeWindow(), nullptr, GetModuleHandleW(nullptr),
       nullptr);
   channel.SetMethodCallHandler([alert](const auto& call, auto result) {
+    if (call.method_name() == "screenReaderEnabled") {
+      result->Success(flutter::EncodableValue(
+          IsNarratorRunning() || IsRegisteredScreenReaderEnabled()));
+      return;
+    }
     if (call.method_name() != "notificationCleared") {
       result->NotImplemented();
       return;
@@ -116,10 +127,6 @@ void RegisterNotificationAccessibilityChannel(
 
     // Narrator does not set SPI_GETSCREENREADER. Registered readers can still
     // use the existing Flutter feedback path when Narrator is absent.
-    BOOL screen_reader = FALSE;
-    const bool use_flutter =
-        SystemParametersInfoW(SPI_GETSCREENREADER, 0, &screen_reader, 0) &&
-        screen_reader;
-    result->Success(flutter::EncodableValue(use_flutter));
+    result->Success(flutter::EncodableValue(IsRegisteredScreenReaderEnabled()));
   });
 }

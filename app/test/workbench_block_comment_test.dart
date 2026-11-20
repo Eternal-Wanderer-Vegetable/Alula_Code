@@ -5,6 +5,7 @@ import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,20 @@ void main() {
         ]);
       final base = temp.path.replaceAll(r'\\', '/');
 
+      final notifications = NotificationCenter();
+      var queries = 0;
+      if (platform == TargetPlatform.linux) {
+        const channel = MethodChannel('alula/accessibility');
+        final messenger = tester.binding.defaultBinaryMessenger;
+        messenger.setMockMethodCallHandler(channel, (call) async {
+          expect(call.method, 'screenReaderEnabled');
+          queries++;
+          return false;
+        });
+        addTearDown(() => messenger.setMockMethodCallHandler(channel, null));
+      }
       await tester.pumpWidget(AlulaApp(
+        notificationCenter: notifications,
         autoFolder: workspace.path,
         layoutStore: LayoutStore(path: '$base/layout.json'),
         sessionStore: SessionStore(path: '$base/session.json'),
@@ -109,8 +123,21 @@ void main() {
       expect(second.text, source);
 
       first.selection = const TextSelection(baseOffset: 4, extentOffset: 9);
+      if (platform == TargetPlatform.linux) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: 'Notification alongside Rust block comment',
+          actions: [
+            WorkbenchNotificationAction(
+              label: 'Primary action',
+              run: () async => fail('Screen reader is off'),
+            ),
+          ],
+        );
+      }
       await tester.pump();
       await _pressBlockComment(tester, platform);
+      if (platform == TargetPlatform.linux) expect(queries, 1);
       const commented = 'let /* value */ = 42;\n';
       expect(first.text, commented);
       expect(second.text, commented);

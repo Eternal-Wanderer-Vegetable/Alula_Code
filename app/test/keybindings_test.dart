@@ -512,7 +512,46 @@ void main() {
         linux.commandForChord(parseChord('ctrl+shift+a')!),
         'editor.action.blockComment',
       );
-      expect(windows.commandForChord(parseChord('ctrl+shift+a')!), isNull);
+      expect(
+        windows.bindingForChord(
+          parseChord('ctrl+shift+a')!,
+          matchesWhen: (condition) => condition == null,
+        ),
+        isNull,
+      );
+    });
+
+    test('notification primary action default respects user binding precedence',
+        () {
+      for (final platform in [
+        TargetPlatform.windows,
+        TargetPlatform.linux,
+        TargetPlatform.macOS,
+      ]) {
+        final keys = KeybindingSet.load(platform: platform);
+        final keySpec =
+            platform == TargetPlatform.macOS ? 'cmd+shift+a' : 'ctrl+shift+a';
+        final chord = parseChord(keySpec)!;
+        final matching = keys.bindingForChord(
+          chord,
+          matchesWhen: (condition) =>
+              condition == null ||
+              condition == KeybindingSet.notificationPrimaryActionWhen,
+        );
+        expect(matching?.commandId, 'notification.acceptPrimaryAction');
+        expect(matching?.when, KeybindingSet.notificationPrimaryActionWhen);
+
+        final rebound = KeybindingSet.load(
+          platform: platform,
+          userJson: '[{"key":"$keySpec","command":"file.save"}]',
+        );
+        expect(
+          rebound
+              .bindingForChord(chord, matchesWhen: (condition) => true)
+              ?.commandId,
+          'file.save',
+        );
+      }
     });
 
     test('copy-line defaults coexist with platform column-selection chords',
@@ -642,9 +681,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords + 15,
+      expect(resolved.keys.length, expectedChords + 16,
           reason: 'tree find, breadcrumbs and notifications add contextual '
-              'bindings, including toast focus navigation');
+              'bindings, including the accessible primary action');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
           ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');

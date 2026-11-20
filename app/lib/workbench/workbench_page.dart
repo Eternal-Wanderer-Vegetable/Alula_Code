@@ -1221,6 +1221,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '执行通知主操作',
       _acceptNotificationPrimaryAction,
+      shortcut: _keybindings.shortcutFor('notification.acceptPrimaryAction'),
     );
     reg(
       'notification.clear',
@@ -17589,7 +17590,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       );
       return KeyEventResult.handled;
     }
-    return KeyEventResult.ignored;
+    return _handleNotificationPrimaryShortcut(currentChord)
+        ? KeyEventResult.handled
+        : KeyEventResult.ignored;
   }
 
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
@@ -21002,9 +21005,85 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  WorkbenchNotification? get _notificationForPrimaryAction =>
+      _focusedNotification ?? _notifications.items.firstOrNull;
+
+  bool get _notificationPrimaryShortcutRelevant =>
+      !_zenMode && (_focusedNotification != null || _notifications.hasToasts);
+
+  bool _handleNotificationPrimaryShortcut(KeyChord chord) {
+    if (chord.key != LogicalKeyboardKey.keyA ||
+        !chord.shift ||
+        !_notificationPrimaryShortcutRelevant) {
+      return false;
+    }
+
+    // Resolve the platform-gated default without changing the context shared
+    // by other shortcuts and menus. An active user binding keeps precedence.
+    final binding = _keybindings.bindingForChord(
+      chord,
+      matchesWhen: (condition) =>
+          condition == KeybindingSet.notificationPrimaryActionWhen ||
+          _commands.context.matches(condition),
+    );
+    if (binding == null ||
+        binding.commandId != 'notification.acceptPrimaryAction' ||
+        binding.when != KeybindingSet.notificationPrimaryActionWhen) {
+      return false;
+    }
+    final fallback = _keybindings.bindingForChord(
+      chord,
+      matchesWhen: _commands.context.matches,
+    );
+    unawaited(_dispatchNotificationPrimaryShortcut(
+      FocusManager.instance.primaryFocus,
+      _notificationForPrimaryAction,
+      fallback,
+    ));
+    return true;
+  }
+
+  Future<void> _dispatchNotificationPrimaryShortcut(
+    FocusNode? focus,
+    WorkbenchNotification? target,
+    KeybindingBinding? fallback,
+  ) async {
+    final enabled = await _notificationScreenReaderEnabled();
+    if (!mounted ||
+        _disposing ||
+        !identical(FocusManager.instance.primaryFocus, focus)) {
+      return;
+    }
+    if (enabled) {
+      if (_notificationPrimaryShortcutRelevant &&
+          identical(_notificationForPrimaryAction, target)) {
+        _runCommand('notification.acceptPrimaryAction');
+      }
+    } else if (fallback != null &&
+        _commands.context.matches(fallback.when) &&
+        _commands.isEnabled(fallback.commandId)) {
+      _runCommand(fallback.commandId, arguments: fallback.arguments);
+    }
+  }
+
+  Future<bool> _notificationScreenReaderEnabled() async {
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return WidgetsBinding.instance.platformDispatcher.accessibilityFeatures
+          .accessibleNavigation;
+    }
+    try {
+      return await const MethodChannel('alula/accessibility')
+              .invokeMethod<bool>('screenReaderEnabled') ??
+          false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   Future<void> _acceptNotificationPrimaryAction() async {
-    final notification =
-        _focusedNotification ?? _notifications.items.firstOrNull;
+    final notification = _notificationForPrimaryAction;
     final action = notification?.actions.firstOrNull;
     if (notification == null || action == null) return;
     await _notifications.runPrimaryAction(notification, action);
