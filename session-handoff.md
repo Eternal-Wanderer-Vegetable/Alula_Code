@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.111 / feat-163 已完成。P05.112 / feat-164 的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.112 / feat-164 已完成。P05.113 / feat-165 的前置依赖已满足。
 
 ## Current State
 
+- 产品 `52748d9b84777f5204079932f53aa84d1fb5f87b` 已推草稿 PR #3。按稳定 ID 设置来源勿扰，固定命令 ID 和单条更多菜单可配置。Windows 11 125% DPI 对同名两来源验证只撤出选定来源普通 toast，已有和新错误保留，中心保留六条，重启恢复。专项 76/76，Flutter 1,605 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库、Dart analyze 通过。同一 SHA 的 PR CI 44697845569 四项及 Platform Availability 44697837635 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.112-notification-source-do-not-disturb.md。
 - 产品 `519a826e13fca2db3e8d23f7ecc810c0c258ff20` 已推草稿 PR #3。Windows 11 125% DPI 对照固定 Code-OSS，开启勿扰收起中心和旧 toast，随后只有新错误弹出，中心保留五条样本，Alula 新进程从 journal 恢复勿扰并仅显示两条错误 toast。专项 71/71，完整 Flutter 1,602 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44694591580 四项及 Platform Availability 44694584435 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.111-notification-do-not-disturb.md。
 - 产品 `3ed5f8d244790a5b8db1e0de3ae161216eb2a23d` 已推草稿 PR #3。toast 右键与通知中心键盘菜单实机开启，Escape 关闭。组件层核对含中文、Emoji、CRLF 的原文写入、焦点恢复、Delete 不受影响。专项 69/69，完整 Flutter 1,600 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44691943586 四项及 Platform Availability 44691935212 Windows/Linux 通过。macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.110-notification-copy-text.md。
 - 产品 `630f42bbd16e6749e24bd96ce8e019a7f6bdb046` 已推草稿 PR #3。toast 和通知中心共用绑定当前条目的次级操作菜单。Windows 11 125% DPI 实机记录两次选择各一次回调，Escape 取消无回调，Enter 能重开。菜单到期、撤出、错误和进度保护经专项 60/60 验证。完整 Flutter 1,598 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44688759654 四项及 Platform Availability 44688750790 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.109-notification-secondary-actions.md。
@@ -20,12 +21,12 @@ Last Updated: 2026-11-20
 
 ## Blockers / Limits
 
-macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰、显式通知优先级等 LAY-18 行为继续按矩阵追踪。
+macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级、中心密度及其余 LAY-18 行为继续按矩阵追踪。
 
 ## Files
 
-`app/lib/workbench/notifications.dart`、`app/lib/workbench/workbench_page.dart`、`app/test/notification_ui_test.dart` 和 [P05.111 证据](docs/diagnostics/2026-11-20-p05/p05.111-notification-do-not-disturb.md)。
+`app/lib/workbench/notifications.dart`、`app/lib/workbench/notification_widgets.dart`、`app/lib/workbench/workbench_page.dart` 和 [P05.112 证据](docs/diagnostics/2026-11-20-p05/p05.112-notification-source-do-not-disturb.md)。
 
 ## Next Session First Step
 
-核对 P05.111 文档收尾 CI，然后按 docs/03 推进 P05.112 按来源请勿打扰。
+核对 P05.112 文档收尾 CI，然后按 docs/03 推进 P05.113 显式通知优先级。

@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.112 / feat-164。产品 `52748d9b84777f5204079932f53aa84d1fb5f87b` 已推草稿 PR #3。按稳定 ID 设置来源勿扰，固定命令 ID 和单条更多菜单可配置。Windows 11 125% DPI 对同名两来源验证只撤出选定来源普通 toast，已有和新错误保留，中心保留六条，重启恢复。专项 76/76，Flutter 1,605 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库、Dart analyze 通过。同一 SHA 的 PR CI 44697845569 四项及 Platform Availability 44697837635 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.112-notification-source-do-not-disturb.md。
+
 - 2026-11-20 完成 P05.111 / feat-163。产品 `519a826e13fca2db3e8d23f7ecc810c0c258ff20` 已推草稿 PR #3。Windows 11 125% DPI 对照固定 Code-OSS，开启勿扰收起中心和旧 toast，随后只有新错误弹出，中心保留五条样本，Alula 新进程从 journal 恢复勿扰并仅显示两条错误 toast。专项 71/71，完整 Flutter 1,602 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44694591580 四项及 Platform Availability 44694584435 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.111-notification-do-not-disturb.md。
 
 - 2026-11-20 完成 P05.110 / feat-162。产品 `3ed5f8d244790a5b8db1e0de3ae161216eb2a23d` 已推草稿 PR #3。toast 右键与通知中心键盘菜单实机开启，Escape 关闭。组件层核对含中文、Emoji、CRLF 的原文写入、焦点恢复、Delete 不受影响。专项 69/69，完整 Flutter 1,600 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44691943586 四项及 Platform Availability 44691935212 Windows/Linux 通过。macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.110-notification-copy-text.md。

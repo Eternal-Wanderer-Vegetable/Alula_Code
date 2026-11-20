@@ -2024,8 +2024,21 @@
       "dependencies": [
         "feat-163"
       ],
+      "status": "done",
+      "evidence": "产品 `52748d9b84777f5204079932f53aa84d1fb5f87b` 已推草稿 PR #3。按稳定 ID 设置来源勿扰，固定命令 ID 和单条更多菜单可配置。Windows 11 125% DPI 对同名两来源验证只撤出选定来源普通 toast，已有和新错误保留，中心保留六条，重启恢复。专项 76/76，Flutter 1,605 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库、Dart analyze 通过。同一 SHA 的 PR CI 44697845569 四项及 Platform Availability 44697837635 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.112-notification-source-do-not-disturb.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-165",
+      "name": "P05.113 LAY-18 通知显式优先级与可选 toast",
+      "description": "按固定版支持常规、静默、紧急和可选通知，验证全局及来源勿扰和当前编辑输入区域对 toast 准入的影响。",
+      "dependencies": [
+        "feat-163",
+        "feat-164"
+      ],
       "status": "not-started",
-      "evidence": "待以固定版 NotificationService 源过滤、通知菜单和来源选择流程为基准验收。",
+      "evidence": "待对照固定版 NotificationPriority 和通知区域内已获焦输入控件的准入规则。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
