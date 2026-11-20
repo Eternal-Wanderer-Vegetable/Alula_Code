@@ -95,6 +95,11 @@ const primarySidebarViewLocation = 'primary';
 const secondarySidebarViewLocation = 'secondary';
 const panelSidebarViewLocation = 'panel';
 
+/// Durable IDs for the standard Panel tabs, in their displayed order.
+enum PanelViewTab { diagnostics, completions, syntax, gitDiff }
+
+typedef PanelViewPlacement = ({PanelViewTab tab, bool before});
+
 /// Normalize built-in view location metadata. Layouts predating view movement
 /// omit this field and are handled as all views belonging to the Primary Side
 /// Bar by [WbSplit].
@@ -292,6 +297,9 @@ class WbSplit extends WbNode {
   /// Null identifies a legacy layout where all built-in views are in Primary.
   Map<String, String>? sidebarViewLocations;
 
+  /// Root-only placement of views grouped into a standard Panel tab.
+  final Map<String, PanelViewPlacement> panelViewPlacements = {};
+
   /// Root-only selected view IDs; null identifies legacy/default selection.
   String? primarySidebarView;
   String? secondarySidebarView;
@@ -335,6 +343,14 @@ class WbSplit extends WbNode {
           'primarySidebarView': primarySidebarView,
           'secondarySidebarView': secondarySidebarView,
         },
+        if (panelViewPlacements.isNotEmpty)
+           'panelViewPlacements': {
+             for (final entry in panelViewPlacements.entries)
+               entry.key: {
+                 'tab': entry.value.tab.name,
+                 'before': entry.value.before,
+               },
+          },
         'children': children.map((c) => c.toJson()).toList(),
       };
 
@@ -384,6 +400,24 @@ class WbSplit extends WbNode {
           .map((e) => WbNode.fromJson((e as Map).cast<String, Object?>()))
           .toList(),
     );
+    final placements = json['panelViewPlacements'];
+    if (placements is Map) {
+      final tabs = PanelViewTab.values.asNameMap();
+      for (final entry in placements.entries) {
+        final view = entry.key;
+        final placement = entry.value;
+        if (view is! String ||
+            split.sidebarViewLocations?[view] != panelSidebarViewLocation ||
+            placement is! Map) {
+          continue;
+        }
+        final tab = tabs[placement['tab']];
+        final before = placement['before'];
+        if (tab != null && before is bool) {
+          split.panelViewPlacements[view] = (tab: tab, before: before);
+        }
+      }
+    }
     // P05.12 layouts persisted Activity Bar placement but had no size field.
     // Upgrade those root layouts to Default while preserving the existing
     // horizontal bar height; Side receives the new 48 px default width.

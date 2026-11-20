@@ -69,13 +69,31 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     return true;
   }
 
-  /// Assign [view] to a side and select it there. If it was the source side's
-  /// selection, select the first remaining view in Activity Bar order.
-  bool moveSidebarView(String view, String destination) {
+  List<String> get standalonePanelViews => [
+        for (final view in sidebarViews(panelSidebarViewLocation))
+          if (!root.panelViewPlacements.containsKey(view)) view,
+      ];
+
+  List<String> groupedPanelViews(PanelViewTab tab, {required bool before}) => [
+        for (final entry in root.panelViewPlacements.entries)
+          if (entry.value == (tab: tab, before: before)) entry.key,
+      ];
+
+  /// Assign [view] to a side or panel. Select a replacement if it was the
+  /// source side's selection. Panel placements can use a standard tab.
+  bool moveSidebarView(
+    String view,
+    String destination, {
+    PanelViewPlacement? panelPlacement,
+  }) {
     if (!activityBarViewOrder.contains(view)) return false;
     if (destination != primarySidebarViewLocation &&
         destination != secondarySidebarViewLocation &&
         destination != panelSidebarViewLocation) {
+      return false;
+    }
+
+    if (panelPlacement != null && destination != panelSidebarViewLocation) {
       return false;
     }
 
@@ -92,6 +110,11 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
     locations[view] = destination;
     root.sidebarViewLocations = locations;
+    if (panelPlacement == null) {
+      root.panelViewPlacements.remove(view);
+    } else {
+      root.panelViewPlacements[view] = panelPlacement;
+    }
 
     if (sourceSelection == view) {
       final sourceFallback = _firstViewAt(source, locations);
@@ -121,6 +144,7 @@ extension WorkbenchSidebarViewLocations on WorkbenchLayout {
     }
 
     root.sidebarViewLocations = null;
+    root.panelViewPlacements.clear();
     root.primarySidebarView = null;
     root.secondarySidebarView = null;
     notifyLayoutChanged();

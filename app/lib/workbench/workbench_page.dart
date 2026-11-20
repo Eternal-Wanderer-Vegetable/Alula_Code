@@ -11,6 +11,7 @@ library;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, listEquals;
@@ -756,7 +757,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _polling = false;
   List<String> _completionItems = const [];
 
-  static const _standardPanelTabCount = 4;
+  static int get _standardPanelTabCount => PanelViewTab.values.length;
   late TabController _panelTab;
   List<String> _panelHostedViews = const [];
   final _searchViewFocus = FocusNode(debugLabel: 'workbench search view');
@@ -781,7 +782,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _syncPanelHostedViews() {
-    final views = _layout.sidebarViews(panelSidebarViewLocation);
+    final views = _layout.standalonePanelViews;
     if (listEquals(views, _panelHostedViews)) return;
     final oldController = _panelTab;
     final selected = _activePanelHostedView;
@@ -812,7 +813,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _sidebarView = _layout.primarySidebarView;
     _secondarySidebarView = _layout.secondarySidebarView;
     _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
-    _panelHostedViews = _layout.sidebarViews(panelSidebarViewLocation);
+    _panelHostedViews = _layout.standalonePanelViews;
     _replacePanelTabController(0);
     _layout.addListener(_syncPanelHostedViews);
     _layout.addListener(_scheduleStateSave);
@@ -20871,10 +20872,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _showPanelHostedView(String view) {
-    final index = _panelHostedViews.indexOf(view);
-    if (index < 0) return;
+    final standaloneIndex = _panelHostedViews.indexOf(view);
+    final groupedTab = _layout.root.panelViewPlacements[view]?.tab;
+    if (groupedTab == null && standaloneIndex < 0) return;
     if (view == 'outline') _refreshOutline();
-    _panelTab.index = _standardPanelTabCount + index;
+    _panelTab.index =
+        groupedTab?.index ?? _standardPanelTabCount + standaloneIndex;
     setState(() => _focusedSidebarView = view);
     _layout.showRegion('panel');
     _focusMovedSearchView(view, panelSidebarViewLocation);
@@ -21029,9 +21032,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _ => '次侧栏',
       };
 
-  void _focusSidebarRegion(String location) {
+  void _focusSidebarRegion(String location, String? panelView) {
     final view = location == panelSidebarViewLocation
-        ? _activePanelHostedView
+        ? panelView
         : _layout.sidebarSelection(location);
     if (view == null || _focusedSidebarView == view) return;
     setState(() => _focusedSidebarView = view);
@@ -21679,7 +21682,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             size: _layout.activityBarSize,
                             order: _layout.activityBarOrder,
                             pinnedViews: _layout.activityBarPinnedViews,
-                            excludedViews: _panelHostedViews,
+                            excludedViews:
+                                _layout.sidebarViews(panelSidebarViewLocation),
                             badgeDisabledViews:
                                 _layout.activityBarBadgesDisabledViews,
                             accountsVisible: _layout.activityBarAccountsVisible,
@@ -22285,7 +22289,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：搜索 ----------
 
-  Widget _buildSearchPanel() {
+  Widget _buildSearchPanel({required bool autofocus}) {
     return Container(
       color: const Color(0xFF181B20),
       child: Column(
@@ -22300,7 +22304,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     key: const ValueKey('search-input'),
                     controller: _searchQuery,
                     focusNode: _searchViewFocus,
-                    autofocus: true,
+                    autofocus: autofocus,
                     style: const TextStyle(fontSize: 12),
                     decoration: const InputDecoration(
                       hintText: '搜索（Enter 执行）',
@@ -22492,7 +22496,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 侧栏：资源管理器 ----------
 
-  Widget _buildSidebarViewRegion(String location, String? view) {
+  Widget _buildSidebarViewRegion(
+    String location,
+    String? view, {
+    bool autofocusSearch = true,
+  }) {
     final title = _sidebarViewLocationLabel(location);
     final child = Focus(
       focusNode: switch (location) {
@@ -22502,11 +22510,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       },
       key: view == null ? null : ValueKey('builtin-view-focus-$view'),
       onFocusChange: (focused) {
-        if (focused) _focusSidebarRegion(location);
+        if (focused) _focusSidebarRegion(location, view);
       },
       child: switch (view) {
         'git' => _buildGitPanel(),
-        'search' => _buildSearchPanel(),
+        'search' => _buildSearchPanel(autofocus: autofocusSearch),
         'outline' => _buildOutlinePanel(),
         'explorer' => _buildSidebar(),
         _ => SecondarySidebarEmptyState(title: title),
@@ -26728,6 +26736,211 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  String _standardPanelTitle(PanelViewTab tab) => switch (tab) {
+        PanelViewTab.diagnostics => '诊断',
+        PanelViewTab.completions => '补全',
+        PanelViewTab.syntax => '语法 (Tree-sitter)',
+        PanelViewTab.gitDiff => 'Git Diff',
+      };
+
+  Widget _buildStandardPanelBody(PanelViewTab tab) {
+    final original = switch (tab) {
+      PanelViewTab.diagnostics => _buildDiagnosticsPanel(),
+      PanelViewTab.completions => _buildCompletionPanel(),
+      PanelViewTab.syntax => _buildSyntaxPanel(),
+      PanelViewTab.gitDiff => _buildGitDiffPanel(),
+    };
+    final before = _layout.groupedPanelViews(tab, before: true);
+    final after = _layout.groupedPanelViews(tab, before: false);
+    final position = _layout.panelPosition;
+    final axis =
+        position == PanelPosition.left || position == PanelPosition.right
+            ? Axis.vertical
+            : Axis.horizontal;
+
+    Widget groupedView(String view) => _buildPanelGroupPane(
+          key: ValueKey('panel-view-group-${tab.name}-$view'),
+          label: _sidebarViewLabel(view),
+          child: _buildSidebarViewRegion(
+            panelSidebarViewLocation,
+            view,
+            autofocusSearch: false,
+          ),
+        );
+
+    return Focus(
+      skipTraversal: true,
+      child: Builder(
+        builder: (context) {
+          final focus = Focus.of(context);
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              if (before.isEmpty && after.isEmpty)
+                original
+              else
+                Flex(
+                  direction: axis,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final view in before)
+                      Expanded(child: groupedView(view)),
+                    Expanded(
+                      child: _buildPanelGroupPane(
+                        key: ValueKey('panel-view-group-${tab.name}-original'),
+                        label: _standardPanelTitle(tab),
+                        child: original,
+                      ),
+                    ),
+                    for (final view in after)
+                      Expanded(child: groupedView(view)),
+                  ],
+                ),
+              Flex(
+                direction: axis,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final before in const [true, false])
+                    Expanded(
+                        child: _buildPanelBodyDropTarget(tab, before, focus)),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPanelGroupPane({
+    required Key key,
+    required String label,
+    required Widget child,
+  }) {
+    return LayoutBuilder(
+      key: key,
+      builder: (context, constraints) {
+        final pane = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              height: 24,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              color: const Color(0xFF252932),
+              child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            Expanded(child: child),
+          ],
+        );
+        // A pane remains scrollable when the outer sash leaves too little
+        // space for the hosted view's inputs and actions.
+        const minWidth = 180.0;
+        const minHeight = 136.0;
+        if (constraints.maxWidth >= minWidth &&
+            constraints.maxHeight >= minHeight) {
+          return pane;
+        }
+        return SingleChildScrollView(
+          primary: false,
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: math.max(constraints.maxWidth, minWidth),
+            height: constraints.maxHeight,
+            child: SingleChildScrollView(
+              primary: false,
+              child: SizedBox(
+                height: math.max(constraints.maxHeight, minHeight),
+                child: pane,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPanelBodyDropTarget(
+    PanelViewTab tab,
+    bool before,
+    FocusNode focus,
+  ) {
+    final side = before ? 'before' : 'after';
+    bool accepts(ActivityBarViewDrag drag) =>
+        _panelTab.index == tab.index &&
+        _layout.sidebarViewLocation(drag.view) == primarySidebarViewLocation;
+
+    return DragTarget<ActivityBarViewDrag>(
+      key: ValueKey('panel-view-body-drop-${tab.name}-$side'),
+      onWillAcceptWithDetails: (details) => accepts(details.data),
+      onAcceptWithDetails: (details) {
+        if (!accepts(details.data)) return;
+        final view = details.data.view;
+        if (!_layout.moveSidebarView(
+          view,
+          panelSidebarViewLocation,
+          panelPlacement: (tab: tab, before: before),
+        )) {
+          return;
+        }
+        setState(() {
+          _sidebarView = _layout.primarySidebarView;
+          if (_focusedSidebarView == view) {
+            _focusedSidebarView = _sidebarView ?? _secondarySidebarView;
+          }
+          if (view == 'outline') _refreshOutline();
+        });
+        focus.requestFocus();
+      },
+      builder: (context, candidates, _) => IgnorePointer(
+        child: candidates.isEmpty
+            ? const SizedBox.expand()
+            : DecoratedBox(
+                key: ValueKey('panel-view-body-highlight-${tab.name}-$side'),
+                decoration: const BoxDecoration(
+                  color: Color(0x30007ACC),
+                  border: Border.fromBorderSide(
+                    BorderSide(color: Color(0xFF55B8FF)),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildPanelTabs() {
+    return Focus(
+      skipTraversal: true,
+      child: Builder(
+        builder: (context) {
+          final focus = Focus.of(context);
+          return TabBar(
+            controller: _panelTab,
+            onTap: (index) {
+              if (!focus.hasFocus) focus.requestFocus();
+              const commandIds = [
+                'view.panelDiagnostics',
+                'view.panelCompletions',
+                'view.panelSyntax',
+              ];
+              if (index < commandIds.length) {
+                _runCommand(commandIds[index]);
+              }
+            },
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            tabs: [
+              for (final tab in PanelViewTab.values)
+                Tab(text: _standardPanelTitle(tab)),
+              for (final view in _panelHostedViews)
+                _buildPanelHostedViewTab(view),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildPanel() {
     return Container(
       color: const Color(0xFF181B20),
@@ -26738,31 +26951,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: Row(
               children: [
                 Expanded(
-                  child: _buildPanelViewDropTarget(
-                    TabBar(
-                      controller: _panelTab,
-                      onTap: (index) {
-                        const commandIds = [
-                          'view.panelDiagnostics',
-                          'view.panelCompletions',
-                          'view.panelSyntax',
-                        ];
-                        if (index < commandIds.length) {
-                          _runCommand(commandIds[index]);
-                        }
-                      },
-                      isScrollable: true,
-                      tabAlignment: TabAlignment.start,
-                      tabs: [
-                        const Tab(text: '诊断'),
-                        const Tab(text: '补全'),
-                        const Tab(text: '语法 (Tree-sitter)'),
-                        const Tab(text: 'Git Diff'),
-                        for (final view in _panelHostedViews)
-                          _buildPanelHostedViewTab(view),
-                      ],
-                    ),
-                  ),
+                  child: _buildPanelViewDropTarget(_buildPanelTabs()),
                 ),
                 ListenableBuilder(
                   listenable: _layout,
@@ -26791,10 +26980,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: TabBarView(
               controller: _panelTab,
               children: [
-                _buildDiagnosticsPanel(),
-                _buildCompletionPanel(),
-                _buildSyntaxPanel(),
-                _buildGitDiffPanel(),
+                for (final tab in PanelViewTab.values)
+                  _buildStandardPanelBody(tab),
                 for (final view in _panelHostedViews)
                   KeyedSubtree(
                     key: ValueKey('panel-builtin-content-$view'),

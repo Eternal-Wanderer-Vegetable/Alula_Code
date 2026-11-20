@@ -8,6 +8,7 @@ import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/panel_position.dart';
 import 'package:alula_app/workbench/secondary_sidebar_layout.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/sidebar_view_locations.dart';
@@ -467,6 +468,148 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
   });
+
+  for (final (position, before) in [
+    (PanelPosition.bottom, true),
+    (PanelPosition.bottom, false),
+    (PanelPosition.right, true),
+    (PanelPosition.right, false),
+  ]) {
+    testWidgets(
+        'Activity Bar body drop groups the view at $position, before=$before',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final layout = WorkbenchLayout();
+      layout.setPanelPosition(position);
+      layout.showRegion('panel');
+      layoutStore.save(layout.root);
+      layout.dispose();
+
+      final keybindingsPath = '${temp.path}/group-keybindings.json';
+      File(keybindingsPath).writeAsStringSync(
+        '[{"key":"f6","command":"view.search"},'
+        '{"key":"f9","command":"workbench.action.resetViewLocations"}]',
+      );
+
+      Future<void> mount() async {
+        await tester.pumpWidget(AlulaApp(
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: keybindingsPath),
+        ));
+        await tester.pumpAndSettle();
+      }
+
+      await mount();
+      final item =
+          find.byKey(const ValueKey('activity-bar-item-menu-anchor-search'));
+      final side = before ? 'before' : 'after';
+      final drop =
+          find.byKey(ValueKey('panel-view-body-drop-diagnostics-$side'));
+      final highlight =
+          find.byKey(ValueKey('panel-view-body-highlight-diagnostics-$side'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final orig =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-original'));
+      final group =
+          find.byKey(const ValueKey('panel-view-group-diagnostics-search'));
+      final panelTab = find.byKey(const ValueKey('panel-builtin-view-search'));
+
+      Future<TestGesture> dragToBody() async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(item),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(const Offset(16, 0));
+        await gesture.moveTo(tester.getCenter(drop));
+        await tester.pump();
+        return gesture;
+      }
+
+      await tester.tap(item);
+      await tester.pumpAndSettle();
+      await tester.enterText(search, 'grouped query 😀');
+
+      final cancelled = await dragToBody();
+      expect(highlight, findsOneWidget);
+      await cancelled.cancel();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(item, findsOneWidget);
+      expect(group, findsNothing);
+
+      final accepted = await dragToBody();
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(item, findsNothing);
+      expect(group, findsOneWidget);
+      expect(highlight, findsNothing);
+      expect(panelTab, findsNothing);
+      expect(
+          find.descendant(of: orig, matching: find.textContaining('LSP 未启动')),
+          findsOneWidget);
+      final field = tester
+          .widget<TextField>(find.descendant(of: group, matching: search));
+      expect(field.controller!.text, 'grouped query 😀');
+      expect(field.focusNode!.hasFocus, isFalse);
+      final searchRect = tester.getRect(group);
+      final origRect = tester.getRect(orig);
+      if (position == PanelPosition.bottom) {
+        expect(searchRect.top, origRect.top);
+        expect(searchRect.left < origRect.left, before);
+      } else {
+        expect(searchRect.left, origRect.left);
+        expect(searchRect.top < origRect.top, before);
+      }
+      // Reset stays reachable immediately after releasing the drag.
+      await tester.sendKeyEvent(LogicalKeyboardKey.f9);
+      await tester.pumpAndSettle();
+      expect(group, findsNothing);
+      expect(item, findsOneWidget);
+      await tester.tap(item);
+      await tester.pumpAndSettle();
+      final regrouped = await dragToBody();
+      await regrouped.up();
+      await tester.pumpAndSettle();
+      expect(group, findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text,
+          'grouped query 😀');
+
+      // The drop overlay leaves pointer access to the hosted view intact.
+      await tester.tap(search);
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.panelViewPlacements['search'],
+          (tab: PanelViewTab.diagnostics, before: before));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mount();
+      expect(orig, findsOneWidget);
+      expect(group, findsOneWidget);
+      expect(item, findsNothing);
+      expect(panelTab, findsNothing);
+      final restored = tester
+          .widget<TextField>(find.descendant(of: group, matching: search));
+      expect(restored.focusNode!.hasFocus, isFalse);
+      await tester.tap(find.widgetWithText(Tab, '补全'));
+      await tester.pumpAndSettle();
+      await tester.sendKeyEvent(LogicalKeyboardKey.f6);
+      await tester.pumpAndSettle();
+      expect(find.descendant(of: group, matching: search), findsOneWidget);
+      expect(tester.widget<TextField>(search).focusNode!.hasFocus, isTrue);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
 
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
