@@ -2305,8 +2305,22 @@
         "feat-183",
         "feat-184"
       ],
+      "status": "done",
+      "evidence": "产品 `50caa0718335eeffd9a99875c9527064aec27f9a` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 验证嵌套单轴及两轴扩展、220×70 最小尺寸、均分、同时隐藏两侧栏和视图身份。专项 71/71，Flutter 1,655 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44774272272 四项及 Platform Availability 44774255986 Windows 和同 SHA 44775806212 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.134-editor-group-expansion.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-187",
+      "name": "P05.135 LAY-07 同组文本编辑器拆分与合并",
+      "description": "实现普通文本标签的同组双视图、合并、方向和焦点切换，保持共享文档的独立 view 状态、脏文档和生命周期。",
+      "dependencies": [
+        "feat-080",
+        "feat-184",
+        "feat-186"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 隔离渲染器已核对单轴及嵌套两轴扩展、保留兄弟组、重新均分及组合命令隐藏侧栏。待产品实现和验收。",
+      "evidence": "固定版 Windows 隔离渲染器已验证单标签双视图、共享编辑、焦点切换、独立滚动、垂直排列和合并后保存。待产品实现和验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
