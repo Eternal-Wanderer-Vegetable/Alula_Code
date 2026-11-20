@@ -8,6 +8,92 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('bulk checks affect only filtered results and keep input focus',
+      (tester) async {
+    final harness = await _pumpHarness(tester);
+    final accepted = <List<QuickItem>>[];
+    const hidden = QuickItem(label: 'Hidden picked', picked: true);
+    unawaited(QuickInput.show(
+      harness.pickerContext,
+      hint: 'Select items',
+      items: const [
+        hidden,
+        QuickItem(label: 'Match A', picked: true),
+        QuickItem(label: 'Match B'),
+        QuickItem(label: 'Hidden other'),
+      ],
+      canSelectMany: true,
+      onAccept: accepted.add,
+    ));
+    await tester.pumpAndSettle();
+    await tester.enterText(_inputFinder(), 'Match');
+    await tester.pumpAndSettle();
+
+    final checkbox = find.byKey(const ValueKey('quick-input-check-all'));
+    final input = tester.widget<TextField>(_inputFinder());
+    expect(tester.widget<Checkbox>(checkbox).value, isFalse);
+    expect(find.text('已选择 2 项'), findsOneWidget);
+
+    await tester.tap(checkbox, kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Checkbox>(checkbox).value, isTrue);
+    expect(find.text('已选择 3 项'), findsOneWidget);
+    expect(input.focusNode?.hasPrimaryFocus, isTrue);
+
+    await tester.tap(checkbox, kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Checkbox>(checkbox).value, isFalse);
+    expect(find.text('已选择 1 项'), findsOneWidget);
+    expect(input.focusNode?.hasPrimaryFocus, isTrue);
+
+    await tester.enterText(_inputFinder(), 'None');
+    await tester.pumpAndSettle();
+    await tester.tap(checkbox, kind: PointerDeviceKind.mouse);
+    await tester.pumpAndSettle();
+    expect(find.text('已选择 1 项'), findsOneWidget);
+    expect(input.focusNode?.hasPrimaryFocus, isTrue);
+
+    await tester.tap(find.byKey(const ValueKey('quick-input-confirm')));
+    await tester.pumpAndSettle();
+    expect(accepted, [
+      [hidden],
+    ]);
+    expect(find.byKey(const ValueKey('quick-input')), findsNothing);
+  });
+
+  testWidgets('bulk-selected provider results survive a query change',
+      (tester) async {
+    final harness = await _pumpHarness(tester);
+    final accepted = <List<QuickItem>>[];
+    const first = QuickItem(label: 'First');
+    const second = QuickItem(label: 'Second');
+    unawaited(QuickInput.show(
+      harness.pickerContext,
+      hint: 'Select items',
+      initialValue: 'first',
+      items: const [],
+      itemsProvider: (query) async => query == 'first' ? [first] : [second],
+      canSelectMany: true,
+      onAccept: accepted.add,
+    ));
+    await tester.pumpAndSettle();
+    final checkbox = find.byKey(const ValueKey('quick-input-check-all'));
+    await tester.tap(checkbox);
+    await tester.pumpAndSettle();
+    await tester.enterText(_inputFinder(), 'second');
+    await tester.pumpAndSettle();
+    expect(tester.widget<Checkbox>(checkbox).value, isFalse);
+    await tester.tap(checkbox);
+    await tester.pumpAndSettle();
+    expect(find.text('已选择 2 项'), findsOneWidget);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pumpAndSettle();
+    expect(accepted, [
+      [first, second],
+    ]);
+  });
+
   testWidgets('separators render as headings and navigation skips them',
       (tester) async {
     final harness = await _pumpHarness(tester);

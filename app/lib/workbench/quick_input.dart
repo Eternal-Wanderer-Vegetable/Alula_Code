@@ -800,10 +800,24 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     });
   }
 
+  Iterable<QuickItem> get _pickableMatches =>
+      _filtered.where((item) => _isSelectable(item) && _enabled(item));
+
+  void _toggleAllFiltered(bool checked) {
+    setState(() {
+      if (checked) {
+        _picked.addAll(_pickableMatches);
+      } else {
+        _picked.removeAll(_pickableMatches);
+      }
+    });
+  }
+
   void _accept() {
     if (!_claimPickerAcceptance()) return;
+    final items = widget.itemsProvider == null ? widget.items : _picked;
     final picked = [
-      for (final item in widget.items)
+      for (final item in items)
         if (_isSelectable(item) && _picked.contains(item)) item,
     ];
     widget.onHandled();
@@ -911,6 +925,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final showMultiSelectControls = widget.canSelectMany && !widget.inputMode;
+    final pickedCount =
+        showMultiSelectControls ? _picked.where(_isSelectable).length : 0;
     final severity = _validation?.severity;
     final validationColor = switch (severity) {
       QuickInputValidationSeverity.info => Colors.lightBlue.shade300,
@@ -957,6 +974,20 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                     icon: const Icon(Icons.arrow_back, size: 16),
                     color: Colors.grey.shade400,
                   ),
+                if (showMultiSelectControls)
+                  TextFieldTapRegion(
+                    child: Tooltip(
+                      message: '选择或清除所有匹配项',
+                      child: Checkbox(
+                        key: const ValueKey('quick-input-check-all'),
+                        visualDensity: VisualDensity.compact,
+                        value: _pickableMatches.isNotEmpty &&
+                            _pickableMatches.every(_picked.contains),
+                        onChanged: (value) =>
+                            _toggleAllFiltered(value ?? false),
+                      ),
+                    ),
+                  ),
                 Expanded(
                   child: Focus(
                     onKeyEvent: _onKey,
@@ -988,6 +1019,26 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
                 ),
                 if (widget.inputActionBuilder case final builder?)
                   builder(context, _controller.text, _refreshInputAction),
+                if (showMultiSelectControls) ...[
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      '已选择 $pickedCount 项',
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    key: const ValueKey('quick-input-confirm'),
+                    style: FilledButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      minimumSize: const Size(0, 26),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                    ),
+                    onPressed: _accept,
+                    child: const Text('确定'),
+                  ),
+                ],
               ],
             ),
           ),
