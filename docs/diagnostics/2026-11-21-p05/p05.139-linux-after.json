@@ -1,0 +1,1624 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "dropSide": "after",
+  "display": "Xvfb X11 in WSL; software GL",
+  "sourceTree": "074574b77330333b75922a3c1157b53e481d59f4",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "e5520e9a68be45725f11e9f1c0586a965cb82b2c8241cf2c70c349a171d0727e",
+  "observations": {
+    "initial-duplicate-target": {
+      "request": "initial-duplicate-target",
+      "boxes": {
+        "tab:editor:10": [
+          329.92,
+          42.0,
+          431.26666666666654,
+          64.0
+        ],
+        "label:editor:10": [
+          363.92,
+          45.5,
+          401.26666666666654,
+          62.5
+        ],
+        "tab:editor:11": [
+          431.26666666666654,
+          42.0,
+          532.613333333333,
+          64.0
+        ],
+        "label:editor:11": [
+          465.26666666666654,
+          45.5,
+          502.61333333333306,
+          62.5
+        ],
+        "tab:editor:12": [
+          532.613333333333,
+          42.0,
+          633.9599999999996,
+          64.0
+        ],
+        "label:editor:12": [
+          566.613333333333,
+          45.5,
+          603.9599999999996,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:11": [
+          771.96,
+          42.0,
+          862.6399999999999,
+          64.0
+        ],
+        "label:editor-2:11": [
+          805.96,
+          45.5,
+          832.6399999999999,
+          62.5
+        ],
+        "tab:editor-2:14": [
+          862.6399999999999,
+          42.0,
+          953.3199999999997,
+          64.0
+        ],
+        "label:editor-2:14": [
+          896.6399999999999,
+          45.5,
+          923.3199999999997,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          953.3199999999997,
+          42.0,
+          1043.9999999999995,
+          64.0
+        ],
+        "label:editor-2:15": [
+          987.3199999999997,
+          45.5,
+          1013.9999999999995,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 11,
+          "documents": [
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 490513786,
+            "inputWindow": 674427723,
+            "focused": false,
+            "text": "Xbravo fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 15,
+          "documents": [
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            }
+          ],
+          "selected": [
+            15
+          ],
+          "view": {
+            "id": 15,
+            "focusNode": 141403442,
+            "inputWindow": 322509141,
+            "focused": false,
+            "text": "Xfoxtrot fixture\n"
+          }
+        }
+      ]
+    },
+    "target-duplicate-view": {
+      "request": "target-duplicate-view",
+      "boxes": {
+        "tab:editor:10": [
+          329.92,
+          42.0,
+          431.26666666666654,
+          64.0
+        ],
+        "label:editor:10": [
+          363.92,
+          45.5,
+          401.26666666666654,
+          62.5
+        ],
+        "tab:editor:11": [
+          431.26666666666654,
+          42.0,
+          532.613333333333,
+          64.0
+        ],
+        "label:editor:11": [
+          465.26666666666654,
+          45.5,
+          502.61333333333306,
+          62.5
+        ],
+        "tab:editor:12": [
+          532.613333333333,
+          42.0,
+          633.9599999999996,
+          64.0
+        ],
+        "label:editor:12": [
+          566.613333333333,
+          45.5,
+          603.9599999999996,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:11": [
+          771.96,
+          42.0,
+          862.6399999999999,
+          64.0
+        ],
+        "label:editor-2:11": [
+          805.96,
+          45.5,
+          832.6399999999999,
+          62.5
+        ],
+        "tab:editor-2:14": [
+          862.6399999999999,
+          42.0,
+          953.3199999999997,
+          64.0
+        ],
+        "label:editor-2:14": [
+          896.6399999999999,
+          45.5,
+          923.3199999999997,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          953.3199999999997,
+          42.0,
+          1043.9999999999995,
+          64.0
+        ],
+        "label:editor-2:15": [
+          987.3199999999997,
+          45.5,
+          1013.9999999999995,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 11,
+          "documents": [
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 490513786,
+            "inputWindow": 674427723,
+            "focused": false,
+            "text": "Xbravo fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 11,
+          "documents": [
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 907731558,
+            "inputWindow": 975455185,
+            "focused": true,
+            "text": "Xbravo fixture\n"
+          }
+        }
+      ]
+    },
+    "original-alpha-view": {
+      "request": "original-alpha-view",
+      "boxes": {
+        "tab:editor:10": [
+          329.92,
+          42.0,
+          431.26666666666654,
+          64.0
+        ],
+        "label:editor:10": [
+          363.92,
+          45.5,
+          401.26666666666654,
+          62.5
+        ],
+        "tab:editor:11": [
+          431.26666666666654,
+          42.0,
+          532.613333333333,
+          64.0
+        ],
+        "label:editor:11": [
+          465.26666666666654,
+          45.5,
+          502.61333333333306,
+          62.5
+        ],
+        "tab:editor:12": [
+          532.613333333333,
+          42.0,
+          633.9599999999996,
+          64.0
+        ],
+        "label:editor:12": [
+          566.613333333333,
+          45.5,
+          603.9599999999996,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:11": [
+          771.96,
+          42.0,
+          862.6399999999999,
+          64.0
+        ],
+        "label:editor-2:11": [
+          805.96,
+          45.5,
+          832.6399999999999,
+          62.5
+        ],
+        "tab:editor-2:14": [
+          862.6399999999999,
+          42.0,
+          953.3199999999997,
+          64.0
+        ],
+        "label:editor-2:14": [
+          896.6399999999999,
+          45.5,
+          923.3199999999997,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          953.3199999999997,
+          42.0,
+          1043.9999999999995,
+          64.0
+        ],
+        "label:editor-2:15": [
+          987.3199999999997,
+          45.5,
+          1013.9999999999995,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 10,
+          "documents": [
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            10
+          ],
+          "view": {
+            "id": 10,
+            "focusNode": 16753647,
+            "inputWindow": 758634865,
+            "focused": true,
+            "text": "Xalpha fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 15,
+          "documents": [
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            }
+          ],
+          "selected": [
+            15
+          ],
+          "view": {
+            "id": 15,
+            "focusNode": 141403442,
+            "inputWindow": 322509141,
+            "focused": false,
+            "text": "Xfoxtrot fixture\n"
+          }
+        }
+      ]
+    },
+    "dirty-before-move": {
+      "request": "dirty-before-move",
+      "boxes": {
+        "tab:editor:10": [
+          329.92,
+          42.0,
+          431.26666666666654,
+          64.0
+        ],
+        "label:editor:10": [
+          363.92,
+          45.5,
+          401.26666666666654,
+          62.5
+        ],
+        "tab:editor:11": [
+          431.26666666666654,
+          42.0,
+          532.613333333333,
+          64.0
+        ],
+        "label:editor:11": [
+          465.26666666666654,
+          45.5,
+          502.61333333333306,
+          62.5
+        ],
+        "tab:editor:12": [
+          532.613333333333,
+          42.0,
+          633.9599999999996,
+          64.0
+        ],
+        "label:editor:12": [
+          566.613333333333,
+          45.5,
+          603.9599999999996,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:11": [
+          771.96,
+          42.0,
+          862.6399999999999,
+          64.0
+        ],
+        "label:editor-2:11": [
+          805.96,
+          45.5,
+          832.6399999999999,
+          62.5
+        ],
+        "tab:editor-2:14": [
+          862.6399999999999,
+          42.0,
+          953.3199999999997,
+          64.0
+        ],
+        "label:editor-2:14": [
+          896.6399999999999,
+          45.5,
+          923.3199999999997,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          953.3199999999997,
+          42.0,
+          1043.9999999999995,
+          64.0
+        ],
+        "label:editor-2:15": [
+          987.3199999999997,
+          45.5,
+          1013.9999999999995,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 10,
+          "documents": [
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            10
+          ],
+          "view": {
+            "id": 10,
+            "focusNode": 16753647,
+            "inputWindow": 758634865,
+            "focused": true,
+            "text": "alpha fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 15,
+          "documents": [
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            }
+          ],
+          "selected": [
+            15
+          ],
+          "view": {
+            "id": 15,
+            "focusNode": 141403442,
+            "inputWindow": 322509141,
+            "focused": false,
+            "text": "Xfoxtrot fixture\n"
+          }
+        }
+      ]
+    },
+    "source-multi-selected": {
+      "request": "source-multi-selected",
+      "boxes": {
+        "tab:editor:10": [
+          329.92,
+          42.0,
+          431.26666666666654,
+          64.0
+        ],
+        "label:editor:10": [
+          363.92,
+          45.5,
+          401.26666666666654,
+          62.5
+        ],
+        "tab:editor:11": [
+          431.26666666666654,
+          42.0,
+          532.613333333333,
+          64.0
+        ],
+        "label:editor:11": [
+          465.26666666666654,
+          45.5,
+          502.61333333333306,
+          62.5
+        ],
+        "tab:editor:12": [
+          532.613333333333,
+          42.0,
+          633.9599999999996,
+          64.0
+        ],
+        "label:editor:12": [
+          566.613333333333,
+          45.5,
+          603.9599999999996,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:11": [
+          771.96,
+          42.0,
+          862.6399999999999,
+          64.0
+        ],
+        "label:editor-2:11": [
+          805.96,
+          45.5,
+          832.6399999999999,
+          62.5
+        ],
+        "tab:editor-2:14": [
+          862.6399999999999,
+          42.0,
+          953.3199999999997,
+          64.0
+        ],
+        "label:editor-2:14": [
+          896.6399999999999,
+          45.5,
+          923.3199999999997,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          953.3199999999997,
+          42.0,
+          1043.9999999999995,
+          64.0
+        ],
+        "label:editor-2:15": [
+          987.3199999999997,
+          45.5,
+          1013.9999999999995,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 11,
+          "documents": [
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            10,
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 490513786,
+            "inputWindow": 674427723,
+            "focused": true,
+            "text": "Xbravo fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 15,
+          "documents": [
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            }
+          ],
+          "selected": [
+            15
+          ],
+          "view": {
+            "id": 15,
+            "focusNode": 141403442,
+            "inputWindow": 322509141,
+            "focused": false,
+            "text": "Xfoxtrot fixture\n"
+          }
+        }
+      ]
+    },
+    "partial-drop-after-target": {
+      "request": "partial-drop-after-target",
+      "boxes": {
+        "tab:editor:12": [
+          329.92,
+          42.0,
+          462.4003924560547,
+          64.0
+        ],
+        "label:editor:12": [
+          363.92,
+          45.5,
+          432.4003924560547,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:14": [
+          724.0,
+          42.0,
+          804.0,
+          64.0
+        ],
+        "label:editor-2:14": [
+          758.0,
+          45.5,
+          774.0,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          804.0,
+          42.0,
+          884.0,
+          64.0
+        ],
+        "label:editor-2:15": [
+          838.0,
+          45.5,
+          854.0,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          884.0,
+          42.0,
+          964.0,
+          64.0
+        ],
+        "label:editor-2:10": [
+          918.0,
+          45.5,
+          934.0,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          964.0,
+          42.0,
+          1044.0,
+          64.0
+        ],
+        "label:editor-2:11": [
+          998.0,
+          45.5,
+          1014.0,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 12,
+          "documents": [
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            12
+          ],
+          "view": {
+            "id": 12,
+            "focusNode": 983297227,
+            "inputWindow": 204220039,
+            "focused": false,
+            "text": "Xcharlie fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 11,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 907731558,
+            "inputWindow": 975455185,
+            "focused": true,
+            "text": "Xbravo fixture\n"
+          }
+        }
+      ]
+    },
+    "moved-alpha-view": {
+      "request": "moved-alpha-view",
+      "boxes": {
+        "tab:editor:12": [
+          329.92,
+          42.0,
+          462.4003924560547,
+          64.0
+        ],
+        "label:editor:12": [
+          363.92,
+          45.5,
+          432.4003924560547,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:14": [
+          724.0,
+          42.0,
+          804.0,
+          64.0
+        ],
+        "label:editor-2:14": [
+          758.0,
+          45.5,
+          774.0,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          804.0,
+          42.0,
+          884.0,
+          64.0
+        ],
+        "label:editor-2:15": [
+          838.0,
+          45.5,
+          854.0,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          884.0,
+          42.0,
+          964.0,
+          64.0
+        ],
+        "label:editor-2:10": [
+          918.0,
+          45.5,
+          934.0,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          964.0,
+          42.0,
+          1044.0,
+          64.0
+        ],
+        "label:editor-2:11": [
+          998.0,
+          45.5,
+          1014.0,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 12,
+          "documents": [
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            12
+          ],
+          "view": {
+            "id": 12,
+            "focusNode": 983297227,
+            "inputWindow": 204220039,
+            "focused": false,
+            "text": "Xcharlie fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 10,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            }
+          ],
+          "selected": [
+            10
+          ],
+          "view": {
+            "id": 10,
+            "focusNode": 16753647,
+            "inputWindow": 758634865,
+            "focused": true,
+            "text": "alpha fixture\n"
+          }
+        }
+      ]
+    },
+    "saved-moved-alpha": {
+      "request": "saved-moved-alpha",
+      "boxes": {
+        "tab:editor:12": [
+          329.92,
+          42.0,
+          462.4003924560547,
+          64.0
+        ],
+        "label:editor:12": [
+          363.92,
+          45.5,
+          432.4003924560547,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:14": [
+          724.0,
+          42.0,
+          804.0,
+          64.0
+        ],
+        "label:editor-2:14": [
+          758.0,
+          45.5,
+          774.0,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          804.0,
+          42.0,
+          884.0,
+          64.0
+        ],
+        "label:editor-2:15": [
+          838.0,
+          45.5,
+          854.0,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          884.0,
+          42.0,
+          964.0,
+          64.0
+        ],
+        "label:editor-2:10": [
+          918.0,
+          45.5,
+          934.0,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          964.0,
+          42.0,
+          1044.0,
+          64.0
+        ],
+        "label:editor-2:11": [
+          998.0,
+          45.5,
+          1014.0,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 12,
+          "documents": [
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            }
+          ],
+          "selected": [
+            12
+          ],
+          "view": {
+            "id": 12,
+            "focusNode": 983297227,
+            "inputWindow": 204220039,
+            "focused": false,
+            "text": "Xcharlie fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 10,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            }
+          ],
+          "selected": [
+            10
+          ],
+          "view": {
+            "id": 10,
+            "focusNode": 16753647,
+            "inputWindow": 758634865,
+            "focused": true,
+            "text": "alpha fixture\n"
+          }
+        }
+      ]
+    },
+    "opened-delta": {
+      "request": "opened-delta",
+      "boxes": {
+        "tab:editor:12": [
+          329.92,
+          42.0,
+          462.4003924560547,
+          64.0
+        ],
+        "label:editor:12": [
+          363.92,
+          45.5,
+          432.4003924560547,
+          62.5
+        ],
+        "tab:editor:16": [
+          462.4003924560547,
+          42.0,
+          586.6967333984376,
+          64.0
+        ],
+        "label:editor:16": [
+          496.4003924560547,
+          45.5,
+          556.6967333984376,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:14": [
+          724.0,
+          42.0,
+          804.0,
+          64.0
+        ],
+        "label:editor-2:14": [
+          758.0,
+          45.5,
+          774.0,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          804.0,
+          42.0,
+          884.0,
+          64.0
+        ],
+        "label:editor-2:15": [
+          838.0,
+          45.5,
+          854.0,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          884.0,
+          42.0,
+          964.0,
+          64.0
+        ],
+        "label:editor-2:10": [
+          918.0,
+          45.5,
+          934.0,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          964.0,
+          42.0,
+          1044.0,
+          64.0
+        ],
+        "label:editor-2:11": [
+          998.0,
+          45.5,
+          1014.0,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 16,
+          "documents": [
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            },
+            {
+              "id": 16,
+              "name": "delta.txt"
+            }
+          ],
+          "selected": [
+            16
+          ],
+          "view": {
+            "id": 16,
+            "focusNode": 669871404,
+            "inputWindow": 37599534,
+            "focused": false,
+            "text": "Xdelta fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 11,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 907731558,
+            "inputWindow": 975455185,
+            "focused": true,
+            "text": "Xbravo fixture\n"
+          }
+        }
+      ]
+    },
+    "remaining-source-selected": {
+      "request": "remaining-source-selected",
+      "boxes": {
+        "tab:editor:12": [
+          329.92,
+          42.0,
+          462.4003924560547,
+          64.0
+        ],
+        "label:editor:12": [
+          363.92,
+          45.5,
+          432.4003924560547,
+          62.5
+        ],
+        "tab:editor:16": [
+          462.4003924560547,
+          42.0,
+          586.6967333984376,
+          64.0
+        ],
+        "label:editor:16": [
+          496.4003924560547,
+          45.5,
+          556.6967333984376,
+          62.5
+        ],
+        "body:editor": [
+          329.92,
+          94.0,
+          767.96,
+          766.0
+        ],
+        "tab:editor-2:14": [
+          724.0,
+          42.0,
+          804.0,
+          64.0
+        ],
+        "label:editor-2:14": [
+          758.0,
+          45.5,
+          774.0,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          804.0,
+          42.0,
+          884.0,
+          64.0
+        ],
+        "label:editor-2:15": [
+          838.0,
+          45.5,
+          854.0,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          884.0,
+          42.0,
+          964.0,
+          64.0
+        ],
+        "label:editor-2:10": [
+          918.0,
+          45.5,
+          934.0,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          964.0,
+          42.0,
+          1044.0,
+          64.0
+        ],
+        "label:editor-2:11": [
+          998.0,
+          45.5,
+          1014.0,
+          62.5
+        ],
+        "body:editor-2": [
+          771.96,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor",
+      "groups": [
+        {
+          "region": "editor",
+          "active": 16,
+          "documents": [
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            },
+            {
+              "id": 16,
+              "name": "delta.txt"
+            }
+          ],
+          "selected": [
+            12,
+            16
+          ],
+          "view": {
+            "id": 16,
+            "focusNode": 669871404,
+            "inputWindow": 37599534,
+            "focused": true,
+            "text": "Xdelta fixture\n"
+          }
+        },
+        {
+          "region": "editor-2",
+          "active": 11,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            }
+          ],
+          "selected": [
+            11
+          ],
+          "view": {
+            "id": 11,
+            "focusNode": 907731558,
+            "inputWindow": 975455185,
+            "focused": false,
+            "text": "Xbravo fixture\n"
+          }
+        }
+      ]
+    },
+    "append-empties-source-group": {
+      "request": "append-empties-source-group",
+      "boxes": {
+        "tab:editor-2:14": [
+          329.92,
+          42.0,
+          448.9333333333332,
+          64.0
+        ],
+        "label:editor-2:14": [
+          363.92,
+          45.5,
+          418.9333333333332,
+          62.5
+        ],
+        "tab:editor-2:15": [
+          448.9333333333332,
+          42.0,
+          567.9466666666665,
+          64.0
+        ],
+        "label:editor-2:15": [
+          482.9333333333332,
+          45.5,
+          537.9466666666665,
+          62.5
+        ],
+        "tab:editor-2:10": [
+          567.9466666666665,
+          42.0,
+          686.9599999999997,
+          64.0
+        ],
+        "label:editor-2:10": [
+          601.9466666666665,
+          45.5,
+          656.9599999999997,
+          62.5
+        ],
+        "tab:editor-2:11": [
+          686.9599999999996,
+          42.0,
+          805.9733333333328,
+          64.0
+        ],
+        "label:editor-2:11": [
+          720.9599999999996,
+          45.5,
+          775.9733333333328,
+          62.5
+        ],
+        "tab:editor-2:12": [
+          805.9733333333329,
+          42.0,
+          924.9866666666661,
+          64.0
+        ],
+        "label:editor-2:12": [
+          839.9733333333329,
+          45.5,
+          894.9866666666661,
+          62.5
+        ],
+        "tab:editor-2:16": [
+          924.986666666666,
+          42.0,
+          1043.999999999999,
+          64.0
+        ],
+        "label:editor-2:16": [
+          958.986666666666,
+          45.5,
+          1013.9999999999992,
+          62.5
+        ],
+        "body:editor-2": [
+          329.92,
+          94.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "focusedRegion": "editor-2",
+      "groups": [
+        {
+          "region": "editor-2",
+          "active": 12,
+          "documents": [
+            {
+              "id": 14,
+              "name": "echo.txt"
+            },
+            {
+              "id": 15,
+              "name": "foxtrot.txt"
+            },
+            {
+              "id": 10,
+              "name": "alpha.txt"
+            },
+            {
+              "id": 11,
+              "name": "bravo.txt"
+            },
+            {
+              "id": 12,
+              "name": "charlie.txt"
+            },
+            {
+              "id": 16,
+              "name": "delta.txt"
+            }
+          ],
+          "selected": [
+            12
+          ],
+          "view": {
+            "id": 12,
+            "focusNode": 983297227,
+            "inputWindow": 204220039,
+            "focused": true,
+            "text": "Xcharlie fixture\n"
+          }
+        }
+      ]
+    }
+  },
+  "memorySamples": {
+    "before": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1599728,
+          "ppid": 1599725,
+          "private": 244785152,
+          "pss": 260711424,
+          "working_set": 336867328
+        }
+      ],
+      "root_pid": 1599728,
+      "total_private_bytes": 244785152,
+      "total_private_mib": 233.4,
+      "total_working_set_bytes": 336867328
+    },
+    "after": {
+      "n_processes": 1,
+      "processes": [
+        {
+          "name": "alula_app",
+          "peak_private": 0,
+          "pid": 1599728,
+          "ppid": 1599725,
+          "private": 245690368,
+          "pss": 261654528,
+          "working_set": 337903616
+        }
+      ],
+      "root_pid": 1599728,
+      "total_private_bytes": 245690368,
+      "total_private_mib": 234.3,
+      "total_working_set_bytes": 337903616
+    }
+  },
+  "fixtureSha256": "9048aa0e89a10fc91fcb18e8fe598ee49ec5095e073eb71487594cfd32373742",
+  "results": {
+    "matchedReference": [
+      "initial-duplicate-target",
+      "source-multi-selected",
+      "partial-drop-after-target",
+      "remaining-source-selected",
+      "append-empties-source-group"
+    ],
+    "sameMovedView": true,
+    "sameExistingTargetView": true,
+    "savedAlphaSha256": "e834f165105c796bdb1a3182e119a7550fee3463df0b60ee456b5dd8269fd742",
+    "focusedGroup": "editor-2"
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

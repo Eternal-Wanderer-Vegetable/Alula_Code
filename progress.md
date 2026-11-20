@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.139 / feat-191。产品 `b2e544b5dacbda5cb31e337ce39a64ecb626fe08` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选的前后落点、重复文档、未保存内容、源组移空与焦点。专项 8/8，Flutter 1,664 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44801767785 四项及 Platform Availability 44801751972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.139-tab-batch-cross-group.md。
+
 - 2026-11-21 完成 P05.138 / feat-190。产品 `8160d300a3099c5d80b4425bdbc125ed2d580c83` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证同组多选相对顺序、前后落点、固定区与活动视图。专项 34/34，Flutter 1,662 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44796951850 四项及 Platform Availability 44796940311 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.138-tab-batch-reorder.md。
 
 - 2026-11-21 完成 P05.137 / feat-189。产品 `3207d3a4775f0c5044de9b53f5fa2c7b39867e5a` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证组内双向循环、修饰键松开、取消、跨组重复文档和焦点。专项 83/83，Flutter 1,660 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44792092379 四项及 Platform Availability 44792079134 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.137-editor-mru.md。

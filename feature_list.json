@@ -2376,6 +2376,21 @@
         "feat-188",
         "feat-190"
       ],
+      "status": "done",
+      "evidence": "产品 `b2e544b5dacbda5cb31e337ce39a64ecb626fe08` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选的前后落点、重复文档、未保存内容、源组移空与焦点。专项 8/8，Flutter 1,664 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44801767785 四项及 Platform Availability 44801751972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.139-tab-batch-cross-group.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-192",
+      "name": "P05.140 LAY-10 跨组已选标签批量复制",
+      "description": "实现主窗口内同一选择的跨组复制修饰键拖放，覆盖共享文档、目标重复视图和不可复制标签的回退。",
+      "dependencies": [
+        "feat-095",
+        "feat-096",
+        "feat-188",
+        "feat-191"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
