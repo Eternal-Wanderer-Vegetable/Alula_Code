@@ -8,6 +8,7 @@ import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/explorer_preview.dart';
@@ -46,6 +47,127 @@ RustTextInputField _fieldWithLabel(WidgetTester tester, String label) => tester
     .firstWhere((field) => field.semanticsLabel == label);
 
 void main() {
+  testWidgets('group maximization restores nested sizes and live editor views',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-group-sizes');
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+    tester.view.physicalSize = const Size(1600, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final base = temp.path.replaceAll(r'\', '/');
+    final layoutStore = LayoutStore(path: '$base/layout.json')
+      ..save(defaultLayout());
+    CommandService? commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        layoutStore: layoutStore,
+        sessionStore: SessionStore(path: '$base/session.json'),
+        keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        onCommandServiceReady: (service) => commands = service,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    const maximize = 'workbench.action.toggleMaximizeEditorGroup';
+    const reset = 'workbench.action.evenEditorWidths';
+    Future<void> execute(String id) async {
+      expect(await commands!.execute(id), CommandExecutionStatus.executed);
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    expect(commands!.isEnabled(maximize), isFalse);
+    await execute('workbench.action.splitEditorRight');
+    await execute('workbench.action.splitEditorDown');
+    expect(commands!.isEnabled(maximize), isTrue);
+
+    const regions = ['editor', 'editor-2', 'editor-3'];
+    Finder region(String name, {bool skipOffstage = true}) =>
+        find.byKey(ValueKey('wb-region-$name'), skipOffstage: skipOffstage);
+    Rect rect(String name) => tester.getRect(region(name));
+    Finder field(String name, {bool skipOffstage = true}) => find.descendant(
+          of: region(name, skipOffstage: skipOffstage),
+          matching: find.byType(RustTextInputField, skipOffstage: skipOffstage),
+        );
+
+    final outerSash = Offset((rect('editor').right + rect('editor-2').left) / 2,
+        rect('editor-2').center.dy);
+    await tester.dragFrom(outerSash, const Offset(-125, 0));
+    await tester.pump();
+    final innerSash = Offset(rect('editor-2').center.dx,
+        (rect('editor-2').bottom + rect('editor-3').top) / 2);
+    await tester.dragFrom(innerSash, const Offset(0, -115));
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(
+        (rect('editor').width - rect('editor-2').width).abs(), greaterThan(60));
+    expect((rect('editor-2').height - rect('editor-3').height).abs(),
+        greaterThan(60));
+
+    final dragged = {for (final name in regions) name: rect(name)};
+    final shell = rect('sidebar');
+    final before = layoutStore.tryLoad()!.toJson();
+    final states = {
+      for (final name in regions)
+        name: tester.state<RustTextInputFieldState>(field(name)),
+    };
+    await tester.tap(field('editor-2'));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump(const Duration(milliseconds: 700));
+
+    expect(region('editor'), findsNothing);
+    expect(region('editor-3'), findsNothing);
+    expect(rect('editor-2'),
+        dragged['editor']!.expandToInclude(dragged['editor-3']!));
+    expect(rect('sidebar'), shell);
+    expect(layoutStore.tryLoad()!.toJson(), before);
+    for (final name in regions) {
+      expect(
+          tester
+              .state<RustTextInputFieldState>(field(name, skipOffstage: false)),
+          same(states[name]));
+    }
+
+    await tester
+        .tap(find.byKey(const ValueKey('restore-editor-group-editor-2')));
+    await tester.pump(const Duration(milliseconds: 700));
+    for (final name in regions) {
+      expect(rect(name), dragged[name]);
+      expect(tester.state<RustTextInputFieldState>(field(name)),
+          same(states[name]));
+    }
+    expect(
+        tester
+            .widget<RustTextInputField>(field('editor-2'))
+            .focusNode
+            ?.hasFocus,
+        isTrue);
+
+    await execute(maximize);
+    await execute(reset);
+    expect(rect('editor').width, closeTo(rect('editor-2').width, 1));
+    expect(rect('editor-2').height, closeTo(rect('editor-3').height, 1));
+    expect(rect('sidebar'), shell);
+    expect(layoutStore.tryLoad()!.toJson(), isNot(before));
+    for (final name in regions) {
+      expect(tester.state<RustTextInputFieldState>(field(name)),
+          same(states[name]));
+    }
+
+    await execute(maximize);
+    expect(region('editor'), findsNothing);
+    await execute('workbench.action.splitEditorRight');
+    expect(region('editor-4'), findsOneWidget);
+    for (final name in regions) {
+      expect(tester.state<RustTextInputFieldState>(field(name)),
+          same(states[name]));
+    }
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
   testWidgets(
     'directional move reuses editor views, creates groups, and deduplicates shared documents',
     (tester) async {

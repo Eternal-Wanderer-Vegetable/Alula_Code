@@ -27,6 +27,76 @@ class WorkbenchLayout extends ChangeNotifier {
     if (notify) notifyListeners();
   }
 
+  String? _maximizedEditorRegion;
+  String? get maximizedEditorRegion => _maximizedEditorRegion;
+
+  bool toggleEditorGroupMaximization(String region) {
+    if (_maximizedEditorRegion != null) {
+      restoreEditorGroups();
+      return true;
+    }
+
+    bool containsGroup(WbSplit split) {
+      final span = split.editorGroupSpan;
+      if (span != null &&
+          split.children
+              .getRange(span.first, span.last + 1)
+              .any((child) => child.leafOf(region) != null)) {
+        return true;
+      }
+      return split.children.whereType<WbSplit>().any(containsGroup);
+    }
+
+    if (!containsGroup(root)) return false;
+    _maximizedEditorRegion = region;
+    notifyListeners();
+    return true;
+  }
+
+  void restoreEditorGroups() {
+    if (_maximizedEditorRegion == null) return;
+    _maximizedEditorRegion = null;
+    notifyListeners();
+  }
+
+  void resetEditorGroupSizes() {
+    var changed = _maximizedEditorRegion != null;
+    _maximizedEditorRegion = null;
+
+    // Consecutive same-axis splits represent columns (or rows) of the same
+    // run. An orthogonal child takes one share on this axis.
+    int shares(WbNode node, Axis axis) {
+      if (node is WbSplit && node.axis == axis) {
+        return node.children
+            .fold(0, (total, child) => total + shares(child, axis));
+      }
+      return 1;
+    }
+
+    void distribute(WbSplit split) {
+      final span = split.editorGroupSpan;
+      if (span != null) {
+        final groups = split.children.sublist(span.first, span.last + 1);
+        final weight = groups.fold(0.0, (sum, node) => sum + node.weight);
+        final totalShares =
+            groups.fold(0, (sum, node) => sum + shares(node, split.axis));
+        for (final node in groups) {
+          final next = weight * shares(node, split.axis) / totalShares;
+          if ((node.weight - next).abs() > 1e-9) {
+            node.weight = next;
+            changed = true;
+          }
+        }
+      }
+      for (final child in split.children.whereType<WbSplit>()) {
+        distribute(child);
+      }
+    }
+
+    distribute(root);
+    if (changed) notifyListeners();
+  }
+
   /// Notify grid renderers after a layout-tree operation performed outside
   /// this controller's built-in split/region methods.
   void notifyLayoutChanged() => notifyListeners();

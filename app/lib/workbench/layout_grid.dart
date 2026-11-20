@@ -150,6 +150,18 @@ class _NodeView extends StatelessWidget {
 
     final split = leaf as WbSplit;
     final axis = split.axis;
+    final maximized = layout.maximizedEditorRegion;
+    final span = maximized == null || maximized == omitRegion
+        ? null
+        : split.editorGroupSpan;
+    final expandedLeaf = span == null || maximized == null
+        ? null
+        : split.children
+            .getRange(span.first, span.last + 1)
+            .map((child) => child.leafOf(maximized))
+            .nonNulls
+            .firstOrNull;
+    final occupied = expandedLeaf == null ? null : span;
 
     // 先确定哪些位置有可拖拽分割条，分割条占位要从弹性池里扣除
     final dividerSlots = <int>[];
@@ -181,7 +193,13 @@ class _NodeView extends StatelessWidget {
       final items = <Widget>[];
       for (var i = 0; i < split.children.length; i++) {
         if (dividerSlots.contains(i)) {
-          items.add(_Divider(
+          if (occupied != null && i > occupied.first && i <= occupied.last) {
+            items.add(SizedBox(
+              width: axis == Axis.horizontal ? dividerThickness : null,
+              height: axis == Axis.vertical ? dividerThickness : null,
+            ));
+          } else {
+            items.add(_Divider(
             key: ValueKey(
                 'wb-div-${_nodeKey(split.children[i - 1])}-${_nodeKey(split.children[i])}'),
             axis: axis,
@@ -190,31 +208,70 @@ class _NodeView extends StatelessWidget {
             thickness: dividerThickness,
             innerExtent: inner,
             layout: layout,
-            projection: projection,
-          ));
+              projection: projection,
+            ));
+          }
         }
         final child = split.children[i];
         final ext = extents[i];
+        final hidden =
+            occupied != null && i >= occupied.first && i <= occupied.last;
+        final view = _NodeView(
+          node: child,
+          layout: layout,
+          builders: builders,
+          regionKeys: regionKeys,
+          projection: projection,
+          omitRegion: hidden ? maximized : omitRegion,
+        );
         items.add(
           SizedBox(
             width: axis == Axis.horizontal ? ext : double.infinity,
             height: axis == Axis.vertical ? ext : double.infinity,
-            child: _NodeView(
-              node: child,
-              layout: layout,
-              builders: builders,
-              regionKeys: regionKeys,
-              projection: projection,
-              omitRegion: omitRegion,
-            ),
+            child: hidden
+                ? Offstage(
+                    child: ExcludeFocus(
+                      child: TickerMode(enabled: false, child: view),
+                    ),
+                  )
+                : view,
           ),
         );
       }
 
-      return Flex(
+      final grid = Flex(
         direction: axis,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: items,
+      );
+      if (expandedLeaf == null || occupied == null) return grid;
+
+      // Retain each hidden group's mounted view and its saved geometry. The
+      // shared editor area includes the dividers between those groups.
+      final before = extents.take(occupied.first).fold(0.0, (a, b) => a + b) +
+          dividerSlots.where((slot) => slot <= occupied.first).length *
+              dividerThickness;
+      final after = extents.skip(occupied.last + 1).fold(0.0, (a, b) => a + b) +
+          dividerSlots.where((slot) => slot > occupied.last).length *
+              dividerThickness;
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          grid,
+          Positioned.fill(
+            left: axis == Axis.horizontal ? before : 0,
+            right: axis == Axis.horizontal ? after : 0,
+            top: axis == Axis.vertical ? before : 0,
+            bottom: axis == Axis.vertical ? after : 0,
+            child: _NodeView(
+              node: expandedLeaf,
+              layout: layout,
+              builders: builders,
+              regionKeys: regionKeys,
+              projection: projection,
+            ),
+          ),
+        ],
       );
     });
   }

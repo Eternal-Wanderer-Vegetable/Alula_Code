@@ -1460,6 +1460,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _splitFocusedGroup(axis: Axis.vertical),
     );
     reg(
+      'workbench.action.evenEditorWidths',
+      '视图',
+      '重置编辑器组尺寸',
+      () async => _resetEditorGroupSizes(),
+    );
+    reg(
+      'workbench.action.toggleMaximizeEditorGroup',
+      '视图',
+      '切换编辑器组最大化',
+      () async => _toggleMaximizeEditorGroup(),
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleMaximizeEditorGroup',
+      ),
+      enablement: 'editorPartMultipleEditorGroups',
+    );
+    reg(
       'workbench.action.moveEditorToLeftGroup',
       '编辑器',
       '将活动编辑器移至左侧组',
@@ -3287,6 +3303,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _syncCommandContext() {
+    final maximizedGroup = _layout.maximizedEditorRegion;
+    if (maximizedGroup != null &&
+        (maximizedGroup != _focusedRegion || _groups.length < 2)) {
+      _layout.restoreEditorGroups();
+    }
     final active = _active;
     if (active != null) {
       final key = '${active.id}#${active.doc.version}';
@@ -3305,6 +3326,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'editorPartMultipleEditorGroups': _groups.length > 1,
       'editorHasPath': active?.path != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
@@ -15296,6 +15318,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _toggleMaximizeEditorGroup() {
+    if (!_layout.toggleEditorGroupMaximization(_focusedRegion)) return;
+    final group = _focused;
+    final active = group.active;
+    if (active != null) _focusEditorAfterLayout(group, active);
+  }
+
+  void _resetEditorGroupSizes() {
+    final wasMaximized = _layout.maximizedEditorRegion != null;
+    _layout.resetEditorGroupSizes();
+    final group = _focused;
+    final active = group.active;
+    if (wasMaximized && active != null) _focusEditorAfterLayout(group, active);
+  }
+
   void _moveFocusedEditorToGroup(_EditorGroupMoveDirection direction) {
     final source = _focused;
     final active = source.active;
@@ -23261,6 +23298,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
+          if (_layout.maximizedEditorRegion == g.region)
+            IconButton(
+              key: ValueKey('restore-editor-group-${g.region}'),
+              tooltip: '还原编辑器组',
+              onPressed: () =>
+                  _runCommand('workbench.action.toggleMaximizeEditorGroup'),
+              icon: const Icon(Icons.close_fullscreen, size: 16),
+              visualDensity: VisualDensity.compact,
+            ),
           IconButton(
             tooltip: '拆分编辑器',
             onPressed: () => _runCommand('editor.split'),

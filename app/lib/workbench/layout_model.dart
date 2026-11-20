@@ -399,6 +399,23 @@ ActivityBarLocation? _activityBarLocationFromJson(Object? raw) {
   return null;
 }
 
+extension EditorGroupSpan on WbSplit {
+  /// A contiguous editor area shares its outer allocation with the workbench
+  /// shell. The editor-only children may themselves contain nested splits.
+  ({int first, int last})? get editorGroupSpan {
+    bool isEditorBranch(WbNode node) => node.leaves.every((leaf) =>
+        !leaf.collapsed &&
+        !leaf.isFixed &&
+        (leaf.region == 'editor' || leaf.region.startsWith('editor-')));
+
+    final first = children.indexWhere(isEditorBranch);
+    final last = children.lastIndexWhere(isEditorBranch);
+    if (first < 0 || last <= first) return null;
+    if (!children.getRange(first, last + 1).every(isEditorBranch)) return null;
+    return (first: first, last: last);
+  }
+}
+
 /// 叶子节点：一个停靠区域。
 class WbLeaf extends WbNode {
   WbLeaf({

@@ -264,6 +264,7 @@ class KeybindingSet {
     'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
     'workbench.action.closeAllEditors': 'ctrl+k w',
     'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
+    'workbench.action.toggleMaximizeEditorGroup': 'ctrl+k ctrl+m',
     'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
@@ -414,6 +415,7 @@ class KeybindingSet {
         result['workbench.action.closeUnmodifiedEditors'] = 'cmd+k u';
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
+        result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
         result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';
