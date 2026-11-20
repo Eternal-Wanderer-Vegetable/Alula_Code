@@ -408,6 +408,18 @@ enum _EditorGroupMoveDirection {
   final bool insertBefore;
 }
 
+enum _ToastFocusMovement {
+  next('notifications.focusNextToast', '下一条通知弹窗'),
+  previous('notifications.focusPreviousToast', '上一条通知弹窗'),
+  first('notifications.focusFirstToast', '第一条通知弹窗'),
+  last('notifications.focusLastToast', '最后一条通知弹窗');
+
+  const _ToastFocusMovement(this.commandId, this.label);
+
+  final String commandId;
+  final String label;
+}
+
 class _EditorGroupBounds {
   const _EditorGroupBounds(this.left, this.top, this.right, this.bottom);
 
@@ -1156,6 +1168,22 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       () async => _notifications.dismissToasts(),
       when: 'notificationToastsVisible',
     );
+    reg(
+      'notifications.focusToasts',
+      '查看',
+      '聚焦通知弹窗',
+      () async => _moveToastFocus(_ToastFocusMovement.first),
+      when: 'notificationToastsVisible',
+    );
+    for (final movement in _ToastFocusMovement.values) {
+      reg(
+        movement.commandId,
+        '查看',
+        movement.label,
+        () async => _moveToastFocus(movement),
+        when: 'notificationFocus && notificationToastsVisible',
+      );
+    }
     reg(
       'notification.clear',
       '查看',
@@ -20958,15 +20986,74 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return !sameCorner;
   }
 
+  void _requestToastFocus(int id) {
+    if (_notifications.byId(id) case final notification?) {
+      requestNotificationToastFocus(_notificationSurfaceFocus, notification);
+    }
+  }
+
+  void _moveToastFocus(_ToastFocusMovement movement) {
+    if (_zenMode || _notificationsVisible) return;
+    final ids = _notifications.toastIds;
+    if (ids.isEmpty) return;
+    final focused = _focusedNotification;
+    final current = focused == null ? -1 : ids.indexOf(focused.id);
+    final index = switch (movement) {
+      _ToastFocusMovement.first => ids.length - 1,
+      _ToastFocusMovement.last => 0,
+      _ToastFocusMovement.next => current - 1,
+      _ToastFocusMovement.previous => current < 0 ? -1 : current + 1,
+    };
+    if (index >= 0 && index < ids.length) _requestToastFocus(ids[index]);
+  }
+
+  KeyEventResult _onToastNavigationKey(FocusNode _, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    final binding = _keybindings.bindingForChord(
+      KeyChord(
+        key: event.logicalKey,
+        control: keyboard.isControlPressed,
+        shift: keyboard.isShiftPressed,
+        alt: keyboard.isAltPressed,
+        meta: keyboard.isMetaPressed,
+      ),
+      matchesWhen: _commands.context.matches,
+    );
+    if (binding == null ||
+        !_ToastFocusMovement.values.any(
+          (movement) => movement.commandId == binding.commandId,
+        )) {
+      return KeyEventResult.ignored;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
+    return KeyEventResult.handled;
+  }
+
+  void _handoffRemovedToastFocus() {
+    final focused = focusedWorkbenchNotification();
+    if (focused == null || !focused.isToast) return;
+    final id = focused.notification.id;
+    final remaining = _notifications.toastIds;
+    if (remaining.isEmpty || remaining.contains(id)) return;
+
+    // Visible IDs increase from oldest to newest. Prefer the next row down.
+    final olderIndex = remaining.lastIndexWhere((candidate) => candidate < id);
+    _requestToastFocus(remaining[olderIndex < 0 ? 0 : olderIndex]);
+  }
+
   void _onNotificationsChanged() {
     if (!mounted || _disposing) return;
     if (!_notificationsVisible) {
       _notificationSourceFilter = null;
-      final active = _active;
-      if (!_notifications.hasToasts &&
-          _notificationSurfaceFocus.hasFocus &&
-          active != null) {
-        _focusEditorAfterLayout(_focused, active);
+      if (_notificationSurfaceFocus.hasFocus) {
+        if (_notifications.hasToasts) {
+          _handoffRemovedToastFocus();
+        } else if (_active case final active?) {
+          _focusEditorAfterLayout(_focused, active);
+        }
       }
     }
     _syncNotificationFocusContext();
@@ -21117,6 +21204,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         alignment: _notificationPosition.alignment,
         child: Focus(
           focusNode: _notificationSurfaceFocus,
+          onKeyEvent: _onToastNavigationKey,
           child: _notificationsVisible
               ? WorkbenchNotificationCenter(
                   center: _notifications,

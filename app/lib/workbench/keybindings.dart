@@ -176,6 +176,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['enter'] = LogicalKeyboardKey.enter;
   m['tab'] = LogicalKeyboardKey.tab;
   m['home'] = LogicalKeyboardKey.home;
+  m['pageup'] = LogicalKeyboardKey.pageUp;
+  m['pagedown'] = LogicalKeyboardKey.pageDown;
   m['end'] = LogicalKeyboardKey.end;
   m['insert'] = LogicalKeyboardKey.insert;
   m['backspace'] = LogicalKeyboardKey.backspace;
@@ -323,6 +325,14 @@ class KeybindingSet {
     'notification.clear': 'notificationFocus',
     'notifications.hideList': 'notificationCenterVisible',
     'notifications.hideToasts': 'notificationToastsVisible',
+    'notifications.focusNextToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusPreviousToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusFirstToast':
+        'notificationFocus && notificationToastsVisible',
+    'notifications.focusLastToast':
+        'notificationFocus && notificationToastsVisible',
     'breadcrumbs.focus': 'breadcrumbsPossible',
     'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
     'breadcrumbs.focusNext':
@@ -347,6 +357,10 @@ class KeybindingSet {
         'list.closeFind': 'escape',
         'notifications.hideToasts': 'escape',
         'notifications.hideList': 'escape',
+        'notifications.focusNextToast': 'arrowdown',
+        'notifications.focusPreviousToast': 'arrowup',
+        'notifications.focusFirstToast': 'pageup,home',
+        'notifications.focusLastToast': 'pagedown,end',
         'notification.clear':
             platform == TargetPlatform.macOS ? 'cmd+backspace' : 'delete',
         'breadcrumbs.focus':

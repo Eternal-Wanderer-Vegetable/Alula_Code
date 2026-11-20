@@ -124,6 +124,24 @@ class _NotificationStyle {
   return null;
 }
 
+/// Focus an attached toast row and keep the row in the visible viewport.
+void requestNotificationToastFocus(
+  FocusNode surface,
+  WorkbenchNotification notification,
+) {
+  for (final node in surface.traversalDescendants) {
+    final context = node.context;
+    if (context == null || !context.mounted) continue;
+    if (context.widget
+        case _NotificationItemFocus(isToast: true, notification: final item)
+        when identical(item, notification)) {
+      node.requestFocus();
+      unawaited(Scrollable.ensureVisible(context));
+      return;
+    }
+  }
+}
+
 class _NotificationItemActions extends StatefulWidget {
   const _NotificationItemActions({
     super.key,
@@ -428,17 +446,25 @@ class _NotificationToastState extends State<_NotificationToast> {
         isToast: true,
         onContextMenuVisibilityChanged: (visible) => _contextMenuOpen = visible,
         onMiddleClick: widget.onMiddleClick,
-        onFocusChange: (focused) => _descendantFocused = focused,
+        onFocusChange: (focused) {
+          if (!mounted || _descendantFocused == focused) return;
+          setState(() => _descendantFocused = focused);
+        },
         child: Semantics(
           liveRegion: true,
           container: true,
           label: '${notification.source} 通知：${notification.message}',
           child: Container(
+            key: ValueKey('notification-toast-frame-${notification.id}'),
             width: _notificationSurfaceWidth,
             decoration: BoxDecoration(
               color: const Color(0xFF252932),
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: const Color(0xFF3A4150)),
+              border: Border.all(
+                color: _descendantFocused
+                    ? Theme.of(context).colorScheme.primary
+                    : const Color(0xFF3A4150),
+              ),
               boxShadow: const [
                 BoxShadow(blurRadius: 12, color: Colors.black54),
               ],

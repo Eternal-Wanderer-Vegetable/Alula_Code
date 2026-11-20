@@ -639,9 +639,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords + 12,
-          reason: 'tree find, breadcrumbs, and notification clear add '
-              'contextual bindings; F3 and Escape share contexts');
+      expect(resolved.keys.length, expectedChords + 15,
+          reason: 'tree find, breadcrumbs and notifications add contextual '
+              'bindings, including toast focus navigation');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
           ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');

@@ -171,6 +171,91 @@ void main() {
     }, keybindings: '[{"key":"alt+f10","command":"notifications.showList"}]');
   });
 
+  testWidgets('toast focus commands navigate newest to oldest and hand off',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final first = _notify(center, 'Oldest toast');
+      final second = _notify(center, 'Middle toast');
+      final third = _notify(center, 'Newest toast');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      final palette = find.byKey(const ValueKey('quick-input'));
+      await tester.enterText(
+        find.descendant(of: palette, matching: find.byType(TextField)),
+        '聚焦通知弹窗',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 聚焦通知弹窗')));
+      await tester.pumpAndSettle();
+      expect(focusedWorkbenchNotification()?.notification, same(third));
+      expect(focusedWorkbenchNotification()?.isToast, isTrue);
+
+      Color borderColor(WorkbenchNotification notice) {
+        final frame =
+            find.byKey(ValueKey('notification-toast-frame-${notice.id}'));
+        final decoration =
+            tester.widget<Container>(frame).decoration! as BoxDecoration;
+        return (decoration.border! as Border).top.color;
+      }
+
+      final focusColor = Theme.of(tester.element(find.text(third.message)))
+          .colorScheme
+          .primary;
+      expect(borderColor(third), focusColor);
+      expect(borderColor(second), isNot(focusColor));
+
+      Future<void> expectFocus(
+          LogicalKeyboardKey key, WorkbenchNotification notice) async {
+        await tester.sendKeyEvent(key);
+        await tester.pump();
+        await tester.pump();
+        expect(focusedWorkbenchNotification()?.notification, same(notice));
+        expect(borderColor(notice), focusColor);
+      }
+
+      await expectFocus(LogicalKeyboardKey.arrowUp, third);
+      await expectFocus(LogicalKeyboardKey.arrowDown, second);
+      await expectFocus(LogicalKeyboardKey.arrowDown, first);
+      await expectFocus(LogicalKeyboardKey.arrowDown, first);
+      await expectFocus(LogicalKeyboardKey.home, third);
+      await expectFocus(LogicalKeyboardKey.end, first);
+      await expectFocus(LogicalKeyboardKey.pageUp, third);
+      await expectFocus(LogicalKeyboardKey.pageDown, first);
+      await expectFocus(LogicalKeyboardKey.arrowUp, second);
+
+      await expectFocus(LogicalKeyboardKey.delete, first);
+      expect(center.items, [third, first]);
+      await expectFocus(LogicalKeyboardKey.delete, third);
+      expect(center.items, [third]);
+      await tester.sendKeyEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      await tester.pump();
+      expect(center.items, isEmpty);
+      expect(focusedWorkbenchNotification(), isNull);
+      expect(_editorFocus(tester).hasPrimaryFocus, isTrue);
+    });
+  });
+
+  testWidgets('removing a different toast preserves focus on the current one',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final oldest = _notify(center, 'Toast before focused item');
+      final selected = _notify(center, 'Toast retaining focus');
+      _notify(center, 'Toast after focused item');
+      await tester.pump();
+      final node = Focus.of(tester.element(find.text(selected.message)));
+      node.requestFocus();
+      await tester.pump();
+
+      center.dismissToast(oldest.id);
+      await tester.pump();
+      expect(focusedWorkbenchNotification()?.notification, same(selected));
+      expect(center.items, hasLength(3));
+      expect(center.toastIds, hasLength(2));
+    });
+  });
+
   testWidgets('toast shortcut protects running progress and clears after done',
       (tester) async {
     final progress = NotificationProgress(total: 10, worked: 1);
