@@ -1,0 +1,149 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "fba5d20ad74a1b71c021e7d1a75b36362b6b2bc1",
+  "runnerSha256": "118b4c4e8dc0133f626a62be6075b6a6fc7f6898b8cfcf6f0d5d9c0a4c2a7871",
+  "aotSha256": "08fa9b8ea4238244125d8081605f3f98bd2bcad119ced0fa9e62314e8d39b4a2",
+  "observations": {
+    "toast": {
+      "request": "toast",
+      "scroll": {},
+      "center": null,
+      "viewport": null,
+      "oldest": null
+    },
+    "center": {
+      "request": "center",
+      "scroll": {
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 212.0,
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 0.0,
+        "colorArgb": 1306976489
+      },
+      "center": [
+        540.0,
+        227.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        263.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        841.0,
+        991.0,
+        875.0
+      ]
+    },
+    "idle": {
+      "request": "capture-idle",
+      "scroll": {
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 212.0,
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 0.0,
+        "colorArgb": 1306976489
+      },
+      "center": [
+        540.0,
+        227.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        263.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        841.0,
+        991.0,
+        875.0
+      ],
+      "image": "p05.126-linux-idle.png",
+      "imageSha256": "12d1c7e4fc2401af68faaea3e4c2eb34c55fe6de823fcc38cb0531cbd2fae94c"
+    },
+    "hover": {
+      "request": "capture-hover",
+      "scroll": {
+        "pixels": 0.0,
+        "extentBefore": 0.0,
+        "extentAfter": 212.0,
+        "painterCount": 1,
+        "thumbAtTop": false,
+        "width": 8.0,
+        "opacity": 0.0,
+        "colorArgb": 1306976489
+      },
+      "center": [
+        540.0,
+        227.0,
+        992.0,
+        664.0
+      ],
+      "viewport": [
+        541.0,
+        263.0,
+        991.0,
+        663.0
+      ],
+      "oldest": [
+        541.0,
+        841.0,
+        991.0,
+        875.0
+      ],
+      "image": "p05.126-linux-idle.png",
+      "imageSha256": "12d1c7e4fc2401af68faaea3e4c2eb34c55fe6de823fcc38cb0531cbd2fae94c"
+    }
+  },
+  "case": "baseline",
+  "fixtureSha256": "96c9c6df4dc8a9a773b52eaa67429f21fec326812389c2585b79091ef8160ad5",
+  "memoryBeforeScreenshots": {
+    "samples": [
+      {
+        "privateBytes": 212545536,
+        "pssBytes": 228023296,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 212545536,
+        "pssBytes": 228023296,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 212545536,
+        "pssBytes": 228023296,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 212545536,
+        "pssBytes": 228023296,
+        "processCount": 1
+      },
+      {
+        "privateBytes": 212549632,
+        "pssBytes": 228027392,
+        "processCount": 1
+      }
+    ],
+    "medianPrivateMiB": 202.7,
+    "medianPssMiB": 217.46
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "coreSha256": "9ee0c35c82c420a668ba30b7995f55442a63dba65f51c90a60d966ccc39edb99"
+}

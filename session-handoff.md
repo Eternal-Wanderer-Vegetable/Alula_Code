@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 等待 Windows 桌面输入恢复。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 等待 Windows 桌面输入恢复。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航的前置依赖已满足。
 
 ## Current State
 
+- 产品 `d84894e03d512b53e302510a3fd6d81ea7fdd37e` 已推草稿 PR #3。固定版与 Linux Xvfb 验证长列表滚动条显隐、8 像素宽度、按住越界拖动、滚轮和短列表。基线与修复版空闲帧相同。专项 151/151，Flutter 1,641 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44738453249 四项及 Platform Availability 44738442824 Windows/Linux 通过。Windows 本机拖动仍待桌面输入恢复，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.126-notification-scrollbar.md。
 - 产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关留在 P05.124，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。
 - 产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，Windows 实机键位按 P05.124 继续验收。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。
 - 产品 `e5f720cfd978e346f8bff22c5443cf6a73147136` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 用 12 个来源复验配置菜单仅显示前十个、按稳定 ID 更新、更多进入完整选择器与全局勿扰。专项 114/114，Flutter 1,636 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44726959456 四项与 Platform Availability 44726947590 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.122-notification-filter-menu.md。
@@ -33,7 +34,7 @@ Last Updated: 2026-11-20
 
 ## Blockers / Limits
 
-macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。P05.123 规范命令验证已完成。P05.125 默认无障碍组合键通过 Linux Xvfb 和 Windows Release 原生状态桥验证。P05.124 等待 Windows 桌面输入恢复后验收自定义和默认键位，P05.126 继续补齐通知中心滚动条。
+macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知铃铛状态、后台进度与可见标记已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。清除全部和全局勿扰固定命令及兼容性已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心默认密度已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。通知中心勿扰配置菜单已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。P05.123 规范命令验证已完成。P05.125 默认无障碍组合键通过 Linux Xvfb 和 Windows Release 原生状态桥验证。P05.124 等待 Windows 桌面输入恢复后验收自定义和默认键位，P05.126 在固定版和 Linux Xvfb 验收滚动条，Windows 本机鼠标路径待恢复桌面输入。通知无障碍视图按 docs/11 ACC-02 归 P14。
 
 ## Files
 
@@ -41,4 +42,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.125 文档收尾 CI。Windows 桌面输入恢复后优先完成 P05.124。继续按 docs/03 推进依赖已满足的 P05.126 通知中心滚动条。
+确认 P05.126 文档收尾 CI。Windows 桌面输入恢复后优先完成 P05.124。继续按 docs/03 推进依赖已满足的 P05.127 QuickInput 分页与首尾导航。

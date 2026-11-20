@@ -2194,8 +2194,23 @@
       "dependencies": [
         "feat-177"
       ],
+      "status": "done",
+      "evidence": "产品 `d84894e03d512b53e302510a3fd6d81ea7fdd37e` 已推草稿 PR #3。固定版与 Linux Xvfb 验证长列表滚动条显隐、8 像素宽度、按住越界拖动、滚轮和短列表。基线与修复版空闲帧相同。专项 151/151，Flutter 1,641 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44738453249 四项及 Platform Availability 44738442824 Windows/Linux 通过。Windows 本机拖动仍待桌面输入恢复，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.126-notification-scrollbar.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-179",
+      "name": "P05.127 LAY-17 QuickInput 分页与首尾导航",
+      "description": "固定版 QuickInput 上下翻页和列表首尾组合键，支持多行 detail、非选中分隔符、刷新后的有限视口、输入框焦点和接受。",
+      "dependencies": [
+        "feat-106",
+        "feat-107",
+        "feat-124",
+        "feat-136"
+      ],
       "status": "not-started",
-      "evidence": "P05.121 已对照列表密度和溢出，闲置滚动条仍有差异。待复验固定版显隐、拖动及 Alula 行为。",
+      "evidence": "已在固定版 Windows 隔离渲染器核对 40 条混合行高分组条目首尾、翻页、边界与输入焦点。待产品修复与验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

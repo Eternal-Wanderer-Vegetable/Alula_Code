@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.126 / feat-178。产品 `d84894e03d512b53e302510a3fd6d81ea7fdd37e` 已推草稿 PR #3。固定版与 Linux Xvfb 验证长列表滚动条显隐、8 像素宽度、按住越界拖动、滚轮和短列表。基线与修复版空闲帧相同。专项 151/151，Flutter 1,641 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44738453249 四项及 Platform Availability 44738442824 Windows/Linux 通过。Windows 本机拖动仍待桌面输入恢复，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.126-notification-scrollbar.md。
+
 - 2026-11-20 完成 P05.125 / feat-177。产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关留在 P05.124，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。
 
 - 2026-11-20 完成 P05.123 / feat-175。产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，Windows 实机键位按 P05.124 继续验收。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。
