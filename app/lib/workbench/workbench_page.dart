@@ -634,8 +634,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _auxiliaryFocusHandlerReady = false;
   // LAY-15：跨编辑器锁定滚动（比例同步 + Alt 按住临时同步）。
   bool _lockedScrolling = false;
+  bool _splitInGroupVertical = false;
   bool _scrollSyncInProgress = false;
-  final Set<int> _scrollSyncListeners = <int>{};
   // LAY-16：Explorer 树 type navigation（键入字符跳转到匹配的可见项）。
   String _treeTypeAheadBuffer = '';
   Timer? _treeTypeAheadTimer;
@@ -1489,6 +1489,67 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'workbench.action.toggleMaximizeEditorGroup',
       ),
       enablement: 'editorPartMultipleEditorGroups',
+    );
+    reg(
+      'workbench.action.splitEditorInGroup',
+      '视图',
+      '在组内拆分编辑器',
+      () async => _splitEditorInGroup(),
+      enablement: 'activeEditorCanSplitInGroup',
+    );
+    reg(
+      'workbench.action.joinEditorInGroup',
+      '视图',
+      '合并组内编辑器',
+      () async => _joinEditorInGroup(),
+      enablement: 'sideBySideEditorActive',
+    );
+    reg(
+      'workbench.action.toggleSplitEditorInGroup',
+      '视图',
+      '切换组内拆分编辑器',
+      () async {
+        if (_active?._splitEditor == null) {
+          _splitEditorInGroup();
+        } else {
+          _joinEditorInGroup();
+        }
+      },
+      shortcut: _keybindings.shortcutFor(
+        'workbench.action.toggleSplitEditorInGroup',
+      ),
+      enablement: 'activeEditorCanSplitInGroup || sideBySideEditorActive',
+    );
+    reg(
+      'workbench.action.toggleSplitEditorInGroupLayout',
+      '视图',
+      '切换组内拆分编辑器布局',
+      () async {
+        setState(() => _splitInGroupVertical = !_splitInGroupVertical);
+        _scheduleStateSave();
+      },
+      enablement: 'sideBySideEditorActive',
+    );
+    reg(
+      'workbench.action.focusFirstSideEditor',
+      '视图',
+      '聚焦组内第一个编辑器',
+      () async => _focusSplitEditorSide(_active?._splitEditor?.first),
+      enablement: 'sideBySideEditorActive',
+    );
+    reg(
+      'workbench.action.focusSecondSideEditor',
+      '视图',
+      '聚焦组内第二个编辑器',
+      () async => _focusSplitEditorSide(_active?._splitEditor?.second),
+      enablement: 'sideBySideEditorActive',
+    );
+    reg(
+      'workbench.action.focusOtherSideEditor',
+      '视图',
+      '聚焦组内另一个编辑器',
+      () async => _focusSplitEditorSide(_active?._splitPeer),
+      enablement: 'sideBySideEditorActive',
     );
     reg(
       'workbench.action.toggleEditorGroupLock',
@@ -3383,6 +3444,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         : _mergeConflictAtSelection(active);
     _commands.context.setValues({
       'editorActive': active != null,
+      'activeEditorCanSplitInGroup':
+          active != null && active._splitEditor == null && mergeSession == null,
+      'sideBySideEditorActive':
+          active?._splitEditor != null && mergeSession == null,
       'editorPartMultipleEditorGroups': _groups.length > 1,
       'activeEditorGroupLocked': _groups[_focusedRegion]?.locked == true,
       'editorHasPath': active?.path != null,
@@ -4164,6 +4229,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'zenMode': _zenMode,
         'welcomeVisible': _welcomeVisible,
         'lockedScrolling': _lockedScrolling,
+        if (_splitInGroupVertical) 'splitInGroupVertical': true,
         'gotoLine.useZeroBasedOffset': _gotoZeroBasedOffset,
         if (_workspaceRoot != null) 'workspace': _workspaceRoot,
         'groups': [
@@ -4183,6 +4249,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 for (final d in g.docs)
                   {
                     'id': d.id,
+                    if (d._splitEditor case final split?)
+                      'splitInGroup': {
+                        'firstActive': identical(d, split.first),
+                        'ratio': split.ratio,
+                      },
                     if (d.path != null) 'path': d.path,
                     'fileOptions': d.fileOptions.toJson(),
                     'savedFileOptions': d.savedFileOptions.toJson(),
@@ -4298,6 +4369,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _zenMode = data['zenMode'] == true;
     _welcomeVisible = data['welcomeVisible'] == true;
     _lockedScrolling = data['lockedScrolling'] == true;
+    _splitInGroupVertical = data['splitInGroupVertical'] == true;
     _gotoZeroBasedOffset = data['gotoLine.useZeroBasedOffset'] == true;
     try {
       final groupsRaw = data['groups'];
@@ -4358,7 +4430,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               _journalRecoveryNotice = '会话中的同文档副本内容或文件设置冲突；已将冲突内容保留为未命名恢复副本。';
               continue;
             }
-            target.docs.add(OpenDoc.viewOf(existing));
+            target.docs.add(
+              _restoreSplitEditor(OpenDoc.viewOf(existing), dr['splitInGroup']),
+            );
             if (id > maxId) maxId = id;
             continue;
           }
@@ -4451,7 +4525,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             conflictBaselineKnown: conflictBaselineKnown,
             undoBudget: _undoHistoryBudget,
           );
-          target.docs.add(open);
+          target.docs.add(_restoreSplitEditor(open, dr['splitInGroup']));
           restoredDocuments[id] = open;
           if (id > maxId) maxId = id;
         }
@@ -4558,8 +4632,20 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Iterable<OpenDoc> get _allDocViews sync* {
     for (final g in _groups.values) {
-      yield* g.docs;
+      for (final doc in g.docs) {
+        yield* doc._tabViews;
+      }
     }
+  }
+
+  OpenDoc _restoreSplitEditor(OpenDoc view, Object? raw) {
+    if (raw is! Map) return view;
+    final ratio = raw['ratio'];
+    final split = view._splitInGroup();
+    if (ratio is num && ratio.isFinite) {
+      split.ratio = ratio.clamp(0.0, 1.0).toDouble();
+    }
+    return raw['firstActive'] == true ? split.first : split.second;
   }
 
   /// One representative per Rust document, for document-scoped services.
@@ -4603,7 +4689,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   EditorGroup? _ownerOfView(OpenDoc view) {
     for (final g in _groups.values) {
-      if (g.docs.any((candidate) => identical(candidate, view))) return g;
+      if (g.docs.any((candidate) =>
+          identical(candidate, view) || identical(candidate._splitPeer, view))) {
+        return g;
+      }
     }
     if (_snapshotCompareViews.containsKey(view)) {
       for (final g in _groups.values) {
@@ -14195,30 +14284,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 为所有已打开文档的滚动控制器挂同步监听（幂等）。编辑器随打开动态创建，
   /// _buildEditor 渲染时补挂。
   void _ensureScrollSyncListeners() {
-    for (final doc in _allDocs) {
-      _attachScrollSyncListener(doc);
+    for (final group in _groups.values) {
+      final active = group.active;
+      if (active == null) continue;
+      for (final view in active._tabViews) {
+        _attachScrollSyncListener(view);
+      }
     }
   }
 
   void _attachScrollSyncListener(OpenDoc doc) {
-    if (_scrollSyncListeners.contains(doc.id)) return;
+    if (doc._hasScrollSyncListener) return;
+    doc._hasScrollSyncListener = true;
     final controller = doc.editorScrollController;
-    if (!controller.hasClients) {
-      // 未布局：延迟到首帧后再挂。
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollSyncListeners.contains(doc.id)) return;
-        _attachScrollSyncListener(doc);
-      });
-      return;
-    }
-    _scrollSyncListeners.add(doc.id);
     controller.addListener(() => _onLockedScroll(doc, controller));
   }
 
   void _onLockedScroll(OpenDoc source, ScrollController controller) {
     final holdSync = HardwareKeyboard.instance.isAltPressed;
     if (!_lockedScrolling && !holdSync) return;
-    if (_scrollSyncInProgress) return;
+    if (_scrollSyncInProgress || source._viewDisposed) return;
     if (!controller.hasClients) return;
     final position = controller.position;
     if (position.maxScrollExtent <= 0) return;
@@ -14926,7 +15011,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (final target in currentTargets) {
         final closingViews = currentTargets
             .where((candidate) => candidate.doc.sameDocumentAs(target.doc))
-            .length;
+            .fold<int>(
+                0, (count, candidate) => count + candidate.doc._tabViewCount);
         if (closingViews < target.doc.sharedViewCount ||
             finalDocuments.any((doc) => doc.sameDocumentAs(target.doc))) {
           continue;
@@ -15207,9 +15293,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
     final id = doc.id;
     final wasActive = owner.activeDocId == id;
-    final focusKey = _focusKeyFor(owner, doc);
-    _editorFocusNodes.remove(focusKey)?.dispose();
-    final isLastView = doc.sharedViewCount == 1;
+    for (final view in doc._tabViews) {
+      _editorFocusNodes.remove(_focusKeyFor(owner, view))?.dispose();
+    }
+    final isLastView = doc.sharedViewCount == doc._tabViewCount;
     if (isLastView) {
       _syntaxRefreshTimers.remove(id)?.cancel();
       if (doc.lspAttached && _lspReady) {
@@ -15460,6 +15547,84 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     });
   }
 
+  void _splitEditorInGroup() {
+    final group = _focused;
+    final view = group.active;
+    if (view == null ||
+        view._splitEditor != null ||
+        view.mergeResultSession != null ||
+        _editorCloseInProgress.contains(view._shared) ||
+        _auxiliaryTransferSourceLocks.containsKey(view.id)) {
+      return;
+    }
+    _flushInput(view, commitComposition: true);
+    final offset = view._scrollOffset;
+    setState(() => view._splitInGroup());
+    _syncCommandContext();
+    _focusEditorAfterLayout(group, view, scrollOffset: offset);
+    _scheduleStateSave();
+  }
+
+  void _joinEditorInGroup() {
+    final group = _focused;
+    final view = group.active;
+    final peer = view?._splitPeer;
+    if (view == null ||
+        peer == null ||
+        _editorCloseInProgress.contains(view._shared) ||
+        _auxiliaryTransferSourceLocks.containsKey(view.id)) {
+      return;
+    }
+    _flushInput(view, commitComposition: true);
+    _flushInput(peer, commitComposition: true);
+    final offset = view._scrollOffset;
+    final keptFocus = _editorFocusNodes.remove(_focusKeyFor(group, view));
+    _editorFocusNodes.remove(_focusKeyFor(group, peer))?.dispose();
+    setState(() {
+      view._splitEditor!.detach();
+      if (keptFocus != null) {
+        _editorFocusNodes[_focusKeyFor(group, view)] = keptFocus;
+      }
+      peer.disposeView(deferScrollControllerDisposal: true);
+    });
+    _syncCommandContext();
+    _focusEditorAfterLayout(group, view, scrollOffset: offset);
+    _scheduleStateSave();
+  }
+
+  void _focusSplitEditorSide(OpenDoc? view) {
+    if (view == null) return;
+    final group = _focused;
+    _activateSplitEditorView(group, view);
+    _focusEditorAfterLayout(group, view, scrollOffset: view._scrollOffset);
+  }
+
+  void _activateSplitEditorView(EditorGroup group, OpenDoc view) {
+    if (_disposing ||
+        !mounted ||
+        !identical(_groups[group.region], group) ||
+        _editorCloseInProgress.contains(view._shared) ||
+        _auxiliaryTransferSourceLocks.containsKey(view.id)) {
+      return;
+    }
+    final current = group.active;
+    if (current == null ||
+        !(identical(current, view) || identical(current._splitPeer, view)) ||
+        (identical(current, view) && _focusedRegion == group.region)) {
+      return;
+    }
+    final previous = _active;
+    if (previous != null && !identical(previous, view)) {
+      _flushInput(previous, commitComposition: true);
+    }
+    setState(() {
+      group.docs[group.docs.indexOf(current)] = view;
+      _focusedRegion = group.region;
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+  }
+
   void _toggleMaximizeEditorGroup() {
     if (!_layout.toggleEditorGroupMaximization(_focusedRegion)) return;
     final group = _focused;
@@ -15529,10 +15694,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     try {
       for (final doc in source.docs) {
         _flushInput(doc, commitComposition: true);
-        final controller = doc.editorScrollController;
-        final offset = controller.positions.firstOrNull?.pixels ??
-            controller.initialScrollOffset;
-        views.add(OpenDoc.viewOf(doc, initialScrollOffset: offset));
+        views.add(doc._copyTab(initialScrollOffset: doc._scrollOffset));
       }
       inserted = _layout.splitRegion(
         source.region,
@@ -15651,17 +15813,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _noteActiveDocument(target, active.id);
       if (movingPreview) target.previewDocId = active.id;
 
-      final sourceFocusKey = _focusKeyFor(source, active);
-      final targetFocusKey = _focusKeyFor(target, active);
-      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
-      if (movedFocusNode != null) {
-        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
-        if (oldTargetFocusNode != null &&
-            oldTargetFocusNode != movedFocusNode) {
-          oldTargetFocusNode.dispose();
-        }
-        _editorFocusNodes[targetFocusKey] = movedFocusNode;
-      }
+      _transferEditorViewFocus(source, target, active);
 
       if (source.docs.isEmpty && removeSourceRegion) {
         _groups.remove(source.region);
@@ -15698,7 +15850,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       setState(() => _statusDetail = '拆分失败：区域 $region 不可拆分');
       return;
     }
-    final freshView = OpenDoc.viewOf(active);
+    final freshView = active._copyTab();
     setState(() {
       _ensureGroupsFromLayout();
       final group = _groups[fresh]!;
@@ -17817,8 +17969,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         (!notificationOnly || id == 'notifications.showList') &&
         _commands.isEnabled(id);
 
+    // GTK can report the shifted backslash key as the resulting pipe.
+    final chordKey = shift &&
+            key == LogicalKeyboardKey.bar &&
+            event.physicalKey == PhysicalKeyboardKey.backslash
+        ? LogicalKeyboardKey.backslash
+        : key;
     final currentChord = KeyChord(
-      key: key,
+      key: chordKey,
       control: ctrl,
       shift: shift,
       alt: alt,
@@ -17872,7 +18030,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
-      '${group.region}:${doc.id}';
+      '${group.region}:${doc.id}${doc._isFirstSplitSide ? ':first' : ''}';
+
+  void _transferEditorViewFocus(EditorGroup from, EditorGroup to, OpenDoc tab) {
+    for (final view in tab._tabViews) {
+      final focus = _editorFocusNodes.remove(_focusKeyFor(from, view));
+      if (focus == null) continue;
+      final targetKey = _focusKeyFor(to, view);
+      final previous = _editorFocusNodes[targetKey];
+      if (previous != focus) previous?.dispose();
+      _editorFocusNodes[targetKey] = focus;
+    }
+  }
 
   FocusNode _focusNodeFor(EditorGroup g, OpenDoc doc) {
     return _editorFocusNodes.putIfAbsent(_focusKeyFor(g, doc), () {
@@ -21210,7 +21379,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 detail: _statusDetail,
                 lspStatus: _lspStatus,
                 diagnosticsCount: _diagnostics.length,
-                tabCount: _allDocViews.length,
+                tabCount: _groups.values
+                    .fold(0, (count, group) => count + group.docs.length),
                 abiVersion: _abiVersion,
                 resourcePressure: _resourceStatus?.pressure,
                 availableBytes: _resourceStatus?.availableBytes,
@@ -22632,7 +22802,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 fit: StackFit.expand,
                 children: [
                   if (mergeSession == null)
-                    _buildEditor(g)
+                    if (activeDoc?._splitEditor case final split?)
+                      _buildSplitEditor(g, split)
+                    else
+                      _buildEditor(g)
                   else
                     MergeEditorSurface(
                       key: ValueKey('merge-editor-surface-${g.region}'),
@@ -24080,17 +24253,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       target.activeDocId = moving.id;
       _noteActiveDocument(target, moving.id);
 
-      final sourceFocusKey = _focusKeyFor(source, moving);
-      final targetFocusKey = _focusKeyFor(target, moving);
-      final movedFocusNode = _editorFocusNodes.remove(sourceFocusKey);
-      if (movedFocusNode != null) {
-        final oldTargetFocusNode = _editorFocusNodes.remove(targetFocusKey);
-        if (oldTargetFocusNode != null &&
-            oldTargetFocusNode != movedFocusNode) {
-          oldTargetFocusNode.dispose();
-        }
-        _editorFocusNodes[targetFocusKey] = movedFocusNode;
-      }
+      _transferEditorViewFocus(source, target, moving);
 
       if (source.docs.isEmpty && removeSourceRegion) {
         _groups.remove(source.region);
@@ -24144,7 +24307,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
 
-    final copy = OpenDoc.viewOf(moving);
+    final copy = moving._copyTab();
     setState(() {
       final stickyCount = target.docs
           .where((doc) => target.stickyDocIds.contains(doc.id))
@@ -24709,10 +24872,86 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  Widget _buildEditor(EditorGroup g) {
+  Widget _buildSplitEditor(EditorGroup group, _SplitEditorViews split) {
+    final axis = _splitInGroupVertical ? Axis.vertical : Axis.horizontal;
+    Widget pane(OpenDoc view, String side) => Focus(
+          key: ValueKey('split-editor-${group.region}-$side'),
+          canRequestFocus: false,
+          includeSemantics: false,
+          onFocusChange: (hasFocus) {
+            if (hasFocus) _activateSplitEditorView(group, view);
+          },
+          child: _buildEditor(group, view: view),
+        );
+    return LayoutBuilder(builder: (context, constraints) {
+      final extent = axis == Axis.horizontal
+          ? constraints.maxWidth
+          : constraints.maxHeight;
+      final sashSize = extent.clamp(0.0, 4.0).toDouble();
+      final available = extent - sashSize;
+      final minimum = (axis == Axis.horizontal ? 220.0 : 70.0)
+          .clamp(0.0, available / 2)
+          .toDouble();
+      final firstExtent = (available * split.ratio)
+          .clamp(minimum, available - minimum)
+          .toDouble();
+      void resize(DragUpdateDetails details) {
+        if (available == 0) return;
+        setState(() {
+          final extent =
+              (available * split.ratio).clamp(minimum, available - minimum);
+          split.ratio = ((extent + details.primaryDelta!) / available)
+              .clamp(minimum / available, 1 - minimum / available)
+              .toDouble();
+        });
+      }
+
+      return Flex(
+        direction: axis,
+        children: [
+          SizedBox(
+            width: axis == Axis.horizontal ? firstExtent : null,
+            height: axis == Axis.vertical ? firstExtent : null,
+            child: pane(split.first, 'first'),
+          ),
+          TextFieldTapRegion(
+            key: ValueKey('split-editor-sash-${group.region}'),
+            child: MouseRegion(
+              cursor: axis == Axis.horizontal
+                  ? SystemMouseCursors.resizeColumn
+                  : SystemMouseCursors.resizeRow,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onHorizontalDragUpdate: axis == Axis.horizontal ? resize : null,
+                onVerticalDragUpdate: axis == Axis.vertical ? resize : null,
+                onHorizontalDragEnd:
+                    axis == Axis.horizontal ? (_) => _scheduleStateSave() : null,
+                onVerticalDragEnd:
+                    axis == Axis.vertical ? (_) => _scheduleStateSave() : null,
+                onDoubleTap: () {
+                  setState(() => split.ratio = 0.5);
+                  _scheduleStateSave();
+                },
+                child: SizedBox(
+                  width:
+                      axis == Axis.horizontal ? sashSize : constraints.maxWidth,
+                  height:
+                      axis == Axis.vertical ? sashSize : constraints.maxHeight,
+                  child: const ColoredBox(color: Color(0xFF2A2D34)),
+                ),
+              ),
+            ),
+          ),
+          Expanded(child: pane(split.second, 'second')),
+        ],
+      );
+    });
+  }
+
+  Widget _buildEditor(EditorGroup g, {OpenDoc? view}) {
     // 同步监听常挂（Hold 模式在 toggle 关闭时也需要监听），回调内判断开关。
     _ensureScrollSyncListeners();
-    final active = g.active;
+    final active = view ?? g.active;
     if (active == null) {
       return EmptyEditorGroupWatermark(
         isCommandVisible: _commands.isVisible,
@@ -24761,7 +25000,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ),
       );
     }
-    final snippetSession = _snippetSessionFor(active);
+    final snippetSession = identical(g.active, active)
+        ? _snippetSessionFor(active)
+        : null;
     final choiceRange = snippetSession?.activeChoiceRange;
     final choiceOptions = choiceRange?.choice?.options;
     Widget? choiceOverlay;
@@ -24840,8 +25081,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                 syntaxTokens: syntaxTokens,
                                 syntaxVersion: syntaxVersion,
                                 enableCodeFolding: usesRustSyntax,
-                                semanticsLabel:
-                                    _editorSemanticsLabel(g, active),
+                                semanticsLabel: active._splitEditor == null
+                                    ? _editorSemanticsLabel(g, active)
+                                    : '${_editorSemanticsLabel(g, active)} '
+                                        '${active._isFirstSplitSide ? '第一分栏' : '第二分栏'}',
                                 onFoldRangesChanged:
                                     (documentId, version, ranges) =>
                                         _onEditorFoldRangesChanged(
@@ -25079,6 +25322,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                   }
                                 },
                                 onTap: () {
+                                  if (active._splitEditor != null) {
+                                    _activateSplitEditorView(g, active);
+                                    return;
+                                  }
                                   // 点击编辑器把焦点切到所在组（快捷键/保存/补全路由依据）
                                   final previous = _active;
                                   if (previous != null &&
@@ -26040,6 +26287,22 @@ class _SharedOpenDocState {
   }
 }
 
+class _SplitEditorViews {
+  _SplitEditorViews(this.first, this.second, {this.ratio = 0.5}) {
+    first._splitEditor = this;
+    second._splitEditor = this;
+  }
+
+  final OpenDoc first;
+  final OpenDoc second;
+  double ratio;
+
+  void detach() {
+    first._splitEditor = null;
+    second._splitEditor = null;
+  }
+}
+
 class OpenDoc {
   OpenDoc({
     required int id,
@@ -26098,6 +26361,49 @@ class OpenDoc {
       OpenDoc._viewOf(source, initialScrollOffset);
 
   final _SharedOpenDocState _shared;
+  _SplitEditorViews? _splitEditor;
+  bool _hasScrollSyncListener = false;
+
+  bool get _isFirstSplitSide => identical(_splitEditor?.first, this);
+
+  OpenDoc? get _splitPeer {
+    final split = _splitEditor;
+    if (split == null) return null;
+    return _isFirstSplitSide ? split.second : split.first;
+  }
+
+  int get _tabViewCount => _splitEditor == null ? 1 : 2;
+
+  Iterable<OpenDoc> get _tabViews sync* {
+    yield this;
+    if (_splitPeer case final peer?) yield peer;
+  }
+
+  double get _scrollOffset =>
+      editorScrollController.positions.firstOrNull?.pixels ??
+      editorScrollController.initialScrollOffset;
+
+  _SplitEditorViews _splitInGroup() => _SplitEditorViews(
+      OpenDoc.viewOf(this, initialScrollOffset: _scrollOffset), this);
+
+  OpenDoc _copyTab({double initialScrollOffset = 0}) {
+    final split = _splitEditor;
+    if (split == null) {
+      return OpenDoc.viewOf(this, initialScrollOffset: initialScrollOffset);
+    }
+    final first = OpenDoc.viewOf(split.first,
+        initialScrollOffset: split.first._scrollOffset);
+    try {
+      final second = OpenDoc.viewOf(split.second,
+          initialScrollOffset: split.second._scrollOffset);
+      _SplitEditorViews(first, second, ratio: split.ratio);
+      return _isFirstSplitSide ? first : second;
+    } catch (_) {
+      first.disposeView();
+      rethrow;
+    }
+  }
+
   int get id => _shared.id;
   String? get path => _shared.path;
   set path(String? value) => _shared.path = value;
@@ -26261,6 +26567,11 @@ class OpenDoc {
   void disposeView({bool deferScrollControllerDisposal = false}) {
     if (_viewDisposed) return;
     _viewDisposed = true;
+    final peer = _splitPeer;
+    _splitEditor?.detach();
+    peer?.disposeView(
+      deferScrollControllerDisposal: deferScrollControllerDisposal,
+    );
     if (deferScrollControllerDisposal) {
       // A collapsing layout can reattach a retained region before removing its
       // old editor subtree. Keep its painter's repaint source alive until then.

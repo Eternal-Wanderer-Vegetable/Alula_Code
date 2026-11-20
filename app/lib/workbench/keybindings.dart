@@ -189,6 +189,8 @@ final Map<String, LogicalKeyboardKey> _keyNames = () {
   m['bracketleft'] = LogicalKeyboardKey.bracketLeft;
   m['bracketright'] = LogicalKeyboardKey.bracketRight;
   m['/'] = LogicalKeyboardKey.slash;
+  m['backslash'] = LogicalKeyboardKey.backslash;
+  m[r'\'] = LogicalKeyboardKey.backslash;
   m['.'] = LogicalKeyboardKey.period;
   m['period'] = LogicalKeyboardKey.period;
   m[';'] = LogicalKeyboardKey.semicolon;
@@ -265,6 +267,7 @@ class KeybindingSet {
     'workbench.action.closeAllEditors': 'ctrl+k w',
     'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
     'workbench.action.toggleMaximizeEditorGroup': 'ctrl+k ctrl+m',
+    'workbench.action.toggleSplitEditorInGroup': r'ctrl+k ctrl+shift+\',
     'workbench.action.moveActiveEditorGroupLeft': 'ctrl+k arrowleft',
     'workbench.action.moveActiveEditorGroupRight': 'ctrl+k arrowright',
     'workbench.action.moveActiveEditorGroupUp': 'ctrl+k arrowup',
@@ -420,6 +423,7 @@ class KeybindingSet {
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
+        result['workbench.action.toggleSplitEditorInGroup'] = r'cmd+k cmd+shift+\';
         result['workbench.action.moveActiveEditorGroupLeft'] =
             'cmd+k arrowleft';
         result['workbench.action.moveActiveEditorGroupRight'] =

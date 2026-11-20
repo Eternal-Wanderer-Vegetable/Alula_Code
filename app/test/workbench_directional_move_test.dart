@@ -47,6 +47,157 @@ RustTextInputField _fieldWithLabel(WidgetTester tester, String label) => tester
     .firstWhere((field) => field.semanticsLabel == label);
 
 void main() {
+  testWidgets('split in group shares text and retains the focused view on join',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-split-in-group');
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+    tester.view.physicalSize = const Size(1600, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final folder = Directory('${temp.path}/workspace')..createSync();
+    final file = File('${folder.path}/split.txt');
+    final content = List.generate(250, (i) => 'line $i').join('\n');
+    file.writeAsStringSync(content);
+    final base = temp.path.replaceAll(r'\', '/');
+    final layoutStore = LayoutStore(path: '$base/layout.json')
+      ..save(defaultLayout());
+    final sessionStore = SessionStore(path: '$base/session.json');
+    CommandService? commands;
+    Widget workbench() => MaterialApp(
+          home: WorkbenchPage(
+            autoFolder: folder.path,
+            layoutStore: layoutStore,
+            sessionStore: sessionStore,
+            keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+            onCommandServiceReady: (service) => commands = service,
+          ),
+        );
+    await tester.pumpWidget(workbench());
+    await tester.pump(const Duration(milliseconds: 700));
+    Future<void> execute(String id) async {
+      expect(await commands!.execute(id), CommandExecutionStatus.executed);
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pump();
+    }
+
+    Finder pane(String side) =>
+        find.byKey(ValueKey('split-editor-editor-$side'));
+    Finder editor(String side) => find.descendant(
+          of: pane(side),
+          matching: find.byType(RustTextInputField),
+        );
+
+    await execute('workbench.action.closeActiveEditor');
+    await openPinnedExplorerFile(tester, find.text('split.txt').first);
+    await tester.pump(const Duration(milliseconds: 700));
+    await execute('workbench.action.splitEditorInGroup');
+    expect(pane('first'), findsOneWidget);
+    expect(pane('second'), findsOneWidget);
+    expect(tester.getRect(pane('first')).right,
+        lessThan(tester.getRect(pane('second')).left));
+    expect(
+        layoutStore.tryLoad()!.leaves.where((leaf) =>
+            leaf.region == 'editor' || leaf.region.startsWith('editor-')),
+        hasLength(1));
+    final left = tester.widget<RustTextInputField>(editor('first'));
+    final right = tester.widget<RustTextInputField>(editor('second'));
+    expect(left.inputWindow.document.id, right.inputWindow.document.id);
+    expect(left.inputWindow, isNot(same(right.inputWindow)));
+    expect(left.scrollController, isNot(same(right.scrollController)));
+    expect(right.focusNode?.hasPrimaryFocus, isTrue);
+
+    await execute('workbench.action.focusFirstSideEditor');
+    final editable = find.descendant(
+      of: editor('first'),
+      matching: find.byType(EditableText),
+    );
+    final edited = 'edited 😀 $content';
+    await tester.enterText(editable, edited);
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(left.inputWindow.text, edited);
+    expect(tester.widget<RustTextInputField>(editor('second')).inputWindow.text,
+        edited);
+    expect(file.readAsStringSync(), content);
+
+    final close = commands!.execute('workbench.action.closeActiveEditor');
+    await tester.pumpAndSettle();
+    expect(find.text('取消'), findsOneWidget);
+    await tester.tap(find.text('取消'));
+    await tester.pumpAndSettle();
+    expect(await close, CommandExecutionStatus.executed);
+    expect(pane('first'), findsOneWidget);
+    expect(file.readAsStringSync(), content);
+
+    await execute('workbench.action.focusOtherSideEditor');
+    expect(right.focusNode?.hasPrimaryFocus, isTrue);
+    right.scrollController!.jumpTo(880);
+    await tester.pump();
+    expect(left.scrollController!.offset, isNot(880));
+    await execute('workbench.action.toggleSplitEditorInGroupLayout');
+    expect(tester.getRect(pane('first')).bottom,
+        lessThan(tester.getRect(pane('second')).top));
+    expect(right.scrollController!.offset, closeTo(880, 1));
+
+    final sash = find.byKey(const ValueKey('split-editor-sash-editor'));
+    final priorHeight = tester.getSize(pane('first')).height;
+    await tester.drag(sash, const Offset(0, 65));
+    await tester.pumpAndSettle();
+    expect(tester.getSize(pane('first')).height, greaterThan(priorHeight + 20));
+    expect(right.focusNode?.hasPrimaryFocus, isTrue);
+
+
+    await execute('workbench.action.focusFirstSideEditor');
+    await execute('workbench.action.joinEditorInGroup');
+    expect(pane('first'), findsNothing);
+    expect(pane('second'), findsNothing);
+    final joined =
+        tester.widget<RustTextInputField>(find.byType(RustTextInputField));
+    expect(joined.inputWindow, same(left.inputWindow));
+    expect(joined.focusNode?.hasPrimaryFocus, isTrue);
+    expect(joined.inputWindow.text, edited);
+    await execute('file.save');
+    expect(file.readAsStringSync(), edited);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.backslash);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pumpAndSettle();
+    expect(pane('first'), findsOneWidget);
+    await execute('workbench.action.duplicateActiveEditorGroupRight');
+    expect(find.byType(RustTextInputField), findsNWidgets(4));
+    expect(
+        tester
+            .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+            .map((view) => view.inputWindow.document.id)
+            .toSet(),
+        {left.inputWindow.document.id});
+    await execute('workbench.action.focusFirstSideEditor');
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(workbench());
+    await tester.pumpAndSettle();
+    expect(find.byType(RustTextInputField), findsNWidgets(4));
+    expect(tester.getRect(pane('first')).bottom,
+        lessThan(tester.getRect(pane('second')).top));
+    final restoredFirst = tester.widget<RustTextInputField>(find.descendant(
+      of: find.byKey(const ValueKey('split-editor-editor-2-first')),
+      matching: find.byType(RustTextInputField),
+    ));
+    await execute('workbench.action.joinEditorInGroup');
+    expect(find.byType(RustTextInputField), findsNWidgets(3));
+    expect(restoredFirst.focusNode!.hasPrimaryFocus, isTrue);
+    expect(
+        tester
+            .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+            .every((view) => view.inputWindow.text == edited),
+        isTrue);
+  });
+
   testWidgets('group expansion keeps peers visible and can hide both side bars',
       (tester) async {
     final temp =
