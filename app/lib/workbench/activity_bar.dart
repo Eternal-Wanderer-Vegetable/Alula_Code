@@ -12,6 +12,13 @@ import 'package:flutter/services.dart';
 import 'activity_bar_badges.dart';
 import 'layout_model.dart';
 
+/// A built-in view dragged from an Activity Bar item.
+class ActivityBarViewDrag {
+  const ActivityBarViewDrag(this.view);
+
+  final String view;
+}
+
 class ActivityBar extends StatefulWidget {
   const ActivityBar({
     super.key,
@@ -22,6 +29,7 @@ class ActivityBar extends StatefulWidget {
     this.size = ActivityBarSize.defaultSize,
     this.order = activityBarViewOrder,
     this.pinnedViews = activityBarViewOrder,
+    this.excludedViews = const [],
     this.badges = const {},
     this.badgeDisabledViews = const [],
     this.accountsVisible = true,
@@ -40,6 +48,9 @@ class ActivityBar extends StatefulWidget {
   final ActivityBarSize size;
   final List<String> order;
   final List<String> pinnedViews;
+
+  /// Views whose launchers are provided by another workbench area.
+  final List<String> excludedViews;
   final Map<String, ActivityBarBadge> badges;
   final List<String> badgeDisabledViews;
   final bool accountsVisible;
@@ -190,18 +201,18 @@ class _ActivityBarState extends State<ActivityBar> {
       child: item,
     );
 
-    return DragTarget<String>(
+    return DragTarget<ActivityBarViewDrag>(
       onWillAcceptWithDetails: (details) =>
           widget.onOrderChanged != null &&
-          details.data != id &&
-          normalizeActivityBarViewOrder(widget.order).contains(details.data),
+          details.data.view != id &&
+          _visibleViewOrder.contains(details.data.view),
       onAcceptWithDetails: (details) => _handleViewDrop(
-        draggedId: details.data,
+        draggedId: details.data.view,
         targetId: id,
         globalPosition: details.offset,
       ),
-      builder: (context, candidates, rejected) => Draggable<String>(
-        data: id,
+      builder: (context, candidates, rejected) => Draggable<ActivityBarViewDrag>(
+        data: ActivityBarViewDrag(id),
         dragAnchorStrategy: pointerDragAnchorStrategy,
         maxSimultaneousDrags: widget.onOrderChanged == null ? 0 : 1,
         feedback: Material(
@@ -228,9 +239,13 @@ class _ActivityBarState extends State<ActivityBar> {
         order: widget.order,
       );
 
+  Iterable<String> get _availableViewOrder =>
+      normalizeActivityBarViewOrder(widget.order)
+          .where((id) => !widget.excludedViews.contains(id));
+
   List<String> get _visibleViewOrder {
     final pinned = _pinnedViewOrder.toSet();
-    return normalizeActivityBarViewOrder(widget.order)
+    return _availableViewOrder
         .where((id) => pinned.contains(id) || id == widget.activeView)
         .toList();
   }
@@ -558,7 +573,7 @@ class _ActivityBarState extends State<ActivityBar> {
       controller: _menuController,
       style: _menuStyle,
       menuChildren: [
-        for (final id in normalizeActivityBarViewOrder(widget.order))
+        for (final id in _availableViewOrder)
           MenuItemButton(
             key: ValueKey('activity-bar-checklist-$id'),
             style: _menuItemStyle,

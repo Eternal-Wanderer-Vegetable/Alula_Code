@@ -21679,6 +21679,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                             size: _layout.activityBarSize,
                             order: _layout.activityBarOrder,
                             pinnedViews: _layout.activityBarPinnedViews,
+                            excludedViews: _panelHostedViews,
                             badgeDisabledViews:
                                 _layout.activityBarBadgesDisabledViews,
                             accountsVisible: _layout.activityBarAccountsVisible,
@@ -26692,6 +26693,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  Widget _buildPanelViewDropTarget(Widget tabs) {
+    return DragTarget<ActivityBarViewDrag>(
+      key: const ValueKey('panel-view-title-drop'),
+      onWillAcceptWithDetails: (details) =>
+          _layout.sidebarViewLocation(details.data.view) ==
+          primarySidebarViewLocation,
+      onAcceptWithDetails: (details) {
+        final view = details.data.view;
+        if (_layout.sidebarViewLocation(view) == primarySidebarViewLocation) {
+          _moveSidebarView(view, panelSidebarViewLocation);
+        }
+      },
+      builder: (context, candidates, _) => Stack(
+        fit: StackFit.passthrough,
+        children: [
+          tabs,
+          if (candidates.isNotEmpty)
+            const Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  key: ValueKey('panel-view-title-drop-highlight'),
+                  decoration: BoxDecoration(
+                    color: Color(0x30007ACC),
+                    border: Border.fromBorderSide(
+                      BorderSide(color: Color(0xFF55B8FF)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPanel() {
     return Container(
       color: const Color(0xFF181B20),
@@ -26702,28 +26738,30 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             child: Row(
               children: [
                 Expanded(
-                  child: TabBar(
-                    controller: _panelTab,
-                    onTap: (index) {
-                      const commandIds = [
-                        'view.panelDiagnostics',
-                        'view.panelCompletions',
-                        'view.panelSyntax',
-                      ];
-                      if (index < commandIds.length) {
-                        _runCommand(commandIds[index]);
-                      }
-                    },
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    tabs: [
-                      const Tab(text: '诊断'),
-                      const Tab(text: '补全'),
-                      const Tab(text: '语法 (Tree-sitter)'),
-                      const Tab(text: 'Git Diff'),
-                      for (final view in _panelHostedViews)
-                        _buildPanelHostedViewTab(view),
-                    ],
+                  child: _buildPanelViewDropTarget(
+                    TabBar(
+                      controller: _panelTab,
+                      onTap: (index) {
+                        const commandIds = [
+                          'view.panelDiagnostics',
+                          'view.panelCompletions',
+                          'view.panelSyntax',
+                        ];
+                        if (index < commandIds.length) {
+                          _runCommand(commandIds[index]);
+                        }
+                      },
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      tabs: [
+                        const Tab(text: '诊断'),
+                        const Tab(text: '补全'),
+                        const Tab(text: '语法 (Tree-sitter)'),
+                        const Tab(text: 'Git Diff'),
+                        for (final view in _panelHostedViews)
+                          _buildPanelHostedViewTab(view),
+                      ],
+                    ),
                   ),
                 ),
                 ListenableBuilder(
@@ -27510,13 +27548,13 @@ typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 /// Small breadcrumb copy of a symbol's identity, label, and UTF-16 start.
 typedef BreadcrumbSymbolPathEntry = ({String id, String name, int startUtf16});
 
-/// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class _PanelHostedViewDrag {
   const _PanelHostedViewDrag(this.view);
 
   final String view;
 }
 
+/// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
 class EditorGroup {
   EditorGroup(this.region);
 

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:ui' show PointerDeviceKind;
 
 import 'package:alula_app/main.dart';
+import 'package:alula_app/workbench/activity_bar_order.dart';
+import 'package:alula_app/workbench/activity_bar_pins.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
@@ -367,6 +369,104 @@ void main() {
       await tester.pumpAndSettle();
     });
   }
+
+  testWidgets('an Activity Bar view moves to an independent panel title entry',
+      (tester) async {
+    tester.view.physicalSize = const Size(1400, 980);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const order = ['git', 'explorer', 'search', 'outline'];
+    const pinned = ['git', 'explorer', 'search'];
+    final layout = WorkbenchLayout();
+    layout.setActivityBarOrder(order);
+    layout.setActivityBarPinnedViews(pinned);
+    layout.showRegion('panel');
+    layoutStore.save(layout.root);
+    layout.dispose();
+    await tester.pumpWidget(AlulaApp(
+      layoutStore: layoutStore,
+      sessionStore: sessionStore,
+    ));
+    await tester.pumpAndSettle();
+
+    final item =
+        find.byKey(const ValueKey('activity-bar-item-menu-anchor-search'));
+    final title = find.byKey(const ValueKey('panel-view-title-drop'));
+    final highlight =
+        find.byKey(const ValueKey('panel-view-title-drop-highlight'));
+    final panelTab = find.byKey(const ValueKey('panel-builtin-view-search'));
+    final search = find.byKey(const ValueKey('search-input'));
+    final editor = find.byKey(const ValueKey('wb-region-editor'));
+    final panel = find.byKey(const ValueKey('wb-region-panel'));
+    final side = find.byKey(const ValueKey('wb-region-sidebar'));
+
+    Future<TestGesture> startDrag(Finder source, Offset target) async {
+      final gesture = await tester.startGesture(
+        tester.getCenter(source),
+        kind: PointerDeviceKind.mouse,
+      );
+      await tester.pump();
+      await gesture.moveBy(const Offset(18, 0));
+      await tester.pump();
+      await gesture.moveTo(target);
+      await tester.pump();
+      return gesture;
+    }
+
+    await tester.tap(item);
+    await tester.pumpAndSettle();
+    await tester.enterText(search, 'persistent query 😀');
+    final rejected = await startDrag(item, tester.getCenter(editor));
+    expect(highlight, findsNothing);
+    await rejected.up();
+    await tester.pumpAndSettle();
+    expect(item, findsOneWidget);
+    expect(panelTab, findsNothing);
+
+    final titleDrop = tester.getTopRight(title) + const Offset(-45, 24);
+    final cancelled = await startDrag(item, titleDrop);
+    expect(highlight, findsOneWidget);
+    await cancelled.cancel();
+    await tester.pumpAndSettle();
+    expect(highlight, findsNothing);
+    expect(item, findsOneWidget);
+    expect(panelTab, findsNothing);
+
+    final accepted = await startDrag(item, titleDrop);
+    expect(highlight, findsOneWidget);
+    await accepted.up();
+    await tester.pumpAndSettle();
+    expect(highlight, findsNothing);
+    expect(item, findsNothing);
+    expect(panelTab, findsOneWidget);
+    expect(find.descendant(of: panel, matching: find.text('Git Diff')),
+        findsOneWidget);
+    final movedSearch = find.descendant(of: panel, matching: search);
+    final field = tester.widget<TextField>(movedSearch);
+    expect(field.controller!.text, 'persistent query 😀');
+    expect(field.focusNode!.hasFocus, isTrue);
+    await tester.pump(const Duration(milliseconds: 700));
+    final saved = layoutStore.tryLoad()!;
+    expect(saved.sidebarViewLocations?['search'], panelSidebarViewLocation);
+    expect(saved.activityBarOrder, order);
+    final restored = WorkbenchLayout(root: saved);
+    expect(restored.activityBarPinnedViews, pinned);
+    restored.dispose();
+
+    final returned = await startDrag(panelTab, tester.getCenter(side));
+    await returned.up();
+    await tester.pumpAndSettle();
+    expect(panelTab, findsNothing);
+    expect(item, findsOneWidget);
+    final returnedSearch = find.descendant(of: side, matching: search);
+    expect(tester.widget<TextField>(returnedSearch).controller!.text,
+        'persistent query 😀');
+    expect(
+        tester.widget<TextField>(returnedSearch).focusNode!.hasFocus, isFalse);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+  });
 
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',
