@@ -2361,6 +2361,21 @@
         "feat-094",
         "feat-188"
       ],
+      "status": "done",
+      "evidence": "产品 `8160d300a3099c5d80b4425bdbc125ed2d580c83` 已推草稿 PR #3。固定版、Windows 11 实机与 Linux Xvfb 验证同组多选相对顺序、前后落点、固定区与活动视图。专项 34/34，Flutter 1,662 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44796951850 四项及 Platform Availability 44796940311 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.138-tab-batch-reorder.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-191",
+      "name": "P05.139 LAY-10 跨组已选标签批量移动",
+      "description": "实现主窗口内同一选择的跨组拖放移动，覆盖顺序、前后或追加落点、共享视图与重复文档及空源组和焦点。",
+      "dependencies": [
+        "feat-094",
+        "feat-096",
+        "feat-188",
+        "feat-190"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

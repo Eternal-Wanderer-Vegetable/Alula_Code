@@ -1,0 +1,169 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer pointer input",
+  "trace": {
+    "ready": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "foxtrot.txt"
+      ],
+      "active": "foxtrot.txt",
+      "sticky": [],
+      "editorFocused": true
+    },
+    "selected-delta-bravo": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "charlie.txt",
+        "delta.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "sticky": [],
+      "editorFocused": true
+    },
+    "active-selected-to-end": {
+      "tabs": [
+        "alpha.txt",
+        "charlie.txt",
+        "echo.txt",
+        "foxtrot.txt",
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "sticky": [],
+      "editorFocused": true
+    },
+    "inactive-selected-before-target": {
+      "tabs": [
+        "alpha.txt",
+        "bravo.txt",
+        "delta.txt",
+        "charlie.txt",
+        "echo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "bravo.txt",
+        "delta.txt"
+      ],
+      "active": "bravo.txt",
+      "sticky": [],
+      "editorFocused": true
+    },
+    "unselected-single-drag": {
+      "tabs": [
+        "echo.txt",
+        "alpha.txt",
+        "bravo.txt",
+        "delta.txt",
+        "charlie.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "echo.txt"
+      ],
+      "active": "echo.txt",
+      "sticky": [],
+      "editorFocused": true
+    },
+    "sticky-boundary": {
+      "tabs": [
+        "alpha.txt",
+        "charlie.txt",
+        "echo.txt",
+        "bravo.txt",
+        "delta.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "charlie.txt"
+      ],
+      "active": "charlie.txt",
+      "sticky": [
+        "alpha.txt",
+        "charlie.txt"
+      ],
+      "editorFocused": true
+    },
+    "mixed-selected": {
+      "tabs": [
+        "alpha.txt",
+        "charlie.txt",
+        "echo.txt",
+        "bravo.txt",
+        "delta.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "sticky": [
+        "alpha.txt",
+        "charlie.txt"
+      ],
+      "editorFocused": true
+    },
+    "mixed-drop-before-sticky": {
+      "tabs": [
+        "alpha.txt",
+        "delta.txt",
+        "charlie.txt",
+        "echo.txt",
+        "bravo.txt",
+        "foxtrot.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "delta.txt"
+      ],
+      "active": "delta.txt",
+      "sticky": [
+        "alpha.txt",
+        "delta.txt",
+        "charlie.txt"
+      ],
+      "editorFocused": true
+    },
+    "mixed-drop-to-ordinary": {
+      "tabs": [
+        "charlie.txt",
+        "echo.txt",
+        "bravo.txt",
+        "foxtrot.txt",
+        "alpha.txt",
+        "delta.txt"
+      ],
+      "selected": [
+        "alpha.txt",
+        "delta.txt"
+      ],
+      "active": "alpha.txt",
+      "sticky": [
+        "charlie.txt"
+      ],
+      "editorFocused": true
+    }
+  },
+  "exitCode": 0
+}
