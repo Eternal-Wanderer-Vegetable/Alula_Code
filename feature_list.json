@@ -2291,8 +2291,22 @@
         "feat-183",
         "feat-184"
       ],
+      "status": "done",
+      "evidence": "产品 `99c8c0cd71d8c37cc5e09937554f9dc5d7c8d821` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 检验锁定后的原文档复用、最近可用组回退、新建邻组和解锁路由。Windows 两次 Release 退出码 0，重启后活动锁组与文档列表一致。专项 38/38，Flutter 1,652 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44769214633 四项及 Platform Availability 44769197746 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.133-editor-group-lock.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-186",
+      "name": "P05.134 LAY-07 扩展活动编辑器组与隐藏侧栏",
+      "description": "扩展活动编辑器组、使相邻组仍可见，再次切换恢复均分，组合操作隐藏两侧栏并扩展组。",
+      "dependencies": [
+        "feat-080",
+        "feat-183",
+        "feat-184"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 隔离渲染器已验证单锁新建邻组、最近未锁组回退、打开既有锁组文档、全部锁定后创建第三组，以及解锁后恢复默认路由。待产品实现和验收。",
+      "evidence": "固定版 Windows 隔离渲染器已核对单轴及嵌套两轴扩展、保留兄弟组、重新均分及组合命令隐藏侧栏。待产品实现和验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

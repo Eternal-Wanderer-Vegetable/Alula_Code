@@ -1,0 +1,1103 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "177b3c5e620997e6303092ed8f598da24b3284b0a6df734a5e8c222a6bcdda33",
+  "observations": {
+    "open-source-a.txt-1-editor": {
+      "request": "open-source-a.txt-1-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "68c10af6865bfb8f3de38feb1e4c34dd5d85f54ed16497757606c0618f7558d1"
+    },
+    "primary-locked": {
+      "request": "primary-locked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": true,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "68c10af6865bfb8f3de38feb1e4c34dd5d85f54ed16497757606c0618f7558d1"
+    },
+    "open-source-b.txt-1-editor": {
+      "request": "open-source-b.txt-1-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          601.96,
+          35.0,
+          633.96,
+          67.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 3,
+          "inputWindow": 996444482,
+          "focusNode": 64781778,
+          "focused": false,
+          "hidden": false,
+          "label": "source-b.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 3,
+          "sticky": [],
+          "preview": 3,
+          "docs": [
+            {
+              "id": 3,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-b.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-fallback.txt-2-editor": {
+      "request": "open-fallback.txt-2-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          601.96,
+          35.0,
+          633.96,
+          67.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "all-locked": {
+      "request": "all-locked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          601.96,
+          35.0,
+          633.96,
+          67.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": true,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-source-a.txt-2-editor-2": {
+      "request": "open-source-a.txt-2-editor-2",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          601.96,
+          35.0,
+          633.96,
+          67.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "b54f53684698ad4e4bccb1dc2d92cf870a5a01c1a488f7fbc3a6b48c95433085"
+    },
+    "open-third.txt-2-editor": {
+      "request": "open-third.txt-2-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          546.94,
+          766.0
+        ],
+        "unlock-editor-group-editor": [
+          380.94000000000005,
+          35.0,
+          412.94000000000005,
+          67.0
+        ],
+        "editor-3": [
+          550.94,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 559656845,
+          "focusNode": 18651703,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "locked": true,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-3",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "primary-unlocked": {
+      "request": "primary-unlocked",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          546.94,
+          766.0
+        ],
+        "editor-3": [
+          550.94,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 2,
+          "inputWindow": 555196490,
+          "focusNode": 375848965,
+          "focused": false,
+          "hidden": false,
+          "label": "source-a.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 559656845,
+          "focusNode": 18651703,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 2,
+          "sticky": [],
+          "preview": 2,
+          "docs": [
+            {
+              "id": 2,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/source-a.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-3",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "open-after-unlock.txt-3-editor": {
+      "request": "open-after-unlock.txt-3-editor",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          546.94,
+          766.0
+        ],
+        "editor-3": [
+          550.94,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 6,
+          "inputWindow": 926629549,
+          "focusNode": 297565827,
+          "focused": false,
+          "hidden": false,
+          "label": "after-unlock.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 559656845,
+          "focusNode": 18651703,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 6,
+          "sticky": [],
+          "preview": 6,
+          "docs": [
+            {
+              "id": 6,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/after-unlock.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    },
+    "locked-group-before-restart": {
+      "request": "locked-group-before-restart",
+      "boxes": {
+        "sidebar": [
+          48.0,
+          35.0,
+          325.92,
+          766.0
+        ],
+        "editor": [
+          329.92,
+          35.0,
+          546.94,
+          766.0
+        ],
+        "editor-3": [
+          550.94,
+          35.0,
+          767.96,
+          766.0
+        ],
+        "editor-2": [
+          771.96,
+          35.0,
+          1210.0,
+          766.0
+        ],
+        "unlock-editor-group-editor-2": [
+          1044.0,
+          35.0,
+          1076.0,
+          67.0
+        ]
+      },
+      "hiddenGroups": [],
+      "views": {
+        "editor": {
+          "document": 6,
+          "inputWindow": 926629549,
+          "focusNode": 297565827,
+          "focused": false,
+          "hidden": false,
+          "label": "after-unlock.txt \u4e3b\u7f16\u8f91\u5668",
+          "scroll": 0.0
+        },
+        "editor-3": {
+          "document": 5,
+          "inputWindow": 559656845,
+          "focusNode": 18651703,
+          "focused": false,
+          "hidden": false,
+          "label": "third.txt \u7f16\u8f91\u5668 3",
+          "scroll": 0.0
+        },
+        "editor-2": {
+          "document": 4,
+          "inputWindow": 343477687,
+          "focusNode": 655135373,
+          "focused": false,
+          "hidden": false,
+          "label": "fallback.txt \u7f16\u8f91\u5668 2",
+          "scroll": 0.0
+        }
+      },
+      "groupState": [
+        {
+          "region": "editor",
+          "active": 6,
+          "sticky": [],
+          "preview": 6,
+          "docs": [
+            {
+              "id": 6,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/after-unlock.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-2",
+          "active": 4,
+          "locked": true,
+          "sticky": [],
+          "preview": 4,
+          "docs": [
+            {
+              "id": 4,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/fallback.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        },
+        {
+          "region": "editor-3",
+          "active": 5,
+          "sticky": [],
+          "preview": 5,
+          "docs": [
+            {
+              "id": 5,
+              "path": "/tmp/alula-p05-133-xvfb-n_e52b6k/workspace/third.txt",
+              "fileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              },
+              "savedFileOptions": {
+                "encoding": "utf-8",
+                "bom": false,
+                "lineEnding": "lf"
+              }
+            }
+          ]
+        }
+      ],
+      "sessionFocus": "editor-2",
+      "layoutSha256": "01a1c5112be768feb4103cc94a0b8d13088f66efc226e4e63dd2ffaa86eea078"
+    }
+  },
+  "fixtureSha256": "77970f096956637a37f9b33736e376f447b055ccc0153988338bb30695edd817",
+  "verification": {
+    "editor": [
+      "after-unlock.txt"
+    ],
+    "editor-2": [
+      "fallback.txt"
+    ],
+    "editor-3": [
+      "third.txt"
+    ]
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15,
+  "parentAtCapture": "9f1229826ebde7cc6476f330b0fbcc7aaa0d8bad",
+  "productCommit": "99c8c0cd71d8c37cc5e09937554f9dc5d7c8d821",
+  "productTree": "38a1811f16573ed3c4bc948ba585bdb6219fa0a4"
+}
