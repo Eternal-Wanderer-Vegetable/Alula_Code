@@ -262,6 +262,8 @@ class KeybindingSet {
     'file.saveAs': 'ctrl+shift+s',
     'workbench.action.closeActiveEditor': 'ctrl+w',
     'workbench.action.closeOtherEditors': 'ctrl+alt+t',
+    'workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup': 'ctrl+tab',
+    'workbench.action.quickOpenLeastRecentlyUsedEditorInGroup': 'ctrl+shift+tab',
     'notifications.showList': 'ctrl+k ctrl+shift+n',
     'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
     'workbench.action.closeAllEditors': 'ctrl+k w',

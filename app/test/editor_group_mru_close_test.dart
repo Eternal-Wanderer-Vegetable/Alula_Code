@@ -382,4 +382,145 @@ void main() {
       expect(_tabIn('editor', 13), findsNothing);
     },
   );
+
+  testWidgets(
+    'recent editor picker cycles while held and commits to the chosen group',
+    (tester) async {
+      await prepareWorkspace(tester);
+      final files = ['alpha', 'bravo', 'charlie', 'delta']
+          .map((name) => File('${workspace.path}/$name.txt')
+            ..writeAsStringSync('$name sample\n'))
+          .toList();
+      final layout = defaultLayout();
+      layout.splitLeaf('editor', 'editor-2', Axis.horizontal);
+      layoutStore.save(layout);
+      sessionStore.save({
+        'v': 1,
+        'focused': 'editor',
+        'editorTabSizing': 'shrink',
+        'groups': [
+          {
+            'region': 'editor',
+            'active': 12,
+            'locked': true,
+            'docs': [
+              for (var index = 0; index < 3; index++)
+                {'id': index + 10, 'path': files[index].path},
+            ],
+          },
+          {
+            'region': 'editor-2',
+            'active': 13,
+            'locked': true,
+            'docs': [
+              {'id': 11, 'path': files[1].path},
+              {'id': 13, 'path': files[3].path},
+            ],
+          },
+        ],
+      });
+      await mountPage(tester);
+      final picker = find.byKey(const ValueKey('quick-input'));
+      Finder row(String name) => find.byKey(ValueKey('qi-$name.txt'));
+      void expectHighlighted(String name) {
+        expect(picker, findsOneWidget);
+        expect(
+            tester.widget<Container>(row(name)).color, const Color(0xFF2F3542));
+      }
+
+      Future<void> confirmEditor(String region, int id) async {
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 650));
+        await tester.pumpAndSettle();
+        expect(picker, findsNothing);
+        final session = sessionStore.tryLoad()!;
+        expect(session['focused'], region);
+        final groups = (session['groups'] as List).cast<Map>();
+        expect(groups.singleWhere((g) => g['region'] == region)['active'], id);
+      }
+
+      await clickTab(tester, 10);
+      await clickTab(tester, 11);
+      await clickTab(tester, 12);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expectHighlighted('bravo');
+      expect(find.descendant(of: picker, matching: find.byType(TextField)),
+          findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expectHighlighted('alpha');
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expectHighlighted('charlie');
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expectHighlighted('alpha');
+
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await confirmEditor('editor', 10);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expectHighlighted('bravo');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.pumpAndSettle();
+      expectHighlighted('bravo');
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await confirmEditor('editor', 11);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+      expectHighlighted('alpha');
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await confirmEditor('editor', 11);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await confirmEditor('editor', 10);
+
+      await clickTab(tester, 11, region: 'editor-2');
+      await clickTab(tester, 10);
+      await clickTab(tester, 13, region: 'editor-2');
+      expect(
+        await commands!
+            .execute('workbench.action.showAllEditorsByMostRecentlyUsed'),
+        CommandExecutionStatus.executed,
+      );
+      await tester.pumpAndSettle();
+      expectHighlighted('delta');
+      expect(find.descendant(of: picker, matching: find.byType(TextField)),
+          findsOneWidget);
+      expect(row('bravo'), findsNWidgets(2));
+      final duplicateInSecondGroup = find.ancestor(
+        of: find.descendant(
+          of: row('bravo'),
+          matching: find.text('编辑器组 2'),
+        ),
+        matching: row('bravo'),
+      );
+      await tester.tap(duplicateInSecondGroup);
+      await confirmEditor('editor-2', 11);
+      await clickTab(tester, 10);
+      await clickTab(tester, 13, region: 'editor-2');
+
+      expect(
+        await commands!
+            .execute('workbench.action.quickOpenPreviousRecentlyUsedEditor'),
+        CommandExecutionStatus.executed,
+      );
+      await tester.pumpAndSettle();
+      expectHighlighted('alpha');
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await confirmEditor('editor', 10);
+    },
+  );
 }

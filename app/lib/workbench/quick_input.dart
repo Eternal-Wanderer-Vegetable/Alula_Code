@@ -80,6 +80,17 @@ class QuickInputValidationMessage {
   final QuickInputValidationSeverity severity;
 }
 
+/// A picker entered from an editor switch shortcut, with no filter field.
+class QuickInputNavigation {
+  const QuickInputNavigation({
+    this.startAtLast = false,
+    this.acceptOnRelease = const {},
+  });
+
+  final bool startAtLast;
+  final Set<LogicalKeyboardKey> acceptOnRelease;
+}
+
 class QuickInput {
   QuickInput._();
 
@@ -150,6 +161,7 @@ class QuickInput {
     String? queryPrefix,
     Future<List<QuickItem>> Function(String query)? itemsProvider,
     VoidCallback? onClose,
+    QuickInputNavigation? navigation,
   }) {
     if (validateInput != null && validateInputMessage != null) {
       throw ArgumentError('Only one QuickInput validator may be provided');
@@ -195,6 +207,7 @@ class QuickInput {
               inputActionBuilder: inputActionBuilder,
               queryPrefix: queryPrefix,
               itemsProvider: itemsProvider,
+              navigation: navigation,
               onDispose: notifyClosed,
               onHandled: () => handled = true,
             ),
@@ -230,6 +243,7 @@ class _QuickInputPanel extends StatefulWidget {
     this.inputActionBuilder,
     this.queryPrefix,
     this.itemsProvider,
+    this.navigation,
     required this.onDispose,
     required this.onHandled,
   });
@@ -257,6 +271,7 @@ class _QuickInputPanel extends StatefulWidget {
       inputActionBuilder;
   final String? queryPrefix;
   final Future<List<QuickItem>> Function(String query)? itemsProvider;
+  final QuickInputNavigation? navigation;
 
   @override
   State<_QuickInputPanel> createState() => _QuickInputPanelState();
@@ -310,6 +325,23 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     if (_hasValidator) unawaited(_validate());
     if (widget.itemsProvider != null) unawaited(_loadItems());
     widget.commands?.addListener(_onCommandsChanged);
+    final navigation = widget.navigation;
+    if (navigation != null) {
+      final keyboard = HardwareKeyboard.instance;
+      if (navigation.acceptOnRelease.isNotEmpty) {
+        keyboard.addHandler(_onNavigationKeyRelease);
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (navigation.acceptOnRelease
+            .any((key) => !keyboard.logicalKeysPressed.contains(key))) {
+          // The initiating modifier can be released before the route builds.
+          unawaited(_runAt(_selected));
+        } else if (navigation.startAtLast) {
+          unawaited(_revealBoundary(_navigationGeneration, last: true));
+        }
+      });
+    }
   }
 
   @override
@@ -324,6 +356,9 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
 
   @override
   void dispose() {
+    if (widget.navigation?.acceptOnRelease.isNotEmpty == true) {
+      HardwareKeyboard.instance.removeHandler(_onNavigationKeyRelease);
+    }
     widget.onDispose();
     _validationGeneration++;
     _itemsGeneration++;
@@ -506,7 +541,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     final generation = ++_navigationGeneration;
     setState(() {
       _filtered = filtered;
-      _selected = _firstSelectable();
+      _selected = _initialSelectionIndex();
     });
     if (_scroll.hasClients && _scroll.offset != 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -516,6 +551,30 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       });
     }
     _previewSelected();
+  }
+
+  int _initialSelectionIndex() {
+    final first = _firstSelectable();
+    final navigation = widget.navigation;
+    if (_filtered.isEmpty || navigation == null) return first;
+    if (navigation.startAtLast) {
+      return _filtered.lastIndexWhere(_isSelectable);
+    }
+    final second = _filtered.indexWhere(_isSelectable, first + 1);
+    return second < 0 ? first : second;
+  }
+
+  bool _onNavigationKeyRelease(KeyEvent event) {
+    if (event is! KeyUpEvent ||
+        event.synthesized ||
+        _accepted ||
+        !mounted ||
+        ModalRoute.of(context)?.isCurrent != true ||
+        !widget.navigation!.acceptOnRelease.contains(event.logicalKey)) {
+      return false;
+    }
+    unawaited(_runAt(_selected));
+    return true;
   }
 
   void _previewSelected() {
@@ -565,17 +624,26 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
   }
 
   void _moveSelection(int delta) {
-    _navigationGeneration++;
+    final generation = ++_navigationGeneration;
     if (_filtered.isEmpty) return;
     var index = _selected;
+    var wrapped = false;
     for (var step = 0; step < _filtered.length; step++) {
       final next = index + delta;
-      if (next < 0 || next >= _filtered.length) return;
-      index = next;
+      if (next < 0 || next >= _filtered.length) {
+        if (widget.navigation == null) return;
+        wrapped = true;
+        index = next % _filtered.length;
+      } else {
+        index = next;
+      }
       if (_isSelectable(_filtered[index])) break;
     }
-    if (index != _selected) {
-      _selectIndex(index);
+    if (index == _selected) return;
+    _selectIndex(index);
+    if (wrapped) {
+      unawaited(_revealBoundary(generation, last: delta < 0));
+    } else {
       _revealSelected();
     }
   }
@@ -847,6 +915,20 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
     }
     final key = event.logicalKey;
     final keyboard = HardwareKeyboard.instance;
+    if (widget.navigation != null &&
+        event is KeyDownEvent &&
+        key == LogicalKeyboardKey.escape) {
+      if (_claimPickerAcceptance()) Navigator.of(context).pop();
+      return KeyEventResult.handled;
+    }
+    if (widget.navigation != null &&
+        key == LogicalKeyboardKey.tab &&
+        keyboard.isControlPressed &&
+        !keyboard.isAltPressed &&
+        !keyboard.isMetaPressed) {
+      _moveSelection(keyboard.isShiftPressed ? -1 : 1);
+      return KeyEventResult.handled;
+    }
     final isMac = Theme.of(context).platform == TargetPlatform.macOS;
     final listModifiers =
         !keyboard.isShiftPressed && (!keyboard.isMetaPressed || isMac);
@@ -946,7 +1028,7 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
         (window.height * 0.4 / _detailRowHeight).floor() * _detailRowHeight;
     // Leave a small part of the next row visible when the list overflows.
     final maxListHeight = listHeight + 6 + _listPadding.vertical;
-    return Container(
+    final panel = Container(
       key: const ValueKey('quick-input'),
       margin: const EdgeInsets.only(top: 56),
       width: math.min(600.0, window.width * 0.62),
@@ -958,90 +1040,94 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                if (widget.onBack != null)
-                  IconButton(
-                    key: const ValueKey('quick-input-back'),
-                    tooltip: '返回上一步',
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 26, minHeight: 26),
-                    onPressed: _goBack,
-                    icon: const Icon(Icons.arrow_back, size: 16),
-                    color: Colors.grey.shade400,
-                  ),
-                if (showMultiSelectControls)
-                  TextFieldTapRegion(
-                    child: Tooltip(
-                      message: '选择或清除所有匹配项',
-                      child: Checkbox(
-                        key: const ValueKey('quick-input-check-all'),
-                        visualDensity: VisualDensity.compact,
-                        value: _pickableMatches.isNotEmpty &&
-                            _pickableMatches.every(_picked.contains),
-                        onChanged: (value) =>
-                            _toggleAllFiltered(value ?? false),
-                      ),
-                    ),
-                  ),
-                Expanded(
-                  child: Focus(
-                    onKeyEvent: _onKey,
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      autofocus: true,
-                      style: const TextStyle(fontSize: 13),
-                      inputFormatters:
-                          widget.canSelectMany ? [_noSpaces] : null,
-                      decoration: InputDecoration(
-                        hintText: widget.hint,
-                        isDense: true,
-                        border: severity == null
-                            ? InputBorder.none
-                            : UnderlineInputBorder(
-                                borderSide: BorderSide(color: validationColor)),
-                        enabledBorder: severity == null
-                            ? InputBorder.none
-                            : UnderlineInputBorder(
-                                borderSide: BorderSide(color: validationColor)),
-                        focusedBorder: severity == null
-                            ? InputBorder.none
-                            : UnderlineInputBorder(
-                                borderSide: BorderSide(color: validationColor)),
-                      ),
-                    ),
-                  ),
-                ),
-                if (widget.inputActionBuilder case final builder?)
-                  builder(context, _controller.text, _refreshInputAction),
-                if (showMultiSelectControls) ...[
-                  Semantics(
-                    liveRegion: true,
-                    child: Text(
-                      '已选择 $pickedCount 项',
-                      style: const TextStyle(fontSize: 11),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    key: const ValueKey('quick-input-confirm'),
-                    style: FilledButton.styleFrom(
+          if (widget.navigation == null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  if (widget.onBack != null)
+                    IconButton(
+                      key: const ValueKey('quick-input-back'),
+                      tooltip: '返回上一步',
                       visualDensity: VisualDensity.compact,
-                      minimumSize: const Size(0, 26),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.zero,
+                      constraints:
+                          const BoxConstraints(minWidth: 26, minHeight: 26),
+                      onPressed: _goBack,
+                      icon: const Icon(Icons.arrow_back, size: 16),
+                      color: Colors.grey.shade400,
                     ),
-                    onPressed: _accept,
-                    child: const Text('确定'),
+                  if (showMultiSelectControls)
+                    TextFieldTapRegion(
+                      child: Tooltip(
+                        message: '选择或清除所有匹配项',
+                        child: Checkbox(
+                          key: const ValueKey('quick-input-check-all'),
+                          visualDensity: VisualDensity.compact,
+                          value: _pickableMatches.isNotEmpty &&
+                              _pickableMatches.every(_picked.contains),
+                          onChanged: (value) =>
+                              _toggleAllFiltered(value ?? false),
+                        ),
+                      ),
+                    ),
+                  Expanded(
+                    child: Focus(
+                      onKeyEvent: _onKey,
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        autofocus: true,
+                        style: const TextStyle(fontSize: 13),
+                        inputFormatters:
+                            widget.canSelectMany ? [_noSpaces] : null,
+                        decoration: InputDecoration(
+                          hintText: widget.hint,
+                          isDense: true,
+                          border: severity == null
+                              ? InputBorder.none
+                              : UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: validationColor)),
+                          enabledBorder: severity == null
+                              ? InputBorder.none
+                              : UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: validationColor)),
+                          focusedBorder: severity == null
+                              ? InputBorder.none
+                              : UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: validationColor)),
+                        ),
+                      ),
+                    ),
                   ),
+                  if (widget.inputActionBuilder case final builder?)
+                    builder(context, _controller.text, _refreshInputAction),
+                  if (showMultiSelectControls) ...[
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        '已选择 $pickedCount 项',
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    FilledButton(
+                      key: const ValueKey('quick-input-confirm'),
+                      style: FilledButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        minimumSize: const Size(0, 26),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                      onPressed: _accept,
+                      child: const Text('确定'),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
           if (severity != null || (validationText?.isNotEmpty ?? false))
             Semantics(
               label: severityLabel,
@@ -1087,6 +1173,16 @@ class _QuickInputPanelState extends State<_QuickInputPanel> {
             ),
           ],
         ],
+      ),
+    );
+    if (widget.navigation == null) return panel;
+    return Semantics(
+      label: widget.hint,
+      child: Focus(
+        focusNode: _focusNode,
+        autofocus: true,
+        onKeyEvent: _onKey,
+        child: panel,
       ),
     );
   }

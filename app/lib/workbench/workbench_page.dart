@@ -701,6 +701,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 编辑器组（W2-2）：region → 组；焦点组承载快捷键/保存/补全/新开文档。
   final Map<String, EditorGroup> _groups = {};
   int _editorActivationClock = 0;
+  ({EditorGroup group, _SharedOpenDocState document})? _lastMruEditor;
+  bool _recentEditorPickerOpen = false;
   final Map<OpenDoc, _SnapshotCompareBinding> _snapshotCompareViews = {};
   final Map<int,
       ({EditorGroup group, OpenDoc view, int offset, Offset position})>
@@ -981,6 +983,62 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'editorActive',
       enablement: 'editorActive',
     );
+    for (final (id, label, allGroups, quick, reverse) in const [
+      (
+        'workbench.action.showEditorsInActiveGroup',
+        '按最近使用顺序显示活动组编辑器',
+        false,
+        false,
+        false,
+      ),
+      (
+        'workbench.action.showAllEditorsByMostRecentlyUsed',
+        '按最近使用顺序显示所有编辑器',
+        true,
+        false,
+        false,
+      ),
+      (
+        'workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup',
+        '快速打开组内上一个最近使用的编辑器',
+        false,
+        true,
+        false,
+      ),
+      (
+        'workbench.action.quickOpenLeastRecentlyUsedEditorInGroup',
+        '快速打开组内最早使用的编辑器',
+        false,
+        true,
+        true,
+      ),
+      (
+        'workbench.action.quickOpenPreviousRecentlyUsedEditor',
+        '快速打开上一个最近使用的编辑器',
+        true,
+        true,
+        false,
+      ),
+      (
+        'workbench.action.quickOpenLeastRecentlyUsedEditor',
+        '快速打开最早使用的编辑器',
+        true,
+        true,
+        false,
+      ),
+    ]) {
+      reg(
+        id,
+        '视图',
+        label,
+        () async => _showRecentEditorPicker(
+          allGroups: allGroups,
+          navigation: quick ? _recentEditorNavigation(id, reverse) : null,
+        ),
+        shortcut: _keybindings.shortcutFor(id),
+        enablement: allGroups ? null : 'editorActive',
+      );
+    }
     reg(
       'workbench.action.closeOtherEditors',
       '编辑器',
@@ -3427,6 +3485,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _layout.restoreEditorGroups();
     }
     final active = _active;
+    final recentTarget = active == null
+        ? null
+        : (group: _focused, document: active._shared);
+    if (recentTarget != _lastMruEditor) {
+      _lastMruEditor = recentTarget;
+      if (active != null &&
+          active._lastTabActivationOrder != _editorActivationClock) {
+        _noteActiveDocument(_focused, active.id);
+      }
+    }
     if (active != null) {
       final key = '${active.id}#${active.doc.version}';
       if ((_sidebarView == 'outline' || _secondarySidebarView == 'outline') &&
@@ -13785,6 +13853,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     group.recentDocIds.remove(documentId);
     group.recentDocIds.insert(0, documentId);
     group.lastActivationOrder = ++_editorActivationClock;
+    final tab = group.docs.where((doc) => doc.id == documentId).firstOrNull;
+    if (tab != null) {
+      for (final view in tab._tabViews) {
+        view._lastTabActivationOrder = _editorActivationClock;
+      }
+    }
   }
 
   OpenDoc? _mostRecentDocument(EditorGroup group,
@@ -23540,6 +23614,105 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     }
   }
 
+  QuickInputNavigation _recentEditorNavigation(String commandId, bool reverse) {
+    final keyboard = HardwareKeyboard.instance;
+    final held = keyboard.logicalKeysPressed;
+    final trigger = _keybindings
+        .resolveBindings(matchesWhen: _commands.context.matches)
+        .entries
+        .where((entry) =>
+            entry.value.commandId == commandId &&
+            held.contains(entry.key.trigger))
+        .firstOrNull
+        ?.key;
+    final releaseKeys = <LogicalKeyboardKey>{
+      if (trigger?.control == true) ...[
+        LogicalKeyboardKey.controlLeft,
+        LogicalKeyboardKey.controlRight,
+      ],
+      if (trigger?.alt == true) ...[
+        LogicalKeyboardKey.altLeft,
+        LogicalKeyboardKey.altRight,
+      ],
+      if (trigger?.meta == true) ...[
+        LogicalKeyboardKey.metaLeft,
+        LogicalKeyboardKey.metaRight,
+      ],
+    };
+    if (releaseKeys.isEmpty && trigger?.shift == true) {
+      releaseKeys.addAll(
+          [LogicalKeyboardKey.shiftLeft, LogicalKeyboardKey.shiftRight]);
+    }
+    return QuickInputNavigation(
+      startAtLast: reverse,
+      acceptOnRelease: releaseKeys.intersection(held),
+    );
+  }
+
+  void _showRecentEditorPicker({
+    required bool allGroups,
+    QuickInputNavigation? navigation,
+  }) {
+    if (_recentEditorPickerOpen) return;
+    final currentGroup = _focused;
+    final current = currentGroup.active;
+    final groups = allGroups ? _groups.values : [currentGroup];
+    final candidates = <({EditorGroup group, OpenDoc doc, int index})>[];
+    final labels = <OpenDoc, String>{};
+    for (final group in groups) {
+      final groupLabels = EditorTabLabelPolicy.labelsFor([
+        for (final doc in group.docs)
+          EditorTabLabelInput(name: doc.name, path: doc.path),
+      ]);
+      for (final (index, doc) in group.docs.indexed) {
+        labels[doc] = groupLabels[index];
+      }
+      final remaining = {for (final doc in group.docs.reversed) doc.id: doc};
+      for (final id in group.recentDocIds) {
+        final doc = remaining.remove(id);
+        if (doc != null) {
+          candidates.add((group: group, doc: doc, index: candidates.length));
+        }
+      }
+      for (final doc in remaining.values) {
+        candidates.add((group: group, doc: doc, index: candidates.length));
+      }
+    }
+    if (allGroups) {
+      candidates.sort((left, right) {
+        final byOrder = right.doc._lastTabActivationOrder
+            .compareTo(left.doc._lastTabActivationOrder);
+        return byOrder != 0 ? byOrder : left.index.compareTo(right.index);
+      });
+    }
+    final groupNumbers = {
+      for (final (index, group) in _groups.values.indexed) group: index + 1,
+    };
+    _recentEditorPickerOpen = true;
+    unawaited(QuickInput.show(
+      context,
+      hint: allGroups ? '最近使用的编辑器' : '组内最近使用的编辑器',
+      navigation: navigation,
+      restoreFocus:
+          current == null ? null : _focusNodeFor(currentGroup, current),
+      onClose: () => _recentEditorPickerOpen = false,
+      items: [
+        for (final (:group, :doc, index: _) in candidates)
+          QuickItem(
+            label: labels[doc] ?? doc.name,
+            description: allGroups && groups.length > 1
+                ? '编辑器组 ${groupNumbers[group]}'
+                : null,
+            onRun: () async {
+              if (mounted && identical(_groups[group.region], group)) {
+                _activateEditorFromOverflow(group, doc.id);
+              }
+            },
+          ),
+      ],
+    ));
+  }
+
   void _activateEditorFromOverflow(EditorGroup group, int documentId) {
     final target = group.docs
         .where((document) => document.id == documentId)
@@ -26436,6 +26609,7 @@ class OpenDoc {
 
   final _SharedOpenDocState _shared;
   _SplitEditorViews? _splitEditor;
+  int _lastTabActivationOrder = 0;
   bool _hasScrollSyncListener = false;
 
   bool get _isFirstSplitSide => identical(_splitEditor?.first, this);
@@ -26458,7 +26632,10 @@ class OpenDoc {
       editorScrollController.initialScrollOffset;
 
   _SplitEditorViews _splitInGroup() => _SplitEditorViews(
-      OpenDoc.viewOf(this, initialScrollOffset: _scrollOffset), this);
+        OpenDoc.viewOf(this, initialScrollOffset: _scrollOffset)
+          .._lastTabActivationOrder = _lastTabActivationOrder,
+        this,
+      );
 
   OpenDoc _copyTab({double initialScrollOffset = 0}) {
     final split = _splitEditor;
