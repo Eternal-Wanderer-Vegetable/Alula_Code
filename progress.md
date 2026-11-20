@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.146 / feat-198。产品 `16984daf914569f02872360859912b8df85544ff` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证活动栏拖到面板标题区、独立入口、无效释放、查询、焦点与入口往返。专项 35/35，Flutter 1,678 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44832281058 四项及 Platform Availability 44832273110 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.146-sidebar-view-drag.md。
+
 - 2026-11-21 完成 P05.145 / feat-197。产品 `4601bc1bf1eaaa7ef4c3b8d73178f1c1aa20fafb` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证面板入口拖回两个侧栏、无效释放、搜索查询与两处匹配、焦点及悬停提示。专项 25/25，Flutter 1,677 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44828717927 四项及 Platform Availability 44828704542 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.145-panel-view-drag.md。
 
 - 2026-11-21 完成 P05.144 / feat-196。产品 `1e3fa2b601b9be3380de5fcd3dd82bfd7081e70e` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证内置视图面板入口、搜索查询与焦点、次侧栏和重置。专项 23/23，Flutter 1,675 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44825134506 四项及 Platform Availability 44825122656 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.144-view-move-panel.md。

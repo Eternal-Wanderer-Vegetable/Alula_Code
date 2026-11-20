@@ -2470,8 +2470,8 @@
     },
     {
       "id": "feat-198",
-      "name": "P05.146 LAY-04/05 侧栏内置视图拖入面板",
-      "description": "对照固定版从侧栏入口拖入面板，覆盖有效落点、取消、原内容与活动栏交互。",
+      "name": "P05.146 LAY-04/05 侧栏内置视图拖到面板标题区",
+      "description": "从活动栏拖到面板标题区建立独立入口，覆盖有效落点、取消、内容与焦点、活动栏入口和配置往返。",
       "dependencies": [
         "feat-066",
         "feat-070",
@@ -2479,8 +2479,22 @@
         "feat-196",
         "feat-197"
       ],
+      "status": "done",
+      "evidence": "产品 `16984daf914569f02872360859912b8df85544ff` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证活动栏拖到面板标题区、独立入口、无效释放、查询、焦点与入口往返。专项 35/35，Flutter 1,678 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44832281058 四项及 Platform Availability 44832273110 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.146-sidebar-view-drag.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-199",
+      "name": "P05.147 LAY-04/05 活动栏视图拖入面板正文分组",
+      "description": "对照固定版正文落点，在当前面板标签中增添视图并保留原内容，覆盖布局、查询、焦点、取消和持久化。",
+      "dependencies": [
+        "feat-078",
+        "feat-196",
+        "feat-198"
+      ],
       "status": "not-started",
-      "evidence": "等待固定版行为对照、实现和平台验收。",
+      "evidence": "P05.146 固定版已捕获 Terminal 与 Search 正文分组。等待实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
