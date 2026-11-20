@@ -1,0 +1,24 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 986,
+    "height": 666
+  },
+  "focusSteps": {
+    "command": "Lifecycle notification after close",
+    "previous boundary": "Lifecycle notification after close",
+    "next middle": "Initial error",
+    "next oldest": "Initial info",
+    "next boundary": "Initial info",
+    "Home newest": "Lifecycle notification after close",
+    "End oldest": "Initial info",
+    "PageUp newest": "Lifecycle notification after close",
+    "PageDown oldest": "Initial info",
+    "Up from oldest": "Initial error",
+    "Delete focused middle advances": "Initial info",
+    "Delete focused oldest goes back": "Lifecycle notification after close"
+  },
+  "restoredEditorAfterLastClear": true,
+  "exitCode": 0
+}

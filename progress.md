@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.116 / feat-168。产品 `bcb3dfb57f41d0f0f4ac22223a2d8827f4e3dbe4` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 验证 toast 聚焦命令、上/下、Home/End、PageUp/PageDown、边界、清除后焦点接续和最后一条移除后回到编辑器。Alula 获焦行显示主题描边并经原始像素扫描确认。专项 141/141，Flutter 1,620 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44711232580 四项及 Platform Availability 44711223066 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.116-toast-focus.md。
+
 - 2026-11-20 完成 P05.115 / feat-167。产品 `367dbdb2f83acd53c0ef129aad7ba07428e63251` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 验证组合键打开通知中心、Escape 关闭及恢复编辑器焦点，核对查找与中心、toast 的关闭顺序。专项 144/144，Flutter 1,618 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44707226037 四项及 Platform Availability 44707218155 的 Windows 与 44709013464 的 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.115-notification-keys.md。
 
 - 2026-11-20 完成 P05.114 / feat-166。产品 `d7d17bdadf5c38d2c846396b1e33f256425da0e1` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 实机对照，中心打开时收起旧 toast、新条目直接留在中心且未读为零，关闭后无回放，后续只显示新发的一条。专项 90/90，Flutter 1,610 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44703684119 四项及 Platform Availability 44703675374 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.114-notification-lifecycle.md。
