@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.110 / feat-162。产品 `3ed5f8d244790a5b8db1e0de3ae161216eb2a23d` 已推草稿 PR #3。toast 右键与通知中心键盘菜单实机开启，Escape 关闭。组件层核对含中文、Emoji、CRLF 的原文写入、焦点恢复、Delete 不受影响。专项 69/69，完整 Flutter 1,600 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44691943586 四项及 Platform Availability 44691935212 Windows/Linux 通过。macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.110-notification-copy-text.md。
+
 - 2026-11-20 完成 P05.109 / feat-161。产品 `630f42bbd16e6749e24bd96ce8e019a7f6bdb046` 已推草稿 PR #3。toast 和通知中心共用绑定当前条目的次级操作菜单。Windows 11 125% DPI 实机记录两次选择各一次回调，Escape 取消无回调，Enter 能重开。菜单到期、撤出、错误和进度保护经专项 60/60 验证。完整 Flutter 1,598 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44688759654 四项及 Platform Availability 44688750790 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.109-notification-secondary-actions.md。
 
 - 2026-11-20 完成 P05.108 / feat-160。产品 `a8ae00621f360db2e6acb0592f798642e09b5be4` 已推 PR #3。Windows 11 125% DPI 同样本对照：三处锚点侧距 8、顶或底距 36，toast 间距 4，外框宽 452 对照固定版 451.6，位置按钮 24 × 24。三种位置的铃铛打开中心、退出码 0。专项 48/48，完整 Flutter 1,595 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44685832926 四项及 Platform Availability 44685826609 Windows/Linux 通过。中心总高差 7.4，留待中心密度复验；macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.108-notification-modern-geometry.md。
