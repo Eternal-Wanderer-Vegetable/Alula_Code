@@ -187,6 +187,126 @@ void main() {
     addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
   }
 
+  for (final before in [true, false]) {
+    testWidgets(
+      'selected tabs move ${before ? 'before' : 'after'} the target tab '
+      'and then close the empty source group',
+      (tester) async {
+        await prepareWorkspace(tester);
+        final base = temp.path.replaceAll(r'\', '/');
+        await mountPage(tester, path: '$base/keybindings.json');
+
+        await execute(tester, 'workbench.action.files.newUntitledFile');
+        await execute(tester, 'workbench.action.splitEditorRight');
+        final existingBravo = tester
+            .widgetList<RustTextInputField>(find.byType(RustTextInputField))
+            .lastWhere((field) => field.inputWindow.document.id == 2);
+        await execute(tester, 'workbench.action.files.newUntitledFile');
+        await execute(tester, 'workbench.action.files.newUntitledFile');
+        await tester.tap(_tabIn('editor', 1));
+        await tester.pumpAndSettle();
+        await execute(tester, 'workbench.action.files.newUntitledFile');
+        expect(_tabIdsIn(tester, 'editor'), [1, 2, 5]);
+        expect(_tabIdsIn(tester, 'editor-2'), [2, 3, 4]);
+
+        await tester.tap(_tabIn('editor', 1));
+        await tester.pumpAndSettle();
+        final alpha = _fieldForDocument(tester, 1);
+        alpha.focusNode!.requestFocus();
+        await tester.pump();
+        const dirtyText = 'unsaved 😀 in the original view';
+        tester.testTextInput.updateEditingValue(const TextEditingValue(
+          text: dirtyText,
+          selection: TextSelection.collapsed(offset: 10),
+        ));
+        await tester.pump();
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.tap(_tabIn('editor', 2));
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pumpAndSettle();
+        for (final id in [1, 2]) {
+          expect(
+              tester
+                  .widget<Semantics>(find.byKey(
+                    ValueKey('editor-tab-semantics-editor-$id'),
+                  ))
+                  .properties
+                  .selected,
+              isTrue);
+        }
+
+        await dragTabOntoTab(
+          tester,
+          'editor',
+          1,
+          'editor-2',
+          4,
+          dropOnLeftHalf: before,
+        );
+        final expectedTarget = before ? [3, 1, 4, 2] : [3, 4, 1, 2];
+        expect(_tabIdsIn(tester, 'editor'), [5]);
+        expect(_savedGroup(sessionStore, 'editor')['active'], 5);
+        expect(_tabIdsIn(tester, 'editor-2'), expectedTarget);
+        expect(_savedGroup(sessionStore, 'editor-2')['active'], 2);
+        for (final id in expectedTarget) {
+          expect(
+              tester
+                  .widget<Semantics>(find.byKey(
+                    ValueKey('editor-tab-semantics-editor-2-$id'),
+                  ))
+                  .properties
+                  .selected,
+              id == 2);
+        }
+        final bravo = _fieldForDocument(tester, 2);
+        expect(bravo.inputWindow, same(existingBravo.inputWindow));
+        expect(bravo.focusNode!.hasFocus, isTrue);
+
+        await tester.tap(_tabIn('editor-2', 1));
+        await tester.pumpAndSettle();
+        final movedAlpha = _fieldForDocument(tester, 1);
+        expect(movedAlpha.inputWindow, same(alpha.inputWindow));
+        expect(movedAlpha.focusNode, same(alpha.focusNode));
+        expect(movedAlpha.scrollController, same(alpha.scrollController));
+        expect(
+            movedAlpha.inputWindow.document.readRange(0, maxLenUtf16: 100).text,
+            dirtyText);
+
+        await tester.tap(_tabIn('editor-2', 2));
+        await tester.pumpAndSettle();
+        await tester.tap(_tabIn('editor', 5));
+        await tester.pumpAndSettle();
+        await execute(tester, 'workbench.action.files.newUntitledFile');
+        await tester.tap(_tabIn('editor', 5));
+        await tester.pumpAndSettle();
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.tap(_tabIn('editor', 6));
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pumpAndSettle();
+
+        final body = find.byKey(const ValueKey('editor-body-drop-editor-2'));
+        final gesture = await tester.startGesture(
+          tester.getCenter(_tabIn('editor', 5)),
+        );
+        await tester.pump();
+        await gesture.moveBy(const Offset(14, 0));
+        await tester.pump();
+        await gesture.moveTo(tester.getCenter(body));
+        await tester.pump();
+        await gesture.up();
+        await tester.pump(const Duration(milliseconds: 750));
+        await tester.pumpAndSettle();
+
+        expect(_strip('editor'), findsNothing);
+        expect(_savedGroups(sessionStore), hasLength(1));
+        expect(_tabIdsIn(tester, 'editor-2'), [...expectedTarget, 5, 6]);
+        expect(_savedGroup(sessionStore, 'editor-2')['active'], 5);
+        expect(_fieldForDocument(tester, 5).focusNode!.hasFocus, isTrue);
+      },
+    );
+  }
+
   testWidgets(
     'cross-group tab drag moves in both directions with pointer-side insertion',
     (tester) async {

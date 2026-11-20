@@ -24519,6 +24519,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     int draggedId,
     int? targetTabId, {
     required bool insertAfter,
+    bool bodyDrop = false,
   }) {
     if (identical(source, target)) return;
     final from = source.docs.indexWhere((d) => d.id == draggedId);
@@ -24532,6 +24533,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     if (target.docs.any((view) => identical(view, moving))) return;
+    final selectedIds = _tabDragSelection?.ids;
+    if (selectedIds != null && selectedIds.contains(draggedId)) {
+      final docsById = {for (final doc in source.docs) doc.id: doc};
+      final selection = <OpenDoc>[
+        for (final id in selectedIds)
+          if (docsById[id] case final doc?) doc,
+      ];
+      if (selection.length > 1) {
+        _moveSelectedTabsAcrossGroups(
+          source,
+          target,
+          selection,
+          targetIndex,
+          insertAfter: insertAfter,
+          bodyDrop: bodyDrop,
+        );
+        return;
+      }
+    }
     _flushInput(moving, commitComposition: true);
 
     final movingSticky = source.stickyDocIds.contains(moving.id);
@@ -24618,6 +24638,144 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 把源组的文件文档复制为同文档新视图（`OpenDoc.viewOf`）插入目标组，
   /// 指针位置决定前/后；复制视图落在普通分区（不是 sticky、不是 preview），
   /// 源组完全不变；目标组已显示同一文档时仅激活既有视图。
+  void _moveSelectedTabsAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    List<OpenDoc> selection,
+    int? targetIndex, {
+    required bool insertAfter,
+    required bool bodyDrop,
+  }) {
+    if (selection.any((doc) =>
+        _auxiliaryTransferSourceLocks.containsKey(doc.id) ||
+        _editorCloseInProgress.contains(doc._shared))) {
+      return;
+    }
+
+    final movingIds = selection.map((doc) => doc.id).toSet();
+    final duplicates = <OpenDoc, OpenDoc>{
+      for (final moving in selection)
+        for (final existing in target.docs)
+          if (existing.sameDocumentAs(moving)) moving: existing,
+    };
+    final previousTarget = target.active;
+    var active = previousTarget;
+    var orderedMoves = selection;
+    var insertion = targetIndex == null
+        ? target.docs.length
+        : targetIndex + (insertAfter ? 1 : 0);
+    var stickyCount = target.docs
+        .takeWhile((doc) => target.stickyDocIds.contains(doc.id))
+        .length;
+    final atEndOfPinnedRow = targetIndex != null &&
+        insertAfter &&
+        insertion == stickyCount &&
+        stickyCount > 0 &&
+        stickyCount < target.docs.length &&
+        _pinnedTabsOnSeparateRow.value &&
+        _editorTabMode.value == EditorTabMode.multiple;
+    // A drop on the body opens one active editor, then opens the other
+    // editors beside it without changing focus. Existing target editors
+    // keep their position in this case.
+    if (bodyDrop) {
+      final first = selection.firstWhere(
+        (doc) =>
+            identical(duplicates[doc], previousTarget) &&
+            previousTarget != null,
+        orElse: () => selection.first,
+      );
+      orderedMoves = [first, ...selection.where((doc) => doc != first)];
+    }
+
+    for (final tab in [
+      if (previousTarget != null) previousTarget,
+      ...selection,
+    ]) {
+      for (final view in tab._tabViews) {
+        _flushInput(view, commitComposition: true);
+      }
+    }
+    final removeSourceRegion =
+        source.docs.length == movingIds.length && _groups.length > 1;
+    if (removeSourceRegion && !_layout.removeRegion(source.region)) {
+      setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      return;
+    }
+
+    setState(() {
+      for (var i = 0; i < orderedMoves.length; i++) {
+        final moving = orderedMoves[i];
+        final existing = duplicates[moving];
+        final view = existing ?? moving;
+        if (bodyDrop) {
+          if (existing == null) {
+            final current = active;
+            final adjacent =
+                current == null ? 0 : target.docs.indexOf(current) + 1;
+            target.docs.insert(
+              adjacent.clamp(stickyCount, target.docs.length),
+              view,
+            );
+          }
+          if (i == 0) active = view;
+        } else {
+          final wasSticky = target.stickyDocIds.remove(view.id);
+          final sticky = insertion < stickyCount || atEndOfPinnedRow;
+          if (existing != null) target.docs.remove(view);
+          if (wasSticky) stickyCount--;
+          final index = sticky
+              ? insertion.clamp(0, stickyCount)
+              : insertion.clamp(stickyCount, target.docs.length);
+          target.docs.insert(index, view);
+          if (sticky) {
+            target.stickyDocIds.add(view.id);
+            stickyCount++;
+          }
+          active = view;
+          insertion++;
+        }
+
+        if (target.previewDocId == view.id) target.previewDocId = null;
+        if (existing == null) {
+          _transferEditorViewFocus(source, target, moving);
+        } else {
+          // The target view still owns the same shared Rust document.
+          for (final peer in moving._tabViews) {
+            _editorFocusNodes.remove(_focusKeyFor(source, peer))?.dispose();
+          }
+          moving.disposeView(deferScrollControllerDisposal: true);
+        }
+      }
+
+      source.docs.removeWhere((doc) => movingIds.contains(doc.id));
+      source.stickyDocIds.removeAll(movingIds);
+      source.recentDocIds.removeWhere(movingIds.contains);
+      source._inactiveSelectedTabIds.removeAll(movingIds);
+      if (movingIds.contains(source._tabSelectionAnchorId)) {
+        source._tabSelectionAnchorId = null;
+      }
+      if (movingIds.contains(source.previewDocId)) source.previewDocId = null;
+      if (removeSourceRegion) {
+        _editorTabLastWidths.remove(source.region);
+        _editorTabHeldWidths.remove(source.region);
+        _groups.remove(source.region);
+      } else if (movingIds.contains(source.activeDocId)) {
+        source.activeDocId = _mostRecentDocument(source)?.id;
+        _noteActiveDocument(source, source.activeDocId);
+      }
+
+      target.activeDocId = active!.id;
+      _noteActiveDocument(target, active!.id);
+      _focusedRegion = target.region;
+      _statusDetail = '已移动 ${selection.length} 个编辑器';
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    final focused = active!;
+    _focusEditorAfterLayout(target, focused,
+        scrollOffset: focused._scrollOffset);
+  }
+
   void _copyDocAcrossGroups(
     EditorGroup source,
     EditorGroup target,
@@ -25075,7 +25233,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       if (copyRequested) {
         _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
       } else {
-        _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
+        _moveDocAcrossGroups(
+          source,
+          g,
+          draggedId,
+          null,
+          insertAfter: false,
+          bodyDrop: true,
+        );
       }
       return;
     }
