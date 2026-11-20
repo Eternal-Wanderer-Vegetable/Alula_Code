@@ -1976,8 +1976,20 @@
       "dependencies": [
         "feat-159"
       ],
+      "status": "done",
+      "evidence": "产品 `a8ae00621f360db2e6acb0592f798642e09b5be4` 已推 PR #3。Windows 11 125% DPI 同样本对照：三处锚点侧距 8、顶或底距 36，toast 间距 4，外框宽 452 对照固定版 451.6，位置按钮 24 × 24。三种位置的铃铛打开中心、退出码 0。专项 48/48，完整 Flutter 1,595 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44685832926 四项及 Platform Availability 44685826609 Windows/Linux 通过。中心总高差 7.4，留待中心密度复验；macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.108-notification-modern-geometry.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-161",
+      "name": "P05.109 LAY-18 单条通知更多操作",
+      "description": "在 toast 和通知中心向单条通知提供次级操作菜单，保留主操作、焦点和活动进度行为。",
+      "dependencies": [
+        "feat-160"
+      ],
       "status": "not-started",
-      "evidence": "固定版外框和 Alula 测量见 docs/diagnostics/2026-11-20-p05/p05.107-notification-position.md。",
+      "evidence": "待对照固定版 notificationsViewer.ts 的单条通知动作与选择行为。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

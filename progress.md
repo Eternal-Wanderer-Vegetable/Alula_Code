@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.108 / feat-160。产品 `a8ae00621f360db2e6acb0592f798642e09b5be4` 已推 PR #3。Windows 11 125% DPI 同样本对照：三处锚点侧距 8、顶或底距 36，toast 间距 4，外框宽 452 对照固定版 451.6，位置按钮 24 × 24。三种位置的铃铛打开中心、退出码 0。专项 48/48，完整 Flutter 1,595 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44685832926 四项及 Platform Availability 44685826609 Windows/Linux 通过。中心总高差 7.4，留待中心密度复验；macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.108-notification-modern-geometry.md。
+
 - 2026-11-20 完成 P05.107 / feat-159。产品 `9573dd41f5e299d62088f0014a89c0ec4c127a8e` 已推草稿 PR #3。通知 UI 和编辑器绘制定向 39/39，Dart analyze、Rust fmt、完整 bash init.sh 通过，Flutter 1,595 passed / 2 skipped。Windows 11 125% DPI 开着 Rust 编辑器时三种位置的铃铛均可打开中心，修复前共享画布覆盖标题栏。最终精确 SHA 的 PR CI 44683449380 四项及 Platform Availability 44683443277 Windows/Linux 通过。固定版几何差异由 P05.108 跟踪，macOS 实机验收暂缓。证据 docs/diagnostics/2026-11-20-p05/p05.107-notification-position.md。
 
 - 2026-11-20 完成 P05.106 / feat-158。产品 `91488d11bb6464e9df3afa01d7ae0aef747cb222` 已推 PR #3。在同一 Windows 11 x64 桌面以 125% DPI 复拍固定 Code-OSS、Alula 基线和修复版。中心和 toast 共用宽度与右下锚点，最新 toast 在上，普通消息默认单行，展开状态跨两表面继承，来源与操作同行，进度条移到底部。可见填充宽度由 336.8 / 377.6 统一为 447.2 逻辑像素。通知与键位专项 104/104，本地全量 Flutter 1,591 passed / 2 skipped。精确 SHA 的 CI 44676516275 四项及 Platform Availability 44676509667 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。macOS 实机验收继续暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.106-notification-visual-parity.md。
