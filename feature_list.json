@@ -2109,8 +2109,20 @@
       "dependencies": [
         "feat-170"
       ],
+      "status": "done",
+      "evidence": "产品 `2d497365eadeacbe310cd45ec9516de534134d1c` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验未读圆点、后台进度及完成状态、中心展开标记、勿扰与标题栏入口。专项 110/110，Flutter 1,630 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44719347201 四项与 Platform Availability 44719339108 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.119-notification-bell.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-172",
+      "name": "P05.120 LAY-18 清除全部和全局勿扰固定命令",
+      "description": "接通固定版本 notifications.clearAll 和 notifications.toggleDoNotDisturbMode，验证面板、命令和已有键位与历史迁移。",
+      "dependencies": [
+        "feat-171"
+      ],
       "status": "not-started",
-      "evidence": "待固定版对照、组件验证、Windows 实机及精确 SHA 托管验收。",
+      "evidence": "待固定版对照、规范命令实现、兼容性回归与精确 SHA 验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
