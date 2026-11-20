@@ -1475,6 +1475,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
       enablement: 'editorPartMultipleEditorGroups',
     );
+    reg(
+      'workbench.action.toggleEditorGroupLock',
+      '视图',
+      '切换编辑器组锁定',
+      () async => _setEditorGroupLocked(_focused, !_focused.locked),
+    );
+    reg(
+      'workbench.action.lockEditorGroup',
+      '视图',
+      '锁定编辑器组',
+      () async => _setEditorGroupLocked(_focused, true),
+      enablement: '!activeEditorGroupLocked',
+    );
+    reg(
+      'workbench.action.unlockEditorGroup',
+      '视图',
+      '解锁编辑器组',
+      () async => _setEditorGroupLocked(_focused, false),
+      enablement: 'activeEditorGroupLocked',
+    );
     for (final direction in _EditorGroupMoveDirection.values) {
       final (suffix, label) = switch (direction) {
         _EditorGroupMoveDirection.left => ('Left', '左'),
@@ -3349,6 +3369,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands.context.setValues({
       'editorActive': active != null,
       'editorPartMultipleEditorGroups': _groups.length > 1,
+      'activeEditorGroupLocked': _groups[_focusedRegion]?.locked == true,
       'editorHasPath': active?.path != null,
       'editorDirty': active?.isDirty ?? false,
       'editorTextFocus': active != null && _isEditorRegion(_focusedRegion),
@@ -4133,6 +4154,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             {
               'region': g.region,
               'active': g.activeDocId,
+              if (g.locked) 'locked': true,
               'sticky': [
                 for (final doc in g.docs)
                   if (g.stickyDocIds.contains(doc.id)) doc.id,
@@ -4164,7 +4186,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       _loadFindHistoryForWorkspace(_workspaceRoot);
       // journal 没有未命名文档时才建欢迎页（避免恢复后出现重复未命名）
       final g = _focused;
-      if (!g.docs.any((d) => d.isUntitled)) {
+      if (!g.locked && !g.docs.any((d) => d.isUntitled)) {
         const welcome = '// Alula Code\n// 打开一个文件夹开始工作，或在此处体验编辑同步。\n';
         final doc = core.openDoc(_untitledId, welcome);
         final untitled = OpenDoc(
@@ -4273,6 +4295,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         if (target == null) continue; // 布局里已无此组：跳过
         final docsRaw = gr['docs'];
         if (docsRaw is! List) continue;
+        target.locked = gr['locked'] == true;
         for (final dr in docsRaw) {
           if (dr is! Map) continue;
           final id = (dr['id'] as num?)?.toInt();
@@ -12454,6 +12477,46 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 文件夹 / 文件树 ----------
 
+  void _setEditorGroupLocked(EditorGroup group, bool locked) {
+    if (group.locked == locked) return;
+    setState(() => group.locked = locked);
+    _syncCommandContext();
+    _scheduleStateSave();
+  }
+
+  /// Implicit opens may reuse an existing view in a locked group. A new
+  /// view uses the most recently active eligible group or a new side group.
+  EditorGroup? _editorGroupForImplicitOpen({OpenDoc? existing}) {
+    bool eligible(EditorGroup group) =>
+        !group.locked ||
+        (existing != null && group.docs.any(existing.sameDocumentAs));
+
+    final current = _focused;
+    if (eligible(current)) return current;
+    EditorGroup? candidate;
+    for (final group in _groups.values) {
+      if (eligible(group) &&
+          (candidate == null ||
+              group.lastActivationOrder > candidate.lastActivationOrder)) {
+        candidate = group;
+      }
+    }
+    if (candidate != null) return candidate;
+
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final region = 'editor-$index';
+    if (!_layout.splitRegion(current.region, region, Axis.horizontal)) {
+      setState(() => _statusDetail = '无法在锁定组旁创建编辑器组');
+      return null;
+    }
+    final group = EditorGroup(region);
+    _groups[region] = group;
+    return group;
+  }
+
   Future<void> _newUntitledFile() async {
     final core = _core;
     if (core == null) return;
@@ -12470,8 +12533,13 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         doc: doc,
         undoBudget: _undoHistoryBudget,
       );
-      final target = _focused;
+      final target = _editorGroupForImplicitOpen();
+      if (target == null) {
+        untitled.disposeView();
+        return;
+      }
       setState(() {
+        _focusedRegion = target.region;
         target.docs.add(untitled);
         target.activeDocId = id;
         _noteActiveDocument(target, id);
@@ -13473,7 +13541,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           );
           return;
         }
-        final target = _focused;
+        final target = _editorGroupForImplicitOpen(existing: existing);
+        if (target == null) return;
         final existingInTarget = target.docs
             .where((candidate) => candidate.sameDocumentAs(existing))
             .firstOrNull;
@@ -13558,9 +13627,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       }
       _updateDirty(open);
-      final target = _focused;
+      final target = _editorGroupForImplicitOpen();
+      if (target == null) {
+        open.disposeView();
+        return;
+      }
       if (asPreview) _replaceCleanPreviewBeforeOpen(target);
       setState(() {
+        _focusedRegion = target.region;
         target.docs.add(open);
         target.activeDocId = id;
         _noteActiveDocument(target, id);
@@ -23432,6 +23506,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             ),
           ),
           // 编辑器动作区（原工具栏按钮迁入，对标 VS Code 编辑器右上角动作）
+          if (g.locked)
+            IconButton(
+              key: ValueKey('unlock-editor-group-${g.region}'),
+              tooltip: '解锁编辑器组',
+              onPressed: () => _setEditorGroupLocked(g, false),
+              icon: const Icon(Icons.lock_outline, size: 16),
+              visualDensity: VisualDensity.compact,
+            ),
           if (_layout.maximizedEditorRegion == g.region)
             IconButton(
               key: ValueKey('restore-editor-group-${g.region}'),
@@ -26168,6 +26250,7 @@ class EditorGroup {
   final Set<int> stickyDocIds = <int>{};
   final List<int> recentDocIds = <int>[];
   int lastActivationOrder = 0;
+  bool locked = false;
   int? activeDocId;
   int? previewDocId;
   List<BreadcrumbSymbolPathEntry> breadcrumbSymbolPath = const [];

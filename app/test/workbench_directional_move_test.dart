@@ -47,6 +47,144 @@ RustTextInputField _fieldWithLabel(WidgetTester tester, String label) => tester
     .firstWhere((field) => field.semanticsLabel == label);
 
 void main() {
+  testWidgets('locked groups route implicit opens and restore session state',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-locked-group');
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+    tester.view.physicalSize = const Size(1600, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    const fileNames = [
+      'source-a.txt',
+      'source-b.txt',
+      'fallback.txt',
+      'third.txt',
+      'after-unlock.txt'
+    ];
+    for (final name in fileNames) {
+      File('${workspace.path}/$name')
+          .writeAsStringSync('$name synthetic content');
+    }
+
+    final base = temp.path.replaceAll(r'\', '/');
+    final layoutStore = LayoutStore(path: '$base/layout.json')
+      ..save(defaultLayout());
+    final sessionStore = SessionStore(path: '$base/session.json');
+    CommandService? commands;
+
+    Future<void> mount() async {
+      await tester.pumpWidget(MaterialApp(
+        home: WorkbenchPage(
+          autoFolder: workspace.path,
+          layoutStore: layoutStore,
+          sessionStore: sessionStore,
+          keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+          onCommandServiceReady: (service) => commands = service,
+        ),
+      ));
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    Future<void> execute(String id) async {
+      expect(await commands!.execute(id), CommandExecutionStatus.executed);
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    Finder pane(String name) => find.byKey(ValueKey('wb-region-$name'));
+    Finder file(String name) => find.descendant(
+          of: pane('sidebar'),
+          matching: find.text(name),
+        );
+    Future<void> open(String name) async {
+      await tester.tap(file(name));
+      await tester.pump(const Duration(milliseconds: 700));
+    }
+
+    List<Map<String, Object?>> groups() =>
+        (sessionStore.tryLoad()!['groups'] as List)
+            .cast<Map<String, Object?>>();
+    Map<String, Object?> group(String region) =>
+        groups().singleWhere((record) => record['region'] == region);
+
+    Future<void> activate(String name) async {
+      final id = group(name)['active'];
+      await tester.tap(find.byKey(ValueKey('editor-tab-label-$name-$id')));
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(sessionStore.tryLoad()?['focused'], name);
+    }
+
+    List<String?> paths(String region) => (group(region)['docs'] as List)
+        .cast<Map<String, Object?>>()
+        .map((doc) => doc['path'] as String?)
+        .toList();
+
+    const lock = 'workbench.action.lockEditorGroup';
+    const unlock = 'workbench.action.unlockEditorGroup';
+    await mount();
+    expect(commands!.isEnabled(lock), isTrue);
+    expect(commands!.isEnabled(unlock), isFalse);
+    await execute('workbench.action.closeActiveEditor');
+    await open('source-a.txt');
+    final original = paths('editor');
+    await execute(lock);
+    expect(group('editor')['locked'], isTrue);
+    expect(find.byKey(const ValueKey('unlock-editor-group-editor')),
+        findsOneWidget);
+    expect(commands!.isEnabled(lock), isFalse);
+    expect(commands!.isEnabled(unlock), isTrue);
+
+    await open('source-b.txt');
+    expect(groups(), hasLength(2));
+    expect(paths('editor'), original);
+    expect(paths('editor-2').single, endsWith('source-b.txt'));
+    expect(group('editor-2')['locked'], isNull);
+
+    await activate('editor');
+    await open('fallback.txt');
+    expect(groups(), hasLength(2));
+    expect(sessionStore.tryLoad()?['focused'], 'editor-2');
+    expect(paths('editor-2').last, endsWith('fallback.txt'));
+    await execute('workbench.action.toggleEditorGroupLock');
+    expect(group('editor-2')['locked'], isTrue);
+
+    await open('source-a.txt');
+    expect(groups(), hasLength(2));
+    expect(sessionStore.tryLoad()?['focused'], 'editor');
+    expect(paths('editor'), original);
+
+    await open('third.txt');
+    expect(groups(), hasLength(3));
+    expect(sessionStore.tryLoad()?['focused'], 'editor-3');
+    expect(paths('editor-3').single, endsWith('third.txt'));
+    expect(tester.getRect(pane('editor-3')).left,
+        greaterThan(tester.getRect(pane('editor')).right));
+
+    await activate('editor-2');
+    final before = paths('editor-2');
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(milliseconds: 100));
+    await mount();
+    expect(group('editor')['locked'], isTrue);
+    expect(group('editor-2')['locked'], isTrue);
+    expect(group('editor-3')['locked'], isNull);
+    expect(paths('editor-2'), before);
+    expect(commands!.isEnabled(unlock), isTrue);
+
+    await execute('workbench.action.files.newUntitledFile');
+    expect(groups(), hasLength(3));
+    expect(paths('editor-2'), before);
+    expect(paths('editor-3'), contains(null));
+
+    await activate('editor-2');
+    await execute(unlock);
+    await open('after-unlock.txt');
+    expect(groups(), hasLength(3));
+    expect(group('editor-2')['locked'], isNull);
+    expect(paths('editor-2').last, endsWith('after-unlock.txt'));
+  });
+
   testWidgets('group maximization restores nested sizes and live editor views',
       (tester) async {
     final temp = Directory.systemTemp.createTempSync('alula-group-sizes');
