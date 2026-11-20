@@ -2158,7 +2158,7 @@
         "feat-174"
       ],
       "status": "done",
-      "evidence": "产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，Windows 实机键位按 P05.124 继续验收。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。",
+      "evidence": "产品 `9318a5fb7f433a368d678f40854c87f022f6510d` 已推草稿 PR #3。固定版 Windows 与 Alula Linux Xvfb 核对聚焦优先、最新回退与第一个操作。专项 148/148，Flutter 1,638 passed / 2 skipped，完整本地门禁通过。Windows Release 已构建、启动并通过命令服务调用，Windows 实机键位已由 P05.124 验收。同一 SHA 的 PR CI 44729917962 四项及 Platform Availability 44729910176 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2170,8 +2170,8 @@
         "feat-175",
         "feat-177"
       ],
-      "status": "not-started",
-      "evidence": "Windows Release 命令服务调用通过。Win32 前景激活和鼠标定位失败，computer-use 激活返回 failed to activate captured window。Windows Sandbox 被 App Control 0x800711C7 阻止。留待可正常输入的 Windows 桌面实测，见 docs/diagnostics/2026-11-20-p05/p05.123-notification-accept-primary.md。 P05.125 Windows Release 已核对原生状态关闭读数，默认键位与 Narrator 实机组合仍待验证。",
+      "status": "done",
+      "evidence": "Windows 11 build 26200、125% DPI 的真实桌面键位已验证。P05.123 Release 的 Ctrl+Shift+F8 与 P05.125 Release 的 Ctrl+Shift+A 均验证最新回退、旧行聚焦优先和仅执行首个主操作。默认键在同一进程内由真实 Narrator 状态门控，未启动与正常退出后均保留通知。两个进程均退出码 0。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.124-windows-notification-keys.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
@@ -2183,7 +2183,7 @@
         "feat-175"
       ],
       "status": "done",
-      "evidence": "产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关留在 P05.124，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。",
+      "evidence": "产品 `0befd12e9a8063f692aaacb13ec4be21b281634b` 已推草稿 PR #3。固定版开关条件与 Linux Xvfb 的真实 X11 键位通过，Windows Release 核对两次无屏幕阅读器状态。专项 154/154，Flutter 1,640 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44734835788 四项及 Platform Availability 44734825742 Windows/Linux 通过。Windows 实机自定义键、默认组合键与 Narrator 开关已由 P05.124 验收，macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.125-notification-reader-shortcut.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     },
