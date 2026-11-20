@@ -2061,8 +2061,20 @@
       "dependencies": [
         "feat-166"
       ],
+      "status": "done",
+      "evidence": "产品 `367dbdb2f83acd53c0ef129aad7ba07428e63251` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 验证组合键打开通知中心、Escape 关闭及恢复编辑器焦点，核对查找与中心、toast 的关闭顺序。专项 144/144，Flutter 1,618 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44707226037 四项及 Platform Availability 44707218155 的 Windows 与 44709013464 的 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.115-notification-keys.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-168",
+      "name": "P05.116 LAY-18 toast 键盘焦点导航",
+      "description": "按固定版支持命令聚焦通知弹窗，上下键、Home/End 与 PageUp/PageDown 导航，清除获焦弹窗后按相邻顺序恢复焦点。",
+      "dependencies": [
+        "feat-167"
+      ],
       "status": "not-started",
-      "evidence": "待对照固定版通知中心 show/hide/toggle、隐藏 toast 的 Escape 条件及焦点恢复。",
+      "evidence": "待对照固定版可见 toast 的键位顺序、边界和移除后的焦点接续。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

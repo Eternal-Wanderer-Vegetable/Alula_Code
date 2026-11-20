@@ -1,0 +1,538 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "3ba2132fa7ff6ccb2f6f8b68a47bcc47738ef0dbc7f360906afb97287f4a1658",
+  "fixtureSha256": "45d6633c50aae10ce96cb069c226b8a6bdae8d9940ea523e9625456f1bfbad62",
+  "observations": {
+    "before": {
+      "request": "before",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        1,
+        2
+      ],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "editor-before": {
+      "request": "closed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-2": [
+          527.2,
+          552.8,
+          979.2,
+          588.8
+        ],
+        "notification-toast-1": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 2,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [
+        1,
+        2
+      ],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "open": {
+      "request": "open",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          516.8,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          529.8,
+          915.2,
+          545.8
+        ],
+        "notification-position": [
+          931.2,
+          525.8,
+          955.2,
+          549.8
+        ],
+        "notification-center-close": [
+          955.2,
+          529.3,
+          972.2,
+          546.3
+        ],
+        "notification-item-2": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-1": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "closed": {
+      "request": "closed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "find": {
+      "request": "find",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          717.8352539062502,
+          111.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        2,
+        1
+      ]
+    },
+    "after": {
+      "request": "after",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          717.8352539062502,
+          111.0
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-closed": {
+      "request": "find-closed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-3": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "toast-closed": {
+      "request": "toast-closed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-again": {
+      "request": "find-again",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          717.8352539062502,
+          111.0
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "open-with-find": {
+      "request": "open-with-find",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          717.8352539062502,
+          111.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          481.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          494.79999999999995,
+          915.2,
+          510.79999999999995
+        ],
+        "notification-position": [
+          931.2,
+          490.79999999999995,
+          955.2,
+          514.8
+        ],
+        "notification-center-close": [
+          955.2,
+          494.29999999999995,
+          972.2,
+          511.29999999999995
+        ],
+        "notification-item-3": [
+          528.2,
+          523.8,
+          978.2,
+          558.8
+        ],
+        "notification-item-2": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-1": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 3,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "center-closed-first": {
+      "request": "center-closed-first",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "find-query-input": [
+          558.2000000000002,
+          93.0,
+          717.8352539062502,
+          111.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    },
+    "find-after-center": {
+      "request": "find-after-center",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": true,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "productCommit": "367dbdb2f83acd53c0ef129aad7ba07428e63251",
+  "fixtureBuildMethod": "Prior release scratch, with changed tracked product source files mirrored byte-for-byte after the scratch base.",
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/keybindings.dart": "b4c253adba84b4d1f8a583ae2726b30594b10454f2a77298a3833c967cc09d08",
+    "app/lib/workbench/notification_widgets.dart": "594c1193e722dc2f380dbd83bbfa2fa5f3bf383681360c3e5488d063f6481623",
+    "app/lib/workbench/notifications.dart": "f4b56f377b6c5f22ea6fde3fe0a6997b325aaf9acde64ce7099a6b5923133166",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "8bee256d4cb6a6480534baa2529069f40b4b64fe42113d12a9c9aec31dc8a59a",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}
