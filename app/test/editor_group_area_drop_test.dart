@@ -248,7 +248,7 @@ void main() {
   );
 
   testWidgets(
-    'untitled documents move on area drops even with the copy modifier',
+    'the copy modifier copies an untitled view on an area drop',
     (tester) async {
       await prepareWorkspace(tester);
       final alpha = File('${workspace.path}/alpha.rs')
@@ -267,12 +267,10 @@ void main() {
 
       await dropTabOnArea(tester, 'editor-2', 5, 'editor',
           modifier: LogicalKeyboardKey.controlLeft);
-      expect(_tabIdsIn(tester, 'editor'), [10, 11, 5],
-          reason: 'the untitled document moves instead of copying');
-      expect(_strip('editor-2'), findsNothing,
-          reason: 'the emptied source group is removed');
-      expect(_tabCountAcrossStrips(tester, 5), 1);
-      expect(_savedGroups(sessionStore), hasLength(1));
+      expect(_tabIdsIn(tester, 'editor'), [10, 11, 5]);
+      expect(_tabIdsIn(tester, 'editor-2'), [5]);
+      expect(_tabCountAcrossStrips(tester, 5), 2);
+      expect(_savedGroups(sessionStore), hasLength(2));
     },
   );
 

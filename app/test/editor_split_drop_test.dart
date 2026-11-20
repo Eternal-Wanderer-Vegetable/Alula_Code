@@ -352,7 +352,8 @@ void main() {
     expect(groupOverlay, findsNothing);
   });
 
-  testWidgets('untitled tab drag never advertises copy', (tester) async {
+  testWidgets('untitled tab drag advertises copy with the modifier',
+      (tester) async {
     await prepareWorkspace(tester);
     final gamma = File('${workspace.path}/gamma.rs')
       ..writeAsStringSync('fn gamma() {}\n');
@@ -377,8 +378,7 @@ void main() {
 
     expect(
       find.byKey(const ValueKey('editor-tab-editor-2-12-copy-badge')),
-      findsNothing,
-      reason: 'untitled singleton editors fall back to move',
+      findsOneWidget,
     );
     await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
     await gesture.cancel();
@@ -593,7 +593,7 @@ void main() {
   );
 
   testWidgets(
-    'copy and untitled fallbacks apply to split drops',
+    'split drops copy named and untitled text documents',
     (tester) async {
       await prepareWorkspace(tester);
       final alpha = File('${workspace.path}/alpha.rs')
@@ -622,16 +622,14 @@ void main() {
           reason: 'the source keeps its view under a copy');
       expect(_tabCountAcrossStrips(tester, 12), 2);
 
-      // An untitled document moves into the new group even with the copy
-      // modifier (upstream Singleton fallback).
+      // The untitled text document can also have a view in a new group.
       await dropTabOnBody(tester, 'editor-2', 5, 'editor-3',
           dxFraction: 0.95,
           dyFraction: 0.5,
           modifier: LogicalKeyboardKey.controlLeft);
       expect(_strip('editor-4'), findsOneWidget);
       expect(_tabIdsIn(tester, 'editor-4'), [5]);
-      expect(_tabIdsIn(tester, 'editor-2'), [12],
-          reason: 'the untitled document leaves its group under a move');
+      expect(_tabIdsIn(tester, 'editor-2'), [12, 5]);
       expect(_tabIn('editor-4', 5), findsOneWidget);
     },
   );

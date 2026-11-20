@@ -186,6 +186,143 @@ void main() {
   }
 
   testWidgets(
+    'copies the selected tabs, reuses target duplicates, and restores shared '
+    'file and untitled documents',
+    (tester) async {
+      await prepareWorkspace(tester);
+      final files = <int, String>{};
+      for (final id in [10, 11, 12, 14, 15]) {
+        final file = File('${workspace.path}/d$id.txt')
+          ..writeAsStringSync('original $id\n');
+        files[id] = file.path;
+      }
+      await seedTwoGroups(
+        editorDocs: [
+          for (final id in [10, 11, 12]) {'id': id, 'path': files[id]},
+          {'id': 16, 'name': 'Untitled-1', 'text': 'unsaved draft 😀'},
+        ],
+        editor2Docs: [
+          for (final id in [11, 14, 15]) {'id': id, 'path': files[id]},
+        ],
+        focused: 'editor',
+      );
+      sessionStore.save({
+        ...sessionStore.tryLoad()!,
+        'editorTabSizing': 'shrink',
+      });
+      await mountPage(tester);
+
+      Finder body(String region) =>
+          find.byKey(ValueKey('editor-body-drop-$region'));
+      RustTextInputField activeView(String region) =>
+          tester.widget<RustTextInputField>(find.descendant(
+            of: body(region),
+            matching: find.byType(RustTextInputField),
+          ));
+      Future<void> select(String region, int id, {bool add = false}) async {
+        const control = LogicalKeyboardKey.controlLeft;
+        if (add) await tester.sendKeyDownEvent(control);
+        await tester.tap(find.byKey(ValueKey('editor-tab-label-$region-$id')));
+        if (add) await tester.sendKeyUpEvent(control);
+        await tester.pumpAndSettle();
+      }
+
+      List<int> selected(String region) => _tabIdsIn(tester, region)
+          .where((id) =>
+              tester
+                  .widget<Semantics>(find.byKey(
+                    ValueKey('editor-tab-semantics-$region-$id'),
+                  ))
+                  .properties
+                  .selected ==
+              true)
+          .toList();
+
+      await select('editor-2', 11);
+      final targetBravo = activeView('editor-2').inputWindow;
+      await select('editor-2', 15);
+      await select('editor', 10);
+      final original = activeView('editor').inputWindow;
+      await select('editor', 11, add: true);
+      expect(selected('editor'), [10, 11]);
+      await dragTabOntoTab(tester, 'editor', 10, 'editor-2', 15,
+          modifier: LogicalKeyboardKey.controlLeft);
+      expect(_tabIdsIn(tester, 'editor'), [10, 11, 12, 16]);
+      expect(selected('editor'), [10]);
+      expect(_tabIdsIn(tester, 'editor-2'), [14, 10, 15, 11]);
+      expect(selected('editor-2'), [11]);
+      expect(activeView('editor-2').inputWindow, same(targetBravo));
+      expect(activeView('editor-2').focusNode!.hasFocus, isTrue);
+
+      await select('editor-2', 10);
+      final copy = activeView('editor-2');
+      expect(copy.inputWindow, isNot(same(original)));
+      expect(copy.inputWindow.document, same(original.document));
+      const changedFile = 'changed in the copied view 😀';
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: changedFile,
+        selection: TextSelection.collapsed(offset: 2),
+      ));
+      await tester.pump();
+      await select('editor-2', 11);
+      expect(
+          original.document.readRange(0, maxLenUtf16: 100).text, changedFile);
+
+      await select('editor', 12);
+      await select('editor', 16, add: true);
+      expect(selected('editor'), [12, 16]);
+      final untitled = activeView('editor').inputWindow;
+      final gesture = await tester.startGesture(
+        tester.getCenter(_tabIn('editor', 12)),
+      );
+      await tester.pump();
+      await gesture.moveBy(const Offset(14, 0));
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump();
+      await gesture.moveTo(tester.getCenter(body('editor-2')));
+      await tester.pump();
+      await gesture.up();
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pump(const Duration(milliseconds: 750));
+      await tester.pumpAndSettle();
+
+      expect(_tabIdsIn(tester, 'editor'), [10, 11, 12, 16]);
+      expect(selected('editor'), [12]);
+      expect(_tabIdsIn(tester, 'editor-2'), [14, 10, 15, 11, 12, 16]);
+      expect(selected('editor-2'), [12]);
+      expect(activeView('editor-2').focusNode!.hasFocus, isTrue);
+      await select('editor-2', 16);
+      expect(
+          activeView('editor-2').inputWindow.document, same(untitled.document));
+      const changedUntitled = 'shared unsaved edit 😀';
+      tester.testTextInput.updateEditingValue(const TextEditingValue(
+        text: changedUntitled,
+        selection: TextSelection.collapsed(offset: 1),
+      ));
+      await tester.pump(const Duration(milliseconds: 750));
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await mountPage(tester);
+      expect(_tabCountAcrossStrips(tester, 16), 2);
+      expect(_tabCountAcrossStrips(tester, 10), 2);
+      final restored = activeView('editor-2').inputWindow.document;
+      expect(restored.readRange(0, maxLenUtf16: 100).text, changedUntitled);
+      await select('editor', 16);
+      expect(activeView('editor').inputWindow.document, same(restored));
+      await select('editor', 10);
+      expect(
+          activeView('editor')
+              .inputWindow
+              .document
+              .readRange(0, maxLenUtf16: 100)
+              .text,
+          changedFile);
+    },
+  );
+
+  testWidgets(
     'copy modifier duplicates the document view with pointer-side insertion',
     (tester) async {
       await prepareWorkspace(tester);
@@ -313,7 +450,7 @@ void main() {
   );
 
   testWidgets(
-    'untitled documents fall back to a move under the copy modifier',
+    'the copy modifier keeps both views of an untitled text document',
     (tester) async {
       await prepareWorkspace(tester);
       await seedTwoGroups(
@@ -331,17 +468,12 @@ void main() {
           reason: 'the focused group already holds an untitled document, so '
               'no welcome tab is appended');
 
-      // Ctrl+drop of an untitled document moves it, matching the upstream
-      // Singleton fallback.
-      await dragTabOntoTab(tester, 'editor-2', 6, 'editor', 5);
-      expect(_tabIdsIn(tester, 'editor'), [6, 5],
-          reason: 'the untitled document moves instead of copying');
-      expect(_strip('editor-2'), findsNothing,
-          reason: 'the emptied source group is removed by the move');
-      expect(_tabCountAcrossStrips(tester, 6), 1,
-          reason: 'no duplicate view is created');
-      expect(_savedGroups(sessionStore), hasLength(1));
-      expect(_savedGroups(sessionStore).single['region'], 'editor');
+      await dragTabOntoTab(tester, 'editor-2', 6, 'editor', 5,
+          modifier: LogicalKeyboardKey.controlLeft);
+      expect(_tabIdsIn(tester, 'editor'), [6, 5]);
+      expect(_tabIdsIn(tester, 'editor-2'), [6]);
+      expect(_tabCountAcrossStrips(tester, 6), 2);
+      expect(_savedGroups(sessionStore), hasLength(2));
     },
   );
 

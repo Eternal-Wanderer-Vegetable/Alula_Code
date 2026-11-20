@@ -24336,23 +24336,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 }
                 return;
               }
-              // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；
-              // 未命名文档（上游 Singleton）不可复制，回退为移动。
-              final movingIndex =
-                  source.docs.indexWhere((doc) => doc.id == draggedId);
-              final copyModifier =
-                  defaultTargetPlatform == TargetPlatform.macOS
-                      ? HardwareKeyboard.instance.isAltPressed
-                      : HardwareKeyboard.instance.isControlPressed;
-              if (copyModifier &&
-                  movingIndex >= 0 &&
-                  source.docs[movingIndex].path != null) {
-                _copyDocAcrossGroups(source, g, draggedId, d.id,
-                    insertAfter: insertAfter);
-              } else {
-                _moveDocAcrossGroups(source, g, draggedId, d.id,
-                    insertAfter: insertAfter);
-              }
+              _dropTabAcrossGroups(source, g, draggedId, d.id,
+                  insertAfter: insertAfter);
             },
             builder: (context, candidateData, __) => Draggable<int>(
               data: d.id,
@@ -24513,13 +24498,58 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 移动同一个 OpenDoc 视图，保留 Rust 后端文本、脏标/存档点、撤销历史、
   /// 选区/光标、滚动与编辑器焦点；sticky 随动，干净的预览标签转为普通标签。
   /// 目标组已显示同一文档时激活既有视图并移除源组重复视图。
-  void _moveDocAcrossGroups(
+  void _dropTabAcrossGroups(
     EditorGroup source,
     EditorGroup target,
     int draggedId,
     int? targetTabId, {
     required bool insertAfter,
     bool bodyDrop = false,
+  }) {
+    if (identical(source, target)) return;
+    final docsById = {for (final doc in source.docs) doc.id: doc};
+    final dragged = docsById[draggedId];
+    if (dragged == null) return;
+    final copy = _isCopyRequestedFor(draggedId, targetRegion: target.region);
+    final selectedIds = _tabDragSelection?.ids;
+    if (selectedIds != null && selectedIds.contains(draggedId)) {
+      final targetIndex = targetTabId == null
+          ? null
+          : target.docs.indexWhere((doc) => doc.id == targetTabId);
+      if (targetIndex != null && targetIndex < 0) return;
+      final selection = <OpenDoc>[
+        for (final id in selectedIds)
+          if (docsById[id] case final doc?) doc,
+      ];
+      if (selection.length > 1) {
+        _transferSelectedTabsAcrossGroups(
+          source,
+          target,
+          selection,
+          dragged,
+          targetIndex,
+          insertAfter: insertAfter,
+          bodyDrop: bodyDrop,
+          keepSource: copy,
+        );
+        return;
+      }
+    }
+    if (copy) {
+      _copyDocAcrossGroups(source, target, draggedId, targetTabId,
+          insertAfter: insertAfter);
+    } else {
+      _moveDocAcrossGroups(source, target, draggedId, targetTabId,
+          insertAfter: insertAfter);
+    }
+  }
+
+  void _moveDocAcrossGroups(
+    EditorGroup source,
+    EditorGroup target,
+    int draggedId,
+    int? targetTabId, {
+    required bool insertAfter,
   }) {
     if (identical(source, target)) return;
     final from = source.docs.indexWhere((d) => d.id == draggedId);
@@ -24533,25 +24563,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return;
     }
     if (target.docs.any((view) => identical(view, moving))) return;
-    final selectedIds = _tabDragSelection?.ids;
-    if (selectedIds != null && selectedIds.contains(draggedId)) {
-      final docsById = {for (final doc in source.docs) doc.id: doc};
-      final selection = <OpenDoc>[
-        for (final id in selectedIds)
-          if (docsById[id] case final doc?) doc,
-      ];
-      if (selection.length > 1) {
-        _moveSelectedTabsAcrossGroups(
-          source,
-          target,
-          selection,
-          targetIndex,
-          insertAfter: insertAfter,
-          bodyDrop: bodyDrop,
-        );
-        return;
-      }
-    }
     _flushInput(moving, commitComposition: true);
 
     final movingSticky = source.stickyDocIds.contains(moving.id);
@@ -24583,8 +24594,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     final removeSourceRegion = source.docs.length == 1 && _groups.length > 1;
     if (removeSourceRegion && !_layout.removeRegion(source.region)) {
-      setState(
-          () => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
+      setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
       return;
     }
 
@@ -24611,8 +24621,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
       final lowerBound = movingSticky ? 0 : stickyCount;
       final upperBound = movingSticky ? stickyCount : target.docs.length;
-      final insertionIndex =
-          desiredIndex.clamp(lowerBound, upperBound).toInt();
+      final insertionIndex = desiredIndex.clamp(lowerBound, upperBound).toInt();
       target.docs.insert(insertionIndex, moving);
       if (movingSticky) target.stickyDocIds.add(moving.id);
       _normalizeStickyOrder(source);
@@ -24638,13 +24647,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   /// 把源组的文件文档复制为同文档新视图（`OpenDoc.viewOf`）插入目标组，
   /// 指针位置决定前/后；复制视图落在普通分区（不是 sticky、不是 preview），
   /// 源组完全不变；目标组已显示同一文档时仅激活既有视图。
-  void _moveSelectedTabsAcrossGroups(
+  void _transferSelectedTabsAcrossGroups(
     EditorGroup source,
     EditorGroup target,
     List<OpenDoc> selection,
+    OpenDoc dragged,
     int? targetIndex, {
     required bool insertAfter,
     required bool bodyDrop,
+    required bool keepSource,
   }) {
     if (selection.any((doc) =>
         _auxiliaryTransferSourceLocks.containsKey(doc.id) ||
@@ -24695,8 +24706,27 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         _flushInput(view, commitComposition: true);
       }
     }
-    final removeSourceRegion =
-        source.docs.length == movingIds.length && _groups.length > 1;
+    final copies = <OpenDoc, OpenDoc>{};
+    if (keepSource) {
+      try {
+        for (final moving in selection) {
+          if (!duplicates.containsKey(moving)) {
+            copies[moving] = moving._copyTab(
+              initialScrollOffset: moving._scrollOffset,
+            );
+          }
+        }
+      } catch (error) {
+        for (final copy in copies.values) {
+          copy.disposeView();
+        }
+        setState(() => _statusDetail = '复制编辑器失败：$error');
+        return;
+      }
+    }
+    final removeSourceRegion = !keepSource &&
+        source.docs.length == movingIds.length &&
+        _groups.length > 1;
     if (removeSourceRegion && !_layout.removeRegion(source.region)) {
       setState(() => _statusDetail = '移动失败：无法移除空编辑器组 ${source.region}');
       return;
@@ -24706,7 +24736,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       for (var i = 0; i < orderedMoves.length; i++) {
         final moving = orderedMoves[i];
         final existing = duplicates[moving];
-        final view = existing ?? moving;
+        final view = existing ?? copies[moving] ?? moving;
         if (bodyDrop) {
           if (existing == null) {
             final current = active;
@@ -24736,32 +24766,39 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
 
         if (target.previewDocId == view.id) target.previewDocId = null;
-        if (existing == null) {
-          _transferEditorViewFocus(source, target, moving);
-        } else {
-          // The target view still owns the same shared Rust document.
-          for (final peer in moving._tabViews) {
-            _editorFocusNodes.remove(_focusKeyFor(source, peer))?.dispose();
+        if (!keepSource) {
+          if (existing == null) {
+            _transferEditorViewFocus(source, target, moving);
+          } else {
+            // The target view still owns the same shared Rust document.
+            for (final peer in moving._tabViews) {
+              _editorFocusNodes.remove(_focusKeyFor(source, peer))?.dispose();
+            }
+            moving.disposeView(deferScrollControllerDisposal: true);
           }
-          moving.disposeView(deferScrollControllerDisposal: true);
         }
       }
 
-      source.docs.removeWhere((doc) => movingIds.contains(doc.id));
-      source.stickyDocIds.removeAll(movingIds);
-      source.recentDocIds.removeWhere(movingIds.contains);
-      source._inactiveSelectedTabIds.removeAll(movingIds);
-      if (movingIds.contains(source._tabSelectionAnchorId)) {
-        source._tabSelectionAnchorId = null;
-      }
-      if (movingIds.contains(source.previewDocId)) source.previewDocId = null;
-      if (removeSourceRegion) {
-        _editorTabLastWidths.remove(source.region);
-        _editorTabHeldWidths.remove(source.region);
-        _groups.remove(source.region);
-      } else if (movingIds.contains(source.activeDocId)) {
-        source.activeDocId = _mostRecentDocument(source)?.id;
-        _noteActiveDocument(source, source.activeDocId);
+      if (keepSource) {
+        source.activeDocId = dragged.id;
+        _noteActiveDocument(source, dragged.id);
+      } else {
+        source.docs.removeWhere((doc) => movingIds.contains(doc.id));
+        source.stickyDocIds.removeAll(movingIds);
+        source.recentDocIds.removeWhere(movingIds.contains);
+        source._inactiveSelectedTabIds.removeAll(movingIds);
+        if (movingIds.contains(source._tabSelectionAnchorId)) {
+          source._tabSelectionAnchorId = null;
+        }
+        if (movingIds.contains(source.previewDocId)) source.previewDocId = null;
+        if (removeSourceRegion) {
+          _editorTabLastWidths.remove(source.region);
+          _editorTabHeldWidths.remove(source.region);
+          _groups.remove(source.region);
+        } else if (movingIds.contains(source.activeDocId)) {
+          source.activeDocId = _mostRecentDocument(source)?.id;
+          _noteActiveDocument(source, source.activeDocId);
+        }
       }
 
       target.activeDocId = active!.id;
@@ -24787,7 +24824,6 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final from = source.docs.indexWhere((d) => d.id == draggedId);
     if (from < 0) return;
     final moving = source.docs[from];
-    if (moving.path == null) return;
     final targetIndex = targetTabId == null
         ? null
         : target.docs.indexWhere((d) => d.id == targetTabId);
@@ -24845,21 +24881,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final sourceRegion = _tabDragSourceRegion;
     final source = sourceRegion == null ? null : _groups[sourceRegion];
     if (source == null || identical(source, g)) return;
-    final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
-    if (movingIndex < 0) return;
-    // 上游 isCopyOperation：Windows/Linux 用 Ctrl、macOS 用 Alt；未命名文档
-    // （上游 Singleton）不可复制，回退为移动。
-    final copyModifier =
-        defaultTargetPlatform == TargetPlatform.macOS
-            ? HardwareKeyboard.instance.isAltPressed
-            : HardwareKeyboard.instance.isControlPressed;
-    final copyRequested =
-        copyModifier && source.docs[movingIndex].path != null;
-    if (copyRequested) {
-      _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
-    } else {
-      _moveDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
-    }
+    _dropTabAcrossGroups(source, g, draggedId, null, insertAfter: false);
   }
 
   /// 当前拖动是否会被既有 drop handler 当作复制请求处理。
@@ -24874,11 +24896,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       return false;
     }
     final source = _groups[sourceRegion];
-    final draggedIndex =
-        source?.docs.indexWhere((doc) => doc.id == draggedId) ?? -1;
-    if (draggedIndex < 0 || source!.docs[draggedIndex].path == null) {
-      return false;
-    }
+    if (source?.docs.any((doc) => doc.id == draggedId) != true) return false;
     return defaultTargetPlatform == TargetPlatform.macOS
         ? HardwareKeyboard.instance.isAltPressed
         : HardwareKeyboard.instance.isControlPressed;
@@ -25217,31 +25235,21 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final movingIndex = source.docs.indexWhere((doc) => doc.id == draggedId);
     if (movingIndex < 0) return;
     final isMac = defaultTargetPlatform == TargetPlatform.macOS;
-    final copyModifier = isMac
-        ? HardwareKeyboard.instance.isAltPressed
-        : HardwareKeyboard.instance.isControlPressed;
     final splitToggled = isMac
         ? HardwareKeyboard.instance.isShiftPressed
         : HardwareKeyboard.instance.isAltPressed;
-    final copyRequested =
-        copyModifier && source.docs[movingIndex].path != null;
-
     final zone = splitToggled ? null : _bodyDropZone(bodyBox, globalOffset);
     if (zone == null) {
       // 拆分关闭或中心带：追加/合并（同组无操作）。
       if (identical(source, g)) return;
-      if (copyRequested) {
-        _copyDocAcrossGroups(source, g, draggedId, null, insertAfter: false);
-      } else {
-        _moveDocAcrossGroups(
-          source,
-          g,
-          draggedId,
-          null,
-          insertAfter: false,
-          bodyDrop: true,
-        );
-      }
+      _dropTabAcrossGroups(
+        source,
+        g,
+        draggedId,
+        null,
+        insertAfter: false,
+        bodyDrop: true,
+      );
       return;
     }
 
@@ -25259,13 +25267,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _ensureGroupsFromLayout();
     final target = _groups[freshRegion];
     if (target == null) return;
-    if (copyRequested) {
-      _copyDocAcrossGroups(source, target, draggedId, null,
-          insertAfter: false);
-    } else {
-      _moveDocAcrossGroups(source, target, draggedId, null,
-          insertAfter: false);
-    }
+    _dropTabAcrossGroups(
+      source,
+      target,
+      draggedId,
+      null,
+      insertAfter: false,
+      bodyDrop: true,
+    );
   }
 
   Widget _buildDiskStateBanner(OpenDoc doc) {
