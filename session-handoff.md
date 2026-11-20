@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.117 / feat-169 已完成。P05.118 / feat-170 的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.118 / feat-170 已完成。P05.119 / feat-171 的前置依赖已满足。
 
 ## Current State
 
+- 产品 `0e156e85010fcceae3c2cd262c3297227d968286` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验 toast 和中心主按钮在回调完成前收起原条目，显式保持可继续显示，异步失败同源回报。真实另存为和 journal 重试回归通过。专项 128/128，Flutter 1,629 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44716581302 四项及 Platform Availability 44716570972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.118-notification-primary.md。
 - 产品 `785b5e6a5990e4f8013df8c335142d8c1c235080` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 对照验证通知行展开、折叠、键鼠和错过首个到期后仍保留。折叠后在后续到期收起，中心仍保留条目。专项 141/141，Flutter 1,624 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44713994088 四项及 Platform Availability 44713987929 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.117-notification-disclosure.md。
 - 产品 `bcb3dfb57f41d0f0f4ac22223a2d8827f4e3dbe4` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 验证 toast 聚焦命令、上/下、Home/End、PageUp/PageDown、边界、清除后焦点接续和最后一条移除后回到编辑器。Alula 获焦行显示主题描边并经原始像素扫描确认。专项 141/141，Flutter 1,620 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44711232580 四项及 Platform Availability 44711223066 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.116-toast-focus.md。
 - 产品 `367dbdb2f83acd53c0ef129aad7ba07428e63251` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Alula Release 验证组合键打开通知中心、Escape 关闭及恢复编辑器焦点，核对查找与中心、toast 的关闭顺序。专项 144/144，Flutter 1,618 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44707226037 四项及 Platform Availability 44707218155 的 Windows 与 44709013464 的 Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.115-notification-keys.md。
@@ -26,12 +27,12 @@ Last Updated: 2026-11-20
 
 ## Blockers / Limits
 
-macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。中心密度及其余 LAY-18 行为继续按矩阵追踪。
+macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样本。三种位置的 Windows 实机验证已完成。P05.108 已校准固定版本的三处锚点和 toast 间距。中心总高、标题栏按钮横向顺序仍有视觉差异。单条更多操作已通过本地、Windows 实机与托管验收。复制文本已通过本地、Windows 菜单与托管验证。全局请勿打扰已通过本地、Windows 固定版对照和托管验证。按来源请勿打扰已通过本地、Windows 实机与托管验证。显式通知优先级已通过本地、Windows 实机与托管验证。中心、toast 与未读生命周期已通过本地、Windows 固定版实机对照与托管验证。通知显隐命令与焦点恢复已通过本地、Windows 固定版实机对照与托管验证。toast 键盘焦点导航和可见描边已通过本地、Windows 固定版实机对照与托管验证。通知展开折叠与持留规则已通过本地、Windows 固定版实机对照与托管验证。通知主操作执行与收起已通过本地、Windows 固定版实机对照、Linux Xvfb 与托管验证。中心密度及其余 LAY-18 行为继续按矩阵追踪。
 
 ## Files
 
-`app/lib/workbench/notification_widgets.dart`、`app/lib/workbench/notifications.dart`、`app/lib/workbench/workbench_page.dart`、`app/lib/workbench/keybindings.dart` 和 [P05.117 证据](docs/diagnostics/2026-11-20-p05/p05.117-notification-disclosure.md)。
+`app/lib/workbench/notification_widgets.dart`、`app/lib/workbench/notifications.dart`、`app/lib/workbench/workbench_page.dart`、`app/lib/workbench/keybindings.dart` 和 [P05.118 证据](docs/diagnostics/2026-11-20-p05/p05.118-notification-primary.md)。
 
 ## Next Session First Step
 
-核对 P05.117 文档收尾 CI，然后按 docs/03 推进 P05.118 通知主操作执行与收起。
+核对 P05.118 文档收尾 CI，然后按 docs/03 推进 P05.119 通知铃铛状态、后台进度与可见标记。

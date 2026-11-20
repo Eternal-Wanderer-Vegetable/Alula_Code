@@ -2097,8 +2097,20 @@
       "dependencies": [
         "feat-169"
       ],
+      "status": "done",
+      "evidence": "产品 `0e156e85010fcceae3c2cd262c3297227d968286` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验 toast 和中心主按钮在回调完成前收起原条目，显式保持可继续显示，异步失败同源回报。真实另存为和 journal 重试回归通过。专项 128/128，Flutter 1,629 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44716581302 四项及 Platform Availability 44716570972 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.118-notification-primary.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-171",
+      "name": "P05.119 LAY-18 通知铃铛状态、后台进度与可见标记",
+      "description": "按固定版核对通知铃铛的未读、后台进度、勿扰、中心打开标记和标题栏入口。",
+      "dependencies": [
+        "feat-170"
+      ],
       "status": "not-started",
-      "evidence": "待核对固定版主操作成功、异步执行、显式保持和失败提示各路径。",
+      "evidence": "待固定版对照、组件验证、Windows 实机及精确 SHA 托管验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

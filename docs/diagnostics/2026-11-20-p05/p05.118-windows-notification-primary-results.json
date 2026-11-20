@@ -1,0 +1,599 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "25fa38c7a6b959b7ac583cf548bbc3909266a0b7dcbb6a11a48cf542c341f214",
+  "fixtureSha256": "7d725c76c9afab3fb31210dc116785c4d2fceffc8e31ff9b4b12435f104f08dc",
+  "observations": {
+    "toast-original": {
+      "request": "toast-original",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-1": [
+          527.2,
+          559.8,
+          979.2,
+          628.8
+        ],
+        "notification-toast-action-1-0": [
+          886.87578125,
+          594.8,
+          970.2,
+          620.8
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        1
+      ],
+      "items": [
+        1
+      ],
+      "messages": {
+        "1": {
+          "message": "Toast primary action sample",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "toast-removed": {
+      "request": "toast-removed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [],
+      "items": [],
+      "messages": {}
+    },
+    "toast-completed": {
+      "request": "toast-completed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          760.860009765625,
+          645.8,
+          791.961572265625,
+          659.8
+        ],
+        "status-notifications-badge": [
+          778.860009765625,
+          646.3,
+          791.961572265625,
+          659.3
+        ],
+        "notification-toast-2": [
+          527.2,
+          592.8,
+          979.2,
+          628.8
+        ]
+      },
+      "unread": 1,
+      "centerVisible": false,
+      "editorFocused": false,
+      "focusedNotification": null,
+      "toastIds": [
+        2
+      ],
+      "items": [
+        2
+      ],
+      "messages": {
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "center-open": {
+      "request": "center-open",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          551.8,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          564.8,
+          915.2,
+          580.8
+        ],
+        "notification-position": [
+          931.2,
+          560.8,
+          955.2,
+          584.8
+        ],
+        "notification-center-close": [
+          955.2,
+          564.3,
+          972.2,
+          581.3
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        2
+      ],
+      "messages": {
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "center-original": {
+      "request": "center-original",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          483.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          496.79999999999995,
+          915.2,
+          512.8
+        ],
+        "notification-position": [
+          931.2,
+          492.79999999999995,
+          955.2,
+          516.8
+        ],
+        "notification-center-close": [
+          955.2,
+          496.29999999999995,
+          972.2,
+          513.3
+        ],
+        "notification-item-3": [
+          528.2,
+          525.8,
+          978.2,
+          593.8
+        ],
+        "notification-action-3-0": [
+          886.87578125,
+          559.8,
+          970.2,
+          585.8
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        3,
+        2
+      ],
+      "messages": {
+        "3": {
+          "message": "Center primary action sample",
+          "sourceId": "fixture.primary"
+        },
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "center-removed": {
+      "request": "center-removed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          551.8,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          564.8,
+          915.2,
+          580.8
+        ],
+        "notification-position": [
+          931.2,
+          560.8,
+          955.2,
+          584.8
+        ],
+        "notification-center-close": [
+          955.2,
+          564.3,
+          972.2,
+          581.3
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        2
+      ],
+      "messages": {
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "center-failed": {
+      "request": "center-failed",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          516.8,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          529.8,
+          915.2,
+          545.8
+        ],
+        "notification-position": [
+          931.2,
+          525.8,
+          955.2,
+          549.8
+        ],
+        "notification-center-close": [
+          955.2,
+          529.3,
+          972.2,
+          546.3
+        ],
+        "notification-item-4": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        4,
+        2
+      ],
+      "messages": {
+        "4": {
+          "message": "通知操作“Apply fixture”失败：Bad state: delayed failure fixture",
+          "sourceId": "fixture.primary"
+        },
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "keep-original": {
+      "request": "keep-original",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          448.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          461.79999999999995,
+          915.2,
+          477.79999999999995
+        ],
+        "notification-position": [
+          931.2,
+          457.79999999999995,
+          955.2,
+          481.79999999999995
+        ],
+        "notification-center-close": [
+          955.2,
+          461.29999999999995,
+          972.2,
+          478.29999999999995
+        ],
+        "notification-item-5": [
+          528.2,
+          490.79999999999995,
+          978.2,
+          558.8
+        ],
+        "notification-action-5-0": [
+          886.87578125,
+          524.8,
+          970.2,
+          550.8
+        ],
+        "notification-item-4": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        5,
+        4,
+        2
+      ],
+      "messages": {
+        "5": {
+          "message": "Keep primary action sample",
+          "sourceId": "fixture.primary"
+        },
+        "4": {
+          "message": "通知操作“Apply fixture”失败：Bad state: delayed failure fixture",
+          "sourceId": "fixture.primary"
+        },
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    },
+    "keep-clicked": {
+      "request": "keep-clicked",
+      "boxes": {
+        "native-probe-editor": [
+          284.448,
+          80.0,
+          979.2000000000002,
+          632.8
+        ],
+        "status-notifications": [
+          769.410791015625,
+          645.8,
+          783.410791015625,
+          659.8
+        ],
+        "notification-center": [
+          527.2,
+          448.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          461.79999999999995,
+          915.2,
+          477.79999999999995
+        ],
+        "notification-position": [
+          931.2,
+          457.79999999999995,
+          955.2,
+          481.79999999999995
+        ],
+        "notification-center-close": [
+          955.2,
+          461.29999999999995,
+          972.2,
+          478.29999999999995
+        ],
+        "notification-item-5": [
+          528.2,
+          490.79999999999995,
+          978.2,
+          558.8
+        ],
+        "notification-action-5-0": [
+          886.87578125,
+          524.8,
+          970.2,
+          550.8
+        ],
+        "notification-item-4": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-2": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "unread": 0,
+      "centerVisible": true,
+      "editorFocused": false,
+      "focusedNotification": 2,
+      "toastIds": [],
+      "items": [
+        5,
+        4,
+        2
+      ],
+      "messages": {
+        "5": {
+          "message": "Keep primary action sample",
+          "sourceId": "fixture.primary"
+        },
+        "4": {
+          "message": "通知操作“Apply fixture”失败：Bad state: delayed failure fixture",
+          "sourceId": "fixture.primary"
+        },
+        "2": {
+          "message": "Toast primary action completed",
+          "sourceId": "fixture.primary"
+        }
+      }
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "productCommit": "0e156e85010fcceae3c2cd262c3297227d968286",
+  "fixtureBuildMethod": "Prior release scratch, with changed tracked product source files mirrored byte-for-byte after the scratch base.",
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/keybindings.dart": "90e83371624d4a5130e823cf66621626d8c5921f9ee50a77768e1b6f3a12858d",
+    "app/lib/workbench/notification_widgets.dart": "7fcb7520d9d2a368bf58a20dc8aaa97684c88724a131f46503bf96d22d7e1817",
+    "app/lib/workbench/notifications.dart": "d502ced6be3766c954495f014a02835cf84909459c29afcfe26b8a176dba9dd8",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "7ea1e614dded680de21e0e3380e803d8937cd7a43cad85a6e2c4c2cd0db2acae",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}
