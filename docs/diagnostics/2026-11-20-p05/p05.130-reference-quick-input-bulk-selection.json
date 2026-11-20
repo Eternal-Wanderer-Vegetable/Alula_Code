@@ -1,0 +1,46 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "window": {
+    "pixelRatio": 1.25,
+    "width": 1444,
+    "height": 907
+  },
+  "driver": "Owned Code-OSS CDP renderer input",
+  "trace": {
+    "filtered-mixed": {
+      "checked": "false",
+      "disabled": null,
+      "count": "2 Selected",
+      "inputFocused": true
+    },
+    "filtered-all": {
+      "checked": "true",
+      "disabled": null,
+      "count": "3 Selected",
+      "inputFocused": true
+    },
+    "filtered-none": {
+      "checked": "false",
+      "disabled": null,
+      "count": "1 Selected",
+      "inputFocused": true
+    },
+    "empty-filter": {
+      "checked": "false",
+      "disabled": null,
+      "count": "1 Selected",
+      "inputFocused": true
+    },
+    "empty-filter-click": {
+      "checked": "true",
+      "disabled": null,
+      "count": "1 Selected",
+      "inputFocused": true
+    }
+  },
+  "acceptedWithButton": true,
+  "accepted": [
+    "Hidden picked"
+  ],
+  "exitCode": 0
+}
