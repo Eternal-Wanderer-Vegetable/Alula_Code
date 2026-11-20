@@ -4,7 +4,7 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-在 PR #3 一次推进一个 P05 子项。P05.104 / feat-156 已收尾。P05 父项为 in-progress，PR #3 为 OPEN/DRAFT。
+在 PR #3 一次推进一个 P05 子项。P05.104 / feat-156 已交付并补登记 Windows 实机结果。P05 父项为 in-progress，PR #3 为 OPEN/DRAFT。
 
 ## Current State
 
@@ -15,7 +15,9 @@ Last Updated: 2026-11-20
 
 ## Blockers / Limits
 
-macOS 实机验收暂缓。Windows 提示由 Dart 回归和平台编译与 smoke 覆盖，Narrator 和实机提示音待验。LAY-18 的阶段视觉对照与独立提示配置按矩阵继续跟踪。
+macOS 实机验收暂缓。Windows 各清除入口的提示音输出和实际移除数已验证。Narrator 语音回顾重复，Narrator 关闭后仍播放提示音，两项差异按 docs/03 跟踪。[Windows 实机证据](docs/diagnostics/2026-11-20-p05/p05.104-windows-native-clear.md)
+
+LAY-18 的阶段视觉对照与独立提示配置按矩阵继续跟踪。
 
 ## Files
 
@@ -23,4 +25,4 @@ macOS 实机验收暂缓。Windows 提示由 Dart 回归和平台编译与 smoke
 
 ## Next Session First Step
 
-核对本次文档收尾 CI，再从 `docs/03` 和 `feature_list.json` 选择一个依赖已满足的 P05 子项。
+核对本次文档收尾 CI。处理 Windows 原生提示时以本次语音回顾和 WASAPI 证据为复现基线。
