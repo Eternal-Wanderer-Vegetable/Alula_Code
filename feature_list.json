@@ -2493,8 +2493,21 @@
         "feat-196",
         "feat-198"
       ],
+      "status": "done",
+      "evidence": "产品 `cf8b667c3d37646e649cdfce8444c1975c4ceeb4` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证面板正文的四个分组落点、原标签、查询、焦点、重置和显示分组搜索。专项 67/67，Flutter 1,683 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44837281133 四项及 Platform Availability 44837271640 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.147-panel-body-group.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-200",
+      "name": "P05.148 LAY-04/05 分组视图拖回侧栏",
+      "description": "对照固定版从分组视图标题拖回侧栏，覆盖原标签、剩余内容、取消、焦点和持久化。",
+      "dependencies": [
+        "feat-197",
+        "feat-199"
+      ],
       "status": "not-started",
-      "evidence": "P05.146 固定版已捕获 Terminal 与 Search 正文分组。等待实现和平台验收。",
+      "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
