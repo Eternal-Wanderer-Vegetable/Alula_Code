@@ -4,10 +4,11 @@ Last Updated: 2026-11-20
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复的前置依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制的前置依赖已满足。
 
 ## Current State
 
+- 产品 `88d745b475ecfc353145dbbf73a76406e8cde6fd` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 已验证嵌套两轴尺寸重置、最大化、原尺寸与焦点恢复，以及视图身份和布局持久化。专项 92/92，Flutter 1,649 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44759034934 四项及 Platform Availability 44759015365 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.131-editor-group-arrangement.md。
 - 产品 `7b7061bc150281deb22b687fd7868e235fa18ca6` 已推草稿 PR #3。固定版、Windows 11 实机鼠标及 Linux Xvfb 已验证筛选批量全选或清除、隐藏条目保留、总计数和确认。分组专项 13/13，Flutter 1,648 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44754987137 四项及 Platform Availability 44754975228 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.130-quick-input-bulk-selection.md。
 - 产品 `9713bfe7171b2f5565eea6d4610bac0370c3cfd5` 已推草稿 PR #3。固定版、Windows 11 实机及 Linux Xvfb 已验证分组双向跳转、环回、焦点与接受。过滤后按首尾回退，未构建组首正确滚入视口。专项 126/126，Flutter 1,646 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44750425700 四项及 Platform Availability 44750415925 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.129-quick-input-groups.md。
 - 产品 `8b016160e8125931456dae77999ca94bc72a1da8` 已推草稿 PR #3。固定版、Windows 11 125% DPI 和 Linux Xvfb 对照响应式宽高、普通行 22 与 detail 行 44。小窗视口 560×340 调整为 493.52×233，高窗为 551.55×321。专项 124/124，Flutter 1,644 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44746980907 四项及 Platform Availability 44746970668 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.128-quick-input-density.md。
@@ -47,4 +48,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.130 文档收尾 CI。按 docs/03 推进 P05.131 编辑器组尺寸重置与最大化恢复。
+确认 P05.131 文档收尾 CI。按 docs/03 推进 P05.132 整组方向移动与复制。

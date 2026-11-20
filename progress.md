@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.131 / feat-183。产品 `88d745b475ecfc353145dbbf73a76406e8cde6fd` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 已验证嵌套两轴尺寸重置、最大化、原尺寸与焦点恢复，以及视图身份和布局持久化。专项 92/92，Flutter 1,649 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44759034934 四项及 Platform Availability 44759015365 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.131-editor-group-arrangement.md。
+
 - 2026-11-20 完成 P05.130 / feat-182。产品 `7b7061bc150281deb22b687fd7868e235fa18ca6` 已推草稿 PR #3。固定版、Windows 11 实机鼠标及 Linux Xvfb 已验证筛选批量全选或清除、隐藏条目保留、总计数和确认。分组专项 13/13，Flutter 1,648 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44754987137 四项及 Platform Availability 44754975228 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.130-quick-input-bulk-selection.md。
 
 - 2026-11-20 完成 P05.129 / feat-181。产品 `9713bfe7171b2f5565eea6d4610bac0370c3cfd5` 已推草稿 PR #3。固定版、Windows 11 实机及 Linux Xvfb 已验证分组双向跳转、环回、焦点与接受。过滤后按首尾回退，未构建组首正确滚入视口。专项 126/126，Flutter 1,646 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44750425700 四项及 Platform Availability 44750415925 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.129-quick-input-groups.md。

@@ -2262,8 +2262,23 @@
         "feat-081",
         "feat-141"
       ],
+      "status": "done",
+      "evidence": "产品 `88d745b475ecfc353145dbbf73a76406e8cde6fd` 已推草稿 PR #3。固定版、Windows 11 实机和 Linux Xvfb 已验证嵌套两轴尺寸重置、最大化、原尺寸与焦点恢复，以及视图身份和布局持久化。专项 92/92，Flutter 1,649 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44759034934 四项及 Platform Availability 44759015365 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.131-editor-group-arrangement.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-184",
+      "name": "P05.132 LAY-07 整组方向移动与复制",
+      "description": "实现活动编辑器组四方向移动/复制与相邻组回退，保持标签顺序、组状态和独立视图，并验证持久化。",
+      "dependencies": [
+        "feat-080",
+        "feat-081",
+        "feat-095",
+        "feat-183"
+      ],
       "status": "not-started",
-      "evidence": "固定版 Windows 隔离渲染器已核对三组两级布局、宽高两轴拖拽、最大化、恢复与嵌套尺寸重置。待产品实现与验收。",
+      "evidence": "固定版 Windows 隔离渲染器已验证两标签整组复制、键位左移、横向邻组回退后上移与向下重排，源组与活动标签身份保留。待产品实现和验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
