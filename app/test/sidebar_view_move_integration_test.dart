@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
@@ -280,6 +281,92 @@ void main() {
       await tester.pumpAndSettle();
     },
   );
+
+  for (final (location, region) in [
+    (primarySidebarViewLocation, 'sidebar'),
+    (secondarySidebarViewLocation, secondarySidebarRegion),
+  ]) {
+    testWidgets('panel views drag to the $location side bar and support cancel',
+        (tester) async {
+      tester.view.physicalSize = const Size(1400, 980);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final layout = WorkbenchLayout();
+      expect(
+          layout.moveSidebarView('search', panelSidebarViewLocation), isTrue);
+      layout.showRegion('panel');
+      layout.showRegion(secondarySidebarRegion);
+      layoutStore.save(layout.root);
+      layout.dispose();
+      sessionStore.save({
+        'v': 1,
+        'activePanelHostedView': 'search',
+        'groups': [
+          {'region': 'editor', 'docs': []},
+        ],
+      });
+      await tester.pumpWidget(AlulaApp(
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+      ));
+      await tester.pumpAndSettle();
+      final panelTab = find.byKey(const ValueKey('panel-builtin-view-search'));
+      final target = find.byKey(ValueKey('sidebar-panel-view-drop-$location'));
+      final highlight =
+          find.byKey(ValueKey('sidebar-panel-view-drop-highlight-$location'));
+      final search = find.byKey(const ValueKey('search-input'));
+      final editor = find.byKey(const ValueKey('wb-region-editor'));
+      final panel = find.byKey(const ValueKey('wb-region-panel'));
+      final side = find.byKey(ValueKey('wb-region-$region'));
+      await tester.enterText(search, 'persistent query 😀');
+
+      Future<TestGesture> startDrag(Finder destination) async {
+        final gesture = await tester.startGesture(
+          tester.getCenter(panelTab),
+          kind: PointerDeviceKind.mouse,
+        );
+        await tester.pump();
+        await gesture.moveBy(const Offset(0, -18));
+        await tester.pump();
+        await gesture.moveTo(tester.getCenter(destination));
+        await tester.pump();
+        return gesture;
+      }
+
+      final rejected = await startDrag(editor);
+      expect(highlight, findsNothing);
+      await rejected.up();
+      await tester.pumpAndSettle();
+      expect(panelTab, findsOneWidget);
+
+      final cancel = await startDrag(target);
+      expect(highlight, findsOneWidget);
+      await cancel.cancel();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(panelTab, findsOneWidget);
+      expect(tester.widget<TextField>(search).controller!.text,
+          'persistent query 😀');
+
+      final accepted = await startDrag(target);
+      expect(highlight, findsOneWidget);
+      await accepted.up();
+      await tester.pumpAndSettle();
+      expect(highlight, findsNothing);
+      expect(panelTab, findsNothing);
+      expect(find.descendant(of: side, matching: search), findsOneWidget);
+      expect(find.descendant(of: panel, matching: find.text('Git Diff')),
+          findsOneWidget);
+      final field = tester.widget<TextField>(search);
+      expect(field.controller!.text, 'persistent query 😀');
+      expect(field.focusNode!.hasFocus, isFalse);
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(layoutStore.tryLoad()!.sidebarViewLocations?['search'], location);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    });
+  }
 
   testWidgets(
       'Reset View Locations command restores defaults and persists through remount',

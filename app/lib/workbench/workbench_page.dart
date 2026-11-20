@@ -760,6 +760,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late TabController _panelTab;
   List<String> _panelHostedViews = const [];
   final _searchViewFocus = FocusNode(debugLabel: 'workbench search view');
+  final _primarySidebarFocus = FocusNode(debugLabel: 'primary side bar');
+  final _secondarySidebarFocus = FocusNode(debugLabel: 'secondary side bar');
 
   String? get _activePanelHostedView => _panelTab.index < _standardPanelTabCount
       ? null
@@ -20971,7 +20973,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
-  void _moveSidebarView(String view, String destination) {
+  void _moveSidebarView(
+    String view,
+    String destination, {
+    bool fromDrag = false,
+  }) {
     if (!_layout.moveSidebarView(view, destination)) return;
     setState(() {
       _sidebarView = _layout.primarySidebarView;
@@ -20986,7 +20992,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         ? 'sidebar'
         : secondarySidebarRegion;
     _layout.showRegion(region);
-    _focusMovedSearchView(view, destination);
+    if (fromDrag) {
+      final focus = destination == primarySidebarViewLocation
+          ? _primarySidebarFocus
+          : _secondarySidebarFocus;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _layout.sidebarViewLocation(view) == destination) {
+          focus.requestFocus();
+        }
+      });
+    } else {
+      _focusMovedSearchView(view, destination);
+    }
   }
 
   Future<void> _resetSidebarViewLocations() async {
@@ -21106,6 +21123,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _panelTab.removeListener(_onPanelTabChanged);
     _layout.removeListener(_syncPanelHostedViews);
     _searchViewFocus.dispose();
+    _primarySidebarFocus.dispose();
+    _secondarySidebarFocus.dispose();
     _layout.removeListener(_syncPanelMaximizationCommandContext);
     _searchQuery.dispose();
     _findQuery.dispose();
@@ -22474,7 +22493,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildSidebarViewRegion(String location, String? view) {
     final title = _sidebarViewLocationLabel(location);
-    return Focus(
+    final child = Focus(
+      focusNode: switch (location) {
+        primarySidebarViewLocation => _primarySidebarFocus,
+        secondarySidebarViewLocation => _secondarySidebarFocus,
+        _ => null,
+      },
       key: view == null ? null : ValueKey('builtin-view-focus-$view'),
       onFocusChange: (focused) {
         if (focused) _focusSidebarRegion(location);
@@ -22486,6 +22510,38 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'explorer' => _buildSidebar(),
         _ => SecondarySidebarEmptyState(title: title),
       },
+    );
+    if (location == panelSidebarViewLocation) return child;
+    return DragTarget<_PanelHostedViewDrag>(
+      key: ValueKey('sidebar-panel-view-drop-$location'),
+      onWillAcceptWithDetails: (details) =>
+          _layout.sidebarViewLocation(details.data.view) ==
+          panelSidebarViewLocation,
+      onAcceptWithDetails: (details) {
+        final view = details.data.view;
+        if (_layout.sidebarViewLocation(view) != panelSidebarViewLocation) {
+          return;
+        }
+        _moveSidebarView(view, location, fromDrag: true);
+      },
+      builder: (context, candidates, _) => Stack(
+        fit: StackFit.passthrough,
+        children: [
+          child,
+          if (candidates.isNotEmpty)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  key: ValueKey('sidebar-panel-view-drop-highlight-$location'),
+                  decoration: BoxDecoration(
+                    color: const Color(0x30007ACC),
+                    border: Border.all(color: const Color(0xFF55B8FF)),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -26618,6 +26674,24 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   // ---------- 面板：诊断 / 补全 / 语法 ----------
 
+  Widget _buildPanelHostedViewTab(String view) {
+    final label = _sidebarViewLabel(view);
+    return Draggable<_PanelHostedViewDrag>(
+      data: _PanelHostedViewDrag(view),
+      maxSimultaneousDrags: 1,
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      feedback: Material(
+        color: const Color(0xFF252932),
+        borderRadius: BorderRadius.circular(3),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(label, style: const TextStyle(fontSize: 12)),
+        ),
+      ),
+      child: Tab(key: ValueKey('panel-builtin-view-$view'), text: label),
+    );
+  }
+
   Widget _buildPanel() {
     return Container(
       color: const Color(0xFF181B20),
@@ -26648,10 +26722,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                       const Tab(text: '语法 (Tree-sitter)'),
                       const Tab(text: 'Git Diff'),
                       for (final view in _panelHostedViews)
-                        Tab(
-                          key: ValueKey('panel-builtin-view-$view'),
-                          text: _sidebarViewLabel(view),
-                        ),
+                        _buildPanelHostedViewTab(view),
                     ],
                   ),
                 ),
@@ -27440,6 +27511,12 @@ typedef _EditorCloseTarget = ({EditorGroup group, OpenDoc doc});
 typedef BreadcrumbSymbolPathEntry = ({String id, String name, int startUtf16});
 
 /// 一个编辑器组（W2-2）：一组标签 + 组内激活文档。
+class _PanelHostedViewDrag {
+  const _PanelHostedViewDrag(this.view);
+
+  final String view;
+}
+
 class EditorGroup {
   EditorGroup(this.region);
 
