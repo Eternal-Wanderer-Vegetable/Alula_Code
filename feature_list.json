@@ -2012,8 +2012,20 @@
       "dependencies": [
         "feat-162"
       ],
+      "status": "done",
+      "evidence": "产品 `519a826e13fca2db3e8d23f7ecc810c0c258ff20` 已推草稿 PR #3。Windows 11 125% DPI 对照固定 Code-OSS，开启勿扰收起中心和旧 toast，随后只有新错误弹出，中心保留五条样本，Alula 新进程从 journal 恢复勿扰并仅显示两条错误 toast。专项 71/71，完整 Flutter 1,602 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Flutter analyze 通过。同一 SHA 的 PR CI 44694591580 四项及 Platform Availability 44694584435 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.111-notification-do-not-disturb.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-164",
+      "name": "P05.112 LAY-18 通知按来源请勿打扰",
+      "description": "用稳定来源标识控制普通 toast，保留错误与中心条目，并提供可取消的来源偏好设置和恢复。",
+      "dependencies": [
+        "feat-163"
+      ],
       "status": "not-started",
-      "evidence": "待对照固定版 NotificationsFilter.ERROR 的通知准入与全局过滤生命周期。",
+      "evidence": "待以固定版 NotificationService 源过滤、通知菜单和来源选择流程为基准验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
