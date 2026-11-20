@@ -39,55 +39,127 @@ enum WorkbenchNotificationPosition {
 class WorkbenchNotificationBell extends StatelessWidget {
   const WorkbenchNotificationBell({
     super.key,
-    required this.unreadCount,
-    required this.visible,
-    required this.doNotDisturb,
+    required this.center,
+    required this.inTitleBar,
     required this.onPressed,
   });
 
-  final int unreadCount;
-  final bool visible;
-  final bool doNotDisturb;
+  final NotificationCenter center;
+  final bool inTitleBar;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
+    if (inTitleBar) return _button(label: '切换通知', tooltip: '切换通知');
+    final items = center.items;
+    final progress = <NotificationProgress>[
+      if (!center.centerVisible && !center.hasToasts)
+        for (final item in items)
+          if (item.hasProgress) item.progress!,
+    ];
+    return ListenableBuilder(
+      listenable: Listenable.merge(progress),
+      builder: (context, _) {
+        final running = progress.where((item) => !item.isDone).length;
+        return _button(
+          label: center.doNotDisturb ? '请勿打扰' : '通知',
+          tooltip: _statusTooltip(running, hasItems: items.isNotEmpty),
+          quiet: center.doNotDisturb,
+          active: center.centerVisible,
+          hasIndicator: center.hasUnread || running > 0,
+        );
+      },
+    );
+  }
+
+  String _statusTooltip(int running, {required bool hasItems}) {
+    if (center.doNotDisturb) return '请勿打扰已启用';
+    if (center.centerVisible) return '隐藏通知';
+    if (!hasItems) return '没有通知';
+    final unread = center.unreadCount;
+    final message = unread == 0 ? '没有新通知' : '$unread 条新通知';
+    return running == 0 ? message : '$message（$running 项正在进行）';
+  }
+
+  Widget _button({
+    required String label,
+    required String tooltip,
+    bool quiet = false,
+    bool active = false,
+    bool hasIndicator = false,
+  }) {
+    final foreground = Colors.grey.shade400;
+    final height = inTitleBar ? 14.0 : 24.0;
+    return Semantics(
+      button: true,
+      label: label,
       child: Tooltip(
-        message: unreadCount > 0 ? '通知（$unreadCount 条未读）' : '通知',
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              doNotDisturb
-                  ? Icons.notifications_off
-                  : visible
-                      ? Icons.notifications
+        message: tooltip,
+        excludeFromSemantics: true,
+        child: InkWell(
+          onTap: onPressed,
+          child: SizedBox(
+            width: 14,
+            height: height,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  quiet
+                      ? Icons.notifications_off_outlined
                       : Icons.notifications_none,
-              size: 14,
-              color: visible ? Colors.lightBlueAccent : Colors.grey.shade400,
+                  size: 14,
+                  color: foreground,
+                ),
+                if (hasIndicator)
+                  Positioned(
+                    right: 0,
+                    bottom: (height - 14) / 2 + 1,
+                    child: Container(
+                      key: const ValueKey('status-notifications-indicator'),
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: foreground,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                if (active)
+                  const Positioned(
+                    top: -5,
+                    child: ClipPath(
+                      key: ValueKey('status-notifications-beak'),
+                      clipper: _NotificationBellBeak(),
+                      child: SizedBox(
+                        width: 10,
+                        height: 5,
+                        child: ColoredBox(color: Color(0xFF1B1E24)),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            if (unreadCount > 0) ...[
-              const SizedBox(width: 4),
-              Container(
-                key: const ValueKey('status-notifications-badge'),
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0E639C),
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                child: Text(
-                  '$unreadCount',
-                  style: const TextStyle(fontSize: 9, color: Colors.white),
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _NotificationBellBeak extends CustomClipper<Path> {
+  const _NotificationBellBeak();
+
+  @override
+  Path getClip(Size size) => Path()
+    ..moveTo(size.width / 2, 0)
+    ..lineTo(size.width, size.height)
+    ..lineTo(0, size.height)
+    ..close();
+
+  @override
+  bool shouldReclip(covariant _NotificationBellBeak oldClipper) => false;
 }
 
 class _NotificationStyle {

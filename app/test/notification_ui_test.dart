@@ -43,23 +43,15 @@ void main() {
       expect(
           find.byKey(const ValueKey('notification-toast-1')), findsOneWidget);
       expect(find.text('磁盘版本已变化'), findsOneWidget);
-      expect(find.byKey(const ValueKey('status-notifications-badge')),
+      expect(find.byKey(const ValueKey('status-notifications-indicator')),
           findsOneWidget);
-      expect(
-        tester
-            .widget<Text>(find.descendant(
-              of: find.byKey(const ValueKey('status-notifications-badge')),
-              matching: find.byType(Text),
-            ))
-            .data,
-        '1',
-      );
+      expect(_notificationBellTooltip(tester), '1 条新通知');
 
       await tester
           .tap(find.byKey(const ValueKey('notification-toast-close-1')));
       await tester.pump();
       expect(find.byKey(const ValueKey('notification-toast-1')), findsNothing);
-      expect(find.byKey(const ValueKey('status-notifications-badge')),
+      expect(find.byKey(const ValueKey('status-notifications-indicator')),
           findsOneWidget,
           reason: '关闭 toast 不改变未读/中心条目');
 
@@ -67,9 +59,63 @@ void main() {
       await tester.pump();
       expect(find.byKey(const ValueKey('notification-center')), findsOneWidget);
       expect(find.byKey(const ValueKey('notification-item-1')), findsOneWidget);
-      expect(find.byKey(const ValueKey('status-notifications-badge')),
+      expect(find.byKey(const ValueKey('status-notifications-indicator')),
           findsNothing,
           reason: '打开中心即标记已读');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('notification bell describes only background progress',
+      (tester) async {
+    final progress = NotificationProgress(total: 5);
+    addTearDown(progress.dispose);
+    await _mountApp(tester);
+    try {
+      final badge =
+          find.byKey(const ValueKey('status-notifications-indicator'));
+      final beak = find.byKey(const ValueKey('status-notifications-beak'));
+      expect(_notificationBellTooltip(tester), '没有通知');
+      expect(badge, findsNothing);
+
+      final pending = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Pending background job',
+        progress: progress,
+      );
+      await tester.pump();
+      expect(_notificationBellTooltip(tester), '1 条新通知');
+      expect(badge, findsOneWidget);
+
+      await _showNotificationCenter(tester);
+      expect(_notificationBellTooltip(tester), '隐藏通知');
+      expect(beak, findsOneWidget);
+      expect(badge, findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('notification-center-close')));
+      await tester.pump();
+      expect(_notificationBellTooltip(tester), '没有新通知（1 项正在进行）');
+      expect(badge, findsOneWidget);
+      expect(beak, findsNothing);
+
+      progress.done();
+      await tester.pump();
+      expect(_notificationBellTooltip(tester), '没有新通知');
+      expect(badge, findsNothing);
+      expect(notifications.items, [pending]);
+
+      notifications.setDoNotDisturb(true);
+      await tester.pump();
+      expect(_notificationBellTooltip(tester), '请勿打扰已启用');
+      expect(badge, findsNothing);
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Quiet notification for the bell',
+      );
+      await tester.pump();
+      expect(_notificationBellTooltip(tester), '请勿打扰已启用');
+      expect(badge, findsOneWidget);
     } finally {
       await _unmountApp(tester);
     }
@@ -424,6 +470,7 @@ void main() {
       expect(top.top, 36);
       expect(top.top, greaterThan(tester.getBottomLeft(titleBell).dy));
       expect(statusBell, findsNothing);
+      expect(_notificationBellTooltip(tester, titleBar: true), '切换通知');
 
       await tester.tap(titleBell);
       await tester.pump();
@@ -458,7 +505,7 @@ void main() {
       );
       final panel = find.byKey(const ValueKey('notification-center'));
       final oldToast = find.byKey(ValueKey('notification-toast-${old.id}'));
-      const badgeKey = ValueKey('status-notifications-badge');
+      const badgeKey = ValueKey('status-notifications-indicator');
       await tester.pump();
       expect(oldToast, findsOneWidget);
       expect(find.byKey(badgeKey), findsOneWidget);
@@ -1136,7 +1183,7 @@ void main() {
       expect(find.byKey(const ValueKey('notification-toast-1')), findsNothing);
       expect(notifications.items, hasLength(1));
       expect(notifications.unreadCount, 1);
-      expect(find.byKey(const ValueKey('status-notifications-badge')),
+      expect(find.byKey(const ValueKey('status-notifications-indicator')),
           findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('status-notifications')));
       await tester.pump();
@@ -1669,6 +1716,14 @@ void main() {
       await _unmountApp(tester);
     }
   });
+}
+
+String _notificationBellTooltip(WidgetTester tester, {bool titleBar = false}) {
+  final target = find.byKey(
+    ValueKey(titleBar ? 'title-notifications' : 'status-notifications'),
+  );
+  final tooltip = find.descendant(of: target, matching: find.byType(Tooltip));
+  return tester.widget<Tooltip>(tooltip).message!;
 }
 
 Finder _paletteInput() => find.descendant(

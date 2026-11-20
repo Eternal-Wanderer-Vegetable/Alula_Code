@@ -20459,9 +20459,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       key: ValueKey(
         notificationInTitleBar ? 'title-notifications' : 'status-notifications',
       ),
-      unreadCount: _notifications.unreadCount,
-      visible: _notificationsVisible,
-      doNotDisturb: _notifications.doNotDisturb,
+      center: _notifications,
+      inTitleBar: notificationInTitleBar,
       onPressed: () => _runCommand('notifications.toggleList'),
     );
 
