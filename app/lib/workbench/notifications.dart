@@ -33,6 +33,7 @@ class WorkbenchNotification {
     required this.source,
     required this.createdAt,
     this.actions = const <WorkbenchNotificationAction>[],
+    this.secondaryActions = const <WorkbenchNotificationAction>[],
     this.progress,
     this.banner = false,
   });
@@ -45,6 +46,7 @@ class WorkbenchNotification {
   final String source;
   final DateTime createdAt;
   final List<WorkbenchNotificationAction> actions;
+  final List<WorkbenchNotificationAction> secondaryActions;
 
   /// 进度通知的进度对象（null 表示普通通知）。
   final NotificationProgress? progress;
@@ -194,6 +196,8 @@ class NotificationCenter extends ChangeNotifier {
     String source = 'Alula',
     List<WorkbenchNotificationAction> actions =
         const <WorkbenchNotificationAction>[],
+    List<WorkbenchNotificationAction> secondaryActions =
+        const <WorkbenchNotificationAction>[],
     DateTime? createdAt,
     NotificationProgress? progress,
     bool banner = false,
@@ -205,6 +209,7 @@ class NotificationCenter extends ChangeNotifier {
       source: source,
       createdAt: createdAt ?? DateTime.now(),
       actions: actions,
+      secondaryActions: List.unmodifiable(secondaryActions),
       progress: progress,
       banner: banner,
     );
@@ -229,6 +234,25 @@ class NotificationCenter extends ChangeNotifier {
     }
     notifyListeners();
     return notification;
+  }
+
+  Future<void> runSecondaryAction(
+    WorkbenchNotification notification,
+    WorkbenchNotificationAction action,
+  ) async {
+    if (!identical(byId(notification.id), notification) ||
+        !notification.secondaryActions.contains(action)) {
+      return;
+    }
+    try {
+      await action.run();
+    } catch (error) {
+      notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: '通知操作“${action.label}”失败：$error',
+        source: notification.source,
+      );
+    }
   }
 
   /// 关闭 toast：只从 toast 层移除，通知仍留在中心。

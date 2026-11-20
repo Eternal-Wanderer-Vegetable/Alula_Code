@@ -203,6 +203,7 @@ class WorkbenchNotificationToasts extends StatelessWidget {
           for (final notification in visible)
             _NotificationToast(
               key: ValueKey('notification-toast-${notification.id}'),
+              center: center,
               notification: notification,
               windowFocused: windowFocused,
               expandsDown: position.atTop,
@@ -222,6 +223,7 @@ class WorkbenchNotificationToasts extends StatelessWidget {
 class _NotificationToast extends StatefulWidget {
   const _NotificationToast({
     super.key,
+    required this.center,
     required this.notification,
     required this.windowFocused,
     required this.expandsDown,
@@ -229,6 +231,7 @@ class _NotificationToast extends StatefulWidget {
     required this.onMiddleClick,
   });
 
+  final NotificationCenter center;
   final WorkbenchNotification notification;
   final bool windowFocused;
   final bool expandsDown;
@@ -243,6 +246,7 @@ class _NotificationToastState extends State<_NotificationToast> {
   Timer? _timer;
   bool _hovered = false;
   bool _descendantFocused = false;
+  bool _secondaryMenuOpen = false;
   bool _waitingForWindowFocus = false;
 
   Duration get _interval => switch (widget.notification.severity) {
@@ -283,7 +287,7 @@ class _NotificationToastState extends State<_NotificationToast> {
     final sticky = notification.hasProgress ||
         (notification.severity == WorkbenchNotificationSeverity.error &&
             notification.hasActions);
-    if (sticky || _hovered || _descendantFocused) {
+    if (sticky || _hovered || _descendantFocused || _secondaryMenuOpen) {
       _schedule();
     } else {
       widget.onDismiss();
@@ -322,7 +326,10 @@ class _NotificationToastState extends State<_NotificationToast> {
               ],
             ),
             child: _NotificationContent(
+              center: widget.center,
               notification: notification,
+              onSecondaryMenuVisibilityChanged: (visible) =>
+                  _secondaryMenuOpen = visible,
               isToast: true,
               expandsDown: widget.expandsDown,
               onDismiss: widget.onDismiss,
@@ -553,6 +560,7 @@ class _WorkbenchNotificationCenterState
                         onMiddleClick: () =>
                             center.clearNotification(notification),
                         child: _NotificationCenterRow(
+                          center: center,
                           notification: notification,
                           showDivider: index < notifications.length - 1,
                           expandsDown: widget.position.atTop,
@@ -572,12 +580,14 @@ class _WorkbenchNotificationCenterState
 
 class _NotificationCenterRow extends StatelessWidget {
   const _NotificationCenterRow({
+    required this.center,
     required this.notification,
     required this.showDivider,
     required this.expandsDown,
     required this.onDismiss,
   });
 
+  final NotificationCenter center;
   final WorkbenchNotification notification;
   final bool showDivider;
   final bool expandsDown;
@@ -587,17 +597,19 @@ class _NotificationCenterRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       key: ValueKey('notification-item-${notification.id}'),
-      decoration: showDivider
-          ? const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Color(0xFF3A4150))),
-            )
-          : null,
-      foregroundDecoration: Focus.of(context).hasFocus
-          ? BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.primary),
-            )
-          : null,
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        border: showDivider
+            ? const Border(bottom: BorderSide(color: Color(0xFF3A4150)))
+            : null,
+      ),
+      foregroundDecoration: BoxDecoration(
+        border: Focus.of(context).hasFocus
+            ? Border.all(color: Theme.of(context).colorScheme.primary)
+            : null,
+      ),
       child: _NotificationContent(
+        center: center,
         notification: notification,
         expandsDown: expandsDown,
         onDismiss: onDismiss,
@@ -608,13 +620,17 @@ class _NotificationCenterRow extends StatelessWidget {
 
 class _NotificationContent extends StatefulWidget {
   const _NotificationContent({
+    required this.center,
     required this.notification,
     required this.expandsDown,
     required this.onDismiss,
     this.isToast = false,
+    this.onSecondaryMenuVisibilityChanged,
   });
 
+  final NotificationCenter center;
   final WorkbenchNotification notification;
+  final ValueChanged<bool>? onSecondaryMenuVisibilityChanged;
   final VoidCallback onDismiss;
   final bool isToast;
   final bool expandsDown;
@@ -635,6 +651,14 @@ class _NotificationContentState extends State<_NotificationContent> {
     visualDensity: VisualDensity.standard,
     textStyle: WidgetStatePropertyAll(TextStyle(fontSize: 12)),
   );
+
+  FocusNode? _secondaryMenuFocusNode;
+
+  @override
+  void dispose() {
+    _secondaryMenuFocusNode?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -697,6 +721,8 @@ class _NotificationContentState extends State<_NotificationContent> {
                         ),
                       ),
                     ),
+                    if (notification.secondaryActions.isNotEmpty)
+                      _secondaryMenu(notification, prefix),
                     if (showDisclosure)
                       _toolbarButton(
                         key: ValueKey('$prefix-toggle-${notification.id}'),
@@ -748,6 +774,8 @@ class _NotificationContentState extends State<_NotificationContent> {
   }
 
   bool _messageOverflows(BuildContext context, double width, bool hasProgress) {
+    final toolbarWidth = (hasProgress ? 0 : 24) +
+        (widget.notification.secondaryActions.isEmpty ? 0 : 24);
     final text = TextPainter(
       text: TextSpan(
         text: widget.notification.message,
@@ -756,10 +784,36 @@ class _NotificationContentState extends State<_NotificationContent> {
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
       maxLines: 1,
-    )..layout(maxWidth: (width - 22 - (hasProgress ? 0 : 24)).clamp(0, width));
+    )..layout(maxWidth: (width - 22 - toolbarWidth).clamp(0, width));
     final overflows = text.didExceedMaxLines;
     text.dispose();
     return overflows;
+  }
+
+  Widget _secondaryMenu(WorkbenchNotification notification, String prefix) {
+    final focusNode = _secondaryMenuFocusNode ??= FocusNode();
+    return MenuAnchor(
+      childFocusNode: focusNode,
+      onOpen: () => widget.onSecondaryMenuVisibilityChanged?.call(true),
+      onClose: () => widget.onSecondaryMenuVisibilityChanged?.call(false),
+      menuChildren: [
+        for (final (index, action) in notification.secondaryActions.indexed)
+          MenuItemButton(
+            key: ValueKey('$prefix-secondary-${notification.id}-$index'),
+            onPressed: () => unawaited(
+              widget.center.runSecondaryAction(notification, action),
+            ),
+            child: Text(action.label),
+          ),
+      ],
+      builder: (context, controller, _) => _toolbarButton(
+        key: ValueKey('$prefix-more-${notification.id}'),
+        icon: Icons.settings_outlined,
+        tooltip: '更多操作',
+        focusNode: focusNode,
+        onPressed: controller.isOpen ? controller.close : controller.open,
+      ),
+    );
   }
 
   Widget _toolbarButton({
@@ -767,6 +821,7 @@ class _NotificationContentState extends State<_NotificationContent> {
     required IconData icon,
     required String tooltip,
     required VoidCallback onPressed,
+    FocusNode? focusNode,
   }) {
     return SizedBox(
       width: 24,
@@ -775,6 +830,7 @@ class _NotificationContentState extends State<_NotificationContent> {
         key: key,
         tooltip: tooltip,
         padding: EdgeInsets.zero,
+        focusNode: focusNode,
         onPressed: onPressed,
         icon: Icon(icon, size: 15, color: Colors.grey.shade400),
       ),

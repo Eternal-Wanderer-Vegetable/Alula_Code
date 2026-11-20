@@ -488,6 +488,134 @@ void main() {
     }
   });
 
+  testWidgets('secondary notification actions target the menu owner',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final selected = <String>[];
+      final notice = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Notification with actions',
+        actions: [
+          WorkbenchNotificationAction(
+            label: 'Primary action',
+            run: () async => selected.add('primary'),
+          ),
+        ],
+        secondaryActions: [
+          WorkbenchNotificationAction(
+            label: 'Secondary action',
+            run: () async => selected.add('secondary'),
+          ),
+        ],
+      );
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Other notification',
+      );
+      await tester.pump();
+      expect(find.text('Primary action'), findsOneWidget);
+      expect(find.text('Secondary action'), findsNothing);
+      expect(find.byKey(const ValueKey('notification-toast-more-2')),
+          findsNothing);
+
+      await tester.tap(find.byKey(const ValueKey('notification-toast-more-1')));
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(const ValueKey('notification-toast-secondary-1-0')));
+      await tester.pumpAndSettle();
+      expect(selected, ['secondary']);
+      expect(notifications.byId(notice.id), same(notice));
+      expect(notifications.toastIds, contains(notice.id));
+
+      await _showNotificationCenter(tester);
+      final more = find.byKey(const ValueKey('notification-more-1'));
+      await tester.tap(more);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('notification-secondary-1-0')),
+          findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Secondary action'), findsNothing);
+      expect(focusedWorkbenchNotification()?.notification, same(notice));
+      expect(selected, ['secondary']);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(const ValueKey('notification-secondary-1-0')));
+      await tester.pumpAndSettle();
+      expect(selected, ['secondary', 'secondary']);
+      expect(notifications.items, hasLength(2));
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets(
+      'an open secondary notification menu preserves the toast at expiry',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final notice = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Expiring notification',
+        secondaryActions: [
+          WorkbenchNotificationAction(label: 'Details', run: () async {}),
+        ],
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('notification-toast-more-1')));
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 10));
+      expect(notifications.toastIds, contains(notice.id));
+      expect(find.text('Details'), findsOneWidget);
+      notifications.dismissToast(notice.id);
+      await tester.pumpAndSettle();
+      expect(find.text('Details'), findsNothing);
+      expect(notifications.byId(notice.id), same(notice));
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('secondary notification failures retain active progress',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final notice = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Running operation',
+        progress: NotificationProgress(total: 10),
+        secondaryActions: [
+          WorkbenchNotificationAction(
+            label: 'Open details',
+            run: () async => throw StateError('details unavailable'),
+          ),
+        ],
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      expect(
+          find.byKey(const ValueKey('notification-dismiss-1')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('notification-more-1')));
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(const ValueKey('notification-secondary-1-0')));
+      await tester.pumpAndSettle();
+      expect(notifications.byId(notice.id), same(notice));
+      expect(notice.hasProgress, isTrue);
+      expect(notifications.items.first.severity,
+          WorkbenchNotificationSeverity.error);
+      expect(
+          notifications.items.first.message, contains('details unavailable'));
+      expect(
+          find.byKey(const ValueKey('notification-dismiss-1')), findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('Windows sends each successful clear to the native runner once',
       (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.windows;
