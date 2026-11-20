@@ -178,6 +178,83 @@ class WorkbenchLayout extends ChangeNotifier {
     return fresh != null;
   }
 
+  /// Move a group leaf as one layout transaction. Its pane and all document
+  /// views remain keyed by the same region.
+  bool moveEditorGroup(
+    String source,
+    String target,
+    Axis axis, {
+    required bool insertBefore,
+  }) {
+    if (source == target) return false;
+    final sourceParent = root.parentSplitOf(source);
+    final targetParent = root.parentSplitOf(target);
+    final sourceLeaf = root.leafOf(source);
+    final targetLeaf = root.leafOf(target);
+    if (sourceParent == null ||
+        targetParent == null ||
+        sourceLeaf == null ||
+        targetLeaf == null) {
+      return false;
+    }
+
+    final sourceIndex = sourceParent.children.indexOf(sourceLeaf);
+    if (identical(sourceParent, targetParent) &&
+        (sourceParent.axis == axis || sourceParent.children.length == 2)) {
+      final targetIndex = sourceParent.children.indexOf(targetLeaf);
+      if (sourceParent.axis == axis &&
+          sourceIndex == targetIndex + (insertBefore ? -1 : 1)) {
+        return false;
+      }
+      if (sourceParent.axis != axis) {
+        final half = (sourceLeaf.weight + targetLeaf.weight) / 2;
+        sourceParent.axis = axis;
+        sourceLeaf.weight = half;
+        targetLeaf.weight = half;
+      }
+      sourceParent.children.removeAt(sourceIndex);
+      final insertAt = sourceParent.children.indexOf(targetLeaf);
+      sourceParent.children
+          .insert(insertBefore ? insertAt : insertAt + 1, sourceLeaf);
+    } else {
+      if (identical(sourceParent, root)) {
+        if (root.children.length <= 2) return false;
+        root.children.removeAt(sourceIndex);
+      } else if (!root.removeLeaf(source)) {
+        return false;
+      }
+
+      // Removing the source can collapse its parent onto the target. Resolve
+      // the insertion point in the resulting tree before sharing its space.
+      final parent = root.parentSplitOf(target)!;
+      final index = parent.children.indexOf(targetLeaf);
+      final targetWeight = targetLeaf.weight;
+      final span = parent.editorGroupSpan;
+      if (parent.axis == axis &&
+          span != null &&
+          index >= span.first &&
+          index <= span.last) {
+        sourceLeaf.weight = targetWeight / 2;
+        targetLeaf.weight = targetWeight / 2;
+        parent.children.insert(insertBefore ? index : index + 1, sourceLeaf);
+      } else {
+        sourceLeaf.weight = 0.5;
+        targetLeaf.weight = 0.5;
+        parent.children[index] = WbSplit(
+          axis: axis,
+          weight: targetWeight,
+          children: insertBefore
+              ? [sourceLeaf, targetLeaf]
+              : [targetLeaf, sourceLeaf],
+        );
+      }
+    }
+
+    _maximizedEditorRegion = null;
+    notifyListeners();
+    return true;
+  }
+
   /// 摘除 [region] 叶子（树会自动折叠单子节点 split）。
   bool removeRegion(String region) {
     final rootIndex = _rootChildIndex(region);

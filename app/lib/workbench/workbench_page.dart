@@ -1475,6 +1475,28 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       ),
       enablement: 'editorPartMultipleEditorGroups',
     );
+    for (final direction in _EditorGroupMoveDirection.values) {
+      final (suffix, label) = switch (direction) {
+        _EditorGroupMoveDirection.left => ('Left', '左'),
+        _EditorGroupMoveDirection.right => ('Right', '右'),
+        _EditorGroupMoveDirection.up => ('Up', '上'),
+        _EditorGroupMoveDirection.down => ('Down', '下'),
+      };
+      final moveId = 'workbench.action.moveActiveEditorGroup$suffix';
+      reg(
+        moveId,
+        '视图',
+        '向$label移动编辑器组',
+        () async => _moveEditorGroup(direction),
+        shortcut: _keybindings.shortcutFor(moveId),
+      );
+      reg(
+        'workbench.action.duplicateActiveEditorGroup$suffix',
+        '视图',
+        '向$label复制编辑器组',
+        () async => _duplicateEditorGroup(direction),
+      );
+    }
     reg(
       'workbench.action.moveEditorToLeftGroup',
       '编辑器',
@@ -15306,15 +15328,44 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     return bestRegion;
   }
 
-  void _focusEditorAfterLayout(EditorGroup group, OpenDoc view) {
+  void _focusEditorAfterLayout(
+    EditorGroup group,
+    OpenDoc view, {
+    double? scrollOffset,
+  }) {
     final focusNode = _focusNodeFor(group, view);
+    bool isCurrentView() =>
+        mounted &&
+        _focusedRegion == group.region &&
+        identical(group.active, view);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted ||
-          _focusedRegion != group.region ||
-          !identical(group.active, view)) {
-        return;
-      }
+      if (!isCurrentView()) return;
       focusNode.requestFocus();
+      if (scrollOffset == null) return;
+      final selection = view.selection;
+
+      // Focus notification queues EditableText's caret reveal. Register this
+      // restoration after that notification to cancel its scroll animation.
+      scheduleMicrotask(() {
+        if (!isCurrentView()) return;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!isCurrentView() ||
+              !focusNode.hasPrimaryFocus ||
+              view.selection != selection) {
+            return;
+          }
+          final position = view.editorScrollController.positions.firstOrNull;
+          if (position == null || !position.hasContentDimensions) return;
+          position.jumpTo(scrollOffset
+              .clamp(
+                position.minScrollExtent,
+                position.maxScrollExtent,
+              )
+              .toDouble());
+        });
+        WidgetsBinding.instance.ensureVisualUpdate();
+      });
     });
   }
 
@@ -15331,6 +15382,89 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final group = _focused;
     final active = group.active;
     if (wasMaximized && active != null) _focusEditorAfterLayout(group, active);
+  }
+
+  void _moveEditorGroup(_EditorGroupMoveDirection direction) {
+    final source = _focused;
+    final alternates = direction.axis == Axis.horizontal
+        ? [_EditorGroupMoveDirection.up, _EditorGroupMoveDirection.down]
+        : [_EditorGroupMoveDirection.left, _EditorGroupMoveDirection.right];
+    String? target;
+    for (final neighbour in [direction, ...alternates]) {
+      target = _adjacentEditorRegion(source.region, neighbour);
+      if (target != null) break;
+    }
+    if (target == null) return;
+
+    final active = source.active;
+    final scrollOffset =
+        active?.editorScrollController.positions.firstOrNull?.pixels;
+    if (active != null) _flushInput(active, commitComposition: true);
+    if (!_layout.moveEditorGroup(
+      source.region,
+      target,
+      direction.axis,
+      insertBefore: direction.insertBefore,
+    )) {
+      return;
+    }
+    if (active == null) return;
+    _focusEditorAfterLayout(source, active, scrollOffset: scrollOffset);
+  }
+
+  void _duplicateEditorGroup(_EditorGroupMoveDirection direction) {
+    final source = _focused;
+    var index = 2;
+    while (_groups.containsKey('editor-$index')) {
+      index++;
+    }
+    final region = 'editor-$index';
+    final views = <OpenDoc>[];
+    var inserted = false;
+    try {
+      for (final doc in source.docs) {
+        _flushInput(doc, commitComposition: true);
+        final controller = doc.editorScrollController;
+        final offset = controller.positions.firstOrNull?.pixels ??
+            controller.initialScrollOffset;
+        views.add(OpenDoc.viewOf(doc, initialScrollOffset: offset));
+      }
+      inserted = _layout.splitRegion(
+        source.region,
+        region,
+        direction.axis,
+        insertBefore: direction.insertBefore,
+      );
+      if (!inserted) return;
+    } finally {
+      if (!inserted) {
+        for (final view in views) {
+          view.disposeView();
+        }
+      }
+    }
+
+    final group = EditorGroup(region)
+      ..docs.addAll(views)
+      ..activeDocId = source.activeDocId
+      ..previewDocId = source.previewDocId
+      ..stickyDocIds.addAll(source.stickyDocIds)
+      ..recentDocIds.addAll(source.recentDocIds);
+    setState(() {
+      _groups[region] = group;
+      _focusedRegion = region;
+      _noteActiveDocument(group, group.activeDocId);
+      _scheduleStateSave();
+    });
+    _syncCommandContext();
+    final active = group.active;
+    if (active != null) {
+      _focusEditorAfterLayout(
+        group,
+        active,
+        scrollOffset: active.editorScrollController.initialScrollOffset,
+      );
+    }
   }
 
   void _moveFocusedEditorToGroup(_EditorGroupMoveDirection direction) {
@@ -25812,7 +25946,7 @@ class OpenDoc {
     _shared.retainView();
   }
 
-  OpenDoc._viewOf(OpenDoc source)
+  OpenDoc._viewOf(OpenDoc source, double initialScrollOffset)
       : _shared = source._shared,
         inputWindow = RustTextInputWindow.openAround(
           source.doc,
@@ -25822,13 +25956,15 @@ class OpenDoc {
           selection: source.selection,
         ),
         inputFieldKey = GlobalKey<RustTextInputFieldState>(),
-        editorScrollController = ScrollController(),
+        editorScrollController =
+            ScrollController(initialScrollOffset: initialScrollOffset),
         additionalSelections = List.unmodifiable(source.additionalSelections),
         foldedLineRanges = List.unmodifiable(source.foldedLineRanges) {
     _shared.retainView();
   }
 
-  factory OpenDoc.viewOf(OpenDoc source) => OpenDoc._viewOf(source);
+  factory OpenDoc.viewOf(OpenDoc source, {double initialScrollOffset = 0}) =>
+      OpenDoc._viewOf(source, initialScrollOffset);
 
   final _SharedOpenDocState _shared;
   int get id => _shared.id;

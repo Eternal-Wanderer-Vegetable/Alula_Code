@@ -265,6 +265,10 @@ class KeybindingSet {
     'workbench.action.closeAllEditors': 'ctrl+k w',
     'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
     'workbench.action.toggleMaximizeEditorGroup': 'ctrl+k ctrl+m',
+    'workbench.action.moveActiveEditorGroupLeft': 'ctrl+k arrowleft',
+    'workbench.action.moveActiveEditorGroupRight': 'ctrl+k arrowright',
+    'workbench.action.moveActiveEditorGroupUp': 'ctrl+k arrowup',
+    'workbench.action.moveActiveEditorGroupDown': 'ctrl+k arrowdown',
     'workbench.action.toggleEditorSticky': 'ctrl+k ctrl+shift+enter',
     'workbench.files.action.compareWithClipboard': 'ctrl+k c',
     'workbench.files.action.compareWithSaved': 'ctrl+k d',
@@ -416,6 +420,13 @@ class KeybindingSet {
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
         result['workbench.action.toggleMaximizeEditorGroup'] = 'cmd+k cmd+m';
+        result['workbench.action.moveActiveEditorGroupLeft'] =
+            'cmd+k arrowleft';
+        result['workbench.action.moveActiveEditorGroupRight'] =
+            'cmd+k arrowright';
+        result['workbench.action.moveActiveEditorGroupUp'] = 'cmd+k arrowup';
+        result['workbench.action.moveActiveEditorGroupDown'] =
+            'cmd+k arrowdown';
         result['workbench.action.toggleEditorSticky'] = 'cmd+k cmd+shift+enter';
         result['workbench.files.action.compareWithClipboard'] = 'cmd+k c';
         result['workbench.files.action.compareWithSaved'] = 'cmd+k d';

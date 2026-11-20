@@ -1,10 +1,62 @@
 // 布局树结构变更原语测试（W2-2 编辑器组拆分）：splitLeaf / removeLeaf / 折叠。
 // 对应 docs/09 W2-2；纯模型测试。
+import 'package:alula_app/workbench/layout_controller.dart';
 import 'package:alula_app/workbench/layout_model.dart';
 import 'package:flutter/painting.dart' show Axis;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('moving a nested group commits a single layout update', () {
+    final layout = WorkbenchLayout();
+    addTearDown(layout.dispose);
+    layout.splitRegion('editor', 'editor-2', Axis.horizontal);
+    layout.splitRegion('editor-2', 'editor-3', Axis.vertical);
+    final source = layout.leafOf('editor-3');
+    final sidebar = layout.leafOf('sidebar');
+    final editorArea = layout.root.parentSplitOf('editor');
+    var updates = 0;
+    layout.addListener(() => updates++);
+
+    expect(
+      layout.moveEditorGroup(
+        'editor-3',
+        'editor',
+        Axis.horizontal,
+        insertBefore: true,
+      ),
+      isTrue,
+    );
+    expect(updates, 1);
+    expect(layout.leafOf('editor-3'), same(source));
+    expect(layout.leafOf('sidebar'), same(sidebar));
+    expect(layout.root.parentSplitOf('editor-3'), same(editorArea));
+    expect(editorArea!.leaves.map((leaf) => leaf.region),
+        ['editor-3', 'editor', 'editor-2']);
+
+    final saved = layout.root.toJson();
+    expect(WbNode.fromJson(saved).toJson(), saved);
+    expect(
+      layout.moveEditorGroup(
+        'editor-3',
+        'editor',
+        Axis.horizontal,
+        insertBefore: true,
+      ),
+      isFalse,
+    );
+    expect(
+      layout.moveEditorGroup(
+        'editor-3',
+        'missing',
+        Axis.vertical,
+        insertBefore: false,
+      ),
+      isFalse,
+    );
+    expect(layout.root.toJson(), saved);
+    expect(updates, 1);
+  });
+
   group('splitLeaf', () {
     test('默认布局上分裂 editor：嵌套分割 + 权重交接', () {
       final root = defaultLayout();

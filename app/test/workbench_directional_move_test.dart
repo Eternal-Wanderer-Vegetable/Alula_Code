@@ -169,6 +169,129 @@ void main() {
   }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
 
   testWidgets(
+      'whole group transfer preserves tabs, scroll, and shared documents',
+      (tester) async {
+    final temp = Directory.systemTemp.createTempSync('alula-group-transfer');
+    addTearDown(() => _unmountAndDeleteTempDirectory(tester, temp));
+    tester.view.physicalSize = const Size(1600, 1100);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final workspace = Directory('${temp.path}/workspace')..createSync();
+    File('${workspace.path}/source-a.txt')
+        .writeAsStringSync('first synthetic source');
+    final shared = File('${workspace.path}/source-b.txt');
+    shared.writeAsStringSync(
+        List.generate(250, (i) => 'source line $i').join('\n'));
+    final base = temp.path.replaceAll(r'\', '/');
+    final layoutStore = LayoutStore(path: '$base/layout.json')
+      ..save(defaultLayout());
+    final sessionStore = SessionStore(path: '$base/session.json');
+    CommandService? commands;
+    await tester.pumpWidget(MaterialApp(
+      home: WorkbenchPage(
+        autoFolder: workspace.path,
+        layoutStore: layoutStore,
+        sessionStore: sessionStore,
+        keybindingsStore: KeybindingsStore(path: '$base/keybindings.json'),
+        onCommandServiceReady: (service) => commands = service,
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 700));
+
+    Future<void> execute(String id) async {
+      expect(await commands!.execute(id), CommandExecutionStatus.executed);
+      await tester.pump(const Duration(milliseconds: 700));
+      await tester.pump();
+    }
+
+    Finder pane(String name) => find.byKey(ValueKey('wb-region-$name'));
+    Finder field(String name) => find.descendant(
+          of: pane(name),
+          matching: find.byType(RustTextInputField),
+        );
+    Rect area(String name) => tester.getRect(pane(name));
+    Map<String, Object?> group(String name) =>
+        (sessionStore.tryLoad()!['groups'] as List)
+            .cast<Map<String, Object?>>()
+            .singleWhere((group) => group['region'] == name);
+
+    await tester.tap(find.byKey(const ValueKey('close-tab-editor-1')));
+    await tester.pump(const Duration(milliseconds: 500));
+    await openPinnedExplorerFile(tester, find.text('source-a.txt').first);
+    await tester.pump(const Duration(milliseconds: 500));
+    await execute('workbench.action.toggleEditorSticky');
+    await openPinnedExplorerFile(tester, find.text('source-b.txt').first);
+    await tester.pump(const Duration(milliseconds: 700));
+    final source = tester.widget<RustTextInputField>(field('editor'));
+    source.scrollController!.jumpTo(840);
+    await tester.pump();
+    final originalArea = area('editor');
+    final shell = area('sidebar');
+    final originalTabs = group('editor');
+    expect((originalTabs['docs'] as List), hasLength(2));
+    expect((originalTabs['sticky'] as List), hasLength(1));
+    expect(source.scrollController!.offset, closeTo(840, 1));
+
+    final singleLayout = layoutStore.tryLoad()!.toJson();
+    await execute('workbench.action.moveActiveEditorGroupLeft');
+    expect(layoutStore.tryLoad()!.toJson(), singleLayout);
+    await execute('workbench.action.duplicateActiveEditorGroupRight');
+    final copied = tester.widget<RustTextInputField>(field('editor-2'));
+    final copiedState =
+        tester.state<RustTextInputFieldState>(field('editor-2'));
+    expect(copied.inputWindow.document.id, source.inputWindow.document.id);
+    expect(copied.inputWindow, isNot(same(source.inputWindow)));
+    expect(copied.scrollController, isNot(same(source.scrollController)));
+    expect(copied.scrollController!.offset, closeTo(840, 1));
+    expect(copied.focusNode?.hasFocus, isTrue);
+    expect(area('editor-2').right, originalArea.right);
+    final copiedMetadata = group('editor-2');
+    expect(copiedMetadata['sticky'], originalTabs['sticky']);
+    expect(copiedMetadata['active'], originalTabs['active']);
+    expect(copiedMetadata['docs'], originalTabs['docs']);
+
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester.pump();
+    expect(area('editor-2').right, lessThan(area('editor').left));
+    await execute('workbench.action.moveActiveEditorGroupUp');
+    expect(area('editor-2').bottom, lessThan(area('editor').top));
+    await execute('workbench.action.moveActiveEditorGroupDown');
+    expect(area('editor-2').top, greaterThan(area('editor').bottom));
+    await execute('workbench.action.moveActiveEditorGroupRight');
+    expect(area('editor-2').left, greaterThan(area('editor').right));
+    expect(area('sidebar'), shell);
+    expect(tester.state<RustTextInputFieldState>(field('editor-2')),
+        same(copiedState));
+    expect(
+        tester
+            .widget<RustTextInputField>(field('editor-2'))
+            .scrollController!
+            .offset,
+        closeTo(840, 1));
+    expect(layoutStore.tryLoad()!.parentSplitOf('editor-2')!.axis,
+        Axis.horizontal);
+
+    await execute('workbench.action.closeActiveEditor');
+    await execute('workbench.action.toggleEditorSticky');
+    await execute('workbench.action.closeActiveEditor');
+    expect(pane('editor-2'), findsNothing);
+    final live = tester.widget<RustTextInputField>(field('editor'));
+    expect(live.inputWindow, same(source.inputWindow));
+    final editable = find.descendant(
+        of: field('editor'), matching: find.byType(EditableText));
+    await tester.enterText(editable, 'Shared document remains editable 😀');
+    await tester.pump(const Duration(milliseconds: 700));
+    await execute('file.save');
+    expect(shared.readAsStringSync(), 'Shared document remains editable 😀');
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
+  testWidgets(
     'directional move reuses editor views, creates groups, and deduplicates shared documents',
     (tester) async {
       final temp =
