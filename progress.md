@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.145 / feat-197。产品 `4601bc1bf1eaaa7ef4c3b8d73178f1c1aa20fafb` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证面板入口拖回两个侧栏、无效释放、搜索查询与两处匹配、焦点及悬停提示。专项 25/25，Flutter 1,677 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44828717927 四项及 Platform Availability 44828704542 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.145-panel-view-drag.md。
+
 - 2026-11-21 完成 P05.144 / feat-196。产品 `1e3fa2b601b9be3380de5fcd3dd82bfd7081e70e` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证内置视图面板入口、搜索查询与焦点、次侧栏和重置。专项 23/23，Flutter 1,675 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44825134506 四项及 Platform Availability 44825122656 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.144-view-move-panel.md。
 
 - 2026-11-21 完成 P05.143 / feat-195。产品 `cd588649d3446f1adb82b0dfb95f2ad141d17439` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证四种固定标签关闭保护、编辑器焦点、明确关闭和原有整批取消。专项 32/32，Flutter 1,673 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44819630190 四项及 Platform Availability 44819617013 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.143-pinned-tab-close.md。

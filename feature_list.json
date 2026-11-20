@@ -2463,6 +2463,22 @@
         "feat-072",
         "feat-196"
       ],
+      "status": "done",
+      "evidence": "产品 `4601bc1bf1eaaa7ef4c3b8d73178f1c1aa20fafb` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证面板入口拖回两个侧栏、无效释放、搜索查询与两处匹配、焦点及悬停提示。专项 25/25，Flutter 1,677 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44828717927 四项及 Platform Availability 44828704542 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.145-panel-view-drag.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-198",
+      "name": "P05.146 LAY-04/05 侧栏内置视图拖入面板",
+      "description": "对照固定版从侧栏入口拖入面板，覆盖有效落点、取消、原内容与活动栏交互。",
+      "dependencies": [
+        "feat-066",
+        "feat-070",
+        "feat-074",
+        "feat-196",
+        "feat-197"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

@@ -4,10 +4,11 @@ Last Updated: 2026-11-21
 
 ## Current Objective
 
-完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并已完成，P05.136 / feat-188 同组标签多选与批量关闭已完成，P05.137 / feat-189 最近使用编辑器快速切换已完成，P05.138 / feat-190 同组多选标签批量排序已完成，P05.139 / feat-191 跨组已选标签批量移动已完成，P05.140 / feat-192 跨组已选标签批量复制已完成，P05.141 / feat-193 固定标签尺寸已完成，P05.142 / feat-194 固定标签水平停靠已完成，P05.143 / feat-195 固定标签关闭保护已完成，P05.144 / feat-196 内置视图移入面板已完成，P05.145 / feat-197 面板内置视图拖回侧栏的依赖已满足。
+完成草稿 PR #3 的全部范围内任务，再向用户汇报。按 docs/03 一次推进一个 P05 子项。P05.123 / feat-175 规范命令已完成。P05.124 / feat-176 的 Windows 实机自定义和默认组合键均已验收。P05.125 / feat-177 默认通知主操作键已完成限定验证。P05.126 / feat-178 通知中心滚动条已完成限定验收。P05.127 / feat-179 QuickInput 分页与首尾导航已完成限定验收。P05.128 / feat-180 默认视口与行密度已完成，P05.129 / feat-181 分组跳转已完成，P05.130 / feat-182 多选批量控制已完成，P05.131 / feat-183 编辑器组尺寸重置与最大化恢复已完成，P05.132 / feat-184 整组方向移动与复制已完成，P05.133 / feat-185 编辑器组锁定已完成，P05.134 / feat-186 编辑器组扩展已完成，P05.135 / feat-187 同组文本编辑器拆分与合并已完成，P05.136 / feat-188 同组标签多选与批量关闭已完成，P05.137 / feat-189 最近使用编辑器快速切换已完成，P05.138 / feat-190 同组多选标签批量排序已完成，P05.139 / feat-191 跨组已选标签批量移动已完成，P05.140 / feat-192 跨组已选标签批量复制已完成，P05.141 / feat-193 固定标签尺寸已完成，P05.142 / feat-194 固定标签水平停靠已完成，P05.143 / feat-195 固定标签关闭保护已完成，P05.144 / feat-196 内置视图移入面板已完成，P05.145 / feat-197 面板内置视图拖回侧栏已完成，P05.146 / feat-198 侧栏内置视图拖入面板的依赖已满足。
 
 ## Current State
 
+- 产品 `4601bc1bf1eaaa7ef4c3b8d73178f1c1aa20fafb` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证面板入口拖回两个侧栏、无效释放、搜索查询与两处匹配、焦点及悬停提示。专项 25/25，Flutter 1,677 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44828717927 四项及 Platform Availability 44828704542 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.145-panel-view-drag.md。
 - 产品 `1e3fa2b601b9be3380de5fcd3dd82bfd7081e70e` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证内置视图面板入口、搜索查询与焦点、次侧栏和重置。专项 23/23，Flutter 1,675 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44825134506 四项及 Platform Availability 44825122656 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.144-view-move-panel.md。
 - 产品 `cd588649d3446f1adb82b0dfb95f2ad141d17439` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证四种固定标签关闭保护、编辑器焦点、明确关闭和原有整批取消。专项 32/32，Flutter 1,673 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44819630190 四项及 Platform Availability 44819617013 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.143-pinned-tab-close.md。
 - 产品 `d5b629ea426395bf45942379b8eb4a3660027060` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签停靠、窄宽滚动、范围恢复、换行和焦点。专项 35/35，Flutter 1,668 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44814735539 四项及 Platform Availability 44814716139 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.142-pinned-tab-scroll.md。
@@ -61,4 +62,4 @@ macOS 实机验收暂缓。固定版实机对照覆盖默认右下与深色样�
 
 ## Next Session First Step
 
-确认 P05.144 文档收尾 CI。按 docs/03 推进 P05.145 面板内置视图拖回侧栏。
+确认 P05.145 文档收尾 CI。按 docs/03 推进 P05.146 侧栏内置视图拖入面板。
