@@ -543,6 +543,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late Map<String, WorkbenchNotificationSourceFilter> _sourceFilterSnapshot;
   late final _optionalToastAdmission = _allowOptionalNotificationToast;
   bool get _notificationsVisible => _notifications.centerVisible;
+  final FocusNode _notificationSurfaceFocus = FocusNode(
+    debugLabel: 'Notification surface',
+    canRequestFocus: false,
+  );
   WorkbenchNotificationPosition _notificationPosition =
       WorkbenchNotificationPosition.bottomRight;
   String? _notificationSourceFilter;
@@ -764,6 +768,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _sourceFilterSnapshot = _notifications.sourceFilters;
     _notifications.allowOptionalToast = _optionalToastAdmission;
     _notifications.addListener(_onNotificationsChanged);
+    _syncNotificationFocusContext();
     widget.onCommandServiceReady?.call(_commands);
   }
 
@@ -1121,6 +1126,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '通知',
       () async => _toggleNotificationCenter(),
+    );
+    reg(
+      'notifications.showList',
+      '查看',
+      '显示通知',
+      () async {
+        if (!_zenMode) _notifications.setCenterVisible(true);
+      },
+      shortcut: _keybindings.shortcutFor('notifications.showList'),
+    );
+    reg(
+      'notifications.hideList',
+      '查看',
+      '隐藏通知',
+      () async => _notifications.setCenterVisible(false),
+      when: 'notificationCenterVisible',
+    );
+    reg(
+      'notifications.toggleList',
+      '查看',
+      '切换通知中心',
+      () async => _toggleNotificationCenter(),
+    );
+    reg(
+      'notifications.hideToasts',
+      '查看',
+      '隐藏通知弹窗',
+      () async => _notifications.dismissToasts(),
+      when: 'notificationToastsVisible',
     );
     reg(
       'notification.clear',
@@ -13615,6 +13649,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       }
     });
     _syncCommandContext();
+    _syncNotificationFocusContext();
     _scheduleStateSave();
   }
 
@@ -17421,6 +17456,71 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   bool _awaitingMoveSelectionChord = false;
   KeyChord? _pendingChordPrefix;
 
+  KeyEventResult _handleCommandChord(KeyEvent event,
+      {bool notificationOnly = false}) {
+    if (event is! KeyDownEvent) return KeyEventResult.ignored;
+    final keyboard = HardwareKeyboard.instance;
+    final key = event.logicalKey;
+    final ctrl = keyboard.isControlPressed;
+    final shift = keyboard.isShiftPressed;
+    final alt = keyboard.isAltPressed;
+    final meta = keyboard.isMetaPressed;
+    bool isEnabled(String id) =>
+        (!notificationOnly || id == 'notifications.showList') &&
+        _commands.isEnabled(id);
+
+    final currentChord = KeyChord(
+      key: key,
+      control: ctrl,
+      shift: shift,
+      alt: alt,
+      meta: meta,
+    );
+    if (_awaitingMoveSelectionChord) {
+      if (key == LogicalKeyboardKey.controlLeft ||
+          key == LogicalKeyboardKey.controlRight ||
+          key == LogicalKeyboardKey.metaLeft ||
+          key == LogicalKeyboardKey.metaRight ||
+          key == LogicalKeyboardKey.shiftLeft ||
+          key == LogicalKeyboardKey.shiftRight ||
+          key == LogicalKeyboardKey.altLeft ||
+          key == LogicalKeyboardKey.altRight) {
+        return KeyEventResult.ignored;
+      }
+      _pendingMoveSelectionChordTimer?.cancel();
+      _pendingMoveSelectionChordTimer = null;
+      _awaitingMoveSelectionChord = false;
+      final prefix = _pendingChordPrefix;
+      _pendingChordPrefix = null;
+      final binding = prefix == null
+          ? null
+          : _keybindings.bindingForSequence([prefix, currentChord]);
+      if (binding != null &&
+          _commands.context.matches(binding.when) &&
+          isEnabled(binding.commandId)) {
+        _runCommand(binding.commandId, arguments: binding.arguments);
+        return KeyEventResult.handled;
+      }
+    }
+    if (_keybindings.hasSequencePrefix(
+      currentChord,
+      matchesWhen: _commands.context.matches,
+      isCommandEnabled: isEnabled,
+    )) {
+      _awaitingMoveSelectionChord = true;
+      _pendingChordPrefix = currentChord;
+      _pendingMoveSelectionChordTimer = Timer(
+        const Duration(seconds: 5),
+        () {
+          _awaitingMoveSelectionChord = false;
+          _pendingChordPrefix = null;
+        },
+      );
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   String _focusKeyFor(EditorGroup group, OpenDoc doc) =>
       '${group.region}:${doc.id}';
 
@@ -17448,6 +17548,15 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             defaultTargetPlatform == TargetPlatform.macOS ? meta : ctrl;
         final activeHasComposition =
             active?.inputWindow.hasComposition ?? false;
+        final plainEscape = key == LogicalKeyboardKey.escape &&
+            !ctrl &&
+            !meta &&
+            !alt &&
+            !shift &&
+            !activeHasComposition;
+        if (plainEscape && _handleNotificationEscape(centerOnly: true)) {
+          return KeyEventResult.handled;
+        }
         final snippetSession = _snippetSession;
         if (active != null && snippetSession != null && !activeHasComposition) {
           if (_snippetSessionDocId != active.id ||
@@ -17556,53 +17665,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             return KeyEventResult.handled;
           }
         }
-        final currentChord = KeyChord(
-          key: key,
-          control: ctrl,
-          shift: shift,
-          alt: alt,
-          meta: meta,
-        );
-        if (_awaitingMoveSelectionChord) {
-          if (key == LogicalKeyboardKey.controlLeft ||
-              key == LogicalKeyboardKey.controlRight ||
-              key == LogicalKeyboardKey.metaLeft ||
-              key == LogicalKeyboardKey.metaRight ||
-              key == LogicalKeyboardKey.shiftLeft ||
-              key == LogicalKeyboardKey.shiftRight ||
-              key == LogicalKeyboardKey.altLeft ||
-              key == LogicalKeyboardKey.altRight) {
-            return KeyEventResult.ignored;
-          }
-          _pendingMoveSelectionChordTimer?.cancel();
-          _pendingMoveSelectionChordTimer = null;
-          _awaitingMoveSelectionChord = false;
-          final prefix = _pendingChordPrefix;
-          _pendingChordPrefix = null;
-          final binding = prefix == null
-              ? null
-              : _keybindings.bindingForSequence([prefix, currentChord]);
-          if (binding != null &&
-              _commands.context.matches(binding.when) &&
-              _commands.isEnabled(binding.commandId)) {
-            _runCommand(binding.commandId, arguments: binding.arguments);
-            return KeyEventResult.handled;
-          }
-        }
-        if (_keybindings.hasSequencePrefix(
-          currentChord,
-          matchesWhen: _commands.context.matches,
-          isCommandEnabled: _commands.isEnabled,
-        )) {
-          _awaitingMoveSelectionChord = true;
-          _pendingChordPrefix = currentChord;
-          _pendingMoveSelectionChordTimer = Timer(
-            const Duration(seconds: 5),
-            () {
-              _awaitingMoveSelectionChord = false;
-              _pendingChordPrefix = null;
-            },
-          );
+        if (_handleCommandChord(event) == KeyEventResult.handled) {
           return KeyEventResult.handled;
         }
         if (commandModifier && !shift && key == LogicalKeyboardKey.keyD) {
@@ -17801,6 +17864,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
             _runCommand(command);
             return KeyEventResult.handled;
           }
+        }
+        if (plainEscape && _handleNotificationEscape()) {
+          return KeyEventResult.handled;
         }
         return KeyEventResult.ignored;
       });
@@ -20272,6 +20338,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _notifications
       ..removeListener(_onNotificationsChanged)
       ..dispose();
+    _notificationSurfaceFocus.dispose();
     _layout.dispose();
     _openEditorsDirtyCountFocus.dispose();
     super.dispose();
@@ -20345,7 +20412,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       unreadCount: _notifications.unreadCount,
       visible: _notificationsVisible,
       doNotDisturb: _notifications.doNotDisturb,
-      onPressed: _toggleNotificationCenter,
+      onPressed: () => _runCommand('notifications.toggleList'),
     );
 
     return Scaffold(
@@ -20376,6 +20443,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         },
         child: Focus(
           autofocus: true, // 无处可聚焦时也保证全局键位可达（W3-1）
+          onKeyEvent: (_, event) =>
+              _handleCommandChord(event, notificationOnly: true),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -20854,10 +20923,11 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _syncNotificationFocusContext() {
     if (!mounted || _disposing) return;
-    _commands.context.setValue(
-      'notificationFocus',
-      _focusedNotification != null,
-    );
+    _commands.context.setValues({
+      'notificationFocus': _focusedNotification != null,
+      'notificationCenterVisible': !_zenMode && _notificationsVisible,
+      'notificationToastsVisible': !_zenMode && _notifications.hasToasts,
+    });
   }
 
   bool _allowOptionalNotificationToast() {
@@ -20890,7 +20960,16 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   void _onNotificationsChanged() {
     if (!mounted || _disposing) return;
-    if (!_notificationsVisible) _notificationSourceFilter = null;
+    if (!_notificationsVisible) {
+      _notificationSourceFilter = null;
+      final active = _active;
+      if (!_notifications.hasToasts &&
+          _notificationSurfaceFocus.hasFocus &&
+          active != null) {
+        _focusEditorAfterLayout(_focused, active);
+      }
+    }
+    _syncNotificationFocusContext();
     final sourceFilters = _notifications.sourceFilters;
     if (!identical(sourceFilters, _sourceFilterSnapshot)) {
       _sourceFilterSnapshot = sourceFilters;
@@ -20947,7 +21026,26 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _scheduleStateSave();
   }
 
+  bool _handleNotificationEscape({bool centerOnly = false}) {
+    if (_zenMode ||
+        (!_notificationsVisible && (centerOnly || !_notifications.hasToasts))) {
+      return false;
+    }
+    final binding = _keybindings.bindingForChord(
+      const KeyChord(key: LogicalKeyboardKey.escape),
+      matchesWhen: _commands.context.matches,
+    );
+    if (binding == null ||
+        (binding.commandId != 'notifications.hideList' &&
+            (centerOnly || binding.commandId != 'notifications.hideToasts'))) {
+      return false;
+    }
+    _runCommand(binding.commandId, arguments: binding.arguments);
+    return true;
+  }
+
   void _toggleNotificationCenter() {
+    if (_zenMode && !_notificationsVisible) return;
     _notifications.setCenterVisible(!_notificationsVisible);
   }
 
@@ -21017,29 +21115,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       bottom: 36,
       child: Align(
         alignment: _notificationPosition.alignment,
-        child: _notificationsVisible
-            ? WorkbenchNotificationCenter(
-                center: _notifications,
-                position: _notificationPosition,
-                onPositionChanged: (position) => _runCommand(position.commandId),
-                sourceFilter: _notificationSourceFilter,
-                onSourceFilterChanged: (value) =>
-                    setState(() => _notificationSourceFilter = value),
-                onDismiss: (id) {
-                  if (_notifications.byId(id) case final notification?) {
-                    _clearNotification(notification);
-                  }
-                },
-                onClearAll: _clearNotifications,
-                onToggleDoNotDisturb: _toggleNotificationDoNotDisturb,
-                onClose: () => _notifications.setCenterVisible(false),
-              )
-            : WorkbenchNotificationToasts(
-                center: _notifications,
-                position: _notificationPosition,
-                windowFocused: _mainWindowFocused ?? true,
-                onDismissToast: _notifications.dismissToast,
-              ),
+        child: Focus(
+          focusNode: _notificationSurfaceFocus,
+          child: _notificationsVisible
+              ? WorkbenchNotificationCenter(
+                  center: _notifications,
+                  position: _notificationPosition,
+                  onPositionChanged: (position) =>
+                      _runCommand(position.commandId),
+                  sourceFilter: _notificationSourceFilter,
+                  onSourceFilterChanged: (value) =>
+                      setState(() => _notificationSourceFilter = value),
+                  onDismiss: (id) {
+                    if (_notifications.byId(id) case final notification?) {
+                      _clearNotification(notification);
+                    }
+                  },
+                  onClearAll: _clearNotifications,
+                  onToggleDoNotDisturb: _toggleNotificationDoNotDisturb,
+                  onClose: () => _runCommand('notifications.hideList'),
+                )
+              : WorkbenchNotificationToasts(
+                  center: _notifications,
+                  position: _notificationPosition,
+                  windowFocused: _mainWindowFocused ?? true,
+                  onDismissToast: _notifications.dismissToast,
+                ),
+        ),
       ),
     );
   }
@@ -24838,7 +24940,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
     return CallbackShortcuts(
       bindings: {
-        const SingleActivator(LogicalKeyboardKey.escape): _toggleFind,
+        const SingleActivator(LogicalKeyboardKey.escape): () {
+          if (!_handleNotificationEscape(centerOnly: true)) _toggleFind();
+        },
         const SingleActivator(LogicalKeyboardKey.escape, shift: true):
             _toggleFind,
       },

@@ -258,6 +258,7 @@ class KeybindingSet {
     'file.saveAs': 'ctrl+shift+s',
     'workbench.action.closeActiveEditor': 'ctrl+w',
     'workbench.action.closeOtherEditors': 'ctrl+alt+t',
+    'notifications.showList': 'ctrl+k ctrl+shift+n',
     'workbench.action.closeUnmodifiedEditors': 'ctrl+k u',
     'workbench.action.closeAllEditors': 'ctrl+k w',
     'workbench.action.closeAllGroups': 'ctrl+k ctrl+w',
@@ -320,6 +321,8 @@ class KeybindingSet {
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
     'notification.clear': 'notificationFocus',
+    'notifications.hideList': 'notificationCenterVisible',
+    'notifications.hideToasts': 'notificationToastsVisible',
     'breadcrumbs.focus': 'breadcrumbsPossible',
     'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
     'breadcrumbs.focusNext':
@@ -342,6 +345,8 @@ class KeybindingSet {
         'list.find':
             platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
         'list.closeFind': 'escape',
+        'notifications.hideToasts': 'escape',
+        'notifications.hideList': 'escape',
         'notification.clear':
             platform == TargetPlatform.macOS ? 'cmd+backspace' : 'delete',
         'breadcrumbs.focus':
@@ -379,6 +384,7 @@ class KeybindingSet {
         result['workbench.action.files.newUntitledFile'] = 'cmd+n';
         result['workbench.action.closeActiveEditor'] = 'cmd+w';
         result['workbench.action.closeOtherEditors'] = 'cmd+alt+t';
+        result['notifications.showList'] = 'cmd+k cmd+shift+n';
         result['workbench.action.closeUnmodifiedEditors'] = 'cmd+k u';
         result['workbench.action.closeAllEditors'] = 'cmd+k w';
         result['workbench.action.closeAllGroups'] = 'cmd+k cmd+w';
@@ -618,9 +624,15 @@ class KeybindingSet {
   /// 键位 → 命令 id（无上下文时优先保留通用默认键位）。
   String? commandForChord(KeyChord chord) => bindingForChord(chord)?.commandId;
 
-  KeybindingBinding? bindingForChord(KeyChord chord) {
+  KeybindingBinding? bindingForChord(
+    KeyChord chord, {
+    bool Function(String? condition)? matchesWhen,
+  }) {
     final bindings = _chordToCommands[chord];
     if (bindings == null || bindings.isEmpty) return null;
+    if (matchesWhen != null) {
+      return _bindingFor(bindings, matchesWhen: matchesWhen);
+    }
     return _bindingFor(bindings,
             matchesWhen: (condition) => condition == null) ??
         bindings.last;

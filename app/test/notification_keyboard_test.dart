@@ -4,6 +4,7 @@ import 'package:alula_app/editor/rust_text_input_field.dart';
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/keybindings.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/notification_widgets.dart';
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/foundation.dart';
@@ -47,6 +48,128 @@ void main() {
       });
     });
   }
+
+  for (final platform in [
+    TargetPlatform.windows,
+    TargetPlatform.linux,
+    TargetPlatform.macOS,
+  ]) {
+    testWidgets(
+        '$platform opens the center with a chord and restores the editor',
+        (tester) async {
+      await _withWorkbench(tester, platform, (center) async {
+        final editorFocus = _editorFocus(tester);
+        editorFocus.requestFocus();
+        await tester.pump();
+        final notice = _notify(center, 'Notice for the default shortcut');
+        await tester.pump();
+
+        await _sendShowNotificationChord(tester, platform);
+        expect(center.centerVisible, isTrue);
+        expect(center.toastIds, isEmpty);
+        expect(focusedWorkbenchNotification()?.notification, same(notice));
+
+        // The fixed show command is idempotent, including outside the editor.
+        await _sendShowNotificationChord(tester, platform);
+        expect(center.centerVisible, isTrue);
+        expect(focusedWorkbenchNotification()?.notification, same(notice));
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+        await tester.pump();
+        expect(center.centerVisible, isFalse);
+        expect(center.items, [notice]);
+        expect(editorFocus.hasPrimaryFocus, isTrue);
+      });
+    });
+  }
+
+  testWidgets('the show chord is available outside the editor', (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final editorFocus = _editorFocus(tester);
+      final bell = find.byKey(const ValueKey('status-notifications'));
+      Focus.of(tester.element(bell)).requestFocus();
+      await tester.pump();
+      expect(editorFocus.hasPrimaryFocus, isFalse);
+      _notify(center, 'Notice while workbench chrome has focus');
+      await tester.pump();
+
+      await _sendShowNotificationChord(tester, TargetPlatform.windows);
+      expect(center.centerVisible, isTrue);
+    });
+  });
+
+  testWidgets('Escape hides toasts and restores focus from a toast action',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final editorFocus = _editorFocus(tester);
+      final item = _notify(center, 'Toast focused before Escape');
+      await tester.pump();
+
+      Focus.of(tester.element(find.text(item.message))).requestFocus();
+      await tester.pump();
+      expect(focusedWorkbenchNotification()?.notification, same(item));
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pump();
+      await tester.pump();
+      expect(center.toastIds, isEmpty);
+      expect(center.items, [item]);
+      expect(editorFocus.hasPrimaryFocus, isTrue);
+    });
+  });
+
+  testWidgets('unfocused toast Escape gives editor Find the first dismissal',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final query = await _showEditorFind(tester);
+      final item = _notify(center, 'Toast while Find is focused');
+      await tester.pump();
+      expect(query, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(query, findsNothing);
+      expect(center.toastIds, [item.id]);
+      expect(_editorFocus(tester).hasPrimaryFocus, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(center.toastIds, isEmpty);
+      expect(center.items, [item]);
+    });
+  });
+
+  testWidgets('center Escape takes priority over editor Find', (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      _notify(center, 'Center notice while Find is focused');
+      await tester.pump();
+      await _showCenter(tester);
+      final query = await _showEditorFind(tester);
+      expect(center.centerVisible, isTrue);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(center.centerVisible, isFalse);
+      expect(query, findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(query, findsNothing);
+    });
+  });
+
+  testWidgets('the custom center key suppresses the old chord', (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      _editorFocus(tester).requestFocus();
+      await tester.pump();
+      _notify(center, 'Notice for a rebound shortcut');
+      await tester.pump();
+
+      await _sendShowNotificationChord(tester, TargetPlatform.windows);
+      expect(center.centerVisible, isFalse);
+      await _sendReboundChord(tester);
+      expect(center.centerVisible, isTrue);
+    }, keybindings: '[{"key":"alt+f10","command":"notifications.showList"}]');
+  });
 
   testWidgets('toast shortcut protects running progress and clears after done',
       (tester) async {
@@ -170,6 +293,48 @@ WorkbenchNotification _notify(
 
 Future<void> _showCenter(WidgetTester tester) async {
   await tester.tap(find.byKey(const ValueKey('status-notifications')));
+  await tester.pump();
+  await tester.pump();
+}
+
+Future<Finder> _showEditorFind(WidgetTester tester) async {
+  _editorFocus(tester).requestFocus();
+  await tester.pump();
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+  await tester.pumpAndSettle();
+
+  final query = find.byKey(const ValueKey('find-query-input'));
+  await tester.tap(query);
+  await tester.pump();
+  final editable = find.descendant(
+    of: query,
+    matching: find.byType(EditableText),
+  );
+  expect(tester.widget<EditableText>(editable).focusNode.hasFocus, isTrue);
+  return query;
+}
+
+FocusNode _editorFocus(WidgetTester tester) {
+  final field = find.descendant(
+    of: find.byType(RustTextInputField).first,
+    matching: find.byType(TextField),
+  );
+  return tester.widget<TextField>(field).focusNode!;
+}
+
+Future<void> _sendShowNotificationChord(
+    WidgetTester tester, TargetPlatform platform) async {
+  final modifier = platform == TargetPlatform.macOS
+      ? LogicalKeyboardKey.metaLeft
+      : LogicalKeyboardKey.controlLeft;
+  await tester.sendKeyDownEvent(modifier);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyK);
+  await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyN);
+  await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+  await tester.sendKeyUpEvent(modifier);
   await tester.pump();
   await tester.pump();
 }

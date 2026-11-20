@@ -191,6 +191,7 @@ class NotificationCenter extends ChangeNotifier {
   bool get doNotDisturb => _doNotDisturb;
   int get unreadCount => _unread.length;
   bool get hasUnread => _unread.isNotEmpty;
+  bool get hasToasts => _toasts.isNotEmpty;
   bool get isEmpty => _items.isEmpty;
 
   /// 出现过的来源（按字母序），用于来源过滤。
@@ -296,6 +297,12 @@ class NotificationCenter extends ChangeNotifier {
   /// 关闭 toast：只从 toast 层移除，通知仍留在中心。
   void dismissToast(int id) {
     if (_toasts.remove(id)) notifyListeners();
+  }
+
+  void dismissToasts() {
+    if (_toasts.isEmpty) return;
+    _toasts.clear();
+    notifyListeners();
   }
 
   /// 关闭通知：同时移出列表、未读、toast 与 banner。
