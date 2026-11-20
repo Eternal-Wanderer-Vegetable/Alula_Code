@@ -1217,6 +1217,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       when: 'notificationRowFocus',
     );
     reg(
+      'notification.acceptPrimaryAction',
+      '查看',
+      '执行通知主操作',
+      _acceptNotificationPrimaryAction,
+    );
+    reg(
       'notification.clear',
       '查看',
       '清除通知',
@@ -20994,6 +21000,14 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'notificationCenterVisible': !_zenMode && _notificationsVisible,
       'notificationToastsVisible': !_zenMode && _notifications.hasToasts,
     });
+  }
+
+  Future<void> _acceptNotificationPrimaryAction() async {
+    final notification =
+        _focusedNotification ?? _notifications.items.firstOrNull;
+    final action = notification?.actions.firstOrNull;
+    if (notification == null || action == null) return;
+    await _notifications.runPrimaryAction(notification, action);
   }
 
   void _changeFocusedNotificationExpansion([bool? expanded]) {

@@ -445,6 +445,64 @@ void main() {
 ]
 ''');
   });
+  testWidgets(
+      'notification command accepts the first action of its focused row',
+      (tester) async {
+    await _withWorkbench(tester, TargetPlatform.windows, (center) async {
+      final handled = <String>[];
+      WorkbenchNotification add(String message, {bool keepOpen = false}) {
+        return center.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: message,
+          actions: [
+            WorkbenchNotificationAction(
+              label: 'First',
+              keepOpen: keepOpen,
+              run: () async => handled.add('$message first'),
+            ),
+            WorkbenchNotificationAction(
+              label: 'Second',
+              run: () async => handled.add('$message second'),
+            ),
+          ],
+        );
+      }
+
+      final older = add('Older action');
+      final latest = add('Latest action');
+      await tester.pump();
+      await _showCenter(tester);
+      Focus.of(tester.element(find.text(older.message))).requestFocus();
+      await tester.pump();
+      expect(focusedWorkbenchNotification()?.notification, same(older));
+      await _sendReboundChord(tester);
+      expect(handled, ['Older action first']);
+      expect(center.items, [latest]);
+
+      await tester.tap(find.byKey(const ValueKey('notification-center-close')));
+      await tester.pump();
+      _editorFocus(tester).requestFocus();
+      final plain = _notify(center, 'Newer without actions');
+      await tester.pump();
+      await _sendReboundChord(tester);
+      expect(handled, ['Older action first']);
+      expect(center.items, [plain, latest]);
+
+      center.dismiss(plain.id);
+      await tester.pump();
+      await _sendReboundChord(tester);
+      expect(handled, ['Older action first', 'Latest action first']);
+      expect(center.items, isEmpty);
+
+      final keep = add('Explicitly kept action', keepOpen: true);
+      await tester.pump();
+      await _sendReboundChord(tester);
+      expect(handled.last, 'Explicitly kept action first');
+      expect(center.items, [keep]);
+    },
+        keybindings:
+            '[{"key":"alt+f10","command":"notification.acceptPrimaryAction"}]');
+  });
 }
 
 WorkbenchNotification _notify(

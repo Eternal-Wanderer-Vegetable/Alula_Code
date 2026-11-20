@@ -1834,6 +1834,37 @@ void main() {
     }
   });
 
+  testWidgets('the palette can accept a new notification primary action',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final handled = <String>[];
+      WorkbenchNotification add(String message) => notifications.notify(
+            severity: WorkbenchNotificationSeverity.info,
+            message: message,
+            actions: [
+              WorkbenchNotificationAction(
+                label: 'First',
+                run: () async => handled.add(message),
+              ),
+            ],
+          );
+      final older = add('Earlier action notification');
+      final latest = add('Newest action notification');
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), '执行通知主操作');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 执行通知主操作')));
+      await tester.pumpAndSettle();
+      expect(handled, [latest.message]);
+      expect(notifications.items, [older]);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('notification commands drive the center from the palette',
       (tester) async {
     await _mountApp(tester);
