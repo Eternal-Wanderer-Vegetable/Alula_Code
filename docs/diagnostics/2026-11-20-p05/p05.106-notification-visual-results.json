@@ -1,0 +1,327 @@
+{
+  "reference": {
+    "chrome": "Chrome/150.0.7871.250",
+    "window": {
+      "pixelRatio": 1.25,
+      "width": 986,
+      "height": 634
+    },
+    "source": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+    "toast": {
+      "bounds": {
+        "x": 522.4000244140625,
+        "y": 445.20001220703125,
+        "width": 459.5999755859375,
+        "height": 156.79998779296875
+      },
+      "rows": [
+        {
+          "message": "Could not save the current document.",
+          "expanded": true,
+          "fullHeight": 68,
+          "width": 450,
+          "source": "Source: Visual Fixture",
+          "sourceVisible": true,
+          "actionLabels": [
+            "Retry",
+            "Open Log"
+          ]
+        },
+        {
+          "message": "The file changed on disk while the workbench was open. Review the changes on disk before saving this editor again to avoid overwriting the external update.",
+          "expanded": false,
+          "fullHeight": 34,
+          "width": 450,
+          "source": "",
+          "sourceVisible": false,
+          "actionLabels": []
+        },
+        {
+          "message": "Index refreshed.",
+          "expanded": false,
+          "fullHeight": 34,
+          "width": 450,
+          "source": "",
+          "sourceVisible": false,
+          "actionLabels": []
+        }
+      ]
+    },
+    "center": {
+      "bounds": {
+        "x": 526.4000244140625,
+        "y": 425.3999938964844,
+        "width": 451.5999755859375,
+        "height": 172.60000610351562
+      },
+      "rows": [
+        {
+          "message": "Could not save the current document.",
+          "expanded": true,
+          "fullHeight": 68,
+          "width": 450,
+          "source": "Source: Visual Fixture",
+          "sourceVisible": true,
+          "actionLabels": [
+            "Retry",
+            "Open Log"
+          ]
+        },
+        {
+          "message": "The file changed on disk while the workbench was open. Review the changes on disk before saving this editor again to avoid overwriting the external update.",
+          "expanded": false,
+          "fullHeight": 34,
+          "width": 450,
+          "source": "",
+          "sourceVisible": false,
+          "actionLabels": []
+        },
+        {
+          "message": "Index refreshed.",
+          "expanded": false,
+          "fullHeight": 34,
+          "width": 450,
+          "source": "",
+          "sourceVisible": false,
+          "actionLabels": []
+        }
+      ]
+    },
+    "expanded": {
+      "bounds": {
+        "x": 526.4000244140625,
+        "y": 347.3999938964844,
+        "width": 451.5999755859375,
+        "height": 250.60000610351562
+      },
+      "rows": [
+        {
+          "message": "Could not save the current document.",
+          "expanded": true,
+          "fullHeight": 68,
+          "width": 450,
+          "source": "Source: Visual Fixture",
+          "sourceVisible": true,
+          "actionLabels": [
+            "Retry",
+            "Open Log"
+          ]
+        },
+        {
+          "message": "The file changed on disk while the workbench was open. Review the changes on disk before saving this editor again to avoid overwriting the external update.",
+          "expanded": true,
+          "fullHeight": 112,
+          "width": 450,
+          "source": "Source: Visual Fixture",
+          "sourceVisible": true,
+          "actionLabels": []
+        },
+        {
+          "message": "Index refreshed.",
+          "expanded": false,
+          "fullHeight": 34,
+          "width": 450,
+          "source": "",
+          "sourceVisible": false,
+          "actionLabels": []
+        }
+      ]
+    },
+    "progress": {
+      "bounds": {
+        "x": 522.4000244140625,
+        "y": 524.4000244140625,
+        "width": 459.5999755859375,
+        "height": 77.5999755859375
+      },
+      "rows": [
+        {
+          "message": "Indexing workspace files",
+          "expanded": true,
+          "fullHeight": 68,
+          "width": 450,
+          "source": "Source: Visual Fixture",
+          "sourceVisible": true,
+          "actionLabels": [
+            "Cancel"
+          ]
+        }
+      ]
+    }
+  },
+  "alulaBaselineRevision": "17d43c82334abf13608acbcf7c2e4330cb521d38",
+  "alulaBaseline": {
+    "runner": "7866caf8252fa698d8c98232eb34bf132c0c7ead16857bda6c799f11678d635b",
+    "aot": "228778b62f73a255fe94838c14387d0e5f295a2c30fd8beaaefcdfa38850daac",
+    "window": {
+      "pixelRatio": 1.25,
+      "clientPx": [
+        1232,
+        793
+      ]
+    },
+    "toast": {
+      "surfacePx": [
+        794,
+        438,
+        1215,
+        744
+      ],
+      "fillLogical": [
+        336.8,
+        244.8
+      ],
+      "rightLogical": 13.6,
+      "bottomLogical": 39.2,
+      "toastYExtentsPx": [
+        [
+          438,
+          494
+        ],
+        [
+          515,
+          630
+        ],
+        [
+          651,
+          744
+        ]
+      ]
+    },
+    "center": {
+      "surfacePx": [
+        746,
+        483,
+        1218,
+        754
+      ],
+      "fillLogical": [
+        377.6,
+        216.8
+      ],
+      "rightLogical": 11.2,
+      "bottomLogical": 31.2
+    },
+    "standardExitCode": 0,
+    "progress": {
+      "surfacePx": [
+        794,
+        663,
+        1215,
+        744
+      ],
+      "fillLogical": [
+        336.8,
+        64.8
+      ],
+      "rightLogical": 13.6,
+      "bottomLogical": 39.2
+    },
+    "progressExitCode": 0
+  },
+  "alulaCorrected": {
+    "runner": "7866caf8252fa698d8c98232eb34bf132c0c7ead16857bda6c799f11678d635b",
+    "aot": "b48890e4016d41dfea07d04e5fcdea20c134b37a418eead11182b5cd3dd3e470",
+    "window": {
+      "pixelRatio": 1.25,
+      "clientPx": [
+        1232,
+        793
+      ]
+    },
+    "toast": {
+      "surfacePx": [
+        661,
+        561,
+        1220,
+        754
+      ],
+      "fillLogical": [
+        447.2,
+        154.4
+      ],
+      "rightLogical": 9.6,
+      "bottomLogical": 31.2,
+      "toastYExtentsPx": [
+        [
+          561,
+          636
+        ],
+        [
+          657,
+          691
+        ],
+        [
+          712,
+          754
+        ]
+      ]
+    },
+    "center": {
+      "surfacePx": [
+        661,
+        541,
+        1220,
+        754
+      ],
+      "fillLogical": [
+        447.2,
+        170.4
+      ],
+      "rightLogical": 9.6,
+      "bottomLogical": 31.2
+    },
+    "expanded": {
+      "surfacePx": [
+        661,
+        467,
+        1220,
+        754
+      ],
+      "fillLogical": [
+        447.2,
+        229.6
+      ],
+      "rightLogical": 9.6,
+      "bottomLogical": 31.2
+    },
+    "standardExitCode": 0,
+    "progress": {
+      "surfacePx": [
+        661,
+        678,
+        1220,
+        754
+      ],
+      "fillLogical": [
+        447.2,
+        60.8
+      ],
+      "rightLogical": 9.6,
+      "bottomLogical": 31.2
+    },
+    "progressExitCode": 0
+  },
+  "sourceHashes": {
+    "app/lib/workbench/notification_widgets.dart": "b7f772790025c02fce4d8d2a63256e79677e6738b515a9d1cf842a5da32445cd",
+    "app/lib/workbench/workbench_page.dart": "6e62234c774be61857d2ea826ae08e783f9b1d5e727632f99388f49e1c0aa137"
+  },
+  "fixture": {
+    "ordinary": "Index refreshed.",
+    "long": "The file changed on disk while the workbench was open. Review the changes on disk before saving this editor again to avoid overwriting the external update.",
+    "actionable": {
+      "message": "Could not save the current document.",
+      "actions": [
+        "Retry",
+        "Open Log"
+      ]
+    },
+    "progress": {
+      "message": "Indexing workspace files",
+      "percent": 25,
+      "cancellable": true
+    },
+    "origin": "Visual Fixture"
+  },
+  "comparisonSha256": "78ca448a1ccde71cb2f94bb45921fe59466ed9987ebb3dd76dd5c93377537c92"
+}

@@ -20871,39 +20871,35 @@ class _WorkbenchPageState extends State<WorkbenchPage>
 
   Widget _buildNotificationLayer() {
     if (_zenMode) return const SizedBox.shrink();
-    return Stack(
-      children: [
-        if (_notificationsVisible)
-          Positioned(
-            right: 10,
-            bottom: 30,
-            child: WorkbenchNotificationCenter(
-              center: _notifications,
-              sourceFilter: _notificationSourceFilter,
-              onSourceFilterChanged: (value) =>
-                  setState(() => _notificationSourceFilter = value),
-              onDismiss: (id) {
-                if (_notifications.byId(id) case final notification?) {
-                  _clearNotification(notification);
-                }
-              },
-              onClearAll: _clearNotifications,
-              onToggleDoNotDisturb: () => _notifications
-                  .setDoNotDisturb(!_notifications.doNotDisturb),
-              onClose: () => setState(() => _notificationsVisible = false),
-            ),
-          )
-        else
-          Positioned(
-            right: 12,
-            bottom: 30,
-            child: WorkbenchNotificationToasts(
-              center: _notifications,
-              windowFocused: _mainWindowFocused ?? true,
-              onDismissToast: _notifications.dismissToast,
-            ),
-          ),
-      ],
+    return Positioned(
+      top: 8,
+      left: 8,
+      right: 8,
+      bottom: 30,
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: _notificationsVisible
+            ? WorkbenchNotificationCenter(
+                center: _notifications,
+                sourceFilter: _notificationSourceFilter,
+                onSourceFilterChanged: (value) =>
+                    setState(() => _notificationSourceFilter = value),
+                onDismiss: (id) {
+                  if (_notifications.byId(id) case final notification?) {
+                    _clearNotification(notification);
+                  }
+                },
+                onClearAll: _clearNotifications,
+                onToggleDoNotDisturb: () => _notifications
+                    .setDoNotDisturb(!_notifications.doNotDisturb),
+                onClose: () => setState(() => _notificationsVisible = false),
+              )
+            : WorkbenchNotificationToasts(
+                center: _notifications,
+                windowFocused: _mainWindowFocused ?? true,
+                onDismissToast: _notifications.dismissToast,
+              ),
+      ),
     );
   }
 

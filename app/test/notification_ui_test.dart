@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alula_app/main.dart';
 import 'package:alula_app/workbench/layout_store.dart';
+import 'package:alula_app/workbench/notification_widgets.dart';
 import 'package:alula_app/workbench/notifications.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:flutter/foundation.dart';
@@ -226,6 +227,156 @@ void main() {
     } finally {
       await _unmountApp(tester);
       debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets(
+      'visual layout keeps the latest toast first and matches surface widths',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      for (final name in ['Older item', 'Newer item']) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: name,
+        );
+      }
+      await tester.pump();
+      final older = find.byKey(const ValueKey('notification-toast-1'));
+      final newer = find.byKey(const ValueKey('notification-toast-2'));
+      expect(
+          tester.getTopLeft(newer).dy, lessThan(tester.getTopLeft(older).dy));
+      final toast = tester.getRect(older);
+
+      await _showNotificationCenter(tester);
+      final panel =
+          tester.getRect(find.byKey(const ValueKey('notification-center')));
+      expect(panel.width, closeTo(toast.width, .01));
+      expect(panel.right, closeTo(toast.right, .01));
+      expect(panel.bottom, closeTo(toast.bottom, .01));
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('visual disclosure carries a long message from toast to center',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      const message =
+          'A long message that needs to wrap on a notification card '
+          'after the user chooses to expand it and show the source details.';
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: message,
+        source: 'Visual Fixture',
+      );
+      await tester.pump();
+      final text = find.text(message);
+      final source = find.text('来源：Visual Fixture');
+      expect(tester.widget<Text>(text).maxLines, 1);
+      expect(source, findsNothing);
+
+      await tester
+          .tap(find.byKey(const ValueKey('notification-toast-toggle-1')));
+      await tester.pump();
+      expect(tester.widget<Text>(text).maxLines, isNull);
+      expect(source, findsOneWidget);
+
+      await _showNotificationCenter(tester);
+      expect(tester.widget<Text>(text).maxLines, isNull);
+      expect(source, findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('notification-toggle-1')));
+      await tester.pump();
+      expect(tester.widget<Text>(text).maxLines, 1);
+      expect(source, findsNothing);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('visual surfaces fit narrow constraints with inline actions',
+      (tester) async {
+    Future<void> showSurface(Widget surface) => tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.bottomRight,
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxWidth: 344, maxHeight: 350),
+                child: surface,
+              ),
+            ),
+          ),
+        ));
+    notifications.notify(
+      severity: WorkbenchNotificationSeverity.error,
+      message: 'Could not save the current document.',
+      source: 'Visual Fixture',
+      actions: [
+        WorkbenchNotificationAction(label: 'Retry', run: () async {}),
+        WorkbenchNotificationAction(label: 'Open Log', run: () async {}),
+      ],
+    );
+    try {
+      await showSurface(WorkbenchNotificationToasts(
+        center: notifications,
+        onDismissToast: notifications.dismissToast,
+      ));
+
+      final toast = find.byKey(const ValueKey('notification-toast-1'));
+      final source = find.text('来源：Visual Fixture');
+      final action =
+          find.byKey(const ValueKey('notification-toast-action-1-0'));
+      expect(tester.getSize(toast).width, 344);
+      expect(
+          tester.getCenter(source).dy, closeTo(tester.getCenter(action).dy, 1));
+      expect(find.byKey(const ValueKey('notification-toast-toggle-1')),
+          findsNothing);
+
+      await showSurface(WorkbenchNotificationCenter(
+        center: notifications,
+        sourceFilter: null,
+        onSourceFilterChanged: (_) {},
+        onDismiss: notifications.dismiss,
+        onClearAll: notifications.clearAll,
+        onToggleDoNotDisturb: () {},
+        onClose: () {},
+      ));
+      final panel = find.byKey(const ValueKey('notification-center'));
+      expect(tester.getSize(panel).width, 344);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('visual progress track sits below its details and cancel button',
+      (tester) async {
+    await _mountApp(tester);
+    final progress = NotificationProgress(
+      total: 10,
+      worked: 2,
+      onCancel: () async {},
+    );
+    addTearDown(progress.dispose);
+    try {
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Indexing files',
+        progress: progress,
+      );
+      await tester.pump();
+      final line = find.byKey(const ValueKey('notification-progress-1'));
+      final cancel = find.byKey(const ValueKey('notification-toast-cancel-1'));
+      expect(tester.getTopLeft(line).dy,
+          greaterThanOrEqualTo(tester.getBottomLeft(cancel).dy));
+      expect(find.text('20%'), findsOneWidget);
+      expect(find.byKey(const ValueKey('notification-toast-close-1')),
+          findsNothing);
+    } finally {
+      await _unmountApp(tester);
     }
   });
 
