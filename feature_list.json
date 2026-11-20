@@ -2384,12 +2384,26 @@
     {
       "id": "feat-192",
       "name": "P05.140 LAY-10 跨组已选标签批量复制",
-      "description": "实现主窗口内同一选择的跨组复制修饰键拖放，覆盖共享文档、目标重复视图和不可复制标签的回退。",
+      "description": "实现主窗口内同一选择的跨组复制修饰键拖放，覆盖共享文件和普通未命名文档、目标重复视图、源选择和焦点。",
       "dependencies": [
         "feat-095",
         "feat-096",
         "feat-188",
         "feat-191"
+      ],
+      "status": "done",
+      "evidence": "产品 `19f79cf421c5a42e077e98c5a6485269059e9761` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证跨组多选复制、重复视图、共享文件及未命名文本、源组和目标活动项。专项 28/28，Flutter 1,665 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44806052076 四项及 Platform Availability 44806033831 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.140-tab-batch-copy.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-193",
+      "name": "P05.141 LAY-09 固定标签尺寸",
+      "description": "对照固定版 pinnedTabSizing，支持固定标签的 normal、compact、shrink，覆盖标签命中区域、独立固定行和普通标签。",
+      "dependencies": [
+        "feat-091",
+        "feat-092",
+        "feat-190"
       ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
