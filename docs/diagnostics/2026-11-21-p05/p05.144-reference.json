@@ -1,0 +1,76 @@
+{
+  "referenceCommit": "4bda7217fc83e8e838b1edd9ebaf21bb9b498c7e",
+  "driver": "Owned Code-OSS CDP renderer keyboard and pointer input",
+  "trace": {
+    "search-in-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [],
+      "panelShown": false
+    },
+    "search-in-new-panel-entry": {
+      "viewPart": "workbench.parts.panel",
+      "viewPartClasses": "part panel basepanel bottom pane-composite-part floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Problems",
+        "Search"
+      ],
+      "panelShown": true
+    },
+    "search-in-secondary": {
+      "viewPart": "workbench.parts.auxiliarybar",
+      "viewPartClasses": "part auxiliarybar basepanel right pane-composite-part floating-part-outer-right floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true
+    },
+    "search-reset-to-primary": {
+      "viewPart": "workbench.parts.sidebar",
+      "viewPartClasses": "part sidebar left pane-composite-part floating-part-outer-top floating-part-outer-bottom",
+      "query": "fixture",
+      "searchFocused": true,
+      "panelTabs": [
+        "Terminal"
+      ],
+      "panelShown": true
+    }
+  },
+  "New Panel Entry": [
+    "New Panel Entry",
+    "New Secondary Side Bar Entry",
+    "Explorer\nSide Bar",
+    "Source Control",
+    "Run and Debug",
+    "Test Results\nPanel",
+    "Refactor Preview",
+    "Problems",
+    "Output",
+    "Debug Console",
+    "Terminal",
+    "Ports",
+    "Chat\nSecondary Side Bar"
+  ],
+  "New Secondary Side Bar Entry": [
+    "New Side Bar Entry",
+    "New Secondary Side Bar Entry",
+    "Explorer\nSide Bar",
+    "Source Control",
+    "Run and Debug",
+    "Test Results\nPanel",
+    "Refactor Preview",
+    "Problems",
+    "Output",
+    "Debug Console",
+    "Terminal",
+    "Ports",
+    "Chat\nSecondary Side Bar"
+  ],
+  "exitCode": 0
+}

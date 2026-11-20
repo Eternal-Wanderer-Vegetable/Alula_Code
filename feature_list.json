@@ -2449,6 +2449,20 @@
         "feat-074",
         "feat-078"
       ],
+      "status": "done",
+      "evidence": "产品 `1e3fa2b601b9be3380de5fcd3dd82bfd7081e70e` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证内置视图面板入口、搜索查询与焦点、次侧栏和重置。专项 23/23，Flutter 1,675 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44825134506 四项及 Platform Availability 44825122656 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.144-view-move-panel.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-197",
+      "name": "P05.145 LAY-04/05 面板内置视图拖回侧栏",
+      "description": "对照固定版从内置视图的独立面板入口拖到侧栏，覆盖有效落点、取消、原内容与焦点。",
+      "dependencies": [
+        "feat-070",
+        "feat-072",
+        "feat-196"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",
