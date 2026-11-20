@@ -486,6 +486,9 @@ class KeybindingSet {
         result['editor.action.copyLinesDownAction'] =
             'ctrl+alt+shift+arrowdown';
         break;
+      case TargetPlatform.windows:
+        result['workbench.action.closeActiveEditor'] = 'ctrl+f4,ctrl+w';
+        break;
       default:
         break;
     }

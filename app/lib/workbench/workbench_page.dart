@@ -14855,7 +14855,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final active = group.active;
     if (active == null) return;
     if (!group.stickyDocIds.contains(active.id)) {
-      _closeDoc(active.id, group: group);
+      unawaited(_closeEditorTabSelection(group, active, keepSticky: true));
       return;
     }
 
@@ -14888,6 +14888,25 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     _focusEditorAfterLayout(selectedGroup, selectedDocument);
     _scheduleStateSave();
+  }
+
+  Future<void> _closeEditorTabSelection(
+    EditorGroup group,
+    OpenDoc target, {
+    bool keepSticky = false,
+  }) async {
+    if (!group.docs.contains(target)) return;
+    final includeSelection = group._isTabSelected(target.id);
+    await _requestCloseEditorViews([
+      if (!keepSticky || !group.stickyDocIds.contains(target.id))
+        (group: group, doc: target),
+      if (includeSelection)
+        for (final doc in group.docs)
+          if (!identical(doc, target) &&
+              group._isTabSelected(doc.id) &&
+              (!keepSticky || !group.stickyDocIds.contains(doc.id)))
+            (group: group, doc: doc),
+    ]);
   }
 
   Future<void> _closeFromActiveEditor(EditorTabCloseOperation action) async {
@@ -15320,6 +15339,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (owner.previewDocId == id) owner.previewDocId = null;
     owner.stickyDocIds.remove(id);
     owner.recentDocIds.remove(id);
+    owner._inactiveSelectedTabIds.remove(id);
+    if (owner._tabSelectionAnchorId == id) owner._tabSelectionAnchorId = null;
     owner.docs.remove(doc);
     final nextActiveId = wasActive ? _mostRecentDocument(owner)?.id : null;
     if (owner.docs.isEmpty) {
@@ -23484,11 +23505,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         await _moveEditorToNewWindow(group, doc);
         break;
       case 'close':
-        await _closeTabsForAction(
-          group,
-          doc,
-          EditorTabCloseOperation.close,
-        );
+        await _closeEditorTabSelection(group, doc);
         break;
       case 'close-others':
         await _closeTabsForAction(
@@ -23881,6 +23898,69 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     );
   }
 
+  void _selectEditorTab(EditorGroup group, OpenDoc target) {
+    if (!group.docs.contains(target)) return;
+    final keyboard = HardwareKeyboard.instance;
+    final toggle = defaultTargetPlatform == TargetPlatform.macOS
+        ? keyboard.isMetaPressed
+        : keyboard.isControlPressed;
+    final selected = <int>{
+      for (final doc in group.docs)
+        if (group._isTabSelected(doc.id)) doc.id,
+    };
+    var activeId = target.id;
+    var anchorId = group._tabSelectionAnchorId;
+    if (keyboard.isShiftPressed) {
+      if (!selected.contains(anchorId)) anchorId = group.active?.id;
+      anchorId ??= target.id;
+      final anchor = group.docs.indexWhere((doc) => doc.id == anchorId);
+      final end = group.docs.indexOf(target);
+      final step = anchor < end ? -1 : 1;
+      // Crossing the anchor drops the contiguous run on the opposite side.
+      for (var i = anchor + step; i >= 0 && i < group.docs.length; i += step) {
+        if (!selected.remove(group.docs[i].id)) break;
+      }
+      final from = anchor < end ? anchor : end;
+      final to = anchor < end ? end : anchor;
+      for (var i = from; i <= to; i++) {
+        selected.add(group.docs[i].id);
+      }
+    } else if (toggle) {
+      if (selected.remove(target.id)) {
+        if (selected.isEmpty) return;
+        activeId = group.activeDocId == target.id
+            ? group.recentDocIds.firstWhere(
+                selected.contains,
+                orElse: () => selected.first,
+              )
+            : group.activeDocId!;
+        if (anchorId == target.id) anchorId = null;
+      } else {
+        selected.add(target.id);
+        anchorId = target.id;
+      }
+    } else {
+      selected.clear();
+      anchorId = null;
+    }
+
+    final active = group.docs.firstWhere((doc) => doc.id == activeId);
+    final previous = _active;
+    if (previous != null && !identical(previous, active)) {
+      _flushInput(previous, commitComposition: true);
+    }
+    setState(() {
+      group.activeDocId = activeId;
+      group._inactiveSelectedTabIds.addAll(selected..remove(activeId));
+      group._tabSelectionAnchorId = anchorId;
+      _noteActiveDocument(group, activeId);
+      _focusedRegion = group.region;
+    });
+    _syncCommandContext();
+    _scheduleStateSave();
+    _focusEditorAfterLayout(group, active, scrollOffset: active._scrollOffset);
+  }
+
   /// 单个标签（W2-1）：点击激活 / 中键关闭 / 拖动排序。
   Widget _buildTab(
     EditorGroup g,
@@ -23895,6 +23975,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       languageId: d.path == null ? null : _languageIdOf(d.path!),
     );
     final isSticky = g.stickyDocIds.contains(d.id);
+    final isActive = d.id == g.activeDocId;
+    final isSelected = g._isTabSelected(d.id);
     final label = Tooltip(
       message: isSticky ? '$displayLabel（已固定）' : displayLabel,
       child: Semantics(
@@ -23922,24 +24004,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         emphasized: d.id == g.activeDocId ||
             d.isDirty ||
             hoveredTarget == (region: g.region, docId: d.id),
-        onPressed: () => _closeDoc(d.id, group: g),
+        onPressed: () => unawaited(_closeEditorTabSelection(g, d)),
       ),
     );
     final tab = InkWell(
       onSecondaryTapUp: (details) => _showEditorTabContextMenu(details, g, d),
-      onTap: () {
-        final current = _active;
-        if (current != null && !identical(current, d)) {
-          _flushInput(current, commitComposition: true);
-        }
-        setState(() {
-          g.activeDocId = d.id;
-          _noteActiveDocument(g, d.id);
-          _focusedRegion = g.region;
-        });
-        _syncCommandContext();
-        _scheduleStateSave();
-      },
+      onTap: () => _selectEditorTab(g, d),
       child: Container(
         key: ValueKey('tab-${d.id}'),
         padding: actionLocation == EditorTabActionLocation.left
@@ -23949,10 +24019,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                     _editorTabSizing.value == EditorTabSizing.fixed ? 8 : 12,
               ),
         decoration: BoxDecoration(
-          color: d.id == g.activeDocId
+          color: isActive
               ? const Color(0xFF14161A)
-              : Colors.transparent,
-          border: d.id == g.activeDocId
+              : isSelected
+                  ? const Color(0xFF283245)
+                  : Colors.transparent,
+          border: isActive
               ? const Border(
                   top: BorderSide(color: Colors.blueAccent, width: 2))
               : const Border(
@@ -24037,6 +24109,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         }
       },
       child: Semantics(
+        key: ValueKey('editor-tab-semantics-${g.region}-${d.id}'),
+        selected: isSelected,
         customSemanticsActions: {
           CustomSemanticsAction(label: isSticky ? '取消固定编辑器' : '固定编辑器'): () =>
               _setEditorSticky(g, d, !isSticky),
@@ -24125,10 +24199,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                   // 中键关闭（kMiddleMouseButton），不影响左键激活
                   onPointerDown: (e) {
                     if (e.buttons == kMiddleMouseButton) {
-                      _closeDoc(d.id, group: g);
+                      unawaited(_closeEditorTabSelection(g, d));
                     }
                   },
-                  child: tab,
+                  child: TextFieldTapRegion(child: tab),
                 ),
               ),
             ),
@@ -26611,10 +26685,23 @@ class EditorGroup {
   final List<int> recentDocIds = <int>[];
   int lastActivationOrder = 0;
   bool locked = false;
-  int? activeDocId;
+  int? _activeDocId;
+  final Set<int> _inactiveSelectedTabIds = <int>{};
+  int? _tabSelectionAnchorId;
   int? previewDocId;
   List<BreadcrumbSymbolPathEntry> breadcrumbSymbolPath = const [];
   String breadcrumbSymbolDocumentKey = '';
+
+  int? get activeDocId => _activeDocId;
+
+  set activeDocId(int? value) {
+    _activeDocId = value;
+    _inactiveSelectedTabIds.clear();
+    _tabSelectionAnchorId = null;
+  }
+
+  bool _isTabSelected(int id) =>
+      id == _activeDocId || _inactiveSelectedTabIds.contains(id);
 
   OpenDoc? get active {
     for (final d in docs) {

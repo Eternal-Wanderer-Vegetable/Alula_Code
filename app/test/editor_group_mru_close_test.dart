@@ -7,7 +7,12 @@ import 'package:alula_app/workbench/layout_model.dart';
 import 'package:alula_app/workbench/layout_store.dart';
 import 'package:alula_app/workbench/session_store.dart';
 import 'package:alula_app/workbench/workbench_page.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
+import 'package:flutter/gestures.dart'
+    show PointerDeviceKind, kSecondaryMouseButton;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Future<void> _deleteDirectoryWithRetry(Directory directory) async {
@@ -50,7 +55,8 @@ void main() {
         autoFolder: workspace.path,
         layoutStore: layoutStore,
         sessionStore: sessionStore,
-        keybindingsStore: KeybindingsStore(path: '${baseOf()}/keybindings.json'),
+        keybindingsStore:
+            KeybindingsStore(path: '${baseOf()}/keybindings.json'),
         onCommandServiceReady: (service) => commands = service,
       ),
     ));
@@ -181,6 +187,199 @@ void main() {
       expect(_strip('editor-2'), findsNothing);
       expect(sessionStore.tryLoad()?['focused'], 'editor-3',
           reason: 'the MRU chain continues across consecutive group closes');
+    },
+  );
+
+  Future<void> seedSelectionTabs() async {
+    final files = ['alpha', 'bravo', 'charlie', 'delta', 'echo', 'other']
+        .map((name) => File('${workspace.path}/$name.txt')
+          ..writeAsStringSync('$name fixture\n'))
+        .toList();
+    final layout = defaultLayout();
+    layout.splitLeaf('editor', 'editor-2', Axis.horizontal);
+    layoutStore.save(layout);
+    sessionStore.save({
+      'v': 1,
+      'focused': 'editor',
+      'editorTabSizing': 'shrink',
+      'groups': [
+        {
+          'region': 'editor',
+          'active': 14,
+          'locked': true,
+          'docs': [
+            for (var index = 0; index < 5; index++)
+              {'id': index + 10, 'path': files[index].path},
+          ],
+        },
+        {
+          'region': 'editor-2',
+          'active': 15,
+          'locked': true,
+          'docs': [
+            {'id': 15, 'path': files.last.path}
+          ],
+        },
+      ],
+    });
+  }
+
+  Future<void> clickTab(
+    WidgetTester tester,
+    int id, {
+    LogicalKeyboardKey? modifier,
+    String region = 'editor',
+  }) async {
+    if (modifier != null) await tester.sendKeyDownEvent(modifier);
+    await tester.tap(
+      find.byKey(ValueKey('editor-tab-label-$region-$id')),
+      kind: PointerDeviceKind.mouse,
+    );
+    if (modifier != null) await tester.sendKeyUpEvent(modifier);
+    await tester.pump(const Duration(milliseconds: 650));
+    await tester.pumpAndSettle();
+  }
+
+  void expectSelected(
+    WidgetTester tester,
+    Set<int> ids,
+    int active, {
+    String region = 'editor',
+  }) {
+    final selected = tester
+        .widgetList<Semantics>(find.descendant(
+          of: _strip(region),
+          matching: find.byType(Semantics),
+        ))
+        .where((widget) => widget.properties.selected == true);
+    expect(
+      selected.map((widget) => (widget.key as ValueKey<String>).value).toSet(),
+      {for (final id in ids) 'editor-tab-semantics-$region-$id'},
+    );
+    final groups = sessionStore.tryLoad()!['groups'] as List;
+    final saved =
+        groups.cast<Map>().singleWhere((group) => group['region'] == region);
+    expect(saved['active'], active);
+  }
+
+  testWidgets(
+    'modified editor-tab clicks keep a group selection and MRU fallback',
+    variant: const TargetPlatformVariant({
+      TargetPlatform.windows,
+      TargetPlatform.macOS,
+    }),
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedSelectionTabs();
+      await mountPage(tester);
+      final toggle = defaultTargetPlatform == TargetPlatform.macOS
+          ? LogicalKeyboardKey.metaLeft
+          : LogicalKeyboardKey.controlLeft;
+      expectSelected(tester, {14}, 14);
+      await clickTab(tester, 11);
+      await clickTab(tester, 13, modifier: toggle);
+      expectSelected(tester, {11, 13}, 13);
+      await clickTab(tester, 10, modifier: toggle);
+      expectSelected(tester, {10, 11, 13}, 10);
+      await clickTab(tester, 10, modifier: toggle);
+      expectSelected(tester, {11, 13}, 13);
+      await clickTab(tester, 11, modifier: toggle);
+      await clickTab(tester, 13, modifier: toggle);
+      expectSelected(tester, {13}, 13);
+
+      await clickTab(tester, 11);
+      await clickTab(tester, 13, modifier: LogicalKeyboardKey.shiftLeft);
+      expectSelected(tester, {11, 12, 13}, 13);
+      await clickTab(tester, 10, modifier: LogicalKeyboardKey.shiftLeft);
+      expectSelected(tester, {10, 11}, 10);
+      await clickTab(tester, 15, region: 'editor-2');
+      expectSelected(tester, {15}, 15, region: 'editor-2');
+      expectSelected(tester, {10, 11}, 10);
+      await clickTab(tester, 11);
+      expectSelected(tester, {11}, 11);
+    },
+  );
+
+  testWidgets(
+    'editor-tab batch close uses one dirty confirmation and respects its scope',
+    variant: const TargetPlatformVariant({TargetPlatform.windows}),
+    (tester) async {
+      await prepareWorkspace(tester);
+      await seedSelectionTabs();
+      await mountPage(tester);
+      Future<void> contextClose(int id) async {
+        await tester.tapAt(
+          tester.getCenter(find.byKey(ValueKey('editor-tab-label-editor-$id'))),
+          kind: PointerDeviceKind.mouse,
+          buttons: kSecondaryMouseButton,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(PopupMenuItem<String>, '关闭'));
+        await tester.pumpAndSettle();
+      }
+
+      final field = find.descendant(
+        of: find.byKey(const ValueKey('wb-region-editor')),
+        matching: find.byType(EditableText),
+      );
+      await clickTab(tester, 10);
+      await tester.enterText(field, 'alpha changed');
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(await commands!.execute('workbench.action.splitEditorInGroup'),
+          CommandExecutionStatus.executed);
+      await tester.pumpAndSettle();
+      expect(field, findsNWidgets(2));
+      await clickTab(tester, 11);
+      await tester.enterText(field, 'bravo changed');
+      await tester.pump(const Duration(milliseconds: 600));
+      await clickTab(tester, 10, modifier: LogicalKeyboardKey.controlLeft);
+      expectSelected(tester, {10, 11}, 10);
+      await contextClose(14);
+      expect(_tabIn('editor', 14), findsNothing);
+      expectSelected(tester, {10, 11}, 10);
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.f4);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      final dialog = find.byType(AlertDialog);
+      expect(dialog, findsOneWidget);
+      for (final name in ['alpha.txt', 'bravo.txt']) {
+        expect(find.descendant(of: dialog, matching: find.textContaining(name)),
+            findsWidgets);
+      }
+      await tester.tap(find.text('取消'));
+      await tester.pumpAndSettle();
+      expectSelected(tester, {10, 11}, 10);
+      expect(_tabIn('editor', 12), findsOneWidget);
+      expect(_tabIn('editor-2', 15), findsOneWidget);
+
+      await contextClose(11);
+      expect(dialog, findsOneWidget);
+      await tester.tap(find.text('不保存'));
+      await tester.pumpAndSettle();
+      expect(_tabIn('editor', 10), findsNothing);
+      expect(_tabIn('editor', 11), findsNothing);
+      expect(_tabIn('editor', 12), findsOneWidget);
+      expect(_tabIn('editor', 13), findsOneWidget);
+      expect(_tabIn('editor-2', 15), findsOneWidget);
+      for (final name in ['alpha', 'bravo']) {
+        expect(File('${workspace.path}/$name.txt').readAsStringSync(),
+            '$name fixture\n');
+      }
+
+      await clickTab(tester, 12);
+      expect(await commands!.execute('workbench.action.pinEditor'),
+          CommandExecutionStatus.executed);
+      await tester.pumpAndSettle();
+      await clickTab(tester, 13, modifier: LogicalKeyboardKey.controlLeft);
+      expectSelected(tester, {12, 13}, 13);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyW);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      expect(_tabIn('editor', 12), findsOneWidget);
+      expect(_tabIn('editor', 13), findsNothing);
     },
   );
 }
