@@ -2434,6 +2434,21 @@
         "feat-188",
         "feat-194"
       ],
+      "status": "done",
+      "evidence": "产品 `cd588649d3446f1adb82b0dfb95f2ad141d17439` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证四种固定标签关闭保护、编辑器焦点、明确关闭和原有整批取消。专项 32/32，Flutter 1,673 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44819630190 四项及 Platform Availability 44819617013 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.143-pinned-tab-close.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-196",
+      "name": "P05.144 LAY-04/05 内置视图移入面板",
+      "description": "对照 Move View 的面板目的地，实现内置视图经命令移入面板、移回侧栏、持久化及恢复默认位置。",
+      "dependencies": [
+        "feat-072",
+        "feat-073",
+        "feat-074",
+        "feat-078"
+      ],
       "status": "not-started",
       "evidence": "等待固定版行为对照、实现和平台验收。",
       "track": "vscode-builtin-parity",

@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-21 更新）
 
+- 2026-11-21 完成 P05.143 / feat-195。产品 `cd588649d3446f1adb82b0dfb95f2ad141d17439` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证四种固定标签关闭保护、编辑器焦点、明确关闭和原有整批取消。专项 32/32，Flutter 1,673 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44819630190 四项及 Platform Availability 44819617013 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.143-pinned-tab-close.md。
+
 - 2026-11-21 完成 P05.142 / feat-194。产品 `d5b629ea426395bf45942379b8eb4a3660027060` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签停靠、窄宽滚动、范围恢复、换行和焦点。专项 35/35，Flutter 1,668 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44814735539 四项及 Platform Availability 44814716139 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.142-pinned-tab-scroll.md。
 
 - 2026-11-21 完成 P05.141 / feat-193。产品 `de33306a06c5cec10ee815a508863dad5cea7ccd` 已推草稿 PR #3。固定版、Windows 实机与 Linux Xvfb 验证固定标签紧凑 28、收缩 80、两侧命中、普通标签和独立固定行。普通按内容计宽的绝对差异见证据。专项 25/25，Flutter 1,667 passed / 2 skipped，完整本地门禁通过。同一 SHA 的 PR CI 44810999031 四项及 Platform Availability 44810984769 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-21-p05/p05.141-pinned-tab-sizing.md。
