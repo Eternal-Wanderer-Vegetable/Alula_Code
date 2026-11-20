@@ -470,6 +470,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   final ValueNotifier<bool> _pinnedTabsOnSeparateRow = ValueNotifier(false);
   final ValueNotifier<EditorPinnedTabSizing> _editorPinnedTabSizing =
       ValueNotifier(EditorPinnedTabSizing.normal);
+  final ValueNotifier<PinnedEditorCloseProtection> _pinnedEditorCloseProtection =
+      ValueNotifier(PinnedEditorCloseProtection.keyboardAndMouse);
   final ValueNotifier<({String region, int docId})?> _editorTabHoveredTarget =
       ValueNotifier(null);
   // 标签拖动开始时记录源组 region；文档 id 可被多组共享，无法在 drop 时消歧。
@@ -983,6 +985,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       shortcut: _keybindings.shortcutFor(
         'workbench.action.closeActiveEditor',
       ),
+      when: 'editorActive',
+      enablement: 'editorActive',
+    );
+    reg(
+      'workbench.action.closeActivePinnedEditor',
+      '文件',
+      '明确关闭活动编辑器',
+      () async {
+        final group = _focused;
+        final active = group.active;
+        if (active != null) await _closeEditorTabSelection(group, active);
+      },
       when: 'editorActive',
       enablement: 'editorActive',
     );
@@ -1805,6 +1819,23 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           EditorPinnedTabSizing.shrink => '使用收缩固定标签宽度',
         },
         () async => _setEditorPinnedTabSizing(sizing),
+      );
+    }
+    for (final protection in PinnedEditorCloseProtection.values) {
+      reg(
+        'workbench.action.editorTabs.pinnedCloseProtection.${protection.name}',
+        '查看',
+        switch (protection) {
+          PinnedEditorCloseProtection.keyboardAndMouse => '键盘和中键保护固定标签',
+          PinnedEditorCloseProtection.keyboard => '键盘保护固定标签',
+          PinnedEditorCloseProtection.mouse => '中键保护固定标签',
+          PinnedEditorCloseProtection.never => '允许键盘和中键关闭固定标签',
+        },
+        () async {
+          if (_pinnedEditorCloseProtection.value == protection) return;
+          setState(() => _pinnedEditorCloseProtection.value = protection);
+          _scheduleStateSave();
+        },
       );
     }
     for (final location in EditorTabActionLocation.values) {
@@ -4318,6 +4349,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'editorWrapTabs': _editorTabWrap.value,
         'pinnedTabsOnSeparateRow': _pinnedTabsOnSeparateRow.value,
         'pinnedTabSizing': _editorPinnedTabSizing.value.name,
+        'preventPinnedEditorClose': _pinnedEditorCloseProtection.value.name,
         'focused': _focusedRegion,
         'openEditorsCollapsed': _openEditorsCollapsed,
         'openEditorsSortOrder': _openEditorsSortOrder.name,
@@ -4460,6 +4492,10 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _pinnedTabsOnSeparateRow.value = data['pinnedTabsOnSeparateRow'] == true;
     _editorPinnedTabSizing.value =
         EditorPinnedTabSizing.fromSessionValue(data['pinnedTabSizing']);
+    _pinnedEditorCloseProtection.value =
+        PinnedEditorCloseProtection.fromSessionValue(
+      data['preventPinnedEditorClose'],
+    );
     _openEditorsCollapsed = data['openEditorsCollapsed'] == true;
     _openEditorsSortOrder = OpenEditorsSortOrder.parse(data['openEditorsSortOrder']);
     _modalEditorUseMode =
@@ -14958,8 +14994,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     final group = _focused;
     final active = group.active;
     if (active == null) return;
-    if (!group.stickyDocIds.contains(active.id)) {
-      unawaited(_closeEditorTabSelection(group, active, keepSticky: true));
+    final keepSticky = _pinnedEditorCloseProtection.value.protectsKeyboard;
+    if (!keepSticky || !group.stickyDocIds.contains(active.id)) {
+      unawaited(_closeEditorTabSelection(group, active, keepSticky: keepSticky));
       return;
     }
 
@@ -15000,6 +15037,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     bool keepSticky = false,
   }) async {
     if (!group.docs.contains(target)) return;
+    final activeBefore = _focusedRegion == group.region ? group.active : null;
     final includeSelection = group._isTabSelected(target.id);
     await _requestCloseEditorViews([
       if (!keepSticky || !group.stickyDocIds.contains(target.id))
@@ -15011,6 +15049,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
               (!keepSticky || !group.stickyDocIds.contains(doc.id)))
             (group: group, doc: doc),
     ]);
+    if (!mounted || activeBefore == null || group.docs.contains(activeBefore)) {
+      return;
+    }
+    if (_groups.containsKey(group.region) && _focusedRegion != group.region) {
+      return;
+    }
+    final nextGroup = _focused;
+    final next = nextGroup.active;
+    if (next != null) {
+      _focusEditorAfterLayout(nextGroup, next,
+          scrollOffset: next._scrollOffset);
+    }
   }
 
   Future<void> _closeFromActiveEditor(EditorTabCloseOperation action) async {
@@ -20976,6 +21026,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabWrap.dispose();
     _pinnedTabsOnSeparateRow.dispose();
     _editorPinnedTabSizing.dispose();
+    _pinnedEditorCloseProtection.dispose();
     _commitMessage.dispose();
     if (identical(_notifications.allowOptionalToast, _optionalToastAdmission)) {
       _notifications.allowOptionalToast = null;
@@ -21301,7 +21352,33 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                                       _editorPinnedTabSizing.value == sizing,
                                 ),
                             ]),
-                            TitleMenuItem.submenu('关闭操作位置', children: [
+                            TitleMenuItem.submenu('固定标签关闭保护', children: [
+                                    for (final mode
+                                        in PinnedEditorCloseProtection.values)
+                                      TitleMenuItem(
+                                        switch (mode) {
+                                          PinnedEditorCloseProtection
+                                                .keyboardAndMouse =>
+                                            '键盘和中键',
+                                          PinnedEditorCloseProtection
+                                                .keyboard =>
+                                            '仅键盘',
+                                          PinnedEditorCloseProtection.mouse =>
+                                            '仅中键',
+                                          PinnedEditorCloseProtection.never =>
+                                            '允许关闭',
+                                        },
+                                        commandId:
+                                            'workbench.action.editorTabs.pinnedCloseProtection.${mode.name}',
+                                        checkedListenable:
+                                            _pinnedEditorCloseProtection,
+                                        checkedBuilder: () =>
+                                            _pinnedEditorCloseProtection
+                                                .value ==
+                                            mode,
+                                      ),
+                                  ]),
+                                  TitleMenuItem.submenu('关闭操作位置', children: [
                               TitleMenuItem(
                                 '左侧',
                                 commandId:
@@ -24490,7 +24567,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
                 child: Listener(
                   // 中键关闭（kMiddleMouseButton），不影响左键激活
                   onPointerDown: (e) {
-                    if (e.buttons == kMiddleMouseButton) {
+                    if (e.buttons == kMiddleMouseButton &&
+                        !(isSticky &&
+                            _pinnedEditorCloseProtection.value.protectsMouse)) {
                       unawaited(_closeEditorTabSelection(g, d));
                     }
                   },

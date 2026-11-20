@@ -2,6 +2,24 @@ import 'package:alula_app/workbench/editor_tab_close_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('pinned close protection accepts four values with a legacy default', () {
+    expect(PinnedEditorCloseProtection.fromSessionValue(null),
+        PinnedEditorCloseProtection.keyboardAndMouse);
+    expect(PinnedEditorCloseProtection.fromSessionValue('invalid'),
+        PinnedEditorCloseProtection.keyboardAndMouse);
+    for (final (name, keyboard, mouse) in [
+      ('keyboardAndMouse', true, true),
+      ('keyboard', true, false),
+      ('mouse', false, true),
+      ('never', false, false),
+    ]) {
+      final mode = PinnedEditorCloseProtection.fromSessionValue(name);
+      expect(mode.name, name);
+      expect(mode.protectsKeyboard, keyboard);
+      expect(mode.protectsMouse, mouse);
+    }
+  });
+
   const ids = [10, 20, 30, 40];
   const sticky = {20, 40};
   const clean = {10, 20, 30, 40};

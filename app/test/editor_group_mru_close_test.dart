@@ -11,7 +11,7 @@ import 'package:alula_app/workbench/workbench_page.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/gestures.dart'
-    show PointerDeviceKind, kSecondaryMouseButton;
+    show PointerDeviceKind, kMiddleMouseButton, kSecondaryMouseButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -261,6 +261,118 @@ void main() {
     final saved =
         groups.cast<Map>().singleWhere((group) => group['region'] == region);
     expect(saved['active'], active);
+  }
+
+  for (final (mode, keyboard, mouse) in [
+    ('keyboardAndMouse', true, true),
+    ('keyboard', true, false),
+    ('mouse', false, true),
+    ('never', false, false),
+  ]) {
+    testWidgets(
+      'fixed-tab close protection applies by gesture in $mode mode',
+      variant: const TargetPlatformVariant({TargetPlatform.windows}),
+      (tester) async {
+        await prepareWorkspace(tester);
+        await seedSelectionTabs();
+        final saved = sessionStore.tryLoad()!;
+        final groups = saved['groups'] as List;
+        (groups.first as Map)['sticky'] = [10, 11];
+        if (mode != 'keyboardAndMouse') {
+          saved['preventPinnedEditorClose'] = mode;
+        }
+        sessionStore.save(saved);
+        await mountPage(tester);
+
+        Future<void> pressClose() async {
+          await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+          await tester.sendKeyEvent(LogicalKeyboardKey.f4);
+          await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+          await tester.pump(const Duration(milliseconds: 700));
+          await tester.pumpAndSettle();
+        }
+
+        Future<void> mouseClose(int id) async {
+          await tester.tapAt(
+            tester
+                .getCenter(find.byKey(ValueKey('editor-tab-label-editor-$id'))),
+            kind: PointerDeviceKind.mouse,
+            buttons: kMiddleMouseButton,
+          );
+          await tester.pump(const Duration(milliseconds: 700));
+          await tester.pumpAndSettle();
+        }
+
+        await clickTab(tester, 14);
+        await clickTab(tester, 10);
+        await pressClose();
+        expect(_tabIn('editor', 10), keyboard ? findsOneWidget : findsNothing);
+        if (keyboard) expectSelected(tester, {14}, 14);
+
+        expect(
+          tester.widget<RustTextInputField>(find.descendant(
+            of: find.byKey(const ValueKey('wb-region-editor')),
+            matching: find.byType(RustTextInputField),
+          )).focusNode!.hasFocus,
+          isTrue,
+        );
+
+        await mouseClose(11);
+        expect(_tabIn('editor', 11), mouse ? findsOneWidget : findsNothing);
+
+        if (mode == 'keyboardAndMouse') {
+          await clickTab(tester, 10);
+          await clickTab(tester, 12, modifier: LogicalKeyboardKey.controlLeft);
+          await pressClose();
+          expect(_tabIn('editor', 10), findsOneWidget);
+          expect(_tabIn('editor', 12), findsNothing);
+
+          await clickTab(tester, 11);
+          final field = find.descendant(
+            of: find.byKey(const ValueKey('wb-region-editor')),
+            matching: find.byType(EditableText),
+          );
+          await tester.enterText(field, 'unsaved bravo 😀');
+          await tester.pump(const Duration(milliseconds: 600));
+          await clickTab(tester, 14, modifier: LogicalKeyboardKey.controlLeft);
+          await mouseClose(14);
+          final dialog = find.byType(AlertDialog);
+          expect(dialog, findsOneWidget);
+          expect(
+              find.descendant(
+                  of: dialog, matching: find.textContaining('bravo.txt')),
+              findsWidgets);
+          expect(
+              find.descendant(
+                  of: dialog, matching: find.textContaining('echo.txt')),
+              findsNothing);
+          await tester.tap(find.text('取消'));
+          await tester.pumpAndSettle();
+          expect(_tabIn('editor', 11), findsOneWidget);
+          expect(_tabIn('editor', 14), findsOneWidget);
+          expect(File('${workspace.path}/bravo.txt').readAsStringSync(),
+              'bravo fixture\n');
+        }
+
+        await clickTab(tester, 13);
+        expect(await commands!.execute('workbench.action.pinEditor'),
+            CommandExecutionStatus.executed);
+        await tester.pumpAndSettle();
+        expect(
+            await commands!.execute('workbench.action.closeActivePinnedEditor'),
+            CommandExecutionStatus.executed);
+        await tester.pumpAndSettle();
+        expect(_tabIn('editor', 13), findsNothing);
+        expect(_tabIn('editor-2', 15), findsOneWidget);
+
+        const config =
+            'workbench.action.editorTabs.pinnedCloseProtection.mouse';
+        expect(
+            await commands!.execute(config), CommandExecutionStatus.executed);
+        await tester.pump(const Duration(milliseconds: 700));
+        expect(sessionStore.tryLoad()?['preventPinnedEditorClose'], 'mouse');
+      },
+    );
   }
 
   testWidgets(

@@ -1,3 +1,22 @@
+/// Which implicit gestures protect a pinned editor.
+enum PinnedEditorCloseProtection {
+  keyboardAndMouse,
+  keyboard,
+  mouse,
+  never;
+
+  static PinnedEditorCloseProtection fromSessionValue(Object? value) =>
+      switch (value) {
+        'keyboard' => keyboard,
+        'mouse' => mouse,
+        'never' => never,
+        _ => keyboardAndMouse,
+      };
+
+  bool get protectsKeyboard => this == keyboardAndMouse || this == keyboard;
+  bool get protectsMouse => this == keyboardAndMouse || this == mouse;
+}
+
 /// The close operation selected from an editor tab or editor group.
 enum EditorTabCloseOperation {
   close,
