@@ -911,11 +911,27 @@ class _NotificationContentState extends State<_NotificationContent> {
 
   Widget _secondaryMenu(WorkbenchNotification notification, String prefix) {
     final focusNode = _secondaryMenuFocusNode ??= FocusNode();
+    final sourceId = notification.sourceId;
+    final source = widget.center.sourceFilters[sourceId];
     return MenuAnchor(
       childFocusNode: focusNode,
       onOpen: () => widget.onSecondaryMenuVisibilityChanged?.call(true),
       onClose: () => widget.onSecondaryMenuVisibilityChanged?.call(false),
       menuChildren: [
+        if (sourceId != null && source != null) ...[
+          MenuItemButton(
+            key: ValueKey('$prefix-source-dnd-${notification.id}'),
+            onPressed: () => widget.center.setSourceDoNotDisturb({
+              sourceId: !source.muted,
+            }),
+            child: Text(
+              source.muted
+                  ? '接收来自“${source.label}”的所有通知'
+                  : '关闭来自“${source.label}”的信息和警告',
+            ),
+          ),
+          const Divider(height: 1),
+        ],
         for (final (index, action) in notification.secondaryActions.indexed)
           MenuItemButton(
             key: ValueKey('$prefix-secondary-${notification.id}-$index'),

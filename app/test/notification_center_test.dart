@@ -74,6 +74,32 @@ void main() {
       expect(center.toastIds.length, 1);
     });
 
+    test(
+        'source preferences restore bounded, validated entries and current labels',
+        () {
+      final center = NotificationCenter();
+      center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Already observed',
+        source: 'Current label',
+        sourceId: 'fixture.0',
+      );
+      center.restoreSourceFilters({
+        'invalid-key': {'label': 'Invalid', 'muted': 'yes'},
+        '': {'label': 'Missing ID', 'muted': true},
+        for (var i = 0; i < NotificationCenter.defaultMaxNotifications + 2; i++)
+          'fixture.$i': {'label': 'Stored label $i', 'muted': true},
+      });
+      expect(center.sourceFilters,
+          hasLength(NotificationCenter.defaultMaxNotifications));
+      expect(center.sourceFilters['fixture.0'],
+          (label: 'Current label', muted: true));
+      expect(center.sourceFilters.containsKey('invalid-key'), isFalse);
+      expect(center.sourceFilters.containsKey(''), isFalse);
+      expect(center.toastIds, isEmpty);
+      expect(center.items.single.message, 'Already observed');
+    });
+
     test('markRead and markAllRead clear unread state', () {
       final center = NotificationCenter();
       final first = notify(center);

@@ -539,6 +539,8 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   late final NotificationCenter _notifications =
       widget.notifications ?? NotificationCenter();
   static const _notificationDndPreference = 'notifications.doNotDisturbMode';
+  static const _sourceDndPreference = 'notifications.perSourceDoNotDisturbMode';
+  late Map<String, WorkbenchNotificationSourceFilter> _sourceFilterSnapshot;
   bool _notificationsVisible = false;
   WorkbenchNotificationPosition _notificationPosition =
       WorkbenchNotificationPosition.bottomRight;
@@ -758,6 +760,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _syncCommandContext();
     _commands.addListener(_onCommandServiceChanged);
     FocusManager.instance.addListener(_syncNotificationFocusContext);
+    _sourceFilterSnapshot = _notifications.sourceFilters;
     _notifications.addListener(_onNotificationsChanged);
     widget.onCommandServiceReady?.call(_commands);
   }
@@ -1140,6 +1143,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '切换请勿打扰',
       () async => _toggleNotificationDoNotDisturb(),
+    );
+    reg(
+      'notifications.toggleDoNotDisturbModeBySource',
+      '查看',
+      '按来源切换请勿打扰',
+      _pickNotificationSourceFilters,
     );
     for (final position in WorkbenchNotificationPosition.values) {
       reg(
@@ -3951,6 +3960,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         'v': 1,
         'workbench.notifications.position': _notificationPosition.value,
         _notificationDndPreference: _notifications.doNotDisturb,
+        _sourceDndPreference: _notifications.encodeSourceFilters(),
         'editorTabMode': _editorTabMode.value.name,
         'editorTabSizing': _editorTabSizing.value.name,
         'editorTabActionLocation': _editorTabActionLocation.value.name,
@@ -4074,6 +4084,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (data[_notificationDndPreference] case final bool doNotDisturb) {
       _notifications.setDoNotDisturb(doNotDisturb);
     }
+    _notifications.restoreSourceFilters(data[_sourceDndPreference]);
     _editorTabMode.value =
         EditorTabMode.fromSessionValue(data['editorTabMode']);
     _editorTabSizing.value =
@@ -13692,6 +13703,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         severity: WorkbenchNotificationSeverity.error,
         message: 'Walkthrough 进度写入失败。',
         source: '工作台',
+        sourceId: 'alula.workbench',
       );
       return;
     }
@@ -13707,6 +13719,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         severity: WorkbenchNotificationSeverity.error,
         message: 'Walkthrough 进度清除失败。',
         source: '工作台',
+        sourceId: 'alula.workbench',
       );
       return;
     }
@@ -13773,6 +13786,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         severity: WorkbenchNotificationSeverity.info,
         message: '已从最近项目移除 $removedCount 个不存在的路径。',
         source: '工作台',
+        sourceId: 'alula.workbench',
       );
     }
   }
@@ -13865,6 +13879,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         severity: WorkbenchNotificationSeverity.info,
         message: '最近项目路径已不存在或类型已变化，已从历史记录移除：${entry.path}',
         source: '工作台',
+        sourceId: 'alula.workbench',
       );
       return;
     }
@@ -13892,6 +13907,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
           severity: WorkbenchNotificationSeverity.warning,
           message: '最近项目历史写入失败。',
           source: '工作台',
+          sourceId: 'alula.workbench',
         );
       }
       return;
@@ -13917,6 +13933,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
         severity: WorkbenchNotificationSeverity.warning,
         message: '最近项目历史写入失败。',
         source: '工作台',
+        sourceId: 'alula.workbench',
       );
     }
   }
@@ -17028,6 +17045,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       severity: WorkbenchNotificationSeverity.error,
       message: '保存 ${doc.name} 失败：${error.code} ${error.detail}',
       source: '文件',
+      sourceId: 'alula.files',
       actions: [
         WorkbenchNotificationAction(
           label: '另存为…',
@@ -17052,6 +17070,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       severity: WorkbenchNotificationSeverity.warning,
       message: '会话 journal 写入失败；未保存编辑仍在内存中，请尽快保存文档。',
       source: '工作台',
+      sourceId: 'alula.workbench',
       actions: [
         WorkbenchNotificationAction(
           label: '重试保存会话',
@@ -20837,7 +20856,12 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   void _onNotificationsChanged() {
-    if (!mounted) return;
+    if (!mounted || _disposing) return;
+    final sourceFilters = _notifications.sourceFilters;
+    if (!identical(sourceFilters, _sourceFilterSnapshot)) {
+      _sourceFilterSnapshot = sourceFilters;
+      _scheduleStateSave();
+    }
     setState(() {});
   }
 
@@ -20845,6 +20869,41 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     if (_notificationPosition == position) return;
     setState(() => _notificationPosition = position);
     _scheduleStateSave();
+  }
+
+  Future<void> _pickNotificationSourceFilters() async {
+    final sources = _notifications.sourceFilters.entries.toList()
+      ..sort((a, b) {
+        final byLabel = a.value.label.compareTo(b.value.label);
+        return byLabel == 0 ? a.key.compareTo(b.key) : byLabel;
+      });
+    final counts = <String, int>{};
+    for (final source in sources) {
+      counts.update(source.value.label, (count) => count + 1, ifAbsent: () => 1);
+    }
+    await QuickInput.show(
+      context,
+      hint: '选择接收所有通知的来源',
+      canSelectMany: true,
+      items: [
+        for (final source in sources)
+          QuickItem(
+            label: counts[source.value.label] == 1
+                ? source.value.label
+                : '${source.value.label} (${source.key})',
+            description: counts[source.value.label] == 1 ? source.key : null,
+            arguments: source.key,
+            picked: !source.value.muted,
+          ),
+      ],
+      onAccept: (picked) {
+        final enabled =
+            picked.map((item) => item.arguments).whereType<String>().toSet();
+        _notifications.setSourceDoNotDisturb({
+          for (final source in sources) source.key: !enabled.contains(source.key),
+        });
+      },
+    );
   }
 
   void _toggleNotificationDoNotDisturb() {

@@ -1206,6 +1206,163 @@ void main() {
     }
   });
 
+  testWidgets('source do not disturb uses IDs and survives session restore',
+      (tester) async {
+    const period = 'notifications.perSourceDoNotDisturbMode';
+    const alphaId = 'fixture.alpha';
+    const betaId = 'fixture.beta';
+    const alphaLabel = '同名 ($alphaId)';
+    const betaLabel = '同名 ($betaId)';
+    final alphaRow = find.byKey(const ValueKey('qi-$alphaLabel'));
+    final betaRow = find.byKey(const ValueKey('qi-$betaLabel'));
+
+    Future<void> openSourcePicker() async {
+      await tester.tap(find.byKey(const ValueKey('command-center-control')));
+      await tester.pumpAndSettle();
+      await tester.enterText(_paletteInput(), '按来源切换请勿打扰');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('qi-查看: 按来源切换请勿打扰')));
+      await tester.pumpAndSettle();
+    }
+
+    await _mountApp(tester);
+    try {
+      final alpha = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Alpha info',
+        source: '同名',
+        sourceId: alphaId,
+      );
+      final beta = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Beta info',
+        source: '同名',
+        sourceId: betaId,
+      );
+      await tester.pumpAndSettle();
+      await openSourcePicker();
+      expect(alphaRow, findsOneWidget);
+      expect(betaRow, findsOneWidget);
+      await tester.tap(alphaRow);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(notifications.toastIds, [alpha.id, beta.id]);
+
+      await openSourcePicker();
+      expect(
+          tester
+              .widget<Icon>(
+                find.byKey(const ValueKey('qi-check-$alphaLabel')),
+              )
+              .icon,
+          Icons.check_box);
+      await tester.tap(alphaRow);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(notifications.toastIds, [beta.id]);
+      expect(notifications.items, [beta, alpha]);
+
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Alpha warning stays in center',
+        source: '同名',
+        sourceId: alphaId,
+      );
+      final betaWarning = notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Beta warning still pops up',
+        source: '同名',
+        sourceId: betaId,
+      );
+      final alphaError = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Alpha error still pops up',
+        source: '同名',
+        sourceId: alphaId,
+      );
+      await tester.pump(const Duration(milliseconds: 550));
+      expect(notifications.toastIds, [beta.id, betaWarning.id, alphaError.id]);
+      expect(sessionStore.tryLoad()?[period], {
+        alphaId: {'label': '同名', 'muted': true},
+        betaId: {'label': '同名', 'muted': false},
+      });
+    } finally {
+      await _unmountApp(tester);
+    }
+
+    notifications = NotificationCenter();
+    await _mountApp(tester);
+    try {
+      await openSourcePicker();
+      expect(
+          tester
+              .widget<Icon>(
+                find.byKey(const ValueKey('qi-check-$alphaLabel')),
+              )
+              .icon,
+          Icons.check_box_outline_blank);
+      expect(betaRow, findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Alpha remains quiet after rename',
+        source: '改名',
+        sourceId: alphaId,
+      );
+      await tester.pump();
+      expect(notifications.toastIds, isEmpty);
+      expect(notifications.items.single.source, '改名');
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('notification secondary menu configures its source only',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final entry = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Source controllable notification',
+        source: 'Fixture',
+        sourceId: 'fixture.named',
+        secondaryActions: [
+          WorkbenchNotificationAction(label: 'Details', run: () async {}),
+        ],
+      );
+      final oldError = notifications.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Existing source error',
+        source: 'Fixture',
+        sourceId: 'fixture.named',
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('notification-toast-more-1')));
+      await tester.pumpAndSettle();
+      await tester
+          .tap(find.byKey(const ValueKey('notification-toast-source-dnd-1')));
+      await tester.pumpAndSettle();
+      expect(notifications.toastIds, [oldError.id]);
+      expect(notifications.items, [oldError, entry]);
+      await _showNotificationCenter(tester);
+      await tester.tap(find.byKey(const ValueKey('notification-more-1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('notification-source-dnd-1')));
+      await tester.pumpAndSettle();
+      expect(notifications.toastIds, [oldError.id]);
+      final enabled = notifications.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Warnings show again',
+        source: 'Fixture',
+        sourceId: 'fixture.named',
+      );
+      expect(notifications.toastIds, [oldError.id, enabled.id]);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   testWidgets('actions run, source filter narrows and clear all empties',
       (tester) async {
     await _mountApp(tester);

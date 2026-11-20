@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 
 enum WorkbenchNotificationSeverity { info, warning, error }
 
+typedef WorkbenchNotificationSourceFilter = ({String label, bool muted});
+
 /// 通知动作（上游 notification action）：按钮标签 + 执行回调。
 class WorkbenchNotificationAction {
   const WorkbenchNotificationAction({
@@ -32,6 +34,7 @@ class WorkbenchNotification {
     required this.message,
     required this.source,
     required this.createdAt,
+    this.sourceId,
     this.actions = const <WorkbenchNotificationAction>[],
     this.secondaryActions = const <WorkbenchNotificationAction>[],
     this.progress,
@@ -44,6 +47,7 @@ class WorkbenchNotification {
 
   /// 来源（上游 extension 名称；工作台自身为 `Alula`）。
   final String source;
+  final String? sourceId;
   final DateTime createdAt;
   final List<WorkbenchNotificationAction> actions;
   final List<WorkbenchNotificationAction> secondaryActions;
@@ -157,6 +161,10 @@ class NotificationCenter extends ChangeNotifier {
   final List<int> _toasts = <int>[]; // 旧 → 新
   final List<int> _banners = <int>[]; // 旧 → 新
   var _doNotDisturb = false;
+  Map<String, WorkbenchNotificationSourceFilter> _sourceFilters = const {};
+
+  Map<String, WorkbenchNotificationSourceFilter> get sourceFilters =>
+      _sourceFilters;
   var _nextId = 1;
 
   /// 通知列表，新的在前。
@@ -194,6 +202,7 @@ class NotificationCenter extends ChangeNotifier {
     required WorkbenchNotificationSeverity severity,
     required String message,
     String source = 'Alula',
+    String? sourceId,
     List<WorkbenchNotificationAction> actions =
         const <WorkbenchNotificationAction>[],
     List<WorkbenchNotificationAction> secondaryActions =
@@ -202,11 +211,13 @@ class NotificationCenter extends ChangeNotifier {
     NotificationProgress? progress,
     bool banner = false,
   }) {
+    _rememberSource(sourceId, source);
     final notification = WorkbenchNotification(
       id: _nextId++,
       severity: severity,
       message: message,
       source: source,
+      sourceId: sourceId,
       createdAt: createdAt ?? DateTime.now(),
       actions: actions,
       secondaryActions: List.unmodifiable(secondaryActions),
@@ -220,8 +231,8 @@ class NotificationCenter extends ChangeNotifier {
       while (_banners.length > maxVisibleBanners) {
         _banners.removeAt(0);
       }
-    } else if (!_doNotDisturb ||
-        severity == WorkbenchNotificationSeverity.error) {
+    } else if (severity == WorkbenchNotificationSeverity.error ||
+        (!_doNotDisturb && _sourceFilters[sourceId]?.muted != true)) {
       _toasts.add(notification.id);
       while (_toasts.length > maxVisibleToasts) {
         _toasts.removeAt(0);
@@ -252,6 +263,7 @@ class NotificationCenter extends ChangeNotifier {
         severity: WorkbenchNotificationSeverity.error,
         message: '通知操作“${action.label}”失败：$error',
         source: notification.source,
+        sourceId: notification.sourceId,
       );
     }
   }
@@ -313,6 +325,72 @@ class NotificationCenter extends ChangeNotifier {
     if (_doNotDisturb == value) return;
     _doNotDisturb = value;
     if (value) _toasts.clear();
+    notifyListeners();
+  }
+
+  Map<String, Object?> encodeSourceFilters() => _sourceFilters.map(
+        (id, filter) =>
+            MapEntry(id, {'label': filter.label, 'muted': filter.muted}),
+      );
+
+  void restoreSourceFilters(Object? saved) {
+    if (saved is! Map) return;
+    final filters = <String, WorkbenchNotificationSourceFilter>{};
+    for (final entry in saved.entries) {
+      if (filters.length == defaultMaxNotifications) break;
+      final id = entry.key;
+      final value = entry.value;
+      if (id is! String || id.isEmpty || value is! Map) continue;
+      final label = value['label'];
+      final muted = value['muted'];
+      if (label is String && label.isNotEmpty && muted is bool) {
+        filters[id] = (label: label, muted: muted);
+      }
+    }
+    for (final entry in _sourceFilters.entries) {
+      final saved = filters[entry.key];
+      if (saved != null) {
+        filters[entry.key] = (label: entry.value.label, muted: saved.muted);
+      } else if (filters.length < defaultMaxNotifications) {
+        filters[entry.key] = entry.value;
+      }
+    }
+    _applySourceFilters(filters);
+  }
+
+  void setSourceDoNotDisturb(Map<String, bool> changes) {
+    final filters = Map.of(_sourceFilters);
+    for (final entry in changes.entries) {
+      if (filters[entry.key] case final source?) {
+        filters[entry.key] = (label: source.label, muted: entry.value);
+      }
+    }
+    _applySourceFilters(filters);
+  }
+
+  void _rememberSource(String? id, String label) {
+    if (id == null || id.isEmpty || label.isEmpty) return;
+    final current = _sourceFilters[id];
+    if (current?.label == label ||
+        (current == null && _sourceFilters.length == defaultMaxNotifications)) {
+      return;
+    }
+    _sourceFilters = Map.unmodifiable({
+      ..._sourceFilters,
+      id: (label: label, muted: current?.muted ?? false),
+    });
+  }
+
+  void _applySourceFilters(
+      Map<String, WorkbenchNotificationSourceFilter> filters) {
+    if (mapEquals(_sourceFilters, filters)) return;
+    _sourceFilters = Map.unmodifiable(filters);
+    _toasts.removeWhere((id) {
+      final entry = byId(id);
+      return entry != null &&
+          entry.severity != WorkbenchNotificationSeverity.error &&
+          _sourceFilters[entry.sourceId]?.muted == true;
+    });
     notifyListeners();
   }
 
