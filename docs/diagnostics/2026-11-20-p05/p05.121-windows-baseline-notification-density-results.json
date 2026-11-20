@@ -1,0 +1,314 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "commit": "88911fc074decf58535ad35778d3987c06e3f1a3",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "f4b434549393294fb8d4c14c2651b85a0bedf3e35a9305cdbcb069e75b83450c",
+  "fixtureSha256": "39c08d784555ebf9e73f01a9f0b33cc3e59a3a34924abbe3b2fc3418e7425546",
+  "cases": {
+    "three": {
+      "dpiScale": 1.25,
+      "clientLogical": [
+        987.2,
+        664.8
+      ],
+      "panelHeight": 180.0,
+      "headerHeight": 40.0,
+      "listHeight": 137.0,
+      "rowHeights": {
+        "notification-item-3": 68.0,
+        "notification-item-2": 35.0,
+        "notification-item-1": 34.0
+      },
+      "toolbar": [
+        "notification-dnd-toggle",
+        "notification-clear-all",
+        "notification-position",
+        "notification-center-close"
+      ],
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          448.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-center-header": [
+          528.2,
+          449.79999999999995,
+          978.2,
+          489.79999999999995
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          461.79999999999995,
+          915.2,
+          477.79999999999995
+        ],
+        "notification-clear-all": [
+          915.2,
+          461.79999999999995,
+          931.2,
+          477.79999999999995
+        ],
+        "notification-position": [
+          931.2,
+          457.79999999999995,
+          955.2,
+          481.79999999999995
+        ],
+        "notification-center-close": [
+          955.2,
+          461.29999999999995,
+          972.2,
+          478.29999999999995
+        ],
+        "notification-center-viewport": [
+          528.2,
+          490.79999999999995,
+          978.2,
+          627.8
+        ],
+        "notification-item-3": [
+          528.2,
+          490.79999999999995,
+          978.2,
+          558.8
+        ],
+        "notification-item-2": [
+          528.2,
+          558.8,
+          978.2,
+          593.8
+        ],
+        "notification-item-1": [
+          528.2,
+          593.8,
+          978.2,
+          627.8
+        ]
+      },
+      "exitCode": 0
+    },
+    "overflow": {
+      "dpiScale": 1.25,
+      "clientLogical": [
+        987.2,
+        664.8
+      ],
+      "panelHeight": 436.0,
+      "headerHeight": 40.0,
+      "listHeight": 393.0,
+      "rowHeights": {
+        "notification-item-18": 35.0,
+        "notification-item-17": 35.0,
+        "notification-item-16": 35.0,
+        "notification-item-15": 35.0,
+        "notification-item-14": 35.0,
+        "notification-item-13": 35.0,
+        "notification-item-12": 35.0,
+        "notification-item-11": 35.0,
+        "notification-item-10": 35.0,
+        "notification-item-9": 35.0,
+        "notification-item-8": 35.0,
+        "notification-item-7": 35.0,
+        "notification-item-6": 35.0,
+        "notification-item-5": 35.0,
+        "notification-item-4": 35.0,
+        "notification-item-3": 35.0,
+        "notification-item-2": 35.0,
+        "notification-item-1": 34.0
+      },
+      "toolbar": [
+        "notification-dnd-toggle",
+        "notification-clear-all",
+        "notification-position",
+        "notification-center-close"
+      ],
+      "boxes": {
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          192.79999999999995,
+          979.2,
+          628.8
+        ],
+        "notification-center-header": [
+          528.2,
+          193.79999999999995,
+          978.2,
+          233.79999999999995
+        ],
+        "notification-dnd-toggle": [
+          899.2,
+          205.79999999999995,
+          915.2,
+          221.79999999999995
+        ],
+        "notification-clear-all": [
+          915.2,
+          205.79999999999995,
+          931.2,
+          221.79999999999995
+        ],
+        "notification-position": [
+          931.2,
+          201.79999999999995,
+          955.2,
+          225.79999999999995
+        ],
+        "notification-center-close": [
+          955.2,
+          205.29999999999995,
+          972.2,
+          222.29999999999995
+        ],
+        "notification-center-viewport": [
+          528.2,
+          234.79999999999995,
+          978.2,
+          627.8
+        ],
+        "notification-item-18": [
+          528.2,
+          234.79999999999995,
+          978.2,
+          269.79999999999995
+        ],
+        "notification-item-17": [
+          528.2,
+          269.79999999999995,
+          978.2,
+          304.79999999999995
+        ],
+        "notification-item-16": [
+          528.2,
+          304.79999999999995,
+          978.2,
+          339.79999999999995
+        ],
+        "notification-item-15": [
+          528.2,
+          339.79999999999995,
+          978.2,
+          374.79999999999995
+        ],
+        "notification-item-14": [
+          528.2,
+          374.79999999999995,
+          978.2,
+          409.79999999999995
+        ],
+        "notification-item-13": [
+          528.2,
+          409.79999999999995,
+          978.2,
+          444.79999999999995
+        ],
+        "notification-item-12": [
+          528.2,
+          444.79999999999995,
+          978.2,
+          479.79999999999995
+        ],
+        "notification-item-11": [
+          528.2,
+          479.79999999999995,
+          978.2,
+          514.8
+        ],
+        "notification-item-10": [
+          528.2,
+          514.8,
+          978.2,
+          549.8
+        ],
+        "notification-item-9": [
+          528.2,
+          549.8,
+          978.2,
+          584.8
+        ],
+        "notification-item-8": [
+          528.2,
+          584.8,
+          978.2,
+          619.8
+        ],
+        "notification-item-7": [
+          528.2,
+          619.8,
+          978.2,
+          654.8
+        ],
+        "notification-item-6": [
+          528.2,
+          654.8,
+          978.2,
+          689.8
+        ],
+        "notification-item-5": [
+          528.2,
+          689.8,
+          978.2,
+          724.8
+        ],
+        "notification-item-4": [
+          528.2,
+          724.8,
+          978.2,
+          759.8
+        ],
+        "notification-item-3": [
+          528.2,
+          759.8,
+          978.2,
+          794.8
+        ],
+        "notification-item-2": [
+          528.2,
+          794.8,
+          978.2,
+          829.8
+        ],
+        "notification-item-1": [
+          528.2,
+          829.8,
+          978.2,
+          863.8
+        ]
+      },
+      "oldestRowAfterScroll": [
+        528.2,
+        593.8,
+        978.2,
+        627.8
+      ],
+      "exitCode": 0
+    }
+  },
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+    "app/lib/workbench/keybindings.dart": "90e83371624d4a5130e823cf66621626d8c5921f9ee50a77768e1b6f3a12858d",
+    "app/lib/workbench/notification_widgets.dart": "5fba8e326fd2cbddf2c45b94158ccd9ae3311d60748414a3a6fd41e4262933a6",
+    "app/lib/workbench/notifications.dart": "d502ced6be3766c954495f014a02835cf84909459c29afcfe26b8a176dba9dd8",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "2669f731c329dff0babe8514f5e44f4265feeafe0f9ce10b727e72db4c81dbad",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}

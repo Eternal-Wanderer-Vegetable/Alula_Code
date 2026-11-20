@@ -2133,8 +2133,20 @@
       "dependencies": [
         "feat-172"
       ],
+      "status": "done",
+      "evidence": "产品 `96a2ac6c34b1223454dad9137b0911a08e4f46f8` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Release 对照。三条通知中心总高 180→172，固定版 172.6。头部恢复 35，18 条通知列表视口恢复 400，工具栏顺序相符且滚轮可到达最旧条目。专项 113/113，Flutter 1,635 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44724309808 四项与 Platform Availability 44724302967 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.121-notification-density.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-174",
+      "name": "P05.122 LAY-18 通知中心勿扰配置菜单",
+      "description": "核对工具栏勿扰配置菜单的全局开关、前十个来源、选中状态与更多来源完整选择器。",
+      "dependencies": [
+        "feat-173"
+      ],
       "status": "not-started",
-      "evidence": "待固定版本和 Alula 现状实测、实现、回归和托管验收。",
+      "evidence": "待固定版和 Alula 键鼠复验，登记选项、来源稳定 ID、完整选择器和托管证据。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }

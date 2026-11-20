@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.121 / feat-173。产品 `96a2ac6c34b1223454dad9137b0911a08e4f46f8` 已推草稿 PR #3。固定 Code-OSS 与 Windows 11 125% DPI Release 对照。三条通知中心总高 180→172，固定版 172.6。头部恢复 35，18 条通知列表视口恢复 400，工具栏顺序相符且滚轮可到达最旧条目。专项 113/113，Flutter 1,635 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44724309808 四项与 Platform Availability 44724302967 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.121-notification-density.md。
+
 - 2026-11-20 完成 P05.120 / feat-172。产品 `88911fc074decf58535ad35778d3987c06e3f1a3` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验两个规范命令、旧自定义键和旧历史迁移。清除时保留活动进度，勿扰时错误继续弹出。专项 155/155，Flutter 1,633 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44721822544 四项与 Platform Availability 44721816048 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.120-notification-commands.md。
 
 - 2026-11-20 完成 P05.119 / feat-171。产品 `2d497365eadeacbe310cd45ec9516de534134d1c` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验未读圆点、后台进度及完成状态、中心展开标记、勿扰与标题栏入口。专项 110/110，Flutter 1,630 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44719347201 四项与 Platform Availability 44719339108 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.119-notification-bell.md。
