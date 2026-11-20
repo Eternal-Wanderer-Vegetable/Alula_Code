@@ -6,7 +6,7 @@ library;
 
 import 'dart:async';
 
-import 'package:flutter/gestures.dart' show PointerDeviceKind;
+import 'package:flutter/gestures.dart' show PointerDeviceKind, kPrimaryButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -557,6 +557,133 @@ class _NotificationToastState extends State<_NotificationToast> {
   }
 }
 
+class _NotificationCenterScrollView extends StatefulWidget {
+  const _NotificationCenterScrollView({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_NotificationCenterScrollView> createState() =>
+      _NotificationCenterScrollViewState();
+}
+
+class _NotificationCenterScrollViewState
+    extends State<_NotificationCenterScrollView> {
+  final _controller = ScrollController();
+  bool _pointerInside = false;
+  bool _thumbPressed = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        onEnter: (_) => setState(() => _pointerInside = true),
+        onExit: (_) => setState(() => _pointerInside = false),
+        child: ScrollConfiguration(
+          // The notification center supplies its own overlay on every platform.
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: PrimaryScrollController(
+            controller: _controller,
+            child: _NotificationCenterScrollbar(
+              controller: _controller,
+              thumbVisibility: _pointerInside || _thumbPressed,
+              onThumbPressed: (pressed) =>
+                  setState(() => _thumbPressed = pressed),
+              child: widget.child,
+            ),
+          ),
+        ),
+      );
+}
+
+class _NotificationCenterScrollbar extends RawScrollbar {
+  const _NotificationCenterScrollbar({
+    required super.controller,
+    required super.thumbVisibility,
+    required this.onThumbPressed,
+    required super.child,
+  }) : super(
+          thickness: 8,
+          padding: EdgeInsets.zero,
+          scrollbarOrientation: ScrollbarOrientation.right,
+          fadeDuration: const Duration(milliseconds: 180),
+          timeToFade: const Duration(milliseconds: 500),
+        );
+
+  final ValueChanged<bool> onThumbPressed;
+
+  @override
+  RawScrollbarState<_NotificationCenterScrollbar> createState() =>
+      _NotificationCenterScrollbarState();
+}
+
+class _NotificationCenterScrollbarState
+    extends RawScrollbarState<_NotificationCenterScrollbar> {
+  bool _hoveringThumb = false;
+  int? _pressPointer;
+
+  void _updateColor() {
+    scrollbarPainter.color = switch ((_pressPointer != null, _hoveringThumb)) {
+      (true, _) => const Color.fromRGBO(168, 169, 170, 0.61),
+      (false, true) => const Color.fromRGBO(168, 169, 170, 0.56),
+      (false, false) => const Color.fromRGBO(168, 169, 170, 0.52),
+    };
+  }
+
+  @override
+  void updateScrollbarPainter() {
+    super.updateScrollbarPainter();
+    _updateColor();
+  }
+
+  @override
+  void handleHover(PointerHoverEvent event) {
+    super.handleHover(event);
+    _hoveringThumb = isPointerOverThumb(event.position, event.kind);
+    _updateColor();
+  }
+
+  @override
+  void handleHoverExit(PointerExitEvent event) {
+    super.handleHoverExit(event);
+    _hoveringThumb = false;
+    _updateColor();
+  }
+
+  void _press(PointerDownEvent event) {
+    if (mounted &&
+        _pressPointer == null &&
+        event.buttons == kPrimaryButton &&
+        isPointerOverThumb(event.position, event.kind)) {
+      _pressPointer = event.pointer;
+      widget.onThumbPressed(true);
+      _updateColor();
+    }
+  }
+
+  void _release(PointerEvent event) {
+    if (!mounted || _pressPointer != event.pointer) return;
+    _pressPointer = null;
+    widget.onThumbPressed(false);
+    _hoveringThumb = event is PointerUpEvent &&
+        event.kind == PointerDeviceKind.mouse &&
+        isPointerOverThumb(event.position, event.kind);
+    _updateColor();
+  }
+
+  @override
+  Widget build(BuildContext context) => Listener(
+        onPointerDown: _press,
+        onPointerUp: _release,
+        onPointerCancel: _release,
+        child: super.build(context),
+      );
+}
+
 /// 通知中心面板：列表、逐条关闭、全部清除、Do Not Disturb、来源过滤。
 class WorkbenchNotificationCenter extends StatefulWidget {
   const WorkbenchNotificationCenter({
@@ -743,37 +870,40 @@ class _WorkbenchNotificationCenterState
             else
               Flexible(
                 child: FocusScope(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: notifications.length,
-                    findChildIndexCallback: (key) {
-                      if (key is! ValueKey<int>) return null;
-                      final index = notifications.indexWhere(
-                        (notification) => notification.id == key.value,
-                      );
-                      return index < 0 ? null : index;
-                    },
-                    itemBuilder: (context, index) {
-                      final notification = notifications[index];
-                      final autofocus = _focusOnOpen && index == 0;
-                      if (autofocus) _focusOnOpen = false;
-                      return _NotificationItemActions(
-                        key: ValueKey(notification.id),
-                        center: center,
-                        notification: notification,
-                        autofocus: autofocus,
-                        onMiddleClick: () =>
-                            center.clearNotification(notification),
-                        child: _NotificationCenterRow(
+                  child: _NotificationCenterScrollView(
+                    child: ListView.builder(
+                      primary: true,
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: notifications.length,
+                      findChildIndexCallback: (key) {
+                        if (key is! ValueKey<int>) return null;
+                        final index = notifications.indexWhere(
+                          (notification) => notification.id == key.value,
+                        );
+                        return index < 0 ? null : index;
+                      },
+                      itemBuilder: (context, index) {
+                        final notification = notifications[index];
+                        final autofocus = _focusOnOpen && index == 0;
+                        if (autofocus) _focusOnOpen = false;
+                        return _NotificationItemActions(
+                          key: ValueKey(notification.id),
                           center: center,
                           notification: notification,
-                          showDivider: index < notifications.length - 1,
-                          expandsDown: widget.position.atTop,
-                          onDismiss: () => widget.onDismiss(notification.id),
-                        ),
-                      );
-                    },
+                          autofocus: autofocus,
+                          onMiddleClick: () =>
+                              center.clearNotification(notification),
+                          child: _NotificationCenterRow(
+                            center: center,
+                            notification: notification,
+                            showDivider: index < notifications.length - 1,
+                            expandsDown: widget.position.atTop,
+                            onDismiss: () => widget.onDismiss(notification.id),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

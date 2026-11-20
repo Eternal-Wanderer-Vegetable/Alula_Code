@@ -407,6 +407,93 @@ void main() {
     }
   });
 
+  testWidgets('notification center shows a draggable thumb only when useful',
+      (tester) async {
+    await _mountApp(tester);
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await mouse.addPointer(location: const Offset(1, 1));
+    try {
+      for (var i = 1; i <= 18; i++) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: 'Density row $i',
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      await tester.pumpAndSettle();
+
+      final panel = find.byKey(const ValueKey('notification-center'));
+      final list = find.descendant(of: panel, matching: find.byType(ListView));
+      final scrollable = find.descendant(
+        of: list,
+        matching: find.byType(Scrollable),
+      );
+      final painterFinder = find.descendant(
+        of: panel,
+        matching: find.byWidgetPredicate((widget) =>
+            widget is CustomPaint &&
+            widget.foregroundPainter is ScrollbarPainter),
+      );
+      expect(painterFinder, findsOneWidget);
+      ScrollbarPainter painter() =>
+          tester.widget<CustomPaint>(painterFinder).foregroundPainter!
+              as ScrollbarPainter;
+
+      final viewport = tester.getRect(list);
+      expect(viewport.height, 400);
+      expect(painter().fadeoutOpacityAnimation.value, 0);
+      await mouse.moveTo(viewport.center);
+      await tester.pumpAndSettle();
+      expect(painter().fadeoutOpacityAnimation.value, 1);
+      expect(painter().thickness, 8);
+
+      final start = viewport.topRight.translate(-4, 80);
+      await mouse.moveTo(start);
+      await tester.pumpAndSettle();
+      final hoverColor = painter().color;
+      await mouse.down(start);
+      await tester.pump();
+      expect(painter().color.a, greaterThan(hoverColor.a));
+      await mouse.moveBy(const Offset(0, 40));
+      await tester.pump();
+      await mouse.moveBy(const Offset(0, 350));
+      await tester.pumpAndSettle();
+      expect(painter().fadeoutOpacityAnimation.value, 1,
+          reason: 'the active thumb remains visible outside the viewport');
+      await mouse.up();
+      await tester.pumpAndSettle();
+      final position = tester.state<ScrollableState>(scrollable).position;
+      expect(position.extentAfter, closeTo(0, 1));
+      expect(find.text('Density row 1').hitTestable(), findsOneWidget);
+      expect(notifications.items, hasLength(18));
+
+      await mouse.moveTo(const Offset(1, 1));
+      await tester.pumpAndSettle();
+      expect(painter().fadeoutOpacityAnimation.value, 0);
+
+      notifications.clearAll();
+      notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Short notice',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      await mouse.moveTo(tester.getCenter(list));
+      await tester.pumpAndSettle();
+      final shortThumbPoint = Offset(tester.getSize(list).width - 4, 15);
+      expect(
+        painter().hitTestOnlyThumbInteractive(
+            shortThumbPoint, PointerDeviceKind.mouse),
+        isFalse,
+      );
+      expect(tester.takeException(), isNull);
+    } finally {
+      await mouse.removePointer();
+      await _unmountApp(tester);
+    }
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
   testWidgets('visual progress track sits below its details and cancel button',
       (tester) async {
     await _mountApp(tester);
