@@ -752,6 +752,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _initCore();
     _syncCommandContext();
     _commands.addListener(_onCommandServiceChanged);
+    FocusManager.instance.addListener(_syncNotificationFocusContext);
     _notifications.addListener(_onNotificationsChanged);
     widget.onCommandServiceReady?.call(_commands);
   }
@@ -1110,6 +1111,18 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       '查看',
       '通知',
       () async => _toggleNotificationCenter(),
+    );
+    reg(
+      'notification.clear',
+      '查看',
+      '清除通知',
+      () async {
+        final notification = _focusedNotification;
+        if (notification != null && !notification.hasProgress) {
+          _notifications.dismiss(notification.id);
+        }
+      },
+      when: 'notificationFocus',
     );
     reg(
       'workbench.action.clearNotifications',
@@ -20128,6 +20141,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   @override
   void dispose() {
     _disposing = true;
+    FocusManager.instance.removeListener(_syncNotificationFocusContext);
     FocusManager.instance.removeListener(_syncBreadcrumbPickerFocus);
     for (final cancel in _quickOpenCancellations.toList()) { cancel(); }
     _quickOpenCancellations.clear();
@@ -20754,6 +20768,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   }
 
   // ---------- 通知中心（LAY-18a） ----------
+
+  WorkbenchNotification? get _focusedNotification {
+    final target = focusedWorkbenchNotification();
+    if (_zenMode || target == null) return null;
+    final notification = target.notification;
+    if (!identical(_notifications.byId(notification.id), notification)) {
+      return null;
+    }
+    if (target.isToast) {
+      if (_notificationsVisible ||
+          !_notifications.toastIds.contains(notification.id)) {
+        return null;
+      }
+    } else if (!_notificationsVisible ||
+        (_notificationSourceFilter != null &&
+            _notificationSourceFilter != notification.source)) {
+      return null;
+    }
+    return notification;
+  }
+
+  void _syncNotificationFocusContext() {
+    if (!mounted || _disposing) return;
+    _commands.context.setValue(
+      'notificationFocus',
+      _focusedNotification != null,
+    );
+  }
 
   void _onNotificationsChanged() {
     if (!mounted) return;

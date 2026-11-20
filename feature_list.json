@@ -1888,6 +1888,19 @@
       "evidence": "产品 `f9c5874572315e9403808bc140a60aee757a1eca` 已推 PR #3。toast 与通知中心条目的关闭按钮在活动进度期间隐藏，完成后恢复。关闭 toast 保留中心条目与未读状态，关闭中心条目移除该通知。专项 47/47，完整本地 Flutter 1,566 passed / 2 skipped，Rust workspace、Clippy、核心库、fmt 和 Dart analyze 通过。精确 SHA PR CI 44635509218 四项和 Platform Availability 44635498901 Windows/Linux 通过。采集时 macOS 托管 job 仍在 Flutter 测试。 macOS 实机验收暂缓。最终 staged all-scope 为 7 个文件、10 个映射符号、0 个流程、LOW，无 partial/truncated。累计 compare-main 为 CRITICAL，764 个文件、78 个流程，重跑的 1,286–1,313 个映射符号列表仍截断。 证据：docs/diagnostics/2026-11-20-p05/p05.101-notification-dismiss-progress.md。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
+    },
+    {
+      "id": "feat-154",
+      "name": "P05.102 单条通知清除快捷键",
+      "description": "按固定 Code-OSS 将 notification.clear 绑定至 Windows/Linux Delete、macOS Cmd+Backspace。仅当前获焦 toast 或通知中心条目可清除，活动进度受到保护。",
+      "dependencies": [
+        "feat-131",
+        "feat-153"
+      ],
+      "status": "in-progress",
+      "evidence": "docs/diagnostics/2026-11-20-p05/p05.102-notification-clear-keybinding.md",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
     }
   ],
   "active_track": "vscode-builtin-parity",

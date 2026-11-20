@@ -319,6 +319,7 @@ class KeybindingSet {
     'mergeEditor.acceptMerge': 'mergeEditorActive',
     'list.find': 'listFocus && listSupportsFind',
     'list.closeFind': 'listFocus && treeFindOpen',
+    'notification.clear': 'notificationFocus',
     'breadcrumbs.focus': 'breadcrumbsPossible',
     'breadcrumbs.focusAndSelect': 'breadcrumbsPossible',
     'breadcrumbs.focusNext':
@@ -341,6 +342,8 @@ class KeybindingSet {
         'list.find':
             platform == TargetPlatform.macOS ? 'cmd+alt+f,f3' : 'ctrl+alt+f,f3',
         'list.closeFind': 'escape',
+        'notification.clear':
+            platform == TargetPlatform.macOS ? 'cmd+backspace' : 'delete',
         'breadcrumbs.focus':
             platform == TargetPlatform.macOS ? 'cmd+shift+;' : 'ctrl+shift+;',
         'breadcrumbs.focusAndSelect':

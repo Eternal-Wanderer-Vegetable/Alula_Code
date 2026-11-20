@@ -639,9 +639,9 @@ void main() {
           (n, v) =>
               n +
               v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(resolved.keys.length, expectedChords + 11,
-          reason: 'tree find adds two keys and breadcrumbs adds nine; '
-              'F3 and Escape share contexts');
+      expect(resolved.keys.length, expectedChords + 12,
+          reason: 'tree find, breadcrumbs, and notification clear add '
+              'contextual bindings; F3 and Escape share contexts');
       expect(ks.shortcutFor('view.commandPalette'), 'Ctrl+Shift+P');
       expect(
           ks.shortcutFor('workbench.action.files.newUntitledFile'), 'Ctrl+N');
@@ -778,14 +778,10 @@ void main() {
 
     test('损坏 JSON：只用默认键位', () {
       final ks = KeybindingSet.load(userJson: '[{"key": broken');
-      final expectedChords = KeybindingSet.defaults.values.fold<int>(
-          0,
-          (n, v) =>
-              n +
-              v.split(',').where((spec) => parseChord(spec) != null).length);
-      expect(ks.resolve().length, expectedChords + 11);
+      final expectedChords = KeybindingSet.load().resolve().length;
+      expect(ks.resolve().length, expectedChords);
       final ks2 = KeybindingSet.load(userJson: '{"not":"an array"}');
-      expect(ks2.resolve().length, expectedChords + 11);
+      expect(ks2.resolve().length, expectedChords);
     });
 
     test('非法条目逐条忽略，合法条目仍生效', () {

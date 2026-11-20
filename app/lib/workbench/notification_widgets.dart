@@ -27,6 +27,37 @@ class _NotificationStyle {
       };
 }
 
+/// Resolve the item that owns the primary focus, including its action buttons.
+({WorkbenchNotification notification, bool isToast})?
+    focusedWorkbenchNotification() {
+  for (var node = FocusManager.instance.primaryFocus;
+      node != null;
+      node = node.parent) {
+    if (node.context?.widget
+        case _NotificationItemFocus(
+          :final notification,
+          :final isToast,
+        )) {
+      return (notification: notification, isToast: isToast);
+    }
+  }
+  return null;
+}
+
+class _NotificationItemFocus extends Focus {
+  const _NotificationItemFocus({
+    super.key,
+    required this.notification,
+    this.isToast = false,
+    super.autofocus,
+    super.onFocusChange,
+    required super.child,
+  });
+
+  final WorkbenchNotification notification;
+  final bool isToast;
+}
+
 /// 右下角 toast 堆叠（旧在上、新在下；数量由中心限制）。
 class WorkbenchNotificationToasts extends StatelessWidget {
   const WorkbenchNotificationToasts({
@@ -146,8 +177,9 @@ class _NotificationToastState extends State<_NotificationToast> {
     return MouseRegion(
       onEnter: (_) => _hovered = true,
       onExit: (_) => _hovered = false,
-      child: Focus(
-        canRequestFocus: false,
+      child: _NotificationItemFocus(
+        notification: notification,
+        isToast: true,
         onFocusChange: (focused) => _descendantFocused = focused,
         child: Semantics(
           liveRegion: true,
@@ -245,7 +277,7 @@ class _NotificationToastState extends State<_NotificationToast> {
 }
 
 /// 通知中心面板：列表、逐条关闭、全部清除、Do Not Disturb、来源过滤。
-class WorkbenchNotificationCenter extends StatelessWidget {
+class WorkbenchNotificationCenter extends StatefulWidget {
   const WorkbenchNotificationCenter({
     super.key,
     required this.center,
@@ -266,8 +298,19 @@ class WorkbenchNotificationCenter extends StatelessWidget {
   final VoidCallback onClose;
 
   @override
+  State<WorkbenchNotificationCenter> createState() =>
+      _WorkbenchNotificationCenterState();
+}
+
+class _WorkbenchNotificationCenterState
+    extends State<WorkbenchNotificationCenter> {
+  bool _focusOnOpen = true;
+
+  @override
   Widget build(BuildContext context) {
-    final notifications = center.filtered(sourceFilter);
+    final center = widget.center;
+    final notifications = center.filtered(widget.sourceFilter);
+    if (notifications.isEmpty) _focusOnOpen = false;
     return Semantics(
       container: true,
       label: '通知中心',
@@ -308,7 +351,7 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     constraints:
                         const BoxConstraints(minWidth: 24, minHeight: 24),
-                    onPressed: onToggleDoNotDisturb,
+                    onPressed: widget.onToggleDoNotDisturb,
                     icon: Icon(
                       center.doNotDisturb
                           ? Icons.notifications_off
@@ -333,7 +376,7 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                       constraints:
                           const BoxConstraints(minWidth: 24, minHeight: 24),
                       color: Colors.grey.shade400,
-                      onPressed: center.canClearAll ? onClearAll : null,
+                      onPressed: center.canClearAll ? widget.onClearAll : null,
                       icon: const Icon(Icons.clear_all, size: 16),
                     ),
                   ),
@@ -344,7 +387,7 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     constraints:
                         const BoxConstraints(minWidth: 24, minHeight: 24),
-                    onPressed: onClose,
+                    onPressed: widget.onClose,
                     icon: Icon(Icons.close,
                         size: 15, color: Colors.grey.shade400),
                   ),
@@ -360,7 +403,7 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String?>(
                           key: const ValueKey('notification-source-filter'),
-                          value: sourceFilter,
+                          value: widget.sourceFilter,
                           isDense: true,
                           dropdownColor: const Color(0xFF252932),
                           style: const TextStyle(
@@ -372,7 +415,7 @@ class WorkbenchNotificationCenter extends StatelessWidget {
                               DropdownMenuItem<String?>(
                                   value: source, child: Text(source)),
                           ],
-                          onChanged: onSourceFilterChanged,
+                          onChanged: widget.onSourceFilterChanged,
                         ),
                       ),
                     ),
@@ -391,17 +434,33 @@ class WorkbenchNotificationCenter extends StatelessWidget {
               )
             else
               Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    final notification = notifications[index];
-                    return _NotificationCenterRow(
-                      notification: notification,
-                      onDismiss: () => onDismiss(notification.id),
-                    );
-                  },
+                child: FocusScope(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    itemCount: notifications.length,
+                    findChildIndexCallback: (key) {
+                      if (key is! ValueKey<int>) return null;
+                      final index = notifications.indexWhere(
+                        (notification) => notification.id == key.value,
+                      );
+                      return index < 0 ? null : index;
+                    },
+                    itemBuilder: (context, index) {
+                      final notification = notifications[index];
+                      final autofocus = _focusOnOpen && index == 0;
+                      if (autofocus) _focusOnOpen = false;
+                      return _NotificationItemFocus(
+                        key: ValueKey(notification.id),
+                        notification: notification,
+                        autofocus: autofocus,
+                        child: _NotificationCenterRow(
+                          notification: notification,
+                          onDismiss: () => widget.onDismiss(notification.id),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
           ],
