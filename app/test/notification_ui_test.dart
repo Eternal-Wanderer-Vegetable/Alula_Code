@@ -1534,6 +1534,66 @@ void main() {
     expect(notifications.allowOptionalToast, isNull);
   });
 
+  testWidgets('center keeps compact row heights when separators are painted',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      final older = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'First density row',
+      );
+      final newer = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Second density row',
+      );
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      final header = find.byKey(const ValueKey('notification-center-header'));
+      final clear = find.byKey(const ValueKey('notification-clear-all'));
+      final quiet = find.byKey(const ValueKey('notification-dnd-toggle'));
+      final panel = find.byKey(const ValueKey('notification-center'));
+
+      for (final notice in [newer, older]) {
+        final row = find.byKey(ValueKey('notification-item-${notice.id}'));
+        expect(tester.getSize(row).height, 34);
+      }
+      expect(tester.getSize(header).height, 35);
+      expect(tester.getCenter(clear).dx, lessThan(tester.getCenter(quiet).dx));
+      expect(tester.getSize(panel).height, 105);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
+  testWidgets('the center scrolls once its rows exceed the fixed viewport',
+      (tester) async {
+    await _mountApp(tester);
+    try {
+      for (var index = 0; index < 18; index++) {
+        notifications.notify(
+          severity: WorkbenchNotificationSeverity.info,
+          message: 'Scrollable notification $index',
+        );
+      }
+      await tester.pump();
+      await _showNotificationCenter(tester);
+      final panel = find.byKey(const ValueKey('notification-center'));
+      final list = find.descendant(
+        of: panel,
+        matching: find.byType(ListView),
+      );
+      expect(tester.getSize(list).height, 400);
+      expect(tester.getSize(panel).height, 437);
+
+      await tester.drag(list, const Offset(0, -390));
+      await tester.pumpAndSettle();
+      expect(
+          find.text('Scrollable notification 0').hitTestable(), findsOneWidget);
+    } finally {
+      await _unmountApp(tester);
+    }
+  });
+
   for (final inCenter in [false, true]) {
     testWidgets(
         'a primary action closes only its own notice in ${inCenter ? 'center' : 'toast'}',

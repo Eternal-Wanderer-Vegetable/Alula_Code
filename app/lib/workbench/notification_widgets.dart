@@ -589,6 +589,10 @@ class WorkbenchNotificationCenter extends StatefulWidget {
 
 class _WorkbenchNotificationCenterState
     extends State<WorkbenchNotificationCenter> {
+  static const _headerHeight = 35.0;
+  // The list viewport is 400 px with a 1 px frame on each edge.
+  static const _maxPanelHeight = _headerHeight + 400 + 2;
+
   bool _focusOnOpen = true;
 
   @override
@@ -602,7 +606,7 @@ class _WorkbenchNotificationCenterState
       child: Container(
         key: const ValueKey('notification-center'),
         width: _notificationSurfaceWidth,
-        constraints: const BoxConstraints(maxHeight: 436),
+        constraints: const BoxConstraints(maxHeight: _maxPanelHeight),
         decoration: BoxDecoration(
           color: const Color(0xFF1F232B),
           borderRadius: BorderRadius.circular(6),
@@ -612,13 +616,13 @@ class _WorkbenchNotificationCenterState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 6, 8),
+            Container(
+              key: const ValueKey('notification-center-header'),
+              height: _headerHeight,
+              padding: const EdgeInsets.only(left: 8, right: 2),
               child: Row(
                 children: [
-                  const Text('通知',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  const Text('通知', style: TextStyle(fontSize: 11)),
                   if (center.hasUnread) ...[
                     const SizedBox(width: 6),
                     Text(
@@ -629,24 +633,6 @@ class _WorkbenchNotificationCenterState
                     ),
                   ],
                   const Spacer(),
-                  IconButton(
-                    key: const ValueKey('notification-dnd-toggle'),
-                    tooltip: center.doNotDisturb ? '请勿打扰：开' : '请勿打扰：关',
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints:
-                        const BoxConstraints(minWidth: 24, minHeight: 24),
-                    onPressed: widget.onToggleDoNotDisturb,
-                    icon: Icon(
-                      center.doNotDisturb
-                          ? Icons.notifications_off
-                          : Icons.notifications_active_outlined,
-                      size: 15,
-                      color: center.doNotDisturb
-                          ? Colors.orangeAccent
-                          : Colors.grey.shade400,
-                    ),
-                  ),
                   ListenableBuilder(
                     listenable: Listenable.merge([
                       if (!center.canClearAll)
@@ -663,6 +649,24 @@ class _WorkbenchNotificationCenterState
                       color: Colors.grey.shade400,
                       onPressed: center.canClearAll ? widget.onClearAll : null,
                       icon: const Icon(Icons.clear_all, size: 16),
+                    ),
+                  ),
+                  IconButton(
+                    key: const ValueKey('notification-dnd-toggle'),
+                    tooltip: center.doNotDisturb ? '请勿打扰：开' : '请勿打扰：关',
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints:
+                        const BoxConstraints(minWidth: 24, minHeight: 24),
+                    onPressed: widget.onToggleDoNotDisturb,
+                    icon: Icon(
+                      center.doNotDisturb
+                          ? Icons.notifications_off
+                          : Icons.notifications_active_outlined,
+                      size: 15,
+                      color: center.doNotDisturb
+                          ? Colors.orangeAccent
+                          : Colors.grey.shade400,
                     ),
                   ),
                   if (widget.onPositionChanged != null)
@@ -741,7 +745,6 @@ class _WorkbenchNotificationCenterState
                   ],
                 ),
               ),
-            const Divider(height: 1),
             if (notifications.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -814,16 +817,12 @@ class _NotificationCenterRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       key: ValueKey('notification-item-${notification.id}'),
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        border: showDivider
-            ? const Border(bottom: BorderSide(color: Color(0xFF3A4150)))
-            : null,
-      ),
       foregroundDecoration: BoxDecoration(
         border: Focus.of(context).hasFocus
             ? Border.all(color: Theme.of(context).colorScheme.primary)
-            : null,
+            : showDivider
+                ? const Border(bottom: BorderSide(color: Color(0xFF3A4150)))
+                : null,
       ),
       child: _NotificationContent(
         center: center,
