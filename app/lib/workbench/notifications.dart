@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 
 enum WorkbenchNotificationSeverity { info, warning, error }
 
+enum WorkbenchNotificationPriority { normal, optional, silent, urgent }
+
 typedef WorkbenchNotificationSourceFilter = ({String label, bool muted});
 
 /// 通知动作（上游 notification action）：按钮标签 + 执行回调。
@@ -35,6 +37,7 @@ class WorkbenchNotification {
     required this.source,
     required this.createdAt,
     this.sourceId,
+    this.priority = WorkbenchNotificationPriority.normal,
     this.actions = const <WorkbenchNotificationAction>[],
     this.secondaryActions = const <WorkbenchNotificationAction>[],
     this.progress,
@@ -43,6 +46,7 @@ class WorkbenchNotification {
 
   final int id;
   final WorkbenchNotificationSeverity severity;
+  final WorkbenchNotificationPriority priority;
   final String message;
 
   /// 来源（上游 extension 名称；工作台自身为 `Alula`）。
@@ -165,6 +169,9 @@ class NotificationCenter extends ChangeNotifier {
 
   Map<String, WorkbenchNotificationSourceFilter> get sourceFilters =>
       _sourceFilters;
+
+  /// The host can defer optional toasts while an editable control has focus.
+  bool Function()? allowOptionalToast;
   var _nextId = 1;
 
   /// 通知列表，新的在前。
@@ -203,6 +210,8 @@ class NotificationCenter extends ChangeNotifier {
     required String message,
     String source = 'Alula',
     String? sourceId,
+    WorkbenchNotificationPriority priority =
+        WorkbenchNotificationPriority.normal,
     List<WorkbenchNotificationAction> actions =
         const <WorkbenchNotificationAction>[],
     List<WorkbenchNotificationAction> secondaryActions =
@@ -215,6 +224,7 @@ class NotificationCenter extends ChangeNotifier {
     final notification = WorkbenchNotification(
       id: _nextId++,
       severity: severity,
+      priority: priority,
       message: message,
       source: source,
       sourceId: sourceId,
@@ -231,8 +241,7 @@ class NotificationCenter extends ChangeNotifier {
       while (_banners.length > maxVisibleBanners) {
         _banners.removeAt(0);
       }
-    } else if (severity == WorkbenchNotificationSeverity.error ||
-        (!_doNotDisturb && _sourceFilters[sourceId]?.muted != true)) {
+    } else if (_canShowToast(notification)) {
       _toasts.add(notification.id);
       while (_toasts.length > maxVisibleToasts) {
         _toasts.removeAt(0);
@@ -246,6 +255,19 @@ class NotificationCenter extends ChangeNotifier {
     }
     notifyListeners();
     return notification;
+  }
+
+  bool _canShowToast(WorkbenchNotification notification) {
+    final priority = notification.priority;
+    if (priority == WorkbenchNotificationPriority.silent) return false;
+    if (priority == WorkbenchNotificationPriority.urgent) return true;
+    if (notification.severity != WorkbenchNotificationSeverity.error &&
+        (_doNotDisturb ||
+            _sourceFilters[notification.sourceId]?.muted == true)) {
+      return false;
+    }
+    return priority != WorkbenchNotificationPriority.optional ||
+        (allowOptionalToast?.call() ?? true);
   }
 
   Future<void> runSecondaryAction(
@@ -389,6 +411,7 @@ class NotificationCenter extends ChangeNotifier {
       final entry = byId(id);
       return entry != null &&
           entry.severity != WorkbenchNotificationSeverity.error &&
+          entry.priority != WorkbenchNotificationPriority.urgent &&
           _sourceFilters[entry.sourceId]?.muted == true;
     });
     notifyListeners();

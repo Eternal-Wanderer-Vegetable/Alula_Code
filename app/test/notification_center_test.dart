@@ -100,6 +100,46 @@ void main() {
       expect(center.items.single.message, 'Already observed');
     });
 
+    test('notification priority combines with the global and source filters',
+        () {
+      final center = NotificationCenter();
+      final firstUrgent = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Urgent before muting',
+        sourceId: 'fixture.named',
+        priority: WorkbenchNotificationPriority.urgent,
+      );
+      center.setSourceDoNotDisturb({'fixture.named': true});
+      expect(center.toastIds, [firstUrgent.id]);
+      center.setDoNotDisturb(true);
+      expect(center.toastIds, isEmpty);
+
+      final silent = center.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Explicitly silent error',
+        priority: WorkbenchNotificationPriority.silent,
+      );
+      final urgent = center.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Urgent during Do Not Disturb',
+        sourceId: 'fixture.named',
+        priority: WorkbenchNotificationPriority.urgent,
+      );
+      final optional = center.notify(
+        severity: WorkbenchNotificationSeverity.warning,
+        message: 'Optional during Do Not Disturb',
+        sourceId: 'fixture.named',
+        priority: WorkbenchNotificationPriority.optional,
+      );
+      final error = center.notify(
+        severity: WorkbenchNotificationSeverity.error,
+        message: 'Normal error',
+        sourceId: 'fixture.named',
+      );
+      expect(center.toastIds, [urgent.id, error.id]);
+      expect(center.items, [error, optional, urgent, silent, firstUrgent]);
+    });
+
     test('markRead and markAllRead clear unread state', () {
       final center = NotificationCenter();
       final first = notify(center);

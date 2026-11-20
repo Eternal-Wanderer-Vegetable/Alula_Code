@@ -541,6 +541,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
   static const _notificationDndPreference = 'notifications.doNotDisturbMode';
   static const _sourceDndPreference = 'notifications.perSourceDoNotDisturbMode';
   late Map<String, WorkbenchNotificationSourceFilter> _sourceFilterSnapshot;
+  late final _optionalToastAdmission = _allowOptionalNotificationToast;
   bool _notificationsVisible = false;
   WorkbenchNotificationPosition _notificationPosition =
       WorkbenchNotificationPosition.bottomRight;
@@ -761,6 +762,7 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _commands.addListener(_onCommandServiceChanged);
     FocusManager.instance.addListener(_syncNotificationFocusContext);
     _sourceFilterSnapshot = _notifications.sourceFilters;
+    _notifications.allowOptionalToast = _optionalToastAdmission;
     _notifications.addListener(_onNotificationsChanged);
     widget.onCommandServiceReady?.call(_commands);
   }
@@ -20264,6 +20266,9 @@ class _WorkbenchPageState extends State<WorkbenchPage>
     _editorTabWrap.dispose();
     _pinnedTabsOnSeparateRow.dispose();
     _commitMessage.dispose();
+    if (identical(_notifications.allowOptionalToast, _optionalToastAdmission)) {
+      _notifications.allowOptionalToast = null;
+    }
     _notifications
       ..removeListener(_onNotificationsChanged)
       ..dispose();
@@ -20853,6 +20858,34 @@ class _WorkbenchPageState extends State<WorkbenchPage>
       'notificationFocus',
       _focusedNotification != null,
     );
+  }
+
+  bool _allowOptionalNotificationToast() {
+    if (!mounted || _disposing) return true;
+    final focused = FocusManager.instance.primaryFocus?.context;
+    if (focused == null || !focused.mounted) return true;
+    final editable = focused.findAncestorStateOfType<EditableTextState>();
+    if (editable == null || !editable.mounted || editable.widget.readOnly) {
+      return true;
+    }
+    final root = context.findRenderObject();
+    final input = editable.renderEditable;
+    if (root is! RenderBox || !root.hasSize || !input.attached || !input.hasSize) {
+      return true;
+    }
+
+    final position =
+        input.localToGlobal(Offset.zero) - root.localToGlobal(Offset.zero);
+    final middle = root.size.center(Offset.zero);
+    final sameCorner = switch (_notificationPosition) {
+      WorkbenchNotificationPosition.bottomRight =>
+        position.dx > middle.dx && position.dy > middle.dy,
+      WorkbenchNotificationPosition.bottomLeft =>
+        position.dx < middle.dx && position.dy > middle.dy,
+      WorkbenchNotificationPosition.topRight =>
+        position.dx > middle.dx && position.dy < middle.dy,
+    };
+    return !sameCorner;
   }
 
   void _onNotificationsChanged() {

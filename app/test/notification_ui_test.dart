@@ -1363,6 +1363,61 @@ void main() {
     }
   });
 
+  testWidgets(
+      'optional notifications give way to an editable field in their corner',
+      (tester) async {
+    await tester.binding.setSurfaceSize(const Size(1200, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    expect(
+      sessionStore.save({
+        'v': 1,
+        'workbench.notifications.position': 'top-right',
+      }),
+      isTrue,
+    );
+    await _mountApp(tester);
+    try {
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      final input = find.byKey(const ValueKey('find-query-input'));
+      expect(input, findsOneWidget);
+      await tester.tap(input);
+      await tester.pump();
+      final anchor = tester.getTopLeft(input);
+      expect(anchor.dx, greaterThan(600));
+      expect(anchor.dy, lessThan(400));
+
+      final hidden = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Optional under the active find input',
+        priority: WorkbenchNotificationPriority.optional,
+      );
+      final normal = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Regular notice while find has focus',
+      );
+      await tester.pump();
+      expect(notifications.toastIds, [normal.id]);
+      expect(notifications.items, [normal, hidden]);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(input, findsNothing);
+      final visible = notifications.notify(
+        severity: WorkbenchNotificationSeverity.info,
+        message: 'Optional after find closes',
+        priority: WorkbenchNotificationPriority.optional,
+      );
+      await tester.pump();
+      expect(notifications.toastIds, [normal.id, visible.id]);
+    } finally {
+      await _unmountApp(tester);
+    }
+    expect(notifications.allowOptionalToast, isNull);
+  });
+
   testWidgets('actions run, source filter narrows and clear all empties',
       (tester) async {
     await _mountApp(tester);
