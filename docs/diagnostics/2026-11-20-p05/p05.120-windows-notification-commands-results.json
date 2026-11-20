@@ -1,0 +1,374 @@
+{
+  "os": "Windows-11-10.0.26200-SP0",
+  "runnerSha256": "cb0a82c50eea761a2f10141f9480f2221d9dd3f2cbb42c419c401b1b6a6deb80",
+  "aotSha256": "e90bce0d1a7f8c9c34ad2533efc6dafbea9885699029d06caf7f3aa8d0947a07",
+  "fixtureSha256": "2cb5062c80e893c5f2488d50a4636f031a2c3b79b64f7dc57982c13a48fa6f75",
+  "observations": {
+    "initial": {
+      "request": "initial",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [
+        1,
+        2,
+        3
+      ],
+      "items": [
+        3,
+        2,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "center-open": {
+      "request": "center-open",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "notification-center": [
+          527.2,
+          456.79999999999995,
+          979.2,
+          628.8
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "toastIds": [],
+      "items": [
+        3,
+        2,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "canonical-clear": {
+      "request": "canonical-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "canonical-dnd": {
+      "request": "canonical-dnd",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": true,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "quiet": {
+      "request": "quiet",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": true,
+      "centerVisible": false,
+      "toastIds": [
+        6
+      ],
+      "items": [
+        6,
+        5,
+        4,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "legacy-dnd": {
+      "request": "legacy-dnd",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [
+        6
+      ],
+      "items": [
+        6,
+        5,
+        4,
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "legacy-clear": {
+      "request": "legacy-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [
+        1
+      ],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "palette": {
+      "request": "palette",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "qi-separator-最近使用": [
+          213.60000000000002,
+          97.0,
+          773.6,
+          123.0
+        ],
+        "qi-查看: 清除所有通知": [
+          213.60000000000002,
+          123.0,
+          773.6,
+          155.0
+        ],
+        "qi-查看: 切换请勿打扰": [
+          213.60000000000002,
+          155.0,
+          773.6,
+          187.0
+        ],
+        "qi-文件: 新建文本文件": [
+          213.60000000000002,
+          213.0,
+          773.6,
+          244.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [
+        1
+      ],
+      "progress": [],
+      "history": [
+        "workbench.action.clearNotifications",
+        "notifications.clearAll",
+        "workbench.action.toggleNotificationsDoNotDisturb"
+      ]
+    },
+    "palette-clear": {
+      "request": "palette-clear",
+      "boxes": {
+        "command-center-control": [
+          10.0,
+          0.0,
+          250.0,
+          35.0
+        ],
+        "status-notifications": [
+          769.410791015625,
+          640.8,
+          783.410791015625,
+          664.8
+        ],
+        "qi-separator-最近使用": [
+          213.60000000000002,
+          97.0,
+          773.6,
+          123.0
+        ],
+        "qi-查看: 清除所有通知": [
+          213.60000000000002,
+          123.0,
+          773.6,
+          155.0
+        ],
+        "qi-查看: 切换请勿打扰": [
+          213.60000000000002,
+          155.0,
+          773.6,
+          187.0
+        ],
+        "qi-文件: 新建文本文件": [
+          213.60000000000002,
+          213.0,
+          773.6,
+          244.0
+        ]
+      },
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "toastIds": [],
+      "items": [],
+      "progress": [],
+      "history": [
+        "notifications.clearAll",
+        "notifications.toggleDoNotDisturbMode"
+      ]
+    }
+  },
+  "dpr": 1.25,
+  "clientLogical": [
+    987.2,
+    664.8
+  ],
+  "exitCode": 0,
+  "productCommit": "88911fc074decf58535ad35778d3987c06e3f1a3",
+  "fixtureBuildMethod": "Prior release scratch, with changed tracked product source files mirrored byte-for-byte after the scratch base.",
+  "mirroredProductSourceSha256": {
+    "app/lib/editor/editor_rendering.dart": "5f0156157d1dc3172e206a9ccd6366776ad8c8219e29f5e4a55dd566ffba098f",
+    "app/lib/workbench/commands.dart": "8d3bb29894a6c8c6d6298714efd3d9c1d60382f34f72191d208afe04d7c27151",
+    "app/lib/workbench/keybindings.dart": "90e83371624d4a5130e823cf66621626d8c5921f9ee50a77768e1b6f3a12858d",
+    "app/lib/workbench/notification_widgets.dart": "5fba8e326fd2cbddf2c45b94158ccd9ae3311d60748414a3a6fd41e4262933a6",
+    "app/lib/workbench/notifications.dart": "d502ced6be3766c954495f014a02835cf84909459c29afcfe26b8a176dba9dd8",
+    "app/lib/workbench/status_bar.dart": "6bbc148c96d6dde7da71426e15a1e6e38584cda3df155460a1cc2ac6d80fc2c2",
+    "app/lib/workbench/title_bar.dart": "ad26aec5107dc2feec28fe12d66a0f3308edce5df1a82b86feffc36a10d3aceb",
+    "app/lib/workbench/workbench_page.dart": "2669f731c329dff0babe8514f5e44f4265feeafe0f9ce10b727e72db4c81dbad",
+    "app/windows/runner/CMakeLists.txt": "3658eac18e1d08d2134ef5db2c59493f2234f068721d17be1d847dca760bf9b6",
+    "app/windows/runner/flutter_window.cpp": "66bbefd15e0ab610dce67273aca308add62d4bfa1056c9fbb9688b787c0d27f5",
+    "app/windows/runner/notification_accessibility.cpp": "9667818850e05d980754eee12e7c33fed76e11f125084ba5d301964f45a1c89e",
+    "app/windows/runner/notification_accessibility.h": "b60e0c3bf25169faeb3fa1ad23d1c5ca704313eb78986878391870d2d9d1c19f"
+  }
+}

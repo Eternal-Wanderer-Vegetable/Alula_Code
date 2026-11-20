@@ -2121,8 +2121,20 @@
       "dependencies": [
         "feat-171"
       ],
+      "status": "done",
+      "evidence": "产品 `88911fc074decf58535ad35778d3987c06e3f1a3` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Alula Release 复验两个规范命令、旧自定义键和旧历史迁移。清除时保留活动进度，勿扰时错误继续弹出。专项 155/155，Flutter 1,633 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44721822544 四项与 Platform Availability 44721816048 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.120-notification-commands.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-173",
+      "name": "P05.121 LAY-18 通知中心默认密度",
+      "description": "按固定版本核对通知中心的标题、按钮顺序、紧凑行、总高与滚动视口。",
+      "dependencies": [
+        "feat-172"
+      ],
       "status": "not-started",
-      "evidence": "待固定版对照、规范命令实现、兼容性回归与精确 SHA 验收。",
+      "evidence": "待固定版本和 Alula 现状实测、实现、回归和托管验收。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
