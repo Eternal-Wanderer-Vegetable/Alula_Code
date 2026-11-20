@@ -5,6 +5,8 @@
 
 ## Current State（当前状态，2026-11-20 更新）
 
+- 2026-11-20 完成 P05.114 / feat-166。产品 `d7d17bdadf5c38d2c846396b1e33f256425da0e1` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 实机对照，中心打开时收起旧 toast、新条目直接留在中心且未读为零，关闭后无回放，后续只显示新发的一条。专项 90/90，Flutter 1,610 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44703684119 四项及 Platform Availability 44703675374 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.114-notification-lifecycle.md。
+
 - 2026-11-20 完成 P05.113 / feat-165。产品 `b45cb4a50ead9d98779a38334e33a97dcc1500c7` 已推草稿 PR #3。Windows 11 125% DPI 用编辑器查找输入验证可选 toast 抑制及关闭后恢复，常规与紧急通知照常显示，静默错误留在中心。专项 78/78，Flutter 1,607 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44700895664 四项及 Platform Availability 44700885939 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.113-notification-priority.md。
 
 - 2026-11-20 完成 P05.112 / feat-164。产品 `52748d9b84777f5204079932f53aa84d1fb5f87b` 已推草稿 PR #3。按稳定 ID 设置来源勿扰，固定命令 ID 和单条更多菜单可配置。Windows 11 125% DPI 对同名两来源验证只撤出选定来源普通 toast，已有和新错误保留，中心保留六条，重启恢复。专项 76/76，Flutter 1,605 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库、Dart analyze 通过。同一 SHA 的 PR CI 44697845569 四项及 Platform Availability 44697837635 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.112-notification-source-do-not-disturb.md。
