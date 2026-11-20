@@ -1,0 +1,802 @@
+{
+  "os": "Linux-6.18.58.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "display": "Xvfb X11 in WSL; software GL",
+  "commit": "e5f720cfd978e346f8bff22c5443cf6a73147136",
+  "runnerSha256": "ec54644899fc2735001ba8c0b7e47bbbdbcc34fce3eadec48d91e560858aef58",
+  "aotSha256": "b566117f75f739750b57d0c4e3beb9095d5cf761227dc2eaf244349208ae48e5",
+  "observations": {
+    "seeded": {
+      "request": "seeded",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": false,
+      "itemCount": 12,
+      "muted": []
+    },
+    "center": {
+      "request": "center",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": []
+    },
+    "menu": {
+      "request": "menu",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "notification-dnd-global": [
+          724.0,
+          76.0,
+          948.0,
+          124.0
+        ],
+        "notification-dnd-source-fixture.source.01": [
+          724.0,
+          140.0,
+          948.0,
+          188.0
+        ],
+        "notification-dnd-source-fixture.source.02": [
+          724.0,
+          188.0,
+          948.0,
+          236.0
+        ],
+        "notification-dnd-source-fixture.source.03": [
+          724.0,
+          236.0,
+          948.0,
+          284.0
+        ],
+        "notification-dnd-source-fixture.source.04": [
+          724.0,
+          284.0,
+          948.0,
+          332.0
+        ],
+        "notification-dnd-source-fixture.source.05": [
+          724.0,
+          332.0,
+          948.0,
+          380.0
+        ],
+        "notification-dnd-source-fixture.source.06": [
+          724.0,
+          380.0,
+          948.0,
+          428.0
+        ],
+        "notification-dnd-source-fixture.source.07": [
+          724.0,
+          428.0,
+          948.0,
+          476.0
+        ],
+        "notification-dnd-source-fixture.source.08": [
+          724.0,
+          476.0,
+          948.0,
+          524.0
+        ],
+        "notification-dnd-source-fixture.source.09": [
+          724.0,
+          524.0,
+          948.0,
+          572.0
+        ],
+        "notification-dnd-source-fixture.source.10": [
+          724.0,
+          572.0,
+          948.0,
+          620.0
+        ],
+        "notification-dnd-more": [
+          724.0,
+          636.0,
+          948.0,
+          684.0
+        ]
+      },
+      "checked": {
+        "notification-dnd-source-fixture.source.01": true,
+        "notification-dnd-source-fixture.source.02": true,
+        "notification-dnd-source-fixture.source.03": true,
+        "notification-dnd-source-fixture.source.04": true,
+        "notification-dnd-source-fixture.source.05": true,
+        "notification-dnd-source-fixture.source.06": true,
+        "notification-dnd-source-fixture.source.07": true,
+        "notification-dnd-source-fixture.source.08": true,
+        "notification-dnd-source-fixture.source.09": true,
+        "notification-dnd-source-fixture.source.10": true
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": []
+    },
+    "cancelled": {
+      "request": "cancelled",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": []
+    },
+    "menu-reopened": {
+      "request": "menu",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "notification-dnd-global": [
+          724.0,
+          76.0,
+          948.0,
+          124.0
+        ],
+        "notification-dnd-source-fixture.source.01": [
+          724.0,
+          140.0,
+          948.0,
+          188.0
+        ],
+        "notification-dnd-source-fixture.source.02": [
+          724.0,
+          188.0,
+          948.0,
+          236.0
+        ],
+        "notification-dnd-source-fixture.source.03": [
+          724.0,
+          236.0,
+          948.0,
+          284.0
+        ],
+        "notification-dnd-source-fixture.source.04": [
+          724.0,
+          284.0,
+          948.0,
+          332.0
+        ],
+        "notification-dnd-source-fixture.source.05": [
+          724.0,
+          332.0,
+          948.0,
+          380.0
+        ],
+        "notification-dnd-source-fixture.source.06": [
+          724.0,
+          380.0,
+          948.0,
+          428.0
+        ],
+        "notification-dnd-source-fixture.source.07": [
+          724.0,
+          428.0,
+          948.0,
+          476.0
+        ],
+        "notification-dnd-source-fixture.source.08": [
+          724.0,
+          476.0,
+          948.0,
+          524.0
+        ],
+        "notification-dnd-source-fixture.source.09": [
+          724.0,
+          524.0,
+          948.0,
+          572.0
+        ],
+        "notification-dnd-source-fixture.source.10": [
+          724.0,
+          572.0,
+          948.0,
+          620.0
+        ],
+        "notification-dnd-more": [
+          724.0,
+          636.0,
+          948.0,
+          684.0
+        ]
+      },
+      "checked": {
+        "notification-dnd-source-fixture.source.01": true,
+        "notification-dnd-source-fixture.source.02": true,
+        "notification-dnd-source-fixture.source.03": true,
+        "notification-dnd-source-fixture.source.04": true,
+        "notification-dnd-source-fixture.source.05": true,
+        "notification-dnd-source-fixture.source.06": true,
+        "notification-dnd-source-fixture.source.07": true,
+        "notification-dnd-source-fixture.source.08": true,
+        "notification-dnd-source-fixture.source.09": true,
+        "notification-dnd-source-fixture.source.10": true
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": []
+    },
+    "source-muted": {
+      "request": "source-muted",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01"
+      ]
+    },
+    "menu-after-mute": {
+      "request": "menu-after-mute",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "notification-dnd-global": [
+          724.0,
+          76.0,
+          948.0,
+          124.0
+        ],
+        "notification-dnd-source-fixture.source.01": [
+          724.0,
+          140.0,
+          948.0,
+          188.0
+        ],
+        "notification-dnd-source-fixture.source.02": [
+          724.0,
+          188.0,
+          948.0,
+          236.0
+        ],
+        "notification-dnd-source-fixture.source.03": [
+          724.0,
+          236.0,
+          948.0,
+          284.0
+        ],
+        "notification-dnd-source-fixture.source.04": [
+          724.0,
+          284.0,
+          948.0,
+          332.0
+        ],
+        "notification-dnd-source-fixture.source.05": [
+          724.0,
+          332.0,
+          948.0,
+          380.0
+        ],
+        "notification-dnd-source-fixture.source.06": [
+          724.0,
+          380.0,
+          948.0,
+          428.0
+        ],
+        "notification-dnd-source-fixture.source.07": [
+          724.0,
+          428.0,
+          948.0,
+          476.0
+        ],
+        "notification-dnd-source-fixture.source.08": [
+          724.0,
+          476.0,
+          948.0,
+          524.0
+        ],
+        "notification-dnd-source-fixture.source.09": [
+          724.0,
+          524.0,
+          948.0,
+          572.0
+        ],
+        "notification-dnd-source-fixture.source.10": [
+          724.0,
+          572.0,
+          948.0,
+          620.0
+        ],
+        "notification-dnd-more": [
+          724.0,
+          636.0,
+          948.0,
+          684.0
+        ]
+      },
+      "checked": {
+        "notification-dnd-source-fixture.source.01": false,
+        "notification-dnd-source-fixture.source.02": true,
+        "notification-dnd-source-fixture.source.03": true,
+        "notification-dnd-source-fixture.source.04": true,
+        "notification-dnd-source-fixture.source.05": true,
+        "notification-dnd-source-fixture.source.06": true,
+        "notification-dnd-source-fixture.source.07": true,
+        "notification-dnd-source-fixture.source.08": true,
+        "notification-dnd-source-fixture.source.09": true,
+        "notification-dnd-source-fixture.source.10": true
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01"
+      ]
+    },
+    "picker": {
+      "request": "picker",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "quick-input": [
+          220.0,
+          0.0,
+          780.0,
+          433.0
+        ],
+        "qi-Fixture Source 11": [
+          220.0,
+          407.0,
+          780.0,
+          438.0
+        ],
+        "qi-Fixture Source 12": [
+          220.0,
+          438.0,
+          780.0,
+          469.0
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01"
+      ]
+    },
+    "filtered": {
+      "request": "filtered",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "quick-input": [
+          220.0,
+          0.0,
+          780.0,
+          132.0
+        ],
+        "qi-Fixture Source 12": [
+          220.0,
+          97.0,
+          780.0,
+          128.0
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01"
+      ]
+    },
+    "quick-accepted": {
+      "request": "quick-accepted",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01",
+        "fixture.source.12"
+      ]
+    },
+    "global-menu": {
+      "request": "global-menu",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ],
+        "notification-center": [
+          540.0,
+          227.0,
+          992.0,
+          664.0
+        ],
+        "notification-dnd-toggle": [
+          924.0,
+          233.5,
+          948.0,
+          257.5
+        ],
+        "notification-dnd-global": [
+          724.0,
+          76.0,
+          948.0,
+          124.0
+        ],
+        "notification-dnd-source-fixture.source.01": [
+          724.0,
+          140.0,
+          948.0,
+          188.0
+        ],
+        "notification-dnd-source-fixture.source.02": [
+          724.0,
+          188.0,
+          948.0,
+          236.0
+        ],
+        "notification-dnd-source-fixture.source.03": [
+          724.0,
+          236.0,
+          948.0,
+          284.0
+        ],
+        "notification-dnd-source-fixture.source.04": [
+          724.0,
+          284.0,
+          948.0,
+          332.0
+        ],
+        "notification-dnd-source-fixture.source.05": [
+          724.0,
+          332.0,
+          948.0,
+          380.0
+        ],
+        "notification-dnd-source-fixture.source.06": [
+          724.0,
+          380.0,
+          948.0,
+          428.0
+        ],
+        "notification-dnd-source-fixture.source.07": [
+          724.0,
+          428.0,
+          948.0,
+          476.0
+        ],
+        "notification-dnd-source-fixture.source.08": [
+          724.0,
+          476.0,
+          948.0,
+          524.0
+        ],
+        "notification-dnd-source-fixture.source.09": [
+          724.0,
+          524.0,
+          948.0,
+          572.0
+        ],
+        "notification-dnd-source-fixture.source.10": [
+          724.0,
+          572.0,
+          948.0,
+          620.0
+        ],
+        "notification-dnd-more": [
+          724.0,
+          636.0,
+          948.0,
+          684.0
+        ]
+      },
+      "checked": {
+        "notification-dnd-source-fixture.source.01": false,
+        "notification-dnd-source-fixture.source.02": true,
+        "notification-dnd-source-fixture.source.03": true,
+        "notification-dnd-source-fixture.source.04": true,
+        "notification-dnd-source-fixture.source.05": true,
+        "notification-dnd-source-fixture.source.06": true,
+        "notification-dnd-source-fixture.source.07": true,
+        "notification-dnd-source-fixture.source.08": true,
+        "notification-dnd-source-fixture.source.09": true,
+        "notification-dnd-source-fixture.source.10": true
+      },
+      "doNotDisturb": false,
+      "centerVisible": true,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01",
+        "fixture.source.12"
+      ]
+    },
+    "global-quiet": {
+      "request": "global-quiet",
+      "boxes": {
+        "status-notifications": [
+          773.5004653930664,
+          676.0,
+          787.5004653930664,
+          700.0
+        ]
+      },
+      "checked": {},
+      "doNotDisturb": true,
+      "centerVisible": false,
+      "itemCount": 12,
+      "muted": [
+        "fixture.source.01",
+        "fixture.source.12"
+      ]
+    }
+  },
+  "coreSha256": "9ee0c35c82c420a668ba30b7995f55442a63dba65f51c90a60d966ccc39edb99",
+  "fixtureSha256": "c566b740252697189ac0de350a7fd851f327456b62cfb097ea633a37f9a76adb",
+  "memProbe": {
+    "centerBeforeFirstMenu": [
+      {
+        "privateBytes": 219766784,
+        "workingSetBytes": 310796288,
+        "pssBytes": 235197440,
+        "processes": 1
+      },
+      {
+        "privateBytes": 219770880,
+        "workingSetBytes": 310800384,
+        "pssBytes": 235201536,
+        "processes": 1
+      },
+      {
+        "privateBytes": 219779072,
+        "workingSetBytes": 310808576,
+        "pssBytes": 235209728,
+        "processes": 1
+      },
+      {
+        "privateBytes": 219787264,
+        "workingSetBytes": 310816768,
+        "pssBytes": 235217920,
+        "processes": 1
+      },
+      {
+        "privateBytes": 219791360,
+        "workingSetBytes": 310820864,
+        "pssBytes": 235222016,
+        "processes": 1
+      }
+    ],
+    "menuAfterFirstSort": [
+      {
+        "privateBytes": 234422272,
+        "workingSetBytes": 326721536,
+        "pssBytes": 250115072,
+        "processes": 1
+      },
+      {
+        "privateBytes": 234430464,
+        "workingSetBytes": 326729728,
+        "pssBytes": 250123264,
+        "processes": 1
+      },
+      {
+        "privateBytes": 234434560,
+        "workingSetBytes": 326733824,
+        "pssBytes": 250127360,
+        "processes": 1
+      },
+      {
+        "privateBytes": 234442752,
+        "workingSetBytes": 326742016,
+        "pssBytes": 250135552,
+        "processes": 1
+      },
+      {
+        "privateBytes": 234446848,
+        "workingSetBytes": 326746112,
+        "pssBytes": 250139648,
+        "processes": 1
+      }
+    ],
+    "centerAfterThirteenMenuCycles": [
+      {
+        "privateBytes": 230481920,
+        "workingSetBytes": 322916352,
+        "pssBytes": 246182912,
+        "processes": 1
+      },
+      {
+        "privateBytes": 230486016,
+        "workingSetBytes": 322920448,
+        "pssBytes": 246185984,
+        "processes": 1
+      },
+      {
+        "privateBytes": 230494208,
+        "workingSetBytes": 322928640,
+        "pssBytes": 246194176,
+        "processes": 1
+      },
+      {
+        "privateBytes": 230498304,
+        "workingSetBytes": 322932736,
+        "pssBytes": 246198272,
+        "processes": 1
+      },
+      {
+        "privateBytes": 230506496,
+        "workingSetBytes": 322940928,
+        "pssBytes": 246206464,
+        "processes": 1
+      }
+    ]
+  },
+  "checksPassed": true,
+  "fixtureExitCode": -15
+}

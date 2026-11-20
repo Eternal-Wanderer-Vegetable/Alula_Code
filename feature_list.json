@@ -2145,8 +2145,20 @@
       "dependencies": [
         "feat-173"
       ],
+      "status": "done",
+      "evidence": "产品 `e5f720cfd978e346f8bff22c5443cf6a73147136` 已推草稿 PR #3。固定版与 Windows 11 125% DPI Release 用 12 个来源复验配置菜单仅显示前十个、按稳定 ID 更新、更多进入完整选择器与全局勿扰。专项 114/114，Flutter 1,636 passed / 2 skipped，Rust fmt、工作区测试、Clippy、核心库和 Dart analyze 通过。同一 SHA 的 PR CI 44726959456 四项与 Platform Availability 44726947590 Windows/Linux 通过。macOS 实机验收暂缓。详见 docs/diagnostics/2026-11-20-p05/p05.122-notification-filter-menu.md。",
+      "track": "vscode-builtin-parity",
+      "phase": "P05"
+    },
+    {
+      "id": "feat-175",
+      "name": "P05.123 LAY-18 执行首个通知主操作命令",
+      "description": "接通固定版 notification.acceptPrimaryAction，验证命令面板、自定义键位、当前聚焦与最新条目的首个主操作。",
+      "dependencies": [
+        "feat-174"
+      ],
       "status": "not-started",
-      "evidence": "待固定版和 Alula 键鼠复验，登记选项、来源稳定 ID、完整选择器和托管证据。",
+      "evidence": "待固定版、命令面板、自定义键位、保留规则及托管验证。",
       "track": "vscode-builtin-parity",
       "phase": "P05"
     }
